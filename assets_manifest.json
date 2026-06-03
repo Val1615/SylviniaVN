@@ -1,0 +1,481 @@
+{
+  "version": "0.73",
+  "original": [
+    {
+      "file": "README.md",
+      "bytes": 3990
+    },
+    {
+      "file": "assets/audio/algratal.mp3",
+      "bytes": 5258814
+    },
+    {
+      "file": "assets/audio/catacombes.mp3",
+      "bytes": 3126294
+    },
+    {
+      "file": "assets/audio/ending.mp3",
+      "bytes": 4810974
+    },
+    {
+      "file": "assets/audio/entrainement_aube.mp3",
+      "bytes": 5851758
+    },
+    {
+      "file": "assets/audio/entree_iriana.mp3",
+      "bytes": 5925222
+    },
+    {
+      "file": "assets/audio/menu.mp3",
+      "bytes": 5936478
+    },
+    {
+      "file": "assets/audio/tension.mp3",
+      "bytes": 4973910
+    },
+    {
+      "file": "assets/audio/training.mp3",
+      "bytes": 3681462
+    },
+    {
+      "file": "assets/audio/vent_confessions.mp3",
+      "bytes": 3522750
+    },
+    {
+      "file": "assets/audio/wild_calm.mp3",
+      "bytes": 2307078
+    },
+    {
+      "file": "assets/images/algratal_panorama.png",
+      "bytes": 3005433
+    },
+    {
+      "file": "assets/images/algratal_portes.png",
+      "bytes": 2931180
+    },
+    {
+      "file": "assets/images/algratal_rues.png",
+      "bytes": 3278174
+    },
+    {
+      "file": "assets/images/bg_bushes.png",
+      "bytes": 2485768
+    },
+    {
+      "file": "assets/images/bg_camp.png",
+      "bytes": 2533574
+    },
+    {
+      "file": "assets/images/bg_clearing_frost.png",
+      "bytes": 3167713
+    },
+    {
+      "file": "assets/images/bg_clearing_twilight.png",
+      "bytes": 3167713
+    },
+    {
+      "file": "assets/images/bg_forest_path.png",
+      "bytes": 2385874
+    },
+    {
+      "file": "assets/images/bg_projection.png",
+      "bytes": 2451067
+    },
+    {
+      "file": "assets/images/bg_training_sunset.png",
+      "bytes": 2640987
+    },
+    {
+      "file": "assets/images/campement_foret.png",
+      "bytes": 2920484
+    },
+    {
+      "file": "assets/images/catacombes_sanctuaire.png",
+      "bytes": 2806039
+    },
+    {
+      "file": "assets/images/chemin_ensorcele_foret.png",
+      "bytes": 2841342
+    },
+    {
+      "file": "assets/images/clairiere_magique.png",
+      "bytes": 3033372
+    },
+    {
+      "file": "assets/images/croissant_ruelle.png",
+      "bytes": 2582484
+    },
+    {
+      "file": "assets/images/keyscenes/c2_algratal_approach.png",
+      "bytes": 2806285
+    },
+    {
+      "file": "assets/images/keyscenes/c2_algratal_gate.png",
+      "bytes": 3049530
+    },
+    {
+      "file": "assets/images/keyscenes/c2_algratal_panorama.png",
+      "bytes": 2863260
+    },
+    {
+      "file": "assets/images/keyscenes/c2_catacombes_draven.png",
+      "bytes": 2582201
+    },
+    {
+      "file": "assets/images/keyscenes/c2_catacombes_iriana.png",
+      "bytes": 2643648
+    },
+    {
+      "file": "assets/images/keyscenes/c2_catacombes_valurn.png",
+      "bytes": 2588332
+    },
+    {
+      "file": "assets/images/keyscenes/c2_forest_intro.png",
+      "bytes": 2998484
+    },
+    {
+      "file": "assets/images/keyscenes/c2_ruisseau_meeting.png",
+      "bytes": 2822390
+    },
+    {
+      "file": "assets/images/keyscenes/cg_barrier.png",
+      "bytes": 387163
+    },
+    {
+      "file": "assets/images/keyscenes/cg_campfire.png",
+      "bytes": 321928
+    },
+    {
+      "file": "assets/images/keyscenes/cg_crystal.png",
+      "bytes": 342744
+    },
+    {
+      "file": "assets/images/keyscenes/cg_day_alert.png",
+      "bytes": 349407
+    },
+    {
+      "file": "assets/images/keyscenes/cg_day_camp.png",
+      "bytes": 351731
+    },
+    {
+      "file": "assets/images/keyscenes/cg_duel.png",
+      "bytes": 428278
+    },
+    {
+      "file": "assets/images/keyscenes/cg_iriana.png",
+      "bytes": 332001
+    },
+    {
+      "file": "assets/images/keyscenes/cg_journey.png",
+      "bytes": 301139
+    },
+    {
+      "file": "assets/images/keyscenes/cg_night_alert.png",
+      "bytes": 263532
+    },
+    {
+      "file": "assets/images/keyscenes/cg_shatter.png",
+      "bytes": 391803
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_audace.png",
+      "bytes": 475467
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_fragile.png",
+      "bytes": 413618
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_interrupted.png",
+      "bytes": 414558
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_lesson.png",
+      "bytes": 360095
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_mastery.png",
+      "bytes": 384336
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_overflow.png",
+      "bytes": 516723
+    },
+    {
+      "file": "assets/images/keyscenes/duel_end_resonance.png",
+      "bytes": 409929
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_barrier.jpg",
+      "bytes": 455416
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_barrier.png",
+      "bytes": 431210
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_counter.jpg",
+      "bytes": 463656
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_counter.png",
+      "bytes": 349162
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_dodge.jpg",
+      "bytes": 528027
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_dodge.png",
+      "bytes": 350345
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_observe.jpg",
+      "bytes": 481241
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_observe.png",
+      "bytes": 371149
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_setup.jpg",
+      "bytes": 454274
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m1_setup.png",
+      "bytes": 343696
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_anchor.jpg",
+      "bytes": 497085
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_anchor.png",
+      "bytes": 449141
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_anticipate.jpg",
+      "bytes": 494626
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_anticipate.png",
+      "bytes": 372267
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_break.jpg",
+      "bytes": 463600
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_break.png",
+      "bytes": 392161
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_flow.jpg",
+      "bytes": 480797
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_flow.png",
+      "bytes": 386796
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_setup.jpg",
+      "bytes": 494626
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m2_setup.png",
+      "bytes": 404334
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m3_attack.png",
+      "bytes": 481270
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m3_core.png",
+      "bytes": 459427
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m3_crown.png",
+      "bytes": 407329
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m3_letgo.png",
+      "bytes": 409094
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m3_setup.png",
+      "bytes": 461151
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m4_explode.png",
+      "bytes": 426137
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m4_hint.png",
+      "bytes": 356271
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m4_setup.png",
+      "bytes": 452408
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m4_silent.png",
+      "bytes": 385408
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m4_slow.png",
+      "bytes": 396308
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m5_control.png",
+      "bytes": 2693715
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m5_refuse.png",
+      "bytes": 2802668
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m5_setup.png",
+      "bytes": 2762725
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m5_transform.png",
+      "bytes": 2912039
+    },
+    {
+      "file": "assets/images/keyscenes/duel_m5_understand.png",
+      "bytes": 2854114
+    },
+    {
+      "file": "assets/sprites/draven_angry.png",
+      "bytes": 2148048
+    },
+    {
+      "file": "assets/sprites/draven_approving.png",
+      "bytes": 2274436
+    },
+    {
+      "file": "assets/sprites/draven_gruff.png",
+      "bytes": 2260662
+    },
+    {
+      "file": "assets/sprites/draven_neutral.png",
+      "bytes": 2227583
+    },
+    {
+      "file": "assets/sprites/draven_stern.png",
+      "bytes": 2127747
+    },
+    {
+      "file": "assets/sprites/draven_surprised.png",
+      "bytes": 2225540
+    },
+    {
+      "file": "assets/sprites/hylee_angry.png",
+      "bytes": 1191974
+    },
+    {
+      "file": "assets/sprites/hylee_confident.png",
+      "bytes": 1154094
+    },
+    {
+      "file": "assets/sprites/hylee_determined.png",
+      "bytes": 1226666
+    },
+    {
+      "file": "assets/sprites/hylee_soft.png",
+      "bytes": 1148876
+    },
+    {
+      "file": "assets/sprites/hylee_surprised.png",
+      "bytes": 1135345
+    },
+    {
+      "file": "assets/sprites/hylee_thinking.png",
+      "bytes": 1182797
+    },
+    {
+      "file": "assets/sprites/iriana_calm.png",
+      "bytes": 1346792
+    },
+    {
+      "file": "assets/sprites/iriana_neutral.png",
+      "bytes": 1341607
+    },
+    {
+      "file": "assets/sprites/iriana_profile.png",
+      "bytes": 1323081
+    },
+    {
+      "file": "assets/sprites/iriana_sad.png",
+      "bytes": 1353946
+    },
+    {
+      "file": "assets/sprites/iriana_smirk.png",
+      "bytes": 1353524
+    },
+    {
+      "file": "assets/sprites/iriana_stern.png",
+      "bytes": 1431628
+    },
+    {
+      "file": "assets/sprites/remerii_calm.png",
+      "bytes": 2033771
+    },
+    {
+      "file": "assets/sprites/remerii_neutral.png",
+      "bytes": 2131940
+    },
+    {
+      "file": "assets/sprites/remerii_profile.png",
+      "bytes": 2141352
+    },
+    {
+      "file": "assets/sprites/remerii_sad.png",
+      "bytes": 2127353
+    },
+    {
+      "file": "assets/sprites/remerii_smirk.png",
+      "bytes": 2033771
+    },
+    {
+      "file": "assets/sprites/remerii_strict.png",
+      "bytes": 2174271
+    },
+    {
+      "file": "assets/sprites/valurn_amused.png",
+      "bytes": 1263302
+    },
+    {
+      "file": "assets/sprites/valurn_annoyed.png",
+      "bytes": 1230474
+    },
+    {
+      "file": "assets/sprites/valurn_away.png",
+      "bytes": 1281999
+    },
+    {
+      "file": "assets/sprites/valurn_charming.png",
+      "bytes": 1263965
+    },
+    {
+      "file": "assets/sprites/valurn_neutral.png",
+      "bytes": 1254775
+    },
+    {
+      "file": "assets/sprites/valurn_surprised.png",
+      "bytes": 1268722
+    },
+    {
+      "file": "assets/video/video_title.mp4",
+      "bytes": 18619331
+    },
+    {
+      "file": "assets_manifest.json",
+      "bytes": 10766
+    },
+    {
+      "file": "index.html",
+      "bytes": 202398
+    }
+  ]
+}
