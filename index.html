@@ -1466,29 +1466,28 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 .chaptersMetaBadge{min-width:130px;border:1px solid rgba(82,55,25,.18);border-radius:18px;padding:12px 14px;background:rgba(255,255,255,.30);text-align:center;}
 .chaptersMetaBadge b{display:block;font-size:24px;color:#2e5d74;}
 .chaptersMetaBadge span{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#6a563b;font-weight:900;}
-.chapterSelectGrid{display:flex;flex-direction:row;gap:10px;align-items:stretch;min-height:640px;overflow-x:auto;overflow-y:hidden;padding:8px 4px 18px;scrollbar-width:thin;scroll-snap-type:x proximity;}
-.chapterSelectCard{position:relative;flex:0 0 72px;min-height:620px;border:1px solid rgba(82,55,25,.24);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22));box-shadow:0 18px 34px rgba(55,35,15,.10);overflow:hidden;display:grid;grid-template-columns:72px 0;transition:flex-basis .38s cubic-bezier(.2,.78,.18,1),grid-template-columns .38s cubic-bezier(.2,.78,.18,1),box-shadow .22s ease,border-color .22s ease,filter .22s ease;scroll-snap-align:start;}
-.chapterSelectCard[open]{flex-basis:min(850px,calc(100vw - 120px));grid-template-columns:86px minmax(0,1fr);box-shadow:0 26px 54px rgba(55,35,15,.22);border-color:rgba(46,93,116,.34);}
+.chapterSelectGrid{display:flex;gap:14px;align-items:stretch;min-height:620px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 14px;scrollbar-width:thin;}
+.chapterSelectCard{flex:0 0 210px;min-height:600px;border:1px solid rgba(82,55,25,.22);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(234,213,168,.26));box-shadow:0 18px 34px rgba(55,35,15,.10);overflow:hidden;display:grid;grid-template-columns:1fr;transition:flex-basis .32s ease,box-shadow .22s ease,border-color .22s ease;}
+.chapterSelectCard[open]{flex-basis:min(860px,92%);grid-template-columns:220px minmax(0,1fr);box-shadow:0 24px 50px rgba(55,35,15,.18);border-color:rgba(46,93,116,.32);}
 .chapterSelectCard.locked{filter:saturate(.82);}
-.chapterBookCover{position:relative;list-style:none;cursor:pointer;min-height:620px;background:#0a0f18;overflow:hidden;display:block;}
+.chapterBookCover{position:relative;list-style:none;cursor:pointer;min-height:600px;background:#0a0f18;overflow:hidden;display:block;}
 .chapterBookCover::-webkit-details-marker{display:none;}
-.chapterBookCover::after{content:'›';position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(8,14,24,.68);border:1px solid rgba(255,255,255,.18);color:#eef8ff;font-size:22px;transition:transform .22s ease;}
-.chapterSelectCard[open] .chapterBookCover::after{transform:translateX(-50%) rotate(180deg);}
-.chapterBookCoverImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease,filter .35s ease,opacity .25s ease;}
-.chapterBookCover:hover .chapterBookCoverImg{transform:scale(1.035);}
-.chapterBookShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.24),rgba(0,0,0,.04) 48%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.42));pointer-events:none;}
-.chapterBookSpine{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10));border-right:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;padding:50px 8px 58px;}
-.chapterBookSpine span{writing-mode:vertical-rl;text-orientation:mixed;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#fff8e8;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.50);max-height:100%;overflow:hidden;}
-.chapterSelectCard[open] .chapterBookSpine{background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24));}
-.chapterBookCoverText{position:absolute;left:8px;right:8px;bottom:58px;color:#fff;display:none;gap:6px;text-shadow:0 7px 16px rgba(0,0,0,.45);}
-.chapterSelectKicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7d6032;font-weight:950;}
-.chapterBookCoverTitle{font-size:18px;line-height:1.05;font-weight:950;writing-mode:vertical-rl;text-orientation:mixed;margin:auto;}
-.chapterBookCoverSub{display:none;font-size:11px;color:#dce9f5;line-height:1.35;font-weight:750;}
-.chapterSelectState{position:absolute;top:12px;left:50%;transform:translateX(-50%);border:1px solid rgba(255,255,255,.22);background:rgba(8,14,24,.72);color:#eef8ff;border-radius:999px;padding:6px 8px;font-size:9px;letter-spacing:.10em;text-transform:uppercase;font-weight:950;backdrop-filter:blur(8px);writing-mode:vertical-rl;text-orientation:mixed;}
+.chapterBookCover::after{content:'›';position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(8,14,24,.66);border:1px solid rgba(255,255,255,.18);color:#eef8ff;font-size:22px;transition:transform .22s ease;}
+.chapterSelectCard[open] .chapterBookCover::after{transform:rotate(90deg);}
+.chapterBookCoverImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease,filter .35s ease;}
+.chapterBookCover:hover .chapterBookCoverImg{transform:scale(1.025);}
+.chapterBookShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.14) 40%,rgba(0,0,0,.86));pointer-events:none;}
+.chapterBookSpine{position:absolute;left:0;top:0;bottom:0;width:42px;background:linear-gradient(180deg,rgba(233,201,133,.40),rgba(46,93,116,.24));border-right:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;}
+.chapterBookSpine span{writing-mode:vertical-rl;text-orientation:mixed;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f8eed8;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+.chapterBookCoverText{position:absolute;left:54px;right:14px;bottom:18px;color:#fff;display:grid;gap:8px;text-shadow:0 7px 16px rgba(0,0,0,.45);}
+.chapterSelectKicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#d9c391;font-weight:950;}
+.chapterBookCoverTitle{font-size:24px;line-height:1.06;font-weight:950;}
+.chapterBookCoverSub{font-size:12px;color:#dce9f5;line-height:1.35;font-weight:750;}
+.chapterSelectState{justify-self:start;border:1px solid rgba(255,255,255,.22);background:rgba(8,14,24,.72);color:#eef8ff;border-radius:999px;padding:8px 11px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;backdrop-filter:blur(8px);}
 .chapterSelectCard.locked .chapterBookCoverImg{filter:grayscale(.56) brightness(.62) saturate(.65);}
 .chapterSelectCard.locked .chapterSelectState{color:#f1ddba;background:rgba(45,31,18,.76);}
-.chapterBookOpened{display:block;min-width:0;width:0;opacity:0;overflow:hidden;padding:0;background:linear-gradient(180deg,rgba(255,255,255,.44),rgba(255,255,255,.24));transition:opacity .24s ease,width .38s cubic-bezier(.2,.78,.18,1);}
-.chapterSelectCard[open] .chapterBookOpened{width:auto;opacity:1;display:grid;grid-template-columns:minmax(230px,320px) minmax(260px,1fr);gap:18px;align-content:start;padding:20px;}
+.chapterBookOpened{display:none;padding:20px;gap:16px;align-content:start;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.24));min-width:0;}
+.chapterSelectCard[open] .chapterBookOpened{display:grid;grid-template-columns:minmax(210px,310px) minmax(0,1fr);}
 .chapterOpenImageFrame{border:1px solid rgba(82,55,25,.18);border-radius:18px;background:rgba(255,255,255,.36);padding:10px;align-self:start;}
 .chapterOpenImage{width:100%;aspect-ratio:4/5;object-fit:contain;display:block;border-radius:12px;background:#0a0f18;box-shadow:0 16px 30px rgba(55,35,15,.16);}
 .chapterOpenText{display:flex;flex-direction:column;gap:12px;min-width:0;}
@@ -1504,19 +1503,18 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 .enterChaptersBtn{min-width:190px;max-width:230px;}
 .chaptersCountBubble{min-width:150px;max-width:190px;display:flex;flex-direction:column;justify-content:center;}
 .chaptersCountBubble strong{white-space:nowrap;}
-@media(max-width:1100px){.chaptersFrame{grid-template-columns:1fr}.chaptersSidebar{padding:18px;border-radius:22px}.chaptersBook{padding:18px;border-radius:22px}.chaptersBookHead{flex-direction:column}.chapterSelectCard[open]{flex-basis:min(800px,calc(100vw - 74px));}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:minmax(210px,280px) minmax(250px,1fr);}.chaptersAccordion .accordionSummary{width:min(220px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:repeat(2,minmax(0,1fr));}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
-@media(max-width:760px){#chaptersCard{min-height:100svh;padding:12px}.chaptersTitle{font-size:34px}.chaptersBookTitle{font-size:30px}.chapterSelectGrid{min-height:560px;gap:8px}.chapterSelectCard{flex-basis:58px;grid-template-columns:58px 0;min-height:540px;border-radius:16px}.chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}.chapterBookCover{min-height:540px}.chapterBookSpine{padding:44px 6px 54px}.chapterBookSpine span{font-size:10px;letter-spacing:.12em}.chapterSelectState{font-size:8px;padding:5px 7px}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;overflow-y:auto;max-height:540px}.chapterOpenText h4{font-size:24px}.chapterOpenText p{font-size:13px}.chaptersAccordion .accordionSummary{width:min(170px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:1fr;}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+@media(max-width:980px){.chaptersFrame{grid-template-columns:1fr}.chaptersSidebar{padding:18px;border-radius:22px}.chaptersBook{padding:18px;border-radius:22px}.chaptersBookHead{flex-direction:column}.chapterSelectGrid{min-height:auto;overflow-x:visible;display:grid;grid-template-columns:1fr}.chapterSelectCard,.chapterSelectCard[open]{flex-basis:auto;grid-template-columns:1fr}.chapterBookCover{min-height:310px}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr}.chaptersAccordion .accordionSummary{width:min(220px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:repeat(2,minmax(0,1fr));}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+@media(max-width:760px){#chaptersCard{min-height:100svh;padding:12px}.chaptersTitle{font-size:34px}.chaptersBookTitle{font-size:30px}.chapterBookCover{min-height:260px}.chapterBookCoverTitle{font-size:22px}.chapterBookOpened{padding:14px}.chapterOpenText h4{font-size:25px}.chapterOpenText p{font-size:13px}.chaptersAccordion .accordionSummary{width:min(170px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:1fr;}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
 body.mobileUI #chapters{width:100%;height:100svh;max-height:100svh;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0;}
 body.mobileUI #chaptersCard{min-height:100svh;padding:12px;}
 body.mobileUI .chaptersFrame{grid-template-columns:1fr;gap:12px;}
 body.mobileUI .chaptersSidebar{padding:16px;border-radius:20px;gap:14px;}
 body.mobileUI .chaptersBook{padding:16px;border-radius:22px;}
 body.mobileUI .chaptersBookHead{flex-direction:column;gap:10px;}
-body.mobileUI .chapterSelectGrid{display:flex;flex-direction:row;gap:8px;min-height:560px;overflow-x:auto;overflow-y:hidden;padding-bottom:16px;}
-body.mobileUI .chapterSelectCard{flex:0 0 58px;grid-template-columns:58px 0;min-height:540px;}
-body.mobileUI .chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}
-body.mobileUI .chapterBookCover{min-height:540px;}
-body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;max-height:540px;overflow-y:auto;}
+body.mobileUI .chapterSelectGrid{display:grid;grid-template-columns:1fr;gap:14px;min-height:auto;overflow-x:visible;}
+body.mobileUI .chapterSelectCard,body.mobileUI .chapterSelectCard[open]{flex-basis:auto;grid-template-columns:1fr;min-height:auto;}
+body.mobileUI .chapterBookCover{min-height:250px;}
+body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;}
 body.mobileUI .chapterOpenText h4{font-size:24px;}
 body.mobileUI .chapterOpenText p{font-size:13px;}
 
@@ -1536,7 +1534,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
         <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="try{sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1');localStorage.setItem('sylvinia_disclaimer_seen_v82','1');}catch(e){};var d=document.getElementById('disclaimer'),t=document.getElementById('title');if(d)d.classList.add('hidden');if(t)t.classList.remove('hidden');document.body.classList.remove('disclaimerOpen');return false;">Entrer dans le récit</button>
+          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="window.__sylviniaDisclaimerAcceptedThisLoad=true;var d=document.getElementById('disclaimer'),t=document.getElementById('title');if(d)d.classList.add('hidden');if(t)t.classList.remove('hidden');document.body.classList.remove('disclaimerOpen');return false;">Entrer dans le récit</button>
         </div>
       </div>
     </section>
@@ -8836,7 +8834,7 @@ function updateDevUI(){
   updateJournalDevButton();
 }
 
-const DEV_MODE_CODE='1615';
+const DEV_MODE_CODE='161598';
 function requestDevCode(){
   const value=prompt('Code développeur requis');
   if(value===null) return false;
@@ -8912,13 +8910,12 @@ function setMobileUI(enabled){
 }
 
 function disclaimerSeen(){
-  try{ if(sessionStorage.getItem('sylvinia_disclaimer_seen_v82')) return true; }catch(e){}
-  try{ if(localStorage.getItem('sylvinia_disclaimer_seen_v82')) return true; }catch(e){}
-  return false;
+  // Le disclaimer doit réapparaître à chaque nouveau chargement du site.
+  // On ne s’appuie donc plus sur localStorage/sessionStorage : seule la session JS en cours le masque après clic.
+  return !!window.__sylviniaDisclaimerAcceptedThisLoad;
 }
 function markDisclaimerSeen(){
-  try{ sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1'); }catch(e){}
-  try{ localStorage.setItem('sylvinia_disclaimer_seen_v82','1'); }catch(e){}
+  window.__sylviniaDisclaimerAcceptedThisLoad=true;
 }
 function enterTitleFromDisclaimer(){
   markDisclaimerSeen();
@@ -9019,7 +9016,7 @@ function renderChapterSelect(){
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
         <div class="chapterBookShade"></div>
-        <div class="chapterBookSpine"><span>${htmlEscape(ch.label+' · '+ch.title)}</span></div>
+        <div class="chapterBookSpine"><span>${htmlEscape(ch.label)}</span></div>
         <div class="chapterBookCoverText">
           <div class="chapterSelectKicker">${htmlEscape(ch.subtitle)}</div>
           <div class="chapterBookCoverTitle">${htmlEscape(ch.title)}</div>
