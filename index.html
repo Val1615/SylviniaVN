@@ -1465,7 +1465,7 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
         <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn">Entrer dans le récit</button>
+          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="try{sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1');localStorage.setItem('sylvinia_disclaimer_seen_v82','1');}catch(e){};var d=document.getElementById('disclaimer'),t=document.getElementById('title');if(d)d.classList.add('hidden');if(t)t.classList.remove('hidden');document.body.classList.remove('disclaimerOpen');return false;">Entrer dans le récit</button>
         </div>
       </div>
     </section>
@@ -8755,9 +8755,7 @@ function toggleDevMode(){
   ensureCodexDefaults();
   if(!state.devMode){
     if(!requestDevCode()) return;
-    const ok=confirm("Activer le mode développeur ?
-
-Cela déverrouille tout le codex, ouvre tous les chapitres, affiche les gains de valeurs sur chaque choix, ignore les prérequis de valeurs et ajoute un bouton Retour pendant les chapitres.");
+    const ok=confirm("Activer le mode développeur ?\n\nCela déverrouille tout le codex, ouvre tous les chapitres, affiche les gains de valeurs sur chaque choix, ignore les prérequis de valeurs et ajoute un bouton Retour pendant les chapitres.");
     if(!ok) return;
     state.devMode=true;
     state.flags={...(state.flags||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true};
@@ -8767,9 +8765,7 @@ Cela déverrouille tout le codex, ouvre tous les chapitres, affiche les gains de
     playUiSound('dev');
     toast('Mode développeur activé','Codex complet · chapitres ouverts · prérequis ignorés · valeurs visibles.');
   }else{
-    const ok=confirm("Désactiver le mode développeur ?
-
-Le codex déjà déverrouillé restera disponible, mais les prérequis redeviendront actifs et le bouton Retour disparaîtra.");
+    const ok=confirm("Désactiver le mode développeur ?\n\nLe codex déjà déverrouillé restera disponible, mais les prérequis redeviendront actifs et le bouton Retour disparaîtra.");
     if(!ok) return;
     state.devMode=false;
     state.devJournalForceAccess=false;
