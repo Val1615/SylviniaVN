@@ -1515,6 +1515,34 @@ body.mobileUI .chapterSelectGrid{display:grid;grid-template-columns:1fr;gap:14px
 body.mobileUI .chapterSelectCard,body.mobileUI .chapterSelectCard[open]{flex-basis:auto;grid-template-columns:1fr;min-height:auto;}
 body.mobileUI .chapterBookCover{min-height:250px;}
 body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;}
+/* --- Patch : bannière bibliothèque infinie + remise en page livres --- */
+.chapterLibraryBanner{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(82,55,25,.18);background:#0a0f18;margin:0 0 18px;min-height:210px;box-shadow:0 18px 34px rgba(55,35,15,.12);}
+.chapterLibraryBanner img{display:block;width:100%;height:250px;object-fit:cover;object-position:center;filter:saturate(.96) contrast(1.02) brightness(.82);}
+.chapterLibraryBannerShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,8,14,.88),rgba(4,8,14,.32) 46%,rgba(4,8,14,.15)),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.50));pointer-events:none;}
+.chapterLibraryBannerText{position:absolute;inset:auto 22px 20px 22px;color:#f8eed8;display:grid;gap:7px;max-width:720px;text-shadow:0 8px 20px rgba(0,0,0,.45);}
+.chapterLibraryBannerText span{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#b9dce9;font-weight:950;}
+.chapterLibraryBannerText strong{font-size:clamp(30px,4vw,48px);line-height:.95;font-weight:950;}
+.chapterLibraryBannerText p{margin:0;color:#e8dcc2;line-height:1.45;font-size:15px;}
+.chapterSelectGrid{display:flex!important;gap:14px!important;align-items:stretch!important;min-height:620px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:4px 2px 14px!important;scrollbar-width:thin!important;}
+.chapterSelectCard{flex:0 0 210px!important;min-height:600px!important;border-radius:22px!important;display:grid!important;grid-template-columns:1fr!important;overflow:hidden!important;}
+.chapterSelectCard[open]{flex-basis:min(860px,92%)!important;grid-template-columns:220px minmax(0,1fr)!important;}
+.chapterBookCover{min-height:600px!important;}
+.chapterBookCoverImg{display:block!important;background:#0a0f18!important;}
+.chapterBookOpened{display:none!important;min-width:0!important;}
+.chapterSelectCard[open] .chapterBookOpened{display:grid!important;grid-template-columns:minmax(210px,310px) minmax(0,1fr)!important;}
+.chapterOpenImage{background:#0a0f18!important;}
+@media(max-width:980px){.chapterLibraryBanner{min-height:180px}.chapterLibraryBanner img{height:220px}.chapterSelectGrid{min-height:auto!important;overflow-x:visible!important;display:grid!important;grid-template-columns:1fr!important}.chapterSelectCard,.chapterSelectCard[open]{flex-basis:auto!important;grid-template-columns:1fr!important;min-height:auto!important}.chapterBookCover{min-height:310px!important}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr!important}}
+@media(max-width:760px){.chapterLibraryBanner{border-radius:20px;min-height:150px;margin-bottom:14px}.chapterLibraryBanner img{height:170px}.chapterLibraryBannerText{left:14px;right:14px;bottom:14px}.chapterLibraryBannerText strong{font-size:26px}.chapterLibraryBannerText p{font-size:13px}.chapterBookCover{min-height:260px!important}.chapterSelectCard{border-radius:18px!important}.chapterSelectCard[open] .chapterBookOpened{padding:14px!important}}
+body.mobileUI .chapterLibraryBanner{border-radius:20px;min-height:150px;margin-bottom:14px}
+body.mobileUI .chapterLibraryBanner img{height:170px}
+body.mobileUI .chapterLibraryBannerText{left:14px;right:14px;bottom:14px}
+body.mobileUI .chapterLibraryBannerText strong{font-size:26px}
+body.mobileUI .chapterLibraryBannerText p{font-size:13px}
+body.mobileUI .chapterSelectGrid{display:grid!important;grid-template-columns:1fr!important;gap:14px!important;min-height:auto!important;overflow-x:visible!important;overflow-y:visible!important;}
+body.mobileUI .chapterSelectCard,body.mobileUI .chapterSelectCard[open]{flex-basis:auto!important;grid-template-columns:1fr!important;min-height:auto!important;}
+body.mobileUI .chapterBookCover{min-height:260px!important;}
+body.mobileUI .chapterSelectCard[open] .chapterBookOpened{display:grid!important;grid-template-columns:1fr!important;padding:14px!important;}
+
 body.mobileUI .chapterOpenText h4{font-size:24px;}
 body.mobileUI .chapterOpenText p{font-size:13px;}
 
@@ -1639,6 +1667,15 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
               <p class="chaptersBookSubtitle">De l’Auberge du Forestier aux portes de Mir’Aldas, chaque chapitre marque une étape dans la transformation d’Hylee.</p>
             </div>
             <div class="chaptersMetaBadge"><b id="chaptersUnlockedCount">2/4</b><span>accessibles</span></div>
+          </div>
+          <div class="chapterLibraryBanner">
+            <img src="assets/images/chapter_select/chapter_selection_banner.png" alt="Bibliothèque infinie de Sylvinia" />
+            <div class="chapterLibraryBannerShade"></div>
+            <div class="chapterLibraryBannerText">
+              <span>Bibliothèque infinie</span>
+              <strong>Sélection des chapitres</strong>
+              <p>Chaque volume ouvre une porte du récit. Choisis l’étape d’Hylee que tu veux parcourir.</p>
+            </div>
           </div>
           <div class="chapterSelectGrid" id="chapterSelectGrid"></div>
         </div>
