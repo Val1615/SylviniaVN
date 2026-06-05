@@ -1449,6 +1449,77 @@ body.mobileUI .lightboxImg{
 .devReward .devKey{color:#e9c985;}
 body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 
+
+
+/* --- v0.95 : page dédiée Chapitres --- */
+#chapters{width:min(1280px,100%);}
+#chaptersCard{min-height:760px;padding:30px;background:radial-gradient(circle at top left,rgba(167,240,255,.10),transparent 26%),radial-gradient(circle at bottom right,rgba(233,201,133,.12),transparent 28%),linear-gradient(180deg,rgba(7,13,24,.98),rgba(3,7,13,.99));}
+.chaptersFrame{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px;align-items:start;}
+.chaptersSidebar{border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg,rgba(10,17,28,.95),rgba(5,9,17,.98));border-radius:28px;padding:24px;display:grid;gap:18px;box-shadow:0 20px 44px rgba(0,0,0,.24);}
+.chaptersTitle{font-size:42px;line-height:1;margin:0;color:#f4e0a8;font-weight:950;}
+.chaptersLead{margin:0;color:#c9d7e5;line-height:1.58;font-size:15px;}
+.chaptersHint{border:1px solid rgba(145,205,255,.20);background:rgba(70,121,164,.12);border-radius:20px;padding:16px;color:#cddff0;line-height:1.55;font-size:14px;}
+.chaptersBook{border:1px solid rgba(233,201,133,.22);background:linear-gradient(180deg,rgba(244,227,188,.94),rgba(216,188,131,.90));color:#2d2418;border-radius:30px;padding:24px;box-shadow:inset 0 0 60px rgba(95,58,25,.16);min-width:0;}
+.chaptersBookHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px;border-bottom:1px solid rgba(82,55,25,.16);padding-bottom:15px;}
+.chaptersBookTitle{font-size:34px;line-height:1;margin:0 0 8px;color:#3a2816;font-weight:950;}
+.chaptersBookSubtitle{margin:0;color:#5e4930;line-height:1.45;max-width:760px;}
+.chaptersMetaBadge{min-width:130px;border:1px solid rgba(82,55,25,.18);border-radius:18px;padding:12px 14px;background:rgba(255,255,255,.30);text-align:center;}
+.chaptersMetaBadge b{display:block;font-size:24px;color:#2e5d74;}
+.chaptersMetaBadge span{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#6a563b;font-weight:900;}
+.chapterSelectGrid{display:flex;flex-direction:row;gap:10px;align-items:stretch;min-height:640px;overflow-x:auto;overflow-y:hidden;padding:8px 4px 18px;scrollbar-width:thin;scroll-snap-type:x proximity;}
+.chapterSelectCard{position:relative;flex:0 0 72px;min-height:620px;border:1px solid rgba(82,55,25,.24);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22));box-shadow:0 18px 34px rgba(55,35,15,.10);overflow:hidden;display:grid;grid-template-columns:72px 0;transition:flex-basis .38s cubic-bezier(.2,.78,.18,1),grid-template-columns .38s cubic-bezier(.2,.78,.18,1),box-shadow .22s ease,border-color .22s ease,filter .22s ease;scroll-snap-align:start;}
+.chapterSelectCard[open]{flex-basis:min(850px,calc(100vw - 120px));grid-template-columns:86px minmax(0,1fr);box-shadow:0 26px 54px rgba(55,35,15,.22);border-color:rgba(46,93,116,.34);}
+.chapterSelectCard.locked{filter:saturate(.82);}
+.chapterBookCover{position:relative;list-style:none;cursor:pointer;min-height:620px;background:#0a0f18;overflow:hidden;display:block;}
+.chapterBookCover::-webkit-details-marker{display:none;}
+.chapterBookCover::after{content:'›';position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(8,14,24,.68);border:1px solid rgba(255,255,255,.18);color:#eef8ff;font-size:22px;transition:transform .22s ease;}
+.chapterSelectCard[open] .chapterBookCover::after{transform:translateX(-50%) rotate(180deg);}
+.chapterBookCoverImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease,filter .35s ease,opacity .25s ease;}
+.chapterBookCover:hover .chapterBookCoverImg{transform:scale(1.035);}
+.chapterBookShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.24),rgba(0,0,0,.04) 48%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.42));pointer-events:none;}
+.chapterBookSpine{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10));border-right:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;padding:50px 8px 58px;}
+.chapterBookSpine span{writing-mode:vertical-rl;text-orientation:mixed;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#fff8e8;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.50);max-height:100%;overflow:hidden;}
+.chapterSelectCard[open] .chapterBookSpine{background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24));}
+.chapterBookCoverText{position:absolute;left:8px;right:8px;bottom:58px;color:#fff;display:none;gap:6px;text-shadow:0 7px 16px rgba(0,0,0,.45);}
+.chapterSelectKicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7d6032;font-weight:950;}
+.chapterBookCoverTitle{font-size:18px;line-height:1.05;font-weight:950;writing-mode:vertical-rl;text-orientation:mixed;margin:auto;}
+.chapterBookCoverSub{display:none;font-size:11px;color:#dce9f5;line-height:1.35;font-weight:750;}
+.chapterSelectState{position:absolute;top:12px;left:50%;transform:translateX(-50%);border:1px solid rgba(255,255,255,.22);background:rgba(8,14,24,.72);color:#eef8ff;border-radius:999px;padding:6px 8px;font-size:9px;letter-spacing:.10em;text-transform:uppercase;font-weight:950;backdrop-filter:blur(8px);writing-mode:vertical-rl;text-orientation:mixed;}
+.chapterSelectCard.locked .chapterBookCoverImg{filter:grayscale(.56) brightness(.62) saturate(.65);}
+.chapterSelectCard.locked .chapterSelectState{color:#f1ddba;background:rgba(45,31,18,.76);}
+.chapterBookOpened{display:block;min-width:0;width:0;opacity:0;overflow:hidden;padding:0;background:linear-gradient(180deg,rgba(255,255,255,.44),rgba(255,255,255,.24));transition:opacity .24s ease,width .38s cubic-bezier(.2,.78,.18,1);}
+.chapterSelectCard[open] .chapterBookOpened{width:auto;opacity:1;display:grid;grid-template-columns:minmax(230px,320px) minmax(260px,1fr);gap:18px;align-content:start;padding:20px;}
+.chapterOpenImageFrame{border:1px solid rgba(82,55,25,.18);border-radius:18px;background:rgba(255,255,255,.36);padding:10px;align-self:start;}
+.chapterOpenImage{width:100%;aspect-ratio:4/5;object-fit:contain;display:block;border-radius:12px;background:#0a0f18;box-shadow:0 16px 30px rgba(55,35,15,.16);}
+.chapterOpenText{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.chapterOpenText h4{margin:0;font-size:31px;line-height:1.02;color:#332413;}
+.chapterOpenText p{margin:0;color:#5f4b31;line-height:1.58;font-size:15px;}
+.chapterSelectTags{display:flex;flex-wrap:wrap;gap:8px;padding-top:3px;}
+.chapterSelectTags span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#2e5d74;border:1px solid rgba(46,93,116,.16);background:rgba(255,255,255,.32);border-radius:999px;padding:7px 9px;font-weight:900;}
+.chapterSelectAction{margin-top:auto;border-radius:16px;padding:13px 14px;font-weight:950;border:1px solid rgba(57,44,29,.16);background:linear-gradient(180deg,rgba(64,118,145,.92),rgba(34,65,91,.96));color:#fff;cursor:pointer;}
+.chapterSelectAction:hover{filter:brightness(1.08);}
+.chapterSelectAction:disabled{cursor:not-allowed;filter:saturate(.55);opacity:.62;background:linear-gradient(180deg,rgba(92,78,57,.70),rgba(52,42,31,.86));}
+.chapterLockHint{font-size:12px!important;color:#7a6240!important;font-weight:850;border-top:1px dashed rgba(82,55,25,.18);padding-top:8px;}
+.chaptersAccordion .accordionPanel{align-items:stretch;}
+.enterChaptersBtn{min-width:190px;max-width:230px;}
+.chaptersCountBubble{min-width:150px;max-width:190px;display:flex;flex-direction:column;justify-content:center;}
+.chaptersCountBubble strong{white-space:nowrap;}
+@media(max-width:1100px){.chaptersFrame{grid-template-columns:1fr}.chaptersSidebar{padding:18px;border-radius:22px}.chaptersBook{padding:18px;border-radius:22px}.chaptersBookHead{flex-direction:column}.chapterSelectCard[open]{flex-basis:min(800px,calc(100vw - 74px));}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:minmax(210px,280px) minmax(250px,1fr);}.chaptersAccordion .accordionSummary{width:min(220px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:repeat(2,minmax(0,1fr));}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+@media(max-width:760px){#chaptersCard{min-height:100svh;padding:12px}.chaptersTitle{font-size:34px}.chaptersBookTitle{font-size:30px}.chapterSelectGrid{min-height:560px;gap:8px}.chapterSelectCard{flex-basis:58px;grid-template-columns:58px 0;min-height:540px;border-radius:16px}.chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}.chapterBookCover{min-height:540px}.chapterBookSpine{padding:44px 6px 54px}.chapterBookSpine span{font-size:10px;letter-spacing:.12em}.chapterSelectState{font-size:8px;padding:5px 7px}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;overflow-y:auto;max-height:540px}.chapterOpenText h4{font-size:24px}.chapterOpenText p{font-size:13px}.chaptersAccordion .accordionSummary{width:min(170px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:1fr;}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+body.mobileUI #chapters{width:100%;height:100svh;max-height:100svh;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0;}
+body.mobileUI #chaptersCard{min-height:100svh;padding:12px;}
+body.mobileUI .chaptersFrame{grid-template-columns:1fr;gap:12px;}
+body.mobileUI .chaptersSidebar{padding:16px;border-radius:20px;gap:14px;}
+body.mobileUI .chaptersBook{padding:16px;border-radius:22px;}
+body.mobileUI .chaptersBookHead{flex-direction:column;gap:10px;}
+body.mobileUI .chapterSelectGrid{display:flex;flex-direction:row;gap:8px;min-height:560px;overflow-x:auto;overflow-y:hidden;padding-bottom:16px;}
+body.mobileUI .chapterSelectCard{flex:0 0 58px;grid-template-columns:58px 0;min-height:540px;}
+body.mobileUI .chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}
+body.mobileUI .chapterBookCover{min-height:540px;}
+body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;max-height:540px;overflow-y:auto;}
+body.mobileUI .chapterOpenText h4{font-size:24px;}
+body.mobileUI .chapterOpenText p{font-size:13px;}
+
 </style>
 </head>
 <body>
@@ -1492,19 +1563,17 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
             <details class="menuAccordion adventureAccordion">
               <summary class="accordionSummary"><span>Aventure</span></summary>
               <div class="accordionPanel optionButtonsGrid">
-                <button class="primaryBtn softBlue menuActionBtn dockBtn primaryDockBtn" id="introBtn"><span class="btnTitle">Introduction</span><small class="btnDesc">Jouer la démo d’Hylee, deux ans avant.</small></button>
                 <button class="primaryBtn softBlue menuActionBtn dockBtn primaryDockBtn" id="startBtn"><span class="btnTitle">Commencer</span><small class="btnDesc">Lancer une nouvelle aventure.</small></button>
                 <button class="secondaryBtn greenBtn menuActionBtn dockBtn primaryDockBtn" id="resumeBtn"><span class="btnTitle">Reprendre</span><small class="btnDesc">Continuer la sauvegarde.</small></button>
                 <button class="secondaryBtn goldBtn menuActionBtn dockBtn primaryDockBtn" id="progressionBtn"><span class="btnTitle">Progression</span><small class="btnDesc">Valeurs, inventaire et souvenirs.</small></button>
               </div>
             </details>
 
-            <details class="menuAccordion">
+            <details class="menuAccordion chaptersAccordion">
               <summary class="accordionSummary"><span>Chapitres</span></summary>
               <div class="accordionPanel">
-                <button class="secondaryBtn blueGhost menuActionBtn dockBtn" id="startCh1Btn"><span class="btnTitle">Chapitre I</span><small class="btnDesc">Convocation impériale</small></button>
-                <button class="secondaryBtn blueGhost menuActionBtn dockBtn" id="startCh2Btn"><span class="btnTitle">Chapitre II</span><small class="btnDesc">Route d’Al’Gratal</small></button>
-                <button class="secondaryBtn blueGhost menuActionBtn dockBtn" id="startCh3Btn"><span class="btnTitle">Chapitre III</span><small class="btnDesc">Préparatifs</small></button>
+                <button class="secondaryBtn softBlue menuActionBtn dockBtn enterChaptersBtn" id="chaptersBtn" type="button"><span class="btnTitle">Sélection</span><small class="btnDesc">Choisir l’Introduction ou un chapitre.</small></button>
+                <div class="progressMiniCard chaptersCountBubble"><span class="label">Disponibles</span><strong id="menuChaptersAvailable">2 / 4</strong></div>
               </div>
             </details>
 
@@ -1547,9 +1616,36 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.94.0</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.96.1</div>
       </section>
     </div>
+  </main>
+
+  <main id="chapters" class="screen card hidden">
+    <section id="chaptersCard">
+      <div class="chaptersFrame">
+        <aside class="chaptersSidebar">
+          <div>
+            <div class="menuSectionTitle">Table des chapitres</div>
+            <h2 class="chaptersTitle">Chapitres</h2>
+            <p class="chaptersLead">Choisis un point d’entrée du Visual Novel. Les chapitres avancés se déverrouillent avec la progression normale, ou via le mode développeur.</p>
+          </div>
+          <div class="chaptersHint">Chaque chapitre possède son illustration, son ambiance et son synopsis. Cette page remplace l’ancien menu coulissant.</div>
+          <button class="topBtn backWide" id="chaptersBackBtn">Retour</button>
+        </aside>
+        <div class="chaptersBook">
+          <div class="chaptersBookHead">
+            <div>
+              <div class="menuSectionTitle" style="color:#7d6032">Sélection narrative</div>
+              <h3 class="chaptersBookTitle">Où reprendre le fil ?</h3>
+              <p class="chaptersBookSubtitle">De l’Auberge du Forestier aux portes de Mir’Aldas, chaque chapitre marque une étape dans la transformation d’Hylee.</p>
+            </div>
+            <div class="chaptersMetaBadge"><b id="chaptersUnlockedCount">2/4</b><span>accessibles</span></div>
+          </div>
+          <div class="chapterSelectGrid" id="chapterSelectGrid"></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <main id="game" class="screen card hidden">
@@ -8844,7 +8940,7 @@ function showInitialScreen(){
   }
 }
 
-function setScreen(name){for(const id of ['disclaimer','title','game','codex','progression']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name!=='disclaimer')state.lastScreen=name; if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
+function setScreen(name){for(const id of ['disclaimer','title','game','codex','progression','chapters']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name==='chapters'){playUiSound('book'); renderChapterSelect();} if(name!=='disclaimer')state.lastScreen=name; if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); if(name==='chapters') renderChapterSelect(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
 
 function isIntroScene(sceneId=state.scene){return String(sceneId||'').startsWith('intro_');}
 function ensureIntroDefaults(){ if(!state.introStats) state.introStats={...INTRO_STATS}; state.introStats={...INTRO_STATS,...state.introStats}; }
@@ -8887,6 +8983,71 @@ function applyChoiceEffects(ch){
   }
   if(ch.effects){for(const [k,v] of Object.entries(ch.effects)){state.stats[k]=(state.stats[k]||0)+v;}}
 }
+
+const CHAPTER_SELECT_DATA=[
+  {key:'intro',label:'Introduction',title:'L’Auberge du Forestier',subtitle:'Deux ans avant',image:'assets/images/chapter_select/chapter_intro.png',tags:['Auberge','Remerii','Fuite'],body:`Hylee sert derrière le comptoir de l’Auberge du Forestier, prisonnière d’une vie étroite et brutale. L’arrivée de Remerii, cliente trop noble pour ce lieu, entrouvre une première porte vers la magie, la fuite et le choix de vivre autrement.`,action:'Jouer l’Introduction'},
+  {key:'ch1',label:'Chapitre I',title:'Une convocation impériale',subtitle:'Deux ans plus tard',image:'assets/images/chapter_select/chapter_1.png',tags:['Entraînement','Duel','Iriana'],body:`Après deux années d’apprentissage clandestin, Hylee affronte les leçons exigeantes de Remerii. La glace répond enfin, mais une projection impériale vient troubler l’équilibre : Iriana Farae réclame leur présence.`,action:'Lancer le Chapitre I'},
+  {key:'ch2',label:'Chapitre II',title:'Sur la route d’Al’Gratal',subtitle:'Vers le cœur de l’Empire',image:'assets/images/chapter_select/chapter_2.png',tags:['Voyage','Al’Gratal','Empire'],body:`La route vers Al’Gratal confronte Hylee à la grandeur lumineuse et oppressante de l’Empire Sylvinien. Entre forêts, portes impériales et catacombes, l’équipe appelée par Iriana commence à prendre forme.`,action:'Lancer le Chapitre II'},
+  {key:'ch3',label:'Chapitre III',title:'Préparatifs pour une nouvelle aventure',subtitle:'Avant Mir’Aldas',image:'assets/images/chapter_select/chapter_3.png',tags:['Préparatifs','Ombres','Cauchemar'],body:`À Al’Gratal, Hylee s’équipe, gagne en assurance et se heurte à ce que sa magie peut devenir. Entre robe bleue, bâton, attaque des Ombres, Medig et cauchemar du petit frère, le chemin vers Mir’Aldas se charge de présages.`,action:'Lancer le Chapitre III'}
+];
+function chapterSelectUnlocked(key){
+  if(key==='intro'||key==='ch1') return true;
+  if(key==='ch2') return canStartChapter2();
+  if(key==='ch3') return canStartChapter3();
+  return false;
+}
+function launchChapterSelect(key){
+  if(key==='intro') return startIntro();
+  if(key==='ch1') return startChapter1();
+  if(key==='ch2') return startChapter2();
+  if(key==='ch3') return startChapter3();
+}
+function renderChapterSelect(){
+  const grid=document.getElementById('chapterSelectGrid');
+  if(!grid) return;
+  const unlockedCount=CHAPTER_SELECT_DATA.filter(ch=>chapterSelectUnlocked(ch.key)).length;
+  setText('chaptersUnlockedCount', `${unlockedCount}/${CHAPTER_SELECT_DATA.length}`);
+  grid.innerHTML='';
+  CHAPTER_SELECT_DATA.forEach((ch,idx)=>{
+    const unlocked=chapterSelectUnlocked(ch.key);
+    const card=document.createElement('details');
+    card.className='chapterSelectCard'+(unlocked?'':' locked');
+    if(idx===0) card.open=true;
+    const stateLabel=unlocked?'Accessible':'Verrouillé';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':'Disponible.';
+    card.innerHTML=`
+      <summary class="chapterBookCover">
+        <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
+        <div class="chapterBookShade"></div>
+        <div class="chapterBookSpine"><span>${htmlEscape(ch.label+' · '+ch.title)}</span></div>
+        <div class="chapterBookCoverText">
+          <div class="chapterSelectKicker">${htmlEscape(ch.subtitle)}</div>
+          <div class="chapterBookCoverTitle">${htmlEscape(ch.title)}</div>
+          <div class="chapterBookCoverSub">Toucher pour ouvrir le volume</div>
+          <div class="chapterSelectState">${stateLabel}</div>
+        </div>
+      </summary>
+      <div class="chapterBookOpened">
+        <div class="chapterOpenImageFrame"><img class="chapterOpenImage" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}"></div>
+        <div class="chapterOpenText">
+          <div class="chapterSelectKicker">${htmlEscape(ch.label)} · ${htmlEscape(ch.subtitle)}</div>
+          <h4>${htmlEscape(ch.title)}</h4>
+          <p>${htmlEscape(ch.body)}</p>
+          <div class="chapterSelectTags">${ch.tags.map(t=>`<span>${htmlEscape(t)}</span>`).join('')}</div>
+          <button class="chapterSelectAction" data-chapter-launch="${htmlEscape(ch.key)}" ${unlocked?'':'disabled'}>${unlocked?htmlEscape(ch.action):'Verrouillé'}</button>
+          ${unlocked?'':`<p class="chapterLockHint">${htmlEscape(lockText)}</p>`}
+        </div>
+      </div>`;
+    card.addEventListener('toggle',()=>{ if(card.open){ grid.querySelectorAll('.chapterSelectCard[open]').forEach(other=>{ if(other!==card) other.open=false; }); } });
+    grid.appendChild(card);
+  });
+}
+function openChapters(){
+  state.chapterReturn=(!document.getElementById('game').classList.contains('hidden'))?'game':'title';
+  setScreen('chapters');
+}
+function backFromChapters(){setScreen(state.chapterReturn||'title');}
+
 function startIntro(){
   ensureCodexDefaults();
   state={...state,scene:'intro_wake',introStats:{...INTRO_STATS},lastScreen:'game',history:[]};
@@ -8940,6 +9101,12 @@ function canStartChapter3(){
   return chapter2CompletedFrom(state) || chapter2CompletedFrom(readMainSave());
 }
 function updateChapterLocks(){
+  const menuChapterCount=document.getElementById('menuChaptersAvailable');
+  if(menuChapterCount && typeof CHAPTER_SELECT_DATA!=='undefined'){
+    const available=CHAPTER_SELECT_DATA.filter(ch=>chapterSelectUnlocked(ch.key)).length;
+    menuChapterCount.textContent=`${available} / ${CHAPTER_SELECT_DATA.length}`;
+  }
+  if(!document.getElementById('chapters').classList.contains('hidden')) renderChapterSelect();
   const btn2=document.getElementById('startCh2Btn');
   if(btn2){
     const unlocked2=canStartChapter2();
@@ -9154,7 +9321,7 @@ document.addEventListener('DOMContentLoaded',bindDisclaimerEnterButton);
 document.addEventListener('click',ev=>{const btn=ev.target&&ev.target.closest?ev.target.closest('#enterTitleBtn'):null; if(btn){ev.preventDefault(); enterTitleFromDisclaimer();}}, false);
 const journalForceBtn=document.getElementById('journalForceAccessBtn'); if(journalForceBtn) journalForceBtn.onclick=toggleJournalForceAccess;
 const devSceneCodeBtn=document.getElementById('devSceneCode'); if(devSceneCodeBtn) devSceneCodeBtn.onclick=()=>{const value=devSceneCodeBtn.dataset.sceneCode||state.scene||''; try{navigator.clipboard&&navigator.clipboard.writeText(value);}catch(e){} toast('Code de scène', value||'inconnu');};
-document.getElementById('introBtn').onclick=startIntro; document.getElementById('startBtn').onclick=newGame; document.getElementById('startCh1Btn').onclick=startChapter1; document.getElementById('startCh2Btn').onclick=startChapter2; document.getElementById('startCh3Btn').onclick=startChapter3; document.getElementById('resumeBtn').onclick=()=>{load();resume()}; document.getElementById('progressionBtn').onclick=openProgression; document.getElementById('progressionBtn2').onclick=openProgression; document.getElementById('codexBtn').onclick=()=>setScreen('codex'); document.getElementById('codexBtn2').onclick=()=>setScreen('codex'); document.getElementById('progressBackBtn').onclick=backFromProgression; document.getElementById('backBtn').onclick=()=>setScreen(state.lastScreen==='codex'?'title':state.lastScreen); document.getElementById('menuBtn').onclick=()=>showInitialScreen(); document.getElementById('resetBtn').onclick=resetProgress; document.getElementById('devModeBtn').onclick=toggleDevMode; document.getElementById('devBackBtn').onclick=devBack; document.getElementById('menuMusicBtn').onclick=()=>{state.menuMusicOn=state.menuMusicOn===false; updateMenuButtons(); if(state.menuMusicOn)playMusic('music_menu'); else music.pause(); save();};
+['chaptersBtn','chaptersBtn2'].forEach(id=>{const el=document.getElementById(id); if(el)el.onclick=openChapters;}); document.getElementById('startBtn').onclick=newGame; document.getElementById('resumeBtn').onclick=()=>{load();resume()}; document.getElementById('progressionBtn').onclick=openProgression; document.getElementById('progressionBtn2').onclick=openProgression; document.getElementById('codexBtn').onclick=()=>setScreen('codex'); document.getElementById('codexBtn2').onclick=()=>setScreen('codex'); document.getElementById('chaptersBackBtn').onclick=backFromChapters; document.getElementById('progressBackBtn').onclick=backFromProgression; document.getElementById('backBtn').onclick=()=>setScreen(state.lastScreen==='codex'?'title':state.lastScreen); document.getElementById('menuBtn').onclick=()=>showInitialScreen(); document.getElementById('resetBtn').onclick=resetProgress; document.getElementById('devModeBtn').onclick=toggleDevMode; document.getElementById('devBackBtn').onclick=devBack; document.getElementById('menuMusicBtn').onclick=()=>{state.menuMusicOn=state.menuMusicOn===false; updateMenuButtons(); if(state.menuMusicOn)playMusic('music_menu'); else music.pause(); save();}; document.addEventListener('click',ev=>{const b=ev.target&&ev.target.closest?ev.target.closest('[data-chapter-launch]'):null; if(!b||b.disabled)return; launchChapterSelect(b.dataset.chapterLaunch);});
 document.getElementById('mobileUiToggle').onchange=e=>setMobileUI(e.target.checked);
 document.getElementById('musicBtn').onclick=()=>{state.musicOn=!state.musicOn;document.getElementById('musicBtn').textContent=state.musicOn?'Couper musique':'Lancer musique'; if(state.musicOn){const sc=S[state.scene]||{}; playMusic(resolveSceneMusic(state.scene, sc.music||'music_menu'))} else music.pause(); save();};
 document.getElementById('volume').oninput=e=>{music.volume=parseFloat(e.target.value);};
