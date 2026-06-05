@@ -236,26 +236,32 @@ body.mobileUI .menuDockCorner{width:100%;gap:7px}body.mobileUI .dockMainRow,body
 .journalBannerOverlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:20px;background:linear-gradient(180deg,rgba(6,9,14,.06),rgba(6,9,14,.30) 36%,rgba(6,9,14,.78) 100%);color:#f5eddc;}
 .journalBannerEyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#b9dce9;}
 .journalBannerTitle{font-size:26px;line-height:1.05;font-weight:950;text-shadow:0 6px 16px rgba(0,0,0,.35);}
-.journalBannerOverlay p{margin:0;max-width:62ch;line-height:1.48;color:#e6ddcb;}
-.journalFragmentsList{display:grid;grid-template-columns:1fr;gap:14px;}
-.journalFragmentCard{border:1px solid rgba(57,44,29,.18);background:rgba(255,255,255,.33);border-radius:22px;overflow:hidden;box-shadow:inset 0 0 26px rgba(79,45,17,.08);}
-.journalFragmentCard.unreadable{background:rgba(255,255,255,.24);border-style:dashed;}
-.journalFragmentCard summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:14px;align-items:center;padding:15px 17px;font-weight:950;color:#332413;}
+.journalBannerOverlay p{margin:0;max-width:68ch;line-height:1.48;color:#e6ddcb;}
+.journalFragmentsList{display:grid;grid-template-columns:1fr;gap:12px;}
+.journalFragmentCard{position:relative;border:1px solid rgba(88,63,31,.22);background:linear-gradient(180deg,rgba(250,240,215,.70),rgba(225,207,171,.58));border-radius:20px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 12px 26px rgba(73,49,20,.10);}
+.journalFragmentCard::before,.journalFragmentCard::after{content:"";position:absolute;left:10px;right:10px;height:6px;border-radius:999px;background:linear-gradient(90deg,rgba(101,70,32,.18),rgba(255,255,255,.30),rgba(101,70,32,.18));pointer-events:none;}
+.journalFragmentCard::before{top:8px}.journalFragmentCard::after{bottom:8px}
+.journalFragmentCard.unreadable{background:linear-gradient(180deg,rgba(241,228,198,.62),rgba(210,191,154,.48));border-style:dashed;}
+.journalFragmentCard summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:18px 20px;font-weight:950;color:#332413;}
 .journalFragmentCard summary::-webkit-details-marker{display:none;}
-.journalFragmentCard summary small{display:block;margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#735b3a;font-weight:900;}
+.journalFragmentCard summary span:first-child{display:grid;gap:5px;}
+.journalFragmentCard summary small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#735b3a;font-weight:900;}
 .journalFragmentCard summary .fragmentState{flex:0 0 auto;border:1px solid rgba(57,44,29,.16);background:rgba(255,255,255,.38);border-radius:999px;padding:8px 11px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2e5d74;}
 .journalFragmentCard.unreadable summary .fragmentState{color:#735b3a;}
-.journalFragmentInner{padding:0 17px 17px;display:grid;gap:13px;}
-.journalBlock{border:1px solid rgba(57,44,29,.13);border-radius:18px;padding:16px;background:rgba(255,255,255,.28);position:relative;}
+.journalFragmentCard summary::after{content:'Dérouler';justify-self:end;grid-column:3;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#7d6032;font-weight:950;opacity:.72;}
+.journalFragmentCard[open] summary::after{content:'Enrouler';}
+.journalFragmentInner,.journalUnreadableBody{margin:0 18px 18px;padding:18px 20px;border:1px solid rgba(88,63,31,.18);border-radius:18px;background:linear-gradient(180deg,rgba(255,250,238,.72),rgba(237,219,184,.60));box-shadow:inset 0 0 28px rgba(104,74,37,.08);animation:journalUnroll .24s ease both;}
+.journalFragmentInner{display:grid;gap:13px;}
+.journalBlock{border:1px solid rgba(57,44,29,.13);border-radius:16px;padding:16px;background:rgba(255,255,255,.28);position:relative;}
 .journalBlockLabel{font-family:Inter,system-ui,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:950;color:#806035;margin-bottom:10px;}
 .journalBlock p{margin:0;color:#2e2417;line-height:1.55;white-space:pre-wrap;}
 .journalBlock.journal p{font-family:"Kunstler Script","Edwardian Script ITC","Segoe Script",cursive;font-size:26px;line-height:1.1;color:#2a1d12;}
 .journalBlock.projection{background:linear-gradient(180deg,rgba(70,121,164,.10),rgba(255,255,255,.20));}
 .journalBlock.projection p{font-family:"Brush Script MT","Segoe Script",cursive;font-size:20px;line-height:1.28;color:#233c4f;}
-.journalUnreadableBody{padding:0 17px 17px;color:#6b5639;line-height:1.45;font-weight:750;display:grid;gap:6px;}
-.journalUnreadableBody strong{font-size:16px;color:#3a2816;}
+.journalUnreadableBody{color:#6b5639;line-height:1.5;font-weight:800;}
 .journalUnreadableBody p{margin:0;color:#6b5639;}
 .journalEmpty{grid-column:1/-1;border:1px dashed rgba(57,44,29,.26);border-radius:18px;padding:18px;color:#6b5639;background:rgba(255,255,255,.18);font-weight:750;line-height:1.5;}
+@keyframes journalUnroll{from{opacity:0;transform:translateY(-8px) scaleY(.96);transform-origin:top}to{opacity:1;transform:translateY(0) scaleY(1)}}
 
 @media(max-width:980px){.menuDockCorner,.dockAccordionRow{width:min(94vw,820px)}.dockMainRow{grid-template-columns:repeat(2,minmax(170px,1fr));width:min(520px,100%)}.menuAccordion{flex-direction:column;gap:8px}.accordionSummary{width:min(220px,100%)}.accordionPanel{max-width:none;max-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0}.menuAccordion[open] .accordionPanel{padding:0;max-height:760px}.accordionStats,.optionButtonsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.progressMiniCard,.progressMiniCard.wide,.accordionPanel .dockBtn,.optionButtonsGrid .dockBtn,.optionButtonsGrid .optionWideBtn,.menuTip.inlineTip{max-width:none;min-width:0}.menuSceneGhost{grid-column:1/-1}.menuTip.inlineTip{grid-column:1/-1}}
 @media(max-width:760px){.titleOverlayLayout{padding:12px 10px 10px}.menuOverlayTitle{max-width:none}.menuDockCorner,.dockAccordionRow{width:100%}.dockMainRow{grid-template-columns:1fr 1fr;width:100%;gap:8px}.primaryDockBtn{padding:12px 12px!important}.primaryDockBtn .btnTitle{font-size:14px}.primaryDockBtn .btnDesc{font-size:10px}.menuAccordion{flex-direction:column;gap:7px}.accordionSummary{width:min(170px,100%);font-size:11px;padding:11px 12px}.accordionPanel{grid-template-columns:1fr;gap:8px}.accordionStats,.optionButtonsGrid{grid-template-columns:1fr}.menuUpdateBubble{right:10px;bottom:10px;padding:7px 10px;font-size:10px}}
@@ -1466,28 +1472,29 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 .chaptersMetaBadge{min-width:130px;border:1px solid rgba(82,55,25,.18);border-radius:18px;padding:12px 14px;background:rgba(255,255,255,.30);text-align:center;}
 .chaptersMetaBadge b{display:block;font-size:24px;color:#2e5d74;}
 .chaptersMetaBadge span{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:#6a563b;font-weight:900;}
-.chapterSelectGrid{display:flex;gap:14px;align-items:stretch;min-height:620px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 14px;scrollbar-width:thin;}
-.chapterSelectCard{flex:0 0 210px;min-height:600px;border:1px solid rgba(82,55,25,.22);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(234,213,168,.26));box-shadow:0 18px 34px rgba(55,35,15,.10);overflow:hidden;display:grid;grid-template-columns:1fr;transition:flex-basis .32s ease,box-shadow .22s ease,border-color .22s ease;}
-.chapterSelectCard[open]{flex-basis:min(860px,92%);grid-template-columns:220px minmax(0,1fr);box-shadow:0 24px 50px rgba(55,35,15,.18);border-color:rgba(46,93,116,.32);}
+.chapterSelectGrid{display:flex;flex-direction:row;gap:10px;align-items:stretch;min-height:640px;overflow-x:auto;overflow-y:hidden;padding:8px 4px 18px;scrollbar-width:thin;scroll-snap-type:x proximity;}
+.chapterSelectCard{position:relative;flex:0 0 72px;min-height:620px;border:1px solid rgba(82,55,25,.24);border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22));box-shadow:0 18px 34px rgba(55,35,15,.10);overflow:hidden;display:grid;grid-template-columns:72px 0;transition:flex-basis .38s cubic-bezier(.2,.78,.18,1),grid-template-columns .38s cubic-bezier(.2,.78,.18,1),box-shadow .22s ease,border-color .22s ease,filter .22s ease;scroll-snap-align:start;}
+.chapterSelectCard[open]{flex-basis:min(850px,calc(100vw - 120px));grid-template-columns:86px minmax(0,1fr);box-shadow:0 26px 54px rgba(55,35,15,.22);border-color:rgba(46,93,116,.34);}
 .chapterSelectCard.locked{filter:saturate(.82);}
-.chapterBookCover{position:relative;list-style:none;cursor:pointer;min-height:600px;background:#0a0f18;overflow:hidden;display:block;}
+.chapterBookCover{position:relative;list-style:none;cursor:pointer;min-height:620px;background:#0a0f18;overflow:hidden;display:block;}
 .chapterBookCover::-webkit-details-marker{display:none;}
-.chapterBookCover::after{content:'›';position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(8,14,24,.66);border:1px solid rgba(255,255,255,.18);color:#eef8ff;font-size:22px;transition:transform .22s ease;}
-.chapterSelectCard[open] .chapterBookCover::after{transform:rotate(90deg);}
-.chapterBookCoverImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease,filter .35s ease;}
-.chapterBookCover:hover .chapterBookCoverImg{transform:scale(1.025);}
-.chapterBookShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.14) 40%,rgba(0,0,0,.86));pointer-events:none;}
-.chapterBookSpine{position:absolute;left:0;top:0;bottom:0;width:42px;background:linear-gradient(180deg,rgba(233,201,133,.40),rgba(46,93,116,.24));border-right:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;}
-.chapterBookSpine span{writing-mode:vertical-rl;text-orientation:mixed;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f8eed8;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.4);}
-.chapterBookCoverText{position:absolute;left:54px;right:14px;bottom:18px;color:#fff;display:grid;gap:8px;text-shadow:0 7px 16px rgba(0,0,0,.45);}
-.chapterSelectKicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#d9c391;font-weight:950;}
-.chapterBookCoverTitle{font-size:24px;line-height:1.06;font-weight:950;}
-.chapterBookCoverSub{font-size:12px;color:#dce9f5;line-height:1.35;font-weight:750;}
-.chapterSelectState{justify-self:start;border:1px solid rgba(255,255,255,.22);background:rgba(8,14,24,.72);color:#eef8ff;border-radius:999px;padding:8px 11px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;backdrop-filter:blur(8px);}
+.chapterBookCover::after{content:'›';position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(8,14,24,.68);border:1px solid rgba(255,255,255,.18);color:#eef8ff;font-size:22px;transition:transform .22s ease;}
+.chapterSelectCard[open] .chapterBookCover::after{transform:translateX(-50%) rotate(180deg);}
+.chapterBookCoverImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease,filter .35s ease,opacity .25s ease;}
+.chapterBookCover:hover .chapterBookCoverImg{transform:scale(1.035);}
+.chapterBookShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.24),rgba(0,0,0,.04) 48%,rgba(0,0,0,.45)),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.42));pointer-events:none;}
+.chapterBookSpine{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10));border-right:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;padding:50px 8px 58px;}
+.chapterBookSpine span{writing-mode:vertical-rl;text-orientation:mixed;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#fff8e8;font-weight:950;text-shadow:0 2px 8px rgba(0,0,0,.50);max-height:100%;overflow:hidden;}
+.chapterSelectCard[open] .chapterBookSpine{background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24));}
+.chapterBookCoverText{position:absolute;left:8px;right:8px;bottom:58px;color:#fff;display:none;gap:6px;text-shadow:0 7px 16px rgba(0,0,0,.45);}
+.chapterSelectKicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7d6032;font-weight:950;}
+.chapterBookCoverTitle{font-size:18px;line-height:1.05;font-weight:950;writing-mode:vertical-rl;text-orientation:mixed;margin:auto;}
+.chapterBookCoverSub{display:none;font-size:11px;color:#dce9f5;line-height:1.35;font-weight:750;}
+.chapterSelectState{position:absolute;top:12px;left:50%;transform:translateX(-50%);border:1px solid rgba(255,255,255,.22);background:rgba(8,14,24,.72);color:#eef8ff;border-radius:999px;padding:6px 8px;font-size:9px;letter-spacing:.10em;text-transform:uppercase;font-weight:950;backdrop-filter:blur(8px);writing-mode:vertical-rl;text-orientation:mixed;}
 .chapterSelectCard.locked .chapterBookCoverImg{filter:grayscale(.56) brightness(.62) saturate(.65);}
 .chapterSelectCard.locked .chapterSelectState{color:#f1ddba;background:rgba(45,31,18,.76);}
-.chapterBookOpened{display:none;padding:20px;gap:16px;align-content:start;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.24));min-width:0;}
-.chapterSelectCard[open] .chapterBookOpened{display:grid;grid-template-columns:minmax(210px,310px) minmax(0,1fr);}
+.chapterBookOpened{display:block;min-width:0;width:0;opacity:0;overflow:hidden;padding:0;background:linear-gradient(180deg,rgba(255,255,255,.44),rgba(255,255,255,.24));transition:opacity .24s ease,width .38s cubic-bezier(.2,.78,.18,1);}
+.chapterSelectCard[open] .chapterBookOpened{width:auto;opacity:1;display:grid;grid-template-columns:minmax(230px,320px) minmax(260px,1fr);gap:18px;align-content:start;padding:20px;}
 .chapterOpenImageFrame{border:1px solid rgba(82,55,25,.18);border-radius:18px;background:rgba(255,255,255,.36);padding:10px;align-self:start;}
 .chapterOpenImage{width:100%;aspect-ratio:4/5;object-fit:contain;display:block;border-radius:12px;background:#0a0f18;box-shadow:0 16px 30px rgba(55,35,15,.16);}
 .chapterOpenText{display:flex;flex-direction:column;gap:12px;min-width:0;}
@@ -1503,19 +1510,24 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 .enterChaptersBtn{min-width:190px;max-width:230px;}
 .chaptersCountBubble{min-width:150px;max-width:190px;display:flex;flex-direction:column;justify-content:center;}
 .chaptersCountBubble strong{white-space:nowrap;}
-@media(max-width:980px){.chaptersFrame{grid-template-columns:1fr}.chaptersSidebar{padding:18px;border-radius:22px}.chaptersBook{padding:18px;border-radius:22px}.chaptersBookHead{flex-direction:column}.chapterSelectGrid{min-height:auto;overflow-x:visible;display:grid;grid-template-columns:1fr}.chapterSelectCard,.chapterSelectCard[open]{flex-basis:auto;grid-template-columns:1fr}.chapterBookCover{min-height:310px}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr}.chaptersAccordion .accordionSummary{width:min(220px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:repeat(2,minmax(0,1fr));}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
-@media(max-width:760px){#chaptersCard{min-height:100svh;padding:12px}.chaptersTitle{font-size:34px}.chaptersBookTitle{font-size:30px}.chapterBookCover{min-height:260px}.chapterBookCoverTitle{font-size:22px}.chapterBookOpened{padding:14px}.chapterOpenText h4{font-size:25px}.chapterOpenText p{font-size:13px}.chaptersAccordion .accordionSummary{width:min(170px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:1fr;}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+@media(max-width:1100px){.chaptersFrame{grid-template-columns:1fr}.chaptersSidebar{padding:18px;border-radius:22px}.chaptersBook{padding:18px;border-radius:22px}.chaptersBookHead{flex-direction:column}.chapterSelectCard[open]{flex-basis:min(800px,calc(100vw - 74px));}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:minmax(210px,280px) minmax(250px,1fr);}.chaptersAccordion .accordionSummary{width:min(220px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:repeat(2,minmax(0,1fr));}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
+@media(max-width:760px){#chaptersCard{min-height:100svh;padding:12px}.chaptersTitle{font-size:34px}.chaptersBookTitle{font-size:30px}.chapterSelectGrid{min-height:560px;gap:8px}.chapterSelectCard{flex-basis:58px;grid-template-columns:58px 0;min-height:540px;border-radius:16px}.chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}.chapterBookCover{min-height:540px}.chapterBookSpine{padding:44px 6px 54px}.chapterBookSpine span{font-size:10px;letter-spacing:.12em}.chapterSelectState{font-size:8px;padding:5px 7px}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;overflow-y:auto;max-height:540px}.chapterOpenText h4{font-size:24px}.chapterOpenText p{font-size:13px}.chaptersAccordion .accordionSummary{width:min(170px,100%);}.chaptersAccordion .accordionPanel{grid-template-columns:1fr;}.enterChaptersBtn,.chaptersCountBubble{min-width:0;max-width:none;}}
 body.mobileUI #chapters{width:100%;height:100svh;max-height:100svh;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0;}
 body.mobileUI #chaptersCard{min-height:100svh;padding:12px;}
 body.mobileUI .chaptersFrame{grid-template-columns:1fr;gap:12px;}
 body.mobileUI .chaptersSidebar{padding:16px;border-radius:20px;gap:14px;}
 body.mobileUI .chaptersBook{padding:16px;border-radius:22px;}
 body.mobileUI .chaptersBookHead{flex-direction:column;gap:10px;}
-body.mobileUI .chapterSelectGrid{display:grid;grid-template-columns:1fr;gap:14px;min-height:auto;overflow-x:visible;}
-body.mobileUI .chapterSelectCard,body.mobileUI .chapterSelectCard[open]{flex-basis:auto;grid-template-columns:1fr;min-height:auto;}
-body.mobileUI .chapterBookCover{min-height:250px;}
-body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;}
-/* --- Patch : bannière bibliothèque infinie + remise en page livres --- */
+body.mobileUI .chapterSelectGrid{display:flex;flex-direction:row;gap:8px;min-height:560px;overflow-x:auto;overflow-y:hidden;padding-bottom:16px;}
+body.mobileUI .chapterSelectCard{flex:0 0 58px;grid-template-columns:58px 0;min-height:540px;}
+body.mobileUI .chapterSelectCard[open]{flex-basis:calc(100vw - 40px);grid-template-columns:58px minmax(0,1fr);}
+body.mobileUI .chapterBookCover{min-height:540px;}
+body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr;padding:14px;max-height:540px;overflow-y:auto;}
+body.mobileUI .chapterOpenText h4{font-size:24px;}
+body.mobileUI .chapterOpenText p{font-size:13px;}
+
+
+/* --- Bannière bibliothèque infinie pour la page Chapitres --- */
 .chapterLibraryBanner{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(82,55,25,.18);background:#0a0f18;margin:0 0 18px;min-height:210px;box-shadow:0 18px 34px rgba(55,35,15,.12);}
 .chapterLibraryBanner img{display:block;width:100%;height:250px;object-fit:cover;object-position:center;filter:saturate(.96) contrast(1.02) brightness(.82);}
 .chapterLibraryBannerShade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,8,14,.88),rgba(4,8,14,.32) 46%,rgba(4,8,14,.15)),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.50));pointer-events:none;}
@@ -1523,29 +1535,13 @@ body.mobileUI .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:
 .chapterLibraryBannerText span{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#b9dce9;font-weight:950;}
 .chapterLibraryBannerText strong{font-size:clamp(30px,4vw,48px);line-height:.95;font-weight:950;}
 .chapterLibraryBannerText p{margin:0;color:#e8dcc2;line-height:1.45;font-size:15px;}
-.chapterSelectGrid{display:flex!important;gap:14px!important;align-items:stretch!important;min-height:620px!important;overflow-x:auto!important;overflow-y:hidden!important;padding:4px 2px 14px!important;scrollbar-width:thin!important;}
-.chapterSelectCard{flex:0 0 210px!important;min-height:600px!important;border-radius:22px!important;display:grid!important;grid-template-columns:1fr!important;overflow:hidden!important;}
-.chapterSelectCard[open]{flex-basis:min(860px,92%)!important;grid-template-columns:220px minmax(0,1fr)!important;}
-.chapterBookCover{min-height:600px!important;}
-.chapterBookCoverImg{display:block!important;background:#0a0f18!important;}
-.chapterBookOpened{display:none!important;min-width:0!important;}
-.chapterSelectCard[open] .chapterBookOpened{display:grid!important;grid-template-columns:minmax(210px,310px) minmax(0,1fr)!important;}
-.chapterOpenImage{background:#0a0f18!important;}
-@media(max-width:980px){.chapterLibraryBanner{min-height:180px}.chapterLibraryBanner img{height:220px}.chapterSelectGrid{min-height:auto!important;overflow-x:visible!important;display:grid!important;grid-template-columns:1fr!important}.chapterSelectCard,.chapterSelectCard[open]{flex-basis:auto!important;grid-template-columns:1fr!important;min-height:auto!important}.chapterBookCover{min-height:310px!important}.chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr!important}}
-@media(max-width:760px){.chapterLibraryBanner{border-radius:20px;min-height:150px;margin-bottom:14px}.chapterLibraryBanner img{height:170px}.chapterLibraryBannerText{left:14px;right:14px;bottom:14px}.chapterLibraryBannerText strong{font-size:26px}.chapterLibraryBannerText p{font-size:13px}.chapterBookCover{min-height:260px!important}.chapterSelectCard{border-radius:18px!important}.chapterSelectCard[open] .chapterBookOpened{padding:14px!important}}
+@media(max-width:980px){.chapterLibraryBanner{min-height:180px}.chapterLibraryBanner img{height:220px}}
+@media(max-width:760px){.chapterLibraryBanner{border-radius:20px;min-height:150px;margin-bottom:14px}.chapterLibraryBanner img{height:170px}.chapterLibraryBannerText{left:14px;right:14px;bottom:14px}.chapterLibraryBannerText strong{font-size:26px}.chapterLibraryBannerText p{font-size:13px}}
 body.mobileUI .chapterLibraryBanner{border-radius:20px;min-height:150px;margin-bottom:14px}
 body.mobileUI .chapterLibraryBanner img{height:170px}
 body.mobileUI .chapterLibraryBannerText{left:14px;right:14px;bottom:14px}
 body.mobileUI .chapterLibraryBannerText strong{font-size:26px}
 body.mobileUI .chapterLibraryBannerText p{font-size:13px}
-body.mobileUI .chapterSelectGrid{display:grid!important;grid-template-columns:1fr!important;gap:14px!important;min-height:auto!important;overflow-x:visible!important;overflow-y:visible!important;}
-body.mobileUI .chapterSelectCard,body.mobileUI .chapterSelectCard[open]{flex-basis:auto!important;grid-template-columns:1fr!important;min-height:auto!important;}
-body.mobileUI .chapterBookCover{min-height:260px!important;}
-body.mobileUI .chapterSelectCard[open] .chapterBookOpened{display:grid!important;grid-template-columns:1fr!important;padding:14px!important;}
-
-body.mobileUI .chapterOpenText h4{font-size:24px;}
-body.mobileUI .chapterOpenText p{font-size:13px;}
-
 </style>
 </head>
 <body>
@@ -1654,9 +1650,9 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
           <div>
             <div class="menuSectionTitle">Table des chapitres</div>
             <h2 class="chaptersTitle">Chapitres</h2>
-            <p class="chaptersLead">Choisis un point d’entrée du Visual Novel. Les chapitres avancés se déverrouillent avec la progression normale, ou via le mode développeur.</p>
+            <p class="chaptersLead">Choisis le volume à ouvrir. Les chapitres suivants se révèlent à mesure que l’histoire avance.</p>
           </div>
-          <div class="chaptersHint">Chaque chapitre possède son illustration, son ambiance et son synopsis. Cette page remplace l’ancien menu coulissant.</div>
+          <div class="chaptersHint">Chaque volume conserve une étape du voyage : une image, un titre et une promesse de récit.</div>
           <button class="topBtn backWide" id="chaptersBackBtn">Retour</button>
         </aside>
         <div class="chaptersBook">
@@ -1723,7 +1719,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
           <div>
             <div class="menuSectionTitle">Grimoire vivant</div>
             <h2 class="codexTitle">Codex</h2>
-            <p class="subtitle">Chapitres I & II · Une convocation impériale / Sur la route d’Al’Gratal</p>
+            <p class="subtitle">Archives découvertes au fil du récit</p>
           </div>
           <div class="codexSidebarBlock">
             <div class="codexSidebarLabel">Sections</div>
@@ -1765,7 +1761,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
             <article class="sitePortalCard">
               <div class="sitePortalKicker">Encyclopédie en ligne</div>
               <h3>Les mondes du Chroniqueur</h3>
-              <p>Pour élargir l’univers au-delà du Visual Novel : cosmologie, carte interactive, personnages, bestiaire, galerie d’illustrations, fragments et archives du projet.</p>
+              <p>Ouvre les grandes archives de Sylvinia : cosmologie, carte interactive, personnages, bestiaire, galerie d’illustrations et fragments du Chroniqueur.</p>
               <div class="sitePortalTags">
                 <span>Univers</span><span>Carte</span><span>Personnages</span><span>Bestiaire</span><span>Galerie</span><span>Fragments</span>
               </div>
@@ -1775,7 +1771,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
               </div>
             </article>
           </div>
-          <p class="footnote grimoireFootnote">Astuce : les images clés et les musiques se déverrouillent au fil de l’aventure. Après le premier clic, la musique peut se relancer automatiquement selon les règles de ton navigateur.</p>
+          <p class="footnote grimoireFootnote">Les images clés et les musiques s’éveillent au fil de l’aventure, quand le récit leur donne enfin une place.</p>
         </div>
       </div>
     </section>
@@ -1791,7 +1787,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
             <p class="subtitle">Valeurs accumulées, inventaire et souvenirs qui pourront résonner plus tard dans l’histoire.</p>
           </div>
           <div class="progressionHint">
-            Les choix stratégiques ne sont plus de simples portes : ils peuvent laisser un objet, une dette, une promesse ou un souvenir dans le récit.
+            Certains choix laissent plus qu’une conséquence immédiate : un objet, une dette, une promesse ou un souvenir peut rester dans le sillage d’Hylee.
           </div>
           <button class="topBtn backWide" id="progressBackBtn">Retour</button>
         </aside>
@@ -1800,7 +1796,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
             <div>
               <div class="menuSectionTitle" style="color:#7d6032">État de l’aventure</div>
               <h3 class="progressionBookTitle">Mémoire du voyage</h3>
-              <p class="progressionBookSubtitle">Cette page sert autant au joueur qu’au jeu : elle garde les récompenses matérielles et situationnelles obtenues par Hylee.</p>
+              <p class="progressionBookSubtitle">La mémoire du voyage conserve les valeurs, objets, souvenirs et fragments ramassés par Hylee au fil de sa route.</p>
             </div>
             <div class="progressionMeta">
               <div class="progressionMetaBadge"><b id="progressionItemCount">0</b><span>objets</span></div>
@@ -1835,7 +1831,7 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
 
           <section class="progressionSection progressionJournalSection">
             <div class="progressionSectionHead journalSectionHead">
-              <h4>Fragments du mystérieux journal</h4>
+              <h4>Le Carnet du Némésis</h4>
               <div class="journalHeaderRight">
                 <span id="progressionJournalLabel">0 / 4 trouvés</span>
                 <button class="journalDevButton hidden" id="journalForceAccessBtn" type="button">DEV · Forcer accès</button>
@@ -1845,8 +1841,8 @@ body.mobileUI .chapterOpenText p{font-size:13px;}
               <img src="assets/images/progression/amanea_journal_banner.png" alt="Projection spectrale d’Amanea" />
               <div class="journalBannerOverlay">
                 <div class="journalBannerEyebrow">Archives incomplètes</div>
-                <div class="journalBannerTitle">Fragments retrouvés au fil du voyage</div>
-                <p>À chaque fin d’Introduction ou de chapitre, Hylee peut mettre la main sur un mystérieux fragment. Ils restent illisibles tant qu’Iriana n’a pas retrouvé le journal d’Amanea.</p>
+                <div class="journalBannerTitle">Le Carnet du Némésis</div>
+                <p>À chaque fin de chapitre (Introduction compris), Hylee peut mettre la main sur un mystérieux fragment. Ils restent cependant illisibles pour le moment. Du moins, pour le moment...</p>
               </div>
             </div>
             <div class="journalFragmentsList" id="progressionJournalList"></div>
@@ -1933,9 +1929,9 @@ body.mobileUI .journalBanner img{height:170px;}
 body.mobileUI .journalBannerOverlay{padding:14px;}
 body.mobileUI .journalBannerTitle{font-size:22px;}
 body.mobileUI .journalBannerOverlay p{font-size:13px;line-height:1.45;}
-body.mobileUI .journalFragmentCard summary{padding:14px;align-items:flex-start;}
-body.mobileUI .journalFragmentInner{padding:0 14px 14px;}
-body.mobileUI .journalUnreadableBody{padding:0 14px 14px;}
+body.mobileUI .journalFragmentCard summary{grid-template-columns:1fr;gap:8px;padding:16px 14px;}
+body.mobileUI .journalFragmentCard summary::after{grid-column:1;justify-self:start;}
+body.mobileUI .journalFragmentInner,body.mobileUI .journalUnreadableBody{margin:0 12px 14px;padding:14px;}
 body.mobileUI .journalBlock{padding:14px;}
 body.mobileUI .journalBlock.journal p{font-size:22px;line-height:1.08;}
 body.mobileUI .journalBlock.projection p{font-size:18px;line-height:1.24;}
@@ -3298,7 +3294,7 @@ Sous la ville, une mission vient de prendre racine.
 
 Draven repart vers ses soldats et ses morts. Valurn vers les Calciterres et ses secrets. Hylee et Remerii vers Mir’Aldas, où un archimage imprévisible attend peut-être déjà d’être dérangé.
 
-Le chapitre se ferme sur une certitude : la convocation impériale n’était pas une porte. C’était le début d’un piège à plusieurs serrures.`,chars:[],choices:[c('Commencer le chapitre III','c3_01',{},'Prendre la route de Mir’Aldas.'),c('Retourner à l’écran titre','menu',{},'Fin de la version test du chapitre II.')],zoom:true}
+Le chapitre se ferme sur une certitude : la convocation impériale n’était pas une porte. C’était le début d’un piège à plusieurs serrures.`,chars:[],choices:[c('Commencer le chapitre III','c3_01',{},'Prendre la route de Mir’Aldas.'),c('Retourner à l’écran titre','menu',{},'Retour au menu principal.')],zoom:true}
 ,
 "c3_01":{
   "title": "Chapitre III",
@@ -5990,7 +5986,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
     {
       "label": "Retourner à l’écran titre",
       "next": "menu",
-      "note": "Fin de la version test du chapitre III."
+      "note": "Retour au menu principal."
     }
   ],
   "zoom": true
@@ -8307,7 +8303,7 @@ Object.assign(S, {
     "bg": "intro_cg_final_confrontation_custom",
     "music": "intro_music_final",
     "speaker": "Remerii",
-    "text": "Remerii tend la main. Derrière Hylee, son père hurle encore, mais sa voix semble lointaine. Le froid pulse dans ses doigts. Le cristal répond contre sa peau. À cet instant, toutes les petites décisions prises depuis le matin reviennent en elle : ce qu’elle a caché, ce qu’elle a osé, ce qu’elle a cru, ce qu’elle a refusé. Certaines routes ne s’ouvrent qu’à la Hylee que le joueur a façonnée.",
+    "text": "Remerii tend la main. Derrière Hylee, son père hurle encore, mais sa voix semble lointaine. Le froid pulse dans ses doigts. Le cristal répond contre sa peau. À cet instant, toutes les petites décisions prises depuis le matin reviennent en elle : ce qu’elle a caché, ce qu’elle a osé, ce qu’elle a cru, ce qu’elle a refusé. Certaines routes ne s’ouvrent qu’à la Hylee que ses propres choix ont façonnée.",
     "chars": [
       [
         "hylee",
@@ -8696,7 +8692,7 @@ function renderJournalFragments(){
   const discovered=order.filter(journalFragmentUnlocked);
   const readable=journalFragmentsReadable();
   if(!discovered.length){
-    list.innerHTML='<div class="journalEmpty">Aucun fragment trouvé pour le moment. À chaque fin d’Introduction ou de chapitre, un mystérieux fragment peut être ajouté ici.</div>';
+    list.innerHTML='<div class="journalEmpty">Aucun fragment trouvé pour le moment. Le Carnet du Némésis restera silencieux jusqu’à ce qu’une page soit découverte.</div>';
     setText('progressionJournalCount', '0');
     setText('progressionJournalLabel', `0 / ${order.length} trouvés`);
     updateJournalDevButton();
@@ -8708,7 +8704,7 @@ function renderJournalFragments(){
     const details=document.createElement('details');
     details.className='journalFragmentCard'+(readable?' readable':' unreadable');
     if(idx===discovered.length-1) details.open=true;
-    const title=readable?frag.title:'Mystérieux fragment d’un journal ancien';
+    const title=readable?frag.title:`Fragment ${idx+1} · Mystérieux fragment d’un journal ancien`;
     const subtitle=readable?frag.chapter:`Retrouvé après ${frag.chapter}`;
     const stateLabel=readable?'Lisible':'Illisible';
     details.innerHTML=`<summary><span>${htmlEscape(title)}<small>${htmlEscape(subtitle)}</small></span><span class="fragmentState">${stateLabel}</span></summary>`;
@@ -8726,7 +8722,7 @@ function renderJournalFragments(){
     }else{
       const unreadable=document.createElement('div');
       unreadable.className='journalUnreadableBody';
-      unreadable.innerHTML='<strong>Mystérieux fragment d’un journal ancien</strong><p>Vous ne parvenez pas à le lire.</p>';
+      unreadable.innerHTML='<p>Vous ne parvenez pas à le lire.</p>';
       details.appendChild(unreadable);
     }
     list.appendChild(details);
@@ -8814,7 +8810,7 @@ function renderProgression(){
   const inv=document.getElementById('progressionInventoryList');
   if(inv){
     inv.innerHTML='';
-    if(!state.inventory.length){inv.innerHTML='<div class="progressionEmpty">Aucun objet spécial pour le moment. Les récompenses matérielles des choix stratégiques apparaîtront ici.</div>';}
+    if(!state.inventory.length){inv.innerHTML='<div class="progressionEmpty">Aucun objet spécial pour le moment. Les trouvailles importantes d’Hylee apparaîtront ici.</div>';}
     state.inventory.forEach(k=>{const it=PROGRESSION_ITEMS[k]; if(!it)return; const el=document.createElement('article'); el.className='progressionEntry'; el.innerHTML=`<div class="progressionIcon">${it.icon||'✦'}</div><div class="progressionEntryBody"><div class="progressionEntryType">${it.type||'Objet'}</div><h5>${it.title}</h5><p>${it.body}</p></div>`; inv.appendChild(el);});
   }
   const mem=document.getElementById('progressionMemoryList');
@@ -9053,7 +9049,7 @@ function renderChapterSelect(){
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
         <div class="chapterBookShade"></div>
-        <div class="chapterBookSpine"><span>${htmlEscape(ch.label)}</span></div>
+        <div class="chapterBookSpine"><span>${htmlEscape(ch.label+' · '+ch.title)}</span></div>
         <div class="chapterBookCoverText">
           <div class="chapterSelectKicker">${htmlEscape(ch.subtitle)}</div>
           <div class="chapterBookCoverTitle">${htmlEscape(ch.title)}</div>
