@@ -229,6 +229,34 @@ body.mobileUI .menuDockCorner{width:100%;gap:7px}body.mobileUI .dockMainRow,body
 
 /* --- v0.79 : accordéons horizontaux à gauche + bannière épurée --- */
 .menuOverlayTitle{max-width:min(760px,62vw)}.menuDockCorner{width:min(1120px,calc(100% - 54px));justify-items:start;gap:12px}.dockMainRow{grid-template-columns:repeat(2,minmax(170px,230px));justify-content:start;width:auto}.dockAccordionRow{grid-template-columns:1fr;width:min(1120px,calc(100% - 54px));justify-content:start;gap:10px}.menuAccordion{display:flex;align-items:stretch;gap:10px;overflow:visible;border:none;background:none;box-shadow:none;border-radius:0}.menuAccordion[open]{background:none}.accordionSummary{width:168px;min-width:168px;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(7,14,27,.56),rgba(7,14,27,.36));backdrop-filter:blur(10px);box-shadow:0 10px 22px rgba(0,0,0,.18)}.accordionPanel{flex:1;display:flex;align-items:stretch;gap:10px;max-height:none;max-width:0;padding:0;opacity:0;overflow:hidden;transition:max-width .28s ease,opacity .18s ease,padding .18s ease}.menuAccordion[open] .accordionPanel{padding:0;max-width:920px;opacity:1}.menuAccordion .dockBtn,.menuAccordion .progressMiniCard,.menuAccordion .compactToggle,.menuAccordion .menuTip{min-height:100%}.accordionPanel .dockBtn{min-width:170px;max-width:220px}.accordionStats{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}.progressMiniCard{min-width:150px;max-width:200px;padding:10px 11px}.progressMiniCard.wide{min-width:210px;max-width:260px}.enterCodexBtn{min-width:140px}.menuSceneGhost,.menuTip.inlineTip{display:flex;align-items:center;border-radius:16px;padding:10px 12px;background:rgba(7,14,27,.42);border:1px solid rgba(255,255,255,.08)}.menuTip.inlineTip{max-width:240px}.optionButtonsGrid{display:flex;flex-wrap:wrap;gap:10px}.optionButtonsGrid .dockBtn{min-width:170px;max-width:210px}.optionButtonsGrid .optionWideBtn{min-width:190px;max-width:240px}.menuUpdateBubble{right:22px;bottom:18px}.cinematicSubtitle.bannerSubtitle{max-width:58ch}.version{display:none!important}
+
+.progressionJournalSection{background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(109,72,31,.12));}
+.journalBanner{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(57,44,29,.18);background:#0d1018;margin-bottom:16px;min-height:220px;box-shadow:0 14px 34px rgba(0,0,0,.12);}
+.journalBanner img{display:block;width:100%;height:250px;object-fit:cover;object-position:center;filter:saturate(.96) contrast(1.02) brightness(.9);}
+.journalBannerOverlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:20px;background:linear-gradient(180deg,rgba(6,9,14,.06),rgba(6,9,14,.30) 36%,rgba(6,9,14,.78) 100%);color:#f5eddc;}
+.journalBannerEyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#b9dce9;}
+.journalBannerTitle{font-size:26px;line-height:1.05;font-weight:950;text-shadow:0 6px 16px rgba(0,0,0,.35);}
+.journalBannerOverlay p{margin:0;max-width:62ch;line-height:1.48;color:#e6ddcb;}
+.journalFragmentsList{display:grid;grid-template-columns:1fr;gap:14px;}
+.journalFragmentCard{border:1px solid rgba(57,44,29,.18);background:rgba(255,255,255,.33);border-radius:22px;overflow:hidden;box-shadow:inset 0 0 26px rgba(79,45,17,.08);}
+.journalFragmentCard.unreadable{background:rgba(255,255,255,.24);border-style:dashed;}
+.journalFragmentCard summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:14px;align-items:center;padding:15px 17px;font-weight:950;color:#332413;}
+.journalFragmentCard summary::-webkit-details-marker{display:none;}
+.journalFragmentCard summary small{display:block;margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#735b3a;font-weight:900;}
+.journalFragmentCard summary .fragmentState{flex:0 0 auto;border:1px solid rgba(57,44,29,.16);background:rgba(255,255,255,.38);border-radius:999px;padding:8px 11px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#2e5d74;}
+.journalFragmentCard.unreadable summary .fragmentState{color:#735b3a;}
+.journalFragmentInner{padding:0 17px 17px;display:grid;gap:13px;}
+.journalBlock{border:1px solid rgba(57,44,29,.13);border-radius:18px;padding:16px;background:rgba(255,255,255,.28);position:relative;}
+.journalBlockLabel{font-family:Inter,system-ui,sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:950;color:#806035;margin-bottom:10px;}
+.journalBlock p{margin:0;color:#2e2417;line-height:1.55;white-space:pre-wrap;}
+.journalBlock.journal p{font-family:"Kunstler Script","Edwardian Script ITC","Segoe Script",cursive;font-size:26px;line-height:1.1;color:#2a1d12;}
+.journalBlock.projection{background:linear-gradient(180deg,rgba(70,121,164,.10),rgba(255,255,255,.20));}
+.journalBlock.projection p{font-family:"Brush Script MT","Segoe Script",cursive;font-size:20px;line-height:1.28;color:#233c4f;}
+.journalUnreadableBody{padding:0 17px 17px;color:#6b5639;line-height:1.45;font-weight:750;display:grid;gap:6px;}
+.journalUnreadableBody strong{font-size:16px;color:#3a2816;}
+.journalUnreadableBody p{margin:0;color:#6b5639;}
+.journalEmpty{grid-column:1/-1;border:1px dashed rgba(57,44,29,.26);border-radius:18px;padding:18px;color:#6b5639;background:rgba(255,255,255,.18);font-weight:750;line-height:1.5;}
+
 @media(max-width:980px){.menuDockCorner,.dockAccordionRow{width:min(94vw,820px)}.dockMainRow{grid-template-columns:repeat(2,minmax(170px,1fr));width:min(520px,100%)}.menuAccordion{flex-direction:column;gap:8px}.accordionSummary{width:min(220px,100%)}.accordionPanel{max-width:none;max-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0}.menuAccordion[open] .accordionPanel{padding:0;max-height:760px}.accordionStats,.optionButtonsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.progressMiniCard,.progressMiniCard.wide,.accordionPanel .dockBtn,.optionButtonsGrid .dockBtn,.optionButtonsGrid .optionWideBtn,.menuTip.inlineTip{max-width:none;min-width:0}.menuSceneGhost{grid-column:1/-1}.menuTip.inlineTip{grid-column:1/-1}}
 @media(max-width:760px){.titleOverlayLayout{padding:12px 10px 10px}.menuOverlayTitle{max-width:none}.menuDockCorner,.dockAccordionRow{width:100%}.dockMainRow{grid-template-columns:1fr 1fr;width:100%;gap:8px}.primaryDockBtn{padding:12px 12px!important}.primaryDockBtn .btnTitle{font-size:14px}.primaryDockBtn .btnDesc{font-size:10px}.menuAccordion{flex-direction:column;gap:7px}.accordionSummary{width:min(170px,100%);font-size:11px;padding:11px 12px}.accordionPanel{grid-template-columns:1fr;gap:8px}.accordionStats,.optionButtonsGrid{grid-template-columns:1fr}.menuUpdateBubble{right:10px;bottom:10px;padding:7px 10px;font-size:10px}}
 body.mobileUI .titleOverlayLayout{padding:10px 8px 8px}body.mobileUI .menuOverlayTitle{max-width:none}body.mobileUI .menuDockCorner,body.mobileUI .dockAccordionRow{width:100%;gap:8px}body.mobileUI .dockMainRow{grid-template-columns:1fr 1fr;width:100%}body.mobileUI .primaryDockBtn{padding:11px 10px!important}body.mobileUI .primaryDockBtn .btnTitle{font-size:13px}body.mobileUI .primaryDockBtn .btnDesc{font-size:10px}body.mobileUI .menuAccordion{flex-direction:column;gap:6px}body.mobileUI .accordionSummary{width:160px;max-width:100%;padding:11px 12px;font-size:11px}body.mobileUI .accordionPanel{display:grid;grid-template-columns:1fr;gap:7px;max-height:0;max-width:none}body.mobileUI .menuAccordion[open] .accordionPanel{max-height:70svh}body.mobileUI .accordionStats,body.mobileUI .optionButtonsGrid{display:grid;grid-template-columns:1fr;gap:7px}body.mobileUI .progressMiniCard strong{font-size:14px}body.mobileUI .menuUpdateBubble{right:8px;bottom:8px;padding:6px 8px;font-size:9px}
@@ -1645,6 +1673,7 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
             <div class="progressionMeta">
               <div class="progressionMetaBadge"><b id="progressionItemCount">0</b><span>objets</span></div>
               <div class="progressionMetaBadge"><b id="progressionMemoryCount">0</b><span>souvenirs marquants</span></div>
+              <div class="progressionMetaBadge"><b id="progressionJournalCount">0</b><span>fragments</span></div>
             </div>
           </div>
 
@@ -1670,6 +1699,22 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
               <span>Personnages qui se souviendront</span>
             </div>
             <div class="progressionList" id="progressionMemoryList"></div>
+          </section>
+
+          <section class="progressionSection progressionJournalSection">
+            <div class="progressionSectionHead">
+              <h4>Fragments du mystérieux journal</h4>
+              <span id="progressionJournalLabel">0 / 4 trouvés</span>
+            </div>
+            <div class="journalBanner">
+              <img src="assets/images/progression/amanea_journal_banner.png" alt="Projection spectrale d’Amanea" />
+              <div class="journalBannerOverlay">
+                <div class="journalBannerEyebrow">Archives incomplètes</div>
+                <div class="journalBannerTitle">Fragments retrouvés au fil du voyage</div>
+                <p>À chaque fin d’Introduction ou de chapitre, Hylee peut mettre la main sur un mystérieux fragment. Ils restent illisibles tant qu’Iriana n’a pas retrouvé le journal d’Amanea.</p>
+              </div>
+            </div>
+            <div class="journalFragmentsList" id="progressionJournalList"></div>
           </section>
         </div>
       </div>
@@ -1726,6 +1771,28 @@ body.mobileUI .devReward{font-size:11px!important;line-height:1.25!important;}
 .progressionEmpty{grid-column:1/-1;border:1px dashed rgba(57,44,29,.26);border-radius:18px;padding:18px;color:#6b5639;background:rgba(255,255,255,.18);font-weight:750;}
 .rewardPing{font-size:12px;color:#f4dfaa;border:1px solid rgba(244,223,170,.30);background:rgba(38,51,72,.68);border-radius:999px;padding:7px 10px;display:inline-block;margin-top:8px;}
 @media(max-width:980px){#progressionCard{min-height:100svh;padding:14px}.progressionFrame{grid-template-columns:1fr}.progressionSidebar{min-height:auto;padding:18px;border-radius:22px}.progressionBook{padding:18px;border-radius:22px}.progressionHeader{flex-direction:column}.progressionMeta{justify-content:flex-start}.progressionSectionHead{flex-direction:column;align-items:flex-start}.progressionTitle{font-size:34px}.progressionBookTitle{font-size:28px}.progressionList{grid-template-columns:1fr}}
+
+body.mobileUI #progression{width:100%;height:100svh;max-height:100svh;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:0;}
+body.mobileUI #progressionCard{min-height:100svh;padding:12px;background:linear-gradient(180deg,rgba(10,18,32,.98),rgba(5,8,16,1));}
+body.mobileUI .progressionFrame{grid-template-columns:1fr;gap:12px;}
+body.mobileUI .progressionSidebar{min-height:auto;padding:16px;border-radius:20px;gap:16px;}
+body.mobileUI .progressionBook{padding:16px;border-radius:22px;overflow:visible;}
+body.mobileUI .progressionHeader{flex-direction:column;align-items:flex-start;gap:12px;}
+body.mobileUI .progressionMeta{justify-content:flex-start;}
+body.mobileUI .progressionMetaBadge{min-width:92px;}
+body.mobileUI .progressionSection{padding:14px;}
+body.mobileUI .progressionSectionHead{flex-direction:column;align-items:flex-start;gap:6px;}
+body.mobileUI .progressionStatsGrid,body.mobileUI .progressionList{grid-template-columns:1fr;}
+body.mobileUI .journalBanner img{height:170px;}
+body.mobileUI .journalBannerOverlay{padding:14px;}
+body.mobileUI .journalBannerTitle{font-size:22px;}
+body.mobileUI .journalBannerOverlay p{font-size:13px;line-height:1.45;}
+body.mobileUI .journalFragmentCard summary{padding:14px;align-items:flex-start;}
+body.mobileUI .journalFragmentInner{padding:0 14px 14px;}
+body.mobileUI .journalUnreadableBody{padding:0 14px 14px;}
+body.mobileUI .journalBlock{padding:14px;}
+body.mobileUI .journalBlock.journal p{font-size:22px;line-height:1.08;}
+body.mobileUI .journalBlock.projection p{font-size:18px;line-height:1.24;}
 </style>
 <style id="introPatchStyles">
 .choiceBtn.lockedChoice{opacity:.52;cursor:not-allowed;filter:saturate(.65) brightness(.9);}
@@ -1799,7 +1866,7 @@ const START_STATS={audace:0,sangfroid:0,lien:0,lucidite:0,resonance:0};
 const INTRO_STATS={"courage": 0, "discretion": 0, "trust": 0, "suspicion": 0, "instability": 0, "hope": 0};
 const introStatNames={"courage": "Courage", "discretion": "Discrétion", "trust": "Confiance", "suspicion": "Méfiance", "instability": "Instabilité", "hope": "Espoir"};
 const INTRO_VALUE_MAX=5;
-let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],musicOn:true,menuMusicOn:true,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],musicOn:true,menuMusicOn:true,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
 let currentPreviewTrack=null;
 const statNames={audace:'Audace',sangfroid:'Sang-froid',lien:'Lien Remerii',lucidite:'Lucidité',resonance:'Résonance'};
 
@@ -1819,6 +1886,81 @@ const PROGRESSION_MEMORIES={
   remerii_confession_patience:{title:'Remerii se souviendra de cette patience',type:'Remerii',icon:'❄',body:`Hylee a compris que certaines vérités de Remerii ne pouvaient pas être arrachées. Ce respect ouvrira plus tard un dialogue plus sincère.`},
   medig_serment:{title:'Medig se souviendra de cette confiance',type:'Medig',icon:'🦉',body:`Hylee a pris la présence de Medig au sérieux et lui a confié une promesse : si elle se perd un jour, que la chouette la retrouve.`},
   remerii_medig_respect:{title:'Remerii se souviendra de ce moment',type:'Remerii',icon:'❄',body:`Remerii a vu Hylee transformer une intuition fragile en serment. Ce souvenir pourra nourrir une scène plus intime plus tard.`}
+};
+const JOURNAL_FRAGMENT_ORDER=['intro','ch1','ch2','ch3'];
+const JOURNAL_FRAGMENTS={
+  "intro": {
+    "title": "Introduction · Le sang préféré",
+    "chapter": "Introduction",
+    "unlockLabel": "Termine l’Introduction",
+    "blocks": [
+      {
+        "kind": "journal",
+        "text": "Ceci est mon souvenir, aussi loin que je me souvienne, de mon passé. Un mélange entre mon ressenti à chaud, et mon vécu avec les reculs des années. Il y a ce qu’il reste de mon vieux journal intime. Bien qu’incomplet, il représente au mieux tout ce que j’ai pu vivre. Ce livre n’a pas pour vocation d’immortaliser sur papier un passé que je te demande de comprendre. Je l’écris car il représente une partie de notre histoire. Il montre mes sacrifices, mes plaies, mes erreurs et mes doutes. Par ces quelques pages, je scelle les lignes d’un passé assumé.
+
+Par où commencer. Oui. J’étais une jeune fille assez impulsive. Je croyais, dur comme fer en mes idées et je reconnais avoir encore cette personnalité aujourd’hui. Relativement rebelle étant gamine, j’ai grandi dans un petit village hors de la capitale, mais tout de même non loin de Al’gratal. Je suis descendante directe de l’Impératrice des Sylviniens, Eladri Farae. Je n’ai jamais connu mon père. Mère disait qu’il a été emporté par la maladie.
+
+Au plus profond de moi-même, je t’ai toujours haïe de tout mon cœur. Ton sourire, ta joie de vivre, tes yeux dorés, ton don… Pourquoi cette… lumière ta donnée ses pouvoirs… Moi, je n’ai eu le droit qu’aux miettes. C’est injuste. Tu ne peux pas imaginée la honte que j’ai pu ressentir quand ta petite gueule d’amour a été reçu aux tests, et pas moi… Mère sera furieuse de me revoir non acceptée… et déçu, une fois de plus. Je n’oublierais jamais ce qu’elle nous a dit avant de partir… « Je sais que je serais fière de mon sang d’ici peu » … Elle parlait de toi… elle parle toujours de toi. Si seulement… ne serait-ce qu’un regard, pourrait m’être accordé. Au moins une fois ; ça fait si longtemps. Mais bon… si seulement ça pouvait t’intéresser. J’ai… l’impression de ne pas être à ma place… à tes côtés… et aux côtés de notre mère."
+      },
+      {
+        "kind": "projection",
+        "text": "Je me souviens. À cette époque, ma mère souhaitait que ses filles suivent un chemin saint et chaste. Elle voulait nous voir en tête de liste de notre peuple, au plus haut du panier, mais d’une façon juste sans aucun piston de sa part. C’est précisément pour ça que nous n’avions pas grandi dans le palais Impérial. Des motivations nobles en soit. Mais la lumière choisie ses croyants, quoi qu’en disent certains, et mon destin n’était pas de ne faire qu’un avec elle visiblement. Je ne l’avais pas comprise de cette manière à l’époque. J’avais la haine envers ma sœur. Tout lui réussissait."
+      }
+    ]
+  },
+  "ch1": {
+    "title": "Chapitre I · La retraite du vaillant",
+    "chapter": "Chapitre I",
+    "unlockLabel": "Termine le Chapitre I",
+    "blocks": [
+      {
+        "kind": "journal",
+        "text": "-Comme je le pensais, mère a été fière de son sang… de son petit ange. Moi, j’ai été chassée de la maison… Elle m’a dit de revenir que quand je me sentirais prête à embrasser mon destin. Et si c’était lui qui ne voulait pas de moi ? J’ai tout fait pour qu’ils m’acceptent… Je me suis donnée corps et âme à l’initiation… j’ai passée une semaine en exile à la retraite du vaillant. Un monastère à l’écart d’Al’gratal… une réponse de la lumière y devait soulager mon sommeil, ma faim, et ma soif. Normalement, la plupart du temps, le séjour dure trois jours… au-delà de ça… cela devient dangereux pour l’initié… et la plupart du temps, la lumière se manifeste avant, avec tout ce temps passer à avoir des bénédictions, etc… Mais… La lumière m’a toujours refusée… encore et encore… j’ai tenue huit jours. Huit longs jours interminables à subir les sanctifications de ses stupides prêtres. Moi-même j’ai prié la lumière pour qu’elle ait pitié de moi, qu’elle me fasse un signe. Mais rien…  La seule médaille que j’ai pu recevoir, c’était celle d’être restée consciente plus d’une semaine, sans repos, ni m’approvisionner. Tout ça pour un retour à la maison, seule, tandis que mon imbécile de sœur, elle, avait déjà eu « l’illumination » avant même son arrivée. Me voilà donc à vagabonder, non loin des murs de la capitale, avec quelques affaires ainsi que ce stupide bouquin. Après tout, il n’y a bien que lui qui s’ouvre à moi, pour y écrire une destinée qui s’amuse bien de ma fatalité."
+      },
+      {
+        "kind": "projection",
+        "text": "L’éveil de la lumière est parfois rude. Cette épreuve consistait à faire naître la foi chez les personnes les plus retissant. Ça n’a pas marché pour moi, sans doute parce que mon destin n’était pas de les suivre. Aujourd’hui encore, c’est la seule explication que je trouve pour expliquer le refus d’aide de la lumière."
+      }
+    ]
+  },
+  "ch2": {
+    "title": "Chapitre II · Quatre murs et un feu",
+    "chapter": "Chapitre II",
+    "unlockLabel": "Termine le Chapitre II",
+    "blocks": [
+      {
+        "kind": "journal",
+        "text": "-Cela fait maintenant trois jours que je réside sous un toit. C’est bon d’avoir quatre murs et un feu pour se réchauffer dans la nuit. Certes les bois luxuriants de la région ainsi que son climat printanier constant en fait un endroit où il fait bon vivre, mais dormir à la belle étoile tout le jour n’est pas forcément des plus confortable. Ça a duré deux semaines tout de même. Par chance, un homme d’un âge avancé à prit pitié de moi. Comme quoi, la chaleur Sylvinienne est  plus réconfortante que celle de la lumière. Cet homme m’a fourni une chambre, et m’offre même de quoi réconforter mon chagrin en apaisant ma faim et ma soif. Je n’oublierais pas ce qu’il fait pour moi… je lui suis redevable."
+      },
+      {
+        "kind": "projection",
+        "text": "Redevable ? Amanea… tu n’es redevable de personne, surtout pas de lui. C’est ce que j’aurais dû me dire à ce moment-là. Mais j’étais dans la détresse, et sans personne d’autre en qui croire."
+      },
+      {
+        "kind": "journal",
+        "text": "Aujourd’hui, je me suis rendu dans la capitale afin de trouver un quelconque nouveau sens, et départ. Malheureusement, selon la plupart des enseignes, je suis jeune, trop jeune et trop peu expérimentée. Il y en a même un qui m’a suggérée de me présenter aux forestiers pour apprendre ce que c’est, la vraie vie… la grosse blague… Il ne sait visiblement pas d’où je viens… et c’est sans doute mieux ainsi…  Je m’en suis donc retournée seule et sans résultat au foyer de l’homme qui m’a recueilli. Cependant, une fois rentrée après plusieurs heures de marche, le vieil homme qui m’hébergeais a eu un regard particulier vis-à-vis de moi lors du repas. Visiblement, il était déjà ivre à mon arrivée… et le vin du soir ne l’a pas arrangé non plus. Il me fixait avec des yeux… presque malsain. Pourtant, ce n’était pas son habitude ; j’ai alors préférée prendre congé, et me mettre à l’écart dans ma chambre… j’appréhende un peu la Suite…"
+      }
+    ]
+  },
+  "ch3": {
+    "title": "Chapitre III · Refus et emblèmes",
+    "chapter": "Chapitre III",
+    "unlockLabel": "Termine le Chapitre III",
+    "blocks": [
+      {
+        "kind": "journal",
+        "text": "-Ça fait maintenant une semaine que j’enchaine les aller venu à Al’gratal, sans franc succès. Forcément, à vivre dans un peuple élitiste et fier, prendre une vagabonde…  C’est moyennement bien vu, j’en conçois. J’ai donc fini par me diriger vers la caserne des forestiers. J’ai été reçus avec un œil mitigé. D’accoutumé on ne regarde pas mon physique pour voir s’il possède la force nécessaire à combattre dans des rangs d’homme… non, au contraire, on l’admire pour sa délicatesse, ses courbes, sa légèreté, et ses proportions parfaite pour la séduction. C’est la première fois que l’on me fait clairement comprendre que je suis chétive, et j’avoue que mon orgueil en a pris un coup. Je n’ai pas pour habitude d’avoir des refus, bien que depuis peu cela ait un peu changé… Quoi qu’il en soit, je ne me conforterais pas à un énième échec. Je repasserais très prochainement… et j’aurais ce qu’il me faut."
+      },
+      {
+        "kind": "projection",
+        "text": "J’étais en effet une jolie femme étant jeune, un peu frêle, mais qui pouvait avoir beaucoup de choses en jouant de mes charmes. Par ailleurs, c’était bien le seul atout que j’avais. J’étais très fragile, souvent considérée comme l’avorton de la portée (même si nous n’étions que deux.). Mais je ne sais pas… j’ai toujours eu plus de facilitée à séduire les hommes que ma sœur. Ma mère serait sans doute écœurée de me voir écrire de telles choses, mais déjà à l’époque, la société était très sexiste. En tant que femme parmi les Sylviniens, nous n’étions pas vouées à grand-chose si nous n’avions pas des facilitées dans la magie."
+      },
+      {
+        "kind": "journal",
+        "text": "-Encore une journée à ne voir les regards de mépris à mon égard et les éternelles refus… ce que les Sylviniens peuvent être un peuple… je n’ai pas de mot pour les décrire. Aveuglés de fierté ? Faussement Nobles ? Narcissiques ? Un peu de tout je pense. Me rabaisser en me faisant comprendre que je ne serais jamais plus qu’un déchet sans ambition, sans avenir, de mauvaise composition, qui ne pourra s’en sortir. Au plus profond de moi-même, je me confortais de leurs visions. Leurs réactions restent bien dans leurs thèmes, des êtres orgueilleux, se croyant au-dessus des nécessiteux. Même si je ne dois pas correspondre à vos barèmes, je ne serais pas défini par vos emblèmes. Je me battrais pour parvenir à mes fins, et je vaincrais l’avenir et mon destin."
+      }
+    ]
+  }
 };
 const SCENE_PROGRESS_REWARDS={
   s16:{items:['jeton_imperial']}
@@ -1842,7 +1984,6 @@ const CODEX_ENTRIES={
   arcatraz:{title:'L’Arcatraz',body:`Prison sylvinienne réputée comme l’une des mieux gardées de l’Empire. Remerii rappelle qu’une humaine capable de magie pourrait y finir enfermée dans d’autres circonstances.`},
   medig:{title:'Medig',body:`Chouette blanche qu’Hylee a sauvée près de l’Auberge du Forestier. Elle semble toujours retrouver sa trace. Remerii note que les chouettes sont parfois vues comme des messagères entre les mondes.`},
   hylee_eveil:{title:'Éclat de givre',body:`Après Glacialis Absoluta, la magie d’Hylee laisse des marques physiques : une mèche blanche et des taches pâles sur la peau. Le pouvoir progresse, mais le prix devient visible.`},
-  vieux_journal:{title:'Fragment du vieux journal',body:`Interlude intime d’une jeune Sylvinienne rejetée à Al’Gratal. Les refus, le mépris et l’orgueil y forgent une volonté de vaincre l’avenir et le destin.`},
   saidin:{title:'Saidin',body:`Archimage maîtrisant les arcanes temporels, aussi brillant qu’insaisissable. Il demeure une figure visée par la mission vers Mir’Aldas, même si ce chapitre s’attarde d’abord sur les préparatifs et les failles d’Hylee.`},
   valeurs:{title:'Valeurs du chapitre',body:`Les choix influencent Audace, Sang-froid, Lien avec Remerii, Lucidité et Résonance. Le chapitre reste canonique, mais les nuances de Hylee changent selon tes décisions.`},
   intro_auberge:{title:'Auberge du Forestier',body:`Lieu d’ouverture de l’introduction. Sous ses poutres et ses odeurs de taverne, Hylee survit plus qu’elle ne vit, jusqu’à ce que Remerii remarque l’anomalie magique que tout le monde ignorait.`},
@@ -1852,7 +1993,7 @@ const CODEX_ENTRIES={
   intro_valeurs:{title:'Valeurs de l’introduction',body:`L’introduction suit ses propres nuances : Courage, Discrétion, Confiance, Méfiance, Instabilité et Espoir. Ces valeurs forment le portrait émotionnel de Hylee avant le Chapitre I.`},
   site_encyclopedie:{title:'Encyclopédie en ligne',body:`Le site Les mondes du Chroniqueur prolonge le Visual Novel avec les grandes archives de Sylvinia : cosmologie, carte, personnages, bestiaire, galerie, fragments et accès au VN.`}
 };
-const CODEX_ORDER=['intro_hylee','intro_remerii','intro_auberge','intro_pere','intro_valeurs','hylee','remerii','gardien','algratal','catacombes','draven','valurn','iriana','obscurcis','mission','miraldas','atelier_arcanique','arcatraz','medig','hylee_eveil','vieux_journal','saidin','valeurs','site_encyclopedie'];
+const CODEX_ORDER=['intro_hylee','intro_remerii','intro_auberge','intro_pere','intro_valeurs','hylee','remerii','gardien','algratal','catacombes','draven','valurn','iriana','obscurcis','mission','miraldas','atelier_arcanique','arcatraz','medig','hylee_eveil','saidin','valeurs','site_encyclopedie'];
 const CODEX_BY_SCENE={
   intro_wake:['intro_hylee','intro_valeurs'],
   intro_mirror:['intro_hylee','intro_auberge'],
@@ -1877,7 +2018,6 @@ const CODEX_BY_SCENE={
   c3_24:['hylee_eveil'],
   c3_28:['medig'],
   c3_34:['miraldas'],
-  c3_53:['vieux_journal']
 };
 
 const CODEX_IMAGES={
@@ -5672,29 +5812,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
       "right"
     ]
   ],
-  "next": "c3_53"
-},
-"c3_53":{
-  "title": "Fragment du vieux journal",
-  "sub": "Une semaine à Al’Gratal",
-  "bg": "c3_bg_algratal_marche",
-  "music": "music_confessions",
-  "speaker": "Narrateur",
-  "text": "Ça fait maintenant une semaine que j’enchaîne les allers-retours à Al’Gratal, sans franc succès.\n\nForcément, dans un peuple élitiste et fier, prendre une vagabonde, c’est moyennement bien vu. J’ai donc fini par me diriger vers la caserne des forestiers. J’ai été reçue avec un œil mitigé.\n\nD’habitude, on ne regarde pas mon physique pour savoir s’il possède la force nécessaire à combattre dans des rangs d’hommes. On l’admire pour sa délicatesse, ses courbes, sa légèreté.\n\nC’est la première fois que l’on me fait clairement comprendre que je suis chétive, et mon orgueil en a pris un coup.\n\nQuoi qu’il en soit, je ne me conforterai pas à un énième échec. Je repasserai très prochainement… et j’aurai ce qu’il me faut.",
-  "chars": [],
-  "next": "c3_54",
-  "zoom": true
-},
-"c3_54":{
-  "title": "Fragment du vieux journal",
-  "sub": "Refuser les emblèmes",
-  "bg": "c3_bg_porte_sud",
-  "music": "music_confessions",
-  "speaker": "Narrateur",
-  "text": "J’étais une jolie femme étant jeune, un peu frêle, souvent considérée comme l’avorton de la portée. Dans une société aussi sexiste, une femme sylvinienne sans facilités dans la magie n’était vouée à grand-chose.\n\nEncore une journée à voir les regards de mépris et les éternels refus. Les Sylviniens sont aveuglés de fierté, faussement nobles, narcissiques.\n\nIls peuvent me faire comprendre que je ne serai jamais plus qu’un déchet sans ambition, sans avenir, de mauvaise composition. Mais même si je ne corresponds pas à leurs barèmes, je ne serai pas définie par leurs emblèmes.\n\nJe me battrai pour parvenir à mes fins.\n\nEt je vaincrai l’avenir et mon destin.",
-  "chars": [],
-  "next": "c3_55",
-  "zoom": true
+  "next": "c3_55"
 },
 "c3_55":{
   "title": "Fin du chapitre III",
@@ -8371,8 +8489,84 @@ function ensureProgressDefaults(){
   if(!Array.isArray(state.inventory)) state.inventory=[];
   if(!Array.isArray(state.memories)) state.memories=[];
   if(!Array.isArray(state.sceneRewards)) state.sceneRewards=[];
+  if(!Array.isArray(state.journalFragments)) state.journalFragments=[];
   state.inventory=[...new Set(state.inventory.filter(k=>PROGRESSION_ITEMS[k]))];
   state.memories=[...new Set(state.memories.filter(k=>PROGRESSION_MEMORIES[k]))];
+  state.journalFragments=[...new Set(state.journalFragments.filter(k=>JOURNAL_FRAGMENTS[k]))];
+}
+function htmlEscape(value){return String(value??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function isIntroEndingScene(sceneId=state.scene){return ['intro_ending_hand','intro_ending_solo','intro_ending_frost','intro_ending_notready','intro_ending_cellar'].includes(String(sceneId||''));}
+function journalFragmentsReadable(){
+  const flags=state.flags||{};
+  return !!(state.devMode || flags.journalFragmentsReadable || flags.amaneaJournalReadable || flags.irianaFoundAmaneaJournal || flags.irianaHasAmaneaJournal);
+}
+function journalFragmentUnlocked(key){
+  ensureProgressDefaults();
+  if(state.devMode) return true;
+  const id=String(state.scene||'');
+  const flags=state.flags||{};
+  if((state.journalFragments||[]).includes(key)) return true;
+  if(key==='intro') return !!(flags.introComplete||isIntroEndingScene(id));
+  if(key==='ch1') return !!(flags.chapter1Complete||state.seenEnding===true||id.startsWith('c2_')||id.startsWith('c3_'));
+  if(key==='ch2') return !!(flags.chapter2Complete||id==='c2_45'||id.startsWith('c3_'));
+  if(key==='ch3') return !!flags.chapter3Complete;
+  return false;
+}
+function unlockJournalFragments(keys=[],opts={}){
+  ensureProgressDefaults();
+  const added=[];
+  (Array.isArray(keys)?keys:[keys]).forEach(k=>{ if(k&&JOURNAL_FRAGMENTS[k]&&!state.journalFragments.includes(k)){state.journalFragments.push(k); added.push(k);} });
+  if(added.length && !opts.silent){
+    const title=added.length>1?'Mystérieux fragments trouvés':'Mystérieux fragment trouvé';
+    const body=added.length>1?'De nouveaux fragments d’un journal ancien ont été ajoutés dans Progression.':'Un mystérieux fragment d’un journal ancien a été ajouté dans Progression.';
+    toast(title, body);
+  }
+  return added;
+}
+function renderJournalFragments(){
+  const list=document.getElementById('progressionJournalList');
+  if(!list) return;
+  list.innerHTML='';
+  const order=JOURNAL_FRAGMENT_ORDER||[];
+  const discovered=order.filter(journalFragmentUnlocked);
+  const readable=journalFragmentsReadable();
+  if(!discovered.length){
+    list.innerHTML='<div class="journalEmpty">Aucun fragment trouvé pour le moment. À chaque fin d’Introduction ou de chapitre, un mystérieux fragment peut être ajouté ici.</div>';
+    setText('progressionJournalCount', '0');
+    setText('progressionJournalLabel', `0 / ${order.length} trouvés`);
+    return;
+  }
+  discovered.forEach((key,idx)=>{
+    const frag=JOURNAL_FRAGMENTS[key];
+    if(!frag) return;
+    const details=document.createElement('details');
+    details.className='journalFragmentCard'+(readable?' readable':' unreadable');
+    if(idx===discovered.length-1) details.open=true;
+    const title=readable?frag.title:'Mystérieux fragment d’un journal ancien';
+    const subtitle=readable?frag.chapter:`Retrouvé après ${frag.chapter}`;
+    const stateLabel=readable?'Lisible':'Illisible';
+    details.innerHTML=`<summary><span>${htmlEscape(title)}<small>${htmlEscape(subtitle)}</small></span><span class="fragmentState">${stateLabel}</span></summary>`;
+    if(readable){
+      const inner=document.createElement('div');
+      inner.className='journalFragmentInner';
+      frag.blocks.forEach(block=>{
+        const b=document.createElement('div');
+        b.className='journalBlock '+(block.kind==='journal'?'journal':'projection');
+        const label=block.kind==='journal'?'Extrait du fragment':'Projection mystérieuse';
+        b.innerHTML=`<div class="journalBlockLabel">${label}</div><p>${htmlEscape(block.text)}</p>`;
+        inner.appendChild(b);
+      });
+      details.appendChild(inner);
+    }else{
+      const unreadable=document.createElement('div');
+      unreadable.className='journalUnreadableBody';
+      unreadable.innerHTML='<strong>Mystérieux fragment d’un journal ancien</strong><p>Vous ne parvenez pas à le lire.</p>';
+      details.appendChild(unreadable);
+    }
+    list.appendChild(details);
+  });
+  setText('progressionJournalCount', String(discovered.length));
+  setText('progressionJournalLabel', `${discovered.length} / ${order.length} trouvés`);
 }
 function unlockProgressItems(keys=[],opts={}){
   ensureProgressDefaults();
@@ -8441,9 +8635,13 @@ function renderProgression(){
     if(!state.memories.length){mem.innerHTML='<div class="progressionEmpty">Aucun souvenir marqué pour le moment. Les personnages qui se souviendront d’un choix d’Hylee seront listés ici.</div>';}
     state.memories.forEach(k=>{const it=PROGRESSION_MEMORIES[k]; if(!it)return; const el=document.createElement('article'); el.className='progressionEntry'; el.innerHTML=`<div class="progressionIcon">${it.icon||'✧'}</div><div class="progressionEntryBody"><div class="progressionEntryType">${it.type||'Souvenir'}</div><h5>${it.title}</h5><p>${it.body}</p></div>`; mem.appendChild(el);});
   }
+  const revealedJournalCount=(JOURNAL_FRAGMENT_ORDER||[]).filter(journalFragmentUnlocked).length;
   setText('progressionItemCount', String(state.inventory.length));
   setText('progressionMemoryCount', String(state.memories.length));
+  setText('progressionJournalCount', String(revealedJournalCount));
+  setText('progressionJournalLabel', `${revealedJournalCount} / ${(JOURNAL_FRAGMENT_ORDER||[]).length} trouvés`);
   setText('progressionChapterLabel', getSceneChapterLabel());
+  renderJournalFragments();
 }
 function openProgression(){
   state.progressReturn=(!document.getElementById('game').classList.contains('hidden'))?'game':'title';
@@ -8482,6 +8680,7 @@ function toggleDevMode(){
     state.flags={...(state.flags||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true};
     state.seenEnding=true;
     unlockAllCodex();
+    unlockJournalFragments(JOURNAL_FRAGMENT_ORDER,{silent:true});
     playUiSound('dev');
     toast('Mode développeur activé','Codex complet · chapitres ouverts · prérequis ignorés · valeurs visibles.');
   }else{
@@ -8593,8 +8792,24 @@ function startIntro(){
   render();
 }
 function exitIntroToMenu(){
-  try{ load(); }catch(e){}
+  const completed=isIntroEndingScene(state.scene);
+  const keepMobile=state.mobileUI===true;
+  const keepDev=state.devMode===true;
+  const keepMenuMusic=state.menuMusicOn!==false;
+  const prev=readMainSave();
+  if(prev&&prev.scene){
+    state={...state,...prev,stats:{...START_STATS,...(prev.stats||{})},introStats:{...INTRO_STATS,...((prev&&prev.introStats)||{})},flags:{...((prev&&prev.flags)||{})},history:Array.isArray(prev.history)?prev.history:[]};
+  }else{
+    state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+  }
+  state.mobileUI=(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:keepMobile;
+  state.menuMusicOn=(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:keepMenuMusic;
+  state.devMode=keepDev || !!(prev&&prev.devMode);
+  ensureCodexDefaults(); ensureIntroDefaults(); ensureProgressDefaults();
+  if(completed){ state.flags={...(state.flags||{}),introComplete:true}; unlockJournalFragments('intro'); }
+  save();
   setScreen('title');
+  updateMenuButtons();
 }
 
 function save(){ensureCodexDefaults(); ensureIntroDefaults(); ensureProgressDefaults(); if(isIntroScene()){localStorage.setItem('sylvinia_vn_intro_v82',JSON.stringify({scene:state.scene,introStats:state.introStats})); return;} localStorage.setItem('sylvinia_vn_v82',JSON.stringify(state));}
@@ -8711,10 +8926,10 @@ function render(){
   const scene=S[state.scene]; if(!scene){state.scene='s01';return render()} checkCodexForScene(state.scene); applySceneProgressRewards(state.scene,scene);
   if(scene.c3ShadowCombat){ if(state.c3ShadowIntroPending) return; if(!state.c3ShadowIntroPlayed){enterC3ShadowCombat(scene); return;} renderC3ShadowDuel(scene); return;}
   if(scene.combat){ if(state.duelIntroPending) return; if(!state.duelIntroPlayed){enterCombat(scene); return;} renderDuel(scene); return;}
-  if(state.scene==='c2_45') state.flags={...(state.flags||{}),chapter2Complete:true};
+  if(state.scene==='c2_45'){ state.flags={...(state.flags||{}),chapter2Complete:true}; unlockJournalFragments('ch2'); }
   if(sceneNumericSuffix(state.scene)!==null && sceneNumericSuffix(state.scene)>=24) state.flags={...(state.flags||{}),hyleePostGlacialis:true};
-  if(state.scene==='c3_55') state.flags={...(state.flags||{}),chapter3Complete:true};
-  if(scene.ending&&!isIntroScene(state.scene)){ state.seenEnding=true; state.flags={...(state.flags||{}),chapter1Complete:true}; scene.text=endingText(); }
+  if(state.scene==='c3_55'){ state.flags={...(state.flags||{}),chapter3Complete:true}; unlockJournalFragments('ch3'); }
+  if(scene.ending&&!isIntroScene(state.scene)){ state.seenEnding=true; state.flags={...(state.flags||{}),chapter1Complete:true}; unlockJournalFragments('ch1'); scene.text=endingText(); }
   if(scene.duelResult) scene.text=duelResultText();
   document.getElementById('sceneTitle').textContent=scene.title||''; document.getElementById('sceneSub').textContent=scene.sub||'';
   document.getElementById('stage').classList.remove('combatMode'); setStageBg(scene.bg,!!scene.zoom);
@@ -8739,7 +8954,7 @@ function newGame(opts={}){
   const keepMobile=state.mobileUI===true;
   const keepDev=state.devMode===true;
   const keepMenuMusic=state.menuMusicOn!==false;
-  state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'game',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+  state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'game',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
   ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v));
   setScreen('game');
   render();
@@ -8774,7 +8989,7 @@ function startChapter2(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c2_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c2_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1'])],memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -8786,7 +9001,7 @@ function startChapter3(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c3_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c3_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2'])],memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -8826,7 +9041,7 @@ function updateProgressUI(){
 }
 function updateMenuButtons(){const stateLabel=document.getElementById('menuMusicBtnState'); if(stateLabel) stateLabel.textContent=state.menuMusicOn===false?'Coupée':'Activée'; applyMobileUI(); updateDevUI(); updateProgressUI(); updateChapterLocks();}
 function showDisclaimer(){load(); ensureCodexDefaults(); const seen=sessionStorage.getItem('sylvinia_disclaimer_seen_v82'); if(seen){setScreen('title');}else{setScreen('disclaimer');}}
-function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],musicOn:true,menuMusicOn:true,mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
+function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],musicOn:true,menuMusicOn:true,mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
 
 const enterTitleBtn=document.getElementById('enterTitleBtn'); if(enterTitleBtn) enterTitleBtn.onclick=()=>{sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1');setScreen('title');};
 document.getElementById('introBtn').onclick=startIntro; document.getElementById('startBtn').onclick=newGame; document.getElementById('startCh1Btn').onclick=startChapter1; document.getElementById('startCh2Btn').onclick=startChapter2; document.getElementById('startCh3Btn').onclick=startChapter3; document.getElementById('resumeBtn').onclick=()=>{load();resume()}; document.getElementById('progressionBtn').onclick=openProgression; document.getElementById('progressionBtn2').onclick=openProgression; document.getElementById('codexBtn').onclick=()=>setScreen('codex'); document.getElementById('codexBtn2').onclick=()=>setScreen('codex'); document.getElementById('progressBackBtn').onclick=backFromProgression; document.getElementById('backBtn').onclick=()=>setScreen(state.lastScreen==='codex'?'title':state.lastScreen); document.getElementById('menuBtn').onclick=()=>showInitialScreen(); document.getElementById('resetBtn').onclick=resetProgress; document.getElementById('devModeBtn').onclick=toggleDevMode; document.getElementById('devBackBtn').onclick=devBack; document.getElementById('menuMusicBtn').onclick=()=>{state.menuMusicOn=state.menuMusicOn===false; updateMenuButtons(); if(state.menuMusicOn)playMusic('music_menu'); else music.pause(); save();};
