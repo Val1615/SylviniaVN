@@ -1797,6 +1797,27 @@ body.mobileUI .journalBlock.projection p{font-size:18px;line-height:1.24;}
 <style id="introPatchStyles">
 .choiceBtn.lockedChoice{opacity:.52;cursor:not-allowed;filter:saturate(.65) brightness(.9);}
 .choiceBtn.lockedChoice:hover{transform:none;background:rgba(255,255,255,.055);}
+
+
+/* --- Correctif anti-blocage disclaimer v0.105 --- */
+body.disclaimerOpen{overflow:auto!important;height:auto!important;min-height:100svh;}
+body.disclaimerOpen #app{height:100svh!important;max-height:100svh!important;overflow:auto!important;display:block;}
+body.disclaimerOpen #disclaimer{width:100%!important;height:100svh!important;max-height:100svh!important;min-height:100svh!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;border-radius:0!important;display:block!important;}
+body.disclaimerOpen #disclaimerCard{min-height:auto!important;padding:18px 14px 92px!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;box-sizing:border-box!important;}
+body.disclaimerOpen .disclaimerPanel{width:min(850px,100%)!important;max-height:none!important;margin:0 auto!important;box-sizing:border-box!important;}
+body.disclaimerOpen .disclaimerActions{position:sticky!important;bottom:0;z-index:20;padding:12px 0 2px;background:linear-gradient(180deg,rgba(5,9,17,0),rgba(5,9,17,.94) 34%,rgba(5,9,17,.98));}
+body.disclaimerOpen #enterTitleBtn{min-height:54px;}
+@media(max-width:760px){
+  body.disclaimerOpen #disclaimerCard{padding:10px 8px 88px!important;}
+  body.disclaimerOpen .disclaimerPanel{padding:14px 13px!important;border-radius:18px!important;}
+  body.disclaimerOpen .disclaimerSigil{width:38px!important;height:38px!important;font-size:22px!important;margin-bottom:8px!important;}
+  body.disclaimerOpen .disclaimerTitle{font-size:clamp(24px,8vw,36px)!important;line-height:1.05!important;margin-bottom:8px!important;}
+  body.disclaimerOpen .disclaimerText,body.disclaimerOpen .disclaimerFine,body.disclaimerOpen .disclaimerBetaNotice{font-size:13px!important;line-height:1.42!important;}
+  body.disclaimerOpen .disclaimerText{margin-bottom:12px!important;}
+  body.disclaimerOpen .disclaimerFine{margin-bottom:12px!important;}
+  body.disclaimerOpen .disclaimerBetaNotice{margin:10px 0 12px!important;padding:10px 11px!important;}
+  body.disclaimerOpen #enterTitleBtn{width:100%!important;min-height:54px!important;font-size:16px!important;}
+}
 </style>
 
 <script>
@@ -1896,11 +1917,7 @@ const JOURNAL_FRAGMENTS={
     "blocks": [
       {
         "kind": "journal",
-        "text": "Ceci est mon souvenir, aussi loin que je me souvienne, de mon passé. Un mélange entre mon ressenti à chaud, et mon vécu avec les reculs des années. Il y a ce qu’il reste de mon vieux journal intime. Bien qu’incomplet, il représente au mieux tout ce que j’ai pu vivre. Ce livre n’a pas pour vocation d’immortaliser sur papier un passé que je te demande de comprendre. Je l’écris car il représente une partie de notre histoire. Il montre mes sacrifices, mes plaies, mes erreurs et mes doutes. Par ces quelques pages, je scelle les lignes d’un passé assumé.
-
-Par où commencer. Oui. J’étais une jeune fille assez impulsive. Je croyais, dur comme fer en mes idées et je reconnais avoir encore cette personnalité aujourd’hui. Relativement rebelle étant gamine, j’ai grandi dans un petit village hors de la capitale, mais tout de même non loin de Al’gratal. Je suis descendante directe de l’Impératrice des Sylviniens, Eladri Farae. Je n’ai jamais connu mon père. Mère disait qu’il a été emporté par la maladie.
-
-Au plus profond de moi-même, je t’ai toujours haïe de tout mon cœur. Ton sourire, ta joie de vivre, tes yeux dorés, ton don… Pourquoi cette… lumière ta donnée ses pouvoirs… Moi, je n’ai eu le droit qu’aux miettes. C’est injuste. Tu ne peux pas imaginée la honte que j’ai pu ressentir quand ta petite gueule d’amour a été reçu aux tests, et pas moi… Mère sera furieuse de me revoir non acceptée… et déçu, une fois de plus. Je n’oublierais jamais ce qu’elle nous a dit avant de partir… « Je sais que je serais fière de mon sang d’ici peu » … Elle parlait de toi… elle parle toujours de toi. Si seulement… ne serait-ce qu’un regard, pourrait m’être accordé. Au moins une fois ; ça fait si longtemps. Mais bon… si seulement ça pouvait t’intéresser. J’ai… l’impression de ne pas être à ma place… à tes côtés… et aux côtés de notre mère."
+        "text": "Ceci est mon souvenir, aussi loin que je me souvienne, de mon passé. Un mélange entre mon ressenti à chaud, et mon vécu avec les reculs des années. Il y a ce qu’il reste de mon vieux journal intime. Bien qu’incomplet, il représente au mieux tout ce que j’ai pu vivre. Ce livre n’a pas pour vocation d’immortaliser sur papier un passé que je te demande de comprendre. Je l’écris car il représente une partie de notre histoire. Il montre mes sacrifices, mes plaies, mes erreurs et mes doutes. Par ces quelques pages, je scelle les lignes d’un passé assumé.\n\nPar où commencer. Oui. J’étais une jeune fille assez impulsive. Je croyais, dur comme fer en mes idées et je reconnais avoir encore cette personnalité aujourd’hui. Relativement rebelle étant gamine, j’ai grandi dans un petit village hors de la capitale, mais tout de même non loin de Al’gratal. Je suis descendante directe de l’Impératrice des Sylviniens, Eladri Farae. Je n’ai jamais connu mon père. Mère disait qu’il a été emporté par la maladie.\n\nAu plus profond de moi-même, je t’ai toujours haïe de tout mon cœur. Ton sourire, ta joie de vivre, tes yeux dorés, ton don… Pourquoi cette… lumière ta donnée ses pouvoirs… Moi, je n’ai eu le droit qu’aux miettes. C’est injuste. Tu ne peux pas imaginée la honte que j’ai pu ressentir quand ta petite gueule d’amour a été reçu aux tests, et pas moi… Mère sera furieuse de me revoir non acceptée… et déçu, une fois de plus. Je n’oublierais jamais ce qu’elle nous a dit avant de partir… « Je sais que je serais fière de mon sang d’ici peu » … Elle parlait de toi… elle parle toujours de toi. Si seulement… ne serait-ce qu’un regard, pourrait m’être accordé. Au moins une fois ; ça fait si longtemps. Mais bon… si seulement ça pouvait t’intéresser. J’ai… l’impression de ne pas être à ma place… à tes côtés… et aux côtés de notre mère."
       },
       {
         "kind": "projection",
@@ -8498,7 +8515,7 @@ function htmlEscape(value){return String(value??'').replace(/[&<>"']/g,m=>({'&':
 function isIntroEndingScene(sceneId=state.scene){return ['intro_ending_hand','intro_ending_solo','intro_ending_frost','intro_ending_notready','intro_ending_cellar'].includes(String(sceneId||''));}
 function journalFragmentsReadable(){
   const flags=state.flags||{};
-  return !!(state.devMode || flags.journalFragmentsReadable || flags.amaneaJournalReadable || flags.irianaFoundAmaneaJournal || flags.irianaHasAmaneaJournal);
+  return !!(flags.journalFragmentsReadable || flags.amaneaJournalReadable || flags.irianaFoundAmaneaJournal || flags.irianaHasAmaneaJournal);
 }
 function journalFragmentUnlocked(key){
   ensureProgressDefaults();
@@ -8733,16 +8750,36 @@ function setMobileUI(enabled){
   toast('Interface mise à jour', state.mobileUI?'Mode mobile activé.':'Mode mobile désactivé.');
 }
 
+function disclaimerSeen(){
+  try{ if(sessionStorage.getItem('sylvinia_disclaimer_seen_v82')) return true; }catch(e){}
+  try{ if(localStorage.getItem('sylvinia_disclaimer_seen_v82')) return true; }catch(e){}
+  return false;
+}
+function markDisclaimerSeen(){
+  try{ sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1'); }catch(e){}
+  try{ localStorage.setItem('sylvinia_disclaimer_seen_v82','1'); }catch(e){}
+}
+function enterTitleFromDisclaimer(){
+  markDisclaimerSeen();
+  const disclaimer=document.getElementById('disclaimer');
+  const title=document.getElementById('title');
+  if(disclaimer) disclaimer.classList.add('hidden');
+  if(title) title.classList.remove('hidden');
+  document.body.classList.remove('disclaimerOpen');
+  state.lastScreen='title';
+  try{ if(state.menuMusicOn!==false) playMusic('music_menu'); }catch(e){}
+  try{ save(); }catch(e){}
+  try{ updateMenuButtons(); updateProgressUI(); updateBugReportUI(); }catch(e){}
+}
 function showInitialScreen(){
-  const seen=sessionStorage.getItem('sylvinia_disclaimer_seen_v82');
-  if(!seen && document.getElementById('disclaimer')){
+  if(!disclaimerSeen() && document.getElementById('disclaimer')){
     setScreen('disclaimer');
   }else{
     setScreen('title');
   }
 }
 
-function setScreen(name){for(const id of ['disclaimer','title','game','codex','progression']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} document.getElementById(name).classList.remove('hidden'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name!=='disclaimer')state.lastScreen=name; if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
+function setScreen(name){for(const id of ['disclaimer','title','game','codex','progression']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name!=='disclaimer')state.lastScreen=name; if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
 
 function isIntroScene(sceneId=state.scene){return String(sceneId||'').startsWith('intro_');}
 function ensureIntroDefaults(){ if(!state.introStats) state.introStats={...INTRO_STATS}; state.introStats={...INTRO_STATS,...state.introStats}; }
@@ -9040,10 +9077,16 @@ function updateProgressUI(){
   if(tip) tip.textContent=`Le grimoire est complété à ${pct}% pour cette démo. Les personnages, lieux, illustrations et pistes sonores se dévoilent au rythme de la découverte.`;
 }
 function updateMenuButtons(){const stateLabel=document.getElementById('menuMusicBtnState'); if(stateLabel) stateLabel.textContent=state.menuMusicOn===false?'Coupée':'Activée'; applyMobileUI(); updateDevUI(); updateProgressUI(); updateChapterLocks();}
-function showDisclaimer(){load(); ensureCodexDefaults(); const seen=sessionStorage.getItem('sylvinia_disclaimer_seen_v82'); if(seen){setScreen('title');}else{setScreen('disclaimer');}}
+function showDisclaimer(){load(); ensureCodexDefaults(); if(disclaimerSeen()){setScreen('title');}else{setScreen('disclaimer');}}
 function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],musicOn:true,menuMusicOn:true,mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
 
-const enterTitleBtn=document.getElementById('enterTitleBtn'); if(enterTitleBtn) enterTitleBtn.onclick=()=>{sessionStorage.setItem('sylvinia_disclaimer_seen_v82','1');setScreen('title');};
+function bindDisclaimerEnterButton(){
+  const enterTitleBtn=document.getElementById('enterTitleBtn');
+  if(enterTitleBtn) enterTitleBtn.onclick=ev=>{ev.preventDefault(); enterTitleFromDisclaimer();};
+}
+bindDisclaimerEnterButton();
+document.addEventListener('DOMContentLoaded',bindDisclaimerEnterButton);
+document.addEventListener('click',ev=>{const btn=ev.target&&ev.target.closest?ev.target.closest('#enterTitleBtn'):null; if(btn){ev.preventDefault(); enterTitleFromDisclaimer();}}, false);
 document.getElementById('introBtn').onclick=startIntro; document.getElementById('startBtn').onclick=newGame; document.getElementById('startCh1Btn').onclick=startChapter1; document.getElementById('startCh2Btn').onclick=startChapter2; document.getElementById('startCh3Btn').onclick=startChapter3; document.getElementById('resumeBtn').onclick=()=>{load();resume()}; document.getElementById('progressionBtn').onclick=openProgression; document.getElementById('progressionBtn2').onclick=openProgression; document.getElementById('codexBtn').onclick=()=>setScreen('codex'); document.getElementById('codexBtn2').onclick=()=>setScreen('codex'); document.getElementById('progressBackBtn').onclick=backFromProgression; document.getElementById('backBtn').onclick=()=>setScreen(state.lastScreen==='codex'?'title':state.lastScreen); document.getElementById('menuBtn').onclick=()=>showInitialScreen(); document.getElementById('resetBtn').onclick=resetProgress; document.getElementById('devModeBtn').onclick=toggleDevMode; document.getElementById('devBackBtn').onclick=devBack; document.getElementById('menuMusicBtn').onclick=()=>{state.menuMusicOn=state.menuMusicOn===false; updateMenuButtons(); if(state.menuMusicOn)playMusic('music_menu'); else music.pause(); save();};
 document.getElementById('mobileUiToggle').onchange=e=>setMobileUI(e.target.checked);
 document.getElementById('musicBtn').onclick=()=>{state.musicOn=!state.musicOn;document.getElementById('musicBtn').textContent=state.musicOn?'Couper musique':'Lancer musique'; if(state.musicOn){const sc=S[state.scene]||{}; playMusic(resolveSceneMusic(state.scene, sc.music||'music_menu'))} else music.pause(); save();};
