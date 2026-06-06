@@ -1565,6 +1565,32 @@ body.mobileUI .char.right{right:3%;}
 body.mobileUI .char.left,body.mobileUI .char.right{max-width:43%;max-height:84%;}
 body.mobileUI .char.center{max-width:76%;max-height:86%;}
 
+
+/* Correctif renforcé : cadrage des groupes de sprites sur mobile / formats étroits */
+.chars.duoChars .char.left{left:2% !important;right:auto !important;max-width:45% !important;max-height:86% !important;object-fit:contain !important;}
+.chars.duoChars .char.right{right:2% !important;left:auto !important;max-width:45% !important;max-height:86% !important;object-fit:contain !important;}
+.chars.duoChars .char.left.back{left:7% !important;max-width:36% !important;max-height:74% !important;}
+.chars.duoChars .char.right.back{right:7% !important;max-width:36% !important;max-height:74% !important;}
+.chars.trioChars .char.left{left:0 !important;max-width:35% !important;max-height:78% !important;}
+.chars.trioChars .char.center{max-width:44% !important;max-height:82% !important;}
+.chars.trioChars .char.right{right:0 !important;max-width:35% !important;max-height:78% !important;}
+@media(max-width:900px){
+  .chars.duoChars .char.left{left:0 !important;max-width:49% !important;max-height:78% !important;}
+  .chars.duoChars .char.right{right:0 !important;max-width:49% !important;max-height:78% !important;}
+  .chars.duoChars .char.left.back{left:4% !important;max-width:36% !important;max-height:68% !important;}
+  .chars.duoChars .char.right.back{right:4% !important;max-width:36% !important;max-height:68% !important;}
+  .chars.trioChars .char.left{left:-1% !important;max-width:33% !important;max-height:70% !important;}
+  .chars.trioChars .char.center{max-width:38% !important;max-height:75% !important;}
+  .chars.trioChars .char.right{right:-1% !important;max-width:33% !important;max-height:70% !important;}
+}
+body.mobileUI .chars.duoChars .char.left{left:0 !important;right:auto !important;max-width:49% !important;max-height:76% !important;}
+body.mobileUI .chars.duoChars .char.right{right:0 !important;left:auto !important;max-width:49% !important;max-height:76% !important;}
+body.mobileUI .chars.duoChars .char.left.back{left:4% !important;max-width:34% !important;max-height:66% !important;}
+body.mobileUI .chars.duoChars .char.right.back{right:4% !important;max-width:34% !important;max-height:66% !important;}
+body.mobileUI .chars.trioChars .char.left{left:-1% !important;max-width:32% !important;max-height:68% !important;}
+body.mobileUI .chars.trioChars .char.center{max-width:38% !important;max-height:72% !important;}
+body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !important;max-height:68% !important;}
+
 </style>
 </head>
 <body>
@@ -2040,7 +2066,7 @@ const A={
   c4v_ruins_circle:'assets/images/chapter4/c4v_ruins_circle.png', c4v_portal_temple:'assets/images/chapter4/c4v_portal_temple.png', c4v_calciterres_square:'assets/images/chapter4/c4v_calciterres_square.png', c4v_infernal_throne:'assets/images/chapter4/c4v_infernal_throne.png', c4v_akuhn_citadel:'assets/images/chapter4/c4v_akuhn_citadel.png', c4v_necro_ritual:'assets/images/chapter4/c4v_necro_ritual.png', c4v_forest_curse:'assets/images/chapter4/c4v_forest_curse.png', c4v_forest_naiah:'assets/images/chapter4/c4v_forest_naiah.png', c4v_bellirith_apocalypse:'assets/images/chapter4/c4v_bellirith_apocalypse.png', c4v_mortal_ruins_return:'assets/images/chapter4/c4v_mortal_ruins_return.png', c4d_noble_chamber:'assets/images/chapter4/c4d_noble_chamber.png', c4d_magic_projection_room:'assets/images/chapter4/c4d_magic_projection_room.png',
   c3_key_arrivee_algratal:'assets/images/chapter3/c3_key_arrivee_algratal.png', c3_key_robe_miroir:'assets/images/chapter3/c3_key_robe_miroir.png', c3_key_baton_cerisier_noir:'assets/images/chapter3/c3_key_baton_cerisier_noir.png', c3_key_carnet_renforce:'assets/images/chapter3/c3_key_carnet_renforce.png', c3_key_glacialis_01:'assets/images/chapter3/c3_key_glacialis_01.png', c3_key_glacialis_02:'assets/images/chapter3/c3_key_glacialis_02.png', c3_key_test_remerii:'assets/images/chapter3/c3_key_test_remerii.png', c3_shadow_m1_situation:'assets/images/chapter3/c3_shadow_m1_situation.png', c3_shadow_m1_barriere:'assets/images/chapter3/c3_shadow_m1_barriere.png', c3_shadow_m1_roulade:'assets/images/chapter3/c3_shadow_m1_roulade.png', c3_shadow_m1_observer:'assets/images/chapter3/c3_shadow_m1_observer.png', c3_shadow_m1_appel_remerii:'assets/images/chapter3/c3_shadow_m1_appel_remerii.png', c3_shadow_m2_situation:'assets/images/chapter3/c3_shadow_m2_situation.png', c3_shadow_m2_etoile:'assets/images/chapter3/c3_shadow_m2_etoile.png', c3_shadow_m2_leurre:'assets/images/chapter3/c3_shadow_m2_leurre.png', c3_shadow_m2_rafale:'assets/images/chapter3/c3_shadow_m2_rafale.png', c3_shadow_m2_souffle:'assets/images/chapter3/c3_shadow_m2_souffle.png', c3_shadow_m3_situation:'assets/images/chapter3/c3_shadow_m3_situation.png', c3_key_medig:'assets/images/chapter3/c3_key_medig.png', c3_key_confession_feu:'assets/images/chapter3/c3_key_confession_feu.png', c3_key_cauchemar:'assets/images/chapter3/c3_key_cauchemar.png',
   c2_forest_intro:'assets/images/keyscenes/c2_forest_intro.png', c2_ruisseau_meeting:'assets/images/keyscenes/c2_ruisseau_meeting.png', c2_algratal_approach:'assets/images/keyscenes/c2_algratal_approach.png', c2_algratal_panorama_cg:'assets/images/keyscenes/c2_algratal_panorama.png', c2_algratal_gate_cg:'assets/images/keyscenes/c2_algratal_gate.png', c2_catacombes_draven:'assets/images/keyscenes/c2_catacombes_draven.png', c2_catacombes_valurn:'assets/images/keyscenes/c2_catacombes_valurn.png', c2_catacombes_iriana:'assets/images/keyscenes/c2_catacombes_iriana.png',
-  c4v_key_02:'assets/images/keyscenes/c4v_key_02.png', c4v_key_04:'assets/images/keyscenes/c4v_key_04.png', c4v_key_05:'assets/images/keyscenes/c4v_key_05.png', c4v_key_06:'assets/images/keyscenes/c4v_key_06.png', c4v_key_07:'assets/images/keyscenes/c4v_key_07.png', c4v_key_10:'assets/images/keyscenes/c4v_key_10.png', c4v_key_14:'assets/images/keyscenes/c4v_key_14.png', c4v_key_17:'assets/images/keyscenes/c4v_key_17.png', c4v_key_20:'assets/images/keyscenes/c4v_key_20.png', c4v_key_21:'assets/images/keyscenes/c4v_key_21.png', c4v_key_24:'assets/images/keyscenes/c4v_key_24.png', c4v_key_25:'assets/images/keyscenes/c4v_key_25.png', c4v_key_29:'assets/images/keyscenes/c4v_key_29.png', c4v_key_38:'assets/images/keyscenes/c4v_key_38.png', c4v_key_39:'assets/images/keyscenes/c4v_key_39.png', c4v_key_42:'assets/images/keyscenes/c4v_key_42.png',
+  c4v_key_02:'assets/images/keyscenes/c4v_key_02.png', c4v_key_04:'assets/images/keyscenes/c4v_key_04.png', c4v_key_05:'assets/images/keyscenes/c4v_key_05.png', c4v_key_06:'assets/images/keyscenes/c4v_key_06.png', c4v_key_07:'assets/images/keyscenes/c4v_key_07.png', c4v_key_10:'assets/images/keyscenes/c4v_key_10.png', c4v_key_14:'assets/images/keyscenes/c4v_key_14.png', c4v_key_17:'assets/images/keyscenes/c4v_key_17.png', c4v_key_20:'assets/images/keyscenes/c4v_key_20.png', c4v_key_21:'assets/images/keyscenes/c4v_key_21.png', c4v_key_24:'assets/images/keyscenes/c4v_key_24.png', c4v_key_25:'assets/images/keyscenes/c4v_key_25.png', c4v_key_29:'assets/images/keyscenes/c4v_key_29.png', c4v_key_38:'assets/images/keyscenes/c4v_key_38.png', c4v_key_39:'assets/images/keyscenes/c4v_key_39.png', c4v_key_42:'assets/images/keyscenes/c4v_key_42.png', c4_key_03:'assets/images/keyscenes/c4_key_03.png', c4v_key_45:'assets/images/keyscenes/c4v_key_45.png', c4v_key_46:'assets/images/keyscenes/c4v_key_46.png', c4v_key_50:'assets/images/keyscenes/c4v_key_50.png', c4v_key_53:'assets/images/keyscenes/c4v_key_53.png', c4v_key_55:'assets/images/keyscenes/c4v_key_55.png',
   music_menu:'assets/audio/menu.mp3', music_wild:'assets/audio/wild_calm.mp3', music_confessions:'assets/audio/vent_confessions.mp3', music_duel:'assets/audio/entrainement_aube.mp3', music_iriana:'assets/audio/entree_iriana.mp3', music_training:'assets/audio/wild_calm.mp3', music_tension:'assets/audio/entree_iriana.mp3', music_end:'assets/audio/entree_iriana.mp3', music_algratal:'assets/audio/algratal.mp3', music_catacombes:'assets/audio/catacombes.mp3', music_c3_shopping:'assets/audio/c3_shopping_capitale.mp3', music_c3_combat_ombres:'assets/audio/c3_combat_ombres.mp3', music_c3_unborn:'assets/audio/c3_the_unborn.mp3', music_valurn_route:'assets/audio/chapter4/valurn_lullaby.mp3', music_thazran:'assets/audio/chapter4/infernal_trade.mp3', music_bellirith:'assets/audio/chapter4/rencontre_bellirith.mp3',
   hylee_thinking:'assets/sprites/hylee_thinking.png', hylee_surprised:'assets/sprites/hylee_surprised.png', hylee_confident:'assets/sprites/hylee_confident.png', hylee_soft:'assets/sprites/hylee_soft.png', hylee_determined:'assets/sprites/hylee_determined.png', hylee_angry:'assets/sprites/hylee_angry.png',
   hylee2_thinking:'assets/sprites/chapter3/hylee2_thinking.png', hylee2_surprised:'assets/sprites/chapter3/hylee2_surprised.png', hylee2_confident:'assets/sprites/chapter3/hylee2_confident.png', hylee2_soft:'assets/sprites/chapter3/hylee2_soft.png', hylee2_determined:'assets/sprites/chapter3/hylee2_determined.png', hylee2_angry:'assets/sprites/chapter3/hylee2_angry.png', hylee2_sad:'assets/sprites/chapter3/hylee2_sad.png', hylee2_charmed:'assets/sprites/chapter3/hylee2_charmed.png', hylee2_teasing:'assets/sprites/chapter3/hylee2_teasing.png', hylee2_furious:'assets/sprites/chapter3/hylee2_furious.png',
@@ -6082,10 +6108,11 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
  c4_03:{
   "title": "Chapitre IV · Croisée des récits",
   "sub": "Le fil se divise",
-  "bg": "bg_projection",
+  "bg": "c4_key_03",
   "music": "music_tension",
   "speaker": "Narrateur",
   "text": "L’histoire se divise ici. Ce choix ne change pas seulement le décor : il change le regard. Dans l’un, le feu infernal parle en dettes, en sang et en désir. Dans l’autre, une ville assiégée répond à travers la voix fatiguée d’une fille qui attend son père.",
+  "zoom": true,
   "choices": [
     {
       "label": "Suivre Valurn · Chapitre 4V",
@@ -6093,6 +6120,24 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
       "effects": {
         "audace": 1
       },
+      "note": "Route des Calciterres, de Thazran, de Naïah et de Bellirith.",
+      "flags": {
+        "route4VStarted": true
+      }
+    },
+    {
+      "label": "Suivre Draven · Chapitre 4D",
+      "next": "c4d_01",
+      "effects": {
+        "sangfroid": 1
+      },
+      "note": "Route de Forthaven, de Lineva et de la demande militaire.",
+      "flags": {
+        "route4DStarted": true
+      }
+    }
+  ]
+},
       "note": "Route des Calciterres, de Thazran, de Naïah et de Bellirith.",
       "flags": {
         "route4VStarted": true
@@ -7254,7 +7299,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
  c4v_45:{
   "title": "Bellirith",
   "sub": "Choix stratégique · Résister au Désir",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_45",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Bellirith n’a pas besoin de chaînes. Elle sait que les souvenirs peuvent ligoter plus finement que le fer. Valurn doit choisir sa défense : couper, rire, encaisser, ou laisser l’ennemie parler assez longtemps pour révéler l’ordre de Bhaal.",
@@ -7270,6 +7315,8 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "choices": [
     {
       "label": "Couper court avant qu’elle ne s’installe",
@@ -7329,10 +7376,62 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
     }
   ]
 },
+      "requires": {
+        "sangfroid": 10
+      },
+      "note": "Choix stratégique · Défense nette.",
+      "flags": {
+        "bellirith_coupee": true
+      }
+    },
+    {
+      "label": "La provoquer pour lui voler le rythme",
+      "next": "c4v_46b",
+      "effects": {
+        "audace": 2
+      },
+      "requires": {
+        "audace": 10
+      },
+      "note": "Choix stratégique · Dangereux mais fidèle à Valurn.",
+      "flags": {
+        "bellirith_provoquee": true
+      }
+    },
+    {
+      "label": "La laisser parler pour remonter jusqu’à Bhaal",
+      "next": "c4v_46c",
+      "effects": {
+        "lucidite": 2
+      },
+      "requires": {
+        "lucidite": 11
+      },
+      "note": "Choix stratégique · Souvenir Bellirith.",
+      "flags": {
+        "bellirith_a_senti_faille": true
+      },
+      "memories": [
+        "bellirith_faille_valurn"
+      ]
+    },
+    {
+      "label": "Se réfugier derrière le sarcasme",
+      "next": "c4v_46d",
+      "effects": {
+        "sangfroid": 1
+      },
+      "note": "Réponse sûre.",
+      "flags": {
+        "valurn_sarcasme_defense": true
+      }
+    }
+  ]
+},
  c4v_46a:{
   "title": "Bellirith",
   "sub": "Réponse de Valurn",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_46",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn attrape sa main avant qu’elle ne termine son cercle autour de lui. « Tu confonds mémoire et invitation. » La phrase claque. Bellirith sourit, mais son regard se refroidit.",
@@ -7348,12 +7447,14 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_47"
 },
  c4v_46b:{
   "title": "Bellirith",
   "sub": "Réponse de Valurn",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_46",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn lui offre son sourire le plus insultant. « Tu perds ton temps. Tes meilleurs tours datent d’une époque où j’avais moins de goût. » Bellirith rit. Touchée ? Peut-être. Amusée ? Beaucoup trop.",
@@ -7369,12 +7470,14 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_47"
 },
  c4v_46c:{
   "title": "Bellirith",
   "sub": "Réponse de Valurn",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_46",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn ne recule pas. Il lui laisse assez d’espace pour croire qu’elle avance. Bellirith savoure sa propre voix, puis glisse enfin le vrai message : Père l’a envoyée. La faille s’ouvre dans les deux sens.",
@@ -7390,12 +7493,14 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_47"
 },
  c4v_46d:{
   "title": "Bellirith",
   "sub": "Réponse de Valurn",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_46",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn ricane, parce que l’ironie est parfois une porte blindée avec des charnières rouillées. Bellirith ne la brise pas. Elle pose simplement la main dessus et promet de revenir avec la bonne clé.",
@@ -7411,6 +7516,8 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_47"
 },
  c4v_47:{
@@ -7479,7 +7586,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
  c4v_50:{
   "title": "Bhaal",
   "sub": "Choix stratégique · Répondre à l’ombre paternelle",
-  "bg": "c4v_infernal_throne",
+  "bg": "c4v_key_50",
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Bhaal n’est pas là, mais son absence occupe plus de place qu’un trône. Valurn peut défier l’ordre, le détourner, ou dissimuler sa véritable peur derrière une obéissance provisoire.",
@@ -7495,6 +7602,8 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "choices": [
     {
       "label": "Déclarer que Bhaal n’est pas son maître",
@@ -7502,6 +7611,39 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
       "effects": {
         "audace": 2
       },
+      "requires": {
+        "audace": 11
+      },
+      "note": "Choix stratégique · Rébellion ouverte.",
+      "flags": {
+        "valurn_defie_bhaal": true
+      }
+    },
+    {
+      "label": "Répondre que l’obéissance n’exclut pas la stratégie",
+      "next": "c4v_51b",
+      "effects": {
+        "lucidite": 2,
+        "sangfroid": 1
+      },
+      "requires": {
+        "lucidite": 10
+      },
+      "note": "Choix stratégique · Défense diplomatique.",
+      "flags": {
+        "valurn_masque_bhaal": true
+      }
+    },
+    {
+      "label": "Ne rien promettre, ne rien refuser",
+      "next": "c4v_51c",
+      "effects": {
+        "sangfroid": 1
+      },
+      "note": "Réponse sûre, mais ambiguë."
+    }
+  ]
+},
       "requires": {
         "audace": 11
       },
@@ -7622,7 +7764,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
  c4v_53:{
   "title": "Bellirith",
   "sub": "La main repoussée",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_53",
   "music": "music_bellirith",
   "speaker": "Valurn",
   "text": "Valurn attrape sa main. Cette fois, son sourire se durcit vraiment. « Et c’est pour ça que je ne te fais pas confiance. » Bellirith rit doucement, un rire qui promet de ne pas prendre fin aujourd’hui.",
@@ -7638,6 +7780,8 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_54"
 },
  c4v_54:{
@@ -7664,7 +7808,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
  c4v_55:{
   "title": "Bellirith",
   "sub": "Toujours là",
-  "bg": "c4v_bellirith_apocalypse",
+  "bg": "c4v_key_55",
   "music": "music_bellirith",
   "speaker": "Bellirith",
   "text": "« Peut-être. Mais souviens-toi… je serai toujours là pour te rappeler ce que tu es vraiment. » Puis elle disparaît dans les ombres, laissant derrière elle un rire, une brûlure et une quantité inacceptable de non-dits.",
@@ -7680,6 +7824,8 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
         "right"
     ]
 ],
+  "hideChars": true,
+  "zoom": true,
   "next": "c4v_56"
 },
  c4v_56:{
@@ -12138,7 +12284,11 @@ function render(){
   document.querySelectorAll('.chapterLabel').forEach(el=>{el.textContent=getSceneChapterLabel(state.scene);}); document.getElementById('sceneTitle').textContent=scene.title||''; document.getElementById('sceneSub').textContent=scene.sub||'';
   document.getElementById('stage').classList.remove('combatMode'); setStageBg(scene.bg,!!scene.zoom);
   const chars=document.getElementById('chars'); chars.innerHTML='';
-  (shouldSuppressSceneChars(scene)?[]:(scene.chars||[])).forEach(ch=>{const [kind,sprite,pos,extra]=ch; const resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; img.className=`char enter ${kind} ${pos||'center'} ${extra||''}`; chars.appendChild(img);});
+  chars.className='chars';
+  const visibleChars=shouldSuppressSceneChars(scene)?[]:(scene.chars||[]);
+  if(visibleChars.length>=2) chars.classList.add('duoChars');
+  if(visibleChars.length>=3) chars.classList.add('trioChars');
+  visibleChars.forEach(ch=>{const [kind,sprite,pos,extra]=ch; const resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; img.className=`char enter ${kind} ${pos||'center'} ${extra||''}`; chars.appendChild(img);});
   document.getElementById('speaker').textContent=scene.speaker||'Narrateur'; const textEl=document.getElementById('text'); const sceneText=(typeof scene.text==='function'?scene.text():scene.text)||''; if(isIntroScene(state.scene)) textEl.innerHTML=sceneText; else textEl.textContent=sceneText;
   const choices=document.getElementById('choices'); choices.innerHTML='';
   if(scene.choices&&scene.choices.length){scene.choices.forEach(ch=>{const locked=!choiceAvailable(ch); const note=choiceNote(ch); const devText=choiceValueDevText(ch); const devClass=choiceValueDevClass(choiceValueEffects(ch)); const b=document.createElement('button'); b.className='choiceBtn'+(locked?' lockedChoice':''); b.disabled=locked; b.innerHTML=`<span>${locked?'🔒 ':''}${ch.label}${note?`<small>${note}</small>`:''}${devText?`<small class="devReward ${devClass}">${devText}</small>`:''}</span><span class="arrow">›</span>`; b.onclick=()=>{if(!locked)choose(ch)}; choices.appendChild(b);});}
