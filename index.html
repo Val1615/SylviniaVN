@@ -1600,6 +1600,14 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
 /* Sécurité légère : un écran masqué ne peut plus absorber les clics */
 .screen.hidden{pointer-events:none!important;}
 
+
+/* Correctif Codex : les sections doivent rester séparées par onglets, même en mode mobile. */
+#codex #codexGrid.hidden,
+#codex #codexImagesGrid.hidden,
+#codex #codexMusicGrid.hidden,
+#codex #codexSitePanel.hidden{
+  display:none!important;
+}
 </style>
 </head>
 <body>
@@ -7907,7 +7915,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "bg": "c4d_key_04",
   "music": "music_draven_bond",
   "speaker": "Narrateur",
-  "text": "La forme apparaît d’abord floue, dévorée par la brume magique. Puis une femme se précise : longue chevelure noire attachée en tresse, yeux noisette, peau pâle, cernes lourdes. Lineva. Sa fille. Sa remplaçante malgré elle.",
+  "text": "La forme apparaît d’abord floue, dévorée par la brume magique. Puis une femme se précise : longue chevelure noire attachée en tresse, yeux bleu profond, peau pâle, cernes lourdes. Lineva. Sa fille. Sa remplaçante malgré elle.",
   "chars": [
     [
         "draven",
@@ -8366,7 +8374,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "bg": "c4d_key_19",
   "music": "music_draven_storm",
   "speaker": "Narrateur",
-  "text": "« Toi aussi, tu me manques. Toi, ta mère, notre cité. » Pendant une seconde, Lineva n’est plus seulement la gardienne de Forthaven. Elle est sa fille, et cela rend la suite presque cruel.",
+  "text": "« Toi aussi, tu me manques. Toi… ta mère… notre cité. » Lineva ne tique pas au mot cité. Pas vraiment. C’est la mention de sa mère qui fend quelque chose dans son regard, une douleur brève qu’elle ravale trop vite. Draven ne la voit pas. Ou refuse de la voir. Mais le silence, lui, a tout entendu.",
   "chars": [
     [
         "draven",
@@ -12077,8 +12085,8 @@ function renderChapterSelect(){
     const card=document.createElement('details');
     card.className='chapterSelectCard'+(unlocked?'':' locked');
     if(idx===0) card.open=true;
-    const stateLabel=ch.key==='ch4'&&!state.devMode?'En développement':(unlocked?'Accessible':'Verrouillé');
-    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Chapitre IV en développement · disponible uniquement en mode développeur pour l’instant.':'Disponible.';
+    const stateLabel=unlocked?'Accessible':'Verrouillé';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':'Disponible.';
     card.innerHTML=`
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
@@ -12098,7 +12106,7 @@ function renderChapterSelect(){
           <h4>${htmlEscape(ch.title)}</h4>
           <p>${htmlEscape(ch.body)}</p>
           <div class="chapterSelectTags">${ch.tags.map(t=>`<span>${htmlEscape(t)}</span>`).join('')}</div>
-          <button class="chapterSelectAction" data-chapter-launch="${htmlEscape(ch.key)}" ${unlocked?'':'disabled'}>${unlocked?htmlEscape(ch.action):(ch.key==='ch4'?'En développement':'Verrouillé')}</button>
+          <button class="chapterSelectAction" data-chapter-launch="${htmlEscape(ch.key)}" ${unlocked?'':'disabled'}>${unlocked?htmlEscape(ch.action):'Verrouillé'}</button>
           ${unlocked?'':`<p class="chapterLockHint">${htmlEscape(lockText)}</p>`}
         </div>
       </div>`;
@@ -12169,7 +12177,8 @@ function canStartChapter3(){
   return chapter2CompletedFrom(state) || chapter2CompletedFrom(readMainSave());
 }
 function canStartChapter4(){
-  return state.devMode === true;
+  if(state.devMode) return true;
+  return chapter3CompletedFrom(state) || chapter3CompletedFrom(readMainSave());
 }
 function updateChapterLocks(){
   const menuChapterCount=document.getElementById('menuChaptersAvailable');
@@ -12402,8 +12411,8 @@ function startChapter3(){
 
 function startChapter4(){
   let prev=readMainSave();
-  if(!state.devMode){
-    toast('Chapitre IV en développement','Disponible uniquement en mode développeur pour l’instant.');
+  if(!canStartChapter4()){
+    toast('Chapitre IV verrouillé','Termine le Chapitre III pour ouvrir la croisée des récits.');
     updateChapterLocks();
     return;
   }
