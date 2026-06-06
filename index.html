@@ -1542,6 +1542,29 @@ body.mobileUI .chapterLibraryBanner img{height:170px}
 body.mobileUI .chapterLibraryBannerText{left:14px;right:14px;bottom:14px}
 body.mobileUI .chapterLibraryBannerText strong{font-size:26px}
 body.mobileUI .chapterLibraryBannerText p{font-size:13px}
+
+/* Correctif Chapitre IV : sprites trop espacés / trop larges sur mobile et formats non 16:9 */
+.char.left,.char.right{max-width:46%;object-fit:contain;}
+.char.left.back,.char.right.back{max-width:38%;}
+@media(max-width:1100px){
+  .char.left{left:5%;}
+  .char.right{right:5%;}
+  .char.left,.char.right{max-width:44%;max-height:88%;}
+  .char.center{max-width:72%;max-height:90%;object-fit:contain;}
+}
+@media(max-width:760px){
+  .char.left{left:3%;}
+  .char.right{right:3%;}
+  .char.left,.char.right{max-width:43%;max-height:84%;}
+  .char.left.back{left:9%;max-width:34%;max-height:72%;}
+  .char.right.back{right:9%;max-width:34%;max-height:72%;}
+  .char.center{max-width:76%;max-height:86%;}
+}
+body.mobileUI .char.left{left:3%;}
+body.mobileUI .char.right{right:3%;}
+body.mobileUI .char.left,body.mobileUI .char.right{max-width:43%;max-height:84%;}
+body.mobileUI .char.center{max-width:76%;max-height:86%;}
+
 </style>
 </head>
 <body>
@@ -12059,7 +12082,13 @@ function sceneNumericSuffix(id){
 function resolveSceneMusic(sceneId, fallback){
   const id=String(sceneId||'');
   const n=sceneNumericSuffix(id);
-  if(id.startsWith('c4v_')) return 'music_tension';
+  if(id.startsWith('c4v_')){
+    const m=id.match(/^c4v_(\d+)/);
+    const v=m?parseInt(m[1],10):0;
+    if(v>=37) return 'music_bellirith';
+    if(v>=10) return 'music_thazran';
+    return 'music_valurn_route';
+  }
   if(id.startsWith('c4d_')) return id==='c4d_01'?'music_algratal':'music_tension';
   if(id.startsWith('c4_')) return 'music_tension';
   if(id.startsWith('c3_') && n!==null){
