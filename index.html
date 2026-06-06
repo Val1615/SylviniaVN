@@ -1591,6 +1591,10 @@ body.mobileUI .chars.trioChars .char.left{left:-1% !important;max-width:32% !imp
 body.mobileUI .chars.trioChars .char.center{max-width:38% !important;max-height:72% !important;}
 body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !important;max-height:68% !important;}
 
+
+/* Sécurité légère : un écran masqué ne peut plus absorber les clics */
+.screen.hidden{pointer-events:none!important;}
+
 </style>
 </head>
 <body>
@@ -1607,7 +1611,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
         <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="window.__sylviniaDisclaimerAcceptedThisLoad=true;var d=document.getElementById('disclaimer'),t=document.getElementById('title');if(d)d.classList.add('hidden');if(t)t.classList.remove('hidden');document.body.classList.remove('disclaimerOpen');return false;">Entrer dans le récit</button>
+          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
         </div>
       </div>
     </section>
@@ -6117,42 +6121,16 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
     {
       "label": "Suivre Valurn · Chapitre 4V",
       "next": "c4v_01",
-      "effects": {
-        "audace": 1
-      },
+      "effects": {"audace": 1},
       "note": "Route des Calciterres, de Thazran, de Naïah et de Bellirith.",
-      "flags": {
-        "route4VStarted": true
-      }
+      "flags": {"route4VStarted": true}
     },
     {
       "label": "Suivre Draven · Chapitre 4D",
       "next": "c4d_01",
-      "effects": {
-        "sangfroid": 1
-      },
+      "effects": {"sangfroid": 1},
       "note": "Route de Forthaven, de Lineva et de la demande militaire.",
-      "flags": {
-        "route4DStarted": true
-      }
-    }
-  ]
-},
-      "note": "Route des Calciterres, de Thazran, de Naïah et de Bellirith.",
-      "flags": {
-        "route4VStarted": true
-      }
-    },
-    {
-      "label": "Suivre Draven · Chapitre 4D",
-      "next": "c4d_01",
-      "effects": {
-        "sangfroid": 1
-      },
-      "note": "Route de Forthaven, de Lineva et de la demande militaire.",
-      "flags": {
-        "route4DStarted": true
-      }
+      "flags": {"route4DStarted": true}
     }
   ]
 },
@@ -7303,129 +7281,14 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Bellirith n’a pas besoin de chaînes. Elle sait que les souvenirs peuvent ligoter plus finement que le fer. Valurn doit choisir sa défense : couper, rire, encaisser, ou laisser l’ennemie parler assez longtemps pour révéler l’ordre de Bhaal.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_neutral",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_seductive",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_neutral","left"],["bellirith","bellirith_seductive","right"]],
   "hideChars": true,
   "zoom": true,
   "choices": [
-    {
-      "label": "Couper court avant qu’elle ne s’installe",
-      "next": "c4v_46a",
-      "effects": {
-        "sangfroid": 2
-      },
-      "requires": {
-        "sangfroid": 10
-      },
-      "note": "Choix stratégique · Défense nette.",
-      "flags": {
-        "bellirith_coupee": true
-      }
-    },
-    {
-      "label": "La provoquer pour lui voler le rythme",
-      "next": "c4v_46b",
-      "effects": {
-        "audace": 2
-      },
-      "requires": {
-        "audace": 10
-      },
-      "note": "Choix stratégique · Dangereux mais fidèle à Valurn.",
-      "flags": {
-        "bellirith_provoquee": true
-      }
-    },
-    {
-      "label": "La laisser parler pour remonter jusqu’à Bhaal",
-      "next": "c4v_46c",
-      "effects": {
-        "lucidite": 2
-      },
-      "requires": {
-        "lucidite": 11
-      },
-      "note": "Choix stratégique · Souvenir Bellirith.",
-      "flags": {
-        "bellirith_a_senti_faille": true
-      },
-      "memories": [
-        "bellirith_faille_valurn"
-      ]
-    },
-    {
-      "label": "Se réfugier derrière le sarcasme",
-      "next": "c4v_46d",
-      "effects": {
-        "sangfroid": 1
-      },
-      "note": "Réponse sûre.",
-      "flags": {
-        "valurn_sarcasme_defense": true
-      }
-    }
-  ]
-},
-      "requires": {
-        "sangfroid": 10
-      },
-      "note": "Choix stratégique · Défense nette.",
-      "flags": {
-        "bellirith_coupee": true
-      }
-    },
-    {
-      "label": "La provoquer pour lui voler le rythme",
-      "next": "c4v_46b",
-      "effects": {
-        "audace": 2
-      },
-      "requires": {
-        "audace": 10
-      },
-      "note": "Choix stratégique · Dangereux mais fidèle à Valurn.",
-      "flags": {
-        "bellirith_provoquee": true
-      }
-    },
-    {
-      "label": "La laisser parler pour remonter jusqu’à Bhaal",
-      "next": "c4v_46c",
-      "effects": {
-        "lucidite": 2
-      },
-      "requires": {
-        "lucidite": 11
-      },
-      "note": "Choix stratégique · Souvenir Bellirith.",
-      "flags": {
-        "bellirith_a_senti_faille": true
-      },
-      "memories": [
-        "bellirith_faille_valurn"
-      ]
-    },
-    {
-      "label": "Se réfugier derrière le sarcasme",
-      "next": "c4v_46d",
-      "effects": {
-        "sangfroid": 1
-      },
-      "note": "Réponse sûre.",
-      "flags": {
-        "valurn_sarcasme_defense": true
-      }
-    }
+    {"label": "Couper court avant qu’elle ne s’installe", "next": "c4v_46a", "effects": {"sangfroid": 2}, "requires": {"sangfroid": 10}, "note": "Choix stratégique · Défense nette.", "flags": {"bellirith_coupee": true}},
+    {"label": "La provoquer pour lui voler le rythme", "next": "c4v_46b", "effects": {"audace": 2}, "requires": {"audace": 10}, "note": "Choix stratégique · Dangereux mais fidèle à Valurn.", "flags": {"bellirith_provoquee": true}},
+    {"label": "La laisser parler pour remonter jusqu’à Bhaal", "next": "c4v_46c", "effects": {"lucidite": 2}, "requires": {"lucidite": 11}, "note": "Choix stratégique · Souvenir Bellirith.", "flags": {"bellirith_a_senti_faille": true}, "memories": ["bellirith_faille_valurn"]},
+    {"label": "Se réfugier derrière le sarcasme", "next": "c4v_46d", "effects": {"sangfroid": 1}, "note": "Réponse sûre.", "flags": {"valurn_sarcasme_defense": true}}
   ]
 },
  c4v_46a:{
@@ -7435,18 +7298,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn attrape sa main avant qu’elle ne termine son cercle autour de lui. « Tu confonds mémoire et invitation. » La phrase claque. Bellirith sourit, mais son regard se refroidit.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_annoyed",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_cold",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_annoyed","left"],["bellirith","bellirith_cold","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_47"
@@ -7458,18 +7310,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn lui offre son sourire le plus insultant. « Tu perds ton temps. Tes meilleurs tours datent d’une époque où j’avais moins de goût. » Bellirith rit. Touchée ? Peut-être. Amusée ? Beaucoup trop.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_charming",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_teasing",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_charming","left"],["bellirith","bellirith_teasing","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_47"
@@ -7481,18 +7322,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn ne recule pas. Il lui laisse assez d’espace pour croire qu’elle avance. Bellirith savoure sa propre voix, puis glisse enfin le vrai message : Père l’a envoyée. La faille s’ouvre dans les deux sens.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_away",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_invite",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_away","left"],["bellirith","bellirith_invite","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_47"
@@ -7504,18 +7334,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Valurn ricane, parce que l’ironie est parfois une porte blindée avec des charnières rouillées. Bellirith ne la brise pas. Elle pose simplement la main dessus et promet de revenir avec la bonne clé.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_amused",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_smirk",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_amused","left"],["bellirith","bellirith_smirk","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_47"
@@ -7590,91 +7409,13 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Narrateur",
   "text": "Bhaal n’est pas là, mais son absence occupe plus de place qu’un trône. Valurn peut défier l’ordre, le détourner, ou dissimuler sa véritable peur derrière une obéissance provisoire.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_neutral",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_cold",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_neutral","left"],["bellirith","bellirith_cold","right"]],
   "hideChars": true,
   "zoom": true,
   "choices": [
-    {
-      "label": "Déclarer que Bhaal n’est pas son maître",
-      "next": "c4v_51a",
-      "effects": {
-        "audace": 2
-      },
-      "requires": {
-        "audace": 11
-      },
-      "note": "Choix stratégique · Rébellion ouverte.",
-      "flags": {
-        "valurn_defie_bhaal": true
-      }
-    },
-    {
-      "label": "Répondre que l’obéissance n’exclut pas la stratégie",
-      "next": "c4v_51b",
-      "effects": {
-        "lucidite": 2,
-        "sangfroid": 1
-      },
-      "requires": {
-        "lucidite": 10
-      },
-      "note": "Choix stratégique · Défense diplomatique.",
-      "flags": {
-        "valurn_masque_bhaal": true
-      }
-    },
-    {
-      "label": "Ne rien promettre, ne rien refuser",
-      "next": "c4v_51c",
-      "effects": {
-        "sangfroid": 1
-      },
-      "note": "Réponse sûre, mais ambiguë."
-    }
-  ]
-},
-      "requires": {
-        "audace": 11
-      },
-      "note": "Choix stratégique · Rébellion ouverte.",
-      "flags": {
-        "valurn_defie_bhaal": true
-      }
-    },
-    {
-      "label": "Répondre que l’obéissance n’exclut pas la stratégie",
-      "next": "c4v_51b",
-      "effects": {
-        "lucidite": 2,
-        "sangfroid": 1
-      },
-      "requires": {
-        "lucidite": 10
-      },
-      "note": "Choix stratégique · Défense diplomatique.",
-      "flags": {
-        "valurn_masque_bhaal": true
-      }
-    },
-    {
-      "label": "Ne rien promettre, ne rien refuser",
-      "next": "c4v_51c",
-      "effects": {
-        "sangfroid": 1
-      },
-      "note": "Réponse sûre, mais ambiguë."
-    }
+    {"label": "Déclarer que Bhaal n’est pas son maître", "next": "c4v_51a", "effects": {"audace": 2}, "requires": {"audace": 11}, "note": "Choix stratégique · Rébellion ouverte.", "flags": {"valurn_defie_bhaal": true}},
+    {"label": "Répondre que l’obéissance n’exclut pas la stratégie", "next": "c4v_51b", "effects": {"lucidite": 2, "sangfroid": 1}, "requires": {"lucidite": 10}, "note": "Choix stratégique · Défense diplomatique.", "flags": {"valurn_masque_bhaal": true}},
+    {"label": "Ne rien promettre, ne rien refuser", "next": "c4v_51c", "effects": {"sangfroid": 1}, "note": "Réponse sûre, mais ambiguë."}
   ]
 },
  c4v_51a:{
@@ -7768,18 +7509,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Valurn",
   "text": "Valurn attrape sa main. Cette fois, son sourire se durcit vraiment. « Et c’est pour ça que je ne te fais pas confiance. » Bellirith rit doucement, un rire qui promet de ne pas prendre fin aujourd’hui.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_annoyed",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_angry_claw",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_annoyed","left"],["bellirith","bellirith_angry_claw","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_54"
@@ -7812,18 +7542,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "music": "music_bellirith",
   "speaker": "Bellirith",
   "text": "« Peut-être. Mais souviens-toi… je serai toujours là pour te rappeler ce que tu es vraiment. » Puis elle disparaît dans les ombres, laissant derrière elle un rire, une brûlure et une quantité inacceptable de non-dits.",
-  "chars": [
-    [
-        "valurn",
-        "valurn_away",
-        "left"
-    ],
-    [
-        "bellirith",
-        "bellirith_teasing",
-        "right"
-    ]
-],
+  "chars": [["valurn","valurn_away","left"],["bellirith","bellirith_teasing","right"]],
   "hideChars": true,
   "zoom": true,
   "next": "c4v_56"
@@ -11982,16 +11701,9 @@ function markDisclaimerSeen(){
   window.__sylviniaDisclaimerAcceptedThisLoad=true;
 }
 function enterTitleFromDisclaimer(){
+  window.__sylviniaDisclaimerAcceptedThisLoad=true;
   markDisclaimerSeen();
-  const disclaimer=document.getElementById('disclaimer');
-  const title=document.getElementById('title');
-  if(disclaimer) disclaimer.classList.add('hidden');
-  if(title) title.classList.remove('hidden');
-  document.body.classList.remove('disclaimerOpen');
-  state.lastScreen='title';
-  try{ if(state.menuMusicOn!==false) playMusic('music_menu'); }catch(e){}
-  try{ save(); }catch(e){}
-  try{ updateMenuButtons(); updateProgressUI(); updateBugReportUI(); }catch(e){}
+  setScreen('title');
 }
 function showInitialScreen(){
   if(!disclaimerSeen() && document.getElementById('disclaimer')){
