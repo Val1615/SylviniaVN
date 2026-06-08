@@ -12935,6 +12935,24 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                 "type": "Mir’Aldas",
                 "icon": "✦",
                 "body": "Sous les constellations mouvantes du dôme arcanique, Hylee demande à Remerii de rester encore. Le monde attendra. Pour une fois, elles aussi."
+        },
+        "remerii_cape_main_proche": {
+                "title": "La main près de la cape",
+                "type": "Lien Remerii",
+                "icon": "❄",
+                "body": "Hylee ne force pas Remerii à expliquer son geste. Elle garde seulement la main sur le bord de la cape, assez longtemps pour montrer qu’elle a compris l’attention sans la piéger."
+        },
+        "remerii_attache_meche": {
+                "title": "Remerii a attaché une mèche d’Hylee",
+                "type": "Lien Remerii",
+                "icon": "✦",
+                "body": "Sur la terrasse, Hylee a osé demander à Remerii un geste minuscule et intime. Remerii a accepté, masquant sa douceur derrière une remarque sèche."
+        },
+        "epaule_remerii_terrasse": {
+                "title": "Un silence contre l’épaule de Remerii",
+                "type": "Lien Remerii",
+                "icon": "❄",
+                "body": "Sous le dôme de Mir’Aldas, Hylee est restée contre Remerii sans réclamer de mots. Pour une fois, le silence n’a pas servi à fuir. Il a gardé une chaleur."
         }
 });
     }
@@ -13085,7 +13103,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Souffler que c’est vraiment difficile à imaginer",
+                "label": "« Insupportable à quel niveau ? J’ai besoin d’un objectif à dépasser. »",
                 "next": "c6_06_a",
                 "requires": {
                     "audace": 30
@@ -13094,22 +13112,21 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide la taquinerie."
+                "note": "Audace · Remerii apprécie le mordant."
             },
             {
-                "label": "Lui laisser le temps de choisir ses mots",
+                "label": "Rester attentive au silence avant le souvenir",
                 "next": "c6_06_b",
                 "requires": {
                     "sangfroid": 30
                 },
                 "effects": {
-                    "sangfroid": 1,
-                    "lien": 1
+                    "sangfroid": 1
                 },
-                "note": "Sang-froid · Remerii valide la patience."
+                "note": "Sang-froid · Laisser l’espace sans forcer."
             },
             {
-                "label": "Comprendre que Mir’Aldas lui a coûté cher",
+                "label": "Remarquer que ce souvenir lui serre encore la gorge",
                 "next": "c6_06_c",
                 "requires": {
                     "lucidite": 30
@@ -13118,19 +13135,18 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "lucidite": 1,
                     "lien": 1
                 },
-                "note": "Lucidité · Remerii valide la lecture du sous-texte."
+                "note": "Lucidité · Hylee voit ce que Remerii ne formule pas."
             },
             {
-                "label": "Se laisser distraire par les flux des étals",
+                "label": "Décrire ce souvenir comme une note qui tremble sous la ville",
                 "next": "c6_06_d",
                 "requires": {
                     "resonance": 20
                 },
                 "effects": {
-                    "resonance": 1,
-                    "lien": -1
+                    "resonance": 1
                 },
-                "note": "Résonance · Remerii désapprouve la distraction."
+                "note": "Résonance · Une lecture intime, sans jugement de Remerii."
             }
         ]
     },
@@ -13139,8 +13155,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Audace",
         "bg": "c5_miraldas_rue_02",
         "music": "music_c5_miraldas",
-        "speaker": "Narrateur",
-        "text": "Hylee laisse volontairement la pointe d’insolence flotter entre elles.\n\nRemerii lui adresse un regard faussement outré, mais le coin de sa bouche cède avant sa discipline.\n\n« Attention, apprentie. Je connais des sorts très efficaces contre les remarques déplacées. »\n\nLa menace sonne trop douce pour convaincre qui que ce soit.",
+        "speaker": "Hylee",
+        "text": "« Insupportable à quel niveau ? »\n\nHylee croque un morceau de tartelette, le regard brillant d’une malice impossible à cacher.\n\n« Parce que si tu me donnes une échelle claire, je peux essayer de te dépasser. Par respect historique, évidemment. »\n\nRemerii ouvre la bouche pour la reprendre, mais le rire lui échappe avant la menace.\n\n« Voilà qui promet un avenir épouvantable à tous mes nerfs. »\n\nHylee sourit plus fort. Cette fois, la taquinerie ne lui sert pas à fuir. Elle ose simplement exister à côté d’elle.",
         "chars": [
             [
                 "hylee",
@@ -13161,7 +13177,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_miraldas_rue_02",
         "music": "music_c5_miraldas",
         "speaker": "Narrateur",
-        "text": "Hylee garde sa plaisanterie au bord des lèvres, puis la laisse mourir. Remerii ne donne pas souvent des fragments d’elle-même.\n\nCe silence-là n’est pas un vide. C’est une chaise tirée près d’un feu discret.\n\nRemerii remarque la retenue et ne la commente pas, mais son expression se détend.",
+        "text": "Hylee garde une plaisanterie au bord des lèvres, puis choisit de ne pas la lancer.\n\nRemerii ne donne pas souvent des fragments d’elle-même. Quand cela arrive, la jeune femme commence à comprendre qu’il ne faut pas se jeter dessus comme sur une preuve.\n\nElle marche donc à son rythme, la tartelette entre les doigts, présente sans envahir.\n\nRemerii ne la remercie pas. Elle ne se moque pas non plus. Son silence devient un peu moins défensif.",
         "chars": [
             [
                 "hylee",
@@ -13181,8 +13197,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Lucidité",
         "bg": "c5_miraldas_rue_02",
         "music": "music_c5_miraldas",
-        "speaker": "Narrateur",
-        "text": "Hylee comprend que cette première tartelette n’est pas seulement un souvenir sucré. C’est le goût d’une entrée dans un monde qui l’a accueillie d’une main et testée de l’autre.\n\nElle ne dit rien de grand. Elle se contente d’écouter autrement.\n\nRemerii baisse les yeux un court instant, comme si cette attention tombait trop juste.",
+        "speaker": "Hylee",
+        "text": "Hylee baisse légèrement la voix.\n\n« Ce n’est pas seulement un bon souvenir, hein ? »\n\nRemerii tourne les yeux vers elle.\n\n« Qu’est-ce qui te fait dire ça ? »\n\n« Ta façon de sourire. On dirait que la tartelette a le goût d’un début… mais aussi d’une facture qu’on t’a donnée après. »\n\nL’archimage ne répond pas tout de suite. Pour une fois, son ironie arrive avec un temps de retard.\n\n« Tu deviens agaçante quand tu regardes correctement. »\n\nHylee comprend que c’est presque un compliment.",
         "chars": [
             [
                 "hylee",
@@ -13202,8 +13218,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Résonance",
         "bg": "c5_miraldas_rue_02",
         "music": "music_c5_miraldas",
-        "speaker": "Narrateur",
-        "text": "Les cristaux suspendus, les cages enchantées et les grimoires flottants tirent l’attention d’Hylee comme autant de petites lunes.\n\nSa magie répond, curieuse, presque trop vite.\n\nRemerii le sent aussitôt.\n\n« Hylee. Avec moi. Les souvenirs explosent moins souvent que les étals de Mir’Aldas, mais ils demandent aussi qu’on les écoute. »\n\nLa réprimande est légère, mais nette.",
+        "speaker": "Hylee",
+        "text": "Hylee observe les reflets de la ville dans le sucre cristallisé de la tartelette.\n\n« Quand tu en parles, j’ai l’impression d’entendre une note tenue trop longtemps. Pas fausse… juste fatiguée d’être encore là. »\n\nRemerii la regarde avec une attention plus prudente que moqueuse.\n\n« Ce n’est pas une façon très académique de décrire un souvenir. »\n\n« Je sais. Mais c’est comme ça que je le sens. »\n\nLa magie d’Hylee ne s’agite pas. Elle ne cherche pas à toucher les étals ni les cristaux. Elle reste en dedans, discrète, traduisant ce que les mots ordinaires n’attrapent pas.",
         "chars": [
             [
                 "hylee",
@@ -13302,7 +13318,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Promettre de ne presque pas le casser",
+                "label": "Promettre de ne le casser qu’en cas d’expérience révolutionnaire",
                 "next": "c6_10_a",
                 "requires": {
                     "audace": 30
@@ -13311,40 +13327,21 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide l’ironie bien placée.",
-                "flags": {
-                    "cristal_taquinerie": true
-                },
-                "items": [
-                    "cristal_navigation"
-                ],
-                "memories": [
-                    "cristal_offert_remerii"
-                ]
+                "note": "Audace · Une insolence qui amuse Remerii."
             },
             {
-                "label": "Le ranger précieusement sans fanfaronner",
+                "label": "Le ranger avec le sérieux d’un serment",
                 "next": "c6_10_b",
                 "requires": {
                     "sangfroid": 30
                 },
                 "effects": {
-                    "sangfroid": 1,
-                    "lien": 1
+                    "sangfroid": 1
                 },
-                "note": "Sang-froid · Remerii valide le sérieux.",
-                "flags": {
-                    "cristal_precieux": true
-                },
-                "items": [
-                    "cristal_navigation"
-                ],
-                "memories": [
-                    "cristal_offert_remerii"
-                ]
+                "note": "Sang-froid · Recevoir le cadeau sans fanfaronner."
             },
             {
-                "label": "Demander ce qu’il détecte exactement",
+                "label": "Demander quelles signatures il peut vraiment suivre",
                 "next": "c6_10_c",
                 "requires": {
                     "lucidite": 30
@@ -13353,37 +13350,18 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "lucidite": 1,
                     "lien": 1
                 },
-                "note": "Lucidité · Remerii valide la bonne question.",
-                "flags": {
-                    "cristal_etudie": true
-                },
-                "items": [
-                    "cristal_navigation"
-                ],
-                "memories": [
-                    "cristal_offert_remerii"
-                ]
+                "note": "Lucidité · Poser la bonne question sur l’outil."
             },
             {
-                "label": "Laisser sa magie effleurer la sphère",
+                "label": "Sentir sa vibration avant de l’utiliser",
                 "next": "c6_10_d",
                 "requires": {
                     "resonance": 20
                 },
                 "effects": {
-                    "resonance": 1,
-                    "lien": -1
+                    "resonance": 1
                 },
-                "note": "Résonance · Remerii désapprouve l’imprudence.",
-                "flags": {
-                    "cristal_reagit": true
-                },
-                "items": [
-                    "cristal_navigation"
-                ],
-                "memories": [
-                    "cristal_offert_remerii"
-                ]
+                "note": "Résonance · Écouter l’objet sans l’activer dans la rue."
             }
         ]
     },
@@ -13393,7 +13371,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_miraldas_rue_01",
         "music": "music_c5_miraldas",
         "speaker": "Hylee",
-        "text": "« Je ne promets rien. Enfin… je promets de ne presque pas le casser. »\n\nRemerii lève les yeux au ciel, mais son sourire la trahit.\n\n« Presque n’est pas une unité de mesure reconnue par le Conseil des Arcanes. »\n\nHylee serre la sphère contre elle, ravie.",
+        "text": "« Je promets de ne le casser qu’en cas d’expérience révolutionnaire. »\n\nRemerii lève lentement les yeux vers elle.\n\n« Je vais faire comme si je n’avais pas entendu la partie la plus inquiétante de cette phrase. »\n\n« C’est généreux. Très professoral. »\n\n« Très temporaire. »\n\nHylee serre la sphère contre elle, ravie. Le cadeau paraît encore plus précieux maintenant qu’il a survécu à une plaisanterie.",
         "chars": [
             [
                 "hylee",
@@ -13414,7 +13392,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_miraldas_rue_01",
         "music": "music_c5_miraldas",
         "speaker": "Narrateur",
-        "text": "Hylee referme ses doigts autour de la sphère avec une attention presque solennelle.\n\nRemerii remarque le geste.\n\n« Bien. Un outil magique n’est jamais seulement un objet joli. Surtout à Mir’Aldas. »\n\nLa remarque ressemble à une leçon. Elle ressemble aussi à une confiance accordée.",
+        "text": "Hylee referme ses doigts autour de la sphère avec une attention presque solennelle.\n\nElle aurait pu plaisanter. Une partie d’elle en meurt d’envie. Mais le poids de l’objet dans sa paume raconte mieux que Remerii ne le fera jamais l’importance du geste.\n\nAlors elle le range avec soin.\n\nRemerii remarque cette retenue. Elle ne sourit pas vraiment, mais son regard cesse de surveiller le cristal pour se poser sur Hylee.",
         "chars": [
             [
                 "hylee",
@@ -13435,7 +13413,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_miraldas_rue_01",
         "music": "music_c5_miraldas",
         "speaker": "Hylee",
-        "text": "« Il détecte toutes les sources ? Même les traces anciennes ? Même les magies dissimulées ? »\n\nRemerii penche la tête, amusée par la rafale de questions.\n\n« Pas toutes. Mais il réagit aux signatures suffisamment fortes ou mal camouflées. Et quand son porteur est sensible, il peut devenir plus précis. »\n\nHylee comprend que le cadeau a été choisi avec beaucoup trop de soin pour n’être qu’une plaisanterie.",
+        "text": "« Il suit quoi exactement ? Des sources actives ? Des traces anciennes ? Les magies dissimulées ? »\n\nRemerii penche la tête, amusée par la rafale de questions.\n\n« Pas toutes. Mais il réagit aux signatures suffisamment fortes ou mal camouflées. Et quand son porteur est sensible, il peut devenir plus précis. »\n\nHylee tourne la sphère entre ses doigts.\n\n« Donc tu ne l’as pas choisi au hasard. »\n\n« Je choisis rarement les choses au hasard. »\n\nCette fois, la plaisanterie ne cache pas assez bien l’attention.",
         "chars": [
             [
                 "hylee",
@@ -13456,7 +13434,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_miraldas_rue_01",
         "music": "music_c5_miraldas",
         "speaker": "Narrateur",
-        "text": "Hylee laisse une mince pulsation magique toucher la sphère. Les points lumineux accélèrent aussitôt, comme une nuée d’étoiles paniquées.\n\nRemerii referme sa main sur celle d’Hylee.\n\n« Pas dans une rue pleine d’objets enchantés. Tu veux réveiller la moitié du marché ? »\n\nHylee rougit. Le cristal, lui, continue de luire doucement.",
+        "text": "Hylee ne pousse pas sa magie dans le cristal. Elle se contente de respirer avec lui, comme on approche la main d’une eau inconnue sans encore y plonger les doigts.\n\nLa sphère répond par une vibration légère, presque timide. Ses points lumineux ne s’emballent pas. Ils se réorganisent, lents, comme s’ils cherchaient la forme exacte de sa présence.\n\nRemerii suit la scène du coin de l’œil.\n\n« Bien. Écouter avant d’utiliser, c’est déjà une moitié de maîtrise. »\n\nHylee ne sait pas pourquoi cette phrase lui fait plus plaisir qu’un compliment direct.",
         "chars": [
             [
                 "hylee",
@@ -13548,7 +13526,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Demander ce qui est différent",
+                "label": "Conclure que la vue doit être jalouse d’elle",
                 "next": "c6_14_a",
                 "requires": {
                     "audace": 30
@@ -13557,22 +13535,21 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide la franchise timide."
+                "note": "Audace · Hylee ose transformer le trouble en humour."
             },
             {
-                "label": "Laisser Remerii chercher ses mots",
+                "label": "Accepter le compliment sans se cacher derrière une blague",
                 "next": "c6_14_b",
                 "requires": {
                     "sangfroid": 30
                 },
                 "effects": {
-                    "sangfroid": 1,
-                    "lien": 1
+                    "sangfroid": 1
                 },
-                "note": "Sang-froid · Remerii valide la patience."
+                "note": "Sang-froid · Ne pas fuir ce qui touche."
             },
             {
-                "label": "Comprendre que son regard change la ville",
+                "label": "Comprendre que Remerii regarde ce qu’elle devient",
                 "next": "c6_14_c",
                 "requires": {
                     "lucidite": 30
@@ -13581,19 +13558,18 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "lucidite": 1,
                     "lien": 1
                 },
-                "note": "Lucidité · Remerii valide ce qu’Hylee devine."
+                "note": "Lucidité · Hylee lit la fierté derrière le détour."
             },
             {
-                "label": "Se perdre dans les pulsations du dôme",
+                "label": "Dire que le dôme change quand elles le regardent ensemble",
                 "next": "c6_14_d",
                 "requires": {
                     "resonance": 20
                 },
                 "effects": {
-                    "resonance": 1,
-                    "lien": -1
+                    "resonance": 1
                 },
-                "note": "Résonance · Remerii désapprouve l’absence soudaine."
+                "note": "Résonance · Une métaphore magique personnelle."
             }
         ]
     },
@@ -13603,7 +13579,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Différent, comment ? »\n\nLa question sort plus vite que prévu. Hylee ne la reprend pas.\n\nRemerii cherche ses mots.\n\n« Je ne sais pas… Comme si redécouvrir cet endroit avec toi me faisait voir les choses autrement. »\n\nHylee se trouble légèrement.\n\n« Ah… »",
+        "text": "Hylee suit le regard de Remerii, puis désigne vaguement la ville d’un mouvement du menton.\n\n« Tu devrais faire attention. La vue risque de se vexer. Elle se donne beaucoup de mal, et toi tu regardes ailleurs. »\n\nRemerii arque un sourcil.\n\n« Depuis quand défends-tu l’orgueil architectural de Mir’Aldas ? »\n\n« Depuis que je soupçonne ses terrasses d’être susceptibles. »\n\nLe rire de Remerii est discret, mais il existe. Pour Hylee, c’est déjà une victoire minuscule et lumineuse.",
         "chars": [
             [
                 "hylee",
@@ -13624,7 +13600,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Narrateur",
-        "text": "Hylee pourrait se précipiter dans la brèche. Elle choisit de ne pas le faire.\n\nRemerii garde quelques secondes de plus pour assembler ce qui, chez elle, refuse d’être assemblé facilement.\n\n« Comme si redécouvrir cet endroit avec toi me faisait voir les choses autrement. »\n\nHylee baisse les yeux, touchée.",
+        "text": "Hylee sent la blague lui venir. Elle pourrait s’y cacher, comme toujours quand quelque chose devient trop doux.\n\nMais elle la laisse passer.\n\nElle baisse seulement les yeux, rougit un peu, puis reste là sans transformer le compliment en duel.\n\nRemerii semble presque surprise de cette simplicité. Il n’y a rien à corriger, rien à pousser, rien à dénouer. Seulement Hylee qui accepte d’être regardée sans se défendre.",
         "chars": [
             [
                 "hylee",
@@ -13644,8 +13620,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Lucidité",
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
-        "speaker": "Narrateur",
-        "text": "Hylee comprend que Remerii ne parle pas vraiment de la ville.\n\nElle parle de ce que la ville devient lorsqu’une autre personne la regarde avec assez d’émerveillement pour rendre ses lumières neuves.\n\nRemerii ne formule pas tout. Hylee n’en a pas besoin.",
+        "speaker": "Hylee",
+        "text": "« Tu ne regardes pas seulement moi. »\n\nRemerii garde son sourire, mais ses yeux se font plus attentifs.\n\n« Ah non ? »\n\n« Tu regardes si j’ai ma place ici. Si Mir’Aldas me fait peur. Si je tiens debout dans un monde que tu as dû conquérir morceau par morceau. »\n\nLe silence qui suit n’est pas froid. Il est précis.\n\n« Tu as une façon très désagréable d’être pertinente », murmure Remerii.\n\nHylee sourit doucement.\n\n« Je prends ça pour un progrès. »",
         "chars": [
             [
                 "hylee",
@@ -13665,8 +13641,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Résonance",
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
-        "speaker": "Narrateur",
-        "text": "Le dôme pulse au-dessus d’elles. Hylee sent les constellations mouvantes glisser dans sa propre magie, comme si la ville lui murmurait un alphabet lumineux.\n\nPendant une seconde, elle n’entend plus Remerii.\n\n« Hylee ? »\n\nLa voix la ramène au bord de la terrasse.\n\n« Ne me laisse pas parler à une statue fascinée par le plafond. Même si le plafond est très impressionnant. »",
+        "speaker": "Hylee",
+        "text": "Hylee observe les constellations mouvantes au-dessus d’elles.\n\n« Quand je le regarde seule, le dôme est immense. Quand tu es là… il paraît moins loin. Comme si les étoiles descendaient un peu. »\n\nRemerii ne se moque pas. Elle suit la courbe lumineuse dans le ciel, puis revient à Hylee.\n\n« Tu as toujours cette manie de rendre les choses difficiles à contredire. »\n\n« Ce n’est pas très académique ? »\n\n« Non. Mais ce n’est pas forcément faux. »",
         "chars": [
             [
                 "hylee",
@@ -13744,7 +13720,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Répondre qu’elle reste impossible à comprendre",
+                "label": "Répondre que sa cape a de drôles de réflexes",
                 "next": "c6_17_a",
                 "requires": {
                     "audace": 30
@@ -13753,22 +13729,21 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide la répartie."
+                "note": "Audace · Hylee attaque la pudeur de Remerii par l’humour."
             },
             {
-                "label": "Ne pas forcer ses secrets",
+                "label": "Accepter le geste sans la mettre au pied du mur",
                 "next": "c6_17_b",
                 "requires": {
                     "sangfroid": 30
                 },
                 "effects": {
-                    "sangfroid": 1,
-                    "lien": 1
+                    "sangfroid": 1
                 },
-                "note": "Sang-froid · Remerii valide la frontière respectée."
+                "note": "Sang-froid · Respecter le refuge de Remerii."
             },
             {
-                "label": "Dire qu’Hylee voit quand même son attention",
+                "label": "Dire qu’elle peut faire attention sans se justifier",
                 "next": "c6_17_c",
                 "requires": {
                     "lucidite": 30
@@ -13777,22 +13752,18 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "lucidite": 1,
                     "lien": 1
                 },
-                "note": "Lucidité · Remerii valide, même si elle feint le contraire.",
-                "memories": [
-                    "remerii_lue_par_hylee"
-                ]
+                "note": "Lucidité · Nommer le geste sans l’accuser."
             },
             {
-                "label": "Chercher dans le froid ce qu’elle ne dit pas",
+                "label": "Sentir la cape comme un sort mal avoué",
                 "next": "c6_17_d",
                 "requires": {
                     "resonance": 20
                 },
                 "effects": {
-                    "resonance": 1,
-                    "lien": -1
+                    "resonance": 1
                 },
-                "note": "Résonance · Remerii désapprouve cette lecture magique."
+                "note": "Résonance · Comprendre le contact par sensation."
             }
         ]
     },
@@ -13802,7 +13773,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Impossible à comprendre, vraiment. C’est presque un métier chez toi. »\n\nRemerii arque un sourcil.\n\n« Presque ? »\n\n« Disons que tu frôles l’excellence. »\n\nLe rire de Remerii est bref, mais il existe. Hylee le range quelque part avec les choses rares.",
+        "text": "« Ta cape a de drôles de réflexes. »\n\nRemerii plisse les yeux.\n\n« Ma cape ? »\n\n« Oui. Elle saute toute seule sur les apprenties frigorifiées. Très impressionnant. Un enchantement rare, je suppose. »\n\n« Absolument. Il s’active au contact des élèves impertinentes. »\n\nHylee rit. Remerii aussi, presque malgré elle. La cape reste sur ses épaules.",
         "chars": [
             [
                 "hylee",
@@ -13823,7 +13794,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Narrateur",
-        "text": "Hylee sent qu’elle pourrait pousser. Elle pourrait poser la mauvaise question au bon moment, ou la bonne question trop tôt.\n\nElle choisit plutôt de regarder la ville.\n\nRemerii ne dit rien, mais sa proximité contre la rambarde ne recule pas.",
+        "text": "Hylee pourrait relever l’excuse. Elle pourrait sourire trop fort, poser une question, tendre un piège.\n\nElle n’en fait rien.\n\nElle se contente de resserrer la cape autour d’elle et de laisser Remerii regarder ailleurs si cela l’aide à rester.\n\nCertaines attentions se brisent quand on les nomme trop vite. Hylee commence à apprendre cette patience-là.",
         "chars": [
             [
                 "hylee",
@@ -13844,7 +13815,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Tu fais comme si rien ne t’atteignait, mais je vois que tu fais attention. Tout le temps. »\n\nUn sourire furtif traverse le visage de Remerii.\n\n« Peut-être. Mais ne va pas trop analyser. »\n\nHylee garde pour elle le fait qu’il est déjà trop tard.",
+        "text": "« Tu sais… tu peux faire attention à moi sans prétendre que c’est la météo. »\n\nRemerii reste immobile, les doigts encore proches du tissu.\n\n« C’est une analyse très dangereuse pour une apprentie. »\n\n« C’est une observation. Je progresse en observation. »\n\nL’archimage détourne le regard, mais sa main ne s’éloigne pas tout de suite.\n\n« Oui. Malheureusement. »\n\nLe mot devrait sonner sec. Il sort presque tendre.",
         "chars": [
             [
                 "hylee",
@@ -13865,7 +13836,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Narrateur",
-        "text": "Hylee se concentre sur la fraîcheur qui entoure Remerii, sur la manière dont sa magie semble plus calme lorsqu’elle ment mal.\n\nRemerii pince les lèvres.\n\n« Tout n’est pas un sort à décoder, Hylee. Parfois, une personne essaie simplement de parler. Mal, peut-être, mais de parler quand même. »\n\nLe rappel pique avec douceur.",
+        "text": "La cape n’est pas seulement chaude. Elle porte l’odeur froide de Remerii, ce mélange impossible de glace maîtrisée et de douceur retenue.\n\nHylee sent le geste comme un sort qui refuse de prononcer son incantation.\n\nPas une protection spectaculaire. Pas une leçon. Une couverture posée sur ses épaules, et toute la pudeur d’une femme qui préfère agir plutôt qu’avouer.\n\nHylee ne dit rien. Son silence garde le secret intact.",
         "chars": [
             [
                 "hylee",
@@ -13899,9 +13870,30 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                 "right"
             ]
         ],
-        "next": "c6_19",
         "memories": [
             "cape_sur_les_epaules"
+        ],
+        "choices": [
+            {
+                "label": "Bonus Lien · Garder sa main sur la cape une seconde de plus",
+                "next": "c6_18_lien_1",
+                "requires": {
+                    "lien": 30
+                },
+                "effects": {
+                    "lien": 1
+                },
+                "note": "Lien Remerii · Proximité douce, sans brusquerie.",
+                "memories": [
+                    "remerii_cape_main_proche"
+                ]
+            },
+            {
+                "label": "Reprendre la conversation sans appuyer le geste",
+                "next": "c6_19",
+                "effects": {},
+                "note": "Continuer sans forcer Remerii à s’expliquer."
+            }
         ]
     },
     "c6_19": {
@@ -13970,7 +13962,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Assumer la question sans détour",
+                "label": "Assumer que la question l’intéresse beaucoup trop",
                 "next": "c6_21_a",
                 "requires": {
                     "audace": 30
@@ -13979,10 +13971,10 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide la sincérité."
+                "note": "Audace · Franchise risquée, mais assumée."
             },
             {
-                "label": "Adoucir la question sans la retirer",
+                "label": "Lui laisser le droit de ne pas répondre",
                 "next": "c6_21_b",
                 "requires": {
                     "sangfroid": 30
@@ -13991,22 +13983,21 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "sangfroid": 1,
                     "lien": 1
                 },
-                "note": "Sang-froid · Remerii valide la délicatesse."
+                "note": "Sang-froid · Remerii valide la sortie offerte."
             },
             {
-                "label": "Avouer que sa distance inquiète Hylee",
+                "label": "Dire que sa solitude ressemble parfois à une stratégie",
                 "next": "c6_21_c",
                 "requires": {
                     "lucidite": 30
                 },
                 "effects": {
-                    "lucidite": 1,
-                    "lien": 1
+                    "lucidite": 1
                 },
-                "note": "Lucidité · Remerii valide le vrai sujet."
+                "note": "Lucidité · Une vérité utile, pas forcément confortable."
             },
             {
-                "label": "Demander si la magie prend toujours la place du reste",
+                "label": "Demander si elle s’est cachée derrière les arcanes",
                 "next": "c6_21_d",
                 "requires": {
                     "resonance": 20
@@ -14015,7 +14006,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "resonance": 1,
                     "lien": -1
                 },
-                "note": "Résonance · Remerii désapprouve la formule trop brutale."
+                "note": "Résonance · Toucher juste, mais trop profondément."
             }
         ]
     },
@@ -14024,8 +14015,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Audace",
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
-        "speaker": "Narrateur",
-        "text": "Hylee ne fuit pas derrière une excuse. Sa rougeur suffit déjà à dire qu’elle a conscience d’avoir touché une zone fragile.\n\nRemerii l’observe quelques secondes, puis expire par le nez.\n\n« Au moins, tu as le mérite de ne pas tourner autour de tes propres questions. »",
+        "speaker": "Hylee",
+        "text": "Hylee inspire, puis décide de ne pas déguiser sa curiosité en philosophie.\n\n« Parce que ça m’intéresse. Beaucoup trop, probablement. »\n\nRemerii la fixe, prise de court par cette honnêteté nue.\n\n« Tu sais que certaines phrases devraient être annoncées par un avertissement ? »\n\n« Je suis encore apprentie. Je n’ai pas appris les avertissements. »\n\nUn sourire tremble au bord des lèvres de Remerii.\n\n« Non. Visiblement pas. »",
         "chars": [
             [
                 "hylee",
@@ -14046,7 +14037,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Tu n’es pas obligée de répondre. Je me demandais juste… »\n\nLa phrase donne à Remerii une sortie. Paradoxalement, c’est peut-être ce qui lui permet de rester.\n\n« Je sais, » répond-elle plus doucement. « Et c’est pour ça que je peux répondre. »",
+        "text": "« Tu n’es pas obligée de répondre. »\n\nHylee garde sa main près de celle de Remerii, mais sans la retenir.\n\n« Je me demandais juste. Si c’est trop personnel, on peut laisser la ville parler à notre place. Elle est très bavarde, ce soir. »\n\nRemerii observe les lumières sous le dôme.\n\n« C’est peut-être parce que tu me donnes le droit de ne pas répondre que je peux le faire. »\n\nSa voix est plus basse. Plus vraie.",
         "chars": [
             [
                 "hylee",
@@ -14067,7 +14058,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Parce que parfois, j’ai l’impression que tu t’es convaincue que rester seule était plus simple. »\n\nRemerii ne sourit plus tout à fait.\n\n« Plus simple, non. Moins dangereux, parfois. »\n\nLa réponse ne ferme pas la porte. Elle en montre seulement les serrures.",
+        "text": "« Parfois, j’ai l’impression que ta solitude est devenue une stratégie. »\n\nRemerii ne répond pas immédiatement.\n\n« Une stratégie ? »\n\n« Oui. Pas forcément parce que tu n’aimes personne. Plutôt parce que si personne n’est trop près, personne ne peut être utilisé contre toi. Ou te coûter quelque chose. »\n\nLa phrase atteint son but. Peut-être un peu trop bien.\n\n« Tu apprends vite », souffle Remerii.\n\nHylee n’est pas certaine que ce soit une bonne nouvelle.",
         "chars": [
             [
                 "hylee",
@@ -14088,7 +14079,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Est-ce que la magie prend toujours la place du reste ? »\n\nLa question est juste, mais elle tombe avec trop de poids.\n\nRemerii retire son regard.\n\n« La magie ne prend rien toute seule. Ce sont les gens qui choisissent ce qu’ils lui offrent. Ne rends pas un pouvoir responsable de toutes les lâchetés. »\n\nHylee acquiesce, un peu piquée.",
+        "text": "« Est-ce que tu t’es cachée derrière les arcanes ? »\n\nLa question sort avec une douceur maladroite, mais elle frappe trop près.\n\nRemerii retire son regard.\n\n« La magie n’est pas une cachette. C’est un outil. Une discipline. Une responsabilité. »\n\n« Je ne voulais pas dire que… »\n\n« Je sais. Mais certaines métaphores coupent même quand on les tient par le manche. »\n\nHylee acquiesce, piquée et un peu honteuse. Elle sent qu’elle a touché une vérité sans avoir encore le droit de la tenir.",
         "chars": [
             [
                 "hylee",
@@ -14185,7 +14176,28 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                 "right"
             ]
         ],
-        "next": "c6_26"
+        "choices": [
+            {
+                "label": "Bonus Lien · Lui demander d’attacher la mèche",
+                "next": "c6_25_lien_1",
+                "requires": {
+                    "lien": 30
+                },
+                "effects": {
+                    "lien": 1
+                },
+                "note": "Lien Remerii · Laisser Remerii prendre soin d’elle.",
+                "memories": [
+                    "remerii_attache_meche"
+                ]
+            },
+            {
+                "label": "Garder la plaisanterie et laisser le moment respirer",
+                "next": "c6_26",
+                "effects": {},
+                "note": "Continuer sans prolonger le contact."
+            }
+        ]
     },
     "c6_26": {
         "title": "La terrasse",
@@ -14208,7 +14220,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         ],
         "choices": [
             {
-                "label": "Assumer cette demande sans détour",
+                "label": "Dire qu’elle n’a pas envie que la nuit finisse",
                 "next": "c6_26_a",
                 "requires": {
                     "audace": 30
@@ -14217,10 +14229,10 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "audace": 1,
                     "lien": 1
                 },
-                "note": "Audace · Remerii valide le courage intime."
+                "note": "Audace · Le courage intime d’une phrase simple."
             },
             {
-                "label": "Lui laisser une porte de sortie",
+                "label": "Lui laisser une vraie porte de sortie",
                 "next": "c6_26_b",
                 "requires": {
                     "sangfroid": 30
@@ -14229,31 +14241,30 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                     "sangfroid": 1,
                     "lien": 1
                 },
-                "note": "Sang-froid · Remerii valide la délicatesse."
+                "note": "Sang-froid · Ne pas transformer la demande en pression."
             },
             {
-                "label": "Comprendre que rester est déjà un choix",
+                "label": "Reconnaître que rester demande déjà un choix",
                 "next": "c6_26_c",
                 "requires": {
                     "lucidite": 30
                 },
                 "effects": {
-                    "lucidite": 1,
-                    "lien": 1
+                    "lucidite": 1
                 },
-                "note": "Lucidité · Remerii valide la maturité du geste."
+                "note": "Lucidité · Comprendre ce que la demande implique."
             },
             {
-                "label": "Demander si ce rêve vient du dôme",
+                "label": "Dire que le silence autour d’elles ne grince plus",
                 "next": "c6_26_d",
                 "requires": {
                     "resonance": 20
                 },
                 "effects": {
                     "resonance": 1,
-                    "lien": -1
+                    "lien": 1
                 },
-                "note": "Résonance · Remerii désapprouve de réduire l’instant à la magie."
+                "note": "Résonance · Une vérité intime formulée par sensation."
             }
         ]
     },
@@ -14262,8 +14273,8 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "sub": "Audace",
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
-        "speaker": "Narrateur",
-        "text": "Hylee ne cache pas que cette demande compte. Il n’y a ni stratégie, ni détour, ni leçon derrière ses mots.\n\nSeulement l’envie que Remerii ne s’éloigne pas tout de suite.\n\nRemerii la regarde comme si cette franchise était plus difficile à encaisser qu’un sort bien lancé.",
+        "speaker": "Hylee",
+        "text": "« Je n’ai pas envie que la nuit finisse tout de suite. »\n\nLa phrase sort plus vite que sa prudence. Hylee rougit aussitôt, mais ne la reprend pas.\n\nRemerii la regarde comme si cette sincérité était plus difficile à encaisser qu’un sort bien lancé.\n\n« Voilà une demande terriblement impolie envers le sommeil. »\n\n« Le sommeil survivra. »\n\n« J’aimerais avoir ta confiance dans sa résilience. »\n\nMais elle ne bouge pas.",
         "chars": [
             [
                 "hylee",
@@ -14284,7 +14295,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« Si tu veux rentrer, je comprendrai. Je veux juste… quelques minutes de plus. »\n\nRemerii baisse un instant les yeux vers leurs mains.\n\n« Tu apprends vite les sorts compliqués. Les phrases simples, par contre, tu les rends terriblement dangereuses. »\n\nMais elle ne bouge pas.",
+        "text": "« Si tu veux rentrer, je comprendrai. Vraiment. »\n\nHylee garde les yeux sur les lumières de Mir’Aldas, pour ne pas emprisonner Remerii dans son regard.\n\n« J’aimerais seulement quelques minutes de plus. Si tu en as envie aussi. »\n\nRemerii baisse un instant les yeux vers leurs mains.\n\n« Tu apprends vite les sorts compliqués. Les phrases simples, par contre, tu les rends terriblement dangereuses. »\n\nMais elle ne bouge pas.",
         "chars": [
             [
                 "hylee",
@@ -14305,7 +14316,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Narrateur",
-        "text": "Hylee comprend qu’elle ne demande pas seulement du temps.\n\nElle demande à Remerii de choisir, pour quelques minutes, de ne pas être l’archimage prudente, la mentor, la survivante de Mir’Aldas ou l’alliée d’une mission impériale.\n\nJuste de rester.",
+        "text": "Hylee comprend qu’elle ne demande pas seulement du temps.\n\nElle demande à Remerii de choisir, pour quelques minutes, de ne pas être l’archimage prudente, la mentor, la survivante de Mir’Aldas ou l’alliée d’une mission impériale.\n\nJuste de rester.\n\nAlors elle ne rajoute rien. Elle laisse la demande respirer, entière, sans tenter de la rendre plus petite.",
         "chars": [
             [
                 "hylee",
@@ -14326,7 +14337,7 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "bg": "c5_key_avenue_suspendue",
         "music": "music_confessions",
         "speaker": "Hylee",
-        "text": "« C’est peut-être le dôme qui fait ça… cette impression de rêve. »\n\nLe sourire de Remerii se referme d’un cran.\n\n« Le dôme embellit la ville. Il ne décide pas à ta place. Ne donne pas aux étoiles le mérite de ce que tu oses demander. »\n\nHylee rougit plus fort, mais comprend la correction.",
+        "text": "« Quand je suis arrivée ici, tout faisait du bruit à l’intérieur. Le dôme, les rues, les sorts, même mes propres pensées. »\n\nHylee serre légèrement la cape contre elle.\n\n« Là, avec toi… ça ne grince plus. »\n\nRemerii ne répond pas tout de suite. Son regard se perd dans la ville avant de revenir vers elle.\n\n« Tu as une façon injuste de rendre les silences difficiles à quitter. »\n\nHylee sourit, fragile et sincère.\n\n« Alors reste encore un peu. »",
         "chars": [
             [
                 "hylee",
@@ -14423,7 +14434,28 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
                 "right"
             ]
         ],
-        "next": "c6_31"
+        "choices": [
+            {
+                "label": "Bonus Lien · Rester contre son épaule en silence",
+                "next": "c6_30_lien_1",
+                "requires": {
+                    "lien": 30
+                },
+                "effects": {
+                    "lien": 1
+                },
+                "note": "Lien Remerii · Un silence plus proche.",
+                "memories": [
+                    "epaule_remerii_terrasse"
+                ]
+            },
+            {
+                "label": "Lui répondre avec un sourire et continuer la nuit",
+                "next": "c6_31",
+                "effects": {},
+                "note": "Laisser l’équilibre se poser naturellement."
+            }
+        ]
     },
     "c6_31": {
         "title": "La terrasse",
@@ -14468,6 +14500,72 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
             "cape_sur_les_epaules",
             "remerii_lue_par_hylee",
             "nuit_sur_la_terrasse"
+        ]
+    },
+    "c6_18_lien_1": {
+        "title": "La terrasse",
+        "sub": "Bonus Lien · La cape",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee ne retient pas Remerii. Elle ne lui demande rien.\n\nElle garde seulement sa main posée sur le bord de la cape, à l’endroit où les doigts de l’archimage viennent de passer. Une seconde de plus. Pas assez pour piéger le geste, assez pour dire qu’elle l’a reçu.\n\nRemerii le voit. Bien sûr qu’elle le voit.\n\nSon regard se détourne vers Mir’Aldas, mais sa main reste près de la rambarde, presque disponible.\n\nHylee sourit sans commentaire. Elle apprend que certaines victoires relationnelles tiennent dans l’art de ne pas triompher.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_19"
+    },
+    "c6_25_lien_1": {
+        "title": "La terrasse",
+        "sub": "Bonus Lien · Le ruban improvisé",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Tu peux… l’attacher, si tu veux. »\n\nLa demande est petite. Ridicule, presque. Pourtant, elle reste suspendue entre elles avec le poids d’une chose plus intime qu’elle n’en a l’air.\n\nRemerii la regarde, puis soupire comme si Hylee venait de lui confier une mission diplomatique impossible.\n\n« Tourne-toi. Avant que je change d’avis. »\n\nHylee obéit, le cœur battant. Les doigts de Remerii rassemblent doucement ses cheveux, évitent les mèches blanchies, glissent avec une délicatesse qui contredit toutes ses excuses.\n\n« Voilà. Tu survivras peut-être à une terrasse venteuse. »\n\n« Grâce à ton héroïsme. »\n\n« Exactement. N’oublie pas de le noter dans les archives. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_26"
+    },
+    "c6_30_lien_1": {
+        "title": "La terrasse",
+        "sub": "Bonus Lien · Silence proche",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee ne répond pas tout de suite.\n\nElle reste simplement contre l’épaule de Remerii, assez légère pour lui laisser le choix de s’écarter, assez présente pour que le geste soit vrai.\n\nRemerii inspire lentement. Puis, presque imperceptiblement, elle incline la tête contre la sienne.\n\nLe dôme déroule ses constellations au-dessus d’elles, mais Hylee n’a plus besoin de les regarder pour sentir la nuit.\n\nCette fois, le silence ne protège pas une blessure. Il garde une chaleur.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_31",
+        "memories": [
+            "epaule_remerii_terrasse"
         ]
     }
 });
