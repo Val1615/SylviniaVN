@@ -35,15 +35,20 @@ button{font:inherit;color:inherit} .hidden{display:none!important}
 .splashTitleOverlay{position:relative;z-index:2;min-height:720px;width:100%;display:flex;align-items:center;justify-content:flex-start;padding:34px 30px 40px;pointer-events:none}
 .splashTitleStack{display:grid;gap:0;max-width:min(360px,90vw)}
 .splashKicker,.splashLogo,.splashSubline{display:none}
-.splashEnterBtn{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;justify-self:start;padding:16px 22px;border-radius:999px;border:1px solid rgba(255,255,255,.38);background:rgba(255,255,255,.06);color:#f7fbff;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 8px 30px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.05);transition:.18s transform,.18s border-color,.18s background,.18s box-shadow,.18s opacity;opacity:.96}
-.splashEnterBtn::before{content:"✦";font-size:.9em;margin-right:.7em;opacity:.82}
-.splashEnterBtn:hover{transform:translateY(-1px) scale(1.015);border-color:rgba(255,255,255,.72);background:rgba(255,255,255,.12);box-shadow:0 10px 34px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.08) inset}
+.splashEnterBtn{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;justify-self:start;padding:15px 23px;border-radius:8px;border:1px solid rgba(233,201,133,.42);background:linear-gradient(180deg,rgba(233,201,133,.10),rgba(233,201,133,.03));color:#fff1c4;font:800 15px/1.1 Georgia,serif;letter-spacing:.05em;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.22);transition:.18s transform,.18s border-color,.18s background,.18s box-shadow,.18s color;opacity:.96}
+.splashEnterBtn::before{content:"";position:absolute;inset:5px;border:1px solid rgba(233,201,133,.18);border-radius:5px;pointer-events:none}
+.splashEnterBtn::after{content:"";position:absolute;left:14px;right:14px;bottom:7px;height:1px;background:linear-gradient(90deg,transparent,rgba(233,201,133,.62),transparent);opacity:.65;pointer-events:none}
+.splashEnterBtn:hover{transform:translateY(-1px);border-color:rgba(233,201,133,.70);background:rgba(233,201,133,.14);color:#fff8dc;box-shadow:0 14px 34px rgba(0,0,0,.28),0 0 18px rgba(233,201,133,.10)}
 .splashEnterBtn:active{transform:translateY(0) scale(.995)}
-@media(max-width:760px){.splashTitleOverlay{min-height:100svh;padding:22px 18px 28px}.splashEnterBtn{padding:14px 18px;font-size:14px;letter-spacing:.07em}}
+@media(max-width:760px){.splashTitleOverlay{min-height:100svh;padding:22px 18px 28px}.splashEnterBtn{padding:14px 18px;font-size:14px;letter-spacing:.04em}}
 
 /* --- Fondu écran titre / menu --- */
 #screenFade{position:fixed;inset:0;z-index:9999;background:#020610;opacity:0;pointer-events:none;transition:opacity .34s ease}
 #screenFade.active{opacity:1;pointer-events:auto}
+
+.sageTimerBadge{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:8;min-width:156px;padding:12px 18px;border-radius:999px;border:1px solid rgba(233,201,133,.58);background:rgba(4,8,17,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 12px 34px rgba(0,0,0,.32),0 0 22px rgba(233,201,133,.12),inset 0 0 0 1px rgba(255,255,255,.05);color:#fff1c4;font:900 22px/1 Georgia,serif;text-align:center;letter-spacing:.06em;pointer-events:none}
+.sageTimerBadge::before{content:"Temps restant";display:block;margin-bottom:4px;color:rgba(255,255,255,.72);font:800 10px/1 var(--font);letter-spacing:.22em;text-transform:uppercase}
+.sageTimerBadge.danger{border-color:rgba(255,120,120,.72);color:#ffd9d9;box-shadow:0 12px 34px rgba(0,0,0,.36),0 0 26px rgba(255,90,90,.22),inset 0 0 0 1px rgba(255,255,255,.05)}
 
 #disclaimerCard{position:relative;min-height:720px;display:flex;align-items:center;justify-content:center;padding:34px;background:
  radial-gradient(circle at 18% 12%,rgba(167,240,255,.18),transparent 28%),
@@ -1798,7 +1803,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
         </div>
       </div>
       <div class="stage" id="stage">
-        <div class="bg" id="bg"></div><div class="veil"></div><div class="chars" id="chars"></div><div class="combatTransition hidden" id="combatTransition"><div class="combatLabel"><div class="combatMini">Mode combat</div><div class="combatTitle">Duel d’entraînement</div><div class="combatSub">Hylee face à Remerii</div></div></div>
+        <div class="bg" id="bg"></div><div class="veil"></div><div class="chars" id="chars"></div><div id="c5SageTopTimer" class="sageTimerBadge hidden">30s</div><div class="combatTransition hidden" id="combatTransition"><div class="combatLabel"><div class="combatMini">Mode combat</div><div class="combatTitle">Duel d’entraînement</div><div class="combatSub">Hylee face à Remerii</div></div></div>
       </div>
       <div class="dialogueWrap">
         <div class="dialogue">
@@ -9252,9 +9257,9 @@ function c5SageChoiceLocked(ch){if(state.devMode)return false; if(ch.requires&&!
 function c5SageChoiceNote(ch,locked=false){const notes=[]; if(state.devMode&&ch.requires)notes.push('DEV · prérequis ignoré : '+c5ReqLabel(ch.requires)); else if(locked&&ch.requires)notes.push('Requis : '+c5ReqLabel(ch.requires)); if(state.devMode&&ch.requiresAny)notes.push('DEV · prérequis ignoré : '+c5ReqAnyLabel(ch.requiresAny)); else if(locked&&ch.requiresAny)notes.push('Requis : '+c5ReqAnyLabel(ch.requiresAny)); return notes.join(' · ');}
 function applyC5SageEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)state.stats[k]=(state.stats[k]||0)+v;}}
 function paintSceneChars(charList=[]){const chars=document.getElementById('chars'); chars.innerHTML=''; chars.className='chars'; if(charList.length>=2)chars.classList.add('duoChars'); if(charList.length>=3)chars.classList.add('trioChars'); charList.forEach(ch=>{const [kind,sprite,pos,extra]=ch; const resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; const extraClasses=((extra||'') + (kind==='lineva'?' projection':'')).trim(); img.className=`char enter ${kind} ${pos||'center'} ${extraClasses}`; chars.appendChild(img);});}
-function clearC5SageTimer(){if(window.__c5SageTimerInterval){clearInterval(window.__c5SageTimerInterval); window.__c5SageTimerInterval=null;}}
-function updateC5SageTimerDisplay(){const d=state.c5SageDuel||{}; const el=document.getElementById('c5SageTimer'); const fill=document.getElementById('c5SageTimerFill'); if(!el||!fill)return; if(d.waiting||!d.deadline){el.textContent='—'; fill.style.width='0%'; return;} const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000); el.textContent=remaining+'s'; fill.style.width=Math.max(0,Math.min(100,(remainingMs/20000)*100))+'%'; if(remaining<=0){clearC5SageTimer(); if(state.scene==='c5_sage_start'&&state.c5SageDuel&&!state.c5SageDuel.waiting&&!state.c5SageDuel.failed){state.c5SageDuel.failed=true; state.c5SageDuel.failReason='timeout'; state.c5SageDuel.perfect=false; save(); go('c5_sage_fail');}}}
-function startC5SageTimer(){const d=state.c5SageDuel; if(!d||d.waiting||d.finished||d.failed)return; if(d.deadlineStep!==d.step||!d.deadline){d.deadlineStep=d.step; d.deadline=Date.now()+20000;} clearC5SageTimer(); updateC5SageTimerDisplay(); window.__c5SageTimerInterval=setInterval(updateC5SageTimerDisplay,250);}
+function function clearC5SageTimer(){if(window.__c5SageTimerInterval){clearInterval(window.__c5SageTimerInterval); window.__c5SageTimerInterval=null;} const top=document.getElementById('c5SageTopTimer'); if(top){top.classList.add('hidden'); top.classList.remove('danger');}}
+function updateC5SageTimerDisplay(){const d=state.c5SageDuel||{}; const el=document.getElementById('c5SageTimer'); const fill=document.getElementById('c5SageTimerFill'); const top=document.getElementById('c5SageTopTimer'); if(!el||!fill)return; if(d.waiting||!d.deadline){el.textContent='—'; fill.style.width='0%'; if(top){top.textContent='—'; top.classList.add('hidden'); top.classList.remove('danger');} return;} const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000); el.textContent=remaining+'s'; fill.style.width=Math.max(0,Math.min(100,(remainingMs/30000)*100))+'%'; if(top){top.textContent=remaining+'s'; top.classList.remove('hidden'); top.classList.toggle('danger',remaining<=7);} if(remaining<=0){clearC5SageTimer(); if(state.scene==='c5_sage_start'&&state.c5SageDuel&&!state.c5SageDuel.waiting&&!state.c5SageDuel.failed){state.c5SageDuel.failed=true; state.c5SageDuel.failReason='timeout'; state.c5SageDuel.perfect=false; save(); go('c5_sage_fail');}}}
+function startC5SageTimer(){const d=state.c5SageDuel; if(!d||d.waiting||d.finished||d.failed)return; if(d.deadlineStep!==d.step||!d.deadline){d.deadlineStep=d.step; d.deadline=Date.now()+30000;} clearC5SageTimer(); updateC5SageTimerDisplay(); window.__c5SageTimerInterval=setInterval(updateC5SageTimerDisplay,250);}
 function enterC5SageDuel(scene){
   updateDevUI();
   clearC5SageTimer();
@@ -9311,7 +9316,7 @@ function renderC5SageDuel(scene){
   const stats=document.getElementById('stats');
   const stepTotal=C5_SAGE_DUEL_STEPS.length;
   const stepNow=Math.min((d.step||0)+1,stepTotal);
-  stats.innerHTML=`<div class="combatHud"><div class="combatBox"><div class="combatTop"><span>Clarté</span><span>${d.clarity}/6</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,(d.clarity/6)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Fractures</span><span>${d.fractures}/2</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.fractures/2)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c5SageTimer">${d.waiting?'—':'20s'}</span></div><div class="combatTrack"><div id="c5SageTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>Manche <b>${stepNow}/${stepTotal}</b></span><span>Audace <b>${(state.stats&&state.stats.audace)||0}</b></span><span>Sang-froid <b>${(state.stats&&state.stats.sangfroid)||0}</b></span><span>Lucidité <b>${(state.stats&&state.stats.lucidite)||0}</b></span><span>Lien Remerii <b>${(state.stats&&state.stats.lien)||0}</b></span><span>Résonance <b>${(state.stats&&state.stats.resonance)||0}</b></span></div>`;
+  stats.innerHTML=`<div class="combatHud"><div class="combatBox"><div class="combatTop"><span>Clarté</span><span>${d.clarity}/6</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,(d.clarity/6)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Fractures</span><span>${d.fractures}/2</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.fractures/2)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c5SageTimer">${d.waiting?'—':'30s'}</span></div><div class="combatTrack"><div id="c5SageTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>Manche <b>${stepNow}/${stepTotal}</b></span><span>Audace <b>${(state.stats&&state.stats.audace)||0}</b></span><span>Sang-froid <b>${(state.stats&&state.stats.sangfroid)||0}</b></span><span>Lucidité <b>${(state.stats&&state.stats.lucidite)||0}</b></span><span>Lien Remerii <b>${(state.stats&&state.stats.lien)||0}</b></span><span>Résonance <b>${(state.stats&&state.stats.resonance)||0}</b></span></div>`;
   if(!d.waiting) startC5SageTimer(); else updateC5SageTimerDisplay();
   updateDevUI(); save(); updateProgressUI();
 }
@@ -12287,7 +12292,7 @@ function applyChoiceEffects(ch){
     }
     if(typeof PROGRESSION_MEMORIES!=='undefined'){
       Object.assign(PROGRESSION_MEMORIES,{
-        saidin_future_hylee:{title:'Hylee a vu un de ses avenirs',type:'Saidin',icon:'⌛',body:`Dans le miroir liquide, Hylee a aperçu une version d’elle-même aux cheveux blancs, aux yeux bleus et aux marques beaucoup plus prononcées.`},
+        saidin_future_hylee:{title:'Hylee a gravé le reflet de son avenir',type:'Hylee',icon:'❄',body:`Dans le miroir liquide de Saidin, Hylee a aperçu la silhouette qu’elle pourrait devenir à la fin du Tome 1 : cheveux blancs, yeux entièrement bleus et marques glacées sur la peau. Elle a choisi de garder ce souvenir sans s’y soumettre.`},
         saidin_dilemme_grave:{title:'Saidin a posé la question fondatrice',type:'Saidin',icon:'⌛',body:`Saidin a forcé Hylee et Remerii à regarder le choix entre loyauté des alliés et pureté des intentions.`},
         hylee_reponse_pragmatique:{title:'Hylee a répondu au dilemme',type:'Hylee',icon:'✦',body:`Hylee a envisagé de perdre la pureté des intentions si cela permettait encore de sauver des vies.`},
         saidin_accompagne_groupe:{title:'Saidin rejoint la quête',type:'Saidin',icon:'⌛',body:`Saidin accepte d’accompagner la mission, tout en avertissant que son dilemme cessera un jour d’être un exercice.`},
@@ -12575,7 +12580,7 @@ Une image de Hylee apparaît, mais pas celle qu’elle connaît. Dans le reflet,
 
 Saidin répond, calme.
 
-« Un de tes avenirs. Le passé, le présent et le futur sont tous liés, et toi, ma chère, tu es une tisseuse de fils complexes. »`,chars:[['hylee','hylee2_surprised','left'],['saidin','saidin_thinking','right']],memories:['saidin_future_hylee'],choices:[c('Reculer sans quitter le reflet des yeux','c5_30_a',{sangfroid:1},'Ne pas appartenir tout de suite au reflet.'),c('Demander si cet avenir est certain','c5_30_b',{lucidite:1},'Chercher le mécanisme derrière la vision.'),c('Effleurer le miroir malgré la peur','c5_30_c',{resonance:1,audace:1},'Choix stratégique · écouter l’avenir sans lui obéir.',{c5_reflet_effleure:true})]},
+« Un de tes avenirs. Le passé, le présent et le futur sont tous liés, et toi, ma chère, tu es une tisseuse de fils complexes. »`,chars:[['hylee','hylee2_surprised','left'],['saidin','saidin_thinking','right']],choices:[c('Reculer sans quitter le reflet des yeux','c5_30_a',{sangfroid:1},'Ne pas appartenir tout de suite au reflet.'),c('Demander si cet avenir est certain','c5_30_b',{lucidite:1},'Chercher le mécanisme derrière la vision.'),{label:'Choix stratégique · Graver ce reflet dans sa mémoire',next:'c5_30_c',effects:{resonance:1,audace:1,lucidite:1},requires:{lucidite:20,resonance:12},note:'Garder le souvenir de cette Hylee de fin de route sans lui obéir.',flags:{c5_reflet_effleure:true,c5_reflet_grave:true},memories:['saidin_future_hylee']}]},
     c5_30_a:{title:'Le miroir liquide',sub:'Recul',bg:'c5_salle_miroirs',music:'music_c5_miraldas',speaker:'Narrateur',text:`Hylee recule, mais ne baisse pas les yeux. Ce reflet n’a pas encore de droit sur elle.
 
 Pas tant qu’elle respire ici, maintenant, sous le regard inquiet de Remerii.`,chars:[['hylee','hylee2_sad','left'],['remerii','remerii_sad','right']],next:'c5_31'},
@@ -12585,6 +12590,8 @@ Saidin sourit, comme si la question l’amusait davantage que la réponse.
 
 « S’il était certain, il ne serait pas un avenir. Il serait une prison. »`,chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_strict','right']],next:'c5_31'},
     c5_30_c:{title:'Le miroir liquide',sub:'Contact',bg:'c5_salle_miroirs',music:'music_c5_miraldas',speaker:'Narrateur',text:`Hylee effleure le miroir. Le froid du liquide n’a rien de naturel. Pendant un battement, elle croit sentir une version d’elle-même respirer de l’autre côté.
+
+Elle ne comprend pas encore ce qu’elle regarde. Pas vraiment. Mais quelque chose en elle grave cette image avec une précision presque douloureuse : les cheveux blancs, les yeux bleus, les marques de givre sur la peau.
 
 Puis elle retire sa main avant que le reflet ne puisse devenir une réponse.`,chars:[['hylee','hylee2_surprised','left'],['remerii','remerii_strict','right']],next:'c5_31'},
     c5_31:{title:'Saidin',sub:'Besoin d’aide',bg:'c5_salle_miroirs',music:'music_c5_miraldas',speaker:'Remerii',text:`Franchement, vraisemblablement crispée par le jeu de l’homme, Remerii intervient.
@@ -12817,12 +12824,18 @@ function exitIntroToMenu(){
   const keepMobile=state.mobileUI===true;
   const keepDev=state.devMode===true;
   const keepMenuMusic=state.menuMusicOn!==false;
+  const introCodexUnlocked=[...(state.codexUnlocked||[])];
+  const introCodexUnlockedImages=[...(state.codexUnlockedImages||[])];
+  const introCodexUnlockedMusic=[...(state.codexUnlockedMusic||[])];
   const prev=readMainSave();
   if(prev&&prev.scene){
     state={...state,...prev,stats:{...START_STATS,...(prev.stats||{})},introStats:{...INTRO_STATS,...((prev&&prev.introStats)||{})},flags:{...((prev&&prev.flags)||{})},history:Array.isArray(prev.history)?prev.history:[]};
   }else{
     state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
   }
+  state.codexUnlocked=[...new Set([...(state.codexUnlocked||[]),...introCodexUnlocked])];
+  state.codexUnlockedImages=[...new Set([...(state.codexUnlockedImages||[]),...introCodexUnlockedImages])];
+  state.codexUnlockedMusic=[...new Set([...(state.codexUnlockedMusic||[]),...introCodexUnlockedMusic])];
   state.mobileUI=(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:keepMobile;
   state.menuMusicOn=(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:keepMenuMusic;
   state.devMode=keepDev || !!(prev&&prev.devMode);
@@ -12833,7 +12846,7 @@ function exitIntroToMenu(){
   updateMenuButtons();
 }
 
-function save(){ensureCodexDefaults(); ensureIntroDefaults(); ensureProgressDefaults(); if(isIntroScene()){localStorage.setItem('sylvinia_vn_intro_v82',JSON.stringify({scene:state.scene,introStats:state.introStats})); return;} localStorage.setItem('sylvinia_vn_v82',JSON.stringify(state));}
+function save(){ensureCodexDefaults(); ensureIntroDefaults(); ensureProgressDefaults(); if(isIntroScene()){localStorage.setItem('sylvinia_vn_intro_v82',JSON.stringify({scene:state.scene,introStats:state.introStats,codexUnlocked:state.codexUnlocked,codexUnlockedImages:state.codexUnlockedImages,codexUnlockedMusic:state.codexUnlockedMusic})); return;} localStorage.setItem('sylvinia_vn_v82',JSON.stringify(state));}
 function load(){try{const raw=localStorage.getItem('sylvinia_vn_v82')||localStorage.getItem('sylvinia_vn_v81')||localStorage.getItem('sylvinia_vn_v79')||localStorage.getItem('sylvinia_vn_v78')||localStorage.getItem('sylvinia_vn_v77')||localStorage.getItem('sylvinia_vn_v76')||localStorage.getItem('sylvinia_vn_v75')||localStorage.getItem('sylvinia_vn_v74')||localStorage.getItem('sylvinia_vn_v73')||localStorage.getItem('sylvinia_vn_v72')||localStorage.getItem('sylvinia_vn_v71')||localStorage.getItem('sylvinia_vn_v70')||localStorage.getItem('sylvinia_vn_v69')||localStorage.getItem('sylvinia_vn_v68')||localStorage.getItem('sylvinia_vn_v67')||localStorage.getItem('sylvinia_vn_v61')||localStorage.getItem('sylvinia_vn_v60')||localStorage.getItem('sylvinia_vn_v59')||localStorage.getItem('sylvinia_vn_v58')||localStorage.getItem('sylvinia_vn_v57')||localStorage.getItem('sylvinia_vn_v56')||localStorage.getItem('sylvinia_vn_v55')||localStorage.getItem('sylvinia_vn_v54')||localStorage.getItem('sylvinia_vn_v53')||localStorage.getItem('sylvinia_vn_v45')||localStorage.getItem('sylvinia_vn_v44')||localStorage.getItem('sylvinia_vn_v43')||localStorage.getItem('sylvinia_vn_v42')||'null'; const s=JSON.parse(raw); if(s&&s.scene){ state={...state,...s,stats:{...START_STATS,...s.stats},introStats:{...INTRO_STATS,...((s&&s.introStats)||{})},flags:{...((state&&state.flags)||{}),...((s&&s.flags)||{})}}; if(state.scene==='duel' && state.duel && (state.duel.step||0)>0) state.duelIntroPlayed=true; if(typeof state.duelIntroPending!=='boolean') state.duelIntroPending=false; if(typeof state.duelIntroPlayed!=='boolean') state.duelIntroPlayed=false; if(typeof state.c3ShadowIntroPending!=='boolean') state.c3ShadowIntroPending=false; if(typeof state.c3ShadowIntroPlayed!=='boolean') state.c3ShadowIntroPlayed=!!(state.scene==='c3_22' && state.c3ShadowDuel && ((state.c3ShadowDuel.step||0)>0 || state.c3ShadowDuel.waiting===true)); if(typeof state.c5SageIntroPending!=='boolean') state.c5SageIntroPending=false; if(typeof state.c5SageIntroPlayed!=='boolean') state.c5SageIntroPlayed=!!(state.scene==='c5_sage_start' && state.c5SageDuel && ((state.c5SageDuel.step||0)>0 || state.c5SageDuel.waiting===true)); if(typeof state.menuMusicOn!=='boolean') state.menuMusicOn=true; if(typeof state.mobileUI!=='boolean') state.mobileUI=false; if(typeof state.devMode!=='boolean') state.devMode=false; state.history=Array.isArray(state.history)?state.history:[]; ensureCodexDefaults(); ensureProgressDefaults(); applyMobileUI(); }}catch(e){ensureCodexDefaults(); ensureProgressDefaults();}}
 
 function readMainSave(){
