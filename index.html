@@ -1743,7 +1743,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.114 · Chapitre VI</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.115 · Chapitre VI</div>
       </section>
     </div>
   </main>
@@ -2064,6 +2064,138 @@ body.disclaimerOpen #enterTitleBtn{min-height:54px;}
   body.disclaimerOpen .disclaimerFine{margin-bottom:12px!important;}
   body.disclaimerOpen .disclaimerBetaNotice{margin:10px 0 12px!important;padding:10px 11px!important;}
   body.disclaimerOpen #enterTitleBtn{width:100%!important;min-height:54px!important;font-size:16px!important;}
+}
+</style>
+<style id="disclaimerFixV115">
+/* Correctif robuste disclaimer v0.115 : plein écran, scroll mobile stable, bouton toujours atteignable */
+body.disclaimerOpen{
+  width:100vw!important;
+  height:100svh!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+body.disclaimerOpen #app{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100svh!important;
+  min-height:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:hidden!important;
+}
+body.disclaimerOpen #disclaimer{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100svh!important;
+  min-height:0!important;
+  max-height:none!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+  background:radial-gradient(circle at 20% 12%,rgba(84,169,211,.16),transparent 30%),radial-gradient(circle at 80% 78%,rgba(233,201,133,.13),transparent 32%),linear-gradient(180deg,rgba(9,18,32,.98),rgba(4,8,15,.98))!important;
+}
+body.disclaimerOpen #disclaimerCard{
+  width:100%!important;
+  min-height:100svh!important;
+  height:auto!important;
+  padding:calc(18px + env(safe-area-inset-top)) 14px calc(22px + env(safe-area-inset-bottom))!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+body.disclaimerOpen #disclaimerCard::before{
+  inset:-35%!important;
+  pointer-events:none!important;
+}
+body.disclaimerOpen #disclaimerCard::after{pointer-events:none!important;}
+body.disclaimerOpen .disclaimerPanel{
+  width:min(860px,100%)!important;
+  max-height:none!important;
+  margin:0 auto!important;
+  padding:clamp(18px,3vw,38px)!important;
+  border-radius:clamp(20px,3vw,30px)!important;
+  box-sizing:border-box!important;
+}
+body.disclaimerOpen .disclaimerSigil{
+  flex:0 0 auto!important;
+}
+body.disclaimerOpen .disclaimerTitle{
+  overflow-wrap:anywhere!important;
+}
+body.disclaimerOpen .disclaimerActions{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:30!important;
+  padding:12px 0 max(4px,env(safe-area-inset-bottom))!important;
+  margin-top:6px!important;
+  background:linear-gradient(180deg,rgba(5,9,17,0),rgba(5,9,17,.94) 36%,rgba(5,9,17,.985))!important;
+}
+body.disclaimerOpen #enterTitleBtn{
+  min-height:54px!important;
+  touch-action:manipulation!important;
+}
+@media(max-width:760px),(max-height:760px){
+  body.disclaimerOpen #disclaimerCard{
+    align-items:flex-start!important;
+    justify-content:center!important;
+    padding:calc(10px + env(safe-area-inset-top)) 8px calc(18px + env(safe-area-inset-bottom))!important;
+  }
+  body.disclaimerOpen .disclaimerPanel{
+    width:100%!important;
+    padding:14px 13px!important;
+    border-radius:18px!important;
+  }
+  body.disclaimerOpen .disclaimerSigil{
+    width:34px!important;
+    height:34px!important;
+    font-size:20px!important;
+    margin:0 auto 8px!important;
+  }
+  body.disclaimerOpen .disclaimerTitle{
+    font-size:clamp(22px,7.8vw,34px)!important;
+    line-height:1.04!important;
+    margin:0 0 8px!important;
+  }
+  body.disclaimerOpen .betaBadge{
+    margin-left:4px!important;
+    padding:3px 7px!important;
+    letter-spacing:.08em!important;
+  }
+  body.disclaimerOpen .disclaimerText,
+  body.disclaimerOpen .disclaimerFine,
+  body.disclaimerOpen .disclaimerBetaNotice{
+    font-size:13px!important;
+    line-height:1.38!important;
+    text-align:left!important;
+  }
+  body.disclaimerOpen .disclaimerText{margin:0 auto 10px!important;}
+  body.disclaimerOpen .disclaimerFine{margin:0 auto 10px!important;}
+  body.disclaimerOpen .disclaimerBetaNotice{
+    margin:10px 0 10px!important;
+    padding:10px 11px!important;
+    border-radius:14px!important;
+  }
+  body.disclaimerOpen .disclaimerActions{
+    padding-top:10px!important;
+  }
+  body.disclaimerOpen #enterTitleBtn{
+    width:100%!important;
+    min-height:52px!important;
+    font-size:15px!important;
+    border-radius:16px!important;
+  }
+}
+@media(max-height:560px){
+  body.disclaimerOpen .disclaimerSigil{display:none!important;}
+  body.disclaimerOpen .disclaimerTitle{font-size:24px!important;}
+  body.disclaimerOpen .disclaimerText,
+  body.disclaimerOpen .disclaimerFine,
+  body.disclaimerOpen .disclaimerBetaNotice{font-size:12px!important;line-height:1.32!important;}
 }
 </style>
 
