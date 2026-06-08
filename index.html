@@ -29,18 +29,17 @@ button{font:inherit;color:inherit} .hidden{display:none!important}
 
 /* --- Écran titre intermédiaire (entre disclaimer et menu) --- */
 #splashTitle{background:#000}
-#splashTitleCard{position:relative;min-height:720px;display:flex;align-items:stretch;overflow:hidden;background:#020610;isolation:isolate}
-#splashTitleCard::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(3,8,15,.72) 0%,rgba(3,8,15,.26) 34%,rgba(3,8,15,.18) 60%,rgba(3,8,15,.44) 100%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.36));pointer-events:none}
-#splashTitleCard::after{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 20% 78%,rgba(167,240,255,.12),transparent 18%),radial-gradient(circle at 85% 16%,rgba(233,201,133,.16),transparent 16%),radial-gradient(circle at center,transparent 54%,rgba(0,0,0,.18) 100%);pointer-events:none}
-.splashVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;filter:saturate(1.04) contrast(1.03) brightness(.9)}
-.splashTitleOverlay{position:relative;z-index:2;min-height:720px;width:100%;display:flex;align-items:flex-end;justify-content:flex-start;padding:34px 30px 40px}
-.splashTitleStack{display:grid;gap:12px;max-width:min(460px,90vw)}
-.splashKicker{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.72);font-weight:800}
-.splashLogo{font-size:clamp(34px,5.4vw,72px);line-height:.96;font-weight:900;margin:0;text-shadow:0 10px 35px rgba(0,0,0,.45)}
-.splashSubline{font-size:15px;line-height:1.55;color:rgba(231,240,248,.86);max-width:34ch;margin:0;text-shadow:0 6px 22px rgba(0,0,0,.42)}
-.splashEnterBtn{display:inline-flex;align-items:center;justify-content:center;justify-self:start;padding:13px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(8,14,24,.14);color:#eef7ff;font-weight:700;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(5px);box-shadow:0 10px 24px rgba(0,0,0,.22);transition:.18s transform,.18s border-color,.18s background,.18s opacity;opacity:.92}
-.splashEnterBtn:hover{transform:translateY(-1px);border-color:rgba(167,240,255,.48);background:rgba(8,14,24,.28);opacity:1}
-@media(max-width:760px){.splashTitleOverlay{min-height:100svh;padding:22px 18px 28px}.splashTitleStack{gap:10px;max-width:86vw}.splashKicker{font-size:10px}.splashSubline{font-size:13px;max-width:28ch}.splashEnterBtn{padding:12px 16px;font-size:15px}}
+#splashTitleCard{position:relative;min-height:720px;display:flex;align-items:stretch;overflow:hidden;background:#000;isolation:isolate}
+#splashTitleCard::before,#splashTitleCard::after{content:none}
+.splashVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;filter:none}
+.splashTitleOverlay{position:relative;z-index:2;min-height:720px;width:100%;display:flex;align-items:center;justify-content:flex-start;padding:34px 30px 40px;pointer-events:none}
+.splashTitleStack{display:grid;gap:0;max-width:min(360px,90vw)}
+.splashKicker,.splashLogo,.splashSubline{display:none}
+.splashEnterBtn{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center;justify-self:start;padding:16px 22px;border-radius:999px;border:1px solid rgba(255,255,255,.38);background:rgba(255,255,255,.06);color:#f7fbff;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);box-shadow:0 8px 30px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.05);transition:.18s transform,.18s border-color,.18s background,.18s box-shadow,.18s opacity;opacity:.96}
+.splashEnterBtn::before{content:"✦";font-size:.9em;margin-right:.7em;opacity:.82}
+.splashEnterBtn:hover{transform:translateY(-1px) scale(1.015);border-color:rgba(255,255,255,.72);background:rgba(255,255,255,.12);box-shadow:0 10px 34px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.08) inset}
+.splashEnterBtn:active{transform:translateY(0) scale(.995)}
+@media(max-width:760px){.splashTitleOverlay{min-height:100svh;padding:22px 18px 28px}.splashEnterBtn{padding:14px 18px;font-size:14px;letter-spacing:.07em}}
 
 /* --- Fondu écran titre / menu --- */
 #screenFade{position:fixed;inset:0;z-index:9999;background:#020610;opacity:0;pointer-events:none;transition:opacity .34s ease}
@@ -1659,9 +1658,6 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
       </video>
       <div class="splashTitleOverlay">
         <div class="splashTitleStack">
-          <div class="splashKicker">Les Chroniques de Sylvinia</div>
-          <h1 class="splashLogo">Tome I</h1>
-          <p class="splashSubline">Entre le prologue et le grimoire, laisse d’abord le monde s’ouvrir à toi.</p>
           <button class="splashEnterBtn" id="enterMenuFromSplashBtn" type="button">Appuyer pour commencer</button>
         </div>
       </div>
