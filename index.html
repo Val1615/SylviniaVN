@@ -1743,7 +1743,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.110 · Chapitre V</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.111 · Chapitre VI</div>
       </section>
     </div>
   </main>
@@ -2306,7 +2306,7 @@ const JOURNAL_FRAGMENTS={
 const SCENE_PROGRESS_REWARDS={
   s16:{items:['jeton_imperial']}
 };
-const PROGRESSION_STAT_CAPS={audace:25,sangfroid:25,lien:25,lucidite:25,resonance:15};
+const PROGRESSION_STAT_CAPS={audace:30,sangfroid:30,lien:30,lucidite:30,resonance:20};
 
 
 const CODEX_ENTRIES={
@@ -12843,13 +12843,1644 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
   });
 })();
 
+
+
+/* Chapitre VI du VN · Adaptation intégrale du Chapitre VII du Tome 1 : Une Parenthèse au Cœur de Mir’Aldas. */
+(function installChapter6MiraldasInterlude(){
+  try{
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        "cristal_navigation": {
+                "title": "Cristal de navigation",
+                "body": "Sphère d’un bleu profond constellée de points lumineux. Elle réagit aux énergies magiques et guide son porteur vers leur source. Remerii l’offre à Hylee comme un investissement, officiellement pour éviter de la chercher pendant des heures."
+        },
+        "parenthese_miraldas": {
+                "title": "Parenthèse au cœur de Mir’Aldas",
+                "body": "Moment suspendu après l’épreuve de Saidin. Loin des ordres impériaux et de la menace des Obscurcis, Hylee et Remerii redécouvrent Mir’Aldas comme une ville de lumières, de secrets, de gourmandises et de silences qui en disent trop."
+        },
+        "terrasse_dome": {
+                "title": "Terrasse sous le dôme",
+                "body": "Plateforme surélevée offrant une vue sur les tours flottantes, les canaux lumineux et la toile cosmique du dôme arcanique. Le lieu devient un refuge intime, presque irréel, où Hylee et Remerii se rapprochent sans vraiment oser nommer ce qui se passe."
+        }
+});
+    }
+    if(typeof CODEX_ORDER!=='undefined' && Array.isArray(CODEX_ORDER)){
+      ['cristal_navigation','parenthese_miraldas','terrasse_dome'].forEach(id=>{ if(!CODEX_ORDER.includes(id)) CODEX_ORDER.push(id); });
+    }
+    if(typeof CODEX_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_BY_SCENE,{
+        "c6_01": [
+                "miraldas",
+                "parenthese_miraldas"
+        ],
+        "c6_09": [
+                "cristal_navigation",
+                "parenthese_miraldas"
+        ],
+        "c6_12": [
+                "miraldas",
+                "terrasse_dome"
+        ],
+        "c6_18": [
+                "terrasse_dome"
+        ],
+        "c6_23": [
+                "terrasse_dome"
+        ],
+        "c6_32": [
+                "parenthese_miraldas",
+                "terrasse_dome",
+                "cristal_navigation"
+        ]
+});
+    }
+    if(typeof PROGRESSION_ITEMS!=='undefined'){
+      Object.assign(PROGRESSION_ITEMS,{
+        "cristal_navigation": {
+                "title": "Cristal de navigation",
+                "type": "Artefact de repérage",
+                "icon": "✧",
+                "body": "Sphère bleu profond constellée de points lumineux, offerte par Remerii à Hylee dans les ruelles de Mir’Aldas. Elle réagit aux énergies magiques et peut guider vers leur source."
+        }
+});
+    }
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      Object.assign(PROGRESSION_MEMORIES,{
+        "tartelette_miraldas": {
+                "title": "La première tartelette de Mir’Aldas",
+                "type": "Mir’Aldas",
+                "icon": "✦",
+                "body": "Hylee goûte une pâtisserie magique dans les rues de Mir’Aldas. Remerii se souvient de sa propre première tartelette, juste après son admission comme apprentie."
+        },
+        "cristal_offert_remerii": {
+                "title": "Remerii a offert le cristal de navigation",
+                "type": "Remerii",
+                "icon": "✧",
+                "body": "Derrière sa plaisanterie sur les apprenties perdues, Remerii offre à Hylee un outil utile et personnel. Un cadeau déguisé en prudence."
+        },
+        "cape_sur_les_epaules": {
+                "title": "La cape sur les épaules",
+                "type": "Hylee & Remerii",
+                "icon": "❄",
+                "body": "Sur la terrasse de Mir’Aldas, Remerii couvre Hylee de sa cape en prétendant seulement qu’il fait frais. Hylee comprend pourtant que le geste dit plus que l’excuse."
+        },
+        "remerii_lue_par_hylee": {
+                "title": "Hylee a lu entre les silences de Remerii",
+                "type": "Lien Remerii",
+                "icon": "✦",
+                "body": "Hylee remarque que Remerii se cache derrière l’ironie, mais fait attention à elle tout le temps. Cette lucidité ouvre une brèche douce dans l’armure de l’archimage."
+        },
+        "nuit_sur_la_terrasse": {
+                "title": "Une nuit sous le dôme",
+                "type": "Mir’Aldas",
+                "icon": "✦",
+                "body": "Sous les constellations mouvantes du dôme arcanique, Hylee demande à Remerii de rester encore. Le monde attendra. Pour une fois, elles aussi."
+        }
+});
+    }
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c6_key_ruelles_miraldas:{title:"Chapitre VI · Ruelle de Mir’Aldas",body:"Les boutiques excentriques, les étals enchantés et la douceur d’une parenthèse après Saidin.",src:A.c5_miraldas_rue_02},
+        c6_key_tartelette:{title:"Chapitre VI · Tartelette magique",body:"La première gourmandise magique d’Hylee à Mir’Aldas, entre émerveillement et souvenir d’apprentie.",src:A.c5_miraldas_rue_03},
+        c6_key_terrasse_dome:{title:"Chapitre VI · Terrasse sous le dôme",body:"Hylee et Remerii face à Mir’Aldas, entre vue cosmique et aveux presque silencieux.",src:A.c5_key_avenue_suspendue},
+        c6_key_nuit_miraldas:{title:"Chapitre VI · Nuit de Mir’Aldas",body:"Un moment volé, simple et précieux, avant que la mission ne reprenne ses droits.",src:A.c5_key_finale}
+      });
+    }
+    if(typeof CODEX_IMAGE_ORDER!=='undefined' && Array.isArray(CODEX_IMAGE_ORDER)){
+      const section=CODEX_IMAGE_ORDER.find(s=>s&&s.title==='Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas');
+      if(!section){
+        CODEX_IMAGE_ORDER.push({title:'Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas',sections:[
+          {title:'Ruelles enchantées',keys:['c6_key_ruelles_miraldas','c6_key_tartelette']},
+          {title:'Terrasse et dôme',keys:['c6_key_terrasse_dome','c6_key_nuit_miraldas']}
+        ]});
+      }
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c6_01:['c6_key_ruelles_miraldas'],
+        c6_03:['c6_key_tartelette'],
+        c6_12:['c6_key_terrasse_dome'],
+        c6_32:['c6_key_nuit_miraldas']
+      });
+    }
+  }catch(e){console.warn('Chapitre VI · extensions optionnelles non appliquées', e);}
+
+  Object.assign(S,{
+    "c6_01": {
+        "title": "Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas",
+        "sub": "Crépuscule sur la cité des mages",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Le crépuscule tombe lentement sur Mir’Aldas, transformant la cité magique en un tableau vivant d’ombres dansantes et de lumières scintillantes.\n\nLes lanternes magiques s’allument progressivement dans les rues, projetant des halos colorés sur les pavés et les tours environnantes. Les habitants de la ville, mages de toutes races et horizons, se déplacent dans un ballet fluide, chacun portant en lui une part de mystère.",
+        "chars": [],
+        "next": "c6_02",
+        "zoom": true
+    },
+    "c6_02": {
+        "title": "Ruelles de Mir’Aldas",
+        "sub": "Après Saidin",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee et Remerii avancent dans une ruelle bordée de boutiques excentriques, après avoir quitté Saidin et lui avoir donné rendez-vous le lendemain pour le départ.\n\nLes étals regorgent de marchandises étranges : des grimoires flottants, des potions changeant de couleur, et des créatures enchantées qui sifflent doucement depuis leurs cages.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_surprised",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_03"
+    },
+    "c6_03": {
+        "title": "Ruelles de Mir’Aldas",
+        "sub": "La tartelette scintillante",
+        "bg": "c5_miraldas_rue_03",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Elles s’arrêtent devant une petite échoppe de pâtisseries magiques, où l’odeur sucrée d’épices rares emplit l’air.\n\nHylee, les yeux brillants, désigne une tartelette scintillante.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_04"
+    },
+    "c6_04": {
+        "title": "La tartelette",
+        "sub": "Comme toujours",
+        "bg": "c5_miraldas_rue_03",
+        "music": "music_c5_miraldas",
+        "speaker": "Hylee",
+        "text": "« Juste une ? » demande Hylee d’un air suppliant.\n\nRemerii prend un air de fausse hésitation.\n\n« D’accord, mais tu la payes. »\n\nHylee grimace aussitôt.\n\n« Tu sais très bien que je n’ai rien ! »\n\nRemerii rit doucement.\n\n« Évidemment. C’est moi qui régale, comme toujours. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_05"
+    },
+    "c6_05": {
+        "title": "La tartelette",
+        "sub": "Explosion de saveurs",
+        "bg": "c5_miraldas_rue_03",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Remerii tend quelques pièces au vendeur, qui lui adresse un sourire reconnaissant, avant de tendre la tartelette à Hylee.\n\nDès la première dégustation, une explosion de saveur méconnaissable irradie son palais.\n\n« C’est délicieux ! » lâche Hylee, croquant avec délice.\n\nRemerii sourit avec nostalgie.\n\n« Je me souviens de ma première tartelette ici. C’était juste après que j’ai été admise dans la bibliothèque comme apprentie. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_06",
+        "memories": [
+            "tartelette_miraldas"
+        ]
+    },
+    "c6_06": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Remerii avant Remerii",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Hylee",
+        "text": "« Tu étais comment, plus jeune ? »\n\nL’archimage prend un temps de réflexion. Son regard se teinte de mélancolie et d’un soupçon de nostalgie.\n\n« Bien plus insupportable que toi, crois-le ou non. »\n\nHylee fait mine d’être sceptique, dans un ton sarcastique.\n\n« C’est difficile à imaginer. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Souffler que c’est vraiment difficile à imaginer",
+                "next": "c6_06_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide la taquinerie."
+            },
+            {
+                "label": "Lui laisser le temps de choisir ses mots",
+                "next": "c6_06_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide la patience."
+            },
+            {
+                "label": "Comprendre que Mir’Aldas lui a coûté cher",
+                "next": "c6_06_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide la lecture du sous-texte."
+            },
+            {
+                "label": "Se laisser distraire par les flux des étals",
+                "next": "c6_06_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve la distraction."
+            }
+        ]
+    },
+    "c6_06_a": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Audace",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee laisse volontairement la pointe d’insolence flotter entre elles.\n\nRemerii lui adresse un regard faussement outré, mais le coin de sa bouche cède avant sa discipline.\n\n« Attention, apprentie. Je connais des sorts très efficaces contre les remarques déplacées. »\n\nLa menace sonne trop douce pour convaincre qui que ce soit.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_07"
+    },
+    "c6_06_b": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Sang-froid",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee garde sa plaisanterie au bord des lèvres, puis la laisse mourir. Remerii ne donne pas souvent des fragments d’elle-même.\n\nCe silence-là n’est pas un vide. C’est une chaise tirée près d’un feu discret.\n\nRemerii remarque la retenue et ne la commente pas, mais son expression se détend.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_07"
+    },
+    "c6_06_c": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Lucidité",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee comprend que cette première tartelette n’est pas seulement un souvenir sucré. C’est le goût d’une entrée dans un monde qui l’a accueillie d’une main et testée de l’autre.\n\nElle ne dit rien de grand. Elle se contente d’écouter autrement.\n\nRemerii baisse les yeux un court instant, comme si cette attention tombait trop juste.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_07"
+    },
+    "c6_06_d": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Résonance",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Les cristaux suspendus, les cages enchantées et les grimoires flottants tirent l’attention d’Hylee comme autant de petites lunes.\n\nSa magie répond, curieuse, presque trop vite.\n\nRemerii le sent aussitôt.\n\n« Hylee. Avec moi. Les souvenirs explosent moins souvent que les étals de Mir’Aldas, mais ils demandent aussi qu’on les écoute. »\n\nLa réprimande est légère, mais nette.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_07"
+    },
+    "c6_07": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Le prix de Mir’Aldas",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Remerii",
+        "text": "« Oh, je te promets que c’est vrai. J’étais têtue, imprudente… Toujours à vouloir prouver que je pouvais rivaliser avec les autres apprentis, même si j’étais humaine. »\n\nHylee la regarde avec admiration.\n\n« Mais tu as réussi. »\n\nRemerii soupire.\n\n« Oui, mais à quel prix ? J’ai perdu beaucoup d’amis en chemin. Et même ceux qui m’appréciaient ne me faisaient jamais entièrement confiance. »\n\nHylee redevient sérieuse.\n\n« Ils avaient tort. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_08"
+    },
+    "c6_08": {
+        "title": "Souvenirs d’apprentie",
+        "sub": "Survivre en étant plus malin",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Remerii",
+        "text": "Touchée, mais feignant l’indifférence, Remerii détourne légèrement le regard.\n\n« Peut-être. Mais c’est comme ça que fonctionne Mir’Aldas. Ici, tu ne survis qu’en étant plus malin que les autres. »\n\nHylee l’observe attentivement.\n\n« C’est pour ça que tu es toujours aussi… prudente ? »\n\nRemerii sourit en coin.\n\n« Prudente, hein ? C’est une manière polie de dire “ennuyeuse” ? »\n\nHylee rit doucement.\n\n« Non… enfin, pas tout le temps. Et puis on ne s’ennuie jamais avec toi. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_09"
+    },
+    "c6_09": {
+        "title": "Le cristal de navigation",
+        "sub": "L’étal suspendu",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Alors qu’elles poursuivent leur chemin, Remerii s’arrête soudain devant un étal où brillent des cristaux en suspension.\n\nL’un d’eux, une sphère d’un bleu profond constellée de points lumineux, attire son regard.\n\nHylee s’approche, intriguée.\n\n« Qu’est-ce que c’est ? »\n\nRemerii touche doucement la sphère.\n\n« Un cristal de navigation. Il réagit aux énergies magiques et te guide vers leur source. »\n\nHylee s’illumine.\n\n« C’est incroyable ! »\n\nRemerii sourit, mystérieuse.\n\n« Et utile, surtout pour toi. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_surprised",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_10"
+    },
+    "c6_10": {
+        "title": "Le cristal de navigation",
+        "sub": "Investissement",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Elle tend quelques pièces au marchand et glisse la sphère dans la main d’Hylee.\n\nLes yeux de l’apprentie s’écarquillent.\n\n« C’est pour moi ? »\n\nRemerii prend un air faussement sérieux.\n\n« Considère ça comme un investissement. Si tu te perds, je n’aurai pas à te chercher pendant des heures. »\n\nHylee rit doucement.\n\n« Merci, Remerii. »\n\nRemerii lui adresse un clin d’œil.\n\n« Juste, ne le casse pas. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_surprised",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Promettre de ne presque pas le casser",
+                "next": "c6_10_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide l’ironie bien placée.",
+                "flags": {
+                    "cristal_taquinerie": true
+                },
+                "items": [
+                    "cristal_navigation"
+                ],
+                "memories": [
+                    "cristal_offert_remerii"
+                ]
+            },
+            {
+                "label": "Le ranger précieusement sans fanfaronner",
+                "next": "c6_10_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide le sérieux.",
+                "flags": {
+                    "cristal_precieux": true
+                },
+                "items": [
+                    "cristal_navigation"
+                ],
+                "memories": [
+                    "cristal_offert_remerii"
+                ]
+            },
+            {
+                "label": "Demander ce qu’il détecte exactement",
+                "next": "c6_10_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide la bonne question.",
+                "flags": {
+                    "cristal_etudie": true
+                },
+                "items": [
+                    "cristal_navigation"
+                ],
+                "memories": [
+                    "cristal_offert_remerii"
+                ]
+            },
+            {
+                "label": "Laisser sa magie effleurer la sphère",
+                "next": "c6_10_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve l’imprudence.",
+                "flags": {
+                    "cristal_reagit": true
+                },
+                "items": [
+                    "cristal_navigation"
+                ],
+                "memories": [
+                    "cristal_offert_remerii"
+                ]
+            }
+        ]
+    },
+    "c6_10_a": {
+        "title": "Le cristal de navigation",
+        "sub": "Audace",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Hylee",
+        "text": "« Je ne promets rien. Enfin… je promets de ne presque pas le casser. »\n\nRemerii lève les yeux au ciel, mais son sourire la trahit.\n\n« Presque n’est pas une unité de mesure reconnue par le Conseil des Arcanes. »\n\nHylee serre la sphère contre elle, ravie.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_11"
+    },
+    "c6_10_b": {
+        "title": "Le cristal de navigation",
+        "sub": "Sang-froid",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee referme ses doigts autour de la sphère avec une attention presque solennelle.\n\nRemerii remarque le geste.\n\n« Bien. Un outil magique n’est jamais seulement un objet joli. Surtout à Mir’Aldas. »\n\nLa remarque ressemble à une leçon. Elle ressemble aussi à une confiance accordée.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_11"
+    },
+    "c6_10_c": {
+        "title": "Le cristal de navigation",
+        "sub": "Lucidité",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Hylee",
+        "text": "« Il détecte toutes les sources ? Même les traces anciennes ? Même les magies dissimulées ? »\n\nRemerii penche la tête, amusée par la rafale de questions.\n\n« Pas toutes. Mais il réagit aux signatures suffisamment fortes ou mal camouflées. Et quand son porteur est sensible, il peut devenir plus précis. »\n\nHylee comprend que le cadeau a été choisi avec beaucoup trop de soin pour n’être qu’une plaisanterie.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_11"
+    },
+    "c6_10_d": {
+        "title": "Le cristal de navigation",
+        "sub": "Résonance",
+        "bg": "c5_miraldas_rue_01",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Hylee laisse une mince pulsation magique toucher la sphère. Les points lumineux accélèrent aussitôt, comme une nuée d’étoiles paniquées.\n\nRemerii referme sa main sur celle d’Hylee.\n\n« Pas dans une rue pleine d’objets enchantés. Tu veux réveiller la moitié du marché ? »\n\nHylee rougit. Le cristal, lui, continue de luire doucement.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_surprised",
+                "right"
+            ]
+        ],
+        "next": "c6_11"
+    },
+    "c6_11": {
+        "title": "Ruelles de Mir’Aldas",
+        "sub": "Le cadeau sous la plaisanterie",
+        "bg": "c5_miraldas_rue_02",
+        "music": "music_c5_miraldas",
+        "speaker": "Narrateur",
+        "text": "Le cristal disparaît dans les affaires d’Hylee, mais la sensation de son poids reste au creux de sa paume.\n\nDerrière l’ironie de Remerii, il y a une attention précise, presque méthodique. Elle ne dit pas “je tiens à toi”. Elle achète un objet capable de retrouver une apprentie perdue.\n\nÀ Mir’Aldas, même la tendresse porte parfois une forme de sortilège pratique.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_12"
+    },
+    "c6_12": {
+        "title": "La terrasse",
+        "sub": "La ville sous le dôme",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "La nuit a enveloppé la cité, et sous son immense dôme arcanique, la ville brille d’une lumière irréelle.\n\nLes tours flottantes scintillent comme des étoiles proches, et les rues pavées réfléchissent les éclats magiques des lanternes dansantes.\n\nAu-dessus, le dôme lui-même est un spectacle : une toile cosmique mouvante, où des constellations s’allument et s’éteignent, jouant un ballet éternel.",
+        "chars": [],
+        "next": "c6_13",
+        "zoom": true
+    },
+    "c6_13": {
+        "title": "La terrasse",
+        "sub": "Un silence apaisant",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Les deux femmes se sont arrêtées sur une terrasse naturelle, une plateforme surélevée qui offre une vue dégagée sur la ville.\n\nL’air est frais et chargé de magie, mais le silence de la nuit est apaisant.\n\nHylee fixe les lumières de la ville, émerveillée.\n\n« C’est… magnifique. »\n\nRemerii regarde la jeune femme plutôt que la vue.\n\n« Oui, c’est vrai. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_14",
+        "memories": [
+            "nuit_sur_la_terrasse"
+        ]
+    },
+    "c6_14": {
+        "title": "La terrasse",
+        "sub": "Différent",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "Hylee se tourne vers Remerii avec un sourire timide.\n\n« Tu regardes même pas, toi. »\n\nRemerii sourit en coin.\n\n« J’ai vu cette vue des centaines de fois. »\n\n« Et tu es blasée, c’est ça ? »\n\nRemerii se détend, s’appuyant contre la rambarde.\n\n« Pas blasée… juste habituée. Après autant d’années, on n’y porte même plus attention. »\n\nElle déglutit un court instant, puis reprend.\n\n« Mais avec toi, ça semble… différent. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Demander ce qui est différent",
+                "next": "c6_14_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide la franchise timide."
+            },
+            {
+                "label": "Laisser Remerii chercher ses mots",
+                "next": "c6_14_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide la patience."
+            },
+            {
+                "label": "Comprendre que son regard change la ville",
+                "next": "c6_14_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide ce qu’Hylee devine."
+            },
+            {
+                "label": "Se perdre dans les pulsations du dôme",
+                "next": "c6_14_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve l’absence soudaine."
+            }
+        ]
+    },
+    "c6_14_a": {
+        "title": "La terrasse",
+        "sub": "Audace",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Différent, comment ? »\n\nLa question sort plus vite que prévu. Hylee ne la reprend pas.\n\nRemerii cherche ses mots.\n\n« Je ne sais pas… Comme si redécouvrir cet endroit avec toi me faisait voir les choses autrement. »\n\nHylee se trouble légèrement.\n\n« Ah… »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_15"
+    },
+    "c6_14_b": {
+        "title": "La terrasse",
+        "sub": "Sang-froid",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee pourrait se précipiter dans la brèche. Elle choisit de ne pas le faire.\n\nRemerii garde quelques secondes de plus pour assembler ce qui, chez elle, refuse d’être assemblé facilement.\n\n« Comme si redécouvrir cet endroit avec toi me faisait voir les choses autrement. »\n\nHylee baisse les yeux, touchée.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_15"
+    },
+    "c6_14_c": {
+        "title": "La terrasse",
+        "sub": "Lucidité",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee comprend que Remerii ne parle pas vraiment de la ville.\n\nElle parle de ce que la ville devient lorsqu’une autre personne la regarde avec assez d’émerveillement pour rendre ses lumières neuves.\n\nRemerii ne formule pas tout. Hylee n’en a pas besoin.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_15"
+    },
+    "c6_14_d": {
+        "title": "La terrasse",
+        "sub": "Résonance",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Le dôme pulse au-dessus d’elles. Hylee sent les constellations mouvantes glisser dans sa propre magie, comme si la ville lui murmurait un alphabet lumineux.\n\nPendant une seconde, elle n’entend plus Remerii.\n\n« Hylee ? »\n\nLa voix la ramène au bord de la terrasse.\n\n« Ne me laisse pas parler à une statue fascinée par le plafond. Même si le plafond est très impressionnant. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_surprised",
+                "right"
+            ]
+        ],
+        "next": "c6_15"
+    },
+    "c6_15": {
+        "title": "La terrasse",
+        "sub": "Silence non gênant",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Le silence s’installe, mais il n’est pas gênant.\n\nHylee s’approche de la rambarde, ses mains effleurant le métal froid, et Remerii, presque inconsciemment, se tient un peu plus près d’elle.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_16"
+    },
+    "c6_16": {
+        "title": "La terrasse",
+        "sub": "Vivre ici",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "D’un ton rêveur, Hylee demande :\n\n« Tu crois qu’un jour, on pourrait vraiment vivre ici ? »\n\nRemerii fixe la ville en contrebas.\n\n« C’est possible… mais ce n’est pas une vie pour tout le monde. Ici, tout est beau en surface, mais c’est une ville de secrets, de pouvoirs cachés. »\n\nHylee rit doucement.\n\n« Ça te va bien, les secrets. »\n\nRemerii sourit, amusée.\n\n« Et toi, tu es bien trop transparente pour ce genre d’endroit. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_17"
+    },
+    "c6_17": {
+        "title": "La terrasse",
+        "sub": "Facile à lire",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Remerii",
+        "text": "Hylee se tourne vers elle, un éclat dans les yeux, la défiant presque du regard.\n\n« Transparente ? »\n\nRemerii s’approche légèrement, un sourire taquin aux lèvres.\n\n« Oui, tu es facile à lire. »\n\nHylee fait mine d’être vexée.\n\n« Et toi, tu es impossible à comprendre. »\n\nLe sourire de Remerii s’adoucit.\n\n« Peut-être… mais c’est parce que j’ai appris à ne pas tout montrer. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Répondre qu’elle reste impossible à comprendre",
+                "next": "c6_17_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide la répartie."
+            },
+            {
+                "label": "Ne pas forcer ses secrets",
+                "next": "c6_17_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide la frontière respectée."
+            },
+            {
+                "label": "Dire qu’Hylee voit quand même son attention",
+                "next": "c6_17_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide, même si elle feint le contraire.",
+                "memories": [
+                    "remerii_lue_par_hylee"
+                ]
+            },
+            {
+                "label": "Chercher dans le froid ce qu’elle ne dit pas",
+                "next": "c6_17_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve cette lecture magique."
+            }
+        ]
+    },
+    "c6_17_a": {
+        "title": "La terrasse",
+        "sub": "Audace",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Impossible à comprendre, vraiment. C’est presque un métier chez toi. »\n\nRemerii arque un sourcil.\n\n« Presque ? »\n\n« Disons que tu frôles l’excellence. »\n\nLe rire de Remerii est bref, mais il existe. Hylee le range quelque part avec les choses rares.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_18"
+    },
+    "c6_17_b": {
+        "title": "La terrasse",
+        "sub": "Sang-froid",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee sent qu’elle pourrait pousser. Elle pourrait poser la mauvaise question au bon moment, ou la bonne question trop tôt.\n\nElle choisit plutôt de regarder la ville.\n\nRemerii ne dit rien, mais sa proximité contre la rambarde ne recule pas.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_18"
+    },
+    "c6_17_c": {
+        "title": "La terrasse",
+        "sub": "Lucidité",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Tu fais comme si rien ne t’atteignait, mais je vois que tu fais attention. Tout le temps. »\n\nUn sourire furtif traverse le visage de Remerii.\n\n« Peut-être. Mais ne va pas trop analyser. »\n\nHylee garde pour elle le fait qu’il est déjà trop tard.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_18"
+    },
+    "c6_17_d": {
+        "title": "La terrasse",
+        "sub": "Résonance",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee se concentre sur la fraîcheur qui entoure Remerii, sur la manière dont sa magie semble plus calme lorsqu’elle ment mal.\n\nRemerii pince les lèvres.\n\n« Tout n’est pas un sort à décoder, Hylee. Parfois, une personne essaie simplement de parler. Mal, peut-être, mais de parler quand même. »\n\nLe rappel pique avec douceur.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_18"
+    },
+    "c6_18": {
+        "title": "La terrasse",
+        "sub": "La cape",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Alors qu’un vent léger souffle, Hylee frissonne.\n\nRemerii, sans même y réfléchir, glisse sa cape sur les épaules de la jeune femme, ses doigts effleurant brièvement sa nuque.\n\nHylee se fige, surprise mais touchée.\n\n« Merci… »\n\nRemerii regarde ailleurs pour masquer son trouble.\n\n« Il fait frais ici, c’est tout. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_19",
+        "memories": [
+            "cape_sur_les_epaules"
+        ]
+    },
+    "c6_19": {
+        "title": "La terrasse",
+        "sub": "Lire entre les silences",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee ajuste la cape, mais ses yeux restent fixés sur Remerii.\n\nElle hésite un instant, puis pose doucement sa main sur celle de son mentor, encore appuyée contre la rambarde.\n\nD’une voix douce, elle murmure :\n\n« Tu sais, parfois, tu es plus facile à comprendre que tu ne le crois. »\n\nRemerii relève les yeux vers elle, surprise.\n\n« Ah oui ? »\n\nHylee sourit légèrement.\n\n« Oui… tu fais comme si rien ne t’atteignait, mais je vois que tu fais attention. Tout le temps. »\n\nUn sourire furtif traverse le visage de Remerii.\n\n« Peut-être. Mais ne va pas trop analyser. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_20",
+        "memories": [
+            "remerii_lue_par_hylee"
+        ]
+    },
+    "c6_20": {
+        "title": "La terrasse",
+        "sub": "Mains jointes",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Leurs mains restent là, jointes sur la rambarde, aucune des deux ne bougeant pour rompre ce moment.\n\nHylee observe le dôme au-dessus, fascinée par ses mouvements fluides et cosmiques.\n\nElle tourne légèrement la tête, capturant le regard de Remerii. Il y a quelque chose dans leurs expressions, une connexion qui dépasse les mots.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_21"
+    },
+    "c6_21": {
+        "title": "La terrasse",
+        "sub": "Quelqu’un",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "Avec un sourire timide, Hylee demande :\n\n« Tu as déjà eu quelqu’un, toi ? »\n\nRemerii, surprise par la question, détourne légèrement les yeux.\n\n« Pourquoi cette question, tout d’un coup ? »\n\nHylee hausse les épaules.\n\n« Je sais pas… Tu sembles tellement… distante, parfois. Comme si tu avais décidé de rester seule pour toujours. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_surprised",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Assumer la question sans détour",
+                "next": "c6_21_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide la sincérité."
+            },
+            {
+                "label": "Adoucir la question sans la retirer",
+                "next": "c6_21_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide la délicatesse."
+            },
+            {
+                "label": "Avouer que sa distance inquiète Hylee",
+                "next": "c6_21_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide le vrai sujet."
+            },
+            {
+                "label": "Demander si la magie prend toujours la place du reste",
+                "next": "c6_21_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve la formule trop brutale."
+            }
+        ]
+    },
+    "c6_21_a": {
+        "title": "La terrasse",
+        "sub": "Audace",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee ne fuit pas derrière une excuse. Sa rougeur suffit déjà à dire qu’elle a conscience d’avoir touché une zone fragile.\n\nRemerii l’observe quelques secondes, puis expire par le nez.\n\n« Au moins, tu as le mérite de ne pas tourner autour de tes propres questions. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_22"
+    },
+    "c6_21_b": {
+        "title": "La terrasse",
+        "sub": "Sang-froid",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Tu n’es pas obligée de répondre. Je me demandais juste… »\n\nLa phrase donne à Remerii une sortie. Paradoxalement, c’est peut-être ce qui lui permet de rester.\n\n« Je sais, » répond-elle plus doucement. « Et c’est pour ça que je peux répondre. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_22"
+    },
+    "c6_21_c": {
+        "title": "La terrasse",
+        "sub": "Lucidité",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Parce que parfois, j’ai l’impression que tu t’es convaincue que rester seule était plus simple. »\n\nRemerii ne sourit plus tout à fait.\n\n« Plus simple, non. Moins dangereux, parfois. »\n\nLa réponse ne ferme pas la porte. Elle en montre seulement les serrures.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_22"
+    },
+    "c6_21_d": {
+        "title": "La terrasse",
+        "sub": "Résonance",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Est-ce que la magie prend toujours la place du reste ? »\n\nLa question est juste, mais elle tombe avec trop de poids.\n\nRemerii retire son regard.\n\n« La magie ne prend rien toute seule. Ce sont les gens qui choisissent ce qu’ils lui offrent. Ne rends pas un pouvoir responsable de toutes les lâchetés. »\n\nHylee acquiesce, un peu piquée.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_22"
+    },
+    "c6_22": {
+        "title": "La terrasse",
+        "sub": "Sacrifices",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Remerii",
+        "text": "Après un moment d’hésitation, Remerii répond :\n\n« J’ai eu des gens… mais la magie a toujours été une priorité. Et quand tu la choisis, tu sacrifies souvent le reste. »\n\nHylee baisse les yeux vers leurs mains.\n\n« Peut-être que tu n’as pas besoin de choisir tout le temps. »\n\nRemerii reste silencieuse, mais sa main serre légèrement celle de Hylee, un geste presque imperceptible, mais chargé de sens.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_23"
+    },
+    "c6_23": {
+        "title": "La terrasse",
+        "sub": "Les dieux et le monde",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "La soirée semble s’étirer à l’infini sous le dôme arcanique, les étoiles scintillantes et les constellations mouvantes offrant un spectacle presque irréel.\n\nLa ville magique murmure doucement sous leurs pieds, ses tours illuminées projetant des ombres dansantes sur les canaux scintillants.\n\nRemerii et Hylee restent immobiles sur la terrasse, bercées par le calme de l’instant.\n\nHylee fixe le ciel au-dessus d’elles.\n\n« Tu crois que c’est comme ça que les dieux voient le monde ? »\n\nRemerii observe le reflet des lumières dans les canaux.\n\n« Peut-être. Mais je doute que les dieux s’arrêtent pour en profiter. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_24"
+    },
+    "c6_24": {
+        "title": "La terrasse",
+        "sub": "Profiter tant qu’on peut",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "Hylee sourit avec malice.\n\n« C’est parce qu’ils ne savent pas ce qu’ils ratent. »\n\nRemerii la regarde en coin.\n\n« Et toi, tu sais ? »\n\nHylee lève les yeux vers elle.\n\n« Je sais que je veux profiter de ce genre de moment tant que je le peux. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_25"
+    },
+    "c6_25": {
+        "title": "La terrasse",
+        "sub": "Le roux qu’il te reste",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Le vent léger fait virevolter une mèche de cheveux roux devant le visage d’Hylee.\n\nSans réfléchir, Remerii tend la main et la remet doucement en place, ses doigts glissant brièvement contre la joue de la jeune femme.\n\nÀ mi-voix, elle murmure :\n\n« Tu devrais attacher tes cheveux. Ce serait dommage de perdre le roux qu’il te reste. »\n\nHylee sourit timidement.\n\n« Je pensais que tu les aimais bien comme ça. »\n\nUn sourire se dessine sur le visage de Remerii.\n\n« Ça se pourrait. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_26"
+    },
+    "c6_26": {
+        "title": "La terrasse",
+        "sub": "Juste un peu plus longtemps",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Leurs regards se croisent, et pour un instant, le bruit du monde extérieur semble disparaître.\n\nHylee sent son cœur battre un peu plus vite, mais elle ne détourne pas les yeux.\n\nAvec hésitation, elle demande :\n\n« Je… je peux te demander quelque chose ? »\n\n« Bien sûr. »\n\nHylee rougit légèrement.\n\n« Tu peux rester là, avec moi… juste un peu plus longtemps ? »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "choices": [
+            {
+                "label": "Assumer cette demande sans détour",
+                "next": "c6_26_a",
+                "requires": {
+                    "audace": 30
+                },
+                "effects": {
+                    "audace": 1,
+                    "lien": 1
+                },
+                "note": "Audace · Remerii valide le courage intime."
+            },
+            {
+                "label": "Lui laisser une porte de sortie",
+                "next": "c6_26_b",
+                "requires": {
+                    "sangfroid": 30
+                },
+                "effects": {
+                    "sangfroid": 1,
+                    "lien": 1
+                },
+                "note": "Sang-froid · Remerii valide la délicatesse."
+            },
+            {
+                "label": "Comprendre que rester est déjà un choix",
+                "next": "c6_26_c",
+                "requires": {
+                    "lucidite": 30
+                },
+                "effects": {
+                    "lucidite": 1,
+                    "lien": 1
+                },
+                "note": "Lucidité · Remerii valide la maturité du geste."
+            },
+            {
+                "label": "Demander si ce rêve vient du dôme",
+                "next": "c6_26_d",
+                "requires": {
+                    "resonance": 20
+                },
+                "effects": {
+                    "resonance": 1,
+                    "lien": -1
+                },
+                "note": "Résonance · Remerii désapprouve de réduire l’instant à la magie."
+            }
+        ]
+    },
+    "c6_26_a": {
+        "title": "La terrasse",
+        "sub": "Audace",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee ne cache pas que cette demande compte. Il n’y a ni stratégie, ni détour, ni leçon derrière ses mots.\n\nSeulement l’envie que Remerii ne s’éloigne pas tout de suite.\n\nRemerii la regarde comme si cette franchise était plus difficile à encaisser qu’un sort bien lancé.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_27"
+    },
+    "c6_26_b": {
+        "title": "La terrasse",
+        "sub": "Sang-froid",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« Si tu veux rentrer, je comprendrai. Je veux juste… quelques minutes de plus. »\n\nRemerii baisse un instant les yeux vers leurs mains.\n\n« Tu apprends vite les sorts compliqués. Les phrases simples, par contre, tu les rends terriblement dangereuses. »\n\nMais elle ne bouge pas.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_27"
+    },
+    "c6_26_c": {
+        "title": "La terrasse",
+        "sub": "Lucidité",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Hylee comprend qu’elle ne demande pas seulement du temps.\n\nElle demande à Remerii de choisir, pour quelques minutes, de ne pas être l’archimage prudente, la mentor, la survivante de Mir’Aldas ou l’alliée d’une mission impériale.\n\nJuste de rester.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_thinking",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_calm",
+                "right"
+            ]
+        ],
+        "next": "c6_27"
+    },
+    "c6_26_d": {
+        "title": "La terrasse",
+        "sub": "Résonance",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Hylee",
+        "text": "« C’est peut-être le dôme qui fait ça… cette impression de rêve. »\n\nLe sourire de Remerii se referme d’un cran.\n\n« Le dôme embellit la ville. Il ne décide pas à ta place. Ne donne pas aux étoiles le mérite de ce que tu oses demander. »\n\nHylee rougit plus fort, mais comprend la correction.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_surprised",
+                "right"
+            ]
+        ],
+        "next": "c6_27"
+    },
+    "c6_27": {
+        "title": "La terrasse",
+        "sub": "Encore un mauvais rêve",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Remerii",
+        "text": "Remerii lui fait un clin d’œil.\n\n« Encore un mauvais rêve ? »\n\nHylee secoue la tête devant la taquinerie.\n\n« Non. Ou s’il en est, celui-ci n’a rien de mauvais. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_teasing",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_smirk",
+                "right"
+            ]
+        ],
+        "next": "c6_28"
+    },
+    "c6_28": {
+        "title": "La terrasse",
+        "sub": "Céder",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "L’apprentie se rapproche un peu plus, glissant son bras contre celui de Remerii.\n\nCette fois, c’est Remerii qui hésite, mais elle finit par céder, posant délicatement sa main sur celle de la jeune femme.\n\nAucun mot n’est nécessaire.\n\nLeurs mains restent jointes, et leurs épaules se touchent à peine, mais ce contact suffit à combler l’espace entre elles.",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_29"
+    },
+    "c6_29": {
+        "title": "La terrasse",
+        "sub": "Insupportable",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Elles observent ensemble les constellations qui dansent sur le dôme, la lumière des étoiles reflétant sur leurs visages.\n\nHylee, presque inconsciemment, laisse sa tête reposer sur l’épaule de Remerii.\n\nCette dernière tressaille légèrement, mais ne bouge pas.\n\nAprès un long silence, Remerii murmure :\n\n« Tu es vraiment insupportable, tu sais ? »\n\nHylee rit doucement.\n\n« Et toi, tu es trop sérieuse. »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_soft",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_30"
+    },
+    "c6_30": {
+        "title": "La terrasse",
+        "sub": "Équilibre",
+        "bg": "c5_key_avenue_suspendue",
+        "music": "music_confessions",
+        "speaker": "Remerii",
+        "text": "Un sourire adoucit les traits de Remerii.\n\n« Peut-être qu’on s’équilibre bien. »\n\nHylee lui lance un regard malicieux.\n\n« Alors ne bouge pas… »",
+        "chars": [
+            [
+                "hylee",
+                "hylee2_charmed",
+                "left"
+            ],
+            [
+                "remerii",
+                "remerii_soft",
+                "right"
+            ]
+        ],
+        "next": "c6_31"
+    },
+    "c6_31": {
+        "title": "La terrasse",
+        "sub": "Un moment volé",
+        "bg": "c5_key_finale",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "Elles restent là, silencieuses mais connectées, profitant d’un moment volé pour être seules, toutes les deux, profitant de ce que Mir’Aldas a à leur offrir.\n\nLe dôme continue de dérouler ses constellations au-dessus d’elles.\n\nLa mission, Saidin, l’Empire et les ombres qui les attendent existent encore. Mais cette nuit, Mir’Aldas leur donne une parenthèse assez vaste pour respirer.",
+        "chars": [],
+        "next": "c6_32",
+        "zoom": true,
+        "hideChars": true,
+        "memories": [
+            "nuit_sur_la_terrasse"
+        ]
+    },
+    "c6_32": {
+        "title": "Chapitre VI terminé",
+        "sub": "Une Parenthèse au Cœur de Mir’Aldas",
+        "bg": "c5_key_finale",
+        "music": "music_confessions",
+        "speaker": "Narrateur",
+        "text": "La nuit de Mir’Aldas referme doucement cette parenthèse.\n\nHylee conserve le cristal de navigation, la chaleur de la cape de Remerii sur ses épaules, le goût impossible de la tartelette magique, et la certitude fragile qu’il existe encore des instants capables de résister au poids du monde.\n\nAu loin, quelque part dans les pages du Carnet du Némésis, un nouveau fragment s’éveille : « Plus rien ne m’échappera. »",
+        "chars": [],
+        "choices": [
+            {
+                "label": "Retour au menu",
+                "next": "menu",
+                "flags": {
+                    "chapter6Complete": true
+                }
+            }
+        ],
+        "zoom": true,
+        "hideChars": true,
+        "items": [
+            "cristal_navigation"
+        ],
+        "memories": [
+            "tartelette_miraldas",
+            "cristal_offert_remerii",
+            "cape_sur_les_epaules",
+            "remerii_lue_par_hylee",
+            "nuit_sur_la_terrasse"
+        ]
+    }
+});
+})();
+
 const CHAPTER_SELECT_DATA=[
   {key:'intro',label:'Introduction',title:'L’Auberge du Forestier',subtitle:'Deux ans avant',image:'assets/images/chapter_select/chapter_intro.png',tags:['Auberge','Remerii','Fuite'],body:`Hylee sert derrière le comptoir de l’Auberge du Forestier, prisonnière d’une vie étroite et brutale. L’arrivée de Remerii, cliente trop noble pour ce lieu, entrouvre une première porte vers la magie, la fuite et le choix de vivre autrement.`,action:'Jouer l’Introduction'},
   {key:'ch1',label:'Chapitre I',title:'Une convocation impériale',subtitle:'Deux ans plus tard',image:'assets/images/chapter_select/chapter_1.png',tags:['Entraînement','Duel','Iriana'],body:`Après deux années d’apprentissage clandestin, Hylee affronte les leçons exigeantes de Remerii. La glace répond enfin, mais une projection impériale vient troubler l’équilibre : Iriana Farae réclame leur présence.`,action:'Lancer le Chapitre I'},
   {key:'ch2',label:'Chapitre II',title:'Sur la route d’Al’Gratal',subtitle:'Vers le cœur de l’Empire',image:'assets/images/chapter_select/chapter_2.png',tags:['Voyage','Al’Gratal','Empire'],body:`La route vers Al’Gratal confronte Hylee à la grandeur lumineuse et oppressante de l’Empire Sylvinien. Entre forêts, portes impériales et catacombes, l’équipe appelée par Iriana commence à prendre forme.`,action:'Lancer le Chapitre II'},
   {key:'ch3',label:'Chapitre III',title:'Préparatifs pour une nouvelle aventure',subtitle:'Avant Mir’Aldas',image:'assets/images/chapter_select/chapter_3.png',tags:['Préparatifs','Ombres','Cauchemar'],body:`À Al’Gratal, Hylee s’équipe, gagne en assurance et se heurte à ce que sa magie peut devenir. Entre robe bleue, bâton, attaque des Ombres, Medig et cauchemar du petit frère, le chemin vers Mir’Aldas se charge de présages.`,action:'Lancer le Chapitre III'}
 ,  {key:'ch4',label:'Chapitre IV',title:'Croisée des récits',subtitle:'Valurn ou Draven',image:'assets/images/chapter_select/chapter_4.png',tags:['Valurn','Draven','Routes'],body:`Le groupe se divise. Valurn descend vers les Calciterres pour arracher des vérités sur Akuhn’Nabad, tandis que Draven contacte Forthaven pour demander un détachement militaire à une cité déjà assiégée.`,action:'Lancer le Chapitre IV'},
-  {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_5.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'}
+  {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_5.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'},
+  {key:'ch6',label:'Chapitre VI',title:'Une Parenthèse au Cœur de Mir’Aldas',subtitle:'Nuit sous le dôme',image:'assets/images/chapter5/c5_key_avenue_suspendue.png',tags:['Mir’Aldas','Remerii','Parenthèse'],body:`Après l’épreuve de Saidin, Hylee et Remerii s’accordent une parenthèse dans les ruelles nocturnes de Mir’Aldas. Tartelette magique, cristal de navigation et terrasse sous les constellations ouvrent un chapitre plus intime, doux en surface, mais précieux pour leur lien.`,action:'Lancer le Chapitre VI'}
 ];
 function chapterSelectUnlocked(key){
   if(key==='intro'||key==='ch1') return true;
@@ -12857,6 +14488,7 @@ function chapterSelectUnlocked(key){
   if(key==='ch3') return canStartChapter3();
   if(key==='ch4') return canStartChapter4();
   if(key==='ch5') return canStartChapter5();
+  if(key==='ch6') return canStartChapter6();
   return false;
 }
 function launchChapterSelect(key){
@@ -12866,6 +14498,7 @@ function launchChapterSelect(key){
   if(key==='ch3') return startChapter3();
   if(key==='ch4') return startChapter4();
   if(key==='ch5') return startChapter5();
+  if(key==='ch6') return startChapter6();
 }
 function renderChapterSelect(){
   const grid=document.getElementById('chapterSelectGrid');
@@ -12879,7 +14512,7 @@ function renderChapterSelect(){
     card.className='chapterSelectCard'+(unlocked?'':' locked');
     if(idx===0) card.open=true;
     const stateLabel=unlocked?'Accessible':'Verrouillé';
-    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':'Disponible.';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Chapitre verrouillé hors mode développeur pour le moment. Active le mode dev pour tester la parenthèse de Mir’Aldas.':'Disponible.';
     card.innerHTML=`
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
@@ -12957,19 +14590,23 @@ function readMainSave(){
 }
 function chapter1CompletedFrom(saveObj){
   const id=String((saveObj&&saveObj.scene)||'');
-  return !!(saveObj && (saveObj.seenEnding===true || (saveObj.flags && saveObj.flags.chapter1Complete===true) || id.startsWith('c2_') || id.startsWith('c3_') || (typeof S!=='undefined' && S[id] && S[id].ending && !id.startsWith('intro_'))));
+  return !!(saveObj && (saveObj.seenEnding===true || (saveObj.flags && saveObj.flags.chapter1Complete===true) || id.startsWith('c2_') || id.startsWith('c3_') || id.startsWith('c4_') || id.startsWith('c4v_') || id.startsWith('c4d_') || id.startsWith('c5_') || id.startsWith('c6_') || (typeof S!=='undefined' && S[id] && S[id].ending && !id.startsWith('intro_'))));
 }
 function chapter2CompletedFrom(saveObj){
   const id=String((saveObj&&saveObj.scene)||'');
-  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter2Complete===true) || id==='c2_45' || id.startsWith('c3_') || id.startsWith('c4_') || id.startsWith('c4v_') || id.startsWith('c4d_')));
+  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter2Complete===true) || id==='c2_45' || id.startsWith('c3_') || id.startsWith('c4_') || id.startsWith('c4v_') || id.startsWith('c4d_') || id.startsWith('c5_') || id.startsWith('c6_')));
 }
 function chapter3CompletedFrom(saveObj){
   const id=String((saveObj&&saveObj.scene)||'');
-  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter3Complete===true) || id==='c3_55' || id.startsWith('c4_') || id.startsWith('c4v_') || id.startsWith('c4d_') || id.startsWith('c5_')));
+  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter3Complete===true) || id==='c3_55' || id.startsWith('c4_') || id.startsWith('c4v_') || id.startsWith('c4d_') || id.startsWith('c5_') || id.startsWith('c6_')));
 }
 function chapter4CompletedFrom(saveObj){
   const id=String((saveObj&&saveObj.scene)||'');
-  return !!(saveObj && ((saveObj.flags && (saveObj.flags.chapter4Complete===true || saveObj.flags.chapter4VComplete===true || saveObj.flags.chapter4DComplete===true)) || id==='c4v_61' || id==='c4d_38' || id.startsWith('c5_')));
+  return !!(saveObj && ((saveObj.flags && (saveObj.flags.chapter4Complete===true || saveObj.flags.chapter4VComplete===true || saveObj.flags.chapter4DComplete===true)) || id==='c4v_61' || id==='c4d_38' || id.startsWith('c5_') || id.startsWith('c6_')));
+}
+function chapter5CompletedFrom(saveObj){
+  const id=String((saveObj&&saveObj.scene)||'');
+  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter5Complete===true) || id==='c5_47' || id.startsWith('c6_')));
 }
 function canStartChapter2(){
   if(state.devMode) return true;
@@ -12986,6 +14623,11 @@ function canStartChapter4(){
 function canStartChapter5(){
   if(state.devMode) return true;
   return chapter4CompletedFrom(state) || chapter4CompletedFrom(readMainSave());
+}
+function canStartChapter6(){
+  // Chapitre VI volontairement verrouillé hors mode développeur.
+  // Même une sauvegarde ayant terminé le Chapitre V ne l’ouvre pas encore en progression normale.
+  return state.devMode===true;
 }
 function updateChapterLocks(){
   const menuChapterCount=document.getElementById('menuChaptersAvailable');
@@ -13136,7 +14778,7 @@ function render(){
   if(state.scene==='c4v_61'){ state.flags={...(state.flags||{}),chapter4VComplete:true}; unlockJournalFragments('ch4v'); }
   if(state.scene==='c4d_38'){ state.flags={...(state.flags||{}),chapter4DComplete:true}; unlockJournalFragments('ch4d'); }
   if(state.scene==='c5_47'){ state.flags={...(state.flags||{}),chapter5Complete:true}; unlockJournalFragments('ch5'); }
-  if(String(state.scene||'').startsWith('c6_')){ state.flags={...(state.flags||{}),chapter6Complete:true}; unlockJournalFragments('ch7'); }
+  if(state.scene==='c6_32'){ state.flags={...(state.flags||{}),chapter6Complete:true}; unlockJournalFragments('ch7'); }
   if(scene.ending&&!isIntroScene(state.scene)){ state.seenEnding=true; state.flags={...(state.flags||{}),chapter1Complete:true}; unlockJournalFragments('ch1'); scene.text=endingText(); }
   if(scene.duelResult) scene.text=duelResultText();
   document.querySelectorAll('.chapterLabel').forEach(el=>{el.textContent=getSceneChapterLabel(state.scene);}); document.getElementById('sceneTitle').textContent=scene.title||''; document.getElementById('sceneSub').textContent=scene.sub||'';
@@ -13245,7 +14887,7 @@ function startChapter5(){
 }
 
 function resume(){load(); if(isIntroScene(state.scene)) state.scene='p01'; setScreen('game'); render();}
-function getSceneChapterLabel(sceneId=state.scene){const id=String(sceneId||''); if(id.startsWith('intro_'))return 'Introduction · Hylee et Remerii'; if(id.startsWith('c4v_'))return 'Chapitre 4V · Valurn'; if(id.startsWith('c4d_'))return 'Chapitre 4D · Draven'; if(id.startsWith('c4_'))return 'Chapitre IV · Croisée des récits'; if(id.startsWith('c5_'))return 'Chapitre V · Une rencontre hors du temps'; if(id.startsWith('c3_'))return 'Chapitre III · Préparatifs'; return id.startsWith('c2_')?'Chapitre II · Sur la route d’Al’Gratal':'Chapitre I · Une convocation impériale';}
+function getSceneChapterLabel(sceneId=state.scene){const id=String(sceneId||''); if(id.startsWith('intro_'))return 'Introduction · Hylee et Remerii'; if(id.startsWith('c4v_'))return 'Chapitre 4V · Valurn'; if(id.startsWith('c4d_'))return 'Chapitre 4D · Draven'; if(id.startsWith('c4_'))return 'Chapitre IV · Croisée des récits'; if(id.startsWith('c6_'))return 'Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas'; if(id.startsWith('c5_'))return 'Chapitre V · Une rencontre hors du temps'; if(id.startsWith('c3_'))return 'Chapitre III · Préparatifs'; return id.startsWith('c2_')?'Chapitre II · Sur la route d’Al’Gratal':'Chapitre I · Une convocation impériale';}
 function getCodexStats(){ensureCodexDefaults(); const entriesUnlocked=[...new Set(state.codexUnlocked||[])].filter(k=>CODEX_ENTRIES[k]).length; const imagesUnlocked=[...new Set(state.codexUnlockedImages||[])].filter(k=>CODEX_IMAGES[k]).length; const musicUnlocked=[...new Set(state.codexUnlockedMusic||[])].filter(k=>CODEX_MUSIC[k]).length; return {entriesUnlocked,entriesTotal:CODEX_ORDER.length,imagesUnlocked,imagesTotal:CODEX_IMAGE_ORDER.length,musicUnlocked,musicTotal:CODEX_MUSIC_ORDER.length};}
 function setText(id,val){const el=document.getElementById(id); if(el) el.textContent=val;}
 function setWidth(id,pct){const el=document.getElementById(id); if(el) el.style.width=Math.max(0,Math.min(100,pct))+'%';}
@@ -13279,6 +14921,20 @@ function updateProgressUI(){
 }
 function updateMenuButtons(){const stateLabel=document.getElementById('menuMusicBtnState'); if(stateLabel) stateLabel.textContent=state.menuMusicOn===false?'Coupée':'Activée'; applyMobileUI(); updateDevUI(); updateProgressUI(); updateChapterLocks();}
 function showDisclaimer(){load(); ensureCodexDefaults(); if(disclaimerSeen()){setScreen('title');}else{setScreen('disclaimer');}}
+
+function startChapter6(){
+  let prev=readMainSave();
+  if(!canStartChapter6()){
+    toast('Chapitre VI verrouillé','Ce chapitre est verrouillé hors mode développeur pour le moment. Active le mode dev pour le tester.');
+    updateChapterLocks();
+    return;
+  }
+  const prevFlags=(prev&&prev.flags)||{};
+  state={scene:'c6_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete','cristal_navigation','parenthese_miraldas','terrasse_dome',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
+  setScreen('game');
+  render();
+}
+
 function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82','106'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
 
 function bindDisclaimerEnterButton(){
