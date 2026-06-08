@@ -26,6 +26,26 @@ button{font:inherit;color:inherit} .hidden{display:none!important}
 .combatTransition{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;overflow:hidden}.combatTransition.hidden{display:none}.combatTransition::before{content:"";position:absolute;inset:-10%;background:radial-gradient(circle at center,rgba(161,241,255,.18) 0%,rgba(28,67,118,.22) 24%,rgba(3,8,16,.84) 62%,rgba(0,0,0,.96) 100%);opacity:0}.combatTransition::after{content:"";position:absolute;width:min(72vw,720px);aspect-ratio:1;border-radius:50%;border:2px solid rgba(166,235,255,.55);box-shadow:0 0 0 14px rgba(115,190,255,.10),0 0 70px rgba(106,205,255,.28),inset 0 0 50px rgba(106,205,255,.12);transform:scale(.42) rotate(0deg);opacity:0}.combatTransition.active{display:flex;animation:combatFade 1.05s ease forwards}.combatTransition.active::before{animation:combatVeil 1.05s ease forwards}.combatTransition.active::after{animation:combatSigil 1.05s ease forwards}.combatTransition .combatLabel{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:18px 28px;border:1px solid rgba(167,240,255,.28);border-radius:22px;background:linear-gradient(180deg,rgba(7,15,29,.74),rgba(4,8,16,.28));box-shadow:0 18px 44px rgba(0,0,0,.35);backdrop-filter:blur(3px);opacity:0;transform:translateY(10px) scale(.95)}.combatTransition.active .combatLabel{animation:combatLabel 1.05s ease forwards}.combatTransition .combatMini{letter-spacing:.34em;color:#9befff;font-weight:900;font-size:12px;text-transform:uppercase}.combatTransition .combatTitle{font-size:clamp(24px,4.2vw,42px);font-weight:900;line-height:1}.combatTransition .combatSub{color:#dceef9;font-size:15px}.stage.combatMode .veil{background:linear-gradient(180deg,rgba(16,32,61,.12),rgba(8,14,28,.10) 36%,rgba(0,0,0,.44))}@keyframes combatFade{0%{opacity:0}8%{opacity:1}88%{opacity:1}100%{opacity:0}}@keyframes combatVeil{0%{opacity:0}15%{opacity:1}75%{opacity:1}100%{opacity:0}}@keyframes combatSigil{0%{opacity:0;transform:scale(.42) rotate(-12deg)}25%{opacity:1}70%{opacity:.92}100%{opacity:0;transform:scale(1.08) rotate(14deg)}}@keyframes combatLabel{0%{opacity:0;transform:translateY(10px) scale(.95)}20%{opacity:1;transform:translateY(0) scale(1)}75%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-8px) scale(1.02)}}
 
 /* --- v0.73 : codex musiques complet + interface mobile --- */
+
+/* --- Écran titre intermédiaire (entre disclaimer et menu) --- */
+#splashTitle{background:#000}
+#splashTitleCard{position:relative;min-height:720px;display:flex;align-items:stretch;overflow:hidden;background:#020610;isolation:isolate}
+#splashTitleCard::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(3,8,15,.72) 0%,rgba(3,8,15,.26) 34%,rgba(3,8,15,.18) 60%,rgba(3,8,15,.44) 100%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.36));pointer-events:none}
+#splashTitleCard::after{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 20% 78%,rgba(167,240,255,.12),transparent 18%),radial-gradient(circle at 85% 16%,rgba(233,201,133,.16),transparent 16%),radial-gradient(circle at center,transparent 54%,rgba(0,0,0,.18) 100%);pointer-events:none}
+.splashVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;filter:saturate(1.04) contrast(1.03) brightness(.9)}
+.splashTitleOverlay{position:relative;z-index:2;min-height:720px;width:100%;display:flex;align-items:flex-end;justify-content:flex-start;padding:34px 30px 40px}
+.splashTitleStack{display:grid;gap:12px;max-width:min(460px,90vw)}
+.splashKicker{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.72);font-weight:800}
+.splashLogo{font-size:clamp(34px,5.4vw,72px);line-height:.96;font-weight:900;margin:0;text-shadow:0 10px 35px rgba(0,0,0,.45)}
+.splashSubline{font-size:15px;line-height:1.55;color:rgba(231,240,248,.86);max-width:34ch;margin:0;text-shadow:0 6px 22px rgba(0,0,0,.42)}
+.splashEnterBtn{display:inline-flex;align-items:center;justify-content:center;justify-self:start;padding:13px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(8,14,24,.14);color:#eef7ff;font-weight:700;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(5px);box-shadow:0 10px 24px rgba(0,0,0,.22);transition:.18s transform,.18s border-color,.18s background,.18s opacity;opacity:.92}
+.splashEnterBtn:hover{transform:translateY(-1px);border-color:rgba(167,240,255,.48);background:rgba(8,14,24,.28);opacity:1}
+@media(max-width:760px){.splashTitleOverlay{min-height:100svh;padding:22px 18px 28px}.splashTitleStack{gap:10px;max-width:86vw}.splashKicker{font-size:10px}.splashSubline{font-size:13px;max-width:28ch}.splashEnterBtn{padding:12px 16px;font-size:15px}}
+
+/* --- Fondu écran titre / menu --- */
+#screenFade{position:fixed;inset:0;z-index:9999;background:#020610;opacity:0;pointer-events:none;transition:opacity .34s ease}
+#screenFade.active{opacity:1;pointer-events:auto}
+
 #disclaimerCard{position:relative;min-height:720px;display:flex;align-items:center;justify-content:center;padding:34px;background:
  radial-gradient(circle at 18% 12%,rgba(167,240,255,.18),transparent 28%),
  radial-gradient(circle at 84% 70%,rgba(233,201,133,.16),transparent 30%),
@@ -1611,6 +1631,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
 </style>
 </head>
 <body>
+<div id="screenFade" aria-hidden="true"></div>
 <div id="app">
   <main id="disclaimer" class="screen card">
     <section id="disclaimerCard">
@@ -1625,6 +1646,23 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
         </div>
         <div class="disclaimerActions">
           <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+  <main id="splashTitle" class="screen card hidden">
+    <section id="splashTitleCard">
+      <video class="splashVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/video/title_intro_banner.mp4" type="video/mp4">
+      </video>
+      <div class="splashTitleOverlay">
+        <div class="splashTitleStack">
+          <div class="splashKicker">Les Chroniques de Sylvinia</div>
+          <h1 class="splashLogo">Tome I</h1>
+          <p class="splashSubline">Entre le prologue et le grimoire, laisse d’abord le monde s’ouvrir à toi.</p>
+          <button class="splashEnterBtn" id="enterMenuFromSplashBtn" type="button">Appuyer pour commencer</button>
         </div>
       </div>
     </section>
@@ -2086,6 +2124,7 @@ const A={
   c4v_key_02:'assets/images/keyscenes/c4v_key_02.png', c4v_key_04:'assets/images/keyscenes/c4v_key_04.png', c4v_key_05:'assets/images/keyscenes/c4v_key_05.png', c4v_key_06:'assets/images/keyscenes/c4v_key_06.png', c4v_key_07:'assets/images/keyscenes/c4v_key_07.png', c4v_key_10:'assets/images/keyscenes/c4v_key_10.png', c4v_key_14:'assets/images/keyscenes/c4v_key_14.png', c4v_key_17:'assets/images/keyscenes/c4v_key_17.png', c4v_key_20:'assets/images/keyscenes/c4v_key_20.png', c4v_key_21:'assets/images/keyscenes/c4v_key_21.png', c4v_key_24:'assets/images/keyscenes/c4v_key_24.png', c4v_key_25:'assets/images/keyscenes/c4v_key_25.png', c4v_key_29:'assets/images/keyscenes/c4v_key_29.png', c4v_key_38:'assets/images/keyscenes/c4v_key_38.png', c4v_key_39:'assets/images/keyscenes/c4v_key_39.png', c4v_key_42:'assets/images/keyscenes/c4v_key_42.png', c4_key_03:'assets/images/keyscenes/c4_key_03.png', c4v_key_45:'assets/images/keyscenes/c4v_key_45.png', c4v_key_46:'assets/images/keyscenes/c4v_key_46.png', c4v_key_50:'assets/images/keyscenes/c4v_key_50.png', c4v_key_53:'assets/images/keyscenes/c4v_key_53.png', c4v_key_55:'assets/images/keyscenes/c4v_key_55.png', c4d_key_03:'assets/images/keyscenes/c4d_key_03.png', c4d_key_04:'assets/images/keyscenes/c4d_key_04.png', c4d_key_07:'assets/images/keyscenes/c4d_key_07.png', c4d_key_09:'assets/images/keyscenes/c4d_key_09.png', c4d_key_13:'assets/images/keyscenes/c4d_key_13.png', c4d_key_15:'assets/images/keyscenes/c4d_key_15.png', c4d_key_19:'assets/images/keyscenes/c4d_key_19.png', c4d_key_20:'assets/images/keyscenes/c4d_key_20.png', c4d_key_24:'assets/images/keyscenes/c4d_key_24.png', c4d_key_29:'assets/images/keyscenes/c4d_key_29.png', c4d_key_34:'assets/images/keyscenes/c4d_key_34.png', c4d_key_38:'assets/images/keyscenes/c4d_key_38.png',
   c5_miraldas_entree:'assets/images/chapter5/c5_miraldas_entree.png', c5_miraldas_rue_01:'assets/images/chapter5/c5_miraldas_rue_01.png', c5_miraldas_rue_02:'assets/images/chapter5/c5_miraldas_rue_02.png', c5_miraldas_rue_03:'assets/images/chapter5/c5_miraldas_rue_03.png', c5_bibliotheque_parvis_dragons:'assets/images/chapter5/c5_bibliotheque_parvis_dragons.png', c5_bibliotheque_interieur:'assets/images/chapter5/c5_bibliotheque_interieur.png', c5_porte_cristal:'assets/images/chapter5/c5_porte_cristal.png', c5_salle_miroirs:'assets/images/chapter5/c5_salle_miroirs.png', c5_key_arrivee_dome:'assets/images/chapter5/c5_key_arrivee_dome.png', c5_key_controle_entree:'assets/images/chapter5/c5_key_controle_entree.png', c5_key_marche_arcane:'assets/images/chapter5/c5_key_marche_arcane.png', c5_key_dragons_biblio:'assets/images/chapter5/c5_key_dragons_biblio.png', c5_key_grande_bibliotheque:'assets/images/chapter5/c5_key_grande_bibliotheque.png', c5_key_porte_saidin:'assets/images/chapter5/c5_key_porte_saidin.png', c5_key_apparition_saidin:'assets/images/chapter5/c5_key_apparition_saidin.png', c5_key_reflet_hylee:'assets/images/chapter5/c5_key_reflet_hylee.png', c5_key_avenue_suspendue:'assets/images/chapter5/c5_key_avenue_suspendue.png', c5_key_epreuve_cadran:'assets/images/chapter5/c5_key_epreuve_cadran.png',
   music_c5_miraldas:'assets/audio/chapter5/c5_miraldas_theme.mp3', music_c5_saidin_duel:'assets/audio/chapter5/c5_saidin_duel.mp3',
+  music_title_intro:'assets/audio/title/title_intro_theme.mp3',
   music_menu:'assets/audio/menu.mp3', music_wild:'assets/audio/wild_calm.mp3', music_confessions:'assets/audio/vent_confessions.mp3', music_duel:'assets/audio/entrainement_aube.mp3', music_iriana:'assets/audio/entree_iriana.mp3', music_training:'assets/audio/wild_calm.mp3', music_tension:'assets/audio/entree_iriana.mp3', music_end:'assets/audio/entree_iriana.mp3', music_algratal:'assets/audio/algratal.mp3', music_catacombes:'assets/audio/catacombes.mp3', music_c3_shopping:'assets/audio/c3_shopping_capitale.mp3', music_c3_combat_ombres:'assets/audio/c3_combat_ombres.mp3', music_c3_unborn:'assets/audio/c3_the_unborn.mp3', music_valurn_route:'assets/audio/chapter4/valurn_lullaby.mp3', music_thazran:'assets/audio/chapter4/infernal_trade.mp3', music_bellirith:'assets/audio/chapter4/rencontre_bellirith.mp3', music_draven_bond:'assets/audio/chapter4/draven_pere_fille.mp3', music_draven_storm:'assets/audio/chapter4/storm_without_you.mp3',
   hylee_thinking:'assets/sprites/hylee_thinking.png', hylee_surprised:'assets/sprites/hylee_surprised.png', hylee_confident:'assets/sprites/hylee_confident.png', hylee_soft:'assets/sprites/hylee_soft.png', hylee_determined:'assets/sprites/hylee_determined.png', hylee_angry:'assets/sprites/hylee_angry.png',
   hylee2_thinking:'assets/sprites/chapter3/hylee2_thinking.png', hylee2_surprised:'assets/sprites/chapter3/hylee2_surprised.png', hylee2_confident:'assets/sprites/chapter3/hylee2_confident.png', hylee2_soft:'assets/sprites/chapter3/hylee2_soft.png', hylee2_determined:'assets/sprites/chapter3/hylee2_determined.png', hylee2_angry:'assets/sprites/chapter3/hylee2_angry.png', hylee2_sad:'assets/sprites/chapter3/hylee2_sad.png', hylee2_charmed:'assets/sprites/chapter3/hylee2_charmed.png', hylee2_teasing:'assets/sprites/chapter3/hylee2_teasing.png', hylee2_furious:'assets/sprites/chapter3/hylee2_furious.png',
@@ -12162,7 +12201,7 @@ function markDisclaimerSeen(){
 function enterTitleFromDisclaimer(){
   window.__sylviniaDisclaimerAcceptedThisLoad=true;
   markDisclaimerSeen();
-  setScreen('title');
+  fadeToScreen('splashTitle');
 }
 function showInitialScreen(){
   if(!disclaimerSeen() && document.getElementById('disclaimer')){
@@ -12172,7 +12211,17 @@ function showInitialScreen(){
   }
 }
 
-function setScreen(name){for(const id of ['disclaimer','title','game','codex','progression','chapters']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name==='chapters'){playUiSound('book'); renderChapterSelect();} if(name!=='disclaimer')state.lastScreen=name; if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); if(name==='chapters') renderChapterSelect(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
+
+function fadeToScreen(name){
+  const fade=document.getElementById('screenFade');
+  if(!fade){ setScreen(name); return; }
+  fade.classList.add('active');
+  window.setTimeout(()=>{
+    setScreen(name);
+    window.setTimeout(()=>fade.classList.remove('active'),80);
+  },340);
+}
+function setScreen(name){for(const id of ['disclaimer','splashTitle','title','game','codex','progression','chapters']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name==='chapters'){playUiSound('book'); renderChapterSelect();} if(name!=='disclaimer'&&name!=='splashTitle')state.lastScreen=name; if(name==='splashTitle') playMusic('music_title_intro'); if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); if(name==='chapters') renderChapterSelect(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
 
 function isIntroScene(sceneId=state.scene){return String(sceneId||'').startsWith('intro_');}
 function ensureIntroDefaults(){ if(!state.introStats) state.introStats={...INTRO_STATS}; state.introStats={...INTRO_STATS,...state.introStats}; }
@@ -12697,7 +12746,7 @@ const CHAPTER_SELECT_DATA=[
   {key:'ch2',label:'Chapitre II',title:'Sur la route d’Al’Gratal',subtitle:'Vers le cœur de l’Empire',image:'assets/images/chapter_select/chapter_2.png',tags:['Voyage','Al’Gratal','Empire'],body:`La route vers Al’Gratal confronte Hylee à la grandeur lumineuse et oppressante de l’Empire Sylvinien. Entre forêts, portes impériales et catacombes, l’équipe appelée par Iriana commence à prendre forme.`,action:'Lancer le Chapitre II'},
   {key:'ch3',label:'Chapitre III',title:'Préparatifs pour une nouvelle aventure',subtitle:'Avant Mir’Aldas',image:'assets/images/chapter_select/chapter_3.png',tags:['Préparatifs','Ombres','Cauchemar'],body:`À Al’Gratal, Hylee s’équipe, gagne en assurance et se heurte à ce que sa magie peut devenir. Entre robe bleue, bâton, attaque des Ombres, Medig et cauchemar du petit frère, le chemin vers Mir’Aldas se charge de présages.`,action:'Lancer le Chapitre III'}
 ,  {key:'ch4',label:'Chapitre IV',title:'Croisée des récits',subtitle:'Valurn ou Draven',image:'assets/images/chapter_select/chapter_4.png',tags:['Valurn','Draven','Routes'],body:`Le groupe se divise. Valurn descend vers les Calciterres pour arracher des vérités sur Akuhn’Nabad, tandis que Draven contacte Forthaven pour demander un détachement militaire à une cité déjà assiégée.`,action:'Lancer le Chapitre IV'},
-  {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_4.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'}
+  {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_5.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'}
 ];
 function chapterSelectUnlocked(key){
   if(key==='intro'||key==='ch1') return true;
@@ -13125,6 +13174,8 @@ function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs,
 function bindDisclaimerEnterButton(){
   const enterTitleBtn=document.getElementById('enterTitleBtn');
   if(enterTitleBtn) enterTitleBtn.onclick=ev=>{ev.preventDefault(); enterTitleFromDisclaimer();};
+  const enterMenuFromSplashBtn=document.getElementById('enterMenuFromSplashBtn');
+  if(enterMenuFromSplashBtn) enterMenuFromSplashBtn.onclick=()=>fadeToScreen('title');
 }
 bindDisclaimerEnterButton();
 document.addEventListener('DOMContentLoaded',bindDisclaimerEnterButton);
