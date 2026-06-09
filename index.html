@@ -1632,6 +1632,45 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
 #codex #codexSitePanel.hidden{
   display:none!important;
 }
+
+
+/* Chapitre VII v2 · Animations de duel Naïah */
+.combatTransition.c7NaiahIntro::before{background:radial-gradient(circle at center,rgba(186,94,255,.26) 0%,rgba(56,22,87,.34) 28%,rgba(5,4,12,.90) 68%,rgba(0,0,0,.98) 100%)}
+.combatTransition.c7NaiahIntro::after{border-color:rgba(202,131,255,.62);box-shadow:0 0 0 16px rgba(129,62,200,.10),0 0 92px rgba(170,81,255,.42),inset 0 0 60px rgba(155,64,255,.16)}
+.combatTransition.c7NaiahIntro .combatMini{color:#ddb6ff}.combatTransition.c7NaiahIntro .combatLabel{border-color:rgba(202,131,255,.36);background:linear-gradient(180deg,rgba(24,10,39,.82),rgba(4,3,10,.42))}
+.combatTransition.c7NaiahIntro.c7Intense.active{animation:combatFade 1.65s ease forwards,c7OverlayTremor .12s linear infinite}
+.combatTransition.c7NaiahIntro.c7Intense::before{background:radial-gradient(circle at center,rgba(255,255,255,.14) 0%,rgba(187,53,255,.34) 16%,rgba(61,6,89,.62) 42%,rgba(0,0,0,.98) 100%)}
+.combatTransition.c7NaiahIntro.c7Intense::after{border-color:rgba(255,210,255,.85);box-shadow:0 0 0 20px rgba(210,72,255,.16),0 0 120px rgba(210,72,255,.60),inset 0 0 90px rgba(255,255,255,.20);animation:combatSigil 1.65s ease forwards,c7SigilCrack .32s steps(2,end) infinite}
+.stage.c7Mindquake .bg{animation:c7StageQuake .18s linear infinite;filter:saturate(1.18) contrast(1.08) brightness(.92)}
+.stage.c7Mindquake .veil{animation:c7VeilPulse .42s ease-in-out infinite;background:radial-gradient(circle at center,rgba(124,45,170,.16),rgba(0,0,0,.44) 62%),linear-gradient(180deg,rgba(40,0,70,.16),rgba(0,0,0,.54))!important}
+.stage.c7Mindquake .dialogue,.stage.c7Mindquake~.dialogueWrap .dialogue{box-shadow:0 0 26px rgba(166,71,255,.22),inset 0 0 24px rgba(166,71,255,.08)}
+@keyframes c7StageQuake{0%{transform:translate(0,0) scale(1.048)}20%{transform:translate(-2px,1px) scale(1.052)}40%{transform:translate(2px,-1px) scale(1.049)}60%{transform:translate(-1px,-2px) scale(1.053)}80%{transform:translate(1px,2px) scale(1.050)}100%{transform:translate(0,0) scale(1.048)}}
+@keyframes c7VeilPulse{0%,100%{opacity:.92}50%{opacity:.70}}
+@keyframes c7OverlayTremor{0%{transform:translate(0,0)}25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}100%{transform:translate(0,0)}}
+@keyframes c7SigilCrack{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(18deg) brightness(1.35)}}
+
+/* Chapitre VII · Du Chaos aux Ombres */
+.c7DuelPulse{border-color:rgba(176,92,255,.42)!important;box-shadow:0 0 24px rgba(128,42,255,.18), inset 0 0 24px rgba(128,42,255,.08)}
+.c7QteRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.c7QteBtn{border:1px solid rgba(176,92,255,.45);background:linear-gradient(180deg,rgba(67,36,92,.92),rgba(22,13,34,.98));color:#f7eeff;border-radius:18px;padding:18px 14px;font-size:20px;font-weight:950;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 24px rgba(0,0,0,.24)}
+.c7QteBtn:hover{transform:translateY(-1px);border-color:rgba(233,201,133,.72)}
+.journalBlock.report{background:linear-gradient(180deg,rgba(238,241,232,.42),rgba(210,216,211,.24));border-color:rgba(62,65,58,.25)}
+.journalBlock.report p{font-family:Georgia,'Times New Roman',serif;letter-spacing:.01em;line-height:1.7;color:#2d2a24}
+.journalBlock.manuscript{background:linear-gradient(180deg,rgba(90,55,85,.10),rgba(255,255,255,.18));border-color:rgba(126,82,128,.26)}
+.journalBlock.manuscript p{font-family:'Segoe Script','Brush Script MT',cursive;font-size:1.08em;line-height:1.85;color:#3d2843}
+body.mobileUI .c7QteRow{grid-template-columns:1fr;gap:9px}.c7QteBtn{min-height:54px}
+
+.c7StageQteLayer{position:absolute;inset:0;z-index:9;pointer-events:none}
+.c7StageQteBtn{position:absolute;min-width:92px;min-height:92px;border-radius:999px;border:2px solid rgba(255,220,255,.86);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.92),rgba(205,134,255,.80) 26%,rgba(92,18,132,.92) 68%,rgba(10,3,20,.98));color:#fff;font-weight:950;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 0 8px rgba(207,104,255,.14),0 0 42px rgba(207,104,255,.62),0 18px 35px rgba(0,0,0,.48);transform:translate(-50%,-50%) scale(.88);animation:c7QteSpawn .22s ease forwards,c7QtePulse .58s ease-in-out infinite;pointer-events:auto;cursor:pointer}
+.c7StageQteBtn::after{content:"";position:absolute;inset:-16px;border-radius:inherit;border:1px solid rgba(255,230,255,.42);animation:c7QteRing .7s ease-in-out infinite}
+.c7StageQteBtn:hover{filter:brightness(1.18);transform:translate(-50%,-50%) scale(1.04)}
+.c7QteAttackText{position:absolute;left:50%;top:8%;transform:translateX(-50%);z-index:9;pointer-events:none;max-width:min(760px,92%);padding:10px 16px;border:1px solid rgba(255,211,255,.35);border-radius:18px;background:linear-gradient(180deg,rgba(22,3,35,.72),rgba(7,2,15,.42));box-shadow:0 12px 32px rgba(0,0,0,.36);color:#fbefff;font-weight:850;letter-spacing:.04em;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.9);animation:c7QteTextShake .16s linear infinite}
+@keyframes c7QteSpawn{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(-18deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(.92) rotate(0deg)}}
+@keyframes c7QtePulse{0%,100%{box-shadow:0 0 0 8px rgba(207,104,255,.14),0 0 42px rgba(207,104,255,.62),0 18px 35px rgba(0,0,0,.48)}50%{box-shadow:0 0 0 15px rgba(207,104,255,.06),0 0 68px rgba(255,162,255,.86),0 18px 35px rgba(0,0,0,.48)}}
+@keyframes c7QteRing{0%{opacity:.85;transform:scale(.84)}100%{opacity:0;transform:scale(1.22)}}
+@keyframes c7QteTextShake{0%,100%{transform:translateX(-50%) translateY(0)}33%{transform:translateX(calc(-50% - 1px)) translateY(1px)}66%{transform:translateX(calc(-50% + 1px)) translateY(-1px)}}
+body.mobileUI .c7StageQteBtn{min-width:78px;min-height:78px;font-size:12px}
+
 </style>
 </head>
 <body>
@@ -1743,7 +1782,7 @@ body.mobileUI .chars.trioChars .char.right{right:-1% !important;max-width:32% !i
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.115 · Chapitre VI</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.118 · Chapitre VII</div>
       </section>
     </div>
   </main>
@@ -2305,9 +2344,10 @@ const PROGRESSION_MEMORIES={
   valurn_naiah_prudence:{title:'Valurn a pris Naïah au sérieux',type:'Valurn',icon:'☾',body:`Au lieu de rire du danger, Valurn a compris que Naïah n’était pas une clef docile, mais une force capable d’entrer dans les esprits avant d’ouvrir les chemins.`},
   bellirith_faille_valurn:{title:'Bellirith a senti une faille',type:'Bellirith',icon:'❤',body:`Bellirith n’a pas brisé Valurn, mais elle a senti quelque chose : une tension, une affection interdite, une braise qu’elle pourra chercher à raviver plus tard.`},
   lineva_loyaute:{title:'Lineva a accepté par loyauté',type:'Draven',icon:'⚓',body:`Lineva n’a pas accepté la demande des Sylviniens. Elle a accepté celle de son père, et cette nuance restera plantée comme une lame dans le cœur de Draven.`},
-  draven_promesse_retour:{title:'Draven a promis de revenir',type:'Draven',icon:'🛡',body:`Draven a promis à Lineva de revenir à Forthaven avec ou sans renforts. Cette promesse pèse désormais autant que l’ordre d’Iriana.`}
+  draven_promesse_retour:{title:'Draven a promis de revenir',type:'Draven',icon:'🛡',body:`Draven a promis à Lineva de revenir à Forthaven avec ou sans renforts. Cette promesse pèse désormais autant que l’ordre d’Iriana.`},
+  naiah_jeu_partage:{title:'Naïah se souviendra de ce jeu partagé',type:'Naïah',icon:'☾',body:`Valurn n’a pas seulement conclu un pacte. Il a su jouer avec Naïah sans la réduire à une arme, ni à une enfant. Cette complicité trouble pourra ouvrir une brèche plus tard.`}
 };
-const JOURNAL_FRAGMENT_ORDER=['intro','ch1','ch2','ch3','ch4v','ch4d','ch5','ch7'];
+const JOURNAL_FRAGMENT_ORDER=['intro','ch1','ch2','ch3','ch4v','ch4d','ch5','ch7','ch8'];
 const JOURNAL_FRAGMENTS={
   "intro": {
     "title": "Introduction · Le sang préféré",
@@ -2379,8 +2419,8 @@ const JOURNAL_FRAGMENTS={
   },
   "ch4v": {
   "title": "Chapitre IV · Le programme du professeur",
-  "chapter": "Chapitre IV · Route Valurn",
-  "unlockLabel": "Termine la route Valurn du Chapitre IV",
+  "chapter": "Chapitre IV-V",
+  "unlockLabel": "Termine la route Valurn",
   "blocks": [
     {
       "kind": "journal",
@@ -2398,8 +2438,8 @@ const JOURNAL_FRAGMENTS={
 },
   "ch4d": {
   "title": "Chapitre V · Caporale Farae",
-  "chapter": "Chapitre V · Route Draven",
-  "unlockLabel": "Termine la route Draven du Chapitre IV",
+  "chapter": "Chapitre IV-D",
+  "unlockLabel": "Termine la route Draven",
   "blocks": [
     {
       "kind": "journal",
@@ -2412,9 +2452,9 @@ const JOURNAL_FRAGMENTS={
   ]
 },
   "ch5": {
-      "title": "Chapitre VI · Le village en cendres",
-      "chapter": "Chapitre VI",
-      "unlockLabel": "Termine le Chapitre V",
+      "title": "Chapitre V · Le village en cendres",
+      "chapter": "Chapitre V",
+      "unlockLabel": "Atteins le Chapitre V",
       "blocks": [
           {
               "kind": "journal",
@@ -2427,8 +2467,8 @@ const JOURNAL_FRAGMENTS={
       ]
   },
   "ch7": {
-      "title": "Chapitre VII · Plus rien ne m’échappera",
-      "chapter": "Chapitre VII",
+      "title": "Chapitre VI · Plus rien ne m’échappera",
+      "chapter": "Chapitre VI",
       "unlockLabel": "Atteins le Chapitre VI",
       "blocks": [
           {
@@ -2437,6 +2477,23 @@ const JOURNAL_FRAGMENTS={
           }
       ]
   }
+,
+  "ch8": {
+  "title": "Chapitre VII · Rapport sur Amanea Farae",
+  "chapter": "Chapitre VII",
+  "unlockLabel": "Termine le Chapitre VII",
+  "blocks": [
+    {
+      "kind": "report",
+      "text": "Compte Rendu\nAmanea Farae\nRédigé par le Sergent-chef Elron\nIntitulé : Demande de mise à pied conservatoire\n\nEn ce jour, durant un interrogatoire mené par la Caporale Farae, un incident eut lieu. En effet, cette dernière a violemment exécuté un prisonnier en l’éviscérant. Ce qui me pousse à vous signaler cela aujourd’hui, c’est surtout le contexte.\n\nEffectivement, pour des raisons qui me sont inconnues, lors de son interrogatoire, Amanea fut prise d’un moment d’absence. Le déroulement des questionnements était habituel… dur, mais efficace. Mais à un moment, l’esprit de la dame a vrillé. C’est difficile à décrire. Elle a commencé à l’attaquer verbalement, comme si c’était pour elle une affaire personnelle ; comme si elle attendait des explications concernant un incident auquel l’individu n’avait rien à voir.\n\nCe dernier ne sachant quoi répondre, Amanea dégaina une dague de sa ceinture et se jeta sur lui. Ses yeux étaient injectés de sang et son visage mêlait panique et haine viscérale. Il a fallu trois soldats pour l’arrêter. Pour des raisons qui lui sont personnelles, je ne pense pas que la Caporale Farae soit actuellement capable d’officier objectivement à son poste. Je propose alors de la mettre à pied et de lui faire consulter un examen psychologique afin d’étudier la source de cet incident."
+    },
+    {
+      "kind": "manuscript",
+      "text": "On croit parfois qu’un rapport administratif peut enfermer une vérité dans une formule propre. Mise à pied. Incident. Examen psychologique.\n\nComme si ces mots pouvaient contenir ce qui hurlait déjà sous ma peau.\n\nIls ont vu une soldate perdre le contrôle. Ils n’ont pas vu la blessure que quelqu’un venait de rouvrir. Ils n’ont pas vu ce que j’essayais encore de tenir debout.\n\nÀ partir de ce jour, quelque chose en moi n’a plus accepté d’être observé, jugé, classé. Plus rien ne devait m’échapper. Plus personne ne devait décider de ma place à ma place."
+    }
+  ]
+}
+
 };
 const SCENE_PROGRESS_REWARDS={
   s16:{items:['jeton_imperial']}
@@ -2693,7 +2750,7 @@ const CODEX_IMAGE_GROUPS=[
     {title:'Glacialis et le test',keys:['c3_key_glacialis_01','c3_key_glacialis_02','c3_key_test_remerii','c3_shadow_m1_situation','c3_shadow_m1_barriere','c3_shadow_m1_roulade','c3_shadow_m1_observer','c3_shadow_m1_appel_remerii','c3_shadow_m2_situation','c3_shadow_m2_etoile','c3_shadow_m2_leurre','c3_shadow_m2_rafale','c3_shadow_m2_souffle']},
     {title:'Route vers Mir’Aldas',keys:['c3_key_medig','c3_key_confession_feu','c3_key_cauchemar','c3_key_fin_miraldas']}
   ]},
-  {id:'chapter4_valurn',title:'Chapitre IV · Route Valurn',sections:[
+  {id:'chapter4_valurn',title:'Chapitre IV-V · Route Valurn',sections:[
     {title:'Calciterres et Thazran',keys:['c4v_ruins_circle','c4v_portal_temple','c4v_calciterres_square','c4v_infernal_throne','c4v_key_02','c4v_key_04','c4v_key_05','c4v_key_06','c4v_key_07','c4v_key_10','c4v_key_14','c4v_key_17','c4v_key_20']},
     {title:'Akuhn’Nabad, Obscurcis et Naïah',keys:['c4v_key_21','c4v_key_24','c4v_key_25','c4v_key_29','c4v_akuhn_citadel','c4v_necro_ritual','c4v_forest_curse','c4v_forest_naiah']},
     {title:'Bellirith et les souvenirs rouges',keys:['c4v_key_38','c4v_key_39','c4v_key_42','c4_key_03','c4v_key_45','c4v_key_46','c4v_key_50','c4v_key_53','c4v_key_55','c4v_bellirith_apocalypse','c4v_mortal_ruins_return']}
@@ -2812,7 +2869,7 @@ const CODEX_MUSIC={
   music_c3_shopping:{title:'Chapitre III · Shopping dans la capitale',body:`Le thème des emplettes à Al’Gratal : marché, tailleur, atelier arcanique et fournitures.`,src:A.music_c3_shopping,label:'Chapitre III · Capitale'},
   music_c3_combat_ombres:{title:'Chapitre III · Combat des Ombres',body:`La pression du duel forestier, de l’encerclement jusqu’à Glacialis Absoluta et son silence de verre.`,src:A.music_c3_combat_ombres,label:'Chapitre III · Duel'},
   music_c3_unborn:{title:'Chapitre III · The Unborn',body:`Le cauchemar du petit frère : souvenir fracturé, peur intime et culpabilité sous la glace.`,src:A.music_c3_unborn,label:'Chapitre III · Cauchemar'},
-  music_valurn_route:{title:'Chapitre IV · Valurn Lullaby',body:`Le thème principal de la route Valurn, entre braises intimes et menace démoniaque.`,src:A.music_valurn_route,label:'Chapitre IV · Route Valurn'},
+  music_valurn_route:{title:'Chapitre IV · Valurn Lullaby',body:`Le thème principal de la route Valurn, entre braises intimes et menace démoniaque.`,src:A.music_valurn_route,label:'Chapitre IV-V · Route Valurn'},
   music_thazran:{title:'Chapitre IV · Infernal Trade',body:`Une tension plus rituelle et infernale pour les tractations de l’autre monde.`,src:A.music_thazran,label:'Chapitre IV · Thazran'},
   music_bellirith:{title:'Chapitre IV · Rencontre avec Bellirith',body:`La séduction dangereuse et les promesses toxiques de Bellirith.`,src:A.music_bellirith,label:'Chapitre IV · Bellirith'},
   music_draven_bond:{title:'Chapitre IV · Le rapport Père Fille',body:`Une ambiance calme et mélancolique pour les premiers échanges entre Draven et Lineva.`,src:A.music_draven_bond,label:'Chapitre IV · Route Draven'},
@@ -6550,14 +6607,14 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true,
   "choices": [
     {
-      "label": "Suivre Valurn · Chapitre 4V",
+      "label": "Suivre Valurn · Chapitre IV-V",
       "next": "c4v_01",
       "effects": {"audace": 1},
       "note": "Route des Calciterres, de Thazran, de Naïah et de Bellirith.",
       "flags": {"route4VStarted": true}
     },
     {
-      "label": "Suivre Draven · Chapitre 4D",
+      "label": "Suivre Draven · Chapitre IV-D",
       "next": "c4d_01",
       "effects": {"sangfroid": 1},
       "note": "Route de Forthaven, de Lineva et de la demande militaire.",
@@ -6566,7 +6623,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4v_01:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Ruines humaines oubliées",
   "bg": "c4v_ruins_circle",
   "music": "music_valurn_route",
@@ -6582,7 +6639,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_02"
 },
  c4v_02:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Le cercle",
   "bg": "c4v_key_02",
   "music": "music_valurn_route",
@@ -6600,7 +6657,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_03"
 },
  c4v_03:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Seuil rituel",
   "bg": "c4v_ruins_circle",
   "music": "music_valurn_route",
@@ -6616,7 +6673,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_04"
 },
  c4v_04:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Choix stratégique · Ouverture",
   "bg": "c4v_key_04",
   "music": "music_valurn_route",
@@ -6677,7 +6734,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4v_05a:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Passage imposé",
   "bg": "c4v_key_05",
   "music": "music_valurn_route",
@@ -6695,7 +6752,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_06"
 },
  c4v_05b:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Passage accordé",
   "bg": "c4v_key_05",
   "music": "music_valurn_route",
@@ -6713,7 +6770,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_06"
 },
  c4v_05c:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Passage hérité",
   "bg": "c4v_key_05",
   "music": "music_valurn_route",
@@ -6833,7 +6890,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_12"
 },
  c4v_12:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Choix stratégique · Marché infernal",
   "bg": "c4v_infernal_throne",
   "music": "music_thazran",
@@ -6907,7 +6964,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4v_13a:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Marché infernal",
   "bg": "c4v_infernal_throne",
   "music": "music_thazran",
@@ -6923,7 +6980,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_14"
 },
  c4v_13b:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Marché infernal",
   "bg": "c4v_infernal_throne",
   "music": "music_thazran",
@@ -6939,7 +6996,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_14"
 },
  c4v_13c:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Marché infernal",
   "bg": "c4v_infernal_throne",
   "music": "music_thazran",
@@ -6955,7 +7012,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_14"
 },
  c4v_13d:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Marché infernal",
   "bg": "c4v_infernal_throne",
   "music": "music_thazran",
@@ -7041,7 +7098,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4v_18:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Choix stratégique · Lire la magie Obscurcie",
   "bg": "c4v_akuhn_citadel",
   "music": "music_thazran",
@@ -7095,7 +7152,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4v_19a:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Lecture du rituel",
   "bg": "c4v_necro_ritual",
   "music": "music_thazran",
@@ -7112,7 +7169,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4v_19b:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Lecture du rituel",
   "bg": "c4v_necro_ritual",
   "music": "music_thazran",
@@ -7129,7 +7186,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4v_19c:{
-  "title": "Chapitre 4V · Les Secrets d’Akuhn’Nabad",
+  "title": "Chapitre IV-V · Les Secrets d’Akuhn’Nabad",
   "sub": "Lecture du rituel",
   "bg": "c4v_necro_ritual",
   "music": "music_thazran",
@@ -8059,7 +8116,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4v_61"
 },
  c4v_61:{
-  "title": "Chapitre 4V · Fin de route",
+  "title": "Chapitre IV-V · Fin de route",
   "sub": "Les Secrets d’Akuhn’Nabad",
   "bg": "c4v_mortal_ruins_return",
   "music": "music_bellirith",
@@ -8103,7 +8160,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4d_01:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Quartiers sylviniens",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8119,7 +8176,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "next": "c4d_02"
 },
  c4d_02:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "La table ouvragée",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8136,7 +8193,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_03:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Activation",
   "bg": "c4d_key_03",
   "music": "music_draven_bond",
@@ -8154,7 +8211,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_04:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "La silhouette",
   "bg": "c4d_key_04",
   "music": "music_draven_bond",
@@ -8177,7 +8234,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_05:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Père ?",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8199,7 +8256,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_06:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Premières nouvelles",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8221,7 +8278,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_07:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Choix · Père ou amiral ?",
   "bg": "c4d_key_07",
   "music": "music_draven_bond",
@@ -8271,7 +8328,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   ]
 },
  c4d_08a:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Ouverture",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8293,7 +8350,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_08b:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Ouverture",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -8315,7 +8372,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_08c:{
-  "title": "Chapitre 4D · Une demande inattendue",
+  "title": "Chapitre IV-D · Une demande inattendue",
   "sub": "Ouverture",
   "bg": "c4d_warroom_sunset",
   "music": "music_draven_bond",
@@ -9248,7 +9305,7 @@ Hylee ne répond pas tout de suite. Elle ne prend pas cette confidence comme une
   "zoom": true
 },
  c4d_38:{
-  "title": "Chapitre 4D · Fin de route",
+  "title": "Chapitre IV-D · Fin de route",
   "sub": "Une demande inattendue",
   "bg": "c4d_key_38",
   "music": "music_draven_storm",
@@ -9507,6 +9564,256 @@ function renderC5SageDuel(scene){
 function finishC5SageDuel(){clearC5SageTimer(); const d=state.c5SageDuel||{}; if((d.clarity||0)<4){d.failed=true; d.failReason='clarity'; go('c5_sage_fail'); return;} state.flags={...(state.flags||{}),c5SageDuelPassed:true,c5SageClarity:d.clarity,c5SageFractures:d.fractures}; unlockProgressItems(['eclat_chronal_saidin']); const mem=['saidin_accompagne_groupe','saidin_dilemme_grave',...(d.temporaryMemories||[])]; if(d.clarity>=5&&d.fractures<=1)mem.push('saidin_cadran_limpide'); if(d.clarity>=6&&d.fractures===0)mem.push('saidin_fil_or_hylee'); unlockProgressMemories(mem); d.finished=true; go('c5_sage_success');}
 function restartC5AfterSageFailure(){clearC5SageTimer(); const d=state.c5SageDuel||{}; if(d.startStats)state.stats={...d.startStats}; state.c5SageDuel=null; state.c5SageIntroPlayed=false; state.c5SageIntroPending=false; state.scene='c5_01'; state.history=[]; setScreen('game'); render();}
 
+
+/* Chapitre VII du VN · Premier jet : Du Chaos aux Ombres */
+
+const C7_NAIAH_DUEL_1=[
+ {phase:'Duel I · Manche 1',title:'Le fils du Chaos',text:`Naïah tourne autour de Valurn comme une ombre qui aurait appris à rire. Elle n’avance jamais tout à fait dans la lumière, jamais tout à fait dans les ténèbres. Chaque pas déplace le brouillard comme si la forêt respirait à son rythme.
+
+« Dis-moi, fils du Chaos… tu viens me chasser, me juger, ou me supplier ? »
+
+Le ton est léger, presque chantant. Pourtant, derrière les mots, Valurn sent une pointe plantée dans sa tempe. Ce n’est pas une question. C’est une serrure. S’il accepte les termes qu’elle lui impose, il entre déjà dans sa cage.`,choices:[
+  {label:'« Ça dépendra de ton accueil. »',pacte:0,effects:{sangfroid:1},reaction:`« Réponse prudente. Pas savoureuse, mais pas idiote. » Naïah ne récompense pas vraiment le calme, mais elle accepte qu’il ne se soit pas précipité dans le piège.`},
+  {label:'« Je viens te remettre à ta place. »',pacte:-1,loss:1,effects:{audace:1},reaction:`La forêt se referme avec un bruit de mâchoire. « Mauvaise réponse. Personne ne me met à ma place ici. » Une griffe d’ombre traverse la pensée de Valurn et y laisse une brûlure froide.`},
+  {label:'« Tu veux surtout savoir si je me définis par les autres. »',pacte:2,effects:{lucidite:1},reaction:`Son sourire s’affine. Pendant une seconde, elle cesse de jouer. « Voilà qui mord au bon endroit. » Valurn sent la pression dans son crâne diminuer d’un cran.`},
+  {label:'« Aucune de ces trois options ne me flatte vraiment. »',pacte:1,effects:{audace:1},reaction:`Naïah éclate d’un rire clair. « Bien. Tu sais au moins ne pas entrer dans les cages qu’on te tend. » Les ombres reculent, mais elle garde son index sur la prochaine blessure.`}
+ ]},
+ {phase:'Duel I · Manche 2',title:'Le cri dans la brume',text:`Un cri traverse le brouillard. Trop aigu pour être adulte. Trop net pour être naturel. Il vient de partout à la fois, ricochant entre les troncs comme un caillou lancé dans un puits.
+
+Naïah penche la tête. « Tu n’y vas pas ? Peut-être que quelqu’un a besoin d’un héros. »
+
+Valurn n’aime pas ce genre de piège. Non parce qu’il est grossier, mais parce qu’il s’appuie sur ce que les gens préfèrent croire d’eux-mêmes.`,choices:[
+  {label:'Courir vers le cri.',pacte:-1,loss:1,effects:{sangfroid:-1},reaction:`Le sol disparaît sous ses pieds. Le cri devient un rire. « Trop facile. Tu viens de nourrir les racines. » Valurn se reprend, mais une partie de son équilibre reste dans la brume.`},
+  {label:'Analyser le cri : il n’a pas d’écho.',pacte:2,effects:{lucidite:1},reaction:`Valurn ne bouge pas. Naïah plisse les yeux, ravie malgré elle. « Tu écoutes bien. C’est agaçant. »`},
+  {label:'Rester immobile et forcer la forêt à venir à lui.',pacte:0,effects:{sangfroid:1},reaction:`La brume se heurte à son calme. Naïah tape des doigts contre sa joue. « Pas drôle, mais solide. Je préfère drôle. »`},
+  {label:'Sourire : « Tu as connu plus subtil. »',pacte:1,effects:{audace:1},reaction:`Les ombres ricanent avec elle. « Oh, celui-là a du goût. » Elle apprécie l’insolence, mais seulement parce qu’elle n’a pas encore décidé de s’en vexer.`}
+ ]},
+ {phase:'Duel I · Manche 3',title:'Homme ou monstre',text:`Naïah approche assez près pour que son ombre touche celle de Valurn.
+
+« Tu es quoi, au juste ? Un homme ? Un monstre ? Le fils d’un démon ? »
+
+Chaque mot change la forme des silhouettes derrière elle. Homme : elles ont des visages. Monstre : elles ont des gueules. Fils : elles ont des chaînes.`,choices:[
+  {label:'« Un peu tout ça. Les gens complexes coûtent plus cher. »',pacte:1,effects:{audace:1},reaction:`Naïah sourit de toutes ses dents. « Enfin quelqu’un qui ne s’excuse pas d’exister. » Puis ses yeux se plissent : elle n’accorde pas encore sa confiance, seulement son amusement.`},
+  {label:'Nier violemment la part démoniaque.',pacte:-1,loss:1,effects:{lucidite:-1},reaction:`Les ombres se tordent. « Mensonge. Et même pas élégant. » Le rejet donne une prise à la forêt, qui serre jusqu’à faire trembler sa vision.`},
+  {label:'« Assez dangereux pour ne pas trembler devant toi. »',pacte:0,effects:{sangfroid:1},reaction:`« Tu trembleras peut-être plus tard. Pour l’instant, tu sais bien te tenir. »`},
+  {label:'« Ce que je suis ne t’apprendra pas ce que je veux. »',pacte:2,effects:{lucidite:1},reaction:`Elle cesse d’avancer. « Méfiant. Précis. Décevant pour mes griffes, mais pas pour ma curiosité. »`}
+ ]},
+ {phase:'Duel I · Manche 4',title:'Le sang de Bhaal',text:`Une voix plus grave glisse dans la brume. Une voix de père, de dette, de chaîne.
+
+Naïah murmure : « Est-ce que Bhaal rit encore quand tu fermes les yeux ? »
+
+Elle attend la colère. Elle attend la honte. Elle attend que le nom soit une poignée à laquelle elle puisse suspendre Valurn jusqu’à ce qu’il craque.`,choices:[
+  {label:'« Tu sais donc imiter les monstres. Tu progresses. »',pacte:0,effects:{audace:1},reaction:`Elle applaudit lentement. « Mordre quand on est mordu. C’est une langue que j’aime bien. » Mais le mot monstre la traverse aussi, et son sourire refroidit.`},
+  {label:'Laisser la colère prendre le contrôle.',pacte:-2,loss:1,effects:{audace:1},reaction:`La forêt adore la colère. Elle l’attrape, l’allonge, la transforme en laisse. Valurn serre les dents trop tard.`},
+  {label:'« Mon père n’est pas le sujet. Le tien, peut-être ? »',pacte:1,effects:{lucidite:1},reaction:`Le sourire de Naïah se fend. Le brouillard devient plus lourd. « Fais attention. » Il a touché juste, mais juste ne veut pas dire sans danger.`},
+  {label:'« Seulement quand il croit avoir gagné. »',pacte:1,effects:{sangfroid:1},reaction:`Naïah observe son visage. Elle cherchait une fissure. Elle trouve une cicatrice fermée. Cela l’agace presque autant que cela l’intéresse.`}
+ ]},
+ {phase:'Duel I · Manche 5',title:'Pourquoi rester ?',text:`Les créatures d’ombre s’écartent. Naïah le fixe avec une curiosité presque vraie.
+
+« Pourquoi tu ne fuis pas ? Tout le monde fuit quand la forêt commence à penser. »
+
+La question paraît moins piégée. C’est souvent là que le piège devient le plus net.`,choices:[
+  {label:'« Parce que tu veux être comprise plus que tu ne veux tuer. »',pacte:2,effects:{lucidite:1},reaction:`Le silence tombe comme une lame. Naïah ne répond pas. Les ombres, elles, reculent. Valurn vient de toucher le nerf sous le masque.`},
+  {label:'« Parce que je n’ai pas peur de toi. »',pacte:-1,loss:1,effects:{audace:1},reaction:`Naïah sourit trop grand. « Mensonge. Tu as peur. Tu caches seulement ça sous du parfum infernal. »`},
+  {label:'« Parce que fuir maintenant te donnerait raison. »',pacte:0,effects:{sangfroid:1},reaction:`« Ah. L’orgueil. Au moins, celui-là sait marcher droit dans la boue. »`},
+  {label:'« Parce que tu n’as pas encore montré ce que tu caches vraiment. »',pacte:1,effects:{audace:1},reaction:`Elle rit, mais moins fort. « Tu es pénible. Ça devient presque intéressant. »`}
+ ]}
+];
+const C7_NAIAH_DUEL_2=[
+ {phase:'Duel II · Manche 1',title:'Le nom d’Amanea',qteSeq:['TENIR','BRISER','AVANCER'],text:`La forêt disparaît. Il ne reste qu’un espace noir, strié de veines violettes. Les miroirs ne montrent pas encore des images : ils montrent des angles, des intentions, des souvenirs qui cherchent un visage.
+
+Valurn prononce le nom d’Amanea.
+
+Naïah ne rit plus.
+
+« Répète ça, et je te laisse à ce qui rampe sous les racines. »
+
+Le jeu vient de perdre sa légèreté. La pression s’abat sur l’écran entier, comme si le monde voulait expulser Valurn hors de sa propre pensée.`,choices:[
+  {label:'« Ton secret était mal gardé. »',pacte:-1,effects:{audace:1},reaction:`Elle sourit, mauvaise. « Et pourtant tu marches encore dedans. » Elle ne frappe pas, mais il sent qu’il vient de refermer une porte qui aurait pu s’ouvrir autrement.`},
+  {label:'« Farae. Fille d’Amanea. Ce n’est pas une insulte, c’est une clef. »',pacte:3,effects:{lucidite:1},reaction:`Naïah serre les poings. Elle pourrait frapper. Elle choisit d’écouter. C’est presque plus dangereux.`},
+  {label:'Se moquer d’Amanea pour la faire réagir.',pacte:-2,loss:1,effects:{audace:1},reaction:`Les ombres frappent sans forme. Naïah n’aime pas qu’on vole ses blessures pour en faire des armes gratuites.`},
+  {label:'« Je ne cherche pas à te blesser. Je cherche la porte. »',pacte:1,effects:{sangfroid:1},reaction:`« Toutes les portes blessent quand on les ouvre. » Mais elle ne le chasse pas.`}
+ ]},
+ {phase:'Duel II · Manche 2',title:'Arme ou enfant',qteSeq:['BRISER','AVANCER','TENIR'],text:`Autour d’eux, les miroirs s’allument. Valurn y aperçoit des chaînes, une main féminine, une silhouette d’enfant couverte d’ombre, puis le visage d’Amanea qui ne regarde jamais vraiment ce qu’elle a créé.
+
+Naïah apparaît au centre du cercle psychique. Plus de cabriole, plus de rire pour distraire. Seulement ses yeux, brillants de colère.
+
+« Alors, dis-moi. Je suis quoi ? Une arme ratée ? Une fille abandonnée ? Un monstre qui attend son prochain ordre ? »
+
+Elle a l’air prête à détester toutes les réponses.`,choices:[
+  {label:'« Tu es une personne façonnée pour blesser, et assez vivante pour refuser que cela suffise. »',pacte:3,effects:{lucidite:1},reaction:`La phrase atteint Naïah comme une lame qui ne tranche pas. Elle ne remercie pas. Elle ne pardonne pas. Mais elle écoute.`},
+  {label:'« Tu es dangereuse. C’est la seule chose certaine. »',pacte:-1,effects:{sangfroid:1},reaction:`Naïah penche la tête. « Tout le monde finit par dire ça quand il manque de vocabulaire. »`},
+  {label:'« Une arme, oui. Mais les meilleures armes choisissent leur main. »',pacte:1,effects:{audace:1},reaction:`Elle rit, nerveuse. « Fais attention. J’ai mordu toutes les mains qui ont essayé. »`},
+  {label:'« Tu es surtout une enfant qui cherche sa mère. »',pacte:-2,loss:1,effects:{lucidite:-1},reaction:`L’air se brise. Le mot enfant devient une insulte dans la bouche du monde. Naïah attaque avant même que Valurn ait fini de respirer.`}
+ ]},
+ {phase:'Duel II · Manche 3',title:'Le pacte',qteSeq:['AVANCER','TENIR','BRISER'],text:`Naïah tend une main d’ombre. Pas pour aider. Pour mesurer le prix.
+
+« Pourquoi je te ferais confiance, Valurn ? »
+
+Son prénom dans sa bouche ressemble à un fil passé autour du cou. Si Valurn tire trop fort, il se pend. S’il ne tire pas assez, elle s’en va.`,choices:[
+  {label:'« Parce que tu n’as personne d’autre. »',pacte:-2,loss:1,effects:{audace:1},reaction:`Les ombres mordent. La solitude est une lame qu’elle refuse de voir dans la main des autres.`},
+  {label:'« Parce que je ne te promets pas de te sauver. Je te promets une sortie. »',pacte:3,effects:{sangfroid:1},reaction:`Naïah sourit lentement. « Une promesse moins brillante. Donc moins pourrie. »`},
+  {label:'« Parce que je sais ce que ça fait d’être lié à quelqu’un qui appelle ça de l’héritage. »',pacte:4,effects:{lucidite:1},reaction:`Ses yeux changent. Elle reconnaît la vérité avant même de la tolérer.`},
+  {label:'« Parce que si je mens, je le mérite. »',pacte:1,effects:{audace:1},reaction:`Elle rit enfin. Un vrai rire, coupant et vivant. « Tu as décidément une façon adorable de signer ton arrêt de mort. »`}
+ ]}
+];
+function c7EnsureDuel(phase='duel1'){
+  if(!state.c7Naiah) state.c7Naiah={phase,step:0,mental:3,pacte:0,waiting:false,last:null,qte:null,history:[],startStats:{...(state.stats||{})}};
+  if(!state.c7Naiah.phase) state.c7Naiah.phase=phase;
+  if(typeof state.c7Naiah.mental!=='number') state.c7Naiah.mental=3;
+  if(typeof state.c7Naiah.pacte!=='number') state.c7Naiah.pacte=0;
+  return state.c7Naiah;
+}
+function clearC7QteLayer(){const old=document.getElementById('c7StageQteLayer'); if(old) old.remove();}
+function clearC7NaiahTimer(){if(window.__c7NaiahTimerInterval){clearInterval(window.__c7NaiahTimerInterval); window.__c7NaiahTimerInterval=null;} clearC7QteLayer();}
+function c7CurrentSteps(){const d=c7EnsureDuel(); return d.phase==='duel2'?C7_NAIAH_DUEL_2:C7_NAIAH_DUEL_1;}
+function c7TimerDuration(){const d=c7EnsureDuel(); if(d.qte){const idx=(d.qte&&typeof d.qte.index==='number')?d.qte.index:0; return Math.max(3000,5000-(idx*1000));} return d.phase==='duel2'?20000:30000;}
+function c7CurrentQteWord(){const d=c7EnsureDuel(); if(!d.qte)return ''; if(typeof d.qte==='string')return d.qte; const seq=Array.isArray(d.qte.seq)?d.qte.seq:['TENIR','BRISER','AVANCER']; return seq[d.qte.index||0]||seq[0]||'TENIR';}
+function c7QtePosition(index){const pos=[{x:72,y:34},{x:28,y:58},{x:55,y:76},{x:43,y:29},{x:78,y:67},{x:22,y:38}]; return pos[index%pos.length];}
+function updateC7NaiahTimerDisplay(){const d=state.c7Naiah; if(!d||d.waiting)return; const el=document.getElementById('c7NaiahTimer'); const fill=document.getElementById('c7NaiahTimerFill'); if(!el||!fill)return; const total=d.deadlineDuration||c7TimerDuration(); const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000); el.textContent=d.qte?`${(remainingMs/1000).toFixed(1)}s`:`${remaining}s`; fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%'; if(remainingMs<=0){clearC7NaiahTimer(); if(d.qte)c7ResolveQte(false,'Naïah frappe avant que Valurn ne verrouille sa défense. L’ombre traverse l’écran comme une griffe.'); else c7ResolveNaiahChoice(null,true);}}
+function startC7NaiahTimer(){const d=c7EnsureDuel(); if(d.waiting)return; d.deadlineDuration=c7TimerDuration(); d.deadline=Date.now()+d.deadlineDuration; if(window.__c7NaiahTimerInterval){clearInterval(window.__c7NaiahTimerInterval); window.__c7NaiahTimerInterval=null;} updateC7NaiahTimerDisplay(); window.__c7NaiahTimerInterval=setInterval(updateC7NaiahTimerDisplay,120);}
+function c7ApplyEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)state.stats[k]=(state.stats[k]||0)+v;}}
+function c7ResolveNaiahChoice(ch,timeout=false){const d=c7EnsureDuel(); clearC7NaiahTimer(); const steps=c7CurrentSteps(); const step=steps[d.step]||steps[0]; if(timeout){d.mental=Math.max(0,(d.mental||3)-1); d.last={reaction:`Naïah sourit. « Trop lent. » La forêt répond à sa place, et Valurn sent une ombre traverser ses tempes.`,bad:true};}
+  else {if(ch.loss)d.mental=Math.max(0,(d.mental||3)-ch.loss); if(typeof ch.pacte==='number')d.pacte=Math.max(0,(d.pacte||0)+ch.pacte); c7ApplyEffects(ch.effects||{}); d.last={reaction:ch.reaction||'Naïah observe la réponse sans cesser de sourire.',bad:!!ch.loss || (typeof ch.pacte==='number'&&ch.pacte<0)}; d.history.push({phase:d.phase,step:d.step+1,label:ch.label,pacte:d.pacte,mental:d.mental});}
+  d.step++;
+  if(d.mental<=0){d.waiting=true; d.after='mentalFail';}
+  else if(d.phase==='duel2' && d.step<steps.length){d.waiting=true; d.after='qte'; d.qteNext=(step.qteSeq||['TENIR','BRISER','AVANCER']).slice();}
+  else if(d.step>=steps.length){d.waiting=true; d.after='finish';}
+  else {d.waiting=true; d.after='next';}
+  save(); renderC7NaiahDuel(S[state.scene]);}
+function c7ResolveQte(ok,msg){
+  const d=c7EnsureDuel();
+  if(!d.qte){return;}
+  if(!ok){
+    clearC7NaiahTimer();
+    d.mental=Math.max(0,(d.mental||3)-1);
+    d.qte=null;
+    d.last={reaction:msg||'L’ombre arrache une pensée au passage.',bad:true};
+    d.waiting=true;
+    d.after=d.mental<=0?'mentalFail':'next';
+    save();
+    renderC7NaiahDuel(S[state.scene]);
+    return;
+  }
+  const seq=Array.isArray(d.qte.seq)?d.qte.seq:['TENIR','BRISER','AVANCER'];
+  const nextIndex=(d.qte.index||0)+1;
+  if(nextIndex<seq.length){
+    d.qte.index=nextIndex;
+    d.qte.positionSeed=(d.qte.positionSeed||0)+1;
+    d.deadlineDuration=c7TimerDuration();
+    d.deadline=Date.now()+d.deadlineDuration;
+    save();
+    renderC7NaiahDuel(S[state.scene]);
+    return;
+  }
+  clearC7NaiahTimer();
+  d.qte=null;
+  d.last={reaction:msg||'Valurn enchaîne les défenses assez vite pour repousser Naïah sans briser le pacte naissant.',bad:false};
+  d.waiting=true;
+  d.after='next';
+  save();
+  renderC7NaiahDuel(S[state.scene]);
+}
+function finishC7NaiahDuel(){const d=c7EnsureDuel(); clearC7NaiahTimer(); if((d.pacte||0)>=15){unlockProgressMemories(['naiah_jeu_partage']); state.flags={...(state.flags||{}),c7PacteNaiah:d.pacte,c7NaiahComplicite:true}; go('c7_success_high'); return;} if((d.pacte||0)>=10){state.flags={...(state.flags||{}),c7PacteNaiah:d.pacte}; go('c7_success_standard'); return;} state.flags={...(state.flags||{}),c7PacteNaiah:d.pacte}; go('c7_bad_pacte');}
+function enterC7NaiahDuel(scene){
+  updateDevUI();
+  clearC7NaiahTimer();
+  const requested=scene.c7NaiahDuel||'duel1';
+  const d=c7EnsureDuel(requested);
+  if(d.phase!==requested){d.phase=requested; d.step=0; d.waiting=false; d.last=null; d.qte=null; d.after=null;}
+  setStageBg(scene.bg||'c4v_forest_naiah',true);
+  const stage=document.getElementById('stage');
+  stage.classList.add('combatMode');
+  stage.classList.toggle('c7Mindquake', requested==='duel2');
+  if(requested==='duel2') document.getElementById('chars').innerHTML=''; else paintSceneChars([['valurn','valurn_charming','center']]);
+  document.getElementById('sceneTitle').textContent=scene.title||'Duel des Ombres';
+  document.getElementById('sceneSub').textContent=requested==='duel2'?'La forêt attaque l’interface':'Mise en bouche';
+  document.getElementById('speaker').textContent='Narrateur';
+  document.getElementById('text').innerHTML=requested==='duel2'
+    ? 'Naïah ne se contente plus de parler. Le monde se fissure autour de Valurn. Les ombres attaquent la pensée, la vue, l’écran lui-même. Cette fois, répondre ne suffira pas : il faudra tenir sous les coups.'
+    : 'La brume se serre autour de Valurn. Naïah installe son jeu avec le soin cruel d’une enfant qui connaît déjà la fin de l’histoire. Cinq questions. Trente secondes chacune. Trois failles mentales seulement avant que la forêt ne le garde.';
+  document.getElementById('choices').innerHTML='';
+  document.getElementById('stats').innerHTML='';
+  playMusic(resolveSceneMusic(state.scene, scene.music||'music_thazran'));
+  const overlay=document.getElementById('combatTransition');
+  const mini=overlay.querySelector('.combatMini');
+  if(mini) mini.textContent=requested==='duel2'?'QTE mental':'Duel mental';
+  overlay.querySelector('.combatTitle').textContent=requested==='duel2'?'Naïah attaque':'Duel des Ombres';
+  overlay.querySelector('.combatSub').textContent=requested==='duel2'?'20 secondes · défense directe sur l’image':'5 manches · santé mentale commune';
+  overlay.classList.remove('hidden');
+  overlay.classList.remove('active','c7NaiahIntro','c7Intense');
+  overlay.classList.add('c7NaiahIntro');
+  if(requested==='duel2') overlay.classList.add('c7Intense');
+  void overlay.offsetWidth;
+  overlay.classList.add('active');
+  state.c7NaiahIntroPending=true;
+  state.c7NaiahIntroPlayed=state.c7NaiahIntroPlayed||{};
+  clearTimeout(window.__c7NaiahTransitionTimer);
+  window.__c7NaiahTransitionTimer=setTimeout(()=>{
+    overlay.classList.add('hidden');
+    overlay.classList.remove('active','c7NaiahIntro','c7Intense');
+    if(mini) mini.textContent='Mode combat';
+    state.c7NaiahIntroPending=false;
+    state.c7NaiahIntroPlayed[requested]=true;
+    save();
+    renderC7NaiahDuel(scene);
+  }, requested==='duel2'?1650:1200);
+}
+function c7RenderStageQte(d){
+  clearC7QteLayer();
+  const stage=document.getElementById('stage');
+  if(!stage||!d.qte)return;
+  const seq=Array.isArray(d.qte.seq)?d.qte.seq:['TENIR','BRISER','AVANCER'];
+  const idx=d.qte.index||0;
+  const word=seq[idx]||'TENIR';
+  const layer=document.createElement('div');
+  layer.id='c7StageQteLayer';
+  layer.className='c7StageQteLayer';
+  const attack=document.createElement('div');
+  attack.className='c7QteAttackText';
+  attack.textContent=idx===0?'Naïah surgit dans l’angle mort. Défends Valurn : 5 secondes.':idx===1?'Deuxième impact. La pensée se fend : 4 secondes.':'Dernière morsure. Repousse l’ombre : 3 secondes.';
+  layer.appendChild(attack);
+  const pos=c7QtePosition((d.step||0)*3+idx+(d.qte.positionSeed||0));
+  const btn=document.createElement('button');
+  btn.className='c7StageQteBtn';
+  btn.type='button';
+  btn.style.left=pos.x+'%';
+  btn.style.top=pos.y+'%';
+  btn.textContent=word;
+  btn.onclick=(ev)=>{ev.stopPropagation(); c7ResolveQte(true, idx>=2?'Valurn repousse la dernière attaque. L’ombre se déchire sous ses doigts et recule en sifflant.':`Valurn ${word.toLowerCase()} l’impact. Naïah frappe aussitôt ailleurs.`);};
+  layer.appendChild(btn);
+  stage.appendChild(layer);
+}
+function renderC7NaiahDuel(scene){const requested=scene.c7NaiahDuel||'duel1'; let d=c7EnsureDuel(requested); if(d.phase!==requested){d.phase=requested; d.step=0; d.waiting=false; d.last=null; d.qte=null; d.after=null;}
+  if(d.mental<=0){go('c7_bad_mental'); return;}
+  const steps=c7CurrentSteps(); const step=steps[d.step]||steps[steps.length-1];
+  document.querySelectorAll('.chapterLabel').forEach(el=>{el.textContent=getSceneChapterLabel(state.scene);});
+  const stage=document.getElementById('stage');
+  stage.classList.add('combatMode');
+  stage.classList.toggle('c7Mindquake', d.phase==='duel2');
+  setStageBg(scene.bg||'c4v_forest_naiah',true);
+  playMusic(resolveSceneMusic(state.scene, scene.music||'music_thazran'));
+  const chars=[['valurn',d.last&&d.last.bad?'valurn_annoyed':'valurn_charming','center']];
+  if(scene.hideChars||d.phase==='duel2') document.getElementById('chars').innerHTML=''; else paintSceneChars(chars);
+  document.getElementById('sceneTitle').textContent=scene.title||'Duel des Ombres';
+  const qteWord=c7CurrentQteWord();
+  document.getElementById('sceneSub').textContent=d.qte?`Défense directe · ${qteWord}`:(d.waiting?'Écho des ombres':`${step.phase} · ${step.title}`);
+  document.getElementById('speaker').textContent=d.qte?'Instinct':(d.waiting?'Naïah':(step.speaker||'Naïah'));
+  const textEl=document.getElementById('text');
+  const status=`\n\nSanté mentale : ${'♥'.repeat(d.mental)}${'♡'.repeat(Math.max(0,3-d.mental))} · Pacte Naïah : ${d.pacte}/15`;
+  const choices=document.getElementById('choices'); choices.innerHTML='';
+  clearC7QteLayer();
+  if(d.qte){
+    const idx=(d.qte.index||0)+1;
+    const total=Array.isArray(d.qte.seq)?d.qte.seq.length:3;
+    textEl.textContent=`Naïah attaque directement. Le bouton de défense apparaît sur l’image : ${qteWord}.\n\nEnchaînement ${idx}/${total}. Le temps se resserre à chaque défense : 5s, puis 4s, puis 3s. Clique avant que l’ombre ne traverse Valurn.`+status;
+    c7RenderStageQte(d);
+  }
+  else if(d.waiting){clearC7NaiahTimer(); textEl.textContent=(d.last&&d.last.reaction?d.last.reaction:'Les ombres retiennent leur souffle.')+status; const b=document.createElement('button'); b.className='choiceBtn continueBtn'; b.innerHTML='<span>Continuer</span><span class="arrow">›</span>'; b.onclick=()=>{d.waiting=false; const after=d.after; d.after=null; d.last=null; if(after==='mentalFail'){go('c7_bad_mental');return;} if(after==='qte'){d.qte={seq:(d.qteNext||['TENIR','BRISER','AVANCER']).slice(),index:0,positionSeed:0}; d.qteNext=null; save(); renderC7NaiahDuel(scene);return;} if(after==='finish'){ if(d.phase==='duel1'){go('c7_07');return;} finishC7NaiahDuel();return;} save(); renderC7NaiahDuel(scene);}; choices.appendChild(b);}
+  else {textEl.textContent=(step.text||'Naïah attaque dans l’angle mort des pensées.')+status; (step.choices||[]).forEach(ch=>{const b=document.createElement('button'); b.className='choiceBtn'; const pacte=(typeof ch.pacte==='number'&&ch.pacte!==0)?`<small>Pacte Naïah ${ch.pacte>0?'+':''}${ch.pacte}</small>`:''; const loss=ch.loss?`<small>Risque : santé mentale -${ch.loss}</small>`:''; b.innerHTML=`<span>${ch.label}${state.devMode?pacte+loss:''}</span><span class="arrow">›</span>`; b.onclick=()=>c7ResolveNaiahChoice(ch,false); choices.appendChild(b);});}
+  const stats=document.getElementById('stats'); const total=steps.length; const current=Math.min(d.step+1,total); stats.innerHTML=`<div class="combatHud c7DuelPulse"><div class="combatBox"><div class="combatTop"><span>Santé mentale</span><span>${d.mental}/3</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.mental/3)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Pacte Naïah</span><span>${d.pacte}/15</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,(d.pacte/15)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c7NaiahTimer">${d.waiting?'—':(d.qte?((c7TimerDuration()/1000).toFixed(1)+'s'):(d.phase==='duel2'?'20s':'30s'))}</span></div><div class="combatTrack"><div id="c7NaiahTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>${d.phase==='duel2'?'Duel II':'Duel I'} <b>${current}/${total}</b></span><span>Objectif pacte <b>10+</b></span><span>Complicité <b>15+</b></span></div>`;
+  if(!d.waiting)startC7NaiahTimer(); else updateC7NaiahTimerDisplay(); updateDevUI(); save(); updateProgressUI();}
+function restartChapter7(){clearC7NaiahTimer(); startChapter7();}
 function setStageBg(key,zoom=false){const bg=document.getElementById('bg'); bg.style.backgroundImage=`url('${A[key]}')`; bg.classList.toggle('zoom',!!zoom); return bg;}
 function shouldSuppressSceneChars(scene){const bgKey=String((scene&&scene.bg)||''); const bgSrc=String((A&&A[bgKey])||''); const sub=String((scene&&scene.sub)||''); const isKeyScene=(bgSrc.includes('/keyscenes/')||/(^|_)key_/i.test(bgKey)||/Illustration CG|Image clé|CG/i.test(sub)); return !!(scene&&(scene.hideChars===true||scene.clearChars===true||isKeyScene||(isIntroScene(state.scene)&&(bgKey.startsWith('intro_cg_')||bgSrc.includes('/cg_')||/Illustration CG|Image clé|CG/i.test(sub)))));}
 function enterCombat(scene){updateDevUI(); const setupKey=(DUEL_STEPS[0]&&DUEL_STEPS[0].bg)||scene.bg; unlockCodexImageKey(setupKey); setStageBg(setupKey,true); document.getElementById('chars').innerHTML=''; document.getElementById('sceneTitle').textContent=scene.title; document.getElementById('sceneSub').textContent=scene.sub; document.getElementById('speaker').textContent='Narrateur'; document.getElementById('text').innerHTML='La clairière se fige. Le souffle se coupe. Remerii ne parle plus comme une mentor, mais comme une épreuve.'; document.getElementById('choices').innerHTML=''; document.getElementById('stats').innerHTML=''; playMusic(resolveSceneMusic(state.scene, scene.music)); const stage=document.getElementById('stage'); stage.classList.add('combatMode'); const overlay=document.getElementById('combatTransition'); overlay.querySelector('.combatTitle').textContent=scene.title; overlay.querySelector('.combatSub').textContent=scene.sub; overlay.classList.remove('hidden'); overlay.classList.remove('active'); void overlay.offsetWidth; overlay.classList.add('active'); state.duelIntroPending=true; clearTimeout(window.__combatTransitionTimer); window.__combatTransitionTimer=setTimeout(()=>{overlay.classList.add('hidden'); overlay.classList.remove('active'); state.duelIntroPending=false; state.duelIntroPlayed=true; save(); renderDuel(scene);},1050);}
@@ -12148,8 +12455,9 @@ function renderJournalFragments(){
       inner.className='journalFragmentInner';
       frag.blocks.forEach(block=>{
         const b=document.createElement('div');
-        b.className='journalBlock '+(block.kind==='journal'?'journal':'projection');
-        const label=block.kind==='journal'?'Extrait du fragment':'Projection mystérieuse';
+        const kind=block.kind||'projection';
+        b.className='journalBlock '+(kind==='journal'?'journal':kind==='report'?'report':kind==='manuscript'?'manuscript':'projection');
+        const label=kind==='journal'?'Extrait du fragment':kind==='report'?'Compte rendu officiel':kind==='manuscript'?'Note manuscrite':'Projection mystérieuse';
         b.innerHTML=`<div class="journalBlockLabel">${label}</div><p>${htmlEscape(block.text)}</p>`;
         inner.appendChild(b);
       });
@@ -12413,9 +12721,10 @@ function fadeToScreen(name){
 function setScreen(name){for(const id of ['disclaimer','splashTitle','title','game','codex','progression','chapters']){const el=document.getElementById(id); if(el)el.classList.add('hidden');} const target=document.getElementById(name); if(target)target.classList.remove('hidden'); document.body.classList.toggle('disclaimerOpen', name==='disclaimer'); if(name==='codex'){playUiSound('book'); renderCodex();} if(name==='progression'){playUiSound('book'); renderProgression();} if(name==='chapters'){playUiSound('book'); renderChapterSelect();} if(name!=='disclaimer'&&name!=='splashTitle')state.lastScreen=name; if(name==='splashTitle') playMusic('music_title_intro'); if(name==='title'&&state.menuMusicOn!==false) playMusic('music_menu'); if(name==='codex') renderCodex(); if(name==='progression') renderProgression(); if(name==='chapters') renderChapterSelect(); save(); updateMenuButtons(); updateProgressUI(); updateBugReportUI();}
 
 function isIntroScene(sceneId=state.scene){return String(sceneId||'').startsWith('intro_');}
+function isC7Scene(sceneId=state.scene){return String(sceneId||'').startsWith('c7_');}
 function ensureIntroDefaults(){ if(!state.introStats) state.introStats={...INTRO_STATS}; state.introStats={...INTRO_STATS,...state.introStats}; }
-function activeStats(){ ensureIntroDefaults(); return isIntroScene()?state.introStats:state.stats; }
-function activeStatNames(){ return isIntroScene()?introStatNames:statNames; }
+function activeStats(){ ensureIntroDefaults(); if(isIntroScene())return state.introStats; if(isC7Scene()){const s=state.stats||{}; return {audace:s.audace||0,sangfroid:s.sangfroid||0,pacteNaiah:(state.c7Naiah&&state.c7Naiah.pacte)||0,lucidite:s.lucidite||0,resonance:s.resonance||0};} return state.stats; }
+function activeStatNames(){ if(isIntroScene())return introStatNames; if(isC7Scene())return {audace:'Audace',sangfroid:'Sang-froid',pacteNaiah:'Pacte Naïah',lucidite:'Lucidité',resonance:'Résonance'}; return statNames; }
 function activeValueMax(){ return isIntroScene()?INTRO_VALUE_MAX:999; }
 function statReqText(req){ if(!req)return ''; ensureIntroDefaults(); const intro=isIntroScene(); const src=intro?state.introStats:state.stats; const names=intro?introStatNames:statNames; const max=intro?INTRO_VALUE_MAX:999; return Object.entries(req).map(([k,v])=>`${names[k]||k} ${Math.min(src[k]||0,max)}/${v}`).join(' · '); }
 function introReqText(req){ return statReqText(req); }
@@ -14705,6 +15014,706 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
 });
 })();
 
+
+(function installChapter7ChaosAuxOmbres(){
+  try{
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        pacte_naiah:{title:'Pacte Naïah',body:`Valeur temporaire du Chapitre VII. Elle remplace le Lien Remerii pendant les jeux d’ombre de Naïah. Si elle reste trop basse, Valurn ne parvient pas à conclure l’accord.`},
+        duel_ombres_naiah:{title:'Duel des Ombres',body:`Deux épreuves mentales imposées par Naïah : une mise en bouche en cinq manches, puis un duel plus brutal en trois manches avec réflexes imposés. La santé mentale de Valurn est commune aux deux.`}
+      });
+      if(Array.isArray(CODEX_ORDER)){['pacte_naiah','duel_ombres_naiah'].forEach(k=>{if(!CODEX_ORDER.includes(k))CODEX_ORDER.push(k);});}
+      if(typeof CODEX_BY_SCENE!=='undefined'){Object.assign(CODEX_BY_SCENE,{c7_01:['valurn','foret_interdite'],c7_02:['naiah','pacte_naiah'],c7_duel1:['duel_ombres_naiah','naiah'],c7_duel2:['duel_ombres_naiah','naiah'],c7_end:['pacte_naiah']});}
+    }
+    Object.assign(S,{
+  "c7_01": {
+    "title": "Chapitre VII · Du Chaos aux Ombres",
+    "sub": "La Forêt Interdite",
+    "bg": "c4v_forest_curse",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "La Forêt Interdite ne commence pas par une frontière. Elle commence par un changement de respiration.\n\nValurn s’en rend compte au bout de quelques pas : l’air devient plus lourd, les arbres plus serrés, les sons plus lointains. La route qu’il a suivie jusqu’ici se perd derrière lui comme si elle n’avait jamais existé.\n\nBellirith lui a donné une direction. Thazran lui a donné un nom. Naïah. Une âme non Obscurcie, disait-il, mais assez liée à cette forêt pour qu’elle y soit moins une habitante qu’une règle vivante.\n\nValurn avance malgré tout. Il garde une main près de son manteau, là où des flammes peuvent naître sans prévenir, mais il ne les appelle pas encore. Dans ce lieu, brûler une branche pourrait revenir à défier toute la forêt. Et il a assez d’ennemis comme ça.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_neutral",
+        "center"
+      ]
+    ],
+    "next": "c7_02",
+    "zoom": true
+  },
+  "c7_02": {
+    "title": "Naïah",
+    "sub": "Le rire dans la brume",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "???",
+    "text": "Un rire roule entre les troncs. Léger, moqueur, impossible à localiser.\n\nIl vient d’abord d’un arbre creux, puis d’une flaque noire, puis d’un buisson où rien ne bouge. Valurn s’arrête sans se retourner. Le rire n’a pas besoin d’être derrière lui pour être dans sa nuque.\n\n« Voilà donc le fameux Valurn. Le fils du Chaos… »\n\nLa voix s’étire, amusée par chaque syllabe.\n\n« Tu ne ressembles pas à un monstre, pourtant. Enfin… pas de loin. »\n\nValurn laisse passer un silence. Pas par peur. Par politesse stratégique. Certaines créatures parlent plus quand on ne leur offre pas tout de suite la réplique qu’elles réclament.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Répondre avec ironie : « Et toi, tu ne ressembles pas à une guide. »",
+        "next": "c7_02_a",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": 1,
+        "note": "Pacte Naïah +1"
+      },
+      {
+        "label": "Observer la brume avant de répondre.",
+        "next": "c7_02_b",
+        "effects": {
+          "lucidite": 1
+        },
+        "pacteNaiah": 0,
+        "note": "Observation neutre"
+      },
+      {
+        "label": "Garder la main près des flammes, sans menacer.",
+        "next": "c7_02_c",
+        "effects": {
+          "sangfroid": 1
+        },
+        "pacteNaiah": -1,
+        "note": "Pacte Naïah -1"
+      }
+    ]
+  },
+  "c7_02_a": {
+    "title": "Naïah",
+    "sub": "Un accueil chaleureux",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "La brume s’épaissit devant lui, puis s’ouvre d’un coup. Une silhouette jaillit d’un arbre, atterrit sur une racine sans faire plier la mousse, et se redresse avec une grâce insolente.\n\nCheveux bleu nuit, reflets violets, sourire trop jeune pour être innocent. Naïah incline la tête comme si Valurn venait de réussir le premier pas d’une danse dont il ignore encore les règles.\n\n« Je ne trompe personne, moi. Je m’amuse, c’est tout. Et toi, tu es un invité dans MA forêt. »\n\nElle appuie sur le mot comme sur une lame. Autour d’eux, les branches bougent à peine, mais Valurn comprend le message : elle ne parle pas au nom du lieu. Le lieu parle avec elle.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_amused",
+        "center"
+      ]
+    ],
+    "next": "c7_03"
+  },
+  "c7_02_b": {
+    "title": "Naïah",
+    "sub": "La brume pense",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Valurn ne répond pas tout de suite. Il écoute les interstices : les sons qui devraient exister et qui manquent, l’écho qui ne revient pas, le froissement des feuilles qui se répète avec trop de précision.\n\nLa forêt n’imite pas seulement Naïah. Elle lui obéit.\n\nQuand la silhouette finit par se détacher du brouillard, Valurn a déjà compris une partie du problème. Naïah n’est pas cachée dans la Forêt Interdite. Elle est éparpillée dedans, comme du poison dans une coupe de vin.\n\nElle sourit en comprenant qu’il a pris le temps de regarder le verre avant de boire.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_away",
+        "center"
+      ]
+    ],
+    "next": "c7_03"
+  },
+  "c7_02_c": {
+    "title": "Naïah",
+    "sub": "Main sur la lame",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "« Pas encore de flammes ? Je suis presque vexée. »\n\nNaïah apparaît devant lui, ses pieds touchant à peine le sol. Elle remarque la main de Valurn, la tension contrôlée dans ses doigts, la menace retenue par intelligence plutôt que par bonté.\n\n« Tu sais, les gens qui n’osent pas attaquer disent souvent qu’ils sont patients. Les gens qui savent attendre, eux, ne disent rien. »\n\nValurn ne répond pas. Son sourire suffit.\n\nNaïah aime ça. Pas assez pour lui faire confiance. Assez pour continuer le jeu.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_neutral",
+        "center"
+      ]
+    ],
+    "next": "c7_03"
+  },
+  "c7_03": {
+    "title": "Naïah",
+    "sub": "Deux prédateurs polis",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Naïah ne déclenche pas tout de suite son jeu. Elle tourne autour de Valurn comme si elle cherchait la couture exacte par laquelle ouvrir son âme.\n\nElle observe ses mains, ses épaules, la façon dont il garde le sourire sans réellement baisser sa garde. Elle remarque la flamme qu’il retient. Elle remarque surtout qu’il sait qu’elle l’a remarquée.\n\n« Tu sens le bois brûlé », dit-elle enfin. « Pas la fumée. Pas l’incendie. Le moment juste avant que quelque chose décide de devenir cendre. »\n\nValurn arque un sourcil.\n\n« On m’a déjà fait des compliments plus rassurants. »\n\n« Ce n’était pas un compliment. »\n\n« Dans cette forêt, je prends ce qui ressemble vaguement à de la politesse. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_03a"
+  },
+  "c7_03a": {
+    "title": "Naïah",
+    "sub": "Elle cherche la fissure",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "Naïah sourit, puis disparaît entre deux troncs sans bruit. Sa voix reste pourtant proche. Trop proche.\n\n« Bellirith t’a envoyé ? Ou Thazran ? Ou est-ce que tu t’es perdu tout seul comme un grand garçon avec des cornes dans le destin ? »\n\nLes feuilles frémissent. Certaines portent le visage de Valurn une fraction de seconde avant de redevenir nervures et ombres.\n\n« Tu as parlé à des démons, à des traîtres, à des gens qui vendraient leur mère pour une information. Mais tu viens quand même jusqu’à moi. C’est flatteur. Ou stupide. J’hésite. »\n\nValurn tourne lentement sur lui-même, sans chercher à la suivre des yeux.\n\nIl comprend ce qu’elle fait : elle multiplie les angles pour l’obliger à choisir une peur. Être manipulé. Être utilisé. Être trop lisible. Être comme son père.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_away",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Répondre : « Flatteur et stupide ne sont pas incompatibles. »",
+        "next": "c7_03b",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": 0,
+        "note": "Naïah apprécie le ton, mais reste méfiante"
+      },
+      {
+        "label": "Ne pas mordre à la provocation et chercher où la forêt répète sa voix.",
+        "next": "c7_03c",
+        "effects": {
+          "lucidite": 1
+        },
+        "pacteNaiah": 1,
+        "note": "Pacte Naïah +1"
+      },
+      {
+        "label": "Lui répondre sèchement qu’elle parle trop pour quelqu’un qui se cache.",
+        "next": "c7_03d",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": -1,
+        "note": "Pacte Naïah -1"
+      }
+    ]
+  },
+  "c7_03b": {
+    "title": "Naïah",
+    "sub": "Le sourire et les crocs",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Valurn",
+    "text": "« Flatteur et stupide ne sont pas incompatibles. On peut même bâtir une carrière respectable sur ce mélange. »\n\nNaïah réapparaît assise sur une branche, une jambe dans le vide, le menton posé dans sa paume.\n\n« Tu parles comme quelqu’un qui a survécu à des salons trop chers. »\n\n« Entre autres enfers. »\n\nElle rit. Pas longtemps. Juste assez pour admettre qu’il n’est pas totalement ennuyeux. Puis son regard glisse vers lui, brusquement plus tranchant.\n\n« Et quand tu souris comme ça, c’est pour cacher quoi ? Une peur ? Une dette ? Un père ? »\n\nValurn lève les yeux vers elle.\n\n« Tu poses beaucoup de questions pour quelqu’un qui n’a pas encore répondu à une seule. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_amused",
+        "center"
+      ]
+    ],
+    "next": "c7_03e"
+  },
+  "c7_03c": {
+    "title": "Naïah",
+    "sub": "Le point fixe",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Valurn ne répond pas. Il écoute.\n\nLa voix de Naïah rebondit partout, mais jamais parfaitement. À chaque éclat de rire, une branche au nord répond avec une demi-seconde de retard. À chaque phrase, les racines sous son pied gauche vibrent un peu trop fort.\n\nElle n’est pas seulement cachée dans la forêt. Elle la traverse par endroits. Comme une pensée passant d’un corps à l’autre.\n\n« Oh. Tu cherches le fil. »\n\nCette fois, elle apparaît derrière lui, à peine à quelques pas.\n\n« Ce n’est pas poli de regarder sous les masques des gens avant le dîner. »\n\nValurn sourit sans se retourner.\n\n« Je n’ai pas été invité à dîner. »\n\n« Pas encore. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_neutral",
+        "center"
+      ]
+    ],
+    "next": "c7_03e"
+  },
+  "c7_03d": {
+    "title": "Naïah",
+    "sub": "Susceptible",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Valurn",
+    "text": "« Tu parles beaucoup pour quelqu’un qui se cache. »\n\nLe silence tombe aussitôt. Trop net. Trop froid.\n\nNaïah réapparaît devant lui, son sourire encore là, mais vidé de sa légèreté.\n\n« Je ne me cache pas. Je choisis où les autres ont le droit de me voir. Nuance importante. »\n\nLa brume se plaque contre les arbres. Valurn sent qu’il vient de toucher une zone sensible sans la nommer. Pas assez profondément pour comprendre. Assez pour la vexer.\n\n« Recommence ce ton, fils du Chaos, et je te montre la différence entre une conversation et une autopsie. »\n\nValurn ne s’excuse pas. Il grave simplement l’information : Naïah n’aime pas qu’on réduise ses jeux à de la lâcheté.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_annoyed",
+        "center"
+      ]
+    ],
+    "next": "c7_03e"
+  },
+  "c7_03e": {
+    "title": "Naïah",
+    "sub": "Valurn contre-interroge",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Valurn",
+    "text": "Valurn reprend la main avant qu’elle ne referme complètement le piège.\n\n« Tu sais beaucoup de choses sur moi. Ou tu fais semblant assez bien pour que ce soit ennuyeux. »\n\nNaïah descend de sa branche sans tomber. Son corps glisse dans l’air, porté par une ombre qui refuse d’obéir aux lois du poids.\n\n« Les visiteurs laissent des traces. Les démons, des odeurs. Les menteurs, des trous. Toi, tu laisses les trois. »\n\n« Et toi ? »\n\nLe sourire de Naïah s’immobilise.\n\n« Moi ? »\n\n« Tu laisses quoi derrière toi ? »\n\nPendant un battement, la forêt cesse de faire semblant d’être un décor. Elle écoute.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_03f"
+  },
+  "c7_03f": {
+    "title": "Duel des Ombres",
+    "sub": "La mise en bouche commence",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "Naïah incline la tête.\n\n« Mauvaise question. »\n\nSon sourire revient, mais il n’a plus rien de léger. Il sert à fermer une porte. Il sert aussi à cacher que Valurn vient de trouver la poignée.\n\nElle claque des doigts.\n\nLe brouillard prend forme : gueules, griffes, silhouettes grotesques faites d’ombre liquide. Certaines rampent sur les troncs. D’autres pendent des branches comme des pendus qui n’auraient jamais appris à mourir.\n\n« Tu voulais un guide ? Alors prouve que tu peux survivre à la conversation. »\n\nLes ombres se redressent.\n\nLa mise en bouche commence.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_duel1"
+  },
+  "c7_duel1": {
+    "title": "Duel I · La forêt teste",
+    "sub": "Timer 30 secondes",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "c7NaiahDuel": "duel1",
+    "zoom": true
+  },
+  "c7_07": {
+    "title": "Après la mise en bouche",
+    "sub": "La curiosité de Naïah",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Les ombres se retirent, non par défaite, mais parce que Naïah n’a plus envie de les regarder jouer. Elles se replient dans les racines avec un bruit humide, comme des bêtes rappelées par une maîtresse capricieuse.\n\nValurn reste debout. Sa tête pulse encore sous la pression du duel, mais il ne montre que ce qu’il choisit de montrer : un sourire de travers, une respiration presque calme, une fatigue soigneusement rangée derrière les dents.\n\nNaïah l’observe sous un angle nouveau. Pas comme une proie. Pas encore comme un allié.\n\nComme une énigme avec assez de dents pour répondre.\n\n« Tu sais, beaucoup de gens supplient à la troisième question. Quelques-uns menacent. Les plus stupides tentent de me bénir, ce qui est très drôle pendant quatre secondes. Toi, tu joues. »\n\nValurn passe une main sur sa tempe.\n\n« Tu dis ça comme si tu n’avais pas installé le plateau. »\n\n« J’installe toujours le plateau. Ça ne veut pas dire que j’apprécie tous les joueurs. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Lui dire qu’elle teste plus qu’elle n’attaque.",
+        "next": "c7_07_a",
+        "effects": {
+          "lucidite": 1
+        },
+        "pacteNaiah": 1,
+        "note": "Pacte Naïah +1"
+      },
+      {
+        "label": "Lui demander si tous ses visiteurs ont droit à autant d’attention.",
+        "next": "c7_07_b",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": -1,
+        "note": "Pacte Naïah -1"
+      },
+      {
+        "label": "Rester sobre : elle est trop dangereuse pour être provoquée gratuitement.",
+        "next": "c7_07_c",
+        "effects": {
+          "sangfroid": 1
+        },
+        "pacteNaiah": 0,
+        "note": "Neutre"
+      }
+    ]
+  },
+  "c7_07_a": {
+    "title": "Après la mise en bouche",
+    "sub": "Ce qu’elle cherche",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Valurn",
+    "text": "« Tu ne testais pas ma force. Tu regardais où je plie. »\n\nNaïah hausse les sourcils, puis fait mine d’applaudir.\n\n« Quelle perspicacité. Tu veux une couronne de ronces ? »\n\n« Non. Je préfère savoir pourquoi tu prends le temps. Si je n’étais qu’un intrus, tu aurais pu me perdre dans les racines. Si je n’étais qu’un ennemi, tu aurais déjà essayé de me tuer. »\n\nLe sourire de Naïah devient plus mince.\n\n« Essayé ? »\n\nValurn incline la tête.\n\n« Touché. »\n\nElle rit, mais cette fois le rire ne vient que d’elle. Pas de la forêt.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_08"
+  },
+  "c7_07_b": {
+    "title": "Après la mise en bouche",
+    "sub": "Trop d’attention",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Valurn",
+    "text": "« Tous tes visiteurs ont droit à autant d’attention, ou je dois me sentir spécial ? »\n\nNaïah porte une main à son cœur avec une exagération théâtrale.\n\n« Spécial ? Non. Bruyant, peut-être. Parfumé au soufre, certainement. Intéressant… ça dépendra de la suite. »\n\n« Donc je progresse. »\n\n« Tu respires encore. Dans cette forêt, c’est déjà une forme de compliment. »\n\nValurn rit doucement. Elle répond par un sourire trop vif, mais l’espace entre eux a changé. Le jeu continue, oui. Mais Naïah ne regarde plus seulement ce qu’elle peut briser.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_amused",
+        "center"
+      ]
+    ],
+    "next": "c7_08"
+  },
+  "c7_07_c": {
+    "title": "Après la mise en bouche",
+    "sub": "Ne pas surjouer",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Valurn choisit de ne pas pousser davantage. Naïah est dangereuse, mais pas seulement parce qu’elle peut tuer. Elle est dangereuse parce qu’elle attend qu’on se trompe de posture.\n\nIl réajuste son manteau, retrouve son souffle et garde pour lui la remarque qui lui brûle la langue.\n\nNaïah le remarque. Évidemment.\n\n« Oh ? Pas de petite phrase brillante ? »\n\n« J’en garde quelques-unes pour survivre plus longtemps. »\n\n« Sage. Décevant, mais sage. »\n\nLe mot la fait sourire malgré tout. Dans sa bouche, même un reproche ressemble parfois à une invitation.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_neutral",
+        "center"
+      ]
+    ],
+    "next": "c7_08"
+  },
+  "c7_08": {
+    "title": "Le dôme psychique",
+    "sub": "La forêt disparaît",
+    "bg": "c4v_key_29",
+    "music": "music_bellirith",
+    "speaker": "Narrateur",
+    "text": "Naïah avance d’un pas.\n\nLe monde se défait autour d’elle. Les troncs deviennent des lignes. Les racines des veines noires. Le ciel une plaie violette ouverte sur quelque chose qui n’appartient ni au plan mortel, ni aux Calciterres.\n\nValurn sent la forêt tenter d’entrer par ses yeux, ses oreilles, les interstices les plus fins de ses pensées. Il comprend trop tard que le premier duel n’était qu’un seuil. Pas une victoire. Une permission.\n\nUn voile noir les enveloppe. Lorsqu’il se dissipe, ils ne sont plus vraiment dans la forêt. Autour d’eux, des miroirs immenses flottent dans un dôme d’ombre. Chaque surface reflète un fragment, une possibilité, une vérité trop bien rangée pour être honnête.\n\nNaïah marche entre les miroirs comme si elle visitait une galerie privée.\n\n« Voyons ce qu’il y a derrière le joli sourire. »\n\nValurn sent le sol trembler sous ses bottes. Cette fois, il n’aura pas trente secondes pour se composer.",
+    "chars": [],
+    "hideChars": true,
+    "zoom": true,
+    "next": "c7_duel2"
+  },
+  "c7_duel2": {
+    "title": "Duel II · Le cœur de l’ombre",
+    "sub": "Timer 20 secondes · QTE 3 secondes",
+    "bg": "c4v_key_29",
+    "music": "music_bellirith",
+    "speaker": "Naïah",
+    "text": "",
+    "chars": [
+      [
+        "valurn",
+        "valurn_annoyed",
+        "center"
+      ]
+    ],
+    "c7NaiahDuel": "duel2",
+    "zoom": true
+  },
+  "c7_09": {
+    "title": "Après le cœur de l’ombre",
+    "sub": "Les miroirs retombent",
+    "bg": "c4v_key_29",
+    "music": "music_bellirith",
+    "speaker": "Narrateur",
+    "text": "Le dernier miroir éclate sans bruit. Les fragments restent suspendus autour d’eux, immobiles, comme des éclats de glace noire refusant de tomber.\n\nValurn met une seconde à comprendre qu’il respire encore. Une autre pour comprendre que Naïah n’a pas bougé. Elle le regarde avec une intensité nouvelle, moins joueuse, presque contrariée.\n\nElle a fouillé. Elle a vu Bhaal, Bellirith, les belles pièces d’Al’Gratal et les salons où Valurn a appris à survivre avec un sourire bien placé. Elle a cherché le noyau, le point faible, la chose qu’elle pourrait tenir entre deux doigts pour le faire danser.\n\nElle n’a pas trouvé ce qu’elle voulait. Ou bien elle a trouvé quelque chose qu’elle ne s’attendait pas à reconnaître.\n\n« Tu es fatigant », dit-elle enfin.\n\nValurn se redresse, une main contre sa tempe.\n\n« Je préfère captivant, mais je prends. »\n\nNaïah ne rit pas tout de suite. C’est ce silence qui lui donne le plus d’importance.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_annoyed",
+        "center"
+      ]
+    ],
+    "next": "c7_10"
+  },
+  "c7_10": {
+    "title": "Naïah",
+    "sub": "La fille d’Amanea",
+    "bg": "c4v_forest_naiah",
+    "music": "music_bellirith",
+    "speaker": "Valurn",
+    "text": "Le dôme psychique se recompose lentement en forêt. Mais quelque chose est resté ouvert entre eux. Une faille. Une conversation qui n’a plus la légèreté d’une partie commencée pour tuer le temps.\n\nValurn observe Naïah.\n\n« Non. Je ne parle pas de ce que tu montres à cette forêt, ou même aux Obscurcis. Je parle de ce que tu caches. »\n\nNaïah se fige. Le sourire s’affaisse, puis revient trop vite.\n\n« Fais attention à ce que tu dis. »\n\n« Une Farae. La fille d’Amanea, c’est bien ça ? »\n\nLa forêt se contracte. Chaque branche devient une menace possible.\n\nValurn poursuit pourtant, plus calme. Il ne frappe pas pour humilier. Il frappe pour ouvrir la porte.\n\n« Et si je ne me trompe pas, ce n’est pas seulement son sang qui te lie à elle. Il y a aussi cette malédiction. Cette façon qu’elle a eue de te créer, puis de t’abandonner comme un outil qui ne répondait plus assez bien. »\n\nNaïah serre les poings. Son regard brille de colère et d’une douleur si ancienne qu’elle ressemble à de la haine.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Lui proposer une sortie sans lui promettre le salut.",
+        "next": "c7_10_a",
+        "effects": {
+          "sangfroid": 1
+        },
+        "pacteNaiah": 1,
+        "note": "Pacte Naïah +1"
+      },
+      {
+        "label": "Lui dire qu’elle n’a pas besoin d’aimer Amanea pour cesser de vivre contre elle.",
+        "next": "c7_10_b",
+        "effects": {
+          "lucidite": 1
+        },
+        "pacteNaiah": 2,
+        "note": "Pacte Naïah +2"
+      },
+      {
+        "label": "Rester mordant : « Les marionnettes les plus dangereuses sont celles qui ont coupé leurs fils. »",
+        "next": "c7_10_c",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": 0,
+        "note": "Mordant neutre"
+      },
+      {
+        "label": "Insister sur le fait qu’elle est seule et qu’elle n’a pas le choix.",
+        "next": "c7_10_d",
+        "effects": {
+          "audace": 1
+        },
+        "pacteNaiah": -1,
+        "note": "Pacte Naïah -1"
+      }
+    ]
+  },
+  "c7_10_a": {
+    "title": "La proposition",
+    "sub": "Une sortie, pas un salut",
+    "bg": "c4v_forest_naiah",
+    "music": "music_bellirith",
+    "speaker": "Valurn",
+    "text": "« Je ne vais pas te vendre une rédemption emballée dans du velours. Ce n’est pas mon commerce. »\n\nNaïah le fixe, méfiante.\n\n« Alors quel est ton commerce ? »\n\n« Les issues. Les informations. Les occasions. La personne pour qui je travaille peut t’aider. Pas te réparer, pas t’adopter, pas t’absoudre. T’aider. En échange, tu nous guides jusqu’à Akuhn’Nabad. »\n\nNaïah ricane, mais le son est moins net qu’avant.\n\n« Tu parles comme quelqu’un qui a déjà refusé les cages dorées. »\n\nValurn sourit.\n\n« J’en ai surtout visité beaucoup. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_11"
+  },
+  "c7_10_b": {
+    "title": "La proposition",
+    "sub": "Vivre autrement que contre elle",
+    "bg": "c4v_forest_naiah",
+    "music": "music_bellirith",
+    "speaker": "Valurn",
+    "text": "« Tu peux passer ta vie à prouver à Amanea que tu es plus grande qu’elle ne l’a décidé. Ou tu peux la laisser sans réponse et devenir autre chose. »\n\nNaïah rit amèrement.\n\n« Facile à dire quand on n’a pas été fait par elle. »\n\n« Non. Facile à dire, difficile à faire. C’est pour ça que je le dis au lieu de te mentir. »\n\nPendant un instant, la forêt ne bouge plus. Même les ombres semblent attendre que Naïah respire.\n\n« Tu as une façon odieuse d’être pertinent », souffle-t-elle.\n\n« On me le reproche souvent. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_11"
+  },
+  "c7_10_c": {
+    "title": "La proposition",
+    "sub": "Les fils coupés",
+    "bg": "c4v_forest_naiah",
+    "music": "music_bellirith",
+    "speaker": "Valurn",
+    "text": "« Elle a toujours eu un faible pour les marionnettes. Dommage que celle-ci ait fini par couper ses ficelles. »\n\nNaïah le regarde longuement. Son sourire revient, mais il a changé de matière. Moins enfantin, plus coupant.\n\n« Tu crois que je suis libre parce que je mords la main qui m’a façonnée ? »\n\n« Non. Je crois que tu veux l’être assez pour écouter une mauvaise idée quand elle a le mérite d’exister. »\n\nElle éclate d’un rire bref.\n\n« Voilà qui est presque une insulte. »\n\n« Presque une proposition. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_amused",
+        "center"
+      ]
+    ],
+    "next": "c7_11"
+  },
+  "c7_10_d": {
+    "title": "La proposition",
+    "sub": "La mauvaise pression",
+    "bg": "c4v_forest_naiah",
+    "music": "music_bellirith",
+    "speaker": "Naïah",
+    "text": "Le regard de Naïah se ferme aussitôt.\n\n« Personne d’autre ? » répète-t-elle doucement.\n\nLa forêt se tend, et Valurn comprend son erreur à l’instant où l’air devient plus froid. Il a parlé de solitude comme d’un levier. Naïah, elle, l’entend comme une laisse.\n\n« Tu as bien appris la langue des gens qui veulent tenir les autres par la gorge », murmure-t-elle.\n\nValurn garde son calme, mais l’occasion se rétrécit. Il peut encore parler. Il ne pourra plus se permettre de gaspiller un mot.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_annoyed",
+        "center"
+      ]
+    ],
+    "next": "c7_11"
+  },
+  "c7_11": {
+    "title": "Le pacte",
+    "sub": "La main dans l’ombre",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Naïah ne répond pas tout de suite.\n\nElle regarde sa propre main comme si elle ne lui appartenait qu’à moitié. Autour de ses doigts, les ombres s’enroulent et se déroulent, impatientes. La forêt voudrait choisir pour elle. Amanea, quelque part au bout de sa haine, voudrait peut-être encore choisir pour elle.\n\nValurn ne tend pas la main le premier. Il attend.\n\nC’est peut-être la seule forme de respect que Naïah accepte encore.\n\nEnfin, elle lève les yeux.\n\n« Très bien, fils du Chaos. Voyons si ton pacte vaut mieux que ton sourire. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Conclure le pacte",
+        "next": "c7_pacte_eval",
+        "note": "La fin dépend du Pacte Naïah accumulé."
+      }
+    ]
+  },
+  "c7_pacte_eval": {
+    "title": "Le pacte",
+    "sub": "Jugement des ombres",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "La forêt écoute le pacte se former.",
+    "chars": [],
+    "hideChars": true,
+    "c7PacteEval": true
+  },
+  "c7_bad_mental": {
+    "title": "Game Over",
+    "sub": "Dévoré par les ombres",
+    "bg": "c4v_forest_curse",
+    "music": "music_bellirith",
+    "speaker": "Narrateur",
+    "text": "Valurn perd le fil.\n\nUne pensée se défait, puis une autre. Ce n’est pas spectaculaire. Pas au début. Il oublie simplement où finit son souffle. Puis où commence sa main. Puis pourquoi il était venu.\n\nLa forêt ne l’attaque plus : elle l’accueille. Les ombres montent jusqu’à sa gorge, avalent son rire, puis son nom.\n\nQuelque part, Naïah soupire presque avec regret.\n\n« Dommage. Tu étais drôle. »",
+    "chars": [],
+    "hideChars": true,
+    "zoom": true,
+    "choices": [
+      {
+        "label": "Recommencer le Chapitre VII",
+        "next": "restart_c7",
+        "skipHistory": true
+      },
+      {
+        "label": "Retour au menu",
+        "next": "menu"
+      }
+    ]
+  },
+  "c7_bad_pacte": {
+    "title": "Game Over",
+    "sub": "Le pacte refuse de prendre",
+    "bg": "c4v_forest_curse",
+    "music": "music_bellirith",
+    "speaker": "Naïah",
+    "text": "Naïah retire sa main avant que Valurn ne puisse la saisir.\n\n« Non. Tu veux un passage. Pas un pacte. Il y a une différence. »\n\nLa phrase tombe avec une douceur presque polie, ce qui la rend pire. La forêt s’ouvre derrière lui, mais pas vers Akuhn’Nabad. Vers la fuite. Vers l’humiliation. Vers le constat qu’il a survécu sans obtenir la seule chose importante.\n\nValurn pourrait forcer le passage. Il sait déjà qu’il échouerait. Ici, les ombres ne sont pas un obstacle. Elles sont la règle du lieu.\n\nNaïah disparaît dans les branches. Son rire reste longtemps après son départ.\n\n« Reviens quand tu sauras demander autre chose qu’un service. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_annoyed",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Recommencer le Chapitre VII",
+        "next": "restart_c7",
+        "skipHistory": true
+      },
+      {
+        "label": "Retour au menu",
+        "next": "menu"
+      }
+    ]
+  },
+  "c7_success_standard": {
+    "title": "Marché conclu",
+    "sub": "Pacte de la Forêt Interdite",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "Naïah tend la main. Son sourire espiègle revient, mais il garde une ombre plus grave.\n\n« Alors, marché conclu, fils du Chaos ? »\n\nValurn hésite juste assez pour comprendre que le geste n’est pas seulement symbolique. Puis il saisit sa main. Le contact est froid, presque liquide. Une étrange énergie traverse leurs doigts, remonte le long de son bras et se fixe quelque part derrière les côtes.\n\nLa forêt reconnaît le pacte. Pas avec un chant, ni avec une bénédiction. Avec un silence.\n\n« Marché conclu. »\n\nNaïah retire sa main rapidement, comme si elle venait de s’approcher trop près d’un feu qu’elle prétendait ne pas sentir.\n\n« Bien. Je ne pensais pas passer un marché avec un démon. Ma journée s’améliore ou empire, je ne sais pas encore. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "next": "c7_end"
+  },
+  "c7_success_high": {
+    "title": "Marché conclu",
+    "sub": "Complicité dans la forêt",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Naïah",
+    "text": "Naïah tend la main. Cette fois, elle ne cache pas complètement son sourire.\n\n« Tu sais, je pourrais presque t’apprécier. Ça m’inquiète beaucoup. »\n\nValurn rit doucement.\n\n« Je vais finir par croire que tu me regardes un peu trop. »\n\n« Impossible à ignorer. »\n\nLe pacte se scelle dans le froid des ombres. Mais quelque chose de plus subtil reste suspendu entre eux : un jeu partagé, dangereux, et assez sincère pour revenir plus tard.\n\nNaïah retire sa main, mais elle ne disparaît pas tout de suite. Elle l’observe encore, comme si elle venait de découvrir une pièce nouvelle sur un plateau qu’elle croyait connaître par cœur.\n\n« Reviens quand tu seras prêt », dit-elle enfin. « Nous avons une longue partie devant nous. »",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "memories": [
+      "naiah_jeu_partage"
+    ],
+    "next": "c7_end"
+  },
+  "c7_fragment": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Rapport sur Amanea Farae",
+    "bg": "c4v_forest_curse",
+    "music": "music_bellirith",
+    "speaker": "Narrateur",
+    "text": "La forêt laisse Valurn passer.\n\nMais quelque part, dans les pages du Carnet du Némésis, une autre ombre s’ouvre : non pas celle de Naïah, mais celle d’Amanea.\n\nUn rapport. Une mise à pied. Une blessure rédigée comme une procédure.\n\nCompte rendu : Amanea Farae. Rédigé par le Sergent-chef Elron. Intitulé : demande de mise à pied conservatoire.\n\nLe rapport évoque un interrogatoire mené par la Caporale Farae, puis un incident brutal : un prisonnier exécuté violemment, un moment d’absence, une rupture difficile à décrire dans le déroulement habituel des questions. Les mots restent administratifs, presque secs, mais ils laissent deviner une inquiétude plus profonde que la simple discipline militaire.\n\nSous le rapport, une seconde écriture apparaît, différente. Plus intime. Plus nerveuse. Comme si quelqu’un avait tenté de commenter l’événement sans oser vraiment signer.\n\n[Fragment obtenu : Rapport sur Amanea Farae]",
+    "chars": [],
+    "hideChars": true,
+    "zoom": true,
+    "next": "c7_fragment_note"
+  },
+  "c7_fragment_note": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Écriture en marge",
+    "bg": "c4v_forest_curse",
+    "music": "music_bellirith",
+    "speaker": "Carnet du Némésis",
+    "text": "Ce n’était pas seulement de la colère.\n\nLa colère a une direction. Elle vise, elle frappe, elle retombe. Ce que j’ai vu ce jour-là n’avait rien d’une colère ordinaire. C’était une porte ouverte sur quelque chose qui attendait depuis trop longtemps.\n\nAmanea n’a pas perdu le contrôle parce qu’elle est faible. Elle l’a perdu parce qu’une partie d’elle ne veut plus être contenue.\n\nEt si personne ne comprend la différence, alors personne ne sera prêt lorsqu’elle cessera de revenir à elle.",
+    "chars": [],
+    "hideChars": true,
+    "zoom": true,
+    "next": "c7_end"
+  },
+  "c7_end": {
+    "title": "Chapitre VII terminé",
+    "sub": "Du Chaos aux Ombres",
+    "bg": "c4v_forest_naiah",
+    "music": "music_thazran",
+    "speaker": "Narrateur",
+    "text": "Naïah a accepté le pacte.\n\nElle guidera Valurn vers Akuhn’Nabad, mais rien dans son sourire ne promet que le chemin sera droit, sûr, ou honnête. Il sait qu’elle l’aidera. Il sait aussi qu’elle testera chaque détour, chaque silence, chaque mensonge qu’il pourrait avoir la mauvaise idée de lui offrir.\n\nDans cette forêt, même les alliances ont des racines. Et les racines savent étrangler.\n\nValurn s’éloigne avec un mal de crâne tenace, une promesse froide dans la main, et la désagréable certitude d’avoir obtenu exactement ce qu’il voulait sans savoir encore ce que cela lui coûtera.\n\nUne nouvelle page du Carnet du Némésis est désormais disponible dans l’onglet Progression.",
+    "chars": [
+      [
+        "valurn",
+        "valurn_charming",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Retour au menu",
+        "next": "menu",
+        "flags": {
+          "chapter7Complete": true
+        }
+      }
+    ]
+  }
+});
+  }catch(e){console.warn('Chapitre VII · v2 non appliqué',e);}
+})();
+
 const CHAPTER_SELECT_DATA=[
   {key:'intro',label:'Introduction',title:'L’Auberge du Forestier',subtitle:'Deux ans avant',image:'assets/images/chapter_select/chapter_intro.png',tags:['Auberge','Remerii','Fuite'],body:`Hylee sert derrière le comptoir de l’Auberge du Forestier, prisonnière d’une vie étroite et brutale. L’arrivée de Remerii, cliente trop noble pour ce lieu, entrouvre une première porte vers la magie, la fuite et le choix de vivre autrement.`,action:'Jouer l’Introduction'},
   {key:'ch1',label:'Chapitre I',title:'Une convocation impériale',subtitle:'Deux ans plus tard',image:'assets/images/chapter_select/chapter_1.png',tags:['Entraînement','Duel','Iriana'],body:`Après deux années d’apprentissage clandestin, Hylee affronte les leçons exigeantes de Remerii. La glace répond enfin, mais une projection impériale vient troubler l’équilibre : Iriana Farae réclame leur présence.`,action:'Lancer le Chapitre I'},
@@ -14712,7 +15721,8 @@ const CHAPTER_SELECT_DATA=[
   {key:'ch3',label:'Chapitre III',title:'Préparatifs pour une nouvelle aventure',subtitle:'Avant Mir’Aldas',image:'assets/images/chapter_select/chapter_3.png',tags:['Préparatifs','Ombres','Cauchemar'],body:`À Al’Gratal, Hylee s’équipe, gagne en assurance et se heurte à ce que sa magie peut devenir. Entre robe bleue, bâton, attaque des Ombres, Medig et cauchemar du petit frère, le chemin vers Mir’Aldas se charge de présages.`,action:'Lancer le Chapitre III'}
 ,  {key:'ch4',label:'Chapitre IV',title:'Croisée des récits',subtitle:'Valurn ou Draven',image:'assets/images/chapter_select/chapter_4.png',tags:['Valurn','Draven','Routes'],body:`Le groupe se divise. Valurn descend vers les Calciterres pour arracher des vérités sur Akuhn’Nabad, tandis que Draven contacte Forthaven pour demander un détachement militaire à une cité déjà assiégée.`,action:'Lancer le Chapitre IV'},
   {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_5.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'},
-  {key:'ch6',label:'Chapitre VI',title:'Une Parenthèse au Cœur de Mir’Aldas',subtitle:'Nuit sous le ciel arcanique',image:'assets/images/chapter_select/chapter_6.png',tags:['Mir’Aldas','Remerii','Parenthèse'],body:`Après l’épreuve de Saidin, Hylee et Remerii s’accordent une parenthèse dans les ruelles nocturnes de Mir’Aldas. Tartelette magique, cristal de navigation et terrasse sous les constellations ouvrent un chapitre plus intime, doux en surface, mais précieux pour leur lien.`,action:'Lancer le Chapitre VI'}
+  {key:'ch6',label:'Chapitre VI',title:'Une Parenthèse au Cœur de Mir’Aldas',subtitle:'Nuit sous le ciel arcanique',image:'assets/images/chapter_select/chapter_6.png',tags:['Mir’Aldas','Remerii','Parenthèse'],body:`Après l’épreuve de Saidin, Hylee et Remerii s’accordent une parenthèse dans les ruelles nocturnes de Mir’Aldas. Tartelette magique, cristal de navigation et terrasse sous les constellations ouvrent un chapitre plus intime, doux en surface, mais précieux pour leur lien.`,action:'Lancer le Chapitre VI'},
+  {key:'ch7',label:'Chapitre VII',title:'Du Chaos aux Ombres',subtitle:'Naïah et la Forêt Interdite',image:'assets/images/keyscenes/c4v_key_29.png',tags:['Valurn','Naïah','Pacte'],body:`Valurn entre seul dans la Forêt Interdite pour trouver le passage vers Akuhn’Nabad. Naïah l’y attend avec ses ombres, ses rires, deux duels d’esprit, et un pacte dont l’échec peut coûter plus qu’une simple défaite.`,action:'Lancer le Chapitre VII'}
 ];
 function chapterSelectUnlocked(key){
   if(key==='intro'||key==='ch1') return true;
@@ -14721,6 +15731,7 @@ function chapterSelectUnlocked(key){
   if(key==='ch4') return canStartChapter4();
   if(key==='ch5') return canStartChapter5();
   if(key==='ch6') return canStartChapter6();
+  if(key==='ch7') return canStartChapter7();
   return false;
 }
 function launchChapterSelect(key){
@@ -14731,6 +15742,7 @@ function launchChapterSelect(key){
   if(key==='ch4') return startChapter4();
   if(key==='ch5') return startChapter5();
   if(key==='ch6') return startChapter6();
+  if(key==='ch7') return startChapter7();
 }
 function renderChapterSelect(){
   const grid=document.getElementById('chapterSelectGrid');
@@ -14744,7 +15756,7 @@ function renderChapterSelect(){
     card.className='chapterSelectCard'+(unlocked?'':' locked');
     if(idx===0) card.open=true;
     const stateLabel=unlocked?'Accessible':'Verrouillé';
-    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':'Disponible.';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Chapitre verrouillé hors mode développeur pour ce premier jet.':'Disponible.';
     card.innerHTML=`
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
@@ -14859,6 +15871,9 @@ function canStartChapter5(){
 function canStartChapter6(){
   if(state.devMode) return true;
   return chapter5CompletedFrom(state) || chapter5CompletedFrom(readMainSave());
+}
+function canStartChapter7(){
+  return state.devMode===true;
 }
 function updateChapterLocks(){
   const menuChapterCount=document.getElementById('menuChaptersAvailable');
@@ -14999,6 +16014,8 @@ function resolveHyleeSprite(sprite){
 
 function render(){
   const scene=S[state.scene]; if(!scene){state.scene='s01';return render()} checkCodexForScene(state.scene); applySceneProgressRewards(state.scene,scene);
+  if(scene.c7PacteEval){ finishC7NaiahPacte(); return;}
+  if(scene.c7NaiahDuel){ if(state.c7NaiahIntroPending) return; state.c7NaiahIntroPlayed=state.c7NaiahIntroPlayed||{}; if(!state.c7NaiahIntroPlayed[scene.c7NaiahDuel]){ enterC7NaiahDuel(scene); return;} renderC7NaiahDuel(scene); return;}
   if(scene.c3ShadowCombat){ if(state.c3ShadowIntroPending) return; if(!state.c3ShadowIntroPlayed){enterC3ShadowCombat(scene); return;} renderC3ShadowDuel(scene); return;}
   if(scene.c5SageDuel){ if(state.c5SageIntroPending) return; if(!state.c5SageIntroPlayed){enterC5SageDuel(scene); return;} renderC5SageDuel(scene); return;}
   if(scene.combat){ if(state.duelIntroPending) return; if(!state.duelIntroPlayed){enterCombat(scene); return;} renderDuel(scene); return;}
@@ -15010,10 +16027,11 @@ function render(){
   if(state.scene==='c4d_38'){ state.flags={...(state.flags||{}),chapter4DComplete:true}; unlockJournalFragments('ch4d'); }
   if(state.scene==='c5_47'){ state.flags={...(state.flags||{}),chapter5Complete:true}; unlockJournalFragments('ch5'); }
   if(state.scene==='c6_32'){ state.flags={...(state.flags||{}),chapter6Complete:true}; unlockJournalFragments('ch7'); }
+  if(state.scene==='c7_end'){ state.flags={...(state.flags||{}),chapter7Complete:true}; unlockJournalFragments('ch8'); }
   if(scene.ending&&!isIntroScene(state.scene)){ state.seenEnding=true; state.flags={...(state.flags||{}),chapter1Complete:true}; unlockJournalFragments('ch1'); scene.text=endingText(); }
   if(scene.duelResult) scene.text=duelResultText();
   document.querySelectorAll('.chapterLabel').forEach(el=>{el.textContent=getSceneChapterLabel(state.scene);}); document.getElementById('sceneTitle').textContent=scene.title||''; document.getElementById('sceneSub').textContent=scene.sub||'';
-  document.getElementById('stage').classList.remove('combatMode'); setStageBg(scene.bg,!!scene.zoom);
+  document.getElementById('stage').classList.remove('combatMode','c7Mindquake'); setStageBg(scene.bg,!!scene.zoom);
   const chars=document.getElementById('chars'); chars.innerHTML='';
   chars.className='chars';
   const visibleChars=shouldSuppressSceneChars(scene)?[]:(scene.chars||[]);
@@ -15028,8 +16046,8 @@ function render(){
   updateDevUI();
   playMusic(resolveSceneMusic(state.scene, scene.music||'music_training')); save(); updateProgressUI();
 }
-function choose(ch){ if(!choiceAvailable(ch))return; applyChoiceEffects(ch); if(ch.flags){state.flags={...(state.flags||{}),...ch.flags};} if(ch.items){unlockProgressItems(ch.items);} if(ch.memories){unlockProgressMemories(ch.memories);} if(ch.next==='menu'){ save(); if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} go(ch.next,{skipHistory:ch.skipHistory===true});}
-function go(next,opts={}){ if(next!=='c5_sage_start')clearC5SageTimer(); if(next==='restart_c5_sage'){restartC5AfterSageFailure(); return;} if(next==='menu'){ if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} ensureCodexDefaults(); if(!opts.skipHistory && state.scene && state.scene!==next){ state.history.push(state.scene); if(state.history.length>120) state.history=state.history.slice(-120); } if(next==='c3_22' && state.scene!==next){ state.c3ShadowDuel=null; state.c3ShadowResult=null; state.c3ShadowIntroPlayed=false; state.c3ShadowIntroPending=false; } if(next==='c5_sage_start' && state.scene!==next){ state.c5SageDuel=null; state.c5SageIntroPlayed=false; state.c5SageIntroPending=false; } state.scene=next; setScreen('game'); render();}
+function choose(ch){ if(!choiceAvailable(ch))return; applyChoiceEffects(ch); if(typeof ch.pacteNaiah==='number'&&ch.pacteNaiah!==0){state.c7Naiah=state.c7Naiah||{mental:3,pacte:0}; state.c7Naiah.pacte=Math.max(0,(state.c7Naiah.pacte||0)+ch.pacteNaiah);} if(ch.flags){state.flags={...(state.flags||{}),...ch.flags};} if(ch.items){unlockProgressItems(ch.items);} if(ch.memories){unlockProgressMemories(ch.memories);} if(ch.next==='menu'){ save(); if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} go(ch.next,{skipHistory:ch.skipHistory===true});}
+function go(next,opts={}){ if(next!=='c5_sage_start')clearC5SageTimer(); if(!String(next||'').startsWith('c7_duel'))clearC7NaiahTimer(); if(next==='restart_c7'){restartChapter7(); return;} if(next==='restart_c5_sage'){restartC5AfterSageFailure(); return;} if(next==='menu'){ if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} ensureCodexDefaults(); if(!opts.skipHistory && state.scene && state.scene!==next){ state.history.push(state.scene); if(state.history.length>120) state.history=state.history.slice(-120); } if(next==='c3_22' && state.scene!==next){ state.c3ShadowDuel=null; state.c3ShadowResult=null; state.c3ShadowIntroPlayed=false; state.c3ShadowIntroPending=false; } if(next==='c5_sage_start' && state.scene!==next){ state.c5SageDuel=null; state.c5SageIntroPlayed=false; state.c5SageIntroPending=false; } state.scene=next; setScreen('game'); render();}
 function newGame(opts={}){
   const requireConfirm=opts.confirm!==false;
   if(requireConfirm){
@@ -15118,7 +16136,7 @@ function startChapter5(){
 }
 
 function resume(){load(); if(isIntroScene(state.scene)) state.scene='p01'; setScreen('game'); render();}
-function getSceneChapterLabel(sceneId=state.scene){const id=String(sceneId||''); if(id.startsWith('intro_'))return 'Introduction · Hylee et Remerii'; if(id.startsWith('c4v_'))return 'Chapitre 4V · Valurn'; if(id.startsWith('c4d_'))return 'Chapitre 4D · Draven'; if(id.startsWith('c4_'))return 'Chapitre IV · Croisée des récits'; if(id.startsWith('c6_'))return 'Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas'; if(id.startsWith('c5_'))return 'Chapitre V · Une rencontre hors du temps'; if(id.startsWith('c3_'))return 'Chapitre III · Préparatifs'; return id.startsWith('c2_')?'Chapitre II · Sur la route d’Al’Gratal':'Chapitre I · Une convocation impériale';}
+function getSceneChapterLabel(sceneId=state.scene){const id=String(sceneId||''); if(id.startsWith('intro_'))return 'Introduction · Hylee et Remerii'; if(id.startsWith('c4v_'))return 'Chapitre IV-V · Valurn'; if(id.startsWith('c4d_'))return 'Chapitre IV-D · Draven'; if(id.startsWith('c4_'))return 'Chapitre IV · Croisée des récits'; if(id.startsWith('c7_'))return 'Chapitre VII · Du Chaos aux Ombres'; if(id.startsWith('c6_'))return 'Chapitre VI · Une Parenthèse au Cœur de Mir’Aldas'; if(id.startsWith('c5_'))return 'Chapitre V · Une rencontre hors du temps'; if(id.startsWith('c3_'))return 'Chapitre III · Préparatifs'; return id.startsWith('c2_')?'Chapitre II · Sur la route d’Al’Gratal':'Chapitre I · Une convocation impériale';}
 function getCodexStats(){ensureCodexDefaults(); const entriesUnlocked=[...new Set(state.codexUnlocked||[])].filter(k=>CODEX_ENTRIES[k]).length; const imagesUnlocked=[...new Set(state.codexUnlockedImages||[])].filter(k=>CODEX_IMAGES[k]).length; const musicUnlocked=[...new Set(state.codexUnlockedMusic||[])].filter(k=>CODEX_MUSIC[k]).length; return {entriesUnlocked,entriesTotal:CODEX_ORDER.length,imagesUnlocked,imagesTotal:CODEX_IMAGE_ORDER.length,musicUnlocked,musicTotal:CODEX_MUSIC_ORDER.length};}
 function setText(id,val){const el=document.getElementById(id); if(el) el.textContent=val;}
 function setWidth(id,pct){const el=document.getElementById(id); if(el) el.style.width=Math.max(0,Math.min(100,pct))+'%';}
@@ -15162,6 +16180,20 @@ function startChapter6(){
   }
   const prevFlags=(prev&&prev.flags)||{};
   state={scene:'c6_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete','cristal_navigation','parenthese_miraldas','terrasse_dome',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
+  setScreen('game');
+  render();
+}
+
+
+function startChapter7(){
+  let prev=readMainSave();
+  if(!canStartChapter7()){
+    toast('Chapitre VII verrouillé','Premier jet réservé au mode développeur pour les tests.');
+    updateChapterLocks();
+    return;
+  }
+  const prevFlags=(prev&&prev.flags)||{};
+  state={scene:'c7_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c7Naiah:{phase:'duel1',step:0,mental:3,pacte:0,waiting:false,last:null,qte:null,history:[],startStats:{...START_STATS,...((prev&&prev.stats)||{})}},c7NaiahIntroPlayed:{},c7NaiahIntroPending:false,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','valurn','naiah','foret_interdite','akuhn_nabad','obscurcis','pacte_naiah','duel_ombres_naiah',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
   setScreen('game');
   render();
 }
