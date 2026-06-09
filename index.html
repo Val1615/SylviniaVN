@@ -1802,7 +1802,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.128 · Matrices de personnalité</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.132 · Cinq profils équilibrés</div>
       </section>
     </div>
   </main>
@@ -17208,6 +17208,465 @@ document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSo
       sc.choices.forEach(ch=>{ normalizeChoice(ch,id); applyReqs(ch,id); });
     });
   }catch(e){ console.warn('Matrices de personnalité v0.128 non appliquées',e); }
+})();
+
+
+
+/* v0.129 · Correctifs scènes matrice + seuils stratégiques à double stat */
+(function applyMatrixStrategicFixV129(){
+  try{
+    if(window.__sylviniaV129StrategicFix) return;
+    window.__sylviniaV129StrategicFix = true;
+    const STAT_KEYS=['audace','sangfroid','lucidite','resonance','lien'];
+    const CLASSIC=['audace','sangfroid','lucidite','lien'];
+    function addMissingScene(id, scene){ if(!S[id]) S[id]=scene; }
+    function cloneChars(id){ return (S[id]&&S[id].chars)?S[id].chars:[]; }
+
+    // Les choix ajoutés par la matrice v0.128 renvoyaient vers des pivots sans scène.
+    // On intègre ces mini-retours au lieu de rediriger brutalement, afin que la réponse choisie reste mémorable.
+    addMissingScene('c3_05', {
+      title:'Boutique enchantée', sub:'Une voix qui tient', bg:'c3_bg_boutique_vetements', music:'music_c3_shopping', speaker:'Narrateur',
+      text:`La vendeuse observe Hylee comme si elle cherchait la couture par laquelle tirer pour la défaire.
+
+Mais Hylee ne baisse pas les yeux cette fois. Sa phrase reste suspendue, modeste et solide, assez ferme pour ne pas demander la permission d’exister.
+
+Remerii laisse passer une seconde avant d’ajouter, avec cette politesse dangereuse qui lui ressemble :
+
+« Voilà. Maintenant, nous pouvons parler tissu plutôt que procédure. »
+
+La propriétaire pince les lèvres. Elle a compris qu’elle ne gagnerait rien à humilier une apprentie protégée par Mir’Aldas.`,
+      chars:cloneChars('c3_04'), next:'c3_06'
+    });
+    addMissingScene('c3_11', {
+      title:'L’Atelier Arcanique', sub:'Le bois qui cesse de résister', bg:'c3_bg_atelier_arcanique', music:'music_c3_shopping', speaker:'Narrateur',
+      text:`Le propriétaire suit le mouvement de la main d’Hylee avec un intérêt soudain.
+
+« Vous ne choisissez pas le plus puissant. »
+
+Hylee secoue la tête. Elle ne saurait pas expliquer autrement que par cette impression : certains bois tirent trop fort, d’autres se ferment. Celui qu’elle désigne se contente d’attendre.
+
+Remerii approuve d’un léger mouvement du menton.
+
+Le bâton choisi ne promet pas de miracle. Il promet mieux : ne pas trahir la main qui tremble encore.`,
+      chars:cloneChars('c3_10'), next:'c3_12_classique'
+    });
+    addMissingScene('c4v_13', {
+      title:'Dans les Calciterres', sub:'La chaleur du contrat', bg:'c4v_infernal_throne', music:'music_thazran', speaker:'Narrateur',
+      text:`La chaleur de la dette n’a rien d’un feu honnête. Elle s’accroche aux mots avant même qu’ils soient prononcés.
+
+Valurn laisse son sourire revenir, plus fin, moins décoratif.
+
+« Je ne paie pas avant de savoir quelle porte tu ouvres. »
+
+Thazran rit bas. Il reconnaît l’odeur d’un marché qui ne se laissera pas avaler d’un seul coup. Alors il trace le cercle, et la vision accepte de brûler dans l’air.`,
+      chars:cloneChars('c4v_12'), hideChars:true, zoom:true, next:'c4v_14'
+    });
+    addMissingScene('c4v_46', {
+      title:'Bellirith', sub:'Le silence qui invite l’aveu', bg:'c4v_key_46', music:'music_bellirith', speaker:'Narrateur',
+      text:`Le silence de Valurn ne donne pas à Bellirith la prise qu’elle espérait.
+
+Elle continue tout de même. Parce qu’elle aime trop entendre sa propre victoire se former.
+
+Et c’est là que la faille apparaît : quelques mots de trop, une allusion trop précise, le nom de Bhaal qui passe dans sa voix avant qu’elle ne puisse le déguiser.
+
+Valurn sourit enfin.
+
+« Voilà. Là, tu viens de dire quelque chose d’utile. »`,
+      chars:cloneChars('c4v_45'), hideChars:true, zoom:true, next:'c4v_47'
+    });
+
+    function textOf(ch){ return String((ch&&ch.label)||'')+' '+String((ch&&ch.note)||'')+' '+String((ch&&ch.matrix)||''); }
+    function isStrategic(ch){
+      const t=textOf(ch).toLowerCase();
+      return /stratégique|strategique|objet|souvenir|bonus lien|duel de sage|pacte naïah|pacte naiah/.test(t) || (ch.items&&ch.items.length) || (ch.memories&&ch.memories.length);
+    }
+    function inferPrimary(ch, req){
+      if(ch.matrix && req[ch.matrix]!=null) return ch.matrix;
+      const effects=ch.effects||{};
+      let best=null, bestScore=-Infinity;
+      for(const k of Object.keys(req||{})){
+        const score=(typeof effects[k]==='number'?effects[k]:0);
+        if(score>bestScore){ best=k; bestScore=score; }
+      }
+      if(best && bestScore>0) return best;
+      const t=textOf(ch).toLowerCase();
+      const cues=[
+        ['resonance',/résonance|resonance|sentir|écouter|ecouter|magie|cristal|glace|froid|bâton|baton|rune|dôme|dome/],
+        ['audace',/audace|provoquer|oser|répondre|repondre|pique|frontal|refuser|tenir tête|tenir tete/],
+        ['sangfroid',/sang-froid|sangfroid|calme|tenir|stable|attendre|respirer|couper court|rester droite/],
+        ['lucidite',/lucidité|lucidite|observer|comprendre|lire|question|trace|mécanisme|mecanisme|stratégie|strategie/],
+        ['lien',/lien remerii|bonus lien|cape|épaule|epaule|mèche|meche|proximité|proximite/]
+      ];
+      for(const [k,re] of cues){ if(req[k]!=null && re.test(t)) return k; }
+      // Dernier recours : la valeur demandée la plus haute est considérée comme axe principal.
+      return Object.keys(req||{}).sort((a,b)=>Number(req[b]||0)-Number(req[a]||0))[0];
+    }
+    function softenSecondaryRequirements(ch){
+      if(!ch || !ch.requires || !isStrategic(ch)) return;
+      const keys=Object.keys(ch.requires).filter(k=>STAT_KEYS.includes(k));
+      if(keys.length<2) return;
+      const primary=inferPrimary(ch, ch.requires);
+      keys.forEach(k=>{
+        if(k!==primary){
+          const old=Number(ch.requires[k]);
+          if(Number.isFinite(old)) ch.requires[k]=Math.max(1, Math.ceil(old/2));
+        }
+      });
+      ch.note=(ch.note||'') + ` · Seuil duo adouci : ${primary||'stat principale'} reste dominant, soutien à 50%.`;
+      ch.__v129DuoSoftened=true;
+    }
+    function softenReqObjectLikeChoice(ch, obj){
+      if(!obj) return;
+      const keys=Object.keys(obj).filter(k=>STAT_KEYS.includes(k));
+      if(keys.length<2) return;
+      const primary=inferPrimary(ch, obj);
+      keys.forEach(k=>{ if(k!==primary){ const old=Number(obj[k]); if(Number.isFinite(old)) obj[k]=Math.max(1, Math.ceil(old/2)); } });
+    }
+    function fixChoice(ch){
+      if(!ch) return;
+      softenSecondaryRequirements(ch);
+      if(Array.isArray(ch.requiresAny) && isStrategic(ch)) ch.requiresAny.forEach(req=>softenReqObjectLikeChoice(ch, req));
+    }
+    Object.keys(S||{}).forEach(id=>{ const sc=S[id]; if(sc && Array.isArray(sc.choices)) sc.choices.forEach(fixChoice); });
+    if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      C5_SAGE_DUEL_STEPS.forEach(step=>(step.choices||[]).forEach(ch=>{ if(ch.requires) softenSecondaryRequirements(ch); if(ch.requiresAny) ch.requiresAny.forEach(req=>softenReqObjectLikeChoice(ch,req)); }));
+    }
+    if(typeof C7_NAIAH_DUEL_1!=='undefined' && Array.isArray(C7_NAIAH_DUEL_1)){
+      C7_NAIAH_DUEL_1.forEach(step=>(step.choices||[]).forEach(ch=>{ if(ch.requires) softenSecondaryRequirements(ch); if(ch.requiresAny) ch.requiresAny.forEach(req=>softenReqObjectLikeChoice(ch,req)); }));
+    }
+    if(typeof C7_NAIAH_DUEL_2!=='undefined' && Array.isArray(C7_NAIAH_DUEL_2)){
+      C7_NAIAH_DUEL_2.forEach(step=>(step.choices||[]).forEach(ch=>{ if(ch.requires) softenSecondaryRequirements(ch); if(ch.requiresAny) ch.requiresAny.forEach(req=>softenReqObjectLikeChoice(ch,req)); }));
+    }
+  }catch(e){ console.warn('Correctifs v0.129 non appliqués', e); }
+})();
+
+
+/* v0.129b · Audace viable dans le duel de Naïah */
+(function applyNaiahAudaceViabilityV129b(){
+  try{
+    if(window.__sylviniaNaiahAudaceV129b) return;
+    window.__sylviniaNaiahAudaceV129b=true;
+    function patchPacte(list,label,value,noteAdd){
+      if(!Array.isArray(list)) return;
+      list.forEach(step=>{
+        (step.choices||[]).forEach(ch=>{
+          if(String(ch.label||'').includes(label)){
+            ch.pacte=value;
+            if(noteAdd && ch.reaction && !String(ch.reaction).includes(noteAdd)) ch.reaction += noteAdd;
+          }
+        });
+      });
+    }
+    const c703a=S&&S.c7_03a;
+    if(c703a && Array.isArray(c703a.choices)){
+      const aud=c703a.choices.find(ch=>String(ch.label||'').includes('Flatteur et stupide'));
+      if(aud){ aud.pacteNaiah=1; aud.note='Audace · Pacte Naïah +1 · Naïah apprécie le ton, même si elle reste méfiante'; }
+    }
+    patchPacte(C7_NAIAH_DUEL_1,'Aucune de ces trois options',2,' L’insolence reste juste assez fine pour ne pas nier sa blessure.');
+    patchPacte(C7_NAIAH_DUEL_1,'Tu as connu plus subtil',2,' Elle récompense l’audace qui ne tombe pas dans l’héroïsme naïf.');
+    patchPacte(C7_NAIAH_DUEL_1,'Les gens complexes coûtent plus cher',2,' Cette fois, l’assurance amuse vraiment Naïah.');
+    patchPacte(C7_NAIAH_DUEL_1,'Tu sais donc imiter les monstres',1,' La morsure est risquée, mais elle parle une langue que Naïah comprend.');
+    patchPacte(C7_NAIAH_DUEL_1,'tu n’as pas encore montré',2,' La provocation vise son masque, pas sa plaie.');
+    patchPacte(C7_NAIAH_DUEL_2,'Ton secret était mal gardé',1,' L’entrée reste brusque, mais elle ne ferme plus entièrement la porte.');
+    patchPacte(C7_NAIAH_DUEL_2,'les meilleures armes choisissent leur main',2,' Naïah déteste la formule, mais elle en reconnaît l’angle.');
+    patchPacte(C7_NAIAH_DUEL_2,'si je mens, je le mérite',2,' Elle entend au moins le risque assumé derrière la fanfaronnade.');
+  }catch(e){ console.warn('Patch Audace Naïah v0.129b non appliqué', e); }
+})();
+
+
+/* v0.129c · Route Sang-froid viable dans l’Épreuve du Cadran */
+(function applySageSangfroidViabilityV129c(){
+  try{
+    if(window.__sylviniaSageSangfroidV129c) return;
+    window.__sylviniaSageSangfroidV129c=true;
+    if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS) && C5_SAGE_DUEL_STEPS[2]){
+      const choices=C5_SAGE_DUEL_STEPS[2].choices||(C5_SAGE_DUEL_STEPS[2].choices=[]);
+      if(!choices.some(ch=>String(ch.label||'').includes('tenir un possible sans lui obéir'))){
+        choices.splice(2,0,{label:'Un possible à tenir sans lui obéir.',requires:{sangfroid:25},clarity:1,effects:{sangfroid:1},reaction:`Hylee inspire lentement. Le reflet n’est pas une promesse, encore moins un ordre. Saidin incline la tête. « Bien. Tenir une image sans s’y agenouiller : voilà une forme de courage que le temps respecte. »`});
+      }
+    }
+  }catch(e){ console.warn('Patch Sang-froid Saidin v0.129c non appliqué', e); }
+})();
+
+
+/* v0.129d · Sang-froid viable chez Naïah sans rendre la prudence gratuite */
+(function applyNaiahSangfroidViabilityV129d(){
+  try{
+    if(window.__sylviniaNaiahSangfroidV129d) return;
+    window.__sylviniaNaiahSangfroidV129d=true;
+    if(S&&S.c7_02&&Array.isArray(S.c7_02.choices)){
+      const ch=S.c7_02.choices.find(x=>String(x.label||'').includes('Garder la main près des flammes'));
+      if(ch){ ch.pacteNaiah=0; ch.note='Sang-froid · Le calme protège Valurn sans nourrir le pacte, mais ne le pénalise plus.'; }
+    }
+    if(typeof C7_NAIAH_DUEL_1!=='undefined'){
+      C7_NAIAH_DUEL_1.forEach(step=>(step.choices||[]).forEach(ch=>{
+        if(String(ch.label||'').includes('Ça dépendra de ton accueil')) ch.pacte=1;
+        if(String(ch.label||'').includes('Rester immobile')) ch.pacte=1;
+        if(String(ch.label||'').includes('Seulement quand il croit avoir gagné')) ch.pacte=2;
+        if(String(ch.label||'').includes('Parce que fuir maintenant')) ch.pacte=1;
+      }));
+    }
+  }catch(e){ console.warn('Patch Sang-froid Naïah v0.129d non appliqué', e); }
+})();
+
+
+
+/* v0.130 · Correctifs bugs + équilibrage cinq matrices */
+(function applyFullBalanceFiveProfilesV130(){
+  try{
+    if(window.__sylviniaV130FullBalance) return;
+    window.__sylviniaV130FullBalance = true;
+
+    const STAT_KEYS=['audace','sangfroid','lucidite','resonance','lien'];
+    const has=(s,frag)=>String(s||'').toLowerCase().includes(String(frag||'').toLowerCase());
+    const cloneChars=(id)=>((typeof S!=='undefined' && S[id] && S[id].chars)?S[id].chars:[]);
+    function addScene(id, scene){ if(typeof S!=='undefined' && !S[id]) S[id]=scene; }
+    function scene(id){ return (typeof S!=='undefined')?S[id]:null; }
+    function choice(scId, frag){ const sc=scene(scId); return sc && Array.isArray(sc.choices) ? sc.choices.find(ch=>has(ch.label, frag)) : null; }
+    function patchChoice(scId, frag, fn){ const ch=choice(scId,frag); if(ch) fn(ch); }
+    function addChoice(scId, ch){ const sc=scene(scId); if(sc){ if(!Array.isArray(sc.choices)){ const oldNext=sc.next; delete sc.next; sc.choices=[]; if(oldNext) sc.choices.push({label:'Continuer', next:oldNext, effects:{}, note:'Poursuivre le fil principal.'}); } if(!sc.choices.some(x=>x.label===ch.label)) sc.choices.push(ch); } }
+    function req(ch, obj){ ch.requires=obj; return ch; }
+    function eff(ch, obj){ ch.effects={...(ch.effects||{}),...obj}; return ch; }
+
+    // Sécurité : les retours ajoutés par les matrices doivent toujours exister.
+    addScene('c3_05', {
+      title:'Boutique enchantée', sub:'Une voix qui tient', bg:'c3_bg_boutique_vetements', music:'music_c3_shopping', speaker:'Narrateur',
+      text:`La vendeuse observe Hylee comme si elle cherchait la couture par laquelle tirer pour la défaire.\n\nMais Hylee ne baisse pas les yeux cette fois. Sa phrase reste suspendue, modeste et solide, assez ferme pour ne pas demander la permission d’exister.\n\nRemerii laisse passer une seconde avant d’ajouter, avec cette politesse dangereuse qui lui ressemble :\n\n« Voilà. Maintenant, nous pouvons parler tissu plutôt que procédure. »\n\nLa propriétaire pince les lèvres. Elle a compris qu’elle ne gagnerait rien à humilier une apprentie protégée par Mir’Aldas.`,
+      chars:cloneChars('c3_04'), next:'c3_06'
+    });
+    addScene('c3_11', {
+      title:'L’Atelier Arcanique', sub:'Le bois qui cesse de résister', bg:'c3_bg_atelier_arcanique', music:'music_c3_shopping', speaker:'Narrateur',
+      text:`Le propriétaire suit le mouvement de la main d’Hylee avec un intérêt soudain.\n\n« Vous ne choisissez pas le plus puissant. »\n\nHylee secoue la tête. Elle ne saurait pas expliquer autrement que par cette impression : certains bois tirent trop fort, d’autres se ferment. Celui qu’elle désigne se contente d’attendre.\n\nRemerii approuve d’un léger mouvement du menton.\n\nLe bâton choisi ne promet pas de miracle. Il promet mieux : ne pas trahir la main qui tremble encore.`,
+      chars:cloneChars('c3_10'), next:'c3_12_classique'
+    });
+    addScene('c4v_13', {
+      title:'Dans les Calciterres', sub:'La chaleur du contrat', bg:'c4v_infernal_throne', music:'music_thazran', speaker:'Narrateur',
+      text:`La chaleur de la dette n’a rien d’un feu honnête. Elle s’accroche aux mots avant même qu’ils soient prononcés.\n\nValurn laisse son sourire revenir, plus fin, moins décoratif.\n\n« Je ne paie pas avant de savoir quelle porte tu ouvres. »\n\nThazran rit bas. Il reconnaît l’odeur d’un marché qui ne se laissera pas avaler d’un seul coup. Alors il trace le cercle, et la vision accepte de brûler dans l’air.`,
+      chars:cloneChars('c4v_12'), hideChars:true, zoom:true, next:'c4v_14'
+    });
+    addScene('c4v_46', {
+      title:'Bellirith', sub:'Le silence qui invite l’aveu', bg:'c4v_key_46', music:'music_bellirith', speaker:'Narrateur',
+      text:`Le silence de Valurn ne donne pas à Bellirith la prise qu’elle espérait.\n\nElle continue tout de même. Parce qu’elle aime trop entendre sa propre victoire se former.\n\nEt c’est là que la faille apparaît : quelques mots de trop, une allusion trop précise, le nom de Bhaal qui passe dans sa voix avant qu’elle ne puisse le déguiser.\n\nValurn sourit enfin.\n\n« Voilà. Là, tu viens de dire quelque chose d’utile. »`,
+      chars:cloneChars('c4v_45'), hideChars:true, zoom:true, next:'c4v_47'
+    });
+
+    // Le Carnet : on garde les anciens identifiants en alias, mais on affiche désormais une progression logique ch6/ch7.
+    if(typeof JOURNAL_FRAGMENTS!=='undefined'){
+      if(JOURNAL_FRAGMENTS.ch7 && JOURNAL_FRAGMENTS.ch7.chapter==='Chapitre VI') JOURNAL_FRAGMENTS.ch6=JOURNAL_FRAGMENTS.ch7;
+      if(JOURNAL_FRAGMENTS.ch8 && JOURNAL_FRAGMENTS.ch8.chapter==='Chapitre VII') JOURNAL_FRAGMENTS.ch7=JOURNAL_FRAGMENTS.ch8;
+    }
+    try{
+      if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined' && Array.isArray(JOURNAL_FRAGMENT_ORDER)){
+        JOURNAL_FRAGMENT_ORDER.splice(0,JOURNAL_FRAGMENT_ORDER.length,'intro','ch1','ch2','ch3','ch4v','ch4d','ch5','ch6','ch7');
+      }
+    }catch(e){}
+
+    // Correction de verrouillage des fragments. Les anciennes sauvegardes ch7/ch8 restent acceptées via l’alias ci-dessous.
+    if(typeof journalFragmentUnlocked==='function'){
+      const oldJournalFragmentUnlocked=journalFragmentUnlocked;
+      journalFragmentUnlocked=function(key){
+        const id=String(state.scene||'');
+        const flags=state.flags||{};
+        const inv=state.journalFragments||[];
+        if(key==='ch6') return inv.includes('ch6') || inv.includes('ch7') || !!(flags.chapter6Complete||id.startsWith('c7_'));
+        if(key==='ch7') return inv.includes('ch7') || inv.includes('ch8') || !!(flags.chapter7Complete||id==='c7_end');
+        return oldJournalFragmentUnlocked(key);
+      };
+    }
+    if(typeof unlockJournalFragments==='function'){
+      const oldUnlock=unlockJournalFragments;
+      unlockJournalFragments=function(keys=[],opts={}){
+        const mapped=(Array.isArray(keys)?keys:[keys]).map(k=>k==='ch8'?'ch7':(k==='ch7' && JOURNAL_FRAGMENTS && JOURNAL_FRAGMENTS.ch6 ? 'ch6':k));
+        return oldUnlock(mapped, opts);
+      };
+    }
+
+    // CHAPITRE III : mieux signaler les branches stratégiques, sans modifier les récompenses.
+    patchChoice('c3_10','laisser le bâton répondre', ch=>{
+      ch.label='Choix stratégique : écouter le bâton avant de le choisir';
+      ch.note='Résonance · Hylee ne cherche pas le bâton le plus fort : elle écoute celui qui accepte de respirer avec elle.';
+      ch.requires={resonance:4};
+      ch.effects={resonance:2,sangfroid:1};
+    });
+    patchChoice('c3_10','Prendre le plus solide', ch=>{ ch.note='Sang-froid · Choisir un outil fiable plutôt qu’une promesse magique.'; ch.effects={sangfroid:1,lucidite:1}; });
+    patchChoice('c3_30','prendre la présence de Medig', ch=>{
+      ch.requires={resonance:4,lien:2};
+      ch.note='Résonance · La confiance de Medig se gagne par une présence attentive, pas par une solution parfaite.';
+    });
+
+    // CHAPITRE V / VI : petits bonus relationnels accessibles plus tôt, grands moments conservés à haut seuil.
+    patchChoice('c6_18','Bonus Lien', ch=>{ ch.requires={lien:22}; ch.note='Bonus Lien · Proximité mineure : assez de confiance pour prolonger le geste sans forcer la scène.'; });
+    patchChoice('c6_25','Bonus Lien', ch=>{ ch.requires={lien:25}; ch.note='Bonus Lien · Proximité intermédiaire : Hylee accepte une tendresse visible, sans en faire une déclaration.'; });
+    patchChoice('c6_30','Bonus Lien', ch=>{ ch.requires={lien:30}; ch.note='Bonus Lien majeur · Silence partagé : la scène reste réservée aux routes très proches de Remerii.'; });
+
+    // Quelques seuils Résonance de Chapitre VI deviennent progressifs : 18 pour premières perceptions, 20 pour intimité magique majeure.
+    ['c6_06','c6_10','c6_14'].forEach(id=>{
+      const sc=scene(id); if(!sc||!sc.choices) return;
+      sc.choices.forEach(ch=>{ if(ch.requires && ch.requires.resonance===20) ch.requires.resonance=18; });
+    });
+
+    // La route Sang-froid ne doit pas tout dominer : certains choix mixtes perdent le +1 Sang-froid quand ce n’est pas la posture principale.
+    function noteText(ch){ return (String(ch.label||'')+' '+String(ch.note||'')).toLowerCase(); }
+    Object.keys(S||{}).forEach(id=>{
+      const sc=S[id]; if(!sc||!Array.isArray(sc.choices)) return;
+      sc.choices.forEach(ch=>{
+        if(!ch.effects || typeof ch.effects.sangfroid!=='number') return;
+        const t=noteText(ch);
+        const clearlySang=/sang.?froid|calme|tenir|stable|respir|encaisser|ancre|mesure/.test(t);
+        const mixed=Object.keys(ch.effects).filter(k=>STAT_KEYS.includes(k) && ch.effects[k]>0).length>=2;
+        if(mixed && !clearlySang && ch.effects.sangfroid>0){
+          delete ch.effects.sangfroid;
+          ch.note=(ch.note||'')+' · v0.130 : ce choix nourrit surtout sa couleur principale.';
+        }
+      });
+    });
+
+    // Ajouter des choix attrayants qui aident les profils faibles sans créer de nouveaux items/souvenirs.
+    addChoice('c2_10', {label:'Répondre à Remerii par une audace minuscule : « Je survivrai à votre patience. »', next:'c2_10_audace', effects:{audace:1,lien:1}, note:'Audace · Une plaisanterie discrète, assez vive pour exister sans briser la tension.'});
+    addScene('c2_10_audace', {title:'Sur la route', sub:'Une insolence presque sage', bg:(scene('c2_10')&&scene('c2_10').bg)||'c2_bg_route', music:(scene('c2_10')&&scene('c2_10').music)||'music_c5_miraldas', speaker:'Narrateur', text:`Remerii lui adresse un regard de biais.\n\n« Voilà une phrase dangereuse. Elle suppose que ma patience existe. »\n\nHylee pince les lèvres pour ne pas sourire trop fort. Ce n’est pas grand-chose : une étincelle, un souffle. Mais pour une jeune femme qui a si longtemps avalé ses réponses, c’est déjà une victoire.`, chars:cloneChars('c2_10'), next:(scene('c2_10')&&scene('c2_10').next)||'c2_11'});
+
+    addChoice('c5_16', {label:'Laisser Remerii voir qu’elle a peur, sans lui demander de la porter', next:'c5_16_lien_v130', effects:{lien:1,sangfroid:1}, note:'Lien Remerii · Hylee accepte une vulnérabilité maîtrisée : proche, mais pas dépendante.'});
+    addScene('c5_16_lien_v130', {title:'Mir’Aldas', sub:'Peur tenue à deux mains', bg:(scene('c5_16')&&scene('c5_16').bg)||'c5_salle_miroirs', music:(scene('c5_16')&&scene('c5_16').music)||'music_c5_miraldas', speaker:'Narrateur', text:`Hylee ne masque pas totalement le tremblement de ses doigts. Elle ne l’offre pas non plus comme une demande de secours.\n\nRemerii le voit. Bien sûr qu’elle le voit.\n\nElle ne commente pas. Elle reste simplement assez proche pour que le silence devienne une réponse.`, chars:cloneChars('c5_16'), next:(scene('c5_16')&&scene('c5_16').next)||'c5_17'});
+
+    addChoice('c6_12', {label:'Décrire Mir’Aldas comme une ville qui respire sous la peau', next:'c6_12_res_v130', effects:{resonance:1,lien:1}, requires:{resonance:16}, note:'Résonance · Pré-requis 16 : Hylee verbalise la sensation magique sans la transformer en prière.'});
+    addScene('c6_12_res_v130', {title:'Terrasse sous le dôme', sub:'La ville vivante', bg:(scene('c6_12')&&scene('c6_12').bg)||'c6_bg_terrasse', music:(scene('c6_12')&&scene('c6_12').music)||'music_c6_parenthese', speaker:'Hylee', text:`« Ce n’est pas seulement beau. C’est… sous la peau. Comme si la ville respirait avec un retard minuscule sur mon propre souffle. »\n\nRemerii ne corrige pas l’image. Elle la garde un instant entre elles.\n\n« C’est une manière assez juste de décrire Mir’Aldas. »`, chars:cloneChars('c6_12'), next:(scene('c6_12')&&scene('c6_12').next)||'c6_13'});
+
+    // Lien Remerii n’est pas un cinquième caractère, mais une conséquence. On ajoute donc quelques réceptions fortes, non automatiques.
+    ['c3_34','c5_30','c6_06'].forEach(id=>{
+      const sc=scene(id); if(!sc||!sc.choices) return;
+      sc.choices.forEach(ch=>{
+        const t=noteText(ch);
+        if(/remerii|silence|patience|confiance|cape|proche/.test(t) && ch.effects && !ch.effects.lien){
+          ch.effects.lien=1;
+          ch.note=(ch.note||'')+' · Remerii reçoit cette posture comme une confiance.';
+        }
+      });
+    });
+
+    // Naïah : éviter qu’une route trop prudente échoue sans comprendre pourquoi, mais garder le risque des réponses clairement mauvaises.
+    if(typeof C7_NAIAH_DUEL_1!=='undefined'){
+      C7_NAIAH_DUEL_1.forEach(step=>{ (step.choices||[]).forEach(ch=>{
+        if(/Rester immobile|Analyser|comprise|accueil/.test(ch.label||'') && (ch.pacte||0)<1) ch.pacte=1;
+      }); });
+    }
+    if(typeof C7_NAIAH_DUEL_2!=='undefined'){
+      C7_NAIAH_DUEL_2.forEach(step=>{ (step.choices||[]).forEach(ch=>{
+        if(/porte|sortie|façonnée|faconnee|héritage|heritage/.test(ch.label||'') && (ch.pacte||0)<2) ch.pacte=2;
+      }); });
+    }
+
+    // Démarrages directs : utiliser les nouvelles clés de fragments sans casser les anciennes sauvegardes.
+    if(typeof startChapter7==='function'){
+      const oldStartChapter7=startChapter7;
+      startChapter7=function(){ oldStartChapter7(); if(state && Array.isArray(state.journalFragments)){ state.journalFragments=[...new Set(state.journalFragments.map(k=>k==='ch8'?'ch7':(k==='ch7'?'ch6':k)))]; } };
+    }
+
+  }catch(e){ console.warn('Correctifs v0.130 non appliqués', e); }
+})();
+
+
+
+/* v0.131 · Correctif post-runs : duel de Saidin viable pour Audace + restart propre */
+(function applyPostRunFiveProfilesV131(){
+  try{
+    if(window.__sylviniaV131PostRuns) return;
+    window.__sylviniaV131PostRuns = true;
+
+    function hasChoice(step,label){ return step && Array.isArray(step.choices) && step.choices.some(ch=>ch.label===label); }
+    function addSageChoice(stepIndex, ch){
+      if(typeof C5_SAGE_DUEL_STEPS==='undefined' || !Array.isArray(C5_SAGE_DUEL_STEPS)) return;
+      const step=C5_SAGE_DUEL_STEPS[stepIndex];
+      if(!step) return;
+      if(!Array.isArray(step.choices)) step.choices=[];
+      if(!hasChoice(step,ch.label)) step.choices.push(ch);
+    }
+
+    // Audace ne doit pas être condamnée à la rupture chez Saidin : elle peut être franche sans être irresponsable.
+    addSageChoice(0, {
+      label:'La décision. Si nous n’avançons pas, quelqu’un choisira notre place.',
+      clarity:1,
+      requires:{audace:20},
+      effects:{audace:1,lucidite:1},
+      reaction:`Saidin incline légèrement la tête. « Voilà une réponse dangereuse, mais pas stupide. Le temps déteste les gens qui confondent prudence et immobilité. »`
+    });
+    addSageChoice(1, {
+      label:'Quand on vole une seconde pour imposer une fin que personne n’a choisie.',
+      clarity:1,
+      requires:{audace:20},
+      effects:{audace:1,sangfroid:1},
+      reaction:`« Bien. L’audace n’est pas le vol. C’est la responsabilité de pousser une porte en sachant qu’elle peut aussi se refermer sur tes doigts. »`
+    });
+    addSageChoice(4, {
+      label:'Celle qui ose agir sans prétendre que la boue devient propre.',
+      clarity:1,
+      requires:{audace:20},
+      effects:{audace:1},
+      reaction:`Saidin sourit presque. « Tu gardes la morsure, mais tu cesses d’appeler cela une excuse. C’est un progrès. »`
+    });
+    addSageChoice(5, {
+      label:'Pour refuser qu’un avenir déjà écrit parle à ma place.',
+      clarity:1,
+      requires:{audace:20},
+      effects:{audace:1,lucidite:1},
+      memory:'saidin_future_hylee',
+      reaction:`« Voilà une raison qui avance avec les dents serrées », souffle Saidin. « Elle me plaît davantage que tu ne devrais t’en réjouir. »`
+    });
+
+    // Redémarrer le Chapitre V après un Game Over doit revenir au début du chapitre sans conserver les gains gagnés pendant la tentative ratée.
+    if(typeof go==='function'){
+      const oldGoV131=go;
+      go=function(next,opts={}){
+        const wasC5=String(state && state.scene || '').startsWith('c5_') || String(state && state.scene || '')==='c5_sage_start';
+        if(next==='c5_01' && !wasC5){ state.c5ChapterStartStats={...(state.stats||{})}; }
+        return oldGoV131(next,opts);
+      };
+    }
+    if(typeof startChapter5==='function'){
+      const oldStartChapter5V131=startChapter5;
+      startChapter5=function(){ oldStartChapter5V131(); if(state && state.scene==='c5_01') state.c5ChapterStartStats={...(state.stats||{})}; };
+    }
+    if(typeof restartC5AfterSageFailure==='function'){
+      restartC5AfterSageFailure=function(){
+        clearC5SageTimer();
+        const base=state.c5ChapterStartStats || (state.c5SageDuel && state.c5SageDuel.startStats) || state.stats || {};
+        state.stats={...base};
+        state.c5SageDuel=null;
+        state.c5SageIntroPlayed=false;
+        state.c5SageIntroPending=false;
+        state.scene='c5_01';
+        state.history=[];
+        setScreen('game');
+        render();
+      };
+    }
+  }catch(e){ console.warn('Correctifs v0.131 non appliqués', e); }
+})();
+
+
+
+/* v0.132 · Saidin : réponses imparfaites mais valides */
+(function applySaidinNonPunitiveCoreV132(){
+  try{
+    if(window.__sylviniaV132SaidinCore) return;
+    window.__sylviniaV132SaidinCore = true;
+    function findSageChoice(stepIndex, fragment){
+      if(typeof C5_SAGE_DUEL_STEPS==='undefined') return null;
+      const step=C5_SAGE_DUEL_STEPS[stepIndex];
+      if(!step||!Array.isArray(step.choices)) return null;
+      return step.choices.find(ch=>String(ch.label||'').toLowerCase().includes(String(fragment||'').toLowerCase()));
+    }
+    function makeValid(ch, reaction){
+      if(!ch) return;
+      delete ch.fracture;
+      delete ch.rupture;
+      ch.clarity = Math.max(1, Number(ch.clarity||0));
+      ch.perfect = false;
+      if(reaction) ch.reaction = reaction;
+    }
+    makeValid(findSageChoice(0,'L’urgence. Le portail doit être arrêté'), `Saidin ne paraît pas satisfait, mais il ne ferme pas la porte. « L’urgence peut être une boussole. Une mauvaise, souvent. Mais elle indique au moins que tu sais pourquoi tu marches. »`);
+    makeValid(findSageChoice(4,'Celle qui sauve le plus de vies'), `« Réponse brutale », murmure Saidin. « Elle sauve parfois des royaumes, et détruit parfois ceux qui la prononcent. Mais ce n’est pas une fuite. »`);
+    makeValid(findSageChoice(5,'Pour sauver le monde'), `Saidin laisse un long silence s’installer. « Une réponse trop grande pour une seule gorge. Mais elle tient debout. Pour aujourd’hui, cela suffit. »`);
+  }catch(e){ console.warn('Correctifs v0.132 non appliqués', e); }
 })();
 
 setupMenuParallax();
