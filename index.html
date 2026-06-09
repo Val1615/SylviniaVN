@@ -46,7 +46,7 @@ button{font:inherit;color:inherit} .hidden{display:none!important}
 #screenFade{position:fixed;inset:0;z-index:9999;background:#020610;opacity:0;pointer-events:none;transition:opacity .34s ease}
 #screenFade.active{opacity:1;pointer-events:auto}
 
-.sageTimerBadge{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:8;min-width:156px;padding:12px 18px;border-radius:999px;border:1px solid rgba(233,201,133,.58);background:rgba(4,8,17,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 12px 34px rgba(0,0,0,.32),0 0 22px rgba(233,201,133,.12),inset 0 0 0 1px rgba(255,255,255,.05);color:#fff1c4;font:900 22px/1 Georgia,serif;text-align:center;letter-spacing:.06em;pointer-events:none}
+.sageTimerBadge{position:fixed;right:18px;top:calc(env(safe-area-inset-top,0px) + 86px);z-index:9999;min-width:116px;padding:9px 12px;border-radius:999px;border:1px solid rgba(233,201,133,.58);background:linear-gradient(180deg,rgba(28,18,4,.94),rgba(10,7,3,.96));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);box-shadow:0 0 0 7px rgba(233,201,133,.10),0 16px 34px rgba(0,0,0,.45),inset 0 0 22px rgba(233,201,133,.10);color:#fff1c4;font:900 22px/1 Georgia,serif;text-align:center;letter-spacing:.06em;pointer-events:none}
 .sageTimerBadge::before{content:"Temps restant";display:block;margin-bottom:4px;color:rgba(255,255,255,.72);font:800 10px/1 var(--font);letter-spacing:.22em;text-transform:uppercase}
 .sageTimerBadge.danger{border-color:rgba(255,120,120,.72);color:#ffd9d9;box-shadow:0 12px 34px rgba(0,0,0,.36),0 0 26px rgba(255,90,90,.22),inset 0 0 0 1px rgba(255,255,255,.05)}
 
@@ -1688,6 +1688,8 @@ body.mobileUI .c7StageQteBtn{min-width:78px;min-height:78px;font-size:12px}
 @keyframes c7StickyUrgent{0%,100%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(1px,1px)}}
 body.mobileUI #c7StickyTimer{top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;min-width:92px;padding:7px 9px}
 body.mobileUI #c7StickyTimer .c7StickyTime{font-size:19px}
+body.mobileUI .sageTimerBadge{top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;min-width:92px;padding:7px 9px}
+body.mobileUI .sageTimerBadge{font-size:19px}
 </style>
 
 </head>
@@ -2454,8 +2456,8 @@ const JOURNAL_FRAGMENTS={
     ]
   },
   "ch4v": {
-  "title": "Chapitre IV · Le programme du professeur",
-  "chapter": "Chapitre IV-V",
+  "title": "Chapitre IV-V · Le programme du professeur",
+  "chapter": "Chapitre IV · Route Valurn",
   "unlockLabel": "Termine la route Valurn",
   "blocks": [
     {
@@ -2473,8 +2475,8 @@ const JOURNAL_FRAGMENTS={
   ]
 },
   "ch4d": {
-  "title": "Chapitre V · Caporale Farae",
-  "chapter": "Chapitre IV-D",
+  "title": "Chapitre IV-D · Caporale Farae",
+  "chapter": "Chapitre IV · Route Draven",
   "unlockLabel": "Termine la route Draven",
   "blocks": [
     {
@@ -14967,6 +14969,14 @@ Mir’Aldas n’a pas seulement offert un allié au groupe. Elle a donné à Hyl
         "chars": [],
         "choices": [
             {
+                "label": "Poursuivre vers le Chapitre VII",
+                "next": "c7_01",
+                "flags": {
+                    "chapter6Complete": true
+                },
+                "note": "Valurn s’enfonce dans la Forêt Interdite."
+            },
+            {
                 "label": "Retour au menu",
                 "next": "menu",
                 "flags": {
@@ -16368,7 +16378,7 @@ const CHAPTER_SELECT_DATA=[
 ,  {key:'ch4',label:'Chapitre IV',title:'Croisée des récits',subtitle:'Valurn ou Draven',image:'assets/images/chapter_select/chapter_4.png',tags:['Valurn','Draven','Routes'],body:`Le groupe se divise. Valurn descend vers les Calciterres pour arracher des vérités sur Akuhn’Nabad, tandis que Draven contacte Forthaven pour demander un détachement militaire à une cité déjà assiégée.`,action:'Lancer le Chapitre IV'},
   {key:'ch5',label:'Chapitre V',title:'Une rencontre hors du temps',subtitle:'Mir’Aldas',image:'assets/images/chapter_select/chapter_5.png',tags:['Mir’Aldas','Saidin','Temps'],body:`Hylee et Remerii atteignent enfin Mir’Aldas. Sous le dôme arcanique, la cité des mages révèle sa Grande Bibliothèque, ses dragons de pierre et une chambre où Saidin plie le temps sans jamais vraiment l’arrêter.`,action:'Lancer le Chapitre V'},
   {key:'ch6',label:'Chapitre VI',title:'Une Parenthèse au Cœur de Mir’Aldas',subtitle:'Nuit sous le ciel arcanique',image:'assets/images/chapter_select/chapter_6.png',tags:['Mir’Aldas','Remerii','Parenthèse'],body:`Après l’épreuve de Saidin, Hylee et Remerii s’accordent une parenthèse dans les ruelles nocturnes de Mir’Aldas. Tartelette magique, cristal de navigation et terrasse sous les constellations ouvrent un chapitre plus intime, doux en surface, mais précieux pour leur lien.`,action:'Lancer le Chapitre VI'},
-  {key:'ch7',label:'Chapitre VII',title:'Du Chaos aux Ombres',subtitle:'Naïah et la Forêt Interdite',image:'assets/images/keyscenes/c4v_key_29.png',tags:['Valurn','Naïah','Pacte'],body:`Valurn entre seul dans la Forêt Interdite pour trouver le passage vers Akuhn’Nabad. Naïah l’y attend avec ses ombres, ses rires, deux duels d’esprit, et un pacte dont l’échec peut coûter plus qu’une simple défaite.`,action:'Lancer le Chapitre VII'}
+  {key:'ch7',label:'Chapitre VII',title:'Du Chaos aux Ombres',subtitle:'Naïah et la Forêt Interdite',image:'assets/images/chapter_select/chapter_7.png',tags:['Valurn','Naïah','Pacte'],body:`Valurn entre seul dans la Forêt Interdite pour trouver le passage vers Akuhn’Nabad. Naïah l’y attend avec ses ombres, ses rires, deux duels d’esprit, et un pacte dont l’échec peut coûter plus qu’une simple défaite.`,action:'Lancer le Chapitre VII'}
 ];
 function chapterSelectUnlocked(key){
   if(key==='intro'||key==='ch1') return true;
@@ -16402,7 +16412,7 @@ function renderChapterSelect(){
     card.className='chapterSelectCard'+(unlocked?'':' locked');
     if(idx===0) card.open=true;
     const stateLabel=unlocked?'Accessible':'Verrouillé';
-    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Chapitre verrouillé hors mode développeur pour ce premier jet.':'Disponible.';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Termine le Chapitre VI pour ouvrir la route de Naïah.':'Disponible.';
     card.innerHTML=`
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
@@ -16498,6 +16508,10 @@ function chapter5CompletedFrom(saveObj){
   const id=String((saveObj&&saveObj.scene)||'');
   return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter5Complete===true) || id==='c5_47' || id.startsWith('c6_')));
 }
+function chapter6CompletedFrom(saveObj){
+  const id=String((saveObj&&saveObj.scene)||'');
+  return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter6Complete===true) || id==='c6_32' || id.startsWith('c7_')));
+}
 function canStartChapter2(){
   if(state.devMode) return true;
   return chapter1CompletedFrom(state) || chapter1CompletedFrom(readMainSave());
@@ -16519,7 +16533,8 @@ function canStartChapter6(){
   return chapter5CompletedFrom(state) || chapter5CompletedFrom(readMainSave());
 }
 function canStartChapter7(){
-  return state.devMode===true;
+  if(state.devMode) return true;
+  return chapter6CompletedFrom(state) || chapter6CompletedFrom(readMainSave());
 }
 function updateChapterLocks(){
   const menuChapterCount=document.getElementById('menuChaptersAvailable');
@@ -16834,7 +16849,7 @@ function startChapter6(){
 function startChapter7(){
   let prev=readMainSave();
   if(!canStartChapter7()){
-    toast('Chapitre VII verrouillé','Premier jet réservé au mode développeur pour les tests.');
+    toast('Chapitre VII verrouillé','Termine le Chapitre VI pour ouvrir la route de Naïah.');
     updateChapterLocks();
     return;
   }
