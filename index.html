@@ -1802,7 +1802,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.122 · Chapitre VII</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.128 · Matrices de personnalité</div>
       </section>
     </div>
   </main>
@@ -2358,6 +2358,8 @@ const INTRO_VALUE_MAX=5;
 let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
 let currentPreviewTrack=null;
 const statNames={audace:'Audace',sangfroid:'Sang-froid',lien:'Lien Remerii',lucidite:'Lucidité',resonance:'Résonance'};
+const VALUE_CAP=45;
+function applyBalancedStatDelta(key,delta){ if(!(key in START_STATS))return; const current=(state.stats&&typeof state.stats[key]==='number')?state.stats[key]:0; state.stats[key]=Math.max(0,Math.min(VALUE_CAP,current+delta)); }
 
 const PROGRESSION_ITEMS={
   jeton_imperial:{title:'Jeton impérial',type:'Autorisation',icon:'✦',body:`Jeton gravé aux armoiries royales. Il permet à Hylee et Remerii de franchir des contrôles sylviniens sans éveiller immédiatement les soupçons.`},
@@ -9419,7 +9421,7 @@ const DUEL_STEPS=[
 function initDuel(){state.duel={step:0,waiting:false,last:null,stability:6,fatigue:1,read:0,audace:0,sangfroid:0,resonance:0,lien:0,lucidite:0,warnings:0,history:[]};}
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
 function duelEffects(choice,d){return typeof choice.effects==='function'?choice.effects(d):{...choice.effects};}
-function applyDuelEffects(effects){const d=state.duel; for(const [k,v] of Object.entries(effects)){ if(k in d)d[k]+=v; if(k in state.stats)state.stats[k]=(state.stats[k]||0)+v;} d.stability=clamp(d.stability,0,10); d.fatigue=clamp(d.fatigue,0,10); d.read=clamp(d.read,0,5);}
+function applyDuelEffects(effects){const d=state.duel; for(const [k,v] of Object.entries(effects)){ if(k in d)d[k]+=v; if(k in START_STATS)applyBalancedStatDelta(k,v);} d.stability=clamp(d.stability,0,10); d.fatigue=clamp(d.fatigue,0,10); d.read=clamp(d.read,0,5);}
 function duelOutcome(){
  const d=state.duel||{};
  const control=(d.sangfroid||0)+(d.lucidite||0);
@@ -9534,7 +9536,7 @@ function c5ReqLabel(req){return Object.entries(req||{}).map(([k,v])=>`${statName
 function c5ReqAnyLabel(list){return (list||[]).map(req=>c5ReqLabel(req)).join(' OU ');}
 function c5SageChoiceLocked(ch){if(state.devMode)return false; if(ch.requires&&!c5ReqMet(ch.requires))return true; if(ch.requiresAny&&!c5ReqAnyMet(ch.requiresAny))return true; return false;}
 function c5SageChoiceNote(ch,locked=false){const notes=[]; if(state.devMode&&ch.requires)notes.push('DEV · prérequis ignoré : '+c5ReqLabel(ch.requires)); else if(locked&&ch.requires)notes.push('Requis : '+c5ReqLabel(ch.requires)); if(state.devMode&&ch.requiresAny)notes.push('DEV · prérequis ignoré : '+c5ReqAnyLabel(ch.requiresAny)); else if(locked&&ch.requiresAny)notes.push('Requis : '+c5ReqAnyLabel(ch.requiresAny)); return notes.join(' · ');}
-function applyC5SageEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)state.stats[k]=(state.stats[k]||0)+v;}}
+function applyC5SageEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)applyBalancedStatDelta(k,v);}}
 function paintSceneChars(charList=[]){const chars=document.getElementById('chars'); chars.innerHTML=''; chars.className='chars'; if(charList.length>=2)chars.classList.add('duoChars'); if(charList.length>=3)chars.classList.add('trioChars'); charList.forEach(ch=>{const [kind,sprite,pos,extra]=ch; const resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; const extraClasses=((extra||'') + (kind==='lineva'?' projection':'')).trim(); img.className=`char enter ${kind} ${pos||'center'} ${extraClasses}`; chars.appendChild(img);});}
 function clearC5SageTimer(){if(window.__c5SageTimerInterval){clearInterval(window.__c5SageTimerInterval); window.__c5SageTimerInterval=null;} const top=document.getElementById('c5SageTopTimer'); if(top){top.classList.add('hidden'); top.classList.remove('danger');}}
 function updateC5SageTimerDisplay(){const d=state.c5SageDuel||{}; const el=document.getElementById('c5SageTimer'); const fill=document.getElementById('c5SageTimerFill'); const top=document.getElementById('c5SageTopTimer'); if(!el||!fill)return; if(d.waiting||!d.deadline){el.textContent='—'; fill.style.width='0%'; if(top){top.textContent='—'; top.classList.add('hidden'); top.classList.remove('danger');} return;} const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000); el.textContent=remaining+'s'; fill.style.width=Math.max(0,Math.min(100,(remainingMs/30000)*100))+'%'; if(top){top.textContent=remaining+'s'; top.classList.remove('hidden'); top.classList.toggle('danger',remaining<=7);} if(remaining<=0){clearC5SageTimer(); if(state.scene==='c5_sage_start'&&state.c5SageDuel&&!state.c5SageDuel.waiting&&!state.c5SageDuel.failed){state.c5SageDuel.failed=true; state.c5SageDuel.failReason='timeout'; state.c5SageDuel.perfect=false; save(); go('c5_sage_fail');}}}
@@ -9696,11 +9698,20 @@ Son prénom dans sa bouche ressemble à un fil passé autour du cou. Si Valurn t
  ]}
 ];
 function c7EnsureDuel(phase='duel1'){
-  if(!state.c7Naiah) state.c7Naiah={phase,step:0,mental:3,pacte:0,waiting:false,last:null,qte:null,history:[],startStats:{...(state.stats||{})}};
-  if(!state.c7Naiah.phase) state.c7Naiah.phase=phase;
-  if(typeof state.c7Naiah.mental!=='number') state.c7Naiah.mental=3;
-  if(typeof state.c7Naiah.pacte!=='number') state.c7Naiah.pacte=0;
-  return state.c7Naiah;
+  if(!state.c7Naiah) state.c7Naiah={};
+  const d=state.c7Naiah;
+  if(!d.phase) d.phase=phase;
+  if(typeof d.step!=='number' || Number.isNaN(d.step)) d.step=0;
+  if(typeof d.mental!=='number' || Number.isNaN(d.mental)) d.mental=3;
+  if(typeof d.pacte!=='number' || Number.isNaN(d.pacte)) d.pacte=0;
+  if(typeof d.waiting!=='boolean') d.waiting=false;
+  if(!Array.isArray(d.history)) d.history=[];
+  if(!d.startStats) d.startStats={...(state.stats||{})};
+  if(!('last' in d)) d.last=null;
+  if(!('qte' in d)) d.qte=null;
+  if(!('after' in d)) d.after=null;
+  if(!('qteNext' in d)) d.qteNext=null;
+  return d;
 }
 function clearC7QteLayer(){const old=document.getElementById('c7StageQteLayer'); if(old) old.remove();}
 function clearC7NaiahTimer(){if(window.__c7NaiahTimerInterval){clearInterval(window.__c7NaiahTimerInterval); window.__c7NaiahTimerInterval=null;} clearC7QteLayer();}
@@ -9710,7 +9721,7 @@ function c7CurrentQteWord(){const d=c7EnsureDuel(); if(!d.qte)return ''; if(type
 function c7QtePosition(index){const pos=[{x:72,y:34},{x:28,y:58},{x:55,y:76},{x:43,y:29},{x:78,y:67},{x:22,y:38}]; return pos[index%pos.length];}
 function updateC7NaiahTimerDisplay(){const d=state.c7Naiah; if(!d||d.waiting)return; const el=document.getElementById('c7NaiahTimer'); const fill=document.getElementById('c7NaiahTimerFill'); if(!el||!fill)return; const total=d.deadlineDuration||c7TimerDuration(); const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000); el.textContent=d.qte?`${(remainingMs/1000).toFixed(1)}s`:`${remaining}s`; fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%'; if(remainingMs<=0){clearC7NaiahTimer(); if(d.qte)c7ResolveQte(false,'Naïah frappe avant que Valurn ne verrouille sa défense. L’ombre traverse l’écran comme une griffe.'); else c7ResolveNaiahChoice(null,true);}}
 function startC7NaiahTimer(){const d=c7EnsureDuel(); if(d.waiting)return; d.deadlineDuration=c7TimerDuration(); d.deadline=Date.now()+d.deadlineDuration; if(window.__c7NaiahTimerInterval){clearInterval(window.__c7NaiahTimerInterval); window.__c7NaiahTimerInterval=null;} updateC7NaiahTimerDisplay(); window.__c7NaiahTimerInterval=setInterval(updateC7NaiahTimerDisplay,120);}
-function c7ApplyEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)state.stats[k]=(state.stats[k]||0)+v;}}
+function c7ApplyEffects(effects={}){for(const [k,v] of Object.entries(effects||{})){if(k in START_STATS)applyBalancedStatDelta(k,v);}}
 function c7ResolveNaiahChoice(ch,timeout=false){const d=c7EnsureDuel(); clearC7NaiahTimer(); const steps=c7CurrentSteps(); const step=steps[d.step]||steps[0]; if(timeout){d.mental=Math.max(0,(d.mental||3)-1); d.last={reaction:`Naïah sourit. « Trop lent. » La forêt répond à sa place, et Valurn sent une ombre traverser ses tempes.`,bad:true};}
   else {if(ch.loss)d.mental=Math.max(0,(d.mental||3)-ch.loss); if(typeof ch.pacte==='number')d.pacte=Math.max(0,(d.pacte||0)+ch.pacte); c7ApplyEffects(ch.effects||{}); d.last={reaction:ch.reaction||'Naïah observe la réponse sans cesser de sourire.',bad:!!ch.loss || (typeof ch.pacte==='number'&&ch.pacte<0)}; d.history.push({phase:d.phase,step:d.step+1,label:ch.label,pacte:d.pacte,mental:d.mental});}
   d.step++;
@@ -12277,7 +12288,7 @@ Le nom traverse la clairière comme un ordre ancien. La forêt disparaît sous u
 ];
 function initC3ShadowDuel(){state.c3ShadowDuel={version:'v100',step:0,waiting:false,last:null,stability:10,fatigue:0,read:0,audace:0,sangfroid:0,resonance:0,lien:0,lucidite:0,warnings:0,history:[],finished:false};}
 function c3ShadowEffects(choice,d){return typeof choice.effects==='function'?choice.effects(d):{...choice.effects};}
-function applyC3ShadowEffects(effects){const d=state.c3ShadowDuel; for(const [k,v] of Object.entries(effects)){ if(k in d)d[k]+=v; if(k in state.stats)state.stats[k]=(state.stats[k]||0)+v;} d.stability=clamp(d.stability,0,10); d.fatigue=clamp(d.fatigue,0,10); d.read=clamp(d.read,0,5);}
+function applyC3ShadowEffects(effects){const d=state.c3ShadowDuel; for(const [k,v] of Object.entries(effects)){ if(k in d)d[k]+=v; if(k in START_STATS)applyBalancedStatDelta(k,v);} d.stability=clamp(d.stability,0,10); d.fatigue=clamp(d.fatigue,0,10); d.read=clamp(d.read,0,5);}
 function c3ShadowOutcome(){const d=state.c3ShadowDuel||{}; let title='Glacialis Absoluta forcé',cls='danger',text=`Hylee survit parce qu’elle n’a plus aucune autre sortie.
 
 Glacialis Absoluta ne se lance pas comme un sort ordinaire : il s’arrache d’elle. Les ombres se figent, puis éclatent, mais le froid continue de chercher un chemin sous sa peau. Les premières mèches blanches se dessinent dans ses cheveux. Les marques pâles brûlent encore, fraîches, douloureuses, presque fumantes.
@@ -12804,7 +12815,7 @@ function applyChoiceEffects(ch){
     for(const [k,v] of Object.entries(ch.introEffects||{})){state.introStats[k]=Math.max(0,Math.min(INTRO_VALUE_MAX,(state.introStats[k]||0)+v));}
     return;
   }
-  if(ch.effects){for(const [k,v] of Object.entries(ch.effects)){state.stats[k]=(state.stats[k]||0)+v;}}
+  if(ch.effects){for(const [k,v] of Object.entries(ch.effects)){applyBalancedStatDelta(k,v);}}
 }
 
 
@@ -16707,7 +16718,7 @@ function render(){
   updateDevUI();
   playMusic(resolveSceneMusic(state.scene, scene.music||'music_training')); save(); updateProgressUI();
 }
-function choose(ch){ if(!choiceAvailable(ch))return; applyChoiceEffects(ch); if(typeof ch.pacteNaiah==='number'&&ch.pacteNaiah!==0){state.c7Naiah=state.c7Naiah||{mental:3,pacte:0}; state.c7Naiah.pacte=Math.max(0,(state.c7Naiah.pacte||0)+ch.pacteNaiah);} if(ch.flags){state.flags={...(state.flags||{}),...ch.flags};} if(ch.items){unlockProgressItems(ch.items);} if(ch.memories){unlockProgressMemories(ch.memories);} if(ch.next==='menu'){ save(); if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} go(ch.next,{skipHistory:ch.skipHistory===true});}
+function choose(ch){ if(!choiceAvailable(ch))return; applyChoiceEffects(ch); if(typeof ch.pacteNaiah==='number'&&ch.pacteNaiah!==0){const d=(typeof c7EnsureDuel==='function')?c7EnsureDuel('duel1'):(state.c7Naiah=state.c7Naiah||{}); d.pacte=Math.max(0,(d.pacte||0)+ch.pacteNaiah);} if(ch.flags){state.flags={...(state.flags||{}),...ch.flags};} if(ch.items){unlockProgressItems(ch.items);} if(ch.memories){unlockProgressMemories(ch.memories);} if(ch.next==='menu'){ save(); if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} go(ch.next,{skipHistory:ch.skipHistory===true});}
 function go(next,opts={}){ if(next!=='c5_sage_start')clearC5SageTimer(); if(!String(next||'').startsWith('c7_duel'))clearC7NaiahTimer(); if(next==='restart_c7'){restartChapter7(); return;} if(next==='restart_c5_sage'){restartC5AfterSageFailure(); return;} if(next==='menu'){ if(isIntroScene()) exitIntroToMenu(); else setScreen('title'); return;} ensureCodexDefaults(); if(!opts.skipHistory && state.scene && state.scene!==next){ state.history.push(state.scene); if(state.history.length>120) state.history=state.history.slice(-120); } if(next==='c3_22' && state.scene!==next){ state.c3ShadowDuel=null; state.c3ShadowResult=null; state.c3ShadowIntroPlayed=false; state.c3ShadowIntroPending=false; } if(next==='c5_sage_start' && state.scene!==next){ state.c5SageDuel=null; state.c5SageIntroPlayed=false; state.c5SageIntroPending=false; } state.scene=next; setScreen('game'); render();}
 function newGame(opts={}){
   const requireConfirm=opts.confirm!==false;
@@ -16877,13 +16888,335 @@ document.getElementById('mobileUiToggle').onchange=e=>setMobileUI(e.target.check
 document.getElementById('musicBtn').onclick=()=>{state.musicOn=!state.musicOn;document.getElementById('musicBtn').textContent=state.musicOn?'Couper musique':'Lancer musique'; if(state.musicOn){const sc=S[state.scene]||{}; playMusic(resolveSceneMusic(state.scene, sc.music||'music_menu'))} else music.pause(); save();};
 document.getElementById('volume').oninput=e=>{music.volume=parseFloat(e.target.value);};
 document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSound('click'); }, true);
+
+
+/* v0.127 · Rééquilibrage global des valeurs, sans ajout d'items ni de souvenirs */
+(function applyGlobalBalanceV127(){
+  try{
+    if(window.__sylviniaBalanceV127) return;
+    window.__sylviniaBalanceV127=true;
+    const normalStats=['audace','sangfroid','lien','lucidite','resonance'];
+    const safeEffects=ch=>{ if(!ch.effects || typeof ch.effects!=='object') ch.effects={}; return ch.effects; };
+    const textOf=ch=>`${ch.label||''} ${ch.note||''}`.toLowerCase();
+    const isStrategic=ch=>/choix stratégique|bonus/.test((ch.label||'').toLowerCase());
+    function capRequirements(req){
+      if(!req || typeof req!=='object') return;
+      Object.keys(req).forEach(k=>{
+        if(k==='resonance') req[k]=Math.min(req[k],16);
+        else if(normalStats.includes(k)) req[k]=Math.min(req[k],20);
+      });
+    }
+    function rebalanceChoice(ch){
+      if(!ch || ch.__v127Balanced) return;
+      ch.__v127Balanced=true;
+      const e=safeEffects(ch);
+      if(typeof e.lucidite==='number' && e.lucidite>1) e.lucidite=isStrategic(ch)?Math.min(e.lucidite,2):1;
+      const t=textOf(ch);
+      if(/rune|magie|flux|bâton|baton|cristal|signature|intuition|sentir|écouter|ecouter|présence|presence|reflet|temps|medig|silence/.test(t) && e.resonance===undefined) e.resonance=1;
+      if(/plaisanter|provoquer|droite|oser|déclarer|declarer|imposer|voler le rythme|répondre|repondre|refuser|contester|coûte que coûte|coute que coute/.test(t) && e.audace===undefined) e.audace=1;
+      if(/accepter|calme|respirer|mesurer|prudence|attendre|reculer|retenir|couper court|garder|sans protester|se tenir/.test(t) && e.sangfroid===undefined) e.sangfroid=1;
+      if(ch.requires) capRequirements(ch.requires);
+      if(ch.requiresAny && Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(capRequirements);
+    }
+    function addChoice(sceneId,ch){
+      const sc=S[sceneId]; if(!sc) return;
+      if(!Array.isArray(sc.choices)) sc.choices=[];
+      if(sc.choices.some(x=>x && x.label===ch.label)) return;
+      sc.choices.push(ch);
+      rebalanceChoice(ch);
+    }
+    function patchChoice(sceneId,needle,fn){
+      const sc=S[sceneId]; if(!sc || !Array.isArray(sc.choices)) return;
+      const ch=sc.choices.find(x=>x && String(x.label||'').includes(needle));
+      if(ch) fn(ch);
+    }
+
+    Object.keys(S||{}).forEach(id=>{ const sc=S[id]; if(sc && Array.isArray(sc.choices)) sc.choices.forEach(rebalanceChoice); });
+
+    // Chapitre I · donner très tôt une route Résonance lisible.
+    addChoice('s02', c('Écouter le froid sous la rivière','s02_river',{resonance:1,sangfroid:1},'Résonance · Hylee ne force pas le courant : elle cherche la note froide qui répond à la sienne.'));
+    patchChoice('s05','Demander pourquoi elle est si dure',ch=>{ ch.effects={lucidite:1,lien:1,sangfroid:1}; ch.note='Comprendre la dureté de Remerii sans se laisser écraser.'; });
+    patchChoice('s08','Lever une barrière de glace',ch=>{ ch.effects={resonance:1,sangfroid:1}; ch.note='Résonance · La glace devient réflexe, mais le souffle garde la forme.'; });
+    patchChoice('s12','Faire semblant de partir mais rester proche',ch=>{ ch.effects={lucidite:1,resonance:1,audace:1,lien:-1}; ch.note='Choix risqué · La curiosité magique l’emporte sur l’ordre.'; });
+    patchChoice('s21','Refuser intérieurement cette autorité',ch=>{ ch.effects={audace:1,resonance:1,sangfroid:1}; ch.note='La révolte reste silencieuse, mais elle ne tremble pas.'; });
+
+    // Chapitre II · forêt vivante : rendre la Résonance utile avant l'atelier du Chapitre III.
+    addChoice('c2_03', c('Sentir l’odeur magique des baies avant de reculer','c2_03_question',{resonance:1,sangfroid:1},'Résonance · L’éclat des baies n’est pas seulement beau : il prévient.'));
+    patchChoice('c2_03','Demander comment elle le sait',ch=>{ ch.effects={lucidite:1,lien:1,resonance:1}; ch.note='Comprendre la leçon et la trace magique laissée par le danger.'; });
+    ['c2_05','c2_07','c2_12','c2_17','c2_21','c2_23','c2_26','c2_35','c2_40','c2_45'].forEach(id=>{ const sc=S[id]; if(sc&&Array.isArray(sc.choices))sc.choices.forEach(rebalanceChoice); });
+
+    // Chapitre III · prérequis plus lisibles, pas plus gratuits.
+    patchChoice('c3_07','se tenir droite',ch=>{ ch.requires={sangfroid:8,lien:7}; ch.effects={sangfroid:1,lien:1,audace:1}; ch.note='La robe devient une posture, pas un déguisement. Requis adouci pour encourager une Hylee plus affirmée.'; });
+    addChoice('c3_07', {label:'Sourire au miroir comme si la robe était une armure',next:'c3_08_joke',effects:{audace:1,sangfroid:1},note:'Audace · Le reflet cesse d’être un tribunal et devient un masque choisi.'});
+    patchChoice('c3_10','laisser le bâton répondre',ch=>{ ch.requires={lucidite:7,resonance:4}; ch.effects={resonance:5,sangfroid:1}; ch.note='Objet stratégique · Le bâton en cerisier noir accordé confère +5 Résonance tant que son accord reste intact.'; });
+    patchChoice('c3_14','préparer un vrai nécessaire',ch=>{ ch.requires={audace:7,sangfroid:7}; ch.effects={audace:1,sangfroid:1,lucidite:1}; ch.note='Objet stratégique · Penser comme une voyageuse, pas seulement comme une apprentie mage.'; });
+    patchChoice('c3_14','Demander ce qu’il risque',ch=>{ ch.effects={lucidite:1,sangfroid:1}; ch.note='Comprendre sa peur sans donner toute la récompense à la seule Lucidité.'; });
+    addChoice('c3_16', {label:'Serrer le bâton et vérifier s’il répond vraiment',next:'c3_17_arcatraz',effects:{resonance:1,sangfroid:1},note:'Résonance · Le catalyseur n’est pas qu’un outil : il devient une présence à surveiller.'});
+    addChoice('c3_19', {label:'Fermer les yeux et écouter la neige résiduelle',next:'c3_20_trace',effects:{resonance:2,sangfroid:1},note:'Résonance · La disparition de Remerii a laissé une vibration dans le froid.'});
+    patchChoice('c3_25','survie, pas ton obéissance',ch=>{ ch.requires={sangfroid:8,lucidite:8}; ch.effects={sangfroid:1,lucidite:1,lien:1}; ch.note='Souvenir stratégique · La colère reste là, mais Hylee comprend le vrai test.'; });
+    patchChoice('c3_30','prendre la présence de Medig au sérieux',ch=>{ ch.requires={lien:8,resonance:5}; ch.effects={resonance:2,lucidite:1}; ch.note='Objet stratégique · La chouette n’est peut-être pas un hasard. La scène insiste davantage sur la plume obtenue.'; });
+
+    // Objets : mêmes récompenses, obtention plus marquante.
+    if(S.c3_12_classique) S.c3_12_classique.text = S.c3_12_classique.text.replace('[Objet obtenu : Bâton d’apprentie renforcé]', 'Le bâton reste simple, mais Remerii le présente comme une victoire de prudence : un catalyseur qui ne trahira pas Hylee quand sa magie tremblera.\n\n[Objet obtenu : Bâton d’apprentie renforcé]');
+    if(S.c3_12_accorde) S.c3_12_accorde.text = S.c3_12_accorde.text.replace('[Objet obtenu : Bâton en cerisier noir accordé]', 'La lumière du cristal s’accorde à son souffle au lieu d’obéir à sa volonté. Remerii lui demande de retenir cette sensation : tant que ce lien reste intact, le bâton portera sa Résonance au-delà de ses limites naturelles.\n\n[Objet obtenu : Bâton en cerisier noir accordé]\n[Bonus actif : +5 Résonance tant que le bâton reste accordé]');
+    if(S.c3_15_carnet) S.c3_15_carnet.text = S.c3_15_carnet.text.replace('[Objet obtenu : Carnet de voyage renforcé]', 'Le carnet n’est pas un simple achat. Hylee le glisse contre elle comme on garde une preuve que l’aventure ne se subit pas seulement : elle se documente.\n\n[Objet obtenu : Carnet de voyage renforcé]');
+    if(S.c3_30_serment) S.c3_30_serment.text = S.c3_30_serment.text.replace('[Objet obtenu : Plume blanche de Medig]', 'La plume ne tombe pas comme une mue ordinaire. Elle descend lentement, presque offerte, puis garde une chaleur inexplicable au creux de la paume de Hylee.\n\n[Objet obtenu : Plume blanche de Medig]');
+
+    // Chapitre IV · seuils un peu moins étroits, pour que Valurn/Draven ne punissent pas un profil non-Lucidité.
+    ['c4v_46','c4v_51','c4d_20','c4d_29','c4d_34'].forEach(id=>{ const sc=S[id]; if(sc&&Array.isArray(sc.choices)) sc.choices.forEach(ch=>{rebalanceChoice(ch); if(ch.requires) Object.keys(ch.requires).forEach(k=>{if(normalStats.includes(k)) ch.requires[k]=Math.min(ch.requires[k],9);}); }); });
+
+    // Chapitre V · seuils du duel de Saidin ramenés autour de 20, Résonance à 16.
+    if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      C5_SAGE_DUEL_STEPS.forEach(step=>{
+        (step.choices||[]).forEach(ch=>{
+          if(ch.requires) capRequirements(ch.requires);
+          if(ch.requiresAny) ch.requiresAny.forEach(capRequirements);
+          if(ch.effects && ch.effects.lucidite>1) ch.effects.lucidite=1;
+        });
+      });
+    }
+    patchChoice('c5_30','Graver ce reflet',ch=>{ ch.requires={lucidite:18,resonance:12}; ch.effects={resonance:1,audace:1,lucidite:1}; ch.note='Souvenir stratégique · Le reflet exige encore une vraie orientation Résonance, mais n’est plus réservé à une run parfaite.'; });
+
+    // Chapitre VI · bonus autour de 20 au lieu de 30, Résonance autour de 16.
+    Object.keys(S||{}).filter(id=>id.startsWith('c6_')).forEach(id=>{ const sc=S[id]; if(sc&&Array.isArray(sc.choices)) sc.choices.forEach(ch=>{rebalanceChoice(ch); if(ch.requires) capRequirements(ch.requires);}); });
+
+    // Chapitre VII · les jeux de Naïah gardent leur danger, mais l’état du duel est toujours complet.
+    if(typeof C7_NAIAH_DUEL_1!=='undefined') C7_NAIAH_DUEL_1.forEach(step=>(step.choices||[]).forEach(ch=>{ if(ch.effects&&ch.effects.lucidite>1)ch.effects.lucidite=1; }));
+    if(typeof C7_NAIAH_DUEL_2!=='undefined') C7_NAIAH_DUEL_2.forEach(step=>(step.choices||[]).forEach(ch=>{ if(ch.effects&&ch.effects.lucidite>1)ch.effects.lucidite=1; }));
+  }catch(e){console.warn('Rééquilibrage v0.127 non appliqué',e);}
+})();
+
+
+
+/* v0.128 · Matrices de personnalité : chaque choix incarne une Hylee, pas une simple statistique */
+(function applyPersonalityMatrixV128(){
+  try{
+    if(window.__sylviniaMatrixV128) return;
+    window.__sylviniaMatrixV128=true;
+    const TRAITS={
+      audace:{name:'Audace',desc:'Hylee ose, taquine, provoque ou prend sa place.'},
+      lucidite:{name:'Lucidité',desc:'Hylee observe juste, lit les silences et les sous-textes.'},
+      sangfroid:{name:'Sang-froid',desc:'Hylee encaisse, reste stable et choisit une réaction mesurée.'},
+      resonance:{name:'Résonance',desc:'Hylee ressent la magie par le corps, les images et l’instinct.'},
+      lien:{name:'Lien Remerii',desc:'Conséquence relationnelle, jamais un comportement autonome.'}
+    };
+    const ORDER=['audace','lucidite','sangfroid','resonance'];
+    const sceneExists=id=>S&&S[id];
+    const makeEffects=e=>Object.assign({},e||{});
+    const effectKeys=e=>Object.keys(e||{}).filter(k=>['audace','lucidite','sangfroid','resonance','lien'].includes(k) && e[k]);
+    const plain=s=>String(s||'').toLowerCase();
+    const cleanNote=n=>String(n||'').replace(/^(Audace|Lucidité|Sang-froid|Résonance|Lien Remerii|Choix risqué|Objet stratégique|Souvenir stratégique|Duel de sage|Pacte Naïah|Observation neutre)\s*·\s*/i,'').trim();
+    function dominantFromEffects(e){
+      let best=null,score=-99;
+      for(const k of ORDER){ const v=(e&&typeof e[k]==='number')?e[k]:0; if(v>score){best=k; score=v;} }
+      if(score>0) return best;
+      return null;
+    }
+    function inferTrait(ch){
+      const t=plain((ch.label||'')+' '+(ch.note||''));
+      if(/bonus lien|épaule|mèche|cape|main|proximité|tendresse/.test(t)) return 'lien';
+      if(/plaisanter|pique|provoquer|oser|répliquer|repondre|répondre|mordant|insolence|frontal|déclarer|refuser|contester|imposer|tenir tête|sourire au risque|voler le rythme|intervenir/.test(t)) return 'audace';
+      if(/observer|remarquer|comprendre|lire|question|sous-texte|mains|regard|silence|vrai|stratégie|mécanisme|définition|trace|runes/.test(t)) return 'lucidite';
+      if(/calme|respir|attendre|accepter|reculer|garder|retenir|mesurer|stable|prudence|sans protester|sans forcer|tenir|laisser|encaisser|sobre/.test(t)) return 'sangfroid';
+      if(/magie|cristal|rune|flux|bâton|baton|dôme|dome|glace|froid|vibration|sentir|écouter|ecouter|appel|présence|presence|note|souffle|odeur|arcan|forêt|foret|reflet/.test(t)) return 'resonance';
+      return dominantFromEffects(ch.effects||{});
+    }
+    function setTrait(ch,trait,intention){
+      if(!ch || !trait || !TRAITS[trait]) return;
+      const current=cleanNote(ch.note||'');
+      const detail=intention||current||TRAITS[trait].desc;
+      ch.matrix=trait;
+      ch.note=`${TRAITS[trait].name} · ${detail}`;
+      if(trait!=='lien'){
+        ch.effects=makeEffects(ch.effects);
+        if(typeof ch.effects[trait]!=='number') ch.effects[trait]=1;
+      }
+    }
+    function rewriteChoice(sceneId,needle,trait,label,note,effects){
+      const sc=S[sceneId]; if(!sc||!Array.isArray(sc.choices)) return;
+      const ch=sc.choices.find(x=>x&&String(x.label||'').includes(needle)); if(!ch) return;
+      if(label) ch.label=label;
+      if(effects) ch.effects=makeEffects(effects);
+      setTrait(ch,trait,note);
+    }
+    function addScene(id,baseScene,next,text,opts={}){
+      if(S[id]) return;
+      const base=S[baseScene]||{};
+      S[id]={
+        title:opts.title||base.title||'Variation', sub:opts.sub||TRAITS[opts.trait||'lucidite']?.name||'Variation', bg:opts.bg||base.bg, music:opts.music||base.music,
+        speaker:opts.speaker||'Narrateur', text, chars:opts.chars||base.chars||[], next:next||base.next
+      };
+    }
+    function addMatrixChoice(sceneId, cfg){
+      const sc=S[sceneId]; if(!sc) return;
+      if(!Array.isArray(sc.choices)) sc.choices=[];
+      if(sc.choices.some(ch=>ch&&ch.label===cfg.label)) return;
+      if(cfg.sceneId && cfg.text){
+        addScene(cfg.sceneId, sceneId, cfg.nextReturn||cfg.next||sc.next, cfg.text, cfg);
+      }
+      const ch={label:cfg.label,next:cfg.sceneId||cfg.next,effects:makeEffects(cfg.effects),note:'',flags:cfg.flags||{}};
+      if(cfg.requires) ch.requires=Object.assign({},cfg.requires);
+      if(cfg.items) ch.items=cfg.items.slice();
+      if(cfg.memories) ch.memories=cfg.memories.slice();
+      if(typeof cfg.pacteNaiah==='number') ch.pacteNaiah=cfg.pacteNaiah;
+      setTrait(ch,cfg.trait,cfg.note);
+      sc.choices.push(ch);
+    }
+    function normalizeChoice(ch,sceneId){
+      if(!ch || ch.__matrixV128) return;
+      ch.__matrixV128=true;
+      if(!ch.effects) ch.effects={};
+      const keys=effectKeys(ch.effects);
+      let trait=ch.matrix||inferTrait(ch)||dominantFromEffects(ch.effects);
+      const onlyLien=keys.length===1 && keys[0]==='lien';
+      if(onlyLien && !/bonus lien/i.test(ch.label||'')){
+        trait=/remerii|regard|voix|cape|main|silence/i.test((ch.label||'')+' '+(ch.note||''))?'sangfroid':'lucidite';
+        ch.effects[trait]=1;
+      }
+      if(trait==='lien' && !/bonus lien/i.test(ch.label||'')) trait=dominantFromEffects(ch.effects)||'sangfroid';
+      if(trait && TRAITS[trait]) setTrait(ch,trait,cleanNote(ch.note||''));
+      // Lucidité ne doit plus avaler toute la table : un choix standard donne rarement +2.
+      for(const k of ['audace','lucidite','sangfroid','resonance','lien']){
+        if(typeof ch.effects[k]==='number'){
+          const strategic=/choix stratégique|objet stratégique|souvenir stratégique/i.test((ch.label||'')+' '+(ch.note||''));
+          const max=(strategic && k!=='lien')?2:1;
+          if(ch.effects[k]>max) ch.effects[k]=max;
+          if(ch.effects[k]<-1) ch.effects[k]=-1;
+        }
+      }
+    }
+    function reqClassic(sceneId){
+      if(sceneId.startsWith('c6')||sceneId.startsWith('c7')) return {classic:30,res:20,lien:30};
+      if(sceneId.startsWith('c5')) return {classic:24,res:16,lien:24};
+      if(sceneId.startsWith('c4')) return {classic:16,res:10,lien:16};
+      if(sceneId.startsWith('c3')) return {classic:10,res:6,lien:10};
+      return {classic:8,res:5,lien:8};
+    }
+    function capReqObject(req,sceneId){
+      if(!req) return;
+      const r=reqClassic(sceneId);
+      for(const k of Object.keys(req)){
+        if(k==='resonance') req[k]=Math.min(req[k],r.res);
+        else if(k==='lien') req[k]=Math.min(req[k],r.lien);
+        else if(['audace','lucidite','sangfroid'].includes(k)) req[k]=Math.min(req[k],r.classic);
+      }
+    }
+    function applyReqs(ch,sceneId){
+      if(ch.requires) capReqObject(ch.requires,sceneId);
+      if(Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(r=>capReqObject(r,sceneId));
+      if(sceneId.startsWith('c6') && ch.requires){
+        for(const k of Object.keys(ch.requires)){
+          if(k==='resonance') ch.requires[k]=20;
+          else if(k==='lien') ch.requires[k]=30;
+          else if(['audace','lucidite','sangfroid'].includes(k)) ch.requires[k]=30;
+        }
+      }
+    }
+
+    // Réécriture ciblée : les intitulés deviennent des intentions de comportement.
+    rewriteChoice('s02','Te concentrer sur la voix de Remerii','sangfroid','Prendre la voix de Remerii comme point fixe','Hylee ne choisit pas la dépendance : elle choisit une ancre pour ne pas céder à la panique.',{sangfroid:1,lien:1});
+    rewriteChoice('s05','Demander pourquoi elle est si dure','lucidite','Chercher la faille sous la sévérité','Hylee comprend que la dureté de Remerii cache une peur plus ancienne.',{lucidite:1,lien:1});
+    rewriteChoice('s12','Demander ce qu’elle a senti','lucidite','Lire l’urgence dans la voix de Remerii','La question vise le danger, pas la désobéissance.',{lucidite:1});
+    rewriteChoice('s19','T’excuser immédiatement','sangfroid','Sortir de l’ombre sans trembler davantage','Hylee assume sa présence au lieu de se dissoudre dans la honte.',{sangfroid:1});
+    rewriteChoice('s21','Regarder Remerii avant de répondre','sangfroid','Chercher l’ancre avant la réponse','La proximité rassure Remerii, mais le geste reste d’abord une maîtrise de soi.',{sangfroid:1,lien:1});
+
+    rewriteChoice('c2_05','Avouer que cette force lui fait peur','sangfroid','Dire la peur sans la laisser décider','La vulnérabilité devient une preuve de stabilité, pas une faiblesse.',{sangfroid:1,lien:1});
+    rewriteChoice('c2_07','Rester parfaitement immobile','sangfroid','Laisser le gardien respirer le premier','Hylee résiste à l’envie de remplir le danger par un geste inutile.',{sangfroid:1,lucidite:1});
+    rewriteChoice('c2_23','Le trouver fascinant malgré toi','resonance','Sentir le danger derrière le sourire de Valurn','Hylee ne l’admire pas : elle perçoit une chaleur étrange sous le charme.',{resonance:1,lucidite:1});
+    rewriteChoice('c2_40','Laisser l’enthousiasme éclater','audace','Laisser Mir’Aldas rallumer quelque chose','Hylee ose montrer qu’elle veut encore croire à la magie.',{audace:1,resonance:1,lien:1});
+
+    rewriteChoice('c3_02','Répliquer que seule la magie compte','audace','Refuser d’être jugée par la robe','La pique défend Hylee, mais peut manquer de tact face à Remerii.',{audace:1,lien:-1});
+    rewriteChoice('c3_04','Laisser Remerii prendre la parole','sangfroid','Laisser Remerii porter l’entrée sans disparaître','Hylee apprend que reculer n’est pas toujours se soumettre.',{sangfroid:1,lien:1});
+    rewriteChoice('c3_10','Lire les runes des supports','lucidite','Lire les supports avant de désirer le plus beau bâton','L’observation protège Hylee d’un choix trop brillant.',{lucidite:1,resonance:1});
+    rewriteChoice('c3_35','Écouter sans détourner le regard','sangfroid','Recevoir la réponse sans l’interrompre','Hylee tient la confidence sans chercher à l’attraper trop fort.',{sangfroid:1,lien:1});
+
+    // Nouvelles fenêtres de personnalité, sans item ni souvenir ajouté.
+    addMatrixChoice('s02',{trait:'lucidite',label:'Observer les mains de Remerii avant d’agir',sceneId:'s02_v128_hands',effects:{lucidite:1,sangfroid:1},note:'Hylee cherche la méthode dans le geste avant d’essayer de briller.',text:`Hylee ne ferme pas les yeux tout de suite. Elle regarde plutôt les doigts de Remerii, la façon dont ils accompagnent l’air sans le contraindre.\n\nLa magie n’est peut-être pas une rivière à vaincre. C’est un mouvement à imiter assez longtemps pour qu’il devienne le sien.`,speaker:'Narrateur',sub:'Lucidité',nextReturn:'s03'});
+    addMatrixChoice('s05',{trait:'resonance',label:'Avouer que la magie tire au lieu d’obéir',sceneId:'s05_v128_call',effects:{resonance:1,lien:1},note:'Hylee décrit une sensation intime, que Remerii reconnaît comme rare.',text:`« Ce n’est pas que je refuse de l’écouter. »\n\nHylee serre ses doigts encore froids.\n\n« C’est comme si la magie tirait avant moi. Comme si elle connaissait déjà la forme et que j’arrivais en retard. »\n\nLe regard de Remerii change. Elle ne corrige pas. Elle écoute.\n\n« Alors commence par arriver avec elle. Pas après. »`,speaker:'Hylee',sub:'Résonance',nextReturn:'s06'});
+    addMatrixChoice('s19',{trait:'lucidite',label:'Comprendre que la projection teste aussi Remerii',sceneId:'s19_v128_test',effects:{lucidite:1,sangfroid:1},note:'La peur reste, mais Hylee voit que la scène vise deux personnes à la fois.',text:`Hylee ne répond pas tout de suite. Elle regarde Iriana, puis Remerii.\n\nLa princesse ne vient pas seulement chercher une apprentie. Elle appuie sur une fissure déjà ouverte chez sa mentor.\n\nCette pensée lui donne assez de calme pour ne pas parler trop vite.`,speaker:'Narrateur',sub:'Lucidité',nextReturn:'s20'});
+
+    addMatrixChoice('c2_05',{trait:'resonance',label:'Décrire la forêt comme une magie qui respire',sceneId:'c2_05_v128_breath',effects:{resonance:1,lien:1},note:'Remerii reconnaît une perception intuitive plutôt qu’une simple curiosité.',text:`« Elle ne brille pas seulement. »\n\nHylee garde les yeux sur les mousses bleutées près du ruisseau.\n\n« La forêt respire. Pas comme nous. Mais chaque lumière a un temps. Une attente. »\n\nRemerii la fixe avec une attention nouvelle.\n\n« Garde cette sensation. Ici, elle te sauvera peut-être plus vite qu’une formule. »`,speaker:'Hylee',sub:'Résonance',nextReturn:'c2_06'});
+    addMatrixChoice('c2_12',{trait:'sangfroid',label:'Rester droite malgré l’humiliation',sceneId:'c2_12_v128_stand',effects:{sangfroid:1,lucidite:1},note:'Hylee ne ravale pas la honte, elle l’empêche seulement de parler à sa place.',text:`Hylee sent la chaleur de la honte lui monter au visage. Elle pourrait baisser les yeux. Elle pourrait répondre.\n\nÀ la place, elle garde les épaules fixes. Pas par soumission. Par économie. Certains combats coûtent trop cher quand les portes ne sont pas encore franchies.`,speaker:'Narrateur',sub:'Sang-froid',nextReturn:'c2_13'});
+    addMatrixChoice('c2_23',{trait:'audace',label:'Répondre au sourire de Valurn par une pique',sceneId:'c2_23_v128_pique',effects:{audace:1,lucidite:1},note:'Hylee ose jouer une seconde, mais garde l’œil ouvert sur le danger.',text:`« Vous souriez beaucoup pour quelqu’un que tout le monde regarde comme un incendie mal éteint. »\n\nValurn éclate d’un rire bref.\n\n« C’est justement pour vérifier qui approche quand même. »\n\nHylee n’est pas certaine d’avoir gagné quoi que ce soit. Mais elle a au moins refusé d’être seulement impressionnée.`,speaker:'Hylee',sub:'Audace',nextReturn:'c2_24'});
+    addMatrixChoice('c2_40',{trait:'resonance',label:'Sentir Mir’Aldas comme un appel plutôt qu’une destination',sceneId:'c2_40_v128_call',effects:{resonance:1,sangfroid:1},note:'Le rêve ne déborde pas : il devient une direction intérieure.',text:`À l’évocation de Mir’Aldas, quelque chose en Hylee cesse de grincer.\n\nCe n’est pas de la joie pure. Plutôt une tension qui trouve enfin un fil. Comme si son propre froid reconnaissait, quelque part au loin, une ville capable de lui répondre.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c2_41'});
+
+    addMatrixChoice('c3_04',{trait:'audace',label:'Prendre la parole avant que la honte ne le fasse',sceneId:'c3_04_v128_voice',effects:{audace:1,sangfroid:1},note:'Hylee ne cherche pas à dominer la boutique, seulement à ne plus s’effacer.',text:`Hylee sent le vieux réflexe revenir : laisser Remerii parler, devenir petite, utile, silencieuse.\n\nElle inspire.\n\n« Je viens choisir de quoi tenir la route. Pas de quoi faire semblant d’appartenir à quelqu’un d’autre. »\n\nLa propriétaire relève les yeux. Remerii aussi. Cette fois, Hylee ne baisse pas les siens.`,speaker:'Hylee',sub:'Audace',nextReturn:'c3_05'});
+    addMatrixChoice('c3_10',{trait:'resonance',label:'Sentir quel bois cesse de résister sous ses doigts',sceneId:'c3_10_v128_wood',effects:{resonance:1,sangfroid:1},note:'Une option attrayante pour nourrir Résonance avant le choix stratégique du bâton.',text:`Hylee pose les doigts sur plusieurs manches sans chercher le plus impressionnant.\n\nCertains bois restent morts sous sa paume. D’autres vibrent trop vite. Puis il y en a un qui ne pousse pas, ne tire pas, ne commande rien. Il attend.\n\nElle retire la main, troublée. Le bon catalyseur ne crie pas toujours le plus fort.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c3_11'});
+    addMatrixChoice('c3_19',{trait:'resonance',label:'Écouter la neige que Remerii a laissée derrière elle',sceneId:'c3_19_v128_snow',effects:{resonance:2,sangfroid:1},note:'Résonance plus généreuse : Hylee retrouve une trace magique par sensation, pas par logique.',text:`Hylee ferme les yeux. La panique veut hurler. Elle lui demande de se taire une seconde.\n\nSous l’odeur humide de la forêt, il reste une froideur plus nette, presque familière. Pas un chemin. Une cicatrice dans l’air.\n\nRemerii a disparu, mais son passage n’a pas encore cessé de trembler.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c3_20_trace'});
+    addMatrixChoice('c3_35',{trait:'resonance',label:'Dire que son froid se calme quand Remerii parle vrai',sceneId:'c3_36_v128_res',effects:{resonance:1,lien:1},note:'Hylee formule l’intime par une sensation magique, sans transformer la scène en romance forcée.',text:`Hylee hésite, puis baisse les yeux vers ses mains.\n\n« Quand vous mentez pour me rassurer, ma magie gratte sous ma peau. Quand vous dites la vérité, même une vérité qui fait mal… elle se calme. »\n\nRemerii reste immobile. Sa réponse vient plus doucement.\n\n« Alors je vais essayer de ne pas te donner trop de mensonges confortables. »`,speaker:'Hylee',sub:'Résonance',nextReturn:'c3_37'});
+
+    addMatrixChoice('c4v_12',{trait:'resonance',label:'Sentir la dette comme une chaleur étrangère',sceneId:'c4v_12_v128_heat',effects:{resonance:1,lucidite:1},note:'Valurn comprend par sensation infernale plutôt que par calcul pur.',text:`Valurn cesse de sourire une seconde.\n\nLa dette dans cette pièce n’a pas seulement un prix. Elle a une chaleur. Quelque chose de sec, d’accroché, qui rappelle les pactes trop anciens pour avoir encore besoin d’encre.\n\n« Voilà qui sent la mauvaise affaire », murmure-t-il.\n\nEt, pour une fois, il ne plaisante pas tout à fait.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c4v_13'});
+    addMatrixChoice('c4v_45',{trait:'sangfroid',label:'Laisser Bellirith croire qu’elle mène la danse',sceneId:'c4v_45_v128_wait',effects:{sangfroid:1,lucidite:1},note:'La retenue devient une arme : ne pas répondre trop vite pour mieux lire l’emprise.',text:`Valurn garde son sourire en place, mais il cesse d’alimenter le jeu.\n\nBellirith aime les réactions immédiates. Les petites blessures visibles. Les colères prêtes à se vendre.\n\nAlors il lui offre le contraire : un silence poli, assez long pour qu’elle doive remplir elle-même l’espace.`,speaker:'Narrateur',sub:'Sang-froid',nextReturn:'c4v_46'});
+    addMatrixChoice('c4d_20',{trait:'sangfroid',label:'Porter la faute sans la transformer en ordre',sceneId:'c4d_20_v128_burden',effects:{sangfroid:1,lucidite:1},note:'Draven reste chef, mais laisse paraître l’homme sous l’armure.',text:`Draven pourrait aboyer une consigne. Ce serait plus simple. Plus habituel.\n\nÀ la place, il regarde les traces de la bataille et laisse la faute peser sans l’utiliser comme un fouet.\n\n« On avance », dit-il enfin. « Mais on n’oublie pas qui paie quand je me trompe. »`,speaker:'Draven',sub:'Sang-froid',nextReturn:'c4d_21'});
+    addMatrixChoice('c4d_29',{trait:'audace',label:'Refuser que Lineva décide seule du sacrifice',sceneId:'c4d_29_v128_refuse',effects:{audace:1,sangfroid:1},note:'Draven conteste frontalement, mais sans détruire l’autorité de Lineva.',text:`« Tu peux haïr mon absence autant que tu veux. »\n\nLa voix de Draven reste basse, presque usée.\n\n« Mais tu ne décideras pas seule que ta vie est une monnaie plus utile que les autres. Pas tant que je respire encore. »\n\nLineva détourne le regard. Ce n’est pas un pardon. Mais ce n’est plus tout à fait une fermeture.`,speaker:'Draven',sub:'Audace',nextReturn:'c4d_30'});
+
+    addMatrixChoice('c5_21',{trait:'sangfroid',label:'Ne pas remplir le silence de la bibliothèque',sceneId:'c5_21_v128_silence',effects:{sangfroid:1,lucidite:1},note:'Hylee accepte que certains lieux répondent mieux à ceux qui ne forcent pas.',text:`Hylee garde la bouche fermée.\n\nDans cette bibliothèque, même une question semble pouvoir devenir une faute de grammaire cosmique. Elle laisse donc le silence passer devant elle, comme on laisse un ancien entrer le premier.\n\nRemerii lui adresse un regard bref. Approbateur.`,speaker:'Narrateur',sub:'Sang-froid',nextReturn:'c5_22'});
+    addMatrixChoice('c5_30',{trait:'resonance',label:'Décrire le reflet comme une glace qui respire',sceneId:'c5_30_v128_breath',effects:{resonance:1,sangfroid:1},note:'Une option Résonance non stratégique, pour ne pas réserver le miroir aux seuls prérequis.',text:`Le reflet n’est pas simplement une image.\n\nHylee le sent dans son ventre avant de le comprendre : cette glace respire à contretemps, comme si l’avenir avait emprunté un souffle au présent.\n\nElle recule d’un demi-pas, non par peur, mais pour ne pas confondre appel et ordre.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c5_31'});
+
+    // Chapitre VI : alignement strict README, classiques 30, Résonance 20, Lien bonus 30.
+    Object.keys(S||{}).filter(id=>id.startsWith('c6_')).forEach(id=>{
+      const sc=S[id]; if(!sc||!Array.isArray(sc.choices)) return;
+      sc.choices.forEach(ch=>{
+        if(ch.requires){
+          for(const k of Object.keys(ch.requires)){
+            if(k==='resonance') ch.requires[k]=20;
+            else if(k==='lien') ch.requires[k]=30;
+            else if(['audace','lucidite','sangfroid'].includes(k)) ch.requires[k]=30;
+          }
+        }
+      });
+    });
+    rewriteChoice('c6_18','Reprendre la conversation sans appuyer le geste','sangfroid','Reprendre la conversation sans enfermer Remerii dans le geste','Hylee respecte le refuge de Remerii : le lien n’est pas forcé.',{sangfroid:1});
+    rewriteChoice('c6_25','Garder la plaisanterie et laisser le moment respirer','audace','Garder la plaisanterie pour laisser le moment respirer','L’humour protège la douceur sans l’annuler.',{audace:1,sangfroid:1});
+
+    // Chapitre VII : pacte Naïah corrigé et choix clarifiés comme tactiques de duel mental.
+    rewriteChoice('c7_02','Observer la brume avant de répondre','lucidite','Lire la brume avant de nourrir le jeu de Naïah','Valurn cherche la règle de la scène avant de choisir son masque.',{lucidite:1});
+    rewriteChoice('c7_02','Garder la main près des flammes','sangfroid','Garder la main près des flammes sans offrir une menace gratuite','Le calme protège Valurn, mais refroidit l’intérêt de Naïah.',{sangfroid:1});
+    rewriteChoice('c7_07','Rester sobre','sangfroid','Ne pas provoquer gratuitement la chose qui sourit dans la forêt','Valurn tient le rythme sans lui abandonner la scène.',{sangfroid:1});
+    rewriteChoice('c7_10','Lui proposer une sortie','sangfroid','Lui offrir une porte sans promettre le salut','La proposition reste stable : pas de sermon, pas de piège évident.',{sangfroid:1,lucidite:1});
+    rewriteChoice('c7_10','mordant','audace','Rester mordant sans lui donner sa gorge','La provocation devient une lame courte, pas une perte de contrôle.',{audace:1,sangfroid:1});
+    if(typeof c7EnsureDuel==='function'){
+      const oldEnsure=c7EnsureDuel;
+      c7EnsureDuel=function(phase='duel1'){
+        const d=oldEnsure(phase);
+        if(typeof d.step!=='number'||Number.isNaN(d.step)) d.step=0;
+        if(!Array.isArray(d.history)) d.history=[];
+        if(typeof d.waiting!=='boolean') d.waiting=false;
+        if(!('last' in d)) d.last=null;
+        if(!('qte' in d)) d.qte=null;
+        if(!d.startStats) d.startStats={...(state.stats||{})};
+        return d;
+      };
+    }
+
+    // Duel de Saidin : chaque réponse gagne une couleur nette, sans transformer Lien en bouton romance.
+    if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      C5_SAGE_DUEL_STEPS.forEach((step,idx)=>{
+        (step.choices||[]).forEach(ch=>{
+          const trait=inferTrait(ch)||dominantFromEffects(ch.effects||{});
+          if(trait) setTrait(ch,trait,cleanNote(ch.note||ch.reaction||''));
+          applyReqs(ch,'c5_sage');
+          if(ch.effects && ch.effects.lucidite>1) ch.effects.lucidite=1;
+          if(ch.requiresAny) ch.requiresAny.forEach(r=>capReqObject(r,'c5_sage'));
+        });
+      });
+    }
+
+    // Pass final : uniformisation des notes, prérequis et rôle du Lien.
+    Object.keys(S||{}).forEach(id=>{
+      const sc=S[id]; if(!sc||!Array.isArray(sc.choices)) return;
+      sc.choices.forEach(ch=>{ normalizeChoice(ch,id); applyReqs(ch,id); });
+    });
+  }catch(e){ console.warn('Matrices de personnalité v0.128 non appliquées',e); }
+})();
+
 setupMenuParallax();
 applyMobileUI();
 updateProgressUI(); updateDevUI();
 showDisclaimer();
 
 
-/* v0.126 · Chapitre VII : doublons nettoyés (HTML + assets) */
+/* v0.128 · Matrices de personnalité + rééquilibrage global + correctif duel Naïah */
 </script>
 
 <a id="bugReportBtn" class="bugReportBtn hidden" href="#" onclick="openBugReport(event)" aria-label="Signaler un bug par email">Signaler un bug</a>
