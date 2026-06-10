@@ -1802,7 +1802,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.132 · Cinq profils équilibrés</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.136 · Correctif scènes et notes</div>
       </section>
     </div>
   </main>
@@ -16952,7 +16952,7 @@ document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSo
     patchChoice('c3_14','préparer un vrai nécessaire',ch=>{ ch.requires={audace:7,sangfroid:7}; ch.effects={audace:1,sangfroid:1,lucidite:1}; ch.note='Objet stratégique · Penser comme une voyageuse, pas seulement comme une apprentie mage.'; });
     patchChoice('c3_14','Demander ce qu’il risque',ch=>{ ch.effects={lucidite:1,sangfroid:1}; ch.note='Comprendre sa peur sans donner toute la récompense à la seule Lucidité.'; });
     addChoice('c3_16', {label:'Serrer le bâton et vérifier s’il répond vraiment',next:'c3_17_arcatraz',effects:{resonance:1,sangfroid:1},note:'Résonance · Le catalyseur n’est pas qu’un outil : il devient une présence à surveiller.'});
-    addChoice('c3_19', {label:'Fermer les yeux et écouter la neige résiduelle',next:'c3_20_trace',effects:{resonance:2,sangfroid:1},note:'Résonance · La disparition de Remerii a laissé une vibration dans le froid.'});
+    addChoice('c3_19', {label:'Compter trois respirations avant d’agir',next:'c3_20_lesson',effects:{sangfroid:1,lucidite:1},note:'Sang-froid · Hylee laisse passer le premier choc et transforme la panique en méthode.'});
     patchChoice('c3_25','survie, pas ton obéissance',ch=>{ ch.requires={sangfroid:8,lucidite:8}; ch.effects={sangfroid:1,lucidite:1,lien:1}; ch.note='Souvenir stratégique · La colère reste là, mais Hylee comprend le vrai test.'; });
     patchChoice('c3_30','prendre la présence de Medig au sérieux',ch=>{ ch.requires={lien:8,resonance:5}; ch.effects={resonance:2,lucidite:1}; ch.note='Objet stratégique · La chouette n’est peut-être pas un hasard. La scène insiste davantage sur la plume obtenue.'; });
 
@@ -17142,7 +17142,13 @@ document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSo
 
     addMatrixChoice('c3_04',{trait:'audace',label:'Prendre la parole avant que la honte ne le fasse',sceneId:'c3_04_v128_voice',effects:{audace:1,sangfroid:1},note:'Hylee ne cherche pas à dominer la boutique, seulement à ne plus s’effacer.',text:`Hylee sent le vieux réflexe revenir : laisser Remerii parler, devenir petite, utile, silencieuse.\n\nElle inspire.\n\n« Je viens choisir de quoi tenir la route. Pas de quoi faire semblant d’appartenir à quelqu’un d’autre. »\n\nLa propriétaire relève les yeux. Remerii aussi. Cette fois, Hylee ne baisse pas les siens.`,speaker:'Hylee',sub:'Audace',nextReturn:'c3_05'});
     addMatrixChoice('c3_10',{trait:'resonance',label:'Sentir quel bois cesse de résister sous ses doigts',sceneId:'c3_10_v128_wood',effects:{resonance:1,sangfroid:1},note:'Une option attrayante pour nourrir Résonance avant le choix stratégique du bâton.',text:`Hylee pose les doigts sur plusieurs manches sans chercher le plus impressionnant.\n\nCertains bois restent morts sous sa paume. D’autres vibrent trop vite. Puis il y en a un qui ne pousse pas, ne tire pas, ne commande rien. Il attend.\n\nElle retire la main, troublée. Le bon catalyseur ne crie pas toujours le plus fort.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c3_11'});
-    addMatrixChoice('c3_19',{trait:'resonance',label:'Écouter la neige que Remerii a laissée derrière elle',sceneId:'c3_19_v128_snow',effects:{resonance:2,sangfroid:1},note:'Résonance plus généreuse : Hylee retrouve une trace magique par sensation, pas par logique.',text:`Hylee ferme les yeux. La panique veut hurler. Elle lui demande de se taire une seconde.\n\nSous l’odeur humide de la forêt, il reste une froideur plus nette, presque familière. Pas un chemin. Une cicatrice dans l’air.\n\nRemerii a disparu, mais son passage n’a pas encore cessé de trembler.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c3_20_trace'});
+    addMatrixChoice('c3_19',{trait:'resonance',label:'Sentir sa propre glace se hérisser sous la peur',sceneId:'c3_19_v136_inner_frost',effects:{resonance:1,sangfroid:1},note:'La magie d’Hylee réagit à l’absence avant qu’elle ne comprenne quoi que ce soit.',text:`Hylee ferme les yeux. Pas pour chercher Remerii. Pour empêcher sa propre magie de bondir avant elle.
+
+Le froid monte dans ses doigts, vif, hérissé, prêt à remplir le vide avec n’importe quelle forme. Hylee le sent comme on sent un animal tirer sur sa laisse.
+
+« Pas encore », souffle-t-elle.
+
+Ce n’est pas une réponse. C’est un premier refus de paniquer.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c3_20_lesson'});
     addMatrixChoice('c3_35',{trait:'resonance',label:'Dire que son froid se calme quand Remerii parle vrai',sceneId:'c3_36_v128_res',effects:{resonance:1,lien:1},note:'Hylee formule l’intime par une sensation magique, sans transformer la scène en romance forcée.',text:`Hylee hésite, puis baisse les yeux vers ses mains.\n\n« Quand vous mentez pour me rassurer, ma magie gratte sous ma peau. Quand vous dites la vérité, même une vérité qui fait mal… elle se calme. »\n\nRemerii reste immobile. Sa réponse vient plus doucement.\n\n« Alors je vais essayer de ne pas te donner trop de mensonges confortables. »`,speaker:'Hylee',sub:'Résonance',nextReturn:'c3_37'});
 
     addMatrixChoice('c4v_12',{trait:'resonance',label:'Sentir la dette comme une chaleur étrangère',sceneId:'c4v_12_v128_heat',effects:{resonance:1,lucidite:1},note:'Valurn comprend par sensation infernale plutôt que par calcul pur.',text:`Valurn cesse de sourire une seconde.\n\nLa dette dans cette pièce n’a pas seulement un prix. Elle a une chaleur. Quelque chose de sec, d’accroché, qui rappelle les pactes trop anciens pour avoir encore besoin d’encre.\n\n« Voilà qui sent la mauvaise affaire », murmure-t-il.\n\nEt, pour une fois, il ne plaisante pas tout à fait.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c4v_13'});
@@ -17411,7 +17417,7 @@ Valurn sourit enfin.
 
 
 
-/* v0.130 · Correctifs bugs + équilibrage cinq matrices */
+/* Correctifs bugs + équilibrage cinq matrices */
 (function applyFullBalanceFiveProfilesV130(){
   try{
     if(window.__sylviniaV130FullBalance) return;
@@ -17516,14 +17522,17 @@ Valurn sourit enfin.
         const mixed=Object.keys(ch.effects).filter(k=>STAT_KEYS.includes(k) && ch.effects[k]>0).length>=2;
         if(mixed && !clearlySang && ch.effects.sangfroid>0){
           delete ch.effects.sangfroid;
-          ch.note=(ch.note||'')+' · v0.130 : ce choix nourrit surtout sa couleur principale.';
         }
       });
     });
 
     // Ajouter des choix attrayants qui aident les profils faibles sans créer de nouveaux items/souvenirs.
-    addChoice('c2_10', {label:'Répondre à Remerii par une audace minuscule : « Je survivrai à votre patience. »', next:'c2_10_audace', effects:{audace:1,lien:1}, note:'Audace · Une plaisanterie discrète, assez vive pour exister sans briser la tension.'});
-    addScene('c2_10_audace', {title:'Sur la route', sub:'Une insolence presque sage', bg:(scene('c2_10')&&scene('c2_10').bg)||'c2_bg_route', music:(scene('c2_10')&&scene('c2_10').music)||'music_c5_miraldas', speaker:'Narrateur', text:`Remerii lui adresse un regard de biais.\n\n« Voilà une phrase dangereuse. Elle suppose que ma patience existe. »\n\nHylee pince les lèvres pour ne pas sourire trop fort. Ce n’est pas grand-chose : une étincelle, un souffle. Mais pour une jeune femme qui a si longtemps avalé ses réponses, c’est déjà une victoire.`, chars:cloneChars('c2_10'), next:(scene('c2_10')&&scene('c2_10').next)||'c2_11'});
+    addChoice('c2_09', {label:'Répondre à Remerii par une audace minuscule : « Je survivrai à votre patience. »', next:'c2_09_audace', effects:{audace:1,lien:1}, note:'Audace · Une plaisanterie discrète, assez vive pour exister sans briser la tension.'});
+    addScene('c2_09_audace', {title:'Après le gardien', sub:'Une insolence presque sage', bg:(scene('c2_09')&&scene('c2_09').bg)||'bg_forest_decor', music:(scene('c2_09')&&scene('c2_09').music)||'music_wild', speaker:'Narrateur', text:`Remerii lui adresse un regard de biais.
+
+« Voilà une phrase dangereuse. Elle suppose que ma patience existe. »
+
+Hylee pince les lèvres pour ne pas sourire trop fort. Ce n’est pas grand-chose : une étincelle, un souffle. Mais pour une jeune femme qui a si longtemps avalé ses réponses, c’est déjà une victoire.`, chars:cloneChars('c2_09'), next:(scene('c2_09')&&scene('c2_09').next)||'c2_10'});
 
     addChoice('c5_16', {label:'Laisser Remerii voir qu’elle a peur, sans lui demander de la porter', next:'c5_16_lien_v130', effects:{lien:1,sangfroid:1}, note:'Lien Remerii · Hylee accepte une vulnérabilité maîtrisée : proche, mais pas dépendante.'});
     addScene('c5_16_lien_v130', {title:'Mir’Aldas', sub:'Peur tenue à deux mains', bg:(scene('c5_16')&&scene('c5_16').bg)||'c5_salle_miroirs', music:(scene('c5_16')&&scene('c5_16').music)||'music_c5_miraldas', speaker:'Narrateur', text:`Hylee ne masque pas totalement le tremblement de ses doigts. Elle ne l’offre pas non plus comme une demande de secours.\n\nRemerii le voit. Bien sûr qu’elle le voit.\n\nElle ne commente pas. Elle reste simplement assez proche pour que le silence devienne une réponse.`, chars:cloneChars('c5_16'), next:(scene('c5_16')&&scene('c5_16').next)||'c5_17'});
@@ -17561,7 +17570,7 @@ Valurn sourit enfin.
       startChapter7=function(){ oldStartChapter7(); if(state && Array.isArray(state.journalFragments)){ state.journalFragments=[...new Set(state.journalFragments.map(k=>k==='ch8'?'ch7':(k==='ch7'?'ch6':k)))]; } };
     }
 
-  }catch(e){ console.warn('Correctifs v0.130 non appliqués', e); }
+  }catch(e){ console.warn('Correctifs complémentaires non appliqués', e); }
 })();
 
 
@@ -17667,6 +17676,260 @@ Valurn sourit enfin.
     makeValid(findSageChoice(4,'Celle qui sauve le plus de vies'), `« Réponse brutale », murmure Saidin. « Elle sauve parfois des royaumes, et détruit parfois ceux qui la prononcent. Mais ce n’est pas une fuite. »`);
     makeValid(findSageChoice(5,'Pour sauver le monde'), `Saidin laisse un long silence s’installer. « Une réponse trop grande pour une seule gorge. Mais elle tient debout. Pour aujourd’hui, cela suffit. »`);
   }catch(e){ console.warn('Correctifs v0.132 non appliqués', e); }
+})();
+
+
+/* v0.133 · Progression anti-verrouillage : les valeurs se travaillent librement, les prérequis récompensent seulement les variations premium */
+(function applyAntiLockProgressionV133(){
+  try{
+    if(window.__sylviniaV133AntiLock) return;
+    window.__sylviniaV133AntiLock = true;
+    const VALUE_KEYS=['audace','sangfroid','lucidite','resonance','lien'];
+    const MAIN_KEYS=['audace','sangfroid','lucidite','resonance'];
+    const PREMIUM_RE=/choix\s+strat[ée]gique|bonus\s+lien|bonus\b|objet\s+strat[ée]gique|souvenir\s+strat[ée]gique|r[ée]compense|plume|b[âa]ton\s+en\s+cerisier|carnet\s+de\s+voyage|[ée]clat\s+chronal|sceau\s+de\s+forthaven|marque\s+des\s+calciterres/i;
+    const TRAIT_LABELS={audace:'Audace',sangfroid:'Sang-froid',lucidite:'Lucidité',resonance:'Résonance',lien:'Lien Remerii'};
+    function isChoicePremium(ch){
+      if(!ch) return false;
+      if(ch.items && ch.items.length) return true;
+      if(ch.memories && ch.memories.length) return true;
+      const txt=String(ch.label||'')+' '+String(ch.note||'');
+      if(PREMIUM_RE.test(txt)) return true;
+      const flags=Object.keys(ch.flags||{}).join(' ');
+      return /souvenir|strateg|strat|reward|item|reflet_grave|serment|fissur|thazran|bellirith/.test(flags.toLowerCase());
+    }
+    function dominantTrait(ch){
+      const e=ch&&ch.effects||{};
+      let best=null,score=-99;
+      for(const k of VALUE_KEYS){
+        const v=Number(e[k]||0);
+        if(v>score){score=v; best=k;}
+      }
+      return score>0?best:null;
+    }
+    function appendNote(ch, extra){
+      if(!ch||!extra) return;
+      if(String(ch.note||'').includes(extra)) return;
+      ch.note=(ch.note?String(ch.note).replace(/\s+$/,'')+' · ':'')+extra;
+    }
+    function relaxRegularChoice(ch, sceneId){
+      if(!ch || !ch.requires || isChoicePremium(ch)) return;
+      const had=Object.assign({}, ch.requires);
+      const dom=dominantTrait(ch);
+      // Règle centrale : un choix qui exprime une personnalité ne doit pas exiger cette personnalité.
+      // Il sert à la construire. Les scènes bonus/stratégiques gardent leurs verrous.
+      for(const k of Object.keys(ch.requires)){
+        if(k===dom || (ch.effects && Number(ch.effects[k]||0)>0)) delete ch.requires[k];
+      }
+      // Les prérequis secondaires d'un choix non premium sont seulement des garde-fous doux.
+      for(const k of Object.keys(ch.requires||{})){
+        if(k==='resonance') ch.requires[k]=Math.min(Number(ch.requires[k]||0),12);
+        else if(VALUE_KEYS.includes(k)) ch.requires[k]=Math.min(Number(ch.requires[k]||0),16);
+      }
+      if(!ch.requires || Object.keys(ch.requires).length===0) delete ch.requires;
+      if(JSON.stringify(had)!==JSON.stringify(ch.requires||{})){
+        appendNote(ch,'Progression libre : ce choix permet de travailler la valeur, il ne la récompense pas seulement.');
+      }
+    }
+    function softenPremium(ch, sceneId){
+      if(!ch || !ch.requires || !isChoicePremium(ch)) return;
+      const id=String(sceneId||'');
+      for(const k of Object.keys(ch.requires)){
+        const v=Number(ch.requires[k]||0);
+        if(k==='resonance'){
+          if(/^c4/.test(id)) ch.requires[k]=Math.min(v,10);
+          else if(/^c5/.test(id)) ch.requires[k]=Math.min(v,14);
+          else if(/^c6/.test(id)) ch.requires[k]=Math.min(v,20);
+          else if(/^c7/.test(id)) ch.requires[k]=Math.min(v,20);
+        }else if(k==='lien'){
+          if(/^c6_18/.test(id)) ch.requires[k]=Math.min(v,20);
+          else if(/^c6_25/.test(id)) ch.requires[k]=Math.min(v,23);
+          else if(/^c6_30/.test(id)) ch.requires[k]=Math.min(v,28);
+          else ch.requires[k]=Math.min(v,30);
+        }else if(VALUE_KEYS.includes(k)){
+          if(/^c4/.test(id)) ch.requires[k]=Math.min(v,10);
+          else if(/^c5/.test(id)) ch.requires[k]=Math.min(v,18);
+          else if(/^c6/.test(id)) ch.requires[k]=Math.min(v,26);
+          else if(/^c7/.test(id)) ch.requires[k]=Math.min(v,26);
+        }
+      }
+      appendNote(ch,'Variation premium : le prérequis récompense une orientation déjà affirmée.');
+    }
+    function patchAllChoices(){
+      Object.keys(S||{}).forEach(id=>{
+        const sc=S[id];
+        if(!sc || !Array.isArray(sc.choices) || !/^c[4567]/.test(id)) return;
+        sc.choices.forEach(ch=>{ relaxRegularChoice(ch,id); softenPremium(ch,id); });
+      });
+    }
+    function scene(id){return S&&S[id];}
+    function cloneChars(id){return (scene(id)&&scene(id).chars)?scene(id).chars:[];}
+    function addScene(id, cfg){ if(!scene(id)) S[id]=cfg; }
+    function addChoice(scId, ch){
+      const sc=scene(scId); if(!sc) return;
+      if(!Array.isArray(sc.choices)) sc.choices=[];
+      if(sc.choices.some(x=>x && x.label===ch.label)) return;
+      sc.choices.push(ch);
+    }
+    function returnAfter(scId){
+      const sc=scene(scId); if(!sc||!Array.isArray(sc.choices)) return sc&&sc.next;
+      for(const ch of sc.choices){ if(ch && ch.next && scene(ch.next) && scene(ch.next).next) return scene(ch.next).next; }
+      return sc.choices[0] && sc.choices[0].next;
+    }
+    function addBridge(scId, trait, label, text){
+      const sc=scene(scId); if(!sc) return;
+      const id=scId+'_bridge_'+trait+'_v133';
+      const next=returnAfter(scId);
+      addScene(id,{title:sc.title||'Variation',sub:'Progression libre',bg:sc.bg,music:sc.music,speaker:'Narrateur',text,chars:cloneChars(scId),next});
+      const effects={}; effects[trait]=1;
+      if((trait==='audace' || trait==='resonance') && /remerii|terrasse|cape|cristal/i.test((sc.title||'')+' '+(sc.sub||''))) effects.lien=1;
+      addChoice(scId,{label,next:id,effects,note:`${TRAIT_LABELS[trait]} · Progression libre : Hylee peut encore explorer cette facette sans être déjà spécialisée.`});
+    }
+
+    patchAllChoices();
+
+    // Chapitre VI : conserver les scènes premium, mais rendre la parenthèse de Mir’Aldas capable de faire évoluer une Hylee encore hésitante.
+    addBridge('c6_06','audace','Répondre avec une insolence prudente',`Hylee relève les yeux avec un courage plus petit qu'une bravade, mais assez net pour exister.
+
+« Si j'étais vraiment insupportable, vous m'auriez déjà abandonnée dans une bibliothèque. »
+
+Remerii laisse échapper un souffle qui ressemble presque à un rire.
+
+Ce n'est pas une grande victoire. C'est une porte entrouverte dans la timidité.`);
+    addBridge('c6_06','resonance','Chercher ce que le souvenir fait vibrer dans l’air',`Hylee n'essaie pas de comprendre tout de suite. Elle écoute d'abord.
+
+Le souvenir de Remerii ne sonne pas comme un récit terminé. Il tremble encore dans l'air, comme une note que la ville n'a jamais rangée.
+
+Hylee garde cette sensation pour elle, fragile, mais réelle.`);
+    addBridge('c6_10','sangfroid','Recevoir le cristal sans promettre plus qu’elle ne peut tenir',`Hylee prend le cristal à deux mains.
+
+Elle voudrait dire quelque chose de brillant. Elle choisit mieux : ne pas mentir.
+
+« Je ne sais pas encore m'en servir correctement. Alors je vais commencer par ne pas faire semblant. »
+
+Remerii hoche la tête. C'est moins spectaculaire qu'une promesse, mais plus solide.`);
+    addBridge('c6_10','lucidite','Demander ce que le cristal ne peut pas trouver',`Hylee observe le cristal au lieu de se contenter de son éclat.
+
+« Et qu'est-ce qu'il ne peut pas suivre ? Les gens qui se cachent ? Les sorts trop anciens ? Les mensonges ? »
+
+Remerii semble satisfaite de la question. Hylee commence à comprendre que connaître les limites d'un outil, c'est déjà apprendre à s'en servir.`);
+    addBridge('c6_14','audace','Transformer le compliment en sourire risqué',`Le compliment de Remerii touche juste assez pour faire peur.
+
+Alors Hylee choisit de sourire avant de reculer.
+
+« Vous savez, à force de dire ce genre de choses, vous allez finir par me rendre prétentieuse. »
+
+Remerii ne répond pas tout de suite. Son regard suffit à dire que le risque était acceptable.`);
+    addBridge('c6_14','sangfroid','Accepter le compliment sans se cacher complètement',`Hylee baisse presque les yeux. Presque.
+
+Elle laisse la gêne traverser son visage sans l'effacer par une plaisanterie.
+
+« Merci. Je crois que j'avais besoin de l'entendre, même si je ne sais pas encore quoi en faire. »
+
+La phrase reste simple. Pour Hylee, c'est déjà beaucoup.`);
+    addBridge('c6_17','lucidite','Comprendre que la cape parle à la place de Remerii',`Hylee regarde la cape avant de regarder Remerii.
+
+Le geste dit ce que la mage n'a pas envie de formuler : attention, inquiétude, et cette pudeur têtue qui habille tout en consigne pratique.
+
+Hylee n'appuie pas sur la faille. Elle la voit, simplement.`);
+    addBridge('c6_17','resonance','Sentir la chaleur de la cape comme un sort retenu',`La cape n'est pas seulement chaude.
+
+Hylee y sent un reste de magie, discret, presque embarrassé d'être là. Pas un grand enchantement. Une attention qui a pris la forme la plus acceptable pour Remerii.
+
+Hylee serre le tissu sans rien dire.`);
+    addBridge('c6_21','sangfroid','Laisser à Remerii le temps de choisir ses mots',`Hylee sent la question prête à sortir trop vite.
+
+Elle la retient.
+
+Remerii n'a pas besoin d'être tirée hors d'elle-même comme une réponse d'examen. Elle a besoin d'un espace où venir si elle le décide.
+
+Pour une fois, Hylee laisse le silence travailler à sa place.`);
+    addBridge('c6_21','resonance','Décrire la solitude comme une pièce trop vaste',`Hylee cherche la phrase la moins brutale.
+
+« Parfois, quand vous vous taisez, j'ai l'impression d'être dans une pièce immense où chaque pas résonne trop fort. »
+
+Remerii détourne les yeux vers le dôme. Elle ne demande pas à Hylee de retirer l'image.`);
+    addBridge('c6_26','lien','Avouer qu’elle est bien ici, sans demander davantage',`Hylee ne transforme pas l'instant en promesse.
+
+Elle dit seulement :
+
+« Je suis bien ici. »
+
+Rien de plus. Rien qui enferme Remerii. Rien qui force la nuit à devenir autre chose qu'une halte.
+
+Mais le silence qui suit n'a pas le même poids.`);
+    addBridge('c6_26','lucidite','Comprendre que rester est déjà une réponse',`Hylee comprend que certaines demandes ne ressemblent pas à des demandes.
+
+Rester, ce soir, n'est pas passif. C'est un choix silencieux, une manière de dire qu'elle ne fuit pas ce qui change entre elles.
+
+Elle laisse cette vérité exister sans l'épingler avec de grands mots.`);
+
+    // Chapitre IV : les choix stratégiques restent verrouillés, mais chaque branche garde au moins une voie de progression par tempérament.
+    addBridge('c4v_18','resonance','Sentir le rituel avant d’en chercher la logique',`Valurn cesse de regarder le rituel comme une énigme à résoudre.
+
+Il l'écoute comme une chaleur qui rampe dans les lignes. Quelque chose répond au sang, au nom de Bhaal, à la vieille odeur des Calciterres.
+
+Ce n'est pas une preuve. C'est une alerte.`);
+    addBridge('c4v_33','audace','Sourire sans accepter l’invitation de Naïah',`Valurn laisse paraître un sourire qui ne promet rien.
+
+Naïah aime les portes entrouvertes. Il lui en offre une peinte sur un mur.
+
+« Tu as l'air dangereuse. Je vais essayer de ne pas te flatter en le disant trop fort. »
+
+Elle rit. C'est peut-être pire que si elle avait attaqué.`);
+    addBridge('c4d_18','lucidite','Entendre ce que Lineva ne dit pas',`Draven écoute le rapport, puis ce qui se cache dessous.
+
+Lineva ne demande pas seulement des ordres. Elle cherche à savoir s'il reviendra assez entier pour les donner encore.
+
+Draven ne sait pas lui offrir cette certitude. Mais il peut au moins cesser de faire semblant de ne pas l'avoir entendue.`);
+    addBridge('c4d_26','audace','Demander sans arrondir la vérité',`Draven n'habille pas sa demande d'une jolie formule.
+
+Il sait ce qu'il exige. Il sait ce que cela coûte.
+
+Alors il parle droit, comme on pose une lame à plat sur une table : visible, lourde, impossible à confondre avec un ruban.`);
+
+    // Petit filet de sécurité : aucune scène de choix entre IV et VII ne doit être composée uniquement de choix verrouillés.
+    Object.keys(S||{}).forEach(id=>{
+      if(!/^c[4567]/.test(id)) return;
+      const sc=S[id]; if(!sc||!Array.isArray(sc.choices)||!sc.choices.length) return;
+      const allLocked=sc.choices.every(ch=>ch && ch.requires);
+      if(allLocked){
+        const next=returnAfter(id);
+        const sid=id+'_safety_v133';
+        addScene(sid,{title:sc.title||'Progression',sub:'Issue libre',bg:sc.bg,music:sc.music,speaker:'Narrateur',text:`Hylee ne trouve pas la réponse brillante, ni la réponse parfaite.
+
+Elle trouve seulement une manière de rester présente dans la scène. Ce n'est pas assez pour ouvrir les chemins les plus rares, mais c'est assez pour continuer à grandir.`,chars:cloneChars(id),next});
+        addChoice(id,{label:'Rester présente, même sans réponse parfaite',next:sid,effects:{sangfroid:1},note:'Sang-froid · Filet de progression : aucune scène ne doit enfermer le joueur hors de toute évolution.'});
+      }
+    });
+  }catch(e){ console.warn('Correctifs v0.133 anti-verrouillage non appliqués', e); }
+})();
+
+
+/* v0.136 · Épreuve de Saidin : route Résonance viable sans trahir le thème */
+(function applySaidinResonanceRouteV134(){
+  try{
+    if(window.__sylviniaV134SaidinResonance) return;
+    window.__sylviniaV134SaidinResonance=true;
+    if(typeof C5_SAGE_DUEL_STEPS==='undefined' || !Array.isArray(C5_SAGE_DUEL_STEPS)) return;
+    function add(stepIndex,ch){
+      const step=C5_SAGE_DUEL_STEPS[stepIndex]; if(!step) return;
+      if(!Array.isArray(step.choices)) step.choices=[];
+      if(!step.choices.some(x=>x && x.label===ch.label)) step.choices.push(ch);
+    }
+    function patch(fragment,fn){
+      C5_SAGE_DUEL_STEPS.forEach(step=>(step.choices||[]).forEach(ch=>{ if(String(ch.label||'').includes(fragment)) fn(ch); }));
+    }
+    add(0,{label:'Ce que la peur fait vibrer. Elle montre où la magie ment le moins.',clarity:1,requires:{resonance:14},effects:{resonance:1,sangfroid:1},reaction:`Saidin observe Hylee comme si elle venait de nommer une corde invisible. « Curieux. Tu n'expliques pas la peur, tu l'écoutes. Ce n'est pas suffisant pour gouverner le temps, mais c'est suffisant pour ne pas lui mentir. »`});
+    add(1,{label:'Quand on n’écoute plus le rythme naturel d’une chose vivante.',clarity:1,requires:{resonance:14},effects:{resonance:1,lucidite:1},reaction:`« Voilà une réponse de mage plus que de stratège », répond Saidin. « Le temps n'est pas vivant comme toi, mais il déteste qu'on le traite comme un meuble. »`});
+    add(2,{label:'Un appel. Mais répondre à un appel n’oblige pas à lui appartenir.',clarity:1,requires:{resonance:16},effects:{resonance:2},reaction:`Les miroirs frémissent. Saidin sourit à peine. « Bien. Tu peux entendre sans obéir. C'est précisément ce qui sépare une mage d'une possédée. »`});
+    add(3,{label:'Une présence qui accorde mon souffle quand le monde devient trop bruyant.',clarity:1,requires:{resonance:16},effects:{resonance:1,lien:1},reaction:`Remerii ne dit rien, mais son silence change de température. Saidin tapote le bois de sa canne. « Les ancres ne sont pas toujours des chaînes. Encore faut-il savoir quand les lâcher. »`});
+    add(4,{label:'Celle qui n’arrache pas la magie à ce qu’elle prétend sauver.',clarity:1,requires:{resonance:16},effects:{resonance:1,sangfroid:1},reaction:`« Une morale par sensation », murmure Saidin. « Très instable. Mais aujourd'hui, elle tient debout. »`});
+    add(5,{label:'Pour comprendre pourquoi la magie m’appelle sans lui donner le droit de me posséder.',clarity:1,requires:{resonance:16},effects:{resonance:1,lucidite:1},reaction:`Saidin ferme les yeux une seconde. « Voilà une raison dangereuse, mais honnête. Les appels les plus doux font parfois les cages les plus solides. »`});
+    // Les anciennes réponses Résonance tentantes restent risquées, mais ne doivent plus condamner mécaniquement toute route sensorielle.
+    patch('Si vous pouvez voler du temps',ch=>{ ch.clarity=1; ch.effects={resonance:1,lucidite:1}; ch.reaction=`Saidin grimace. « Mauvais instinct, bonne question. Voler le temps n'est pas toujours une solution, mais tu as senti qu'il pouvait répondre. Maintenant, apprends pourquoi il ne faut pas toujours l'appeler. »`; });
+    patch('Une dette. Si ce futur existe',ch=>{ delete ch.fracture; ch.clarity=1; ch.effects={resonance:1,sangfroid:1}; ch.reaction=`« Non », tranche Saidin. Puis il nuance : « Mais tu as compris qu'un futur peut peser avant d'arriver. Ne confonds pas ce poids avec une obligation. »`; });
+    patch('Je veux ce pouvoir',ch=>{ ch.clarity=1; ch.effects={resonance:1,audace:1}; ch.reaction=`Saidin rit sans joie. « Au moins, tu ne mens pas. C'est une réponse dangereuse, mais une réponse que l'on peut corriger. Les mensonges, eux, pourrissent plus vite. »`; });
+  }catch(e){ console.warn('Correctifs v0.136 Résonance/Saidin non appliqués',e); }
 })();
 
 setupMenuParallax();
