@@ -1802,7 +1802,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.136 · Correctif scènes et notes</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.142 · Souvenirs affûtés</div>
       </section>
     </div>
   </main>
@@ -4342,6 +4342,29 @@ Le chapitre se ferme sur une certitude : la convocation impériale n’était pa
     [
       "remerii",
       "remerii_smirk",
+      "right"
+    ]
+  ],
+  "next": "c3_09"
+},
+"c3_08_mirror_confidence":{
+  "title": "Boutique enchantée",
+  "sub": "Reflet choisi",
+  "bg": "c3_key_robe_miroir",
+  "hideChars": true,
+  "zoom": true,
+  "music": "music_c3_shopping",
+  "speaker": "Narrateur",
+  "text": "Hylee reste devant le miroir au lieu de chercher tout de suite une plaisanterie ou une échappatoire. Le bleu de la robe ne la transforme pas en noble, ni en héroïne de conte. Il dessine seulement une silhouette qu’elle n’a plus envie d’effacer.\n\nSous le tissu, sa magie frémit. Pas comme une menace. Plutôt comme une respiration qui trouve enfin assez d’espace pour ne pas se cogner aux murs.\n\nElle pose deux doigts sur l’attache de la cape. Son reflet rougit encore, mais il ne baisse plus les yeux.\n\n« Je crois que je peux la porter », murmure Hylee.\n\nRemerii observe son reflet à côté du sien.\n\n« Non », répond-elle doucement. « Tu peux te porter toi-même. La robe se contente de suivre. »",
+  "chars": [
+    [
+      "hylee",
+      "hylee_confident",
+      "left"
+    ],
+    [
+      "remerii",
+      "remerii_calm",
       "right"
     ]
   ],
@@ -16947,7 +16970,7 @@ document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSo
 
     // Chapitre III · prérequis plus lisibles, pas plus gratuits.
     patchChoice('c3_07','se tenir droite',ch=>{ ch.requires={sangfroid:8,lien:7}; ch.effects={sangfroid:1,lien:1,audace:1}; ch.note='La robe devient une posture, pas un déguisement. Requis adouci pour encourager une Hylee plus affirmée.'; });
-    addChoice('c3_07', {label:'Sourire au miroir comme si la robe était une armure',next:'c3_08_joke',effects:{audace:1,sangfroid:1},note:'Audace · Le reflet cesse d’être un tribunal et devient un masque choisi.'});
+    addChoice('c3_07', {label:'Se reconnaître dans le miroir sans détourner les yeux',next:'c3_08_mirror_confidence',effects:{sangfroid:1,resonance:1},note:'Résonance · La robe n’efface pas Hylee : elle lui donne une forme où sa magie peut tenir.'});
     patchChoice('c3_10','laisser le bâton répondre',ch=>{ ch.requires={lucidite:7,resonance:4}; ch.effects={resonance:5,sangfroid:1}; ch.note='Objet stratégique · Le bâton en cerisier noir accordé confère +5 Résonance tant que son accord reste intact.'; });
     patchChoice('c3_14','préparer un vrai nécessaire',ch=>{ ch.requires={audace:7,sangfroid:7}; ch.effects={audace:1,sangfroid:1,lucidite:1}; ch.note='Objet stratégique · Penser comme une voyageuse, pas seulement comme une apprentie mage.'; });
     patchChoice('c3_14','Demander ce qu’il risque',ch=>{ ch.effects={lucidite:1,sangfroid:1}; ch.note='Comprendre sa peur sans donner toute la récompense à la seule Lucidité.'; });
@@ -17782,7 +17805,7 @@ Hylee pince les lèvres pour ne pas sourire trop fort. Ce n’est pas grand-chos
       addScene(id,{title:sc.title||'Variation',sub:'Progression libre',bg:sc.bg,music:sc.music,speaker:'Narrateur',text,chars:cloneChars(scId),next});
       const effects={}; effects[trait]=1;
       if((trait==='audace' || trait==='resonance') && /remerii|terrasse|cape|cristal/i.test((sc.title||'')+' '+(sc.sub||''))) effects.lien=1;
-      addChoice(scId,{label,next:id,effects,note:`${TRAIT_LABELS[trait]} · Progression libre : Hylee peut encore explorer cette facette sans être déjà spécialisée.`});
+      addChoice(scId,{label,next:id,effects,note:`${TRAIT_LABELS[trait]} · Choix de progression : une voie accessible sans spécialisation préalable.`});
     }
 
     patchAllChoices();
@@ -17869,23 +17892,25 @@ Elle laisse cette vérité exister sans l'épingler avec de grands mots.`);
 Il l'écoute comme une chaleur qui rampe dans les lignes. Quelque chose répond au sang, au nom de Bhaal, à la vieille odeur des Calciterres.
 
 Ce n'est pas une preuve. C'est une alerte.`);
-    addBridge('c4v_33','audace','Sourire sans accepter l’invitation de Naïah',`Valurn laisse paraître un sourire qui ne promet rien.
+    addBridge('c4v_33','audace','Refuser de prendre l’image pour une invitation',`Valurn laisse paraître un sourire, mais il ne l'adresse ni à Naïah, ni au reflet que Thazran lui agite sous les yeux.
 
-Naïah aime les portes entrouvertes. Il lui en offre une peinte sur un mur.
+La vision n'est qu'un appât : une silhouette, un domaine, une promesse de danger. Répondre à l'image serait déjà laisser le démon fixer les règles.
 
-« Tu as l'air dangereuse. Je vais essayer de ne pas te flatter en le disant trop fort. »
+« Jolie mise en scène », souffle-t-il. « Dommage que je préfère rencontrer les problèmes quand ils ont la décence d'être réels. »
 
-Elle rit. C'est peut-être pire que si elle avait attaqué.`);
+Thazran rit doucement. Ce n'est pas Naïah qui a été défiée. C'est le conteur.`);
     addBridge('c4d_18','lucidite','Entendre ce que Lineva ne dit pas',`Draven écoute le rapport, puis ce qui se cache dessous.
 
 Lineva ne demande pas seulement des ordres. Elle cherche à savoir s'il reviendra assez entier pour les donner encore.
 
 Draven ne sait pas lui offrir cette certitude. Mais il peut au moins cesser de faire semblant de ne pas l'avoir entendue.`);
-    addBridge('c4d_26','audace','Demander sans arrondir la vérité',`Draven n'habille pas sa demande d'une jolie formule.
+    addBridge('c4d_26','audace','Lui rendre le droit de refuser',`Draven pourrait transformer sa demande en ordre. Il en a le grade, la voix, et toute une vie passée à faire obéir des hommes plus vieux que sa fille.
 
-Il sait ce qu'il exige. Il sait ce que cela coûte.
+Cette fois, il ne s'en sert pas.
 
-Alors il parle droit, comme on pose une lame à plat sur une table : visible, lourde, impossible à confondre avec un ruban.`);
+« Je peux te le commander », dit-il. « Je ne le ferai pas. Si tu pars, Lineva, que ce soit parce que tu crois encore que Forthaven mérite mieux que ma colère. »
+
+La phrase n'adoucit rien. Elle rend seulement à Lineva une chose que la guerre lui arrache depuis des années : le droit de choisir pourquoi elle reste debout.`);
 
     // Petit filet de sécurité : aucune scène de choix entre IV et VII ne doit être composée uniquement de choix verrouillés.
     Object.keys(S||{}).forEach(id=>{
@@ -17932,6 +17957,224 @@ Elle trouve seulement une manière de rester présente dans la scène. Ce n'est 
   }catch(e){ console.warn('Correctifs v0.136 Résonance/Saidin non appliqués',e); }
 })();
 
+/* v0.138 · Modération Lucidité + branches uniques + retour d'humour */
+(function applyV138BalanceAndUniqueness(){
+  try{
+    if(window.__sylviniaV138BalanceAndUniqueness) return;
+    window.__sylviniaV138BalanceAndUniqueness=true;
+    const stats=['audace','sangfroid','lien','lucidite','resonance'];
+    const labels={audace:'Audace',sangfroid:'Sang-froid',lien:'Lien Remerii',lucidite:'Lucidité',resonance:'Résonance'};
+    const hasScene=id=>S && S[id];
+    const cloneChars=id=>{ try{return JSON.parse(JSON.stringify((S[id]&&S[id].chars)||[]));}catch(e){return [];} };
+    const nextAfter=id=>{
+      const sc=S[id];
+      if(!sc) return null;
+      if(sc.next) return sc.next;
+      if(Array.isArray(sc.choices)){
+        for(const ch of sc.choices){ const n=ch&&ch.next; if(n && S[n] && S[n].next) return S[n].next; }
+        if(sc.choices[0]&&sc.choices[0].next) return sc.choices[0].next;
+      }
+      return null;
+    };
+    function ensureScene(id,obj){ if(!S[id]) S[id]=obj; else Object.assign(S[id],obj); }
+    function findChoice(sceneId, needle){
+      const sc=S[sceneId]; if(!sc||!Array.isArray(sc.choices)) return null;
+      return sc.choices.find(ch=>ch && String(ch.label||'').includes(needle));
+    }
+    function patchChoice(sceneId, needle, fn){ const ch=findChoice(sceneId,needle); if(ch) fn(ch); }
+    function setMatrix(ch,matrix){
+      if(!ch) return;
+      ch.matrix=matrix;
+      const e=ch.effects||(ch.effects={});
+      const prefix=labels[matrix]||'';
+      if(ch.note){ ch.note=String(ch.note).replace(/^(Audace|Sang-froid|Lucidité|Résonance|Lien Remerii)\s*·\s*/,''); }
+      if(prefix) ch.note=prefix+' · '+(ch.note||'');
+      stats.forEach(k=>{ if(k!==matrix && k==='lucidite' && e[k] && !isPremium(ch)) delete e[k]; });
+    }
+    function isPremium(ch){
+      const t=((ch.label||'')+' '+(ch.note||'')).toLowerCase();
+      return !!(ch.requires || ch.requiresAny || ch.memories || ch.items || /choix stratégique|bonus|souvenir|objet stratégique/.test(t));
+    }
+    function moderateLucidity(){
+      Object.keys(S||{}).forEach(id=>{
+        const sc=S[id]; if(!sc||!Array.isArray(sc.choices)) return;
+        sc.choices.forEach(ch=>{
+          if(!ch||!ch.effects) return;
+          const e=ch.effects;
+          const matrix=ch.matrix || '';
+          const t=((ch.label||'')+' '+(ch.note||'')).toLowerCase();
+          const premium=isPremium(ch);
+          if(e.lucidite && matrix && matrix!=='lucidite' && !premium){ delete e.lucidite; }
+          if(e.lucidite && e.lucidite>1 && !premium) e.lucidite=1;
+          // Les choix de pure présence magique ou de tenue émotionnelle ne doivent pas recevoir Lucidité par automatisme.
+          if(e.lucidite && !premium && /(bâton|baton|cristal|glace|magie|résonance|resonance|respiration|respirer|cape|tenir|gêne|gene|peur|risque)/.test(t) && (e.resonance||e.sangfroid||e.audace)){
+            if(!/observer|comprendre|analyser|demander|chercher une trace|sous-texte/.test(t)) delete e.lucidite;
+          }
+        });
+      });
+      // Duel de Saidin : conserver la viabilité Résonance, mais éviter de distribuer Lucidité sur les réponses sensorielles.
+      if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+        C5_SAGE_DUEL_STEPS.forEach(step=>(step.choices||[]).forEach(ch=>{
+          if(!ch.effects) return;
+          const t=(ch.label||'').toLowerCase();
+          if((ch.effects.resonance||/vibrer|rythme naturel|appel|souffle|magie m’appelle/.test(t)) && ch.effects.lucidite){ delete ch.effects.lucidite; }
+        }));
+      }
+    }
+
+    // Doublon 1 · Chapitre I : deux choix menaient à s02_river. Le second devient une micro-scène d'humour inquiet.
+    patchChoice('s02','Écouter le froid sous la rivière',ch=>{
+      ch.label='Demander si les rivières magiques ont des dents';
+      ch.next='s02_river_teeth_v138';
+      ch.effects={audace:1,resonance:1};
+      ch.note='Audace · Hylee cache sa peur derrière une question absurde, puis écoute quand même la magie.';
+      ch.matrix='audace';
+    });
+    ensureScene('s02_river_teeth_v138',{
+      title:'La rivière',sub:'Dents invisibles',bg:(S.s02&&S.s02.bg)||'bg_training',music:(S.s02&&S.s02.music)||'music_wild',speaker:'Hylee',
+      text:`« Est-ce qu’une rivière magique peut mordre ? »\n\nRemerii la regarde avec cette patience précise qui annonce une réplique dangereuse.\n\n« Seulement les apprenties qui parlent trop près du courant. »\n\nHylee manque de rire, puis se reprend. La plaisanterie a fait son œuvre : la peur a reculé d’un pas. Sous ses doigts, le froid circule enfin comme une chose qu’on peut écouter sans se faire avaler.`,
+      chars:cloneChars('s02'),next:'s03'});
+
+    // Doublon 2 · C2_03 : la sensation des baies devient une vraie perception sensorielle, pas la même question que la leçon canon.
+    patchChoice('c2_03','Sentir l’odeur magique des baies',ch=>{
+      ch.next='c2_03_scent_v138';
+      ch.effects={resonance:1,sangfroid:1};
+      ch.note='Résonance · Hylee apprend à sentir le danger avant de le comprendre.';
+      ch.matrix='resonance';
+    });
+    ensureScene('c2_03_scent_v138',{
+      title:'Les baies scintillantes',sub:'Odeur de danger',bg:(S.c2_03&&S.c2_03.bg)||'bg_forest_decor',music:(S.c2_03&&S.c2_03.music)||'music_wild',speaker:'Narrateur',
+      text:`Hylee ne retire pas seulement sa main parce que Remerii l’a ordonné.\n\nUne odeur sèche lui picote le nez, presque métallique sous le parfum sucré des baies. La magie du buisson ne brille plus comme une invitation, mais comme un avertissement.\n\nElle recule d’elle-même.\n\nRemerii remarque le mouvement.\n\n« Bien. Quand ton instinct te tire en arrière, ne négocie pas avec lui pour avoir l’air courageuse. »`,
+      chars:cloneChars('c2_03'),next:'c2_04'});
+
+    // Doublon 3 · C3_16 : le bâton ne mène plus à la même scène que le risque d'Arcatraz.
+    patchChoice('c3_16','Serrer le bâton et vérifier',ch=>{
+      ch.next='c3_17_baton_presence_v138';
+      ch.effects={resonance:1,sangfroid:1};
+      ch.note='Résonance · Hylee ne pense pas à la prison : elle vérifie si son propre outil reste avec elle.';
+      ch.matrix='resonance';
+    });
+    ensureScene('c3_17_baton_presence_v138',{
+      title:'Sortie de boutique',sub:'Le bois sous les doigts',bg:'c3_bg_algratal_marche',music:'music_algratal',speaker:'Narrateur',
+      text:`Hylee resserre les doigts autour du bâton.\n\nElle n’essaie pas d’y lire une réponse brillante. Elle cherche seulement une résistance, une présence, quelque chose qui ne la juge pas depuis les hauteurs d’Al’Gratal.\n\nLe bois demeure tiède. Pas rassurant au point de mentir. Juste assez vivant pour rappeler qu’elle n’est pas vide sous le regard des autres.\n\n« Il ne va pas te sauver à ta place », dit Remerii.\n\nHylee relève les yeux.\n\n« Non. Mais il a l’air d’accord pour ne pas me lâcher tout de suite. »\n\nRemerii esquisse un sourire.\n\n« Marché raisonnable. Pour un bout de bois prétentieux. »`,
+      chars:[['hylee','hylee_thinking','left'],['remerii','remerii_smirk','right']],next:'c3_18'});
+    patchChoice('c3_16','Mesurer le risque de l’Arcatraz',ch=>{ ch.effects={sangfroid:1}; ch.note='Sang-froid · Une peur nommée est plus facile à ranger.'; ch.matrix='sangfroid'; });
+    patchChoice('c3_16','Demander si le jeton',ch=>{ ch.effects={lucidite:1}; ch.note='Lucidité · Hylee interroge la permission plutôt que de la confondre avec une protection.'; ch.matrix='lucidite'; });
+
+    // Doublon 4 · C3_19 : respirer ne répète plus la leçon canon.
+    patchChoice('c3_19','Compter trois respirations',ch=>{
+      ch.next='c3_20_breath_v138';
+      ch.effects={sangfroid:1};
+      ch.note='Sang-froid · Hylee ne trouve pas Remerii plus vite, mais elle évite de devenir un second problème.';
+      ch.matrix='sangfroid';
+    });
+    ensureScene('c3_20_breath_v138',{
+      title:'Troisième jour',sub:'Trois respirations',bg:'c3_bg_foret_route',music:'music_wild',speaker:'Narrateur',
+      text:`Hylee compte.\n\nUn : ses doigts arrêtent de trembler autour du bâton.\n\nDeux : elle cesse d’imaginer Remerii morte à chaque bruissement de feuille.\n\nTrois : la forêt n’est pas moins inquiétante, mais elle redevient un lieu au lieu d’un monstre.\n\n« D’accord », souffle-t-elle. « Paniquer après. Chercher maintenant. »`,
+      chars:[['hylee','hylee_determined','left']],next:'c3_21'});
+
+    // Un peu d'humour dans les scènes légères où le ton l'autorise.
+    if(S.c3_08_joke){
+      S.c3_08_joke.text=`« Donc si je tombe, je tombe avec élégance ? »\n\nRemerii plisse les yeux.\n\n« Si tu tombes avec ce tissu, je te relève après avoir vérifié que tu ne l’as pas abîmé. »\n\nHylee porte une main à son cœur, faussement outrée.\n\n« Je vois. La robe d’abord, l’apprentie ensuite. Quelle pédagogie délicate. »\n\n« Enfin une leçon que tu retiens vite. »\n\nHylee rit malgré elle. La propriétaire, elle, ne rit pas du tout.`;
+    }
+    if(S.c3_17_rights){
+      S.c3_17_rights.text=`« Vous êtes sûre que le jeton nous donnait tous ces droits ? »\n\nRemerii lui adresse un clin d’œil.\n\n« Certainement pas. Mais pourquoi s’en priver ? »\n\nHylee fixe le jeton, puis la rue, puis Remerii.\n\n« Donc la diplomatie, c’est voler légalement avant que quelqu’un ait le temps de vérifier ? »\n\n« Tu apprends vite. Ne le répète jamais devant un conseiller impérial. »\n\nLes doutes d’Hylee ne disparaissent pas, mais ils perdent un peu de leur mordant.`;
+    }
+    if(S.c2_03_joke){
+      S.c2_03_joke.text=`« Donc, règle numéro un : ne pas manger les jolies choses qui brillent. »\n\nRemerii la regarde longuement.\n\n« C’est une règle étonnamment utile avec les plantes, les cristaux et certains nobles sylviniens. »\n\nHylee ravale un rire. La peur reste là, mais elle tient moins de place.`;
+    }
+
+    // Modération générale après tous les ajouts précédents.
+    moderateLucidity();
+    // Corrections manuelles de notes/matrices après modération.
+    patchChoice('c3_07','Se reconnaître dans le miroir',ch=>{ ch.matrix='resonance'; ch.effects={sangfroid:1,resonance:1}; ch.note='Résonance · La robe n’efface pas Hylee : elle lui offre une forme où sa magie peut tenir sans se cacher.'; });
+    patchChoice('c3_19','Chercher une trace magique',ch=>{ ch.matrix='lucidite'; ch.effects={lucidite:1}; ch.note='Lucidité · Hylee cherche des indices concrets au lieu de se laisser avaler par la peur.'; });
+  }catch(e){ console.warn('Correctifs v0.138 non appliqués',e); }
+})();
+
+/* v0.140 · Modération relation/Lucidité + Saidin Audace viable */
+(function applyV139RelationAndSaidinPolish(){
+  try{
+    if(window.__sylviniaV139RelationAndSaidinPolish) return;
+    window.__sylviniaV139RelationAndSaidinPolish=true;
+    function patchChoice(sceneId,needle,fn){ const sc=S[sceneId]; if(!sc||!Array.isArray(sc.choices)) return; const ch=sc.choices.find(x=>x&&String(x.label||'').includes(needle)); if(ch) fn(ch); }
+    const set=(ch,effects,matrix,note)=>{ if(!ch) return; ch.effects=effects; ch.matrix=matrix; ch.note=note; };
+    // Les choix relationnels ne doivent pas tous arroser Lucidité. Certains relèvent plutôt de stabilité, d'audace ou de sensation.
+    patchChoice('c2_07','Chercher le regard de Remerii',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Hylee cherche une ancre sans prétendre avoir tout compris.'));
+    patchChoice('c2_35','Regarder Remerii',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Chercher un point fixe, pas une réponse parfaite.'));
+    patchChoice('c3_28','Raconter comment tu l’as sauvée',ch=>set(ch,{lien:1,audace:1},'audace','Audace · Hylee ose rendre le souvenir plus vivant qu’une simple gêne.'));
+    patchChoice('c3_28','Dire qu’elle te retrouve toujours',ch=>set(ch,{lien:1,resonance:1},'resonance','Résonance · La fidélité de Medig ressemble moins à une habitude qu’à un fil invisible.'));
+    patchChoice('c3_32','T’excuser d’avoir demandé',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Hylee recule d’un pas pour laisser la porte respirer.'));
+    patchChoice('c3_37','Essayer de la tutoyer naturellement',ch=>set(ch,{lien:1,audace:1},'audace','Audace · Un petit pas de langage, énorme pour Hylee.'));
+    patchChoice('c3_40','Serrer le nourrisson contre toi',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Protéger, même dans le cauchemar, sans laisser la panique tenir l’enfant.'));
+    patchChoice('c3_45','Demander son aide sans détour',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Hylee choisit de ne pas porter ça seule, sans s’effondrer dans la demande.'));
+    patchChoice('c3_47','Demander si tu es un danger pour elle',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · La peur se formule enfin, mais elle ne déborde pas.'));
+    patchChoice('c3_49','Lui demander de dormir à côté de toi',ch=>set(ch,{lien:1,sangfroid:1},'sangfroid','Sang-froid · Juste pour cette nuit : une demande simple, pas une chaîne.'));
+    patchChoice('c6_26','Dire que le silence autour d’elles ne grince plus',ch=>set(ch,{resonance:1,lien:1},'resonance','Résonance · Une vérité intime formulée par sensation, sans en faire une analyse.'));
+    // Conserver quelques vrais choix Lucidité relationnels : observer Remerii, lire une faille, comprendre un sous-texte. Mais pas tous les gestes doux.
+
+    // Duel de Saidin : une Hylee audacieuse doit pouvoir réussir sans devenir soudainement lucide.
+    if(typeof C5_SAGE_DUEL_STEPS!=='undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      function patch(fragment,fn){ C5_SAGE_DUEL_STEPS.forEach(step=>(step.choices||[]).forEach(ch=>{ if(String(ch.label||'').includes(fragment)) fn(ch); })); }
+      patch('L’ambition. Nous avons besoin de votre pouvoir pour gagner',ch=>{ ch.clarity=1; ch.effects={audace:1}; ch.reaction=`Saidin lève un sourcil. « Brutal, mais au moins l’aiguille pointe vers une volonté. L’ambition est une mauvaise maîtresse, pas forcément une mauvaise lanterne. »`; ch.note='Audace · Réponse directe, imparfaite mais assumée.'; ch.matrix='audace'; });
+      patch('Jamais, si cela sauve plus de vies',ch=>{ ch.clarity=1; ch.fracture=1; ch.effects={audace:1}; ch.reaction=`Saidin tapote sa canne. « Voilà une phrase qui peut sauver une ville et perdre une âme. Tu gagnes une marche, mais elle grince. »`; ch.note='Audace · Saidin accepte la décision, mais marque une fracture morale.'; ch.matrix='audace'; });
+      patch('Peu importe la boue, seule la victoire compte',ch=>{ ch.clarity=1; ch.fracture=1; ch.effects={audace:2}; ch.reaction=`« Dangereux », coupe Saidin. « Mais le danger est nommé. C’est mieux qu’une vertu qui prétend ne jamais salir ses bottes. »`; ch.note='Audace · Forte avancée, mais la réponse laisse une trace sombre.'; ch.matrix='audace'; });
+      // Retirer Lucidité des choix Audace premium ajoutés plus tôt.
+      patch('La décision. Si nous n’avançons pas',ch=>{ if(ch.effects){delete ch.effects.lucidite; ch.effects.audace=1;} });
+      patch('Pour refuser qu’un avenir déjà écrit',ch=>{ if(ch.effects){delete ch.effects.lucidite; ch.effects.audace=1;} });
+      patch('Parce que si je ne choisis pas ma route',ch=>{ if(ch.effects){delete ch.effects.lucidite; ch.effects.audace=1;} });
+    }
+  }catch(e){ console.warn('Correctifs v0.140 non appliqués',e); }
+})();
+
+
+/* v0.141 · Draven : choix distinct + nettoyage des notes de progression */
+(function applyV141DravenChoicePolish(){
+  try{
+    if(window.__sylviniaV141DravenChoicePolish) return;
+    window.__sylviniaV141DravenChoicePolish=true;
+    const sc = S && S.c4d_26;
+    if(sc && Array.isArray(sc.choices)){
+      const ch = sc.choices.find(x=>x && String(x.label||'').includes('Lui rendre le droit de refuser'));
+      if(ch){
+        ch.effects = { audace: 1 };
+        ch.matrix = 'audace';
+        ch.note = 'Audace · Draven ose renoncer à l’ordre pour rendre le choix à Lineva.';
+      }
+      const direct = sc.choices.find(x=>x && String(x.label||'').includes('Formuler la demande sans détour'));
+      if(direct){
+        direct.note = 'Sang-froid · Draven nomme l’impossible sans le maquiller.';
+        direct.matrix = 'sangfroid';
+      }
+    }
+    const bridge = S && S.c4d_26_bridge_audace_v133;
+    if(bridge){
+      bridge.sub = 'Le choix rendu';
+      bridge.text = `Draven pourrait transformer sa demande en ordre. Il en a le grade, la voix, et toute une vie passée à faire obéir des hommes plus vieux que sa fille.
+
+Cette fois, il ne s'en sert pas.
+
+« Je peux te le commander », dit-il. « Je ne le ferai pas. Si tu pars, Lineva, que ce soit parce que tu crois encore que Forthaven mérite mieux que ma colère. »
+
+La phrase n'adoucit rien. Elle rend seulement à Lineva une chose que la guerre lui arrache depuis des années : le droit de choisir pourquoi elle reste debout.`;
+    }
+    // Les notes techniques de progression doivent rester lisibles et non intrusives côté dev.
+    Object.keys(S||{}).forEach(id=>{
+      const scene=S[id];
+      if(!scene || !Array.isArray(scene.choices)) return;
+      scene.choices.forEach(ch=>{
+        if(!ch || !ch.note) return;
+        ch.note = String(ch.note)
+          .replace(/Progression libre\s*:\s*cette facette peut encore être explorée sans spécialisation préalable\.?/gi, 'Choix de progression accessible.')
+          .replace(/Progression libre\s*:\s*Hylee peut encore explorer cette facette sans être déjà spécialisée\.?/gi, 'Choix de progression accessible.')
+          .replace(/Progression libre\s*:\s*/gi, 'Choix de progression · ')
+          .replace(/\s{2,}/g,' ')
+          .trim();
+      });
+    });
+  }catch(e){ console.warn('Correctifs v0.141 non appliqués',e); }
+})();
+
 setupMenuParallax();
 applyMobileUI();
 updateProgressUI(); updateDevUI();
@@ -17939,6 +18182,171 @@ showDisclaimer();
 
 
 /* v0.128 · Matrices de personnalité + rééquilibrage global + correctif duel Naïah */
+
+
+/* v0.142 · Correction contextuelle C6_06 : souvenirs d’apprentie sans doublons ni notes de chantier */
+(function applyC606ContextFixV142(){
+  try{
+    if(window.__sylviniaV142C606ContextFix) return;
+    window.__sylviniaV142C606ContextFix = true;
+
+    function scene(id){ return (typeof S !== 'undefined' && S) ? S[id] : null; }
+    function cloneChars(id){ const sc=scene(id); return sc && Array.isArray(sc.chars) ? sc.chars : []; }
+    function setChoiceByNext(sc, next, patch){
+      if(!sc || !Array.isArray(sc.choices)) return null;
+      const ch=sc.choices.find(c=>c && c.next===next);
+      if(!ch) return null;
+      Object.assign(ch, patch);
+      return ch;
+    }
+    function cleanNote(txt){
+      if(!txt) return txt;
+      let s=String(txt);
+      s=s.replace(/\s*·\s*v0\.130\s*:?\s*ce choix nourrit surtout sa couleur principale\.?/gi,'');
+      s=s.replace(/\s*·\s*Progression libre\s*:?\s*ce choix permet de travailler la valeur, il ne la récompense pas seulement\.?/gi,'');
+      s=s.replace(/\s*·\s*Progression libre\s*:?\s*Hylee peut encore explorer cette facette sans être déjà spécialisée\.?/gi,'');
+      s=s.replace(/\s*·\s*Choix de progression\s*:?\s*une voie accessible sans spécialisation préalable\.?/gi,'');
+      s=s.replace(/\s*Progression libre\s*:?\s*ce choix permet de travailler la valeur, il ne la récompense pas seulement\.?/gi,'');
+      s=s.replace(/\s*Progression libre\s*:?\s*Hylee peut encore explorer cette facette sans être déjà spécialisée\.?/gi,'');
+      s=s.replace(/\s*Choix de progression\s*:?\s*une voie accessible sans spécialisation préalable\.?/gi,'');
+      s=s.replace(/\s*·\s*Remerii reçoit cette posture comme une confiance\.?/gi,'');
+      s=s.replace(/\s*·\s*$/,'').replace(/\s{2,}/g,' ').trim();
+      return s;
+    }
+
+    // Nettoyage global des notes visibles héritées des passes d’équilibrage.
+    Object.keys(S||{}).forEach(id=>{
+      const sc=scene(id);
+      if(!sc || !Array.isArray(sc.choices)) return;
+      sc.choices.forEach(ch=>{
+        if(ch && ch.note) ch.note=cleanNote(ch.note);
+      });
+    });
+
+    const sc=scene('c6_06');
+    if(sc && Array.isArray(sc.choices)){
+      // Retire l’ancien choix passerelle Résonance, car il parlait déjà d’un souvenir que Remerii n’a pas encore livré.
+      sc.choices=sc.choices.filter(ch=>ch && ch.next!=='c6_06_bridge_resonance_v133' && ch.label!=='Chercher ce que le souvenir fait vibrer dans l’air');
+
+      setChoiceByNext(sc,'c6_06_b',{
+        label:'Ne pas se jeter sur la plaisanterie',
+        note:'Sang-froid · Hylee laisse Remerii garder le rythme de ce qu’elle accepte de livrer.',
+        effects:{sangfroid:1,lien:1}
+      });
+
+      setChoiceByNext(sc,'c6_06_c',{
+        label:'Remarquer que le mot « insupportable » lui coûte encore',
+        note:'Lucidité · Hylee entend la fêlure derrière l’ironie, sans l’exposer brutalement.',
+        effects:{lucidite:1,lien:1}
+      });
+
+      const resChoice=setChoiceByNext(sc,'c6_06_d',{
+        label:'Sentir que Mir’Aldas garde la trace de son ancienne colère',
+        note:'Résonance · Hylee perçoit la pression de la ville avant de connaître toute l’histoire.',
+        effects:{resonance:1,lien:1}
+      });
+      if(resChoice && resChoice.requires) delete resChoice.requires;
+
+      const audBridge=sc.choices.find(ch=>ch && (ch.next==='c6_06_bridge_audace_v133' || ch.label==='Répondre avec une insolence prudente'));
+      if(audBridge){
+        audBridge.label='Imaginer Remerii interdite de bibliothèque';
+        audBridge.next='c6_06_e';
+        audBridge.effects={audace:1,lien:1};
+        audBridge.note='Audace · Hylee ose une taquinerie légère qui reste dans le ton de la scène.';
+      }
+    }
+
+    S['c6_06_b']={
+      title:'Souvenirs d’apprentie',
+      sub:'Sang-froid',
+      bg:(scene('c6_06')&&scene('c6_06').bg)||'c6_miraldas_rue_magique',
+      music:(scene('c6_06')&&scene('c6_06').music)||'music_c6_miraldas_city',
+      speaker:'Narrateur',
+      text:`Hylee garde une réplique au bord des lèvres.
+
+Elle aurait pu bondir sur le mot « insupportable », le retourner en plaisanterie, demander des preuves comme on réclame une histoire amusante.
+
+Mais quelque chose dans le regard de Remerii lui conseille de ne pas tirer trop vite sur ce fil.
+
+Alors Hylee marche à son rythme, la tartelette entre les doigts, assez présente pour écouter, assez discrète pour ne pas fouiller.
+
+Remerii ne la remercie pas. Son silence devient simplement moins hérissé.`,
+      chars:cloneChars('c6_06'),
+      next:'c6_07'
+    };
+
+    S['c6_06_c']={
+      title:'Souvenirs d’apprentie',
+      sub:'Lucidité',
+      bg:(scene('c6_06')&&scene('c6_06').bg)||'c6_miraldas_rue_magique',
+      music:(scene('c6_06')&&scene('c6_06').music)||'music_c6_miraldas_city',
+      speaker:'Hylee',
+      text:`Hylee incline légèrement la tête.
+
+« Tu dis insupportable comme si c’était une plaisanterie… mais aussi comme si quelqu’un te l’avait beaucoup répété. »
+
+Le sourire de Remerii ne disparaît pas. Il change seulement de poids.
+
+« Tu apprends à écouter les mots qui restent collés aux dents. »
+
+« C’est plus facile quand ils mordent encore. »
+
+Remerii détourne brièvement le regard vers les tours de Mir’Aldas. L’ironie revient, mais moins vite qu’avant.
+
+« Méfie-toi, Hylee. À force d’observer correctement, tu vas devenir pénible. »`,
+      chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_calm','right']],
+      next:'c6_07'
+    };
+
+    S['c6_06_d']={
+      title:'Souvenirs d’apprentie',
+      sub:'Résonance',
+      bg:(scene('c6_06')&&scene('c6_06').bg)||'c6_miraldas_rue_magique',
+      music:(scene('c6_06')&&scene('c6_06').music)||'music_c6_miraldas_city',
+      speaker:'Narrateur',
+      text:`Le mot « insupportable » ne reste pas seulement dans l’air.
+
+Pour Hylee, il touche les pierres autour d’elles, les vitrines, les cristaux suspendus aux façades. Mir’Aldas semble avoir gardé quelque chose de cette ancienne Remerii : une colère serrée, brillante, trop longtemps polie pour ressembler encore à de la colère.
+
+Elle ne connaît pas l’histoire. Pas encore.
+
+Mais elle sent que cette ville n’a pas seulement formé l’archimage. Elle l’a obligée à devenir plus dure que ce qu’une jeune humaine aurait dû être.
+
+Hylee garde cette intuition pour elle. Pour l’instant, c’est trop fragile pour devenir une phrase.`,
+      chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_calm','right']],
+      next:'c6_07'
+    };
+
+    S['c6_06_e']={
+      title:'Souvenirs d’apprentie',
+      sub:'Audace légère',
+      bg:(scene('c6_06')&&scene('c6_06').bg)||'c6_miraldas_rue_magique',
+      music:(scene('c6_06')&&scene('c6_06').music)||'music_c6_miraldas_city',
+      speaker:'Hylee',
+      text:`« Je commence à mieux comprendre les panneaux de silence dans les bibliothèques. »
+
+Remerii hausse un sourcil.
+
+« Pardon ? »
+
+« Ils n’étaient peut-être pas là pour les lecteurs. Peut-être qu’ils essayaient seulement de te contenir. »
+
+Le regard de Remerii se durcit d’une façon parfaitement artificielle.
+
+« Les bibliothèques de Mir’Aldas me respectent énormément. »
+
+« Par peur ? »
+
+« Par sagesse. »
+
+Hylee ne peut pas retenir son sourire. La plaisanterie n’efface pas la mélancolie de Remerii, mais elle lui offre une petite marche où poser le pied sans tomber dedans.`,
+      chars:[['hylee','hylee2_teasing','left'],['remerii','remerii_smirk','right']],
+      next:'c6_07'
+    };
+
+    if(S['c6_06_bridge_resonance_v133']) delete S['c6_06_bridge_resonance_v133'];
+  }catch(e){ console.warn('Correctif C6_06 v0.142 non appliqué', e); }
+})();
 </script>
 
 <a id="bugReportBtn" class="bugReportBtn hidden" href="#" onclick="openBugReport(event)" aria-label="Signaler un bug par email">Signaler un bug</a>
