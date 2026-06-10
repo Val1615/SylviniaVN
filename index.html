@@ -17317,7 +17317,7 @@ Ce n’est pas une réponse. C’est un premier refus de paniquer.`,speaker:'Nar
 
     addMatrixChoice('c4v_12',{trait:'resonance',label:'Sentir la dette comme une chaleur étrangère',sceneId:'c4v_12_v128_heat',effects:{resonance:1,lucidite:1},note:'Valurn comprend par sensation infernale plutôt que par calcul pur.',text:`Valurn cesse de sourire une seconde.\n\nLa dette dans cette pièce n’a pas seulement un prix. Elle a une chaleur. Quelque chose de sec, d’accroché, qui rappelle les pactes trop anciens pour avoir encore besoin d’encre.\n\n« Voilà qui sent la mauvaise affaire », murmure-t-il.\n\nEt, pour une fois, il ne plaisante pas tout à fait.`,speaker:'Narrateur',sub:'Résonance',nextReturn:'c4v_13'});
     addMatrixChoice('c4v_45',{trait:'sangfroid',label:'Laisser Bellirith croire qu’elle mène la danse',sceneId:'c4v_45_v128_wait',effects:{sangfroid:1,lucidite:1},note:'La retenue devient une arme : ne pas répondre trop vite pour mieux lire l’emprise.',text:`Valurn garde son sourire en place, mais il cesse d’alimenter le jeu.\n\nBellirith aime les réactions immédiates. Les petites blessures visibles. Les colères prêtes à se vendre.\n\nAlors il lui offre le contraire : un silence poli, assez long pour qu’elle doive remplir elle-même l’espace.`,speaker:'Narrateur',sub:'Sang-froid',nextReturn:'c4v_46'});
-    addMatrixChoice('c4d_20',{trait:'sangfroid',label:'Porter la faute sans la transformer en ordre',sceneId:'c4d_20_v128_burden',effects:{sangfroid:1,lucidite:1},note:'Draven reste chef, mais laisse paraître l’homme sous l’armure.',text:`Draven pourrait aboyer une consigne. Ce serait plus simple. Plus habituel.\n\nÀ la place, il regarde les traces de la bataille et laisse la faute peser sans l’utiliser comme un fouet.\n\n« On avance », dit-il enfin. « Mais on n’oublie pas qui paie quand je me trompe. »`,speaker:'Draven',sub:'Sang-froid',nextReturn:'c4d_21'});
+    addMatrixChoice('c4d_20',{trait:'sangfroid',label:'Porter la faute sans la transformer en ordre',sceneId:'c4d_20_v128_burden',effects:{sangfroid:1,lucidite:1},note:'Draven reste chef, mais laisse paraître l’homme sous l’armure.',text:`Draven encaisse la phrase sans répondre tout de suite. Chez Lineva, il n’entend pas une accusation. Il entend Forthaven qui respire mal.\n\nIl pourrait reprendre sa place d’un ordre. Couper court, redresser les épaules, transformer la peur de sa fille en discipline. Ce serait plus simple. Plus habituel.\n\nIl ne le fait pas.\n\n« Tu as raison », dit-il enfin. L’aveu sort bas, presque râpé. « Si je reviens trop tard, ce ne sera pas à toi de porter ce poids. Ni à eux. »\n\nSon regard quitte Lineva pour les couloirs meurtris du palais.\n\n« Je pars avec cette faute. Pas pour qu’elle me ralentisse. Pour qu’elle m’empêche d’oublier pourquoi je dois revenir. »`,speaker:'Draven',sub:'La promesse de Lineva',nextReturn:'c4d_21'});
     addMatrixChoice('c4d_29',{trait:'audace',label:'Refuser que Lineva décide seule du sacrifice',sceneId:'c4d_29_v128_refuse',effects:{audace:1,sangfroid:1},note:'Draven conteste frontalement, mais sans détruire l’autorité de Lineva.',text:`« Tu peux haïr mon absence autant que tu veux. »\n\nLa voix de Draven reste basse, presque usée.\n\n« Mais tu ne décideras pas seule que ta vie est une monnaie plus utile que les autres. Pas tant que je respire encore. »\n\nLineva détourne le regard. Ce n’est pas un pardon. Mais ce n’est plus tout à fait une fermeture.`,speaker:'Draven',sub:'Audace',nextReturn:'c4d_30'});
 
     addMatrixChoice('c5_21',{trait:'sangfroid',label:'Ne pas remplir le silence de la bibliothèque',sceneId:'c5_21_v128_silence',effects:{sangfroid:1,lucidite:1},note:'Hylee accepte que certains lieux répondent mieux à ceux qui ne forcent pas.',text:`Hylee garde la bouche fermée.\n\nDans cette bibliothèque, même une question semble pouvoir devenir une faute de grammaire cosmique. Elle laisse donc le silence passer devant elle, comme on laisse un ancien entrer le premier.\n\nRemerii lui adresse un regard bref. Approbateur.`,speaker:'Narrateur',sub:'Sang-froid',nextReturn:'c5_22'});
@@ -19872,6 +19872,314 @@ Hylee baisse les yeux une seconde, mais son sourire reste là, petit et tenace.`
     // c6_12 : l’option Résonance est bien à sa place, mais le choix opposé devait lui répondre au lieu de rester un bouton technique.
     renameContinue('c6_12','Garder cette sensation pour elle','Hylee contemple Mir’Aldas en silence, sans encore trouver les mots pour ce que la ville réveille.');
   }catch(e){ console.warn('Correctif v0.154 choix isolés non appliqué',e); }
+})();
+
+
+/* v0.160 · Correction contextuelle C4D_26 : choix Audace "Lui rendre le droit de refuser" */
+(function applyV160C4D26BridgeAudace(){
+  try{
+    if(window.__sylviniaV160C4D26BridgeAudace) return;
+    window.__sylviniaV160C4D26BridgeAudace = true;
+
+    const sc = S && S.c4d_26_bridge_audace_v133;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Le choix rendu',
+        speaker:'Narrateur',
+        text:`Draven regarde la carte, puis Lineva.
+
+Il connaît la phrase qui ferait plier la salle. Il pourrait couvrir sa demande du sceau de l’amiral, transformer les soldats en chiffres, la colère en discipline, la peur en obéissance.
+
+Cette fois, il refuse cette facilité.
+
+« Je te demande des hommes », dit-il. « Pas ton obéissance. Si tu refuses, je porterai ce refus devant les Sylviniens. Si tu acceptes, que ce soit parce que tu juges Forthaven encore capable de payer ce prix, pas parce que je t’ai forcée à le croire. »
+
+Lineva reste immobile.
+
+Ce n’est pas une douceur. Ce n’est même pas une consolation. C’est plus dangereux que cela : Draven vient de lui rendre le droit de répondre en cheffe, pas seulement en fille.`
+      });
+    }
+
+    const parent = S && S.c4d_26;
+    if(parent && Array.isArray(parent.choices)){
+      const ch = parent.choices.find(x=>x && x.next === 'c4d_26_bridge_audace_v133');
+      if(ch){
+        ch.label = 'Lui rendre le droit de refuser';
+        ch.note = 'Audace · Draven prend le risque de demander sans imposer.';
+        ch.matrix = 'audace';
+        ch.effects = { audace: 1 };
+      }
+    }
+  }catch(e){ console.warn('Correctif v0.160 C4D_26 non appliqué', e); }
+})();
+
+
+/* v0.161 · Correction contextuelle C4D_29 : "Refuser que Lineva décide seule du sacrifice" */
+(function applyV161C4D29RefuseContext(){
+  try{
+    if(window.__sylviniaV161C4D29RefuseContext) return;
+    window.__sylviniaV161C4D29RefuseContext = true;
+
+    const sc = S && S.c4d_29_v128_refuse;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Le poids partagé',
+        speaker:'Narrateur',
+        text:`Draven entend le « combien ? » et comprend le piège.
+
+S’il donne seulement un chiffre, Lineva devra transformer ce nombre en visages. Elle devra choisir les postes qui se videront, les hommes qu’on arrachera aux remparts, les familles qui regarderont partir un père, un frère, un fils.
+
+Alors il secoue la tête.
+
+« Non. Pas seule. »
+
+Lineva relève les yeux vers lui, méfiante, presque blessée.
+
+Draven avance jusqu’à la carte et pose la main près de la ville basse tombée.
+
+« Je te donnerai le nombre. Mais je ne te laisserai pas porter les noms à ma place. Ce détachement, c’est moi qui le demande. Alors je choisirai avec toi ceux qu’on peut envoyer sans condamner ceux qui restent. »
+
+Il marque une pause.
+
+« Et j’irai leur parler moi-même. »
+
+Ce n’est pas une solution juste. Rien, dans cette pièce, ne l’est encore. Mais pour la première fois depuis le début de la demande, Lineva ne tient plus seule le couteau.`
+      });
+    }
+
+    const parent = S && S.c4d_29;
+    if(parent && Array.isArray(parent.choices)){
+      const ch = parent.choices.find(x=>x && x.next === 'c4d_29_v128_refuse');
+      if(ch){
+        ch.label = 'Refuser que Lineva choisisse seule les noms';
+        ch.note = 'Audace · Draven partage le poids concret du détachement.';
+        ch.matrix = 'audace';
+      }
+    }
+  }catch(e){ console.warn('Correctif v0.161 C4D_29 non appliqué', e); }
+})();
+
+
+/* v0.162 · Correction C4D_29 : Draven ne peut pas choisir les noms, il prend la responsabilité du détachement */
+(function applyV162C4D29ResponsabiliteDraven(){
+  try{
+    if(window.__sylviniaV162C4D29ResponsabiliteDraven) return;
+    window.__sylviniaV162C4D29ResponsabiliteDraven = true;
+
+    const sc = S && S.c4d_29_v128_refuse;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Responsabilité assumée',
+        speaker:'Narrateur',
+        text:`Draven entend le « combien ? » et comprend ce qui vient avec.
+
+Un nombre, à Forthaven, n’est jamais seulement un nombre. C’est une patrouille qu’on dégarnit, une porte qu’on tiendra plus faiblement, des soldats que Lineva devra regarder partir en sachant qu’ils ne reviendront peut-être pas.
+
+Il ne peut pas lui épargner ce choix. Il ne peut pas rester pour le faire à sa place.
+
+Alors il lui retire la seule chose qu’il peut encore lui retirer : la faute.
+
+« Ils partiront sous mon commandement », dit-il. « S’ils tombent à Al’Gratal, ce ne sera pas ton nom qu’on mettra sur leur mort. Ce sera le mien. »
+
+Lineva serre la mâchoire.
+
+Draven continue, plus bas :
+
+« Tu donneras des soldats parce que Forthaven doit survivre. Mais s’ils ne reviennent pas, personne ne dira que tu les as envoyés mourir. Je porterai ça. Entièrement. »
+
+Ce n’est pas un pardon. Ce n’est pas une consolation.
+
+Mais dans une pièce où chaque décision réclame du sang, Draven vient au moins de choisir où la lame devra frapper.`
+      });
+    }
+
+    const parent = S && S.c4d_29;
+    if(parent && Array.isArray(parent.choices)){
+      const ch = parent.choices.find(x=>x && x.next === 'c4d_29_v128_refuse');
+      if(ch){
+        ch.label = 'Prendre l’entière responsabilité du détachement';
+        ch.note = 'Audace · Draven assume publiquement le risque pour décharger Lineva de la faute.';
+        ch.matrix = 'audace';
+        ch.effects = { audace: 1, sangfroid: 1 };
+      }
+    }
+  }catch(e){ console.warn('Correctif v0.162 C4D_29 non appliqué', e); }
+})();
+
+
+/* v0.163 · Correction C4D_29 : Draven promet de ramener les hommes vivants à Forthaven */
+(function applyV163C4D29PromesseRetour(){
+  try{
+    if(window.__sylviniaV163C4D29PromesseRetour) return;
+    window.__sylviniaV163C4D29PromesseRetour = true;
+
+    const sc = S && S.c4d_29_v128_refuse;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'La promesse du retour',
+        speaker:'Narrateur',
+        text:`Draven entend le « combien ? » et comprend ce qui vient avec.
+
+À Forthaven, un soldat n’est jamais seulement un soldat. C’est un mur qui tient encore, une porte qu’on garde, une maison qui espère revoir quelqu’un entrer avant l’aube.
+
+Lineva devra les laisser partir. Cette part-là, Draven ne peut pas la lui enlever.
+
+Mais il peut lui donner autre chose qu’un ordre.
+
+« Je ne te demande pas de me donner des hommes à perdre », dit-il.
+
+Sa voix ne cherche pas à adoucir la pièce. Elle s’y plante comme une lame.
+
+« Je te demande de me confier des soldats que je ramènerai ici. Vivants. Ils ne partent pas pour mourir à Al’Gratal. Ils partent pour que je revienne avec ce qu’il faut pour que Forthaven tienne. Et ensuite, ils reprendront leur place sur ces murs. À défendre leurs foyers. »
+
+Lineva le fixe, durement, comme si elle cherchait la fissure dans la promesse.
+
+Draven ne détourne pas les yeux.
+
+« Je ne te promets pas une route propre. Je te promets qu’ils ne seront pas traités comme une monnaie. Pas par moi. »
+
+Ce n’est pas assez pour effacer le prix.
+
+Mais pour la première fois, le détachement ne ressemble plus seulement à un arrachement. Il ressemble à une promesse de retour.`
+      });
+    }
+
+    const parent = S && S.c4d_29;
+    if(parent && Array.isArray(parent.choices)){
+      const ch = parent.choices.find(x=>x && x.next === 'c4d_29_v128_refuse');
+      if(ch){
+        ch.label = 'Promettre de ramener les soldats vivants';
+        ch.note = 'Audace · Draven transforme le détachement en promesse de retour.';
+        ch.matrix = 'audace';
+        ch.effects = { audace: 1, sangfroid: 1 };
+      }
+    }
+  }catch(e){ console.warn('Correctif v0.163 C4D_29 non appliqué', e); }
+})();
+
+
+/* v0.164 · Correction C4D_31 : acceptation de Lineva moins bâclée, centrée sur les hommes de Forthaven */
+(function applyV164C4D31AcceptationLineva(){
+  try{
+    if(window.__sylviniaV164C4D31AcceptationLineva) return;
+    window.__sylviniaV164C4D31AcceptationLineva = true;
+
+    const sc = S && S.c4d_31;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Une acceptation sous condition',
+        speaker:'Lineva',
+        text:`Lineva répète le nombre à voix basse.
+
+Pas pour vérifier qu’elle a bien entendu. Pour mesurer ce qu’il enlève aux murs.
+
+Son regard glisse vers la carte de Forthaven, vers les quartiers encore debout, vers les lignes rouges qui marquent la ville basse tombée. Quand elle parle, sa voix ne tremble pas. C’est presque pire.
+
+« Ce ne sont pas des renforts sylviniens. Ce ne sont pas des pièces à déplacer sur ta carte. »
+
+Elle relève les yeux vers Draven.
+
+« Ce sont des hommes de Forthaven. Ils ont des foyers derrière ces remparts. Des familles qui comptent sur eux. Des morts à venger. Des vivants à protéger. »
+
+Un silence passe. Puis Lineva acquiesce, lentement, comme si le geste lui coûtait plus que la parole.
+
+« Je te les confie, Père. Pas à l’Empire. Pas aux Sylviniens. À toi. »
+
+Sa mâchoire se durcit.
+
+« Alors ramène-les. Vivants. Parce que quand cette mission sera terminée, leur place est ici. Sur nos murs. À défendre leurs foyers. »`
+      });
+    }
+  }catch(e){ console.warn('Correctif v0.164 C4D_31 non appliqué', e); }
+})();
+
+
+/* v0.165 · Correction C4D_31 : Lineva accepte sans répéter la promesse de Draven */
+(function applyV165C4D31LinevaNoRepetition(){
+  try{
+    if(window.__sylviniaV165C4D31LinevaNoRepetition) return;
+    window.__sylviniaV165C4D31LinevaNoRepetition = true;
+
+    const sc = S && S.c4d_31;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Pas pour les Sylviniens',
+        speaker:'Lineva',
+        text:`Lineva répète le nombre à voix basse.
+
+Pas pour vérifier qu’elle a bien entendu. Pour sentir ce que ce nombre enlève aux remparts.
+
+Son regard descend vers la carte de Forthaven. Il y a des traits rouges là où les quartiers ont cédé, des marques noires là où l’on ne compte plus les incendies, et trop peu d’espace entre les dernières lignes de défense.
+
+« Je signerai l’ordre », dit-elle enfin.
+
+La phrase tombe sans grandeur. Une décision de siège. Une phrase qu’on écrit quand aucune option propre n’existe plus.
+
+Lineva relève les yeux vers lui.
+
+« Mais je ne le signerai pas pour l’Empire. Ni pour leurs promesses dorées. Je le signerai parce que tu me dis que c’est encore notre meilleure chance. »
+
+Sa gorge se serre. Elle l’écrase aussitôt, comme on écrase une faiblesse avant qu’elle ne devienne visible.
+
+« Et parce que, malgré tout ce que cette guerre t’a pris… je veux croire qu’il reste assez de mon père dans l’amiral pour ne pas les traiter comme des sacrifices. »
+
+Elle détourne le regard vers la carte.
+
+« Donne-moi la composition exacte du détachement. »`
+      });
+    }
+  }catch(e){ console.warn('Correctif v0.165 C4D_31 non appliqué', e); }
+})();
+
+
+/* v0.166 · Correction C4D_33 : fin officieuse, froide et mélancolique de la conversation */
+(function applyV166C4D33FinOfficieuse(){
+  try{
+    if(window.__sylviniaV166C4D33FinOfficieuse) return;
+    window.__sylviniaV166C4D33FinOfficieuse = true;
+
+    const sc = S && S.c4d_33;
+    if(sc){
+      Object.assign(sc,{
+        title:'La demande',
+        sub:'Fin de transmission',
+        speaker:'Narrateur',
+        text:`Lineva ne dit pas adieu.
+
+Elle baisse seulement les yeux vers une zone de la carte où les lignes rouges s’arrêtent trop près du palais. Sa main vient chercher une plume. Le geste est précis, presque froid. Une manière de redevenir commandante avant que la fille ne reprenne trop de place.
+
+« Je ferai préparer le détachement », dit-elle.
+
+Le parchemin crisse sous ses doigts. Derrière elle, Forthaven continue de brûler par endroits, muette dans le voile de communication.
+
+Draven attend une phrase de plus. Quelque chose qui n’aurait pas sa place dans un rapport. Quelque chose qui dirait que la colère n’a pas tout mangé.
+
+Lineva relève finalement les yeux.
+
+« Père. »
+
+Un seul mot. Trop officiel pour une fille. Trop intime pour un état-major.
+
+Sa bouche hésite sur la suite, puis se ferme. Quand elle reprend, sa voix est plus basse.
+
+« Faites vite. »
+
+La formule tombe comme un ordre donné à distance. Elle aurait pu dire revenez. Elle aurait pu dire je vous en prie. Elle choisit la phrase qui survivra le mieux dans une salle de guerre.
+
+Le voile tremble. Les contours de Lineva se défont dans une neige d’argent.
+
+Draven ne bouge pas.
+
+La conversation est terminée depuis plusieurs secondes déjà. Aucun des deux n’a eu le courage de la couper le premier.`
+      });
+    }
+  }catch(e){ console.warn('Correctif v0.166 C4D_33 non appliqué', e); }
 })();
 
 </script>
