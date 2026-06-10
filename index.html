@@ -1802,7 +1802,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.144 · Choix distincts</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.147 · Doublons nettoyés</div>
       </section>
     </div>
   </main>
@@ -18643,6 +18643,436 @@ Cette pensée la rend moins honteuse de demander. Parce qu'elle ne demande pas �
     });
 
   }catch(e){ console.warn('Correctifs v0.144 choix distincts non appliqués', e); }
+})();
+
+
+
+/* v0.145 · Audit choix uniques : suppression des variantes déguisées et notes méta */
+(function(){
+  try{
+    if(typeof S==='undefined') return;
+    const scene=id=>S&&S[id];
+    const baseChars=id=>scene(id)&&scene(id).chars?scene(id).chars:[];
+    function cleanNote(note){
+      return String(note||'')
+        .replace(/\s*·\s*Choix de progression\s*·\s*ce choix permet de travailler la valeur, il ne la récompense pas seulement\.?/gi,'')
+        .replace(/\s*·\s*Variation premium\s*:\s*le prérequis récompense une orientation déjà affirmée\.?/gi,'')
+        .replace(/\s*·\s*Progression libre\s*:\s*[^.]+\.?/gi,'')
+        .replace(/\s*·\s*v0\.\d+\s*:[^.]+\.?/gi,'')
+        .replace(/\s{2,}/g,' ')
+        .replace(/\s*·\s*$/,'')
+        .trim();
+    }
+    function ch(label,next,effects,note,requires){
+      const o={label,next,effects:effects||{},note:cleanNote(note||'')};
+      if(requires) o.requires=requires;
+      return o;
+    }
+    function setChoices(id, choices){
+      const sc=scene(id); if(!sc) return;
+      sc.choices=choices;
+    }
+    function setScene(id, patch){
+      if(!scene(id)) S[id]={};
+      Object.assign(S[id], patch);
+    }
+    function commonScene(id, title, sub, bg, speaker, text, next){
+      setScene(id,{title,sub,bg:bg||((scene(id)&&scene(id).bg)||''),music:(scene(id)&&scene(id).music)||'music_c6_nuit_etoiles',speaker,text,chars:baseChars(id.split('_').slice(0,2).join('_'))||[],next});
+    }
+    // Nettoyage global des notes : plus de vocabulaire de chantier visible en DEV.
+    Object.keys(S).forEach(id=>{
+      const sc=scene(id); if(!sc) return;
+      if(sc.sub==='Progression libre') sc.sub='Variation';
+      if(Array.isArray(sc.choices)) sc.choices.forEach(c=>{ if(c&&c.note) c.note=cleanNote(c.note); });
+    });
+
+    /* C6_06 · Souvenirs d’apprentie : on garde 4 postures nettes, pas deux taquineries. */
+    setChoices('c6_06',[
+      ch('« Insupportable à quel niveau ? J’ai besoin d’un objectif à dépasser. »','c6_06_a',{audace:1,lien:1},'Audace · Hylee répond par une taquinerie qui allège la mélancolie.'),
+      ch('Ne pas se jeter sur la plaisanterie','c6_06_b',{sangfroid:1,lien:1},'Sang-froid · Hylee laisse à Remerii le rythme de ce qu’elle accepte de livrer.'),
+      ch('Remarquer que le mot « insupportable » lui coûte encore','c6_06_c',{lucidite:1,lien:1},'Lucidité · Hylee entend la fêlure derrière l’ironie, sans l’exposer brutalement.'),
+      ch('Sentir que Mir’Aldas garde la trace de son ancienne colère','c6_06_d',{resonance:1,lien:1},'Résonance · Hylee perçoit la pression de la ville avant de connaître toute l’histoire.')
+    ]);
+
+    /* C6_10 · Cristal : quatre angles distincts, aucun doublon outil/limites. */
+    setChoices('c6_10',[
+      ch('Demander s’il sait retrouver les pâtisseries perdues','c6_10_a',{audace:1,lien:1},'Audace · Hylee désamorce le cadeau par une plaisanterie gourmande.'),
+      ch('Le ranger comme une chose qui compte vraiment','c6_10_b',{sangfroid:1},'Sang-froid · Hylee reçoit l’objet sans promettre l’impossible.'),
+      ch('Demander ce que le cristal ne pourra jamais remplacer','c6_10_c',{lucidite:1},'Lucidité · Hylee cherche les limites de l’outil, pas seulement son éclat.'),
+      ch('Sentir sa vibration avant de l’utiliser','c6_10_d',{resonance:1},'Résonance · Hylee écoute l’objet avant de vouloir s’en servir.')
+    ]);
+    setScene('c6_10_a',{sub:'Audace légère',speaker:'Hylee',text:`Hylee fait tourner le cristal entre ses doigts avec une gravité parfaitement suspecte.
+
+« Il retrouve les signatures magiques, d'accord. Mais les pâtisseries perdues ? »
+
+Remerii la fixe.
+
+« Si tu perds une pâtisserie dans Mir'Aldas, c'est qu'elle a été mangée. »
+
+« Donc il ne résout pas les drames importants. »
+
+« Il t'évitera déjà de te perdre dans une rue circulaire. Un miracle à la fois. »
+
+Hylee serre le cristal avec un sourire plus franc. Le cadeau reste précieux, mais il cesse d'être intimidant.`,next:'c6_11'});
+    setScene('c6_10_b',{sub:'Sang-froid',speaker:'Narrateur',text:`Hylee cesse de jouer avec le cristal.
+
+Elle le range avec lenteur, comme on range une lame fine, un livre dangereux ou une confiance qu'on n'a pas envie d'abîmer.
+
+« Je ne vais pas faire de grande promesse », dit-elle. « Je vais déjà apprendre à ne pas m'en servir n'importe comment. »
+
+Remerii approuve d'un bref mouvement de tête.
+
+Pour une fois, Hylee n'a pas besoin d'en faire davantage pour que le geste ait du poids.`,next:'c6_11'});
+    setScene('c6_10_c',{sub:'Lucidité',speaker:'Hylee',text:`Hylee observe le cristal au lieu de se contenter de son éclat.
+
+« Qu'est-ce qu'il ne pourra jamais remplacer ? »
+
+Remerii croise les bras, visiblement plus satisfaite de cette question que de tous les compliments possibles.
+
+« Ton jugement. Il peut signaler une trace, une tension, une signature. Il ne saura pas décider si tu dois la suivre. »
+
+Hylee baisse les yeux vers la sphère.
+
+« Donc il indique une porte, pas ce qu'il y a derrière. »
+
+« Exactement. Et parfois, la porte est une très mauvaise idée avec une excellente présentation. »
+
+Cette fois, le cristal ne ressemble plus à une solution. Il ressemble à une responsabilité.`,next:'c6_11'});
+    setScene('c6_10_d',{sub:'Résonance',speaker:'Narrateur',text:`Hylee ne l'active pas.
+
+Elle garde le cristal entre ses paumes et écoute la vibration discrète qui court sous sa surface, plus proche d'un frisson que d'un ordre.
+
+Ce n'est pas un appel. Pas encore. Plutôt une respiration minuscule, comme si l'objet attendait qu'elle cesse de vouloir comprendre avec les yeux.
+
+Quand elle relève la tête, Remerii ne corrige pas son silence.
+
+Cela suffit à Hylee pour comprendre qu'elle n'a pas tout fait de travers.`,next:'c6_11'});
+
+    /* C6_14 · Compliment : humour, stabilité, lecture de Remerii, perception magique. */
+    setChoices('c6_14',[
+      ch('Accuser la terrasse d’en faire trop','c6_14_a',{audace:1},'Audace · Hylee détourne sa gêne vers le décor avec humour.'),
+      ch('Accepter le compliment sans se cacher complètement','c6_14_b',{sangfroid:1},'Sang-froid · Hylee laisse le trouble passer sans le fuir.'),
+      ch('Comprendre que Remerii parle de confiance, pas seulement de beauté','c6_14_c',{lucidite:1,lien:1},'Lucidité · Hylee lit ce que le compliment tente de dire sans le formuler.'),
+      ch('Sentir le dôme adoucir la gêne entre elles','c6_14_d',{resonance:1},'Résonance · Hylee perçoit la ville qui rend le silence moins coupant.')
+    ]);
+    setScene('c6_14_a',{sub:'Audace légère',speaker:'Hylee',text:`Hylee sent la phrase de Remerii lui monter aux joues.
+
+Alors elle accuse lâchement le paysage.
+
+« Je crois que cette terrasse essaie de rendre toutes les conversations dramatiques. Regarde-la. Elle force beaucoup trop. »
+
+Remerii lève les yeux vers le dôme violet, puis vers les arches couvertes de lumière.
+
+« Mir'Aldas a toujours eu le goût de la mise en scène. »
+
+« Ça me rassure. Je pensais être la seule à paniquer avec élégance. »
+
+Le sourire de Remerii se creuse. La gêne reste là, mais elle a trouvé une petite fenêtre ouverte.`,next:'c6_15'});
+    setScene('c6_14_b',{sub:'Sang-froid',speaker:'Narrateur',text:`Hylee baisse presque les yeux. Presque.
+
+Elle laisse la gêne traverser son visage sans l'effacer par une plaisanterie.
+
+« Merci. Je crois que j'avais besoin de l'entendre, même si je ne sais pas encore quoi en faire. »
+
+La phrase reste simple. Pour Hylee, c'est déjà beaucoup.`,next:'c6_15'});
+    setScene('c6_14_c',{sub:'Lucidité',speaker:'Narrateur',text:`Hylee comprend que Remerii ne parle pas seulement de la robe, ni même de son reflet.
+
+Elle parle de la façon dont Hylee se tient désormais dans le monde : moins prête à s'excuser d'exister, moins prompte à disparaître dans les angles.
+
+« Tu ne regardes pas la robe », murmure Hylee.
+
+Remerii ne nie pas.
+
+« Non. »
+
+La réponse est courte, mais elle suffit à rendre le compliment plus dangereux qu'une déclaration.`,next:'c6_15'});
+    setScene('c6_14_d',{sub:'Résonance',speaker:'Narrateur',text:`Le compliment reste suspendu, trop chaud pour être attrapé directement.
+
+Alors Hylee sent autre chose : le dôme au-dessus d'elles, les flux violets de Mir'Aldas, la manière dont la ville arrondit la gêne au lieu de la laisser devenir coupante.
+
+Pour une fois, son trouble ne grince pas.
+
+Il résonne doucement, comme un cristal qu'on aurait effleuré sans vouloir le faire chanter.`,next:'c6_15'});
+
+    /* C6_17 · Facile à lire : avant la cape. Aucun choix ne doit parler de la cape avant C6_18. */
+    setChoices('c6_17',[
+      ch('Demander si elle fournit aussi le manuel de lecture','c6_17_a',{audace:1,lien:1},'Audace · Hylee attaque la pudeur de Remerii par l’humour.'),
+      ch('Accepter qu’elle ne montre pas tout','c6_17_b',{sangfroid:1},'Sang-froid · Hylee respecte le refuge de Remerii.'),
+      ch('Comprendre que ses secrets sont une armure, pas un jeu','c6_17_c',{lucidite:1,lien:1},'Lucidité · Hylee voit la protection sous la taquinerie.'),
+      ch('Sentir le silence de Remerii comme une porte ancienne','c6_17_d',{resonance:1},'Résonance · Hylee perçoit ce que Remerii retient sans le forcer.')
+    ]);
+    setScene('c6_17_a',{sub:'Audace',speaker:'Hylee',text:`« Facile à lire ? Très bien. Tu fournis aussi le manuel ? »
+
+Remerii lève un sourcil.
+
+« Il est réservé aux élèves qui survivent à l'introduction. »
+
+« C'est injuste. Je suis certaine que le chapitre sur mes expressions embarrassées est très court. »
+
+« Absolument pas. Il demande plusieurs volumes et une annexe. »
+
+Hylee tente de paraître vexée. Elle échoue assez joliment pour que Remerii sourie.`,next:'c6_18'});
+    setScene('c6_17_b',{sub:'Sang-froid',speaker:'Narrateur',text:`Hylee pourrait insister.
+
+Elle pourrait réclamer une explication, une faille, une vérité emballée dans un sourire. Mais elle entend le poids discret derrière la phrase de Remerii.
+
+Apprendre à ne pas tout montrer, ce n'est pas seulement une habitude. C'est une survie.
+
+Alors Hylee hoche lentement la tête.
+
+Elle n'approuve pas le masque. Elle reconnaît seulement qu'il a dû servir.`,next:'c6_18'});
+    setScene('c6_17_c',{sub:'Lucidité',speaker:'Hylee',text:`« Tu dis ça comme si c'était une plaisanterie », murmure Hylee.
+
+Remerii garde son sourire, mais il devient plus fin.
+
+« Peut-être que ça en est une. »
+
+« Non. C'est une armure qui a appris à parler poliment. »
+
+Le regard de Remerii s'arrête sur elle une seconde de trop.
+
+« Tu deviens pénible. »
+
+« J'apprends de la meilleure. »
+
+Cette fois, le silence qui suit ne blesse pas. Il confirme que Hylee a touché juste sans frapper.`,next:'c6_18'});
+    setScene('c6_17_d',{sub:'Résonance',speaker:'Narrateur',text:`La phrase de Remerii ne sonne pas comme un refus.
+
+Pour Hylee, elle a plutôt la texture d'une vieille porte : solide, fermée depuis longtemps, mais pas morte. Quelque chose existe derrière. Quelque chose respire encore.
+
+Elle ne cherche pas la serrure.
+
+Elle garde seulement la sensation, étrange et fragile, qu'un silence peut être habité sans être vide.`,next:'c6_18'});
+
+    /* C6_21 · Quelqu’un : curiosité, sortie offerte, lecture, perception. */
+    setChoices('c6_21',[
+      ch('Avouer que la question lui brûle la langue','c6_21_a',{audace:1,lien:1},'Audace · Hylee assume une curiosité trop vive, sans prétendre le contraire.'),
+      ch('Lui laisser le droit de ne pas répondre','c6_21_b',{sangfroid:1,lien:1},'Sang-froid · Hylee offre une sortie avant de toucher au sujet sensible.',{sangfroid:20}),
+      ch('Voir la solitude derrière l’habitude','c6_21_c',{lucidite:1},'Lucidité · Hylee distingue la blessure de la stratégie.'),
+      ch('Sentir l’espace qu’elle garde autour d’elle','c6_21_d',{resonance:1},'Résonance · Hylee perçoit une distance ancienne sans la franchir.')
+    ]);
+    setScene('c6_21_a',{sub:'Audace',speaker:'Hylee',text:`Hylee inspire, puis renonce à faire semblant d'être raisonnable.
+
+« J'aimerais dire que je demande ça par pure curiosité historique. »
+
+Remerii la regarde de côté.
+
+« Et ? »
+
+« Et ce serait un mensonge très mal habillé. »
+
+Un coin de la bouche de Remerii tressaille.
+
+« Au moins, tu progresses dans l'identification de tes mensonges. »
+
+« C'est un début de carrière honorable. »`,next:'c6_22'});
+    setScene('c6_21_b',{sub:'Sang-froid',speaker:'Hylee',text:`« Tu n'es pas obligée de répondre. »
+
+Hylee le dit avant que la question ne devienne une prise.
+
+« Je veux savoir, oui. Mais pas assez pour te coincer avec ça. »
+
+Remerii garde le regard sur Mir'Aldas. Longtemps.
+
+« C'est agaçant. »
+
+« Que je demande ? »
+
+« Que tu apprennes à demander correctement. »`,next:'c6_22'});
+    setScene('c6_21_c',{sub:'Lucidité',speaker:'Narrateur',text:`Hylee comprend que Remerii ne s'est pas seulement tenue seule parce qu'elle aimait le silence.
+
+Il y a des habitudes qui commencent comme des refuges et finissent par ressembler à une méthode.
+
+« Tu parles de solitude comme si c'était une discipline », dit-elle doucement.
+
+Remerii ne répond pas tout de suite.
+
+Ce retard suffit.`,next:'c6_22'});
+    setScene('c6_21_d',{sub:'Résonance',speaker:'Narrateur',text:`La question reste suspendue entre elles.
+
+Pour Hylee, la solitude de Remerii n'a pas la forme d'un mur. Plutôt celle d'un cercle tracé au sol : invisible, ancien, respecté par habitude.
+
+Elle le sent sans savoir le nommer.
+
+Alors elle garde ses pieds de son côté du cercle. Pas par peur. Par respect pour ce que cette distance a dû protéger avant elle.`,next:'c6_22'});
+
+    /* C6_26 · Rester : demande directe, minute, porte de sortie premium, sensation intime. */
+    setChoices('c6_26',[
+      ch('Dire qu’elle n’a pas envie que la nuit finisse','c6_26_a',{audace:1,lien:1},'Audace · Hylee ose formuler un désir simple.'),
+      ch('Demander seulement encore une minute','c6_26_b',{sangfroid:1,lien:1},'Sang-froid · Hylee réduit sa demande pour ne pas lui donner le poids d’une promesse.'),
+      ch('Lui laisser une vraie porte de sortie','c6_26_c',{lucidite:1,lien:1},'Lucidité · Hylee comprend que rester doit rester un choix.',{lucidite:22}),
+      ch('Dire que le silence autour d’elles ne grince plus','c6_26_d',{resonance:1,lien:1},'Résonance · Hylee formule l’apaisement par sensation.')
+    ]);
+    setScene('c6_26_b',{sub:'Une minute',speaker:'Hylee',text:`Hylee sent que « reste » est un mot trop grand.
+
+Alors elle le réduit jusqu'à pouvoir le porter.
+
+« Juste encore une minute ? »
+
+La demande ne réclame pas la nuit entière. Elle n'essaie pas de transformer l'instant en serment.
+
+Remerii regarde le dôme comme si elle vérifiait auprès des étoiles qu'une minute était raisonnable.
+
+« Une minute », concède-t-elle.
+
+Elle reste davantage.`,next:'c6_27'});
+    setScene('c6_26_c',{sub:'Lucidité',speaker:'Hylee',text:`« Si tu préfères rentrer, je comprendrai. »
+
+Hylee force ses doigts à ne pas se crisper.
+
+« Je voudrais que tu restes, mais pas si ma demande devient une chaîne. »
+
+Remerii baisse un instant les yeux, comme si cette précision la touchait plus que l'audace de la demande elle-même.
+
+« Tu rends les choses très difficiles à refuser. »
+
+« C'est une critique ? »
+
+« Pas entièrement. »`,next:'c6_27'});
+
+    // Suppression des anciennes passerelles qui recréaient des variantes gratuites.
+    ['c6_06_bridge_audace_v133','c6_06_bridge_resonance_v133','c6_10_bridge_sangfroid_v133','c6_10_bridge_lucidite_v133','c6_14_bridge_audace_v133','c6_14_bridge_sangfroid_v133','c6_17_bridge_lucidite_v133','c6_17_bridge_resonance_v133','c6_21_bridge_sangfroid_v133','c6_21_bridge_resonance_v133','c6_26_bridge_lien_v133','c6_26_bridge_lucidite_v133'].forEach(id=>{ delete S[id]; });
+
+    // Dernier nettoyage après consolidation.
+    Object.keys(S).forEach(id=>{
+      const sc=scene(id); if(!sc) return;
+      if(sc.sub==='Progression libre') sc.sub='Variation';
+      if(Array.isArray(sc.choices)) sc.choices.forEach(c=>{ if(c&&c.note) c.note=cleanNote(c.note); });
+    });
+  }catch(e){ console.warn('Correctifs v0.145 choix uniques non appliqués', e); }
+})();
+
+
+
+/* v0.146 · Second passage anti-similarité : intro + C3/C5 */
+(function(){
+  try{
+    if(typeof S==='undefined') return;
+    const scene=id=>S&&S[id];
+    function cleanNote(note){return String(note||'').replace(/\s*·\s*Choix de progression\s*·\s*ce choix permet de travailler la valeur, il ne la récompense pas seulement\.?/gi,'').replace(/\s*·\s*Variation premium\s*:\s*le prérequis récompense une orientation déjà affirmée\.?/gi,'').replace(/\s*·\s*Progression libre\s*:\s*[^.]+\.?/gi,'').replace(/\s*·\s*v0\.\d+\s*:[^.]+\.?/gi,'').replace(/\s{2,}/g,' ').replace(/\s*·\s*$/,'').trim();}
+    function patchChoice(scId,next,patch){const sc=scene(scId); if(!sc||!Array.isArray(sc.choices))return; const ch=sc.choices.find(c=>c&&c.next===next); if(ch){Object.assign(ch,patch); if(ch.note)ch.note=cleanNote(ch.note);}}
+    function patchScene(id,patch){if(scene(id)) Object.assign(S[id],patch);}
+
+    // Intro : notes et effets différenciés, pour éviter les postures copiées-collées.
+    patchChoice('intro_offer','intro_bridge_offer_0',{effects:{lucidite:1},note:'Lucidité · Hylee cherche à comprendre l’impossible avant de croire Remerii.'});
+    patchChoice('intro_offer','intro_bridge_offer_1',{effects:{sangfroid:1},note:'Sang-froid · Hylee accepte d’écouter sans offrir sa confiance trop vite.'});
+    patchChoice('intro_cellar_descent','intro_bridge_cellar_descent_0',{effects:{sangfroid:1},note:'Sang-froid · Hylee garde le froid enfermé malgré la douleur.'});
+    patchChoice('intro_cellar_descent','intro_bridge_cellar_descent_1',{effects:{resonance:1},note:'Résonance · La magie répond au corps d’Hylee avant sa volonté.'});
+    patchChoice('intro_arcane_vision','intro_bridge_arcane_vision_0',{effects:{sangfroid:1},note:'Sang-froid · Hylee refuse de toucher ce qui l’appelle trop fort.'});
+    patchChoice('intro_arcane_vision','intro_bridge_arcane_vision_1',{effects:{resonance:1},note:'Résonance · Hylee ressent l’appel cosmique avant d’en comprendre le danger.'});
+    patchChoice('intro_father_grabs','intro_bridge_father_grabs_1',{effects:{sangfroid:1},note:'Sang-froid · Hylee attend l’ouverture au lieu d’exploser trop tôt.'});
+    patchChoice('intro_father_grabs','intro_bridge_father_grabs_2',{effects:{resonance:1},note:'Résonance · Le froid monte dans ses doigts comme une réponse instinctive.'});
+    patchChoice('intro_final_confrontation','intro_bridge_final_confrontation_2',{effects:{audace:1},note:'Audace sombre · Hylee choisit l’attaque plutôt que la main tendue.'});
+
+    // C3_35 : le choix libre ne doit plus être une version faible du choix stratégique de silence.
+    patchChoice('c3_35','c3_36_listen',{label:'Dire que le mot « sauvée » lui reste coincé',effects:{sangfroid:1,lien:1},note:'Sang-froid · Hylee accepte la vérité du mot sans réclamer tout le passé de Remerii.'});
+    patchScene('c3_36_listen',{sub:'Le mot difficile',speaker:'Hylee',text:`Hylee garde la réponse de Remerii entre elles pendant quelques secondes.
+
+Le mot « sauvée » lui gratte la gorge. Il a quelque chose d'humiliant, presque sale, comme s'il prouvait qu'elle n'avait pas été assez forte toute seule.
+
+« Je déteste ce mot », finit-elle par dire. « Mais je crois qu'il est vrai. »
+
+Remerii ne sourit pas.
+
+« Alors il ne te servira pas de chaîne. Seulement de point de départ. »
+
+Hylee baisse les yeux vers les braises. Pour une fois, la vérité ne l'écrase pas tout à fait.`});
+
+    // C3_49 : le choix lucidité ne doit plus répéter la demande de dormir à côté.
+    patchChoice('c3_49','c3_50_direct',{label:'Avouer que tu as peur de toi-même',effects:{lucidite:1,lien:1},note:'Lucidité · Hylee nomme le vrai danger : sa propre perte de contrôle.'});
+    patchScene('c3_50_direct',{sub:'Le vrai danger',speaker:'Hylee',text:`Hylee inspire. Pour une fois, elle ne tourne pas autour de sa peur.
+
+« Ce n'est pas seulement le cauchemar qui me fait peur. C'est moi. Ce que je peux faire si je repars là-dedans. »
+
+Remerii la regarde sans l'interrompre.
+
+« Voilà une peur utile », dit-elle enfin.
+
+Hylee fronce les sourcils.
+
+« Utile ? »
+
+« Oui. Les peurs qu'on nomme deviennent moins douées pour nous tenir en laisse. »
+
+Ce n'est pas exactement rassurant. Mais c'est solide, et ce soir, solide suffit presque.`});
+
+    // C5_08 : chaque réponse au garde doit produire une posture réellement différente.
+    patchChoice('c5_08','c5_08_a',{label:'Dire simplement ce qu’elle cherche',effects:{sangfroid:1},note:'Sang-froid · Hylee répond sans inventer de masque.'});
+    patchScene('c5_08_a',{sub:'Sincérité',speaker:'Hylee',text:`Hylee avale sa nervosité.
+
+La vérité paraît moins dangereuse que l'invention.
+
+« Je cherche un endroit où apprendre sans cacher mes mains. »
+
+Le garde ne cille pas. Remerii, elle, ne la corrige pas.
+
+Pour Hylee, c'est presque une validation.`});
+    patchChoice('c5_08','c5_08_b',{label:'Se présenter comme l’apprentie de Remerii',effects:{lien:1},note:'Lien Remerii · Hylee s’appuie sur leur lien sans se cacher derrière lui.'});
+    patchScene('c5_08_b',{sub:'Appui',speaker:'Hylee',text:`Hylee sent Remerii près d'elle.
+
+Ce n'est pas une protection absolue, mais c'est assez pour que sa voix ne se brise pas.
+
+« Je suis l'apprentie de Remerii. Et j'aimerais comprendre ce que cette ville peut m'apprendre. »
+
+Le titre paraît trop grand sur sa langue. Pourtant, il ne tombe pas.
+
+Remerii ne dit rien. Son silence tient lieu d'accord.`});
+    patchChoice('c5_08','c5_08_c',{label:'Répondre avec une formule de jeune mage',effects:{lucidite:1},note:'Lucidité · Hylee choisit les mots attendus pour passer la porte.'});
+    patchScene('c5_08_c',{sub:'Le rôle',speaker:'Hylee',text:`Jeune mage.
+
+Le titre est trop grand pour elle, mais Hylee comprend que les portes de Mir'Aldas s'ouvrent plus facilement devant les formes correctes.
+
+Elle incline légèrement la tête.
+
+« Hylee. Apprentie cryomancienne. Présente sous la responsabilité de Remerii de Mir'Aldas. »
+
+Remerii lui jette un regard en coin.
+
+« Presque administratif. Je suis impressionnée. »
+
+« Je peux devenir terrifiante avec assez de formulaires. »`});
+
+    // C4D_26 : deux choix Sang-froid, mais l'un est militaire, l'autre intime. Les notes le disent clairement.
+    patchChoice('c4d_26','c4d_27a',{note:'Sang-froid · Draven parle en amiral : objectif, chaîne de commandement, priorité.'});
+    patchChoice('c4d_26','c4d_27b',{note:'Sang-froid · Draven parle en père : il assume que la demande le blesse autant qu’elle.'});
+
+    Object.keys(S).forEach(id=>{const sc=scene(id); if(sc&&Array.isArray(sc.choices)) sc.choices.forEach(c=>{if(c&&c.note)c.note=cleanNote(c.note);});});
+  }catch(e){ console.warn('Correctifs v0.146 anti-similarité non appliqués', e); }
+})();
+
+
+
+/* v0.147 · Dernier cas signalé par audit : tutoiement ≠ hésitation */
+(function(){
+  try{
+    if(typeof S==='undefined') return;
+    const sc=S.c3_37;
+    if(sc && Array.isArray(sc.choices)){
+      const ch=sc.choices.find(c=>c&&c.next==='c3_38_hesitate');
+      if(ch){
+        ch.label='Garder le « vous » encore un instant';
+        ch.effects={sangfroid:1};
+        ch.note='Sang-froid · Hylee respecte la distance au lieu de franchir le pas trop vite.';
+      }
+    }
+    if(S.c3_38_hesitate){
+      Object.assign(S.c3_38_hesitate,{
+        sub:'Distance respectée',
+        speaker:'Hylee',
+        text:`Hylee ouvre la bouche. Le prénom de Remerii arrive presque seul, mais le tutoiement reste coincé derrière les dents.
+
+Elle baisse un peu les yeux.
+
+« Merci... pour tout. Je crois que je ne suis pas encore prête à faire comme si cette distance n'avait jamais existé. »
+
+Remerii ne se moque pas.
+
+« Alors ne fais pas semblant. Les distances franchies trop vite ressemblent parfois à des mensonges. »
+
+Hylee hoche la tête. Ce n'est pas un recul. C'est une manière plus honnête d'avancer.`
+      });
+    }
+  }catch(e){ console.warn('Correctif v0.147 tutoiement non appliqué', e); }
 })();
 
 </script>
