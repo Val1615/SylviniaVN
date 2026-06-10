@@ -16587,7 +16587,7 @@ function renderChapterSelect(){
     card.className='chapterSelectCard'+(unlocked?'':' locked');
     if(idx===0) card.open=true;
     const stateLabel=unlocked?'Accessible':'Verrouillé';
-    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Termine le Chapitre VI pour ouvrir la route de Naïah.':'Disponible.';
+    const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Termine le Chapitre VI pour ouvrir la route de Naïah.':ch.key==='ch8'?'Chapitre en préparation : disponible uniquement en mode développeur pour l’instant.':'Disponible.';
     card.innerHTML=`
       <summary class="chapterBookCover">
         <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
@@ -20180,6 +20180,914 @@ La conversation est terminée depuis plusieurs secondes déjà. Aucun des deux n
       });
     }
   }catch(e){ console.warn('Correctif v0.166 C4D_33 non appliqué', e); }
+})();
+
+
+/* v0.168 · Chapitre VIII VN : sélection ajoutée, verrouillée hors mode développeur */
+(function installChapter8UnSombreConseiller(){
+  try{
+    if(window.__sylviniaV167Chapter8UnSombreConseiller) return;
+    window.__sylviniaV167Chapter8UnSombreConseiller=true;
+
+    if(typeof A!=='undefined'){
+      A.c8_port_isole = A.c4d_warroom_sunset || A.bg_algratal_panorama || A.bg_camp;
+      A.c8_camp_base = A.bg_camp || A.c4d_warroom_sunset || A.bg_algratal_panorama;
+      A.c8_quartiers_iriana = A.c4d_noble_chamber || A.c4d_warroom_night || A.bg_projection;
+      A.c8_memoire_amanea = A.c7_bg_monde_mental || A.c7_bg_monde_fracture || A.bg_projection;
+      A.music_chapter8_sombre_conseiller = A.music_iriana || A.music_tension || A.music_menu;
+    }
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      Object.assign(PROGRESSION_MEMORIES,{
+        iriana_conseiller_violet:{title:'Iriana se souviendra du masque violet',type:'Iriana',icon:'☾',body:`Draven a vu que le masque de médecin de peste ne réveillait pas seulement la prudence militaire : il réveillait aussi une mémoire dangereuse chez Iriana.`},
+        iriana_naiah_blessure:{title:'Iriana se souviendra de la blessure de Naïah',type:'Iriana',icon:'☾',body:`Le nom de Naïah n’a pas seulement été reçu comme une donnée stratégique. Iriana a senti le poids du mot “erreur”, et ce qu’une famille impériale peut ensevelir derrière ce genre de formule.`}
+      });
+    }
+
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        conseiller_masque:{title:'Le Conseiller au masque de peste',body:`Personnage énigmatique associé à la cour de Tia Farae et désormais signalé à Forthaven. Son masque de médecin de peste, ses yeux violets et son influence silencieuse en font une présence difficile à classer : conseiller, agent, opportunité ou menace.`},
+        caldran:{title:'Capitaine Caldran',body:`Capitaine de Forthaven, envoyé auprès de Draven avec deux navires et quarante hommes. Son rapport confirme l’état critique de la ville basse et l’arrivée inquiétante d’un conseiller masqué auprès de Lineva.`},
+        naiah_sang_imperial:{title:'Naïah, sang impérial perdu',body:`Révélée par Valurn comme une cousine d’Iriana, Naïah n’est plus seulement une guide de la Forêt Interdite. Elle devient une survivante de la lignée Farae, longtemps décrite comme une erreur et désormais impossible à ignorer.`},
+        fracture_tia_amanea:{title:'Fracture entre Tia et Amanea',body:`Le Carnet du Némésis révèle un épisode fondateur : Amanea a répondu à la mort de sa mère par un massacre, avant d’être arrêtée par Tia pour usage de magie occulte. La blessure intime devient alors fracture politique, morale et familiale.`}
+      });
+    }
+
+    if(typeof JOURNAL_FRAGMENTS!=='undefined'){
+      JOURNAL_FRAGMENTS.ch9={
+        title:'Chapitre VIII · Les ombres ne disparaissent jamais',
+        chapter:'Chapitre VIII',
+        unlockLabel:'Termine le Chapitre VIII',
+        blocks:[{kind:'journal',text:"Elle regarde le ciel, voyant une étoile filante traverser le ciel, un signe éphémère au-dessus d’Al’gratal, tandis que le destin semble préparer une réunion familiale aussi inattendue que périlleuse.\n\nMa sœur. Je peux encore te voir, à genoux, pleurant au chevet de notre mère. Ta voix tremblait, brisée par la douleur, quand tu m'as presque suppliée: « Ce crime ne peut rester impuni. » Ces mots... ils résonnent encore dans mon esprit. Je n'ai rien demandé en retour. Rien. Pas ton aide, pas ton soutien. Je t'ai simplement écoutée.\n\nJe me suis rendue dans ce village humain. Seule. Et j'ai accompli ce que tu voulais, ce que toi tu n'as pas eu le courage de faire. J'ai mis fin à leur existence, chaque homme, chaque femme, chaque enfant. Même les vieillards et les infirmes. Tous. Je les ai tous fait payer pour toi, pour mère.\n\nJe n'ai laissé qu'un seul survivant. Un père. Un pauvre homme à qui j'ai arraché son enfant sous ses yeux avant de l'abattre comme un chien. Il vivra avec cette image gravée dans son âme misérable, une punition bien pire que la mort.\n\nEt quand j'en ai terminé avec leurs vies, j'ai brûlé leurs foyers. Les flammes dansaient, lumineuses, pourtant si froides. Je leur ai offert des morts lentes, douloureuses, marquées par la peur et la désolation. C'était cela, ta justice, non ? La justice que toi tu réclamais.\n\nEt puis tu es venue. Sur ton destrier, toujours si droite, si noble, si parfaite dans ton rôle d'impératrice. Tu m'as regardée d'en haut, comme tu regardes le monde entier, avec cette hauteur insupportable qui te définit si bien. Mais ton regard n'était pas empreint de gratitude ou de soulagement. Non. Tu m'as jugée. Tu m'as condamnée.\n\n«  L'utilisation de la magie occulte est un crime. » Voilà tout ce que tu as trouvé à dire. Comme si ta Lumière capricieuse m'avait laissé d'autres options. Tu crois que j'ai eu le choix ? Que j'ai eu le privilège de ta grâce divine? Non, Tia. Je n'avais que ce que j'étais, et je l'ai utilisé.\n\nEt toi, ma sœur, toi qui avais supplié ma vengeance, toi qui m'avais poussé à agir, tu m'as arrêtée. Tu m'as conduite toi-même dans les profondeurs des cellules, ces geôles lugubres où l'odeur de la pierre humide m'étouffe encore. Juste avant de m'enfermer, tu as murmuré ces mots : « Pardonne-moi, ma sœur. »\n\nPardonner? Comment pourrais-je ? Ton regard, froid et distant, a été la dernière chose que j'ai vue avant que les barreaux ne se referment sur moi. C'était un abandon, clair et simple. Un abandon déguisé en pitié.\n\nEt maintenant, je suis là, seule dans cette cage, tandis que toi, tu chevauches dans la lumière. La mort de notre mère, pensais-je, aurait pu nous unir. J'avais espéré, naïvement, que ce drame aurait effacé nos différends, qu'il aurait forgé un lien indestructible entre nous. Mais non. Cette perte, ce vide, n'a fait que creuser le fossé entre nous.\n\nTu crois qu'elle aurait été fière de toi? Je suppose que oui. Tout le monde l'est, n'est-ce pas? Que ce soit notre peuple, la Lumière, ou même Al'Gratal tout entier, tous admirent la grande Tia Farae. La parfaite impératrice. La digne héritière.\n\nEt moi ? Je ne suis rien d'autre qu'une ombre. Une sœur que tu as sacrifiée pour préserver ton image immaculée. Une paria dans l'ombre de ta lumière.\n\nMais souviens-toi de ceci: les ombres ne disparaissent jamais vraiment. Elles sont toujours là, tapies derrière chaque éclat, prêtes à revenir. Et un jour, ma chère sœur, tu te souviendras de moi. Pas comme celle que tu as enfermée, mais comme celle qui aurait tout donné pour toi. Celle qui l'a fait. Celle qui n'a pas eu peur de se salir les mains pour accomplir ce que toi, tu n'osais même pas envisager.\n\nPardonne-moi, disais-tu ? Non, Tia. C'est à toi de chercher le pardon. Mais tu ne l'obtiendras pas de moi.\n\nEn relisant ces mots, je ne ressens ni honte ni regret pour ce que j’ai fait. Je ne m’excuserai pas d’avoir utilisé les armes qui étaient à ma disposition. La Lumière de Tia n’aurait jamais pu me donner la force nécessaire pour faire ce qui devait être fait. Alors j’ai pris ce qui m’était accessible, et j’ai frappé avec la brutalité qu’exigeait la situation.\n\nCe village humain devait être un exemple. Pas seulement une vengeance, pas seulement une réponse à la douleur. C’était un message. Ils ont pris notre mère ? J’ai pris tout ce qu’ils avaient. Ils ont détruit un foyer ? J’ai détruit une lignée entière. Ils ont semé le chaos ? J’ai imposé un chaos plus grand encore, pour que jamais l’idée ne leur vienne de recommencer. Cela a t-il marché ? Oui. Ils ont capitulé rapidement après mon acte. Ils ont prit peur devant la cruauté que notre peuple peu évoquer.\n\nNon, je ne regrette pas d’avoir utilisé la magie que l’on me reproche. Ce pouvoir m’appartenait, et il a été un outil. Ce que je regrette… c’est l’escalade.\n\nJe pensais que Tia comprendrait. Que face à l’horreur qu’on nous avait imposée, elle verrait que ma réponse n’était que la conséquence naturelle de leur crime. Mais elle n’a vu qu’un acte impardonnable, un point de non-retour. Elle a regardé mon œuvre non comme une justice accomplie, mais comme une monstruosité.\n\nCe jour-là, elle a décidé que j’étais une menace.\n\nEt je comprends pourquoi.\n\nElle n’aurait jamais pu cautionner cela. Pas seulement parce qu’elle est Tia Farae, la grande impératrice, le flambeau de la Lumière et de l’Ordre. Mais parce qu’elle est elle. Parce que tout, dans son essence, la pousse à construire quelque chose de grand dans ses principes, là où moi, la fin justifie les moyens employés.\n\nNous étions à un carrefour, et nous avons pris deux routes opposées. Pas par trahison, ni par haine. Par nécessité. Elle a fait ce qu’elle pensait juste. Et moi aussi.\n\nPeut-être que si j’avais contenu ma fureur, peut-être que si j’avais canalisé ma vengeance autrement, tout cela aurait pris une autre tournure. Peut-être que nous aurions pu nous retrouver, au lieu de nous perdre dans cette division absurde.\n\nMais le passé est figé, immuable.\n\nNous avons toutes les deux agi selon ce que nous sommes.\n\nJe ne regrette pas mon choix. Je regrette seulement qu’il nous ait séparées."}]
+      };
+    }
+    if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined' && Array.isArray(JOURNAL_FRAGMENT_ORDER) && !JOURNAL_FRAGMENT_ORDER.includes('ch9')) JOURNAL_FRAGMENT_ORDER.push('ch9');
+
+    if(typeof S!=='undefined'){
+      Object.assign(S,{
+  "c8_01": {
+    "title": "Un sombre conseiller",
+    "sub": "Port isolé",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Chapitre  IX\n\nUn sombre conseiller\n\nLe vent marin souffle sur le port isolé, apportant avec lui l’odeur du sel et du bois humide. Draven se tient sur le quai, encadré par Iriana et quelques soldats Sylviniens en uniforme impeccable. L’homme, bien que concentré, jette de temps à autre un regard à la princesse Sylvinienne, cherchant à capter ses réactions. Les deux navires en approche, leurs coques marquées par les batailles et la mer, rappellent à Draven l’état critique de sa province.\n\nLes bateaux accostent lentement, le grincement du bois et les cris des marins brisant le silence pesant. Les soldats à bord descendent un à un, fatigués mais disciplinés, leurs armures éraflées témoignant des combats qu’ils ont dû affronter. À leur tête, un homme au visage durci par les années et marqué par une cicatrice notable s’avance.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_neutral",
+        "right"
+      ]
+    ],
+    "next": "c8_02",
+    "zoom": true
+  },
+  "c8_02": {
+    "title": "Un sombre conseiller",
+    "sub": "Les navires de Forthaven",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Caldran",
+    "text": "Capitaine – Se redressant pour saluer. Amiral Draven.\n\nDraven – Rendant le salut. Capitaine Caldran.\n\nCaldran – Jetant un coup d’œil aux Sylviniens, puis revenant à Draven. Nous sommes ici comme promis. Deux navires, quarante hommes… les seuls que nous avons pu « libérer ».\n\nDraven – D’un ton neutre. Vous avez fait ce que vous avez pu.\n\nIl écoute attentivement le rapport du capitaine, mais son regard dérive régulièrement vers Iriana. La princesse, impassible, observe les soldats de Forthaven avec une curiosité distante, ses yeux évaluant silencieusement chaque détail.\n\nCaldran – Continuant, avec un soupir. La ville basse est perdue. Les morts ont franchi nos défenses. Lineva a ordonné l’évacuation vers la ville haute, mais ils sont à nos portes.\n\nDraven – D’un ton mesuré, regardant brièvement Iriana. Je le savais déjà.\n\nIl note le léger froncement de sourcils d’Iriana, qui reste cependant silencieuse, attendant visiblement la suite.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_neutral",
+        "right"
+      ]
+    ],
+    "next": "c8_03"
+  },
+  "c8_03": {
+    "title": "Un sombre conseiller",
+    "sub": "Le conseiller masqué",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Caldran",
+    "text": "Caldran – Hésitant un instant avant de continuer. Mais ce n’est pas tout.\n\nDraven – Croisant les bras. Expliquez.\n\nCaldran – Baissant légèrement la voix. Lineva… elle n’est pas seule pour gérer cette crise.\n\nDraven – Fronçant les sourcils. Qu’entendez-vous par là ?\n\nCaldran – Avec précaution. Un conseiller est arrivé récemment. Un personnage énigmatique… toujours encapuchonné. Il porte un masque de médecin de peste, et ses yeux brillent d’un violet étrange.\n\nL’amiral, jusque-là impassible, se redresse légèrement, son regard devenant plus dur.\n\nDraven – D’un ton plus tranchant. Un masque de médecin de peste ?\n\nCaldran – Hochant la tête. Oui. Il ne parle presque jamais, mais quand il le fait, les gens l’écoutent. Il a gagné une influence… inquiétante.",
+    "chars": [
+      [
+        "draven",
+        "draven_angry",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_stern",
+        "right"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Traiter l’information comme une menace militaire",
+        "next": "c8_03a",
+        "effects": {
+          "sangfroid": 1,
+          "lucidite": 1
+        },
+        "note": "Draven reste sur le terrain concret."
+      },
+      {
+        "label": "Chercher ce qu’Iriana ne dit pas",
+        "next": "c8_03b",
+        "effects": {
+          "lucidite": 2
+        },
+        "requires": {
+          "lucidite": 24
+        },
+        "note": "Choix stratégique · Souvenir : Iriana se souviendra de ce soupçon.",
+        "memories": [
+          "iriana_conseiller_violet"
+        ]
+      },
+      {
+        "label": "Rappeler intérieurement que Forthaven passe avant les jeux de cour",
+        "next": "c8_03c",
+        "effects": {
+          "audace": 1,
+          "sangfroid": 1
+        },
+        "note": "Une priorité froide, presque têtue."
+      }
+    ]
+  },
+  "c8_03a": {
+    "title": "Un sombre conseiller",
+    "sub": "Menace classée",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Draven ne laisse pas l’étrangeté du masque prendre toute la place. Un conseiller inconnu dans une ville assiégée n’est pas d’abord une énigme : c’est une faille dans une chaîne de commandement.\n\nIl grave le détail dans son esprit avec la rigueur d’un rapport militaire. Masque. Yeux violets. Influence. Lineva exposée. Le reste attendra.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_neutral",
+        "right"
+      ]
+    ],
+    "next": "c8_04"
+  },
+  "c8_03b": {
+    "title": "Un sombre conseiller",
+    "sub": "Le silence d’Iriana",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Draven regarde moins le port que la réaction d’Iriana. Le masque inquiète Caldran. Les yeux violets, eux, semblent avoir trouvé quelque chose dans la mémoire de la princesse.\n\nElle ne parle pas encore. Ce silence vaut presque un aveu. Draven le range avec les autres informations dangereuses : celles qui ne sont pas formulées parce qu’elles coûtent trop cher.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_profile",
+        "right"
+      ]
+    ],
+    "next": "c8_04"
+  },
+  "c8_03c": {
+    "title": "Un sombre conseiller",
+    "sub": "Forthaven d’abord",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Un conseiller mystérieux, une cour impériale, des yeux violets. Tout cela pourrait avaler l’attention d’un homme moins enraciné.\n\nMais Draven pense à Forthaven, à Lineva, aux murs qui cèdent et aux morts qui montent. Si ce masque est une menace, il ne sera pas un mystère élégant. Il sera un obstacle de plus entre ses soldats et leurs foyers.",
+    "chars": [
+      [
+        "draven",
+        "draven_angry",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_stern",
+        "right"
+      ]
+    ],
+    "next": "c8_04"
+  },
+  "c8_04": {
+    "title": "Un sombre conseiller",
+    "sub": "Iriana écoute",
+    "bg": "c8_port_isole",
+    "music": "music_iriana",
+    "speaker": "Draven",
+    "text": "Draven reste silencieux un instant, ses yeux fixant l’horizon comme s’il cherchait à assembler un puzzle invisible. Puis, lentement, il se tourne vers Iriana, son regard cherchant à lire ses pensées.\n\nDraven – Avec une pointe de gravité. Vous avez entendu, princesse ?\n\nIriana – Avec un sourire fin. J’ai entendu, oui.\n\nDraven – Appuyant ses mots. Cet individu… ses origines, son rôle, tout cela reste flou. Si ce qu’il dit influence ma fille, cela peut devenir un problème.\n\nIriana – D’un ton calme, mais pénétrant. Ou une opportunité. Parfois, ces éléments imprévus peuvent jouer en notre faveur… si nous savons les utiliser.\n\nDraven – Fixant Iriana avec insistance. Lineva est seule, dépassée par la situation. Ce « conseiller » pourrait bien être une menace déguisée.\n\nIriana – Hochant doucement la tête, songeuse. Alors il faudra le surveiller de près.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_calm",
+        "right"
+      ]
+    ],
+    "next": "c8_05"
+  },
+  "c8_05": {
+    "title": "Un sombre conseiller",
+    "sub": "Du quai au camp",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "L’amiral détourne son attention vers Caldran, son visage redevenu neutre.\n\nDraven – D’un ton plus détaché. Merci pour votre rapport, capitaine. Prenez soin de vos hommes. Ils auront besoin de repos avant d’être opérationnels.\n\nCaldran – Saluant légèrement. Oui, Amiral.\n\nLes soldats de Forthaven, bien que fatigués, se regroupent avec discipline, aidés par les Sylviniens qui observent leurs alliés avec une neutralité froide.\n\nLa procession quitte lentement le port pour rejoindre le camp de base près d’Al’gratal. Draven, à cheval en tête du convoi, garde un visage fermé, son esprit occupé par les nouvelles troublantes venant de Forthaven. Derrière lui, Iriana suit en silence, mais quelque chose dans son attitude trahit une agitation intérieure. Ses yeux verts, habituellement calmes et observateurs, brillent d’une lueur intense, et elle semble perdue dans ses pensées.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_neutral",
+        "right"
+      ]
+    ],
+    "next": "c8_06",
+    "zoom": true
+  },
+  "c8_06": {
+    "title": "Un sombre conseiller",
+    "sub": "Les yeux violets",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Iriana",
+    "text": "Iriana – D’une voix basse, presque pour elle-même. Un masque de médecin de peste… et des yeux violets ?\n\nDraven – L’entendant malgré tout, se retournant légèrement. Cela vous dit quelque chose ?\n\nIriana – Reprenant une expression neutre. Peut-être.\n\nDraven – La regarde avec insistance. Soyez claire, princesse. Si ce que vous savez peut nous être utile, je dois en être informé.\n\nIriana – Fixant l’horizon, hésitante. Ce n’est qu’une supposition, mais… il y a quelqu’un de similaire à la cour de ma grand-mère, l’Impératrice Tia.\n\nDraven – Frappé par la révélation, serrant les rênes de son cheval. Continuez.\n\nIriana – Avec un ton mesuré. Il y a des années, un individu encapuchonné est apparu à la cour. Toujours vêtu d’une cape et d’un masque de médecin de peste, ses yeux brillants d’un violet étrange, exactement comme celui dont votre capitaine a parlé.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_profile",
+        "right"
+      ]
+    ],
+    "next": "c8_07"
+  },
+  "c8_07": {
+    "title": "Un sombre conseiller",
+    "sub": "Le conseiller de Tia",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Iriana",
+    "text": "Draven – Fronçant les sourcils. Et quel est son rôle auprès de l’Impératrice ?\n\nIriana – D’un ton plus grave. Conseiller. Officiellement, il est un érudit chargé d’assister ma grand-mère dans les affaires magiques et diplomatiques. Mais… personne ne sait d’où il vient réellement. Il a vite réussi à s’attirer les faveurs de la cour\n\nDraven – Vous pensez qu’il pourrait y avoir un lien entre lui et celui de Forthaven ?\n\nIriana – Avec un soupir. Ce n’est pas impossible. S’il s’agit du même individu ou de quelqu’un de son cercle, cela pourrait expliquer bien des choses.\n\nDraven – D’un ton direct. Vous avez déjà eu des contacts avec cet homme ?\n\nIriana – Marquant une pause, son visage impassible. Une ou deux fois, oui. Il est… déstabilisant. Il a une manière de parler qui vous pousse à baisser votre garde, et pourtant, il vous donne toujours l’impression de ne rien savoir sur lui. C’est très dur de se faire une idée sur lui. Même son genre est dur à définir...\n\nDraven – Soupire, lasse. Là n’est pas la question. L’air sombre. Et votre grand-mère ? Elle lui fait confiance ?\n\nIriana – Avec un sourire amer. Ma grand-mère ne fait confiance à personne. Mais elle le garde près d’elle, et cela veut dire qu’il a prouvé son utilité… ou qu’il détient quelque chose qu’elle veut protéger.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_stern",
+        "right"
+      ]
+    ],
+    "next": "c8_08"
+  },
+  "c8_08": {
+    "title": "Un sombre conseiller",
+    "sub": "Terrain dangereux",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Draven",
+    "text": "Draven – Ruminant l’information. Si ce conseiller agit aussi à Forthaven, cela signifie qu’il joue un jeu à plusieurs niveaux. Et je n’aime pas ça.\n\nIriana – Jetant un regard perçant à Draven. Vous pensez que ma famille pourrait être derrière cela ?\n\nDraven – Hésitant un instant. Je ne l’exclus pas. Les Sylviniens ont une influence qui s’étend bien au-delà de leurs frontières.\n\nIriana – Avec un sourire fin, presque moqueur. Faites attention à vos mots, Amiral. Vous marchez sur un terrain dangereux.\n\nDraven – D’un ton calme mais ferme. Peut-être, mais c’est un terrain que je connais bien.",
+    "chars": [
+      [
+        "draven",
+        "draven_angry",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_smirk",
+        "right"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Soutenir l’hypothèse sans accuser directement",
+        "next": "c8_08a",
+        "effects": {
+          "lucidite": 1,
+          "sangfroid": 1
+        },
+        "note": "La prudence garde les portes ouvertes."
+      },
+      {
+        "label": "Répondre que la prudence n’est pas une insulte",
+        "next": "c8_08b",
+        "effects": {
+          "sangfroid": 2
+        },
+        "requires": {
+          "sangfroid": 24
+        },
+        "note": "Choix stratégique · Draven refuse le piège rhétorique."
+      },
+      {
+        "label": "Laisser le sous-entendu mordre",
+        "next": "c8_08c",
+        "effects": {
+          "audace": 2
+        },
+        "note": "Le terrain dangereux ne l’a jamais empêché d’avancer."
+      }
+    ]
+  },
+  "c8_08a": {
+    "title": "Un sombre conseiller",
+    "sub": "Accuser sans rompre",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Draven ne pousse pas l’accusation jusqu’au point de rupture. Pas encore. Il connaît la valeur d’une porte entrouverte, surtout quand la personne en face tient peut-être la clef d’un désastre.\n\nIriana le remarque. Son sourire ne disparaît pas, mais ses yeux deviennent plus attentifs. Il n’a pas reculé. Il a choisi l’angle d’attaque.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_calm",
+        "right"
+      ]
+    ],
+    "next": "c8_09"
+  },
+  "c8_08b": {
+    "title": "Un sombre conseiller",
+    "sub": "La prudence n’est pas une offense",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Draven",
+    "text": "« Je ne vous accuse pas pour le plaisir, princesse. Je mesure les angles morts. »\n\nIriana l’observe un instant de plus. La réponse n’a rien d’insolent, et c’est précisément pour cela qu’elle porte. Draven ne cherche pas à l’humilier. Il cherche à garder ses hommes vivants dans un monde où les cours impériales traitent parfois les vies comme des pions décorés.",
+    "chars": [
+      [
+        "draven",
+        "draven_stern",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_stern",
+        "right"
+      ]
+    ],
+    "next": "c8_09"
+  },
+  "c8_08c": {
+    "title": "Un sombre conseiller",
+    "sub": "Sur la ligne",
+    "bg": "c8_camp_base",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Draven ne retire pas son soupçon. Il le laisse entre eux, bien visible, comme une lame posée sur une table de négociation.\n\nIriana sourit, mais le sourire a perdu sa souplesse. L’amiral vient de rappeler une chose simple : Forthaven n’est pas une salle de conseil. Là-bas, les conséquences ont des visages.",
+    "chars": [
+      [
+        "draven",
+        "draven_angry",
+        "left"
+      ],
+      [
+        "iriana",
+        "iriana_smirk",
+        "right"
+      ]
+    ],
+    "next": "c8_09"
+  },
+  "c8_09": {
+    "title": "Un sombre conseiller",
+    "sub": "Quartiers d’Iriana",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_iriana",
+    "speaker": "Iriana",
+    "text": "Le reste du trajet se déroule en silence, chacun perdu dans ses pensées. L’arrivée au camp de base, dans une clairière où est installé tout le nécessaire pour que les soldats s’installent, se fait rapidement et efficace. Mais Draven et Iriana ne s’attardent pas ; à peine arrivée dans ses quartiers, Iriana s’installe à son bureau, feuilletant des documents et des cartes, ses pensées toujours tournées vers cet étrange conseiller.\n\nIriana – Murmurant pour elle-même. Un masque de médecin de peste, des yeux violets… Qu’est-ce que tu es, exactement ?\n\nLes bougies dans les quartiers d’Iriana vacillent légèrement, projetant des ombres mouvantes sur les murs. La princesse, concentrée sur ses documents, sursaute brusquement lorsqu’une voix familière résonne depuis un coin de la pièce.\n\nValurn – Avec une nonchalance provocatrice. Vous travaillez si tard, princesse. Pas étonnant que vous ayez ce regard toujours si… perçant.\n\nIriana – Se retournant brusquement, agacée et prise par surprise. Par Sylvinia, Valurn ! Vous êtes vraiment insupportable. Vous auriez pu au moins frapper.\n\nValurn – S’avançant légèrement, un sourire en coin. Où serait le plaisir dans ça ?",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_10"
+  },
+  "c8_10": {
+    "title": "Un sombre conseiller",
+    "sub": "Un guide",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Valurn",
+    "text": "Elle le fusille du regard, mais il continue de marcher vers elle, s’arrêtant juste assez près pour la mettre mal à l’aise, sans pour autant franchir une ligne.\n\nIriana – Croisant les bras, son ton froid. Parlez. Vous avez trouvé un moyen d’atteindre Akuhn’Nabad ?\n\nValurn – Avec un sourire satisfait. En effet, mais ce n’est pas une simple traversée. Vous aurez besoin d’un guide…\n\nIriana – Plissant les yeux. Et vous avez trouvé quelqu’un capable de nous aider ?\n\nValurn – Avec un ton énigmatique. Oh, bien plus qu’un simple guide.\n\nIriana – Exaspérée. Arrêtez vos mystères. Qui est-ce ?\n\nValurn – Hochant la tête lentement, sa voix baissant légèrement. Si je vous le dis maintenant, où serait le plaisir ?\n\nIriana – Avec irritation. Cessez de jouer avec moi, Valurn. Cette mission est trop importante.\n\nValurn – Levant une main pour calmer son irritation, un sourire provocateur toujours présent. Très bien, princesse. Je vais vous donner un indice. Cette personne… porte en elle du sang impérial.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Couper court au théâtre de Valurn",
+        "next": "c8_10a",
+        "effects": {
+          "sangfroid": 1,
+          "lucidite": 1
+        },
+        "note": "Iriana impose le rythme."
+      },
+      {
+        "label": "Laisser Valurn dérouler son indice",
+        "next": "c8_10b",
+        "effects": {
+          "lucidite": 2
+        },
+        "requires": {
+          "lucidite": 23
+        },
+        "note": "Choix stratégique · Écouter ce qu’il veut vraiment montrer."
+      },
+      {
+        "label": "Répondre à son jeu avec la même insolence",
+        "next": "c8_10c",
+        "effects": {
+          "audace": 2
+        },
+        "note": "Deux lames sourient dans la même pièce."
+      }
+    ]
+  },
+  "c8_10a": {
+    "title": "Un sombre conseiller",
+    "sub": "Rythme impérial",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Narrateur",
+    "text": "Iriana refuse de lui offrir le plaisir de la mise en scène. Son silence se durcit, et Valurn comprend qu’il n’aura pas droit à une scène plus longue sans payer en information.\n\nIl garde son sourire, bien sûr. Chez lui, c’est presque une armure. Mais il avance d’un pas vers le cœur du sujet.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_annoyed",
+        "right"
+      ]
+    ],
+    "next": "c8_11"
+  },
+  "c8_10b": {
+    "title": "Un sombre conseiller",
+    "sub": "L’indice avant le nom",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Narrateur",
+    "text": "Iriana le laisse parler. Pas par patience. Par méthode. Valurn n’annonce jamais seulement une information : il choisit la manière dont elle doit tomber.\n\nAlors elle écoute le théâtre autant que le texte. La désinvolture, le plaisir de retarder, le mot sang impérial posé comme une braise sur un tapis sec.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_11"
+  },
+  "c8_10c": {
+    "title": "Un sombre conseiller",
+    "sub": "Deux sourires",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Iriana",
+    "text": "« Vous adorez vous entendre approcher d’une vérité, Valurn. C’est presque touchant. »\n\nLe sourire du demi-démon s’élargit.\n\n« Je préfère dire que j’ai le sens de l’entrée dramatique. »\n\n« Vous avez surtout le sens de ma patience. Et elle n’est pas une ressource renouvelable. »\n\nCette fois, Valurn rit doucement. Il a gagné une seconde de jeu. Iriana, elle, a gagné la confirmation qu’il attendait qu’on le laisse jouer.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_smirk",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_amused",
+        "right"
+      ]
+    ],
+    "next": "c8_11"
+  },
+  "c8_11": {
+    "title": "Un sombre conseiller",
+    "sub": "Le sang impérial",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Valurn",
+    "text": "Iriana – Frappée par la révélation, fronçant les sourcils. Du sang impérial ? Impossible. Toute ma famille est soit à la cour, soit…\n\nValurn – L’interrompant doucement. … Soit cachée dans l’ombre, loin des regards. Vous seriez surprise de savoir ce qui se cache dans les coins les plus sombres de ce monde.\n\nIriana – Le fixant, méfiante. Vous mentez.\n\nValurn – S’approchant davantage, son regard flamboyant légèrement. Je ne mens jamais sur des choses aussi importantes, princesse. Mais si vous voulez connaître son identité… il va falloir me faire confiance.\n\nIriana – Hésitant, son regard plongé dans le sien. Et qu’attendez-vous de moi en échange de cette information ?\n\nValurn – Avec un sourire en coin. Un pacte. Une simple poignée de main pour sceller notre accord. Vous acceptez de me laisser faire les choses à ma manière, et en retour, je vous révèle tout ce que je sais.\n\nIriana – Levant un sourcil, suspicieuse. Et qu’est-ce que vous gagnez dans tout ça ?\n\nValurn – Avec un ton plus sérieux. Vous pourriez être surprise de voir combien j’apprécierais sortir de cette mission en vie.\n\nElle le fixe longuement, cherchant à déceler une quelconque malice derrière ses mots. Finalement, elle tend sa main.\n\nIriana – Avec une voix ferme. Très bien. Mais sachez que je ne tolérerai aucune trahison.\n\nValurn – Attrapant sa main avec une douceur déconcertante. Princesse, trahir une femme aussi fascinante que vous serait un crime.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_12"
+  },
+  "c8_12": {
+    "title": "Un sombre conseiller",
+    "sub": "Pacte de Chaos",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Narrateur",
+    "text": "Le contact de leurs mains déclenche une sensation étrange. Une chaleur déconcertante s’élève, et une subtile odeur se répand dans l’air, mêlant des notes de bois incandescent et de vin rouge. Iriana reconnaît immédiatement cette odeur : celle du Chaos.\n\nIriana – Retirant légèrement sa main après la poignée, le ton froid. Vous n’avez pas dit que ce serait un pacte magique.\n\nValurn – Avec un sourire amusé. Vous auriez refusé ?\n\nIriana – Avec méfiance. Certainement…\n\nValurn – S’éloignant légèrement, son ton redevenant léger. Eh bien, maintenant, il est scellé. Préparez-vous, princesse. Les vérités que vous allez découvrir risquent de vous surprendre. Il la regarde se questionner sur le bon choix de ce pacte, puis pouffe de rire. Ne vous en faite pas, votre âme est toujours votre.\n\nLe silence règne dans les quartiers d’Iriana après la poignée de main entre elle et Valurn. L’odeur persistante du Chaos flotte encore légèrement, un rappel de l’audace du sorcier et de la gravité de l’accord qu’ils viennent de conclure. Iriana, bien qu’énervée par cette intrusion, reste fixée sur l’identité de ce guide mystérieux.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_amused",
+        "right"
+      ]
+    ],
+    "next": "c8_13"
+  },
+  "c8_13": {
+    "title": "Un sombre conseiller",
+    "sub": "Le nom de Naïah",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Valurn",
+    "text": "Iriana – Croisant les bras, son ton tranchant. Très bien. Le pacte est scellé. Maintenant, dites-moi : qui est cette personne ?\n\nValurn – S’éloignant légèrement, les mains croisées dans son dos, un sourire amusé aux lèvres. Êtes-vous certaine de vouloir savoir ?\n\nIriana – Avec impatience. Ne jouez pas avec moi, Valurn. Vous avez insisté pour faire ce pacte, alors tenez votre parole.\n\nValurn – Se retournant lentement, son sourire s’élargissant. Très bien, princesse. Elle s’appelle Naïah.\n\nIriana – Clignant des yeux, abasourdie. Naïah ?\n\nValurn – S’approchant, son regard flamboyant légèrement. Oui, Naïah. Votre cousine, si mes informations sont exactes.\n\nIriana – Secouant la tête, incrédule. C’est impossible. Elle a disparu il y a des années, bien avant ma naissance.\n\nValurn – Avec un ton posé, presque moqueur. Eh bien, il semble qu’elle n’ait pas disparu aussi complètement que tout le monde le pensait. Elle est toujours là, dans cette forêt maudite, vivante et… disons, très consciente de ses origines.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Classer Naïah comme alliée utile",
+        "next": "c8_13a",
+        "effects": {
+          "sangfroid": 1,
+          "lucidite": 1
+        },
+        "note": "La mission avant le vertige familial."
+      },
+      {
+        "label": "Comprendre la blessure derrière le mot “erreur”",
+        "next": "c8_13b",
+        "effects": {
+          "lucidite": 2,
+          "resonance": 1
+        },
+        "requires": {
+          "lucidite": 24
+        },
+        "note": "Choix stratégique · Souvenir : Iriana se souviendra de cette nuance.",
+        "memories": [
+          "iriana_naiah_blessure"
+        ]
+      },
+      {
+        "label": "Répondre à l’ironie de Valurn",
+        "next": "c8_13c",
+        "effects": {
+          "audace": 2
+        },
+        "note": "Une réunion de famille sous menace d’ombres."
+      }
+    ]
+  },
+  "c8_13a": {
+    "title": "Un sombre conseiller",
+    "sub": "Alliée utile",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Narrateur",
+    "text": "Iriana range d’abord Naïah dans la seule catégorie qui puisse servir la mission : une ressource dangereuse, mais nécessaire.\n\nC’est froid. C’est peut-être injuste. C’est aussi la seule manière de ne pas laisser un nom familial faire dérailler l’objectif avant même la rencontre.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_14"
+  },
+  "c8_13b": {
+    "title": "Un sombre conseiller",
+    "sub": "L’erreur de la lignée",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Narrateur",
+    "text": "Le mot erreur ne glisse pas sur Iriana. Il accroche quelque chose.\n\nDans une famille impériale, on ne nomme pas ainsi quelqu’un par hasard. On forge ce mot pour qu’il serve de tombeau. Naïah n’a peut-être pas seulement disparu. Peut-être a-t-on appris à tous à ne plus la chercher.\n\nCette pensée déplaît à Iriana. Elle reste pourtant.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_14"
+  },
+  "c8_13c": {
+    "title": "Un sombre conseiller",
+    "sub": "Réunion de famille",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Iriana",
+    "text": "« Votre idée de l’ironie familiale a quelque chose de dangereusement suicidaire. »\n\nValurn incline la tête, faussement flatté.\n\n« Je prends cela comme un compliment. »\n\n« Prenez plutôt cela comme une limite. Les miens ont tendance à survivre aux plaisanteries moins longtemps que les démons. »\n\nLe sourire de Valurn vacille à peine. Assez pour prouver qu’il a entendu.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_smirk",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_amused",
+        "right"
+      ]
+    ],
+    "next": "c8_14"
+  },
+  "c8_14": {
+    "title": "Un sombre conseiller",
+    "sub": "Une cousine dans l’ombre",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Iriana",
+    "text": "Iriana – Frappée par les implications, se détournant légèrement. Elle m’a toujours été décrite comme une erreur… quelqu’un qui n’avait pas sa place parmi nous.\n\nValurn – Avec un sourire ironique. Et pourtant, cette « erreur » est aujourd’hui la seule capable de nous guider à travers cette forêt. Une ironie délicieuse, non ?\n\nIriana – Se retournant vers lui, le regard glacé. Et comment avez-vous réussi à la convaincre de vous aider ?\n\nValurn – Avec un ton léger. Disons qu’elle a trouvé en moi un interlocuteur… intéressant. Elle m’a mis à l’épreuve, bien sûr. Mais il semble que mon bagout naturel l’ai convaincu de nous aider.\n\nLa Sylvinienne reste silencieuse, ses pensées tourbillonnant. Naïah, le nom de sa cousine disparue depuis si longtemps, résonne dans son esprit. La légende familiale dépeignait Naïah comme un être brisé, une erreur de la lignée, maudite dès sa naissance.\n\nValurn – D’un ton plus sérieux. Maintenant que vous savez, qu’allez-vous faire ?\n\nIriana – D’un ton ferme. Si Naïah est prête à nous aider, alors nous utiliserons ses connaissances. Mais je veux être très claire, Valurn : si elle devient une menace, je m’en occuperai moi-même.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_charming",
+        "right"
+      ]
+    ],
+    "next": "c8_15"
+  },
+  "c8_15": {
+    "title": "Un sombre conseiller",
+    "sub": "Naïah est toujours là",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_valurn_route",
+    "speaker": "Valurn",
+    "text": "Valurn – Avec un sourire provocateur. Très convainquant. Je serais curieux de voir vos réunions de famille.\n\nValurn s’éloigne vers l’ombre de la pièce, prêt à disparaître, mais il se retourne une dernière fois, son expression redevenant sérieuse.\n\nValurn – Avec une voix calme mais perçante. Un dernier conseil : Naïah n’est pas comme vous. Elle a grandi dans l’ombre, et l’ombre l’a changée. Ne la sous-estimez pas, et surtout… ne la trahissez pas.\n\nIriana – Avec froideur. Je ne trahirai personne, tant qu’elle reste une alliée.\n\nValurn incline légèrement la tête avant de disparaître dans les ténèbres, laissant Iriana seule.\n\nIriana marche jusqu’à la fenêtre, le regard perdu dans les lumières de la ville sous elle.\n\nIriana – Murmurant pour elle-même. Naïah… Alors tu es toujours là.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_neutral",
+        "right"
+      ]
+    ],
+    "next": "c8_16",
+    "zoom": true
+  },
+  "c8_16": {
+    "title": "Le Carnet du Némésis",
+    "sub": "La sœur dans la cage",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Elle regarde le ciel, voyant une étoile filante traverser le ciel, un signe éphémère au-dessus d’Al’gratal, tandis que le destin semble préparer une réunion familiale aussi inattendue que périlleuse.\n\nMa sœur. Je peux encore te voir, à genoux, pleurant au chevet de notre mère. Ta voix tremblait, brisée par la douleur, quand tu m'as presque suppliée: « Ce crime ne peut rester impuni. » Ces mots... ils résonnent encore dans mon esprit. Je n'ai rien demandé en retour. Rien. Pas ton aide, pas ton soutien. Je t'ai simplement écoutée.\n\nJe me suis rendue dans ce village humain. Seule. Et j'ai accompli ce que tu voulais, ce que toi tu n'as pas eu le courage de faire. J'ai mis fin à leur existence, chaque homme, chaque femme, chaque enfant. Même les vieillards et les infirmes. Tous. Je les ai tous fait payer pour toi, pour mère.",
+    "chars": [],
+    "next": "c8_17",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_17": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Justice réclamée",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Je n'ai laissé qu'un seul survivant. Un père. Un pauvre homme à qui j'ai arraché son enfant sous ses yeux avant de l'abattre comme un chien. Il vivra avec cette image gravée dans son âme misérable, une punition bien pire que la mort.\n\nEt quand j'en ai terminé avec leurs vies, j'ai brûlé leurs foyers. Les flammes dansaient, lumineuses, pourtant si froides. Je leur ai offert des morts lentes, douloureuses, marquées par la peur et la désolation. C'était cela, ta justice, non ? La justice que toi tu réclamais.\n\nEt puis tu es venue. Sur ton destrier, toujours si droite, si noble, si parfaite dans ton rôle d'impératrice. Tu m'as regardée d'en haut, comme tu regardes le monde entier, avec cette hauteur insupportable qui te définit si bien. Mais ton regard n'était pas empreint de gratitude ou de soulagement. Non. Tu m'as jugée. Tu m'as condamnée.\n\n«  L'utilisation de la magie occulte est un crime. » Voilà tout ce que tu as trouvé à dire. Comme si ta Lumière capricieuse m'avait laissé d'autres options. Tu crois que j'ai eu le choix ? Que j'ai eu le privilège de ta grâce divine? Non, Tia. Je n'avais que ce que j'étais, et je l'ai utilisé.",
+    "chars": [],
+    "next": "c8_18",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_18": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Abandon déguisé en pitié",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Et toi, ma sœur, toi qui avais supplié ma vengeance, toi qui m'avais poussé à agir, tu m'as arrêtée. Tu m'as conduite toi-même dans les profondeurs des cellules, ces geôles lugubres où l'odeur de la pierre humide m'étouffe encore. Juste avant de m'enfermer, tu as murmuré ces mots : « Pardonne-moi, ma sœur. »\n\nPardonner? Comment pourrais-je ? Ton regard, froid et distant, a été la dernière chose que j'ai vue avant que les barreaux ne se referment sur moi. C'était un abandon, clair et simple. Un abandon déguisé en pitié.\n\nEt maintenant, je suis là, seule dans cette cage, tandis que toi, tu chevauches dans la lumière. La mort de notre mère, pensais-je, aurait pu nous unir. J'avais espéré, naïvement, que ce drame aurait effacé nos différends, qu'il aurait forgé un lien indestructible entre nous. Mais non. Cette perte, ce vide, n'a fait que creuser le fossé entre nous.\n\nTu crois qu'elle aurait été fière de toi? Je suppose que oui. Tout le monde l'est, n'est-ce pas? Que ce soit notre peuple, la Lumière, ou même Al'Gratal tout entier, tous admirent la grande Tia Farae. La parfaite impératrice. La digne héritière.",
+    "chars": [],
+    "next": "c8_19",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_19": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Les ombres reviennent",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Et moi ? Je ne suis rien d'autre qu'une ombre. Une sœur que tu as sacrifiée pour préserver ton image immaculée. Une paria dans l'ombre de ta lumière.\n\nMais souviens-toi de ceci: les ombres ne disparaissent jamais vraiment. Elles sont toujours là, tapies derrière chaque éclat, prêtes à revenir. Et un jour, ma chère sœur, tu te souviendras de moi. Pas comme celle que tu as enfermée, mais comme celle qui aurait tout donné pour toi. Celle qui l'a fait. Celle qui n'a pas eu peur de se salir les mains pour accomplir ce que toi, tu n'osais même pas envisager.\n\nPardonne-moi, disais-tu ? Non, Tia. C'est à toi de chercher le pardon. Mais tu ne l'obtiendras pas de moi.\n\nEn relisant ces mots, je ne ressens ni honte ni regret pour ce que j’ai fait. Je ne m’excuserai pas d’avoir utilisé les armes qui étaient à ma disposition. La Lumière de Tia n’aurait jamais pu me donner la force nécessaire pour faire ce qui devait être fait. Alors j’ai pris ce qui m’était accessible, et j’ai frappé avec la brutalité qu’exigeait la situation.",
+    "chars": [],
+    "next": "c8_20",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_20": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Deux routes opposées",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Ce village humain devait être un exemple. Pas seulement une vengeance, pas seulement une réponse à la douleur. C’était un message. Ils ont pris notre mère ? J’ai pris tout ce qu’ils avaient. Ils ont détruit un foyer ? J’ai détruit une lignée entière. Ils ont semé le chaos ? J’ai imposé un chaos plus grand encore, pour que jamais l’idée ne leur vienne de recommencer. Cela a t-il marché ? Oui. Ils ont capitulé rapidement après mon acte. Ils ont prit peur devant la cruauté que notre peuple peu évoquer.\n\nNon, je ne regrette pas d’avoir utilisé la magie que l’on me reproche. Ce pouvoir m’appartenait, et il a été un outil. Ce que je regrette… c’est l’escalade.\n\nJe pensais que Tia comprendrait. Que face à l’horreur qu’on nous avait imposée, elle verrait que ma réponse n’était que la conséquence naturelle de leur crime. Mais elle n’a vu qu’un acte impardonnable, un point de non-retour. Elle a regardé mon œuvre non comme une justice accomplie, mais comme une monstruosité.\n\nCe jour-là, elle a décidé que j’étais une menace.\n\nEt je comprends pourquoi.\n\nElle n’aurait jamais pu cautionner cela. Pas seulement parce qu’elle est Tia Farae, la grande impératrice, le flambeau de la Lumière et de l’Ordre. Mais parce qu’elle est elle. Parce que tout, dans son essence, la pousse à construire quelque chose de grand dans ses principes, là où moi, la fin justifie les moyens employés.\n\nNous étions à un carrefour, et nous avons pris deux routes opposées. Pas par trahison, ni par haine. Par nécessité. Elle a fait ce qu’elle pensait juste. Et moi aussi.",
+    "chars": [],
+    "next": "c8_21",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_21": {
+    "title": "Le Carnet du Némésis",
+    "sub": "Le passé figé",
+    "bg": "c8_memoire_amanea",
+    "music": "music_c7_ombre_mentale",
+    "speaker": "Amanea",
+    "text": "Peut-être que si j’avais contenu ma fureur, peut-être que si j’avais canalisé ma vengeance autrement, tout cela aurait pris une autre tournure. Peut-être que nous aurions pu nous retrouver, au lieu de nous perdre dans cette division absurde.\n\nMais le passé est figé, immuable.\n\nNous avons toutes les deux agi selon ce que nous sommes.\n\nJe ne regrette pas mon choix. Je regrette seulement qu’il nous ait séparées.",
+    "chars": [],
+    "next": "c8_end",
+    "hideChars": true,
+    "zoom": true
+  },
+  "c8_end": {
+    "title": "Chapitre VIII terminé",
+    "sub": "Un sombre conseiller",
+    "bg": "c8_quartiers_iriana",
+    "music": "music_iriana",
+    "speaker": "Narrateur",
+    "text": "Le port a livré ses quarante soldats, Forthaven a livré un avertissement, et Iriana connaît désormais le nom qui attend au cœur de la Forêt Interdite.\n\nNaïah n’est plus seulement un pacte arraché par Valurn. Elle est une cousine, une survivante, une erreur que la lignée Farae croyait enterrée.\n\nDans les marges du Carnet du Némésis, la fracture entre Tia et Amanea laisse une nouvelle trace. Les ombres ne disparaissent jamais vraiment. Elles apprennent seulement à attendre.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ],
+      [
+        "valurn",
+        "valurn_neutral",
+        "right"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Retour au menu",
+        "next": "menu",
+        "flags": {
+          "chapter8Complete": true
+        }
+      }
+    ]
+  }
+});
+      if(S.c7_end && Array.isArray(S.c7_end.choices)){
+        // Chapitre VIII visible dans la sélection, mais verrouillé hors mode développeur pour l'instant.
+        S.c7_end.choices = S.c7_end.choices.filter(ch=>!(ch&&ch.next==='c8_01'));
+      }
+    }
+
+    window.chapter7CompletedFrom = window.chapter7CompletedFrom || function(saveObj){
+      const id=String((saveObj&&saveObj.scene)||'');
+      return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter7Complete===true) || id==='c7_end' || id.startsWith('c8_')));
+    };
+    window.canStartChapter8 = function canStartChapter8(){
+      // Verrouillage temporaire : visible dans la sélection, accessible uniquement en mode développeur.
+      return !!(state && state.devMode);
+    };
+    window.startChapter8 = function startChapter8(){
+      let prev=readMainSave();
+      if(!canStartChapter8()){
+        toast('Chapitre VIII verrouillé','Disponible uniquement en mode développeur pour l’instant.');
+        updateChapterLocks();
+        return;
+      }
+      const prevFlags=(prev&&prev.flags)||{};
+      state={scene:'c8_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true,chapter7Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7','ch8',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c7Naiah:(prev&&prev.c7Naiah)||null,c7NaiahIntroPlayed:{},c7NaiahIntroPending:false,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','valurn','naiah','foret_interdite','akuhn_nabad','obscurcis','pacte_naiah','duel_ombres_naiah','conseiller_masque','caldran','naiah_sang_imperial','fracture_tia_amanea',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+      setScreen('game');
+      render();
+    };
+
+    if(typeof CHAPTER_SELECT_DATA!=='undefined' && Array.isArray(CHAPTER_SELECT_DATA) && !CHAPTER_SELECT_DATA.some(ch=>ch&&ch.key==='ch8')){
+      CHAPTER_SELECT_DATA.push({key:'ch8',label:'Chapitre VIII',title:'Un sombre conseiller',subtitle:'Forthaven, Naïah et le Carnet',image:(A.c4d_warroom_night||A.c4d_noble_chamber||A.bg_projection),tags:['Draven','Iriana','Naïah','Amanea'],body:`Les navires de Forthaven rejoignent le camp d’Al’Gratal, mais leur rapport apporte une ombre nouvelle : un conseiller au masque de médecin de peste influence Lineva. Pendant qu’Iriana cherche à comprendre ce signe, Valurn revient avec le nom de Naïah et un pacte de Chaos. Dans le Carnet du Némésis, la fracture entre Tia et Amanea s’ouvre davantage.`,action:'Lancer le Chapitre VIII'});
+    }
+
+    if(typeof chapterSelectUnlocked==='function'){
+      const oldChapterSelectUnlockedC8=chapterSelectUnlocked;
+      chapterSelectUnlocked=function(key){ if(key==='ch8') return canStartChapter8(); return oldChapterSelectUnlockedC8(key); };
+    }
+    if(typeof launchChapterSelect==='function'){
+      const oldLaunchChapterSelectC8=launchChapterSelect;
+      launchChapterSelect=function(key){ if(key==='ch8') return startChapter8(); return oldLaunchChapterSelectC8(key); };
+    }
+    if(typeof getSceneChapterLabel==='function'){
+      const oldGetSceneChapterLabelC8=getSceneChapterLabel;
+      getSceneChapterLabel=function(sceneId=state.scene){ const id=String(sceneId||''); if(id.startsWith('c8_')) return 'Chapitre VIII · Un sombre conseiller'; return oldGetSceneChapterLabelC8(sceneId); };
+    }
+
+    if(typeof CODEX_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_BY_SCENE,{c8_01:['caldran'],c8_03:['conseiller_masque','caldran'],c8_06:['conseiller_masque'],c8_09:['conseiller_masque','valurn'],c8_13:['naiah_sang_imperial','naiah'],c8_16:['fracture_tia_amanea'],c8_17:['fracture_tia_amanea'],c8_18:['fracture_tia_amanea'],c8_19:['fracture_tia_amanea'],c8_20:['fracture_tia_amanea'],c8_21:['fracture_tia_amanea'],c8_end:['naiah_sang_imperial','fracture_tia_amanea']});
+    }
+
+    if(typeof go==='function'){
+      const oldGoC8=go;
+      go=function(next,opts={}){
+        oldGoC8(next,opts);
+        if(state && String(state.scene||'').startsWith('c8_')){
+          state.flags={...(state.flags||{}),chapter7Complete:true};
+          if(typeof unlockJournalFragments==='function') unlockJournalFragments('ch8',{silent:true});
+        }
+        if(state && state.scene==='c8_end'){
+          state.flags={...(state.flags||{}),chapter8Complete:true};
+          if(typeof unlockJournalFragments==='function') unlockJournalFragments('ch9');
+        }
+        save();
+        if(typeof updateProgressUI==='function') updateProgressUI();
+      };
+    }
+
+    if(typeof updateChapterLocks==='function') updateChapterLocks();
+  }catch(e){ console.warn('Chapitre VIII · Un sombre conseiller non appliqué',e); }
 })();
 
 </script>
