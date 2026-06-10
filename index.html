@@ -1792,6 +1792,16 @@ body.mobileUI .sageTimerBadge{font-size:19px}
                     <span class="sliderSwitch"></span>
                   </label>
                 </div>
+                <div class="mobileToggleWrap compactToggle">
+                  <div class="toggleText">
+                    <strong>Mode facile</strong>
+                    <small id="easyModeState">Désactivé · indications masquées</small>
+                  </div>
+                  <label class="switch" aria-label="Activer le mode facile">
+                    <input type="checkbox" id="easyModeToggle">
+                    <span class="sliderSwitch"></span>
+                  </label>
+                </div>
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
@@ -1802,7 +1812,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.147 · Doublons nettoyés</div>
+        <div class="menuUpdateBubble">Mise à jour · v0.150 · Prérequis stratégiques calibrés</div>
       </section>
     </div>
   </main>
@@ -1948,7 +1958,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
           <div>
             <div class="menuSectionTitle">Carnet d’Hylee</div>
             <h2 class="progressionTitle">Progression</h2>
-            <p class="subtitle">Valeurs accumulées, inventaire et souvenirs qui pourront résonner plus tard dans l’histoire.</p>
+            <p class="subtitle">Valeurs accumulées, regard de Remerii, inventaire et souvenirs qui pourront résonner plus tard dans l’histoire.</p>
           </div>
           <div class="progressionHint">
             Certains choix laissent plus qu’une conséquence immédiate : un objet, une dette, une promesse ou un souvenir peut rester dans le sillage d’Hylee.
@@ -1960,10 +1970,11 @@ body.mobileUI .sageTimerBadge{font-size:19px}
             <div>
               <div class="menuSectionTitle" style="color:#7d6032">État de l’aventure</div>
               <h3 class="progressionBookTitle">Mémoire du voyage</h3>
-              <p class="progressionBookSubtitle">La mémoire du voyage conserve les valeurs, objets, souvenirs et fragments ramassés par Hylee au fil de sa route.</p>
+              <p class="progressionBookSubtitle">La mémoire du voyage conserve les valeurs, le regard de Remerii, les objets, souvenirs et fragments ramassés par Hylee au fil de sa route.</p>
             </div>
             <div class="progressionMeta">
               <div class="progressionMetaBadge"><b id="progressionItemCount">0</b><span>objets</span></div>
+              <div class="progressionMetaBadge"><b id="progressionRemeriiMeta">0</b><span>regard Remerii</span></div>
               <div class="progressionMetaBadge"><b id="progressionMemoryCount">0</b><span>souvenirs marquants</span></div>
               <div class="progressionMetaBadge"><b id="progressionJournalCount">0</b><span>fragments</span></div>
             </div>
@@ -1975,6 +1986,34 @@ body.mobileUI .sageTimerBadge{font-size:19px}
               <span id="progressionChapterLabel">Chapitre I</span>
             </div>
             <div class="progressionStatsGrid" id="progressionStatsGrid"></div>
+          </section>
+
+          <section class="progressionSection progressionRemeriiSection">
+            <div class="progressionSectionHead">
+              <h4>Regard de Remerii</h4>
+              <span id="progressionRemeriiLabel">Perception actuelle</span>
+            </div>
+            <div class="remeriiProgressPanel">
+              <article class="remeriiBondCard">
+                <div class="remeriiBondTop">
+                  <div>
+                    <div class="remeriiEyebrow">Lien Remerii</div>
+                    <h5 id="progressionRemeriiTier">Distance prudente</h5>
+                  </div>
+                  <b id="progressionRemeriiValue">0</b>
+                </div>
+                <div class="progressionTrack remeriiTrack"><div class="progressionFill remeriiFill" id="progressionRemeriiFill" style="width:0%"></div></div>
+                <p id="progressionRemeriiSummary">Remerii observe encore Hylee avec prudence. Certains gestes peuvent changer son regard.</p>
+              </article>
+              <div class="remeriiObservationBlock">
+                <div class="remeriiBlockTitle">Ce que Remerii remarque chez Hylee</div>
+                <div class="remeriiObservationGrid" id="progressionRemeriiObservations"></div>
+              </div>
+              <div class="remeriiMemoryBlock">
+                <div class="remeriiBlockTitle">Souvenirs marquants pour Remerii</div>
+                <div class="remeriiMemoryList" id="progressionRemeriiMemoryList"></div>
+              </div>
+            </div>
           </section>
 
           <section class="progressionSection">
@@ -2065,7 +2104,28 @@ body.mobileUI .sageTimerBadge{font-size:19px}
 .progressionEntryBody p{margin:0;color:#5f4b31;line-height:1.42;font-size:13px;}
 .progressionEmpty{grid-column:1/-1;border:1px dashed rgba(57,44,29,.26);border-radius:18px;padding:18px;color:#6b5639;background:rgba(255,255,255,.18);font-weight:750;}
 .rewardPing{font-size:12px;color:#f4dfaa;border:1px solid rgba(244,223,170,.30);background:rgba(38,51,72,.68);border-radius:999px;padding:7px 10px;display:inline-block;margin-top:8px;}
-@media(max-width:980px){#progressionCard{min-height:100svh;padding:14px}.progressionFrame{grid-template-columns:1fr}.progressionSidebar{min-height:auto;padding:18px;border-radius:22px}.progressionBook{padding:18px;border-radius:22px}.progressionHeader{flex-direction:column}.progressionMeta{justify-content:flex-start}.progressionSectionHead{flex-direction:column;align-items:flex-start}.progressionTitle{font-size:34px}.progressionBookTitle{font-size:28px}.progressionList{grid-template-columns:1fr}}
+.progressionRemeriiSection{background:linear-gradient(180deg,rgba(85,137,174,.18),rgba(255,255,255,.22));border-color:rgba(46,93,116,.24);}
+.remeriiProgressPanel{display:grid;grid-template-columns:minmax(220px,.9fr) minmax(260px,1.25fr);gap:14px;align-items:stretch;}
+.remeriiBondCard,.remeriiObservationBlock,.remeriiMemoryBlock{border:1px solid rgba(57,44,29,.14);background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(234,246,255,.22));border-radius:20px;padding:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);}
+.remeriiBondCard{grid-row:span 2;display:flex;flex-direction:column;gap:12px;}
+.remeriiBondTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;}
+.remeriiEyebrow,.remeriiBlockTitle{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#2e5d74;font-weight:950;margin-bottom:8px;}
+.remeriiBondTop h5{margin:0;font-size:22px;color:#332413;line-height:1.1;}
+.remeriiBondTop b{font-size:32px;line-height:1;color:#2e5d74;}
+.remeriiBondCard p{margin:0;color:#5f4b31;line-height:1.5;font-size:14px;}
+.remeriiTrack{height:10px;background:rgba(46,93,116,.18);}
+.remeriiFill{background:linear-gradient(90deg,#4c7287,#b7dbe8,#8a6a2d);}
+.remeriiObservationGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;}
+.remeriiObservationCard{border:1px solid rgba(57,44,29,.13);background:rgba(255,255,255,.34);border-radius:16px;padding:13px;}
+.remeriiObservationCard strong{display:block;color:#332413;font-size:14px;margin-bottom:6px;}
+.remeriiObservationCard p{margin:0;color:#5f4b31;line-height:1.4;font-size:13px;}
+.remeriiMemoryList{display:grid;gap:10px;}
+.remeriiMemoryMini{border:1px solid rgba(57,44,29,.13);background:rgba(255,255,255,.34);border-radius:16px;padding:13px;display:flex;gap:10px;}
+.remeriiMemoryMini .progressionIcon{width:34px;height:34px;flex-basis:34px;font-size:18px;border-radius:12px;}
+.remeriiMemoryMini h5{margin:0 0 4px;color:#332413;font-size:15px;}
+.remeriiMemoryMini p{margin:0;color:#5f4b31;line-height:1.38;font-size:12px;}
+.remeriiEmpty{border:1px dashed rgba(57,44,29,.22);border-radius:16px;padding:14px;color:#6b5639;background:rgba(255,255,255,.18);font-weight:750;line-height:1.45;}
+@media(max-width:980px){#progressionCard{min-height:100svh;padding:14px}.progressionFrame{grid-template-columns:1fr}.progressionSidebar{min-height:auto;padding:18px;border-radius:22px}.progressionBook{padding:18px;border-radius:22px}.progressionHeader{flex-direction:column}.progressionMeta{justify-content:flex-start}.progressionSectionHead{flex-direction:column;align-items:flex-start}.progressionTitle{font-size:34px}.progressionBookTitle{font-size:28px}.progressionList{grid-template-columns:1fr}.remeriiProgressPanel{grid-template-columns:1fr}.remeriiBondCard{grid-row:auto}}
 
 
 .devSceneCode{margin-top:8px;border:1px solid rgba(167,240,255,.34);background:linear-gradient(180deg,rgba(23,50,72,.88),rgba(10,22,34,.92));color:#dff9ff;border-radius:999px;padding:7px 11px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:950;box-shadow:0 8px 20px rgba(0,0,0,.20);cursor:pointer;}
@@ -2089,6 +2149,9 @@ body.mobileUI .progressionMetaBadge{min-width:92px;}
 body.mobileUI .progressionSection{padding:14px;}
 body.mobileUI .progressionSectionHead{flex-direction:column;align-items:flex-start;gap:6px;}
 body.mobileUI .progressionStatsGrid,body.mobileUI .progressionList{grid-template-columns:1fr;}
+body.mobileUI .remeriiProgressPanel,body.mobileUI .remeriiObservationGrid{grid-template-columns:1fr;}
+body.mobileUI .remeriiBondTop h5{font-size:20px;}
+body.mobileUI .remeriiBondTop b{font-size:28px;}
 body.mobileUI .journalBanner img{height:170px;}
 body.mobileUI .journalBannerOverlay{padding:14px;}
 body.mobileUI .journalBannerTitle{font-size:22px;}
@@ -2355,7 +2418,7 @@ const START_STATS={audace:0,sangfroid:0,lien:0,lucidite:0,resonance:0};
 const INTRO_STATS={"courage": 0, "discretion": 0, "trust": 0, "suspicion": 0, "instability": 0, "hope": 0};
 const introStatNames={"courage": "Courage", "discretion": "Discrétion", "trust": "Confiance", "suspicion": "Méfiance", "instability": "Instabilité", "hope": "Espoir"};
 const INTRO_VALUE_MAX=5;
-let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,easyMode:false,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
 let currentPreviewTrack=null;
 const statNames={audace:'Audace',sangfroid:'Sang-froid',lien:'Lien Remerii',lucidite:'Lucidité',resonance:'Résonance'};
 const VALUE_CAP=45;
@@ -9878,7 +9941,7 @@ function renderC7NaiahDuel(scene){const requested=scene.c7NaiahDuel||'duel1'; le
   document.getElementById('sceneSub').textContent=d.qte?`Défense directe · ${qteWord}`:(d.waiting?'Écho des ombres':`${step.phase} · ${step.title}`);
   document.getElementById('speaker').textContent=d.qte?'Instinct':(d.waiting?'Naïah':(step.speaker||'Naïah'));
   const textEl=document.getElementById('text');
-  const status=`\n\nSanté mentale : ${'♥'.repeat(d.mental)}${'♡'.repeat(Math.max(0,3-d.mental))} · Pacte Naïah : ${d.pacte}/15`;
+  const status=`\n\nSanté mentale : ${'♥'.repeat(d.mental)}${'♡'.repeat(Math.max(0,3-d.mental))}`;
   const choices=document.getElementById('choices'); choices.innerHTML='';
   clearC7QteLayer();
   if(d.qte){
@@ -9888,8 +9951,8 @@ function renderC7NaiahDuel(scene){const requested=scene.c7NaiahDuel||'duel1'; le
     c7RenderStageQte(d);
   }
   else if(d.waiting){clearC7NaiahTimer(); textEl.textContent=(d.last&&d.last.reaction?d.last.reaction:'Les ombres retiennent leur souffle.')+status; const b=document.createElement('button'); b.className='choiceBtn continueBtn'; b.innerHTML='<span>Continuer</span><span class="arrow">›</span>'; b.onclick=()=>{d.waiting=false; const after=d.after; d.after=null; d.last=null; if(after==='mentalFail'){go('c7_bad_mental');return;} if(after==='qte'){d.qte={seq:(d.qteNext||['TENIR','BRISER','AVANCER']).slice(),index:0,positionSeed:0,round:(typeof d.qteRound==='number'?d.qteRound:0)}; d.qteNext=null; d.qteRound=null; save(); renderC7NaiahDuel(scene);return;} if(after==='finish'){ if(d.phase==='duel1'){go('c7_07');return;} finishC7NaiahDuel();return;} save(); renderC7NaiahDuel(scene);}; choices.appendChild(b);}
-  else {textEl.textContent=(step.text||'Naïah attaque dans l’angle mort des pensées.')+status; (step.choices||[]).forEach(ch=>{const b=document.createElement('button'); b.className='choiceBtn'; const pacte=(typeof ch.pacte==='number'&&ch.pacte!==0)?`<small>Pacte Naïah ${ch.pacte>0?'+':''}${ch.pacte}</small>`:''; const loss=ch.loss?`<small>Risque : santé mentale -${ch.loss}</small>`:''; b.innerHTML=`<span>${ch.label}${state.devMode?pacte+loss:''}</span><span class="arrow">›</span>`; b.onclick=()=>c7ResolveNaiahChoice(ch,false); choices.appendChild(b);});}
-  const stats=document.getElementById('stats'); const total=steps.length; const current=Math.min(d.step+1,total); stats.innerHTML=`<div class="combatHud c7DuelPulse"><div class="combatBox"><div class="combatTop"><span>Santé mentale</span><span>${d.mental}/3</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.mental/3)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Pacte Naïah</span><span>${d.pacte}/15</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,(d.pacte/15)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c7NaiahTimer">${d.waiting?'—':(d.qte?((c7TimerDuration()/1000).toFixed(1)+'s'):(d.phase==='duel2'?'20s':'30s'))}</span></div><div class="combatTrack"><div id="c7NaiahTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>${d.phase==='duel2'?'Duel II':'Duel I'} <b>${current}/${total}</b></span><span>Objectif pacte <b>10+</b></span><span>Complicité <b>15+</b></span></div>`;
+  else {textEl.textContent=(step.text||'Naïah attaque dans l’angle mort des pensées.')+status; (step.choices||[]).forEach(ch=>{const b=document.createElement('button'); b.className='choiceBtn'; const pacte=''; const loss=(state.devMode&&ch.loss)?`<small>DEV · Santé mentale -${ch.loss}</small>`:''; b.innerHTML=`<span>${ch.label}${loss}</span><span class="arrow">›</span>`; b.onclick=()=>c7ResolveNaiahChoice(ch,false); choices.appendChild(b);});}
+  const stats=document.getElementById('stats'); const total=steps.length; const current=Math.min(d.step+1,total); stats.innerHTML=`<div class="combatHud c7DuelPulse"><div class="combatBox"><div class="combatTop"><span>Santé mentale</span><span>${d.mental}/3</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.mental/3)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Jeu de Naïah</span><span>?</span></div><div class="combatTrack"><div class="combatFill read" style="width:50%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c7NaiahTimer">${d.waiting?'—':(d.qte?((c7TimerDuration()/1000).toFixed(1)+'s'):(d.phase==='duel2'?'20s':'30s'))}</span></div><div class="combatTrack"><div id="c7NaiahTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>${d.phase==='duel2'?'Duel II':'Duel I'} <b>${current}/${total}</b></span><span>Forêt Interdite <b>instable</b></span></div>`;
   if(!d.waiting)startC7NaiahTimer(); else updateC7NaiahTimerDisplay(); updateDevUI(); save(); updateProgressUI();}
 function restartChapter7(){clearC7NaiahTimer(); startChapter7();}
 function setStageBg(key,zoom=false){const bg=document.getElementById('bg'); const src=(A&&A[key])?A[key]:''; bg.style.backgroundImage=src?`url('${src}')`:'none'; bg.classList.toggle('zoom',!!zoom); bg.dataset.bgKey=key||''; return bg;}
@@ -12613,12 +12676,71 @@ function progressTier(key,value){
   if(value>=8) return 'Solide';
   return 'En construction';
 }
+function remeriiPerceptionTier(value){
+  if(value>=30) return {title:'Lien presque avoué',label:'Confiance profonde',body:`Remerii ne se contente plus de surveiller Hylee. Elle anticipe ses silences, protège ses élans et laisse parfois paraître une inquiétude qu’elle aurait autrefois déguisée en reproche.`};
+  if(value>=24) return {title:'Attachement retenu',label:'Attachement visible',body:`Remerii s’attache malgré sa prudence. Elle corrige encore Hylee avec sévérité, mais son regard trahit une attention plus personnelle qu’elle ne veut l’admettre.`};
+  if(value>=16) return {title:'Confiance naissante',label:'Confiance installée',body:`Remerii commence à croire qu’Hylee peut comprendre ses leçons sans être brisée par elles. Son exigence reste forte, mais elle devient moins froide.`};
+  if(value>=8) return {title:'Curiosité attentive',label:'Curiosité prudente',body:`Remerii observe Hylee avec davantage d’intérêt. Elle remarque les progrès, les hésitations et les moments où l’apprentie choisit de ne pas fuir.`};
+  if(value>=1) return {title:'Distance prudente',label:'Premiers signes',body:`Remerii reste difficile à lire, mais certains gestes d’Hylee ont commencé à fissurer sa réserve.`};
+  return {title:'Distance prudente',label:'Observation neutre',body:`Remerii observe encore Hylee avec prudence. Certains gestes peuvent changer son regard.`};
+}
+function remeriiObservationList(){
+  const st=state.stats||{};
+  const list=[];
+  const add=(title,body)=>list.push({title,body});
+  const aud=st.audace||0, sf=st.sangfroid||0, luc=st.lucidite||0, res=st.resonance||0, lien=st.lien||0;
+  if(aud>=24) add('Audace difficile à ignorer', 'Remerii voit une Hylee qui ose prendre sa place, même lorsque la prudence réclamerait le silence.');
+  else if(aud>=12) add('Courage en formation', 'Hylee commence à répondre au monde au lieu de seulement l’endurer. Remerii l’a remarqué.');
+  else add('Élan encore fragile', 'Remerii sent qu’Hylee hésite encore à occuper l’espace qu’elle mérite.');
+  if(sf>=24) add('Maîtrise fiable', 'Sous pression, Hylee garde assez de tenue pour que Remerii puisse lui confier davantage qu’un exercice.');
+  else if(sf>=12) add('Calme travaillé', 'Remerii remarque que la peur ne décide plus toujours à la place d’Hylee.');
+  else add('Nerfs à surveiller', 'Remerii garde un œil sur les moments où Hylee risque de confondre urgence et panique.');
+  if(luc>=24) add('Lecture fine', 'Hylee commence à comprendre les intentions derrière les mots. Remerii sait que ce genre de lucidité peut autant sauver que blesser.');
+  else if(luc>=12) add('Esprit qui s’aiguise', 'Remerii voit Hylee chercher la logique des épreuves au lieu de subir seulement leur violence.');
+  else add('Compréhension incomplète', 'Remerii sait qu’Hylee ressent beaucoup, mais ne nomme pas encore toujours ce qu’elle comprend.');
+  if(res>=24) add('Résonance remarquable', 'La magie répond à Hylee avec une intensité que Remerii ne peut pas traiter comme un simple talent.');
+  else if(res>=12) add('Écoute magique', 'Remerii remarque que Hylee n’impose pas toujours sa magie : parfois, elle l’écoute.');
+  else add('Résonance discrète', 'La magie d’Hylee reste présente, mais Remerii attend encore de voir comment elle choisira de l’habiter.');
+  if(lien>=24) add('Présence personnelle', 'Remerii ne regarde plus seulement une apprentie prometteuse. Elle voit quelqu’un dont les choix l’atteignent.');
+  else if(lien>=12) add('Confiance qui s’installe', 'Hylee a gagné assez de place dans l’attention de Remerii pour que certains silences deviennent importants.');
+  return list;
+}
+function isRemeriiMemoryKey(key){
+  const it=PROGRESSION_MEMORIES&&PROGRESSION_MEMORIES[key];
+  if(!it)return false;
+  const hay=`${key} ${it.title||''} ${it.type||''} ${it.body||''}`.toLowerCase();
+  return hay.includes('remerii') || hay.includes('hylee & remerii') || hay.includes('lien remerii');
+}
+function renderRemeriiProgression(){
+  const value=(state.stats&&typeof state.stats.lien==='number')?state.stats.lien:0;
+  const tier=remeriiPerceptionTier(value);
+  const cap=PROGRESSION_STAT_CAPS.lien||45;
+  const pct=Math.max(0,Math.min(100,Math.round(value/cap*100)));
+  setText('progressionRemeriiLabel', tier.label);
+  setText('progressionRemeriiTier', tier.title);
+  setText('progressionRemeriiValue', String(value));
+  setText('progressionRemeriiMeta', String(value));
+  setText('progressionRemeriiSummary', tier.body);
+  const fill=document.getElementById('progressionRemeriiFill'); if(fill) fill.style.width=pct+'%';
+  const obs=document.getElementById('progressionRemeriiObservations');
+  if(obs){
+    obs.innerHTML='';
+    remeriiObservationList().forEach(o=>{const el=document.createElement('article'); el.className='remeriiObservationCard'; el.innerHTML=`<strong>${o.title}</strong><p>${o.body}</p>`; obs.appendChild(el);});
+  }
+  const mem=document.getElementById('progressionRemeriiMemoryList');
+  if(mem){
+    mem.innerHTML='';
+    const keys=(state.memories||[]).filter(isRemeriiMemoryKey);
+    if(!keys.length){mem.innerHTML='<div class="remeriiEmpty">Aucun souvenir précis lié à Remerii pour le moment. Ses réactions importantes apparaîtront ici, comme des marques laissées sous la glace.</div>';}
+    keys.forEach(k=>{const it=PROGRESSION_MEMORIES[k]; if(!it)return; const el=document.createElement('article'); el.className='remeriiMemoryMini'; el.innerHTML=`<div class="progressionIcon">${it.icon||'❄'}</div><div><h5>${it.title}</h5><p>${it.body}</p></div>`; mem.appendChild(el);});
+  }
+}
 function renderProgression(){
   ensureProgressDefaults(); ensureIntroDefaults();
   const statsGrid=document.getElementById('progressionStatsGrid');
   if(statsGrid){
     statsGrid.innerHTML='';
-    Object.entries(statNames).forEach(([k,label])=>{
+    Object.entries(statNames).filter(([k])=>k!=='lien').forEach(([k,label])=>{
       const v=state.stats&&typeof state.stats[k]==='number'?state.stats[k]:0;
       const cap=PROGRESSION_STAT_CAPS[k]||25;
       const pct=Math.max(0,Math.min(100,Math.round(v/cap*100)));
@@ -12628,6 +12750,7 @@ function renderProgression(){
       statsGrid.appendChild(card);
     });
   }
+  renderRemeriiProgression();
   const inv=document.getElementById('progressionInventoryList');
   if(inv){
     inv.innerHTML='';
@@ -16498,7 +16621,7 @@ function exitIntroToMenu(){
   if(prev&&prev.scene){
     state={...state,...prev,stats:{...START_STATS,...(prev.stats||{})},introStats:{...INTRO_STATS,...((prev&&prev.introStats)||{})},flags:{...((prev&&prev.flags)||{})},history:Array.isArray(prev.history)?prev.history:[]};
   }else{
-    state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+    state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:keepMenuMusic,easyMode:vnEasyModeEnabled&&vnEasyModeEnabled(),mobileUI:keepMobile,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
   }
   state.codexUnlocked=[...new Set([...(state.codexUnlocked||[]),...introCodexUnlocked])];
   state.codexUnlockedImages=[...new Set([...(state.codexUnlockedImages||[]),...introCodexUnlockedImages])];
@@ -16514,7 +16637,7 @@ function exitIntroToMenu(){
 }
 
 function save(){ensureCodexDefaults(); ensureIntroDefaults(); ensureProgressDefaults(); if(isIntroScene()){localStorage.setItem('sylvinia_vn_intro_v82',JSON.stringify({scene:state.scene,introStats:state.introStats,codexUnlocked:state.codexUnlocked,codexUnlockedImages:state.codexUnlockedImages,codexUnlockedMusic:state.codexUnlockedMusic})); return;} localStorage.setItem('sylvinia_vn_v82',JSON.stringify(state));}
-function load(){try{const raw=localStorage.getItem('sylvinia_vn_v82')||localStorage.getItem('sylvinia_vn_v81')||localStorage.getItem('sylvinia_vn_v79')||localStorage.getItem('sylvinia_vn_v78')||localStorage.getItem('sylvinia_vn_v77')||localStorage.getItem('sylvinia_vn_v76')||localStorage.getItem('sylvinia_vn_v75')||localStorage.getItem('sylvinia_vn_v74')||localStorage.getItem('sylvinia_vn_v73')||localStorage.getItem('sylvinia_vn_v72')||localStorage.getItem('sylvinia_vn_v71')||localStorage.getItem('sylvinia_vn_v70')||localStorage.getItem('sylvinia_vn_v69')||localStorage.getItem('sylvinia_vn_v68')||localStorage.getItem('sylvinia_vn_v67')||localStorage.getItem('sylvinia_vn_v61')||localStorage.getItem('sylvinia_vn_v60')||localStorage.getItem('sylvinia_vn_v59')||localStorage.getItem('sylvinia_vn_v58')||localStorage.getItem('sylvinia_vn_v57')||localStorage.getItem('sylvinia_vn_v56')||localStorage.getItem('sylvinia_vn_v55')||localStorage.getItem('sylvinia_vn_v54')||localStorage.getItem('sylvinia_vn_v53')||localStorage.getItem('sylvinia_vn_v45')||localStorage.getItem('sylvinia_vn_v44')||localStorage.getItem('sylvinia_vn_v43')||localStorage.getItem('sylvinia_vn_v42')||'null'; const s=JSON.parse(raw); if(s&&s.scene){ state={...state,...s,stats:{...START_STATS,...s.stats},introStats:{...INTRO_STATS,...((s&&s.introStats)||{})},flags:{...((state&&state.flags)||{}),...((s&&s.flags)||{})}}; if(state.scene==='duel' && state.duel && (state.duel.step||0)>0) state.duelIntroPlayed=true; if(typeof state.duelIntroPending!=='boolean') state.duelIntroPending=false; if(typeof state.duelIntroPlayed!=='boolean') state.duelIntroPlayed=false; if(typeof state.c3ShadowIntroPending!=='boolean') state.c3ShadowIntroPending=false; if(typeof state.c3ShadowIntroPlayed!=='boolean') state.c3ShadowIntroPlayed=!!(state.scene==='c3_22' && state.c3ShadowDuel && ((state.c3ShadowDuel.step||0)>0 || state.c3ShadowDuel.waiting===true)); if(typeof state.c5SageIntroPending!=='boolean') state.c5SageIntroPending=false; if(typeof state.c5SageIntroPlayed!=='boolean') state.c5SageIntroPlayed=!!(state.scene==='c5_sage_start' && state.c5SageDuel && ((state.c5SageDuel.step||0)>0 || state.c5SageDuel.waiting===true)); if(typeof state.menuMusicOn!=='boolean') state.menuMusicOn=true; if(typeof state.mobileUI!=='boolean') state.mobileUI=false; if(typeof state.devMode!=='boolean') state.devMode=false; state.history=Array.isArray(state.history)?state.history:[]; ensureCodexDefaults(); ensureProgressDefaults(); applyMobileUI(); }}catch(e){ensureCodexDefaults(); ensureProgressDefaults();}}
+function load(){try{const raw=localStorage.getItem('sylvinia_vn_v82')||localStorage.getItem('sylvinia_vn_v81')||localStorage.getItem('sylvinia_vn_v79')||localStorage.getItem('sylvinia_vn_v78')||localStorage.getItem('sylvinia_vn_v77')||localStorage.getItem('sylvinia_vn_v76')||localStorage.getItem('sylvinia_vn_v75')||localStorage.getItem('sylvinia_vn_v74')||localStorage.getItem('sylvinia_vn_v73')||localStorage.getItem('sylvinia_vn_v72')||localStorage.getItem('sylvinia_vn_v71')||localStorage.getItem('sylvinia_vn_v70')||localStorage.getItem('sylvinia_vn_v69')||localStorage.getItem('sylvinia_vn_v68')||localStorage.getItem('sylvinia_vn_v67')||localStorage.getItem('sylvinia_vn_v61')||localStorage.getItem('sylvinia_vn_v60')||localStorage.getItem('sylvinia_vn_v59')||localStorage.getItem('sylvinia_vn_v58')||localStorage.getItem('sylvinia_vn_v57')||localStorage.getItem('sylvinia_vn_v56')||localStorage.getItem('sylvinia_vn_v55')||localStorage.getItem('sylvinia_vn_v54')||localStorage.getItem('sylvinia_vn_v53')||localStorage.getItem('sylvinia_vn_v45')||localStorage.getItem('sylvinia_vn_v44')||localStorage.getItem('sylvinia_vn_v43')||localStorage.getItem('sylvinia_vn_v42')||'null'; const s=JSON.parse(raw); if(s&&s.scene){ state={...state,...s,stats:{...START_STATS,...s.stats},introStats:{...INTRO_STATS,...((s&&s.introStats)||{})},flags:{...((state&&state.flags)||{}),...((s&&s.flags)||{})}}; if(state.scene==='duel' && state.duel && (state.duel.step||0)>0) state.duelIntroPlayed=true; if(typeof state.duelIntroPending!=='boolean') state.duelIntroPending=false; if(typeof state.duelIntroPlayed!=='boolean') state.duelIntroPlayed=false; if(typeof state.c3ShadowIntroPending!=='boolean') state.c3ShadowIntroPending=false; if(typeof state.c3ShadowIntroPlayed!=='boolean') state.c3ShadowIntroPlayed=!!(state.scene==='c3_22' && state.c3ShadowDuel && ((state.c3ShadowDuel.step||0)>0 || state.c3ShadowDuel.waiting===true)); if(typeof state.c5SageIntroPending!=='boolean') state.c5SageIntroPending=false; if(typeof state.c5SageIntroPlayed!=='boolean') state.c5SageIntroPlayed=!!(state.scene==='c5_sage_start' && state.c5SageDuel && ((state.c5SageDuel.step||0)>0 || state.c5SageDuel.waiting===true)); if(typeof state.menuMusicOn!=='boolean') state.menuMusicOn=true; if(typeof state.mobileUI!=='boolean') state.mobileUI=false; if(typeof state.devMode!=='boolean') state.devMode=false; if(typeof state.easyMode!=='boolean') state.easyMode=(typeof vnEasyModeEnabled==='function'?vnEasyModeEnabled():false); state.history=Array.isArray(state.history)?state.history:[]; ensureCodexDefaults(); ensureProgressDefaults(); applyMobileUI(); }}catch(e){ensureCodexDefaults(); ensureProgressDefaults();}}
 
 function readMainSave(){
   try{
@@ -16752,7 +16875,7 @@ function newGame(opts={}){
   const keepMobile=state.mobileUI===true;
   const keepDev=state.devMode===true;
   const keepMenuMusic=state.menuMusicOn!==false;
-  state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:keepMenuMusic,mobileUI:keepMobile,lastScreen:'game',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
+  state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:keepMenuMusic,easyMode:vnEasyModeEnabled&&vnEasyModeEnabled(),mobileUI:keepMobile,lastScreen:'game',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:keepDev,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
   ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82','106'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v));
   setScreen('game');
   render();
@@ -16787,7 +16910,7 @@ function startChapter2(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c2_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,c5SageDuel:null,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu','music_c5_miraldas','music_c5_saidin_duel',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c2_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,c5SageDuel:null,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu','music_c5_miraldas','music_c5_saidin_duel',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -16799,7 +16922,7 @@ function startChapter3(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c3_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c3_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -16812,7 +16935,7 @@ function startChapter4(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c4_00',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig','valurn','draven','iriana','obscurcis','mission','calciterres','forthaven','croisee_recits',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c4_00',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3'])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','algratal','miraldas','atelier_arcanique','arcatraz','medig','valurn','draven','iriana','obscurcis','mission','calciterres','forthaven','croisee_recits',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -16825,7 +16948,7 @@ function startChapter5(){
     updateChapterLocks();
     return;
   }
-  state={scene:'c5_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3',...(((prev&&prev.flags&&prev.flags.chapter4VComplete)||state.flags&&state.flags.chapter4VComplete)?['ch4v']:[]),...(((prev&&prev.flags&&prev.flags.chapter4DComplete)||state.flags&&state.flags.chapter4DComplete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
+  state={scene:'c5_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...((prev&&prev.flags)||{}),chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3',...(((prev&&prev.flags&&prev.flags.chapter4VComplete)||state.flags&&state.flags.chapter4VComplete)?['ch4v']:[]),...(((prev&&prev.flags&&prev.flags.chapter4DComplete)||state.flags&&state.flags.chapter4DComplete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]};
   setScreen('game');
   render();
 }
@@ -16874,7 +16997,7 @@ function startChapter6(){
     return;
   }
   const prevFlags=(prev&&prev.flags)||{};
-  state={scene:'c6_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete','cristal_navigation','parenthese_miraldas','terrasse_dome',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
+  state={scene:'c6_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','miraldas','saidin','chronomancie','dilemme_loyaute_purete','cristal_navigation','parenthese_miraldas','terrasse_dome',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
   setScreen('game');
   render();
 }
@@ -16888,12 +17011,12 @@ function startChapter7(){
     return;
   }
   const prevFlags=(prev&&prev.flags)||{};
-  state={scene:'c7_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c7Naiah:{phase:'duel1',step:0,mental:3,pacte:0,waiting:false,last:null,qte:null,history:[],startStats:{...START_STATS,...((prev&&prev.stats)||{})}},c7NaiahIntroPlayed:{},c7NaiahIntroPending:false,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','valurn','naiah','foret_interdite','akuhn_nabad','obscurcis','pacte_naiah','duel_ombres_naiah',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
+  state={scene:'c7_01',stats:{...START_STATS,...((prev&&prev.stats)||{})},introStats:{...INTRO_STATS},flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true},inventory:[...new Set([...(prev&&prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev&&prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7',...((prevFlags.chapter4VComplete||prevFlags.chapter4Complete)?['ch4v']:[]),...((prevFlags.chapter4DComplete||prevFlags.chapter4Complete)?['ch4d']:[])])],devJournalForceAccess:false,memories:[...new Set([...(prev&&prev.memories||[])])],sceneRewards:[...new Set([...(prev&&prev.sceneRewards||[])])],musicOn:(prev&&typeof prev.musicOn==='boolean')?prev.musicOn:true,menuMusicOn:(prev&&typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,easyMode:(prev&&typeof prev.easyMode==='boolean')?prev.easyMode:(vnEasyModeEnabled&&vnEasyModeEnabled()),mobileUI:(prev&&typeof prev.mobileUI==='boolean')?prev.mobileUI:state.mobileUI===true,lastScreen:'game',seenEnding:true,duel:null,duelResult:(prev&&prev.duelResult)||{title:'Progression fragile'},c7Naiah:{phase:'duel1',step:0,mental:3,pacte:0,waiting:false,last:null,qte:null,history:[],startStats:{...START_STATS,...((prev&&prev.stats)||{})}},c7NaiahIntroPlayed:{},c7NaiahIntroPending:false,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:state.devMode || ((prev&&typeof prev.devMode==='boolean')?prev.devMode:false),history:[],codexTab:'entries',codexUnlocked:[...new Set(['hylee','remerii','valeurs','valurn','naiah','foret_interdite','akuhn_nabad','obscurcis','pacte_naiah','duel_ombres_naiah',...((prev&&prev.codexUnlocked)||[])])],codexUnlockedImages:[...new Set([...(prev&&prev.codexUnlockedImages||[])])],codexUnlockedMusic:[...new Set(['music_menu',...(prev&&prev.codexUnlockedMusic||[])])]} ;
   setScreen('game');
   render();
 }
 
-function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82','106'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
+function resetProgress(){const ok=confirm("Nouveau départ : toutes les valeurs, choix, sauvegardes et entrées du codex déverrouillées seront réinitialisés. Confirmer ?"); if(!ok)return; ['42','43','44','45','53','55','56','57','58','59','60','61','67','68','69','70','71','72','73','74','75','76','77','78','79','81','82','106'].forEach(v=>localStorage.removeItem('sylvinia_vn_v'+v)); state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,easyMode:vnEasyModeEnabled&&vnEasyModeEnabled(),mobileUI:state.mobileUI===true,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii','valeurs'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']}; localStorage.removeItem('sylvinia_vn_intro_v82'); save(); toast('Nouveau départ prêt','Les valeurs ont été réinitialisées.'); setScreen('title');}
 
 function bindDisclaimerEnterButton(){
   const enterTitleBtn=document.getElementById('enterTitleBtn');
@@ -19073,6 +19196,664 @@ Hylee hoche la tête. Ce n'est pas un recul. C'est une manière plus honnête d'
       });
     }
   }catch(e){ console.warn('Correctif v0.147 tutoiement non appliqué', e); }
+})();
+
+
+/* v0.149 · Mode facile + nettoyage des libellés méta */
+(function applyV148EasyModeAndMetaCleanup(){
+  try{
+    if(window.__sylviniaV148EasyModeAndMetaCleanup) return;
+    window.__sylviniaV148EasyModeAndMetaCleanup = true;
+
+    const STAT_LABELS = Object.assign({}, (typeof statNames !== 'undefined' ? statNames : {}), (typeof introStatNames !== 'undefined' ? introStatNames : {}));
+    const STAT_KEYS = new Set(['audace','sangfroid','lien','lucidite','resonance','courage','discretion','trust','suspicion','instability','hope']);
+
+    window.vnEasyModeEnabled = function vnEasyModeEnabled(){
+      try{
+        if(state && typeof state.easyMode === 'boolean') return state.easyMode === true;
+        return localStorage.getItem('sylvinia_vn_easy_mode') === 'true';
+      }catch(e){ return !!(state && state.easyMode); }
+    };
+
+    window.updateEasyModeUI = function updateEasyModeUI(){
+      const on = vnEasyModeEnabled();
+      const toggle = document.getElementById('easyModeToggle');
+      const label = document.getElementById('easyModeState');
+      if(toggle) toggle.checked = on;
+      if(label) label.textContent = on ? 'Activé · indications visibles' : 'Désactivé · indications masquées';
+    };
+
+    window.setEasyMode = function setEasyMode(on){
+      state.easyMode = !!on;
+      try{ localStorage.setItem('sylvinia_vn_easy_mode', state.easyMode ? 'true' : 'false'); }catch(e){}
+      updateEasyModeUI();
+      save();
+      if(!document.getElementById('game').classList.contains('hidden')) render();
+      else updateMenuButtons();
+    };
+
+    function cleanPlayerNote(note){
+      let s = String(note || '');
+      s = s.replace(/\s*·\s*Requis adouci pour encourager une Hylee plus affirmée\.?/gi,'');
+      s = s.replace(/\s*Requis adouci pour encourager une Hylee plus affirmée\.?/gi,'');
+      s = s.replace(/\s*·\s*Seuil duo adouci\s*:\s*[^.]+\.?/gi,'');
+      s = s.replace(/\s*Seuil duo adouci\s*:\s*[^.]+\.?/gi,'');
+      s = s.replace(/\s*·\s*Pré-requis\s*\d+\s*:?\s*/gi,' · ');
+      s = s.replace(/\s*Pré-requis\s*\d+\s*:?\s*/gi,'');
+      s = s.replace(/^Bonus Lien majeur\s*·\s*/i,'Silence partagé · ');
+      s = s.replace(/^Bonus Lien\s*·\s*/i,'Tendresse assumée · ');
+      s = s.replace(/^Objet stratégique\s*·\s*/i,'Objet stratégique · ');
+      s = s.replace(/^Souvenir stratégique\s*·\s*/i,'Souvenir stratégique · ');
+      s = s.replace(/\s*·\s*$/,'').replace(/\s{2,}/g,' ').trim();
+      return s;
+    }
+
+    function cleanLabel(label){
+      return String(label || '')
+        .replace(/^Bonus Lien majeur\s*·\s*/i,'Silence partagé · ')
+        .replace(/^Bonus Lien\s*·\s*/i,'Tendresse assumée · ')
+        .replace(/\s*·\s*Résonance\s*·\s*Pré-requis\s*(\d+)/i, '. Requis : Résonance $1')
+        .replace(/\s*·\s*Pré-requis\s*(\d+)/i, '. Requis : $1');
+    }
+
+    function cleanSub(sub){
+      return String(sub || '')
+        .replace(/^Bonus Lien majeur\s*·\s*/i,'Silence partagé · ')
+        .replace(/^Bonus Lien\s*·\s*/i,'Tendresse assumée · ');
+    }
+
+    function isChapterTransition(ch){
+      const label = String((ch && ch.label) || '');
+      const next = String((ch && ch.next) || '');
+      return /Chapitre|Retour au menu|Recommencer/i.test(label) || next === 'menu' || /^c\d_0?1$/.test(next) || next === 'restart_c7' || next === 'restart_c5_sage';
+    }
+
+    function reqTextClean(req){
+      if(!req) return '';
+      const names = (typeof isIntroScene === 'function' && isIntroScene()) ? (typeof introStatNames !== 'undefined' ? introStatNames : STAT_LABELS) : (typeof statNames !== 'undefined' ? statNames : STAT_LABELS);
+      return Object.entries(req).map(([k,v]) => `${names[k] || STAT_LABELS[k] || k} ${v}`).join(' · ');
+    }
+
+    statReqText = function statReqText(req){ return reqTextClean(req); };
+
+    choiceNote = function choiceNote(ch){
+      if(!ch) return '';
+      const notes=[];
+      if(ch.requires) notes.push((state.devMode ? 'DEV · prérequis ignoré : ' : 'Requis : ') + reqTextClean(ch.requires));
+      if(vnEasyModeEnabled() && ch.note && !isChapterTransition(ch)) notes.push(cleanPlayerNote(ch.note));
+      return notes.filter(Boolean).join(' · ');
+    };
+
+    function normalizeChoice(ch){
+      if(!ch) return;
+      if(ch.label) ch.label = cleanLabel(ch.label);
+      if(ch.note) ch.note = cleanPlayerNote(ch.note);
+      if(isChapterTransition(ch)){
+        delete ch.matrix;
+        if(ch.note && /^(Audace|Sang-froid|Lucidité|Résonance|Lien Remerii|Pacte Naïah|Objet stratégique|Souvenir stratégique|Tendresse assumée|Silence partagé)\b/i.test(ch.note)) delete ch.note;
+        if(ch.effects){
+          const keys = Object.keys(ch.effects || {});
+          if(keys.length && keys.every(k => STAT_KEYS.has(k))) delete ch.effects;
+        }
+      }
+      if(String(ch.note || '').includes('Pacte Naïah')) ch.note = cleanPlayerNote(String(ch.note).replace(/Pacte Naïah\s*[+-]?\d+/gi,'').replace(/Mordant neutre/gi,''));
+    }
+
+    if(typeof S !== 'undefined'){
+      Object.keys(S).forEach(id=>{
+        const sc = S[id];
+        if(!sc) return;
+        if(sc.sub) sc.sub = cleanSub(sc.sub);
+        if(Array.isArray(sc.choices)) sc.choices.forEach(normalizeChoice);
+      });
+      if(S.c6_18 && S.c6_18.choices) S.c6_18.choices.forEach(ch=>{ if(String(ch.label||'').includes('Tendresse assumée')) ch.note='Proximité fragile · assez de confiance pour prolonger le geste sans forcer la scène.'; });
+      if(S.c6_25 && S.c6_25.choices) S.c6_25.choices.forEach(ch=>{ if(String(ch.label||'').includes('Tendresse assumée')) ch.note='Tendresse visible · Hylee accepte le geste sans en faire une déclaration.'; });
+      if(S.c6_30 && S.c6_30.choices) S.c6_30.choices.forEach(ch=>{ if(String(ch.label||'').includes('Silence partagé')) ch.note='Silence partagé · la proximité reste réservée aux routes très proches de Remerii.'; });
+      if(S.c6_12 && Array.isArray(S.c6_12.choices)){
+        S.c6_12.choices.forEach(ch=>{
+          if(String(ch.label||'').includes('ville qui respire sous la peau')){
+            ch.label='Décrire Mir’Aldas comme une ville qui respire sous la peau';
+            ch.requires={resonance:16};
+            ch.note='Sensation arcanique · Hylee verbalise la respiration magique de Mir’Aldas sans la transformer en prière.';
+          }
+        });
+      }
+    }
+
+    if(typeof C7_NAIAH_DUEL_1 !== 'undefined') C7_NAIAH_DUEL_1.forEach(step => (step.choices||[]).forEach(ch => { if(ch) delete ch.note; }));
+    if(typeof C7_NAIAH_DUEL_2 !== 'undefined') C7_NAIAH_DUEL_2.forEach(step => (step.choices||[]).forEach(ch => { if(ch) delete ch.note; }));
+
+    if(typeof activeStats === 'function'){
+      activeStats = function activeStats(){
+        ensureIntroDefaults();
+        if(isIntroScene()) return state.introStats;
+        if(isC7Scene()){
+          const s=state.stats||{};
+          return {audace:s.audace||0,sangfroid:s.sangfroid||0,lucidite:s.lucidite||0,resonance:s.resonance||0};
+        }
+        return state.stats;
+      };
+      activeStatNames = function activeStatNames(){
+        if(isIntroScene()) return introStatNames;
+        if(isC7Scene()) return {audace:'Audace',sangfroid:'Sang-froid',lucidite:'Lucidité',resonance:'Résonance'};
+        return statNames;
+      };
+    }
+
+    const oldUpdateMenuButtonsV148 = updateMenuButtons;
+    updateMenuButtons = function updateMenuButtons(){
+      oldUpdateMenuButtonsV148();
+      updateEasyModeUI();
+    };
+
+    const easyToggle = document.getElementById('easyModeToggle');
+    if(easyToggle) easyToggle.onchange = e => setEasyMode(e.target.checked);
+
+    const storedEasy = (function(){ try{return localStorage.getItem('sylvinia_vn_easy_mode') === 'true';}catch(e){return false;} })();
+    if(typeof state.easyMode !== 'boolean') state.easyMode = storedEasy;
+    updateEasyModeUI();
+    updateMenuButtons();
+  }catch(e){ console.warn('Correctifs v0.149 non appliqués', e); }
+})();
+
+
+
+/* v0.149 · Correction mode dev / objectifs Pacte Naïah */
+(function applyV149DevAndPacteObjectives(){
+  try{
+    if(window.__sylviniaV149DevAndPacteObjectives) return;
+    window.__sylviniaV149DevAndPacteObjectives = true;
+
+    const STAT_LABELS_V149 = Object.assign({}, (typeof statNames !== 'undefined' ? statNames : {}), (typeof introStatNames !== 'undefined' ? introStatNames : {}), {pacteNaiah:'Pacte Naïah'});
+    const STAT_KEYS_V149 = new Set(['audace','sangfroid','lien','lucidite','resonance','courage','discretion','trust','suspicion','instability','hope','pacteNaiah']);
+
+    function cleanPlayerNoteV149(note){
+      let s = String(note || '');
+      s = s.replace(/\s*·\s*Requis adouci pour encourager une Hylee plus affirmée\.?/gi,'');
+      s = s.replace(/\s*Requis adouci pour encourager une Hylee plus affirmée\.?/gi,'');
+      s = s.replace(/\s*·\s*Seuil duo adouci\s*:\s*[^.]+\.?/gi,'');
+      s = s.replace(/\s*Seuil duo adouci\s*:\s*[^.]+\.?/gi,'');
+      s = s.replace(/\s*·\s*Pré-requis\s*\d+\s*:?\s*/gi,' · ');
+      s = s.replace(/\s*Pré-requis\s*\d+\s*:?\s*/gi,'');
+      s = s.replace(/^Bonus Lien majeur\s*·\s*/i,'Silence partagé · ');
+      s = s.replace(/^Bonus Lien\s*·\s*/i,'Tendresse assumée · ');
+      s = s.replace(/\s*·\s*$/,'').replace(/\s{2,}/g,' ').trim();
+      return s;
+    }
+
+    function isChapterTransitionV149(ch){
+      const label = String((ch && ch.label) || '');
+      const next = String((ch && ch.next) || '');
+      return /Chapitre|Retour au menu|Recommencer/i.test(label) || next === 'menu' || /^c\d_0?1$/.test(next) || next === 'restart_c7' || next === 'restart_c5_sage';
+    }
+
+    function reqTextV149(req){
+      if(!req) return '';
+      const names = (typeof isIntroScene === 'function' && isIntroScene()) ? (typeof introStatNames !== 'undefined' ? introStatNames : STAT_LABELS_V149) : (typeof statNames !== 'undefined' ? statNames : STAT_LABELS_V149);
+      return Object.entries(req).map(([k,v]) => `${names[k] || STAT_LABELS_V149[k] || k} ${v}`).join(' · ');
+    }
+
+    statReqText = function statReqText(req){ return reqTextV149(req); };
+
+    choiceNote = function choiceNote(ch){
+      if(!ch) return '';
+      const notes=[];
+      if(ch.requires) notes.push((state.devMode ? 'DEV · prérequis ignoré : ' : 'Requis : ') + reqTextV149(ch.requires));
+      const showNote = state.devMode || (typeof vnEasyModeEnabled === 'function' && vnEasyModeEnabled());
+      if(showNote && ch.note && (state.devMode || !isChapterTransitionV149(ch))){
+        notes.push(cleanPlayerNoteV149(ch.note));
+      }
+      return notes.filter(Boolean).join(' · ');
+    };
+
+    choiceValueEffects = function choiceValueEffects(ch){
+      if(!ch) return {};
+      const intro=(typeof isIntroScene === 'function' && isIntroScene());
+      const effects=(intro||ch.introEffects)?(ch.introEffects||{}):(ch.effects||{});
+      if(!effects || typeof effects==='function') return {};
+      const allowed=Object.assign({}, intro ? INTRO_STATS : START_STATS, {pacteNaiah:0});
+      const out={};
+      Object.entries(effects).forEach(([k,v])=>{
+        if((k in allowed || STAT_KEYS_V149.has(k)) && typeof v==='number' && Number.isFinite(v) && v!==0) out[k]=v;
+      });
+      if(typeof ch.pacteNaiah==='number' && Number.isFinite(ch.pacteNaiah) && ch.pacteNaiah!==0) out.pacteNaiah=ch.pacteNaiah;
+      return out;
+    };
+
+    choiceValueDevText = function choiceValueDevText(ch){
+      if(!state.devMode) return '';
+      const effects=choiceValueEffects(ch);
+      const names=(typeof isIntroScene === 'function' && isIntroScene()) ? introStatNames : Object.assign({}, statNames, {pacteNaiah:'Pacte Naïah'});
+      const parts=Object.entries(effects).map(([k,v])=>`${names[k]||STAT_LABELS_V149[k]||k} ${v>0?'+':''}${v}`);
+      return parts.length ? `DEV · Valeurs : ${parts.join(' · ')}` : 'DEV · Valeurs : aucun gain';
+    };
+
+    activeStats = function activeStats(){
+      ensureIntroDefaults();
+      if(isIntroScene()) return state.introStats;
+      if(isC7Scene()){
+        const s=state.stats||{};
+        return {audace:s.audace||0,sangfroid:s.sangfroid||0,pacteNaiah:(state.c7Naiah&&state.c7Naiah.pacte)||0,lucidite:s.lucidite||0,resonance:s.resonance||0};
+      }
+      return state.stats;
+    };
+    activeStatNames = function activeStatNames(){
+      if(isIntroScene()) return introStatNames;
+      if(isC7Scene()) return {audace:'Audace',sangfroid:'Sang-froid',pacteNaiah:'Pacte Naïah',lucidite:'Lucidité',resonance:'Résonance'};
+      return statNames;
+    };
+
+    renderC7NaiahDuel = function renderC7NaiahDuel(scene){
+      const requested=scene.c7NaiahDuel||'duel1';
+      let d=c7EnsureDuel(requested);
+      if(d.phase!==requested){d.phase=requested; d.step=0; d.waiting=false; d.last=null; d.qte=null; d.after=null;}
+      if(d.mental<=0){go('c7_bad_mental'); return;}
+      const steps=c7CurrentSteps();
+      const step=steps[d.step]||steps[steps.length-1];
+      document.querySelectorAll('.chapterLabel').forEach(el=>{el.textContent=getSceneChapterLabel(state.scene);});
+      const stage=document.getElementById('stage');
+      stage.classList.add('combatMode');
+      stage.classList.toggle('c7Mindquake', d.phase==='duel2');
+      let duelBg = scene.bg||'c4v_forest_naiah';
+      if(d.phase==='duel1') duelBg = d.waiting ? 'c7_key_s1_07_duel1_response' : 'c7_key_s1_06_duel1_setup';
+      else if(d.phase==='duel2') duelBg = d.qte ? 'c7_key_s2_03_duel2_qte' : (d.waiting ? 'c7_key_s2_02_duel2_response' : 'c7_key_s2_01_duel2_setup');
+      setStageBg(duelBg,true);
+      playMusic(resolveSceneMusic(state.scene, scene.music||'music_thazran'));
+      const chars=[['valurn',d.last&&d.last.bad?'valurn_annoyed':'valurn_charming','left'],['naiah',d.last&&d.last.bad?'naiah_menacing':'naiah_smirk','right']];
+      if(scene.hideChars||d.phase==='duel2'||d.phase==='duel1') document.getElementById('chars').innerHTML=''; else paintSceneChars(chars);
+      document.getElementById('sceneTitle').textContent=scene.title||'Duel des Ombres';
+      const qteWord=c7CurrentQteWord();
+      document.getElementById('sceneSub').textContent=d.qte?`Défense directe · ${qteWord}`:(d.waiting?'Écho des ombres':`${step.phase} · ${step.title}`);
+      document.getElementById('speaker').textContent=d.qte?'Instinct':(d.waiting?'Naïah':(step.speaker||'Naïah'));
+      const textEl=document.getElementById('text');
+      const status=`\n\nSanté mentale : ${'♥'.repeat(d.mental)}${'♡'.repeat(Math.max(0,3-d.mental))} · Pacte Naïah : ${d.pacte}/15`;
+      const choices=document.getElementById('choices');
+      choices.innerHTML='';
+      clearC7QteLayer();
+      if(d.qte){
+        const idx=(d.qte.index||0)+1;
+        const total=Array.isArray(d.qte.seq)?d.qte.seq.length:3;
+        textEl.textContent=`Naïah attaque directement. Le bouton de défense apparaît sur l’image : ${qteWord}.\n\nEnchaînement ${idx}/${total}. Cette manche impose ${Math.round(c7TimerDuration()/1000)} secondes par défense. Clique avant que l’ombre ne traverse Valurn.`+status;
+        c7RenderStageQte(d);
+      }
+      else if(d.waiting){
+        clearC7NaiahTimer();
+        textEl.textContent=(d.last&&d.last.reaction?d.last.reaction:'Les ombres retiennent leur souffle.')+status;
+        const b=document.createElement('button');
+        b.className='choiceBtn continueBtn';
+        b.innerHTML='<span>Continuer</span><span class="arrow">›</span>';
+        b.onclick=()=>{
+          d.waiting=false;
+          const after=d.after;
+          d.after=null;
+          d.last=null;
+          if(after==='mentalFail'){go('c7_bad_mental');return;}
+          if(after==='qte'){
+            d.qte={seq:(d.qteNext||['TENIR','BRISER','AVANCER']).slice(),index:0,positionSeed:0,round:(typeof d.qteRound==='number'?d.qteRound:0)};
+            d.qteNext=null; d.qteRound=null; save(); renderC7NaiahDuel(scene); return;
+          }
+          if(after==='finish'){
+            if(d.phase==='duel1'){go('c7_07');return;}
+            finishC7NaiahDuel(); return;
+          }
+          save(); renderC7NaiahDuel(scene);
+        };
+        choices.appendChild(b);
+      }
+      else{
+        textEl.textContent=(step.text||'Naïah attaque dans l’angle mort des pensées.')+status;
+        (step.choices||[]).forEach(ch=>{
+          const b=document.createElement('button');
+          b.className='choiceBtn';
+          const pacte=(state.devMode && typeof ch.pacte==='number' && ch.pacte!==0)?`<small class="devReward ${ch.pacte<0?'negative':''}">DEV · Pacte Naïah ${ch.pacte>0?'+':''}${ch.pacte}</small>`:'';
+          const loss=(state.devMode && ch.loss)?`<small class="devReward negative">DEV · Santé mentale -${ch.loss}</small>`:'';
+          const effects=(state.devMode && ch.effects)?Object.entries(ch.effects).filter(([k,v])=>v!==0).map(([k,v])=>`${(statNames&&statNames[k])||k} ${v>0?'+':''}${v}`).join(' · '):'';
+          const values=effects?`<small class="devReward ${/ -/.test(effects)?'negative':''}">DEV · Valeurs : ${effects}</small>`:'';
+          b.innerHTML=`<span>${ch.label}${pacte}${loss}${values}</span><span class="arrow">›</span>`;
+          b.onclick=()=>c7ResolveNaiahChoice(ch,false);
+          choices.appendChild(b);
+        });
+      }
+      const stats=document.getElementById('stats');
+      const total=steps.length;
+      const current=Math.min(d.step+1,total);
+      stats.innerHTML=`<div class="combatHud c7DuelPulse"><div class="combatBox"><div class="combatTop"><span>Santé mentale</span><span>${d.mental}/3</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.mental/3)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Pacte Naïah</span><span>${d.pacte}/15</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,(d.pacte/15)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c7NaiahTimer">${d.waiting?'—':(d.qte?((c7TimerDuration()/1000).toFixed(1)+'s'):(d.phase==='duel2'?'20s':'30s'))}</span></div><div class="combatTrack"><div id="c7NaiahTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>${d.phase==='duel2'?'Duel II':'Duel I'} <b>${current}/${total}</b></span><span>Objectif pacte <b>10+</b></span><span>Complicité <b>15+</b></span></div>`;
+      if(!d.waiting) startC7NaiahTimer(); else updateC7NaiahTimerDisplay();
+      updateDevUI(); save(); updateProgressUI();
+    };
+
+    if(typeof updateMenuButtons === 'function') updateMenuButtons();
+    if(typeof updateProgressUI === 'function') updateProgressUI();
+  }catch(e){ console.warn('Correctifs v0.149 non appliqués', e); }
+})();
+
+
+
+/* v0.150 · Courbe des prérequis : stratégique = médiane du chapitre suivant */
+(function applyV150StrategicRequirementCurve(){
+  try{
+    if(window.__sylviniaV150StrategicRequirementCurve) return;
+    window.__sylviniaV150StrategicRequirementCurve = true;
+
+    const V150_STATS = ['audace','sangfroid','lien','lucidite','resonance'];
+    const V150_NEXT_MEDIAN = {3:10,4:18,5:21};
+    const V150_NORMAL_MEDIAN = {4:10,5:18};
+
+    function txt(ch){ return String((ch&&ch.label)||'')+' '+String((ch&&ch.note)||''); }
+    function hasReq(ch){ return !!(ch && (ch.requires || ch.requiresAny)); }
+    function isStrategicV150(ch){
+      if(!ch) return false;
+      const text = txt(ch);
+      const e = ch.effects || {};
+      const strongReward = Object.keys(e).some(k => V150_STATS.includes(k) && typeof e[k] === 'number' && e[k] > 1);
+      const tangibleReward = (Array.isArray(ch.items) && ch.items.length) || (Array.isArray(ch.memories) && ch.memories.length);
+      return /choix stratégique|objet stratégique|souvenir stratégique/i.test(text)
+        || (/priorité stratégique/i.test(text) && hasReq(ch))
+        || (hasReq(ch) && (strongReward || tangibleReward));
+    }
+    function sceneChapterV150(id){
+      id=String(id||'');
+      if(id.startsWith('c3_')) return 3;
+      if(id.startsWith('c4v_') || id.startsWith('c4d_')) return 4;
+      if(id.startsWith('c5_')) return 5;
+      if(id.startsWith('c6_')) return 6;
+      return 0;
+    }
+    function applyToReqObject(req, fn){
+      if(!req) return;
+      Object.keys(req).forEach(k=>{
+        if(V150_STATS.includes(k) && typeof req[k] === 'number') req[k] = fn(k, req[k]);
+      });
+    }
+    function setAllReqs(ch, target){
+      applyToReqObject(ch.requires, () => target);
+      if(Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(req => applyToReqObject(req, () => target));
+    }
+    function smoothC5Req(ch, stepIndex){
+      const label = String((ch&&ch.label)||'');
+      const isCapstone = stepIndex >= 5 && /route|futur|avenir|écrit|ecrit/.test(label);
+      const smoother = (k,v)=>{
+        if(k === 'resonance') return 16;
+        if(v >= 25) return 20;
+        if(v >= 20) return isCapstone ? 20 : 18;
+        return v;
+      };
+      applyToReqObject(ch.requires, smoother);
+      if(Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(req => applyToReqObject(req, smoother));
+    }
+
+    if(typeof S !== 'undefined'){
+      Object.keys(S||{}).forEach(id=>{
+        const chapter = sceneChapterV150(id);
+        const sc = S[id];
+        if(!sc || !Array.isArray(sc.choices)) return;
+        sc.choices.forEach(ch=>{
+          if(!hasReq(ch)) return;
+          const strategic = isStrategicV150(ch);
+          if(strategic && V150_NEXT_MEDIAN[chapter]){
+            setAllReqs(ch, V150_NEXT_MEDIAN[chapter]);
+            ch.__v150StrategicNextMedian = V150_NEXT_MEDIAN[chapter];
+          }else if(!strategic && chapter === 4){
+            applyToReqObject(ch.requires, () => V150_NORMAL_MEDIAN[4]);
+            if(Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(req => applyToReqObject(req, () => V150_NORMAL_MEDIAN[4]));
+            ch.__v150NormalMedian = V150_NORMAL_MEDIAN[4];
+          }
+        });
+      });
+
+      // Chapitre VI : correction d'un doublon de formulation dans la note finale de proximité.
+      if(S.c6_30 && Array.isArray(S.c6_30.choices)){
+        S.c6_30.choices.forEach(ch=>{
+          if(ch && /Rester contre son épaule/i.test(String(ch.label||''))){
+            ch.note = 'Silence partagé · La scène reste réservée aux routes très proches de Remerii.';
+          }
+        });
+      }
+    }
+
+    // Chapitre V : les réponses normales de Saidin sont lissées à 16-18, avec quelques capstones à 20.
+    if(typeof C5_SAGE_DUEL_STEPS !== 'undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      C5_SAGE_DUEL_STEPS.forEach((step, stepIndex)=>{
+        (step.choices||[]).forEach(ch=>{
+          if(hasReq(ch)) smoothC5Req(ch, stepIndex);
+        });
+      });
+    }
+
+    const bubble = document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent = 'Mise à jour · v0.150 · Prérequis stratégiques calibrés';
+    if(typeof updateProgressUI === 'function') updateProgressUI();
+    if(typeof updateMenuButtons === 'function') updateMenuButtons();
+  }catch(e){ console.warn('Correctifs v0.150 non appliqués', e); }
+})();
+
+
+
+
+/* v0.152 · Lien Remerii discret : plus de jauge en jeu, feedback par notification */
+(function applyV151RemeriiDiscreetFeedback(){
+  try{
+    if(window.__sylviniaV151RemeriiDiscreetFeedback) return;
+    window.__sylviniaV151RemeriiDiscreetFeedback = true;
+
+    function isGameScreenVisible(){
+      const game=document.getElementById('game');
+      return !!(game && !game.classList.contains('hidden'));
+    }
+
+    function shouldHideRemeriiLinkInGame(){
+      return !(state && state.devMode === true);
+    }
+
+    function hideRemeriiLinkFromGameHud(){
+      try{
+        if(!shouldHideRemeriiLinkInGame()) return;
+        if(!isGameScreenVisible()) return;
+        const stats=document.getElementById('stats');
+        if(!stats) return;
+        stats.querySelectorAll('.stat,.combatMeta span').forEach(el=>{
+          const txt=(el.textContent||'').trim();
+          if(/^Lien(?:\s+Remerii)?\b/i.test(txt)) el.remove();
+        });
+      }catch(e){}
+    }
+
+    function queueRemeriiNotice(delta){
+      if(!delta || !Number.isFinite(delta)) return;
+      if(typeof isIntroScene === 'function' && isIntroScene()) return;
+      window.__sylviniaPendingRemeriiDelta = (window.__sylviniaPendingRemeriiDelta || 0) + delta;
+    }
+
+    function flushRemeriiNotice(){
+      const delta=window.__sylviniaPendingRemeriiDelta || 0;
+      window.__sylviniaPendingRemeriiDelta = 0;
+      if(!delta || typeof toast !== 'function') return;
+      if(delta>0){
+        toast(delta>=2 ? 'Remerii a beaucoup apprécié ça' : 'Remerii a apprécié ça', 'Sa confiance envers Hylee se renforce.');
+      }else{
+        toast(delta<=-2 ? 'Remerii a vraiment désapprouvé ça' : 'Remerii n’a pas apprécié ça', 'Quelque chose se tend entre elles.');
+      }
+    }
+
+    function afterGameplayRender(){
+      hideRemeriiLinkFromGameHud();
+      window.setTimeout(flushRemeriiNotice, 40);
+    }
+
+    if(typeof applyBalancedStatDelta === 'function'){
+      const oldApplyBalancedStatDelta = applyBalancedStatDelta;
+      applyBalancedStatDelta = function applyBalancedStatDeltaV151(key,delta){
+        const before=(key==='lien' && state && state.stats && typeof state.stats.lien==='number') ? state.stats.lien : null;
+        const result=oldApplyBalancedStatDelta.apply(this, arguments);
+        if(key==='lien' && typeof delta==='number' && delta!==0 && state && state.stats){
+          const after=typeof state.stats.lien==='number' ? state.stats.lien : before;
+          const realDelta=(before===null || after===null) ? delta : (after-before);
+          queueRemeriiNotice(realDelta);
+        }
+        return result;
+      };
+    }
+
+    if(typeof activeStats === 'function'){
+      const oldActiveStatsV151 = activeStats;
+      activeStats = function activeStatsV151(){
+        const src=oldActiveStatsV151.apply(this, arguments) || {};
+        if(shouldHideRemeriiLinkInGame() && !(typeof isIntroScene==='function' && isIntroScene()) && Object.prototype.hasOwnProperty.call(src,'lien')){
+          const copy={...src};
+          delete copy.lien;
+          return copy;
+        }
+        return src;
+      };
+    }
+
+    if(typeof choiceNote === 'function'){
+      const oldChoiceNoteV151 = choiceNote;
+      choiceNote = function choiceNoteV151(ch){
+        let note=oldChoiceNoteV151.apply(this, arguments) || '';
+        if(!state || state.devMode!==true){
+          note = note
+            .replace(/(^|\s*·\s*)Lien\s+Remerii\s*·\s*/gi, '$1Tendresse assumée · ')
+            .replace(/(^|\s*·\s*)Lien\s*·\s*/gi, '$1Tendresse assumée · ')
+            .replace(/\s*·\s*$/,'')
+            .trim();
+        }
+        return note;
+      };
+    }
+
+    function wrapRenderFunction(name){
+      const fn=window[name] || (typeof globalThis!=='undefined' ? globalThis[name] : null);
+      if(typeof fn !== 'function') return;
+      const wrapped=function(){
+        const result=fn.apply(this, arguments);
+        afterGameplayRender();
+        return result;
+      };
+      window[name]=wrapped;
+      try{ eval(name+' = window["'+name+'"];'); }catch(e){}
+    }
+
+    ['render','renderDuel','renderC3ShadowDuel','renderC5SageDuel','renderC7NaiahDuel'].forEach(wrapRenderFunction);
+
+    const oldSetScreenV151 = (typeof setScreen === 'function') ? setScreen : null;
+    if(oldSetScreenV151){
+      setScreen = function setScreenV151(){
+        const result=oldSetScreenV151.apply(this, arguments);
+        afterGameplayRender();
+        return result;
+      };
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.152 · Lien Remerii discret';
+    if(typeof updateProgressUI === 'function') updateProgressUI();
+    if(typeof updateMenuButtons === 'function') updateMenuButtons();
+    afterGameplayRender();
+  }catch(e){ console.warn('Correctifs v0.152 non appliqués', e); }
+})();
+
+
+
+
+
+/* v0.153 · Pré-requis doubles : la seconde valeur vaut la moitié de la première */
+(function applyV153HalfSecondaryRequirements(){
+  try{
+    if(window.__sylviniaV153HalfSecondaryRequirements) return;
+    window.__sylviniaV153HalfSecondaryRequirements = true;
+
+    const V153_VALUE_KEYS = ['audace','sangfroid','lien','lucidite','resonance','courage','discretion','trust','suspicion','instability','hope'];
+
+    function halfSecondaryRequirement(req){
+      if(!req || typeof req !== 'object') return;
+      const keys = Object.keys(req).filter(k => V153_VALUE_KEYS.includes(k) && typeof req[k] === 'number' && Number.isFinite(req[k]));
+      if(keys.length !== 2) return;
+      const first = keys[0];
+      const second = keys[1];
+      req[second] = Math.ceil(req[first] / 2);
+    }
+
+    function normalizeChoiceRequirements(ch){
+      if(!ch || typeof ch !== 'object') return;
+      if(ch.requires) halfSecondaryRequirement(ch.requires);
+      if(Array.isArray(ch.requiresAny)) ch.requiresAny.forEach(halfSecondaryRequirement);
+    }
+
+    if(typeof S !== 'undefined'){
+      Object.keys(S || {}).forEach(id => {
+        const sc = S[id];
+        if(sc && Array.isArray(sc.choices)) sc.choices.forEach(normalizeChoiceRequirements);
+      });
+    }
+
+    if(typeof C5_SAGE_DUEL_STEPS !== 'undefined' && Array.isArray(C5_SAGE_DUEL_STEPS)){
+      C5_SAGE_DUEL_STEPS.forEach(step => (step.choices || []).forEach(normalizeChoiceRequirements));
+    }
+    if(typeof C7_NAIAH_DUEL_1 !== 'undefined' && Array.isArray(C7_NAIAH_DUEL_1)){
+      C7_NAIAH_DUEL_1.forEach(step => (step.choices || []).forEach(normalizeChoiceRequirements));
+    }
+    if(typeof C7_NAIAH_DUEL_2 !== 'undefined' && Array.isArray(C7_NAIAH_DUEL_2)){
+      C7_NAIAH_DUEL_2.forEach(step => (step.choices || []).forEach(normalizeChoiceRequirements));
+    }
+
+    const bubble = document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent = 'Mise à jour · v0.153 · Pré-requis doubles harmonisés';
+    if(typeof updateProgressUI === 'function') updateProgressUI();
+    if(typeof updateMenuButtons === 'function') updateMenuButtons();
+  }catch(e){ console.warn('Correctifs v0.153 non appliqués', e); }
+})();
+
+
+
+/* v0.154 · Nettoyage des choix isolés "Continuer + option contextuelle" */
+(function applyV154ContextualIsolatedChoices(){
+  try{
+    if(window.__sylviniaV154ContextualIsolatedChoices) return;
+    window.__sylviniaV154ContextualIsolatedChoices=true;
+    function findChoice(sceneId,label){
+      const sc=S&&S[sceneId];
+      if(!sc||!Array.isArray(sc.choices)) return null;
+      return sc.choices.find(ch=>ch&&ch.label===label);
+    }
+    function renameContinue(sceneId,newLabel,newNote){
+      const ch=findChoice(sceneId,'Continuer');
+      if(ch){
+        ch.label=newLabel;
+        ch.note=newNote||'';
+      }
+    }
+
+    // c2_09 : le choix spécial est cohérent, mais le "Continuer" générique faisait faux choix.
+    renameContinue('c2_09','Accepter le compliment sans répondre','Retenue · Hylee laisse la leçon se déposer sans transformer le soulagement en plaisanterie.');
+
+    // c5_16 : l’ancien choix parlait de peur alors que la scène montre la Grande Bibliothèque et l’admiration d’Hylee.
+    renameContinue('c5_16','Continuer vers les statues de dragons','Hylee suit Remerii vers la Grande Bibliothèque sans s’attarder sur ce qu’elle ressent.');
+    const c5Choice=findChoice('c5_16','Laisser Remerii voir qu’elle a peur, sans lui demander de la porter');
+    if(c5Choice){
+      c5Choice.label='Laisser Remerii voir que la Bibliothèque l’impressionne';
+      c5Choice.note='Proximité discrète · Hylee ne cache pas son émerveillement, sans chercher à paraître plus savante qu’elle ne l’est.';
+    }
+    if(S&&S.c5_16_lien_v130){
+      Object.assign(S.c5_16_lien_v130,{
+        title:'Grande Bibliothèque',
+        sub:'Émerveillement contenu',
+        speaker:'Narrateur',
+        text:`Hylee ne cache pas totalement l’éclat qui lui traverse le regard devant les grandes portes sculptées et les deux dragons de pierre.
+
+Elle ne joue pas les érudites. Elle ne transforme pas son admiration en phrase trop bien taillée.
+
+Remerii le remarque. Bien sûr qu’elle le remarque.
+
+« Tu as le droit d’être impressionnée », dit-elle simplement.
+
+Hylee baisse les yeux une seconde, mais son sourire reste là, petit et tenace.`
+      });
+    }
+
+    // c6_12 : l’option Résonance est bien à sa place, mais le choix opposé devait lui répondre au lieu de rester un bouton technique.
+    renameContinue('c6_12','Garder cette sensation pour elle','Hylee contemple Mir’Aldas en silence, sans encore trouver les mots pour ce que la ville réveille.');
+  }catch(e){ console.warn('Correctif v0.154 choix isolés non appliqué',e); }
 })();
 
 </script>
