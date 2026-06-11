@@ -22329,5 +22329,292 @@ Iriana, presque inaudible.
 })();
 </script>
 
+
+<script id="patch-v177-codex-ch8-unlock">
+/* v0.177 · Chapitre VIII : Codex complet, musiques rangées, accès après Chapitre VII */
+(function patchChapter8CodexAndAccessV177(){
+  try{
+    if(window.__sylviniaV177Chapter8CodexAndAccess) return;
+    window.__sylviniaV177Chapter8CodexAndAccess = true;
+
+    const uniquePush=(arr, keys)=>{
+      if(!Array.isArray(arr)) return;
+      (keys||[]).forEach(k=>{ if(k && !arr.includes(k)) arr.push(k); });
+    };
+    const replaceOrPushGroup=(groups, group)=>{
+      if(!Array.isArray(groups) || !group || !group.id) return;
+      const idx=groups.findIndex(g=>g && g.id===group.id);
+      if(idx>=0) groups[idx]=group;
+      else groups.push(group);
+    };
+
+    const c8ImageKeys=[
+      'c8_key_port_arrivee','c8_key_port_briefing_wide','c8_key_conseiller_masque','c8_key_port_briefing_close',
+      'c8_key_camp_night_walk','c8_key_camp_night_duo','c8_key_conseiller_apparition_night','c8_key_iriana_map_night',
+      'c8_key_valurn_arrivee_selection','c8_key_arrivee_valurn','c8_key_valurn_close_tension','c8_key_pacte_chaos',
+      'c8_key_revelation_naiah','c8_key_iriana_after_depart','c8_key_iriana_troubled_alone'
+    ];
+
+    if(typeof A!=='undefined'){
+      Object.assign(A,{
+        music_c8_sombre_conseiller: A.music_iriana || A.music_tension || A.music_menu,
+        music_c8_valurn_pacte: A.music_valurn_route || A.music_iriana || A.music_menu
+      });
+    }
+
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        conseiller_masque:{title:'Le Conseiller au masque de peste',body:'Personnage énigmatique associé à la cour de Tia Farae et désormais signalé à Forthaven. Son masque de médecin de peste, ses yeux violets et son influence silencieuse en font une présence difficile à classer : conseiller, agent, opportunité ou menace.'},
+        caldran:{title:'Capitaine Caldran',body:'Capitaine de Forthaven, envoyé auprès de Draven avec deux navires et quarante hommes. Son rapport confirme l’état critique de la ville basse et l’arrivée inquiétante d’un conseiller masqué auprès de Lineva.'},
+        naiah_sang_imperial:{title:'Naïah, sang impérial perdu',body:'Révélée par Valurn comme une cousine d’Iriana, Naïah n’est plus seulement une guide de la Forêt Interdite. Elle devient une survivante de la lignée Farae, longtemps décrite comme une erreur et désormais impossible à ignorer.'},
+        fracture_tia_amanea:{title:'Fracture entre Tia et Amanea',body:'Le Carnet du Némésis révèle un épisode fondateur : Amanea a répondu à la mort de sa mère par un massacre, avant d’être arrêtée par Tia pour usage de magie occulte. La blessure intime devient alors fracture politique, morale et familiale.'}
+      });
+    }
+    if(typeof CODEX_ORDER!=='undefined'){
+      uniquePush(CODEX_ORDER,['conseiller_masque','caldran','naiah_sang_imperial','fracture_tia_amanea']);
+    }
+    window.CODEX_ENTRY_GROUPS = window.CODEX_ENTRY_GROUPS || [];
+    replaceOrPushGroup(window.CODEX_ENTRY_GROUPS,{id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',keys:['caldran','conseiller_masque','naiah_sang_imperial','fracture_tia_amanea']});
+
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c8_key_port_arrivee:{title:'Chapitre VIII · Arrivée de Forthaven',body:'Les navires de Forthaven accostent au port isolé, apportant quarante hommes, un rapport et une inquiétude nouvelle.',src:A.c8_key_port_arrivee},
+        c8_key_port_briefing_wide:{title:'Chapitre VIII · Rapport de Caldran',body:'Caldran remet son rapport à Draven et Iriana, entre fatigue militaire et discipline de siège.',src:A.c8_key_port_briefing_wide},
+        c8_key_conseiller_masque:{title:'Chapitre VIII · Le masque dans le récit',body:'Le conseiller au masque de médecin de peste se matérialise comme une menace presque spectrale au-dessus du rapport.',src:A.c8_key_conseiller_masque},
+        c8_key_port_briefing_close:{title:'Chapitre VIII · Réaction au port',body:'Draven et Iriana encaissent l’information, chacun selon sa propre manière de lire le danger.',src:A.c8_key_port_briefing_close},
+        c8_key_camp_night_walk:{title:'Chapitre VIII · Retour vers le camp',body:'Le trajet de retour depuis le port, sous une nuit où chaque silence devient tactique.',src:A.c8_key_camp_night_walk},
+        c8_key_camp_night_duo:{title:'Chapitre VIII · Les yeux violets',body:'Iriana relève le détail du masque et des yeux violets, tandis que Draven comprend que la piste dépasse Forthaven.',src:A.c8_key_camp_night_duo},
+        c8_key_conseiller_apparition_night:{title:'Chapitre VIII · L’ombre de la cour',body:'Le lien avec le conseiller de Tia se précise, et l’image du masque quitte le simple rapport militaire.',src:A.c8_key_conseiller_apparition_night},
+        c8_key_iriana_map_night:{title:'Chapitre VIII · Tension stratégique',body:'La discussion politique entre Draven et Iriana se tend autour de la carte, des soupçons et des conséquences humaines.',src:A.c8_key_iriana_map_night},
+        c8_key_valurn_arrivee_selection:{title:'Chapitre VIII · Iriana seule aux cartes',body:'Iriana tente de classer le danger avant que Valurn ne vienne troubler la pièce et ses certitudes.',src:A.c8_key_valurn_arrivee_selection},
+        c8_key_arrivee_valurn:{title:'Chapitre VIII · Valurn entre sans frapper',body:'Valurn surprend Iriana dans ses quartiers, avec cette insolence qui l’exaspère presque autant qu’elle lui répond.',src:A.c8_key_arrivee_valurn},
+        c8_key_valurn_close_tension:{title:'Chapitre VIII · Duo verbal',body:'La tension entre Iriana et Valurn se resserre autour du guide, du sang impérial et d’un pacte à venir.',src:A.c8_key_valurn_close_tension},
+        c8_key_pacte_chaos:{title:'Chapitre VIII · Pacte de Chaos',body:'La poignée de main scelle un accord chargé d’une odeur de bois incandescent et de vin rouge.',src:A.c8_key_pacte_chaos},
+        c8_key_revelation_naiah:{title:'Chapitre VIII · Le nom de Naïah',body:'Valurn révèle le nom de Naïah, et Iriana découvre que la Forêt Interdite cache aussi une fracture familiale.',src:A.c8_key_revelation_naiah},
+        c8_key_iriana_after_depart:{title:'Chapitre VIII · Révélation encaissée',body:'Valurn savoure le trouble qu’il vient de provoquer, tandis qu’Iriana tente de donner une forme stratégique à l’impossible.',src:A.c8_key_iriana_after_depart},
+        c8_key_iriana_troubled_alone:{title:'Chapitre VIII · Naïah est toujours là',body:'Après le départ de Valurn, Iriana reste seule avec le nom de sa cousine et ce qu’il réveille dans la lignée Farae.',src:A.c8_key_iriana_troubled_alone}
+      });
+    }
+    if(typeof CODEX_IMAGE_ORDER!=='undefined') uniquePush(CODEX_IMAGE_ORDER,c8ImageKeys);
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'){
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',sections:[
+        {title:'Port de Forthaven et rapport de Caldran',keys:['c8_key_port_arrivee','c8_key_port_briefing_wide','c8_key_conseiller_masque','c8_key_port_briefing_close']},
+        {title:'Retour au camp et ombre du conseiller',keys:['c8_key_camp_night_walk','c8_key_camp_night_duo','c8_key_conseiller_apparition_night','c8_key_iriana_map_night']},
+        {title:'Valurn, pacte et révélation de Naïah',keys:['c8_key_valurn_arrivee_selection','c8_key_arrivee_valurn','c8_key_valurn_close_tension','c8_key_pacte_chaos','c8_key_revelation_naiah','c8_key_iriana_after_depart','c8_key_iriana_troubled_alone']}
+      ]});
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c8_01:['c8_key_port_arrivee'],
+        c8_02:['c8_key_port_briefing_wide'],
+        c8_03:['c8_key_conseiller_masque'],
+        c8_04:['c8_key_port_briefing_close'],
+        c8_05:['c8_key_camp_night_walk'],
+        c8_06:['c8_key_camp_night_duo'],
+        c8_07:['c8_key_conseiller_apparition_night'],
+        c8_08:['c8_key_iriana_map_night'],
+        c8_09:['c8_key_valurn_arrivee_selection'],
+        c8_09b:['c8_key_arrivee_valurn'],
+        c8_10_intro:['c8_key_valurn_close_tension'],
+        c8_12:['c8_key_pacte_chaos'],
+        c8_13:['c8_key_revelation_naiah'],
+        c8_14:['c8_key_iriana_after_depart'],
+        c8_15:['c8_key_iriana_troubled_alone']
+      });
+    }
+
+    if(typeof CODEX_MUSIC!=='undefined'){
+      Object.assign(CODEX_MUSIC,{
+        music_c8_sombre_conseiller:{title:'Chapitre VIII · Un sombre conseiller',body:'Le thème des scènes de port, de rapport et de stratégie autour du conseiller masqué.',src:A.music_c8_sombre_conseiller,label:'Chapitre VIII · Conseiller masqué'},
+        music_c8_valurn_pacte:{title:'Chapitre VIII · Pacte et révélation',body:'La couleur sonore des scènes entre Iriana et Valurn : ironie, tension, pacte et nom de Naïah.',src:A.music_c8_valurn_pacte,label:'Chapitre VIII · Valurn et Naïah'}
+      });
+    }
+    if(typeof CODEX_MUSIC_ORDER!=='undefined') uniquePush(CODEX_MUSIC_ORDER,['music_c8_sombre_conseiller','music_c8_valurn_pacte']);
+    window.CODEX_MUSIC_GROUPS = window.CODEX_MUSIC_GROUPS || [];
+    replaceOrPushGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',keys:['music_c8_sombre_conseiller','music_c8_valurn_pacte']});
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_MUSIC_BY_SCENE,{
+        c8_01:['music_c8_sombre_conseiller'],c8_02:['music_c8_sombre_conseiller'],c8_03:['music_c8_sombre_conseiller'],c8_04:['music_c8_sombre_conseiller'],
+        c8_05:['music_c8_sombre_conseiller'],c8_06:['music_c8_sombre_conseiller'],c8_07:['music_c8_sombre_conseiller'],c8_08:['music_c8_sombre_conseiller'],c8_09:['music_c8_sombre_conseiller'],
+        c8_09b:['music_c8_valurn_pacte'],c8_10_intro:['music_c8_valurn_pacte'],c8_10:['music_c8_valurn_pacte'],c8_11:['music_c8_valurn_pacte'],c8_11b:['music_c8_valurn_pacte'],c8_12:['music_c8_valurn_pacte'],c8_12b:['music_c8_valurn_pacte'],c8_13:['music_c8_valurn_pacte'],c8_14:['music_c8_valurn_pacte'],c8_15:['music_c8_valurn_pacte'],
+        c8_end:['music_c8_sombre_conseiller']
+      });
+    }
+    if(typeof S!=='undefined'){
+      ['c8_01','c8_02','c8_03','c8_04','c8_05','c8_06','c8_07','c8_07b','c8_08','c8_08a','c8_08b','c8_08c','c8_09','c8_end'].forEach(id=>{ if(S[id]) S[id].music='music_c8_sombre_conseiller'; });
+      ['c8_09b','c8_10_intro','c8_10','c8_10a','c8_10b','c8_10c','c8_11','c8_11b','c8_12','c8_12b','c8_13','c8_13a','c8_13b','c8_13c','c8_14','c8_14b','c8_15'].forEach(id=>{ if(S[id]) S[id].music='music_c8_valurn_pacte'; });
+    }
+
+    function ch7DoneFrom(saveObj){
+      const id=String((saveObj&&saveObj.scene)||'');
+      return !!(saveObj && ((saveObj.flags && saveObj.flags.chapter7Complete===true) || id==='c7_end' || id.startsWith('c8_')));
+    }
+    window.chapter7CompletedFrom = ch7DoneFrom;
+    window.canStartChapter8 = function canStartChapter8(){
+      if(state && state.devMode) return true;
+      return ch7DoneFrom(state) || ch7DoneFrom((typeof readMainSave==='function')?readMainSave():null);
+    };
+    if(typeof S!=='undefined' && S.c7_end){
+      S.c7_end.choices=[
+        {label:'Continuer vers le Chapitre VIII',next:'c8_01',flags:{chapter7Complete:true}},
+        {label:'Retour au menu',next:'menu',flags:{chapter7Complete:true}}
+      ];
+    }
+    if(typeof startChapter8==='function'){
+      const oldStartChapter8=startChapter8;
+      window.startChapter8 = startChapter8 = function startChapter8(){
+        if(!window.canStartChapter8()){
+          if(typeof toast==='function') toast('Chapitre VIII verrouillé','Termine le Chapitre VII pour ouvrir Un sombre conseiller.');
+          if(typeof updateChapterLocks==='function') updateChapterLocks();
+          return;
+        }
+        return oldStartChapter8();
+      };
+    }
+
+    if(typeof CHAPTER_SELECT_DATA!=='undefined' && Array.isArray(CHAPTER_SELECT_DATA)){
+      let ch8=CHAPTER_SELECT_DATA.find(ch=>ch&&ch.key==='ch8');
+      if(!ch8){
+        ch8={key:'ch8'};
+        CHAPTER_SELECT_DATA.push(ch8);
+      }
+      Object.assign(ch8,{label:'Chapitre VIII',title:'Un sombre conseiller',subtitle:'Forthaven, Naïah et le Carnet',image:'assets/images/chapter_select/chapter_8.png',tags:['Draven','Iriana','Naïah','Amanea'],body:'Les navires de Forthaven rejoignent le camp d’Al’Gratal, mais leur rapport apporte une ombre nouvelle : un conseiller au masque de médecin de peste influence Lineva. Pendant qu’Iriana cherche à comprendre ce signe, Valurn revient avec le nom de Naïah et un pacte de Chaos. Dans le Carnet du Némésis, la fracture entre Tia et Amanea s’ouvre davantage.',action:'Lancer le Chapitre VIII'});
+    }
+    if(typeof chapterSelectUnlocked==='function'){
+      const previousChapterSelectUnlocked=chapterSelectUnlocked;
+      window.chapterSelectUnlocked = chapterSelectUnlocked = function chapterSelectUnlocked(key){
+        if(key==='ch8') return window.canStartChapter8();
+        return previousChapterSelectUnlocked(key);
+      };
+    }
+    if(typeof launchChapterSelect==='function'){
+      const previousLaunchChapterSelect=launchChapterSelect;
+      window.launchChapterSelect = launchChapterSelect = function launchChapterSelect(key){
+        if(key==='ch8') return startChapter8();
+        return previousLaunchChapterSelect(key);
+      };
+    }
+
+    window.renderChapterSelect = renderChapterSelect = function renderChapterSelect(){
+      const grid=document.getElementById('chapterSelectGrid');
+      if(!grid || typeof CHAPTER_SELECT_DATA==='undefined') return;
+      const unlockedCount=CHAPTER_SELECT_DATA.filter(ch=>chapterSelectUnlocked(ch.key)).length;
+      if(typeof setText==='function') setText('chaptersUnlockedCount', `${unlockedCount}/${CHAPTER_SELECT_DATA.length}`);
+      grid.innerHTML='';
+      CHAPTER_SELECT_DATA.forEach((ch,idx)=>{
+        const unlocked=chapterSelectUnlocked(ch.key);
+        const card=document.createElement('details');
+        card.className='chapterSelectCard'+(unlocked?'':' locked');
+        if(idx===0) card.open=true;
+        const stateLabel=unlocked?'Accessible':'Verrouillé';
+        const lockText=ch.key==='ch2'?'Termine le Chapitre I pour ouvrir la route d’Al’Gratal.':ch.key==='ch3'?'Termine le Chapitre II pour ouvrir les préparatifs.':ch.key==='ch4'?'Termine le Chapitre III pour ouvrir la croisée des récits.':ch.key==='ch5'?'Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.':ch.key==='ch6'?'Termine le Chapitre V pour ouvrir cette parenthèse au cœur de Mir’Aldas.':ch.key==='ch7'?'Termine le Chapitre VI pour ouvrir la route de Naïah.':ch.key==='ch8'?'Termine le Chapitre VII pour ouvrir Un sombre conseiller.':'Disponible.';
+        card.innerHTML=`
+          <summary class="chapterBookCover">
+            <img class="chapterBookCoverImg" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}">
+            <div class="chapterBookShade"></div>
+            <div class="chapterBookSpine"><span>${htmlEscape(ch.label+' · '+ch.title)}</span></div>
+            <div class="chapterBookCoverText">
+              <div class="chapterSelectKicker">${htmlEscape(ch.subtitle)}</div>
+              <div class="chapterBookCoverTitle">${htmlEscape(ch.title)}</div>
+              <div class="chapterBookCoverSub">Toucher pour ouvrir le volume</div>
+              <div class="chapterSelectState">${stateLabel}</div>
+            </div>
+          </summary>
+          <div class="chapterBookOpened">
+            <div class="chapterOpenImageFrame"><img class="chapterOpenImage" src="${htmlEscape(ch.image)}" alt="${htmlEscape(ch.label+' · '+ch.title)}"></div>
+            <div class="chapterOpenText">
+              <div class="chapterSelectKicker">${htmlEscape(ch.label)} · ${htmlEscape(ch.subtitle)}</div>
+              <h4>${htmlEscape(ch.title)}</h4>
+              <p>${htmlEscape(ch.body)}</p>
+              <div class="chapterSelectTags">${(ch.tags||[]).map(t=>`<span>${htmlEscape(t)}</span>`).join('')}</div>
+              <button class="chapterSelectAction" data-chapter-launch="${htmlEscape(ch.key)}" ${unlocked?'':'disabled'}>${unlocked?htmlEscape(ch.action):'Verrouillé'}</button>
+              ${unlocked?'':`<p class="chapterLockHint">${htmlEscape(lockText)}</p>`}
+            </div>
+          </div>`;
+        card.addEventListener('toggle',()=>{ if(card.open){ grid.querySelectorAll('.chapterSelectCard[open]').forEach(other=>{ if(other!==card) other.open=false; }); } });
+        grid.appendChild(card);
+      });
+    };
+
+    function buildV177CodexEntryCard(key){
+      const entry=CODEX_ENTRIES[key]; if(!entry) return null;
+      const ok=(state.codexUnlocked||[]).includes(key);
+      const item=document.createElement('article');
+      item.className='codexItem'+(ok?'':' locked');
+      item.innerHTML=`<h3>${ok?entry.title:'Entrée inconnue'}</h3><p>${ok?entry.body:'Continue l’aventure pour déverrouiller cette page du grimoire.'}</p>`;
+      return item;
+    }
+    function buildV177CodexMusicCard(key){
+      const entry=CODEX_MUSIC[key]; if(!entry) return null;
+      const ok=(state.codexUnlockedMusic||[]).includes(key);
+      const item=document.createElement('article');
+      item.className='mediaCard'+(ok?'':' locked');
+      if(ok){
+        const playing=currentPreviewTrack===key && music && !music.paused;
+        item.innerHTML=`<div class="mediaThumb"><div style="padding:20px;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;background:radial-gradient(circle at top left,rgba(87,180,255,.18),transparent 42%),linear-gradient(180deg,rgba(22,36,54,.94),rgba(8,14,23,.98))"><span class="mediaTag">OST</span><h3 style="margin:8px 0 6px">${entry.title}</h3><p style="margin:0;color:#c7d5e3">${entry.label}</p></div></div><div class="mediaMeta"><span class="mediaTag">Musique</span></div><h3>${entry.title}</h3><p>${entry.body}</p><div class="musicPlayer"><div class="musicPlayerMeta"><strong>${entry.label}</strong><span>${playing?'Lecture en cours':'Prêt à écouter'}</span></div><button class="audioPlayBtn ${playing?'playing':''}" data-track="${key}"><span class="audioIcon">${playing?'❚❚':'▶'}</span><span>${playing?'Pause':'Lecture'}</span></button></div>`;
+        const btn=item.querySelector('.audioPlayBtn'); if(btn) btn.onclick=()=>togglePreviewTrack(key);
+      }else{
+        item.innerHTML=`<div class="mediaThumb locked">Musique verrouillée</div><div class="mediaMeta"><span class="mediaTag">Musique</span></div><h3>Piste inconnue</h3><p>Continue l’aventure pour déverrouiller cette piste du grimoire.</p>`;
+      }
+      return item;
+    }
+    function renderV177Grouped(container, groups, type){
+      container.innerHTML='';
+      container.classList.add('codexGroupedList');
+      const unlockedList=type==='music'?(state.codexUnlockedMusic||[]):(state.codexUnlocked||[]);
+      const source=type==='music'?CODEX_MUSIC:CODEX_ENTRIES;
+      const builder=type==='music'?buildV177CodexMusicCard:buildV177CodexEntryCard;
+      (groups||[]).forEach((group,idx)=>{
+        const keys=[...new Set((group.keys||[]).filter(k=>source&&source[k]))];
+        if(!keys.length) return;
+        const unlocked=keys.filter(k=>unlockedList.includes(k)).length;
+        const wrapper=document.createElement('details');
+        wrapper.className='codexGallerySection';
+        wrapper.open=idx===0 || unlocked>0 || group.id==='chapter8';
+        const summary=document.createElement('summary');
+        summary.className='codexGallerySummary';
+        summary.innerHTML=`<span class="codexGalleryLabel">${group.title}</span><span class="codexGalleryCount">${unlocked} / ${keys.length} débloquées</span>`;
+        wrapper.appendChild(summary);
+        const body=document.createElement('div');
+        body.className='codexGalleryBody';
+        const grid=document.createElement('div');
+        grid.className='codexSubGrid mediaGrid lockedMode';
+        keys.forEach(k=>{const card=builder(k); if(card) grid.appendChild(card);});
+        body.appendChild(grid);
+        wrapper.appendChild(body);
+        container.appendChild(wrapper);
+      });
+    }
+    const previousRenderCodex = (typeof renderCodex==='function') ? renderCodex : null;
+    window.renderCodex = renderCodex = function renderCodex(){
+      if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
+      if(typeof updateCodexTabUI==='function') updateCodexTabUI();
+      if(typeof updateProgressUI==='function') updateProgressUI();
+      const entriesGrid=document.getElementById('codexGrid');
+      const imagesGrid=document.getElementById('codexImagesGrid');
+      const musicGrid=document.getElementById('codexMusicGrid');
+      const sitePanel=document.getElementById('codexSitePanel');
+      if(!entriesGrid||!imagesGrid||!musicGrid||!sitePanel){ if(previousRenderCodex) previousRenderCodex(); return; }
+      entriesGrid.classList.toggle('hidden', state.codexTab!=='entries');
+      imagesGrid.classList.toggle('hidden', state.codexTab!=='images');
+      musicGrid.classList.toggle('hidden', state.codexTab!=='music');
+      sitePanel.classList.toggle('hidden', state.codexTab!=='site');
+      entriesGrid.classList.toggle('codexGroupedList', state.codexTab==='entries');
+      musicGrid.classList.toggle('codexGroupedList', state.codexTab==='music');
+      imagesGrid.classList.remove('codexGroupedList');
+      if(state.codexTab==='entries') renderV177Grouped(entriesGrid, window.CODEX_ENTRY_GROUPS||[{id:'all',title:'Entrées',keys:CODEX_ORDER}], 'entries'); else entriesGrid.innerHTML='';
+      if(state.codexTab==='images'){ imagesGrid.innerHTML=''; if(typeof buildCodexImageGallery==='function') buildCodexImageGallery(imagesGrid); } else imagesGrid.innerHTML='';
+      if(state.codexTab==='music') renderV177Grouped(musicGrid, window.CODEX_MUSIC_GROUPS||[{id:'all',title:'Musiques',keys:CODEX_MUSIC_ORDER}], 'music'); else musicGrid.innerHTML='';
+    };
+
+    if(typeof updateChapterLocks==='function') updateChapterLocks();
+    if(!document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    if(!document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+  }catch(e){
+    console.warn('Correctif v0.177 Codex Chapitre VIII / accès Chapitre VIII non appliqué', e);
+  }
+})();
+</script>
+
 </body>
 </html>
