@@ -21602,5 +21602,27 @@ La conversation est terminée depuis plusieurs secondes déjà. Aucun des deux n
 })();
 </script>
 
+
+<script>
+/* v0.172 · Chapitre VIII : décors intégrés */
+(function patchChapter8DecorAssets(){
+  try{
+    if(window.__sylviniaV172Chapter8DecorAssets) return;
+    window.__sylviniaV172Chapter8DecorAssets = true;
+    if(typeof A !== 'undefined'){
+      A.c8_port_isole = 'assets/images/backgrounds/chapter8/c8_port_isole.png';
+      A.c8_camp_base = 'assets/images/backgrounds/chapter8/c8_camp_base.png';
+      A.c8_quartiers_iriana = 'assets/images/backgrounds/chapter8/c8_quartiers_iriana.png';
+    }
+    if(typeof CHAPTER_SELECT_DATA !== 'undefined'){
+      const ch8 = CHAPTER_SELECT_DATA.find(c => c.key === 'ch8');
+      if(ch8) ch8.image = 'assets/images/chapter_select/chapter_8.png';
+    }
+  }catch(e){
+    console.warn('Correctif v0.172 Chapitre VIII décors non appliqué', e);
+  }
+})();
+</script>
+
 </body>
 </html>
