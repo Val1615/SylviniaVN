@@ -21624,5 +21624,67 @@ La conversation est terminée depuis plusieurs secondes déjà. Aucun des deux n
 })();
 </script>
 
+
+<script>
+/* v0.173 · Chapitre VIII : images clés intégrées */
+
+(function patchChapter8KeyScenes(){
+  try{
+    if(window.__sylviniaV173Chapter8KeyScenesSelection) return;
+    window.__sylviniaV173Chapter8KeyScenesSelection = true;
+
+    if(typeof A !== 'undefined'){
+      A.c8_key_port_arrivee = 'assets/images/keyscenes/chapter8/c8_key_port_arrivee.png';
+      A.c8_key_conseiller_masque = 'assets/images/keyscenes/chapter8/c8_key_conseiller_masque.png';
+      A.c8_key_arrivee_valurn = 'assets/images/keyscenes/chapter8/c8_key_arrivee_valurn.png';
+      A.c8_key_pacte_chaos = 'assets/images/keyscenes/chapter8/c8_key_pacte_chaos.png';
+      A.c8_key_revelation_naiah = 'assets/images/keyscenes/chapter8/c8_key_revelation_naiah.png';
+
+      A.c8_key_port_briefing_wide = 'assets/images/keyscenes/chapter8/c8_key_port_briefing_wide.png';
+      A.c8_key_port_briefing_close = 'assets/images/keyscenes/chapter8/c8_key_port_briefing_close.png';
+      A.c8_key_camp_night_duo = 'assets/images/keyscenes/chapter8/c8_key_camp_night_duo.png';
+      A.c8_key_camp_night_walk = 'assets/images/keyscenes/chapter8/c8_key_camp_night_walk.png';
+      A.c8_key_conseiller_apparition_night = 'assets/images/keyscenes/chapter8/c8_key_conseiller_apparition_night.png';
+      A.c8_key_iriana_map_night = 'assets/images/keyscenes/chapter8/c8_key_iriana_map_night.png';
+      A.c8_key_valurn_arrivee_selection = 'assets/images/keyscenes/chapter8/c8_key_valurn_arrivee_selection.png';
+      A.c8_key_valurn_close_tension = 'assets/images/keyscenes/chapter8/c8_key_valurn_close_tension.png';
+      A.c8_key_iriana_after_depart = 'assets/images/keyscenes/chapter8/c8_key_iriana_after_depart.png';
+      A.c8_key_iriana_troubled_alone = 'assets/images/keyscenes/chapter8/c8_key_iriana_troubled_alone.png';
+    }
+
+    if(typeof S !== 'undefined'){
+      const apply=(id,bg)=>{
+        if(!S[id]) return;
+        S[id].bg = bg;
+        S[id].hideChars = true;
+        S[id].zoom = false;
+      };
+
+      // Anciennes images : une seule scène chacune
+      apply('c8_01','c8_key_port_arrivee');
+      apply('c8_04','c8_key_conseiller_masque');
+      apply('c8_09b','c8_key_arrivee_valurn');
+      apply('c8_12','c8_key_pacte_chaos');
+      apply('c8_13','c8_key_revelation_naiah');
+
+      // Nouvelle sélection utilisateur
+      apply('c8_02','c8_key_port_briefing_wide');
+      apply('c8_03','c8_key_port_briefing_close');
+      apply('c8_05','c8_key_camp_night_duo');
+      apply('c8_06','c8_key_camp_night_walk');
+      apply('c8_07','c8_key_conseiller_apparition_night');
+      apply('c8_09','c8_key_iriana_map_night');
+      apply('c8_10_intro','c8_key_valurn_arrivee_selection');
+      apply('c8_11b','c8_key_valurn_close_tension');
+      apply('c8_14b','c8_key_iriana_troubled_alone');
+      apply('c8_15','c8_key_iriana_after_depart');
+    }
+  }catch(e){
+    console.warn('Correctif Chapitre VIII sélection d’images clés non appliqué', e);
+  }
+})();
+
+</script>
+
 </body>
 </html>
