@@ -21686,5 +21686,648 @@ La conversation est terminée depuis plusieurs secondes déjà. Aucun des deux n
 
 </script>
 
+
+<script>
+/* v0.174 · Chapitre VIII : choix en dialogues directs + duo Iriana/Valurn renforcé */
+(function patchChapter8DialoguePolishV174(){
+  try{
+    if(window.__sylviniaV174Chapter8DialoguePolish) return;
+    window.__sylviniaV174Chapter8DialoguePolish = true;
+    if(typeof S === 'undefined') return;
+
+    const setText=(id, speaker, text)=>{
+      if(!S[id]) return;
+      S[id].speaker = speaker;
+      S[id].text = text;
+    };
+
+    const patchChoice=(sceneId,next,label,note)=>{
+      const sc=S[sceneId];
+      if(!sc || !Array.isArray(sc.choices)) return;
+      const ch=sc.choices.find(c=>c && c.next===next);
+      if(!ch) return;
+      ch.label = label;
+      if(note) ch.note = note;
+    };
+
+    // Choix : les libellés deviennent des répliques directes.
+    patchChoice('c8_03','c8_03a','« Capitaine, je veux des faits : où, quand, et qui l’a laissé approcher Lineva ? »','Sang-froid · Draven reste sur le terrain concret.');
+    patchChoice('c8_03','c8_03b','« Princesse, vous connaissez ce regard. Ne me faites pas perdre du temps. »','Lucidité · Draven lit le silence d’Iriana avant de classer la menace.');
+    patchChoice('c8_03','c8_03c','« Les jeux de cour attendront. Forthaven brûle pendant qu’on parle. »','Audace · Forthaven passe avant les jeux de cour.');
+
+    patchChoice('c8_08','c8_08a','« Je n’accuse pas encore. Je refuse seulement d’appeler coïncidence une manœuvre aussi propre. »','Lucidité · La prudence garde les portes ouvertes.');
+    patchChoice('c8_08','c8_08b','« La prudence n’est pas une insulte, princesse. C’est ce qui garde mes hommes en vie. »','Sang-froid · Draven refuse le piège rhétorique.');
+    patchChoice('c8_08','c8_08c','« Dangereux ? Alors je suis bien au bon endroit. »','Audace · Draven laisse le sous-entendu mordre.');
+
+    patchChoice('c8_10','c8_10a','« Parlez, Valurn. Les chandelles brûlent plus vite que ma patience. »','Sang-froid · Iriana impose le rythme.');
+    patchChoice('c8_10','c8_10b','« Continuez. Votre théâtre cache toujours une information utile. »','Lucidité · Iriana écoute ce que Valurn veut vraiment montrer.');
+    patchChoice('c8_10','c8_10c','« Vous savourez vos silences comme un démon devant une cave ouverte. »','Audace · Iriana répond à son jeu avec la même insolence.');
+
+    patchChoice('c8_13','c8_13a','« Si Naïah nous guide, elle est utile. Le reste attendra. »','Sang-froid · La mission passe avant le vertige familial.');
+    patchChoice('c8_13','c8_13b','« “Erreur”… voilà un mot qu’on forge pour enterrer quelqu’un vivant. »','Lucidité · Iriana comprend la blessure derrière le mot « erreur ».');
+    patchChoice('c8_13','c8_13c','« Continuez à sourire ainsi, et je vous fais avaler votre sens de l’ironie. »','Audace · Iriana transforme l’ironie de Valurn en limite.');
+
+    // Branches Draven : moins de résumé, plus de confrontation dialoguée.
+    setText('c8_03a','Draven',`Draven, sans quitter Caldran des yeux.
+« Capitaine, je veux des faits : depuis quand ce conseiller approche-t-il Lineva, qui l’a introduit auprès d’elle, et quelles décisions ont changé depuis son arrivée ? »
+
+Caldran se raidit. Le port, les voiles et les soldats deviennent soudain secondaires. Draven a ramené le mystère à son terrain naturel : une chaîne de commandement, des accès, des conséquences.
+
+Caldran, plus bas.
+« Il est apparu il y a peu. Aucun officier ne l’a recommandé. Lineva l’a gardé près d’elle après une audience privée. Depuis, elle refuse certains rapports directs. Elle dit qu’il l’aide à voir plus loin. »
+
+Draven, froidement.
+« Voir plus loin est inutile quand on cesse de regarder ses propres murs. Continuez. Chaque détail. Même ceux qui vous paraissent absurdes. Surtout ceux-là. »
+
+Iriana observe l’amiral sans intervenir. Il ne cherche pas à comprendre le masque. Pas encore. Il cherche la brèche par laquelle le masque est entré.`);
+
+    setText('c8_03b','Draven',`Draven laisse Caldran terminer, puis se tourne vers Iriana avec cette lenteur militaire qui transforme une simple question en ordre poli.
+
+Draven, d’une voix basse.
+« Princesse, vous connaissez ce regard. Ne me faites pas perdre du temps. »
+
+Iriana ne répond pas tout de suite. Son visage reste impassible, mais ses doigts se referment légèrement sur le bord de sa manche. Un détail minuscule. Suffisant.
+
+Iriana, mesurée.
+« Je connais surtout beaucoup de regards que les hommes préfèrent croire uniques. »
+
+Draven, sans se laisser détourner.
+« Et celui-là ? »
+
+Le sourire d’Iriana ne monte pas jusqu’à ses yeux.
+« Disons qu’il ressemble à une ombre déjà vue à Al’Gratal. Rien que je puisse affirmer ici, devant tout un quai. »
+
+Draven incline à peine la tête. La réponse n’est pas complète. Elle est pire : elle confirme qu’il y a quelque chose à taire.`);
+
+    setText('c8_03c','Draven',`Draven serre les mâchoires. Il a déjà assez vu d’hommes mourir pendant que des puissants débattaient du nom élégant à donner au danger.
+
+Draven, plus tranchant.
+« Les jeux de cour attendront. Forthaven brûle pendant qu’on parle. Si un masque murmure à l’oreille de Lineva, je veux savoir s’il protège ma ville ou s’il la regarde tomber. »
+
+Caldran baisse légèrement les yeux.
+« C’est justement ce qui m’inquiète, Amiral. Il ne donne jamais d’ordre direct. Il suggère. Il glisse une phrase, puis tout le monde agit comme si l’idée venait de lui-même. »
+
+Iriana, pensive.
+« Une influence qui ne laisse pas d’empreinte. Pratique. »
+
+Draven, sombre.
+« Je ne chasse pas les empreintes. Je chasse les conséquences. Et celles-là ont déjà commencé. »`);
+
+    setText('c8_08a','Draven',`Draven soutient le regard d’Iriana sans hausser le ton. Il connaît la différence entre provoquer une alliée et lui laisser une porte par laquelle ne pas se sentir humiliée.
+
+Draven, avec gravité.
+« Je n’accuse pas encore. Je refuse seulement d’appeler coïncidence une manœuvre aussi propre. Un conseiller à Forthaven. Un profil similaire à la cour impériale. Une crise qui arrange trop de gens. »
+
+Iriana, un sourcil légèrement levé.
+« Vous avez une manière très sobre de dire que ma famille sent le piège. »
+
+Draven.
+« J’ai une manière très sobre de survivre aux pièges. »
+
+Le sourire d’Iriana s’affine. Elle n’est pas vexée. Pas vraiment. L’amiral vient de garder le fil sans l’étrangler.
+
+Iriana.
+« Alors gardez votre sobriété, Amiral. Elle pourrait servir. »`);
+
+    setText('c8_08b','Draven',`Iriana laisse sa menace flotter entre eux, soyeuse et coupante. Draven n’y met pas les doigts.
+
+Draven, parfaitement calme.
+« La prudence n’est pas une insulte, princesse. C’est ce qui garde mes hommes en vie. »
+
+Iriana le fixe, moins amusée.
+« Et vous pensez que la mienne les met en danger ? »
+
+Draven.
+« Je pense qu’une lignée capable de déplacer des armées, des secrets et des monstres ne devrait jamais être traitée comme un décor. Même par ceux qui en portent le nom. »
+
+Le silence qui suit est lourd, mais propre. Draven n’a pas attaqué pour blesser. Il a marqué la limite.
+
+Iriana, après un instant.
+« Vous avez une franchise fatigante. »
+
+Draven.
+« On me l’a souvent reproché. Plus rarement quand elle évitait un enterrement. »`);
+
+    setText('c8_08c','Draven',`Draven ne se détourne pas. Le sous-entendu reste entre eux, posé bien en vue, comme une lame sur une table de négociation.
+
+Draven, rauque.
+« Dangereux ? Alors je suis bien au bon endroit. »
+
+Iriana esquisse un sourire froid.
+« Les hommes qui disent cela découvrent souvent qu’ils confondaient courage et manque d’imagination. »
+
+Draven.
+« Les hommes qui restent silencieux découvrent souvent qu’ils ont laissé d’autres choisir leur tombe. »
+
+Le sourire d’Iriana se fige une seconde. Pas longtemps. Juste assez pour que Draven sache qu’il a touché une vérité.
+
+Iriana.
+« Vous marchez vraiment sans regarder le vide. »
+
+Draven.
+« Si je le regarde trop, il prend de l’avance. »`);
+
+    // Scènes Iriana / Valurn : acidité, charme et exaspération assumés.
+    setText('c8_09b','Valurn',`Les bougies dans les quartiers d’Iriana vacillent légèrement, projetant des ombres mouvantes sur les cartes, les rapports et les lettres encore ouvertes. La princesse, penchée sur son bureau, suit du bout des doigts une route tracée vers la Forêt Interdite.
+
+Valurn, depuis un coin de la pièce.
+« Vous travaillez si tard, princesse. À ce rythme, même vos cernes vont finir par demander un titre de noblesse. »
+
+Iriana se redresse brusquement. Sa main glisse vers un cristal posé près de la carte avant qu’elle ne reconnaisse la voix.
+
+Iriana, agacée.
+« Par Sylvinia, Valurn ! Frapper à une porte est une compétence trop avancée pour les demi-démons ? »
+
+Valurn s’avance dans la lumière des chandelles, comme s’il venait d’être invité avec fanfare et vin chaud.
+
+Valurn, sourire en coin.
+« J’allais frapper. Puis j’ai songé que votre soirée manquait de mauvaise surprise. »
+
+Iriana, glaciale.
+« Ma soirée contenait déjà des rapports militaires, un conseiller masqué et une migraine impériale. Vous arrivez en supplément ou en malédiction ? »
+
+Valurn.
+« En amélioration esthétique, évidemment. »
+
+Iriana le regarde sans ciller.
+« Je vais considérer cette réponse comme une preuve de culpabilité. »`);
+
+    setText('c8_10_intro','Narrateur',`Valurn continue d’avancer vers elle avec cette nonchalance soigneusement travaillée qui donne envie de lui lancer un encrier. Il s’arrête juste assez près pour être agaçant, pas assez pour être accusé d’imprudence.
+
+Iriana, croisant les bras.
+« Parlez. Vous avez trouvé un moyen d’atteindre Akuhn’Nabad ? »
+
+Valurn, satisfait.
+« En effet. Mais ce n’est pas une simple traversée. Vous aurez besoin d’un guide. »
+
+Iriana.
+« Quelle chance. J’espérais justement que cette nuit comporte une énigme, un détour et votre sourire. »
+
+Valurn pose une main sur son cœur, faussement touché.
+« Vous remarquez mon sourire. Je savais que notre collaboration progressait. »
+
+Iriana, sèchement.
+« Elle régresse à chaque phrase. Continuez avant qu’elle ne meure. »
+
+Valurn rit doucement. Le duel est familier, presque confortable, et c’est bien ce qui le rend insupportable : leurs piques s’emboîtent trop bien pour deux personnes décidées à ne pas se supporter.`);
+
+    setText('c8_10a','Iriana',`Iriana ne lui offre pas le plaisir d’une mise en scène plus longue. Elle pose les deux mains sur la carte, son regard planté dans le sien.
+
+Iriana.
+« Parlez, Valurn. Les chandelles brûlent plus vite que ma patience. »
+
+Valurn regarde les bougies, puis elle, avec une gravité théâtrale.
+« Tragique. Une ressource aussi rare devrait être conservée sous verre. »
+
+Iriana.
+« Elle va surtout finir dans votre gorge si vous continuez. »
+
+Le sourire de Valurn s’élargit, mais il cède. Pas par peur. Par goût du jeu bien mené. Iriana vient de lui refuser la scène, et cela semble presque l’amuser davantage.
+
+Valurn.
+« Très bien. Puisque votre patience agonise avec tant de dignité : la personne capable de nous guider porte du sang impérial. »
+
+Iriana se fige. Le trait a atteint sa cible.`);
+
+    setText('c8_10b','Iriana',`Iriana ravale son exaspération. Pas par faiblesse. Par méthode. Valurn ne donne jamais seulement une information : il l’enrobe, la suspend, la laisse briller juste assez pour forcer l’autre à regarder.
+
+Iriana.
+« Continuez. Votre théâtre cache toujours une information utile. »
+
+Valurn incline la tête, ravi.
+« Voilà qui ressemble presque à un compliment. Je vais l’encadrer dans un endroit humide pour qu’il ne survive pas. »
+
+Iriana.
+« Ne vous attachez pas. C’était une observation, pas une affection. »
+
+Valurn fait mine d’être blessé, mais ses yeux rient.
+« Cruelle. J’aurais dû apporter des fleurs. Noires, évidemment. »
+
+Iriana.
+« Apportez plutôt un nom. »
+
+Il savoure encore une seconde de silence. Puis il lâche l’indice comme une braise sur le bois sec.
+
+Valurn.
+« Cette personne porte du sang impérial. »
+
+Le visage d’Iriana ne change presque pas. Presque.`);
+
+    setText('c8_10c','Iriana',`Iriana laisse son irritation devenir un sourire très mince. Valurn aime les scènes ? Très bien. Elle peut lui en voler le centre.
+
+Iriana.
+« Vous savourez vos silences comme un démon devant une cave ouverte. »
+
+Valurn, ravi.
+« J’admets que l’image est flatteuse. Inexacte, mais flatteuse. Je préfère le vin avec un peu plus de péché. »
+
+Iriana.
+« Votre goût pour les métaphores explique beaucoup de choses. Aucune rassurante. »
+
+Valurn rit, bas, presque sincèrement.
+« Et vous, princesse, vous avez l’art de rendre une menace administrative. C’est très impérial. Très inquiétant. Très charmant malgré vous. »
+
+Iriana.
+« Encore un mot comme charmant, et je vous fais escorter par un prêtre de la Lumière. »
+
+Valurn porte une main à sa poitrine.
+« Vous n’oseriez pas. »
+
+Iriana.
+« Essayez-moi. »
+
+Le demi-démon lève les deux mains, vaincu en apparence seulement.
+« Très bien. Voici votre indice : du sang impérial. »
+
+Cette fois, le jeu quitte un instant la pièce.`);
+
+    setText('c8_11','Valurn',`Iriana, frappée par la révélation, fronce les sourcils.
+« Du sang impérial ? Impossible. Toute ma famille est soit à la cour, soit… »
+
+Valurn, l’interrompant doucement.
+« Soit cachée dans l’ombre, loin des portraits officiels et des repas où tout le monde sourit avec des couteaux dans les manches. »
+
+Iriana le fixe, méfiante.
+« Vous mentez. »
+
+Valurn s’approche davantage. La lueur des chandelles découpe son sourire avec une précision presque cruelle.
+
+Valurn.
+« Je mens souvent pour m’amuser, princesse. Rarement quand le mensonge serait moins intéressant que la vérité. »
+
+Iriana.
+« Votre honnêteté sélective ne mérite pas encore une statue. »
+
+Valurn.
+« Laissez-moi au moins choisir la pose. »
+
+Iriana, exaspérée.
+« Valurn. »
+
+Il savoure son nom dans sa bouche comme une victoire minuscule, puis son ton se fait plus bas.
+
+Valurn.
+« Si vous voulez connaître son identité, il va falloir me faire confiance. »`);
+
+    setText('c8_11b','Valurn',`Iriana garde son regard plongé dans le sien, chaque fibre de son visage refusant de montrer à quel point l’indice l’a atteinte.
+
+Iriana.
+« Et qu’attendez-vous de moi en échange de cette information ? »
+
+Valurn.
+« Un pacte. Une simple poignée de main pour sceller notre accord. Vous acceptez de me laisser faire les choses à ma manière, et en retour, je vous révèle tout ce que je sais. »
+
+Iriana lève un sourcil.
+« Votre manière implique généralement des flammes, des sourires suspects et un taux de survie difficile à défendre devant un conseil. »
+
+Valurn.
+« Vous me prêtez une constance touchante. »
+
+Iriana.
+« Je vous prête surtout un casier moral. »
+
+Il rit doucement, puis redevient plus sérieux.
+« Ce que j’y gagne ? Vous pourriez être une alliée précieuse, princesse. Et, entre nous, j’ai toujours eu une faiblesse pour les décisions dangereuses prises par des personnes qui prétendent être raisonnables. »
+
+Iriana.
+« Vous rendez ce pacte moins séduisant à chaque respiration. »
+
+Valurn lui tend la main.
+« Et pourtant, vous écoutez encore. »`);
+
+    setText('c8_12b','Valurn',`Valurn s’éloigne légèrement, son ton redevenant léger alors que l’odeur de bois incandescent et de vin rouge flotte encore entre eux.
+
+Valurn.
+« Eh bien, maintenant, il est scellé. Préparez-vous, princesse. Les vérités que vous allez découvrir risquent de vous surprendre. »
+
+Iriana regarde sa main comme si elle venait d’y trouver une tache invisible.
+
+Iriana.
+« Vous auriez pu préciser qu’il s’agissait d’un pacte magique. »
+
+Valurn, faussement innocent.
+« J’aurais pu. Mais alors vous auriez fait cette chose terrible avec votre visage. »
+
+Iriana.
+« Quelle chose ? »
+
+Valurn.
+« Celle où vous devenez raisonnable. C’est très beau, mais cela gâche les soirées. »
+
+Iriana le fusille du regard.
+
+Valurn pouffe de rire.
+« Ne vous en faites pas. Votre âme est toujours vôtre. Je n’ai pris qu’un accord, pas votre éternité. Je laisse ce genre d’excès aux démons qui manquent d’éducation. »
+
+Iriana, glaciale.
+« Votre définition de l’éducation mérite une enquête. »
+
+Valurn.
+« Vous voyez ? Nous nous comprenons déjà. »`);
+
+    setText('c8_13a','Iriana',`Iriana encaisse le nom comme une lame qu’on aurait déposée avec douceur sur la table. Son visage se referme aussitôt. La mission d’abord. Toujours.
+
+Iriana.
+« Si Naïah nous guide, elle est utile. Le reste attendra. »
+
+Valurn l’observe avec un plaisir presque cruel.
+« Quelle froideur. Votre famille doit avoir des réunions absolument délicieuses. »
+
+Iriana.
+« Ma famille a survécu assez longtemps parce qu’elle sait différer les émotions inutiles. »
+
+Valurn.
+« Inutiles ? Votre cousine revient d’entre les rumeurs, et vous la rangez déjà dans une colonne stratégique. »
+
+Iriana le regarde, dure.
+« Je la range dans ce qui nous empêchera peut-être de mourir dans la Forêt Interdite. C’est une marque de considération très concrète. »
+
+Valurn sourit.
+« Voilà qui est presque tendre. À votre manière. C’est-à-dire armée. »
+
+Iriana.
+« Vous découvrez mon charme. Quelle nuit tragique pour vous. »`);
+
+    setText('c8_13b','Iriana',`Le mot erreur ne glisse pas sur Iriana. Il accroche quelque chose sous l’armure, là où la lignée Farae laisse ses blessures les plus propres.
+
+Iriana.
+« “Erreur”… voilà un mot qu’on forge pour enterrer quelqu’un vivant. »
+
+Le sourire de Valurn se fait moins large, mais plus attentif.
+« Tiens. Voilà que la princesse entend les fantômes entre les syllabes. »
+
+Iriana.
+« On ne traite pas un enfant d’erreur sans construire ensuite toute une histoire pour justifier l’abandon. »
+
+Valurn.
+« Vous dites cela comme si votre famille avait une certaine expérience dans l’art de transformer les crimes en traditions. »
+
+Iriana lui lance un regard coupant.
+« Attention. Vous êtes très proche d’avoir raison d’une manière qui me déplaît. »
+
+Valurn incline la tête, presque respectueux.
+« Alors je savoure en silence. C’est rare, profitez. »
+
+Iriana détourne les yeux vers les cartes.
+« Naïah n’a peut-être pas seulement disparu. Peut-être qu’on a appris à tout le monde à ne plus la chercher. »`);
+
+    setText('c8_13c','Iriana',`Valurn a encore ce sourire. Celui d’un homme qui sait qu’il vient d’allumer une mèche et qui attend la couleur de l’explosion.
+
+Iriana.
+« Continuez à sourire ainsi, et je vous fais avaler votre sens de l’ironie. »
+
+Valurn porte la main à son cœur.
+« Menacé par une princesse au milieu de ses propres cartes. Je rêvais d’un retour héroïque, mais celui-ci a du style. »
+
+Iriana.
+« Vous appelez héroïque le fait d’entrer sans frapper et de transformer ma généalogie en spectacle ? »
+
+Valurn.
+« Héroïque, non. Efficace, oui. Vous n’avez pas détourné les yeux une seule fois. »
+
+Iriana s’approche d’un pas, assez pour que la lumière de la bougie durcisse son regard.
+« Naïah n’est pas une anecdote pour vous rendre intéressant. »
+
+Le sourire de Valurn vacille à peine. Assez pour prouver qu’il a entendu.
+
+Valurn.
+« Non. Elle est bien pire que cela. C’est pour ça que je souris. Sinon, je serais inquiet. »
+
+Iriana.
+« Vous l’êtes déjà. Vous le cachez seulement sous vos dents. »`);
+
+    setText('c8_14','Iriana',`Iriana se détourne légèrement. Le nom de Naïah résonne encore dans la pièce, impossible à ranger proprement parmi les cartes.
+
+Iriana.
+« Elle m’a toujours été décrite comme une erreur… quelqu’un qui n’avait pas sa place parmi nous. »
+
+Valurn, avec un sourire ironique.
+« Et pourtant, cette “erreur” est aujourd’hui la seule capable de nous guider à travers cette forêt. Une ironie délicieuse, non ? »
+
+Iriana se retourne vers lui, le regard glacé.
+« Votre palais a-t-il une salle réservée aux ironies délicieuses, ou les exposez-vous directement dans votre bouche ? »
+
+Valurn.
+« Cela dépend du public. Avec vous, j’improvise. »
+
+Iriana.
+« Mauvaise nouvelle : je suis difficile à divertir. »
+
+Valurn.
+« Je m’en doutais. Votre seuil de tolérance a l’air d’avoir été élevé par des bourreaux administratifs. »
+
+Iriana ignore la pique, mais son exaspération est visible.
+« Comment avez-vous réussi à la convaincre de nous aider ? »
+
+Valurn.
+« Disons qu’elle a trouvé en moi un interlocuteur… intéressant. Elle m’a mis à l’épreuve, bien sûr. Mais il semble que mon bagout naturel l’ait convaincue de nous aider. »
+
+Iriana.
+« Votre bagout naturel donne surtout envie de vérifier les serrures. »
+
+Valurn sourit.
+« Elle a dit quelque chose de très proche. Je commence à croire que vous pourriez vous entendre. »`);
+
+    setText('c8_14b','Narrateur',`La Sylvinienne reste silencieuse. Ses pensées tourbillonnent autour de ce nom que sa famille avait transformé en poussière : Naïah. Une cousine disparue avant même qu’Iriana puisse la connaître. Une légende honteuse, une phrase évitée, une absence polie.
+
+Valurn, plus sérieux.
+« Maintenant que vous savez, qu’allez-vous faire ? »
+
+Iriana relève les yeux.
+« Si Naïah est prête à nous aider, alors nous utiliserons ses connaissances. Mais je veux être très claire, Valurn : si elle devient une menace, je m’en occuperai moi-même. »
+
+Valurn.
+« Voilà qui devrait la rassurer. Rien ne dit bienvenue dans la famille comme une promesse d’exécution préventive. »
+
+Iriana.
+« Et rien ne dit consultant fiable comme un demi-démon qui annonce une cousine perdue avec le sourire d’un homme devant un incendie. »
+
+Il incline la tête, amusé malgré lui.
+« Touché. »
+
+Iriana.
+« Ne prenez pas cela comme un progrès. »
+
+Valurn.
+« Trop tard. »`);
+
+    setText('c8_15','Valurn',`Valurn affiche son sourire le plus provocateur, celui qu’Iriana commence à reconnaître comme une manière très élégante de cacher une inquiétude réelle.
+
+Valurn.
+« Très convaincant. Je serais curieux de voir vos réunions de famille. J’imagine des entrées au violon, des regards meurtriers et trois tentatives d’assassinat avant le dessert. »
+
+Iriana.
+« Vous ne seriez pas invité. »
+
+Valurn.
+« Voilà qui confirme leur mauvais goût. »
+
+Il s’éloigne vers l’ombre de la pièce, prêt à disparaître, puis se retourne une dernière fois. Cette fois, le sourire tombe un peu.
+
+Valurn.
+« Un dernier conseil : Naïah n’est pas comme vous. Elle a grandi dans l’ombre, et l’ombre l’a changée. Ne la sous-estimez pas, et surtout… ne la trahissez pas. »
+
+Iriana, plus froide.
+« Je ne trahirai personne, tant qu’elle reste une alliée. »
+
+Valurn.
+« Formulation impériale. Donc dangereuse. »
+
+Iriana.
+« Formulation démoniaque. Donc inutilement dramatique. »
+
+Il rit une dernière fois, plus bas.
+« Nous formons une équipe splendide. »
+
+Iriana.
+« Nous formons une nécessité. Ne vous emballez pas. »
+
+Valurn incline légèrement la tête avant de disparaître dans les ténèbres, laissant Iriana seule.
+
+Elle marche jusqu’à la fenêtre. Le camp dort mal. Les bannières rouges frémissent dans la nuit. Les cartes sur son bureau semblent soudain trop petites pour contenir le nom qu’il vient de laisser derrière lui.
+
+Iriana, presque inaudible.
+« Naïah… alors tu es toujours là. »`);
+
+  }catch(e){ console.warn('Correctif v0.174 Chapitre VIII dialogues non appliqué', e); }
+})();
+</script>
+
+
+<script>
+/* v0.175 · Chapitre VIII : choix Naïah replacés après c8_14 */
+(function patchChapter8ChoicePlacementV175(){
+  try{
+    if(window.__sylviniaV175Chapter8ChoicePlacement) return;
+    window.__sylviniaV175Chapter8ChoicePlacement = true;
+    if(typeof S === 'undefined') return;
+
+    const naiahChoices = [
+      {
+        label: '« Si Naïah nous guide, elle est utile. Le reste attendra. »',
+        next: 'c8_13a',
+        effects: { sangfroid: 1 },
+        note: 'Sang-froid · La mission passe avant le vertige familial.'
+      },
+      {
+        label: '« “Erreur”… voilà un mot qu’on forge pour enterrer quelqu’un vivant. »',
+        next: 'c8_13b',
+        effects: { lucidite: 2 },
+        requires: { lucidite: 24 },
+        note: 'Lucidité · Iriana comprend la blessure derrière le mot « erreur ».',
+        memories: ['naiah_erreur_lignee']
+      },
+      {
+        label: '« Continuez à sourire ainsi, et je vous fais avaler votre sens de l’ironie. »',
+        next: 'c8_13c',
+        effects: { audace: 2 },
+        note: 'Audace · Iriana transforme l’ironie de Valurn en limite.'
+      }
+    ];
+
+    // c8_13 doit livrer le choc du nom et laisser la scène respirer.
+    if(S.c8_13){
+      delete S.c8_13.choices;
+      S.c8_13.next = 'c8_14';
+    }
+
+    // Le choix arrive après la scène où Iriana évoque le mot “erreur” et où Valurn précise l’ironie de la situation.
+    if(S.c8_14){
+      delete S.c8_14.next;
+      S.c8_14.choices = naiahChoices;
+    }
+
+    // Les réponses au choix doivent poursuivre vers la suite, pas revenir sur c8_14.
+    ['c8_13a','c8_13b','c8_13c'].forEach(id=>{
+      if(S[id]) S[id].next = 'c8_14b';
+    });
+
+  }catch(e){
+    console.warn('Correctif v0.175 Chapitre VIII placement choix Naïah non appliqué', e);
+  }
+})();
+</script>
+
+
+<script>
+/* v0.176 · Chapitre VIII : placement cohérent de toutes les images clés */
+(function patchChapter8KeyScenePlacementV176(){
+  try{
+    if(window.__sylviniaV176Chapter8KeyScenePlacement) return;
+    window.__sylviniaV176Chapter8KeyScenePlacement = true;
+    if(typeof S === 'undefined' || typeof A === 'undefined') return;
+
+    Object.assign(A, {
+      c8_key_port_arrivee: 'assets/images/keyscenes/chapter8/c8_key_port_arrivee.png',
+      c8_key_conseiller_masque: 'assets/images/keyscenes/chapter8/c8_key_conseiller_masque.png',
+      c8_key_arrivee_valurn: 'assets/images/keyscenes/chapter8/c8_key_arrivee_valurn.png',
+      c8_key_pacte_chaos: 'assets/images/keyscenes/chapter8/c8_key_pacte_chaos.png',
+      c8_key_revelation_naiah: 'assets/images/keyscenes/chapter8/c8_key_revelation_naiah.png',
+      c8_key_port_briefing_wide: 'assets/images/keyscenes/chapter8/c8_key_port_briefing_wide.png',
+      c8_key_port_briefing_close: 'assets/images/keyscenes/chapter8/c8_key_port_briefing_close.png',
+      c8_key_camp_night_duo: 'assets/images/keyscenes/chapter8/c8_key_camp_night_duo.png',
+      c8_key_camp_night_walk: 'assets/images/keyscenes/chapter8/c8_key_camp_night_walk.png',
+      c8_key_conseiller_apparition_night: 'assets/images/keyscenes/chapter8/c8_key_conseiller_apparition_night.png',
+      c8_key_iriana_map_night: 'assets/images/keyscenes/chapter8/c8_key_iriana_map_night.png',
+      c8_key_valurn_arrivee_selection: 'assets/images/keyscenes/chapter8/c8_key_valurn_arrivee_selection.png',
+      c8_key_valurn_close_tension: 'assets/images/keyscenes/chapter8/c8_key_valurn_close_tension.png',
+      c8_key_iriana_after_depart: 'assets/images/keyscenes/chapter8/c8_key_iriana_after_depart.png',
+      c8_key_iriana_troubled_alone: 'assets/images/keyscenes/chapter8/c8_key_iriana_troubled_alone.png'
+    });
+
+    const restoreBg = {
+      c8_01:'c8_port_isole', c8_02:'c8_port_isole', c8_03:'c8_port_isole', c8_04:'c8_port_isole',
+      c8_05:'c8_camp_base', c8_06:'c8_camp_base', c8_07:'c8_camp_base', c8_07b:'c8_camp_base',
+      c8_08:'c8_camp_base', c8_08a:'c8_camp_base', c8_08b:'c8_camp_base', c8_08c:'c8_camp_base',
+      c8_09:'c8_quartiers_iriana', c8_09b:'c8_quartiers_iriana',
+      c8_10:'c8_quartiers_iriana', c8_10_intro:'c8_quartiers_iriana', c8_10a:'c8_quartiers_iriana', c8_10b:'c8_quartiers_iriana', c8_10c:'c8_quartiers_iriana',
+      c8_11:'c8_quartiers_iriana', c8_11b:'c8_quartiers_iriana',
+      c8_12:'c8_quartiers_iriana', c8_12b:'c8_quartiers_iriana',
+      c8_13:'c8_quartiers_iriana', c8_13a:'c8_quartiers_iriana', c8_13b:'c8_quartiers_iriana', c8_13c:'c8_quartiers_iriana',
+      c8_14:'c8_quartiers_iriana', c8_14b:'c8_quartiers_iriana',
+      c8_15:'c8_quartiers_iriana'
+    };
+
+    Object.entries(restoreBg).forEach(([id,bg])=>{
+      if(!S[id]) return;
+      S[id].bg = bg;
+      delete S[id].hideChars;
+      delete S[id].zoom;
+    });
+
+    const apply=(id,bg)=>{
+      if(!S[id]) return;
+      S[id].bg = bg;
+      S[id].hideChars = true;
+      S[id].zoom = false;
+    };
+
+    // Port : progression lisible, du panorama au mystère.
+    apply('c8_01','c8_key_port_arrivee');              // arrivée des navires
+    apply('c8_02','c8_key_port_briefing_wide');        // Caldran remet le rapport, plan large
+    apply('c8_03','c8_key_conseiller_masque');         // mention du conseiller, silhouette dans le ciel
+    apply('c8_04','c8_key_port_briefing_close');       // Draven et Iriana encaissent l’information
+
+    // Camp : retour et compréhension progressive du lien avec Tia.
+    apply('c8_05','c8_key_camp_night_walk');           // retour vers le camp
+    apply('c8_06','c8_key_camp_night_duo');            // Iriana relève le masque et les yeux violets
+    apply('c8_07','c8_key_conseiller_apparition_night'); // le lien avec le conseiller de Tia devient explicite
+    apply('c8_08','c8_key_iriana_map_night');          // tension politique entre Draven et Iriana
+
+    // Quartiers d’Iriana : solitude, intrusion, pacte, révélation.
+    apply('c8_09','c8_key_valurn_arrivee_selection');  // Iriana seule sur ses cartes
+    apply('c8_09b','c8_key_arrivee_valurn');           // Valurn l’interpelle par surprise
+    apply('c8_10_intro','c8_key_valurn_close_tension'); // duo verbal autour du guide
+    apply('c8_12','c8_key_pacte_chaos');               // pacte de Chaos
+    apply('c8_13','c8_key_revelation_naiah');          // nom de Naïah et vision/projection
+    apply('c8_14','c8_key_iriana_after_depart');       // Valurn savoure la révélation, Iriana réagit
+    apply('c8_15','c8_key_iriana_troubled_alone');     // Valurn parti, Iriana seule avec le nom de Naïah
+
+  }catch(e){
+    console.warn('Correctif v0.176 Chapitre VIII placement images clés non appliqué', e);
+  }
+})();
+</script>
+
 </body>
 </html>
