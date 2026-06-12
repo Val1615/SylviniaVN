@@ -23384,5 +23384,182 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 })();
 </script>
 
+
+<script>
+/* v0.182 · Chapitre IX : images clés sélectionnées */
+(function patchChapter9SelectedKeyScenes(){
+  try{
+    if(window.__sylviniaV182Chapter9SelectedKeyScenes) return;
+    window.__sylviniaV182Chapter9SelectedKeyScenes = true;
+
+    const uniquePush=(arr,items)=>{
+      if(!Array.isArray(arr)) return;
+      (Array.isArray(items)?items:[items]).forEach(item=>{
+        if(item && !arr.includes(item)) arr.push(item);
+      });
+    };
+    const replaceOrPushGroup=(groups,group)=>{
+      if(!Array.isArray(groups)||!group) return;
+      const index=groups.findIndex(entry=>entry&&entry.id===group.id);
+      if(index>=0) groups[index]=group;
+      else groups.push(group);
+    };
+
+    const c9ImageKeys=[
+      'c9_key_soldat_voile',
+      'c9_key_naiah_apparition',
+      'c9_key_confidentes_retrouvailles',
+      'c9_key_passage_brume',
+      'c9_key_naiah_guide',
+      'c9_key_encerclement',
+      'c9_key_alamma_revelation',
+      'c9_key_alamma_iriana',
+      'c9_key_chaines_ombre'
+    ];
+
+    if(typeof A!=='undefined'){
+      Object.assign(A,{
+        c9_key_soldat_voile:'assets/images/keyscenes/chapter9/c9_key_soldat_voile.png',
+        c9_key_naiah_apparition:'assets/images/keyscenes/chapter9/c9_key_naiah_apparition.png',
+        c9_key_confidentes_retrouvailles:'assets/images/keyscenes/chapter9/c9_key_confidentes_retrouvailles.png',
+        c9_key_passage_brume:'assets/images/keyscenes/chapter9/c9_key_passage_brume.png',
+        c9_key_naiah_guide:'assets/images/keyscenes/chapter9/c9_key_naiah_guide.png',
+        c9_key_encerclement:'assets/images/keyscenes/chapter9/c9_key_encerclement.png',
+        c9_key_alamma_revelation:'assets/images/keyscenes/chapter9/c9_key_alamma_revelation.png',
+        c9_key_alamma_iriana:'assets/images/keyscenes/chapter9/c9_key_alamma_iriana.png',
+        c9_key_chaines_ombre:'assets/images/keyscenes/chapter9/c9_key_chaines_ombre.png'
+      });
+    }
+
+    if(typeof S!=='undefined'){
+      const apply=(sceneId,imageKey)=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=imageKey;
+        scene.hideChars=true;
+        scene.zoom=false;
+      };
+
+      apply('c9_18','c9_key_soldat_voile');
+      apply('c9_24','c9_key_naiah_apparition');
+
+      // La CG des retrouvailles est désormais la récompense visuelle exclusive
+      // du choix stratégique de c9_29, et non une illustration automatique de c9_26.
+      apply('c9_29_b','c9_key_confidentes_retrouvailles');
+
+      apply('c9_30','c9_key_passage_brume');
+      apply('c9_31','c9_key_naiah_guide');
+      apply('c9_33','c9_key_encerclement');
+      apply('c9_34','c9_key_alamma_revelation');
+      apply('c9_35','c9_key_alamma_iriana');
+      apply('c9_39','c9_key_chaines_ombre');
+    }
+
+    if(typeof CODEX_IMAGES!=='undefined' && typeof A!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c9_key_soldat_voile:{
+          title:'Chapitre IX · Le voile efface un soldat',
+          body:'À la lisière de la Forêt Interdite, la brume absorbe un soldat de Forthaven tandis que chaque membre du groupe réagit selon sa nature.',
+          src:A.c9_key_soldat_voile
+        },
+        c9_key_naiah_apparition:{
+          title:'Chapitre IX · Naïah dans la brume',
+          body:'Naïah se révèle au-dessus du groupe, perchée dans les arbres comme si la Forêt Interdite l’avait elle-même façonnée.',
+          src:A.c9_key_naiah_apparition
+        },
+        c9_key_confidentes_retrouvailles:{
+          title:'Chapitre IX · Les confidentes de l’Auberge',
+          body:'Récompense du choix stratégique : Hylee rappelle à Naïah leurs confidences nocturnes et retrouve, derrière l’Ombre, l’amie qui revenait toujours.',
+          src:A.c9_key_confidentes_retrouvailles
+        },
+        c9_key_passage_brume:{
+          title:'Chapitre IX · Le passage s’ouvre',
+          body:'Naïah ouvre une voie dans la brume et entraîne le groupe au-delà de la lisière.',
+          src:A.c9_key_passage_brume
+        },
+        c9_key_naiah_guide:{
+          title:'Chapitre IX · À travers son royaume',
+          body:'Naïah mène le groupe dans les profondeurs de la Forêt Interdite, sous une lumière de plus en plus étrangère.',
+          src:A.c9_key_naiah_guide
+        },
+        c9_key_encerclement:{
+          title:'Chapitre IX · Rouge, vert, violet',
+          body:'Les Obscurcis émergent tout autour du groupe, leurs yeux révélant l’énergie sombre qui les traverse.',
+          src:A.c9_key_encerclement
+        },
+        c9_key_alamma_revelation:{
+          title:'Chapitre IX · Alamma Farae',
+          body:'Le père d’Iriana sort des rangs obscurcis, marqué par les yeux et les fissures rouges du Chaos.',
+          src:A.c9_key_alamma_revelation
+        },
+        c9_key_alamma_iriana:{
+          title:'Chapitre IX · Ma fille. Enfin.',
+          body:'Alamma et Iriana se font face. Le reste du groupe s’efface derrière une confrontation attendue depuis des années.',
+          src:A.c9_key_alamma_iriana
+        },
+        c9_key_chaines_ombre:{
+          title:'Chapitre IX · Magie étouffée',
+          body:'Les chaînes runiques se referment et absorbent toute tentative magique, transformant la rencontre en capture.',
+          src:A.c9_key_chaines_ombre
+        }
+      });
+    }
+
+    if(typeof CODEX_IMAGE_ORDER!=='undefined'){
+      uniquePush(CODEX_IMAGE_ORDER,c9ImageKeys);
+    }
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'){
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{
+        id:'chapter9',
+        title:'Chapitre IX · L’heure du départ',
+        sections:[
+          {
+            title:'La brume et le retour de Naïah',
+            keys:[
+              'c9_key_soldat_voile',
+              'c9_key_naiah_apparition',
+              'c9_key_confidentes_retrouvailles',
+              'c9_key_passage_brume',
+              'c9_key_naiah_guide'
+            ]
+          },
+          {
+            title:'Le piège des Obscurcis',
+            keys:[
+              'c9_key_encerclement',
+              'c9_key_alamma_revelation',
+              'c9_key_alamma_iriana',
+              'c9_key_chaines_ombre'
+            ]
+          }
+        ]
+      });
+    }
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c9_18:['c9_key_soldat_voile'],
+        c9_24:['c9_key_naiah_apparition'],
+        c9_29_b:['c9_key_confidentes_retrouvailles'],
+        c9_30:['c9_key_passage_brume'],
+        c9_31:['c9_key_naiah_guide'],
+        c9_33:['c9_key_encerclement'],
+        c9_34:['c9_key_alamma_revelation'],
+        c9_35:['c9_key_alamma_iriana'],
+        c9_39:['c9_key_chaines_ombre']
+      });
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.182 · Images clés du Chapitre IX';
+
+    if(typeof updateProgressUI==='function') updateProgressUI();
+  }catch(error){
+    console.warn('Correctif v0.182 images clés du Chapitre IX non appliqué',error);
+  }
+})();
+</script>
+
 </body>
 </html>
