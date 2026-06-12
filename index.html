@@ -1692,6 +1692,49 @@ body.mobileUI .sageTimerBadge{top:calc(env(safe-area-inset-top,0px) + 8px);right
 body.mobileUI .sageTimerBadge{font-size:19px}
 </style>
 
+
+<style id="v179-remerii-evolution-style">
+.remeriiChapterLens{
+  margin:0 0 12px;
+  padding:14px 15px;
+  border-radius:17px;
+  border:1px solid rgba(57,44,29,.15);
+  background:
+    radial-gradient(circle at top right,rgba(89,151,181,.17),transparent 38%),
+    linear-gradient(180deg,rgba(255,255,255,.48),rgba(225,240,248,.27));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42);
+}
+.remeriiChapterLens .lensEyebrow{
+  margin-bottom:6px;
+  color:#2e5d74;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+}
+.remeriiChapterLens h5{
+  margin:0 0 7px;
+  color:#332413;
+  font-size:18px;
+  line-height:1.14;
+}
+.remeriiChapterLens p{
+  margin:0;
+  color:#5f4b31;
+  font-size:13px;
+  line-height:1.48;
+}
+.remeriiObservationCard.contextual{
+  border-color:rgba(46,93,116,.21);
+  background:linear-gradient(180deg,rgba(231,246,253,.58),rgba(255,255,255,.31));
+}
+.remeriiObservationCard.contextual strong::before{
+  content:"✦";
+  margin-right:7px;
+  color:#4c7287;
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -19659,9 +19702,7 @@ Hylee hoche la tête. Ce n'est pas un recul. C'est une manière plus honnête d'
       return !!(game && !game.classList.contains('hidden'));
     }
 
-    function shouldHideRemeriiLinkInGame(){
-      return !(state && state.devMode === true);
-    }
+    function shouldHideRemeriiLinkInGame(){ return true; }
 
     function hideRemeriiLinkFromGameHud(){
       try{
@@ -19687,9 +19728,9 @@ Hylee hoche la tête. Ce n'est pas un recul. C'est une manière plus honnête d'
       window.__sylviniaPendingRemeriiDelta = 0;
       if(!delta || typeof toast !== 'function') return;
       if(delta>0){
-        toast(delta>=2 ? 'Remerii a beaucoup apprécié ça' : 'Remerii a apprécié ça', 'Sa confiance envers Hylee se renforce.');
+        toast(delta>=2 ? 'Remerii a beaucoup apprécié ça' : 'Remerii a apprécié ça', 'Son regard sur Hylee se réchauffe.');
       }else{
-        toast(delta<=-2 ? 'Remerii a vraiment désapprouvé ça' : 'Remerii n’a pas apprécié ça', 'Quelque chose se tend entre elles.');
+        toast(delta<=-2 ? 'Remerii a vraiment détesté ça' : 'Remerii a détesté ça', 'Quelque chose se tend dans son regard.');
       }
     }
 
@@ -22815,6 +22856,530 @@ Iriana, presque inaudible.
     if(!document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
   }catch(e){
     console.warn('Correctif v0.177 Codex Chapitre VIII / accès Chapitre VIII non appliqué', e);
+  }
+})();
+
+
+/* v0.179 · Regard de Remerii évolutif + répartition relationnelle du Chapitre IX */
+(function applyV179RemeriiEvolution(){
+  try{
+    if(window.__sylviniaV179RemeriiEvolution) return;
+    window.__sylviniaV179RemeriiEvolution = true;
+
+    if(typeof PROGRESSION_MEMORIES !== 'undefined'){
+      Object.assign(PROGRESSION_MEMORIES,{
+        remerii_c9_brume_calme:{
+          title:'Remerii se souviendra du calme dans la brume',
+          type:'Remerii',
+          icon:'❄',
+          body:`Quand la Forêt Interdite a avalé un soldat, Hylee a empêché la panique de gagner le reste du groupe. Remerii a vu son apprentie devenir, l’espace d’un instant, un point d’appui pour les autres.`
+        },
+        remerii_c9_regard_chaines:{
+          title:'Remerii se souviendra de ce regard dans les chaînes',
+          type:'Remerii',
+          icon:'❄',
+          body:`Entravées par les Obscurcis, Hylee et Remerii n’ont eu besoin d’aucune consigne prononcée. Un regard a suffi : survivre, observer, attendre l’ouverture.`
+        }
+      });
+    }
+
+    function findC9Choice(sceneId,label){
+      const sc=(typeof S!=='undefined' && S[sceneId]) ? S[sceneId] : null;
+      if(!sc || !Array.isArray(sc.choices)) return null;
+      return sc.choices.find(ch=>ch && ch.label===label) || null;
+    }
+
+    function setC9Relation(sceneId,label,delta,flag,memory){
+      const ch=findC9Choice(sceneId,label);
+      if(!ch) return;
+      ch.effects={...(ch.effects||{})};
+      delete ch.effects.lien;
+      if(typeof delta==='number' && delta!==0) ch.effects.lien=delta;
+      if(flag) ch.flags={...(ch.flags||{}),[flag]:true};
+      if(memory) ch.memories=[...new Set([...(ch.memories||[]),memory])];
+    }
+
+    // Chaque choix du Chapitre IX reçoit volontairement un statut relationnel :
+    // positif, négatif ou neutre. Aucun gain automatique n’est laissé au hasard.
+    ['c9_04','c9_07','c9_18','c9_26','c9_29','c9_34','c9_39'].forEach(sceneId=>{
+      const sc=(typeof S!=='undefined') ? S[sceneId] : null;
+      (sc&&Array.isArray(sc.choices)?sc.choices:[]).forEach(ch=>{
+        if(ch&&ch.effects) delete ch.effects.lien;
+      });
+    });
+
+    setC9Relation('c9_04','Faire confiance au chemin de Valurn',-1,'rem_c9_valurn_reckless');
+    setC9Relation('c9_04','Demander des garanties concrètes',1,'rem_c9_guarantees');
+
+    setC9Relation('c9_07','Accepter la logique de l’équipe restreinte',1,'rem_c9_team_logic');
+
+    setC9Relation('c9_18','Calmer les soldats avant la panique',1,'rem_c9_calm_fog','remerii_c9_brume_calme');
+    setC9Relation('c9_18','Écouter le silence laissé par l’homme disparu',1,'rem_c9_listen_fog');
+
+    setC9Relation('c9_29','Appuyer la demande d’Iriana avec calme',1,'rem_c9_diplomacy');
+    setC9Relation('c9_29','Répondre à son royaume par une pointe d’insolence',-1,'rem_c9_insolence');
+    setC9Relation('c9_29','Lire la peur derrière son rire',1,'rem_c9_read_naiah');
+
+    setC9Relation('c9_39','Tenter de geler les chaînes malgré tout',-1,'rem_c9_force_chains');
+    setC9Relation('c9_39','Observer les runes qui absorbent la magie',1,'rem_c9_read_runes');
+    setC9Relation('c9_39','Chercher Remerii du regard',1,'rem_c9_shared_gaze','remerii_c9_regard_chaines');
+
+    function remeriiChapterIndex(){
+      const id=String((state&&state.scene)||'');
+      if(typeof isIntroScene==='function' && isIntroScene(id)) return 0;
+      const match=id.match(/^c(\d+)_/i);
+      if(match) return Number(match[1])||1;
+      const flags=(state&&state.flags)||{};
+      for(let n=9;n>=1;n--){
+        if(flags['chapter'+n+'Complete']===true) return n;
+      }
+      if(flags.chapter4VComplete||flags.chapter4DComplete) return 4;
+      return 1;
+    }
+
+    function c9SceneNumber(){
+      const id=String((state&&state.scene)||'');
+      if(id==='c9_end') return 99;
+      const match=id.match(/^c9_(\d+)/i);
+      return match ? Number(match[1]) : 0;
+    }
+
+    function remeriiChapterStage(){
+      const chapter=remeriiChapterIndex();
+      if(chapter===0) return {
+        short:'Introduction',
+        eyebrow:'Aux origines du lien',
+        title:'Une possibilité derrière le tablier',
+        body:`À l’Auberge du Forestier, Remerii ne voit pas seulement une jeune servante maltraitée. Elle reconnaît une magie rare, une volonté comprimée et le risque qu’Hylee finisse par se briser si personne ne lui tend une autre route.`
+      };
+      if(chapter===1) return {
+        short:'Chapitre I',
+        eyebrow:'L’apprentissage commence',
+        title:'Une apprentie qu’elle refuse de ménager',
+        body:`Remerii pousse Hylee avec dureté parce qu’elle craint davantage le monde qui l’attend que la colère de son élève. Son regard reste professionnel, mais sa vigilance devient déjà personnelle.`
+      };
+      if(chapter===2) return {
+        short:'Chapitre II',
+        eyebrow:'La route d’Al’Gratal',
+        title:'Protéger sans enfermer',
+        body:`Face aux gardiens, aux contrôles et à la violence de l’Empire, Remerii commence à mesurer ce qu’Hylee choisit lorsqu’elle n’est plus à l’abri d’un exercice. Elle surveille moins son talent que sa manière de rester elle-même.`
+      };
+      if(chapter===3) return {
+        short:'Chapitre III',
+        eyebrow:'Après Glacialis Absoluta',
+        title:'La peur de l’avoir poussée trop loin',
+        body:`Les préparatifs, le duel et la surcharge magique changent la posture de Remerii. Hylee n’est plus seulement une élève prometteuse : elle devient quelqu’un que l’archimage peut perdre, et cette idée fissure sa maîtrise.`
+      };
+      if(chapter===4) return {
+        short:'Chapitre IV',
+        eyebrow:'Routes séparées',
+        title:'La distance n’efface pas l’attention',
+        body:`Pendant que les autres fils de la mission se déploient, Remerii conserve les gestes d’Hylee en mémoire. Leur lien ne progresse pas par proximité constante, mais par la place que l’absence commence à prendre.`
+      };
+      if(chapter===5) return {
+        short:'Chapitre V',
+        eyebrow:'Sous le regard de Saidin',
+        title:'Une confiance mise à l’épreuve',
+        body:`Le duel de sages oblige Remerii à regarder Hylee répondre sans pouvoir parler à sa place. Chaque choix juste lui prouve que son apprentie peut penser au-delà de ses leçons. Chaque fracture réveille sa peur de l’avoir mal préparée.`
+      };
+      if(chapter===6) return {
+        short:'Chapitre VI',
+        eyebrow:'Mir’Aldas',
+        title:'La maîtrise laisse passer quelque chose de plus tendre',
+        body:`Dans la ville qui a façonné Remerii, Hylee découvre ses silences, ses blessures et ses habitudes. L’archimage reste retenue, mais elle ne peut plus prétendre que leur proximité relève seulement de l’enseignement.`
+      };
+      if(chapter===7) return {
+        short:'Chapitre VII',
+        eyebrow:'Les jeux de Naïah',
+        title:'Une autre facette d’Hylee apparaît',
+        body:`Naïah force le groupe à jouer avec la peur, l’intuition et les vérités mal rangées. Remerii observe comment Hylee s’attache sans se dissoudre dans l’autre, un équilibre qui l’inquiète autant qu’il l’impressionne.`
+      };
+      if(chapter===8) return {
+        short:'Chapitre VIII',
+        eyebrow:'Avant le départ',
+        title:'Une présence désormais intégrée à chaque risque',
+        body:`Les décisions stratégiques se resserrent autour de la Forêt Interdite. Remerii ne traite plus Hylee comme un élément fragile à garder derrière elle : elle anticipe désormais ce que chaque danger pourrait lui coûter, et ce que son élève serait capable de choisir malgré elle.`
+      };
+
+      const step=c9SceneNumber();
+      if(step<=13) return {
+        short:'Chapitre IX · Départ',
+        eyebrow:'L’heure du départ',
+        title:'Une place entière autour de la table',
+        body:`Dans la salle souterraine, Remerii écoute désormais les réactions d’Hylee comme celles d’un véritable membre de l’expédition. Elle reste protectrice, mais ne confond plus protection et silence imposé.`
+      };
+      if(step<=31) return {
+        short:'Chapitre IX · Brume',
+        eyebrow:'Dans la Forêt Interdite',
+        title:'La confiance se mesure quand le monde disparaît',
+        body:`La brume ne laisse aucune place aux exercices préparés. Remerii observe si Hylee sait calmer, écouter et choisir sans transformer la peur en précipitation. La relation de la jeune mage avec Naïah éveille surtout sa vigilance, pas une possessivité facile.`
+      };
+      if(step<=38) return {
+        short:'Chapitre IX · Alamma',
+        eyebrow:'Face à la fracture Farae',
+        title:'Comprendre avant de frapper',
+        body:`Devant Alamma, Remerii sait qu’un geste trop rapide pourrait condamner le groupe. Son regard sur Hylee se concentre sur une question simple : peut-elle lire une blessure politique et familiale sans laisser l’émotion lui voler son jugement ?`
+      };
+      return {
+        short:'Chapitre IX · Captivité',
+        eyebrow:'Dans les chaînes d’Akuhn’Nabad',
+        title:'Un regard suffit désormais',
+        body:`La capture efface les postures confortables. Remerii ne peut plus placer Hylee derrière elle ni lui dicter chaque mouvement. Dans les chaînes, leur lien devient coordination silencieuse : survivre, comprendre la cage, attendre ensemble le moment où elle cédera.`
+      };
+    }
+
+    function contextualRemeriiObservations(){
+      const f=(state&&state.flags)||{};
+      const list=[];
+      const add=(title,body)=>list.push({title,body});
+
+      if(f.rem_c9_valurn_reckless) add('Une confiance accordée trop vite',`Hylee a accepté le chemin de Valurn avant d’en exiger les contours. Remerii comprend l’élan, mais n’aime pas la facilité avec laquelle le danger a obtenu son consentement.`);
+      if(f.rem_c9_guarantees) add('Le danger mérite des preuves',`Hylee a demandé des garanties là où Valurn proposait surtout un sourire. Remerii y reconnaît une prudence qui n’a pas besoin de devenir docile.`);
+      if(f.rem_c9_team_logic) add('Penser comme un membre de l’expédition',`Hylee a accepté qu’un groupe restreint protège mieux la mission qu’une démonstration de force. Remerii voit sa pensée quitter peu à peu le cadre de l’apprentissage.`);
+      if(f.rem_c9_calm_fog) add('Tenir les autres dans la brume',`Quand un soldat a disparu, Hylee a choisi d’endiguer la panique. Remerii a vu son calme devenir utile à quelqu’un d’autre qu’elle-même.`);
+      if(f.rem_c9_listen_fog) add('Écouter ce que la forêt retire',`Hylee a cherché la trace laissée dans le silence plutôt que de remplir le vide par un sort. Cette écoute magique ressemble à la maîtrise que Remerii essaie de lui transmettre.`);
+      if(f.rem_c9_diplomacy) add('Parler sans humilier',`Face à Naïah, Hylee a soutenu la demande d’Iriana sans transformer la négociation en ordre. Remerii apprécie cette retenue, plus difficile que la froideur.`);
+      if(f.rem_c9_insolence) add('Une pointe au mauvais endroit',`L’insolence d’Hylee a frôlé une blessure que Naïah dissimule derrière le jeu. Remerii n’y voit pas du courage, seulement un risque inutile pour la mission et pour leur guide.`);
+      if(f.rem_c9_read_naiah) add('Voir la peur derrière le rire',`Hylee a reconnu que la théâtralité de Naïah protège quelque chose de plus fragile. Remerii remarque cette lucidité, parce qu’elle menace aussi ses propres armures.`);
+      if(f.rem_c9_force_chains) add('Attaquer avant de comprendre la cage',`Hylee a tenté de geler les chaînes malgré leur nature inconnue. Remerii déteste cette précipitation, surtout lorsqu’elle donne à l’ennemi exactement la réaction qu’il attend.`);
+      if(f.rem_c9_read_runes) add('Apprendre même entravée',`Hylee a observé les runes avant de gaspiller sa magie. Remerii y voit une maîtrise plus précieuse qu’une démonstration de puissance.`);
+      if(f.rem_c9_shared_gaze) add('Une consigne sans paroles',`Dans les chaînes, Hylee a cherché Remerii du regard et compris immédiatement : pas maintenant. Cette confiance silencieuse marque un seuil nouveau entre elles.`);
+
+      return list.slice(-4);
+    }
+
+    const previousRenderRemeriiProgression =
+      (typeof renderRemeriiProgression==='function') ? renderRemeriiProgression : null;
+
+    if(previousRenderRemeriiProgression){
+      window.renderRemeriiProgression = renderRemeriiProgression = function renderRemeriiProgressionV179(){
+        previousRenderRemeriiProgression.apply(this,arguments);
+
+        const stage=remeriiChapterStage();
+        const value=(state&&state.stats&&typeof state.stats.lien==='number')?state.stats.lien:0;
+        const tier=(typeof remeriiPerceptionTier==='function') ? remeriiPerceptionTier(value) : {label:'Perception actuelle'};
+
+        if(typeof setText==='function'){
+          setText('progressionRemeriiLabel',`${tier.label} · ${stage.short}`);
+        }
+
+        const obs=document.getElementById('progressionRemeriiObservations');
+        const block=obs&&obs.closest('.remeriiObservationBlock');
+        if(block&&obs){
+          let lens=block.querySelector('.remeriiChapterLens');
+          if(!lens){
+            lens=document.createElement('article');
+            lens.className='remeriiChapterLens';
+            block.insertBefore(lens,obs);
+          }
+          lens.innerHTML=`<div class="lensEyebrow">${stage.eyebrow}</div><h5>${stage.title}</h5><p>${stage.body}</p>`;
+
+          contextualRemeriiObservations().forEach(item=>{
+            const card=document.createElement('article');
+            card.className='remeriiObservationCard contextual';
+            card.innerHTML=`<strong>${item.title}</strong><p>${item.body}</p>`;
+            obs.appendChild(card);
+          });
+        }
+      };
+    }
+
+    // Filet de sécurité permanent : aucune jauge Lien Remerii ne reste dans le HUD,
+    // y compris dans les duels et en mode développeur.
+    function scrubRemeriiFromGameHud(){
+      const stats=document.getElementById('stats');
+      if(!stats) return;
+      stats.querySelectorAll('.stat,.combatMeta span').forEach(el=>{
+        const txt=(el.textContent||'').trim();
+        if(/^Lien(?:\s+Remerii)?\b/i.test(txt)) el.remove();
+      });
+    }
+    const statsNode=document.getElementById('stats');
+    if(statsNode && typeof MutationObserver!=='undefined'){
+      const observer=new MutationObserver(scrubRemeriiFromGameHud);
+      observer.observe(statsNode,{childList:true,subtree:true});
+    }
+    scrubRemeriiFromGameHud();
+
+    const progression=document.getElementById('progression');
+    if(progression && !progression.classList.contains('hidden') && typeof renderRemeriiProgression==='function'){
+      renderRemeriiProgression();
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.179 · Regard de Remerii évolutif';
+  }catch(e){
+    console.warn('Correctif v0.179 Regard de Remerii non appliqué',e);
+  }
+})();
+
+
+
+/* v0.180 · Prérequis Chapitre IX répartis + choix stratégique Naïah */
+(function applyV180Chapter9Balance(){
+  try{
+    if(window.__sylviniaV180Chapter9Balance) return;
+    window.__sylviniaV180Chapter9Balance = true;
+
+    const choiceScenes=['c9_04','c9_07','c9_18','c9_26','c9_29','c9_34','c9_39'];
+
+    function choicesOf(sceneId){
+      const scene=(typeof S!=='undefined' && S[sceneId]) ? S[sceneId] : null;
+      return scene && Array.isArray(scene.choices) ? scene.choices : [];
+    }
+
+    function findChoice(sceneId,labelPart){
+      return choicesOf(sceneId).find(ch=>ch && String(ch.label||'').includes(labelPart)) || null;
+    }
+
+    function clearRequirements(ch){
+      if(!ch) return;
+      delete ch.requires;
+      delete ch.requiresAny;
+    }
+
+    // On repart d'une table propre : les anciens verrous Résonance sont retirés.
+    choiceScenes.forEach(sceneId=>choicesOf(sceneId).forEach(clearRequirements));
+
+    function setRequiredChoice(sceneId,labelPart,requirements,effectKey,note){
+      const ch=findChoice(sceneId,labelPart);
+      if(!ch) return;
+      ch.requires={...requirements};
+      ch.effects={...(ch.effects||{})};
+      if(effectKey) ch.effects[effectKey]=2;
+      ch.note=note;
+    }
+
+    // Un verrou par grande orientation. Les options de Résonance non stratégiques
+    // restent libres afin qu'un joueur puisse encore développer cette valeur.
+    setRequiredChoice(
+      'c9_04',
+      'Demander des garanties concrètes',
+      {lucidite:30},
+      'lucidite',
+      'Lucidité · Prérequis 30 · Hylee démonte les zones d’ombre du plan au lieu de subir le secret de Valurn.'
+    );
+
+    setRequiredChoice(
+      'c9_07',
+      'Répondre que ce groupe a déjà survécu à pire',
+      {audace:30},
+      'audace',
+      'Audace · Prérequis 30 · Hylee prend assez de place pour briser la tension du conseil sans nier le danger.'
+    );
+
+    setRequiredChoice(
+      'c9_18',
+      'Calmer les soldats avant la panique',
+      {sangfroid:30},
+      'sangfroid',
+      'Sang-froid · Prérequis 30 · Sa voix devient un point d’appui au milieu de la panique.'
+    );
+
+    const strategic=findChoice('c9_29','Parler à Naïah comme à l’amie d’autrefois');
+    if(strategic){
+      strategic.label='Choix stratégique : demander l’aide de l’amie d’autrefois';
+      strategic.requires={resonance:30};
+      strategic.effects={...(strategic.effects||{}),resonance:2};
+      strategic.flags={
+        ...(strategic.flags||{}),
+        c9_naiah_appel_strategique:true,
+        naiah_se_souviendra_de_hylee:true
+      };
+      strategic.memories=[...new Set([...(strategic.memories||[]),'naiah_hylee_effort'])];
+      strategic.note='Souvenir stratégique · Résonance 30 · Hylee s’adresse à Naïah comme à une personne, pas comme à une clé ouvrant la forêt.';
+    }
+
+    // Les anciennes options verrouillées par Résonance redeviennent de vraies voies
+    // de progression. Elles peuvent donc faire monter cette valeur sans exiger
+    // qu'elle soit déjà élevée.
+    [
+      ['c9_04','Écouter ce que le mot “guide” réveille dans la magie'],
+      ['c9_18','Écouter le silence laissé par l’homme disparu'],
+      ['c9_34','Sentir la blessure d’Iriana derrière son immobilité'],
+      ['c9_39','Sentir l’étouffement de sa magie']
+    ].forEach(([sceneId,labelPart])=>{
+      const ch=findChoice(sceneId,labelPart);
+      if(!ch) return;
+      clearRequirements(ch);
+      ch.effects={...(ch.effects||{}),resonance:1};
+    });
+
+    // La lecture de Naïah reste une option libre : elle nourrit la Lucidité et le
+    // Regard de Remerii sans concurrencer le choix stratégique.
+    const readNaiah=findChoice('c9_29','Lire la peur derrière son rire');
+    if(readNaiah){
+      clearRequirements(readNaiah);
+      readNaiah.effects={...(readNaiah.effects||{}),lucidite:1};
+    }
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      PROGRESSION_MEMORIES.naiah_hylee_effort={
+        title:'Naïah se souviendra de l’appel d’Hylee',
+        type:'Naïah',
+        icon:'☾',
+        body:`Hylee n’a pas demandé son aide à la fille d’Ombre, à la guide ou à l’héritière oubliée. Elle s’est adressée à l’amie des nuits de l’Auberge du Forestier. Naïah a accepté de les conduire, et ce choix pourra peser sur une future scène ou un dialogue inédit.`
+      };
+    }
+
+    if(typeof S!=='undefined' && S.c9_29_b){
+      S.c9_29_b.sub='Choix stratégique · L’amie derrière l’Ombre';
+      S.c9_29_b.text=`Hylee baisse légèrement la voix.
+
+Elle ne parle ni à la guide, ni à la fille impériale, ni à la créature que la Forêt Interdite laisse circuler dans sa brume.
+
+Elle parle à l’amie qui s’asseyait autrefois près d’elle lorsque les nuits de l’Auberge du Forestier devenaient trop longues.
+
+« Alors aide-nous. Pas pour l’Empire. Pas pour Iriana. Pour moi. »
+
+Le sourire de Naïah vacille. Une seconde seulement, mais assez pour laisser apparaître quelque chose de plus ancien que l’Ombre.
+
+« Pour toi, petite Hylee… peut-être que je ferai un effort. Mais elle ne m’écoutera pas plus que vous. »
+
+Quand Naïah détourne les yeux, son rire ne revient pas tout de suite.
+
+Ce n’est pas une promesse. C’est mieux : une dette qu’elle a choisie elle-même.`;
+    }
+
+    // Sécurité d'interface : le Lien Remerii reste absent des prérequis visibles
+    // et du HUD. Aucun choix du Chapitre IX ne l'utilise comme verrou.
+    choiceScenes.forEach(sceneId=>{
+      choicesOf(sceneId).forEach(ch=>{
+        if(ch && ch.requires && Object.prototype.hasOwnProperty.call(ch.requires,'lien')){
+          delete ch.requires.lien;
+          if(!Object.keys(ch.requires).length) delete ch.requires;
+        }
+      });
+    });
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.180 · Chapitre IX rééquilibré';
+
+    if(typeof updateProgressUI==='function') updateProgressUI();
+    if(typeof updateMenuButtons==='function') updateMenuButtons();
+  }catch(e){
+    console.warn('Correctif v0.180 Chapitre IX non appliqué',e);
+  }
+})();
+
+
+/* v0.181 · Choix stratégique Naïah/Hylee : anciennes confidentes */
+(function applyV181NaiahHyleeConnection(){
+  try{
+    if(window.__sylviniaV181NaiahHyleeConnection) return;
+    window.__sylviniaV181NaiahHyleeConnection = true;
+
+    if(typeof S!=='undefined' && S.c9_29 && Array.isArray(S.c9_29.choices)){
+      const strategic=S.c9_29.choices.find(ch=>
+        ch && (
+          ch.next==='c9_29_b' ||
+          String(ch.label||'').includes('amie d’autrefois') ||
+          String(ch.label||'').includes('Choix stratégique')
+        )
+      );
+
+      if(strategic){
+        strategic.label='Choix stratégique : rappeler les nuits où elles se confiaient';
+        strategic.requires={resonance:30};
+        strategic.effects={...(strategic.effects||{}),resonance:2};
+        strategic.flags={
+          ...(strategic.flags||{}),
+          c9_naiah_appel_strategique:true,
+          naiah_se_souviendra_de_hylee:true,
+          naiah_hylee_confidentes_reconnues:true
+        };
+        strategic.memories=[...new Set([
+          ...(strategic.memories||[]),
+          'naiah_hylee_effort'
+        ])];
+        strategic.note='Souvenir stratégique · Résonance 30 · Hylee rouvre le lien né durant leurs confidences nocturnes à l’Auberge du Forestier.';
+      }
+    }
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      PROGRESSION_MEMORIES.naiah_hylee_effort={
+        title:'Naïah se souviendra des nuits partagées',
+        type:'Naïah',
+        icon:'☾',
+        body:`À l’Auberge du Forestier, Hylee et Naïah se retrouvaient après la fermeture, lorsque personne ne les écoutait. Elles parlaient de leurs blessures sans toujours les nommer et devinrent, l’une pour l’autre, de rares confidentes. Dans la Forêt Interdite, Hylee a rouvert ce lien au lieu de traiter Naïah comme un simple guide.`
+      };
+    }
+
+    if(typeof S!=='undefined' && S.c9_29_b){
+      S.c9_29_b.sub='Choix stratégique · Les confidentes de l’Auberge';
+      S.c9_29_b.text=`Hylee attend que Naïah reporte les yeux sur elle.
+
+Autour d’elles, la forêt, le groupe et la mission semblent reculer d’un pas.
+
+« Tu te souviens des nuits après la fermeture de l’Auberge du Forestier ? Tu arrivais sans prévenir, tu t’asseyais près de moi… et on faisait semblant de parler de tout, sauf de ce qui nous faisait vraiment mal. »
+
+Le sourire de Naïah se resserre.
+
+« Je me souviens surtout que tu posais beaucoup trop de questions. »
+
+« Et toi, tu répondais sans répondre. Mais tu revenais. »
+
+Hylee avait attendu chacune de ces visites. Dans ces heures volées, elle n’était plus la servante de l’auberge, l’orpheline encombrante ou la fille qui devait cacher sa magie. Avec Naïah, elle était simplement Hylee.
+
+« Tu étais la seule à qui je pouvais dire que j’avais peur. »
+
+Le regard de Naïah vacille. Son rire ne vient pas.
+
+« Et toi, la seule qui ne me demandait pas de devenir quelqu’un d’autre. »
+
+Hylee s’approche d’un pas.
+
+« Alors regarde-moi comme avant. Tu sais pourquoi je ne peux pas faire demi-tour. Aide-moi. Pas pour Iriana. Pas pour l’Empire. Parce que c’est moi qui te le demande. »
+
+Naïah baisse la tête, comme si elle cherchait une plaisanterie assez solide pour refermer ce que Hylee vient d’ouvrir.
+
+« C’est déloyal, petite Hylee. Ressortir nos confidences devant autant de gens bien élevés… »
+
+« Tu peux rire. Tu ne m’as jamais trompée longtemps. »
+
+Cette fois, Naïah relève les yeux sans masque.
+
+« Non. Toi, jamais. »
+
+Elle se rapproche, juste assez pour que sa voix n’appartienne plus qu’à Hylee.
+
+« D’accord. Je vous conduis. Mais si tout s’effondre, tu restes près de moi. Ce n’est pas une négociation. »
+
+Hylee acquiesce.
+
+Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemble plus à une porte fermée.`;
+    }
+
+    const previousRender =
+      (typeof renderRemeriiProgression==='function')
+        ? renderRemeriiProgression
+        : null;
+
+    if(previousRender && !window.__sylviniaV181RemeriiWrapper){
+      window.__sylviniaV181RemeriiWrapper=true;
+      window.renderRemeriiProgression = renderRemeriiProgression = function renderRemeriiProgressionV181(){
+        previousRender.apply(this,arguments);
+
+        const flags=(state&&state.flags)||{};
+        if(!flags.naiah_hylee_confidentes_reconnues) return;
+
+        const observations=document.getElementById('progressionRemeriiObservations');
+        if(!observations || observations.querySelector('[data-v181-naiah-confidentes]')) return;
+
+        const card=document.createElement('article');
+        card.className='remeriiObservationCard contextual';
+        card.setAttribute('data-v181-naiah-confidentes','true');
+        card.innerHTML=`<strong>Une proximité plus ancienne qu’elle ne le pensait</strong><p>Remerii a compris que Naïah et Hylee ne partageaient pas seulement quelques souvenirs d’auberge. Elles furent des confidentes, capables de reconnaître les blessures cachées derrière leurs silences. Elle n’en conçoit pas de jalousie facile, mais mesure désormais le poids réel que Naïah possède dans le cœur d’Hylee.</p>`;
+        observations.appendChild(card);
+      };
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.181 · Confidentes de l’Auberge';
+
+    if(typeof updateProgressUI==='function') updateProgressUI();
+  }catch(e){
+    console.warn('Correctif v0.181 Naïah/Hylee non appliqué',e);
   }
 })();
 </script>
