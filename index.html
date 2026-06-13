@@ -24176,5 +24176,89 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 })();
 </script>
 
+
+<script>
+/* v0.186 · Regard de Remerii clarifié + OST III du Chapitre IX */
+(function applyV186RemeriiMemoriesAndC9Music(){
+  try{
+    if(window.__sylviniaV186RemeriiMemoriesAndC9Music) return;
+    window.__sylviniaV186RemeriiMemoriesAndC9Music=true;
+
+    // La troisième OST du Chapitre IX reprend le fichier déjà utilisé par Infernal Trade.
+    const infernalTradePath='assets/audio/chapter4/infernal_trade.mp3';
+    if(typeof A!=='undefined'){
+      A.music_c9_capture=infernalTradePath;
+    }
+    if(typeof CODEX_MUSIC!=='undefined' && CODEX_MUSIC.music_c9_capture){
+      Object.assign(CODEX_MUSIC.music_c9_capture,{
+        title:'Chapitre IX · Infernal Trade',
+        body:'Thème du Chaos pour l’apparition d’Alamma, la capture du groupe, Akuhn’Nabad et les geôles de la Cité Noire.',
+        src:infernalTradePath,
+        label:'Chapitre IX · Chaos'
+      });
+    }
+
+    function convertObservationToMemory(card){
+      const title=card.querySelector('strong')?.textContent?.trim()||'Souvenir de Remerii';
+      const body=card.querySelector('p')?.innerHTML||'';
+      const memory=document.createElement('article');
+      memory.className='remeriiMemoryMini remeriiContextMemory';
+      memory.innerHTML=`<div class="progressionIcon">❄</div><div><h5>${title}</h5><p>${body}</p></div>`;
+      return memory;
+    }
+
+    function convertLensToMemory(lens){
+      const eyebrow=lens.querySelector('.lensEyebrow')?.textContent?.trim()||'Évolution actuelle';
+      const title=lens.querySelector('h5')?.textContent?.trim()||'Le regard de Remerii évolue';
+      const body=lens.querySelector('p')?.innerHTML||'';
+      const memory=document.createElement('article');
+      memory.className='remeriiMemoryMini remeriiChapterMemory';
+      memory.innerHTML=`<div class="progressionIcon">✦</div><div><div class="remeriiMemoryEyebrow">${eyebrow}</div><h5>${title}</h5><p>${body}</p></div>`;
+      return memory;
+    }
+
+    const previousRender=(typeof renderRemeriiProgression==='function')?renderRemeriiProgression:null;
+    if(previousRender){
+      window.renderRemeriiProgression=renderRemeriiProgression=function renderRemeriiProgressionV186(){
+        previousRender.apply(this,arguments);
+
+        const observations=document.getElementById('progressionRemeriiObservations');
+        const memoryList=document.getElementById('progressionRemeriiMemoryList');
+        if(!observations||!memoryList) return;
+
+        // Cette zone reste exclusivement pilotée par Audace, Sang-froid,
+        // Lucidité, Résonance et le niveau de lien.
+        const observationBlock=observations.closest('.remeriiObservationBlock');
+        const lens=observationBlock?.querySelector('.remeriiChapterLens');
+        const contextualCards=[...observations.querySelectorAll('.remeriiObservationCard.contextual')];
+
+        // Les éléments narratifs et souvenirs de choix migrent dans la bonne section.
+        if(lens) memoryList.prepend(convertLensToMemory(lens));
+        contextualCards.forEach(card=>memoryList.appendChild(convertObservationToMemory(card)));
+
+        lens?.remove();
+        contextualCards.forEach(card=>card.remove());
+      };
+    }
+
+    const style=document.createElement('style');
+    style.id='v0186-remerii-memory-clarity-style';
+    style.textContent=`
+      .remeriiContextMemory,.remeriiChapterMemory{border-color:rgba(46,93,116,.20);background:linear-gradient(180deg,rgba(231,246,253,.50),rgba(255,255,255,.31));}
+      .remeriiMemoryEyebrow{margin-bottom:5px;color:#2e5d74;font-size:10px;font-weight:950;letter-spacing:.15em;text-transform:uppercase;}
+    `;
+    document.head.appendChild(style);
+
+    if(typeof renderRemeriiProgression==='function') renderRemeriiProgression();
+    if(typeof renderCodex==='function' && !document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.186 · Regard de Remerii et OST du Chapitre IX';
+  }catch(e){
+    console.warn('Correctif v0.186 Regard de Remerii / OST IX non appliqué',e);
+  }
+})();
+</script>
+
 </body>
 </html>
