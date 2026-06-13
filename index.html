@@ -1735,6 +1735,28 @@ body.mobileUI .sageTimerBadge{font-size:19px}
 }
 </style>
 
+
+<style id="v0185-codex-navigation-style">
+/* v0.185 · Navigation du Codex par chapitre */
+#codexGrid.codexGroupedList,
+#codexMusicGrid.codexGroupedList{display:block!important}
+#codexGrid.codexGroupedList>.codexGallerySection,
+#codexMusicGrid.codexGroupedList>.codexGallerySection{width:100%;margin:0 0 16px;grid-column:1/-1}
+#codexGrid .codexGallerySummary,
+#codexMusicGrid .codexGallerySummary{position:relative}
+#codexGrid .codexGalleryLabel,
+#codexMusicGrid .codexGalleryLabel{display:flex;align-items:center;gap:10px}
+#codexGrid .codexGalleryLabel::before{content:'✦';font-size:13px;color:#8b6a35;opacity:.78}
+#codexMusicGrid .codexGalleryLabel::before{content:'♫';font-size:15px;color:#8b6a35;opacity:.82}
+#codexGrid .codexSubGrid,
+#codexMusicGrid .codexSubGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#codexGrid .codexGallerySection[open],
+#codexMusicGrid .codexGallerySection[open]{box-shadow:inset 0 1px 0 rgba(255,255,255,.58),0 18px 34px rgba(64,43,17,.11)}
+@media(max-width:760px){
+  #codexGrid .codexSubGrid,#codexMusicGrid .codexSubGrid{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -23956,6 +23978,201 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
   }catch(e){
     console.warn('Correctif v0.184 du lac et de la lisière non appliqué',e);
   }
+})();
+</script>
+
+
+<script id="v0185-codex-navigation-patch">
+/* v0.185 · Codex : chapitres ordonnés, filtres VIII/IX et contenus récents */
+(function repairCodexChapterNavigationV185(){
+  try{
+    if(window.__sylviniaV185CodexNavigation) return;
+    window.__sylviniaV185CodexNavigation=true;
+
+    const chapterOrder=['general','intro','chapter1','chapter2','chapter3','chapter4','chapter4_valurn','chapter4_draven','chapter5','chapter6','chapter7','chapter8','chapter9','annexes'];
+    const rank=id=>{const n=chapterOrder.indexOf(id);return n<0?999:n;};
+    const unique=(arr)=>[...new Set((arr||[]).filter(Boolean))];
+    const upsertGroup=(groups, group)=>{
+      if(!Array.isArray(groups)||!group) return;
+      const i=groups.findIndex(g=>g&&g.id===group.id);
+      if(i>=0){
+        const old=groups[i]||{};
+        groups[i]={...old,...group,keys:unique([...(old.keys||[]),...(group.keys||[])])};
+      }else groups.push({...group,keys:unique(group.keys||[])});
+    };
+    const sortGroups=groups=>{
+      if(!Array.isArray(groups)) return;
+      groups.sort((a,b)=>rank(a&&a.id)-rank(b&&b.id));
+    };
+
+    /* Les filtres Images doivent aller jusqu'aux chapitres récents. */
+    if(typeof CODEX_IMAGE_FILTERS!=='undefined' && Array.isArray(CODEX_IMAGE_FILTERS)){
+      const desired=[
+        {id:'all',label:'Tout'},
+        {id:'intro',label:'Introduction'},
+        {id:'chapter1',label:'Chapitre I'},
+        {id:'chapter2',label:'Chapitre II'},
+        {id:'chapter3',label:'Chapitre III'},
+        {id:'chapter4_valurn',label:'Chapitre IV · Valurn'},
+        {id:'chapter4_draven',label:'Chapitre IV · Draven'},
+        {id:'chapter5',label:'Chapitre V'},
+        {id:'chapter6',label:'Chapitre VI'},
+        {id:'chapter7',label:'Chapitre VII'},
+        {id:'chapter8',label:'Chapitre VIII'},
+        {id:'chapter9',label:'Chapitre IX'}
+      ];
+      desired.forEach(f=>{
+        const i=CODEX_IMAGE_FILTERS.findIndex(x=>x&&x.id===f.id);
+        if(i>=0) CODEX_IMAGE_FILTERS[i]={...CODEX_IMAGE_FILTERS[i],...f};
+        else CODEX_IMAGE_FILTERS.push(f);
+      });
+      const filterOrder=desired.map(x=>x.id);
+      CODEX_IMAGE_FILTERS.sort((a,b)=>filterOrder.indexOf(a.id)-filterOrder.indexOf(b.id));
+    }
+
+    /* Contenus du Chapitre VIII. */
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        conseiller_masque:CODEX_ENTRIES.conseiller_masque||{title:'Le Conseiller au masque de peste',body:'Personnage énigmatique associé à la cour de Tia Farae et signalé à Forthaven. Son masque de médecin de peste, ses yeux violets et son influence silencieuse en font une présence difficile à classer.'},
+        caldran:CODEX_ENTRIES.caldran||{title:'Capitaine Caldran',body:'Capitaine de Forthaven chargé de transmettre à Draven un rapport militaire alarmant sur la ville basse et l’arrivée d’un conseiller masqué.'},
+        naiah_sang_imperial:CODEX_ENTRIES.naiah_sang_imperial||{title:'Naïah, sang impérial perdu',body:'La révélation de son lien avec la lignée Farae transforme Naïah en survivante d’une fracture familiale que l’Empire préférait oublier.'},
+        fracture_tia_amanea:CODEX_ENTRIES.fracture_tia_amanea||{title:'Fracture entre Tia et Amanea',body:'Un événement fondateur où une blessure familiale devient rupture politique, morale et magique entre les deux sœurs.'}
+      });
+    }
+    if(typeof CODEX_MUSIC!=='undefined'){
+      Object.assign(CODEX_MUSIC,{
+        music_c8_sombre_conseiller:CODEX_MUSIC.music_c8_sombre_conseiller||{title:'Chapitre VIII · Un sombre conseiller',body:'Le thème des scènes de port, du rapport de Caldran et de la menace du conseiller masqué.',src:(typeof A!=='undefined'?A.music_c8_sombre_conseiller:''),label:'Chapitre VIII · Conseiller masqué'},
+        music_c8_valurn_pacte:CODEX_MUSIC.music_c8_valurn_pacte||{title:'Chapitre VIII · Pacte et révélation',body:'La couleur sonore des scènes entre Iriana et Valurn, du pacte au nom de Naïah.',src:(typeof A!=='undefined'?A.music_c8_valurn_pacte:''),label:'Chapitre VIII · Valurn et Naïah'}
+      });
+    }
+
+    /* Contenus du Chapitre IX. */
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        alamma_farae:CODEX_ENTRIES.alamma_farae||{title:'Alamma Farae',body:'Père d’Iriana et fils de Tia Farae. Retrouvé parmi les Obscurcis, il porte désormais dans ses yeux et sur son corps les marques rouges du Chaos.'},
+        brume_devoreuse:CODEX_ENTRIES.brume_devoreuse||{title:'La brume dévoreuse',body:'Voile vivant entourant la Forêt Interdite. Il ne masque pas seulement le chemin : il efface les intrus qui s’y abandonnent.'},
+        geoles_akuhn:CODEX_ENTRIES.geoles_akuhn||{title:'Les geôles d’Akuhn’Nabad',body:'Prisons souterraines de la Cité Noire, creusées dans la pierre maudite et protégées par des runes capables d’étouffer la magie.'}
+      });
+    }
+    if(typeof CODEX_MUSIC!=='undefined'){
+      Object.assign(CODEX_MUSIC,{
+        music_c9_depart:CODEX_MUSIC.music_c9_depart||{title:'Chapitre IX · L’heure du départ',body:'Le thème du départ d’Al’Gratal et de la route vers la Forêt Interdite.',src:(typeof A!=='undefined'?A.music_c9_depart:''),label:'Chapitre IX · Départ'},
+        music_c9_foret:CODEX_MUSIC.music_c9_foret||{title:'Chapitre IX · La Forêt Interdite',body:'La couleur sonore de la brume vivante, de Naïah et de la progression au-delà de la lisière.',src:(typeof A!=='undefined'?A.music_c9_foret:''),label:'Chapitre IX · Forêt'},
+        music_c9_capture:CODEX_MUSIC.music_c9_capture||{title:'Chapitre IX · L’héritage du Chaos',body:'Le thème d’Alamma, de la capture du groupe, d’Akuhn’Nabad et des geôles.',src:(typeof A!=='undefined'?A.music_c9_capture:''),label:'Chapitre IX · Chaos et capture'}
+      });
+    }
+
+    if(typeof CODEX_ORDER!=='undefined' && Array.isArray(CODEX_ORDER)){
+      ['caldran','conseiller_masque','naiah_sang_imperial','fracture_tia_amanea','brume_devoreuse','alamma_farae','geoles_akuhn'].forEach(k=>{if(!CODEX_ORDER.includes(k)) CODEX_ORDER.push(k);});
+    }
+    if(typeof CODEX_MUSIC_ORDER!=='undefined' && Array.isArray(CODEX_MUSIC_ORDER)){
+      ['music_c8_sombre_conseiller','music_c8_valurn_pacte','music_c9_depart','music_c9_foret','music_c9_capture'].forEach(k=>{if(!CODEX_MUSIC_ORDER.includes(k)) CODEX_MUSIC_ORDER.push(k);});
+    }
+
+    window.CODEX_ENTRY_GROUPS=window.CODEX_ENTRY_GROUPS||[];
+    upsertGroup(window.CODEX_ENTRY_GROUPS,{id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',keys:['caldran','conseiller_masque','naiah_sang_imperial','fracture_tia_amanea']});
+    upsertGroup(window.CODEX_ENTRY_GROUPS,{id:'chapter9',title:'Chapitre IX · L’heure du départ',keys:['brume_devoreuse','alamma_farae','geoles_akuhn','akuhn_nabad','foret_interdite','naiah']});
+    sortGroups(window.CODEX_ENTRY_GROUPS);
+
+    window.CODEX_MUSIC_GROUPS=window.CODEX_MUSIC_GROUPS||[];
+    upsertGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',keys:['music_c8_sombre_conseiller','music_c8_valurn_pacte']});
+    upsertGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter9',title:'Chapitre IX · L’heure du départ',keys:['music_c9_depart','music_c9_foret','music_c9_capture']});
+    sortGroups(window.CODEX_MUSIC_GROUPS);
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined' && Array.isArray(CODEX_IMAGE_GROUPS)) sortGroups(CODEX_IMAGE_GROUPS);
+
+    function esc(v){
+      if(typeof htmlEscape==='function') return htmlEscape(String(v??''));
+      return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+    function entryCard(key){
+      const entry=typeof CODEX_ENTRIES!=='undefined'?CODEX_ENTRIES[key]:null;
+      if(!entry) return null;
+      const ok=(state.codexUnlocked||[]).includes(key);
+      const item=document.createElement('article');
+      item.className='codexItem'+(ok?'':' locked');
+      item.innerHTML=`<h3>${ok?esc(entry.title):'Entrée inconnue'}</h3><p>${ok?esc(entry.body):'Continue l’aventure pour déverrouiller cette page du grimoire.'}</p>`;
+      return item;
+    }
+    function musicCard(key){
+      const entry=typeof CODEX_MUSIC!=='undefined'?CODEX_MUSIC[key]:null;
+      if(!entry) return null;
+      const ok=(state.codexUnlockedMusic||[]).includes(key);
+      const item=document.createElement('article');
+      item.className='mediaCard'+(ok?'':' locked');
+      if(ok){
+        const playing=currentPreviewTrack===key && music && !music.paused;
+        item.innerHTML=`<div class="mediaThumb"><div style="padding:20px;width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;background:radial-gradient(circle at top left,rgba(87,180,255,.18),transparent 42%),linear-gradient(180deg,rgba(22,36,54,.94),rgba(8,14,23,.98))"><span class="mediaTag">OST</span><h3 style="margin:8px 0 6px">${esc(entry.title)}</h3><p style="margin:0;color:#c7d5e3">${esc(entry.label||'Bande originale')}</p></div></div><div class="mediaMeta"><span class="mediaTag">Musique</span></div><h3>${esc(entry.title)}</h3><p>${esc(entry.body)}</p><div class="musicPlayer"><div class="musicPlayerMeta"><strong>${esc(entry.label||entry.title)}</strong><span>${playing?'Lecture en cours':'Prêt à écouter'}</span></div><button class="audioPlayBtn ${playing?'playing':''}" data-track="${esc(key)}"><span class="audioIcon">${playing?'❚❚':'▶'}</span><span>${playing?'Pause':'Lecture'}</span></button></div>`;
+        const btn=item.querySelector('.audioPlayBtn');
+        if(btn && typeof togglePreviewTrack==='function') btn.onclick=()=>togglePreviewTrack(key);
+      }else{
+        item.innerHTML='<div class="mediaThumb locked">Musique verrouillée</div><div class="mediaMeta"><span class="mediaTag">Musique</span></div><h3>Piste inconnue</h3><p>Continue l’aventure pour déverrouiller cette piste du grimoire.</p>';
+      }
+      return item;
+    }
+    function renderChapterGroups(container,groups,type){
+      container.innerHTML='';
+      container.classList.add('codexGroupedList');
+      const unlocked=type==='music'?(state.codexUnlockedMusic||[]):(state.codexUnlocked||[]);
+      const source=type==='music'?CODEX_MUSIC:CODEX_ENTRIES;
+      const build=type==='music'?musicCard:entryCard;
+      const valid=(groups||[]).map(g=>({...g,keys:unique((g.keys||[]).filter(k=>source&&source[k]))})).filter(g=>g.keys.length);
+      const latestUnlocked=[...valid].reverse().find(g=>g.keys.some(k=>unlocked.includes(k)) && g.id!=='annexes');
+      valid.forEach((group,idx)=>{
+        const count=group.keys.filter(k=>unlocked.includes(k)).length;
+        const details=document.createElement('details');
+        details.className='codexGallerySection';
+        details.dataset.codexGroup=group.id||'';
+        details.open=(latestUnlocked?group.id===latestUnlocked.id:idx===0);
+        const summary=document.createElement('summary');
+        summary.className='codexGallerySummary';
+        summary.innerHTML=`<span class="codexGalleryLabel">${esc(group.title)}</span><span class="codexGalleryCount">${count} / ${group.keys.length} débloquées</span>`;
+        details.appendChild(summary);
+        const body=document.createElement('div');
+        body.className='codexGalleryBody';
+        const grid=document.createElement('div');
+        grid.className='codexSubGrid mediaGrid lockedMode';
+        group.keys.forEach(k=>{const card=build(k);if(card) grid.appendChild(card);});
+        body.appendChild(grid); details.appendChild(body); container.appendChild(details);
+        details.addEventListener('toggle',()=>{
+          if(!details.open) return;
+          container.querySelectorAll('.codexGallerySection[open]').forEach(other=>{if(other!==details) other.open=false;});
+        });
+      });
+    }
+
+    const prior=typeof renderCodex==='function'?renderCodex:null;
+    window.renderCodex=renderCodex=function renderCodexV185(){
+      if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
+      if(typeof updateCodexTabUI==='function') updateCodexTabUI();
+      if(typeof updateProgressUI==='function') updateProgressUI();
+      const entries=document.getElementById('codexGrid');
+      const images=document.getElementById('codexImagesGrid');
+      const musicGrid=document.getElementById('codexMusicGrid');
+      const site=document.getElementById('codexSitePanel');
+      if(!entries||!images||!musicGrid||!site){if(prior) return prior();return;}
+      entries.classList.toggle('hidden',state.codexTab!=='entries');
+      images.classList.toggle('hidden',state.codexTab!=='images');
+      musicGrid.classList.toggle('hidden',state.codexTab!=='music');
+      site.classList.toggle('hidden',state.codexTab!=='site');
+      entries.classList.toggle('codexGroupedList',state.codexTab==='entries');
+      musicGrid.classList.toggle('codexGroupedList',state.codexTab==='music');
+      if(state.codexTab==='entries') renderChapterGroups(entries,window.CODEX_ENTRY_GROUPS,'entries'); else entries.innerHTML='';
+      if(state.codexTab==='images'){
+        images.innerHTML='';
+        if(typeof buildCodexImageGallery==='function') buildCodexImageGallery(images);
+      }else images.innerHTML='';
+      if(state.codexTab==='music') renderChapterGroups(musicGrid,window.CODEX_MUSIC_GROUPS,'music'); else musicGrid.innerHTML='';
+    };
+
+    if(typeof state!=='undefined' && state && state.devMode){
+      if(typeof CODEX_ORDER!=='undefined') state.codexUnlocked=unique([...(state.codexUnlocked||[]),...CODEX_ORDER]);
+      if(typeof CODEX_MUSIC_ORDER!=='undefined') state.codexUnlockedMusic=unique([...(state.codexUnlockedMusic||[]),...CODEX_MUSIC_ORDER]);
+      if(typeof CODEX_IMAGE_ORDER!=='undefined') state.codexUnlockedImages=unique([...(state.codexUnlockedImages||[]),...CODEX_IMAGE_ORDER]);
+    }
+    if(typeof save==='function') save();
+    if(typeof renderCodex==='function' && !document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+  }catch(e){console.warn('Correctif v0.185 du Codex non appliqué',e);}
 })();
 </script>
 
