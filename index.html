@@ -24327,10 +24327,10 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     replaceOrPushGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter10',title:'Chapitre X · L’Impératrice Noire',keys:['music_c10_horreur','music_c10_amanea','music_c10_cite','music_c10_culte']});
     if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
       const musicMap={};
-      ['c10_01','c10_02','c10_03','c10_04','c10_04_a','c10_04_b','c10_04_c','c10_04_d','c10_05'].forEach(k=>musicMap[k]=['music_c10_horreur']);
-      ['c10_06','c10_07','c10_08','c10_09','c10_09_a','c10_09_b','c10_09_c','c10_09_d','c10_10','c10_11','c10_12','c10_12_a','c10_12_b','c10_12_c','c10_12_d','c10_13'].forEach(k=>musicMap[k]=['music_c10_amanea']);
-      ['c10_14','c10_15','c10_16','c10_16_a','c10_16_b','c10_16_c','c10_16_d','c10_17','c10_21','c10_22','c10_22_a','c10_22_b','c10_22_c','c10_22_d','c10_23','c10_end'].forEach(k=>musicMap[k]=['music_c10_cite']);
-      ['c10_18','c10_19','c10_19_a','c10_19_b','c10_19_c','c10_19_d','c10_20'].forEach(k=>musicMap[k]=['music_c10_culte']);
+      ['c10_01','c10_01b','c10_02','c10_03','c10_03b','c10_04','c10_04_a','c10_04_b','c10_04_c','c10_04_d','c10_05'].forEach(k=>musicMap[k]=['music_c10_horreur']);
+      ['c10_06','c10_06b','c10_07','c10_07b','c10_08','c10_09','c10_09_a','c10_09_b','c10_09_c','c10_09_d','c10_10','c10_11','c10_12','c10_12_a','c10_12_b','c10_12_c','c10_12_d','c10_13'].forEach(k=>musicMap[k]=['music_c10_amanea']);
+      ['c10_14','c10_14b','c10_15','c10_15b','c10_16','c10_16_a','c10_16_b','c10_16_c','c10_16_d','c10_17','c10_17b','c10_21','c10_21b','c10_22','c10_22_a','c10_22_b','c10_22_c','c10_22_d','c10_23','c10_end'].forEach(k=>musicMap[k]=['music_c10_cite']);
+      ['c10_17b','c10_18','c10_19','c10_19_a','c10_19_b','c10_19_c','c10_19_d','c10_20'].forEach(k=>musicMap[k]=['music_c10_culte']);
       Object.assign(CODEX_MUSIC_BY_SCENE,musicMap);
     }
 
@@ -24434,7 +24434,42 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_geoles",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "L’obscurité ne se contente pas de l’entourer. Elle l’avale.\n\nIl n’y a plus de murs, plus de sol, plus de temps.\n\nSeulement la nuit absolue.\n\nIriana n’entend rien. Elle ressent tout.\n\nUne présence glisse dans les profondeurs d’Akuhn Nabad. Quelque chose de primal, de mauvais, quelque chose qui ne devrait pas exister.\n\nPuis, les hurlements commencent.\n\nL’Horreur Innommable.\n\nDes cries inhumains.\n\nDes voix tordues par une souffrance qui transcende la chair.\n\nQuelque part, dans une cellule voisine. Un prisonnier qui se met à hurler.\n\nUn hurlement terrible, viscéral, déchirant la pierre elle-même.\n\nPuis un second.\n\nPuis un troisième.\n\nUne vague d’agonie envahit les souterrains, un concert de souffrances incessant.",
+    "text": "L’obscurité ne se contente pas de l’entourer. Elle l’avale.
+
+Il n’y a plus de murs, plus de sol, plus de temps.
+
+Seulement la nuit absolue.
+
+Iriana n’entend rien. Elle ressent tout.
+
+Une présence glisse dans les profondeurs d’Akuhn Nabad. Quelque chose de primal, de mauvais, quelque chose qui ne devrait pas exister.
+
+Puis, les hurlements commencent.",
+    "chars": [],
+    "next": "c10_01b",
+    "zoom": true
+  },
+  "c10_01b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le concert de souffrance",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "L’Horreur Innommable.
+
+Des cris inhumains.
+
+Des voix tordues par une souffrance qui transcende la chair.
+
+Quelque part, dans une cellule voisine, un prisonnier se met à hurler.
+
+Un hurlement terrible, viscéral, déchirant la pierre elle-même.
+
+Puis un second.
+
+Puis un troisième.
+
+Une vague d’agonie envahit les souterrains, un concert de souffrances incessant.",
     "chars": [],
     "next": "c10_02",
     "zoom": true
@@ -24456,7 +24491,17 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_extraction",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "La Douleur Insupportable\n\nIriana hurle aussi.\n\nElle ne voulait pas, elle ne devait pas. Mais le cauchemar est trop fort, et l’horreur envahit son corps et son âme\n\nC’est une douleur qu’elle-même ne peut encaisser.\n\nCe ne sont pas des cris lointains qu’elle entend. Elle ressent chaque extraction.\n\nChaque âme tirée de sa coquille brüle dans son propre esprit.\n\nC’est comme si elle mourait aussi à chaque cri, à chaque souffle volé.\n\nElle suffoque, sa gorge nouée par une force qui écrase sa poitrine, sa tête prête à exploser sous les radiations abominables de douleur et d’horreur qui saturent l’espace.\n\nC’est insupportable.\n\nElle plonge ses doigts dans ses propres cheveux, crispant sa mâchoire, luttant pour ne pas perdre la raison.\n\nPuis tout s’arrête.\n\nUn silence assourdissant s’abat sur la prison.\n\nLes ames ont cessé de hurler… parce qu’elles n’existent plus.",
+    "text": "La douleur insupportable.
+
+Iriana hurle aussi.
+
+Elle ne voulait pas, elle ne devait pas. Mais le cauchemar est trop fort, et l’horreur envahit son corps et son âme.
+
+C’est une douleur qu’elle-même ne peut encaisser.
+
+Ce ne sont pas des cris lointains qu’elle entend. Elle ressent chaque extraction.
+
+Chaque âme tirée de sa coquille brûle dans son propre esprit.",
     "chars": [
       [
         "iriana",
@@ -24464,8 +24509,36 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
         "center"
       ]
     ],
-    "next": "c10_04",
+    "next": "c10_03b",
     "zoom": true
+  },
+  "c10_03b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le silence après la déchirure",
+    "bg": "c10_extraction",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "C’est comme si elle mourait aussi à chaque cri, à chaque souffle volé.
+
+Elle suffoque, sa gorge nouée par une force qui écrase sa poitrine, sa tête prête à exploser sous les radiations abominables de douleur et d’horreur qui saturent l’espace.
+
+C’est insupportable.
+
+Elle plonge ses doigts dans ses propres cheveux, crispant sa mâchoire, luttant pour ne pas perdre la raison.
+
+Puis tout s’arrête.
+
+Un silence assourdissant s’abat sur la prison.
+
+Les âmes ont cessé de hurler… parce qu’elles n’existent plus.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "center"
+      ]
+    ],
+    "next": "c10_04"
   },
   "c10_04": {
     "title": "Chapitre X · L’Impératrice Noire",
@@ -24606,7 +24679,49 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
     "speaker": "Narrateur",
-    "text": "Le silence pèse.\n\nL’obscurité de la cellule est profonde, l’air est glacé, porteur d’une présence insidieuse, comme si la prison elle-même respirait dans un murmure inaudible.\n\nLa porte de la cellule s’ouvre avec un grincement sinistre, laissant la silhouette rentrer dans cette dernière. Iriana, est pétrifiée, mais sa peur s’estompe légèrement en voyant l’ombre se dissiper, révélant l’apparence anthropique de la dirigeante Obscurci.\n\nLa princesse ne l’a jamais vue. Elle a entendu des récits. Des rumeurs. Des avertissements murmurés dans les couloirs du palais Sylvinien, toujours chuchotés comme une malédiction qu’on évite d’évoquer trop fort.\n\nMais jamais elle ne s’était retrouvée face à elle. Maintenant qu’elle la voit, elle comprend pourquoi son nom est un murmure dans l’empire.\n\nAmanea Farae. L’Exilée. La Traîtresse. L’Ombre de la famille impériale.\n\nSon apparition est presque irréelle, comme un mirage ancré dans la pénombre. Une elfe, pas si grande, mais sculptée par la magie qui coule dans ses veines. Son teint, marqué par les stigmates de son bannissement, est d’une pâleur presque lunaire, mais parcouru de fines craquelures lumineuses verte, trahissant l’énergie impie qui la consume lentement.\n\nSes cheveux mi-longs, d’un blond platine chutant sur du blanc spectral, tombent en mèches libres autour de son visage, contrastant avec ses yeux d’un vert incandescent, brûlant d’une lumière sinistre qui n’a rien de naturel, le contour de ses paupières marqués par d’anciennes cicatrice.\n\nMais ce qui frappe le plus Iriana, c’est l’aura qu’elle dégage. Une pression invisible. Une force ancienne.\n\nAmanea n’est pas simplement une Sylvinienne bannie, elle est devenue autre chose.\n\nLa dame noire s’avance d’un pas fluide, presque félin, laissant sa cape ténébreuse et argent effleurer le sol de pierre. Chaque mouvement est calculé, empreint d’une grâce froide et impérieuse.\n\nElle ne dit rien immédiatement.\n\nElle regarde.\n\nElle jauge.\n\nSes yeux verts scrutent Iriana avec une intensité troublante, comme si elle sondait son être jusqu’à ses os. Iriana soutient ce regard sans ciller. Un silence glacé s’installe entre elles. Enfin, Amanea casse le silence",
+    "text": "Le silence pèse.
+
+L’obscurité de la cellule est profonde, l’air est glacé, porteur d’une présence insidieuse, comme si la prison elle-même respirait dans un murmure inaudible.
+
+La porte de la cellule s’ouvre avec un grincement sinistre, laissant la silhouette rentrer dans cette dernière. Iriana est pétrifiée, mais sa peur s’estompe légèrement en voyant l’ombre se dissiper, révélant l’apparence anthropique de la dirigeante obscurcie.
+
+La princesse ne l’a jamais vue. Elle a entendu des récits. Des rumeurs. Des avertissements murmurés dans les couloirs du palais sylvinien, toujours chuchotés comme une malédiction qu’on évite d’évoquer trop fort.
+
+Mais jamais elle ne s’était retrouvée face à elle. Maintenant qu’elle la voit, elle comprend pourquoi son nom est un murmure dans l’Empire.
+
+Amanea Farae. L’Exilée. La Traîtresse. L’Ombre de la famille impériale.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_06b"
+  },
+  "c10_06b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ce qu’elle est devenue",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Son apparition est presque irréelle, comme un mirage ancré dans la pénombre. Une elfe, pas si grande, mais sculptée par la magie qui coule dans ses veines. Son teint, marqué par les stigmates de son bannissement, est d’une pâleur presque lunaire, mais parcouru de fines craquelures lumineuses vertes, trahissant l’énergie impie qui la consume lentement.
+
+Ses cheveux mi-longs, d’un blond platine chutant sur du blanc spectral, tombent en mèches libres autour de son visage, contrastant avec ses yeux d’un vert incandescent, brûlant d’une lumière sinistre qui n’a rien de naturel, le contour de ses paupières marqué par d’anciennes cicatrices.
+
+Mais ce qui frappe le plus Iriana, c’est l’aura qu’elle dégage. Une pression invisible. Une force ancienne.
+
+Amanea n’est pas simplement une Sylvinienne bannie : elle est devenue autre chose.
+
+La dame noire s’avance d’un pas fluide, presque félin, laissant sa cape ténébreuse et argent effleurer le sol de pierre. Chaque mouvement est calculé, empreint d’une grâce froide et impérieuse.
+
+Elle ne dit rien immédiatement.
+
+Elle regarde.
+
+Elle jauge.
+
+Ses yeux verts scrutent Iriana avec une intensité troublante, comme si elle sondait son être jusqu’à ses os. Iriana soutient ce regard sans ciller. Un silence glacé s’installe entre elles. Enfin, Amanea casse le silence.",
     "chars": [
       [
         "iriana",
@@ -24622,7 +24737,41 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
     "speaker": "Amanea",
-    "text": "Amanea – D’une voix posée, presque curieuse. Alors… c’est toi.\n\nSa voix est douce. Trop douce. Une caresse empoisonnée. Son accent arbore la grâce et la finesse d’une vibration propre aux serpents, sifflant et volatile. Iriana reste silencieuse. Amanea esquisse un léger sourire, dévoilant un rictus à la fois amusé et calculateur.\n\nAmanea – Tu portes un nom lourd, mon enfant.\n\nElle s’arrête à quelques pas d’elle, penchant légèrement la tête.\n\nAmanea – Farae. Un nom qui a brisé des vies. Un nom qui a écrit l’histoire dans le sang. Notre sang.\n\nElle marque une pause, ses yeux perçant Iriana comme des lames.\n\nAmanea – Un nom qui m’a été retiré. Je ne pensais pas qu’il reviendrait se présenter à moi… pas de la sorte.\n\nIriana serre discrètement les poings. Elle sent le poids de ces mots. Elle savait qu’Amanea haïssait sa lignée, mais la voir… la sentir… rend cette haine bien plus tangible.\n\nAmanea, elle, semble aussi analyser chaque détail d’Iriana.\n\nSon allure, droite et noble. Son regard, froid et résolu. La manière dont elle ne tremble pas – Ou plus - sous sa présence.\n\nAmanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si proche et si éloignée de ton père.",
+    "text": "Amanea – D’une voix posée, presque curieuse. Alors… c’est toi.
+
+Sa voix est douce. Trop douce. Une caresse empoisonnée. Son accent arbore la grâce et la finesse d’une vibration propre aux serpents, sifflante et volatile. Iriana reste silencieuse. Amanea esquisse un léger sourire, dévoilant un rictus à la fois amusé et calculateur.
+
+Amanea – Tu portes un nom lourd, mon enfant.
+
+Elle s’arrête à quelques pas d’elle, penchant légèrement la tête.
+
+Amanea – Farae. Un nom qui a brisé des vies. Un nom qui a écrit l’histoire dans le sang. Notre sang.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_07b"
+  },
+  "c10_07b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le nom retiré",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Elle marque une pause, ses yeux perçant Iriana comme des lames.
+
+Amanea – Un nom qui m’a été retiré. Je ne pensais pas qu’il reviendrait se présenter à moi… pas de la sorte.
+
+Iriana serre discrètement les poings. Elle sent le poids de ces mots. Elle savait qu’Amanea haïssait sa lignée, mais la voir… la sentir… rend cette haine bien plus tangible.
+
+Amanea, elle, semble aussi analyser chaque détail d’Iriana.
+
+Son allure, droite et noble. Son regard, froid et résolu. La manière dont elle ne tremble pas – ou plus – sous sa présence.
+
+Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si proche et si éloignée de ton père.",
     "chars": [
       [
         "iriana",
@@ -24934,7 +25083,21 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Les couloirs des prisons sont creusés dans la roche noire de la montagne qui abrite Akuhn’Nabad. Des torches imbibées de magie ombreuse diffusent une lumière pâle, vacillante, baignant les murs d’un éclat irréel. À chaque pas, Iriana sent la cité vivre autour d’elle.\n\nDes murmures résonnent dans les ténèbres. Des incantations chuchotées dans une langue qu’elle ne reconnaît pas. Par moments, elle croise des silhouettes voilées, des gardiens masqués qui ne semblent pas totalement appartenir au monde physique.\n\nPuis, progressivement, les ténèbres s’allègent.\n\nL’ascension est longue. L’architecture d’Akuhn’Nabad est verticale, chaque niveau étant relié par d’immenses escaliers ou des passerelles suspendues au-dessus du vide. Lorsqu’Iriana atteint enfin l’un des premiers paliers supérieurs, elle découvre la cité vue différemment.",
+    "text": "Les couloirs des prisons sont creusés dans la roche noire de la montagne qui abrite Akuhn’Nabad. Des torches imbibées de magie ombreuse diffusent une lumière pâle, vacillante, baignant les murs d’un éclat irréel. À chaque pas, Iriana sent la cité vivre autour d’elle.
+
+Des murmures résonnent dans les ténèbres. Des incantations chuchotées dans une langue qu’elle ne reconnaît pas. Par moments, elle croise des silhouettes voilées, des gardiens masqués qui ne semblent pas totalement appartenir au monde physique.
+
+Puis, progressivement, les ténèbres s’allègent.",
+    "chars": [],
+    "next": "c10_14b"
+  },
+  "c10_14b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Les premiers paliers",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "L’ascension est longue. L’architecture d’Akuhn’Nabad est verticale, chaque niveau étant relié par d’immenses escaliers ou des passerelles suspendues au-dessus du vide. Lorsqu’Iriana atteint enfin l’un des premiers paliers supérieurs, elle découvre la cité vue différemment.",
     "chars": [],
     "next": "c10_15",
     "zoom": true
@@ -24945,7 +25108,32 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "La princesse s’attendait à une terre de désolation, à des ruines hantées par des bannis sans foi ni loi. Mais ce qu’elle voit lui fait revoir ses certitudes. Les rues, bien que sombres, sont animées. Les Obscurcis ne sont pas une horde d’exilés errants. Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des tissus aux reflets d’ombres mouvantes. Ils ont leurs temples, où des prêtres psalmodient d’antiques prières sous l’œil de statues immenses sculptées dans l’obsidienne. Ils ont leurs codes, leurs rites, et même leurs festivités.\n\nIriana – D’un ton mesuré, observant la ville. Ce n’est pas… ce que j’imaginais.\n\nAmanea – S’amusant de sa réaction. Non ? Et qu’imaginais-tu ?\n\nIriana – Froide. Un amas de ruines peuplé de criminels et de fanatiques.\n\nAmanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et c’est ce qu’ils étaient quand ton impératrice les a bannis",
+    "text": "La princesse s’attendait à une terre de désolation, à des ruines hantées par des bannis sans foi ni loi. Mais ce qu’elle voit lui fait revoir ses certitudes. Les rues, bien que sombres, sont animées. Les Obscurcis ne sont pas une horde d’exilés errants.
+
+Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des tissus aux reflets d’ombres mouvantes. Ils ont leurs temples, où des prêtres psalmodient d’antiques prières sous l’œil de statues immenses sculptées dans l’obsidienne. Ils ont leurs codes, leurs rites, et même leurs festivités.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_15b",
+    "zoom": true
+  },
+  "c10_15b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ce qu’elle n’imaginait pas",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Iriana – D’un ton mesuré, observant la ville. Ce n’est pas… ce que j’imaginais.
+
+Amanea – S’amusant de sa réaction. Non ? Et qu’imaginais-tu ?
+
+Iriana – Froide. Un amas de ruines peuplé de criminels et de fanatiques.
+
+Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et c’est ce qu’ils étaient quand ton impératrice les a bannis.",
     "chars": [
       [
         "iriana",
@@ -25078,7 +25266,30 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Alors qu’elles progressent, Iriana remarque des différences visibles entre les habitants.\n\nCertains Obscurcis portent des marques tribales sur leur peau, signe d’un rang ou d’un rôle particulier, passant par des tatouages sous les yeux ou sur le cou. Les guerriers, reconnaissables à leurs armures finement ciselées, patrouillent avec une discipline militaire. Les mages, prêtres et cultistes, vêtus de longues robes ornées de symboles complexes, discutent en murmurant des mots qu’elle ne comprend pas. Il y a même des érudits, regroupés autour d’immenses parchemins, enseignant à de plus jeunes élèves.\n\nIriana – Intriguée. Vous avez une société aussi organisée que la nôtre.\n\nAmanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certaines choses ne changent pas même avec une bannière différente\n\nAlors qu’elles avancent vers le sommet de la cité, Iriana remarque un immense temple, sculpté dans la roche. À l’intérieur, une grande cérémonie est en cours.",
+    "text": "Alors qu’elles progressent, Iriana remarque des différences visibles entre les habitants.
+
+Certains Obscurcis portent des marques tribales sur leur peau, signe d’un rang ou d’un rôle particulier, passant par des tatouages sous les yeux ou sur le cou. Les guerriers, reconnaissables à leurs armures finement ciselées, patrouillent avec une discipline militaire. Les mages, prêtres et cultistes, vêtus de longues robes ornées de symboles complexes, discutent en murmurant des mots qu’elle ne comprend pas. Il y a même des érudits, regroupés autour d’immenses parchemins, enseignant à de plus jeunes élèves.
+
+Iriana – Intriguée. Vous avez une société aussi organisée que la nôtre.
+
+Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certaines choses ne changent pas même avec une bannière différente.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_17b",
+    "zoom": true
+  },
+  "c10_17b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le temple",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "Alors qu’elles avancent vers le sommet de la cité, Iriana remarque un immense temple, sculpté dans la roche. À l’intérieur, une grande cérémonie est en cours.",
     "chars": [
       [
         "iriana",
@@ -25254,7 +25465,38 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_palais",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Finalement, après une longue marche, elles atteignent le sommet de la cité.\n\nUn immense palais noir domine les hauteurs d’Akuhn’Nabad, ses tours effilées s’élevant vers un ciel perpétuellement voilé.\n\nL’architecture est un mélange d’élégance et de mysticisme, chaque pierre gravée de symboles anciens, interdit chez les Sylviniens, mais aussi inutilisé chez eux depuis des siècles. Ce palais est un affront aux Sylviniens, mais aussi une merveille en terme d’héritage et culturelle.\n\nIriana ne peut s’empêcher d’être impressionnée.\n\nAmanea – D’un ton calme. Bienvenue au cœur des Obscurcis.\n\nElle se tourne vers Iriana, observant sa réaction.\n\nAmanea – Alors, très chère nièce.\n\nElle marque une pause, un sourire en coin.\n\nAmanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
+    "text": "Finalement, après une longue marche, elles atteignent le sommet de la cité.
+
+Un immense palais noir domine les hauteurs d’Akuhn’Nabad, ses tours effilées s’élevant vers un ciel perpétuellement voilé.
+
+L’architecture est un mélange d’élégance et de mysticisme, chaque pierre gravée de symboles anciens, interdits chez les Sylviniens, mais aussi inutilisés chez eux depuis des siècles. Ce palais est un affront aux Sylviniens, mais aussi une merveille en termes d’héritage et de culture.
+
+Iriana ne peut s’empêcher d’être impressionnée.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_21b",
+    "zoom": true
+  },
+  "c10_21b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Au cœur des Obscurcis",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Amanea",
+    "text": "Amanea – D’un ton calme. Bienvenue au cœur des Obscurcis.
+
+Elle se tourne vers Iriana, observant sa réaction.
+
+Amanea – Alors, très chère nièce.
+
+Elle marque une pause, un sourire en coin.
+
+Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
     "chars": [
       [
         "iriana",
