@@ -24270,16 +24270,39 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 
     const uniquePush=(arr,items)=>{if(!Array.isArray(arr))return;(Array.isArray(items)?items:[items]).forEach(k=>{if(k&&!arr.includes(k))arr.push(k);});};
     const replaceOrPushGroup=(arr,group)=>{if(!Array.isArray(arr)||!group)return;const i=arr.findIndex(g=>g&&g.id===group.id);if(i>=0)arr[i]=group;else arr.push(group);};
+
+    if(!document.getElementById('amanea-sprite-style')){
+      const amaneaStyle=document.createElement('style');
+      amaneaStyle.id='amanea-sprite-style';
+      amaneaStyle.textContent=`
+        .char.amanea{max-height:104%;bottom:-5.5%;opacity:.98;filter:drop-shadow(0 0 14px rgba(82,255,126,.16)) drop-shadow(0 18px 30px rgba(0,0,0,.78));}
+        .char.amanea.dim{opacity:.54;filter:drop-shadow(0 16px 26px rgba(0,0,0,.78)) saturate(.82) brightness(.88);}
+        body.mobileUI .char.amanea{max-height:96%;bottom:-3%;}
+        @media(max-width:760px){.char.amanea{max-height:98%;bottom:-4%;}}
+      `;
+      document.head.appendChild(amaneaStyle);
+    }
+
     const c10Cover='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07120f"/><stop offset="1" stop-color="#020304"/></linearGradient><radialGradient id="r"><stop stop-color="#62ff9b" stop-opacity=".45"/><stop offset="1" stop-color="#62ff9b" stop-opacity="0"/></radialGradient></defs><rect width="900" height="560" fill="url(#g)"/><circle cx="690" cy="130" r="150" fill="url(#r)"/><path d="M0 470L100 410 170 430 250 350 310 390 370 255 420 330 470 170 515 315 575 230 625 360 690 275 735 390 810 325 900 415V560H0Z" fill="#050708"/><path d="M420 560V240L470 170 520 240V560M350 560V330L390 270 430 330M520 560V320L565 250 610 320" fill="#0a0d0d" stroke="#173328" stroke-width="4"/><g fill="#72ff9e"><circle cx="438" cy="320" r="4"/><circle cx="500" cy="325" r="4"/><circle cx="470" cy="278" r="5"/></g><path d="M120 510C300 450 560 450 810 510" fill="none" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/></svg>`);
 
     if(typeof A!=='undefined'){
+
+      A.amanea_sad='assets/sprites/amanea_sad.png';
+      A.amanea_rictus='assets/sprites/amanea_rictus.png';
+      A.amanea_neutral='assets/sprites/amanea_neutral.png';
+      A.amanea_menacing='assets/sprites/amanea_menacing.png';
+      A.amanea_terrifying='assets/sprites/amanea_terrifying.png';
+      A.amanea_smile='assets/sprites/amanea_smile.png';
+      A.amanea_away='assets/sprites/amanea_away.png';
+      A.amanea_thinking='assets/sprites/amanea_thinking.png';
+      A.amanea_angry='assets/sprites/amanea_angry.png';
       A.c10_cover=c10Cover;
-      A.c10_geoles=A.c9_key_iriana_seule_cellule||A.c9_geoles||A.bg_catacombes||A.bg_projection;
-      A.c10_extraction=A.c4v_necro_ritual||A.c9_geoles||A.bg_catacombes||A.bg_projection;
-      A.c10_amanea=A.c9_geoles||A.c4v_necro_ritual||A.bg_catacombes||A.bg_projection;
-      A.c10_akuhn=A.c9_key_akuhn_panorama||A.c9_akuhn||A.c4v_akuhn_citadel||A.bg_projection;
-      A.c10_temple=A.c4v_necro_ritual||A.c9_akuhn||A.bg_projection;
-      A.c10_palais=A.c4v_akuhn_citadel||A.c9_key_akuhn_panorama||A.c9_akuhn||A.bg_projection;
+      A.c10_geoles="assets/images/backgrounds/chapter10/c10_geoles.png";
+      A.c10_extraction=A.c10_geoles;
+      A.c10_amanea=A.c10_geoles;
+      A.c10_akuhn="assets/images/backgrounds/chapter10/c10_akuhn.png";
+      A.c10_temple="assets/images/backgrounds/chapter10/c10_temple.png";
+      A.c10_palais="assets/images/backgrounds/chapter10/c10_palais.png";
       A.music_c10_horreur=A.music_c9_capture||A.music_bellirith||A.music_tension||A.music_menu;
       A.music_c10_amanea=A.music_iriana||A.music_c9_capture||A.music_tension||A.music_menu;
       A.music_c10_cite=A.music_c9_foret||A.music_c7_rencontre_naiah||A.music_tension||A.music_menu;
@@ -24329,7 +24352,7 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
       const musicMap={};
       ['c10_01','c10_01b','c10_02','c10_03','c10_03b','c10_04','c10_04_a','c10_04_b','c10_04_c','c10_04_d','c10_05'].forEach(k=>musicMap[k]=['music_c10_horreur']);
       ['c10_06','c10_06b','c10_07','c10_07b','c10_08','c10_09','c10_09_a','c10_09_b','c10_09_c','c10_09_d','c10_10','c10_11','c10_12','c10_12_a','c10_12_b','c10_12_c','c10_12_d','c10_13'].forEach(k=>musicMap[k]=['music_c10_amanea']);
-      ['c10_14','c10_14b','c10_15','c10_15b','c10_16','c10_16_a','c10_16_b','c10_16_c','c10_16_d','c10_17','c10_17b','c10_21','c10_21b','c10_22','c10_22_a','c10_22_b','c10_22_c','c10_22_d','c10_23','c10_end'].forEach(k=>musicMap[k]=['music_c10_cite']);
+      ['c10_14','c10_14b','c10_15','c10_15b','c10_16','c10_16_a','c10_16_b','c10_16_c','c10_16_d','c10_17','c10_21','c10_21b','c10_22','c10_22_a','c10_22_b','c10_22_c','c10_22_d','c10_23','c10_end'].forEach(k=>musicMap[k]=['music_c10_cite']);
       ['c10_17b','c10_18','c10_19','c10_19_a','c10_19_b','c10_19_c','c10_19_d','c10_20'].forEach(k=>musicMap[k]=['music_c10_culte']);
       Object.assign(CODEX_MUSIC_BY_SCENE,musicMap);
     }
@@ -24434,42 +24457,18 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     "bg": "c10_geoles",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "L’obscurité ne se contente pas de l’entourer. Elle l’avale.
-
-Il n’y a plus de murs, plus de sol, plus de temps.
-
-Seulement la nuit absolue.
-
-Iriana n’entend rien. Elle ressent tout.
-
-Une présence glisse dans les profondeurs d’Akuhn Nabad. Quelque chose de primal, de mauvais, quelque chose qui ne devrait pas exister.
-
-Puis, les hurlements commencent.",
+    "text": "L’obscurité ne se contente pas de l’entourer. Elle l’avale.\n\nIl n’y a plus de murs, plus de sol, plus de temps.\n\nSeulement la nuit absolue.\n\nIriana n’entend rien. Elle ressent tout.\n\nUne présence glisse dans les profondeurs d’Akuhn Nabad. Quelque chose de primal, de mauvais, quelque chose qui ne devrait pas exister.\n\nPuis, les hurlements commencent.",
     "chars": [],
     "next": "c10_01b",
     "zoom": true
   },
   "c10_01b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Le concert de souffrance",
+    "sub": "La nuit absolue",
     "bg": "c10_geoles",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "L’Horreur Innommable.
-
-Des cris inhumains.
-
-Des voix tordues par une souffrance qui transcende la chair.
-
-Quelque part, dans une cellule voisine, un prisonnier se met à hurler.
-
-Un hurlement terrible, viscéral, déchirant la pierre elle-même.
-
-Puis un second.
-
-Puis un troisième.
-
-Une vague d’agonie envahit les souterrains, un concert de souffrances incessant.",
+    "text": "L’Horreur Innommable.\n\nDes cries inhumains.\n\nDes voix tordues par une souffrance qui transcende la chair.\n\nQuelque part, dans une cellule voisine. Un prisonnier qui se met à hurler.\n\nUn hurlement terrible, viscéral, déchirant la pierre elle-même.\n\nPuis un second.\n\nPuis un troisième.\n\nUne vague d’agonie envahit les souterrains, un concert de souffrances incessant.",
     "chars": [],
     "next": "c10_02",
     "zoom": true
@@ -24491,17 +24490,7 @@ Une vague d’agonie envahit les souterrains, un concert de souffrances incessan
     "bg": "c10_extraction",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "La douleur insupportable.
-
-Iriana hurle aussi.
-
-Elle ne voulait pas, elle ne devait pas. Mais le cauchemar est trop fort, et l’horreur envahit son corps et son âme.
-
-C’est une douleur qu’elle-même ne peut encaisser.
-
-Ce ne sont pas des cris lointains qu’elle entend. Elle ressent chaque extraction.
-
-Chaque âme tirée de sa coquille brûle dans son propre esprit.",
+    "text": "La Douleur Insupportable\n\nIriana hurle aussi.\n\nElle ne voulait pas, elle ne devait pas. Mais le cauchemar est trop fort, et l’horreur envahit son corps et son âme\n\nC’est une douleur qu’elle-même ne peut encaisser.\n\nCe ne sont pas des cris lointains qu’elle entend. Elle ressent chaque extraction.\n\nChaque âme tirée de sa coquille brüle dans son propre esprit.",
     "chars": [
       [
         "iriana",
@@ -24514,23 +24503,11 @@ Chaque âme tirée de sa coquille brûle dans son propre esprit.",
   },
   "c10_03b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Le silence après la déchirure",
+    "sub": "La douleur insupportable",
     "bg": "c10_extraction",
     "music": "music_c10_horreur",
     "speaker": "Narrateur",
-    "text": "C’est comme si elle mourait aussi à chaque cri, à chaque souffle volé.
-
-Elle suffoque, sa gorge nouée par une force qui écrase sa poitrine, sa tête prête à exploser sous les radiations abominables de douleur et d’horreur qui saturent l’espace.
-
-C’est insupportable.
-
-Elle plonge ses doigts dans ses propres cheveux, crispant sa mâchoire, luttant pour ne pas perdre la raison.
-
-Puis tout s’arrête.
-
-Un silence assourdissant s’abat sur la prison.
-
-Les âmes ont cessé de hurler… parce qu’elles n’existent plus.",
+    "text": "C’est comme si elle mourait aussi à chaque cri, à chaque souffle volé.\n\nElle suffoque, sa gorge nouée par une force qui écrase sa poitrine, sa tête prête à exploser sous les radiations abominables de douleur et d’horreur qui saturent l’espace.\n\nC’est insupportable.\n\nElle plonge ses doigts dans ses propres cheveux, crispant sa mâchoire, luttant pour ne pas perdre la raison.\n\nPuis tout s’arrête.\n\nUn silence assourdissant s’abat sur la prison.\n\nLes ames ont cessé de hurler… parce qu’elles n’existent plus.",
     "chars": [
       [
         "iriana",
@@ -24538,7 +24515,8 @@ Les âmes ont cessé de hurler… parce qu’elles n’existent plus.",
         "center"
       ]
     ],
-    "next": "c10_04"
+    "next": "c10_04",
+    "zoom": true
   },
   "c10_04": {
     "title": "Chapitre X · L’Impératrice Noire",
@@ -24679,54 +24657,38 @@ Les âmes ont cessé de hurler… parce qu’elles n’existent plus.",
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
     "speaker": "Narrateur",
-    "text": "Le silence pèse.
-
-L’obscurité de la cellule est profonde, l’air est glacé, porteur d’une présence insidieuse, comme si la prison elle-même respirait dans un murmure inaudible.
-
-La porte de la cellule s’ouvre avec un grincement sinistre, laissant la silhouette rentrer dans cette dernière. Iriana est pétrifiée, mais sa peur s’estompe légèrement en voyant l’ombre se dissiper, révélant l’apparence anthropique de la dirigeante obscurcie.
-
-La princesse ne l’a jamais vue. Elle a entendu des récits. Des rumeurs. Des avertissements murmurés dans les couloirs du palais sylvinien, toujours chuchotés comme une malédiction qu’on évite d’évoquer trop fort.
-
-Mais jamais elle ne s’était retrouvée face à elle. Maintenant qu’elle la voit, elle comprend pourquoi son nom est un murmure dans l’Empire.
-
-Amanea Farae. L’Exilée. La Traîtresse. L’Ombre de la famille impériale.",
+    "text": "Le silence pèse.\n\nL’obscurité de la cellule est profonde, l’air est glacé, porteur d’une présence insidieuse, comme si la prison elle-même respirait dans un murmure inaudible.\n\nLa porte de la cellule s’ouvre avec un grincement sinistre, laissant la silhouette rentrer dans cette dernière. Iriana, est pétrifiée, mais sa peur s’estompe légèrement en voyant l’ombre se dissiper, révélant l’apparence anthropique de la dirigeante Obscurci.\n\nLa princesse ne l’a jamais vue. Elle a entendu des récits. Des rumeurs. Des avertissements murmurés dans les couloirs du palais Sylvinien, toujours chuchotés comme une malédiction qu’on évite d’évoquer trop fort.\n\nMais jamais elle ne s’était retrouvée face à elle. Maintenant qu’elle la voit, elle comprend pourquoi son nom est un murmure dans l’empire.\n\nAmanea Farae. L’Exilée. La Traîtresse. L’Ombre de la famille impériale.",
     "chars": [
       [
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_terrifying",
+        "right"
       ]
     ],
     "next": "c10_06b"
   },
   "c10_06b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Ce qu’elle est devenue",
+    "sub": "L’Exilée",
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
     "speaker": "Narrateur",
-    "text": "Son apparition est presque irréelle, comme un mirage ancré dans la pénombre. Une elfe, pas si grande, mais sculptée par la magie qui coule dans ses veines. Son teint, marqué par les stigmates de son bannissement, est d’une pâleur presque lunaire, mais parcouru de fines craquelures lumineuses vertes, trahissant l’énergie impie qui la consume lentement.
-
-Ses cheveux mi-longs, d’un blond platine chutant sur du blanc spectral, tombent en mèches libres autour de son visage, contrastant avec ses yeux d’un vert incandescent, brûlant d’une lumière sinistre qui n’a rien de naturel, le contour de ses paupières marqué par d’anciennes cicatrices.
-
-Mais ce qui frappe le plus Iriana, c’est l’aura qu’elle dégage. Une pression invisible. Une force ancienne.
-
-Amanea n’est pas simplement une Sylvinienne bannie : elle est devenue autre chose.
-
-La dame noire s’avance d’un pas fluide, presque félin, laissant sa cape ténébreuse et argent effleurer le sol de pierre. Chaque mouvement est calculé, empreint d’une grâce froide et impérieuse.
-
-Elle ne dit rien immédiatement.
-
-Elle regarde.
-
-Elle jauge.
-
-Ses yeux verts scrutent Iriana avec une intensité troublante, comme si elle sondait son être jusqu’à ses os. Iriana soutient ce regard sans ciller. Un silence glacé s’installe entre elles. Enfin, Amanea casse le silence.",
+    "text": "Son apparition est presque irréelle, comme un mirage ancré dans la pénombre. Une elfe, pas si grande, mais sculptée par la magie qui coule dans ses veines. Son teint, marqué par les stigmates de son bannissement, est d’une pâleur presque lunaire, mais parcouru de fines craquelures lumineuses verte, trahissant l’énergie impie qui la consume lentement.\n\nSes cheveux mi-longs, d’un blond platine chutant sur du blanc spectral, tombent en mèches libres autour de son visage, contrastant avec ses yeux d’un vert incandescent, brûlant d’une lumière sinistre qui n’a rien de naturel, le contour de ses paupières marqués par d’anciennes cicatrice.\n\nMais ce qui frappe le plus Iriana, c’est l’aura qu’elle dégage. Une pression invisible. Une force ancienne.\n\nAmanea n’est pas simplement une Sylvinienne bannie, elle est devenue autre chose.\n\nLa dame noire s’avance d’un pas fluide, presque félin, laissant sa cape ténébreuse et argent effleurer le sol de pierre. Chaque mouvement est calculé, empreint d’une grâce froide et impérieuse.\n\nElle ne dit rien immédiatement.\n\nElle regarde.\n\nElle jauge.\n\nSes yeux verts scrutent Iriana avec une intensité troublante, comme si elle sondait son être jusqu’à ses os. Iriana soutient ce regard sans ciller. Un silence glacé s’installe entre elles. Enfin, Amanea casse le silence",
     "chars": [
       [
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_07"
@@ -24737,46 +24699,38 @@ Ses yeux verts scrutent Iriana avec une intensité troublante, comme si elle son
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
     "speaker": "Amanea",
-    "text": "Amanea – D’une voix posée, presque curieuse. Alors… c’est toi.
-
-Sa voix est douce. Trop douce. Une caresse empoisonnée. Son accent arbore la grâce et la finesse d’une vibration propre aux serpents, sifflante et volatile. Iriana reste silencieuse. Amanea esquisse un léger sourire, dévoilant un rictus à la fois amusé et calculateur.
-
-Amanea – Tu portes un nom lourd, mon enfant.
-
-Elle s’arrête à quelques pas d’elle, penchant légèrement la tête.
-
-Amanea – Farae. Un nom qui a brisé des vies. Un nom qui a écrit l’histoire dans le sang. Notre sang.",
+    "text": "Amanea – D’une voix posée, presque curieuse. Alors… c’est toi.\n\nSa voix est douce. Trop douce. Une caresse empoisonnée. Son accent arbore la grâce et la finesse d’une vibration propre aux serpents, sifflant et volatile. Iriana reste silencieuse. Amanea esquisse un léger sourire, dévoilant un rictus à la fois amusé et calculateur.\n\nAmanea – Tu portes un nom lourd, mon enfant.\n\nElle s’arrête à quelques pas d’elle, penchant légèrement la tête.\n\nAmanea – Farae. Un nom qui a brisé des vies. Un nom qui a écrit l’histoire dans le sang. Notre sang.",
     "chars": [
       [
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_rictus",
+        "right"
       ]
     ],
     "next": "c10_07b"
   },
   "c10_07b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Le nom retiré",
+    "sub": "Le poids du nom",
     "bg": "c10_amanea",
     "music": "music_c10_amanea",
-    "speaker": "Narrateur",
-    "text": "Elle marque une pause, ses yeux perçant Iriana comme des lames.
-
-Amanea – Un nom qui m’a été retiré. Je ne pensais pas qu’il reviendrait se présenter à moi… pas de la sorte.
-
-Iriana serre discrètement les poings. Elle sent le poids de ces mots. Elle savait qu’Amanea haïssait sa lignée, mais la voir… la sentir… rend cette haine bien plus tangible.
-
-Amanea, elle, semble aussi analyser chaque détail d’Iriana.
-
-Son allure, droite et noble. Son regard, froid et résolu. La manière dont elle ne tremble pas – ou plus – sous sa présence.
-
-Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si proche et si éloignée de ton père.",
+    "speaker": "Amanea",
+    "text": "Elle marque une pause, ses yeux perçant Iriana comme des lames.\n\nAmanea – Un nom qui m’a été retiré. Je ne pensais pas qu’il reviendrait se présenter à moi… pas de la sorte.\n\nIriana serre discrètement les poings. Elle sent le poids de ces mots. Elle savait qu’Amanea haïssait sa lignée, mais la voir… la sentir… rend cette haine bien plus tangible.\n\nAmanea, elle, semble aussi analyser chaque détail d’Iriana.\n\nSon allure, droite et noble. Son regard, froid et résolu. La manière dont elle ne tremble pas – Ou plus - sous sa présence.\n\nAmanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si proche et si éloignée de ton père.",
     "chars": [
       [
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_08"
@@ -24793,6 +24747,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_09"
@@ -24809,6 +24768,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "choices": [
@@ -24861,6 +24825,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_10"
@@ -24877,6 +24846,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_10"
@@ -24893,6 +24867,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_10"
@@ -24909,6 +24888,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_terrifying",
+        "right"
       ]
     ],
     "next": "c10_10"
@@ -24925,6 +24909,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_sad",
+        "right"
       ]
     ],
     "next": "c10_11"
@@ -24941,6 +24930,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_away",
+        "right"
       ]
     ],
     "next": "c10_12"
@@ -24957,6 +24951,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "choices": [
@@ -25009,6 +25008,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_13"
@@ -25025,6 +25029,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_angry",
+        "right"
       ]
     ],
     "next": "c10_13"
@@ -25041,6 +25050,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_13"
@@ -25057,6 +25071,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_13"
@@ -25073,6 +25092,11 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_smile",
+        "right"
       ]
     ],
     "next": "c10_14"
@@ -25083,17 +25107,14 @@ Amanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si pro
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Les couloirs des prisons sont creusés dans la roche noire de la montagne qui abrite Akuhn’Nabad. Des torches imbibées de magie ombreuse diffusent une lumière pâle, vacillante, baignant les murs d’un éclat irréel. À chaque pas, Iriana sent la cité vivre autour d’elle.
-
-Des murmures résonnent dans les ténèbres. Des incantations chuchotées dans une langue qu’elle ne reconnaît pas. Par moments, elle croise des silhouettes voilées, des gardiens masqués qui ne semblent pas totalement appartenir au monde physique.
-
-Puis, progressivement, les ténèbres s’allègent.",
+    "text": "Les couloirs des prisons sont creusés dans la roche noire de la montagne qui abrite Akuhn’Nabad. Des torches imbibées de magie ombreuse diffusent une lumière pâle, vacillante, baignant les murs d’un éclat irréel. À chaque pas, Iriana sent la cité vivre autour d’elle.\n\nDes murmures résonnent dans les ténèbres. Des incantations chuchotées dans une langue qu’elle ne reconnaît pas. Par moments, elle croise des silhouettes voilées, des gardiens masqués qui ne semblent pas totalement appartenir au monde physique.\n\nPuis, progressivement, les ténèbres s’allègent.",
     "chars": [],
-    "next": "c10_14b"
+    "next": "c10_14b",
+    "zoom": true
   },
   "c10_14b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Les premiers paliers",
+    "sub": "L’ascension",
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
@@ -25108,14 +25129,17 @@ Puis, progressivement, les ténèbres s’allègent.",
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "La princesse s’attendait à une terre de désolation, à des ruines hantées par des bannis sans foi ni loi. Mais ce qu’elle voit lui fait revoir ses certitudes. Les rues, bien que sombres, sont animées. Les Obscurcis ne sont pas une horde d’exilés errants.
-
-Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des tissus aux reflets d’ombres mouvantes. Ils ont leurs temples, où des prêtres psalmodient d’antiques prières sous l’œil de statues immenses sculptées dans l’obsidienne. Ils ont leurs codes, leurs rites, et même leurs festivités.",
+    "text": "La princesse s’attendait à une terre de désolation, à des ruines hantées par des bannis sans foi ni loi. Mais ce qu’elle voit lui fait revoir ses certitudes. Les rues, bien que sombres, sont animées. Les Obscurcis ne sont pas une horde d’exilés errants. Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des tissus aux reflets d’ombres mouvantes. Ils ont leurs temples, où des prêtres psalmodient d’antiques prières sous l’œil de statues immenses sculptées dans l’obsidienne. Ils ont leurs codes, leurs rites, et même leurs festivités.",
     "chars": [
       [
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_15b",
@@ -25123,22 +25147,21 @@ Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des
   },
   "c10_15b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Ce qu’elle n’imaginait pas",
+    "sub": "Une cité vivante",
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Iriana – D’un ton mesuré, observant la ville. Ce n’est pas… ce que j’imaginais.
-
-Amanea – S’amusant de sa réaction. Non ? Et qu’imaginais-tu ?
-
-Iriana – Froide. Un amas de ruines peuplé de criminels et de fanatiques.
-
-Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et c’est ce qu’ils étaient quand ton impératrice les a bannis.",
+    "text": "Iriana – D’un ton mesuré, observant la ville. Ce n’est pas… ce que j’imaginais.\n\nAmanea – S’amusant de sa réaction. Non ? Et qu’imaginais-tu ?\n\nIriana – Froide. Un amas de ruines peuplé de criminels et de fanatiques.\n\nAmanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et c’est ce qu’ils étaient quand ton impératrice les a bannis",
     "chars": [
       [
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_smile",
+        "right"
       ]
     ],
     "next": "c10_16",
@@ -25156,6 +25179,11 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "choices": [
@@ -25208,6 +25236,11 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_17"
@@ -25224,6 +25257,11 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_17"
@@ -25240,6 +25278,11 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_17"
@@ -25256,6 +25299,11 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_17"
@@ -25266,18 +25314,17 @@ Amanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et
     "bg": "c10_akuhn",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Alors qu’elles progressent, Iriana remarque des différences visibles entre les habitants.
-
-Certains Obscurcis portent des marques tribales sur leur peau, signe d’un rang ou d’un rôle particulier, passant par des tatouages sous les yeux ou sur le cou. Les guerriers, reconnaissables à leurs armures finement ciselées, patrouillent avec une discipline militaire. Les mages, prêtres et cultistes, vêtus de longues robes ornées de symboles complexes, discutent en murmurant des mots qu’elle ne comprend pas. Il y a même des érudits, regroupés autour d’immenses parchemins, enseignant à de plus jeunes élèves.
-
-Iriana – Intriguée. Vous avez une société aussi organisée que la nôtre.
-
-Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certaines choses ne changent pas même avec une bannière différente.",
+    "text": "Alors qu’elles progressent, Iriana remarque des différences visibles entre les habitants.\n\nCertains Obscurcis portent des marques tribales sur leur peau, signe d’un rang ou d’un rôle particulier, passant par des tatouages sous les yeux ou sur le cou. Les guerriers, reconnaissables à leurs armures finement ciselées, patrouillent avec une discipline militaire. Les mages, prêtres et cultistes, vêtus de longues robes ornées de symboles complexes, discutent en murmurant des mots qu’elle ne comprend pas. Il y a même des érudits, regroupés autour d’immenses parchemins, enseignant à de plus jeunes élèves.\n\nIriana – Intriguée. Vous avez une société aussi organisée que la nôtre.\n\nAmanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certaines choses ne changent pas même avec une bannière différente",
     "chars": [
       [
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_17b",
@@ -25285,9 +25332,9 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
   },
   "c10_17b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Le temple",
-    "bg": "c10_temple",
-    "music": "music_c10_culte",
+    "sub": "Un peuple organisé",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
     "speaker": "Narrateur",
     "text": "Alors qu’elles avancent vers le sommet de la cité, Iriana remarque un immense temple, sculpté dans la roche. À l’intérieur, une grande cérémonie est en cours.",
     "chars": [
@@ -25295,6 +25342,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_18",
@@ -25312,6 +25364,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_rictus",
+        "right"
       ]
     ],
     "next": "c10_19",
@@ -25329,6 +25386,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "choices": [
@@ -25390,6 +25452,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_20"
@@ -25406,6 +25473,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_20"
@@ -25422,6 +25494,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_20"
@@ -25438,6 +25515,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_20"
@@ -25454,6 +25536,11 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_menacing",
+        "right"
       ]
     ],
     "next": "c10_21",
@@ -25465,18 +25552,17 @@ Amanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certa
     "bg": "c10_palais",
     "music": "music_c10_cite",
     "speaker": "Narrateur",
-    "text": "Finalement, après une longue marche, elles atteignent le sommet de la cité.
-
-Un immense palais noir domine les hauteurs d’Akuhn’Nabad, ses tours effilées s’élevant vers un ciel perpétuellement voilé.
-
-L’architecture est un mélange d’élégance et de mysticisme, chaque pierre gravée de symboles anciens, interdits chez les Sylviniens, mais aussi inutilisés chez eux depuis des siècles. Ce palais est un affront aux Sylviniens, mais aussi une merveille en termes d’héritage et de culture.
-
-Iriana ne peut s’empêcher d’être impressionnée.",
+    "text": "Finalement, après une longue marche, elles atteignent le sommet de la cité.\n\nUn immense palais noir domine les hauteurs d’Akuhn’Nabad, ses tours effilées s’élevant vers un ciel perpétuellement voilé.\n\nL’architecture est un mélange d’élégance et de mysticisme, chaque pierre gravée de symboles anciens, interdit chez les Sylviniens, mais aussi inutilisé chez eux depuis des siècles. Ce palais est un affront aux Sylviniens, mais aussi une merveille en terme d’héritage et culturelle.\n\nIriana ne peut s’empêcher d’être impressionnée.",
     "chars": [
       [
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_21b",
@@ -25484,24 +25570,21 @@ Iriana ne peut s’empêcher d’être impressionnée.",
   },
   "c10_21b": {
     "title": "Chapitre X · L’Impératrice Noire",
-    "sub": "Au cœur des Obscurcis",
+    "sub": "Le palais noir",
     "bg": "c10_palais",
     "music": "music_c10_cite",
-    "speaker": "Amanea",
-    "text": "Amanea – D’un ton calme. Bienvenue au cœur des Obscurcis.
-
-Elle se tourne vers Iriana, observant sa réaction.
-
-Amanea – Alors, très chère nièce.
-
-Elle marque une pause, un sourire en coin.
-
-Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
+    "speaker": "Narrateur",
+    "text": "Amanea – D’un ton calme. Bienvenue au cœur des Obscurcis.\n\nElle se tourne vers Iriana, observant sa réaction.\n\nAmanea – Alors, très chère nièce.\n\nElle marque une pause, un sourire en coin.\n\nAmanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
     "chars": [
       [
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_rictus",
+        "right"
       ]
     ],
     "next": "c10_22",
@@ -25519,6 +25602,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_rictus",
+        "right"
       ]
     ],
     "choices": [
@@ -25571,6 +25659,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_neutral",
+        "right"
       ]
     ],
     "next": "c10_23"
@@ -25587,6 +25680,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_calm",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_away",
+        "right"
       ]
     ],
     "next": "c10_23"
@@ -25603,6 +25701,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_stern",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_angry",
+        "right"
       ]
     ],
     "next": "c10_23"
@@ -25619,6 +25722,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_thinking",
+        "right"
       ]
     ],
     "next": "c10_23"
@@ -25635,6 +25743,11 @@ Amanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
         "iriana",
         "iriana_profile",
         "left"
+      ],
+      [
+        "amanea",
+        "amanea_smile",
+        "right"
       ]
     ],
     "next": "c10_end",
@@ -25750,7 +25863,7 @@ Confirmer ?`);
     console.warn('Chapitre X · L’Impératrice Noire non appliqué',error);
   }
 })();
-
 </script>
+
 </body>
 </html>
