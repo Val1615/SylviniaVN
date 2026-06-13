@@ -23538,5 +23538,102 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 })();
 </script>
 
+
+
+<script>
+/* v0.184 · Chapitre IX : lac, montagnes et lisière de la Forêt Interdite */
+(function patchChapter9LakeAndBorderKeyScenes(){
+  try{
+    if(window.__sylviniaV184Chapter9LakeAndBorder) return;
+    window.__sylviniaV184Chapter9LakeAndBorder = true;
+
+    const imageKeys=['c9_key_lac_montagnes','c9_key_lisiere_foret_interdite'];
+
+    if(typeof A!=='undefined'){
+      Object.assign(A,{
+        c9_key_lac_montagnes:'assets/images/keyscenes/chapter9/c9_key_lac_montagnes.png',
+        c9_key_lisiere_foret_interdite:'assets/images/keyscenes/chapter9/c9_key_lisiere_foret_interdite.png'
+      });
+    }
+
+    if(typeof S!=='undefined'){
+      if(S.c9_13){
+        S.c9_13.bg='c9_key_lac_montagnes';
+        S.c9_13.chars=[];
+        S.c9_13.zoom=true;
+      }
+      if(S.c9_14){
+        S.c9_14.bg='c9_key_lisiere_foret_interdite';
+        S.c9_14.chars=[];
+        S.c9_14.zoom=true;
+      }
+    }
+
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c9_key_lac_montagnes:{
+          title:'Chapitre IX · Le lac sous les pics noirs',
+          body:'Le groupe longe un lac paisible encore bordé par la vie sylvinienne, tandis que des montagnes sombres et démesurées disparaissent dans les nuages.',
+          src:A.c9_key_lac_montagnes
+        },
+        c9_key_lisiere_foret_interdite:{
+          title:'Chapitre IX · Le seuil de la Forêt Interdite',
+          body:'La lumière et la végétation vivante s’arrêtent net devant les bois noirs, où la brume violette semble absorber le jour.',
+          src:A.c9_key_lisiere_foret_interdite
+        }
+      });
+    }
+
+    if(typeof CODEX_IMAGE_ORDER!=='undefined' && Array.isArray(CODEX_IMAGE_ORDER)){
+      imageKeys.forEach(key=>{ if(!CODEX_IMAGE_ORDER.includes(key)) CODEX_IMAGE_ORDER.push(key); });
+    }
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined' && Array.isArray(CODEX_IMAGE_GROUPS)){
+      let group=CODEX_IMAGE_GROUPS.find(g=>g && g.id==='chapter9');
+      if(!group){
+        group={id:'chapter9',title:'Chapitre IX · L’heure du départ',sections:[]};
+        CODEX_IMAGE_GROUPS.push(group);
+      }
+      group.sections=Array.isArray(group.sections)?group.sections:[];
+      let routeSection=group.sections.find(s=>s && s.title==='La route depuis Al’Gratal');
+      if(!routeSection){
+        routeSection={title:'La route depuis Al’Gratal',keys:[]};
+        group.sections.unshift(routeSection);
+      }
+      routeSection.keys=Array.isArray(routeSection.keys)?routeSection.keys:[];
+      if(!routeSection.keys.includes('c9_key_lac_montagnes')) routeSection.keys.push('c9_key_lac_montagnes');
+
+      let borderSection=group.sections.find(s=>s && s.title==='Le seuil de la Forêt Interdite');
+      if(!borderSection){
+        borderSection={title:'Le seuil de la Forêt Interdite',keys:[]};
+        const routeIndex=group.sections.indexOf(routeSection);
+        group.sections.splice(Math.max(0,routeIndex+1),0,borderSection);
+      }
+      borderSection.keys=Array.isArray(borderSection.keys)?borderSection.keys:[];
+      if(!borderSection.keys.includes('c9_key_lisiere_foret_interdite')) borderSection.keys.push('c9_key_lisiere_foret_interdite');
+    }
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c9_13:['c9_key_lac_montagnes'],
+        c9_14:['c9_key_lisiere_foret_interdite']
+      });
+    }
+
+    if(typeof state!=='undefined' && state && state.devMode){
+      state.codexUnlockedImages=[...new Set([...(state.codexUnlockedImages||[]),...imageKeys])];
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.184 · Lac et lisière du Chapitre IX';
+
+    if(typeof save==='function') save();
+    if(typeof renderCodex==='function' && !document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+  }catch(e){
+    console.warn('Correctif v0.184 du lac et de la lisière non appliqué',e);
+  }
+})();
+</script>
+
 </body>
 </html>
