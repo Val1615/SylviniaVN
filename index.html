@@ -23386,6 +23386,332 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 
 
 <script>
+/* v0.182 · Chapitre IX : images clés sélectionnées */
+(function patchChapter9SelectedKeyScenes(){
+  try{
+    if(window.__sylviniaV182Chapter9SelectedKeyScenes) return;
+    window.__sylviniaV182Chapter9SelectedKeyScenes = true;
+
+    const uniquePush=(arr,items)=>{
+      if(!Array.isArray(arr)) return;
+      (Array.isArray(items)?items:[items]).forEach(item=>{
+        if(item && !arr.includes(item)) arr.push(item);
+      });
+    };
+    const replaceOrPushGroup=(groups,group)=>{
+      if(!Array.isArray(groups)||!group) return;
+      const index=groups.findIndex(entry=>entry&&entry.id===group.id);
+      if(index>=0) groups[index]=group;
+      else groups.push(group);
+    };
+
+    const c9ImageKeys=[
+      'c9_key_soldat_voile',
+      'c9_key_naiah_apparition',
+      'c9_key_confidentes_retrouvailles',
+      'c9_key_passage_brume',
+      'c9_key_naiah_guide',
+      'c9_key_encerclement',
+      'c9_key_alamma_revelation',
+      'c9_key_alamma_iriana',
+      'c9_key_chaines_ombre'
+    ];
+
+    if(typeof A!=='undefined'){
+      Object.assign(A,{
+        c9_key_soldat_voile:'assets/images/keyscenes/chapter9/c9_key_soldat_voile.png',
+        c9_key_naiah_apparition:'assets/images/keyscenes/chapter9/c9_key_naiah_apparition.png',
+        c9_key_confidentes_retrouvailles:'assets/images/keyscenes/chapter9/c9_key_confidentes_retrouvailles.png',
+        c9_key_passage_brume:'assets/images/keyscenes/chapter9/c9_key_passage_brume.png',
+        c9_key_naiah_guide:'assets/images/keyscenes/chapter9/c9_key_naiah_guide.png',
+        c9_key_encerclement:'assets/images/keyscenes/chapter9/c9_key_encerclement.png',
+        c9_key_alamma_revelation:'assets/images/keyscenes/chapter9/c9_key_alamma_revelation.png',
+        c9_key_alamma_iriana:'assets/images/keyscenes/chapter9/c9_key_alamma_iriana.png',
+        c9_key_chaines_ombre:'assets/images/keyscenes/chapter9/c9_key_chaines_ombre.png'
+      });
+    }
+
+    if(typeof S!=='undefined'){
+      const apply=(sceneId,imageKey)=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=imageKey;
+        scene.hideChars=true;
+        scene.zoom=false;
+      };
+
+      apply('c9_18','c9_key_soldat_voile');
+      apply('c9_24','c9_key_naiah_apparition');
+
+      // La CG des retrouvailles est désormais la récompense visuelle exclusive
+      // du choix stratégique de c9_29, et non une illustration automatique de c9_26.
+      apply('c9_29_b','c9_key_confidentes_retrouvailles');
+
+      apply('c9_30','c9_key_passage_brume');
+      apply('c9_31','c9_key_naiah_guide');
+      apply('c9_33','c9_key_encerclement');
+      apply('c9_34','c9_key_alamma_revelation');
+      apply('c9_35','c9_key_alamma_iriana');
+      apply('c9_39','c9_key_chaines_ombre');
+    }
+
+    if(typeof CODEX_IMAGES!=='undefined' && typeof A!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c9_key_soldat_voile:{
+          title:'Chapitre IX · Le voile efface un soldat',
+          body:'À la lisière de la Forêt Interdite, la brume absorbe un soldat de Forthaven tandis que chaque membre du groupe réagit selon sa nature.',
+          src:A.c9_key_soldat_voile
+        },
+        c9_key_naiah_apparition:{
+          title:'Chapitre IX · Naïah dans la brume',
+          body:'Naïah se révèle au-dessus du groupe, perchée dans les arbres comme si la Forêt Interdite l’avait elle-même façonnée.',
+          src:A.c9_key_naiah_apparition
+        },
+        c9_key_confidentes_retrouvailles:{
+          title:'Chapitre IX · Les confidentes de l’Auberge',
+          body:'Récompense du choix stratégique : Hylee rappelle à Naïah leurs confidences nocturnes et retrouve, derrière l’Ombre, l’amie qui revenait toujours.',
+          src:A.c9_key_confidentes_retrouvailles
+        },
+        c9_key_passage_brume:{
+          title:'Chapitre IX · Le passage s’ouvre',
+          body:'Naïah ouvre une voie dans la brume et entraîne le groupe au-delà de la lisière.',
+          src:A.c9_key_passage_brume
+        },
+        c9_key_naiah_guide:{
+          title:'Chapitre IX · À travers son royaume',
+          body:'Naïah mène le groupe dans les profondeurs de la Forêt Interdite, sous une lumière de plus en plus étrangère.',
+          src:A.c9_key_naiah_guide
+        },
+        c9_key_encerclement:{
+          title:'Chapitre IX · Rouge, vert, violet',
+          body:'Les Obscurcis émergent tout autour du groupe, leurs yeux révélant l’énergie sombre qui les traverse.',
+          src:A.c9_key_encerclement
+        },
+        c9_key_alamma_revelation:{
+          title:'Chapitre IX · Alamma Farae',
+          body:'Le père d’Iriana sort des rangs obscurcis, marqué par les yeux et les fissures rouges du Chaos.',
+          src:A.c9_key_alamma_revelation
+        },
+        c9_key_alamma_iriana:{
+          title:'Chapitre IX · Ma fille. Enfin.',
+          body:'Alamma et Iriana se font face. Le reste du groupe s’efface derrière une confrontation attendue depuis des années.',
+          src:A.c9_key_alamma_iriana
+        },
+        c9_key_chaines_ombre:{
+          title:'Chapitre IX · Magie étouffée',
+          body:'Les chaînes runiques se referment et absorbent toute tentative magique, transformant la rencontre en capture.',
+          src:A.c9_key_chaines_ombre
+        }
+      });
+    }
+
+    if(typeof CODEX_IMAGE_ORDER!=='undefined'){
+      uniquePush(CODEX_IMAGE_ORDER,c9ImageKeys);
+    }
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'){
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{
+        id:'chapter9',
+        title:'Chapitre IX · L’heure du départ',
+        sections:[
+          {
+            title:'La brume et le retour de Naïah',
+            keys:[
+              'c9_key_soldat_voile',
+              'c9_key_naiah_apparition',
+              'c9_key_confidentes_retrouvailles',
+              'c9_key_passage_brume',
+              'c9_key_naiah_guide'
+            ]
+          },
+          {
+            title:'Le piège des Obscurcis',
+            keys:[
+              'c9_key_encerclement',
+              'c9_key_alamma_revelation',
+              'c9_key_alamma_iriana',
+              'c9_key_chaines_ombre'
+            ]
+          }
+        ]
+      });
+    }
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c9_18:['c9_key_soldat_voile'],
+        c9_24:['c9_key_naiah_apparition'],
+        c9_29_b:['c9_key_confidentes_retrouvailles'],
+        c9_30:['c9_key_passage_brume'],
+        c9_31:['c9_key_naiah_guide'],
+        c9_33:['c9_key_encerclement'],
+        c9_34:['c9_key_alamma_revelation'],
+        c9_35:['c9_key_alamma_iriana'],
+        c9_39:['c9_key_chaines_ombre']
+      });
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.182 · Images clés du Chapitre IX';
+
+    if(typeof updateProgressUI==='function') updateProgressUI();
+  }catch(error){
+    console.warn('Correctif v0.182 images clés du Chapitre IX non appliqué',error);
+  }
+})();
+</script>
+
+
+<script>
+/* v0.183 · Chapitre IX : Akuhn’Nabad et la cellule d’Iriana */
+(function patchChapter9AkuhnAndPrisonKeyScenes(){
+  try{
+    if(window.__sylviniaV183Chapter9AkuhnAndPrisonKeyScenes) return;
+    window.__sylviniaV183Chapter9AkuhnAndPrisonKeyScenes = true;
+
+    const uniquePush=(arr,items)=>{
+      if(!Array.isArray(arr)) return;
+      (Array.isArray(items)?items:[items]).forEach(item=>{
+        if(item && !arr.includes(item)) arr.push(item);
+      });
+    };
+    const replaceOrPushGroup=(groups,group)=>{
+      if(!Array.isArray(groups)||!group) return;
+      const index=groups.findIndex(entry=>entry&&entry.id===group.id);
+      if(index>=0) groups[index]=group;
+      else groups.push(group);
+    };
+
+    const newKeys=[
+      'c9_key_akuhn_panorama',
+      'c9_key_akuhn_procession',
+      'c9_key_iriana_jetee_geole',
+      'c9_key_iriana_seule_cellule'
+    ];
+
+    if(typeof A!=='undefined'){
+      Object.assign(A,{
+        c9_key_akuhn_panorama:'assets/images/keyscenes/chapter9/c9_key_akuhn_panorama.png',
+        c9_key_akuhn_procession:'assets/images/keyscenes/chapter9/c9_key_akuhn_procession.png',
+        c9_key_iriana_jetee_geole:'assets/images/keyscenes/chapter9/c9_key_iriana_jetee_geole.png',
+        c9_key_iriana_seule_cellule:'assets/images/keyscenes/chapter9/c9_key_iriana_seule_cellule.png'
+      });
+    }
+
+    if(typeof S!=='undefined'){
+      const apply=(sceneId,imageKey)=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=imageKey;
+        scene.hideChars=true;
+        scene.zoom=false;
+      };
+
+      apply('c9_42','c9_key_akuhn_panorama');
+      apply('c9_43','c9_key_akuhn_procession');
+
+      if(S.c9_44){
+        Object.assign(S.c9_44,{
+          sub:'Jetée dans les profondeurs',
+          bg:'c9_key_iriana_jetee_geole',
+          hideChars:true,
+          zoom:false,
+          chars:[],
+          text:'Les Obscurcis séparent Iriana du reste du groupe et l’entraînent plus profondément sous la cité.\n\nLa cellule qui lui est réservée se trouve au bout d’un couloir noyé d’humidité et d’une lueur verte maladive. Alamma ouvre la lourde porte de fer, puis pousse sa fille à l’intérieur.\n\nIriana chute sur la pierre froide. Sa robe claire se souille au contact du sol humide, mais elle relève aussitôt la tête.\n\nAlamma demeure dans l’encadrement, au-dessus d’elle, ses yeux et les marques rouges de son corps éclairés par l’énergie du Chaos.\n\n« Réfléchis, ma fille. Tu es là où tu aurais toujours dû être. Sans le savoir… tu m’as rendu un fier service. »\n\nElle ne lui offre aucune réponse. Seulement un regard assez dur pour transformer le silence en menace.',
+          next:'c9_45'
+        });
+      }
+
+      S.c9_45={
+        title:'Chapitre IX · L’heure du départ',
+        sub:'Seule sous la flamme verte',
+        bg:'c9_key_iriana_seule_cellule',
+        music:'music_c9_capture',
+        speaker:'Narrateur',
+        text:'La porte se referme dans un fracas sourd.\n\nLes pas d’Alamma s’éloignent, puis disparaissent. Il ne reste plus que le ruissellement de l’eau entre les pierres et la flamme verte qui brûle hors de la cellule, seule source de lumière dans les profondeurs.\n\nIriana demeure contre le mur, couverte de poussière et d’humidité. Sa colère n’a pas disparu. Elle s’est tassée sous ses côtes, plus froide, plus dense.\n\nLa princesse impériale est seule.\n\nLes négociations sont terminées.\n\nSeule reste la nuit sans fin de la Cité Noire.',
+        chars:[],
+        hideChars:true,
+        zoom:false,
+        next:'c9_end'
+      };
+    }
+
+    if(typeof CODEX_IMAGES!=='undefined' && typeof A!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        c9_key_akuhn_panorama:{
+          title:'Chapitre IX · La première vision d’Akuhn’Nabad',
+          body:'La Cité Noire se déploie sous une brume verdâtre, traversée de manifestations d’énergie sombre rouges, violettes et vertes.',
+          src:A.c9_key_akuhn_panorama
+        },
+        c9_key_akuhn_procession:{
+          title:'Chapitre IX · Sous les regards de la Cité Noire',
+          body:'Les prisonniers traversent Akuhn’Nabad au milieu des silhouettes obscurcies et des lueurs surnaturelles qui rongent la cité.',
+          src:A.c9_key_akuhn_procession
+        },
+        c9_key_iriana_jetee_geole:{
+          title:'Chapitre IX · Jetée dans les profondeurs',
+          body:'Iriana chute dans sa cellule tandis qu’Alamma la domine depuis l’encadrement, marqué par l’énergie rouge du Chaos.',
+          src:A.c9_key_iriana_jetee_geole
+        },
+        c9_key_iriana_seule_cellule:{
+          title:'Chapitre IX · La flamme derrière les barreaux',
+          body:'Après le départ d’Alamma, Iriana demeure seule dans l’obscurité. La flamme verte du couloir est sa seule lumière.',
+          src:A.c9_key_iriana_seule_cellule
+        }
+      });
+    }
+
+    if(typeof CODEX_IMAGE_ORDER!=='undefined') uniquePush(CODEX_IMAGE_ORDER,newKeys);
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'){
+      const existing=CODEX_IMAGE_GROUPS.find(entry=>entry&&entry.id==='chapter9');
+      const sections=Array.isArray(existing&&existing.sections)?existing.sections.slice():[];
+      const title='Akuhn’Nabad et les geôles';
+      const replacement={title,keys:newKeys.slice()};
+      const idx=sections.findIndex(section=>section&&section.title===title);
+      if(idx>=0) sections[idx]=replacement;
+      else sections.push(replacement);
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{
+        id:'chapter9',
+        title:'Chapitre IX · L’heure du départ',
+        sections
+      });
+    }
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c9_42:['c9_key_akuhn_panorama'],
+        c9_43:['c9_key_akuhn_procession'],
+        c9_44:['c9_key_iriana_jetee_geole'],
+        c9_45:['c9_key_iriana_seule_cellule']
+      });
+    }
+
+    if(typeof CODEX_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_BY_SCENE,{
+        c9_45:['geoles_akuhn','alamma_farae']
+      });
+    }
+
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_MUSIC_BY_SCENE,{
+        c9_45:['music_c9_capture']
+      });
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.183 · Akuhn’Nabad et les geôles';
+
+    if(typeof updateProgressUI==='function') updateProgressUI();
+  }catch(error){
+    console.warn('Correctif v0.183 Akuhn’Nabad et cellule non appliqué',error);
+  }
+})();
+</script>
+
+
+
+<script>
 /* v0.183 · Correction Chapitre IX : montage du voyage sans créer de nouvelles scènes */
 (function patchChapter9TravelKeyScenesCorrected(){
   try{
@@ -23537,8 +23863,6 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
   }
 })();
 </script>
-
-
 
 <script>
 /* v0.184 · Chapitre IX : lac, montagnes et lisière de la Forêt Interdite */
