@@ -24260,5 +24260,1255 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
 })();
 </script>
 
+
+<script>
+/* v0.187 · Chapitre X VN : L’Impératrice Noire */
+(function installChapter10ImperatriceNoire(){
+  try{
+    if(window.__sylviniaV187Chapter10ImperatriceNoire) return;
+    window.__sylviniaV187Chapter10ImperatriceNoire=true;
+
+    const uniquePush=(arr,items)=>{if(!Array.isArray(arr))return;(Array.isArray(items)?items:[items]).forEach(k=>{if(k&&!arr.includes(k))arr.push(k);});};
+    const replaceOrPushGroup=(arr,group)=>{if(!Array.isArray(arr)||!group)return;const i=arr.findIndex(g=>g&&g.id===group.id);if(i>=0)arr[i]=group;else arr.push(group);};
+    const c10Cover='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07120f"/><stop offset="1" stop-color="#020304"/></linearGradient><radialGradient id="r"><stop stop-color="#62ff9b" stop-opacity=".45"/><stop offset="1" stop-color="#62ff9b" stop-opacity="0"/></radialGradient></defs><rect width="900" height="560" fill="url(#g)"/><circle cx="690" cy="130" r="150" fill="url(#r)"/><path d="M0 470L100 410 170 430 250 350 310 390 370 255 420 330 470 170 515 315 575 230 625 360 690 275 735 390 810 325 900 415V560H0Z" fill="#050708"/><path d="M420 560V240L470 170 520 240V560M350 560V330L390 270 430 330M520 560V320L565 250 610 320" fill="#0a0d0d" stroke="#173328" stroke-width="4"/><g fill="#72ff9e"><circle cx="438" cy="320" r="4"/><circle cx="500" cy="325" r="4"/><circle cx="470" cy="278" r="5"/></g><path d="M120 510C300 450 560 450 810 510" fill="none" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/></svg>`);
+
+    if(typeof A!=='undefined'){
+      A.c10_cover=c10Cover;
+      A.c10_geoles=A.c9_key_iriana_seule_cellule||A.c9_geoles||A.bg_catacombes||A.bg_projection;
+      A.c10_extraction=A.c4v_necro_ritual||A.c9_geoles||A.bg_catacombes||A.bg_projection;
+      A.c10_amanea=A.c9_geoles||A.c4v_necro_ritual||A.bg_catacombes||A.bg_projection;
+      A.c10_akuhn=A.c9_key_akuhn_panorama||A.c9_akuhn||A.c4v_akuhn_citadel||A.bg_projection;
+      A.c10_temple=A.c4v_necro_ritual||A.c9_akuhn||A.bg_projection;
+      A.c10_palais=A.c4v_akuhn_citadel||A.c9_key_akuhn_panorama||A.c9_akuhn||A.bg_projection;
+      A.music_c10_horreur=A.music_c9_capture||A.music_bellirith||A.music_tension||A.music_menu;
+      A.music_c10_amanea=A.music_iriana||A.music_c9_capture||A.music_tension||A.music_menu;
+      A.music_c10_cite=A.music_c9_foret||A.music_c7_rencontre_naiah||A.music_tension||A.music_menu;
+      A.music_c10_culte=A.music_bellirith||A.music_c9_capture||A.music_tension||A.music_menu;
+    }
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      Object.assign(PROGRESSION_MEMORIES,{
+        iriana_extraction_ames:{title:'Iriana se souviendra des âmes arrachées',type:'Iriana',icon:'◈',body:'Dans les geôles d’Akuhn’Nabad, Iriana n’a pas seulement entendu les prisonniers mourir : elle a ressenti chaque âme être déchirée et effacée.'},
+        iriana_face_amanea:{title:'Iriana se souviendra du premier regard d’Amanea',type:'Iriana',icon:'♛',body:'La rencontre avec l’Impératrice Noire n’a pas commencé par une bataille, mais par un examen silencieux entre deux héritières du nom Farae.'},
+        iriana_akuhn_peuple:{title:'Iriana se souviendra qu’Akuhn’Nabad est un peuple',type:'Iriana',icon:'◆',body:'Les marchés, les temples, les soldats et les érudits ont brisé l’image d’une horde de bannis errants. Le doute est désormais impossible à effacer.'},
+        amanea_respecte_iriana:{title:'Amanea se souviendra de la nuance d’Iriana',type:'Amanea',icon:'♜',body:'Iriana a reconnu qu’une force obscure pouvait être étudiée et contenue sans être adorée aveuglément. Amanea l’a regardée, pour la première fois, comme une interlocutrice plutôt que comme une enfant de l’Empire.'}
+      });
+    }
+
+    if(typeof CODEX_ENTRIES!=='undefined'){
+      Object.assign(CODEX_ENTRIES,{
+        amanea_farae:{title:'Amanea Farae',body:'Petite sœur de Tia Farae, bannie puis devenue souveraine des Obscurcis. Sa magie a laissé sur son corps des craquelures vertes et dans son regard une présence capable d’écraser l’espace autour d’elle.'},
+        imperatrice_noire:{title:'L’Impératrice Noire',body:'Titre porté par Amanea à Akuhn’Nabad. Il désigne autant une dirigeante politique qu’une figure façonnée par l’exil, les forces obscures et la rupture avec l’Empire sylvinien.'},
+        extraction_ames:{title:'L’extraction des âmes',body:'Pratique obscure qui arrache lentement l’âme à son corps, dévore ses souvenirs et ne laisse derrière elle qu’une enveloppe vide. Iriana en ressent les effets à travers les geôles.'},
+        societe_obscurcie:{title:'La société obscurcie',body:'Akuhn’Nabad possède ses marchés, ses artisans, ses guerriers, ses érudits, ses temples, ses rites et ses écoles. Les bannis ont bâti une civilisation structurée plutôt qu’un simple refuge.'},
+        equilibre_oublie:{title:'L’équilibre oublié',body:'Doctrine d’Amanea selon laquelle l’Ombre, la Mort et le Chaos appartiennent au monde autant que les forces reconnues par l’Empire. Les Obscurcis prétendent utiliser ces puissances pour mieux les contenir.'},
+        llorea:{title:'Llorea',body:'Sœur d’Eladri et figure maudite des anciennes légendes sylviniennes. Son esprit apparaît à Amanea dans la Cellule 17 et lui présente les ténèbres comme l’unique voie capable de la reconnaître.'}
+      });
+    }
+    if(typeof CODEX_ORDER!=='undefined') uniquePush(CODEX_ORDER,['amanea_farae','imperatrice_noire','extraction_ames','societe_obscurcie','equilibre_oublie','llorea']);
+    window.CODEX_ENTRY_GROUPS=window.CODEX_ENTRY_GROUPS||[];
+    replaceOrPushGroup(window.CODEX_ENTRY_GROUPS,{id:'chapter10',title:'Chapitre X · L’Impératrice Noire',keys:['amanea_farae','imperatrice_noire','extraction_ames','societe_obscurcie','equilibre_oublie','llorea','akuhn_nabad','geoles_akuhn']});
+    if(typeof CODEX_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_BY_SCENE,{
+        c10_02:['extraction_ames','geoles_akuhn'],c10_05:['amanea_farae','imperatrice_noire'],c10_06:['amanea_farae','imperatrice_noire'],c10_14:['akuhn_nabad','societe_obscurcie'],c10_15:['societe_obscurcie'],c10_17:['societe_obscurcie'],c10_18:['equilibre_oublie'],c10_20:['equilibre_oublie'],c10_end:['llorea']
+      });
+    }
+
+    if(typeof CODEX_MUSIC!=='undefined'){
+      Object.assign(CODEX_MUSIC,{
+        music_c10_horreur:{title:'Chapitre X · Les âmes arrachées',body:'Thème des geôles et de l’extraction qui ouvre le chapitre dans une horreur presque entièrement sensorielle.',src:A.music_c10_horreur,label:'Chapitre X · Horreur'},
+        music_c10_amanea:{title:'Chapitre X · Deux Farae',body:'Thème de la première confrontation entre Iriana et Amanea, faite de silence, de sang et de questions empoisonnées.',src:A.music_c10_amanea,label:'Chapitre X · Amanea'},
+        music_c10_cite:{title:'Chapitre X · Le peuple d’Akuhn’Nabad',body:'Thème de l’ascension à travers les marchés, les passerelles et le palais noir de la capitale obscurcie.',src:A.music_c10_cite,label:'Chapitre X · Cité'},
+        music_c10_culte:{title:'Chapitre X · L’équilibre oublié',body:'Thème du temple, de la flamme noire et verte et de la doctrine que l’Empire refuse d’entendre.',src:A.music_c10_culte,label:'Chapitre X · Culte'}
+      });
+    }
+    if(typeof CODEX_MUSIC_ORDER!=='undefined') uniquePush(CODEX_MUSIC_ORDER,['music_c10_horreur','music_c10_amanea','music_c10_cite','music_c10_culte']);
+    window.CODEX_MUSIC_GROUPS=window.CODEX_MUSIC_GROUPS||[];
+    replaceOrPushGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter10',title:'Chapitre X · L’Impératrice Noire',keys:['music_c10_horreur','music_c10_amanea','music_c10_cite','music_c10_culte']});
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+      const musicMap={};
+      ['c10_01','c10_02','c10_03','c10_04','c10_04_a','c10_04_b','c10_04_c','c10_04_d','c10_05'].forEach(k=>musicMap[k]=['music_c10_horreur']);
+      ['c10_06','c10_07','c10_08','c10_09','c10_09_a','c10_09_b','c10_09_c','c10_09_d','c10_10','c10_11','c10_12','c10_12_a','c10_12_b','c10_12_c','c10_12_d','c10_13'].forEach(k=>musicMap[k]=['music_c10_amanea']);
+      ['c10_14','c10_15','c10_16','c10_16_a','c10_16_b','c10_16_c','c10_16_d','c10_17','c10_21','c10_22','c10_22_a','c10_22_b','c10_22_c','c10_22_d','c10_23','c10_end'].forEach(k=>musicMap[k]=['music_c10_cite']);
+      ['c10_18','c10_19','c10_19_a','c10_19_b','c10_19_c','c10_19_d','c10_20'].forEach(k=>musicMap[k]=['music_c10_culte']);
+      Object.assign(CODEX_MUSIC_BY_SCENE,musicMap);
+    }
+
+    if(typeof CODEX_IMAGES!=='undefined'){
+      CODEX_IMAGES.c10_cover={title:'Chapitre X · L’Impératrice Noire',body:'Le palais noir d’Akuhn’Nabad domine une cité que l’Empire n’a jamais voulu décrire comme un peuple.',src:c10Cover};
+    }
+    if(typeof CODEX_IMAGE_ORDER!=='undefined') uniquePush(CODEX_IMAGE_ORDER,'c10_cover');
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined') replaceOrPushGroup(CODEX_IMAGE_GROUPS,{id:'chapter10',title:'Chapitre X · L’Impératrice Noire',sections:[{title:'Au cœur d’Akuhn’Nabad',keys:['c10_cover']}]});
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{c10_01:['c10_cover']});
+
+    if(typeof JOURNAL_FRAGMENTS!=='undefined'){
+      JOURNAL_FRAGMENTS.ch10={title:'Chapitre X · Journal d’Amanea – Cellule 17',chapter:'Chapitre X',unlockLabel:'Termine le Chapitre X',blocks:[
+  {
+    "kind": "journal",
+    "text": "Jour 1\n\nIls m’ont enfermée sans un mot. Pas de procès, pas de jugement. Juste ces murs de pierre froide et une porte verrouillée derrière laquelle le monde continue sans moi. Mon titre de noblesse m’a servi à rien. Ma lignée ? Oubliée. Mon sang impérial ? Il n’a fait que nourrir la méfiance et le mépris. Ici, je ne suis rien. Une ombre qu’on a jetée dans un trou pour qu’elle disparaisse.\n\nJe devrais être en colère. Pourtant, ce n’est pas la rage qui me ronge… c’est l’attente. Je ne sais pas combien de temps je vais rester ici. Un jour ? Un mois ? Une vie entière ? L’incertitude est pire que les barreaux."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour 6\n\nLes heures s’étirent, sans saveur ni but. Le silence est absolu, seulement brisé par les pas des gardes qui ne s’arrêtent jamais devant ma cellule, excepté pour me donner le minimum de vivres afin de survivre. Personne ne parle. Personne ne vient. Même Tia… Elle qui m’a elle-même enfermée… Elle ne se montre pas.\n\nJe ne dors plus vraiment. La cellule est trop sombre, trop oppressante. L’humidité s’infiltre dans mes os, rendant chaque respiration plus lourde. Parfois, j’écoute les bruits lointains, dehors, mais tout semble si distant, comme si je n’avais jamais existé ailleurs que dans ce cachot. Par chance… j’ai c’est quelques feuilles, servant de souffre douleur."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour 14\n\nL’ennui me tue à petit feu. Il n’y a rien à faire, rien à voir, personne à haïr en face de moi. Je me surprends à parler toute seule, à murmurer des pensées que personne n’entendra jamais. Mes propres mots résonnent dans cette boîte de pierre et me reviennent comme une autre voix, une autre moi.\n\nJe pense souvent à mère. À ce qu’elle dirait en me voyant ici. Rirait-elle de mon arrogance, me rappellerait-elle combien j’ai toujours été impulsive ? Ou aurait-elle de la peine ? Certainement pas. Et impossible de savoir."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ≈20\n\nJ’ai arrêté de compter les jours avec précision. Le temps n’a plus de forme ici. Juste des repas laissés sans un mot et des nuits qui se fondent dans les jours sans qu’on puisse les distinguer.\n\nJ’ai commencé à observer les murs. Chaque fissure, chaque pierre qui dépasse, chaque imperfection devient une distraction. Mon esprit tente de s’accrocher à quelque chose, n’importe quoi. Parfois, je trace des formes imaginaires dans la saleté sur le sol, des animaux, des paysages…"
+  },
+  {
+    "kind": "journal",
+    "text": "Jour 37 ? 38 ?\n\nToujours pas de visite. Pas même un messager. Ils m’ont réellement abandonnée.\n\nJe pensais que Tia viendrait. Qu’elle aurait au moins l’audace de me regarder dans les yeux une dernière fois. Mais non. Elle m’a enfermée et m’a laissée pourrir ici.\n\nC’est la pire des trahisons : l’indifférence."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour 50 et plus\n\nJ’ai cessé d’espérer. Si elle devait venir, elle l’aurait déjà fait. Je suis seule. Complètement seule.\n\nLes ombres de cette cellule sont devenues mes compagnes. Elles bougent parfois, dansent aux reflets de la torche qui éclaire brièvement le couloir lorsque le garde passe. Elles sont silencieuses, mais elles sont là. C’est déjà ça."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ?\n\nPeu importe.\n\nJe me suis endurcie. La douleur de l’abandon a laissé place à autre chose. Une détermination froide, acérée. Je ne me laisserai pas briser par ces murs. Ils veulent me faire disparaître ? Qu’ils essaient.\n\nSi je sors un jour d’ici, ce ne sera pas en tant que prisonnière repentante. Ce sera en tant que celle qui a survécu à leur oubli.\n\nEt alors, ils se souviendront."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ?\n\nJe suis sensé marquer Jour ? Mois ? Ou Année ?. À quoi bon ? Le temps est une illusion ici. Il n’y a plus de jour, plus de nuit. Seulement ce silence épais qui s’accroche à ma peau comme une seconde prison. Mais dans ce calme infâme… j’entre aperçoit des choses.\n\nD’abord, ce n’était rien. Un souffle à peine perceptible, comme un soupir porté par le vent qui ne devrait pas exister ici. Puis, des murmures. Des fragments de mots qui se fondent dans mes pensées.\n\nOu peut-être est-ce simplement moi qui commence à parler toute seule."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ??\n\nJe me surprends à répéter certains mots à voix basse, sans même y penser. Des phrases qui ne sont pas les miennes. Ou peut-être que si ?\n\n« Ils t’ont abandonnée. »\n\n« Ils t’ont trahie. »\n\n« Tu es seule. »\n\nMais ce n’est pas une révélation. Je le savais déjà. C’est ce que je me disais depuis des jours. Des semaines. Alors pourquoi ces mots semblent-ils résonner différemment quand je les pense maintenant ?"
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ???\n\nJ’ai rêvé de mère cette nuit. Ou du moins, j’en ai eu l’illusion. Elle me regardait, son visage grave, figé dans une expression que je ne lui avais jamais connue. Ses lèvres bougeaient, mais aucun son n’en sortait. C’était comme si elle me faisait la morale. Ce même regardant quand  elle me jugeait après le refus de la lumière. Ce même souffle sortant de son nez signifiant sa lassitude a mon égard\n\nPuis, à travers le silence, j’ai entendu une voix.\n\n« Amanea. »\n\nC’était la mienne. Mais ce n’était pas moi.\n\nJe me suis réveillée en sueur. Et dans l’obscurité, les murmures continuaient."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????\n\nJe ne dors plus… ou du moins plus du tout contrairement à avant.\n\nIls parlent maintenant plus clairement. Doucement, presque avec tendresse. Ils me connaissent. Ils savent tout de moi. Ils susurrent ce que je ressens, ce que j’ai toujours su au fond de moi.\n\n« Tia t’a trahie. »\n\n« Elle t’a laissée ici. »\n\n« Elle a peur de toi. »\n\nJ’essaie de les ignorer. Mais…ça ne cesse jamais. Encore… encore…… encore………\n\nAprès tout, pourquoi mentiraient-ils ?"
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ?????\n\nJe crois que je ne suis plus seule.\n\nQuelque chose est là, juste au bord de mon regard, dans ces coins d’ombre qui s’étirent un peu trop loin, un peu trop profond.\n\nQuand je ferme les yeux, je le vois. Une forme indistincte, mouvante, qui se confond avec les ténèbres de cette cellule.\n\nElle m’observe. Elle attend. Je pensais que c’était mon esprit qui s’égarait… je l’espérais. Je ne sais plus… je ne me reconnais plus."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ??????\n\nIls me chuchotent mon propre nom comme une prière. Comme une promesse.\n\n« Tu es plus forte qu’eux. »\n\n« Ils t’ont enfermée parce qu’ils te craignent. »\n\n« Ils savent ce dont tu es capable. »\n\nMa voix se mêle à la leur, ou est-ce l’inverse ? Parfois, je ne suis plus sûre.\n\nJe ne devrais pas les écouter. Mais ils ont raison."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ???????\n\nLa cellule est plus grande qu’avant. Ou peut-être suis-je plus petite.\n\nLes murs ne sont plus seulement de pierre. Ils respirent. Ils pulsent, comme un cœur malade battant lentement dans l’obscurité. Je pose ma main contre eux, et sous mes doigts, je ressens un frisson, une présence.\n\n« Nous pouvons t’aider. »\n\nJe ne réponds pas. Mais je n’enlève pas ma main."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nQuelqu’un est venu.\n\nPas un garde. Pas Tia.\n\nUne ombre plus dense que les autres, une silhouette qui n’a pas besoin de lumière pour exister. Elle se tient là, au seuil de la réalité, à l’orée de ce que je comprends encore.\n\n« Amanea. »\n\nCette fois, je l’entends clairement. Pas dans ma tête. Pas comme un murmure.\n\nComme une invitation.\n\nEt, pour la première fois depuis que je suis ici…\n\nJe réponds."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nL’ombre a pris une forme.\n\nJe pensais que ce serait une illusion de plus, un jeu de mon esprit fatigué. Mais elle est bien là, tangible, ancrée dans la réalité autant que moi. Je peux voir les plis de sa robe sombre, la finesse de ses gestes.\n\nEt je connais son visage.\n\nNon. Je devrais le connaître.\n\nUne Sylvinienne au teint gris pâle, presque cendreux, comme si la vie l’avait désertée sans l’effacer complètement. De longs cheveux noirs, aux reflets bleu nuit, encadrent son visage. Mais ce n’est pas ce qui frappe. C’est son regard.\n\nDeux abysses. Entièrement noirs. Pas un éclat, pas une étincelle, pas même une ombre de lumière. Juste du néant, un vide qui aspire tout ce qui s’en approche.\n\nEt cette brûlure… Marquant tout son côté droit, la chair encore rouge et boursouflée, comme si elle venait tout juste d’être infligée.\n\nJ’ai entendu son nom dans les légendes. Dans les murmures interdits, dans les récits chuchotés à voix basse. La sœur de ma mère. Une traîtresse, une disparue, une condamnée.\n\nEt pourtant, elle est là.\n\nElle s’approche lentement, sa silhouette glissant comme une ombre au sol. Je devrais reculer. Je devrais avoir peur. Mais je ne ressens rien de tout cela. Seulement une étrange fascination.\n\nElle parle, et sa voix est douce, presque caressante.\n\n« Nous sommes identiques, toi et moi. »\n\nJe ne réponds pas.\n\n« Insensible à la Lumière, étrangère à la Vie, imperméable à l’Unité. »\n\nSes mots résonnent, vibrent en moi comme s’ils avaient toujours été là, en attente d’être prononcés.\n\n« Mais les Ténèbres… elles nous reconnaissent. Elles nous acceptent. Elles nous élèvent. »\n\nUn frisson me parcourt l’échine.\n\n« Ils t’ont enfermée pour ce que tu es, Amanea. Pour ce que tu peux devenir. Parce que tu es un prodige des Ténèbres, comme moi. »\n\nLes mots claquent dans l’air comme une vérité absolue.\n\nUn prodige.\n\nElle s’agenouille devant moi, une main gantée tendue vers la mienne.\n\n« Ce n’est pas un crime. C’est une opportunité. »\n\nMes doigts tremblent alors que je les approche des siens.\n\n« Ils veulent te briser. Ils veulent que tu croies que ce pouvoir est une malédiction. »\n\nNos doigts se touchent à peine, et une onde glacée se répand dans mon corps. Ce n’est pas désagréable.\n\n« Mais tu sais qu’ils mentent. »\n\nJe le sais. Au fond, je l’ai toujours su.\n\nLa Lumière m’a rejetée.\n\nLa Vie ne m’a jamais portée.\n\nL’Unité n’a jamais été mienne.\n\nMais les Ténèbres… elles m’ont toujours regardée.\n\nEt si c’était elles, depuis le début, qui attendaient que je les regarde en retour ?\n\nLa main de ma tante serre la mienne.\n\n« Embrasse-les, Amanea. Et deviens enfin ce que tu es destinée à être. »\n\nAlors, dans l’obscurité de cette cellule, pour la première fois depuis mon enfermement…\n\nJe souris."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nElle s’appelle Llorea.\n\nCe nom, je le connais. Il résonne à travers l’histoire de notre peuple comme un avertissement, un conte que l’on murmure aux enfants pour leur apprendre la loyauté et la vertu. Llorea, la sœur maudite, la traîtresse qui s’est tournée vers les ténèbres et a tenté de renverser sa propre sœur, Eladri. Llorea, l’ambitieuse, la corruptrice, celle qui a été punie par le feu et réduite à néant.\n\nMais elle est là.\n\nAssise à mes côtés, comme une confidente, une présence rassurante dans cette solitude qui m’étouffe depuis des jours… des semaines… des années…. plus encore ?\n\nJe l’observe, cherchant à voir à travers elle une illusion, un mirage de mon esprit fracturé. Mais elle ne vacille pas. Elle est tangible, ancrée dans mon monde, bien qu’elle n’appartienne plus tout à fait au sien.\n\n« La légende ne dit pas tout. »\n\nSa voix est douce, presque triste.\n\n« Ils t’ont raconté une version qui sert leur vérité. Mais il y a une autre histoire, Amanea. »\n\nJe ne réponds pas. Pas encore. Je la laisse parler, intriguée malgré moi.\n\nElle s’installe confortablement, comme si cette prison lui appartenait, comme si ces murs sombres et humides étaient un salon privé où elle pouvait se livrer sans crainte.\n\n« Moi aussi, j’avais une sœur. »\n\nJe serre les dents.\n\n« Moi aussi, je l’aimais. Moi aussi, j’ai cru qu’elle me comprendrait. Que nous étions destinées à régner ensemble, à créer un monde où nous serions libres de choisir notre propre voie. »\n\nElle se tourne vers moi, son regard d’ombre me sondant jusqu’à l’âme.\n\n« Mais elle m’a enfermée dans une cage bien plus grande que celle-ci. Une cage faite d’interdits, de devoirs et d’attentes. »\n\nJe connais cette histoire. Enfin… la version d’Eladri.\n\nDans cette version, Llorea a sombré dans la folie du pouvoir, s’est laissée corrompre par les ténèbres, et a mené un coup d’État contre sa propre sœur. Elles se sont affrontées, et dans la bataille, Llorea a été grièvement brûlée par le feu sacré d’Eladri. Mortellement blessée, elle a rendu son dernier souffle dans l’obscurité, maudissant sa sœur jusqu’à son dernier battement de cœur.\n\nMais Llorea est là, bien vivante… ou du moins, aussi vivante qu’un esprit peut l’être.\n\n« Je suis morte ce jour-là, c’est vrai. » Elle effleure du bout des doigts la brûlure qui déforme son visage. « Mais les ténèbres ne m’ont pas abandonnée. Elles m’ont offerte une autre existence. Une autre destinée. »\n\nElle se penche vers moi, sa présence presque réconfortante.\n\n« Tout comme toi, Amanea. »\n\nJe détourne le regard, mon cœur battant trop fort dans ma poitrine.\n\n« Nous sommes liées, toi et moi. » Sa voix s’adoucit, se fait presque un murmure intime. « Par le sang, par notre exil, par notre nature. »\n\nElle me connaît. Pas juste mon nom, pas juste mon histoire. Elle me connaît.\n\n« Elles ont choisi leur voie, Eladri et Tia. Elles ont renié ce qu’elles ne pouvaient comprendre, condamné ce qu’elles n’étaient pas prêtes à embrasser. Et nous ? Nous avons été laissées de côté. Jugées. Trahies. »\n\nSes doigts glissent sur la pierre froide du mur, traçant des formes invisibles.\n\n« Mais nous savons, n’est-ce pas ? Ce pouvoir, ce don que nous portons, ce n’est pas un crime. Ce n’est pas une malédiction. »\n\nSon regard d’ombre plonge dans le mien.\n\n« C’est une opportunité. »\n\nJe déglutis avec peine. Elle ne m’oblige à rien. Elle ne me force pas. Elle m’invite. Et ce qui me terrifie le plus…\n\nC’est que je veux l’écouter."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nLlorea se tait un instant. Elle me laisse digérer ses mots, me laisse plonger dans ce silence épais qui n’a jamais été aussi pesant qu’en cet instant.\n\nPuis, lentement, elle lève une main pâle et désigne l’obscurité.\n\nVers les ténèbres qui s’étendent au-delà de ma cellule\n\nVers ce que je ne peux pas voir.\n\n« Tu crois être seule, mais tu ne l’es pas. »\n\nSa voix est un murmure, pourtant, elle me transperce comme un ordre divin.\n\nJe fronce les sourcils et tends l’oreille. Rien. Le silence. Juste ce vide oppressant auquel je me suis habituée.\n\nMais alors…\n\nUn bruit.\n\nÀ peine un souffle. Une respiration lointaine, quelque part au fond de ce couloir lugubre. Puis une autre. Depuis tout ce temps.\n\nIls sont là.\n\nIls ont toujours été là.\n\nDes ombres oubliées, des voix qu’on a réduites au silence, des âmes condamnées à pourrir dans ces geôles comme moi.\n\n« Ils ont été trahis comme toi. Enfermés. Oubliés. »\n\nElle me regarde à nouveau, et cette fois, son sourire est différent.\n\nPas un rictus cruel. Pas une moquerie.\n\nUn sourire… sincère.\n\n« Ils t’attendent, Amanea. Ils attendent une raison d’exister, une raison de croire qu’ils ne sont pas juste des erreurs à enterrer. »\n\nUn frisson parcourt mon dos.\n\n« Là où Tia t’a laissée mourir, moi, je t’offre la vie. »\n\nJe me redresse légèrement, les poings serrés sur mes genoux.\n\n« Une vie ? » ma voix est rauque, brisée par le silence dans lequel j’ai trop longtemps été enfermée.\n\n« Une liberté. » corrige Llorea.\n\nElle effleure ma joue d’un geste presque maternel, comme si elle voyait en moi l’enfant qu’elle n’a jamais eu.\n\n« Ces âmes derrière ces murs… Elles sont comme toi. Des parias, des maudits, des rejetés. Mais elles n’ont pas besoin de l’être. »\n\nJe n’ose pas bouger. Je n’ose même pas respirer.\n\n« Tu peux leur donner une raison d’exister, Amanea. »\n\nSon regard abyssal brille d’un éclat que je ne comprends pas encore.\n\n« Tu peux être leur guide. Leur espoir. »\n\nJe détourne enfin les yeux vers l’obscurité.\n\nIls sont là.\n\nAttendant.\n\nComme moi.\n\nJe sens quelque chose naître en moi. Une étincelle. Non, pas de lumière. Une conviction, froide, absolue.\n\nTia m’a enfermée ici pour que je disparaisse.\n\nMais ca ne sera pas le cas.\n\nJe vais renaître.\n\nNous allons renaître..\n\nJe ferme les yeux un instant.\n\nPuis je souris. Cette fois, ce sourire n’a plus rien d’un sourire brisé.\n\nC’est un sourire de promesse."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nLiorea est restée.\n\nJour après jour, elle est restée assise à mes côtés, me parlant avec cette voix douce et envoûtante qui s’infiltre dans mes pensées comme un venin délicieux. Mais ce n’est pas elle qui a parlé le plus ces derniers jours\n\nC’est moi.\n\nJ’ai parlé de tout. De Tia. De notre mère. De mon enfance, de mes doutes, de cette colère qui brûle en moi comme un feu que je ne peux éteindre. Et elle m’a écoutée. Toujours. Sans jugement, sans me donner de leçons.\n\n« Tu n’es pas seule, Amanea. Tu n’as jamais été seule. »\n\nCes mots sont devenus un ancrage. Une vérité que je n’aurais jamais cru possible.\n\nNous avons commencé à élaborer un plan. Pas un plan bâclé, pas un coup de désespérée. Un plan réfléchi. Précis.\n\n« Ta magie est en toi. Tu l’as toujours portée. Ce don, ils n’ont pas pu te l’arracher »\n\nElle avait raison.\n\nMes yeux.\n\nDans tous ces interrogatoire menés par le passé…Je les al toujours sentis différents, mais aujourd’hui, je comprends leur véritable nature. Ils portent un pouvoir que les autres craignent, un pouvoir que je n’ai jamais pleinement explore.\n\nLa persuasion. L’influence,\n\nUn simple regard peut insuffler une idée dans l’esprit d’un autre.\n\nEt c’est ainsi que j’ai planté une graine dans l’esprit du garde."
+  },
+  {
+    "kind": "journal",
+    "text": "Jour ????????\n\nCela a pris du temps. Je ne pouvais pas me précipiter.\n\nChaque fois qu’il passait devant ma cellule, je l’attendais. Juste un échange furtif de regards, Un frisson imperceptible qui parcourait son échine. D’abord, il n’a rien ressenti\n\nPuis, un doute.\n\nPuis, une idée\n\nPuis, une conviction.\n\nIl est venu aujourd’hui.\n\nIl s’est arrêté devant la cellule, comme il l’a fait tant de fois auparavant. Mais cette fois, ses doigts ont hésité sur le trousseau de clés. Son souffle s’est accéléré. Il ne savait même pas pourquoi il faisait cela, pourquoi un désir impérieux l’avait poussé à venir ici, seul.\n\n« Ouvre la porte. »\n\nJe n’ai même pas eu besoin de le dire à voix haute. Mon regard s’est chargé du reste\n\nUn clic.\n\nPuis un autre.\n\nPuis la porte s’est ouverte.\n\nEt avant même qu’il ne comprenne ce qu’il faisait, je me suis jetée sur lui\n\nMon bras a frappé par instinct, ma main s’abattant sur la lame accrochée à sa ceinture, s’abattant dans un élan inné sous sa gorge.J’ai senti la chair céder sous la coupe. Un flot chaud a jailli contre ma peau. Il a reculé en titubant, une main pressée contre sa gorge, les yeux écarquillés, pris entre l'horreur et l’incompréhension.\n\nEt moi\n\nJe suis restée figée.\n\nLe garde est allongé contre le mur de ma cellule, haletant, du sang coulant entre ses doigts crispés. Il n’est pas mort. Pas encore.\n\nJe suis retournée à l’intérieur, sans fuir, sans profiter de l’ouverture de la porte.\n\nJe suis assise devant lui, les coudes appuyés sur mes genoux, le regard posé sur ce corps tremblant, entre les doigts de mes mains couverts de son sang, palpitant de vie qui s’accroche à lui-même.\n\nJe devrais le tuer\n\nJe dois le tuer\n\nJe ne peux pas le laisser là, blessé, un témoin vivant. C’est la solution logique.\n\nRapide Propre\n\nMais je ne bouge pas.\n\nJe le regarde suffoquer, lutter pour une vie qui lui échappe. Je ne sais pas ce que je ressens.\n\nLiorea s’est accroupie à côté de moi, ses doigts fins jouant avec une mèche de ses cheveux noirs, comme un ange sur mon épaule me murmurant.\n\n« Pourquoi hésites-tu ? » Sa voix est douce, presque maternelle. Il t’aurait laissé mourir ici sans un remords. »\n\nPeut être, certainement même.\n\nJ’ai ôté la vie à tant d’humaine… mais là, c’est un Sylvinien. Un des miens…\n\nMais ce n’est pas le seul problème.\n\n« Tu ressens quelque chose, n’est-ce pas ? »\n\nJe ferme les yeux un instant.\n\nOui, un y a quelque chose.\n\nLa pitié n’est qu’un fond.\n\nLe remords un arrière goût.\n\nC’est… un appétit\n\nUne faim sourde, profonde, qui s’est éveillée au moment où son sang a touché ma peau. Je l’ai toujours eu, mais je n’ai jamais su quoi en faire…\n\nLlorea sourit\n\n« Tu n’as pas à choisir entre la vie et la mort. » Elle glisse une main sous mon menton, m’incitant à la regarder. « Tu peux lui prendre autre chose. »\n\nJe fronce les sourcils\n\n« Son âme. »\n\nMon souffle se bloque.\n\n« C’est un don. Un privilège. Un pouvoir que peu possèdent. Tu peux lui offrir l’éternité dans ton sillage, ou l’anéantir complètement. Tu peux goûter à ce qu’il est, absorber sa force, son essence »\n\nJe tourne lentement la tête vers l’homme qui suffoque à mes pieds.\n\nIl me regarde, et dans ses yeux, je vois la peur.\n\nPas seulement celle de mourir.\n\nMoi\n\nJe tends la main.\n\nJuste pour voir.\n\nJuste pour comprendre.\n\nJuste pour sentir\n\nCe que ça fait. Mon corps bouge avant que mon esprit ne puisse lui ordonner d’arrêter. Mes doigts se tendent, effleurant la peau du garde blessé. Il frissonne à mon contact, un râle étouffé s’échappant de sa gorge ensanglantée.\n\nEt puis, je ressens tout.\n\nC’est comme si je plongeais dans un gouffre insondable, un tourbillon de sensations qui ne m’appartiennent pas.\n\nL’agonie.\n\nLa douleur brute d’un corps mourant, d’une chair qui comprend qu’elle va cesser d’exister. Un dernier instinct de survie, vain, désespéré.\n\nLa peur.\n\nUne terreur si intense qu’elle supplante tout le reste. Pas seulement la peur de mourir, mais la peur de ce qui vient après. De ce qui l’attend.\n\nLes souvenirs.\n\nIls affluent en moi comme une marée incontrôlable, brisant mes propres pensées sous leur flot implacable. Je vois une maison. Modeste, mais chaleureuse. Une femme aux cheveux clairs, un sourire tendre. Un enfant, riant aux éclats en courant à travers une cour baignée de lumière.\n\nJe ressens ce qu’il ressentait en les regardant. L’amour. L’attachement. L’envie de rentrer chez lui après son service, de les retrouver, de les serrer dans ses bras.\n\nPuis, une autre facette.\n\nLa douleur d’avoir perdu un frère en service. La rage silencieuse, la haine nourrie par les ordres qu’on lui donnait. D’avoir combattu contre des Sylviniens renégats, des corrompus, des bannis, des monstres… des Obscurcis\n\nJ'étais ce monstre. Et maintenant, il était à ma merci.\n\nJ’essaie de me détourner, de reculer.  Tous ce qu’il  est, ce qu’il a été… ce qu’il  ne sera plus…\n\nJe ne peux pas… c’est trop de douleur…\n\nMais quelque chose me retient.\n\nLlorea.\n\nElle est là, derrière moi, sa main glacée posée contre mon épaule.\n\n« Ne résiste pas. »\n\nJe veux arrêter. Il ne mérite pas ça…\n\nMais mon corps ne m’écoute pas. Mon emprise sur lui se resserre, et je le sens sombrer. Ce n’est pas une simple mort. Ce n’est pas une fin paisible, un dernier soupir qui s’efface dans l’air.\n\nC’est une déchirure.\n\nSon âme se brise, se disloque sous mes doigts. Ce n’est pas une essence pure qui s’élève vers un au-delà inconnu. C’est une masse informe, une énergie chaotique, un amalgame d’émotions et de souvenirs qui perdent tout sens en se détachant de son corps. Elle se tord, tourbillonne, cherchant une échappatoire. Elle me trouve. Un flot d’énergie me traverse, brûlant et glacé à la fois.\n\nCe n’est pas comme la magie que je connaissais. Ce n’est pas un pouvoir que l’on invoque, que l’on façonne. C’est une force brute, indomptable, qui s’infiltre en moi comme une marée noire.\n\nJe vois tout.\n\nSa peur ultime. L’ombre qui l’engloutit alors qu’il réalise qu’il ne laissera qu’un cadavre vide derrière lui.\n\nSon amour. Le visage de sa femme, de son fils, gravé dans sa mémoire alors qu’il se raccroche désespérément à leur image.\n\nSa haine. Son mépris pour ce que je suis, qui vacille au dernier instant, remplacé par l’incompréhension.\n\nPuis… plus rien.\n\nUn silence assourdissant.\n\nUn vide.\n\nLe corps s’affaisse contre la pierre froide. Je vacille, mes mains tremblantes sous l’onde de pouvoir qui se dissipe en moi. Mon souffle est court, erratique. Je me redresse lentement, le regard fixé sur l’homme qui n’est plus qu’une enveloppe vide à mes pieds.\n\nJe devrais ressentir quelque chose. De la culpabilité, du remords, du triomphe, n’importe quoi.\n\nMais il n’y a rien. Rien, à part une chaleur insidieuse qui palpite dans mes veines. Llorea s’agenouille à mes côtés, posant une main apaisante sur mon bras.\n\n« C’est ce que nous sommes, Amanea. »\n\nElle n’a pas tort. Tel est ma nature.\n\nTel est ce que je suis…"
+  }
+]};
+    }
+    if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined') uniquePush(JOURNAL_FRAGMENT_ORDER,'ch10');
+
+    if(typeof S!=='undefined') Object.assign(S,{
+  "c10_01": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La nuit absolue",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "L’obscurité ne se contente pas de l’entourer. Elle l’avale.\n\nIl n’y a plus de murs, plus de sol, plus de temps.\n\nSeulement la nuit absolue.\n\nIriana n’entend rien. Elle ressent tout.\n\nUne présence glisse dans les profondeurs d’Akuhn Nabad. Quelque chose de primal, de mauvais, quelque chose qui ne devrait pas exister.\n\nPuis, les hurlements commencent.\n\nL’Horreur Innommable.\n\nDes cries inhumains.\n\nDes voix tordues par une souffrance qui transcende la chair.\n\nQuelque part, dans une cellule voisine. Un prisonnier qui se met à hurler.\n\nUn hurlement terrible, viscéral, déchirant la pierre elle-même.\n\nPuis un second.\n\nPuis un troisième.\n\nUne vague d’agonie envahit les souterrains, un concert de souffrances incessant.",
+    "chars": [],
+    "next": "c10_02",
+    "zoom": true
+  },
+  "c10_02": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’extraction",
+    "bg": "c10_extraction",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Iriana l’aperçoit.\n\nL’extraction ; Des ombres rampent, glissent à travers les barreaux, s’enroulent autour des corps prostrés, se resserrent comme des prédateurs affamés.\n\nPuis elles arrachent.\n\nElles arrachent les âmes.\n\nPas d’un coup. Lentement.\n\nIriana ne voit pas leur chair se briser.. elle voit leurs âmes être consumées.\n\nLeurs formes éthérées se tordent, se convulsent, leurs bouches hurlant sans voix, leurs corps s’arquant sous une douleur impossible.\n\nLeurs âmes ne quittent pas leurs corps d’un simple mouvement fluide. Elles sont trainées hors d’eux, déchirées, étirées, mangées vivantes par une force qui ne laisse derrière elle que du vide.",
+    "chars": [],
+    "next": "c10_03",
+    "zoom": true
+  },
+  "c10_03": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La douleur insupportable",
+    "bg": "c10_extraction",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "La Douleur Insupportable\n\nIriana hurle aussi.\n\nElle ne voulait pas, elle ne devait pas. Mais le cauchemar est trop fort, et l’horreur envahit son corps et son âme\n\nC’est une douleur qu’elle-même ne peut encaisser.\n\nCe ne sont pas des cris lointains qu’elle entend. Elle ressent chaque extraction.\n\nChaque âme tirée de sa coquille brüle dans son propre esprit.\n\nC’est comme si elle mourait aussi à chaque cri, à chaque souffle volé.\n\nElle suffoque, sa gorge nouée par une force qui écrase sa poitrine, sa tête prête à exploser sous les radiations abominables de douleur et d’horreur qui saturent l’espace.\n\nC’est insupportable.\n\nElle plonge ses doigts dans ses propres cheveux, crispant sa mâchoire, luttant pour ne pas perdre la raison.\n\nPuis tout s’arrête.\n\nUn silence assourdissant s’abat sur la prison.\n\nLes ames ont cessé de hurler… parce qu’elles n’existent plus.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "center"
+      ]
+    ],
+    "next": "c10_04",
+    "zoom": true
+  },
+  "c10_04": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Après les hurlements",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Iriana",
+    "text": "Le silence revient, mais il ne rend rien. Il laisse seulement à Iriana quelques secondes pour décider de ce qu’elle fera de la peur qui lui reste dans la gorge.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "center"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Refuser d’offrir un cri de plus aux ténèbres",
+        "next": "c10_04_a",
+        "effects": {
+          "audace": 1
+        },
+        "note": "Audace · Iriana transforme l’effroi en défi."
+      },
+      {
+        "label": "Régler sa respiration comme avant une audience",
+        "next": "c10_04_b",
+        "effects": {
+          "sangfroid": 1
+        },
+        "note": "Sang-froid · Elle reconstruit sa posture avant que quelqu’un ne la voie brisée."
+      },
+      {
+        "label": "Identifier ce que l’extraction fait réellement aux âmes",
+        "next": "c10_04_c",
+        "effects": {
+          "lucidite": 2
+        },
+        "note": "Lucidité · Prérequis 35 · Comprendre l’horreur pour lui retirer une part de son pouvoir.",
+        "requires": {
+          "lucidite": 35
+        }
+      },
+      {
+        "label": "Écouter l’écho magique laissé par les disparus",
+        "next": "c10_04_d",
+        "effects": {
+          "resonance": 1
+        },
+        "note": "Résonance · Les âmes ne sont plus là, mais leur absence possède encore une vibration."
+      }
+    ]
+  },
+  "c10_04_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ne rien céder",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Iriana relève le menton. Ses mains tremblent encore, alors elle les referme jusqu’à sentir ses ongles dans ses paumes. La peur peut rester. Elle n’aura pas le droit de parler à sa place.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "center"
+      ]
+    ],
+    "next": "c10_05"
+  },
+  "c10_04_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Reprendre possession de soi",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Une inspiration. Une expiration. Iriana compte les battements affolés de son cœur et les ramène, un à un, sous son autorité. Une princesse peut être terrifiée. Elle ne doit pas nécessairement en offrir le spectacle.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "center"
+      ]
+    ],
+    "next": "c10_05"
+  },
+  "c10_04_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Lire le vide",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Iriana force son esprit à séparer les sensations. Ce qu’elle a ressenti n’était pas une simple mort : les âmes ont été déchirées, consommées, effacées. Cette précision ne rend pas l’acte moins monstrueux, mais elle lui donne un nom. Et ce qui possède un nom peut être combattu.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "center"
+      ]
+    ],
+    "next": "c10_05"
+  },
+  "c10_04_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’empreinte de l’absence",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Elle cesse de lutter contre la vibration qui traverse encore la pierre. Là où les âmes hurlaient, il ne reste pas du silence, mais une place arrachée au monde. Iriana mémorise cette empreinte. Un jour, elle saura peut-être la reconnaître avant qu’il ne soit trop tard.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "center"
+      ]
+    ],
+    "next": "c10_05"
+  },
+  "c10_05": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Deux yeux dans les ténèbres",
+    "bg": "c10_geoles",
+    "music": "music_c10_horreur",
+    "speaker": "Narrateur",
+    "text": "Iriana reste haletante, les yeux agrandis par la terreur.\n\nL’air autour se fige. Elle sent qu’on l’observe.\n\nDeux yeux verts incandescents transpercent les ténèbres, brûlant comme des torches infernales. Mais elle n’a pas besoin de voir la silhouette.\n\nElle sait qui c’est.\n\nLa présence écrase tout.\n\nUne présence qui déforme l’espace lui-même.\n\nIriana se recroqueville, le souffle court.\n\nElle ne voulait pas avoir peur.\n\nElle se pensait prête.\n\nElle en était convaincue…\n\nJusqu’à ce moment.\n\nC’est Amanea.\n\nElle est là.\n\nEt elle la regarde, tapis dans les ombres qui l’habite.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_sad",
+        "center"
+      ]
+    ],
+    "next": "c10_06",
+    "zoom": true
+  },
+  "c10_06": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’Exilée",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Le silence pèse.\n\nL’obscurité de la cellule est profonde, l’air est glacé, porteur d’une présence insidieuse, comme si la prison elle-même respirait dans un murmure inaudible.\n\nLa porte de la cellule s’ouvre avec un grincement sinistre, laissant la silhouette rentrer dans cette dernière. Iriana, est pétrifiée, mais sa peur s’estompe légèrement en voyant l’ombre se dissiper, révélant l’apparence anthropique de la dirigeante Obscurci.\n\nLa princesse ne l’a jamais vue. Elle a entendu des récits. Des rumeurs. Des avertissements murmurés dans les couloirs du palais Sylvinien, toujours chuchotés comme une malédiction qu’on évite d’évoquer trop fort.\n\nMais jamais elle ne s’était retrouvée face à elle. Maintenant qu’elle la voit, elle comprend pourquoi son nom est un murmure dans l’empire.\n\nAmanea Farae. L’Exilée. La Traîtresse. L’Ombre de la famille impériale.\n\nSon apparition est presque irréelle, comme un mirage ancré dans la pénombre. Une elfe, pas si grande, mais sculptée par la magie qui coule dans ses veines. Son teint, marqué par les stigmates de son bannissement, est d’une pâleur presque lunaire, mais parcouru de fines craquelures lumineuses verte, trahissant l’énergie impie qui la consume lentement.\n\nSes cheveux mi-longs, d’un blond platine chutant sur du blanc spectral, tombent en mèches libres autour de son visage, contrastant avec ses yeux d’un vert incandescent, brûlant d’une lumière sinistre qui n’a rien de naturel, le contour de ses paupières marqués par d’anciennes cicatrice.\n\nMais ce qui frappe le plus Iriana, c’est l’aura qu’elle dégage. Une pression invisible. Une force ancienne.\n\nAmanea n’est pas simplement une Sylvinienne bannie, elle est devenue autre chose.\n\nLa dame noire s’avance d’un pas fluide, presque félin, laissant sa cape ténébreuse et argent effleurer le sol de pierre. Chaque mouvement est calculé, empreint d’une grâce froide et impérieuse.\n\nElle ne dit rien immédiatement.\n\nElle regarde.\n\nElle jauge.\n\nSes yeux verts scrutent Iriana avec une intensité troublante, comme si elle sondait son être jusqu’à ses os. Iriana soutient ce regard sans ciller. Un silence glacé s’installe entre elles. Enfin, Amanea casse le silence",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_07"
+  },
+  "c10_07": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le poids du nom",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Amanea",
+    "text": "Amanea – D’une voix posée, presque curieuse. Alors… c’est toi.\n\nSa voix est douce. Trop douce. Une caresse empoisonnée. Son accent arbore la grâce et la finesse d’une vibration propre aux serpents, sifflant et volatile. Iriana reste silencieuse. Amanea esquisse un léger sourire, dévoilant un rictus à la fois amusé et calculateur.\n\nAmanea – Tu portes un nom lourd, mon enfant.\n\nElle s’arrête à quelques pas d’elle, penchant légèrement la tête.\n\nAmanea – Farae. Un nom qui a brisé des vies. Un nom qui a écrit l’histoire dans le sang. Notre sang.\n\nElle marque une pause, ses yeux perçant Iriana comme des lames.\n\nAmanea – Un nom qui m’a été retiré. Je ne pensais pas qu’il reviendrait se présenter à moi… pas de la sorte.\n\nIriana serre discrètement les poings. Elle sent le poids de ces mots. Elle savait qu’Amanea haïssait sa lignée, mais la voir… la sentir… rend cette haine bien plus tangible.\n\nAmanea, elle, semble aussi analyser chaque détail d’Iriana.\n\nSon allure, droite et noble. Son regard, froid et résolu. La manière dont elle ne tremble pas – Ou plus - sous sa présence.\n\nAmanea – Intriguée. Tu as l’air différente de ce que j’imaginais. Si proche et si éloignée de ton père.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_08"
+  },
+  "c10_08": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le premier échange",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Iriana",
+    "text": "Iriana – D’un ton maîtrisé. Je pourrais dire la même chose de vous.\n\nUn léger rire s’échappe des lèvres d’Amanea.\n\nAmanea – Je ne doute pas que m’a sœur m’ai décrite de diverses manières en effet.\n\nElle s’arrête, croisant lentement les bras, son expression redevenant sérieuse.\n\nAmanea – Alors, dis-moi…\n\nElle s’approche légèrement, réduisant la distance entre elles.\n\nAmanea – Pourquoi es-tu venue, Iriana ?",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_09"
+  },
+  "c10_09": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Pourquoi es-tu venue ?",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Iriana",
+    "text": "La question paraît simple. Elle ne l’est pas. Amanea ne cherche pas seulement une réponse : elle cherche la première fissure dans laquelle glisser ses doigts.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Ne lui offrir que l’objectif officiel",
+        "next": "c10_09_a",
+        "effects": {
+          "sangfroid": 1
+        },
+        "note": "Sang-froid · Une réponse étroite laisse moins de prises."
+      },
+      {
+        "label": "Revendiquer sa présence au nom des Farae",
+        "next": "c10_09_b",
+        "effects": {
+          "audace": 2
+        },
+        "note": "Audace · Prérequis 35 · Iriana refuse de se présenter comme une suppliante.",
+        "requires": {
+          "audace": 35
+        }
+      },
+      {
+        "label": "Disséquer le test avant de répondre",
+        "next": "c10_09_c",
+        "effects": {
+          "lucidite": 1
+        },
+        "note": "Lucidité · Amanea étudie chaque hésitation ; Iriana peut étudier en retour."
+      },
+      {
+        "label": "Sentir ce que l’Ombre attend de cette réponse",
+        "next": "c10_09_d",
+        "effects": {
+          "resonance": 1
+        },
+        "note": "Résonance · La cellule elle-même semble écouter."
+      }
+    ]
+  },
+  "c10_09_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Une réponse sans offrande",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Iriana enferme tout le reste derrière son masque. Son père, son âme promise, sa peur et sa colère n’appartiennent pas encore à cette conversation. Elle ne donnera à Amanea que les mots strictement nécessaires.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_10"
+  },
+  "c10_09_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Une Farae face à une Farae",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Elle redresse les épaules. Amanea a été privée de son nom ; Iriana, elle, le porte encore. Ce n’est ni une excuse ni une couronne offerte. C’est une lame posée entre elles, dont aucune ne détournera les yeux.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_10"
+  },
+  "c10_09_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le test derrière la question",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Amanea observe sa respiration, ses mains, le temps qu’elle prend avant chaque mot. Iriana comprend que la dirigeante attend moins la vérité que la manière dont elle sera défendue. Elle choisit donc une réponse assez vraie pour tenir, et assez pauvre pour ne rien livrer de plus.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_10"
+  },
+  "c10_09_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La cellule écoute",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "L’Ombre autour d’Amanea se resserre à peine, attentive. Iriana sent qu’un mensonge grossier nourrirait cette présence. Elle choisit une vérité partielle, nette, qui ne tremblera pas lorsqu’elle sera répétée.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_10"
+  },
+  "c10_10": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Parlementer",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Iriana",
+    "text": "Iriana sait que c’est un test. Un jeu d’esprit. Elle inspire lentement, puis, calmement, elle répond.\n\nIriana – Je suis venue parlementer.\n\nLa dirigeante arque un sourcil, comme si elle entendait une plaisanterie mal formulée.\n\nAmanea – Parlementer ?\n\nUn éclat d’amusement danse brièvement dans ses yeux, avant de disparaître derrière un voile de méfiance.\n\nAmanea – Et pourtant, te voilà enchaînée dans mes prisons… Il faut croire que ton père ai remit en cause la sincérité de tes intentions.\n\nIriana – Froide. C’est la décision d’Alamma. Pas la vôtre.\n\nLe sourire d’Amanea s’efface légèrement. Une ombre passe dans son regard. Elle se redresse, reprenant son calme, et croise les bras.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_11"
+  },
+  "c10_11": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Récupérer son père",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Amanea",
+    "text": "Amanea – Tu n’es donc pas venue pour voir ton père  ?\n\nIriana – Aussi… mais je vous corrige, je suis venue récupérer mon père.\n\nUn silence tombe, lourd et glacial.\n\nAmanea fixe Iriana avec une nouvelle lueur dans les yeux. De la curiosité… mais aussi un soupçon d’intérêt réel.\n\nElle se détourne légèrement, laissant son regard errer sur les runes de la cellule, comme si elle réfléchissait.\n\nAmanea – Intéressant…\n\nElle revient vers Iriana, plus proche cette fois.\n\nAmanea – Et que comptes-tu faire, ma petite-nièce ? Le supplier de revenir à la lumière ?",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_12"
+  },
+  "c10_12": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ce qu’Alamma mérite",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Iriana",
+    "text": "Supplier Alamma de revenir n’a jamais fait partie du plan. Mais la manière dont Iriana l’énonce décidera de ce qu’Amanea verra en elle : une fille blessée, une héritière, ou une ennemie de son propre sang.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Parler d’Alamma comme d’une menace à neutraliser",
+        "next": "c10_12_a",
+        "effects": {
+          "lucidite": 1
+        },
+        "note": "Lucidité · Retirer le père de l’équation pour ne garder que ses actes."
+      },
+      {
+        "label": "Assumer qu’elle est venue lui arracher ce qu’il lui doit",
+        "next": "c10_12_b",
+        "effects": {
+          "audace": 1
+        },
+        "note": "Audace · La blessure devient une déclaration de guerre."
+      },
+      {
+        "label": "Garder sa haine sous une formulation parfaitement froide",
+        "next": "c10_12_c",
+        "effects": {
+          "sangfroid": 2
+        },
+        "note": "Sang-froid · Prérequis 35 · La colère demeure, mais elle ne gouverne pas la phrase.",
+        "requires": {
+          "sangfroid": 35
+        }
+      },
+      {
+        "label": "Reconnaître la marque du Chaos sans la confondre avec l’homme",
+        "next": "c10_12_d",
+        "effects": {
+          "resonance": 1
+        },
+        "note": "Résonance · Distinguer l’influence magique de la volonté d’Alamma."
+      }
+    ]
+  },
+  "c10_12_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Un problème avant d’être un père",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Iriana chasse le mot père de son esprit. Alamma a manipulé l’Empire, conduit le groupe dans un piège et vendu l’âme de sa propre fille. Le lien du sang n’atténue rien. Il rend seulement le crime plus précis.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_13"
+  },
+  "c10_12_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Une dette de sang",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Pendant une seconde, la princesse ne cache plus entièrement la fille. Alamma lui doit une vie, une enfance et un avenir qu’il a marchandés. Elle ne demande pas réparation. Elle vient saisir ce qui lui appartient encore.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_13"
+  },
+  "c10_12_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La haine sous le verre",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Chaque mot est choisi comme une pièce sur un échiquier. Aucun tremblement, aucune accusation inutile. La haine reste là, visible seulement dans la netteté presque cruelle de la phrase.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_13"
+  },
+  "c10_12_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’homme et la marque",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Narrateur",
+    "text": "Le Chaos a posé sa couleur dans les yeux d’Alamma, mais Iriana refuse de lui offrir cette excuse. Une influence peut pousser, promettre, amplifier. Elle ne signe pas les pactes à la place de celui qui tend la main.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_13"
+  },
+  "c10_13": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Fascinante",
+    "bg": "c10_amanea",
+    "music": "music_c10_amanea",
+    "speaker": "Iriana",
+    "text": "Iriana – Calmement. Son affiliation m’est bien égal. Je suis venue pour mettre un terme à ce qu’il a fait.\n\nL’ombre d’un sourire effleure les lèvres d’Amanea.\n\nAmanea – Voilà qui devient fascinant.\n\nElle observe Iriana, une étincelle de respect non-dit dans son regard. Puis, lentement, elle recule vers la porte. Iriana, encore marquée par l’échange précédent, redresse le menton et observe la silhouette qui l’attend de l’autre côté. La souveraine des Obscurcis se tient là, un léger sourire flottant sur ses lèvres pâles, ses yeux verts perçant Iriana avec une intensité troublante.\n\nAmanea – D’un ton léger, presque amical. Allons, mon enfant. Suis-moi. Il est temps que tu voies ce que ton empire refuse d’accepter.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_14"
+  },
+  "c10_14": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’ascension",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Les couloirs des prisons sont creusés dans la roche noire de la montagne qui abrite Akuhn’Nabad. Des torches imbibées de magie ombreuse diffusent une lumière pâle, vacillante, baignant les murs d’un éclat irréel. À chaque pas, Iriana sent la cité vivre autour d’elle.\n\nDes murmures résonnent dans les ténèbres. Des incantations chuchotées dans une langue qu’elle ne reconnaît pas. Par moments, elle croise des silhouettes voilées, des gardiens masqués qui ne semblent pas totalement appartenir au monde physique.\n\nPuis, progressivement, les ténèbres s’allègent.\n\nL’ascension est longue. L’architecture d’Akuhn’Nabad est verticale, chaque niveau étant relié par d’immenses escaliers ou des passerelles suspendues au-dessus du vide. Lorsqu’Iriana atteint enfin l’un des premiers paliers supérieurs, elle découvre la cité vue différemment.",
+    "chars": [],
+    "next": "c10_15",
+    "zoom": true
+  },
+  "c10_15": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Une cité vivante",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "La princesse s’attendait à une terre de désolation, à des ruines hantées par des bannis sans foi ni loi. Mais ce qu’elle voit lui fait revoir ses certitudes. Les rues, bien que sombres, sont animées. Les Obscurcis ne sont pas une horde d’exilés errants. Ils ont leurs marchés, où des artisans vendent des artefacts enchantés et des tissus aux reflets d’ombres mouvantes. Ils ont leurs temples, où des prêtres psalmodient d’antiques prières sous l’œil de statues immenses sculptées dans l’obsidienne. Ils ont leurs codes, leurs rites, et même leurs festivités.\n\nIriana – D’un ton mesuré, observant la ville. Ce n’est pas… ce que j’imaginais.\n\nAmanea – S’amusant de sa réaction. Non ? Et qu’imaginais-tu ?\n\nIriana – Froide. Un amas de ruines peuplé de criminels et de fanatiques.\n\nAmanea – Sourit légèrement. C’est ce que ton empire veut que tu croies, et c’est ce qu’ils étaient quand ton impératrice les a bannis",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_16",
+    "zoom": true
+  },
+  "c10_16": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ce que l’Empire a nommé ruines",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Iriana",
+    "text": "Les marchés, les rites et les voix ne correspondent pas au récit appris à Al’Gratal. Iriana peut encore rejeter ce qu’elle voit. Elle peut aussi accepter que le mensonge impérial ne réside peut-être pas dans chaque détail, mais dans tout ce qu’il a choisi de taire.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Chercher immédiatement ce que cette façade dissimule",
+        "next": "c10_16_a",
+        "effects": {
+          "lucidite": 2
+        },
+        "note": "Lucidité · Prérequis 35 · Une société organisée peut aussi cacher une violence organisée.",
+        "requires": {
+          "lucidite": 35
+        }
+      },
+      {
+        "label": "Admettre intérieurement que les récits impériaux étaient incomplets",
+        "next": "c10_16_b",
+        "effects": {
+          "sangfroid": 1
+        },
+        "note": "Sang-froid · Corriger une certitude sans abandonner toute prudence."
+      },
+      {
+        "label": "Refuser de laisser Amanea savourer sa surprise",
+        "next": "c10_16_c",
+        "effects": {
+          "audace": 1
+        },
+        "note": "Audace · Ne pas céder le terrain symbolique, même impressionnée."
+      },
+      {
+        "label": "Sentir les multiples courants magiques sous la ville",
+        "next": "c10_16_d",
+        "effects": {
+          "resonance": 1
+        },
+        "note": "Résonance · Akuhn’Nabad n’est pas une seule Ombre, mais un réseau de forces distinctes."
+      }
+    ]
+  },
+  "c10_16_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La façade et les fondations",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Iriana observe les gardes, les issues, les groupes qui se taisent au passage d’Amanea. La ville est réelle, vivante et structurée. Cela ne signifie pas qu’elle soit innocente. Refuser la propagande ne l’oblige pas à adopter celle d’en face.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_17"
+  },
+  "c10_16_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Une certitude corrigée",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Elle laisse une vérité étroite prendre place : l’Empire lui a présenté les Obscurcis comme des débris humains et magiques. Ce qu’elle voit suffit à détruire cette image, pas encore à absoudre le reste.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_17"
+  },
+  "c10_16_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ne pas offrir la victoire",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Amanea attend une réaction. Iriana garde le visage fermé, comme si les passerelles, les marchés et les tours n’ébranlaient rien. Sa tante peut lire le doute dans son silence ; elle n’aura pas le plaisir de l’entendre avoué.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_17"
+  },
+  "c10_16_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Les courants sous la pierre",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Sous les pavés noirs, Iriana perçoit des signatures différentes : Ombre, Mort, rites de protection, enchantements domestiques, traces d’Unité détournées. La cité ne repose pas sur une seule corruption. Elle a bâti une écologie magique entière dans l’interdit.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_17"
+  },
+  "c10_17": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Un peuple organisé",
+    "bg": "c10_akuhn",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Alors qu’elles progressent, Iriana remarque des différences visibles entre les habitants.\n\nCertains Obscurcis portent des marques tribales sur leur peau, signe d’un rang ou d’un rôle particulier, passant par des tatouages sous les yeux ou sur le cou. Les guerriers, reconnaissables à leurs armures finement ciselées, patrouillent avec une discipline militaire. Les mages, prêtres et cultistes, vêtus de longues robes ornées de symboles complexes, discutent en murmurant des mots qu’elle ne comprend pas. Il y a même des érudits, regroupés autour d’immenses parchemins, enseignant à de plus jeunes élèves.\n\nIriana – Intriguée. Vous avez une société aussi organisée que la nôtre.\n\nAmanea – Hochant la tête. Parce que nous avons survécu aux Sylviniens. Certaines choses ne changent pas même avec une bannière différente\n\nAlors qu’elles avancent vers le sommet de la cité, Iriana remarque un immense temple, sculpté dans la roche. À l’intérieur, une grande cérémonie est en cours.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_18",
+    "zoom": true
+  },
+  "c10_18": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’équilibre oublié",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "Des prêtres récitent des incantations autour d’un autel de pierre, où une flamme noire et verte danse dans l’obscurité. Des Obscurcis sont agenouillés, murmurant à l’unisson, formant un chœur troublant.\n\nIriana fronce les sourcils.\n\nIriana – D’un ton sec. Vous vénérez la magie des ténèbres ?\n\nAmanea – Sourit, presque moqueuse. Nous vénérons le changement. L’équilibre oublié.\n\nElle se tourne vers Iriana, son regard transperçant.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_19",
+    "zoom": true
+  },
+  "c10_19": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Nommer le culte",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Iriana",
+    "text": "La flamme noire et verte danse devant elle. L’Empire lui a appris que certaines forces ne doivent jamais être approchées. Amanea prétend qu’on peut les employer pour contenir ce qu’elles ont de pire. Entre les deux affirmations se trouve peut-être la vérité, ou un piège plus sophistiqué.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Choix stratégique : reconnaître qu’un équilibre peut employer l’Ombre sans lui obéir",
+        "next": "c10_19_a",
+        "effects": {
+          "lucidite": 2
+        },
+        "note": "Souvenir stratégique · Lucidité 40 · Iriana distingue l’usage d’une force de sa vénération aveugle.",
+        "flags": {
+          "amanea_respecte_lucidite_iriana": true
+        },
+        "requires": {
+          "lucidite": 40
+        },
+        "memories": [
+          "amanea_respecte_iriana"
+        ]
+      },
+      {
+        "label": "Rester fidèle à l’interdit impérial",
+        "next": "c10_19_b",
+        "effects": {
+          "audace": 1
+        },
+        "note": "Audace · Certaines portes restent fermées parce que le prix de l’erreur est trop grand."
+      },
+      {
+        "label": "Écouter la structure du rite avant de le juger",
+        "next": "c10_19_c",
+        "effects": {
+          "resonance": 1
+        },
+        "note": "Résonance · Le chœur ne cherche pas seulement la puissance ; il stabilise quelque chose."
+      },
+      {
+        "label": "Suspendre son jugement sans accorder sa confiance",
+        "next": "c10_19_d",
+        "effects": {
+          "sangfroid": 2
+        },
+        "note": "Sang-froid · Prérequis 35 · Ne pas confondre prudence et condamnation automatique.",
+        "requires": {
+          "sangfroid": 35
+        }
+      }
+    ]
+  },
+  "c10_19_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "L’usage n’est pas l’adoration",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "Iriana observe la flamme sans s’incliner. Une force peut être dangereuse sans être moralement consciente ; le choix réside dans celui qui la façonne et dans les limites qu’il accepte. Elle ne donne pas raison à Amanea. Elle reconnaît seulement que l’Empire a peut-être préféré l’interdiction à la compréhension. Dans le regard vert de la souveraine, quelque chose change : non pas de la tendresse, mais l’attention accordée à une interlocutrice réelle.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_20"
+  },
+  "c10_19_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "La porte interdite",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "L’argument d’Amanea est séduisant précisément parce qu’il donne à l’interdit le visage de la maturité. Iriana refuse d’oublier les âmes arrachées quelques instants plus tôt. Un peuple peut avoir des marchés, des écoles et des rites ; cela ne rend pas chaque pratique acceptable.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_20"
+  },
+  "c10_19_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ce que contient le chœur",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "Elle écoute au-delà des mots. Les voix se répondent selon un rythme précis, divisant la pression de la flamme entre les officiants. Le rite ressemble moins à une invocation qu’à une contention collective. Cette découverte ne rassure pas Iriana. Elle rend seulement le danger plus complexe.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_20"
+  },
+  "c10_19_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Ni adhésion ni condamnation",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Narrateur",
+    "text": "Iriana garde son jugement en suspens. Elle ne s’agenouille pas devant l’équilibre d’Amanea, mais elle refuse de répéter mécaniquement les sentences d’Al’Gratal. Ce délai est minuscule. Pour une Farae élevée dans l’absolu impérial, il ressemble déjà à une rupture.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_20"
+  },
+  "c10_20": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Contenir les ténèbres",
+    "bg": "c10_temple",
+    "music": "music_c10_culte",
+    "speaker": "Amanea",
+    "text": "Amanea – Votre empire adore la Lumière. Il bannit l’Ombre, la Mort et le Chaos comme des poisons impurs.\n\nElle désigne la scène devant elles.\n\nAmanea – Nous ? Nous comprenons que ces forces sont nécessaires, et surtout utilisable a bon escient. Elles font partie du monde, autant que la Vie et l’Unité. Mieux, nous aidons à contenir les ténèbres avec leurs propres pouvoir.\n\nIriana reste silencieuse, mais quelque chose la perturbe.\n\nCe culte n’est pas celui de fanatiques assoiffés de pouvoir. C’est une croyance structurée. Un mode de vie.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_21",
+    "zoom": true
+  },
+  "c10_21": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le palais noir",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Finalement, après une longue marche, elles atteignent le sommet de la cité.\n\nUn immense palais noir domine les hauteurs d’Akuhn’Nabad, ses tours effilées s’élevant vers un ciel perpétuellement voilé.\n\nL’architecture est un mélange d’élégance et de mysticisme, chaque pierre gravée de symboles anciens, interdit chez les Sylviniens, mais aussi inutilisé chez eux depuis des siècles. Ce palais est un affront aux Sylviniens, mais aussi une merveille en terme d’héritage et culturelle.\n\nIriana ne peut s’empêcher d’être impressionnée.\n\nAmanea – D’un ton calme. Bienvenue au cœur des Obscurcis.\n\nElle se tourne vers Iriana, observant sa réaction.\n\nAmanea – Alors, très chère nièce.\n\nElle marque une pause, un sourire en coin.\n\nAmanea – Toujours convaincue que nous ne sommes que des exilés sans but ?",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_22",
+    "zoom": true
+  },
+  "c10_22": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Toujours convaincue ?",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Iriana",
+    "text": "Amanea attend une réponse. Iriana comprend que le moindre mot sera utilisé comme une victoire, un aveu ou une faiblesse. Son silence peut pourtant prendre plusieurs formes.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "choices": [
+      {
+        "label": "Observer le peuple plutôt que répondre à sa souveraine",
+        "next": "c10_22_a",
+        "effects": {
+          "lucidite": 1
+        },
+        "note": "Lucidité · Les habitants constituent la réponse qu’Amanea cherche à lui arracher."
+      },
+      {
+        "label": "Garder un silence qui ne nie plus ce qu’elle voit",
+        "next": "c10_22_b",
+        "effects": {
+          "sangfroid": 1
+        },
+        "note": "Sang-froid · Ne rien concéder à voix haute, sans mentir intérieurement."
+      },
+      {
+        "label": "Laisser son menton relevé répondre à sa place",
+        "next": "c10_22_c",
+        "effects": {
+          "audace": 1
+        },
+        "note": "Audace · Le doute n’est pas une capitulation."
+      },
+      {
+        "label": "Sentir la cité comme un organisme magique complet",
+        "next": "c10_22_d",
+        "effects": {
+          "resonance": 2
+        },
+        "note": "Résonance · Prérequis 35 · Les temples, les marchés et les défenses battent au même rythme.",
+        "requires": {
+          "resonance": 35
+        }
+      }
+    ]
+  },
+  "c10_22_a": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le peuple comme réponse",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Iriana détourne légèrement les yeux d’Amanea pour regarder les rues en contrebas. Les réponses ne se trouvent pas dans le sourire d’une souveraine, mais dans les enfants qui apprennent, les soldats qui patrouillent et les artisans qui travaillent sous les flammes noires.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_23"
+  },
+  "c10_22_b": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Un silence sans mensonge",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Elle ne répond pas. Pourtant, pour la première fois, son silence ne signifie pas qu’Amanea a tort. Il signifie qu’Iriana n’est pas encore prête à nommer ce qu’elle vient de perdre : une certitude confortable.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_calm",
+        "left"
+      ]
+    ],
+    "next": "c10_23"
+  },
+  "c10_22_c": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le doute n’est pas une reddition",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Son menton reste haut. Amanea peut avoir détruit une partie du récit impérial ; elle n’a pas gagné sa confiance. Iriana conservera le droit de reconstruire elle-même ce qui vient de se fissurer.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_stern",
+        "left"
+      ]
+    ],
+    "next": "c10_23"
+  },
+  "c10_22_d": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Le cœur noir de la cité",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Iriana laisse ses sens descendre dans la ville. Les protections du palais répondent aux temples ; les passerelles relaient des impulsions de surveillance ; les marchés sont parcourus d’enchantements modestes, presque domestiques. Akuhn’Nabad n’est pas une accumulation de refuges. C’est un organisme construit pour survivre à l’Empire.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_23"
+  },
+  "c10_23": {
+    "title": "Chapitre X · L’Impératrice Noire",
+    "sub": "Un peuple",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Iriana ne répond pas immédiatement. La dirigeante affiche un sourire moqueur, mais aussi fier.\n\nElle observe la ville qui s’étend sous ses pieds, les flammes noires des temples, les marchés vivants, la discipline des guerriers, et surtout… Le regard des Obscurcis eux-mêmes. Ils ne sont pas des parias. Ils sont un peuple.\n\nEt pour la première fois depuis son arrivée, un doute s’immisce dans son esprit.",
+    "chars": [
+      [
+        "iriana",
+        "iriana_profile",
+        "left"
+      ]
+    ],
+    "next": "c10_end",
+    "zoom": true
+  },
+  "c10_end": {
+    "title": "Chapitre X terminé",
+    "sub": "L’Impératrice Noire",
+    "bg": "c10_palais",
+    "music": "music_c10_cite",
+    "speaker": "Narrateur",
+    "text": "Amanea n’a pas obtenu une alliée. Iriana n’a pas obtenu de réponse sur Alamma. Pourtant, quelque chose a changé au sommet d’Akuhn’Nabad.\n\nLa propagande impériale a rencontré des rues, des écoles, des rites et des visages. Le doute ne libère personne, mais il ouvre une brèche que même une Farae ne pourra refermer d’un simple ordre.\n\nDans le Carnet du Némésis, une nouvelle page devient lisible : « Journal d’Amanea – Cellule 17 ». Elle raconte comment une prisonnière abandonnée a commencé à écouter les ténèbres, puis à leur répondre.",
+    "chars": [],
+    "choices": [
+      {
+        "label": "Retour au menu",
+        "next": "menu",
+        "effects": {},
+        "note": "",
+        "flags": {
+          "chapter10Complete": true
+        }
+      }
+    ]
+  }
+});
+
+    window.canStartChapter10=function canStartChapter10(){return !!(state&&((state.flags&&state.flags.chapter9Complete)||state.devMode));};
+    window.startChapter10=function startChapter10(){
+      const ok=confirm(`Aller au début du Chapitre X ?
+
+Cela ne réinitialise pas la sauvegarde globale : les valeurs, le codex, les souvenirs et les réglages restent conservés.
+
+Confirmer ?`);
+      if(!ok)return;
+      const prev=state||{}; const prevFlags=prev.flags||{};
+      state={
+        ...prev,
+        scene:'c10_01',
+        stats:{...START_STATS,...(prev.stats||{})},
+        introStats:{...INTRO_STATS,...(prev.introStats||{})},
+        flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true,chapter7Complete:true,chapter8Complete:true,chapter9Complete:true},
+        inventory:[...new Set([...(prev.inventory||[]),'jeton_imperial'])],
+        memories:[...new Set(prev.memories||[])],
+        sceneRewards:[...new Set(prev.sceneRewards||[])],
+        journalFragments:[...new Set(prev.journalFragments||[])],
+        codexUnlocked:[...new Set(['hylee','remerii','valeurs','valurn','naiah','foret_interdite','akuhn_nabad','obscurcis','brume_devoreuse','alamma_farae','geoles_akuhn',...(prev.codexUnlocked||[])])],
+        codexUnlockedImages:[...new Set(prev.codexUnlockedImages||[])],
+        codexUnlockedMusic:[...new Set(['music_menu','music_c10_horreur','music_c10_amanea','music_c10_cite','music_c10_culte',...(prev.codexUnlockedMusic||[])])],
+        history:[],lastScreen:'game'
+      };
+      if(typeof setScreen==='function')setScreen('game');
+      if(typeof render==='function')render();
+    };
+
+    if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
+      let ch10=CHAPTER_SELECT_DATA.find(ch=>ch&&ch.key==='ch10');
+      if(!ch10){ch10={key:'ch10'};CHAPTER_SELECT_DATA.push(ch10);}
+      Object.assign(ch10,{key:'ch10',label:'Chapitre X',title:'L’Impératrice Noire',subtitle:'Amanea et le cœur d’Akuhn’Nabad',image:c10Cover,tags:['Iriana','Amanea','Obscurcis','Cellule 17'],body:'Isolée dans les geôles, Iriana assiste à l’extraction des âmes avant de rencontrer Amanea. La souveraine obscurcie lui ouvre ensuite les portes d’une cité organisée que l’Empire avait réduite à une légende de criminels et de fanatiques.',action:'Lancer le Chapitre X'});
+    }
+
+    if(typeof chapterSelectUnlocked==='function'){
+      const previous=chapterSelectUnlocked;
+      window.chapterSelectUnlocked=chapterSelectUnlocked=function(key){if(key==='ch10')return window.canStartChapter10();return previous(key);};
+    }
+    if(typeof launchChapterSelect==='function'){
+      const previous=launchChapterSelect;
+      window.launchChapterSelect=launchChapterSelect=function(key){if(key==='ch10')return window.startChapter10();return previous(key);};
+    }
+    if(typeof getSceneChapterLabel==='function'){
+      const previous=getSceneChapterLabel;
+      window.getSceneChapterLabel=getSceneChapterLabel=function(sceneId=state.scene){if(String(sceneId||'').startsWith('c10_'))return 'Chapitre X · L’Impératrice Noire';return previous(sceneId);};
+    }
+
+    if(typeof renderChapterSelect==='function'){
+      const previous=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function(){
+        previous();
+        const index=(CHAPTER_SELECT_DATA||[]).findIndex(ch=>ch&&ch.key==='ch10');
+        const card=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')[index];
+        if(card&&!window.canStartChapter10()){const hint=card.querySelector('.chapterLockHint');if(hint)hint.textContent='Termine le Chapitre IX pour ouvrir L’Impératrice Noire.';}
+      };
+    }
+
+    if(typeof S!=='undefined'&&S.c9_end){
+      S.c9_end.choices=[
+        {label:'Continuer vers le Chapitre X',next:'c10_01',effects:{},note:'',flags:{chapter9Complete:true}},
+        {label:'Retour au menu',next:'menu',effects:{},note:'',flags:{chapter9Complete:true}}
+      ];
+    }
+
+    if(typeof go==='function'){
+      const previous=go;
+      window.go=go=function(next,opts={}){
+        previous(next,opts);
+        if(state&&String(state.scene||'').startsWith('c10_')) state.flags={...(state.flags||{}),chapter9Complete:true};
+        if(state&&state.scene==='c10_end'){
+          state.flags={...(state.flags||{}),chapter10Complete:true};
+          if(typeof unlockJournalFragments==='function')unlockJournalFragments('ch10');
+          if(typeof unlockProgressMemories==='function')unlockProgressMemories(['iriana_extraction_ames','iriana_face_amanea','iriana_akuhn_peuple']);
+        }
+        if(typeof save==='function')save();
+        if(typeof updateProgressUI==='function')updateProgressUI();
+      };
+    }
+
+    if(typeof updateChapterLocks==='function')updateChapterLocks();
+    if(!document.getElementById('chapters')?.classList.contains('hidden')&&typeof renderChapterSelect==='function')renderChapterSelect();
+    if(!document.getElementById('codex')?.classList.contains('hidden')&&typeof renderCodex==='function')renderCodex();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble)bubble.textContent='Mise à jour · v0.187 · Chapitre X · L’Impératrice Noire';
+  }catch(error){
+    console.warn('Chapitre X · L’Impératrice Noire non appliqué',error);
+  }
+})();
+
+</script>
 </body>
 </html>
