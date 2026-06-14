@@ -24302,6 +24302,7 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
     }
 
     const c10Cover='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#07120f"/><stop offset="1" stop-color="#020304"/></linearGradient><radialGradient id="r"><stop stop-color="#62ff9b" stop-opacity=".45"/><stop offset="1" stop-color="#62ff9b" stop-opacity="0"/></radialGradient></defs><rect width="900" height="560" fill="url(#g)"/><circle cx="690" cy="130" r="150" fill="url(#r)"/><path d="M0 470L100 410 170 430 250 350 310 390 370 255 420 330 470 170 515 315 575 230 625 360 690 275 735 390 810 325 900 415V560H0Z" fill="#050708"/><path d="M420 560V240L470 170 520 240V560M350 560V330L390 270 430 330M520 560V320L565 250 610 320" fill="#0a0d0d" stroke="#173328" stroke-width="4"/><g fill="#72ff9e"><circle cx="438" cy="320" r="4"/><circle cx="500" cy="325" r="4"/><circle cx="470" cy="278" r="5"/></g><path d="M120 510C300 450 560 450 810 510" fill="none" stroke="#2f6b4a" stroke-opacity=".45" stroke-width="3"/></svg>`);
+    const c10SelectionCover='assets/images/chapter_select/ch10_routes.png';
 
     if(typeof A!=='undefined'){
 
@@ -27601,7 +27602,7 @@ Confirmer ?`);
     if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
       let ch10=CHAPTER_SELECT_DATA.find(ch=>ch&&ch.key==='ch10');
       if(!ch10){ch10={key:'ch10'};CHAPTER_SELECT_DATA.push(ch10);}
-      Object.assign(ch10,{key:'ch10',label:'Chapitre X',title:'L’Impératrice Noire',subtitle:'Amanea et le cœur d’Akuhn’Nabad',image:c10Cover,tags:['Iriana','Amanea','Obscurcis','Cellule 17'],body:'Isolée dans les geôles, Iriana assiste à l’extraction des âmes avant de rencontrer Amanea. La souveraine obscurcie lui ouvre ensuite les portes d’une cité organisée que l’Empire avait réduite à une légende de criminels et de fanatiques.',action:'Lancer le Chapitre X'});
+      Object.assign(ch10,{key:'ch10',label:'Chapitre X',title:'L’Impératrice Noire',subtitle:'Amanea et le cœur d’Akuhn’Nabad',image:c10SelectionCover,tags:['Iriana','Amanea','Obscurcis','Cellule 17'],body:'Isolée dans les geôles, Iriana assiste à l’extraction des âmes avant de rencontrer Amanea. La souveraine obscurcie lui ouvre ensuite les portes d’une cité organisée que l’Empire avait réduite à une légende de criminels et de fanatiques.',action:'Lancer le Chapitre X'});
     }
 
     if(typeof chapterSelectUnlocked==='function'){
@@ -27708,9 +27709,40 @@ body.c10RouteMode #choices .choiceBtn small{color:#d9f9e5;background:rgba(0,0,0,
       c10g_240:['ancre_calciterres']
     });
 
-    const canonicalRoute=()=>state&&state.flags&&state.flags.chapter10Route||null;
-    const activeRoute=()=>{const f=(state&&state.flags)||{};return state&&state.devMode?(f.chapter10DevRoute||f.chapter10Route||null):(f.chapter10Route||null);};
-    if(state&&state.flags&&state.flags.chapter10Route==='group'&&!state.devMode&&Array.isArray(state.journalFragments)){
+    const CHAPTER10_PERSPECTIVE_SCHEMA=2;
+    const validChapter10Route=route=>route==='iriana'||route==='group';
+    const canonicalRoute=()=>{
+      const f=(state&&state.flags)||{};
+      const completed=!!(f.chapter10IrianaComplete||f.chapter10GroupComplete);
+      return validChapter10Route(f.chapter10Route)&&f.chapter10RouteLocked===true&&(f.chapter10ChoiceConfirmed===true||completed)?f.chapter10Route:null;
+    };
+    const activeRoute=()=>{
+      const f=(state&&state.flags)||{};
+      if(state&&state.devMode&&validChapter10Route(f.chapter10DevRoute)) return f.chapter10DevRoute;
+      return canonicalRoute();
+    };
+
+    // Migration de la première version à double route : une ancienne sauvegarde pouvait
+    // contenir une route résiduelle sans avoir réellement affiché le choix au joueur.
+    if(state){
+      state.flags=state.flags||{};
+      const f=state.flags;
+      const completed=!!(f.chapter10IrianaComplete||f.chapter10GroupComplete);
+      if(f.chapter10PerspectiveSchema!==CHAPTER10_PERSPECTIVE_SCHEMA){
+        if(!completed){
+          delete f.chapter10Route;
+          delete f.chapter10RouteLocked;
+          delete f.chapter10DevRoute;
+          delete f.chapter10ChoiceConfirmed;
+        }else if(validChapter10Route(f.chapter10Route)){
+          f.chapter10RouteLocked=true;
+          f.chapter10ChoiceConfirmed=true;
+        }
+        f.chapter10PerspectiveSchema=CHAPTER10_PERSPECTIVE_SCHEMA;
+      }
+    }
+
+    if(canonicalRoute()==='group'&&!state.devMode&&Array.isArray(state.journalFragments)){
       state.journalFragments=state.journalFragments.filter(key=>key!=='ch10');
     }
     const routeStart=r=>r==='group'?GROUP_START:'c10_01';
@@ -27737,6 +27769,8 @@ body.c10RouteMode #choices .choiceBtn small{color:#d9f9e5;background:rgba(0,0,0,
             }
             state.flags.chapter10Route=route;
             state.flags.chapter10RouteLocked=true;
+            state.flags.chapter10ChoiceConfirmed=true;
+            state.flags.chapter10PerspectiveSchema=CHAPTER10_PERSPECTIVE_SCHEMA;
             if(route==='group'&&Array.isArray(state.journalFragments)){
               state.journalFragments=state.journalFragments.filter(key=>key!=='ch10');
             }
@@ -27848,9 +27882,137 @@ Ouvrir le choix de perspective ?`);
     }
 
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble)bubble.textContent='Mise à jour · v0.188 · Chapitre X à double perspective';
+    if(bubble)bubble.textContent='Mise à jour · v0.190 · Choix de perspective sécurisé';
     if(typeof save==='function')save();
   }catch(error){console.warn('Chapitre X à double perspective non appliqué',error);}
+})();
+</script>
+
+
+<script>
+/* v0.189 · Chapitre X toujours visible dans la sélection des chapitres */
+(function ensureChapter10SelectionVisibility(){
+  try{
+    if(window.__sylviniaV189Chapter10SelectionVisibility) return;
+    window.__sylviniaV189Chapter10SelectionVisibility=true;
+
+    const getRoute=()=>{
+      const f=(state&&state.flags)||{};
+      const completed=!!(f.chapter10IrianaComplete||f.chapter10GroupComplete);
+      return (f.chapter10Route==='iriana'||f.chapter10Route==='group')&&f.chapter10RouteLocked===true&&(f.chapter10ChoiceConfirmed===true||completed)?f.chapter10Route:null;
+    };
+    const chapter10Unlocked=()=>!!(state&&(state.devMode||(state.flags&&state.flags.chapter9Complete)));
+
+    function upsertChapter10Card(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return null;
+      let ch10=CHAPTER_SELECT_DATA.find(ch=>ch&&ch.key==='ch10');
+      if(!ch10){
+        ch10={key:'ch10'};
+        CHAPTER_SELECT_DATA.push(ch10);
+      }
+      const route=getRoute();
+      const base={
+        key:'ch10',
+        label:'Chapitre X',
+        image:(typeof A!=='undefined'&&A.c10_cover)?A.c10_cover:'',
+        tags:['Perspective définitive','Akuhn’Nabad','Amanea','Geôles']
+      };
+      if(route==='iriana') Object.assign(ch10,base,{
+        title:'L’Impératrice Noire',
+        subtitle:'Route Iriana · verrouillée',
+        body:'Cette aventure a choisi de suivre Iriana. La rencontre avec Amanea, la cité obscurcie et le fragment de la Cellule 17 appartiennent à cette perspective.',
+        action:'Reprendre la route Iriana',
+        tags:['Route Iriana','Amanea','Cité noire','Perspective verrouillée']
+      });
+      else if(route==='group') Object.assign(ch10,base,{
+        title:'Les Geôles de la Cité Noire',
+        subtitle:'Route du groupe · verrouillée',
+        body:'Cette aventure a choisi de rester auprès de Hylee et du groupe. Amanea demeure une souveraine antagoniste observée depuis les geôles.',
+        action:'Reprendre la route du groupe',
+        tags:['Route du groupe','Hylee','Bellirith','Perspective verrouillée']
+      });
+      else Object.assign(ch10,base,{
+        title:'Deux vérités sous les pierres',
+        subtitle:'Iriana ou le groupe',
+        body:'Deux cellules racontent deux vérités. Le choix de perspective est définitif hors mode développeur et façonnera les chapitres suivants.',
+        action:'Choisir une perspective'
+      });
+
+      const order=['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10'];
+      CHAPTER_SELECT_DATA.sort((a,b)=>{
+        const ia=order.indexOf(a&&a.key), ib=order.indexOf(b&&b.key);
+        return (ia<0?999:ia)-(ib<0?999:ib);
+      });
+      return ch10;
+    }
+
+    upsertChapter10Card();
+
+    const previousUnlocked=(typeof chapterSelectUnlocked==='function')?chapterSelectUnlocked:null;
+    if(previousUnlocked){
+      window.chapterSelectUnlocked=chapterSelectUnlocked=function(key){
+        if(key==='ch10') return chapter10Unlocked();
+        return previousUnlocked(key);
+      };
+    }
+
+    const previousLaunch=(typeof launchChapterSelect==='function')?launchChapterSelect:null;
+    if(previousLaunch){
+      window.launchChapterSelect=launchChapterSelect=function(key){
+        if(key==='ch10'&&typeof window.startChapter10==='function') return window.startChapter10();
+        return previousLaunch(key);
+      };
+    }
+
+    const previousRender=(typeof renderChapterSelect==='function')?renderChapterSelect:null;
+    if(previousRender){
+      window.renderChapterSelect=renderChapterSelect=function(){
+        upsertChapter10Card();
+        previousRender();
+        const grid=document.getElementById('chapterSelectGrid');
+        if(!grid) return;
+        const index=CHAPTER_SELECT_DATA.findIndex(ch=>ch&&ch.key==='ch10');
+        const cards=grid.querySelectorAll('.chapterSelectCard');
+        const card=index>=0?cards[index]:null;
+        if(card){
+          card.dataset.chapterKey='ch10';
+          card.classList.add('chapterLatest');
+          const hint=card.querySelector('.chapterLockHint');
+          if(hint&&!chapter10Unlocked()) hint.textContent='Termine le Chapitre IX pour ouvrir le choix de perspective.';
+        }
+      };
+    }
+
+    const previousOpen=(typeof openChapters==='function')?openChapters:null;
+    if(previousOpen){
+      window.openChapters=openChapters=function(){
+        upsertChapter10Card();
+        const result=previousOpen.apply(this,arguments);
+        if(typeof renderChapterSelect==='function') renderChapterSelect();
+        requestAnimationFrame(()=>{
+          const card=document.querySelector('#chapterSelectGrid .chapterSelectCard[data-chapter-key="ch10"]');
+          if(card&&(chapter10Unlocked()||getRoute())){
+            document.querySelectorAll('#chapterSelectGrid .chapterSelectCard[open]').forEach(other=>{if(other!==card)other.open=false;});
+            card.open=true;
+            card.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+          }
+        });
+        return result;
+      };
+    }
+
+    if(!document.getElementById('v0189-ch10-selection-style')){
+      const style=document.createElement('style');
+      style.id='v0189-ch10-selection-style';
+      style.textContent=`
+        .chapterSelectCard.chapterLatest{border-color:rgba(91,255,156,.48);box-shadow:0 20px 46px rgba(21,128,73,.16)}
+        .chapterSelectCard.chapterLatest .chapterBookSpine{background:linear-gradient(180deg,rgba(73,170,111,.38),rgba(18,55,42,.42))}
+      `;
+      document.head.appendChild(style);
+    }
+
+    if(typeof renderChapterSelect==='function') renderChapterSelect();
+  }catch(error){console.warn('Correctif visibilité Chapitre X non appliqué',error);}
 })();
 </script>
 
