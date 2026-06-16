@@ -2509,8 +2509,8 @@ const INTRO_VALUE_MAX=5;
 let state={scene:'p01',stats:{...START_STATS},introStats:{...INTRO_STATS},flags:{},inventory:[],memories:[],sceneRewards:[],journalFragments:[],devJournalForceAccess:false,musicOn:true,menuMusicOn:true,easyMode:false,mobileUI:false,lastScreen:'title',seenEnding:false,duel:null,duelResult:null,c3ShadowDuel:null,c3ShadowResult:null,c5SageDuel:null,c5SageIntroPlayed:false,c5SageIntroPending:false,c3ShadowIntroPlayed:false,c3ShadowIntroPending:false,duelIntroPlayed:false,duelIntroPending:false,devMode:false,history:[],codexTab:'entries',codexUnlocked:['hylee','remerii'],codexUnlockedImages:[],codexUnlockedMusic:['music_menu']};
 let currentPreviewTrack=null;
 const statNames={audace:'Audace',sangfroid:'Sang-froid',lien:'Lien Remerii',lucidite:'Lucidité',resonance:'Résonance'};
-const VALUE_CAP=45;
-function applyBalancedStatDelta(key,delta){ if(!(key in START_STATS))return; const current=(state.stats&&typeof state.stats[key]==='number')?state.stats[key]:0; state.stats[key]=Math.max(0,Math.min(VALUE_CAP,current+delta)); }
+const VALUE_CAP=999;
+function applyBalancedStatDelta(key,delta){ if(!(key in START_STATS))return; const current=(state.stats&&typeof state.stats[key]==='number')?state.stats[key]:0; state.stats[key]=Math.max(0,current+delta); }
 
 const PROGRESSION_ITEMS={
   jeton_imperial:{title:'Jeton impérial',type:'Autorisation',icon:'✦',body:`Jeton gravé aux armoiries royales. Il permet à Hylee et Remerii de franchir des contrôles sylviniens sans éveiller immédiatement les soupçons.`},
@@ -28781,6 +28781,285 @@ Ouvrir le choix de perspective ?`);
     }
   }catch(e){
     console.warn('Correctif v0.196 fracture Hylee / Remerii non appliqué',e);
+  }
+})();
+</script>
+
+
+<script>
+/* v0.194 · Repositionnement des images Valurn / Obscurci dans la cellule */
+(function installXGValurnObscurciReposition(){
+  try{
+    if(window.__sylviniaXGValurnObscurci194) return;
+    window.__sylviniaXGValurnObscurci194=true;
+
+    const setScene=(id,bg,zoom)=>{
+      if(typeof S==='undefined' || !S || !S[id]) return;
+      S[id].bg=bg;
+      if(typeof zoom!=='undefined') S[id].zoom=!!zoom;
+    };
+
+    for(let i=65;i<=77;i++) setScene(`c10g_${String(i).padStart(3,'0')}`,'c10g_key_release_01',true);
+    for(let i=78;i<=81;i++) setScene(`c10g_${String(i).padStart(3,'0')}`,'c10g_key_release_02',true);
+
+    setScene('c10g_156','c10g_key_bellirith_finale',true);
+    setScene('c10g_157','c10g_corridor_geoles',false);
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined' && CODEX_IMAGES_BY_SCENE){
+      CODEX_IMAGES_BY_SCENE.c10g_065=['c10g_key_release_01'];
+      CODEX_IMAGES_BY_SCENE.c10g_078=['c10g_key_release_02'];
+      delete CODEX_IMAGES_BY_SCENE.c10g_156;
+      CODEX_IMAGES_BY_SCENE.c10g_157=['c10g_corridor_geoles'];
+    }
+
+    console.log('[Sylvinia X-G] Repositionnement Valurn/Obscurci appliqué : c10g_065→081.');
+  }catch(err){
+    console.error('[Sylvinia X-G] Échec du repositionnement Valurn/Obscurci',err);
+  }
+})();
+</script>
+
+<script>
+/* v0.195 · Valeurs déplafonnées : plus de plafond à 45 pour Audace, Sang-froid, Lucidité et Résonance. */
+</script>
+
+<script>
+/* v0.197 · Choix supplémentaires route Groupe : interventions ponctuelles d’Hylee */
+(function installXGExtraGroupChoices(){
+  try{
+    if(window.__sylviniaXGExtraGroupChoices197) return;
+    window.__sylviniaXGExtraGroupChoices197=true;
+    if(typeof S==='undefined' || !S) return;
+
+    const cloneChoice=(label,next)=>({label,next,effects:{},note:''});
+    const addContinuePlusRequirement=(sceneId, branchChoice, continueLabel='Continuer')=>{
+      const sc=S[sceneId];
+      if(!sc) return;
+      const originalNext=sc.next || (Array.isArray(sc.choices)&&sc.choices[0]&&sc.choices[0].next);
+      if(!originalNext) return;
+      sc.choices=[
+        cloneChoice(continueLabel, originalNext),
+        branchChoice
+      ];
+      delete sc.next;
+    };
+
+    const upsertScene=(id,scene)=>{ S[id]=Object.assign({title:'Chapitre X-G · Les Geôles de la Cité Noire'},scene); };
+
+    // Pendant les images Valurn / Obscurci, les sprites sont retirés pour garder l’image clé lisible.
+    for(let i=65;i<=77;i++){
+      const id=`c10g_${String(i).padStart(3,'0')}`;
+      if(S[id]){ S[id].bg='c10g_key_release_01'; S[id].zoom=true; S[id].chars=[]; }
+    }
+    for(let i=78;i<=81;i++){
+      const id=`c10g_${String(i).padStart(3,'0')}`;
+      if(S[id]){ S[id].bg='c10g_key_release_02'; S[id].zoom=true; S[id].chars=[]; }
+    }
+
+    // 1) La négociation de Valurn avec l’Obscurci : Hylee peut intervenir sans casser le marché.
+    addContinuePlusRequirement('c10g_075',{
+      label:'Ajouter une pression calme',
+      next:'c10g_extra_obscurci_sangfroid',
+      effects:{sangfroid:3},
+      requires:{sangfroid:40},
+      note:'Sang-froid · Hylee intervient sans briser la négociation de Valurn.',
+      flags:{c10gHyleePressedObscurci:true}
+    },'Laisser Valurn tenir son marché');
+
+    upsertScene('c10g_extra_obscurci_sangfroid',{
+      sub:'Le marché de Valurn',
+      bg:'c10g_key_release_01',
+      music:'music_bellirith',
+      speaker:'Hylee',
+      text:'« Il ne bluffe pas. »\n\nLa voix d’Hylee surprend même Remerii. Elle ne hausse pas le ton, ne menace pas vraiment. Elle pose simplement les mots entre Valurn et l’Obscurci, comme une lame froide sur une table.\n\n« S’il dit que tu porteras les conséquences, c’est qu’il sait déjà lesquelles. »',
+      chars:[],
+      zoom:true,
+      next:'c10g_extra_obscurci_sangfroid_reaction'
+    });
+    upsertScene('c10g_extra_obscurci_sangfroid_reaction',{
+      sub:'Le marché de Valurn',
+      bg:'c10g_key_release_01',
+      music:'music_bellirith',
+      speaker:'Narrateur',
+      text:'L’Obscurci tourne lentement la tête vers elle. Pendant un instant, Hylee croit avoir parlé trop vite.\n\nPuis Valurn sourit, ravi de voir quelqu’un ajouter un poids discret à sa balance.\n\nRemerii, elle, observe Hylee avec une surprise brève, presque inquiète. Ce n’est pas de l’audace brute. C’est plus dangereux : du calme au bon endroit.',
+      chars:[],
+      zoom:true,
+      next:'c10g_076'
+    });
+
+    // 2) Duel Draven / Valurn : intervention d’audace pour empêcher l’explosion immédiate.
+    addContinuePlusRequirement('c10g_188',{
+      label:'Se placer entre eux',
+      next:'c10g_extra_draven_valurn_audace',
+      effects:{audace:3},
+      requires:{audace:41},
+      note:'Audace · Hylee s’interpose avant que Draven ne transforme les mots en coup.',
+      flags:{c10gHyleeBetweenDravenValurn:true}
+    },'Laisser la tension monter');
+
+    upsertScene('c10g_extra_draven_valurn_audace',{
+      sub:'Les mots qui blessent',
+      bg:'c10g_key_draven_valurn',
+      music:'music_c10_cite',
+      speaker:'Hylee',
+      text:'« Ça suffit. »\n\nHylee se place à moitié entre eux, plus petite que Draven, moins dangereuse que Valurn, mais assez droite pour couper leur ligne de mire.\n\n« Bellirith vient de nous ouvrir le ventre avec des mots. Vous voulez vraiment lui donner raison aussi vite ? »',
+      chars:[],
+      zoom:true,
+      next:'c10g_extra_draven_valurn_audace_reaction'
+    });
+    upsertScene('c10g_extra_draven_valurn_audace_reaction',{
+      sub:'Les mots qui blessent',
+      bg:'c10g_key_draven_valurn',
+      music:'music_c10_cite',
+      speaker:'Narrateur',
+      text:'Valurn laisse échapper un rire discret, mais il recule d’un pas. Draven garde les poings serrés. Il n’est pas calmé, seulement retenu par ce qu’Hylee vient d’oser faire.\n\nNaïah sourit derrière sa main, visiblement ravie que la plus douce du groupe ait choisi le moment le plus dangereux pour devenir la plus raisonnable.',
+      chars:[],
+      zoom:true,
+      next:'c10g_189'
+    });
+
+    // 3) Absence de Saidin : intervention de Résonance, différente de la pure analyse de Remerii.
+    addContinuePlusRequirement('c10g_274',{
+      label:'Sentir le contour du vide',
+      next:'c10g_extra_saidin_resonance',
+      effects:{resonance:3},
+      requires:{resonance:26},
+      note:'Résonance · Hylee perçoit la trace laissée par l’absence de Saidin.',
+      flags:{c10gHyleeFeltSaidinGap:true}
+    },'Laisser Remerii analyser le sort');
+
+    upsertScene('c10g_extra_saidin_resonance',{
+      sub:'Le vide dans la mémoire',
+      bg:'c10g_corridor_cite',
+      music:'music_c10_infiltration',
+      speaker:'Hylee',
+      text:'« Ce n’est pas seulement un oubli. »\n\nHylee ferme les yeux. La cité respire autour d’elle, noire, verticale, pleine de magie étrangère. Et dans cette magie, il y a un manque.\n\n« C’est comme une place laissée propre. Trop propre. Quelqu’un a retiré son ombre de nos pensées. »',
+      chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_calm','right']],
+      next:'c10g_extra_saidin_resonance_reaction'
+    });
+    upsertScene('c10g_extra_saidin_resonance_reaction',{
+      sub:'Le vide dans la mémoire',
+      bg:'c10g_corridor_cite',
+      music:'music_c10_infiltration',
+      speaker:'Remerii',
+      text:'« Tu as raison. »\n\nRemerii ne le dit pas par gentillesse. Son regard se durcit, soudain plus précis.\n\n« Ce sort n’a pas effacé Saidin. Il l’a rendu secondaire. Assez secondaire pour que nous cessions tous de le chercher. »',
+      chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_strict','right']],
+      next:'c10g_275'
+    });
+
+    // 4) Révélation du portail : Hylee peut nommer le danger avant que tout le monde se réfugie dans le choc.
+    addContinuePlusRequirement('c10g_318',{
+      label:'Nommer la menace',
+      next:'c10g_extra_portail_lucidite',
+      effects:{lucidite:3},
+      requires:{lucidite:42},
+      note:'Lucidité · Hylee formule ce que le silence du groupe refuse encore de regarder.',
+      flags:{c10gHyleeNamedPortalThreat:true}
+    },'Encaisser la révélation');
+
+    upsertScene('c10g_extra_portail_lucidite',{
+      sub:'L’Archive obscurcie',
+      bg:'c10g_key_archive_study',
+      music:'music_c10_cite',
+      speaker:'Hylee',
+      text:'« S’ils ouvrent ce portail, ce ne sera pas une bataille. »\n\nSa voix tremble, mais ses mots tiennent debout.\n\n« Ce sera une porte laissée ouverte sur quelque chose que personne ne pourra refermer seul. Même l’Empire. Même Amanea. Même Iriana. »',
+      chars:[],
+      zoom:true,
+      next:'c10g_extra_portail_lucidite_reaction'
+    });
+    upsertScene('c10g_extra_portail_lucidite_reaction',{
+      sub:'L’Archive obscurcie',
+      bg:'c10g_key_archive_study',
+      music:'music_c10_cite',
+      speaker:'Saidin',
+      text:'« Voilà. »\n\nSaidin incline à peine la tête vers elle.\n\n« C’est précisément pour cela que je n’ai pas attendu votre permission pour chercher des preuves. »',
+      chars:[],
+      zoom:true,
+      next:'c10g_319'
+    });
+
+    // 5) Arrivée devant Tia : sang-froid face à la Lumière, sans voler la scène à Remerii.
+    addContinuePlusRequirement('c10g_385',{
+      label:'Rester droite malgré la Lumière',
+      next:'c10g_extra_tia_sangfroid',
+      effects:{sangfroid:3},
+      requires:{sangfroid:43},
+      note:'Sang-froid · Hylee ne laisse pas la peur de Tia dicter sa posture.',
+      flags:{c10gHyleeHeldBeforeTia:true}
+    },'Subir l’arrivée de Tia');
+
+    upsertScene('c10g_extra_tia_sangfroid',{
+      sub:'Le palais impérial',
+      bg:'c10g_key_tia_faceaface',
+      music:'music_c10_cite',
+      speaker:'Narrateur',
+      text:'Hylee sent la Lumière lui écraser les épaules avant même que l’Impératrice ne parle. Tout en elle voudrait baisser les yeux.\n\nElle ne le fait pas.\n\nSes mains tremblent, mais son regard reste levé. Elle ne défie pas Tia Farae. Elle refuse seulement de disparaître devant elle.',
+      chars:[],
+      zoom:true,
+      next:'c10g_386'
+    });
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined' && CODEX_IMAGES_BY_SCENE){
+      CODEX_IMAGES_BY_SCENE.c10g_extra_obscurci_sangfroid=['c10g_key_release_01'];
+      CODEX_IMAGES_BY_SCENE.c10g_extra_draven_valurn_audace=['c10g_key_draven_valurn'];
+      CODEX_IMAGES_BY_SCENE.c10g_extra_portail_lucidite=['c10g_key_archive_study'];
+      CODEX_IMAGES_BY_SCENE.c10g_extra_tia_sangfroid=['c10g_key_tia_faceaface'];
+    }
+
+    console.log('[Sylvinia X-G] Choix supplémentaires de rythme installés.');
+  }catch(err){
+    console.error('[Sylvinia X-G] Échec installation choix supplémentaires',err);
+  }
+})();
+</script>
+
+
+<script>
+/* v0.198 · Polissage des transitions après choix supplémentaires X-G */
+(function polishXGExtraChoiceTransitions(){
+  try{
+    if(window.__sylviniaXGExtraChoiceTransitions198) return;
+    window.__sylviniaXGExtraChoiceTransitions198=true;
+    if(typeof S==='undefined' || !S) return;
+
+    const patchScene=(id,patch)=>{
+      if(!S[id]) return;
+      Object.assign(S[id],patch);
+    };
+
+    // Le choix de Sang-froid renforce la pression sans remplacer la menace de Valurn qui suit.
+    patchScene('c10g_extra_obscurci_sangfroid_reaction',{
+      text:'L’Obscurci tourne lentement la tête vers elle. Pendant un instant, Hylee croit avoir parlé trop vite.\n\nPuis Valurn sourit, ravi de voir quelqu’un ajouter un poids discret à sa balance. Il ne perd pas la main : il attend simplement que le silence fasse son œuvre.\n\nRemerii observe Hylee avec une surprise brève, presque inquiète. Ce n’est pas de l’audace brute. C’est plus dangereux : du calme au bon endroit.',
+      next:'c10g_076'
+    });
+
+    // Le choix d’Audace ne désamorce pas magiquement la dispute : il ajoute un cran de retenue avant que le canon reprenne.
+    patchScene('c10g_extra_draven_valurn_audace_reaction',{
+      text:'Valurn lève les mains avec un sourire, comme s’il acceptait la frontière qu’Hylee vient de tracer. Mais son regard, lui, reste fixé sur Draven.\n\nDraven garde les poings serrés. Il n’est pas calmé. Il est seulement forcé de mesurer le pas suivant.\n\nNaïah sourit derrière sa main, visiblement ravie que la plus douce du groupe ait choisi le moment le plus dangereux pour devenir la plus raisonnable.',
+      next:'c10g_189'
+    });
+
+    // Après l’intervention de Résonance, on évite de revenir sur une narration où Hylee serait encore totalement en retrait.
+    patchScene('c10g_extra_saidin_resonance_reaction',{
+      text:'« Tu as raison. »\n\nRemerii ne le dit pas par gentillesse. Son regard se durcit, soudain plus précis.\n\n« Ce sort n’a pas effacé Saidin. Il l’a rendu secondaire. Assez secondaire pour que nous cessions tous de le chercher. »\n\nLa phrase laisse au groupe une seconde de froid. Puis Naïah, évidemment, choisit cette seconde pour sourire.',
+      next:'c10g_276'
+    });
+
+    // La révélation du portail garde le choc de Draven intact tout en répondant au choix de Lucidité.
+    patchScene('c10g_extra_portail_lucidite_reaction',{
+      text:'« Voilà. »\n\nSaidin incline à peine la tête vers elle.\n\n« C’est précisément pour cela que je n’ai pas attendu votre permission pour chercher des preuves. »\n\nLe mot reste suspendu dans l’air : Calciterres. Même prononcé avec méthode, il conserve son venin.',
+      next:'c10g_319'
+    });
+
+    // Le choix devant Tia prépare l’entrée de l’Impératrice sans donner l’impression qu’elle est déjà décrite deux fois.
+    patchScene('c10g_extra_tia_sangfroid',{
+      text:'Hylee sent la Lumière lui écraser les épaules avant même que l’Impératrice ne parle. Tout en elle voudrait baisser les yeux.\n\nElle ne le fait pas.\n\nSes mains tremblent, mais son regard reste levé. Elle ne défie pas Tia Farae. Elle refuse seulement de disparaître devant elle.\n\nAlors la silhouette impériale s’avance, et la salle entière semble retenir son souffle.',
+      next:'c10g_386'
+    });
+
+    console.log('[Sylvinia X-G] Transitions des choix supplémentaires polies.');
+  }catch(err){
+    console.error('[Sylvinia X-G] Échec polissage transitions choix supplémentaires',err);
   }
 })();
 </script>
