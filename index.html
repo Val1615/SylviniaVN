@@ -29991,5 +29991,342 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<script>
+/* v0.208 · Corrections XI_I / XII_I · route Iriana */
+(function installChapter11IChapter12IPatch(){
+  try{
+    if(window.__sylviniaV208XI12IPatch) return;
+    window.__sylviniaV208XI12IPatch = true;
+    if(typeof A==='undefined' || typeof S==='undefined'){
+      console.warn('[Sylvinia v0.208] Assets ou scènes introuvables.');
+      return;
+    }
+
+    // Assets additionnels conservés dans le ZIP.
+    A.music_c11_complainte_instru = 'assets/audio/chapter11/la_complainte_imperiale_instru.mp3';
+    A.music_c11_complainte = 'assets/audio/chapter11/la_complainte_imperiale.mp3';
+    A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
+    A.iriana_dungeon = 'assets/images/backgrounds/iriana/iriana_dungeon.png';
+    A.iriana_corridor = 'assets/images/backgrounds/iriana/iriana_corridor.png';
+    A.iriana_warroom = 'assets/images/backgrounds/iriana/iriana_warroom.png';
+    A.iriana_music_room = 'assets/images/backgrounds/iriana/iriana_music_room.png';
+    A.iriana_throneroom = 'assets/images/backgrounds/iriana/iriana_throneroom.png';
+    A.iriana_terrace = 'assets/images/backgrounds/iriana/iriana_terrace.png';
+
+    const patchScene=(id,patch)=>{ if(S[id]) Object.assign(S[id],patch); };
+    const clone=o=>JSON.parse(JSON.stringify(o));
+    const replaceTitlePrefix=(id,prefix)=>{ if(S[id]&&typeof S[id].title==='string') S[id].title=S[id].title.replace(/^Chapitre\s+XI_I/,prefix); };
+    const hasScene=id=>!!S[id];
+
+    const chapter12BranchPrefixes=['c11i_choice_reflet','c11i_reflet_','c11i_choice_meche','c11i_meche_','c11i_choice_tia_sentence','c11i_tia_sentence_','c11i_choice_rage','c11i_rage_bonus'];
+    function isChapter12IScene(id){
+      id=String(id||'');
+      if(id==='c12i_000' || id==='c12i_end') return true;
+      const m=id.match(/^c11i_(\d+)/);
+      if(m){ const n=parseInt(m[1],10); if(n>=29) return true; }
+      return chapter12BranchPrefixes.some(prefix=>id.startsWith(prefix));
+    }
+
+    // --- 1) Correction bannière vidéo / musiques du duo au piano.
+    const normalDuoCalm = [['iriana','iriana_calm','left'],['amanea','amanea_thinking','right']];
+    const normalDuoSad = [['iriana','iriana_sad','left'],['amanea','amanea_sad','right']];
+    ['c11i_004','c11i_005'].forEach(id=>patchScene(id,{music:'music_c11_complainte_instru',chars:clone(normalDuoCalm)}));
+    ['c11i_006','c11i_007','c11i_008','c11i_009','c11i_010'].forEach(id=>patchScene(id,{music:'music_c11_complainte_instru',chars:clone([['iriana','iriana_calm','left'],['amanea','amanea_sad','right']])}));
+    ['c11i_011','c11i_012'].forEach(id=>patchScene(id,{music:'music_c11_complainte',chars:clone(normalDuoSad),videoBanner:null}));
+    ['c11i_013','c11i_014','c11i_015','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final'].forEach(id=>{
+      if(S[id]){
+        S[id].music = 'music_c11_complainte';
+        S[id].chars = [];
+        S[id].videoBanner = A.c11i_piano_video;
+      }
+    });
+    patchScene('c11i_016',{chars:clone(normalDuoSad),music:'music_c10_cite',videoBanner:null});
+    patchScene('c11i_017',{chars:clone(normalDuoSad),music:'music_c10_cite',videoBanner:null});
+
+    // --- 2) Correction sprite d'Iriana scènes 018 → 020.
+    ['c11i_018','c11i_019','c11i_020'].forEach(id=>patchScene(id,{chars:[['iriana','iriana_sad','left'],['amanea','amanea_sad','right']]}));
+
+    // --- 3) Effet spectral du reflet d'Amanea.
+    if(!document.getElementById('v0208-iriana-reflet-style')){
+      const style=document.createElement('style');
+      style.id='v0208-iriana-reflet-style';
+      style.textContent=`
+        .char.amanea.projection{
+          filter:drop-shadow(0 0 10px rgba(99,255,137,.45)) drop-shadow(0 0 28px rgba(86,255,126,.28)) drop-shadow(0 18px 30px rgba(0,0,0,.72));
+          opacity:.68;
+          mix-blend-mode:screen;
+        }
+        .char.amanea.projection.dim{opacity:.46;}
+        .chapterSelectCard.chapter12ICard{border-color:rgba(142,255,173,.34);box-shadow:0 20px 46px rgba(54,149,94,.14)}
+        .chapterSelectCard.chapter12ICard .chapterBookSpine{background:linear-gradient(180deg,rgba(58,122,92,.42),rgba(24,30,39,.42))}
+      `;
+      document.head.appendChild(style);
+    }
+    patchScene('c11i_027',{chars:[['iriana','iriana_profile','left'],['amanea','amanea_away','right','projection']]});
+    patchScene('c11i_choice_reflet',{chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']]});
+    patchScene('c11i_028',{chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']]});
+    patchScene('c11i_029',{chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']]});
+    patchScene('c11i_030',{chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']]});
+    ['c11i_reflet_sangfroid','c11i_reflet_lucidite','c11i_reflet_audace','c11i_reflet_resonance'].forEach(id=>patchScene(id,{chars:[['iriana','iriana_calm','left'],['amanea','amanea_thinking','right','projection']]}));
+
+    // --- 4) Allonger les choix du reflet avec plus d’impact.
+    patchScene('c11i_reflet_sangfroid',{
+      text:`Iriana ne lève même pas les yeux.\n\nLe reflet peut parler. Il peut juger. Il ne peut pas choisir ce qu’elle comprend.\n\nCette fois, c’est elle qui tient la page.`,
+      next:'c11i_reflet_sangfroid_2'
+    });
+    S.c11i_reflet_sangfroid_2={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Reflet d’Amanea',text:`« Tu fais semblant de m’ignorer, mais tu écoutes tout. »\n\nIriana tourne une page sans se presser.\n\n« Non, répond-elle intérieurement. Je fais seulement la différence entre une défense magique et la vérité que tu prétends protéger. »`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_thinking','right','projection']],next:'c11i_reflet_sangfroid_3',effects:{sangfroid:1}};
+    S.c11i_reflet_sangfroid_3={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Le silence qui suit n’a rien d’une victoire éclatante. C’est mieux que cela.\n\nIriana vient de refuser qu’un écho décide du rythme de sa pensée. Elle ne s’écrase pas. Elle ne mord pas à l’hameçon. Elle continue, plus solide, plus maîtresse d’elle-même.`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_028'};
+
+    patchScene('c11i_reflet_lucidite',{
+      text:`« Jusqu’où va ma curiosité… ou jusqu’où voulais-tu qu’elle aille ? »\n\nLe reflet penche légèrement la tête. Sa voix a le sourire d’Amanea sans sa chaleur.\n\n« Voilà une question moins idiote. »`,
+      next:'c11i_reflet_lucidite_2'
+    });
+    S.c11i_reflet_lucidite_2={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Reflet d’Amanea',text:`« On ne laisse pas un journal pareil dans une pièce accessible par accident. »\n\nIriana fronce imperceptiblement les sourcils.\n\n« Alors ce n’est ni un oubli, ni une faiblesse. »\n\nLe reflet ne confirme pas franchement. Il se contente de l’observer, comme si la réponse importait moins que la manière dont elle y parvient.`,chars:[['iriana','iriana_calm','left'],['amanea','amanea_thinking','right','projection']],next:'c11i_reflet_lucidite_3',effects:{lucidite:1}};
+    S.c11i_reflet_lucidite_3={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Iriana comprend alors quelque chose d’inconfortable : Amanea n’a pas seulement conservé des souvenirs. Elle a préparé une rencontre différée, une conversation impossible entre celle qu’elle est devenue… et quelqu’un de sa lignée capable de tenir jusqu’au bout.\n\nCette idée rend le journal plus lourd entre ses mains. Et infiniment plus intime.`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_028',effects:{lucidite:1}};
+
+    patchScene('c11i_reflet_audace',{
+      text:`« Curieux choix de reprocher une intrusion à quelqu’un après avoir laissé un fantôme pour l’accueillir. »\n\nLe reflet esquisse un rictus.\n\n« Tu as bien du sang Farae. Insupportable jusque dans les effractions. »`,
+      next:'c11i_reflet_audace_2'
+    });
+    S.c11i_reflet_audace_2={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Iriana',text:`« Si tu voulais me chasser, tu l’aurais déjà fait. Si tu voulais seulement me juger, tu n’aurais pas besoin de parler autant. »\n\nElle relève enfin les yeux vers l’apparition.\n\n« Alors va au bout. Dis-moi ce que tu protèges vraiment. »`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_rictus','right','projection']],next:'c11i_reflet_audace_3',effects:{audace:1}};
+    S.c11i_reflet_audace_3={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Le reflet ne recule pas. Pourtant, quelque chose s’ouvre. Pas une confidence entière. Pas une permission formelle. Mais la sensation ténue qu’Iriana vient de frapper juste : derrière l’ironie, l’écho d’Amanea défend moins un secret qu’une plaie encore vive.`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_028'};
+
+    patchScene('c11i_reflet_resonance',{
+      text:`Iriana ne répond pas tout de suite. Elle sent plutôt qu’elle écoute autrement.\n\nLe reflet n’a pas la rigidité d’un simple enchantement défensif. Sa présence pulse, subtile, presque organique, comme si la magie avait mémorisé une humeur et pas seulement une voix.`,
+      next:'c11i_reflet_resonance_2'
+    });
+    S.c11i_reflet_resonance_2={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Iriana',text:`« Tu n’es pas un verrou. Tu es une empreinte. »\n\nL’écho verdit légèrement, son halo se densifiant comme une flamme retenue.\n\n« Enfin, murmure le reflet. Quelqu’un qui sent la différence. »`,chars:[['iriana','iriana_calm','left'],['amanea','amanea_thinking','right','projection']],next:'c11i_reflet_resonance_3',effects:{resonance:1}};
+    S.c11i_reflet_resonance_3={title:'Chapitre XII_I · Le reflet d’Amanea',sub:'Le reflet d’Amanea',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`La résonance ne lui livre pas seulement un mécanisme. Elle lui fait percevoir le désespoir enfoui dans cette magie. Quelqu’un a voulu laisser derrière lui assez de soi pour être compris plus tard… tout en sachant que cela ne suffirait jamais à réparer quoi que ce soit.\n\nIriana baisse un instant les yeux vers le journal. Elle vient de sentir un chagrin logé dans le sort lui-même.`,chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_028',effects:{resonance:1}};
+
+    // --- 5) Scinder le chapitre XI_I et créer XII_I.
+    patchScene('c11i_028',{next:'c11i_end'});
+    if(S.c11i_067) S.c11i_067.next='c12i_end';
+
+    const xiMemories=['iriana_amanea_piano','iriana_trouve_coffret_amanea'];
+    S.c11i_end={
+      title:'Chapitre XI_I terminé',
+      sub:'Amie ou ennemie ?',
+      bg:'c10_palais',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:`Iriana referme lentement le journal, incapable de chasser l’impression d’avoir franchi un seuil invisible.\n\nLes quartiers d’Amanea, le piano, le coffret, puis ce reflet laissé derrière elle : tout cela n’a pas dissipé la fracture entre leurs camps. Mais cela a fissuré quelque chose de plus ancien encore — la version simple, propre, impériale, qu’Iriana se racontait jusque-là.\n\nDans la Progression, les fragments du Carnet du Némésis cessent enfin d’être illisibles. Le passé n’est plus seulement trouvé. Il peut désormais être lu.\n\nAu moment où elle s’apprête à s’éloigner, son regard retombe pourtant sur une mèche oubliée. Une étrange magie y circule encore, presque imperceptible... comme si le souvenir refusait de se refermer tout à fait.`,
+      chars:[['iriana','iriana_sad','left'],['amanea','amanea_away','right','projection']],
+      choices:[
+        {label:'Continuer vers le Chapitre XII_I',next:'c12i_000',effects:{},note:'Route Iriana uniquement · Le souvenir d’Amanea',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:xiMemories},
+        {label:'Retour au menu',next:'menu',effects:{},note:'Les fragments sont désormais lisibles dans la Progression.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:xiMemories}
+      ]
+    };
+    S.c12i_000={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'La mèche réagit',
+      bg:'c10_palais',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:`La magie résiduelle n’était pas une simple trace.\n\nÀ peine le journal refermé, la mèche semble répondre à la présence d’Iriana. Une pulsation sourde, presque charnelle, traverse la fibre ancienne. Ce n’est plus une lecture. C’est une invitation dangereuse.\n\nSi elle va plus loin, elle ne lira plus le passé d’Amanea. Elle le traversera.`,
+      chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],
+      next:'c11i_029'
+    };
+
+    // Retitrer toutes les scènes de la deuxième partie comme Chapitre XII_I.
+    Object.keys(S).forEach(id=>{ if(isChapter12IScene(id)) replaceTitlePrefix(id,'Chapitre XII_I'); });
+
+    // --- 6) Restaurer des sprites dans la mémoire d’Amanea lorsque seule le décor restait.
+    const combatAmanea=[['amanea','amanea_terrifying','center']];
+    const brokenAmanea=[['amanea','amanea_sad','center']];
+    for(let i=40;i<=53;i++) patchScene('c11i_'+String(i).padStart(3,'0'),{chars:clone(combatAmanea)});
+    for(let i=54;i<=67;i++) patchScene('c11i_'+String(i).padStart(3,'0'),{chars:clone(brokenAmanea)});
+    patchScene('c11i_choice_tia_sentence',{chars:[['amanea','amanea_terrifying','center']]});
+    ['c11i_tia_sentence_resonance','c11i_tia_sentence_lucidite','c11i_tia_sentence_audace','c11i_tia_sentence_sangfroid'].forEach(id=>patchScene(id,{chars:[['amanea','amanea_terrifying','center']]}));
+    patchScene('c11i_choice_rage',{chars:[['amanea','amanea_terrifying','center']]});
+    patchScene('c11i_rage_bonus',{chars:[['amanea','amanea_terrifying','center']]});
+
+    // --- 7) Allonger les scènes de choix du souvenir Tia / Amanea.
+    patchScene('c11i_tia_sentence_resonance',{next:'c11i_tia_sentence_resonance_2'});
+    S.c11i_tia_sentence_resonance_2={title:'Chapitre XII_I · Tu ne devrais pas exister',sub:'Tu ne devrais pas exister',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Cette phrase ne blesse pas seulement Amanea. Elle traverse Iriana elle-même.\n\nUne Farae en nie une autre. Pas pour ce qu’elle a fait. Pour ce qu’elle est devenue — ou peut-être pour ce qu’elle a toujours été aux yeux de sa sœur. Pendant un battement de cœur, les siècles se resserrent et la blessure cesse d’appartenir au seul passé.`,chars:[['amanea','amanea_sad','center']],next:'c11i_037',effects:{resonance:1}};
+    patchScene('c11i_tia_sentence_lucidite',{next:'c11i_tia_sentence_lucidite_2'});
+    S.c11i_tia_sentence_lucidite_2={title:'Chapitre XII_I · Tu ne devrais pas exister',sub:'Tu ne devrais pas exister',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Iriana comprend alors l’exacte violence de la formule. Tia ne se contente pas de condamner un acte. Elle recode tout le débat moral en amont.\n\nSi Amanea ne devrait pas exister, alors plus rien de ce qui lui a été fait n’a besoin d’être justifié avec équité. La phrase transforme une sœur en faute ontologique. C’est d’une efficacité politique terrifiante.`,chars:[['amanea','amanea_terrifying','center']],next:'c11i_037',effects:{lucidite:1}};
+    patchScene('c11i_tia_sentence_audace',{next:'c11i_tia_sentence_audace_2'});
+    S.c11i_tia_sentence_audace_2={title:'Chapitre XII_I · Tu ne devrais pas exister',sub:'Tu ne devrais pas exister',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Une colère droite se forme en Iriana. Elle n’absout rien. Elle n’efface pas les villages détruits ni le sang répandu. Mais elle refuse de reconnaître comme juste une parole qui commence par nier l’existence de l’autre.\n\nÀ cet instant, l’Empire et sa pureté sacrée cessent d’avoir le monopole du bon droit dans son esprit.`,chars:[['amanea','amanea_terrifying','center']],next:'c11i_037',effects:{audace:1}};
+    patchScene('c11i_tia_sentence_sangfroid',{next:'c11i_tia_sentence_sangfroid_2'});
+    S.c11i_tia_sentence_sangfroid_2={title:'Chapitre XII_I · Tu ne devrais pas exister',sub:'Tu ne devrais pas exister',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Iriana s’oblige à tenir. À ne pas se dissoudre dans la scène.\n\nCe n’est pas sa colère. Pas sa gorge. Pas son siècle. Elle peut sentir la fracture sans s’y abandonner. Ce contrôle lui coûte, mais il lui permet de continuer à lire la vérité du souvenir au lieu d’être avalée par lui.`,chars:[['amanea','amanea_terrifying','center']],next:'c11i_037'};
+
+    patchScene('c11i_choice_rage',{
+      text:`La lame est levée. La haine réclame une fin. Mais dans le souvenir, quelque chose hésite, et cette hésitation est presque plus dangereuse que le coup.\n\nIriana sent que ce qui va suivre ne parlera plus seulement de victoire ou de défaite. Cela dira ce qu’il reste d’une sœur quand toute retenue a brûlé.`,
+      chars:[['amanea','amanea_terrifying','center']]
+    });
+    patchScene('c11i_rage_bonus',{
+      next:'c11i_rage_bonus_2',
+      text:`Iriana cherche le moment exact où la vengeance cesse d’être une décision et devient une chute.\n\nElle le trouve dans cette seconde : Amanea peut encore frapper avec une lame. Elle choisit pourtant ses mains. Ce n’est plus une exécution. C’est une demande impossible adressée au corps de sa sœur : ressens enfin ce que tu m’as fait.`
+    });
+    S.c11i_rage_bonus_2={title:'Chapitre XII_I · L’instant avant la chute',sub:'L’instant avant la chute',bg:'c10_palais',music:'music_c10_cite',speaker:'Narrateur',text:`Cette intuition bouleverse Iriana. Elle comprend que la violence qui suit n’est pas seulement celle d’une guerre. C’est l’effondrement d’un lien incapable de mourir proprement.\n\nAmanea ne cherche plus à convaincre Tia. Elle veut lui faire toucher, par la chair, l’ampleur de la rupture. Cette lucidité rend la scène plus terrible encore.`,chars:[['amanea','amanea_terrifying','center']],next:'c11i_047',effects:{lucidite:1}};
+
+    // --- 8) Fin du chapitre XII_I.
+    S.c12i_end={
+      title:'Chapitre XII_I terminé',
+      sub:'Le souvenir d’Amanea',
+      bg:'c10_palais',
+      music:'music_c10_cite',
+      speaker:'Narrateur',
+      text:`Iriana revient du souvenir avec le goût métallique de la chute et de la survie.\n\nElle a vu la rage d’Amanea, la fracture irréparable avec Tia, puis l’étrange lueur d’humanité qu’une enfant nommée Allenna a su préserver au milieu des cendres.\n\nDans la Progression, un nouveau souvenir est gravé : Allenna, l’enfant restée.`,
+      chars:[['iriana','iriana_sad','left'],['amanea','amanea_sad','right','projection']],
+      choices:[
+        {label:'Retour au menu',next:'menu',effects:{},note:'La route Iriana poursuivra plus tard cette fracture.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter12IComplete:true,chapter12IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['souvenir_allenna']}
+      ]
+    };
+
+    // --- 9) Fragments du journal : révélation lisible en fin de XI_I, nouveau fragment XII_I en fin de XII_I.
+    if(typeof JOURNAL_FRAGMENTS!=='undefined'){
+      JOURNAL_FRAGMENTS.ch12i={
+        title:'Chapitre XII_I · Allenna',
+        chapter:'Chapitre XII_I · Le souvenir d’Amanea',
+        unlockLabel:'Termine le Chapitre XII_I',
+        blocks:[
+          {kind:'journal',text:'Ce souvenir n’est pas seulement celui de ma chute. C’est celui du moment où une enfant, Allenna, m’a regardée autrement que comme une monstruosité. J’étais aveugle, brisée, trahie, vidée de toute victoire. Elle n’avait rien à gagner à rester. Elle est restée.'},
+          {kind:'projection',text:'Je crois que c’est là que j’ai compris que les Obscurcis ne pouvaient pas seulement être une vengeance. Ils devaient devenir une porte pour ceux que l’Empire abandonnait.'}
+        ]
+      };
+    }
+    if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined' && Array.isArray(JOURNAL_FRAGMENT_ORDER)){
+      const idx=JOURNAL_FRAGMENT_ORDER.indexOf('ch11i');
+      if(idx>=0) JOURNAL_FRAGMENT_ORDER.splice(idx,1,'ch12i');
+      else if(!JOURNAL_FRAGMENT_ORDER.includes('ch12i')) JOURNAL_FRAGMENT_ORDER.push('ch12i');
+    }
+    if(typeof journalFragmentUnlocked==='function' && !window.__sylviniaV208JournalOverride){
+      window.__sylviniaV208JournalOverride=true;
+      const prevJournalUnlocked=journalFragmentUnlocked;
+      window.journalFragmentUnlocked=journalFragmentUnlocked=function(key){
+        ensureProgressDefaults&&ensureProgressDefaults();
+        if(state&&state.devMode&&state.devJournalForceAccess===true) return true;
+        const f=(state&&state.flags)||{};
+        if(key==='ch11i') return false;
+        if(key==='ch12i') return !!(f.chapter12IComplete===true || (state.journalFragments||[]).includes('ch12i'));
+        return prevJournalUnlocked(key);
+      };
+    }
+
+    // --- 10) Chapitre XII_I dans la sélection de chapitres.
+    function chapter12IUnlocked(){
+      const prev=(typeof readMainSave==='function'?readMainSave():state)||state||{};
+      const f=prev.flags||{};
+      return !!(((state&&state.devMode) || prev.devMode) || f.chapter11IComplete || f.chapter12IComplete);
+    }
+    window.canStartChapter12I=function canStartChapter12I(){ return chapter12IUnlocked(); };
+    window.startChapter12I=function startChapter12I(){
+      if(!chapter12IUnlocked()){
+        if(typeof toast==='function') toast('Chapitre XII_I verrouillé','Termine d’abord le Chapitre XI_I de la route Iriana.');
+        return;
+      }
+      const prev=(typeof readMainSave==='function'?readMainSave():state)||state||{};
+      const prevFlags=prev.flags||{};
+      state={
+        ...prev,
+        scene:'c12i_000',
+        stats:{...START_STATS,...(prev.stats||{})},
+        introStats:{...INTRO_STATS,...(prev.introStats||{})},
+        flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true,chapter7Complete:true,chapter8Complete:true,chapter9Complete:true,chapter10Complete:true,chapter10IrianaComplete:true,chapter11IComplete:true,chapter11IRoute:true,chapter10Route:'iriana',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'iriana',journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},
+        inventory:[...new Set([...(prev.inventory||[]),'jeton_imperial'])],
+        journalFragments:[...new Set([...(prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7','ch8','ch9','ch10'])],
+        memories:[...new Set([...(prev.memories||[])])],
+        sceneRewards:[...new Set([...(prev.sceneRewards||[])])],
+        musicOn:(typeof prev.musicOn==='boolean')?prev.musicOn:true,
+        menuMusicOn:(typeof prev.menuMusicOn==='boolean')?prev.menuMusicOn:true,
+        easyMode:(typeof prev.easyMode==='boolean')?prev.easyMode:(typeof vnEasyModeEnabled==='function'&&vnEasyModeEnabled()),
+        mobileUI:(typeof prev.mobileUI==='boolean')?prev.mobileUI:(state&&state.mobileUI===true),
+        lastScreen:'game',seenEnding:true,history:[],codexTab:'entries',
+        devMode:(state&&state.devMode) || (typeof prev.devMode==='boolean'?prev.devMode:false)
+      };
+      if(typeof setScreen==='function') setScreen('game');
+      if(typeof render==='function') render();
+      if(typeof save==='function') save();
+    };
+
+    const upsertChapter12ICard=()=>{
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      let ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch12_i');
+      if(!ch){ ch={key:'ch12_i'}; CHAPTER_SELECT_DATA.push(ch); }
+      Object.assign(ch,{
+        key:'ch12_i',
+        label:'Chapitre XII_I',
+        title:'Le souvenir d’Amanea',
+        subtitle:'Route Iriana uniquement',
+        image:(typeof A!=='undefined'&&(A.iriana_throneroom||A.c10_palais||A.c10_cover))?(A.iriana_throneroom||A.c10_palais||A.c10_cover):'',
+        tags:['Route Iriana','Journal','Souvenir','Allenna'],
+        body:'La mèche oubliée dans le journal réagit à la magie d’Iriana. En traversant ce souvenir, elle assiste à la fracture entre Tia et Amanea, puis au moment où Allenna devient une lumière infime au milieu des cendres.',
+        action:'Lancer le Chapitre XII_I'
+      });
+      const order=['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11_i','ch11_g','ch12_i'];
+      CHAPTER_SELECT_DATA.sort((a,b)=>{const ia=order.indexOf(a&&a.key),ib=order.indexOf(b&&b.key);return (ia<0?999:ia)-(ib<0?999:ib);});
+    };
+    upsertChapter12ICard();
+    const upsertChapter11IText=()=>{
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch11_i');
+      if(ch){
+        ch.body='Accessible uniquement après la route Iriana du Chapitre X. Iriana découvre les quartiers privés d’Amanea, le piano des Farae, puis le coffret qui fait enfin tomber le voile sur les fragments du Carnet du Némésis.';
+      }
+    };
+    upsertChapter11IText();
+
+    if(typeof chapterSelectUnlocked==='function' && !window.__sylviniaV208ChapterSelectUnlock){
+      window.__sylviniaV208ChapterSelectUnlock=true;
+      const prevUnlock=chapterSelectUnlocked;
+      window.chapterSelectUnlocked=chapterSelectUnlocked=function(key){
+        if(key==='ch12_i') return chapter12IUnlocked();
+        return prevUnlock(key);
+      };
+    }
+    if(typeof launchChapterSelect==='function' && !window.__sylviniaV208ChapterLaunch){
+      window.__sylviniaV208ChapterLaunch=true;
+      const prevLaunch=launchChapterSelect;
+      window.launchChapterSelect=launchChapterSelect=function(key){
+        if(key==='ch12_i') return window.startChapter12I();
+        return prevLaunch(key);
+      };
+    }
+    if(typeof renderChapterSelect==='function' && !window.__sylviniaV208ChapterRender){
+      window.__sylviniaV208ChapterRender=true;
+      const prevRender=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function(){
+        upsertChapter12ICard();
+        upsertChapter11IText();
+        const result=prevRender.apply(this,arguments);
+        const keys=['ch11_i','ch12_i'];
+        keys.forEach(key=>{
+          const index=CHAPTER_SELECT_DATA.findIndex(ch=>ch&&ch.key===key);
+          const cards=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard');
+          const card=index>=0?cards[index]:null;
+          if(card){
+            card.dataset.chapterKey=key;
+            if(key==='ch12_i') card.classList.add('chapter12ICard');
+            const hint=card.querySelector('.chapterLockHint');
+            if(hint && key==='ch12_i' && !chapter12IUnlocked()) hint.textContent='Termine d’abord le Chapitre XI_I de la route Iriana.';
+          }
+        });
+        return result;
+      };
+    }
+    if(typeof getSceneChapterLabel==='function' && !window.__sylviniaV208SceneLabel){
+      window.__sylviniaV208SceneLabel=true;
+      const prevLabel=getSceneChapterLabel;
+      window.getSceneChapterLabel=getSceneChapterLabel=function(sceneId=state.scene){
+        const id=String(sceneId||'');
+        if(id.startsWith('c11i_') && !isChapter12IScene(id)) return 'Chapitre XI_I · Amie ou ennemie ?';
+        if(isChapter12IScene(id)) return 'Chapitre XII_I · Le souvenir d’Amanea';
+        return prevLabel(sceneId);
+      };
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.208 · XI_I / XII_I route Iriana';
+    if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    console.log('[Sylvinia v0.208] Corrections XI_I et création XII_I appliquées.');
+  }catch(err){
+    console.error('[Sylvinia v0.208] Échec du patch XI_I / XII_I',err);
+  }
+})();
+</script>
+
 </body>
 </html>
