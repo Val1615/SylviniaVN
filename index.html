@@ -29852,7 +29852,10 @@ Ouvrir le choix de perspective ?`);
     if(window.__sylviniaSongVideoPatch207) return;
     window.__sylviniaSongVideoPatch207 = true;
     if(typeof A==='undefined' || typeof S==='undefined') return;
+
     A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
+
+    // Regrouper c11i_013 et c11i_014 dans une seule étape de lecture.
     if(S.c11i_013){
       S.c11i_013.speaker = 'Duo';
       S.c11i_013.direction = 'La réponse d’Amanea se fait plus grave, puis leurs voix se superposent enfin, non pas en paix, mais en miroir.';
@@ -29861,13 +29864,130 @@ Ouvrir le choix de perspective ?`);
       S.c11i_013.chars = [];
       S.c11i_013.videoBanner = A.c11i_piano_video;
     }
-    const videoScenes = new Set(['c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010','c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final','c11i_016']);
-    videoScenes.forEach(id=>{ if(S[id]){ S[id].chars=[]; S[id].videoBanner=A.c11i_piano_video; } });
-    const ensureVideoStyle=()=>{ if(document.getElementById('c11iVideoBannerStyle')) return; const style=document.createElement('style'); style.id='c11iVideoBannerStyle'; style.textContent='.stageVideoBanner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1}.stageVideoActive .bg{opacity:0}'; document.head.appendChild(style); };
-    const applySceneVideoBanner=()=>{ const stage=document.getElementById('stage'); if(!stage) return; const scene=(typeof state!=="undefined"&&state)?S[state.scene]:null; const src=scene&&scene.videoBanner?scene.videoBanner:''; let video=document.getElementById('stageVideoBanner'); if(src){ ensureVideoStyle(); if(!video){ video=document.createElement('video'); video.id='stageVideoBanner'; video.className='stageVideoBanner'; video.autoplay=true; video.loop=true; video.muted=true; video.playsInline=true; video.preload='auto'; const veil=stage.querySelector('.veil'); stage.insertBefore(video,veil||stage.firstChild); } if(video.getAttribute('src')!==src){ video.setAttribute('src',src); video.load(); } stage.classList.add('stageVideoActive'); } else { if(video) video.remove(); stage.classList.remove('stageVideoActive'); } };
-    if(typeof render==='function'&&!window.__sylviniaSongVideoRenderWrapped){ window.__sylviniaSongVideoRenderWrapped=true; const previousRender=render; window.render=render=function(){ const result=previousRender.apply(this,arguments); applySceneVideoBanner(); return result; }; }
-    console.log('[Sylvinia] Correctif XI : build complet restauré, complainte regroupée, vidéo bannière active.');
-  }catch(err){ console.error('[Sylvinia] Échec correctif XI vidéo',err); }
+    if(S.c11i_014){
+      S.c11i_014.chars = [];
+      S.c11i_014.videoBanner = A.c11i_piano_video;
+    }
+
+    // Scènes du piano / chant : bannière vidéo + suppression des sprites.
+    const videoScenes = new Set([
+      'c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010','c11i_011',
+      'c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014',
+      'c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final','c11i_016'
+    ]);
+    videoScenes.forEach(id=>{
+      if(S[id]){
+        S[id].chars = [];
+        S[id].videoBanner = A.c11i_piano_video;
+      }
+    });
+
+    const ensureVideoStyle = ()=>{
+      if(document.getElementById('c11iVideoBannerStyle')) return;
+      const style = document.createElement('style');
+      style.id = 'c11iVideoBannerStyle';
+      style.textContent = `
+        .stageVideoBanner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1;}
+        .stageVideoActive .bg{opacity:0;}
+      `;
+      document.head.appendChild(style);
+    };
+
+    const applySceneVideoBanner = ()=>{
+      const stage = document.getElementById('stage');
+      if(!stage) return;
+      const scene = (typeof state!=='undefined' && state) ? S[state.scene] : null;
+      const src = scene && scene.videoBanner ? scene.videoBanner : '';
+      let video = document.getElementById('stageVideoBanner');
+      if(src){
+        ensureVideoStyle();
+        if(!video){
+          video = document.createElement('video');
+          video.id = 'stageVideoBanner';
+          video.className = 'stageVideoBanner';
+          video.autoplay = true;
+          video.loop = true;
+          video.muted = true;
+          video.playsInline = true;
+          video.preload = 'auto';
+          const veil = stage.querySelector('.veil');
+          stage.insertBefore(video, veil || stage.firstChild);
+        }
+        if(video.getAttribute('src') !== src){
+          video.setAttribute('src', src);
+          video.load();
+        }
+        stage.classList.add('stageVideoActive');
+      }else{
+        if(video) video.remove();
+        stage.classList.remove('stageVideoActive');
+      }
+    };
+
+    if(typeof render==='function' && !window.__sylviniaSongVideoRenderWrapped){
+      window.__sylviniaSongVideoRenderWrapped = true;
+      const previousRender = render;
+      window.render = render = function(){
+        const result = previousRender.apply(this, arguments);
+        applySceneVideoBanner();
+        return result;
+      };
+    }
+
+    console.log('[Sylvinia] Build corrigé : XI restauré, complainte regroupée, vidéo bannière sans sprites.');
+  }catch(err){
+    console.error('[Sylvinia] Échec patch chanson / bannière vidéo', err);
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  try{
+    if(window.__sylviniaSongAudioVideoFix208) return;
+    window.__sylviniaSongAudioVideoFix208 = true;
+    if(typeof A==='undefined' || typeof S==='undefined') return;
+
+    // Restauration explicite des deux versions audio de la complainte.
+    A.music_c11_complainte_instru = 'assets/audio/chapter11/la_complainte_imperiale_instru.mp3';
+    A.music_c11_complainte = 'assets/audio/chapter11/la_complainte_imperiale.mp3';
+    A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
+
+    const setMusic=(ids,key)=>ids.forEach(id=>{ if(S[id]) S[id].music = key; });
+    const setNoVideo=(ids)=>ids.forEach(id=>{ if(S[id]) delete S[id].videoBanner; });
+    const setVideo=(ids)=>ids.forEach(id=>{ if(S[id]){ S[id].videoBanner = A.c11i_piano_video; S[id].chars = []; } });
+
+    const instrumentalScenes = ['c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010'];
+    const vocalScenes = [
+      'c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014','c11i_015',
+      'c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final'
+    ];
+    const afterSongScenes = ['c11i_016'];
+
+    setMusic(instrumentalScenes, 'music_c11_complainte_instru');
+    setMusic(vocalScenes, 'music_c11_complainte');
+    setMusic(afterSongScenes, 'music_c11_complainte_instru');
+
+    // La vidéo bannière ne commence qu'au passage c11i_013, et se termine à c11i_song_final inclus.
+    setNoVideo([...instrumentalScenes,'c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_016']);
+    setVideo(['c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final']);
+
+    // c11i_013 reste la scène regroupée : couplet d'Amanea + refrain duo, puis on saute c11i_014.
+    if(S.c11i_013){
+      S.c11i_013.speaker = 'Duo';
+      S.c11i_013.direction = 'La réponse d’Amanea se fait plus grave, puis leurs voix se superposent enfin, non pas en paix, mais en miroir.';
+      S.c11i_013.text = 'Amanea : « Regarde-moi, brise-moi,\nSi c’est ainsi que finit notre histoire,\nMais ne me demande pas d’être toi,\nMon soleil n’a jamais eu d’espoir. »\n\n« Tu refuses de voir mon visage,\nÀ tes yeux je suis déjà morte,\nTu parles d’amour, mais ton héritage,\nC’est l’épée levée à ma porte. »\n\nIriana : « Tu pries »\nAmanea : « Je hurle »\n\nIriana : « Tu brilles »\nAmanea : « Je brûle »\n\nDuo : « Nous sommes l’aube et la fin...\nUn dernier crépuscule ! »\n\nAmanea : « Un dernier regard. »\nIriana : « Un dernier combat. »\nDuo : « Et la nuit tombe… »';
+      S.c11i_013.next = 'c11i_015';
+      S.c11i_013.music = 'music_c11_complainte';
+      S.c11i_013.videoBanner = A.c11i_piano_video;
+      S.c11i_013.chars = [];
+    }
+
+    console.log('[Sylvinia] Correctif musique/vidéo c11i : instrumental dès c11i_004, chant dès c11i_011, vidéo seulement de c11i_013 à c11i_song_final.');
+  }catch(err){
+    console.error('[Sylvinia] Échec correctif musique/vidéo c11i', err);
+  }
 })();
 </script>
 
