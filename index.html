@@ -30212,5 +30212,84 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+<script>
+/* v0.210 · Vignettes de sélection appliquées sur le bon build */
+(function installChapterSelectionCoversV0210(){
+  try{
+    const COVERS={
+      ch11_i:'assets/images/chapter_select/chapter_11_i.png',
+      ch11_g:'assets/images/chapter_select/chapter_11_g.png',
+      ch12_i:'assets/images/chapter_select/chapter_12_i.png'
+    };
+    function applyChapterSelectionCovers(){
+      if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
+        CHAPTER_SELECT_DATA.forEach(ch=>{ if(ch&&COVERS[ch.key]) ch.image=COVERS[ch.key]; });
+      }
+      const cards=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard');
+      if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
+        CHAPTER_SELECT_DATA.forEach((ch,idx)=>{
+          if(!ch||!COVERS[ch.key]) return;
+          const card=cards[idx];
+          if(!card) return;
+          card.dataset.chapterKey=ch.key;
+          if(ch.key==='ch11_i') card.classList.add('chapter11ICard');
+          if(ch.key==='ch11_g') card.classList.add('chapter11GCard');
+          if(ch.key==='ch12_i') card.classList.add('chapter12ICard');
+          const img=card.querySelector('.chapterBookCoverImg');
+          if(img&&img.getAttribute('src')!==COVERS[ch.key]) img.setAttribute('src',COVERS[ch.key]);
+        });
+      }
+    }
+    if(!document.getElementById('v0210-chapter-covers-style')){
+      const style=document.createElement('style');
+      style.id='v0210-chapter-covers-style';
+      style.textContent=`
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard{
+          border-color:rgba(82,55,25,.24)!important;
+          box-shadow:0 18px 34px rgba(55,35,15,.10)!important;
+          background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22))!important;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard[open],
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard[open],
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard[open]{
+          border-color:rgba(46,93,116,.34)!important;
+          box-shadow:0 26px 54px rgba(55,35,15,.22)!important;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterBookSpine,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterBookSpine,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterBookSpine{
+          background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10))!important;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard[open] .chapterBookSpine,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard[open] .chapterBookSpine,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard[open] .chapterBookSpine{
+          background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24))!important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaV0210RenderCoversWrapped){
+      window.__sylviniaV0210RenderCoversWrapped=true;
+      const previousRenderChapterSelect=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function(){
+        const result=previousRenderChapterSelect.apply(this,arguments);
+        applyChapterSelectionCovers();
+        return result;
+      };
+    }
+    applyChapterSelectionCovers();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.210 · Vignettes XI_I, XI_G et XII_I corrigées';
+    if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    console.log('[Sylvinia v0.210] Vignettes XI_I, XI_G et XII_I appliquées sur le build fourni.');
+  }catch(err){
+    console.error('[Sylvinia v0.210] Échec application vignettes sélection chapitres',err);
+  }
+})();
+</script>
+
 </body>
 </html>
