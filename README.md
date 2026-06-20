@@ -1,346 +1,135 @@
-# Les Chroniques de Sylvinia - Visual Novel
+# Sylvinia VN - v0.91.0
 
-**État : bêta jouable**  
-**Build courant : v0.210**  
-**Fichier principal : `index.html`**  
-**Fonction du README : historique cumulatif du projet**
+## Contenu de cette version
 
-Ce README doit conserver l'historique des mises à jour. Lors d'un patch, il faut ajouter une entrée au changelog, pas remplacer le document par un simple résumé du dernier correctif.
+Cette archive contient le HTML mis à jour du Visual Novel ainsi que les assets nécessaires au Chapitre III.
 
----
+### Correctif principal
 
-## Contenu du build actuel
+Les décors du Chapitre III ont été réintégrés dans l’archive, dans le dossier :
 
-```text
-index.html
-README.md
-assets/audio/chapter11/la_complainte_imperiale_instru.mp3
-assets/audio/chapter11/la_complainte_imperiale.mp3
-assets/video/chapter11/piano_iriana_sd.mp4
-assets/images/backgrounds/iriana/*.png
-assets/images/keyscenes/chapter11_i/*.png
-assets/images/chapter_select/chapter_11_i.png
-assets/images/chapter_select/chapter_11_g.png
-assets/images/chapter_select/chapter_12_i.png
-```
+`assets/images/chapter3/`
 
-Projet web statique, recommandé sur GitHub Pages ou serveur local.
+Ils sont référencés comme des arrière-plans de scène, au même titre que les autres bannières/décors du VN.
 
----
+Décors inclus :
 
-## État jouable
+- `c3_algratal_marche.png`
+- `c3_boutique_vetements.png`
+- `c3_atelier_arcanique.png`
+- `c3_boutique_fournitures.png`
+- `c3_porte_sud.png`
+- `c3_foret_route.png`
+- `c3_clairiere_gelee.png`
+- `c3_camp_nuit.png`
 
-| Clé | Affichage | Titre / fonction | État |
-|---|---|---|---|
-| `intro` | Introduction | L'Auberge du Forestier | Jouable |
-| `ch1` | Chapitre I | Une convocation impériale | Jouable |
-| `ch2` | Chapitre II | Sur la route d'Al'Gratal | Jouable |
-| `ch3` | Chapitre III | Préparatifs pour une nouvelle aventure | Jouable |
-| `ch4` | Chapitre IV | Croisée des récits | Jouable, routes Valurn / Draven |
-| `ch5` | Chapitre V | Une rencontre hors du temps | Jouable |
-| `ch6` | Chapitre VI | Parenthèse à Mir'Aldas | Jouable |
-| `ch7` | Chapitre VII | Du Chaos aux Ombres | Jouable |
-| `ch8` | Chapitre VIII | Un sombre conseiller | Jouable |
-| `ch9` | Chapitre IX | L'heure du départ | Jouable |
-| `ch10` | Chapitre X | Deux perspectives | Jouable, bifurcation Iriana / Groupe |
-| `ch11_i` | Chapitre XI_I | Amie ou ennemie ? | En développement |
-| `ch11_g` | Chapitre XI_G | Le Bal des Élus | En développement |
-| `ch12_i` | Chapitre XII_I | Le souvenir d'Amanea | En développement |
+### Images clés incluses
 
----
+- Arrivée à Al’Gratal
+- Robe / miroir
+- Bâton en cerisier noir
+- Carnet de voyage renforcé
+- Glacialis 1
+- Glacialis 2
+- Test de Remerii
+- Medig
+- Confession au feu
+- Cauchemar
+- Fin du Chapitre III : Mir’Aldas sous son dôme arcanique pourpre
 
-## Règles de développement
+### Sprites inclus
 
-- Le dernier `index.html` livré est la source technique de vérité.
-- Le Tome 1 reste la source canonique narrative.
-- Ne pas couper le texte canon.
-- Les choix ajoutent variations, conséquences, souvenirs, objets ou scènes bonus.
-- Fournir `index.html` et un ZIP.
-- Dans le ZIP, garder `index.html` et `README.md` sans suffixe de version.
-- Les sprites doivent disparaître pendant les CG / images clés.
-- Les images clés doivent tomber sur le moment narratif exact.
-- Le Lien Remerii ne doit pas revenir dans le HUD principal.
-- Le Codex doit être complété à chaque ajout d'entrée, musique, image ou chapitre.
-- Le README doit rester cumulatif.
+Les sprites post-Glacialis d’Hylee sont inclus dans :
 
----
+`assets/sprites/chapter3/`
 
-## Systèmes actifs
+Le basculement vers ces sprites commence après la scène de Glacialis.
 
-Valeurs :
+## Fichier principal
 
-```text
-Audace
-Sang-froid
-Lucidité
-Résonance
-```
+Ouvrir :
 
-Le Lien Remerii est dans `Progression > Regard de Remerii`.
+`index.html`
 
-Progression : valeurs, Regard de Remerii, inventaire, souvenirs, Carnet du Némésis.
+## Note
 
-Codex : Entrées, Images, Musiques, Site.
+Cette version conserve la structure du VN existant. Les nouveaux assets sont fournis séparément pour éviter d’alourdir inutilement les anciens dossiers déjà présents dans le projet principal.
 
-Mode développeur : code `161598`. Il ouvre les chapitres, contourne les prérequis, affiche les effets, ouvre le Codex, permet le retour et ajoute une recherche de scène depuis v0.209.
 
----
+## Mise à jour v092
+- Remplacement de l'image clé de l'intervention / test de Remerii.
+- Correction du sprite `hylee2_angry`.
+- Le réveil après le cauchemar utilise désormais le sprite `hylee2_sad`.
 
-## Routes récentes
 
-### Chapitre X-I : L'Impératrice Noire
+Mise à jour v094
+- Correction critique : les sprites post-Glacialis de Hylee ne remplacent plus les sprites des chapitres I, II ni du début du chapitre III.
+- Le basculement automatique ne se fait qu'à partir de c3_24, puis pour les chapitres suivants.
+- c3_04 repasse sur un sprite pré-transformation.
 
-Route Iriana. Iriana découvre les geôles d'Akuhn'Nabad, les extractions d'âme, Amanea et une facette plus nuancée des Obscurcis. Le fragment `ch10` est réservé à cette route.
+- v0.95: sprites post-Glacialis de Hylee remplacés par les sprites validés par l’utilisateur (C3_24 et après), avec détourage PNG transparent.
 
-### Chapitre X-G : Les Geôles de la Cité Noire
 
-Route Groupe. Hylee, Remerii, Valurn, Draven et Naïah sont prisonniers. Valurn négocie, Bellirith déstabilise le groupe, la fracture Hylee / Remerii est renforcée, puis le groupe passe par les archives et revient face à Tia.
+- v0.96: ajout des sprites `hylee2_teasing` (taquin) et `hylee2_furious` (furieuse) dans `assets/sprites/chapter3/`, disponibles après la transformation post-Glacialis pour les scènes futures.
+- v0.96: correction de l’ambiance musicale du passage « Fragment du vieux journal » (c3_53 / c3_54) et de la fin du chapitre III (c3_55).
 
-### Chapitre XI_I : Amie ou ennemie ?
 
-Route Iriana. Quartiers privés d'Amanea, piano, complainte impériale, tension familiale, coffret, journal, reflet d'Amanea, fin avec révélation des fragments lisibles et teasing de la mèche magique.
+- v0.97: remplacement du passage des ombres du Chapitre III par un duel interactif en 3 manches, utilisant les mécaniques du duel du Chapitre I : HUD Stabilité/Fatigue/Lecture, réactions, choix verrouillés, gains de valeurs et résultat dynamique. Le duel force désormais l’usage de Glacialis avant la transformation de c3_24.
 
-Règle audio / vidéo actuelle :
 
-```text
-c11i_004 : démarrage instrumental
-c11i_011 : démarrage version chantée
-c11i_013 -> c11i_song_final : vidéo bannière uniquement
-```
+- v0.98: duel des ombres du chapitre III recalibré. Stabilité initiale à 10, Fatigue initiale à 0. Les deux premières manches coûtent chacune 5 Stabilité et ajoutent 5 Fatigue, ce qui force la troisième manche à ne laisser qu’une option jouable : Glacialis Absoluta.
+- v0.98: le nom du sort a été corrigé en `Glacialis Absoluta` dans la mécanique de duel et l’écran de résultat.
 
-Images clés XI_I :
 
-```text
-c11i_002 -> c11i_003 : cg_xi_i_quartiers_entree.png
-c11i_008 -> c11i_009 : cg_xi_i_avant_musique.png
-c11i_011 -> c11i_012 : cg_xi_i_piano_intro.png
-c11i_019 -> c11i_020 : cg_xi_i_apres_chanson.png
-c11i_024 -> c11i_025 : cg_xi_i_coffret_iriana_seule.png
-c11i_027 -> c11i_028 : cg_xi_i_reflet_amanea.png
-```
+- v0.99 : dynamique de Lien Remerii ajoutée. Certains choix rares, contraires à la personnalité de Remerii (précipitation, désobéissance directe, fascination du danger ou défiance brusque), font maintenant perdre 1 point de Lien Remerii. Cela concerne des choix ciblés des chapitres I, II et III, sans toucher aux choix stratégiques validés.
 
-Note importante : quand Iriana fouille le coffret, Amanea est déjà partie. Ne pas placer d'image avec Amanea physiquement présente pour cette fouille.
+## Mise à jour v100
+- Correction du duel des ombres du Chapitre III : l’animation de transition se lance maintenant au début du combat, comme pour le duel du Chapitre I.
+- L’animation est réinitialisée à chaque entrée dans `c3_22`, sans bloquer la reprise en cours de duel.
 
-### Chapitre XI_G : Le Bal des Élus
 
-Route Groupe. Invitation impériale, préparation au bal, tensions Hylee / Remerii, arrivée à la cour sylvinienne, Valurn, Draven, Saidin, Ellion, Riven, Aldecian, Yelna.
+## Mise à jour 0.100 — Duel des ombres, manche 1
+- Intégration de 5 nouvelles images clés pour la manche 1 du test de Remerii.
+- Correspondance : Situation, Barrière de glace, Roulade sous l’attaque, Observation de la vraie ombre, Appel instinctif à Remerii.
+- Les visuels sont reliés au combat du chapitre III et déverrouillables dans le codex.
 
-### Chapitre XII_I : Le souvenir d'Amanea
+## Mise à jour complémentaire
 
-Route Iriana. La mèche réagit, puis le souvenir d'Amanea / Allenna est traité dans un chapitre séparé afin que XI_I se conclue proprement.
+- Ajout des 5 images clés de la manche 2 du duel des ombres (situation + 4 choix) et branchement dans le chapitre 3.
 
----
 
-## Interface actuelle
-
-- Chapitres indisponibles grisés dans la sélection.
-- XI_I, XI_G et XII_I marqués `EN DÉVELOPPEMENT`.
-- Les couleurs de route ajoutées par erreur ont été retirées.
-- La bibliothèque de chapitres doit rester neutre.
-- Recherche de scène ajoutée dans les options sous le mode développeur.
-
----
-
-## Historique cumulatif
-
-### v0.91 à v0.104 : ancien socle
-
-- Ancien README centré sur le Chapitre III.
-- Base du VN web avec menu, Introduction, premiers chapitres, Codex, Progression, choix, sauvegarde et premières images.
-
-### Socle jusqu'au Chapitre III
-
-- Introduction séparée dans `Aventure`.
-- Chapitres I, II et III intégrés.
-- Valeurs Audace, Sang-froid, Lucidité, Résonance.
-- Ajout du bâton en cerisier noir, robe bleue, confession de Remerii, test de Remerii, Plume blanche de Medig.
-- Premiers objets, souvenirs, fragments, images et musiques du Codex.
-
-### Chapitres IV à VII
-
-- Chapitre IV à routes Valurn / Draven.
-- Route Valurn : Calciterres, Bellirith, tension infernale.
-- Route Draven : Forthaven, Lineva, responsabilités de Draven.
-- Chapitre V : Mir'Aldas, Saidin, bibliothèque, Épreuve du Cadran.
-- Chapitre VI : parenthèse à Mir'Aldas, relation Hylee / Remerii.
-- Chapitre VII : Naïah, pacte, duels, Forêt Interdite.
-- Ajout progressif des sprites, décors, musiques, images clés et entrées Codex.
-
-### v0.152
-
-- Lien Remerii retiré du HUD principal et déplacé dans `Regard de Remerii`.
-
-### v0.153
-
-- Harmonisation des choix à deux valeurs : seconde valeur à environ 50 %.
-
-### v0.168 à v0.177
-
-- Intégration et stabilisation du Chapitre VIII.
-- Sélection de chapitre, accès après Chapitre VII, décors, images clés, musiques et Codex.
-- Dialogues retravaillés au format VN.
-
-### v0.178 à v0.186
-
-- Intégration et polissage du Chapitre IX.
-- Départ vers la Forêt Interdite, Naïah guide le groupe, Akuhn'Nabad, Alamma, capture et séparation d'Iriana.
-- Images clés, musiques, Codex et Regard de Remerii clarifié.
-- Musique III du Chapitre IX corrigée avec `infernal_trade.mp3`.
-
-### v0.187
-
-- Intégration de la route Iriana du Chapitre X : `L'Impératrice Noire`.
-
-### v0.190 à v0.193
-
-- Réparation du choix de perspective du Chapitre X.
-- Choix explicite entre Iriana et le groupe.
-- Route verrouillée hors mode développeur.
-- Mode développeur utilisable pour tester les deux routes.
-
-### v0.194
-
-- Repositionnement des images Valurn / Obscurci sur `c10g_065` à `c10g_081`.
-- Sprites retirés pendant ces images clés.
-
-### v0.195
-
-- Valeurs déplafonnées.
-- Fin de l'ancien plafond à 45.
-
-### v0.196
-
-- Fracture Hylee / Remerii renforcée dans la route Groupe.
-- Hylee ressent mieux l'impact de la douleur.
-- Remerii ne sait pas comment répondre.
-- Perte unique de Lien Remerii : `-15`.
-
-### v0.197
-
-- Ajout de choix supplémentaires dans la route Groupe pour faire intervenir Hylee plus souvent.
-
-### v0.198
-
-- Polissage des transitions après les choix supplémentaires de la route Groupe.
-
-### v0.199
-
-- Ajout du Chapitre XI_I : `Amie ou ennemie ?`.
-- Accès uniquement après la route Iriana.
-- Transition depuis `c10_end`.
-- Choix classiques, prérequis, bonus et stratégiques.
-- Scène bonus liée à `amanea_respecte_lucidite_iriana`.
-- Entrées Codex : quartiers privés d'Amanea, piano des Farae, journal d'Amanea, dernier combat Tia / Amanea, Allenna.
-- Souvenirs liés à Iriana, Amanea et Allenna.
-
-### v0.200
-
-- Ajout du Chapitre XI_G : `Le Bal des Élus`.
-- Accès uniquement après la route Groupe.
-- Transition depuis `c10g_end`.
-- Carte XI_G ajoutée et verrouillée hors mode développeur.
-- Entrées Codex : Bal des Élus, cour sylvinienne, Ellion, Riven, Aldecian, Yelna.
-- Pas de fragment ajouté pour XI_G.
-
-### v0.201
-
-- Correction de mise en page XI_G.
-- Répliques avec guillemets.
-- Indications de ton en italique au-dessus des répliques.
-- Correction des champs `speaker` pour Aldecian Vareth et Ellion Valendil.
-
-### v0.202
-
-- Rééquilibrage des choix de XI_I et XI_G.
-- Choix stratégiques réduits et rendus plus importants.
-- XI_G conserve deux grands stratégiques : pacte silencieux Hylee / Remerii et graine de trahison de Valurn.
-- Anciens stratégiques faibles reclassés.
-- Salves de choix rééquilibrées.
-- Souvenirs stratégiques accordés seulement si le choix est pris.
-
-### v0.203
-
-- Redécoupage de la route Iriana du Chapitre X.
-- Scènes `c10_` trop longues divisées en battements plus courts.
-- Aucun contenu canon supprimé.
-
-### v0.204
-
-- Ajout des disclaimers de développement pour XI_I et XI_G.
-- Scènes `c11i_disclaimer` et `c11g_disclaimer`.
-- Badges `EN DÉVELOPPEMENT` ajoutés.
-
-### v0.205
-
-- Retrait des couleurs spécifiques appliquées par erreur aux cartes.
-- Chapitre X plus vert, XI_I plus bleu, XI_G plus orange.
-- Retour au style neutre.
-
-### v0.206
-
-- Nouvelle version des paroles de la complainte impériale.
-- Iriana chante les passages indiqués entre parenthèses dans la consigne source, Amanea chante le reste.
-- Marqueurs de structure retirés de l'affichage joueur.
-- Ajout de l'audio instrumental et chanté.
-- Instrumental prévu dès `c11i_004`.
-- Version chantée prévue dès `c11i_011`.
-- Ajout au Codex musical.
-
-### v0.207
-
-- Nouveaux décors de la route Iriana intégrés.
-- Donjon, couloir, salle de guerre / étude, salon au piano, salle du trône, terrasse d'Akuhn'Nabad.
-- Anciens décors remplacés.
-- Ajout de la vidéo bannière piano.
-- Regroupement de `c11i_013` et `c11i_014`.
-- Correction après mauvais build ayant masqué XI.
-- Restauration du build complet XI_I + XI_G.
-- Correction audio / vidéo : instrumental `c11i_004` à `c11i_010`, chanté `c11i_011` à `c11i_song_final`, vidéo `c11i_013` à `c11i_song_final`.
-
-### v0.208
-
-- Restauration des sprites quand il ne restait que le décor.
-- Correction du sprite d'Iriana de `c11i_018` à `c11i_020`.
-- Reflet d'Amanea avec transparence et halo vert.
-- Choix du reflet allongés.
-- Choix du souvenir Tia / Amanea allongés.
-- Fin de XI_I coupée avant le souvenir.
-- Création de XII_I pour le souvenir d'Amanea / Allenna.
-- Notification : fragments du Carnet du Némésis lisibles en fin de XI_I.
-- Ajout de `c12i_000`, `c12i_end`, carte XII_I, déverrouillage XII_I.
-
-### v0.209
-
-- Intégration courte des images clés XI_I.
-- Images placées sur 1 à 2 scènes maximum.
-- Image piano avant vidéo : `c11i_011` à `c11i_012`.
-- Vidéo conservée uniquement de `c11i_013` à `c11i_song_final`.
-- Chapitres indisponibles grisés.
-- XII_I marqué `EN DÉVELOPPEMENT` comme XI_I et XI_G.
-- Recherche de scène ajoutée dans les options sous le mode développeur.
-- Codex complété : entrées, images, musiques XI_I / XII_I.
-- README restauré comme historique cumulatif.
-
-### v0.210
-
-- Reprise du bon build fourni par l'utilisateur : `index(55).html`.
-- Application des 3 vignettes validées dans l'onglet de sélection :
-  - `chapter_11_i.png` pour `ch11_i` / Chapitre XI_I ;
-  - `chapter_11_g.png` pour `ch11_g` / Chapitre XI_G ;
-  - `chapter_12_i.png` pour `ch12_i` / Chapitre XII_I.
-- Conservation du style neutre des cartes, sans couleur spécifique par route.
-- Extension de la neutralisation visuelle à `chapter12ICard`.
-- Aucun changement appliqué à la vidéo du piano ni aux scènes de jeu.
-
----
-
-## Points de vigilance
-
-- Ne pas repartir d'un mauvais build.
-- Ne pas casser XI_I / XI_G / XII_I.
-- Ne pas toucher à la vidéo du piano sans demande.
-- Ne pas laisser une CG trop longtemps.
-- Ne pas afficher les sprites pendant une CG.
-- Garder le Codex synchronisé.
-- Garder ce README comme historique.
-
+## Mise à jour 0.101 — Bâton de l’Atelier Arcanique
+- Correction de la branche du bâton : le bâton en cerisier noir accordé n’est désormais obtenu que via le choix stratégique « laisser le bâton répondre avant de le choisir ».
+- Les autres choix de l’Atelier Arcanique mènent à une nouvelle scène où Hylee reçoit un Bâton d’apprentie renforcé, plus classique, sans bonus de Résonance.
+- Ajout de l’objet `baton_apprenti_renforce` dans la progression.
+- Correction du codex de l’Atelier Arcanique pour refléter les deux variantes possibles.
+
+## Mise à jour v0.103 — Musiques du chapitre III
+
+Trois nouveaux morceaux Suno ont été intégrés au projet dans `assets/audio/` :
+
+- `c3_shopping_capitale.mp3` — **Shopping dans la capitale**
+  - utilisé pour le marché d’Al’Gratal, la boutique du tailleur, l’Atelier Arcanique et la boutique de fournitures.
+- `c3_combat_ombres.mp3` — **Combat des Ombres**
+  - utilisé pour le duel des ombres, Glacialis Absoluta et le silence de verre qui suit.
+- `c3_the_unborn.mp3` — **The Unborn**
+  - utilisé pour le cauchemar du petit frère et le réveil brutal.
+
+Les trois musiques ont été ajoutées au codex musical afin d’être déverrouillées comme les autres pistes.
+
+
+## Mise à jour v0.104 — Mode développeur renforcé
+- Le mode développeur déverrouille désormais toutes les entrées, images et musiques du Codex, y compris lorsqu’une sauvegarde déjà en mode dev est rechargée après une mise à jour.
+- Le mode développeur ignore désormais les prérequis de valeurs sur les choix classiques.
+- Le mode développeur ignore aussi les prérequis internes des duels, dont le duel d’entraînement et le duel des ombres du chapitre III.
+- Les gains de valeurs restent affichés sur chaque choix en mode développeur.
+
+## Mise à jour v0.211 — Outils développeur Codex et valeurs
+
+- Correction du comportement du mode développeur : il ne révèle plus automatiquement tout le Codex lors de son activation.
+- Ajout dans le Codex d’un bouton développeur `DEV · Révéler tout le Codex`, visible seulement en mode développeur.
+- Le bouton du Codex fonctionne comme celui du Carnet du Némésis : un clic révèle temporairement toutes les entrées, images et musiques ; un second clic revient à l’état normal sans supprimer les vrais déblocages de progression.
+- À la désactivation du mode développeur, les révélations temporaires du Carnet du Némésis et du Codex sont automatiquement refermées.
+- Ajout dans les Options, sous le mode développeur, d’un outil de réglage direct des valeurs.
+- L’outil permet de sélectionner puis définir exactement : Audace, Sang-froid, Lucidité, Résonance ou Regard de Remerii.
+- Après modification d’une valeur, les interfaces Progression, HUD et scènes se rafraîchissent immédiatement afin de faciliter les tests de prérequis.
