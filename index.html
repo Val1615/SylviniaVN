@@ -12615,8 +12615,7 @@ function ensureProgressDefaults(){
   if(!Array.isArray(state.sceneRewards)) state.sceneRewards=[];
   if(!Array.isArray(state.journalFragments)) state.journalFragments=[];
   if(typeof state.devJournalForceAccess!=='boolean') state.devJournalForceAccess=false;
-  if(typeof state.devCodexForceAccess!=='boolean') state.devCodexForceAccess=false;
-  if(!state.devMode){ state.devJournalForceAccess=false; state.devCodexForceAccess=false; }
+  if(!state.devMode) state.devJournalForceAccess=false;
   state.inventory=[...new Set(state.inventory.filter(k=>PROGRESSION_ITEMS[k]))];
   state.memories=[...new Set(state.memories.filter(k=>PROGRESSION_MEMORIES[k]))];
   state.journalFragments=[...new Set(state.journalFragments.filter(k=>JOURNAL_FRAGMENTS[k]))];
@@ -23912,8 +23911,8 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
       };
     }
 
-    if(typeof state!=='undefined' && state){
-      if(typeof state.devCodexForceAccess!=='boolean') state.devCodexForceAccess=false;
+    if(typeof state!=='undefined' && state && state.devMode){
+      state.codexUnlockedImages=[...new Set([...(state.codexUnlockedImages||[]),...travelKeys])];
     }
 
     const bubble=document.querySelector('.menuUpdateBubble');
@@ -24008,8 +24007,8 @@ Le sourire de Naïah revient enfin, plus léger, presque familier. Il ne ressemb
       });
     }
 
-    if(typeof state!=='undefined' && state){
-      if(typeof state.devCodexForceAccess!=='boolean') state.devCodexForceAccess=false;
+    if(typeof state!=='undefined' && state && state.devMode){
+      state.codexUnlockedImages=[...new Set([...(state.codexUnlockedImages||[]),...imageKeys])];
     }
 
     const bubble=document.querySelector('.menuUpdateBubble');
@@ -29223,7 +29222,6 @@ Ouvrir le choix de perspective ?`);
         flags:{...prevFlags,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true,chapter7Complete:true,chapter8Complete:true,chapter9Complete:true,chapter10Complete:true,chapter10IrianaComplete:true,chapter10Route:'iriana',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'iriana'},
         inventory:[...new Set([...(prev.inventory||[]),'jeton_imperial'])],
         journalFragments:[...new Set([...(prev.journalFragments||[]),'ch1','ch2','ch3','ch5','ch7','ch8','ch9','ch10'])],
-        devCodexForceAccess:false,
         memories:[...new Set([...(prev.memories||[])])],
         sceneRewards:[...new Set([...(prev.sceneRewards||[])])],
         musicOn:(typeof prev.musicOn==='boolean')?prev.musicOn:true,
@@ -29852,10 +29850,7 @@ Ouvrir le choix de perspective ?`);
     if(window.__sylviniaSongVideoPatch207) return;
     window.__sylviniaSongVideoPatch207 = true;
     if(typeof A==='undefined' || typeof S==='undefined') return;
-
     A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
-
-    // Regrouper c11i_013 et c11i_014 dans une seule étape de lecture.
     if(S.c11i_013){
       S.c11i_013.speaker = 'Duo';
       S.c11i_013.direction = 'La réponse d’Amanea se fait plus grave, puis leurs voix se superposent enfin, non pas en paix, mais en miroir.';
@@ -29864,430 +29859,13 @@ Ouvrir le choix de perspective ?`);
       S.c11i_013.chars = [];
       S.c11i_013.videoBanner = A.c11i_piano_video;
     }
-    if(S.c11i_014){
-      S.c11i_014.chars = [];
-      S.c11i_014.videoBanner = A.c11i_piano_video;
-    }
-
-    // Scènes du piano / chant : bannière vidéo + suppression des sprites.
-    const videoScenes = new Set([
-      'c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010','c11i_011',
-      'c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014',
-      'c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final','c11i_016'
-    ]);
-    videoScenes.forEach(id=>{
-      if(S[id]){
-        S[id].chars = [];
-        S[id].videoBanner = A.c11i_piano_video;
-      }
-    });
-
-    const ensureVideoStyle = ()=>{
-      if(document.getElementById('c11iVideoBannerStyle')) return;
-      const style = document.createElement('style');
-      style.id = 'c11iVideoBannerStyle';
-      style.textContent = `
-        .stageVideoBanner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1;}
-        .stageVideoActive .bg{opacity:0;}
-      `;
-      document.head.appendChild(style);
-    };
-
-    const applySceneVideoBanner = ()=>{
-      const stage = document.getElementById('stage');
-      if(!stage) return;
-      const scene = (typeof state!=='undefined' && state) ? S[state.scene] : null;
-      const src = scene && scene.videoBanner ? scene.videoBanner : '';
-      let video = document.getElementById('stageVideoBanner');
-      if(src){
-        ensureVideoStyle();
-        if(!video){
-          video = document.createElement('video');
-          video.id = 'stageVideoBanner';
-          video.className = 'stageVideoBanner';
-          video.autoplay = true;
-          video.loop = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.preload = 'auto';
-          const veil = stage.querySelector('.veil');
-          stage.insertBefore(video, veil || stage.firstChild);
-        }
-        if(video.getAttribute('src') !== src){
-          video.setAttribute('src', src);
-          video.load();
-        }
-        stage.classList.add('stageVideoActive');
-      }else{
-        if(video) video.remove();
-        stage.classList.remove('stageVideoActive');
-      }
-    };
-
-    if(typeof render==='function' && !window.__sylviniaSongVideoRenderWrapped){
-      window.__sylviniaSongVideoRenderWrapped = true;
-      const previousRender = render;
-      window.render = render = function(){
-        const result = previousRender.apply(this, arguments);
-        applySceneVideoBanner();
-        return result;
-      };
-    }
-
-    console.log('[Sylvinia] Build corrigé : XI restauré, complainte regroupée, vidéo bannière sans sprites.');
-  }catch(err){
-    console.error('[Sylvinia] Échec patch chanson / bannière vidéo', err);
-  }
-})();
-</script>
-
-
-<script>
-(function(){
-  try{
-    if(window.__sylviniaSongAudioVideoFix208) return;
-    window.__sylviniaSongAudioVideoFix208 = true;
-    if(typeof A==='undefined' || typeof S==='undefined') return;
-
-    // Restauration explicite des deux versions audio de la complainte.
-    A.music_c11_complainte_instru = 'assets/audio/chapter11/la_complainte_imperiale_instru.mp3';
-    A.music_c11_complainte = 'assets/audio/chapter11/la_complainte_imperiale.mp3';
-    A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
-
-    const setMusic=(ids,key)=>ids.forEach(id=>{ if(S[id]) S[id].music = key; });
-    const setNoVideo=(ids)=>ids.forEach(id=>{ if(S[id]) delete S[id].videoBanner; });
-    const setVideo=(ids)=>ids.forEach(id=>{ if(S[id]){ S[id].videoBanner = A.c11i_piano_video; S[id].chars = []; } });
-
-    const instrumentalScenes = ['c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010'];
-    const vocalScenes = [
-      'c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014','c11i_015',
-      'c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final'
-    ];
-    const afterSongScenes = ['c11i_016'];
-
-    setMusic(instrumentalScenes, 'music_c11_complainte_instru');
-    setMusic(vocalScenes, 'music_c11_complainte');
-    setMusic(afterSongScenes, 'music_c11_complainte_instru');
-
-    // La vidéo bannière ne commence qu'au passage c11i_013, et se termine à c11i_song_final inclus.
-    setNoVideo([...instrumentalScenes,'c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_016']);
-    setVideo(['c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final']);
-
-    // c11i_013 reste la scène regroupée : couplet d'Amanea + refrain duo, puis on saute c11i_014.
-    if(S.c11i_013){
-      S.c11i_013.speaker = 'Duo';
-      S.c11i_013.direction = 'La réponse d’Amanea se fait plus grave, puis leurs voix se superposent enfin, non pas en paix, mais en miroir.';
-      S.c11i_013.text = 'Amanea : « Regarde-moi, brise-moi,\nSi c’est ainsi que finit notre histoire,\nMais ne me demande pas d’être toi,\nMon soleil n’a jamais eu d’espoir. »\n\n« Tu refuses de voir mon visage,\nÀ tes yeux je suis déjà morte,\nTu parles d’amour, mais ton héritage,\nC’est l’épée levée à ma porte. »\n\nIriana : « Tu pries »\nAmanea : « Je hurle »\n\nIriana : « Tu brilles »\nAmanea : « Je brûle »\n\nDuo : « Nous sommes l’aube et la fin...\nUn dernier crépuscule ! »\n\nAmanea : « Un dernier regard. »\nIriana : « Un dernier combat. »\nDuo : « Et la nuit tombe… »';
-      S.c11i_013.next = 'c11i_015';
-      S.c11i_013.music = 'music_c11_complainte';
-      S.c11i_013.videoBanner = A.c11i_piano_video;
-      S.c11i_013.chars = [];
-    }
-
-    console.log('[Sylvinia] Correctif musique/vidéo c11i : instrumental dès c11i_004, chant dès c11i_011, vidéo seulement de c11i_013 à c11i_song_final.');
-  }catch(err){
-    console.error('[Sylvinia] Échec correctif musique/vidéo c11i', err);
-  }
-})();
-</script>
-
-
-<script>
-/* v0.209 · Images clés XI_I, Chapitre XII_I, sélection grisée, recherche DEV, Codex */
-(function installSylviniaV0209(){
-  try{
-    if(window.__sylviniaV0209RouteIrianaPolish) return;
-    window.__sylviniaV0209RouteIrianaPolish = true;
-    if(typeof A==='undefined' || typeof S==='undefined'){
-      console.warn('[Sylvinia v0.209] Assets ou scènes introuvables.');
-      return;
-    }
-
-    const uniqPush=(arr,items)=>{ if(!Array.isArray(arr)) return; (items||[]).forEach(k=>{ if(k && !arr.includes(k)) arr.push(k); }); };
-    const replaceOrPushGroup=(arr,group)=>{
-      if(!Array.isArray(arr)||!group||!group.id) return;
-      const i=arr.findIndex(g=>g&&g.id===group.id);
-      if(i>=0) arr[i]=group; else arr.push(group);
-    };
-    const clone=o=>JSON.parse(JSON.stringify(o));
-    const patchScene=(id,patch)=>{ if(S[id]) Object.assign(S[id],patch); };
-    const stripVideo=(ids)=>ids.forEach(id=>{ if(S[id]) delete S[id].videoBanner; });
-    const setMusic=(ids,key)=>ids.forEach(id=>{ if(S[id]) S[id].music=key; });
-    const setVideo=(ids)=>ids.forEach(id=>{ if(S[id]){ S[id].videoBanner=A.c11i_piano_video; S[id].chars=[]; } });
-    const setCG=(ids,key)=>ids.forEach(id=>{ if(S[id]){ S[id].bg=key; S[id].zoom=true; S[id].chars=[]; delete S[id].videoBanner; } });
-    const retitleScene=(id,prefix)=>{ if(S[id] && typeof S[id].title==='string') S[id].title=S[id].title.replace(/^Chapitre\s+XI_I/,prefix); };
-
-    // --- Assets ajoutés par le patch.
-    A.music_c11_complainte_instru = 'assets/audio/chapter11/la_complainte_imperiale_instru.mp3';
-    A.music_c11_complainte = 'assets/audio/chapter11/la_complainte_imperiale.mp3';
-    A.c11i_piano_video = 'assets/video/chapter11/piano_iriana_sd.mp4';
-
-    A.cg_xi_i_quartiers_entree = 'assets/images/keyscenes/chapter11_i/cg_xi_i_quartiers_entree.png';
-    A.cg_xi_i_avant_musique = 'assets/images/keyscenes/chapter11_i/cg_xi_i_avant_musique.png';
-    A.cg_xi_i_piano_intro = 'assets/images/keyscenes/chapter11_i/cg_xi_i_piano_intro.png';
-    A.cg_xi_i_duo_piano_bonus = 'assets/images/keyscenes/chapter11_i/cg_xi_i_duo_piano_bonus.png';
-    A.cg_xi_i_apres_chanson = 'assets/images/keyscenes/chapter11_i/cg_xi_i_apres_chanson.png';
-    A.cg_xi_i_coffret_iriana_seule = 'assets/images/keyscenes/chapter11_i/cg_xi_i_coffret_iriana_seule.png';
-    A.cg_xi_i_reflet_amanea = 'assets/images/keyscenes/chapter11_i/cg_xi_i_reflet_amanea.png';
-
-    // --- Répartition exacte audio / vidéo : ne pas toucher à la vidéo hors de cette fenêtre.
-    const instrumentalScenes=['c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010'];
-    const vocalScenes=['c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final'];
-    const videoScenes=['c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final'];
-    Object.keys(S).filter(id=>/^c11i/.test(id)).forEach(id=>{ if(S[id]) delete S[id].videoBanner; });
-    setMusic(instrumentalScenes,'music_c11_complainte_instru');
-    setMusic(vocalScenes,'music_c11_complainte');
-    setVideo(videoScenes);
-    stripVideo(['c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_016','c11i_017','c11i_018','c11i_019','c11i_020']);
-
-    if(S.c11i_013){
-      S.c11i_013.speaker='Duo';
-      S.c11i_013.direction='La réponse d’Amanea se fait plus grave, puis leurs voix se superposent enfin, non pas en paix, mais en miroir.';
-      S.c11i_013.text='Amanea : « Regarde-moi, brise-moi,\nSi c’est ainsi que finit notre histoire,\nMais ne me demande pas d’être toi,\nMon soleil n’a jamais eu d’espoir. »\n\n« Tu refuses de voir mon visage,\nÀ tes yeux je suis déjà morte,\nTu parles d’amour, mais ton héritage,\nC’est l’épée levée à ma porte. »\n\nIriana : « Tu pries »\nAmanea : « Je hurle »\n\nIriana : « Tu brilles »\nAmanea : « Je brûle »\n\nDuo : « Nous sommes l’aube et la fin...\nUn dernier crépuscule ! »\n\nAmanea : « Un dernier regard. »\nIriana : « Un dernier combat. »\nDuo : « Et la nuit tombe… »';
-      S.c11i_013.next='c11i_015';
-      S.c11i_013.music='music_c11_complainte';
-      S.c11i_013.videoBanner=A.c11i_piano_video;
-      S.c11i_013.chars=[];
-    }
-
-    // --- Images clés, posées court : 1 à 2 scènes chacune. La vidéo reste c11i_013 → c11i_song_final uniquement.
-    setCG(['c11i_002','c11i_003'],'cg_xi_i_quartiers_entree');
-    setCG(['c11i_008','c11i_009'],'cg_xi_i_avant_musique');
-    setCG(['c11i_011','c11i_012'],'cg_xi_i_piano_intro');
-    setCG(['c11i_019','c11i_020'],'cg_xi_i_apres_chanson');
-    setCG(['c11i_024','c11i_025'],'cg_xi_i_coffret_iriana_seule');
-    setCG(['c11i_027','c11i_028'],'cg_xi_i_reflet_amanea');
-    // Image de duo piano conservée pour le Codex, sans remplacer la bannière vidéo.
-
-    // --- Sprites corrigés là où il n'y a pas d'image clé ni vidéo.
-    const duoCalme=[['iriana','iriana_calm','left'],['amanea','amanea_sad','right']];
-    const duoTendu=[['iriana','iriana_stern','left'],['amanea','amanea_thinking','right']];
-    ['c11i_016','c11i_017','c11i_018'].forEach(id=>patchScene(id,{chars:clone(duoCalme)}));
-    // c11i_019-c11i_020 sont des CG, donc pas de sprites.
-    ['c11i_021','c11i_022'].forEach(id=>patchScene(id,{chars:clone(duoTendu)}));
-    ['c11i_023','c11i_026'].forEach(id=>patchScene(id,{chars:[['iriana','iriana_profile','center']]}));
-    if(S.c11i_choice_reflet) S.c11i_choice_reflet.chars=[['iriana','iriana_stern','left'],['amanea','amanea_thinking','right','projection']];
-    ['c11i_reflet_sangfroid','c11i_reflet_lucidite','c11i_reflet_audace','c11i_reflet_resonance'].forEach(id=>patchScene(id,{chars:[['iriana','iriana_calm','left'],['amanea','amanea_thinking','right','projection']]}));
-
-    // --- Effet spectral du reflet d'Amanea + chapitres grisés + moteur recherche DEV.
-    if(!document.getElementById('v0209-style')){
-      const style=document.createElement('style');
-      style.id='v0209-style';
-      style.textContent=`
-        .char.amanea.projection{opacity:.64;filter:drop-shadow(0 0 10px rgba(91,255,139,.68)) drop-shadow(0 0 30px rgba(77,255,126,.35));mix-blend-mode:screen;}
-        #chapterSelectGrid .chapterSelectCard.locked{filter:grayscale(1) brightness(.72) saturate(.35)!important;opacity:.72!important;border-color:rgba(105,105,105,.34)!important;box-shadow:0 14px 28px rgba(0,0,0,.12)!important;background:linear-gradient(180deg,rgba(200,200,200,.24),rgba(96,96,96,.16))!important;}
-        #chapterSelectGrid .chapterSelectCard.locked .chapterBookSpine{background:linear-gradient(180deg,rgba(88,92,100,.58),rgba(54,56,62,.42))!important;}
-        #chapterSelectGrid .chapterSelectCard.locked .chapterOpenText h4,#chapterSelectGrid .chapterSelectCard.locked .chapterOpenText p,#chapterSelectGrid .chapterSelectCard.locked .chapterOpenText li{color:#7b7b7b!important;}
-        #chapterSelectGrid .chapterSelectCard.chapter11ICard::after,#chapterSelectGrid .chapterSelectCard.chapter11GCard::after,#chapterSelectGrid .chapterSelectCard.chapter12ICard::after{content:'EN DÉVELOPPEMENT';position:absolute;right:14px;top:14px;padding:7px 10px;border-radius:999px;border:1px solid rgba(233,201,133,.36);background:rgba(11,16,28,.74);color:#fff1c4;font-size:10px;font-weight:950;letter-spacing:.14em;box-shadow:0 8px 22px rgba(0,0,0,.25);z-index:5;}
-        .devSceneSearchBox{grid-column:1/-1;display:grid;gap:8px;padding:12px;border-radius:16px;border:1px solid rgba(142,198,232,.26);background:rgba(9,16,27,.55);}
-        .devSceneSearchBox.hidden{display:none!important;}
-        .devSceneSearchBox label{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#bfe9ff;}
-        .devSceneSearchRow{display:flex;gap:8px;align-items:center;}
-        .devSceneSearchRow input{flex:1;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid rgba(214,230,255,.22);background:rgba(255,255,255,.08);color:#fff;font-weight:800;outline:none;}
-        .devSceneSearchRow button{padding:11px 14px;border-radius:12px;border:1px solid rgba(142,198,232,.32);background:rgba(63,132,174,.32);color:#fff;font-weight:950;cursor:pointer;}
-        .devSceneSearchBox small{color:#b8c8d9;font-size:11px;line-height:1.4;}
-      `;
-      document.head.appendChild(style);
-    }
-
-    // --- Choix du reflet : réponses plus longues, étalées et plus impactantes.
-    patchScene('c11i_reflet_sangfroid',{text:'Iriana ne lève pas les yeux tout de suite. Le reflet peut parler, provoquer, juger. Il ne peut pas décider à sa place de ce qu’elle doit ressentir.\n\nElle inspire lentement, garde la page ouverte et choisit de ne pas offrir à l’apparition le plaisir de la voir vaciller.',next:'c11i_reflet_sangfroid_2'});
-    S.c11i_reflet_sangfroid_2={title:'Chapitre XI_I · Amie ou ennemie ?',sub:'Le reflet d’Amanea',bg:'c11i_study',music:'music_c10_horreur',speaker:'Iriana',direction:'Sans quitter le journal des yeux.',text:'« Tu n’es pas Amanea. Pas entièrement. Tu es une trace. Une défense. Peut-être même une provocation. Alors je vais te traiter comme telle : avec prudence, et sans te laisser tenir ma gorge. »',chars:[['iriana','iriana_calm','left'],['amanea','amanea_thinking','right','projection']],next:'c11i_028',effects:{sangfroid:1}};
-    patchScene('c11i_reflet_lucidite',{text:'Iriana suit le contour de la magie, non la voix qui cherche à la distraire. Le reflet n’a pas la rigidité d’un simple verrou. Il répond. Il sélectionne. Il oriente.\n\nCe n’est donc pas une alarme. C’est une conversation préparée.',next:'c11i_reflet_lucidite_2'});
-    S.c11i_reflet_lucidite_2={title:'Chapitre XI_I · Amie ou ennemie ?',sub:'Le reflet d’Amanea',bg:'c11i_study',music:'music_c10_horreur',speaker:'Iriana',direction:'Sa voix devient plus basse, plus tranchante.',text:'« Tu voulais que quelqu’un arrive jusque-là. Pas n’importe qui. Quelqu’un capable de lire sans fuir, et de douter sans se jeter dans tes bras. »\n\nLe reflet ne répond pas. Ce silence suffit presque à confirmer l’hypothèse.',chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_028',effects:{lucidite:1}};
-    patchScene('c11i_reflet_audace',{text:'Iriana relève les yeux. Cette fois, elle ne se contente pas de subir l’apparition. Elle la fixe comme on fixe une souveraine ennemie assise à sa propre table.\n\nLe journal pèse dans ses mains, mais sa voix ne tremble pas.',next:'c11i_reflet_audace_2'});
-    S.c11i_reflet_audace_2={title:'Chapitre XI_I · Amie ou ennemie ?',sub:'Le reflet d’Amanea',bg:'c11i_study',music:'music_c10_horreur',speaker:'Iriana',direction:'Avec une insolence froide.',text:'« Si tu voulais vraiment m’arrêter, tu n’aurais pas attendu que je lise autant. Alors cesse de jouer la gardienne offensée. Dis-moi plutôt ce que tu as si peur que je comprenne. »',chars:[['iriana','iriana_stern','left'],['amanea','amanea_rictus','right','projection']],next:'c11i_028',effects:{audace:1}};
-    patchScene('c11i_reflet_resonance',{text:'La magie du reflet ne vibre pas comme un piège. Elle a une texture presque émotionnelle, faite de mémoire, de regret et d’orgueil.\n\nIriana ferme un instant les yeux. Elle n’écoute plus seulement les mots : elle écoute ce qui les porte.',next:'c11i_reflet_resonance_2'});
-    S.c11i_reflet_resonance_2={title:'Chapitre XI_I · Amie ou ennemie ?',sub:'Le reflet d’Amanea',bg:'c11i_study',music:'music_c10_horreur',speaker:'Iriana',direction:'Comme si elle touchait une blessure à travers le sort.',text:'« Tu n’es pas un verrou. Tu es une empreinte. Quelqu’un a laissé ici assez de douleur pour être reconnu, mais pas assez de confiance pour parler simplement. »\n\nLe halo vert se densifie. L’écho d’Amanea paraît, l’espace d’une seconde, moins menaçant que las.',chars:[['iriana','iriana_calm','left'],['amanea','amanea_away','right','projection']],next:'c11i_028',effects:{resonance:1}};
-
-    // --- Coupe propre : XI_I se termine après le reflet. Le souvenir d'Amanea passe en XII_I.
-    patchScene('c11i_028',{next:'c11i_end'});
-    if(S.c11i_067) S.c11i_067.next='c12i_end';
-    S.c11i_end={title:'Chapitre XI_I terminé',sub:'Amie ou ennemie ?',bg:'cg_xi_i_reflet_amanea',music:'music_c10_horreur',speaker:'Narrateur',text:'Iriana referme lentement le journal. Les quartiers d’Amanea n’ont pas répondu à toutes ses questions, mais ils ont fissuré la version trop simple que l’Empire lui avait laissée.\n\nDans l’onglet Progression, les fragments du Carnet du Némésis cessent enfin d’être illisibles. Le passé n’est plus seulement trouvé : il peut désormais être lu.\n\nAu moment où elle s’apprête à s’éloigner, son regard accroche pourtant une mèche oubliée. Une magie étrange y frémit encore, presque imperceptible, comme si le souvenir refusait de se refermer tout à fait.',chars:[],choices:[{label:'Continuer vers le Chapitre XII_I',next:'c12i_000',effects:{},note:'Route Iriana · Le souvenir d’Amanea',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['iriana_amanea_piano','iriana_trouve_coffret_amanea']},{label:'Retour au menu',next:'menu',effects:{},note:'Les fragments sont désormais lisibles dans la Progression.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['iriana_amanea_piano','iriana_trouve_coffret_amanea']} ]};
-    S.c12i_000={title:'Chapitre XII_I · Le souvenir d’Amanea',sub:'La mèche réagit',bg:'c11i_study',music:'music_c10_horreur',speaker:'Narrateur',text:'La mèche n’était pas un simple reste oublié dans le coffret.\n\nÀ peine Iriana l’effleure-t-elle que la magie répond. Une pulsation sourde, ancienne, traverse la fibre pâle. Ce n’est plus une lecture. C’est une invitation dangereuse.\n\nSi elle va plus loin, elle ne lira plus le passé d’Amanea. Elle le traversera.',chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c11i_029'};
-    S.c12i_end={title:'Chapitre XII_I terminé',sub:'Le souvenir d’Amanea',bg:'c11i_memory',music:'music_c10_horreur',speaker:'Narrateur',text:'Iriana revient du souvenir avec le goût métallique de la chute et de la survie.\n\nElle a vu la rage d’Amanea, la fracture irréparable avec Tia, puis l’étrange lueur d’humanité qu’une enfant nommée Allenna a su préserver au milieu des cendres.\n\nDans la Progression, un nouveau souvenir est gravé : Allenna, l’enfant restée.',chars:[['iriana','iriana_sad','left'],['amanea','amanea_sad','right','projection']],choices:[{label:'Retour au menu',next:'menu',effects:{},note:'La route Iriana poursuivra plus tard cette fracture.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter12IComplete:true,chapter12IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['souvenir_allenna']} ]};
-    Object.keys(S).forEach(id=>{ const m=id.match(/^c11i_(\d+)/); if(m && parseInt(m[1],10)>=29) retitleScene(id,'Chapitre XII_I'); });
-    ['c11i_choice_meche','c11i_meche_strategique','c11i_meche_strategique_2','c11i_meche_strategique_3','c11i_meche_strategique_4','c11i_choice_tia_sentence','c11i_tia_sentence_resonance','c11i_tia_sentence_lucidite','c11i_tia_sentence_audace','c11i_tia_sentence_sangfroid','c11i_choice_rage','c11i_rage_bonus'].forEach(id=>retitleScene(id,'Chapitre XII_I'));
-    for(let n=40;n<=53;n++) patchScene('c11i_'+String(n).padStart(3,'0'),{chars:[['amanea','amanea_terrifying','center']]});
-    for(let n=54;n<=67;n++) patchScene('c11i_'+String(n).padStart(3,'0'),{chars:[['amanea','amanea_sad','center']]});
-
-    // --- Chapitre XII_I dans la sélection, verrouillé tant que XI_I n'est pas terminé.
-    const isChapter12IScene=id=> id==='c12i_000'||id==='c12i_end'||(/^c11i_(\d+)/.test(id)&&parseInt(String(id).match(/^c11i_(\d+)/)[1],10)>=29)||['c11i_choice_meche','c11i_meche_strategique','c11i_meche_strategique_2','c11i_meche_strategique_3','c11i_meche_strategique_4','c11i_choice_tia_sentence','c11i_tia_sentence_resonance','c11i_tia_sentence_lucidite','c11i_tia_sentence_audace','c11i_tia_sentence_sangfroid','c11i_choice_rage','c11i_rage_bonus'].includes(id);
-    function chapter12IUnlocked(){ const prev=(typeof readMainSave==='function'?readMainSave():state)||state||{}; const f=prev.flags||{}; return !!((state&&state.devMode)||prev.devMode||f.chapter11IComplete||f.chapter12IComplete); }
-    window.canStartChapter12I=function(){ return chapter12IUnlocked(); };
-    window.startChapter12I=function(){
-      if(!chapter12IUnlocked()){ if(typeof toast==='function') toast('Chapitre XII_I verrouillé','Termine d’abord le Chapitre XI_I de la route Iriana.'); return; }
-      const prev=(typeof readMainSave==='function'?readMainSave():state)||state||{}; const f=prev.flags||{};
-      state={...prev,scene:'c12i_000',stats:{...START_STATS,...(prev.stats||{})},introStats:{...INTRO_STATS,...(prev.introStats||{})},flags:{...f,chapter1Complete:true,chapter2Complete:true,chapter3Complete:true,chapter4Complete:true,chapter5Complete:true,chapter6Complete:true,chapter7Complete:true,chapter8Complete:true,chapter9Complete:true,chapter10Complete:true,chapter10IrianaComplete:true,chapter11IComplete:true,chapter11IRoute:true,chapter10Route:'iriana',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},inventory:[...new Set([...(prev.inventory||[]),'jeton_imperial'])],journalFragments:[...new Set([...(prev.journalFragments||[])])],memories:[...new Set([...(prev.memories||[])])],sceneRewards:[...new Set([...(prev.sceneRewards||[])])],history:[],lastScreen:'game',seenEnding:true,devMode:(state&&state.devMode)||(prev.devMode===true)};
-      if(typeof setScreen==='function') setScreen('game'); if(typeof render==='function') render(); if(typeof save==='function') save();
-    };
-    const upsertChapter12=()=>{
-      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
-      let ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch12_i'); if(!ch){ ch={key:'ch12_i'}; CHAPTER_SELECT_DATA.push(ch); }
-      Object.assign(ch,{key:'ch12_i',label:'Chapitre XII_I',title:'Le souvenir d’Amanea',subtitle:'Route Iriana · En développement',image:A.cg_xi_i_reflet_amanea||A.c11i_study,tags:['Route Iriana','Mémoire','Amanea','Allenna'],body:'La mèche oubliée dans le coffret réagit à la magie d’Iriana. Le journal ne se contente plus de livrer des mots : il ouvre la porte d’un souvenir.',action:'Lancer le Chapitre XII_I'});
-      const order=['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11_i','ch11_g','ch12_i'];
-      CHAPTER_SELECT_DATA.sort((a,b)=>{const ia=order.indexOf(a&&a.key),ib=order.indexOf(b&&b.key);return (ia<0?999:ia)-(ib<0?999:ib);});
-    };
-    upsertChapter12();
-    const prevUnlock=(typeof chapterSelectUnlocked==='function')?chapterSelectUnlocked:null;
-    if(prevUnlock && !window.__sylviniaV0209UnlockWrapped){ window.__sylviniaV0209UnlockWrapped=true; window.chapterSelectUnlocked=chapterSelectUnlocked=function(key){ if(key==='ch12_i') return chapter12IUnlocked(); return prevUnlock(key); }; }
-    const prevLaunch=(typeof launchChapterSelect==='function')?launchChapterSelect:null;
-    if(prevLaunch && !window.__sylviniaV0209LaunchWrapped){ window.__sylviniaV0209LaunchWrapped=true; window.launchChapterSelect=launchChapterSelect=function(key){ if(key==='ch12_i') return window.startChapter12I(); return prevLaunch(key); }; }
-    const prevRenderChapters=(typeof renderChapterSelect==='function')?renderChapterSelect:null;
-    if(prevRenderChapters && !window.__sylviniaV0209RenderChaptersWrapped){ window.__sylviniaV0209RenderChaptersWrapped=true; window.renderChapterSelect=renderChapterSelect=function(){ upsertChapter12(); const result=prevRenderChapters.apply(this,arguments); if(typeof CHAPTER_SELECT_DATA!=='undefined'){ CHAPTER_SELECT_DATA.forEach((ch,idx)=>{ const card=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')[idx]; if(card&&ch&&ch.key){ card.dataset.chapterKey=ch.key; if(ch.key==='ch12_i') card.classList.add('chapter12ICard'); if(ch.key==='ch11_i') card.classList.add('chapter11ICard'); if(ch.key==='ch11_g') card.classList.add('chapter11GCard'); } }); } return result; }; }
-    const prevLabel=(typeof getSceneChapterLabel==='function')?getSceneChapterLabel:null;
-    if(prevLabel && !window.__sylviniaV0209LabelWrapped){ window.__sylviniaV0209LabelWrapped=true; window.getSceneChapterLabel=getSceneChapterLabel=function(sceneId=state.scene){ const id=String(sceneId||''); if(isChapter12IScene(id)) return 'Chapitre XII_I · Le souvenir d’Amanea'; if(id.startsWith('c11i_')) return 'Chapitre XI_I · Amie ou ennemie ?'; return prevLabel(sceneId); }; }
-
-    // --- Carnet : fragments lisibles après XI_I, et fragment du XII_I au lieu de fin XI_I.
-    if(typeof JOURNAL_FRAGMENTS!=='undefined'){
-      JOURNAL_FRAGMENTS.ch12i={title:'Chapitre XII_I · Allenna',chapter:'Chapitre XII_I · Le souvenir d’Amanea',unlockLabel:'Termine le Chapitre XII_I',blocks:[{kind:'journal',text:'Ce souvenir n’est pas seulement celui de ma chute. C’est celui du moment où une enfant, Allenna, m’a regardée autrement que comme une monstruosité. J’étais brisée, trahie, presque vidée de toute victoire. Elle n’avait rien à gagner à rester. Elle est restée.'},{kind:'projection',text:'Je crois que c’est là que j’ai compris que les Obscurcis ne pouvaient pas seulement être une vengeance. Ils devaient devenir une porte pour ceux que l’Empire abandonnait.'}]};
-    }
-    if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined'&&Array.isArray(JOURNAL_FRAGMENT_ORDER)&&!JOURNAL_FRAGMENT_ORDER.includes('ch12i')) JOURNAL_FRAGMENT_ORDER.push('ch12i');
-
-    // --- Codex complété : entrées, images et musiques XI_I / XII_I.
-    if(typeof CODEX_ENTRIES!=='undefined') Object.assign(CODEX_ENTRIES,{
-      quartiers_amanea:{title:'Quartiers privés d’Amanea',body:'Les appartements d’Amanea ne ressemblent pas à un antre de monstre. Bureau stratégique, piano, objets personnels et silence habité : tout y contredit la caricature impériale de l’Impératrice noire.'},
-      complainte_imperiale:{title:'La complainte impériale',body:'Chant ancien des Farae, devenu un dialogue impossible entre Iriana et Amanea. Chaque voix y porte une version de la blessure : la prière, la brûlure, l’aube et la fin.'},
-      coffret_amanea:{title:'Le coffret d’Amanea',body:'Coffret intime contenant portraits, notes et traces soigneusement conservées. Iriana y découvre moins un dossier militaire qu’un cœur barricadé derrière la stratégie.'},
-      reflet_amanea:{title:'Reflet d’Amanea',body:'Écho magique laissé dans le journal. Il n’est ni tout à fait Amanea, ni un simple piège : une empreinte, une gardienne et une conversation différée.'},
-      carnet_nemesis_revele:{title:'Carnet du Némésis révélé',body:'À la fin du Chapitre XI_I, les fragments jusque-là illisibles cessent de résister. Le passé entre enfin dans une forme lisible, même si le comprendre reste une autre guerre.'},
-      souvenir_amanea_allenna:{title:'Allenna',body:'Dans le souvenir d’Amanea, Allenna devient une lueur minuscule mais décisive. Non pas une victoire, mais la preuve qu’au milieu des cendres, quelqu’un a encore choisi de rester.'}
-    });
-    if(typeof CODEX_ORDER!=='undefined') uniqPush(CODEX_ORDER,['quartiers_amanea','complainte_imperiale','coffret_amanea','reflet_amanea','carnet_nemesis_revele','souvenir_amanea_allenna']);
-    if(typeof CODEX_BY_SCENE!=='undefined') Object.assign(CODEX_BY_SCENE,{c11i_002:['quartiers_amanea'],c11i_011:['complainte_imperiale'],c11i_024:['coffret_amanea'],c11i_027:['reflet_amanea','carnet_nemesis_revele'],c12i_000:['souvenir_amanea_allenna'],c12i_end:['souvenir_amanea_allenna']});
-    if(typeof CODEX_IMAGES!=='undefined') Object.assign(CODEX_IMAGES,{
-      cg_xi_i_quartiers_entree:{title:'XI_I · Entrée dans les quartiers',body:'Iriana découvre les quartiers privés d’Amanea, avec le piano déjà visible au centre du silence.',src:A.cg_xi_i_quartiers_entree},
-      cg_xi_i_avant_musique:{title:'XI_I · Avant la musique',body:'Le face-à-face se charge de non-dits avant que le piano ne donne une voix à la fracture.',src:A.cg_xi_i_avant_musique},
-      cg_xi_i_piano_intro:{title:'XI_I · Premières notes',body:'La complainte commence avant la bannière vidéo, dans une proximité retenue et déjà douloureuse.',src:A.cg_xi_i_piano_intro},
-      cg_xi_i_duo_piano_bonus:{title:'XI_I · Duo au piano',body:'Illustration bonus du cœur musical de la route Iriana, conservée dans le Codex sans remplacer la vidéo.',src:A.cg_xi_i_duo_piano_bonus},
-      cg_xi_i_apres_chanson:{title:'XI_I · Après la chanson',body:'Une distance minuscule suffit à porter tout ce qu’elles ne peuvent pas se dire.',src:A.cg_xi_i_apres_chanson},
-      cg_xi_i_coffret_iriana_seule:{title:'XI_I · Le coffret ouvert',body:'Amanea partie, Iriana fouille seule le coffret et comprend que les secrets ont été gardés trop longtemps.',src:A.cg_xi_i_coffret_iriana_seule},
-      cg_xi_i_reflet_amanea:{title:'XI_I · Le reflet d’Amanea',body:'L’écho vert d’Amanea surgit du journal, vision magique entre avertissement et invitation.',src:A.cg_xi_i_reflet_amanea}
-    });
-    if(typeof CODEX_IMAGE_ORDER!=='undefined') uniqPush(CODEX_IMAGE_ORDER,['cg_xi_i_quartiers_entree','cg_xi_i_avant_musique','cg_xi_i_piano_intro','cg_xi_i_duo_piano_bonus','cg_xi_i_apres_chanson','cg_xi_i_coffret_iriana_seule','cg_xi_i_reflet_amanea']);
-    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{c11i_002:['cg_xi_i_quartiers_entree'],c11i_008:['cg_xi_i_avant_musique'],c11i_011:['cg_xi_i_piano_intro'],c11i_013:['cg_xi_i_duo_piano_bonus'],c11i_019:['cg_xi_i_apres_chanson'],c11i_024:['cg_xi_i_coffret_iriana_seule'],c11i_027:['cg_xi_i_reflet_amanea']});
-    if(typeof CODEX_IMAGE_GROUPS!=='undefined') replaceOrPushGroup(CODEX_IMAGE_GROUPS,{id:'chapter11i',title:'Chapitre XI_I · Amie ou ennemie ?',sections:[{title:'Images clés de la route Iriana',keys:['cg_xi_i_quartiers_entree','cg_xi_i_avant_musique','cg_xi_i_piano_intro','cg_xi_i_duo_piano_bonus','cg_xi_i_apres_chanson','cg_xi_i_coffret_iriana_seule','cg_xi_i_reflet_amanea']}]});
-    if(typeof CODEX_MUSIC!=='undefined') Object.assign(CODEX_MUSIC,{music_c11_complainte_instru:{title:'XI_I · Complainte impériale — instrumental',body:'La version sans voix accompagne l’approche du piano, avant que la blessure ne trouve ses paroles.',src:A.music_c11_complainte_instru,label:'Chapitre XI_I · Instrumental'},music_c11_complainte:{title:'XI_I · Complainte impériale',body:'La version chantée du duo entre Iriana et Amanea, de la prière à la brûlure.',src:A.music_c11_complainte,label:'Chapitre XI_I · Chant'}});
-    if(typeof CODEX_MUSIC_ORDER!=='undefined') uniqPush(CODEX_MUSIC_ORDER,['music_c11_complainte_instru','music_c11_complainte']);
-    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined') Object.assign(CODEX_MUSIC_BY_SCENE,{c11i_004:['music_c11_complainte_instru'],c11i_011:['music_c11_complainte']});
-    window.CODEX_MUSIC_GROUPS=window.CODEX_MUSIC_GROUPS||[];
-    replaceOrPushGroup(window.CODEX_MUSIC_GROUPS,{id:'chapter11i',title:'Chapitre XI_I · Amie ou ennemie ?',keys:['music_c11_complainte_instru','music_c11_complainte']});
-
-    // --- Moteur de recherche de scène en mode DEV, dans Options sous le bouton dev.
-    function installDevSceneSearch(){
-      const devBtn=document.getElementById('devModeBtn'); if(!devBtn) return;
-      let box=document.getElementById('devSceneSearchBox');
-      if(!box){
-        box=document.createElement('div');
-        box.id='devSceneSearchBox';
-        box.className='devSceneSearchBox hidden';
-        box.innerHTML='<label for="devSceneSearchInput">Recherche de scène DEV</label><div class="devSceneSearchRow"><input id="devSceneSearchInput" list="devSceneSearchList" placeholder="Ex : c11i_027, c12i_000, c11g_045"><datalist id="devSceneSearchList"></datalist><button id="devSceneSearchGo" type="button">Aller</button></div><small>Entre un identifiant exact ou un fragment. Le moteur prend le premier résultat correspondant.</small>';
-        const grid=devBtn.closest('.optionButtonsGrid')||devBtn.parentElement;
-        if(grid) grid.insertBefore(box, devBtn.nextSibling);
-      }
-      const list=document.getElementById('devSceneSearchList');
-      if(list && !list.dataset.ready){
-        Object.keys(S).sort().forEach(id=>{ const opt=document.createElement('option'); opt.value=id; opt.label=(S[id].title||'')+' · '+(S[id].sub||''); list.appendChild(opt); });
-        list.dataset.ready='true';
-      }
-      const input=document.getElementById('devSceneSearchInput');
-      const goBtn=document.getElementById('devSceneSearchGo');
-      const goTo=()=>{ if(!state.devMode){ if(typeof toast==='function') toast('Mode développeur requis','Active le mode DEV pour accéder à une scène.'); return; } const raw=(input&&input.value||'').trim(); if(!raw) return; const exact=S[raw]?raw:null; const found=exact||Object.keys(S).sort().find(id=>id.toLowerCase().includes(raw.toLowerCase())); if(!found){ if(typeof toast==='function') toast('Scène introuvable',raw); return; } if(!Array.isArray(state.history)) state.history=[]; if(state.scene&&state.scene!==found) state.history.push(state.scene); state.scene=found; if(typeof setScreen==='function') setScreen('game'); if(typeof render==='function') render(); if(typeof save==='function') save(); };
-      if(goBtn && !goBtn.dataset.bound){ goBtn.dataset.bound='true'; goBtn.addEventListener('click',goTo); }
-      if(input && !input.dataset.bound){ input.dataset.bound='true'; input.addEventListener('keydown',e=>{ if(e.key==='Enter') goTo(); }); }
-    }
-    installDevSceneSearch();
-    const prevDevUI=(typeof updateDevUI==='function')?updateDevUI:null;
-    if(prevDevUI && !window.__sylviniaV0209DevUIWrapped){ window.__sylviniaV0209DevUIWrapped=true; window.updateDevUI=updateDevUI=function(){ const r=prevDevUI.apply(this,arguments); installDevSceneSearch(); const box=document.getElementById('devSceneSearchBox'); if(box) box.classList.toggle('hidden',!(state&&state.devMode)); return r; }; }
-
-    const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.209 · Images XI_I, XII_I et recherche DEV';
-    if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
-    if(typeof updateDevUI==='function') updateDevUI();
-    if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
-    console.log('[Sylvinia v0.209] Route Iriana : images clés, XII_I, sélection, recherche DEV et Codex appliqués.');
-  }catch(err){
-    console.error('[Sylvinia v0.209] Échec du patch',err);
-  }
-})();
-</script>
-
-
-<script>
-/* v0.210 · Vignettes de sélection appliquées sur le bon build */
-(function installChapterSelectionCoversV0210(){
-  try{
-    const COVERS={
-      ch11_i:'assets/images/chapter_select/chapter_11_i.png',
-      ch11_g:'assets/images/chapter_select/chapter_11_g.png',
-      ch12_i:'assets/images/chapter_select/chapter_12_i.png'
-    };
-    function applyChapterSelectionCovers(){
-      if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
-        CHAPTER_SELECT_DATA.forEach(ch=>{ if(ch&&COVERS[ch.key]) ch.image=COVERS[ch.key]; });
-      }
-      const cards=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard');
-      if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
-        CHAPTER_SELECT_DATA.forEach((ch,idx)=>{
-          if(!ch||!COVERS[ch.key]) return;
-          const card=cards[idx];
-          if(!card) return;
-          card.dataset.chapterKey=ch.key;
-          if(ch.key==='ch11_i') card.classList.add('chapter11ICard');
-          if(ch.key==='ch11_g') card.classList.add('chapter11GCard');
-          if(ch.key==='ch12_i') card.classList.add('chapter12ICard');
-          const img=card.querySelector('.chapterBookCoverImg');
-          if(img&&img.getAttribute('src')!==COVERS[ch.key]) img.setAttribute('src',COVERS[ch.key]);
-        });
-      }
-    }
-    if(!document.getElementById('v0210-chapter-covers-style')){
-      const style=document.createElement('style');
-      style.id='v0210-chapter-covers-style';
-      style.textContent=`
-        #chapterSelectGrid .chapterSelectCard.chapter11ICard,
-        #chapterSelectGrid .chapterSelectCard.chapter11GCard,
-        #chapterSelectGrid .chapterSelectCard.chapter12ICard{
-          border-color:rgba(82,55,25,.24)!important;
-          box-shadow:0 18px 34px rgba(55,35,15,.10)!important;
-          background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22))!important;
-        }
-        #chapterSelectGrid .chapterSelectCard.chapter11ICard[open],
-        #chapterSelectGrid .chapterSelectCard.chapter11GCard[open],
-        #chapterSelectGrid .chapterSelectCard.chapter12ICard[open]{
-          border-color:rgba(46,93,116,.34)!important;
-          box-shadow:0 26px 54px rgba(55,35,15,.22)!important;
-        }
-        #chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterBookSpine,
-        #chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterBookSpine,
-        #chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterBookSpine{
-          background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10))!important;
-        }
-        #chapterSelectGrid .chapterSelectCard.chapter11ICard[open] .chapterBookSpine,
-        #chapterSelectGrid .chapterSelectCard.chapter11GCard[open] .chapterBookSpine,
-        #chapterSelectGrid .chapterSelectCard.chapter12ICard[open] .chapterBookSpine{
-          background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24))!important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-    if(typeof renderChapterSelect==='function'&&!window.__sylviniaV0210RenderCoversWrapped){
-      window.__sylviniaV0210RenderCoversWrapped=true;
-      const previousRenderChapterSelect=renderChapterSelect;
-      window.renderChapterSelect=renderChapterSelect=function(){
-        const result=previousRenderChapterSelect.apply(this,arguments);
-        applyChapterSelectionCovers();
-        return result;
-      };
-    }
-    applyChapterSelectionCovers();
-    const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.210 · Vignettes XI_I, XI_G et XII_I corrigées';
-    if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
-    console.log('[Sylvinia v0.210] Vignettes XI_I, XI_G et XII_I appliquées sur le build fourni.');
-  }catch(err){
-    console.error('[Sylvinia v0.210] Échec application vignettes sélection chapitres',err);
-  }
+    const videoScenes = new Set(['c11i_004','c11i_005','c11i_006','c11i_007','c11i_008','c11i_009','c11i_010','c11i_011','c11i_song_amanea_01','c11i_song_iriana_01','c11i_song_amanea_02','c11i_012','c11i_013','c11i_014','c11i_015','c11i_song_amanea_brulemoi','c11i_song_iriana_jugement','c11i_song_amanea_espoir','c11i_song_final','c11i_016']);
+    videoScenes.forEach(id=>{ if(S[id]){ S[id].chars=[]; S[id].videoBanner=A.c11i_piano_video; } });
+    const ensureVideoStyle=()=>{ if(document.getElementById('c11iVideoBannerStyle')) return; const style=document.createElement('style'); style.id='c11iVideoBannerStyle'; style.textContent='.stageVideoBanner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1}.stageVideoActive .bg{opacity:0}'; document.head.appendChild(style); };
+    const applySceneVideoBanner=()=>{ const stage=document.getElementById('stage'); if(!stage) return; const scene=(typeof state!=="undefined"&&state)?S[state.scene]:null; const src=scene&&scene.videoBanner?scene.videoBanner:''; let video=document.getElementById('stageVideoBanner'); if(src){ ensureVideoStyle(); if(!video){ video=document.createElement('video'); video.id='stageVideoBanner'; video.className='stageVideoBanner'; video.autoplay=true; video.loop=true; video.muted=true; video.playsInline=true; video.preload='auto'; const veil=stage.querySelector('.veil'); stage.insertBefore(video,veil||stage.firstChild); } if(video.getAttribute('src')!==src){ video.setAttribute('src',src); video.load(); } stage.classList.add('stageVideoActive'); } else { if(video) video.remove(); stage.classList.remove('stageVideoActive'); } };
+    if(typeof render==='function'&&!window.__sylviniaSongVideoRenderWrapped){ window.__sylviniaSongVideoRenderWrapped=true; const previousRender=render; window.render=render=function(){ const result=previousRender.apply(this,arguments); applySceneVideoBanner(); return result; }; }
+    console.log('[Sylvinia] Correctif XI : build complet restauré, complainte regroupée, vidéo bannière active.');
+  }catch(err){ console.error('[Sylvinia] Échec correctif XI vidéo',err); }
 })();
 </script>
 
@@ -30521,6 +30099,205 @@ Ouvrir le choix de perspective ?`);
     console.log('[Sylvinia v0.211] Outils DEV Codex temporaire et réglage des valeurs installés.');
   }catch(err){
     console.error('[Sylvinia v0.211] Échec du patch outils DEV',err);
+  }
+})();
+</script>
+
+
+<script id="v0212-chapter-covers-options-fix">
+/* v0.212 · Correctif sélection chapitres + options DEV mobile */
+(function installV0212ChapterCoversAndOptionsFix(){
+  try{
+    if(window.__sylviniaV0212ChapterCoversAndOptionsFix) return;
+    window.__sylviniaV0212ChapterCoversAndOptionsFix=true;
+
+    const COVERS={
+      ch11_i:'assets/images/chapter_select/chapter_11_i.png',
+      ch11_g:'assets/images/chapter_select/chapter_11_g.png',
+      ch12_i:'assets/images/chapter_select/chapter_12_i.png'
+    };
+
+    function orderChapterSelectData(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const order=['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11_i','ch11_g','ch12_i'];
+      CHAPTER_SELECT_DATA.sort((a,b)=>{
+        const ia=order.indexOf(a&&a.key), ib=order.indexOf(b&&b.key);
+        return (ia<0?999:ia)-(ib<0?999:ib);
+      });
+    }
+
+    function ensureChapterCards(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const upsert=(key,data)=>{
+        let ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key===key);
+        if(!ch){ ch={key}; CHAPTER_SELECT_DATA.push(ch); }
+        Object.assign(ch,data,{key,image:COVERS[key],cover:COVERS[key],openImage:COVERS[key]});
+      };
+      upsert('ch11_i',{
+        label:'Chapitre XI_I',
+        title:'Amie ou ennemie ?',
+        subtitle:'Route Iriana uniquement · En développement',
+        tags:['Route Iriana','Amanea','Piano','Journal','En développement'],
+        body:'Chapitre en développement, réservé à la route Iriana du Chapitre X. Iriana découvre les quartiers privés d’Amanea, un piano chargé de mémoire, puis un journal qui ouvre la fracture intime entre Tia et la Reine Noire.',
+        action:'Lancer le Chapitre XI_I'
+      });
+      upsert('ch11_g',{
+        label:'Chapitre XI_G',
+        title:'Le Bal des Élus',
+        subtitle:'Route Groupe uniquement · En développement',
+        tags:['Route Groupe','Bal','Cour','Intrigues','En développement'],
+        body:'Chapitre en développement, réservé à la route Groupe du Chapitre X. Le groupe est convié au Bal des Élus, une réception impériale où chaque regard devient une attaque et chaque conversation une manœuvre.',
+        action:'Lancer le Chapitre XI_G'
+      });
+      upsert('ch12_i',{
+        label:'Chapitre XII_I',
+        title:'Souvenir d’Amanea',
+        subtitle:'Route Iriana uniquement · En développement',
+        tags:['Route Iriana','Tia','Amanea','Souvenir','En développement'],
+        body:'Chapitre en développement, réservé à la suite de la route Iriana. Le souvenir d’Amanea ouvre la salle du trône d’Al’Gratal en flammes, là où deux sœurs ont cessé de chercher un pardon possible.',
+        action:'Lancer le Chapitre XII_I'
+      });
+      orderChapterSelectData();
+    }
+
+    function ensureChapter12Scene(){
+      if(typeof S==='undefined'||!S) return;
+      if(!S.c12i_disclaimer){
+        S.c12i_disclaimer={
+          title:'Chapitre XII_I · Souvenir d’Amanea',
+          sub:'En développement',
+          bg:'c11i_memory',
+          music:'music_c10_horreur',
+          speaker:'Narrateur',
+          text:'Ce chapitre est en développement et n’est donc pas terminé.\n\nLa route Iriana se poursuivra dans un souvenir d’Amanea : une salle du trône en flammes, une fresque familiale qui se consume, et deux sœurs incapables de reculer avant que la Lumière ne devienne sentence.',
+          chars:[],
+          choices:[{label:'Retour au menu',next:'menu',effects:{},note:'Version en développement'}]
+        };
+      }
+    }
+
+    function decorateChapterCards(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const cards=[...document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')];
+      CHAPTER_SELECT_DATA.forEach((ch,idx)=>{
+        if(!ch||!COVERS[ch.key]) return;
+        const cover=COVERS[ch.key];
+        const card=cards[idx];
+        if(!card) return;
+        card.dataset.chapterKey=ch.key;
+        card.classList.add('devChapterCard');
+        card.classList.toggle('chapter11ICard',ch.key==='ch11_i');
+        card.classList.toggle('chapter11GCard',ch.key==='ch11_g');
+        card.classList.toggle('chapter12ICard',ch.key==='ch12_i');
+        card.querySelectorAll('.chapterBookCoverImg,.chapterOpenImage').forEach(img=>{
+          if(img.getAttribute('src')!==cover) img.setAttribute('src',cover);
+          const alt=(ch.label||'Chapitre')+' · '+(ch.title||'');
+          img.setAttribute('alt',alt);
+        });
+      });
+    }
+
+    if(typeof chapterSelectUnlocked==='function'&&!window.__sylviniaV0212ChapterUnlockWrapped){
+      window.__sylviniaV0212ChapterUnlockWrapped=true;
+      const previousChapterSelectUnlocked=chapterSelectUnlocked;
+      window.chapterSelectUnlocked=chapterSelectUnlocked=function chapterSelectUnlockedV0212(key){
+        if(key==='ch12_i') return !!(state&&state.devMode)||!!(state&&state.flags&&state.flags.chapter11IComplete);
+        return previousChapterSelectUnlocked.apply(this,arguments);
+      };
+    }
+
+    if(typeof launchChapterSelect==='function'&&!window.__sylviniaV0212ChapterLaunchWrapped){
+      window.__sylviniaV0212ChapterLaunchWrapped=true;
+      const previousLaunchChapterSelect=launchChapterSelect;
+      window.launchChapterSelect=launchChapterSelect=function launchChapterSelectV0212(key){
+        if(key==='ch12_i'){
+          ensureChapter12Scene();
+          if(typeof setScreen==='function') setScreen('game');
+          if(typeof go==='function') return go('c12i_disclaimer');
+          if(typeof state!=='undefined'&&state){ state.scene='c12i_disclaimer'; if(typeof render==='function') render(); }
+          return;
+        }
+        return previousLaunchChapterSelect.apply(this,arguments);
+      };
+    }
+
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaV0212RenderChapterSelectWrapped){
+      window.__sylviniaV0212RenderChapterSelectWrapped=true;
+      const previousRenderChapterSelect=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function renderChapterSelectV0212(){
+        ensureChapterCards();
+        const result=previousRenderChapterSelect.apply(this,arguments);
+        decorateChapterCards();
+        return result;
+      };
+    }
+
+    function injectV0212Styles(){
+      if(document.getElementById('v0212-covers-options-style')) return;
+      const style=document.createElement('style');
+      style.id='v0212-covers-options-style';
+      style.textContent=`
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard::after,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard::after,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard::after{
+          content:'EN DÉVELOPPEMENT';position:absolute;right:14px;top:14px;z-index:6;padding:7px 10px;border-radius:999px;border:1px solid rgba(233,201,133,.36);background:rgba(11,16,28,.76);color:#fff1c4;font-size:10px;font-weight:950;letter-spacing:.14em;box-shadow:0 8px 22px rgba(0,0,0,.25);
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard{
+          border-color:rgba(82,55,25,.24)!important;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(234,213,168,.22))!important;box-shadow:0 18px 34px rgba(55,35,15,.10)!important;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard.locked,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard.locked,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard.locked{
+          filter:grayscale(.82) saturate(.35) brightness(.74);opacity:.76;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterOpenImage,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterOpenImage,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterOpenImage{
+          object-fit:cover!important;object-position:center center!important;background:#05070a;
+        }
+        #chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterBookCoverImg,
+        #chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterBookCoverImg,
+        #chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterBookCoverImg{
+          object-position:center center!important;
+        }
+        #devStatSetterBox,.devStatSetterBox,.devSceneSearchBox{
+          min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important;flex:1 1 100%!important;
+        }
+        .optionButtonsGrid{max-width:100%;overflow:visible;align-items:stretch;}
+        @media(max-width:980px){
+          .menuAccordion[open] .accordionPanel,
+          body.mobileUI .menuAccordion[open] .accordionPanel{
+            max-height:calc(100svh - 245px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;padding-right:4px!important;padding-bottom:10px!important;
+          }
+          #titleCard .menuDockCorner,
+          body.mobileUI .menuDockCorner{
+            max-height:calc(100svh - 150px)!important;overflow-y:auto!important;overflow-x:hidden!important;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+          }
+          .devStatSetterRow{grid-template-columns:1fr!important;}
+          .devSceneSearchRow{display:grid!important;grid-template-columns:1fr!important;align-items:stretch!important;}
+        }
+        @media(max-width:760px){
+          .menuAccordion[open] .accordionPanel,
+          body.mobileUI .menuAccordion[open] .accordionPanel{max-height:calc(100svh - 210px)!important;}
+          #devStatSelect,#devStatValueInput,#devStatApplyBtn,.devSceneSearchRow input,.devSceneSearchRow button{min-width:0!important;width:100%!important;}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    injectV0212Styles();
+    ensureChapterCards();
+    ensureChapter12Scene();
+    if(!document.getElementById('chapters')?.classList.contains('hidden')&&typeof renderChapterSelect==='function') renderChapterSelect();
+    else decorateChapterCards();
+    if(typeof updateChapterLocks==='function') updateChapterLocks();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.212 · Sélection chapitres et Options corrigées';
+    console.log('[Sylvinia v0.212] Images XI_I/XI_G/XII_I appliquées partout + Options DEV mieux cadrées.');
+  }catch(err){
+    console.error('[Sylvinia v0.212] Échec correctif sélection/options',err);
   }
 })();
 </script>
