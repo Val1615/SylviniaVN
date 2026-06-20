@@ -30302,5 +30302,185 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<script>
+/* v0.213 · Restauration robuste des outils DEV : recherche de scène + réglage valeurs + Codex temporaire */
+(function installDevToolsV0213(){
+  try{
+    if(window.__sylviniaV0213DevToolsInstalled) return;
+    window.__sylviniaV0213DevToolsInstalled=true;
+    function ensureDevToolsState(){
+      if(typeof state==='undefined'||!state) return false;
+      if(!state.stats) state.stats={};
+      if(!Array.isArray(state.history)) state.history=[];
+      if(typeof state.devCodexForceAccess!=='boolean') state.devCodexForceAccess=false;
+      if(!state.devMode) state.devCodexForceAccess=false;
+      if(!Array.isArray(state.codexUnlocked)) state.codexUnlocked=[];
+      if(!Array.isArray(state.codexUnlockedImages)) state.codexUnlockedImages=[];
+      if(!Array.isArray(state.codexUnlockedMusic)) state.codexUnlockedMusic=[];
+      return true;
+    }
+    function uniqueDevTools(arr){return Array.from(new Set((arr||[]).filter(Boolean)));}
+    function injectDevToolsStyle(){
+      if(document.getElementById('v0213-dev-tools-style')) return;
+      const style=document.createElement('style');
+      style.id='v0213-dev-tools-style';
+      style.textContent=`
+        .accordionPanel.devToolsPanel{align-items:flex-start!important;}
+        .devSceneSearchBox,.devStatSetterBox{
+          display:grid;gap:10px;padding:13px;border-radius:18px;
+          border:1px solid rgba(167,240,255,.22);
+          background:linear-gradient(180deg,rgba(8,16,29,.78),rgba(4,9,18,.68));
+          box-shadow:0 10px 24px rgba(0,0,0,.16);color:#f5fbff;
+          flex:1 1 100%;min-width:min(100%,560px);max-width:760px;
+        }
+        .devSceneSearchBox.hidden,.devStatSetterBox.hidden{display:none!important;}
+        .devSceneSearchBox label,.devToolHead strong{font-size:13px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#bfefff;}
+        .devSceneSearchBox small,.devToolHead small{font-size:11px;line-height:1.42;color:#b8c8d9;}
+        .devToolHead{display:grid;gap:4px;}
+        .devSceneSearchRow,.devStatSetterRow{display:grid;grid-template-columns:minmax(170px,1fr) auto;gap:9px;align-items:center;}
+        .devStatSetterRow{grid-template-columns:minmax(145px,1fr) 110px auto;}
+        #devSceneSearchInput,#devStatSelect,#devStatValueInput{
+          width:100%;min-width:0;border:1px solid rgba(255,255,255,.14);border-radius:14px;
+          background:rgba(3,8,15,.78);color:#f6fbff;padding:12px 13px;font-weight:850;outline:none;
+        }
+        #devSceneSearchInput:focus,#devStatSelect:focus,#devStatValueInput:focus{border-color:rgba(167,240,255,.56);box-shadow:0 0 0 4px rgba(167,240,255,.08);}
+        #devSceneSearchGo,#devStatApplyBtn{
+          border:1px solid rgba(167,240,255,.24);border-radius:14px;
+          background:linear-gradient(180deg,rgba(67,138,172,.42),rgba(28,56,82,.72));
+          color:#f5fbff;padding:12px 15px;font-weight:950;cursor:pointer;white-space:nowrap;
+        }
+        #devSceneSearchGo:hover,#devStatApplyBtn:hover{border-color:rgba(167,240,255,.58);transform:translateY(-1px);}
+        .codexDevButton{width:100%;margin-top:12px;padding:10px 13px;}
+        .codexDevButton.hidden{display:none!important;}
+        @media(min-width:981px){#title .menuAccordion[open] .accordionPanel.devToolsPanel{max-width:min(940px,calc(100vw - 230px));overflow:visible;}}
+        @media(max-width:980px){#title .menuAccordion[open] .accordionPanel.devToolsPanel{overflow-y:auto;max-height:76svh}.devSceneSearchBox,.devStatSetterBox{grid-column:1/-1;min-width:0;max-width:none;width:100%;}}
+        @media(max-width:760px){#title .menuAccordion[open] .accordionPanel.devToolsPanel,body.mobileUI #title .menuAccordion[open] .accordionPanel.devToolsPanel{overflow-y:auto;max-height:72svh;padding-right:4px!important}.devSceneSearchRow,.devStatSetterRow{grid-template-columns:1fr}#devSceneSearchGo,#devStatApplyBtn{width:100%;}}
+      `;
+      document.head.appendChild(style);
+    }
+    function optionsPanel(){
+      const devBtn=document.getElementById('devModeBtn');
+      if(!devBtn) return null;
+      const panel=devBtn.closest('.accordionPanel');
+      if(panel) panel.classList.add('devToolsPanel');
+      return panel;
+    }
+    function installSceneSearch(){
+      if(typeof S==='undefined'||!S) return;
+      const devBtn=document.getElementById('devModeBtn');
+      if(!devBtn) return;
+      const panel=optionsPanel();
+      let box=document.getElementById('devSceneSearchBox');
+      if(!box){
+        box=document.createElement('div');
+        box.id='devSceneSearchBox';
+        box.className='devSceneSearchBox hidden';
+        box.innerHTML=`<label for="devSceneSearchInput">Recherche de scène DEV</label><div class="devSceneSearchRow"><input id="devSceneSearchInput" list="devSceneSearchList" placeholder="Ex : c11i_027, c11g_045, c12i_000" autocomplete="off"><datalist id="devSceneSearchList"></datalist><button id="devSceneSearchGo" type="button">Aller</button></div><small>Entre un identifiant exact ou un fragment. Le premier résultat correspondant est ouvert directement.</small>`;
+        if(panel) panel.insertBefore(box, devBtn.nextSibling);
+      }
+      const list=document.getElementById('devSceneSearchList');
+      if(list){
+        const ids=Object.keys(S).sort();
+        if(list.dataset.count!==String(ids.length)){
+          list.innerHTML='';
+          ids.forEach(id=>{const opt=document.createElement('option'); opt.value=id; const sc=S[id]||{}; opt.label=[sc.title,sc.sub].filter(Boolean).join(' · '); list.appendChild(opt);});
+          list.dataset.count=String(ids.length);
+        }
+      }
+      const input=document.getElementById('devSceneSearchInput');
+      const goBtn=document.getElementById('devSceneSearchGo');
+      const goTo=()=>{
+        if(!ensureDevToolsState()||!state.devMode){ if(typeof toast==='function') toast('Mode développeur requis','Active le mode DEV pour accéder à une scène.'); return; }
+        const raw=(input&&input.value||'').trim();
+        if(!raw) return;
+        const lower=raw.toLowerCase();
+        const ids=Object.keys(S).sort();
+        const found=S[raw]?raw:(ids.find(id=>id.toLowerCase()===lower)||ids.find(id=>id.toLowerCase().includes(lower))||ids.find(id=>((S[id].title||'')+' '+(S[id].sub||'')).toLowerCase().includes(lower)));
+        if(!found){ if(typeof toast==='function') toast('Scène introuvable',raw); return; }
+        if(state.scene&&state.scene!==found) state.history.push(state.scene);
+        state.scene=found;
+        if(typeof playUiSound==='function') playUiSound('book');
+        if(typeof setScreen==='function') setScreen('game');
+        if(typeof render==='function') render();
+        if(typeof save==='function') save();
+        if(typeof toast==='function') toast('Scène ouverte',found);
+      };
+      if(goBtn&&!goBtn.dataset.v0213Bound){goBtn.dataset.v0213Bound='true';goBtn.addEventListener('click',goTo);}
+      if(input&&!input.dataset.v0213Bound){input.dataset.v0213Bound='true';input.addEventListener('keydown',ev=>{if(ev.key==='Enter') goTo();});}
+    }
+    function installStatSetter(){
+      const devBtn=document.getElementById('devModeBtn');
+      if(!devBtn) return;
+      const panel=optionsPanel();
+      let box=document.getElementById('devStatSetterBox');
+      if(!box){
+        box=document.createElement('div');
+        box.id='devStatSetterBox';
+        box.className='devStatSetterBox hidden';
+        box.innerHTML=`<div class="devToolHead"><strong>Réglage des valeurs DEV</strong><small>Définis un score exact pour tester les prérequis et embranchements sans rejouer toute la route.</small></div><div class="devStatSetterRow"><select id="devStatSelect" aria-label="Valeur à définir"><option value="audace">Audace</option><option value="sangfroid">Sang-froid</option><option value="lucidite">Lucidité</option><option value="resonance">Résonance</option><option value="lien">Regard de Remerii</option></select><input id="devStatValueInput" type="number" inputmode="numeric" min="0" max="999" step="1" value="0" aria-label="Score exact"><button id="devStatApplyBtn" type="button">Définir</button></div>`;
+        const search=document.getElementById('devSceneSearchBox');
+        if(search&&search.parentElement) search.insertAdjacentElement('afterend',box);
+        else if(panel) panel.insertBefore(box, devBtn.nextSibling);
+      }
+      const select=document.getElementById('devStatSelect');
+      const input=document.getElementById('devStatValueInput');
+      const apply=document.getElementById('devStatApplyBtn');
+      const refresh=()=>{if(!ensureDevToolsState()||!select||!input) return; const key=select.value; input.value=String((state.stats&&typeof state.stats[key]==='number')?state.stats[key]:0);};
+      if(select&&!select.dataset.v0213Bound){select.dataset.v0213Bound='true';select.addEventListener('change',refresh);}
+      if(apply&&!apply.dataset.v0213Bound){apply.dataset.v0213Bound='true';apply.addEventListener('click',()=>{if(!ensureDevToolsState()||!state.devMode){ if(typeof toast==='function') toast('Mode développeur requis','Active le mode DEV pour régler les valeurs.'); return; } const key=select?select.value:'audace'; let value=parseInt(input&&input.value,10); if(!Number.isFinite(value)) value=0; value=Math.max(0,Math.min(999,value)); state.stats[key]=value; if(input) input.value=String(value); if(typeof playUiSound==='function') playUiSound('notify'); if(typeof updateProgressUI==='function') updateProgressUI(); if(!document.getElementById('progression')?.classList.contains('hidden')&&typeof renderProgression==='function') renderProgression(); if(!document.getElementById('game')?.classList.contains('hidden')&&typeof render==='function') render(); if(typeof save==='function') save(); const names=(typeof statNames!=='undefined'?statNames:{}); if(typeof toast==='function') toast('Valeur définie',`${names[key]||key} = ${value}`);});}
+      refresh();
+    }
+    function installCodexButton(){
+      const codex=document.getElementById('codex');
+      if(!codex) return;
+      let btn=document.getElementById('codexForceAccessBtn');
+      if(!btn){
+        btn=document.createElement('button');
+        btn.id='codexForceAccessBtn';
+        btn.type='button';
+        btn.className='journalDevButton codexDevButton hidden';
+        btn.textContent='DEV · Révéler tout le Codex';
+        btn.addEventListener('click',()=>{ if(!ensureDevToolsState()||!state.devMode){ if(typeof toast==='function') toast('Mode développeur requis','Active le mode DEV pour révéler temporairement le Codex.'); return; } state.devCodexForceAccess=!state.devCodexForceAccess; if(typeof playUiSound==='function') playUiSound('book'); updateDevToolsVisibility(); if(typeof renderCodex==='function') renderCodex(); if(typeof updateProgressUI==='function') updateProgressUI(); if(typeof save==='function') save(); if(typeof toast==='function') toast(state.devCodexForceAccess?'Codex DEV révélé':'Codex normal restauré',state.devCodexForceAccess?'Affichage temporaire : aucun vrai déblocage n’est modifié.':'La progression réelle reprend le dessus.'); });
+        const note=codex.querySelector('.grimoireNote');
+        const side=codex.querySelector('.codexSidebar');
+        if(note) note.insertAdjacentElement('afterend',btn); else if(side) side.appendChild(btn);
+      }
+    }
+    function updateDevToolsVisibility(){
+      ensureDevToolsState();
+      const visible=!!(typeof state!=='undefined'&&state&&state.devMode);
+      ['devSceneSearchBox','devStatSetterBox'].forEach(id=>{const el=document.getElementById(id); if(el) el.classList.toggle('hidden',!visible);});
+      const codexBtn=document.getElementById('codexForceAccessBtn');
+      if(codexBtn){const active=!!(visible&&state.devCodexForceAccess===true); codexBtn.classList.toggle('hidden',!visible); codexBtn.classList.toggle('active',active); codexBtn.textContent=active?'DEV · Revenir au Codex normal':'DEV · Révéler tout le Codex';}
+      const select=document.getElementById('devStatSelect'), input=document.getElementById('devStatValueInput');
+      if(visible&&select&&input&&state&&state.stats){const key=select.value; input.value=String(typeof state.stats[key]==='number'?state.stats[key]:0);}
+    }
+    function withTemporaryFullCodex(fn){
+      if(!ensureDevToolsState()||!(state.devMode&&state.devCodexForceAccess===true)) return fn();
+      const saved={e:[...(state.codexUnlocked||[])],i:[...(state.codexUnlockedImages||[])],m:[...(state.codexUnlockedMusic||[])]};
+      try{
+        if(typeof CODEX_ORDER!=='undefined') state.codexUnlocked=uniqueDevTools([...(state.codexUnlocked||[]),...CODEX_ORDER]);
+        if(typeof CODEX_IMAGE_ORDER!=='undefined') state.codexUnlockedImages=uniqueDevTools([...(state.codexUnlockedImages||[]),...CODEX_IMAGE_ORDER]);
+        if(typeof CODEX_MUSIC_ORDER!=='undefined') state.codexUnlockedMusic=uniqueDevTools([...(state.codexUnlockedMusic||[]),...CODEX_MUSIC_ORDER]);
+        return fn();
+      }finally{state.codexUnlocked=saved.e; state.codexUnlockedImages=saved.i; state.codexUnlockedMusic=saved.m;}
+    }
+    function installAll(){injectDevToolsStyle(); installSceneSearch(); installStatSetter(); installCodexButton(); updateDevToolsVisibility();}
+    if(typeof renderCodex==='function'&&!window.__sylviniaV0213RenderCodexWrapped){window.__sylviniaV0213RenderCodexWrapped=true; const prev=renderCodex; window.renderCodex=renderCodex=function(){installCodexButton(); const r=withTemporaryFullCodex(()=>prev.apply(this,arguments)); installCodexButton(); updateDevToolsVisibility(); return r;};}
+    if(typeof updateProgressUI==='function'&&!window.__sylviniaV0213ProgressWrapped){window.__sylviniaV0213ProgressWrapped=true; const prev=updateProgressUI; window.updateProgressUI=updateProgressUI=function(){return withTemporaryFullCodex(()=>prev.apply(this,arguments));};}
+    if(typeof updateDevUI==='function'&&!window.__sylviniaV0213DevUIWrapped){window.__sylviniaV0213DevUIWrapped=true; const prev=updateDevUI; window.updateDevUI=updateDevUI=function(){const r=prev.apply(this,arguments); installAll(); return r;};}
+    const devBtn=document.getElementById('devModeBtn');
+    if(devBtn&&!devBtn.dataset.v0213ToolsKick){devBtn.dataset.v0213ToolsKick='true'; devBtn.addEventListener('click',()=>setTimeout(installAll,80));}
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.213 · Outils DEV restaurés';
+    installAll();
+    if(typeof updateDevUI==='function') updateDevUI();
+    console.log('[Sylvinia v0.213] Outils DEV restaurés.');
+  }catch(err){console.error('[Sylvinia v0.213] Échec outils DEV',err);}
+})();
+</script>
+
 </body>
 </html>
