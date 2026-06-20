@@ -143,12 +143,9 @@ Les trois musiques ont été ajoutées au codex musical afin d’être déverrou
 - Correction d’ergonomie mobile des Options : le panneau peut défiler au lieu de sortir de l’écran, et les outils DEV ne forcent plus de largeur minimale trop grande.
 - L’outil DEV de réglage direct des valeurs reste accessible uniquement en mode développeur.
 
+### v0.215
 
-## v0.213 · Restauration des outils développeur
-
-- Restauration du moteur de recherche de scène dans l’onglet Options, visible uniquement en mode développeur.
-- Recherche par identifiant exact ou fragment de scène, avec ouverture directe dans le moteur de jeu.
-- Réglage direct des valeurs DEV conservé et renforcé : Audace, Sang-froid, Lucidité, Résonance et Regard de Remerii.
-- Bouton temporaire de révélation complète du Codex conservé : un clic révèle, un second clic revient à l’état normal.
-- Correction CSS de l’onglet Options pour que les outils DEV restent visibles et scrollables sur mobile.
-- Le ZIP inclut de nouveau les trois visuels de sélection : XI_I, XI_G et XII_I.
+- Correction de l’affichage des outils développeur dans l’onglet Options.
+- Ajout d’un panneau DEV autonome sous les boutons d’Options, visible uniquement quand le mode développeur est actif.
+- Restauration visible de la recherche de scène DEV, du réglage direct des valeurs et du bouton temporaire de révélation du Codex.
+- Le panneau Options reste scrollable sur mobile.
