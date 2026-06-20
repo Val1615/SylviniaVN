@@ -133,3 +133,22 @@ Les trois musiques ont été ajoutées au codex musical afin d’être déverrou
 - Ajout dans les Options, sous le mode développeur, d’un outil de réglage direct des valeurs.
 - L’outil permet de sélectionner puis définir exactement : Audace, Sang-froid, Lucidité, Résonance ou Regard de Remerii.
 - Après modification d’une valeur, les interfaces Progression, HUD et scènes se rafraîchissent immédiatement afin de faciliter les tests de prérequis.
+
+
+## Mise à jour v0.212 — Correctif sélection chapitres et Options DEV
+
+- Correction des images de sélection pour `Chapitre XI_I`, `Chapitre XI_G` et `Chapitre XII_I` : les visuels sont maintenant appliqués à la miniature du livre **et** à l’image du panneau ouvert du chapitre.
+- Ajout/confirmation de la carte `Chapitre XII_I · Souvenir d’Amanea` avec le marqueur `EN DÉVELOPPEMENT`.
+- Les trois images de sélection sont fournies dans `assets/images/chapter_select/` : `chapter_11_i.png`, `chapter_11_g.png`, `chapter_12_i.png`.
+- Correction d’ergonomie mobile des Options : le panneau peut défiler au lieu de sortir de l’écran, et les outils DEV ne forcent plus de largeur minimale trop grande.
+- L’outil DEV de réglage direct des valeurs reste accessible uniquement en mode développeur.
+
+
+## v0.213 · Restauration des outils développeur
+
+- Restauration du moteur de recherche de scène dans l’onglet Options, visible uniquement en mode développeur.
+- Recherche par identifiant exact ou fragment de scène, avec ouverture directe dans le moteur de jeu.
+- Réglage direct des valeurs DEV conservé et renforcé : Audace, Sang-froid, Lucidité, Résonance et Regard de Remerii.
+- Bouton temporaire de révélation complète du Codex conservé : un clic révèle, un second clic revient à l’état normal.
+- Correction CSS de l’onglet Options pour que les outils DEV restent visibles et scrollables sur mobile.
+- Le ZIP inclut de nouveau les trois visuels de sélection : XI_I, XI_G et XII_I.
