@@ -30692,5 +30692,231 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<script id="v0218-selection-codex-dev-fix">
+/* v0.218 · Correctif sélection chapitres + Codex DEV non automatique
+   - Restaure les images dédiées XI_I / XI_G / XII_I dans l’onglet de sélection.
+   - Le mode développeur ne débloque plus tout le Codex à lui seul.
+   - Le bouton Codex DEV temporaire reste dans les Options. */
+(function installSylviniaV0218SelectionAndDevCodexFix(){
+  try{
+    if(window.__sylviniaV0218SelectionAndDevCodexFix) return;
+    window.__sylviniaV0218SelectionAndDevCodexFix=true;
+
+    const SELECT_IMAGES={
+      ch11_i:'assets/images/chapter_select/chapter_11_i.png',
+      ch11_g:'assets/images/chapter_select/chapter_11_g.png',
+      ch12_i:'assets/images/chapter_select/chapter_12_i.png'
+    };
+    const DEFAULT_CODEX_ENTRIES=['hylee','remerii','valeurs'];
+    const DEFAULT_CODEX_IMAGES=[];
+    const DEFAULT_CODEX_MUSIC=['music_menu'];
+    const uniq=arr=>Array.from(new Set((arr||[]).filter(Boolean)));
+    const cloneArr=arr=>Array.isArray(arr)?[...arr]:[];
+    const normalize=(arr,base)=>uniq([...(Array.isArray(arr)?arr:[]),...(base||[])]);
+    const containsAll=(arr,order)=>Array.isArray(arr)&&Array.isArray(order)&&order.length>0&&order.every(k=>arr.includes(k));
+    const looksAutoFull=()=>{
+      try{
+        const e=containsAll(state?.codexUnlocked,CODEX_ORDER||[]);
+        const i=containsAll(state?.codexUnlockedImages,CODEX_IMAGE_ORDER||[]);
+        const m=containsAll(state?.codexUnlockedMusic,CODEX_MUSIC_ORDER||[]);
+        return !!(e&&i&&m);
+      }catch(err){return false;}
+    };
+    function ensureArrays(){
+      if(typeof state==='undefined'||!state) return false;
+      state.codexUnlocked=Array.isArray(state.codexUnlocked)?state.codexUnlocked:[];
+      state.codexUnlockedImages=Array.isArray(state.codexUnlockedImages)?state.codexUnlockedImages:[];
+      state.codexUnlockedMusic=Array.isArray(state.codexUnlockedMusic)?state.codexUnlockedMusic:[];
+      state.codexUnlocked=normalize(state.codexUnlocked,DEFAULT_CODEX_ENTRIES);
+      state.codexUnlockedImages=normalize(state.codexUnlockedImages,DEFAULT_CODEX_IMAGES);
+      state.codexUnlockedMusic=normalize(state.codexUnlockedMusic,DEFAULT_CODEX_MUSIC);
+      if(!state.codexTab) state.codexTab='entries';
+      if(!state.codexImageFilter) state.codexImageFilter='all';
+      if(typeof state.mobileUI!=='boolean') state.mobileUI=false;
+      if(typeof state.devMode!=='boolean') state.devMode=false;
+      if(typeof state.devCodexForceAccess!=='boolean') state.devCodexForceAccess=false;
+      return true;
+    }
+    function currentCodexSnapshot(){
+      ensureArrays();
+      return {entries:cloneArr(state.codexUnlocked),images:cloneArr(state.codexUnlockedImages),music:cloneArr(state.codexUnlockedMusic)};
+    }
+    function defaultSnapshot(){
+      return {entries:[...DEFAULT_CODEX_ENTRIES],images:[...DEFAULT_CODEX_IMAGES],music:[...DEFAULT_CODEX_MUSIC]};
+    }
+    function validSnapshot(snap){
+      return snap && Array.isArray(snap.entries) && Array.isArray(snap.images) && Array.isArray(snap.music);
+    }
+    function getRealSnapshot(){
+      ensureArrays();
+      if(!validSnapshot(state.__realCodexV0218)){
+        state.__realCodexV0218=(state.devMode && looksAutoFull())?defaultSnapshot():currentCodexSnapshot();
+      }
+      return state.__realCodexV0218;
+    }
+    function syncRealWhenNormal(){
+      if(!ensureArrays()) return;
+      if(!state.devMode){
+        state.__realCodexV0218=currentCodexSnapshot();
+      }
+    }
+    function restoreRealWhenDevNoForce(){
+      if(!ensureArrays()) return;
+      if(state.devMode && state.devCodexForceAccess!==true){
+        const real=getRealSnapshot();
+        state.codexUnlocked=normalize(real.entries,DEFAULT_CODEX_ENTRIES);
+        state.codexUnlockedImages=normalize(real.images,DEFAULT_CODEX_IMAGES);
+        state.codexUnlockedMusic=normalize(real.music,DEFAULT_CODEX_MUSIC);
+      }
+    }
+
+    function applyChapterSelectImages(){
+      try{
+        if(typeof A!=='undefined'&&A){
+          A.chapter_11_i_select=SELECT_IMAGES.ch11_i;
+          A.chapter_11_g_select=SELECT_IMAGES.ch11_g;
+          A.chapter_12_i_select=SELECT_IMAGES.ch12_i;
+        }
+        if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
+          CHAPTER_SELECT_DATA.forEach(ch=>{
+            if(ch && SELECT_IMAGES[ch.key]) ch.image=SELECT_IMAGES[ch.key];
+          });
+        }
+        document.querySelectorAll('#chapterSelectGrid .chapterSelectCard').forEach(card=>{
+          const key=card.dataset.chapterKey;
+          const path=SELECT_IMAGES[key];
+          if(!path) return;
+          card.querySelectorAll('img.chapterBookCoverImg,img.chapterOpenImage').forEach(img=>{
+            if(img.getAttribute('src')!==path) img.setAttribute('src',path);
+            img.onerror=function(){
+              this.onerror=null;
+              const fallback=(typeof A!=='undefined'&&(A.c10_selection_cover||A.cg_xi_i_reflet_amanea||A.c10_cover||A.c10_palais))||(key==='ch12_i'&&SELECT_IMAGES.ch12_i)||'';
+              if(fallback && this.getAttribute('src')!==fallback) this.setAttribute('src',fallback);
+            };
+          });
+        });
+      }catch(err){console.warn('[Sylvinia v0.218] Images de sélection non appliquées',err);}
+    }
+
+    if(typeof ensureCodexDefaults==='function' && !window.__sylviniaV0218EnsureCodexWrapped){
+      window.__sylviniaV0218EnsureCodexWrapped=true;
+      const previousEnsureCodexDefaults=ensureCodexDefaults;
+      window.ensureCodexDefaults=ensureCodexDefaults=function ensureCodexDefaultsV0218(){
+        const before=(typeof state!=='undefined'&&state)?currentCodexSnapshot():null;
+        const wasNormal=!!(typeof state!=='undefined'&&state&&!state.devMode);
+        const result=previousEnsureCodexDefaults.apply(this,arguments);
+        ensureArrays();
+        if(wasNormal && before) state.__realCodexV0218=before;
+        syncRealWhenNormal();
+        restoreRealWhenDevNoForce();
+        return result;
+      };
+      try{ eval('ensureCodexDefaults=window.ensureCodexDefaults'); }catch(e){}
+    }
+
+    if(typeof unlockAllCodex==='function' && !window.__sylviniaV0218UnlockAllCodexWrapped){
+      window.__sylviniaV0218UnlockAllCodexWrapped=true;
+      const previousUnlockAllCodex=unlockAllCodex;
+      window.unlockAllCodex=unlockAllCodex=function unlockAllCodexV0218(){
+        ensureArrays();
+        if(state && state.devCodexForceAccess===true){
+          return previousUnlockAllCodex.apply(this,arguments);
+        }
+        // Le mode DEV n'a plus le droit de modifier les vrais déblocages du Codex.
+        restoreRealWhenDevNoForce();
+      };
+      try{ eval('unlockAllCodex=window.unlockAllCodex'); }catch(e){}
+    }
+
+    if(typeof toggleDevMode==='function' && !window.__sylviniaV0218ToggleDevWrapped){
+      window.__sylviniaV0218ToggleDevWrapped=true;
+      const previousToggleDevMode=toggleDevMode;
+      window.toggleDevMode=toggleDevMode=function toggleDevModeV0218(){
+        ensureArrays();
+        const before=currentCodexSnapshot();
+        const wasDev=!!state.devMode;
+        if(!wasDev && !looksAutoFull()) state.__realCodexV0218=before;
+        const result=previousToggleDevMode.apply(this,arguments);
+        ensureArrays();
+        if(state.devMode){
+          state.devCodexForceAccess=false;
+          if(!validSnapshot(state.__realCodexV0218)) state.__realCodexV0218=before;
+          restoreRealWhenDevNoForce();
+          const small=document.getElementById('devModeState');
+          if(small) small.textContent='Activé · Codex normal';
+        }else{
+          state.devCodexForceAccess=false;
+          if(validSnapshot(state.__realCodexV0218)){
+            const real=state.__realCodexV0218;
+            state.codexUnlocked=normalize(real.entries,DEFAULT_CODEX_ENTRIES);
+            state.codexUnlockedImages=normalize(real.images,DEFAULT_CODEX_IMAGES);
+            state.codexUnlockedMusic=normalize(real.music,DEFAULT_CODEX_MUSIC);
+          }
+          syncRealWhenNormal();
+        }
+        if(typeof updateDevUI==='function') updateDevUI();
+        if(typeof renderCodex==='function' && !document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+        if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+        applyChapterSelectImages();
+        if(typeof save==='function') save();
+        return result;
+      };
+      try{ eval('toggleDevMode=window.toggleDevMode'); }catch(e){}
+    }
+
+    if(typeof renderCodex==='function' && !window.__sylviniaV0218RenderCodexWrapped){
+      window.__sylviniaV0218RenderCodexWrapped=true;
+      const previousRenderCodex=renderCodex;
+      window.renderCodex=renderCodex=function renderCodexV0218(){
+        restoreRealWhenDevNoForce();
+        return previousRenderCodex.apply(this,arguments);
+      };
+      try{ eval('renderCodex=window.renderCodex'); }catch(e){}
+    }
+
+    if(typeof renderChapterSelect==='function' && !window.__sylviniaV0218RenderChapterSelectWrapped){
+      window.__sylviniaV0218RenderChapterSelectWrapped=true;
+      const previousRenderChapterSelect=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function renderChapterSelectV0218(){
+        applyChapterSelectImages();
+        const result=previousRenderChapterSelect.apply(this,arguments);
+        applyChapterSelectImages();
+        return result;
+      };
+      try{ eval('renderChapterSelect=window.renderChapterSelect'); }catch(e){}
+    }
+
+    if(typeof updateDevUI==='function' && !window.__sylviniaV0218UpdateDevUIWrapped){
+      window.__sylviniaV0218UpdateDevUIWrapped=true;
+      const previousUpdateDevUI=updateDevUI;
+      window.updateDevUI=updateDevUI=function updateDevUIV0218(){
+        restoreRealWhenDevNoForce();
+        const result=previousUpdateDevUI.apply(this,arguments);
+        const small=document.getElementById('devModeState');
+        if(small && state && state.devMode && state.devCodexForceAccess!==true) small.textContent='Activé · Codex normal';
+        return result;
+      };
+      try{ eval('updateDevUI=window.updateDevUI'); }catch(e){}
+    }
+
+    ensureArrays();
+    restoreRealWhenDevNoForce();
+    applyChapterSelectImages();
+    document.addEventListener('DOMContentLoaded',()=>{restoreRealWhenDevNoForce(); applyChapterSelectImages();});
+    window.addEventListener('load',()=>{restoreRealWhenDevNoForce(); applyChapterSelectImages(); setTimeout(applyChapterSelectImages,250); setTimeout(applyChapterSelectImages,900);});
+    if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    if(typeof renderCodex==='function' && !document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.218 · Sélection et Codex DEV corrigés';
+    if(typeof save==='function') save();
+    console.log('[Sylvinia v0.218] Images XI_I/XI_G/XII_I restaurées et Codex DEV rendu temporaire uniquement.');
+  }catch(err){
+    console.error('[Sylvinia v0.218] Échec correctif sélection/Codex DEV',err);
+  }
+})();
+</script>
+
 </body>
 </html>
