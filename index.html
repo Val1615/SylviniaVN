@@ -31038,5 +31038,87 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+<!-- v0.221 — XI_G backgrounds fix: apply to S + SCENES and just-in-time render safety -->
+<script id="v0221-xig-backgrounds-runtime-fix">
+(function(){
+  var bgRoot='assets/images/backgrounds/chapter11/group_vn/';
+  var ASSETS={
+    c11g_quartiers: bgRoot+'c11g_quartiers_suite.png',
+    c11g_quartiers_intime: bgRoot+'c11g_quartiers_intime.png',
+    c11g_pavillon: bgRoot+'c11g_pavillon_apparat.png',
+    c11g_antichambre: bgRoot+'c11g_antichambre.png',
+    c11g_bal_grand: bgRoot+'c11g_bal_grand.png',
+    c11g_bal_valurn: bgRoot+'c11g_bal_valurn.png',
+    c11g_bal_alcove: bgRoot+'c11g_bal_alcove.png'
+  };
+  function installAssets(){
+    if(typeof A==='undefined' || !A) return;
+    Object.keys(ASSETS).forEach(function(k){ A[k]=ASSETS[k]; });
+    A.c11g_bal=A.c11g_bal_grand;
+  }
+  function numericId(id){
+    var m=/^c11g_(\d+)$/.exec(id||'');
+    return m?parseInt(m[1],10):null;
+  }
+  function bgForScene(id, scene){
+    var sub=(scene&&scene.sub)||'';
+    var n=numericId(id);
+    if(sub==='Entre Hylee et Remerii' || /^c11g_glace/.test(id)) return 'c11g_quartiers_intime';
+    if(sub==='Les quartiers du groupe' || sub==='Avant le bal' || id==='c11g_choice_plan' || (n!==null && n>=1 && n<=23)) return 'c11g_quartiers';
+    if(sub==='Le pavillon d’apparat' || id==='c11g_choice_tenue' || /^c11g_tenue/.test(id) || (n!==null && n>=24 && n<=31)) return 'c11g_pavillon';
+    if(id==='c11g_032' || id==='c11g_choice_entree' || /^c11g_entree/.test(id)) return 'c11g_antichambre';
+    if(sub==='La grande salle impériale' || (n!==null && n>=33 && n<=47)) return 'c11g_bal_grand';
+    if(sub==='La joute de Valurn' || id==='c11g_choice_valurn_joute' || /^c11g_valurn/.test(id) || (n!==null && n>=48 && n<=72)) return 'c11g_bal_valurn';
+    if(sub==='La fourmi de Forthaven' || id==='c11g_choice_draven_pression' || /^c11g_draven/.test(id) || (n!==null && n>=73 && n<=98)) return 'c11g_bal_alcove';
+    if(sub==='Le doute de Saidin' || id==='c11g_choice_saidin_miraldas' || /^c11g_saidin/.test(id) || (n!==null && n>=99 && n<=130)) return 'c11g_bal_alcove';
+    if(sub==='Le Bal des Élus · Ouverture' || id==='c11g_end') return 'c11g_bal_grand';
+    return null;
+  }
+  function applySceneMap(){
+    installAssets();
+    ['S','SCENES'].forEach(function(name){
+      var registry=window[name];
+      if(!registry) return;
+      Object.keys(registry).forEach(function(id){
+        if(!/^c11g_/.test(id)) return;
+        var bg=bgForScene(id, registry[id]);
+        if(bg) registry[id].bg=bg;
+      });
+    });
+  }
+  window.applyC11GBackgroundsV0221=applySceneMap;
+  applySceneMap();
+
+  if(typeof setStageBg==='function'){
+    var previousSetStageBg=setStageBg;
+    window.setStageBg=setStageBg=function(key,zoom){
+      installAssets();
+      var remap={c11g_bal:'c11g_bal_grand'};
+      key=remap[key]||key;
+      return previousSetStageBg(key,zoom);
+    };
+  }
+  if(typeof render==='function'){
+    var previousRender=render;
+    window.render=render=function(){
+      applySceneMap();
+      if(window.state && /^c11g_/.test(String(state.scene||'')) && window.S && S[state.scene]){
+        var bg=bgForScene(state.scene,S[state.scene]);
+        if(bg) S[state.scene].bg=bg;
+      }
+      return previousRender.apply(this,arguments);
+    };
+  }
+  if(typeof go==='function'){
+    var previousGo=go;
+    window.go=go=function(next,opts){
+      applySceneMap();
+      return previousGo.apply(this,arguments);
+    };
+  }
+})();
+</script>
+
 </body>
 </html>
