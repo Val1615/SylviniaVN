@@ -31449,5 +31449,151 @@ Ouvrir le choix de perspective ?`);
   patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
 })();
 </script>
+
+<!-- v0.229 — Correctif global sprites de fête XI_G/XI_I -->
+<script id="v0229-party-sprite-remap-complete">
+(function(){
+  if(typeof A==='undefined') return;
+
+  /* Aliases de sécurité : certains chapitres utilisent hylee2_*,
+     et plusieurs scènes ajoutées ont des identifiants non numériques. */
+  var aliases = {
+    hylee2_thinking:'hylee_fete_reflection',
+    hylee2_surprised:'hylee_fete_side',
+    hylee2_confident:'hylee_fete_smile',
+    hylee2_soft:'hylee_fete_neutral',
+    hylee2_determined:'hylee_fete_angry',
+    hylee2_angry:'hylee_fete_angry',
+    hylee2_sad:'hylee_fete_sad',
+    hylee2_scared:'hylee_fete_side',
+    hylee_thinking:'hylee_fete_reflection',
+    hylee_surprised:'hylee_fete_side',
+    hylee_confident:'hylee_fete_smile',
+    hylee_hopeful:'hylee_fete_smile',
+    hylee_soft:'hylee_fete_neutral',
+    hylee_neutral:'hylee_fete_neutral',
+    hylee_determined:'hylee_fete_angry',
+    hylee_angry:'hylee_fete_angry',
+    hylee_sad:'hylee_fete_sad',
+    hylee_scared:'hylee_fete_side',
+
+    remerii_profile:'remerii_fete_side',
+    remerii_side:'remerii_fete_side',
+    remerii_neutral:'remerii_fete_neutral',
+    remerii_calm:'remerii_fete_neutral',
+    remerii_soft:'remerii_fete_neutral',
+    remerii_sad:'remerii_fete_sad',
+    remerii_strict:'remerii_fete_stern',
+    remerii_stern:'remerii_fete_stern',
+    remerii_smirk:'remerii_fete_reflection',
+    remerii_smile:'remerii_fete_smile',
+    remerii_surprised:'remerii_fete_sad',
+
+    valurn_neutral:'valurn_fete_neutral',
+    valurn_charming:'valurn_fete_neutral',
+    valurn_amused:'valurn_fete_laugh',
+    valurn_annoyed:'valurn_fete_angry',
+    valurn_away:'valurn_fete_lookaway',
+    valurn_surprised:'valurn_fete_sad',
+
+    draven_neutral:'draven_fete_neutral',
+    draven_stern:'draven_fete_neutral',
+    draven_gruff:'draven_fete_lookaway',
+    draven_approving:'draven_fete_smile',
+    draven_angry:'draven_fete_angry',
+    draven_surprised:'draven_fete_sad',
+
+    saidin_neutral:'saidin_fete_neutral',
+    saidin_mysterious:'saidin_fete_soft',
+    saidin_side:'saidin_fete_side',
+    saidin_thinking:'saidin_fete_thinking',
+    saidin_downcast:'saidin_fete_side',
+    saidin_surprised:'saidin_fete_side',
+    saidin_menacing:'saidin_fete_stern',
+
+    naiah_neutral:'naiah_fete_neutral',
+    naiah_sad:'naiah_fete_away',
+    naiah_laugh:'naiah_fete_laugh',
+    naiah_thinking:'naiah_fete_thinking',
+    naiah_angry:'naiah_fete_angry',
+    naiah_away:'naiah_fete_away',
+    naiah_smirk:'naiah_fete_smirk',
+    naiah_menacing:'naiah_fete_angry'
+  };
+
+  Object.keys(aliases).forEach(function(oldKey){
+    var newKey = aliases[oldKey];
+    if(A[newKey]) A[oldKey + '_partyAlias'] = A[newKey];
+  });
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+
+    /* Scènes et choix ajoutés après c11g_032 mais non numérotés */
+    if(id==='c11g_choice_draven_fourmi') return true;
+    if(id==='c11g_choice_saidin_miraldas') return true;
+    if(id==='c11g_end') return true;
+    if(/^c11g_draven/i.test(id)) return true;
+    if(/^c11g_saidin/i.test(id)) return true;
+    if(/^c11g_valurn_strategique/i.test(id)) return true;
+
+    return false;
+  }
+
+  function remapPartySprite(sprite){
+    if(!sprite) return sprite;
+    return aliases[sprite] || sprite;
+  }
+
+  window.__sylviniaPartySpriteRemap = remapPartySprite;
+  window.__sylviniaShouldUsePartyOutfit = shouldUsePartyOutfit;
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && typeof ch[1]==='string'){
+          var next=ch.slice();
+          next[1]=remapPartySprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+
+  /* Filet de sécurité : si une scène est construite à la volée, on remappe juste avant l’affichage. */
+  if(typeof window.paintSceneChars==='function' && !window.paintSceneChars.__partyWrapped){
+    var originalPaintSceneChars = window.paintSceneChars;
+    window.paintSceneChars = function(chars){
+      var id = (typeof state!=='undefined' && state && state.scene) ? state.scene : '';
+      var scene = (typeof S!=='undefined' && S && S[id]) || (typeof SCENES!=='undefined' && SCENES && SCENES[id]) || {};
+      if(Array.isArray(chars) && shouldUsePartyOutfit(id, scene)){
+        chars = chars.map(function(ch){
+          if(Array.isArray(ch) && typeof ch[1]==='string'){
+            var next=ch.slice();
+            next[1]=remapPartySprite(next[1]);
+            return next;
+          }
+          return ch;
+        });
+      }
+      return originalPaintSceneChars.call(this, chars);
+    };
+    window.paintSceneChars.__partyWrapped = true;
+  }
+})();
+</script>
 </body>
 </html>
