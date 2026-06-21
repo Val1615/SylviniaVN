@@ -31120,5 +31120,334 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+<!-- v0.222 — XI_G Saidin tenue de fête à partir de c11g_032 -->
+<script id="v0222-xig-saidin-fete-sprite">
+(function(){
+  if(typeof A==='undefined') return;
+  A.saidin_fete_neutral='assets/sprites/chapter11/group/saidin_fete_neutral.png';
+
+  function shouldUseSaidinFete(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var m=/^c11g_(\d+)$/.exec(id);
+    if(m && parseInt(m[1],10)>=32) return true;
+    if(id==='c11g_choice_saidin_miraldas') return true;
+    if(/^c11g_saidin/.test(id)) return true;
+    if(id==='c11g_end') return true;
+    if(scene.sub==='Le doute de Saidin') return true;
+    return false;
+  }
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUseSaidinFete(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='saidin'){
+          var next=ch.slice();
+          next[1]='saidin_fete_neutral';
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
+
+
+<!-- v0.224 — XI_G Valurn tenue de fête + vigilance XI_I à partir de c11i_018 -->
+<script id="v0224-xi-valurn-fete-sprites">
+(function(){
+  if(typeof A==='undefined') return;
+  A.valurn_fete_thinking='assets/sprites/chapter11/group/valurn_fete_thinking.png';
+  A.valurn_fete_lookaway='assets/sprites/chapter11/group/valurn_fete_lookaway.png';
+  A.valurn_fete_sad='assets/sprites/chapter11/group/valurn_fete_sad.png';
+  A.valurn_fete_laugh='assets/sprites/chapter11/group/valurn_fete_laugh.png';
+  A.valurn_fete_neutral='assets/sprites/chapter11/group/valurn_fete_neutral.png';
+  A.valurn_fete_angry='assets/sprites/chapter11/group/valurn_fete_angry.png';
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+    if(scene.chapter==='XI_G' && scene.sub==='Le bal des élus') return true;
+    return false;
+  }
+
+  function remapValurnSprite(name){
+    switch(name){
+      case 'valurn_neutral': return 'valurn_fete_neutral';
+      case 'valurn_charming': return 'valurn_fete_neutral';
+      case 'valurn_amused': return 'valurn_fete_laugh';
+      case 'valurn_annoyed': return 'valurn_fete_angry';
+      case 'valurn_away': return 'valurn_fete_lookaway';
+      case 'valurn_surprised': return 'valurn_fete_sad';
+      default: return name;
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='valurn'){
+          var next=ch.slice();
+          next[1]=remapValurnSprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
+
+<!-- v0.225 — XI_G / XI_I Remerii tenue de fête -->
+<script id="v0225-xi-remerii-fete-sprites">
+(function(){
+  if(typeof A==='undefined') return;
+  A.remerii_fete_reflection='assets/sprites/chapter11/group/remerii_fete_reflection.png';
+  A.remerii_fete_sad='assets/sprites/chapter11/group/remerii_fete_sad.png';
+  A.remerii_fete_side='assets/sprites/chapter11/group/remerii_fete_side.png';
+  A.remerii_fete_stern='assets/sprites/chapter11/group/remerii_fete_stern.png';
+  A.remerii_fete_neutral='assets/sprites/chapter11/group/remerii_fete_neutral.png';
+  A.remerii_fete_smile='assets/sprites/chapter11/group/remerii_fete_smile.png';
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+    if(scene.chapter==='XI_G' && scene.sub==='Le bal des élus') return true;
+    return false;
+  }
+
+  function remapRemeriiSprite(name){
+    switch(name){
+      case 'remerii_profile': return 'remerii_fete_side';
+      case 'remerii_side': return 'remerii_fete_side';
+      case 'remerii_neutral': return 'remerii_fete_neutral';
+      case 'remerii_calm': return 'remerii_fete_neutral';
+      case 'remerii_soft': return 'remerii_fete_neutral';
+      case 'remerii_sad': return 'remerii_fete_sad';
+      case 'remerii_strict': return 'remerii_fete_stern';
+      case 'remerii_stern': return 'remerii_fete_stern';
+      case 'remerii_smirk': return 'remerii_fete_reflection';
+      case 'remerii_smile': return 'remerii_fete_smile';
+      case 'remerii_surprised': return 'remerii_fete_sad';
+      default: return name;
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='remerii'){
+          var next=ch.slice();
+          next[1]=remapRemeriiSprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
+
+<!-- v0.226 — XI_G / XI_I Hylee tenue de fête -->
+<script id="v0226-xi-hylee-fete-sprites">
+(function(){
+  if(typeof A==='undefined') return;
+  A.hylee_fete_neutral='assets/sprites/chapter11/group/hylee_fete_neutral.png';
+  A.hylee_fete_reflection='assets/sprites/chapter11/group/hylee_fete_reflection.png';
+  A.hylee_fete_sad='assets/sprites/chapter11/group/hylee_fete_sad.png';
+  A.hylee_fete_side='assets/sprites/chapter11/group/hylee_fete_side.png';
+  A.hylee_fete_angry='assets/sprites/chapter11/group/hylee_fete_angry.png';
+  A.hylee_fete_smile='assets/sprites/chapter11/group/hylee_fete_smile.png';
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+    if(scene.chapter==='XI_G' && scene.sub==='Le bal des élus') return true;
+    return false;
+  }
+
+  function remapHyleeSprite(name){
+    switch(name){
+      case 'hylee_neutral': return 'hylee_fete_neutral';
+      case 'hylee_soft': return 'hylee_fete_neutral';
+      case 'hylee_confident': return 'hylee_fete_smile';
+      case 'hylee_hopeful': return 'hylee_fete_smile';
+      case 'hylee_thinking': return 'hylee_fete_reflection';
+      case 'hylee_sad': return 'hylee_fete_sad';
+      case 'hylee_scared': return 'hylee_fete_side';
+      case 'hylee_surprised': return 'hylee_fete_side';
+      case 'hylee_determined': return 'hylee_fete_angry';
+      case 'hylee_angry': return 'hylee_fete_angry';
+      default: return name;
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='hylee'){
+          var next=ch.slice();
+          next[1]=remapHyleeSprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
+
+<!-- v0.227 — XI_G / XI_I Naïah tenue de fête -->
+<script id="v0227-xi-naiah-fete-sprites">
+(function(){
+  if(typeof A==='undefined') return;
+  A.naiah_fete_thinking='assets/sprites/chapter11/group/naiah_fete_thinking.png';
+  A.naiah_fete_smirk='assets/sprites/chapter11/group/naiah_fete_smirk.png';
+  A.naiah_fete_away='assets/sprites/chapter11/group/naiah_fete_away.png';
+  A.naiah_fete_angry='assets/sprites/chapter11/group/naiah_fete_angry.png';
+  A.naiah_fete_neutral='assets/sprites/chapter11/group/naiah_fete_neutral.png';
+  A.naiah_fete_laugh='assets/sprites/chapter11/group/naiah_fete_laugh.png';
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+    if(scene.chapter==='XI_G' && scene.sub==='Le bal des élus') return true;
+    return false;
+  }
+
+  function remapNaiahSprite(name){
+    switch(name){
+      case 'naiah_neutral': return 'naiah_fete_neutral';
+      case 'naiah_sad': return 'naiah_fete_away';
+      case 'naiah_laugh': return 'naiah_fete_laugh';
+      case 'naiah_thinking': return 'naiah_fete_thinking';
+      case 'naiah_angry': return 'naiah_fete_angry';
+      case 'naiah_away': return 'naiah_fete_away';
+      case 'naiah_smirk': return 'naiah_fete_smirk';
+      case 'naiah_menacing': return 'naiah_fete_angry';
+      default: return name;
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='naiah'){
+          var next=ch.slice();
+          next[1]=remapNaiahSprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
+
+<!-- v0.228 — XI_G / XI_I Saidin tenue de fête, six expressions -->
+<script id="v0228-xi-saidin-fete-six-sprites">
+(function(){
+  if(typeof A==='undefined') return;
+  A.saidin_fete_soft='assets/sprites/chapter11/group/saidin_fete_soft.png';
+  A.saidin_fete_neutral='assets/sprites/chapter11/group/saidin_fete_neutral.png';
+  A.saidin_fete_smile='assets/sprites/chapter11/group/saidin_fete_smile.png';
+  A.saidin_fete_thinking='assets/sprites/chapter11/group/saidin_fete_thinking.png';
+  A.saidin_fete_stern='assets/sprites/chapter11/group/saidin_fete_stern.png';
+  A.saidin_fete_side='assets/sprites/chapter11/group/saidin_fete_side.png';
+
+  function shouldUsePartyOutfit(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    var g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+    var i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+    if(scene.chapter==='XI_G' && scene.sub==='Le bal des élus') return true;
+    if(id==='c11g_choice_saidin_miraldas') return true;
+    if(/^c11g_saidin/i.test(id)) return true;
+    if(id==='c11g_end') return true;
+    return false;
+  }
+
+  function remapSaidinSprite(name){
+    switch(name){
+      case 'saidin_neutral': return 'saidin_fete_neutral';
+      case 'saidin_mysterious': return 'saidin_fete_soft';
+      case 'saidin_side': return 'saidin_fete_side';
+      case 'saidin_thinking': return 'saidin_fete_thinking';
+      case 'saidin_downcast': return 'saidin_fete_side';
+      case 'saidin_surprised': return 'saidin_fete_side';
+      case 'saidin_menacing': return 'saidin_fete_stern';
+      case 'saidin_fete_neutral': return 'saidin_fete_neutral';
+      default: return name;
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      var scene=map[id];
+      if(!scene || !Array.isArray(scene.chars) || !shouldUsePartyOutfit(id, scene)) return;
+      scene.chars=scene.chars.map(function(ch){
+        if(Array.isArray(ch) && ch[0]==='saidin'){
+          var next=ch.slice();
+          next[1]=remapSaidinSprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+})();
+</script>
 </body>
 </html>
