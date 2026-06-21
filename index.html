@@ -1762,6 +1762,47 @@ body.mobileUI .sageTimerBadge{font-size:19px}
 #text .c10StageDirection{display:block;margin:0 0 .55rem;font-size:.88em;font-style:italic;opacity:.74;letter-spacing:.01em}
 #text .c10DirectSpeech{display:block;margin:.15rem 0 .55rem}
 </style>
+
+<style id="v0219-chapter-select-framing-fix">
+/* v0.219 — Correctif cadrage visuels XI_I / XI_G / XII_I dans la sélection des chapitres */
+#chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterOpenImageFrame,
+#chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterOpenImageFrame,
+#chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterOpenImageFrame{
+  padding:0;
+  overflow:hidden;
+  background:linear-gradient(180deg,rgba(16,18,26,.96),rgba(7,9,14,.98));
+}
+#chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterOpenImage{
+  aspect-ratio:3/4;
+  object-fit:cover;
+  object-position:center center;
+  background:transparent;
+  border-radius:14px;
+  box-shadow:none;
+}
+#chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterBookCoverImg,
+#chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterBookCoverImg,
+#chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterBookCoverImg{
+  object-fit:cover;
+  object-position:center center;
+  background:transparent;
+}
+/* Ajustements fins par carte pour limiter les bordures noires et recentrer le sujet */
+#chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterBookCoverImg{ object-position:center 32%; }
+#chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterBookCoverImg{ object-position:center 42%; }
+#chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterBookCoverImg{ object-position:center 36%; }
+@media(max-width:760px){
+  #chapterSelectGrid .chapterSelectCard.chapter11ICard .chapterOpenImage,
+  #chapterSelectGrid .chapterSelectCard.chapter11GCard .chapterOpenImage,
+  #chapterSelectGrid .chapterSelectCard.chapter12ICard .chapterOpenImage{ aspect-ratio:4/5; }
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
