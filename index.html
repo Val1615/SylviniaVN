@@ -30421,5 +30421,276 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<script id="v0216-xii-i-clean-structure">
+/* v0.216 · XII_I séparé proprement + flags stratégiques enrichis
+   Contraintes utilisateur : ne pas déplacer le bouton Codex DEV hors des Options,
+   ne pas modifier les seuils ni le nombre de choix stratégiques. */
+(function installSylviniaV0216XIIICleanStructure(){
+  try{
+    if(window.__sylviniaV0216XIIICleanStructure) return;
+    window.__sylviniaV0216XIIICleanStructure=true;
+    if(typeof S==='undefined'||!S) return;
+
+    const clone=o=>JSON.parse(JSON.stringify(o));
+    const uniq=(arr)=>Array.from(new Set((arr||[]).filter(Boolean)));
+    const pushUnique=(arr,items)=>{ if(!Array.isArray(arr)) return; (items||[]).forEach(k=>{ if(k && !arr.includes(k)) arr.push(k); }); };
+    const replaceOrPushGroup=(arr,group)=>{ if(!Array.isArray(arr)||!group||!group.id) return; const i=arr.findIndex(g=>g&&g.id===group.id); if(i>=0) arr[i]=group; else arr.push(group); };
+
+    const numericMap={};
+    for(let n=29;n<=67;n++){
+      numericMap['c11i_'+String(n).padStart(3,'0')]='c12i_'+String(n-28).padStart(3,'0');
+    }
+    const specialMap={
+      c11i_choice_meche:'c12i_choice_meche',
+      c11i_meche_strategique:'c12i_meche_strategique',
+      c11i_meche_strategique_2:'c12i_meche_strategique_2',
+      c11i_meche_strategique_3:'c12i_meche_strategique_3',
+      c11i_meche_strategique_4:'c12i_meche_strategique_4',
+      c11i_choice_tia_sentence:'c12i_choice_tia_sentence',
+      c11i_tia_sentence_resonance:'c12i_tia_sentence_resonance',
+      c11i_tia_sentence_lucidite:'c12i_tia_sentence_lucidite',
+      c11i_tia_sentence_audace:'c12i_tia_sentence_audace',
+      c11i_tia_sentence_sangfroid:'c12i_tia_sentence_sangfroid',
+      c11i_choice_rage:'c12i_choice_rage',
+      c11i_rage_bonus:'c12i_rage_bonus'
+    };
+    const idMap=Object.assign({},numericMap,specialMap);
+    const remapId=id=>idMap[id]||id;
+    const retitle=sc=>{ if(sc && typeof sc.title==='string') sc.title=sc.title.replace(/^Chapitre\s+XI_I/,'Chapitre XII_I'); return sc; };
+    const remapScene=sc=>{
+      if(!sc) return sc;
+      const out=retitle(clone(sc));
+      if(typeof out.next==='string') out.next=remapId(out.next);
+      if(Array.isArray(out.choices)) out.choices=out.choices.map(ch=>{
+        const c=clone(ch);
+        if(typeof c.next==='string') c.next=remapId(c.next);
+        if(c.flags) c.flags=Object.assign({},c.flags,{chapter12IRoute:true});
+        else c.flags={chapter12IRoute:true};
+        return c;
+      });
+      if(out.title==='Chapitre XII_I · Amie ou ennemie ?') out.title='Chapitre XII_I · Le souvenir d’Amanea';
+      if(typeof out.sub==='string' && out.sub.startsWith('Mémoire')) out.sub=out.sub.replace(/^Mémoire/,'Souvenir');
+      return out;
+    };
+
+    Object.keys(idMap).forEach(oldId=>{
+      const newId=idMap[oldId];
+      if(S[oldId]) S[newId]=remapScene(S[oldId]);
+    });
+
+    if(S.c11i_028) S.c11i_028.next='c11i_end';
+    S.c11i_end={
+      title:'Chapitre XI_I terminé',sub:'Amie ou ennemie ?',bg:'cg_xi_i_reflet_amanea',music:'music_c10_horreur',speaker:'Narrateur',
+      text:'Iriana referme lentement le journal. Les quartiers d’Amanea n’ont pas répondu à toutes ses questions, mais ils ont fissuré la version trop simple que l’Empire lui avait laissée.\n\nDans l’onglet Progression, les fragments du Carnet du Némésis cessent enfin d’être illisibles. Le passé n’est plus seulement trouvé : il peut désormais être lu.\n\nAu moment où elle s’apprête à s’éloigner, son regard accroche pourtant une mèche oubliée. Une magie étrange y frémit encore, presque imperceptible, comme si le souvenir refusait de se refermer tout à fait.',
+      chars:[],
+      choices:[
+        {label:'Continuer vers le Chapitre XII_I',next:'c12i_000',effects:{},note:'Route Iriana · Le souvenir d’Amanea',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['iriana_amanea_piano','iriana_trouve_coffret_amanea']},
+        {label:'Retour au menu',next:'menu',effects:{},note:'Les fragments sont désormais lisibles dans la Progression.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['iriana_amanea_piano','iriana_trouve_coffret_amanea']}
+      ]
+    };
+    S.c12i_000={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',sub:'La mèche réagit',bg:'c11i_study',music:'music_c10_horreur',speaker:'Narrateur',
+      text:'La mèche n’était pas un simple reste oublié dans le coffret.\n\nÀ peine Iriana l’effleure-t-elle que la magie répond. Une pulsation sourde, ancienne, traverse la fibre pâle. Ce n’est plus une lecture. C’est une invitation dangereuse.\n\nSi elle va plus loin, elle ne lira plus le passé d’Amanea. Elle le traversera.',
+      chars:[['iriana','iriana_stern','left'],['amanea','amanea_away','right','projection']],next:'c12i_001'
+    };
+    if(S.c12i_039) S.c12i_039.next='c12i_end';
+    S.c12i_end={
+      title:'Chapitre XII_I terminé',sub:'Le souvenir d’Amanea',bg:'c11i_memory',music:'music_c10_horreur',speaker:'Narrateur',
+      text:'Iriana revient du souvenir avec le goût métallique de la chute et de la survie.\n\nElle a vu la rage d’Amanea, la fracture irréparable avec Tia, puis l’étrange lueur d’humanité qu’une enfant nommée Allenna a su préserver au milieu des cendres.\n\nDans la Progression, un nouveau souvenir est gravé : Allenna, l’enfant restée.',
+      chars:[['iriana','iriana_sad','left'],['amanea','amanea_sad','right','projection']],
+      choices:[{label:'Retour au menu',next:'menu',effects:{},note:'La route Iriana poursuivra plus tard cette fracture.',flags:{chapter11IComplete:true,chapter11IRoute:true,chapter12IComplete:true,chapter12IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},memories:['souvenir_allenna']}]
+    };
+
+    // Correction du sprite fantôme signalé : l’asset iriana_troubled_alone n’existe pas comme sprite.
+    ['c11i_018','c11i_019','c11i_020'].forEach(id=>{
+      if(S[id] && Array.isArray(S[id].chars)){
+        S[id].chars=S[id].chars.map(ch=>Array.isArray(ch)&&ch[1]==='iriana_troubled_alone'?[ch[0],'iriana_sad',ch[2],ch[3]].filter(v=>v!==undefined):ch);
+      }
+    });
+
+    // Flags stratégiques enrichis sans changer les seuils ni le nombre de choix.
+    const enrichChoice=(sceneId,nextId,extraFlags,extraMemories)=>{
+      const sc=S[sceneId]; if(!sc||!Array.isArray(sc.choices)) return;
+      sc.choices.forEach(ch=>{
+        if(ch && ch.next===nextId){
+          ch.flags=Object.assign({},ch.flags||{},extraFlags||{});
+          ch.memories=uniq([...(ch.memories||[]),...(extraMemories||[])]);
+        }
+      });
+    };
+    enrichChoice('c11i_010','c11i_bonus_lucidite_strategique',{amanea_respecte_lucidite_iriana:true,c11iStrategicRespectUnlocked:true,futureAmaneaDialogueTrust:true},['amanea_reconnait_lucidite_iriana']);
+    enrichChoice('c12i_choice_meche','c12i_meche_strategique',{c12iAnchoredInMemory:true,c12iMemoryAnchorAvailable:true,irianaKeptPresentThread:true},['iriana_ancree_souvenir_amanea']);
+    enrichChoice('c11g_choice_glace','c11g_glace_strategique',{c11gPacteSilencieuxRemerii:true,remeriiPacteSilencieuxBal:true,futureRemeriiPrivateDialogue:true,hyleeRepairedTensionWithoutApology:true},['hylee_remerii_pacte_silencieux_bal']);
+    enrichChoice('c11g_choice_valurn','c11g_valurn_strategique',{c11gGraineTrahisonReperee:true,valurnPoliticalSeedDetected:true,futureValurnCourtSuspicion:true,valurnRiskReadByHylee:true},['valurn_graine_doute_bal']);
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined') Object.assign(PROGRESSION_MEMORIES,{
+      iriana_trouve_coffret_amanea:{title:'Iriana a ouvert le coffret d’Amanea',type:'Iriana et Amanea',icon:'▣',body:'Dans les quartiers privés, Iriana a découvert les traces intimes qu’Amanea avait gardées derrière la stratégie : portraits, notes et mèche ancienne. Ce coffret transforme l’ennemie en énigme familiale.'},
+      iriana_ancree_souvenir_amanea:{title:'Iriana s’est ancrée avant le souvenir',type:'Souvenir magique',icon:'◇',body:'Avant de toucher la mèche d’Amanea, Iriana a gardé un fil vers le présent. Le souvenir pourra la happer, mais il ne l’engloutira pas sans résistance.'},
+      hylee_remerii_pacte_silencieux_bal:{title:'Pacte silencieux avec Remerii',type:'Remerii',icon:'❄',body:'Au lieu d’envenimer la blessure, Hylee et Remerii ont trouvé une manière muette de tenir ensemble devant les autres. Ce pacte pourra nourrir une scène plus intime ou une réaction protectrice plus tard.'},
+      valurn_graine_doute_bal:{title:'La graine de trahison de Valurn repérée',type:'Valurn',icon:'🔥',body:'Hylee a compris que Valurn ne provoquait pas seulement pour briller. Il plaçait une idée dangereuse dans les esprits présents au bal, et cette lecture pourra servir lors d’une future joute politique.'},
+      souvenir_allenna:{title:'Allenna, l’enfant restée',type:'Amanea',icon:'✧',body:'Dans le souvenir d’Amanea, Allenna n’a pas sauvé un empire. Elle a fait plus petit et plus rare : elle est restée auprès d’une vaincue que tout le monde voulait réduire à un monstre.'}
+    });
+
+    if(typeof CODEX_BY_SCENE!=='undefined') Object.assign(CODEX_BY_SCENE,{
+      c12i_001:['souvenir_amanea_allenna'],c12i_007:['duel_tia_amanea'],c12i_choice_tia_sentence:['duel_tia_amanea'],c12i_039:['souvenir_amanea_allenna'],c12i_end:['souvenir_amanea_allenna']
+    });
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{c12i_000:['cg_xi_i_reflet_amanea']});
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined') replaceOrPushGroup(CODEX_IMAGE_GROUPS,{id:'chapter12i',title:'Chapitre XII_I · Le souvenir d’Amanea',sections:[{title:'Mémoire d’Amanea',keys:['cg_xi_i_reflet_amanea']}]});
+
+    const oldIsChapter12I=window.isChapter12IScene;
+    window.isChapter12IScene=function(id){ id=String(id||''); return id==='c12i_000'||id==='c12i_end'||/^c12i_\d+$/.test(id)||id.startsWith('c12i_choice_')||id.startsWith('c12i_meche_')||id.startsWith('c12i_tia_sentence_')||id.startsWith('c12i_rage_')||(typeof oldIsChapter12I==='function'&&oldIsChapter12I(id)); };
+    const previousLabel=(typeof getSceneChapterLabel==='function')?getSceneChapterLabel:null;
+    if(previousLabel && !window.__sylviniaV0216LabelWrapped){
+      window.__sylviniaV0216LabelWrapped=true;
+      window.getSceneChapterLabel=getSceneChapterLabel=function(sceneId=state&&state.scene){
+        const id=String(sceneId||'');
+        if(window.isChapter12IScene(id) && id.startsWith('c12i')) return 'Chapitre XII_I · Le souvenir d’Amanea';
+        return previousLabel(sceneId);
+      };
+    }
+
+    // Rafraîchit la recherche de scène DEV v0.215, si elle existe déjà.
+    const devList=document.getElementById('devSceneSearchListV0215');
+    if(devList) devList.dataset.count='';
+    if(typeof updateDevUI==='function') updateDevUI();
+    if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
+    if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.216 · XII_I séparé et flags enrichis';
+    console.log('[Sylvinia v0.216] XII_I dispose désormais de vrais identifiants c12i_* et de flags stratégiques enrichis.');
+  }catch(err){
+    console.error('[Sylvinia v0.216] Échec du patch XII_I propre',err);
+  }
+})();
+</script>
+
+
+
+<script id="v0217-xii-i-deduplicate">
+/* v0.217 · XII_I séparation définitive : plus de doublons c11i_029 → c11i_067
+   Contraintes utilisateur : ne pas déplacer le bouton Codex DEV hors des Options,
+   ne pas rééquilibrer les valeurs, ne pas retirer de choix stratégique. */
+(function installSylviniaV0217XIIIDeduplicate(){
+  try{
+    if(window.__sylviniaV0217XIIIDeduplicate) return;
+    window.__sylviniaV0217XIIIDeduplicate=true;
+    if(typeof S==='undefined'||!S) return;
+
+    const numericMap={};
+    for(let n=29;n<=67;n++){
+      numericMap['c11i_'+String(n).padStart(3,'0')]='c12i_'+String(n-28).padStart(3,'0');
+    }
+    const specialMap={
+      c11i_choice_meche:'c12i_choice_meche',
+      c11i_meche_strategique:'c12i_meche_strategique',
+      c11i_meche_strategique_2:'c12i_meche_strategique_2',
+      c11i_meche_strategique_3:'c12i_meche_strategique_3',
+      c11i_meche_strategique_4:'c12i_meche_strategique_4',
+      c11i_choice_tia_sentence:'c12i_choice_tia_sentence',
+      c11i_tia_sentence_resonance:'c12i_tia_sentence_resonance',
+      c11i_tia_sentence_lucidite:'c12i_tia_sentence_lucidite',
+      c11i_tia_sentence_audace:'c12i_tia_sentence_audace',
+      c11i_tia_sentence_sangfroid:'c12i_tia_sentence_sangfroid',
+      c11i_choice_rage:'c12i_choice_rage',
+      c11i_rage_bonus:'c12i_rage_bonus'
+    };
+    const idMap=Object.assign({},numericMap,specialMap);
+    const oldIds=Object.keys(idMap);
+    const oldSet=new Set(oldIds);
+    const remap=id=>idMap[id]||id;
+    const remapArray=arr=>Array.isArray(arr)?arr.map(remap):arr;
+
+    // 1) Remappe toutes les sorties de scène restantes avant suppression.
+    Object.keys(S).forEach(id=>{
+      const sc=S[id];
+      if(!sc) return;
+      if(typeof sc.next==='string') sc.next=remap(sc.next);
+      if(Array.isArray(sc.choices)) sc.choices.forEach(ch=>{
+        if(ch && typeof ch.next==='string') ch.next=remap(ch.next);
+      });
+    });
+
+    // 2) Remappe les index Codex / images / musiques basés sur les scènes, puis supprime les anciens index.
+    const remapSceneIndex=obj=>{
+      if(!obj || typeof obj!=='object') return;
+      oldIds.forEach(oldId=>{
+        const newId=idMap[oldId];
+        if(Object.prototype.hasOwnProperty.call(obj,oldId)){
+          const oldVal=obj[oldId];
+          if(Array.isArray(oldVal)){
+            const base=Array.isArray(obj[newId])?obj[newId]:[];
+            obj[newId]=Array.from(new Set([...base,...oldVal]));
+          }else if(obj[newId]===undefined){
+            obj[newId]=oldVal;
+          }
+          delete obj[oldId];
+        }
+      });
+    };
+    if(typeof CODEX_BY_SCENE!=='undefined') remapSceneIndex(CODEX_BY_SCENE);
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') remapSceneIndex(CODEX_IMAGES_BY_SCENE);
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined') remapSceneIndex(CODEX_MUSIC_BY_SCENE);
+
+    // 3) Supprime les anciennes scènes, pour qu'elles ne remontent plus dans la recherche DEV.
+    oldIds.forEach(id=>{ if(S[id]) delete S[id]; });
+
+    // 4) Migration douce des sauvegardes ou historiques qui pointaient encore vers les anciens ids.
+    const migrateStateScene=()=>{
+      if(typeof state==='undefined'||!state) return;
+      if(typeof state.scene==='string' && oldSet.has(state.scene)) state.scene=remap(state.scene);
+      if(Array.isArray(state.history)) state.history=state.history.map(remap).filter(id=>S[id]||id==='menu');
+    };
+    migrateStateScene();
+
+    // 5) Protège les appels directs anciens : ils sont redirigés, pas conservés.
+    if(typeof go==='function' && !window.__sylviniaV0217GoWrapped){
+      window.__sylviniaV0217GoWrapped=true;
+      const previousGo=go;
+      window.go=go=function goV0217NoDuplicate(next,opts={}){
+        return previousGo(remap(next),opts);
+      };
+    }
+    if(typeof render==='function' && !window.__sylviniaV0217RenderWrapped){
+      window.__sylviniaV0217RenderWrapped=true;
+      const previousRender=render;
+      window.render=render=function renderV0217NoDuplicate(){
+        migrateStateScene();
+        return previousRender.apply(this,arguments);
+      };
+    }
+
+    // 6) La détection XII_I ne doit plus réaccepter les anciennes scènes XI_I supprimées.
+    window.isChapter12IScene=function(id){
+      id=String(id||'');
+      return id==='c12i_000'||id==='c12i_end'||/^c12i_\d+$/.test(id)||id.startsWith('c12i_choice_')||id.startsWith('c12i_meche_')||id.startsWith('c12i_tia_sentence_')||id.startsWith('c12i_rage_');
+    };
+    if(typeof getSceneChapterLabel==='function' && !window.__sylviniaV0217LabelWrapped){
+      window.__sylviniaV0217LabelWrapped=true;
+      const previousLabel=getSceneChapterLabel;
+      window.getSceneChapterLabel=getSceneChapterLabel=function getSceneChapterLabelV0217(sceneId=state&&state.scene){
+        const id=String(sceneId||'');
+        if(window.isChapter12IScene(id)) return 'Chapitre XII_I · Le souvenir d’Amanea';
+        return previousLabel(sceneId);
+      };
+    }
+
+    // 7) Rafraîchit les outils qui listent Object.keys(S), notamment la recherche de scène DEV.
+    const devList=document.getElementById('devSceneSearchListV0215');
+    if(devList) devList.innerHTML='';
+    if(typeof updateDevUI==='function') updateDevUI();
+    if(typeof updateProgressUI==='function') updateProgressUI();
+    if(typeof renderChapterSelect==='function' && !document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    if(typeof save==='function') save();
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.217 · XII_I sans doublons';
+    console.log('[Sylvinia v0.217] Anciennes scènes c11i_029→c11i_067 supprimées, références migrées vers c12i_*.' );
+  }catch(err){
+    console.error('[Sylvinia v0.217] Échec dédoublonnage XII_I',err);
+  }
+})();
+</script>
+
 </body>
 </html>
