@@ -17021,7 +17021,7 @@ function render(){
   const visibleChars=shouldSuppressSceneChars(scene)?[]:(scene.chars||[]);
   if(visibleChars.length>=2) chars.classList.add('duoChars');
   if(visibleChars.length>=3) chars.classList.add('trioChars');
-  visibleChars.forEach(ch=>{const [kind,sprite,pos,extra]=ch; const resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; const extraClasses=((extra||'') + (kind==='lineva' ? ' projection' : '')).trim(); img.className=`char enter ${kind} ${pos||'center'} ${extraClasses}`; chars.appendChild(img);});
+  visibleChars.forEach(ch=>{const [kind,sprite,pos,extra]=ch; let resolvedSprite=(kind==='hylee')?resolveHyleeSprite(sprite):sprite; if(window.__sylviniaShouldUsePartyOutfit&&window.__sylviniaPartySpriteRemap&&window.__sylviniaShouldUsePartyOutfit(state.scene,scene)){resolvedSprite=window.__sylviniaPartySpriteRemap(resolvedSprite); const remappedRaw=window.__sylviniaPartySpriteRemap(sprite); if(A[remappedRaw]) resolvedSprite=remappedRaw;} const img=document.createElement('img'); img.src=A[resolvedSprite]||A[sprite]; const extraClasses=((extra||'') + (kind==='lineva' ? ' projection' : '')).trim(); img.className=`char enter ${kind} ${pos||'center'} ${extraClasses}`; chars.appendChild(img);});
   document.getElementById('speaker').textContent=scene.speaker||'Narrateur'; const textEl=document.getElementById('text'); const sceneText=(typeof scene.text==='function'?scene.text():scene.text)||''; renderVNDialogueText(textEl,scene,sceneText);
   const choices=document.getElementById('choices'); choices.innerHTML='';
   if(scene.choices&&scene.choices.length){scene.choices.forEach(ch=>{const locked=!choiceAvailable(ch); const note=choiceNote(ch); const devText=choiceValueDevText(ch); const devClass=choiceValueDevClass(choiceValueEffects(ch)); const b=document.createElement('button'); b.className='choiceBtn'+(locked?' lockedChoice':''); b.disabled=locked; b.innerHTML=`<span>${locked?'🔒 ':''}${ch.label}${note?`<small>${note}</small>`:''}${devText?`<small class="devReward ${devClass}">${devText}</small>`:''}</span><span class="arrow">›</span>`; b.onclick=()=>{if(!locked)choose(ch)}; choices.appendChild(b);});}
@@ -31593,6 +31593,223 @@ Ouvrir le choix de perspective ?`);
     };
     window.paintSceneChars.__partyWrapped = true;
   }
+})();
+</script>
+
+<!-- v0.230 — Filet de sécurité render() : sprites de fête dans les réponses de choix -->
+<script id="v0230-render-party-sprite-guard">
+(function(){
+  /* Ce patch confirme que render() remappe désormais directement les sprites.
+     Il couvre les réponses de choix et les scènes ajoutées après les scènes numérotées. */
+  window.__sylviniaPartyRenderGuard = true;
+})();
+</script>
+
+<!-- v0.231 — Correctif complet fête XI_G : choix, intervenants sans sprite, codex anti-spam -->
+<script id="v0231-xig-party-final-fix">
+(function(){
+  if(typeof A==='undefined') return;
+
+  A.sylvinian_silhouette = 'assets/sprites/chapter11/group/sylvinian_silhouette.png';
+
+  const PARTY_ALIASES = {
+    hylee2_thinking:'hylee_fete_reflection',
+    hylee2_surprised:'hylee_fete_side',
+    hylee2_confident:'hylee_fete_smile',
+    hylee2_soft:'hylee_fete_neutral',
+    hylee2_determined:'hylee_fete_angry',
+    hylee2_angry:'hylee_fete_angry',
+    hylee2_sad:'hylee_fete_sad',
+    hylee2_scared:'hylee_fete_side',
+    hylee_thinking:'hylee_fete_reflection',
+    hylee_surprised:'hylee_fete_side',
+    hylee_confident:'hylee_fete_smile',
+    hylee_hopeful:'hylee_fete_smile',
+    hylee_soft:'hylee_fete_neutral',
+    hylee_neutral:'hylee_fete_neutral',
+    hylee_determined:'hylee_fete_angry',
+    hylee_angry:'hylee_fete_angry',
+    hylee_sad:'hylee_fete_sad',
+    hylee_scared:'hylee_fete_side',
+
+    remerii_profile:'remerii_fete_side',
+    remerii_side:'remerii_fete_side',
+    remerii_neutral:'remerii_fete_neutral',
+    remerii_calm:'remerii_fete_neutral',
+    remerii_soft:'remerii_fete_neutral',
+    remerii_sad:'remerii_fete_sad',
+    remerii_strict:'remerii_fete_stern',
+    remerii_stern:'remerii_fete_stern',
+    remerii_smirk:'remerii_fete_reflection',
+    remerii_smile:'remerii_fete_smile',
+    remerii_surprised:'remerii_fete_sad',
+
+    valurn_neutral:'valurn_fete_neutral',
+    valurn_charming:'valurn_fete_neutral',
+    valurn_amused:'valurn_fete_laugh',
+    valurn_annoyed:'valurn_fete_angry',
+    valurn_away:'valurn_fete_lookaway',
+    valurn_surprised:'valurn_fete_sad',
+
+    draven_neutral:'draven_fete_neutral',
+    draven_stern:'draven_fete_neutral',
+    draven_gruff:'draven_fete_lookaway',
+    draven_approving:'draven_fete_smile',
+    draven_angry:'draven_fete_angry',
+    draven_surprised:'draven_fete_sad',
+
+    saidin_neutral:'saidin_fete_neutral',
+    saidin_mysterious:'saidin_fete_soft',
+    saidin_side:'saidin_fete_side',
+    saidin_thinking:'saidin_fete_thinking',
+    saidin_downcast:'saidin_fete_side',
+    saidin_surprised:'saidin_fete_side',
+    saidin_menacing:'saidin_fete_stern',
+
+    naiah_neutral:'naiah_fete_neutral',
+    naiah_sad:'naiah_fete_away',
+    naiah_laugh:'naiah_fete_laugh',
+    naiah_thinking:'naiah_fete_thinking',
+    naiah_angry:'naiah_fete_angry',
+    naiah_away:'naiah_fete_away',
+    naiah_smirk:'naiah_fete_smirk',
+    naiah_menacing:'naiah_fete_angry'
+  };
+
+  function isPartyScene(id, scene){
+    id=String(id||'');
+    scene=scene||{};
+    const g=/^c11g_(\d+)$/i.exec(id);
+    if(g && parseInt(g[1],10)>=32) return true;
+
+    const i=/^c11i_(\d+)$/i.exec(id);
+    if(i && parseInt(i[1],10)>=18) return true;
+
+    /* Choix et réponses du bal, non numérotés, qui échappaient au filtre précédent. */
+    if(/^c11g_choice_/i.test(id)) return true;
+    if(/^c11g_draven/i.test(id)) return true;
+    if(/^c11g_saidin/i.test(id)) return true;
+    if(/^c11g_valurn/i.test(id)) return true;
+    if(/^c11g_glace/i.test(id)) return true;
+    if(/^c11g_entree/i.test(id)) return true;
+    if(id==='c11g_end') return true;
+
+    return false;
+  }
+
+  function remapPartySprite(sprite){
+    return PARTY_ALIASES[sprite] || sprite;
+  }
+
+  window.__sylviniaPartySpriteRemap = remapPartySprite;
+  window.__sylviniaShouldUsePartyOutfit = isPartyScene;
+
+  function normalizeIntervenantWithoutSprite(id, scene){
+    if(!scene || !isPartyScene(id, scene)) return;
+    const speaker = String(scene.speaker||'');
+    const needsGeneric = /^(Aldecian Vareth|Riven|Riven Thalarel|Yelna|Yelna Faendil|Grande Archiviste Yelna Faendil|Chancelier Riven Thalarel|Maître-Intendant Aldecian Vareth)$/i.test(speaker);
+    if(!needsGeneric) return;
+
+    scene.chars = Array.isArray(scene.chars) ? scene.chars.slice() : [];
+
+    /* Saidin ne sert plus de substitut visuel pour les nobles sans sprite. */
+    scene.chars = scene.chars.map(function(ch){
+      if(Array.isArray(ch) && ch[0]==='saidin'){
+        return ['sylvinian','sylvinian_silhouette',ch[2]||'center',ch[3]||''];
+      }
+      return ch;
+    });
+
+    const hasGeneric = scene.chars.some(ch => Array.isArray(ch) && ch[1]==='sylvinian_silhouette');
+    if(!hasGeneric){
+      let pos = 'right';
+      if(scene.chars.length>=2) pos = 'center';
+      scene.chars.unshift(['sylvinian','sylvinian_silhouette',pos]);
+    }
+    if(scene.chars.length>=4){
+      /* Évite les scènes à quatre personnages qui cassent le cadrage : on retire le plus ancien figurant neutre. */
+      const idx = scene.chars.findIndex(ch => Array.isArray(ch) && ch[0]==='naiah' && speaker!=='Naïah');
+      if(idx>=0) scene.chars.splice(idx,1);
+      while(scene.chars.length>3) scene.chars.pop();
+    }
+  }
+
+  function patchSceneMap(map){
+    if(!map) return;
+    Object.keys(map).forEach(function(id){
+      const scene = map[id];
+      if(!scene) return;
+      normalizeIntervenantWithoutSprite(id, scene);
+      if(!Array.isArray(scene.chars) || !isPartyScene(id, scene)) return;
+      scene.chars = scene.chars.map(function(ch){
+        if(Array.isArray(ch) && typeof ch[1]==='string'){
+          const next = ch.slice();
+          next[1] = remapPartySprite(next[1]);
+          return next;
+        }
+        return ch;
+      });
+    });
+  }
+
+  patchSceneMap(typeof S!=='undefined'?S:null);
+  patchSceneMap(typeof SCENES!=='undefined'?SCENES:null);
+
+  /* Render-guard plus dur : il s’applique aussi aux scènes de choix, même construites ou modifiées tardivement. */
+  if(typeof window.paintSceneChars==='function' && !window.paintSceneChars.__partyFinalWrapped){
+    const originalPaintSceneChars = window.paintSceneChars;
+    window.paintSceneChars = function(chars){
+      const id = (typeof state!=='undefined' && state && state.scene) ? state.scene : '';
+      const scene = (typeof S!=='undefined' && S && S[id]) || (typeof SCENES!=='undefined' && SCENES && SCENES[id]) || {};
+      if(Array.isArray(chars) && isPartyScene(id, scene)){
+        chars = chars.map(function(ch){
+          if(Array.isArray(ch) && typeof ch[1]==='string'){
+            const next = ch.slice();
+            next[1] = remapPartySprite(next[1]);
+            return next;
+          }
+          return ch;
+        });
+      }
+      return originalPaintSceneChars.call(this, chars);
+    };
+    window.paintSceneChars.__partyFinalWrapped = true;
+  }
+
+  /* Anti-spam Codex : empêche “Le cœur de l’Empire” de se réannoncer à chaque scène. */
+  window.__codexToastSeen = window.__codexToastSeen || new Set();
+  window.checkCodexForScene = function(id){
+    ensureCodexDefaults();
+    const sc = (typeof S!=='undefined' && S[id]) ? S[id] : null;
+    const imageKeys = [...((typeof CODEX_IMAGES_BY_SCENE!=='undefined' && CODEX_IMAGES_BY_SCENE[id]) || [])];
+    const musicKeys = [...((typeof CODEX_MUSIC_BY_SCENE!=='undefined' && CODEX_MUSIC_BY_SCENE[id]) || [])];
+    if(sc && sc.bg && typeof CODEX_IMAGES!=='undefined' && CODEX_IMAGES[sc.bg]) imageKeys.push(sc.bg);
+    if(sc && sc.music && typeof CODEX_MUSIC!=='undefined' && CODEX_MUSIC[sc.music]) musicKeys.push(sc.music);
+
+    const groups = [
+      ['codexUnlocked', typeof CODEX_ENTRIES!=='undefined'?CODEX_ENTRIES:{}, (typeof CODEX_BY_SCENE!=='undefined' && CODEX_BY_SCENE[id]) || []],
+      ['codexUnlockedImages', typeof CODEX_IMAGES!=='undefined'?CODEX_IMAGES:{}, imageKeys],
+      ['codexUnlockedMusic', typeof CODEX_MUSIC!=='undefined'?CODEX_MUSIC:{}, musicKeys]
+    ];
+
+    const added = [];
+    groups.forEach(function(group){
+      const targetKey = group[0], lookup = group[1], keys = group[2] || [];
+      if(!Array.isArray(state[targetKey])) state[targetKey] = [];
+      keys.forEach(function(k){
+        if(!lookup[k]) return;
+        const already = state[targetKey].includes(k);
+        if(!already) state[targetKey].push(k);
+        const toastKey = targetKey + ':' + k;
+        if(!already && !window.__codexToastSeen.has(toastKey)){
+          window.__codexToastSeen.add(toastKey);
+          added.push(lookup[k].title);
+        }
+      });
+    });
+
+    if(added.length) toast('Codex mis à jour', added.join(' · '));
+  };
 })();
 </script>
 </body>
