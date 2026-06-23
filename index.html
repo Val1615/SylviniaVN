@@ -31812,5 +31812,96 @@ Ouvrir le choix de perspective ?`);
   };
 })();
 </script>
+
+<!-- v0.223 — XI_G images clés du Bal des Élus intégrées -->
+<script id="v0223-xig-keyscenes-patch">
+(function(){
+  if(typeof A==='undefined') return;
+  var sceneMaps=[];
+  var mapS = (typeof S!=='undefined' && S) ? S : null;
+  var mapScenes = (typeof SCENES!=='undefined' && SCENES) ? SCENES : null;
+  if(mapS) sceneMaps.push(mapS);
+  if(mapScenes && mapScenes!==mapS) sceneMaps.push(mapScenes);
+  if(!sceneMaps.length) return;
+
+  A.cg_c11g_032='assets/images/keyscenes/chapter11_g/c11g_032.png';
+    A.cg_c11g_036='assets/images/keyscenes/chapter11_g/c11g_036.png';
+    A.cg_c11g_037='assets/images/keyscenes/chapter11_g/c11g_037.png';
+    A.cg_c11g_042='assets/images/keyscenes/chapter11_g/c11g_042.png';
+    A.cg_c11g_043='assets/images/keyscenes/chapter11_g/c11g_043.png';
+    A.cg_c11g_049='assets/images/keyscenes/chapter11_g/c11g_049.png';
+    A.cg_c11g_050='assets/images/keyscenes/chapter11_g/c11g_050.png';
+    A.cg_c11g_choice_valurn_joute='assets/images/keyscenes/chapter11_g/c11g_choice_valurn_joute.png';
+    A.cg_c11g_062='assets/images/keyscenes/chapter11_g/c11g_062.png';
+    A.cg_c11g_063='assets/images/keyscenes/chapter11_g/c11g_063.png';
+    A.cg_c11g_074='assets/images/keyscenes/chapter11_g/c11g_074.png';
+    A.cg_c11g_075='assets/images/keyscenes/chapter11_g/c11g_075.png';
+    A.cg_c11g_choice_draven_pression='assets/images/keyscenes/chapter11_g/c11g_choice_draven_pression.png';
+    A.cg_c11g_085='assets/images/keyscenes/chapter11_g/c11g_085.png';
+    A.cg_c11g_100='assets/images/keyscenes/chapter11_g/c11g_100.png';
+    A.cg_c11g_101='assets/images/keyscenes/chapter11_g/c11g_101.png';
+
+  function forEachSceneId(ids, fn){
+    ids.forEach(function(id){
+      sceneMaps.forEach(function(map){
+        if(map && map[id]) fn(map[id], id, map);
+      });
+    });
+  }
+
+  function applyCG(ids,key){
+    forEachSceneId(ids,function(scene){
+      scene.bg=key;
+      scene.zoom=true;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      delete scene.videoBanner;
+    });
+  }
+
+  var sceneToKey={
+    "c11g_032":"cg_c11g_032", "c11g_036":"cg_c11g_036", "c11g_037":"cg_c11g_037", "c11g_042":"cg_c11g_042", "c11g_043":"cg_c11g_043", "c11g_049":"cg_c11g_049", "c11g_050":"cg_c11g_050", "c11g_choice_valurn_joute":"cg_c11g_choice_valurn_joute", "c11g_062":"cg_c11g_062", "c11g_063":"cg_c11g_063", "c11g_074":"cg_c11g_074", "c11g_075":"cg_c11g_075", "c11g_choice_draven_pression":"cg_c11g_choice_draven_pression", "c11g_085":"cg_c11g_085", "c11g_100":"cg_c11g_100", "c11g_101":"cg_c11g_101"
+  };
+
+  Object.keys(sceneToKey).forEach(function(sceneId){ applyCG([sceneId], sceneToKey[sceneId]); });
+
+  if(typeof CODEX_IMAGES!=='undefined'){
+    Object.assign(CODEX_IMAGES,{
+      cg_c11g_032:{title:"XI_G · Entrée au bal",body:"Image clé intégrée pour la scène c11g · 032 du chapitre XI_G.",src:A.cg_c11g_032},
+      cg_c11g_036:{title:"XI_G · Duel au cœur de la salle",body:"Image clé intégrée pour la scène c11g · 036 du chapitre XI_G.",src:A.cg_c11g_036},
+      cg_c11g_037:{title:"XI_G · Draven face au noble sylvinien",body:"Image clé intégrée pour la scène c11g · 037 du chapitre XI_G.",src:A.cg_c11g_037},
+      cg_c11g_042:{title:"XI_G · Échange venimeux",body:"Image clé intégrée pour la scène c11g · 042 du chapitre XI_G.",src:A.cg_c11g_042},
+      cg_c11g_043:{title:"XI_G · Face-à-face rapproché",body:"Image clé intégrée pour la scène c11g · 043 du chapitre XI_G.",src:A.cg_c11g_043},
+      cg_c11g_049:{title:"XI_G · Riven accueille Valurn",body:"Image clé intégrée pour la scène c11g · 049 du chapitre XI_G.",src:A.cg_c11g_049},
+      cg_c11g_050:{title:"XI_G · Valurn entre dans le jeu",body:"Image clé intégrée pour la scène c11g · 050 du chapitre XI_G.",src:A.cg_c11g_050},
+      cg_c11g_choice_valurn_joute:{title:"XI_G · Choix · La joute de Valurn",body:"Image clé intégrée pour la scène c11g · choice · valurn · joute du chapitre XI_G.",src:A.cg_c11g_choice_valurn_joute},
+      cg_c11g_062:{title:"XI_G · Valurn face à la cour",body:"Image clé intégrée pour la scène c11g · 062 du chapitre XI_G.",src:A.cg_c11g_062},
+      cg_c11g_063:{title:"XI_G · Tension entre Valurn et les Élus",body:"Image clé intégrée pour la scène c11g · 063 du chapitre XI_G.",src:A.cg_c11g_063},
+      cg_c11g_074:{title:"XI_G · Pression sur Draven",body:"Image clé intégrée pour la scène c11g · 074 du chapitre XI_G.",src:A.cg_c11g_074},
+      cg_c11g_075:{title:"XI_G · Confrontation contenue",body:"Image clé intégrée pour la scène c11g · 075 du chapitre XI_G.",src:A.cg_c11g_075},
+      cg_c11g_choice_draven_pression:{title:"XI_G · Choix · La pression sur Draven",body:"Image clé intégrée pour la scène c11g · choice · draven · pression du chapitre XI_G.",src:A.cg_c11g_choice_draven_pression},
+      cg_c11g_085:{title:"XI_G · Valurn trouble la scène",body:"Image clé intégrée pour la scène c11g · 085 du chapitre XI_G.",src:A.cg_c11g_085},
+      cg_c11g_100:{title:"XI_G · Saidin observe et lit",body:"Image clé intégrée pour la scène c11g · 100 du chapitre XI_G.",src:A.cg_c11g_100},
+      cg_c11g_101:{title:"XI_G · Le livre et le regard de Saidin",body:"Image clé intégrée pour la scène c11g · 101 du chapitre XI_G.",src:A.cg_c11g_101}
+    });
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{"c11g_032":["cg_c11g_032"],"c11g_036":["cg_c11g_036"],"c11g_037":["cg_c11g_037"],"c11g_042":["cg_c11g_042"],"c11g_043":["cg_c11g_043"],"c11g_049":["cg_c11g_049"],"c11g_050":["cg_c11g_050"],"c11g_choice_valurn_joute":["cg_c11g_choice_valurn_joute"],"c11g_062":["cg_c11g_062"],"c11g_063":["cg_c11g_063"],"c11g_074":["cg_c11g_074"],"c11g_075":["cg_c11g_075"],"c11g_choice_draven_pression":["cg_c11g_choice_draven_pression"],"c11g_085":["cg_c11g_085"],"c11g_100":["cg_c11g_100"],"c11g_101":["cg_c11g_101"]});
+    var cgKeys=["cg_c11g_032","cg_c11g_036","cg_c11g_037","cg_c11g_042","cg_c11g_043","cg_c11g_049","cg_c11g_050","cg_c11g_choice_valurn_joute","cg_c11g_062","cg_c11g_063","cg_c11g_074","cg_c11g_075","cg_c11g_choice_draven_pression","cg_c11g_085","cg_c11g_100","cg_c11g_101"];
+    if(Array.isArray(window.CODEX_IMAGE_ORDER)){
+      cgKeys.forEach(function(k){ if(!CODEX_IMAGE_ORDER.includes(k)) CODEX_IMAGE_ORDER.push(k); });
+    }
+    if(typeof replaceOrPushGroup==='function' && Array.isArray(window.CODEX_IMAGE_GROUPS)){
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{
+        id:'chapter11g_keyscenes',
+        title:'Chapitre XI_G · Le Bal des Élus',
+        sections:[{title:'Images clés du bal',keys:cgKeys}]
+      });
+    }
+  }
+
+  console.log('[Sylvinia v0.223] Images clés XI_G intégrées et sprites retirés sur les scènes concernées.');
+})();
+</script>
+
 </body>
 </html>
