@@ -32102,5 +32102,256 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+<script id="v0233-xig-bal-observation-hub">
+/* v0.233 · XI_G : hub d'observation du Bal des Élus
+   Hylee peut choisir quelles altercations observer, puis revenir à son point initial. */
+(function installXIGBalObservationHub(){
+  try{
+    if(window.__sylviniaV233XIGBalObservationHub) return;
+    window.__sylviniaV233XIGBalObservationHub = true;
+
+    function ensureFlagStore(){
+      if(typeof state!=='undefined' && state && !state.flags) state.flags = {};
+      return (typeof state!=='undefined' && state) ? state.flags : {};
+    }
+
+    function hasFlag(name){
+      const flags = ensureFlagStore();
+      return !!flags[name];
+    }
+
+    function setFlag(name){
+      const flags = ensureFlagStore();
+      flags[name] = true;
+    }
+
+    function updateObservationHubScene(){
+      if(typeof S==='undefined' || !S) return;
+
+      const seenValurn = hasFlag('c11gSeenValurnCourt');
+      const seenDraven = hasFlag('c11gSeenDravenCourt');
+      const seenSaidin = hasFlag('c11gSeenSaidinCourt');
+      const seenRemerii = hasFlag('c11gSeenRemeriiCourt');
+      const seenCount = [seenValurn, seenDraven, seenSaidin, seenRemerii].filter(Boolean).length;
+
+      const fragments = [];
+      if(seenValurn) fragments.push('Valurn a laissé un doute empoisonné dans les verres dorés de la cour');
+      if(seenDraven) fragments.push('Draven a encaissé l’humiliation sans plier');
+      if(seenSaidin) fragments.push('Saidin a transformé une question en piège diplomatique');
+      if(seenRemerii) fragments.push('Remerii a tenu tête aux sourires qui voulaient réduire Hylee à une curiosité');
+
+      const intro = seenCount === 0
+        ? "Hylee reste en retrait, près d’une colonne ouvragée. La grande salle respire autour d’elle comme une bête polie : musique, parfums, dorures, murmures.\n\nPlusieurs foyers de tension s’allument à la fois. Valurn attire les curieux. Draven se retrouve face aux regards militaires. Saidin est cerné par les érudits. Remerii, plus loin, subit cette attention feutrée que la noblesse réserve aux anomalies bien habillées.\n\nHylee peut s’approcher discrètement d’une situation… ou laisser le bal poursuivre son cours."
+        : "Hylee revient près de la colonne, le cœur un peu plus lourd et l’esprit plus aigu. Le bal continue sans l’attendre. Rien ne s’arrête dans cette salle : les sourires changent simplement de cible.\n\nElle a déjà vu que " + fragments.join('; ') + ".\n\nD’autres tensions restent à portée de regard.";
+
+      const choices = [];
+      if(!seenValurn){
+        choices.push({
+          label:"Observer Valurn parmi les nobles",
+          next:"c11g_048",
+          effects:{lucidite:1},
+          note:"Lucidité · Se glisser près de la joute du demi-démon.",
+          flags:{c11gSeenValurnCourt:true}
+        });
+      }
+      if(!seenDraven){
+        choices.push({
+          label:"Rejoindre discrètement Draven",
+          next:"c11g_073",
+          effects:{sangfroid:1},
+          note:"Sang-froid · Voir comment l’amiral tient face à la cour.",
+          flags:{c11gSeenDravenCourt:true}
+        });
+      }
+      if(!seenSaidin){
+        choices.push({
+          label:"Écouter Saidin près des érudits",
+          next:"c11g_099",
+          effects:{lucidite:1},
+          note:"Lucidité · Comprendre ce que Mir’Aldas refuse de promettre.",
+          flags:{c11gSeenSaidinCourt:true}
+        });
+      }
+      if(!seenRemerii){
+        choices.push({
+          label:"Chercher Remerii du regard",
+          next:"c11g_remerii_cour_001",
+          effects:{sangfroid:1},
+          note:"Sang-froid · Approcher sans forcer la distance entre elles.",
+          flags:{c11gSeenRemeriiCourt:true}
+        });
+      }
+
+      choices.push({
+        label: seenCount ? "Continuer le chapitre" : "Laisser les tensions se jouer et continuer",
+        next:"c11g_end",
+        effects:{},
+        note: seenCount < 4 ? "Le bal continue, même si Hylee n’a pas tout observé." : "Hylee a observé tous les foyers de tension disponibles."
+      });
+
+      S.c11g_bal_observation = {
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"Les foyers de tension",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:intro,
+        chars:[["hylee","hylee2_thinking","center"]],
+        choices:choices,
+        zoom:true
+      };
+    }
+
+    function markObservedFromScene(id){
+      id = String(id || '');
+      const numeric = /^c11g_(\d+)$/i.exec(id);
+      const n = numeric ? parseInt(numeric[1],10) : null;
+      if((n!==null && n>=48 && n<=72) || /^c11g_valurn/i.test(id)) setFlag('c11gSeenValurnCourt');
+      if((n!==null && n>=73 && n<=98) || /^c11g_draven/i.test(id)) setFlag('c11gSeenDravenCourt');
+      if((n!==null && n>=99 && n<=130) || /^c11g_saidin/i.test(id) || id==='c11g_choice_saidin_miraldas') setFlag('c11gSeenSaidinCourt');
+      if(/^c11g_remerii_cour/i.test(id)) setFlag('c11gSeenRemeriiCourt');
+    }
+
+    function addScene(map, id, scene){
+      if(!map) return;
+      map[id] = Object.assign({}, scene);
+    }
+
+    function configureMap(map){
+      if(!map) return;
+
+      /* Après le choix d'entrée, Hylee revient à un point d'observation au lieu d'enchaîner mécaniquement sur Valurn. */
+      ['c11g_entree_draven','c11g_entree_lucidite','c11g_entree_naiah','c11g_entree_resonance','c11g_entree_strategique'].forEach(function(id){
+        if(map[id]) map[id].next = 'c11g_bal_observation';
+      });
+
+      /* Chaque altercation revient ensuite au hub. */
+      if(map.c11g_072) map.c11g_072.next = 'c11g_bal_observation';
+      if(map.c11g_098) map.c11g_098.next = 'c11g_bal_observation';
+      if(map.c11g_130) map.c11g_130.next = 'c11g_bal_observation';
+
+      addScene(map,'c11g_remerii_cour_001',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:"Hylee aperçoit Remerii près d’une arcade de marbre. Elle n’est pas seule. Deux nobles sylviniennes se tiennent devant elle, sourires fins, éventails ouverts, regards trop attentifs.\n\nCe n’est pas une conversation. C’est une auscultation.",
+        chars:[["hylee","hylee2_thinking","left"],["remerii","remerii_strict","right"]],
+        next:"c11g_remerii_cour_002",
+        zoom:true
+      });
+
+      addScene(map,'c11g_remerii_cour_002',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Noble sylvinienne",
+        text:"Une humaine qui forme une humaine. Voilà qui ressemble moins à une école qu’à une expérience de laboratoire. Dites-moi, Remerii… faut-il y voir une vocation ou une provocation ?",
+        chars:[["remerii","remerii_strict","center"],["hylee","hylee2_sad","right","back dim"]],
+        next:"c11g_remerii_cour_003",
+        zoom:true
+      });
+
+      addScene(map,'c11g_remerii_cour_003',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Remerii",
+        text:"Je préfère former une élève qui pense plutôt que flatter une cour qui répète.",
+        chars:[["remerii","remerii_calm","center"]],
+        next:"c11g_choice_remerii_cour",
+        zoom:true
+      });
+
+      addScene(map,'c11g_choice_remerii_cour',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:"La réplique tombe avec une douceur parfaite. Trop parfaite. Hylee comprend que Remerii n’a pas seulement répondu pour elle-même.",
+        chars:[["hylee","hylee2_thinking","left"],["remerii","remerii_calm","right"]],
+        choices:[
+          {label:"Rester discrète",next:"c11g_remerii_cour_discrete",effects:{sangfroid:1},note:"Sang-froid · Ne pas attirer les regards sur Remerii."},
+          {label:"Lire ce que Remerii protège réellement",next:"c11g_remerii_cour_lucidite",effects:{lucidite:2},requires:{lucidite:40},note:"Lucidité · Prérequis 40 · Voir la protection derrière la froideur."},
+          {label:"Entrer dans son champ de vision sans parler",next:"c11g_remerii_cour_soutien",effects:{sangfroid:2},note:"Sang-froid · Soutenir sans forcer la réconciliation.",flags:{c11gRemeriiARecuSoutienSilencieux:true}}
+        ],
+        zoom:true
+      });
+
+      addScene(map,'c11g_remerii_cour_discrete',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:"Hylee garde sa distance. Pour une fois, elle comprend que s’approcher serait peut-être offrir aux nobles exactement ce qu’ils cherchent : une réaction.\n\nRemerii tient sa posture. Hylee, elle, apprend à tenir son silence.",
+        chars:[["hylee","hylee2_thinking","left"],["remerii","remerii_calm","right"]],
+        next:"c11g_bal_observation",
+        zoom:true
+      });
+
+      addScene(map,'c11g_remerii_cour_lucidite',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:"La phrase de Remerii n’est pas seulement une attaque. C’est un mur.\n\nElle détourne la conversation avant qu’elle n’atteigne Hylee. Elle absorbe la morsure pour que son apprentie n’ait pas à la sentir. Hylee le comprend, et cette compréhension a le goût étrange d’une blessure qui refuse de guérir trop vite.",
+        chars:[["hylee","hylee2_thinking","left"],["remerii","remerii_sad","right"]],
+        next:"c11g_bal_observation",
+        effects:{lucidite:1},
+        flags:{c11gHyleeComprendProtectionRemerii:true},
+        zoom:true
+      });
+
+      addScene(map,'c11g_remerii_cour_soutien',{
+        title:"Chapitre XI_G · Le Bal des Élus",
+        sub:"L’élégance sous les dents",
+        bg:"c11g_bal",
+        music:"music_iriana",
+        speaker:"Narrateur",
+        text:"Hylee ne dit rien. Elle se contente d’entrer dans le bord du regard de Remerii, assez près pour être vue, assez loin pour ne pas lui voler sa réponse.\n\nLes yeux de Remerii glissent vers elle une fraction de seconde. Rien de plus. Mais dans ce rien, quelque chose cesse de trembler.",
+        chars:[["hylee","hylee2_thinking","left"],["remerii","remerii_sad","right"]],
+        next:"c11g_bal_observation",
+        effects:{sangfroid:1},
+        memories:["remerii_soutien_silencieux_bal"],
+        zoom:true
+      });
+    }
+
+    const maps=[];
+    if(typeof S!=='undefined' && S) maps.push(S);
+    if(typeof SCENES!=='undefined' && SCENES && SCENES!==S) maps.push(SCENES);
+    maps.forEach(configureMap);
+    updateObservationHubScene();
+
+    if(typeof render==='function' && !render.__xigObservationHubWrapped){
+      const previousRender = render;
+      render = window.render = function(){
+        try{
+          if(typeof state!=='undefined' && state && state.scene){
+            markObservedFromScene(state.scene);
+            updateObservationHubScene();
+          }
+        }catch(err){
+          console.error('[Sylvinia] Hub observation XI_G · préparation', err);
+        }
+        return previousRender.apply(this, arguments);
+      };
+      render.__xigObservationHubWrapped = true;
+    }
+
+    console.log('[Sylvinia v0.233] Hub d’observation XI_G installé.');
+  }catch(err){
+    console.error('[Sylvinia] Patch hub observation XI_G non installé', err);
+  }
+})();
+</script>
+
 </body>
 </html>
