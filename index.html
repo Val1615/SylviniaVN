@@ -31894,5 +31894,183 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<!-- v0.232 — XI_G tenues/entrée : 8 images clés + musiques sur le bon build -->
+<script id="v0232-xig-tenues-keyscenes-music-correct-build">
+(function(){
+  try{
+    if(window.__sylviniaV232XIGTenuesKeyscenesMusic) return;
+    window.__sylviniaV232XIGTenuesKeyscenesMusic = true;
+    if(typeof A==='undefined') return;
+
+    Object.assign(A,{
+      cg_c11g_tenue_bonus:'assets/images/keyscenes/chapter11_g/c11g_key_hylee_tenue.png',
+      cg_c11g_027_tenue_naiah_01:'assets/images/keyscenes/chapter11_g/c11g_key_naiah_tenue_01.png',
+      cg_c11g_028_tenue_naiah_02:'assets/images/keyscenes/chapter11_g/c11g_key_naiah_tenue_02.png',
+      cg_c11g_029_tenue_remerii:'assets/images/keyscenes/chapter11_g/c11g_key_remerii_tenue.png',
+      cg_c11g_029_tenue_valurn:'assets/images/keyscenes/chapter11_g/c11g_key_valurn_tenue.png',
+      cg_c11g_030_tenue_draven:'assets/images/keyscenes/chapter11_g/c11g_key_draven_tenue.png',
+      cg_c11g_030_tenue_saidin:'assets/images/keyscenes/chapter11_g/c11g_key_saidin_tenue.png',
+      cg_c11g_031_entree_nuit:'assets/images/keyscenes/chapter11_g/c11g_key_group_night.png'
+    });
+
+    const maps=[];
+    if(typeof S!=='undefined' && S) maps.push(S);
+    if(typeof SCENES!=='undefined' && SCENES && SCENES!==S) maps.push(SCENES);
+
+    function applyKeyScene(scene,bgKey){
+      if(!scene) return;
+      scene.bg = bgKey;
+      scene.zoom = true;
+      scene.chars = [];
+      scene.hideChars = true;
+      scene.clearChars = true;
+      delete scene.videoBanner;
+    }
+
+    function setMusic(scene,key){ if(scene) scene.music = key; }
+
+    function configure(map){
+      if(!map) return;
+
+      applyKeyScene(map.c11g_tenue_bonus,'cg_c11g_tenue_bonus');
+      applyKeyScene(map.c11g_027,'cg_c11g_027_tenue_naiah_01');
+      applyKeyScene(map.c11g_028,'cg_c11g_028_tenue_naiah_02');
+
+      applyKeyScene(map.c11g_029,'cg_c11g_029_tenue_remerii');
+      if(map.c11g_029){
+        map.c11g_029.keySlides=[
+          {bg:'cg_c11g_029_tenue_remerii',duration:3000},
+          {bg:'cg_c11g_029_tenue_valurn',duration:3000}
+        ];
+      }
+
+      applyKeyScene(map.c11g_030,'cg_c11g_030_tenue_draven');
+      if(map.c11g_030){
+        map.c11g_030.keySlides=[
+          {bg:'cg_c11g_030_tenue_draven',duration:3000},
+          {bg:'cg_c11g_030_tenue_saidin',duration:3000}
+        ];
+      }
+
+      applyKeyScene(map.c11g_031,'cg_c11g_031_entree_nuit');
+
+      /* Ancien correctif demandé : l'image de c11g_043 reste visible sur c11g_044. */
+      if(map.c11g_043 && map.c11g_044){
+        map.c11g_044.bg = map.c11g_043.bg;
+        map.c11g_044.zoom = map.c11g_043.zoom;
+        map.c11g_044.chars = [];
+        map.c11g_044.hideChars = true;
+        map.c11g_044.clearChars = true;
+      }
+
+      /* Saidin ne sert pas de figurant dans la joute de Valurn. */
+      ['c11g_049','c11g_051','c11g_053','c11g_055'].forEach(function(id){
+        const scene=map[id];
+        if(scene && Array.isArray(scene.chars)){
+          scene.chars = scene.chars.filter(function(ch){ return !(Array.isArray(ch) && ch[0]==='saidin'); });
+        }
+      });
+
+      Object.keys(map).forEach(function(id){
+        const scene=map[id];
+        if(!scene || !/^c11g/i.test(id)) return;
+        const numeric=/^c11g_(\d+)$/i.exec(id);
+        if(numeric){
+          const n=parseInt(numeric[1],10);
+          if(n>=23 && n<=31) setMusic(scene,'music_c3_shopping');
+          if(n>=32) setMusic(scene,'music_iriana');
+          return;
+        }
+        if(id==='c11g_choice_tenue' || /^c11g_tenue/i.test(id)) setMusic(scene,'music_c3_shopping');
+        if(id==='c11g_choice_entree' || id==='c11g_choice_valurn_joute' || id==='c11g_choice_draven_pression' || id==='c11g_choice_draven_fourmi' || id==='c11g_choice_saidin_miraldas' || /^c11g_entree/i.test(id) || /^c11g_valurn/i.test(id) || /^c11g_draven/i.test(id) || /^c11g_saidin/i.test(id) || id==='c11g_end') setMusic(scene,'music_iriana');
+      });
+    }
+
+    maps.forEach(configure);
+
+    function clearTenueSlideTimer(){
+      if(window.__c11gTenueSlideTimer){
+        clearTimeout(window.__c11gTenueSlideTimer);
+        window.__c11gTenueSlideTimer=null;
+      }
+    }
+
+    if(typeof render==='function' && !render.__xigTenueSlidesWrapped){
+      const previousRender=render;
+      render=function(){
+        clearTenueSlideTimer();
+        const result=previousRender.apply(this,arguments);
+        try{
+          if(!state || !state.scene || typeof S==='undefined' || !S) return result;
+          const sceneId=state.scene;
+          const scene=S[sceneId];
+          if(!scene || !Array.isArray(scene.keySlides) || scene.keySlides.length<2) return result;
+          let i=0;
+          const slides=scene.keySlides.slice();
+          const show=function(){
+            if(!state || state.scene!==sceneId) return;
+            const slide=slides[i];
+            if(!slide) return;
+            if(typeof setStageBg==='function') setStageBg(slide.bg,!!scene.zoom);
+            if(i<slides.length-1){
+              window.__c11gTenueSlideTimer=setTimeout(function(){ i+=1; show(); }, Number(slide.duration)||3000);
+            }
+          };
+          show();
+        }catch(err){ console.error('[Sylvinia] XI_G tenues slides',err); }
+        return result;
+      };
+      render.__xigTenueSlidesWrapped=true;
+      window.render=render;
+    }
+
+    if(typeof go==='function' && !go.__xigTenueSlidesWrapped){
+      const previousGo=go;
+      go=function(){ clearTenueSlideTimer(); return previousGo.apply(this,arguments); };
+      go.__xigTenueSlidesWrapped=true;
+      window.go=go;
+    }
+
+    const tenueKeys=['cg_c11g_tenue_bonus','cg_c11g_027_tenue_naiah_01','cg_c11g_028_tenue_naiah_02','cg_c11g_029_tenue_remerii','cg_c11g_029_tenue_valurn','cg_c11g_030_tenue_draven','cg_c11g_030_tenue_saidin','cg_c11g_031_entree_nuit'];
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+        cg_c11g_tenue_bonus:{title:'XI_G · Hylee en tenue de fête',body:'Hylee découvre la tenue choisie pour le Bal des Élus.',src:A.cg_c11g_tenue_bonus},
+        cg_c11g_027_tenue_naiah_01:{title:'XI_G · Naïah entre dans le jeu',body:'Naïah transforme l’habillage en provocation élégante.',src:A.cg_c11g_027_tenue_naiah_01},
+        cg_c11g_028_tenue_naiah_02:{title:'XI_G · Naïah presque respectable',body:'Naïah savoure son apparence de noble impossible.',src:A.cg_c11g_028_tenue_naiah_02},
+        cg_c11g_029_tenue_remerii:{title:'XI_G · Remerii en tenue de fête',body:'Remerii choisit une élégance froide et maîtrisée.',src:A.cg_c11g_029_tenue_remerii},
+        cg_c11g_029_tenue_valurn:{title:'XI_G · Valurn en tenue de fête',body:'Valurn s’approprie le rôle avec une aisance insolente.',src:A.cg_c11g_029_tenue_valurn},
+        cg_c11g_030_tenue_draven:{title:'XI_G · Draven en tenue de fête',body:'Draven endure l’apparat impérial avec une dignité rugueuse.',src:A.cg_c11g_030_tenue_draven},
+        cg_c11g_030_tenue_saidin:{title:'XI_G · Saidin en tenue de fête',body:'Saidin se drape dans une élégance presque intemporelle.',src:A.cg_c11g_030_tenue_saidin},
+        cg_c11g_031_entree_nuit:{title:'XI_G · Entrée de nuit au palais',body:'Le groupe rejoint le palais sous le ciel nocturne d’Al’Gratal.',src:A.cg_c11g_031_entree_nuit}
+      });
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c11g_tenue_bonus:['cg_c11g_tenue_bonus'],
+        c11g_027:['cg_c11g_027_tenue_naiah_01'],
+        c11g_028:['cg_c11g_028_tenue_naiah_02'],
+        c11g_029:['cg_c11g_029_tenue_remerii','cg_c11g_029_tenue_valurn'],
+        c11g_030:['cg_c11g_030_tenue_draven','cg_c11g_030_tenue_saidin'],
+        c11g_031:['cg_c11g_031_entree_nuit']
+      });
+    }
+    if(Array.isArray(window.CODEX_IMAGE_ORDER)) tenueKeys.forEach(function(k){ if(!CODEX_IMAGE_ORDER.includes(k)) CODEX_IMAGE_ORDER.push(k); });
+    if(typeof replaceOrPushGroup==='function' && Array.isArray(window.CODEX_IMAGE_GROUPS)){
+      replaceOrPushGroup(CODEX_IMAGE_GROUPS,{
+        id:'chapter11g_tenues_fete',
+        title:'Chapitre XI_G · Tenues de fête',
+        sections:[{title:'Pavillon d’apparat et entrée de nuit',keys:tenueKeys}]
+      });
+    }
+
+    console.log('[Sylvinia v0.232] XI_G tenues, entrée de nuit et musiques appliquées sur le bon build.');
+  }catch(err){
+    console.error('[Sylvinia] Patch XI_G tenues/musiques non installé',err);
+  }
+})();
+</script>
+
 </body>
 </html>
