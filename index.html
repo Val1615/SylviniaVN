@@ -31822,11 +31822,11 @@ Ouvrir le choix de perspective ?`);
 
     if(typeof A!=='undefined' && A){
       Object.assign(A,{
-        c11g_key_hylee_tenue:'c11g_key_hylee_tenue.png',
-        c11g_key_naiah_tenue_01:'c11g_key_naiah_tenue_01.png',
-        c11g_key_naiah_tenue_02:'c11g_key_naiah_tenue_02.png',
-        c11g_key_remerii_valurn:'c11g_key_remerii_valurn.png',
-        c11g_key_draven_saidin:'c11g_key_draven_saidin.png'
+        c11g_key_hylee_tenue:'assets/images/keyscenes/chapter11_g/c11g_key_hylee_tenue.png',
+        c11g_key_naiah_tenue_01:'assets/images/keyscenes/chapter11_g/c11g_key_naiah_tenue_01.png',
+        c11g_key_naiah_tenue_02:'assets/images/keyscenes/chapter11_g/c11g_key_naiah_tenue_02.png',
+        c11g_key_remerii_valurn:'assets/images/keyscenes/chapter11_g/c11g_key_remerii_valurn.png',
+        c11g_key_draven_saidin:'assets/images/keyscenes/chapter11_g/c11g_key_draven_saidin.png'
       });
     }
 
@@ -31875,7 +31875,7 @@ Ouvrir le choix de perspective ?`);
     window.__sylviniaV205Chapter11GFollowupFixes = true;
 
     if(typeof A!=='undefined' && A){
-      A.c11g_key_group_night = 'c11g_key_group_night.png';
+      A.c11g_key_group_night = 'assets/images/keyscenes/chapter11_g/c11g_key_group_night.png';
       if(!A.sylvinian_silhouette) A.sylvinian_silhouette = 'assets/sprites/chapter11/group/sylvinian_silhouette.png';
     }
 
@@ -31916,6 +31916,105 @@ Ouvrir le choix de perspective ?`);
     console.log('[Sylvinia] Correctifs XI_G follow-up installés · v0.205');
   }catch(err){
     console.error('[Sylvinia] Patch XI_G follow-up non installé', err);
+  }
+})();
+</script>
+
+
+<script id="v0206-ch11g-separate-slides-fix">
+/* v0.206 · XI_G : c11g_029 et c11g_030 en deux images successives (3s + 3s) */
+(function installChapter11GSeparateSlidesFix(){
+  try{
+    if(window.__sylviniaV206Chapter11GSeparateSlidesFix) return;
+    window.__sylviniaV206Chapter11GSeparateSlidesFix = true;
+
+    if(typeof A!=='undefined' && A){
+      Object.assign(A, {
+        c11g_key_remerii_tenue: 'assets/images/keyscenes/chapter11_g/c11g_key_remerii_tenue.png',
+        c11g_key_valurn_tenue: 'assets/images/keyscenes/chapter11_g/c11g_key_valurn_tenue.png',
+        c11g_key_draven_tenue: 'assets/images/keyscenes/chapter11_g/c11g_key_draven_tenue.png',
+        c11g_key_saidin_tenue: 'assets/images/keyscenes/chapter11_g/c11g_key_saidin_tenue.png'
+      });
+    }
+
+    function applySlideConfig(map){
+      if(!map) return;
+      var scene29 = map['c11g_029'];
+      if(scene29){
+        scene29.bg = 'c11g_key_remerii_tenue';
+        scene29.hideChars = true;
+        scene29.zoom = false;
+        scene29.keySlides = [
+          { bg:'c11g_key_remerii_tenue', duration:3000 },
+          { bg:'c11g_key_valurn_tenue', duration:3000 }
+        ];
+      }
+      var scene30 = map['c11g_030'];
+      if(scene30){
+        scene30.bg = 'c11g_key_draven_tenue';
+        scene30.hideChars = true;
+        scene30.zoom = false;
+        scene30.keySlides = [
+          { bg:'c11g_key_draven_tenue', duration:3000 },
+          { bg:'c11g_key_saidin_tenue', duration:3000 }
+        ];
+      }
+    }
+
+    if(typeof S!=='undefined' && S) applySlideConfig(S);
+    if(typeof SCENES!=='undefined' && SCENES && SCENES!==S) applySlideConfig(SCENES);
+
+    function clearSlideTimer(){
+      if(window.__c11gSlideTimer){
+        clearTimeout(window.__c11gSlideTimer);
+        window.__c11gSlideTimer = null;
+      }
+    }
+
+    var previousRender = render;
+    render = window.render = function(){
+      clearSlideTimer();
+      var result = previousRender.apply(this, arguments);
+      try{
+        if(!state || !state.scene || typeof S==='undefined' || !S) return result;
+        var sceneId = state.scene;
+        var scene = S[sceneId];
+        if(!scene || !Array.isArray(scene.keySlides) || scene.keySlides.length < 2) return result;
+
+        var slides = scene.keySlides.slice();
+        var slideIndex = 0;
+
+        function showSlide(){
+          if(!state || state.scene !== sceneId) return;
+          var slide = slides[slideIndex];
+          if(!slide) return;
+          setStageBg(slide.bg, !!scene.zoom);
+          var bgEl = document.getElementById('bg');
+          if(bgEl) bgEl.dataset.bgKey = slide.bg;
+          if(slideIndex < slides.length - 1){
+            window.__c11gSlideTimer = setTimeout(function(){
+              slideIndex += 1;
+              showSlide();
+            }, Number(slide.duration) || 3000);
+          }
+        }
+
+        showSlide();
+      }catch(err){
+        console.error('[Sylvinia] Erreur séquence images XI_G', err);
+      }
+      return result;
+    };
+
+    var previousGo = go;
+    go = window.go = function(){
+      clearSlideTimer();
+      return previousGo.apply(this, arguments);
+    };
+
+    console.log('[Sylvinia] Correctif XI_G images successives installé · v0.206');
+  }catch(err){
+    console.error('[Sylvinia] Patch XI_G images successives non installé', err);
   }
 })();
 </script>
