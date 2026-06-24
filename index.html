@@ -31995,6 +31995,47 @@ Ouvrir le choix de perspective ?`);
         clearTimeout(window.__c11gTenueSlideTimer);
         window.__c11gTenueSlideTimer=null;
       }
+      if(window.__c11gTenueFadeTimer){
+        clearTimeout(window.__c11gTenueFadeTimer);
+        window.__c11gTenueFadeTimer=null;
+      }
+      const bgEl=document.getElementById('bg');
+      if(bgEl){
+        bgEl.style.opacity='';
+        bgEl.style.transition='';
+      }
+    }
+
+    function startTenueSlidesLoop(sceneId, scene){
+      if(!scene || !Array.isArray(scene.keySlides) || scene.keySlides.length<2 || typeof setStageBg!=='function') return;
+      const slides=scene.keySlides.slice();
+      const fadeDuration=900;
+      let index=0;
+      const bgEl=document.getElementById('bg');
+      if(bgEl){
+        bgEl.style.transition='opacity '+fadeDuration+'ms ease, transform 8s ease, filter .4s ease';
+      }
+      const applySlide=function(firstPass){
+        if(!state || state.scene!==sceneId) return;
+        const slide=slides[index];
+        if(!slide) return;
+        const duration=Math.max(Number(slide.duration)||3000, fadeDuration + 1200);
+        if(firstPass){
+          setStageBg(slide.bg, !!scene.zoom);
+        }else if(bgEl){
+          bgEl.style.opacity='0';
+          window.__c11gTenueFadeTimer=setTimeout(function(){
+            if(!state || state.scene!==sceneId) return;
+            setStageBg(slide.bg, !!scene.zoom);
+            bgEl.style.opacity='1';
+          }, Math.round(fadeDuration/2));
+        }else{
+          setStageBg(slide.bg, !!scene.zoom);
+        }
+        index=(index+1)%slides.length;
+        window.__c11gTenueSlideTimer=setTimeout(function(){ applySlide(false); }, duration);
+      };
+      applySlide(true);
     }
 
     if(typeof render==='function' && !render.__xigTenueSlidesWrapped){
@@ -32007,18 +32048,7 @@ Ouvrir le choix de perspective ?`);
           const sceneId=state.scene;
           const scene=S[sceneId];
           if(!scene || !Array.isArray(scene.keySlides) || scene.keySlides.length<2) return result;
-          let i=0;
-          const slides=scene.keySlides.slice();
-          const show=function(){
-            if(!state || state.scene!==sceneId) return;
-            const slide=slides[i];
-            if(!slide) return;
-            if(typeof setStageBg==='function') setStageBg(slide.bg,!!scene.zoom);
-            if(i<slides.length-1){
-              window.__c11gTenueSlideTimer=setTimeout(function(){ i+=1; show(); }, Number(slide.duration)||3000);
-            }
-          };
-          show();
+          startTenueSlidesLoop(sceneId, scene);
         }catch(err){ console.error('[Sylvinia] XI_G tenues slides',err); }
         return result;
       };
