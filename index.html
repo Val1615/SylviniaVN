@@ -32353,5 +32353,173 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+<script id="v0234-draven-fete-codex-repair">
+/* v0.234 · Draven fête + réparation d'index Codex récent
+   - déclare les sprites de fête de Draven dans A
+   - sécurise le remap Draven
+   - force l'indexation Codex Entrées / Images / Musiques des ajouts récents
+   - relance la détection Codex sur la scène courante et l'historique proche */
+(function installDravenFeteAndCodexRepair(){
+  try{
+    if(window.__sylviniaV234DravenFeteCodexRepair) return;
+    window.__sylviniaV234DravenFeteCodexRepair = true;
+
+    function pushUnique(arr, values){
+      if(!Array.isArray(arr)) return;
+      (Array.isArray(values)?values:[values]).forEach(function(v){
+        if(v && !arr.includes(v)) arr.push(v);
+      });
+    }
+
+    function replaceOrPush(arr, group){
+      if(!Array.isArray(arr) || !group || !group.id) return;
+      var index = arr.findIndex(function(item){ return item && item.id === group.id; });
+      if(index >= 0) arr[index] = Object.assign({}, arr[index], group);
+      else arr.push(group);
+    }
+
+    if(typeof A!=='undefined' && A){
+      Object.assign(A,{
+        draven_fete_angry:'assets/sprites/chapter11/group/draven_fete_angry.png',
+        draven_fete_neutral:'assets/sprites/chapter11/group/draven_fete_neutral.png',
+        draven_fete_sad:'assets/sprites/chapter11/group/draven_fete_sad.png',
+        draven_fete_smile:'assets/sprites/chapter11/group/draven_fete_smile.png',
+        draven_fete_thinking:'assets/sprites/chapter11/group/draven_fete_thinking.png',
+        draven_fete_lookaway:'assets/sprites/chapter11/group/draven_fete_lookaway.png'
+      });
+    }
+
+    /* Le remap précédent appelait déjà draven_fete_lookaway, mais la clé n'était pas déclarée.
+       On ajoute aussi l'équivalent thinking pour les scènes qui l'utilisent directement. */
+    var previousPartyRemap = window.__sylviniaPartySpriteRemap;
+    window.__sylviniaPartySpriteRemap = function repairedPartySpriteRemap(sprite){
+      var name = previousPartyRemap ? previousPartyRemap(sprite) : sprite;
+      var extra = {
+        draven_neutral:'draven_fete_neutral',
+        draven_stern:'draven_fete_neutral',
+        draven_gruff:'draven_fete_lookaway',
+        draven_approving:'draven_fete_smile',
+        draven_angry:'draven_fete_angry',
+        draven_surprised:'draven_fete_sad',
+        draven_thinking:'draven_fete_thinking'
+      };
+      return extra[name] || name;
+    };
+
+    /* Réparation Codex :
+       plusieurs patchs récents ajoutaient bien les entrées / images / musiques,
+       mais certaines clés n'étaient pas poussées dans les listes d'ordre ou groupes affichés. */
+    if(typeof CODEX_ORDER!=='undefined' && typeof CODEX_ENTRIES!=='undefined'){
+      pushUnique(CODEX_ORDER, Object.keys(CODEX_ENTRIES));
+    }
+    if(typeof CODEX_IMAGE_ORDER!=='undefined' && typeof CODEX_IMAGES!=='undefined'){
+      pushUnique(CODEX_IMAGE_ORDER, Object.keys(CODEX_IMAGES));
+    }
+    if(typeof CODEX_MUSIC_ORDER!=='undefined' && typeof CODEX_MUSIC!=='undefined'){
+      pushUnique(CODEX_MUSIC_ORDER, Object.keys(CODEX_MUSIC));
+    }
+
+    if(typeof CODEX_IMAGE_FILTERS!=='undefined' && Array.isArray(CODEX_IMAGE_FILTERS)){
+      [
+        {id:'chapter5',label:'Chapitre V'},
+        {id:'chapter6',label:'Chapitre VI'},
+        {id:'chapter7',label:'Chapitre VII'},
+        {id:'chapter8',label:'Chapitre VIII'},
+        {id:'chapter9',label:'Chapitre IX'},
+        {id:'chapter10',label:'Chapitre X'},
+        {id:'chapter11i',label:'Chapitre XI_I'},
+        {id:'chapter11g',label:'Chapitre XI_G'}
+      ].forEach(function(filter){
+        var old = CODEX_IMAGE_FILTERS.find(function(x){ return x && x.id === filter.id; });
+        if(!old) CODEX_IMAGE_FILTERS.push(filter);
+      });
+    }
+
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined' && Array.isArray(CODEX_IMAGE_GROUPS)){
+      replaceOrPush(CODEX_IMAGE_GROUPS,{
+        id:'chapter11g',
+        title:'Chapitre XI_G · Le Bal des Élus',
+        sections:[
+          {title:'Pavillon d’apparat et entrée de nuit',keys:[
+            'cg_c11g_tenue_bonus','cg_c11g_027_tenue_naiah_01','cg_c11g_028_tenue_naiah_02',
+            'cg_c11g_029_tenue_remerii','cg_c11g_029_tenue_valurn',
+            'cg_c11g_030_tenue_draven','cg_c11g_030_tenue_saidin','cg_c11g_031_entree_nuit'
+          ]},
+          {title:'Images clés du bal',keys:[
+            'cg_c11g_032','cg_c11g_036','cg_c11g_037','cg_c11g_042','cg_c11g_043',
+            'cg_c11g_049','cg_c11g_050','cg_c11g_choice_valurn_joute',
+            'cg_c11g_062','cg_c11g_063','cg_c11g_074','cg_c11g_075',
+            'cg_c11g_choice_draven_pression','cg_c11g_085','cg_c11g_100','cg_c11g_101'
+          ]}
+        ]
+      });
+    }
+
+    if(typeof window.CODEX_ENTRY_GROUPS!=='undefined' && Array.isArray(window.CODEX_ENTRY_GROUPS)){
+      replaceOrPush(window.CODEX_ENTRY_GROUPS,{
+        id:'chapter11g',
+        title:'Chapitre XI_G · Le Bal des Élus',
+        keys:['bal_des_elus','cour_sylvinienne','ellion_valendil','riven_thalarel','aldecian_vareth','yelna_faendil']
+      });
+    }
+
+    if(typeof window.CODEX_MUSIC_GROUPS!=='undefined' && Array.isArray(window.CODEX_MUSIC_GROUPS)){
+      replaceOrPush(window.CODEX_MUSIC_GROUPS,{
+        id:'chapter11',
+        title:'Chapitre XI · Routes du bal et d’Amanea',
+        keys:[
+          'music_c11_complainte_instru','music_c11_complainte',
+          'music_c3_shopping','music_iriana','music_algratal'
+        ].filter(function(k){ return typeof CODEX_MUSIC!=='undefined' && CODEX_MUSIC[k]; })
+      });
+    }
+
+    /* Rendre visibles les clés déjà débloquées si le joueur est dans le codex,
+       et rattraper la scène courante / l'historique proche sans tout révéler. */
+    function replayCodexForKnownScenes(){
+      if(typeof checkCodexForScene!=='function') return;
+      var ids = [];
+      try{
+        if(typeof state!=='undefined' && state){
+          ids = ids.concat(Array.isArray(state.history) ? state.history : []);
+          if(state.scene) ids.push(state.scene);
+        }
+      }catch(e){}
+      [...new Set(ids.filter(Boolean))].forEach(function(id){
+        try{ checkCodexForScene(id); }catch(e){}
+      });
+    }
+
+    replayCodexForKnownScenes();
+
+    if(typeof render==='function' && !render.__v234CodexRepairWrapped){
+      var previousRender = render;
+      render = window.render = function(){
+        var result = previousRender.apply(this, arguments);
+        try{
+          if(typeof state!=='undefined' && state && state.scene && typeof checkCodexForScene==='function'){
+            checkCodexForScene(state.scene);
+            if(typeof save==='function') save();
+          }
+        }catch(e){
+          console.warn('[Sylvinia] Codex v0.234 · rattrapage scène impossible', e);
+        }
+        return result;
+      };
+      render.__v234CodexRepairWrapped = true;
+    }
+
+    if(typeof renderCodex==='function' && typeof state!=='undefined' && state && state.lastScreen==='codex'){
+      try{ renderCodex(); }catch(e){}
+    }
+
+    console.log('[Sylvinia v0.234] Draven fête + réparation Codex appliqués.');
+  }catch(err){
+    console.error('[Sylvinia] Patch v0.234 Draven/Codex non installé', err);
+  }
+})();
+</script>
+
 </body>
 </html>
