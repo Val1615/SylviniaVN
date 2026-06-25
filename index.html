@@ -32521,5 +32521,227 @@ Ouvrir le choix de perspective ?`);
 })();
 </script>
 
+
+
+<script id="v0235-codex-unlock-and-hub-reset">
+/* v0.235 · Codex : déblocage robuste + reset du hub d'observation XI_G
+   - le Codex synchronise aussi son instantané réel quand le mode DEV est actif
+   - les déblocages Entrées / Images / Musiques ne sont plus effacés par les snapshots DEV
+   - le hub c11g_bal_observation repart à zéro à chaque relance du chapitre XI_G */
+(function installCodexUnlockAndHubResetFix(){
+  try{
+    if(window.__sylviniaV235CodexUnlockAndHubResetFix) return;
+    window.__sylviniaV235CodexUnlockAndHubResetFix = true;
+
+    const OBS_FLAGS = [
+      'c11gSeenValurnCourt',
+      'c11gSeenDravenCourt',
+      'c11gSeenSaidinCourt',
+      'c11gSeenRemeriiCourt'
+    ];
+
+    function clearObservationFlags(){
+      try{
+        if(typeof state==='undefined' || !state) return;
+        state.flags = state.flags || {};
+        OBS_FLAGS.forEach(function(flag){ delete state.flags[flag]; });
+      }catch(e){}
+    }
+
+    function unique(arr){ return Array.from(new Set((arr||[]).filter(Boolean))); }
+
+    function ensureCodexArraysLite(){
+      if(typeof state==='undefined' || !state) return false;
+      state.codexUnlocked = Array.isArray(state.codexUnlocked) ? state.codexUnlocked : [];
+      state.codexUnlockedImages = Array.isArray(state.codexUnlockedImages) ? state.codexUnlockedImages : [];
+      state.codexUnlockedMusic = Array.isArray(state.codexUnlockedMusic) ? state.codexUnlockedMusic : [];
+      ['hylee','remerii','valeurs'].forEach(function(k){ if(!state.codexUnlocked.includes(k)) state.codexUnlocked.push(k); });
+      if(!state.codexUnlockedMusic.includes('music_menu')) state.codexUnlockedMusic.push('music_menu');
+      if(!state.codexTab) state.codexTab='entries';
+      if(!state.codexImageFilter) state.codexImageFilter='all';
+      return true;
+    }
+
+    function syncRealCodexSnapshot(){
+      try{
+        if(typeof state==='undefined' || !state) return;
+        ensureCodexArraysLite();
+        const snap = state.__realCodexV0218 || {entries:[],images:[],music:[]};
+        state.__realCodexV0218 = {
+          entries: unique([...(snap.entries||[]), ...(state.codexUnlocked||[])]),
+          images: unique([...(snap.images||[]), ...(state.codexUnlockedImages||[])]),
+          music: unique([...(snap.music||[]), ...(state.codexUnlockedMusic||[])])
+        };
+      }catch(e){}
+    }
+
+    function pushOrder(orderName, lookupName){
+      try{
+        const order = window[orderName] || eval(orderName);
+        const lookup = window[lookupName] || eval(lookupName);
+        if(Array.isArray(order) && lookup){
+          Object.keys(lookup).forEach(function(k){ if(!order.includes(k)) order.push(k); });
+        }
+      }catch(e){}
+    }
+
+    pushOrder('CODEX_ORDER','CODEX_ENTRIES');
+    pushOrder('CODEX_IMAGE_ORDER','CODEX_IMAGES');
+    pushOrder('CODEX_MUSIC_ORDER','CODEX_MUSIC');
+
+    function unlockDirect(targetKey, lookup, keys){
+      ensureCodexArraysLite();
+      const added=[];
+      (Array.isArray(keys)?keys:[keys]).filter(Boolean).forEach(function(k){
+        if(lookup && lookup[k] && Array.isArray(state[targetKey]) && !state[targetKey].includes(k)){
+          state[targetKey].push(k);
+          added.push(lookup[k].title || lookup[k].label || k);
+        }
+      });
+      if(added.length) syncRealCodexSnapshot();
+      return added;
+    }
+
+    /* Remplace unlockList : l'ancien système pouvait perdre les ajouts quand le DEV conservait un snapshot réel du Codex. */
+    if(typeof unlockList==='function' && !unlockList.__v235Stable){
+      window.unlockList = unlockList = function unlockListV235(targetKey, lookup, keys){
+        return unlockDirect(targetKey, lookup, keys);
+      };
+      window.unlockList.__v235Stable = true;
+      try{ eval('unlockList=window.unlockList'); }catch(e){}
+    }
+
+    function sceneFromAnyMap(id){
+      try{ if(typeof S!=='undefined' && S && S[id]) return S[id]; }catch(e){}
+      try{ if(typeof SCENES!=='undefined' && SCENES && SCENES[id]) return SCENES[id]; }catch(e){}
+      return null;
+    }
+
+    function extraEntryKeysForScene(id){
+      id=String(id||'');
+      const keys=[];
+      const add=function(list){ list.forEach(function(k){
+        try{ if(typeof CODEX_ENTRIES!=='undefined' && CODEX_ENTRIES && CODEX_ENTRIES[k]) keys.push(k); }catch(e){}
+      }); };
+      if(/^c11g_/i.test(id)) add(['bal_des_elus','cour_sylvinienne']);
+      if(id==='c11g_bal_observation') add(['bal_des_elus','cour_sylvinienne']);
+      if(/^c11g_remerii_cour/i.test(id)) add(['remerii','bal_des_elus','cour_sylvinienne']);
+      if(/^c11g_valurn/i.test(id) || id==='c11g_choice_valurn_joute') add(['valurn','riven_thalarel','aldecian_vareth']);
+      if(/^c11g_draven/i.test(id) || id==='c11g_choice_draven_pression' || id==='c11g_choice_draven_fourmi') add(['draven','ellion_valendil']);
+      if(/^c11g_saidin/i.test(id) || id==='c11g_choice_saidin_miraldas') add(['saidin','yelna_faendil']);
+      const numeric=/^c11g_(\d+)$/i.exec(id);
+      if(numeric){
+        const n=parseInt(numeric[1],10);
+        if(n>=48 && n<=72) add(['valurn','riven_thalarel','aldecian_vareth']);
+        if(n>=73 && n<=98) add(['draven','ellion_valendil']);
+        if(n>=99 && n<=130) add(['saidin','yelna_faendil']);
+      }
+      return unique(keys);
+    }
+
+    function collectSceneCodex(id){
+      const scene = sceneFromAnyMap(id);
+      const entries = [];
+      const images = [];
+      const music = [];
+      try{ if(typeof CODEX_BY_SCENE!=='undefined' && CODEX_BY_SCENE && CODEX_BY_SCENE[id]) entries.push(...CODEX_BY_SCENE[id]); }catch(e){}
+      try{ if(typeof CODEX_IMAGES_BY_SCENE!=='undefined' && CODEX_IMAGES_BY_SCENE && CODEX_IMAGES_BY_SCENE[id]) images.push(...CODEX_IMAGES_BY_SCENE[id]); }catch(e){}
+      try{ if(typeof CODEX_MUSIC_BY_SCENE!=='undefined' && CODEX_MUSIC_BY_SCENE && CODEX_MUSIC_BY_SCENE[id]) music.push(...CODEX_MUSIC_BY_SCENE[id]); }catch(e){}
+      entries.push(...extraEntryKeysForScene(id));
+      if(scene){
+        try{ if(scene.bg && typeof CODEX_IMAGES!=='undefined' && CODEX_IMAGES && CODEX_IMAGES[scene.bg]) images.push(scene.bg); }catch(e){}
+        try{ if(Array.isArray(scene.keySlides)) scene.keySlides.forEach(function(slide){ if(slide && slide.bg && CODEX_IMAGES && CODEX_IMAGES[slide.bg]) images.push(slide.bg); }); }catch(e){}
+        try{ if(scene.music && typeof CODEX_MUSIC!=='undefined' && CODEX_MUSIC && CODEX_MUSIC[scene.music]) music.push(scene.music); }catch(e){}
+      }
+      return {entries:unique(entries),images:unique(images),music:unique(music)};
+    }
+
+    const previousCheck = (typeof checkCodexForScene==='function') ? checkCodexForScene : null;
+    window.checkCodexForScene = checkCodexForScene = function checkCodexForSceneV235(id){
+      let added=[];
+      try{
+        ensureCodexArraysLite();
+        const data = collectSceneCodex(id);
+        added = added.concat(unlockDirect('codexUnlocked', typeof CODEX_ENTRIES!=='undefined'?CODEX_ENTRIES:{}, data.entries));
+        added = added.concat(unlockDirect('codexUnlockedImages', typeof CODEX_IMAGES!=='undefined'?CODEX_IMAGES:{}, data.images));
+        added = added.concat(unlockDirect('codexUnlockedMusic', typeof CODEX_MUSIC!=='undefined'?CODEX_MUSIC:{}, data.music));
+        syncRealCodexSnapshot();
+        if(added.length && typeof toast==='function') toast('Codex mis à jour', unique(added).join(' · '));
+        if(typeof save==='function') save();
+      }catch(err){
+        console.warn('[Sylvinia v0.235] Déblocage Codex réparé impossible pour '+id, err);
+        if(previousCheck) try{ previousCheck(id); }catch(e){}
+      }
+    };
+    try{ eval('checkCodexForScene=window.checkCodexForScene'); }catch(e){}
+
+    window.unlockCodexImageKey = unlockCodexImageKey = function unlockCodexImageKeyV235(key){
+      try{
+        const added = unlockDirect('codexUnlockedImages', typeof CODEX_IMAGES!=='undefined'?CODEX_IMAGES:{}, [key]);
+        syncRealCodexSnapshot();
+        if(added.length && typeof toast==='function') toast('Codex mis à jour', added.join(' · '));
+        if(typeof save==='function') save();
+      }catch(e){}
+    };
+    try{ eval('unlockCodexImageKey=window.unlockCodexImageKey'); }catch(e){}
+
+    /* Rattrapage de la scène courante et de l'historique déjà parcouru. */
+    function replayKnownCodexScenes(){
+      try{
+        if(typeof state==='undefined' || !state) return;
+        const ids = unique([...(Array.isArray(state.history)?state.history:[]), state.scene]);
+        ids.forEach(function(id){ if(id) window.checkCodexForScene(id); });
+        syncRealCodexSnapshot();
+        if(typeof renderCodex==='function' && state.lastScreen==='codex') renderCodex();
+      }catch(e){}
+    }
+
+    replayKnownCodexScenes();
+
+    if(typeof render==='function' && !render.__v235CodexStableWrapped){
+      const previousRender = render;
+      render = window.render = function(){
+        const result = previousRender.apply(this, arguments);
+        try{
+          if(typeof state!=='undefined' && state && state.scene){
+            window.checkCodexForScene(state.scene);
+            syncRealCodexSnapshot();
+          }
+        }catch(e){}
+        return result;
+      };
+      render.__v235CodexStableWrapped = true;
+      try{ eval('render=window.render'); }catch(e){}
+    }
+
+    if(typeof window.startChapter11G==='function' && !window.startChapter11G.__v235HubResetWrapped){
+      const previousStartChapter11G = window.startChapter11G;
+      window.startChapter11G = function startChapter11GV235(){
+        const result = previousStartChapter11G.apply(this, arguments);
+        clearObservationFlags();
+        try{ if(typeof save==='function') save(); }catch(e){}
+        return result;
+      };
+      window.startChapter11G.__v235HubResetWrapped = true;
+      try{ eval('startChapter11G=window.startChapter11G'); }catch(e){}
+    }
+
+    if(typeof go==='function' && !go.__v235HubResetWrapped){
+      const previousGo = go;
+      go = window.go = function goV235(next, opts){
+        if(next==='c11g_001' || next==='c11g_disclaimer') clearObservationFlags();
+        return previousGo.apply(this, arguments);
+      };
+      go.__v235HubResetWrapped = true;
+      try{ eval('go=window.go'); }catch(e){}
+    }
+
+    console.log('[Sylvinia v0.235] Codex stable + reset hub XI_G appliqués.');
+  }catch(err){
+    console.error('[Sylvinia] Patch v0.235 Codex/hub non installé', err);
+  }
+})();
+</script>
+
 </body>
 </html>
