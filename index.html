@@ -2452,6 +2452,130 @@ body.trailer16x9.trailerDevMode #gameCard #devSceneCode{
 }
 </style>
 
+<style id="sylvinia-discrete-notifications-css">
+
+/* v17 · Notifications discrètes intégrées à la nouvelle D.A */
+.syl-notify-layer{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+.syl-notify-zone{
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  pointer-events:none;
+}
+.syl-notify-zone.top-right{top:max(14px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));align-items:flex-end}
+.syl-notify-zone.above-dialogue{left:max(18px,env(safe-area-inset-left));bottom:clamp(118px,18vh,190px);align-items:flex-start}
+.syl-notify-zone.bottom-left{left:max(18px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));align-items:flex-start}
+.syl-toast{
+  --toast-accent:rgba(233,201,133,.44);
+  --toast-border:rgba(233,201,133,.20);
+  position:relative;
+  width:min(320px,calc(100vw - 34px));
+  min-height:38px;
+  display:grid;
+  grid-template-columns:24px 1fr;
+  gap:9px;
+  align-items:start;
+  padding:9px 11px 9px 12px;
+  border:1px solid var(--toast-border);
+  border-left:2px solid var(--toast-accent);
+  border-radius:14px;
+  color:rgba(248,244,232,.92);
+  background:linear-gradient(180deg,rgba(9,11,18,.56),rgba(6,9,16,.46));
+  backdrop-filter:blur(12px) saturate(1.05);
+  -webkit-backdrop-filter:blur(12px) saturate(1.05);
+  box-shadow:0 13px 34px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.035);
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(7px) scale(.99);
+  animation:sylToastIn .24s ease forwards, sylToastOut .24s ease forwards;
+  animation-delay:0s,var(--toast-life,4.8s);
+}
+.syl-toast::after{
+  content:"";
+  position:absolute;
+  left:14px;right:14px;bottom:5px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--toast-accent),transparent);
+  opacity:.25;
+}
+.syl-toast .syl-sigil{
+  width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--toast-border);
+  background:rgba(255,255,255,.035);
+  color:var(--toast-accent);
+  font-size:12px;
+  line-height:1;
+  margin-top:1px;
+}
+.syl-toast .syl-tag{
+  margin-bottom:1px;
+  color:rgba(156,239,255,.84);
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.syl-toast .syl-title{
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:900;
+  color:rgba(255,249,232,.94);
+  font-size:15px;
+  line-height:1.08;
+  text-shadow:0 1px 8px rgba(0,0,0,.26);
+}
+.syl-toast .syl-desc{
+  color:rgba(244,242,235,.64);
+  margin-top:3px;
+  font-size:12px;
+  line-height:1.25;
+  max-width:28em;
+}
+.syl-toast.codex{--toast-accent:rgba(156,239,255,.48);--toast-border:rgba(156,239,255,.18)}
+.syl-toast.memory{--toast-accent:rgba(142,223,255,.48);--toast-border:rgba(142,223,255,.18)}
+.syl-toast.remerii{--toast-accent:rgba(185,153,255,.50);--toast-border:rgba(185,153,255,.18)}
+.syl-toast.nemesis{--toast-accent:rgba(167,231,195,.48);--toast-border:rgba(167,231,195,.16)}
+.syl-toast.item{--toast-accent:rgba(233,201,133,.46);--toast-border:rgba(233,201,133,.18)}
+.syl-toast.warning{--toast-accent:rgba(255,155,144,.48);--toast-border:rgba(255,155,144,.18)}
+.syl-toast.system{--toast-accent:rgba(210,220,232,.34);--toast-border:rgba(210,220,232,.13)}
+.syl-toast.tiny{
+  width:auto;min-width:210px;max-width:300px;
+  grid-template-columns:19px 1fr;
+  border-radius:999px;
+  padding:7px 10px;
+}
+.syl-toast.tiny .syl-sigil{width:19px;height:19px;font-size:10px}
+.syl-toast.tiny .syl-tag,.syl-toast.tiny .syl-desc{display:none}
+.syl-toast.tiny .syl-title{font-family:Inter,system-ui,sans-serif;font-size:12px;letter-spacing:.03em;text-transform:uppercase}
+.syl-toast.ribbon{
+  width:min(390px,calc(100vw - 38px));
+  display:block;
+  text-align:center;
+  padding:8px 14px;
+  border-left:1px solid var(--toast-border);
+  background:linear-gradient(90deg,transparent,rgba(8,10,16,.52),transparent);
+  box-shadow:none;
+}
+.syl-toast.ribbon .syl-sigil,.syl-toast.ribbon .syl-tag,.syl-toast.ribbon .syl-desc{display:none}
+.syl-toast.ribbon .syl-title{color:rgba(233,201,133,.92);letter-spacing:.08em;text-transform:uppercase;font-size:14px}
+@keyframes sylToastIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes sylToastOut{to{opacity:0;transform:translateY(-7px) scale(.99)}}
+@media(max-width:760px){
+  .syl-notify-zone.top-right{top:10px;right:10px}
+  .syl-notify-zone.above-dialogue{left:10px;bottom:150px}
+  .syl-toast{width:min(290px,calc(100vw - 24px));padding:8px 10px;font-size:12px}
+  .syl-toast .syl-title{font-size:13px}.syl-toast .syl-desc{font-size:11px}
+}
+body:not(.experimentalUI) .syl-notify-layer .syl-toast{
+  background:linear-gradient(180deg,rgba(8,13,22,.72),rgba(4,8,14,.66));
+}
+
+</style>
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -2565,7 +2689,7 @@ body.trailer16x9.trailerDevMode #gameCard #devSceneCode{
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
-                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Mode trailer 16:9</span><small class="btnDesc" id="trailerModeState">Désactivé · capture standard</small></button>
+                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Affichage expérimental</span><small class="btnDesc" id="trailerModeState">Désactivé · interface standard</small></button>
                   <button class="secondaryBtn redBtn menuActionBtn dockBtn toolBtn optionWideBtn" id="resetBtn"><span class="btnTitle">Nouveau départ</span><small class="btnDesc">Réinitialiser la progression.</small></button>
                 </div>
               </div>
@@ -2824,7 +2948,12 @@ body.trailer16x9.trailerDevMode #gameCard #devSceneCode{
     </section>
   </main>
 </div>
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast" aria-hidden="true"></div>
+<div id="sylviniaNotifyLayer" class="syl-notify-layer" aria-live="polite" aria-atomic="false">
+  <div class="syl-notify-zone top-right" id="sylNotifyTopRight"></div>
+  <div class="syl-notify-zone above-dialogue" id="sylNotifyAboveDialogue"></div>
+  <div class="syl-notify-zone bottom-left" id="sylNotifyBottomLeft"></div>
+</div>
 <div id="lightbox" class="lightbox hidden" onclick="closeLightbox(event)">
   <button class="lightboxClose" aria-label="Fermer l’aperçu" onclick="closeLightbox(event)">×</button>
   <div class="lightboxBox">
@@ -3810,7 +3939,57 @@ function ensureCodexDefaults(){
     if(typeof CODEX_MUSIC_ORDER!=='undefined') state.codexUnlockedMusic=[...new Set([...(state.codexUnlockedMusic||[]),...CODEX_MUSIC_ORDER])];
   }
 }
-function toast(title,detail=''){playUiSound('notify'); const t=document.getElementById('toast'); if(!t)return; t.innerHTML=`${title}${detail?`<small>${detail}</small>`:''}`; t.classList.add('show'); clearTimeout(window.__toastTimer); window.__toastTimer=setTimeout(()=>t.classList.remove('show'),2600);}
+function sylviniaNotifyIcon(type){
+  return {codex:'◇',memory:'✦',remerii:'◈',nemesis:'✧',item:'▣',choice:'›',warning:'!',system:'•'}[type] || '•';
+}
+function sylviniaNotifyEscape(value){
+  return String(value ?? '').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function sylviniaNotifyInfer(title='', detail=''){
+  const txt=(String(title)+' '+String(detail)).toLowerCase();
+  if(txt.includes('codex') || txt.includes('grimoire')) return {type:'codex', tag:'Codex', zone:'top'};
+  if(txt.includes('souvenir')) return {type:'memory', tag:'Souvenir', zone:'top'};
+  if(txt.includes('remerii') || txt.includes('regard') || txt.includes('lien')) return {type:'remerii', tag:'Regard', zone:'top'};
+  if(txt.includes('fragment') || txt.includes('némésis') || txt.includes('nemesis') || txt.includes('journal ancien')) return {type:'nemesis', tag:'Carnet', zone:'above'};
+  if(txt.includes('inventaire') || txt.includes('objet')) return {type:'item', tag:'Inventaire', zone:'top'};
+  if(txt.includes('incorrect') || txt.includes('désactivé') || txt.includes('alerte') || txt.includes('bug')) return {type:'warning', tag:'Système', zone:'top'};
+  if(txt.includes('+') || txt.includes('audace') || txt.includes('lucidité') || txt.includes('sang-froid') || txt.includes('résonance')) return {type:'choice', tag:'Conséquence', zone:'top'};
+  return {type:'system', tag:'Interface', zone:'top'};
+}
+function sylviniaNotifyZone(zone){
+  return zone==='above' ? document.getElementById('sylNotifyAboveDialogue') : zone==='left' ? document.getElementById('sylNotifyBottomLeft') : document.getElementById('sylNotifyTopRight');
+}
+function sylviniaNotify(input, detail){
+  const data=(typeof input==='object' && input) ? {...input} : {title:input, desc:detail};
+  const inferred=sylviniaNotifyInfer(data.title||'', data.desc||data.detail||'');
+  const type=data.type||inferred.type;
+  const zone=data.zone||inferred.zone;
+  const tag=data.tag===undefined?inferred.tag:data.tag;
+  const title=sylviniaNotifyEscape(data.title||'Notification');
+  let desc=String(data.desc ?? data.detail ?? '');
+  const parts=desc.split(' · ').filter(Boolean);
+  if(parts.length>3) desc=parts.slice(0,2).join(' · ')+` · +${parts.length-2}`;
+  desc=sylviniaNotifyEscape(desc);
+  const variant=data.variant || (desc.length<1 && !tag ? 'tiny' : '');
+  const life=Number(data.life||data.duration||4800);
+  const zoneEl=sylviniaNotifyZone(zone);
+  if(!zoneEl) return;
+  if(typeof playUiSound==='function') playUiSound('notify');
+  const el=document.createElement('div');
+  el.className=`syl-toast ${type}${variant?` ${variant}`:''}`;
+  el.style.setProperty('--toast-life', Math.max(2.6, life/1000)+'s');
+  if(variant==='ribbon'){
+    el.innerHTML=`<div class="syl-title">${title}</div>`;
+  }else{
+    el.innerHTML=`<div class="syl-sigil">${sylviniaNotifyIcon(type)}</div><div>${tag?`<div class="syl-tag">${sylviniaNotifyEscape(tag)}</div>`:''}<div class="syl-title">${title}</div>${desc?`<div class="syl-desc">${desc}</div>`:''}</div>`;
+  }
+  zoneEl.appendChild(el);
+  while(zoneEl.children.length>4){ zoneEl.firstElementChild.remove(); }
+  window.setTimeout(()=>{ el.remove(); }, life+420);
+}
+function toast(title,detail=''){
+  sylviniaNotify({title, desc:detail});
+}
 function unlockList(targetKey, lookup, keys){ensureCodexDefaults(); const added=[]; (keys||[]).forEach(k=>{ if(lookup[k] && !state[targetKey].includes(k)){ state[targetKey].push(k); added.push(lookup[k].title); } }); return added; }
 function checkCodexForScene(id){
   const dynamicImages=[];
@@ -13693,32 +13872,15 @@ function applyTrailer16x9UI(){
   const btn=document.getElementById('trailerModeBtn');
   const label=document.getElementById('trailerModeState');
   if(btn) btn.classList.toggle('active', enabled);
-  if(label) label.textContent=enabled?'Activé · cadre paysage 16:9':'Désactivé · capture standard';
+  const title=btn?btn.querySelector('.btnTitle'):null;
+  if(title) title.textContent='Affichage expérimental';
+  if(label) label.textContent=enabled?'Activé · affichage libre':'Désactivé · interface standard';
 }
 async function setTrailer16x9Mode(enabled){
   enabled=!!enabled;
   try{localStorage.setItem(TRAILER_16X9_STORAGE_KEY, enabled?'true':'false');}catch(e){}
   applyTrailer16x9UI();
-  if(enabled){
-    try{
-      if(document.documentElement.requestFullscreen && !document.fullscreenElement){
-        await document.documentElement.requestFullscreen();
-      }
-    }catch(e){ console.warn('Plein écran indisponible', e); }
-    try{
-      if(screen.orientation && screen.orientation.lock){
-        await screen.orientation.lock('landscape');
-      }
-    }catch(e){ console.warn('Verrouillage paysage indisponible', e); }
-    toast('Mode trailer 16:9 activé','Tourne le téléphone en paysage pour une capture propre.');
-  }else{
-    try{
-      if(document.fullscreenElement && document.exitFullscreen){
-        await document.exitFullscreen();
-      }
-    }catch(e){ console.warn('Sortie plein écran indisponible', e); }
-    toast('Mode trailer désactivé','Retour à l’affichage normal.');
-  }
+  toast(enabled?'Affichage expérimental activé':'Affichage expérimental désactivé', enabled?'Interface VN cinématique activée, sans verrouillage 16:9.':'Retour à l’affichage standard.');
 }
 function toggleTrailer16x9Mode(){
   setTrailer16x9Mode(!trailer16x9Enabled());
@@ -34812,6 +34974,665 @@ body.trailer16x9 #gameCard.trailerQteActive ~ #c7StickyTimer{
     }catch(e){}
   });
   document.addEventListener('click',()=>setTimeout(syncTrailerQteClass,40),true);
+})();
+</script>
+
+
+
+<style id="experimentalDisplayV12FreeLayout">
+/* V12 · Affichage expérimental libre : on garde l'ATH cinématique sans verrouiller le jeu en 16:9. */
+body.trailer16x9{
+  background:#020409!important;
+  overflow:auto!important;
+}
+body.trailer16x9 #app{
+  width:100%!important;
+  min-height:100dvh!important;
+  height:auto!important;
+  padding:0!important;
+  display:block!important;
+  overflow:visible!important;
+  background:#000!important;
+}
+body.trailer16x9 .screen.card:not(.hidden){
+  width:100%!important;
+  height:auto!important;
+  min-height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  border-radius:0!important;
+  overflow:auto!important;
+}
+body.trailer16x9 #game.screen.card:not(.hidden),
+body.trailer16x9 #gameCard{
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+body.trailer16x9 #titleCard,
+body.trailer16x9 #splashTitleCard{
+  width:100%!important;
+  min-height:100dvh!important;
+  height:auto!important;
+  border-radius:0!important;
+  overflow:auto!important;
+}
+#trailerModeBtn .btnTitle::after{content:"";}
+
+/* Chapitres : on revient à l'esprit initial, avec livre beige + rangée de volumes horizontale défilable. */
+body.trailer16x9 #chapters.screen.card:not(.hidden),
+body.trailer16x9 #chaptersCard{
+  width:100%!important;
+  height:auto!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  padding:16px!important;
+  overflow:auto!important;
+  border-radius:0!important;
+  background:radial-gradient(circle at top left,rgba(167,240,255,.10),transparent 26%),radial-gradient(circle at bottom right,rgba(233,201,133,.12),transparent 28%),linear-gradient(180deg,rgba(7,13,24,.98),rgba(3,7,13,.99))!important;
+}
+body.trailer16x9 #chaptersCard .chaptersFrame{
+  display:grid!important;
+  grid-template-columns:minmax(220px,300px) minmax(0,1fr)!important;
+  gap:18px!important;
+  align-items:start!important;
+  width:min(1280px,100%)!important;
+  margin:0 auto!important;
+  height:auto!important;
+  min-height:0!important;
+}
+body.trailer16x9 #chaptersCard .chaptersSidebar{
+  position:sticky!important;
+  top:12px!important;
+  left:auto!important;
+  right:auto!important;
+  width:auto!important;
+  height:auto!important;
+  padding:18px!important;
+  border-radius:24px!important;
+  background:linear-gradient(180deg,rgba(10,17,28,.95),rgba(5,9,17,.98))!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:0 20px 44px rgba(0,0,0,.24)!important;
+  backdrop-filter:none!important;
+  display:grid!important;
+  gap:12px!important;
+}
+body.trailer16x9 #chaptersCard .chaptersSidebar .chaptersLead,
+body.trailer16x9 #chaptersCard .chaptersSidebar .chaptersHint{
+  display:block!important;
+}
+body.trailer16x9 #chaptersCard .chaptersTitle{
+  color:#f4e0a8!important;
+  font-size:clamp(28px,4vw,42px)!important;
+  line-height:1!important;
+}
+body.trailer16x9 #chaptersCard .menuSectionTitle{
+  font-size:10px!important;
+  letter-spacing:.28em!important;
+  color:#a8efff!important;
+}
+body.trailer16x9 #chaptersCard .backWide{
+  width:100%!important;
+  padding:12px 16px!important;
+  border-radius:16px!important;
+}
+body.trailer16x9 #chaptersCard .chaptersBook{
+  position:relative!important;
+  inset:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  padding:20px!important;
+  border-radius:28px!important;
+  background:linear-gradient(180deg,rgba(244,227,188,.94),rgba(216,188,131,.90))!important;
+  color:#2d2418!important;
+  border:1px solid rgba(233,201,133,.22)!important;
+  box-shadow:inset 0 0 60px rgba(95,58,25,.16)!important;
+}
+body.trailer16x9 #chaptersCard .chaptersBookHead{
+  display:flex!important;
+  margin-bottom:16px!important;
+  padding-bottom:14px!important;
+}
+body.trailer16x9 #chaptersCard .chapterLibraryBanner{
+  display:block!important;
+  margin-bottom:18px!important;
+}
+body.trailer16x9 #chaptersCard .chapterSelectGrid{
+  display:flex!important;
+  flex-direction:row!important;
+  gap:10px!important;
+  min-height:520px!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:8px 4px 18px!important;
+  scroll-snap-type:x proximity!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-x!important;
+}
+body.trailer16x9 #chaptersCard .chapterSelectCard{
+  flex:0 0 72px!important;
+  min-height:500px!important;
+  height:auto!important;
+  max-height:none!important;
+  display:grid!important;
+  grid-template-columns:72px 0!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  scroll-snap-align:start!important;
+}
+body.trailer16x9 #chaptersCard .chapterSelectCard[open]{
+  flex-basis:min(760px,calc(100vw - 120px))!important;
+  grid-template-columns:86px minmax(0,1fr)!important;
+}
+body.trailer16x9 #chaptersCard .chapterBookCover{
+  min-height:500px!important;
+  height:100%!important;
+}
+body.trailer16x9 #chaptersCard .chapterBookSpine{
+  padding:46px 8px 56px!important;
+}
+body.trailer16x9 #chaptersCard .chapterBookSpine span{
+  font-size:11px!important;
+  letter-spacing:.14em!important;
+}
+body.trailer16x9 #chaptersCard .chapterSelectState{
+  top:12px!important;
+  left:50%!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+  writing-mode:vertical-rl!important;
+  text-orientation:mixed!important;
+}
+body.trailer16x9 #chaptersCard .chapterSelectCard[open] .chapterBookOpened{
+  height:auto!important;
+  max-height:500px!important;
+  overflow-y:auto!important;
+  padding:18px!important;
+  gap:16px!important;
+  grid-template-columns:minmax(190px,280px) minmax(250px,1fr)!important;
+  align-content:start!important;
+}
+body.trailer16x9 #chaptersCard .chapterOpenImageFrame{max-height:none!important;}
+
+/* Choix : ne jamais perdre les infos facile/dev. */
+body.trailer16x9 #gameCard .choiceBtn > span:first-child{
+  display:flex!important;
+  min-width:0!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  white-space:normal!important;
+}
+body.trailer16x9 #gameCard .choiceBtn small,
+body.trailer16x9 #gameCard .choiceBtn .devReward{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  margin-top:3px!important;
+  font-size:clamp(8.5px,.74vw,11px)!important;
+  line-height:1.18!important;
+  color:rgba(226,234,244,.86)!important;
+  font-weight:750!important;
+}
+body.trailer16x9 #gameCard .choiceBtn .devReward{color:#9fffd1!important;}
+body.trailer16x9 #gameCard .choiceBtn .devReward.negative{color:#ff9baa!important;}
+body.trailer16x9 #gameCard .choiceBtn .devReward.neutral{color:#ffd88a!important;}
+
+/* Sprites : on annule le gonflage V11 et on revient à un ancrage plus stable. */
+body.trailer16x9 #gameCard .char,
+body.trailer16x9 #gameCard .chars img{
+  bottom:-1.5%!important;
+  max-height:88%!important;
+  max-width:46%!important;
+  object-fit:contain!important;
+  transform-origin:center bottom!important;
+}
+body.trailer16x9 #gameCard .char.left{left:4%!important;right:auto!important;}
+body.trailer16x9 #gameCard .char.right{right:4%!important;left:auto!important;}
+body.trailer16x9 #gameCard .char.center{left:50%!important;right:auto!important;max-height:90%!important;max-width:62%!important;}
+body.trailer16x9 #gameCard .chars.duoChars .char.left,
+body.trailer16x9 #gameCard .chars.duoChars .char.right{
+  max-height:88%!important;
+  max-width:44%!important;
+  bottom:-1.5%!important;
+}
+body.trailer16x9 #gameCard .chars.trioChars .char.left,
+body.trailer16x9 #gameCard .chars.trioChars .char.right{
+  max-height:78%!important;
+  max-width:34%!important;
+  bottom:-1.5%!important;
+}
+body.trailer16x9 #gameCard .chars.trioChars .char.center{
+  max-height:82%!important;
+  max-width:38%!important;
+  bottom:-1.5%!important;
+}
+body.trailer16x9 #gameCard .char.left.back,
+body.trailer16x9 #gameCard .char.right.back{
+  max-height:74%!important;
+  max-width:34%!important;
+  bottom:-1.5%!important;
+  opacity:.74!important;
+}
+body.trailer16x9 #gameCard .char.valurn,
+body.trailer16x9 #gameCard .char.draven,
+body.trailer16x9 #gameCard .char.saidin{
+  max-height:90%!important;
+}
+body.trailer16x9 #gameCard .char.iriana,
+body.trailer16x9 #gameCard .char.remerii,
+body.trailer16x9 #gameCard .char.hylee{
+  max-height:88%!important;
+}
+
+/* Duels : intégration plus légère des jauges, moins d'emprise sur l'image. */
+body.trailer16x9 #gameCard .stats:has(.combatHud){
+  top:8.2%!important;
+  left:5.2%!important;
+  max-width:min(420px,34vw)!important;
+  opacity:.48!important;
+  transform:scale(.72)!important;
+  transform-origin:top left!important;
+  filter:saturate(.90)!important;
+}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatHud{
+  gap:5px!important;
+}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatBox{
+  min-width:112px!important;
+  padding:6px 8px!important;
+  border-radius:11px!important;
+  background:linear-gradient(180deg,rgba(8,8,14,.34),rgba(5,6,12,.24))!important;
+}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatTop{
+  font-size:9px!important;
+  margin-bottom:4px!important;
+}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatTrack{height:5px!important;}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatMeta{
+  gap:4px!important;
+  margin-top:4px!important;
+}
+body.trailer16x9 #gameCard .stats:has(.combatHud) .combatMeta span{
+  font-size:8px!important;
+  padding:3px 6px!important;
+}
+body.trailer16x9 #c7StickyTimer{
+  transform:scale(.86)!important;
+  transform-origin:top right!important;
+  opacity:.82!important;
+}
+
+@media (max-width:900px), (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 #chaptersCard .chaptersFrame{display:block!important;width:100%!important;}
+  body.trailer16x9 #chaptersCard .chaptersSidebar{position:relative!important;top:auto!important;margin-bottom:12px!important;padding:12px!important;}
+  body.trailer16x9 #chaptersCard .chaptersSidebar .chaptersLead,
+  body.trailer16x9 #chaptersCard .chaptersSidebar .chaptersHint{display:none!important;}
+  body.trailer16x9 #chaptersCard .chaptersBook{padding:14px!important;border-radius:22px!important;}
+  body.trailer16x9 #chaptersCard .chaptersBookHead{display:flex!important;gap:10px!important;align-items:center!important;}
+  body.trailer16x9 #chaptersCard .chapterLibraryBanner{display:block!important;max-height:120px!important;overflow:hidden!important;}
+  body.trailer16x9 #chaptersCard .chapterSelectGrid{min-height:410px!important;}
+  body.trailer16x9 #chaptersCard .chapterSelectCard{flex-basis:60px!important;grid-template-columns:60px 0!important;min-height:395px!important;}
+  body.trailer16x9 #chaptersCard .chapterSelectCard[open]{flex-basis:min(620px,calc(100vw - 88px))!important;grid-template-columns:66px minmax(0,1fr)!important;}
+  body.trailer16x9 #chaptersCard .chapterBookCover{min-height:395px!important;}
+  body.trailer16x9 #chaptersCard .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:minmax(120px,180px) minmax(0,1fr)!important;max-height:395px!important;padding:12px!important;}
+  body.trailer16x9 #chaptersCard .chapterOpenText h4{font-size:clamp(18px,2.6vw,25px)!important;}
+  body.trailer16x9 #chaptersCard .chapterOpenText p{font-size:12px!important;line-height:1.32!important;}
+  body.trailer16x9 #gameCard .char,
+  body.trailer16x9 #gameCard .chars img{max-height:84%!important;max-width:45%!important;}
+  body.trailer16x9 #gameCard .chars.trioChars .char.left,
+  body.trailer16x9 #gameCard .chars.trioChars .char.right{max-height:74%!important;max-width:32%!important;}
+  body.trailer16x9 #gameCard .chars.trioChars .char.center{max-height:78%!important;max-width:36%!important;}
+  body.trailer16x9 #gameCard .stats:has(.combatHud){top:6.4%!important;left:4.5%!important;max-width:38vw!important;transform:scale(.62)!important;}
+  body.trailer16x9 #c7StickyTimer{transform:scale(.76)!important;}
+}
+</style>
+
+<script id="experimentalDisplayV12BehaviorFix">
+(function(){
+  function syncExperimentalLabels(){
+    const title=document.querySelector('#trailerModeBtn .btnTitle');
+    const stateLabel=document.getElementById('trailerModeState');
+    const enabled=document.body.classList.contains('trailer16x9');
+    if(title) title.textContent='Affichage expérimental';
+    if(stateLabel) stateLabel.textContent=enabled?'Activé · affichage libre':'Désactivé · interface standard';
+  }
+
+  function patchExperimentalMode(){
+    try{
+      if(typeof applyTrailer16x9UI==='function' && !applyTrailer16x9UI.__v12FreeDisplay){
+        const oldApply=applyTrailer16x9UI;
+        applyTrailer16x9UI=function(){
+          const result=oldApply.apply(this, arguments);
+          syncExperimentalLabels();
+          return result;
+        };
+        applyTrailer16x9UI.__v12FreeDisplay=true;
+      }
+      if(typeof setTrailer16x9Mode==='function' && !setTrailer16x9Mode.__v12FreeDisplay){
+        setTrailer16x9Mode=async function(enabled){
+          enabled=!!enabled;
+          try{localStorage.setItem(TRAILER_16X9_STORAGE_KEY, enabled?'true':'false');}catch(e){}
+          if(typeof applyTrailer16x9UI==='function') applyTrailer16x9UI();
+          syncExperimentalLabels();
+          if(typeof toast==='function') toast(enabled?'Affichage expérimental activé':'Affichage expérimental désactivé', enabled?'Interface VN cinématique activée, sans verrouillage 16:9.':'Retour à l’affichage standard.');
+        };
+        setTrailer16x9Mode.__v12FreeDisplay=true;
+        window.setTrailer16x9Mode=setTrailer16x9Mode;
+      }
+    }catch(e){console.warn('Patch affichage expérimental V12 non appliqué',e);}
+  }
+
+  function patchChoiceHints(){
+    try{
+      const oldRender=render;
+      if(typeof oldRender==='function' && !oldRender.__v12ChoiceHints){
+        render=function(){
+          const result=oldRender.apply(this,arguments);
+          requestAnimationFrame(enhanceChoiceHints);
+          return result;
+        };
+        render.__v12ChoiceHints=true;
+        window.render=render;
+      }
+    }catch(e){}
+  }
+
+  function choiceTypeFromChoice(ch){
+    if(!ch) return '';
+    const labels={audace:'Audace',sangfroid:'Sang-froid',lucidite:'Lucidité',resonance:'Résonance',lien:'Lien Remerii',pacteNaiah:'Pacte Naïah'};
+    const keys=[];
+    if(ch.effects && typeof ch.effects==='object') Object.keys(ch.effects).forEach(k=>{ if(labels[k]) keys.push(labels[k]); });
+    if(ch.introEffects && typeof ch.introEffects==='object') Object.keys(ch.introEffects).forEach(k=>{ if(labels[k]) keys.push(labels[k]); });
+    if(typeof ch.pacteNaiah==='number' && ch.pacteNaiah!==0) keys.push(labels.pacteNaiah);
+    if(ch.requires && typeof ch.requires==='object') Object.keys(ch.requires).forEach(k=>{ if(labels[k]) keys.push('Préreq. '+labels[k]); });
+    return Array.from(new Set(keys)).join(' · ');
+  }
+
+  function enhanceChoiceHints(){
+    try{
+      if(!document.body.classList.contains('trailer16x9')) return;
+      const scene=(typeof S!=='undefined' && typeof state!=='undefined')?S[state.scene]:null;
+      if(!scene || !Array.isArray(scene.choices)) return;
+      const buttons=[...document.querySelectorAll('#choices .choiceBtn:not(.continueBtn)')];
+      buttons.forEach((btn,i)=>{
+        const ch=scene.choices[i];
+        if(!ch) return;
+        const span=btn.querySelector('span:first-child')||btn;
+        const existing=[...span.querySelectorAll('small')].map(e=>e.textContent.trim()).join(' ');
+        if(state && state.devMode){
+          if(!/DEV · Valeurs/.test(existing) && typeof choiceValueDevText==='function'){
+            const txt=choiceValueDevText(ch);
+            if(txt){
+              const sm=document.createElement('small');
+              sm.className='devReward '+(typeof choiceValueDevClass==='function'?choiceValueDevClass(typeof choiceValueEffects==='function'?choiceValueEffects(ch):{}):'');
+              sm.textContent=txt;
+              span.appendChild(sm);
+            }
+          }
+          if(ch.requires && !/prérequis/i.test(existing) && typeof statReqText==='function'){
+            const sm=document.createElement('small');
+            sm.textContent='DEV · prérequis ignoré : '+statReqText(ch.requires);
+            span.appendChild(sm);
+          }
+        }else if(typeof vnEasyModeEnabled==='function' && vnEasyModeEnabled()){
+          const type=choiceTypeFromChoice(ch);
+          if(type && !existing.includes(type)){
+            const sm=document.createElement('small');
+            sm.textContent=type;
+            span.appendChild(sm);
+          }
+        }
+      });
+    }catch(e){}
+  }
+
+  patchExperimentalMode();
+  patchChoiceHints();
+  document.addEventListener('DOMContentLoaded',()=>{patchExperimentalMode(); syncExperimentalLabels(); enhanceChoiceHints();});
+  document.addEventListener('click',()=>setTimeout(()=>{syncExperimentalLabels(); enhanceChoiceHints();},80),true);
+  document.addEventListener('change',()=>setTimeout(()=>{syncExperimentalLabels(); enhanceChoiceHints();},80),true);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style id="experimentalDisplayV16ChoiceExpandStable">
+/* V16 · Choix dépliables stables, sans observer ni boucle DOM.
+   Fermé : libellé seul. Ouvert : infos sous le libellé + second clic pour valider. */
+body.trailer16x9 #gameCard #choices{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn){
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:34px!important;
+  max-height:46px!important;
+  height:auto!important;
+  padding:6px 10px!important;
+  overflow:hidden!important;
+  position:relative!important;
+  contain:layout style!important;
+  transition:max-height .18s ease, min-height .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn) > span:first-child{
+  display:block!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn) .choiceTitleText{
+  display:block!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2!important;
+  -webkit-box-orient:vertical!important;
+  line-height:1.06!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn) small,
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn) .devReward,
+body.trailer16x9 #gameCard #choices .choiceBtn:not(.continueBtn) .choiceDetailsPane{
+  display:block!important;
+  max-height:0!important;
+  height:auto!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  overflow:hidden!important;
+  margin:0!important;
+  padding:0!important;
+  pointer-events:none!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn){
+  align-items:start!important;
+  min-height:88px!important;
+  max-height:min(230px,42vh)!important;
+  padding:8px 10px 9px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  border-color:rgba(233,201,133,.72)!important;
+  background:linear-gradient(180deg,rgba(58,39,25,.70),rgba(9,11,21,.84))!important;
+  box-shadow:0 0 0 1px rgba(233,201,133,.12),0 12px 28px rgba(0,0,0,.36)!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) > span:first-child{
+  overflow:visible!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .choiceTitleText{
+  -webkit-line-clamp:unset!important;
+  overflow:visible!important;
+  margin-bottom:4px!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) small,
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .devReward,
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .choiceDetailsPane{
+  max-height:160px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  overflow:visible!important;
+  margin-top:3px!important;
+  pointer-events:auto!important;
+  color:rgba(225,235,245,.9)!important;
+  font-size:clamp(9px,.82vw,11.5px)!important;
+  line-height:1.18!important;
+  font-weight:750!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .devReward{color:#9fffd1!important;}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .devReward.negative{color:#ff9baa!important;}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .devReward.neutral{color:#ffd88a!important;}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn)::after{
+  grid-column:1 / -1!important;
+  content:"Appuie encore pour choisir"!important;
+  display:block!important;
+  margin-top:5px!important;
+  padding-top:5px!important;
+  border-top:1px solid rgba(233,201,133,.24)!important;
+  text-align:right!important;
+  font:800 8.5px/1.1 system-ui,-apple-system,Segoe UI,sans-serif!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+  color:rgba(159,238,255,.78)!important;
+}
+body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) .arrow{
+  transform:rotate(90deg)!important;
+  color:#f3d99b!important;
+}
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn){
+    min-height:78px!important;
+    max-height:176px!important;
+  }
+}
+</style>
+
+<script id="experimentalDisplayV16ChoiceExpandStableScript">
+(function(){
+  if(window.__sylviniaExperimentalChoiceExpandV16) return;
+  window.__sylviniaExperimentalChoiceExpandV16=true;
+
+  function active(){
+    return document.body && document.body.classList.contains('trailer16x9');
+  }
+  function isChoiceButton(btn){
+    return !!(btn && btn.classList && btn.classList.contains('choiceBtn') && !btn.classList.contains('continueBtn') && btn.closest('#gameCard #choices'));
+  }
+  function closeAll(except){
+    const root=document.getElementById('choices');
+    if(!root) return;
+    root.querySelectorAll('.choiceBtn.choiceExpanded').forEach(function(b){
+      if(b===except) return;
+      b.classList.remove('choiceExpanded');
+      b.setAttribute('aria-expanded','false');
+    });
+  }
+  function prepareButton(btn){
+    if(!isChoiceButton(btn) || btn.dataset.v16Prepared==='1') return;
+    btn.dataset.v16Prepared='1';
+    btn.setAttribute('aria-expanded','false');
+    const main=btn.querySelector('span:first-child');
+    if(!main) return;
+    if(!main.querySelector('.choiceTitleText')){
+      const details=[];
+      Array.from(main.childNodes).forEach(function(node){
+        if(node.nodeType===1 && (node.matches('small') || node.classList.contains('devReward'))){
+          details.push(node);
+        }
+      });
+      let label='';
+      Array.from(main.childNodes).forEach(function(node){
+        if(details.includes(node)) return;
+        label += node.textContent || '';
+      });
+      label = label.replace(/›/g,'').replace(/\s+/g,' ').trim();
+      if(!label) label = (btn.innerText || '').replace(/›/g,'').replace(/Appuie encore pour choisir/gi,'').replace(/\s+/g,' ').trim();
+      main.innerHTML='';
+      const title=document.createElement('span');
+      title.className='choiceTitleText';
+      title.textContent=label;
+      main.appendChild(title);
+      details.forEach(function(d){ main.appendChild(d); });
+    }
+  }
+  function prepareChoices(){
+    if(!active()) return;
+    const root=document.getElementById('choices');
+    if(!root) return;
+    root.querySelectorAll('.choiceBtn:not(.continueBtn)').forEach(prepareButton);
+  }
+  function schedulePrepare(){
+    requestAnimationFrame(prepareChoices);
+  }
+
+  document.addEventListener('click', function(ev){
+    if(!active()) return;
+    const btn=ev.target && ev.target.closest ? ev.target.closest('#gameCard #choices .choiceBtn') : null;
+    if(!isChoiceButton(btn)) return;
+    if(btn.disabled || btn.classList.contains('lockedChoice') || btn.classList.contains('locked')) return;
+    prepareButton(btn);
+    if(!btn.classList.contains('choiceExpanded')){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      closeAll(btn);
+      btn.classList.add('choiceExpanded');
+      btn.setAttribute('aria-expanded','true');
+      try{ btn.scrollIntoView({block:'nearest', inline:'nearest'}); }catch(e){}
+      return false;
+    }
+    // second clic : on laisse le gestionnaire natif du jeu valider le choix.
+  }, true);
+
+  document.addEventListener('keydown', function(ev){
+    if(!active() || (ev.key!=='Enter' && ev.key!==' ')) return;
+    const btn=ev.target && ev.target.closest ? ev.target.closest('#gameCard #choices .choiceBtn') : null;
+    if(!isChoiceButton(btn) || btn.disabled) return;
+    prepareButton(btn);
+    if(!btn.classList.contains('choiceExpanded')){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      closeAll(btn);
+      btn.classList.add('choiceExpanded');
+      btn.setAttribute('aria-expanded','true');
+      return false;
+    }
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', schedulePrepare);
+  document.addEventListener('click', function(){ setTimeout(schedulePrepare,40); }, true);
+  try{
+    if(typeof render==='function' && !render.__choiceExpandV16){
+      const previousRender=render;
+      render=function(){
+        const result=previousRender.apply(this,arguments);
+        schedulePrepare();
+        return result;
+      };
+      render.__choiceExpandV16=true;
+      window.render=render;
+    }
+  }catch(e){}
 })();
 </script>
 
