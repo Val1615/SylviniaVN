@@ -2041,6 +2041,130 @@ body.trailer16x9 .chaptersSidebar{transform:scale(.92)!important;transform-origi
 }
 </style>
 
+<style id="trailer16x9V3Fixes">
+/* V3 : mode trailer utilisable. On garde le cadre 16:9, mais on rend les écrans scrollables et on restaure Menu. */
+body.trailer16x9 .screen.card:not(.hidden){
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+body.trailer16x9 #app{
+  overscroll-behavior:contain!important;
+}
+
+/* Le jeu reste cadré comme une capture VN, mais le texte peut défiler dans la boîte. */
+body.trailer16x9 #game.screen.card:not(.hidden),
+body.trailer16x9 #gameCard{
+  overflow:hidden!important;
+}
+body.trailer16x9 #menuBtn{
+  display:inline-flex!important;
+}
+body.trailer16x9 #devBackBtn:not(.hidden){
+  display:inline-flex!important;
+}
+body.trailer16x9 .topActions{
+  pointer-events:auto!important;
+  max-width:48%!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+body.trailer16x9 .dialogue{
+  max-height:44svh!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+}
+body.trailer16x9 .text{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.trailer16x9 .choices{
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.trailer16x9 .choiceBtn{
+  min-height:46px!important;
+}
+body.trailer16x9 .dialogue::-webkit-scrollbar,
+body.trailer16x9 .screen.card:not(.hidden)::-webkit-scrollbar{
+  width:7px;
+  height:7px;
+}
+body.trailer16x9 .dialogue::-webkit-scrollbar-thumb,
+body.trailer16x9 .screen.card:not(.hidden)::-webkit-scrollbar-thumb{
+  background:rgba(139,214,240,.42);
+  border-radius:999px;
+}
+
+/* Menus, Codex, Progression et Chapitres : ils peuvent défiler dans le cadre 16:9. */
+body.trailer16x9 #titleCard,
+body.trailer16x9 #splashTitleCard,
+body.trailer16x9 #chaptersCard,
+body.trailer16x9 #codexCard,
+body.trailer16x9 #progressionCard{
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+body.trailer16x9 .titleOverlayLayout{
+  overflow-y:auto!important;
+}
+body.trailer16x9 .chaptersFrame,
+body.trailer16x9 .codexFrame,
+body.trailer16x9 .progressionFrame{
+  height:auto!important;
+  min-height:100%!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.trailer16x9 .codexBook,
+body.trailer16x9 .progressionBook,
+body.trailer16x9 .chaptersBook{
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.trailer16x9 .codexGrid,
+body.trailer16x9 .mediaGrid,
+body.trailer16x9 .progressionBook,
+body.trailer16x9 .chapterSelectGrid{
+  overflow:visible!important;
+}
+
+/* Sur petit paysage mobile, on garde l'interface compacte sans bloquer la navigation. */
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 .topbar{
+    padding:10px 14px 24px!important;
+  }
+  body.trailer16x9 .topActions{
+    transform:scale(.72)!important;
+    max-width:58%!important;
+  }
+  body.trailer16x9 .dialogueWrap{
+    left:3%!important;
+    right:3%!important;
+    bottom:3%!important;
+  }
+  body.trailer16x9 .dialogue{
+    max-height:47svh!important;
+    padding:12px 15px!important;
+    border-radius:18px!important;
+  }
+  body.trailer16x9 .speaker{
+    font-size:clamp(19px,2.1vw,28px)!important;
+  }
+  body.trailer16x9 .text{
+    font-size:clamp(13px,1.35vw,18px)!important;
+    line-height:1.32!important;
+  }
+}
+</style>
+
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
