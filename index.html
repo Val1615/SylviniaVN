@@ -33829,16 +33829,36 @@ body.trailer16x9 .trailerVNBtn.active{
     return nodes;
   }
   function startNativeTypewriter(){
-    clearTypeTimer();
-    clearAdvanceTimer();
     if(!isTrailerGameActive()) return;
     const textEl=$('text');
     if(!textEl) return;
     const sceneId=(typeof state!=='undefined' && state)?String(state.scene||''):'';
+
+    // Sécurité anti double-lancement : plusieurs hooks peuvent appeler afterRender
+    // presque en même temps. Avant, le second appel relisait une boîte déjà vidée
+    // par le typewriter et la scène restait sans texte.
+    if(currentTyping && currentTyping.sceneId===sceneId && !currentTyping.done){
+      return;
+    }
+
     const sourceHTML=textEl.innerHTML;
+    if(currentTyping && currentTyping.sceneId===sceneId && currentTyping.done && currentTyping.sourceHTML===sourceHTML){
+      scheduleAutoAdvanceWhenReady(sceneId);
+      return;
+    }
+
+    clearTypeTimer();
+    clearAdvanceTimer();
     const plain=(textEl.innerText||textEl.textContent||'').trim();
     if(!plain){
-      currentTyping={sceneId, done:true, startedAt:Date.now(), completedAt:Date.now(), sourceHTML:''};
+      // Ne jamais écraser un typewriter en cours avec une lecture vide de la DOM.
+      if(currentTyping && currentTyping.sceneId===sceneId && currentTyping.sourceHTML){
+        if(!currentTyping.done){
+          return;
+        }
+        textEl.innerHTML=currentTyping.sourceHTML;
+      }
+      currentTyping={sceneId, done:true, startedAt:Date.now(), completedAt:Date.now(), sourceHTML:textEl.innerHTML||''};
       scheduleAutoAdvanceWhenReady(sceneId);
       return;
     }
@@ -33852,6 +33872,12 @@ body.trailer16x9 .trailerVNBtn.active{
     const originals=nodes.map(n=>n.nodeValue||'');
     nodes.forEach(n=>{ n.nodeValue=''; });
     const total=originals.reduce((sum,t)=>sum+t.length,0);
+    if(total<=0){
+      textEl.innerHTML=sourceHTML;
+      currentTyping={sceneId, done:true, startedAt:Date.now(), completedAt:Date.now(), sourceHTML};
+      scheduleAutoAdvanceWhenReady(sceneId);
+      return;
+    }
     currentTyping={
       sceneId,
       sourceHTML,
@@ -33984,6 +34010,7 @@ body.trailer16x9 .trailerVNBtn.active{
       render=function(){
         clearTypeTimer();
         clearAdvanceTimer();
+        currentTyping=null;
         const result=previous.apply(this, arguments);
         setTimeout(afterRender,0);
         return result;
@@ -34024,6 +34051,174 @@ body.trailer16x9 .trailerVNBtn.active{
 })();
 </script>
 
+
+
+
+<style id="trailer16x9V8AthCleanup">
+/* V8 : ATH plus léger, infos de scène uniquement en mode développeur, boîte plus transparente. */
+body.trailer16x9 #gameCard::before{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.30) 0%,rgba(0,0,0,.08) 14%,rgba(0,0,0,0) 30%),
+    linear-gradient(0deg,rgba(0,0,0,.58) 0%,rgba(0,0,0,.32) 19%,rgba(0,0,0,0) 45%),
+    radial-gradient(circle at 50% 24%,rgba(142,210,255,.07),transparent 44%)!important;
+}
+
+/* En mode trailer, on masque le titre/scène. Il réapparaît seulement en DEV. */
+body.trailer16x9 .topbar{
+  padding:8px 12px 26px!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.24),rgba(0,0,0,0))!important;
+}
+body.trailer16x9 .topbar > div:first-child{
+  display:none!important;
+}
+body.trailer16x9.trailerDevMode .topbar > div:first-child{
+  display:block!important;
+  pointer-events:auto!important;
+  max-width:min(520px,46vw)!important;
+  padding:9px 12px!important;
+  border:1px solid rgba(157,238,255,.28)!important;
+  border-radius:14px!important;
+  background:rgba(3,10,21,.50)!important;
+  backdrop-filter:blur(8px)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.28)!important;
+}
+body.trailer16x9.trailerDevMode .chapterLabel{
+  font-size:8px!important;
+  letter-spacing:.34em!important;
+}
+body.trailer16x9.trailerDevMode .chapterTitle{
+  font-size:clamp(14px,1.25vw,19px)!important;
+  line-height:1.08!important;
+  margin-top:2px!important;
+}
+body.trailer16x9.trailerDevMode .chapterSub{
+  font-size:clamp(10px,.9vw,13px)!important;
+  opacity:.82!important;
+}
+body.trailer16x9.trailerDevMode #devSceneCode:not(.hidden){
+  display:inline-flex!important;
+  margin-top:6px!important;
+  min-height:0!important;
+  padding:5px 9px!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  letter-spacing:.18em!important;
+  background:rgba(10,38,52,.56)!important;
+  border-color:rgba(157,238,255,.38)!important;
+}
+
+/* Dialogue plus transparent et moins massif : on voit davantage décor, sprites et CG. */
+body.trailer16x9 .dialogueWrap{
+  left:7%!important;
+  right:7%!important;
+  bottom:3.6%!important;
+  gap:5px!important;
+}
+body.trailer16x9 .dialogue{
+  max-height:27svh!important;
+  min-height:104px!important;
+  padding:11px 17px 12px!important;
+  grid-template-columns:minmax(0,1fr) minmax(190px,29%)!important;
+  column-gap:14px!important;
+  row-gap:6px!important;
+  background:linear-gradient(180deg,rgba(12,12,18,.46),rgba(4,7,13,.58))!important;
+  border:1px solid rgba(234,205,145,.42)!important;
+  box-shadow:
+    0 14px 42px rgba(0,0,0,.42),
+    inset 0 0 0 1px rgba(255,255,255,.045),
+    inset 0 0 28px rgba(210,170,88,.045)!important;
+  backdrop-filter:blur(4px)!important;
+}
+body.trailer16x9 .dialogue::before,
+body.trailer16x9 .dialogue::after{
+  content:none!important;
+  display:none!important;
+}
+body.trailer16x9 .speaker{
+  min-width:min(170px,100%)!important;
+  padding:2px 13px!important;
+  font-size:clamp(15px,1.38vw,20px)!important;
+  margin:0 0 5px!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.42),rgba(0,0,0,0))!important;
+}
+body.trailer16x9 .speaker::before,
+body.trailer16x9 .speaker::after{
+  content:none!important;
+  display:none!important;
+}
+body.trailer16x9 .text{
+  max-height:calc(27svh - 53px)!important;
+  font-size:clamp(12px,1.12vw,16px)!important;
+  line-height:1.30!important;
+  padding-right:6px!important;
+}
+body.trailer16x9 .choices{
+  gap:5px!important;
+}
+body.trailer16x9 .choiceBtn{
+  min-height:29px!important;
+  padding:6px 10px!important;
+  font-size:clamp(10px,.95vw,13px)!important;
+}
+body.trailer16x9 .stats{
+  margin-left:3px!important;
+  gap:5px!important;
+  opacity:.82!important;
+}
+body.trailer16x9 .stat{
+  font-size:9px!important;
+  padding:3px 7px!important;
+  background:rgba(8,10,16,.52)!important;
+}
+body.trailer16x9 #trailerVNControls{
+  gap:6px!important;
+}
+body.trailer16x9 .trailerVNBtn{
+  font-size:clamp(9px,.78vw,12px)!important;
+  padding:4px 7px!important;
+  background:rgba(4,6,12,.26)!important;
+}
+
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 .dialogueWrap{left:6.2%!important;right:6.2%!important;bottom:3%!important;gap:3px!important;}
+  body.trailer16x9 .dialogue{max-height:25svh!important;min-height:88px!important;padding:8px 12px 9px!important;grid-template-columns:minmax(0,1fr) minmax(180px,28%)!important;column-gap:10px!important;}
+  body.trailer16x9 .speaker{font-size:clamp(13px,1.25vw,17px)!important;padding:2px 10px!important;margin-bottom:4px!important;min-width:130px!important;}
+  body.trailer16x9 .text{font-size:clamp(10px,1vw,14px)!important;line-height:1.24!important;max-height:calc(25svh - 42px)!important;}
+  body.trailer16x9 .choiceBtn{min-height:25px!important;padding:4px 8px!important;font-size:clamp(9px,.85vw,12px)!important;}
+  body.trailer16x9 .stat{font-size:8px!important;padding:3px 6px!important;}
+  body.trailer16x9 .trailerVNBtn{font-size:9px!important;padding:3px 6px!important;}
+}
+</style>
+
+<script id="trailer16x9V8DevHudScript">
+(function(){
+  function syncTrailerDevHud(){
+    try{
+      document.body.classList.toggle('trailerDevMode', !!(window.state && state.devMode));
+      const code=document.getElementById('devSceneCode');
+      if(code && window.state && state.devMode){
+        const id=String(state.scene||'');
+        code.textContent='DEV · scène : '+id;
+      }
+    }catch(e){}
+  }
+  function patchRenderForDevHud(){
+    if(typeof window.render==='function' && !window.render.__trailerV8DevHud){
+      const previous=window.render;
+      window.render=function(){
+        const result=previous.apply(this, arguments);
+        setTimeout(syncTrailerDevHud,0);
+        return result;
+      };
+      window.render.__trailerV8DevHud=true;
+    }
+  }
+  patchRenderForDevHud();
+  document.addEventListener('DOMContentLoaded',()=>{patchRenderForDevHud(); syncTrailerDevHud();});
+  document.addEventListener('click',()=>setTimeout(syncTrailerDevHud,60),true);
+  setInterval(syncTrailerDevHud,700);
+})();
+</script>
 
 </body>
 </html>
