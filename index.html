@@ -1671,6 +1671,200 @@ body.mobileUI .c7QteRow{grid-template-columns:1fr;gap:9px}.c7QteBtn{min-height:5
 @keyframes c7QteTextShake{0%,100%{transform:translateX(-50%) translateY(0)}33%{transform:translateX(calc(-50% - 1px)) translateY(1px)}66%{transform:translateX(calc(-50% + 1px)) translateY(-1px)}}
 body.mobileUI .c7StageQteBtn{min-width:78px;min-height:78px;font-size:12px}
 
+
+
+/* V19 - Menu obsidienne plus transparent pour mieux voir la vidéo */
+#titleCard .menuAccordion{
+  background:linear-gradient(180deg,rgba(7,14,25,.24),rgba(5,10,18,.30))!important;
+  border-color:rgba(255,255,255,.09)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.14)!important;
+  backdrop-filter:blur(6px)!important;
+}
+
+#titleCard .menuAccordion[open]{
+  background:linear-gradient(180deg,rgba(8,16,28,.34),rgba(5,10,18,.42))!important;
+}
+
+#titleCard .accordionSummary{
+  background:rgba(255,255,255,.025)!important;
+}
+
+#titleCard .dockBtn,
+#titleCard .menuActionBtn,
+#titleCard .enterCodexBtn,
+#titleCard .primaryDockBtn,
+#titleCard .secondaryBtn,
+#titleCard .primaryBtn{
+  background:linear-gradient(180deg,rgba(38,48,68,.18),rgba(24,29,44,.26))!important;
+  border-color:rgba(255,255,255,.11)!important;
+  box-shadow:none!important;
+}
+
+#titleCard .dockBtn:hover,
+#titleCard .menuActionBtn:hover,
+#titleCard .enterCodexBtn:hover,
+#titleCard .primaryDockBtn:hover,
+#titleCard .secondaryBtn:hover,
+#titleCard .primaryBtn:hover{
+  background:linear-gradient(180deg,rgba(48,62,86,.24),rgba(26,32,48,.32))!important;
+  border-color:rgba(168,139,255,.30)!important;
+}
+
+#titleCard .progressMiniCard,
+#titleCard .compactToggle,
+#titleCard .menuSceneGhost,
+#titleCard .menuTip.inlineTip{
+  background:rgba(255,255,255,.028)!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+
+#titleCard .mobileToggleWrap .sliderSwitch{
+  background:rgba(255,255,255,.08)!important;
+}
+
+
+
+/* V20 - Obsidienne ultra cinématique : transparence maximale, vidéo prioritaire */
+#titleCard::before{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.04) 42%,rgba(0,0,0,.22) 100%)!important;
+}
+
+#titleCard::after{
+  opacity:.22!important;
+}
+
+#titleCard .menuOverlayTitle{
+  text-shadow:0 8px 24px rgba(0,0,0,.62)!important;
+}
+
+#titleCard .menuDockCorner{
+  filter:drop-shadow(0 14px 30px rgba(0,0,0,.34))!important;
+}
+
+#titleCard .menuAccordion{
+  background:rgba(4,7,13,.135)!important;
+  border-color:rgba(255,255,255,.075)!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.10)!important;
+  backdrop-filter:blur(3.5px)!important;
+  -webkit-backdrop-filter:blur(3.5px)!important;
+}
+
+#titleCard .menuAccordion[open]{
+  background:rgba(4,8,16,.22)!important;
+  border-color:rgba(168,139,255,.13)!important;
+}
+
+#titleCard .accordionSummary{
+  background:rgba(255,255,255,.012)!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.70)!important;
+}
+
+#titleCard .accordionSummary::after{
+  color:rgba(190,170,255,.78)!important;
+  text-shadow:0 0 14px rgba(168,139,255,.50)!important;
+}
+
+#titleCard .accordionPanel{
+  background:transparent!important;
+}
+
+#titleCard .dockBtn,
+#titleCard .menuActionBtn,
+#titleCard .enterCodexBtn,
+#titleCard .primaryDockBtn,
+#titleCard .secondaryBtn,
+#titleCard .primaryBtn{
+  background:
+    linear-gradient(180deg,rgba(26,24,44,.085),rgba(8,8,18,.145))!important;
+  border-color:rgba(255,255,255,.085)!important;
+  box-shadow:none!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.74)!important;
+  backdrop-filter:blur(2px)!important;
+  -webkit-backdrop-filter:blur(2px)!important;
+}
+
+#titleCard .dockBtn::before,
+#titleCard .menuActionBtn::before,
+#titleCard .enterCodexBtn::before,
+#titleCard .primaryDockBtn::before,
+#titleCard .secondaryBtn::before,
+#titleCard .primaryBtn::before{
+  opacity:.18!important;
+}
+
+#titleCard .dockBtn:hover,
+#titleCard .menuActionBtn:hover,
+#titleCard .enterCodexBtn:hover,
+#titleCard .primaryDockBtn:hover,
+#titleCard .secondaryBtn:hover,
+#titleCard .primaryBtn:hover{
+  background:
+    linear-gradient(180deg,rgba(42,36,72,.18),rgba(12,12,26,.24))!important;
+  border-color:rgba(188,164,255,.26)!important;
+  box-shadow:0 0 22px rgba(168,139,255,.08)!important;
+}
+
+#titleCard .dockBtn .btnTitle{
+  color:rgba(255,252,255,.96)!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.85),0 0 12px rgba(168,139,255,.13)!important;
+}
+
+#titleCard .dockBtn .btnDesc{
+  color:rgba(229,221,245,.78)!important;
+  opacity:.74!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.82)!important;
+}
+
+#titleCard .progressMiniCard,
+#titleCard .compactToggle,
+#titleCard .menuSceneGhost,
+#titleCard .menuTip.inlineTip{
+  background:rgba(255,255,255,.014)!important;
+  border-color:rgba(255,255,255,.055)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(2px)!important;
+  -webkit-backdrop-filter:blur(2px)!important;
+}
+
+#titleCard .progressMiniCard .label,
+#titleCard .menuSceneGhost,
+#titleCard .menuTip.inlineTip,
+#titleCard .compactToggle small{
+  color:rgba(216,206,232,.72)!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.75)!important;
+}
+
+#titleCard .progressMiniCard strong,
+#titleCard .compactToggle strong{
+  color:rgba(255,255,255,.93)!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.82)!important;
+}
+
+#titleCard .mobileToggleWrap .sliderSwitch{
+  background:rgba(255,255,255,.045)!important;
+  border-color:rgba(255,255,255,.075)!important;
+}
+
+#titleCard .mobileToggleWrap .sliderSwitch::before{
+  opacity:.82!important;
+}
+
+#titleCard .switch input:checked + .sliderSwitch{
+  background:rgba(168,139,255,.13)!important;
+  border-color:rgba(168,139,255,.22)!important;
+}
+
+#titleCard .betaBadge{
+  background:rgba(168,139,255,.08)!important;
+  border-color:rgba(168,139,255,.18)!important;
+  color:rgba(245,236,255,.88)!important;
+}
+
+#titleCard .menuUpdateBubble{
+  display:none!important;
+}
+
 </style>
 
 <style id="c7V6CodexTimerPatchStyles">
