@@ -37576,5 +37576,292 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
 })();
 </script>
 
+
+<!-- V26 · Plein écran menu + scène responsive au panneau de dialogue -->
+<style id="sylviniaV26FullscreenMenuAndResponsiveStageFix">
+/* V26 : quand le panneau dialogue monte, les sprites montent aussi au lieu de rester noyés derrière l'ATH. */
+body.trailer16x9 #gameCard,
+body.legacyVisualUI #gameCard{
+  --vnAthReserve:0px;
+  --vnVisibleSceneMin:clamp(150px,30svh,270px);
+}
+
+body.trailer16x9 #gameCard .chars,
+body.legacyVisualUI #gameCard .chars{
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:min(var(--vnAthReserve,0px), calc(100% - var(--vnVisibleSceneMin)))!important;
+  height:auto!important;
+  min-height:var(--vnVisibleSceneMin)!important;
+  transition:bottom .24s ease, min-height .24s ease!important;
+}
+
+body.trailer16x9 #gameCard .char,
+body.legacyVisualUI #gameCard .char{
+  transform-origin:center bottom!important;
+}
+
+/* Panneau moyen/grand : on calme légèrement les groupes de 3 pour éviter l'effet "têtes coupées derrière la vitre". */
+body.vnPanelMedium.trailer16x9 #gameCard .chars.trioChars .char.left,
+body.vnPanelMedium.trailer16x9 #gameCard .chars.trioChars .char.right,
+body.vnPanelMedium.legacyVisualUI #gameCard .chars.trioChars .char.left,
+body.vnPanelMedium.legacyVisualUI #gameCard .chars.trioChars .char.right{
+  max-height:70%!important;
+  max-width:31%!important;
+}
+body.vnPanelMedium.trailer16x9 #gameCard .chars.trioChars .char.center,
+body.vnPanelMedium.legacyVisualUI #gameCard .chars.trioChars .char.center{
+  max-height:74%!important;
+  max-width:35%!important;
+}
+
+body.vnPanelLarge.trailer16x9 #gameCard,
+body.vnPanelLarge.legacyVisualUI #gameCard{
+  --vnVisibleSceneMin:clamp(140px,27svh,240px);
+}
+body.vnPanelLarge.trailer16x9 #gameCard .char,
+body.vnPanelLarge.legacyVisualUI #gameCard .char{
+  max-height:78%!important;
+}
+body.vnPanelLarge.trailer16x9 #gameCard .chars.trioChars .char.left,
+body.vnPanelLarge.trailer16x9 #gameCard .chars.trioChars .char.right,
+body.vnPanelLarge.legacyVisualUI #gameCard .chars.trioChars .char.left,
+body.vnPanelLarge.legacyVisualUI #gameCard .chars.trioChars .char.right{
+  max-height:62%!important;
+  max-width:30%!important;
+}
+body.vnPanelLarge.trailer16x9 #gameCard .chars.trioChars .char.center,
+body.vnPanelLarge.legacyVisualUI #gameCard .chars.trioChars .char.center{
+  max-height:66%!important;
+  max-width:34%!important;
+}
+
+/* En Legacy, la scène garde toujours une vraie fenêtre visible, même quand le panneau est agrandi. */
+body.legacyVisualUI #gameCard .stage{
+  clip-path:inset(0 0 min(var(--vnAthReserve,0px), calc(100% - var(--vnVisibleSceneMin))) 0)!important;
+  transition:clip-path .24s ease!important;
+}
+body.legacyVisualUI #gameCard .stage .bg,
+body.legacyVisualUI #gameCard .stage .veil{
+  clip-path:none!important;
+}
+
+/* Filet de secours : si le navigateur refuse de sortir du plein écran, les écrans hors jeu ne restent plus coincés en cadre 16:9 miniature. */
+body.force16x9Fullscreen:has(#title:not(.hidden)) #app,
+body.force16x9Fullscreen:has(#disclaimer:not(.hidden)) #app,
+body.force16x9Fullscreen:has(#splashTitle:not(.hidden)) #app,
+body.force16x9Fullscreen:has(#chapters:not(.hidden)) #app,
+body.force16x9Fullscreen:has(#codex:not(.hidden)) #app,
+body.force16x9Fullscreen:has(#progression:not(.hidden)) #app{
+  height:100svh!important;
+  min-height:100svh!important;
+  overflow:auto!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+}
+
+body.force16x9Fullscreen:has(#title:not(.hidden)) .screen.card:not(.hidden),
+body.force16x9Fullscreen:has(#disclaimer:not(.hidden)) .screen.card:not(.hidden),
+body.force16x9Fullscreen:has(#splashTitle:not(.hidden)) .screen.card:not(.hidden),
+body.force16x9Fullscreen:has(#chapters:not(.hidden)) .screen.card:not(.hidden),
+body.force16x9Fullscreen:has(#codex:not(.hidden)) .screen.card:not(.hidden),
+body.force16x9Fullscreen:has(#progression:not(.hidden)) .screen.card:not(.hidden){
+  width:100%!important;
+  height:auto!important;
+  min-height:100svh!important;
+  max-height:none!important;
+  overflow:auto!important;
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.trailer16x9 #gameCard,
+  body.legacyVisualUI #gameCard{
+    --vnVisibleSceneMin:clamp(118px,30svh,190px);
+  }
+  body.vnPanelLarge.trailer16x9 #gameCard,
+  body.vnPanelLarge.legacyVisualUI #gameCard{
+    --vnVisibleSceneMin:clamp(108px,26svh,170px);
+  }
+}
+</style>
+
+<script id="sylviniaV26FullscreenMenuAndResponsiveStageFix">
+(function(){
+  if(window.__sylviniaV26FullscreenMenuAndResponsiveStageFix) return;
+  window.__sylviniaV26FullscreenMenuAndResponsiveStageFix = true;
+
+  const NON_GAME_ACTIONS = '[data-trailer-action="menu"],[data-trailer-action="chapters"],[data-trailer-action="progression"],[data-trailer-action="codex"],#menuBtn,#chaptersBtn,#chaptersBtn2,#progressionBtn,#progressionBtn2,#codexBtn,#codexBtn2,#backBtn,#chaptersBackBtn,#progressBackBtn';
+  let reserveObserver = null;
+  let lastReserve = -1;
+
+  function isFullscreen(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  }
+
+  function syncFullscreenButtonLabel(){
+    const btn = document.querySelector('[data-trailer-action="fullscreen"]');
+    if(!btn) return;
+    const active = isFullscreen() && document.body.classList.contains('force16x9Fullscreen');
+    btn.classList.toggle('active', active);
+    const compact = window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+    btn.textContent = active ? (compact ? 'Quitter' : 'Quitter plein écran') : (compact ? '16:9' : 'Plein écran');
+  }
+
+  function leaveFullscreenForNonGame(){
+    document.body.classList.remove('force16x9Fullscreen','athHidden');
+    syncFullscreenButtonLabel();
+    try{
+      if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+    }catch(e){}
+    try{
+      if(document.exitFullscreen && isFullscreen()) document.exitFullscreen().catch(function(){});
+      else if(document.webkitExitFullscreen && isFullscreen()) document.webkitExitFullscreen();
+      else if(document.msExitFullscreen && isFullscreen()) document.msExitFullscreen();
+    }catch(e){}
+  }
+
+  function scheduleReserveSync(){
+    requestAnimationFrame(syncSceneReserve);
+    setTimeout(syncSceneReserve, 60);
+    setTimeout(syncSceneReserve, 260);
+  }
+
+  function syncSceneReserve(){
+    const game = document.getElementById('game');
+    const gameCard = document.getElementById('gameCard');
+    const wrap = gameCard ? gameCard.querySelector('.dialogueWrap') : null;
+    const active = game && !game.classList.contains('hidden') && (document.body.classList.contains('trailer16x9') || document.body.classList.contains('legacyVisualUI'));
+
+    if(!gameCard || !wrap || !active){
+      document.body.classList.remove('vnPanelMedium','vnPanelLarge');
+      if(gameCard) gameCard.style.removeProperty('--vnAthReserve');
+      lastReserve = -1;
+      return;
+    }
+
+    const cardRect = gameCard.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    if(!cardRect.height || !wrapRect.height) return;
+
+    let reserve = Math.max(0, cardRect.bottom - wrapRect.top);
+
+    /* Le panneau Legacy annonce sa hauteur via classes ; on respecte cette intention même pendant la transition. */
+    if(document.body.classList.contains('legacyVisualUI')){
+      if(document.body.classList.contains('legacySheetCollapsed')) reserve = Math.max(reserve, 72);
+      else if(document.body.classList.contains('legacySheetExpanded')) reserve = Math.max(reserve, cardRect.height * 0.58);
+      else reserve = Math.max(reserve, cardRect.height * 0.34);
+    }
+
+    const minimumScene = Math.max(118, Math.min(270, cardRect.height * (document.body.classList.contains('vnPanelLarge') ? 0.27 : 0.30)));
+    reserve = Math.min(reserve, Math.max(0, cardRect.height - minimumScene));
+    reserve = Math.max(0, Math.round(reserve));
+
+    if(Math.abs(reserve - lastReserve) > 1){
+      gameCard.style.setProperty('--vnAthReserve', reserve + 'px');
+      lastReserve = reserve;
+    }
+
+    const ratio = reserve / Math.max(1, cardRect.height);
+    document.body.classList.toggle('vnPanelLarge', ratio >= 0.50);
+    document.body.classList.toggle('vnPanelMedium', ratio >= 0.34 && ratio < 0.50);
+  }
+
+  function observeReserveTargets(){
+    if(typeof ResizeObserver === 'undefined') return;
+    const gameCard = document.getElementById('gameCard');
+    const wrap = gameCard ? gameCard.querySelector('.dialogueWrap') : null;
+    if(!gameCard || !wrap) return;
+    if(reserveObserver) reserveObserver.disconnect();
+    reserveObserver = new ResizeObserver(scheduleReserveSync);
+    reserveObserver.observe(gameCard);
+    reserveObserver.observe(wrap);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV26ResponsiveStage){
+        const previousRender = render;
+        render = function(){
+          const result = previousRender.apply(this, arguments);
+          observeReserveTargets();
+          scheduleReserveSync();
+          return result;
+        };
+        render.__sylviniaV26ResponsiveStage = true;
+        window.render = render;
+      }
+    }catch(e){}
+  }
+
+  function patchSetScreen(){
+    try{
+      if(typeof setScreen === 'function' && !setScreen.__sylviniaV26FullscreenMenu){
+        const previousSetScreen = setScreen;
+        setScreen = function(name){
+          if(name && name !== 'game') leaveFullscreenForNonGame();
+          const result = previousSetScreen.apply(this, arguments);
+          if(name && name !== 'game') leaveFullscreenForNonGame();
+          observeReserveTargets();
+          scheduleReserveSync();
+          return result;
+        };
+        setScreen.__sylviniaV26FullscreenMenu = true;
+        window.setScreen = setScreen;
+      }
+    }catch(e){}
+
+    try{
+      if(typeof showInitialScreen === 'function' && !showInitialScreen.__sylviniaV26FullscreenMenu){
+        const previousShowInitialScreen = showInitialScreen;
+        showInitialScreen = function(){
+          leaveFullscreenForNonGame();
+          const result = previousShowInitialScreen.apply(this, arguments);
+          leaveFullscreenForNonGame();
+          return result;
+        };
+        showInitialScreen.__sylviniaV26FullscreenMenu = true;
+        window.showInitialScreen = showInitialScreen;
+      }
+    }catch(e){}
+  }
+
+  function install(){
+    patchRender();
+    patchSetScreen();
+    observeReserveTargets();
+    scheduleReserveSync();
+    syncFullscreenButtonLabel();
+  }
+
+  document.addEventListener('click', function(ev){
+    const target = ev.target && ev.target.closest ? ev.target.closest(NON_GAME_ACTIONS) : null;
+    if(target) leaveFullscreenForNonGame();
+    scheduleReserveSync();
+  }, true);
+
+  document.addEventListener('click', function(ev){
+    if(ev.target && ev.target.closest && ev.target.closest('#legacySheetToggle,[data-trailer-action="fullscreen"],.choiceBtn')){
+      scheduleReserveSync();
+    }
+  }, true);
+
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+
+  document.addEventListener('transitionend', function(ev){
+    if(ev.target && ev.target.closest && ev.target.closest('#gameCard .dialogueWrap')) scheduleReserveSync();
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  setTimeout(install, 0);
+  setTimeout(install, 240);
+})();
+</script>
+
 </body>
 </html>
