@@ -38440,3 +38440,744 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
 
 </body>
 </html>
+<!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
+<style id="sylviniaV29CurrentVisualDialogueRobustFix">
+/*
+  V29 neutralise les vieux placements fixes du mode trailer pour le visuel actuel.
+  Objectif : une seule boîte stable, texte/situation à gauche, choix à droite,
+  stats au-dessus de la boîte et jamais dans la grille de dialogue.
+*/
+body.trailer16x9:not(.legacyVisualUI) #gameCard{
+  --vnDialogLeft:5.8%;
+  --vnDialogRight:5.8%;
+  --vnDialogBottom:3.7%;
+  --vnDialogHeight:clamp(158px, 24%, 242px);
+  --vnChoiceColumn:clamp(230px, 31%, 390px);
+  --vnDialogGap:18px;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:absolute!important;
+  left:var(--vnDialogLeft)!important;
+  right:var(--vnDialogRight)!important;
+  bottom:var(--vnDialogBottom)!important;
+  z-index:30!important;
+  display:block!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  pointer-events:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap::after{
+  content:none!important;
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  position:relative!important;
+  width:100%!important;
+  height:var(--vnDialogHeight)!important;
+  min-height:0!important;
+  max-height:none!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) var(--vnChoiceColumn)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  grid-template-areas:
+    "speaker choices"
+    "text    choices"!important;
+  column-gap:var(--vnDialogGap)!important;
+  row-gap:8px!important;
+  align-items:stretch!important;
+  margin:0!important;
+  padding:12px 18px 14px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  color:#f6f0e6!important;
+  background:linear-gradient(180deg,rgba(14,12,18,.66),rgba(5,7,13,.74))!important;
+  border:1px solid rgba(234,205,145,.50)!important;
+  border-radius:10px!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.50), inset 0 0 0 1px rgba(255,255,255,.055), inset 0 0 32px rgba(210,170,88,.055)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue::before,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue::after{
+  content:none!important;
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .tag{
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-area:speaker!important;
+  position:static!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:4px 14px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(17px,1.75vw,25px)!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  color:#f1db9b!important;
+  letter-spacing:.02em!important;
+  text-align:center!important;
+  text-shadow:0 2px 10px #000!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.58),rgba(0,0,0,0))!important;
+  border-top:1px solid rgba(234,205,145,.36)!important;
+  border-bottom:1px solid rgba(234,205,145,.30)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::before,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::after{
+  content:none!important;
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-area:text!important;
+  position:static!important;
+  display:block!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 10px 0 0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  white-space:pre-line!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(13px,1.28vw,19px)!important;
+  line-height:1.36!important;
+  color:rgba(255,250,240,.93)!important;
+  text-shadow:0 2px 9px rgba(0,0,0,.78)!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnContinueOnly .choices{
+  grid-area:choices!important;
+  position:static!important;
+  inset:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  top:auto!important;
+  transform:none!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:100%!important;
+  max-height:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  pointer-events:auto!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  flex:0 0 auto!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:8px 14px!important;
+  border-radius:6px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(12px,1.02vw,16px)!important;
+  line-height:1.16!important;
+  color:#f3e6cc!important;
+  background:linear-gradient(90deg,rgba(30,22,30,.80),rgba(14,12,18,.72))!important;
+  border:1px solid rgba(232,201,130,.48)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn .arrow{
+  color:#e8c982!important;
+  margin-left:10px!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn small{
+  display:none!important;
+}
+
+/* Les stats sortent du flux : elles ne peuvent plus voler une cellule à la situation ou aux choix. */
+body.trailer16x9:not(.legacyVisualUI) #gameCard #stats,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stats{
+  position:absolute!important;
+  left:0!important;
+  top:calc(-1 * var(--vnStatsLift, 32px))!important;
+  z-index:35!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  width:auto!important;
+  max-width:min(72%, 760px)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  opacity:.78!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stat{
+  font-size:clamp(9px,.86vw,12px)!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  color:rgba(255,255,255,.80)!important;
+  background:rgba(8,10,16,.58)!important;
+  border:1px solid rgba(232,201,130,.24)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar{
+  width:6px!important;
+}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar-thumb,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar-thumb{
+  background:rgba(232,201,130,.38)!important;
+  border-radius:999px!important;
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnDialogLeft:6.4%;
+    --vnDialogRight:6.4%;
+    --vnDialogBottom:3.0%;
+    --vnDialogHeight:clamp(142px, 31%, 204px);
+    --vnChoiceColumn:clamp(205px, 32%, 340px);
+    --vnDialogGap:12px;
+    --vnStatsLift:28px;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    padding:9px 13px 10px!important;
+    row-gap:6px!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+    padding:3px 12px!important;
+    font-size:clamp(15px,1.55vw,20px)!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+    font-size:clamp(12px,1.18vw,16px)!important;
+    line-height:1.30!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
+    gap:5px!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+    min-height:30px!important;
+    padding:6px 10px!important;
+    font-size:clamp(10px,.94vw,14px)!important;
+  }
+}
+
+@media(max-width:820px){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnDialogLeft:5%;
+    --vnDialogRight:5%;
+    --vnDialogHeight:clamp(176px, 34%, 260px);
+    --vnChoiceColumn:1fr;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+    grid-template-areas:
+      "speaker"
+      "text"
+      "choices"!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard.vnContinueOnly .choices{
+    height:auto!important;
+    max-height:44%!important;
+  }
+}
+</style>
+
+<script id="sylviniaV29CurrentVisualDialogueRobustFix">
+(function(){
+  if(window.__sylviniaV29CurrentVisualDialogueRobustFix) return;
+  window.__sylviniaV29CurrentVisualDialogueRobustFix = true;
+
+  function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
+
+  function syncV29Dialogue(){
+    const game = document.getElementById('game');
+    const card = document.getElementById('gameCard');
+    if(!card) return;
+    const current = document.body.classList.contains('trailer16x9') && !document.body.classList.contains('legacyVisualUI') && game && !game.classList.contains('hidden');
+    card.classList.toggle('vnCurrentDialogueV29', !!current);
+    if(!current) return;
+
+    const rect = card.getBoundingClientRect();
+    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = Math.max(1, rect.height || window.innerHeight || 1);
+    const ratio = w / h;
+    const choices = document.getElementById('choices');
+    const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn:not(:disabled)')) : [];
+    const n = buttons.length;
+    const continueOnly = n === 1 && buttons[0].classList.contains('continueBtn');
+    const decisionChoices = n > 1;
+    const text = document.getElementById('text');
+    const hasText = !!(text && text.textContent && text.textContent.trim());
+
+    card.classList.toggle('vnContinueOnly', continueOnly);
+    card.classList.toggle('vnDecisionChoices', decisionChoices);
+    card.classList.toggle('vnTextEmpty', !hasText);
+
+    let dialogH = Math.round(h * 0.245);
+    if(decisionChoices) dialogH = Math.max(dialogH, 154 + Math.max(0, n - 2) * 18);
+    if(continueOnly) dialogH = Math.max(dialogH, 150);
+    if(ratio < 1.38) dialogH = Math.round(h * 0.30);
+    if(h <= 560 && ratio > 1.15) dialogH = Math.round(h * 0.315);
+    dialogH = clamp(dialogH, h <= 560 ? 142 : 156, h <= 560 ? 208 : 250);
+
+    const choicePx = clamp(Math.round(w * (ratio < 1.45 ? 0.34 : 0.30)), 210, 390);
+    const choiceCss = w <= 820 ? '1fr' : 'clamp(210px, ' + choicePx + 'px, 390px)';
+
+    card.style.setProperty('--vnDialogHeight', dialogH + 'px');
+    card.style.setProperty('--vnChoiceColumn', choiceCss);
+    card.style.setProperty('--vnStatsLift', clamp(Math.round(h * 0.035), 25, 38) + 'px');
+
+    if(choices && choices.__v29LastScene !== (window.state && state.scene)){
+      choices.scrollTop = 0;
+      choices.__v29LastScene = window.state && state.scene;
+    }
+    if(text && text.__v29LastScene !== (window.state && state.scene)){
+      text.scrollTop = 0;
+      text.__v29LastScene = window.state && state.scene;
+    }
+  }
+
+  function scheduleV29(){
+    requestAnimationFrame(syncV29Dialogue);
+    setTimeout(syncV29Dialogue, 50);
+    setTimeout(syncV29Dialogue, 180);
+    setTimeout(syncV29Dialogue, 420);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV29DialogueRobustFix){
+        const previous = render;
+        render = function(){
+          const result = previous.apply(this, arguments);
+          scheduleV29();
+          return result;
+        };
+        render.__sylviniaV29DialogueRobustFix = true;
+        window.render = render;
+      }
+    }catch(e){}
+  }
+
+  function install(){
+    patchRender();
+    scheduleV29();
+  }
+
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(scheduleV29, 0); }, true);
+  document.addEventListener('transitionend', scheduleV29, true);
+  setTimeout(install, 0);
+  setTimeout(install, 260);
+})();
+</script>
+
+<!-- V30 · Visuel actuel : dialogue/choix en grille 2 colonnes stable, sans empilement paysage -->
+<style id="sylviniaV30CurrentVisualChoiceGridFix">
+/*
+  V30 corrige le vrai problème observé sur mobile/tablette en 16:9 :
+  les anciens media queries forçaient parfois les choix sous le texte.
+  Le texte perdait alors sa rangée et semblait remplacé par les choix.
+*/
+body.trailer16x9:not(.legacyVisualUI) #gameCard{
+  --vn30DialogLeft:6.0%;
+  --vn30DialogRight:6.0%;
+  --vn30DialogBottom:3.2%;
+  --vn30PanelH:210px;
+  --vn30ChoiceCol:clamp(220px, 31%, 390px);
+  --vn30Gap:18px;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:absolute!important;
+  left:var(--vn30DialogLeft)!important;
+  right:var(--vn30DialogRight)!important;
+  bottom:var(--vn30DialogBottom)!important;
+  z-index:80!important;
+  display:block!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:visible!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) var(--vn30ChoiceCol)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  grid-template-areas:
+    "speaker choices"
+    "text    choices"!important;
+  column-gap:var(--vn30Gap)!important;
+  row-gap:8px!important;
+  width:100%!important;
+  height:var(--vn30PanelH)!important;
+  min-height:150px!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:12px 18px 14px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  border-radius:10px!important;
+  border:1px solid rgba(234,205,145,.52)!important;
+  background:linear-gradient(180deg,rgba(14,12,18,.68),rgba(5,7,13,.76))!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.50), inset 0 0 0 1px rgba(255,255,255,.055), inset 0 0 32px rgba(210,170,88,.055)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue::before,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue::after,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap::after{
+  content:none!important;
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .tag{
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-area:speaker!important;
+  position:static!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:4px 14px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(16px,1.70vw,25px)!important;
+  line-height:1.08!important;
+  font-weight:700!important;
+  text-align:center!important;
+  color:#f1db9b!important;
+  letter-spacing:.02em!important;
+  text-shadow:0 2px 10px #000!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.58),rgba(0,0,0,0))!important;
+  border-top:1px solid rgba(234,205,145,.36)!important;
+  border-bottom:1px solid rgba(234,205,145,.30)!important;
+}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::before,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::after{
+  content:none!important;
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-area:text!important;
+  position:static!important;
+  display:block!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 10px 0 0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  white-space:pre-line!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(12px,1.22vw,18px)!important;
+  line-height:1.34!important;
+  color:rgba(255,250,240,.94)!important;
+  text-shadow:0 2px 9px rgba(0,0,0,.78)!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnContinueOnly .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vn30ContinueOnly .choices{
+  grid-area:choices!important;
+  position:static!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:stretch!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  gap:8px!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  pointer-events:auto!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  flex:0 0 auto!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:36px!important;
+  margin:0!important;
+  padding:8px 14px!important;
+  border-radius:6px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(11px,.98vw,16px)!important;
+  line-height:1.16!important;
+  color:#f3e6cc!important;
+  background:linear-gradient(90deg,rgba(30,22,30,.80),rgba(14,12,18,.72))!important;
+  border:1px solid rgba(232,201,130,.50)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn .arrow{color:#e8c982!important;margin-left:10px!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn small{display:none!important;}
+
+/* Stats en dehors de la grille : jamais une cellule volée au texte ni aux choix. */
+body.trailer16x9:not(.legacyVisualUI) #gameCard #stats,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stats{
+  position:absolute!important;
+  left:0!important;
+  top:calc(-1 * var(--vn30StatsLift, 31px))!important;
+  z-index:85!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  width:auto!important;
+  max-width:min(72%, 760px)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  pointer-events:auto!important;
+  opacity:.78!important;
+}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stat{
+  font-size:clamp(9px,.82vw,12px)!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  color:rgba(255,255,255,.80)!important;
+  background:rgba(8,10,16,.58)!important;
+  border:1px solid rgba(232,201,130,.24)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar{width:6px!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar-thumb,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar-thumb{background:rgba(232,201,130,.38)!important;border-radius:999px!important;}
+
+/* Sur mobile paysage, on garde deux colonnes. C'est LE point qui cassait V29. */
+@media(max-width:900px) and (orientation:landscape){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vn30DialogLeft:5.2%;
+    --vn30DialogRight:5.2%;
+    --vn30DialogBottom:3.0%;
+    --vn30ChoiceCol:clamp(205px, 33%, 330px);
+    --vn30Gap:12px;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    grid-template-columns:minmax(0,1fr) var(--vn30ChoiceCol)!important;
+    grid-template-rows:auto minmax(0,1fr)!important;
+    grid-template-areas:"speaker choices" "text choices"!important;
+    padding:9px 13px 10px!important;
+    row-gap:6px!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{font-size:clamp(14px,1.55vw,20px)!important;padding:3px 12px!important;}
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .text{font-size:clamp(11px,1.12vw,16px)!important;line-height:1.30!important;}
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{gap:5px!important;}
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{min-height:30px!important;padding:6px 10px!important;font-size:clamp(10px,.95vw,14px)!important;}
+}
+
+/* Empilement seulement si l'écran est vraiment étroit ET en portrait. */
+@media(max-width:640px) and (orientation:portrait){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vn30DialogLeft:4.5%;
+    --vn30DialogRight:4.5%;
+    --vn30ChoiceCol:1fr;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto minmax(70px,1fr) auto!important;
+    grid-template-areas:"speaker" "text" "choices"!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{height:auto!important;max-height:42%!important;justify-content:flex-start!important;}
+}
+</style>
+
+<script id="sylviniaV30CurrentVisualChoiceGridFix">
+(function(){
+  if(window.__sylviniaV30CurrentVisualChoiceGridFix) return;
+  window.__sylviniaV30CurrentVisualChoiceGridFix = true;
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function isCurrentVisualGame(){
+    const game = document.getElementById('game');
+    return document.body.classList.contains('trailer16x9') &&
+      !document.body.classList.contains('legacyVisualUI') &&
+      game && !game.classList.contains('hidden');
+  }
+
+  function syncV30CurrentVisual(){
+    const card = document.getElementById('gameCard');
+    const wrap = card ? card.querySelector('.dialogueWrap') : null;
+    const dialogue = card ? card.querySelector('.dialogue') : null;
+    const stats = document.getElementById('stats');
+    const choices = document.getElementById('choices');
+    const text = document.getElementById('text');
+    if(!card || !wrap || !dialogue) return;
+
+    const active = isCurrentVisualGame();
+    card.classList.toggle('vn30CurrentVisual', !!active);
+    if(!active) return;
+
+    /* La stat doit vivre au-dessus de la boîte, pas dans la grille. */
+    if(stats && stats.parentElement !== wrap){
+      wrap.insertBefore(stats, dialogue);
+    }
+
+    const rect = card.getBoundingClientRect();
+    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = Math.max(1, rect.height || window.innerHeight || 1);
+    const ratio = w / h;
+    const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn')) : [];
+    const n = buttons.length;
+    const continueOnly = n === 1 && buttons[0] && buttons[0].classList.contains('continueBtn');
+    const decisionChoices = n > 1 || (n === 1 && !continueOnly);
+    const textLen = text ? (text.textContent || '').trim().length : 0;
+
+    card.classList.toggle('vn30ContinueOnly', !!continueOnly);
+    card.classList.toggle('vn30DecisionChoices', !!decisionChoices);
+    card.classList.toggle('vn30TextEmpty', textLen === 0);
+
+    /* Hauteur calculée sur le cadre réel, avec assez de place pour les choix ET la situation. */
+    let panelH = Math.round(h * (h <= 560 && ratio > 1.10 ? 0.34 : 0.27));
+    if(decisionChoices) panelH = Math.max(panelH, 158 + Math.max(0, Math.min(n,5) - 2) * 18);
+    if(continueOnly) panelH = Math.max(panelH, 156);
+    if(textLen > 220) panelH += 18;
+    if(textLen > 420) panelH += 12;
+    panelH = clamp(panelH, h <= 560 ? 150 : 166, h <= 560 ? 230 : 282);
+
+    /* Colonne droite jamais à 1fr en paysage, sinon les choix retombent sous le texte. */
+    let choiceCol = clamp(Math.round(w * (ratio < 1.45 ? 0.34 : 0.30)), 205, 390);
+    if(w < 720 && ratio > 1.05) choiceCol = clamp(Math.round(w * 0.36), 190, 285);
+
+    card.style.setProperty('--vn30PanelH', panelH + 'px');
+    card.style.setProperty('--vn30StatsLift', clamp(Math.round(h * 0.036), 25, 38) + 'px');
+    card.style.setProperty('--vn30ChoiceCol', 'minmax(' + Math.min(choiceCol, 220) + 'px, ' + choiceCol + 'px)');
+
+    const sceneId = (window.state && state.scene) ? String(state.scene) : '';
+    if(choices && choices.__vn30LastScene !== sceneId){
+      choices.scrollTop = 0;
+      choices.__vn30LastScene = sceneId;
+    }
+    if(text && text.__vn30LastScene !== sceneId){
+      text.scrollTop = 0;
+      text.__vn30LastScene = sceneId;
+    }
+  }
+
+  function scheduleV30(){
+    requestAnimationFrame(syncV30CurrentVisual);
+    setTimeout(syncV30CurrentVisual, 40);
+    setTimeout(syncV30CurrentVisual, 140);
+    setTimeout(syncV30CurrentVisual, 360);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV30CurrentVisualChoiceGridFix){
+        const previous = render;
+        render = window.render = function(){
+          const result = previous.apply(this, arguments);
+          scheduleV30();
+          return result;
+        };
+        render.__sylviniaV30CurrentVisualChoiceGridFix = true;
+      }
+    }catch(e){}
+  }
+
+  function install(){ patchRender(); scheduleV30(); }
+
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(scheduleV30, 0); }, true);
+  document.addEventListener('transitionend', scheduleV30, true);
+  setInterval(syncV30CurrentVisual, 1000);
+  setTimeout(install, 0);
+  setTimeout(install, 260);
+})();
+</script>
