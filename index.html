@@ -1803,6 +1803,244 @@ body.mobileUI .sageTimerBadge{font-size:19px}
 }
 </style>
 
+
+<style id="trailer16x9Styles">
+/* Mode capture trailer 16:9 v2 : gameplay lisible, scène plein cadre, UI en surimpression. */
+body.trailer16x9{
+  margin:0!important;
+  background:#000!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+body.trailer16x9 #app{
+  width:100vw!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+  background:#000!important;
+}
+body.trailer16x9 .screen.card:not(.hidden){
+  width:min(100vw, calc(100svh * 16 / 9))!important;
+  height:min(100svh, calc(100vw * 9 / 16))!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+  box-shadow:0 0 0 1px rgba(139,214,240,.22), 0 26px 90px rgba(0,0,0,.76)!important;
+  background:#02060d!important;
+}
+
+/* Titre : garde le vrai menu, mais compressé proprement en 16:9. */
+body.trailer16x9 #titleCard,
+body.trailer16x9 #splashTitleCard{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  border-radius:inherit!important;
+}
+body.trailer16x9 .titleVideo,
+body.trailer16x9 .splashVideo{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+}
+body.trailer16x9 .titleOverlayLayout{
+  inset:0!important;
+  min-height:0!important;
+  padding:4.2% 5%!important;
+}
+body.trailer16x9 .menuOverlayTitle{max-width:54%!important;}
+body.trailer16x9 .menuMainTitle{font-size:clamp(34px,5vw,76px)!important;line-height:.95!important;}
+body.trailer16x9 .bannerSubtitle{font-size:clamp(14px,1.55vw,22px)!important;line-height:1.35!important;}
+body.trailer16x9 .menuDockCorner{width:min(600px,50%)!important;gap:10px!important;}
+body.trailer16x9 .accordionSummary{min-height:46px!important;padding:12px 16px!important;}
+
+/* Gameplay : la scène occupe tout le cadre. Topbar et dialogue deviennent des overlays. */
+body.trailer16x9 #gameCard{
+  position:relative!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  display:block!important;
+  overflow:hidden!important;
+  border-radius:inherit!important;
+  background:#000!important;
+}
+body.trailer16x9 #gameCard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(2,7,16,.84) 0%,rgba(2,7,16,.56) 12%,rgba(2,7,16,0) 29%),
+    linear-gradient(0deg,rgba(2,7,16,.92) 0%,rgba(2,7,16,.72) 28%,rgba(2,7,16,0) 54%);
+}
+body.trailer16x9 .stage{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  z-index:1!important;
+  background:#000!important;
+}
+body.trailer16x9 .bg,
+body.trailer16x9 .stage .bg{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background-size:cover!important;
+  background-position:center center!important;
+}
+body.trailer16x9 .veil{opacity:.10!important;}
+body.trailer16x9 .chars{
+  position:absolute!important;
+  inset:0!important;
+  z-index:2!important;
+}
+body.trailer16x9 .char,
+body.trailer16x9 .chars img{
+  max-height:92%!important;
+}
+
+/* Topbar minimaliste, plus de gros bloc qui mange l'image. */
+body.trailer16x9 .topbar{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  z-index:5!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:18px 24px 34px!important;
+  border:0!important;
+  background:linear-gradient(180deg,rgba(2,7,16,.88),rgba(2,7,16,0))!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  pointer-events:none!important;
+}
+body.trailer16x9 .chapterLabel{font-size:9px!important;letter-spacing:.34em!important;color:#9deeff!important;text-shadow:0 2px 12px #000!important;}
+body.trailer16x9 .chapterTitle{font-size:clamp(20px,2.4vw,34px)!important;line-height:1.02!important;text-shadow:0 3px 14px #000!important;max-width:560px!important;}
+body.trailer16x9 .chapterSub{font-size:clamp(11px,1.15vw,17px)!important;text-shadow:0 2px 12px #000!important;}
+body.trailer16x9 .topActions{
+  pointer-events:auto!important;
+  gap:8px!important;
+  transform:scale(.78)!important;
+  transform-origin:top right!important;
+  opacity:.92!important;
+}
+body.trailer16x9 #musicBtn,
+body.trailer16x9 #volume,
+body.trailer16x9 #devBackBtn,
+body.trailer16x9 #menuBtn{
+  display:none!important;
+}
+body.trailer16x9 .topBtn{min-height:0!important;padding:9px 13px!important;border-radius:14px!important;font-size:13px!important;}
+body.trailer16x9 #devSceneCode{display:none!important;}
+body.trailer16x9 .bugReportBtn{display:none!important;}
+
+/* Dialogue VN : overlay bas, plus compact, lisible et fidèle. */
+body.trailer16x9 .dialogueWrap{
+  position:absolute!important;
+  left:4.4%!important;
+  right:4.4%!important;
+  bottom:4.2%!important;
+  z-index:6!important;
+  padding:0!important;
+  min-height:0!important;
+  overflow:visible!important;
+}
+body.trailer16x9 .dialogue{
+  width:100%!important;
+  height:auto!important;
+  max-height:36svh!important;
+  margin:0!important;
+  overflow:hidden!important;
+  padding:16px 20px 14px!important;
+  border-radius:22px!important;
+  background:rgba(3,10,21,.88)!important;
+  box-shadow:0 14px 38px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06)!important;
+  backdrop-filter:blur(12px)!important;
+}
+body.trailer16x9 .tag{font-size:9px!important;letter-spacing:.32em!important;margin-bottom:2px!important;color:#9deeff!important;}
+body.trailer16x9 .speaker{font-size:clamp(22px,2.4vw,34px)!important;line-height:1.02!important;margin:2px 0 9px!important;}
+body.trailer16x9 .text{
+  font-size:clamp(15px,1.45vw,21px)!important;
+  line-height:1.36!important;
+  max-height:5.45em!important;
+  overflow:hidden!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:4!important;
+  -webkit-box-orient:vertical!important;
+}
+body.trailer16x9 .choices{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin-top:12px!important;
+  max-height:108px!important;
+  overflow:hidden!important;
+}
+body.trailer16x9 .choiceBtn{
+  font-size:clamp(12px,1.08vw,16px)!important;
+  padding:10px 14px!important;
+  border-radius:16px!important;
+  min-height:0!important;
+}
+body.trailer16x9 .choiceBtn small{font-size:11px!important;line-height:1.2!important;margin-top:2px!important;}
+body.trailer16x9 .stats{gap:6px!important;margin-top:10px!important;}
+body.trailer16x9 .stat{font-size:10px!important;padding:5px 8px!important;}
+
+/* Ecrans système : restent proches du gameplay, mais dans un cadre 16:9 capturable. */
+body.trailer16x9 #chaptersCard,
+body.trailer16x9 #codexCard,
+body.trailer16x9 #progressionCard{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:22px!important;
+  overflow:hidden!important;
+}
+body.trailer16x9 .chaptersFrame,
+body.trailer16x9 .codexFrame,
+body.trailer16x9 .progressionFrame{
+  height:100%!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+}
+body.trailer16x9 .codexBook,
+body.trailer16x9 .progressionBook,
+body.trailer16x9 .chaptersBook{
+  max-height:100%!important;
+  overflow:hidden!important;
+}
+body.trailer16x9 .codexSidebar,
+body.trailer16x9 .progressionSidebar,
+body.trailer16x9 .chaptersSidebar{transform:scale(.92)!important;transform-origin:top left!important;}
+
+#trailerModeBtn.active{
+  border-color:rgba(233,201,133,.70)!important;
+  background:linear-gradient(180deg,rgba(126,92,28,.82),rgba(52,36,15,.92))!important;
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -1916,6 +2154,7 @@ body.mobileUI .sageTimerBadge{font-size:19px}
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
+                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Mode trailer 16:9</span><small class="btnDesc" id="trailerModeState">Désactivé · capture standard</small></button>
                   <button class="secondaryBtn redBtn menuActionBtn dockBtn toolBtn optionWideBtn" id="resetBtn"><span class="btnTitle">Nouveau départ</span><small class="btnDesc">Réinitialiser la progression.</small></button>
                 </div>
               </div>
@@ -13033,6 +13272,48 @@ function setMobileUI(enabled){
   toast('Interface mise à jour', state.mobileUI?'Mode mobile activé.':'Mode mobile désactivé.');
 }
 
+const TRAILER_16X9_STORAGE_KEY='sylvinia_vn_trailer16x9';
+function trailer16x9Enabled(){
+  try{return localStorage.getItem(TRAILER_16X9_STORAGE_KEY)==='true';}catch(e){return false;}
+}
+function applyTrailer16x9UI(){
+  const enabled=trailer16x9Enabled();
+  document.body.classList.toggle('trailer16x9', enabled);
+  const btn=document.getElementById('trailerModeBtn');
+  const label=document.getElementById('trailerModeState');
+  if(btn) btn.classList.toggle('active', enabled);
+  if(label) label.textContent=enabled?'Activé · cadre paysage 16:9':'Désactivé · capture standard';
+}
+async function setTrailer16x9Mode(enabled){
+  enabled=!!enabled;
+  try{localStorage.setItem(TRAILER_16X9_STORAGE_KEY, enabled?'true':'false');}catch(e){}
+  applyTrailer16x9UI();
+  if(enabled){
+    try{
+      if(document.documentElement.requestFullscreen && !document.fullscreenElement){
+        await document.documentElement.requestFullscreen();
+      }
+    }catch(e){ console.warn('Plein écran indisponible', e); }
+    try{
+      if(screen.orientation && screen.orientation.lock){
+        await screen.orientation.lock('landscape');
+      }
+    }catch(e){ console.warn('Verrouillage paysage indisponible', e); }
+    toast('Mode trailer 16:9 activé','Tourne le téléphone en paysage pour une capture propre.');
+  }else{
+    try{
+      if(document.fullscreenElement && document.exitFullscreen){
+        await document.exitFullscreen();
+      }
+    }catch(e){ console.warn('Sortie plein écran indisponible', e); }
+    toast('Mode trailer désactivé','Retour à l’affichage normal.');
+  }
+}
+function toggleTrailer16x9Mode(){
+  setTrailer16x9Mode(!trailer16x9Enabled());
+}
+
+
 function disclaimerSeen(){
   // Le disclaimer doit réapparaître à chaque nouveau chargement du site.
   // On ne s’appuie donc plus sur localStorage/sessionStorage : seule la session JS en cours le masque après clic.
@@ -17152,7 +17433,7 @@ function updateProgressUI(){
   const tip=document.getElementById('menuProgressTip');
   if(tip) tip.textContent=`Le grimoire est complété à ${pct}% pour cette démo. Les personnages, lieux, illustrations et pistes sonores se dévoilent au rythme de la découverte.`;
 }
-function updateMenuButtons(){const stateLabel=document.getElementById('menuMusicBtnState'); if(stateLabel) stateLabel.textContent=state.menuMusicOn===false?'Coupée':'Activée'; applyMobileUI(); updateDevUI(); updateProgressUI(); updateChapterLocks();}
+function updateMenuButtons(){const stateLabel=document.getElementById('menuMusicBtnState'); if(stateLabel) stateLabel.textContent=state.menuMusicOn===false?'Coupée':'Activée'; applyMobileUI(); applyTrailer16x9UI(); updateDevUI(); updateProgressUI(); updateChapterLocks();}
 function showDisclaimer(){load(); ensureCodexDefaults(); if(disclaimerSeen()){setScreen('title');}else{setScreen('disclaimer');}}
 
 function startChapter6(){
@@ -17197,6 +17478,9 @@ const journalForceBtn=document.getElementById('journalForceAccessBtn'); if(journ
 const devSceneCodeBtn=document.getElementById('devSceneCode'); if(devSceneCodeBtn) devSceneCodeBtn.onclick=()=>{const value=devSceneCodeBtn.dataset.sceneCode||state.scene||''; try{navigator.clipboard&&navigator.clipboard.writeText(value);}catch(e){} toast('Code de scène', value||'inconnu');};
 ['chaptersBtn','chaptersBtn2'].forEach(id=>{const el=document.getElementById(id); if(el)el.onclick=openChapters;}); document.getElementById('startBtn').onclick=newGame; document.getElementById('resumeBtn').onclick=()=>{load();resume()}; document.getElementById('progressionBtn').onclick=openProgression; document.getElementById('progressionBtn2').onclick=openProgression; document.getElementById('codexBtn').onclick=()=>setScreen('codex'); document.getElementById('codexBtn2').onclick=()=>setScreen('codex'); document.getElementById('chaptersBackBtn').onclick=backFromChapters; document.getElementById('progressBackBtn').onclick=backFromProgression; document.getElementById('backBtn').onclick=()=>setScreen(state.lastScreen==='codex'?'title':state.lastScreen); document.getElementById('menuBtn').onclick=()=>showInitialScreen(); document.getElementById('resetBtn').onclick=resetProgress; document.getElementById('devModeBtn').onclick=toggleDevMode; document.getElementById('devBackBtn').onclick=devBack; document.getElementById('menuMusicBtn').onclick=()=>{state.menuMusicOn=state.menuMusicOn===false; updateMenuButtons(); if(state.menuMusicOn)playMusic('music_menu'); else music.pause(); save();}; document.addEventListener('click',ev=>{const b=ev.target&&ev.target.closest?ev.target.closest('[data-chapter-launch]'):null; if(!b||b.disabled)return; launchChapterSelect(b.dataset.chapterLaunch);});
 document.getElementById('mobileUiToggle').onchange=e=>setMobileUI(e.target.checked);
+const trailerModeBtn=document.getElementById('trailerModeBtn'); if(trailerModeBtn) trailerModeBtn.onclick=toggleTrailer16x9Mode;
+document.addEventListener('fullscreenchange', applyTrailer16x9UI);
+applyTrailer16x9UI();
 document.getElementById('musicBtn').onclick=()=>{state.musicOn=!state.musicOn;document.getElementById('musicBtn').textContent=state.musicOn?'Couper musique':'Lancer musique'; if(state.musicOn){const sc=S[state.scene]||{}; playMusic(resolveSceneMusic(state.scene, sc.music||'music_menu'))} else music.pause(); save();};
 document.getElementById('volume').oninput=e=>{music.volume=parseFloat(e.target.value);};
 document.addEventListener('click',ev=>{ if(ev.target.closest('button')) playUiSound('click'); }, true);
