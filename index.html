@@ -37863,5 +37863,393 @@ body.force16x9Fullscreen:has(#progression:not(.hidden)) .screen.card:not(.hidden
 })();
 </script>
 
+
+<!-- V27 · Visuel actuel : sprites ancrés + boîte dialogue stable selon le format écran -->
+<style id="sylviniaV27CurrentVisualSpriteAndDialogFix">
+/* Le correctif V26 reste utile au Legacy ; en visuel actuel, les sprites doivent rester liés au bas du cadre. */
+body.trailer16x9:not(.legacyVisualUI) #gameCard{
+  --vnSpriteMax:92%;
+  --vnDuoSpriteMax:94%;
+  --vnTrioSpriteMax:80%;
+  --vnSpriteBottom:-2%;
+  --vnDialogLeft:6%;
+  --vnDialogRight:6%;
+  --vnDialogBottom:3.4%;
+  --vnDialogMax:230px;
+  --vnTextMax:116px;
+  --vnChoicesMax:126px;
+  --vnContentColumn:minmax(0,66%);
+  --vnOrnamentColumn:minmax(160px,1fr);
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stage{
+  position:absolute!important;
+  inset:0!important;
+  overflow:hidden!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  z-index:3!important;
+  overflow:hidden!important;
+  transform:none!important;
+  transition:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars img{
+  bottom:var(--vnSpriteBottom)!important;
+  max-height:var(--vnSpriteMax)!important;
+  max-width:46%!important;
+  object-fit:contain!important;
+  object-position:bottom center!important;
+  transform-origin:center bottom!important;
+  filter:drop-shadow(0 22px 34px rgba(0,0,0,.78))!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.duoChars .char.left,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.duoChars .char.right{
+  max-height:var(--vnDuoSpriteMax)!important;
+  max-width:47%!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char{
+  max-height:var(--vnTrioSpriteMax)!important;
+  max-width:34%!important;
+  bottom:calc(var(--vnSpriteBottom) + 1%)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char.left{left:3.8%!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char.right{right:3.8%!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char.center{
+  left:50%!important;
+  max-width:48%!important;
+}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char.left{left:1.3%!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char.right{right:1.3%!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char.center{max-width:36%!important;}
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char.left.back,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .char.right.back{
+  max-height:calc(var(--vnSpriteMax) - 8%)!important;
+  bottom:calc(var(--vnSpriteBottom) + 1%)!important;
+}
+
+/* Boîte dialogue : proportions calculées sur le cadre réel du jeu, pas sur le viewport du navigateur. */
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:absolute!important;
+  left:var(--vnDialogLeft)!important;
+  right:var(--vnDialogRight)!important;
+  bottom:var(--vnDialogBottom)!important;
+  z-index:20!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:4px!important;
+  padding:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  pointer-events:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  order:2!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:104px!important;
+  max-height:var(--vnDialogMax)!important;
+  display:grid!important;
+  grid-template-columns:var(--vnContentColumn) var(--vnOrnamentColumn)!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  column-gap:16px!important;
+  row-gap:7px!important;
+  margin:0!important;
+  padding:11px 16px 12px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  background:linear-gradient(180deg,rgba(13,12,15,.44),rgba(4,6,11,.54))!important;
+  border:1px solid rgba(232,201,130,.40)!important;
+  border-radius:10px!important;
+  box-shadow:0 14px 40px rgba(0,0,0,.42), inset 0 0 0 1px rgba(255,255,255,.035), inset 0 0 28px rgba(210,170,88,.038)!important;
+  backdrop-filter:blur(5px)!important;
+  -webkit-backdrop-filter:blur(5px)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .tag{
+  display:none!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-column:1!important;
+  grid-row:1!important;
+  align-self:start!important;
+  min-width:min(170px,100%)!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:2px 13px!important;
+  font-size:clamp(15px,1.38vw,20px)!important;
+  line-height:1.12!important;
+  text-align:center!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-column:1!important;
+  grid-row:2!important;
+  min-height:0!important;
+  max-height:var(--vnTextMax)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding-right:8px!important;
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  line-height:1.30!important;
+  font-size:clamp(12px,1.12vw,16px)!important;
+  scrollbar-width:thin!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
+  grid-column:1!important;
+  grid-row:3!important;
+  align-self:end!important;
+  width:100%!important;
+  max-height:var(--vnChoicesMax)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:6px!important;
+  margin:2px 0 0!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  pointer-events:auto!important;
+  scrollbar-width:thin!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices{
+  grid-row:2 / span 2!important;
+  align-self:stretch!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn{
+  width:100%!important;
+  min-height:30px!important;
+  padding:6px 10px!important;
+  border-radius:7px!important;
+  font-size:clamp(10px,.95vw,13px)!important;
+  line-height:1.22!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  max-width:min(720px,100%)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard #stats,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .stats{
+  order:1!important;
+  flex:0 0 auto!important;
+  margin:0 0 1px 3px!important;
+  max-width:calc(100% - 12px)!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
+  order:3!important;
+  flex:0 0 auto!important;
+  width:calc(100% - 12px)!important;
+  max-width:calc(100% - 12px)!important;
+  margin:-1px auto 0!important;
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnSpriteMax:86%;
+    --vnDuoSpriteMax:88%;
+    --vnTrioSpriteMax:74%;
+    --vnSpriteBottom:-3%;
+    --vnDialogBottom:2.8%;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    min-height:82px!important;
+    padding:8px 12px 9px!important;
+    column-gap:10px!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn{
+    min-height:25px!important;
+    padding:4px 8px!important;
+  }
+}
+
+@media(max-aspect-ratio:4/3){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnSpriteMax:82%;
+    --vnDuoSpriteMax:84%;
+    --vnTrioSpriteMax:70%;
+    --vnSpriteBottom:-1%;
+    --vnContentColumn:minmax(0,70%);
+    --vnOrnamentColumn:minmax(120px,1fr);
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .char,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .chars img{
+    max-width:50%!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char{
+    max-width:35%!important;
+  }
+}
+
+@media(max-width:760px){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnDialogLeft:5%;
+    --vnDialogRight:5%;
+    --vnContentColumn:1fr;
+    --vnOrnamentColumn:0px;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    grid-template-columns:1fr!important;
+  }
+}
+</style>
+
+<script id="sylviniaV27CurrentVisualSpriteAndDialogFix">
+(function(){
+  if(window.__sylviniaV27CurrentVisualSpriteAndDialogFix) return;
+  window.__sylviniaV27CurrentVisualSpriteAndDialogFix = true;
+
+  let ro = null;
+
+  function clamp(value, min, max){
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function syncCurrentVisualLayout(){
+    const game = document.getElementById('game');
+    const card = document.getElementById('gameCard');
+    if(!card) return;
+
+    const current = document.body.classList.contains('trailer16x9') && !document.body.classList.contains('legacyVisualUI') && game && !game.classList.contains('hidden');
+    card.classList.toggle('vnCurrentVisualLayout', !!current);
+    if(!current) return;
+
+    const rect = card.getBoundingClientRect();
+    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = Math.max(1, rect.height || window.innerHeight || 1);
+    const ratio = w / h;
+
+    const choices = document.getElementById('choices');
+    const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn:not(:disabled)')) : [];
+    const continueOnly = buttons.length === 1 && buttons[0].classList.contains('continueBtn');
+    const decisionChoices = buttons.length > 1;
+    card.classList.toggle('vnContinueOnly', continueOnly);
+    card.classList.toggle('vnDecisionChoices', decisionChoices);
+
+    let spriteMax = 92;
+    let duoSpriteMax = 94;
+    let trioSpriteMax = 80;
+    let bottom = -2;
+    let dialogMax = clamp(Math.round(h * 0.28), 118, 238);
+    let contentCol = 66;
+
+    if(ratio < 1.34){
+      spriteMax = 82;
+      duoSpriteMax = 84;
+      trioSpriteMax = 70;
+      bottom = -1;
+      dialogMax = clamp(Math.round(h * 0.30), 132, 268);
+      contentCol = 70;
+    }else if(ratio < 1.56){
+      spriteMax = 87;
+      duoSpriteMax = 89;
+      trioSpriteMax = 74;
+      bottom = -1.5;
+      dialogMax = clamp(Math.round(h * 0.29), 126, 252);
+      contentCol = 68;
+    }else if(ratio > 2.05){
+      spriteMax = 96;
+      duoSpriteMax = 97;
+      trioSpriteMax = 84;
+      bottom = -3;
+      dialogMax = clamp(Math.round(h * 0.26), 112, 222);
+      contentCol = 63;
+    }
+
+    if(h <= 560 && ratio > 1.2){
+      spriteMax = Math.min(spriteMax, 86);
+      duoSpriteMax = Math.min(duoSpriteMax, 88);
+      trioSpriteMax = Math.min(trioSpriteMax, 74);
+      dialogMax = clamp(Math.round(h * 0.27), 88, 170);
+      bottom = Math.min(bottom, -2.5);
+    }
+
+    const choiceMax = decisionChoices ? clamp(Math.round(dialogMax - 48), 70, 174) : clamp(Math.round(dialogMax * 0.34), 42, 96);
+    const textMax = decisionChoices ? clamp(Math.round(dialogMax - 52), 42, 160) : clamp(Math.round(dialogMax - choiceMax - 58), 38, 150);
+
+    card.style.setProperty('--vnSpriteMax', spriteMax + '%');
+    card.style.setProperty('--vnDuoSpriteMax', duoSpriteMax + '%');
+    card.style.setProperty('--vnTrioSpriteMax', trioSpriteMax + '%');
+    card.style.setProperty('--vnSpriteBottom', bottom + '%');
+    card.style.setProperty('--vnDialogMax', dialogMax + 'px');
+    card.style.setProperty('--vnTextMax', textMax + 'px');
+    card.style.setProperty('--vnChoicesMax', choiceMax + 'px');
+    card.style.setProperty('--vnContentColumn', 'minmax(0,' + contentCol + '%)');
+    card.style.setProperty('--vnOrnamentColumn', 'minmax(130px,1fr)');
+  }
+
+  function scheduleSync(){
+    requestAnimationFrame(syncCurrentVisualLayout);
+    setTimeout(syncCurrentVisualLayout, 60);
+    setTimeout(syncCurrentVisualLayout, 240);
+  }
+
+  function observe(){
+    if(typeof ResizeObserver === 'undefined') return;
+    const card = document.getElementById('gameCard');
+    const wrap = card ? card.querySelector('.dialogueWrap') : null;
+    if(!card || !wrap) return;
+    if(ro) ro.disconnect();
+    ro = new ResizeObserver(scheduleSync);
+    ro.observe(card);
+    ro.observe(wrap);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV27CurrentVisualLayout){
+        const previous = render;
+        render = function(){
+          const result = previous.apply(this, arguments);
+          observe();
+          scheduleSync();
+          return result;
+        };
+        render.__sylviniaV27CurrentVisualLayout = true;
+        window.render = render;
+      }
+    }catch(e){}
+  }
+
+  function install(){
+    patchRender();
+    observe();
+    scheduleSync();
+  }
+
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(scheduleSync, 0); }, true);
+  document.addEventListener('input', scheduleSync, true);
+  document.addEventListener('transitionend', scheduleSync, true);
+  setTimeout(install, 0);
+  setTimeout(install, 260);
+})();
+</script>
+
 </body>
 </html>
