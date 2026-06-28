@@ -34220,5 +34220,166 @@ body.trailer16x9 .trailerVNBtn{
 })();
 </script>
 
+
+
+<style id="trailer16x9V9DevHudAndAthFix">
+/* V9 : DEV HUD réellement piloté par state.devMode + ATH moins opaque et plus cohérent avec la boîte de texte. */
+body.trailer16x9 #gameCard .dialogueWrap{
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Bloc scène masqué en normal, visible uniquement en mode dev. */
+body.trailer16x9 #gameCard .topbar > div:first-child{
+  display:none!important;
+}
+body.trailer16x9.trailerDevMode #gameCard .topbar > div:first-child{
+  display:block!important;
+  position:absolute!important;
+  top:12px!important;
+  left:14px!important;
+  max-width:min(460px,42vw)!important;
+  padding:8px 10px 9px!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,rgba(5,8,14,.42),rgba(5,8,14,.25))!important;
+  border:1px solid rgba(155,234,255,.24)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.025)!important;
+  backdrop-filter:blur(5px)!important;
+  pointer-events:auto!important;
+  z-index:16!important;
+}
+body.trailer16x9.trailerDevMode #gameCard .chapterLabel{
+  display:block!important;
+  font-size:8px!important;
+  line-height:1.15!important;
+  letter-spacing:.24em!important;
+  color:#a8f0ff!important;
+  opacity:.95!important;
+  text-shadow:0 2px 10px rgba(0,0,0,.85)!important;
+}
+body.trailer16x9.trailerDevMode #gameCard .chapterTitle{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:clamp(13px,1.2vw,18px)!important;
+  line-height:1.05!important;
+  color:#fff!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.9)!important;
+  max-width:100%!important;
+}
+body.trailer16x9.trailerDevMode #gameCard .chapterSub{
+  display:none!important;
+}
+body.trailer16x9.trailerDevMode #gameCard #devSceneCode{
+  display:none!important;
+}
+
+/* Dialogue et ATH : même famille visuelle, moins de bloc bleu massif. */
+body.trailer16x9 #gameCard .dialogue{
+  background:linear-gradient(180deg,rgba(13,12,15,.38),rgba(4,6,11,.48))!important;
+  border-color:rgba(228,198,132,.34)!important;
+  box-shadow:
+    0 12px 36px rgba(0,0,0,.34),
+    inset 0 0 0 1px rgba(255,255,255,.035),
+    inset 0 0 26px rgba(210,170,88,.032)!important;
+  backdrop-filter:blur(3px)!important;
+}
+body.trailer16x9 #gameCard #trailerVNControls{
+  width:calc(100% - 12px)!important;
+  max-width:calc(100% - 12px)!important;
+  margin:-1px auto 0!important;
+  padding:4px 10px 5px!important;
+  border-radius:0 0 10px 10px!important;
+  background:linear-gradient(180deg,rgba(13,12,15,.36),rgba(4,6,11,.42))!important;
+  border:1px solid rgba(228,198,132,.20)!important;
+  border-top:0!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.025)!important;
+  backdrop-filter:blur(3px)!important;
+}
+body.trailer16x9 #gameCard .trailerVNBtn{
+  background:transparent!important;
+  color:rgba(240,230,210,.66)!important;
+  box-shadow:none!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.90)!important;
+}
+body.trailer16x9 #gameCard .trailerVNBtn:hover,
+body.trailer16x9 #gameCard .trailerVNBtn:focus-visible{
+  color:#f0d08a!important;
+  background:rgba(122,91,43,.16)!important;
+}
+body.trailer16x9 #gameCard .trailerVNBtn.active{
+  color:#9feeff!important;
+  background:rgba(80,170,220,.16)!important;
+}
+body.trailer16x9 #gameCard .stats{
+  opacity:.78!important;
+}
+body.trailer16x9 #gameCard .stat{
+  background:rgba(7,8,13,.42)!important;
+  border-color:rgba(228,198,132,.22)!important;
+}
+
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9.trailerDevMode #gameCard .topbar > div:first-child{
+    top:8px!important;
+    left:10px!important;
+    max-width:min(390px,40vw)!important;
+    padding:6px 8px!important;
+  }
+  body.trailer16x9.trailerDevMode #gameCard .chapterLabel{font-size:7px!important;letter-spacing:.20em!important;}
+  body.trailer16x9.trailerDevMode #gameCard .chapterTitle{font-size:clamp(11px,1.05vw,15px)!important;}
+  body.trailer16x9 #gameCard #trailerVNControls{padding:3px 8px 4px!important;}
+}
+</style>
+
+<script id="trailer16x9V9DevHudScript">
+(function(){
+  function getDevEnabled(){
+    try{ return (typeof state !== 'undefined' && state && state.devMode === true); }
+    catch(e){ return false; }
+  }
+  function getSceneId(){
+    try{ return (typeof state !== 'undefined' && state && state.scene) ? String(state.scene) : ''; }
+    catch(e){ return ''; }
+  }
+  function syncTrailerDevHudV9(){
+    const dev=getDevEnabled();
+    document.body.classList.toggle('trailerDevMode', dev);
+    const label=document.querySelector('#gameCard .chapterLabel');
+    const title=document.querySelector('#gameCard .chapterTitle');
+    const code=document.getElementById('devSceneCode');
+    if(dev){
+      const id=getSceneId();
+      if(label) label.textContent='DEV · SCÈNE : '+(id || 'inconnue');
+      if(code){
+        code.textContent='DEV · scène : '+(id || 'inconnue');
+        code.classList.remove('hidden');
+      }
+      if(title && !title.textContent.trim()) title.textContent='Scène sans titre';
+    }
+  }
+  function patchRender(){
+    try{
+      if(typeof render==='function' && !render.__trailerV9DevHud){
+        const previous=render;
+        window.render=function(){
+          const result=previous.apply(this, arguments);
+          setTimeout(syncTrailerDevHudV9,0);
+          setTimeout(syncTrailerDevHudV9,80);
+          return result;
+        };
+        try{ render=window.render; }catch(e){}
+        window.render.__trailerV9DevHud=true;
+      }
+    }catch(e){}
+  }
+  patchRender();
+  document.addEventListener('DOMContentLoaded',()=>{patchRender(); syncTrailerDevHudV9();});
+  document.addEventListener('click',()=>setTimeout(syncTrailerDevHudV9,80),true);
+  document.addEventListener('input',()=>setTimeout(syncTrailerDevHudV9,80),true);
+  setInterval(syncTrailerDevHudV9,500);
+})();
+</script>
+
 </body>
 </html>
