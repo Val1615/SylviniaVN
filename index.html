@@ -36011,5 +36011,1570 @@ body.trailer16x9 #gameCard #choices .choiceBtn.choiceExpanded:not(.continueBtn) 
 })();
 </script>
 
+
+
+<!-- V21 · Correctifs fins de chapitre + inversion Mode expérimental / Legacy -->
+<script id="sylviniaV21ChapterEndAndLegacyVisualFix">
+(function(){
+  if(window.__sylviniaV21ChapterEndAndLegacyVisualFix) return;
+  window.__sylviniaV21ChapterEndAndLegacyVisualFix = true;
+
+  const LEGACY_VISUAL_KEY = 'sylvinia_vn_legacy_visual_mode';
+
+  function legacyVisualEnabled(){
+    try{ return localStorage.getItem(LEGACY_VISUAL_KEY) === 'true'; }
+    catch(e){ return false; }
+  }
+
+  function setLegacyVisualEnabled(enabled){
+    enabled = !!enabled;
+    try{
+      localStorage.setItem(LEGACY_VISUAL_KEY, enabled ? 'true' : 'false');
+      /* Garde l'ancienne clé cohérente pour les vieux scripts : true = affichage expérimental actif. */
+      if(typeof TRAILER_16X9_STORAGE_KEY !== 'undefined'){
+        localStorage.setItem(TRAILER_16X9_STORAGE_KEY, enabled ? 'false' : 'true');
+      }else{
+        localStorage.setItem('sylvinia_vn_trailer16x9', enabled ? 'false' : 'true');
+      }
+    }catch(e){}
+    applyLegacyVisualUI();
+  }
+
+  function syncLegacyButtonLabel(){
+    const legacy = legacyVisualEnabled();
+    const btn = document.getElementById('trailerModeBtn');
+    const title = btn ? btn.querySelector('.btnTitle') : null;
+    const label = document.getElementById('trailerModeState');
+    if(title) title.textContent = 'Mode visuel Legacy';
+    if(label) label.textContent = legacy ? 'Activé · ancien visuel du jeu' : 'Désactivé · visuel expérimental actif';
+    if(btn){
+      btn.classList.toggle('active', legacy);
+      btn.setAttribute('aria-pressed', legacy ? 'true' : 'false');
+      btn.title = legacy ? 'Revenir au visuel expérimental' : 'Activer l’ancien visuel du jeu';
+    }
+  }
+
+  function applyLegacyVisualUI(){
+    const legacy = legacyVisualEnabled();
+    const experimental = !legacy;
+    document.body.classList.toggle('trailer16x9', experimental);
+    document.body.classList.toggle('experimentalUI', experimental);
+    document.body.classList.toggle('legacyVisualUI', legacy);
+    syncLegacyButtonLabel();
+  }
+
+  function toggleLegacyVisualMode(){
+    const enableLegacy = !legacyVisualEnabled();
+    setLegacyVisualEnabled(enableLegacy);
+    if(typeof toast === 'function'){
+      toast(
+        enableLegacy ? 'Mode visuel Legacy activé' : 'Affichage expérimental réactivé',
+        enableLegacy ? 'Retour à l’ancien visuel du jeu.' : 'Le visuel expérimental redevient le mode principal.'
+      );
+    }
+  }
+
+  function patchChapterEndChoices(){
+    if(typeof S === 'undefined') return;
+
+    if(S.c8_end){
+      S.c8_end.next = null;
+      S.c8_end.choices = [
+        {
+          label:'Continuer vers le Chapitre IX',
+          next:'c9_01',
+          effects:{},
+          note:'Le chapitre IX est maintenant accessible.',
+          flags:{chapter8Complete:true}
+        },
+        {
+          label:'Retour au menu',
+          next:'menu',
+          effects:{},
+          note:'',
+          flags:{chapter8Complete:true}
+        }
+      ];
+    }
+
+    if(S.c9_end){
+      S.c9_end.next = null;
+      S.c9_end.choices = [
+        {
+          label:'Continuer vers le Chapitre X',
+          next:'c10_route_choice',
+          effects:{},
+          note:'Choisir la perspective qui façonnera la suite.',
+          flags:{chapter9Complete:true}
+        },
+        {
+          label:'Retour au menu',
+          next:'menu',
+          effects:{},
+          note:'',
+          flags:{chapter9Complete:true}
+        }
+      ];
+    }
+  }
+
+  function installLegacyButton(){
+    const btn = document.getElementById('trailerModeBtn');
+    if(btn){
+      btn.onclick = function(ev){
+        if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+        toggleLegacyVisualMode();
+        return false;
+      };
+    }
+    syncLegacyButtonLabel();
+  }
+
+  function installFunctionOverrides(){
+    try{
+      window.trailer16x9Enabled = trailer16x9Enabled = function(){ return !legacyVisualEnabled(); };
+    }catch(e){}
+
+    try{
+      window.applyTrailer16x9UI = applyTrailer16x9UI = function(){
+        applyLegacyVisualUI();
+      };
+    }catch(e){}
+
+    try{
+      window.setTrailer16x9Mode = setTrailer16x9Mode = function(enabled){
+        /* Compatibilité : anciens appels true = affichage expérimental actif, donc legacy désactivé. */
+        setLegacyVisualEnabled(!enabled);
+      };
+    }catch(e){}
+
+    try{
+      window.toggleTrailer16x9Mode = toggleTrailer16x9Mode = function(){
+        toggleLegacyVisualMode();
+      };
+    }catch(e){}
+  }
+
+  function refreshIfNeeded(){
+    patchChapterEndChoices();
+    installFunctionOverrides();
+    applyLegacyVisualUI();
+    installLegacyButton();
+
+    try{
+      const current = state && state.scene;
+      const game = document.getElementById('game');
+      if((current === 'c8_end' || current === 'c9_end') && game && !game.classList.contains('hidden') && typeof render === 'function'){
+        render();
+      }
+    }catch(e){}
+  }
+
+  refreshIfNeeded();
+  document.addEventListener('DOMContentLoaded', refreshIfNeeded);
+  window.addEventListener('load', refreshIfNeeded);
+
+  /* Les anciens scripts V12 réécrivent parfois le libellé après un clic : on repasse juste après. */
+  document.addEventListener('click', function(){
+    setTimeout(function(){
+      patchChapterEndChoices();
+      applyLegacyVisualUI();
+      installLegacyButton();
+    }, 140);
+  }, true);
+})();
+</script>
+
+
+
+<style id="sylviniaV22LegacyCleanAndFullscreen16x9">
+/* V22 · Legacy propre + bouton Plein écran 16:9 pour le visuel actuel */
+
+/* Legacy : on retire toute la partie haute, devenue doublon avec la barre basse. */
+body.legacyVisualUI #gameCard .topbar{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  overflow:hidden!important;
+}
+
+/* Legacy : valeurs replacées lisiblement au-dessus de la boîte de dialogue. */
+body.legacyVisualUI #gameCard .dialogueWrap{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+  padding:10px 20px 18px!important;
+  background:linear-gradient(180deg,rgba(5,9,17,.95),rgba(8,16,32,.98))!important;
+}
+
+body.legacyVisualUI #gameCard #stats,
+body.legacyVisualUI #gameCard .stats{
+  order:1!important;
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  z-index:6!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-items:center!important;
+  gap:7px!important;
+  margin:0 0 2px 2px!important;
+  padding:0!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+
+body.legacyVisualUI #gameCard .stat{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+  min-height:0!important;
+  padding:5px 9px!important;
+  border-radius:999px!important;
+  color:rgba(242,248,255,.92)!important;
+  background:rgba(10,16,28,.68)!important;
+  border:1px solid rgba(167,240,255,.18)!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.20)!important;
+  font-size:12px!important;
+  line-height:1.1!important;
+}
+
+body.legacyVisualUI #gameCard .stat b{
+  color:#f3d58d!important;
+}
+
+/* Legacy : boîte texte sous les valeurs, sans chevauchement. */
+body.legacyVisualUI #gameCard .dialogue{
+  order:2!important;
+  margin-top:0!important;
+  z-index:5!important;
+}
+
+/* Legacy : la barre basse reste utilisable et ne prend plus le style gris natif du navigateur. */
+body.legacyVisualUI #gameCard #trailerVNControls{
+  order:3!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:7px!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:2px auto 0!important;
+  padding:8px 10px!important;
+  border-radius:18px!important;
+  background:rgba(5,9,17,.70)!important;
+  border:1px solid rgba(167,240,255,.10)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22)!important;
+  pointer-events:auto!important;
+}
+
+body.legacyVisualUI #gameCard .trailerVNBtn{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  border:1px solid rgba(167,240,255,.13)!important;
+  border-radius:999px!important;
+  cursor:pointer!important;
+  padding:7px 10px!important;
+  min-height:32px!important;
+  color:rgba(236,246,255,.86)!important;
+  background:linear-gradient(180deg,rgba(24,35,53,.64),rgba(10,15,26,.76))!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.68)!important;
+  box-shadow:none!important;
+  font:800 clamp(11px,1.8vw,13px)/1.1 system-ui,-apple-system,Segoe UI,sans-serif!important;
+  letter-spacing:.01em!important;
+}
+
+body.legacyVisualUI #gameCard .trailerVNBtn:hover,
+body.legacyVisualUI #gameCard .trailerVNBtn:focus-visible{
+  color:#fff2c8!important;
+  border-color:rgba(243,213,141,.36)!important;
+  background:linear-gradient(180deg,rgba(42,36,72,.62),rgba(18,18,34,.82))!important;
+}
+
+body.legacyVisualUI #gameCard .trailerVNBtn.active{
+  color:#9feeff!important;
+  border-color:rgba(159,238,255,.34)!important;
+  background:rgba(80,170,220,.14)!important;
+}
+
+/* Visuel actuel : ordre plus logique de la barre basse. */
+body.trailer16x9 #gameCard #trailerVNControls{
+  justify-content:center!important;
+  gap:6px!important;
+}
+
+body.trailer16x9 #gameCard .trailerVNBtn[data-trailer-action="fullscreen"]{
+  color:#fff2c8!important;
+  border:1px solid rgba(243,213,141,.22)!important;
+  background:rgba(92,68,28,.22)!important;
+}
+
+body.trailer16x9 #gameCard .trailerVNBtn[data-trailer-action="fullscreen"].active{
+  color:#9feeff!important;
+  border-color:rgba(159,238,255,.34)!important;
+  background:rgba(80,170,220,.20)!important;
+}
+
+/* Plein écran 16:9 : le jeu est centré avec bandes noires si l'écran n'est pas au bon ratio. */
+body.force16x9Fullscreen{
+  overflow:hidden!important;
+  background:#000!important;
+}
+
+body.force16x9Fullscreen #app{
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+  background:#000!important;
+}
+
+body.force16x9Fullscreen .screen.card:not(.hidden){
+  width:min(100vw,calc(100dvh * 16 / 9))!important;
+  height:min(100dvh,calc(100vw * 9 / 16))!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  box-shadow:0 0 0 1px rgba(168,139,255,.18),0 28px 90px rgba(0,0,0,.82)!important;
+}
+
+body.force16x9Fullscreen #game.screen.card:not(.hidden),
+body.force16x9Fullscreen #gameCard{
+  width:min(100vw,calc(100dvh * 16 / 9))!important;
+  height:min(100dvh,calc(100vw * 9 / 16))!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:hidden!important;
+}
+
+body.force16x9Fullscreen #gameCard .stage{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  aspect-ratio:auto!important;
+}
+
+body.force16x9Fullscreen #gameCard .dialogueWrap{
+  left:6.2%!important;
+  right:6.2%!important;
+  bottom:3.2%!important;
+}
+
+body.force16x9Fullscreen #gameCard .dialogue{
+  max-height:28%!important;
+}
+
+@media(max-width:760px){
+  body.legacyVisualUI #gameCard .dialogueWrap{
+    padding:8px 14px 14px!important;
+  }
+  body.legacyVisualUI #gameCard .stat{
+    font-size:11px!important;
+    padding:5px 8px!important;
+  }
+  body.legacyVisualUI #gameCard #trailerVNControls{
+    gap:5px!important;
+    padding:7px!important;
+  }
+  body.legacyVisualUI #gameCard .trailerVNBtn{
+    font-size:11px!important;
+    padding:7px 8px!important;
+  }
+}
+</style>
+
+<script id="sylviniaV22ToolbarOrderLegacyAndFullscreen">
+(function(){
+  if(window.__sylviniaV22ToolbarOrderLegacyAndFullscreen) return;
+  window.__sylviniaV22ToolbarOrderLegacyAndFullscreen = true;
+
+  const ORDER = [
+    ['history','Historique'],
+    ['back','Retour'],
+    ['skip','Passer'],
+    ['auto','Auto'],
+    ['music','Musique'],
+    ['fullscreen','Plein écran'],
+    ['chapters','Chapitres'],
+    ['progression','Progression'],
+    ['codex','Codex'],
+    ['menu','Menu']
+  ];
+
+  function isFullscreen(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  }
+
+  function updateFullscreenClass(){
+    const active = isFullscreen() && document.body.classList.contains('trailer16x9');
+    document.body.classList.toggle('force16x9Fullscreen', active);
+    const btn = document.querySelector('[data-trailer-action="fullscreen"]');
+    if(btn){
+      btn.classList.toggle('active', active);
+      btn.textContent = active ? 'Quitter plein écran' : 'Plein écran';
+      btn.title = 'Plein écran paysage 16:9';
+    }
+  }
+
+  async function enterFullscreen16x9(){
+    const target = document.documentElement;
+    try{
+      if(target.requestFullscreen) await target.requestFullscreen();
+      else if(target.webkitRequestFullscreen) await target.webkitRequestFullscreen();
+      else if(target.msRequestFullscreen) await target.msRequestFullscreen();
+    }catch(e){
+      if(typeof toast === 'function') toast('Plein écran refusé', 'Le navigateur a bloqué la demande de plein écran.');
+    }
+
+    try{
+      if(screen.orientation && screen.orientation.lock){
+        await screen.orientation.lock('landscape');
+      }
+    }catch(e){}
+
+    document.body.classList.add('force16x9Fullscreen');
+    updateFullscreenClass();
+
+    if(typeof toast === 'function'){
+      toast('Plein écran 16:9', 'Affichage paysage centré activé.');
+    }
+  }
+
+  async function exitFullscreen16x9(){
+    try{
+      if(document.exitFullscreen && isFullscreen()) await document.exitFullscreen();
+      else if(document.webkitExitFullscreen && isFullscreen()) await document.webkitExitFullscreen();
+      else if(document.msExitFullscreen && isFullscreen()) await document.msExitFullscreen();
+    }catch(e){}
+    try{
+      if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+    }catch(e){}
+    document.body.classList.remove('force16x9Fullscreen');
+    updateFullscreenClass();
+  }
+
+  function toggleFullscreen16x9(){
+    if(isFullscreen() || document.body.classList.contains('force16x9Fullscreen')){
+      exitFullscreen16x9();
+    }else{
+      enterFullscreen16x9();
+    }
+  }
+
+  function toolbarHTML(){
+    return ORDER.map(function(pair){
+      return '<button type="button" class="trailerVNBtn" data-trailer-action="'+pair[0]+'">'+pair[1]+'</button>';
+    }).join('');
+  }
+
+  function reorderToolbar(){
+    const toolbar = document.getElementById('trailerVNControls');
+    if(!toolbar) return;
+    if(toolbar.dataset.v22Order !== '1'){
+      toolbar.innerHTML = toolbarHTML();
+      toolbar.dataset.v22Order = '1';
+    }
+
+    const autoBtn = toolbar.querySelector('[data-trailer-action="auto"]');
+    if(autoBtn){
+      autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
+      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
+    }
+
+    const musicBtn = toolbar.querySelector('[data-trailer-action="music"]');
+    if(musicBtn && typeof state !== 'undefined'){
+      musicBtn.classList.toggle('active', state.musicOn !== false);
+      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
+    }
+
+    updateFullscreenClass();
+  }
+
+  function refreshVisualLabels(){
+    const stateLabel = document.getElementById('trailerModeState');
+    const legacy = document.body.classList.contains('legacyVisualUI');
+    const title = document.querySelector('#trailerModeBtn .btnTitle');
+    if(title) title.textContent = 'Mode visuel Legacy';
+    if(stateLabel) stateLabel.textContent = legacy ? 'Activé · ancien visuel du jeu' : 'Désactivé · visuel actuel actif';
+  }
+
+  function refresh(){
+    reorderToolbar();
+    refreshVisualLabels();
+    updateFullscreenClass();
+  }
+
+  document.addEventListener('click', function(ev){
+    const fullBtn = ev.target && ev.target.closest ? ev.target.closest('[data-trailer-action="fullscreen"]') : null;
+    if(fullBtn){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      toggleFullscreen16x9();
+      return false;
+    }
+    setTimeout(refresh, 80);
+  }, true);
+
+  ['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(function(evt){
+    document.addEventListener(evt, updateFullscreenClass);
+  });
+
+  try{
+    if(typeof render === 'function' && !render.__sylviniaV22ToolbarOrder){
+      const previousRender = render;
+      render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(refresh, 0);
+        setTimeout(refresh, 90);
+        return result;
+      };
+      render.__sylviniaV22ToolbarOrder = true;
+      window.render = render;
+    }
+  }catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(refresh, 0);
+    setTimeout(refresh, 160);
+  });
+  window.addEventListener('load', function(){
+    setTimeout(refresh, 0);
+    setTimeout(refresh, 240);
+  });
+  document.addEventListener('visibilitychange', updateFullscreenClass);
+
+  setTimeout(refresh, 0);
+  setTimeout(refresh, 250);
+})();
+</script>
+
+
+
+<style id="sylviniaV23LegacyBottomSheet">
+/* V23 · Legacy autonome : scène visible + panneau inférieur coulissant */
+
+body.legacyVisualUI #gameCard{
+  position:relative!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background:#000!important;
+}
+
+/* La scène reste en arrière-plan, visible en permanence. */
+body.legacyVisualUI #gameCard .stage{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  aspect-ratio:auto!important;
+  z-index:1!important;
+  background:#000!important;
+}
+
+body.legacyVisualUI #gameCard .stage::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.04) 0%,rgba(0,0,0,.02) 38%,rgba(0,0,0,.44) 100%),
+    linear-gradient(0deg,rgba(3,8,16,.56) 0%,rgba(3,8,16,.18) 38%,rgba(3,8,16,0) 68%);
+}
+
+body.legacyVisualUI #gameCard .bg,
+body.legacyVisualUI #gameCard .stage .bg{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background-size:cover!important;
+  background-position:center center!important;
+}
+
+body.legacyVisualUI #gameCard .chars{
+  position:absolute!important;
+  inset:0!important;
+  z-index:3!important;
+}
+
+body.legacyVisualUI #gameCard .char,
+body.legacyVisualUI #gameCard .chars img{
+  bottom:0!important;
+  max-height:92%!important;
+}
+
+/* Le panneau bas devient une bottom-sheet lisible, avec plusieurs hauteurs. */
+body.legacyVisualUI #gameCard .dialogueWrap{
+  --legacySheetCollapsed:92px;
+  --legacySheetPeek:36dvh;
+  --legacySheetExpanded:68dvh;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  z-index:20!important;
+  height:var(--legacySheetPeek)!important;
+  max-height:var(--legacySheetExpanded)!important;
+  min-height:var(--legacySheetCollapsed)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  padding:26px 18px 12px!important;
+  background:
+    linear-gradient(180deg,rgba(7,12,23,.56),rgba(5,9,17,.86) 22%,rgba(4,8,16,.94))!important;
+  border-top:1px solid rgba(167,240,255,.18)!important;
+  box-shadow:0 -18px 46px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.04)!important;
+  backdrop-filter:blur(10px) saturate(1.03)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.03)!important;
+  overflow:hidden!important;
+  transition:height .28s ease, background .22s ease, padding .22s ease!important;
+  touch-action:none!important;
+}
+
+/* Poignée visuelle. */
+body.legacyVisualUI #gameCard .dialogueWrap::before{
+  content:"";
+  position:absolute;
+  top:9px;
+  left:50%;
+  width:54px;
+  height:5px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:rgba(221,237,255,.34);
+  box-shadow:0 0 16px rgba(167,240,255,.12);
+}
+
+body.legacyVisualUI.legacySheetCollapsed #gameCard .dialogueWrap{
+  height:var(--legacySheetCollapsed)!important;
+  padding-top:24px!important;
+  background:linear-gradient(180deg,rgba(7,12,23,.50),rgba(5,9,17,.72))!important;
+}
+
+body.legacyVisualUI.legacySheetExpanded #gameCard .dialogueWrap{
+  height:var(--legacySheetExpanded)!important;
+}
+
+/* En mode réduit : on garde valeurs + barre de boutons, on masque le texte. */
+body.legacyVisualUI.legacySheetCollapsed #gameCard .dialogue{
+  display:none!important;
+}
+
+/* La zone de dialogue scrolle à l'intérieur du panneau sans pousser la scène. */
+body.legacyVisualUI #gameCard .dialogue{
+  order:2!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:auto!important;
+  margin:0!important;
+  padding:22px 24px!important;
+  border-radius:24px!important;
+  background:linear-gradient(180deg,rgba(10,16,28,.72),rgba(5,9,17,.82))!important;
+  border:1px solid rgba(167,240,255,.16)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.035)!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+
+body.legacyVisualUI #gameCard .text{
+  font-size:clamp(18px,3.9vw,24px)!important;
+  line-height:1.58!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+
+/* Valeurs : toujours visibles en haut de la bottom-sheet. */
+body.legacyVisualUI #gameCard #stats,
+body.legacyVisualUI #gameCard .stats{
+  order:1!important;
+  flex:0 0 auto!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  margin:0 0 0 0!important;
+  padding:0 4px!important;
+  z-index:25!important;
+  opacity:1!important;
+}
+
+/* Barre du bas : toujours visible, scroll horizontal si l'écran est trop étroit. */
+body.legacyVisualUI #gameCard #trailerVNControls{
+  order:3!important;
+  flex:0 0 auto!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
+  align-items:center!important;
+  gap:7px!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:8px 6px 3px!important;
+  margin:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  scrollbar-width:thin!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-x!important;
+}
+
+body.legacyVisualUI #gameCard #trailerVNControls::-webkit-scrollbar{
+  height:4px!important;
+}
+body.legacyVisualUI #gameCard #trailerVNControls::-webkit-scrollbar-thumb{
+  background:rgba(167,240,255,.22)!important;
+  border-radius:999px!important;
+}
+
+body.legacyVisualUI #gameCard .trailerVNBtn{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+}
+
+/* Bouton flottant de gestion du panneau. */
+body.legacyVisualUI #legacySheetToggle{
+  position:absolute!important;
+  right:14px!important;
+  top:8px!important;
+  z-index:35!important;
+  appearance:none!important;
+  border:1px solid rgba(167,240,255,.18)!important;
+  border-radius:999px!important;
+  background:rgba(9,16,28,.62)!important;
+  color:rgba(235,246,255,.88)!important;
+  padding:5px 9px!important;
+  min-height:28px!important;
+  font:900 11px/1 system-ui,-apple-system,Segoe UI,sans-serif!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
+  cursor:pointer!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.22)!important;
+}
+
+body.legacyVisualUI #legacySheetToggle::before{
+  content:"↕ ";
+  color:#9feeff;
+}
+
+body.legacyVisualUI.legacySheetCollapsed #legacySheetToggle::after{
+  content:"Ouvrir";
+}
+
+body.legacyVisualUI.legacySheetPeek #legacySheetToggle::after{
+  content:"Agrandir";
+}
+
+body.legacyVisualUI.legacySheetExpanded #legacySheetToggle::after{
+  content:"Réduire";
+}
+
+body:not(.legacyVisualUI) #legacySheetToggle{
+  display:none!important;
+}
+
+/* Mobile : Legacy auto-suffisant, sans dépendre du mode mobile. */
+@media(max-width:760px){
+  body.legacyVisualUI #gameCard .dialogueWrap{
+    --legacySheetCollapsed:88px;
+    --legacySheetPeek:38dvh;
+    --legacySheetExpanded:72dvh;
+    padding-left:14px!important;
+    padding-right:14px!important;
+    padding-bottom:10px!important;
+  }
+
+  body.legacyVisualUI #gameCard .dialogue{
+    padding:18px 18px!important;
+    border-radius:22px!important;
+  }
+
+  body.legacyVisualUI #gameCard .text{
+    font-size:clamp(18px,4.6vw,23px)!important;
+    line-height:1.55!important;
+  }
+
+  body.legacyVisualUI #gameCard .speaker{
+    font-size:clamp(24px,7vw,32px)!important;
+  }
+
+  body.legacyVisualUI #gameCard #stats,
+  body.legacyVisualUI #gameCard .stats{
+    gap:6px!important;
+    padding-right:90px!important;
+  }
+
+  body.legacyVisualUI #gameCard .stat{
+    font-size:11px!important;
+    padding:5px 8px!important;
+  }
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.legacyVisualUI #gameCard .dialogueWrap{
+    --legacySheetCollapsed:72px;
+    --legacySheetPeek:42dvh;
+    --legacySheetExpanded:76dvh;
+    padding-top:22px!important;
+  }
+  body.legacyVisualUI #gameCard .dialogue{
+    padding:14px 16px!important;
+  }
+  body.legacyVisualUI #gameCard .text{
+    font-size:clamp(13px,1.45vw,17px)!important;
+    line-height:1.35!important;
+  }
+}
+</style>
+
+<script id="sylviniaV23LegacyBottomSheet">
+(function(){
+  if(window.__sylviniaV23LegacyBottomSheet) return;
+  window.__sylviniaV23LegacyBottomSheet = true;
+
+  const KEY = 'sylvinia_legacy_sheet_state';
+  const states = ['collapsed','peek','expanded'];
+
+  function getState(){
+    try{
+      const value = localStorage.getItem(KEY);
+      return states.includes(value) ? value : 'peek';
+    }catch(e){
+      return 'peek';
+    }
+  }
+
+  function setState(value){
+    if(!states.includes(value)) value = 'peek';
+    document.body.classList.toggle('legacySheetCollapsed', value === 'collapsed');
+    document.body.classList.toggle('legacySheetPeek', value === 'peek');
+    document.body.classList.toggle('legacySheetExpanded', value === 'expanded');
+    try{ localStorage.setItem(KEY, value); }catch(e){}
+  }
+
+  function nextState(){
+    const current = getCurrentClassState();
+    if(current === 'collapsed') return 'peek';
+    if(current === 'peek') return 'expanded';
+    return 'collapsed';
+  }
+
+  function getCurrentClassState(){
+    if(document.body.classList.contains('legacySheetCollapsed')) return 'collapsed';
+    if(document.body.classList.contains('legacySheetExpanded')) return 'expanded';
+    return 'peek';
+  }
+
+  function ensureToggle(){
+    const wrap = document.querySelector('#gameCard .dialogueWrap');
+    if(!wrap) return;
+    let btn = document.getElementById('legacySheetToggle');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.id = 'legacySheetToggle';
+      btn.type = 'button';
+      btn.setAttribute('aria-label','Changer la hauteur du panneau de dialogue');
+      btn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        setState(nextState());
+      }, true);
+      wrap.appendChild(btn);
+    }
+
+    installDrag(wrap);
+  }
+
+  function installDrag(wrap){
+    if(wrap.__legacySheetDragInstalled) return;
+    wrap.__legacySheetDragInstalled = true;
+
+    let startY = null;
+    let startState = null;
+
+    function onStart(ev){
+      if(!document.body.classList.contains('legacyVisualUI')) return;
+      if(ev.target && ev.target.closest && ev.target.closest('#trailerVNControls,.dialogue,button.choiceBtn')) return;
+      const point = ev.touches ? ev.touches[0] : ev;
+      startY = point.clientY;
+      startState = getCurrentClassState();
+    }
+
+    function onEnd(ev){
+      if(startY == null) return;
+      const point = ev.changedTouches ? ev.changedTouches[0] : ev;
+      const dy = point.clientY - startY;
+      const threshold = 42;
+      if(Math.abs(dy) > threshold){
+        if(dy < 0){
+          if(startState === 'collapsed') setState('peek');
+          else setState('expanded');
+        }else{
+          if(startState === 'expanded') setState('peek');
+          else setState('collapsed');
+        }
+      }
+      startY = null;
+      startState = null;
+    }
+
+    wrap.addEventListener('pointerdown', onStart, {passive:true});
+    wrap.addEventListener('pointerup', onEnd, {passive:true});
+    wrap.addEventListener('touchstart', onStart, {passive:true});
+    wrap.addEventListener('touchend', onEnd, {passive:true});
+  }
+
+  function refresh(){
+    if(!document.body.classList.contains('legacySheetCollapsed') &&
+       !document.body.classList.contains('legacySheetPeek') &&
+       !document.body.classList.contains('legacySheetExpanded')){
+      setState(getState());
+    }
+    ensureToggle();
+  }
+
+  try{
+    if(typeof render === 'function' && !render.__sylviniaV23LegacyBottomSheet){
+      const previousRender = render;
+      render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(refresh, 0);
+        setTimeout(refresh, 80);
+        return result;
+      };
+      render.__sylviniaV23LegacyBottomSheet = true;
+      window.render = render;
+    }
+  }catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setState(getState());
+    setTimeout(refresh, 0);
+    setTimeout(refresh, 160);
+  });
+
+  window.addEventListener('load', function(){
+    setState(getState());
+    setTimeout(refresh, 0);
+    setTimeout(refresh, 220);
+  });
+
+  document.addEventListener('click', function(){
+    setTimeout(refresh, 80);
+  }, true);
+
+  setState(getState());
+  setTimeout(refresh, 0);
+})();
+</script>
+
+
+
+<style id="sylviniaV24HideATH">
+/* V24 · Bouton Masquer l’ATH : ne laisser que la scène + bouton de retour */
+
+body.athHidden{
+  background:#000!important;
+  overflow:hidden!important;
+}
+
+/* On garde uniquement la scène visible. */
+body.athHidden #gameCard .topbar,
+body.athHidden #gameCard .dialogueWrap,
+body.athHidden #gameCard #stats,
+body.athHidden #gameCard .stats,
+body.athHidden #gameCard #trailerVNControls,
+body.athHidden #c7StickyTimer,
+body.athHidden .syl-toast-host,
+body.athHidden .syl-toast-stack,
+body.athHidden .toast,
+body.athHidden .toastWrap{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateY(12px)!important;
+}
+
+/* Retire aussi les voiles ATH ajoutés par les modes visuels. */
+body.athHidden #gameCard::before,
+body.athHidden #gameCard::after,
+body.athHidden #gameCard .stage::after,
+body.athHidden #gameCard .veil{
+  opacity:0!important;
+  display:none!important;
+}
+
+/* La scène remplit le cadre disponible. */
+body.athHidden #gameCard,
+body.athHidden #gameCard .stage{
+  background:#000!important;
+}
+
+body.athHidden #gameCard .stage{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:1!important;
+}
+
+body.athHidden #gameCard .bg,
+body.athHidden #gameCard .stage .bg{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background-size:cover!important;
+  background-position:center center!important;
+}
+
+/* Bouton minimal pour réafficher l’ATH. */
+#athRestoreBtn{
+  position:fixed!important;
+  right:max(14px,env(safe-area-inset-right))!important;
+  bottom:max(14px,env(safe-area-inset-bottom))!important;
+  z-index:99999!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  min-height:42px!important;
+  padding:10px 14px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(167,240,255,.24)!important;
+  background:linear-gradient(180deg,rgba(8,13,24,.58),rgba(4,8,16,.72))!important;
+  color:rgba(240,249,255,.94)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.05)!important;
+  backdrop-filter:blur(10px) saturate(1.04)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.04)!important;
+  font:900 12px/1 system-ui,-apple-system,Segoe UI,sans-serif!important;
+  letter-spacing:.10em!important;
+  text-transform:uppercase!important;
+  cursor:pointer!important;
+  opacity:.76!important;
+}
+
+#athRestoreBtn:hover,
+#athRestoreBtn:focus-visible{
+  opacity:1!important;
+  border-color:rgba(243,213,141,.38)!important;
+  color:#fff2c8!important;
+  transform:translateY(-1px)!important;
+}
+
+#athRestoreBtn::before{
+  content:"◈";
+  color:#9feeff;
+  font-size:14px;
+  line-height:1;
+}
+
+body.athHidden #athRestoreBtn{
+  display:inline-flex!important;
+}
+
+/* Bouton dans la barre VN. */
+#gameCard .trailerVNBtn[data-trailer-action="hideath"]{
+  color:#f7e9c4!important;
+  border:1px solid rgba(243,213,141,.20)!important;
+  background:rgba(92,68,28,.16)!important;
+}
+
+#gameCard .trailerVNBtn[data-trailer-action="hideath"]:hover,
+#gameCard .trailerVNBtn[data-trailer-action="hideath"]:focus-visible{
+  color:#fff2c8!important;
+  border-color:rgba(243,213,141,.38)!important;
+  background:rgba(92,68,28,.28)!important;
+}
+
+/* En Legacy réduit, le bouton reste accessible dans la rangée scrollable. */
+body.legacyVisualUI #gameCard .trailerVNBtn[data-trailer-action="hideath"]{
+  border-color:rgba(243,213,141,.20)!important;
+  background:linear-gradient(180deg,rgba(54,43,28,.48),rgba(18,16,24,.70))!important;
+}
+
+@media(max-width:760px){
+  #athRestoreBtn{
+    right:max(10px,env(safe-area-inset-right))!important;
+    bottom:max(10px,env(safe-area-inset-bottom))!important;
+    min-height:40px!important;
+    padding:9px 12px!important;
+    font-size:11px!important;
+  }
+}
+</style>
+
+<script id="sylviniaV24HideATH">
+(function(){
+  if(window.__sylviniaV24HideATH) return;
+  window.__sylviniaV24HideATH = true;
+
+  const ORDER_WITH_ATH = [
+    ['history','Historique'],
+    ['back','Retour'],
+    ['skip','Passer'],
+    ['auto','Auto'],
+    ['music','Musique'],
+    ['fullscreen','Plein écran'],
+    ['hideath','Masquer ATH'],
+    ['chapters','Chapitres'],
+    ['progression','Progression'],
+    ['codex','Codex'],
+    ['menu','Menu']
+  ];
+
+  function toolbarHTML(){
+    return ORDER_WITH_ATH.map(function(pair){
+      return '<button type="button" class="trailerVNBtn" data-trailer-action="'+pair[0]+'">'+pair[1]+'</button>';
+    }).join('');
+  }
+
+  function ensureRestoreButton(){
+    let btn = document.getElementById('athRestoreBtn');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.id = 'athRestoreBtn';
+      btn.type = 'button';
+      btn.textContent = 'Afficher l’ATH';
+      btn.setAttribute('aria-label','Réafficher l’ATH');
+      btn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        showATH();
+      }, true);
+      document.body.appendChild(btn);
+    }
+    return btn;
+  }
+
+  function gameVisible(){
+    const game = document.getElementById('game');
+    return !!(game && !game.classList.contains('hidden'));
+  }
+
+  function hideATH(){
+    if(!gameVisible()) return;
+    ensureRestoreButton();
+    document.body.classList.add('athHidden');
+  }
+
+  function showATH(){
+    document.body.classList.remove('athHidden');
+  }
+
+  function toggleATH(){
+    if(document.body.classList.contains('athHidden')) showATH();
+    else hideATH();
+  }
+
+  function syncToolbar(){
+    const toolbar = document.getElementById('trailerVNControls');
+    if(toolbar && toolbar.dataset.v24AthOrder !== '1'){
+      toolbar.innerHTML = toolbarHTML();
+      toolbar.dataset.v22Order = '1';
+      toolbar.dataset.v24AthOrder = '1';
+    }
+
+    const autoBtn = document.querySelector('[data-trailer-action="auto"]');
+    if(autoBtn){
+      autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
+      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
+    }
+
+    const musicBtn = document.querySelector('[data-trailer-action="music"]');
+    if(musicBtn && typeof state !== 'undefined'){
+      musicBtn.classList.toggle('active', state.musicOn !== false);
+      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
+    }
+
+    const fullBtn = document.querySelector('[data-trailer-action="fullscreen"]');
+    if(fullBtn){
+      const active = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+      fullBtn.classList.toggle('active', active);
+      fullBtn.textContent = active ? 'Quitter plein écran' : 'Plein écran';
+    }
+
+    const hideBtn = document.querySelector('[data-trailer-action="hideath"]');
+    if(hideBtn){
+      hideBtn.textContent = 'Masquer ATH';
+      hideBtn.setAttribute('aria-label','Masquer l’ATH pour ne garder que la scène');
+    }
+
+    ensureRestoreButton();
+
+    if(!gameVisible()){
+      document.body.classList.remove('athHidden');
+    }
+  }
+
+  document.addEventListener('click', function(ev){
+    const btn = ev.target && ev.target.closest ? ev.target.closest('[data-trailer-action="hideath"]') : null;
+    if(btn){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      toggleATH();
+      return false;
+    }
+
+    /* Si on quitte le jeu par un autre bouton, on remet l’ATH pour éviter un menu invisible. */
+    const navBtn = ev.target && ev.target.closest ? ev.target.closest('[data-trailer-action="menu"],[data-trailer-action="chapters"],[data-trailer-action="progression"],[data-trailer-action="codex"]') : null;
+    if(navBtn){
+      setTimeout(showATH, 40);
+    }
+
+    setTimeout(syncToolbar, 100);
+  }, true);
+
+  try{
+    if(typeof render === 'function' && !render.__sylviniaV24HideATH){
+      const previousRender = render;
+      render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(syncToolbar, 0);
+        setTimeout(syncToolbar, 120);
+        return result;
+      };
+      render.__sylviniaV24HideATH = true;
+      window.render = render;
+    }
+  }catch(e){}
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureRestoreButton();
+    setTimeout(syncToolbar, 0);
+    setTimeout(syncToolbar, 160);
+  });
+
+  window.addEventListener('load', function(){
+    ensureRestoreButton();
+    setTimeout(syncToolbar, 0);
+    setTimeout(syncToolbar, 240);
+  });
+
+  document.addEventListener('visibilitychange', syncToolbar);
+
+  ensureRestoreButton();
+  setTimeout(syncToolbar, 0);
+  setTimeout(syncToolbar, 250);
+})();
+</script>
+
+
+
+<style id="sylviniaV25ToolbarOneLineBugOnly">
+/* V25 clean · Départ V24 : uniquement barre basse sur une seule ligne + bouton Signaler un bug intégré */
+
+/* En jeu, le bouton bug flottant devient inutile : il passe dans la barre basse. */
+body.trailer16x9 #bugReportBtn,
+body.legacyVisualUI #bugReportBtn,
+#gameCard #bugReportBtn{
+  display:none!important;
+}
+
+/* Barre basse : une seule ligne, jamais de retour à la ligne.
+   Sur petit écran, elle défile horizontalement. */
+#gameCard #trailerVNControls,
+body.trailer16x9 #gameCard #trailerVNControls,
+body.legacyVisualUI #gameCard #trailerVNControls{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:6px!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  white-space:nowrap!important;
+  scrollbar-width:thin!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-x!important;
+}
+
+#gameCard #trailerVNControls::-webkit-scrollbar{
+  height:4px!important;
+}
+
+#gameCard #trailerVNControls::-webkit-scrollbar-thumb{
+  background:rgba(167,240,255,.24)!important;
+  border-radius:999px!important;
+}
+
+#gameCard #trailerVNControls .trailerVNBtn,
+body.trailer16x9 #gameCard #trailerVNControls .trailerVNBtn,
+body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  min-width:0!important;
+  padding:6px 9px!important;
+  font-size:clamp(10px,1.45vw,12px)!important;
+  line-height:1.05!important;
+}
+
+/* Bouton bug intégré dans la barre. */
+#gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="bug"]{
+  color:#ffe8a8!important;
+  border:1px solid rgba(243,213,141,.24)!important;
+  background:rgba(92,68,28,.18)!important;
+}
+
+#gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="bug"]::before{
+  content:"⚠ ";
+  color:#ffe8a8;
+}
+
+/* Conserve Masquer ATH et Plein écran lisibles sans agrandir la ligne. */
+#gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="hideath"]{
+  color:#f7e9c4!important;
+}
+
+#gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="fullscreen"]{
+  color:#fff2c8!important;
+}
+
+@media(max-width:760px){
+  #gameCard #trailerVNControls,
+  body.trailer16x9 #gameCard #trailerVNControls,
+  body.legacyVisualUI #gameCard #trailerVNControls{
+    gap:5px!important;
+  }
+
+  #gameCard #trailerVNControls .trailerVNBtn,
+  body.trailer16x9 #gameCard #trailerVNControls .trailerVNBtn,
+  body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
+    padding:6px 8px!important;
+    font-size:10px!important;
+  }
+}
+</style>
+
+<script id="sylviniaV25ToolbarOneLineBugOnly">
+(function(){
+  if(window.__sylviniaV25ToolbarOneLineBugOnly) return;
+  window.__sylviniaV25ToolbarOneLineBugOnly = true;
+
+  const ORDER = [
+    'history',
+    'back',
+    'skip',
+    'auto',
+    'music',
+    'fullscreen',
+    'hideath',
+    'bug',
+    'chapters',
+    'progression',
+    'codex',
+    'menu'
+  ];
+
+  const LABELS = {
+    history:'Historique',
+    back:'Retour',
+    skip:'Passer',
+    auto:'Auto',
+    music:'Musique',
+    fullscreen:'Plein écran',
+    hideath:'Masquer ATH',
+    bug:'Bug',
+    chapters:'Chapitres',
+    progression:'Progression',
+    codex:'Codex',
+    menu:'Menu'
+  };
+
+  const COMPACT = {
+    history:'Hist.',
+    back:'Retour',
+    skip:'Passer',
+    auto:'Auto',
+    music:'Son',
+    fullscreen:'16:9',
+    hideath:'ATH',
+    bug:'Bug',
+    chapters:'Chap.',
+    progression:'Prog.',
+    codex:'Codex',
+    menu:'Menu'
+  };
+
+  function compact(){
+    return window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+  }
+
+  function isFullscreen(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  }
+
+  function labelFor(action){
+    if(action === 'auto' && window.__sylviniaTrailerAuto){
+      return compact() ? 'Auto ✓' : 'Auto activé';
+    }
+    if(action === 'music' && typeof state !== 'undefined' && state.musicOn === false){
+      return compact() ? 'Son off' : 'Musique off';
+    }
+    if(action === 'fullscreen' && isFullscreen()){
+      return compact() ? 'Quitter' : 'Quitter plein écran';
+    }
+    return (compact() ? COMPACT : LABELS)[action] || action;
+  }
+
+  function html(){
+    return ORDER.map(function(action){
+      return '<button type="button" class="trailerVNBtn" data-trailer-action="'+action+'">'+labelFor(action)+'</button>';
+    }).join('');
+  }
+
+  function gameVisible(){
+    const game = document.getElementById('game');
+    return !!(game && !game.classList.contains('hidden'));
+  }
+
+  function syncToolbar(){
+    const toolbar = document.getElementById('trailerVNControls');
+    if(!toolbar) return;
+
+    const current = Array.from(toolbar.querySelectorAll('[data-trailer-action]')).map(function(btn){
+      return btn.dataset.trailerAction;
+    });
+
+    const needsRebuild = toolbar.dataset.v25BugOnly !== '1' || ORDER.some(function(action, i){
+      return current[i] !== action;
+    });
+
+    if(needsRebuild){
+      toolbar.innerHTML = html();
+      toolbar.dataset.v22Order = '1';
+      toolbar.dataset.v24AthOrder = '1';
+      toolbar.dataset.v25BugOnly = '1';
+    }
+
+    ORDER.forEach(function(action){
+      const btn = toolbar.querySelector('[data-trailer-action="'+action+'"]');
+      if(!btn) return;
+      btn.textContent = labelFor(action);
+      if(action === 'bug') btn.setAttribute('aria-label','Signaler un bug');
+      if(action === 'hideath') btn.setAttribute('aria-label','Masquer l’ATH pour ne garder que la scène');
+      if(action === 'fullscreen') btn.setAttribute('aria-label','Passer en plein écran paysage 16:9');
+    });
+
+    const autoBtn = toolbar.querySelector('[data-trailer-action="auto"]');
+    if(autoBtn) autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
+
+    const musicBtn = toolbar.querySelector('[data-trailer-action="music"]');
+    if(musicBtn && typeof state !== 'undefined') musicBtn.classList.toggle('active', state.musicOn !== false);
+
+    const fullBtn = toolbar.querySelector('[data-trailer-action="fullscreen"]');
+    if(fullBtn) fullBtn.classList.toggle('active', isFullscreen());
+
+    toolbar.style.flexWrap = 'nowrap';
+    toolbar.style.overflowX = 'auto';
+    toolbar.style.overflowY = 'hidden';
+    toolbar.style.justifyContent = 'flex-start';
+
+    toolbar.querySelectorAll('.trailerVNBtn').forEach(function(btn){
+      btn.style.flex = '0 0 auto';
+      btn.style.whiteSpace = 'nowrap';
+    });
+
+    const floatingBug = document.getElementById('bugReportBtn');
+    if(floatingBug && gameVisible()){
+      floatingBug.classList.add('hidden');
+    }
+  }
+
+  function triggerBugReport(ev){
+    if(typeof openBugReport === 'function'){
+      openBugReport(ev || new Event('click'));
+      return;
+    }
+
+    const floatingBug = document.getElementById('bugReportBtn');
+    if(floatingBug){
+      floatingBug.click();
+      return;
+    }
+
+    if(typeof toast === 'function'){
+      toast('Signalement indisponible','La fonction de signalement n’est pas chargée.');
+    }
+  }
+
+  document.addEventListener('click', function(ev){
+    const bugBtn = ev.target && ev.target.closest ? ev.target.closest('[data-trailer-action="bug"]') : null;
+    if(bugBtn){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      triggerBugReport(ev);
+      return false;
+    }
+
+    setTimeout(syncToolbar, 80);
+  }, true);
+
+  try{
+    if(typeof render === 'function' && !render.__sylviniaV25ToolbarOneLineBugOnly){
+      const previousRender = render;
+      render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(syncToolbar, 0);
+        setTimeout(syncToolbar, 120);
+        return result;
+      };
+      render.__sylviniaV25ToolbarOneLineBugOnly = true;
+      window.render = render;
+    }
+  }catch(e){}
+
+  window.addEventListener('resize', function(){
+    const toolbar = document.getElementById('trailerVNControls');
+    if(toolbar) toolbar.dataset.v25BugOnly = '0';
+    setTimeout(syncToolbar, 80);
+  });
+
+  ['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      const toolbar = document.getElementById('trailerVNControls');
+      if(toolbar) toolbar.dataset.v25BugOnly = '0';
+      setTimeout(syncToolbar, 80);
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(syncToolbar, 0);
+    setTimeout(syncToolbar, 180);
+  });
+
+  window.addEventListener('load', function(){
+    setTimeout(syncToolbar, 0);
+    setTimeout(syncToolbar, 240);
+  });
+
+  setTimeout(syncToolbar, 0);
+  setTimeout(syncToolbar, 260);
+})();
+</script>
+
 </body>
 </html>
