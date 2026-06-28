@@ -2165,6 +2165,270 @@ body.trailer16x9 .chapterSelectGrid{
 </style>
 
 
+
+
+<style id="trailer16x9V4CinematicVN">
+/* V4 : rapprochement visuel vers un trailer VN plus cinématique, sans casser la navigation. */
+body.trailer16x9 #game.screen.card:not(.hidden),
+body.trailer16x9 #gameCard{
+  background:#000!important;
+  box-shadow:0 0 0 1px rgba(224,190,118,.30),0 28px 110px rgba(0,0,0,.82)!important;
+}
+
+/* L'image redevient la star : moins de blocs, plus de plein cadre. */
+body.trailer16x9 #gameCard::before{
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.54) 0%,rgba(0,0,0,.18) 16%,rgba(0,0,0,0) 34%),
+    linear-gradient(0deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.48) 20%,rgba(0,0,0,0) 48%),
+    radial-gradient(circle at 50% 22%,rgba(142,210,255,.10),transparent 42%)!important;
+}
+body.trailer16x9 .stage,
+body.trailer16x9 .bg,
+body.trailer16x9 .stage .bg{
+  filter:saturate(1.08) contrast(1.04)!important;
+}
+body.trailer16x9 .veil{
+  opacity:.04!important;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.24))!important;
+}
+
+/* Sprites un peu moins écrasants pour rappeler une composition VN illustrée. */
+body.trailer16x9 .char,
+body.trailer16x9 .chars img{
+  max-height:82%!important;
+  bottom:6%!important;
+  filter:drop-shadow(0 22px 34px rgba(0,0,0,.80))!important;
+}
+body.trailer16x9 .char.left{left:6%!important;}
+body.trailer16x9 .char.right{right:6%!important;}
+body.trailer16x9 .char.center{max-height:82%!important;}
+
+/* Topbar quasi transparente : on garde Menu/Codex/Progression accessibles, mais façon overlay trailer. */
+body.trailer16x9 .topbar{
+  padding:14px 18px 34px!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.44),rgba(0,0,0,0))!important;
+  border:none!important;
+  pointer-events:none!important;
+}
+body.trailer16x9 .chapterLabel{
+  font-size:9px!important;
+  letter-spacing:.42em!important;
+  color:#9feeff!important;
+  opacity:.92!important;
+}
+body.trailer16x9 .chapterTitle{
+  font-size:clamp(18px,2.05vw,30px)!important;
+  line-height:1!important;
+  color:#fff!important;
+  text-shadow:0 3px 18px #000,0 0 20px rgba(112,218,255,.26)!important;
+}
+body.trailer16x9 .chapterSub{
+  font-size:clamp(10px,1vw,15px)!important;
+  color:rgba(255,255,255,.80)!important;
+}
+body.trailer16x9 .topActions{
+  pointer-events:auto!important;
+  transform:none!important;
+  max-width:62%!important;
+  gap:8px!important;
+}
+body.trailer16x9 .topBtn{
+  min-height:34px!important;
+  padding:8px 13px!important;
+  border-radius:16px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  color:#f5f1e8!important;
+  background:linear-gradient(180deg,rgba(21,27,39,.72),rgba(7,10,18,.66))!important;
+  border:1px solid rgba(232,202,139,.26)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08)!important;
+  backdrop-filter:blur(10px)!important;
+}
+body.trailer16x9 #menuBtn,
+body.trailer16x9 #codexBtn2,
+body.trailer16x9 #progressionBtn2,
+body.trailer16x9 #devBackBtn:not(.hidden){
+  display:inline-flex!important;
+}
+body.trailer16x9 #musicBtn,
+body.trailer16x9 #volume{
+  display:none!important;
+}
+
+/* Boîte de dialogue façon VN trailer : plus basse, plus transparente, accents or. */
+body.trailer16x9 .dialogueWrap{
+  left:6.2%!important;
+  right:6.2%!important;
+  bottom:4.6%!important;
+  z-index:7!important;
+  pointer-events:none!important;
+}
+body.trailer16x9 .dialogue{
+  position:relative!important;
+  max-height:30svh!important;
+  min-height:128px!important;
+  padding:16px 24px 18px!important;
+  border-radius:8px!important;
+  overflow-y:auto!important;
+  pointer-events:auto!important;
+  color:#f6f0e6!important;
+  background:linear-gradient(180deg,rgba(14,12,18,.70),rgba(5,7,13,.76))!important;
+  border:1px solid rgba(234,205,145,.52)!important;
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.50),
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 0 32px rgba(210,170,88,.06)!important;
+  backdrop-filter:blur(7px)!important;
+}
+body.trailer16x9 .dialogue::before,
+body.trailer16x9 .dialogue::after{
+  content:"✦";
+  position:absolute;
+  top:-12px;
+  width:34px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  color:#e8c982;
+  font-size:14px;
+  text-shadow:0 0 14px rgba(232,201,130,.55);
+  background:rgba(8,9,14,.82);
+  border:1px solid rgba(234,205,145,.48);
+  border-radius:999px;
+}
+body.trailer16x9 .dialogue::before{left:18px;}
+body.trailer16x9 .dialogue::after{right:18px;}
+body.trailer16x9 .tag{
+  display:none!important;
+}
+body.trailer16x9 .speaker{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:0 0 9px!important;
+  padding:4px 18px!important;
+  min-width:160px!important;
+  justify-content:center!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(17px,1.7vw,24px)!important;
+  font-weight:700!important;
+  color:#f1db9b!important;
+  letter-spacing:.02em!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.60),rgba(0,0,0,0))!important;
+  border-top:1px solid rgba(234,205,145,.42)!important;
+  border-bottom:1px solid rgba(234,205,145,.34)!important;
+  text-shadow:0 2px 10px #000!important;
+}
+body.trailer16x9 .speaker::before,
+body.trailer16x9 .speaker::after{
+  content:"✧";
+  color:#d9bf80;
+  font-size:.72em;
+}
+body.trailer16x9 .text{
+  display:block!important;
+  max-height:none!important;
+  overflow:visible!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(14px,1.35vw,19px)!important;
+  line-height:1.38!important;
+  color:rgba(255,250,240,.93)!important;
+  text-shadow:0 2px 9px rgba(0,0,0,.78)!important;
+}
+body.trailer16x9 .text em,
+body.trailer16x9 .text i{
+  color:rgba(240,232,218,.72)!important;
+}
+
+/* Les choix façon menu à droite, comme dans le visuel cible, mais seulement quand il y en a. */
+body.trailer16x9 .choices{
+  position:fixed!important;
+  right:7.2vw!important;
+  bottom:23svh!important;
+  width:min(390px,31vw)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  margin:0!important;
+  z-index:12!important;
+  pointer-events:auto!important;
+}
+body.trailer16x9 .choiceBtn{
+  min-height:36px!important;
+  padding:8px 14px!important;
+  border-radius:4px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(12px,1.05vw,16px)!important;
+  line-height:1.16!important;
+  color:#f3e6cc!important;
+  background:linear-gradient(90deg,rgba(30,22,30,.78),rgba(14,12,18,.70))!important;
+  border:1px solid rgba(232,201,130,.48)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.40), inset 0 1px 0 rgba(255,255,255,.07)!important;
+  backdrop-filter:blur(8px)!important;
+}
+body.trailer16x9 .choiceBtn:hover,
+body.trailer16x9 .choiceBtn:focus-visible{
+  background:linear-gradient(90deg,rgba(97,67,30,.82),rgba(32,24,28,.76))!important;
+  border-color:rgba(255,222,149,.78)!important;
+}
+body.trailer16x9 .choiceBtn small{
+  display:none!important;
+}
+body.trailer16x9 .choiceBtn .arrow{
+  color:#e8c982!important;
+}
+
+/* Petits boutons VN décoratifs en bas, pour le look trailer. Ils ne remplacent pas Menu/Codex/Progression. */
+body.trailer16x9 .dialogueWrap::after{
+  content:"Historique     Sauvegarder     Charger     Préférences     Passer     Auto";
+  display:block;
+  margin:9px auto 0;
+  width:max-content;
+  max-width:90%;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(10px,.95vw,14px);
+  color:rgba(242,231,210,.60);
+  text-shadow:0 2px 10px #000;
+  pointer-events:none;
+}
+
+body.trailer16x9 .stats{
+  position:fixed!important;
+  left:7vw!important;
+  bottom:2.1svh!important;
+  z-index:12!important;
+  opacity:.70!important;
+  pointer-events:auto!important;
+}
+body.trailer16x9 .stat{
+  background:rgba(8,10,16,.58)!important;
+  border-color:rgba(232,201,130,.24)!important;
+  color:rgba(255,255,255,.76)!important;
+}
+
+/* Les scènes longues restent jouables : la boîte dialogue défile, le reste aussi hors jeu. */
+body.trailer16x9 .dialogue::-webkit-scrollbar{width:6px!important;}
+body.trailer16x9 .dialogue::-webkit-scrollbar-thumb{background:rgba(232,201,130,.38)!important;}
+
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 .topbar{padding:8px 12px 26px!important;}
+  body.trailer16x9 .topActions{gap:6px!important;max-width:58%!important;}
+  body.trailer16x9 .topBtn{padding:7px 10px!important;font-size:11px!important;border-radius:13px!important;}
+  body.trailer16x9 .chapterLabel{font-size:8px!important;letter-spacing:.34em!important;}
+  body.trailer16x9 .chapterTitle{font-size:clamp(17px,2vw,25px)!important;}
+  body.trailer16x9 .chapterSub{font-size:11px!important;}
+  body.trailer16x9 .char,
+  body.trailer16x9 .chars img{max-height:78%!important;bottom:9%!important;}
+  body.trailer16x9 .dialogueWrap{left:8%!important;right:8%!important;bottom:5%!important;}
+  body.trailer16x9 .dialogue{max-height:28svh!important;min-height:94px!important;padding:11px 16px 12px!important;}
+  body.trailer16x9 .speaker{font-size:clamp(15px,1.55vw,20px)!important;margin-bottom:6px!important;padding:3px 14px!important;}
+  body.trailer16x9 .text{font-size:clamp(12px,1.24vw,16px)!important;line-height:1.32!important;}
+  body.trailer16x9 .choices{right:6vw!important;bottom:21svh!important;width:min(340px,32vw)!important;gap:5px!important;}
+  body.trailer16x9 .choiceBtn{min-height:30px!important;padding:6px 10px!important;font-size:clamp(11px,1vw,14px)!important;}
+  body.trailer16x9 .dialogueWrap::after{font-size:10px!important;margin-top:5px!important;}
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -33221,6 +33485,545 @@ Ouvrir le choix de perspective ?`);
   }
 })();
 </script>
+
+
+
+<style id="trailer16x9V5RealVNControls">
+/* V5 : barre VN réelle, stats au-dessus du dialogue, choix sans chevauchement. */
+body.trailer16x9 .topActions{
+  display:none!important;
+}
+body.trailer16x9 .topbar{
+  padding:14px 18px 42px!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.48),rgba(0,0,0,0))!important;
+}
+body.trailer16x9 .dialogueWrap{
+  left:6.2%!important;
+  right:6.2%!important;
+  bottom:4.2%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  pointer-events:none!important;
+}
+body.trailer16x9 .dialogueWrap::after{
+  content:none!important;
+  display:none!important;
+}
+body.trailer16x9 .dialogue{
+  order:2!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(220px,31%)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  column-gap:18px!important;
+  row-gap:8px!important;
+  max-height:31svh!important;
+  min-height:126px!important;
+  padding:14px 20px 15px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+}
+body.trailer16x9 .speaker{
+  grid-column:1!important;
+  grid-row:1!important;
+  align-self:start!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:3px 18px!important;
+  min-width:min(210px,100%)!important;
+}
+body.trailer16x9 .text{
+  grid-column:1!important;
+  grid-row:2!important;
+  min-height:0!important;
+  max-height:calc(31svh - 76px)!important;
+  overflow-y:auto!important;
+  padding-right:8px!important;
+  scrollbar-width:thin!important;
+}
+body.trailer16x9 .text::-webkit-scrollbar{width:6px!important;}
+body.trailer16x9 .text::-webkit-scrollbar-thumb{background:rgba(232,201,130,.38)!important;border-radius:999px!important;}
+body.trailer16x9 .choices{
+  position:static!important;
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  align-self:center!important;
+  width:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  max-height:100%!important;
+  overflow-y:auto!important;
+  margin:0!important;
+  padding:0!important;
+  pointer-events:auto!important;
+  scrollbar-width:thin!important;
+}
+body.trailer16x9 .choices::-webkit-scrollbar{width:6px!important;}
+body.trailer16x9 .choices::-webkit-scrollbar-thumb{background:rgba(232,201,130,.35)!important;border-radius:999px!important;}
+body.trailer16x9 .choiceBtn{
+  width:100%!important;
+  min-height:34px!important;
+  padding:8px 12px!important;
+  border-radius:5px!important;
+}
+body.trailer16x9 .stats{
+  order:1!important;
+  position:static!important;
+  left:auto!important;
+  bottom:auto!important;
+  z-index:12!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  align-self:flex-start!important;
+  gap:6px!important;
+  margin:0 0 1px 4px!important;
+  opacity:.86!important;
+  pointer-events:auto!important;
+}
+body.trailer16x9 .stat{
+  font-size:10px!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  background:rgba(8,10,16,.68)!important;
+  border:1px solid rgba(232,201,130,.28)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.25)!important;
+  color:rgba(255,255,255,.78)!important;
+}
+body.trailer16x9 .stat b{color:#ead08b!important;}
+body.trailer16x9 #trailerVNControls{
+  order:3!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:8px!important;
+  max-width:96%!important;
+  margin:0 auto!important;
+  pointer-events:auto!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+}
+body.trailer16x9 .trailerVNBtn{
+  appearance:none!important;
+  border:0!important;
+  cursor:pointer!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  color:rgba(244,235,215,.72)!important;
+  background:rgba(4,6,12,.34)!important;
+  text-shadow:0 2px 9px #000!important;
+  font:700 clamp(10px,.85vw,13px)/1.1 Georgia,'Times New Roman',serif!important;
+  letter-spacing:.01em!important;
+  transition:color .16s ease, background .16s ease, transform .16s ease!important;
+}
+body.trailer16x9 .trailerVNBtn:hover,
+body.trailer16x9 .trailerVNBtn:focus-visible{
+  color:#ffe1a0!important;
+  background:rgba(92,68,28,.50)!important;
+  transform:translateY(-1px)!important;
+}
+body.trailer16x9 .trailerVNBtn.active{
+  color:#9feeff!important;
+  background:rgba(80,170,220,.20)!important;
+}
+#trailerHistoryModal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(0,0,0,.62);
+  backdrop-filter:blur(6px);
+}
+#trailerHistoryModal.open{display:flex;}
+#trailerHistoryPanel{
+  width:min(820px,92vw);
+  max-height:min(72vh,620px);
+  overflow:auto;
+  color:#f7efe1;
+  background:linear-gradient(180deg,rgba(12,14,22,.96),rgba(5,7,13,.96));
+  border:1px solid rgba(232,201,130,.48);
+  border-radius:14px;
+  box-shadow:0 24px 80px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.05);
+  padding:18px 20px;
+  font-family:Georgia,'Times New Roman',serif;
+}
+.trailerHistoryHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;border-bottom:1px solid rgba(232,201,130,.26);padding-bottom:10px;}
+.trailerHistoryHead strong{font-size:24px;color:#f1db9b;}
+.trailerHistoryClose{appearance:none;border:1px solid rgba(232,201,130,.42);border-radius:999px;background:rgba(255,255,255,.04);color:#f7efe1;font-weight:800;padding:7px 12px;cursor:pointer;}
+.trailerHistoryEntry{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+.trailerHistoryEntry:last-child{border-bottom:0;}
+.trailerHistoryMeta{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:#9feeff;margin-bottom:4px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-weight:900;}
+.trailerHistoryEntry h4{margin:0 0 6px;font-size:18px;color:#f1db9b;}
+.trailerHistoryEntry p{margin:0;line-height:1.45;color:rgba(255,250,238,.86);white-space:pre-line;}
+@media (max-height:560px) and (orientation:landscape){
+  body.trailer16x9 .dialogueWrap{left:5.2%!important;right:5.2%!important;bottom:3.2%!important;gap:4px!important;}
+  body.trailer16x9 .dialogue{grid-template-columns:minmax(0,1fr) minmax(210px,31%)!important;max-height:34svh!important;min-height:102px!important;padding:10px 14px 11px!important;column-gap:12px!important;}
+  body.trailer16x9 .speaker{font-size:clamp(14px,1.45vw,19px)!important;padding:2px 12px!important;min-width:150px!important;}
+  body.trailer16x9 .text{max-height:calc(34svh - 56px)!important;font-size:clamp(11px,1.12vw,15px)!important;line-height:1.27!important;}
+  body.trailer16x9 .choiceBtn{min-height:28px!important;padding:5px 9px!important;font-size:clamp(10px,.95vw,13px)!important;}
+  body.trailer16x9 .stats{gap:4px!important;}
+  body.trailer16x9 .stat{font-size:9px!important;padding:3px 6px!important;}
+  body.trailer16x9 #trailerVNControls{gap:5px!important;}
+  body.trailer16x9 .trailerVNBtn{font-size:10px!important;padding:4px 6px!important;}
+}
+@media (max-width:760px){
+  body.trailer16x9 .dialogue{grid-template-columns:1fr!important;max-height:43svh!important;}
+  body.trailer16x9 .choices{grid-column:1!important;grid-row:auto!important;max-height:120px!important;}
+  body.trailer16x9 .text{max-height:20svh!important;}
+}
+</style>
+
+<script id="trailer16x9V6VNControlsAndNativeTypewriterScript">
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  let autoAdvanceTimer=null;
+  let typeTimer=null;
+  let currentTyping=null;
+  let lastPlayerInteraction=Date.now();
+  window.__sylviniaTrailerAuto = !!window.__sylviniaTrailerAuto;
+
+  function notify(title,msg){
+    if(typeof toast==='function') toast(title,msg||'');
+    else console.log('[Sylvinia]', title, msg||'');
+  }
+  function clearAdvanceTimer(){
+    clearTimeout(autoAdvanceTimer);
+    autoAdvanceTimer=null;
+  }
+  function clearTypeTimer(){
+    clearTimeout(typeTimer);
+    typeTimer=null;
+  }
+  function markPlayerInteraction(){
+    lastPlayerInteraction=Date.now();
+    if(window.__sylviniaTrailerAuto && currentTyping && currentTyping.done){
+      scheduleAutoAdvanceWhenReady(currentTyping.sceneId);
+    }
+  }
+  function isTrailerGameActive(){
+    const game=$('game');
+    return document.body.classList.contains('trailer16x9') && game && !game.classList.contains('hidden');
+  }
+  function isDecisionChoiceList(){
+    const choices=$('choices');
+    if(!choices) return true;
+    const buttons=[...choices.querySelectorAll('button.choiceBtn:not(:disabled)')];
+    return !(buttons.length===1 && buttons[0].classList.contains('continueBtn'));
+  }
+  function getContinueButton(){
+    const choices=$('choices');
+    if(!choices) return null;
+    const buttons=[...choices.querySelectorAll('button.choiceBtn:not(:disabled)')];
+    if(buttons.length===1 && buttons[0].classList.contains('continueBtn')) return buttons[0];
+    return null;
+  }
+  function ensureToolbar(){
+    const wrap=document.querySelector('#gameCard .dialogueWrap');
+    const dialogue=document.querySelector('#gameCard .dialogue');
+    const stats=$('stats');
+    if(!wrap || !dialogue) return;
+    if(stats && stats.parentElement!==wrap){
+      wrap.insertBefore(stats, dialogue);
+    }
+    let toolbar=$('trailerVNControls');
+    if(!toolbar){
+      toolbar=document.createElement('nav');
+      toolbar.id='trailerVNControls';
+      toolbar.setAttribute('aria-label','Commandes visual novel');
+      const buttons=[
+        ['history','Historique'],
+        ['chapters','Chapitres'],
+        ['progression','Progression'],
+        ['codex','Codex'],
+        ['back','Retour'],
+        ['music','Musique'],
+        ['menu','Menu'],
+        ['skip','Passer'],
+        ['auto','Auto']
+      ];
+      toolbar.innerHTML=buttons.map(([action,label])=>`<button type="button" class="trailerVNBtn" data-trailer-action="${action}">${label}</button>`).join('');
+      wrap.appendChild(toolbar);
+      toolbar.addEventListener('click', handleToolbarClick);
+    }
+    updateToolbarState();
+    ensureHistoryModal();
+  }
+  function updateToolbarState(){
+    const autoBtn=document.querySelector('[data-trailer-action="auto"]');
+    if(autoBtn){
+      autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
+      autoBtn.textContent=window.__sylviniaTrailerAuto?'Auto activé':'Auto';
+    }
+    const musicBtn=document.querySelector('[data-trailer-action="music"]');
+    if(musicBtn && typeof state!=='undefined'){
+      musicBtn.classList.toggle('active', state.musicOn!==false);
+      musicBtn.textContent=state.musicOn===false?'Musique off':'Musique';
+    }
+  }
+  function handleToolbarClick(ev){
+    const btn=ev.target.closest('[data-trailer-action]');
+    if(!btn) return;
+    ev.preventDefault(); ev.stopPropagation();
+    markPlayerInteraction();
+    const action=btn.dataset.trailerAction;
+    if(action==='history') return openHistoryModal();
+    if(action==='chapters'){
+      if(typeof openChapters==='function') openChapters();
+      else $('chaptersBtn')?.click();
+      return;
+    }
+    if(action==='progression') return $('progressionBtn2')?.click();
+    if(action==='codex') return $('codexBtn2')?.click();
+    if(action==='menu') return $('menuBtn')?.click();
+    if(action==='music'){
+      $('musicBtn')?.click();
+      setTimeout(updateToolbarState,40);
+      return;
+    }
+    if(action==='back') return trailerBack();
+    if(action==='skip') return trailerSkip();
+    if(action==='auto') return toggleTrailerAuto();
+  }
+  function trailerBack(){
+    finishTypewriterIfActive();
+    if(typeof state==='undefined' || !Array.isArray(state.history) || !state.history.length){
+      notify('Retour indisponible','Aucune scène précédente dans l’historique.');
+      return;
+    }
+    const prev=state.history.pop();
+    if(!prev) return;
+    state.scene=prev;
+    if(typeof setScreen==='function') setScreen('game');
+    if(typeof render==='function') render();
+    if(typeof save==='function') save();
+  }
+  function trailerSkip(){
+    if(finishTypewriterIfActive()) return;
+    const btn=getContinueButton();
+    if(btn) btn.click();
+    else notify('Choix requis','Impossible de passer une décision importante.');
+  }
+  function toggleTrailerAuto(){
+    window.__sylviniaTrailerAuto=!window.__sylviniaTrailerAuto;
+    updateToolbarState();
+    if(window.__sylviniaTrailerAuto){
+      notify('Auto activé','Le mode auto attend la fin du texte, puis continue après 5 secondes si aucun choix n’est requis.');
+      if(currentTyping && currentTyping.done) scheduleAutoAdvanceWhenReady(currentTyping.sceneId);
+    }else{
+      clearAdvanceTimer();
+      notify('Auto désactivé','Lecture manuelle restaurée.');
+    }
+  }
+  function collectTextNodes(root){
+    const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){ return node.nodeValue ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; }
+    });
+    const nodes=[];
+    let node;
+    while((node=walker.nextNode())) nodes.push(node);
+    return nodes;
+  }
+  function startNativeTypewriter(){
+    clearTypeTimer();
+    clearAdvanceTimer();
+    if(!isTrailerGameActive()) return;
+    const textEl=$('text');
+    if(!textEl) return;
+    const sceneId=(typeof state!=='undefined' && state)?String(state.scene||''):'';
+    const sourceHTML=textEl.innerHTML;
+    const plain=(textEl.innerText||textEl.textContent||'').trim();
+    if(!plain){
+      currentTyping={sceneId, done:true, startedAt:Date.now(), completedAt:Date.now(), sourceHTML:''};
+      scheduleAutoAdvanceWhenReady(sceneId);
+      return;
+    }
+
+    const template=document.createElement('template');
+    template.innerHTML=sourceHTML;
+    textEl.innerHTML='';
+    textEl.appendChild(template.content.cloneNode(true));
+
+    const nodes=collectTextNodes(textEl);
+    const originals=nodes.map(n=>n.nodeValue||'');
+    nodes.forEach(n=>{ n.nodeValue=''; });
+    const total=originals.reduce((sum,t)=>sum+t.length,0);
+    currentTyping={
+      sceneId,
+      sourceHTML,
+      textEl,
+      nodes,
+      originals,
+      total,
+      index:0,
+      done:false,
+      startedAt:Date.now(),
+      completedAt:null
+    };
+
+    const step=()=>{
+      const st=currentTyping;
+      if(!st || st.done || st.sceneId!==String((typeof state!=='undefined'&&state)?state.scene||'':'')) return;
+      if(!isTrailerGameActive()) return;
+      const speed = st.total > 850 ? 5 : st.total > 450 ? 4 : 3;
+      st.index=Math.min(st.total, st.index+speed);
+      writeTypingIndex(st, st.index);
+      scrollTextToBottom();
+      if(st.index<st.total){
+        typeTimer=setTimeout(step, 24);
+      }else{
+        st.done=true;
+        st.completedAt=Date.now();
+        textEl.dataset.trailerTypingComplete='1';
+        scheduleAutoAdvanceWhenReady(st.sceneId);
+      }
+    };
+    typeTimer=setTimeout(step, 70);
+  }
+  function writeTypingIndex(st, target){
+    let remaining=target;
+    for(let i=0;i<st.nodes.length;i++){
+      const full=st.originals[i];
+      const take=Math.max(0, Math.min(full.length, remaining));
+      st.nodes[i].nodeValue=full.slice(0,take);
+      remaining-=take;
+    }
+  }
+  function finishTypewriterIfActive(){
+    const st=currentTyping;
+    if(!st || st.done || !st.textEl) return false;
+    clearTypeTimer();
+    writeTypingIndex(st, st.total);
+    st.done=true;
+    st.completedAt=Date.now();
+    st.textEl.dataset.trailerTypingComplete='1';
+    scrollTextToBottom();
+    scheduleAutoAdvanceWhenReady(st.sceneId);
+    return true;
+  }
+  function scrollTextToBottom(){
+    const textEl=$('text');
+    if(textEl) textEl.scrollTop=textEl.scrollHeight;
+    const dialogue=document.querySelector('#gameCard .dialogue');
+    if(dialogue) dialogue.scrollTop=dialogue.scrollHeight;
+  }
+  function scheduleAutoAdvanceWhenReady(sceneId){
+    clearAdvanceTimer();
+    if(!window.__sylviniaTrailerAuto || !isTrailerGameActive()) return;
+    const st=currentTyping;
+    if(st && st.sceneId===sceneId && !st.done) return;
+    if(isDecisionChoiceList()) return;
+    const attempt=()=>{
+      clearAdvanceTimer();
+      if(!window.__sylviniaTrailerAuto || !isTrailerGameActive()) return;
+      if(typeof state!=='undefined' && String(state.scene||'')!==String(sceneId||'')) return;
+      if(currentTyping && currentTyping.sceneId===sceneId && !currentTyping.done) return;
+      if(isDecisionChoiceList()) return;
+      const now=Date.now();
+      const completedAt=(currentTyping && currentTyping.completedAt) || now;
+      const earliest=Math.max(completedAt+5000, lastPlayerInteraction+5000);
+      const delay=earliest-now;
+      if(delay>0){
+        autoAdvanceTimer=setTimeout(attempt, delay);
+        return;
+      }
+      const btn=getContinueButton();
+      if(btn) btn.click();
+    };
+    autoAdvanceTimer=setTimeout(attempt, 5000);
+  }
+  function ensureHistoryModal(){
+    if($('trailerHistoryModal')) return;
+    const modal=document.createElement('div');
+    modal.id='trailerHistoryModal';
+    modal.innerHTML=`<div id="trailerHistoryPanel" role="dialog" aria-modal="true" aria-label="Historique"><div class="trailerHistoryHead"><strong>Historique</strong><button type="button" class="trailerHistoryClose">Fermer</button></div><div id="trailerHistoryList"></div></div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',ev=>{ if(ev.target===modal || ev.target.closest('.trailerHistoryClose')) closeHistoryModal(); });
+  }
+  function cleanText(txt){
+    const div=document.createElement('div');
+    div.innerHTML=String(txt||'');
+    return (div.textContent||div.innerText||'').replace(/\s+\n/g,'\n').trim();
+  }
+  function escapeHTML(txt){
+    return String(txt||'').replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function sceneTextFor(id){
+    try{
+      const sc=(typeof S!=='undefined'&&S)?S[id]:null;
+      if(!sc) return null;
+      const t=typeof sc.text==='function'?sc.text():sc.text;
+      return {id, title:sc.title||id, speaker:sc.speaker||'Narrateur', text:cleanText(t||'')};
+    }catch(e){ return null; }
+  }
+  function openHistoryModal(){
+    ensureHistoryModal();
+    const modal=$('trailerHistoryModal');
+    const list=$('trailerHistoryList');
+    const ids=[];
+    if(typeof state!=='undefined'){
+      if(Array.isArray(state.history)) ids.push(...state.history.slice(-9));
+      if(state.scene) ids.push(state.scene);
+    }
+    const entries=ids.map(sceneTextFor).filter(Boolean).slice(-10);
+    list.innerHTML=entries.length?entries.map(e=>`<article class="trailerHistoryEntry"><div class="trailerHistoryMeta">${escapeHTML(e.id)} · ${escapeHTML(e.title)}</div><h4>${escapeHTML(e.speaker)}</h4><p>${escapeHTML(e.text||'…')}</p></article>`).join(''):'<p>Aucun dialogue dans l’historique pour le moment.</p>';
+    modal.classList.add('open');
+  }
+  function closeHistoryModal(){ $('trailerHistoryModal')?.classList.remove('open'); }
+  function afterRender(){
+    ensureToolbar();
+    setTimeout(startNativeTypewriter, 20);
+  }
+  function patchRender(){
+    if(typeof render==='function' && !render.__trailerV6NativeTypewriter){
+      const previous=render;
+      render=function(){
+        clearTypeTimer();
+        clearAdvanceTimer();
+        const result=previous.apply(this, arguments);
+        setTimeout(afterRender,0);
+        return result;
+      };
+      render.__trailerV6NativeTypewriter=true;
+      window.render=render;
+    }
+  }
+
+  patchRender();
+  ensureToolbar();
+  document.addEventListener('DOMContentLoaded',()=>{patchRender(); ensureToolbar(); if(isTrailerGameActive()) afterRender();});
+  document.addEventListener('click',ev=>{
+    const target=ev.target;
+    if(target && target.closest){
+      if(target.closest('#trailerVNControls,#trailerHistoryModal')) return;
+      if(target.closest('#text,.dialogue') && finishTypewriterIfActive()){
+        ev.preventDefault();
+        ev.stopPropagation();
+        markPlayerInteraction();
+        return;
+      }
+      if(target.closest('#trailerModeBtn,#startBtn,#resumeBtn,[data-chapter-launch],.choiceBtn')){
+        markPlayerInteraction();
+        setTimeout(()=>{patchRender(); ensureToolbar(); if(isTrailerGameActive()) afterRender();},90);
+      }else{
+        markPlayerInteraction();
+      }
+    }
+  }, true);
+  ['keydown','touchstart','wheel','pointerdown'].forEach(type=>{
+    document.addEventListener(type, function(ev){
+      if(ev.target && ev.target.closest && ev.target.closest('#trailerVNControls')) return;
+      markPlayerInteraction();
+      if(type==='keydown' && (ev.code==='Space' || ev.code==='Enter')) finishTypewriterIfActive();
+    }, {capture:true, passive:true});
+  });
+})();
+</script>
+
 
 </body>
 </html>
