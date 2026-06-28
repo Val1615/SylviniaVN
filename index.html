@@ -38251,5 +38251,192 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
 })();
 </script>
 
+
+<!-- V28 · Visuel actuel : texte gauche + choix droite, comme le layout VN cible -->
+<style id="sylviniaV28CurrentVisualChoiceColumnFix">
+/* Corrige V27 : en visuel actuel, la zone de texte reste à gauche et les choix reviennent dans la colonne droite. */
+body.trailer16x9:not(.legacyVisualUI) #gameCard{
+  --vnContentColumn:minmax(0,69%);
+  --vnChoiceColumn:minmax(230px,31%);
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  grid-template-columns:var(--vnContentColumn) var(--vnChoiceColumn)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  column-gap:18px!important;
+  align-items:stretch!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-column:1!important;
+  grid-row:2!important;
+  max-height:calc(var(--vnDialogMax) - 52px)!important;
+  padding-right:10px!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  justify-content:center!important;
+  width:100%!important;
+  max-height:calc(var(--vnDialogMax) - 18px)!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices,
+body.trailer16x9:not(.legacyVisualUI) #gameCard.vnContinueOnly .choices{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  align-self:stretch!important;
+}
+
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  width:100%!important;
+  max-width:none!important;
+  min-height:34px!important;
+  padding:8px 13px!important;
+  font-size:clamp(11px,1vw,15px)!important;
+  line-height:1.18!important;
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnContentColumn:minmax(0,68%);
+    --vnChoiceColumn:minmax(200px,32%);
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    column-gap:12px!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
+    gap:5px!important;
+    max-height:calc(var(--vnDialogMax) - 12px)!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+    min-height:27px!important;
+    padding:5px 9px!important;
+    font-size:clamp(10px,.92vw,13px)!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+    max-height:calc(var(--vnDialogMax) - 42px)!important;
+  }
+}
+
+@media(max-aspect-ratio:4/3){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnContentColumn:minmax(0,64%);
+    --vnChoiceColumn:minmax(190px,36%);
+  }
+}
+
+@media(max-width:760px){
+  body.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vnContentColumn:1fr;
+    --vnChoiceColumn:1fr;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard.vnDecisionChoices .choices,
+  body.trailer16x9:not(.legacyVisualUI) #gameCard.vnContinueOnly .choices{
+    grid-column:1!important;
+    grid-row:3!important;
+    max-height:var(--vnChoicesMax)!important;
+  }
+  body.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+    max-height:var(--vnTextMax)!important;
+  }
+}
+</style>
+
+<script id="sylviniaV28CurrentVisualChoiceColumnFix">
+(function(){
+  if(window.__sylviniaV28CurrentVisualChoiceColumnFix) return;
+  window.__sylviniaV28CurrentVisualChoiceColumnFix = true;
+
+  function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
+
+  function syncChoiceColumn(){
+    const game = document.getElementById('game');
+    const card = document.getElementById('gameCard');
+    if(!card) return;
+    const current = document.body.classList.contains('trailer16x9') && !document.body.classList.contains('legacyVisualUI') && game && !game.classList.contains('hidden');
+    if(!current) return;
+
+    const rect = card.getBoundingClientRect();
+    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = Math.max(1, rect.height || window.innerHeight || 1);
+    const ratio = w / h;
+
+    const choices = document.getElementById('choices');
+    const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn:not(:disabled)')) : [];
+    const decisionChoices = buttons.length > 1;
+    const continueOnly = buttons.length === 1 && buttons[0].classList.contains('continueBtn');
+    card.classList.toggle('vnDecisionChoices', decisionChoices);
+    card.classList.toggle('vnContinueOnly', continueOnly);
+
+    let content = 69;
+    let choice = 31;
+    if(ratio < 1.34){ content = 64; choice = 36; }
+    else if(ratio < 1.56){ content = 66; choice = 34; }
+    else if(ratio > 2.05){ content = 70; choice = 30; }
+    if(h <= 560 && ratio > 1.2){ content = Math.min(content, 68); choice = 100 - content; }
+
+    const choiceMin = clamp(Math.round(w * 0.22), 180, 300);
+    card.style.setProperty('--vnContentColumn','minmax(0,' + content + '%)');
+    card.style.setProperty('--vnChoiceColumn','minmax(' + choiceMin + 'px,' + choice + '%)');
+  }
+
+  function schedule(){
+    requestAnimationFrame(syncChoiceColumn);
+    setTimeout(syncChoiceColumn, 70);
+    setTimeout(syncChoiceColumn, 260);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV28ChoiceColumn){
+        const previous = render;
+        render = function(){
+          const result = previous.apply(this, arguments);
+          schedule();
+          return result;
+        };
+        render.__sylviniaV28ChoiceColumn = true;
+        window.render = render;
+      }
+    }catch(e){}
+  }
+
+  function install(){ patchRender(); schedule(); }
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
+  document.addEventListener('transitionend', schedule, true);
+  setTimeout(install, 0);
+  setTimeout(install, 260);
+})();
+</script>
+
 </body>
 </html>
