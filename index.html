@@ -2951,118 +2951,6 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
 }
 </style>
 
-
-<style id="sylviniaV42FormatChoiceAndToolbarStableStyles">
-/* V42 · Choix de format clair + modes Mobile/Legacy exclusifs + barre basse stabilisée */
-.disclaimerFormatActions{
-  align-items:stretch;
-  gap:18px;
-  margin-top:22px;
-}
-.formatChoiceBtn{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  border:1px solid rgba(167,240,255,.24);
-  background:linear-gradient(180deg,rgba(29,48,76,.78),rgba(9,16,30,.92));
-  color:#f7fbff;
-  cursor:pointer;
-  box-shadow:0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.08);
-  transition:.18s transform,.18s border-color,.18s box-shadow,.18s background;
-  overflow:hidden;
-}
-.formatChoiceBtn::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 0%,rgba(233,201,133,.18),transparent 42%),radial-gradient(circle at 50% 100%,rgba(167,240,255,.13),transparent 46%);
-  pointer-events:none;
-}
-.formatChoiceBtn>*{position:relative;z-index:1}
-.formatChoiceBtn:hover,.formatChoiceBtn:focus-visible{
-  transform:translateY(-2px);
-  border-color:rgba(167,240,255,.58);
-  box-shadow:0 22px 54px rgba(0,0,0,.42),0 0 28px rgba(167,240,255,.10);
-}
-.formatChoiceBtn strong{font-size:18px;line-height:1.2;text-align:center}
-.formatChoiceBtn small{color:#c9d8e8;font-weight:800;letter-spacing:.04em;text-align:center}
-.formatVerticalBtn{
-  width:min(210px,34vw);
-  min-height:255px;
-  border-radius:26px;
-}
-.formatHorizontalBtn{
-  width:min(390px,54vw);
-  min-height:176px;
-  align-self:center;
-  border-radius:24px;
-}
-.formatFrame{
-  display:block;
-  border:2px solid rgba(233,201,133,.64);
-  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
-  box-shadow:inset 0 0 0 5px rgba(0,0,0,.20),0 0 18px rgba(233,201,133,.10);
-}
-.formatFrameVertical{width:54px;height:94px;border-radius:14px}
-.formatFrameHorizontal{width:128px;height:72px;border-radius:16px}
-.disclaimerOptionsNote{
-  margin-top:18px!important;
-  margin-bottom:0!important;
-  color:#c4d2df!important;
-}
-.formatModePair{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  align-items:stretch;
-}
-.formatModeCard{
-  min-height:112px;
-  margin:0!important;
-}
-.formatModePair .legacyModeBtn{
-  text-align:left;
-  justify-content:space-between;
-  align-items:stretch;
-}
-.formatModePair .legacyModeBtn .btnTitle{font-size:16px}
-.formatModePair .legacyModeBtn .btnDesc{font-size:13px}
-.miniHint{
-  display:block;
-  margin-top:6px;
-  font-size:12px!important;
-  line-height:1.35!important;
-  opacity:.92;
-}
-#trailerModeBtn.active{
-  border-color:rgba(233,201,133,.58)!important;
-  background:linear-gradient(180deg,rgba(145,105,48,.72),rgba(62,40,18,.86))!important;
-}
-#gameCard #trailerVNControls .trailerVNBtn{
-  text-transform:none!important;
-}
-@media(max-width:760px){
-  .disclaimerFormatActions{gap:12px}
-  .formatVerticalBtn{width:min(42vw,178px);min-height:220px}
-  .formatHorizontalBtn{width:min(48vw,260px);min-height:145px}
-  .formatChoiceBtn strong{font-size:15px}
-  .formatChoiceBtn small{font-size:12px}
-  .formatFrameVertical{width:45px;height:78px}
-  .formatFrameHorizontal{width:94px;height:54px}
-  .formatModePair{grid-template-columns:1fr 1fr;gap:8px}
-  .formatModeCard{min-height:128px;padding:13px!important}
-}
-@media(max-width:460px){
-  .disclaimerFormatActions{flex-wrap:wrap}
-  .formatVerticalBtn,.formatHorizontalBtn{width:100%;min-height:132px}
-  .formatFrameVertical,.formatFrameHorizontal{width:88px;height:52px;border-radius:14px}
-  .formatFrameVertical{width:48px;height:78px}
-}
-</style>
-
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -3078,19 +2966,9 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
         <div class="disclaimerBetaNotice">
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
-        <div class="disclaimerActions disclaimerFormatActions" aria-label="Choisir un format d’affichage">
-          <button class="formatChoiceBtn formatVerticalBtn" id="playVerticalBtn" type="button">
-            <span class="formatFrame formatFrameVertical" aria-hidden="true"></span>
-            <strong>Jouer en format Vertical</strong>
-            <small>Idéal sur mobile</small>
-          </button>
-          <button class="formatChoiceBtn formatHorizontalBtn" id="playHorizontalBtn" type="button">
-            <span class="formatFrame formatFrameHorizontal" aria-hidden="true"></span>
-            <strong>Jouer en format Horizontal</strong>
-            <small>Idéal sur PC ou tablette</small>
-          </button>
+        <div class="disclaimerActions">
+          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
         </div>
-        <p class="disclaimerFine disclaimerOptionsNote">Ces réglages pourront être modifiés ensuite dans les Options.</p>
       </div>
     </section>
   </main>
@@ -3163,23 +3041,15 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
             <details class="menuAccordion">
               <summary class="accordionSummary"><span>Options</span></summary>
               <div class="accordionPanel">
-                <div class="formatModePair" aria-label="Modes d’affichage exclusifs">
-                  <div class="mobileToggleWrap compactToggle formatModeCard">
-                    <div class="toggleText">
-                      <strong>Mode mobile</strong>
-                      <small id="mobileUiState">Désactivé · format horizontal par défaut</small>
-                      <span class="toggleHint miniHint">Adapté au format vertical. Incompatible avec le mode Legacy.</span>
-                    </div>
-                    <label class="switch" aria-label="Activer le mode mobile">
-                      <input type="checkbox" id="mobileUiToggle">
-                      <span class="sliderSwitch"></span>
-                    </label>
+                <div class="mobileToggleWrap compactToggle">
+                  <div class="toggleText">
+                    <strong>Mode mobile</strong>
+                    <small id="mobileUiState">Désactivé · commandes standard</small>
                   </div>
-                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn formatModeCard legacyModeBtn" id="trailerModeBtn" type="button">
-                    <span class="btnTitle">Mode Legacy</span>
-                    <small class="btnDesc" id="trailerModeState">Désactivé · visuel actuel</small>
-                    <span class="toggleHint miniHint">Adopte le tout premier design du Visual Novel. Incompatible avec le mode mobile.</span>
-                  </button>
+                  <label class="switch" aria-label="Activer le mode mobile">
+                    <input type="checkbox" id="mobileUiToggle">
+                    <span class="sliderSwitch"></span>
+                  </label>
                 </div>
                 <div class="mobileToggleWrap compactToggle">
                   <div class="toggleText">
@@ -3194,6 +3064,7 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
+                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Affichage expérimental</span><small class="btnDesc" id="trailerModeState">Désactivé · interface standard</small></button>
                   <button class="secondaryBtn redBtn menuActionBtn dockBtn toolBtn optionWideBtn" id="resetBtn"><span class="btnTitle">Nouveau départ</span><small class="btnDesc">Réinitialiser la progression.</small></button>
                 </div>
               </div>
@@ -34446,12 +34317,12 @@ body.trailer16x9 .trailerVNBtn.active{
     const autoBtn=document.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent='Auto';
+      autoBtn.textContent=window.__sylviniaTrailerAuto?'Auto activé':'Auto';
     }
     const musicBtn=document.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state!=='undefined'){
       musicBtn.classList.toggle('active', state.musicOn!==false);
-      musicBtn.textContent='Musique';
+      musicBtn.textContent=state.musicOn===false?'Musique off':'Musique';
     }
   }
   function handleToolbarClick(ev){
@@ -36621,13 +36492,13 @@ body.force16x9Fullscreen #gameCard .dialogue{
     const autoBtn = toolbar.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent = 'Auto';
+      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
     }
 
     const musicBtn = toolbar.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state !== 'undefined'){
       musicBtn.classList.toggle('active', state.musicOn !== false);
-      musicBtn.textContent = 'Musique';
+      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
     }
 
     updateFullscreenClass();
@@ -37327,20 +37198,20 @@ body.legacyVisualUI #gameCard .trailerVNBtn[data-trailer-action="hideath"]{
     const autoBtn = document.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent = 'Auto';
+      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
     }
 
     const musicBtn = document.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state !== 'undefined'){
       musicBtn.classList.toggle('active', state.musicOn !== false);
-      musicBtn.textContent = 'Musique';
+      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
     }
 
     const fullBtn = document.querySelector('[data-trailer-action="fullscreen"]');
     if(fullBtn){
       const active = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
       fullBtn.classList.toggle('active', active);
-      fullBtn.textContent = '16:9';
+      fullBtn.textContent = active ? 'Quitter plein écran' : 'Plein écran';
     }
 
     const hideBtn = document.querySelector('[data-trailer-action="hideath"]');
@@ -37519,16 +37390,16 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
   ];
 
   const LABELS = {
-    history:'Hist.',
+    history:'Historique',
     back:'Retour',
     skip:'Passer',
     auto:'Auto',
     music:'Musique',
-    fullscreen:'16:9',
+    fullscreen:'Plein écran',
     hideath:'Masquer ATH',
     bug:'Bug',
-    chapters:'Chap.',
-    progression:'Prog.',
+    chapters:'Chapitres',
+    progression:'Progression',
     codex:'Codex',
     menu:'Menu'
   };
@@ -37538,7 +37409,7 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
     back:'Retour',
     skip:'Passer',
     auto:'Auto',
-    music:'Musique',
+    music:'Son',
     fullscreen:'16:9',
     hideath:'ATH',
     bug:'Bug',
@@ -37558,13 +37429,13 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
 
   function labelFor(action){
     if(action === 'auto' && window.__sylviniaTrailerAuto){
-      return 'Auto';
+      return compact() ? 'Auto ✓' : 'Auto activé';
     }
     if(action === 'music' && typeof state !== 'undefined' && state.musicOn === false){
-      return 'Musique';
+      return compact() ? 'Son off' : 'Musique off';
     }
     if(action === 'fullscreen' && isFullscreen()){
-      return '16:9';
+      return compact() ? 'Quitter' : 'Quitter plein écran';
     }
     return (compact() ? COMPACT : LABELS)[action] || action;
   }
@@ -38564,272 +38435,6 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
   document.addEventListener('transitionend', schedule, true);
   setTimeout(install, 0);
   setTimeout(install, 260);
-})();
-</script>
-
-
-<script id="sylviniaV42FormatChoiceAndToolbarStableScript">
-(function(){
-  if(window.__sylviniaV42FormatChoiceAndToolbarStableScript) return;
-  window.__sylviniaV42FormatChoiceAndToolbarStableScript = true;
-
-  const LEGACY_KEY = 'sylvinia_vn_legacy_visual_mode';
-  const CURRENT_VISUAL_KEY = 'sylvinia_vn_trailer16x9';
-
-  function byId(id){ return document.getElementById(id); }
-  function isLegacy(){ return document.body.classList.contains('legacyVisualUI') || safeGet(LEGACY_KEY) === 'true'; }
-  function safeSet(key,value){ try{ localStorage.setItem(key, value); }catch(e){} }
-  function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
-
-  function forceCurrentVisual(){
-    safeSet(LEGACY_KEY, 'false');
-    safeSet(CURRENT_VISUAL_KEY, 'true');
-    document.body.classList.remove('legacyVisualUI','legacySheetCollapsed','legacySheetPeek','legacySheetExpanded');
-    document.body.classList.add('trailer16x9','experimentalUI');
-    try{
-      if(typeof setTrailer16x9Mode === 'function'){
-        setTrailer16x9Mode(true);
-      }else if(typeof applyTrailer16x9UI === 'function'){
-        applyTrailer16x9UI();
-      }
-    }catch(e){}
-  }
-
-  function saveMobile(enabled){
-    try{
-      if(typeof state !== 'undefined' && state){
-        state.mobileUI = !!enabled;
-        if(typeof applyMobileUI === 'function') applyMobileUI();
-        if(typeof save === 'function') save();
-        if(typeof updateMenuButtons === 'function') updateMenuButtons();
-      }
-    }catch(e){}
-  }
-
-  function syncFormatLabels(){
-    const mobile = !!(typeof state !== 'undefined' && state && state.mobileUI);
-    const legacy = isLegacy();
-    const mobileToggle = byId('mobileUiToggle');
-    const mobileLabel = byId('mobileUiState');
-    const legacyBtn = byId('trailerModeBtn');
-    const legacyTitle = legacyBtn ? legacyBtn.querySelector('.btnTitle') : null;
-    const legacyLabel = byId('trailerModeState');
-
-    if(mobileToggle) mobileToggle.checked = mobile;
-    if(mobileLabel){
-      mobileLabel.textContent = mobile
-        ? 'Activé · format vertical adapté'
-        : 'Désactivé · format horizontal par défaut';
-    }
-    if(legacyTitle) legacyTitle.textContent = 'Mode Legacy';
-    if(legacyLabel){
-      legacyLabel.textContent = legacy
-        ? 'Activé · tout premier design du VN'
-        : 'Désactivé · visuel actuel';
-    }
-    if(legacyBtn){
-      legacyBtn.classList.toggle('active', legacy);
-      legacyBtn.setAttribute('aria-pressed', legacy ? 'true' : 'false');
-      legacyBtn.title = legacy
-        ? 'Désactiver le mode Legacy'
-        : 'Activer le tout premier design du Visual Novel';
-    }
-  }
-
-  function chooseVerticalFormat(){
-    forceCurrentVisual();
-    if(typeof setMobileUI === 'function') setMobileUI(true);
-    else saveMobile(true);
-    syncFormatLabels();
-    if(typeof enterTitleFromDisclaimer === 'function') enterTitleFromDisclaimer();
-  }
-
-  function chooseHorizontalFormat(){
-    forceCurrentVisual();
-    if(typeof setMobileUI === 'function') setMobileUI(false);
-    else saveMobile(false);
-    syncFormatLabels();
-    if(typeof enterTitleFromDisclaimer === 'function') enterTitleFromDisclaimer();
-  }
-
-  function patchSetMobileUI(){
-    try{
-      if(typeof setMobileUI !== 'function' || setMobileUI.__sylviniaV42Exclusive) return;
-      const previous = setMobileUI;
-      setMobileUI = function(enabled){
-        if(enabled) forceCurrentVisual();
-        const result = previous.apply(this, arguments);
-        setTimeout(syncFormatLabels, 0);
-        setTimeout(stabilizeToolbar, 0);
-        return result;
-      };
-      setMobileUI.__sylviniaV42Exclusive = true;
-      window.setMobileUI = setMobileUI;
-    }catch(e){}
-  }
-
-  function bindFormatControls(){
-    patchSetMobileUI();
-    const vertical = byId('playVerticalBtn');
-    const horizontal = byId('playHorizontalBtn');
-    if(vertical && !vertical.__sylviniaV42Bound){
-      vertical.__sylviniaV42Bound = true;
-      vertical.addEventListener('click', function(ev){ ev.preventDefault(); chooseVerticalFormat(); }, true);
-    }
-    if(horizontal && !horizontal.__sylviniaV42Bound){
-      horizontal.__sylviniaV42Bound = true;
-      horizontal.addEventListener('click', function(ev){ ev.preventDefault(); chooseHorizontalFormat(); }, true);
-    }
-    const mobileToggle = byId('mobileUiToggle');
-    if(mobileToggle && !mobileToggle.__sylviniaV42Bound){
-      mobileToggle.__sylviniaV42Bound = true;
-      mobileToggle.addEventListener('change', function(ev){
-        if(typeof setMobileUI === 'function') setMobileUI(ev.target.checked);
-        else saveMobile(ev.target.checked);
-        syncFormatLabels();
-      }, true);
-    }
-  }
-
-  document.addEventListener('click', function(ev){
-    const legacyBtn = ev.target && ev.target.closest ? ev.target.closest('#trailerModeBtn') : null;
-    if(legacyBtn){
-      const willEnableLegacy = !isLegacy();
-      if(willEnableLegacy){
-        if(typeof state !== 'undefined' && state){
-          state.mobileUI = false;
-          try{ if(typeof applyMobileUI === 'function') applyMobileUI(); }catch(e){}
-          try{ if(typeof save === 'function') save(); }catch(e){}
-        }
-      }
-      setTimeout(syncFormatLabels, 0);
-      setTimeout(syncFormatLabels, 80);
-      setTimeout(syncFormatLabels, 180);
-      setTimeout(stabilizeToolbar, 0);
-    }
-  }, true);
-
-  const TOOLBAR_ORDER = ['history','back','skip','auto','music','fullscreen','hideath','bug','chapters','progression','codex','menu'];
-  const TOOLBAR_LABELS = {
-    history:'Hist.',
-    back:'Retour',
-    skip:'Passer',
-    auto:'Auto',
-    music:'Musique',
-    fullscreen:'16:9',
-    hideath:'ATH',
-    bug:'⚠ Bug',
-    chapters:'Chap.',
-    progression:'Prog.',
-    codex:'Codex',
-    menu:'Menu'
-  };
-
-  let stabilizingToolbar = false;
-  function toolbarHTML(){
-    return TOOLBAR_ORDER.map(function(action){
-      const label = TOOLBAR_LABELS[action] || action;
-      return '<button type="button" class="trailerVNBtn" data-trailer-action="'+action+'">'+label+'</button>';
-    }).join('');
-  }
-
-  function currentToolbarOrder(toolbar){
-    return Array.from(toolbar.querySelectorAll('[data-trailer-action]')).map(function(btn){
-      return btn.getAttribute('data-trailer-action');
-    });
-  }
-
-  function stabilizeToolbar(){
-    const toolbar = byId('trailerVNControls');
-    if(!toolbar || stabilizingToolbar) return;
-    stabilizingToolbar = true;
-    try{
-      const current = currentToolbarOrder(toolbar);
-      const wrongOrder = current.length !== TOOLBAR_ORDER.length || TOOLBAR_ORDER.some(function(action, i){ return current[i] !== action; });
-      if(wrongOrder || toolbar.dataset.v42Stable !== '1'){
-        toolbar.innerHTML = toolbarHTML();
-      }
-      toolbar.dataset.v22Order = '1';
-      toolbar.dataset.v24AthOrder = '1';
-      toolbar.dataset.v25BugOnly = '1';
-      toolbar.dataset.v42Stable = '1';
-      TOOLBAR_ORDER.forEach(function(action){
-        const btn = toolbar.querySelector('[data-trailer-action="'+action+'"]');
-        if(!btn) return;
-        const expected = TOOLBAR_LABELS[action] || action;
-        if(btn.textContent !== expected) btn.textContent = expected;
-        btn.setAttribute('aria-label', expected);
-        btn.title = titleForToolbar(action);
-        if(action === 'auto') btn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-        if(action === 'music' && typeof state !== 'undefined') btn.classList.toggle('active', state.musicOn !== false);
-        if(action === 'fullscreen') btn.classList.toggle('active', !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement));
-        if(action === 'hideath') btn.classList.toggle('active', document.body.classList.contains('athHidden'));
-      });
-    }finally{
-      stabilizingToolbar = false;
-    }
-  }
-
-  function titleForToolbar(action){
-    const titles = {
-      history:'Hist.',
-      back:'Retour à la scène précédente',
-      skip:'Afficher le texte instantanément',
-      auto:'Lecture automatique',
-      music:'Activer ou couper la musique',
-      fullscreen:'Basculer l’affichage 16:9',
-      hideath:'Masquer ou afficher l’ATH',
-      bug:'Signaler un bug',
-      chapters:'Chap.',
-      progression:'Prog.',
-      codex:'Codex',
-      menu:'Menu principal'
-    };
-    return titles[action] || action;
-  }
-
-  function installToolbarObserver(){
-    const toolbar = byId('trailerVNControls');
-    if(!toolbar || toolbar.__sylviniaV42Observer) return;
-    toolbar.__sylviniaV42Observer = new MutationObserver(function(){
-      if(stabilizingToolbar) return;
-      requestAnimationFrame(stabilizeToolbar);
-    });
-    toolbar.__sylviniaV42Observer.observe(toolbar, {childList:true, subtree:true, characterData:true, attributes:true});
-  }
-
-  function tick(){
-    bindFormatControls();
-    syncFormatLabels();
-    stabilizeToolbar();
-    installToolbarObserver();
-  }
-
-  try{
-    if(typeof render === 'function' && !render.__sylviniaV42ToolbarStable){
-      const previousRender = render;
-      render = function(){
-        const result = previousRender.apply(this, arguments);
-        setTimeout(tick, 0);
-        setTimeout(tick, 90);
-        setTimeout(tick, 180);
-        return result;
-      };
-      render.__sylviniaV42ToolbarStable = true;
-      window.render = render;
-    }
-  }catch(e){}
-
-  ['DOMContentLoaded','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
-    document.addEventListener(evt, function(){ setTimeout(tick, 0); setTimeout(tick, 120); }, true);
-  });
-  window.addEventListener('load', function(){ setTimeout(tick, 0); setTimeout(tick, 180); });
-  window.addEventListener('resize', function(){ setTimeout(tick, 60); });
-  document.addEventListener('click', function(){ setTimeout(tick, 0); setTimeout(tick, 100); setTimeout(tick, 220); }, true);
-
-  setTimeout(tick, 0);
-  setTimeout(tick, 200);
-  setTimeout(tick, 600);
 })();
 </script>
 
@@ -41252,521 +40857,5 @@ html body.vn37MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI)
   document.addEventListener('transitionend', schedule, true);
   setInterval(sync, 850);
   setTimeout(install, 240);
-})();
-</script>
-
-
-<!-- V44 · correctif ciblé : mobile vertical stable + anti-crash toolbar -->
-<style id="sylviniaV44MobileSceneAboveDialogueCrashFix">
-/* V44 : reprend la build courante sans remplacer tout le jeu.
-   Objectif : en mode Mobile portrait, scène AU-DESSUS de la bulle, et aucune topbar interne en doublon. */
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI),
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI){
-  overflow:hidden!important;
-  background:#000!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #app,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #app{
-  display:block!important;
-  width:100vw!important;
-  height:var(--vn44ViewportH,100svh)!important;
-  min-height:0!important;
-  max-height:var(--vn44ViewportH,100svh)!important;
-  padding:0!important;
-  overflow:hidden!important;
-  background:#000!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #game.screen.card:not(.hidden),
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #game.screen.card:not(.hidden){
-  display:block!important;
-  width:100vw!important;
-  height:var(--vn44ViewportH,100svh)!important;
-  min-height:0!important;
-  max-height:var(--vn44ViewportH,100svh)!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  overflow:hidden!important;
-  background:#000!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
-  position:relative!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-rows:minmax(0,1fr) var(--vn44PanelH,38vh)!important;
-  width:100%!important;
-  height:var(--vn44ViewportH,100svh)!important;
-  min-height:0!important;
-  max-height:var(--vn44ViewportH,100svh)!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:hidden!important;
-  background:#000!important;
-  transform:none!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .topbar,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .topbar{
-  display:none!important;
-  position:static!important;
-  height:0!important;
-  min-height:0!important;
-  max-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  border:0!important;
-  overflow:hidden!important;
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage{
-  grid-row:1!important;
-  position:relative!important;
-  inset:auto!important;
-  display:block!important;
-  visibility:visible!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  aspect-ratio:auto!important;
-  margin:0!important;
-  overflow:hidden!important;
-  border-radius:0!important;
-  background:#000!important;
-  z-index:1!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg{
-  position:absolute!important;
-  inset:0!important;
-  display:block!important;
-  visibility:visible!important;
-  width:100%!important;
-  height:100%!important;
-  opacity:1!important;
-  background-size:cover!important;
-  background-position:center center!important;
-  background-repeat:no-repeat!important;
-  z-index:0!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg.zoom,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg.zoom{
-  transform:scale(1.03)!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .veil,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .veil{
-  position:absolute!important;
-  inset:0!important;
-  z-index:1!important;
-  pointer-events:none!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars{
-  position:absolute!important;
-  inset:0!important;
-  display:block!important;
-  visibility:visible!important;
-  width:100%!important;
-  height:100%!important;
-  overflow:hidden!important;
-  z-index:2!important;
-  pointer-events:none!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char,
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars img,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars img{
-  position:absolute!important;
-  bottom:-1%!important;
-  width:auto!important;
-  max-height:var(--vn44SpriteMax,92%)!important;
-  max-width:72%!important;
-  object-fit:contain!important;
-  object-position:bottom center!important;
-  transform-origin:center bottom!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.left,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.left{left:-8%!important;right:auto!important;transform:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.right,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.right{right:-8%!important;left:auto!important;transform:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.center,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.center{left:50%!important;right:auto!important;transform:translateX(-50%)!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char{max-width:55%!important;max-height:var(--vn44DuoSpriteMax,90%)!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char{max-width:39%!important;max-height:var(--vn44TrioSpriteMax,82%)!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap{
-  grid-row:2!important;
-  position:relative!important;
-  inset:auto!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-rows:auto minmax(0,1fr) auto!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
-  overflow:hidden!important;
-  background:linear-gradient(180deg,rgba(2,5,10,.08),rgba(2,5,10,.90) 12%,rgba(2,5,10,.98) 100%)!important;
-  z-index:6!important;
-  pointer-events:auto!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats{
-  grid-row:1!important;
-  position:relative!important;
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  gap:5px!important;
-  width:100%!important;
-  min-height:24px!important;
-  max-height:28px!important;
-  margin:0!important;
-  padding:1px 2px!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  background:none!important;
-  opacity:.92!important;
-  scrollbar-width:none!important;
-  z-index:8!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar,
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar{display:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats .stat,
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats .stat,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat{
-  flex:0 0 auto!important;
-  padding:4px 8px!important;
-  font-size:10px!important;
-  line-height:1!important;
-  background:rgba(3,5,10,.54)!important;
-  border-color:rgba(255,255,255,.14)!important;
-  backdrop-filter:blur(6px)!important;
-  -webkit-backdrop-filter:blur(6px)!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
-  grid-row:2!important;
-  position:relative!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-rows:auto minmax(var(--vn44TextMin,52px),var(--vn44TextH,88px)) minmax(0,var(--vn44ChoicesH,136px))!important;
-  grid-template-areas:"speaker" "text" "choices"!important;
-  gap:5px!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:7px 8px!important;
-  overflow:hidden!important;
-  border-radius:13px!important;
-  background:linear-gradient(180deg,rgba(20,15,16,.72),rgba(8,8,13,.82))!important;
-  border:1px solid rgba(234,205,145,.40)!important;
-  box-shadow:0 10px 28px rgba(0,0,0,.40), inset 0 0 0 1px rgba(255,255,255,.035)!important;
-  backdrop-filter:blur(6px)!important;
-  -webkit-backdrop-filter:blur(6px)!important;
-  pointer-events:auto!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .tag,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .speaker,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
-  grid-area:speaker!important;
-  margin:0!important;
-  padding:1px 0 4px!important;
-  min-height:26px!important;
-  font:900 21px/1.05 Georgia,'Times New Roman',serif!important;
-  text-align:center!important;
-  color:#f0d08e!important;
-  border-bottom:1px solid rgba(234,205,145,.22)!important;
-  overflow:hidden!important;
-  white-space:nowrap!important;
-  text-overflow:ellipsis!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .text,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .text{
-  grid-area:text!important;
-  position:relative!important;
-  display:block!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  color:#f4ead8!important;
-  font:700 13.5px/1.38 Georgia,'Times New Roman',serif!important;
-  white-space:pre-line!important;
-  scrollbar-width:thin!important;
-  overscroll-behavior:contain!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn44NoText .dialogue,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn44NoText .dialogue{
-  grid-template-rows:auto 0 minmax(0,1fr)!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn44NoText .text,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn44NoText .text{
-  display:none!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choices,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
-  grid-area:choices!important;
-  position:relative!important;
-  inset:auto!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:flex-start!important;
-  align-items:stretch!important;
-  gap:5px!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:0!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  background:none!important;
-  pointer-events:auto!important;
-  scrollbar-width:thin!important;
-  overscroll-behavior:contain!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
-  flex:0 0 auto!important;
-  width:100%!important;
-  min-height:36px!important;
-  max-width:none!important;
-  margin:0!important;
-  padding:8px 10px!important;
-  border-radius:10px!important;
-  font-family:Georgia,'Times New Roman',serif!important;
-  font-size:13px!important;
-  line-height:1.14!important;
-  color:#f3e6cc!important;
-  background:linear-gradient(90deg,rgba(30,22,30,.78),rgba(14,12,18,.66))!important;
-  border:1px solid rgba(232,201,130,.44)!important;
-  box-shadow:0 6px 16px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.06)!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn .arrow{font-size:18px!important;color:#e8c982!important;margin-left:8px!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn small{display:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
-  grid-row:3!important;
-  position:relative!important;
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:4px!important;
-  width:100%!important;
-  height:29px!important;
-  min-height:29px!important;
-  max-height:29px!important;
-  margin:0!important;
-  padding:2px 3px!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  border-radius:999px!important;
-  background:rgba(3,6,11,.50)!important;
-  border:1px solid rgba(232,201,130,.16)!important;
-  scrollbar-width:none!important;
-  z-index:8!important;
-}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
-html body.vn44MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn,
-html body.vn44MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
-  flex:0 0 auto!important;
-  min-height:24px!important;
-  height:24px!important;
-  padding:3px 7px!important;
-  font:800 10px/1 Georgia,'Times New Roman',serif!important;
-}
-html body.vn44MobilePortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard,
-html body.vn44MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard{
-  grid-template-rows:minmax(0,1fr) 0!important;
-}
-html body.vn44MobilePortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap,
-html body.vn44MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap{display:none!important;}
-</style>
-
-<script id="sylviniaV44MobileSceneAboveDialogueCrashFixScript">
-(function(){
-  if(window.__sylviniaV44MobileSceneAboveDialogueCrashFix) return;
-  window.__sylviniaV44MobileSceneAboveDialogueCrashFix = true;
-
-  var TOOLBAR_ORDER = ['history','back','skip','auto','music','fullscreen','hideath','bug','chapters','progression','codex','menu'];
-  var TOOLBAR_LABELS = {history:'Hist.',back:'Retour',skip:'Passer',auto:'Auto',music:'Musique',fullscreen:'16:9',hideath:'ATH',bug:'⚠ Bug',chapters:'Chap.',progression:'Prog.',codex:'Codex',menu:'Menu'};
-
-  function byId(id){ return document.getElementById(id); }
-  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
-  function vh(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.height) || window.innerHeight || document.documentElement.clientHeight || 1)); }
-  function vw(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.width) || window.innerWidth || document.documentElement.clientWidth || 1)); }
-  function isGameVisible(){ var game=byId('game'); return !!(game && !game.classList.contains('hidden')); }
-  function active(){
-    try{ if(typeof state !== 'undefined' && state && state.mobileUI) document.body.classList.add('mobileUI'); }catch(e){}
-    return isGameVisible() && document.body.classList.contains('mobileUI') && !document.body.classList.contains('legacyVisualUI') && vh() >= vw();
-  }
-
-  function tameToolbarObserver(){
-    var toolbar = byId('trailerVNControls');
-    if(!toolbar) return;
-    try{ if(toolbar.__sylviniaV42Observer && toolbar.__sylviniaV42Observer.disconnect) toolbar.__sylviniaV42Observer.disconnect(); }catch(e){}
-    /* Empêche le MutationObserver V42 de se réinstaller : c'était le candidat principal du plantage mobile. */
-    toolbar.__sylviniaV42Observer = {disconnect:function(){}};
-  }
-
-  function titleFor(action){
-    var titles = {history:'Historique',back:'Retour',skip:'Passer le texte',auto:'Lecture automatique',music:'Musique',fullscreen:'Format 16:9',hideath:'Masquer ou afficher l’ATH',bug:'Signaler un bug',chapters:'Chapitres',progression:'Progression',codex:'Codex',menu:'Menu'};
-    return titles[action] || action;
-  }
-
-  function stabilizeToolbarLabels(){
-    var toolbar = byId('trailerVNControls');
-    if(!toolbar) return;
-    tameToolbarObserver();
-    var buttons = Array.prototype.slice.call(toolbar.querySelectorAll('[data-trailer-action]'));
-    buttons.forEach(function(btn){
-      var action = btn.getAttribute('data-trailer-action');
-      var label = TOOLBAR_LABELS[action];
-      if(label && btn.textContent !== label) btn.textContent = label;
-      if(label){ btn.setAttribute('aria-label', titleFor(action)); btn.title = titleFor(action); }
-    });
-    toolbar.dataset.v44Stable = '1';
-  }
-
-  function ensureStructure(){
-    var card = byId('gameCard');
-    if(!card) return null;
-    var wrap = card.querySelector('.dialogueWrap');
-    var dialogue = card.querySelector('.dialogue');
-    var stats = byId('stats');
-    var toolbar = byId('trailerVNControls');
-    if(wrap && dialogue && stats && (stats.parentElement !== wrap || stats.nextElementSibling !== dialogue)){
-      try{ wrap.insertBefore(stats, dialogue); }catch(e){}
-    }
-    if(wrap && toolbar && toolbar.parentElement !== wrap){
-      try{ wrap.appendChild(toolbar); }catch(e){}
-    }
-    return {card:card, wrap:wrap, dialogue:dialogue, stage:byId('stage') || card.querySelector('.stage'), stats:stats, toolbar:toolbar};
-  }
-
-  function sync(){
-    tameToolbarObserver();
-    stabilizeToolbarLabels();
-    var isActive = active();
-    document.body.classList.toggle('vn44MobilePortrait', isActive);
-    if(!isActive) return;
-
-    var parts = ensureStructure();
-    if(!parts || !parts.card || !parts.wrap || !parts.dialogue || !parts.stage) return;
-    var h = vh(), w = vw();
-    document.documentElement.style.setProperty('--vn44ViewportH', h + 'px');
-
-    var text = byId('text');
-    var choices = byId('choices');
-    var bg = byId('bg') || (parts.stage && parts.stage.querySelector('.bg'));
-    var buttons = choices ? Array.prototype.slice.call(choices.querySelectorAll('button.choiceBtn')) : [];
-    var n = buttons.length;
-    var textLen = text ? (text.textContent || '').trim().length : 0;
-    var hasText = textLen > 0;
-
-    parts.card.classList.toggle('vn44NoText', !hasText);
-    parts.card.classList.toggle('vn44HasChoices', n > 0);
-    parts.card.classList.toggle('vn44ManyChoices', n >= 4);
-
-    var statsH = parts.stats ? clamp(Math.ceil(parts.stats.getBoundingClientRect().height || 25), 22, 30) : 25;
-    var toolbarH = parts.toolbar ? clamp(Math.ceil(parts.toolbar.getBoundingClientRect().height || 29), 26, 34) : 29;
-    var desiredPanel = Math.round(h * (n >= 4 ? 0.45 : n >= 2 ? 0.41 : 0.36));
-    if(textLen > 520) desiredPanel += 14;
-    if(textLen > 900) desiredPanel += 12;
-    var maxPanel = Math.round(h * 0.50);
-    var minPanel = n >= 4 ? 280 : n >= 3 ? 252 : n >= 2 ? 224 : 196;
-    var minScene = clamp(Math.round(h * 0.42), 235, 410);
-    var panelH = clamp(desiredPanel, Math.min(minPanel, maxPanel), maxPanel);
-    if(h - panelH < minScene) panelH = Math.max(178, h - minScene);
-
-    var dialogueH = Math.max(80, panelH - statsH - toolbarH - 8);
-    var speakerH = 31;
-    var inside = Math.max(44, dialogueH - speakerH - 18);
-    var textMin = hasText ? (n ? 50 : 70) : 0;
-    var textH = hasText ? clamp(Math.round(inside * (n ? 0.38 : 0.84)), textMin, n >= 4 ? 104 : 138) : 0;
-    var choicesH = n ? Math.max(38, inside - textH - 6) : 0;
-    if(n === 1) choicesH = Math.min(46, choicesH);
-    if(n >= 4) choicesH = Math.max(142, choicesH);
-
-    var sceneH = Math.max(1, h - panelH);
-    var spriteBase = clamp(Math.round(82 + (sceneH / h) * 18), 86, 96);
-    parts.card.style.setProperty('--vn44PanelH', Math.floor(panelH) + 'px');
-    parts.card.style.setProperty('--vn44TextMin', Math.floor(textMin) + 'px');
-    parts.card.style.setProperty('--vn44TextH', Math.max(0, Math.floor(textH)) + 'px');
-    parts.card.style.setProperty('--vn44ChoicesH', Math.max(0, Math.floor(choicesH)) + 'px');
-    parts.card.style.setProperty('--vn44SpriteMax', spriteBase + '%');
-    parts.card.style.setProperty('--vn44DuoSpriteMax', clamp(spriteBase - 2, 82, 94) + '%');
-    parts.card.style.setProperty('--vn44TrioSpriteMax', clamp(spriteBase - 9, 74, 86) + '%');
-
-    parts.stage.style.display = 'block';
-    parts.stage.style.visibility = 'visible';
-    if(bg){
-      bg.style.display = 'block';
-      bg.style.visibility = 'visible';
-      if(bg.style.opacity === '0') bg.style.opacity = '1';
-    }
-
-    var sceneId = '';
-    try{ if(typeof state !== 'undefined' && state && state.scene) sceneId = String(state.scene); }catch(e){}
-    if(choices && choices.__vn44LastScene !== sceneId){ choices.scrollTop = 0; choices.__vn44LastScene = sceneId; }
-    if(text && text.__vn44LastScene !== sceneId){ text.scrollTop = 0; text.__vn44LastScene = sceneId; }
-  }
-
-  function schedule(){
-    window.requestAnimationFrame(sync);
-    setTimeout(sync, 40);
-    setTimeout(sync, 160);
-  }
-
-  function patchRender(){
-    try{
-      if(typeof render === 'function' && !render.__sylviniaV44MobileSceneAboveDialogueCrashFix){
-        var previous = render;
-        render = function(){
-          var result = previous.apply(this, arguments);
-          schedule();
-          return result;
-        };
-        render.__sylviniaV44MobileSceneAboveDialogueCrashFix = true;
-        window.render = render;
-      }
-    }catch(e){}
-  }
-
-  function install(){ patchRender(); schedule(); }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
-  else install();
-
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', schedule, {passive:true});
-    window.visualViewport.addEventListener('scroll', schedule, {passive:true});
-  }
-  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','visibilitychange'].forEach(function(evt){
-    window.addEventListener(evt, schedule, {passive:true});
-    document.addEventListener(evt, schedule, {passive:true});
-  });
-  document.addEventListener('click', function(){ setTimeout(schedule, 0); }, true);
-  setTimeout(install, 240);
-  setTimeout(install, 800);
 })();
 </script>
