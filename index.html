@@ -39660,3 +39660,672 @@ body.vn31MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard
   setTimeout(install, 300);
 })();
 </script>
+
+<!-- V32 · ATH compact adaptatif : scène prioritaire, dialogue plafonné, mobile propre -->
+<style id="sylviniaV32CompactAdaptiveATH">
+/*
+  V32 pose une règle simple : la scène règne, l'ATH sert.
+  Le panneau ne grossit plus selon le contenu ; le texte et les choix scrollent dedans.
+  Legacy reste hors du champ du patch.
+*/
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard{
+  --vn32PanelH:clamp(118px,22%,204px);
+  --vn32ToolbarH:30px;
+  --vn32Bottom:2.1%;
+  --vn32Side:5.2%;
+  --vn32ChoiceCol:clamp(220px,30%,390px);
+  --vn32Gap:14px;
+  --vn32StagePadBottom:0px;
+}
+
+/* La scène garde tout le cadre. Les sprites restent ancrés au bas de la scène, pas au bas du texte. */
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .stage{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars{
+  position:absolute!important;
+  inset:0!important;
+  overflow:hidden!important;
+  z-index:3!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .char,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars img{
+  bottom:0!important;
+  max-height:var(--vn32SpriteMax,86%)!important;
+  max-width:var(--vn32SpriteW,46%)!important;
+  object-fit:contain!important;
+  object-position:bottom center!important;
+  transform-origin:center bottom!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars.duoChars .char{max-height:var(--vn32DuoSpriteMax,88%)!important;max-width:47%!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char{max-height:var(--vn32TrioSpriteMax,76%)!important;max-width:34%!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .char.left{left:3.5%!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .char.right{right:3.5%!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .char.center{left:50%!important;transform:translateX(-50%)!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char.left{left:1%!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .chars.trioChars .char.right{right:1%!important;}
+
+/* Dialogue compact : hauteur fixe, contenu scrollable. */
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:absolute!important;
+  left:var(--vn32Side)!important;
+  right:var(--vn32Side)!important;
+  bottom:var(--vn32Bottom)!important;
+  z-index:32!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:3px!important;
+  width:auto!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  pointer-events:none!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  order:1!important;
+  position:relative!important;
+  width:100%!important;
+  height:var(--vn32PanelH)!important;
+  min-height:0!important;
+  max-height:var(--vn32PanelH)!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) var(--vn32ChoiceCol)!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  grid-template-areas:"speaker choices" "text choices"!important;
+  column-gap:var(--vn32Gap)!important;
+  row-gap:5px!important;
+  align-items:stretch!important;
+  margin:0!important;
+  padding:8px 12px 9px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  color:#f6f0e6!important;
+  background:linear-gradient(180deg,rgba(14,12,18,.58),rgba(5,7,13,.68))!important;
+  border:1px solid rgba(234,205,145,.42)!important;
+  border-radius:9px!important;
+  box-shadow:0 14px 38px rgba(0,0,0,.44), inset 0 0 0 1px rgba(255,255,255,.045), inset 0 0 24px rgba(210,170,88,.04)!important;
+  backdrop-filter:blur(6px)!important;
+  -webkit-backdrop-filter:blur(6px)!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-area:speaker!important;
+  min-width:0!important;
+  max-width:none!important;
+  width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  padding:2px 10px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(14px,1.55vw,23px)!important;
+  line-height:1.02!important;
+  color:#f1db9b!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.42),rgba(0,0,0,0))!important;
+  border-top:1px solid rgba(234,205,145,.24)!important;
+  border-bottom:1px solid rgba(234,205,145,.18)!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::before,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .speaker::after{display:none!important;content:none!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-area:text!important;
+  display:block!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 8px 0 0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  white-space:pre-line!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(11px,1.02vw,16px)!important;
+  line-height:1.24!important;
+  color:rgba(255,250,240,.94)!important;
+  text-shadow:0 2px 7px rgba(0,0,0,.76)!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard.vn30ContinueOnly .choices{
+  grid-area:choices!important;
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  background:none!important;
+  pointer-events:auto!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard.vn32ManyChoices .choices{justify-content:flex-start!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  flex:0 0 auto!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:30px!important;
+  margin:0!important;
+  padding:6px 10px!important;
+  border-radius:6px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:clamp(10px,.88vw,14px)!important;
+  line-height:1.14!important;
+  color:#f3e6cc!important;
+  background:linear-gradient(90deg,rgba(30,22,30,.78),rgba(14,12,18,.66))!important;
+  border:1px solid rgba(232,201,130,.44)!important;
+  box-shadow:0 6px 16px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.06)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn .arrow{font-size:18px!important;color:#e8c982!important;margin-left:8px!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn small{display:none!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar{width:5px!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .text::-webkit-scrollbar-thumb,
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choices::-webkit-scrollbar-thumb{background:rgba(232,201,130,.36)!important;border-radius:999px!important;}
+
+/* Barre de commandes fine : elle n'est plus une deuxième boîte. */
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
+  order:2!important;
+  flex:0 0 var(--vn32ToolbarH)!important;
+  height:var(--vn32ToolbarH)!important;
+  min-height:0!important;
+  max-height:var(--vn32ToolbarH)!important;
+  width:calc(100% - 8px)!important;
+  max-width:calc(100% - 8px)!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:4px!important;
+  margin:0 auto!important;
+  padding:2px 4px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  pointer-events:auto!important;
+  border-radius:999px!important;
+  background:rgba(3,6,11,.38)!important;
+  border:1px solid rgba(232,201,130,.16)!important;
+  scrollbar-width:none!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
+  flex:0 0 auto!important;
+  min-height:23px!important;
+  height:23px!important;
+  padding:3px 7px!important;
+  border-radius:999px!important;
+  font:800 clamp(9px,.78vw,12px)/1 Georgia,'Times New Roman',serif!important;
+  color:rgba(244,235,215,.76)!important;
+  background:rgba(4,6,12,.28)!important;
+  border:1px solid rgba(255,255,255,.04)!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="hideath"],
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="fullscreen"],
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn[data-trailer-action="bug"]{
+  min-width:0!important;
+  padding-left:8px!important;
+  padding-right:8px!important;
+}
+
+/* Stats en surimpression légère : hors flux, hors boîte, hors catastrophe. */
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard > #stats,
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard > .stats{
+  position:absolute!important;
+  left:var(--vn32StatsLeft,3.4%)!important;
+  top:var(--vn32StatsTop,10px)!important;
+  z-index:34!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:5px!important;
+  width:auto!important;
+  max-width:min(76%,760px)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  opacity:.62!important;
+  pointer-events:auto!important;
+}
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard > #stats .stat,
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard > .stats .stat{
+  font-size:clamp(8px,.74vw,11px)!important;
+  padding:4px 7px!important;
+  border-radius:999px!important;
+  color:rgba(255,255,255,.74)!important;
+  background:rgba(4,6,11,.48)!important;
+  border:1px solid rgba(232,201,130,.18)!important;
+  box-shadow:0 5px 18px rgba(0,0,0,.26)!important;
+}
+
+@media(max-height:560px) and (orientation:landscape){
+  body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard{
+    --vn32PanelH:clamp(102px,23%,166px);
+    --vn32ToolbarH:27px;
+    --vn32Side:4.2%;
+    --vn32Bottom:1.8%;
+    --vn32Gap:10px;
+  }
+  body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{padding:6px 10px 7px!important;row-gap:4px!important;}
+  body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{font-size:clamp(12px,1.35vw,18px)!important;padding:1px 9px!important;}
+  body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .text{font-size:clamp(10px,.96vw,13px)!important;line-height:1.18!important;}
+  body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn{min-height:25px!important;padding:4px 8px!important;font-size:clamp(9px,.84vw,12px)!important;}
+}
+
+/* Mobile portrait : scène au-dessus, ATH bas plafonné, commandes en ruban fin. */
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard,
+body.vn32MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto minmax(0,1fr) var(--vn32MobilePanelH,34svh)!important;
+  height:100svh!important;
+  max-height:100svh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .stage,
+body.vn32MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .stage{
+  grid-row:2!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:hidden!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap,
+body.vn32MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  grid-row:3!important;
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  z-index:20!important;
+  width:100%!important;
+  height:var(--vn32MobilePanelH,34svh)!important;
+  max-height:var(--vn32MobilePanelH,34svh)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:2px!important;
+  margin:0!important;
+  padding:2px 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(2,5,10,.18),rgba(2,5,10,.95) 14%,rgba(2,5,10,1))!important;
+  pointer-events:none!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
+body.vn32MobilePortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  grid-template-areas:"speaker" "text" "choices"!important;
+  gap:5px!important;
+  padding:7px 8px 8px!important;
+  border-radius:14px 14px 0 0!important;
+  pointer-events:auto!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .speaker{font-size:18px!important;padding:3px 9px!important;line-height:1.03!important;}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .text{font-size:14px!important;line-height:1.32!important;padding:0 4px 0 0!important;}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choices{gap:5px!important;max-height:var(--vn32MobileChoicesMax,38%)!important;}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  min-height:36px!important;
+  padding:8px 10px!important;
+  border-radius:10px!important;
+  font-size:13px!important;
+  line-height:1.16!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls{
+  flex:0 0 30px!important;
+  height:30px!important;
+  min-height:0!important;
+  max-height:30px!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:2px 4px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  pointer-events:auto!important;
+  border-radius:999px!important;
+  scrollbar-width:none!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
+  flex:0 0 auto!important;
+  height:24px!important;
+  min-height:24px!important;
+  padding:3px 7px!important;
+  font-size:10px!important;
+  line-height:1!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > #stats,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stats{
+  top:calc(var(--vn32TopbarH,0px) + 7px)!important;
+  left:8px!important;
+  max-width:calc(100% - 16px)!important;
+  opacity:.64!important;
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  scrollbar-width:none!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > #stats::-webkit-scrollbar,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stats::-webkit-scrollbar{display:none!important;}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .char,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars img{
+  max-height:var(--vn32MobileSpriteMax,92%)!important;
+}
+body.vn32MobilePortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard{grid-template-rows:auto minmax(0,1fr) 0px!important;}
+body.vn32MobilePortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard .dialogueWrap{display:none!important;}
+body.vn32MobilePortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard .stage{height:100%!important;}
+</style>
+
+<script id="sylviniaV32CompactAdaptiveATH">
+(function(){
+  if(window.__sylviniaV32CompactAdaptiveATH) return;
+  window.__sylviniaV32CompactAdaptiveATH = true;
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  function gameVisible(){
+    const game = document.getElementById('game');
+    return !!(game && !game.classList.contains('hidden'));
+  }
+
+  function currentVisualActive(){
+    return gameVisible() && !document.body.classList.contains('legacyVisualUI');
+  }
+
+  function isPortrait(){
+    return (window.innerHeight || 0) >= (window.innerWidth || 0);
+  }
+
+  function syncV32(){
+    const card = document.getElementById('gameCard');
+    const wrap = card ? card.querySelector('.dialogueWrap') : null;
+    const dialogue = card ? card.querySelector('.dialogue') : null;
+    const stage = card ? card.querySelector('.stage') : null;
+    const topbar = card ? card.querySelector('.topbar') : null;
+    const stats = document.getElementById('stats');
+    const choices = document.getElementById('choices');
+    const text = document.getElementById('text');
+    const toolbar = document.getElementById('trailerVNControls');
+    if(!card || !wrap || !dialogue || !stage) return;
+
+    const active = currentVisualActive();
+    const mobilePortrait = !!(active && document.body.classList.contains('mobileUI') && isPortrait());
+    const compact = !!(active && (document.body.classList.contains('trailer16x9') || mobilePortrait));
+
+    document.body.classList.toggle('vn32CurrentCompact', compact);
+    document.body.classList.toggle('vn32MobilePortrait', mobilePortrait);
+    card.classList.toggle('vn32CurrentCompactCard', compact);
+    card.classList.toggle('vn32MobilePortraitCard', mobilePortrait);
+    if(!compact) return;
+
+    /* V33 : les stats restent à leur emplacement lisible, juste au-dessus de la boîte de dialogue.
+       On ne les remet plus en enfant direct de #gameCard, sinon V30/V31/V32 se disputent le DOM et ça clignote. */
+    if(stats && (stats.parentElement !== wrap || stats.nextElementSibling !== dialogue)){
+      wrap.insertBefore(stats, dialogue);
+    }
+
+    const rect = card.getBoundingClientRect();
+    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = Math.max(1, rect.height || window.innerHeight || 1);
+    const ratio = w / h;
+    const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn')) : [];
+    const n = buttons.length;
+    const textLen = text ? (text.textContent || '').trim().length : 0;
+    const toolbarH = toolbar ? clamp(Math.ceil(toolbar.getBoundingClientRect().height || 0), 26, 34) : 30;
+    const topbarH = topbar ? Math.ceil(topbar.getBoundingClientRect().height || 0) : 0;
+
+    card.classList.toggle('vn32ManyChoices', n >= 4);
+    card.classList.toggle('vn32LongText', textLen > 520);
+
+    if(mobilePortrait){
+      const maxPanel = Math.round(h * (n >= 3 ? 0.38 : 0.34));
+      const minPanel = n >= 2 ? 234 : 206;
+      let panelH = Math.round(h * (n >= 2 ? 0.33 : 0.29));
+      if(textLen > 360) panelH += 18;
+      if(textLen > 700) panelH += 14;
+      panelH = clamp(panelH, Math.min(minPanel, maxPanel), maxPanel);
+      const minStage = clamp(Math.round(h * 0.36), 245, 360);
+      if(h - topbarH - panelH < minStage){
+        panelH = Math.max(188, h - topbarH - minStage);
+      }
+      const stageH = Math.max(120, h - topbarH - panelH);
+      const spriteMax = clamp(Math.round(82 + (stageH / h) * 22), 86, 96);
+      const choiceMax = n >= 3 ? '46%' : (n === 2 ? '39%' : '30%');
+
+      card.style.setProperty('--vn32MobilePanelH', Math.max(180, Math.floor(panelH)) + 'px');
+      card.style.setProperty('--vn32TopbarH', Math.max(0, topbarH) + 'px');
+      card.style.setProperty('--vn32MobileSpriteMax', spriteMax + '%');
+      card.style.setProperty('--vn32MobileChoicesMax', choiceMax);
+    }else{
+      let panelRatio = h <= 560 ? 0.22 : 0.215;
+      if(n >= 3) panelRatio += 0.018;
+      if(textLen > 520) panelRatio += 0.012;
+      let panelH = Math.round(h * panelRatio);
+      const minPanel = h <= 560 ? 104 : 122;
+      const maxPanel = Math.round(h * (h <= 560 ? 0.255 : 0.265));
+      panelH = clamp(panelH, minPanel, Math.min(maxPanel, h <= 560 ? 168 : 216));
+
+      let choiceCol = clamp(Math.round(w * (ratio < 1.45 ? 0.34 : 0.30)), 210, 390);
+      if(w < 820) choiceCol = clamp(Math.round(w * 0.36), 190, 300);
+      const spriteBase = h <= 560 ? 82 : 86;
+      const duo = spriteBase + 2;
+      const trio = spriteBase - 10;
+
+      card.style.setProperty('--vn32PanelH', Math.floor(panelH) + 'px');
+      card.style.setProperty('--vn32ToolbarH', Math.max(26, toolbarH) + 'px');
+      card.style.setProperty('--vn32ChoiceCol', 'minmax(' + Math.min(choiceCol, 230) + 'px, ' + choiceCol + 'px)');
+      card.style.setProperty('--vn32StatsTop', clamp(Math.round(h * 0.018), 8, 18) + 'px');
+      card.style.setProperty('--vn32SpriteMax', spriteBase + '%');
+      card.style.setProperty('--vn32DuoSpriteMax', duo + '%');
+      card.style.setProperty('--vn32TrioSpriteMax', trio + '%');
+    }
+
+    const sceneId = (window.state && state.scene) ? String(state.scene) : '';
+    if(choices && choices.__vn32LastScene !== sceneId){
+      choices.scrollTop = 0;
+      choices.__vn32LastScene = sceneId;
+    }
+    if(text && text.__vn32LastScene !== sceneId){
+      text.scrollTop = 0;
+      text.__vn32LastScene = sceneId;
+    }
+  }
+
+  function scheduleV32(){
+    requestAnimationFrame(syncV32);
+    setTimeout(syncV32, 40);
+    setTimeout(syncV32, 140);
+    setTimeout(syncV32, 360);
+    setTimeout(syncV32, 700);
+  }
+
+  function patchRender(){
+    try{
+      if(typeof render === 'function' && !render.__sylviniaV32CompactAdaptiveATH){
+        const previous = render;
+        render = window.render = function(){
+          const result = previous.apply(this, arguments);
+          scheduleV32();
+          return result;
+        };
+        render.__sylviniaV32CompactAdaptiveATH = true;
+      }
+    }catch(e){}
+  }
+
+  function install(){ patchRender(); scheduleV32(); }
+
+  document.addEventListener('DOMContentLoaded', install);
+  window.addEventListener('load', install);
+  ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, install, {passive:true});
+    document.addEventListener(evt, install, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(scheduleV32, 0); }, true);
+  document.addEventListener('transitionend', scheduleV32, true);
+  setInterval(syncV32, 850);
+  setTimeout(install, 0);
+  setTimeout(install, 320);
+})();
+</script>
+
+
+<!-- V33 · Valeurs stabilisées au-dessus de la case de dialogue -->
+<style id="sylviniaV33StatsAboveDialogue">
+/*
+  V33 corrige le clignotement des valeurs : un seul emplacement officiel.
+  Les stats restent au-dessus de la boîte de dialogue, comme avant,
+  et ne sont plus déplacées en surimpression en haut de scène.
+*/
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard .dialogueWrap,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:relative!important;
+}
+body.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
+  position:absolute!important;
+}
+
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+body.vn31MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+body.vn31MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats{
+  position:absolute!important;
+  left:0!important;
+  top:calc(-1 * var(--vn33StatsLift, 28px))!important;
+  z-index:85!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  width:auto!important;
+  max-width:min(76%,760px)!important;
+  height:auto!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  opacity:.82!important;
+  pointer-events:auto!important;
+  transform:none!important;
+}
+
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats .stat,
+body.vn32CurrentCompact:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat,
+body.vn31MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats .stat,
+body.vn31MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat{
+  font-size:clamp(9px,.78vw,12px)!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  color:rgba(255,255,255,.78)!important;
+  background:rgba(8,10,16,.58)!important;
+  border:1px solid rgba(232,201,130,.24)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.30)!important;
+}
+
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats{
+  left:8px!important;
+  right:8px!important;
+  top:calc(-1 * var(--vn33MobileStatsLift, 30px))!important;
+  max-width:calc(100% - 16px)!important;
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scrollbar-width:none!important;
+  opacity:.82!important;
+}
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar,
+body.vn32MobilePortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar{display:none!important;}
+
+body.athHidden #gameCard .dialogueWrap > #stats,
+body.athHidden #gameCard .dialogueWrap > .stats{display:none!important;}
+</style>
+
+<script id="sylviniaV33StatsAboveDialogue">
+(function(){
+  if(window.__sylviniaV33StatsAboveDialogue) return;
+  window.__sylviniaV33StatsAboveDialogue = true;
+
+  function activeCurrentVisual(){
+    const game = document.getElementById('game');
+    return !!(game && !game.classList.contains('hidden') && !document.body.classList.contains('legacyVisualUI'));
+  }
+
+  function syncV33Stats(){
+    if(!activeCurrentVisual()) return;
+    const card = document.getElementById('gameCard');
+    const wrap = card ? card.querySelector('.dialogueWrap') : null;
+    const dialogue = card ? card.querySelector('.dialogue') : null;
+    const stats = document.getElementById('stats');
+    if(!card || !wrap || !dialogue || !stats) return;
+
+    // Un seul nid pour les valeurs : juste au-dessus de la boîte.
+    if(stats.parentElement !== wrap || stats.nextElementSibling !== dialogue){
+      wrap.insertBefore(stats, dialogue);
+    }
+  }
+
+  function scheduleV33Stats(){
+    requestAnimationFrame(syncV33Stats);
+    setTimeout(syncV33Stats, 40);
+    setTimeout(syncV33Stats, 160);
+  }
+
+  function patchRender(){
+    if(typeof render === 'function' && !render.__sylviniaV33StatsAboveDialogue){
+      const original = render;
+      render = window.render = function(){
+        const result = original.apply(this, arguments);
+        scheduleV33Stats();
+        return result;
+      };
+      render.__sylviniaV33StatsAboveDialogue = true;
+    }
+  }
+
+  function install(){ patchRender(); scheduleV33Stats(); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else install();
+  window.addEventListener('resize', scheduleV33Stats, {passive:true});
+  window.addEventListener('orientationchange', scheduleV33Stats, {passive:true});
+  document.addEventListener('fullscreenchange', scheduleV33Stats, true);
+  document.addEventListener('webkitfullscreenchange', scheduleV33Stats, true);
+  document.addEventListener('click', function(){ setTimeout(scheduleV33Stats, 0); }, true);
+  setTimeout(install, 300);
+})();
+</script>
