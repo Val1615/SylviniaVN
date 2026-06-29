@@ -2951,6 +2951,118 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
 }
 </style>
 
+
+<style id="sylviniaV42FormatChoiceAndToolbarStableStyles">
+/* V42 · Choix de format clair + modes Mobile/Legacy exclusifs + barre basse stabilisée */
+.disclaimerFormatActions{
+  align-items:stretch;
+  gap:18px;
+  margin-top:22px;
+}
+.formatChoiceBtn{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:1px solid rgba(167,240,255,.24);
+  background:linear-gradient(180deg,rgba(29,48,76,.78),rgba(9,16,30,.92));
+  color:#f7fbff;
+  cursor:pointer;
+  box-shadow:0 18px 42px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.08);
+  transition:.18s transform,.18s border-color,.18s box-shadow,.18s background;
+  overflow:hidden;
+}
+.formatChoiceBtn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(233,201,133,.18),transparent 42%),radial-gradient(circle at 50% 100%,rgba(167,240,255,.13),transparent 46%);
+  pointer-events:none;
+}
+.formatChoiceBtn>*{position:relative;z-index:1}
+.formatChoiceBtn:hover,.formatChoiceBtn:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(167,240,255,.58);
+  box-shadow:0 22px 54px rgba(0,0,0,.42),0 0 28px rgba(167,240,255,.10);
+}
+.formatChoiceBtn strong{font-size:18px;line-height:1.2;text-align:center}
+.formatChoiceBtn small{color:#c9d8e8;font-weight:800;letter-spacing:.04em;text-align:center}
+.formatVerticalBtn{
+  width:min(210px,34vw);
+  min-height:255px;
+  border-radius:26px;
+}
+.formatHorizontalBtn{
+  width:min(390px,54vw);
+  min-height:176px;
+  align-self:center;
+  border-radius:24px;
+}
+.formatFrame{
+  display:block;
+  border:2px solid rgba(233,201,133,.64);
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
+  box-shadow:inset 0 0 0 5px rgba(0,0,0,.20),0 0 18px rgba(233,201,133,.10);
+}
+.formatFrameVertical{width:54px;height:94px;border-radius:14px}
+.formatFrameHorizontal{width:128px;height:72px;border-radius:16px}
+.disclaimerOptionsNote{
+  margin-top:18px!important;
+  margin-bottom:0!important;
+  color:#c4d2df!important;
+}
+.formatModePair{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  align-items:stretch;
+}
+.formatModeCard{
+  min-height:112px;
+  margin:0!important;
+}
+.formatModePair .legacyModeBtn{
+  text-align:left;
+  justify-content:space-between;
+  align-items:stretch;
+}
+.formatModePair .legacyModeBtn .btnTitle{font-size:16px}
+.formatModePair .legacyModeBtn .btnDesc{font-size:13px}
+.miniHint{
+  display:block;
+  margin-top:6px;
+  font-size:12px!important;
+  line-height:1.35!important;
+  opacity:.92;
+}
+#trailerModeBtn.active{
+  border-color:rgba(233,201,133,.58)!important;
+  background:linear-gradient(180deg,rgba(145,105,48,.72),rgba(62,40,18,.86))!important;
+}
+#gameCard #trailerVNControls .trailerVNBtn{
+  text-transform:none!important;
+}
+@media(max-width:760px){
+  .disclaimerFormatActions{gap:12px}
+  .formatVerticalBtn{width:min(42vw,178px);min-height:220px}
+  .formatHorizontalBtn{width:min(48vw,260px);min-height:145px}
+  .formatChoiceBtn strong{font-size:15px}
+  .formatChoiceBtn small{font-size:12px}
+  .formatFrameVertical{width:45px;height:78px}
+  .formatFrameHorizontal{width:94px;height:54px}
+  .formatModePair{grid-template-columns:1fr 1fr;gap:8px}
+  .formatModeCard{min-height:128px;padding:13px!important}
+}
+@media(max-width:460px){
+  .disclaimerFormatActions{flex-wrap:wrap}
+  .formatVerticalBtn,.formatHorizontalBtn{width:100%;min-height:132px}
+  .formatFrameVertical,.formatFrameHorizontal{width:88px;height:52px;border-radius:14px}
+  .formatFrameVertical{width:48px;height:78px}
+}
+</style>
+
 </head>
 <body>
 <div id="screenFade" aria-hidden="true"></div>
@@ -2966,9 +3078,19 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
         <div class="disclaimerBetaNotice">
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
-        <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
+        <div class="disclaimerActions disclaimerFormatActions" aria-label="Choisir un format d’affichage">
+          <button class="formatChoiceBtn formatVerticalBtn" id="playVerticalBtn" type="button">
+            <span class="formatFrame formatFrameVertical" aria-hidden="true"></span>
+            <strong>Jouer en format Vertical</strong>
+            <small>Idéal sur mobile</small>
+          </button>
+          <button class="formatChoiceBtn formatHorizontalBtn" id="playHorizontalBtn" type="button">
+            <span class="formatFrame formatFrameHorizontal" aria-hidden="true"></span>
+            <strong>Jouer en format Horizontal</strong>
+            <small>Idéal sur PC ou tablette</small>
+          </button>
         </div>
+        <p class="disclaimerFine disclaimerOptionsNote">Ces réglages pourront être modifiés ensuite dans les Options.</p>
       </div>
     </section>
   </main>
@@ -3041,15 +3163,23 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
             <details class="menuAccordion">
               <summary class="accordionSummary"><span>Options</span></summary>
               <div class="accordionPanel">
-                <div class="mobileToggleWrap compactToggle">
-                  <div class="toggleText">
-                    <strong>Mode mobile</strong>
-                    <small id="mobileUiState">Désactivé · commandes standard</small>
+                <div class="formatModePair" aria-label="Modes d’affichage exclusifs">
+                  <div class="mobileToggleWrap compactToggle formatModeCard">
+                    <div class="toggleText">
+                      <strong>Mode mobile</strong>
+                      <small id="mobileUiState">Désactivé · format horizontal par défaut</small>
+                      <span class="toggleHint miniHint">Adapté au format vertical. Incompatible avec le mode Legacy.</span>
+                    </div>
+                    <label class="switch" aria-label="Activer le mode mobile">
+                      <input type="checkbox" id="mobileUiToggle">
+                      <span class="sliderSwitch"></span>
+                    </label>
                   </div>
-                  <label class="switch" aria-label="Activer le mode mobile">
-                    <input type="checkbox" id="mobileUiToggle">
-                    <span class="sliderSwitch"></span>
-                  </label>
+                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn formatModeCard legacyModeBtn" id="trailerModeBtn" type="button">
+                    <span class="btnTitle">Mode Legacy</span>
+                    <small class="btnDesc" id="trailerModeState">Désactivé · visuel actuel</small>
+                    <span class="toggleHint miniHint">Adopte le tout premier design du Visual Novel. Incompatible avec le mode mobile.</span>
+                  </button>
                 </div>
                 <div class="mobileToggleWrap compactToggle">
                   <div class="toggleText">
@@ -3064,7 +3194,6 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
-                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Affichage expérimental</span><small class="btnDesc" id="trailerModeState">Désactivé · interface standard</small></button>
                   <button class="secondaryBtn redBtn menuActionBtn dockBtn toolBtn optionWideBtn" id="resetBtn"><span class="btnTitle">Nouveau départ</span><small class="btnDesc">Réinitialiser la progression.</small></button>
                 </div>
               </div>
@@ -34317,12 +34446,12 @@ body.trailer16x9 .trailerVNBtn.active{
     const autoBtn=document.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent=window.__sylviniaTrailerAuto?'Auto activé':'Auto';
+      autoBtn.textContent='Auto';
     }
     const musicBtn=document.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state!=='undefined'){
       musicBtn.classList.toggle('active', state.musicOn!==false);
-      musicBtn.textContent=state.musicOn===false?'Musique off':'Musique';
+      musicBtn.textContent='Musique';
     }
   }
   function handleToolbarClick(ev){
@@ -36492,13 +36621,13 @@ body.force16x9Fullscreen #gameCard .dialogue{
     const autoBtn = toolbar.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
+      autoBtn.textContent = 'Auto';
     }
 
     const musicBtn = toolbar.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state !== 'undefined'){
       musicBtn.classList.toggle('active', state.musicOn !== false);
-      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
+      musicBtn.textContent = 'Musique';
     }
 
     updateFullscreenClass();
@@ -37198,20 +37327,20 @@ body.legacyVisualUI #gameCard .trailerVNBtn[data-trailer-action="hideath"]{
     const autoBtn = document.querySelector('[data-trailer-action="auto"]');
     if(autoBtn){
       autoBtn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
-      autoBtn.textContent = window.__sylviniaTrailerAuto ? 'Auto activé' : 'Auto';
+      autoBtn.textContent = 'Auto';
     }
 
     const musicBtn = document.querySelector('[data-trailer-action="music"]');
     if(musicBtn && typeof state !== 'undefined'){
       musicBtn.classList.toggle('active', state.musicOn !== false);
-      musicBtn.textContent = state.musicOn === false ? 'Musique off' : 'Musique';
+      musicBtn.textContent = 'Musique';
     }
 
     const fullBtn = document.querySelector('[data-trailer-action="fullscreen"]');
     if(fullBtn){
       const active = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
       fullBtn.classList.toggle('active', active);
-      fullBtn.textContent = active ? 'Quitter plein écran' : 'Plein écran';
+      fullBtn.textContent = '16:9';
     }
 
     const hideBtn = document.querySelector('[data-trailer-action="hideath"]');
@@ -37390,16 +37519,16 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
   ];
 
   const LABELS = {
-    history:'Historique',
+    history:'Hist.',
     back:'Retour',
     skip:'Passer',
     auto:'Auto',
     music:'Musique',
-    fullscreen:'Plein écran',
+    fullscreen:'16:9',
     hideath:'Masquer ATH',
     bug:'Bug',
-    chapters:'Chapitres',
-    progression:'Progression',
+    chapters:'Chap.',
+    progression:'Prog.',
     codex:'Codex',
     menu:'Menu'
   };
@@ -37409,7 +37538,7 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
     back:'Retour',
     skip:'Passer',
     auto:'Auto',
-    music:'Son',
+    music:'Musique',
     fullscreen:'16:9',
     hideath:'ATH',
     bug:'Bug',
@@ -37429,13 +37558,13 @@ body.legacyVisualUI #gameCard #trailerVNControls .trailerVNBtn{
 
   function labelFor(action){
     if(action === 'auto' && window.__sylviniaTrailerAuto){
-      return compact() ? 'Auto ✓' : 'Auto activé';
+      return 'Auto';
     }
     if(action === 'music' && typeof state !== 'undefined' && state.musicOn === false){
-      return compact() ? 'Son off' : 'Musique off';
+      return 'Musique';
     }
     if(action === 'fullscreen' && isFullscreen()){
-      return compact() ? 'Quitter' : 'Quitter plein écran';
+      return '16:9';
     }
     return (compact() ? COMPACT : LABELS)[action] || action;
   }
@@ -38435,6 +38564,272 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
   document.addEventListener('transitionend', schedule, true);
   setTimeout(install, 0);
   setTimeout(install, 260);
+})();
+</script>
+
+
+<script id="sylviniaV42FormatChoiceAndToolbarStableScript">
+(function(){
+  if(window.__sylviniaV42FormatChoiceAndToolbarStableScript) return;
+  window.__sylviniaV42FormatChoiceAndToolbarStableScript = true;
+
+  const LEGACY_KEY = 'sylvinia_vn_legacy_visual_mode';
+  const CURRENT_VISUAL_KEY = 'sylvinia_vn_trailer16x9';
+
+  function byId(id){ return document.getElementById(id); }
+  function isLegacy(){ return document.body.classList.contains('legacyVisualUI') || safeGet(LEGACY_KEY) === 'true'; }
+  function safeSet(key,value){ try{ localStorage.setItem(key, value); }catch(e){} }
+  function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+
+  function forceCurrentVisual(){
+    safeSet(LEGACY_KEY, 'false');
+    safeSet(CURRENT_VISUAL_KEY, 'true');
+    document.body.classList.remove('legacyVisualUI','legacySheetCollapsed','legacySheetPeek','legacySheetExpanded');
+    document.body.classList.add('trailer16x9','experimentalUI');
+    try{
+      if(typeof setTrailer16x9Mode === 'function'){
+        setTrailer16x9Mode(true);
+      }else if(typeof applyTrailer16x9UI === 'function'){
+        applyTrailer16x9UI();
+      }
+    }catch(e){}
+  }
+
+  function saveMobile(enabled){
+    try{
+      if(typeof state !== 'undefined' && state){
+        state.mobileUI = !!enabled;
+        if(typeof applyMobileUI === 'function') applyMobileUI();
+        if(typeof save === 'function') save();
+        if(typeof updateMenuButtons === 'function') updateMenuButtons();
+      }
+    }catch(e){}
+  }
+
+  function syncFormatLabels(){
+    const mobile = !!(typeof state !== 'undefined' && state && state.mobileUI);
+    const legacy = isLegacy();
+    const mobileToggle = byId('mobileUiToggle');
+    const mobileLabel = byId('mobileUiState');
+    const legacyBtn = byId('trailerModeBtn');
+    const legacyTitle = legacyBtn ? legacyBtn.querySelector('.btnTitle') : null;
+    const legacyLabel = byId('trailerModeState');
+
+    if(mobileToggle) mobileToggle.checked = mobile;
+    if(mobileLabel){
+      mobileLabel.textContent = mobile
+        ? 'Activé · format vertical adapté'
+        : 'Désactivé · format horizontal par défaut';
+    }
+    if(legacyTitle) legacyTitle.textContent = 'Mode Legacy';
+    if(legacyLabel){
+      legacyLabel.textContent = legacy
+        ? 'Activé · tout premier design du VN'
+        : 'Désactivé · visuel actuel';
+    }
+    if(legacyBtn){
+      legacyBtn.classList.toggle('active', legacy);
+      legacyBtn.setAttribute('aria-pressed', legacy ? 'true' : 'false');
+      legacyBtn.title = legacy
+        ? 'Désactiver le mode Legacy'
+        : 'Activer le tout premier design du Visual Novel';
+    }
+  }
+
+  function chooseVerticalFormat(){
+    forceCurrentVisual();
+    if(typeof setMobileUI === 'function') setMobileUI(true);
+    else saveMobile(true);
+    syncFormatLabels();
+    if(typeof enterTitleFromDisclaimer === 'function') enterTitleFromDisclaimer();
+  }
+
+  function chooseHorizontalFormat(){
+    forceCurrentVisual();
+    if(typeof setMobileUI === 'function') setMobileUI(false);
+    else saveMobile(false);
+    syncFormatLabels();
+    if(typeof enterTitleFromDisclaimer === 'function') enterTitleFromDisclaimer();
+  }
+
+  function patchSetMobileUI(){
+    try{
+      if(typeof setMobileUI !== 'function' || setMobileUI.__sylviniaV42Exclusive) return;
+      const previous = setMobileUI;
+      setMobileUI = function(enabled){
+        if(enabled) forceCurrentVisual();
+        const result = previous.apply(this, arguments);
+        setTimeout(syncFormatLabels, 0);
+        setTimeout(stabilizeToolbar, 0);
+        return result;
+      };
+      setMobileUI.__sylviniaV42Exclusive = true;
+      window.setMobileUI = setMobileUI;
+    }catch(e){}
+  }
+
+  function bindFormatControls(){
+    patchSetMobileUI();
+    const vertical = byId('playVerticalBtn');
+    const horizontal = byId('playHorizontalBtn');
+    if(vertical && !vertical.__sylviniaV42Bound){
+      vertical.__sylviniaV42Bound = true;
+      vertical.addEventListener('click', function(ev){ ev.preventDefault(); chooseVerticalFormat(); }, true);
+    }
+    if(horizontal && !horizontal.__sylviniaV42Bound){
+      horizontal.__sylviniaV42Bound = true;
+      horizontal.addEventListener('click', function(ev){ ev.preventDefault(); chooseHorizontalFormat(); }, true);
+    }
+    const mobileToggle = byId('mobileUiToggle');
+    if(mobileToggle && !mobileToggle.__sylviniaV42Bound){
+      mobileToggle.__sylviniaV42Bound = true;
+      mobileToggle.addEventListener('change', function(ev){
+        if(typeof setMobileUI === 'function') setMobileUI(ev.target.checked);
+        else saveMobile(ev.target.checked);
+        syncFormatLabels();
+      }, true);
+    }
+  }
+
+  document.addEventListener('click', function(ev){
+    const legacyBtn = ev.target && ev.target.closest ? ev.target.closest('#trailerModeBtn') : null;
+    if(legacyBtn){
+      const willEnableLegacy = !isLegacy();
+      if(willEnableLegacy){
+        if(typeof state !== 'undefined' && state){
+          state.mobileUI = false;
+          try{ if(typeof applyMobileUI === 'function') applyMobileUI(); }catch(e){}
+          try{ if(typeof save === 'function') save(); }catch(e){}
+        }
+      }
+      setTimeout(syncFormatLabels, 0);
+      setTimeout(syncFormatLabels, 80);
+      setTimeout(syncFormatLabels, 180);
+      setTimeout(stabilizeToolbar, 0);
+    }
+  }, true);
+
+  const TOOLBAR_ORDER = ['history','back','skip','auto','music','fullscreen','hideath','bug','chapters','progression','codex','menu'];
+  const TOOLBAR_LABELS = {
+    history:'Hist.',
+    back:'Retour',
+    skip:'Passer',
+    auto:'Auto',
+    music:'Musique',
+    fullscreen:'16:9',
+    hideath:'ATH',
+    bug:'⚠ Bug',
+    chapters:'Chap.',
+    progression:'Prog.',
+    codex:'Codex',
+    menu:'Menu'
+  };
+
+  let stabilizingToolbar = false;
+  function toolbarHTML(){
+    return TOOLBAR_ORDER.map(function(action){
+      const label = TOOLBAR_LABELS[action] || action;
+      return '<button type="button" class="trailerVNBtn" data-trailer-action="'+action+'">'+label+'</button>';
+    }).join('');
+  }
+
+  function currentToolbarOrder(toolbar){
+    return Array.from(toolbar.querySelectorAll('[data-trailer-action]')).map(function(btn){
+      return btn.getAttribute('data-trailer-action');
+    });
+  }
+
+  function stabilizeToolbar(){
+    const toolbar = byId('trailerVNControls');
+    if(!toolbar || stabilizingToolbar) return;
+    stabilizingToolbar = true;
+    try{
+      const current = currentToolbarOrder(toolbar);
+      const wrongOrder = current.length !== TOOLBAR_ORDER.length || TOOLBAR_ORDER.some(function(action, i){ return current[i] !== action; });
+      if(wrongOrder || toolbar.dataset.v42Stable !== '1'){
+        toolbar.innerHTML = toolbarHTML();
+      }
+      toolbar.dataset.v22Order = '1';
+      toolbar.dataset.v24AthOrder = '1';
+      toolbar.dataset.v25BugOnly = '1';
+      toolbar.dataset.v42Stable = '1';
+      TOOLBAR_ORDER.forEach(function(action){
+        const btn = toolbar.querySelector('[data-trailer-action="'+action+'"]');
+        if(!btn) return;
+        const expected = TOOLBAR_LABELS[action] || action;
+        if(btn.textContent !== expected) btn.textContent = expected;
+        btn.setAttribute('aria-label', expected);
+        btn.title = titleForToolbar(action);
+        if(action === 'auto') btn.classList.toggle('active', !!window.__sylviniaTrailerAuto);
+        if(action === 'music' && typeof state !== 'undefined') btn.classList.toggle('active', state.musicOn !== false);
+        if(action === 'fullscreen') btn.classList.toggle('active', !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement));
+        if(action === 'hideath') btn.classList.toggle('active', document.body.classList.contains('athHidden'));
+      });
+    }finally{
+      stabilizingToolbar = false;
+    }
+  }
+
+  function titleForToolbar(action){
+    const titles = {
+      history:'Hist.',
+      back:'Retour à la scène précédente',
+      skip:'Afficher le texte instantanément',
+      auto:'Lecture automatique',
+      music:'Activer ou couper la musique',
+      fullscreen:'Basculer l’affichage 16:9',
+      hideath:'Masquer ou afficher l’ATH',
+      bug:'Signaler un bug',
+      chapters:'Chap.',
+      progression:'Prog.',
+      codex:'Codex',
+      menu:'Menu principal'
+    };
+    return titles[action] || action;
+  }
+
+  function installToolbarObserver(){
+    const toolbar = byId('trailerVNControls');
+    if(!toolbar || toolbar.__sylviniaV42Observer) return;
+    toolbar.__sylviniaV42Observer = new MutationObserver(function(){
+      if(stabilizingToolbar) return;
+      requestAnimationFrame(stabilizeToolbar);
+    });
+    toolbar.__sylviniaV42Observer.observe(toolbar, {childList:true, subtree:true, characterData:true, attributes:true});
+  }
+
+  function tick(){
+    bindFormatControls();
+    syncFormatLabels();
+    stabilizeToolbar();
+    installToolbarObserver();
+  }
+
+  try{
+    if(typeof render === 'function' && !render.__sylviniaV42ToolbarStable){
+      const previousRender = render;
+      render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(tick, 0);
+        setTimeout(tick, 90);
+        setTimeout(tick, 180);
+        return result;
+      };
+      render.__sylviniaV42ToolbarStable = true;
+      window.render = render;
+    }
+  }catch(e){}
+
+  ['DOMContentLoaded','fullscreenchange','webkitfullscreenchange','msfullscreenchange','visibilitychange'].forEach(function(evt){
+    document.addEventListener(evt, function(){ setTimeout(tick, 0); setTimeout(tick, 120); }, true);
+  });
+  window.addEventListener('load', function(){ setTimeout(tick, 0); setTimeout(tick, 180); });
+  window.addEventListener('resize', function(){ setTimeout(tick, 60); });
+  document.addEventListener('click', function(){ setTimeout(tick, 0); setTimeout(tick, 100); setTimeout(tick, 220); }, true);
+
+  setTimeout(tick, 0);
+  setTimeout(tick, 200);
+  setTimeout(tick, 600);
 })();
 </script>
 
