@@ -2966,8 +2966,16 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
         <div class="disclaimerBetaNotice">
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
-        <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
+        <p class="disclaimerFine v38DisclaimerFine">Choisis ton format de départ. Le format Vertical active le mode Mobile ; le format Horizontal garde le visuel actuel. Ces réglages restent modifiables ensuite dans les Options.</p>
+        <div class="disclaimerActions v38DisclaimerActions">
+          <button class="v38StartFormatBtn v38StartVertical" id="v38StartVerticalBtn" type="button" aria-label="Jouer en format vertical, active le mode Mobile, idéal sur mobile">
+            <span class="v38FormatIcon" aria-hidden="true"><span></span></span>
+            <span class="v38StartText"><strong>Jouer en format Vertical</strong><small>Active le mode Mobile · idéal téléphone</small></span>
+          </button>
+          <button class="v38StartFormatBtn v38StartHorizontal" id="v38StartHorizontalBtn" type="button" aria-label="Jouer en format horizontal, visuel actuel, idéal sur ordinateur ou tablette">
+            <span class="v38FormatIcon" aria-hidden="true"><span></span></span>
+            <span class="v38StartText"><strong>Jouer en format Horizontal</strong><small>Visuel actuel · idéal PC ou tablette</small></span>
+          </button>
         </div>
       </div>
     </section>
@@ -40859,3 +40867,484 @@ html body.vn37MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI)
   setTimeout(install, 240);
 })();
 </script>
+
+<style id="sylviniaV38FormatModeOptionsStyle">
+/* V39 · Choix clair Vertical / Horizontal + exclusivité Mobile / Legacy robuste */
+.v38DisclaimerFine{
+  margin-top:18px!important;
+  margin-bottom:14px!important;
+  color:#dceaf7!important;
+}
+.v38DisclaimerActions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:18px!important;
+  flex-wrap:wrap!important;
+}
+.v38StartFormatBtn{
+  position:relative;
+  isolation:isolate;
+  border:1px solid rgba(167,240,255,.24);
+  background:linear-gradient(180deg,rgba(21,37,61,.86),rgba(8,14,26,.94));
+  color:#f6fbff;
+  cursor:pointer;
+  box-shadow:0 18px 48px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:.18s transform,.18s border-color,.18s box-shadow,.18s background;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:12px;
+  padding:18px 18px;
+  overflow:hidden;
+}
+.v38StartFormatBtn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:radial-gradient(circle at 50% 12%,rgba(167,240,255,.14),transparent 32%),radial-gradient(circle at 50% 92%,rgba(233,201,133,.12),transparent 34%);
+  opacity:.9;
+}
+.v38StartFormatBtn:hover,
+.v38StartFormatBtn:focus-visible{
+  transform:translateY(-2px);
+  border-color:rgba(167,240,255,.58);
+  box-shadow:0 22px 56px rgba(0,0,0,.36),0 0 28px rgba(122,211,255,.10),inset 0 1px 0 rgba(255,255,255,.10);
+  outline:none;
+}
+.v38StartVertical{
+  width:min(230px,42vw);
+  min-height:210px;
+  border-radius:30px;
+}
+.v38StartHorizontal{
+  width:min(390px,74vw);
+  min-height:148px;
+  border-radius:28px;
+}
+.v38FormatIcon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(233,201,133,.32);
+  background:linear-gradient(180deg,rgba(233,201,133,.12),rgba(255,255,255,.035));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 28px rgba(0,0,0,.20);
+}
+.v38StartVertical .v38FormatIcon{
+  width:48px;
+  height:82px;
+  border-radius:14px;
+}
+.v38StartHorizontal .v38FormatIcon{
+  width:112px;
+  height:58px;
+  border-radius:16px;
+}
+.v38FormatIcon span{
+  display:block;
+  width:42%;
+  height:6px;
+  border-radius:999px;
+  background:rgba(233,201,133,.82);
+  box-shadow:0 0 14px rgba(233,201,133,.22);
+}
+.v38StartText strong{
+  display:block;
+  font-size:18px;
+  line-height:1.12;
+  font-weight:950;
+}
+.v38StartText small{
+  display:block;
+  margin-top:6px;
+  color:#c8d7e5;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.v38ModePair{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  width:100%;
+}
+.v38ModeBtn{
+  position:relative;
+  border:1px solid rgba(167,240,255,.18);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(18,23,38,.62),rgba(10,14,26,.82));
+  color:#eef8ff;
+  cursor:pointer;
+  text-align:left;
+  padding:14px 14px 13px;
+  min-height:118px;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:8px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  transition:.18s transform,.18s border-color,.18s background,.18s box-shadow,.18s opacity;
+}
+.v38ModeBtn:hover,
+.v38ModeBtn:focus-visible{
+  transform:translateY(-1px);
+  border-color:rgba(167,240,255,.45);
+  outline:none;
+}
+.v38ModeBtn.active{
+  border-color:rgba(233,201,133,.58);
+  background:linear-gradient(180deg,rgba(84,62,24,.72),rgba(22,18,12,.90));
+  box-shadow:0 0 0 1px rgba(233,201,133,.10),0 14px 30px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.v38ModeBtn .v38ModeTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:15px;
+  font-weight:950;
+  color:#fff;
+}
+.v38ModeBtn .v38ModeBadge{
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  padding:4px 7px;
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#b9c7d4;
+  background:rgba(255,255,255,.045);
+}
+.v38ModeBtn.active .v38ModeBadge{
+  color:#ffe7ac;
+  border-color:rgba(233,201,133,.35);
+  background:rgba(233,201,133,.10);
+}
+.v38ModeBtn small{
+  display:block;
+  color:#b9c7d4;
+  line-height:1.42;
+  font-size:12px;
+  font-weight:650;
+}
+.v38ModeBtn .v38ModeShape{
+  width:42px;
+  height:26px;
+  border-radius:8px;
+  border:1px solid rgba(233,201,133,.30);
+  background:rgba(233,201,133,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.v38ModeBtn.mobile .v38ModeShape{
+  width:25px;
+  height:42px;
+  border-radius:9px;
+}
+.v38OriginalFormatControlHidden{
+  display:none!important;
+}
+body.mobileUI .v38ModePair{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+body.mobileUI .v38ModeBtn{
+  min-height:116px;
+  padding:12px;
+}
+body.mobileUI .v38ModeBtn .v38ModeTitle{
+  font-size:13px;
+}
+body.mobileUI .v38ModeBtn small{
+  font-size:11px;
+}
+@media(max-width:560px){
+  .v38DisclaimerActions{gap:12px!important;align-items:stretch!important;}
+  .v38StartVertical{width:40vw;min-width:138px;min-height:190px;padding:15px 12px;}
+  .v38StartHorizontal{width:min(86vw,340px);min-height:134px;padding:15px 14px;}
+  .v38StartText strong{font-size:16px;}
+  .v38StartText small{font-size:12px;}
+  .v38StartVertical .v38FormatIcon{width:42px;height:72px;}
+  .v38StartHorizontal .v38FormatIcon{width:96px;height:50px;}
+}
+</style>
+
+<script id="sylviniaV39FormatModeOptions">
+(function(){
+  if(window.__sylviniaV39FormatModeOptions) return;
+  window.__sylviniaV39FormatModeOptions = true;
+
+  var LEGACY_KEY = 'sylvinia_vn_legacy_visual_mode';
+  var TRAILER_KEY = 'sylvinia_vn_trailer16x9';
+
+  function stateExists(){
+    try{ return typeof state !== 'undefined' && !!state; }
+    catch(e){ return false; }
+  }
+
+  /* Les anciens correctifs lisaient window.state alors que le jeu utilise un let state.
+     On expose une passerelle propre pour que les boutons Mobile/Legacy voient la vraie sauvegarde. */
+  try{
+    if(!Object.prototype.hasOwnProperty.call(window, 'state')){
+      Object.defineProperty(window, 'state', {
+        configurable:true,
+        get:function(){ try{ return state; }catch(e){ return undefined; } },
+        set:function(v){ try{ state = v; }catch(e){} }
+      });
+    }
+  }catch(e){}
+
+  function legacyEnabled(){
+    try{ return localStorage.getItem(LEGACY_KEY) === 'true' || document.body.classList.contains('legacyVisualUI'); }
+    catch(e){ return document.body.classList.contains('legacyVisualUI'); }
+  }
+
+  function mobileEnabled(){
+    try{ if(stateExists()) return !!state.mobileUI; }catch(e){}
+    return document.body.classList.contains('mobileUI');
+  }
+
+  function saveStateQuietly(){
+    try{ if(typeof save === 'function') save(); }catch(e){}
+    try{ if(typeof updateMenuButtons === 'function') updateMenuButtons(); }catch(e){}
+  }
+
+  function applyMobileClass(enabled){
+    enabled = !!enabled;
+    try{ if(stateExists()) state.mobileUI = enabled; }catch(e){}
+    document.body.classList.toggle('mobileUI', enabled);
+    try{ if(typeof applyMobileUI === 'function') applyMobileUI(); }catch(e){}
+    var toggle = document.getElementById('mobileUiToggle');
+    if(toggle) toggle.checked = enabled;
+    var label = document.getElementById('mobileUiState');
+    if(label){
+      label.textContent = enabled
+        ? 'Activé · format vertical optimisé, incompatible avec Legacy'
+        : 'Désactivé · format vertical disponible';
+    }
+    saveStateQuietly();
+  }
+
+  function setLegacyExact(enabled){
+    enabled = !!enabled;
+    try{
+      localStorage.setItem(LEGACY_KEY, enabled ? 'true' : 'false');
+      localStorage.setItem(TRAILER_KEY, enabled ? 'false' : 'true');
+    }catch(e){}
+    document.body.classList.toggle('legacyVisualUI', enabled);
+    document.body.classList.toggle('trailer16x9', !enabled);
+    document.body.classList.toggle('experimentalUI', !enabled);
+    try{ if(typeof applyLegacyVisualUI === 'function') applyLegacyVisualUI(); }catch(e){}
+    try{ if(typeof applyTrailer16x9UI === 'function') applyTrailer16x9UI(); }catch(e){}
+    refreshOriginalLegacyButton();
+  }
+
+  function setMobileExact(enabled){
+    enabled = !!enabled;
+    if(enabled) setLegacyExact(false);
+    applyMobileClass(enabled);
+    syncCards();
+  }
+
+  function setLegacyModeExact(enabled){
+    enabled = !!enabled;
+    if(enabled) applyMobileClass(false);
+    setLegacyExact(enabled);
+    syncCards();
+  }
+
+  function startWithFormat(format){
+    if(format === 'vertical'){
+      setLegacyExact(false);
+      applyMobileClass(true);
+      try{ if(typeof toast === 'function') toast('Format vertical activé','Mode mobile activé. Tu pourras modifier ce réglage dans les Options.'); }catch(e){}
+    }else{
+      applyMobileClass(false);
+      setLegacyExact(false);
+      try{ if(typeof toast === 'function') toast('Format horizontal activé','Visuel actuel conservé. Tu pourras modifier ce réglage dans les Options.'); }catch(e){}
+    }
+    syncCards();
+    try{ if(typeof enterTitleFromDisclaimer === 'function') enterTitleFromDisclaimer(); }
+    catch(e){ try{ if(typeof setScreen === 'function') setScreen('splashTitle'); }catch(_e){} }
+    return false;
+  }
+  window.sylviniaStartWithFormat = startWithFormat;
+
+  function refreshOriginalLegacyButton(){
+    var legacy = legacyEnabled();
+    var btn = document.getElementById('trailerModeBtn');
+    var title = btn ? btn.querySelector('.btnTitle') : null;
+    var label = document.getElementById('trailerModeState');
+    if(title) title.textContent = 'Mode Legacy';
+    if(label){
+      label.textContent = legacy
+        ? 'Activé · tout premier design du Visual Novel'
+        : 'Désactivé · visuel actuel actif';
+    }
+    if(btn){
+      btn.classList.toggle('active', legacy);
+      btn.setAttribute('aria-pressed', legacy ? 'true' : 'false');
+      btn.title = legacy
+        ? 'Désactiver le mode Legacy'
+        : 'Activer le tout premier design du Visual Novel';
+    }
+  }
+
+  function syncCards(){
+    var mobile = mobileEnabled();
+    var legacy = legacyEnabled();
+    if(mobile && legacy){
+      setLegacyExact(false);
+      legacy = false;
+    }
+
+    document.body.classList.toggle('mobileUI', mobile);
+    document.body.classList.toggle('legacyVisualUI', legacy);
+    document.body.classList.toggle('trailer16x9', !legacy);
+    document.body.classList.toggle('experimentalUI', !legacy);
+
+    var toggle = document.getElementById('mobileUiToggle');
+    if(toggle) toggle.checked = mobile;
+    var mobileLabel = document.getElementById('mobileUiState');
+    if(mobileLabel){
+      mobileLabel.textContent = mobile
+        ? 'Activé · format vertical optimisé, incompatible avec Legacy'
+        : 'Désactivé · format vertical disponible';
+    }
+
+    var m = document.getElementById('v38MobileModeBtn');
+    var l = document.getElementById('v38LegacyModeBtn');
+    if(m){
+      m.classList.toggle('active', mobile);
+      m.setAttribute('aria-pressed', mobile ? 'true' : 'false');
+      var b = m.querySelector('.v38ModeBadge');
+      if(b) b.textContent = mobile ? 'Actif' : 'Off';
+    }
+    if(l){
+      l.classList.toggle('active', legacy);
+      l.setAttribute('aria-pressed', legacy ? 'true' : 'false');
+      var lb = l.querySelector('.v38ModeBadge');
+      if(lb) lb.textContent = legacy ? 'Actif' : 'Off';
+    }
+    refreshOriginalLegacyButton();
+  }
+
+  function makeButton(kind){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'v38ModeBtn ' + kind;
+    btn.id = kind === 'mobile' ? 'v38MobileModeBtn' : 'v38LegacyModeBtn';
+    btn.setAttribute('aria-pressed','false');
+    if(kind === 'mobile'){
+      btn.innerHTML = '<span class="v38ModeTitle"><span>Mode mobile</span><span class="v38ModeBadge">Off</span></span><small>Format vertical adapté aux téléphones. Incompatible avec le mode Legacy.</small><span class="v38ModeShape" aria-hidden="true"></span>';
+    }else{
+      btn.innerHTML = '<span class="v38ModeTitle"><span>Mode Legacy</span><span class="v38ModeBadge">Off</span></span><small>Adopte le tout premier design du Visual Novel. Incompatible avec le mode Mobile.</small><span class="v38ModeShape" aria-hidden="true"></span>';
+    }
+    return btn;
+  }
+
+  function installOptionModePair(){
+    var mobileToggle = document.getElementById('mobileUiToggle');
+    var legacyBtn = document.getElementById('trailerModeBtn');
+    if(!mobileToggle || !legacyBtn) return;
+    var mobileWrap = mobileToggle.closest ? mobileToggle.closest('.mobileToggleWrap') : null;
+    var panel = mobileWrap ? mobileWrap.parentElement : legacyBtn.closest('.accordionPanel');
+    if(!panel) return;
+
+    var row = document.getElementById('v38FormatPair');
+    if(!row){
+      row = document.createElement('div');
+      row.id = 'v38FormatPair';
+      row.className = 'v38ModePair';
+      row.appendChild(makeButton('mobile'));
+      row.appendChild(makeButton('legacy'));
+      panel.insertBefore(row, mobileWrap || panel.firstChild);
+    }
+
+    if(mobileWrap) mobileWrap.classList.add('v38OriginalFormatControlHidden');
+    legacyBtn.classList.add('v38OriginalFormatControlHidden');
+
+    var easyWrap = document.getElementById('easyModeToggle');
+    easyWrap = easyWrap && easyWrap.closest ? easyWrap.closest('.mobileToggleWrap') : null;
+    if(easyWrap && row.nextElementSibling !== easyWrap){
+      panel.insertBefore(row, easyWrap);
+    }
+    syncCards();
+  }
+
+  function patchGlobalSetters(){
+    try{
+      window.setMobileUI = setMobileUI = function(enabled){
+        setMobileExact(!!enabled);
+        try{ if(typeof toast === 'function') toast('Interface mise à jour', enabled ? 'Mode mobile activé.' : 'Mode mobile désactivé.'); }catch(e){}
+      };
+    }catch(e){}
+    try{
+      window.toggleTrailer16x9Mode = toggleTrailer16x9Mode = function(){
+        setLegacyModeExact(!legacyEnabled());
+        try{
+          if(typeof toast === 'function'){
+            toast(legacyEnabled() ? 'Mode Legacy activé' : 'Mode Legacy désactivé', legacyEnabled() ? 'Le mode mobile a été désactivé.' : 'Le visuel actuel redevient actif.');
+          }
+        }catch(e){}
+      };
+    }catch(e){}
+  }
+
+  function handleClick(ev){
+    var target = ev.target && ev.target.closest ? ev.target.closest('#v38StartVerticalBtn,#v38StartHorizontalBtn,#v38MobileModeBtn,#v38LegacyModeBtn,#trailerModeBtn') : null;
+    if(!target) return;
+
+    if(target.id === 'trailerModeBtn' && target.classList.contains('v38OriginalFormatControlHidden')) return;
+
+    ev.preventDefault();
+    ev.stopPropagation();
+    if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+
+    if(target.id === 'v38StartVerticalBtn'){
+      startWithFormat('vertical');
+    }else if(target.id === 'v38StartHorizontalBtn'){
+      startWithFormat('horizontal');
+    }else if(target.id === 'v38MobileModeBtn'){
+      setMobileExact(!mobileEnabled());
+      try{ if(typeof toast === 'function') toast(mobileEnabled() ? 'Mode mobile activé' : 'Mode mobile désactivé', mobileEnabled() ? 'Format vertical actif. Legacy désactivé.' : 'Interface standard restaurée.'); }catch(e){}
+    }else if(target.id === 'v38LegacyModeBtn' || target.id === 'trailerModeBtn'){
+      setLegacyModeExact(!legacyEnabled());
+      try{ if(typeof toast === 'function') toast(legacyEnabled() ? 'Mode Legacy activé' : 'Mode Legacy désactivé', legacyEnabled() ? 'Premier design du VN actif. Mobile désactivé.' : 'Visuel actuel actif.'); }catch(e){}
+    }
+    return false;
+  }
+
+  function handleChange(ev){
+    var target = ev.target;
+    if(!target) return;
+    if(target.id === 'mobileUiToggle'){
+      ev.preventDefault();
+      ev.stopPropagation();
+      if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+      setMobileExact(!!target.checked);
+    }
+  }
+
+  function install(){
+    patchGlobalSetters();
+    installOptionModePair();
+    syncCards();
+  }
+
+  document.addEventListener('click', handleClick, true);
+  document.addEventListener('change', handleChange, true);
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else install();
+  window.addEventListener('load', install, {once:true});
+  document.addEventListener('click', function(){ setTimeout(install, 80); setTimeout(syncCards, 180); }, true);
+  ['resize','orientationchange','fullscreenchange','visibilitychange'].forEach(function(evt){
+    window.addEventListener(evt, syncCards, {passive:true});
+    document.addEventListener(evt, syncCards, {passive:true});
+  });
+  setTimeout(install, 250);
+  setInterval(syncCards, 1200);
+})();
+</script>
+
