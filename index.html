@@ -2966,8 +2966,16 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
         <div class="disclaimerBetaNotice">
           <strong>Version bêta :</strong> Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.
         </div>
-        <div class="disclaimerActions">
-          <button class="primaryBtn softBlue" id="enterTitleBtn" onclick="enterTitleFromDisclaimer();return false;">Entrer dans le récit</button>
+        <p class="disclaimerFine disclaimerFormatNote">Choisis le format de départ : ces réglages resteront modifiables ensuite dans les <strong>Options</strong>.</p>
+        <div class="disclaimerActions disclaimerFormatActions" aria-label="Choix du format de jeu">
+          <button class="primaryBtn softBlue disclaimerFormatBtn disclaimerFormatVertical" id="enterTitleVerticalBtn" data-disclaimer-format="vertical" type="button">
+            <span>Jouer en format Vertical</span>
+            <small>Idéal sur mobile</small>
+          </button>
+          <button class="primaryBtn softBlue disclaimerFormatBtn disclaimerFormatHorizontal" id="enterTitleHorizontalBtn" data-disclaimer-format="horizontal" type="button">
+            <span>Jouer en format Horizontal</span>
+            <small>Idéal sur PC ou tablette</small>
+          </button>
         </div>
       </div>
     </section>
@@ -3041,15 +3049,21 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
             <details class="menuAccordion">
               <summary class="accordionSummary"><span>Options</span></summary>
               <div class="accordionPanel">
-                <div class="mobileToggleWrap compactToggle">
-                  <div class="toggleText">
-                    <strong>Mode mobile</strong>
-                    <small id="mobileUiState">Désactivé · commandes standard</small>
+                <div class="modeOptionsRow">
+                  <div class="mobileToggleWrap compactToggle modeOptionCard">
+                    <div class="toggleText">
+                      <strong>Mode Mobile</strong>
+                      <small id="mobileUiState">Désactivé · format vertical disponible (incompatible Legacy)</small>
+                    </div>
+                    <label class="switch" aria-label="Activer le mode Mobile adapté aux formats verticaux, incompatible avec le mode Legacy">
+                      <input type="checkbox" id="mobileUiToggle">
+                      <span class="sliderSwitch"></span>
+                    </label>
                   </div>
-                  <label class="switch" aria-label="Activer le mode mobile">
-                    <input type="checkbox" id="mobileUiToggle">
-                    <span class="sliderSwitch"></span>
-                  </label>
+                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn modeOptionCard legacyOptionBtn" id="trailerModeBtn" type="button">
+                    <span class="btnTitle">Mode Legacy</span>
+                    <small class="btnDesc" id="trailerModeState">Désactivé · premier design disponible (incompatible Mobile)</small>
+                  </button>
                 </div>
                 <div class="mobileToggleWrap compactToggle">
                   <div class="toggleText">
@@ -3064,7 +3078,6 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
                 <div class="optionButtonsGrid">
                   <button class="secondaryBtn menuActionBtn dockBtn toolBtn" id="menuMusicBtn"><span class="btnTitle">Musique du menu</span><small class="btnDesc" id="menuMusicBtnState">Activée</small></button>
                   <button class="secondaryBtn devBtn menuActionBtn dockBtn toolBtn" id="devModeBtn"><span class="btnTitle">Mode développeur</span><small class="btnDesc" id="devModeState">Verrouillé</small></button>
-                  <button class="secondaryBtn goldBtn menuActionBtn dockBtn toolBtn" id="trailerModeBtn"><span class="btnTitle">Affichage expérimental</span><small class="btnDesc" id="trailerModeState">Désactivé · interface standard</small></button>
                   <button class="secondaryBtn redBtn menuActionBtn dockBtn toolBtn optionWideBtn" id="resetBtn"><span class="btnTitle">Nouveau départ</span><small class="btnDesc">Réinitialiser la progression.</small></button>
                 </div>
               </div>
@@ -40857,5 +40870,249 @@ html body.vn37MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI)
   document.addEventListener('transitionend', schedule, true);
   setInterval(sync, 850);
   setTimeout(install, 240);
+})();
+</script>
+
+
+<!-- V38 · Choix format disclaimer + descriptifs Mobile / Legacy -->
+<style id="sylviniaV38FormatChoiceAndModeDescriptions">
+/* Options : Mobile et Legacy côte à côte, sans modifier leurs effets internes. */
+.modeOptionsRow{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  align-items:stretch;
+}
+.modeOptionCard{
+  min-height:100%;
+}
+.modeOptionsRow .mobileToggleWrap{
+  align-items:stretch;
+}
+.modeOptionsRow .toggleText{
+  align-content:center;
+}
+.modeOptionsRow .legacyOptionBtn{
+  display:grid;
+  align-content:center;
+  text-align:left;
+}
+.modeOptionsRow .legacyOptionBtn .btnTitle{
+  font-size:16px;
+}
+.modeOptionsRow .legacyOptionBtn .btnDesc,
+.modeOptionsRow #mobileUiState{
+  line-height:1.38;
+}
+
+/* Disclaimer : deux portes de départ, une verticale et une horizontale. */
+.disclaimerFormatNote{
+  margin-top:-12px!important;
+  margin-bottom:18px!important;
+}
+.disclaimerFormatActions{
+  align-items:center;
+}
+.disclaimerFormatBtn{
+  position:relative;
+  display:inline-grid;
+  place-items:center;
+  gap:7px;
+  text-align:center;
+  line-height:1.15;
+  overflow:hidden;
+  isolation:isolate;
+}
+.disclaimerFormatBtn span{
+  display:block;
+  font-weight:950;
+}
+.disclaimerFormatBtn small{
+  display:block;
+  color:#dceeff;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.disclaimerFormatBtn::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:inherit;
+  pointer-events:none;
+}
+.disclaimerFormatVertical{
+  width:190px;
+  min-height:150px;
+  border-radius:28px;
+}
+.disclaimerFormatHorizontal{
+  width:340px;
+  min-height:104px;
+  border-radius:24px;
+}
+body.disclaimerOpen .disclaimerActions.disclaimerFormatActions{
+  position:sticky!important;
+  bottom:0;
+  z-index:20;
+  padding:12px 0 2px;
+  background:linear-gradient(180deg,rgba(5,9,17,0),rgba(5,9,17,.94) 34%,rgba(5,9,17,.98));
+}
+body.disclaimerOpen .disclaimerFormatBtn{
+  min-height:unset;
+}
+@media(max-width:760px){
+  .modeOptionsRow{grid-template-columns:1fr 1fr!important;gap:7px}
+  .modeOptionsRow .mobileToggleWrap{padding:11px 10px}
+  .modeOptionsRow .legacyOptionBtn{padding:11px 10px!important}
+  .modeOptionsRow .legacyOptionBtn .btnTitle{font-size:13px}
+  .modeOptionsRow .legacyOptionBtn .btnDesc,
+  .modeOptionsRow #mobileUiState{font-size:10px;line-height:1.28}
+  .modeOptionsRow .switch{width:50px;height:30px}
+  .modeOptionsRow .sliderSwitch:before{height:22px;width:22px}
+  .modeOptionsRow .switch input:checked + .sliderSwitch:before{transform:translateX(20px)}
+  .disclaimerFormatActions{display:grid!important;grid-template-columns:minmax(96px,.9fr) minmax(0,1.25fr);gap:10px!important;width:100%}
+  .disclaimerFormatVertical{width:100%;min-height:128px;border-radius:24px}
+  .disclaimerFormatHorizontal{width:100%;min-height:86px;border-radius:22px}
+  .disclaimerFormatBtn{padding:13px 11px!important;font-size:14px!important}
+  .disclaimerFormatBtn small{font-size:11px}
+}
+@media(max-width:420px){
+  .disclaimerFormatActions{grid-template-columns:1fr!important}
+  .disclaimerFormatVertical,.disclaimerFormatHorizontal{width:100%;min-height:74px;border-radius:22px}
+}
+</style>
+<script id="sylviniaV38FormatChoiceAndModeDescriptions">
+(function(){
+  if(window.__sylviniaV38FormatChoiceAndModeDescriptions) return;
+  window.__sylviniaV38FormatChoiceAndModeDescriptions = true;
+
+  var LEGACY_KEY = 'sylvinia_vn_legacy_visual_mode';
+  var TRAILER_KEY = 'sylvinia_vn_trailer16x9';
+
+  function readLegacy(){
+    try{ return localStorage.getItem(LEGACY_KEY) === 'true'; }catch(e){ return document.body.classList.contains('legacyVisualUI'); }
+  }
+
+  function forceLegacyOff(){
+    try{
+      localStorage.setItem(LEGACY_KEY, 'false');
+      localStorage.setItem(TRAILER_KEY, 'true');
+    }catch(e){}
+    document.body.classList.remove('legacyVisualUI');
+    document.body.classList.add('trailer16x9','experimentalUI');
+    try{ if(typeof window.applyTrailer16x9UI === 'function') window.applyTrailer16x9UI(); }catch(e){}
+  }
+
+  function setMobileSilently(enabled){
+    enabled = !!enabled;
+    try{ if(typeof state === 'object' && state) state.mobileUI = enabled; }catch(e){}
+    try{ if(typeof window.applyMobileUI === 'function') window.applyMobileUI(); }catch(e){}
+    try{ if(typeof window.save === 'function') window.save(); }catch(e){}
+    document.body.classList.toggle('mobileUI', enabled);
+    updateModeDescriptions();
+  }
+
+  function chooseDisclaimerFormat(format){
+    var vertical = format === 'vertical';
+    forceLegacyOff();
+    setMobileSilently(vertical);
+    try{
+      window.__sylviniaDisclaimerAcceptedThisLoad = true;
+      if(typeof window.markDisclaimerSeen === 'function') window.markDisclaimerSeen();
+    }catch(e){}
+    if(typeof window.enterTitleFromDisclaimer === 'function') window.enterTitleFromDisclaimer();
+  }
+
+  function updateModeDescriptions(){
+    var mobileOn = false;
+    try{ mobileOn = !!(state && state.mobileUI); }catch(e){ mobileOn = document.body.classList.contains('mobileUI'); }
+    var mobileLabel = document.getElementById('mobileUiState');
+    if(mobileLabel){
+      mobileLabel.textContent = mobileOn
+        ? 'Activé · format vertical adapté (incompatible Legacy)'
+        : 'Désactivé · format vertical disponible (incompatible Legacy)';
+    }
+
+    var legacy = readLegacy() || document.body.classList.contains('legacyVisualUI');
+    var legacyBtn = document.getElementById('trailerModeBtn');
+    var legacyTitle = legacyBtn ? legacyBtn.querySelector('.btnTitle') : null;
+    var legacyLabel = document.getElementById('trailerModeState');
+    if(legacyTitle) legacyTitle.textContent = 'Mode Legacy';
+    if(legacyLabel){
+      legacyLabel.textContent = legacy
+        ? 'Activé · tout premier design du Visual Novel (incompatible Mobile)'
+        : 'Désactivé · mode actuel actif (Legacy incompatible Mobile)';
+    }
+    if(legacyBtn){
+      legacyBtn.title = legacy
+        ? 'Désactiver le mode Legacy et revenir au visuel actuel'
+        : 'Activer le tout premier design du Visual Novel, incompatible avec le mode Mobile';
+      legacyBtn.setAttribute('aria-label', legacyBtn.title);
+    }
+  }
+
+  function patchMobileApply(){
+    try{
+      if(typeof window.applyMobileUI === 'function' && !window.applyMobileUI.__sylviniaV38Patched){
+        var previous = window.applyMobileUI;
+        var patched = function(){
+          var result = previous.apply(this, arguments);
+          updateModeDescriptions();
+          return result;
+        };
+        patched.__sylviniaV38Patched = true;
+        window.applyMobileUI = applyMobileUI = patched;
+      }
+    }catch(e){}
+  }
+
+  function patchLegacyApply(){
+    try{
+      if(typeof window.applyTrailer16x9UI === 'function' && !window.applyTrailer16x9UI.__sylviniaV38Patched){
+        var previous = window.applyTrailer16x9UI;
+        var patched = function(){
+          var result = previous.apply(this, arguments);
+          updateModeDescriptions();
+          return result;
+        };
+        patched.__sylviniaV38Patched = true;
+        window.applyTrailer16x9UI = applyTrailer16x9UI = patched;
+      }
+    }catch(e){}
+  }
+
+  function install(){
+    patchMobileApply();
+    patchLegacyApply();
+    updateModeDescriptions();
+  }
+
+  document.addEventListener('click', function(ev){
+    var choice = ev.target && ev.target.closest ? ev.target.closest('[data-disclaimer-format]') : null;
+    if(choice){
+      ev.preventDefault();
+      ev.stopPropagation();
+      chooseDisclaimerFormat(choice.getAttribute('data-disclaimer-format'));
+      return;
+    }
+    if(ev.target && ev.target.closest && ev.target.closest('#trailerModeBtn')){
+      setTimeout(updateModeDescriptions, 180);
+      setTimeout(updateModeDescriptions, 360);
+    }
+  }, true);
+
+  document.addEventListener('change', function(ev){
+    if(ev.target && ev.target.id === 'mobileUiToggle'){
+      setTimeout(updateModeDescriptions, 0);
+      setTimeout(updateModeDescriptions, 160);
+    }
+  }, true);
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else install();
+  window.addEventListener('load', install);
+  setTimeout(install, 120);
+  setTimeout(updateModeDescriptions, 500);
 })();
 </script>
