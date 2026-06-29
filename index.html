@@ -38438,6 +38438,447 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
 })();
 </script>
 
+
+<!-- PATCH V36 - mobile portrait propre : vraie suppression topbar, scène restaurée, situation + choix -->
+<style id="sylviniaV36CleanMobilePortraitLayoutStyles">
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #game.screen.card:not(.hidden),
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #game.screen.card:not(.hidden){
+  display:block!important;
+  width:100vw!important;
+  height:100svh!important;
+  min-height:0!important;
+  max-height:100svh!important;
+  overflow:hidden!important;
+  background:#000!important;
+  border-radius:0!important;
+  border:0!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
+  position:relative!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) var(--vn36MobilePanelH,42svh)!important;
+  grid-template-columns:1fr!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  background:#000!important;
+  transform:none!important;
+}
+
+/* V36 : on ne masque plus la topbar avec une zone noire. Elle est réellement sortie du layout mobile. */
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .topbar,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .topbar{
+  display:none!important;
+  position:static!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* La scène est une vraie rangée de grille, pas une couche absolue qui peut laisser un trou noir. */
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage{
+  grid-row:1!important;
+  position:relative!important;
+  inset:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+  border-radius:0!important;
+  background:#000!important;
+  z-index:1!important;
+  contain:layout paint!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  visibility:visible!important;
+  width:100%!important;
+  height:100%!important;
+  opacity:1!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  z-index:0!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .veil,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .veil{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars{
+  position:absolute!important;
+  inset:0!important;
+  height:100%!important;
+  width:100%!important;
+  z-index:2!important;
+  pointer-events:none!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char{
+  position:absolute!important;
+  bottom:-1%!important;
+  max-height:var(--vn36MobileSpriteMax,92%)!important;
+  width:auto!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char{max-height:var(--vn36MobileDuoSpriteMax,91%)!important;max-width:54%!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char{max-height:var(--vn36MobileTrioSpriteMax,84%)!important;max-width:38%!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.left,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.left{left:-6%!important;right:auto!important;transform:none!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.right,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.right{right:-6%!important;left:auto!important;transform:none!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.center,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.center{left:50%!important;right:auto!important;transform:translateX(-50%)!important;}
+
+/* Panneau mobile : stats au-dessus, situation visible, choix sous la situation. */
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap{
+  grid-row:2!important;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(3,5,10,.96) 16%,rgba(3,5,10,.98))!important;
+  z-index:5!important;
+  pointer-events:auto!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats{
+  grid-row:1!important;
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:5px!important;
+  width:100%!important;
+  min-height:24px!important;
+  max-height:28px!important;
+  margin:0!important;
+  padding:2px 2px 1px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  background:none!important;
+  scrollbar-width:none!important;
+  z-index:6!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar,
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar{display:none!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats .stat{
+  flex:0 0 auto!important;
+  padding:4px 8px!important;
+  font-size:10px!important;
+  line-height:1!important;
+  background:rgba(3,5,10,.50)!important;
+  backdrop-filter:blur(6px)!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  grid-row:2!important;
+  position:relative!important;
+  display:grid!important;
+  grid-template-areas:"speaker" "text" "choices"!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto var(--vn36MobileTextH,78px) minmax(0,var(--vn36MobileChoicesH,128px))!important;
+  gap:5px!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:8px 9px!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+  z-index:5!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .tag,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .speaker,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-area:speaker!important;
+  font-size:22px!important;
+  line-height:1!important;
+  text-align:center!important;
+  margin:0!important;
+  padding:2px 0 5px!important;
+  max-height:31px!important;
+  overflow:hidden!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .text,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-area:text!important;
+  display:block!important;
+  height:var(--vn36MobileTextH,78px)!important;
+  min-height:0!important;
+  max-height:var(--vn36MobileTextH,78px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:0 3px!important;
+  margin:0!important;
+  font-size:14px!important;
+  line-height:1.42!important;
+  white-space:pre-line!important;
+  scrollbar-width:thin!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choices,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices{
+  grid-area:choices!important;
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  width:100%!important;
+  height:var(--vn36MobileChoicesH,128px)!important;
+  min-height:0!important;
+  max-height:var(--vn36MobileChoicesH,128px)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  background:none!important;
+  scrollbar-width:thin!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-height:35px!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  border-radius:10px!important;
+  font-size:13px!important;
+  line-height:1.15!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn36NoSituation .dialogue,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn36NoSituation .dialogue{
+  grid-template-rows:auto 0 minmax(0,1fr)!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn36NoSituation .text,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn36NoSituation .text{
+  display:none!important;
+  height:0!important;
+  max-height:0!important;
+  padding:0!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
+  grid-row:3!important;
+  position:relative!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  width:100%!important;
+  height:28px!important;
+  min-height:28px!important;
+  max-height:28px!important;
+  margin:0!important;
+  padding:2px 3px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  border-radius:999px!important;
+  scrollbar-width:none!important;
+  z-index:7!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
+html body.vn36MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
+  flex:0 0 auto!important;
+  height:23px!important;
+  min-height:23px!important;
+  padding:3px 7px!important;
+  font-size:10px!important;
+  line-height:1!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard{
+  grid-template-rows:minmax(0,1fr) 0!important;
+}
+html body.vn36MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn36MobileCurrentPortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap{display:none!important;}
+</style>
+
+<script id="sylviniaV36CleanMobilePortraitLayout">
+(function(){
+  if(window.__sylviniaV36CleanMobilePortraitLayout) return;
+  window.__sylviniaV36CleanMobilePortraitLayout = true;
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function gameVisible(){
+    var game = document.getElementById('game');
+    return !!(game && !game.classList.contains('hidden'));
+  }
+  function vh(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.height) || window.innerHeight || document.documentElement.clientHeight || 1)); }
+  function vw(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.width) || window.innerWidth || document.documentElement.clientWidth || 1)); }
+  function active(){
+    return gameVisible()
+      && document.body.classList.contains('mobileUI')
+      && !document.body.classList.contains('legacyVisualUI')
+      && vh() >= vw();
+  }
+  function syncV36(){
+    var isActive = active();
+    document.body.classList.toggle('vn36MobileCurrentPortrait', isActive);
+    var card = document.getElementById('gameCard');
+    if(!card) return;
+    card.classList.toggle('vn36MobileCurrentPortraitCard', isActive);
+    if(!isActive) return;
+
+    var wrap = card.querySelector('.dialogueWrap');
+    var dialogue = card.querySelector('.dialogue');
+    var stats = document.getElementById('stats');
+    var text = document.getElementById('text');
+    var choices = document.getElementById('choices');
+    var toolbar = document.getElementById('trailerVNControls');
+    var stage = document.getElementById('stage') || card.querySelector('.stage');
+    var bg = document.getElementById('bg') || (stage && stage.querySelector('.bg'));
+    if(!wrap || !dialogue || !stage) return;
+
+    if(stats && stats.parentElement !== wrap){
+      wrap.insertBefore(stats, dialogue);
+    }else if(stats && stats.nextElementSibling !== dialogue){
+      wrap.insertBefore(stats, dialogue);
+    }
+    if(toolbar && toolbar.parentElement !== wrap){
+      wrap.appendChild(toolbar);
+    }
+
+    var h = vh();
+    var w = vw();
+    var buttons = choices ? Array.prototype.slice.call(choices.querySelectorAll('button.choiceBtn')) : [];
+    var n = buttons.length;
+    var textLen = text ? (text.textContent || '').trim().length : 0;
+    var hasSituation = textLen > 0;
+
+    card.classList.toggle('vn36NoSituation', !hasSituation);
+    card.classList.toggle('vn36HasChoices', n > 0);
+    card.classList.toggle('vn36ManyChoices', n >= 4);
+
+    var toolbarH = toolbar ? clamp(Math.ceil(toolbar.getBoundingClientRect().height || 28), 26, 32) : 28;
+    var statsH = stats ? clamp(Math.ceil(stats.getBoundingClientRect().height || 24), 22, 30) : 24;
+    var speakerH = 32;
+    var panelMax = Math.round(h * (n >= 4 ? 0.50 : 0.46));
+    var panelMin = n >= 4 ? 276 : (n === 3 ? 252 : (n === 2 ? 228 : 204));
+    var wanted = statsH + toolbarH + speakerH + 30;
+    wanted += hasSituation ? (textLen > 520 ? 96 : (textLen > 260 ? 82 : 66)) : 0;
+    wanted += n >= 4 ? 156 : (n === 3 ? 118 : (n === 2 ? 82 : (n === 1 ? 42 : 0)));
+    var panelH = clamp(wanted, Math.min(panelMin, panelMax), panelMax);
+
+    var minScene = clamp(Math.round(h * 0.43), 230, 430);
+    if(h - panelH < minScene){
+      panelH = Math.max(182, h - minScene);
+    }
+
+    var dialogueH = Math.max(80, panelH - statsH - toolbarH - 8);
+    var availableInside = Math.max(40, dialogueH - speakerH - 18);
+    var textH = hasSituation ? clamp(Math.round(availableInside * (n ? 0.38 : 0.78)), 52, n >= 4 ? 92 : 122) : 0;
+    var choicesH = n ? Math.max(36, availableInside - textH - 6) : 0;
+    if(n >= 4) choicesH = clamp(choicesH, 118, Math.max(118, availableInside - textH - 4));
+    if(n === 1) choicesH = Math.min(42, choicesH);
+
+    var sceneH = Math.max(1, h - panelH);
+    var spriteBase = clamp(Math.round(83 + (sceneH / h) * 15), 84, 96);
+    card.style.setProperty('--vn36MobilePanelH', Math.floor(panelH) + 'px');
+    card.style.setProperty('--vn36MobileTextH', Math.max(0, Math.floor(textH)) + 'px');
+    card.style.setProperty('--vn36MobileChoicesH', Math.max(0, Math.floor(choicesH)) + 'px');
+    card.style.setProperty('--vn36MobileSpriteMax', spriteBase + '%');
+    card.style.setProperty('--vn36MobileDuoSpriteMax', clamp(spriteBase - 1, 82, 94) + '%');
+    card.style.setProperty('--vn36MobileTrioSpriteMax', clamp(spriteBase - 8, 76, 86) + '%');
+
+    stage.style.display = 'block';
+    stage.style.visibility = 'visible';
+    if(bg){
+      bg.style.display = 'block';
+      bg.style.visibility = 'visible';
+      if(bg.style.opacity === '0') bg.style.opacity = '1';
+    }
+
+    var sceneId = (window.state && window.state.scene) ? String(window.state.scene) : '';
+    if(choices && choices.__vn36LastScene !== sceneId){ choices.scrollTop = 0; choices.__vn36LastScene = sceneId; }
+    if(text && text.__vn36LastScene !== sceneId){ text.scrollTop = 0; text.__vn36LastScene = sceneId; }
+  }
+  function scheduleV36(){
+    requestAnimationFrame(syncV36);
+    setTimeout(syncV36, 40);
+    setTimeout(syncV36, 140);
+    setTimeout(syncV36, 360);
+  }
+  function patchRender(){
+    try{
+      if(typeof window.render === 'function' && !window.render.__sylviniaV36CleanMobilePortraitLayout){
+        var previous = window.render;
+        window.render = render = function(){
+          var result = previous.apply(this, arguments);
+          scheduleV36();
+          return result;
+        };
+        window.render.__sylviniaV36CleanMobilePortraitLayout = true;
+      }
+    }catch(e){}
+  }
+  function install(){ patchRender(); scheduleV36(); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+  else install();
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', scheduleV36, {passive:true});
+    window.visualViewport.addEventListener('scroll', scheduleV36, {passive:true});
+  }
+  ['resize','orientationchange','fullscreenchange'].forEach(function(evt){
+    window.addEventListener(evt, scheduleV36, {passive:true});
+    document.addEventListener(evt, scheduleV36, {passive:true});
+  });
+  document.addEventListener('click', function(){ setTimeout(scheduleV36, 0); }, true);
+  document.addEventListener('transitionend', scheduleV36, true);
+  setInterval(syncV36, 900);
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
@@ -40330,190 +40771,291 @@ body.athHidden #gameCard .dialogueWrap > .stats{display:none!important;}
 })();
 </script>
 
-<!-- V34 · Mobile portrait : topbar retirée + situation toujours visible avec les choix -->
-<style id="sylviniaV34MobileNoTopbarTextAndChoices">
+
+<!-- V35 · Mobile portrait : scène restaurée + ATH compact sans topbar -->
+<style id="sylviniaV35MobileSceneRestoredNoTopbar">
 /*
-  V34 corrige le mode mobile portrait du Visuel actuel :
-  - la bande haute est retirée, car les commandes existent déjà dans la barre basse ;
-  - la scène gagne la hauteur libérée ;
-  - quand des choix existent, le texte/situation conserve toujours une vraie zone visible.
+  V35 remplace la logique mobile portrait de V34.
+  Objectifs :
+  - la topbar haute disparaît vraiment, sans créer une zone noire parasite ;
+  - la scène reste une zone visible au-dessus de l'ATH ;
+  - le décor et les sprites sont forcés dans cette zone scène ;
+  - quand il y a des choix, la situation reste visible et scrolle séparément.
   Legacy reste intact.
 */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI){
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI),
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI){
+  margin:0!important;
   overflow:hidden!important;
   background:#000!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #app{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #app,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #app{
   width:100vw!important;
   height:100svh!important;
   min-height:100svh!important;
+  max-height:100svh!important;
   padding:0!important;
   overflow:hidden!important;
+  display:block!important;
   background:#000!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #game.screen.card:not(.hidden){
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #game.screen.card:not(.hidden),
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #game.screen.card:not(.hidden){
+  display:block!important;
   width:100vw!important;
   height:100svh!important;
   min-height:0!important;
   max-height:100svh!important;
   max-width:none!important;
   border-radius:0!important;
+  border:0!important;
   overflow:hidden!important;
   box-shadow:none!important;
   background:#000!important;
 }
 
-/* Le haut devient inutile en mobile portrait : commandes déjà disponibles en bas. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .topbar{
-  display:none!important;
-  visibility:hidden!important;
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  overflow:hidden!important;
+  background:#000!important;
+  isolation:isolate!important;
+  transform:none!important;
+}
+
+/* La topbar reste dans le DOM pour ne pas casser le JS, mais elle ne réserve plus aucun pixel. */
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .topbar,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .topbar{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:0!important;
   height:0!important;
   min-height:0!important;
   max-height:0!important;
   margin:0!important;
   padding:0!important;
+  border:0!important;
+  opacity:0!important;
+  visibility:hidden!important;
   overflow:hidden!important;
   pointer-events:none!important;
+  z-index:-1!important;
 }
 
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard,
-body.vn34MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
-  position:relative!important;
+/* Scène : absolue, au-dessus du panneau. Plus de grille capricieuse. */
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  top:0!important;
+  bottom:var(--vn35MobilePanelH,42svh)!important;
   width:100%!important;
-  height:100svh!important;
-  min-height:0!important;
-  max-height:100svh!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-rows:minmax(0,1fr) var(--vn34MobilePanelH,40svh)!important;
-  gap:0!important;
-  overflow:hidden!important;
-  background:#000!important;
-}
-
-/* La scène occupe toute la zone haute libérée. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .stage,
-body.vn34MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .stage{
-  grid-row:1!important;
-  position:relative!important;
-  inset:auto!important;
-  z-index:1!important;
-  width:100%!important;
-  height:100%!important;
-  min-height:0!important;
+  height:auto!important;
+  min-height:var(--vn35MobileSceneMin,240px)!important;
   max-height:none!important;
   aspect-ratio:auto!important;
+  display:block!important;
   overflow:hidden!important;
   border-radius:0!important;
-  background:#000!important;
+  background:#03060a!important;
+  z-index:1!important;
+  contain:layout paint!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .bg{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg{
   position:absolute!important;
   inset:0!important;
   width:100%!important;
   height:100%!important;
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
   background-size:cover!important;
   background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-color:#05080f!important;
+  z-index:0!important;
+  filter:none!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg.zoom,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg.zoom{
+  transform:scale(1.025)!important;
+}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .veil,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .veil{
   position:absolute!important;
   inset:0!important;
-  z-index:2!important;
-  overflow:hidden!important;
+  display:block!important;
+  opacity:1!important;
+  z-index:1!important;
+  background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.04) 62%,rgba(0,0,0,.34))!important;
   pointer-events:none!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .char,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars img{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  overflow:hidden!important;
+  transform:none!important;
+  z-index:2!important;
+  pointer-events:none!important;
+}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars img,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars img{
   position:absolute!important;
   bottom:0!important;
-  max-height:var(--vn34MobileSpriteMax,94%)!important;
-  width:auto!important;
-  object-fit:contain!important;
-}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .char.left{left:-2%!important;right:auto!important;transform:none!important;max-width:52%!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .char.right{right:-2%!important;left:auto!important;transform:none!important;max-width:52%!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .char.center{left:50%!important;transform:translateX(-50%)!important;max-width:78%!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars.trioChars .char.left{left:-5%!important;max-width:36%!important;max-height:90%!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars.trioChars .char.center{max-width:42%!important;max-height:94%!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .chars.trioChars .char.right{right:-5%!important;max-width:36%!important;max-height:90%!important;}
-
-/* Le panneau bas reste compact, mais il ne sacrifie plus la situation. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap,
-body.vn34MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
-  grid-row:2!important;
-  position:relative!important;
-  left:auto!important;
-  right:auto!important;
   top:auto!important;
-  bottom:auto!important;
+  width:auto!important;
+  max-height:var(--vn35MobileSpriteMax,94%)!important;
+  max-width:54%!important;
+  object-fit:contain!important;
+  object-position:bottom center!important;
+  transform-origin:center bottom!important;
+  visibility:visible!important;
+  opacity:.96!important;
+}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.left,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.left{left:-4%!important;right:auto!important;transform:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.right,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.right{right:-4%!important;left:auto!important;transform:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.center,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.center{left:50%!important;right:auto!important;transform:translateX(-50%)!important;max-width:76%!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.duoChars .char{max-width:52%!important;max-height:var(--vn35MobileDuoSpriteMax,94%)!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char{max-width:37%!important;max-height:var(--vn35MobileTrioSpriteMax,88%)!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char.left,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char.left{left:-6%!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char.right,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars.trioChars .char.right{right:-6%!important;}
+
+/* ATH : bas compact, texte toujours visible avec les choix. */
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  top:auto!important;
   z-index:20!important;
   width:100%!important;
-  height:var(--vn34MobilePanelH,40svh)!important;
-  max-height:var(--vn34MobilePanelH,40svh)!important;
+  height:var(--vn35MobilePanelH,42svh)!important;
   min-height:0!important;
+  max-height:var(--vn35MobilePanelH,42svh)!important;
   display:flex!important;
   flex-direction:column!important;
   gap:3px!important;
   margin:0!important;
-  padding:2px 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
+  padding:3px 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
   overflow:hidden!important;
-  background:linear-gradient(180deg,rgba(2,5,10,.16),rgba(2,5,10,.95) 14%,rgba(2,5,10,1))!important;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.82) 9%,rgba(0,0,0,.98))!important;
+  box-shadow:none!important;
   pointer-events:none!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap::before,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap::after{display:none!important;content:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap::before,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap::after,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap::before,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap::after{display:none!important;content:none!important;}
 
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
-body.vn34MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats{
+  position:absolute!important;
+  left:8px!important;
+  right:8px!important;
+  top:calc(-1 * var(--vn35StatsLift,30px))!important;
+  z-index:35!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:5px!important;
+  max-width:calc(100% - 16px)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  opacity:.84!important;
+  pointer-events:auto!important;
+  scrollbar-width:none!important;
+}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar{display:none!important;}
+
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
   flex:1 1 auto!important;
   min-height:0!important;
   height:auto!important;
   max-height:none!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-rows:auto minmax(var(--vn34MobileTextMin,64px),1fr) minmax(0,var(--vn34MobileChoicesH,132px))!important;
-  grid-template-areas:"speaker" "text" "choices"!important;
-  gap:5px!important;
   width:100%!important;
   margin:0!important;
   padding:7px 8px 8px!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto var(--vn35MobileTextH,72px) minmax(0,var(--vn35MobileChoicesH,132px))!important;
+  grid-template-areas:"speaker" "text" "choices"!important;
+  gap:5px!important;
   overflow:hidden!important;
-  border-radius:14px 14px 0 0!important;
+  border-radius:13px 13px 0 0!important;
+  background:linear-gradient(180deg,rgba(15,13,17,.58),rgba(6,7,12,.68))!important;
+  border:1px solid rgba(232,201,130,.43)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.40), inset 0 0 0 1px rgba(255,255,255,.03)!important;
+  backdrop-filter:blur(4px)!important;
+  -webkit-backdrop-filter:blur(4px)!important;
   pointer-events:auto!important;
 }
-
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .speaker{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .tag,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .speaker,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
   grid-area:speaker!important;
-  display:block!important;
-  min-height:0!important;
   margin:0!important;
   padding:3px 9px!important;
+  min-height:0!important;
   font-size:18px!important;
   line-height:1.04!important;
   text-align:center!important;
+  color:#f1d495!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .text{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .text,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .text{
   grid-area:text!important;
   display:block!important;
-  min-height:var(--vn34MobileTextMin,64px)!important;
-  height:100%!important;
-  max-height:none!important;
+  min-height:0!important;
+  height:var(--vn35MobileTextH,72px)!important;
+  max-height:var(--vn35MobileTextH,72px)!important;
   margin:0!important;
-  padding:0 4px 0 0!important;
+  padding:0 5px 0 0!important;
   overflow-y:auto!important;
   overflow-x:hidden!important;
   white-space:pre-line!important;
   -webkit-line-clamp:unset!important;
   -webkit-box-orient:initial!important;
   font-size:14px!important;
-  line-height:1.32!important;
+  line-height:1.34!important;
   scrollbar-width:thin!important;
   overscroll-behavior:contain!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choices,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30ContinueOnly .choices{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choices,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choices,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn30DecisionChoices .choices{
   grid-area:choices!important;
   position:relative!important;
   inset:auto!important;
@@ -40523,9 +41065,9 @@ body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30Conti
   align-items:stretch!important;
   gap:5px!important;
   width:100%!important;
-  height:100%!important;
+  height:var(--vn35MobileChoicesH,132px)!important;
+  max-height:var(--vn35MobileChoicesH,132px)!important;
   min-height:0!important;
-  max-height:var(--vn34MobileChoicesH,132px)!important;
   margin:0!important;
   padding:0!important;
   overflow-y:auto!important;
@@ -40535,11 +41077,13 @@ body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn30Conti
   scrollbar-width:thin!important;
   overscroll-behavior:contain!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
   flex:0 0 auto!important;
   width:100%!important;
-  min-height:36px!important;
+  min-height:35px!important;
   max-width:none!important;
   margin:0!important;
   padding:8px 10px!important;
@@ -40547,42 +41091,24 @@ body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .choiceBt
   font-size:13px!important;
   line-height:1.16!important;
 }
-
-/* Cas sans texte : le choix peut prendre la place, mais seulement quand la situation est vraiment vide. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn34NoSituation .dialogue{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn35NoSituation .dialogue,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn35NoSituation .dialogue{
   grid-template-rows:auto 0 minmax(0,1fr)!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn34NoSituation .text{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn35NoSituation .text,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn35NoSituation .text{
   display:none!important;
-  min-height:0!important;
+  height:0!important;
+  max-height:0!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn34NoSituation .choices{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard.vn35NoSituation .choices,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard.vn35NoSituation .choices{
+  height:auto!important;
   max-height:none!important;
 }
 
-/* Valeurs : emplacement conservé au-dessus de la boîte, sans provoquer de bande haute. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats{
-  position:absolute!important;
-  left:8px!important;
-  right:8px!important;
-  top:calc(-1 * var(--vn34MobileStatsLift,30px))!important;
-  z-index:85!important;
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  gap:5px!important;
-  max-width:calc(100% - 16px)!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  opacity:.82!important;
-  pointer-events:auto!important;
-  scrollbar-width:none!important;
-}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar,
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar{display:none!important;}
-
-/* Barre basse : elle garde les commandes essentielles, sans manger l'espace texte. */
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
   flex:0 0 30px!important;
   height:30px!important;
   min-height:30px!important;
@@ -40601,8 +41127,9 @@ body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerV
   border-radius:999px!important;
   scrollbar-width:none!important;
 }
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
-body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls .trailerVNBtn{
   flex:0 0 auto!important;
   height:24px!important;
   min-height:24px!important;
@@ -40611,136 +41138,179 @@ body.vn34MobileCurrentPortrait.mobileUI:not(.legacyVisualUI) #gameCard #trailerV
   line-height:1!important;
 }
 
-body.vn34MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard{grid-template-rows:minmax(0,1fr) 0px!important;}
-body.vn34MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard .dialogueWrap{display:none!important;}
+html body.vn35MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard > .stage,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard > .stage{bottom:0!important;min-height:100%!important;}
+html body.vn35MobileCurrentPortrait.mobileUI.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn35MobileCurrentPortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap{display:none!important;}
 </style>
 
-<script id="sylviniaV34MobileNoTopbarTextAndChoices">
+<script id="sylviniaV35MobileSceneRestoredNoTopbar">
 (function(){
-  if(window.__sylviniaV34MobileNoTopbarTextAndChoices) return;
-  window.__sylviniaV34MobileNoTopbarTextAndChoices = true;
+  if(window.__sylviniaV35MobileSceneRestoredNoTopbar) return;
+  window.__sylviniaV35MobileSceneRestoredNoTopbar = true;
 
   function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
   function gameVisible(){
     const game = document.getElementById('game');
     return !!(game && !game.classList.contains('hidden'));
   }
+  function viewportHeight(){
+    return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.height) || window.innerHeight || document.documentElement.clientHeight || 1));
+  }
+  function viewportWidth(){
+    return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.width) || window.innerWidth || document.documentElement.clientWidth || 1));
+  }
   function mobileCurrentPortrait(){
     return gameVisible()
       && document.body.classList.contains('mobileUI')
       && !document.body.classList.contains('legacyVisualUI')
-      && (window.innerHeight || 0) >= (window.innerWidth || 0);
+      && viewportHeight() >= viewportWidth();
   }
-  function syncV34(){
+  function hasRealBackground(bg){
+    if(!bg) return false;
+    const inline = bg.style && bg.style.backgroundImage;
+    if(inline && inline !== 'none') return true;
+    const computed = window.getComputedStyle ? window.getComputedStyle(bg).backgroundImage : '';
+    return !!(computed && computed !== 'none');
+  }
+  function syncV35(){
     const active = mobileCurrentPortrait();
-    document.body.classList.toggle('vn34MobileCurrentPortrait', active);
+    document.body.classList.toggle('vn35MobileCurrentPortrait', active);
     const card = document.getElementById('gameCard');
-    if(!card){ return; }
-    card.classList.toggle('vn34MobileCurrentPortraitCard', active);
-    if(!active){ return; }
+    if(!card) return;
+    card.classList.toggle('vn35MobileCurrentPortraitCard', active);
+    if(!active) return;
 
     const wrap = card.querySelector('.dialogueWrap');
     const dialogue = card.querySelector('.dialogue');
     const stage = card.querySelector('.stage');
+    const bg = document.getElementById('bg') || (stage && stage.querySelector('.bg'));
     const stats = document.getElementById('stats');
     const text = document.getElementById('text');
     const choices = document.getElementById('choices');
     const toolbar = document.getElementById('trailerVNControls');
-    if(!wrap || !dialogue || !stage){ return; }
+    if(!wrap || !dialogue || !stage) return;
 
-    if(stats && (stats.parentElement !== wrap || stats.nextElementSibling !== dialogue)){
+    if(stats && stats.parentElement !== wrap){
+      wrap.insertBefore(stats, dialogue);
+    }else if(stats && stats.nextElementSibling !== dialogue){
       wrap.insertBefore(stats, dialogue);
     }
 
-    const rect = card.getBoundingClientRect();
-    const h = Math.max(1, rect.height || window.innerHeight || 1);
-    const w = Math.max(1, rect.width || window.innerWidth || 1);
+    const h = viewportHeight();
+    const w = viewportWidth();
     const buttons = choices ? Array.from(choices.querySelectorAll('button.choiceBtn')) : [];
     const n = buttons.length;
     const textLen = text ? (text.textContent || '').trim().length : 0;
     const hasSituation = textLen > 0;
     const toolbarH = toolbar ? clamp(Math.ceil(toolbar.getBoundingClientRect().height || 30), 28, 34) : 30;
 
-    card.classList.toggle('vn34NoSituation', !hasSituation);
-    card.classList.toggle('vn34ManyChoices', n >= 4);
+    card.classList.toggle('vn35NoSituation', !hasSituation);
+    card.classList.toggle('vn35ManyChoices', n >= 4);
+    card.classList.toggle('vn35NoBg', !hasRealBackground(bg));
 
-    let panelRatio = n >= 4 ? 0.43 : (n === 3 ? 0.40 : (n === 2 ? 0.37 : 0.34));
-    if(textLen > 360) panelRatio += 0.025;
-    if(textLen > 720) panelRatio += 0.025;
+    let panelRatio = n >= 4 ? 0.47 : (n === 3 ? 0.43 : (n === 2 ? 0.39 : 0.35));
+    if(textLen > 380) panelRatio += 0.025;
+    if(textLen > 760) panelRatio += 0.025;
 
-    const maxPanel = Math.round(h * 0.49);
-    const minPanel = n >= 4 ? 300 : (n === 3 ? 270 : (n === 2 ? 238 : 206));
+    const maxPanel = Math.round(h * 0.54);
+    const minPanel = n >= 4 ? 312 : (n === 3 ? 282 : (n === 2 ? 244 : 210));
     let panelH = clamp(Math.round(h * panelRatio), Math.min(minPanel, maxPanel), maxPanel);
 
-    const minStage = clamp(Math.round(h * 0.44), 275, 430);
-    if(h - panelH < minStage){
-      panelH = Math.max(190, h - minStage);
+    const minScene = clamp(Math.round(h * 0.40), 235, 420);
+    if(h - panelH < minScene){
+      panelH = Math.max(188, h - minScene);
     }
 
-    const stageH = Math.max(120, h - panelH);
-    const spriteMax = clamp(Math.round(84 + (stageH / h) * 18), 88, 96);
+    let choicesH = 0;
+    if(n >= 4) choicesH = clamp(42 * n, 158, Math.round(panelH * 0.58));
+    else if(n === 3) choicesH = clamp(114, 104, Math.round(panelH * 0.46));
+    else if(n === 2) choicesH = clamp(78, 72, Math.round(panelH * 0.34));
+    else if(n === 1) choicesH = 40;
 
-    let choicesH = 44;
-    if(n >= 4) choicesH = clamp(Math.round(h * 0.22), 146, 190);
-    else if(n === 3) choicesH = clamp(Math.round(h * 0.17), 118, 152);
-    else if(n === 2) choicesH = clamp(Math.round(h * 0.12), 82, 112);
-    else if(n === 1) choicesH = 44;
-    else choicesH = 0;
+    const speakerH = 27;
+    const chrome = toolbarH + speakerH + 26;
+    let textH = hasSituation ? Math.max(54, panelH - chrome - choicesH) : 0;
+    if(hasSituation && textH < 56 && choicesH > 52){
+      const missing = 56 - textH;
+      choicesH = Math.max(n >= 4 ? 116 : 40, choicesH - missing);
+      textH = Math.max(54, panelH - chrome - choicesH);
+    }
+    textH = hasSituation ? clamp(textH, 54, n >= 4 ? 96 : 124) : 0;
 
-    const speakerH = 28;
-    const chromeH = toolbarH + speakerH + 26;
-    const availableForText = Math.max(0, panelH - chromeH - choicesH);
-    const textMin = hasSituation ? clamp(Math.min(availableForText, n >= 3 ? 74 : 88), 54, 112) : 0;
+    const sceneH = Math.max(120, h - panelH);
+    const spriteMax = clamp(Math.round(86 + (sceneH / h) * 14), 88, 96);
+    const duoSpriteMax = clamp(spriteMax, 88, 96);
+    const trioSpriteMax = clamp(spriteMax - 7, 80, 90);
+    const sceneMin = Math.max(120, sceneH);
 
-    card.style.setProperty('--vn34MobilePanelH', Math.floor(panelH) + 'px');
-    card.style.setProperty('--vn34MobileSpriteMax', spriteMax + '%');
-    card.style.setProperty('--vn34MobileChoicesH', Math.max(0, Math.floor(choicesH)) + 'px');
-    card.style.setProperty('--vn34MobileTextMin', Math.max(0, Math.floor(textMin)) + 'px');
-    card.style.setProperty('--vn34MobileStatsLift', '30px');
+    card.style.setProperty('--vn35MobilePanelH', Math.floor(panelH) + 'px');
+    card.style.setProperty('--vn35MobileSceneMin', Math.floor(sceneMin) + 'px');
+    card.style.setProperty('--vn35MobileSpriteMax', spriteMax + '%');
+    card.style.setProperty('--vn35MobileDuoSpriteMax', duoSpriteMax + '%');
+    card.style.setProperty('--vn35MobileTrioSpriteMax', trioSpriteMax + '%');
+    card.style.setProperty('--vn35MobileChoicesH', Math.max(0, Math.floor(choicesH)) + 'px');
+    card.style.setProperty('--vn35MobileTextH', Math.max(0, Math.floor(textH)) + 'px');
+    card.style.setProperty('--vn35StatsLift', '30px');
+
+    if(bg){
+      bg.style.display = 'block';
+      bg.style.visibility = 'visible';
+      if(bg.style.opacity === '0') bg.style.opacity = '1';
+    }
+    if(stage){
+      stage.style.visibility = 'visible';
+      stage.style.display = 'block';
+    }
 
     const sceneId = (window.state && state.scene) ? String(state.scene) : '';
-    if(choices && choices.__vn34LastScene !== sceneId){
+    if(choices && choices.__vn35LastScene !== sceneId){
       choices.scrollTop = 0;
-      choices.__vn34LastScene = sceneId;
+      choices.__vn35LastScene = sceneId;
     }
-    if(text && text.__vn34LastScene !== sceneId){
+    if(text && text.__vn35LastScene !== sceneId){
       text.scrollTop = 0;
-      text.__vn34LastScene = sceneId;
+      text.__vn35LastScene = sceneId;
     }
   }
 
-  function scheduleV34(){
-    requestAnimationFrame(syncV34);
-    setTimeout(syncV34, 40);
-    setTimeout(syncV34, 160);
-    setTimeout(syncV34, 420);
+  function scheduleV35(){
+    requestAnimationFrame(syncV35);
+    setTimeout(syncV35, 40);
+    setTimeout(syncV35, 140);
+    setTimeout(syncV35, 360);
   }
   function patchRender(){
     try{
-      if(typeof render === 'function' && !render.__sylviniaV34MobileNoTopbarTextAndChoices){
+      if(typeof render === 'function' && !render.__sylviniaV35MobileSceneRestoredNoTopbar){
         const previous = render;
         render = window.render = function(){
           const result = previous.apply(this, arguments);
-          scheduleV34();
+          scheduleV35();
           return result;
         };
-        render.__sylviniaV34MobileNoTopbarTextAndChoices = true;
+        render.__sylviniaV35MobileSceneRestoredNoTopbar = true;
       }
     }catch(e){}
   }
-  function install(){ patchRender(); scheduleV34(); }
+  function install(){ patchRender(); scheduleV35(); }
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
   else install();
   window.addEventListener('load', install, {passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', scheduleV35, {passive:true});
+    window.visualViewport.addEventListener('scroll', scheduleV35, {passive:true});
+  }
   ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','visibilitychange'].forEach(function(evt){
-    window.addEventListener(evt, scheduleV34, {passive:true});
-    document.addEventListener(evt, scheduleV34, {passive:true});
+    window.addEventListener(evt, scheduleV35, {passive:true});
+    document.addEventListener(evt, scheduleV35, {passive:true});
   });
-  document.addEventListener('click', function(){ setTimeout(scheduleV34, 0); }, true);
-  document.addEventListener('transitionend', scheduleV34, true);
-  setInterval(syncV34, 1000);
+  document.addEventListener('click', function(){ setTimeout(scheduleV35, 0); }, true);
+  document.addEventListener('transitionend', scheduleV35, true);
+  setInterval(syncV35, 900);
   setTimeout(install, 0);
-  setTimeout(install, 280);
+  setTimeout(install, 260);
 })();
 </script>
+
