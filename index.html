@@ -39785,6 +39785,302 @@ Temps disponible : ${sec} seconde${sec==='1.0'?'':'s'}.`+status;
 })();
 </script>
 
+
+<script id="v0249-x12i-amanea-young-sprites">
+/* v0.249 · XII_I : intégration des sprites d'Amanea jeune + remplacement du 2e sprite par la version magique sombre */
+(function installV0249X12IAmaneaYoungSprites(){
+  try{
+    if(window.__sylviniaV0249X12IAmaneaYoungSprites) return;
+    window.__sylviniaV0249X12IAmaneaYoungSprites=true;
+    if(typeof A==='undefined' || !A) return;
+
+    /* Assets XII_I */
+    Object.assign(A,{
+      amanea_young_distress:'assets/sprites/chapter12/amanea_young_distress.png',
+      amanea_young_dark_magic:'assets/sprites/chapter12/amanea_young_dark_magic.png',
+      amanea_young_rage:'assets/sprites/chapter12/amanea_young_rage.png',
+      amanea_young_neutral_fragile:'assets/sprites/chapter12/amanea_young_neutral_fragile.png',
+      amanea_young_sad:'assets/sprites/chapter12/amanea_young_sad.png',
+      amanea_young_hostile:'assets/sprites/chapter12/amanea_young_hostile.png',
+      amanea_young_burned_sad:'assets/sprites/chapter12/amanea_young_burned_sad.png',
+      amanea_young_burned_rage:'assets/sprites/chapter12/amanea_young_burned_rage.png',
+      music_x12i_duel_farae:'assets/music/chapter12/Confrontation_Fratricide.mp3'
+    });
+
+    if(typeof S==='undefined' || !S) return;
+
+    const beforeCombatMap={
+      c12i_003:'amanea_young_dark_magic',
+      c12i_004:'amanea_young_hostile',
+      c12i_005:'amanea_young_sad',
+      c12i_006:'amanea_young_distress',
+      c12i_007:'amanea_young_hostile',
+      c12i_008:'amanea_young_dark_magic',
+      c12i_009:'amanea_young_neutral_fragile',
+      c12i_010:'amanea_young_sad',
+      c12i_011:'amanea_young_dark_magic',
+      c12i_012:'amanea_young_rage',
+      c12i_choice_meche:'amanea_young_neutral_fragile',
+      c12i_meche_strategique:'amanea_young_dark_magic',
+      c12i_meche_strategique_2:'amanea_young_dark_magic',
+      c12i_meche_strategique_3:'amanea_young_hostile',
+      c12i_meche_strategique_4:'amanea_young_sad',
+      c12i_choice_tia_sentence:'amanea_young_hostile',
+      c12i_tia_sentence_resonance:'amanea_young_sad',
+      c12i_tia_sentence_lucidite:'amanea_young_dark_magic',
+      c12i_tia_sentence_audace:'amanea_young_hostile',
+      c12i_tia_sentence_sangfroid:'amanea_young_neutral_fragile',
+      c12i_choice_rage:'amanea_young_rage',
+      c12i_rage_bonus:'amanea_young_rage'
+    };
+
+    const afterCombatMap={
+      c12i_027:'amanea_young_burned_rage',
+      c12i_028:'amanea_young_burned_sad',
+      c12i_029:'amanea_young_burned_sad',
+      c12i_030:'amanea_young_burned_rage',
+      c12i_031:'amanea_young_burned_sad',
+      c12i_032:'amanea_young_burned_sad',
+      c12i_033:'amanea_young_burned_sad',
+      c12i_034:'amanea_young_burned_rage',
+      c12i_035:'amanea_young_burned_sad',
+      c12i_036:'amanea_young_burned_sad',
+      c12i_037:'amanea_young_burned_sad',
+      c12i_038:'amanea_young_burned_sad',
+      c12i_039:'amanea_young_burned_sad',
+      c12i_end:'amanea_young_burned_sad'
+    };
+
+    function ensureAmaneaSprite(sceneId, spriteKey, opts={}){
+      const sc=S[sceneId];
+      if(!sc) return;
+      const defaultSide = opts.side || 'right';
+      const preserveClass = opts.preserveClass===true;
+      let found=false;
+      const chars = Array.isArray(sc.chars) ? sc.chars.slice() : [];
+      sc.chars = chars.map(ch=>{
+        if(Array.isArray(ch) && ch[0]==='amanea'){
+          found=true;
+          const side = ch[2] || defaultSide;
+          const cls = preserveClass ? ch[3] : undefined;
+          return [ 'amanea', spriteKey, side, cls ].filter(v=>v!==undefined);
+        }
+        return ch;
+      });
+      if(!found){
+        sc.chars = [ ...(Array.isArray(sc.chars)?sc.chars:[]), ['amanea', spriteKey, defaultSide] ];
+      }
+    }
+
+    function removeAmanea(sceneId){
+      const sc=S[sceneId];
+      if(!sc || !Array.isArray(sc.chars)) return;
+      sc.chars = sc.chars.filter(ch=>!(Array.isArray(ch) && ch[0]==='amanea'));
+    }
+
+    /* Entrée en scène d’Amanea jeune au début réel du souvenir. */
+    Object.keys(beforeCombatMap).forEach(id=>ensureAmaneaSprite(id,beforeCombatMap[id],{side:'right'}));
+
+    /* Aucune présence sprite pendant la partie combat/QTE : on laisse respirer les images clés. */
+    ['x12i_duel_start','c12i_gameover','c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'].forEach(removeAmanea);
+
+    /* Après le combat : uniquement les 2 sprites aux yeux brûlés/noircis. */
+    Object.keys(afterCombatMap).forEach(id=>ensureAmaneaSprite(id,afterCombatMap[id],{side:'right'}));
+
+    /* On évite de faire apparaître la version jeune trop tôt. */
+    ['c12i_000','c12i_001','c12i_002'].forEach(id=>{
+      const sc=S[id];
+      if(!sc) return;
+      if(id==='c12i_000' && Array.isArray(sc.chars)){
+        sc.chars = sc.chars.map(ch=>Array.isArray(ch)&&ch[0]==='amanea' ? ['amanea','amanea_away',ch[2]||'right','projection'] : ch);
+      }
+    });
+
+    /* Petit confort visuel : chapitre mémoire = pas de projection sur Amanea jeune. */
+    const idsToClean=[...Object.keys(beforeCombatMap),...Object.keys(afterCombatMap)];
+    idsToClean.forEach(id=>{
+      const sc=S[id];
+      if(!sc || !Array.isArray(sc.chars)) return;
+      sc.chars=sc.chars.map(ch=>Array.isArray(ch)&&ch[0]==='amanea' ? [ch[0],ch[1],ch[2]||'right'] : ch);
+    });
+
+    if(typeof save==='function') save();
+    console.info("[Sylvinia v0.249] Sprites d'Amanea jeune intégrés à XII_I, entrée à c12i_003, sprites retirés pendant le duel, 2e sprite remplacé par la version magique sombre.");
+  }catch(err){
+    console.error('[Sylvinia v0.249] Échec intégration sprites Amanea jeune',err);
+  }
+})();
+</script>
+
+<script id="v0255-x12i-tia-young-sprites">
+/* v0.255 · XII_I : intégration des sprites sélectionnés de Tia jeune (6 avant-combat, 3 post-combat) */
+(function installV0255X12ITiaYoungSprites(){
+  try{
+    if(window.__sylviniaV0255X12ITiaYoungSprites) return;
+    window.__sylviniaV0255X12ITiaYoungSprites=true;
+    if(typeof A==='undefined' || !A) return;
+
+    Object.assign(A,{
+      tia_young_light_wrath:'assets/sprites/chapter12/tia_young_light_wrath.png',
+      tia_young_angry:'assets/sprites/chapter12/tia_young_angry.png',
+      tia_young_teary:'assets/sprites/chapter12/tia_young_teary.png',
+      tia_young_hostile:'assets/sprites/chapter12/tia_young_hostile.png',
+      tia_young_calm_light:'assets/sprites/chapter12/tia_young_calm_light.png',
+      tia_young_shocked:'assets/sprites/chapter12/tia_young_shocked.png',
+      tia_young_post_crying:'assets/sprites/chapter12/tia_young_post_crying.png',
+      tia_young_post_faded:'assets/sprites/chapter12/tia_young_post_faded.png',
+      tia_young_post_shocked:'assets/sprites/chapter12/tia_young_post_shocked.png'
+    });
+
+    if(typeof S==='undefined' || !S) return;
+
+    const beforeCombatMap={
+      c12i_003:'tia_young_light_wrath',
+      c12i_004:'tia_young_angry',
+      c12i_005:'tia_young_teary',
+      c12i_006:'tia_young_shocked',
+      c12i_007:'tia_young_angry',
+      c12i_008:'tia_young_light_wrath',
+      c12i_009:'tia_young_calm_light',
+      c12i_010:'tia_young_teary',
+      c12i_011:'tia_young_light_wrath',
+      c12i_012:'tia_young_hostile',
+      c12i_choice_meche:'tia_young_calm_light',
+      c12i_meche_strategique:'tia_young_light_wrath',
+      c12i_meche_strategique_2:'tia_young_light_wrath',
+      c12i_meche_strategique_3:'tia_young_angry',
+      c12i_meche_strategique_4:'tia_young_shocked',
+      c12i_choice_tia_sentence:'tia_young_angry',
+      c12i_tia_sentence_resonance:'tia_young_teary',
+      c12i_tia_sentence_lucidite:'tia_young_light_wrath',
+      c12i_tia_sentence_audace:'tia_young_hostile',
+      c12i_tia_sentence_sangfroid:'tia_young_calm_light',
+      c12i_choice_rage:'tia_young_hostile',
+      c12i_rage_bonus:'tia_young_hostile'
+    };
+
+    const afterCombatMap={
+      c12i_027:'tia_young_post_crying',
+      c12i_028:'tia_young_post_faded',
+      c12i_029:'tia_young_post_crying',
+      c12i_030:'tia_young_post_shocked',
+      c12i_031:'tia_young_post_crying',
+      c12i_032:'tia_young_post_faded',
+      c12i_033:'tia_young_post_crying',
+      c12i_034:'tia_young_post_shocked',
+      c12i_035:'tia_young_post_crying',
+      c12i_036:'tia_young_post_faded',
+      c12i_037:'tia_young_post_crying',
+      c12i_038:'tia_young_post_faded',
+      c12i_039:'tia_young_post_crying',
+      c12i_end:'tia_young_post_faded'
+    };
+
+    function ensureTiaSprite(sceneId, spriteKey, opts={}){
+      const sc=S[sceneId];
+      if(!sc) return;
+      const defaultSide = opts.side || 'left';
+      const preserveClass = opts.preserveClass===true;
+      let found=false;
+      const chars = Array.isArray(sc.chars) ? sc.chars.slice() : [];
+      sc.chars = chars.map(ch=>{
+        if(Array.isArray(ch) && ch[0]==='tia'){
+          found=true;
+          const side = ch[2] || defaultSide;
+          const cls = preserveClass ? ch[3] : undefined;
+          return ['tia', spriteKey, side, cls].filter(v=>v!==undefined);
+        }
+        return ch;
+      });
+      if(!found){
+        sc.chars = [ ['tia', spriteKey, defaultSide], ...(Array.isArray(sc.chars)?sc.chars:[]) ];
+      }
+    }
+
+    function removeTia(sceneId){
+      const sc=S[sceneId];
+      if(!sc || !Array.isArray(sc.chars)) return;
+      sc.chars = sc.chars.filter(ch=>!(Array.isArray(ch) && ch[0]==='tia'));
+    }
+
+    Object.keys(beforeCombatMap).forEach(id=>ensureTiaSprite(id,beforeCombatMap[id],{side:'left'}));
+
+    ['x12i_duel_start','c12i_gameover','c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'].forEach(removeTia);
+
+    Object.keys(afterCombatMap).forEach(id=>ensureTiaSprite(id,afterCombatMap[id],{side:'left'}));
+
+    ['c12i_000','c12i_001','c12i_002'].forEach(removeTia);
+
+    const idsToClean=[...Object.keys(beforeCombatMap),...Object.keys(afterCombatMap)];
+    idsToClean.forEach(id=>{
+      const sc=S[id];
+      if(!sc || !Array.isArray(sc.chars)) return;
+      sc.chars=sc.chars.map(ch=>Array.isArray(ch)&&ch[0]==='tia' ? [ch[0],ch[1],ch[2]||'left'] : ch);
+    });
+
+    if(typeof save==='function') save();
+    console.info('[Sylvinia v0.255] Sprites de Tia jeune intégrés à XII_I (6 avant-combat, 3 post-combat).');
+  }catch(err){
+    console.error('[Sylvinia v0.255] Échec intégration sprites Tia jeune', err);
+  }
+})();
+</script>
+
+
+<script id="v0256-x12i-throne-backgrounds">
+/* v0.256 · XII_I : intégration des 4 décors de la salle du trône */
+(function installV0256X12IThroneBackgrounds(){
+  try{
+    if(window.__sylviniaV0256X12IThroneBackgrounds) return;
+    window.__sylviniaV0256X12IThroneBackgrounds = true;
+    if(typeof A==='undefined' || !A || typeof S==='undefined' || !S) return;
+
+    Object.assign(A, {
+      x12i_tia_hall_before_01: 'assets/backgrounds/chapter12/x12i_tia_hall_before_01.png',
+      x12i_tia_hall_before_02: 'assets/backgrounds/chapter12/x12i_tia_hall_before_02.png',
+      x12i_tia_hall_after_01:  'assets/backgrounds/chapter12/x12i_tia_hall_after_01.png',
+      x12i_tia_hall_after_02:  'assets/backgrounds/chapter12/x12i_tia_hall_after_02.png'
+    });
+
+    const before01 = [
+      'c12i_003','c12i_004','c12i_005','c12i_006','c12i_007','c12i_008'
+    ];
+    const before02 = [
+      'c12i_009','c12i_010','c12i_011','c12i_012',
+      'c12i_choice_meche','c12i_meche_strategique','c12i_meche_strategique_2','c12i_meche_strategique_3','c12i_meche_strategique_4',
+      'c12i_choice_tia_sentence','c12i_tia_sentence_resonance','c12i_tia_sentence_lucidite','c12i_tia_sentence_audace','c12i_tia_sentence_sangfroid',
+      'c12i_choice_rage','c12i_rage_bonus'
+    ];
+    const after01 = [
+      'c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte',
+      'c12i_027','c12i_028','c12i_029','c12i_030','c12i_031','c12i_032','c12i_033'
+    ];
+    const after02 = [
+      'c12i_034','c12i_035','c12i_036','c12i_037','c12i_038','c12i_039','c12i_end'
+    ];
+
+    function applyBg(ids, key){
+      ids.forEach(id=>{
+        if(S[id]){
+          S[id].bg = key;
+          if(typeof S[id].zoom === 'undefined') S[id].zoom = true;
+        }
+      });
+    }
+
+    applyBg(before01, 'x12i_tia_hall_before_01');
+    applyBg(before02, 'x12i_tia_hall_before_02');
+    applyBg(after01,  'x12i_tia_hall_after_01');
+    applyBg(after02,  'x12i_tia_hall_after_02');
+
+    if(typeof save==='function') save();
+    console.info('[Sylvinia v0.256] Décors XII_I intégrés : 2 avant-combat, 2 post-combat.');
+  }catch(err){
+    console.error('[Sylvinia v0.256] Échec intégration décors XII_I', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
