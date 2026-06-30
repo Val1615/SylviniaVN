@@ -42888,3 +42888,502 @@ body.x12iQteModeV250 .dialogueWrap{
 })();
 </script>
 
+
+<style id="v0258-mobile-stack-stage-above-dialogue">
+/* v0.258 · Mobile UI : scène au-dessus de la case de texte dans toutes les orientations.
+   Le mode mobile ne dépend plus du portrait pur : sur Fold / paysage, la scène reste dans sa rangée au-dessus de l'ATH. */
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI),
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI){
+  overflow:hidden!important;
+  background:#000!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #app,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #app{
+  width:100vw!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:0!important;
+  max-height:var(--vn38ViewportH,100svh)!important;
+  padding:0!important;
+  overflow:hidden!important;
+  display:block!important;
+  background:#000!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #game.screen.card:not(.hidden),
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #game.screen.card:not(.hidden){
+  display:block!important;
+  width:100vw!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:0!important;
+  max-height:var(--vn38ViewportH,100svh)!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  background:#000!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:minmax(0,1fr) var(--vn38PanelH,39vh)!important;
+  width:100%!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:0!important;
+  max-height:var(--vn38ViewportH,100svh)!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#000!important;
+  transform:none!important;
+}
+
+/* En mobile, la topbar interne mangeait la scène. Les boutons restent dans le ruban bas. */
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .topbar,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .topbar{
+  display:none!important;
+  position:static!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Rangée 1 : scène visible, non absolue, donc réellement au-dessus du texte. */
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage{
+  grid-row:1!important;
+  position:relative!important;
+  inset:auto!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+  border-radius:0!important;
+  background:#000!important;
+  z-index:1!important;
+  contain:layout paint!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  visibility:visible!important;
+  width:100%!important;
+  height:100%!important;
+  opacity:1!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  z-index:0!important;
+}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .bg.zoom,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .bg.zoom{
+  transform:scale(1.035)!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .veil,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .veil{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  pointer-events:none!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+  z-index:2!important;
+  pointer-events:none!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char,
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .chars img,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .chars img{
+  position:absolute!important;
+  bottom:-1%!important;
+  width:auto!important;
+  max-height:var(--vn38SpriteMax,92%)!important;
+  object-fit:contain!important;
+  object-position:bottom center!important;
+  transform-origin:center bottom!important;
+}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.left,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.left{left:-7%!important;right:auto!important;transform:none!important;}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.right,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.right{right:-7%!important;left:auto!important;transform:none!important;}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .stage .char.center,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .stage .char.center{left:50%!important;right:auto!important;transform:translateX(-50%)!important;}
+
+/* Rangée 2 : ATH / texte / choix. */
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap{
+  grid-row:2!important;
+  position:relative!important;
+  inset:auto!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 6px calc(5px + env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(2,5,10,.10),rgba(2,5,10,.88) 14%,rgba(2,5,10,.98) 100%)!important;
+  z-index:6!important;
+  pointer-events:auto!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap::before,
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard > .dialogueWrap::after,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap::before,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard > .dialogueWrap::after{
+  display:none!important;
+  content:none!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats{
+  grid-row:1!important;
+  position:relative!important;
+  inset:auto!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  gap:5px!important;
+  width:100%!important;
+  min-height:24px!important;
+  max-height:28px!important;
+  margin:0!important;
+  padding:1px 2px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  opacity:.78!important;
+  z-index:8!important;
+  scrollbar-width:none!important;
+  pointer-events:auto!important;
+}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > #stats::-webkit-scrollbar,
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .dialogueWrap > .stats::-webkit-scrollbar{display:none!important;}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .dialogue,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
+  grid-row:2!important;
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto minmax(var(--vn38TextMin,54px),var(--vn38TextH,94px)) minmax(0,var(--vn38ChoicesH,62px))!important;
+  grid-template-areas:"speaker" "text" "choices"!important;
+  gap:5px!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:6px 8px 7px!important;
+  overflow:hidden!important;
+  pointer-events:auto!important;
+  color:#f6f0e6!important;
+  background:linear-gradient(180deg,rgba(14,12,18,.72),rgba(5,7,13,.86))!important;
+  border:1px solid rgba(234,205,145,.46)!important;
+  border-radius:13px 13px 0 0!important;
+  box-shadow:0 -10px 32px rgba(0,0,0,.46), inset 0 0 0 1px rgba(255,255,255,.045)!important;
+  backdrop-filter:blur(7px)!important;
+  -webkit-backdrop-filter:blur(7px)!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .tag,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .tag{display:none!important;}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .speaker,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .speaker{
+  grid-area:speaker!important;
+  position:static!important;
+  width:100%!important;
+  margin:0!important;
+  padding:3px 9px!important;
+  font:700 16px/1.05 Georgia,'Times New Roman',serif!important;
+  text-align:center!important;
+  color:#f1db9b!important;
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(87,61,24,.58),rgba(0,0,0,0))!important;
+  border-top:1px solid rgba(234,205,145,.28)!important;
+  border-bottom:1px solid rgba(234,205,145,.22)!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .text,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .text{
+  grid-area:text!important;
+  position:relative!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 4px 0 0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  font-size:var(--vn38TextFont,14px)!important;
+  line-height:1.32!important;
+  white-space:pre-line!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .choices,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choices{
+  grid-area:choices!important;
+  position:relative!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  pointer-events:auto!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-height:34px!important;
+  padding:7px 10px!important;
+  border-radius:10px!important;
+  font-size:13px!important;
+  line-height:1.16!important;
+}
+
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls,
+html body.vn38MobileStack.mobileUI.trailer16x9:not(.legacyVisualUI) #gameCard #trailerVNControls{
+  grid-row:3!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:4px!important;
+  width:100%!important;
+  height:28px!important;
+  min-height:28px!important;
+  max-height:28px!important;
+  margin:0!important;
+  padding:2px 4px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  pointer-events:auto!important;
+  border-radius:999px!important;
+  scrollbar-width:none!important;
+}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard #trailerVNControls::-webkit-scrollbar{display:none!important;}
+
+html body.vn38MobileStack.mobileUI.athHidden:not(.legacyVisualUI) #gameCard,
+html body.vn38MobileStack.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard{
+  grid-template-rows:minmax(0,1fr) 0!important;
+}
+html body.vn38MobileStack.mobileUI.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap,
+html body.vn38MobileStack.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI) #gameCard > .dialogueWrap{
+  display:none!important;
+}
+
+/* Le mode QTE garde son plein écran. */
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV250{
+  display:block!important;
+}
+html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV250 > .stage{
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:var(--vn38ViewportH,100svh)!important;
+}
+</style>
+
+<script id="v0258-mobile-stack-stage-above-dialogue-script">
+(function installV0258MobileStackStageAboveDialogue(){
+  try{
+    if(window.__sylviniaV0258MobileStackStageAboveDialogue) return;
+    window.__sylviniaV0258MobileStackStageAboveDialogue = true;
+
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+    function byId(id){ return document.getElementById(id); }
+    function vh(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.height) || window.innerHeight || document.documentElement.clientHeight || 1)); }
+    function vw(){ return Math.max(1, Math.floor((window.visualViewport && window.visualViewport.width) || window.innerWidth || document.documentElement.clientWidth || 1)); }
+    function gameVisible(){ var game=byId('game'); return !!(game && !game.classList.contains('hidden')); }
+    function active(){
+      return gameVisible()
+        && document.body.classList.contains('mobileUI')
+        && !document.body.classList.contains('legacyVisualUI');
+    }
+
+    function ensureStructure(card, wrap, dialogue){
+      var stats = byId('stats');
+      var toolbar = byId('trailerVNControls');
+      if(stats && (stats.parentElement !== wrap || stats.nextElementSibling !== dialogue)){
+        wrap.insertBefore(stats, dialogue);
+      }
+      if(toolbar && toolbar.parentElement !== wrap){
+        wrap.appendChild(toolbar);
+      }
+    }
+
+    function sync(){
+      var isActive = active();
+      document.body.classList.toggle('vn38MobileStack', isActive);
+      var card = byId('gameCard');
+      if(!card) return;
+      card.classList.toggle('vn38MobileStackCard', isActive);
+      if(!isActive) return;
+
+      var h = vh(), w = vw();
+      document.documentElement.style.setProperty('--vn38ViewportH', h + 'px');
+
+      var wrap = card.querySelector('.dialogueWrap');
+      var dialogue = card.querySelector('.dialogue');
+      var stage = byId('stage') || card.querySelector('.stage');
+      var bg = byId('bg') || (stage && stage.querySelector('.bg'));
+      var text = byId('text');
+      var choices = byId('choices');
+      var stats = byId('stats');
+      var toolbar = byId('trailerVNControls');
+      if(!wrap || !dialogue || !stage) return;
+      ensureStructure(card, wrap, dialogue);
+
+      var buttons = choices ? Array.prototype.slice.call(choices.querySelectorAll('button.choiceBtn')) : [];
+      var n = buttons.length;
+      var textLen = text ? (text.textContent || '').trim().length : 0;
+      var landscape = w > h;
+
+      var desiredPanel = Math.round(h * (landscape ? (n >= 3 ? 0.48 : 0.42) : (n >= 4 ? 0.47 : n >= 2 ? 0.43 : 0.38)));
+      if(textLen > 520) desiredPanel += landscape ? 10 : 18;
+      if(textLen > 860) desiredPanel += landscape ? 10 : 16;
+
+      var minPanel = landscape ? (n >= 3 ? 190 : 168) : (n >= 4 ? 292 : n >= 3 ? 268 : n >= 2 ? 238 : 206);
+      var maxPanel = Math.round(h * (landscape ? 0.56 : 0.52));
+      var minScene = landscape ? clamp(Math.round(h * 0.36), 150, 260) : clamp(Math.round(h * 0.40), 245, 390);
+      var panelH = clamp(desiredPanel, Math.min(minPanel, maxPanel), maxPanel);
+      if(h - panelH < minScene) panelH = Math.max(148, h - minScene);
+
+      var statsH = stats ? clamp(Math.ceil(stats.getBoundingClientRect().height || 25), 20, 30) : 25;
+      var toolbarH = toolbar ? clamp(Math.ceil(toolbar.getBoundingClientRect().height || 28), 24, 32) : 28;
+      var dialogueH = Math.max(78, panelH - statsH - toolbarH - 8);
+      var speakerH = landscape ? 25 : 31;
+      var inside = Math.max(42, dialogueH - speakerH - 16);
+      var textMin = textLen ? (n ? (landscape ? 40 : 52) : 68) : 0;
+      var textH = textLen ? clamp(Math.round(inside * (n ? (landscape ? 0.34 : 0.38) : 0.82)), textMin, landscape ? 94 : 134) : 0;
+      var choicesH = n ? Math.max(34, inside - textH - 6) : 0;
+      if(n === 1) choicesH = Math.min(44, choicesH);
+      if(n >= 4) choicesH = Math.max(landscape ? 96 : 144, choicesH);
+
+      var sceneH = Math.max(1, h - panelH);
+      var spriteBase = clamp(Math.round(82 + (sceneH / h) * 18), 84, 96);
+
+      card.style.setProperty('--vn38PanelH', Math.floor(panelH) + 'px');
+      card.style.setProperty('--vn38TextMin', Math.floor(textMin) + 'px');
+      card.style.setProperty('--vn38TextH', Math.max(0, Math.floor(textH)) + 'px');
+      card.style.setProperty('--vn38ChoicesH', Math.max(0, Math.floor(choicesH)) + 'px');
+      card.style.setProperty('--vn38SpriteMax', spriteBase + '%');
+      card.style.setProperty('--vn38TextFont', (landscape ? '13px' : '14px'));
+
+      stage.style.display = 'block';
+      stage.style.visibility = 'visible';
+      if(bg){
+        bg.style.display = 'block';
+        bg.style.visibility = 'visible';
+        if(bg.style.opacity === '0') bg.style.opacity = '1';
+      }
+
+      var sceneId = (window.state && window.state.scene) ? String(window.state.scene) : '';
+      if(choices && choices.__vn38LastScene !== sceneId){ choices.scrollTop = 0; choices.__vn38LastScene = sceneId; }
+      if(text && text.__vn38LastScene !== sceneId){ text.scrollTop = 0; text.__vn38LastScene = sceneId; }
+    }
+
+    function schedule(){
+      requestAnimationFrame(sync);
+      setTimeout(sync, 30);
+      setTimeout(sync, 120);
+      setTimeout(sync, 330);
+    }
+
+    function patchRender(){
+      try{
+        if(typeof window.render === 'function' && !window.render.__sylviniaV0258MobileStack){
+          var previousRender = window.render;
+          window.render = render = function(){
+            var result = previousRender.apply(this, arguments);
+            schedule();
+            return result;
+          };
+          window.render.__sylviniaV0258MobileStack = true;
+        }
+      }catch(e){}
+    }
+
+    function patchMobileToggle(){
+      try{
+        if(typeof window.setMobileUI === 'function' && !window.setMobileUI.__sylviniaV0258MobileStack){
+          var previousSetMobileUI = window.setMobileUI;
+          window.setMobileUI = setMobileUI = function(enabled){
+            var result = previousSetMobileUI.apply(this, arguments);
+            schedule();
+            return result;
+          };
+          window.setMobileUI.__sylviniaV0258MobileStack = true;
+        }
+        if(typeof window.applyMobileUI === 'function' && !window.applyMobileUI.__sylviniaV0258MobileStack){
+          var previousApplyMobileUI = window.applyMobileUI;
+          window.applyMobileUI = applyMobileUI = function(){
+            var result = previousApplyMobileUI.apply(this, arguments);
+            schedule();
+            return result;
+          };
+          window.applyMobileUI.__sylviniaV0258MobileStack = true;
+        }
+      }catch(e){}
+    }
+
+    function install(){ patchRender(); patchMobileToggle(); schedule(); }
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, {once:true});
+    else install();
+
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize', schedule, {passive:true});
+      window.visualViewport.addEventListener('scroll', schedule, {passive:true});
+    }
+    ['resize','orientationchange','fullscreenchange','webkitfullscreenchange','visibilitychange'].forEach(function(evt){
+      window.addEventListener(evt, schedule, {passive:true});
+      document.addEventListener(evt, schedule, {passive:true});
+    });
+    document.addEventListener('click', function(){ setTimeout(schedule,0); }, true);
+    document.addEventListener('transitionend', schedule, true);
+    setInterval(sync, 900);
+
+    console.info('[Sylvinia v0.258] Mode mobile : scène fixée au-dessus de la case de texte, portrait et paysage.');
+  }catch(err){
+    console.error('[Sylvinia v0.258] Échec correction mode mobile', err);
+  }
+})();
+</script>
+
