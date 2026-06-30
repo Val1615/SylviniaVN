@@ -38509,6 +38509,1282 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
 })();
 </script>
 
+
+
+
+
+<style id="x12i-post-choice-qte-style">
+.x12iStageQteLayer{position:absolute;inset:0;z-index:12;pointer-events:none}
+.x12iStageQteBtn{position:absolute;min-width:94px;min-height:94px;border-radius:999px;border:2px solid rgba(255,244,194,.92);background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.96),rgba(255,219,126,.88) 26%,rgba(190,86,36,.95) 64%,rgba(48,8,4,.98));color:#fff8d6;font-weight:950;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.75);box-shadow:0 0 0 8px rgba(255,201,92,.14),0 0 46px rgba(255,196,79,.62),0 18px 35px rgba(0,0,0,.50);transform:translate(-50%,-50%) scale(.88);animation:c7QteSpawn .18s ease forwards,c7QtePulse .45s ease-in-out infinite;pointer-events:auto;cursor:pointer}
+.x12iStageQteBtn::after{content:"";position:absolute;inset:-16px;border-radius:inherit;border:1px solid rgba(255,232,172,.58);animation:c7QteRing .62s ease-in-out infinite}
+.x12iStageQteBtn:hover{filter:brightness(1.18);transform:translate(-50%,-50%) scale(1.04)}
+.x12iQteAttackText{position:absolute;left:50%;top:7%;transform:translateX(-50%);z-index:13;pointer-events:none;max-width:min(800px,92%);padding:10px 16px;border:1px solid rgba(255,223,148,.38);border-radius:18px;background:linear-gradient(180deg,rgba(58,17,7,.76),rgba(13,4,2,.48));box-shadow:0 12px 32px rgba(0,0,0,.38);color:#fff3ca;font-weight:880;letter-spacing:.04em;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.9);animation:c7QteTextShake .14s linear infinite}
+.x12iQteCountdown{display:inline-block;margin-left:.35em;color:#fff;font-weight:950}
+body.mobileUI .x12iStageQteBtn{min-width:78px;min-height:78px;font-size:12px}
+</style>
+
+<style id="x12i-multibutton-qte-style-v249">
+#gameCard.x12iQteMode .topbar,
+#gameCard.x12iQteMode .dialogueWrap{
+  display:none!important;
+}
+#gameCard.x12iQteMode{
+  background:#000!important;
+}
+#gameCard.x12iQteMode .stage{
+  width:100%!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.x12iStageQteLayer{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}
+.x12iStageQteLayer::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.48),rgba(0,0,0,.03) 32%,rgba(0,0,0,.22));pointer-events:none}
+.x12iQteAttackText{top:3%!important;max-width:min(980px,94%)!important;padding:12px 18px!important;border-color:rgba(255,226,156,.46)!important;background:linear-gradient(180deg,rgba(22,8,3,.84),rgba(7,2,1,.58))!important;box-shadow:0 12px 42px rgba(0,0,0,.52)!important;font-size:clamp(13px,1.65vw,22px)!important;line-height:1.35!important;animation:none!important}
+.x12iQteCountdown{display:inline-flex!important;align-items:center;justify-content:center;min-width:4.2em;margin-left:.55em;padding:.15em .45em;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,236,188,.34);color:#fff!important}
+.x12iStageQteBtn{min-width:78px!important;min-height:78px!important;font-size:clamp(10px,1.1vw,15px)!important;letter-spacing:.08em!important;z-index:31!important}
+.x12iStageQteBtn.decoy{border-color:rgba(190,220,255,.60)!important;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.72),rgba(113,150,185,.74) 28%,rgba(43,48,72,.90) 68%,rgba(8,10,20,.96))!important;box-shadow:0 0 0 7px rgba(120,170,255,.10),0 0 32px rgba(120,170,255,.26),0 16px 30px rgba(0,0,0,.48)!important;color:#eaf6ff!important;opacity:.86}
+.x12iStageQteBtn.correct{border-color:rgba(255,244,194,.96)!important}
+.x12iStageQteBtn:active{transform:translate(-50%,-50%) scale(.94)!important}
+body.mobileUI .x12iStageQteBtn{min-width:64px!important;min-height:64px!important;font-size:10px!important}
+body.mobileUI .x12iQteAttackText{font-size:13px!important;top:2%!important}
+</style>
+
+<script>
+/* v0.246 · XII_I : duel Stabilité / Perception intégré après la mise en tension */
+(function installSylviniaX12IDuelIntegrated(){
+  try{
+    if(window.__sylviniaX12IDuelIntegratedV246) return;
+    window.__sylviniaX12IDuelIntegratedV246 = true;
+    if(typeof S === 'undefined'){
+      console.warn('[Sylvinia x12i duel] Scènes introuvables.');
+      return;
+    }
+
+    const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
+    const bgExists=key=>typeof A!=='undefined' && A && A[key];
+    const pickBg=key=>bgExists(key)?key:(bgExists('c10_palais')?'c10_palais':key);
+    const safeMusic=key=>key || 'music_c10_horreur';
+
+    const X12I_DUEL_STEPS=[
+      {
+        act:'Acte I',
+        phase:'Combat armé · Manche 1',
+        title:'Le premier choc',
+        bg:'bg_x12i_trone_ruines_feu',
+        music:'music_x12i_duel_farae',
+        text:`Tu sens la poignée de la dague dans ta main avant même de comprendre que tu l’as levée.
+
+Tia avance.
+
+Son armure vient de se refermer sur elle comme une prière devenue métal. Elle ne crie pas. Elle ne tremble pas. Elle te regarde comme on regarde une erreur qu’il faudrait enfin corriger.
+
+La première frappe tombe.
+
+L’impact remonte dans ton bras. La douleur appartient à Amanea, mais c’est ton souffle qui se coupe.`,
+        choices:[
+          {label:'Laisser la rage guider la riposte',effects:{stabilite:-1,perception:-2},reaction:`Tu ne réfléchis pas.
+
+La dague répond avant toi, avec une violence presque reconnaissante. Pendant un instant, la rage te tient droite mieux que tes jambes.
+
+Tia recule d’un demi-pas.
+
+Ce recul devient une victoire. Puis une faim.`},
+          {label:'Observer son épaule avant de bouger',effects:{stabilite:-1,perception:2},reaction:`Tu retiens le coup une fraction de seconde.
+
+Cela fait mal. La rage hurle qu’il faut frapper, maintenant, sans mesure. Mais dans ce retard minuscule, tu vois l’épaule de Tia se fermer.
+
+Elle ne combat pas seulement pour vaincre. Elle se prépare déjà à porter une décision.`},
+          {label:'Parer sans chercher à dominer',effects:{stabilite:0,perception:0},reaction:`Tu encaisses.
+
+Le métal chante contre le métal. La salle entière semble retenir son souffle avec toi. Tu ne comprends pas encore ce que tu vois, mais tu ne tombes pas dedans.
+
+Pas entièrement.`},
+          {label:'Forcer son recul par la puissance',effects:{stabilite:0,perception:-1},reaction:`Tu pousses.
+
+Tia glisse sur le marbre fissuré. Son regard se durcit.
+
+Tu sens Amanea sourire à travers toi. Pas parce qu’elle est heureuse. Parce qu’elle vient d’obtenir la preuve que la lumière peut céder.`}
+        ]
+      },
+      {
+        act:'Acte I',
+        phase:'Combat armé · Manche 2',
+        title:'La bannière en flammes',
+        bg:'bg_x12i_trone_ruines_feu',
+        music:'music_x12i_duel_farae',
+        text:`La bannière des Farae brûle derrière vous.
+
+Les visages brodés de votre lignée se tordent dans la chaleur. Le tien n’y est déjà plus qu’une offense. Celui de Tia demeure au centre, intact, presque sacré.
+
+Elle attaque en silence.
+
+Chaque mouvement porte l’éducation que vous avez reçue toutes les deux. Les mêmes maîtres. Les mêmes salles. Les mêmes gestes.
+
+Mais chez elle, tout est droit.
+
+Chez toi, tout mord.`,
+        choices:[
+          {label:'Viser le symbole sur son armure',effects:{stabilite:-1,perception:-1},reaction:`Ta lame cherche l’emblème impérial.
+
+Tu ne veux pas seulement blesser Tia. Tu veux rayer ce qu’elle représente. Le coup glisse sur l’or, arrache une étincelle, et la chaleur te remonte jusque dans la gorge.`},
+          {label:'Lire la peur sous sa discipline',effects:{stabilite:-1,perception:2},reaction:`Tu regardes plus haut que la lame.
+
+Sa garde est parfaite, mais son souffle ne l’est pas. Il y a un battement de retard, une peur minuscule cachée sous l’Empire.
+
+Amanea ne voulait pas la voir. Iriana, elle, la voit.`},
+          {label:'Reculer pour reprendre ton souffle',effects:{stabilite:1,perception:0},reaction:`Tu cèdes du terrain.
+
+La rage proteste, mais ton corps retrouve un peu d’air. La mémoire grince autour de toi, mécontente de cette prudence.
+
+Tu tiens encore debout.`},
+          {label:'Attaquer avant qu’elle ne parle',effects:{stabilite:0,perception:-2},reaction:`Tu refuses ses mots avant qu’ils existent.
+
+La dague fend l’air. Tia pare, mais son visage se ferme. Tu sens la scène se resserrer autour d’une vérité simple et noire : aucune parole ne réparera cette salle.`}
+        ]
+      },
+      {
+        act:'Acte I',
+        phase:'Combat armé · Manche 3',
+        title:'La faille',
+        bg:'bg_x12i_trone_ruines_feu',
+        music:'music_x12i_duel_farae',
+        text:`Tia change d’appui.
+
+Tu le sens avant de le voir. Amanea connaît ce mouvement. Vous l’avez appris ensemble, autrefois, sous les galeries blanches d’Al’Gratal.
+
+La mémoire tremble.
+
+Pendant une seconde, la salle du trône et la cour d’entraînement se superposent. Deux sœurs plus jeunes. Deux lames de bois. Un rire.
+
+Puis le feu reprend tout.`,
+        choices:[
+          {label:'Exploiter le vieux réflexe commun',effects:{stabilite:0,perception:-1},reaction:`Tu frappes à l’endroit exact où son corps aurait répondu autrefois.
+
+Tia pare trop tard. Le choc la force à plier le genou. La satisfaction qui monte ne ressemble pas à une victoire.
+
+Elle ressemble à une revanche qui attendait depuis l’enfance.`},
+          {label:'Te souvenir que ce geste vous appartenait à deux',effects:{stabilite:-1,perception:2},reaction:`Tu la vois plus jeune.
+
+La vision t’arrache presque au présent. Tia n’a pas toujours été ce mur de lumière. Elle a été une sœur qui apprenait près de toi.
+
+Cette clarté coûte cher, mais elle ouvre une fissure dans la haine.`},
+          {label:'Bloquer le souvenir pour rester dans le combat',effects:{stabilite:1,perception:-1},reaction:`Tu fermes la porte.
+
+Pas de cour. Pas de rire. Pas de sœur.
+
+Il ne reste que l’adversaire. C’est plus simple. Plus stable. Plus faux aussi, peut-être.`},
+          {label:'Accepter la douleur du souvenir sans ralentir',effects:{stabilite:-1,perception:0},reaction:`Le souvenir traverse ton bras au même moment que l’impact.
+
+Tu ne le repousses pas. Tu ne t’y abandonnes pas non plus. Pendant une seconde, tu avances avec deux douleurs dans le même corps.`}
+        ]
+      },
+      {
+        act:'Acte II',
+        phase:'Combat magique · Manche 1',
+        title:'Sacré contre ténèbres',
+        bg:'bg_x12i_trone_apres_magie',
+        music:'music_x12i_duel_farae',
+        text:`La magie éclate.
+
+La lumière de Tia n’illumine pas la salle. Elle l’ordonne. Elle impose au marbre, au feu, à ton sang même une règle qui n’admet pas de discussion.
+
+Autour de toi, les ténèbres répondent.
+
+Elles montent comme une mer noire, vivantes, furieuses, presque aimantes. Elles ne te demandent pas de les contrôler. Elles te demandent de les laisser sortir.`,
+        choices:[
+          {label:'Ouvrir grand les ténèbres',effects:{stabilite:-1,perception:-2},reaction:`Tu cèdes le passage.
+
+L’ombre jaillit avec une joie carnassière. Elle enveloppe les colonnes, mord la lumière, avale les dorures.
+
+Pour Amanea, c’est respirer enfin. Pour Iriana, c’est manquer d’air.`},
+          {label:'Chercher la forme exacte de la lumière',effects:{stabilite:-1,perception:2},reaction:`Tu regardes la lumière au lieu de la fuir.
+
+Elle n’est pas pure. Pas entièrement. Elle porte une peur, une obligation, un ordre ancien que Tia a laissé entrer jusqu’à l’os.
+
+Comprendre cela ne la rend pas douce. Cela la rend plus terrible.`},
+          {label:'Canaliser l’ombre au lieu de la libérer',effects:{stabilite:1,perception:1},reaction:`Tu retiens.
+
+L’ombre griffe l’intérieur de tes côtes, mais elle prend forme au lieu de déborder. La mémoire proteste. Amanea voulait la tempête.
+
+Iriana gagne un battement de lucidité.`},
+          {label:'Frapper la lumière avec tout ce que tu es',effects:{stabilite:-2,perception:-1},reaction:`Tu jettes tout contre elle.
+
+La salle devient noire et or. L’impact te traverse comme si tes os servaient de cloche. Tu restes debout, mais quelque chose dans ton ancrage s’effrite.`}
+        ]
+      },
+      {
+        act:'Acte II',
+        phase:'Combat magique · Manche 2',
+        title:'La salle se fracture',
+        bg:'bg_x12i_trone_apres_magie',
+        music:'music_x12i_duel_farae',
+        text:`Les vitraux hurlent sans voix.
+
+Des arcs de lumière courent sur les murs. Des veines d’ombre remontent entre les dalles. La salle du trône ne sait plus à quelle souveraine obéir.
+
+Tia lève la main.
+
+Le geste est beau, précis, presque sacré.
+
+Tu le hais avant même qu’il te touche.`,
+        choices:[
+          {label:'Transformer la haine en bouclier',effects:{stabilite:1,perception:-1},reaction:`Tu dresses la haine devant toi.
+
+Elle protège mieux que la peur. Le rayon sacré s’écrase contre elle et se disperse en éclats brûlants.
+
+Tu survis, mais la colère gagne une forme plus solide.`},
+          {label:'Chercher ce qu’elle vise vraiment',effects:{stabilite:-1,perception:2},reaction:`Tu ne regardes pas la lumière.
+
+Tu regardes sa trajectoire.
+
+Tia ne vise pas ton cœur. Pas encore. Elle cherche à te contenir. À te prouver que tu peux encore être enfermée.
+
+La clarté fait plus mal que le coup.`},
+          {label:'Plonger sous le rayon',effects:{stabilite:0,perception:0},reaction:`Tu tombes et roules dans les éclats de verre.
+
+Le marbre coupe ta peau. La lumière passe au-dessus de toi, assez proche pour laisser une brûlure blanche dans ta vision.
+
+Tu ne gagnes rien. Tu continues.`},
+          {label:'Répondre par une vague d’ombre pure',effects:{stabilite:-1,perception:-2},reaction:`L’ombre part comme une marée.
+
+Elle ne cherche pas à parer. Elle cherche à recouvrir. Le trône, les marches, les restes de la bannière, Tia elle-même.
+
+Pendant une seconde, tout appartient à ta nuit.`}
+        ]
+      },
+      {
+        act:'Acte II',
+        phase:'Combat magique · Manche 3',
+        title:'Le verdict de lumière',
+        bg:'bg_x12i_trone_apres_magie',
+        music:'music_x12i_duel_farae',
+        text:`Tia prononce ton nom.
+
+Pas comme une sœur.
+
+Comme une sentence.
+
+Amanea.
+
+La lumière répond à cette voix avec une fidélité qui te donne envie de rire. Les dieux, l’Empire, la lignée, les morts, tous semblent se ranger derrière elle.
+
+Et toi, tu es encore là.`,
+        choices:[
+          {label:'Lui jeter son propre verdict au visage',effects:{stabilite:0,perception:-2},reaction:`Tu ris.
+
+Le son est cassé, mais il tient debout. Tu lui rends son jugement avec les dents, avec les cendres, avec tout ce qu’elle voulait effacer.
+
+Tia ne détourne pas les yeux. Pas cette fois.`},
+          {label:'Entendre le tremblement sous ton nom',effects:{stabilite:-1,perception:2},reaction:`Tu entends ce qui se cache sous le mot.
+
+Elle dit Amanea comme une condamnation, mais la fin tremble. Pas assez pour sauver quoi que ce soit. Assez pour prouver que le verdict lui coûte encore quelque chose.`},
+          {label:'T’accrocher à ton propre souffle',effects:{stabilite:1,perception:0},reaction:`Tu respires.
+
+Ce n’est pas ton souffle. Pas vraiment. Mais Iriana parvient à y glisser un fil à elle.
+
+Le souvenir ne se referme pas entièrement.`},
+          {label:'Refuser le nom qu’elle utilise contre toi',effects:{stabilite:-1,perception:-1},reaction:`Amanea.
+
+Tu refuses de lui laisser ce nom. Pas dans cette bouche. Pas dans cette salle.
+
+La rage monte plus haut, mais elle te tient encore droite.`}
+        ]
+      },
+      {
+        act:'Acte III',
+        phase:'Combat à mains nues · Manche 1',
+        title:'Les armes tombent',
+        bg:'bg_x12i_trone_corps_a_corps',
+        music:'music_x12i_duel_farae',
+        text:`La dague quitte ta main.
+
+L’épée de Tia glisse sur le marbre.
+
+Pendant une seconde, le combat perd ses symboles. Plus de trône. Plus d’Empire. Plus d’ombre sacrée ou de lumière impériale.
+
+Seulement deux corps.
+
+Deux sœurs.
+
+Deux violences qui savent exactement où appuyer.`,
+        choices:[
+          {label:'Te jeter sur elle sans défense',effects:{stabilite:-1,perception:-2},reaction:`Tu bondis.
+
+Il n’y a plus de stratégie, seulement l’urgence de l’atteindre. Tes poings frappent l’armure, les côtes, la gorge, tout ce qui cède ou refuse de céder.
+
+La rage devient un langage simple.`},
+          {label:'Noter qu’elle ouvre les mains avant de frapper',effects:{stabilite:-1,perception:2},reaction:`Elle ouvre les mains.
+
+Le geste ressemble à une demande de paix. Puis son genou cherche ton ventre.
+
+Tu comprends quelque chose de laid : même ses gestes doux ont appris à mentir quand l’Empire l’exige.`},
+          {label:'Garder une distance courte',effects:{stabilite:1,perception:0},reaction:`Tu restes près, mais pas assez pour te perdre dans son souffle.
+
+Tia tente de te saisir. Tu te dégages. Le combat devient une suite de heurts, de prises, de respirations volées.`},
+          {label:'Frapper là où l’armure est fissurée',effects:{stabilite:0,perception:-1},reaction:`Tu cherches les fentes.
+
+Le métal gémit. Tia aussi, presque. Ce son te traverse avec une satisfaction si vive qu’Iriana sent son propre cœur se rétracter.`}
+        ]
+      },
+      {
+        act:'Acte III',
+        phase:'Combat à mains nues · Manche 2',
+        title:'Le feu trop proche',
+        bg:'bg_x12i_trone_corps_a_corps',
+        music:'music_x12i_duel_farae',
+        text:`Tia t’entraîne vers les flammes.
+
+La chaleur lèche ta peau. La bannière des Farae s’effondre par morceaux, et chaque chute répand des braises sur le marbre.
+
+Elle veut te faire reculer.
+
+Ou te rappeler ce que l’Empire fait aux erreurs qu’il ne sait pas nommer autrement.`,
+        choices:[
+          {label:'La tirer avec toi vers le feu',effects:{stabilite:-1,perception:-2},reaction:`Si tu brûles, elle brûlera aussi.
+
+Tu l’agrippes et l’entraînes vers la chaleur. Tia résiste, son visage enfin fendu par une peur brute.
+
+Cette peur nourrit Amanea comme une victoire noire.`},
+          {label:'Voir qu’elle hésite au bord des flammes',effects:{stabilite:-1,perception:2},reaction:`Elle aurait pu pousser plus fort.
+
+Elle ne le fait pas.
+
+L’hésitation dure moins qu’un battement. Mais tu la vois. Elle ne te sauve pas. Elle ne l’absout pas. Elle prouve seulement que sa cruauté n’est pas simple.`},
+          {label:'Utiliser la chaleur pour reprendre appui',effects:{stabilite:1,perception:0},reaction:`La douleur te rend presque nette.
+
+Tu prends appui dans la brûlure, détournes le poids de Tia et arraches un souffle au brasier.
+
+Encore un instant. Rien qu’un instant.`},
+          {label:'Lui cracher ta haine au visage',effects:{stabilite:0,perception:-1},reaction:`Les mots sortent avant la pensée.
+
+Ils sont laids, exacts, terriblement vivants. Tia les reçoit sans répondre. Son silence te donne envie de frapper plus fort.`}
+        ]
+      },
+      {
+        act:'Acte III',
+        phase:'Combat à mains nues · Manche 3',
+        title:'Au-dessus d’elle',
+        bg:'bg_x12i_trone_corps_a_corps',
+        music:'music_x12i_duel_farae',
+        text:`Tu la fais tomber.
+
+Le choc du corps impérial contre le marbre traverse la salle comme un glas. Tu es déjà sur elle. Tes mains trouvent son cou.
+
+Tia se débat.
+
+Sous tes doigts, la grande lumière de Sylvinia n’est plus un mythe. Elle est une gorge qui cherche de l’air.
+
+Et une part d’Amanea veut que cette vérité dure.`,
+        choices:[
+          {label:'Serrer jusqu’à ce qu’elle cesse de lutter',effects:{stabilite:-2,perception:-3},reaction:`Tu serres.
+
+Le monde se réduit à la pulsation sous tes doigts. Une sœur. Une ennemie. Une dette.
+
+Iriana sent la mémoire se refermer comme une mâchoire. Tu n’es presque plus témoin. Tu es presque elle.`},
+          {label:'Chercher la sœur sous l’impératrice',effects:{stabilite:-1,perception:3},reaction:`Tu regardes son visage.
+
+La haine veut un monstre. La clarté montre autre chose : une femme terrifiée par ce qu’elle doit faire, et déjà trop loin pour revenir.
+
+Ce n’est pas une excuse. C’est une lame plus froide.`},
+          {label:'Tenir sans achever le geste',effects:{stabilite:1,perception:1},reaction:`Tes doigts restent autour de son cou, mais ils ne ferment pas tout.
+
+La mémoire tremble, furieuse de cette suspension. Tia reprend un souffle minuscule.
+
+Ce souffle va tout changer.`},
+          {label:'Lui demander pourquoi elle t’a abandonnée',effects:{stabilite:-1,perception:0},reaction:`La question sort dans un râle.
+
+Elle n’appartient pas seulement à Amanea. Iriana la sent remonter jusqu’à elle, jusqu’à toutes les filles laissées avec une version officielle du silence.
+
+Tia ne répond pas encore.`}
+        ]
+      },
+      {
+        act:'Acte IV',
+        phase:'La lumière qui brûle · Manche 1',
+        title:'Les pouces sur ton visage',
+        bg:'bg_x12i_lumiere_brule',
+        music:'music_x12i_duel_farae',
+        text:`Ses mains trouvent ton visage.
+
+Le geste est presque tendre.
+
+C’est cela qui le rend monstrueux.
+
+Ses pouces se placent sous tes yeux. Tu sens la chaleur avant de comprendre. La lumière de Tia ne monte pas comme une attaque. Elle monte comme une décision déjà prise.`,
+        choices:[
+          {label:'Comprendre trop tard qu’elle a choisi',effects:{stabilite:-1,perception:2},reaction:`La clarté arrive comme une morsure blanche.
+
+Elle ne cherche plus à te convaincre. Elle ne cherche plus à te sauver. Elle a choisi ce qu’elle peut vivre avec elle-même.
+
+Et ce choix passe par tes yeux.`},
+          {label:'Haïr ses mains plus que la lumière',effects:{stabilite:-1,perception:-2},reaction:`Ce ne sont pas les dieux qui te brûlent.
+
+Ce sont ses mains.
+
+Ses mains de sœur. Ses mains d’enfant. Ses mains d’impératrice. Tu les hais toutes à la fois.`},
+          {label:'T’accrocher au nom d’Iriana',effects:{stabilite:1,perception:1},reaction:`Iriana.
+
+Tu forces ce nom à rester quelque part, derrière la douleur, derrière Amanea, derrière la lumière qui monte.
+
+Le souvenir gronde. Mais il ne t’avale pas.`},
+          {label:'Refuser de détourner le regard',effects:{stabilite:-2,perception:1},reaction:`Tu regardes jusqu’au bout.
+
+C’est presque impossible. C’est peut-être stupide. Mais dans la seconde avant le blanc, tu vois le visage de Tia se briser.
+
+Puis il n’y a plus que la lumière.`}
+        ]
+      },
+      {
+        act:'Acte IV',
+        phase:'La lumière qui brûle · Manche 2',
+        title:'Blanc',
+        bg:'bg_x12i_lumiere_brule',
+        music:'music_x12i_duel_farae',
+        text:`La lumière entre.
+
+Elle n’éclaire rien.
+
+Elle arrache.
+
+Tu n’as plus d’yeux, plus de salle, plus de trône, plus de sœur. Seulement une douleur blanche qui remplace le monde et dévore tous les contours.
+
+Quelque part, Tia parle.
+
+Tu ne sais plus si elle demande pardon ou si elle se donne le droit de survivre à ce qu’elle vient de faire.`,
+        choices:[
+          {label:'Laisser la douleur devenir haine',effects:{stabilite:-1,perception:-2},reaction:`La douleur trouve une forme.
+
+Elle devient haine parce que la haine a des bords, parce qu’elle donne un nom à ce qui brûle, parce qu’elle empêche le vide de tout prendre.
+
+Amanea s’y accroche. Iriana sent le prix.`},
+          {label:'Écouter ce que sa voix cache',effects:{stabilite:-1,perception:2},reaction:`Tu écoutes au lieu de hurler.
+
+Sous les mots de Tia, il y a une ruine. Pas une innocence. Pas une justification. Une ruine.
+
+Elle vient de gagner quelque chose qui ressemble déjà à une perte éternelle.`},
+          {label:'Chercher un point fixe dans le noir',effects:{stabilite:1,perception:0},reaction:`Tu cherches un bord.
+
+Un son. Une dalle froide. Le goût du sang. N’importe quoi qui ne soit pas la lumière.
+
+Tu trouves le sol. C’est peu. C’est assez.`},
+          {label:'Te débattre contre la mémoire elle-même',effects:{stabilite:-2,perception:0},reaction:`Tu refuses.
+
+Pas seulement Tia. Pas seulement la douleur. Tu refuses la scène entière. Mais le souvenir a déjà ses griffes dans ton corps.
+
+Il te garde.`}
+        ]
+      },
+      {
+        act:'Acte IV',
+        phase:'La lumière qui brûle · Manche 3',
+        title:'Ce qu’il reste',
+        bg:'bg_x12i_lumiere_brule',
+        music:'music_x12i_duel_farae',
+        text:`Tout tremble.
+
+La salle du trône n’est plus qu’une rumeur de feu autour de toi. Tia est là, quelque part, trop proche et déjà hors d’atteinte.
+
+Tu ne peux pas changer ce qui vient d’arriver.
+
+Tu peux seulement décider comment Iriana traverse ce qu’Amanea n’a jamais cessé de porter.`,
+        choices:[
+          {label:'Garder la blessure d’Amanea entière',effects:{stabilite:-1,perception:-2},reaction:`Tu acceptes la brûlure comme elle vient.
+
+Sans filtre. Sans distance. Sans pardon imposé.
+
+La douleur d’Amanea entre en toi avec une vérité noire : Tia l’a abandonnée au moment où elle avait encore besoin d’une sœur.`},
+          {label:'Garder assez de distance pour voir Tia',effects:{stabilite:-1,perception:2},reaction:`Tu refuses que la haine décide seule.
+
+Elle dit vrai, mais elle ne dit pas tout. Derrière la violence de Tia, tu vois aussi la mécanique froide de l’Empire, la peur du sacré, la décision d’une femme qui a préféré régner plutôt que sauver.`},
+          {label:'Tenir au centre du souvenir',effects:{stabilite:1,perception:0},reaction:`Tu ne choisis ni l’excuse, ni l’aveuglement.
+
+Tu restes au bord de la plaie, les mains crispées sur ce qui te reste d’Iriana.
+
+Le souvenir ne se referme pas. Pas encore.`},
+          {label:'Abandonner toute distance et tomber avec elle',effects:{stabilite:-2,perception:-1},reaction:`Tu tombes.
+
+Pas du balcon. Pas encore.
+
+Tu tombes dans Amanea, dans son noir, dans sa certitude que le monde n’a répondu à sa douleur que par davantage de violence.`}
+        ]
+      }
+    ];
+
+    window.X12I_DUEL_STEPS = X12I_DUEL_STEPS;
+
+    function x12iEnsureDuel(){
+      if(!state.x12iDuel) state.x12iDuel={};
+      const d=state.x12iDuel;
+      if(typeof d.step!=='number'||Number.isNaN(d.step)) d.step=0;
+      if(typeof d.stabilite!=='number'||Number.isNaN(d.stabilite)) d.stabilite=5;
+      if(typeof d.perception!=='number'||Number.isNaN(d.perception)) d.perception=0;
+      d.stabilite=clamp(d.stabilite,0,5);
+      d.perception=clamp(d.perception,-6,6);
+      if(typeof d.waiting!=='boolean') d.waiting=false;
+      if(!Array.isArray(d.history)) d.history=[];
+      if(!('last' in d)) d.last=null;
+      if(!('after' in d)) d.after=null;
+      if(!('qte' in d)) d.qte=null;
+      if(!('pendingChoice' in d)) d.pendingChoice=null;
+      return d;
+    }
+
+    function x12iPerceptionName(v){
+      if(v<=-4) return 'Emprise forte';
+      if(v<0) return 'Emprise';
+      if(v>=4) return 'Clarté forte';
+      if(v>0) return 'Clarté';
+      return 'Équilibre';
+    }
+
+    function x12iPerceptionDisplay(v){
+      if(v<0) return `${x12iPerceptionName(v)} ${v}`;
+      if(v>0) return `${x12iPerceptionName(v)} +${v}`;
+      return 'Équilibre';
+    }
+
+    function x12iTimerDuration(){
+      const d=x12iEnsureDuel();
+      const step=X12I_DUEL_STEPS[d.step]||X12I_DUEL_STEPS[0];
+      if(step.act==='Acte IV') return 24000;
+      if(step.act==='Acte III') return 26000;
+      if(step.act==='Acte II') return 30000;
+      return 34000;
+    }
+
+    function clearX12ITimer(){
+      if(window.__x12iDuelTimerInterval){
+        clearInterval(window.__x12iDuelTimerInterval);
+        window.__x12iDuelTimerInterval=null;
+      }
+    }
+
+    function clearX12IQteLayer(){
+      const old=document.getElementById('x12iStageQteLayer');
+      if(old) old.remove();
+    }
+
+    function clearX12IQteTimer(){
+      if(window.__x12iQteTimerInterval){
+        clearInterval(window.__x12iQteTimerInterval);
+        window.__x12iQteTimerInterval=null;
+      }
+      clearX12IQteLayer();
+    }
+
+    function x12iQteDuration(stepIndex){
+      const maxIndex=Math.max(1,X12I_DUEL_STEPS.length-1);
+      const idx=clamp(typeof stepIndex==='number'?stepIndex:0,0,maxIndex);
+      return Math.round(5000 - (idx/maxIndex)*4000);
+    }
+
+    function x12iQteButtonCount(stepIndex){
+      const maxIndex=Math.max(1,X12I_DUEL_STEPS.length-1);
+      const idx=clamp(typeof stepIndex==='number'?stepIndex:0,0,maxIndex);
+      return clamp(Math.round(3 + (idx/maxIndex)*4),3,7);
+    }
+
+    function x12iQtePosition(seed,count=1){
+      // Zone sûre élargie : presque toute la moitié haute et le centre de la scène.
+      // On évite seulement l'extrême bas pour ne pas retomber derrière la boîte de texte si un navigateur tarde à masquer l'interface.
+      const rings=[
+        {x:50,y:19},{x:34,y:23},{x:66,y:23},{x:22,y:31},{x:78,y:31},
+        {x:42,y:35},{x:58,y:35},{x:28,y:44},{x:72,y:44},{x:50,y:48},
+        {x:18,y:55},{x:82,y:55},{x:36,y:60},{x:64,y:60},{x:50,y:64},
+        {x:24,y:22},{x:76,y:22},{x:31,y:51},{x:69,y:51},{x:44,y:26},{x:56,y:26}
+      ];
+      const start=Math.abs(seed||0)%rings.length;
+      return rings[(start+count)%rings.length];
+    }
+
+    function x12iQteWord(step,choice){
+      const act=String((step&&step.act)||'');
+      if(act==='Acte IV') return 'VOIR';
+      if(act==='Acte III') return 'TENIR';
+      if(act==='Acte II') return 'SCELLER';
+      if(String((choice&&choice.label)||'').toLowerCase().includes('parer')) return 'PARER';
+      return 'FRAPPER';
+    }
+
+    function x12iQteWords(correct,count,seed=0){
+      const pool=['FRAPPER','PARER','SCELLER','TENIR','VOIR','BRISER','ANCRER','ESQUIVER','RESPIRER','FIXER','COUPER','RÉSISTER'];
+      const words=[correct];
+      const offset=Math.abs(seed||0)%pool.length;
+      for(let i=0;i<pool.length && words.length<count;i++){
+        const w=pool[(i+offset)%pool.length];
+        if(w!==correct && !words.includes(w)) words.push(w);
+      }
+      const correctIndex=Math.abs((seed||0)*3 + count)%count;
+      const out=[];
+      for(let i=0;i<count;i++) out[i]=words[i]||pool[(i+offset)%pool.length];
+      const currentCorrectIndex=out.indexOf(correct);
+      if(currentCorrectIndex>=0){ const tmp=out[correctIndex]; out[correctIndex]=correct; out[currentCorrectIndex]=tmp; }
+      else out[correctIndex]=correct;
+      return out.map((word,i)=>({word,correct:i===correctIndex}));
+    }
+
+    function x12iRenderQteLayer(d,step){
+      clearX12IQteLayer();
+      const stage=document.getElementById('stage');
+      if(!stage||!d||!d.qte) return;
+      const layer=document.createElement('div');
+      layer.id='x12iStageQteLayer';
+      layer.className='x12iStageQteLayer';
+      const count=d.qte.count||x12iQteButtonCount(d.step||0);
+      const attack=document.createElement('div');
+      attack.className='x12iQteAttackText';
+      attack.innerHTML=`<span>Le souvenir frappe. Clique <b>${d.qte.word}</b> parmi ${count} éclats.</span> <span id="x12iQteCountdown" class="x12iQteCountdown">${(d.qte.duration/1000).toFixed(1)}s</span>`;
+      layer.appendChild(attack);
+      const seed=((d.step||0)*7)+(d.history||[]).length+(d.qte.positionSeed||0);
+      const words=x12iQteWords(d.qte.word,count,seed);
+      words.forEach((item,i)=>{
+        const pos=x12iQtePosition(seed+i*2,i);
+        const btn=document.createElement('button');
+        btn.className='x12iStageQteBtn '+(item.correct?'correct':'decoy');
+        btn.type='button';
+        btn.style.left=pos.x+'%';
+        btn.style.top=pos.y+'%';
+        btn.textContent=item.word;
+        btn.onclick=(ev)=>{ev.stopPropagation(); x12iResolveQte(!!item.correct);};
+        layer.appendChild(btn);
+      });
+      stage.appendChild(layer);
+    }
+
+    function updateX12IQteTimerDisplay(){
+      const d=state.x12iDuel;
+      if(!d||!d.qte) return;
+      const total=d.qte.duration||x12iQteDuration(d.step||0);
+      const remainingMs=Math.max(0,(d.qte.deadline||0)-Date.now());
+      const remainingSeconds=(remainingMs/1000).toFixed(1);
+      const el=document.getElementById('x12iDuelTimer');
+      const fill=document.getElementById('x12iDuelTimerFill');
+      const layerCount=document.getElementById('x12iQteCountdown');
+      if(el) el.textContent=remainingSeconds+'s';
+      if(layerCount) layerCount.textContent=remainingSeconds+'s';
+      if(fill) fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%';
+      if(remainingMs<=0){
+        x12iResolveQte(false);
+      }
+    }
+
+    function startX12IQteTimer(){
+      const d=x12iEnsureDuel();
+      if(!d.qte) return;
+      clearX12ITimer();
+      if(!d.qte.deadline){
+        d.qte.duration=d.qte.duration||x12iQteDuration(d.step||0);
+        d.qte.deadline=Date.now()+d.qte.duration;
+      }
+      if(window.__x12iQteTimerInterval){
+        clearInterval(window.__x12iQteTimerInterval);
+        window.__x12iQteTimerInterval=null;
+      }
+      updateX12IQteTimerDisplay();
+      window.__x12iQteTimerInterval=setInterval(updateX12IQteTimerDisplay,60);
+    }
+
+    function updateX12ITimerDisplay(){
+      const d=state.x12iDuel;
+      if(!d||d.waiting) return;
+      const el=document.getElementById('x12iDuelTimer');
+      const fill=document.getElementById('x12iDuelTimerFill');
+      if(!el||!fill) return;
+      const total=d.deadlineDuration||x12iTimerDuration();
+      const remainingMs=Math.max(0,(d.deadline||0)-Date.now());
+      const remaining=Math.ceil(remainingMs/1000);
+      el.textContent=`${remaining}s`;
+      fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%';
+      if(remainingMs<=0){
+        clearX12ITimer();
+        x12iResolveChoice(null,true);
+      }
+    }
+
+    function startX12ITimer(){
+      const d=x12iEnsureDuel();
+      if(d.waiting) return;
+      d.deadlineDuration=x12iTimerDuration();
+      d.deadline=Date.now()+d.deadlineDuration;
+      clearX12ITimer();
+      updateX12ITimerDisplay();
+      window.__x12iDuelTimerInterval=setInterval(updateX12ITimerDisplay,120);
+    }
+
+    function x12iApplyEffects(effects={}){
+      const d=x12iEnsureDuel();
+      if(typeof effects.stabilite==='number') d.stabilite=clamp(d.stabilite+effects.stabilite,0,5);
+      if(typeof effects.perception==='number') d.perception=clamp(d.perception+effects.perception,-6,6);
+      return d;
+    }
+
+    function x12iResolveQte(ok){
+      const d=x12iEnsureDuel();
+      if(!d.qte) return;
+      const qte=d.qte;
+      const choice=qte.choice||d.pendingChoice;
+      clearX12IQteTimer();
+      d.qte=null;
+      d.pendingChoice=null;
+
+      x12iApplyEffects(choice&&choice.effects?choice.effects:{});
+      let reaction=(choice&&choice.reaction)?choice.reaction:'Le souvenir tremble autour de toi.';
+      if(ok){
+        reaction += `
+
+Tu saisis l’éclat au vol. Le choc passe quand même, mais il ne t’arrache pas entièrement à toi-même.`;
+      }else{
+        d.stabilite=clamp((d.stabilite||5)-1,0,5);
+        d.perception=clamp((d.perception||0)-1,-6,6);
+        reaction = `L’éclat t’échappe.
+
+Le souvenir frappe plus vite que ta pensée. La douleur gagne un cran, et la rage d’Amanea se referme autour de la perception d’Iriana.
+
+` + reaction;
+      }
+
+      d.last={bad:!ok || !!(choice&&choice.effects&&choice.effects.stabilite<0),reaction};
+      d.history.push({step:d.step+1,label:(choice&&choice.label?choice.label:'Réflexe')+(ok?' · élément saisi':' · élément manqué'),stabilite:d.stabilite,perception:d.perception,qteMs:qte.duration||0});
+      d.step++;
+      d.waiting=true;
+      if(d.stabilite<=0) d.after='gameover';
+      else if(d.step>=X12I_DUEL_STEPS.length) d.after='finish';
+      else d.after='next';
+      if(typeof save==='function') save();
+      renderX12IDuel(S[state.scene]);
+    }
+
+    function x12iResolveChoice(choice,timeout=false){
+      const d=x12iEnsureDuel();
+      clearX12ITimer();
+      const step=X12I_DUEL_STEPS[d.step]||X12I_DUEL_STEPS[X12I_DUEL_STEPS.length-1];
+      if(timeout){
+        clearX12IQteTimer();
+        d.stabilite=clamp((d.stabilite||5)-1,0,5);
+        d.perception=clamp((d.perception||0)-1,-6,6);
+        d.last={bad:true,reaction:`Le souvenir n’attend pas.
+
+Tu restes trop longtemps immobile, et la scène choisit pour toi. La douleur avance, la rage gagne un pas, et Iriana sent son ancrage se fissurer.`};
+        d.history.push({step:d.step+1,label:'Temps écoulé',stabilite:d.stabilite,perception:d.perception});
+        d.step++;
+        d.waiting=true;
+        if(d.stabilite<=0) d.after='gameover';
+        else if(d.step>=X12I_DUEL_STEPS.length) d.after='finish';
+        else d.after='next';
+        if(typeof save==='function') save();
+        renderX12IDuel(S[state.scene]);
+        return;
+      }
+
+      const duration=x12iQteDuration(d.step||0);
+      d.pendingChoice=choice;
+      d.qte={choice,word:x12iQteWord(step,choice),duration,deadline:Date.now()+duration,positionSeed:(d.history||[]).length,count:x12iQteButtonCount(d.step||0)};
+      d.waiting=false;
+      d.last=null;
+      d.after=null;
+      if(typeof save==='function') save();
+      renderX12IDuel(S[state.scene]);
+    }
+
+    function x12iFinishDuel(){
+      const d=x12iEnsureDuel();
+      clearX12ITimer();
+      clearX12IQteTimer();
+      state.flags={...(state.flags||{}),x12iDuelCompleted:true,x12iFinalPerception:d.perception,x12iFinalStabilite:d.stabilite};
+      document.body.classList.remove('x12iQteMode');
+      const gc=document.getElementById('gameCard');
+      if(gc) gc.classList.remove('x12iQteMode');
+      if(d.perception<=-3){ go('c12i_duel_after_emprise'); return; }
+      if(d.perception>=3){ go('c12i_duel_after_clarte'); return; }
+      go('c12i_duel_after_equilibre');
+    }
+
+    function enterX12IDuel(scene){
+      clearX12ITimer();
+      clearX12IQteTimer();
+      state.x12iDuel={step:0,stabilite:5,perception:0,waiting:false,last:null,after:null,qte:null,pendingChoice:null,history:[]};
+      const first=X12I_DUEL_STEPS[0];
+      if(typeof setStageBg==='function') setStageBg(pickBg(first.bg),true);
+      const stage=document.getElementById('stage');
+      if(stage) stage.classList.add('combatMode');
+      const chars=document.getElementById('chars');
+      if(chars) chars.innerHTML='';
+      document.getElementById('sceneTitle').textContent=scene.title||'Chapitre XII_I · Le souvenir d’Amanea';
+      document.getElementById('sceneSub').textContent='Mémoire incarnée';
+      document.getElementById('speaker').textContent='Narrateur';
+      document.getElementById('text').textContent='La scène ne s’ouvre pas comme une vision. Elle s’ouvre comme une blessure.\n\nIriana n’est pas devant Amanea.\n\nElle est derrière ses yeux.';
+      document.getElementById('choices').innerHTML='';
+      document.getElementById('stats').innerHTML='';
+      if(typeof playMusic==='function') playMusic(resolveSceneMusic(state.scene, scene.music||first.music||'music_c10_horreur'));
+
+      const overlay=document.getElementById('combatTransition');
+      if(overlay){
+        const mini=overlay.querySelector('.combatMini');
+        if(mini) mini.textContent='Mémoire de combat';
+        overlay.querySelector('.combatTitle').textContent='Combat de sang';
+        overlay.querySelector('.combatSub').textContent='Stabilité 5 · Perception 0';
+        overlay.classList.remove('hidden','active','c7NaiahIntro','c7Intense');
+        void overlay.offsetWidth;
+        overlay.classList.add('active');
+        state.x12iDuelIntroPending=true;
+        clearTimeout(window.__x12iDuelTransitionTimer);
+        window.__x12iDuelTransitionTimer=setTimeout(()=>{
+          overlay.classList.add('hidden');
+          overlay.classList.remove('active');
+          if(mini) mini.textContent='Mode combat';
+          state.x12iDuelIntroPending=false;
+          state.x12iDuelIntroPlayed=true;
+          if(typeof save==='function') save();
+          renderX12IDuel(scene);
+        },1200);
+      }else{
+        state.x12iDuelIntroPlayed=true;
+        renderX12IDuel(scene);
+      }
+    }
+
+    function renderX12IDuel(scene){
+      const d=x12iEnsureDuel();
+      if(d.stabilite<=0){ document.body.classList.remove('x12iQteMode'); const gc=document.getElementById('gameCard'); if(gc) gc.classList.remove('x12iQteMode'); go('c12i_gameover'); return; }
+      const step=X12I_DUEL_STEPS[d.step]||X12I_DUEL_STEPS[X12I_DUEL_STEPS.length-1];
+      document.querySelectorAll('.chapterLabel').forEach(el=>{ el.textContent='Chapitre XII_I · Le souvenir d’Amanea'; });
+      const stage=document.getElementById('stage');
+      if(stage) stage.classList.add('combatMode');
+      const qteActive=!!d.qte;
+      document.body.classList.toggle('x12iQteMode', qteActive);
+      const gameCard=document.getElementById('gameCard');
+      if(gameCard) gameCard.classList.toggle('x12iQteMode', qteActive);
+      if(typeof setStageBg==='function') setStageBg(pickBg(step.bg),true);
+      if(typeof playMusic==='function') playMusic(resolveSceneMusic(state.scene, scene.music||step.music||'music_c10_horreur'));
+      const chars=document.getElementById('chars');
+      if(chars) chars.innerHTML='';
+      document.getElementById('sceneTitle').textContent=scene.title||'Combat de sang';
+      document.getElementById('sceneSub').textContent=d.qte?`Réflexe · ${d.qte.word}`:(d.waiting?'Écho du souvenir':`${step.phase} · ${step.title}`);
+      document.getElementById('speaker').textContent=d.qte?'Instinct':(d.waiting?'Souvenir':'Narrateur');
+
+      const textEl=document.getElementById('text');
+      const choices=document.getElementById('choices');
+      choices.innerHTML='';
+      const status=`
+
+Stabilité : ${'♥'.repeat(d.stabilite)}${'♡'.repeat(Math.max(0,5-d.stabilite))} · Perception : ${x12iPerceptionDisplay(d.perception)}`;
+
+      if(d.qte){
+        clearX12ITimer();
+        const sec=((d.qte.duration||x12iQteDuration(d.step||0))/1000).toFixed(1);
+        textEl.textContent=`Le choix est pris.
+
+Mais le souvenir ne laisse aucun geste tranquille. Quelque chose jaillit dans la salle, un éclat de douleur, de verre et de lumière.
+
+Appuie sur l’élément ${d.qte.word} directement sur l’image avant qu’il disparaisse.
+
+Temps disponible : ${sec} seconde${sec==='1.0'?'':'s'}.`+status;
+        x12iRenderQteLayer(d,step);
+      }
+      else if(d.waiting){
+        clearX12ITimer();
+        clearX12IQteTimer();
+        textEl.textContent=(d.last&&d.last.reaction?d.last.reaction:'Le souvenir retient son souffle.')+status;
+        const b=document.createElement('button');
+        b.className='choiceBtn continueBtn';
+        b.innerHTML='<span>Continuer</span><span class="arrow">›</span>';
+        b.onclick=()=>{
+          d.waiting=false;
+          const after=d.after;
+          d.after=null;
+          d.last=null;
+          if(after==='gameover'){ go('c12i_gameover'); return; }
+          if(after==='finish'){ x12iFinishDuel(); return; }
+          if(typeof save==='function') save();
+          renderX12IDuel(scene);
+        };
+        choices.appendChild(b);
+      }else{
+        clearX12IQteTimer();
+        textEl.textContent=(step.text||'Le souvenir avance.')+status;
+        (step.choices||[]).forEach(ch=>{
+          const b=document.createElement('button');
+          b.className='choiceBtn';
+          let dev='';
+          if(state.devMode && ch.effects){
+            const parts=[];
+            if(ch.effects.stabilite) parts.push(`Stabilité ${ch.effects.stabilite>0?'+':''}${ch.effects.stabilite}`);
+            if(ch.effects.perception) parts.push(`Perception ${ch.effects.perception>0?'+':''}${ch.effects.perception}`);
+            dev=parts.length?`<small>DEV · ${parts.join(' · ')} · QTE ${((x12iQteDuration(d.step||0))/1000).toFixed(1)}s · ${x12iQteButtonCount(d.step||0)} éclats</small>`:'';
+          }
+          b.innerHTML=`<span>${ch.label}${dev}</span><span class="arrow">›</span>`;
+          b.onclick=()=>x12iResolveChoice(ch,false);
+          choices.appendChild(b);
+        });
+      }
+
+      const stats=document.getElementById('stats');
+      const perceptionPct=((d.perception+6)/12)*100;
+      const timerText=d.waiting?'—':(d.qte?(((d.qte.duration||x12iQteDuration(d.step||0))/1000).toFixed(1)+'s'):Math.round(x12iTimerDuration()/1000)+'s');
+      stats.innerHTML=`<div class="combatHud x12iDuelHud">
+        <div class="combatBox"><div class="combatTop"><span>Stabilité</span><span>${d.stabilite}/5</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.stabilite/5)*100)}%"></div></div></div>
+        <div class="combatBox"><div class="combatTop"><span>Perception</span><span>${x12iPerceptionDisplay(d.perception)}</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,Math.max(0,perceptionPct))}%"></div></div></div>
+        <div class="combatBox"><div class="combatTop"><span>${d.qte?'Réflexe':'Temps'}</span><span id="x12iDuelTimer">${timerText}</span></div><div class="combatTrack"><div id="x12iDuelTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div>
+      </div>
+      <div class="combatMeta"><span>${step.act} <b>${Math.min(d.step+1,X12I_DUEL_STEPS.length)}/${X12I_DUEL_STEPS.length}</b></span><span>QTE <b>${d.qte?'sur l’image':'après choix'}</b></span><span>Point de vue <b>Amanea</b></span></div>`;
+
+      if(d.qte) startX12IQteTimer();
+      else if(!d.waiting) startX12ITimer();
+      else updateX12ITimerDisplay();
+      if(typeof updateDevUI==='function') updateDevUI();
+      if(typeof save==='function') save();
+      if(typeof updateProgressUI==='function') updateProgressUI();
+    }
+
+    S.x12i_duel_start={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'Mémoire · Combat de sang',
+      bg:'c10_palais',
+      music:'music_x12i_duel_farae',
+      speaker:'Narrateur',
+      text:'',
+      chars:[],
+      x12iDuel:true,
+      zoom:true
+    };
+
+    S.c12i_gameover={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'Stabilité rompue',
+      bg:'c11i_memory',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:'Iriana cherche son nom.\n\nElle ne le trouve pas.\n\nLa rage d’Amanea se referme autour d’elle, lourde, chaude, absolue. Le souvenir n’est plus une scène. Il devient un tombeau ouvert dans sa propre conscience.\n\nElle tombe dedans.',
+      chars:[['iriana','iriana_sad','center']],
+      choices:[
+        {label:'Recommencer le souvenir',next:'x12i_duel_start',effects:{},note:'La Stabilité revient à 5 et la Perception à 0.'},
+        {label:'Retour au menu',next:'menu',effects:{}}
+      ]
+    };
+
+    S.c12i_duel_after_emprise={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'Après la lumière · Emprise',
+      bg:'bg_x12i_lumiere_brule',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:'La douleur d’Amanea reste entière.\n\nIriana ne ressort pas du combat avec une explication. Elle ressort avec une brûlure. Tia n’a pas seulement vaincu sa sœur. Elle l’a abandonnée au moment précis où il restait encore quelque chose à sauver.\n\nLe souvenir continue.',
+      chars:[],
+      choices:[{label:'Continuer',next:'c11i_055',effects:{},note:'La suite originale du souvenir reprend.'}]
+    };
+
+    S.c12i_duel_after_equilibre={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'Après la lumière · Équilibre',
+      bg:'bg_x12i_lumiere_brule',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:'Iriana tient au bord de la plaie.\n\nElle a senti la haine d’Amanea sans lui appartenir tout à fait. Elle a vu la cruauté de Tia sans la transformer en simple monstre. Rien n’est réparé. Rien n’est pardonné. Mais le souvenir n’a pas réussi à lui voler son propre regard.\n\nLe souvenir continue.',
+      chars:[],
+      choices:[{label:'Continuer',next:'c11i_055',effects:{},note:'La suite originale du souvenir reprend.'}]
+    };
+
+    S.c12i_duel_after_clarte={
+      title:'Chapitre XII_I · Le souvenir d’Amanea',
+      sub:'Après la lumière · Clarté',
+      bg:'bg_x12i_lumiere_brule',
+      music:'music_c10_horreur',
+      speaker:'Narrateur',
+      text:'La clarté ne rend pas Tia innocente.\n\nElle la rend plus terrible.\n\nIriana comprend que l’impératrice n’a pas frappé dans la panique seule. Elle a choisi une version du devoir qui exigeait de sacrifier sa sœur, puis elle a appelé cela sauver ce qui pouvait l’être.\n\nLe souvenir continue.',
+      chars:[],
+      choices:[{label:'Continuer',next:'c11i_055',effects:{},note:'La suite originale du souvenir reprend.'}]
+    };
+
+    // Intégration correcte : on garde toute la mise en tension c12i_000 -> c11i_029 -> c11i_041.
+    // Le mini-combat commence seulement après l’ouverture réelle du combat, et la suite Allenna reprend ensuite à c11i_055.
+    if(S.c12i_000) S.c12i_000.next='c11i_029';
+    if(S.c11i_041) S.c11i_041.next='x12i_duel_start';
+
+    const prevStartChapter12I=window.startChapter12I;
+    if(typeof prevStartChapter12I==='function' && !window.__sylviniaX12IStartWrappedV246){
+      window.__sylviniaX12IStartWrappedV246=true;
+      window.startChapter12I=function(){
+        const result=prevStartChapter12I.apply(this,arguments);
+        if(state){
+          state.x12iDuel=null;
+          if(typeof save==='function') save();
+        }
+        return result;
+      };
+      if(typeof startChapter12I!=='undefined') startChapter12I=window.startChapter12I;
+    }
+
+    const prevLabel=window.getSceneChapterLabel;
+    if(typeof prevLabel==='function' && !window.__sylviniaX12ILabelWrappedV246){
+      window.__sylviniaX12ILabelWrappedV246=true;
+      window.getSceneChapterLabel=function(sceneId=state.scene){
+        const id=String(sceneId||'');
+        if(id.startsWith('x12i_')||id.startsWith('c12i_duel_')||id==='c12i_gameover') return 'Chapitre XII_I · Le souvenir d’Amanea';
+        return prevLabel(sceneId);
+      };
+      if(typeof getSceneChapterLabel!=='undefined') getSceneChapterLabel=window.getSceneChapterLabel;
+    }
+
+    const prevRender=window.render;
+    if(typeof prevRender==='function' && !window.__sylviniaX12IRenderWrappedV246){
+      window.__sylviniaX12IRenderWrappedV246=true;
+      window.render=function(){
+        const scene=S[state.scene];
+        if(scene&&scene.x12iDuel){
+          if(state.x12iDuelIntroPending) return;
+          if(!state.x12iDuelIntroPlayed || !state.x12iDuel) { enterX12IDuel(scene); return; }
+          renderX12IDuel(scene);
+          return;
+        }
+        return prevRender.apply(this,arguments);
+      };
+      if(typeof render!=='undefined') render=window.render;
+    }
+
+    if(typeof A!=='undefined' && A && !A.music_x12i_duel_farae && A.music_c10_horreur) A.music_x12i_duel_farae=A.music_c10_horreur;
+    ['c12i_gameover','c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'].forEach(id=>{ if(S[id] && !bgExists(S[id].bg)) S[id].bg='c10_palais'; });
+
+    if(typeof CODEX_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_BY_SCENE,{
+        x12i_duel_start:['souvenir_amanea_allenna'],
+        c12i_duel_after_emprise:['souvenir_amanea_allenna'],
+        c12i_duel_after_equilibre:['souvenir_amanea_allenna'],
+        c12i_duel_after_clarte:['souvenir_amanea_allenna']
+      });
+    }
+
+    console.info('[Sylvinia] v0.246/v0.249 duel XII_I intégré avec QTE multi-boutons post-choix.');
+  }catch(err){
+    console.error('[Sylvinia] Échec installation duel XII_I intégré',err);
+  }
+})();
+</script>
+
+
+
+<script>
+/* v0.247 · XII_I : intégration du duel au vrai point de bascule c12i_012 */
+(function installSylviniaX12IDuelC12I012V247(){
+  try{
+    if(window.__sylviniaX12IDuelC12I012V247) return;
+    window.__sylviniaX12IDuelC12I012V247 = true;
+    if(typeof S === 'undefined' || !S){
+      console.warn('[Sylvinia v0.247] Scènes introuvables.');
+      return;
+    }
+
+    // Le chapitre XII_I doit garder son entrée propre en c12i_000, puis suivre la chaîne c12i_* créée par v0.217.
+    // Le patch précédent repassait par les anciens ids c11i_* : on remet la chaîne propre.
+    if(S.c12i_000){
+      S.c12i_000.next = 'c12i_001';
+    }
+
+    // Point d’intégration demandé : le duel commence autour de c12i_012.
+    // c12i_012 garde la matérialisation de l’armure et sert de sas narratif, puis lance le mini-moteur.
+    if(S.c12i_012){
+      S.c12i_012.next = 'x12i_duel_start';
+      S.c12i_012.sub = 'Mémoire · Combat de sang';
+      S.c12i_012.music = S.c12i_012.music || 'music_x12i_duel_farae';
+    }
+
+    // La suite originale post-combat reprend sur la partie Allenna, après la séquence de duel pur.
+    // c12i_027 correspond à l’ancien c11i_055 après migration v0.217.
+    ['c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'].forEach(id=>{
+      const sc=S[id];
+      if(sc && Array.isArray(sc.choices) && sc.choices[0]){
+        sc.choices[0].next = 'c12i_027';
+        sc.choices[0].note = 'La suite originale du souvenir reprend après le combat.';
+      }
+    });
+
+    // Sécurité : si un ancien pont c11i_041 traîne encore dans une version non dédoublonnée, on le neutralise.
+    if(S.c11i_041 && S.c11i_041.next === 'x12i_duel_start'){
+      S.c11i_041.next = 'c11i_042';
+    }
+
+    if(typeof CODEX_BY_SCENE !== 'undefined'){
+      const add=(key,vals)=>{
+        const base=Array.isArray(CODEX_BY_SCENE[key])?CODEX_BY_SCENE[key]:[];
+        CODEX_BY_SCENE[key]=Array.from(new Set([...base,...vals]));
+      };
+      add('c12i_012',['duel_tia_amanea','souvenir_amanea_allenna']);
+      add('x12i_duel_start',['duel_tia_amanea','souvenir_amanea_allenna']);
+    }
+
+    if(typeof CODEX_MUSIC_BY_SCENE !== 'undefined'){
+      const base=Array.isArray(CODEX_MUSIC_BY_SCENE.x12i_duel_start)?CODEX_MUSIC_BY_SCENE.x12i_duel_start:[];
+      CODEX_MUSIC_BY_SCENE.x12i_duel_start=Array.from(new Set([...base,'music_x12i_duel_farae']));
+    }
+
+    if(state && state.scene === 'c11i_029') state.scene='c12i_001';
+    if(state && state.scene === 'c11i_041') state.scene='c12i_013';
+    if(typeof save==='function') save();
+    if(typeof updateDevUI==='function') updateDevUI();
+    console.info('[Sylvinia v0.247] Duel XII_I branché après c12i_012, reprise en c12i_027.');
+  }catch(err){
+    console.error('[Sylvinia v0.247] Échec correctif duel c12i_012',err);
+  }
+})();
+</script>
+
+
+<script id="x12i-qte-per-button-restart-fix-v251">
+/* v0.251 · XII_I : chrono par touche QTE + restart propre après game over */
+(function installSylviniaX12IPerButtonRestartV251(){
+  try{
+    if(window.__sylviniaX12IPerButtonRestartV251) return;
+    window.__sylviniaX12IPerButtonRestartV251=true;
+
+    function clearX12IRuntime(){
+      try{ if(window.__x12iQteTimerInterval){ clearInterval(window.__x12iQteTimerInterval); window.__x12iQteTimerInterval=null; } }catch(e){}
+      try{ if(window.__x12iDuelTimerInterval){ clearInterval(window.__x12iDuelTimerInterval); window.__x12iDuelTimerInterval=null; } }catch(e){}
+      try{ if(window.__x12iDuelTransitionTimer){ clearTimeout(window.__x12iDuelTransitionTimer); window.__x12iDuelTransitionTimer=null; } }catch(e){}
+      const layer=document.getElementById('x12iStageQteLayer');
+      if(layer) layer.remove();
+      document.body.classList.remove('x12iQteMode','x12iQteModeV250');
+      const gameCard=document.getElementById('gameCard');
+      if(gameCard) gameCard.classList.remove('x12iQteMode','x12iQteModeV250');
+    }
+
+    window.restartX12IDuel=function restartX12IDuel(){
+      clearX12IRuntime();
+      if(typeof state!=='undefined' && state){
+        state.x12iDuel=null;
+        state.x12iDuelIntroPending=false;
+        state.x12iDuelIntroPlayed=false;
+        state.scene='x12i_duel_start';
+        if(Array.isArray(state.history)) state.history=state.history.filter(id=>id!=='c12i_gameover').slice(-120);
+      }
+      if(typeof setScreen==='function') setScreen('game');
+      if(typeof save==='function') save();
+      if(typeof render==='function') render();
+    };
+
+    if(typeof S!=='undefined' && S && S.c12i_gameover && Array.isArray(S.c12i_gameover.choices)){
+      S.c12i_gameover.choices=S.c12i_gameover.choices.map(ch=>{
+        if(ch && /Recommencer le souvenir/i.test(String(ch.label||''))){
+          return {...ch,next:'restart_x12i_duel',note:'Réinitialise entièrement le mini-duel : Stabilité 5, Perception 0, QTE nettoyé.'};
+        }
+        return ch;
+      });
+    }
+
+    const previousGo=window.go;
+    if(typeof previousGo==='function' && !window.__sylviniaX12IGoRestartWrappedV251){
+      window.__sylviniaX12IGoRestartWrappedV251=true;
+      window.go=function(next,opts={}){
+        if(next==='restart_x12i_duel' || (next==='x12i_duel_start' && typeof state!=='undefined' && state && state.scene==='c12i_gameover')){
+          window.restartX12IDuel();
+          return;
+        }
+        return previousGo.apply(this,arguments);
+      };
+      try{ if(typeof go!=='undefined') go=window.go; }catch(e){}
+    }
+
+    console.info('[Sylvinia v0.251] QTE XII_I : chrono par touche et recommencer le souvenir opérationnel.');
+  }catch(err){ console.error('[Sylvinia v0.251] Échec correctif QTE/restart XII_I',err); }
+})();
+</script>
+
+<script id="x12i-reactions-impact-v254">
+/* v0.254 · XII_I : réponses de choix plus longues et conséquences plus lisibles */
+(function installSylviniaX12IReactionImpactV254(){
+  try{
+    if(window.__sylviniaX12IReactionImpactV254) return;
+    window.__sylviniaX12IReactionImpactV254=true;
+
+    function patch(){
+      const steps=Array.isArray(window.X12I_DUEL_STEPS)?window.X12I_DUEL_STEPS:null;
+      if(!steps || !steps.length) return false;
+
+      const phaseBeats=[
+        `Le premier choc ne disparaît pas. Il reste dans ton poignet, dans tes dents, dans cette partie d’Iriana qui comprend soudain que la mémoire a un poids physique. Le décor ne raconte plus seulement le passé : il l’enfonce dans la chair.`,
+        `La bannière brûlée répand des fils noirs dans l’air. Chaque fragment qui tombe ressemble à un ancêtre qui détourne les yeux. Le choix que tu viens de faire n’arrête pas le combat, il change seulement la forme de la culpabilité dans la pièce.`,
+        `La cour d’entraînement revient une demi-seconde, puis se déchire. Le rire ancien des deux sœurs se noie dans le feu. Iriana sent que la scène ne montre pas seulement une haine née ce jour-là : elle montre une tendresse retournée contre elle-même.`,
+        `La magie répond comme une bête blessée. La lumière veut ordonner. L’ombre veut déborder. Entre les deux, ton corps devient la frontière, et Iriana comprend que chaque décision prise dans ce souvenir ajoute une fissure à son propre ancrage.`,
+        `Les vitraux continuent de vibrer, même quand aucun éclat ne tombe. Le palais semble hésiter entre sanctuaire et tombeau. Ton choix laisse une trace visible dans l’air : une veine sombre, une poussière d’or, une odeur de pierre chaude.`,
+        `Le nom Amanea reste suspendu au-dessus du marbre. Il n’est plus un prénom. Il devient une clef, une condamnation, une blessure que Tia prononce avec la voix de l’Empire. Iriana sent combien un mot peut tenir lieu de chaîne.`,
+        `Quand les armes tombent, la salle paraît soudain plus proche. Les respirations deviennent énormes. Les coups ne résonnent plus comme un duel royal, mais comme une dispute de sang que personne n’aurait dû transformer en histoire officielle.`,
+        `La chaleur du brasier plie les contours. La peau, l’armure et la pierre sentent le métal trop chaud. Ton choix fait bouger le centre de la scène : soit vers la brûlure d’Amanea, soit vers le regard que Tia tente encore de cacher.`,
+        `Le corps de Tia sous toi n’a plus rien d’un symbole. Il tremble, lutte, cherche de l’air. Cette vérité est insupportable parce qu’elle est simple : même l’impératrice peut étouffer. Même une sœur peut devenir un poids sous tes mains.`,
+        `Les mains de Tia sur ton visage abolissent la distance. La scène devient minuscule : deux pouces, deux yeux, un souffle qui s’arrête. Iriana sent que le pire n’est pas seulement la douleur à venir, mais la douceur presque ancienne du geste.`,
+        `Dans le blanc, les sons arrivent avec du retard. Une pierre tombe. Quelqu’un respire trop fort. Peut-être toi. Peut-être elle. Le choix ne sauve rien, mais il décide quelle vérité restera debout dans la cendre.`,
+        `Il ne reste presque plus d’image. Seulement des sensations qui cherchent un nom : le froid du marbre, le goût du sang, la lumière derrière des paupières qui ne protègent plus rien. Iriana tient encore, ou croit tenir, au bord d’une mémoire qui veut la garder.`
+      ];
+
+      function dialogueFor(step, choice, si){
+        const act=String((step&&step.act)||'');
+        const label=String((choice&&choice.label)||'').toLowerCase();
+        const p=(choice&&choice.effects&&typeof choice.effects.perception==='number')?choice.effects.perception:0;
+        if(act==='Acte IV'){
+          if(p<0) return `Tia murmure quelque chose. Peut-être ton nom. Peut-être une prière. La rage d’Amanea refuse d’y entendre autre chose qu’une insulte de plus.\n\n« Ne me touche plus », voudrais-tu cracher. Mais la lumière est déjà dans ta bouche.`;
+          if(p>0) return `Dans le tremblement de Tia, Iriana attrape une phrase qui n’arrive jamais entière.\n\n« Je… »\n\nLe reste se perd dans la lumière. Ce début suffit à faire plus mal qu’une excuse complète.`;
+          return `Aucun mot ne tient vraiment. Tia respire contre ton visage, et ce souffle suffit à rappeler que ce n’est pas une légende qui te détruit. C’est quelqu’un qui t’a connue avant la couronne.`;
+        }
+        if(act==='Acte III'){
+          if(label.includes('pourquoi') || p===0) return `Tia entrouvre les lèvres.\n\n« Je n’ai pas… »\n\nElle s’interrompt avant le mensonge ou avant l’aveu. Tu ne sais pas lequel, et cette hésitation devient une autre blessure.`;
+          if(p<0) return `Tia grogne ton nom avec une peur mal cachée.\n\n« Amanea, arrête. »\n\nLe mot arrête arrive trop tard. Il aurait fallu le dire avant la cellule, avant les chaînes, avant que la salle ne se mette à brûler.`;
+          return `Sous l’effort, Tia n’a plus la voix d’une souveraine.\n\n« Je ne voulais pas que ça devienne ça. »\n\nIriana sent la phrase heurter la mémoire d’Amanea. Elle ne pardonne rien. Elle ajoute seulement une couche de tragédie au coup suivant.`;
+        }
+        if(act==='Acte II'){
+          if(p<0) return `La lumière de Tia se durcit.\n\n« Tu ne me laisses pas le choix. »\n\nEt la colère répond en toi, plus vite que la pensée : elle a toujours eu le choix. C’est peut-être cela qui brûle le plus.`;
+          if(p>0) return `Tia prononce une formule basse, presque une supplication cachée sous un ordre. Iriana distingue les deux voix en elle : l’impératrice qui condamne, la sœur qui tente encore de ne pas regarder ce qu’elle condamne.`;
+          return `La magie crépite entre vous comme une langue que vous parlez toutes les deux, mais avec des prières différentes. Aucun mot ne sort. Les sorts se chargent de dire ce que les sœurs n’osent plus articuler.`;
+        }
+        // Acte I
+        if(p<0) return `Tia recule à peine, mais son regard change.\n\n« Tu veux vraiment faire couler notre sang ici ? »\n\nLa réponse monte dans ta gorge sans demander la permission : c’est toi qui as commencé à me traiter comme une étrangère.`;
+        if(p>0) return `Tia garde le silence, mais son visage trahit une seconde de reconnaissance. Elle aussi se souvient des entraînements, des corridors blancs, des heures où ton nom n’était pas encore une menace. Iriana voit cette seconde. Amanea voudrait l’écraser.`;
+        return `Les lames se séparent. Le silence entre vous n’est pas vide : il contient tous les mots que deux sœurs impériales ont appris à ne jamais dire devant les murs.`;
+      }
+
+      function axisFor(choice){
+        const e=(choice&&choice.effects)||{};
+        const p=typeof e.perception==='number'?e.perception:0;
+        if(p<=-2) return `La Perception tire vers l’Emprise. Les contours de Tia se simplifient, presque volontairement : une ennemie, une faute, une cible. Iriana sent le danger de cette netteté. Elle comprend Amanea plus profondément, mais au prix d’une vision qui commence à perdre ses nuances.`;
+        if(p<0) return `L’Emprise gagne un peu de terrain. Pas assez pour engloutir Iriana, mais assez pour colorer le souvenir. Les dorures paraissent plus sales, la lumière plus arrogante, et chaque geste de Tia semble porter une accusation.`;
+        if(p>=2) return `La Clarté ouvre un angle douloureux. Le souvenir ne devient pas plus doux, seulement plus précis. Iriana voit ce que la rage d’Amanea aurait préféré brûler : une hésitation, une peur, une décision qui s’habille en devoir pour ne pas s’appeler abandon.`;
+        if(p>0) return `La Clarté résiste en silence. Une ligne fine, presque ridicule face à l’incendie, mais suffisante pour empêcher Iriana de confondre totalement la douleur d’Amanea avec sa propre volonté.`;
+        return `La Perception reste au centre, dangereusement suspendue. Iriana ne gagne ni distance, ni abandon. Elle traverse le choix comme on marche sur une dalle fendue, consciente que le prochain pas peut faire basculer toute la salle.`;
+      }
+
+      function stabilityFor(choice){
+        const e=(choice&&choice.effects)||{};
+        const s=typeof e.stabilite==='number'?e.stabilite:0;
+        if(s<=-2) return `La Stabilité s’arrache par plaques. Derrière les yeux d’Amanea, Iriana vacille si fort qu’elle oublie presque la chambre, le coffret, le fil qui l’a conduite ici. Pendant un battement, le souvenir a presque tout l’écran pour lui.`;
+        if(s<0) return `La Stabilité se fissure. Pas avec un grand bruit, plutôt avec ce petit craquement intérieur qui annonce qu’une partie d’Iriana vient de céder du terrain à la mémoire.`;
+        if(s>0) return `La Stabilité reprend un souffle. Iriana accroche quelque chose d’elle-même, un nom, une sensation, une certitude fragile. Ce n’est pas une victoire, mais c’est un clou planté dans la tempête.`;
+        return `La Stabilité ne bouge presque pas, et c’est déjà une forme de violence. Le choix ne brise rien d’un coup, mais il laisse Iriana avec toute la scène sur les épaules, intacte et brûlante.`;
+      }
+
+      function consequence(step, choice, si){
+        return [phaseBeats[si]||phaseBeats[phaseBeats.length-1], dialogueFor(step,choice,si), axisFor(choice), stabilityFor(choice)].join('\n\n');
+      }
+
+      steps.forEach((step,si)=>{
+        if(!step || !Array.isArray(step.choices)) return;
+        step.choices.forEach((choice,ci)=>{
+          if(!choice || choice.__x12iImpactV254) return;
+          const base=String(choice.reaction||'Le souvenir répond à ton choix.').trim();
+          choice.reaction=base+'\n\n'+consequence(step,choice,si);
+          choice.__x12iImpactV254=true;
+          choice.impactVersion='v254';
+        });
+      });
+      return true;
+    }
+
+    if(!patch()){
+      window.addEventListener('load', patch, {once:true});
+      setTimeout(patch, 250);
+      setTimeout(patch, 1000);
+    }
+    console.info('[Sylvinia v0.254] Réponses XII_I enrichies : dialogue, conséquences Stabilité/Perception, descriptions plus longues.');
+  }catch(err){
+    console.error('[Sylvinia v0.254] Échec enrichissement réponses XII_I', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
@@ -40928,5 +42204,237 @@ html body.vn37MobilePortrait.mobileUI.trailer16x9.athHidden:not(.legacyVisualUI)
   document.addEventListener('transitionend', schedule, true);
   setInterval(sync, 850);
   setTimeout(install, 240);
+})();
+</script>
+
+
+<style id="x12i-qte-sequence-style-v250">
+/* v0.250 · XII_I : QTE séquentiel façon Chapitre VII, interface masquée pendant la rafale */
+#gameCard.x12iQteModeV250 .topbar,
+#gameCard.x12iQteModeV250 .dialogueWrap{
+  display:none!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+#gameCard.x12iQteModeV250{
+  min-height:100vh!important;
+  border-radius:0!important;
+  background:#000!important;
+}
+#gameCard.x12iQteModeV250 .stage{
+  width:100%!important;
+  max-width:100vw!important;
+  min-height:100vh!important;
+  height:100vh!important;
+  aspect-ratio:auto!important;
+}
+.x12iStageQteLayer.v250{position:absolute;inset:0;z-index:80;pointer-events:none;overflow:hidden}
+.x12iStageQteLayer.v250::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,210,90,.08),transparent 30%),linear-gradient(180deg,rgba(0,0,0,.58),rgba(0,0,0,.04) 34%,rgba(0,0,0,.28));pointer-events:none}
+.x12iStageQteLayer.v250 .x12iQteAttackText{position:absolute!important;top:3%!important;left:50%!important;transform:translateX(-50%)!important;z-index:82!important;max-width:min(1050px,94%)!important;padding:12px 18px!important;border:1px solid rgba(255,226,156,.52)!important;border-radius:18px!important;background:linear-gradient(180deg,rgba(22,8,3,.88),rgba(7,2,1,.62))!important;box-shadow:0 12px 42px rgba(0,0,0,.58)!important;color:#fff3ca!important;font-size:clamp(13px,1.65vw,22px)!important;line-height:1.35!important;font-weight:900!important;text-align:center!important;text-shadow:0 2px 10px rgba(0,0,0,.9)!important;animation:none!important;pointer-events:none!important}
+.x12iStageQteLayer.v250 .x12iQteCountdown{display:inline-flex!important;align-items:center;justify-content:center;min-width:4.2em;margin-left:.55em;padding:.15em .45em;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,236,188,.38);color:#fff!important;font-weight:950!important}
+.x12iStageQteLayer.v250 .x12iQteProgress{display:inline-flex!important;margin-right:.55em;padding:.15em .55em;border-radius:999px;background:rgba(167,240,255,.10);border:1px solid rgba(167,240,255,.26);color:#dff8ff!important;font-weight:950!important}
+.x12iStageQteLayer.v250 .x12iStageQteBtn{position:absolute!important;min-width:92px!important;min-height:92px!important;border-radius:999px!important;border:2px solid rgba(255,244,194,.96)!important;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.98),rgba(255,219,126,.90) 26%,rgba(190,86,36,.97) 64%,rgba(48,8,4,.99))!important;color:#fff8d6!important;font-weight:950!important;letter-spacing:.10em!important;text-transform:uppercase!important;text-shadow:0 2px 8px rgba(0,0,0,.75)!important;box-shadow:0 0 0 8px rgba(255,201,92,.14),0 0 46px rgba(255,196,79,.62),0 18px 35px rgba(0,0,0,.54)!important;transform:translate(-50%,-50%) scale(.90)!important;animation:c7QteSpawn .18s ease forwards,c7QtePulse .45s ease-in-out infinite!important;pointer-events:auto!important;cursor:pointer!important;z-index:83!important;font-size:clamp(12px,1.15vw,16px)!important}
+.x12iStageQteLayer.v250 .x12iStageQteBtn::after{content:"";position:absolute;inset:-16px;border-radius:inherit;border:1px solid rgba(255,232,172,.58);animation:c7QteRing .62s ease-in-out infinite;pointer-events:none}
+.x12iStageQteLayer.v250 .x12iStageQteBtn:hover{filter:brightness(1.18)!important;transform:translate(-50%,-50%) scale(1.05)!important}
+body.mobileUI #gameCard.x12iQteModeV250 .stage{min-height:100svh!important;height:100svh!important}
+body.mobileUI .x12iStageQteLayer.v250 .x12iStageQteBtn{min-width:70px!important;min-height:70px!important;font-size:10px!important}
+body.mobileUI .x12iStageQteLayer.v250 .x12iQteAttackText{font-size:13px!important;top:2%!important}
+</style>
+
+<style id="x12i-qte-safe-zone-style-v252">
+/* v0.252 · XII_I : boutons QTE recentrés en zone haute sûre + sécurité anti-boîte de texte */
+#gameCard.x12iQteModeV250 .dialogue,
+#gameCard.x12iQteModeV250 .choices,
+#gameCard.x12iQteModeV250 .stats,
+body.x12iQteModeV250 .dialogueWrap{
+  display:none!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.x12iStageQteLayer.v250 .x12iStageQteBtn{
+  z-index:9999!important;
+}
+</style>
+
+<script id="x12i-qte-sequence-script-v250">
+/* v0.250 · XII_I : QTE séquentiel post-choix, calqué sur la logique Chapitre VII */
+(function installSylviniaX12IQteSequenceV250(){
+  try{
+    if(window.__sylviniaX12IQteSequenceV250) return;
+    window.__sylviniaX12IQteSequenceV250=true;
+    if(typeof S==='undefined' || typeof state==='undefined') return;
+
+    const clampV=(n,min,max)=>Math.max(min,Math.min(max,n));
+    const getSteps=()=>Array.isArray(window.X12I_DUEL_STEPS)?window.X12I_DUEL_STEPS:[];
+    const pickBgV250=(key)=>{ try{ return (typeof A!=='undefined' && A && A[key]) ? key : 'c10_palais'; }catch(e){ return 'c10_palais'; } };
+    const clearLayer=()=>{ const old=document.getElementById('x12iStageQteLayer'); if(old) old.remove(); };
+    const clearQteTimer=()=>{ if(window.__x12iQteTimerInterval){ clearInterval(window.__x12iQteTimerInterval); window.__x12iQteTimerInterval=null; } clearLayer(); };
+    const clearChoiceTimer=()=>{ if(window.__x12iDuelTimerInterval){ clearInterval(window.__x12iDuelTimerInterval); window.__x12iDuelTimerInterval=null; } };
+    const setQteMode=(on)=>{ document.body.classList.toggle('x12iQteMode',!!on); document.body.classList.toggle('x12iQteModeV250',!!on); const gc=document.getElementById('gameCard'); if(gc){ gc.classList.toggle('x12iQteMode',!!on); gc.classList.toggle('x12iQteModeV250',!!on); } };
+    function ensure(){
+      if(!state.x12iDuel) state.x12iDuel={};
+      const d=state.x12iDuel;
+      if(typeof d.step!=='number'||Number.isNaN(d.step)) d.step=0;
+      if(typeof d.stabilite!=='number'||Number.isNaN(d.stabilite)) d.stabilite=5;
+      if(typeof d.perception!=='number'||Number.isNaN(d.perception)) d.perception=0;
+      d.stabilite=clampV(d.stabilite,0,5);
+      d.perception=clampV(d.perception,-6,6);
+      if(typeof d.waiting!=='boolean') d.waiting=false;
+      if(!Array.isArray(d.history)) d.history=[];
+      if(!('last' in d)) d.last=null;
+      if(!('after' in d)) d.after=null;
+      if(!('qte' in d)) d.qte=null;
+      if(!('pendingChoice' in d)) d.pendingChoice=null;
+      d.engineVersion='v250';
+      return d;
+    }
+    function perceptionName(v){ if(v<=-4) return 'Emprise forte'; if(v<0) return 'Emprise'; if(v>=4) return 'Clarté forte'; if(v>0) return 'Clarté'; return 'Équilibre'; }
+    function perceptionDisplay(v){ if(v<0) return `${perceptionName(v)} ${v}`; if(v>0) return `${perceptionName(v)} +${v}`; return 'Équilibre'; }
+    function choiceTimerDuration(){ const d=ensure(); const step=getSteps()[d.step]||{}; if(step.act==='Acte IV') return 24000; if(step.act==='Acte III') return 26000; if(step.act==='Acte II') return 30000; return 34000; }
+    function qteButtonCount(stepIndex){ const steps=getSteps(); const maxIndex=Math.max(1,steps.length-1); const idx=clampV(typeof stepIndex==='number'?stepIndex:0,0,maxIndex); return clampV(Math.round(3+(idx/maxIndex)*4),3,7); }
+    function qteButtonDuration(qte){
+      // Durée PAR bouton, pas pour toute la séquence.
+      // La difficulté progresse selon la manche du duel : 5.0s au début, 1.0s à la fin.
+      const steps=getSteps();
+      const maxIndex=Math.max(1,steps.length-1);
+      const raw=(qte&&typeof qte.stepIndex==='number')?qte.stepIndex:(ensure().step||0);
+      const idx=clampV(raw,0,maxIndex);
+      return Math.round(5000-(idx/maxIndex)*4000);
+    }
+    function qtePosition(seed){
+      // v0.253 · vraie zone large : on élargit la zone dans le JS, pas seulement en CSS.
+      // Les positions restent au-dessus du bas de scène, mais couvrent désormais beaucoup plus d'espace.
+      const pos=[
+        {x:50,y:24},{x:28,y:30},{x:72,y:30},{x:42,y:42},{x:58,y:42},
+        {x:20,y:46},{x:80,y:46},{x:36,y:58},{x:64,y:58},{x:50,y:64},
+        {x:18,y:24},{x:82,y:24},{x:25,y:62},{x:75,y:62},{x:50,y:36},
+        {x:34,y:22},{x:66,y:22},{x:22,y:54},{x:78,y:54},{x:44,y:66},
+        {x:56,y:66},{x:30,y:38},{x:70,y:38},{x:50,y:52}
+      ];
+      return pos[Math.abs(seed||0)%pos.length];
+    }
+    function baseWordsFor(step,choice){
+      const act=String((step&&step.act)||'');
+      const label=String((choice&&choice.label)||'').toLowerCase();
+      if(act==='Acte IV') return ['VOIR','TENIR','RESPIRER','FIXER','ANCRER','RÉSISTER','SURVIVRE'];
+      if(act==='Acte III') return ['TENIR','PARER','BRISER','RÉSISTER','FRAPPER','ANCRER','RESPIRER'];
+      if(act==='Acte II') return ['SCELLER','VOIR','TENIR','BRISER','ANCRER','FIXER','RÉSISTER'];
+      if(label.includes('parer')) return ['PARER','FRAPPER','AVANCER','TENIR','ESQUIVER','BRISER','ANCRER'];
+      return ['FRAPPER','PARER','AVANCER','TENIR','BRISER','ESQUIVER','ANCRER'];
+    }
+    function buildQteSeq(step,choice,count,seed){
+      const base=baseWordsFor(step,choice);
+      const offset=Math.abs(seed||0)%base.length;
+      const out=[];
+      for(let i=0;i<count;i++) out.push(base[(offset+i)%base.length]);
+      return out;
+    }
+    function currentQteWord(d){ const q=d&&d.qte; const seq=Array.isArray(q&&q.seq)?q.seq:['TENIR','BRISER','AVANCER']; return seq[q&&typeof q.index==='number'?q.index:0]||seq[0]||'TENIR'; }
+    function applyEffects(effects={}){ const d=ensure(); if(typeof effects.stabilite==='number') d.stabilite=clampV(d.stabilite+effects.stabilite,0,5); if(typeof effects.perception==='number') d.perception=clampV(d.perception+effects.perception,-6,6); return d; }
+    function qteMessage(d){
+      const q=d.qte||{}; const seq=Array.isArray(q.seq)?q.seq:['TENIR','BRISER','AVANCER']; const idx=typeof q.index==='number'?q.index:0; const total=seq.length; const word=seq[idx]||'TENIR'; const dur=qteButtonDuration(q);
+      return `<span class="x12iQteProgress">${idx+1}/${total}</span><span>Le souvenir frappe. Clique <b>${word}</b>.</span> <span>Temps par touche :</span> <span id="x12iQteCountdown" class="x12iQteCountdown">${(dur/1000).toFixed(1)}s</span>`;
+    }
+    function renderQteLayer(d){
+      clearLayer();
+      const stage=document.getElementById('stage'); if(!stage||!d.qte) return;
+      const q=d.qte; const idx=typeof q.index==='number'?q.index:0; const word=currentQteWord(d); const layer=document.createElement('div');
+      layer.id='x12iStageQteLayer'; layer.className='x12iStageQteLayer v250';
+      const attack=document.createElement('div'); attack.className='x12iQteAttackText'; attack.innerHTML=qteMessage(d); layer.appendChild(attack);
+      const pos=qtePosition(((d.step||0)*11)+(idx*3)+(q.positionSeed||0));
+      const btn=document.createElement('button'); btn.className='x12iStageQteBtn'; btn.type='button'; btn.style.left=pos.x+'%'; btn.style.top=pos.y+'%'; btn.textContent=word;
+      btn.onclick=(ev)=>{ ev.stopPropagation(); resolveQte(true); };
+      layer.appendChild(btn); stage.appendChild(layer);
+    }
+    function updateQteTimer(){
+      const d=state.x12iDuel; if(!d||!d.qte) return;
+      const q=d.qte; const total=q.duration||qteButtonDuration(q); const remainingMs=Math.max(0,(q.deadline||0)-Date.now()); const rem=(remainingMs/1000).toFixed(1);
+      const el=document.getElementById('x12iDuelTimer'); const fill=document.getElementById('x12iDuelTimerFill'); const layer=document.getElementById('x12iQteCountdown');
+      if(el) el.textContent=rem+'s'; if(layer) layer.textContent=rem+'s'; if(fill) fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%';
+      if(remainingMs<=0) resolveQte(false);
+    }
+    function startQteTimer(){
+      const d=ensure(); if(!d.qte) return; clearChoiceTimer();
+      const desired=qteButtonDuration(d.qte);
+      // Ne pas réinitialiser le chrono si un simple render survient pendant la même touche.
+      // Le deadline est relancé uniquement lorsqu'on passe à la touche suivante.
+      if(!d.qte.deadline || d.qte.duration!==desired){
+        d.qte.duration=desired;
+        d.qte.deadline=Date.now()+desired;
+      }
+      if(window.__x12iQteTimerInterval){ clearInterval(window.__x12iQteTimerInterval); window.__x12iQteTimerInterval=null; }
+      updateQteTimer(); window.__x12iQteTimerInterval=setInterval(updateQteTimer,60);
+    }
+    function updateChoiceTimer(){
+      const d=state.x12iDuel; if(!d||d.waiting||d.qte) return;
+      const el=document.getElementById('x12iDuelTimer'); const fill=document.getElementById('x12iDuelTimerFill'); if(!el||!fill) return;
+      const total=d.deadlineDuration||choiceTimerDuration(); const remainingMs=Math.max(0,(d.deadline||0)-Date.now()); const remaining=Math.ceil(remainingMs/1000);
+      el.textContent=`${remaining}s`; fill.style.width=Math.max(0,Math.min(100,(remainingMs/total)*100))+'%'; if(remainingMs<=0){ clearChoiceTimer(); resolveChoice(null,true); }
+    }
+    function startChoiceTimer(){ const d=ensure(); if(d.waiting||d.qte) return; d.deadlineDuration=choiceTimerDuration(); d.deadline=Date.now()+d.deadlineDuration; clearChoiceTimer(); updateChoiceTimer(); window.__x12iDuelTimerInterval=setInterval(updateChoiceTimer,120); }
+    function finaliseChoiceAfterQte(ok){
+      const d=ensure(); const q=d.qte||{}; const choice=q.choice||d.pendingChoice; clearQteTimer(); d.qte=null; d.pendingChoice=null; setQteMode(false);
+      applyEffects(choice&&choice.effects?choice.effects:{});
+      let head=ok ? `Tu suis l’enchaînement jusqu’au dernier éclat.\n\nLe choc passe, mais il ne vole pas la réponse d’Iriana.` : `L’enchaînement se brise.\n\nLe souvenir frappe avant que tu verrouilles le geste. La douleur gagne un cran, et la rage d’Amanea mord la perception d’Iriana.`;
+      if(!ok){ d.stabilite=clampV((d.stabilite||5)-1,0,5); d.perception=clampV((d.perception||0)-1,-6,6); }
+      const label=choice&&choice.label?`Choix : ${choice.label}`:'Choix : réflexe imposé';
+      const reaction=choice&&choice.reaction?choice.reaction:'Le souvenir tremble autour de toi.';
+      d.last={bad:!ok || !!(choice&&choice.effects&&choice.effects.stabilite<0),reaction:`${head}\n\n${label}\n\n${reaction}`};
+      d.history.push({step:d.step+1,label:(choice&&choice.label?choice.label:'Réflexe')+(ok?' · séquence réussie':' · séquence brisée'),qteSeq:Array.isArray(q.seq)?q.seq.slice():[],stabilite:d.stabilite,perception:d.perception});
+      d.step++; d.waiting=true;
+      if(d.stabilite<=0) d.after='gameover'; else if(d.step>=getSteps().length) d.after='finish'; else d.after='next';
+      if(typeof save==='function') save();
+      renderDuel(S[state.scene]);
+      setTimeout(()=>{
+        const wrap=document.querySelector('.dialogueWrap')||document.querySelector('.dialogue');
+        if(wrap && typeof wrap.scrollIntoView==='function') wrap.scrollIntoView({block:'start',behavior:'smooth'});
+      },80);
+    }
+    function resolveQte(ok){
+      const d=ensure(); if(!d.qte) return; const q=d.qte; const seq=Array.isArray(q.seq)?q.seq:['TENIR','BRISER','AVANCER'];
+      if(!ok){ finaliseChoiceAfterQte(false); return; }
+      const next=(q.index||0)+1;
+      if(next<seq.length){ q.index=next; q.positionSeed=(q.positionSeed||0)+1; q.duration=qteButtonDuration(q); q.deadline=Date.now()+q.duration; if(typeof save==='function') save(); renderDuel(S[state.scene]); return; }
+      finaliseChoiceAfterQte(true);
+    }
+    function resolveChoice(choice,timeout=false){
+      const d=ensure(); clearChoiceTimer(); clearQteTimer(); const steps=getSteps(); const step=steps[d.step]||steps[steps.length-1]||{};
+      if(timeout){ d.stabilite=clampV((d.stabilite||5)-1,0,5); d.perception=clampV((d.perception||0)-1,-6,6); d.last={bad:true,reaction:`Le souvenir n’attend pas.\n\nTu restes trop longtemps immobile, et la scène choisit pour toi. La douleur avance, la rage gagne un pas, et Iriana sent son ancrage se fissurer.`}; d.history.push({step:d.step+1,label:'Temps écoulé',stabilite:d.stabilite,perception:d.perception}); d.step++; d.waiting=true; if(d.stabilite<=0) d.after='gameover'; else if(d.step>=steps.length) d.after='finish'; else d.after='next'; if(typeof save==='function') save(); renderDuel(S[state.scene]); return; }
+      const count=qteButtonCount(d.step||0); const seed=((d.step||0)*13)+(d.history||[]).length; const seq=buildQteSeq(step,choice,count,seed);
+      d.pendingChoice=choice; d.qte={choice,seq,index:0,stepIndex:d.step,positionSeed:seed,duration:null,deadline:null}; d.waiting=false; d.last=null; d.after=null; if(typeof save==='function') save(); renderDuel(S[state.scene]);
+    }
+    function finishDuel(){ const d=ensure(); clearChoiceTimer(); clearQteTimer(); setQteMode(false); d.finished=true; state.flags={...(state.flags||{}),x12iDuelCompleted:true,x12iFinalPerception:d.perception,x12iFinalStabilite:d.stabilite}; if(typeof save==='function') save(); if(d.perception<=-3){ go('c12i_duel_after_emprise'); return; } if(d.perception>=3){ go('c12i_duel_after_clarte'); return; } go('c12i_duel_after_equilibre'); }
+    function enterDuel(scene){
+      clearChoiceTimer(); clearQteTimer(); setQteMode(false); state.x12iDuel={engineVersion:'v250',step:0,stabilite:5,perception:0,waiting:false,last:null,after:null,qte:null,pendingChoice:null,history:[]}; const first=getSteps()[0]||{};
+      if(typeof setStageBg==='function') setStageBg(pickBgV250(first.bg),true); const stage=document.getElementById('stage'); if(stage) stage.classList.add('combatMode'); const chars=document.getElementById('chars'); if(chars) chars.innerHTML='';
+      const sceneTitle=document.getElementById('sceneTitle'); if(sceneTitle) sceneTitle.textContent=scene.title||'Chapitre XII_I · Le souvenir d’Amanea'; const sceneSub=document.getElementById('sceneSub'); if(sceneSub) sceneSub.textContent='Mémoire incarnée'; const speaker=document.getElementById('speaker'); if(speaker) speaker.textContent='Narrateur'; const text=document.getElementById('text'); if(text) text.textContent='La scène ne s’ouvre pas comme une vision. Elle s’ouvre comme une blessure.\n\nIriana n’est pas devant Amanea.\n\nElle est derrière ses yeux.'; const choices=document.getElementById('choices'); if(choices) choices.innerHTML=''; const stats=document.getElementById('stats'); if(stats) stats.innerHTML='';
+      if(typeof playMusic==='function') playMusic(resolveSceneMusic(state.scene, scene.music||first.music||'music_c10_horreur'));
+      const overlay=document.getElementById('combatTransition'); if(overlay){ const mini=overlay.querySelector('.combatMini'); if(mini) mini.textContent='Mémoire de combat'; const title=overlay.querySelector('.combatTitle'); if(title) title.textContent='Combat de sang'; const sub=overlay.querySelector('.combatSub'); if(sub) sub.textContent='Stabilité 5 · Perception 0'; overlay.classList.remove('hidden','active','c7NaiahIntro','c7Intense'); void overlay.offsetWidth; overlay.classList.add('active'); state.x12iDuelIntroPending=true; clearTimeout(window.__x12iDuelTransitionTimer); window.__x12iDuelTransitionTimer=setTimeout(()=>{ overlay.classList.add('hidden'); overlay.classList.remove('active'); if(mini) mini.textContent='Mode combat'; state.x12iDuelIntroPending=false; state.x12iDuelIntroPlayed=true; if(typeof save==='function') save(); renderDuel(scene); },1200); } else { state.x12iDuelIntroPlayed=true; renderDuel(scene); }
+    }
+    function renderDuel(scene){
+      const d=ensure(); const steps=getSteps(); if(!steps.length){ if(typeof go==='function') go('c12i_027'); return; }
+      if(d.stabilite<=0){ setQteMode(false); go('c12i_gameover'); return; }
+      const step=steps[d.step]||steps[steps.length-1];
+      document.querySelectorAll('.chapterLabel').forEach(el=>{ el.textContent='Chapitre XII_I · Le souvenir d’Amanea'; }); const stage=document.getElementById('stage'); if(stage) stage.classList.add('combatMode'); setQteMode(!!d.qte); if(typeof setStageBg==='function') setStageBg(pickBgV250(step.bg),true); if(typeof playMusic==='function') playMusic(resolveSceneMusic(state.scene, scene.music||step.music||'music_c10_horreur')); const chars=document.getElementById('chars'); if(chars) chars.innerHTML='';
+      const sceneTitle=document.getElementById('sceneTitle'); if(sceneTitle) sceneTitle.textContent=scene.title||'Combat de sang'; const sceneSub=document.getElementById('sceneSub'); if(sceneSub) sceneSub.textContent=d.qte?`Réflexe · ${currentQteWord(d)}`:(d.waiting?'Écho du souvenir':`${step.phase} · ${step.title}`); const speaker=document.getElementById('speaker'); if(speaker) speaker.textContent=d.qte?'Instinct':(d.waiting?'Souvenir':'Narrateur');
+      const textEl=document.getElementById('text'); const choices=document.getElementById('choices'); if(choices) choices.innerHTML=''; const status=`\n\nStabilité : ${'♥'.repeat(d.stabilite)}${'♡'.repeat(Math.max(0,5-d.stabilite))} · Perception : ${perceptionDisplay(d.perception)}`;
+      if(d.qte){ clearChoiceTimer(); if(textEl) textEl.textContent=''; renderQteLayer(d); }
+      else if(d.waiting){ clearChoiceTimer(); clearQteTimer(); setQteMode(false); if(textEl) textEl.textContent=(d.last&&d.last.reaction?d.last.reaction:'Le souvenir retient son souffle.')+status; const b=document.createElement('button'); b.className='choiceBtn continueBtn'; b.innerHTML='<span>Continuer</span><span class="arrow">›</span>'; b.onclick=()=>{ d.waiting=false; const after=d.after; d.after=null; d.last=null; if(after==='gameover'){ go('c12i_gameover'); return; } if(after==='finish'){ finishDuel(); return; } if(typeof save==='function') save(); renderDuel(scene); }; choices.appendChild(b); }
+      else{ clearQteTimer(); setQteMode(false); if(textEl) textEl.textContent=(step.text||'Le souvenir avance.')+status; (step.choices||[]).forEach(ch=>{ const b=document.createElement('button'); b.className='choiceBtn'; let dev=''; if(state.devMode&&ch.effects){ const parts=[]; if(ch.effects.stabilite) parts.push(`Stabilité ${ch.effects.stabilite>0?'+':''}${ch.effects.stabilite}`); if(ch.effects.perception) parts.push(`Perception ${ch.effects.perception>0?'+':''}${ch.effects.perception}`); parts.push(`QTE ${qteButtonCount(d.step||0)} touches · ${(qteButtonDuration({stepIndex:d.step||0})/1000).toFixed(1)}s/touche`); dev=`<small>DEV · ${parts.join(' · ')}</small>`; } b.innerHTML=`<span>${ch.label}${dev}</span><span class="arrow">›</span>`; b.onclick=()=>resolveChoice(ch,false); choices.appendChild(b); }); }
+      const stats=document.getElementById('stats'); if(stats){ const perceptionPct=((d.perception+6)/12)*100; const qCount=d.qte&&Array.isArray(d.qte.seq)?d.qte.seq.length:qteButtonCount(d.step||0); const qIndex=d.qte?((d.qte.index||0)+1):0; const timerText=d.waiting?'—':(d.qte?((qteButtonDuration(d.qte)/1000).toFixed(1)+'s'):Math.round(choiceTimerDuration()/1000)+'s'); stats.innerHTML=`<div class="combatHud x12iDuelHud"><div class="combatBox"><div class="combatTop"><span>Stabilité</span><span>${d.stabilite}/5</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.min(100,(d.stabilite/5)*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Perception</span><span>${perceptionDisplay(d.perception)}</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,Math.max(0,perceptionPct))}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>${d.qte?'Réflexe':'Temps'}</span><span id="x12iDuelTimer">${timerText}</span></div><div class="combatTrack"><div id="x12iDuelTimerFill" class="combatFill" style="width:${d.waiting?0:100}%"></div></div></div></div><div class="combatMeta"><span>${step.act} <b>${Math.min(d.step+1,steps.length)}/${steps.length}</b></span><span>QTE <b>${d.qte?(qIndex+'/'+qCount):('après choix · '+qCount+' touches')}</b></span><span>Point de vue <b>Amanea</b></span></div>`; }
+      if(d.qte) startQteTimer(); else if(!d.waiting) startChoiceTimer(); else updateChoiceTimer(); if(typeof updateDevUI==='function') updateDevUI(); if(typeof save==='function') save(); if(typeof updateProgressUI==='function') updateProgressUI();
+    }
+
+    const prevRender=window.render;
+    window.render=function(){ const scene=S[state.scene]; if(scene&&scene.x12iDuel){ if(state.x12iDuelIntroPending) return; if(!state.x12iDuel || state.x12iDuel.engineVersion!=='v250' || state.x12iDuel.stabilite<=0 || state.x12iDuel.finished){ enterDuel(scene); return; } renderDuel(scene); return; } return prevRender.apply(this,arguments); };
+    if(typeof render!=='undefined') render=window.render;
+
+    const prevStart=window.startChapter12I;
+    if(typeof prevStart==='function' && !window.__sylviniaX12IStartWrappedV250){ window.__sylviniaX12IStartWrappedV250=true; window.startChapter12I=function(){ const r=prevStart.apply(this,arguments); if(state){ state.x12iDuel=null; state.x12iDuelIntroPlayed=false; state.x12iDuelIntroPending=false; if(typeof save==='function') save(); } return r; }; if(typeof startChapter12I!=='undefined') startChapter12I=window.startChapter12I; }
+
+    if(S.c12i_012) S.c12i_012.next='x12i_duel_start';
+    ['c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'].forEach(id=>{ if(S[id]&&Array.isArray(S[id].choices)&&S[id].choices[0]) S[id].choices[0].next='c12i_027'; });
+    console.info('[Sylvinia v0.253] QTE XII_I : vraie zone large JS, chrono par touche, scroll réponse après QTE.');
+  }catch(err){ console.error('[Sylvinia v0.250] Échec installation QTE séquentiel XII_I',err); }
 })();
 </script>
