@@ -42734,3 +42734,157 @@ body.x12iQteModeV250 .dialogueWrap{
   }catch(err){ console.error('[Sylvinia v0.250] Échec installation QTE séquentiel XII_I',err); }
 })();
 </script>
+
+
+<script id="v0257-x12i-presence-and-assets-fix">
+/* v0.257 · XII_I : correction finale placements sprites + chemins assets chapter12
+   - Iriana n'apparaît pas pendant le souvenir incarné.
+   - Tia et Amanea ne sont plus injectées par plages trop larges.
+   - Les sprites ne reviennent qu'aux scènes où la présence est cohérente.
+   - Les décors et la musique utilisent les nouveaux dossiers assets. */
+(function installV0257X12IPresenceAndAssetsFix(){
+  try{
+    if(window.__sylviniaV0257X12IPresenceAndAssetsFix) return;
+    window.__sylviniaV0257X12IPresenceAndAssetsFix = true;
+
+    const scenes = (typeof S !== 'undefined' && S) || (typeof SCENES !== 'undefined' && SCENES) || null;
+    if(!scenes) return;
+
+    if(typeof A !== 'undefined' && A){
+      Object.assign(A,{
+        music_x12i_duel_farae:'assets/audio/chapter12/Confrontation_Fratricide.mp3',
+        x12i_tia_hall_before_01:'assets/images/backgrounds/chapter12/x12i_tia_hall_before_01.png',
+        x12i_tia_hall_before_02:'assets/images/backgrounds/chapter12/x12i_tia_hall_before_02.png',
+        x12i_tia_hall_after_01:'assets/images/backgrounds/chapter12/x12i_tia_hall_after_01.png',
+        x12i_tia_hall_after_02:'assets/images/backgrounds/chapter12/x12i_tia_hall_after_02.png'
+      });
+    }
+
+    const exists = id => !!scenes[id];
+    const setChars = (id, chars) => {
+      if(exists(id)) scenes[id].chars = Array.isArray(chars) ? chars : [];
+    };
+    const removeNames = (id, names) => {
+      if(!exists(id)) return;
+      const forbidden = new Set(names);
+      scenes[id].chars = (Array.isArray(scenes[id].chars) ? scenes[id].chars : [])
+        .filter(ch => !(Array.isArray(ch) && forbidden.has(ch[0])));
+    };
+    const applyBg = (ids, key) => {
+      ids.forEach(id=>{
+        if(!exists(id)) return;
+        scenes[id].bg = key;
+        if(typeof scenes[id].zoom === 'undefined') scenes[id].zoom = true;
+      });
+    };
+
+    const range = (a,b) => {
+      const out=[];
+      for(let n=a;n<=b;n++) out.push('c12i_'+String(n).padStart(3,'0'));
+      return out;
+    };
+
+    const preMemoryIds = [
+      'c12i_001','c12i_002',
+      'c12i_choice_meche','c12i_meche_strategique','c12i_meche_strategique_2',
+      'c12i_meche_strategique_3','c12i_meche_strategique_4'
+    ];
+
+    const memoryIds = [
+      ...range(3,39),
+      'c12i_choice_tia_sentence','c12i_tia_sentence_resonance','c12i_tia_sentence_lucidite',
+      'c12i_tia_sentence_audace','c12i_tia_sentence_sangfroid',
+      'c12i_choice_rage','c12i_rage_bonus',
+      'x12i_duel_start','c12i_gameover',
+      'c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'
+    ].filter(exists);
+
+    // Nettoyage général : le souvenir est vécu par les yeux d'Amanea.
+    memoryIds.forEach(id => removeNames(id, ['iriana','tia','amanea']));
+
+    // c12i_000 et c12i_001/002 restent hors souvenir incarné : Iriana peut y être visible.
+    setChars('c12i_000', [
+      ['iriana','iriana_stern','left'],
+      ['amanea','amanea_away','right','projection']
+    ]);
+    setChars('c12i_001', [
+      ['iriana','iriana_stern','left'],
+      ['amanea','amanea_away','right','projection']
+    ]);
+    setChars('c12i_002', [
+      ['iriana','iriana_stern','left'],
+      ['amanea','amanea_away','right','projection']
+    ]);
+
+    // Les scènes de mèche avant l'entrée dans le souvenir : Iriana seule, pas Tia, pas Amanea jeune.
+    ['c12i_choice_meche','c12i_meche_strategique','c12i_meche_strategique_2','c12i_meche_strategique_3','c12i_meche_strategique_4']
+      .forEach(id => setChars(id, [['iriana','iriana_stern','center']]));
+
+    // Entrée dans le souvenir : Amanea jeune uniquement, comme repère visuel de possession/mémoire.
+    ['c12i_003','c12i_004','c12i_005','c12i_006'].forEach((id,i)=>{
+      const sprite = ['amanea_young_dark_magic','amanea_young_hostile','amanea_young_sad','amanea_young_distress'][i] || 'amanea_young_dark_magic';
+      setChars(id, [['amanea', sprite, 'center']]);
+    });
+
+    // Tia arrive réellement dans la salle : les deux sœurs sont visibles jusqu'à la bascule vers le combat.
+    const confrontationMap = {
+      c12i_007:[['tia','tia_young_angry','left'],['amanea','amanea_young_hostile','right']],
+      c12i_008:[['tia','tia_young_light_wrath','left'],['amanea','amanea_young_dark_magic','right']],
+      c12i_009:[['tia','tia_young_calm_light','left'],['amanea','amanea_young_neutral_fragile','right']],
+      c12i_010:[['tia','tia_young_teary','left'],['amanea','amanea_young_sad','right']],
+      c12i_011:[['tia','tia_young_light_wrath','left'],['amanea','amanea_young_dark_magic','right']],
+      c12i_choice_tia_sentence:[['tia','tia_young_angry','left'],['amanea','amanea_young_hostile','right']],
+      c12i_tia_sentence_resonance:[['tia','tia_young_teary','left'],['amanea','amanea_young_sad','right']],
+      c12i_tia_sentence_lucidite:[['tia','tia_young_light_wrath','left'],['amanea','amanea_young_dark_magic','right']],
+      c12i_tia_sentence_audace:[['tia','tia_young_hostile','left'],['amanea','amanea_young_hostile','right']],
+      c12i_tia_sentence_sangfroid:[['tia','tia_young_calm_light','left'],['amanea','amanea_young_neutral_fragile','right']]
+    };
+    Object.entries(confrontationMap).forEach(([id,chars]) => setChars(id, chars));
+
+    // Combat et QTE : aucune sprite, les CG/écrans de duel doivent porter la scène.
+    [
+      'c12i_012',
+      ...range(13,26),
+      'c12i_choice_rage','c12i_rage_bonus',
+      'x12i_duel_start','c12i_gameover',
+      'c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte'
+    ].forEach(id => setChars(id, []));
+
+    // Juste après l'aveuglement : Tia est encore là. On garde les sprites post-combat, mais pas au-delà.
+    const postFaceToFace = {
+      c12i_027:[['tia','tia_young_post_crying','left','back'],['amanea','amanea_young_burned_rage','right']],
+      c12i_028:[['tia','tia_young_post_faded','left','back'],['amanea','amanea_young_burned_sad','right']],
+      c12i_029:[['tia','tia_young_post_crying','left','back'],['amanea','amanea_young_burned_sad','right']],
+      c12i_030:[['tia','tia_young_post_shocked','left']]
+    };
+    Object.entries(postFaceToFace).forEach(([id,chars]) => setChars(id, chars));
+
+    // Après la baie vitrée / chute / Allenna : Tia n'est plus là, et Amanea est le point de vue aveugle.
+    // Pas de sprite plaquée sur la scène, pour éviter le faux face-à-face.
+    range(31,39).forEach(id => setChars(id, []));
+
+    // Retour hors souvenir : Iriana peut réapparaître, Amanea seulement en projection/mémoire.
+    setChars('c12i_end', [
+      ['iriana','iriana_sad','left'],
+      ['amanea','amanea_sad','right','projection']
+    ]);
+
+    // Réapplique les 4 décors avec le nouveau dossier.
+    applyBg(['c12i_003','c12i_004','c12i_005','c12i_006','c12i_007','c12i_008'], 'x12i_tia_hall_before_01');
+    applyBg([
+      'c12i_009','c12i_010','c12i_011','c12i_012',
+      'c12i_choice_meche','c12i_meche_strategique','c12i_meche_strategique_2','c12i_meche_strategique_3','c12i_meche_strategique_4',
+      'c12i_choice_tia_sentence','c12i_tia_sentence_resonance','c12i_tia_sentence_lucidite','c12i_tia_sentence_audace','c12i_tia_sentence_sangfroid',
+      'c12i_choice_rage','c12i_rage_bonus'
+    ], 'x12i_tia_hall_before_02');
+    applyBg(['c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte','c12i_027','c12i_028','c12i_029','c12i_030'], 'x12i_tia_hall_after_01');
+    applyBg(['c12i_031','c12i_032','c12i_033','c12i_034','c12i_035','c12i_036','c12i_037','c12i_038','c12i_039','c12i_end'], 'x12i_tia_hall_after_02');
+
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.257] XII_I : placements sprites corrigés scène par scène, Iriana retirée du souvenir, Tia/Amanea limitées aux scènes cohérentes, assets chapter12 corrigés.');
+  }catch(err){
+    console.error('[Sylvinia v0.257] Échec correction placements XII_I', err);
+  }
+})();
+</script>
+
