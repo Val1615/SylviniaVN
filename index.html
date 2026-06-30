@@ -43464,3 +43464,149 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+
+<script id="x12i-duel-response-bg-hard-fix-v259">
+/* v0.259 · XII_I : correction dure de l'alternance situation / réponse
+   Problème corrigé : après un QTE, le moteur avançait déjà d'une manche et affichait l'image de situation suivante.
+   Cette surcouche impose l'image de réponse de la manche qui vient d'être jouée tant que l'écran affiche "Continuer". */
+(function installX12IResponseBgHardFixV259(){
+  try{
+    if(window.__sylviniaX12IResponseBgHardFixV259) return;
+    window.__sylviniaX12IResponseBgHardFixV259 = true;
+
+    const PATHS={
+      x12i_duel_seq01_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq01_situation.png',
+      x12i_duel_seq01_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq01_reponse.png',
+      x12i_duel_seq02_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq02_situation.png',
+      x12i_duel_seq02_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq02_reponse.png',
+      x12i_duel_seq03_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq03_situation.png',
+      x12i_duel_seq03_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq03_reponse.png',
+      x12i_duel_seq04_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq04_situation.png',
+      x12i_duel_seq04_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq04_reponse.png',
+      x12i_duel_seq05_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq05_situation.png',
+      x12i_duel_seq05_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq05_reponse.png'
+    };
+    const PAIRS=[
+      ['x12i_duel_seq01_situation','x12i_duel_seq01_reponse'],
+      ['x12i_duel_seq02_situation','x12i_duel_seq02_reponse'],
+      ['x12i_duel_seq03_situation','x12i_duel_seq03_reponse'],
+      ['x12i_duel_seq04_situation','x12i_duel_seq04_reponse'],
+      ['x12i_duel_seq05_situation','x12i_duel_seq05_reponse']
+    ];
+
+    function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
+    function sceneIsDuel(){
+      try{
+        return typeof state!=='undefined' && state && typeof S!=='undefined' && S && S[state.scene] && S[state.scene].x12iDuel;
+      }catch(e){ return false; }
+    }
+    function applyAssetsAndSteps(){
+      try{
+        if(typeof A!=='undefined' && A) Object.assign(A,PATHS);
+        const steps=Array.isArray(window.X12I_DUEL_STEPS)?window.X12I_DUEL_STEPS:null;
+        if(!steps) return null;
+        PAIRS.forEach((pair,idx)=>{
+          if(steps[idx]){
+            steps[idx].bg=pair[0];
+            steps[idx].responseBg=pair[1];
+          }
+        });
+        return steps;
+      }catch(e){ return null; }
+    }
+    function imageUrlForKey(key){
+      try{
+        if(!key) return '';
+        if(typeof A!=='undefined' && A && A[key]) return A[key];
+        return PATHS[key] || '';
+      }catch(e){ return PATHS[key] || ''; }
+    }
+    function forceBgKey(key){
+      if(!key) return;
+      try{ if(typeof setStageBg==='function') setStageBg(key,true); }catch(e){}
+      const url=imageUrlForKey(key);
+      if(!url) return;
+      const bg=document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      if(bg){
+        bg.style.backgroundImage=`url("${url}")`;
+        bg.style.display='block';
+        bg.style.visibility='visible';
+        bg.style.opacity='1';
+      }
+    }
+    function wantedKey(){
+      const steps=applyAssetsAndSteps();
+      if(!steps || !sceneIsDuel()) return null;
+      const d=state.x12iDuel;
+      if(!d || d.stabilite<=0 || d.finished) return null;
+
+      if(d.qte){
+        const qIndex=(d.qte && typeof d.qte.stepIndex==='number') ? d.qte.stepIndex : (typeof d.step==='number'?d.step:0);
+        const step=steps[clamp(qIndex,0,steps.length-1)];
+        return step && step.bg;
+      }
+
+      if(d.waiting){
+        // Le moteur incrémente d.step AVANT l'écran de réponse.
+        // Donc l'image correcte est celle de la manche précédente, pas celle affichée par le HUD.
+        let previousIndex=(typeof d.step==='number'?d.step:1)-1;
+        if(Array.isArray(d.history) && d.history.length){
+          const last=d.history[d.history.length-1];
+          if(last && typeof last.step==='number') previousIndex=last.step-1;
+        }
+        previousIndex=clamp(previousIndex,0,steps.length-1);
+        const previousStep=steps[previousIndex];
+        return (previousStep && (previousStep.responseBg || previousStep.bg)) || null;
+      }
+
+      const currentIndex=clamp(typeof d.step==='number'?d.step:0,0,steps.length-1);
+      const currentStep=steps[currentIndex];
+      return currentStep && currentStep.bg;
+    }
+    function sync(){
+      const key=wantedKey();
+      if(key) forceBgKey(key);
+    }
+    function pulse(){
+      sync();
+      setTimeout(sync,25);
+      setTimeout(sync,80);
+      setTimeout(sync,180);
+      setTimeout(sync,360);
+    }
+
+    // Ce patch doit passer APRES les fonctions locales du moteur, donc on surveille aussi les renders directs
+    // qui ne passent pas par window.render.
+    if(typeof window.render==='function' && !window.render.__x12iResponseBgHardFixV259){
+      const prev=window.render;
+      window.render=function(){
+        const r=prev.apply(this,arguments);
+        pulse();
+        return r;
+      };
+      window.render.__x12iResponseBgHardFixV259=true;
+      try{ if(typeof render!=='undefined') render=window.render; }catch(e){}
+    }
+
+    ['click','touchend','keydown','transitionend','orientationchange','resize'].forEach(evt=>{
+      window.addEventListener(evt,pulse,{passive:true});
+      document.addEventListener(evt,pulse,{passive:true});
+    });
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',pulse,{passive:true});
+      window.visualViewport.addEventListener('scroll',pulse,{passive:true});
+    }
+    const mo=new MutationObserver(()=>pulse());
+    const startObserver=()=>{
+      const root=document.getElementById('gameCard') || document.body;
+      if(root) mo.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});
+      pulse();
+    };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',startObserver,{once:true}); else startObserver();
+    setInterval(sync,180);
+
+    console.info('[Sylvinia v0.259] XII_I : alternance situation/réponse corrigée.');
+  }catch(err){ console.error('[Sylvinia v0.259] Échec correction alternance situation/réponse.',err); }
+})();
+</script>
+
