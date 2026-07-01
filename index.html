@@ -44867,3 +44867,434 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+
+<style id="x12i-situation-fx-v265">
+/* v0.265 · Situation FX pour XII_I
+   Ajoute du dynamisme aux situations sans toucher au flux QTE. */
+
+#stage{overflow:hidden}
+#bg, .bg{
+  will-change:transform, filter, opacity;
+  transform-origin:center center;
+}
+
+/* Presets de situation : animation d'entrée de l'image */
+#stage.x12iSitObserve #bg, #stage.x12iSitObserve .bg{animation:x12iSitObserve .92s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitWeapon #bg, #stage.x12iSitWeapon .bg{animation:x12iSitWeapon .62s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitSideAttack #bg, #stage.x12iSitSideAttack .bg{animation:x12iSitSideAttack .66s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitMagicPressure #bg, #stage.x12iSitMagicPressure .bg{animation:x12iSitMagicPressure .84s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitDomination #bg, #stage.x12iSitDomination .bg{animation:x12iSitDomination 1.02s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitHolyLight #bg, #stage.x12iSitHolyLight .bg{animation:x12iSitHolyLight .95s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitDisarm #bg, #stage.x12iSitDisarm .bg{animation:x12iSitDisarm .58s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitBodyImpact #bg, #stage.x12iSitBodyImpact .bg{animation:x12iSitBodyImpact .56s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitStrangle #bg, #stage.x12iSitStrangle .bg{animation:x12iSitStrangle .96s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitMemoryBreak #bg, #stage.x12iSitMemoryBreak .bg{animation:x12iSitMemoryBreak .94s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitBlindness #bg, #stage.x12iSitBlindness .bg{animation:x12iSitBlindness 1.08s cubic-bezier(.22,.61,.36,1) both!important}
+#stage.x12iSitCollapse #bg, #stage.x12iSitCollapse .bg{animation:x12iSitCollapse 1.06s cubic-bezier(.22,.61,.36,1) both!important}
+
+@keyframes x12iSitObserve{
+  0%{transform:scale(1.12);filter:brightness(.86) contrast(1.08)}
+  100%{transform:scale(1.04);filter:brightness(1) contrast(1)}
+}
+@keyframes x12iSitWeapon{
+  0%{transform:scale(1.16) translateX(-3.5%);filter:brightness(.9) contrast(1.12)}
+  42%{transform:scale(1.09) translateX(1.4%)}
+  100%{transform:scale(1.04) translateX(0)}
+}
+@keyframes x12iSitSideAttack{
+  0%{transform:scale(1.16) translateX(4%);filter:brightness(.86) contrast(1.12)}
+  38%{transform:scale(1.08) translateX(-1.6%)}
+  100%{transform:scale(1.04) translateX(0)}
+}
+@keyframes x12iSitMagicPressure{
+  0%{transform:scale(1.08);filter:brightness(.76) contrast(1.22) saturate(1.18)}
+  48%{transform:scale(1.11)}
+  100%{transform:scale(1.04);filter:brightness(1) contrast(1) saturate(1)}
+}
+@keyframes x12iSitDomination{
+  0%{transform:scale(1.2) translateY(-2%);filter:brightness(.66) contrast(1.24)}
+  54%{transform:scale(1.1) translateY(1%)}
+  100%{transform:scale(1.04) translateY(0);filter:brightness(1) contrast(1)}
+}
+@keyframes x12iSitHolyLight{
+  0%{transform:scale(1.06);filter:brightness(1.45) contrast(1.18)}
+  35%{transform:scale(1.09);filter:brightness(1.2) contrast(1.1)}
+  100%{transform:scale(1.04);filter:brightness(1.02) contrast(1)}
+}
+@keyframes x12iSitDisarm{
+  0%{transform:scale(1.15) translateY(2%);filter:brightness(.84) contrast(1.16)}
+  44%{transform:scale(1.08) translateY(-1%)}
+  100%{transform:scale(1.04) translateY(0)}
+}
+@keyframes x12iSitBodyImpact{
+  0%{transform:scale(1.18) translateY(3%);filter:brightness(.8) contrast(1.16)}
+  30%{transform:scale(1.11) translateY(-1.5%)}
+  100%{transform:scale(1.04) translateY(0)}
+}
+@keyframes x12iSitStrangle{
+  0%{transform:scale(1.1);filter:brightness(.62) contrast(1.28)}
+  60%{transform:scale(1.08)}
+  100%{transform:scale(1.04);filter:brightness(.92) contrast(1.02)}
+}
+@keyframes x12iSitMemoryBreak{
+  0%{transform:scale(1.08);filter:brightness(.88) contrast(1.02) saturate(.85)}
+  50%{transform:scale(1.06)}
+  100%{transform:scale(1.04);filter:brightness(1) contrast(1) saturate(1)}
+}
+@keyframes x12iSitBlindness{
+  0%{transform:scale(1.08);filter:brightness(1.58) contrast(1.22)}
+  42%{transform:scale(1.08);filter:brightness(1.28) contrast(1.1)}
+  100%{transform:scale(1.04);filter:brightness(1.02) contrast(1)}
+}
+@keyframes x12iSitCollapse{
+  0%{transform:scale(1.09);filter:brightness(.72) contrast(1.14)}
+  54%{transform:scale(1.06)}
+  100%{transform:scale(1.04);filter:brightness(.94) contrast(1)}
+}
+
+/* Overlay FX léger */
+#stage .x12iSituationFxLayer{
+  position:absolute!important; inset:0!important; pointer-events:none!important; overflow:hidden!important; z-index:2147482200!important;
+}
+#stage .x12iSituationVeil, #stage .x12iSituationRing, #stage .x12iSituationPulse{
+  position:absolute!important; inset:0!important; opacity:0!important; pointer-events:none!important;
+}
+#stage .x12iSituationVeil{
+  mix-blend-mode:screen!important;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,239,191,.22), transparent 48%),
+    radial-gradient(circle at 50% 45%, transparent 0 34%, rgba(255,255,255,.12) 42%, transparent 56%)!important;
+  filter:blur(6px)!important;
+}
+#stage .x12iSituationVeil.show{animation:x12iSituationVeil .42s ease-out forwards!important}
+@keyframes x12iSituationVeil{
+  0%{opacity:0;transform:scale(1.18)}
+  30%{opacity:.85}
+  100%{opacity:0;transform:scale(1)}
+}
+#stage .x12iSituationPulse{
+  mix-blend-mode:overlay!important;
+  background:radial-gradient(circle at 50% 50%, rgba(255,161,44,.28), transparent 42%)!important;
+}
+#stage .x12iSituationPulse.show{animation:x12iSituationPulse .28s ease-out forwards!important}
+@keyframes x12iSituationPulse{
+  0%{opacity:0}
+  25%{opacity:1}
+  100%{opacity:0}
+}
+#stage .x12iSituationRing{
+  left:50%!important; top:50%!important; right:auto!important; bottom:auto!important;
+  width:48px!important; height:48px!important; border-radius:999px!important; border:2px solid rgba(255,236,186,.9)!important;
+  transform:translate(-50%,-50%) scale(.2)!important;
+}
+#stage .x12iSituationRing.show{animation:x12iSituationRing .38s ease-out forwards!important}
+@keyframes x12iSituationRing{
+  0%{opacity:.85;transform:translate(-50%,-50%) scale(.22)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(6.4)}
+}
+#stage .x12iSituationParticle{
+  position:absolute!important; width:4px!important; height:4px!important; border-radius:999px!important;
+  left:var(--x,50%)!important; top:var(--y,94%)!important;
+  background:#ffc46a!important; box-shadow:0 0 10px #ff7b23!important;
+  animation:x12iSituationParticle var(--dur,850ms) linear forwards!important;
+}
+#stage .x12iSituationParticle.shadow{background:#9f56ff!important;box-shadow:0 0 12px #7a2dff!important}
+#stage .x12iSituationParticle.gold{background:#fff2ad!important;box-shadow:0 0 13px #fff2ad!important}
+#stage .x12iSituationParticle.dust{background:#dab37a!important;box-shadow:0 0 8px #dab37a!important}
+@keyframes x12iSituationParticle{
+  0%{opacity:0;transform:translate3d(0,0,0) scale(1)}
+  12%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--dx,0px),var(--dy,-260px),0) scale(.1)}
+}
+
+/* Texte / choix */
+#text.x12iSituationTextIntro, .dialogue.x12iSituationTextIntro, .dialogueWrap.x12iSituationTextIntro{
+  animation:x12iSituationTextIntro .38s ease-out both!important;
+}
+@keyframes x12iSituationTextIntro{
+  0%{opacity:0;transform:translateY(12px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+#choices.x12iChoicesReveal .choiceBtn,
+.choices.x12iChoicesReveal .choiceBtn{
+  opacity:0;
+  transform:translateY(14px) scale(.98);
+  animation:x12iChoiceReveal .34s ease-out forwards;
+}
+@keyframes x12iChoiceReveal{
+  0%{opacity:0;transform:translateY(14px) scale(.98)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+#choices.x12iChoicesStress .choiceBtn,
+.choices.x12iChoicesStress .choiceBtn{
+  animation-name:x12iChoiceReveal, x12iChoiceStress;
+  animation-duration:.34s, 2.8s;
+  animation-delay:var(--choiceDelay,0ms), .42s;
+  animation-timing-function:ease-out, ease-in-out;
+  animation-iteration-count:1, infinite;
+}
+@keyframes x12iChoiceStress{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(0) scale(1.008)}
+}
+#choices.x12iChoicesClarte .choiceBtn,
+.choices.x12iChoicesClarte .choiceBtn{
+  box-shadow:0 0 0 1px rgba(255,244,204,.2), 0 0 18px rgba(255,239,166,.14);
+}
+#choices.x12iChoicesEmprise .choiceBtn,
+.choices.x12iChoicesEmprise .choiceBtn{
+  box-shadow:0 0 0 1px rgba(146,87,255,.18), 0 0 18px rgba(92,39,182,.18);
+}
+</style>
+
+<script id="x12i-situation-fx-script-v265">
+(function installX12ISituationFXV265(){
+  try{
+    if(window.__x12iSituationFXV265) return;
+    window.__x12iSituationFXV265 = true;
+
+    let audioCtx = null;
+    let lastSituationStep = null;
+    let lastMode = '';
+
+    function byId(id){ return document.getElementById(id); }
+    function stage(){ return byId('stage'); }
+    function bg(){ return byId('bg') || document.querySelector('#stage .bg') || document.querySelector('.bg'); }
+    function textEl(){ return byId('text') || document.querySelector('.dialogue') || document.querySelector('.dialogueWrap'); }
+    function choicesEl(){ return byId('choices') || document.querySelector('.choices'); }
+    function choiceButtons(){ return Array.from(document.querySelectorAll('#choices .choiceBtn, .choices .choiceBtn')); }
+    function duel(){ return window.state && window.state.x12iDuel ? window.state.x12iDuel : null; }
+    function steps(){ return Array.isArray(window.X12I_DUEL_STEPS) ? window.X12I_DUEL_STEPS : []; }
+
+    function currentStep(){
+      const d = duel(), arr = steps();
+      if(!d || !arr.length) return null;
+      const idx = Math.max(0, Math.min(arr.length - 1, Number(d.step || 0)));
+      return { index: idx, data: arr[idx] };
+    }
+    function qteActive(){
+      const d = duel();
+      return !!(d && d.qte) || document.body.classList.contains('x12iQteModeV250') || document.body.classList.contains('x12iQteMode');
+    }
+    function isSituationMode(){
+      const d = duel();
+      return !!(d && !d.qte && !d.waiting);
+    }
+
+    function ensureAudio(){
+      try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      }catch(e){}
+      return audioCtx;
+    }
+    function tone(freq, dur, type, gain){
+      const ctx = ensureAudio(); if(!ctx) return;
+      const now = ctx.currentTime;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq || 160, now);
+      g.gain.setValueAtTime(gain || .045, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + (dur || .08));
+      o.connect(g).connect(ctx.destination);
+      o.start(now); o.stop(now + (dur || .08));
+    }
+    function noise(dur, gain, lowpass){
+      const ctx = ensureAudio(); if(!ctx) return;
+      const sr = ctx.sampleRate;
+      const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(sr * (dur || .1))), sr);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.pow(1 - i/data.length, 2);
+      const src = ctx.createBufferSource();
+      const g = ctx.createGain();
+      const f = ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.value = lowpass || 650;
+      src.buffer = buffer;
+      g.gain.value = gain || .09;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start();
+    }
+    function playPresetSound(preset){
+      switch(preset){
+        case 'observe': tone(92,.18,'sine',.03); break;
+        case 'weapon': noise(.08,.08,900); tone(130,.08,'sawtooth',.035); break;
+        case 'sideattack': noise(.08,.09,1000); tone(176,.06,'square',.03); break;
+        case 'magic': tone(96,.14,'triangle',.04); setTimeout(()=>tone(148,.12,'sine',.03),50); break;
+        case 'domination': noise(.12,.09,500); tone(68,.18,'sawtooth',.045); break;
+        case 'holylight': tone(320,.12,'sine',.03); setTimeout(()=>tone(480,.14,'triangle',.025),40); break;
+        case 'disarm': noise(.09,.1,820); tone(110,.08,'square',.04); break;
+        case 'bodyimpact': noise(.12,.11,620); tone(74,.11,'sawtooth',.045); break;
+        case 'strangle': tone(72,.13,'sine',.03); break;
+        case 'memorybreak': tone(228,.12,'sine',.022); break;
+        case 'blindness': tone(520,.10,'sine',.025); break;
+        case 'collapse': noise(.13,.08,440); tone(58,.16,'triangle',.035); break;
+      }
+    }
+
+    function fxLayer(){
+      const st = stage(); if(!st) return null;
+      let layer = byId('x12iSituationFxLayer');
+      if(!layer){
+        layer = document.createElement('div');
+        layer.id = 'x12iSituationFxLayer';
+        layer.className = 'x12iSituationFxLayer';
+        layer.innerHTML = '<div class="x12iSituationVeil"></div><div class="x12iSituationPulse"></div><div class="x12iSituationRing"></div>';
+        st.appendChild(layer);
+      }
+      return layer;
+    }
+    function pulse(className){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.' + className);
+      if(!el) return;
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    }
+    function particleKindForPreset(preset){
+    }
+    function spawnParticles(preset, count){
+      const layer = fxLayer(); if(!layer) return;
+      const kind = (preset === 'magic' || preset === 'domination') ? 'shadow' :
+                   (preset === 'holylight' || preset === 'blindness') ? 'gold' :
+                   (preset === 'collapse' || preset === 'observe' || preset === 'memorybreak') ? 'dust' : '';
+      const dir = (preset === 'magic' || preset === 'domination') ? 'right' :
+                  (preset === 'sideattack' || preset === 'disarm' || preset === 'bodyimpact') ? 'left' : 'up';
+      for(let i=0;i<(count || 10);i++){
+        const p = document.createElement('i');
+        p.className = 'x12iSituationParticle ' + kind;
+        p.style.setProperty('--x', (dir === 'left' ? 8 : dir === 'right' ? 92 : Math.random()*100).toFixed(1) + '%');
+        p.style.setProperty('--y', (dir === 'up' ? 92 : 32 + Math.random()*40).toFixed(1) + '%');
+        p.style.setProperty('--dx', (dir === 'left' ? Math.random()*220 : dir === 'right' ? -Math.random()*220 : Math.random()*140 - 70).toFixed(0) + 'px');
+        p.style.setProperty('--dy', (dir === 'up' ? -150 - Math.random()*170 : Math.random()*180 - 90).toFixed(0) + 'px');
+        p.style.setProperty('--dur', (640 + Math.random()*700).toFixed(0) + 'ms');
+        layer.appendChild(p);
+        setTimeout(()=>{ try{p.remove();}catch(e){} }, 1450);
+      }
+    }
+
+    const PRESETS = [
+      'observe',      // 1
+      'weapon',       // 2
+      'sideattack',   // 3
+      'magic',        // 4
+      'domination',   // 5
+      'holylight',    // 6
+      'disarm',       // 7
+      'bodyimpact',   // 8
+      'strangle',     // 9
+      'memorybreak',  // 10
+      'blindness',    // 11
+      'collapse'      // 12
+    ];
+    const STAGE_CLASS = {
+      observe:'x12iSitObserve',
+      weapon:'x12iSitWeapon',
+      sideattack:'x12iSitSideAttack',
+      magic:'x12iSitMagicPressure',
+      domination:'x12iSitDomination',
+      holylight:'x12iSitHolyLight',
+      disarm:'x12iSitDisarm',
+      bodyimpact:'x12iSitBodyImpact',
+      strangle:'x12iSitStrangle',
+      memorybreak:'x12iSitMemoryBreak',
+      blindness:'x12iSitBlindness',
+      collapse:'x12iSitCollapse'
+    };
+
+    function resetStagePreset(){
+      const st = stage(); if(!st) return;
+      Object.values(STAGE_CLASS).forEach(c => st.classList.remove(c));
+    }
+
+    function animateSituation(stepIndex){
+      const st = stage(); if(!st) return;
+      const preset = PRESETS[stepIndex] || 'observe';
+      resetStagePreset();
+      void st.offsetWidth;
+      st.classList.add(STAGE_CLASS[preset]);
+
+      // FX image
+      pulse('x12iSituationVeil');
+      pulse('x12iSituationPulse');
+      if(['weapon','sideattack','disarm','bodyimpact','holylight','blindness'].includes(preset)){
+        pulse('x12iSituationRing');
+      }
+      spawnParticles(preset, preset === 'domination' ? 16 : preset === 'magic' ? 14 : 10);
+      playPresetSound(preset);
+
+      // Texte
+      const te = textEl();
+      if(te){
+        te.classList.remove('x12iSituationTextIntro');
+        void te.offsetWidth;
+        te.classList.add('x12iSituationTextIntro');
+      }
+
+      // Choix
+      const ce = choicesEl();
+      if(ce){
+        ce.classList.remove('x12iChoicesReveal','x12iChoicesStress','x12iChoicesClarte','x12iChoicesEmprise');
+        const d = duel();
+        const perception = d ? Number(d.perception || 0) : 0;
+        const stability = d ? Number(d.stability || 0) : 0;
+        void ce.offsetWidth;
+        ce.classList.add('x12iChoicesReveal');
+        if(stability <= 2) ce.classList.add('x12iChoicesStress');
+        if(perception > 0) ce.classList.add('x12iChoicesClarte');
+        if(perception < 0) ce.classList.add('x12iChoicesEmprise');
+      }
+      choiceButtons().forEach((btn, i) => {
+        btn.style.setProperty('--choiceDelay', `${i * 70}ms`);
+        btn.style.animationDelay = `${i * 70}ms`;
+      });
+
+      setTimeout(resetStagePreset, 1250);
+    }
+
+    function checkSituation(){
+      const d = duel();
+      if(!d) return;
+      const mode = d.qte ? 'qte' : d.waiting ? 'waiting' : 'situation';
+      if(mode !== lastMode) lastMode = mode;
+
+      if(!isSituationMode() || qteActive()) return;
+      const stepInfo = currentStep();
+      if(!stepInfo) return;
+
+      if(lastSituationStep !== stepInfo.index){
+        lastSituationStep = stepInfo.index;
+        setTimeout(() => {
+          // revérifie qu'on est encore sur une phase situation
+          if(isSituationMode() && !qteActive()){
+            animateSituation(stepInfo.index);
+          }
+        }, 20);
+      }
+    }
+
+    // Hook léger après render
+    const originalRender = window.render;
+    if(typeof originalRender === 'function' && !originalRender.__x12iSituationFXV265){
+      const wrapped = function(){
+        const result = originalRender.apply(this, arguments);
+        setTimeout(checkSituation, 25);
+        return result;
+      };
+      wrapped.__x12iSituationFXV265 = true;
+      window.render = wrapped;
+    }
+
+    // Au clic, on réveille l'audio sans toucher au gameplay.
+    document.addEventListener('click', ensureAudio, {capture:true, passive:true});
+    document.addEventListener('touchstart', ensureAudio, {capture:true, passive:true});
+
+    setInterval(checkSituation, 240);
+    setTimeout(checkSituation, 600);
+    console.info('[Sylvinia v0.265] Situation FX actifs : entrée d’image, reveal des choix, tension perception/stabilité.');
+  }catch(err){
+    console.error('[Sylvinia v0.265] échec patch situation fx', err);
+  }
+})();
+</script>
+
