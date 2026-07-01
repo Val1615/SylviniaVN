@@ -40415,6 +40415,391 @@ body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iQteAttackText{
 })();
 </script>
 
+
+<style id="x12i-combat-fx-v261-style">
+/* v0.261 · XII_I Combat FX : urgence visuelle, hitstop, shockwave, braises, boutons QTE au-dessus de tout */
+#gameCard.x12iQteMode .x12iStageQteLayer{
+  z-index:9999!important;
+  pointer-events:auto!important;
+  overflow:hidden!important;
+}
+#gameCard.x12iQteMode .x12iStageQteBtn{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  user-select:none!important;
+  -webkit-user-select:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+  transition:filter .08s ease, box-shadow .08s ease, transform .06s ease!important;
+}
+#gameCard.x12iQteMode .x12iStageQteBtn.correct{
+  box-shadow:0 0 0 8px rgba(255,201,92,.16),0 0 54px rgba(255,213,102,.84),0 0 120px rgba(255,112,45,.18),0 18px 35px rgba(0,0,0,.58)!important;
+}
+#gameCard.x12iQteMode .x12iStageQteBtn.decoy{
+  filter:saturate(.9) brightness(.9)!important;
+}
+#gameCard.x12iQteMode .dialogueWrap,
+#gameCard.x12iQteMode .topbar{
+  pointer-events:none!important;
+}
+#gameCard.x12iCombatUrgent .stage{
+  transform-origin:center center!important;
+  animation:x12iCombatBreathV261 780ms ease-in-out infinite alternate!important;
+}
+#gameCard.x12iCombatUrgent .stage .bg,
+#gameCard.x12iCombatUrgent .stage .background,
+#gameCard.x12iCombatUrgent .stage #bg{
+  filter:contrast(1.14) saturate(1.16) brightness(.78)!important;
+  transform:scale(1.035)!important;
+}
+@keyframes x12iCombatBreathV261{
+  from{filter:brightness(.96);}
+  to{filter:brightness(1.08);}
+}
+#gameCard.x12iFxShake .stage{
+  animation:x12iScreenShakeV261 340ms cubic-bezier(.36,.07,.19,.97)!important;
+}
+@keyframes x12iScreenShakeV261{
+  0%{transform:translate(0,0) rotate(0deg)}
+  15%{transform:translate(-14px,7px) rotate(-.45deg)}
+  30%{transform:translate(11px,-9px) rotate(.36deg)}
+  46%{transform:translate(-8px,5px) rotate(-.28deg)}
+  62%{transform:translate(7px,-4px) rotate(.18deg)}
+  82%{transform:translate(-3px,2px) rotate(-.08deg)}
+  100%{transform:translate(0,0) rotate(0deg)}
+}
+#gameCard.x12iFxHeavyShake .stage{
+  animation:x12iHeavyShakeV261 540ms cubic-bezier(.22,.61,.36,1)!important;
+}
+@keyframes x12iHeavyShakeV261{
+  0%{transform:translate(0,0) rotate(0deg)}
+  12%{transform:translate(-22px,12px) rotate(-.8deg)}
+  24%{transform:translate(20px,-14px) rotate(.7deg)}
+  36%{transform:translate(-15px,9px) rotate(-.55deg)}
+  50%{transform:translate(13px,-8px) rotate(.38deg)}
+  68%{transform:translate(-8px,5px) rotate(-.22deg)}
+  84%{transform:translate(4px,-3px) rotate(.12deg)}
+  100%{transform:translate(0,0) rotate(0deg)}
+}
+#gameCard.x12iFxHitstop .stage .bg,
+#gameCard.x12iFxHitstop .stage .background,
+#gameCard.x12iFxHitstop .stage #bg{
+  filter:brightness(1.9) contrast(1.42) saturate(1.35)!important;
+}
+.x12iFxLayerV261{
+  position:absolute;
+  inset:0;
+  z-index:9998;
+  pointer-events:none;
+  overflow:hidden;
+}
+.x12iFxFlashV261{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 50% 50%,rgba(255,242,178,.80),rgba(255,139,45,.30) 27%,rgba(255,255,255,0) 58%);
+  mix-blend-mode:screen;
+}
+.x12iFxFlashV261.show{animation:x12iMiniFlashV261 210ms ease-out forwards}
+.x12iFxFlashV261.fail{background:radial-gradient(circle at 50% 50%,rgba(255,68,42,.68),rgba(120,0,0,.32) 34%,rgba(0,0,0,0) 68%)}
+@keyframes x12iMiniFlashV261{
+  0%{opacity:0}
+  18%{opacity:1}
+  100%{opacity:0}
+}
+.x12iFxShockwaveV261{
+  position:absolute;
+  left:50%;top:50%;
+  width:72px;height:72px;
+  border-radius:999px;
+  border:2px solid rgba(255,231,160,.88);
+  box-shadow:0 0 28px rgba(255,201,92,.6), inset 0 0 22px rgba(255,201,92,.22);
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.15);
+}
+.x12iFxShockwaveV261.show{animation:x12iShockwaveV261 420ms ease-out forwards}
+.x12iFxShockwaveV261.fail{border-color:rgba(255,88,70,.84);box-shadow:0 0 28px rgba(255,50,40,.62), inset 0 0 22px rgba(255,50,40,.18)}
+@keyframes x12iShockwaveV261{
+  0%{opacity:.95;transform:translate(-50%,-50%) scale(.15)}
+  78%{opacity:.32}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(8.5)}
+}
+.x12iFxImpactWordV261{
+  position:absolute;
+  left:50%;top:45%;
+  transform:translate(-50%,-50%) scale(.72);
+  opacity:0;
+  color:#fff0bf;
+  font:900 clamp(34px,6vw,76px)/1 system-ui, sans-serif;
+  letter-spacing:.08em;
+  text-shadow:0 0 12px rgba(255,157,59,.95),0 0 46px rgba(255,63,31,.75),0 2px 2px rgba(0,0,0,.9);
+  filter:drop-shadow(0 0 16px rgba(255,221,130,.58));
+}
+.x12iFxImpactWordV261.show{animation:x12iImpactWordV261 460ms ease forwards}
+.x12iFxImpactWordV261.fail{color:#ffd4d0;text-shadow:0 0 12px rgba(255,72,58,.95),0 0 42px rgba(120,0,0,.9),0 2px 2px rgba(0,0,0,.9)}
+@keyframes x12iImpactWordV261{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.62)}
+  22%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+  100%{opacity:0;transform:translate(-50%,-72%) scale(.92)}
+}
+.x12iFxEmberV261{
+  position:absolute;
+  left:var(--x);
+  bottom:-18px;
+  width:var(--s);
+  height:var(--s);
+  border-radius:999px;
+  background:rgba(255,183,72,.95);
+  box-shadow:0 0 10px rgba(255,129,32,.95),0 0 20px rgba(255,74,28,.42);
+  opacity:0;
+  animation:x12iEmberRiseV261 var(--d) linear forwards;
+}
+@keyframes x12iEmberRiseV261{
+  0%{opacity:0;transform:translate3d(0,18px,0) scale(.75)}
+  13%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--dx),-390px,0) scale(.1)}
+}
+.x12iFxSlashV261{
+  position:absolute;
+  inset:-12%;
+  opacity:0;
+  background:linear-gradient(72deg,transparent 0 38%,rgba(255,238,184,.34) 39%,transparent 46%),linear-gradient(112deg,transparent 0 58%,rgba(127,40,211,.24) 59%,transparent 66%);
+  filter:blur(8px);
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+#gameCard.x12iCombatUrgent .x12iFxSlashV261{opacity:1;animation:x12iSlashDriftV261 520ms infinite steps(2,end)}
+@keyframes x12iSlashDriftV261{from{transform:translateX(-4%) rotate(-1deg)}to{transform:translateX(4%) rotate(1deg)}}
+@media(max-width:900px){
+  .x12iFxImpactWordV261{top:40%;font-size:38px}
+  .x12iFxShockwaveV261.show{animation-duration:360ms}
+}
+</style>
+<script id="x12i-combat-fx-v261-script">
+/* v0.261 · XII_I Combat FX : Web Audio + shake + hitstop + flash + shockwave + braises */
+(function installX12ICombatFXV261(){
+  try{
+    if(window.__sylviniaX12ICombatFXV261) return;
+    window.__sylviniaX12ICombatFXV261 = true;
+
+    let audioCtx = null;
+    let lastQteActive = false;
+    let lastQteSignature = '';
+    let lastQteClickAt = 0;
+    let emberTimer = null;
+    let observer = null;
+
+    const now = () => Date.now();
+    function gameCard(){ return document.getElementById('gameCard'); }
+    function stage(){ return document.getElementById('stage') || (gameCard() && gameCard().querySelector('.stage')); }
+    function qteLayer(){ return document.querySelector('.x12iStageQteLayer'); }
+    function qteButtons(){ return Array.from(document.querySelectorAll('.x12iStageQteBtn')); }
+
+    function ensureAudio(){
+      try{
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if(!Ctx) return null;
+        audioCtx = audioCtx || new Ctx();
+        if(audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+        return audioCtx;
+      }catch(e){ return null; }
+    }
+    function tone(freq, dur, type, gain){
+      const ctx = ensureAudio();
+      if(!ctx) return;
+      const t = ctx.currentTime;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(gain ?? .12, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g).connect(ctx.destination);
+      o.start(t);
+      o.stop(t + dur + .02);
+    }
+    function noiseHit(dur, gain, cutoff){
+      const ctx = ensureAudio();
+      if(!ctx) return;
+      const sr = ctx.sampleRate;
+      const length = Math.max(1, Math.floor(sr * dur));
+      const buffer = ctx.createBuffer(1, length, sr);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<length;i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/length,2.2);
+      const src = ctx.createBufferSource();
+      const g = ctx.createGain();
+      const f = ctx.createBiquadFilter();
+      f.type = 'lowpass';
+      f.frequency.value = cutoff || 560;
+      g.gain.value = gain ?? .20;
+      src.buffer = buffer;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start();
+    }
+    function soundBlip(){ tone(760,.035,'square',.045); setTimeout(()=>tone(980,.03,'triangle',.035),28); }
+    function soundImpact(){ noiseHit(.16,.27,580); tone(74,.17,'sawtooth',.15); setTimeout(()=>tone(220,.045,'square',.08),24); }
+    function soundFail(){ noiseHit(.25,.22,360); tone(58,.26,'sawtooth',.14); setTimeout(()=>tone(42,.22,'sine',.10),72); }
+
+    function ensureFxLayer(){
+      const st = stage();
+      if(!st) return null;
+      let layer = st.querySelector('.x12iFxLayerV261');
+      if(layer) return layer;
+      layer = document.createElement('div');
+      layer.className = 'x12iFxLayerV261';
+      layer.innerHTML = '<div class="x12iFxFlashV261"></div><div class="x12iFxSlashV261"></div><div class="x12iFxShockwaveV261"></div><div class="x12iFxImpactWordV261"></div>';
+      st.appendChild(layer);
+      return layer;
+    }
+    function pulseClass(cls, ms){
+      const gc = gameCard();
+      if(!gc) return;
+      gc.classList.remove(cls);
+      void gc.offsetWidth;
+      gc.classList.add(cls);
+      setTimeout(()=>gc.classList.remove(cls), ms || 350);
+    }
+    function flash(fail=false){
+      const layer = ensureFxLayer();
+      if(!layer) return;
+      const el = layer.querySelector('.x12iFxFlashV261');
+      el.classList.remove('show','fail');
+      if(fail) el.classList.add('fail');
+      void el.offsetWidth;
+      el.classList.add('show');
+    }
+    function shockwave(fail=false){
+      const layer = ensureFxLayer();
+      if(!layer) return;
+      const el = layer.querySelector('.x12iFxShockwaveV261');
+      el.classList.remove('show','fail');
+      if(fail) el.classList.add('fail');
+      void el.offsetWidth;
+      el.classList.add('show');
+    }
+    function word(txt, fail=false){
+      const layer = ensureFxLayer();
+      if(!layer) return;
+      const el = layer.querySelector('.x12iFxImpactWordV261');
+      el.textContent = txt || (fail ? 'RATÉ' : 'IMPACT');
+      el.classList.remove('show','fail');
+      if(fail) el.classList.add('fail');
+      void el.offsetWidth;
+      el.classList.add('show');
+    }
+    function emberBurst(count){
+      const layer = ensureFxLayer();
+      if(!layer) return;
+      for(let i=0;i<(count||8);i++){
+        const e = document.createElement('i');
+        e.className = 'x12iFxEmberV261';
+        e.style.setProperty('--x', (Math.random()*100).toFixed(2)+'%');
+        e.style.setProperty('--s', (2+Math.random()*4).toFixed(1)+'px');
+        e.style.setProperty('--dx', ((Math.random()*180)-90).toFixed(1)+'px');
+        e.style.setProperty('--d', (850+Math.random()*1450).toFixed(0)+'ms');
+        layer.appendChild(e);
+        setTimeout(()=>e.remove(), 2600);
+      }
+    }
+    function startEmbers(){
+      if(emberTimer) return;
+      emberTimer = setInterval(()=>{
+        const gc = gameCard();
+        if(gc && gc.classList.contains('x12iCombatUrgent')) emberBurst(4);
+      }, 360);
+    }
+    function stopEmbersSoon(){
+      setTimeout(()=>{
+        const gc = gameCard();
+        if(!gc || !gc.classList.contains('x12iCombatUrgent')){
+          clearInterval(emberTimer);
+          emberTimer = null;
+        }
+      }, 900);
+    }
+    function fxBlip(){ soundBlip(); emberBurst(4); }
+    function fxImpact(label){ soundImpact(); pulseClass('x12iFxShake', 360); pulseClass('x12iFxHitstop', 170); flash(false); shockwave(false); word(label || 'IMPACT', false); emberBurst(12); }
+    function fxFail(label){ soundFail(); pulseClass('x12iFxHeavyShake', 560); pulseClass('x12iFxHitstop', 120); flash(true); shockwave(true); word(label || 'RATÉ', true); emberBurst(8); }
+
+    function qteSignature(){
+      return qteButtons().map(b => (b.textContent||'').trim()+':'+Math.round(parseFloat(b.style.left)||0)+':'+Math.round(parseFloat(b.style.top)||0)).join('|');
+    }
+    function syncQteState(){
+      try{
+        ensureFxLayer();
+        const d = window.state && window.state.x12iDuel;
+        const domActive = !!qteLayer() && qteButtons().length > 0;
+        const stateActive = !!(d && d.qte);
+        const active = domActive || stateActive;
+        const gc = gameCard();
+        if(gc) gc.classList.toggle('x12iCombatUrgent', active);
+        if(active){
+          startEmbers();
+          const sig = qteSignature();
+          if(sig && sig !== lastQteSignature){
+            lastQteSignature = sig;
+            fxBlip();
+          }else if(!lastQteActive){
+            fxBlip();
+          }
+        }else{
+          if(lastQteActive && now() - lastQteClickAt > 420){
+            // QTE quitté sans clic récent : timer écoulé ou perte automatique.
+            fxFail('TROP TARD');
+          }
+          if(gc) gc.classList.remove('x12iCombatUrgent');
+          lastQteSignature = '';
+          stopEmbersSoon();
+        }
+        lastQteActive = active;
+      }catch(e){}
+    }
+
+    function installObserver(){
+      if(observer) return;
+      observer = new MutationObserver(()=>{ syncQteState(); });
+      observer.observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','style']});
+    }
+
+    document.addEventListener('pointerdown', function(ev){
+      ensureAudio();
+      const btn = ev.target && ev.target.closest ? ev.target.closest('.x12iStageQteBtn') : null;
+      if(!btn) return;
+      lastQteClickAt = now();
+      if(btn.classList.contains('decoy')) fxFail('ERREUR');
+      else fxImpact((btn.textContent || 'CHOC').trim().slice(0,12));
+    }, true);
+
+    document.addEventListener('click', function(ev){
+      const choice = ev.target && ev.target.closest ? ev.target.closest('#choices .choiceBtn, #choices button, .choiceBtn') : null;
+      if(choice && window.state && window.state.x12iDuel && !window.state.x12iDuel.waiting){
+        ensureAudio();
+        // Petit souffle avant le QTE, comme une inspiration.
+        setTimeout(()=>{ if(window.state && window.state.x12iDuel && window.state.x12iDuel.qte) fxBlip(); }, 90);
+      }
+    }, true);
+
+    function start(){
+      ensureFxLayer();
+      installObserver();
+      syncQteState();
+      setInterval(syncQteState, 130);
+      setInterval(()=>{
+        const d = window.state && window.state.x12iDuel;
+        if(d && !d.finished && document.getElementById('gameCard')) emberBurst(d.qte ? 3 : 1);
+      }, 1100);
+    }
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
+    else start();
+
+    window.SylviniaX12ICombatFX = {impact:fxImpact, fail:fxFail, blip:fxBlip, embers:emberBurst};
+    console.info('[Sylvinia v0.261] XII_I : FX de combat actifs (Web Audio, shake, hitstop, flash, shockwave, braises).');
+  }catch(err){
+    console.error('[Sylvinia v0.261] Échec Combat FX XII_I', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
