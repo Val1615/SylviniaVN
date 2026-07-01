@@ -40158,6 +40158,263 @@ Temps disponible : ${sec} seconde${sec==='1.0'?'':'s'}.`+status;
 })();
 </script>
 
+
+<style id="x12i-qte-click-fix-v261">
+/* v0.261 · XII_I : bulles QTE cliquables même dans la zone où se trouvait l'ATH. */
+body.x12iQteModeV250,
+body.x12iQteMode{
+  overflow:hidden!important;
+}
+body.x12iQteModeV250 #app,
+body.x12iQteModeV250 #game,
+body.x12iQteModeV250 #gameCard{
+  overflow:hidden!important;
+}
+body.x12iQteModeV250 #gameCard > .dialogueWrap,
+body.x12iQteModeV250 #gameCard .dialogueWrap,
+body.x12iQteModeV250 #gameCard .dialogue,
+body.x12iQteModeV250 #gameCard .choices,
+body.x12iQteModeV250 #gameCard #trailerVNControls,
+body.x12iQteModeV250 #gameCard .stats,
+body.x12iQteModeV250 #gameCard #stats{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  width:0!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  overflow:hidden!important;
+}
+body.x12iQteModeV250 #gameCard,
+html body.vn38MobileStack.mobileUI.x12iQteModeV250:not(.legacyVisualUI) #gameCard{
+  display:block!important;
+  position:relative!important;
+  width:100vw!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:var(--vn38ViewportH,100svh)!important;
+  max-height:var(--vn38ViewportH,100svh)!important;
+  padding:0!important;
+  margin:0!important;
+  background:#000!important;
+  overflow:hidden!important;
+}
+body.x12iQteModeV250 #gameCard > .stage,
+html body.vn38MobileStack.mobileUI.x12iQteModeV250:not(.legacyVisualUI) #gameCard > .stage{
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100vw!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  min-height:var(--vn38ViewportH,100svh)!important;
+  max-height:var(--vn38ViewportH,100svh)!important;
+  pointer-events:auto!important;
+  overflow:hidden!important;
+  z-index:1000!important;
+}
+body.x12iQteModeV250 .x12iStageQteLayer,
+body.x12iQteModeV250 .x12iStageQteLayer.v250{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:var(--vn38ViewportH,100svh)!important;
+  z-index:2147483000!important;
+  pointer-events:auto!important;
+  overflow:hidden!important;
+}
+body.x12iQteModeV250 .x12iStageQteLayer::before,
+body.x12iQteModeV250 .x12iStageQteLayer.v250::before,
+body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn::after,
+body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iStageQteBtn::after{
+  pointer-events:none!important;
+}
+body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn,
+body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iStageQteBtn{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  cursor:pointer!important;
+  z-index:2147483002!important;
+}
+body.x12iQteModeV250 .x12iStageQteLayer .x12iQteAttackText,
+body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iQteAttackText{
+  pointer-events:none!important;
+  z-index:2147483001!important;
+}
+</style>
+
+<script id="x12i-final-sequences-qte-music-v261">
+/* v0.261 · XII_I : séquences 1-12, QTE cliquables, musique post-combat, nettoyage musique parasite avant combat. */
+(function installX12IFinalSequencesQteMusicV261(){
+  try{
+    if(window.__sylviniaX12IFinalSequencesQteMusicV261) return;
+    window.__sylviniaX12IFinalSequencesQteMusicV261 = true;
+
+    const PATHS={
+      x12i_duel_seq01_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq01_situation.png',
+      x12i_duel_seq01_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq01_reponse.png',
+      x12i_duel_seq02_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq02_situation.png',
+      x12i_duel_seq02_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq02_reponse.png',
+      x12i_duel_seq03_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq03_situation.png',
+      x12i_duel_seq03_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq03_reponse.png',
+      x12i_duel_seq04_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq04_situation.png',
+      x12i_duel_seq04_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq04_reponse.png',
+      x12i_duel_seq05_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq05_situation.png',
+      x12i_duel_seq05_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq05_reponse.png',
+      x12i_duel_seq06_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq06_situation.png',
+      x12i_duel_seq06_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq06_reponse.png',
+      x12i_duel_seq07_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq07_situation.png',
+      x12i_duel_seq07_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq07_reponse.png',
+      x12i_duel_seq08_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq08_situation.png',
+      x12i_duel_seq08_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq08_reponse.png',
+      x12i_duel_seq09_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq09_situation.png',
+      x12i_duel_seq09_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq09_reponse.png',
+      x12i_duel_seq10_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq10_situation.png',
+      x12i_duel_seq10_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq10_reponse.png',
+      x12i_duel_seq11_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq11_situation.png',
+      x12i_duel_seq11_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq11_reponse.png',
+      x12i_duel_seq12_situation:'assets/images/keyscenes/chapter12/x12i_duel_seq12_situation.png',
+      x12i_duel_seq12_reponse:'assets/images/keyscenes/chapter12/x12i_duel_seq12_reponse.png',
+      music_x12i_glace_brisee:'assets/audio/chapter12/une_glace_a_jamais_brisee.mp3'
+    };
+    const PAIRS=[
+      ['x12i_duel_seq01_situation','x12i_duel_seq01_reponse'],
+      ['x12i_duel_seq02_situation','x12i_duel_seq02_reponse'],
+      ['x12i_duel_seq03_situation','x12i_duel_seq03_reponse'],
+      ['x12i_duel_seq04_situation','x12i_duel_seq04_reponse'],
+      ['x12i_duel_seq05_situation','x12i_duel_seq05_reponse'],
+      ['x12i_duel_seq06_situation','x12i_duel_seq06_reponse'],
+      ['x12i_duel_seq07_situation','x12i_duel_seq07_reponse'],
+      ['x12i_duel_seq08_situation','x12i_duel_seq08_reponse'],
+      ['x12i_duel_seq09_situation','x12i_duel_seq09_reponse'],
+      ['x12i_duel_seq10_situation','x12i_duel_seq10_reponse'],
+      ['x12i_duel_seq11_situation','x12i_duel_seq11_reponse'],
+      ['x12i_duel_seq12_situation','x12i_duel_seq12_reponse']
+    ];
+
+    function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+    function scenes(){ return (typeof S!=='undefined' && S) || (typeof SCENES!=='undefined' && SCENES) || null; }
+    function range(a,b){ const out=[]; for(let n=a;n<=b;n++) out.push('c12i_'+String(n).padStart(3,'0')); return out; }
+    function sceneIsDuel(){ try{ const sc=scenes(); return !!(typeof state!=='undefined' && state && sc && sc[state.scene] && sc[state.scene].x12iDuel); }catch(e){ return false; } }
+
+    function applyAssets(){
+      if(typeof A!=='undefined' && A) Object.assign(A, PATHS);
+      const steps=Array.isArray(window.X12I_DUEL_STEPS) ? window.X12I_DUEL_STEPS : null;
+      if(steps){
+        PAIRS.forEach((pair,idx)=>{
+          if(steps[idx]){
+            steps[idx].bg=pair[0];
+            steps[idx].responseBg=pair[1];
+          }
+        });
+      }
+      return steps;
+    }
+    function applyMusicFixes(){
+      const sc=scenes(); if(!sc) return;
+      const preDuel=[
+        ...range(1,12),
+        'c12i_choice_meche','c12i_meche_strategique','c12i_meche_strategique_2','c12i_meche_strategique_3','c12i_meche_strategique_4',
+        'c12i_choice_tia_sentence','c12i_tia_sentence_resonance','c12i_tia_sentence_lucidite','c12i_tia_sentence_audace','c12i_tia_sentence_sangfroid',
+        'c12i_choice_rage','c12i_rage_bonus'
+      ];
+      preDuel.forEach(id=>{ if(sc[id]) sc[id].music='music_c10_horreur'; });
+      if(sc.x12i_duel_start) sc.x12i_duel_start.music='music_x12i_duel_farae';
+      const postCombat=[
+        'c12i_duel_after_emprise','c12i_duel_after_equilibre','c12i_duel_after_clarte',
+        ...range(27,39),'c12i_end'
+      ];
+      postCombat.forEach(id=>{ if(sc[id]) sc[id].music='music_x12i_glace_brisee'; });
+      if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+        postCombat.forEach(id=>{
+          if(sc[id]) CODEX_MUSIC_BY_SCENE[id]=Array.from(new Set([...(CODEX_MUSIC_BY_SCENE[id]||[]),'music_x12i_glace_brisee']));
+        });
+      }
+      if(typeof CODEX_MUSIC!=='undefined' && !CODEX_MUSIC.music_x12i_glace_brisee){
+        CODEX_MUSIC.music_x12i_glace_brisee={title:'Une glace à jamais brisée',chapter:'Chapitre XII_I',src:'music_x12i_glace_brisee'};
+      }
+    }
+    function imageUrlForKey(key){ try{ if(typeof A!=='undefined' && A && A[key]) return A[key]; return PATHS[key] || ''; }catch(e){ return PATHS[key] || ''; } }
+    function forceBgKey(key){
+      if(!key) return;
+      try{ if(typeof setStageBg==='function') setStageBg(key,true); }catch(e){}
+      const url=imageUrlForKey(key); if(!url) return;
+      const bg=document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      if(bg){ bg.style.backgroundImage=`url("${url}")`; bg.style.display='block'; bg.style.visibility='visible'; bg.style.opacity='1'; bg.style.backgroundSize='cover'; bg.style.backgroundPosition='center center'; }
+    }
+    function lastResolvedStepIndex(d){
+      try{
+        if(d && Array.isArray(d.history) && d.history.length){
+          const last=d.history[d.history.length-1];
+          if(last && typeof last.step==='number') return last.step-1;
+          if(last && typeof last.stepIndex==='number') return last.stepIndex;
+        }
+      }catch(e){}
+      return (d && typeof d.step==='number') ? d.step-1 : 0;
+    }
+    function wantedKey(){
+      const steps=applyAssets();
+      if(!steps || !sceneIsDuel()) return null;
+      const d=state.x12iDuel;
+      if(!d || d.stabilite<=0 || d.finished) return null;
+      if(d.qte){
+        const qIndex=(d.qte && typeof d.qte.stepIndex==='number') ? d.qte.stepIndex : (typeof d.step==='number'?d.step:0);
+        const step=steps[clamp(qIndex,0,steps.length-1)];
+        return step && step.bg;
+      }
+      if(d.waiting){
+        const idx=clamp(lastResolvedStepIndex(d),0,steps.length-1);
+        const step=steps[idx];
+        return step && (step.responseBg || step.bg);
+      }
+      const idx=clamp(typeof d.step==='number'?d.step:0,0,steps.length-1);
+      const step=steps[idx];
+      return step && step.bg;
+    }
+    function syncBg(){ const key=wantedKey(); if(key) forceBgKey(key); }
+    function fixQteLayer(){
+      try{
+        const on=document.body.classList.contains('x12iQteModeV250') || document.body.classList.contains('x12iQteMode');
+        if(!on) return;
+        const layer=document.getElementById('x12iStageQteLayer');
+        if(layer){
+          layer.style.pointerEvents='auto';
+          layer.style.zIndex='2147483000';
+          layer.querySelectorAll('button,.x12iStageQteBtn').forEach(btn=>{
+            btn.style.pointerEvents='auto';
+            btn.style.zIndex='2147483002';
+            btn.style.touchAction='manipulation';
+          });
+        }
+      }catch(e){}
+    }
+    function pulse(){ applyAssets(); applyMusicFixes(); syncBg(); fixQteLayer(); setTimeout(()=>{syncBg();fixQteLayer();},30); setTimeout(()=>{syncBg();fixQteLayer();},120); setTimeout(()=>{syncBg();fixQteLayer();},320); }
+
+    if(typeof window.render==='function' && !window.render.__x12iFinalV261){
+      const prev=window.render;
+      window.render=function(){ const r=prev.apply(this,arguments); pulse(); return r; };
+      window.render.__x12iFinalV261=true;
+      try{ if(typeof render!=='undefined') render=window.render; }catch(e){}
+    }
+    ['click','touchstart','touchend','pointerdown','keydown','transitionend','orientationchange','resize'].forEach(evt=>{
+      window.addEventListener(evt,pulse,{passive:true});
+      document.addEventListener(evt,pulse,{passive:true});
+    });
+    if(window.visualViewport){ window.visualViewport.addEventListener('resize',pulse,{passive:true}); window.visualViewport.addEventListener('scroll',pulse,{passive:true}); }
+    const start=()=>{
+      pulse();
+      const root=document.getElementById('gameCard') || document.body;
+      if(root){ const mo=new MutationObserver(()=>pulse()); mo.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']}); }
+      setInterval(()=>{ applyAssets(); applyMusicFixes(); syncBg(); fixQteLayer(); },160);
+    };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+    console.info('[Sylvinia v0.261] XII_I : séquences 1-12 intégrées, QTE cliquables, musique post-combat et parasite pré-combat corrigés.');
+  }catch(err){ console.error('[Sylvinia v0.261] Échec patch final XII_I.',err); }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
