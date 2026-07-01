@@ -38513,6 +38513,140 @@ body.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn.continueBtn{
 
 
 
+
+<style id="x12i-situation-fx-v267">
+/* v0.267 · Situation FX robuste
+   Cette version ne dépend plus d'une détection externe.
+   Elle est appelée directement depuis renderX12IDuel et utilise un calque fantôme animé
+   au-dessus de l'image de situation. Les QTE restent intouchés. */
+
+#stage{overflow:hidden!important; position:relative!important}
+
+.x12iSitFxLayerV267{
+  position:absolute!important;
+  inset:0!important;
+  z-index:2147482400!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+
+.x12iSitFxGhostV267{
+  position:absolute!important;
+  inset:-2%!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  opacity:.96!important;
+  transform-origin:center center!important;
+  filter:brightness(1) contrast(1)!important;
+  will-change:transform,opacity,filter!important;
+}
+
+/* Animations de situation, très visibles, mais courtes */
+.x12iSitFxGhostV267.observe{animation:x12iV267Observe .95s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.weapon{animation:x12iV267Weapon .72s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.side{animation:x12iV267Side .72s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.magic{animation:x12iV267Magic .9s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.domination{animation:x12iV267Domination 1.08s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.light{animation:x12iV267Light 1s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.disarm{animation:x12iV267Disarm .68s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.impact{animation:x12iV267Impact .62s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.strangle{animation:x12iV267Strangle 1.08s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.memory{animation:x12iV267Memory .96s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.blind{animation:x12iV267Blind 1.08s cubic-bezier(.19,.72,.27,1) forwards!important}
+.x12iSitFxGhostV267.collapse{animation:x12iV267Collapse 1.08s cubic-bezier(.19,.72,.27,1) forwards!important}
+
+@keyframes x12iV267Observe{0%{opacity:1;transform:scale(1.16);filter:brightness(.58) contrast(1.25)}58%{opacity:.86;transform:scale(1.07)}100%{opacity:0;transform:scale(1.04);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Weapon{0%{opacity:1;transform:scale(1.22) translateX(-6%);filter:brightness(.7) contrast(1.34)}35%{opacity:.95;transform:scale(1.1) translateX(2.3%);filter:brightness(1.28) contrast(1.18)}100%{opacity:0;transform:scale(1.04) translateX(0);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Side{0%{opacity:1;transform:scale(1.22) translateX(6%);filter:brightness(.68) contrast(1.34)}38%{opacity:.95;transform:scale(1.1) translateX(-2.6%);filter:brightness(1.24) contrast(1.18)}100%{opacity:0;transform:scale(1.04) translateX(0);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Magic{0%{opacity:1;transform:scale(1.08);filter:brightness(.45) contrast(1.55) saturate(1.28) hue-rotate(18deg)}45%{opacity:.94;transform:scale(1.14);filter:brightness(.88) contrast(1.3) saturate(1.2)}100%{opacity:0;transform:scale(1.04);filter:brightness(1) contrast(1) saturate(1)}}
+@keyframes x12iV267Domination{0%{opacity:1;transform:scale(1.24) translateY(-3.5%);filter:brightness(.34) contrast(1.55)}55%{opacity:.92;transform:scale(1.11) translateY(1.4%);filter:brightness(.68) contrast(1.25)}100%{opacity:0;transform:scale(1.04) translateY(0);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Light{0%{opacity:1;transform:scale(1.07);filter:brightness(2.45) contrast(1.45) saturate(1.05)}44%{opacity:.9;transform:scale(1.11);filter:brightness(1.42) contrast(1.2)}100%{opacity:0;transform:scale(1.04);filter:brightness(1.02) contrast(1)}}
+@keyframes x12iV267Disarm{0%{opacity:1;transform:scale(1.21) translateY(4.5%);filter:brightness(.62) contrast(1.36)}40%{opacity:.94;transform:scale(1.1) translateY(-2%);filter:brightness(1.22) contrast(1.16)}100%{opacity:0;transform:scale(1.04) translateY(0);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Impact{0%{opacity:1;transform:scale(1.24) translateY(5%);filter:brightness(.52) contrast(1.45)}28%{opacity:.96;transform:scale(1.13) translateY(-2.4%);filter:brightness(1.5) contrast(1.18)}100%{opacity:0;transform:scale(1.04) translateY(0);filter:brightness(1) contrast(1)}}
+@keyframes x12iV267Strangle{0%{opacity:1;transform:scale(1.14);filter:brightness(.28) contrast(1.6) saturate(.95)}60%{opacity:.9;transform:scale(1.09);filter:brightness(.62) contrast(1.28)}100%{opacity:0;transform:scale(1.04);filter:brightness(.96) contrast(1.05)}}
+@keyframes x12iV267Memory{0%{opacity:1;transform:scale(1.1);filter:brightness(.65) contrast(1.18) saturate(.52)}50%{opacity:.84;transform:scale(1.07);filter:brightness(1.26) contrast(1.08) saturate(.85)}100%{opacity:0;transform:scale(1.04);filter:brightness(1) contrast(1) saturate(1)}}
+@keyframes x12iV267Blind{0%{opacity:1;transform:scale(1.08);filter:brightness(3) contrast(1.52) saturate(.9)}44%{opacity:.88;transform:scale(1.12);filter:brightness(1.7) contrast(1.28)}100%{opacity:0;transform:scale(1.04);filter:brightness(1.05) contrast(1)}}
+@keyframes x12iV267Collapse{0%{opacity:1;transform:scale(1.13) translateY(-3.2%);filter:brightness(.38) contrast(1.5) saturate(.75)}58%{opacity:.86;transform:scale(1.06) translateY(1.5%)}100%{opacity:0;transform:scale(1.04) translateY(0);filter:brightness(.95) contrast(1)}}
+
+.x12iSitFxVeilV267,.x12iSitFxPulseV267,.x12iSitFxRingV267,.x12iSitFxSlashV267{
+  position:absolute!important;
+  inset:0!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.x12iSitFxVeilV267{
+  mix-blend-mode:screen!important;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(255,239,187,.34),transparent 44%),
+    radial-gradient(circle at 50% 44%,transparent 0 30%,rgba(255,255,255,.20) 41%,transparent 58%)!important;
+  filter:blur(6px)!important;
+  animation:x12iV267Veil .52s ease-out forwards!important;
+}
+@keyframes x12iV267Veil{0%{opacity:0;transform:scale(1.25)}26%{opacity:1}100%{opacity:0;transform:scale(.95)}}
+.x12iSitFxPulseV267{
+  mix-blend-mode:screen!important;
+  background:radial-gradient(circle at 50% 50%,rgba(255,166,49,.48),transparent 44%)!important;
+  animation:x12iV267Pulse .32s ease-out forwards!important;
+}
+@keyframes x12iV267Pulse{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+.x12iSitFxSlashV267{
+  inset:-5%!important;
+  mix-blend-mode:screen!important;
+  background:
+    linear-gradient(35deg,transparent 0 52%,rgba(255,239,190,.72) 53%,transparent 55%),
+    linear-gradient(145deg,transparent 0 48%,rgba(126,41,255,.48) 49%,transparent 52%)!important;
+  animation:x12iV267Slash .34s ease-out forwards!important;
+}
+@keyframes x12iV267Slash{0%{opacity:0;transform:scale(.92)}22%{opacity:1}100%{opacity:0;transform:scale(1.12)}}
+.x12iSitFxRingV267{
+  left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  width:64px!important;height:64px!important;border-radius:999px!important;border:2px solid rgba(255,237,183,.92)!important;
+  transform:translate(-50%,-50%) scale(.2)!important;
+  animation:x12iV267Ring .45s ease-out forwards!important;
+}
+@keyframes x12iV267Ring{0%{opacity:.95;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(7.6)}}
+
+.x12iSitFxParticleV267{
+  position:absolute!important;
+  width:4px!important;height:4px!important;border-radius:999px!important;
+  left:var(--x,50%)!important;top:var(--y,92%)!important;
+  background:#ffc46a!important;box-shadow:0 0 11px #ff7a22!important;
+  animation:x12iV267Particle var(--dur,900ms) linear forwards!important;
+}
+.x12iSitFxParticleV267.shadow{background:#9f56ff!important;box-shadow:0 0 13px #7a2dff!important}
+.x12iSitFxParticleV267.gold{background:#fff2ad!important;box-shadow:0 0 15px #fff2ad!important}
+.x12iSitFxParticleV267.dust{background:#dab37a!important;box-shadow:0 0 9px #dab37a!important}
+@keyframes x12iV267Particle{
+  0%{opacity:0;transform:translate3d(0,0,0) scale(1)}
+  12%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--dx,0),var(--dy,-260px),0) scale(.1)}
+}
+
+/* Shake visible mais bref */
+#stage.x12iV267ShakeLight{animation:x12iV267ShakeLight .26s ease!important}
+#stage.x12iV267ShakeHard{animation:x12iV267ShakeHard .4s cubic-bezier(.36,.07,.19,.97)!important}
+#stage.x12iV267ShakeNerve{animation:x12iV267ShakeNerve .5s ease!important}
+@keyframes x12iV267ShakeLight{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,2px)}52%{transform:translate(4px,-2px)}78%{transform:translate(-2px,1px)}}
+@keyframes x12iV267ShakeHard{0%,100%{transform:translate(0,0) rotate(0)}18%{transform:translate(-16px,7px) rotate(-.45deg)}38%{transform:translate(12px,-9px) rotate(.38deg)}58%{transform:translate(-7px,5px) rotate(-.22deg)}80%{transform:translate(5px,-3px) rotate(.15deg)}}
+@keyframes x12iV267ShakeNerve{0%,100%{transform:translate(0,0)}10%{transform:translate(-7px,0)}22%{transform:translate(6px,0)}34%{transform:translate(-5px,1px)}50%{transform:translate(4px,-1px)}68%{transform:translate(-3px,0)}}
+
+/* Texte et choix : cascade visible, non bloquante */
+#text.x12iV267TextIntro{animation:x12iV267TextIntro .42s ease-out both!important}
+@keyframes x12iV267TextIntro{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+#choices.x12iV267Choices .choiceBtn{
+  opacity:0;
+  transform:translateY(14px) scale(.98);
+  animation:x12iV267ChoiceReveal .36s ease-out forwards!important;
+  animation-delay:var(--x12iV267ChoiceDelay,0ms)!important;
+}
+@keyframes x12iV267ChoiceReveal{0%{opacity:0;transform:translateY(14px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
+#choices.x12iV267Emprise .choiceBtn{box-shadow:0 0 0 1px rgba(145,87,255,.22),0 0 22px rgba(92,39,182,.2)!important}
+#choices.x12iV267Clarte .choiceBtn{box-shadow:0 0 0 1px rgba(255,244,204,.22),0 0 22px rgba(255,239,166,.16)!important}
+#choices.x12iV267Stress .choiceBtn{filter:brightness(1.06)!important}
+</style>
+
+
 <style id="x12i-post-choice-qte-style">
 .x12iStageQteLayer{position:absolute;inset:0;z-index:12;pointer-events:none}
 .x12iStageQteBtn{position:absolute;min-width:94px;min-height:94px;border-radius:999px;border:2px solid rgba(255,244,194,.92);background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.96),rgba(255,219,126,.88) 26%,rgba(190,86,36,.95) 64%,rgba(48,8,4,.98));color:#fff8d6;font-weight:950;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.75);box-shadow:0 0 0 8px rgba(255,201,92,.14),0 0 46px rgba(255,196,79,.62),0 18px 35px rgba(0,0,0,.50);transform:translate(-50%,-50%) scale(.88);animation:c7QteSpawn .18s ease forwards,c7QtePulse .45s ease-in-out infinite;pointer-events:auto;cursor:pointer}
@@ -39342,6 +39476,137 @@ Tu restes trop longtemps immobile, et la scène choisit pour toi. La douleur ava
       }
     }
 
+
+    /* v0.267 · Situation FX robuste, local au duel XII_I */
+    let x12iV267LastSituationKey='';
+    let x12iV267AudioCtx=null;
+    function x12iV267EnsureAudio(){
+      try{
+        x12iV267AudioCtx=x12iV267AudioCtx||new (window.AudioContext||window.webkitAudioContext)();
+        if(x12iV267AudioCtx&&x12iV267AudioCtx.state==='suspended') x12iV267AudioCtx.resume();
+      }catch(e){}
+      return x12iV267AudioCtx;
+    }
+    function x12iV267Tone(freq,dur,type,gain){
+      const ctx=x12iV267EnsureAudio(); if(!ctx) return;
+      const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
+      o.type=type||'sine'; o.frequency.setValueAtTime(freq||160,t);
+      g.gain.setValueAtTime(gain||.045,t); g.gain.exponentialRampToValueAtTime(.001,t+(dur||.08));
+      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t+(dur||.08));
+    }
+    function x12iV267Noise(dur,gain,lowpass){
+      const ctx=x12iV267EnsureAudio(); if(!ctx) return;
+      const sr=ctx.sampleRate,b=ctx.createBuffer(1,Math.max(1,Math.floor(sr*(dur||.1))),sr),d=b.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+      const s=ctx.createBufferSource(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+      f.type='lowpass'; f.frequency.value=lowpass||650; g.gain.value=gain||.09; s.buffer=b;
+      s.connect(f).connect(g).connect(ctx.destination); s.start();
+    }
+    function x12iV267Sound(preset){
+      switch(preset){
+        case 'weapon': case 'side': case 'disarm': x12iV267Noise(.09,.1,980); x12iV267Tone(132,.07,'sawtooth',.045); break;
+        case 'magic': x12iV267Tone(96,.16,'triangle',.05); setTimeout(()=>x12iV267Tone(148,.12,'sine',.035),55); break;
+        case 'domination': x12iV267Noise(.14,.1,480); x12iV267Tone(68,.19,'sawtooth',.05); break;
+        case 'light': case 'blind': x12iV267Tone(340,.14,'sine',.038); setTimeout(()=>x12iV267Tone(520,.14,'triangle',.03),42); break;
+        case 'impact': x12iV267Noise(.12,.13,620); x12iV267Tone(74,.12,'sawtooth',.052); break;
+        case 'strangle': x12iV267Tone(72,.15,'sine',.035); break;
+        case 'collapse': x12iV267Noise(.14,.09,440); x12iV267Tone(58,.16,'triangle',.04); break;
+        default: x12iV267Tone(92,.18,'sine',.034);
+      }
+    }
+    function x12iV267PresetForStep(idx){
+      return ['observe','weapon','side','magic','domination','light','disarm','impact','strangle','memory','blind','collapse'][Math.max(0,Math.min(11,idx||0))] || 'observe';
+    }
+    function x12iV267ParticleKind(preset){
+      if(preset==='magic'||preset==='domination'||preset==='strangle') return 'shadow';
+      if(preset==='light'||preset==='blind') return 'gold';
+      if(preset==='observe'||preset==='memory'||preset==='collapse') return 'dust';
+      return '';
+    }
+    function x12iV267ShakeClass(preset){
+      if(preset==='impact'||preset==='disarm'||preset==='collapse') return 'x12iV267ShakeHard';
+      if(preset==='magic'||preset==='strangle'||preset==='domination') return 'x12iV267ShakeNerve';
+      return 'x12iV267ShakeLight';
+    }
+    function x12iV267ApplySituationFX(stepIndex,d){
+      try{
+        if(!d||d.qte||d.waiting) return;
+        const stage=document.getElementById('stage');
+        const bg=document.getElementById('bg');
+        if(!stage||!bg) return;
+
+        const bgImage=bg.style.backgroundImage||'';
+        const bgKey=bg.dataset?bg.dataset.bgKey||'':'';
+        const key=[state.scene,stepIndex,bgKey,(d.history||[]).length,d.stabilite,d.perception].join(':');
+        if(key===x12iV267LastSituationKey) return;
+        x12iV267LastSituationKey=key;
+
+        const preset=x12iV267PresetForStep(stepIndex);
+        let layer=document.getElementById('x12iSitFxLayerV267');
+        if(!layer){
+          layer=document.createElement('div');
+          layer.id='x12iSitFxLayerV267';
+          layer.className='x12iSitFxLayerV267';
+          stage.appendChild(layer);
+        }
+        layer.innerHTML='';
+
+        const ghost=document.createElement('div');
+        ghost.className='x12iSitFxGhostV267 '+preset;
+        ghost.style.backgroundImage=bgImage;
+        layer.appendChild(ghost);
+
+        const veil=document.createElement('div'); veil.className='x12iSitFxVeilV267'; layer.appendChild(veil);
+        const pulse=document.createElement('div'); pulse.className='x12iSitFxPulseV267'; layer.appendChild(pulse);
+        if(['weapon','side','disarm','impact','light','blind','collapse'].includes(preset)){
+          const ring=document.createElement('div'); ring.className='x12iSitFxRingV267'; layer.appendChild(ring);
+        }
+        if(['weapon','side','disarm','impact','magic'].includes(preset)){
+          const slash=document.createElement('div'); slash.className='x12iSitFxSlashV267'; layer.appendChild(slash);
+        }
+
+        const kind=x12iV267ParticleKind(preset);
+        const dir=(preset==='magic'||preset==='domination'||preset==='strangle')?'right':(['side','disarm','impact'].includes(preset)?'left':'up');
+        const count=(preset==='magic'||preset==='domination'||preset==='strangle')?20:14;
+        for(let i=0;i<count;i++){
+          const p=document.createElement('i');
+          p.className='x12iSitFxParticleV267 '+kind;
+          p.style.setProperty('--x',(dir==='left'?8:dir==='right'?92:Math.random()*100).toFixed(1)+'%');
+          p.style.setProperty('--y',(dir==='up'?92:28+Math.random()*46).toFixed(1)+'%');
+          p.style.setProperty('--dx',(dir==='left'?Math.random()*280:dir==='right'?-Math.random()*280:Math.random()*180-90).toFixed(0)+'px');
+          p.style.setProperty('--dy',(dir==='up'?-190-Math.random()*230:Math.random()*210-105).toFixed(0)+'px');
+          p.style.setProperty('--dur',(620+Math.random()*760).toFixed(0)+'ms');
+          layer.appendChild(p);
+        }
+
+        const shake=x12iV267ShakeClass(preset);
+        stage.classList.remove('x12iV267ShakeLight','x12iV267ShakeHard','x12iV267ShakeNerve');
+        void stage.offsetWidth;
+        stage.classList.add(shake);
+        setTimeout(()=>stage.classList.remove(shake),520);
+
+        const textEl=document.getElementById('text');
+        if(textEl){
+          textEl.classList.remove('x12iV267TextIntro'); void textEl.offsetWidth; textEl.classList.add('x12iV267TextIntro');
+        }
+        const choices=document.getElementById('choices');
+        if(choices){
+          choices.classList.remove('x12iV267Choices','x12iV267Emprise','x12iV267Clarte','x12iV267Stress');
+          void choices.offsetWidth;
+          choices.classList.add('x12iV267Choices');
+          if(Number(d.perception||0)<0) choices.classList.add('x12iV267Emprise');
+          if(Number(d.perception||0)>0) choices.classList.add('x12iV267Clarte');
+          if(Number(d.stabilite||0)<=2) choices.classList.add('x12iV267Stress');
+          Array.from(choices.querySelectorAll('.choiceBtn')).forEach((btn,i)=>btn.style.setProperty('--x12iV267ChoiceDelay',(i*75)+'ms'));
+        }
+
+        x12iV267Sound(preset);
+        setTimeout(()=>{ try{ layer.innerHTML=''; }catch(e){} },1450);
+      }catch(err){
+        console.error('[Sylvinia v0.267] situation fx failed',err);
+      }
+    }
+
     function renderX12IDuel(scene){
       const d=x12iEnsureDuel();
       if(d.stabilite<=0){ document.body.classList.remove('x12iQteMode'); const gc=document.getElementById('gameCard'); if(gc) gc.classList.remove('x12iQteMode'); go('c12i_gameover'); return; }
@@ -39427,6 +39692,9 @@ Temps disponible : ${sec} seconde${sec==='1.0'?'':'s'}.`+status;
       </div>
       <div class="combatMeta"><span>${step.act} <b>${Math.min(d.step+1,X12I_DUEL_STEPS.length)}/${X12I_DUEL_STEPS.length}</b></span><span>QTE <b>${d.qte?'sur l’image':'après choix'}</b></span><span>Point de vue <b>Amanea</b></span></div>`;
 
+      if(!d.qte && !d.waiting){
+        x12iV267ApplySituationFX(d.step,d);
+      }
       if(d.qte) startX12IQteTimer();
       else if(!d.waiting) startX12ITimer();
       else updateX12ITimerDisplay();
