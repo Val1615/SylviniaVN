@@ -44444,442 +44444,425 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 </script>
 
 
-<style id="x12i-qte-dynamic-combat-v263">
-/* v0.263 · XII_I : dynamisme de duel complet, inspiré de la démo v2.
-   Ajouts non destructifs : micro-caméra après choix, rush, trajectoires QTE, pulsation timer,
-   états par acte, perception visuelle, flash de réponse, particules directionnelles. */
+<style id="x12i-qte-dynamic-safe-v264">
+/* v0.264 · XII_I · Dynamisme sûr
+   Version volontairement légère : aucune boucle qui touche aux QTE, aucun déplacement forcé des boutons,
+   pas de filtre permanent lourd. Les FX sont déclenchés une seule fois par événement. */
 
-html body #stage.x12iV263Rush::before{
-  content:""!important;
-  position:absolute!important;
-  inset:-16%!important;
-  z-index:2147481600!important;
-  pointer-events:none!important;
-  opacity:.82!important;
-  mix-blend-mode:screen!important;
-  background:
-    radial-gradient(ellipse at center,transparent 0 33%,rgba(255,255,255,.11) 42%,transparent 60%),
-    repeating-conic-gradient(from 0deg,transparent 0 8deg,rgba(255,230,170,.18) 9deg 11deg,transparent 12deg 24deg)!important;
-  filter:blur(6px)!important;
-  animation:x12iV263Tunnel .54s ease-out forwards!important;
+#stage.x12iSafeRush .bg,
+#stage.x12iSafeRush img,
+#stage.x12iSafeRush .stageBg,
+#stage.x12iSafeRush .background{
+  animation:x12iSafeRushCam .42s ease-out both!important;
 }
-@keyframes x12iV263Tunnel{
-  0%{transform:scale(1.75) rotate(0);opacity:0}
-  28%{opacity:.95}
-  100%{transform:scale(.82) rotate(18deg);opacity:0}
+@keyframes x12iSafeRushCam{
+  0%{transform:scale(1.02) translate3d(0,0,0)}
+  42%{transform:scale(1.075) translate3d(-1.5%,0,0)}
+  70%{transform:scale(1.065) translate3d(1%,0,0)}
+  100%{transform:scale(1.04) translate3d(0,0,0)}
 }
 
-html body #stage.x12iV263ChoiceCam .bg{animation:x12iV263ChoiceCam .48s ease-out!important}
-html body #stage.x12iV263DodgeCam .bg{animation:x12iV263DodgeCam .52s ease-out!important}
-html body #stage.x12iV263HeavyCam .bg{animation:x12iV263HeavyCam .58s ease-out!important}
-
-@keyframes x12iV263ChoiceCam{
-  0%{transform:scale(1.04)}
-  34%{transform:scale(1.13) translateX(-2%)}
-  54%{transform:scale(1.12) translateX(2%)}
-  100%{transform:scale(1.06) translateX(0)}
+#stage.x12iSafeBodyRush .bg,
+#stage.x12iSafeBodyRush img,
+#stage.x12iSafeBodyRush .stageBg,
+#stage.x12iSafeBodyRush .background{
+  animation:x12iSafeBodyRushCam .45s ease-out both!important;
 }
-@keyframes x12iV263DodgeCam{
-  0%{transform:scale(1.04) translateX(0)}
-  26%{transform:scale(1.09) translateX(-5%)}
-  62%{transform:scale(1.11) translateX(4%)}
-  100%{transform:scale(1.06) translateX(0)}
-}
-@keyframes x12iV263HeavyCam{
-  0%{transform:scale(1.04) translateY(0)}
-  32%{transform:scale(1.16) translateY(3%)}
-  48%{transform:scale(1.11) translateY(-2%)}
-  100%{transform:scale(1.06) translateY(0)}
+@keyframes x12iSafeBodyRushCam{
+  0%{transform:scale(1.02)}
+  38%{transform:scale(1.09) translate3d(0,2%,0)}
+  62%{transform:scale(1.075) translate3d(0,-1%,0)}
+  100%{transform:scale(1.04)}
 }
 
-html body #stage.x12iV263Weapon::after,
-html body #stage.x12iV263Magic::after,
-html body #stage.x12iV263Body::after,
-html body #stage.x12iV263Light::after{
-  pointer-events:none!important;
-}
-
-html body #stage.x12iV263Magic .bg{
-  filter:brightness(.82) contrast(1.24) saturate(1.18) hue-rotate(8deg)!important;
-}
-html body #stage.x12iV263Body .bg{
-  filter:brightness(.76) contrast(1.28) saturate(1.2)!important;
-}
-html body #stage.x12iV263Light .bg{
-  filter:brightness(1.16) contrast(1.22) saturate(1.05)!important;
-}
-html body.x12iQteModeV250 #stage.x12iV263Light .bg,
-html body.x12iQteMode #stage.x12iV263Light .bg{
-  filter:brightness(1.76) contrast(1.38) saturate(1.06)!important;
-}
-html body #stage.x12iV263Emprise .bg{
-  filter:brightness(.58) contrast(1.36) saturate(1.12) hue-rotate(16deg)!important;
-}
-html body #stage.x12iV263Clarte .bg{
-  filter:brightness(1.06) contrast(1.16) saturate(.98)!important;
-}
-
-.x12iV263FxLayer{
+.x12iSafeLayer{
   position:absolute!important;
   inset:0!important;
   z-index:2147482500!important;
-  pointer-events:none!important;
   overflow:hidden!important;
+  pointer-events:none!important;
 }
-.x12iV263ResponseFlash{
+
+.x12iSafeRushVeil{
+  position:absolute!important;
+  inset:-12%!important;
+  opacity:0!important;
+  mix-blend-mode:screen!important;
+  background:
+    radial-gradient(ellipse at center, transparent 0 36%, rgba(255,244,202,.13) 46%, transparent 62%),
+    linear-gradient(70deg, transparent 0 38%, rgba(255,235,180,.18) 42%, transparent 48%)!important;
+  filter:blur(5px)!important;
+}
+.x12iSafeRushVeil.show{animation:x12iSafeRushVeil .38s ease-out forwards!important}
+@keyframes x12iSafeRushVeil{
+  0%{opacity:0;transform:scale(1.35) rotate(0deg)}
+  35%{opacity:.8}
+  100%{opacity:0;transform:scale(.92) rotate(7deg)}
+}
+
+.x12iSafeFlash{
   position:absolute!important;
   inset:0!important;
   opacity:0!important;
-  pointer-events:none!important;
   mix-blend-mode:screen!important;
-  background:radial-gradient(circle at center,rgba(255,239,190,.88),rgba(255,148,44,.24) 30%,transparent 62%)!important;
+  background:radial-gradient(circle at center, rgba(255,238,184,.78), rgba(255,167,52,.20) 24%, transparent 56%)!important;
 }
-.x12iV263ResponseFlash.show{animation:x12iV263ResponseFlash .52s ease-out forwards!important}
-@keyframes x12iV263ResponseFlash{
-  0%{opacity:0;transform:scale(.92)}
-  18%{opacity:1}
-  100%{opacity:0;transform:scale(1.22)}
+.x12iSafeFlash.show{animation:x12iSafeFlash .22s ease-out forwards!important}
+@keyframes x12iSafeFlash{
+  0%{opacity:0}
+  25%{opacity:.82}
+  100%{opacity:0}
 }
 
-.x12iV263Slash{
+.x12iSafeShock{
   position:absolute!important;
-  inset:-4%!important;
+  left:50%!important;
+  top:50%!important;
+  width:52px!important;
+  height:52px!important;
+  border-radius:999px!important;
+  border:2px solid rgba(255,235,178,.8)!important;
   opacity:0!important;
-  pointer-events:none!important;
-  mix-blend-mode:screen!important;
-  background:
-    linear-gradient(35deg,transparent 0 52%,rgba(255,237,188,.72) 53%,transparent 55%),
-    linear-gradient(145deg,transparent 0 48%,rgba(126,41,255,.55) 49%,transparent 52%)!important;
+  transform:translate(-50%,-50%) scale(.2)!important;
 }
-.x12iV263Slash.show{animation:x12iV263Slash .28s ease-out forwards!important}
-@keyframes x12iV263Slash{
-  0%{opacity:0;transform:scale(.9)}
-  22%{opacity:1}
-  100%{opacity:0;transform:scale(1.12)}
+.x12iSafeShock.show{animation:x12iSafeShock .34s ease-out forwards!important}
+@keyframes x12iSafeShock{
+  0%{opacity:.9;transform:translate(-50%,-50%) scale(.2)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(7)}
 }
 
-.x12iV263Particle{
+.x12iSafeParticle{
   position:absolute!important;
-  width:4px!important;
-  height:4px!important;
+  width:3px!important;
+  height:3px!important;
   border-radius:999px!important;
   left:var(--x,50%)!important;
-  top:var(--y,95%)!important;
-  background:#ffc163!important;
-  box-shadow:0 0 11px #ff7b23,0 0 18px rgba(255,208,105,.55)!important;
-  animation:x12iV263Particle var(--dur,900ms) linear forwards!important;
+  top:var(--y,92%)!important;
+  background:#ffc36a!important;
+  box-shadow:0 0 10px #ff7d26!important;
+  animation:x12iSafeParticle var(--dur,900ms) linear forwards!important;
 }
-.x12iV263Particle.shadow{
+.x12iSafeParticle.shadow{
   background:#9e55ff!important;
-  box-shadow:0 0 15px #7a2cff,0 0 30px rgba(128,43,255,.45)!important;
+  box-shadow:0 0 12px #7830ff!important;
 }
-.x12iV263Particle.dust{
-  background:#d8b27a!important;
-  box-shadow:0 0 9px #e2b879,0 0 18px rgba(216,178,122,.32)!important;
+.x12iSafeParticle.dust{
+  background:#d7b781!important;
+  box-shadow:0 0 8px #d7b781!important;
 }
-.x12iV263Particle.gold{
-  background:#fff0a8!important;
-  box-shadow:0 0 14px #fff0a8,0 0 34px rgba(255,241,170,.58)!important;
+.x12iSafeParticle.gold{
+  background:#fff2ac!important;
+  box-shadow:0 0 13px #fff2ac!important;
 }
-@keyframes x12iV263Particle{
+@keyframes x12iSafeParticle{
   0%{opacity:0;transform:translate3d(0,0,0) scale(1)}
-  14%{opacity:1}
-  100%{opacity:0;transform:translate3d(var(--dx,0px),var(--dy,-320px),0) scale(.08)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--dx,0px),var(--dy,-260px),0) scale(.1)}
 }
 
-html body #stage.x12iV263NerveShake{animation:x12iV263NerveShake .44s ease!important}
-@keyframes x12iV263NerveShake{
+#stage.x12iSafeShakeLight{animation:x12iSafeShakeLight .22s ease!important}
+#stage.x12iSafeShakeHard{animation:x12iSafeShakeHard .32s cubic-bezier(.36,.07,.19,.97)!important}
+#stage.x12iSafeShakeNerve{animation:x12iSafeShakeNerve .38s ease!important}
+@keyframes x12iSafeShakeLight{
   0%,100%{transform:translate(0,0)}
-  10%{transform:translate(-7px,0)}
-  20%{transform:translate(6px,0)}
-  30%{transform:translate(-5px,1px)}
-  45%{transform:translate(4px,-1px)}
-  60%{transform:translate(-3px,0)}
+  25%{transform:translate(-4px,2px)}
+  55%{transform:translate(3px,-2px)}
+  78%{transform:translate(-2px,1px)}
+}
+@keyframes x12iSafeShakeHard{
+  0%,100%{transform:translate(0,0) rotate(0)}
+  20%{transform:translate(-13px,6px) rotate(-.4deg)}
+  40%{transform:translate(10px,-8px) rotate(.35deg)}
+  62%{transform:translate(-6px,4px) rotate(-.2deg)}
+  82%{transform:translate(4px,-3px) rotate(.15deg)}
+}
+@keyframes x12iSafeShakeNerve{
+  0%,100%{transform:translate(0,0)}
+  13%{transform:translate(-6px,0)}
+  27%{transform:translate(5px,0)}
+  42%{transform:translate(-4px,1px)}
+  60%{transform:translate(3px,-1px)}
 }
 
-html body #stats.x12iV263HudPulse,
-html body .stats.x12iV263HudPulse{
-  animation:x12iV263HudPulse .32s ease!important;
+#stage.x12iSafeClarte::after,
+#stage.x12iSafeEmprise::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:2147481200!important;
+  pointer-events:none!important;
+  opacity:0!important;
 }
-@keyframes x12iV263HudPulse{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-4px)}
-  40%{transform:translateX(3px)}
-  60%{transform:translateX(-2px)}
-  80%{transform:translateX(2px)}
+#stage.x12iSafeClarte::after{
+  opacity:.18!important;
+  mix-blend-mode:screen!important;
+  background:radial-gradient(circle at 50% 42%, rgba(255,245,201,.65), transparent 46%)!important;
 }
-
-/* QTE chorégraphié : on rend la trajectoire perceptible sans bloquer le clic. */
-html body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn,
-html body.x12iQteMode .x12iStageQteLayer .x12iStageQteBtn{
-  transition:left .10s ease-out, top .10s ease-out, transform .08s ease, filter .08s ease!important;
+#stage.x12iSafeEmprise::after{
+  opacity:.24!important;
+  mix-blend-mode:multiply!important;
+  background:radial-gradient(circle at center, transparent 34%, rgba(44,0,74,.55) 76%, rgba(0,0,0,.72) 100%)!important;
 }
 </style>
 
-<script id="x12i-qte-dynamic-combat-script-v263">
-/* v0.263 · XII_I : dynamisme de duel étendu depuis la démo v2. */
-(function installX12IDynamicCombatV263(){
+<script id="x12i-qte-dynamic-safe-script-v264">
+/* v0.264 · XII_I · Dynamisme sûr
+   Patch basé sur la v0.262 stable. Il évite les causes du bug v0.263 :
+   - aucun MutationObserver global,
+   - aucune boucle qui modifie les boutons QTE ou leur timer,
+   - aucun filtre/flash maintenu en continu,
+   - FX déclenchés une fois au début d'un choix, au début d'un QTE, et à l'entrée de l'écran réponse.
+*/
+(function installX12ISafeDynamicV264(){
   try{
-    if(window.__sylviniaX12IDynamicCombatV263) return;
-    window.__sylviniaX12IDynamicCombatV263 = true;
+    if(window.__sylviniaX12ISafeDynamicV264) return;
+    window.__sylviniaX12ISafeDynamicV264 = true;
 
     let audioCtx = null;
-    let lastStepKey = '';
-    let lastQteKey = '';
-    let lastWaitingKey = '';
-    let lastBeatAt = 0;
+    let lastDuelSignature = "";
+    let lastQteSignature = "";
+    let lastWaitingSignature = "";
+    let heartbeatTimer = null;
 
-    function byId(id){ return document.getElementById(id); }
-    function stage(){ return byId('stage'); }
-    function qteLayer(){ return document.querySelector('.x12iStageQteLayer'); }
-    function qteButtons(){ return Array.from(document.querySelectorAll('.x12iStageQteLayer .x12iStageQteBtn')); }
-    function duel(){
-      try{ return window.state && window.state.x12iDuel ? window.state.x12iDuel : null; }catch(e){ return null; }
-    }
+    function $(sel, root){ return (root || document).querySelector(sel); }
+    function stage(){ return document.getElementById("stage"); }
+    function duel(){ return window.state && window.state.x12iDuel ? window.state.x12iDuel : null; }
     function steps(){ return Array.isArray(window.X12I_DUEL_STEPS) ? window.X12I_DUEL_STEPS : []; }
     function currentStep(){
-      const d = duel(); const arr = steps();
+      const d = duel();
+      const arr = steps();
       if(!d || !arr.length) return null;
-      const index = Math.max(0, Math.min(arr.length - 1, typeof d.step === 'number' ? d.step : 0));
-      return arr[index] || null;
+      const idx = Math.max(0, Math.min(arr.length - 1, Number(d.step || 0)));
+      return arr[idx] || null;
     }
-    function qteActive(){ return document.body.classList.contains('x12iQteModeV250') || document.body.classList.contains('x12iQteMode'); }
+    function phaseOf(step){
+      const s = JSON.stringify(step || {}).toLowerCase();
+      if(s.includes("lumi") || s.includes("aveugl")) return "light";
+      if(s.includes("poing") || s.includes("mains") || s.includes("corps") || s.includes("étrang")) return "body";
+      if(s.includes("magie") || s.includes("ombre") || s.includes("sort") || s.includes("onde")) return "magic";
+      return "weapon";
+    }
 
     function ensureAudio(){
       try{
         audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
       }catch(e){}
       return audioCtx;
     }
     function tone(freq, dur, type, gain){
-      const ctx = ensureAudio(); if(!ctx) return;
-      const t = ctx.currentTime;
+      const ctx = ensureAudio();
+      if(!ctx) return;
+      const now = ctx.currentTime;
       const o = ctx.createOscillator();
       const g = ctx.createGain();
-      o.type = type || 'sine';
-      o.frequency.setValueAtTime(freq || 160, t);
-      g.gain.setValueAtTime(gain || .09, t);
-      g.gain.exponentialRampToValueAtTime(.001, t + (dur || .08));
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(freq || 160, now);
+      g.gain.setValueAtTime(gain || .07, now);
+      g.gain.exponentialRampToValueAtTime(.001, now + (dur || .08));
       o.connect(g).connect(ctx.destination);
-      o.start(t); o.stop(t + (dur || .08));
+      o.start(now);
+      o.stop(now + (dur || .08));
     }
-    function rushSound(){
-      tone(112,.075,'sawtooth',.055);
-      setTimeout(()=>tone(196,.045,'square',.05),45);
+    function noise(dur, gain, lowpass){
+      const ctx = ensureAudio();
+      if(!ctx) return;
+      const sr = ctx.sampleRate;
+      const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(sr * (dur || .12))), sr);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.pow(1 - i/data.length, 2);
+      const src = ctx.createBufferSource();
+      const g = ctx.createGain();
+      const f = ctx.createBiquadFilter();
+      f.type = "lowpass";
+      f.frequency.value = lowpass || 520;
+      g.gain.value = gain || .12;
+      src.buffer = buffer;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start();
     }
-    function beatSound(intensity){
-      tone(68,.085,'sine', intensity || .055);
-    }
+    function sfxBlip(){ tone(780,.035,"square",.045); }
+    function sfxRush(){ tone(125,.07,"sawtooth",.05); setTimeout(()=>tone(215,.045,"square",.045),45); }
+    function sfxImpact(){ noise(.13,.18,620); tone(76,.12,"sawtooth",.105); setTimeout(()=>tone(220,.035,"square",.06),24); }
+    function sfxMiss(){ noise(.18,.15,380); tone(56,.22,"sawtooth",.09); }
 
-    function fxLayer(){
-      const st = stage(); if(!st) return null;
-      let layer = byId('x12iV263FxLayer');
-      if(!layer){
-        layer = document.createElement('div');
-        layer.id = 'x12iV263FxLayer';
-        layer.className = 'x12iV263FxLayer';
-        layer.innerHTML = '<div class="x12iV263ResponseFlash"></div><div class="x12iV263Slash"></div>';
-        st.appendChild(layer);
+    function layer(){
+      const st = stage();
+      if(!st) return null;
+      let l = document.getElementById("x12iSafeLayer");
+      if(!l){
+        l = document.createElement("div");
+        l.id = "x12iSafeLayer";
+        l.className = "x12iSafeLayer";
+        l.innerHTML = '<div class="x12iSafeRushVeil"></div><div class="x12iSafeFlash"></div><div class="x12iSafeShock"></div>';
+        st.appendChild(l);
       }
-      return layer;
+      return l;
     }
-    function flashResponse(){
-      const layer = fxLayer(); if(!layer) return;
-      const el = layer.querySelector('.x12iV263ResponseFlash'); if(!el) return;
-      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    function pulse(elClass){
+      const l = layer(); if(!l) return;
+      const el = $("." + elClass, l);
+      if(!el) return;
+      el.classList.remove("show");
+      void el.offsetWidth;
+      el.classList.add("show");
     }
-    function slash(){
-      const layer = fxLayer(); if(!layer) return;
-      const el = layer.querySelector('.x12iV263Slash'); if(!el) return;
-      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    function particleType(){
+      const phase = phaseOf(currentStep());
+      if(phase === "light") return "gold";
+      if(phase === "magic") return "shadow";
+      if(phase === "weapon") return "dust";
+      return "";
     }
-    function particles(type, count, dir){
-      const layer = fxLayer(); if(!layer) return;
-      count = count || 10; dir = dir || 'up';
-      for(let i=0;i<count;i++){
-        const p = document.createElement('i');
-        p.className = 'x12iV263Particle ' + (type || '');
-        const fromLeft = dir === 'left', fromRight = dir === 'right';
-        p.style.setProperty('--x', (fromLeft ? 5 : fromRight ? 95 : Math.random()*100).toFixed(1) + '%');
-        p.style.setProperty('--y', (dir === 'up' ? 95 : (28 + Math.random()*50)).toFixed(1) + '%');
-        p.style.setProperty('--dx', (fromLeft ? Math.random()*420 : fromRight ? -Math.random()*420 : (Math.random()*220-110)).toFixed(1) + 'px');
-        p.style.setProperty('--dy', (dir === 'up' ? (-260-Math.random()*260) : (Math.random()*260-130)).toFixed(1) + 'px');
-        p.style.setProperty('--dur', (620+Math.random()*950).toFixed(0)+'ms');
-        layer.appendChild(p);
-        setTimeout(()=>{ try{p.remove();}catch(_){} }, 1900);
+    function particles(count, dir){
+      const l = layer(); if(!l) return;
+      const type = particleType();
+      dir = dir || "up";
+      for(let i=0;i<(count || 8);i++){
+        const p = document.createElement("i");
+        p.className = "x12iSafeParticle " + type;
+        const left = dir === "left" ? 8 : dir === "right" ? 92 : Math.random()*100;
+        p.style.setProperty("--x", left.toFixed(1) + "%");
+        p.style.setProperty("--y", (dir === "up" ? 92 : 28 + Math.random()*46).toFixed(1) + "%");
+        p.style.setProperty("--dx", (dir === "left" ? Math.random()*260 : dir === "right" ? -Math.random()*260 : Math.random()*160 - 80).toFixed(0) + "px");
+        p.style.setProperty("--dy", (dir === "up" ? -180 - Math.random()*210 : Math.random()*200 - 100).toFixed(0) + "px");
+        p.style.setProperty("--dur", (620 + Math.random()*620).toFixed(0) + "ms");
+        l.appendChild(p);
+        setTimeout(()=>{ try{p.remove();}catch(e){} }, 1400);
       }
     }
-    function cleanStageClasses(){
-      const st = stage(); if(!st) return;
-      st.classList.remove('x12iV263Weapon','x12iV263Magic','x12iV263Body','x12iV263Light','x12iV263Emprise','x12iV263Clarte');
-    }
-    function phaseOf(step){
-      const act = String((step && step.act) || '');
-      const phase = String((step && step.phase) || '');
-      if(act.includes('IV') || phase.includes('lumière') || phase.includes('Lumière')) return 'light';
-      if(act.includes('III') || phase.includes('mains nues')) return 'body';
-      if(act.includes('II') || phase.includes('magique')) return 'magic';
-      return 'weapon';
-    }
-    function applyPhase(){
-      const st = stage(); const d = duel(); const step = currentStep();
-      if(!st || !d || !step) return;
-      st.classList.remove('x12iV263Weapon','x12iV263Magic','x12iV263Body','x12iV263Light','x12iV263Emprise','x12iV263Clarte');
-      const phase = phaseOf(step);
-      st.classList.add(
-        phase === 'light' ? 'x12iV263Light' :
-        phase === 'body' ? 'x12iV263Body' :
-        phase === 'magic' ? 'x12iV263Magic' : 'x12iV263Weapon'
-      );
-      if(d.perception < 0 && phase !== 'light') st.classList.add('x12iV263Emprise');
-      if(d.perception > 0) st.classList.add('x12iV263Clarte');
-    }
-    function cameraClassFor(step){
-      const phase = phaseOf(step);
-      if(phase === 'body') return 'x12iV263HeavyCam';
-      if(phase === 'magic') return 'x12iV263DodgeCam';
-      return 'x12iV263ChoiceCam';
-    }
-    function particleTypeFor(step){
-      const phase = phaseOf(step);
-      if(phase === 'light') return 'gold';
-      if(phase === 'magic') return 'shadow';
-      if(phase === 'body') return '';
-      return 'dust';
-    }
-    function microCamera(){
-      const st = stage(); const step = currentStep(); if(!st || !step) return;
-      const cls = cameraClassFor(step);
-      st.classList.remove('x12iV263ChoiceCam','x12iV263DodgeCam','x12iV263HeavyCam','x12iV263Rush');
+    function shake(kind){
+      const st = stage();
+      if(!st) return;
+      st.classList.remove("x12iSafeShakeLight","x12iSafeShakeHard","x12iSafeShakeNerve");
       void st.offsetWidth;
-      st.classList.add(cls, 'x12iV263Rush');
-      rushSound();
-      particles(particleTypeFor(step), 18, phaseOf(step)==='magic'?'right':'up');
-      setTimeout(()=>{ try{st.classList.remove(cls,'x12iV263Rush');}catch(e){} }, 620);
+      st.classList.add(kind);
+      setTimeout(()=>st.classList.remove(kind), 450);
     }
-    function qteIndex(){
-      const d = duel(); if(!d || !d.qte) return 0;
-      if(typeof d.qte.index === 'number') return d.qte.index;
-      if(Array.isArray(d.qte.seq) && typeof d.qte.stepIndex === 'number') return d.qte.index || 0;
-      return 0;
+    function microCam(){
+      const st = stage();
+      const phase = phaseOf(currentStep());
+      if(!st) return;
+      const camClass = phase === "body" ? "x12iSafeBodyRush" : "x12iSafeRush";
+      st.classList.remove("x12iSafeRush","x12iSafeBodyRush");
+      void st.offsetWidth;
+      st.classList.add(camClass);
+      pulse("x12iSafeRushVeil");
+      particles(12, phase === "magic" ? "right" : phase === "body" ? "left" : "up");
+      sfxRush();
+      setTimeout(()=>st.classList.remove(camClass), 560);
     }
-    const PATHS = {
-      weapon:[[24,42],[38,34],[54,46],[68,38],[48,29],[74,52],[32,56]],
-      magic:[[18,58],[32,44],[50,36],[66,44],[80,56],[58,29],[42,62]],
-      body:[[28,62],[42,55],[55,50],[63,43],[48,35],[34,48],[72,60]],
-      light:[[20,50],[32,42],[45,36],[57,34],[70,40],[78,52],[50,62]]
-    };
-    function choreographButtons(){
-      const btns = qteButtons(); if(!btns.length) return;
-      const step = currentStep(); const phase = phaseOf(step); const path = PATHS[phase] || PATHS.weapon;
-      const qi = qteIndex();
-      btns.forEach((btn, i)=>{
-        const pos = path[(qi + i) % path.length];
-        // On garde le QTE dans la moitié haute/milieu : pas derrière la case de texte.
-        let x = Math.max(14, Math.min(86, pos[0] + (i ? ((i%2?1:-1)*Math.min(10, i*4)) : 0)));
-        let y = Math.max(18, Math.min(64, pos[1] + (i ? ((i%3)-1)*6 : 0)));
-        btn.style.left = x + '%';
-        btn.style.top = y + '%';
-        btn.style.zIndex = '2147483600';
-        btn.style.pointerEvents = 'auto';
-        btn.dataset.x12iV263Choreo = phase + ':' + qi + ':' + i;
-      });
+    function applyPerceptionTint(){
+      const st = stage();
+      const d = duel();
+      if(!st || !d) return;
+      st.classList.remove("x12iSafeClarte","x12iSafeEmprise");
+      if(Number(d.perception || 0) > 0) st.classList.add("x12iSafeClarte");
+      if(Number(d.perception || 0) < 0) st.classList.add("x12iSafeEmprise");
     }
-    function heartbeat(){
-      const d = duel(); if(!d || !d.qte || !d.qte.deadline) return;
-      const now = Date.now();
-      const total = d.qte.duration || 1200;
-      const remain = Math.max(0, d.qte.deadline - now);
-      const ratio = remain / total;
-      let interval = ratio < .25 ? 150 : ratio < .50 ? 260 : 430;
-      if(ratio < .58 && now - lastBeatAt > interval){
-        lastBeatAt = now;
-        beatSound(ratio < .25 ? .105 : .065);
-      }
+    function qteActive(){
+      return document.body.classList.contains("x12iQteModeV250") || document.body.classList.contains("x12iQteMode") || !!$(".x12iStageQteLayer .x12iStageQteBtn");
     }
-    function waitingKey(){
-      const d = duel(); if(!d || !d.waiting) return '';
-      return String(d.step||0) + ':' + String((d.history && d.history.length) || 0) + ':' + String((d.last && d.last.reaction) || '').slice(0,36);
+    function qteSignature(){
+      const d = duel();
+      if(!d || !d.qte) return "";
+      return [d.step, d.qte.index, d.qte.word, d.qte.deadline, (d.qte.seq || []).join("|")].join(":");
     }
-    function qteKey(){
-      const d = duel(); if(!d || !d.qte) return '';
-      return String(d.step||0)+':'+String(qteIndex())+':'+String(d.qte.positionSeed||0)+':'+String((d.qte.seq||[]).join('|') || d.qte.word || '');
+    function waitingSignature(){
+      const d = duel();
+      if(!d || !d.waiting) return "";
+      return [d.step, (d.history || []).length, Number(d.perception || 0), Number(d.stability || 0)].join(":");
     }
-    function onNewQte(){
-      const step = currentStep();
-      particles(particleTypeFor(step), 12, phaseOf(step)==='magic'?'right':phaseOf(step)==='body'?'left':'up');
-      slash();
-      choreographButtons();
+    function onQteStart(){
+      sfxBlip();
+      particles(8, "up");
+      const phase = phaseOf(currentStep());
+      shake(phase === "magic" ? "x12iSafeShakeNerve" : phase === "body" ? "x12iSafeShakeHard" : "x12iSafeShakeLight");
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(()=>{
+        const d = duel();
+        if(!d || !d.qte || !d.qte.deadline || !qteActive()){
+          clearInterval(heartbeatTimer);
+          heartbeatTimer = null;
+          return;
+        }
+        const remain = d.qte.deadline - Date.now();
+        const total = d.qte.duration || 1200;
+        if(remain / total < .45){
+          tone(remain / total < .22 ? 68 : 92, .045, "sine", remain / total < .22 ? .055 : .035);
+        }
+      }, 230);
     }
     function onWaiting(){
-      const step = currentStep();
-      flashResponse();
-      particles(particleTypeFor(step), 16, 'up');
-      const st = stage();
-      if(st){
-        st.classList.remove('x12iV263NerveShake'); void st.offsetWidth;
-        if(duel() && duel().last && duel().last.bad) st.classList.add('x12iV263NerveShake');
-        setTimeout(()=>{ try{st.classList.remove('x12iV263NerveShake');}catch(e){} }, 480);
-      }
-      const stats = byId('stats') || document.querySelector('.stats');
-      if(stats){
-        stats.classList.remove('x12iV263HudPulse'); void stats.offsetWidth;
-        stats.classList.add('x12iV263HudPulse');
-        setTimeout(()=>stats.classList.remove('x12iV263HudPulse'), 360);
-      }
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = null;
+      sfxImpact();
+      pulse("x12iSafeFlash");
+      pulse("x12iSafeShock");
+      particles(12, "up");
+      const phase = phaseOf(currentStep());
+      shake(phase === "magic" ? "x12iSafeShakeNerve" : phase === "body" ? "x12iSafeShakeHard" : "x12iSafeShakeLight");
     }
-    function monitor(){
-      applyPhase();
-      if(qteActive()){
-        const key = qteKey();
-        if(key && key !== lastQteKey){
-          lastQteKey = key;
-          setTimeout(onNewQte, 25);
-        }else{
-          choreographButtons();
-        }
-        heartbeat();
+    function tick(){
+      const d = duel();
+      if(!d) return;
+      applyPerceptionTint();
+      const qs = qteSignature();
+      if(qs && qs !== lastQteSignature){
+        lastQteSignature = qs;
+        onQteStart();
       }
-      const wk = waitingKey();
-      if(wk && wk !== lastWaitingKey){
-        lastWaitingKey = wk;
-        setTimeout(onWaiting, 35);
+      const ws = waitingSignature();
+      if(ws && ws !== lastWaitingSignature){
+        lastWaitingSignature = ws;
+        onWaiting();
       }
     }
 
-    document.addEventListener('click', function(ev){
+    // Micro-mouvement uniquement au clic de choix de duel, jamais en boucle.
+    document.addEventListener("click", function(ev){
       try{
+        ensureAudio();
+        const btn = ev.target && ev.target.closest ? ev.target.closest("button") : null;
+        if(!btn) return;
+
         const d = duel();
-        const btn = ev.target && ev.target.closest ? ev.target.closest('button.choiceBtn') : null;
-        if(!btn || !d || d.waiting || d.qte) return;
-        const txt = (btn.textContent || '').trim().toLowerCase();
-        if(txt.includes('continuer') || txt.includes('recommencer') || txt.includes('retour')) return;
-        microCamera();
+        const label = (btn.textContent || "").trim().toLowerCase();
+
+        if(btn.classList.contains("x12iStageQteBtn")){
+          sfxImpact();
+          pulse("x12iSafeFlash");
+          pulse("x12iSafeShock");
+          particles(8, "right");
+          return;
+        }
+
+        if(!d || d.waiting || d.qte) return;
+        const isChoice = btn.classList.contains("choiceBtn") || btn.closest(".choices") || btn.closest("#choices");
+        if(!isChoice) return;
+        if(label.includes("continuer") || label.includes("recommencer") || label.includes("retour")) return;
+        microCam();
       }catch(e){}
     }, true);
 
-    document.addEventListener('pointerdown', function(ev){
-      const btn = ev.target && ev.target.closest ? ev.target.closest('.x12iStageQteBtn') : null;
-      if(btn){
-        const step = currentStep();
-        slash();
-        particles(particleTypeFor(step), 10, phaseOf(step)==='body'?'left':'right');
-      }
-    }, true);
+    document.addEventListener("touchstart", ensureAudio, {capture:true, passive:true});
 
-    document.addEventListener('click', ensureAudio, {capture:true, passive:true});
-    document.addEventListener('touchstart', ensureAudio, {capture:true, passive:true});
-
-    if(window.MutationObserver && document.body){
-      const mo = new MutationObserver(()=>setTimeout(monitor, 20));
-      mo.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class','style']});
+    const originalRender = window.render;
+    if(typeof originalRender === "function" && !originalRender.__x12iSafeV264){
+      const wrapped = function(){
+        const result = originalRender.apply(this, arguments);
+        setTimeout(tick, 20);
+        return result;
+      };
+      wrapped.__x12iSafeV264 = true;
+      window.render = wrapped;
     }
-    setInterval(monitor, 90);
-    setTimeout(monitor, 250);
-    console.info('[Sylvinia v0.263] Dynamisme combat XII_I étendu : micro-caméra, rush, trajectoires QTE, pulsation timer, phases, perception, réponses.');
+
+    setInterval(tick, 260);
+    setTimeout(tick, 500);
+    console.info("[Sylvinia v0.264] Dynamisme sûr XII_I actif : sans blocage de timer, sans saccade persistante.");
   }catch(err){
-    console.error('[Sylvinia v0.263] Échec dynamisme combat XII_I', err);
+    console.error("[Sylvinia v0.264] Échec du patch dynamisme sûr", err);
   }
 })();
 </script>
