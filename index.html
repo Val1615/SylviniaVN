@@ -40416,387 +40416,410 @@ body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iQteAttackText{
 </script>
 
 
-<style id="x12i-combat-fx-v261-style">
-/* v0.261 · XII_I Combat FX : urgence visuelle, hitstop, shockwave, braises, boutons QTE au-dessus de tout */
-#gameCard.x12iQteMode .x12iStageQteLayer{
-  z-index:9999!important;
-  pointer-events:auto!important;
+
+<style id="x12i-qte-dynamic-fx-v262">
+/* v0.262 · XII_I : dynamisme QTE, bruitages Web Audio, shake, hitstop, flash, shockwave, braises */
+html body.x12iQteModeV250,
+html body.x12iQteMode{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+html body.x12iQteModeV250 #gameCard,
+html body.x12iQteMode #gameCard{
+  background:#000!important;
+}
+html body.x12iQteModeV250 #stage,
+html body.x12iQteMode #stage{
+  isolation:isolate!important;
+  transform-origin:center center!important;
+}
+html body.x12iQteModeV250 #stage .bg,
+html body.x12iQteMode #stage .bg{
+  transition:filter .12s linear, transform .18s cubic-bezier(.2,.8,.2,1)!important;
+  filter:brightness(.74) contrast(1.2) saturate(1.16)!important;
+  transform:scale(1.055)!important;
+}
+html body.x12iQteModeV250 #stage::before,
+html body.x12iQteMode #stage::before{
+  content:""!important;
+  position:absolute!important;
+  inset:-8%!important;
+  z-index:65!important;
+  pointer-events:none!important;
+  opacity:.74!important;
+  mix-blend-mode:screen!important;
+  background:
+    radial-gradient(circle at 17% 90%,rgba(255,91,22,.48),transparent 18%),
+    radial-gradient(circle at 83% 83%,rgba(255,164,50,.33),transparent 20%),
+    linear-gradient(103deg,transparent 0 37%,rgba(255,244,204,.08) 43%,transparent 48% 100%),
+    linear-gradient(76deg,transparent 0 59%,rgba(130,52,230,.14) 63%,transparent 70% 100%)!important;
+  filter:blur(8px)!important;
+  animation:x12iDynHeat 1.05s infinite alternate ease-in-out!important;
+}
+html body.x12iQteModeV250 #stage::after,
+html body.x12iQteMode #stage::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:66!important;
+  pointer-events:none!important;
+  opacity:.34!important;
+  mix-blend-mode:screen!important;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.05) 0 1px,transparent 1px 4px)!important;
+}
+@keyframes x12iDynHeat{
+  from{transform:translate(-1%,1%) scale(1)}
+  to{transform:translate(1.25%,-1%) scale(1.035)}
+}
+@keyframes x12iDynShakeA{
+  0%{transform:translate3d(0,0,0) rotate(0)}
+  14%{transform:translate3d(-14px,8px,0) rotate(-.45deg)}
+  28%{transform:translate3d(12px,-9px,0) rotate(.38deg)}
+  42%{transform:translate3d(-9px,6px,0) rotate(-.28deg)}
+  58%{transform:translate3d(7px,-5px,0) rotate(.22deg)}
+  76%{transform:translate3d(-4px,3px,0) rotate(-.12deg)}
+  100%{transform:translate3d(0,0,0) rotate(0)}
+}
+html body #stage.x12iDynShake{
+  animation:x12iDynShakeA .34s cubic-bezier(.36,.07,.19,.97)!important;
+}
+html body #stage.x12iDynShakeHard{
+  animation:x12iDynShakeA .52s cubic-bezier(.36,.07,.19,.97)!important;
+}
+html body #stage.x12iDynHitstop .bg{
+  filter:brightness(1.85) contrast(1.45) saturate(1.25)!important;
+  transform:scale(1.085)!important;
+}
+.x12iDynFxLayer{
+  position:absolute!important;
+  inset:0!important;
+  z-index:2147482000!important;
+  pointer-events:none!important;
   overflow:hidden!important;
 }
-#gameCard.x12iQteMode .x12iStageQteBtn{
+.x12iDynFlash{
+  position:absolute!important;
+  inset:0!important;
+  background:radial-gradient(circle at center,rgba(255,246,200,.82),rgba(255,168,49,.22) 38%,transparent 72%)!important;
+  opacity:0!important;
+  mix-blend-mode:screen!important;
+}
+.x12iDynFlash.show{animation:x12iDynFlash .18s ease-out forwards!important}
+@keyframes x12iDynFlash{
+  0%{opacity:0}
+  22%{opacity:.95}
+  100%{opacity:0}
+}
+.x12iDynShockwave{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:62px!important;
+  height:62px!important;
+  border-radius:50%!important;
+  transform:translate(-50%,-50%) scale(.18)!important;
+  border:2px solid rgba(255,237,176,.9)!important;
+  box-shadow:0 0 30px rgba(255,189,76,.65)!important;
+  opacity:0!important;
+}
+.x12iDynShockwave.show{animation:x12iDynShock .42s ease-out forwards!important}
+@keyframes x12iDynShock{
+  0%{opacity:.95;transform:translate(-50%,-50%) scale(.18)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(10)}
+}
+.x12iDynImpactWord{
+  position:absolute!important;
+  left:50%!important;
+  top:49%!important;
+  z-index:2147482100!important;
+  transform:translate(-50%,-50%) scale(.78)!important;
+  opacity:0!important;
+  color:#fff0bd!important;
+  font:900 clamp(30px,5vw,64px)/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  letter-spacing:.08em!important;
+  text-shadow:0 0 12px rgba(255,170,58,.95),0 0 42px rgba(255,51,26,.78)!important;
+  white-space:nowrap!important;
+}
+.x12iDynImpactWord.show{animation:x12iDynWord .46s ease-out forwards!important}
+@keyframes x12iDynWord{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.62)}
+  22%{opacity:1;transform:translate(-50%,-50%) scale(1.14)}
+  100%{opacity:0;transform:translate(-50%,-72%) scale(.96)}
+}
+.x12iDynEmber{
+  position:absolute!important;
+  width:3px!important;
+  height:3px!important;
+  border-radius:999px!important;
+  left:var(--x,50%)!important;
+  bottom:-18px!important;
+  background:#ffc163!important;
+  box-shadow:0 0 10px #ff7b23,0 0 18px rgba(255,208,105,.55)!important;
+  animation:x12iDynEmber var(--dur,1400ms) linear forwards!important;
+}
+@keyframes x12iDynEmber{
+  0%{opacity:0;transform:translate3d(0,22px,0) scale(.8)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--drift,40px),-410px,0) scale(.08)}
+}
+html body.x12iQteModeV250 .x12iStageQteLayer,
+html body.x12iQteModeV250 .x12iStageQteLayer.v250,
+html body.x12iQteMode .x12iStageQteLayer,
+html body.x12iQteMode .x12iStageQteLayer.v250{
+  z-index:2147483000!important;
+  pointer-events:auto!important;
+  overflow:visible!important;
+}
+html body.x12iQteModeV250 .x12iStageQteLayer.v250::after,
+html body.x12iQteMode .x12iStageQteLayer.v250::after{
+  content:""!important;
+  position:absolute!important;
+  inset:-10%!important;
+  z-index:81!important;
+  pointer-events:none!important;
+  opacity:.35!important;
+  mix-blend-mode:screen!important;
+  background:
+    linear-gradient(70deg,transparent 0 35%,rgba(255,237,188,.22) 39%,transparent 46%),
+    linear-gradient(112deg,transparent 0 58%,rgba(137,43,226,.20) 61%,transparent 69%)!important;
+  filter:blur(8px)!important;
+  animation:x12iDynSlash .48s infinite steps(2,end)!important;
+}
+@keyframes x12iDynSlash{
+  from{transform:translateX(-4%) rotate(-.7deg)}
+  to{transform:translateX(4%) rotate(.7deg)}
+}
+html body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn,
+html body.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iStageQteBtn,
+html body.x12iQteMode .x12iStageQteLayer .x12iStageQteBtn,
+html body.x12iQteMode .x12iStageQteLayer.v250 .x12iStageQteBtn{
+  z-index:2147483600!important;
   pointer-events:auto!important;
   touch-action:manipulation!important;
   user-select:none!important;
-  -webkit-user-select:none!important;
   -webkit-tap-highlight-color:transparent!important;
-  transition:filter .08s ease, box-shadow .08s ease, transform .06s ease!important;
+  box-shadow:0 0 0 10px rgba(255,201,92,.16),0 0 58px rgba(255,196,79,.86),0 18px 42px rgba(0,0,0,.62)!important;
+  animation:x12iDynBubbleIn .13s ease-out forwards,x12iDynDangerPulse .42s ease-in-out infinite alternate!important;
 }
-#gameCard.x12iQteMode .x12iStageQteBtn.correct{
-  box-shadow:0 0 0 8px rgba(255,201,92,.16),0 0 54px rgba(255,213,102,.84),0 0 120px rgba(255,112,45,.18),0 18px 35px rgba(0,0,0,.58)!important;
+html body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn.x12iDynHit,
+html body.x12iQteMode .x12iStageQteLayer .x12iStageQteBtn.x12iDynHit{
+  background:radial-gradient(circle,rgba(255,252,210,.98),rgba(255,213,96,.92) 42%,rgba(94,21,6,.82) 74%)!important;
+  color:#2a0903!important;
+  transform:translate(-50%,-50%) scale(1.16)!important;
+  filter:brightness(1.35)!important;
 }
-#gameCard.x12iQteMode .x12iStageQteBtn.decoy{
-  filter:saturate(.9) brightness(.9)!important;
+@keyframes x12iDynBubbleIn{to{transform:translate(-50%,-50%) scale(1)}}
+@keyframes x12iDynDangerPulse{
+  from{filter:brightness(1);box-shadow:0 0 0 7px rgba(255,201,92,.12),0 0 42px rgba(255,196,79,.72),0 16px 32px rgba(0,0,0,.5)}
+  to{filter:brightness(1.28);box-shadow:0 0 0 13px rgba(255,201,92,.21),0 0 72px rgba(255,226,138,1),0 20px 44px rgba(0,0,0,.62)}
 }
-#gameCard.x12iQteMode .dialogueWrap,
-#gameCard.x12iQteMode .topbar{
+html body.x12iQteModeV250 #gameCard > .dialogueWrap,
+html body.x12iQteModeV250 #gameCard .dialogueWrap,
+html body.x12iQteModeV250 #gameCard .dialogue,
+html body.x12iQteModeV250 #gameCard .choices,
+html body.x12iQteModeV250 #gameCard #trailerVNControls,
+html body.x12iQteModeV250 #gameCard #stats,
+html body.x12iQteMode #gameCard > .dialogueWrap,
+html body.x12iQteMode #gameCard .dialogueWrap,
+html body.x12iQteMode #gameCard .dialogue,
+html body.x12iQteMode #gameCard .choices,
+html body.x12iQteMode #gameCard #trailerVNControls,
+html body.x12iQteMode #gameCard #stats{
   pointer-events:none!important;
 }
-#gameCard.x12iCombatUrgent .stage{
-  transform-origin:center center!important;
-  animation:x12iCombatBreathV261 780ms ease-in-out infinite alternate!important;
-}
-#gameCard.x12iCombatUrgent .stage .bg,
-#gameCard.x12iCombatUrgent .stage .background,
-#gameCard.x12iCombatUrgent .stage #bg{
-  filter:contrast(1.14) saturate(1.16) brightness(.78)!important;
-  transform:scale(1.035)!important;
-}
-@keyframes x12iCombatBreathV261{
-  from{filter:brightness(.96);}
-  to{filter:brightness(1.08);}
-}
-#gameCard.x12iFxShake .stage{
-  animation:x12iScreenShakeV261 340ms cubic-bezier(.36,.07,.19,.97)!important;
-}
-@keyframes x12iScreenShakeV261{
-  0%{transform:translate(0,0) rotate(0deg)}
-  15%{transform:translate(-14px,7px) rotate(-.45deg)}
-  30%{transform:translate(11px,-9px) rotate(.36deg)}
-  46%{transform:translate(-8px,5px) rotate(-.28deg)}
-  62%{transform:translate(7px,-4px) rotate(.18deg)}
-  82%{transform:translate(-3px,2px) rotate(-.08deg)}
-  100%{transform:translate(0,0) rotate(0deg)}
-}
-#gameCard.x12iFxHeavyShake .stage{
-  animation:x12iHeavyShakeV261 540ms cubic-bezier(.22,.61,.36,1)!important;
-}
-@keyframes x12iHeavyShakeV261{
-  0%{transform:translate(0,0) rotate(0deg)}
-  12%{transform:translate(-22px,12px) rotate(-.8deg)}
-  24%{transform:translate(20px,-14px) rotate(.7deg)}
-  36%{transform:translate(-15px,9px) rotate(-.55deg)}
-  50%{transform:translate(13px,-8px) rotate(.38deg)}
-  68%{transform:translate(-8px,5px) rotate(-.22deg)}
-  84%{transform:translate(4px,-3px) rotate(.12deg)}
-  100%{transform:translate(0,0) rotate(0deg)}
-}
-#gameCard.x12iFxHitstop .stage .bg,
-#gameCard.x12iFxHitstop .stage .background,
-#gameCard.x12iFxHitstop .stage #bg{
-  filter:brightness(1.9) contrast(1.42) saturate(1.35)!important;
-}
-.x12iFxLayerV261{
-  position:absolute;
-  inset:0;
-  z-index:9998;
-  pointer-events:none;
-  overflow:hidden;
-}
-.x12iFxFlashV261{
-  position:absolute;
-  inset:0;
-  opacity:0;
-  pointer-events:none;
-  background:radial-gradient(circle at 50% 50%,rgba(255,242,178,.80),rgba(255,139,45,.30) 27%,rgba(255,255,255,0) 58%);
-  mix-blend-mode:screen;
-}
-.x12iFxFlashV261.show{animation:x12iMiniFlashV261 210ms ease-out forwards}
-.x12iFxFlashV261.fail{background:radial-gradient(circle at 50% 50%,rgba(255,68,42,.68),rgba(120,0,0,.32) 34%,rgba(0,0,0,0) 68%)}
-@keyframes x12iMiniFlashV261{
-  0%{opacity:0}
-  18%{opacity:1}
-  100%{opacity:0}
-}
-.x12iFxShockwaveV261{
-  position:absolute;
-  left:50%;top:50%;
-  width:72px;height:72px;
-  border-radius:999px;
-  border:2px solid rgba(255,231,160,.88);
-  box-shadow:0 0 28px rgba(255,201,92,.6), inset 0 0 22px rgba(255,201,92,.22);
-  opacity:0;
-  transform:translate(-50%,-50%) scale(.15);
-}
-.x12iFxShockwaveV261.show{animation:x12iShockwaveV261 420ms ease-out forwards}
-.x12iFxShockwaveV261.fail{border-color:rgba(255,88,70,.84);box-shadow:0 0 28px rgba(255,50,40,.62), inset 0 0 22px rgba(255,50,40,.18)}
-@keyframes x12iShockwaveV261{
-  0%{opacity:.95;transform:translate(-50%,-50%) scale(.15)}
-  78%{opacity:.32}
-  100%{opacity:0;transform:translate(-50%,-50%) scale(8.5)}
-}
-.x12iFxImpactWordV261{
-  position:absolute;
-  left:50%;top:45%;
-  transform:translate(-50%,-50%) scale(.72);
-  opacity:0;
-  color:#fff0bf;
-  font:900 clamp(34px,6vw,76px)/1 system-ui, sans-serif;
-  letter-spacing:.08em;
-  text-shadow:0 0 12px rgba(255,157,59,.95),0 0 46px rgba(255,63,31,.75),0 2px 2px rgba(0,0,0,.9);
-  filter:drop-shadow(0 0 16px rgba(255,221,130,.58));
-}
-.x12iFxImpactWordV261.show{animation:x12iImpactWordV261 460ms ease forwards}
-.x12iFxImpactWordV261.fail{color:#ffd4d0;text-shadow:0 0 12px rgba(255,72,58,.95),0 0 42px rgba(120,0,0,.9),0 2px 2px rgba(0,0,0,.9)}
-@keyframes x12iImpactWordV261{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.62)}
-  22%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
-  100%{opacity:0;transform:translate(-50%,-72%) scale(.92)}
-}
-.x12iFxEmberV261{
-  position:absolute;
-  left:var(--x);
-  bottom:-18px;
-  width:var(--s);
-  height:var(--s);
-  border-radius:999px;
-  background:rgba(255,183,72,.95);
-  box-shadow:0 0 10px rgba(255,129,32,.95),0 0 20px rgba(255,74,28,.42);
-  opacity:0;
-  animation:x12iEmberRiseV261 var(--d) linear forwards;
-}
-@keyframes x12iEmberRiseV261{
-  0%{opacity:0;transform:translate3d(0,18px,0) scale(.75)}
-  13%{opacity:1}
-  100%{opacity:0;transform:translate3d(var(--dx),-390px,0) scale(.1)}
-}
-.x12iFxSlashV261{
-  position:absolute;
-  inset:-12%;
-  opacity:0;
-  background:linear-gradient(72deg,transparent 0 38%,rgba(255,238,184,.34) 39%,transparent 46%),linear-gradient(112deg,transparent 0 58%,rgba(127,40,211,.24) 59%,transparent 66%);
-  filter:blur(8px);
-  mix-blend-mode:screen;
-  pointer-events:none;
-}
-#gameCard.x12iCombatUrgent .x12iFxSlashV261{opacity:1;animation:x12iSlashDriftV261 520ms infinite steps(2,end)}
-@keyframes x12iSlashDriftV261{from{transform:translateX(-4%) rotate(-1deg)}to{transform:translateX(4%) rotate(1deg)}}
-@media(max-width:900px){
-  .x12iFxImpactWordV261{top:40%;font-size:38px}
-  .x12iFxShockwaveV261.show{animation-duration:360ms}
+@media (max-width:900px){
+  html body.mobileUI.x12iQteModeV250 .x12iStageQteLayer.v250 .x12iStageQteBtn,
+  html body.mobileUI.x12iQteMode .x12iStageQteLayer.v250 .x12iStageQteBtn{
+    min-width:74px!important;
+    min-height:74px!important;
+    font-size:10px!important;
+  }
 }
 </style>
-<script id="x12i-combat-fx-v261-script">
-/* v0.261 · XII_I Combat FX : Web Audio + shake + hitstop + flash + shockwave + braises */
-(function installX12ICombatFXV261(){
+<script id="x12i-qte-dynamic-fx-script-v262">
+/* v0.262 · XII_I : FX dynamiques non destructifs. Se greffe sur le QTE existant sans toucher à la logique de choix. */
+(function installX12IDynamicQteFxV262(){
   try{
-    if(window.__sylviniaX12ICombatFXV261) return;
-    window.__sylviniaX12ICombatFXV261 = true;
+    if(window.__sylviniaX12IDynamicQteFxV262) return;
+    window.__sylviniaX12IDynamicQteFxV262 = true;
 
     let audioCtx = null;
-    let lastQteActive = false;
-    let lastQteSignature = '';
-    let lastQteClickAt = 0;
-    let emberTimer = null;
-    let observer = null;
+    let lastQteKey = '';
+    let lastFailKey = '';
+    let emberInterval = null;
 
-    const now = () => Date.now();
-    function gameCard(){ return document.getElementById('gameCard'); }
-    function stage(){ return document.getElementById('stage') || (gameCard() && gameCard().querySelector('.stage')); }
-    function qteLayer(){ return document.querySelector('.x12iStageQteLayer'); }
-    function qteButtons(){ return Array.from(document.querySelectorAll('.x12iStageQteBtn')); }
-
+    function stage(){ return document.getElementById('stage'); }
+    function qteActive(){ return document.body.classList.contains('x12iQteModeV250') || document.body.classList.contains('x12iQteMode'); }
     function ensureAudio(){
       try{
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if(!Ctx) return null;
-        audioCtx = audioCtx || new Ctx();
-        if(audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-        return audioCtx;
-      }catch(e){ return null; }
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      }catch(e){}
+      return audioCtx;
     }
     function tone(freq, dur, type, gain){
-      const ctx = ensureAudio();
-      if(!ctx) return;
+      const ctx = ensureAudio(); if(!ctx) return;
       const t = ctx.currentTime;
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = type || 'sine';
-      o.frequency.setValueAtTime(freq, t);
-      g.gain.setValueAtTime(gain ?? .12, t);
-      g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.frequency.setValueAtTime(freq || 160, t);
+      g.gain.setValueAtTime(gain || .12, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + (dur || .08));
       o.connect(g).connect(ctx.destination);
-      o.start(t);
-      o.stop(t + dur + .02);
+      o.start(t); o.stop(t + (dur || .08));
     }
-    function noiseHit(dur, gain, cutoff){
-      const ctx = ensureAudio();
-      if(!ctx) return;
-      const sr = ctx.sampleRate;
-      const length = Math.max(1, Math.floor(sr * dur));
-      const buffer = ctx.createBuffer(1, length, sr);
+    function noiseHit(dur, gain){
+      const ctx = ensureAudio(); if(!ctx) return;
+      dur = dur || .14; gain = gain || .16;
+      const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * dur)), ctx.sampleRate);
       const data = buffer.getChannelData(0);
-      for(let i=0;i<length;i++) data[i] = (Math.random()*2-1) * Math.pow(1-i/length,2.2);
+      for(let i=0;i<data.length;i++) data[i] = (Math.random()*2-1) * Math.pow(1 - i/data.length, 2.2);
       const src = ctx.createBufferSource();
       const g = ctx.createGain();
       const f = ctx.createBiquadFilter();
-      f.type = 'lowpass';
-      f.frequency.value = cutoff || 560;
-      g.gain.value = gain ?? .20;
+      f.type = 'lowpass'; f.frequency.value = 560;
+      g.gain.value = gain;
       src.buffer = buffer;
       src.connect(f).connect(g).connect(ctx.destination);
       src.start();
     }
-    function soundBlip(){ tone(760,.035,'square',.045); setTimeout(()=>tone(980,.03,'triangle',.035),28); }
-    function soundImpact(){ noiseHit(.16,.27,580); tone(74,.17,'sawtooth',.15); setTimeout(()=>tone(220,.045,'square',.08),24); }
-    function soundFail(){ noiseHit(.25,.22,360); tone(58,.26,'sawtooth',.14); setTimeout(()=>tone(42,.22,'sine',.10),72); }
+    function blipSound(){ tone(760,.035,'square',.045); }
+    function impactSound(){ noiseHit(.18,.22); tone(74,.15,'sawtooth',.13); setTimeout(()=>tone(220,.04,'square',.07),24); }
+    function failSound(){ noiseHit(.24,.18); tone(58,.28,'sawtooth',.13); setTimeout(()=>tone(42,.22,'sine',.1),85); }
 
-    function ensureFxLayer(){
-      const st = stage();
-      if(!st) return null;
-      let layer = st.querySelector('.x12iFxLayerV261');
-      if(layer) return layer;
-      layer = document.createElement('div');
-      layer.className = 'x12iFxLayerV261';
-      layer.innerHTML = '<div class="x12iFxFlashV261"></div><div class="x12iFxSlashV261"></div><div class="x12iFxShockwaveV261"></div><div class="x12iFxImpactWordV261"></div>';
-      st.appendChild(layer);
+    function fxLayer(){
+      const st = stage(); if(!st) return null;
+      let layer = document.getElementById('x12iDynFxLayer');
+      if(!layer){
+        layer = document.createElement('div');
+        layer.id = 'x12iDynFxLayer';
+        layer.className = 'x12iDynFxLayer';
+        layer.innerHTML = '<div class="x12iDynFlash"></div><div class="x12iDynShockwave"></div><div class="x12iDynImpactWord"></div>';
+        st.appendChild(layer);
+      }
       return layer;
     }
-    function pulseClass(cls, ms){
-      const gc = gameCard();
-      if(!gc) return;
-      gc.classList.remove(cls);
-      void gc.offsetWidth;
-      gc.classList.add(cls);
-      setTimeout(()=>gc.classList.remove(cls), ms || 350);
+    function flash(){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.x12iDynFlash'); if(!el) return;
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     }
-    function flash(fail=false){
-      const layer = ensureFxLayer();
-      if(!layer) return;
-      const el = layer.querySelector('.x12iFxFlashV261');
-      el.classList.remove('show','fail');
-      if(fail) el.classList.add('fail');
-      void el.offsetWidth;
-      el.classList.add('show');
+    function shockwave(){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.x12iDynShockwave'); if(!el) return;
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     }
-    function shockwave(fail=false){
-      const layer = ensureFxLayer();
-      if(!layer) return;
-      const el = layer.querySelector('.x12iFxShockwaveV261');
-      el.classList.remove('show','fail');
-      if(fail) el.classList.add('fail');
-      void el.offsetWidth;
-      el.classList.add('show');
+    function impactWord(word){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.x12iDynImpactWord'); if(!el) return;
+      el.textContent = word || 'IMPACT';
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     }
-    function word(txt, fail=false){
-      const layer = ensureFxLayer();
-      if(!layer) return;
-      const el = layer.querySelector('.x12iFxImpactWordV261');
-      el.textContent = txt || (fail ? 'RATÉ' : 'IMPACT');
-      el.classList.remove('show','fail');
-      if(fail) el.classList.add('fail');
-      void el.offsetWidth;
-      el.classList.add('show');
+    function shake(hard){
+      const st = stage(); if(!st) return;
+      st.classList.remove('x12iDynShake','x12iDynShakeHard'); void st.offsetWidth;
+      st.classList.add(hard ? 'x12iDynShakeHard' : 'x12iDynShake');
+      setTimeout(()=>st.classList.remove('x12iDynShake','x12iDynShakeHard'), hard ? 560 : 380);
     }
-    function emberBurst(count){
-      const layer = ensureFxLayer();
-      if(!layer) return;
-      for(let i=0;i<(count||8);i++){
+    function hitstop(){
+      const st = stage(); if(!st) return;
+      st.classList.remove('x12iDynHitstop'); void st.offsetWidth;
+      st.classList.add('x12iDynHitstop');
+      setTimeout(()=>st.classList.remove('x12iDynHitstop'), 190);
+    }
+    function embers(count){
+      const layer = fxLayer(); if(!layer) return;
+      count = count || 7;
+      for(let i=0;i<count;i++){
         const e = document.createElement('i');
-        e.className = 'x12iFxEmberV261';
+        e.className = 'x12iDynEmber';
         e.style.setProperty('--x', (Math.random()*100).toFixed(2)+'%');
-        e.style.setProperty('--s', (2+Math.random()*4).toFixed(1)+'px');
-        e.style.setProperty('--dx', ((Math.random()*180)-90).toFixed(1)+'px');
-        e.style.setProperty('--d', (850+Math.random()*1450).toFixed(0)+'ms');
+        e.style.setProperty('--drift', (Math.random()*170-85).toFixed(1)+'px');
+        e.style.setProperty('--dur', (950+Math.random()*1500).toFixed(0)+'ms');
         layer.appendChild(e);
-        setTimeout(()=>e.remove(), 2600);
+        setTimeout(()=>{ try{e.remove();}catch(_){} }, 2600);
       }
     }
-    function startEmbers(){
-      if(emberTimer) return;
-      emberTimer = setInterval(()=>{
-        const gc = gameCard();
-        if(gc && gc.classList.contains('x12iCombatUrgent')) emberBurst(4);
-      }, 360);
+    function successFx(btn){
+      try{ if(btn) btn.classList.add('x12iDynHit'); }catch(e){}
+      impactSound();
+      shake(false); hitstop(); flash(); shockwave(); embers(12);
+      const words = ['CHOC','BRISURE','IMPACT','TENIR','FAILLE'];
+      impactWord(words[Math.floor(Math.random()*words.length)]);
     }
-    function stopEmbersSoon(){
-      setTimeout(()=>{
-        const gc = gameCard();
-        if(!gc || !gc.classList.contains('x12iCombatUrgent')){
-          clearInterval(emberTimer);
-          emberTimer = null;
-        }
-      }, 900);
+    function failFx(){
+      failSound();
+      shake(true); flash(); shockwave(); embers(18);
+      impactWord('RATÉ');
     }
-    function fxBlip(){ soundBlip(); emberBurst(4); }
-    function fxImpact(label){ soundImpact(); pulseClass('x12iFxShake', 360); pulseClass('x12iFxHitstop', 170); flash(false); shockwave(false); word(label || 'IMPACT', false); emberBurst(12); }
-    function fxFail(label){ soundFail(); pulseClass('x12iFxHeavyShake', 560); pulseClass('x12iFxHitstop', 120); flash(true); shockwave(true); word(label || 'RATÉ', true); emberBurst(8); }
-
-    function qteSignature(){
-      return qteButtons().map(b => (b.textContent||'').trim()+':'+Math.round(parseFloat(b.style.left)||0)+':'+Math.round(parseFloat(b.style.top)||0)).join('|');
+    function spawnFx(){
+      blipSound();
+      embers(5);
     }
-    function syncQteState(){
+    function currentQteKey(){
       try{
-        ensureFxLayer();
         const d = window.state && window.state.x12iDuel;
-        const domActive = !!qteLayer() && qteButtons().length > 0;
-        const stateActive = !!(d && d.qte);
-        const active = domActive || stateActive;
-        const gc = gameCard();
-        if(gc) gc.classList.toggle('x12iCombatUrgent', active);
-        if(active){
-          startEmbers();
-          const sig = qteSignature();
-          if(sig && sig !== lastQteSignature){
-            lastQteSignature = sig;
-            fxBlip();
-          }else if(!lastQteActive){
-            fxBlip();
+        const q = d && d.qte;
+        if(!q) return '';
+        const step = typeof q.stepIndex === 'number' ? q.stepIndex : (typeof d.step === 'number' ? d.step : 0);
+        const index = typeof q.index === 'number' ? q.index : 0;
+        const seed = q.positionSeed || 0;
+        return step + ':' + index + ':' + seed;
+      }catch(e){ return ''; }
+    }
+    function ensureLayerWhileQte(){
+      if(qteActive()){
+        fxLayer();
+        if(!emberInterval){ emberInterval = setInterval(()=>{ if(qteActive()) embers(3); }, 620); }
+      }else if(emberInterval){ clearInterval(emberInterval); emberInterval = null; }
+    }
+    function monitor(){
+      ensureLayerWhileQte();
+      const key = currentQteKey();
+      if(key && key !== lastQteKey){
+        lastQteKey = key;
+        setTimeout(()=>{
+          const btn = document.querySelector('.x12iStageQteLayer .x12iStageQteBtn');
+          if(btn && !btn.dataset.x12iDynBound){
+            btn.dataset.x12iDynBound = '1';
           }
-        }else{
-          if(lastQteActive && now() - lastQteClickAt > 420){
-            // QTE quitté sans clic récent : timer écoulé ou perte automatique.
-            fxFail('TROP TARD');
-          }
-          if(gc) gc.classList.remove('x12iCombatUrgent');
-          lastQteSignature = '';
-          stopEmbersSoon();
+          spawnFx();
+        }, 30);
+      }
+      try{
+        const d = window.state && window.state.x12iDuel;
+        if(d && d.waiting && d.last && d.last.bad){
+          const fkey = (d.history && d.history.length ? d.history.length : 0) + ':' + (d.step || 0) + ':' + String(d.last.reaction || '').slice(0,40);
+          if(fkey !== lastFailKey){ lastFailKey = fkey; failFx(); }
         }
-        lastQteActive = active;
       }catch(e){}
     }
 
-    function installObserver(){
-      if(observer) return;
-      observer = new MutationObserver(()=>{ syncQteState(); });
-      observer.observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','style']});
-    }
-
     document.addEventListener('pointerdown', function(ev){
-      ensureAudio();
       const btn = ev.target && ev.target.closest ? ev.target.closest('.x12iStageQteBtn') : null;
       if(!btn) return;
-      lastQteClickAt = now();
-      if(btn.classList.contains('decoy')) fxFail('ERREUR');
-      else fxImpact((btn.textContent || 'CHOC').trim().slice(0,12));
+      ensureAudio();
+      successFx(btn);
     }, true);
+    document.addEventListener('click', function(){ ensureAudio(); }, {capture:true, passive:true});
+    document.addEventListener('touchstart', function(){ ensureAudio(); }, {capture:true, passive:true});
 
-    document.addEventListener('click', function(ev){
-      const choice = ev.target && ev.target.closest ? ev.target.closest('#choices .choiceBtn, #choices button, .choiceBtn') : null;
-      if(choice && window.state && window.state.x12iDuel && !window.state.x12iDuel.waiting){
-        ensureAudio();
-        // Petit souffle avant le QTE, comme une inspiration.
-        setTimeout(()=>{ if(window.state && window.state.x12iDuel && window.state.x12iDuel.qte) fxBlip(); }, 90);
+    const observer = new MutationObserver(function(muts){
+      for(const mut of muts){
+        for(const node of mut.addedNodes || []){
+          if(node && node.nodeType === 1){
+            if(node.matches && node.matches('.x12iStageQteLayer, .x12iStageQteBtn')) setTimeout(monitor, 20);
+            if(node.querySelector && node.querySelector('.x12iStageQteBtn')) setTimeout(monitor, 20);
+          }
+        }
       }
-    }, true);
-
-    function start(){
-      ensureFxLayer();
-      installObserver();
-      syncQteState();
-      setInterval(syncQteState, 130);
-      setInterval(()=>{
-        const d = window.state && window.state.x12iDuel;
-        if(d && !d.finished && document.getElementById('gameCard')) emberBurst(d.qte ? 3 : 1);
-      }, 1100);
-    }
-    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
-    else start();
-
-    window.SylviniaX12ICombatFX = {impact:fxImpact, fail:fxFail, blip:fxBlip, embers:emberBurst};
-    console.info('[Sylvinia v0.261] XII_I : FX de combat actifs (Web Audio, shake, hitstop, flash, shockwave, braises).');
-  }catch(err){
-    console.error('[Sylvinia v0.261] Échec Combat FX XII_I', err);
-  }
+    });
+    if(document.body) observer.observe(document.body, {childList:true, subtree:true});
+    setInterval(monitor, 90);
+    setTimeout(monitor, 200);
+    console.info('[Sylvinia v0.262] QTE dynamique XII_I : WebAudio, shake, hitstop, flash, shockwave, braises.');
+  }catch(err){ console.error('[Sylvinia v0.262] Échec QTE dynamique XII_I', err); }
 })();
 </script>
 
@@ -44416,6 +44439,447 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
     console.info('[Sylvinia v0.260] XII_I : séquences illustrées 1 à 10 intégrées, alternance situation/réponse renforcée.');
   }catch(err){
     console.error('[Sylvinia v0.260] Échec intégration séquences 1 à 10 XII_I.', err);
+  }
+})();
+</script>
+
+
+<style id="x12i-qte-dynamic-combat-v263">
+/* v0.263 · XII_I : dynamisme de duel complet, inspiré de la démo v2.
+   Ajouts non destructifs : micro-caméra après choix, rush, trajectoires QTE, pulsation timer,
+   états par acte, perception visuelle, flash de réponse, particules directionnelles. */
+
+html body #stage.x12iV263Rush::before{
+  content:""!important;
+  position:absolute!important;
+  inset:-16%!important;
+  z-index:2147481600!important;
+  pointer-events:none!important;
+  opacity:.82!important;
+  mix-blend-mode:screen!important;
+  background:
+    radial-gradient(ellipse at center,transparent 0 33%,rgba(255,255,255,.11) 42%,transparent 60%),
+    repeating-conic-gradient(from 0deg,transparent 0 8deg,rgba(255,230,170,.18) 9deg 11deg,transparent 12deg 24deg)!important;
+  filter:blur(6px)!important;
+  animation:x12iV263Tunnel .54s ease-out forwards!important;
+}
+@keyframes x12iV263Tunnel{
+  0%{transform:scale(1.75) rotate(0);opacity:0}
+  28%{opacity:.95}
+  100%{transform:scale(.82) rotate(18deg);opacity:0}
+}
+
+html body #stage.x12iV263ChoiceCam .bg{animation:x12iV263ChoiceCam .48s ease-out!important}
+html body #stage.x12iV263DodgeCam .bg{animation:x12iV263DodgeCam .52s ease-out!important}
+html body #stage.x12iV263HeavyCam .bg{animation:x12iV263HeavyCam .58s ease-out!important}
+
+@keyframes x12iV263ChoiceCam{
+  0%{transform:scale(1.04)}
+  34%{transform:scale(1.13) translateX(-2%)}
+  54%{transform:scale(1.12) translateX(2%)}
+  100%{transform:scale(1.06) translateX(0)}
+}
+@keyframes x12iV263DodgeCam{
+  0%{transform:scale(1.04) translateX(0)}
+  26%{transform:scale(1.09) translateX(-5%)}
+  62%{transform:scale(1.11) translateX(4%)}
+  100%{transform:scale(1.06) translateX(0)}
+}
+@keyframes x12iV263HeavyCam{
+  0%{transform:scale(1.04) translateY(0)}
+  32%{transform:scale(1.16) translateY(3%)}
+  48%{transform:scale(1.11) translateY(-2%)}
+  100%{transform:scale(1.06) translateY(0)}
+}
+
+html body #stage.x12iV263Weapon::after,
+html body #stage.x12iV263Magic::after,
+html body #stage.x12iV263Body::after,
+html body #stage.x12iV263Light::after{
+  pointer-events:none!important;
+}
+
+html body #stage.x12iV263Magic .bg{
+  filter:brightness(.82) contrast(1.24) saturate(1.18) hue-rotate(8deg)!important;
+}
+html body #stage.x12iV263Body .bg{
+  filter:brightness(.76) contrast(1.28) saturate(1.2)!important;
+}
+html body #stage.x12iV263Light .bg{
+  filter:brightness(1.16) contrast(1.22) saturate(1.05)!important;
+}
+html body.x12iQteModeV250 #stage.x12iV263Light .bg,
+html body.x12iQteMode #stage.x12iV263Light .bg{
+  filter:brightness(1.76) contrast(1.38) saturate(1.06)!important;
+}
+html body #stage.x12iV263Emprise .bg{
+  filter:brightness(.58) contrast(1.36) saturate(1.12) hue-rotate(16deg)!important;
+}
+html body #stage.x12iV263Clarte .bg{
+  filter:brightness(1.06) contrast(1.16) saturate(.98)!important;
+}
+
+.x12iV263FxLayer{
+  position:absolute!important;
+  inset:0!important;
+  z-index:2147482500!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+.x12iV263ResponseFlash{
+  position:absolute!important;
+  inset:0!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  mix-blend-mode:screen!important;
+  background:radial-gradient(circle at center,rgba(255,239,190,.88),rgba(255,148,44,.24) 30%,transparent 62%)!important;
+}
+.x12iV263ResponseFlash.show{animation:x12iV263ResponseFlash .52s ease-out forwards!important}
+@keyframes x12iV263ResponseFlash{
+  0%{opacity:0;transform:scale(.92)}
+  18%{opacity:1}
+  100%{opacity:0;transform:scale(1.22)}
+}
+
+.x12iV263Slash{
+  position:absolute!important;
+  inset:-4%!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  mix-blend-mode:screen!important;
+  background:
+    linear-gradient(35deg,transparent 0 52%,rgba(255,237,188,.72) 53%,transparent 55%),
+    linear-gradient(145deg,transparent 0 48%,rgba(126,41,255,.55) 49%,transparent 52%)!important;
+}
+.x12iV263Slash.show{animation:x12iV263Slash .28s ease-out forwards!important}
+@keyframes x12iV263Slash{
+  0%{opacity:0;transform:scale(.9)}
+  22%{opacity:1}
+  100%{opacity:0;transform:scale(1.12)}
+}
+
+.x12iV263Particle{
+  position:absolute!important;
+  width:4px!important;
+  height:4px!important;
+  border-radius:999px!important;
+  left:var(--x,50%)!important;
+  top:var(--y,95%)!important;
+  background:#ffc163!important;
+  box-shadow:0 0 11px #ff7b23,0 0 18px rgba(255,208,105,.55)!important;
+  animation:x12iV263Particle var(--dur,900ms) linear forwards!important;
+}
+.x12iV263Particle.shadow{
+  background:#9e55ff!important;
+  box-shadow:0 0 15px #7a2cff,0 0 30px rgba(128,43,255,.45)!important;
+}
+.x12iV263Particle.dust{
+  background:#d8b27a!important;
+  box-shadow:0 0 9px #e2b879,0 0 18px rgba(216,178,122,.32)!important;
+}
+.x12iV263Particle.gold{
+  background:#fff0a8!important;
+  box-shadow:0 0 14px #fff0a8,0 0 34px rgba(255,241,170,.58)!important;
+}
+@keyframes x12iV263Particle{
+  0%{opacity:0;transform:translate3d(0,0,0) scale(1)}
+  14%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--dx,0px),var(--dy,-320px),0) scale(.08)}
+}
+
+html body #stage.x12iV263NerveShake{animation:x12iV263NerveShake .44s ease!important}
+@keyframes x12iV263NerveShake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-7px,0)}
+  20%{transform:translate(6px,0)}
+  30%{transform:translate(-5px,1px)}
+  45%{transform:translate(4px,-1px)}
+  60%{transform:translate(-3px,0)}
+}
+
+html body #stats.x12iV263HudPulse,
+html body .stats.x12iV263HudPulse{
+  animation:x12iV263HudPulse .32s ease!important;
+}
+@keyframes x12iV263HudPulse{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-4px)}
+  40%{transform:translateX(3px)}
+  60%{transform:translateX(-2px)}
+  80%{transform:translateX(2px)}
+}
+
+/* QTE chorégraphié : on rend la trajectoire perceptible sans bloquer le clic. */
+html body.x12iQteModeV250 .x12iStageQteLayer .x12iStageQteBtn,
+html body.x12iQteMode .x12iStageQteLayer .x12iStageQteBtn{
+  transition:left .10s ease-out, top .10s ease-out, transform .08s ease, filter .08s ease!important;
+}
+</style>
+
+<script id="x12i-qte-dynamic-combat-script-v263">
+/* v0.263 · XII_I : dynamisme de duel étendu depuis la démo v2. */
+(function installX12IDynamicCombatV263(){
+  try{
+    if(window.__sylviniaX12IDynamicCombatV263) return;
+    window.__sylviniaX12IDynamicCombatV263 = true;
+
+    let audioCtx = null;
+    let lastStepKey = '';
+    let lastQteKey = '';
+    let lastWaitingKey = '';
+    let lastBeatAt = 0;
+
+    function byId(id){ return document.getElementById(id); }
+    function stage(){ return byId('stage'); }
+    function qteLayer(){ return document.querySelector('.x12iStageQteLayer'); }
+    function qteButtons(){ return Array.from(document.querySelectorAll('.x12iStageQteLayer .x12iStageQteBtn')); }
+    function duel(){
+      try{ return window.state && window.state.x12iDuel ? window.state.x12iDuel : null; }catch(e){ return null; }
+    }
+    function steps(){ return Array.isArray(window.X12I_DUEL_STEPS) ? window.X12I_DUEL_STEPS : []; }
+    function currentStep(){
+      const d = duel(); const arr = steps();
+      if(!d || !arr.length) return null;
+      const index = Math.max(0, Math.min(arr.length - 1, typeof d.step === 'number' ? d.step : 0));
+      return arr[index] || null;
+    }
+    function qteActive(){ return document.body.classList.contains('x12iQteModeV250') || document.body.classList.contains('x12iQteMode'); }
+
+    function ensureAudio(){
+      try{
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      }catch(e){}
+      return audioCtx;
+    }
+    function tone(freq, dur, type, gain){
+      const ctx = ensureAudio(); if(!ctx) return;
+      const t = ctx.currentTime;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq || 160, t);
+      g.gain.setValueAtTime(gain || .09, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + (dur || .08));
+      o.connect(g).connect(ctx.destination);
+      o.start(t); o.stop(t + (dur || .08));
+    }
+    function rushSound(){
+      tone(112,.075,'sawtooth',.055);
+      setTimeout(()=>tone(196,.045,'square',.05),45);
+    }
+    function beatSound(intensity){
+      tone(68,.085,'sine', intensity || .055);
+    }
+
+    function fxLayer(){
+      const st = stage(); if(!st) return null;
+      let layer = byId('x12iV263FxLayer');
+      if(!layer){
+        layer = document.createElement('div');
+        layer.id = 'x12iV263FxLayer';
+        layer.className = 'x12iV263FxLayer';
+        layer.innerHTML = '<div class="x12iV263ResponseFlash"></div><div class="x12iV263Slash"></div>';
+        st.appendChild(layer);
+      }
+      return layer;
+    }
+    function flashResponse(){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.x12iV263ResponseFlash'); if(!el) return;
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    }
+    function slash(){
+      const layer = fxLayer(); if(!layer) return;
+      const el = layer.querySelector('.x12iV263Slash'); if(!el) return;
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    }
+    function particles(type, count, dir){
+      const layer = fxLayer(); if(!layer) return;
+      count = count || 10; dir = dir || 'up';
+      for(let i=0;i<count;i++){
+        const p = document.createElement('i');
+        p.className = 'x12iV263Particle ' + (type || '');
+        const fromLeft = dir === 'left', fromRight = dir === 'right';
+        p.style.setProperty('--x', (fromLeft ? 5 : fromRight ? 95 : Math.random()*100).toFixed(1) + '%');
+        p.style.setProperty('--y', (dir === 'up' ? 95 : (28 + Math.random()*50)).toFixed(1) + '%');
+        p.style.setProperty('--dx', (fromLeft ? Math.random()*420 : fromRight ? -Math.random()*420 : (Math.random()*220-110)).toFixed(1) + 'px');
+        p.style.setProperty('--dy', (dir === 'up' ? (-260-Math.random()*260) : (Math.random()*260-130)).toFixed(1) + 'px');
+        p.style.setProperty('--dur', (620+Math.random()*950).toFixed(0)+'ms');
+        layer.appendChild(p);
+        setTimeout(()=>{ try{p.remove();}catch(_){} }, 1900);
+      }
+    }
+    function cleanStageClasses(){
+      const st = stage(); if(!st) return;
+      st.classList.remove('x12iV263Weapon','x12iV263Magic','x12iV263Body','x12iV263Light','x12iV263Emprise','x12iV263Clarte');
+    }
+    function phaseOf(step){
+      const act = String((step && step.act) || '');
+      const phase = String((step && step.phase) || '');
+      if(act.includes('IV') || phase.includes('lumière') || phase.includes('Lumière')) return 'light';
+      if(act.includes('III') || phase.includes('mains nues')) return 'body';
+      if(act.includes('II') || phase.includes('magique')) return 'magic';
+      return 'weapon';
+    }
+    function applyPhase(){
+      const st = stage(); const d = duel(); const step = currentStep();
+      if(!st || !d || !step) return;
+      st.classList.remove('x12iV263Weapon','x12iV263Magic','x12iV263Body','x12iV263Light','x12iV263Emprise','x12iV263Clarte');
+      const phase = phaseOf(step);
+      st.classList.add(
+        phase === 'light' ? 'x12iV263Light' :
+        phase === 'body' ? 'x12iV263Body' :
+        phase === 'magic' ? 'x12iV263Magic' : 'x12iV263Weapon'
+      );
+      if(d.perception < 0 && phase !== 'light') st.classList.add('x12iV263Emprise');
+      if(d.perception > 0) st.classList.add('x12iV263Clarte');
+    }
+    function cameraClassFor(step){
+      const phase = phaseOf(step);
+      if(phase === 'body') return 'x12iV263HeavyCam';
+      if(phase === 'magic') return 'x12iV263DodgeCam';
+      return 'x12iV263ChoiceCam';
+    }
+    function particleTypeFor(step){
+      const phase = phaseOf(step);
+      if(phase === 'light') return 'gold';
+      if(phase === 'magic') return 'shadow';
+      if(phase === 'body') return '';
+      return 'dust';
+    }
+    function microCamera(){
+      const st = stage(); const step = currentStep(); if(!st || !step) return;
+      const cls = cameraClassFor(step);
+      st.classList.remove('x12iV263ChoiceCam','x12iV263DodgeCam','x12iV263HeavyCam','x12iV263Rush');
+      void st.offsetWidth;
+      st.classList.add(cls, 'x12iV263Rush');
+      rushSound();
+      particles(particleTypeFor(step), 18, phaseOf(step)==='magic'?'right':'up');
+      setTimeout(()=>{ try{st.classList.remove(cls,'x12iV263Rush');}catch(e){} }, 620);
+    }
+    function qteIndex(){
+      const d = duel(); if(!d || !d.qte) return 0;
+      if(typeof d.qte.index === 'number') return d.qte.index;
+      if(Array.isArray(d.qte.seq) && typeof d.qte.stepIndex === 'number') return d.qte.index || 0;
+      return 0;
+    }
+    const PATHS = {
+      weapon:[[24,42],[38,34],[54,46],[68,38],[48,29],[74,52],[32,56]],
+      magic:[[18,58],[32,44],[50,36],[66,44],[80,56],[58,29],[42,62]],
+      body:[[28,62],[42,55],[55,50],[63,43],[48,35],[34,48],[72,60]],
+      light:[[20,50],[32,42],[45,36],[57,34],[70,40],[78,52],[50,62]]
+    };
+    function choreographButtons(){
+      const btns = qteButtons(); if(!btns.length) return;
+      const step = currentStep(); const phase = phaseOf(step); const path = PATHS[phase] || PATHS.weapon;
+      const qi = qteIndex();
+      btns.forEach((btn, i)=>{
+        const pos = path[(qi + i) % path.length];
+        // On garde le QTE dans la moitié haute/milieu : pas derrière la case de texte.
+        let x = Math.max(14, Math.min(86, pos[0] + (i ? ((i%2?1:-1)*Math.min(10, i*4)) : 0)));
+        let y = Math.max(18, Math.min(64, pos[1] + (i ? ((i%3)-1)*6 : 0)));
+        btn.style.left = x + '%';
+        btn.style.top = y + '%';
+        btn.style.zIndex = '2147483600';
+        btn.style.pointerEvents = 'auto';
+        btn.dataset.x12iV263Choreo = phase + ':' + qi + ':' + i;
+      });
+    }
+    function heartbeat(){
+      const d = duel(); if(!d || !d.qte || !d.qte.deadline) return;
+      const now = Date.now();
+      const total = d.qte.duration || 1200;
+      const remain = Math.max(0, d.qte.deadline - now);
+      const ratio = remain / total;
+      let interval = ratio < .25 ? 150 : ratio < .50 ? 260 : 430;
+      if(ratio < .58 && now - lastBeatAt > interval){
+        lastBeatAt = now;
+        beatSound(ratio < .25 ? .105 : .065);
+      }
+    }
+    function waitingKey(){
+      const d = duel(); if(!d || !d.waiting) return '';
+      return String(d.step||0) + ':' + String((d.history && d.history.length) || 0) + ':' + String((d.last && d.last.reaction) || '').slice(0,36);
+    }
+    function qteKey(){
+      const d = duel(); if(!d || !d.qte) return '';
+      return String(d.step||0)+':'+String(qteIndex())+':'+String(d.qte.positionSeed||0)+':'+String((d.qte.seq||[]).join('|') || d.qte.word || '');
+    }
+    function onNewQte(){
+      const step = currentStep();
+      particles(particleTypeFor(step), 12, phaseOf(step)==='magic'?'right':phaseOf(step)==='body'?'left':'up');
+      slash();
+      choreographButtons();
+    }
+    function onWaiting(){
+      const step = currentStep();
+      flashResponse();
+      particles(particleTypeFor(step), 16, 'up');
+      const st = stage();
+      if(st){
+        st.classList.remove('x12iV263NerveShake'); void st.offsetWidth;
+        if(duel() && duel().last && duel().last.bad) st.classList.add('x12iV263NerveShake');
+        setTimeout(()=>{ try{st.classList.remove('x12iV263NerveShake');}catch(e){} }, 480);
+      }
+      const stats = byId('stats') || document.querySelector('.stats');
+      if(stats){
+        stats.classList.remove('x12iV263HudPulse'); void stats.offsetWidth;
+        stats.classList.add('x12iV263HudPulse');
+        setTimeout(()=>stats.classList.remove('x12iV263HudPulse'), 360);
+      }
+    }
+    function monitor(){
+      applyPhase();
+      if(qteActive()){
+        const key = qteKey();
+        if(key && key !== lastQteKey){
+          lastQteKey = key;
+          setTimeout(onNewQte, 25);
+        }else{
+          choreographButtons();
+        }
+        heartbeat();
+      }
+      const wk = waitingKey();
+      if(wk && wk !== lastWaitingKey){
+        lastWaitingKey = wk;
+        setTimeout(onWaiting, 35);
+      }
+    }
+
+    document.addEventListener('click', function(ev){
+      try{
+        const d = duel();
+        const btn = ev.target && ev.target.closest ? ev.target.closest('button.choiceBtn') : null;
+        if(!btn || !d || d.waiting || d.qte) return;
+        const txt = (btn.textContent || '').trim().toLowerCase();
+        if(txt.includes('continuer') || txt.includes('recommencer') || txt.includes('retour')) return;
+        microCamera();
+      }catch(e){}
+    }, true);
+
+    document.addEventListener('pointerdown', function(ev){
+      const btn = ev.target && ev.target.closest ? ev.target.closest('.x12iStageQteBtn') : null;
+      if(btn){
+        const step = currentStep();
+        slash();
+        particles(particleTypeFor(step), 10, phaseOf(step)==='body'?'left':'right');
+      }
+    }, true);
+
+    document.addEventListener('click', ensureAudio, {capture:true, passive:true});
+    document.addEventListener('touchstart', ensureAudio, {capture:true, passive:true});
+
+    if(window.MutationObserver && document.body){
+      const mo = new MutationObserver(()=>setTimeout(monitor, 20));
+      mo.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:['class','style']});
+    }
+    setInterval(monitor, 90);
+    setTimeout(monitor, 250);
+    console.info('[Sylvinia v0.263] Dynamisme combat XII_I étendu : micro-caméra, rush, trajectoires QTE, pulsation timer, phases, perception, réponses.');
+  }catch(err){
+    console.error('[Sylvinia v0.263] Échec dynamisme combat XII_I', err);
   }
 })();
 </script>
