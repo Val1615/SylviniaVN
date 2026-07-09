@@ -45181,212 +45181,106 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
-
-<script id="v0260d-stagebg-direct-path-fix-tail">
-/* v0.260d · Correctif robuste : setStageBg accepte les clés A[...] ET les chemins directs.
-   Fixe les écrans noirs si une scène reçoit "assets/..." au lieu d'une clé. */
-(function installV0260DStageBgDirectPathFix(){
+<script id="v0260d-x12i-c12i003-004-keyscene-fix-tail">
+/* v0.260d · XII_I : correction robuste c12i_003/c12i_004.
+   Le moteur garde scene.bg sous forme de clé A[...]. Les chemins privilégient le dossier chapter12,
+   avec repli automatique vers chapter12_i si l'ancien dossier existe encore dans le dépôt. */
+(function installV0260DX12I003004KeysceneFix(){
   try{
-    if(window.__sylviniaV0260DStageBgDirectPathFix) return;
-    window.__sylviniaV0260DStageBgDirectPathFix = true;
+    if(window.__sylviniaV0260DX12I003004KeysceneFix) return;
+    window.__sylviniaV0260DX12I003004KeysceneFix = true;
 
-    function isDirectAssetPath(value){
-      return typeof value === 'string' && /^(assets\/|\.\/assets\/|\/assets\/|https?:\/\/|data:image\/)/i.test(value);
-    }
-
-    function resolveBgSource(keyOrPath){
-      const raw = String(keyOrPath || '');
-      try{
-        if(typeof A !== 'undefined' && A && A[raw]) return A[raw];
-      }catch(e){}
-      return isDirectAssetPath(raw) ? raw : '';
-    }
-
-    window.resolveSylviniaBgSource = resolveBgSource;
-
-    const originalSetStageBg = window.setStageBg || (typeof setStageBg === 'function' ? setStageBg : null);
-    window.setStageBg = function(keyOrPath, zoom=false){
-      const bg = document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
-      const src = resolveBgSource(keyOrPath);
-      if(bg){
-        bg.style.backgroundImage = src ? `url('${src}')` : 'none';
-        bg.classList.toggle('zoom', !!zoom);
-        bg.dataset.bgKey = String(keyOrPath || '');
-        bg.dataset.bgSrc = src || '';
-        bg.style.display = 'block';
-        bg.style.visibility = 'visible';
-        bg.style.opacity = '1';
-        bg.style.backgroundSize = 'cover';
-        bg.style.backgroundPosition = 'center center';
-        return bg;
-      }
-      if(typeof originalSetStageBg === 'function'){
-        return originalSetStageBg(keyOrPath, zoom);
-      }
-      return null;
+    window.A = window.A || {};
+    const CANDIDATES = {
+      x12i_c12i003_key: [
+        'assets/images/keyscenes/chapter12/c12i_003_arrivee_hall.png',
+        'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png'
+      ],
+      x12i_c12i004_key: [
+        'assets/images/keyscenes/chapter12/c12i_004_fresque_farae.png',
+        'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
+      ]
     };
-    try{ setStageBg = window.setStageBg; }catch(e){}
-
-    if(typeof A !== 'undefined' && A){
-      Object.assign(A, {
-        x12i_c12i003_key: 'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png',
-        x12i_c12i004_key: 'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
-      });
-    }
-
-    if(typeof S !== 'undefined' && S){
-      if(S.c12i_003){
-        S.c12i_003.bg = 'x12i_c12i003_key';
-        S.c12i_003.zoom = true;
-        S.c12i_003.chars = [];
-        S.c12i_003.hideChars = true;
-        S.c12i_003.clearChars = true;
-        delete S.c12i_003.videoBanner;
-      }
-      if(S.c12i_004){
-        S.c12i_004.bg = 'x12i_c12i004_key';
-        S.c12i_004.zoom = true;
-        S.c12i_004.chars = [];
-        S.c12i_004.hideChars = true;
-        S.c12i_004.clearChars = true;
-        delete S.c12i_004.videoBanner;
-      }
-    }
-
-    function forceCurrentX12IBgIfNeeded(){
-      try{
-        if(typeof state === 'undefined' || !state || typeof S === 'undefined' || !S) return;
-        const id = String(state.scene || '');
-        if(id !== 'c12i_003' && id !== 'c12i_004') return;
-        const sc = S[id];
-        if(sc && sc.bg) window.setStageBg(sc.bg, sc.zoom !== false);
-      }catch(e){}
-    }
-
-    const previousRender = window.render;
-    if(typeof previousRender === 'function' && !window.__sylviniaV0260DRenderWrapped){
-      window.__sylviniaV0260DRenderWrapped = true;
-      window.render = function(){
-        const result = previousRender.apply(this, arguments);
-        setTimeout(forceCurrentX12IBgIfNeeded, 0);
-        return result;
-      };
-      try{ render = window.render; }catch(e){}
-    }
-
-    setTimeout(forceCurrentX12IBgIfNeeded, 150);
-    if(typeof save === 'function') save();
-    console.info('[Sylvinia v0.260d] setStageBg robuste actif : clés A et chemins directs acceptés. c12i_003/c12i_004 réappliqués.');
-  }catch(err){
-    console.error('[Sylvinia v0.260d] Échec correctif setStageBg direct path', err);
-  }
-})();
-</script>
-
-
-<style id="v0260e-forced-c12i003-004-cg-css">
-/* v0.260e · sécurité visuelle : image clé forcée au-dessus du fond noir */
-.stage .bg{z-index:0}
-.stage #x12iForcedSceneImage{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;z-index:1;display:block;pointer-events:none;background:#000}
-.stage .veil{z-index:2}
-.stage .chars{z-index:3}
-</style>
-<script id="v0260e-forced-c12i003-004-cg-tail">
-/* v0.260e · XII_I : c12i_003/c12i_004 ne dépendent plus seulement de setStageBg.
-   On garde les clés A normales ET on injecte une image HTML directe dans la scène. */
-(function installV0260EForcedC12I003004CG(){
-  try{
-    if(window.__sylviniaV0260EForcedC12I003004CG) return;
-    window.__sylviniaV0260EForcedC12I003004CG = true;
-
-    const sceneImages = {
-      c12i_003: {
-        key: 'x12i_c12i003_key',
-        src: 'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png'
-      },
-      c12i_004: {
-        key: 'x12i_c12i004_key',
-        src: 'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
-      }
-    };
-
-    if(typeof A !== 'undefined' && A){
-      Object.keys(sceneImages).forEach(id => {
-        A[sceneImages[id].key] = sceneImages[id].src;
-      });
-    }
-
-    function applySceneData(){
-      if(typeof S === 'undefined' || !S) return;
-      Object.keys(sceneImages).forEach(id => {
-        if(!S[id]) return;
-        S[id].bg = sceneImages[id].key;
-        S[id].zoom = true;
-        S[id].chars = [];
-        S[id].hideChars = true;
-        S[id].clearChars = true;
-        delete S[id].videoBanner;
-      });
-    }
 
     function currentSceneId(){
-      try{
-        if(typeof state !== 'undefined' && state) return String(state.scene || '');
-      }catch(e){}
-      return '';
+      try{ return (typeof state !== 'undefined' && state) ? String(state.scene || '') : ''; }
+      catch(e){ return ''; }
     }
 
-    function ensureForcedImage(){
-      applySceneData();
-      const id = currentSceneId();
-      const data = sceneImages[id];
-      const stage = document.getElementById('stage') || document.querySelector('.stage');
-      if(!stage) return;
-
-      let img = document.getElementById('x12iForcedSceneImage');
-
-      if(!data){
-        if(img) img.remove();
-        return;
-      }
-
-      if(!img){
-        img = document.createElement('img');
-        img.id = 'x12iForcedSceneImage';
-        img.alt = '';
-        img.decoding = 'async';
-        img.loading = 'eager';
-        const bg = document.getElementById('bg') || stage.querySelector('.bg');
-        if(bg && bg.nextSibling) stage.insertBefore(img, bg.nextSibling);
-        else stage.insertBefore(img, stage.firstChild);
-      }
-
-      if(img.getAttribute('src') !== data.src) img.setAttribute('src', data.src);
-      img.style.display = 'block';
-
-      try{
-        if(typeof setStageBg === 'function') setStageBg(data.key, true);
-      }catch(e){}
+    function forceStageBg(key){
+      const src = (window.A && A[key]) ? A[key] : '';
+      const bg = document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      if(!bg || !src) return;
+      bg.style.backgroundImage = `url("${src}")`;
+      bg.style.display = 'block';
+      bg.style.visibility = 'visible';
+      bg.style.opacity = '1';
+      bg.style.backgroundSize = 'cover';
+      bg.style.backgroundPosition = 'center center';
+      bg.dataset.bgKey = key || '';
+      bg.classList.add('zoom');
     }
 
-    const previousRender = window.render;
-    if(typeof previousRender === 'function' && !window.__sylviniaV0260EForcedC12I003004Render){
-      window.__sylviniaV0260EForcedC12I003004Render = true;
+    function setAssetWithFallback(key){
+      const list = CANDIDATES[key] || [];
+      if(!list.length) return;
+      A[key] = list[0];
+      if(list.length < 2 || typeof Image === 'undefined') return;
+
+      const probe = new Image();
+      probe.onerror = function(){
+        if(A[key] !== list[0]) return;
+        A[key] = list[1];
+        const scene = currentSceneId();
+        if((scene === 'c12i_003' && key === 'x12i_c12i003_key') || (scene === 'c12i_004' && key === 'x12i_c12i004_key')){
+          forceStageBg(key);
+        }
+      };
+      probe.src = list[0];
+    }
+
+    function applyScene(id, key){
+      if(typeof S === 'undefined' || !S || !S[id]) return;
+      S[id].bg = key;
+      S[id].zoom = true;
+      S[id].chars = [];
+      S[id].hideChars = true;
+      S[id].clearChars = true;
+      delete S[id].videoBanner;
+    }
+
+    function applyAll(){
+      setAssetWithFallback('x12i_c12i003_key');
+      setAssetWithFallback('x12i_c12i004_key');
+      applyScene('c12i_003', 'x12i_c12i003_key');
+      applyScene('c12i_004', 'x12i_c12i004_key');
+    }
+
+    applyAll();
+
+    const prevRender = window.render;
+    if(typeof prevRender === 'function' && !window.__sylviniaV0260DX12IRenderWrapped){
+      window.__sylviniaV0260DX12IRenderWrapped = true;
       window.render = function(){
-        const result = previousRender.apply(this, arguments);
-        setTimeout(ensureForcedImage, 0);
-        setTimeout(ensureForcedImage, 120);
-        return result;
+        const out = prevRender.apply(this, arguments);
+        try{
+          applyAll();
+          const scene = currentSceneId();
+          if(scene === 'c12i_003') forceStageBg('x12i_c12i003_key');
+          if(scene === 'c12i_004') forceStageBg('x12i_c12i004_key');
+        }catch(e){}
+        return out;
       };
       try{ render = window.render; }catch(e){}
     }
 
-    setInterval(ensureForcedImage, 500);
-    setTimeout(ensureForcedImage, 250);
+    if(currentSceneId() === 'c12i_003') forceStageBg('x12i_c12i003_key');
+    if(currentSceneId() === 'c12i_004') forceStageBg('x12i_c12i004_key');
+
     if(typeof save === 'function') save();
-    console.info('[Sylvinia v0.260e] Sécurité image clé active : c12i_003/c12i_004 injectées aussi en <img> direct.');
+    console.info('[Sylvinia v0.260d] c12i_003/c12i_004 corrigés : clés A conservées, chemin chapter12 prioritaire, repli chapter12_i disponible.');
   }catch(err){
-    console.error('[Sylvinia v0.260e] Échec sécurité image clé c12i_003/c12i_004', err);
+    console.error('[Sylvinia v0.260d] Échec correction robuste c12i_003/c12i_004', err);
   }
 })();
 </script>
