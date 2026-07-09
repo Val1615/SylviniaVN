@@ -40823,6 +40823,122 @@ html body.x12iQteMode #gameCard #stats{
 })();
 </script>
 
+
+<script id="x12i-user-custom-cg-patch-v001">
+/* Patch utilisateur · XII_I : affectation des nouvelles images de fin et post-combat */
+(function installX12IUserCustomCGPatchV001(){
+  try{
+    if(window.__x12iUserCustomCGPatchV001) return;
+    window.__x12iUserCustomCGPatchV001 = true;
+
+    window.A = window.A || {};
+    const CUSTOM = {
+      x12i_user_gameover:'assets/images/keyscenes/chapter12/x12i_gameover_custom.png',
+      x12i_user_duel_after_clarte:'assets/images/keyscenes/chapter12/x12i_duel_after_clarte_custom.png',
+      x12i_user_duel_after_equilibre:'assets/images/keyscenes/chapter12/x12i_duel_after_equilibre_custom.png',
+      x12i_user_duel_after_emprise:'assets/images/keyscenes/chapter12/x12i_duel_after_emprise_custom.png',
+      x12i_user_c12i_027_028:'assets/images/keyscenes/chapter12/x12i_c12i_027_028_custom.png',
+      x12i_user_c12i_029:'assets/images/keyscenes/chapter12/x12i_c12i_029_custom.png',
+      x12i_user_c12i_030_a:'assets/images/keyscenes/chapter12/x12i_c12i_030_part1_custom.png',
+      x12i_user_c12i_030_b:'assets/images/keyscenes/chapter12/x12i_c12i_030_part2_custom.png'
+    };
+    Object.assign(A, CUSTOM);
+
+    if(typeof S !== 'undefined' && S){
+      const assign = (id, key) => {
+        if(!S[id]) return;
+        S[id].bg = key;
+        S[id].zoom = true;
+        S[id].hideChars = true;
+        S[id].clearChars = true;
+      };
+
+      assign('c12i_gameover', 'x12i_user_gameover');
+      assign('c12i_duel_after_clarte', 'x12i_user_duel_after_clarte');
+      assign('c12i_duel_after_equilibre', 'x12i_user_duel_after_equilibre');
+      assign('c12i_duel_after_emprise', 'x12i_user_duel_after_emprise');
+      assign('c12i_027', 'x12i_user_c12i_027_028');
+      assign('c12i_028', 'x12i_user_c12i_027_028');
+      assign('c12i_029', 'x12i_user_c12i_029');
+      assign('c12i_030', 'x12i_user_c12i_030_a');
+    }
+
+    let c12i030TimerA = null;
+    let c12i030TimerB = null;
+    let lastSceneId = null;
+
+    function clearC12I030Sequence(){
+      if(c12i030TimerA){ clearTimeout(c12i030TimerA); c12i030TimerA = null; }
+      if(c12i030TimerB){ clearTimeout(c12i030TimerB); c12i030TimerB = null; }
+    }
+
+    function forceStageBg(key){
+      try{
+        if(typeof setStageBg === 'function') setStageBg(key, true);
+      }catch(e){}
+      const bg = document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      const src = (A && A[key]) ? A[key] : '';
+      if(bg){
+        bg.style.backgroundImage = src ? `url('${src}')` : 'none';
+        bg.style.display = 'block';
+        bg.style.visibility = 'visible';
+        bg.style.opacity = '1';
+        bg.style.backgroundSize = 'cover';
+        bg.style.backgroundPosition = 'center center';
+        bg.dataset.bgKey = key || '';
+        bg.classList.add('zoom');
+      }
+    }
+
+    function startC12I030Sequence(){
+      clearC12I030Sequence();
+      forceStageBg('x12i_user_c12i_030_a');
+      c12i030TimerA = setTimeout(()=>{
+        forceStageBg('x12i_user_c12i_030_b');
+      }, 6000);
+      c12i030TimerB = setTimeout(()=>{
+        forceStageBg('x12i_user_c12i_030_b');
+      }, 12000);
+    }
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__x12iUserCustomCGPatchRenderWrappedV001){
+      window.__x12iUserCustomCGPatchRenderWrappedV001 = true;
+      window.render = function(){
+        const out = previousRender.apply(this, arguments);
+        const current = (typeof state !== 'undefined' && state) ? String(state.scene || '') : '';
+        if(current !== lastSceneId){
+          clearC12I030Sequence();
+          lastSceneId = current;
+          if(current === 'c12i_030'){
+            startC12I030Sequence();
+          }
+        }
+        return out;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    const previousGo = window.go;
+    if(typeof previousGo === 'function' && !window.__x12iUserCustomCGPatchGoWrappedV001){
+      window.__x12iUserCustomCGPatchGoWrappedV001 = true;
+      window.go = function(next, opts={}){
+        const current = (typeof state !== 'undefined' && state) ? String(state.scene || '') : '';
+        if(current === 'c12i_030' && String(next || '') !== 'c12i_030'){
+          clearC12I030Sequence();
+        }
+        return previousGo.apply(this, arguments);
+      };
+      try{ go = window.go; }catch(e){}
+    }
+
+    console.info('[Sylvinia custom] XII_I : images utilisateur affectées à c12i_gameover, fins de duel, c12i_027-030.');
+  }catch(err){
+    console.error('[Sylvinia custom] Échec du patch images XII_I', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
@@ -44929,3 +45045,139 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
   }
 })();
 </script>
+
+<script id="x12i-user-custom-cg-patch-v002-tail">
+/* Patch utilisateur final · XII_I : prioritaire en fin de fichier */
+(function installX12IUserCustomCGPatchV002Tail(){
+  try{
+    if(window.__x12iUserCustomCGPatchV002Tail) return;
+    window.__x12iUserCustomCGPatchV002Tail = true;
+
+    window.A = window.A || {};
+    const CUSTOM = {
+      x12i_user_gameover:'assets/images/keyscenes/chapter12/x12i_gameover_custom.png',
+      x12i_user_duel_after_clarte:'assets/images/keyscenes/chapter12/x12i_duel_after_clarte_custom.png',
+      x12i_user_duel_after_equilibre:'assets/images/keyscenes/chapter12/x12i_duel_after_equilibre_custom.png',
+      x12i_user_duel_after_emprise:'assets/images/keyscenes/chapter12/x12i_duel_after_emprise_custom.png',
+      x12i_user_c12i_027_028:'assets/images/keyscenes/chapter12/x12i_c12i_027_028_custom.png',
+      x12i_user_c12i_029:'assets/images/keyscenes/chapter12/x12i_c12i_029_custom.png',
+      x12i_user_c12i_030_a:'assets/images/keyscenes/chapter12/x12i_c12i_030_part1_custom.png',
+      x12i_user_c12i_030_b:'assets/images/keyscenes/chapter12/x12i_c12i_030_part2_custom.png'
+    };
+    Object.assign(A, CUSTOM);
+
+    const applyScene = (id, key) => {
+      if(typeof S === 'undefined' || !S || !S[id]) return;
+      S[id].bg = key;
+      S[id].zoom = true;
+      S[id].hideChars = true;
+      S[id].clearChars = true;
+    };
+
+    applyScene('c12i_gameover', 'x12i_user_gameover');
+    applyScene('c12i_duel_after_clarte', 'x12i_user_duel_after_clarte');
+    applyScene('c12i_duel_after_equilibre', 'x12i_user_duel_after_equilibre');
+    applyScene('c12i_duel_after_emprise', 'x12i_user_duel_after_emprise');
+    applyScene('c12i_027', 'x12i_user_c12i_027_028');
+    applyScene('c12i_028', 'x12i_user_c12i_027_028');
+    applyScene('c12i_029', 'x12i_user_c12i_029');
+    applyScene('c12i_030', 'x12i_user_c12i_030_a');
+
+    let timer1 = null;
+    let timer2 = null;
+    let lastScene = null;
+    function clearSeq(){ if(timer1){clearTimeout(timer1); timer1=null;} if(timer2){clearTimeout(timer2); timer2=null;} }
+    function forceBg(key){
+      try{ if(typeof setStageBg==='function') setStageBg(key,true); }catch(e){}
+      const bg=document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      const src=(A&&A[key])?A[key]:'';
+      if(bg){
+        bg.style.backgroundImage = src ? `url('${src}')` : 'none';
+        bg.style.display='block';
+        bg.style.visibility='visible';
+        bg.style.opacity='1';
+        bg.style.backgroundSize='cover';
+        bg.style.backgroundPosition='center center';
+        bg.dataset.bgKey=key||'';
+        bg.classList.add('zoom');
+      }
+    }
+    function startSeq030(){
+      clearSeq();
+      forceBg('x12i_user_c12i_030_a');
+      timer1=setTimeout(()=>forceBg('x12i_user_c12i_030_b'), 6000);
+      timer2=setTimeout(()=>forceBg('x12i_user_c12i_030_b'), 12000);
+    }
+
+    const prevRender = window.render;
+    if(typeof prevRender==='function' && !window.__x12iUserCustomCGPatchV002TailRender){
+      window.__x12iUserCustomCGPatchV002TailRender=true;
+      window.render=function(){
+        const out=prevRender.apply(this,arguments);
+        const current=(typeof state!=='undefined' && state)?String(state.scene||''):'';
+        if(current!==lastScene){
+          clearSeq();
+          lastScene=current;
+          if(current==='c12i_030') startSeq030();
+        }
+        return out;
+      };
+      try{ render=window.render; }catch(e){}
+    }
+
+    const prevGo = window.go;
+    if(typeof prevGo==='function' && !window.__x12iUserCustomCGPatchV002TailGo){
+      window.__x12iUserCustomCGPatchV002TailGo=true;
+      window.go=function(next,opts={}){
+        const current=(typeof state!=='undefined' && state)?String(state.scene||''):'';
+        if(current==='c12i_030' && String(next||'')!=='c12i_030') clearSeq();
+        return prevGo.apply(this,arguments);
+      };
+      try{ go=window.go; }catch(e){}
+    }
+
+    if(typeof save==='function') save();
+    console.info('[Sylvinia custom tail] XII_I : images utilisateur réappliquées en toute fin de fichier.');
+  }catch(err){
+    console.error('[Sylvinia custom tail] Échec du patch final XII_I', err);
+  }
+})();
+</script>
+
+
+
+<script id="v0260c-x12i-c12i003-004-black-screen-fix-tail">
+/* v0.260c · XII_I : correctif écran noir c12i_003/c12i_004.
+   Le moteur attend une clé A[...] dans scene.bg, pas l'URL directe. */
+(function installV0260CX12I003004BlackScreenFix(){
+  try{
+    if(window.__sylviniaV0260CX12I003004BlackScreenFix) return;
+    window.__sylviniaV0260CX12I003004BlackScreenFix = true;
+    if(typeof A === 'undefined' || !A || typeof S === 'undefined' || !S) return;
+
+    Object.assign(A, {
+      x12i_c12i003_key: 'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png',
+      x12i_c12i004_key: 'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
+    });
+
+    const setKeyBg = (id, key) => {
+      if(!S[id]) return;
+      S[id].bg = key;
+      S[id].zoom = true;
+      S[id].chars = [];
+      S[id].hideChars = true;
+      S[id].clearChars = true;
+      delete S[id].videoBanner;
+    };
+
+    setKeyBg('c12i_003', 'x12i_c12i003_key');
+    setKeyBg('c12i_004', 'x12i_c12i004_key');
+
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.260c] c12i_003/c12i_004 corrigés : scene.bg utilise maintenant la clé A, plus l’URL directe.');
+  }catch(err){
+    console.error('[Sylvinia v0.260c] Échec correctif écran noir c12i_003/c12i_004', err);
+  }
+})();
+</script>
+
