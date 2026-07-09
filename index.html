@@ -45283,3 +45283,111 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+
+<style id="v0260e-forced-c12i003-004-cg-css">
+/* v0.260e · sécurité visuelle : image clé forcée au-dessus du fond noir */
+.stage .bg{z-index:0}
+.stage #x12iForcedSceneImage{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;z-index:1;display:block;pointer-events:none;background:#000}
+.stage .veil{z-index:2}
+.stage .chars{z-index:3}
+</style>
+<script id="v0260e-forced-c12i003-004-cg-tail">
+/* v0.260e · XII_I : c12i_003/c12i_004 ne dépendent plus seulement de setStageBg.
+   On garde les clés A normales ET on injecte une image HTML directe dans la scène. */
+(function installV0260EForcedC12I003004CG(){
+  try{
+    if(window.__sylviniaV0260EForcedC12I003004CG) return;
+    window.__sylviniaV0260EForcedC12I003004CG = true;
+
+    const sceneImages = {
+      c12i_003: {
+        key: 'x12i_c12i003_key',
+        src: 'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png'
+      },
+      c12i_004: {
+        key: 'x12i_c12i004_key',
+        src: 'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
+      }
+    };
+
+    if(typeof A !== 'undefined' && A){
+      Object.keys(sceneImages).forEach(id => {
+        A[sceneImages[id].key] = sceneImages[id].src;
+      });
+    }
+
+    function applySceneData(){
+      if(typeof S === 'undefined' || !S) return;
+      Object.keys(sceneImages).forEach(id => {
+        if(!S[id]) return;
+        S[id].bg = sceneImages[id].key;
+        S[id].zoom = true;
+        S[id].chars = [];
+        S[id].hideChars = true;
+        S[id].clearChars = true;
+        delete S[id].videoBanner;
+      });
+    }
+
+    function currentSceneId(){
+      try{
+        if(typeof state !== 'undefined' && state) return String(state.scene || '');
+      }catch(e){}
+      return '';
+    }
+
+    function ensureForcedImage(){
+      applySceneData();
+      const id = currentSceneId();
+      const data = sceneImages[id];
+      const stage = document.getElementById('stage') || document.querySelector('.stage');
+      if(!stage) return;
+
+      let img = document.getElementById('x12iForcedSceneImage');
+
+      if(!data){
+        if(img) img.remove();
+        return;
+      }
+
+      if(!img){
+        img = document.createElement('img');
+        img.id = 'x12iForcedSceneImage';
+        img.alt = '';
+        img.decoding = 'async';
+        img.loading = 'eager';
+        const bg = document.getElementById('bg') || stage.querySelector('.bg');
+        if(bg && bg.nextSibling) stage.insertBefore(img, bg.nextSibling);
+        else stage.insertBefore(img, stage.firstChild);
+      }
+
+      if(img.getAttribute('src') !== data.src) img.setAttribute('src', data.src);
+      img.style.display = 'block';
+
+      try{
+        if(typeof setStageBg === 'function') setStageBg(data.key, true);
+      }catch(e){}
+    }
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0260EForcedC12I003004Render){
+      window.__sylviniaV0260EForcedC12I003004Render = true;
+      window.render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(ensureForcedImage, 0);
+        setTimeout(ensureForcedImage, 120);
+        return result;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    setInterval(ensureForcedImage, 500);
+    setTimeout(ensureForcedImage, 250);
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.260e] Sécurité image clé active : c12i_003/c12i_004 injectées aussi en <img> direct.');
+  }catch(err){
+    console.error('[Sylvinia v0.260e] Échec sécurité image clé c12i_003/c12i_004', err);
+  }
+})();
+</script>
+
