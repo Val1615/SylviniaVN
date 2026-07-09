@@ -45181,3 +45181,105 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+
+<script id="v0260d-stagebg-direct-path-fix-tail">
+/* v0.260d · Correctif robuste : setStageBg accepte les clés A[...] ET les chemins directs.
+   Fixe les écrans noirs si une scène reçoit "assets/..." au lieu d'une clé. */
+(function installV0260DStageBgDirectPathFix(){
+  try{
+    if(window.__sylviniaV0260DStageBgDirectPathFix) return;
+    window.__sylviniaV0260DStageBgDirectPathFix = true;
+
+    function isDirectAssetPath(value){
+      return typeof value === 'string' && /^(assets\/|\.\/assets\/|\/assets\/|https?:\/\/|data:image\/)/i.test(value);
+    }
+
+    function resolveBgSource(keyOrPath){
+      const raw = String(keyOrPath || '');
+      try{
+        if(typeof A !== 'undefined' && A && A[raw]) return A[raw];
+      }catch(e){}
+      return isDirectAssetPath(raw) ? raw : '';
+    }
+
+    window.resolveSylviniaBgSource = resolveBgSource;
+
+    const originalSetStageBg = window.setStageBg || (typeof setStageBg === 'function' ? setStageBg : null);
+    window.setStageBg = function(keyOrPath, zoom=false){
+      const bg = document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      const src = resolveBgSource(keyOrPath);
+      if(bg){
+        bg.style.backgroundImage = src ? `url('${src}')` : 'none';
+        bg.classList.toggle('zoom', !!zoom);
+        bg.dataset.bgKey = String(keyOrPath || '');
+        bg.dataset.bgSrc = src || '';
+        bg.style.display = 'block';
+        bg.style.visibility = 'visible';
+        bg.style.opacity = '1';
+        bg.style.backgroundSize = 'cover';
+        bg.style.backgroundPosition = 'center center';
+        return bg;
+      }
+      if(typeof originalSetStageBg === 'function'){
+        return originalSetStageBg(keyOrPath, zoom);
+      }
+      return null;
+    };
+    try{ setStageBg = window.setStageBg; }catch(e){}
+
+    if(typeof A !== 'undefined' && A){
+      Object.assign(A, {
+        x12i_c12i003_key: 'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png',
+        x12i_c12i004_key: 'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png'
+      });
+    }
+
+    if(typeof S !== 'undefined' && S){
+      if(S.c12i_003){
+        S.c12i_003.bg = 'x12i_c12i003_key';
+        S.c12i_003.zoom = true;
+        S.c12i_003.chars = [];
+        S.c12i_003.hideChars = true;
+        S.c12i_003.clearChars = true;
+        delete S.c12i_003.videoBanner;
+      }
+      if(S.c12i_004){
+        S.c12i_004.bg = 'x12i_c12i004_key';
+        S.c12i_004.zoom = true;
+        S.c12i_004.chars = [];
+        S.c12i_004.hideChars = true;
+        S.c12i_004.clearChars = true;
+        delete S.c12i_004.videoBanner;
+      }
+    }
+
+    function forceCurrentX12IBgIfNeeded(){
+      try{
+        if(typeof state === 'undefined' || !state || typeof S === 'undefined' || !S) return;
+        const id = String(state.scene || '');
+        if(id !== 'c12i_003' && id !== 'c12i_004') return;
+        const sc = S[id];
+        if(sc && sc.bg) window.setStageBg(sc.bg, sc.zoom !== false);
+      }catch(e){}
+    }
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0260DRenderWrapped){
+      window.__sylviniaV0260DRenderWrapped = true;
+      window.render = function(){
+        const result = previousRender.apply(this, arguments);
+        setTimeout(forceCurrentX12IBgIfNeeded, 0);
+        return result;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    setTimeout(forceCurrentX12IBgIfNeeded, 150);
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.260d] setStageBg robuste actif : clés A et chemins directs acceptés. c12i_003/c12i_004 réappliqués.');
+  }catch(err){
+    console.error('[Sylvinia v0.260d] Échec correctif setStageBg direct path', err);
+  }
+})();
+</script>
+
