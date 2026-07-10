@@ -45251,3 +45251,65 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+<script id="v0267-x12i-c12i008-sprite-fix-tail">
+/* v0.267 · XII_I : correction ciblée des sprites de c12i_008.
+   c12i_008 ne doit pas utiliser tia_young_light_wrath / amanea_young_dark_magic.
+   Ces deux sprites restent réservés à c12i_011. */
+(function installV0267X12I008SpriteFix(){
+  try{
+    if(window.__sylviniaV0267X12I008SpriteFix) return;
+    window.__sylviniaV0267X12I008SpriteFix = true;
+
+    function fixC12I008Sprites(){
+      if(typeof S === 'undefined' || !S || !S.c12i_008) return;
+      S.c12i_008.chars = [
+        ['tia','tia_young_hostile','left'],
+        ['amanea','amanea_young_rage','right']
+      ];
+      delete S.c12i_008.hideChars;
+      delete S.c12i_008.clearChars;
+      delete S.c12i_008.videoBanner;
+      delete S.c12i_008.video;
+    }
+
+    fixC12I008Sprites();
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0267X12I008RenderWrapped){
+      window.__sylviniaV0267X12I008RenderWrapped = true;
+      window.render = function(){
+        fixC12I008Sprites();
+        const out = previousRender.apply(this, arguments);
+        fixC12I008Sprites();
+        return out;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    const previousGo = window.go;
+    if(typeof previousGo === 'function' && !window.__sylviniaV0267X12I008GoWrapped){
+      window.__sylviniaV0267X12I008GoWrapped = true;
+      window.go = function(next, opts){
+        fixC12I008Sprites();
+        const out = previousGo.apply(this, arguments);
+        setTimeout(fixC12I008Sprites, 0);
+        return out;
+      };
+      try{ go = window.go; }catch(e){}
+    }
+
+    setTimeout(function(){
+      fixC12I008Sprites();
+      try{
+        if(typeof state !== 'undefined' && state && String(state.scene||'') === 'c12i_008' && typeof render === 'function') render();
+      }catch(e){}
+    }, 0);
+
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.267] XII_I c12i_008 corrigée : tia_young_hostile + amanea_young_rage.');
+  }catch(err){
+    console.error('[Sylvinia v0.267] Échec correction sprites c12i_008', err);
+  }
+})();
+</script>
+
