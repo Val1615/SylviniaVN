@@ -40940,238 +40940,6 @@ html body.x12iQteMode #gameCard #stats{
 </script>
 
 
-<script id="v0265-x12i-c12i003-004-clean-keyscene-install-tail">
-/* v0.265 · XII_I : c12i_003/c12i_004 nettoyées et images clés remises proprement.
-   - Supprime les affectations cassées : plus d'URL directe dans scene.bg pour ces deux scènes.
-   - Le fond de scène reste un décor sûr ; l'image clé est affichée par un vrai <img> prioritaire.
-   - Le chargeur teste plusieurs noms plausibles pour s'aligner avec les assets réellement déposés. */
-(function installV0265X12I003004CleanKeysceneInstall(){
-  try{
-    if(window.__sylviniaV0265X12I003004CleanKeysceneInstall) return;
-    window.__sylviniaV0265X12I003004CleanKeysceneInstall = true;
-
-    window.A = window.A || {};
-
-    // Décor de secours déjà utilisé par XII_I : il évite l'écran noir si une image clé manque côté dépôt.
-    A.x12i_tia_hall_before_01 = A.x12i_tia_hall_before_01 || 'assets/images/backgrounds/chapter12/x12i_tia_hall_before_01.png';
-
-    const FALLBACK_BG = 'x12i_tia_hall_before_01';
-    const CONFIG = {
-      c12i_003:{
-        key:'x12i_c12i003_key_clean',
-        title:'XII_I · Arrivée dans le souvenir',
-        candidates:[
-          // Nommage custom cohérent avec les autres images utilisateur XII_I.
-          'assets/images/keyscenes/chapter12/x12i_c12i_003_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i003_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_003_arrivee_hall_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i003_arrivee_hall_custom.png',
-          // Nommage descriptif simple.
-          'assets/images/keyscenes/chapter12/c12i_003_arrivee_hall.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_003_arrivee_hall.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i003_arrivee_hall.png',
-          'assets/images/keyscenes/chapter12/c12i_003.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_003.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i003.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i003_key.png',
-          // Anciens essais éventuels, gardés uniquement comme secours.
-          'assets/images/keyscenes/chapter12_i/c12i_003_arrivee_hall.png',
-          'assets/images/keyscenes/chapter12_i/x12i_c12i_003_custom.png',
-          'assets/images/keyscenes/chapter12_i/x12i_c12i003_custom.png',
-          'assets/images/keyscenes/chapter12_i/c12i_003.png'
-        ]
-      },
-      c12i_004:{
-        key:'x12i_c12i004_key_clean',
-        title:'XII_I · Fresque des Farae',
-        candidates:[
-          // Nommage custom cohérent avec les autres images utilisateur XII_I.
-          'assets/images/keyscenes/chapter12/x12i_c12i_004_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i004_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_004_fresque_farae_custom.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i004_fresque_farae_custom.png',
-          // Nommage descriptif simple.
-          'assets/images/keyscenes/chapter12/c12i_004_fresque_farae.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_004_fresque_farae.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i004_fresque_farae.png',
-          'assets/images/keyscenes/chapter12/c12i_004.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i_004.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i004.png',
-          'assets/images/keyscenes/chapter12/x12i_c12i004_key.png',
-          // Anciens essais éventuels, gardés uniquement comme secours.
-          'assets/images/keyscenes/chapter12_i/c12i_004_fresque_farae.png',
-          'assets/images/keyscenes/chapter12_i/x12i_c12i_004_custom.png',
-          'assets/images/keyscenes/chapter12_i/x12i_c12i004_custom.png',
-          'assets/images/keyscenes/chapter12_i/c12i_004.png'
-        ]
-      }
-    };
-
-    function sceneId(){
-      try{ return (typeof state !== 'undefined' && state) ? String(state.scene || '') : ''; }
-      catch(e){ return ''; }
-    }
-
-    function unique(arr){ return Array.from(new Set((arr || []).filter(Boolean))); }
-
-    function pathsFromExistingAssets(id){
-      const needle = id === 'c12i_003' ? /c12i[_-]?0?03|c12i003/i : /c12i[_-]?0?04|c12i004/i;
-      try{
-        return Object.keys(A || {})
-          .filter(k => needle.test(k) || needle.test(String(A[k] || '')))
-          .map(k => A[k])
-          .filter(v => typeof v === 'string' && /keyscenes\//i.test(v));
-      }catch(e){ return []; }
-    }
-
-    function ensureCodexRegistration(id){
-      const cfg = CONFIG[id];
-      if(!cfg) return;
-      const meta = {
-        title: cfg.title,
-        type:'Image clé',
-        chapter:'Chapitre XII_I',
-        srcKey: cfg.key,
-        desc: id === 'c12i_003' ? 'Entrée visuelle dans le souvenir d’Amanea.' : 'La fresque familiale des Farae ouvre la fracture du souvenir.'
-      };
-      try{
-        if(typeof CODEX_IMAGES !== 'undefined' && CODEX_IMAGES){ CODEX_IMAGES[cfg.key] = meta; }
-        if(Array.isArray(window.CODEX_IMAGE_ORDER) && !CODEX_IMAGE_ORDER.includes(cfg.key)) CODEX_IMAGE_ORDER.push(cfg.key);
-        if(typeof CODEX_IMAGES_BY_SCENE !== 'undefined' && CODEX_IMAGES_BY_SCENE){ CODEX_IMAGES_BY_SCENE[id] = unique([...(CODEX_IMAGES_BY_SCENE[id] || []), cfg.key]); }
-      }catch(e){}
-    }
-
-    function resetScene(id){
-      const cfg = CONFIG[id];
-      if(!cfg || typeof S === 'undefined' || !S || !S[id]) return;
-      A[cfg.key] = A[cfg.key] || cfg.candidates[0];
-
-      // Important : le moteur reçoit un décor fiable, pas l'image clé cassée.
-      // L'image clé est ensuite posée dans le stage par overlay <img>, donc plus de conflit scene.bg / A[...].
-      S[id].bg = FALLBACK_BG;
-      S[id].zoom = true;
-      S[id].chars = [];
-      S[id].hideChars = true;
-      S[id].clearChars = true;
-      delete S[id].videoBanner;
-      delete S[id].video;
-      ensureCodexRegistration(id);
-    }
-
-    function removeOverlay(){
-      const img = document.getElementById('x12i003004CleanKeyOverlay');
-      if(img) img.remove();
-    }
-
-    function buildOverlay(){
-      const stage = document.getElementById('stage');
-      if(!stage) return null;
-      let img = document.getElementById('x12i003004CleanKeyOverlay');
-      if(!img){
-        img = document.createElement('img');
-        img.id = 'x12i003004CleanKeyOverlay';
-        img.alt = '';
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.style.position = 'absolute';
-        img.style.inset = '0';
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'cover';
-        img.style.objectPosition = 'center center';
-        img.style.display = 'block';
-        img.style.pointerEvents = 'none';
-        img.style.zIndex = '1';
-        img.style.opacity = '1';
-        img.style.background = '#000';
-        stage.appendChild(img);
-      }
-      return img;
-    }
-
-    function trySources(img, id, sources, index){
-      const cfg = CONFIG[id];
-      if(!cfg || !img) return;
-      if(index >= sources.length){
-        // Pas d'image trouvée : on retire l'overlay pour garder au moins le décor de secours.
-        removeOverlay();
-        console.warn('[Sylvinia v0.265] Aucune image clé trouvée pour '+id+'. Vérifier le nom du fichier dans assets/images/keyscenes/chapter12/.');
-        return;
-      }
-      const src = sources[index];
-      img.onerror = function(){ trySources(img, id, sources, index + 1); };
-      img.onload = function(){
-        A[cfg.key] = src;
-        img.dataset.sceneId = id;
-        img.dataset.assetKey = cfg.key;
-        img.dataset.srcOk = src;
-      };
-      img.src = src;
-    }
-
-    function showSceneImage(id){
-      const cfg = CONFIG[id];
-      if(!cfg) return removeOverlay();
-      resetScene(id);
-      const img = buildOverlay();
-      if(!img) return;
-      const candidates = unique([
-        ...pathsFromExistingAssets(id),
-        ...(cfg.candidates || [])
-      ]);
-      if(img.dataset.sceneId === id && img.dataset.srcOk && candidates.includes(img.dataset.srcOk)) return;
-      img.dataset.sceneId = id;
-      img.dataset.srcOk = '';
-      trySources(img, id, candidates, 0);
-    }
-
-    function applyAll(){
-      resetScene('c12i_003');
-      resetScene('c12i_004');
-    }
-
-    applyAll();
-
-    const previousRender = window.render;
-    if(typeof previousRender === 'function' && !window.__sylviniaV0265X12IRenderWrapped){
-      window.__sylviniaV0265X12IRenderWrapped = true;
-      window.render = function(){
-        applyAll();
-        const out = previousRender.apply(this, arguments);
-        const id = sceneId();
-        if(id === 'c12i_003' || id === 'c12i_004') showSceneImage(id);
-        else removeOverlay();
-        return out;
-      };
-      try{ render = window.render; }catch(e){}
-    }
-
-    const previousGo = window.go;
-    if(typeof previousGo === 'function' && !window.__sylviniaV0265X12IGoWrapped){
-      window.__sylviniaV0265X12IGoWrapped = true;
-      window.go = function(next, opts){
-        const out = previousGo.apply(this, arguments);
-        setTimeout(function(){
-          const id = sceneId();
-          if(id === 'c12i_003' || id === 'c12i_004') showSceneImage(id);
-          else removeOverlay();
-        }, 0);
-        return out;
-      };
-      try{ go = window.go; }catch(e){}
-    }
-
-    const current = sceneId();
-    if(current === 'c12i_003' || current === 'c12i_004') setTimeout(function(){ showSceneImage(current); }, 0);
-
-    if(typeof save === 'function') save();
-    console.info('[Sylvinia v0.265] c12i_003/c12i_004 nettoyées : anciens fonds image retirés, image clé posée par overlay robuste, décor de secours conservé.');
-  }catch(err){
-    console.error('[Sylvinia v0.265] Échec correction c12i_003/c12i_004', err);
-  }
-})();
-</script>
-
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
@@ -45312,3 +45080,174 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
   }
 })();
 </script>
+
+<script id="v0266-x12i-c12i003-006-strict-media-fix-tail">
+/* v0.266 · XII_I : correction stricte c12i_003→006.
+   - c12i_003 et c12i_004 n'utilisent plus aucun balayage automatique : impossible de charger c12i_030 par erreur.
+   - c12i_005 et c12i_006 retrouvent leurs vidéos en videoBanner direct.
+   - Patch placé tout en fin de fichier pour reprendre la priorité sur les anciens correctifs. */
+(function installV0266X12I003006StrictMediaFix(){
+  try{
+    if(window.__sylviniaV0266X12I003006StrictMediaFix) return;
+    window.__sylviniaV0266X12I003006StrictMediaFix = true;
+
+    window.A = window.A || {};
+    Object.assign(A, {
+      x12i_c12i003_key_strict: 'assets/images/keyscenes/chapter12/x12i_c12i_003_custom.png',
+      x12i_c12i004_key_strict: 'assets/images/keyscenes/chapter12/x12i_c12i_004_custom.png',
+      x12i_c12i005_video_strict: 'assets/video/chapter12/c12i_005_arrivee_fresque.mp4',
+      x12i_c12i006_video_strict: 'assets/video/chapter12/c12i_006_coupe_brule.mp4',
+      x12i_tia_hall_before_01: A.x12i_tia_hall_before_01 || 'assets/images/backgrounds/chapter12/x12i_tia_hall_before_01.png'
+    });
+
+    const KEY_SCENES = {
+      c12i_003: 'x12i_c12i003_key_strict',
+      c12i_004: 'x12i_c12i004_key_strict'
+    };
+    const VIDEO_SCENES = {
+      c12i_005: 'x12i_c12i005_video_strict',
+      c12i_006: 'x12i_c12i006_video_strict'
+    };
+
+    function currentSceneId(){
+      try{ return (typeof state !== 'undefined' && state && state.scene) ? String(state.scene) : ''; }
+      catch(e){ return ''; }
+    }
+
+    function removeOldBadOverlay(){
+      const old = document.getElementById('x12i003004CleanKeyOverlay');
+      if(old) old.remove();
+    }
+
+    function sceneObj(id){
+      return (typeof S !== 'undefined' && S) ? S[id] : null;
+    }
+
+    function applyKeyScene(id){
+      const key = KEY_SCENES[id];
+      const sc = sceneObj(id);
+      if(!key || !sc) return;
+      sc.bg = key;
+      sc.zoom = true;
+      sc.chars = [];
+      sc.hideChars = true;
+      sc.clearChars = true;
+      delete sc.videoBanner;
+      delete sc.video;
+      delete sc.keySlides;
+    }
+
+    function applyVideoScene(id){
+      const videoKey = VIDEO_SCENES[id];
+      const sc = sceneObj(id);
+      if(!videoKey || !sc) return;
+      sc.bg = 'x12i_tia_hall_before_01';
+      sc.zoom = true;
+      sc.chars = [];
+      sc.hideChars = true;
+      sc.clearChars = true;
+      sc.videoBanner = A[videoKey];
+      delete sc.video;
+      delete sc.keySlides;
+    }
+
+    function applyStrictScenes(){
+      Object.keys(KEY_SCENES).forEach(applyKeyScene);
+      Object.keys(VIDEO_SCENES).forEach(applyVideoScene);
+    }
+
+    function forceStageBg(key){
+      try{ if(typeof setStageBg === 'function') setStageBg(key, true); }catch(e){}
+      const bg = document.getElementById('bg') || document.querySelector('#stage .bg, .stage .bg');
+      const src = A && A[key] ? A[key] : '';
+      if(bg){
+        bg.style.backgroundImage = src ? "url('" + src + "')" : 'none';
+        bg.style.display = 'block';
+        bg.style.visibility = 'visible';
+        bg.style.opacity = '1';
+        bg.style.backgroundSize = 'cover';
+        bg.style.backgroundPosition = 'center center';
+        bg.dataset.bgKey = key || '';
+        bg.classList.add('zoom');
+      }
+    }
+
+    function forceVideoBanner(src){
+      const stage = document.getElementById('stage');
+      if(!stage || !src) return;
+      let video = document.getElementById('stageVideoBanner');
+      if(!document.getElementById('c11iVideoBannerStyle')){
+        const style = document.createElement('style');
+        style.id = 'c11iVideoBannerStyle';
+        style.textContent = '.stageVideoBanner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none;opacity:1}.stageVideoActive .bg{opacity:0;}';
+        document.head.appendChild(style);
+      }
+      if(!video){
+        video = document.createElement('video');
+        video.id = 'stageVideoBanner';
+        video.className = 'stageVideoBanner';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        const veil = stage.querySelector('.veil');
+        stage.insertBefore(video, veil || stage.firstChild);
+      }
+      if(video.getAttribute('src') !== src){
+        video.setAttribute('src', src);
+        try{ video.load(); }catch(e){}
+      }
+      stage.classList.add('stageVideoActive');
+    }
+
+    function afterRenderMediaFix(){
+      const id = currentSceneId();
+      removeOldBadOverlay();
+      if(KEY_SCENES[id]){
+        const stage = document.getElementById('stage');
+        const video = document.getElementById('stageVideoBanner');
+        if(video) video.remove();
+        if(stage) stage.classList.remove('stageVideoActive');
+        forceStageBg(KEY_SCENES[id]);
+      }else if(VIDEO_SCENES[id]){
+        forceVideoBanner(A[VIDEO_SCENES[id]]);
+      }
+    }
+
+    applyStrictScenes();
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0266X12IRenderWrapped){
+      window.__sylviniaV0266X12IRenderWrapped = true;
+      window.render = function(){
+        applyStrictScenes();
+        const out = previousRender.apply(this, arguments);
+        applyStrictScenes();
+        afterRenderMediaFix();
+        return out;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    const previousGo = window.go;
+    if(typeof previousGo === 'function' && !window.__sylviniaV0266X12IGoWrapped){
+      window.__sylviniaV0266X12IGoWrapped = true;
+      window.go = function(next, opts){
+        applyStrictScenes();
+        const out = previousGo.apply(this, arguments);
+        setTimeout(function(){ applyStrictScenes(); afterRenderMediaFix(); }, 0);
+        return out;
+      };
+      try{ go = window.go; }catch(e){}
+    }
+
+    setTimeout(function(){ applyStrictScenes(); afterRenderMediaFix(); }, 0);
+    if(typeof save === 'function') save();
+    console.info('[Sylvinia v0.266] XII_I c12i_003→006 corrigées : images 003/004 strictes, vidéos 005/006 restaurées.');
+  }catch(err){
+    console.error('[Sylvinia v0.266] Échec correction stricte c12i_003→006', err);
+  }
+})();
+</script>
+
