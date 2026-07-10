@@ -40940,6 +40940,116 @@ html body.x12iQteMode #gameCard #stats{
 </script>
 
 
+
+<script id="x12i-c12i031-keyslideshow-final-patch">
+/* Patch final · XII_I : c12i_031 affiche 4 images clés successives, 8 secondes chacune, sans boucle. */
+(function installX12IC12I031KeySlideshowFinalPatch(){
+  try{
+    if(window.__x12iC12I031KeySlideshowFinalPatch) return;
+    window.__x12iC12I031KeySlideshowFinalPatch = true;
+    if(typeof A==='undefined' || !A || typeof S==='undefined' || !S) return;
+
+    Object.assign(A, {
+      x12i_c12i031_slide_01: 'assets/images/keyscenes/chapter12/c12i_031_slide_01.png',
+      x12i_c12i031_slide_02: 'assets/images/keyscenes/chapter12/c12i_031_slide_02.png',
+      x12i_c12i031_slide_03: 'assets/images/keyscenes/chapter12/c12i_031_slide_03.png',
+      x12i_c12i031_slide_04: 'assets/images/keyscenes/chapter12/c12i_031_slide_04.png'
+    });
+
+    const scene = S.c12i_031;
+    if(scene){
+      scene.bg = 'x12i_c12i031_slide_01';
+      scene.zoom = true;
+      scene.chars = [];
+      scene.hideChars = true;
+      scene.clearChars = true;
+      delete scene.videoBanner;
+      delete scene.keySlides;
+    }
+
+    function clearC12I031SlideShow(){
+      if(window.__x12iC12I031SlideTimer){
+        clearTimeout(window.__x12iC12I031SlideTimer);
+        window.__x12iC12I031SlideTimer = null;
+      }
+      if(window.__x12iC12I031FadeTimer){
+        clearTimeout(window.__x12iC12I031FadeTimer);
+        window.__x12iC12I031FadeTimer = null;
+      }
+      const bgEl = document.getElementById('bg');
+      if(bgEl){
+        bgEl.style.opacity = '';
+        bgEl.style.transition = '';
+      }
+    }
+
+    function startC12I031SlideShow(){
+      if(typeof state==='undefined' || !state || state.scene!=='c12i_031' || typeof setStageBg!=='function') return;
+      const slides = [
+        'x12i_c12i031_slide_01',
+        'x12i_c12i031_slide_02',
+        'x12i_c12i031_slide_03',
+        'x12i_c12i031_slide_04'
+      ];
+      const duration = 8000;
+      const fadeDuration = 900;
+      const bgEl = document.getElementById('bg');
+      if(bgEl){
+        bgEl.style.transition = 'opacity '+fadeDuration+'ms ease, transform 8s ease, filter .4s ease';
+      }
+      let index = 0;
+
+      const applySlide = function(firstPass){
+        if(typeof state==='undefined' || !state || state.scene!=='c12i_031') return;
+        const key = slides[index];
+        if(!key) return;
+        if(firstPass){
+          setStageBg(key, true);
+        }else if(bgEl){
+          bgEl.style.opacity = '0';
+          window.__x12iC12I031FadeTimer = setTimeout(function(){
+            if(typeof state==='undefined' || !state || state.scene!=='c12i_031') return;
+            setStageBg(key, true);
+            bgEl.style.opacity = '1';
+          }, Math.round(fadeDuration/2));
+        }else{
+          setStageBg(key, true);
+        }
+
+        if(index < slides.length - 1){
+          index += 1;
+          window.__x12iC12I031SlideTimer = setTimeout(function(){ applySlide(false); }, duration);
+        }
+      };
+
+      applySlide(true);
+    }
+
+    if(typeof render==='function' && !render.__x12iC12I031KeySlidesWrapped){
+      const previousRender = render;
+      render = function(){
+        clearC12I031SlideShow();
+        const result = previousRender.apply(this, arguments);
+        try{
+          if(typeof state!=='undefined' && state && state.scene==='c12i_031'){
+            startC12I031SlideShow();
+          }
+        }catch(err){
+          console.error('[Sylvinia] XII_I c12i_031 slideshow', err);
+        }
+        return result;
+      };
+      render.__x12iC12I031KeySlidesWrapped = true;
+      window.render = render;
+    }
+
+    console.info('[Sylvinia custom] c12i_031 configure un slideshow de 4 images, 8 secondes chacune, sans boucle.');
+  }catch(err){
+    console.error('[Sylvinia custom] Échec patch slideshow c12i_031', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
