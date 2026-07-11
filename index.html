@@ -41050,6 +41050,50 @@ html body.x12iQteMode #gameCard #stats{
 })();
 </script>
 
+
+<script id="x12i-c12i032-039-keyimages-final-patch">
+/* Patch final · XII_I : assignation des nouvelles images clés avec continuité
+   c12i_032 -> image 1
+   c12i_033, c12i_034, c12i_035 -> image 2
+   c12i_036, c12i_037 -> image 3
+   c12i_038, c12i_039 -> image 4 */
+(function installX12IC12I032039KeyImagesFinalPatch(){
+  try{
+    if(window.__x12iC12I032039KeyImagesFinalPatch) return;
+    window.__x12iC12I032039KeyImagesFinalPatch = true;
+    if(typeof A==='undefined' || !A || typeof S==='undefined' || !S) return;
+
+    Object.assign(A, {
+      x12i_c12i_032_group_01: 'assets/images/keyscenes/chapter12/x12i_c12i_032_group_01.png',
+      x12i_c12i_033_035_group_02: 'assets/images/keyscenes/chapter12/x12i_c12i_033_035_group_02.png',
+      x12i_c12i_036_037_group_03: 'assets/images/keyscenes/chapter12/x12i_c12i_036_037_group_03.png',
+      x12i_c12i_038_039_group_04: 'assets/images/keyscenes/chapter12/x12i_c12i_038_039_group_04.png'
+    });
+
+    const applyScene = (id, bgKey)=>{
+      const sc = S[id];
+      if(!sc) return;
+      sc.bg = bgKey;
+      sc.zoom = true;
+      sc.chars = [];
+      sc.hideChars = true;
+      sc.clearChars = true;
+      delete sc.videoBanner;
+      delete sc.keySlides;
+    };
+
+    applyScene('c12i_032', 'x12i_c12i_032_group_01');
+    ['c12i_033','c12i_034','c12i_035'].forEach(id=>applyScene(id, 'x12i_c12i_033_035_group_02'));
+    ['c12i_036','c12i_037'].forEach(id=>applyScene(id, 'x12i_c12i_036_037_group_03'));
+    ['c12i_038','c12i_039'].forEach(id=>applyScene(id, 'x12i_c12i_038_039_group_04'));
+
+    console.info('[Sylvinia custom] XII_I : c12i_032 à c12i_039 réassignées aux nouvelles images clés avec continuité.');
+  }catch(err){
+    console.error('[Sylvinia custom] Échec patch images clés c12i_032-039', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
