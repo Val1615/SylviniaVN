@@ -41052,6 +41052,201 @@ html body.x12iQteMode #gameCard #stats{
 
 
 
+
+<script id="v0261-remove-development-warnings-and-fix-routes">
+/* v0.261 · Retrait des avertissements de développement et verrouillage des transitions
+   X-I -> XI_I (c11i_001)
+   X-G -> XI_G (c11g_001)
+   XI_I -> XII_I (c12i_000)
+   Suppression des mentions et badges "En développement" dans la sélection. */
+(function installV0261RemoveDevelopmentWarningsAndFixRoutes(){
+  try{
+    if(window.__sylviniaV0261RemoveDevelopmentWarningsAndFixRoutes) return;
+    window.__sylviniaV0261RemoveDevelopmentWarningsAndFixRoutes=true;
+    if(typeof S==='undefined'||!S) return;
+
+    const cleanNote=value=>String(value||'')
+      .replace(/\s*[·•|-]?\s*Chapitre en développement/gi,'')
+      .replace(/\s*[·•|-]?\s*Version en développement/gi,'')
+      .replace(/\s{2,}/g,' ')
+      .trim();
+
+    const normalizeChoices=(sceneId,fromIds,target)=>{
+      const sc=S[sceneId];
+      if(!sc) return;
+      const fromSet=new Set(fromIds);
+      if(Array.isArray(sc.choices)){
+        sc.choices=sc.choices.map(ch=>{
+          if(!ch) return ch;
+          const next=fromSet.has(ch.next)?target:ch.next;
+          return {...ch,next,note:cleanNote(ch.note)};
+        });
+      }
+      if(fromSet.has(sc.next)) sc.next=target;
+    };
+
+    // Les scènes d'avertissement ne font plus partie du parcours.
+    delete S.c11i_disclaimer;
+    delete S.c11g_disclaimer;
+    delete S.c12i_disclaimer;
+
+    // Fin du Chapitre X, route Iriana : entrée directe dans la première vraie scène de XI_I.
+    if(S.c10_end){
+      const existingMenu=Array.isArray(S.c10_end.choices)
+        ? S.c10_end.choices.find(ch=>ch&&ch.next==='menu') : null;
+      S.c10_end.choices=[
+        {
+          label:'Continuer vers le Chapitre XI_I',next:'c11i_001',effects:{},
+          note:'Route Iriana uniquement · Amie ou ennemie ?',
+          flags:{chapter10Complete:true,chapter10IrianaComplete:true,chapter10Route:'iriana',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'iriana'}
+        },
+        existingMenu ? {...existingMenu,note:cleanNote(existingMenu.note)} : {
+          label:'Retour au menu',next:'menu',effects:{},note:'La route Iriana est validée.',
+          flags:{chapter10Complete:true,chapter10IrianaComplete:true,chapter10Route:'iriana',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'iriana'}
+        }
+      ];
+    }
+
+    // Fin du Chapitre X, route Groupe : entrée directe dans la première vraie scène de XI_G.
+    if(S.c10g_end){
+      const existingMenu=Array.isArray(S.c10g_end.choices)
+        ? S.c10g_end.choices.find(ch=>ch&&ch.next==='menu') : null;
+      S.c10g_end.choices=[
+        {
+          label:'Continuer vers le Chapitre XI_G',next:'c11g_001',effects:{},
+          note:'Route Groupe uniquement · Le Bal des Élus',
+          flags:{chapter10Complete:true,chapter10GroupComplete:true,chapter10Route:'group',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'group'}
+        },
+        existingMenu ? {...existingMenu,note:cleanNote(existingMenu.note),flags:{...(existingMenu.flags||{}),chapter10Complete:true,chapter10GroupComplete:true,chapter10Route:'group',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'group'}} : {
+          label:'Retour au menu',next:'menu',effects:{},note:'La route Groupe est validée.',
+          flags:{chapter10Complete:true,chapter10GroupComplete:true,chapter10Route:'group',chapter10RouteLocked:true,chapter10ChoiceConfirmed:true,chapter10RouteExplicitV3:'group'}
+        }
+      ];
+    }
+
+    // Fin de XI_I : entrée directe dans XII_I.
+    if(S.c11i_end){
+      const existingMenu=Array.isArray(S.c11i_end.choices)
+        ? S.c11i_end.choices.find(ch=>ch&&ch.next==='menu') : null;
+      const continueChoice=Array.isArray(S.c11i_end.choices)
+        ? S.c11i_end.choices.find(ch=>ch&&ch.next!=='menu') : null;
+      S.c11i_end.choices=[
+        continueChoice ? {...continueChoice,label:'Continuer vers le Chapitre XII_I',next:'c12i_000',note:'Route Iriana · Le souvenir d’Amanea'} : {
+          label:'Continuer vers le Chapitre XII_I',next:'c12i_000',effects:{},note:'Route Iriana · Le souvenir d’Amanea',
+          flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true},
+          memories:['iriana_amanea_piano','iriana_trouve_coffret_amanea']
+        },
+        existingMenu ? {...existingMenu,note:cleanNote(existingMenu.note)} : {
+          label:'Retour au menu',next:'menu',effects:{},note:'Le Chapitre XII_I est désormais accessible.',
+          flags:{chapter11IComplete:true,chapter11IRoute:true,chapter10IrianaComplete:true,chapter10Complete:true,journalFragmentsReadable:true,amaneaJournalReadable:true,irianaFoundAmaneaJournal:true}
+        }
+      ];
+    }
+
+    normalizeChoices('c10_end',['c11i_disclaimer'],'c11i_001');
+    normalizeChoices('c10g_end',['c11g_disclaimer'],'c11g_001');
+    normalizeChoices('c11i_end',['c12i_disclaimer'],'c12i_000');
+
+    // Les anciens appels directs vers les disclaimers sont redirigés proprement.
+    if(typeof go==='function'&&!window.__sylviniaV0261GoWrapped){
+      window.__sylviniaV0261GoWrapped=true;
+      const previousGo=go;
+      window.go=go=function goV0261NoDevelopmentWarning(next,opts={}){
+        const map={c11i_disclaimer:'c11i_001',c11g_disclaimer:'c11g_001',c12i_disclaimer:'c12i_000'};
+        return previousGo(map[next]||next,opts);
+      };
+      try{eval('go=window.go');}catch(e){}
+    }
+
+    // Les lanceurs de chapitre peuvent encore être enveloppés par v0.204 : on force la vraie première scène après leur exécution.
+    const wrapStarter=(name,target)=>{
+      const fn=window[name];
+      if(typeof fn!=='function'||fn.__v0261NoWarningWrapped) return;
+      const wrapped=function(){
+        const result=fn.apply(this,arguments);
+        if(typeof state!=='undefined'&&state&&['c11i_disclaimer','c11g_disclaimer','c12i_disclaimer'].includes(state.scene)){
+          state.scene=target;
+          state.history=[];
+          if(typeof render==='function') render();
+          if(typeof save==='function') save();
+        }
+        return result;
+      };
+      wrapped.__v0261NoWarningWrapped=true;
+      window[name]=wrapped;
+      try{eval(name+'=window["'+name+'"]');}catch(e){}
+    };
+    wrapStarter('startChapter11I','c11i_001');
+    wrapStarter('startChapter11G','c11g_001');
+    wrapStarter('startChapter12I','c12i_000');
+
+    const cleanDevelopmentText=value=>String(value||'')
+      .replace(/\s*[·•|-]?\s*En développement/gi,'')
+      .replace(/Chapitre en développement[^.]*\.?\s*/gi,'')
+      .replace(/Certaines scènes, images, musiques et récompenses pourront encore évoluer\.?/gi,'')
+      .replace(/Le Bal des Élus peut encore recevoir des scènes, images, musiques et ajustements\.?/gi,'')
+      .replace(/\s{2,}/g,' ')
+      .trim();
+
+    const cleanCard=(key,subtitle,body,tags)=>{
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key===key);
+      if(!ch) return;
+      ch.subtitle=subtitle;
+      ch.body=body||cleanDevelopmentText(ch.body);
+      ch.tags=[...new Set((tags||ch.tags||[]).filter(tag=>!/en développement/i.test(String(tag))))];
+      if(ch.action) ch.action=cleanDevelopmentText(ch.action);
+    };
+
+    cleanCard('ch11_i','Route Iriana uniquement','Accessible uniquement après la route Iriana du Chapitre X. Iriana découvre les quartiers privés d’Amanea, un piano chargé de mémoire, puis un journal qui ouvre la fracture intime entre Tia et la Reine Noire.',['Route Iriana','Amanea','Piano','Journal']);
+    cleanCard('ch11_g','Route Groupe uniquement','Accessible uniquement après la route Groupe du Chapitre X. Le groupe rejoint Al’Gratal et entre dans le Bal des Élus, où chaque échange devient une joute politique.',['Route Groupe','Bal','Al’Gratal','Intrigues']);
+    cleanCard('ch12_i','Route Iriana','La mèche oubliée dans le coffret réagit à la magie d’Iriana. Le journal ne se contente plus de livrer des mots : il ouvre la porte d’un souvenir.',['Route Iriana','Mémoire','Amanea','Allenna']);
+
+    // Suppression du style qui ajoutait le macaron par pseudo-élément.
+    document.getElementById('v0204-ch11-dev-disclaimer-style')?.remove();
+    if(!document.getElementById('v0261-no-development-badges-style')){
+      const style=document.createElement('style');
+      style.id='v0261-no-development-badges-style';
+      style.textContent=`
+        .chapterSelectCard.chapter11ICard::after,
+        .chapterSelectCard.chapter11GCard::after,
+        .chapterSelectCard.chapter12ICard::after{content:none!important;display:none!important}
+      `;
+      document.head.appendChild(style);
+    }
+
+    const scrubChapterSelectDom=()=>{
+      document.querySelectorAll('#chapterSelectGrid *').forEach(el=>{
+        if(el.children.length===0&&/en développement/i.test(el.textContent||'')){
+          el.textContent=cleanDevelopmentText(el.textContent);
+        }
+      });
+    };
+
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaV0261RenderChapterSelectWrapped){
+      window.__sylviniaV0261RenderChapterSelectWrapped=true;
+      const previousRenderChapterSelect=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function renderChapterSelectV0261(){
+        cleanCard('ch11_i','Route Iriana uniquement','Accessible uniquement après la route Iriana du Chapitre X. Iriana découvre les quartiers privés d’Amanea, un piano chargé de mémoire, puis un journal qui ouvre la fracture intime entre Tia et la Reine Noire.',['Route Iriana','Amanea','Piano','Journal']);
+        cleanCard('ch11_g','Route Groupe uniquement','Accessible uniquement après la route Groupe du Chapitre X. Le groupe rejoint Al’Gratal et entre dans le Bal des Élus, où chaque échange devient une joute politique.',['Route Groupe','Bal','Al’Gratal','Intrigues']);
+        cleanCard('ch12_i','Route Iriana','La mèche oubliée dans le coffret réagit à la magie d’Iriana. Le journal ne se contente plus de livrer des mots : il ouvre la porte d’un souvenir.',['Route Iriana','Mémoire','Amanea','Allenna']);
+        const result=previousRenderChapterSelect.apply(this,arguments);
+        scrubChapterSelectDom();
+        return result;
+      };
+      try{eval('renderChapterSelect=window.renderChapterSelect');}catch(e){}
+    }
+
+    scrubChapterSelectDom();
+    if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    if(typeof save==='function') save();
+    console.info('[Sylvinia v0.261] Avertissements XI_I/XI_G/XII_I retirés, transitions X-I→XI_I, X-G→XI_G et XI_I→XII_I verrouillées, mentions En développement supprimées.');
+  }catch(err){
+    console.error('[Sylvinia v0.261] Échec retrait avertissements et correction routes',err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
