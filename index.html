@@ -45746,3 +45746,92 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+
+
+<script id="v0262-xi-chapter-select-direct-launch-fix">
+/* v0.262 · Correctif final du sélecteur XI_I / XI_G.
+   Neutralise la chaîne d'anciens wrappers qui renvoyait vers le Chapitre I. */
+(function installV0262XIChapterSelectDirectLaunchFix(){
+  try{
+    if(window.__sylviniaV0262XIChapterSelectDirectLaunchFix) return;
+    window.__sylviniaV0262XIChapterSelectDirectLaunchFix=true;
+
+    const directStart=(sceneId,route)=>{
+      const prev=(typeof readMainSave==='function' ? readMainSave() : window.state) || window.state || {};
+      const current=(typeof state!=='undefined'&&state)?state:prev;
+      const flags=Object.assign({},prev.flags||{},current.flags||{}, {
+        chapter10Complete:true,
+        chapter10Route:route,
+        chapter10RouteLocked:true,
+        chapter10ChoiceConfirmed:true
+      });
+      if(route==='iriana') flags.chapter10IrianaComplete=true;
+      if(route==='group') flags.chapter10GroupComplete=true;
+
+      const nextState=Object.assign({},prev,current,{
+        scene:sceneId,
+        flags,
+        history:[],
+        lastScreen:'game'
+      });
+      if(typeof START_STATS!=='undefined') nextState.stats=Object.assign({},START_STATS,prev.stats||{},current.stats||{});
+      if(typeof INTRO_STATS!=='undefined') nextState.introStats=Object.assign({},INTRO_STATS,prev.introStats||{},current.introStats||{});
+      nextState.inventory=[...new Set([...(prev.inventory||[]),...(current.inventory||[])])];
+      nextState.memories=[...new Set([...(prev.memories||[]),...(current.memories||[])])];
+      nextState.sceneRewards=[...new Set([...(prev.sceneRewards||[]),...(current.sceneRewards||[])])];
+      nextState.journalFragments=[...new Set([...(prev.journalFragments||[]),...(current.journalFragments||[])])];
+
+      window.state=nextState;
+      try{ state=nextState; }catch(e){}
+      if(typeof setScreen==='function') setScreen('game');
+      if(typeof render==='function') render();
+      if(typeof save==='function') save();
+    };
+
+    const previousLaunch=(typeof launchChapterSelect==='function')?launchChapterSelect:null;
+    const fixedLaunch=function(key){
+      if(key==='ch11_i'){
+        if(typeof chapterSelectUnlocked==='function'&&!chapterSelectUnlocked(key)){
+          if(typeof toast==='function') toast('Chapitre XI_I verrouillé','Termine la route Iriana du Chapitre X.');
+          return;
+        }
+        return directStart('c11i_001','iriana');
+      }
+      if(key==='ch11_g'){
+        if(typeof chapterSelectUnlocked==='function'&&!chapterSelectUnlocked(key)){
+          if(typeof toast==='function') toast('Chapitre XI_G verrouillé','Termine la route Groupe du Chapitre X.');
+          return;
+        }
+        return directStart('c11g_001','group');
+      }
+      if(key==='ch12_i'){
+        if(typeof chapterSelectUnlocked==='function'&&!chapterSelectUnlocked(key)){
+          if(typeof toast==='function') toast('Chapitre XII_I verrouillé','Termine d’abord le Chapitre XI_I.');
+          return;
+        }
+        return directStart('c12i_000','iriana');
+      }
+      return previousLaunch ? previousLaunch(key) : undefined;
+    };
+    window.launchChapterSelect=fixedLaunch;
+    try{ launchChapterSelect=fixedLaunch; }catch(e){}
+
+    // Interception prioritaire : empêche l'ancien listener global de relancer une mauvaise route.
+    document.addEventListener('click',function(ev){
+      const button=ev.target&&ev.target.closest?ev.target.closest('[data-chapter-launch]'):null;
+      if(!button||button.disabled) return;
+      const key=button.dataset.chapterLaunch;
+      if(!['ch11_i','ch11_g','ch12_i'].includes(key)) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.stopImmediatePropagation();
+      fixedLaunch(key);
+    },true);
+
+    console.info('[Sylvinia v0.262] Sélecteur XI_I/XI_G/XII_I branché directement sur c11i_001, c11g_001 et c12i_000.');
+  }catch(err){
+    console.error('[Sylvinia v0.262] Échec correctif sélecteur XI',err);
+  }
+})();
+</script>
+
