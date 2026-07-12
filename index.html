@@ -45835,3 +45835,168 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 })();
 </script>
 
+<script id="v0269-projection-halo-latest-final-fix">
+/* v0.269 · Correctif final sur la dernière version reçue.
+   - XI_I : le reflet d'Amanea reste une projection verte et légèrement transparente.
+   - IV-D : Lineva reste une projection bleu profond pendant la communication magique. */
+(function installV0269ProjectionHaloLatestFinalFix(){
+  try{
+    if(window.__sylviniaV0269ProjectionHaloLatestFinalFix) return;
+    window.__sylviniaV0269ProjectionHaloLatestFinalFix = true;
+
+    const scenes = (typeof S !== 'undefined' && S) || (typeof SCENES !== 'undefined' && SCENES) || null;
+    if(!scenes) return;
+
+    const amaneaReflectScenes = new Set([
+      'c11i_choice_reflet',
+      'c11i_reflet_sangfroid',
+      'c11i_reflet_sangfroid_2',
+      'c11i_reflet_lucidite',
+      'c11i_reflet_lucidite_2',
+      'c11i_reflet_audace',
+      'c11i_reflet_audace_2',
+      'c11i_reflet_resonance',
+      'c11i_reflet_resonance_2'
+    ]);
+
+    const amaneaSprites = {
+      c11i_choice_reflet: 'amanea_thinking',
+      c11i_reflet_sangfroid: 'amanea_thinking',
+      c11i_reflet_sangfroid_2: 'amanea_thinking',
+      c11i_reflet_lucidite: 'amanea_thinking',
+      c11i_reflet_lucidite_2: 'amanea_away',
+      c11i_reflet_audace: 'amanea_rictus',
+      c11i_reflet_audace_2: 'amanea_rictus',
+      c11i_reflet_resonance: 'amanea_away',
+      c11i_reflet_resonance_2: 'amanea_away'
+    };
+
+    function forceAmaneaProjection(sceneId){
+      const sc = scenes[sceneId];
+      if(!sc) return;
+      const wantedSprite = amaneaSprites[sceneId] || 'amanea_thinking';
+      const chars = Array.isArray(sc.chars) ? sc.chars.slice() : [];
+      let foundAmanea = false;
+
+      sc.chars = chars.map(ch => {
+        if(!Array.isArray(ch)) return ch;
+        if(ch[0] !== 'amanea') return ch;
+        foundAmanea = true;
+        return ['amanea', wantedSprite, ch[2] || 'right', 'projection'];
+      });
+
+      if(!foundAmanea){
+        sc.chars.push(['amanea', wantedSprite, 'right', 'projection']);
+      }
+    }
+
+    function forceLinevaProjection(){
+      Object.keys(scenes).forEach(id => {
+        if(!/^c4d_/.test(id)) return;
+        const sc = scenes[id];
+        if(!sc || !Array.isArray(sc.chars)) return;
+        sc.chars = sc.chars.map(ch => {
+          if(!Array.isArray(ch) || ch[0] !== 'lineva') return ch;
+          return ['lineva', ch[1], ch[2] || 'right', 'projection'];
+        });
+      });
+    }
+
+    function patchProjectionData(){
+      amaneaReflectScenes.forEach(forceAmaneaProjection);
+      forceLinevaProjection();
+    }
+
+    patchProjectionData();
+
+    if(!document.getElementById('v0269-projection-halo-latest-style')){
+      const style = document.createElement('style');
+      style.id = 'v0269-projection-halo-latest-style';
+      style.textContent = `
+        #stage.v0269AmaneaReflect .char.amanea.projection,
+        .stage.v0269AmaneaReflect .char.amanea.projection{
+          opacity:.70 !important;
+          mix-blend-mode:screen !important;
+          filter:
+            drop-shadow(0 0 7px rgba(190,255,199,.96))
+            drop-shadow(0 0 17px rgba(93,255,124,.88))
+            drop-shadow(0 0 35px rgba(43,211,82,.60))
+            drop-shadow(0 17px 28px rgba(0,0,0,.58)) !important;
+        }
+
+        #stage.v0269LinevaProjection .char.lineva.projection,
+        .stage.v0269LinevaProjection .char.lineva.projection{
+          opacity:.77 !important;
+          mix-blend-mode:screen !important;
+          filter:
+            drop-shadow(0 0 8px rgba(142,181,255,.82))
+            drop-shadow(0 0 20px rgba(69,111,238,.74))
+            drop-shadow(0 0 42px rgba(24,48,155,.62))
+            drop-shadow(0 16px 28px rgba(0,0,0,.56))
+            saturate(1.08) brightness(1.06) !important;
+        }
+
+        #stage.v0269AmaneaReflect .char.amanea.projection.enter,
+        #stage.v0269LinevaProjection .char.lineva.projection.enter{
+          animation:v0269ProjectionArrival .34s ease both !important;
+        }
+
+        @keyframes v0269ProjectionArrival{
+          from{opacity:0;filter:brightness(1.35) blur(2px)}
+          to{opacity:inherit}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function applyProjectionStageState(){
+      const stage = document.getElementById('stage');
+      if(!stage) return;
+      stage.classList.remove('v0269AmaneaReflect','v0269LinevaProjection');
+
+      const id = (typeof state !== 'undefined' && state) ? String(state.scene || '') : '';
+      if(amaneaReflectScenes.has(id)) stage.classList.add('v0269AmaneaReflect');
+      if(/^c4d_/.test(id)) stage.classList.add('v0269LinevaProjection');
+    }
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0269RenderWrapped){
+      window.__sylviniaV0269RenderWrapped = true;
+      window.render = function(){
+        patchProjectionData();
+        const result = previousRender.apply(this, arguments);
+        patchProjectionData();
+        applyProjectionStageState();
+        setTimeout(applyProjectionStageState, 0);
+        return result;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    const previousGo = window.go;
+    if(typeof previousGo === 'function' && !window.__sylviniaV0269GoWrapped){
+      window.__sylviniaV0269GoWrapped = true;
+      window.go = function(){
+        patchProjectionData();
+        const result = previousGo.apply(this, arguments);
+        setTimeout(function(){
+          patchProjectionData();
+          applyProjectionStageState();
+        }, 0);
+        return result;
+      };
+      try{ go = window.go; }catch(e){}
+    }
+
+    setTimeout(function(){
+      patchProjectionData();
+      applyProjectionStageState();
+    }, 0);
+
+    console.info('[Sylvinia v0.269] Projections corrigées sur la dernière version : Amanea verte dans XI_I, Lineva bleu profond dans IV-D.');
+  }catch(err){
+    console.error('[Sylvinia v0.269] Échec correctif projections', err);
+  }
+})();
+</script>
+
