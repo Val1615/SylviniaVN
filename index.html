@@ -41247,6 +41247,124 @@ html body.x12iQteMode #gameCard #stats{
 })();
 </script>
 
+
+<script id="v0270-x12i-amanea-threshold-projection-fix">
+/* v0.270 · XII_I : Amanea projection spectrale UNIQUEMENT sur c12i_000, c12i_001 et c12i_002 */
+(function installV0270X12IAmaneaThresholdProjectionFix(){
+  try{
+    if(window.__sylviniaV0270X12IAmaneaThresholdProjectionFix) return;
+    window.__sylviniaV0270X12IAmaneaThresholdProjectionFix = true;
+
+    const targetScenes = new Set(['c12i_000','c12i_001','c12i_002']);
+
+    function patchDataMaps(){
+      const maps = [];
+      if(typeof S !== 'undefined' && S) maps.push(S);
+      if(typeof SCENES !== 'undefined' && SCENES && SCENES !== S) maps.push(SCENES);
+
+      maps.forEach(map=>{
+        targetScenes.forEach(id=>{
+          const sc = map[id];
+          if(!sc) return;
+          const chars = Array.isArray(sc.chars) ? sc.chars.slice() : [];
+          let foundAmanea = false;
+          let foundIriana = false;
+          const nextChars = chars.map(ch=>{
+            if(!Array.isArray(ch)) return ch;
+            if(ch[0] === 'iriana'){
+              foundIriana = true;
+              return ['iriana', ch[1] || 'iriana_stern', ch[2] || 'left'];
+            }
+            if(ch[0] === 'amanea'){
+              foundAmanea = true;
+              return ['amanea', ch[1] || 'amanea_away', ch[2] || 'right', 'projection'];
+            }
+            return ch;
+          });
+          if(!foundIriana) nextChars.unshift(['iriana','iriana_stern','left']);
+          if(!foundAmanea) nextChars.push(['amanea','amanea_away','right','projection']);
+          sc.chars = nextChars;
+        });
+      });
+    }
+
+    const styleId = 'v0270-x12i-amanea-threshold-projection-style';
+    if(!document.getElementById(styleId)){
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        #stage.v0270X12IAmaneaThreshold .char.amanea.projection,
+        .stage.v0270X12IAmaneaThreshold .char.amanea.projection{
+          opacity:.74 !important;
+          mix-blend-mode:screen !important;
+          filter:
+            drop-shadow(0 0 8px rgba(132,197,116,.62))
+            drop-shadow(0 0 18px rgba(72,148,70,.56))
+            drop-shadow(0 0 34px rgba(25,88,39,.48))
+            drop-shadow(0 16px 28px rgba(0,0,0,.60))
+            saturate(0.98) brightness(0.98) !important;
+        }
+        #stage.v0270X12IAmaneaThreshold .char.amanea.projection.enter,
+        .stage.v0270X12IAmaneaThreshold .char.amanea.projection.enter{
+          animation:v0270ProjectionArrival .34s ease both !important;
+        }
+        @keyframes v0270ProjectionArrival{
+          from{opacity:0;filter:brightness(1.2) blur(2px)}
+          to{opacity:.74}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function applyStageState(){
+      const stage = document.getElementById('stage');
+      if(!stage) return;
+      stage.classList.remove('v0270X12IAmaneaThreshold');
+      const id = (typeof state !== 'undefined' && state) ? String(state.scene || '') : '';
+      if(targetScenes.has(id)) stage.classList.add('v0270X12IAmaneaThreshold');
+    }
+
+    const previousRender = window.render;
+    if(typeof previousRender === 'function' && !window.__sylviniaV0270RenderWrapped){
+      window.__sylviniaV0270RenderWrapped = true;
+      window.render = function(){
+        patchDataMaps();
+        const result = previousRender.apply(this, arguments);
+        patchDataMaps();
+        applyStageState();
+        setTimeout(applyStageState, 0);
+        return result;
+      };
+      try{ render = window.render; }catch(e){}
+    }
+
+    const previousGo = window.go;
+    if(typeof previousGo === 'function' && !window.__sylviniaV0270GoWrapped){
+      window.__sylviniaV0270GoWrapped = true;
+      window.go = function(){
+        patchDataMaps();
+        const result = previousGo.apply(this, arguments);
+        setTimeout(function(){
+          patchDataMaps();
+          applyStageState();
+        }, 0);
+        return result;
+      };
+      try{ go = window.go; }catch(e){}
+    }
+
+    setTimeout(function(){
+      patchDataMaps();
+      applyStageState();
+    }, 0);
+
+    console.info('[Sylvinia v0.270] Amanea reçoit une projection verte sombre, légèrement transparente, uniquement sur c12i_000 à c12i_002.');
+  }catch(err){
+    console.error('[Sylvinia v0.270] Échec correctif projection Amanea XII_I', err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
