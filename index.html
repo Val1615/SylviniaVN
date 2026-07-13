@@ -46141,6 +46141,154 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 .chapterSelectCard.chapter12GCard{border-color:rgba(164,91,218,.5);box-shadow:0 20px 46px rgba(132,64,184,.14)}
 .chapterSelectCard.chapter12GCard .chapterBookSpine{background:linear-gradient(180deg,rgba(116,61,163,.96),rgba(44,19,71,.98))}
 </style>
+<style id="v0274-c12g-chapter7-combat-ui">
+/* v0.274 · XII_G : interface de duel calquée sur le Chapitre VII */
+#stage.c12gDuelPerspective .char.naiah{
+  left:3.2%!important;
+  right:auto!important;
+  bottom:-4%!important;
+  max-height:100%!important;
+  max-width:51%!important;
+  opacity:1!important;
+  z-index:3!important;
+  filter:drop-shadow(0 0 24px rgba(163,77,255,.46)) drop-shadow(0 18px 28px rgba(0,0,0,.74))!important;
+}
+#stage.c12gDuelPerspective .char.valurn{
+  right:4.2%!important;
+  left:auto!important;
+  bottom:-3%!important;
+  max-height:88%!important;
+  max-width:45%!important;
+  opacity:.9!important;
+  z-index:2!important;
+  filter:drop-shadow(0 0 20px rgba(255,75,75,.28)) drop-shadow(0 18px 28px rgba(0,0,0,.74))!important;
+}
+#stage.c12gDuelPerspective .chars.duoChars .char.left,
+#stage.c12gDuelPerspective .chars.duoChars .char.right{
+  transform-origin:center bottom!important;
+}
+
+/* Le HUD reprend les classes et la géométrie du duel de Naïah au Chapitre VII. */
+.c12gCombatHud .combatFill.read{background:linear-gradient(90deg,#9b65ff,#eed6ff)}
+.c12gCombatHud .combatFill.fatigue{background:linear-gradient(90deg,#ff725f,#ffcab4)}
+.c12gCombatHud .combatFill.time{background:linear-gradient(90deg,#7fd8ff,#eefcff)}
+
+#c12gStickyTimer{
+  position:fixed;
+  right:18px;
+  top:calc(env(safe-area-inset-top,0px) + 86px);
+  z-index:9999;
+  min-width:116px;
+  border:1px solid rgba(255,220,255,.58);
+  border-radius:999px;
+  background:linear-gradient(180deg,rgba(30,8,45,.94),rgba(7,3,16,.96));
+  box-shadow:0 0 0 7px rgba(198,88,255,.10),0 16px 34px rgba(0,0,0,.45),inset 0 0 22px rgba(203,104,255,.10);
+  padding:9px 12px;
+  color:#fff;
+  pointer-events:none;
+  text-align:center;
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+#c12gStickyTimer .c12gStickyLabel{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#ddb6ff;font-weight:950;line-height:1}
+#c12gStickyTimer .c12gStickyTime{font-size:24px;font-weight:1000;line-height:1.04;margin-top:3px;text-shadow:0 0 14px rgba(230,151,255,.70)}
+#c12gStickyTimer .c12gStickyBar{height:5px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:6px}
+#c12gStickyTimer .c12gStickyFill{height:100%;width:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd88a,#d78cff,#98efff)}
+#c12gStickyTimer.urgent{animation:c7StickyUrgent .22s linear infinite;border-color:rgba(255,126,170,.75)}
+
+/* QTE : l'ATH s'efface, mais la zone de jeu et les boutons restent au-dessus de tout. */
+body.c12gQteActive #gameCard .dialogueWrap,
+#gameCard.c12gQteActive .dialogueWrap,
+body.c12gQteActive #gameCard .stats,
+#gameCard.c12gQteActive .stats,
+body.c12gQteActive #gameCard #trailerVNControls,
+#gameCard.c12gQteActive #trailerVNControls{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+body.c12gQteActive #gameCard .topbar,
+#gameCard.c12gQteActive .topbar{
+  opacity:.12!important;
+  pointer-events:none!important;
+}
+body.c12gQteActive #gameCard #stage,
+#gameCard.c12gQteActive #stage{
+  z-index:60!important;
+}
+body.c12gQteActive #gameCard::after,
+#gameCard.c12gQteActive::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:61;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 44%,rgba(203,95,255,.15),transparent 34%),
+    linear-gradient(180deg,rgba(17,0,34,.18),rgba(0,0,0,.02) 42%,rgba(17,0,34,.22)),
+    repeating-linear-gradient(115deg,rgba(255,97,255,.08) 0 1px,transparent 1px 22px);
+  animation:trailerQteUrgency 1.2s ease-in-out infinite;
+}
+#c12gQteLayer{
+  position:absolute;
+  inset:0;
+  z-index:80!important;
+  pointer-events:none!important;
+}
+.c12gQteAttackText{
+  position:absolute;
+  left:50%;
+  top:7%;
+  transform:translateX(-50%);
+  z-index:82;
+  pointer-events:none;
+  max-width:min(760px,88%);
+  padding:12px 18px;
+  border:1px solid rgba(255,211,255,.35);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(22,3,35,.74),rgba(7,2,15,.46));
+  box-shadow:0 16px 42px rgba(0,0,0,.42),0 0 34px rgba(179,65,255,.20);
+  color:#fbefff;
+  font-weight:850;
+  font-size:clamp(16px,1.8vw,27px);
+  line-height:1.15;
+  letter-spacing:.04em;
+  text-align:center;
+  text-shadow:0 2px 10px rgba(0,0,0,.9);
+  animation:c7QteTextShake .16s linear infinite;
+}
+#c12gQteButton{
+  position:absolute;
+  z-index:85!important;
+  pointer-events:auto!important;
+  min-width:104px;
+  min-height:104px;
+  padding:14px 18px;
+  border-radius:999px;
+  border:2px solid rgba(255,220,255,.86);
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.92),rgba(205,134,255,.80) 26%,rgba(92,18,132,.92) 68%,rgba(10,3,20,.98));
+  color:#fff;
+  font-weight:950;
+  font-size:clamp(17px,1.8vw,27px);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  box-shadow:0 0 0 10px rgba(207,104,255,.16),0 0 54px rgba(214,118,255,.78),0 22px 48px rgba(0,0,0,.55);
+  transform:translate(-50%,-50%) scale(.88);
+  animation:c7QteSpawn .22s ease forwards,c7QtePulse .58s ease-in-out infinite;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+#c12gQteButton:hover{filter:brightness(1.18);transform:translate(-50%,-50%) scale(1.04)}
+#c12gQteButton::after{content:"";position:absolute;inset:-16px;border-radius:inherit;border:1px solid rgba(255,230,255,.42);animation:c7QteRing .7s ease-in-out infinite;pointer-events:none}
+
+body.mobileUI #c12gStickyTimer{top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;min-width:92px;padding:7px 9px}
+body.mobileUI #c12gStickyTimer .c12gStickyTime{font-size:19px}
+body.mobileUI #c12gQteButton{min-width:82px;min-height:82px;font-size:13px}
+@media(max-height:560px) and (orientation:landscape){
+  .c12gQteAttackText{top:4.5%;font-size:clamp(14px,1.6vw,22px);padding:9px 14px}
+  #c12gQteButton{min-width:84px;min-height:84px;font-size:clamp(14px,1.5vw,21px)}
+}
+</style>
 <script id="v0272-c12g-deep-choices">
 (function installChapter12GRebuilt(){
   try{
@@ -46230,10 +46378,43 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     if(typeof CODEX_BY_SCENE!=='undefined'){CODEX_BY_SCENE.c12g_001=['bal_des_elus','cour_sylvinienne'];CODEX_BY_SCENE.c12g_duel_1=['naiah','valurn','duel_ombres_naiah'];}
 
     let c12gTimer=null;
-    function clearC12GTimer(){if(c12gTimer){clearInterval(c12gTimer);c12gTimer=null;}}
+    function clearC12GStickyTimer(){const old=document.getElementById('c12gStickyTimer');if(old)old.remove();}
+    function clearC12GTimer(){if(c12gTimer){clearInterval(c12gTimer);c12gTimer=null;}clearC12GStickyTimer();}
+    function c12gStickyTimerNode(){
+      let el=document.getElementById('c12gStickyTimer');
+      if(!el){
+        el=document.createElement('div');
+        el.id='c12gStickyTimer';
+        el.innerHTML='<div class="c12gStickyLabel">Temps</div><div class="c12gStickyTime">--</div><div class="c12gStickyBar"><div class="c12gStickyFill"></div></div>';
+        document.body.appendChild(el);
+      }
+      return el;
+    }
+    function updateC12GStickyTimer(remainingMs,totalMs,label){
+      const d=state&&state.c12gDuel;
+      if(!d||!String((state&&state.scene)||'').startsWith('c12g_duel_')||d.mode==='reaction'||d.mode==='success'){
+        clearC12GStickyTimer();
+        return;
+      }
+      const el=c12gStickyTimerNode(),time=el.querySelector('.c12gStickyTime'),lab=el.querySelector('.c12gStickyLabel'),fill=el.querySelector('.c12gStickyFill');
+      if(lab)lab.textContent=label||'Temps';
+      if(time)time.textContent=d.mode==='qte'?`${(remainingMs/1000).toFixed(1)}s`:`${Math.ceil(remainingMs/1000)}s`;
+      if(fill)fill.style.width=Math.max(0,Math.min(100,(remainingMs/Math.max(1,totalMs))*100))+'%';
+      el.classList.toggle('urgent',remainingMs<=3000);
+    }
+    function setC12GQteMode(active){
+      document.body.classList.toggle('c12gQteActive',!!active);
+      const gameCard=document.getElementById('gameCard');if(gameCard)gameCard.classList.toggle('c12gQteActive',!!active);
+    }
+    function clearC12GCombatUi(){
+      setC12GQteMode(false);
+      clearC12GTimer();
+      const layer=document.getElementById('c12gQteLayer');if(layer)layer.remove();
+      const stage=document.getElementById('stage');if(stage)stage.classList.remove('c12gDuelPerspective');
+    }
     function duelScene(cycle){return S['c12g_duel_'+(cycle+1)];}
     function freshDuel(cycle){
-      return {cycle,round:0,pressure:0,mode:'round',last:'',pendingEffects:{},qteIndex:0,failText:'',cycleStartStats:{...((state&&state.stats)||{})}};
+      return {cycle,round:0,pressure:0,mode:'round',last:'',pendingEffects:{},qteIndex:0,failText:'',introPending:true,introRunning:false,cycleStartStats:{...((state&&state.stats)||{})}};
     }
     function ensureDuel(cycle){
       let d=state.c12gDuel;
@@ -46243,36 +46424,73 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     function reqMet(req){if(state.devMode)return true;return Object.entries(req||{}).every(([k,v])=>((state.stats&&state.stats[k])||0)>=v);}
     function reqLabel(req){return Object.entries(req||{}).map(([k,v])=>`${statNames[k]||k} ${(state.stats&&state.stats[k])||0}/${v}`).join(' · ');}
     function commitEffects(d){Object.entries(d.pendingEffects||{}).forEach(([k,v])=>{if(v&&typeof applyBalancedStatDelta==='function')applyBalancedStatDelta(k,v);});d.pendingEffects={};}
-    function failDuel(text){clearC12GTimer();const d=state.c12gDuel||freshDuel(0);d.failText=text;d.mode='failed';state.c12gDuel=d;state.scene='c12g_game_over';setScreen('game');render();save();}
-    function startClock(ms,onTimeout){
-      clearC12GTimer();const d=state.c12gDuel;if(!d)return;d.deadline=Date.now()+ms;d.deadlineDuration=ms;
-      c12gTimer=setInterval(()=>{
-        const nowD=state.c12gDuel;if(!nowD||!String(state.scene||'').startsWith('c12g_duel_')){clearC12GTimer();return;}
-        const rem=Math.max(0,nowD.deadline-Date.now());const e=document.getElementById('c12gTimeValue'),f=document.getElementById('c12gTimeFill');if(e)e.textContent=(rem/1000).toFixed(1)+'s';if(f)f.style.width=Math.max(0,Math.min(100,rem/nowD.deadlineDuration*100))+'%';
+    function failDuel(text){clearC12GCombatUi();const d=state.c12gDuel||freshDuel(0);d.failText=text;d.mode='failed';state.c12gDuel=d;state.scene='c12g_game_over';setScreen('game');render();save();}
+    function startClock(ms,onTimeout,label='Temps'){
+      clearC12GTimer();
+      const d=state.c12gDuel;if(!d)return;
+      d.deadline=Date.now()+ms;d.deadlineDuration=ms;
+      const tick=()=>{
+        const nowD=state.c12gDuel;
+        if(!nowD||!String(state.scene||'').startsWith('c12g_duel_')){clearC12GTimer();return;}
+        const rem=Math.max(0,nowD.deadline-Date.now());
+        const e=document.getElementById('c12gTimeValue'),f=document.getElementById('c12gTimeFill');
+        if(e)e.textContent=nowD.mode==='qte'?(rem/1000).toFixed(1)+'s':Math.ceil(rem/1000)+'s';
+        if(f)f.style.width=Math.max(0,Math.min(100,rem/Math.max(1,nowD.deadlineDuration)*100))+'%';
+        updateC12GStickyTimer(rem,nowD.deadlineDuration,label);
         if(rem<=0){clearC12GTimer();onTimeout();}
-      },90);
+      };
+      tick();
+      c12gTimer=setInterval(tick,90);
     }
-    function qteLayer(){let layer=document.getElementById('c12gQteLayer');if(!layer){layer=document.createElement('div');layer.id='c12gQteLayer';document.getElementById('stage').appendChild(layer);}layer.innerHTML='';return layer;}
-    const qtePos=[[18,26],[67,22],[42,58],[76,61],[23,67],[54,34]];
+    function qteLayer(){
+      let layer=document.getElementById('c12gQteLayer');
+      if(!layer){layer=document.createElement('div');layer.id='c12gQteLayer';layer.className='c12gStageQteLayer';document.getElementById('stage').appendChild(layer);}
+      layer.innerHTML='';
+      return layer;
+    }
+    const qtePos=[[72,34],[28,58],[55,76],[43,29],[78,67],[22,38]];
     function renderQteButton(cfg,d){
-      const layer=qteLayer(),word=cfg.qte[d.qteIndex]||'SAISIR',btn=document.createElement('button');btn.id='c12gQteButton';btn.textContent=word;const p=qtePos[(d.qteIndex+d.cycle)%qtePos.length];btn.style.left=p[0]+'%';btn.style.top=p[1]+'%';btn.onclick=(ev)=>{ev.stopPropagation();clearC12GTimer();d.qteIndex++;if(d.qteIndex>=cfg.qte.length){d.pressure+=1;const target=cfg.target-(state.easyMode?1:0);if(d.pressure<target)return failDuel(`Naïah atteint le cœur de la défense, mais son emprise reste trop faible (${d.pressure}/${target}). Valurn referme toutes les couches à la fois.`);commitEffects(d);if(typeof unlockProgressMemories==='function')unlockProgressMemories([cfg.memoryKey]);state.flags={...(state.flags||{}),['c12gMemory'+(d.cycle+1)]:true};d.mode='success';d.last=`La défense cède sans que Valurn perde entièrement le contrôle. Naïah ne possède pas son esprit : elle obtient un passage. Le souvenir ${d.cycle+1} s’ouvre.`;renderC12GDuel(duelScene(d.cycle));save();return;}renderC12GDuel(duelScene(d.cycle));};layer.appendChild(btn);startClock(cfg.qteMs+(state.easyMode?900:0),()=>failDuel('Naïah manque l’impact décisif. Valurn saisit son hésitation et retourne la pression contre elle.'));
+      setC12GQteMode(true);
+      const layer=qteLayer(),word=cfg.qte[d.qteIndex]||'SAISIR';
+      const attack=document.createElement('div');
+      attack.className='c12gQteAttackText';
+      attack.textContent=d.qteIndex===0?'Naïah plonge dans la faille. Premier impact.' : 'Valurn referme la brèche. Frappe ailleurs, immédiatement.';
+      layer.appendChild(attack);
+      const btn=document.createElement('button');
+      btn.id='c12gQteButton';btn.type='button';btn.textContent=word;
+      const p=qtePos[(d.qteIndex+(d.cycle*2))%qtePos.length];btn.style.left=p[0]+'%';btn.style.top=p[1]+'%';
+      btn.onclick=(ev)=>{
+        ev.preventDefault();ev.stopPropagation();clearC12GTimer();d.qteIndex++;
+        if(d.qteIndex>=cfg.qte.length){
+          d.pressure+=1;const target=cfg.target-(state.easyMode?1:0);
+          if(d.pressure<target)return failDuel(`Naïah atteint le cœur de la défense, mais son emprise reste trop faible (${d.pressure}/${target}). Valurn referme toutes les couches à la fois.`);
+          commitEffects(d);
+          if(typeof unlockProgressMemories==='function')unlockProgressMemories([cfg.memoryKey]);
+          state.flags={...(state.flags||{}),['c12gMemory'+(d.cycle+1)]:true};
+          d.mode='success';d.last=`La défense cède sans que Valurn perde entièrement le contrôle. Naïah ne possède pas son esprit : elle obtient un passage. Le souvenir ${d.cycle+1} s’ouvre.`;
+          setC12GQteMode(false);renderC12GDuel(duelScene(d.cycle));save();return;
+        }
+        renderC12GDuel(duelScene(d.cycle));
+      };
+      layer.appendChild(btn);
+      startClock(cfg.qteMs+(state.easyMode?900:0),()=>failDuel('Naïah manque l’impact décisif. Valurn saisit son hésitation et retourne la pression contre elle.'),'Impact');
     }
     function chooseAttack(ch,cfg,d){
       if(ch.requires&&!reqMet(ch.requires))return;clearC12GTimer();d.pressure+=ch.power||1;if(ch.effect)Object.entries(ch.effect).forEach(([k,v])=>d.pendingEffects[k]=(d.pendingEffects[k]||0)+v);d.last=ch.reaction;d.mode='reaction';renderC12GDuel(duelScene(d.cycle));save();
     }
     function renderC12GDuel(scene){
       const cycle=Number(scene.c12gCycle||0),cfg=C12G_DUEL[cycle],d=ensureDuel(cycle),round=cfg.rounds[d.round]||cfg.rounds[0];
-      clearC12GTimer();checkCodexForScene(state.scene);document.querySelectorAll('.chapterLabel').forEach(el=>el.textContent='Chapitre XII_G · Intrusion de Naïah');
+      clearC12GTimer();setC12GQteMode(d.mode==='qte');checkCodexForScene(state.scene);document.querySelectorAll('.chapterLabel').forEach(el=>el.textContent='Chapitre XII_G · Intrusion de Naïah');
       const stage=document.getElementById('stage');stage.classList.remove('combatMode','c7Mindquake');stage.classList.add('combatMode','c12gDuelPerspective');setStageBg('c7_bg_monde_mental',true);playMusic(resolveSceneMusic(state.scene,'music_c7_duel_naiah_2'));
-      paintSceneChars([['naiah',d.mode==='success'?'naiah_smirk':'naiah_menacing','left'],['valurn',d.mode==='success'?'valurn_surprised':'valurn_annoyed','right','back']]);
+      paintSceneChars([['naiah',d.mode==='success'?'naiah_fete_smirk':'naiah_fete_angry','left'],['valurn',d.mode==='success'?'valurn_fete_sad':'valurn_fete_angry','right','back']]);
       document.getElementById('sceneTitle').textContent=`Brèche ${cycle+1}/6 · ${cfg.title}`;
       document.getElementById('sceneSub').textContent=d.mode==='qte'?'Assaut décisif':d.mode==='success'?'Souvenir accessible':`Manche ${d.round+1}/3 · ${round.title}`;
       document.getElementById('speaker').textContent=d.mode==='success'?'Narrateur':'Naïah';
-      const text=document.getElementById('text'),choices=document.getElementById('choices');text.innerHTML='';choices.innerHTML='';qteLayer().innerHTML='';
+      const text=document.getElementById('text'),choices=document.getElementById('choices');text.innerHTML='';choices.innerHTML='';const oldQte=document.getElementById('c12gQteLayer');if(oldQte)oldQte.remove();
       const add=(cls,t)=>{const s=document.createElement('span');s.className=cls;s.textContent=t;text.appendChild(s);};
       const target=cfg.target-(state.easyMode?1:0);
       if(d.mode==='round'){
-        add('c12gNarration c12gDirection',round.text);(round.choices||[]).forEach(ch=>{const locked=ch.requires&&!reqMet(ch.requires);const b=document.createElement('button');b.className='choiceBtn'+(locked?' lockedChoice':'');b.disabled=locked;const note=ch.fallback?'Instinct de Naïah · Aucun prérequis':`${statNames[ch.stat]||ch.stat} · Prérequis ${Object.values(ch.requires||{})[0]||''} · Emprise +${ch.power||1}`;b.innerHTML=`<span>${locked?'🔒 ':''}${ch.label}<small>${locked?reqLabel(ch.requires):note}</small></span><span class="arrow">›</span>`;b.onclick=()=>chooseAttack(ch,cfg,d);choices.appendChild(b);});startClock(cfg.choiceMs+(state.easyMode?5000:0),()=>failDuel('Naïah hésite une seconde de trop. Valurn trouve son rythme, verrouille la manche et l’expulse de la couche mentale.'));
+        add('c12gNarration c12gDirection',round.text);(round.choices||[]).forEach(ch=>{const locked=ch.requires&&!reqMet(ch.requires);const b=document.createElement('button');b.className='choiceBtn'+(locked?' lockedChoice':'');b.disabled=locked;const note=ch.fallback?'Instinct de Naïah · Aucun prérequis':`${statNames[ch.stat]||ch.stat} · Prérequis ${Object.values(ch.requires||{})[0]||''} · Emprise +${ch.power||1}`;b.innerHTML=`<span>${locked?'🔒 ':''}${ch.label}<small>${locked?reqLabel(ch.requires):note}</small></span><span class="arrow">›</span>`;b.onclick=()=>chooseAttack(ch,cfg,d);choices.appendChild(b);});startClock(cfg.choiceMs+(state.easyMode?5000:0),()=>failDuel('Naïah hésite une seconde de trop. Valurn trouve son rythme, verrouille la manche et l’expulse de la couche mentale.'),'Choix');
       }else if(d.mode==='reaction'){
         add('c12gNarration c12gDirection',d.last);const b=document.createElement('button');b.className='choiceBtn continueBtn';b.innerHTML='<span>Maintenir l’assaut</span><span class="arrow">›</span>';b.onclick=()=>{d.round++;if(d.round>=3){d.round=2;d.mode='qte';d.qteIndex=0;}else d.mode='round';renderC12GDuel(scene);save();};choices.appendChild(b);
       }else if(d.mode==='qte'){
@@ -46280,16 +46498,54 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       }else if(d.mode==='success'){
         add('c12gNarration c12gDirection',d.last);const b=document.createElement('button');b.className='choiceBtn continueBtn';b.innerHTML='<span>Entrer dans le souvenir</span><span class="arrow">›</span>';b.onclick=()=>{clearC12GTimer();state.c12gDuel=null;go(cfg.memory);};choices.appendChild(b);
       }
-      document.getElementById('stats').innerHTML=`<div class="c12gDuelHud"><div class="c12gDuelBox"><div class="c12gDuelTop"><span>Emprise de Naïah</span><span>${d.pressure}/${target}</span></div><div class="c12gDuelTrack"><div class="c12gDuelFill" style="width:${Math.min(100,d.pressure/target*100)}%"></div></div></div><div class="c12gDuelBox"><div class="c12gDuelTop"><span>Défense de Valurn</span><span>${Math.max(0,target-d.pressure)}</span></div><div class="c12gDuelTrack"><div class="c12gDuelFill defense" style="width:${Math.max(0,(target-d.pressure)/target*100)}%"></div></div></div><div class="c12gDuelBox"><div class="c12gDuelTop"><span>Temps</span><span id="c12gTimeValue">${d.mode==='reaction'||d.mode==='success'?'—':((d.mode==='qte'?cfg.qteMs:cfg.choiceMs)/1000).toFixed(1)+'s'}</span></div><div class="c12gDuelTrack"><div id="c12gTimeFill" class="c12gDuelFill time" style="width:${d.mode==='reaction'||d.mode==='success'?0:100}%"></div></div></div></div>`;
+      document.getElementById('stats').innerHTML=`<div class="combatHud c7DuelPulse c12gCombatHud"><div class="combatBox"><div class="combatTop"><span>Emprise de Naïah</span><span>${d.pressure}/${target}</span></div><div class="combatTrack"><div class="combatFill read" style="width:${Math.min(100,d.pressure/target*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Défense de Valurn</span><span>${Math.max(0,target-d.pressure)}</span></div><div class="combatTrack"><div class="combatFill fatigue" style="width:${Math.max(0,(target-d.pressure)/target*100)}%"></div></div></div><div class="combatBox"><div class="combatTop"><span>Temps</span><span id="c12gTimeValue">${d.mode==='reaction'||d.mode==='success'?'—':((d.mode==='qte'?cfg.qteMs:cfg.choiceMs)/1000).toFixed(1)+'s'}</span></div><div class="combatTrack"><div id="c12gTimeFill" class="combatFill time" style="width:${d.mode==='reaction'||d.mode==='success'?0:100}%"></div></div></div></div><div class="combatMeta"><span>Brèche <b>${cycle+1}/6</b></span><span>Manche <b>${Math.min(d.round+1,3)}/3</b></span><span>Objectif emprise <b>${target}+</b></span><span>Point de vue <b>Naïah</b></span></div>`;
       updateDevUI();save();updateProgressUI();
     }
+    function enterC12GDuel(scene){
+      const cycle=Number(scene.c12gCycle||0),cfg=C12G_DUEL[cycle],d=ensureDuel(cycle);
+      if(d.introRunning)return;
+      d.introRunning=true;
+      clearC12GTimer();setC12GQteMode(false);
+      const oldLayer=document.getElementById('c12gQteLayer');if(oldLayer)oldLayer.remove();
+      document.querySelectorAll('.chapterLabel').forEach(el=>el.textContent='Chapitre XII_G · Intrusion de Naïah');
+      const stage=document.getElementById('stage');stage.classList.remove('c7Mindquake');stage.classList.add('combatMode','c12gDuelPerspective');
+      setStageBg('c7_bg_monde_mental',true);
+      paintSceneChars([['naiah','naiah_fete_angry','left'],['valurn','valurn_fete_angry','right','back']]);
+      document.getElementById('sceneTitle').textContent=`Brèche ${cycle+1}/6 · ${cfg.title}`;
+      document.getElementById('sceneSub').textContent='Naïah reprend l’assaut';
+      document.getElementById('speaker').textContent='Narrateur';
+      document.getElementById('text').textContent=cycle===0
+        ? 'Naïah resserre le dôme autour de Valurn. Cette fois, elle ne cherche pas à lui répondre : elle cherche la couture exacte de son premier secret.'
+        : `Le souvenir précédent s’éteint. Avant que Valurn ne puisse refermer entièrement son esprit, Naïah s’accroche à la brèche suivante. Défense ${cycle+1} sur 6.`;
+      document.getElementById('choices').innerHTML='';document.getElementById('stats').innerHTML='';
+      playMusic(resolveSceneMusic(state.scene,'music_c7_duel_naiah_2'));
+      const overlay=document.getElementById('combatTransition');
+      if(!overlay){d.introPending=false;d.introRunning=false;save();renderC12GDuel(scene);return;}
+      const mini=overlay.querySelector('.combatMini');if(mini)mini.textContent='Duel mental';
+      const title=overlay.querySelector('.combatTitle');if(title)title.textContent=`Brèche ${cycle+1}/6`;
+      const sub=overlay.querySelector('.combatSub');if(sub)sub.textContent=`Naïah attaque · ${cfg.title}`;
+      overlay.classList.remove('hidden','active','c7NaiahIntro','c7Intense');
+      overlay.classList.add('c7NaiahIntro');if(cycle>=2)overlay.classList.add('c7Intense');
+      void overlay.offsetWidth;overlay.classList.add('active');
+      clearTimeout(window.__c12gTransitionTimer);
+      window.__c12gTransitionTimer=setTimeout(()=>{
+        overlay.classList.add('hidden');overlay.classList.remove('active','c7NaiahIntro','c7Intense');
+        if(mini)mini.textContent='Mode combat';
+        d.introPending=false;d.introRunning=false;save();renderC12GDuel(scene);
+      },cycle>=2?1500:1220);
+    }
+
     window.renderC12GDuel=renderC12GDuel;
 
     const previousRender=window.render||render;
     window.render=render=function(){
       const sc=S[state.scene];
-      if(!(sc&&sc.c12gNaiahAssault)){clearC12GTimer();document.getElementById('stage')?.classList.remove('c12gDuelPerspective');document.getElementById('c12gQteLayer')?.remove();}
-      if(sc&&sc.c12gNaiahAssault){renderC12GDuel(sc);return;}
+      if(!(sc&&sc.c12gNaiahAssault)){clearC12GCombatUi();}
+      if(sc&&sc.c12gNaiahAssault){
+        const d=ensureDuel(Number(sc.c12gCycle||0));
+        if(d.introPending||d.introRunning){enterC12GDuel(sc);return;}
+        renderC12GDuel(sc);return;
+      }
       return previousRender.apply(this,arguments);
     };
 
@@ -46313,7 +46569,24 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     window.__c12gSourceParagraphCount=389;
     window.__c12gDuelCycleCount=C12G_DUEL.length;
     if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden'))renderChapterSelect();
-    console.info('[Sylvinia v0.272] XII_G : choix approfondis et branches stratégiques développées.');
+    console.info('[Sylvinia v0.274] XII_G : interface Chapitre VII, QTE plein écran, sprites de fête et intro rejouée à chaque brèche.');
   }catch(err){console.error('[Sylvinia v0.270] XII_G non installé',err);}
+})();
+</script>
+
+
+<script id="v0273-c12g-hylee-pov-fix">
+/* v0.273 · XII_G : les choix impliquant Hylee restent joués depuis Hylee */
+(function installC12GHyleePovFix(){
+  try{
+    if(window.__sylviniaV0273C12GHyleePov) return;
+    window.__sylviniaV0273C12GHyleePov=true;
+    if(typeof S==='undefined'||!S) return;
+    const HYLEE_POV_SCENES={"c12g_choice_remerii_proximite":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"La musique touche à sa fin. Remerii ne resserre pas son étreinte, comme si elle refusait de décider à la place d’Hylee. La jeune femme sent pourtant que ce dernier tour peut devenir autre chose qu’une conclusion. C’est à elle de choisir ce qu’elle offre, ce qu’elle retient et la distance qu’elle laisse encore entre elles.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"choices":[{"label":"Rester dans le pas, sans précipiter ce qui se répare","next":"c12g_remerii_proximite_calme","effects":{"sangfroid":1},"note":"Hylee · Sang-froid · Aucun prérequis"},{"label":"Réduire elle-même la distance au dernier tour","next":"c12g_remerii_proximite_audace","effects":{"audace":1,"lien":1},"requires":{"audace":50},"note":"Hylee · Audace · Prérequis 50 · Lien possible"},{"label":"Comprendre que Remerii attend une permission, puis la lui donner","next":"c12g_remerii_proximite_lucidite","effects":{"lucidite":1,"lien":1},"requires":{"lucidite":52},"note":"Hylee · Lucidité · Prérequis 52 · Lien possible"},{"label":"Accorder son souffle et sa magie à ceux de Remerii","next":"c12g_remerii_proximite_resonance","effects":{"resonance":1,"lien":1},"requires":{"resonance":48},"note":"Hylee · Résonance · Prérequis 48 · Lien possible"},{"label":"Poser sa main sur celle de Remerii et ne plus reculer","next":"c12g_remerii_proximite_lien","effects":{"sangfroid":1,"lien":1},"requires":{"lien":50},"note":"Hylee · Scène bonus approfondie · Lien Remerii 50","memories":["silence_partage_sur_la_piste"]}],"partyOutfits":true},"c12g_remerii_proximite_calme":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee ne s’accroche pas et ne s’écarte pas. Elle maintient simplement le pas, stable, présente. Lorsque Remerii desserre légèrement sa main, Hylee répond en restant exactement là où elle a choisi d’être.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_calme_2","partyOutfits":true},"c12g_remerii_proximite_calme_2":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Tu peux desserrer la main. Je ne vais pas disparaître.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_calme_3","partyOutfits":true},"c12g_remerii_proximite_calme_3":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Je sais. J’essaie seulement de ne plus décider à ta place.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_calme_4","partyOutfits":true},"c12g_remerii_proximite_calme_4":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee incline légèrement la tête et conserve le rythme. Ce n’est pas encore un pardon. C’est un terrain assez stable pour qu’elles puissent enfin commencer à réparer.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_042","partyOutfits":true},"c12g_remerii_proximite_audace":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Sur les dernières mesures, Hylee prend l’initiative. Elle change brusquement d’appui et entraîne Remerii dans un tour plus vif. L’archimage suit par réflexe, surprise de se retrouver, pour une fois, guidée par son apprentie.","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_surprised","right"]],"next":"c12g_remerii_proximite_audace_2","partyOutfits":true},"c12g_remerii_proximite_audace_2":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"C’était volontaire ?","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_surprised","right"]],"next":"c12g_remerii_proximite_audace_3","partyOutfits":true},"c12g_remerii_proximite_audace_3":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Évidemment. Je voulais savoir si la grande Remerii savait encore suivre.","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_surprised","right"]],"next":"c12g_remerii_proximite_audace_4","partyOutfits":true},"c12g_remerii_proximite_audace_4":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Tu prends de très mauvaises habitudes.","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_smirk","right"]],"next":"c12g_remerii_proximite_audace_5","partyOutfits":true},"c12g_remerii_proximite_audace_5":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"J’apprends de la meilleure.","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_smirk","right"]],"next":"c12g_042","partyOutfits":true},"c12g_remerii_proximite_lucidite":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee remarque que la main de Remerii s’est desserrée. Ce n’est pas un recul. C’est une permission, une façon maladroite de lui rendre le choix qu’elle lui avait retiré à Akuhn’Nabad. Hylee réduit elle-même la distance.","chars":[["hylee","hylee2_thinking","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lucidite_2","partyOutfits":true},"c12g_remerii_proximite_lucidite_2":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Tu attends que je décide si je reste.","chars":[["hylee","hylee2_thinking","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lucidite_3","partyOutfits":true},"c12g_remerii_proximite_lucidite_3":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Oui.","chars":[["hylee","hylee2_thinking","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lucidite_4","partyOutfits":true},"c12g_remerii_proximite_lucidite_4":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Alors regarde mes pas. Ils ne vont pas vers la sortie.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_042","partyOutfits":true},"c12g_remerii_proximite_resonance":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee perçoit la magie de Remerii au bord de leurs paumes. Elle ne tire plus, ne commande plus. Elle attend. Hylee laisse alors un filet de froid répondre au sien, assez fin pour relier leurs souffles sans guider leurs gestes.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_resonance_2","partyOutfits":true},"c12g_remerii_proximite_resonance_2":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Tu l’as senti ?","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_surprised","right"]],"next":"c12g_remerii_proximite_resonance_3","partyOutfits":true},"c12g_remerii_proximite_resonance_3":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Ta magie ne me demande plus de la suivre. Elle attend.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_resonance_4","partyOutfits":true},"c12g_remerii_proximite_resonance_4":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Peut-être qu’elle a enfin compris que tu n’étais pas mon apprentie dans chaque instant.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_resonance_5","partyOutfits":true},"c12g_remerii_proximite_resonance_5":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Ou peut-être que c’est toi qui l’as compris.","chars":[["hylee","hylee2_smirk","left"],["remerii","remerii_soft","right"]],"next":"c12g_042","partyOutfits":true},"c12g_remerii_proximite_lien":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee pose doucement sa main sur celle de Remerii, dans son dos. Elle ne la retient pas prisonnière. Elle l’empêche seulement de croire qu’elle doit encore reculer pour la protéger.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lien_2","partyOutfits":true},"c12g_remerii_proximite_lien_2":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Tu peux rester.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lien_3","partyOutfits":true},"c12g_remerii_proximite_lien_3":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Je comptais le faire.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lien_4","partyOutfits":true},"c12g_remerii_proximite_lien_4":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Narrateur","text":"Hylee ne retire pas sa main. Aucun pardon n’est exigé sur la piste et aucune excuse n’est improvisée pour étouffer la blessure. Elles terminent simplement la danse assez proches pour que le silence cesse d’être une punition.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lien_5","partyOutfits":true},"c12g_remerii_proximite_lien_5":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Hylee","text":"Après le bal… on parlera vraiment ?","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_remerii_proximite_lien_6","partyOutfits":true},"c12g_remerii_proximite_lien_6":{"title":"Chapitre XII_G · Le Bal des Élus","sub":"Hylee au dernier tour","bg":"c11g_bal_grand","music":"music_algratal","speaker":"Remerii","text":"Oui. Même si je dois commencer par reconnaître tout ce que j’ai mal fait.","chars":[["hylee","hylee2_soft","left"],["remerii","remerii_soft","right"]],"next":"c12g_042","partyOutfits":true}};
+    Object.assign(S,HYLEE_POV_SCENES);
+    console.info('[Sylvinia v0.273] XII_G : point de vue Hylee restauré pour la proximité avec Remerii.');
+  }catch(err){
+    console.error('[Sylvinia v0.273] Correctif point de vue Hylee non appliqué',err);
+  }
 })();
 </script>
