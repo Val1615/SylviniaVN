@@ -41368,6 +41368,38 @@ html body.x12iQteMode #gameCard #stats{
 })();
 </script>
 
+
+<script id="c12g-final-music-normalizer">
+/* XII_G · Correctif final des musiques.
+   Ce bloc s'exécute après tous les correctifs de scènes afin que les choix et
+   embranchements ajoutés tardivement ne puissent plus restaurer les anciens placeholders. */
+(function normalizeC12GMusicFinal(){
+  const HYLEE_REMERII = new Set(["c12g_013", "c12g_014", "c12g_015", "c12g_016", "c12g_017", "c12g_018", "c12g_019", "c12g_020", "c12g_021", "c12g_022", "c12g_037", "c12g_038", "c12g_039", "c12g_040", "c12g_041", "c12g_042", "c12g_043", "c12g_044", "c12g_045", "c12g_046", "c12g_047", "c12g_048", "c12g_049", "c12g_050", "c12g_051", "c12g_052", "c12g_053", "c12g_054", "c12g_055", "c12g_056", "c12g_choice_hylee_invitation", "c12g_choice_remerii_proximite", "c12g_hylee_invitation_audace", "c12g_hylee_invitation_audace_2", "c12g_hylee_invitation_audace_3", "c12g_hylee_invitation_audace_4", "c12g_hylee_invitation_audace_5", "c12g_hylee_invitation_calme", "c12g_hylee_invitation_calme_2", "c12g_hylee_invitation_calme_3", "c12g_hylee_invitation_lien", "c12g_hylee_invitation_lien_2", "c12g_hylee_invitation_lien_3", "c12g_hylee_invitation_lien_4", "c12g_hylee_invitation_lien_5", "c12g_hylee_invitation_lucidite", "c12g_hylee_invitation_lucidite_2", "c12g_hylee_invitation_lucidite_3", "c12g_hylee_invitation_lucidite_4", "c12g_hylee_invitation_resonance", "c12g_hylee_invitation_resonance_2", "c12g_hylee_invitation_resonance_3", "c12g_hylee_invitation_resonance_4", "c12g_remerii_proximite_audace", "c12g_remerii_proximite_audace_2", "c12g_remerii_proximite_audace_3", "c12g_remerii_proximite_audace_4", "c12g_remerii_proximite_audace_5", "c12g_remerii_proximite_calme", "c12g_remerii_proximite_calme_2", "c12g_remerii_proximite_calme_3", "c12g_remerii_proximite_calme_4", "c12g_remerii_proximite_lien", "c12g_remerii_proximite_lien_2", "c12g_remerii_proximite_lien_3", "c12g_remerii_proximite_lien_4", "c12g_remerii_proximite_lien_5", "c12g_remerii_proximite_lien_6", "c12g_remerii_proximite_lucidite", "c12g_remerii_proximite_lucidite_2", "c12g_remerii_proximite_lucidite_3", "c12g_remerii_proximite_lucidite_4", "c12g_remerii_proximite_resonance", "c12g_remerii_proximite_resonance_2", "c12g_remerii_proximite_resonance_3", "c12g_remerii_proximite_resonance_4", "c12g_remerii_proximite_resonance_5"]);
+  const IRIANA_VALURN = new Set(["c12g_129", "c12g_130", "c12g_131", "c12g_132", "c12g_133", "c12g_134", "c12g_135", "c12g_136", "c12g_137", "c12g_138", "c12g_139", "c12g_140", "c12g_141", "c12g_142", "c12g_143", "c12g_144", "c12g_145", "c12g_146", "c12g_147", "c12g_148", "c12g_149", "c12g_150", "c12g_151", "c12g_152", "c12g_153", "c12g_154", "c12g_155", "c12g_156", "c12g_157", "c12g_158", "c12g_159", "c12g_160", "c12g_161", "c12g_162", "c12g_163", "c12g_164", "c12g_165", "c12g_166", "c12g_167", "c12g_168", "c12g_169", "c12g_170", "c12g_171", "c12g_172", "c12g_173", "c12g_174", "c12g_175", "c12g_176", "c12g_177", "c12g_178", "c12g_179", "c12g_180", "c12g_181", "c12g_182", "c12g_183", "c12g_184", "c12g_185", "c12g_186", "c12g_187", "c12g_188", "c12g_189", "c12g_190", "c12g_191", "c12g_192", "c12g_193", "c12g_194", "c12g_195", "c12g_196", "c12g_197", "c12g_198", "c12g_199", "c12g_200", "c12g_201", "c12g_202", "c12g_203", "c12g_204", "c12g_205", "c12g_206", "c12g_207", "c12g_208", "c12g_209", "c12g_210", "c12g_211", "c12g_212", "c12g_213", "c12g_214", "c12g_215", "c12g_216", "c12g_217", "c12g_262", "c12g_263", "c12g_264", "c12g_265", "c12g_266", "c12g_267", "c12g_268", "c12g_269", "c12g_270", "c12g_271", "c12g_272", "c12g_273", "c12g_274", "c12g_275", "c12g_276", "c12g_277", "c12g_278", "c12g_279", "c12g_280", "c12g_281", "c12g_282", "c12g_283", "c12g_284", "c12g_285", "c12g_286", "c12g_287", "c12g_288", "c12g_289", "c12g_290", "c12g_291", "c12g_292", "c12g_293", "c12g_294", "c12g_295", "c12g_296", "c12g_297", "c12g_298", "c12g_299", "c12g_300", "c12g_301", "c12g_302", "c12g_303", "c12g_304", "c12g_305", "c12g_306", "c12g_307", "c12g_308", "c12g_309", "c12g_310", "c12g_311", "c12g_312", "c12g_313", "c12g_314", "c12g_315", "c12g_316", "c12g_317", "c12g_318", "c12g_319", "c12g_320", "c12g_321", "c12g_322", "c12g_323", "c12g_324", "c12g_325", "c12g_326", "c12g_327", "c12g_328", "c12g_329", "c12g_330", "c12g_331", "c12g_332", "c12g_333", "c12g_334", "c12g_335", "c12g_336", "c12g_337", "c12g_338", "c12g_339", "c12g_340", "c12g_341", "c12g_342", "c12g_343", "c12g_344", "c12g_345", "c12g_346", "c12g_347", "c12g_348", "c12g_349", "c12g_350", "c12g_351", "c12g_352", "c12g_353", "c12g_354", "c12g_355", "c12g_356", "c12g_357"]);
+
+  function applyMusicMap(){
+    if (typeof S === 'undefined' || !S) return;
+    Object.keys(S).forEach((id) => {
+      if (!id.startsWith('c12g_') || !S[id] || typeof S[id] !== 'object') return;
+      if (IRIANA_VALURN.has(id)) {
+        S[id].music = 'music_c12g_iriana_valurn';
+      } else if (HYLEE_REMERII.has(id)) {
+        S[id].music = 'music_c12g_hylee_remerii';
+      } else {
+        S[id].music = 'music_c12g_bal';
+      }
+    });
+  }
+
+  applyMusicMap();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyMusicMap, { once:true });
+  }
+  // Sécurité contre d'éventuels scripts différés du chapitre.
+  setTimeout(applyMusicMap, 0);
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
