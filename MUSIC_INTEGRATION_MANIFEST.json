@@ -1,0 +1,14 @@
+{
+  "chapter": "XII_G",
+  "tracks": {
+    "music_c12g_bal": "assets/audio/chapter12/group/bal_des_elus.mp3",
+    "music_c12g_hylee_remerii": "assets/audio/chapter12/group/bal_des_elus_hylee_remerii.mp3",
+    "music_c12g_iriana_valurn": "assets/audio/chapter12/group/un_vent_de_confessions_iriana_valurn.mp3"
+  },
+  "mapping": {
+    "default": "Bal des Élus for all XII_G scenes",
+    "hylee_remerii": "Scenes 013-022, 037-056 and their related choice branches",
+    "iriana_valurn": "Souvenir V and Souvenir VI passages"
+  },
+  "note": "All previous XII_G placeholder music keys were replaced by one of these three selected tracks."
+}
