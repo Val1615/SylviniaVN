@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- Correctif sélection XII_G appliqué directement à index.html · 2026-07-30 -->
+
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
@@ -46303,13 +46305,47 @@ html body.vn38MobileStack.mobileUI:not(.legacyVisualUI) #gameCard.x12iQteModeV25
 #c12gQteButton{position:absolute;pointer-events:auto;min-width:140px;padding:17px 22px;border-radius:999px;border:2px solid rgba(232,199,255,.82);background:radial-gradient(circle at top,rgba(113,47,164,.98),rgba(24,7,38,.98));color:#fff;font-weight:950;letter-spacing:.13em;box-shadow:0 0 0 10px rgba(146,71,209,.12),0 0 42px rgba(174,90,255,.5);cursor:pointer;animation:c12gPulse .72s ease-in-out infinite alternate}
 @keyframes c12gPulse{from{transform:scale(.96)}to{transform:scale(1.04)}}
 @media(max-width:760px){.c12gDuelHud{grid-template-columns:1fr}#c12gQteButton{min-width:118px;padding:14px 16px;font-size:13px}}
-.chapterSelectCard.chapter12GCard{border-color:rgba(174,116,244,.58);box-shadow:0 22px 48px rgba(119,64,190,.18)}
-.chapterSelectCard.chapter12GCard .chapterBookSpine{background:linear-gradient(180deg,rgba(18,8,33,.24),rgba(8,3,18,.58)),url('assets/images/chapter_select/chapter_12_g.png');background-size:cover;background-position:center center;}
-.chapterSelectCard.chapter12GCard[open] .chapterBookSpine{background:linear-gradient(180deg,rgba(18,8,33,.16),rgba(8,3,18,.44)),url('assets/images/chapter_select/chapter_12_g.png');background-size:cover;background-position:center center;}
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImageFrame{background:linear-gradient(180deg,rgba(19,8,36,.92),rgba(8,3,18,.96));border-color:rgba(174,116,244,.30)}
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage,
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg{object-fit:cover;object-position:center 18%;}
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage{aspect-ratio:4/5;}
+/* XII_G utilise désormais exactement le même gabarit que XI_I, XI_G et XII_I. */
+.chapterSelectCard.chapter12GCard{
+  border-color:rgba(82,55,25,.24)!important;
+  box-shadow:0 18px 34px rgba(55,35,15,.10)!important;
+}
+.chapterSelectCard.chapter12GCard[open]{
+  border-color:rgba(46,93,116,.34)!important;
+  box-shadow:0 26px 54px rgba(55,35,15,.22)!important;
+}
+.chapterSelectCard.chapter12GCard .chapterBookSpine{
+  background:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10))!important;
+  background-image:linear-gradient(180deg,rgba(26,37,55,.66),rgba(46,93,116,.34)),linear-gradient(90deg,rgba(255,255,255,.16),rgba(0,0,0,.10))!important;
+}
+.chapterSelectCard.chapter12GCard[open] .chapterBookSpine{
+  background:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24))!important;
+  background-image:linear-gradient(180deg,rgba(233,201,133,.36),rgba(46,93,116,.24))!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImageFrame{
+  padding:0!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(16,18,26,.96),rgba(7,9,14,.98))!important;
+  border-color:rgba(82,55,25,.18)!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage{
+  aspect-ratio:3/4!important;
+  object-fit:cover!important;
+  object-position:center 18%!important;
+  background:transparent!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg{
+  object-fit:cover!important;
+  object-position:center 18%!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  #chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage{
+    aspect-ratio:4/5!important;
+  }
+}
 </style>
 <style id="v0274-c12g-chapter7-combat-ui">
 /* v0.274 · XII_G : interface de duel calquée sur le Chapitre VII */
