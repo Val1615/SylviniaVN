@@ -41376,6 +41376,160 @@ html body.x12iQteMode #gameCard #stats{
   }
 })();
 </script>
+
+<script id="v0277-c12g-tia-naiah-valurn-integration">
+/* v0.278 · XII_G : placement corrigé des visuels Tia + intégration Naïah-Valurn. */
+(function installC12GVisualAndChoicePatch(){
+  try{
+    if(window.__sylviniaV0277C12GPatch) return;
+    window.__sylviniaV0277C12GPatch = true;
+    if(typeof A==='undefined'||!A||typeof S==='undefined'||!S) return;
+
+    Object.assign(A,{
+      c12g_key_tia_couronnement_large:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_large.png',
+      c12g_key_tia_couronnement_profile:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_profile.png',
+      c12g_key_tia_couronnement_regard:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_regard.png',
+      c12g_key_naiah_valurn_panorama:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_panorama.png',
+      c12g_key_naiah_valurn_faceaface:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_faceaface.png',
+      c12g_key_naiah_valurn_provocation:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_provocation.png'
+    });
+
+    const apply=(ids,bg,extra={})=>ids.forEach(id=>{
+      if(!S[id]) return;
+      S[id].bg = bg;
+      Object.assign(S[id], extra);
+    });
+
+    // c12g_001 et c12g_002 conservent leur image d'origine déjà intégrée.
+    apply(['c12g_001','c12g_002'],'c12g_key_tia_entree',{hideChars:true});
+    apply(['c12g_003','c12g_004'],'c12g_key_tia_couronnement_large',{hideChars:true});
+    apply(['c12g_005','c12g_006'],'c12g_key_tia_couronnement_profile',{hideChars:true});
+    apply(['c12g_007','c12g_008'],'c12g_key_tia_couronnement_regard',{hideChars:true});
+
+    // Corridor after the Iriana/Valurn fire memory.
+    apply(['c12g_358'],'c12g_key_naiah_valurn_panorama',{hideChars:true});
+    apply(['c12g_359','c12g_360'],'c12g_key_naiah_valurn_faceaface',{hideChars:true});
+    apply(['c12g_380','c12g_381','c12g_382','c12g_383','c12g_384','c12g_385','c12g_386','c12g_387'],'c12g_key_naiah_valurn_provocation',{hideChars:true});
+
+    Object.keys(S).forEach(id=>{
+      if(id==='c12g_choice_naiah_verdict' || id==='c12g_rejoin_naiah_verdict' || id.startsWith('c12g_naiah_verdict_')){
+        S[id].bg='c12g_key_naiah_valurn_faceaface';
+        S[id].hideChars=true;
+      }
+      if(id==='c12g_choice_naiah_sortie' || id==='c12g_rejoin_naiah_sortie' || id.startsWith('c12g_branch_naiah_sortie_')){
+        S[id].bg='c12g_key_naiah_valurn_provocation';
+        S[id].hideChars=true;
+      }
+    });
+
+    const EXTRA = {
+      "c12g_choice_naiah_apres_feu":{
+        "title":"Chapitre XII_G · Le Bal des Élus",
+        "sub":"Après le feu",
+        "bg":"c12g_key_naiah_valurn_panorama",
+        "music":"music_c12g_valurn_memory",
+        "speaker":"Narrateur",
+        "text":"Le souvenir vient de s’éteindre. Naïah a vu, derrière l’insolence de Valurn, une inquiétude qu’il préfère travestir en sourire. Avant de décider ce qu’elle lui renverra, elle choisit ce qu’elle fait de cette révélation.",
+        "chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],
+        "choices":[
+          {"label":"Ranger l’émotion avant d’ouvrir la bouche","next":"c12g_naiah_apres_feu_calme_1","effects":{"sangfroid":1},"note":"Naïah · Sang-froid · Aucun prérequis","flags":{"c12gNaiahOrderedFireMemory":true}},
+          {"label":"Lui montrer d’un sourire que la faille n’est plus secrète","next":"c12g_naiah_apres_feu_audace_1","effects":{"audace":1},"requires":{"audace":52},"note":"Choix stratégique · Naïah · Audace · Prérequis 52","flags":{"c12gNaiahSawValurnCrack":true}},
+          {"label":"Relier le feu, le “nous” échappé et les pères qui les ont forgés","next":"c12g_naiah_apres_feu_lucidite_1","effects":{"lucidite":1},"requires":{"lucidite":55},"note":"Choix stratégique · Naïah · Lucidité · Prérequis 55","flags":{"c12gNaiahMappedFireParallels":true},"memories":["valurn_et_iriana_reflets_de_leurs_peres"]},
+          {"label":"Reconnaître la blessure sans lui offrir l’absolution","next":"c12g_naiah_apres_feu_resonance_1","effects":{"resonance":1},"requires":{"resonance":50},"note":"Choix stratégique · Naïah · Résonance · Prérequis 50","flags":{"c12gNaiahRecognizedWoundWithoutMercy":true}}
+        ],
+        "partyOutfits":true,
+        "hideChars":true
+      },
+      "c12g_naiah_apres_feu_calme_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah remet d’abord de l’ordre dans ses pensées. Elle ne veut pas offrir à Valurn le plaisir de voir, en direct, la manière dont ce souvenir l’a touchée.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_calme_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_calme_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Tu attends une réaction trop vite. Ça te rassure, quand les gens parlent avant de comprendre. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_calme_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_calme_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Valurn garde le menton haut et le sourire souple. Naïah, elle, conserve assez de distance pour que le prochain mot lui appartienne entièrement.","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_verdict","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_apres_feu_audace_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Au lieu de se crisper, Naïah choisit le jeu. Son sourire se fait plus fin, plus espiègle, exactement assez pour lui faire comprendre qu’elle a vu ce qu’il voulait masquer.","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_audace_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_audace_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Tu caches ça mieux que tes boutons de manchette. Presque. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_audace_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_audace_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Et pourtant, me voilà toujours impeccable. Tu vas devoir faire mieux que ça, petite ombre. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_audace_4","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_audace_4":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Il sourit avec fierté, comme s’il refusait de céder un pouce de terrain. Cela convient très bien à Naïah : un masque qui lutte est plus amusant qu’un masque qui tombe.","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_verdict","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_apres_feu_lucidite_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah remonte le souvenir comme une mécanique. Le “nous” qui lui a échappé, la dague arrêtée, le dernier anniversaire, la peur sous l’ironie : rien n’était accidentel.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_lucidite_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_lucidite_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Vous avez été fabriqués par des pères différents, mais forgés pour le même usage : devenir l’outil de quelqu’un d’autre. »","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_lucidite_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_lucidite_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Valurn ne perd pas son allure. Son sourire reste en place, mais son regard se précise. Naïah sait désormais quel type de vérité il respecte : celles qui découpent juste.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_verdict","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_apres_feu_resonance_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah laisse remonter le trouble sans le confondre avec une excuse. Comprendre n’efface rien. Mais nier l’écho qu’elle vient de sentir serait une autre forme de cécité.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_resonance_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_resonance_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Ne t’emballe pas. Je n’ai pas dit que j’allais te plaindre. J’ai juste vu où ça saigne. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_apres_feu_resonance_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_apres_feu_resonance_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Après le feu","bg":"c12g_key_naiah_valurn_panorama","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Voilà une délicatesse que je ne t’aurais pas attribuée. Comme quoi, les surprises existent encore. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_verdict","partyOutfits":true,"hideChars":true},
+
+      "c12g_choice_naiah_dernier_regard":{
+        "title":"Chapitre XII_G · Le Bal des Élus",
+        "sub":"Le dernier sourire",
+        "bg":"c12g_key_naiah_valurn_provocation",
+        "music":"music_c12g_valurn_memory",
+        "speaker":"Narrateur",
+        "text":"Le secret est maintenant entre eux, suspendu dans l’air du dôme. Avant de refermer l’échange, Naïah choisit la distance exacte qu’elle laisse entre elle et Valurn.",
+        "chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],
+        "choices":[
+          {"label":"Laisser une ambiguïté polie et parfaitement contrôlée","next":"c12g_naiah_dernier_regard_calme_1","effects":{"sangfroid":1},"note":"Naïah · Sang-froid · Aucun prérequis","flags":{"c12gNaiahLastLookControlled":true}},
+          {"label":"Lui rendre un sourire trop informé pour être innocent","next":"c12g_naiah_dernier_regard_audace_1","effects":{"audace":1},"requires":{"audace":52},"note":"Choix relationnel · Naïah · Audace · Prérequis 52","flags":{"c12gNaiahLastLookTeasing":true}},
+          {"label":"Nommer le théâtre qu’il érige autour de ses vérités","next":"c12g_naiah_dernier_regard_lucidite_1","effects":{"lucidite":1},"requires":{"lucidite":55},"note":"Choix relationnel · Naïah · Lucidité · Prérequis 55","flags":{"c12gNaiahNamedValurnTheatre":true}},
+          {"label":"Admettre la parenté de blessure sans baisser sa garde","next":"c12g_naiah_dernier_regard_resonance_1","effects":{"resonance":1},"requires":{"resonance":50},"note":"Choix relationnel · Naïah · Résonance · Prérequis 50","flags":{"c12gNaiahSharedWoundDistance":true}}
+        ],
+        "partyOutfits":true,
+        "hideChars":true
+      },
+      "c12g_naiah_dernier_regard_calme_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah choisit la retenue. Pas le silence vide : une retenue précise, assez opaque pour le laisser réfléchir, assez lisible pour lui rappeler qu’elle ne s’est pas perdue en route.","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_calme_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_calme_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Je vais garder le bon angle de cette histoire. C’est plus prudent pour tout le monde. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_calme_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_calme_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Une menace polie. J’apprécie l’effort. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_sortie","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_dernier_regard_audace_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah choisit le jeu frontal. Ses yeux brillent d’un éclat mutin ; elle sait désormais quelle corde fait vibrer Valurn, et le simple fait de le savoir l’amuse beaucoup trop.","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_audace_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_audace_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Rassure-toi, je ne dirai à personne que tu peux presque avoir un cœur. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_audace_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_audace_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Presque ? Tu me blesses. J’exige au moins un compliment complet quand on m’espionne aussi profondément. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_audace_4","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_audace_4":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Ne gâche pas tout. Tu étais presque élégant, pour une fois. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_sortie","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_dernier_regard_lucidite_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah choisit de nommer le mécanisme plutôt que la blessure. Si Valurn survit grâce au théâtre, alors autant lui montrer qu’elle distingue désormais la scène, les rideaux et la main qui tire dessus.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_lucidite_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_lucidite_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Tu transformes tout en spectacle pour choisir où les autres regardent. Le problème, c’est que j’ai fini par regarder derrière toi. »","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_lucidite_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_lucidite_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Et pourtant tu es restée jusqu’au dernier acte. Tu vois ? Mon théâtre a encore des mérites. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_sortie","partyOutfits":true,"hideChars":true},
+
+      "c12g_naiah_dernier_regard_resonance_1":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Narrateur","text":"Naïah ne renonce ni à sa méfiance ni à son mordant. Elle se contente d’admettre que certaines blessures se reconnaissent entre elles, même quand leurs porteurs préféreraient en rire.","chars":[["naiah","naiah_thinking","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_resonance_2","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_resonance_2":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Naïah","text":"« Je ne te confonds pas avec mes alliés. Mais je ne te confonds plus non plus avec tes grimaces. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_naiah_dernier_regard_resonance_3","partyOutfits":true,"hideChars":true},
+      "c12g_naiah_dernier_regard_resonance_3":{
+        "title":"Chapitre XII_G · Le Bal des Élus","sub":"Le dernier sourire","bg":"c12g_key_naiah_valurn_provocation","music":"music_c12g_valurn_memory","speaker":"Valurn","text":"« Voilà qui sonne presque comme du respect. Je suppose que je vais devoir faire semblant de le mériter. »","chars":[["naiah","naiah_smirk","left"],["valurn","valurn_charming","right"]],"next":"c12g_choice_naiah_sortie","partyOutfits":true,"hideChars":true}
+    };
+
+    Object.assign(S, EXTRA);
+    if(S.c12g_358) S.c12g_358.next='c12g_choice_naiah_apres_feu';
+    if(S.c12g_387) S.c12g_387.next='c12g_choice_naiah_dernier_regard';
+
+    window.__c12gV0277ExtraChoices=2;
+    console.info('[Sylvinia v0.278] XII_G : visuels Tia placés à partir de c12g_003, 2 choix Naïah / Valurn conservés.');
+  }catch(err){
+    console.error('[Sylvinia v0.277] Patch Tia / Naïah-Valurn non installé',err);
+  }
+})();
+</script>
+
 </body>
 </html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
@@ -46877,3 +47031,110 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
   }catch(err){console.error('[Sylvinia v0.276] Correctif musical XII_G non installé',err);}
 })();
 </script>
+
+
+<script id="v0278-c12g-preserve-existing-keyframes">
+/* v0.278 · XII_G : préserver les images clés existantes et déplacer les nouveaux visuels/choix dans les zones neutres. */
+(function installC12GPreserveExistingKeyframes(){
+  try{
+    if(window.__sylviniaV0278C12GPreserveExistingKeyframes) return;
+    window.__sylviniaV0278C12GPreserveExistingKeyframes = true;
+    if(typeof A==='undefined'||!A||typeof S==='undefined'||!S) return;
+
+    Object.assign(A,{
+      c12g_key_tia_couronnement_large:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_large.png',
+      c12g_key_tia_couronnement_profile:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_profile.png',
+      c12g_key_tia_couronnement_regard:'assets/images/keyscenes/chapter12/group/c12g_key_tia_couronnement_regard.png',
+      c12g_key_naiah_valurn_faceaface:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_faceaface.png',
+      c12g_key_naiah_valurn_panorama:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_panorama.png',
+      c12g_key_naiah_valurn_provocation:'assets/images/keyscenes/chapter12/group/c12g_key_naiah_valurn_provocation.png'
+    });
+
+    const setBg=(ids,bg,hide=true)=>ids.forEach(id=>{
+      if(!S[id]) return;
+      S[id].bg=bg;
+      if(hide) S[id].hideChars=true;
+      else delete S[id].hideChars;
+    });
+
+    /* Tia : c12g_001 et c12g_002 gardent leur image déjà installée. */
+    setBg(['c12g_001','c12g_002'],'c12g_key_tia_entree',true);
+    setBg(['c12g_003','c12g_004'],'c12g_key_tia_couronnement_large',true);
+    setBg(['c12g_005','c12g_006'],'c12g_key_tia_couronnement_profile',true);
+    setBg(['c12g_007','c12g_008'],'c12g_key_tia_couronnement_regard',true);
+
+    /* Naïah / Valurn : restauration stricte des images clés préexistantes. */
+    setBg(['c12g_358','c12g_359','c12g_360'],'c12g_key_fragments_souvenirs',true);
+    setBg(['c12g_383','c12g_384'],'c12g_key_valurn_fissure',true);
+    setBg(['c12g_387'],'c12g_key_naiah_detourne',true);
+
+    /* Les nouveaux visuels occupent uniquement les scènes qui utilisaient le décor générique du dôme. */
+    setBg(['c12g_361','c12g_362','c12g_363','c12g_364','c12g_365','c12g_366','c12g_367','c12g_368','c12g_369','c12g_370','c12g_371','c12g_372'],
+      'c12g_key_naiah_valurn_panorama',true);
+    setBg(['c12g_373','c12g_374','c12g_375','c12g_376','c12g_377','c12g_378','c12g_379','c12g_380','c12g_381','c12g_382'],
+      'c12g_key_naiah_valurn_faceaface',true);
+
+    /* Premier choix ajouté : placé au milieu du tunnel, après c12g_372, et non juste après le souvenir. */
+    if(S.c12g_358) S.c12g_358.next='c12g_choice_naiah_verdict';
+    if(S.c12g_372) S.c12g_372.next='c12g_choice_naiah_apres_feu';
+
+    if(S.c12g_choice_naiah_apres_feu){
+      Object.assign(S.c12g_choice_naiah_apres_feu,{
+        sub:'Sous le sourire',
+        bg:'c12g_key_naiah_valurn_faceaface',
+        text:'Naïah a reconnu la faille derrière le sourire de Valurn. Elle choisit maintenant comment la toucher sans lui laisser reprendre la scène.',
+        hideChars:true
+      });
+    }
+    Object.keys(S).forEach(id=>{
+      if(id.startsWith('c12g_naiah_apres_feu_')){
+        S[id].bg='c12g_key_naiah_valurn_faceaface';
+        S[id].hideChars=true;
+      }
+    });
+    ['c12g_naiah_apres_feu_calme_3','c12g_naiah_apres_feu_audace_4','c12g_naiah_apres_feu_lucidite_3','c12g_naiah_apres_feu_resonance_3'].forEach(id=>{
+      if(S[id]) S[id].next='c12g_373';
+    });
+
+    /* Deuxième choix ajouté : il répond directement à la question de Valurn en c12g_384. */
+    if(S.c12g_384) S.c12g_384.next='c12g_choice_naiah_dernier_regard';
+    if(S.c12g_choice_naiah_dernier_regard){
+      Object.assign(S.c12g_choice_naiah_dernier_regard,{
+        sub:'Ce qu’elle fera du secret',
+        bg:'c12g_key_naiah_valurn_provocation',
+        text:'Valurn lui demande ce qu’elle compte faire de ce qu’elle a découvert. Naïah choisit la réponse qu’elle lui laisse, entre vérité, jeu et prudence.',
+        hideChars:true
+      });
+    }
+    Object.keys(S).forEach(id=>{
+      if(id.startsWith('c12g_naiah_dernier_regard_')){
+        S[id].bg='c12g_key_naiah_valurn_provocation';
+        S[id].hideChars=true;
+      }
+    });
+    ['c12g_naiah_dernier_regard_calme_3','c12g_naiah_dernier_regard_audace_4','c12g_naiah_dernier_regard_lucidite_3','c12g_naiah_dernier_regard_resonance_3'].forEach(id=>{
+      if(S[id]) S[id].next='c12g_387';
+    });
+
+    /* Les anciennes lignes 385-386 sont remplacées par le choix et deviennent volontairement non parcourues. */
+    if(S.c12g_387) S.c12g_387.next='c12g_choice_naiah_sortie';
+
+    /* Ne pas habiller le choix de sortie avec les nouveaux visuels : il conserve le dôme d’origine. */
+    if(S.c12g_choice_naiah_sortie){
+      S.c12g_choice_naiah_sortie.bg='c12g_bg_dome_souvenirs';
+      delete S.c12g_choice_naiah_sortie.hideChars;
+    }
+    Object.keys(S).forEach(id=>{
+      if(id.startsWith('c12g_branch_naiah_sortie_')||id==='c12g_rejoin_naiah_sortie'){
+        S[id].bg='c12g_bg_dome_souvenirs';
+        delete S[id].hideChars;
+      }
+    });
+
+    console.info('[Sylvinia v0.278] Images clés existantes préservées. Nouveaux visuels déplacés sur les scènes neutres 361-382 et sur les deux choix ajoutés.');
+  }catch(err){
+    console.error('[Sylvinia v0.278] Correctif de placement des images clés non installé',err);
+  }
+})();
+</script>
+
