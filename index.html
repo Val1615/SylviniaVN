@@ -41531,153 +41531,6 @@ html body.x12iQteMode #gameCard #stats{
 </script>
 
 
-<!-- sylvinia-c13g-devfix-v0281 -->
-<style id="sylvinia-c13g-devfix-style-v0281">
-/* Harmonisation visuelle de la carte XII_G dans la bibliothèque */
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImageFrame,
-#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImageFrame{
-  padding:0!important;
-  overflow:hidden!important;
-  background:linear-gradient(180deg,rgba(16,18,26,.96),rgba(7,9,14,.98))!important;
-  border-color:rgba(82,55,25,.18)!important;
-}
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage,
-#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImage{
-  aspect-ratio:3/4!important;
-  object-fit:cover!important;
-  object-position:center 22%!important;
-  background:transparent!important;
-  border-radius:14px!important;
-  box-shadow:none!important;
-}
-#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg,
-#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterBookCoverImg{
-  object-fit:cover!important;
-  object-position:center 22%!important;
-  background:transparent!important;
-}
-@media(max-width:760px){
-  #chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage,
-  #chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImage{aspect-ratio:4/5!important;object-position:center 20%!important;}
-  #chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg,
-  #chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterBookCoverImg{object-position:center 20%!important;}
-}
-</style>
-<script id="sylvinia-c13g-devfix-v0281">
-(function(){
-  try{
-    const S = (typeof window!=='undefined' ? (window.SCENES||window.S) : null) || (typeof SCENES!=='undefined' ? SCENES : (typeof S!=='undefined' ? S : null));
-    if(!S) return;
-
-    function c13gHasAny(list){const f=(state&&state.flags)||{};return list.some(k=>f[k]===true);}
-    function c13gEval(){
-      const milestones=[
-        c13gHasAny(['remeriiSeSouviendraAssurance','remeriiSeSouviendraBaton','remeriiSeSouviendraMaitrise','remeriiSeSouviendraMedig','remeriiSeSouviendraPatience']),
-        c13gHasAny(['c10gAnchoredToRemerii','c10gRemeriiMemoryRawPain']),
-        c13gHasAny(['c11gPacteSilencieuxRemerii','remeriiPacteSilencieuxBal','hyleeRepairedTensionWithoutApology','c11gHyleeComprendProtectionRemerii','c11gRemeriiARecuSoutienSilencieux','futureRemeriiPrivateDialogue']),
-        c13gHasAny(['c12gHyleeDanceKeptDistance','c12gHyleeNamedFalseRescue','c12gHyleeReadRemeriiFear','c12gHyleeLinkAnsweredDuringDance'])
-      ];
-      const lien=((state&&state.stats&&Number(state.stats.lien))||0);
-      const count=milestones.filter(Boolean).length;
-      return {milestones,count,lien,secret:(count>=3&&lien>=45)};
-    }
-    window.c13gRemeriiEvaluation = window.c13gRemeriiEvaluation || c13gEval;
-
-    S.c13g_dev_gate={
-      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
-      sub:'Mode développeur · Variante Remerii',
-      bg:'c13g_bg_corridor',
-      music:'music_c12g_moonlight',
-      speaker:'Narrateur',
-      hideChars:true,
-      partyOutfits:false,
-      text:function(){
-        const r=(typeof window.c13gRemeriiEvaluation==='function'?window.c13gRemeriiEvaluation():c13gEval());
-        const m=r.milestones.map(v=>v?'✓':'✗').join(' · ');
-        return 'Mode développeur actif.\n\nÉvaluation actuelle de la route Remerii :\n- Lien : '+r.lien+'\n- Jalons validés : '+r.count+'/4\n- Détail : '+m+'\n\nTu peux laisser le système décider normalement, ou forcer la variante souhaitée pour test.';
-      },
-      choices:[
-        {label:'Suivre l’évaluation normale',next:'c13g_dev_gate_resolve',note:'Applique le verrou normal (Lien 45 + 3 jalons).'},
-        {label:'Forcer la variante intime',next:'c13g_secret_src_7197_1',note:'DEV · Ignore le verrou narratif',flags:{c13gRemeriiSceneUnlocked:true,c13gDevForcedVariant:'intime'}},
-        {label:'Forcer la variante soft',next:'c13g_soft_001',note:'DEV · Teste la version alternative',flags:{c13gRemeriiSceneUnlocked:false,c13gDevForcedVariant:'soft'}}
-      ]
-    };
-    S.c13g_dev_gate_resolve={
-      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
-      sub:'Mode développeur · Résolution',
-      bg:'c13g_bg_corridor',
-      music:'music_c12g_moonlight',
-      speaker:'Narrateur',
-      hideChars:true,
-      partyOutfits:false,
-      text:function(){
-        const r=(typeof window.c13gRemeriiEvaluation==='function'?window.c13gRemeriiEvaluation():c13gEval());
-        return r.secret ? 'Les conditions normales sont remplies. La scène intime s’ouvre.' : 'Les conditions normales ne sont pas remplies. La variante soft s’ouvre.';
-      },
-      choices:[
-        {label:'Continuer',next:'c13g_dev_gate_jump'}
-      ]
-    };
-    S.c13g_dev_gate_jump={
-      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
-      sub:'Mode développeur · Résolution',
-      bg:'c13g_bg_corridor',
-      music:'music_c12g_moonlight',
-      speaker:'Narrateur',
-      hideChars:true,
-      partyOutfits:false,
-      text:'...',
-      next:'c13g_soft_001'
-    };
-
-    if(typeof go==='function' && !window.__sylviniaC13GDevGateWrappedV0281){
-      window.__sylviniaC13GDevGateWrappedV0281 = true;
-      const previousGo = go;
-      window.go = go = function(next,opts={}){
-        if(next==='c13g_route_gate'){
-          const r=(typeof window.c13gRemeriiEvaluation==='function'?window.c13gRemeriiEvaluation():c13gEval());
-          state.flags={...(state.flags||{}),c13gRemeriiMilestones:r.count,c13gRemeriiGateLien:r.lien,c13gRemeriiSceneUnlocked:r.secret};
-          if(state&&state.devMode) return previousGo('c13g_dev_gate',opts);
-          return previousGo(r.secret ? 'c13g_secret_src_7197_1' : 'c13g_soft_001',opts);
-        }
-        if(next==='c13g_dev_gate_jump'){
-          const r=(typeof window.c13gRemeriiEvaluation==='function'?window.c13gRemeriiEvaluation():c13gEval());
-          state.flags={...(state.flags||{}),c13gRemeriiMilestones:r.count,c13gRemeriiGateLien:r.lien,c13gRemeriiSceneUnlocked:r.secret,c13gDevForcedVariant:'normal'};
-          return previousGo(r.secret ? 'c13g_secret_src_7197_1' : 'c13g_soft_001',opts);
-        }
-        return previousGo(next,opts);
-      };
-      try{ eval('go=window.go'); }catch(e){}
-    }
-
-    if(typeof renderChapterSelect==='function' && !window.__sylviniaChapterCardFixV0281){
-      window.__sylviniaChapterCardFixV0281 = true;
-      const prevRenderChapterSelect = renderChapterSelect;
-      window.renderChapterSelect = renderChapterSelect = function(){
-        const result = prevRenderChapterSelect.apply(this, arguments);
-        try{
-          const cards=[...document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')];
-          const keys=(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA))?CHAPTER_SELECT_DATA:[];
-          keys.forEach((entry, idx)=>{
-            const card=cards[idx];
-            if(!card||!entry||!entry.key) return;
-            if(entry.key==='ch12_g') card.classList.add('chapter12GCard');
-            if(entry.key==='ch13_g') card.classList.add('chapter13GCard');
-          });
-        }catch(e){}
-        return result;
-      };
-      try{ eval('renderChapterSelect=window.renderChapterSelect'); }catch(e){}
-    }
-
-    if(typeof renderChapterSelect==='function') setTimeout(()=>{try{renderChapterSelect();}catch(e){}},0);
-    console.info('[Sylvinia v0.281] Correctifs DEV/miniature XII_G installés.');
-  }catch(err){console.error('[Sylvinia v0.281] Correctifs DEV/miniature XII_G non installés',err);}
-})();
-</script>
-
-</body>
-</html>
 <!-- V29 · Visuel actuel : layout stable texte gauche / choix droite + stats hors grille -->
 <style id="sylviniaV29CurrentVisualDialogueRobustFix">
 /*
@@ -47510,3 +47363,174 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
   }catch(err){console.error('[Sylvinia v0.280] Chapitre XIII_G non installé',err);}
 })();
 </script>
+
+
+<!-- sylvinia-c13g-devfix-v0283-final -->
+<style id="sylvinia-c13g-devfix-style-v0283">
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImageFrame,
+#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImageFrame{
+  padding:0!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(16,18,26,.96),rgba(7,9,14,.98))!important;
+  border-color:rgba(82,55,25,.18)!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImage{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:3/4!important;
+  object-fit:cover!important;
+  object-position:center 22%!important;
+  background:transparent!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg,
+#chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterBookCoverImg{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center 22%!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  #chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterOpenImage,
+  #chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterOpenImage{
+    aspect-ratio:4/5!important;
+    object-position:center 20%!important;
+  }
+  #chapterSelectGrid .chapterSelectCard.chapter12GCard .chapterBookCoverImg,
+  #chapterSelectGrid .chapterSelectCard.chapter13GCard .chapterBookCoverImg{
+    object-position:center 20%!important;
+  }
+}
+</style>
+<script id="sylvinia-c13g-devfix-v0283-final">
+(function(){
+  try{
+    if(typeof S==='undefined') throw new Error('Registre des scènes indisponible');
+
+    function hasAnyC13GFlag(list){
+      const flags=(state&&state.flags)||{};
+      return list.some(key=>flags[key]===true);
+    }
+
+    function evaluateC13GRemerii(){
+      const flags=(state&&state.flags)||{};
+      const milestones=[
+        hasAnyC13GFlag(['remeriiSeSouviendraAssurance','remeriiSeSouviendraBaton','remeriiSeSouviendraMaitrise','remeriiSeSouviendraMedig','remeriiSeSouviendraPatience']),
+        hasAnyC13GFlag(['c10gAnchoredToRemerii','c10gRemeriiMemoryRawPain']),
+        hasAnyC13GFlag(['c11gPacteSilencieuxRemerii','remeriiPacteSilencieuxBal','hyleeRepairedTensionWithoutApology','c11gHyleeComprendProtectionRemerii','c11gRemeriiARecuSoutienSilencieux','futureRemeriiPrivateDialogue']),
+        hasAnyC13GFlag(['c12gHyleeDanceKeptDistance','c12gHyleeNamedFalseRescue','c12gHyleeReadRemeriiFear','c12gHyleeLinkAnsweredDuringDance'])
+      ];
+      const lien=Number((state&&state.stats&&state.stats.lien)||0);
+      const count=milestones.filter(Boolean).length;
+      const group=flags.chapter10Route==='group'||flags.chapter11GRoute===true||flags.chapter12GComplete===true||flags.chapter13GRoute===true;
+      return {group,lien,count,milestones,secret:group&&lien>=45&&count>=3};
+    }
+
+    window.c13gRemeriiEvaluation=evaluateC13GRemerii;
+
+    S.c13g_dev_gate={
+      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
+      sub:'Mode développeur · Variante Remerii',
+      bg:'c13g_bg_corridor',
+      music:'music_c12g_moonlight',
+      speaker:'Narrateur',
+      hideChars:true,
+      partyOutfits:false,
+      text:function(){
+        const result=evaluateC13GRemerii();
+        return 'Mode développeur actif.\n\nÉvaluation actuelle :\n- Route Groupe : '+(result.group?'oui':'non')+'\n- Lien Remerii : '+result.lien+'\n- Jalons relationnels : '+result.count+'/4\n\nChoisis la variante à tester, ou laisse le verrou normal décider.';
+      },
+      choices:[
+        {label:'Suivre l’évaluation normale',next:'c13g_dev_normal_resolve',note:'Lien 45 + au moins 3 jalons Remerii sur 4.'},
+        {label:'Forcer la variante intime',next:'c13g_secret_src_7197_1',note:'DEV · Ignore les prérequis de la scène secrète',flags:{c13gRemeriiSceneUnlocked:true,c13gDevForcedVariant:'intime'}},
+        {label:'Forcer la variante soft',next:'c13g_soft_001',note:'DEV · Ouvre directement la scène alternative',flags:{c13gRemeriiSceneUnlocked:false,c13gDevForcedVariant:'soft'}}
+      ]
+    };
+
+    S.c13g_dev_normal_resolve={
+      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
+      sub:'Mode développeur · Évaluation normale',
+      bg:'c13g_bg_corridor',
+      music:'music_c12g_moonlight',
+      speaker:'Narrateur',
+      hideChars:true,
+      partyOutfits:false,
+      text:function(){
+        const result=evaluateC13GRemerii();
+        return result.secret
+          ? 'Les conditions normales sont remplies : la variante intime va s’ouvrir.'
+          : 'Les conditions normales ne sont pas remplies : la variante soft va s’ouvrir.';
+      },
+      choices:[{label:'Continuer',next:'c13g_dev_normal_jump'}]
+    };
+
+    S.c13g_dev_normal_jump={
+      title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',
+      sub:'Mode développeur · Redirection',
+      bg:'c13g_bg_corridor',
+      music:'music_c12g_moonlight',
+      speaker:'Narrateur',
+      hideChars:true,
+      partyOutfits:false,
+      text:'La route relationnelle est appliquée.',
+      next:'c13g_soft_001'
+    };
+
+    /* Placé après le wrapper original XIII_G : ce wrapper devient le dernier et reçoit donc la priorité. */
+    if(typeof go==='function'&&!window.__sylviniaC13GDevGateWrappedV0283){
+      window.__sylviniaC13GDevGateWrappedV0283=true;
+      const previousGo=go;
+      window.go=go=function(next,opts={}){
+        if(next==='c13g_route_gate'){
+          const result=evaluateC13GRemerii();
+          state.flags={...(state.flags||{}),c13gRemeriiMilestones:result.count,c13gRemeriiGateLien:result.lien,c13gRemeriiSceneUnlocked:result.secret};
+          if(state&&state.devMode===true) return previousGo('c13g_dev_gate',opts);
+          return previousGo(result.secret?'c13g_secret_src_7197_1':'c13g_soft_001',opts);
+        }
+        if(next==='c13g_dev_normal_jump'){
+          const result=evaluateC13GRemerii();
+          state.flags={...(state.flags||{}),c13gRemeriiMilestones:result.count,c13gRemeriiGateLien:result.lien,c13gRemeriiSceneUnlocked:result.secret,c13gDevForcedVariant:'normal'};
+          return previousGo(result.secret?'c13g_secret_src_7197_1':'c13g_soft_001',opts);
+        }
+        return previousGo(next,opts);
+      };
+      try{eval('go=window.go');}catch(error){}
+    }
+
+    function tagLateChapterCards(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA)) return;
+      const cards=[...document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')];
+      CHAPTER_SELECT_DATA.forEach((entry,index)=>{
+        const card=cards[index];
+        if(!card||!entry) return;
+        if(entry.key==='ch12_g') card.classList.add('chapter12GCard');
+        if(entry.key==='ch13_g') card.classList.add('chapter13GCard');
+      });
+    }
+
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaChapterCardFixV0283){
+      window.__sylviniaChapterCardFixV0283=true;
+      const previousRenderChapterSelect=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function(){
+        const result=previousRenderChapterSelect.apply(this,arguments);
+        tagLateChapterCards();
+        return result;
+      };
+      try{eval('renderChapterSelect=window.renderChapterSelect');}catch(error){}
+    }
+
+    setTimeout(tagLateChapterCards,0);
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.283 · Correctif DEV XIII_G';
+    console.info('[Sylvinia v0.283] Correctif final DEV XIII_G et miniature XII_G installé.');
+  }catch(error){
+    console.error('[Sylvinia v0.283] Correctif final non installé',error);
+  }
+})();
+</script>
+
+</body>
+</html>
