@@ -47978,5 +47978,816 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-soft-bed-v0293 -->
+<script id="sylvinia-c13g-soft-bed-v0293">
+/* --- v0.293 : scène classique XIII_G réécrite comme conversation calme au lit --- */
+(()=>{
+  try{
+    if(typeof S==='undefined') throw new Error('Registre des scènes indisponible');
+
+    const chapterTitle='Chapitre XIII_G · Le Bal des Élus : Dénouement';
+    const bedBg='c13g_bg_chambre';
+    const bedMusic='music_c12g_moonlight';
+    const bedBase={title:chapterTitle,bg:bedBg,music:bedMusic,chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false};
+    const scene=(fields)=>Object.assign({},bedBase,fields);
+
+    // Les choix de souvenirs peuvent être ouverts par n’importe lequel des drapeaux listés.
+    if(typeof choiceAvailable==='function'&&!window.__sylviniaRequiresAnyFlagsChoiceGuard){
+      window.__sylviniaRequiresAnyFlagsChoiceGuard=true;
+      const previousChoiceAvailable=choiceAvailable;
+      window.choiceAvailable=choiceAvailable=function(ch){
+        if(!previousChoiceAvailable(ch)) return false;
+        if(state&&state.devMode) return true;
+        if(ch&&Array.isArray(ch.requiresAnyFlags)&&ch.requiresAnyFlags.length){
+          const flags=(state&&state.flags)||{};
+          return ch.requiresAnyFlags.some(key=>flags[key]===true);
+        }
+        return true;
+      };
+      if(typeof choiceNote==='function'){
+        const previousChoiceNote=choiceNote;
+        window.choiceNote=choiceNote=function(ch){
+          let base=previousChoiceNote(ch)||'';
+          if(ch&&Array.isArray(ch.requiresAnyFlags)&&ch.requiresAnyFlags.length&&!(state&&state.devMode)){
+            base+=(base?' · ':'')+'Souvenir de partie requis';
+          }
+          return base;
+        };
+      }
+    }
+
+    const f=()=>((state&&state.flags)||{});
+
+    S.c13g_soft_001={
+      title:chapterTitle,sub:'Une nuit sans rôle',bg:'c13g_bg_corridor',music:bedMusic,
+      speaker:'Narrateur',partyOutfits:true,
+      chars:[['hylee','hylee2_thinking','left'],['remerii','remerii_soft','right']],
+      text:function(){
+        const flags=f();
+        if(flags.c13gHyleeAskedNightPlainly) return 'Le majordome indique deux chambres voisines. Hylee rassemble son courage et formule sa demande sans la déguiser : elle ne veut pas encore quitter Remerii. La phrase tremble un peu, mais elle reste entière.';
+        if(flags.c13gHyleeRefusedClosedDoor) return 'Le majordome n’a pas fini de désigner les portes qu’Hylee refuse déjà de laisser le couloir décider pour elles. Elle se tourne vers Remerii et lui demande de rester ensemble encore un moment, avec une fermeté qui surprend jusqu’à sa propre voix.';
+        if(flags.c13gHyleeReadRemeriiWaiting) return 'Remerii ne regarde pas sa porte. Elle attend, immobile, en laissant à Hylee l’espace de choisir. Hylee reconnaît enfin cette retenue pour ce qu’elle est et lui demande de rester avec elle.';
+        if(flags.c13gHyleeFollowedRemeriiPresence) return 'Dans le couloir, la magie de Remerii demeure calme et ouverte, sans tirer Hylee vers elle. Hylee suit cette présence jusqu’aux mots les plus simples : elle veut prolonger la nuit à ses côtés.';
+        return 'Le majordome indique deux chambres voisines. Hylee laisse passer une respiration, puis demande à Remerii de rester encore un moment. Ce n’est ni une leçon ni une urgence. Seulement une demande qu’elle choisit enfin de prononcer.';
+      },
+      next:'c13g_soft_002'
+    };
+
+    S.c13g_soft_002={
+      title:chapterTitle,sub:'Une nuit sans rôle',bg:'c13g_bg_corridor',music:bedMusic,
+      speaker:'Remerii',partyOutfits:true,
+      chars:[['hylee','hylee2_surprised','left'],['remerii','remerii_soft','right']],
+      text:'Reste. Pas pour une leçon, ni parce que je crois devoir veiller sur toi. Reste parce que j’en ai envie aussi.',
+      direction:'La réponse vient sans détour. Remerii ouvre sa porte et attend qu’Hylee entre la première.',
+      next:'c13g_soft_003'
+    };
+
+    S.c13g_soft_003=scene({
+      sub:'La frontière du matelas',speaker:'Narrateur',
+      text:'Quelques minutes plus tard, les chaussures ont été abandonnées près du fauteuil, les bijoux reposent sur la table et le bal ne survit plus que dans leurs cheveux défaits. Hylee et Remerii se glissent sous la grande couverture, chacune sur son bord du lit. Entre elles demeure une bande de drap intacte, assez large pour accueillir une négociation impériale.',
+      next:'c13g_soft_004'
+    });
+
+    S.c13g_soft_004=scene({
+      sub:'La frontière du matelas',speaker:'Remerii',
+      text:'Je constate que le palais a prévu une zone neutre.',
+      next:'c13g_soft_005'
+    });
+
+    S.c13g_soft_005=scene({
+      sub:'La frontière du matelas',speaker:'Hylee',
+      text:'Saidin pourrait s’y installer avec trois énigmes et encore avoir de la place.',
+      next:'c13g_soft_006'
+    });
+
+    S.c13g_soft_006=scene({
+      sub:'La frontière du matelas',speaker:'Remerii',
+      text:'Alors réduisons-la avant qu’il ne se matérialise.',
+      direction:'Le rire d’Hylee est discret, mais il suffit à rendre le lit moins solennel.',
+      next:'c13g_soft_choice_silence'
+    });
+
+    S.c13g_soft_choice_silence=scene({
+      sub:'Comment abolir la frontière',speaker:'Narrateur',
+      text:'La distance entre elles n’est plus une blessure. Seulement une habitude encore un peu trop bien dressée. Hylee choisit comment la rendre moins sérieuse.',
+      choices:[
+        {label:'Déclarer une trêve jusqu’au lever du soleil',next:'c13g_soft_silence_calme_1',effects:{sangfroid:1},note:'Hylee · Sang-froid · Aucun prérequis',flags:{c13gSoftDistanceNamed:true,c13gSoftTruceNamed:true}},
+        {label:'Voler un coin de la couverture pour abolir la frontière',next:'c13g_soft_silence_audace_1',effects:{audace:1},note:'Hylee · Audace · Aucun prérequis',flags:{c13gSoftHonestyDemanded:true,c13gSoftBlanketBorderCrossed:true}},
+        {label:'Faire remarquer que Remerii s’est placée au bord pour lui laisser une sortie',next:'c13g_soft_silence_lucidite_1',effects:{lucidite:1},note:'Hylee · Lucidité · Aucun prérequis',flags:{c13gSoftProtectionPatternSeen:true,c13gSoftExitPatternSeen:true}},
+        {label:'Glisser sa main dans l’espace entre elles et laisser leurs magies se calmer',next:'c13g_soft_silence_resonance_1',effects:{resonance:1},note:'Hylee · Résonance · Aucun prérequis',flags:{c13gSoftAbandonmentMagicNamed:true,c13gSoftMagicSettledInBed:true}}
+      ]
+    });
+
+    S.c13g_soft_silence_calme_1=scene({
+      sub:'Une trêve sous les couvertures',speaker:'Hylee',
+      text:'Trêve jusqu’au lever du soleil. Aucun interrogatoire, aucun sacrifice héroïque et aucune décision prise à la place de l’autre.',
+      next:'c13g_soft_silence_calme_2'
+    });
+    S.c13g_soft_silence_calme_2=scene({
+      sub:'Une trêve sous les couvertures',speaker:'Remerii',
+      text:'Puis-je au moins contester la disposition des oreillers ?',
+      next:'c13g_soft_silence_calme_3'
+    });
+    S.c13g_soft_silence_calme_3=scene({
+      sub:'Une trêve sous les couvertures',speaker:'Hylee',
+      text:'Une concession. N’en abuse pas.',
+      direction:'Remerii déplace un oreiller avec le sérieux d’une négociatrice de cour. Hylee mord sa lèvre pour ne pas rire trop fort.',
+      next:'c13g_soft_rejoin_1'
+    });
+
+    S.c13g_soft_silence_audace_1=scene({
+      sub:'Une frontière de couverture',speaker:'Narrateur',
+      text:'Hylee attrape le bord de la couverture et tire juste assez pour forcer Remerii à se rapprocher.',
+      next:'c13g_soft_silence_audace_2'
+    });
+    S.c13g_soft_silence_audace_2=scene({
+      sub:'Une frontière de couverture',speaker:'Hylee',
+      text:'Frontière abolie.',
+      next:'c13g_soft_silence_audace_3'
+    });
+    S.c13g_soft_silence_audace_3=scene({
+      sub:'Une frontière de couverture',speaker:'Remerii',
+      text:'Une déclaration de guerre dans mon propre lit ?',
+      next:'c13g_soft_silence_audace_4'
+    });
+    S.c13g_soft_silence_audace_4=scene({
+      sub:'Une frontière de couverture',speaker:'Hylee',
+      text:'Tu as parlé de rester. Pas de zone démilitarisée.',
+      next:'c13g_soft_silence_audace_5'
+    });
+    S.c13g_soft_silence_audace_5=scene({
+      sub:'Une frontière de couverture',speaker:'Remerii',
+      text:'Tu as passé trop de temps avec Valurn.',
+      next:'c13g_soft_silence_audace_6'
+    });
+    S.c13g_soft_silence_audace_6=scene({
+      sub:'Une frontière de couverture',speaker:'Hylee',
+      text:'J’avais peur que tu dises Naïah.',
+      next:'c13g_soft_silence_audace_7'
+    });
+    S.c13g_soft_silence_audace_7=scene({
+      sub:'Une frontière de couverture',speaker:'Remerii',
+      text:'J’essayais de ne pas nous effrayer toutes les deux.',
+      direction:'Cette fois, elles rient ensemble.',
+      next:'c13g_soft_rejoin_1'
+    });
+
+    S.c13g_soft_silence_lucidite_1=scene({
+      sub:'La sortie laissée ouverte',speaker:'Hylee',
+      text:'Tu t’es mise au bord pour que je ne me sente jamais coincée.',
+      next:'c13g_soft_silence_lucidite_2'
+    });
+    S.c13g_soft_silence_lucidite_2=scene({
+      sub:'La sortie laissée ouverte',speaker:'Remerii',
+      text:'Je voulais te laisser une sortie.',
+      next:'c13g_soft_silence_lucidite_3'
+    });
+    S.c13g_soft_silence_lucidite_3=scene({
+      sub:'La sortie laissée ouverte',speaker:'Hylee',
+      text:'J’en ai une. Et je choisis de ne pas transformer tout le matelas en forteresse.',
+      next:'c13g_soft_silence_lucidite_4'
+    });
+    S.c13g_soft_silence_lucidite_4=scene({
+      sub:'La sortie laissée ouverte',speaker:'Narrateur',
+      text:'Remerii se rapproche d’une largeur de main. Pas davantage. Hylee comble elle-même la moitié de l’espace restant.',
+      next:'c13g_soft_silence_lucidite_5'
+    });
+    S.c13g_soft_silence_lucidite_5=scene({
+      sub:'La sortie laissée ouverte',speaker:'Remerii',
+      text:'Une correction stratégiquement irréprochable.',
+      next:'c13g_soft_rejoin_1'
+    });
+
+    S.c13g_soft_silence_resonance_1=scene({
+      sub:'Le calme entre leurs mains',speaker:'Narrateur',
+      text:'Hylee glisse sa main dans l’espace entre elles. Un souffle froid ride le drap, puis s’apaise lorsque les doigts de Remerii rejoignent les siens.',
+      next:'c13g_soft_silence_resonance_2'
+    });
+    S.c13g_soft_silence_resonance_2=scene({
+      sub:'Le calme entre leurs mains',speaker:'Remerii',
+      text:'Ta magie semble approuver la literie impériale.',
+      next:'c13g_soft_silence_resonance_3'
+    });
+    S.c13g_soft_silence_resonance_3=scene({
+      sub:'Le calme entre leurs mains',speaker:'Hylee',
+      text:'Elle approuve surtout que tu ne donnes pas de cours.',
+      next:'c13g_soft_silence_resonance_4'
+    });
+    S.c13g_soft_silence_resonance_4=scene({
+      sub:'Le calme entre leurs mains',speaker:'Remerii',
+      text:'Alors elle manque manifestement de discipline.',
+      next:'c13g_soft_silence_resonance_5'
+    });
+    S.c13g_soft_silence_resonance_5=scene({
+      sub:'Le calme entre leurs mains',speaker:'Hylee',
+      text:'Elle a appris avec moi.',
+      direction:'Le sourire de Remerii se sent jusque dans la pression légère de ses doigts.',
+      next:'c13g_soft_rejoin_1'
+    });
+
+    S.c13g_soft_rejoin_1=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Narrateur',
+      text:'La frontière du matelas n’est plus qu’un pli dans le drap. Elles parlent du discours de Tia, du conseiller masqué et de la bataille dans deux jours. Puis les phrases rétrécissent. Le bal devient un souvenir ridicule, la guerre reste au pied du lit et, pour quelques minutes, aucune d’elles n’a besoin de sauver qui que ce soit.',
+      next:'c13g_soft_rejoin_2'
+    });
+    S.c13g_soft_rejoin_2=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Remerii',
+      text:'Nous devrions dormir. Demain exigera que nous soyons sérieuses.',
+      next:'c13g_soft_rejoin_3'
+    });
+    S.c13g_soft_rejoin_3=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Hylee',
+      text:'Nous sommes sérieuses depuis des semaines. Je réclame dix minutes d’incompétence.',
+      next:'c13g_soft_rejoin_4'
+    });
+    S.c13g_soft_rejoin_4=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Remerii',
+      text:'Dans quel domaine ?',
+      next:'c13g_soft_rejoin_5'
+    });
+    S.c13g_soft_rejoin_5=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Hylee',
+      text:'Le repos.',
+      next:'c13g_soft_rejoin_6'
+    });
+    S.c13g_soft_rejoin_6=scene({
+      sub:'Dix minutes d’incompétence',speaker:'Remerii',
+      text:'Enfin une discipline dans laquelle je peux échouer avec élégance.',
+      direction:'Hylee tourne la tête vers elle, amusée. Plusieurs souvenirs attendent derrière ce sourire.',
+      next:'c13g_soft_choice_memory'
+    });
+
+    S.c13g_soft_choice_memory=scene({
+      sub:'De quoi rire avant de dormir',speaker:'Narrateur',
+      text:'Hylee choisit le souvenir qu’elle veut déposer entre elles. Certains ne sont disponibles que si cette version de leur histoire les a réellement vécus.',
+      choices:[
+        {label:'Lui demander si elle a répété sa danse devant un miroir',next:'c13g_soft_memory_dance_1',note:'Toujours disponible · Souvenir du bal'},
+        {label:'Ressasser la première fois où Remerii l’a regardée comme une véritable mage',next:'c13g_soft_memory_firstmage_1',note:'Souvenir des premiers chapitres',requiresAnyFlags:['remeriiSeSouviendraAssurance','remeriiSeSouviendraBaton','remeriiSeSouviendraMaitrise','remeriiSeSouviendraMedig','remeriiSeSouviendraPatience'],flags:{c13gSoftRememberedFirstMage:true}},
+        {label:'Revenir sur leur talent catastrophique pour parler quand tout brûle',next:'c13g_soft_memory_prison_1',note:'Souvenir d’Akuhn’Nabad et du pacte du bal',requiresAnyFlags:['c10gAnchoredToRemerii','c10gRemeriiMemoryRawPain','c10gRemeriiSawHurt','c11gPacteSilencieuxRemerii','remeriiPacteSilencieuxBal','hyleeRepairedTensionWithoutApology','c11gHyleeComprendProtectionRemerii','c11gRemeriiARecuSoutienSilencieux','futureRemeriiPrivateDialogue'],flags:{c13gSoftRevisitedPrison:true}},
+        {label:'Lui demander ce qu’elle pensait réellement en lui offrant sa main pendant la danse',next:'c13g_soft_memory_hand_1',note:'Souvenir du chapitre XII_G',requiresAnyFlags:['c12gHyleeDanceKeptDistance','c12gHyleeNamedFalseRescue','c12gHyleeReadRemeriiFear','c12gHyleeLinkAnsweredDuringDance'],flags:{c13gSoftRevisitedDanceHand:true}}
+      ]
+    });
+
+    S.c13g_soft_memory_dance_1=scene({
+      sub:'Une archimage sur la piste',speaker:'Hylee',
+      text:'Dis-moi la vérité. Tu avais répété cette danse devant un miroir ?',
+      next:'c13g_soft_memory_dance_2'
+    });
+    S.c13g_soft_memory_dance_2=scene({
+      sub:'Une archimage sur la piste',speaker:'Remerii',
+      text:'Non. Les miroirs ne m’ont rien fait qui mérite un tel traitement.',
+      next:'c13g_soft_memory_dance_3'
+    });
+    S.c13g_soft_memory_dance_3=scene({
+      sub:'Une archimage sur la piste',speaker:'Hylee',
+      text:'Tu danses comme tu lances un rituel. Très droite, très précise, et légèrement vexée quand le sol ne coopère pas.',
+      next:'c13g_soft_memory_dance_4'
+    });
+    S.c13g_soft_memory_dance_4=scene({
+      sub:'Une archimage sur la piste',speaker:'Remerii',
+      text:'J’ignorais que le sol avait choisi ton camp.',
+      next:'c13g_soft_after_memory_1'
+    });
+
+    S.c13g_soft_memory_firstmage_1=scene({
+      sub:'La mage qu’elle devenait',speaker:'Hylee',
+      text:function(){
+        const flags=f();
+        if(flags.remeriiSeSouviendraAssurance) return 'Je me souviens de la boutique. Tu as dit que je ressemblais enfin à la mage que j’étais en train de devenir. J’ai fait semblant de croire que la robe n’y était pour rien.';
+        if(flags.remeriiSeSouviendraBaton) return 'Je me souviens du marchand qui doutait que je puisse manier ce bâton. Tu as répondu : « Je ne pense pas. J’en suis sûre. » J’ai porté cette phrase plus longtemps que le bâton.';
+        if(flags.remeriiSeSouviendraMaitrise) return 'Je me souviens de la clairière. Tu avais cette façon insupportablement calme d’expliquer que tu testais ma survie et non mon obéissance.';
+        if(flags.remeriiSeSouviendraMedig) return 'Je me souviens du feu de camp, quand tu as expliqué que les chouettes voyageaient entre les mondes. Tu avais réussi à rendre Medig inquiétante et rassurante dans la même phrase.';
+        return 'Je me souviens du soir où je t’ai demandé pourquoi tu m’aidais. Tu n’étais pas prête à tout dire, et pour une fois je n’ai pas forcé la porte.';
+      },
+      next:'c13g_soft_memory_firstmage_2'
+    });
+    S.c13g_soft_memory_firstmage_2=scene({
+      sub:'La mage qu’elle devenait',speaker:'Remerii',
+      text:function(){
+        const flags=f();
+        if(flags.remeriiSeSouviendraAssurance) return 'La robe n’y était pour rien. Tu étais déjà cette mage. Il te manquait seulement un miroir moins cruel que ceux de ton passé.';
+        if(flags.remeriiSeSouviendraBaton) return 'J’étais sûre de toi. J’étais aussi, je le reconnais, d’une assurance presque offensante.';
+        if(flags.remeriiSeSouviendraMaitrise) return 'L’explication était exacte. La méthode, elle, méritait d’être jetée dans le premier ravin disponible.';
+        if(flags.remeriiSeSouviendraMedig) return 'Je sous-estimais surtout sa capacité à entrer sans invitation et à juger tout le monde avec son bec.';
+        return 'Tu m’as offert un silence qui ne ressemblait pas à un abandon. Je ne l’ai pas oublié.';
+      },
+      next:'c13g_soft_memory_firstmage_3'
+    });
+    S.c13g_soft_memory_firstmage_3=scene({
+      sub:'La mage qu’elle devenait',speaker:'Narrateur',
+      text:'Hylee laisse le souvenir reposer entre elles. Il n’a plus la forme d’une dette envers son mentor. Il appartient désormais à deux femmes capables d’en rire, de le corriger ou de le garder sans s’y enfermer.',
+      next:'c13g_soft_after_memory_1'
+    });
+
+    S.c13g_soft_memory_prison_1=scene({
+      sub:'Leur catastrophique talent pour parler',speaker:'Hylee',
+      text:function(){
+        const flags=f();
+        if(flags.c10gRemeriiMemoryRawPain||flags.c10gRemeriiSawHurt) return 'Dans les geôles, quand tu as dit que je n’étais que ton apprentie… je croyais vraiment être davantage pour toi.';
+        if(flags.c10gAnchoredToRemerii) return 'Dans les geôles, j’ai cherché ton regard pour ne pas tomber. Même fâchée, même perdue, c’est encore toi que j’ai cherchée.';
+        if(flags.c11gPacteSilencieuxRemerii||flags.remeriiPacteSilencieuxBal) return 'Nous avons conclu un pacte entier sans prononcer une seule phrase. C’était très élégant. Et un peu lâche.';
+        if(flags.c11gRemeriiARecuSoutienSilencieux) return 'À la cour, je suis simplement entrée dans ton champ de vision. Je ne savais pas si tu l’avais remarqué.';
+        return 'À la cour, j’ai compris que ta froideur servait parfois de mur devant moi. Ce n’était pas toujours une manière de me tenir loin.';
+      },
+      next:'c13g_soft_memory_prison_2'
+    });
+    S.c13g_soft_memory_prison_2=scene({
+      sub:'Leur catastrophique talent pour parler',speaker:'Remerii',
+      text:function(){
+        const flags=f();
+        if(flags.c10gRemeriiMemoryRawPain||flags.c10gRemeriiSawHurt) return 'Tu l’étais déjà. J’ai choisi la phrase la plus sûre pour la situation, et la plus cruelle pour toi. Je suis désolée.';
+        if(flags.c10gAnchoredToRemerii) return 'Je te cherchais aussi. J’aurais simplement dû cesser de prétendre que regarder suffisait à répondre.';
+        if(flags.c11gPacteSilencieuxRemerii||flags.remeriiPacteSilencieuxBal) return 'Efficace et lâche ne sont malheureusement pas incompatibles. Notre talent pour le silence mériterait une surveillance.';
+        if(flags.c11gRemeriiARecuSoutienSilencieux) return 'Je l’ai remarqué. Tu étais la seule présence dans cette salle qui ne me demandait rien pour rester.';
+        return 'Non. Mais j’ai trop souvent confondu te protéger avec choisir la forme de la distance à ta place.';
+      },
+      next:'c13g_soft_memory_prison_3'
+    });
+    S.c13g_soft_memory_prison_3=scene({
+      sub:'Leur catastrophique talent pour parler',speaker:'Hylee',
+      text:function(){
+        const flags=f();
+        if(flags.c10gRemeriiMemoryRawPain||flags.c10gRemeriiSawHurt) return 'Tu me dois encore une phrase moins désastreuse.';
+        if(flags.c10gAnchoredToRemerii) return 'Alors la prochaine fois, réponds avant qu’une prison entière nous tombe dessus.';
+        if(flags.c11gPacteSilencieuxRemerii||flags.remeriiPacteSilencieuxBal) return 'Je propose que notre prochain pacte contienne au moins trois mots.';
+        if(flags.c11gRemeriiARecuSoutienSilencieux) return 'C’était l’idée. Et aussi éviter de gifler un noble, mais surtout l’idée.';
+        return 'Tu progresses. Tu viens de le reconnaître sans attendre une attaque démoniaque.';
+      },
+      next:'c13g_soft_memory_prison_4'
+    });
+    S.c13g_soft_memory_prison_4=scene({
+      sub:'Leur catastrophique talent pour parler',speaker:'Remerii',
+      text:function(){
+        const flags=f();
+        if(flags.c10gRemeriiMemoryRawPain||flags.c10gRemeriiSawHurt) return 'J’en ai préparé douze. Onze étaient pires.';
+        if(flags.c10gAnchoredToRemerii) return 'Je tâcherai d’exiger moins de barreaux pour devenir éloquente.';
+        if(flags.c11gPacteSilencieuxRemerii||flags.remeriiPacteSilencieuxBal) return 'Trois mots. Voilà une ambition dangereusement audacieuse.';
+        if(flags.c11gRemeriiARecuSoutienSilencieux) return 'Ton sens des priorités demeure admirablement humain.';
+        return 'Ne t’habitue pas trop vite à cette performance.';
+      },
+      next:'c13g_soft_after_memory_1'
+    });
+
+    S.c13g_soft_memory_hand_1=scene({
+      sub:'La main offerte pendant la danse',speaker:'Hylee',
+      text:'Quand tu m’as tendu la main sur la piste… qu’est-ce que tu pensais réellement ?',
+      next:'c13g_soft_memory_hand_2'
+    });
+    S.c13g_soft_memory_hand_2=scene({
+      sub:'La main offerte pendant la danse',speaker:'Remerii',
+      text:function(){
+        const flags=f();
+        if(flags.c12gHyleeDanceKeptDistance) return 'Que la distance que tu gardais était juste. Je voulais danser avec toi, pas utiliser la musique pour effacer ce qui restait entre nous.';
+        if(flags.c12gHyleeNamedFalseRescue) return 'Que tu allais probablement me rappeler que tu n’avais pas besoin d’être sauvée. Et peut-être me marcher sur le pied pour rendre la leçon mémorable.';
+        if(flags.c12gHyleeReadRemeriiFear) return 'Que tu pouvais encore reculer. Je m’y préparais déjà, comme si anticiper ton départ le rendait moins effrayant.';
+        return 'Que quelque chose avait répondu entre nos magies avant même que nos mains se touchent. Je ne savais pas si je l’avais réellement senti.';
+      },
+      next:'c13g_soft_memory_hand_3'
+    });
+    S.c13g_soft_memory_hand_3=scene({
+      sub:'La main offerte pendant la danse',speaker:'Hylee',
+      text:function(){
+        const flags=f();
+        if(flags.c12gHyleeDanceKeptDistance) return 'Merci de ne pas avoir pris ma distance pour un refus.';
+        if(flags.c12gHyleeNamedFalseRescue) return 'Je n’ai pas marché sur ton pied. J’ai envisagé l’option pour des raisons pédagogiques.';
+        if(flags.c12gHyleeReadRemeriiFear) return 'Tu peux avoir peur que je parte. Mais tu n’as pas besoin de préparer mon absence avant moi.';
+        return 'Je l’ai senti aussi. Ce soir, je préfère ne pas lui donner un nom plus grand que nous.';
+      },
+      next:'c13g_soft_memory_hand_4'
+    });
+    S.c13g_soft_memory_hand_4=scene({
+      sub:'La main offerte pendant la danse',speaker:'Remerii',
+      text:function(){
+        const flags=f();
+        if(flags.c12gHyleeDanceKeptDistance) return 'Tu m’apprends enfin la différence entre attendre et abandonner.';
+        if(flags.c12gHyleeNamedFalseRescue) return 'Je tremble devant la rigueur de cette pédagogie.';
+        if(flags.c12gHyleeReadRemeriiFear) return 'Alors je vais apprendre à attendre ta réponse au lieu d’écrire la perte à l’avance.';
+        return 'Pour une fois, je consens volontiers à ne pas transformer un mystère en cours magistral.';
+      },
+      next:'c13g_soft_after_memory_1'
+    });
+
+    S.c13g_soft_after_memory_1=scene({
+      sub:'La nuit peut rester légère',speaker:'Narrateur',
+      text:'Le souvenir ne disparaît pas. Il perd seulement ses angles les plus coupants. Hylee et Remerii restent côte à côte, plus proches qu’au début, et la guerre paraît enfin assez loin pour tenir hors de la couverture.',
+      next:'c13g_soft_after_memory_2'
+    });
+    S.c13g_soft_after_memory_2=scene({
+      sub:'La nuit peut rester légère',speaker:'Hylee',
+      text:'Tu vois ? Nous pouvons parler sans prison, sans démon et sans public.',
+      next:'c13g_soft_after_memory_3'
+    });
+    S.c13g_soft_after_memory_3=scene({
+      sub:'La nuit peut rester légère',speaker:'Remerii',
+      text:'Attendons le matin avant de qualifier l’expérience de réussite.',
+      next:'c13g_soft_choice_rest'
+    });
+
+    S.c13g_soft_choice_rest=scene({
+      sub:'La forme du repos',speaker:'Narrateur',
+      text:'Le silence revient, mais il ne ressemble plus à une punition. Hylee choisit la manière dont elle veut terminer cette conversation et commencer le sommeil.',
+      choices:[
+        {label:'Interdire tout plan de guerre jusqu’au petit-déjeuner',next:'c13g_soft_rest_calme_1',effects:{sangfroid:1},note:'Hylee · Sang-froid · Aucun prérequis',flags:{c13gSoftRestedBesideRemerii:true}},
+        {label:'Demander à Remerii de rester et lui interdire d’appeler cela une garde',next:'c13g_soft_rest_audace_1',effects:{audace:1},note:'Hylee · Audace · Aucun prérequis',flags:{c13gSoftAskedRemeriiStay:true}},
+        {label:'Dire que cette nuit ne répare pas tout, mais qu’elle compte vraiment',next:'c13g_soft_rest_lucidite_1',effects:{lucidite:1},note:'Hylee · Lucidité · Aucun prérequis',flags:{c13gSoftMomentNotResolution:true}},
+        {label:'Se rapprocher jusqu’à ce que sa magie cesse de chercher une issue',next:'c13g_soft_rest_resonance_1',effects:{resonance:1},note:'Hylee · Résonance · Aucun prérequis',flags:{c13gSoftMagicCalmedTogether:true},memories:['c13g_nuit_soft_remerii']}
+      ]
+    });
+
+    S.c13g_soft_rest_calme_1=scene({
+      sub:'Aucun plan avant le matin',speaker:'Hylee',
+      text:'Jusqu’au petit-déjeuner, si l’une de nous commence à planifier la guerre, l’autre lui jette un oreiller.',
+      next:'c13g_soft_rest_calme_2'
+    });
+    S.c13g_soft_rest_calme_2=scene({
+      sub:'Aucun plan avant le matin',speaker:'Remerii',
+      text:'Tu proposes d’utiliser la literie impériale comme une arme ?',
+      next:'c13g_soft_rest_calme_3'
+    });
+    S.c13g_soft_rest_calme_3=scene({
+      sub:'Aucun plan avant le matin',speaker:'Hylee',
+      text:'L’Empire doit bien contribuer à l’effort de repos.',
+      direction:'Remerii ferme les yeux avec un sourire qu’elle ne cherche même plus à cacher.',
+      next:'c13g_soft_medig_1'
+    });
+
+    S.c13g_soft_rest_audace_1=scene({
+      sub:'Rester sans monter la garde',speaker:'Hylee',
+      text:'Reste jusqu’à mon réveil. Et si tu prétends que tu veilles sur moi, je prends toute la couverture.',
+      next:'c13g_soft_rest_audace_2'
+    });
+    S.c13g_soft_rest_audace_2=scene({
+      sub:'Rester sans monter la garde',speaker:'Remerii',
+      text:'Du chantage.',
+      next:'c13g_soft_rest_audace_3'
+    });
+    S.c13g_soft_rest_audace_3=scene({
+      sub:'Rester sans monter la garde',speaker:'Hylee',
+      text:'Une négociation.',
+      next:'c13g_soft_rest_audace_4'
+    });
+    S.c13g_soft_rest_audace_4=scene({
+      sub:'Rester sans monter la garde',speaker:'Remerii',
+      text:'Alors je resterai pour des raisons strictement égoïstes. Je tiens à cette couverture.',
+      next:'c13g_soft_medig_1'
+    });
+
+    S.c13g_soft_rest_lucidite_1=scene({
+      sub:'Un commencement, pas une conclusion',speaker:'Hylee',
+      text:'Cette nuit ne répare pas les geôles. Elle n’efface pas la peur. Mais elle compte.',
+      next:'c13g_soft_rest_lucidite_2'
+    });
+    S.c13g_soft_rest_lucidite_2=scene({
+      sub:'Un commencement, pas une conclusion',speaker:'Remerii',
+      text:'Oui. Un commencement n’a pas besoin de se déguiser en conclusion.',
+      next:'c13g_soft_rest_lucidite_3'
+    });
+    S.c13g_soft_rest_lucidite_3=scene({
+      sub:'Un commencement, pas une conclusion',speaker:'Hylee',
+      text:'Tu avais préparé cette phrase ?',
+      next:'c13g_soft_rest_lucidite_4'
+    });
+    S.c13g_soft_rest_lucidite_4=scene({
+      sub:'Un commencement, pas une conclusion',speaker:'Remerii',
+      text:'Seulement deux fois.',
+      direction:'Hylee rit doucement, puis laisse sa main ouverte entre elles. Remerii y glisse la sienne.',
+      next:'c13g_soft_medig_1'
+    });
+
+    S.c13g_soft_rest_resonance_1=scene({
+      sub:'Seulement elles',speaker:'Narrateur',
+      text:'Hylee se rapproche et pose la tête contre l’épaule de Remerii. Le froid cesse de courir le long du drap. Aucun Lien surnaturel ne naît, aucune magie ne leur dicte ce qu’elles ressentent. Il ne reste que deux respirations qui finissent par trouver le même calme.',
+      next:'c13g_soft_rest_resonance_2'
+    });
+    S.c13g_soft_rest_resonance_2=scene({
+      sub:'Seulement elles',speaker:'Remerii',
+      text:'Aucun sort ?',
+      next:'c13g_soft_rest_resonance_3'
+    });
+    S.c13g_soft_rest_resonance_3=scene({
+      sub:'Seulement elles',speaker:'Hylee',
+      text:'Non. Juste moi.',
+      next:'c13g_soft_rest_resonance_4'
+    });
+    S.c13g_soft_rest_resonance_4=scene({
+      sub:'Seulement elles',speaker:'Remerii',
+      text:'Alors je préfère ainsi.',
+      next:'c13g_soft_medig_1'
+    });
+
+    S.c13g_soft_medig_1={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Narrateur',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:function(){
+        const flags=f();
+        if(flags.medigSerment||flags.remeriiSeSouviendraMedig) return 'Hylee s’endort enfin, blottie près de Remerii. Comme annoncé par une habitude plus fiable que le protocole impérial, un tapotement retentit contre la fenêtre. Deux yeux dorés attendent sur le rebord.';
+        return 'Hylee s’endort enfin, blottie près de Remerii. Un tapotement contre la fenêtre attire alors l’attention de l’archimage. Deux yeux dorés brillent dans la nuit, sévères et parfaitement éveillés.';
+      },
+      next:'c13g_soft_medig_2'
+    };
+    S.c13g_soft_medig_2={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Narrateur',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:'Remerii ouvre la fenêtre. Medig entre, inspecte Hylee avec un sérieux cérémoniel, puis mordille les doigts de l’archimage avant de se poser au pied du lit.',
+      next:'c13g_soft_medig_3'
+    };
+    S.c13g_soft_medig_3={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Remerii',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:function(){
+        const flags=f();
+        if(flags.medigSerment||flags.remeriiSeSouviendraMedig) return 'Je vois que ta conception de la diplomatie n’a pas évolué, petite gardienne.';
+        return 'J’ai survécu à la cour impériale. Je devrais pouvoir survivre au jugement d’une chouette.';
+      },
+      next:'c13g_soft_medig_4'
+    };
+    S.c13g_soft_medig_4={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Hylee',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:'Elle t’aime bien.',
+      direction:'La voix ensommeillée d’Hylee vient de sous la couverture. Remerii tourne la tête, surprise de la découvrir à moitié réveillée.',
+      next:'c13g_soft_medig_5'
+    };
+    S.c13g_soft_medig_5={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Remerii',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:'Voilà donc sa version de la tendresse.',
+      next:'c13g_soft_medig_6'
+    };
+    S.c13g_soft_medig_6={
+      title:chapterTitle,sub:'La gardienne à la fenêtre',bg:'c13g_key_medig',music:bedMusic,
+      speaker:'Hylee',chars:[],hideChars:true,clearChars:true,partyOutfits:false,zoom:false,
+      text:'Elle a appris avec moi.',
+      direction:'Hylee se rendort avant de voir le sourire de Remerii. Medig replie ses ailes, satisfaite de sa relève.',
+      next:'c13g_soft_complete'
+    };
+
+    S.c13g_soft_complete=scene({
+      sub:'Une nuit sans masque',speaker:'Narrateur',
+      text:'Rien n’est effacé, rien n’est forcé. Au cœur d’un palais qui prépare la guerre, Hylee et Remerii se sont accordé une nuit sans rôle à tenir : ni mentor ni apprentie, seulement deux femmes capables de parler, de rire et de choisir le même calme.',
+      choices:[{
+        label:'Fermer les yeux à leur tour',next:'c13g_end',effects:{lien:1},
+        note:'Lien Remerii +1 · Souvenir alternatif',
+        flags:{c13gRemeriiSoftMoment:true,c13gSoftBedConversation:true,chapter13GComplete:true,chapter13GRoute:true,chapter10Route:'group'},
+        memories:['c13g_nuit_soft_remerii','c13g_medig_veille']
+      }]
+    });
+
+    if(typeof PROGRESSION_MEMORIES!=='undefined'&&PROGRESSION_MEMORIES.c13g_nuit_soft_remerii){
+      PROGRESSION_MEMORIES.c13g_nuit_soft_remerii.body='Hylee et Remerii ont passé une nuit calme dans le même lit, à parler de leurs souvenirs, à rire de leurs maladresses et à choisir une proximité sans rien forcer.';
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.293 · Conversation au lit de la scène classique XIII_G';
+    console.info('[Sylvinia v0.293] Scène classique XIII_G réécrite : conversation calme au lit, choix de personnalité et souvenirs conditionnels.');
+  }catch(error){
+    console.error('[Sylvinia v0.293] Échec de la réécriture de la scène classique au lit',error);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-c13g-soft-hylee-rotation-v0294 -->
+<script id="sylvinia-c13g-soft-hylee-rotation-v0294">
+/* --- v0.294 : intégration des 10 images-clés d'Hylee pour la scène classique XIII_G --- */
+(()=>{
+  try{
+    const assets={
+      c13g_soft_hylee_01_attentive:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_01_attentive.png',
+      c13g_soft_hylee_02_handheart:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_02_handheart.png',
+      c13g_soft_hylee_03_smile:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_03_smile.png',
+      c13g_soft_hylee_04_folded:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_04_folded.png',
+      c13g_soft_hylee_05_downsoft:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_05_downsoft.png',
+      c13g_soft_hylee_06_tender:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_06_tender.png',
+      c13g_soft_hylee_07_blushsheet:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_07_blushsheet.png',
+      c13g_soft_hylee_08_neutral:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_08_neutral.png',
+      c13g_soft_hylee_09_openheart:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_09_openheart.png',
+      c13g_soft_hylee_10_openheart2:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_10_openheart2.png'
+    };
+    Object.entries(assets).forEach(([k,v])=>A[k]=v);
+
+    const bind=(assetKey,sceneIds)=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
+
+    bind('c13g_soft_hylee_01_attentive',[
+      'c13g_soft_005',
+      'c13g_soft_memory_hand_1',
+      'c13g_soft_rest_lucidite_1'
+    ]);
+
+    bind('c13g_soft_hylee_02_handheart',[
+      'c13g_soft_silence_calme_1',
+      'c13g_soft_memory_prison_1',
+      'c13g_soft_rest_resonance_3'
+    ]);
+
+    bind('c13g_soft_hylee_03_smile',[
+      'c13g_soft_silence_calme_3',
+      'c13g_soft_rejoin_3',
+      'c13g_soft_rest_calme_3'
+    ]);
+
+    bind('c13g_soft_hylee_04_folded',[
+      'c13g_soft_silence_lucidite_1',
+      'c13g_soft_silence_lucidite_3',
+      'c13g_soft_rest_audace_3'
+    ]);
+
+    bind('c13g_soft_hylee_05_downsoft',[
+      'c13g_soft_rejoin_5',
+      'c13g_soft_memory_firstmage_1',
+      'c13g_soft_rest_calme_1'
+    ]);
+
+    bind('c13g_soft_hylee_06_tender',[
+      'c13g_soft_silence_resonance_5',
+      'c13g_soft_memory_hand_3',
+      'c13g_soft_after_memory_2'
+    ]);
+
+    bind('c13g_soft_hylee_07_blushsheet',[
+      'c13g_soft_memory_dance_3',
+      'c13g_soft_rest_lucidite_3'
+    ]);
+
+    bind('c13g_soft_hylee_08_neutral',[
+      'c13g_soft_silence_audace_4',
+      'c13g_soft_memory_dance_1',
+      'c13g_soft_rest_audace_1'
+    ]);
+
+    bind('c13g_soft_hylee_09_openheart',[
+      'c13g_soft_silence_resonance_3',
+      'c13g_soft_memory_prison_3'
+    ]);
+
+    bind('c13g_soft_hylee_10_openheart2',[
+      'c13g_soft_silence_audace_2',
+      'c13g_soft_silence_audace_6'
+    ]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.294 · Hylee classique illustrée';
+    console.info('[Sylvinia v0.294] Les 10 images-clés d'Hylee ont été intégrées à la scène classique XIII_G avec rotation variée.');
+  }catch(error){
+    console.error('[Sylvinia v0.294] Échec de l'intégration des images-clés d'Hylee',error);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-c13g-soft-complete-v0295 -->
+<script id="sylvinia-c13g-soft-complete-v0295">
+/* --- v0.295 : intégration des images-clés de Remerii + couverture complète de la scène classique XIII_G --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const assets={
+      c13g_soft_remerii_01_attentive:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_01_attentive.png',
+      c13g_soft_remerii_02_handheart:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_02_handheart.png',
+      c13g_soft_remerii_03_reach:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_03_reach.png',
+      c13g_soft_remerii_04_openhand:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_04_openhand.png',
+      c13g_soft_remerii_05_smile:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_05_smile.png',
+      c13g_soft_remerii_06_downsmile:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_06_downsmile.png',
+      c13g_soft_remerii_07_softgaze:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_07_softgaze.png',
+      c13g_soft_remerii_08_blushnecklace:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_08_blushnecklace.png',
+      c13g_soft_remerii_09_inviting:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_09_inviting.png',
+      c13g_soft_remerii_10_speaking:'assets/images/keyscenes/chapter13_g/c13g_soft_remerii_10_speaking.png'
+    };
+    Object.entries(assets).forEach(([k,v])=>A[k]=v);
+
+    // Mise en cohérence du début de la scène avec les nouvelles images.
+    if(S.c13g_soft_003){
+      S.c13g_soft_003.text = 'Quelques minutes plus tard, les chaussures ont été abandonnées près du fauteuil, les bijoux reposent sur la table et le bal ne survit plus que dans leurs cheveux défaits. Remerii a troqué les atours du palais pour une nuisette sombre constellée de reflets bleus ; Hylee, elle, s’est réfugiée sous un grand drap clair qu’elle tient encore contre elle avec une pudeur qui la fait déjà sourire. Elles se glissent sur la grande literie, chacune sur son bord du lit. Entre elles demeure une bande de tissu intacte, assez large pour accueillir une négociation impériale.';
+    }
+    if(S.c13g_soft_004){
+      S.c13g_soft_004.text = 'Je constate que le palais a prévu une zone neutre. Et que le drap t’en a confié la garde.';
+    }
+    if(S.c13g_soft_005){
+      S.c13g_soft_005.text = 'Je prends mon rôle très au sérieux. Quelqu’un doit bien compenser ta nuisette diplomatique.';
+    }
+    if(S.c13g_soft_006){
+      S.c13g_soft_006.text = 'Alors réduisons-la avant qu’un protocole impérial ne s’en mêle.';
+      S.c13g_soft_006.direction = 'Le rire d’Hylee est discret, mais il suffit à rendre le lit moins solennel.';
+    }
+
+    const applySceneVisual=(sceneId,assetKey)=>{
+      const scene=S[sceneId];
+      if(!scene) return;
+      scene.bg=assetKey;
+      scene.keyImage=assetKey;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.partyOutfits=false;
+      scene.zoom=false;
+      delete scene.pov;
+      delete scene.videoBanner;
+    };
+
+    const mapping={
+      // Narration / transitions
+      c13g_soft_003:'c13g_soft_remerii_01_attentive',
+      c13g_soft_choice_silence:'c13g_soft_hylee_08_neutral',
+      c13g_soft_silence_audace_1:'c13g_soft_hylee_07_blushsheet',
+      c13g_soft_silence_lucidite_4:'c13g_soft_remerii_09_inviting',
+      c13g_soft_silence_resonance_1:'c13g_soft_remerii_03_reach',
+      c13g_soft_rejoin_1:'c13g_soft_hylee_03_smile',
+      c13g_soft_choice_memory:'c13g_soft_hylee_05_downsoft',
+      c13g_soft_memory_firstmage_3:'c13g_soft_hylee_01_attentive',
+      c13g_soft_after_memory_1:'c13g_soft_remerii_06_downsmile',
+      c13g_soft_choice_rest:'c13g_soft_hylee_06_tender',
+      c13g_soft_rest_resonance_1:'c13g_soft_remerii_09_inviting',
+      c13g_soft_complete:'c13g_soft_hylee_06_tender',
+
+      // Hylee speaking
+      c13g_soft_005:'c13g_soft_hylee_01_attentive',
+      c13g_soft_silence_calme_1:'c13g_soft_hylee_02_handheart',
+      c13g_soft_silence_calme_3:'c13g_soft_hylee_03_smile',
+      c13g_soft_silence_audace_2:'c13g_soft_hylee_10_openheart2',
+      c13g_soft_silence_audace_4:'c13g_soft_hylee_08_neutral',
+      c13g_soft_silence_audace_6:'c13g_soft_hylee_10_openheart2',
+      c13g_soft_silence_lucidite_1:'c13g_soft_hylee_04_folded',
+      c13g_soft_silence_lucidite_3:'c13g_soft_hylee_04_folded',
+      c13g_soft_silence_resonance_3:'c13g_soft_hylee_09_openheart',
+      c13g_soft_silence_resonance_5:'c13g_soft_hylee_06_tender',
+      c13g_soft_rejoin_3:'c13g_soft_hylee_03_smile',
+      c13g_soft_rejoin_5:'c13g_soft_hylee_05_downsoft',
+      c13g_soft_memory_dance_1:'c13g_soft_hylee_08_neutral',
+      c13g_soft_memory_dance_3:'c13g_soft_hylee_07_blushsheet',
+      c13g_soft_memory_firstmage_1:'c13g_soft_hylee_05_downsoft',
+      c13g_soft_memory_prison_1:'c13g_soft_hylee_02_handheart',
+      c13g_soft_memory_prison_3:'c13g_soft_hylee_09_openheart',
+      c13g_soft_memory_hand_1:'c13g_soft_hylee_01_attentive',
+      c13g_soft_memory_hand_3:'c13g_soft_hylee_06_tender',
+      c13g_soft_after_memory_2:'c13g_soft_hylee_06_tender',
+      c13g_soft_rest_calme_1:'c13g_soft_hylee_05_downsoft',
+      c13g_soft_rest_calme_3:'c13g_soft_hylee_03_smile',
+      c13g_soft_rest_audace_1:'c13g_soft_hylee_08_neutral',
+      c13g_soft_rest_audace_3:'c13g_soft_hylee_04_folded',
+      c13g_soft_rest_lucidite_1:'c13g_soft_hylee_01_attentive',
+      c13g_soft_rest_lucidite_3:'c13g_soft_hylee_07_blushsheet',
+      c13g_soft_rest_resonance_3:'c13g_soft_hylee_02_handheart',
+
+      // Remerii speaking
+      c13g_soft_004:'c13g_soft_remerii_01_attentive',
+      c13g_soft_006:'c13g_soft_remerii_05_smile',
+      c13g_soft_silence_calme_2:'c13g_soft_remerii_10_speaking',
+      c13g_soft_silence_audace_3:'c13g_soft_remerii_10_speaking',
+      c13g_soft_silence_audace_5:'c13g_soft_remerii_05_smile',
+      c13g_soft_silence_audace_7:'c13g_soft_remerii_06_downsmile',
+      c13g_soft_silence_lucidite_2:'c13g_soft_remerii_07_softgaze',
+      c13g_soft_silence_lucidite_5:'c13g_soft_remerii_08_blushnecklace',
+      c13g_soft_silence_resonance_2:'c13g_soft_remerii_02_handheart',
+      c13g_soft_silence_resonance_4:'c13g_soft_remerii_05_smile',
+      c13g_soft_rejoin_2:'c13g_soft_remerii_06_downsmile',
+      c13g_soft_rejoin_4:'c13g_soft_remerii_10_speaking',
+      c13g_soft_rejoin_6:'c13g_soft_remerii_05_smile',
+      c13g_soft_memory_dance_2:'c13g_soft_remerii_08_blushnecklace',
+      c13g_soft_memory_dance_4:'c13g_soft_remerii_06_downsmile',
+      c13g_soft_memory_firstmage_2:'c13g_soft_remerii_07_softgaze',
+      c13g_soft_memory_prison_2:'c13g_soft_remerii_10_speaking',
+      c13g_soft_memory_prison_4:'c13g_soft_remerii_05_smile',
+      c13g_soft_memory_hand_2:'c13g_soft_remerii_03_reach',
+      c13g_soft_memory_hand_4:'c13g_soft_remerii_09_inviting',
+      c13g_soft_after_memory_3:'c13g_soft_remerii_06_downsmile',
+      c13g_soft_rest_calme_2:'c13g_soft_remerii_04_openhand',
+      c13g_soft_rest_audace_2:'c13g_soft_remerii_10_speaking',
+      c13g_soft_rest_audace_4:'c13g_soft_remerii_05_smile',
+      c13g_soft_rest_lucidite_2:'c13g_soft_remerii_07_softgaze',
+      c13g_soft_rest_lucidite_4:'c13g_soft_remerii_08_blushnecklace',
+      c13g_soft_rest_resonance_2:'c13g_soft_remerii_10_speaking',
+      c13g_soft_rest_resonance_4:'c13g_soft_remerii_05_smile'
+    };
+
+    Object.entries(mapping).forEach(([sceneId,assetKey])=>applySceneVisual(sceneId,assetKey));
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.295 · Scène classique complète';
+    console.info("[Sylvinia v0.295] Les images-clés de Remerii ont été intégrées, la scène classique couvre désormais toutes les répliques avec images-clés et l'ouverture a été adaptée aux tenues de nuit.");
+  }catch(error){
+    console.error("[Sylvinia v0.295] Échec de l'intégration complète de la scène classique",error);
+  }
+})();
+</script>
+
 </body>
 </html>
