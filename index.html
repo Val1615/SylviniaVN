@@ -47874,5 +47874,109 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-ellipses-v0292 -->
+<script id="sylvinia-c13g-ellipses-v0292">
+/* --- v0.292 : ellipses illustrées pour les passages les plus explicites de XIII_G --- */
+(()=>{
+  try{
+    const assets={
+      c13g_alt_01_remerii_abandon:'assets/images/keyscenes/chapter13_g/c13g_alt_01_remerii_abandon.jpg',
+      c13g_alt_02_remerii_regard:'assets/images/keyscenes/chapter13_g/c13g_alt_02_remerii_regard.jpg',
+      c13g_alt_03_hylee_regard_haut:'assets/images/keyscenes/chapter13_g/c13g_alt_03_hylee_regard_haut.jpg',
+      c13g_alt_04_hylee_vertige:'assets/images/keyscenes/chapter13_g/c13g_alt_04_hylee_vertige.jpg',
+      c13g_alt_05_baiser_rassurant:'assets/images/keyscenes/chapter13_g/c13g_alt_05_baiser_rassurant.jpg',
+      c13g_alt_06_ellipse_caresses:'assets/images/keyscenes/chapter13_g/c13g_alt_06_ellipse_caresses.jpg',
+      c13g_alt_07_premier_baiser:'assets/images/keyscenes/chapter13_g/c13g_alt_07_premier_baiser.jpg',
+      c13g_alt_08_remerii_cicatrice_conclusion:'assets/images/keyscenes/chapter13_g/c13g_alt_08_remerii_cicatrice_conclusion.jpg',
+      c13g_alt_09_hylee_dos_cicatrices:'assets/images/keyscenes/chapter13_g/c13g_alt_09_hylee_dos_cicatrices.jpg',
+      c13g_alt_10_hylee_initiative:'assets/images/keyscenes/chapter13_g/c13g_alt_10_hylee_initiative.jpg'
+    };
+    Object.entries(assets).forEach(([k,v])=>A[k]=v);
+
+    const bind=(assetKey,sceneIds,{keepVideo=false}={})=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        if(!keepVideo) delete scene.videoBanner;
+      });
+    };
+
+    // 1) Révélation des cicatrices d'Hylee
+    bind('c13g_alt_09_hylee_dos_cicatrices',[
+      'c13g_secret_src_7256_1','c13g_secret_choice_scars_hylee',
+      'c13g_secret_scars_calme_1','c13g_secret_scars_calme_2',
+      'c13g_secret_scars_audace_1','c13g_secret_scars_audace_2',
+      'c13g_secret_scars_lucidite_1','c13g_secret_scars_lucidite_2',
+      'c13g_secret_scars_resonance_1','c13g_secret_src_7258_1'
+    ]);
+
+    // 2) Conclusion de la découverte de la cicatrice de Remerii
+    bind('c13g_alt_08_remerii_cicatrice_conclusion',[
+      'c13g_secret_src_7285_1','c13g_secret_src_7286_1',
+      'c13g_secret_src_7287_1','c13g_secret_src_7288_1'
+    ]);
+
+    // 3) Premier baiser / ellipse d'étreinte
+    bind('c13g_alt_07_premier_baiser',[
+      'c13g_secret_src_7289_1','c13g_secret_src_7290_1',
+      'c13g_secret_src_7291_1','c13g_secret_src_7292_1'
+    ]);
+
+    // 4) Consentement, regard d'Hylee vers Remerii
+    bind('c13g_alt_03_hylee_regard_haut',[
+      'c13g_secret_src_7294_1','c13g_secret_src_7295_1'
+    ]);
+
+    // 5) Insert elliptique pour les caresses trop directes
+    bind('c13g_alt_06_ellipse_caresses',[
+      'c13g_secret_src_7296_1','c13g_secret_src_7297_1'
+    ]);
+
+    // 6) Montée sensorielle / vertige d'Hylee
+    bind('c13g_alt_04_hylee_vertige',[
+      'c13g_secret_src_7298_1','c13g_secret_src_7299_1','c13g_secret_src_7300_1',
+      'c13g_secret_src_7301_1','c13g_secret_src_7302_1','c13g_secret_src_7303_1'
+    ]);
+
+    // 7) Baiser rassurant après l'hésitation
+    bind('c13g_alt_05_baiser_rassurant',[
+      'c13g_secret_src_7315_1','c13g_secret_src_7316_1'
+    ]);
+
+    // 8) Hylee prend l'initiative
+    bind('c13g_alt_10_hylee_initiative',[
+      'c13g_secret_src_7329_1','c13g_secret_src_7330_1','c13g_secret_src_7331_1'
+    ]);
+
+    // 9) Remerii s'abandonne
+    bind('c13g_alt_01_remerii_abandon',[
+      'c13g_secret_src_7332_1','c13g_secret_src_7333_1','c13g_secret_src_7334_1'
+    ]);
+
+    // 10) Réponse émotive de Remerii
+    bind('c13g_alt_02_remerii_regard',[
+      'c13g_secret_src_7335_1','c13g_secret_src_7336_1','c13g_secret_src_7337_1',
+      'c13g_secret_src_7338_1','c13g_secret_src_7339_1','c13g_secret_src_7340_1'
+    ]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.292 · Ellipses illustrées XIII_G';
+    console.info('[Sylvinia v0.292] Ellipses illustrées XIII_G intégrées pour les passages les plus explicites.');
+  }catch(error){
+    console.error('[Sylvinia v0.292] Échec de l’intégration des ellipses illustrées',error);
+  }
+})();
+</script>
+
 </body>
 </html>
