@@ -49706,5 +49706,168 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
   }
 })();
 </script>
+
+
+<!-- sylvinia-c13g-progression-relation-v0309 -->
+<script id="sylvinia-c13g-progression-relation-v0309">
+/* --- v0.309 : progression Remerii après XIII_G + correction du décor de couloir --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const flags=()=>((typeof state!=='undefined' && state.flags) ? state.flags : {});
+    const ensureFlags=()=>{
+      if(typeof state==='undefined') return {};
+      state.flags=state.flags||{};
+      return state.flags;
+    };
+
+    /* ---------------------------------------------------------------
+       1. Fin du recyclage incohérent de x12i_tia_hall_after_01 dans XIII_G
+       --------------------------------------------------------------- */
+    A.c13g_bg_corridor=A.c12g_bg_bal_grand || A.c12g_bg_balcon_algratal || A.c13g_classic_bg_chambre_sprite;
+
+    [
+      'c13g_src_7191_1','c13g_src_7192_1','c13g_src_7193_1','c13g_src_7194_1','c13g_src_7195_1',
+      'c13g_choice_nuit','c13g_nuit_calme_1','c13g_nuit_audace_1','c13g_nuit_lucidite_1','c13g_nuit_resonance_1',
+      'c13g_route_gate'
+    ].forEach(id=>{
+      if(!S[id]) return;
+      S[id].bg='c13g_bg_corridor';
+      delete S[id].keyImage;
+      delete S[id].hideChars;
+      delete S[id].clearChars;
+    });
+
+    // L'arrivée avec le majordome utilise désormais l'illustration réellement conçue pour ce passage.
+    [
+      'c13g_secret_src_7197_1','c13g_secret_src_7199_1','c13g_secret_src_7201_1',
+      'c13g_secret_src_7203_1','c13g_secret_src_7205_1','c13g_secret_src_7207_1','c13g_secret_src_7208_1'
+    ].forEach(id=>{
+      const scene=S[id];
+      if(!scene) return;
+      scene.bg='c13g_classic_18_arrivee_majordome';
+      scene.keyImage='c13g_classic_18_arrivee_majordome';
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.partyOutfits=false;
+      scene.zoom=false;
+      delete scene.pov;
+      delete scene.videoBanner;
+    });
+
+    /* ---------------------------------------------------------------
+       2. Les deux conclusions de XIII_G ouvrent le nouveau plafond à 80
+       et enregistrent l'état relationnel choisi par le joueur.
+       --------------------------------------------------------------- */
+    const patchCompletionChoice=(sceneId, mode)=>{
+      const scene=S[sceneId];
+      if(!scene || !Array.isArray(scene.choices) || !scene.choices.length) return;
+      const ch=scene.choices[0];
+      ch.flags={...(ch.flags||{}),
+        remeriiLienCap:80,
+        c13gRelationshipState:mode,
+        c13gRelationshipUpdated:true
+      };
+    };
+    patchCompletionChoice('c13g_soft_complete','soft');
+    patchCompletionChoice('c13g_secret_complete','intimate');
+
+    // Migration des sauvegardes ayant déjà terminé l'une des deux variantes.
+    const migrateRelationshipState=()=>{
+      const f=ensureFlags();
+      if(f.c13gRemeriiSecretScene===true || f.lienRemeriiEveille===true){
+        f.remeriiLienCap=80;
+        f.c13gRelationshipState='intimate';
+        f.c13gRelationshipUpdated=true;
+      }else if(f.c13gRemeriiSoftMoment===true || f.c13gSoftBedConversation===true){
+        f.remeriiLienCap=80;
+        f.c13gRelationshipState='soft';
+        f.c13gRelationshipUpdated=true;
+      }
+    };
+    migrateRelationshipState();
+
+    const relationshipMode=()=>{
+      const f=flags();
+      if(f.c13gRelationshipState==='intimate' || f.c13gRemeriiSecretScene===true || f.lienRemeriiEveille===true) return 'intimate';
+      if(f.c13gRelationshipState==='soft' || f.c13gRemeriiSoftMoment===true || f.c13gSoftBedConversation===true) return 'soft';
+      return null;
+    };
+
+    const relationshipCopy=(mode)=>{
+      if(mode==='intimate') return {
+        label:'Relation assumée · Lien éveillé',
+        tier:'Partenaires liées',
+        summary:'Hylee et Remerii se sont choisies au-delà des rôles de mentor et d’apprentie. Leur Lien est désormais éveillé : une présence intime et magique qui approfondit leur confiance sans jamais remplacer leurs mots, leurs limites ni leur consentement.',
+        eyebrow:'Chapitre XIII_G · Après la nuit intime',
+        title:'Le Lien éveillé',
+        body:'Remerii ne regarde plus Hylee comme une apprentie à protéger à distance. Elles sont devenues deux partenaires capables de se guider, de se contredire et de se choisir.'
+      };
+      return {
+        label:'Confiance reconstruite · Relation en devenir',
+        tier:'Au-delà du rôle de mentor',
+        summary:'Cette nuit n’a pas tout réparé, mais elle a déplacé leur relation. Remerii reconnaît désormais Hylee comme une partenaire émotionnelle, capable de choisir sa proximité et de demander une présence sans redevenir une simple apprentie à protéger.',
+        eyebrow:'Chapitre XIII_G · Après la nuit classique',
+        title:'Une proximité choisie',
+        body:'Hylee et Remerii ont quitté, pour une nuit, le cadre strict de l’apprentissage. Leur confiance est de nouveau vivante, plus réciproque et prête à évoluer sans être forcée.'
+      };
+    };
+
+    const previousRemeriiProgression=(typeof renderRemeriiProgression==='function') ? renderRemeriiProgression : null;
+    if(previousRemeriiProgression && !window.__sylviniaC13GProgressionV0309){
+      window.__sylviniaC13GProgressionV0309=true;
+      window.renderRemeriiProgression=renderRemeriiProgression=function renderRemeriiProgressionV0309(){
+        migrateRelationshipState();
+        const mode=relationshipMode();
+        const cap=mode ? 80 : 30;
+        if(typeof PROGRESSION_STAT_CAPS!=='undefined' && PROGRESSION_STAT_CAPS) PROGRESSION_STAT_CAPS.lien=cap;
+
+        previousRemeriiProgression.apply(this,arguments);
+
+        const value=(state.stats && typeof state.stats.lien==='number') ? state.stats.lien : 0;
+        const pct=Math.max(0,Math.min(100,Math.round(value/cap*100)));
+        if(typeof setText==='function'){
+          setText('progressionRemeriiValue',`${value} / ${cap}`);
+          setText('progressionRemeriiMeta',`${value} / ${cap}`);
+        }
+        const fill=document.getElementById('progressionRemeriiFill');
+        if(fill) fill.style.width=pct+'%';
+
+        if(!mode) return;
+        const copy=relationshipCopy(mode);
+        if(typeof setText==='function'){
+          setText('progressionRemeriiLabel',copy.label);
+          setText('progressionRemeriiTier',copy.tier);
+          setText('progressionRemeriiSummary',copy.summary);
+        }
+
+        const list=document.getElementById('progressionRemeriiMemoryList');
+        if(list){
+          list.querySelectorAll('[data-c13g-relation-card]').forEach(el=>el.remove());
+          const card=document.createElement('article');
+          card.className='remeriiMemoryMini remeriiChapterMemory';
+          card.dataset.c13gRelationCard='true';
+          card.innerHTML=`<div class="progressionIcon">❄</div><div><div class="remeriiMemoryEyebrow">${copy.eyebrow}</div><h5>${copy.title}</h5><p>${copy.body}</p></div>`;
+          list.prepend(card);
+        }
+      };
+    }
+
+    // Rafraîchissement immédiat pour une sauvegarde déjà terminée.
+    if(typeof renderRemeriiProgression==='function' && !document.getElementById('progression')?.classList.contains('hidden')){
+      renderRemeriiProgression();
+    }
+    if(typeof save==='function') save();
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.309 · Relation Remerii et décor XIII_G corrigés';
+    console.info('[Sylvinia v0.309] Plafond du Lien porté à 80 après XIII_G, relation mise à jour et ancien décor x12i retiré du chapitre XIII_G.');
+  }catch(error){
+    console.error('[Sylvinia v0.309] Échec du correctif progression / relation / décor',error);
+  }
+})();
+</script>
 </body>
 </html>
