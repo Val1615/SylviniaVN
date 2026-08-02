@@ -48818,5 +48818,146 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-secret-complete-v0297 -->
+<script id="sylvinia-c13g-secret-complete-v0297">
+/* --- v0.297 : scène secrète XIII_G sans trou visuel, avec prolongation des images-clés --- */
+(()=>{
+  try{
+    const assets={
+      c13g_secret_ext_01_baiser_crop:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_01_baiser_crop.jpg',
+      c13g_secret_ext_02_remerii_regard_bleu:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_02_remerii_regard_bleu.jpg',
+      c13g_secret_ext_03_remerii_allongee:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_03_remerii_allongee.jpg',
+      c13g_secret_ext_04_hylee_nuque_1:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_04_hylee_nuque_1.jpg',
+      c13g_secret_ext_05_hylee_nuque_2:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_05_hylee_nuque_2.jpg',
+      c13g_secret_ext_06_hylee_nuque_3:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_06_hylee_nuque_3.jpg',
+      c13g_secret_ext_07_hylee_apres:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_07_hylee_apres.jpg'
+    };
+    Object.assign(A,assets);
+
+    const setIllustration=(sceneId,assetKey)=>{
+      const scene=S[sceneId];
+      if(!scene) return;
+      scene.bg=assetKey;
+      scene.keyImage=assetKey;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.partyOutfits=false;
+      scene.zoom=false;
+      delete scene.videoBanner;
+      delete scene.pov;
+    };
+
+    const anchors={
+      c13g_secret_ext_04_hylee_nuque_1:[
+        'c13g_secret_src_7307_1','c13g_secret_src_7308_1','c13g_secret_src_7309_1'
+      ],
+      c13g_secret_ext_05_hylee_nuque_2:[
+        'c13g_secret_src_7310_1','c13g_secret_src_7311_1','c13g_secret_src_7312_1','c13g_secret_src_7313_1','c13g_secret_src_7314_1'
+      ],
+      c13g_secret_ext_01_baiser_crop:[
+        'c13g_secret_src_7317_1'
+      ],
+      c13g_secret_ext_06_hylee_nuque_3:[
+        'c13g_secret_choice_link_emerge','c13g_secret_link_calme_1','c13g_secret_link_audace_1','c13g_secret_link_audace_2','c13g_secret_link_lucidite_1','c13g_secret_link_resonance_1',
+        'c13g_secret_src_7319_1','c13g_secret_src_7320_1','c13g_secret_src_7321_1','c13g_secret_src_7322_1','c13g_secret_src_7326_1','c13g_secret_src_7326_2','c13g_secret_src_7328_1'
+      ],
+      c13g_secret_ext_02_remerii_regard_bleu:[
+        'c13g_secret_src_7341_1','c13g_secret_src_7343_1','c13g_secret_src_7344_1','c13g_secret_src_7345_1'
+      ],
+      c13g_secret_ext_03_remerii_allongee:[
+        'c13g_secret_src_7346_1','c13g_secret_src_7347_1','c13g_secret_src_7348_1','c13g_secret_src_7349_1','c13g_secret_src_7350_1','c13g_secret_src_7351_1'
+      ],
+      c13g_secret_ext_07_hylee_apres:[
+        'c13g_secret_src_7353_1','c13g_secret_src_7354_1','c13g_secret_src_7356_1','c13g_secret_src_7358_1','c13g_secret_src_7360_1','c13g_secret_src_7363_1',
+        'c13g_secret_choice_link_name','c13g_secret_lname_calme_1','c13g_secret_lname_calme_2','c13g_secret_lname_audace_1','c13g_secret_lname_audace_2','c13g_secret_lname_lucidite_1','c13g_secret_lname_lucidite_2','c13g_secret_lname_resonance_1',
+        'c13g_secret_src_7366_1','c13g_secret_src_7367_1','c13g_secret_src_7368_1','c13g_secret_src_7369_1','c13g_secret_src_7370_1','c13g_secret_src_7371_1','c13g_secret_src_7372_1','c13g_secret_src_7373_1','c13g_secret_src_7374_1','c13g_secret_src_7375_1','c13g_secret_src_7376_1','c13g_secret_src_7377_1','c13g_secret_complete'
+      ]
+    };
+
+    Object.entries(anchors).forEach(([assetKey,ids])=>ids.forEach(id=>setIllustration(id,assetKey)));
+
+    const customVisualKeys=new Set(Object.keys(assets).concat([
+      'c13g_secret_key_01_retour','c13g_secret_key_02_consentement','c13g_secret_key_03_menton','c13g_secret_key_04_mains','c13g_secret_key_05_cicatrices_revelation','c13g_secret_key_06_cicatrices_contact','c13g_secret_key_07_cicatrice_remerii',
+      'c13g_pov_hylee_01_admiration','c13g_pov_hylee_02_trouble','c13g_pov_hylee_03_vulnerabilite','c13g_pov_hylee_04_confiance','c13g_pov_hylee_05_gravite','c13g_pov_hylee_06_tendresse','c13g_pov_hylee_07_confession','c13g_pov_hylee_08_caresse',
+      'c13g_pov_remerii_01_douceur','c13g_pov_remerii_02_guidance','c13g_pov_remerii_03_ecoute','c13g_pov_remerii_04_sourire','c13g_pov_remerii_05_confiance','c13g_pov_remerii_06_aveu','c13g_pov_remerii_07_apaisement',
+      'c13g_alt_01_remerii_abandon','c13g_alt_02_remerii_regard','c13g_alt_03_hylee_regard_haut','c13g_alt_04_hylee_vertige','c13g_alt_05_baiser_rassurant','c13g_alt_06_ellipse_caresses','c13g_alt_07_premier_baiser','c13g_alt_08_remerii_cicatrice_conclusion','c13g_alt_09_hylee_dos_cicatrices','c13g_alt_10_hylee_initiative'
+    ]));
+
+    const orderedScenes=[
+      'c13g_secret_src_7289_1','c13g_secret_src_7290_1','c13g_secret_src_7291_1','c13g_secret_src_7292_1',
+      'c13g_secret_src_7294_1','c13g_secret_src_7295_1','c13g_secret_src_7296_1','c13g_secret_src_7297_1','c13g_secret_src_7298_1','c13g_secret_src_7299_1','c13g_secret_src_7301_1','c13g_secret_src_7302_1','c13g_secret_src_7303_1','c13g_secret_src_7305_1',
+      'c13g_secret_src_7307_1','c13g_secret_src_7308_1','c13g_secret_src_7309_1','c13g_secret_src_7310_1','c13g_secret_src_7311_1','c13g_secret_src_7312_1','c13g_secret_src_7313_1','c13g_secret_src_7314_1',
+      'c13g_secret_choice_link_emerge','c13g_secret_link_calme_1','c13g_secret_link_audace_1','c13g_secret_link_audace_2','c13g_secret_link_lucidite_1','c13g_secret_link_resonance_1',
+      'c13g_secret_src_7315_1','c13g_secret_src_7316_1','c13g_secret_src_7317_1','c13g_secret_src_7318_1','c13g_secret_src_7319_1','c13g_secret_src_7320_1','c13g_secret_src_7321_1','c13g_secret_src_7322_1','c13g_secret_src_7323_1','c13g_secret_src_7326_1','c13g_secret_src_7326_2','c13g_secret_src_7327_1','c13g_secret_src_7328_1','c13g_secret_src_7329_1','c13g_secret_src_7330_1','c13g_secret_src_7331_1',
+      'c13g_secret_src_7332_1','c13g_secret_src_7333_1','c13g_secret_src_7334_1','c13g_secret_src_7335_1','c13g_secret_src_7336_1','c13g_secret_src_7337_1','c13g_secret_src_7338_1','c13g_secret_src_7339_1','c13g_secret_src_7340_1','c13g_secret_src_7341_1',
+      'c13g_secret_src_7343_1','c13g_secret_src_7344_1','c13g_secret_src_7345_1','c13g_secret_src_7346_1','c13g_secret_src_7347_1','c13g_secret_src_7348_1','c13g_secret_src_7349_1','c13g_secret_src_7350_1','c13g_secret_src_7351_1','c13g_secret_src_7353_1','c13g_secret_src_7354_1','c13g_secret_src_7355_1','c13g_secret_src_7356_1','c13g_secret_src_7357_1','c13g_secret_src_7358_1','c13g_secret_src_7359_1','c13g_secret_src_7360_1','c13g_secret_src_7361_1','c13g_secret_src_7363_1',
+      'c13g_secret_choice_link_name','c13g_secret_lname_calme_1','c13g_secret_lname_calme_2','c13g_secret_lname_audace_1','c13g_secret_lname_audace_2','c13g_secret_lname_lucidite_1','c13g_secret_lname_lucidite_2','c13g_secret_lname_resonance_1',
+      'c13g_secret_src_7364_1','c13g_secret_src_7366_1','c13g_secret_src_7367_1','c13g_secret_src_7368_1','c13g_secret_src_7369_1','c13g_secret_src_7370_1','c13g_secret_src_7371_1','c13g_secret_src_7372_1','c13g_secret_src_7373_1','c13g_secret_src_7374_1','c13g_secret_src_7375_1','c13g_secret_src_7376_1','c13g_secret_src_7377_1','c13g_secret_complete'
+    ];
+
+    const sceneHasCustomVisual=(scene)=>{
+      if(!scene) return false;
+      if(scene.videoBanner) return true;
+      if(scene.keyImage && customVisualKeys.has(scene.keyImage)) return true;
+      if(typeof scene.bg==='string' && customVisualKeys.has(scene.bg)) return true;
+      return false;
+    };
+
+    const applyCarryForward=()=>{
+      let lastAsset=null;
+      orderedScenes.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        if(sceneHasCustomVisual(scene)){
+          lastAsset=scene.keyImage || scene.bg || lastAsset;
+          return;
+        }
+        if(lastAsset){
+          scene.bg=lastAsset;
+          scene.keyImage=lastAsset;
+          scene.chars=[];
+          scene.hideChars=true;
+          scene.clearChars=true;
+          scene.partyOutfits=false;
+          scene.zoom=false;
+          delete scene.pov;
+        }
+      });
+    };
+
+    applyCarryForward();
+
+    const prevRender=window.render;
+    if(typeof prevRender==='function' && !window.__sylviniaC13GSecretCompleteV0297Render){
+      window.__sylviniaC13GSecretCompleteV0297Render=true;
+      window.render=function(){
+        applyCarryForward();
+        return prevRender.apply(this,arguments);
+      };
+      try{render=window.render;}catch(e){}
+    }
+
+    const prevGo=window.go;
+    if(typeof prevGo==='function' && !window.__sylviniaC13GSecretCompleteV0297Go){
+      window.__sylviniaC13GSecretCompleteV0297Go=true;
+      window.go=function(){
+        applyCarryForward();
+        return prevGo.apply(this,arguments);
+      };
+      try{go=window.go;}catch(e){}
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.297 · Scène secrète sans trou visuel';
+    console.info('[Sylvinia v0.297] La scène secrète XIII_G prolonge désormais les images-clés sur toutes les répliques sans illustration dédiée.');
+  }catch(error){
+    console.error('[Sylvinia v0.297] Échec du correctif visuel de la scène secrète',error);
+  }
+})();
+</script>
+
 </body>
 </html>
