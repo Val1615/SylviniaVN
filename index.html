@@ -49171,9 +49171,9 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 
 
 
-<!-- sylvinia-c13g-classic-keyscenes-v0300 -->
-<script id="sylvinia-c13g-classic-keyscenes-v0300">
-/* --- v0.300 : intégration des plans Medig, du fond de chambre et de l'arrivée avec le majordome --- */
+<!-- sylvinia-c13g-classic-keyscenes-v0301 -->
+<script id="sylvinia-c13g-classic-keyscenes-v0301">
+/* --- v0.301 : correction du chemin du fond de chambre --- */
 (()=>{
   try{
     if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
@@ -49181,7 +49181,7 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     Object.assign(A,{
       c13g_classic_16_medig_toc_bec:'assets/images/keyscenes/chapter13_g/c13g_classic_16_medig_toc_bec.png',
       c13g_classic_17_remerii_va_voir_medig:'assets/images/keyscenes/chapter13_g/c13g_classic_17_remerii_va_voir_medig.png',
-      c13g_classic_bg_chambre_sprite:'assets/images/keyscenes/chapter13_g/c13g_classic_bg_chambre_sprite.png',
+      c13g_classic_bg_chambre_sprite:'assets/images/backgrounds/chapter13_g/c13g_classic_bg_chambre_sprite.png',
       c13g_classic_18_arrivee_majordome:'assets/images/keyscenes/chapter13_g/c13g_classic_18_arrivee_majordome.png'
     });
 
@@ -49218,10 +49218,93 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     ]);
 
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.300 · Medig et arrivée en chambre intégrés';
-    console.info('[Sylvinia v0.300] Les deux plans Medig, le fond de chambre et l’arrivée avec le majordome ont été intégrés au VN.');
+    if(bubble) bubble.textContent='Mise à jour · v0.301 · Chemin du fond de chambre corrigé';
+    console.info('[Sylvinia v0.301] Le fond de chambre utilise désormais assets/images/backgrounds/chapter13_g/.');
   }catch(error){
-    console.error('[Sylvinia v0.300] Échec de l’intégration complémentaire',error);
+    console.error('[Sylvinia v0.301] Échec de la correction du chemin du fond',error);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-c13g-secret-early-visual-fix-v0302 -->
+<script id="sylvinia-c13g-secret-early-visual-fix-v0302">
+/* --- v0.302 : correction des scènes secrètes précoces qui retombaient sur un écran vide --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const roomKey='c13g_classic_bg_chambre_sprite';
+    A[roomKey]=A[roomKey]||'assets/images/backgrounds/chapter13_g/c13g_classic_bg_chambre_sprite.png';
+    A.c13g_bg_chambre=A[roomKey];
+
+    const setFullKey=(sceneId,assetKey)=>{
+      const scene=S[sceneId];
+      if(!scene) return;
+      scene.bg=assetKey;
+      scene.keyImage=assetKey;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.partyOutfits=false;
+      scene.zoom=false;
+      delete scene.pov;
+      delete scene.videoBanner;
+    };
+
+    const setRoomWithSprites=(sceneId)=>{
+      const scene=S[sceneId];
+      if(!scene) return;
+      scene.bg=roomKey;
+      scene.keyImage=roomKey;
+      scene.zoom=false;
+      delete scene.pov;
+      delete scene.videoBanner;
+      if(Array.isArray(scene.chars) && scene.chars.length){
+        scene.hideChars=false;
+        scene.clearChars=false;
+      }else{
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+      }
+    };
+
+    // Arrivée dans la chambre avec le majordome.
+    [
+      'c13g_secret_src_7197_1','c13g_secret_src_7199_1','c13g_secret_src_7201_1',
+      'c13g_secret_src_7203_1','c13g_secret_src_7205_1','c13g_secret_src_7207_1',
+      'c13g_secret_src_7208_1'
+    ].forEach(id=>setFullKey(id,'c13g_classic_18_arrivee_majordome'));
+
+    // Découverte de la chambre et premiers échanges : décor explicite + sprites conservés.
+    [
+      'c13g_secret_src_7209_1','c13g_secret_src_7210_1','c13g_secret_src_7211_1',
+      'c13g_secret_src_7212_1','c13g_secret_src_7213_1','c13g_secret_src_7215_1',
+      'c13g_secret_src_7217_1','c13g_secret_src_7219_1','c13g_secret_src_7221_1',
+      'c13g_secret_echo','c13g_secret_src_7222_1','c13g_secret_src_7223_1',
+      'c13g_secret_src_7224_1'
+    ].forEach(setRoomWithSprites);
+
+    // Hylee attend seule, puis Remerii termine de se préparer derrière le paravent.
+    setFullKey('c13g_secret_src_7225_1','c13g_soft_hylee_05_downsoft');
+    setFullKey('c13g_secret_src_7226_1','c13g_soft_remerii_08_blushnecklace');
+
+    // Filet de sécurité : toute scène secrète de chambre encore sans visuel reçoit le décor direct.
+    Object.entries(S).forEach(([sceneId,scene])=>{
+      if(!sceneId.startsWith('c13g_secret_') || !scene) return;
+      if(scene.videoBanner || scene.keyImage) return;
+      if(scene.bg!=='c13g_bg_chambre' && scene.bg!==roomKey) return;
+      setRoomWithSprites(sceneId);
+    });
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.302 · Chargement des scènes secrètes corrigé';
+    console.info('[Sylvinia v0.302] c13g_secret_src_7226_1 et toute l’ouverture de la scène secrète disposent désormais d’un visuel explicite.');
+  }catch(error){
+    console.error('[Sylvinia v0.302] Échec du correctif de chargement des scènes secrètes',error);
   }
 })();
 </script>
