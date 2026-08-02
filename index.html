@@ -49052,5 +49052,122 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-classic-keyscenes-v0299 -->
+<script id="sylvinia-c13g-classic-keyscenes-v0299">
+/* --- v0.299 : attribution définitive des images-clés communes de la scène classique XIII_G --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const assets={
+      c13g_classic_01_remerii_dialogue:'assets/images/keyscenes/chapter13_g/c13g_classic_01_remerii_dialogue.png',
+      c13g_classic_02_repos_proche:'assets/images/keyscenes/chapter13_g/c13g_classic_02_repos_proche.png',
+      c13g_classic_03_installation_lit:'assets/images/keyscenes/chapter13_g/c13g_classic_03_installation_lit.png',
+      c13g_classic_04_rire_hylee:'assets/images/keyscenes/chapter13_g/c13g_classic_04_rire_hylee.png',
+      c13g_classic_05_hylee_confie:'assets/images/keyscenes/chapter13_g/c13g_classic_05_hylee_confie.png',
+      c13g_classic_06_hylee_geste:'assets/images/keyscenes/chapter13_g/c13g_classic_06_hylee_geste.png',
+      c13g_classic_07_toucher_joue:'assets/images/keyscenes/chapter13_g/c13g_classic_07_toucher_joue.png',
+      c13g_classic_08_menton:'assets/images/keyscenes/chapter13_g/c13g_classic_08_menton.png',
+      c13g_classic_09_hylee_introspective:'assets/images/keyscenes/chapter13_g/c13g_classic_09_hylee_introspective.png',
+      c13g_classic_10_mains_rejointes:'assets/images/keyscenes/chapter13_g/c13g_classic_10_mains_rejointes.png',
+      c13g_classic_11_endormies:'assets/images/keyscenes/chapter13_g/c13g_classic_11_endormies.png',
+      c13g_classic_12_medig_fenetre:'assets/images/keyscenes/chapter13_g/c13g_classic_12_medig_fenetre.png',
+      c13g_classic_13_conversation_chill:'assets/images/keyscenes/chapter13_g/c13g_classic_13_conversation_chill.png',
+      c13g_classic_14_hylee_epaule:'assets/images/keyscenes/chapter13_g/c13g_classic_14_hylee_epaule.png',
+      c13g_classic_15_distance_reduite:'assets/images/keyscenes/chapter13_g/c13g_classic_15_distance_reduite.png'
+    };
+    Object.assign(A,assets);
+
+    const bind=(assetKey,sceneIds)=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
+
+    // Installation et première détente sur le lit.
+    bind('c13g_classic_03_installation_lit',[
+      'c13g_soft_003','c13g_soft_choice_silence'
+    ]);
+    bind('c13g_classic_01_remerii_dialogue',[
+      'c13g_soft_004','c13g_soft_silence_calme_2','c13g_soft_silence_audace_3','c13g_soft_silence_audace_5',
+      'c13g_soft_silence_lucidite_2','c13g_soft_silence_lucidite_5','c13g_soft_rejoin_2','c13g_soft_rejoin_4',
+      'c13g_soft_memory_dance_2','c13g_soft_memory_dance_4','c13g_soft_memory_firstmage_2',
+      'c13g_soft_memory_prison_2','c13g_soft_memory_prison_4','c13g_soft_after_memory_3',
+      'c13g_soft_rest_calme_2','c13g_soft_rest_audace_2','c13g_soft_rest_audace_4',
+      'c13g_soft_rest_lucidite_2','c13g_soft_rest_lucidite_4'
+    ]);
+    bind('c13g_classic_05_hylee_confie',[
+      'c13g_soft_005','c13g_soft_silence_audace_2','c13g_soft_silence_lucidite_1',
+      'c13g_soft_memory_prison_1','c13g_soft_rest_audace_1'
+    ]);
+    bind('c13g_classic_04_rire_hylee',[
+      'c13g_soft_006','c13g_soft_silence_calme_3','c13g_soft_silence_audace_6','c13g_soft_silence_audace_7',
+      'c13g_soft_rejoin_6','c13g_soft_memory_dance_3','c13g_soft_rest_calme_3','c13g_soft_rest_lucidite_3'
+    ]);
+    bind('c13g_classic_06_hylee_geste',[
+      'c13g_soft_silence_calme_1','c13g_soft_silence_audace_4','c13g_soft_rejoin_3',
+      'c13g_soft_memory_dance_1','c13g_soft_after_memory_2','c13g_soft_rest_audace_3'
+    ]);
+    bind('c13g_classic_09_hylee_introspective',[
+      'c13g_soft_silence_lucidite_3','c13g_soft_rejoin_5','c13g_soft_memory_firstmage_1',
+      'c13g_soft_memory_firstmage_3','c13g_soft_memory_prison_3','c13g_soft_rest_lucidite_1'
+    ]);
+
+    // Réduction de la distance et contact des mains.
+    bind('c13g_classic_15_distance_reduite',[
+      'c13g_soft_silence_audace_1','c13g_soft_silence_lucidite_4'
+    ]);
+    bind('c13g_classic_10_mains_rejointes',[
+      'c13g_soft_silence_resonance_1','c13g_soft_silence_resonance_2','c13g_soft_silence_resonance_3',
+      'c13g_soft_silence_resonance_4','c13g_soft_silence_resonance_5',
+      'c13g_soft_memory_hand_1','c13g_soft_memory_hand_2','c13g_soft_memory_hand_3','c13g_soft_memory_hand_4'
+    ]);
+
+    // Conversation détendue et souvenirs.
+    bind('c13g_classic_13_conversation_chill',[
+      'c13g_soft_rejoin_1','c13g_soft_choice_memory','c13g_soft_after_memory_1',
+      'c13g_soft_rest_calme_1'
+    ]);
+    bind('c13g_classic_02_repos_proche',[
+      'c13g_soft_choice_rest'
+    ]);
+
+    // Fin sereine de la route classique.
+    bind('c13g_classic_14_hylee_epaule',[
+      'c13g_soft_rest_resonance_1','c13g_soft_rest_resonance_2','c13g_soft_rest_resonance_3','c13g_soft_rest_resonance_4'
+    ]);
+    bind('c13g_classic_12_medig_fenetre',[
+      'c13g_soft_medig_1','c13g_soft_medig_2','c13g_soft_medig_3',
+      'c13g_soft_medig_4','c13g_soft_medig_5','c13g_soft_medig_6'
+    ]);
+    bind('c13g_classic_11_endormies',[
+      'c13g_soft_complete'
+    ]);
+
+    // Deux plans de geste doux réemployés au début de la scène secrète, avant le passage intime.
+    bind('c13g_classic_07_toucher_joue',['c13g_secret_src_7233_1']);
+    bind('c13g_classic_08_menton',['c13g_secret_src_7235_1']);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.299 · Images-clés classiques intégrées';
+    console.info('[Sylvinia v0.299] Les quinze images sélectionnées ont été attribuées à la scène classique, avec deux gestes doux réemployés avant la scène secrète.');
+  }catch(error){
+    console.error('[Sylvinia v0.299] Échec de l’intégration des images-clés classiques',error);
+  }
+})();
+</script>
+
 </body>
 </html>
