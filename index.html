@@ -48644,9 +48644,9 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 
     const bubble=document.querySelector('.menuUpdateBubble');
     if(bubble) bubble.textContent='Mise à jour · v0.294 · Hylee classique illustrée';
-    console.info('[Sylvinia v0.294] Les 10 images-clés d'Hylee ont été intégrées à la scène classique XIII_G avec rotation variée.');
+    console.info("[Sylvinia v0.294] Les 10 images-clés d'Hylee ont été intégrées à la scène classique XIII_G avec rotation variée.");
   }catch(error){
-    console.error('[Sylvinia v0.294] Échec de l'intégration des images-clés d'Hylee',error);
+    console.error("[Sylvinia v0.294] Échec de l'intégration des images-clés d'Hylee",error);
   }
 })();
 </script>
@@ -48785,6 +48785,35 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     console.info("[Sylvinia v0.295] Les images-clés de Remerii ont été intégrées, la scène classique couvre désormais toutes les répliques avec images-clés et l'ouverture a été adaptée aux tenues de nuit.");
   }catch(error){
     console.error("[Sylvinia v0.295] Échec de l'intégration complète de la scène classique",error);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-c13g-hylee-assets-fix-v0296 -->
+<script id="sylvinia-c13g-hylee-assets-fix-v0296">
+/* --- v0.296 : correctif de chargement des images-clés d'Hylee --- */
+(()=>{
+  try{
+    const hyleeAssets={
+      c13g_soft_hylee_01_attentive:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_01_attentive.png',
+      c13g_soft_hylee_02_handheart:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_02_handheart.png',
+      c13g_soft_hylee_03_smile:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_03_smile.png',
+      c13g_soft_hylee_04_folded:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_04_folded.png',
+      c13g_soft_hylee_05_downsoft:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_05_downsoft.png',
+      c13g_soft_hylee_06_tender:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_06_tender.png',
+      c13g_soft_hylee_07_blushsheet:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_07_blushsheet.png',
+      c13g_soft_hylee_08_neutral:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_08_neutral.png',
+      c13g_soft_hylee_09_openheart:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_09_openheart.png',
+      c13g_soft_hylee_10_openheart2:'assets/images/keyscenes/chapter13_g/c13g_soft_hylee_10_openheart2.png'
+    };
+    Object.entries(hyleeAssets).forEach(([key,path])=>A[key]=path);
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.296 · Correctif images Hylee';
+    console.info('[Sylvinia v0.296] Les 10 images-clés d\'Hylee sont correctement enregistrées.');
+  }catch(error){
+    console.error('[Sylvinia v0.296] Échec du correctif des images Hylee',error);
   }
 })();
 </script>
