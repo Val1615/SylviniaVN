@@ -49394,5 +49394,105 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-secret-ending-rhythm-v0304 -->
+<script id="sylvinia-c13g-secret-ending-rhythm-v0304">
+/* --- v0.304 : la fin de la scène intime varie les images et ne reste plus bloquée sur un gros plan d’Hylee --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    Object.assign(A,{
+      c13g_classic_02_repos_proche:'assets/images/keyscenes/chapter13_g/c13g_classic_02_repos_proche.png',
+      c13g_classic_11_endormies:'assets/images/keyscenes/chapter13_g/c13g_classic_11_endormies.png',
+      c13g_classic_12_medig_fenetre:'assets/images/keyscenes/chapter13_g/c13g_classic_12_medig_fenetre.png',
+      c13g_classic_16_medig_toc_bec:'assets/images/keyscenes/chapter13_g/c13g_classic_16_medig_toc_bec.png',
+      c13g_classic_17_remerii_va_voir_medig:'assets/images/keyscenes/chapter13_g/c13g_classic_17_remerii_va_voir_medig.png'
+    });
+
+    const setIntimate=(assetKey,sceneIds)=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
+
+    // Après-coup : on quitte le gros plan fixe d'Hylee pour un plan plus partagé.
+    setIntimate('c13g_classic_02_repos_proche',[
+      'c13g_secret_src_7366_1','c13g_secret_src_7367_1','c13g_secret_src_7368_1'
+    ]);
+
+    // Parenthèse Medig à la fenêtre puis Remerii qui va le voir.
+    setIntimate('c13g_classic_16_medig_toc_bec',[
+      'c13g_secret_src_7369_1'
+    ]);
+    setIntimate('c13g_classic_17_remerii_va_voir_medig',[
+      'c13g_secret_src_7370_1','c13g_secret_src_7371_1','c13g_secret_src_7372_1'
+    ]);
+    setIntimate('c13g_classic_12_medig_fenetre',[
+      'c13g_secret_src_7373_1'
+    ]);
+
+    // Clôture : image finale apaisée, plus lisible qu'un long gros plan solo.
+    setIntimate('c13g_classic_11_endormies',[
+      'c13g_secret_src_7374_1','c13g_secret_src_7375_1','c13g_secret_src_7376_1','c13g_secret_src_7377_1','c13g_secret_complete'
+    ]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.304 · Fin intime plus variée';
+    console.info('[Sylvinia v0.304] La fin de la scène intime alterne désormais plans de repos, parenthèse Medig et conclusion endormies.');
+  }catch(error){
+    console.error('[Sylvinia v0.304] Échec du correctif de fin de scène intime',error);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-c12g-party-sprite-fix-v0305 -->
+<script id="sylvinia-c12g-party-sprite-fix-v0305">
+/* --- v0.305 : correctif des sprites de fête manquants dans C12_G --- */
+(()=>{
+  try{
+    if(typeof S==='undefined') throw new Error('Registre des scènes indisponible');
+
+    const setChars=(id,chars)=>{ if(S[id]) S[id].chars=chars; };
+    const setParty=(id,val=true)=>{ if(S[id]) S[id].partyOutfits=val; };
+
+    // Hylee n'a pas d'équivalent "charmed" spécifique en tenue de fête.
+    // On utilise donc l'expression de fête la plus proche visuellement : sourire doux.
+    setParty('c12g_019', true);
+    setParty('c12g_020', true);
+    setParty('c12g_021', true);
+    setParty('c12g_022', true);
+    setParty('c12g_054', true);
+    setParty('c12g_056', true);
+
+    setChars('c12g_019', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
+    setChars('c12g_020', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
+    setChars('c12g_021', [['hylee','hylee_fete_neutral','left'],['remerii','remerii_fete_neutral','right']]);
+    setChars('c12g_022', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
+    setChars('c12g_054', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_reflection','right']]);
+    setChars('c12g_056', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.305 · Correctif sprites C12_G';
+    console.info('[Sylvinia v0.305] Les scènes de bal de C12_G utilisent désormais les bons sprites de fête, notamment c12g_022.');
+  }catch(error){
+    console.error('[Sylvinia v0.305] Échec du correctif des sprites de fête C12_G', error);
+  }
+})();
+</script>
+
 </body>
 </html>
