@@ -49601,5 +49601,110 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
   }
 })();
 </script>
+
+
+<!-- sylvinia-c13g-medig-integration-v0308 -->
+<script id="sylvinia-c13g-medig-integration-v0308">
+/* --- v0.308 : intégration des nouveaux plans Medig dans la scène secrète XIII_G --- */
+(()=>{
+  try{
+    const scenes=(typeof C13G_SCENES!=='undefined') ? C13G_SCENES : (typeof S!=='undefined' ? S : null);
+    const assets=(typeof A!=='undefined') ? A : null;
+    if(!scenes || !assets) throw new Error('Registre des scènes ou des assets indisponible');
+
+    Object.assign(assets, {
+      c13g_secret_medig_01_tapotement:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_01_tapotement.png',
+      c13g_secret_medig_02_fenetre:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_02_fenetre.png',
+      c13g_secret_medig_03_entree:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_03_entree.png',
+      c13g_secret_medig_04_inspection:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_04_inspection.png',
+      c13g_secret_medig_05_mordille:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_05_mordille.png',
+      c13g_secret_medig_06_depart:'assets/images/keyscenes/chapter13_g/c13g_secret_medig_06_depart.png'
+    });
+
+    const illustrate=(sceneId, assetKey)=>{
+      const scene=scenes[sceneId];
+      if(!scene) return;
+      scene.bg=assetKey;
+      scene.keyImage=assetKey;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.partyOutfits=false;
+      scene.zoom=false;
+      delete scene.videoBanner;
+      delete scene.pov;
+    };
+
+    // Séquence Medig : on colle précisément aux beats du texte.
+    illustrate('c13g_secret_src_7369_1','c13g_secret_medig_01_tapotement'); // tapotement à la vitre
+    illustrate('c13g_secret_src_7370_1','c13g_secret_medig_02_fenetre');    // Remerii va ouvrir et fait face à Medig
+    illustrate('c13g_secret_src_7371_1','c13g_secret_medig_03_entree');     // entrée de Medig dans la chambre
+    illustrate('c13g_secret_src_7372_1','c13g_secret_medig_05_mordille');   // dialogue + mordillement des doigts
+    illustrate('c13g_secret_src_7373_1','c13g_secret_medig_06_depart');     // départ de Medig par la fenêtre
+
+    // Variantes complémentaires pour la scène si le joueur reste quelques secondes sur l'image.
+    // 7371 peut alterner entre l'entrée et l'inspection, 7372 entre l'inspection et le mordillement.
+    const animatedScenes = {
+      c13g_secret_src_7371_1: ['c13g_secret_medig_03_entree','c13g_secret_medig_04_inspection'],
+      c13g_secret_src_7372_1: ['c13g_secret_medig_04_inspection','c13g_secret_medig_05_mordille']
+    };
+
+    let medigTimer=null;
+    let lastSceneId=null;
+    let frameIndex=0;
+
+    const currentSceneId=()=>{
+      try{
+        if(typeof gameState!=='undefined' && gameState.currentSceneId) return gameState.currentSceneId;
+        if(typeof state!=='undefined' && state.currentSceneId) return state.currentSceneId;
+        if(typeof currentSceneId!=='undefined') return currentSceneId;
+      }catch(e){}
+      return null;
+    };
+
+    const findBgElement=()=>{
+      return document.querySelector('.background-layer img, .bg-layer img, #background img, img.scene-bg, img.bg, .vn-background img');
+    };
+
+    const stopAnim=()=>{
+      if(medigTimer){ clearInterval(medigTimer); medigTimer=null; }
+      lastSceneId=null;
+      frameIndex=0;
+    };
+
+    const startAnim=(sceneId)=>{
+      stopAnim();
+      const frames=animatedScenes[sceneId];
+      if(!frames || frames.length<2) return;
+      lastSceneId=sceneId;
+      medigTimer=setInterval(()=>{
+        const active=currentSceneId();
+        if(active!==sceneId){ stopAnim(); return; }
+        frameIndex=(frameIndex+1)%frames.length;
+        const key=frames[frameIndex];
+        const img=findBgElement();
+        const scene=scenes[sceneId];
+        if(scene){ scene.bg=key; scene.keyImage=key; }
+        if(img && assets[key]) img.src=assets[key];
+      },5000);
+    };
+
+    // Surveille les changements de scène pour lancer/arrêter la petite alternance.
+    setInterval(()=>{
+      const id=currentSceneId();
+      if(id!==lastSceneId){
+        if(animatedScenes[id]) startAnim(id);
+        else stopAnim();
+      }
+    },500);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.308 · Séquence Medig illustrée';
+    console.info('[Sylvinia v0.308] Les nouveaux visuels de Medig sont intégrés à la scène secrète XIII_G.');
+  }catch(error){
+    console.error('[Sylvinia v0.308] Échec de l’intégration Medig', error);
+  }
+})();
+</script>
 </body>
 </html>
