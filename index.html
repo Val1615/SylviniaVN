@@ -49528,5 +49528,78 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-secret-ending-images-v0307 -->
+<script id="sylvinia-c13g-secret-ending-images-v0307">
+/* --- v0.307 : force l'utilisation des 6 nouveaux plans sur toute la fin de la scène secrète XIII_G --- */
+(()=>{
+  try{
+    const scenes=(typeof C13G_SCENES!=='undefined') ? C13G_SCENES : (typeof S!=='undefined' ? S : null);
+    const assets=(typeof A!=='undefined') ? A : null;
+    if(!scenes || !assets) throw new Error('Registre des scènes ou des assets indisponible');
+
+    Object.assign(assets,{
+      c13g_secret_end_01_regards:'assets/images/keyscenes/chapter13_g/c13g_secret_end_01_regards.png',
+      c13g_secret_end_02_mains:'assets/images/keyscenes/chapter13_g/c13g_secret_end_02_mains.png',
+      c13g_secret_end_03_caresse:'assets/images/keyscenes/chapter13_g/c13g_secret_end_03_caresse.png',
+      c13g_secret_end_04_ensemble_large:'assets/images/keyscenes/chapter13_g/c13g_secret_end_04_ensemble_large.png',
+      c13g_secret_end_05_veille:'assets/images/keyscenes/chapter13_g/c13g_secret_end_05_veille.png',
+      c13g_secret_end_06_sommeil:'assets/images/keyscenes/chapter13_g/c13g_secret_end_06_sommeil.png'
+    });
+
+    const setIllustrated=(assetKey, sceneIds=[])=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=scenes[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
+
+    // Remplace entièrement l'ancien bloc final basé sur c13g_secret_ext_07_hylee_apres.jpg.
+    setIllustrated('c13g_secret_end_01_regards',[
+      'c13g_secret_src_7353_1','c13g_secret_src_7354_1','c13g_secret_src_7355_1'
+    ]);
+
+    setIllustrated('c13g_secret_end_02_mains',[
+      'c13g_secret_src_7356_1','c13g_secret_src_7357_1','c13g_secret_src_7358_1','c13g_secret_src_7359_1'
+    ]);
+
+    setIllustrated('c13g_secret_end_03_caresse',[
+      'c13g_secret_src_7360_1','c13g_secret_src_7361_1','c13g_secret_src_7363_1','c13g_secret_src_7364_1',
+      'c13g_secret_choice_link_name','c13g_secret_lname_calme_1','c13g_secret_lname_calme_2','c13g_secret_lname_audace_1','c13g_secret_lname_audace_2','c13g_secret_lname_lucidite_1','c13g_secret_lname_lucidite_2','c13g_secret_lname_resonance_1',
+      'c13g_secret_src_7366_1'
+    ]);
+
+    setIllustrated('c13g_secret_end_04_ensemble_large',[
+      'c13g_secret_src_7367_1','c13g_secret_src_7368_1'
+    ]);
+
+    // Même pendant la parenthèse Medig, on garde désormais la nouvelle série d'images finales.
+    setIllustrated('c13g_secret_end_05_veille',[
+      'c13g_secret_src_7369_1','c13g_secret_src_7370_1','c13g_secret_src_7371_1','c13g_secret_src_7372_1',
+      'c13g_secret_src_7373_1','c13g_secret_src_7374_1','c13g_secret_src_7375_1'
+    ]);
+
+    setIllustrated('c13g_secret_end_06_sommeil',[
+      'c13g_secret_src_7376_1','c13g_secret_src_7377_1','c13g_secret_complete'
+    ]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.307 · Fin secrète entièrement re-illustrée';
+    console.info('[Sylvinia v0.307] Les 6 nouveaux plans couvrent désormais toute la fin de la scène secrète, sans retour à c13g_secret_ext_07_hylee_apres.jpg.');
+  }catch(error){
+    console.error('[Sylvinia v0.307] Échec du correctif final de la scène secrète',error);
+  }
+})();
+</script>
 </body>
 </html>
