@@ -49309,5 +49309,90 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-bedroom-music-v0303 -->
+<script id="sylvinia-c13g-bedroom-music-v0303">
+/* --- v0.303 : une piste continue par version dès l'entrée dans la chambre --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const SOFT_MUSIC='music_c13g_une_nuit_soft';
+    const INTIMATE_MUSIC='music_c13g_une_nuit_intime';
+    const ROUTE_FLAG='c13gBedroomMusicRoute';
+
+    Object.assign(A,{
+      [SOFT_MUSIC]:'assets/audio/chapter13_g/une_nuit_sous_ton_etoile_soft.mp3',
+      [INTIMATE_MUSIC]:'assets/audio/chapter13_g/une_nuit_sous_ton_etoiles_intime.mp3'
+    });
+
+    const softRoomScene=id=>{
+      id=String(id||'');
+      const numbered=id.match(/^c13g_soft_(\d+)$/);
+      if(numbered) return Number(numbered[1])>=3;
+      return id.startsWith('c13g_soft_');
+    };
+
+    const intimateRoomScene=id=>{
+      id=String(id||'');
+      const numbered=id.match(/^c13g_secret_src_(\d+)_1$/);
+      if(numbered) return Number(numbered[1])>=7209;
+      return id.startsWith('c13g_secret_');
+    };
+
+    const setRoute=route=>{
+      if(typeof state!=='undefined' && state){
+        state.flags=state.flags||{};
+        state.flags[ROUTE_FLAG]=route;
+      }
+    };
+
+    // Supprime toutes les anciennes attributions musicales à l'intérieur des deux versions.
+    Object.entries(S).forEach(([sceneId,scene])=>{
+      if(!scene) return;
+      if(softRoomScene(sceneId)) scene.music=SOFT_MUSIC;
+      if(intimateRoomScene(sceneId)) scene.music=INTIMATE_MUSIC;
+    });
+
+    // La scène de fin est commune aux deux routes. Sa musique dépend donc de la version traversée.
+    const previousResolve=window.resolveSceneMusic;
+    if(typeof previousResolve!=='function') throw new Error('Résolveur musical indisponible');
+
+    window.resolveSceneMusic=function(sceneId,fallback){
+      const id=String(sceneId||'');
+
+      if(softRoomScene(id)){
+        setRoute('soft');
+        return SOFT_MUSIC;
+      }
+      if(intimateRoomScene(id)){
+        setRoute('intime');
+        return INTIMATE_MUSIC;
+      }
+      if(id==='c13g_end'){
+        const route=(typeof state!=='undefined' && state && state.flags)?state.flags[ROUTE_FLAG]:null;
+        if(route==='soft') return SOFT_MUSIC;
+        if(route==='intime') return INTIMATE_MUSIC;
+      }
+      return previousResolve(sceneId,fallback);
+    };
+
+    // Le lecteur HTML est unique et boucle déjà. Cette sécurité empêche toute superposition accidentelle.
+    const musicEl=document.getElementById('music');
+    if(musicEl){
+      musicEl.loop=true;
+      musicEl.preload='auto';
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.303 · Musiques Soft et Intime continues';
+    console.info('[Sylvinia v0.303] Les pistes Soft et Intime démarrent à l’entrée dans la chambre et restent continues jusqu’à la fin du chapitre.');
+  }catch(error){
+    console.error('[Sylvinia v0.303] Échec de l’intégration musicale XIII_G',error);
+  }
+})();
+</script>
+
 </body>
 </html>
