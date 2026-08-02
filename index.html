@@ -49169,5 +49169,62 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-classic-keyscenes-v0300 -->
+<script id="sylvinia-c13g-classic-keyscenes-v0300">
+/* --- v0.300 : intégration des plans Medig, du fond de chambre et de l'arrivée avec le majordome --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    Object.assign(A,{
+      c13g_classic_16_medig_toc_bec:'assets/images/keyscenes/chapter13_g/c13g_classic_16_medig_toc_bec.png',
+      c13g_classic_17_remerii_va_voir_medig:'assets/images/keyscenes/chapter13_g/c13g_classic_17_remerii_va_voir_medig.png',
+      c13g_classic_bg_chambre_sprite:'assets/images/keyscenes/chapter13_g/c13g_classic_bg_chambre_sprite.png',
+      c13g_classic_18_arrivee_majordome:'assets/images/keyscenes/chapter13_g/c13g_classic_18_arrivee_majordome.png'
+    });
+
+    const bindKey=(assetKey,sceneIds)=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
+
+    // Fond de chambre utilisé pour les scènes qui gardent les sprites et un simple décor.
+    A.c13g_bg_chambre=A.c13g_classic_bg_chambre_sprite;
+
+    // Arrivée dans la chambre avec le majordome.
+    bindKey('c13g_classic_18_arrivee_majordome',[
+      'c13g_soft_001','c13g_soft_002'
+    ]);
+
+    // Séquence Medig : d'abord le bec contre la fenêtre, puis Remerii va le voir.
+    bindKey('c13g_classic_16_medig_toc_bec',[
+      'c13g_soft_medig_1','c13g_soft_medig_4','c13g_soft_medig_5','c13g_soft_medig_6'
+    ]);
+    bindKey('c13g_classic_17_remerii_va_voir_medig',[
+      'c13g_soft_medig_2','c13g_soft_medig_3'
+    ]);
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.300 · Medig et arrivée en chambre intégrés';
+    console.info('[Sylvinia v0.300] Les deux plans Medig, le fond de chambre et l’arrivée avec le majordome ont été intégrés au VN.');
+  }catch(error){
+    console.error('[Sylvinia v0.300] Échec de l’intégration complémentaire',error);
+  }
+})();
+</script>
+
 </body>
 </html>
