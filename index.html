@@ -48832,7 +48832,13 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       c13g_secret_ext_04_hylee_nuque_1:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_04_hylee_nuque_1.jpg',
       c13g_secret_ext_05_hylee_nuque_2:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_05_hylee_nuque_2.jpg',
       c13g_secret_ext_06_hylee_nuque_3:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_06_hylee_nuque_3.jpg',
-      c13g_secret_ext_07_hylee_apres:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_07_hylee_apres.jpg'
+      c13g_secret_ext_07_hylee_apres:'assets/images/keyscenes/chapter13_g/c13g_secret_ext_07_hylee_apres.jpg',
+      c13g_secret_end_01_regards:'assets/images/keyscenes/chapter13_g/c13g_secret_end_01_regards.png',
+      c13g_secret_end_02_mains:'assets/images/keyscenes/chapter13_g/c13g_secret_end_02_mains.png',
+      c13g_secret_end_03_caresse:'assets/images/keyscenes/chapter13_g/c13g_secret_end_03_caresse.png',
+      c13g_secret_end_04_ensemble_large:'assets/images/keyscenes/chapter13_g/c13g_secret_end_04_ensemble_large.png',
+      c13g_secret_end_05_veille:'assets/images/keyscenes/chapter13_g/c13g_secret_end_05_veille.png',
+      c13g_secret_end_06_sommeil:'assets/images/keyscenes/chapter13_g/c13g_secret_end_06_sommeil.png'
     };
     Object.assign(A,assets);
 
@@ -49458,38 +49464,66 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 </script>
 
 
-
-<!-- sylvinia-c12g-party-sprite-fix-v0305 -->
-<script id="sylvinia-c12g-party-sprite-fix-v0305">
-/* --- v0.305 : correctif des sprites de fête manquants dans C12_G --- */
+<!-- sylvinia-c13g-secret-ending-images-v0306 -->
+<script id="sylvinia-c13g-secret-ending-images-v0306">
+/* --- v0.306 : intégration des nouveaux plans de fin pour la scène secrète XIII_G --- */
 (()=>{
   try{
-    if(typeof S==='undefined') throw new Error('Registre des scènes indisponible');
+    const S=C13G_SCENES;
+    const setIntimate=(assetKey, sceneIds=[])=>{
+      sceneIds.forEach(sceneId=>{
+        const scene=S[sceneId];
+        if(!scene) return;
+        scene.bg=assetKey;
+        scene.keyImage=assetKey;
+        scene.chars=[];
+        scene.hideChars=true;
+        scene.clearChars=true;
+        scene.partyOutfits=false;
+        scene.zoom=false;
+        delete scene.pov;
+        delete scene.videoBanner;
+      });
+    };
 
-    const setChars=(id,chars)=>{ if(S[id]) S[id].chars=chars; };
-    const setParty=(id,val=true)=>{ if(S[id]) S[id].partyOutfits=val; };
+    A.c13g_secret_end_01_regards='assets/images/keyscenes/chapter13_g/c13g_secret_end_01_regards.png';
+    A.c13g_secret_end_02_mains='assets/images/keyscenes/chapter13_g/c13g_secret_end_02_mains.png';
+    A.c13g_secret_end_03_caresse='assets/images/keyscenes/chapter13_g/c13g_secret_end_03_caresse.png';
+    A.c13g_secret_end_04_ensemble_large='assets/images/keyscenes/chapter13_g/c13g_secret_end_04_ensemble_large.png';
+    A.c13g_secret_end_05_veille='assets/images/keyscenes/chapter13_g/c13g_secret_end_05_veille.png';
+    A.c13g_secret_end_06_sommeil='assets/images/keyscenes/chapter13_g/c13g_secret_end_06_sommeil.png';
 
-    // Hylee n'a pas d'équivalent "charmed" spécifique en tenue de fête.
-    // On utilise donc l'expression de fête la plus proche visuellement : sourire doux.
-    setParty('c12g_019', true);
-    setParty('c12g_020', true);
-    setParty('c12g_021', true);
-    setParty('c12g_022', true);
-    setParty('c12g_054', true);
-    setParty('c12g_056', true);
+    setIntimate('c13g_secret_end_01_regards',[
+      'c13g_secret_src_7353_1','c13g_secret_src_7354_1','c13g_secret_src_7355_1'
+    ]);
 
-    setChars('c12g_019', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
-    setChars('c12g_020', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
-    setChars('c12g_021', [['hylee','hylee_fete_neutral','left'],['remerii','remerii_fete_neutral','right']]);
-    setChars('c12g_022', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
-    setChars('c12g_054', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_reflection','right']]);
-    setChars('c12g_056', [['hylee','hylee_fete_smile','left'],['remerii','remerii_fete_neutral','right']]);
+    setIntimate('c13g_secret_end_02_mains',[
+      'c13g_secret_src_7356_1','c13g_secret_src_7357_1','c13g_secret_src_7358_1','c13g_secret_src_7359_1'
+    ]);
+
+    setIntimate('c13g_secret_end_03_caresse',[
+      'c13g_secret_src_7360_1','c13g_secret_src_7361_1','c13g_secret_src_7363_1','c13g_secret_src_7364_1',
+      'c13g_secret_choice_link_name','c13g_secret_lname_calme_1','c13g_secret_lname_calme_2','c13g_secret_lname_audace_1','c13g_secret_lname_audace_2','c13g_secret_lname_lucidite_1','c13g_secret_lname_lucidite_2','c13g_secret_lname_resonance_1',
+      'c13g_secret_src_7366_1'
+    ]);
+
+    setIntimate('c13g_secret_end_04_ensemble_large',[
+      'c13g_secret_src_7367_1','c13g_secret_src_7368_1'
+    ]);
+
+    setIntimate('c13g_secret_end_05_veille',[
+      'c13g_secret_src_7373_1','c13g_secret_src_7374_1','c13g_secret_src_7375_1'
+    ]);
+
+    setIntimate('c13g_secret_end_06_sommeil',[
+      'c13g_secret_src_7376_1','c13g_secret_src_7377_1','c13g_secret_complete'
+    ]);
 
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.305 · Correctif sprites C12_G';
-    console.info('[Sylvinia v0.305] Les scènes de bal de C12_G utilisent désormais les bons sprites de fête, notamment c12g_022.');
+    if(bubble) bubble.textContent='Mise à jour · v0.306 · Fin secrète illustrée';
+    console.info('[Sylvinia v0.306] Les nouveaux plans de fin ont été intégrés à la scène secrète XIII_G.');
   }catch(error){
-    console.error('[Sylvinia v0.305] Échec du correctif des sprites de fête C12_G', error);
+    console.error('[Sylvinia v0.306] Échec de l’intégration des plans de fin',error);
   }
 })();
 </script>
