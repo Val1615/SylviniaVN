@@ -1,0 +1,16 @@
+{
+  "version": "0.288",
+  "base": "sylvinia_c13g_keyscenes v0.287",
+  "assets": [
+    "c13g_pov_hylee_01_admiration.png",
+    "c13g_pov_hylee_02_trouble.png",
+    "c13g_pov_hylee_03_vulnerabilite.png",
+    "c13g_pov_hylee_04_confiance.png",
+    "c13g_pov_hylee_05_gravite.png",
+    "c13g_pov_hylee_06_tendresse.png",
+    "c13g_pov_hylee_07_confession.png",
+    "c13g_pov_hylee_08_caresse.png"
+  ],
+  "path": "assets/images/keyscenes/chapter13_g/",
+  "logic": "POV Hylee appliqués uniquement aux écrans où Hylee parle; Remerii reste visible en réaction."
+}
