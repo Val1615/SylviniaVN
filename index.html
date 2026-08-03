@@ -49869,5 +49869,178 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
   }
 })();
 </script>
+
+
+<!-- sylvinia-c13g-ballroom-gallery-integration-v0310 -->
+<script id="sylvinia-c13g-ballroom-gallery-integration-v0310">
+/* --- v0.310 : intégration des plans conservés du bal sur l’ensemble du Chapitre XIII_G --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const assets={
+      c13g_ball_01_dance_hylee_remerii:'assets/images/keyscenes/chapter13_g/c13g_ball_01_dance_hylee_remerii.png',
+      c13g_ball_02_hebergement_duo_quartet:'assets/images/keyscenes/chapter13_g/c13g_ball_02_hebergement_duo_quartet.png',
+      c13g_ball_03_duel_hylee_naiah:'assets/images/keyscenes/chapter13_g/c13g_ball_03_duel_hylee_naiah.png',
+      c13g_ball_04_tia_conseiller_close:'assets/images/keyscenes/chapter13_g/c13g_ball_04_tia_conseiller_close.png',
+      c13g_ball_05_proclamation_wide:'assets/images/keyscenes/chapter13_g/c13g_ball_05_proclamation_wide.png',
+      c13g_ball_06_proclamation_alt:'assets/images/keyscenes/chapter13_g/c13g_ball_06_proclamation_alt.png',
+      c13g_ball_07_draven_close_conseiller:'assets/images/keyscenes/chapter13_g/c13g_ball_07_draven_close_conseiller.png',
+      c13g_ball_08_draven_foreground_group:'assets/images/keyscenes/chapter13_g/c13g_ball_08_draven_foreground_group.png',
+      c13g_ball_09_dance_hylee_remerii_close:'assets/images/keyscenes/chapter13_g/c13g_ball_09_dance_hylee_remerii_close.png',
+      c13g_ball_10_escorte_majordomes:'assets/images/keyscenes/chapter13_g/c13g_ball_10_escorte_majordomes.png',
+      c13g_ball_11_valurn_enters_duel:'assets/images/keyscenes/chapter13_g/c13g_ball_11_valurn_enters_duel.png',
+      c13g_ball_12_draven_valurn_balcony:'assets/images/keyscenes/chapter13_g/c13g_ball_12_draven_valurn_balcony.png',
+      c13g_ball_13_draven_observe_wall:'assets/images/keyscenes/chapter13_g/c13g_ball_13_draven_observe_wall.png',
+      c13g_ball_14_hebergement_four_chars:'assets/images/keyscenes/chapter13_g/c13g_ball_14_hebergement_four_chars.png',
+      c13g_ball_15_duel_hylee_naiah_alt:'assets/images/keyscenes/chapter13_g/c13g_ball_15_duel_hylee_naiah_alt.png',
+      c13g_ball_16_group_lineup:'assets/images/keyscenes/chapter13_g/c13g_ball_16_group_lineup.png',
+      c13g_ball_17_salon_relax:'assets/images/keyscenes/chapter13_g/c13g_ball_17_salon_relax.png',
+      c13g_ball_18_salon_relax_alt:'assets/images/keyscenes/chapter13_g/c13g_ball_18_salon_relax_alt.png',
+      c13g_ball_19_draven_wine_group:'assets/images/keyscenes/chapter13_g/c13g_ball_19_draven_wine_group.png'
+    };
+    Object.assign(A,assets);
+
+    // Miniature et image-codex principales du chapitre.
+    A.c13g_chapter_thumb=A.c13g_ball_16_group_lineup;
+    A.c13g_key_conseiller=A.c13g_ball_07_draven_close_conseiller;
+
+    const setFullArt=(sceneId,assetKey,{keepPartyOutfits=false}={})=>{
+      const scene=S[sceneId];
+      if(!scene) return;
+      scene.bg=assetKey;
+      scene.keyImage=assetKey;
+      scene.chars=[];
+      scene.hideChars=true;
+      scene.clearChars=true;
+      scene.zoom=false;
+      scene.partyOutfits=!!keepPartyOutfits;
+      delete scene.pov;
+      delete scene.videoBanner;
+    };
+
+    const bind=(assetKey,sceneIds,opts={})=>sceneIds.forEach(id=>setFullArt(id,assetKey,opts));
+
+    // Ouverture / miniature.
+    bind('c13g_ball_16_group_lineup',['c13g_001']);
+
+    // 1. Hylee entraîne Remerii.
+    bind('c13g_ball_01_dance_hylee_remerii',[
+      'c13g_src_6998_1','c13g_src_7000_1','c13g_src_7002_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_09_dance_hylee_remerii_close',[
+      'c13g_src_7004_1','c13g_src_7006_1','c13g_src_7008_1'
+    ],{keepPartyOutfits:true});
+
+    // 2. Naïah rejoint la piste et le duel commence.
+    bind('c13g_ball_15_duel_hylee_naiah_alt',[
+      'c13g_src_7009_1','c13g_src_7011_1','c13g_src_7013_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_03_duel_hylee_naiah',[
+      'c13g_src_7015_1','c13g_src_7017_1','c13g_src_7019_1','c13g_src_7021_1'
+    ],{keepPartyOutfits:true});
+
+    // 3. Valurn transforme le duel en spectacle.
+    bind('c13g_ball_11_valurn_enters_duel',[
+      'c13g_src_7023_1','c13g_src_7025_1','c13g_src_7027_1','c13g_src_7029_1','c13g_src_7031_1','c13g_src_7033_1','c13g_src_7035_1','c13g_src_7037_1','c13g_src_7039_1'
+    ],{keepPartyOutfits:true});
+
+    // 4. Draven observe en retrait.
+    bind('c13g_ball_13_draven_observe_wall',[
+      'c13g_src_7041_1','c13g_src_7043_1','c13g_src_7045_1'
+    ],{keepPartyOutfits:true});
+
+    // 5. Tia apparaît au balcon avec le conseiller.
+    bind('c13g_ball_05_proclamation_wide',[
+      'c13g_src_7048_1','c13g_src_7049_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_04_tia_conseiller_close',['c13g_src_7051_1'],{keepPartyOutfits:true});
+    bind('c13g_ball_07_draven_close_conseiller',[
+      'c13g_src_7053_1','c13g_src_7055_1','c13g_src_7057_1'
+    ],{keepPartyOutfits:true});
+
+    // 6. Réaction de Draven et Valurn, puis discours de l’Impératrice.
+    bind('c13g_ball_12_draven_valurn_balcony',[
+      'c13g_src_7069_1','c13g_src_7071_1','c13g_src_7073_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_06_proclamation_alt',[
+      'c13g_src_7075_1','c13g_src_7077_1','c13g_src_7079_1','c13g_src_7081_1','c13g_src_7083_1','c13g_src_7085_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_05_proclamation_wide',[
+      'c13g_src_7087_1','c13g_src_7089_1','c13g_src_7091_1','c13g_src_7093_1','c13g_src_7095_1','c13g_src_7097_1','c13g_src_7099_1','c13g_src_7101_1','c13g_src_7103_1','c13g_src_7105_1','c13g_src_7107_1','c13g_src_7109_1','c13g_src_7111_1','c13g_src_7113_1','c13g_src_7115_1'
+    ],{keepPartyOutfits:true});
+
+    // 7. La troupe réagit aux deux nuits offertes au palais.
+    bind('c13g_ball_14_hebergement_four_chars',[
+      'c13g_src_7118_1','c13g_src_7120_1','c13g_src_7122_1','c13g_src_7124_1','c13g_src_7126_1'
+    ],{keepPartyOutfits:true});
+    bind('c13g_ball_02_hebergement_duo_quartet',[
+      'c13g_src_7128_1','c13g_src_7130_1','c13g_src_7132_1','c13g_src_7134_1','c13g_src_7136_1','c13g_src_7138_1','c13g_src_7140_1','c13g_src_7142_1'
+    ],{keepPartyOutfits:true});
+
+    // 8. Draven sent que quelque chose se trame derrière la fête.
+    bind('c13g_ball_08_draven_foreground_group',['c13g_src_7144_1'],{keepPartyOutfits:true});
+    bind('c13g_ball_19_draven_wine_group',['c13g_src_7146_1','c13g_src_7148_1'],{keepPartyOutfits:true});
+
+    // 9. Transition vers les chambres : le groupe est guidé dans les couloirs du palais.
+    bind('c13g_ball_10_escorte_majordomes',[
+      'c13g_soft_001','c13g_soft_002',
+      'c13g_secret_src_7197_1','c13g_secret_src_7199_1','c13g_secret_src_7201_1','c13g_secret_src_7203_1','c13g_secret_src_7205_1','c13g_secret_src_7207_1','c13g_secret_src_7208_1'
+    ],{keepPartyOutfits:true});
+
+    // Plans bonus accessibles dans le codex / galerie du chapitre.
+    if(typeof CODEX_IMAGES!=='undefined') Object.assign(CODEX_IMAGES,{
+      c13g_key_danse_survivants:{
+        title:'Chapitre XIII_G · Le dernier duel de danse',
+        body:'Hylee, Remerii, Naïah et Valurn font de la fin du bal un dernier éclat de grâce, de rivalité et d’affection.',
+        src:A.c13g_ball_11_valurn_enters_duel
+      },
+      c13g_key_conseiller_lineva:{
+        title:'Chapitre XIII_G · Le conseiller de Lineva',
+        body:'Draven reconnaît auprès de Tia une présence qui fissure immédiatement la légèreté de la soirée.',
+        src:A.c13g_ball_07_draven_close_conseiller
+      },
+      c13g_key_salon_bleu:{
+        title:'Chapitre XIII_G · Entre deux guerres',
+        body:'Un rare moment de détente au salon bleu réunit encore la troupe avant que la nuit ne se referme.',
+        src:A.c13g_ball_17_salon_relax
+      },
+      c13g_key_salon_bleu_alt:{
+        title:'Chapitre XIII_G · Sous les lustres du palais',
+        body:'La conversation se prolonge autour de quelques verres, sur un fil fragile entre douceur et tension à venir.',
+        src:A.c13g_ball_18_salon_relax_alt
+      }
+    });
+    if(typeof CODEX_IMAGE_ORDER!=='undefined' && Array.isArray(CODEX_IMAGE_ORDER))[
+      'c13g_key_danse_survivants','c13g_key_conseiller_lineva','c13g_key_salon_bleu','c13g_key_salon_bleu_alt'
+    ].forEach(k=>{ if(!CODEX_IMAGE_ORDER.includes(k)) CODEX_IMAGE_ORDER.push(k); });
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined' && Array.isArray(CODEX_IMAGE_GROUPS)){
+      const grp=CODEX_IMAGE_GROUPS.find(g=>g&&g.id==='chapter13g');
+      if(grp){
+        grp.sections=Array.isArray(grp.sections)?grp.sections:[];
+        if(!grp.sections.some(s=>s&&s.title==='Illustrations bonus')) grp.sections.push({title:'Illustrations bonus',keys:['c13g_key_salon_bleu','c13g_key_salon_bleu_alt']});
+      }else{
+        CODEX_IMAGE_GROUPS.push({id:'chapter13g',title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',sections:[
+          {title:'Le dernier bal',keys:['c13g_key_danse_survivants','c13g_key_conseiller_lineva']},
+          {title:'Illustrations bonus',keys:['c13g_key_salon_bleu','c13g_key_salon_bleu_alt']}
+        ]});
+      }
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{
+      c13g_src_7000_1:['c13g_key_danse_survivants'],
+      c13g_src_7051_1:['c13g_key_conseiller_lineva'],
+      c13g_src_7118_1:['c13g_key_salon_bleu'],
+      c13g_end:['c13g_key_salon_bleu_alt']
+    });
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.310 · Plans du bal intégrés à XIII_G';
+    console.info('[Sylvinia v0.310] Les visuels conservés du bal ont été répartis sur l’ensemble du Chapitre XIII_G, plus galerie bonus.');
+  }catch(error){
+    console.error('[Sylvinia v0.310] Échec de l’intégration des plans du bal',error);
+  }
+})();
+</script>
+
 </body>
 </html>
