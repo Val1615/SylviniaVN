@@ -50121,5 +50121,71 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+
+<!-- sylvinia-c13g-ball-music-v0314 -->
+<script id="sylvinia-c13g-ball-music-v0314">
+/* --- v0.314 : une seule musique continue pour toute la fin du Bal des Élus, jusqu'aux variations privées --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    const BALL_MUSIC='music_c13g_bal_midnight_waltz';
+    A[BALL_MUSIC]='assets/audio/chapter13_g/bal_des_elus_midnight_waltz.mp3';
+
+    const isSoftPrivate=id=>{
+      id=String(id||'');
+      const numbered=id.match(/^c13g_soft_(\d+)$/);
+      if(numbered) return Number(numbered[1])>=3;
+      return id.startsWith('c13g_soft_') && !['c13g_soft_001','c13g_soft_002'].includes(id);
+    };
+
+    const isIntimatePrivate=id=>{
+      id=String(id||'');
+      const numbered=id.match(/^c13g_secret_src_(\d+)_1$/);
+      if(numbered) return Number(numbered[1])>=7209;
+      return id.startsWith('c13g_secret_') && !/^c13g_secret_src_(7197|7199|7201|7203|7205|7207|7208)_1$/.test(id);
+    };
+
+    const isChapter13GScene=(id,scene)=>{
+      id=String(id||'');
+      if(id==='c13g_end') return false;
+      if(isSoftPrivate(id) || isIntimatePrivate(id)) return false;
+      if(id.startsWith('c13g_')) return true;
+      const title=String((scene&&scene.title)||'');
+      return title.includes('Chapitre XIII_G');
+    };
+
+    // Toutes les scènes de la fin du bal utilisent la même piste.
+    // Les routes privées conservent ensuite leurs thèmes Soft et Intime déjà configurés.
+    Object.entries(S).forEach(([sceneId,scene])=>{
+      if(scene && isChapter13GScene(sceneId,scene)) scene.music=BALL_MUSIC;
+    });
+
+    const previousResolve=window.resolveSceneMusic;
+    if(typeof previousResolve!=='function') throw new Error('Résolveur musical indisponible');
+
+    window.resolveSceneMusic=function(sceneId,fallback){
+      const id=String(sceneId||'');
+      const scene=S[id];
+      if(isChapter13GScene(id,scene)) return BALL_MUSIC;
+      return previousResolve(sceneId,fallback);
+    };
+
+    const musicEl=document.getElementById('music');
+    if(musicEl){
+      musicEl.loop=true;
+      musicEl.preload='auto';
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.314 · Midnight Waltz continue sur la fin du bal';
+    console.info('[Sylvinia v0.314] Midnight Waltz accompagne toute la fin du Bal des Élus sans changement, jusqu’aux embranchements privés Hylee/Remerii.');
+  }catch(error){
+    console.error('[Sylvinia v0.314] Échec de l’intégration de Midnight Waltz',error);
+  }
+})();
+</script>
+
 </body>
 </html>
