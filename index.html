@@ -50042,5 +50042,84 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+<script id="sylvinia-c13g-bedroom-return-v0313">
+/* --- v0.313 : chargement des visuels du retour de Remerii depuis assets dans les routes secrète et classique --- */
+(()=>{
+  try{
+    if(typeof S==='undefined' || typeof A==='undefined') throw new Error('Registre des scènes ou des assets indisponible');
+
+    Object.assign(A,{
+      c13g_shared_return_01:'assets/images/keyscenes/chapter13_g/c13g_shared_return_01.png',
+      c13g_shared_return_02:'assets/images/keyscenes/chapter13_g/c13g_shared_return_02.png'
+    });
+
+    const applyImage=(sceneId, assetKey)=>{
+      const sc=S[sceneId];
+      if(!sc) return;
+      sc.bg=assetKey;
+      sc.keyImage=assetKey;
+      sc.chars=[];
+      sc.hideChars=true;
+      sc.partyOutfits=false;
+      sc.zoom=false;
+      delete sc.pov;
+      delete sc.videoBanner;
+    };
+
+    // Route secrète : remplacement des deux premiers temps du retour de Remerii dans la chambre.
+    applyImage('c13g_secret_src_7227_1','c13g_shared_return_01');
+    applyImage('c13g_secret_src_7228_1','c13g_shared_return_02');
+
+    // Route classique : insertion des mêmes visuels juste après l'invitation de Remerii,
+    // avant la scène déjà existante où elles s'installent dans le lit.
+    const baseMusic=(S.c13g_soft_002 && S.c13g_soft_002.music) || 'music_c12g_moonlight';
+    const baseTitle=(S.c13g_soft_002 && S.c13g_soft_002.title) || 'Chapitre XIII_G · Le Bal des Élus : Dénouement';
+    const baseSub=(S.c13g_soft_002 && S.c13g_soft_002.sub) || 'Un moment sans masque';
+
+    S.c13g_soft_return_01={
+      title:baseTitle,
+      sub:baseSub,
+      bg:'c13g_shared_return_01',
+      keyImage:'c13g_shared_return_01',
+      music:baseMusic,
+      speaker:'Narrateur',
+      text:'Quelques instants plus tard, la porte s’entrouvre de nouveau. Remerii revient changée, drapée d’une tenue de nuit légère et élégante. Assise au bord du lit, Hylee en oublie presque de respirer ; la fatigue du bal cède la place à une gêne douce, étonnée.',
+      chars:[],
+      hideChars:true,
+      partyOutfits:false,
+      next:'c13g_soft_return_02'
+    };
+
+    S.c13g_soft_return_02={
+      title:baseTitle,
+      sub:baseSub,
+      bg:'c13g_shared_return_02',
+      keyImage:'c13g_shared_return_02',
+      music:baseMusic,
+      speaker:'Narrateur',
+      text:'Remerii s’avance avec un calme tendre, comme si elle craignait de troubler l’instant. Hylee, déjà enveloppée dans les draps, tourne vers elle un regard rougissant. Puis la soirée reprend son souffle, plus intime, plus paisible.',
+      chars:[],
+      hideChars:true,
+      partyOutfits:false,
+      next:'c13g_soft_003'
+    };
+
+    if(S.c13g_soft_002) S.c13g_soft_002.next='c13g_soft_return_01';
+
+    // Ajustement léger pour garder la continuité après les deux nouveaux plans.
+    if(S.c13g_soft_003){
+      S.c13g_soft_003.text='Quelques minutes plus tard, les chaussures ont été abandonnées près du fauteuil, les bijoux reposent sur la table et le bal ne survit plus que dans leurs cheveux défaits. Remerii finit par rejoindre Hylee sous la grande couverture. Chacune garde d’abord son bord du lit. Entre elles demeure une bande de drap intacte, assez large pour accueillir une négociation impériale.';
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.313 · Retour de Remerii chargé depuis assets';
+    console.info('[Sylvinia v0.313] Les deux visuels du retour de Remerii sont chargés depuis assets dans les embranchements secret et classique.');
+  }catch(err){
+    console.warn('[Sylvinia v0.313] Chargement des visuels de retour impossible :', err);
+  }
+})();
+</script>
+
 </body>
 </html>
