@@ -3736,7 +3736,7 @@ const A={
   music_c5_miraldas:'assets/audio/chapter5/c5_miraldas_theme.mp3', music_c5_saidin_duel:'assets/audio/chapter5/c5_saidin_duel.mp3',
   music_c6_miraldas_city:'assets/audio/chapter6/c6_la_cite_des_mages_miraldas.mp3', music_c6_nuit_etoiles:'assets/audio/chapter6/c6_une_nuit_entre_deux_etoiles.mp3',
   music_title_intro:'assets/audio/title/title_intro_theme.mp3',
-  music_menu:'assets/audio/menu.mp3', music_wild:'assets/audio/wild_calm.mp3', music_confessions:'assets/audio/vent_confessions.mp3', music_duel:'assets/audio/entrainement_aube.mp3', music_iriana:'assets/audio/entree_iriana.mp3', music_training:'assets/audio/wild_calm.mp3', music_tension:'assets/audio/entree_iriana.mp3', music_end:'assets/audio/entree_iriana.mp3', music_algratal:'assets/audio/algratal.mp3', music_c12g_bal:'assets/audio/chapter12/group/bal_des_elus.mp3', music_c12g_hylee_remerii:'assets/audio/chapter12/group/bal_des_elus_hylee_remerii.mp3', music_c12g_iriana_valurn:'assets/audio/chapter12/group/un_vent_de_confessions_iriana_valurn.mp3', music_c12g_valurn_memory:'assets/audio/chapter12/group/valurn_memory.mp3', music_c12g_moonlight:'assets/audio/chapter12/group/moonlight_in_marble.mp3', music_catacombes:'assets/audio/catacombes.mp3', music_c3_shopping:'assets/audio/c3_shopping_capitale.mp3', music_c3_combat_ombres:'assets/audio/c3_combat_ombres.mp3', music_c3_unborn:'assets/audio/c3_the_unborn.mp3', music_valurn_route:'assets/audio/chapter4/valurn_lullaby.mp3', music_thazran:'assets/audio/chapter4/infernal_trade.mp3', music_bellirith:'assets/audio/chapter4/rencontre_bellirith.mp3', music_draven_bond:'assets/audio/chapter4/draven_pere_fille.mp3', music_draven_storm:'assets/audio/chapter4/storm_without_you.mp3',
+  music_menu:'assets/audio/menu.mp3', music_wild:'assets/audio/wild_calm.mp3', music_confessions:'assets/audio/vent_confessions.mp3', music_duel:'assets/audio/entrainement_aube.mp3', music_iriana:'assets/audio/entree_iriana.mp3', music_training:'assets/audio/training.mp3', music_tension:'assets/audio/tension.mp3', music_end:'assets/audio/ending.mp3', music_algratal:'assets/audio/algratal.mp3', music_c12g_bal:'assets/audio/chapter12/group/bal_des_elus.mp3', music_c12g_hylee_remerii:'assets/audio/chapter12/group/bal_des_elus_hylee_remerii.mp3', music_c12g_iriana_valurn:'assets/audio/chapter12/group/un_vent_de_confessions_iriana_valurn.mp3', music_c12g_valurn_memory:'assets/audio/chapter12/group/valurn_memory.mp3', music_c12g_moonlight:'assets/audio/chapter12/group/moonlight_in_marble.mp3', music_catacombes:'assets/audio/catacombes.mp3', music_c3_shopping:'assets/audio/c3_shopping_capitale.mp3', music_c3_combat_ombres:'assets/audio/c3_combat_ombres.mp3', music_c3_unborn:'assets/audio/c3_the_unborn.mp3', music_valurn_route:'assets/audio/chapter4/valurn_lullaby.mp3', music_thazran:'assets/audio/chapter4/infernal_trade.mp3', music_bellirith:'assets/audio/chapter4/rencontre_bellirith.mp3', music_draven_bond:'assets/audio/chapter4/draven_pere_fille.mp3', music_draven_storm:'assets/audio/chapter4/storm_without_you.mp3',
   hylee_thinking:'assets/sprites/hylee_thinking.png', hylee_surprised:'assets/sprites/hylee_surprised.png', hylee_confident:'assets/sprites/hylee_confident.png', hylee_soft:'assets/sprites/hylee_soft.png', hylee_determined:'assets/sprites/hylee_determined.png', hylee_angry:'assets/sprites/hylee_angry.png',
   hylee2_thinking:'assets/sprites/chapter3/hylee2_thinking.png', hylee2_surprised:'assets/sprites/chapter3/hylee2_surprised.png', hylee2_confident:'assets/sprites/chapter3/hylee2_confident.png', hylee2_soft:'assets/sprites/chapter3/hylee2_soft.png', hylee2_determined:'assets/sprites/chapter3/hylee2_determined.png', hylee2_angry:'assets/sprites/chapter3/hylee2_angry.png', hylee2_sad:'assets/sprites/chapter3/hylee2_sad.png', hylee2_charmed:'assets/sprites/chapter3/hylee2_charmed.png', hylee2_teasing:'assets/sprites/chapter3/hylee2_teasing.png', hylee2_furious:'assets/sprites/chapter3/hylee2_furious.png',
   remerii_neutral:'assets/sprites/remerii_neutral.png', remerii_profile:'assets/sprites/remerii_profile.png', remerii_calm:'assets/sprites/remerii_calm.png', remerii_strict:'assets/sprites/remerii_strict.png', remerii_sad:'assets/sprites/remerii_sad.png', remerii_soft:'assets/sprites/remerii_calm.png', remerii_surprised:'assets/sprites/remerii_neutral.png', remerii_smirk:'assets/sprites/remerii_smirk.png',
@@ -50277,12 +50277,12 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
         {label:'Nommer ce qu’elle craint de découvrir, puis toucher',next:'c13i_key_sangfroid',effects:{sangfroid:1},note:'Sang-froid · Garder son intention',flags:{c13iKeyFearNamed:true}},
         {label:'Choix stratégique : renouer le fil du présent avant le contact',next:'c13i_key_strategic_1',effects:{sangfroid:1,resonance:1},requires:{sangfroid:34,resonance:30},requiresFlags:{c12iAnchoredInMemory:true},note:'Stratégique · Sang-froid 34 · Résonance 30 · Ancrage du Chapitre XII_I',flags:{c13iAnchoredKey:true,c13iTruthPrepared:true},memories:['iriana_fil_present_touche']}
       ]}),
-      c13i_key_audace:scene('Le seuil franchi',ROOM,PIANO,'Narrateur',`Ses doigts se referment sur l’ivoire. Le froid n’a rien de physique : il ressemble à la seconde exacte où une décision devient irréversible.`,iriana('iriana_stern'),'c13i_020'),
-      c13i_key_lucidite:scene('La fracture',ROOM,PIANO,'Narrateur',`La cassure n’est pas nette. La touche a cédé sous plusieurs impacts, comme si quelqu’un avait continué de jouer après que le mécanisme eut commencé à rompre. Iriana comprend cela juste avant que la mémoire l’emporte.`,iriana('iriana_profile'),'c13i_020'),
-      c13i_key_resonance:scene('L’écho d’ivoire',ROOM,PIANO,'Narrateur',`Une note impossible vibre contre sa paume : trop grave pour l’ivoire, trop humaine pour un objet. Elle porte une rage qui n’a jamais cessé de demander pourquoi.`,iriana('iriana_sad'),'c13i_020'),
-      c13i_key_sangfroid:scene('La peur nommée',ROOM,PIANO,'Iriana',`« J’ai peur de comprendre pourquoi tu me ressembles. » La phrase demeure dans la pièce quand ses doigts touchent enfin la touche.`,iriana('iriana_calm'),'c13i_020'),
-      c13i_key_strategic_1:scene('Le fil du présent',ROOM,PIANO,'Narrateur',`Iriana presse deux doigts contre son propre poignet. Elle rappelle son nom, la salle, le carnet, la morsure du banc sous ses jambes. Puis seulement elle tend l’autre main vers l’ivoire.`,pair('iriana_calm','amanea_sad'),'c13i_key_strategic_2',{projection:true}),
-      c13i_key_strategic_2:scene('Le fil du présent',ROOM,PIANO,'Amanea',`« Tu ne viens pas me voler une sensation. Tu viens la regarder sans abandonner qui tu es. Cette fois, peut-être, tu verras vraiment. »`,pair('iriana_calm','amanea_sad'),'c13i_020',{projection:true}),
+      c13i_key_audace:scene('Le seuil franchi',ROOM,DEFAULT,'Narrateur',`Ses doigts se referment sur l’ivoire. Le froid n’a rien de physique : il ressemble à la seconde exacte où une décision devient irréversible.`,iriana('iriana_stern'),'c13i_020'),
+      c13i_key_lucidite:scene('La fracture',ROOM,DEFAULT,'Narrateur',`La cassure n’est pas nette. La touche a cédé sous plusieurs impacts, comme si quelqu’un avait continué de jouer après que le mécanisme eut commencé à rompre. Iriana comprend cela juste avant que la mémoire l’emporte.`,iriana('iriana_profile'),'c13i_020'),
+      c13i_key_resonance:scene('L’écho d’ivoire',ROOM,DEFAULT,'Narrateur',`Une note impossible vibre contre sa paume : trop grave pour l’ivoire, trop humaine pour un objet. Elle porte une rage qui n’a jamais cessé de demander pourquoi.`,iriana('iriana_sad'),'c13i_020'),
+      c13i_key_sangfroid:scene('La peur nommée',ROOM,DEFAULT,'Iriana',`« J’ai peur de comprendre pourquoi tu me ressembles. » La phrase demeure dans la pièce quand ses doigts touchent enfin la touche.`,iriana('iriana_calm'),'c13i_020'),
+      c13i_key_strategic_1:scene('Le fil du présent',ROOM,DEFAULT,'Narrateur',`Iriana presse deux doigts contre son propre poignet. Elle rappelle son nom, la salle, le carnet, la morsure du banc sous ses jambes. Puis seulement elle tend l’autre main vers l’ivoire.`,pair('iriana_calm','amanea_sad'),'c13i_key_strategic_2',{projection:true}),
+      c13i_key_strategic_2:scene('Le fil du présent',ROOM,DEFAULT,'Amanea',`« Tu ne viens pas me voler une sensation. Tu viens la regarder sans abandonner qui tu es. Cette fois, peut-être, tu verras vraiment. »`,pair('iriana_calm','amanea_sad'),'c13i_020',{projection:true}),
 
       c13i_020:keyScene('Ce que nous aurions pu être',MEMORY,PIANO,`Le monde bascule. Iriana n’observe plus Amanea : elle habite son souffle. La maison est éventrée, les vitres ont fondu, la fumée racle une gorge qui a trop crié. Pourtant, devant elle, le piano tient encore.`,'c13i_021'),
       c13i_021:keyScene('Ce que nous aurions pu être',MEMORY,PIANO,`Chaque mouvement arrache quelque chose au corps brisé d’Amanea. Elle s’assoit tout de même. Ses mains tremblent au-dessus des touches comme deux oiseaux qui auraient oublié comment se poser.`,'c13i_022'),
@@ -50322,9 +50322,9 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       c13i_song_reprise_03:scene('La tempête musicale',MEMORY,PIANO,'Amanea',`« Je veux que tu souffres comme tu m’as fait souffrir cette nuit ! »`,[], 'c13i_song_reprise_04',{hideChars:true,keyImage:MEMORY}),
       c13i_song_reprise_04:scene('La tempête musicale',MEMORY,PIANO,'Amanea',`« Je veux que tu perdes comme j’ai perdu ce jour… »`,[], 'c13i_031',{hideChars:true,keyImage:MEMORY}),
       c13i_031:keyScene('La tempête musicale',MEMORY,PIANO,`Le dernier accord explose. Une touche cède sous ses doigts, mais Amanea continue de marteler le clavier, pleurant et libérant toute sa rage malgré le vide laissé dans l’ivoire.`,'c13i_song_final_01'),
-      c13i_song_final_01:scene('Après la dernière note',AFTERMATH,DEFAULT,'Narrateur',`Puis, plus rien. Amanea reste figée, les doigts immobiles, le souffle court. Le silence reprend ses droits autour d’elle ; en elle, la douleur demeure.` ,[], 'c13i_song_final_02',{hideChars:true,keyImage:AFTERMATH}),
-      c13i_song_final_02:scene('Après la dernière note',AFTERMATH,DEFAULT,'Amanea',`« Ce que nous aurions pu être. »`,[], 'c13i_032',{hideChars:true,keyImage:AFTERMATH}),
-      c13i_032:keyScene('Après la dernière note',AFTERMATH,DEFAULT,`Dans un dernier soupir, Amanea se replie sous sa cape et termine son chagrin dans ses propres bras. Près du clavier, la touche brisée conserve tout ce qu’elle n’a jamais pu dire autrement.`,'c13i_033'),
+      c13i_song_final_01:scene('Après la dernière note',AFTERMATH,PIANO,'Narrateur',`Puis, plus rien. Amanea reste figée, les doigts immobiles, le souffle court. Le silence reprend ses droits autour d’elle ; en elle, la douleur demeure.` ,[], 'c13i_song_final_02',{hideChars:true,keyImage:AFTERMATH}),
+      c13i_song_final_02:scene('Après la dernière note',AFTERMATH,PIANO,'Amanea',`« Ce que nous aurions pu être. »`,[], 'c13i_032',{hideChars:true,keyImage:AFTERMATH}),
+      c13i_032:keyScene('Après la dernière note',AFTERMATH,PIANO,`Dans un dernier soupir, Amanea se replie sous sa cape et termine son chagrin dans ses propres bras. Près du clavier, la touche brisée conserve tout ce qu’elle n’a jamais pu dire autrement.`,'c13i_033'),
       c13i_033:keyScene('Le retour','c13i_key_broken_key',DEFAULT,`Iriana revient dans la salle de musique, la touche brisée serrée entre ses doigts. Le piano intact devant elle paraît désormais plus fragile que les ruines du souvenir.`,'c13i_choice_take_key'),
       c13i_choice_take_key:scene('Le vestige dans sa paume',ROOM,DEFAULT,'Narrateur',`La touche n’est plus seulement un seuil vers la mémoire. Elle est revenue avec Iriana. La projection d’Amanea contemple encore le piano, absorbée par l’écho de sa propre chanson.`,pair('iriana_profile','amanea_sad'),null,{projection:true,choices:[
         {label:'Reposer la touche là où Amanea l’avait conservée',next:'c13i_key_left_resonance',effects:{resonance:1},note:'Résonance · Respecter ce vestige',flags:{c13iBrokenKeyLeft:true}},
@@ -50412,23 +50412,23 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       },pair('iriana_sad','amanea_sad'),'c13i_truth_strategic_4'),
       c13i_truth_strategic_4:scene('La vérité sans défense',ROOM,RETURN,'Iriana',`« Je sais. Je ne te demande pas de me pardonner. »`,pair('iriana_sad','amanea_away'),'c13i_070'),
 
-      c13i_070:scene('Le choix respecté',ROOM,DEFAULT,'Amanea',`« Je t’ai dit que je respecterais ton choix. Ton camp. »`,pair('iriana_sad','amanea_away'),'c13i_071'),
-      c13i_071:scene('Le choix respecté',ROOM,DEFAULT,'Amanea',`« Tu avais déjà fait ton choix avant de venir à moi. Alors je le respecte. »`,pair('iriana_sad','amanea_away'),'c13i_072'),
-      c13i_072:keyScene('La porte noire',PORTAL,DEFAULT,`Amanea ouvre la main. Un portail de ténèbres se déploie près du piano, cerclé d’une lueur verte presque éteinte. Iriana se relève avec peine. Elle ne possède plus aucune justification assez solide pour la retenir.`,'c13i_073'),
-      c13i_073:scene('La porte noire',PORTAL,DEFAULT,'Amanea',`« Pars. Et ne reviens jamais. »`,[], 'c13i_choice_depart',{hideChars:true,keyImage:PORTAL}),
-      c13i_choice_depart:scene('Le dernier pas',PORTAL,DEFAULT,'Narrateur',`Amanea détourne le regard. Iriana choisit ce qu’elle laisse dans la pièce avant de franchir le seuil.`,[],null,{hideChars:true,keyImage:PORTAL,choices:[
+      c13i_070:scene('Le choix respecté',ROOM,RETURN,'Amanea',`« Je t’ai dit que je respecterais ton choix. Ton camp. »`,pair('iriana_sad','amanea_away'),'c13i_071'),
+      c13i_071:scene('Le choix respecté',ROOM,RETURN,'Amanea',`« Tu avais déjà fait ton choix avant de venir à moi. Alors je le respecte. »`,pair('iriana_sad','amanea_away'),'c13i_072'),
+      c13i_072:keyScene('La porte noire',PORTAL,RETURN,`Amanea ouvre la main. Un portail de ténèbres se déploie près du piano, cerclé d’une lueur verte presque éteinte. Iriana se relève avec peine. Elle ne possède plus aucune justification assez solide pour la retenir.`,'c13i_073'),
+      c13i_073:scene('La porte noire',PORTAL,RETURN,'Amanea',`« Pars. Et ne reviens jamais. »`,[], 'c13i_choice_depart',{hideChars:true,keyImage:PORTAL}),
+      c13i_choice_depart:scene('Le dernier pas',PORTAL,RETURN,'Narrateur',`Amanea détourne le regard. Iriana choisit ce qu’elle laisse dans la pièce avant de franchir le seuil.`,[],null,{hideChars:true,keyImage:PORTAL,choices:[
         {label:'Partir sans lui imposer une dernière parole',next:'c13i_depart_sangfroid',effects:{sangfroid:1},note:'Sang-froid · Respecter le silence',flags:{c13iLeftInSilence:true}},
         {label:'Dire seulement : « Je suis désolée »',next:'c13i_depart_resonance',effects:{resonance:1},note:'Résonance · Offrir des mots sans exiger de réponse',flags:{c13iApologizedWithoutDemand:true}},
         {label:'Observer ce qu’Amanea choisit de ne plus montrer',next:'c13i_depart_lucidite',effects:{lucidite:1},note:'Lucidité · Lire le silence sans le forcer',flags:{c13iReadFinalSilence:true}},
         {label:'Promettre : « Je n’oublierai pas ce que j’ai fait ici »',next:'c13i_depart_audace',effects:{audace:1},note:'Audace · Assumer une mémoire durable',flags:{c13iPromisedNotToForget:true}}
       ]}),
-      c13i_depart_sangfroid:keyScene('Le dernier pas',PORTAL,DEFAULT,`Iriana incline la tête. Elle entre dans l’ombre sans demander à Amanea de rendre le départ plus supportable. Derrière elle, aucun adieu ne vient.`,'c13i_080'),
-      c13i_depart_resonance:scene('Le dernier pas',PORTAL,DEFAULT,'Iriana',`« Je suis désolée. » Amanea ne répond pas. Iriana accepte que l’excuse puisse être vraie sans avoir le pouvoir de réparer.` ,[], 'c13i_080',{hideChars:true,keyImage:PORTAL}),
-      c13i_depart_lucidite:keyScene('Le dernier pas',PORTAL,DEFAULT,`Amanea détourne le visage avant même qu’Iriana n’entre dans le portail. Ce refus d’offrir une dernière expression n’est ni de l’indifférence ni un pardon : c’est une frontière.`,'c13i_080'),
-      c13i_depart_audace:scene('Le dernier pas',PORTAL,DEFAULT,'Iriana',`« Je n’oublierai pas ce que j’ai fait ici. » Amanea détourne davantage le visage. La promesse n’obtient rien ; c’est précisément pour cela qu’Iriana la tient.` ,[], 'c13i_080',{hideChars:true,keyImage:PORTAL}),
-      c13i_080:keyScene('Une dernière trahison',PORTAL,DEFAULT,`Le portail se referme. Dans la dernière fraction de seconde, Iriana voit Amanea seule près du piano, tournée vers une pièce où la confiance a cessé d’exister.`,'c13i_081'),
-      c13i_081:scene('Après le seuil',PORTAL,DEFAULT,'Narrateur',`De l’autre côté, Iriana ne sait plus qui elle est, ni si le camp qu’elle a choisi mérite encore ce nom. Elle sait seulement qu’Amanea n’était pas le monstre commode qu’elle espérait trouver — et que cette découverte n’a pas empêché la trahison.` ,[], 'c13i_end',{hideChars:true,keyImage:PORTAL}),
-      c13i_end:scene('Fin du Chapitre XIII_I',PORTAL,DEFAULT,'Narrateur',function(){
+      c13i_depart_sangfroid:keyScene('Le dernier pas',PORTAL,RETURN,`Iriana incline la tête. Elle entre dans l’ombre sans demander à Amanea de rendre le départ plus supportable. Derrière elle, aucun adieu ne vient.`,'c13i_080'),
+      c13i_depart_resonance:scene('Le dernier pas',PORTAL,RETURN,'Iriana',`« Je suis désolée. » Amanea ne répond pas. Iriana accepte que l’excuse puisse être vraie sans avoir le pouvoir de réparer.` ,[], 'c13i_080',{hideChars:true,keyImage:PORTAL}),
+      c13i_depart_lucidite:keyScene('Le dernier pas',PORTAL,RETURN,`Amanea détourne le visage avant même qu’Iriana n’entre dans le portail. Ce refus d’offrir une dernière expression n’est ni de l’indifférence ni un pardon : c’est une frontière.`,'c13i_080'),
+      c13i_depart_audace:scene('Le dernier pas',PORTAL,RETURN,'Iriana',`« Je n’oublierai pas ce que j’ai fait ici. » Amanea détourne davantage le visage. La promesse n’obtient rien ; c’est précisément pour cela qu’Iriana la tient.` ,[], 'c13i_080',{hideChars:true,keyImage:PORTAL}),
+      c13i_080:keyScene('Une dernière trahison',PORTAL,RETURN,`Le portail se referme. Dans la dernière fraction de seconde, Iriana voit Amanea seule près du piano, tournée vers une pièce où la confiance a cessé d’exister.`,'c13i_081'),
+      c13i_081:scene('Après le seuil',PORTAL,RETURN,'Narrateur',`De l’autre côté, Iriana ne sait plus qui elle est, ni si le camp qu’elle a choisi mérite encore ce nom. Elle sait seulement qu’Amanea n’était pas le monstre commode qu’elle espérait trouver — et que cette découverte n’a pas empêché la trahison.` ,[], 'c13i_end',{hideChars:true,keyImage:PORTAL}),
+      c13i_end:scene('Fin du Chapitre XIII_I',PORTAL,RETURN,'Narrateur',function(){
         const kept=Array.isArray(state&&state.inventory)&&state.inventory.includes('touche_piano_amanea');
         return kept
           ? `La chanson complète d’Amanea et la sentence du portail rejoignent la Progression. Sous la manche d’Iriana, la touche de piano dérobée demeure un objet important pour la suite. La route s’achève sur une confiance perdue, pas sur une vérité résolue.`
@@ -50448,6 +50448,29 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       sc.chars=sc.chars.map(ch=>Array.isArray(ch)&&ch[0]==='amanea'?[ch[0],ch[1],ch[2]||'right','projection']:ch);
     });
     Object.assign(S,C13I_SCENES);
+
+    /* XIII_I possède une bande-son volontairement limitée à trois morceaux.
+       Ce résolveur final empêche les anciens correctifs musicaux de réinjecter
+       une piste d'un autre chapitre au moment du rendu ou d'un chargement. */
+    const c13iMusicForScene=sceneId=>{
+      const id=String(sceneId||'');
+      if(!id.startsWith('c13i_'))return null;
+      if(returnScene.test(id))return RETURN;
+      if(pianoScene.test(id))return PIANO;
+      return DEFAULT;
+    };
+    if(!window.__sylviniaC13IMusicResolverV0319){
+      window.__sylviniaC13IMusicResolverV0319=true;
+      const previousResolve=window.resolveSceneMusic;
+      window.resolveSceneMusic=function(sceneId,fallback){
+        return c13iMusicForScene(sceneId)||(
+          typeof previousResolve==='function'
+            ? previousResolve(sceneId,fallback)
+            : (fallback||DEFAULT)
+        );
+      };
+      resolveSceneMusic=window.resolveSceneMusic;
+    }
 
     if(typeof PROGRESSION_ITEMS!=='undefined') Object.assign(PROGRESSION_ITEMS,{
       touche_piano_amanea:{title:'Touche brisée du piano d’Amanea',type:'Objet stratégique · Iriana',icon:'▰',body:`Fragment d’ivoire arraché lorsque Amanea a joué sa chanson après la trahison de Tia. Iriana l’a dissimulé dans sa manche sans être vue. Sa mémoire magique et sa valeur matérielle pourront produire une conséquence dans la suite de la route.`}
@@ -50541,8 +50564,8 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
-<!-- sylvinia-codex-consolidation-v0316 -->
-<script id="sylvinia-codex-consolidation-v0316">
+<!-- sylvinia-codex-consolidation-v0319 -->
+<script id="sylvinia-codex-consolidation-v0319">
 (()=>{
   'use strict';
   try{
@@ -50553,6 +50576,16 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       if(typeof CODEX_BY_SCENE==='undefined')return;
       CODEX_BY_SCENE[sceneId]=unique([...(CODEX_BY_SCENE[sceneId]||[]),...(keys||[])]);
     };
+
+    /* Deux anciennes fiches avaient pratiquement le même titre alors qu'elles
+       décrivent deux contenus distincts. Le libellé rend leur rôle explicite. */
+    if(CODEX_ENTRIES.intro_valeurs){
+      CODEX_ENTRIES.intro_valeurs.title='Tempérament d’Hylee avant l’apprentissage';
+    }
+    if(CODEX_IMAGES.c6_key_patisserie)CODEX_IMAGES.c6_key_patisserie.title='Chapitre VI · La tartelette en gros plan';
+    if(CODEX_IMAGES.c6_key_tartelette)CODEX_IMAGES.c6_key_tartelette.title='Chapitre VI · La pâtisserie de Mir’Aldas';
+    if(CODEX_IMAGES.c10g_key_archive_arrival)CODEX_IMAGES.c10g_key_archive_arrival.title='Chapitre X-G · Panorama de l’Archive obscurcie';
+    if(CODEX_IMAGES.c10g_archives_entree)CODEX_IMAGES.c10g_archives_entree.title='Chapitre X-G · La salle de consultation';
 
     /* Une seule entrée Allenna : l’ancienne page de souvenir faisait doublon avec le personnage. */
     CODEX_ENTRIES.allenna={
@@ -50668,22 +50701,113 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       {title:'Retour au bal',keys:['c12g_key_valurn_sylvinienne_flirt','c12g_key_valurn_sylvinienne_depart']}
     ]});
 
-    const c13gBedroomMeta={
-      c13g_secret_src_7224_1:'Remerii annonce qu’elle va se changer',
-      c13g_secret_src_7225_1:'Hylee attend, intimidée',
-      c13g_secret_src_7226_1:'Hylee rassemble son courage'
+    /* Les anciens correctifs avaient créé des clés de galerie qui pointaient
+       vers les mêmes fichiers que les véritables clés de scènes. On migre les
+       sauvegardes et les index, puis on ne garde qu'une fiche par illustration. */
+    const IMAGE_ALIASES={
+      c13i_gallery_broken_key:'c13i_key_broken_key',
+      c13i_gallery_amanea_piano:'c13i_key_amanea_piano_memory',
+      c13i_gallery_song_aftermath:'c13i_key_song_aftermath',
+      c13i_gallery_hidden_key:'c13i_key_hidden_key',
+      c13i_gallery_shadow_judgment:'c13i_key_shadow_judgment',
+      c13i_gallery_portal:'c13i_key_portal_departure',
+      c13g_key_danse_survivants:'c13g_ball_11_valurn_enters_duel',
+      c13g_key_conseiller_lineva:'c13g_ball_07_draven_close_conseiller',
+      c13g_key_medig_nuit:'c3_key_medig',
+      c13g_key_salon_bleu:'c13g_ball_17_salon_relax',
+      c13g_key_salon_bleu_alt:'c13g_ball_18_salon_relax_alt'
     };
-    Object.entries(c13gBedroomMeta).forEach(([key,title])=>registerImage(key,`Chapitre XIII_G · ${title}`,'Trois plans successifs de la scène secrète dans la chambre impériale.'));
-    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.assign(CODEX_IMAGES_BY_SCENE,{
-      c13g_secret_src_7224_1:['c13g_secret_src_7224_1'],
-      c13g_secret_src_7225_1:['c13g_secret_src_7225_1'],
-      c13g_secret_src_7226_1:['c13g_secret_src_7226_1']
+    const canonicalImageKey=key=>IMAGE_ALIASES[key]||key;
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined') Object.keys(CODEX_IMAGES_BY_SCENE).forEach(sceneId=>{
+      CODEX_IMAGES_BY_SCENE[sceneId]=unique((CODEX_IMAGES_BY_SCENE[sceneId]||[]).map(canonicalImageKey));
     });
-    const c13gGroup=groupById('chapter13g');
-    if(c13gGroup){
-      c13gGroup.sections=Array.isArray(c13gGroup.sections)?c13gGroup.sections:[];
-      c13gGroup.sections.push({title:'Scène secrète · Dans la chambre',keys:Object.keys(c13gBedroomMeta)});
+    Object.keys(IMAGE_ALIASES).forEach(key=>delete CODEX_IMAGES[key]);
+
+    /* Les scènes sont la source de vérité de la galerie des derniers chapitres.
+       Une image réellement jouée ne peut donc plus rester absente du Codex. */
+    const recentImageUsage=new Map();
+    if(typeof S!=='undefined') Object.entries(S).forEach(([sceneId,scene])=>{
+      if(!scene||(!sceneId.startsWith('c13g_')&&!sceneId.startsWith('c13i_')))return;
+      const previousKey=scene.keyImage;
+      const key=canonicalImageKey(previousKey);
+      if(!key||!A[key])return;
+      if(previousKey!==key){
+        scene.keyImage=key;
+        if(scene.bg===previousKey)scene.bg=key;
+      }
+      if(!recentImageUsage.has(key))recentImageUsage.set(key,[]);
+      recentImageUsage.get(key).push({sceneId,sub:String(scene.sub||scene.title||'Moment clé')});
+      if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+        CODEX_IMAGES_BY_SCENE[sceneId]=unique([...(CODEX_IMAGES_BY_SCENE[sceneId]||[]),key]);
+      }
+    });
+
+    const c13iImageMeta={
+      c13i_key_broken_key:['La touche brisée','Iriana approche le fragment d’ivoire qui conserve le souvenir le plus intime d’Amanea.'],
+      c13i_key_amanea_piano_memory:['Ce que nous aurions pu être','Dans les ruines, Amanea transforme l’abandon et la colère en une chanson adressée à Tia.'],
+      c13i_key_song_aftermath:['Après la dernière note','La chanson achevée, Amanea se replie sous sa cape près du piano et de la touche qu’elle vient de briser.'],
+      c13i_key_hidden_key:['Le vestige dérobé','Dans la branche stratégique, Iriana glisse la touche dans sa manche pendant que la projection d’Amanea regarde ailleurs.'],
+      c13i_key_shadow_judgment:['La confiance étranglée','Amanea confronte Iriana aux conséquences de l’évasion et à la confiance qu’elle lui avait accordée.'],
+      c13i_key_portal_departure:['Pars','Amanea respecte le choix antérieur d’Iriana et lui interdit de revenir.']
+    };
+    Object.entries(c13iImageMeta).forEach(([key,[title,body]])=>registerImage(key,`Chapitre XIII_I · ${title}`,body));
+
+    const c13gKeys=[...recentImageUsage.keys()].filter(key=>key.startsWith('c13g_'));
+    const c13gBaseTitles=new Map(c13gKeys.map(key=>[key,(recentImageUsage.get(key)[0]||{}).sub||'Moment clé']));
+    const c13gTitleTotals={};
+    c13gBaseTitles.forEach(title=>{c13gTitleTotals[title]=(c13gTitleTotals[title]||0)+1;});
+    const c13gTitleIndexes={};
+    c13gKeys.forEach(key=>{
+      const base=c13gBaseTitles.get(key);
+      c13gTitleIndexes[base]=(c13gTitleIndexes[base]||0)+1;
+      const suffix=c13gTitleTotals[base]>1?` · plan ${c13gTitleIndexes[base]}/${c13gTitleTotals[base]}`:'';
+      const scenes=recentImageUsage.get(key)||[];
+      registerImage(key,`Chapitre XIII_G · ${base}${suffix}`,`Illustration clé de la séquence « ${base} », utilisée dans ${scenes.length} scène${scenes.length>1?'s':''} du dénouement.`);
+    });
+
+    const c13gBall=c13gKeys.filter(key=>/^c13g_ball_/.test(key));
+    const c13gSoft=c13gKeys.filter(key=>/^c13g_classic_/.test(key));
+    const c13gMedig=c13gKeys.filter(key=>/medig/i.test(key)&&!c13gBall.includes(key)&&!c13gSoft.includes(key));
+    const c13gIntimate=c13gKeys.filter(key=>/^(?:c13g_secret_|c13g_alt_|c13g_pov_)/.test(key)&&!c13gMedig.includes(key));
+    const c13gClaimed=new Set([...c13gBall,...c13gSoft,...c13gMedig,...c13gIntimate]);
+    const c13gTransitions=c13gKeys.filter(key=>!c13gClaimed.has(key));
+
+    replaceImageGroup({id:'chapter13i',title:'Chapitre XIII_I · Une dernière trahison',sections:[
+      {title:'La mémoire dans l’ivoire',keys:['c13i_key_broken_key','c13i_key_amanea_piano_memory','c13i_key_song_aftermath']},
+      {title:'Le choix stratégique',keys:['c13i_key_hidden_key']},
+      {title:'Le jugement',keys:['c13i_key_shadow_judgment','c13i_key_portal_departure']}
+    ]});
+    replaceImageGroup({id:'chapter13g',title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',sections:[
+      {title:'Le dénouement au bal',keys:c13gBall},
+      {title:'Transitions et révélations',keys:c13gTransitions},
+      {title:'La nuit douce',keys:c13gSoft},
+      {title:'Medig dans la nuit',keys:c13gMedig},
+      {title:'La route intime',keys:c13gIntimate}
+    ].filter(section=>section.keys.length)});
+
+    /* Les trois images ajoutées à la chambre appartiennent désormais au même
+       parcours automatique que toutes les autres images de XIII_G. */
+    ['c13g_secret_src_7224_1','c13g_secret_src_7225_1','c13g_secret_src_7226_1'].forEach(key=>{
+      if(A[key]&&!c13gKeys.includes(key)){
+        registerImage(key,`Chapitre XIII_G · Scène secrète dans la chambre`,`Plan supplémentaire de la scène secrète d’Hylee et Remerii dans la chambre impériale.`);
+        const group=groupById('chapter13g');
+        const section=group&&group.sections.find(item=>item.title==='La route intime');
+        if(section)section.keys=unique([...section.keys,key]);
+      }
+    });
+
+    /* Supprime les groupes techniques empilés par d'anciens correctifs, puis
+       garantit qu'un identifiant de chapitre n'existe qu'une seule fois. */
+    for(let i=CODEX_IMAGE_GROUPS.length-1;i>=0;i--){
+      if(CODEX_IMAGE_GROUPS[i]&&CODEX_IMAGE_GROUPS[i].id==='visual_supplements')CODEX_IMAGE_GROUPS.splice(i,1);
     }
+    const imageGroupIds=new Set();
+    CODEX_IMAGE_GROUPS.splice(0,CODEX_IMAGE_GROUPS.length,...CODEX_IMAGE_GROUPS.filter(group=>{
+      if(!group||!group.id||imageGroupIds.has(group.id))return false;
+      imageGroupIds.add(group.id);
+      group.sections=(group.sections||[]).filter(section=>section&&Array.isArray(section.keys)&&section.keys.length);
+      return true;
+    }));
 
     const imageGroupOrder=['intro','chapter1','chapter2','chapter3','chapter4_valurn','chapter4_draven','chapter5','chapter6','chapter7','chapter8','chapter9','chapter10','chapter10group','chapter11i','chapter11g','chapter12i','chapter12g','chapter13i','chapter13g'];
     CODEX_IMAGE_GROUPS.sort((a,b)=>{const ia=imageGroupOrder.indexOf(a&&a.id),ib=imageGroupOrder.indexOf(b&&b.id);return (ia<0?999:ia)-(ib<0?999:ib);});
@@ -50713,6 +50837,45 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     addMusic('music_c13g_bal_midnight_waltz','Midnight Waltz','La valse continue qui accompagne le dénouement du Bal des Élus.','Chapitre XIII_G');
     addMusic('music_c13g_une_nuit_soft','Une nuit sous ton étoile · Douce','Le thème de la scène nocturne alternative d’Hylee et Remerii.','Chapitre XIII_G');
     addMusic('music_c13g_une_nuit_intime','Une nuit sous ton étoile · Intime','Le thème de la scène secrète débloquée par leur relation.','Chapitre XIII_G');
+    addMusic('music_c13i_amanea_reine_noire','Amanea, Reine Noire','Le retour réel d’Amanea, son jugement et la chasse d’Iriana jusqu’au portail.','Chapitre XIII_I');
+
+    /* Plusieurs noms de pistes avaient été ajoutés pour des chapitres récents
+       alors qu'ils pointaient vers des fichiers déjà présents. On conserve la
+       piste d'origine et on migre scènes, index et sauvegardes vers cette clé. */
+    const MUSIC_ALIASES={
+      music_c7_ombre_mentale:'music_c7_duel_naiah_2',
+      music_c8_sombre_conseiller:'music_iriana',
+      music_c8_valurn_pacte:'music_valurn_route',
+      music_c9_depart:'music_iriana',
+      music_c9_foret:'music_c7_rencontre_naiah',
+      music_c9_capture:'music_thazran'
+    };
+    const canonicalMusicKey=key=>{
+      let current=key,guard=0;
+      while(MUSIC_ALIASES[current]&&guard++<20)current=MUSIC_ALIASES[current];
+      return current;
+    };
+    const musicOwnerBySource=new Map();
+    Object.keys(CODEX_MUSIC).forEach(key=>{
+      if(MUSIC_ALIASES[key])return;
+      const src=CODEX_MUSIC[key]&&CODEX_MUSIC[key].src;
+      if(!src)return;
+      if(musicOwnerBySource.has(src))MUSIC_ALIASES[key]=musicOwnerBySource.get(src);
+      else musicOwnerBySource.set(src,key);
+    });
+    if(typeof S!=='undefined') Object.values(S).forEach(scene=>{
+      if(scene&&typeof scene.music==='string')scene.music=canonicalMusicKey(scene.music);
+    });
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+      Object.keys(CODEX_MUSIC_BY_SCENE).forEach(sceneId=>{
+        CODEX_MUSIC_BY_SCENE[sceneId]=unique((CODEX_MUSIC_BY_SCENE[sceneId]||[]).map(canonicalMusicKey));
+      });
+      if(typeof S!=='undefined') Object.entries(S).forEach(([sceneId,scene])=>{
+        if(!sceneId.startsWith('c13i_')||!scene||typeof scene.music!=='string')return;
+        CODEX_MUSIC_BY_SCENE[sceneId]=[canonicalMusicKey(scene.music)];
+      });
+    }
+    Object.keys(MUSIC_ALIASES).forEach(key=>delete CODEX_MUSIC[key]);
 
     const MUSIC_GROUPS=[
       {id:'general',title:'Général · Menu et ambiance',keys:['music_menu']},
@@ -50724,12 +50887,11 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       {id:'chapter5',title:'Chapitre V · Une rencontre hors du temps',keys:['music_c5_miraldas','music_c5_saidin_duel']},
       {id:'chapter6',title:'Chapitre VI · Mir’Aldas',keys:['music_c6_miraldas_city','music_c6_nuit_etoiles']},
       {id:'chapter7',title:'Chapitre VII · Du Chaos aux Ombres',keys:['music_c7_rencontre_naiah','music_c7_duel_naiah_1','music_c7_duel_naiah_2']},
-      {id:'chapter8',title:'Chapitre VIII · Un sombre conseiller',keys:['music_c8_sombre_conseiller','music_c8_valurn_pacte']},
-      {id:'chapter9',title:'Chapitre IX · L’heure du départ',keys:['music_c9_depart','music_c9_foret','music_c9_capture']},
       {id:'chapter10',title:'Chapitre X · Deux perspectives sous la pierre',keys:['music_c10_horreur','music_c10_cite','music_c10_infiltration']},
       {id:'chapter11i',title:'Chapitre XI_I · Amie ou ennemie ?',keys:['music_c11_complainte_instru','music_c11_complainte']},
       {id:'chapter12i',title:'Chapitre XII_I · Le souvenir d’Amanea',keys:['music_x12i_glace_brisee','music_x12i_duel_farae']},
       {id:'chapter12g',title:'Chapitre XII_G · La fête bat son plein',keys:['music_c12g_bal','music_c12g_hylee_remerii','music_c12g_iriana_valurn','music_c12g_valurn_memory','music_c12g_moonlight']},
+      {id:'chapter13i',title:'Chapitre XIII_I · Une dernière trahison',keys:['music_c13i_amanea_reine_noire']},
       {id:'chapter13g',title:'Chapitre XIII_G · Le Bal des Élus : Dénouement',keys:['music_c13g_bal_midnight_waltz','music_c13g_une_nuit_soft','music_c13g_une_nuit_intime']}
     ];
     const musicSeen=new Set();
@@ -50748,8 +50910,8 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     function retroUnlockRecentCodex(){
       if(typeof state==='undefined'||!state)return;
       state.codexUnlocked=unique(state.codexUnlocked);
-      state.codexUnlockedImages=unique(state.codexUnlockedImages);
-      state.codexUnlockedMusic=unique(state.codexUnlockedMusic);
+      state.codexUnlockedImages=unique((state.codexUnlockedImages||[]).map(canonicalImageKey));
+      state.codexUnlockedMusic=unique((state.codexUnlockedMusic||[]).map(canonicalMusicKey));
       if(state.codexUnlocked.includes('souvenir_amanea_allenna'))state.codexUnlocked.push('allenna');
       const flags=state.flags||{};
       const unlock=(complete,text,imageGroup,music)=>{
@@ -50760,24 +50922,24 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       };
       unlock(flags.chapter12IComplete||flags.chapter13IComplete,C12I_TEXT,'chapter12i',['music_x12i_glace_brisee','music_x12i_duel_farae']);
       unlock(flags.chapter12GComplete||flags.chapter13GComplete,C12G_TEXT,'chapter12g',['music_c12g_bal','music_c12g_hylee_remerii','music_c12g_iriana_valurn','music_c12g_valurn_memory','music_c12g_moonlight']);
-      unlock(flags.chapter13IComplete,C13I_TEXT,'chapter13i',[]);
+      unlock(flags.chapter13IComplete,C13I_TEXT,'chapter13i',['music_c10_horreur','music_c11_complainte_instru','music_c13i_amanea_reine_noire']);
       unlock(flags.chapter13GComplete,C13G_TEXT,'chapter13g',['music_c13g_bal_midnight_waltz','music_c13g_une_nuit_soft','music_c13g_une_nuit_intime']);
       state.codexUnlocked=unique(state.codexUnlocked).filter(key=>CODEX_ENTRIES[key]);
       state.codexUnlockedImages=unique(state.codexUnlockedImages).filter(key=>CODEX_IMAGES[key]);
       state.codexUnlockedMusic=unique(state.codexUnlockedMusic).filter(key=>CODEX_MUSIC[key]);
     }
     window.retroUnlockRecentCodex=retroUnlockRecentCodex;
-    if(typeof ensureCodexDefaults==='function'&&!window.__codexV0316EnsureWrapped){
-      window.__codexV0316EnsureWrapped=true;
+    if(typeof ensureCodexDefaults==='function'&&!window.__codexV0319EnsureWrapped){
+      window.__codexV0319EnsureWrapped=true;
       const previousEnsure=ensureCodexDefaults;
       ensureCodexDefaults=window.ensureCodexDefaults=function(){previousEnsure();retroUnlockRecentCodex();};
     }
     retroUnlockRecentCodex();
     if(typeof save==='function')save();
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble)bubble.textContent='Mise à jour · v0.317 · Chapitre XIII_I corrigé';
-    console.info('[Sylvinia v0.316] Codex consolidé :',CODEX_ORDER.length,'entrées,',CODEX_IMAGE_ORDER.length,'images,',CODEX_MUSIC_ORDER.length,'musiques.');
-  }catch(error){console.error('[Sylvinia v0.316] Consolidation du Codex impossible',error);}
+    if(bubble)bubble.textContent='Mise à jour · v0.319 · Codex et musiques consolidés';
+    console.info('[Sylvinia v0.319] Codex consolidé :',CODEX_ORDER.length,'entrées,',CODEX_IMAGE_ORDER.length,'images,',CODEX_MUSIC_ORDER.length,'musiques.');
+  }catch(error){console.error('[Sylvinia v0.319] Consolidation du Codex impossible',error);}
 })();
 </script>
 
