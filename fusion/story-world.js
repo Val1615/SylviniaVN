@@ -4,10 +4,10 @@
   if (window.__sylviniaStoryWorldFusionLoaded) return;
   window.__sylviniaStoryWorldFusionLoaded = true;
 
-  const ENGINE_VERSION = 1;
-  const PERIOD_ID = "algratal-preparatifs";
-  const PERIOD_TARGET = "story_world_algratal_preparatifs";
-  const MAX_ACTIONS = 2;
+  const CONTENT = window.SylviniaStoryContent;
+  const ENGINE_VERSION = 2;
+  const RELATION_THRESHOLDS = [0, 5, 14, 26, 40];
+  const RELATION_STAGES = ["Rencontre", "Connaissance", "Confiance", "Proximité", "Lien profond"];
   const STAT_LABELS = {
     audace: "Audace",
     lucidite: "Lucidité",
@@ -15,215 +15,16 @@
     resonance: "Résonance",
     lien: "Lien Remerii",
   };
-  const RELATION_LABELS = {
-    remerii: "Remerii",
-    iriana: "Iriana",
-  };
-  const RELATION_THRESHOLDS = [0, 5, 14, 26, 40];
-
-  const PERIOD = {
-    id: PERIOD_ID,
-    title: "Quelques heures à Al’Gratal",
-    subtitle: "La veille du départ pour Mir’Aldas",
-    chapterGate: "Fin du chapitre II",
-    nextScene: "c3_01",
-    slots: [
-      { id: "late-afternoon", label: "Fin d’après-midi", detail: "La cour se disperse après la réunion." },
-      { id: "evening", label: "Soirée", detail: "Les dernières boutiques ferment sous les lanternes." },
-    ],
-    defaultSpots: ["market", "quarters"],
-    spots: {
-      market: {
-        id: "market",
-        icon: "◈",
-        name: "Grand Marché",
-        shortName: "Marché",
-        description: "Étoffes enchantées, cristaux de voyage et provisions changent encore de mains avant la fermeture.",
-        background: "c3_bg_algratal_marche",
-        sprite: "remerii_calm",
-        presence: "Remerii vous accompagne entre les derniers étals.",
-        event: "market-supplies",
-        availableFrom: 0,
-      },
-      gallery: {
-        id: "gallery",
-        icon: "♜",
-        name: "Galerie du palais",
-        shortName: "Palais",
-        description: "Une galerie ouverte où les requêtes laissées par la cour s’empilent plus vite que les serviteurs ne les emportent.",
-        background: "bg_algratal_panorama",
-        sprite: "iriana_calm",
-        presence: "Iriana termine seule le triage de quelques requêtes.",
-        event: "iriana-petitions",
-        availableFrom: 0,
-      },
-      avenues: {
-        id: "avenues",
-        icon: "⌁",
-        name: "Avenues impériales",
-        shortName: "Avenues",
-        description: "Les grandes artères blanches et or ralentissent enfin tandis que les lanternes remplacent le soleil.",
-        background: "bg_algratal_rues",
-        sprite: "hylee_thinking",
-        presence: "Hylee peut marcher seule et laisser retomber le poids de la convocation.",
-        event: "avenues-breath",
-        availableFrom: 0,
-      },
-      quarters: {
-        id: "quarters",
-        icon: "☾",
-        name: "Appartements d’hôtes",
-        shortName: "Appartements",
-        description: "La chambre prêtée par le palais offre enfin un silence où préparer le départ sans public.",
-        background: "c4d_noble_chamber",
-        sprite: "remerii_profile",
-        presence: "Remerii vérifie les cartes de Mir’Aldas et prétend ne pas être préoccupée.",
-        event: "quarters-miraldas",
-        availableFrom: 1,
-      },
-    },
-    events: {
-      "market-supplies": {
-        id: "market-supplies",
-        spot: "market",
-        eyebrow: "Activité facultative · Préparatifs",
-        title: "Le dernier étal encore ouvert",
-        speaker: "Remerii",
-        intro: "Une artisane ferme déjà ses coffres lorsque Remerii repère trois nécessaires de voyage presque identiques. L’un est solide, l’autre élégant, le troisième vibre faiblement au contact de la magie d’Hylee.",
-        prompt: "Remerii vous laisse choisir la manière de départager les lots.",
-        choices: [
-          {
-            id: "compare",
-            label: "Interroger les trois artisans avant de choisir",
-            note: "Recouper les usages, les défauts et les prix.",
-            effects: { stats: { lucidite: 1 }, relationships: { remerii: { trust: 1 } }, flags: ["freeMarketCompared"] },
-            response: "Hylee pose des questions précises, compare les coutures et repère le seul vendeur qui évite de parler de l’imperméabilisation. Remerii ne cache pas son approbation : le nécessaire le moins spectaculaire est aussi le seul qui survivra vraiment à la route.",
-          },
-          {
-            id: "resonate",
-            label: "Laisser sa magie répondre au lot qui vibre",
-            note: "Faire confiance à la Résonance sans la laisser décider seule.",
-            effects: { stats: { resonance: 1 }, relationships: { remerii: { affection: 1 } }, flags: ["freeMarketResonance"] },
-            response: "Le troisième lot réagit à son froid, puis révèle une couture arcanique destinée à stabiliser les objets fragiles. Hylee vérifie tout de même les sangles avant de l’accepter. Remerii sourit : l’instinct devient enfin une méthode plutôt qu’une excuse.",
-          },
-          {
-            id: "negotiate",
-            label: "Négocier franchement avant que l’étal ne ferme",
-            note: "Assumer l’urgence sans inventer une fausse noblesse.",
-            effects: { stats: { audace: 1, lien: 1 }, relationships: { remerii: { affection: 1 } }, flags: ["freeMarketBold"] },
-            response: "Hylee annonce leur départ, leur budget et le temps qu’il leur reste. L’artisane rit, tranche le marchandage en deux phrases et ajoute une couverture de route. Remerii concède que l’audace peut parfois faire gagner du temps sans provoquer de catastrophe diplomatique.",
-          },
-        ],
-      },
-      "iriana-petitions": {
-        id: "iriana-petitions",
-        spot: "gallery",
-        eyebrow: "Service ponctuel · Palais impérial",
-        title: "Trois requêtes et aucune bonne pile",
-        speaker: "Iriana",
-        intro: "Un courant d’air disperse trois requêtes : un quartier signale une citerne fissurée, un noble réclame le déplacement d’un arbre qui lui cache la lune, et une intendante demande des escortes pour une livraison médicale.",
-        prompt: "Iriana demande à Hylee ce qui doit atteindre le Conseil avant la nuit.",
-        commonEffects: { flags: ["freeIrianaPetitions"] },
-        choices: [
-          {
-            id: "danger",
-            label: "Classer d’abord selon le danger immédiat",
-            note: "Citerne, livraison médicale, puis caprice du noble.",
-            effects: { stats: { lucidite: 1 }, relationships: { iriana: { trust: 2 } }, flags: ["freeIrianaSafetyFirst"] },
-            response: "Hylee place la citerne en tête, relie la livraison médicale au même quartier et renvoie l’arbre à une audience ordinaire. Iriana reprend l’ordre sans le corriger. Pour la première fois, son silence ressemble à une marque de confiance plutôt qu’à une évaluation.",
-          },
-          {
-            id: "missing",
-            label: "Demander ce qui manque avant de trancher",
-            note: "Une urgence mal décrite peut cacher une erreur de terrain.",
-            effects: { stats: { sangfroid: 1 }, relationships: { iriana: { trust: 2 } }, flags: ["freeIrianaAskedContext"] },
-            response: "Hylee remarque que personne n’a indiqué si la citerne est encore en service. Iriana dépêche un messager avant d’engager des ouvriers au mauvais endroit. La décision prend quelques minutes de plus, mais évite de transformer l’empressement en gaspillage.",
-          },
-          {
-            id: "tree",
-            label: "Refuser immédiatement la requête concernant l’arbre",
-            note: "La cour peut survivre à une lune partiellement masquée.",
-            effects: { stats: { audace: 1 }, relationships: { iriana: { trust: 1 } }, flags: ["freeIrianaRejectedTree"] },
-            response: "Hylee barre la requête d’un trait net. Iriana la fixe une seconde, puis ajoute sa propre signature sous le refus. Le noble protestera probablement demain ; ce soir, deux urgences réelles viennent de gagner une place sur le bureau impérial.",
-          },
-        ],
-      },
-      "avenues-breath": {
-        id: "avenues-breath",
-        spot: "avenues",
-        eyebrow: "Exploration · Al’Gratal",
-        title: "Une ville après la convocation",
-        speaker: "Narrateur",
-        intro: "Hylee marche sans escorte dans les avenues encore chaudes du jour. La capitale continue de vivre comme si aucune mission secrète ne venait d’être décidée sous ses fondations.",
-        prompt: "Elle choisit ce qu’elle veut garder de cette promenade.",
-        choices: [
-          {
-            id: "observe",
-            label: "Observer ce que la façade impériale dissimule",
-            note: "Les serviteurs, les détours et les portes disent autant que les bannières.",
-            effects: { stats: { lucidite: 1 }, flags: ["freeAvenuesObserved"] },
-            response: "Derrière les façades blanches, Hylee remarque les cuisines de nuit, les livreurs pressés et les gardes qui changent discrètement de poste. Al’Gratal cesse un instant d’être un symbole : elle redevient une ville faite de personnes qui tiennent ses murs debout.",
-          },
-          {
-            id: "listen",
-            label: "Écouter la vibration magique sous les pavés",
-            note: "Sentir la ville sans tenter de la posséder.",
-            effects: { stats: { resonance: 1 }, flags: ["freeAvenuesResonance"] },
-            response: "Sous ses pas, les anciennes protections d’Al’Gratal forment un réseau immense et tendu. Hylee n’y projette aucun sort. Elle écoute seulement jusqu’à distinguer le pouls de la ville de son propre froid.",
-          },
-          {
-            id: "rest",
-            label: "S’arrêter avant que la fatigue ne décide pour elle",
-            note: "Une pause choisie vaut mieux qu’un effondrement héroïque.",
-            effects: { stats: { sangfroid: 1 }, flags: ["freeAvenuesRested"] },
-            response: "Hylee s’assied près d’une fontaine et accepte de ne rien accomplir pendant quelques minutes. La mission reste immense lorsqu’elle se relève, mais son corps ne la confond plus avec une urgence immédiate.",
-          },
-        ],
-      },
-      "quarters-miraldas": {
-        id: "quarters-miraldas",
-        spot: "quarters",
-        eyebrow: "Conversation facultative · Remerii",
-        title: "Ce que signifie vraiment rentrer",
-        speaker: "Remerii",
-        intro: "Les cartes de Mir’Aldas couvrent la table. Remerii vérifie deux fois le même itinéraire, puis une troisième, comme si la précision pouvait rendre le retour moins personnel.",
-        prompt: "Hylee peut laisser le silence intact ou lui donner une autre forme.",
-        commonEffects: { flags: ["freeRemeriiMiraldasTalk"] },
-        choices: [
-          {
-            id: "fear",
-            label: "Lui demander ce qu’elle redoute de retrouver",
-            note: "Ne pas réduire Mir’Aldas à une destination prestigieuse.",
-            effects: { stats: { lucidite: 1, lien: 1 }, relationships: { remerii: { affection: 1, trust: 2 } }, flags: ["freeRemeriiNamedFear"] },
-            response: "Remerii cesse enfin de déplacer les cartes. Elle ne donne aucun nom, seulement une vérité : certaines villes se souviennent de la personne que vous étiez et refusent de voir celle que vous êtes devenue. Hylee n’essaie pas de réparer cette peur. Elle reste assez longtemps pour qu’elle puisse exister sans les séparer.",
-          },
-          {
-            id: "real-city",
-            label: "Dire qu’elle veut connaître sa Mir’Aldas, pas la légende",
-            note: "Choisir la femme avant le prestige de l’archimage.",
-            effects: { stats: { audace: 1, lien: 1 }, relationships: { remerii: { affection: 2, trust: 1 } }, flags: ["freeRemeriiRealCity"] },
-            response: "La formule surprend Remerii. Sa Mir’Aldas n’est ni le Dôme ni la Grande Bibliothèque : ce sont des ateliers trop froids, des maîtres impossibles et quelques terrasses où elle apprenait à respirer. Elle promet d’en montrer au moins une à Hylee, si la mission leur laisse une soirée.",
-          },
-          {
-            id: "quiet",
-            label: "Préparer leurs sacs à côté d’elle, sans exiger d’aveu",
-            note: "Faire de la présence une aide concrète.",
-            effects: { stats: { sangfroid: 1, lien: 1 }, relationships: { remerii: { trust: 2 } }, flags: ["freeRemeriiQuietPrep"] },
-            response: "Hylee vérifie les sangles, répartit les provisions et laisse Remerii parler seulement lorsqu’elle le souhaite. À la fin, l’itinéraire n’a pas changé, mais les deux sacs sont prêts et le silence n’a plus rien d’une fuite.",
-          },
-        ],
-      },
-    },
-  };
 
   let root = null;
+  let activePeriod = null;
 
   function canUseCanon() {
-    return typeof state !== "undefined" && typeof S !== "undefined" && typeof A !== "undefined";
+    return Boolean(CONTENT && typeof state !== "undefined" && typeof S !== "undefined" && typeof A !== "undefined");
   }
 
   function clone(value) {
-    if (!value) return value;
+    if (value == null) return value;
     try { return JSON.parse(JSON.stringify(value)); } catch (_error) { return value; }
   }
 
@@ -241,8 +42,16 @@
     });
   }
 
+  function relationLabel(id) {
+    return (CONTENT.relationLabels && CONTENT.relationLabels[id]) || id;
+  }
+
+  function relationBond(relation) {
+    return (Number(relation && relation.affection) || 0) + (Number(relation && relation.trust) || 0);
+  }
+
   function relationStage(relation) {
-    const bond = (Number(relation.affection) || 0) + (Number(relation.trust) || 0);
+    const bond = relationBond(relation);
     let stage = 0;
     RELATION_THRESHOLDS.forEach(function each(threshold, index) {
       if (bond >= threshold) stage = index;
@@ -251,36 +60,41 @@
   }
 
   function makeRelation(seedAffection) {
-    return { affection: Math.max(0, Number(seedAffection) || 0), trust: 0, desire: 0, stage: 0, met: false, gifts: 0 };
+    const relation = {
+      affection: Math.max(0, Number(seedAffection) || 0),
+      trust: 0,
+      desire: 0,
+      stage: 0,
+      met: false,
+      gifts: 0,
+    };
+    relation.stage = relationStage(relation);
+    return relation;
   }
 
-  function ensureWorldState() {
-    if (!canUseCanon()) return null;
-    const previous = state.storyWorld && typeof state.storyWorld === "object" ? state.storyWorld : {};
-    const relationships = previous.relationships && typeof previous.relationships === "object" ? previous.relationships : {};
-    const remerii = { ...makeRelation(state.stats && state.stats.lien), ...(relationships.remerii || {}) };
-    const iriana = { ...makeRelation(0), ...(relationships.iriana || {}) };
-    remerii.stage = relationStage(remerii);
-    iriana.stage = relationStage(iriana);
-    previous.version = ENGINE_VERSION;
-    previous.mode = "story";
-    previous.activePeriod = previous.activePeriod || null;
-    previous.completedPeriods = unique(previous.completedPeriods);
-    previous.relationships = { ...relationships, remerii, iriana };
-    previous.periodRuns = previous.periodRuns && typeof previous.periodRuns === "object" ? previous.periodRuns : {};
-    previous.history = Array.isArray(previous.history) ? previous.history : [];
-    state.storyWorld = previous;
-    return previous;
+  function normaliseRelation(value, seedAffection) {
+    const relation = { ...makeRelation(seedAffection), ...(value || {}) };
+    relation.affection = clamp(relation.affection);
+    relation.trust = clamp(relation.trust);
+    relation.desire = clamp(relation.desire);
+    relation.stage = relationStage(relation);
+    relation.met = relation.met === true || relationBond(relation) > 0;
+    return relation;
   }
 
-  function freshRun() {
+  function periodById(id) {
+    return CONTENT && CONTENT.byId ? CONTENT.byId[id] : null;
+  }
+
+  function freshRun(period) {
+    const firstSpot = (period.spots || []).find(function findSpot(spot) { return (spot.availableFrom || 0) <= 0; }) || period.spots[0];
     return {
-      id: PERIOD_ID,
+      id: period.id,
       slot: 0,
-      selectedSpot: PERIOD.defaultSpots[0],
-      view: "map",
-      pendingEvent: null,
-      completedEvents: [],
+      selectedSpot: firstSpot ? firstSpot.id : null,
+      view: "location",
+      pendingActivity: null,
+      completedActivities: [],
       actions: [],
       lastResult: null,
       startedAtScene: state.scene,
@@ -288,15 +102,69 @@
     };
   }
 
-  function getRun(createIfMissing) {
-    const world = ensureWorldState();
-    if (!world) return null;
-    if (!world.periodRuns[PERIOD_ID] && createIfMissing) world.periodRuns[PERIOD_ID] = freshRun();
-    return world.periodRuns[PERIOD_ID] || null;
+  function normaliseRun(period, value) {
+    const defaults = freshRun(period);
+    const run = value && typeof value === "object" ? value : defaults;
+    Object.entries(defaults).forEach(function each(entry) {
+      if (run[entry[0]] === undefined) run[entry[0]] = clone(entry[1]);
+    });
+    if (Array.isArray(run.completedEvents) && !Array.isArray(value && value.completedActivities)) {
+      run.completedActivities = unique(run.completedEvents);
+    }
+    run.completedActivities = unique(run.completedActivities);
+    run.actions = Array.isArray(run.actions) ? run.actions : [];
+    run.slot = Math.max(0, Math.min(period.maxActions, Number(run.slot) || 0));
+    run.view = ["location", "activity", "result", "relations", "journal"].includes(run.view) ? run.view : "location";
+    if (run.pendingEvent && !run.pendingActivity) run.pendingActivity = { activityId: run.pendingEvent };
+    return run;
   }
 
-  function assetUrl(key) {
-    return (typeof A !== "undefined" && A[key]) ? A[key] : "";
+  function ensureWorldState() {
+    if (!canUseCanon()) return null;
+    const previous = state.storyWorld && typeof state.storyWorld === "object" ? state.storyWorld : {};
+    const relationships = previous.relationships && typeof previous.relationships === "object" ? previous.relationships : {};
+    const relationIds = unique([
+      ...Object.keys(CONTENT.relationLabels || {}),
+      ...Object.keys(relationships),
+    ]);
+    const normalisedRelationships = {};
+    relationIds.forEach(function each(id) {
+      const seed = id === "remerii" && !relationships[id] ? Number(state.stats && state.stats.lien) || 0 : 0;
+      normalisedRelationships[id] = normaliseRelation(relationships[id], seed);
+      if (id === "remerii") {
+        normalisedRelationships[id].affection = Math.max(normalisedRelationships[id].affection, Number(state.stats && state.stats.lien) || 0);
+        normalisedRelationships[id].met = normalisedRelationships[id].met || normalisedRelationships[id].affection > 0;
+        normalisedRelationships[id].stage = relationStage(normalisedRelationships[id]);
+      }
+    });
+
+    previous.version = ENGINE_VERSION;
+    previous.mode = "story";
+    previous.activePeriod = typeof previous.activePeriod === "string" ? previous.activePeriod : null;
+    previous.completedPeriods = unique(previous.completedPeriods);
+    previous.relationships = normalisedRelationships;
+    previous.periodRuns = previous.periodRuns && typeof previous.periodRuns === "object" ? previous.periodRuns : {};
+    previous.history = Array.isArray(previous.history) ? previous.history : [];
+    previous.resources = previous.resources && typeof previous.resources === "object" ? previous.resources : {};
+    previous.resources.coins = Math.max(0, Number(previous.resources.coins) || 0);
+    previous.resources.supplies = Math.max(0, Number(previous.resources.supplies) || 0);
+    previous.resources.items = unique(previous.resources.items);
+
+    Object.keys(previous.periodRuns).forEach(function each(id) {
+      const period = periodById(id);
+      if (period) previous.periodRuns[id] = normaliseRun(period, previous.periodRuns[id]);
+    });
+    if (previous.activePeriod && !periodById(previous.activePeriod)) previous.activePeriod = null;
+    state.storyWorld = previous;
+    return previous;
+  }
+
+  function getRun(period, createIfMissing) {
+    const world = ensureWorldState();
+    if (!world || !period) return null;
+    if (!world.periodRuns[period.id] && createIfMissing) world.periodRuns[period.id] = freshRun(period);
+    if (world.periodRuns[period.id]) world.periodRuns[period.id] = normaliseRun(period, world.periodRuns[period.id]);
+    return world.periodRuns[period.id] || null;
   }
 
   function safeSave() {
@@ -304,6 +172,7 @@
   }
 
   function setFlag(key, value) {
+    if (!key) return;
     state.flags = state.flags && typeof state.flags === "object" ? state.flags : {};
     state.flags[key] = value !== false;
   }
@@ -311,9 +180,16 @@
   function mergeEffects(base, extra) {
     const first = base || {};
     const second = extra || {};
+    const stats = {};
+    const resources = {};
     const relationships = {};
-    const relationIds = unique([...Object.keys(first.relationships || {}), ...Object.keys(second.relationships || {})]);
-    relationIds.forEach(function each(id) {
+    unique([...Object.keys(first.stats || {}), ...Object.keys(second.stats || {})]).forEach(function each(key) {
+      stats[key] = (Number((first.stats || {})[key]) || 0) + (Number((second.stats || {})[key]) || 0);
+    });
+    unique([...Object.keys(first.resources || {}), ...Object.keys(second.resources || {})]).forEach(function each(key) {
+      resources[key] = (Number((first.resources || {})[key]) || 0) + (Number((second.resources || {})[key]) || 0);
+    });
+    unique([...Object.keys(first.relationships || {}), ...Object.keys(second.relationships || {})]).forEach(function each(id) {
       const left = (first.relationships || {})[id] || {};
       const right = (second.relationships || {})[id] || {};
       relationships[id] = {};
@@ -321,50 +197,213 @@
         relationships[id][key] = (Number(left[key]) || 0) + (Number(right[key]) || 0);
       });
     });
-    const stats = {};
-    unique([...Object.keys(first.stats || {}), ...Object.keys(second.stats || {})]).forEach(function statKey(key) {
-      stats[key] = (Number((first.stats || {})[key]) || 0) + (Number((second.stats || {})[key]) || 0);
+    return {
+      stats,
+      resources,
+      relationships,
+      items: unique([...(first.items || []), ...(second.items || [])]),
+      flags: unique([...(first.flags || []), ...(second.flags || [])]),
+    };
+  }
+
+  function canAfford(effects) {
+    const world = ensureWorldState();
+    return Object.entries((effects && effects.resources) || {}).every(function every(entry) {
+      const key = entry[0];
+      const delta = Number(entry[1]) || 0;
+      return delta >= 0 || (Number(world.resources[key]) || 0) >= Math.abs(delta);
     });
-    return { stats, relationships, flags: unique([...(first.flags || []), ...(second.flags || [])]) };
   }
 
   function applyEffects(effects) {
     const world = ensureWorldState();
     const applied = effects || {};
     state.stats = state.stats && typeof state.stats === "object" ? state.stats : {};
-    Object.entries(applied.stats || {}).forEach(function statEntry(entry) {
+    Object.entries(applied.stats || {}).forEach(function each(entry) {
       const key = entry[0];
       const delta = Number(entry[1]) || 0;
       if (typeof applyBalancedStatDelta === "function") applyBalancedStatDelta(key, delta);
       else state.stats[key] = Math.max(0, (Number(state.stats[key]) || 0) + delta);
     });
-    Object.entries(applied.relationships || {}).forEach(function relationEntry(entry) {
+
+    Object.entries(applied.relationships || {}).forEach(function each(entry) {
       const id = entry[0];
       const deltas = entry[1] || {};
-      const relation = { ...makeRelation(0), ...(world.relationships[id] || {}) };
+      const relation = normaliseRelation(world.relationships[id], 0);
       ["affection", "trust", "desire"].forEach(function relationKey(key) {
         relation[key] = clamp((Number(relation[key]) || 0) + (Number(deltas[key]) || 0));
       });
       relation.met = true;
       relation.stage = relationStage(relation);
       world.relationships[id] = relation;
+      if (id === "remerii") {
+        const relationGain = Math.max(0, (Number(deltas.affection) || 0) + (Number(deltas.trust) || 0));
+        const lienGain = relationGain ? Math.max(1, Math.round(relationGain / 2)) : 0;
+        if (lienGain && typeof applyBalancedStatDelta === "function") applyBalancedStatDelta("lien", lienGain);
+        else if (lienGain) state.stats.lien = Math.max(0, (Number(state.stats.lien) || 0) + lienGain);
+      }
     });
-    (applied.flags || []).forEach(function flag(flagName) { setFlag(flagName, true); });
+
+    Object.entries(applied.resources || {}).forEach(function each(entry) {
+      const key = entry[0];
+      world.resources[key] = Math.max(0, (Number(world.resources[key]) || 0) + (Number(entry[1]) || 0));
+    });
+    (applied.items || []).forEach(function each(item) {
+      world.resources.items = unique([...world.resources.items, item]);
+      state.inventory = unique([...(Array.isArray(state.inventory) ? state.inventory : []), item]);
+    });
+    (applied.flags || []).forEach(function each(flag) { setFlag(flag, true); });
   }
 
   function effectLabels(effects) {
     const labels = [];
-    Object.entries((effects && effects.stats) || {}).forEach(function statEntry(entry) {
+    Object.entries((effects && effects.stats) || {}).forEach(function each(entry) {
       const delta = Number(entry[1]) || 0;
       if (delta) labels.push(`${STAT_LABELS[entry[0]] || entry[0]} ${delta > 0 ? "+" : ""}${delta}`);
     });
-    Object.entries((effects && effects.relationships) || {}).forEach(function relationEntry(entry) {
-      const id = relationEntry[0];
-      const deltas = relationEntry[1] || {};
-      const total = (Number(deltas.affection) || 0) + (Number(deltas.trust) || 0);
-      if (total) labels.push(`Relation ${RELATION_LABELS[id] || id} +${total}`);
+    Object.entries((effects && effects.relationships) || {}).forEach(function each(entry) {
+      const deltas = entry[1] || {};
+      const total = (Number(deltas.affection) || 0) + (Number(deltas.trust) || 0) + (Number(deltas.desire) || 0);
+      if (total) labels.push(`Relation ${relationLabel(entry[0])} ${total > 0 ? "+" : ""}${total}`);
     });
+    Object.entries((effects && effects.resources) || {}).forEach(function each(entry) {
+      const delta = Number(entry[1]) || 0;
+      if (!delta) return;
+      const label = entry[0] === "coins" ? "Pièces" : entry[0] === "supplies" ? "Provisions" : entry[0];
+      labels.push(`${label} ${delta > 0 ? "+" : ""}${delta}`);
+    });
+    if (effects && effects.items && effects.items.length) labels.push(`Objet · ${effects.items.length}`);
     return labels;
+  }
+
+  function spotById(period, id) {
+    return (period.spots || []).find(function find(spot) { return spot.id === id; }) || null;
+  }
+
+  function activityById(spot, id) {
+    return spot && (spot.activities || []).find(function find(activity) { return activity.id === id; });
+  }
+
+  function activityKey(spot, activity) {
+    return `${spot.id}/${activity.id}`;
+  }
+
+  function relationRequirement(activity) {
+    const requirement = activity && activity.requiresRelation;
+    if (!requirement) return { unlocked: true, label: "" };
+    const world = ensureWorldState();
+    const bond = relationBond(world.relationships[requirement.id]);
+    return {
+      unlocked: bond >= (Number(requirement.min) || 0),
+      label: `${relationLabel(requirement.id)} ${bond}/${Number(requirement.min) || 0}`,
+    };
+  }
+
+  function activityState(period, run, spot, activity) {
+    const requirement = relationRequirement(activity);
+    const done = run.completedActivities.includes(activityKey(spot, activity)) || run.completedActivities.includes(activity.id);
+    const timeLocked = run.slot < (activity.availableFrom || 0) || run.slot < (spot.availableFrom || 0);
+    const ended = run.slot >= period.maxActions;
+    return {
+      done,
+      timeLocked,
+      ended,
+      relationLocked: !requirement.unlocked,
+      requirement: requirement.label,
+      available: !done && !timeLocked && !ended && requirement.unlocked,
+    };
+  }
+
+  function assetUrl(key) {
+    if (!key) return "";
+    if (A && A[key]) return A[key];
+    if (/^(?:https?:|data:|blob:|assets\/|\.\.\/|\.\/)/.test(String(key))) return String(key);
+    return "";
+  }
+
+  function sceneCharacter(scene, character) {
+    if (!scene || !Array.isArray(scene.chars)) return null;
+    const match = scene.chars.find(function find(entry) { return Array.isArray(entry) && entry[0] === character; });
+    return match ? { kind: match[0], sprite: match[1], position: match[2] || "center" } : null;
+  }
+
+  function chapterPrefix(sceneId) {
+    const id = String(sceneId || "");
+    const match = id.match(/^(c\d+(?:[a-z])?_)/i);
+    return match ? match[1] : id.match(/^s\d+/) ? "s" : "";
+  }
+
+  function resolveSceneVisual(period, spot) {
+    const preferredSceneIds = unique([spot.visualScene, period.anchorScene, period.nextScene]);
+    let scene = null;
+    let spriteData = null;
+    preferredSceneIds.some(function some(sceneId) {
+      const candidate = S[sceneId];
+      if (!candidate) return false;
+      if (!scene) scene = candidate;
+      const character = sceneCharacter(candidate, spot.character);
+      if (character) {
+        scene = candidate;
+        spriteData = character;
+        return true;
+      }
+      return false;
+    });
+
+    if (!spriteData && spot.character) {
+      const prefix = chapterPrefix(spot.visualScene || period.anchorScene);
+      const sceneIds = Object.keys(S);
+      const referenceIndex = Math.max(0, sceneIds.indexOf(spot.visualScene || period.anchorScene));
+      const candidates = sceneIds.filter(function filter(id) { return !prefix || id.startsWith(prefix); }).sort(function nearest(left, right) {
+        return Math.abs(sceneIds.indexOf(left) - referenceIndex) - Math.abs(sceneIds.indexOf(right) - referenceIndex);
+      });
+      candidates.some(function some(id) {
+        const character = sceneCharacter(S[id], spot.character);
+        if (!character) return false;
+        spriteData = character;
+        if (!scene) scene = S[id];
+        return true;
+      });
+    }
+
+    let spriteKey = spriteData && spriteData.sprite;
+    if (!spriteKey && spot.sprite && assetUrl(spot.sprite)) spriteKey = spot.sprite;
+    const referenceScene = S[spot.visualScene] || scene || S[period.anchorScene] || S[period.nextScene];
+    let usePartyOutfit = spot.partyOutfits === true;
+    try {
+      if (!usePartyOutfit && typeof window.__sylviniaShouldUsePartyOutfit === "function") {
+        usePartyOutfit = Boolean(window.__sylviniaShouldUsePartyOutfit(spot.visualScene || period.anchorScene, referenceScene));
+      }
+    } catch (_error) { /* tenue normale */ }
+    if (spriteKey && usePartyOutfit && typeof window.__sylviniaPartySpriteRemap === "function") {
+      const remapped = window.__sylviniaPartySpriteRemap(spriteKey);
+      if (assetUrl(remapped)) spriteKey = remapped;
+    }
+    return {
+      background: spot.background || (referenceScene && referenceScene.bg) || (S[period.anchorScene] && S[period.anchorScene].bg) || (S[period.nextScene] && S[period.nextScene].bg),
+      sprite: spriteKey,
+      position: spriteData ? spriteData.position : "center",
+    };
+  }
+
+  function setVisuals(period, spot) {
+    if (!root || !period || !spot) return;
+    const visual = resolveSceneVisual(period, spot);
+    const background = root.querySelector(".sw-backdrop");
+    const character = root.querySelector("#swCharacter");
+    const backgroundSrc = assetUrl(visual.background);
+    const spriteSrc = assetUrl(visual.sprite);
+    background.style.backgroundImage = backgroundSrc ? `url("${backgroundSrc.replace(/"/g, "%22")}")` : "none";
+    character.className = `sw-character is-${escapeHtml(spot.character || "narrator")} is-${escapeHtml(visual.position || "center")}`;
+    if (spriteSrc) {
+      character.src = spriteSrc;
+      character.alt = spot.presence || relationLabel(spot.character);
+      character.hidden = false;
+    } else {
+      character.removeAttribute("src");
+      character.alt = "";
+      character.hidden = true;
+    }
   }
 
   function createRoot() {
@@ -382,12 +421,12 @@
       <div class="sw-shell">
         <header class="sw-topbar">
           <div class="sw-heading">
-            <span class="sw-mode">Mode Histoire · Temps libre contrôlé</span>
-            <h1 id="swTitle">${escapeHtml(PERIOD.title)}</h1>
-            <p>${escapeHtml(PERIOD.subtitle)}</p>
+            <span class="sw-mode">Mode Histoire · Monde entre les chapitres</span>
+            <h1 id="swTitle"></h1>
+            <p id="swSubtitle"></p>
           </div>
           <div class="sw-top-actions">
-            <button type="button" class="sw-quiet-button" data-sw-action="title">Retour au menu</button>
+            <button type="button" class="sw-quiet-button" data-sw-action="title">Sauver et revenir au menu</button>
             <button type="button" class="sw-story-button" data-sw-action="finish">Reprendre le récit</button>
           </div>
         </header>
@@ -395,194 +434,269 @@
         <main class="sw-layout">
           <aside class="sw-sidebar">
             <div class="sw-sidebar-heading">
-              <span>Lieux accessibles</span>
-              <strong>Al’Gratal</strong>
-              <p>Hylee reste dans le périmètre cohérent avec la mission.</p>
+              <span id="swLocationLabel">Zone accessible</span>
+              <strong id="swLocation"></strong>
+              <p id="swLocationNote"></p>
             </div>
-            <nav class="sw-spot-list" id="swSpotList" aria-label="Sous-lieux d’Al’Gratal"></nav>
-            <div class="sw-world-note">
-              <span>Rythme narratif</span>
-              <p>Chaque activité fait avancer le temps. Vous pouvez reprendre le chapitre III quand vous le souhaitez.</p>
-            </div>
+            <nav class="sw-section-nav" aria-label="Sections du temps libre">
+              <button type="button" data-sw-view="location" class="is-selected">⌖ <span>Lieux</span></button>
+              <button type="button" data-sw-view="relations">♡ <span>Relations</span></button>
+              <button type="button" data-sw-view="journal">▤ <span>Journal</span></button>
+            </nav>
+            <div class="sw-spot-list" id="swSpotList"></div>
+            <div class="sw-world-note"><span>Liberté contrôlée</span><p id="swWorldNote"></p></div>
           </aside>
-          <section class="sw-stage" id="swStage">
-            <img class="sw-character" id="swCharacter" alt="" />
+          <section class="sw-stage">
+            <img class="sw-character" id="swCharacter" alt="" hidden>
             <article class="sw-content" id="swContent"></article>
           </section>
         </main>
-      </div>
-    `;
+      </div>`;
     root.addEventListener("click", handleClick);
     document.addEventListener("keydown", handleKeydown);
     document.body.appendChild(root);
     return root;
   }
 
-  function relationSummary(world, id) {
-    const relation = world.relationships[id] || makeRelation(0);
-    return (Number(relation.affection) || 0) + (Number(relation.trust) || 0);
-  }
-
-  function renderStatus(run) {
+  function renderStatus(period, run) {
     const world = ensureWorldState();
-    const slotIndex = Math.min(run.slot, PERIOD.slots.length - 1);
-    const slot = PERIOD.slots[slotIndex];
-    const complete = run.slot >= MAX_ACTIONS;
-    const stats = ["audace", "lucidite", "sangfroid", "resonance"].map(function mapStat(key) {
-      return `<span class="sw-stat"><small>${escapeHtml(STAT_LABELS[key])}</small><b>${Number(state.stats && state.stats[key]) || 0}</b></span>`;
-    }).join("");
+    const complete = run.slot >= period.maxActions;
+    const slot = period.slots[Math.min(run.slot, Math.max(0, period.slots.length - 1))] || { label: "Temps libre", detail: "Le récit attend." };
+    const stats = period.perspective === "Hylee"
+      ? ["audace", "lucidite", "sangfroid", "resonance"].map(function map(key) {
+        return `<span class="sw-stat"><small>${escapeHtml(STAT_LABELS[key])}</small><b>${Number(state.stats && state.stats[key]) || 0}</b></span>`;
+      }).join("")
+      : `<span class="sw-perspective"><small>Perspective</small><b>${escapeHtml(period.perspective)}</b><em>Les choix de cette route nourrissent surtout ses relations et ses traces narratives.</em></span>`;
+    const metRelations = Object.entries(world.relationships).filter(function filter(entry) { return entry[1].met; });
+    const strongest = metRelations.sort(function sort(a, b) { return relationBond(b[1]) - relationBond(a[1]); }).slice(0, 2);
+    const relationSummary = strongest.length ? strongest.map(function map(entry) {
+      return `<span><small>${escapeHtml(relationLabel(entry[0]))}</small><b>${relationBond(entry[1])}</b></span>`;
+    }).join("") : `<span><small>Relations</small><b>—</b></span>`;
     document.getElementById("swStatus").innerHTML = `
-      <div class="sw-time">
-        <span>${complete ? "Temps libre terminé" : escapeHtml(slot.label)}</span>
-        <strong>${Math.min(run.slot, MAX_ACTIONS)} / ${MAX_ACTIONS} activités</strong>
-        <small>${complete ? "Vous pouvez reprendre le fil principal." : escapeHtml(slot.detail)}</small>
-      </div>
+      <div class="sw-time"><span>${complete ? "Temps libre terminé" : escapeHtml(slot.label)}</span><strong>${Math.min(run.slot, period.maxActions)} / ${period.maxActions} activités</strong><small>${complete ? "Vous pouvez reprendre le fil principal." : escapeHtml(slot.detail)}</small></div>
       <div class="sw-stats">${stats}</div>
-      <div class="sw-relations">
-        <span><small>Lien Remerii</small><b>${Number(state.stats && state.stats.lien) || 0}</b></span>
-        <span><small>Confiance Iriana</small><b>${relationSummary(world, "iriana")}</b></span>
-      </div>
-    `;
+      <div class="sw-relations">${relationSummary}<span><small>Pièces</small><b>${world.resources.coins}</b></span><span><small>Provisions</small><b>${world.resources.supplies}</b></span></div>`;
   }
 
-  function eventAvailable(spot, run) {
-    if (run.slot >= MAX_ACTIONS) return false;
-    if (run.slot < (spot.availableFrom || 0)) return false;
-    return !run.completedEvents.includes(spot.event);
-  }
-
-  function renderSpots(run) {
+  function renderSpots(period, run) {
     const list = document.getElementById("swSpotList");
-    list.innerHTML = Object.values(PERIOD.spots).map(function mapSpot(spot) {
+    const show = ["location", "activity", "result"].includes(run.view);
+    list.hidden = !show;
+    if (!show) { list.innerHTML = ""; return; }
+    list.innerHTML = (period.spots || []).map(function map(spot) {
       const selected = run.selectedSpot === spot.id;
       const locked = run.slot < (spot.availableFrom || 0);
-      const done = run.completedEvents.includes(spot.event);
-      const status = locked ? "Disponible en soirée" : done ? "Visité" : "Disponible";
+      const completed = (spot.activities || []).filter(function filter(activity) {
+        return run.completedActivities.includes(activityKey(spot, activity)) || run.completedActivities.includes(activity.id);
+      }).length;
+      const status = locked ? "Disponible plus tard" : `${completed}/${(spot.activities || []).length} scène${(spot.activities || []).length > 1 ? "s" : ""}`;
       return `<button type="button" class="sw-spot${selected ? " is-selected" : ""}${locked ? " is-locked" : ""}" data-sw-spot="${escapeHtml(spot.id)}" ${locked ? "disabled" : ""} aria-pressed="${selected ? "true" : "false"}">
-        <span class="sw-spot-icon">${escapeHtml(spot.icon)}</span>
-        <span><strong>${escapeHtml(spot.shortName)}</strong><small>${escapeHtml(status)}</small></span>
+        <span class="sw-spot-icon">${escapeHtml(spot.icon)}</span><span><strong>${escapeHtml(spot.shortName)}</strong><small>${escapeHtml(status)}</small></span>
       </button>`;
     }).join("");
   }
 
-  function renderMap(run) {
-    const spot = PERIOD.spots[run.selectedSpot] || PERIOD.spots[PERIOD.defaultSpots[Math.min(run.slot, PERIOD.defaultSpots.length - 1)]];
-    const complete = run.slot >= MAX_ACTIONS;
-    const available = eventAvailable(spot, run);
-    setVisuals(spot);
-    const actionLabel = complete ? "Reprendre le récit" : available ? "Vivre cette scène" : run.completedEvents.includes(spot.event) ? "Scène déjà vécue" : "Indisponible pour l’instant";
+  function activityStatusText(value) {
+    if (value.done) return "Déjà vécu";
+    if (value.ended) return "Temps écoulé";
+    if (value.timeLocked) return "Disponible plus tard";
+    if (value.relationLocked) return `Lien requis · ${value.requirement}`;
+    return "Disponible · 1 créneau";
+  }
+
+  function renderLocation(period, run) {
+    let spot = spotById(period, run.selectedSpot);
+    if (!spot || run.slot < (spot.availableFrom || 0)) {
+      spot = (period.spots || []).find(function find(candidate) { return run.slot >= (candidate.availableFrom || 0); }) || period.spots[0];
+      run.selectedSpot = spot && spot.id;
+    }
+    if (!spot) return;
+    setVisuals(period, spot);
+    const activities = (spot.activities || []).map(function map(activity) {
+      const status = activityState(period, run, spot, activity);
+      const relationClass = status.relationLocked ? " is-relation-locked" : "";
+      return `<button type="button" class="sw-activity${relationClass}" data-sw-activity="${escapeHtml(activity.id)}" ${status.available ? "" : "disabled"}>
+        <span class="sw-activity-icon">${activity.kind === "job" ? "⚒" : "✦"}</span>
+        <span><small>${activity.kind === "job" ? "Travail ou service" : "Scène facultative"}</small><strong>${escapeHtml(activity.title)}</strong><em>${escapeHtml(activityStatusText(status))}</em></span>
+        <b>›</b>
+      </button>`;
+    }).join("");
+    const ended = run.slot >= period.maxActions;
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-location-card">
-        <span class="sw-eyebrow">${escapeHtml(PERIOD.chapterGate)} · ${escapeHtml(PERIOD.subtitle)}</span>
+        <span class="sw-eyebrow">${escapeHtml(period.chapterGate)} · ${escapeHtml(period.perspective)}</span>
         <h2>${escapeHtml(spot.name)}</h2>
         <p class="sw-lead">${escapeHtml(spot.description)}</p>
         <div class="sw-presence"><span>Présence</span><p>${escapeHtml(spot.presence)}</p></div>
-        <div class="sw-location-actions">
-          <button type="button" class="sw-primary-button" data-sw-action="${complete ? "finish" : "event"}" ${!complete && !available ? "disabled" : ""}>${escapeHtml(actionLabel)}</button>
-          ${run.slot > 0 && !complete ? '<button type="button" class="sw-secondary-button" data-sw-action="finish">Partir plus tôt</button>' : ""}
-        </div>
-        <p class="sw-cost">${complete ? "Les activités choisies ont été enregistrées dans la sauvegarde du Mode Histoire." : "Coût : un créneau de temps · Effets persistants sur Hylee et ses relations."}</p>
-      </div>
-    `;
+        <div class="sw-activity-list">${activities || "<p class=\"sw-empty\">Aucune activité n’est disponible ici pour le moment.</p>"}</div>
+        ${ended ? '<button type="button" class="sw-primary-button sw-inline-finish" data-sw-action="finish">Reprendre le récit principal</button>' : ""}
+        <p class="sw-cost">Chaque activité fait avancer le temps. Les caractéristiques, relations, objets et ressources restent dans la sauvegarde du Mode Histoire.</p>
+      </div>`;
   }
 
-  function renderEvent(run) {
-    const event = PERIOD.events[run.pendingEvent];
-    if (!event) { run.view = "map"; renderWorld(); return; }
-    const spot = PERIOD.spots[event.spot];
-    setVisuals(spot);
+  function getPending(period, run) {
+    const pending = run.pendingActivity || {};
+    let spot = spotById(period, pending.spotId || run.selectedSpot);
+    let activity = activityById(spot, pending.activityId);
+    if (!activity && pending.activityId) {
+      (period.spots || []).some(function some(candidate) {
+        const found = activityById(candidate, pending.activityId);
+        if (!found) return false;
+        spot = candidate;
+        activity = found;
+        return true;
+      });
+    }
+    return { spot, activity };
+  }
+
+  function renderActivity(period, run) {
+    const pending = getPending(period, run);
+    if (!pending.spot || !pending.activity) { run.view = "location"; renderWorld(); return; }
+    setVisuals(period, pending.spot);
+    const choices = (pending.activity.choices || []).map(function map(choice) {
+      const effects = mergeEffects(pending.activity.commonEffects, choice.effects);
+      const affordable = canAfford(effects);
+      const labels = effectLabels(effects);
+      return `<button type="button" class="sw-choice${affordable ? "" : " is-unaffordable"}" data-sw-choice="${escapeHtml(choice.id)}" ${affordable ? "" : "disabled"}>
+        <span><strong>${escapeHtml(choice.label)}</strong><small>${escapeHtml(choice.note)}${affordable ? "" : " · Ressources insuffisantes"}</small></span>
+        <span class="sw-choice-effects">${labels.map(function label(value) { return `<em>${escapeHtml(value)}</em>`; }).join("")}</span>
+      </button>`;
+    }).join("");
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-event-card">
-        <button type="button" class="sw-back-button" data-sw-action="map">‹ Retour aux lieux</button>
-        <span class="sw-eyebrow">${escapeHtml(event.eyebrow)}</span>
-        <h2>${escapeHtml(event.title)}</h2>
-        <p class="sw-speaker">${escapeHtml(event.speaker)}</p>
-        <p class="sw-event-intro">${escapeHtml(event.intro)}</p>
-        <p class="sw-prompt">${escapeHtml(event.prompt)}</p>
-        <div class="sw-choice-list">
-          ${event.choices.map(function mapChoice(choice) {
-            const effects = mergeEffects(event.commonEffects, choice.effects);
-            const labels = effectLabels(effects);
-            return `<button type="button" class="sw-choice" data-sw-choice="${escapeHtml(choice.id)}">
-              <span><strong>${escapeHtml(choice.label)}</strong><small>${escapeHtml(choice.note)}</small></span>
-              <span class="sw-choice-effects">${labels.map(function label(value) { return `<em>${escapeHtml(value)}</em>`; }).join("")}</span>
-            </button>`;
-          }).join("")}
-        </div>
-      </div>
-    `;
+        <button type="button" class="sw-back-button" data-sw-action="location">‹ Retour au lieu</button>
+        <span class="sw-eyebrow">${escapeHtml(pending.activity.eyebrow)}</span>
+        <h2>${escapeHtml(pending.activity.title)}</h2>
+        <p class="sw-speaker">${escapeHtml(pending.activity.speaker)}</p>
+        <p class="sw-event-intro">${escapeHtml(pending.activity.intro)}</p>
+        <p class="sw-prompt">${escapeHtml(pending.activity.prompt)}</p>
+        <div class="sw-choice-list">${choices}</div>
+      </div>`;
   }
 
-  function renderResult(run) {
+  function renderResult(period, run) {
     const result = run.lastResult;
-    if (!result) { run.view = "map"; renderWorld(); return; }
-    const event = PERIOD.events[result.eventId];
-    const spot = PERIOD.spots[event.spot];
-    const complete = run.slot >= MAX_ACTIONS;
-    setVisuals(spot);
+    const spot = result && spotById(period, result.spotId);
+    if (!result || !spot) { run.view = "location"; renderWorld(); return; }
+    setVisuals(period, spot);
+    const complete = run.slot >= period.maxActions;
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-result-card">
         <span class="sw-eyebrow">Conséquence enregistrée</span>
         <h2>${escapeHtml(result.choiceLabel)}</h2>
-        <p class="sw-result-text">${escapeHtml(result.response)}</p>
-        <div class="sw-gain-list">${result.labels.map(function mapLabel(label) { return `<span>${escapeHtml(label)}</span>`; }).join("")}</div>
-        <button type="button" class="sw-primary-button" data-sw-action="${complete ? "finish" : "continue"}">${complete ? "Reprendre le chapitre III" : "Continuer le temps libre"}</button>
-        <p class="sw-cost">${complete ? "Les choix du temps libre pourront modifier des dialogues et des options du récit principal." : "Le temps avance. De nouveaux lieux ou personnages peuvent devenir disponibles."}</p>
-      </div>
-    `;
+        <p class="sw-result-text">${escapeHtml(result.response).replace(/\n/g, "<br>")}</p>
+        <div class="sw-gain-list">${result.labels.map(function map(label) { return `<span>${escapeHtml(label)}</span>`; }).join("")}</div>
+        <button type="button" class="sw-primary-button" data-sw-action="${complete ? "finish" : "continue"}">${complete ? "Reprendre le récit principal" : "Continuer le temps libre"}</button>
+        <p class="sw-cost">${complete ? "Le temps imparti est écoulé. Les conséquences ont été sauvegardées." : "Le monde et les personnages ont avancé d’un créneau."}</p>
+      </div>`;
   }
 
-  function setVisuals(spot) {
-    const background = document.querySelector("#storyWorldRoot .sw-backdrop");
-    const character = document.getElementById("swCharacter");
-    const backgroundSrc = assetUrl(spot.background);
-    const spriteSrc = assetUrl(spot.sprite);
-    background.style.backgroundImage = backgroundSrc ? `url("${backgroundSrc.replace(/"/g, "%22")}")` : "none";
-    if (spriteSrc) {
-      character.src = spriteSrc;
-      character.alt = spot.presence;
-      character.hidden = false;
-    } else {
-      character.removeAttribute("src");
-      character.alt = "";
-      character.hidden = true;
-    }
+  function periodRelationIds(period) {
+    const ids = [];
+    (period.spots || []).forEach(function each(spot) {
+      (spot.activities || []).forEach(function eachActivity(activity) {
+        if (activity.requiresRelation && activity.requiresRelation.id) ids.push(activity.requiresRelation.id);
+        (activity.choices || []).forEach(function eachChoice(choice) { ids.push(...Object.keys((choice.effects && choice.effects.relationships) || {})); });
+      });
+    });
+    const world = ensureWorldState();
+    Object.entries(world.relationships).forEach(function each(entry) { if (entry[1].met) ids.push(entry[0]); });
+    return unique(ids);
+  }
+
+  function renderRelations(period) {
+    const world = ensureWorldState();
+    const cards = periodRelationIds(period).map(function map(id) {
+      const relation = normaliseRelation(world.relationships[id], 0);
+      const bond = relationBond(relation);
+      const stage = relationStage(relation);
+      const nextThreshold = RELATION_THRESHOLDS[Math.min(stage + 1, RELATION_THRESHOLDS.length - 1)];
+      const width = stage === RELATION_THRESHOLDS.length - 1 ? 100 : Math.round((bond / Math.max(1, nextThreshold)) * 100);
+      return `<article class="sw-relation-card">
+        <div><span>${escapeHtml(relationLabel(id))}</span><b>${bond}</b></div>
+        <strong>${escapeHtml(RELATION_STAGES[stage])}</strong>
+        <div class="sw-meter"><i style="width:${clamp(width)}%"></i></div>
+        <small>Affection ${relation.affection} · Confiance ${relation.trust}${relation.desire ? ` · Désir ${relation.desire}` : ""}</small>
+      </article>`;
+    }).join("");
+    const fallbackSpot = spotById(period, (getRun(period, true) || {}).selectedSpot) || period.spots[0];
+    if (fallbackSpot) setVisuals(period, fallbackSpot);
+    document.getElementById("swContent").innerHTML = `
+      <div class="sw-card sw-panel-card">
+        <span class="sw-eyebrow">Liens persistants</span><h2>Relations</h2>
+        <p class="sw-lead">Les scènes libres construisent confiance, proximité ou tension. Ces valeurs restent disponibles pour les chapitres principaux.</p>
+        <div class="sw-relation-grid">${cards || '<p class="sw-empty">Aucune relation n’a encore été rencontrée dans les périodes libres.</p>'}</div>
+      </div>`;
+  }
+
+  function renderJournal(period) {
+    const world = ensureWorldState();
+    const entries = world.history.slice(-12).reverse().map(function map(entry) {
+      const sourcePeriod = periodById(entry.period);
+      return `<article class="sw-journal-entry"><small>${escapeHtml((sourcePeriod && sourcePeriod.chapterGate) || "Temps libre")}</small><strong>${escapeHtml(entry.activityTitle || entry.activity || "Scène facultative")}</strong><p>${escapeHtml(entry.choiceLabel || entry.choice || "Décision enregistrée")}</p></article>`;
+    }).join("");
+    const fallbackSpot = spotById(period, (getRun(period, true) || {}).selectedSpot) || period.spots[0];
+    if (fallbackSpot) setVisuals(period, fallbackSpot);
+    document.getElementById("swContent").innerHTML = `
+      <div class="sw-card sw-panel-card">
+        <span class="sw-eyebrow">Traces de la partie</span><h2>Journal du monde</h2>
+        <div class="sw-resource-strip"><span>◈ ${world.resources.coins} pièces</span><span>⌂ ${world.resources.supplies} provisions</span><span>▣ ${world.resources.items.length} objets trouvés</span><span>✓ ${world.completedPeriods.length} périodes achevées</span></div>
+        <div class="sw-journal-list">${entries || '<p class="sw-empty">Les décisions prises dans le monde apparaîtront ici.</p>'}</div>
+      </div>`;
+  }
+
+  function renderNavigation(run) {
+    root.querySelectorAll("[data-sw-view]").forEach(function each(button) {
+      button.classList.toggle("is-selected", button.dataset.swView === (run.view === "relations" || run.view === "journal" ? run.view : "location"));
+    });
   }
 
   function renderWorld() {
-    const run = getRun(true);
-    if (!run || !root || root.hidden) return;
-    if (!PERIOD.spots[run.selectedSpot] || run.slot < (PERIOD.spots[run.selectedSpot].availableFrom || 0)) {
-      run.selectedSpot = PERIOD.defaultSpots[Math.min(run.slot, PERIOD.defaultSpots.length - 1)];
-    }
-    renderStatus(run);
-    renderSpots(run);
-    if (run.view === "event") renderEvent(run);
-    else if (run.view === "result") renderResult(run);
-    else renderMap(run);
+    const world = ensureWorldState();
+    const period = activePeriod || periodById(world && world.activePeriod);
+    if (!period || !root || root.hidden) return;
+    activePeriod = period;
+    const run = getRun(period, true);
+    document.getElementById("swTitle").textContent = period.title;
+    document.getElementById("swSubtitle").textContent = period.subtitle;
+    document.getElementById("swLocation").textContent = period.location;
+    document.getElementById("swLocationNote").textContent = period.locationNote;
+    document.getElementById("swWorldNote").textContent = period.locationNote;
+    renderStatus(period, run);
+    renderNavigation(run);
+    renderSpots(period, run);
+    if (run.view === "activity") renderActivity(period, run);
+    else if (run.view === "result") renderResult(period, run);
+    else if (run.view === "relations") renderRelations(period);
+    else if (run.view === "journal") renderJournal(period);
+    else renderLocation(period, run);
   }
 
-  function openPeriod(options) {
+  function openPeriod(id, options) {
     if (!canUseCanon()) return;
+    const period = typeof id === "string" ? periodById(id) : periodById((ensureWorldState() || {}).activePeriod);
+    if (!period) return;
     const world = ensureWorldState();
-    let run = getRun(true);
+    let run = getRun(period, true);
     if (run.completed && !(options && options.resume)) {
       if (!(state && state.devMode)) return;
-      world.periodRuns[PERIOD_ID] = freshRun();
-      run = world.periodRuns[PERIOD_ID];
+      world.periodRuns[period.id] = freshRun(period);
+      run = world.periodRuns[period.id];
     }
-    world.activePeriod = PERIOD_ID;
-    setFlag("storyFreeAlgratalStarted", true);
-    if (run.view === "event") run.view = "map";
+    activePeriod = period;
+    world.activePeriod = period.id;
+    setFlag(`storyWorld_${period.id.replace(/[^a-zA-Z0-9]+/g, "_")}_started`, true);
+    if (run.view === "activity" && !(options && options.resume)) run.view = "location";
     createRoot();
     root.hidden = false;
     document.body.classList.add("sw-open");
-    try { if (typeof playMusic === "function") playMusic("music_algratal"); } catch (_error) { /* musique facultative */ }
+    try { if (period.music && assetUrl(period.music) && typeof playMusic === "function") playMusic(period.music); } catch (_error) { /* musique facultative */ }
     renderWorld();
     safeSave();
-    window.requestAnimationFrame(function focusWorld() {
-      const focusTarget = root.querySelector(".sw-spot.is-selected") || root.querySelector("button");
-      if (focusTarget) focusTarget.focus({ preventScroll: true });
+    if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(function focusWorld() {
+      const target = root.querySelector(".sw-spot.is-selected") || root.querySelector("button");
+      if (target && typeof target.focus === "function") target.focus({ preventScroll: true });
     });
   }
 
@@ -590,50 +704,84 @@
     if (!root) return;
     root.hidden = true;
     document.body.classList.remove("sw-open");
+    activePeriod = null;
   }
 
   function resolveChoice(choiceId) {
-    const run = getRun(true);
-    const event = PERIOD.events[run.pendingEvent];
-    if (!event || run.slot >= MAX_ACTIONS || run.completedEvents.includes(event.id)) return;
-    const choice = event.choices.find(function findChoice(candidate) { return candidate.id === choiceId; });
+    const period = activePeriod;
+    const run = getRun(period, true);
+    const pending = getPending(period, run);
+    if (!pending.spot || !pending.activity || run.slot >= period.maxActions) return;
+    const status = activityState(period, run, pending.spot, pending.activity);
+    if (!status.available) return;
+    const choice = (pending.activity.choices || []).find(function find(candidate) { return candidate.id === choiceId; });
     if (!choice) return;
-    const effects = mergeEffects(event.commonEffects, choice.effects);
+    const effects = mergeEffects(pending.activity.commonEffects, choice.effects);
+    if (!canAfford(effects)) return;
     applyEffects(effects);
-    run.completedEvents = unique([...run.completedEvents, event.id]);
-    run.actions.push({ eventId: event.id, choiceId: choice.id, choiceLabel: choice.label, slot: run.slot, effects: clone(effects) });
-    run.slot = Math.min(MAX_ACTIONS, run.slot + 1);
-    run.selectedSpot = PERIOD.defaultSpots[Math.min(run.slot, PERIOD.defaultSpots.length - 1)];
-    run.lastResult = { eventId: event.id, choiceId: choice.id, choiceLabel: choice.label, response: choice.response, labels: effectLabels(effects) };
-    run.pendingEvent = null;
+    const key = activityKey(pending.spot, pending.activity);
+    run.completedActivities = unique([...run.completedActivities, key]);
+    run.actions.push({
+      spotId: pending.spot.id,
+      activityId: pending.activity.id,
+      activityTitle: pending.activity.title,
+      choiceId: choice.id,
+      choiceLabel: choice.label,
+      slot: run.slot,
+      effects: clone(effects),
+    });
+    run.slot = Math.min(period.maxActions, run.slot + 1);
+    run.lastResult = {
+      spotId: pending.spot.id,
+      activityId: pending.activity.id,
+      choiceId: choice.id,
+      choiceLabel: choice.label,
+      response: choice.response,
+      labels: effectLabels(effects),
+    };
+    run.pendingActivity = null;
     run.view = "result";
     const world = ensureWorldState();
-    world.history.push({ period: PERIOD_ID, event: event.id, choice: choice.id, slot: run.slot, scene: state.scene });
+    world.history.push({
+      period: period.id,
+      activity: pending.activity.id,
+      activityTitle: pending.activity.title,
+      choice: choice.id,
+      choiceLabel: choice.label,
+      slot: run.slot,
+      scene: state.scene,
+    });
     installChapterConsequences();
     safeSave();
     renderWorld();
   }
 
   function completePeriod() {
+    const period = activePeriod;
+    if (!period) return;
     const world = ensureWorldState();
-    const run = getRun(true);
+    const run = getRun(period, true);
     run.completed = true;
-    run.view = "map";
-    run.pendingEvent = null;
+    run.view = "location";
+    run.pendingActivity = null;
     world.activePeriod = null;
-    world.completedPeriods = unique([...world.completedPeriods, PERIOD_ID]);
-    setFlag("storyFreeAlgratalComplete", true);
-    setFlag("storyFreeAlgratalUsed", run.actions.length > 0);
+    world.completedPeriods = unique([...world.completedPeriods, period.id]);
+    (period.completionFlags || []).forEach(function each(flag) { setFlag(flag, true); });
+    setFlag(`storyWorld_${period.id.replace(/[^a-zA-Z0-9]+/g, "_")}_complete`, true);
     installChapterConsequences();
     safeSave();
     hidePeriod();
-    if (typeof go === "function") go(PERIOD.nextScene, { skipHistory: false });
+    if (period.nextScene === "menu") {
+      if (typeof setScreen === "function") setScreen("title");
+      return;
+    }
+    if (typeof go === "function") go(period.nextScene, { skipHistory: false });
   }
 
   function returnToTitle() {
-    const run = getRun(true);
-    run.view = "map";
-    run.pendingEvent = null;
+    const period = activePeriod;
+    const run = period && getRun(period, true);
+    if (run && run.view === "activity") { run.view = "location"; run.pendingActivity = null; }
     safeSave();
     hidePeriod();
     if (typeof setScreen === "function") setScreen("title");
@@ -641,160 +789,183 @@
 
   function handleClick(event) {
     const button = event.target.closest("button");
-    if (!button || !root.contains(button) || button.disabled) return;
+    if (!button || !root.contains(button) || button.disabled || !activePeriod) return;
+    const run = getRun(activePeriod, true);
     const spotId = button.dataset.swSpot;
     if (spotId) {
-      const run = getRun(true);
-      if (!PERIOD.spots[spotId] || run.slot < (PERIOD.spots[spotId].availableFrom || 0)) return;
+      const spot = spotById(activePeriod, spotId);
+      if (!spot || run.slot < (spot.availableFrom || 0)) return;
       run.selectedSpot = spotId;
-      run.view = "map";
-      run.pendingEvent = null;
+      run.view = "location";
+      run.pendingActivity = null;
+      renderWorld();
+      return;
+    }
+    const view = button.dataset.swView;
+    if (view) {
+      run.view = view;
+      run.pendingActivity = null;
+      renderWorld();
+      return;
+    }
+    const activityId = button.dataset.swActivity;
+    if (activityId) {
+      const spot = spotById(activePeriod, run.selectedSpot);
+      const activity = activityById(spot, activityId);
+      if (!activity || !activityState(activePeriod, run, spot, activity).available) return;
+      run.pendingActivity = { spotId: spot.id, activityId: activity.id };
+      run.view = "activity";
       renderWorld();
       return;
     }
     const choiceId = button.dataset.swChoice;
     if (choiceId) { resolveChoice(choiceId); return; }
     const action = button.dataset.swAction;
-    const run = getRun(true);
-    if (action === "event") {
-      const spot = PERIOD.spots[run.selectedSpot];
-      if (!eventAvailable(spot, run)) return;
-      run.pendingEvent = spot.event;
-      run.view = "event";
-      renderWorld();
-    } else if (action === "map") {
-      run.pendingEvent = null;
-      run.view = "map";
+    if (action === "location") {
+      run.pendingActivity = null;
+      run.view = "location";
       renderWorld();
     } else if (action === "continue") {
       run.lastResult = null;
-      run.view = "map";
+      run.view = "location";
       renderWorld();
     } else if (action === "finish") completePeriod();
     else if (action === "title") returnToTitle();
   }
 
   function handleKeydown(event) {
-    if (!root || root.hidden || event.key !== "Escape") return;
-    const run = getRun(true);
-    if (run.view === "event" || run.view === "result") {
+    if (!root || root.hidden || event.key !== "Escape" || !activePeriod) return;
+    const run = getRun(activePeriod, true);
+    if (["activity", "result", "relations", "journal"].includes(run.view)) {
       event.preventDefault();
-      run.view = "map";
-      run.pendingEvent = null;
+      run.view = "location";
+      run.pendingActivity = null;
       renderWorld();
     }
   }
 
   function installChapterConsequences() {
-    if (!canUseCanon() || !S.c3_01 || !S.c3_02) return;
-    if (!S.c3_01.__storyWorldOriginalText) S.c3_01.__storyWorldOriginalText = S.c3_01.text;
-    S.c3_01.text = function storyWorldChapterThreeOpening() {
-      const original = S.c3_01.__storyWorldOriginalText;
-      const base = typeof original === "function" ? original() : String(original || "");
-      const flags = state.flags || {};
-      const echoes = [];
-      if (flags.freeMarketCompared || flags.freeMarketResonance || flags.freeMarketBold) {
-        echoes.push("Les heures de la veille n’ont pas été perdues : Hylee reconnaît déjà les étals utiles et les vendeurs qu’il vaut mieux laisser parler avant de choisir.");
+    if (!canUseCanon()) return;
+    const byScene = {};
+    CONTENT.periods.forEach(function each(period) {
+      if (period.echoScene && S[period.echoScene]) {
+        byScene[period.echoScene] = unique([...(byScene[period.echoScene] || []), period.id]);
       }
-      if (flags.freeIrianaPetitions) {
-        echoes.push("Un messager d’Iriana les a remerciées à l’aube. La citerne et la livraison médicale ont reçu une réponse avant que la cour ne se réveille tout à fait.");
-      }
-      if (flags.freeAvenuesObserved || flags.freeAvenuesResonance || flags.freeAvenuesRested) {
-        echoes.push("Al’Gratal lui paraît moins écrasante ce matin. Elle en connaît désormais un rythme qui n’appartient ni aux bannières ni aux catacombes.");
-      }
-      return echoes.length ? `${base}\n\n${echoes.join("\n\n")}` : base;
-    };
-
-    const consequenceId = "story-world-c3-remerii";
-    S.c3_02.choices = (S.c3_02.choices || []).filter(function filterChoice(choice) { return choice && choice.storyWorldId !== consequenceId; });
-    if (state.flags && state.flags.freeRemeriiMiraldasTalk) {
-      S.c3_02.choices.push({
-        storyWorldId: consequenceId,
-        label: "Reprendre les mots échangés la veille sur Mir’Aldas",
-        next: "c3_02_story_world_remerii",
-        effects: { lucidite: 1, lien: 1 },
-        note: "Souvenir du temps libre · Remerii sait que Hylee a entendu ce qu’elle ne disait pas.",
-        flags: { storyWorldRemeriiEchoUsed: true },
-      });
-    }
-    S.c3_02_story_world_remerii = {
-      title: "Dernier jour à Al’Gratal",
-      sub: "Les mots de la veille",
-      bg: "c3_bg_algratal_marche",
-      music: "music_c3_shopping",
-      speaker: "Hylee",
-      text: function storyWorldRemeriiEcho() {
-        const flags = state.flags || {};
-        if (flags.freeRemeriiNamedFear) return "« Tu m’as dit hier que Mir’Aldas se souvenait de celle que tu étais. Je ne veux pas y entrer en jouant quelqu’un d’autre simplement pour rassurer ceux qui te jugeront. »\n\nRemerii reste silencieuse une seconde. Sa critique des vêtements ne disparaît pas, mais elle change de forme.\n\n« Alors nous trouverons quelque chose qui te ressemble et qui leur interdira de te réduire à ce qu’ils voient en premier. »";
-        if (flags.freeRemeriiRealCity) return "« Je veux toujours voir ta Mir’Aldas. Pas arriver devant elle déguisée en apprentie parfaite. »\n\nLe sourire de Remerii se fait plus franc.\n\n« Une tenue correcte n’est pas un déguisement. Mais tu as raison sur un point : je ne te présenterai pas comme une version plus commode de toi-même. »";
-        return "« Hier, tu m’as laissé préparer ce départ avec toi. Laisse-moi au moins choisir la personne qui portera cette tenue. »\n\nRemerii incline la tête.\n\n« Marché conclu. Je conseille. Tu décides. Et nous gardons le droit de trouver les premières propositions affreuses. »";
-      },
-      chars: [["hylee", "hylee_confident", "left"], ["remerii", "remerii_calm", "right"]],
-      next: "c3_03",
-    };
+    });
+    Object.entries(byScene).forEach(function each(entry) {
+      const scene = S[entry[0]];
+      if (!scene.__storyWorldOriginalTextV2) scene.__storyWorldOriginalTextV2 = scene.text;
+      scene.__storyWorldEchoPeriodIds = unique([...(scene.__storyWorldEchoPeriodIds || []), ...entry[1]]);
+      if (scene.__storyWorldEchoWrappedV2) return;
+      scene.__storyWorldEchoWrappedV2 = true;
+      scene.text = function storyWorldEchoText() {
+        const original = scene.__storyWorldOriginalTextV2;
+        const base = typeof original === "function" ? original() : String(original || "");
+        const world = ensureWorldState();
+        const echoes = (scene.__storyWorldEchoPeriodIds || []).filter(function filter(id) {
+          return world.completedPeriods.includes(id);
+        }).map(function map(id) {
+          const period = periodById(id);
+          const run = getRun(period, false);
+          if (!period || !period.echo || !run || !run.actions.length) return "";
+          const remembered = run.actions.slice(-2).map(function actionLabel(action) { return action.activityTitle; }).filter(Boolean).join(" et ");
+          const subject = period.perspective || "Hylee";
+          return `${period.echo}${remembered ? ` ${subject} garde notamment en mémoire ${remembered.toLowerCase()}.` : ""}`;
+        }).filter(Boolean);
+        return echoes.length ? `${base}\n\n${echoes.join("\n\n")}` : base;
+      };
+    });
   }
 
-  function patchChapterGate() {
-    if (!canUseCanon() || !S.c2_45 || !Array.isArray(S.c2_45.choices)) return;
-    S.c2_45.choices = S.c2_45.choices.filter(function removeOldGate(choice) { return choice && choice.storyWorldId !== PERIOD_ID; });
+  function continuationLabel(period) {
+    return period.nextScene === "menu" ? "Revenir au menu principal" : "Poursuivre directement le récit";
+  }
+
+  function patchChapterGates() {
+    if (!canUseCanon()) return;
     const world = ensureWorldState();
-    if (world.completedPeriods.includes(PERIOD_ID) && !(state && state.devMode)) return;
-    const directIndex = S.c2_45.choices.findIndex(function findDirect(choice) { return choice && choice.next === "c3_01"; });
-    const entryChoice = {
-      storyWorldId: PERIOD_ID,
-      label: "Explorer Al’Gratal avant le départ",
-      next: PERIOD_TARGET,
-      effects: {},
-      note: "Temps libre court · Deux activités facultatives · Caractéristiques et relations persistantes.",
-    };
-    if (directIndex >= 0) S.c2_45.choices.splice(directIndex, 0, entryChoice);
-    else S.c2_45.choices.unshift(entryChoice);
+    CONTENT.periods.forEach(function each(period) {
+      const scene = S[period.anchorScene];
+      if (!scene) return;
+      let choices = Array.isArray(scene.choices) ? scene.choices.slice() : [];
+      choices = choices.filter(function filter(choice) { return choice && choice.storyWorldPeriodId !== period.id; });
+      if (!choices.length) {
+        choices.push({
+          storyWorldDirectChoice: period.id,
+          label: continuationLabel(period),
+          next: scene.next || period.nextScene,
+          effects: {},
+        });
+      }
+      const completed = world.completedPeriods.includes(period.id);
+      if (!completed || (state && state.devMode)) {
+        const entryChoice = {
+          storyWorldPeriodId: period.id,
+          label: period.entryLabel,
+          next: period.target,
+          effects: {},
+          note: `Temps libre · ${period.maxActions} activité${period.maxActions > 1 ? "s" : ""} · Lieux, relations et journal persistants.`,
+        };
+        const directIndex = choices.findIndex(function find(choice) {
+          return choice && (choice.next === period.nextScene || choice.storyWorldDirectChoice === period.id || (period.nextScene === "menu" && choice.next === "menu"));
+        });
+        if (directIndex >= 0) choices.splice(directIndex, 0, entryChoice);
+        else choices.unshift(entryChoice);
+      }
+      scene.choices = choices;
+    });
   }
 
   function wrapGo() {
-    if (typeof go !== "function" || window.__sylviniaStoryWorldGoWrapped) return;
-    window.__sylviniaStoryWorldGoWrapped = true;
+    if (typeof go !== "function" || window.__sylviniaStoryWorldGoWrappedV2) return;
+    window.__sylviniaStoryWorldGoWrappedV2 = true;
     const previousGo = go;
     window.go = go = function storyWorldGo(next, options) {
-      if (next === PERIOD_TARGET) { openPeriod(); return; }
+      const period = CONTENT.byTarget[next];
+      if (period) { openPeriod(period.id); return; }
       return previousGo.call(this, next, options);
     };
   }
 
   function wrapRender() {
-    if (typeof render !== "function" || window.__sylviniaStoryWorldRenderWrapped) return;
-    window.__sylviniaStoryWorldRenderWrapped = true;
+    if (typeof render !== "function" || window.__sylviniaStoryWorldRenderWrappedV2) return;
+    window.__sylviniaStoryWorldRenderWrappedV2 = true;
     const previousRender = render;
     window.render = render = function storyWorldRender() {
-      patchChapterGate();
+      patchChapterGates();
       installChapterConsequences();
       const result = previousRender.apply(this, arguments);
       const world = ensureWorldState();
-      if (world && world.activePeriod === PERIOD_ID && state.scene === "c2_45") {
-        window.requestAnimationFrame(function reopenWorld() { openPeriod({ resume: true }); });
+      const period = world.activePeriod && periodById(world.activePeriod);
+      if (period && !getRun(period, true).completed && state.scene === period.anchorScene && typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(function reopenWorld() { openPeriod(period.id, { resume: true }); });
       }
       return result;
     };
   }
 
   function wrapResume() {
-    if (typeof resume !== "function" || window.__sylviniaStoryWorldResumeWrapped) return;
-    window.__sylviniaStoryWorldResumeWrapped = true;
+    if (typeof resume !== "function" || window.__sylviniaStoryWorldResumeWrappedV2) return;
+    window.__sylviniaStoryWorldResumeWrappedV2 = true;
     const previousResume = resume;
     window.resume = resume = function storyWorldResume() {
       const result = previousResume.apply(this, arguments);
       const world = ensureWorldState();
-      if (world && world.activePeriod === PERIOD_ID) window.requestAnimationFrame(function resumeWorld() { openPeriod({ resume: true }); });
+      const period = world.activePeriod && periodById(world.activePeriod);
+      if (period && !getRun(period, true).completed && typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(function resumeWorld() { openPeriod(period.id, { resume: true }); });
+      }
       return result;
     };
   }
 
   function wrapChapterStarters() {
-    Object.getOwnPropertyNames(window).filter(function chapterName(name) { return /^startChapter/.test(name); }).forEach(function eachStarter(name) {
+    Object.getOwnPropertyNames(window).filter(function filter(name) { return /^startChapter/.test(name); }).forEach(function each(name) {
       const original = window[name];
-      if (typeof original !== "function" || original.__storyWorldWrapped) return;
+      if (typeof original !== "function" || original.__storyWorldWrappedV2) return;
       const wrapped = function storyWorldChapterStarter() {
-        const savedWorld = clone((state && state.storyWorld) || (typeof readMainSave === "function" && readMainSave() && readMainSave().storyWorld));
+        const saved = typeof readMainSave === "function" ? readMainSave() : null;
+        const savedWorld = clone((state && state.storyWorld) || (saved && saved.storyWorld));
         const result = original.apply(this, arguments);
         if (savedWorld && state) {
           state.storyWorld = savedWorld;
@@ -804,19 +975,23 @@
         }
         return result;
       };
-      wrapped.__storyWorldWrapped = true;
+      wrapped.__storyWorldWrappedV2 = true;
       window[name] = wrapped;
     });
   }
 
   function initialise() {
+    if (!CONTENT) {
+      console.warn("[Sylvinia Fusion] Le catalogue des périodes libres est absent.");
+      return;
+    }
     if (!canUseCanon()) {
       console.warn("[Sylvinia Fusion] Le moteur du VN n’est pas encore disponible.");
       return;
     }
     ensureWorldState();
     createRoot();
-    patchChapterGate();
+    patchChapterGates();
     installChapterConsequences();
     wrapGo();
     wrapRender();
@@ -824,14 +999,17 @@
     wrapChapterStarters();
     window.SylviniaStoryWorld = {
       version: ENGINE_VERSION,
-      period: PERIOD,
-      open: function open() { openPeriod(); },
+      periods: CONTENT.periods,
+      byId: CONTENT.byId,
+      open: function open(id) { openPeriod(id || CONTENT.periods[0].id); },
       close: hidePeriod,
       complete: completePeriod,
       ensureState: ensureWorldState,
       render: renderWorld,
+      resolveVisual: resolveSceneVisual,
+      patchGates: patchChapterGates,
     };
-    console.info("[Sylvinia Fusion] Temps libre du Mode Histoire prêt · Al’Gratal après le chapitre II.");
+    console.info(`[Sylvinia Fusion] ${CONTENT.periods.length} périodes libres prêtes · chapitres I à XIV.`);
   }
 
   initialise();

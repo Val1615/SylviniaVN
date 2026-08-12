@@ -1,0 +1,36 @@
+.fusion-return {
+  position: fixed;
+  z-index: 90;
+  right: 18px;
+  bottom: 18px;
+  padding: 10px 13px;
+  color: #f3e4b5;
+  text-decoration: none;
+  border: 1px solid rgba(216, 189, 120, .38);
+  background: rgba(10, 11, 20, .82);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .38);
+  backdrop-filter: blur(12px);
+  font: 800 12px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: .05em;
+  transition: transform .18s ease, border-color .18s ease, filter .18s ease;
+}
+
+.fusion-return:hover {
+  transform: translateY(-2px);
+  border-color: #d8bd78;
+  filter: brightness(1.12);
+}
+
+.fusion-return:focus-visible {
+  outline: 2px solid #d8bd78;
+  outline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .fusion-return {
+    right: 10px;
+    bottom: 78px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+}

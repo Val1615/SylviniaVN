@@ -1,219 +1,164 @@
 # Fusion du Visual Novel et du Dating Sim
 
-## Décision structurante
+## État actuel
 
-Le Visual Novel reste la base du jeu fusionné.
+Sylvinia propose désormais les deux expériences prévues dans la vision de fusion :
 
-Le Dating Sim est traité comme un projet donneur : ses systèmes, ses données et ses interfaces sont transférés progressivement vers le VN. Les chapitres, scènes, choix, musiques, illustrations, statistiques, objets et entrées de Codex déjà présents ne sont pas reconstruits dans une autre technologie.
+- **Mode Histoire** : le Visual Novel canonique de Hylee, enrichi de périodes libres entre les chapitres.
+- **Chronique Alternative** : le Dating Sim d’origine, conservé comme Mode libre autonome avec création de personnage, voyages, horaires, relations, romances, jobs, inventaire, journal, codex et sauvegardes.
 
-Cette décision évite deux risques :
+Le menu principal contient cinq volets coulissants. Le volet **Chronique Alternative** ouvre directement le second mode et celui-ci dispose d’un bouton permanent pour revenir au Mode Histoire.
 
-- devoir réintégrer plus de 1,5 Go d’assets et des dizaines de milliers de lignes de scènes dans une nouvelle application ;
-- créer deux sauvegardes incompatibles qui donneraient seulement l’illusion d’un jeu unique.
+## Mode Histoire : couverture narrative
 
-## Premier jalon réalisé
+Le moteur générique couvre tous les chapitres actuellement présents, du chapitre I au chapitre XIV, y compris les branches Valurn, Draven, Iriana et Groupe.
 
-Une première période libre est branchée entre la fin du chapitre II et le début du chapitre III.
+| Contenu | Quantité |
+|---|---:|
+| Périodes libres | 19 |
+| Sous-lieux contextuels | 62 |
+| Activités et scènes facultatives | 62 |
+| Approches proposées au joueur | 189 |
 
-Le parcours devient :
+Les transitions urgentes ne proposent qu’un créneau court. Les respirations narratives plus calmes offrent jusqu’à quatre activités. Une période peut toujours être ignorée afin de reprendre immédiatement le chapitre suivant.
 
-1. fin du chapitre II ;
-2. choix entre commencer directement le chapitre III ou explorer Al’Gratal ;
-3. période libre courte de deux activités maximum ;
-4. reprise du chapitre III avec les gains et souvenirs conservés.
+## Cohérence des sprites
 
-La période propose un périmètre volontairement limité :
+Le Mode Histoire n’utilise jamais les sprites indépendants du Dating Sim.
 
-- Grand Marché ;
-- Galerie du palais ;
-- Avenues impériales ;
-- Appartements d’hôtes, accessibles en soirée.
+Chaque sous-lieu indique une `visualScene` appartenant au VN. Au moment de l’affichage, le moteur lit directement :
 
-Les personnages présents respectent la situation du récit. Remerii et Iriana peuvent être rencontrées ; Valurn et Draven, déjà repartis vers leurs propres routes, ne sont pas artificiellement disponibles.
+- le décor de cette scène dans le registre `S` ;
+- le sprite exact du personnage présent dans `scene.chars` ;
+- sa position à l’écran ;
+- le remappage officiel des tenues de bal lorsqu’il est actif.
 
-## Ce que le prototype vérifie
+Si une scène illustrative ne contient pas le personnage attendu, le moteur recherche une scène compatible du même chapitre, puis utilise la scène d’entrée ou de reprise comme solution de repli. Les apparences du Dating Sim restent réservées à la Chronique Alternative.
 
-Le premier jalon ne sert pas seulement à afficher un nouveau menu. Il vérifie les communications essentielles entre les deux formes de jeu :
+## Progression persistante
 
-- les activités utilisent directement Audace, Lucidité, Sang-froid, Résonance et Lien Remerii ;
-- les gains sont écrits dans la sauvegarde principale du VN ;
-- une structure relationnelle persistante compatible avec celle du Dating Sim est ajoutée ;
-- une confiance propre à Iriana peut désormais évoluer ;
-- quitter vers le menu pendant le temps libre puis reprendre restaure la période ;
-- le temps libre terminé ne peut pas être exploité indéfiniment pour accumuler les mêmes gains ;
-- les données restent conservées lorsqu’un chapitre est lancé depuis la sélection des chapitres ;
-- les choix effectués ajoutent des échos au début du chapitre III ;
-- une conversation avec Remerii débloque une réponse supplémentaire dans la première discussion du chapitre III.
-
-## État partagé
-
-Le VN conserve ses données historiques à leur emplacement actuel. La fusion ajoute un espace dédié sans casser les anciennes sauvegardes :
+Le moteur ajoute un espace versionné dans la sauvegarde principale du VN :
 
 ```js
 state.storyWorld = {
-  version: 1,
+  version: 2,
   mode: "story",
-  activePeriod: "algratal-preparatifs" | null,
+  activePeriod: null,
   completedPeriods: [],
   relationships: {
-    remerii: {
-      affection: 0,
-      trust: 0,
-      desire: 0,
-      stage: 0,
-      met: false,
-      gifts: 0
-    },
-    iriana: {
-      affection: 0,
-      trust: 0,
-      desire: 0,
-      stage: 0,
-      met: false,
-      gifts: 0
-    }
+    remerii: { affection: 0, trust: 0, desire: 0, stage: 0, met: false },
+    iriana: { affection: 0, trust: 0, desire: 0, stage: 0, met: false },
+    valurn: { affection: 0, trust: 0, desire: 0, stage: 0, met: false }
+  },
+  resources: {
+    coins: 0,
+    supplies: 0,
+    items: []
   },
   periodRuns: {},
   history: []
 };
 ```
 
-Cette forme reprend le modèle relationnel du Dating Sim afin que les futurs contenus puissent partager les mêmes outils. Le `state.stats.lien` historique reste la valeur canonique utilisée par les chapitres existants pour Remerii.
+Les activités peuvent modifier :
 
-## Frontière technique
+- Audace, Lucidité, Sang-froid et Résonance ;
+- le Lien canonique avec Remerii ;
+- affection, confiance et désir pour les autres personnages ;
+- pièces et provisions ;
+- inventaire, drapeaux narratifs et historique.
 
-Le fichier principal du VN reste intact autant que possible. Le nouveau système est chargé à la fin de la page :
+La relation avec Remerii alimente aussi `state.stats.lien`, ce qui permet aux gains du monde libre d’ouvrir les choix déjà conditionnés par le VN. Les relations des autres personnages sont conservées pour les variantes présentes et futures.
+
+## Interface du monde libre canonique
+
+Chaque période propose quatre espaces d’interface inspirés du Dating Sim :
+
+- les lieux accessibles ;
+- les scènes et jobs disponibles selon le créneau ;
+- l’écran des relations avec niveaux et jauges ;
+- le journal persistant avec activités, ressources et périodes terminées.
+
+Le joueur peut quitter vers le menu à tout moment. La période reprend au même endroit au chargement de la sauvegarde. Une activité terminée ne peut pas être répétée pour exploiter ses récompenses.
+
+## Conséquences sur les chapitres
+
+À la reprise du récit :
+
+- les statistiques modifiées sont immédiatement disponibles pour les prérequis du VN ;
+- le Lien Remerii et les relations persistent ;
+- les objets rejoignent l’inventaire canonique ;
+- un écho narratif rappelle les activités récentes dans la scène d’ouverture suivante ;
+- les drapeaux détaillés permettent d’écrire ensuite des variantes de dialogue plus spécifiques.
+
+Le moteur conserve également les données du monde libre lorsqu’un chapitre est lancé depuis l’écran de sélection.
+
+## Chronique Alternative
+
+La Chronique Alternative est une adaptation statique du Dating Sim React d’origine. Elle fonctionne sous GitHub Pages sans serveur applicatif.
+
+```text
+chronique-alternative/
+  index.html              version jouable publiée
+  build/                  JavaScript et CSS compilés
+  assets/                 sprites, portraits, lieux, cartes et musiques
+  source/                 sources React conservées
+```
+
+Elle garde ses propres clés de sauvegarde locale (`sylvinia-liens-*`). Cette séparation est volontaire : la chronologie libre et le personnage créé ne doivent pas modifier la sauvegarde canonique de Hylee.
+
+Pour reconstruire le mode :
+
+```bash
+cd chronique-alternative/source
+npm install
+npm run build
+```
+
+Le build adapte automatiquement les chemins d’assets afin qu’ils fonctionnent aussi bien à la racine d’un serveur local que sous le sous-dossier GitHub Pages du dépôt.
+
+## Organisation des fichiers de fusion
 
 ```text
 index.html
 fusion/
-  story-world.css
-  story-world.js
+  game-modes.js           navigation entre les deux modes
+  story-periods.js        contenu des 19 périodes libres
+  story-world.js          moteur générique et sauvegarde
+  story-world.css         interface du Mode Histoire
 tests/
+  game-modes.test.cjs
   story-world.test.cjs
 ```
 
-Le module de fusion :
+Le VN historique reste dans `index.html`. Le nouveau contenu est volontairement isolé dans `fusion/` afin de ne pas réécrire les dizaines de milliers de lignes déjà validées.
 
-- ajoute le choix de temps libre à la scène `c2_45` ;
-- intercepte uniquement sa destination spéciale ;
-- affiche une interface plein écran au-dessus du VN ;
-- réutilise le registre d’assets `A` du VN ;
-- réutilise la fonction `save()` du VN ;
-- rend la main au moteur de scènes avec `go("c3_01")` ;
-- ajoute les conséquences au registre de scènes `S`.
+## Règles de conception
 
-Aucun asset n’est dupliqué pour ce jalon.
+Une période libre doit toujours respecter :
 
-## Règles d’une période libre du Mode Histoire
+- le lieu et la perspective du chapitre ;
+- les personnages réellement présents ;
+- la tenue et le sprite de la scène VN correspondante ;
+- l’urgence du récit et un nombre limité de créneaux ;
+- des gains modestes mais utiles ;
+- une sortie directe vers le chapitre suivant ;
+- une reprise sûre après sauvegarde.
 
-Chaque période doit déclarer :
+Elle ne doit pas téléporter un personnage, ouvrir artificiellement tout le continent, imposer un job incohérent ou laisser le monde attendre une catastrophe pendant une durée indéfinie.
 
-- une scène d’entrée et une scène de reprise ;
-- un lieu principal imposé par le chapitre ;
-- une durée ou un nombre d’activités maximum ;
-- les sous-lieux réellement accessibles ;
-- les personnages présents et leurs occupations ;
-- les activités disponibles selon le créneau ;
-- les gains maximaux autorisés ;
-- les drapeaux et souvenirs pouvant influencer les chapitres ;
-- la conduite à tenir si le joueur quitte ou recharge la partie.
+## Validation
 
-Une période libre ne doit jamais :
+Les tests automatisés vérifient notamment :
 
-- rendre le reste du monde accessible sans justification ;
-- ressusciter ou téléporter un personnage absent ;
-- suspendre artificiellement une urgence narrative ;
-- donner davantage de progression qu’un chapitre principal ;
-- imposer un job sans cohérence avec la situation de Hylee ;
-- devenir obligatoire lorsque le rythme exige un enchaînement direct.
+- l’enregistrement des 19 périodes et de leurs portes de chapitre ;
+- la reprise d’une période active après retour au menu ;
+- l’application des statistiques, relations, ressources et objets ;
+- le verrou relationnel du triage impérial d’Iriana ;
+- la réutilisation exacte des sprites du VN et des tenues de bal ;
+- la fin d’une période et le retour au chapitre suivant ;
+- les échos narratifs ;
+- la conservation des données lors du changement de chapitre ;
+- l’ouverture de la Chronique Alternative par le cinquième bouton.
 
-## Roadmap de migration
-
-### Jalon 1 — Moteur de temps libre
-
-Statut : prototype fonctionnel.
-
-- période courte à Al’Gratal ;
-- navigation entre sous-lieux ;
-- créneaux limités ;
-- scènes facultatives ;
-- effets persistants ;
-- reprise et sauvegarde ;
-- première conséquence au chapitre III.
-
-### Jalon 2 — Contrat commun de progression
-
-- formaliser les adaptateurs entre les clés du VN et celles du Dating Sim ;
-- étendre les relations à Iriana, Naïah, Valurn et Allenna lorsqu’elles deviennent pertinentes ;
-- permettre aux objets, conversations et événements libres d’ouvrir des variantes de chapitres ;
-- ajouter un journal des événements secondaires ;
-- différencier clairement confiance, proximité, complicité et romance ;
-- préparer les migrations de sauvegarde par version.
-
-### Jalon 3 — Bibliothèque de périodes libres
-
-- identifier chaque intervalle narratif du VN ;
-- classer les transitions en enchaînement immédiat, temps court, journée libre ou période prolongée ;
-- créer les périodes adaptées sans en placer après chaque chapitre ;
-- transférer progressivement les conversations, activités et petits événements utiles du Dating Sim ;
-- introduire des suites secondaires invisibles si leur première scène n’a pas été déclenchée.
-
-### Jalon 4 — Jobs du Mode Histoire
-
-- sélectionner uniquement les jobs cohérents avec Hylee et le lieu ;
-- limiter leur fréquence et leur rendement ;
-- relier certains accès à la confiance d’un personnage ;
-- réutiliser les variantes déjà créées pour éviter les répétitions ;
-- conserver les jobs complets et réguliers comme pilier de la Chronique Alternative.
-
-### Jalon 5 — Chronique Alternative
-
-- ajouter le choix des deux modes au menu principal ;
-- transférer le créateur de personnage ;
-- reprendre les voyages libres, calendriers, présences, romances, jobs et fils narratifs du Dating Sim ;
-- isoler la chronologie alternative de la sauvegarde du Mode Histoire ;
-- partager les lieux, sprites, musiques, composants d’interface et règles relationnelles ;
-- permettre la poursuite indéfinie après les principaux événements.
-
-### Jalon 6 — Modularisation progressive du VN
-
-Le `index.html` actuel dépasse cinquante mille lignes et contient une longue succession de correctifs historiques. Une réécriture globale serait trop risquée.
-
-La modularisation doit donc suivre les fonctionnalités réellement touchées :
-
-- extraire d’abord le moteur de sauvegarde et les adaptateurs de progression ;
-- extraire ensuite le registre des périodes libres ;
-- déplacer les nouveaux chapitres vers des fichiers de données sans convertir immédiatement les anciens ;
-- centraliser progressivement les registres d’assets, de musiques et de scènes ;
-- conserver des tests de non-régression pour les anciens chapitres.
-
-## Stratégie d’assets
-
-À court terme, les périodes libres réutilisent les chemins déjà connus du VN. Le Dating Sim peut fournir des variantes plus légères lorsque le VN ne possède pas de décor approprié.
-
-À moyen terme, il faudra :
-
-- établir un manifeste commun ;
-- identifier les doublons visuels et musicaux ;
-- conserver une seule identité par asset partagé ;
-- distinguer les assets propres au Mode Histoire et à la Chronique Alternative ;
-- éviter de recopier l’intégralité du dépôt VN dans l’application du Dating Sim.
-
-Le poids des assets n’empêche pas la fusion, mais impose une distribution propre. Le code est léger comparé aux médias ; le problème principal est donc l’organisation et le chargement, pas la logique du jeu.
-
-## Validation minimale avant chaque ajout
-
-Chaque nouveau jalon doit vérifier :
-
-- démarrage du VN sans erreur JavaScript ;
-- anciennes sauvegardes encore chargeables ;
-- nouvelle sauvegarde restaurée après rechargement ;
-- statistiques et relations non perdues au changement de chapitre ;
-- absence de répétition exploitable des récompenses ;
-- cohérence des personnages présents ;
-- comportement mobile et clavier ;
-- reprise correcte du récit principal ;
-- fonctionnement sans dépendance réseau une fois les assets installés.
-
-Le test `tests/story-world.test.cjs` couvre déjà le branchement de la période, deux activités, les effets, la reprise après le menu, la fin de période, la conséquence au chapitre III et la conservation des données lors du lancement d’un chapitre.
+La version statique du Dating Sim est également reconstruite et ses pages, scripts, styles et principaux assets sont contrôlés par un serveur HTTP local avant publication.

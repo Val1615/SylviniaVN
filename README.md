@@ -1,5 +1,18 @@
 # Sylvinia VN - v0.91.0
 
+## Fusion jouable : deux modes
+
+La branche de fusion ajoute désormais deux expériences depuis le même menu :
+
+- **Mode Histoire** : l’histoire canonique de Hylee, avec 19 périodes libres réparties entre les chapitres I à XIV, 62 lieux contextuels, relations persistantes, jobs, ressources et journal.
+- **Chronique Alternative** : le Dating Sim d’origine intégré comme Mode libre autonome avec création de personnage, carte, voyages, horaires, relations, romances, activités et sauvegardes.
+
+Les périodes libres du Mode Histoire reprennent automatiquement le décor et le sprite exact de leur scène VN de référence. Les sprites propres au Dating Sim restent réservés à la Chronique Alternative.
+
+Pour jouer localement, ouvrir `index.html`. Sur GitHub Pages, le cinquième bouton coulissant **Chronique Alternative** ouvre le Mode libre sans installation supplémentaire.
+
+Les détails de l’intégration sont décrits dans [FUSION_ARCHITECTURE.md](FUSION_ARCHITECTURE.md).
+
 ## Contenu de cette version
 
 Cette archive contient le HTML mis à jour du Visual Novel ainsi que les assets nécessaires au Chapitre III.
