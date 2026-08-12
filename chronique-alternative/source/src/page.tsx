@@ -1,0 +1,2659 @@
+"use client";
+/* eslint-disable @next/next/no-img-element -- sprites and map assets use dynamic canon paths */
+
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  CHARACTERS,
+  GIFTS,
+  INTRO_SCENE,
+  LOCATIONS,
+  PERIODS,
+  ROUTE_SCENES,
+  type CharacterData,
+  type ChoiceData,
+  type DialogueLine,
+  type Effects,
+  type RouteScene,
+  type StatKey,
+} from "./game-data";
+import { AMBIENT_LINES, type AmbientDialogue } from "./ambient-dialogues";
+import { SOCIAL_SCENES, type SocialScene } from "./social-scenes";
+import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
+import { INTIMACY_PROFILES, directionLines, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyFinalChoice } from "./intimacy-scenes";
+import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
+import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
+import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
+import { sceneClosure } from "./scene-closures";
+import { MUSIC_LABELS, musicForContext } from "./music-data";
+import { JOBS, JOB_KIND_LABELS, allJobRounds, jobCratesForSession, jobPathForSession, jobRoundOrder, jobSessionLabel, jobsAtSpot, type JobData, type JobOption, type JobRound } from "./jobs-data";
+import {
+  ASSEMBLY_PARTS,
+  HARVEST_TOOLS,
+  MARKET_TACTICS,
+  MENU_CATEGORY_LABELS,
+  PETITION_ACTIONS,
+  ROTATION_LABELS,
+  TAVERN_MENU,
+  assemblyBlueprint,
+  harvestNodes,
+  inspectionRoom,
+  marketCustomers,
+  petitionDeck,
+  serviceCustomers,
+  serviceOrderIsValid,
+  type HarvestSense,
+  type MarketTactic,
+  type MenuCategory,
+} from "./advanced-jobs";
+import {
+  AMBIENT_SPOT_HINTS,
+  DEFAULT_SPOTS,
+  ROUTE_PERIODS,
+  ROUTE_SPOTS,
+  routineFor,
+  spotById,
+  spotsForLocation,
+  travelWaypoint,
+} from "./world-data";
+
+type Screen = "title" | "creator" | "game";
+type Tab = "place" | "map" | "jobs" | "relations" | "journal" | "inventory" | "codex" | "options";
+type Pronouns = "elle" | "il" | "iel";
+type Intimacy = "tendre" | "suggestif" | "explicite" | "ellipse";
+
+type Player = {
+  name: string;
+  age: number;
+  pronouns: Pronouns;
+  sex: PlayerSex;
+  origin: string;
+  vocation: string;
+  trait: string;
+  hair: string;
+  eyes: string;
+  skin: string;
+  intimacy: Intimacy;
+};
+
+type Relationship = {
+  affection: number;
+  trust: number;
+  desire: number;
+  stage: number;
+  met: boolean;
+  gifts: number;
+};
+
+type GameSettings = {
+  fontScale: number;
+  reducedMotion: boolean;
+  showImpact: boolean;
+  music: boolean;
+  volume: number;
+  developer: boolean;
+  noTimeCost: boolean;
+  unlockAll: boolean;
+};
+
+type GameState = {
+  version: 10;
+  player: Player;
+  day: number;
+  period: number;
+  location: string;
+  spot: string;
+  stats: Record<StatKey, number>;
+  relationships: Record<string, Relationship>;
+  inventory: Record<string, number>;
+  coins: number;
+  confluence: number;
+  flags: string[];
+  journal: string[];
+  codex: string[];
+  history: string[];
+  ambientHistory: Record<string, string[]>;
+  sharedHistory: string[];
+  sceneMemories: Record<string, string>;
+  dateHistory: string[];
+  jobRuns: Record<string, number>;
+  settings: GameSettings;
+};
+
+type SceneView = {
+  id: string;
+  title: string;
+  background: string;
+  mood: string;
+  character?: string;
+  intro: DialogueLine[];
+  choices?: ChoiceData[];
+  kind: "intro" | "route" | "ambient" | "social" | "date";
+  route?: RouteScene;
+  ambientId?: string;
+  socialId?: string;
+  date?: DateScene;
+  cast: string[];
+};
+
+type DialogueState = {
+  scene: SceneView;
+  lines: DialogueLine[];
+  lineIndex: number;
+  phase: "intro" | "choices" | "response";
+  chosen?: ChoiceData;
+  replay?: boolean;
+};
+
+type JobPhase = "briefing" | "memorize" | "play" | "perfect" | "success" | "failure";
+
+type JobState = {
+  jobId: string;
+  sequence: string[];
+  step: number;
+  phase: JobPhase;
+  round: number;
+  score: number;
+  mistakes: number;
+  variant: number;
+  leftWeight: number;
+  rightWeight: number;
+  pathPosition: number;
+  pathSteps: number;
+  timingPosition: number;
+  timingDirection: 1 | -1;
+  roundOrder: number[];
+  combo: number;
+  maxCombo: number;
+  lastResult?: "correct" | "wrong";
+  feedbackText?: string;
+  serviceSelections: Partial<Record<MenuCategory, string>>;
+  serviceTimeLeft: number;
+  inspectionFound: string[];
+  inspectionScanUsed: boolean;
+  assemblySlots: (string | null)[];
+  assemblyRotations: number[];
+  assemblySelected?: string;
+  assemblySelectedRotation: number;
+  assemblyStage: "build" | "calibrate";
+  assemblyTests: number;
+  harvestTimeLeft: number;
+  harvestTool: HarvestSense;
+  harvestWave: number;
+  harvestWaveScore: number;
+  harvestPicked: string[];
+  harvestRejected: string[];
+  harvestFocus: number;
+  harvestHinted?: string;
+  harvestExamined?: string;
+  marketPrice: number;
+  marketTactic: MarketTactic;
+  marketCounter: number;
+  marketProfit: number;
+  marketReputation: number;
+  visited: number[];
+};
+
+type ModalState =
+  | { kind: "chronicle" }
+  | { kind: "shop" }
+  | { kind: "character"; character: string }
+  | { kind: "gift"; character: string }
+  | { kind: "date-planner"; character: string }
+  | { kind: "date-result"; character: string; dateId: string }
+  | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string }
+  | { kind: "ritual" }
+  | { kind: "job"; jobId: string }
+  | { kind: "notice"; title: string; text: string; consumeTime?: boolean; actionLabel?: string }
+  | null;
+
+type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
+
+const ECHOES = [
+  ["Réflexe protecteur", "Votre corps se place instinctivement entre le danger et les autres"],
+  ["Familiarité du pouvoir", "Les usages d’une cour inconnue vous semblent étrangement naturels"],
+  ["Affinité des ombres", "Les magies inquiétantes éveillent moins de peur que de prudence"],
+  ["Curiosité mécanique", "Les mécanismes et portails vous attirent sans souvenir précis"],
+  ["Mémoire de la pierre", "Certains lieux éveillent des sensations que votre esprit ne peut nommer"],
+] as const;
+
+const VOCATIONS = [
+  ["Cartographe des Échos", "Résonance +2 · perçoit les fractures", "resonance"],
+  ["Diplomate itinérant·e", "Lucidité +2 · lit les sous-textes", "lucidite"],
+  ["Éclaireur·se des routes", "Sang-froid +2 · voyage plus vite", "sangFroid"],
+  ["Artisan·e arcanique", "Audace +1 · Résonance +1", "mixed"],
+] as const;
+
+const TRAITS = [
+  ["Audace", "Répondre, provoquer, assumer ses envies", "audace"],
+  ["Lucidité", "Observer juste et respecter les silences", "lucidite"],
+  ["Sang-froid", "Rester fiable lorsque tout vacille", "sangFroid"],
+  ["Résonance", "Sentir la magie avant de la comprendre", "resonance"],
+] as const;
+
+const STAT_LABELS: Record<StatKey, string> = {
+  audace: "Audace",
+  lucidite: "Lucidité",
+  sangFroid: "Sang-froid",
+  resonance: "Résonance",
+};
+
+const STAGE_LABELS = ["Inconnu·e", "Première impression", "Complicité", "Confidence", "Attirance", "Lien accompli"];
+const BOND_THRESHOLDS = [0, 5, 14, 26, 40];
+const SAVE_KEY = "sylvinia-liens-autosave";
+const DEFAULT_PLAYER: Player = {
+  name: "",
+  age: 24,
+  pronouns: "iel",
+  sex: "intersexe",
+  origin: ECHOES[0][0],
+  vocation: VOCATIONS[0][0],
+  trait: TRAITS[0][0],
+  hair: "#321e2a",
+  eyes: "#62d4c7",
+  skin: "#c99175",
+  intimacy: "suggestif",
+};
+
+const DEFAULT_SETTINGS: GameSettings = {
+  fontScale: 100,
+  reducedMotion: false,
+  showImpact: false,
+  music: true,
+  volume: 36,
+  developer: false,
+  noTimeCost: false,
+  unlockAll: false,
+};
+
+const ACTIVITIES: Record<string, { icon: string; label: string; detail: string; stat?: StatKey; coins?: number }> = {
+  market: { icon: "◈", label: "Marché", detail: "Acheter des présents" },
+  court: { icon: "♜", label: "Cour", detail: "Lire les jeux de pouvoir", stat: "lucidite" },
+  rest: { icon: "☾", label: "Se reposer", detail: "Retrouver son ancrage" },
+  archives: { icon: "▤", label: "Archives", detail: "Étudier les fractures", stat: "lucidite" },
+  training: { icon: "⚔", label: "S’entraîner", detail: "Garder la maîtrise", stat: "sangFroid" },
+  attunement: { icon: "✦", label: "S’accorder", detail: "Rituel de Résonance", stat: "resonance" },
+  explore: { icon: "⌁", label: "Explorer", detail: "Suivre un chemin instable", stat: "audace" },
+  harbor: { icon: "≋", label: "Observer les quais", detail: "Comprendre la chaîne portuaire", stat: "sangFroid" },
+  workshop: { icon: "⚙", label: "Étudier l’atelier", detail: "Comprendre ses mécanismes", stat: "resonance" },
+};
+
+function emptyRelationships(): Record<string, Relationship> {
+  return Object.fromEntries(CHARACTERS.map((character) => [character.id, { affection: 0, trust: 0, desire: 0, stage: 0, met: false, gifts: 0 }]));
+}
+
+function emptyAmbientHistory(): Record<string, string[]> {
+  return Object.fromEntries(CHARACTERS.map((character) => [character.id, []]));
+}
+
+function playerStats(player: Player): Record<StatKey, number> {
+  const stats: Record<StatKey, number> = { audace: 4, lucidite: 4, sangFroid: 4, resonance: 4 };
+  const trait = TRAITS.find(([label]) => label === player.trait)?.[2] as StatKey | undefined;
+  if (trait) stats[trait] += 3;
+  const vocation = VOCATIONS.find(([label]) => label === player.vocation)?.[2];
+  if (vocation === "mixed") {
+    stats.audace += 1;
+    stats.resonance += 1;
+  } else if (vocation) {
+    stats[vocation as StatKey] += 2;
+  }
+  return stats;
+}
+
+function createGame(player: Player): GameState {
+  return {
+    version: 10,
+    player,
+    day: 1,
+    period: 0,
+    location: "algratal",
+    spot: "algratal-palace-quarters",
+    stats: playerStats(player),
+    relationships: emptyRelationships(),
+    inventory: { tartelette: 1, the: 1 },
+    coins: 32,
+    confluence: 8,
+    flags: [],
+    journal: ["Saidin vous a recueilli·e à la sortie d’un portail défectueux.", "Votre temporalité d’origine et vos souvenirs demeurent introuvables.", "Dans cette branche du temps, Iriana n’a jamais réuni l’expédition qui aurait dû l’accompagner.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
+    codex: ["La Confluence", "Al’Gratal", "Mir’Aldas"],
+    history: [],
+    ambientHistory: emptyAmbientHistory(),
+    sharedHistory: [],
+    sceneMemories: {},
+    dateHistory: [],
+    jobRuns: {},
+    settings: { ...DEFAULT_SETTINGS },
+  };
+}
+
+function originLine(player: Player): DialogueLine {
+  const lines: Record<string, string> = {
+    "Réflexe protecteur": "Lorsque le portail crépite encore, votre corps se place entre Saidin et la fracture avant même que vous sachiez qui il est. Ce réflexe vous appartient ; le souvenir qui l’a forgé, lui, demeure absent.",
+    "Familiarité du pouvoir": "Les appartements impériaux ne vous rappellent aucun lieu, pourtant vous reconnaissez instinctivement les distances, les silences et les portes réservées au pouvoir. Saidin refuse d’appeler cela une preuve d’origine.",
+    "Affinité des ombres": "Les résidus sombres du portail glissent sur votre peau sans éveiller de souvenir ni de panique. Saidin note seulement que votre prudence ressemble à une habitude très ancienne.",
+    "Curiosité mécanique": "Malgré l’amnésie, vos doigts cherchent aussitôt le défaut du mécanisme emprunté. Vous ne savez pas où vous avez appris ce geste ; Saidin ignore si la compétence vient de votre temporalité ou du portail lui-même.",
+    "Mémoire de la pierre": "Le marbre d’Al’Gratal vous paraît à la fois neuf et familier. Aucune image ne revient, seulement la certitude physique que la pierre de votre monde ne vibrait pas exactement ainsi.",
+  };
+  return { speaker: "Narration", text: lines[player.origin] || "Votre corps conserve des réflexes dont votre mémoire ne peut plus raconter l’origine." };
+}
+
+function hydrateGame(raw: unknown): GameState | null {
+  if (!raw || typeof raw !== "object") return null;
+  const value = raw as Partial<GameState> & { player?: Player };
+  if (!value.player?.name) return null;
+  const fresh = createGame(value.player);
+  const location = LOCATIONS.some((entry) => entry.id === value.location) ? value.location! : fresh.location;
+  const requestedSpot = typeof value.spot === "string" ? spotById(value.spot) : undefined;
+  const spot = requestedSpot?.location === location ? requestedSpot.id : (DEFAULT_SPOTS[location] || fresh.spot);
+  const legacyTimeline = Number((raw as { version?: number }).version || 0) < 8;
+  const resetCharacters = new Set(["iriana", "valurn", "bellirith", "amanea", "draven"]);
+  const oldRelationships = Object.fromEntries(CHARACTERS.map((character) => {
+    const saved = { ...fresh.relationships[character.id], ...(value.relationships?.[character.id] || {}) };
+    if (!legacyTimeline || !resetCharacters.has(character.id)) return [character.id, saved];
+    return [character.id, { ...fresh.relationships[character.id], gifts: saved.gifts }];
+  }));
+  const obsoleteRoute = (id: string) => legacyTimeline && /^(iriana|valurn|bellirith|amanea|draven)-[0-4]$/.test(id);
+  const obsoleteFlag = (flag: string) => legacyTimeline && (
+    flag === "main-story-complete" || flag === "amanea-platonic" ||
+    /^(story-(amanea|draven|pact|allenna|naiah)|social:(amanea-family-truth|draven-lineva-letter|medig-window)|date(-intimate)?:date-amanea)/.test(flag)
+  );
+  const migratedJournal = legacyTimeline
+    ? ["Chronologie recalée : Amanea règne encore, Draven voyage vers l’Empire et le rassemblement d’Iriana n’a jamais eu lieu.", ...(value.journal || fresh.journal)]
+    : (value.journal || fresh.journal);
+  return {
+    ...fresh,
+    ...value,
+    version: 10,
+    player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
+    location,
+    spot,
+    stats: { ...fresh.stats, ...(value.stats || {}) },
+    relationships: oldRelationships,
+    inventory: { ...fresh.inventory, ...(value.inventory || {}) },
+    settings: { ...DEFAULT_SETTINGS, ...(value.settings || {}) },
+    flags: (value.flags || []).filter((flag) => !obsoleteFlag(flag)),
+    journal: migratedJournal,
+    codex: value.codex || fresh.codex,
+    history: (value.history || []).filter((id) => !obsoleteRoute(id)),
+    ambientHistory: Object.fromEntries(CHARACTERS.map((character) => [character.id, legacyTimeline && ["amanea", "draven"].includes(character.id) ? [] : (value.ambientHistory?.[character.id] || [])])),
+    sharedHistory: (value.sharedHistory || []).filter((id) => !legacyTimeline || !["amanea-family-truth", "draven-lineva-letter", "medig-window"].includes(id)),
+    sceneMemories: value.sceneMemories || {},
+    dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
+    jobRuns: value.jobRuns || {},
+  };
+}
+
+function jobAccess(game: GameState, job: JobData) {
+  if (!job.requirement || game.settings.unlockAll) return { unlocked: true, value: 0, target: 0, characterName: "" };
+  const relationship = game.relationships[job.requirement.character] || { affection: 0, trust: 0 };
+  const value = relationship.affection + relationship.trust;
+  const characterName = CHARACTERS.find((character) => character.id === job.requirement!.character)?.name || job.requirement.character;
+  return { unlocked: value >= job.requirement.bond, value, target: job.requirement.bond, characterName };
+}
+
+function replacePlayer(text: string, player: Player) {
+  return text.replaceAll("{player}", player.name);
+}
+
+function clamp(value: number, min = 0, max = 100) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function unique(values: string[]) {
+  return Array.from(new Set(values));
+}
+
+function readSlotInfo() {
+  const next: Record<number, string> = {};
+  if (typeof window === "undefined") return next;
+  for (let slot = 1; slot <= 3; slot += 1) {
+    const raw = window.localStorage.getItem(`sylvinia-liens-slot-${slot}`);
+    if (!raw) continue;
+    try {
+      const parsed = JSON.parse(raw);
+      next[slot] = parsed.savedAt || "Sauvegarde existante";
+    } catch { /* slot illisible */ }
+  }
+  return next;
+}
+
+const LINEVA_TRAVEL_ITINERARY: CharacterData["itinerary"] = [
+  { days: 14, location: "forthaven", note: "Tient Forthaven et prépare une relève capable de voyager sans elle" },
+  { days: 3, travelTo: "algratal", note: "Voyage vers Al’Gratal après avoir été convaincue de défendre elle-même son dossier" },
+  { days: 3, location: "algratal", note: "Plaide pour Forthaven aux côtés de Draven" },
+  { days: 3, travelTo: "forthaven", note: "Retour vers le front avec l’accord négocié" },
+  { days: 15, location: "forthaven", note: "Reprend le commandement et mesure ce que sa relève a accompli" },
+];
+
+function characterSchedule(character: CharacterData, day: number, flags: string[] = []) {
+  const itinerary = character.id === "lineva" && flags.includes("lineva-travel") ? LINEVA_TRAVEL_ITINERARY : character.itinerary;
+  const cycleLength = itinerary.reduce((total, stop) => total + stop.days, 0);
+  const cycleDay = ((Math.max(1, day) - 1) % cycleLength) + 1;
+  let cursor = 1;
+  for (const stop of itinerary) {
+    const end = cursor + stop.days - 1;
+    if (cycleDay <= end) {
+      const cycleStart = day - cycleDay + 1;
+      return { ...stop, untilDay: cycleStart + end, cycleDay, cycleLength, stopDay: cycleDay - cursor + 1 };
+    }
+    cursor = end + 1;
+  }
+  return { ...itinerary[0], untilDay: day, cycleDay, cycleLength, stopDay: 1 };
+}
+
+function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = []) {
+  const schedule = characterSchedule(character, day, flags);
+  let moment = schedule.location
+    ? routineFor(character.id, schedule.location, PERIODS[period].id, day)
+    : travelWaypoint(character.id, schedule.travelTo, schedule.note, schedule.stopDay);
+  if (character.id === "naiah" && schedule.location === "forbidden") {
+    const hylee = CHARACTERS.find((entry) => entry.id === "hylee");
+    const hyleeSchedule = hylee ? characterSchedule(hylee, day, flags) : undefined;
+    if (hyleeSchedule?.location === "forbidden") moment = { spot: "forbidden-sanctuary", action: "accueille Hylee et maintient le chemin de la clairière stable" };
+  }
+  const spot = spotById(moment.spot);
+  return {
+    ...schedule,
+    location: spot?.location || schedule.location || schedule.travelTo || "algratal",
+    spot: moment.spot,
+    action: moment.action,
+    traveling: !schedule.location,
+  };
+}
+
+function nextPresence(
+  character: CharacterData,
+  game: GameState,
+  spotId: string,
+  allowedPeriods?: (typeof PERIODS)[number]["id"][],
+  minDay = game.day,
+) {
+  const start = game.day * PERIODS.length + game.period;
+  for (let offset = 1; offset <= 38 * PERIODS.length; offset += 1) {
+    const absolute = start + offset;
+    const day = Math.floor(absolute / PERIODS.length);
+    const period = absolute % PERIODS.length;
+    const place = characterPlace(character, day, period, game.flags);
+    if (day >= minDay && place.spot === spotId && (!allowedPeriods || allowedPeriods.includes(PERIODS[period].id))) {
+      return { day, period, place, offset };
+    }
+  }
+  return undefined;
+}
+
+function waitDurationLabel(game: GameState, target: { day: number; period: number }) {
+  const days = target.day - game.day;
+  if (days <= 0) return `${target.period - game.period} période${target.period - game.period > 1 ? "s" : ""}`;
+  return `${days} jour${days > 1 ? "s" : ""}`;
+}
+
+function sceneFor(characterId: string, stage: number) {
+  return ROUTE_SCENES.find((scene) => scene.character === characterId && scene.stage === stage);
+}
+
+function chooseAmbientDialogue(
+  deck: AmbientDialogue[],
+  stage: number,
+  location: string,
+  spot: string,
+  period: string,
+  history: string[],
+) {
+  const atStage = deck.filter((entry) => stage >= (entry.minStage ?? 0) && stage <= (entry.maxStage ?? 5));
+  const atLocation = atStage.filter((entry) => !entry.locations || entry.locations.includes(location));
+  const atPeriod = atLocation.filter((entry) => !entry.periods || entry.periods.includes(period as (typeof PERIODS)[number]["id"]));
+  const contextual = atPeriod.length ? atPeriod : atLocation.filter((entry) => !entry.periods);
+  if (!contextual.length) return undefined;
+
+  // Les sous-lieux sont une préférence de mise en scène, pas une prison qui
+  // oblige à rejouer l'unique scène compatible. On épuise d'abord tout le
+  // paquet cohérent avec le lieu, puis on reprend la scène vue depuis le plus
+  // longtemps. Aucune sélection au hasard : le même historique donne toujours
+  // la même suite, facile à comprendre et à tester.
+  const strict = contextual.filter((entry) => !AMBIENT_SPOT_HINTS[entry.id] || AMBIENT_SPOT_HINTS[entry.id].includes(spot));
+  const seen = new Set(history);
+  const strictUnseen = strict.filter((entry) => !seen.has(entry.id));
+  const contextualUnseen = contextual.filter((entry) => !seen.has(entry.id));
+  const unseen = strictUnseen.length ? strictUnseen : contextualUnseen;
+  if (unseen.length) return unseen[seen.size % unseen.length];
+
+  const lastSeenAt = (id: string) => history.lastIndexOf(id);
+  return [...contextual].sort((a, b) => lastSeenAt(a.id) - lastSeenAt(b.id) || a.id.localeCompare(b.id, "fr"))[0];
+}
+
+function socialSceneReady(scene: SocialScene, selectedCharacter: string, game: GameState) {
+  const triggers = scene.triggerCharacters || scene.characters;
+  if (!triggers.includes(selectedCharacter)) return false;
+  if (scene.oneTime && game.flags.includes(`social:${scene.id}`)) return false;
+  if (scene.locations && !scene.locations.includes(game.location)) return false;
+  if (scene.sublocations && !scene.sublocations.includes(game.spot)) return false;
+  if ((scene.requiredPresent || scene.characters).some((id) => {
+    const character = CHARACTERS.find((entry) => entry.id === id);
+    const place = character ? characterPlace(character, game.day, game.period, game.flags) : undefined;
+    return !place || place.location !== game.location || place.spot !== game.spot;
+  })) return false;
+  if (scene.minStages && Object.entries(scene.minStages).some(([id, stage]) => game.relationships[id].stage < stage)) return false;
+  if (scene.stageSum && scene.characters.reduce((sum, id) => sum + game.relationships[id].stage, 0) < scene.stageSum) return false;
+  if (scene.requiresFlags?.some((flag) => !game.flags.includes(flag))) return false;
+  if (scene.requiresAnyFlags && !scene.requiresAnyFlags.some((flag) => game.flags.includes(flag))) return false;
+  if (scene.excludesFlags?.some((flag) => game.flags.includes(flag))) return false;
+  if (!scene.oneTime) {
+    const last = game.sharedHistory.slice().reverse().find((entry) => entry.startsWith(`${scene.id}@`));
+    const lastDay = last ? Number(last.split("@")[1]) : -99;
+    if (game.day - lastDay < 7) return false;
+  }
+  return true;
+}
+
+function chooseSocialScene(characterId: string, game: GameState) {
+  const eligible = SOCIAL_SCENES.filter((scene) => socialSceneReady(scene, characterId, game));
+  const oneTime = eligible.filter((scene) => scene.oneTime).sort((a, b) => (b.priority || 0) - (a.priority || 0));
+  if (oneTime.length) return oneTime[0];
+  const recurring = eligible.filter((scene) => !scene.oneTime);
+  const lastDay = (id: string) => {
+    const entry = game.sharedHistory.slice().reverse().find((item) => item.startsWith(`${id}@`));
+    return entry ? Number(entry.split("@")[1]) : -999;
+  };
+  return [...recurring].sort((a, b) => lastDay(a.id) - lastDay(b.id) || a.id.localeCompare(b.id, "fr"))[0];
+}
+
+function relationshipRequirementMet(choice: ChoiceData, game: GameState) {
+  return !choice.requiresRelationship?.some((requirement) => {
+    const relation = game.relationships[requirement.character];
+    return !relation
+      || (requirement.stage !== undefined && relation.stage < requirement.stage)
+      || (requirement.trust !== undefined && relation.trust < requirement.trust)
+      || (requirement.affection !== undefined && relation.affection < requirement.affection);
+  });
+}
+
+function impactText(choice: ChoiceData) {
+  const values: string[] = [`+1 ${STAT_LABELS[choice.stat]}`];
+  const signed = (value: number) => value > 0 ? `+${value}` : `${value}`;
+  if (choice.effects.affection) values.push(`Affection ${signed(choice.effects.affection)}`);
+  if (choice.effects.trust) values.push(`Confiance ${signed(choice.effects.trust)}`);
+  if (choice.effects.desire) values.push(`Désir ${signed(choice.effects.desire)}`);
+  if (choice.effects.confluence) values.push(`Confluence ${signed(choice.effects.confluence)}`);
+  return values.join(" · ");
+}
+
+type Misread = { text: string; response: string; stat: StatKey };
+
+const MISREADS: Record<string, Misread[]> = {
+  hylee: [
+    { text: "La rassurer en affirmant qu’elle n’a aucune raison d’avoir peur.", response: "Ce n’est pas vraiment ce que j’ai dit. J’ai peur. J’avais surtout besoin que tu ne décides pas à ma place que cette peur est ridicule.", stat: "sangFroid" },
+    { text: "Décider de la solution la plus sûre avant qu’elle ait terminé.", response: "Attends… Tu viens de choisir pour moi. C’est précisément ce que j’essayais de ne plus laisser faire.", stat: "lucidite" },
+    { text: "Lui expliquer ce que Remerii ferait mieux dans la même situation.", response: "J’admire Remerii. Mais je n’ai pas envie de devenir sa copie pour mériter qu’on m’écoute.", stat: "lucidite" },
+    { text: "Détourner immédiatement sa gêne par une plaisanterie.", response: "Je sais rire de moi. Là, j’essayais quand même de te dire quelque chose de vrai.", stat: "audace" },
+    { text: "Lui promettre que vous ne la laisserez plus jamais avoir peur.", response: "Tu ne peux pas me promettre ça. Et je n’ai pas besoin d’une vie sans peur ; j’ai besoin de pouvoir choisir malgré elle.", stat: "audace" },
+    { text: "Toucher sa main pour la calmer sans lui demander.", response: "Attends. Je sais que tu voulais m’aider, mais mon corps n’a pas eu le temps de comprendre que ce contact venait de toi.", stat: "sangFroid" },
+    { text: "Présenter sa magie comme ce qui la rend exceptionnelle.", response: "Ma magie est importante. Mais si c’est la seule chose exceptionnelle que tu vois, je redeviens encore un pouvoir avant d’être une personne.", stat: "resonance" },
+    { text: "L’assurer que vous savez exactement ce qui est bon pour elle.", response: "C’est une phrase que j’ai trop entendue. Même dite doucement, elle décide encore à ma place.", stat: "lucidite" },
+  ],
+  remerii: [
+    { text: "Lui assurer qu’une archimage de son niveau maîtrise forcément la situation.", response: "Voilà une manière élégante de me rendre ma compétence comme bouclier. Je vous parlais justement de ce qu’elle ne protège pas.", stat: "lucidite" },
+    { text: "Prendre les choses en main pour lui éviter un nouvel échec.", response: "Vous confondez aide et confiscation. Je suis capable d’échouer sans vous céder la conduite de ma propre vie.", stat: "audace" },
+    { text: "Interpréter son calme comme la preuve qu’elle n’est pas réellement atteinte.", response: "Mon contrôle décrit ma méthode, pas l’absence de douleur. J’espérais que vous aviez appris cette différence.", stat: "sangFroid" },
+    { text: "Comparer sa réaction à celle qu’aurait Hylee.", response: "Hylee n’est ni une unité de mesure ni un moyen de contourner ce que je viens de vous dire.", stat: "lucidite" },
+    { text: "Lui demander une solution précise avant d’accueillir ce qu’elle ressent.", response: "Je vous ai confié une difficulté, pas soumis un problème d’examen. Tout ne réclame pas une solution avant d’être entendu.", stat: "lucidite" },
+    { text: "Lui dire que sa froideur rend ses intentions impossibles à comprendre.", response: "Ma retenue peut vous frustrer. Elle ne vous autorise pas à transformer toute ma nuance en absence de sentiment.", stat: "audace" },
+    { text: "Insister pour qu’elle cesse immédiatement de tout contrôler.", response: "Vous exigez que j’abandonne un mécanisme de survie selon votre calendrier. Voilà une forme de contrôle assez ironique.", stat: "audace" },
+    { text: "La féliciter d’avoir parfaitement protégé Hylee jusque-là.", response: "J’ai aussi étouffé certains de ses choix en prétendant les sécuriser. Votre compliment efface précisément la faute que j’essaie de regarder.", stat: "sangFroid" },
+  ],
+  iriana: [
+    { text: "Lui rappeler que son rang lui garantit déjà une place exceptionnelle.", response: "Vous venez de répondre à Iriana en complimentant la Princesse. C’était exactement la confusion que je redoutais.", stat: "lucidite" },
+    { text: "Accepter son plan sans poser de question pour lui prouver votre loyauté.", response: "L’obéissance sans examen ne m’est pas utile. Elle est seulement confortable — et je me méfie de ce confort.", stat: "sangFroid" },
+    { text: "Présenter le pacte de son père comme un héritage qu’elle doit assumer.", response: "Je passe ma vie à refuser d’être réduite à son sang. Ne recommencez pas cela sous le nom du devoir.", stat: "audace" },
+    { text: "L’encourager à rendre cette confidence publique pour reprendre le contrôle.", response: "Une vérité intime ne devient pas plus libre parce qu’une salle entière peut l’utiliser contre moi.", stat: "audace" },
+    { text: "Lui assurer qu’une princesse ne devrait jamais montrer autant d’hésitation.", response: "Vous venez de renforcer la prison au moment même où je vous montrais la porte. Mon rang hésite moins ; il vit moins aussi.", stat: "sangFroid" },
+    { text: "Transformer immédiatement sa confidence en stratégie contre son père.", response: "Tout ce que je vous confie n’est pas une arme à retourner. Certaines vérités ont le droit d’exister avant de devenir utiles.", stat: "lucidite" },
+    { text: "Lui dire que Valurn semble mieux comprendre cette part d’elle.", response: "Valurn n’est pas un instrument destiné à mesurer votre proximité avec moi. Répondez à ce que je vous offre, pas à ce qu’il possède déjà.", stat: "lucidite" },
+    { text: "Lui promettre de toujours obéir à ses décisions privées.", response: "Je ne cherche pas une autre cour. Votre désaccord honnête me serait plus précieux qu’une loyauté qui m’empêche de me voir.", stat: "audace" },
+  ],
+  valurn: [
+    { text: "Traiter son flirt comme une promesse qu’il devra désormais tenir.", response: "Vous venez de transformer un jeu partagé en contrat unilatéral. Mon père apprécierait la méthode ; ce n’est pas un compliment.", stat: "audace" },
+    { text: "Lui dire que vous comprenez parfaitement ce qu’il a vécu.", response: "Parfaitement ? Quelle efficacité. J’ai mis des années à ne pas me comprendre et vous venez de résoudre l’affaire en une phrase.", stat: "lucidite" },
+    { text: "Exiger qu’il abandonne immédiatement toute plaisanterie pour être sincère.", response: "Vous voulez la vérité, mais seulement si elle porte l’uniforme que vous avez choisi. C’est moins libre qu’il n’y paraît.", stat: "sangFroid" },
+    { text: "Promettre de le sauver de sa famille et du Chaos.", response: "Je ne cherche pas un nouveau propriétaire bien intentionné. Gardez la cape héroïque pour quelqu’un qui l’a demandée.", stat: "audace" },
+    { text: "Jouer avec son pacte comme s’il s’agissait d’un simple trait séduisant.", response: "Le Chaos est très décoratif jusqu’à ce qu’il réclame son dû. Ne transformez pas ma chaîne en accessoire parce qu’elle brille bien.", stat: "resonance" },
+    { text: "Lui demander de prouver qu’il peut enfin être digne de confiance.", response: "La confiance n’est pas une épreuve que je passe pour obtenir votre affection. Regardez mes actes, ou ne me la donnez pas.", stat: "sangFroid" },
+    { text: "Lui assurer que son père ne peut plus avoir de prise sur lui.", response: "Les chaînes ne disparaissent pas parce que vous ne les voyez pas. Votre optimisme n’annule ni le pacte ni ce qu’il m’a appris à devenir.", stat: "lucidite" },
+    { text: "Répondre à sa vulnérabilité par une provocation plus cruelle encore.", response: "J’aime les lames verbales. J’aime moins qu’on les utilise au moment précis où je viens de poser les miennes.", stat: "audace" },
+  ],
+  naiah: [
+    { text: "Rire de sa dernière phrase comme s’il ne s’agissait que d’une provocation.", response: "Oh. Tu as ri au bon endroit et écouté au mauvais. C’était la partie vraie.", stat: "audace" },
+    { text: "La qualifier de petite menace finalement inoffensive.", response: "Petite, peut-être. Inoffensive, non. Et mignonne ne signifie pas que tu peux cesser de me regarder sérieusement.", stat: "sangFroid" },
+    { text: "Supposer qu’Amanea avait nécessairement de bonnes raisons de la chasser.", response: "Deux secondes. C’est le temps qu’il t’a fallu pour offrir à ma mère une innocence qu’elle ne t’a même pas demandée.", stat: "lucidite" },
+    { text: "Lui demander de se comporter normalement pour faciliter la conversation.", response: "Normalement selon qui ? Toi ? Ma mère ? Les gens qui aiment les monstres uniquement quand ils restent décoratifs ?", stat: "sangFroid" },
+    { text: "Lui demander de dissiper toutes ses illusions pour prouver sa sincérité.", response: "Ma magie n’est pas automatiquement un mensonge. Me forcer à l’effacer pour mériter d’être crue ressemble encore à une cage.", stat: "resonance" },
+    { text: "Traiter son besoin de garder une sortie comme une exagération.", response: "Les portes fermées ont compté dans ma vie. Tu n’as pas besoin d’avoir peur avec moi, mais ne te moque pas de ce qui m’a appris à vérifier.", stat: "sangFroid" },
+    { text: "Lui dire qu’Hylee est probablement la seule personne capable de l’apaiser.", response: "Hylee compte énormément. Elle n’est pas la gardienne officielle de mon humanité, et moi je ne suis pas son problème à résoudre.", stat: "lucidite" },
+    { text: "Répondre à sa jalousie en la mettant aussitôt en compétition.", response: "Voilà. Je te parle de la peur de ne pas être choisie et tu construis déjà un tournoi. Je ne veux pas gagner quelqu’un.", stat: "audace" },
+  ],
+  lineva: [
+    { text: "Lui ordonner de se reposer parce que vous savez ce qui est bon pour elle.", response: "Vous avez transformé une inquiétude raisonnable en ordre mal placé. Recommencez sans prendre mon commandement.", stat: "audace" },
+    { text: "Lui dire que Draven aurait été fier qu’elle agisse exactement comme lui.", response: "Je ne tiens pas Forthaven pour devenir une copie convenable de mon père.", stat: "lucidite" },
+    { text: "Minimiser le danger pour l’aider à relâcher la pression.", response: "Les morts-vivants ne deviennent pas moins réels parce que votre réconfort exige une version plus simple du front.", stat: "sangFroid" },
+    { text: "Accepter toutes les tâches qu’elle propose sans fixer de limite.", response: "Une aide qui s’effondre demain devient un problème supplémentaire. Choisissez ce que vous pouvez réellement tenir.", stat: "sangFroid" },
+    { text: "Lui conseiller de laisser les décisions difficiles à l’Empire.", response: "L’Empire ne connaît ni mes rues ni le nom de mes soldats. Son aide compte ; son confort ne commandera pas Forthaven.", stat: "lucidite" },
+    { text: "Lui dire que sa fatigue prouve qu’elle n’est pas faite pour commander.", response: "Ma fatigue prouve que la situation dure. J’accepterai qu’on m’aide, pas qu’on réduise mon commandement à une nuit trop courte.", stat: "sangFroid" },
+    { text: "Transformer immédiatement son inquiétude pour Draven en faiblesse.", response: "Mon père me manque. Cela ne retire rien à mon jugement. Les commandantes ne deviennent pas incompétentes lorsqu’elles aiment quelqu’un.", stat: "lucidite" },
+    { text: "Promettre de rester au front quoi qu’elle vous demande.", response: "Une promesse sans limite est une future désobéissance ou un futur cadavre. Je ne veux ni l’un ni l’autre.", stat: "audace" },
+  ],
+  saidin: [
+    { text: "Accepter sa première réponse sans la questionner davantage.", response: "Vous me laissez choisir votre conclusion parce que ma certitude paraît confortable. Ce n’est pas la même chose que me faire confiance.", stat: "sangFroid" },
+    { text: "Lui rappeler qu’il connaît probablement déjà la bonne solution.", response: "Connaître une conséquence possible ne me donne pas le droit de transformer votre choix en formalité.", stat: "lucidite" },
+    { text: "Exiger une prédiction précise avant d’accepter de continuer.", response: "Si je vous la donne, passerez-vous le reste du chemin à choisir — ou seulement à lui obéir ?", stat: "audace" },
+    { text: "Prendre son détachement pour la preuve que rien ne l’atteint.", response: "La distance est une méthode. Vous venez d’en faire une absence de sentiment parce que cette lecture était plus facile.", stat: "lucidite" },
+    { text: "Lui demander de consulter les futurs pour confirmer vos sentiments.", response: "Un sentiment n’est pas plus vrai parce qu’une version future le conserve. Vous me demandez une preuve qui détruirait précisément sa liberté.", stat: "resonance" },
+    { text: "Lui reprocher de ne jamais donner de réponse simple.", response: "Je complique parfois par habitude. Ici, pourtant, la réponse simple vous retirerait un choix que je refuse de prendre à votre place.", stat: "audace" },
+    { text: "Supposer que votre arrivée faisait nécessairement partie de son plan.", response: "Vous me prêtez une maîtrise flatteuse et fausse. Je vous ai trouvé ; je ne vous ai ni créé ni convoqué.", stat: "lucidite" },
+    { text: "Lui demander de promettre que cette relation finira bien.", response: "Je pourrais sélectionner un avenir heureux et vous condamner à le poursuivre. Ce ne serait pas une promesse, mais une contrainte élégante.", stat: "sangFroid" },
+  ],
+  bellirith: [
+    { text: "Prendre sa séduction pour la promesse qu’elle ira forcément plus loin.", response: "Vous avez confondu mon goût du jeu avec une promesse. Je déteste qu’on écrive la fin de mes scènes avant moi.", stat: "audace" },
+    { text: "Promettre que votre affection suffira à réparer ses blessures.", response: "Charmant. Vous m’aimez donc assez pour nier tout le travail que je n’ai pas encore fait moi-même.", stat: "lucidite" },
+    { text: "La comparer à Valurn pour lui montrer que vous comprenez leur conflit.", response: "Vous venez de remettre mon frère au centre d’une phrase qui parlait de moi. Une habitude familiale particulièrement laide.", stat: "lucidite" },
+    { text: "Répondre à sa manipulation par davantage de proximité.", response: "Vous récompensez le piège et appelez cela de la tendresse. Je pourrais en profiter ; je préfère vous prévenir que c’est une mauvaise idée.", stat: "audace" },
+    { text: "Lui demander d’utiliser légèrement son charme pour rendre la scène plus intense.", response: "Légèrement est encore une manière de modifier votre volonté. Si vous me désirez, je veux savoir que ce désir a survécu à mon abstention.", stat: "resonance" },
+    { text: "Lui assurer qu’un refus ne pourrait jamais réellement la blesser.", response: "Il me blesserait. Je peux reculer sans prétendre que cela ne coûte rien ; ne transformez pas ma retenue en indifférence.", stat: "sangFroid" },
+    { text: "Prendre sa vulnérabilité pour une nouvelle technique de séduction.", response: "Je comprends votre méfiance. Mais si chaque vérité devient encore une performance à vos yeux, je n’ai plus aucun moyen de parler sans mon masque.", stat: "lucidite" },
+    { text: "Lui dire qu’elle serait plus aimable si elle abandonnait entièrement son pouvoir.", response: "Mon pouvoir fait partie de moi. Je peux le retenir sans devenir inoffensive pour mériter votre affection.", stat: "audace" },
+  ],
+  amanea: [
+    { text: "Lui promettre une obéissance entière pour gagner sa confiance.", response: "Je demandais ta fiabilité, pas ton effacement. Les serments faciles produisent des sujets dangereux et de très mauvais partenaires.", stat: "sangFroid" },
+    { text: "Qualifier l’exil de Naïah de sacrifice malheureusement nécessaire.", response: "Ne rends pas mon choix plus noble qu’il ne l’était. J’ai protégé, contrôlé et blessé dans le même geste.", stat: "lucidite" },
+    { text: "Flatter la réputation terrifiante de la Reine Noire.", response: "Ma réputation garde certaines portes. Elle ne répond pas à la femme qui vient de te parler.", stat: "audace" },
+    { text: "Expliquer ce qu’Allenna ou Naïah devrait accepter à sa place.", response: "Mes filles ont déjà assez souffert de décisions prises en leur nom. Tu ne gagneras pas ma confiance en ajoutant la tienne.", stat: "lucidite" },
+    { text: "Lui dire que Naïah finira forcément par lui pardonner.", response: "Le pardon de ma fille n’est ni un dû ni une conclusion nécessaire. Ne m’offre pas ce qui lui appartient.", stat: "sangFroid" },
+    { text: "Présenter Allenna comme une version améliorée de sa mère.", response: "Allenna n’est pas ma correction. Elle est une femme entière, et mon héritière précisément parce qu’elle sait me contredire.", stat: "lucidite" },
+    { text: "L’encourager à braver l’Empire au grand jour pour prouver sa force.", response: "Une reine qui confond courage et spectacle sacrifie ses sujets à son orgueil. Akuhn’Nabad n’a pas besoin d’une démonstration.", stat: "audace" },
+    { text: "Lui demander de révéler immédiatement la clause concernant Naïah.", response: "Nommer cette clause peut guider le démon jusqu’à elle. Ton impatience est compréhensible ; elle ne rend pas le risque acceptable.", stat: "resonance" },
+  ],
+  draven: [
+    { text: "Lui conseiller de transmettre des ordres plus stricts à Lineva.", response: "Ma fille commande Forthaven. Si je profite de la distance pour reprendre sa place, je n’aurai rien défendu du tout.", stat: "sangFroid" },
+    { text: "Affirmer que l’Empire finira forcément par sauver la ville.", response: "Un espoir sans clause, sans délai et sans navire n’est pas un plan. C’est une manière élégante d’attendre les morts.", stat: "audace" },
+    { text: "Parler des pertes comme d’un coût stratégique acceptable.", response: "Les cartes disent pertes. Moi, je connais les noms. Ne me demandez pas de confondre les deux.", stat: "lucidite" },
+    { text: "Suggérer qu’il serait temps de laisser la guerre aux plus jeunes.", response: "Le jour où je ne serai plus utile, Lineva me le dira. Jusque-là, jugez mes actes plutôt que mes cheveux blancs.", stat: "audace" },
+    { text: "Lui promettre que Lineva restera en sécurité pendant son absence.", response: "Vous ne contrôlez ni la mer ni les morts. Ne transformez pas mon inquiétude en promesse que personne ne peut tenir.", stat: "sangFroid" },
+    { text: "Lui conseiller de reprendre le commandement dès son retour.", response: "Lineva tient Forthaven. Si je rentre pour lui retirer ce qu’elle a construit, mon retour deviendra une défaite.", stat: "lucidite" },
+    { text: "Présenter son endurance comme une raison de ne jamais se reposer.", response: "Tenir longtemps n’est pas tenir sans relève. Cette logique a déjà enterré assez de bons soldats.", stat: "sangFroid" },
+    { text: "Se moquer de sa méfiance envers la magie pour détendre l’atmosphère.", response: "Je peux apprendre ce que je ne comprends pas. Me traiter d’ignorant ne rendra pas vos sorts plus fiables sur le terrain.", stat: "audace" },
+  ],
+};
+
+const BOUNDARY_RESPONSES: Record<string, string> = {
+  hylee: "D’accord… ça pique un peu, je ne vais pas mentir. Laisse-moi reprendre mon souffle et on continue moins vite.",
+  remerii: "C’est clair. Désagréable, mais clair. Accordez-moi quelques minutes pour retrouver une contenance qui ne ressemble pas à une dissertation.",
+  iriana: "J’entends. Laissez-moi seulement une seconde avant de remettre mon titre et mon visage de cour au même endroit.",
+  valurn: "Un refus net. Voilà qui ruine trois traits d’esprit et un plan très séduisant. Je survivrai à cette tragédie.",
+  naiah: "Oh… d’accord. Je vais être vexée cinq minutes, peut-être six, puis nous pourrons reparler sans que je transforme les coussins en crapauds.",
+  lineva: "Compris. Nous nous arrêtons là. Je préférerais marcher un peu avant de reprendre la conversation.",
+  saidin: "Alors cette possibilité s’arrête ici. C’est étrange : parmi tant d’avenirs, une réponse présente demeure toujours la plus nette.",
+  bellirith: "Je pourrais sourire comme si cela ne m’atteignait pas. Épargnons-nous cette mauvaise scène : cela m’atteint, et je vais tout de même reculer.",
+  amanea: "Très bien. Je n’apprécie pas cette réponse, mais je l’ai entendue. Laisse-moi un moment avant de redevenir raisonnable.",
+};
+
+const PLATONIC_RESPONSES: Record<string, string> = {
+  hylee: "Je comprends. J’aurai besoin d’un peu de temps pour ranger mes espoirs, mais pas notre amitié avec eux.",
+  remerii: "Une réponse définitive. Mon esprit proteste contre sa conclusion et apprécie honteusement sa précision. Je saurai m’y tenir.",
+  iriana: "Alors votre place auprès de moi portera un autre nom. Elle n’en sera pas moins réelle, seulement différente de celle que j’avais imaginée.",
+  valurn: "Ami, donc. Une loyauté qui ne finit ni dans un lit ni devant un notaire démoniaque : j’ignorais que vous aimiez les expériences radicales.",
+  naiah: "Ça fait mal. Mais je préfère être ton amie sans mensonge que passer des mois à essayer de devenir une réponse différente.",
+  lineva: "Reçu. Votre présence compte toujours. Il me faudra simplement quelques jours pour lui rendre une forme qui ne me fasse pas attendre autre chose.",
+  saidin: "Je ferme donc cette branche. Le chemin qui demeure n’est pas moindre ; il conduit seulement ailleurs.",
+  bellirith: "Voilà qui m’oblige à apprendre la proximité sans en faire une conquête. Ce sera terriblement peu glamour… et probablement utile.",
+  amanea: "Cette voie s’arrête donc ici. L’affection, elle, peut demeurer si tu acceptes qu’elle retrouve lentement sa place.",
+};
+
+const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | "platonic", DialogueLine[]>> = {
+  hylee: {
+    misread: [{ speaker: "Narration", text: "Hylee ramène une mèche derrière son oreille. Le geste lui donne le temps de reprendre sa pensée au point où votre réponse l’avait coupée." }],
+    boundary: [{ speaker: "Narration", text: "Le froid gagne un instant ses doigts, puis se résorbe. Hylee reste près de vous, sans chercher à ranimer ce qui vient de s’interrompre." }],
+    platonic: [{ speaker: "Narration", text: "Elle acquiesce, les yeux brillants mais le dos droit. Le silence qui suit n’efface pas ce que vous avez déjà traversé ensemble." }],
+  },
+  remerii: {
+    misread: [{ speaker: "Narration", text: "Remerii remet d’aplomb un objet qui n’en avait nul besoin. Lorsqu’elle revient à vous, son calme a retrouvé un bord plus coupant." }],
+    boundary: [{ speaker: "Narration", text: "Elle corrige machinalement un pli de sa manche, puis renonce à prétendre que ce seul détail occupait son attention." }],
+    platonic: [{ speaker: "Narration", text: "Remerii inspire lentement. Elle ne négocie pas la conclusion ; elle se contente de l’inscrire parmi les vérités qu’elle devra apprendre à habiter." }],
+  },
+  iriana: {
+    misread: [{ speaker: "Narration", text: "Le visage de la princesse se referme avant que celui d’Iriana ait fini de parler. Vous venez de remettre son titre entre vous." }],
+    boundary: [{ speaker: "Narration", text: "Iriana lisse le bord de son gant. Quand elle relève la tête, la déception demeure visible, mais elle ne vous demande pas de la réparer." }],
+    platonic: [{ speaker: "Narration", text: "Elle reçoit votre réponse comme une décision privée, sans témoin ni appel. Sa main quitte la vôtre avec lenteur." }],
+  },
+  valurn: {
+    misread: [{ speaker: "Narration", text: "Le sourire de Valurn tient une seconde de trop, puis tombe. Cette fois, aucune plaisanterie ne vient récupérer ce qu’il avait confié." }],
+    boundary: [{ speaker: "Narration", text: "Il s’incline avec une légèreté un peu forcée et vous rend l’espace entre vos corps avant de chercher une nouvelle phrase." }],
+    platonic: [{ speaker: "Narration", text: "Valurn retourne une carte imaginaire entre ses doigts. La partie change de règles, et il ne tente pas de reprendre la donne." }],
+  },
+  naiah: {
+    misread: [{ speaker: "Narration", text: "Les lucioles autour de Naïah s’éteignent une à une. Elle demeure pourtant là, assez longtemps pour que vous compreniez où votre réponse a dérapé." }],
+    boundary: [{ speaker: "Narration", text: "Naïah recule d’un pas et s’assied dans l’herbe, les bras autour des genoux. Sa moue ne devient ni sortilège ni vengeance." }],
+    platonic: [{ speaker: "Narration", text: "Une illusion commence à couvrir son expression ; elle la dissipe d’un geste agacé et vous laisse voir la peine telle qu’elle est." }],
+  },
+  lineva: {
+    misread: [{ speaker: "Narration", text: "Lineva croise les bras. Son regard ne quitte pas le vôtre, mais la conversation vient de reprendre la raideur d’un rapport militaire." }],
+    boundary: [{ speaker: "Narration", text: "Elle recule jusqu’au parapet et regarde les feux de Forthaven, le temps de remettre ses pensées en ordre." }],
+    platonic: [{ speaker: "Narration", text: "Lineva incline brièvement la tête. Elle accepte la nouvelle ligne entre vous avec la gravité d’un engagement qu’elle entend respecter." }],
+  },
+  saidin: {
+    misread: [{ speaker: "Narration", text: "Le regard de Saidin se perd dans plusieurs réponses possibles. Il les abandonne toutes afin de rester devant celle que vous venez réellement de donner." }],
+    boundary: [{ speaker: "Narration", text: "Une lueur traverse ses yeux puis s’éteint. Saidin ne poursuit aucune des phrases qui auraient pu changer votre réponse." }],
+    platonic: [{ speaker: "Narration", text: "Autour de lui, les futurs se simplifient d’un seul coup. Il semble à la fois soulagé de leur silence et atteint par ce qu’il signifie." }],
+  },
+  bellirith: {
+    misread: [{ speaker: "Narration", text: "Bellirith laisse son charme retomber. Sans l’éclat de son sourire, la blessure que votre réponse vient d’effleurer paraît beaucoup moins théâtrale." }],
+    boundary: [{ speaker: "Narration", text: "Elle fait un pas de côté, assez élégant pour sauver les apparences et assez net pour laisser la distance intacte." }],
+    platonic: [{ speaker: "Narration", text: "Bellirith détourne les yeux vers la foule. Pour une fois, elle ne cherche pas dans un autre regard de quoi annuler le vôtre." }],
+  },
+  amanea: {
+    misread: [{ speaker: "Narration", text: "Amanea s’immobilise. Son silence n’est pas une menace : il contient seulement tout ce qu’elle refuse de laisser la reine répondre à la place de la mère ou de la femme." }],
+    boundary: [{ speaker: "Narration", text: "La souveraine reprend sa cape sur ses épaules. Amanea, elle, demeure encore un instant dans son regard." }],
+    platonic: [{ speaker: "Narration", text: "Elle remet sa couronne sans cérémonie. Le métal referme une possibilité, pas la confiance déjà déposée entre vous." }],
+  },
+};
+
+function injectedChoiceAftermath(choice: ChoiceData, characterId: string) {
+  const kind = choice.id.endsWith("-misread") ? "misread" : choice.id.endsWith("-boundary") ? "boundary" : choice.id.endsWith("-platonic") ? "platonic" : undefined;
+  return kind ? INJECTED_CHOICE_AFTERMATH[characterId]?.[kind] || [] : [];
+}
+
+function stableChoiceIndex(value: string, length: number) {
+  let hash = 0;
+  for (const character of value) hash = (hash * 31 + character.charCodeAt(0)) | 0;
+  return Math.abs(hash) % Math.max(1, length);
+}
+
+function shuffledChoices<T extends { id: string }>(values: T[], seed: string) {
+  return [...values]
+    .map((value) => ({ value, rank: stableChoiceIndex(`${seed}:${value.id}`, 1_000_003) }))
+    .sort((left, right) => left.rank - right.rank || left.value.id.localeCompare(right.value.id, "fr"))
+    .map(({ value }) => value);
+}
+
+function orderedJobRounds(job: JobData, order: number[]) {
+  const pool = allJobRounds(job);
+  return order.map((index) => pool[index]).filter((round): round is JobRound => Boolean(round));
+}
+
+function memoryWaveLength(round: number, maximum: number) {
+  return Math.min([3, 4, 6][round] || maximum, maximum);
+}
+
+function finishServiceCustomer(current: JobState, correct: boolean, feedbackText: string): JobState {
+  const total = serviceCustomers(current.variant).length;
+  const score = current.score + (correct ? 1 : 0);
+  const mistakes = current.mistakes + (correct ? 0 : 1);
+  const combo = correct ? current.combo + 1 : 0;
+  const maxCombo = Math.max(current.maxCombo, combo);
+  const round = current.round + 1;
+  if (round >= total) {
+    return {
+      ...current, round, score, mistakes, combo, maxCombo, feedbackText,
+      serviceSelections: {},
+      phase: mistakes === 0 ? "perfect" : mistakes <= 2 ? "success" : "failure",
+      lastResult: correct ? "correct" : "wrong",
+    };
+  }
+  return {
+    ...current, round, score, mistakes, combo, maxCombo, feedbackText,
+    serviceSelections: {},
+    serviceTimeLeft: correct ? 20 : 17,
+    lastResult: correct ? "correct" : "wrong",
+  };
+}
+
+function choicesForDialogue(dialogue: DialogueState, game: GameState) {
+  const base = dialogue.scene.choices || [];
+  if (dialogue.replay || dialogue.scene.kind === "intro") return base;
+  const characterId = dialogue.scene.character || dialogue.scene.cast[0];
+  const character = CHARACTERS.find((entry) => entry.id === characterId);
+  const pool = MISREADS[characterId];
+  if (!character || !pool?.length) return base;
+  const misread = pool[stableChoiceIndex(dialogue.scene.id, pool.length)];
+  const extra: ChoiceData[] = [{
+    id: `${dialogue.scene.id}-misread`, text: misread.text, stat: misread.stat,
+    response: [{ speaker: character.name, text: misread.response }],
+    effects: { stats: { [misread.stat]: 1 }, affection: -3, trust: -5, desire: -2 },
+    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
+  }];
+  const relation = game.relationships[characterId];
+  const romanticMoment = characterId !== "draven" && !game.flags.includes(`${characterId}-platonic`) && Boolean(BOUNDARY_RESPONSES[characterId]) && (
+    dialogue.scene.kind === "date" ||
+    (dialogue.scene.kind === "route" && (dialogue.scene.route?.stage || 0) >= 3) ||
+    (dialogue.scene.kind === "ambient" && relation?.stage >= 3)
+  );
+  if (romanticMoment) extra.push({
+    id: `${dialogue.scene.id}-boundary`,
+    text: "Dire honnêtement que vous ne souhaitez pas aller plus loin pour le moment.",
+    stat: "sangFroid",
+    response: [{ speaker: character.name, text: BOUNDARY_RESPONSES[characterId] }],
+    effects: { stats: { sangFroid: 1 }, affection: -1, trust: 2, desire: -8 },
+    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
+  });
+  if (romanticMoment) extra.push({
+    id: `${dialogue.scene.id}-platonic`,
+    text: `Dire clairement à ${character.name} que vous souhaitez préserver une relation amicale, sans attente romantique.`,
+    stat: "lucidite",
+    response: [{ speaker: character.name, text: PLATONIC_RESPONSES[characterId] }],
+    effects: { stats: { lucidite: 1 }, trust: 3, desire: -15, flags: [`${characterId}-platonic`] },
+    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
+  });
+  return shuffledChoices([...base, ...extra], `${dialogue.scene.id}:${game.day}:${game.period}:${game.relationships[characterId]?.stage || 0}`);
+}
+
+function choiceOpeningLine(choice: ChoiceData): DialogueLine | undefined {
+  if (choice.response[0]?.speaker === "{player}") return undefined;
+  if (choice.playerLine) return { speaker: "{player}", text: choice.playerLine };
+  const spoken = choice.text.match(/«([^»]+)»/s)?.[1];
+  if (spoken) return { speaker: "{player}", text: spoken };
+  const action = choice.text.replace(/[. ]+$/, "");
+  const forms: [RegExp, string][] = [
+    [/^Lui demander\s+/i, "Vous lui demandez "], [/^Lui dire\s+/i, "Vous lui dites "], [/^Lui rappeler\s+/i, "Vous lui rappelez "], [/^Lui proposer\s+/i, "Vous lui proposez "], [/^Lui offrir\s+/i, "Vous lui offrez "], [/^Lui répondre\s+/i, "Vous lui répondez "],
+    [/^Leur demander\s+/i, "Vous leur demandez "], [/^Leur dire\s+/i, "Vous leur dites "], [/^Leur proposer\s+/i, "Vous leur proposez "], [/^Leur rappeler\s+/i, "Vous leur rappelez "],
+    [/^Le laisser\s+/i, "Vous le laissez "], [/^La laisser\s+/i, "Vous la laissez "], [/^Les laisser\s+/i, "Vous les laissez "],
+    [/^L’inviter\s+/i, "Vous l’invitez "], [/^L'entraîner\s+/i, "Vous l’entraînez "], [/^L’entraîner\s+/i, "Vous l’entraînez "], [/^L’emmener\s+/i, "Vous l’emmenez "], [/^L’embrasser\s+/i, "Vous l’embrassez "], [/^L’obliger\s+/i, "Vous l’obligez "],
+    [/^Demander\s+/i, "Vous demandez "], [/^Proposer\s+/i, "Vous proposez "], [/^Observer\s+/i, "Vous observez "], [/^Écouter\s+/i, "Vous écoutez "], [/^Laisser\s+/i, "Vous laissez "], [/^Rester\s+/i, "Vous restez "],
+    [/^Refuser\s+/i, "Vous refusez "], [/^Accepter\s+/i, "Vous acceptez "], [/^Rappeler\s+/i, "Vous rappelez "],
+    [/^Prendre\s+/i, "Vous prenez "], [/^Offrir\s+/i, "Vous offrez "], [/^Choisir\s+/i, "Vous choisissez "],
+    [/^Suivre\s+/i, "Vous suivez "], [/^Poser\s+/i, "Vous posez "], [/^Partager\s+/i, "Vous partagez "],
+    [/^Admettre\s+/i, "Vous admettez "], [/^Transformer\s+/i, "Vous transformez "], [/^Accorder\s+/i, "Vous accordez "],
+    [/^Commencer\s+/i, "Vous commencez "], [/^Continuer\s+/i, "Vous continuez "], [/^Bâtir\s+/i, "Vous bâtissez "], [/^Construire\s+/i, "Vous construisez "], [/^Prononcer\s+/i, "Vous prononcez "], [/^Nommer\s+/i, "Vous nommez "],
+    [/^Ranger\s+/i, "Vous rangez "], [/^Inventer\s+/i, "Vous inventez "], [/^Comparer\s+/i, "Vous comparez "],
+    [/^Lever\s+/i, "Vous levez "], [/^Écrire\s+/i, "Vous écrivez "], [/^Soutenir\s+/i, "Vous soutenez "],
+    [/^Détourner\s+/i, "Vous détournez "], [/^Toucher\s+/i, "Vous touchez "], [/^Répondre\s+/i, "Vous répondez "], [/^Dire\s+/i, "Vous dites "], [/^Garder\s+/i, "Vous gardez "],
+    [/^Jouer\s+/i, "Vous jouez "], [/^Lire\s+/i, "Vous lisez "], [/^Repousser\s+/i, "Vous repoussez "], [/^Retourner\s+/i, "Vous retournez "], [/^Quitter\s+/i, "Vous quittez "], [/^Entrer\s+/i, "Vous entrez "], [/^Saisir\s+/i, "Vous saisissez "],
+    [/^Vérifier\s+/i, "Vous vérifiez "], [/^Repérer\s+/i, "Vous repérez "], [/^Fermer\s+/i, "Vous fermez "], [/^Montrer\s+/i, "Vous montrez "], [/^Ancrer\s+/i, "Vous ancrez "], [/^Souffler\s+/i, "Vous soufflez "],
+    [/^Examiner\s+/i, "Vous examinez "], [/^Détruire\s+/i, "Vous détruisez "], [/^Provoquer\s+/i, "Vous provoquez "], [/^Présenter\s+/i, "Vous présentez "], [/^Maintenir\s+/i, "Vous maintenez "], [/^Accuser\s+/i, "Vous accusez "],
+    [/^Établir\s+/i, "Vous établissez "], [/^Utiliser\s+/i, "Vous utilisez "], [/^Reconnaître\s+/i, "Vous reconnaissez "], [/^Dissocier\s+/i, "Vous dissociez "], [/^Fixer\s+/i, "Vous fixez "], [/^Menacer\s+/i, "Vous menacez "],
+    [/^Souligner\s+/i, "Vous soulignez "], [/^Obtenir\s+/i, "Vous obtenez "], [/^Assumer\s+/i, "Vous assumez "], [/^Mettre\s+/i, "Vous mettez "], [/^Exiger\s+/i, "Vous exigez "], [/^Rompre\s+/i, "Vous rompez "],
+    [/^Avouer\s+/i, "Vous avouez "], [/^Préférer\s+/i, "Vous préférez "], [/^Préserver\s+/i, "Vous préservez "], [/^Marcher\s+/i, "Vous marchez "], [/^Séparer\s+/i, "Vous séparez "], [/^Distinguer\s+/i, "Vous distinguez "],
+    [/^Déchirer\s+/i, "Vous déchirez "], [/^Jeter\s+/i, "Vous jetez "], [/^Mélanger\s+/i, "Vous mélangez "], [/^Rendre\s+/i, "Vous rendez "], [/^Stabiliser\s+/i, "Vous stabilisez "],
+  ];
+  const form = forms.find(([pattern]) => pattern.test(action));
+  const text = form ? action.replace(form[0], form[1]) : "Vous prenez le temps de répondre sans détour";
+  return { speaker: "Narration", text: `${text}.` };
+}
+
+function ambientPromptLines(prompt: string, characterName: string): DialogueLine[] {
+  const lines: DialogueLine[] = [];
+  const pattern = /«([^»]+)»/g;
+  let cursor = 0;
+  for (const match of prompt.matchAll(pattern)) {
+    const before = prompt.slice(cursor, match.index).trim();
+    if (before) lines.push({ speaker: "Narration", text: before });
+    lines.push({ speaker: characterName, text: match[1] });
+    cursor = (match.index || 0) + match[0].length;
+  }
+  const after = prompt.slice(cursor).trim();
+  if (after) lines.push({ speaker: "Narration", text: after });
+  return lines.length ? lines : [{ speaker: "Narration", text: prompt }];
+}
+
+function backgroundUrl(background: string) {
+  return background.startsWith("/") ? background : `/assets/backgrounds/${background}.webp`;
+}
+
+function routeBackground(scene: RouteScene) {
+  return spotById(ROUTE_SPOTS[scene.id])?.background || backgroundUrl(scene.background);
+}
+
+function expandedLines(scene: SceneView, game: GameState, lines: DialogueLine[], phase: "intro" | "response", spotId = game.spot) {
+  const spot = spotById(spotId);
+  const lead = scene.cast[0] ? CHARACTERS.find((character) => character.id === scene.cast[0]) : undefined;
+  const place = lead ? characterPlace(lead, game.day, game.period, game.flags) : undefined;
+  return enrichDialogueLines(lines, {
+    sceneId: scene.id,
+    title: scene.title,
+    kind: scene.kind,
+    phase,
+    cast: scene.cast,
+    baseMood: scene.mood,
+    spotName: spot?.name,
+    action: place?.action,
+  });
+}
+
+export default function Home() {
+  const [screen, setScreen] = useState<Screen>("title");
+  const [player, setPlayer] = useState<Player>(DEFAULT_PLAYER);
+  const [game, setGame] = useState<GameState | null>(null);
+  const [tab, setTab] = useState<Tab>("place");
+  const [hasSave, setHasSave] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState("algratal");
+  const [selectedSpot, setSelectedSpot] = useState("algratal-palace-council");
+  const [mapDestinationOpen, setMapDestinationOpen] = useState(false);
+  const [modal, setModal] = useState<ModalState>(null);
+  const [dialogue, setDialogue] = useState<DialogueState | null>(null);
+  const [slotInfo, setSlotInfo] = useState<Record<number, string>>({});
+  const [ritualSequence, setRitualSequence] = useState<string[]>([]);
+  const [ritualStep, setRitualStep] = useState(0);
+  const [ritualPhase, setRitualPhase] = useState<"memorize" | "play" | "success" | "failure">("memorize");
+  const [jobState, setJobState] = useState<JobState | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioVolume = game?.settings.volume ?? DEFAULT_SETTINGS.volume;
+  const activeJobId = jobState?.jobId;
+  const activeJobPhase = jobState?.phase;
+  const activeAssemblyStage = jobState?.assemblyStage;
+  const currentPlaceKey = game ? `${game.location}:${game.spot}` : "";
+
+  useEffect(() => {
+    if (!mapDestinationOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMapDestinationOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [mapDestinationOpen]);
+
+  useEffect(() => {
+    if (!activeJobId || activeJobPhase !== "play") return;
+    const job = JOBS.find((entry) => entry.id === activeJobId);
+    const calibratingAssembly = job?.id === "tzekarun-mechanism" && activeAssemblyStage === "calibrate";
+    if (job?.kind !== "timing" && !calibratingAssembly) return;
+    const timer = window.setInterval(() => {
+      setJobState((current) => {
+        if (!current || current.phase !== "play") return current;
+        const speed = calibratingAssembly ? 2.5 + current.round * .35 : 2.2 + current.round * .45;
+        let next = current.timingPosition + speed * current.timingDirection;
+        let direction = current.timingDirection;
+        if (next >= 100) { next = 100; direction = -1; }
+        if (next <= 0) { next = 0; direction = 1; }
+        return { ...current, timingPosition: next, timingDirection: direction };
+      });
+    }, 35);
+    return () => window.clearInterval(timer);
+  }, [activeAssemblyStage, activeJobId, activeJobPhase]);
+
+  useEffect(() => {
+    if (activeJobId !== "forestier-service" || activeJobPhase !== "play") return;
+    const timer = window.setInterval(() => {
+      setJobState((current) => {
+        if (!current || current.jobId !== "forestier-service" || current.phase !== "play") return current;
+        if (current.serviceTimeLeft <= 1) return finishServiceCustomer(current, false, "Le client renonce à attendre. La table suivante vous laisse trois secondes de moins.");
+        return { ...current, serviceTimeLeft: current.serviceTimeLeft - 1 };
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [activeJobId, activeJobPhase]);
+
+  useEffect(() => {
+    if (activeJobId !== "forbidden-herbs" || activeJobPhase !== "play") return;
+    const timer = window.setInterval(() => {
+      setJobState((current) => {
+        if (!current || current.jobId !== "forbidden-herbs" || current.phase !== "play") return current;
+        if (current.harvestTimeLeft <= 1) return { ...current, harvestTimeLeft: 0, phase: current.score >= 5 ? "success" : "failure", feedbackText: "La brume se referme et efface les dernières pousses." };
+        return { ...current, harvestTimeLeft: current.harvestTimeLeft - 1 };
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [activeJobId, activeJobPhase]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setHasSave(Boolean(window.localStorage.getItem(SAVE_KEY)));
+      setSlotInfo(readSlotInfo());
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!game || screen !== "game") return;
+    window.localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+  }, [game, screen]);
+
+  useEffect(() => {
+    if (screen !== "game") return;
+    const frame = window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [currentPlaceKey, screen, tab]);
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = audioVolume / 100;
+  }, [audioVolume]);
+
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d") {
+        event.preventDefault();
+        updateGame((current) => ({ ...current, settings: { ...current.settings, developer: !current.settings.developer } }));
+      }
+    };
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, []);
+
+  function updateGame(transform: (current: GameState) => GameState) {
+    setGame((current) => current ? transform(current) : current);
+  }
+
+  function refreshSlots() {
+    setSlotInfo(readSlotInfo());
+  }
+
+  function begin() {
+    if (!player.name.trim() || player.age < 18) return;
+    const next = createGame({ ...player, name: player.name.trim() });
+    const introLines = [...INTRO_SCENE, originLine(next.player)];
+    const introScene: SceneView = { id: "intro", title: "Prologue · Le portail emprunté", background: "/assets/backgrounds/bedroom.webp", mood: "mysterious", character: "saidin", cast: ["saidin"], intro: introLines, kind: "intro" };
+    setGame(next);
+    setHasSave(true);
+    setSelectedLocation("algratal");
+    setSelectedSpot(next.spot);
+    setTab("place");
+    setScreen("game");
+    setDialogue({
+      scene: introScene,
+      lines: expandedLines(introScene, next, introLines, "intro"),
+      lineIndex: 0,
+      phase: "intro",
+    });
+  }
+
+  function continueGame() {
+    const raw = window.localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    try {
+      const loaded = hydrateGame(JSON.parse(raw));
+      if (!loaded) throw new Error("invalid save");
+      setPlayer(loaded.player);
+      setGame(loaded);
+      setSelectedLocation(loaded.location);
+      setSelectedSpot(loaded.spot);
+      setTab("place");
+      setScreen("game");
+    } catch {
+      setHasSave(false);
+      setModal({ kind: "notice", title: "Sauvegarde illisible", text: "La chronique automatique n’a pas pu être restaurée." });
+    }
+  }
+
+  function advancePeriod() {
+    if (!game || game.settings.noTimeCost) return;
+    updateGame((current) => {
+      const nextPeriod = current.period + 1;
+      if (nextPeriod < PERIODS.length) return { ...current, period: nextPeriod };
+      const nextDay = current.day + 1;
+      return {
+        ...current,
+        day: nextDay,
+        period: 0,
+        codex: unique([...current.codex, ...LOCATIONS.filter((location) => location.unlockDay <= nextDay).map((location) => location.name)]),
+      };
+    });
+  }
+
+  function applyEffects(characterId: string | undefined, effects: Effects, completedScene?: RouteScene) {
+    updateGame((current) => {
+      const stats = { ...current.stats };
+      for (const [key, value] of Object.entries(effects.stats || {})) stats[key as StatKey] += value || 0;
+      const relationships = { ...current.relationships };
+      if (characterId) {
+        const relation = { ...relationships[characterId] };
+        relation.affection = clamp(relation.affection + (effects.affection || 0));
+        relation.trust = clamp(relation.trust + (effects.trust || 0));
+        relation.desire = clamp(relation.desire + (effects.desire || 0));
+        relation.met = true;
+        if (completedScene) relation.stage = Math.max(relation.stage, completedScene.stage + 1);
+        relationships[characterId] = relation;
+      }
+      for (const [otherId, changes] of Object.entries(effects.relationshipEffects || {})) {
+        if (!relationships[otherId]) continue;
+        const relation = { ...relationships[otherId] };
+        relation.affection = clamp(relation.affection + (changes.affection || 0));
+        relation.trust = clamp(relation.trust + (changes.trust || 0));
+        relation.desire = clamp(relation.desire + (changes.desire || 0));
+        relation.met = true;
+        relationships[otherId] = relation;
+      }
+      const character = CHARACTERS.find((entry) => entry.id === characterId);
+      return {
+        ...current,
+        stats,
+        relationships,
+        confluence: clamp(current.confluence + (effects.confluence || 0)),
+        coins: Math.max(0, current.coins + (effects.coins || 0)),
+        flags: unique([...current.flags, ...(effects.flags || [])]),
+        history: completedScene ? unique([...current.history, completedScene.id]) : current.history,
+        journal: completedScene ? [...current.journal, `${character?.name || "Rencontre"} · ${completedScene.title}`] : current.journal,
+        codex: completedScene ? unique([...current.codex, character?.name || "", completedScene.title].filter(Boolean)) : current.codex,
+      };
+    });
+  }
+
+  function openCharacterScene(characterId: string) {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    if (!character) return;
+    const relation = game.relationships[characterId];
+    const route = sceneFor(characterId, relation.stage);
+    const bond = relation.affection + relation.trust;
+    const routeSpotId = route ? ROUTE_SPOTS[route.id] : undefined;
+    const routePeriods = route ? ROUTE_PERIODS[route.id] : undefined;
+    const ready = route
+      && game.day >= route.dayMin
+      && route.location === game.location
+      && routeSpotId === game.spot
+      && (!routePeriods || routePeriods.includes(PERIODS[game.period].id))
+      && bond >= BOND_THRESHOLDS[route.stage];
+    const queuedSocial = chooseSocialScene(characterId, game);
+    if (queuedSocial?.oneTime) {
+      const scene: SceneView = {
+        id: queuedSocial.id,
+        title: queuedSocial.title,
+        background: spotById(game.spot)?.background || backgroundUrl("streets"),
+        mood: queuedSocial.mood || character.defaultMood,
+        character: characterId,
+        cast: queuedSocial.characters,
+        intro: queuedSocial.prompt,
+        choices: queuedSocial.choices,
+        kind: "social",
+        socialId: queuedSocial.id,
+      };
+      setDialogue({
+        scene,
+        lines: expandedLines(scene, game, queuedSocial.prompt, "intro"),
+        lineIndex: 0,
+        phase: "intro",
+      });
+      return;
+    }
+    if (ready && route) {
+      const scene: SceneView = { ...route, background: routeBackground(route), cast: [route.character], kind: "route", route };
+      setDialogue({
+        scene,
+        lines: expandedLines(scene, game, route.intro, "intro"),
+        lineIndex: 0,
+        phase: "intro",
+      });
+      return;
+    }
+    const social = queuedSocial;
+    if (social) {
+      const scene: SceneView = {
+        id: social.id,
+        title: social.title,
+        background: spotById(game.spot)?.background || backgroundUrl("streets"),
+        mood: social.mood || character.defaultMood,
+        character: characterId,
+        cast: social.characters,
+        intro: social.prompt,
+        choices: social.choices,
+        kind: "social",
+        socialId: social.id,
+      };
+      setDialogue({
+        scene,
+        lines: expandedLines(scene, game, social.prompt, "intro"),
+        lineIndex: 0,
+        phase: "intro",
+      });
+      return;
+    }
+    const ambientHistory = game.ambientHistory[characterId] || [];
+    const ambient = chooseAmbientDialogue(
+      AMBIENT_LINES[characterId] || [],
+      relation.stage,
+      game.location,
+      game.spot,
+      PERIODS[game.period].id,
+      ambientHistory,
+    );
+    if (!ambient) {
+      const place = characterPlace(character, game.day, game.period, game.flags);
+      setModal({ kind: "notice", title: `${character.name} est occupé·e`, text: `${character.name} ${place.action}. Revenez à une autre période : ses conversations suivent maintenant son activité et ce sous-lieu.` });
+      return;
+    }
+    const ambientIntro = ambientPromptLines(ambient.prompt, character.name);
+    const scene: SceneView = {
+      id: ambient.id,
+      title: ambient.title,
+      background: spotById(game.spot)?.background || backgroundUrl("streets"),
+      mood: ambient.mood || character.defaultMood,
+      character: characterId,
+      cast: [characterId],
+      intro: ambientIntro,
+      choices: ambient.choices,
+      kind: "ambient",
+      ambientId: ambient.id,
+    };
+    setDialogue({
+      scene,
+      lines: expandedLines(scene, game, ambientIntro, "intro"),
+      lineIndex: 0,
+      phase: "intro",
+    });
+  }
+
+  function advanceDialogue() {
+    if (!dialogue) return;
+    if (dialogue.lineIndex < dialogue.lines.length - 1) {
+      setDialogue({ ...dialogue, lineIndex: dialogue.lineIndex + 1 });
+      return;
+    }
+    if (dialogue.phase === "intro" && dialogue.scene.choices?.length) {
+      setDialogue({ ...dialogue, phase: "choices" });
+      return;
+    }
+    closeDialogue();
+  }
+
+  function selectChoice(choice: ChoiceData) {
+    if (!dialogue || !game) return;
+    if (choice.requires && game.stats[choice.requires.stat] < choice.requires.value && !game.settings.unlockAll) return;
+    if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
+    const pausedAdvance = choice.id.endsWith("-boundary");
+    const route = dialogue.scene.kind === "route" && !pausedAdvance ? dialogue.scene.route : undefined;
+    if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && dialogue.scene.kind === "ambient" && dialogue.scene.character && dialogue.scene.ambientId) {
+      const characterId = dialogue.scene.character;
+      const ambientId = dialogue.scene.ambientId;
+      updateGame((current) => ({
+        ...current,
+        ambientHistory: {
+          ...current.ambientHistory,
+          [characterId]: [...(current.ambientHistory[characterId] || []), ambientId].slice(-96),
+        },
+      }));
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "social" && dialogue.scene.socialId) {
+      const socialId = dialogue.scene.socialId;
+      const social = SOCIAL_SCENES.find((entry) => entry.id === socialId);
+      updateGame((current) => ({
+        ...current,
+        flags: social?.oneTime ? unique([...current.flags, `social:${socialId}`]) : current.flags,
+        sharedHistory: [...current.sharedHistory, `${socialId}@${current.day}`].slice(-96),
+        sceneMemories: { ...current.sceneMemories, [socialId]: current.spot },
+        journal: social?.oneTime ? [...current.journal, `Liens croisés · ${social.title}`] : current.journal,
+      }));
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date) {
+      const date = dialogue.scene.date;
+      updateGame((current) => ({
+        ...current,
+        dateHistory: [...current.dateHistory, date.id].slice(-96),
+        sceneMemories: { ...current.sceneMemories, [date.id]: date.spot },
+        journal: [...current.journal, `Rendez-vous · ${date.title} avec ${CHARACTERS.find((entry) => entry.id === date.character)?.name}`],
+      }));
+    }
+    const opening = choiceOpeningLine(choice);
+    const injectedEnding = injectedChoiceAftermath(choice, dialogue.scene.character || dialogue.scene.cast[0]);
+    const authoredEnding = injectedEnding.length ? injectedEnding : sceneClosure(dialogue.scene.id);
+    const response = opening
+      ? [opening, ...choice.response, ...authoredEnding]
+      : [...choice.response, ...authoredEnding];
+    setDialogue({ ...dialogue, chosen: choice, lines: expandedLines(dialogue.scene, game, response, "response"), lineIndex: 0, phase: "response" });
+  }
+
+  function closeDialogue() {
+    if (!dialogue) return;
+    const intimateCharacter = dialogue.scene.route?.intimate
+      && !dialogue.chosen?.effects.flags?.some((flag) => flag.endsWith("-platonic"))
+      && !dialogue.chosen?.id.endsWith("-boundary")
+      && !dialogue.chosen?.id.endsWith("-platonic")
+      ? dialogue.scene.character : undefined;
+    const consumesTime = dialogue.scene.kind !== "intro" && !dialogue.replay;
+    const replay = dialogue.replay;
+    const background = dialogue.scene.background;
+    const date = dialogue.scene.date;
+    const dateCanBecomeIntimate = date
+      && dialogue.chosen?.dateOutcome === "great"
+      && (game!.relationships[date.character].stage >= 4 || game!.settings.unlockAll)
+      && (game!.relationships[date.character].affection + (dialogue.chosen.effects.affection || 0) >= 34 || game!.settings.unlockAll)
+      && (game!.relationships[date.character].trust + (dialogue.chosen.effects.trust || 0) >= 32 || game!.settings.unlockAll);
+    setDialogue(null);
+    if (!replay && dateCanBecomeIntimate && date) {
+      setModal({ kind: "date-result", character: date.character, dateId: date.id });
+    } else if (intimateCharacter) {
+      setModal({ kind: "intimacy", character: intimateCharacter, background, replay });
+    } else if (consumesTime && !date) {
+      advancePeriod();
+    }
+  }
+
+  function travel(locationId: string, spotId: string) {
+    if (!game) return;
+    const location = LOCATIONS.find((entry) => entry.id === locationId);
+    const spot = spotById(spotId);
+    if (!location || !spot || spot.location !== locationId || (game.day < location.unlockDay && !game.settings.unlockAll)) return;
+    if (game.location === locationId && game.spot === spotId) return;
+    updateGame((current) => ({ ...current, location: locationId, spot: spotId, codex: unique([...current.codex, location.name, spot.name]) }));
+    setTab("place");
+    advancePeriod();
+  }
+
+  function performActivity(activityId: string) {
+    if (!game) return;
+    if (activityId === "market") {
+      setModal({ kind: "shop" });
+      return;
+    }
+    if (activityId === "attunement") {
+      const runes = ["✦", "◇", "◐", "⌁", "✧"];
+      const start = (game.day + game.period) % runes.length;
+      setRitualSequence(Array.from({ length: 4 }, (_, index) => runes[(start + index * 2) % runes.length]));
+      setRitualStep(0);
+      setRitualPhase("memorize");
+      setModal({ kind: "ritual" });
+      return;
+    }
+    const activity = ACTIVITIES[activityId];
+    if (!activity) return;
+    updateGame((current) => {
+      const stats = { ...current.stats };
+      if (activity.stat) stats[activity.stat] += 1;
+      return {
+        ...current,
+        stats,
+        coins: current.coins + (activity.coins || 0),
+        confluence: clamp(current.confluence + (activityId === "rest" ? 3 : 1)),
+        journal: [...current.journal, `${PERIODS[current.period].label} · ${activity.label} à ${spotById(current.spot)?.name || LOCATIONS.find((location) => location.id === current.location)?.name}`],
+      };
+    });
+    setModal({ kind: "notice", title: activity.label, text: activity.stat ? `${STAT_LABELS[activity.stat]} progresse. La Confluence répond à votre action.` : "Vous reprenez votre souffle. La Confluence se stabilise légèrement.", consumeTime: true });
+  }
+
+  function closeActivityNotice() {
+    setModal(null);
+    advancePeriod();
+  }
+
+  function openJob(job: JobData) {
+    if (!game) return;
+    const access = jobAccess(game, job);
+    if (!access.unlocked) {
+      setModal({ kind: "notice", title: "Contrat réservé", text: `${job.employer} ne confie pas encore ce travail à une personne inconnue du dossier. Développez votre lien avec ${access.characterName} : ${access.value} / ${access.target}.` });
+      return;
+    }
+    const run = game.jobRuns[job.id] || 0;
+    const symbols = job.symbols || [];
+    const variant = run;
+    const roundOrder = jobRoundOrder(job, run, 5);
+    const sequence = job.kind === "memory" ? Array.from({ length: job.length || 4 }, (_, index) => (
+      symbols[stableChoiceIndex(`${job.id}:memory:${run}:${index}`, symbols.length)]
+    )) : [];
+    const firstMarketCustomer = job.id === "algratal-merchant" ? marketCustomers(variant)[0] : undefined;
+    const path = jobPathForSession(job, variant);
+    updateGame((current) => ({ ...current, jobRuns: { ...current.jobRuns, [job.id]: run + 1 } }));
+    setJobState({
+      jobId: job.id,
+      sequence,
+      step: 0,
+      phase: "briefing",
+      round: 0,
+      score: 0,
+      mistakes: 0,
+      variant,
+      leftWeight: 0,
+      rightWeight: 0,
+      pathPosition: path?.start || 0,
+      pathSteps: 0,
+      timingPosition: 0,
+      timingDirection: 1,
+      roundOrder,
+      combo: 0,
+      maxCombo: 0,
+      serviceSelections: {},
+      serviceTimeLeft: 20,
+      inspectionFound: [],
+      inspectionScanUsed: false,
+      assemblySlots: [null, null, null, null],
+      assemblyRotations: [0, 0, 0, 0],
+      assemblySelectedRotation: 0,
+      assemblyStage: "build",
+      assemblyTests: 0,
+      harvestTimeLeft: 45,
+      harvestTool: "shadow",
+      harvestWave: 0,
+      harvestWaveScore: 0,
+      harvestPicked: [],
+      harvestRejected: [],
+      harvestFocus: 2,
+      marketPrice: firstMarketCustomer?.base || 0,
+      marketTactic: "direct",
+      marketCounter: 0,
+      marketProfit: 0,
+      marketReputation: 0,
+      visited: path ? [path.start] : [],
+    });
+    setModal({ kind: "job", jobId: job.id });
+  }
+
+  function beginJob() {
+    setJobState((current) => {
+      if (!current || current.phase !== "briefing") return current;
+      const job = JOBS.find((entry) => entry.id === current.jobId);
+      return { ...current, phase: job?.kind === "memory" ? "memorize" : "play" };
+    });
+  }
+
+  function startMemoryJob() {
+    setJobState((current) => current?.phase === "memorize" ? { ...current, phase: "play" } : current);
+  }
+
+  function playJobAction(action: string) {
+    if (!game) return;
+    setJobState((current) => {
+      if (!current || current.phase !== "play") return current;
+      const job = JOBS.find((entry) => entry.id === current.jobId);
+      if (!job) return current;
+
+      if (job.id === "forestier-service") {
+        const customers = serviceCustomers(current.variant);
+        const customer = customers[current.round];
+        if (!customer) return current;
+        if (action.startsWith("service:item:")) {
+          const itemId = action.slice("service:item:".length);
+          const item = TAVERN_MENU.find((entry) => entry.id === itemId);
+          if (!item) return current;
+          const selections = { ...current.serviceSelections };
+          selections[item.category] = selections[item.category] === item.id ? undefined : item.id;
+          return { ...current, serviceSelections: selections, feedbackText: undefined, lastResult: undefined };
+        }
+        if (action === "service:clear") return { ...current, serviceSelections: {}, feedbackText: undefined };
+        if (action !== "service:serve" || !Object.keys(current.serviceSelections).length) return current;
+        const correct = serviceOrderIsValid(customer, current.serviceSelections);
+        return finishServiceCustomer(
+          current,
+          correct,
+          correct
+            ? "Le client confirme le plateau d’un signe satisfait. La table suivante s’installe."
+            : "Le plateau revient en cuisine. La prochaine table commence avec trois secondes de moins.",
+        );
+      }
+
+      if (job.id === "forestier-rooms") {
+        const room = inspectionRoom(current.variant, current.round);
+        if (action === "inspection:scan") {
+          return { ...current, inspectionScanUsed: true, feedbackText: "La lanterne d’inspection souligne les défauts inhabituels. La prime de perfection ne sera plus accordée.", lastResult: undefined };
+        }
+        if (!action.startsWith("inspection:hotspot:")) return current;
+        const hotspotId = action.slice("inspection:hotspot:".length);
+        if (current.inspectionFound.includes(hotspotId)) return current;
+        const hotspot = room.hotspots.find((entry) => entry.id === hotspotId);
+        if (!hotspot) return current;
+        const inspectionFound = [...current.inspectionFound, hotspotId];
+        if (hotspot.kind === "decoy") {
+          const mistakes = current.mistakes + 1;
+          return {
+            ...current, inspectionFound, mistakes,
+            phase: mistakes >= 4 ? "failure" : current.phase,
+            feedbackText: "Vous perdez du temps sur un objet usé mais parfaitement propre et fonctionnel.",
+            lastResult: "wrong",
+          };
+        }
+        const score = current.score + 1;
+        const foundTasks = room.hotspots.filter((entry) => entry.kind !== "decoy" && inspectionFound.includes(entry.id)).length;
+        if (foundTasks < room.taskCount) {
+          return { ...current, inspectionFound, score, feedbackText: hotspot.detail, lastResult: "correct" };
+        }
+        const round = current.round + 1;
+        if (round >= 3) {
+          return {
+            ...current, round, score, inspectionFound: [],
+            phase: current.mistakes === 0 && !current.inspectionScanUsed ? "perfect" : current.mistakes <= 3 ? "success" : "failure",
+            feedbackText: "La dernière chambre est prête avant l’arrivée des voyageurs.", lastResult: "correct",
+          };
+        }
+        return {
+          ...current, round, score, inspectionFound: [], feedbackText: "La chambre est prête. Vous passez à la suivante.", lastResult: "correct",
+        };
+      }
+
+      if (job.id === "algratal-petitions") {
+        if (!action.startsWith("petition:")) return current;
+        const petitions = petitionDeck(current.variant);
+        const petition = petitions[current.round];
+        if (!petition) return current;
+        const decision = action.slice("petition:".length);
+        const correct = decision === petition.action || Boolean(petition.special?.accepted && decision === `special:${petition.special.id}`);
+        const score = current.score + (correct ? 1 : 0);
+        const mistakes = current.mistakes + (correct ? 0 : 1);
+        const round = current.round + 1;
+        const destination = petition.action === "empress" ? "le cabinet impérial" : petition.action === "guard" ? "la garde impériale" : petition.action === "approve" ? "l’intendance compétente" : "la corbeille des requêtes classées";
+        const feedbackText = correct
+          ? decision.startsWith("special:") ? "L’annotation provoque un silence, puis un rire étouffé : contre toute attente, elle règle le dossier." : `Le dossier rejoint ${destination}.`
+          : `Le secrétaire reprend le feuillet avant son départ : certains détails imposaient ${destination}.`;
+        if (round >= petitions.length) return { ...current, round, score, mistakes, phase: mistakes === 0 ? "perfect" : mistakes <= 3 ? "success" : "failure", feedbackText, lastResult: correct ? "correct" : "wrong" };
+        return { ...current, round, score, mistakes, feedbackText, lastResult: correct ? "correct" : "wrong" };
+      }
+
+      if (job.id === "tzekarun-mechanism") {
+        const blueprint = assemblyBlueprint(current.variant);
+        if (current.assemblyStage === "build") {
+          if (action.startsWith("assembly:select:")) {
+            const partId = action.slice("assembly:select:".length);
+            if (!ASSEMBLY_PARTS.some((part) => part.id === partId)) return current;
+            return { ...current, assemblySelected: partId, assemblySelectedRotation: 0, feedbackText: undefined, lastResult: undefined };
+          }
+          if (action === "assembly:rotate" && current.assemblySelected) return { ...current, assemblySelectedRotation: (current.assemblySelectedRotation + 90) % 360, feedbackText: undefined };
+          if (action.startsWith("assembly:remove:")) {
+            const slotIndex = Number(action.slice("assembly:remove:".length));
+            if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex > 3) return current;
+            const slots = [...current.assemblySlots];
+            slots[slotIndex] = null;
+            return { ...current, assemblySlots: slots, feedbackText: "La pièce revient sur l’établi." };
+          }
+          if (action.startsWith("assembly:place:") && current.assemblySelected) {
+            const slotIndex = Number(action.slice("assembly:place:".length));
+            const part = ASSEMBLY_PARTS.find((entry) => entry.id === current.assemblySelected);
+            const slot = blueprint.slots[slotIndex];
+            if (!part || !slot) return current;
+            if (part.type !== slot.type) return { ...current, mistakes: current.mistakes + 1, feedbackText: "Les attaches ne correspondent pas à ce logement.", lastResult: "wrong" };
+            const slots = [...current.assemblySlots];
+            const rotations = [...current.assemblyRotations];
+            slots[slotIndex] = part.id;
+            rotations[slotIndex] = current.assemblySelectedRotation;
+            return { ...current, assemblySlots: slots, assemblyRotations: rotations, assemblySelected: undefined, assemblySelectedRotation: 0, feedbackText: `${part.name} verrouillé dans le logement « ${slot.label} ».`, lastResult: "correct" };
+          }
+          if (action !== "assembly:test") return current;
+          if (current.assemblySlots.some((part) => !part)) return { ...current, feedbackText: "Quatre logements doivent être équipés avant la mise en pression.", lastResult: "wrong" };
+          const mismatches = blueprint.slots.filter((slot, index) => current.assemblySlots[index] !== slot.part || current.assemblyRotations[index] !== slot.rotation).length;
+          const assemblyTests = current.assemblyTests + 1;
+          if (mismatches > 0) {
+            return {
+              ...current, assemblyTests,
+              phase: assemblyTests >= 3 ? "failure" : current.phase,
+              feedbackText: `${mismatches} incompatibilité${mismatches > 1 ? "s" : ""} bloque${mismatches > 1 ? "nt" : ""} la mise en pression. Le plan reste consultable pour corriger le montage.`,
+              lastResult: "wrong",
+            };
+          }
+          return { ...current, assemblyTests, assemblyStage: "calibrate", round: 0, score: 0, timingPosition: 0, timingDirection: 1, feedbackText: "Le mécanisme tourne. Trois soupapes doivent maintenant être verrouillées au bon niveau.", lastResult: "correct" };
+        }
+        if (action !== "assembly:lock") return current;
+        const target = blueprint.calibration[current.round];
+        const width = 14 + Math.min(8, game.stats[job.stat]);
+        const hit = Math.abs(current.timingPosition - target) <= width / 2;
+        const score = current.score + (hit ? 1 : 0);
+        const mistakes = current.mistakes + (hit ? 0 : 1);
+        const round = current.round + 1;
+        if (round >= blueprint.calibration.length) return { ...current, round, score, mistakes, phase: hit && score === 3 && current.assemblyTests === 1 && mistakes === 0 ? "perfect" : score >= 2 ? "success" : "failure", feedbackText: hit ? "La dernière soupape se stabilise dans un déclic net." : "La dernière soupape vibre hors de sa plage.", lastResult: hit ? "correct" : "wrong" };
+        return { ...current, round, score, mistakes, timingPosition: 0, timingDirection: 1, feedbackText: hit ? "La soupape tient. Le flux passe au circuit suivant." : "Le verrouillage mord trop tôt ; le circuit suivant reçoit la surcharge.", lastResult: hit ? "correct" : "wrong" };
+      }
+
+      if (job.id === "forbidden-herbs") {
+        if (action.startsWith("harvest:tool:")) {
+          const tool = action.slice("harvest:tool:".length) as HarvestSense;
+          if (!HARVEST_TOOLS.some((entry) => entry.id === tool)) return current;
+          return { ...current, harvestTool: tool, feedbackText: undefined, lastResult: undefined };
+        }
+        const nodes = harvestNodes(current.variant, current.harvestWave);
+        if (action.startsWith("harvest:examine:")) {
+          const nodeId = action.slice("harvest:examine:".length);
+          if (!nodes.some((node) => node.id === nodeId) || current.harvestPicked.includes(nodeId) || current.harvestRejected.includes(nodeId)) return current;
+          return { ...current, harvestExamined: nodeId, feedbackText: undefined, lastResult: undefined };
+        }
+        if (action === "harvest:focus") {
+          if (current.harvestFocus <= 0) return current;
+          const hinted = nodes.find((node) => node.real && !current.harvestPicked.includes(node.id));
+          return { ...current, harvestFocus: current.harvestFocus - 1, harvestHinted: hinted?.id, harvestExamined: hinted?.id, feedbackText: "Vous retenez votre souffle : une pousse véritable se détache un instant de la brume.", lastResult: undefined };
+        }
+        if (!action.startsWith("harvest:node:")) return current;
+        const nodeId = action.slice("harvest:node:".length);
+        if (current.harvestPicked.includes(nodeId) || current.harvestRejected.includes(nodeId)) return current;
+        const node = nodes.find((entry) => entry.id === nodeId);
+        if (!node) return current;
+        const correct = node.real && node.sense === current.harvestTool;
+        if (!correct) {
+          const mistakes = current.mistakes + 1;
+          const harvestTimeLeft = Math.max(0, current.harvestTimeLeft - 3);
+          return {
+            ...current, mistakes, harvestTimeLeft, harvestExamined: undefined,
+            harvestRejected: node.real ? current.harvestRejected : [...current.harvestRejected, node.id],
+            phase: mistakes >= 5 || harvestTimeLeft === 0 ? "failure" : current.phase,
+            feedbackText: node.real ? "Le signal choisi ne permet pas de vérifier cette espèce. Changez d’outil avant de la couper." : "La pousse se défait en brume et vous coûte trois secondes.",
+            lastResult: "wrong",
+          };
+        }
+        const score = current.score + 1;
+        const harvestWaveScore = current.harvestWaveScore + 1;
+        const harvestPicked = [...current.harvestPicked, node.id];
+        if (score >= 7) return { ...current, score, harvestWaveScore, harvestPicked, harvestExamined: undefined, phase: current.mistakes === 0 && current.harvestFocus === 2 && current.harvestTimeLeft >= 15 ? "perfect" : "success", feedbackText: "Le septième spécimen reste solide dans le panier tandis que la brume se retire.", lastResult: "correct" };
+        if (harvestWaveScore >= 4) return { ...current, score, harvestWave: current.harvestWave + 1, harvestWaveScore: 0, harvestPicked: [], harvestRejected: [], harvestHinted: undefined, harvestExamined: undefined, feedbackText: "La parcelle s’épuise. Vous avancez vers une poche de brume encore intacte.", lastResult: "correct" };
+        return { ...current, score, harvestWaveScore, harvestPicked, harvestExamined: undefined, feedbackText: `${node.name} rejoint le panier sans se dissoudre.`, lastResult: "correct" };
+      }
+
+      if (job.id === "algratal-merchant") {
+        const customers = marketCustomers(current.variant);
+        const customer = customers[current.round];
+        if (!customer) return current;
+        const moveToNextCustomer = (quality: number, reputation: number, profit: number, feedbackText: string, correct: boolean): JobState => {
+          const round = current.round + 1;
+          const score = current.score + quality;
+          const mistakes = current.mistakes + (correct ? 0 : 1);
+          const marketProfit = current.marketProfit + profit;
+          const marketReputation = current.marketReputation + reputation;
+          if (round >= customers.length) {
+            return { ...current, round, score, mistakes, marketProfit, marketReputation, feedbackText, phase: mistakes === 0 && score >= 13 && marketReputation >= 8 ? "perfect" : score >= 7 && marketReputation >= 3 ? "success" : "failure", lastResult: correct ? "correct" : "wrong" };
+          }
+          return { ...current, round, score, mistakes, marketProfit, marketReputation, feedbackText, marketPrice: customers[round].base, marketTactic: "direct", marketCounter: 0, lastResult: correct ? "correct" : "wrong" };
+        };
+        if (action.startsWith("market:price:")) {
+          const price = Number(action.slice("market:price:".length));
+          if (!Number.isFinite(price)) return current;
+          return { ...current, marketPrice: Math.max(Math.max(0, customer.cost - 2), Math.min(customer.base + 12, Math.round(price))), feedbackText: undefined, lastResult: undefined };
+        }
+        if (action.startsWith("market:tactic:")) {
+          const tactic = action.slice("market:tactic:".length) as MarketTactic;
+          if (!MARKET_TACTICS.some((entry) => entry.id === tactic)) return current;
+          return { ...current, marketTactic: tactic, feedbackText: undefined, lastResult: undefined };
+        }
+        if (action === "market:special" && customer.special) return moveToNextCustomer(2, 2, 0, customer.special.result, true);
+        if (action === "market:refuse") {
+          return customer.kind === "scam"
+            ? moveToNextCustomer(2, 2, 0, "Vous fermez la caisse et appelez un surveillant. Le client disparaît avant son arrivée.", true)
+            : moveToNextCustomer(0, -1, 0, "Le client repart les mains vides. L’étal voisin récupère probablement la vente.", false);
+        }
+        if (action !== "market:offer") return current;
+        if (customer.kind === "scam") return moveToNextCustomer(0, -2, -2, "L’affaire était douteuse. Vous perdez du temps, de la marchandise et la confiance de deux témoins.", false);
+        const tacticCost = current.marketTactic === "bundle" || current.marketTactic === "guarantee" ? 1 : 0;
+        const matchingTactic = current.marketTactic === customer.preference;
+        const tacticAllowance = matchingTactic ? 4 : current.marketTactic === "direct" ? 0 : -1;
+        const acceptable = current.marketPrice <= customer.budget + tacticAllowance;
+        if (!acceptable && current.marketCounter === 0) {
+          return { ...current, marketCounter: 1, feedbackText: `Le client refuse, mais reste devant l’étal : « ${customer.budget + Math.max(0, tacticAllowance - 1)} pièces, ou donnez-moi une raison de monter. »`, lastResult: "wrong" };
+        }
+        if (!acceptable) return moveToNextCustomer(0, -1, 0, "La seconde offre dépasse encore ce que le client accepte. Il quitte l’étal.", false);
+        const profit = current.marketPrice - customer.cost - tacticCost;
+        const reputation = (matchingTactic ? 2 : 0) + (current.marketPrice <= customer.base + 2 ? 1 : -1) + (profit < 0 ? 1 : 0);
+        const quality = profit >= 2 && reputation >= 1 ? 2 : 1;
+        return moveToNextCustomer(quality, Math.max(-1, reputation), profit, profit >= 2 ? "Marché conclu : la marge reste saine et le client emporte son achat sans amertume." : "La vente se fait, mais la marge est mince. La bonne impression devra compenser.", true);
+      }
+
+      if (job.kind === "memory") {
+        const waveLength = memoryWaveLength(current.round, current.sequence.length);
+        if (action !== current.sequence[current.step]) {
+          const mistakes = current.mistakes + 1;
+          return mistakes >= 2
+            ? { ...current, mistakes, phase: "failure", lastResult: "wrong" }
+            : { ...current, mistakes, step: 0, phase: "memorize", lastResult: "wrong" };
+        }
+        if (current.step === waveLength - 1) {
+          const score = current.score + waveLength;
+          const round = current.round + 1;
+          if (round >= 3) return { ...current, step: waveLength, round, score, phase: current.mistakes === 0 ? "perfect" : "success", lastResult: "correct" };
+          return { ...current, step: 0, round, score, phase: "memorize", lastResult: "correct" };
+        }
+        return { ...current, step: current.step + 1, lastResult: undefined };
+      }
+
+      if (job.kind === "timing") {
+        const width = 16 + Math.min(10, game.stats[job.stat]);
+        const center = 22 + ((current.variant * 17 + current.round * 29) % 57);
+        const hit = Math.abs(current.timingPosition - center) <= width / 2;
+        const score = current.score + (hit ? 1 : 0);
+        const round = current.round + 1;
+        if (round >= 6) return { ...current, round, score, phase: score === 6 ? "perfect" : score >= 4 ? "success" : "failure", lastResult: hit ? "correct" : "wrong" };
+        return { ...current, round, score, timingPosition: 0, timingDirection: 1, lastResult: hit ? "correct" : "wrong" };
+      }
+
+      if (job.kind === "packing") {
+        const crates = jobCratesForSession(job, current.variant);
+        const crate = crates[current.round];
+        if (!crate) return current;
+        const leftWeight = current.leftWeight + (action === "left" ? crate.weight : 0);
+        const rightWeight = current.rightWeight + (action === "right" ? crate.weight : 0);
+        const respectedRule = !crate.requiredSide || crate.requiredSide === action;
+        const mistakes = current.mistakes + (respectedRule ? 0 : 1);
+        const round = current.round + 1;
+        if (round >= crates.length) {
+          const difference = Math.abs(leftWeight - rightWeight);
+          return { ...current, round, leftWeight, rightWeight, mistakes, phase: difference === 0 && mistakes === 0 ? "perfect" : difference <= 2 && mistakes <= 1 ? "success" : "failure", lastResult: respectedRule ? "correct" : "wrong" };
+        }
+        return { ...current, round, leftWeight, rightWeight, mistakes, lastResult: respectedRule ? "correct" : "wrong" };
+      }
+
+      if (job.kind === "path") {
+        const path = jobPathForSession(job, current.variant);
+        if (!path) return current;
+        const size = path.size;
+        const row = Math.floor(current.pathPosition / size);
+        const column = current.pathPosition % size;
+        const delta = action === "up" ? -size : action === "down" ? size : action === "left" ? -1 : 1;
+        const crossesEdge = (action === "left" && column === 0) || (action === "right" && column === size - 1) || (action === "up" && row === 0) || (action === "down" && row === size - 1);
+        const candidate = current.pathPosition + delta;
+        const invalid = crossesEdge || candidate < 0 || candidate >= size * size || path.blocked.includes(candidate);
+        const mistakes = current.mistakes + (invalid ? 1 : 0);
+        const pathSteps = current.pathSteps + 1;
+        const pathPosition = invalid ? current.pathPosition : candidate;
+        const visited = invalid || current.visited.includes(pathPosition) ? current.visited : [...current.visited, pathPosition];
+        if (mistakes >= (game.stats[job.stat] >= 6 ? 3 : 2) || pathSteps > path.maxSteps + 2) return { ...current, mistakes, pathSteps, pathPosition, visited, phase: "failure", lastResult: "wrong" };
+        if (pathPosition === path.goal) return { ...current, mistakes, pathSteps, pathPosition, visited, phase: pathSteps <= path.maxSteps - 1 && mistakes === 0 ? "perfect" : "success", lastResult: "correct" };
+        return { ...current, mistakes, pathSteps, pathPosition, visited, lastResult: invalid ? "wrong" : "correct" };
+      }
+
+      const rounds = orderedJobRounds(job, current.roundOrder);
+      const challenge = rounds[current.round];
+      if (!challenge) return current;
+      if (job.kind === "bargain") {
+        const value = challenge.options.find((option) => option.id === action)?.score || 0;
+        const score = current.score + value;
+        const round = current.round + 1;
+        const strong = value >= 2;
+        if (round >= rounds.length) return { ...current, round, score, phase: score >= rounds.length * 2 ? "perfect" : score >= rounds.length ? "success" : "failure", lastResult: strong ? "correct" : "wrong" };
+        return { ...current, round, score, lastResult: strong ? "correct" : "wrong" };
+      }
+
+      const correct = action === challenge.correct;
+      const score = current.score + (correct ? 1 : 0);
+      const mistakes = current.mistakes + (correct ? 0 : 1);
+      const round = current.round + 1;
+      if (round >= rounds.length) return { ...current, round, score, mistakes, phase: mistakes === 0 ? "perfect" : mistakes <= 2 ? "success" : "failure", lastResult: correct ? "correct" : "wrong" };
+      return { ...current, round, score, mistakes, lastResult: correct ? "correct" : "wrong" };
+    });
+  }
+
+  function closeJob() {
+    if (!jobState || !["perfect", "success", "failure"].includes(jobState.phase)) return;
+    const job = JOBS.find((entry) => entry.id === jobState.jobId);
+    if (!job) return;
+    const succeeded = jobState.phase === "success" || jobState.phase === "perfect";
+    const pay = jobState.phase === "perfect" ? Math.ceil(job.reward * 1.5) : succeeded ? job.reward : Math.max(2, Math.floor(job.reward / 4));
+    updateGame((current) => ({
+      ...current,
+      coins: current.coins + pay,
+      stats: succeeded ? { ...current.stats, [job.stat]: current.stats[job.stat] + 1 } : current.stats,
+      confluence: clamp(current.confluence + (jobState.phase === "perfect" ? 2 : succeeded ? 1 : 0)),
+      journal: [...current.journal, `Job · ${job.title} · ${jobState.phase === "perfect" ? "travail parfait" : succeeded ? "mission accomplie" : "travail partiel"} · ${pay} pièces`],
+    }));
+    setJobState(null);
+    setModal(null);
+    advancePeriod();
+  }
+
+  function buyGift(giftId: string) {
+    if (!game) return;
+    const gift = GIFTS.find((entry) => entry.id === giftId);
+    if (!gift || game.coins < gift.price) return;
+    updateGame((current) => ({ ...current, coins: current.coins - gift.price, inventory: { ...current.inventory, [giftId]: (current.inventory[giftId] || 0) + 1 } }));
+  }
+
+  function giveGift(characterId: string, giftId: string) {
+    if (!game || !(game.inventory[giftId] > 0)) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const gift = GIFTS.find((entry) => entry.id === giftId);
+    if (!character || !gift) return;
+    const place = characterPlace(character, game.day, game.period, game.flags);
+    if (place.location !== game.location || place.spot !== game.spot) {
+      setModal({ kind: "notice", title: "Impossible de remettre le présent", text: `${character.name} n’est plus dans ce sous-lieu. Retrouvez cette personne exactement au même endroit et à la même période.` });
+      return;
+    }
+    const liked = character.giftLikes.includes(giftId);
+    updateGame((current) => {
+      const relation = { ...current.relationships[characterId] };
+      relation.met = true;
+      relation.gifts += 1;
+      relation.affection = clamp(relation.affection + (liked ? 6 : 2));
+      relation.trust = clamp(relation.trust + (liked ? 3 : 1));
+      return {
+        ...current,
+        relationships: { ...current.relationships, [characterId]: relation },
+        inventory: { ...current.inventory, [giftId]: current.inventory[giftId] - 1 },
+        journal: [...current.journal, `Présent offert à ${character.name} : ${gift.name}.`],
+      };
+    });
+    setModal({ kind: "notice", title: liked ? "Un présent qui touche juste" : "Une attention remarquée", text: liked ? `${character.name} reconnaît immédiatement l’attention derrière ce choix.` : `${character.name} accepte le présent avec curiosité. L’intention compte, même si l’objet ne lui correspond pas tout à fait.`, consumeTime: true });
+  }
+
+  function startDate(dateId: string) {
+    if (!game) return;
+    const date = DATE_SCENES.find((entry) => entry.id === dateId);
+    if (!date) return;
+    const relation = game.relationships[date.character];
+    const unlocked = game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust);
+    if (!unlocked) return;
+    const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
+    const nextGame: GameState = {
+      ...game,
+      day: game.day + 1,
+      period: periodIndex,
+      location: date.location,
+      spot: date.spot,
+      codex: unique([...game.codex, spotById(date.spot)?.name || date.title]),
+    };
+    const character = CHARACTERS.find((entry) => entry.id === date.character)!;
+    const scene: SceneView = {
+      id: date.id,
+      title: date.title,
+      background: spotById(date.spot)?.background || backgroundUrl("streets"),
+      mood: date.mood || character.defaultMood,
+      character: date.character,
+      cast: [date.character],
+      intro: date.intro,
+      choices: date.choices,
+      kind: "date",
+      date,
+    };
+    setGame(nextGame);
+    setSelectedLocation(date.location);
+    setSelectedSpot(date.spot);
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, nextGame, date.intro, "intro"), lineIndex: 0, phase: "intro" });
+  }
+
+  function startDateIntimacy(dateId: string) {
+    const date = DATE_SCENES.find((entry) => entry.id === dateId);
+    if (!date) return;
+    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background });
+  }
+
+  function closeIntimacy(completed: boolean, memory?: string) {
+    if (!modal || modal.kind !== "intimacy") return;
+    if (completed && !modal.replay) {
+      const memoryKey = `intimacy:${modal.dateId || modal.character}`;
+      updateGame((current) => ({
+        ...current,
+        flags: modal.dateId ? unique([...current.flags, `date-intimate:${modal.dateId}`]) : current.flags,
+        sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
+      }));
+    }
+    const noTime = Boolean(modal.replay || modal.dateId);
+    setModal(null);
+    if (!noTime) advancePeriod();
+  }
+
+  function replayDateIntimacy(dateId: string) {
+    const date = DATE_SCENES.find((entry) => entry.id === dateId);
+    if (!date || !game?.flags.includes(`date-intimate:${date.id}`)) return;
+    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background, replay: true });
+  }
+
+  function waitForCharacter(characterId: string, spotId = game?.spot || "") {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    if (!character) return;
+    const target = nextPresence(character, game, spotId);
+    if (!target) {
+      setModal({ kind: "notice", title: "Aucun passage prévu", text: `${character.name} ne passera pas par ce sous-lieu pendant son prochain cycle de voyage.` });
+      return;
+    }
+    updateGame((current) => ({
+      ...current,
+      day: target.day,
+      period: target.period,
+      journal: [...current.journal, `Attente · ${character.name} rejoint ${spotById(spotId)?.name} après ${waitDurationLabel(current, target)}.`],
+    }));
+  }
+
+  function waitForRoute(sceneId: string) {
+    if (!game) return;
+    const route = ROUTE_SCENES.find((entry) => entry.id === sceneId);
+    const character = CHARACTERS.find((entry) => entry.id === route?.character);
+    if (!route || !character) return;
+    const spotId = ROUTE_SPOTS[route.id];
+    const target = nextPresence(character, game, spotId, ROUTE_PERIODS[route.id], route.dayMin);
+    if (!target) {
+      setModal({ kind: "notice", title: "Rencontre introuvable", text: "Aucun créneau cohérent n’apparaît dans le prochain cycle de voyage." });
+      return;
+    }
+    updateGame((current) => ({
+      ...current,
+      day: target.day,
+      period: target.period,
+      location: route.location,
+      spot: spotId,
+      journal: [...current.journal, `Attente scénarisée · ${character.name} arrive à ${spotById(spotId)?.name}.`],
+    }));
+    setSelectedLocation(route.location);
+    setSelectedSpot(spotId);
+    setMapDestinationOpen(false);
+    setTab("map");
+  }
+
+  function replayRoute(sceneId: string) {
+    const route = ROUTE_SCENES.find((scene) => scene.id === sceneId);
+    if (!route) return;
+    const scene: SceneView = { ...route, background: routeBackground(route), cast: [route.character], kind: "route", route };
+    setDialogue({
+      scene,
+      lines: expandedLines(scene, game!, route.intro, "intro", ROUTE_SPOTS[route.id]),
+      lineIndex: 0,
+      phase: "intro",
+      replay: true,
+    });
+  }
+
+  function replaySocial(sceneId: string) {
+    const social = SOCIAL_SCENES.find((scene) => scene.id === sceneId);
+    if (!social) return;
+    const character = CHARACTERS.find((entry) => entry.id === social.characters[0]);
+    const memorySpot = spotById(game?.sceneMemories[social.id] || "")
+      || spotById(social.sublocations?.[0] || "")
+      || spotById(DEFAULT_SPOTS[social.locations?.[0] || game?.location || "algratal"]);
+    const scene: SceneView = {
+        id: social.id,
+        title: social.title,
+        background: memorySpot?.background || backgroundUrl("streets"),
+        mood: social.mood || character?.defaultMood || "calm",
+        character: character?.id,
+        cast: social.characters,
+        intro: social.prompt,
+        choices: social.choices,
+        kind: "social",
+        socialId: social.id,
+      };
+    setDialogue({
+      scene,
+      lines: expandedLines(scene, game!, social.prompt, "intro", memorySpot?.id),
+      lineIndex: 0,
+      phase: "intro",
+      replay: true,
+    });
+  }
+
+  function replayDate(dateId: string) {
+    if (!game) return;
+    const date = DATE_SCENES.find((entry) => entry.id === dateId);
+    if (!date) return;
+    const character = CHARACTERS.find((entry) => entry.id === date.character)!;
+    const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || character.defaultMood, character: date.character, cast: [date.character], intro: date.intro, choices: date.choices, kind: "date", date };
+    setDialogue({ scene, lines: expandedLines(scene, game, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
+  }
+
+  function saveSlot(slot: number) {
+    if (!game) return;
+    const payload = { ...game, savedAt: new Date().toLocaleString("fr-FR") };
+    window.localStorage.setItem(`sylvinia-liens-slot-${slot}`, JSON.stringify(payload));
+    refreshSlots();
+  }
+
+  function loadSlot(slot: number) {
+    const raw = window.localStorage.getItem(`sylvinia-liens-slot-${slot}`);
+    if (!raw) return;
+    try {
+      const loaded = hydrateGame(JSON.parse(raw));
+      if (!loaded) return;
+      setGame(loaded);
+      setPlayer(loaded.player);
+      setSelectedLocation(loaded.location);
+      setSelectedSpot(loaded.spot);
+      setMapDestinationOpen(false);
+      setTab("map");
+    } catch { /* sauvegarde invalide ignorée */ }
+  }
+
+  function exportSave() {
+    if (!game) return;
+    const blob = new Blob([JSON.stringify(game, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sylvinia-${game.player.name.toLowerCase().replace(/[^a-z0-9]+/gi, "-")}-jour-${game.day}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importSave(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const loaded = hydrateGame(JSON.parse(String(reader.result)));
+        if (!loaded) throw new Error("invalid");
+        setGame(loaded);
+        setPlayer(loaded.player);
+        setSelectedLocation(loaded.location);
+        setSelectedSpot(loaded.spot);
+        setModal({ kind: "notice", title: "Chronique importée", text: "La sauvegarde a été restaurée et enregistrée automatiquement sur cet appareil." });
+      } catch {
+        setModal({ kind: "notice", title: "Import impossible", text: "Ce fichier ne contient pas une chronique compatible." });
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }
+
+  function playRitualRune(rune: string) {
+    if (!game || ritualPhase !== "play") return;
+    if (rune !== ritualSequence[ritualStep]) {
+      setRitualPhase("failure");
+      updateGame((current) => ({ ...current, confluence: clamp(current.confluence + 2) }));
+      return;
+    }
+    if (ritualStep === ritualSequence.length - 1) {
+      setRitualPhase("success");
+      updateGame((current) => ({ ...current, confluence: clamp(current.confluence + 8), stats: { ...current.stats, resonance: current.stats.resonance + 1 } }));
+      return;
+    }
+    setRitualStep(ritualStep + 1);
+  }
+
+  const playerInitial = player.name.trim().charAt(0).toUpperCase() || "?";
+
+  if (screen === "title") {
+    return (
+      <TitleScreen
+        hasSave={hasSave}
+        onNew={() => setScreen("creator")}
+        onContinue={continueGame}
+        onChronicle={() => setModal({ kind: "chronicle" })}
+        modal={modal}
+        closeModal={() => setModal(null)}
+      />
+    );
+  }
+
+  if (screen === "creator") {
+    return <CreatorScreen player={player} setPlayer={setPlayer} onBack={() => setScreen("title")} onBegin={begin} />;
+  }
+
+  if (!game) return null;
+
+  const period = PERIODS[game.period];
+  const currentLocation = LOCATIONS.find((location) => location.id === game.location) || LOCATIONS[0];
+  const currentSpot = spotById(game.spot) || spotById(DEFAULT_SPOTS[currentLocation.id])!;
+  const viewedLocation = LOCATIONS.find((location) => location.id === selectedLocation) || currentLocation;
+  const selectedSpotData = spotById(selectedSpot);
+  const viewedSpot = selectedSpotData?.location === viewedLocation.id ? selectedSpotData : spotById(DEFAULT_SPOTS[viewedLocation.id])!;
+  const viewedSpots = spotsForLocation(viewedLocation.id);
+  const presentCharacters = CHARACTERS.filter((character) => {
+    const place = characterPlace(character, game.day, game.period, game.flags);
+    return (game.day >= character.unlockDay || game.settings.unlockAll) && place.location === game.location && place.spot === game.spot;
+  });
+  const visibleCharacters = CHARACTERS.filter((character) => game.day >= character.unlockDay || game.settings.unlockAll);
+  const upcomingVisitors = visibleCharacters
+    .map((character) => ({ character, target: nextPresence(character, game, game.spot) }))
+    .filter((entry): entry is { character: CharacterData; target: NonNullable<ReturnType<typeof nextPresence>> } => Boolean(entry.target))
+    .sort((left, right) => left.target.offset - right.target.offset)
+    .slice(0, 4);
+  const soundtrack = musicForContext(game.spot, { intimacy: modal?.kind === "intimacy", prologue: dialogue?.scene.kind === "intro" });
+  const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
+
+  return (
+    <main className={`game-shell ${game.settings.reducedMotion ? "reduce-motion" : ""}`} style={{ fontSize: `${game.settings.fontScale}%` }}>
+      {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = audioVolume / 100; }} autoPlay loop />}
+      <header className="game-topbar">
+        <button className="brand-small" onClick={() => setTab("place")}><span>✦</span><div><strong>Les Liens du Crépuscule</strong><small>Chronique Alternative</small></div></button>
+        <div className="time-block"><small>Jour {game.day} · Monde ouvert · {currentSpot.shortName}</small><strong>{period.icon} {period.label} · {period.time}</strong></div>
+        <div className="resource"><small>Stabilité de la Confluence</small><div><i style={{ width: `${game.confluence}%` }} /></div><b>{game.confluence} / 100</b></div>
+        <button className="music-button" title={soundtrackLabel} aria-label={game.settings.music ? `Couper la musique · ${soundtrackLabel}` : `Activer la musique · ${soundtrackLabel}`} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))}>{game.settings.music ? "♫" : "♩"}</button>
+        {game.settings.developer && <button className="dev-badge" onClick={() => setTab("options")}>DEV</button>}
+        <button className="profile-chip" onClick={() => setTab("options")}><span style={{ background: game.player.skin, color: game.player.eyes }}>{playerInitial}</span><div><strong>{game.player.name}</strong><small>{game.player.vocation}</small></div></button>
+      </header>
+
+      {tab === "place" && (
+        <section className="place-stage" style={{ backgroundImage: `url(${currentSpot.background})` }}>
+          <div className="place-atmosphere" aria-hidden="true" />
+          <header className="place-identity">
+            <p className="eyebrow">{currentLocation.subtitle}</p>
+            <h1>{currentLocation.name}</h1>
+            <div className="place-subtitle"><span>{currentSpot.icon}</span><strong>{currentSpot.name}</strong></div>
+            <p>{currentSpot.description}</p>
+            <div className="place-context-chips">
+              <span>{period.icon} {period.label} · {period.time}</span>
+              <span>Jour {game.day}</span>
+              <span>{presentCharacters.length} présence{presentCharacters.length > 1 ? "s" : ""}</span>
+            </div>
+          </header>
+          <div className="place-quick-actions">
+            <button onClick={() => { setSelectedLocation(game.location); setSelectedSpot(game.spot); setMapDestinationOpen(false); setTab("map"); }}>⌖ Ouvrir la carte</button>
+            <span title={soundtrackLabel}>♫ {soundtrackLabel}</span>
+          </div>
+
+          <div className="place-bottom-deck">
+            <section className="place-panel place-presences">
+              <header><div><p className="eyebrow">Rencontres</p><h2>Présences maintenant</h2></div><span>{presentCharacters.length}</span></header>
+              <div className="immersive-presence-list">
+                {presentCharacters.length ? presentCharacters.map((character) => {
+                  const relation = game.relationships[character.id];
+                  const nextScene = sceneFor(character.id, relation.stage);
+                  const place = characterPlace(character, game.day, game.period, game.flags);
+                  const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage];
+                  const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
+                  return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
+                    <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{special ? `Scène · ${nextScene.title}` : relation.met ? "Moment libre" : "Première rencontre"}</span></div></button>
+                    <div className="immersive-presence-actions"><button onClick={() => openCharacterScene(character.id)}>Parler</button><button onClick={() => setModal({ kind: "gift", character: character.id })}>Offrir</button>{canDate && <button onClick={() => setModal({ kind: "date-planner", character: character.id })}>Rendez-vous</button>}</div>
+                  </article>;
+                }) : <div className="place-empty"><span>☾</span><p>Le lieu est calme pour l’instant.</p></div>}
+              </div>
+            </section>
+
+            <section className="place-panel place-waiting">
+              <header><div><p className="eyebrow">Rythme du monde</p><h2>Attendre</h2></div><span>{period.icon}</span></header>
+              <button className="wait-period" onClick={advancePeriod}><span>◷</span><div><strong>Attendre une période</strong><small>Passer à l’étape suivante de la journée</small></div><b>›</b></button>
+              {upcomingVisitors.length > 0 && <div className="next-arrivals"><small>Prochains passages dans ce lieu</small>{upcomingVisitors.slice(0, 3).map(({ character, target }) => <button key={character.id} onClick={() => waitForCharacter(character.id)}><img src={character.portrait} alt="" /><span><strong>{character.name}</strong><small>{waitDurationLabel(game, target)} · {PERIODS[target.period].label}</small></span></button>)}</div>}
+              {!upcomingVisitors.length && <p className="waiting-note">Aucun passage connu n’est prévu prochainement. Le monde continuera néanmoins d’évoluer.</p>}
+            </section>
+
+            <section className="place-panel place-actions-panel">
+              <header><div><p className="eyebrow">Sur place</p><h2>Actions disponibles</h2></div><span>{currentSpot.icon}</span></header>
+              <div className="immersive-action-grid">
+                {currentSpot.activities.map((activityId) => { const activity = ACTIVITIES[activityId]; return <button key={activityId} onClick={() => performActivity(activityId)}><span>{activity.icon}</span><div><b>{activity.label}</b><small>{activity.detail}</small></div></button>; })}
+                {jobsAtSpot(currentSpot.id).map((job) => { const access = jobAccess(game, job); return <button className={`immersive-job-action ${access.unlocked ? "" : "locked"}`} key={job.id} onClick={() => openJob(job)}><span>{access.unlocked ? "◈" : "♙"}</span><div><b>{job.title}</b><small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} · ${access.value}/${access.target}`}</small></div></button>; })}
+              </div>
+            </section>
+          </div>
+        </section>
+      )}
+
+      {tab === "map" && (
+        <section className="game-stage map-stage">
+          <div className="map-panel">
+            <div className="panel-heading"><div><p className="eyebrow">Carte des routes</p><h1>Où souhaitez-vous aller ?</h1></div><span className="weather">{period.icon} {game.period === 3 ? "Brume nocturne" : "Ciel de Confluence"}</span></div>
+            <div className="world-map">
+              <img src="/assets/map.png" alt="Carte de Sylvinia" />
+              {LOCATIONS.map((location) => {
+                const locked = game.day < location.unlockDay && !game.settings.unlockAll;
+                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags).location === location.id);
+                return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""} ${locked ? "locked" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { if (!locked) { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); } }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}{locked && <em>J{location.unlockDay}</em>}</button>;
+              })}
+            </div>
+            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span><i className="locked" />À découvrir</span><span>Le voyage consomme une période.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
+          </div>
+
+          {mapDestinationOpen && <div className="map-destination-layer">
+            <button className="map-destination-backdrop" type="button" aria-label="Fermer la destination" onClick={() => setMapDestinationOpen(false)} />
+            <aside id="map-destination" role="dialog" aria-modal="true" aria-labelledby="map-destination-title" className={`location-panel map-location-panel ${viewedSpots.length > 1 ? "has-sublocations" : "single-destination"}`}>
+              <button className="map-destination-close" type="button" aria-label="Fermer" onClick={() => setMapDestinationOpen(false)}>×</button>
+              <div className="location-visual" style={{ backgroundImage: `url(${viewedSpot.background})` }}>
+                <div><p className="eyebrow">{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Position actuelle" : "Destination"}</p><h2 id="map-destination-title">{viewedLocation.name}</h2><span>{viewedSpot.name}</span></div>
+              </div>
+              {viewedSpots.length > 1 && <div className="sublocation-list"><div><strong>Sous-lieux</strong><small>{viewedSpots.length} endroits vivants</small></div>{viewedSpots.map((spot) => {
+                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags).spot === spot.id);
+                const spotJobs = jobsAtSpot(spot.id);
+                return <button key={spot.id} className={viewedSpot.id === spot.id ? "active" : ""} onClick={() => setSelectedSpot(spot.id)}><span>{spot.icon}</span><div><b>{spot.shortName}</b><small>{spot.description}</small>{spotJobs.length > 0 && <span className="spot-job-badges">{spotJobs.map((job) => { const access = jobAccess(game, job); return <em className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}</em>; })}</span>}</div>{occupants.length > 0 && <span className="spot-occupants">{occupants.map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}</span>}</button>;
+              })}</div>}
+              <div className={`travel-card ${game.location === viewedLocation.id && game.spot === viewedSpot.id ? "is-current" : ""}`}><p>{viewedSpot.description}</p>{jobsAtSpot(viewedSpot.id).length > 0 && <div className="travel-job-list"><strong>Jobs dans ce sous-lieu</strong>{jobsAtSpot(viewedSpot.id).map((job) => { const access = jobAccess(game, job); return <span className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}<small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} ${access.value}/${access.target}`}</small></span>; })}</div>}{game.location === viewedLocation.id && game.spot === viewedSpot.id ? <button className="secondary-action" onClick={() => setTab("place")}>Revenir dans le lieu</button> : <button className="primary-action" onClick={() => travel(viewedLocation.id, viewedSpot.id)}>{game.location === viewedLocation.id ? `Se rendre à ${viewedSpot.shortName}` : `Voyager vers ${viewedLocation.name}`}</button>}<small>{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Votre position actuelle" : "Arrivée à la période suivante"}</small></div>
+            </aside>
+          </div>}
+        </section>
+      )}
+
+      {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
+      {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
+      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onWaitForRoute={waitForRoute} />}
+      {tab === "inventory" && <InventoryView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} />}
+      {tab === "codex" && <CodexView game={game} />}
+      {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
+
+      <nav className="game-nav">
+        {([
+          ["place", "◉", "Lieu"], ["map", "⌖", "Carte"], ["jobs", "◈", "Jobs"], ["relations", "♡", "Relations"], ["journal", "≡", "Journal"], ["inventory", "◇", "Sac"], ["codex", "✧", "Codex"], ["options", "⚙", "Options"],
+        ] as [Tab, string, string][]).map(([id, icon, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => { setMapDestinationOpen(false); setTab(id); }}><span>{icon}</span>{label}</button>)}
+      </nav>
+
+      {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue() : undefined} />}
+      {modal && <GameModal
+        modal={modal}
+        game={game}
+        onClose={() => setModal(null)}
+        onActivityClose={closeActivityNotice}
+        buyGift={buyGift}
+        giveGift={giveGift}
+        startDate={startDate}
+        startDateIntimacy={startDateIntimacy}
+        onIntimacyClose={closeIntimacy}
+        ritual={{ sequence: ritualSequence, step: ritualStep, phase: ritualPhase, setPhase: setRitualPhase, play: playRitualRune }}
+        onRitualClose={() => setModal(null)}
+        jobState={jobState}
+        onJobBegin={beginJob}
+        onMemoryStart={startMemoryJob}
+        onJobAction={playJobAction}
+        onJobClose={closeJob}
+      />}
+    </main>
+  );
+}
+
+function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModal }: { hasSave: boolean; onNew: () => void; onContinue: () => void; onChronicle: () => void; modal: ModalState; closeModal: () => void }) {
+  return <main className="title-screen">
+    <div className="title-backdrop" /><div className="title-vignette" />
+    <button className="chronicle-badge" onClick={onChronicle}><span>Chronique Alternative</span><small>Mode libre · Une autre Sylvinia</small></button>
+    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button></div><div className="title-meta"><span>Histoire principale sans date limite</span><span>18 rendez-vous uniques</span><span>Amanea · Reine Noire vivante</span><span>Draven · mission diplomatique</span></div></section>
+    <p className="title-footer">Jeu narratif pour public adulte · Intimité réglable · Scènes interactives · Sauvegarde locale</p>
+    {modal?.kind === "chronicle" && <ChronicleModal onClose={closeModal} />}
+    {modal?.kind === "notice" && <SimpleModal title={modal.title} text={modal.text} onClose={closeModal} />}
+  </main>;
+}
+
+function CreatorScreen({ player, setPlayer, onBack, onBegin }: { player: Player; setPlayer: (player: Player) => void; onBack: () => void; onBegin: () => void }) {
+  const initial = player.name.trim().charAt(0).toUpperCase() || "?";
+  return <main className="creator-screen">
+    <header className="screen-header"><button className="back-button" onClick={onBack}>← Retour</button><div><p className="eyebrow">Prologue · La personne entre les mondes</p><h1>Créez votre protagoniste</h1></div><span className="step-pill">Adulte · 18+</span></header>
+    <div className="creator-layout">
+      <aside className="creator-preview"><div className="avatar-frame"><div className="avatar-glow" /><div className="avatar-hair" style={{ background: player.hair }} /><div className="avatar-head" style={{ background: player.skin }}><i style={{ background: player.eyes }} /><i style={{ background: player.eyes }} /></div><div className="avatar-body" /><strong>{initial}</strong></div><div className="preview-copy"><span className="kicker">Votre chronique</span><h2>{player.name || "Nom encore inconnu"}</h2><p>{player.age} ans · {player.pronouns} · {player.sex}</p><blockquote>« Mon passé s’est effacé. Ce que je choisirai ici, en revanche, m’appartiendra. »</blockquote></div><div className="preview-stats">{TRAITS.map(([name]) => <div key={name} className={name === player.trait ? "is-primary" : ""}><span>{name}</span><b>{name === player.trait ? 7 : 4}</b></div>)}</div></aside>
+      <section className="creator-form">
+        <FormSection number="01" title="Identité" detail="Le monde emploiera ces informations dans les dialogues."><div className="form-grid two"><label>Nom ou prénom<input value={player.name} maxLength={24} placeholder="Votre nom" onChange={(event) => setPlayer({ ...player, name: event.target.value })} /></label><label>Âge adulte<input type="number" min={18} max={120} value={player.age} onChange={(event) => setPlayer({ ...player, age: Number(event.target.value) })} /></label></div><div className="choice-row">{(["elle", "iel", "il"] as Pronouns[]).map((pronouns) => <button key={pronouns} className={player.pronouns === pronouns ? "selected" : ""} onClick={() => setPlayer({ ...player, pronouns })}>{pronouns}</button>)}</div></FormSection>
+        <FormSection number="02" title="Écho résiduel" detail="Votre mémoire est vide, mais certains réflexes ont traversé le portail avec vous."><div className="card-choices">{ECHOES.map(([name, detail]) => <button key={name} className={player.origin === name ? "selected" : ""} onClick={() => setPlayer({ ...player, origin: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>
+        <FormSection number="03" title="Vocation & tempérament" detail="Cette orientation décrit la place que vous choisissez de construire à Al’Gratal, pas un passé dont vous vous souviendriez."><div className="form-grid two"><label>Vocation choisie<select value={player.vocation} onChange={(event) => setPlayer({ ...player, vocation: event.target.value })}>{VOCATIONS.map(([name]) => <option key={name}>{name}</option>)}</select></label><label>Facette dominante<select value={player.trait} onChange={(event) => setPlayer({ ...player, trait: event.target.value })}>{TRAITS.map(([name]) => <option key={name}>{name}</option>)}</select></label></div><p className="trait-note">{TRAITS.find(([name]) => name === player.trait)?.[1]}</p></FormSection>
+        <FormSection number="04" title="Apparence, sexe & intimité" detail="Le sexe adapte la narration des scènes intimes ; il ne détermine ni vos pronoms ni vos relations."><div className="swatch-grid"><ColorField label="Cheveux" value={player.hair} onChange={(hair) => setPlayer({ ...player, hair })} /><ColorField label="Yeux" value={player.eyes} onChange={(eyes) => setPlayer({ ...player, eyes })} /><ColorField label="Peau" value={player.skin} onChange={(skin) => setPlayer({ ...player, skin })} /></div><div className="choice-row sex-choice">{(["femme", "intersexe", "homme"] as PlayerSex[]).map((sex) => <button key={sex} className={player.sex === sex ? "selected" : ""} onClick={() => setPlayer({ ...player, sex })}>{sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe"}</button>)}</div><div className="intimacy-options">{([[
+          "tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans image ni coupure"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]] as [Intimacy, string, string][]).map(([id, title, detail]) => <button key={id} className={player.intimacy === id ? "selected" : ""} onClick={() => setPlayer({ ...player, intimacy: id })}><strong>{title}</strong><small>{detail}</small></button>)}</div></FormSection>
+        <div className="creator-submit"><div><strong>Votre personnage est-il prêt ?</strong><small>Une sauvegarde automatique sera créée au début du prologue.</small></div><button className="primary-action" disabled={!player.name.trim() || player.age < 18} onClick={onBegin}>Franchir le portail</button></div>
+      </section>
+    </div>
+  </main>;
+}
+
+function FormSection({ number, title, detail, children }: { number: string; title: string; detail: string; children: React.ReactNode }) {
+  return <div className="form-section"><div className="section-title"><span>{number}</span><div><h2>{title}</h2><p>{detail}</p></div></div>{children}</div>;
+}
+
+function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return <label className="color-field"><span>{label}</span><input type="color" value={value} onChange={(event) => onChange(event.target.value)} /><code>{value}</code></label>;
+}
+
+function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dialogue: DialogueState; game: GameState; onAdvance: () => void; onChoice: (choice: ChoiceData) => void; onClose: () => void }) {
+  const currentLine = dialogue.lines[dialogue.lineIndex];
+  const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
+  const availableChoices = choicesForDialogue(dialogue, game);
+  return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
+    <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : "Moment libre"}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
+    <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => { const character = CHARACTERS.find((entry) => entry.id === id); if (!character) return null; const active = activeIds.includes(id); const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined; const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, character.defaultMood)) : character.defaultMood; return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${id}/${mood}.webp`} alt={character.name} />; })}</div>
+    <div className="dialogue-gradient" />
+    {dialogue.phase !== "choices" ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={onAdvance}>
+      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length} · Cliquer pour continuer</small>
+    </button> : <div className="choice-box"><p className="choice-question">Comment répondre ?</p>{availableChoices.map((choice) => {
+      const statLocked = Boolean(choice.requires && game.stats[choice.requires.stat] < choice.requires.value);
+      const relationLocked = !relationshipRequirementMet(choice, game);
+      const locked = (statLocked || relationLocked) && !game.settings.unlockAll;
+      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat}`}>{STAT_LABELS[choice.stat].charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
+    })}</div>}
+  </section>;
+}
+
+function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job: JobData) => void; onLocate: (job: JobData) => void }) {
+  const ordered = [...JOBS].sort((left, right) => {
+    const leftLocal = left.spot === game.spot ? 0 : 1;
+    const rightLocal = right.spot === game.spot ? 0 : 1;
+    const leftLocked = jobAccess(game, left).unlocked ? 0 : 1;
+    const rightLocked = jobAccess(game, right).unlocked ? 0 : 1;
+    return leftLocal - rightLocal || leftLocked - rightLocked || left.title.localeCompare(right.title, "fr");
+  });
+  const unlockedCount = JOBS.filter((job) => jobAccess(game, job).unlocked).length;
+  const localCount = JOBS.filter((job) => job.spot === game.spot && jobAccess(game, job).unlocked).length;
+  return <section className="jobs-stage">
+    <header className="jobs-heading"><div><p className="eyebrow">Registre des contrats</p><h1>Jobs & travaux de Sylvinia</h1><p>Chaque employeur conserve sa propre rotation. Les situations inédites sont distribuées avant le retour des anciennes, puis les banques sont rebattues.</p></div><div className="jobs-summary"><span><b>{localCount}</b> ici</span><span><b>{unlockedCount}</b> accessibles</span><span><b>{JOBS.length}</b> contrats</span></div></header>
+    <div className="jobs-grid">{ordered.map((job) => {
+      const access = jobAccess(game, job);
+      const spot = spotById(job.spot);
+      const location = LOCATIONS.find((entry) => entry.id === spot?.location);
+      const local = job.spot === game.spot;
+      const run = game.jobRuns[job.id] || 0;
+      return <article key={job.id} className={`job-contract-card ${local ? "local" : ""} ${access.unlocked ? "" : "locked"}`}>
+        <header><span>{access.unlocked ? "◈" : "♙"}</span><div><small>{JOB_KIND_LABELS[job.kind]} · {job.employer}</small><h2>{job.title}</h2></div><b>{job.reward} ◈</b></header>
+        <p>{job.description}</p>
+        <div className="job-contract-place"><span>{spot?.icon || "⌖"}</span><div><strong>{location?.name || "Sylvinia"}</strong><small>{spot?.name || job.spot}</small></div>{local && <em>Vous êtes ici</em>}</div>
+        <div className="job-contract-rotation"><small>Prochaine session</small><strong>{jobSessionLabel(job, run)}</strong><span>{run ? `${run} rotation${run > 1 ? "s" : ""} jouée${run > 1 ? "s" : ""}` : "Banque intacte"}</span></div>
+        {!access.unlocked && <div className="job-contract-lock"><b>Lien requis avec {access.characterName}</b><span>{access.value} / {access.target}</span><i><em style={{ width: `${Math.min(100, (access.value / access.target) * 100)}%` }} /></i></div>}
+        <button className={local && access.unlocked ? "primary-action" : "secondary-action"} onClick={() => access.unlocked && !local ? onLocate(job) : onStart(job)}>{access.unlocked ? local ? "Commencer ce job" : "Localiser sur la carte" : "Voir la condition"}</button>
+      </article>;
+    })}</div>
+  </section>;
+}
+
+function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><div className="relationship-grid">{CHARACTERS.map((character) => {
+    const relation = game.relationships[character.id];
+    const unlocked = game.day >= character.unlockDay || game.settings.unlockAll;
+    const schedule = characterPlace(character, game.day, game.period, game.flags);
+    const locationId = schedule.location;
+    const location = LOCATIONS.find((entry) => entry.id === locationId);
+    const exactSpot = spotById(schedule.spot);
+    const next = sceneFor(character.id, relation.stage);
+    const needed = next ? Math.max(0, BOND_THRESHOLDS[next.stage] - relation.affection - relation.trust) : 0;
+    const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
+    const routeTarget = next ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
+    return <article key={character.id} className={`relationship-card ${!unlocked ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties}>
+      <button className="relationship-portrait" disabled={!unlocked} onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{unlocked ? character.name : "Inconnu·e"}</span><small>{unlocked ? character.role : `Disponible au jour ${character.unlockDay}`}</small></div></button>
+      <div className="relationship-body"><div className="stage-line"><strong>{STAGE_LABELS[relation.stage]}</strong><span>{relation.stage} / 5</span></div><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" />
+        {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible" : "Route accomplie · rencontres libres disponibles"}</small></div>}
+        {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{dates.length > 0 && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
+      </div>
+    </article>;
+  })}</div></section>;
+}
+
+function Meter({ label, value, color }: { label: string; value: number; color: string }) {
+  return <div className="meter"><div><span>{label}</span><b>{value}</b></div><i><em style={{ width: `${value}%`, background: color }} /></i></div>;
+}
+
+function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onReplayDateIntimacy, onWaitForRoute }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void }) {
+  const nextScenes = CHARACTERS.map((character) => ({ character, scene: sceneFor(character.id, game.relationships[character.id].stage) })).filter((item) => item.scene);
+  const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
+  const dateMemories = unique(game.dateHistory).map((id) => DATE_SCENES.find((date) => date.id === id)).filter((date): date is DateScene => Boolean(date));
+  const mainProgress = storyProgress(game.history, game.flags);
+  return <section className="content-view">
+    <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Vous pouvez rejouer toute scène mémorisée. En mode souvenir, aucun gain, drapeau ou temps n’est appliqué.</p></div><span>Jour {game.day}</span></header>
+    <div className="journal-layout"><div className="quest-column">
+      <h2>Fils relationnels</h2>
+      {nextScenes.map(({ character, scene }) => { const relation = game.relationships[character.id]; const ready = relation.affection + relation.trust >= BOND_THRESHOLDS[scene!.stage]; const target = nextPresence(character, game, ROUTE_SPOTS[scene!.id], ROUTE_PERIODS[scene!.id], scene!.dayMin); return <article className="quest-card" key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{character.name}</span><h3>{scene!.title}</h3><p>À partir du jour {scene!.dayMin} · {spotById(ROUTE_SPOTS[scene!.id])?.name} · {ROUTE_PERIODS[scene!.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" / ")}</p>{ready && target && <button onClick={() => onWaitForRoute(scene!.id)}>Attendre · {waitDurationLabel(game, target)}</button>}</div><b>{game.day >= scene!.dayMin ? ready ? "Prête" : "Lien insuffisant" : `J−${scene!.dayMin - game.day}`}</b></article>; })}
+      <h2>Scènes mémorisées</h2>
+      <p className="memory-explainer">✦ Relecture protégée : les caractéristiques, relations, objets et l’heure restent strictement inchangés.</p>
+      <div className="memory-replay-grid">
+        {game.history.map((id) => { const scene = ROUTE_SCENES.find((entry) => entry.id === id); const character = CHARACTERS.find((entry) => entry.id === scene?.character); return scene && <button key={id} onClick={() => onReplayRoute(id)}><span style={{ color: character?.color }}>◇ {character?.name}</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>; })}
+        {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
+        {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
+        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir selon le niveau d’intimité actuel</small></button>)}
+        {!game.history.length && !socialMemories.length && !dateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
+      </div>
+      <h2>Histoire principale · Le rassemblement absent</h2>
+      <p className="memory-explainer">Aucun acte ne peut être manqué : l’histoire avance par découvertes, jamais à un jour précis. Après le dernier acte, le monde reste ouvert.</p>
+      {MAIN_STORY.map((act, index) => <article className={`story-timeline ${index < mainProgress ? "done" : ""}`} key={act.id}><span>{act.number}</span><div><strong>{act.title}</strong><p>{act.objective}</p><small>{act.detail}</small></div><b>{index < mainProgress ? "Accompli" : index === mainProgress ? "En cours" : "À découvrir"}</b></article>)}
+    </div><aside className="log-column"><h2>Dernières traces</h2>{game.journal.slice().reverse().slice(0, 14).map((entry, index) => <p key={`${entry}-${index}`}><span>✦</span>{entry}</p>)}</aside></div>
+  </section>;
+}
+
+function InventoryView({ game, presentCharacters, onShop, onGive }: { game: GameState; presentCharacters: CharacterData[]; onShop: () => void; onGive: (character: string, gift: string) => void }) {
+  const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
+  return <section className="content-view">
+    <header className="content-header"><div><p className="eyebrow">Objets & présents</p><h1>Sac de voyage</h1><p>Achetez un objet, retrouvez une personne au même sous-lieu, puis choisissez « Offrir » ici ou sur sa carte de présence.</p></div><button className="coins-button" onClick={onShop}>◈ {game.coins} · Ouvrir le marché</button></header>
+    <div className="gift-steps"><span><b>1</b>Acheter au marché</span><span><b>2</b>Rejoindre le même sous-lieu</span><span><b>3</b>Choisir la personne</span></div>
+    {owned.length ? <div className="inventory-grid">{owned.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Possédé : {game.inventory[gift.id]}</small><div className="gift-recipient-row">{presentCharacters.length ? presentCharacters.map((character) => <button key={character.id} onClick={() => onGive(character.id, gift.id)}>Offrir à {character.name}</button>) : <em>Personne n’est avec vous dans ce sous-lieu.</em>}</div></div></article>)}</div> : <div className="empty-view"><span>◇</span><h2>Votre sac est vide</h2><p>Ouvrez le marché, achetez un présent, puis retrouvez son destinataire sur la carte.</p><button className="primary-action" onClick={onShop}>Voir les présents</button></div>}
+  </section>;
+}
+
+function CodexView({ game }: { game: GameState }) {
+  const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Archives personnelles</p><h1>Codex</h1><p>Les entrées se complètent en voyageant, en rencontrant les personnages et en vivant leurs scènes.</p></div><span>{game.codex.length} entrées</span></header><div className="codex-layout"><div><h2>Personnages rencontrables</h2><div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? `${character.role} · ${character.ageNote}` : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div><h2>Figures de la chronique</h2><div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div></div><div><h2>Lieux découverts</h2>{LOCATIONS.map((location) => { const known = game.day >= location.unlockDay || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}<h2>Scènes mémorisées</h2><div className="memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title}</span>) : <p>Aucune scène majeure consignée.</p>}</div></div></div></section>;
+}
+
+function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><button className="secondary-action" onClick={returnTitle}>Retour au titre</button></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du protagoniste</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, intimacy: event.target.value as Intimacy } }))}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Le mode explicite utilise uniquement une narration adulte détaillée. Aucune image explicite n’est affichée.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p></footer></div></section>;
+}
+
+function Toggle({ label, detail, active, onClick }: { label: string; detail: string; active: boolean; onClick: () => void }) {
+  return <button className="toggle-option" onClick={onClick}><div><strong>{label}</strong><small>{detail}</small></div><i className={active ? "active" : ""}><em /></i></button>;
+}
+
+function DeveloperPanel({ game, updateGame }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void }) {
+  if (!game.settings.developer) return <div className="option-panel dev-panel locked"><h2>Mode développeur</h2><p>Accès rapide aux jours, caractéristiques, routes et ressources. Raccourci : Ctrl + Maj + D.</p><button className="secondary-action" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: true } }))}>Activer le mode développeur</button></div>;
+  return <div className="option-panel dev-panel"><div className="dev-title"><div><span>DEV</span><h2>Mode développeur</h2></div><button onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button></div><div className="dev-row"><label>Jour<input type="number" min={1} value={game.day} onChange={(event) => updateGame((current) => ({ ...current, day: Math.max(1, Number(event.target.value) || 1) }))} /></label><label>Période<select value={game.period} onChange={(event) => updateGame((current) => ({ ...current, period: Number(event.target.value) }))}>{PERIODS.map((period, index) => <option value={index} key={period.id}>{period.label}</option>)}</select></label><button onClick={() => updateGame((current) => ({ ...current, day: current.day + 7, period: 0 }))}>+7 jours</button><button onClick={() => updateGame((current) => ({ ...current, coins: current.coins + 100 }))}>+100 pièces</button><button onClick={() => updateGame((current) => ({ ...current, confluence: 100 }))}>Confluence 100</button><button onClick={() => updateGame((current) => ({ ...current, ambientHistory: emptyAmbientHistory(), sharedHistory: [] }))}>Réinitialiser les conversations</button></div><div className="dev-stats">{(Object.keys(game.stats) as StatKey[]).map((stat) => <button key={stat} onClick={() => updateGame((current) => ({ ...current, stats: { ...current.stats, [stat]: current.stats[stat] + 1 } }))}>{STAT_LABELS[stat]} <b>{game.stats[stat]}</b> +</button>)}</div><div className="dev-toggles"><Toggle label="Aucun coût de temps" detail="Voyages et scènes ne font plus avancer l’heure." active={game.settings.noTimeCost} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, noTimeCost: !current.settings.noTimeCost } }))} /><Toggle label="Tout déverrouiller" detail="Ignore jours, seuils et routes fermées." active={game.settings.unlockAll} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, unlockAll: !current.settings.unlockAll } }))} /></div><h3>Fil principal</h3><div className="dev-row"><button onClick={() => updateGame((current) => ({ ...current, day: Math.max(8, current.day), location: "akuhn", spot: "akuhn-throne-room", period: 0 }))}>Aller à l’audience d’Amanea</button><button onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "iriana-0", "draven-0", "amanea-0", "valurn-2", "amanea-3", "iriana-3", "amanea-4", "draven-4", "bellirith-3"]), flags: unique([...current.flags, "social:medig-window", "social:amanea-family-truth", "main-story-complete"]), relationships: { ...current.relationships, iriana: { ...current.relationships.iriana, stage: 5, met: true, affection: 60, trust: 70 }, valurn: { ...current.relationships.valurn, stage: 5, met: true, affection: 60, trust: 70 }, bellirith: { ...current.relationships.bellirith, stage: 5, met: true, affection: 60, trust: 70 }, amanea: { ...current.relationships.amanea, stage: 5, met: true, affection: 60, trust: 70, desire: 45 }, draven: { ...current.relationships.draven, stage: 5, met: true, affection: 40, trust: 75, desire: 0 } } }))}>Accomplir l’histoire</button></div><h3>Étapes relationnelles</h3><div className="dev-routes">{CHARACTERS.map((character) => <label key={character.id}><span>{character.name}</span><select value={game.relationships[character.id].stage} onChange={(event) => updateGame((current) => ({ ...current, relationships: { ...current.relationships, [character.id]: { ...current.relationships[character.id], stage: Number(event.target.value), met: true, affection: Math.max(current.relationships[character.id].affection, Number(event.target.value) * 10), trust: Math.max(current.relationships[character.id].trust, Number(event.target.value) * 10) } } }))}>{[0, 1, 2, 3, 4, 5].map((stage) => <option key={stage} value={stage}>{stage} · {STAGE_LABELS[stage]}</option>)}</select></label>)}</div></div>;
+}
+
+type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
+
+function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: IntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
+  const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+  const date = modal.dateId ? DATE_SCENES.find((entry) => entry.id === modal.dateId) : undefined;
+  const profile = INTIMACY_PROFILES[character.id];
+  const intimacyGame = INTIMACY_GAMES[character.id];
+  const [step, setStep] = useState<IntimacyStep>("opening");
+  const [lines, setLines] = useState<DialogueLine[]>(() => intimacyOpening(character.id, date));
+  const [lineIndex, setLineIndex] = useState(0);
+  const [approach, setApproach] = useState<IntimacyChoice | null>(null);
+  const [direction, setDirection] = useState<IntimacyFinalChoice | null>(null);
+  const [attunementBeat, setAttunementBeat] = useState(0);
+  const [attunementScore, setAttunementScore] = useState(0);
+  const [approachChoices] = useState(() => shuffledChoices(profile.approaches, `${modal.character}:${modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [directionChoices] = useState(() => shuffledChoices(profile.directions, `${modal.character}:${modal.dateId || "route"}:directions:${game.player.name}`));
+  const currentLine = lines[lineIndex];
+  const characterSpeaking = currentLine?.speaker === character.name;
+  const spriteMood = characterSpeaking
+    ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
+    : character.defaultMood;
+
+  function beginSegment(nextStep: IntimacyStep, nextLines: DialogueLine[]) {
+    setStep(nextStep);
+    setLines(nextLines);
+    setLineIndex(0);
+  }
+
+  function advance() {
+    if (lineIndex < lines.length - 1) {
+      setLineIndex((index) => index + 1);
+      return;
+    }
+    if (step === "opening") setStep("approach-choice");
+    else if (step === "approach-lines") setStep(intimacyGame ? "attunement-choice" : "direction-choice");
+    else if (step === "attunement-lines") {
+      if (attunementBeat < (intimacyGame?.beats.length || 0) - 1) {
+        setAttunementBeat((beat) => beat + 1);
+        setStep("attunement-choice");
+      } else beginSegment("attunement-result", intimacyGameResult(character.id, attunementScore));
+    }
+    else if (step === "attunement-result") setStep("direction-choice");
+    else if (step === "direction-lines") beginSegment("ending", intimacyEnding(character.id, date));
+    else if (step === "ending") setStep("done");
+  }
+
+  function chooseApproach(choice: IntimacyChoice) {
+    setApproach(choice);
+    beginSegment("approach-lines", choice.lines);
+  }
+
+  function chooseDirection(choice: IntimacyFinalChoice) {
+    setDirection(choice);
+    beginSegment("direction-lines", directionLines(character.id, choice.id, game.player.intimacy, game.player.sex));
+  }
+
+  function chooseAttunement(option: IntimacyGameOption) {
+    setAttunementScore((score) => score + option.score);
+    beginSegment("attunement-lines", option.lines);
+  }
+
+  const isChoice = step === "approach-choice" || step === "attunement-choice" || step === "direction-choice";
+  const isDone = step === "done";
+  const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");
+  const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
+
+  return <section className="interactive-intimacy" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
+    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `Scène intime · ${modeLabel}`}</p><h2>{character.name} · {date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+    <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
+    <div className="dialogue-gradient" />
+    {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
+      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
+      <p>{replacePlayer(currentLine.text, game.player)}</p>
+      <small>{lineIndex + 1} / {lines.length} · Cliquer pour continuer</small>
+    </button>}
+    {step === "approach-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">Comment entrer dans ce moment ?</p>{approachChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseApproach(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester simplement ensemble et terminer la soirée ici</button></div>}
+    {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}</div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
+    {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button className="primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
+  </section>;
+}
+
+function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFinish, onCancel }: { job: JobData; state: JobState; game: GameState; onBegin: () => void; onMemoryStart: () => void; onAction: (action: string) => void; onFinish: () => void; onCancel: () => void }) {
+  const modalScrollRef = useRef<HTMLElement>(null);
+  const complete = state.phase === "perfect" || state.phase === "success" || state.phase === "failure";
+  const partialPay = Math.max(2, Math.floor(job.reward / 4));
+  const perfectPay = Math.ceil(job.reward * 1.5);
+  const statValue = game.stats[job.stat];
+  const assisted = statValue >= 6;
+  const sessionRounds = orderedJobRounds(job, state.roundOrder);
+  const round = sessionRounds[state.round];
+  const sessionCrates = jobCratesForSession(job, state.variant);
+  const sessionPath = jobPathForSession(job, state.variant);
+  let progressTotal = job.kind === "timing" ? 6 : job.kind === "packing" ? sessionCrates.length : job.kind === "path" ? sessionPath?.maxSteps || 0 : job.kind === "memory" ? 3 : sessionRounds.length;
+  let progressNow = job.kind === "path" ? state.pathSteps : job.kind === "memory" ? Math.min(3, state.round + state.step / Math.max(1, memoryWaveLength(state.round, state.sequence.length))) : state.round;
+  if (job.id === "forestier-service") { progressTotal = serviceCustomers(state.variant).length; progressNow = state.round; }
+  if (job.id === "forestier-rooms") { progressTotal = 3; progressNow = state.round; }
+  if (job.id === "algratal-petitions") { progressTotal = petitionDeck(state.variant).length; progressNow = state.round; }
+  if (job.id === "tzekarun-mechanism") { progressTotal = 7; progressNow = state.assemblyStage === "build" ? state.assemblySlots.filter(Boolean).length : 4 + state.round; }
+  if (job.id === "forbidden-herbs") { progressTotal = 7; progressNow = state.score; }
+  if (job.id === "algratal-merchant") { progressTotal = marketCustomers(state.variant).length; progressNow = state.round; }
+
+  useEffect(() => {
+    if (modalScrollRef.current) modalScrollRef.current.scrollTop = 0;
+  }, [job.id, state.phase, state.round]);
+
+  const rotateOptions = (options: JobOption[]) => shuffledChoices(options, `${job.id}:${state.variant}:${state.round}:options`);
+
+  const assistElimination = round && assisted ? (() => {
+    if (job.kind === "bargain") return [...round.options].sort((a, b) => (a.score || 0) - (b.score || 0))[0]?.id;
+    return round.options.find((option) => option.id !== round.correct)?.id;
+  })() : undefined;
+
+  const renderChoiceGame = () => {
+    if (!round) return null;
+    return <div className={`job-challenge job-${job.kind}`}>
+      <div className="job-round-title"><span>{job.kind === "bargain" ? "Client" : job.kind === "sort" ? "Dossier" : job.kind === "assembly" ? "Étape de montage" : "Observation"} {state.round + 1} / {sessionRounds.length}</span><b>{STAT_LABELS[job.stat]} {statValue}</b></div>
+      <h3>{round.prompt}</h3>{round.detail && <p>{round.detail}</p>}
+      {state.lastResult && <div className={`job-live-feedback ${state.lastResult}`}>{state.lastResult === "correct" ? "La décision précédente a tenu." : "La décision précédente a coûté du temps ou de la marge."}</div>}
+      {assisted && <div className="job-assist">✦ Votre {STAT_LABELS[job.stat]} permet d’écarter une option manifestement faible.</div>}
+      <div className="job-option-grid">{rotateOptions(round.options).map((option) => {
+        const eliminated = option.id === assistElimination;
+        return <button key={option.id} disabled={eliminated} className={eliminated ? "eliminated" : ""} onClick={() => onAction(option.id)}><strong>{option.label}</strong>{option.detail && <small>{option.detail}</small>}{eliminated && <em>Écartée</em>}</button>;
+      })}</div>
+    </div>;
+  };
+
+  const renderService = () => {
+    const customers = serviceCustomers(state.variant);
+    const customer = customers[state.round];
+    if (!customer) return null;
+    const selectedItems = Object.values(state.serviceSelections).filter(Boolean).map((id) => TAVERN_MENU.find((item) => item.id === id)).filter(Boolean);
+    return <div className="job-challenge service-game advanced-service">
+      <div className="job-round-title"><span>Client {state.round + 1} / {customers.length}</span><b>Série : {state.combo} · Record : {state.maxCombo}</b></div>
+      <div className={`job-timer ${state.serviceTimeLeft <= 6 ? "urgent" : ""}`}><div><span>Temps de commande</span><strong>{state.serviceTimeLeft}s</strong></div><i style={{ width: `${(state.serviceTimeLeft / 20) * 100}%` }} /></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <div className="service-customer-card"><span>{customer.mode === "suggestion" ? "?" : "✎"}</span><div><small>{customer.title}</small><h3>{customer.name}</h3><p>{customer.request}</p></div></div>
+      <div className="full-menu">{(["starter", "main", "drink", "dessert"] as MenuCategory[]).map((category) => <section key={category}><header><h4>{MENU_CATEGORY_LABELS[category]}</h4><small>{TAVERN_MENU.filter((item) => item.category === category).length} choix</small></header>{TAVERN_MENU.filter((item) => item.category === category).map((item) => <button key={item.id} className={state.serviceSelections[category] === item.id ? "selected" : ""} onClick={() => onAction(`service:item:${item.id}`)}><span><strong>{item.name}</strong><small>{item.description}</small></span><b>{item.price} ◈</b></button>)}</section>)}</div>
+      <div className="service-tray full-tray"><div><small>Plateau en cours · les catégories non demandées restent vides</small><p>{selectedItems.length ? selectedItems.map((item) => item!.name).join(" · ") : "Aucun produit sélectionné"}</p></div><button className="text-button" disabled={!selectedItems.length} onClick={() => onAction("service:clear")}>Vider</button><button className="primary-action" disabled={!selectedItems.length} onClick={() => onAction("service:serve")}>Servir la commande</button></div>
+    </div>;
+  };
+
+  const renderInspection = () => {
+    const room = inspectionRoom(state.variant, state.round);
+    const foundCorrect = room.hotspots.filter((hotspot) => hotspot.kind !== "decoy" && state.inspectionFound.includes(hotspot.id)).length;
+    const anomalyFound = room.hotspots.filter((hotspot) => hotspot.kind === "anomaly" && state.inspectionFound.includes(hotspot.id)).length;
+    return <div className="job-challenge inspection-game">
+      <div className="job-round-title"><span>Chambre {state.round + 1} / 3</span><b>{foundCorrect} / {room.taskCount} tâches · {state.mistakes} erreur{state.mistakes > 1 ? "s" : ""}</b></div>
+      <div className="inspection-heading"><div><h3>{room.title}</h3><p>{room.subtitle}</p></div><button disabled={state.inspectionScanUsed} onClick={() => onAction("inspection:scan")}>◉ Lever la lanterne d’inspection</button></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <div className="inspection-layout"><aside><h4>Travail systématique</h4>{room.hotspots.filter((hotspot) => hotspot.kind === "routine").map((hotspot) => <span key={hotspot.id} className={state.inspectionFound.includes(hotspot.id) ? "done" : ""}><b>{state.inspectionFound.includes(hotspot.id) ? "✓" : "○"}</b>{hotspot.label}</span>)}<h4>Anomalies occasionnelles</h4><span className={anomalyFound >= 2 ? "done" : ""}><b>{anomalyFound >= 2 ? "✓" : "!"}</b>{anomalyFound} / 2 repérées</span><small>Les marques très discrètes signalent les zones douteuses. La lanterne les révèle nettement, mais retire la prime parfaite.</small></aside><div className={`inspection-room ${state.inspectionScanUsed ? "scan-active" : ""}`} style={{ backgroundImage: `url(${room.background})` }}>{room.hotspots.map((hotspot) => { const found = state.inspectionFound.includes(hotspot.id); const visibleMarker = hotspot.kind === "routine" || (hotspot.kind === "anomaly" && (state.inspectionScanUsed || !found)); return <button key={hotspot.id} aria-label={hotspot.kind === "routine" ? hotspot.label : "Inspecter cette zone"} title={state.inspectionScanUsed && hotspot.kind === "anomaly" ? hotspot.label : "Inspecter"} disabled={found} className={`${hotspot.kind} ${found ? "found" : ""}`} style={{ left: `${hotspot.x}%`, top: `${hotspot.y}%`, width: `${hotspot.size}%`, aspectRatio: "1" }} onClick={() => onAction(`inspection:hotspot:${hotspot.id}`)}><span>{found ? (hotspot.kind === "decoy" ? "×" : "✓") : visibleMarker ? (hotspot.kind === "routine" ? hotspot.icon : "!") : ""}</span></button>; })}</div></div>
+    </div>;
+  };
+
+  const renderPetitions = () => {
+    const petitions = petitionDeck(state.variant);
+    const petition = petitions[state.round];
+    if (!petition) return null;
+    return <div className="job-challenge petition-game">
+      <div className="job-round-title"><span>Requête {state.round + 1} / {petitions.length}</span><b>{state.score} décision{state.score > 1 ? "s" : ""} tenue{state.score > 1 ? "s" : ""}</b></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <article className="petition-paper"><header><span>✦</span><div><small>Pétition adressée au Conseil impérial</small><h3>{petition.petitioner}</h3><b>{petition.district}</b></div></header><p>{petition.text}</p><blockquote>{petition.clue}</blockquote><footer>Sceau d’arrivée · Jour {game.day} · registre {String(state.variant % 997).padStart(3, "0")}</footer></article>
+      <p className="petition-rule">L’impératrice ne reçoit que les affaires majeures. Les dossiers ordinaires relèvent de votre bureau ; toute manœuvre douteuse appartient à la garde.</p>
+      <div className="petition-actions">{PETITION_ACTIONS.map((decision) => <button key={decision.id} onClick={() => onAction(`petition:${decision.id}`)}><span>{decision.icon}</span><strong>{decision.label}</strong></button>)}{petition.special && <button className="whimsical" onClick={() => onAction(`petition:special:${petition.special!.id}`)}><span>✧</span><strong>{petition.special.label}</strong></button>}</div>
+    </div>;
+  };
+
+  const renderAssembly = () => {
+    const blueprint = assemblyBlueprint(state.variant);
+    if (state.assemblyStage === "calibrate") {
+      const target = blueprint.calibration[state.round];
+      const width = 14 + Math.min(8, statValue);
+      return <div className="job-challenge assembly-calibration"><div className="job-round-title"><span>Soupape {state.round + 1} / {blueprint.calibration.length}</span><b>{state.score} verrouillage{state.score > 1 ? "s" : ""}</b></div><h3>Mise en pression · {blueprint.name}</h3><p>Verrouillez l’aiguille dans la plage lumineuse avant que le flux ne reparte.</p>{state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}<div className="mechanical-gauge"><span>0</span><div><i className="timing-target" style={{ left: `${target - width / 2}%`, width: `${width}%` }} /><b className="timing-needle" style={{ left: `${state.timingPosition}%` }} /></div><span>100</span></div><div className="machine-pulse"><i style={{ animationDuration: `${Math.max(.6, 1.4 - state.round * .2)}s` }} /><span>Pression</span><i style={{ animationDuration: `${Math.max(.6, 1.2 - state.round * .15)}s` }} /></div><button className="primary-action timing-lock" onClick={() => onAction("assembly:lock")}>Fermer la soupape</button></div>;
+    }
+    const selected = ASSEMBLY_PARTS.find((part) => part.id === state.assemblySelected);
+    return <div className="job-challenge assembly-game">
+      <div className="job-round-title"><span>Plan {blueprint.name}</span><b>Essais de pression : {state.assemblyTests} / 3</b></div>
+      <div className="blueprint-card"><span>⚙</span><div><h3>{blueprint.name}</h3><p>{blueprint.purpose}</p></div></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <div className="assembly-workbench"><section className="assembly-slots"><h4>Bâti d’obsidienne</h4>{blueprint.slots.map((slot, index) => { const part = ASSEMBLY_PARTS.find((entry) => entry.id === state.assemblySlots[index]); return <article key={slot.type} className={part ? "filled" : ""}><header><span>{index + 1}</span><div><strong>{slot.label}</strong><small>{slot.requirement}</small></div></header>{part ? <div className="installed-part"><b style={{ transform: `rotate(${state.assemblyRotations[index]}deg)` }}>{part.icon}</b><span>{part.name}<small>Orientation : {ROTATION_LABELS[state.assemblyRotations[index]]}</small></span><button onClick={() => onAction(`assembly:remove:${index}`)}>Retirer</button></div> : <button disabled={!selected || selected.type !== slot.type} onClick={() => onAction(`assembly:place:${index}`)}>{selected?.type === slot.type ? `Installer ${selected.name}` : `Logement ${slot.type}`}</button>}</article>; })}<button className="primary-action" disabled={state.assemblySlots.some((part) => !part)} onClick={() => onAction("assembly:test")}>Mettre le mécanisme sous pression</button></section><section className="parts-bin"><h4>Pièces disponibles</h4><div>{ASSEMBLY_PARTS.map((part) => <button key={part.id} className={state.assemblySelected === part.id ? "selected" : ""} onClick={() => onAction(`assembly:select:${part.id}`)}><span>{part.icon}</span><div><strong>{part.name}</strong><small>{part.detail}</small></div><em>{part.type}</em></button>)}</div>{selected && <aside><span style={{ transform: `rotate(${state.assemblySelectedRotation}deg)` }}>{selected.icon}</span><div><strong>{selected.name}</strong><small>Orientation : {ROTATION_LABELS[state.assemblySelectedRotation]}</small></div><button onClick={() => onAction("assembly:rotate")}>↻ Tourner de 90°</button></aside>}</section></div>
+    </div>;
+  };
+
+  const renderHarvest = () => {
+    const nodes = harvestNodes(state.variant, state.harvestWave);
+    const examined = nodes.find((node) => node.id === state.harvestExamined);
+    const currentTool = HARVEST_TOOLS.find((tool) => tool.id === state.harvestTool)!;
+    return <div className="job-challenge harvest-game">
+      <div className="job-round-title"><span>Parcelle {state.harvestWave + 1} · Panier {state.score} / 7</span><b>{state.mistakes} illusion{state.mistakes > 1 ? "s" : ""}</b></div>
+      <div className={`job-timer ${state.harvestTimeLeft <= 10 ? "urgent" : ""}`}><div><span>Fermeture de la brume</span><strong>{state.harvestTimeLeft}s</strong></div><i style={{ width: `${(state.harvestTimeLeft / 45) * 100}%` }} /></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <div className="harvest-tools">{HARVEST_TOOLS.map((tool) => <button key={tool.id} className={state.harvestTool === tool.id ? "selected" : ""} onClick={() => onAction(`harvest:tool:${tool.id}`)}><span>{tool.icon}</span><div><strong>{tool.label}</strong><small>{tool.guide}</small></div></button>)}<button className="focus-tool" disabled={state.harvestFocus <= 0} onClick={() => onAction("harvest:focus")}><span>✦</span><div><strong>Faire le silence</strong><small>{state.harvestFocus} concentration{state.harvestFocus > 1 ? "s" : ""} restante{state.harvestFocus > 1 ? "s" : ""}</small></div></button></div>
+      <div className="harvest-field" style={{ backgroundImage: "linear-gradient(180deg,rgba(10,9,20,.12),rgba(10,9,20,.58)),url(/assets/backgrounds/forbidden_forest.webp)" }}>{nodes.map((node) => { const picked = state.harvestPicked.includes(node.id); const rejected = state.harvestRejected.includes(node.id); return <button key={node.id} disabled={picked || rejected} className={`${picked ? "picked" : ""} ${rejected ? "rejected" : ""} ${state.harvestHinted === node.id ? "hinted" : ""} ${state.harvestExamined === node.id ? "examined" : ""}`} style={{ left: `${node.x}%`, top: `${node.y}%` }} onClick={() => onAction(`harvest:examine:${node.id}`)}><span>{picked ? "✓" : rejected ? "×" : node.icon}</span></button>; })}<div className="moving-mist mist-one" /><div className="moving-mist mist-two" /></div>
+      <div className="harvest-reading">{examined ? <><div><span>{examined.icon}</span><h3>{examined.name}</h3><small>Lecture par {currentTool.label.toLocaleLowerCase("fr-FR")}</small></div><blockquote>{examined.reading[state.harvestTool]}</blockquote><button className="primary-action" onClick={() => onAction(`harvest:node:${examined.id}`)}>Couper cette pousse</button></> : <p>Choisissez un outil, puis touchez une pousse dans la brume pour l’examiner avant de la couper.</p>}</div>
+    </div>;
+  };
+
+  const renderMarket = () => {
+    const customers = marketCustomers(state.variant);
+    const customer = customers[state.round];
+    if (!customer) return null;
+    const minPrice = Math.max(0, customer.cost - 2);
+    const maxPrice = customer.base + 12;
+    return <div className="job-challenge market-game">
+      <div className="market-scoreboard"><span>Client <b>{state.round + 1}/{customers.length}</b></span><span>Marge <b>{state.marketProfit >= 0 ? "+" : ""}{state.marketProfit} ◈</b></span><span>Réputation <b>{state.marketReputation >= 0 ? "+" : ""}{state.marketReputation}</b></span><span>Patience <b>{state.marketCounter ? "Dernière offre" : "2 offres"}</b></span></div>
+      {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
+      <div className="market-customer"><span>{customer.icon}</span><div><small>{customer.name}</small><h3>{customer.item}</h3><p>{customer.opening}</p><blockquote>{customer.clue}</blockquote></div><aside><small>Prix conseillé</small><b>{customer.base} ◈</b><span>Coût : {customer.cost} ◈</span></aside></div>
+      <div className="price-counter"><button onClick={() => onAction(`market:price:${state.marketPrice - 1}`)}>−</button><div><span>Votre prix</span><strong>{state.marketPrice} ◈</strong><input aria-label="Prix proposé" type="range" min={minPrice} max={maxPrice} value={state.marketPrice} onChange={(event) => onAction(`market:price:${event.target.value}`)} /></div><button onClick={() => onAction(`market:price:${state.marketPrice + 1}`)}>+</button></div>
+      <div className="market-tactics">{MARKET_TACTICS.map((tactic) => <button key={tactic.id} className={state.marketTactic === tactic.id ? "selected" : ""} onClick={() => onAction(`market:tactic:${tactic.id}`)}><strong>{tactic.label}</strong><small>{tactic.detail}</small></button>)}</div>
+      <div className="market-actions"><button className="primary-action" onClick={() => onAction("market:offer")}>Présenter l’offre</button><button onClick={() => onAction("market:refuse")}>Refuser la vente</button>{customer.special && <button className="whimsical" onClick={() => onAction("market:special")}>{customer.special.label}</button>}</div>
+    </div>;
+  };
+
+  const renderTiming = () => {
+    const width = 16 + Math.min(10, statValue);
+    const center = 22 + ((state.variant * 17 + state.round * 29) % 57);
+    return <div className="job-challenge timing-game"><div className="job-round-title"><span>Essai {state.round + 1} / 6</span><b>{state.score} réussite{state.score > 1 ? "s" : ""}</b></div><h3>{job.id.includes("defense") ? "Attendez l’entrée dans la ligne de tir" : "Maintenez l’aiguille dans la fréquence lumineuse"}</h3>{state.lastResult && <div className={`job-live-feedback ${state.lastResult}`}>{state.lastResult === "correct" ? "Verrouillage net. La prochaine cible accélère." : "Fenêtre manquée. Reprenez le rythme avant le passage suivant."}</div>}<div className="timing-track"><i className="timing-target" style={{ left: `${center - width / 2}%`, width: `${width}%` }} /><b className="timing-needle" style={{ left: `${state.timingPosition}%` }} /></div><p>{assisted ? `Votre ${STAT_LABELS[job.stat]} élargit légèrement la fenêtre.` : "Touchez le bouton lorsque l’aiguille traverse la zone."}</p><button className="primary-action timing-lock" onClick={() => onAction("lock")}>{job.id.includes("defense") ? "Déclencher le tir" : "Stabiliser maintenant"}</button></div>;
+  };
+
+  const renderPacking = () => {
+    const crate = sessionCrates[state.round];
+    if (!crate) return null;
+    const leftAfter = state.leftWeight + crate.weight;
+    const rightAfter = state.rightWeight + crate.weight;
+    return <div className="job-challenge packing-game"><div className="job-round-title"><span>Cargaison {state.round + 1} / {sessionCrates.length}</span><b>Écart actuel : {Math.abs(state.leftWeight - state.rightWeight)}</b></div>{state.lastResult && <div className={`job-live-feedback ${state.lastResult}`}>{state.lastResult === "correct" ? "Le dernier chargement est arrimé correctement." : "Une consigne de sécurité vient d’être enfreinte."}</div>}<div className="hold-balance"><div><span>Bâbord</span><strong>{state.leftWeight}</strong><i style={{ height: `${Math.min(100, state.leftWeight * 7)}%` }} /></div><article><span>{crate.icon}</span><h3>{crate.label}</h3><b>{crate.weight} unités</b><small>{crate.detail}</small>{crate.ruleText && <em>{crate.ruleText}</em>}</article><div><span>Tribord</span><strong>{state.rightWeight}</strong><i style={{ height: `${Math.min(100, state.rightWeight * 7)}%` }} /></div></div><div className="packing-actions"><button onClick={() => onAction("left")}>Placer à bâbord{assisted && <small>Après : {leftAfter} / {state.rightWeight}</small>}</button><button onClick={() => onAction("right")}>Placer à tribord{assisted && <small>Après : {state.leftWeight} / {rightAfter}</small>}</button></div></div>;
+  };
+
+  const renderPath = () => {
+    if (!sessionPath) return null;
+    return <div className="job-challenge path-game"><div className="job-round-title"><span>Déplacements : {state.pathSteps} / {sessionPath.maxSteps}</span><b>Cases reconnues : {state.visited.length}</b></div><h3>{job.id.includes("crystal") ? "Conduisez la flamme jusqu’au cristal" : "Conduisez la lanterne jusqu’au sanctuaire"}</h3>{state.lastResult === "wrong" && <div className="job-live-feedback wrong">Le passage résiste : la charge reste sur la dalle précédente.</div>}<div className="path-grid" style={{ gridTemplateColumns: `repeat(${sessionPath.size}, 1fr)` }}>{Array.from({ length: sessionPath.size * sessionPath.size }, (_, index) => { const blocked = sessionPath.blocked.includes(index); const current = state.pathPosition === index; const goal = sessionPath.goal === index; const seen = state.visited.includes(index); return <span key={index} className={`${blocked ? "blocked" : ""} ${current ? "current" : ""} ${goal ? "goal" : ""} ${seen ? "seen" : ""}`}>{current ? (job.id.includes("crystal") ? "♨" : "◐") : goal ? "✦" : sessionPath.flavor[index] || "·"}</span>; })}</div>{assisted && <div className="job-assist">✦ Votre {STAT_LABELS[job.stat]} vous permet d’encaisser une erreur supplémentaire.</div>}<div className="path-controls"><button onClick={() => onAction("up")}>↑</button><button onClick={() => onAction("left")}>←</button><button onClick={() => onAction("down")}>↓</button><button onClick={() => onAction("right")}>→</button></div></div>;
+  };
+
+  const renderMemory = () => {
+    const wave = state.sequence.slice(0, memoryWaveLength(state.round, state.sequence.length));
+    return state.phase === "memorize" ? <div className="job-challenge memory-game"><div className="job-round-title"><span>Vague {Math.min(3, state.round + 1)} / 3</span><b>{state.mistakes} erreur{state.mistakes > 1 ? "s" : ""}</b></div>{state.lastResult && <div className={`job-live-feedback ${state.lastResult}`}>{state.lastResult === "correct" ? "La vague précédente dort. Une nouvelle marque rejoint la chaîne." : "La chaîne s’est tendue. Réobservez cette vague avant un second essai."}</div>}<p>Observez l’ordre d’endormissement des sceaux. La série disparaîtra lorsque vous commencerez.</p><div className="ritual-sequence">{wave.map((symbol, index) => <span key={`${symbol}-${index}`}>{symbol}</span>)}</div><button className="primary-action" onClick={onMemoryStart}>Toucher les sceaux</button></div> : <div className="job-challenge memory-game"><div className="job-round-title"><span>Vague {state.round + 1} / 3</span><b>{wave.length} signes</b></div><p>Reproduisez la séquence sans réveiller les protections.</p><div className="ritual-progress">{wave.map((_, index) => <i className={index < state.step ? "done" : ""} key={index} />)}</div><div className="rune-buttons">{shuffledChoices((job.symbols || []).map((symbol) => ({ id: symbol, symbol })), `${job.id}:${state.variant}:${state.round}:symbols`).map(({ symbol }) => <button key={symbol} onClick={() => onAction(symbol)}>{symbol}</button>)}</div></div>;
+  };
+
+  return <div className="modal-backdrop job-backdrop"><section ref={modalScrollRef} className={`ritual-modal job-modal varied-job job-kind-${job.kind} job-id-${job.id}`}><p className="eyebrow">Job local · {spotById(job.spot)?.shortName}</p><h2>{job.title}</h2>
+    {state.phase === "briefing" && <><p className="job-session-name">Rotation {state.variant + 1} · {jobSessionLabel(job, state.variant)}</p><p className="job-employer">Proposé par {job.employer} · Salaire : <b>{job.reward} pièces</b> · Perfection : <b>{perfectPay}</b></p><p>{job.description}</p><blockquote>{job.briefing}</blockquote><div className="job-mechanic"><span>{job.kind === "service" ? "☕" : job.kind === "observation" ? "◉" : job.kind === "bargain" ? "◈" : job.kind === "sort" ? "▤" : job.kind === "timing" ? "⌖" : job.kind === "packing" ? "▦" : job.kind === "path" ? "⌁" : job.kind === "assembly" ? "⚙" : "◇"}</span><div><strong>{job.kind === "service" ? "Lecture de commandes" : JOB_KIND_LABELS[job.kind]}</strong><small>Stat associée : {STAT_LABELS[job.stat]} {statValue}{assisted ? " · avantage actif" : " · avantage au niveau 6"}</small></div></div><button className="primary-action" onClick={onBegin}>Accepter le travail</button><button className="text-button" onClick={onCancel}>Refuser sans perdre de temps</button></>}
+    {(state.phase === "play" || state.phase === "memorize") && <><div className="job-progress-line"><i style={{ width: `${progressTotal ? Math.min(100, (progressNow / progressTotal) * 100) : 0}%` }} /></div>{job.id === "forestier-service" ? renderService() : job.id === "forestier-rooms" ? renderInspection() : job.id === "algratal-petitions" ? renderPetitions() : job.id === "tzekarun-mechanism" ? renderAssembly() : job.id === "forbidden-herbs" ? renderHarvest() : job.id === "algratal-merchant" ? renderMarket() : ["observation", "bargain", "sort", "assembly"].includes(job.kind) ? renderChoiceGame() : job.kind === "timing" ? renderTiming() : job.kind === "packing" ? renderPacking() : job.kind === "path" ? renderPath() : renderMemory()}</>}
+    {complete && <div className={`ritual-result ${state.phase !== "failure" ? "success" : ""}`}><span>{state.phase === "perfect" ? "✦" : state.phase === "success" ? "◈" : "◇"}</span><h3>{state.phase === "perfect" ? "Travail impeccable" : state.phase === "success" ? "Travail accompli" : "Travail partiel"}</h3><p>{state.phase === "perfect" ? job.perfect : state.phase === "success" ? job.success : job.failure}</p><strong className="job-pay">{state.phase === "perfect" ? perfectPay : state.phase === "success" ? job.reward : partialPay} pièces{state.phase !== "failure" ? ` · ${STAT_LABELS[job.stat]} +1` : ""}</strong><button className={state.phase === "failure" ? "secondary-action" : "primary-action"} onClick={onFinish}>{state.phase === "failure" ? "Recevoir la compensation" : "Recevoir le salaire"}</button></div>}
+  </section></div>;
+}
+
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startDateIntimacy, onIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startDateIntimacy: (dateId: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+  if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
+  if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
+  if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint votre Sac. Vous pourrez le remettre depuis le Sac ou directement sur la carte quand son destinataire se trouve exactement avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans le sac : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
+  if (modal.kind === "gift") {
+    const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+    const place = characterPlace(character, game.day, game.period, game.flags);
+    const present = place.location === game.location && place.spot === game.spot;
+    const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
+    return <div className="modal-backdrop"><section className="gift-modal"><button className="modal-close" onClick={onClose}>×</button><div className="gift-modal-title"><img src={character.portrait} alt="" /><div><p className="eyebrow">Remettre un présent</p><h2>Offrir à {character.name}</h2><small>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</small></div></div>{present && owned.length ? <div className="gift-list large">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>{gift.description} · x{game.inventory[gift.id]}</small></div><em>Offrir</em></button>)}</div> : <p className="hint">{present ? "Votre sac ne contient aucun présent. Achetez-en au marché depuis l’onglet Sac." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}<button className="secondary-action" onClick={onClose}>Annuler</button></section></div>;
+  }
+  if (modal.kind === "character") {
+    const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+    const relation = game.relationships[character.id];
+    const place = characterPlace(character, game.day, game.period, game.flags);
+    const present = place.location === game.location && place.spot === game.spot;
+    const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
+    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{character.role} · {character.ageNote}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p><h3>Blessure centrale</h3><p>{character.wound}</p><h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre sac ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
+  }
+  if (modal.kind === "date-planner") {
+    const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+    const relation = game.relationships[character.id];
+    const dates = DATE_SCENES.filter((date) => date.character === character.id);
+    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Chaque rendez-vous consomme une journée complète et vous conduit directement au bon sous-lieu, à la période prévue.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust); const place = spotById(date.spot); return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startDate(date.id)}>Réserver cette journée</button> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}</div></section></div>;
+  }
+  if (modal.kind === "date-result") {
+    const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+    const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
+    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>Après « {date.title} », la conversation s’est tue sans que la proximité disparaisse. Il reste encore une porte à franchir — ou une nuit à laisser s’achever sur ce dernier regard.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startDateIntimacy(date.id)}>Suivre {character.name}</button><button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button></div></section></div>;
+  }
+  if (modal.kind === "intimacy") {
+    return <InteractiveIntimacyModal key={`${modal.character}:${modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
+  }
+  if (modal.kind === "ritual") {
+    const runes = ["✦", "◇", "◐", "⌁", "✧"];
+    return <div className="modal-backdrop"><section className="ritual-modal"><p className="eyebrow">Mini-jeu de Résonance</p><h2>Accorder les quatre échos</h2>{ritual.phase === "memorize" && <><p>Mémorisez la séquence. Elle disparaîtra lorsque vous commencerez.</p><div className="ritual-sequence">{ritual.sequence.map((rune, index) => <span key={`${rune}-${index}`}>{rune}</span>)}</div><button className="primary-action" onClick={() => ritual.setPhase("play")}>Je suis prêt·e</button></>}{ritual.phase === "play" && <><p>Reproduisez les échos dans le bon ordre.</p><div className="ritual-progress">{ritual.sequence.map((_, index) => <i className={index < ritual.step ? "done" : ""} key={index} />)}</div><div className="rune-buttons">{runes.map((rune) => <button key={rune} onClick={() => ritual.play(rune)}>{rune}</button>)}</div></>}{ritual.phase === "success" && <div className="ritual-result success"><span>✦</span><h3>Accord parfait</h3><p>Résonance +1 · Confluence +8</p><button className="primary-action" onClick={onRitualClose}>Revenir</button></div>}{ritual.phase === "failure" && <div className="ritual-result"><span>◇</span><h3>Écho dissonant</h3><p>La tentative stabilise tout de même la Confluence de 2 points.</p><button className="secondary-action" onClick={onRitualClose}>Revenir</button></div>}</section></div>;
+  }
+  if (modal.kind === "job") {
+    const job = JOBS.find((entry) => entry.id === modal.jobId);
+    if (!job || !jobState) return null;
+    return <JobGameModal job={job} state={jobState} game={game} onBegin={onJobBegin} onMemoryStart={onMemoryStart} onAction={onJobAction} onFinish={onJobClose} onCancel={onClose} />;
+  }
+  return null;
+}
+
+function SimpleModal({ title, text, actionLabel, onClose }: { title: string; text: string; actionLabel?: string; onClose: () => void }) {
+  return <div className="modal-backdrop"><section className="chronicle-modal"><p className="eyebrow">Chronique</p><h2>{title}</h2><p>{text}</p><button className="primary-action" onClick={onClose}>{actionLabel || "Continuer"}</button></section></div>;
+}
+
+function ChronicleModal({ onClose }: { onClose: () => void }) {
+  return <div className="modal-backdrop" onMouseDown={onClose}><section className="chronicle-modal" onMouseDown={(event) => event.stopPropagation()}><button className="modal-close" onClick={onClose}>×</button><p className="eyebrow">À propos de cette histoire</p><h2>Une branche alternative au début du Tome 1</h2><p>Hylee a rencontré Remerii à l’Auberge du Forestier et l’a suivie sur les routes. Mais Iriana n’a mystérieusement jamais réuni l’équipe qui devait lancer les événements du premier roman. Amanea règne donc encore à Akuhn’Nabad, Draven cherche l’aide de l’Empire et chaque personnage poursuit sa propre trajectoire jusqu’à votre arrivée.</p><p>Leurs personnalités, leurs liens et leurs blessures viennent des romans, du site et du Visual Novel ; les alliances que vous tisserez appartiennent à cette chronique parallèle.</p><div className="modal-rule" /><p>Hylee a 22 ans et le protagoniste doit avoir au moins 18 ans. Les scènes intimes vont du fondu au noir à une narration adulte explicite, toujours sans image sexuelle.</p><button className="primary-action" onClick={onClose}>Compris</button></section></div>;
+}

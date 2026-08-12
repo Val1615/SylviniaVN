@@ -3107,6 +3107,14 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
               </div>
             </details>
 
+            <details class="menuAccordion chronicleAccordion">
+              <summary class="accordionSummary"><span>Chronique Alternative</span></summary>
+              <div class="accordionPanel">
+                <button class="secondaryBtn violetBtn menuActionBtn dockBtn chronicleLaunchBtn" id="chronicleModeBtn" type="button"><span class="btnTitle">Mode libre</span><small class="btnDesc">Créer son personnage et vivre librement dans une autre Sylvinia.</small></button>
+                <div class="menuTip inlineTip">Voyages, relations, romances, jobs et événements dans une chronologie alternative.</div>
+              </div>
+            </details>
+
             <details class="menuAccordion">
               <summary class="accordionSummary"><span>Options</span></summary>
               <div class="accordionPanel">
@@ -51489,8 +51497,10 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
-<!-- Fusion VN + Dating Sim · premier temps libre canonique du Mode Histoire -->
+<!-- Fusion VN + Dating Sim · monde canonique et Chronique Alternative -->
+<script src="fusion/story-periods.js"></script>
 <script src="fusion/story-world.js"></script>
+<script src="fusion/game-modes.js"></script>
 
 </body>
 </html>
