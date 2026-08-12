@@ -5,7 +5,7 @@
   window.__sylviniaStoryWorldFusionLoaded = true;
 
   const CONTENT = window.SylviniaStoryContent;
-  const ENGINE_VERSION = 2;
+  const ENGINE_VERSION = 3;
   const RELATION_THRESHOLDS = [0, 5, 14, 26, 40];
   const RELATION_STAGES = ["Rencontre", "Connaissance", "Confiance", "Proximité", "Lien profond"];
   const STAT_LABELS = {
@@ -93,6 +93,8 @@
       slot: 0,
       selectedSpot: firstSpot ? firstSpot.id : null,
       view: "location",
+      drawerOpen: false,
+      drawerView: "location",
       pendingActivity: null,
       completedActivities: [],
       actions: [],
@@ -114,7 +116,14 @@
     run.completedActivities = unique(run.completedActivities);
     run.actions = Array.isArray(run.actions) ? run.actions : [];
     run.slot = Math.max(0, Math.min(period.maxActions, Number(run.slot) || 0));
-    run.view = ["location", "activity", "result", "relations", "journal"].includes(run.view) ? run.view : "location";
+    if (["relations", "journal"].includes(run.view)) {
+      run.drawerView = run.view;
+      run.drawerOpen = true;
+      run.view = "location";
+    }
+    run.view = ["location", "activity", "result"].includes(run.view) ? run.view : "location";
+    run.drawerView = ["location", "relations", "journal"].includes(run.drawerView) ? run.drawerView : "location";
+    run.drawerOpen = run.drawerOpen === true;
     if (run.pendingEvent && !run.pendingActivity) run.pendingActivity = { activityId: run.pendingEvent };
     return run;
   }
@@ -327,6 +336,13 @@
     return match ? { kind: match[0], sprite: match[1], position: match[2] || "center" } : null;
   }
 
+  function sceneCharacters(scene) {
+    if (!scene || !Array.isArray(scene.chars)) return [];
+    return scene.chars.filter(Array.isArray).map(function map(entry) {
+      return { kind: entry[0], sprite: entry[1], position: entry[2] || "center" };
+    }).filter(function filter(entry) { return entry.kind && entry.sprite && assetUrl(entry.sprite); });
+  }
+
   function chapterPrefix(sceneId) {
     const id = String(sceneId || "");
     const match = id.match(/^(c\d+(?:[a-z])?_)/i);
@@ -379,10 +395,31 @@
       const remapped = window.__sylviniaPartySpriteRemap(spriteKey);
       if (assetUrl(remapped)) spriteKey = remapped;
     }
+    const referenceCharacters = sceneCharacters(referenceScene).filter(function filter(character) {
+      return character.kind !== (spriteData && spriteData.kind);
+    });
+    referenceCharacters.sort(function sort(left, right) {
+      const wanted = period.perspective === "Hylee" ? "hylee" : String(period.perspective || "").toLowerCase();
+      return Number(right.kind === wanted) - Number(left.kind === wanted);
+    });
+    let companion = referenceCharacters[0] || null;
+    if (companion && usePartyOutfit && typeof window.__sylviniaPartySpriteRemap === "function") {
+      const remapped = window.__sylviniaPartySpriteRemap(companion.sprite);
+      if (assetUrl(remapped)) companion = { ...companion, sprite: remapped };
+    }
+    let primaryPosition = spriteData ? spriteData.position : "center";
+    let companionPosition = companion ? companion.position : "center";
+    if (companion && (primaryPosition === companionPosition || primaryPosition === "center" || companionPosition === "center")) {
+      const primaryIsHylee = (spriteData && spriteData.kind) === "hylee" || spot.character === "hylee";
+      primaryPosition = primaryIsHylee ? "left" : "right";
+      companionPosition = primaryIsHylee ? "right" : "left";
+    }
     return {
       background: spot.background || (referenceScene && referenceScene.bg) || (S[period.anchorScene] && S[period.anchorScene].bg) || (S[period.nextScene] && S[period.nextScene].bg),
       sprite: spriteKey,
-      position: spriteData ? spriteData.position : "center",
+      character: (spriteData && spriteData.kind) || spot.character || "narrator",
+      position: primaryPosition,
+      companion: companion ? { ...companion, position: companionPosition } : null,
     };
   }
 
@@ -391,18 +428,30 @@
     const visual = resolveSceneVisual(period, spot);
     const background = root.querySelector(".sw-backdrop");
     const character = root.querySelector("#swCharacter");
+    const companion = root.querySelector("#swCompanion");
     const backgroundSrc = assetUrl(visual.background);
     const spriteSrc = assetUrl(visual.sprite);
     background.style.backgroundImage = backgroundSrc ? `url("${backgroundSrc.replace(/"/g, "%22")}")` : "none";
-    character.className = `sw-character is-${escapeHtml(spot.character || "narrator")} is-${escapeHtml(visual.position || "center")}`;
+    character.className = `sw-character is-primary is-${escapeHtml(visual.character || spot.character || "narrator")} is-${escapeHtml(visual.position || "center")}`;
     if (spriteSrc) {
       character.src = spriteSrc;
-      character.alt = spot.presence || relationLabel(spot.character);
+      character.alt = "";
       character.hidden = false;
     } else {
       character.removeAttribute("src");
       character.alt = "";
       character.hidden = true;
+    }
+    const companionSrc = assetUrl(visual.companion && visual.companion.sprite);
+    if (companion && companionSrc) {
+      companion.className = `sw-character is-companion is-${escapeHtml(visual.companion.kind)} is-${escapeHtml(visual.companion.position || "left")}`;
+      companion.src = companionSrc;
+      companion.alt = "";
+      companion.hidden = false;
+    } else if (companion) {
+      companion.removeAttribute("src");
+      companion.alt = "";
+      companion.hidden = true;
     }
   }
 
@@ -418,39 +467,42 @@
     root.innerHTML = `
       <div class="sw-backdrop" aria-hidden="true"></div>
       <div class="sw-shade" aria-hidden="true"></div>
-      <div class="sw-shell">
-        <header class="sw-topbar">
+      <div class="sw-scene">
+        <header class="sw-scene-header">
           <div class="sw-heading">
-            <span class="sw-mode">Mode Histoire · Monde entre les chapitres</span>
+            <span class="sw-mode">Mode Histoire · Temps libre</span>
             <h1 id="swTitle"></h1>
             <p id="swSubtitle"></p>
           </div>
-          <div class="sw-top-actions">
-            <button type="button" class="sw-quiet-button" data-sw-action="title">Sauver et revenir au menu</button>
-            <button type="button" class="sw-story-button" data-sw-action="finish">Reprendre le récit</button>
-          </div>
+          <button type="button" class="sw-drawer-toggle" data-sw-view="location" aria-controls="swDrawer" aria-expanded="false"><span>☰</span> Explorer</button>
         </header>
-        <div class="sw-status" id="swStatus"></div>
-        <main class="sw-layout">
-          <aside class="sw-sidebar">
-            <div class="sw-sidebar-heading">
-              <span id="swLocationLabel">Zone accessible</span>
-              <strong id="swLocation"></strong>
-              <p id="swLocationNote"></p>
-            </div>
-            <nav class="sw-section-nav" aria-label="Sections du temps libre">
-              <button type="button" data-sw-view="location" class="is-selected">⌖ <span>Lieux</span></button>
-              <button type="button" data-sw-view="relations">♡ <span>Relations</span></button>
-              <button type="button" data-sw-view="journal">▤ <span>Journal</span></button>
-            </nav>
-            <div class="sw-spot-list" id="swSpotList"></div>
-            <div class="sw-world-note"><span>Liberté contrôlée</span><p id="swWorldNote"></p></div>
-          </aside>
-          <section class="sw-stage">
-            <img class="sw-character" id="swCharacter" alt="" hidden>
-            <article class="sw-content" id="swContent"></article>
-          </section>
-        </main>
+        <div class="sw-status" id="swStatus" aria-label="État de Hylee et du temps libre"></div>
+        <div class="sw-characters" aria-live="off">
+          <img class="sw-character is-primary" id="swCharacter" alt="" hidden>
+          <img class="sw-character is-companion" id="swCompanion" alt="" hidden>
+        </div>
+        <button type="button" class="sw-drawer-scrim" data-sw-action="close-drawer" aria-label="Fermer le panneau du temps libre" tabindex="-1"></button>
+        <aside class="sw-drawer" id="swDrawer" aria-hidden="true">
+          <div class="sw-drawer-head">
+            <div><span>Zone accessible</span><strong id="swLocation"></strong><p id="swLocationNote"></p></div>
+            <button type="button" class="sw-drawer-close" data-sw-action="close-drawer" aria-label="Replier le panneau">×</button>
+          </div>
+          <nav class="sw-section-nav" aria-label="Sections du temps libre">
+            <button type="button" data-sw-view="location" class="is-selected">✦ <span>Lieux</span></button>
+            <button type="button" data-sw-view="relations">♡ <span>Relations</span></button>
+            <button type="button" data-sw-view="journal">▤ <span>Journal</span></button>
+          </nav>
+          <div class="sw-drawer-panel" id="swDrawerPanel"></div>
+          <div class="sw-drawer-foot"><span>Liberté contrôlée</span><p id="swWorldNote"></p></div>
+        </aside>
+        <article class="sw-content" id="swContent"></article>
+        <nav class="sw-toolbar" aria-label="Commandes du temps libre">
+          <button type="button" data-sw-view="location">Lieux</button>
+          <button type="button" data-sw-view="relations">Relations</button>
+          <button type="button" data-sw-view="journal">Journal</button>
+          <button type="button" data-sw-action="title">Menu</button>
+          <button type="button" class="is-story" data-sw-action="finish">Reprendre le récit</button>
+        </nav>
       </div>`;
     root.addEventListener("click", handleClick);
     document.addEventListener("keydown", handleKeydown);
@@ -459,31 +511,21 @@
   }
 
   function renderStatus(period, run) {
-    const world = ensureWorldState();
     const complete = run.slot >= period.maxActions;
     const slot = period.slots[Math.min(run.slot, Math.max(0, period.slots.length - 1))] || { label: "Temps libre", detail: "Le récit attend." };
     const stats = period.perspective === "Hylee"
       ? ["audace", "lucidite", "sangfroid", "resonance"].map(function map(key) {
-        return `<span class="sw-stat"><small>${escapeHtml(STAT_LABELS[key])}</small><b>${Number(state.stats && state.stats[key]) || 0}</b></span>`;
+        return `<span class="sw-stat"><small>${escapeHtml(STAT_LABELS[key])}</small> <b>${Number(state.stats && state.stats[key]) || 0}</b></span>`;
       }).join("")
-      : `<span class="sw-perspective"><small>Perspective</small><b>${escapeHtml(period.perspective)}</b><em>Les choix de cette route nourrissent surtout ses relations et ses traces narratives.</em></span>`;
-    const metRelations = Object.entries(world.relationships).filter(function filter(entry) { return entry[1].met; });
-    const strongest = metRelations.sort(function sort(a, b) { return relationBond(b[1]) - relationBond(a[1]); }).slice(0, 2);
-    const relationSummary = strongest.length ? strongest.map(function map(entry) {
-      return `<span><small>${escapeHtml(relationLabel(entry[0]))}</small><b>${relationBond(entry[1])}</b></span>`;
-    }).join("") : `<span><small>Relations</small><b>—</b></span>`;
+      : `<span class="sw-stat"><small>Perspective</small> <b>${escapeHtml(period.perspective)}</b></span>`;
     document.getElementById("swStatus").innerHTML = `
-      <div class="sw-time"><span>${complete ? "Temps libre terminé" : escapeHtml(slot.label)}</span><strong>${Math.min(run.slot, period.maxActions)} / ${period.maxActions} activités</strong><small>${complete ? "Vous pouvez reprendre le fil principal." : escapeHtml(slot.detail)}</small></div>
-      <div class="sw-stats">${stats}</div>
-      <div class="sw-relations">${relationSummary}<span><small>Pièces</small><b>${world.resources.coins}</b></span><span><small>Provisions</small><b>${world.resources.supplies}</b></span></div>`;
+      <span class="sw-time"><b>${complete ? "Temps écoulé" : escapeHtml(slot.label)}</b><small>${Math.min(run.slot, period.maxActions)}/${period.maxActions}</small></span>
+      ${stats}`;
   }
 
   function renderSpots(period, run) {
-    const list = document.getElementById("swSpotList");
-    const show = ["location", "activity", "result"].includes(run.view);
-    list.hidden = !show;
-    if (!show) { list.innerHTML = ""; return; }
-    list.innerHTML = (period.spots || []).map(function map(spot) {
+    const panel = document.getElementById("swDrawerPanel");
+    const spots = (period.spots || []).map(function map(spot) {
       const selected = run.selectedSpot === spot.id;
       const locked = run.slot < (spot.availableFrom || 0);
       const completed = (spot.activities || []).filter(function filter(activity) {
@@ -494,6 +536,7 @@
         <span class="sw-spot-icon">${escapeHtml(spot.icon)}</span><span><strong>${escapeHtml(spot.shortName)}</strong><small>${escapeHtml(status)}</small></span>
       </button>`;
     }).join("");
+    panel.innerHTML = `<div class="sw-drawer-intro"><span>Lieux disponibles</span><p>Choisir un lieu replie automatiquement ce panneau pour rendre la scène au décor.</p></div><div class="sw-spot-list">${spots}</div>`;
   }
 
   function activityStatusText(value) {
@@ -516,21 +559,23 @@
       const status = activityState(period, run, spot, activity);
       const relationClass = status.relationLocked ? " is-relation-locked" : "";
       return `<button type="button" class="sw-activity${relationClass}" data-sw-activity="${escapeHtml(activity.id)}" ${status.available ? "" : "disabled"}>
-        <span class="sw-activity-icon">${activity.kind === "job" ? "⚒" : "✦"}</span>
-        <span><small>${activity.kind === "job" ? "Travail ou service" : "Scène facultative"}</small><strong>${escapeHtml(activity.title)}</strong><em>${escapeHtml(activityStatusText(status))}</em></span>
-        <b>›</b>
+        <span><small>${activity.kind === "job" ? "Travail ou service" : "Scène facultative"}</small><strong>${escapeHtml(activity.title)}</strong><em>${escapeHtml(activityStatusText(status))}</em></span><b>›</b>
       </button>`;
     }).join("");
     const ended = run.slot >= period.maxActions;
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-location-card">
-        <span class="sw-eyebrow">${escapeHtml(period.chapterGate)} · ${escapeHtml(period.perspective)}</span>
-        <h2>${escapeHtml(spot.name)}</h2>
-        <p class="sw-lead">${escapeHtml(spot.description)}</p>
-        <div class="sw-presence"><span>Présence</span><p>${escapeHtml(spot.presence)}</p></div>
-        <div class="sw-activity-list">${activities || "<p class=\"sw-empty\">Aucune activité n’est disponible ici pour le moment.</p>"}</div>
-        ${ended ? '<button type="button" class="sw-primary-button sw-inline-finish" data-sw-action="finish">Reprendre le récit principal</button>' : ""}
-        <p class="sw-cost">Chaque activité fait avancer le temps. Les caractéristiques, relations, objets et ressources restent dans la sauvegarde du Mode Histoire.</p>
+        <div class="sw-dialogue-copy">
+          <span class="sw-eyebrow">${escapeHtml(period.chapterGate)} · ${escapeHtml(spot.name)}</span>
+          <div class="sw-speaker">Narrateur</div>
+          <p class="sw-dialogue-text">${escapeHtml(spot.description)}</p>
+          <p class="sw-presence"><b>Présence —</b> ${escapeHtml(spot.presence)}</p>
+        </div>
+        <div class="sw-dialogue-actions">
+          <span class="sw-actions-label">${ended ? "Temps libre terminé" : "Situations disponibles"}</span>
+          <div class="sw-activity-list">${activities || "<p class=\"sw-empty\">Aucune activité n’est disponible ici pour le moment.</p>"}</div>
+          ${ended ? '<button type="button" class="sw-primary-button" data-sw-action="finish">Reprendre le récit principal</button>' : ""}
+        </div>
       </div>`;
   }
 
@@ -565,13 +610,14 @@
     }).join("");
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-event-card">
-        <button type="button" class="sw-back-button" data-sw-action="location">‹ Retour au lieu</button>
-        <span class="sw-eyebrow">${escapeHtml(pending.activity.eyebrow)}</span>
-        <h2>${escapeHtml(pending.activity.title)}</h2>
-        <p class="sw-speaker">${escapeHtml(pending.activity.speaker)}</p>
-        <p class="sw-event-intro">${escapeHtml(pending.activity.intro)}</p>
-        <p class="sw-prompt">${escapeHtml(pending.activity.prompt)}</p>
-        <div class="sw-choice-list">${choices}</div>
+        <div class="sw-dialogue-copy">
+          <button type="button" class="sw-back-button" data-sw-action="location">‹ ${escapeHtml(pending.spot.shortName)}</button>
+          <span class="sw-eyebrow">${escapeHtml(pending.activity.eyebrow)} · ${escapeHtml(pending.activity.title)}</span>
+          <div class="sw-speaker">${escapeHtml(pending.activity.speaker)}</div>
+          <p class="sw-dialogue-text">${escapeHtml(pending.activity.intro)}</p>
+          <p class="sw-prompt">${escapeHtml(pending.activity.prompt)}</p>
+        </div>
+        <div class="sw-dialogue-actions"><span class="sw-actions-label">Comment réagir ?</span><div class="sw-choice-list">${choices}</div></div>
       </div>`;
   }
 
@@ -583,12 +629,16 @@
     const complete = run.slot >= period.maxActions;
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-result-card">
-        <span class="sw-eyebrow">Conséquence enregistrée</span>
-        <h2>${escapeHtml(result.choiceLabel)}</h2>
-        <p class="sw-result-text">${escapeHtml(result.response).replace(/\n/g, "<br>")}</p>
-        <div class="sw-gain-list">${result.labels.map(function map(label) { return `<span>${escapeHtml(label)}</span>`; }).join("")}</div>
-        <button type="button" class="sw-primary-button" data-sw-action="${complete ? "finish" : "continue"}">${complete ? "Reprendre le récit principal" : "Continuer le temps libre"}</button>
-        <p class="sw-cost">${complete ? "Le temps imparti est écoulé. Les conséquences ont été sauvegardées." : "Le monde et les personnages ont avancé d’un créneau."}</p>
+        <div class="sw-dialogue-copy">
+          <span class="sw-eyebrow">Conséquence enregistrée · ${escapeHtml(result.choiceLabel)}</span>
+          <div class="sw-speaker">Narrateur</div>
+          <p class="sw-dialogue-text">${escapeHtml(result.response).replace(/\n/g, "<br>")}</p>
+          <div class="sw-gain-list">${result.labels.map(function map(label) { return `<span>${escapeHtml(label)}</span>`; }).join("")}</div>
+        </div>
+        <div class="sw-dialogue-actions sw-result-actions">
+          <span class="sw-actions-label">${complete ? "La période s’achève" : "Un créneau s’est écoulé"}</span>
+          <button type="button" class="sw-primary-button" data-sw-action="${complete ? "finish" : "continue"}">${complete ? "Reprendre le récit principal" : "Continuer le temps libre"}</button>
+        </div>
       </div>`;
   }
 
@@ -620,14 +670,9 @@
         <small>Affection ${relation.affection} · Confiance ${relation.trust}${relation.desire ? ` · Désir ${relation.desire}` : ""}</small>
       </article>`;
     }).join("");
-    const fallbackSpot = spotById(period, (getRun(period, true) || {}).selectedSpot) || period.spots[0];
-    if (fallbackSpot) setVisuals(period, fallbackSpot);
-    document.getElementById("swContent").innerHTML = `
-      <div class="sw-card sw-panel-card">
-        <span class="sw-eyebrow">Liens persistants</span><h2>Relations</h2>
-        <p class="sw-lead">Les scènes libres construisent confiance, proximité ou tension. Ces valeurs restent disponibles pour les chapitres principaux.</p>
-        <div class="sw-relation-grid">${cards || '<p class="sw-empty">Aucune relation n’a encore été rencontrée dans les périodes libres.</p>'}</div>
-      </div>`;
+    document.getElementById("swDrawerPanel").innerHTML = `
+      <div class="sw-drawer-intro"><span>Liens persistants</span><p>Confiance, proximité ou tension peuvent modifier les chapitres principaux.</p></div>
+      <div class="sw-relation-grid">${cards || '<p class="sw-empty">Aucune relation n’a encore été rencontrée dans les périodes libres.</p>'}</div>`;
   }
 
   function renderJournal(period) {
@@ -636,20 +681,27 @@
       const sourcePeriod = periodById(entry.period);
       return `<article class="sw-journal-entry"><small>${escapeHtml((sourcePeriod && sourcePeriod.chapterGate) || "Temps libre")}</small><strong>${escapeHtml(entry.activityTitle || entry.activity || "Scène facultative")}</strong><p>${escapeHtml(entry.choiceLabel || entry.choice || "Décision enregistrée")}</p></article>`;
     }).join("");
-    const fallbackSpot = spotById(period, (getRun(period, true) || {}).selectedSpot) || period.spots[0];
-    if (fallbackSpot) setVisuals(period, fallbackSpot);
-    document.getElementById("swContent").innerHTML = `
-      <div class="sw-card sw-panel-card">
-        <span class="sw-eyebrow">Traces de la partie</span><h2>Journal du monde</h2>
+    document.getElementById("swDrawerPanel").innerHTML = `
+      <div class="sw-drawer-intro"><span>Journal du monde</span><p>Les décisions prises entre les chapitres restent inscrites dans cette partie.</p></div>
         <div class="sw-resource-strip"><span>◈ ${world.resources.coins} pièces</span><span>⌂ ${world.resources.supplies} provisions</span><span>▣ ${world.resources.items.length} objets trouvés</span><span>✓ ${world.completedPeriods.length} périodes achevées</span></div>
-        <div class="sw-journal-list">${entries || '<p class="sw-empty">Les décisions prises dans le monde apparaîtront ici.</p>'}</div>
-      </div>`;
+        <div class="sw-journal-list">${entries || '<p class="sw-empty">Les décisions prises dans le monde apparaîtront ici.</p>'}</div>`;
   }
 
   function renderNavigation(run) {
     root.querySelectorAll("[data-sw-view]").forEach(function each(button) {
-      button.classList.toggle("is-selected", button.dataset.swView === (run.view === "relations" || run.view === "journal" ? run.view : "location"));
+      button.classList.toggle("is-selected", run.drawerOpen && button.dataset.swView === run.drawerView);
+      if (button.getAttribute && button.getAttribute("aria-controls") === "swDrawer") button.setAttribute("aria-expanded", String(run.drawerOpen));
     });
+  }
+
+  function renderDrawer(period, run) {
+    root.classList.toggle("is-drawer-open", run.drawerOpen);
+    const drawer = document.getElementById("swDrawer");
+    drawer.setAttribute("aria-hidden", String(!run.drawerOpen));
+    renderNavigation(run);
+    if (run.drawerView === "relations") renderRelations(period);
+    else if (run.drawerView === "journal") renderJournal(period);
+    else renderSpots(period, run);
   }
 
   function renderWorld() {
@@ -664,12 +716,9 @@
     document.getElementById("swLocationNote").textContent = period.locationNote;
     document.getElementById("swWorldNote").textContent = period.locationNote;
     renderStatus(period, run);
-    renderNavigation(run);
-    renderSpots(period, run);
+    renderDrawer(period, run);
     if (run.view === "activity") renderActivity(period, run);
     else if (run.view === "result") renderResult(period, run);
-    else if (run.view === "relations") renderRelations(period);
-    else if (run.view === "journal") renderJournal(period);
     else renderLocation(period, run);
   }
 
@@ -686,6 +735,7 @@
     }
     activePeriod = period;
     world.activePeriod = period.id;
+    run.drawerOpen = false;
     setFlag(`storyWorld_${period.id.replace(/[^a-zA-Z0-9]+/g, "_")}_started`, true);
     if (run.view === "activity" && !(options && options.resume)) run.view = "location";
     createRoot();
@@ -797,14 +847,16 @@
       if (!spot || run.slot < (spot.availableFrom || 0)) return;
       run.selectedSpot = spotId;
       run.view = "location";
+      run.drawerOpen = false;
       run.pendingActivity = null;
       renderWorld();
       return;
     }
     const view = button.dataset.swView;
     if (view) {
-      run.view = view;
-      run.pendingActivity = null;
+      const sameOpenView = run.drawerOpen && run.drawerView === view;
+      run.drawerView = view;
+      run.drawerOpen = !sameOpenView;
       renderWorld();
       return;
     }
@@ -815,6 +867,7 @@
       if (!activity || !activityState(activePeriod, run, spot, activity).available) return;
       run.pendingActivity = { spotId: spot.id, activityId: activity.id };
       run.view = "activity";
+      run.drawerOpen = false;
       renderWorld();
       return;
     }
@@ -824,6 +877,9 @@
     if (action === "location") {
       run.pendingActivity = null;
       run.view = "location";
+      renderWorld();
+    } else if (action === "close-drawer") {
+      run.drawerOpen = false;
       renderWorld();
     } else if (action === "continue") {
       run.lastResult = null;
@@ -836,7 +892,11 @@
   function handleKeydown(event) {
     if (!root || root.hidden || event.key !== "Escape" || !activePeriod) return;
     const run = getRun(activePeriod, true);
-    if (["activity", "result", "relations", "journal"].includes(run.view)) {
+    if (run.drawerOpen) {
+      event.preventDefault();
+      run.drawerOpen = false;
+      renderWorld();
+    } else if (["activity", "result"].includes(run.view)) {
       event.preventDefault();
       run.view = "location";
       run.pendingActivity = null;
@@ -1009,7 +1069,10 @@
       resolveVisual: resolveSceneVisual,
       patchGates: patchChapterGates,
     };
-    console.info(`[Sylvinia Fusion] ${CONTENT.periods.length} périodes libres prêtes · chapitres I à XIV.`);
+    const activityCount = CONTENT.periods.reduce(function totalPeriods(total, period) {
+      return total + (period.spots || []).reduce(function totalSpots(spotTotal, spot) { return spotTotal + (spot.activities || []).length; }, 0);
+    }, 0);
+    console.info(`[Sylvinia Fusion] ${CONTENT.periods.length} périodes libres · ${activityCount} situations prêtes · chapitres I à XIV.`);
   }
 
   initialise();

@@ -27,6 +27,7 @@ const navButtons = ["location", "relations", "journal"].map((view) => {
 });
 
 function fakeElement(id = "") {
+  const attributes = {};
   return {
     id,
     hidden: false,
@@ -41,7 +42,9 @@ function fakeElement(id = "") {
     children: [],
     listeners: {},
     classList: fakeClassList(),
-    setAttribute() {},
+    attributes,
+    setAttribute(name, value) { attributes[name] = String(value); },
+    getAttribute(name) { return attributes[name]; },
     removeAttribute(name) { if (name === "src") this.src = ""; },
     addEventListener(type, listener) { this.listeners[type] = listener; },
     appendChild(child) { this.children.push(child); },
@@ -49,6 +52,7 @@ function fakeElement(id = "") {
     querySelector(selector) {
       if (selector === ".sw-backdrop") return getElement("swBackdrop");
       if (selector === "#swCharacter") return getElement("swCharacter");
+      if (selector === "#swCompanion") return getElement("swCompanion");
       if (selector === ".sw-spot.is-selected" || selector === "button") return fakeElement("focus-target");
       return null;
     },
@@ -124,11 +128,16 @@ window.render = context.render;
 window.resume = context.resume;
 window.startChapter3 = context.startChapter3;
 
+const momentsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-moments.js"), "utf8");
+new vm.Script(momentsSource, { filename: "story-moments.js" }).runInContext(context);
 const periodsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-periods.js"), "utf8");
 new vm.Script(periodsSource, { filename: "story-periods.js" }).runInContext(context);
 const content = window.SylviniaStoryContent;
 
 assert.equal(content.periods.length, 19);
+assert.equal(Object.keys(window.SylviniaStoryMoments).length, 62);
+assert.equal(content.periods.flatMap((period) => period.spots).reduce((total, spot) => total + spot.activities.length, 0), 124);
+content.periods.forEach((period) => period.spots.forEach((spot) => assert.ok(spot.activities.length >= 2, `lieu non enrichi: ${period.id}/${spot.id}`)));
 
 content.periods.forEach((period) => {
   S[period.anchorScene] = S[period.anchorScene] || {};
@@ -164,7 +173,7 @@ content.periods.forEach((period) => {
   assert.ok(S[period.anchorScene].choices.some((choice) => choice.storyWorldPeriodId === period.id), `porte absente: ${period.id}`);
 });
 assert.equal(state.storyWorld.mode, "story");
-assert.equal(state.storyWorld.version, 2);
+assert.equal(state.storyWorld.version, 3);
 
 const algratal = content.byId["algratal-preparatifs"];
 const apartment = algratal.spots.find((spot) => spot.id === "appartements");
@@ -182,11 +191,17 @@ assert.equal(state.storyWorld.activePeriod, "algratal-preparatifs");
 const root = elements.get("storyWorldRoot");
 assert.ok(root);
 assert.equal(root.hidden, false);
+assert.equal(root.classList.contains("is-drawer-open"), false, "le panneau de gestion doit être replié à l’ouverture");
 
 function click(dataset, disabled = false) {
   const button = { dataset, disabled };
   root.listeners.click({ target: { closest: () => button } });
 }
+
+click({ swView: "location" });
+assert.equal(root.classList.contains("is-drawer-open"), true, "le joueur doit pouvoir ouvrir le tiroir des lieux");
+click({ swAction: "close-drawer" });
+assert.equal(root.classList.contains("is-drawer-open"), false);
 
 click({ swActivity: "provisions" });
 click({ swChoice: "lucidite" });
