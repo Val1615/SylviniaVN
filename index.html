@@ -51234,5 +51234,260 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+<!-- sylvinia-chapter14-cg-v0321-safe -->
+<script id="sylvinia-chapter14-cg-v0321-safe">
+(()=>{
+  'use strict';
+  try{
+    if(window.__sylviniaC14CGV0321) return;
+    window.__sylviniaC14CGV0321=true;
+    if(typeof A==='undefined'||typeof S==='undefined') throw new Error('Registres A/S indisponibles');
+
+    A["c14_cg_council_establish"]="assets/images/keyscenes/chapter14/c14_cg_council_establish.webp";
+    A["c14_cg_council_faces"]="assets/images/keyscenes/chapter14/c14_cg_council_faces.webp";
+    A["c14_cg_entry_iriana"]="assets/images/keyscenes/chapter14/c14_cg_entry_iriana.webp";
+    A["c14_cg_map_iriana"]="assets/images/keyscenes/chapter14/c14_cg_map_iriana.webp";
+    A["c14_cg_dementras_lucid"]="assets/images/keyscenes/chapter14/c14_cg_dementras_lucid.webp";
+    A["c14_cg_dementras_calm"]="assets/images/keyscenes/chapter14/c14_cg_dementras_calm.webp";
+    A["c14_cg_dementras_bold"]="assets/images/keyscenes/chapter14/c14_cg_dementras_bold.webp";
+    A["c14_cg_dementras_close"]="assets/images/keyscenes/chapter14/c14_cg_dementras_close.webp";
+    A["c14_cg_sentence"]="assets/images/keyscenes/chapter14/c14_cg_sentence.webp";
+    A["c14_cg_group_report"]="assets/images/keyscenes/chapter14/c14_cg_group_report.webp";
+    A["c14_cg_group_map"]="assets/images/keyscenes/chapter14/c14_cg_group_map.webp";
+    A["c14_cg_group_balcony"]="assets/images/keyscenes/chapter14/c14_cg_group_balcony.webp";
+    A["c14_cg_group_remerii"]="assets/images/keyscenes/chapter14/c14_cg_group_remerii.webp";
+    A["c14_cg_group_draven"]="assets/images/keyscenes/chapter14/c14_cg_group_draven.webp";
+    A["c14_cg_group_naiah"]="assets/images/keyscenes/chapter14/c14_cg_group_naiah.webp";
+    A["c14_cg_group_rest"]="assets/images/keyscenes/chapter14/c14_cg_group_rest.webp";
+    A["c14_cg_tia_iriana"]="assets/images/keyscenes/chapter14/c14_cg_tia_iriana.webp";
+    A["c14_cg_iv_tense_1"]="assets/images/keyscenes/chapter14/c14_cg_iv_tense_1.webp";
+    A["c14_cg_iv_tense_2"]="assets/images/keyscenes/chapter14/c14_cg_iv_tense_2.webp";
+    A["c14_cg_iv_hit_1"]="assets/images/keyscenes/chapter14/c14_cg_iv_hit_1.webp";
+    A["c14_cg_iv_hit_2"]="assets/images/keyscenes/chapter14/c14_cg_iv_hit_2.webp";
+    A["c14_cg_iv_hit_3"]="assets/images/keyscenes/chapter14/c14_cg_iv_hit_3.webp";
+    A["c14_cg_iv_embrace_1"]="assets/images/keyscenes/chapter14/c14_cg_iv_embrace_1.webp";
+    A["c14_cg_iv_embrace_2"]="assets/images/keyscenes/chapter14/c14_cg_iv_embrace_2.webp";
+
+    const singleMap={"c14_001": "c14_cg_council_establish", "c14_002": "c14_cg_council_faces", "c14_004": "c14_cg_entry_iriana", "c14_013": "c14_cg_map_iriana", "c14_014": "c14_cg_dementras_close", "c14_dementras_lucid": "c14_cg_dementras_lucid", "c14_dementras_calm": "c14_cg_dementras_calm", "c14_dementras_bold": "c14_cg_dementras_bold", "c14_021": "c14_cg_sentence", "c14_i_002": "c14_cg_tia_iriana", "c14_g_003": "c14_cg_group_report", "c14_g_004": "c14_cg_group_map", "c14_g_006": "c14_cg_group_balcony", "c14_g_prep_remerii": "c14_cg_group_remerii", "c14_g_prep_draven": "c14_cg_group_draven", "c14_g_prep_naiah": "c14_cg_group_naiah", "c14_g_prep_rest": "c14_cg_group_rest", "c14_g_008": "c14_cg_group_report", "c14_g_009": "c14_cg_group_balcony"};
+    const cycleMap={"c14_i_007": ["c14_cg_iv_tense_1", "c14_cg_iv_tense_2"], "c14_i_008": ["c14_cg_iv_tense_2", "c14_cg_iv_tense_1"], "c14_i_choice_break": ["c14_cg_iv_tense_1", "c14_cg_iv_tense_2"], "c14_i_012": ["c14_cg_iv_hit_1", "c14_cg_iv_hit_2", "c14_cg_iv_hit_3"], "c14_i_013": ["c14_cg_iv_hit_2", "c14_cg_iv_hit_1", "c14_cg_iv_hit_3"], "c14_i_014": ["c14_cg_iv_embrace_1", "c14_cg_iv_embrace_2"], "c14_i_015": ["c14_cg_iv_embrace_2", "c14_cg_iv_embrace_1"], "c14_i_016": ["c14_cg_iv_embrace_1", "c14_cg_iv_embrace_2"]};
+
+    const applyCG=(sceneId,key)=>{
+      const sc=S[sceneId];
+      if(!sc||!A[key]) return;
+      sc.bg=key;
+      sc.zoom=true;
+      sc.hideChars=true;
+      sc.clearChars=true;
+      sc.chars=[];
+      delete sc.bgCycle;
+    };
+    Object.entries(singleMap).forEach(([sceneId,key])=>applyCG(sceneId,key));
+
+    const applyCycle=(sceneId,keys)=>{
+      const sc=S[sceneId];
+      const usable=(keys||[]).filter(k=>A[k]);
+      if(!sc||!usable.length) return;
+      sc.bg=usable[0];
+      sc.bgCycle=usable;
+      sc.bgCycleMs=5000;
+      sc.zoom=true;
+      sc.hideChars=true;
+      sc.clearChars=true;
+      sc.chars=[];
+    };
+    Object.entries(cycleMap).forEach(([sceneId,keys])=>applyCycle(sceneId,keys));
+
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.assign(CODEX_IMAGES,{
+      "c14_cg_council_establish":{title:"XIV · Le Conseil de Guerre",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_council_establish"]},
+      "c14_cg_council_faces":{title:"XIV · Les visages de l’Empire",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_council_faces"]},
+      "c14_cg_entry_iriana":{title:"XIV · Le retour d’Iriana",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_entry_iriana"]},
+      "c14_cg_map_iriana":{title:"XIV · Une autre possibilité",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_map_iriana"]},
+      "c14_cg_dementras_lucid":{title:"XIV · Démendras · Lucidité",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_dementras_lucid"]},
+      "c14_cg_dementras_calm":{title:"XIV · Démendras · Sang-froid",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_dementras_calm"]},
+      "c14_cg_dementras_bold":{title:"XIV · Démendras · Audace",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_dementras_bold"]},
+      "c14_cg_dementras_close":{title:"XIV · Le masque parle",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_dementras_close"]},
+      "c14_cg_sentence":{title:"XIV · Aucune clémence",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_sentence"]},
+      "c14_cg_group_report":{title:"XIV · Rapporter l’ordre",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_report"]},
+      "c14_cg_group_map":{title:"XIV · Naïah lit la carte",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_map"]},
+      "c14_cg_group_balcony":{title:"XIV · La nuit d’Al’Gratal",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_balcony"]},
+      "c14_cg_group_remerii":{title:"XIV · Préparation magique",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_remerii"]},
+      "c14_cg_group_draven":{title:"XIV · Préparer les sorties",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_draven"]},
+      "c14_cg_group_naiah":{title:"XIV · L’éclaireuse",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_naiah"]},
+      "c14_cg_group_rest":{title:"XIV · Avant l’aube",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_group_rest"]},
+      "c14_cg_tia_iriana":{title:"XIV · Tout ce qu’il me reste",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_tia_iriana"]},
+      "c14_cg_iv_tense_1":{title:"XIV · Iriana et Valurn · Tension",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_tense_1"]},
+      "c14_cg_iv_tense_2":{title:"XIV · Iriana et Valurn · Face-à-face",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_tense_2"]},
+      "c14_cg_iv_hit_1":{title:"XIV · Le premier coup",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_hit_1"]},
+      "c14_cg_iv_hit_2":{title:"XIV · Le duel sans règles",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_hit_2"]},
+      "c14_cg_iv_hit_3":{title:"XIV · La colère déborde",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_hit_3"]},
+      "c14_cg_iv_embrace_1":{title:"XIV · Arrête",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_embrace_1"]},
+      "c14_cg_iv_embrace_2":{title:"XIV · Juste toi",body:'Illustration clé du Chapitre XIV.',src:A["c14_cg_iv_embrace_2"]}
+      });
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{"c14_001": ["c14_cg_council_establish"], "c14_002": ["c14_cg_council_faces"], "c14_004": ["c14_cg_entry_iriana"], "c14_013": ["c14_cg_map_iriana"], "c14_014": ["c14_cg_dementras_close"], "c14_dementras_lucid": ["c14_cg_dementras_lucid"], "c14_dementras_calm": ["c14_cg_dementras_calm"], "c14_dementras_bold": ["c14_cg_dementras_bold"], "c14_021": ["c14_cg_sentence"], "c14_i_002": ["c14_cg_tia_iriana"], "c14_g_003": ["c14_cg_group_report"], "c14_g_004": ["c14_cg_group_map"], "c14_g_006": ["c14_cg_group_balcony"], "c14_g_prep_remerii": ["c14_cg_group_remerii"], "c14_g_prep_draven": ["c14_cg_group_draven"], "c14_g_prep_naiah": ["c14_cg_group_naiah"], "c14_g_prep_rest": ["c14_cg_group_rest"], "c14_g_008": ["c14_cg_group_report"], "c14_g_009": ["c14_cg_group_balcony"], "c14_i_007": ["c14_cg_iv_tense_1", "c14_cg_iv_tense_2"], "c14_i_008": ["c14_cg_iv_tense_2", "c14_cg_iv_tense_1"], "c14_i_choice_break": ["c14_cg_iv_tense_1", "c14_cg_iv_tense_2"], "c14_i_012": ["c14_cg_iv_hit_1", "c14_cg_iv_hit_2", "c14_cg_iv_hit_3"], "c14_i_013": ["c14_cg_iv_hit_2", "c14_cg_iv_hit_1", "c14_cg_iv_hit_3"], "c14_i_014": ["c14_cg_iv_embrace_1", "c14_cg_iv_embrace_2"], "c14_i_015": ["c14_cg_iv_embrace_2", "c14_cg_iv_embrace_1"], "c14_i_016": ["c14_cg_iv_embrace_1", "c14_cg_iv_embrace_2"]});
+    }
+
+    if(typeof window.render==='function'&&!window.__sylviniaC14RenderBase){
+      window.__sylviniaC14RenderBase=window.render;
+      window.render=function(){
+        try{
+          if(window.__c14BgCycleTimer) clearInterval(window.__c14BgCycleTimer);
+          if(window.__c14BgFadeTimer) clearTimeout(window.__c14BgFadeTimer);
+          window.__c14BgCycleTimer=null;
+          window.__c14BgFadeTimer=null;
+        }catch(_e){}
+
+        const result=window.__sylviniaC14RenderBase.apply(this,arguments);
+
+        try{
+          const sceneId=state&&state.scene;
+          const sc=(sceneId&&S[sceneId])?S[sceneId]:null;
+          if(!sc||!Array.isArray(sc.bgCycle)||sc.bgCycle.length<2) return result;
+          const keys=sc.bgCycle.filter(k=>A[k]);
+          if(keys.length<2) return result;
+          let index=0;
+          const stageBg=document.getElementById('bg');
+          const interval=Math.max(1000,Number(sc.bgCycleMs)||5000);
+
+          const advance=()=>{
+            if(!state||state.scene!==sceneId||S[sceneId]!==sc){
+              if(window.__c14BgCycleTimer) clearInterval(window.__c14BgCycleTimer);
+              window.__c14BgCycleTimer=null;
+              return;
+            }
+            index=(index+1)%keys.length;
+            if(!stageBg) return;
+            stageBg.style.opacity='0';
+            if(window.__c14BgFadeTimer) clearTimeout(window.__c14BgFadeTimer);
+            window.__c14BgFadeTimer=setTimeout(()=>{
+              if(!state||state.scene!==sceneId) return;
+              if(typeof setStageBg==='function') setStageBg(keys[index],true);
+              else stageBg.style.backgroundImage="url('"+A[keys[index]]+"')";
+              stageBg.style.opacity='1';
+            },220);
+          };
+          window.__c14BgCycleTimer=setInterval(advance,interval);
+        }catch(error){
+          console.warn('[Sylvinia v0.321] Rotation CG non appliquée',error);
+        }
+        return result;
+      };
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.321 · Images clés du Conseil';
+    console.info('[Sylvinia v0.321] CG du Chapitre XIV intégrées · rotations 5 s sur les scènes Iriana/Valurn non explicites.');
+  }catch(error){
+    console.error('[Sylvinia v0.321] Échec du patch CG Chapitre XIV',error);
+  }
+})();
+</script>
+
+
+<script id="sylvinia-c14-explicit-cg-v0323">
+(function(){
+  'use strict';
+  try{
+    if(typeof A==='undefined'||typeof S==='undefined') throw new Error('Registres A/S indisponibles');
+    A["c14_cg_iv_491"]="assets/images/keyscenes/chapter14/c14_cg_iv_491.jpg";
+    A["c14_cg_iv_494"]="assets/images/keyscenes/chapter14/c14_cg_iv_494.jpg";
+    A["c14_cg_iv_495"]="assets/images/keyscenes/chapter14/c14_cg_iv_495.jpg";
+    A["c14_cg_iv_496"]="assets/images/keyscenes/chapter14/c14_cg_iv_496.jpg";
+    A["c14_cg_iv_492"]="assets/images/keyscenes/chapter14/c14_cg_iv_492.jpg";
+    A["c14_cg_iv_493"]="assets/images/keyscenes/chapter14/c14_cg_iv_493.jpg";
+    A["c14_cg_iv_468"]="assets/images/keyscenes/chapter14/c14_cg_iv_468.jpg";
+    A["c14_cg_iv_477"]="assets/images/keyscenes/chapter14/c14_cg_iv_477.jpg";
+    A["c14_cg_iv_461"]="assets/images/keyscenes/chapter14/c14_cg_iv_461.jpg";
+    A["c14_cg_iv_463"]="assets/images/keyscenes/chapter14/c14_cg_iv_463.jpg";
+    A["c14_cg_iv_497"]="assets/images/keyscenes/chapter14/c14_cg_iv_497.jpg";
+    A["c14_cg_iv_505"]="assets/images/keyscenes/chapter14/c14_cg_iv_505.jpg";
+    A["c14_cg_iv_499"]="assets/images/keyscenes/chapter14/c14_cg_iv_499.jpg";
+    A["c14_cg_iv_500"]="assets/images/keyscenes/chapter14/c14_cg_iv_500.jpg";
+    A["c14_cg_iv_501"]="assets/images/keyscenes/chapter14/c14_cg_iv_501.jpg";
+    A["c14_cg_iv_482"]="assets/images/keyscenes/chapter14/c14_cg_iv_482.jpg";
+    A["c14_cg_iv_483"]="assets/images/keyscenes/chapter14/c14_cg_iv_483.jpg";
+    A["c14_cg_iv_484"]="assets/images/keyscenes/chapter14/c14_cg_iv_484.jpg";
+    A["c14_cg_iv_485"]="assets/images/keyscenes/chapter14/c14_cg_iv_485.jpg";
+    A["c14_cg_iv_507"]="assets/images/keyscenes/chapter14/c14_cg_iv_507.jpg";
+    A["c14_cg_iv_459"]="assets/images/keyscenes/chapter14/c14_cg_iv_459.jpg";
+    A["c14_cg_iv_460"]="assets/images/keyscenes/chapter14/c14_cg_iv_460.jpg";
+    A["c14_cg_iv_471"]="assets/images/keyscenes/chapter14/c14_cg_iv_471.jpg";
+    A["c14_cg_iv_472"]="assets/images/keyscenes/chapter14/c14_cg_iv_472.jpg";
+    A["c14_cg_iv_476"]="assets/images/keyscenes/chapter14/c14_cg_iv_476.jpg";
+    A["c14_cg_iv_478"]="assets/images/keyscenes/chapter14/c14_cg_iv_478.jpg";
+    A["c14_cg_iv_467"]="assets/images/keyscenes/chapter14/c14_cg_iv_467.jpg";
+    A["c14_cg_iv_486"]="assets/images/keyscenes/chapter14/c14_cg_iv_486.jpg";
+    A["c14_cg_iv_479"]="assets/images/keyscenes/chapter14/c14_cg_iv_479.jpg";
+    A["c14_cg_iv_480"]="assets/images/keyscenes/chapter14/c14_cg_iv_480.jpg";
+    A["c14_cg_iv_462"]="assets/images/keyscenes/chapter14/c14_cg_iv_462.jpg";
+    A["c14_cg_iv_465"]="assets/images/keyscenes/chapter14/c14_cg_iv_465.jpg";
+    A["c14_cg_iv_466"]="assets/images/keyscenes/chapter14/c14_cg_iv_466.jpg";
+    A["c14_cg_iv_481"]="assets/images/keyscenes/chapter14/c14_cg_iv_481.jpg";
+    A["c14_cg_iv_464"]="assets/images/keyscenes/chapter14/c14_cg_iv_464.jpg";
+    A["c14_cg_iv_473"]="assets/images/keyscenes/chapter14/c14_cg_iv_473.jpg";
+    A["c14_cg_iv_474"]="assets/images/keyscenes/chapter14/c14_cg_iv_474.jpg";
+    A["c14_cg_iv_487"]="assets/images/keyscenes/chapter14/c14_cg_iv_487.jpg";
+    A["c14_cg_iv_488"]="assets/images/keyscenes/chapter14/c14_cg_iv_488.jpg";
+    A["c14_cg_iv_510"]="assets/images/keyscenes/chapter14/c14_cg_iv_510.jpg";
+    A["c14_cg_iv_511"]="assets/images/keyscenes/chapter14/c14_cg_iv_511.jpg";
+    A["c14_cg_iv_475"]="assets/images/keyscenes/chapter14/c14_cg_iv_475.jpg";
+    A["c14_cg_iv_469"]="assets/images/keyscenes/chapter14/c14_cg_iv_469.jpg";
+    A["c14_cg_iv_470"]="assets/images/keyscenes/chapter14/c14_cg_iv_470.jpg";
+    A["c14_cg_iv_498"]="assets/images/keyscenes/chapter14/c14_cg_iv_498.jpg";
+    A["c14_cg_iv_502"]="assets/images/keyscenes/chapter14/c14_cg_iv_502.jpg";
+    A["c14_cg_iv_503"]="assets/images/keyscenes/chapter14/c14_cg_iv_503.jpg";
+    A["c14_cg_iv_508"]="assets/images/keyscenes/chapter14/c14_cg_iv_508.jpg";
+    A["c14_cg_iv_509"]="assets/images/keyscenes/chapter14/c14_cg_iv_509.jpg";
+    A["c14_cg_iv_489"]="assets/images/keyscenes/chapter14/c14_cg_iv_489.jpg";
+
+    const explicitCycles={"c14_i_019": ["c14_cg_iv_491", "c14_cg_iv_494", "c14_cg_iv_495", "c14_cg_iv_496"], "c14_i_int_001": ["c14_cg_iv_492", "c14_cg_iv_493"], "c14_i_int_002": ["c14_cg_iv_461", "c14_cg_iv_463", "c14_cg_iv_497", "c14_cg_iv_505"], "c14_i_int_003": ["c14_cg_iv_499", "c14_cg_iv_500", "c14_cg_iv_501"], "c14_i_int_004": ["c14_cg_iv_507", "c14_cg_iv_459", "c14_cg_iv_471", "c14_cg_iv_478", "c14_cg_iv_475"], "c14_i_int_005": ["c14_cg_iv_480", "c14_cg_iv_482"], "c14_i_int_006": ["c14_cg_iv_465", "c14_cg_iv_466", "c14_cg_iv_462"], "c14_i_int_008": ["c14_cg_iv_483", "c14_cg_iv_484", "c14_cg_iv_485", "c14_cg_iv_464"], "c14_i_int_009": ["c14_cg_iv_481", "c14_cg_iv_487", "c14_cg_iv_489"], "c14_i_int_010": ["c14_cg_iv_488", "c14_cg_iv_489"], "c14_i_int_011": ["c14_cg_iv_481"]};
+    const explicitTitles={"c14_i_019": "Une ligne franchie · Premier baiser", "c14_i_int_001": "La route secrète · Iriana et Valurn", "c14_i_int_002": "Plus de lendemain", "c14_i_int_003": "Le vieux duel change de langage", "c14_i_int_004": "L’urgence", "c14_i_int_005": "Le premier abandon", "c14_i_int_006": "Aucun vainqueur", "c14_i_int_007": "Le Chaos dans le sang", "c14_i_int_008": "Une valse après la tempête", "c14_i_int_009": "Après", "c14_i_int_010": "Une équipe improbable", "c14_i_int_011": "Ne plus être seule"};
+
+    Object.entries(explicitCycles).forEach(([sceneId,keys])=>{
+      const sc=S[sceneId];
+      const usable=(keys||[]).filter(k=>A[k]);
+      if(!sc||!usable.length) return;
+      sc.bg=usable[0];
+      sc.bgCycle=usable;
+      sc.bgCycleMs=5000;
+      sc.zoom=true;
+      sc.hideChars=true;
+      sc.clearChars=true;
+      sc.chars=[];
+    });
+
+    if(typeof CODEX_IMAGES!=='undefined'){
+      Object.entries(explicitCycles).forEach(([sceneId,keys])=>{
+        const title=explicitTitles[sceneId]||sceneId;
+        keys.forEach((key,index)=>{
+          if(!A[key]) return;
+          CODEX_IMAGES[key]={
+            title:`XIV · ${title} · Plan ${String(index+1).padStart(2,'0')}`,
+            body:'Illustration clé de la route Iriana / Valurn du Chapitre XIV.',
+            src:A[key]
+          };
+        });
+      });
+    }
+
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.entries(explicitCycles).forEach(([sceneId,keys])=>{
+        const previous=Array.isArray(CODEX_IMAGES_BY_SCENE[sceneId])?CODEX_IMAGES_BY_SCENE[sceneId]:[];
+        CODEX_IMAGES_BY_SCENE[sceneId]=Array.from(new Set(previous.concat(keys.filter(k=>A[k]))));
+      });
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.323 · CG du Conseil dans assets';
+    console.info('[Sylvinia v0.323] CG Iriana / Valurn intégrées depuis assets/images/keyscenes/chapter14 · rotation 5 s.');
+  }catch(error){
+    console.error('[Sylvinia v0.323] Échec du patch CG explicites du Chapitre XIV',error);
+  }
+})();
+</script>
+
 </body>
 </html>
