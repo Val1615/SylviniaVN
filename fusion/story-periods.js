@@ -3,6 +3,8 @@
 
   if (window.SylviniaStoryContent) return;
 
+  const EXTRA_MOMENTS = window.SylviniaStoryMoments || {};
+
   const APPROACHES = {
     lucidite: {
       label: "Observer avant d’agir",
@@ -51,6 +53,61 @@
     },
   };
 
+  const APPROACH_VARIANTS = {
+    lucidite: [
+      { label: "Démêler ce qui cloche", note: "Reprendre les faits dans l’ordre avant de répondre.", response: "Le détail qui semblait secondaire devient le point d’appui d’une réponse plus juste." },
+      { label: "Poser la question précise", note: "Écarter les détours et nommer l’incohérence.", response: "La question atteint exactement ce que l’autre espérait laisser dans l’ombre." },
+      { label: "Comparer avec ce que Hylee sait", note: "Rattacher ce moment aux événements déjà vécus.", response: "Ce rapprochement ne donne pas toutes les réponses, mais il empêche une conclusion trop facile." },
+      { label: "Observer les réactions", note: "Lire les silences autant que les paroles.", response: "Un regard retenu et une respiration trop courte en disent davantage que la première explication." },
+      { label: "Chercher le détail oublié", note: "Examiner ce que personne n’a jugé important.", response: "Ce qui avait été négligé replace soudain toute la situation sous une lumière différente." },
+    ],
+    audace: [
+      { label: "Dire franchement ce qu’elle pense", note: "Accepter que la sincérité dérange.", response: "La franchise coupe court aux précautions et oblige chacun à répondre sans masque." },
+      { label: "Proposer une solution inattendue", note: "Sortir du rôle que les autres avaient prévu.", response: "La proposition surprend assez pour ouvrir une possibilité que personne n’avait formulée." },
+      { label: "Prendre les devants", note: "Agir avant que l’hésitation ne referme l’occasion.", response: "Le premier geste entraîne les autres et transforme une attente inconfortable en décision commune." },
+      { label: "Refuser la fausse politesse", note: "Nommer le problème sans l’enrober.", response: "Le ton est abrupt, mais personne ne peut désormais prétendre ne pas avoir compris l’enjeu." },
+      { label: "Tenter quelque chose de risqué", note: "Faire confiance à l’élan plutôt qu’au protocole.", response: "Le risque ne disparaît pas ; il devient simplement un choix assumé au lieu d’une menace subie." },
+    ],
+    sangfroid: [
+      { label: "Laisser retomber la tension", note: "Ne pas répondre au premier mouvement d’humeur.", response: "Le silence dure juste assez pour que la colère perde le contrôle de la conversation." },
+      { label: "Rester un point fixe", note: "Offrir du calme sans minimiser ce qui se passe.", response: "Cette stabilité donne aux autres un espace où reprendre souffle sans avoir à se justifier." },
+      { label: "Procéder étape par étape", note: "Résoudre le plus urgent avant de discuter du reste.", response: "La situation cesse de former un seul nœud dès que chaque problème retrouve sa place." },
+      { label: "Ne rien laisser paraître", note: "Garder l’émotion pour un moment moins dangereux.", response: "Le contrôle évite l’escalade, même si ce qui n’a pas été dit continue d’exister entre eux." },
+      { label: "Répondre avec mesure", note: "Choisir des mots qui n’ajoutent pas une blessure.", response: "La réponse ne cède rien d’essentiel, mais elle laisse encore une voie pour se comprendre." },
+    ],
+    resonance: [
+      { label: "Suivre l’intuition magique", note: "Écouter la première vibration avant de l’expliquer.", response: "La magie ne formule aucun ordre ; elle souligne seulement l’endroit exact où l’attention doit se poser." },
+      { label: "Accueillir ce que le lieu renvoie", note: "Cesser un instant de séparer émotion et magie.", response: "Le lieu répond moins par une vision que par une émotion étrangère, assez nette pour guider la suite." },
+      { label: "Effleurer la trame", note: "Tester la magie avec retenue, sans chercher à la dominer.", response: "Une vibration discrète traverse la trame et révèle une présence que les yeux seuls auraient manquée." },
+      { label: "Faire confiance au ressenti", note: "Assumer une impression impossible à prouver immédiatement.", response: "L’intuition demeure fragile, mais les événements lui donnent bientôt une cohérence inattendue." },
+      { label: "Écouter avant de nommer", note: "Laisser la magie et l’émotion se distinguer d’elles-mêmes.", response: "Lorsque Hylee cesse de forcer une réponse, deux sensations jusque-là confondues se séparent enfin." },
+    ],
+    observer: [
+      { label: "Lire ce qui n’est pas dit", note: "Comparer la posture aux paroles.", response: "Le silence et les gestes révèlent l’enjeu que la conversation évitait encore." },
+      { label: "Reconstituer les intentions", note: "Distinguer le calcul de la peur.", response: "L’intention réelle apparaît moins glorieuse, mais aussi plus compréhensible que le discours officiel." },
+      { label: "Attendre le faux pas", note: "Laisser l’autre préciser sa position.", response: "Une contradiction minuscule suffit à dévoiler ce qui devait rester implicite." },
+      { label: "Examiner les conséquences", note: "Penser au-delà de l’instant présent.", response: "La décision change lorsqu’elle est regardée depuis le lendemain plutôt que depuis l’urgence." },
+    ],
+    agir: [
+      { label: "Trancher sans détour", note: "Donner à la scène une direction claire.", response: "Le geste impose une réalité nouvelle à laquelle chacun doit désormais s’adapter." },
+      { label: "Prendre la responsabilité", note: "Accepter d’être celui ou celle que l’on jugera.", response: "La décision ne plaît pas à tous, mais elle cesse au moins d’être une charge que chacun repousse." },
+      { label: "Forcer une réponse concrète", note: "Remplacer les sous-entendus par un acte.", response: "L’action rend les intentions visibles et met fin aux hypothèses confortables." },
+      { label: "Choisir le risque utile", note: "Ne pas confondre prudence et immobilité.", response: "Le risque ouvre un passage étroit, assez réel pour que les autres puissent le suivre." },
+    ],
+    temporiser: [
+      { label: "Préserver une issue", note: "Ne fermer aucune porte trop tôt.", response: "La retenue permet à chacun de revenir sur sa position sans transformer cela en défaite." },
+      { label: "Reporter le conflit", note: "Choisir un moment où la vérité coûtera moins cher.", response: "Rien n’est résolu, mais le désaccord cesse de menacer tout ce qui l’entoure." },
+      { label: "Accorder un peu de temps", note: "Laisser l’émotion perdre sa première violence.", response: "Quelques minutes suffisent pour que la même question puisse enfin recevoir une réponse honnête." },
+      { label: "Proposer un compromis provisoire", note: "Avancer sans prétendre avoir tout réglé.", response: "Le compromis tient assez longtemps pour éviter la rupture et préparer une vraie décision." },
+    ],
+  };
+
+  function stableIndex(value, length) {
+    let hash = 0;
+    String(value || "").split("").forEach(function each(character) { hash = ((hash << 5) - hash + character.charCodeAt(0)) | 0; });
+    return Math.abs(hash) % Math.max(1, length);
+  }
+
   function slug(value) {
     return String(value || "")
       .normalize("NFD")
@@ -68,15 +125,17 @@
     const commonItems = definition.items || [];
     const choices = approachIds.map(function buildChoice(approachId) {
       const approach = source[approachId];
+      const variants = APPROACH_VARIANTS[approachId] || [];
+      const variant = variants[stableIndex(`${periodId}:${definition.id}:${approachId}`, variants.length)] || {};
       const override = (definition.choiceText || {})[approachId] || {};
       const statEffects = routeOnly || definition.noStats ? {} : { [approachId]: definition.statGain || 1 };
       const relationshipEffects = relationId ? { [relationId]: { ...approach.relation } } : {};
       const response = ((definition.responses || {})[approachId] || "").trim();
       return {
         id: approachId,
-        label: override.label || approach.label,
-        note: override.note || approach.note,
-        response: [definition.resolution, response || approach.response].filter(Boolean).join("\n\n"),
+        label: override.label || variant.label || approach.label,
+        note: override.note || variant.note || approach.note,
+        response: [definition.resolution, response || variant.response || approach.response].filter(Boolean).join("\n\n"),
         effects: {
           stats: statEffects,
           relationships: relationshipEffects,
@@ -101,6 +160,7 @@
   }
 
   function makeSpot(periodId, definition, routeOnly) {
+    const extraMoments = EXTRA_MOMENTS[`${periodId}:${definition.id}`] || [];
     return {
       id: definition.id,
       icon: definition.icon || "✦",
@@ -114,7 +174,7 @@
       sprite: definition.sprite || null,
       partyOutfits: definition.partyOutfits === true,
       availableFrom: definition.availableFrom || 0,
-      activities: (definition.activities || []).map(function activity(entry) {
+      activities: [...(definition.activities || []), ...extraMoments].map(function activity(entry) {
         return makeActivity(periodId, entry, routeOnly || entry.routeOnly === true);
       }),
     };

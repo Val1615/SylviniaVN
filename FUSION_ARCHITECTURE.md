@@ -17,8 +17,8 @@ Le moteur générique couvre tous les chapitres actuellement présents, du chapi
 |---|---:|
 | Périodes libres | 19 |
 | Sous-lieux contextuels | 62 |
-| Activités et scènes facultatives | 62 |
-| Approches proposées au joueur | 189 |
+| Activités et scènes facultatives | 124 |
+| Approches proposées au joueur | 375 |
 
 Les transitions urgentes ne proposent qu’un créneau court. Les respirations narratives plus calmes offrent jusqu’à quatre activités. Une période peut toujours être ignorée afin de reprendre immédiatement le chapitre suivant.
 
@@ -41,7 +41,7 @@ Le moteur ajoute un espace versionné dans la sauvegarde principale du VN :
 
 ```js
 state.storyWorld = {
-  version: 2,
+  version: 3,
   mode: "story",
   activePeriod: null,
   completedPeriods: [],
@@ -72,12 +72,16 @@ La relation avec Remerii alimente aussi `state.stats.lien`, ce qui permet aux ga
 
 ## Interface du monde libre canonique
 
-Chaque période propose quatre espaces d’interface inspirés du Dating Sim :
+Le temps libre est présenté comme une scène du Visual Novel et non plus comme un tableau de bord :
 
-- les lieux accessibles ;
-- les scènes et jobs disponibles selon le créneau ;
-- l’écran des relations avec niveaux et jauges ;
-- le journal persistant avec activités, ressources et périodes terminées.
+- le décor occupe tout l’écran et reste lisible ;
+- les sprites issus du chapitre restent visibles au-dessus du dialogue ;
+- le texte, les situations et les choix utilisent le cadre or et la composition du HUD du VN ;
+- les statistiques deviennent de petites pastilles discrètes ;
+- les lieux, relations, ressources et le journal sont réunis dans un tiroir latéral replié par défaut ;
+- la barre inférieure permet d’ouvrir directement une section, revenir au menu ou reprendre le récit.
+
+Choisir un lieu replie automatiquement le tiroir. Sur téléphone, le cadre narratif et la liste de choix possèdent chacun leur propre défilement afin de préserver au moins la moitié supérieure de l’illustration.
 
 Le joueur peut quitter vers le menu à tout moment. La période reprend au même endroit au chargement de la sauvegarde. Une activité terminée ne peut pas être répétée pour exploiter ses récompenses.
 
@@ -123,6 +127,7 @@ Le build adapte automatiquement les chemins d’assets afin qu’ils fonctionnen
 index.html
 fusion/
   game-modes.js           navigation entre les deux modes
+  story-moments.js        62 situations supplémentaires propres à chaque lieu
   story-periods.js        contenu des 19 périodes libres
   story-world.js          moteur générique et sauvegarde
   story-world.css         interface du Mode Histoire
@@ -152,6 +157,8 @@ Elle ne doit pas téléporter un personnage, ouvrir artificiellement tout le con
 Les tests automatisés vérifient notamment :
 
 - l’enregistrement des 19 périodes et de leurs portes de chapitre ;
+- la présence d’au moins deux situations dans chacun des 62 lieux ;
+- l’ouverture repliée et la navigation du tiroir de gestion ;
 - la reprise d’une période active après retour au menu ;
 - l’application des statistiques, relations, ressources et objets ;
 - le verrou relationnel du triage impérial d’Iriana ;

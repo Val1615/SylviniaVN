@@ -4,10 +4,10 @@
 
 La branche de fusion ajoute désormais deux expériences depuis le même menu :
 
-- **Mode Histoire** : l’histoire canonique de Hylee, avec 19 périodes libres réparties entre les chapitres I à XIV, 62 lieux contextuels, relations persistantes, jobs, ressources et journal.
+- **Mode Histoire** : l’histoire canonique de Hylee, avec 19 périodes libres réparties entre les chapitres I à XIV, 62 lieux contextuels, 124 scènes facultatives, relations persistantes, jobs, ressources et journal.
 - **Chronique Alternative** : le Dating Sim d’origine intégré comme Mode libre autonome avec création de personnage, carte, voyages, horaires, relations, romances, activités et sauvegardes.
 
-Les périodes libres du Mode Histoire reprennent automatiquement le décor et le sprite exact de leur scène VN de référence. Les sprites propres au Dating Sim restent réservés à la Chronique Alternative.
+Les périodes libres reprennent automatiquement les décors et sprites du VN. Leur interface conserve désormais la scène en plein écran : le HUD narratif reste en bas comme pendant les chapitres, tandis que les lieux, relations et le journal sont rangés dans un tiroir replié par défaut. Les sprites propres au Dating Sim restent réservés à la Chronique Alternative.
 
 Pour jouer localement, ouvrir `index.html`. Sur GitHub Pages, le cinquième bouton coulissant **Chronique Alternative** ouvre le Mode libre sans installation supplémentaire.
 
