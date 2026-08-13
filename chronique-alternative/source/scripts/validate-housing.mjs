@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const alternativeRoot = resolve(sourceRoot, "..");
 const housingData = await readFile(resolve(sourceRoot, "src/housing-data.ts"), "utf8");
 const housingScenes = await readFile(resolve(sourceRoot, "src/housing-scenes.ts"), "utf8");
 const page = await readFile(resolve(sourceRoot, "src/page.tsx"), "utf8");
@@ -12,7 +13,7 @@ const characters = ["hylee", "remerii", "iriana", "valurn", "naiah", "lineva", "
 for (const city of cities) {
   for (let tier = 1; tier <= 5; tier += 1) {
     if (!housingData.includes(`property("${city}", ${tier},`)) throw new Error(`Logement manquant : ${city}/${tier}`);
-    await access(resolve(sourceRoot, "../..", `assets/housing/${city}_${tier}.webp`));
+    await access(resolve(alternativeRoot, `assets/housing/${city}_${tier}.webp`));
   }
 }
 

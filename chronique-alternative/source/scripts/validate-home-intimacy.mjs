@@ -11,7 +11,7 @@ const moduleUrl = `data:text/javascript;base64,${Buffer.from(transformed.code).t
 const catalog = await import(moduleUrl);
 const report = catalog.validateHomeIntimacyCatalog();
 
-const expected = { characters: 9, combinations: 27, routes: 81, chapters: 1944 };
+const expected = { characters: 9, combinations: 27, routes: 81, chapters: 2592 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }
