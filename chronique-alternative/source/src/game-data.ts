@@ -9,6 +9,7 @@ export type Effects = {
   desire?: number;
   confluence?: number;
   coins?: number;
+  items?: Record<string, number>;
   flags?: string[];
   relationshipEffects?: Record<string, Partial<Pick<Effects, "affection" | "trust" | "desire">>>;
 };
@@ -514,7 +515,7 @@ export const ROUTE_SCENES: RouteScene[] = [
     line("Valurn", "Je parie trois pièces que vous allez prétendre ne pas me connaître. Cinq que vous savez déjà qu’il vaut mieux mentir."),
     line("Valurn", "Alors ? Faites-moi gagner agréablement."),
   ], [
-    choice("v0-a", "Prendre le jeton au vol. « Je parie que vous aviez prévu les deux réponses. »", "audace", [line("Valurn", "Enfin une personne qui comprend qu’un pari se gagne avant d’être proposé."), line("Narration", "Il vous laisse le jeton.")], { stats: { audace: 1 }, affection: 5, desire: 3, trust: 2, coins: 3, confluence: 2 }),
+    choice("v0-a", "Prendre le jeton au vol. « Je parie que vous aviez prévu les deux réponses. »", "audace", [line("Valurn", "Enfin une personne qui comprend qu’un pari se gagne avant d’être proposé."), line("Narration", "Il vous laisse le jeton.")], { stats: { audace: 1 }, affection: 5, desire: 3, trust: 2, coins: 3, confluence: 2, items: { "keepsake-valurn": 1 } }),
     choice("v0-l", "« Vous ne cherchez pas à gagner. Vous vérifiez si quelqu’un m’a déjà briefé sur vous. »", "lucidite", [line("Valurn", "Voilà qui devient intéressant."), line("Narration", "Son sourire reste charmeur, mais son regard se fait sérieux.")], { stats: { lucidite: 1 }, trust: 6, affection: 3, confluence: 2 }),
     choice("v0-s", "Refuser la mise, mais accepter la conversation.", "sangFroid", [line("Valurn", "Vous refusez le jeu sans refuser le joueur. Subtil."), line("{player}", "Je préfère connaître les règles avant de miser."), line("Valurn", "Moi aussi. C’est pour cela que je les écris.")], { stats: { sangFroid: 1 }, trust: 5, affection: 3, confluence: 2 }),
   ]),

@@ -1,4 +1,5 @@
 import type { PeriodKey } from "./game-data";
+import { HOUSING_PROPERTIES } from "./housing-data";
 
 export type SpotData = {
   id: string;
@@ -9,6 +10,7 @@ export type SpotData = {
   background: string;
   activities: string[];
   icon: string;
+  housing?: boolean;
 };
 
 export type RoutineMoment = {
@@ -77,6 +79,17 @@ export const SUBLOCATIONS: SpotData[] = [
   { id: "river-halt", location: "river-halt", name: "Halte du Fleuve bleu", shortName: "Halte du fleuve", description: "La route longe ici un large fleuve avant les montagnes et les brumes de la Forêt Interdite.", background: place("foret-algratal"), activities: ["explore", "rest"], icon: "≋" },
   { id: "imperial-road", location: "imperial-road", name: "Camp de la route impériale", shortName: "Camp impérial", description: "Une escale fortifiée sur la longue route de Forthaven, utilisée par les convois et les renforts.", background: bg("camp"), activities: ["training", "rest"], icon: "⚑" },
   { id: "obsidian-waystation", location: "obsidian-waystation", name: "Relais des dunes d’obsidienne", shortName: "Relais des dunes", description: "À l’entrée du désert Hil’dinis, les caravanes vérifient leurs réserves avant de rejoindre les galeries de Tzekarun.", background: place("hildinis"), activities: ["rest", "explore"], icon: "◇" },
+  ...HOUSING_PROPERTIES.map((entry): SpotData => ({
+    id: entry.spot,
+    location: entry.location,
+    name: entry.name,
+    shortName: "Votre logis",
+    description: entry.description,
+    background: entry.background,
+    activities: ["rest"],
+    icon: "⌂",
+    housing: true,
+  })),
 ];
 
 export const DEFAULT_SPOTS: Record<string, string> = {
