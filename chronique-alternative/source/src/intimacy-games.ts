@@ -1,4 +1,5 @@
 import type { DialogueLine } from "./game-data";
+import { polishIntimacyText } from "./intimacy-prose";
 
 export type IntimacyGameOption = {
   id: string;
@@ -24,9 +25,9 @@ export type IntimacyGame = {
   };
 };
 
-const N = (text: string): DialogueLine => ({ speaker: "Narration", text });
-const C = (speaker: string, text: string, mood?: string): DialogueLine => ({ speaker, text, mood });
-const P = (text: string): DialogueLine => ({ speaker: "{player}", text });
+const N = (text: string): DialogueLine => ({ speaker: "Narration", text: polishIntimacyText(text, { speaker: "Narration", context: "individual-game" }) });
+const C = (speaker: string, text: string, mood?: string): DialogueLine => ({ speaker, text: polishIntimacyText(text, { speaker, context: "individual-game" }), mood });
+const P = (text: string): DialogueLine => ({ speaker: "{player}", text: polishIntimacyText(text, { speaker: "{player}", context: "individual-game" }) });
 const O = (id: string, label: string, score: 0 | 1 | 2, ...lines: DialogueLine[]): IntimacyGameOption => ({ id, label, score, lines });
 
 /**

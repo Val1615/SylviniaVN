@@ -66,7 +66,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         "Vous augmentez ensemble la pression sur Remerii jusqu’à lui arracher un oui brisé, tandis qu’elle maintient sur vous la stimulation que vous avez choisie. La mage jouit sans retirer sa main ni sa bouche ; elle revient ensuite à votre rythme et Hylee se place contre votre autre flanc, de sorte que votre orgasme reste reçu par deux partenaires actives et non par une observatrice et une exécutante.",
       ),
       shared: scene(
-        "Vous dessinez avec la lanterne trois zones mobiles : recevoir, donner, changer. Chaque personne y entre avec le geste adapté à son corps — ciseau, frottement, bouche ou pénétration consentie — puis en sort dès qu’une autre demande apparaît. Hylee garde les transitions visibles dans le givre ; Remerii s’assure qu’aucune configuration ne devient une obligation de symétrie.",
+        "Vous dessinez avec la lanterne trois zones mobiles : recevoir, donner, changer. Chaque personne y entre avec le geste adapté à son corps — ciseau, frottement, bouche ou pénétration désirée — puis en sort lorsqu’un nouvel élan la tire ailleurs. Hylee garde les transitions visibles dans le givre ; Remerii veille à ce qu’aucune configuration ne devienne une obligation de symétrie.",
         P("Nos gestes n’ont pas besoin de se ressembler. Ce qui doit être égal, c’est la liberté de demander une position entièrement différente."),
         C("Remerii", "Alors aucune répétition obligatoire. Hylee reçoit selon son corps, vous selon le vôtre, et je formulerai le mien sans les prendre pour modèle."),
         "Les trois scènes physiques s’enchaînent sans se copier. Hylee jouit dans un frottement de givre, Remerii dans la pénétration ou la pression qu’elle a choisie, puis elles adaptent ensemble bouche et mains à votre désir singulier ; le dernier éclat de la lanterne marque trois plaisirs distincts, reliés par le regard et non par une anatomie supposée commune.",
@@ -153,7 +153,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       ),
       shared: scene(
         "Vous vous asseyez sur Valurn et accueillez son membre viril en vous, tandis qu’Iriana se place derrière votre dos. Sa main caresse votre perle de plaisir et l’autre guide les doigts de Valurn vers sa propre intimité ; lorsque vous ralentissez, Iriana prend votre place au-dessus de lui et vous vous agenouillez devant elle, bouche sur son point de feu, gardant les trois corps dans le même changement de préséance.",
-        P("La personne au-dessus choisit la cadence, celle entre ses cuisses choisit la pression, et Valurn n’interprète aucun silence comme une permission."),
+        P("La personne au-dessus choisit la cadence, celle entre ses cuisses choisit la pression, et Valurn suit les hanches plutôt que d’essayer de gagner par avance."),
         C("Iriana", "Une règle remarquablement précise pour une soirée sans protocole. Je l’adopte parce qu’elle circule avec nous.", "calm"),
         "Votre chevauchée se termine dans votre orgasme ; celle d’Iriana dans un plaisir plus lent, soutenu par votre langue. Valurn jouit ensuite sous ses mouvements pendant que vous gardez vos doigts sur elle, et l’Impératrice refuse de se retirer avant d’avoir accompagné votre corps dans une dernière reprise choisie, sans dette ni rang.",
       ),
@@ -183,7 +183,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         "Iriana vous demande de formuler la manière exacte dont elle doit mener : bouche sur le point de feu, doigts dans l’intimité choisie, frottement ou pénétration adaptée. Valurn se place derrière elle et attend sa propre invitation avant de la toucher ; lorsqu’il commence, Iriana conserve votre rythme malgré les réactions qui traversent son corps et vous laisse corriger toute hypothèse au milieu de la scène.",
         C("Iriana", "Votre corps n’est pas un article de protocole. Vous rédigez chaque demande au présent ; je ne conserverai que celle que vous confirmez encore."),
         C("Valurn", "Et je découvre avec émotion qu’une règle peut devenir séduisante lorsqu’elle interdit précisément de deviner."),
-        "Vous changez de contact et Iriana s’adapte sans défendre le premier choix. Valurn lui donne du plaisir tandis qu’elle vous conduit vers le vôtre, puis vous choisissez une position où vos mains rejoignent les siennes sur lui ; les trois orgasmes empruntent des voies différentes, mais chacun garde le pouvoir d’interrompre ou de redessiner la suivante.",
+        "Vous changez de contact et Iriana s’adapte sans défendre le premier choix. Valurn lui donne du plaisir tandis qu’elle vous conduit vers le vôtre, puis vous choisissez une position où vos mains rejoignent les siennes sur lui ; les trois orgasmes empruntent des voies différentes, et les corps redessinent naturellement la suite au gré de leurs frissons.",
       ),
       second: scene(
         "Valurn s’installe devant vous et vous demande quel rôle son corps doit prendre sans se fier au vôtre. Vous choisissez un échange de bouche et de mains avant une éventuelle pénétration donnée ou reçue ; Iriana vient à son côté, touche simultanément son membre viril et le point de feu que vous lui désignez, faisant de sa précision un lien entre vous plutôt qu’une autorité centrale.",

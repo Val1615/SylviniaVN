@@ -1,6 +1,7 @@
 import type { DialogueLine } from "./game-data";
 import type { DateScene, IntimacyMode, PlayerSex } from "./date-scenes";
 import { intimacyRoutes, type IntimacyRoute } from "./intimacy-routes";
+import { polishIntimacyText } from "./intimacy-prose";
 
 export type IntimacyChoice = {
   id: string;
@@ -23,9 +24,9 @@ export type IntimacyProfile = {
   afterglow: DialogueLine[];
 };
 
-const N = (text: string): DialogueLine => ({ speaker: "Narration", text });
-const C = (speaker: string, text: string, mood?: string): DialogueLine => ({ speaker, text, mood });
-const P = (text: string): DialogueLine => ({ speaker: "{player}", text });
+const N = (text: string): DialogueLine => ({ speaker: "Narration", text: polishIntimacyText(text, { speaker: "Narration", context: "legacy-individual" }) });
+const C = (speaker: string, text: string, mood?: string): DialogueLine => ({ speaker, text: polishIntimacyText(text, { speaker, context: "legacy-individual" }), mood });
+const P = (text: string): DialogueLine => ({ speaker: "{player}", text: polishIntimacyText(text, { speaker: "{player}", context: "legacy-individual" }) });
 
 const modes = (
   tender: DialogueLine[],
