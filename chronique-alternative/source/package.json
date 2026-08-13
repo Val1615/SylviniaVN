@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test:intimacy": "node scripts/validate-intimacy.mjs"
+    "test:intimacy": "node scripts/validate-intimacy.mjs && node scripts/validate-group-intimacy.mjs"
   },
   "dependencies": {
     "react": "19.2.6",
