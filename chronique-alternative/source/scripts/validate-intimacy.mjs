@@ -8,10 +8,16 @@ const sourcePath = resolve(sourceRoot, "src/intimacy-routes.ts");
 const source = await readFile(sourcePath, "utf8");
 const transformed = await transformWithOxc(source, sourcePath, { transformMode: "web" });
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(transformed.code).toString("base64")}`;
-const catalog = await import(moduleUrl);
+let catalog;
+try {
+  catalog = await import(moduleUrl);
+} catch (error) {
+  console.error(`[Intimité] ${error instanceof Error ? error.message : String(error)}`);
+  process.exit(1);
+}
 const report = catalog.validateIntimacyRouteCatalog();
 
-const expected = { characters: 9, combinations: 27, routes: 81, chapters: 1296 };
+const expected = { characters: 9, combinations: 27, routes: 81, chapters: 2592 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) {
     throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
