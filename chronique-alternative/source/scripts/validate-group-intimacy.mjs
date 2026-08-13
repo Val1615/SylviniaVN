@@ -22,4 +22,18 @@ for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }
 
-console.log(`[Intimité à trois] ${report.pairs} duos · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${report.games} mini-jeux validés.`);
+const forbiddenMedicalTerms = /\b(?:vulve|vagin|vaginale?|clitoris|p[eé]nis|gland|verge|testicules?|scrotum|anus)\b/giu;
+const forbiddenMatches = source.match(forbiddenMedicalTerms) || [];
+if (forbiddenMatches.length) {
+  throw new Error(`Vocabulaire anatomique à remplacer : ${[...new Set(forbiddenMatches.map((term) => term.toLocaleLowerCase("fr")))].join(", ")}`);
+}
+
+const advancedRoutes = Object.values(catalog.GROUP_INTIMACY_ROUTES_BY_SEX)
+  .flatMap((bySex) => Object.values(bySex))
+  .flat()
+  .filter((route) => route.chapters.explicite.flat().some((line) => /position en ciseaux|pénétration|chevauch/iu.test(line.text)));
+if (advancedRoutes.length !== 18) {
+  throw new Error(`18 routes à trois avancées attendues (une par duo et par sexe), ${advancedRoutes.length} obtenues`);
+}
+
+console.log(`[Intimité à trois] ${report.pairs} duos · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${report.games} mini-jeux · ${advancedRoutes.length} progressions avancées validées.`);

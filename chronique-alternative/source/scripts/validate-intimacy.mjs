@@ -33,4 +33,19 @@ if (new Set(labels).size !== labels.length) {
   throw new Error("Chaque choix final doit posséder un libellé propre au personnage et au sexe.");
 }
 
-console.log(`[Intimité] ${report.characters} personnages · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences validées.`);
+const forbiddenMedicalTerms = /\b(?:vulve|vagin|vaginale?|clitoris|p[eé]nis|gland|verge|testicules?|scrotum|anus)\b/giu;
+const legacySource = await readFile(resolve(sourceRoot, "src/intimacy-scenes.ts"), "utf8");
+const forbiddenMatches = `${source}\n${legacySource}`.match(forbiddenMedicalTerms) || [];
+if (forbiddenMatches.length) {
+  throw new Error(`Vocabulaire anatomique à remplacer : ${[...new Set(forbiddenMatches.map((term) => term.toLocaleLowerCase("fr")))].join(", ")}`);
+}
+
+const advancedRoutes = Object.values(catalog.INTIMACY_ROUTES_BY_SEX)
+  .flatMap((bySex) => Object.values(bySex))
+  .flat()
+  .filter((route) => route.chapters.explicite.flat().some((line) => /position en ciseaux|pénétration|chevauch/iu.test(line.text)));
+if (advancedRoutes.length !== 27) {
+  throw new Error(`27 routes avancées attendues (une par personnage et par sexe), ${advancedRoutes.length} obtenues`);
+}
+
+console.log(`[Intimité] ${report.characters} personnages · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${advancedRoutes.length} progressions avancées validées.`);
