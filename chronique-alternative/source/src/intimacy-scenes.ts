@@ -35,9 +35,9 @@ const modes = (
 ): Record<IntimacyMode, DialogueLine[]> => ({ tendre: tender, suggestif: suggestive, explicite: explicit, ellipse });
 
 const receivedBody = (sex: PlayerSex, name: string): DialogueLine => {
-  if (sex === "femme") return N(`La bouche de ${name} descend sur votre ventre pendant que ses doigts écartent doucement vos cuisses. Le premier contact autour de votre clitoris vous arrache un mouvement qu’${name} suit aussitôt, variant la pression et le rythme jusqu’à faire trembler vos jambes.`);
-  if (sex === "homme") return N(`${name} referme sa main autour de votre pénis et observe votre souffle changer. Sa bouche prend ensuite le relais, lente d’abord, plus assurée lorsque vos hanches répondent ; sa main accompagne chaque mouvement jusqu’à ce que votre plaisir ne vous laisse plus la moindre phrase entière.`);
-  return N(`${name} découvre votre anatomie sans chercher à la ramener à un modèle. Sa bouche, ses doigts et ses paumes trouvent successivement les zones que votre corps lui révèle ; la pression change avec vos réactions jusqu’à ce que le plaisir rassemble toutes les sensations en une seule montée.`);
+  if (sex === "femme") return N(`La bouche de ${name} descend sur votre ventre pendant que ses doigts écartent doucement vos cuisses. Le premier contact autour de votre perle de plaisir vous arrache un mouvement qu’${name} suit aussitôt, variant la pression et le rythme jusqu’à faire trembler vos jambes.`);
+  if (sex === "homme") return N(`${name} referme sa main autour de votre sexe dressé et observe votre souffle changer. Sa bouche prend ensuite le relais, lente d’abord, plus assurée lorsque vos hanches répondent ; sa main accompagne chaque mouvement jusqu’à ce que votre plaisir ne vous laisse plus la moindre phrase entière.`);
+  return N(`${name} découvre votre corps sans chercher à le ramener à un modèle. Sa bouche, ses doigts et ses paumes trouvent successivement les zones que vous lui révélez ; la pression change avec vos réactions jusqu’à ce que le plaisir rassemble toutes les sensations en une seule montée.`);
 };
 
 const targetBody = (character: string): DialogueLine => {

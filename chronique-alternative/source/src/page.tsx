@@ -921,7 +921,8 @@ function ambientPromptLines(prompt: string, characterName: string): DialogueLine
 }
 
 function backgroundUrl(background: string) {
-  return background.startsWith("/") ? background : `/assets/backgrounds/${background}.webp`;
+  if (/^(?:\/|\.{1,2}\/|assets\/|https?:\/\/|data:)/iu.test(background)) return background;
+  return `/assets/backgrounds/${background}.webp`;
 }
 
 function routeBackground(scene: RouteScene) {
@@ -2185,7 +2186,7 @@ export default function Home() {
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
 
   return (
-    <main className={`game-shell ${game.settings.reducedMotion ? "reduce-motion" : ""}`} style={{ fontSize: `${game.settings.fontScale}%` }}>
+    <main className={`game-shell ${game.settings.reducedMotion ? "reduce-motion" : ""} ${dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" ? "scene-active" : ""}`} style={{ fontSize: `${game.settings.fontScale}%` }}>
       {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = audioVolume / 100; }} autoPlay loop />}
       <header className="game-topbar">
         <button className="brand-small" onClick={() => setTab("place")}><span>✦</span><div><strong>Les Liens du Crépuscule</strong><small>Chronique Alternative</small></div></button>

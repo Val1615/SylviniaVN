@@ -161,16 +161,27 @@ function explicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex)
   const name = CHARACTER_NAMES[character] || character;
   const npcFemale = FEMALE_BODY.has(character);
   const playerReceiving = sex === "femme"
-    ? `${name} écarte vos cuisses, embrasse l’intérieur de chacune puis pose sa bouche sur votre vulve. Sa langue trouve votre clitoris tandis qu’un doigt, puis deux après votre accord, pénètrent votre vagin au rythme que vous avez demandé ; l’autre main garde votre bassin soutenu sans l’immobiliser.`
+    ? `${name} écarte vos cuisses, embrasse l’intérieur de chacune puis pose sa bouche contre votre intimité humide. Sa langue trouve la perle de plaisir nichée au creux de vos lèvres de velours, tandis qu’un doigt, puis deux après votre accord, glissent en vous au rythme demandé ; l’autre main garde votre bassin soutenu sans l’immobiliser.`
     : sex === "homme"
-      ? `${name} referme d’abord la main autour de votre pénis et répartit le lubrifiant avec des mouvements lents. Après votre accord, sa bouche descend sur votre gland puis le long de votre verge pendant que sa main poursuit la base ; chaque accélération répond à une demande ou à la poussée volontaire de vos hanches.`
-      : `${name} vous demande de désigner précisément la partie externe que vous souhaitez voir stimulée et si votre corps possède une ouverture que vous voulez inclure. Sa bouche suit votre indication, ses doigts massent la zone voisine et ne vous pénètrent que si vous le réclamez ; aucune anatomie n’est supposée à votre place.`;
+      ? `${name} referme d’abord la main autour de votre sexe dressé et répartit le lubrifiant avec des mouvements lents. Après votre accord, sa bouche descend sur son extrémité sensible puis le long de votre membre viril pendant que sa main poursuit la base ; chaque accélération répond à une demande ou à la poussée volontaire de vos hanches.`
+      : `${name} vous demande de guider sa main vers le point de feu que vous souhaitez voir stimulé et de lui indiquer si vous voulez qu’un doigt, puis éventuellement deux, glissent en vous. Sa bouche suit votre indication, ses doigts caressent le pli secret voisin et ne vont plus loin que si vous le réclamez ; aucune forme n’est supposée à votre place.`;
   const npcReceiving = npcFemale
-    ? `Vous écartez les cuisses de ${name}, embrassez son ventre puis posez votre bouche sur sa vulve. Votre langue maintient une pression régulière sur son clitoris tandis que vos doigts la pénètrent seulement après son oui ; sa main guide votre rythme au lieu de vous laisser deviner.`
-    : `Vous prenez le pénis de ${name} dans votre main, étalez le lubrifiant du gland jusqu’à la base puis le prenez dans votre bouche après son accord. Votre langue accompagne chaque va-et-vient et votre seconde main soutient ses hanches sans les retenir ; sa voix vous indique exactement quand accélérer.`;
+    ? `Vous écartez les cuisses de ${name}, embrassez son ventre puis posez votre bouche contre son intimité humide. Votre langue maintient une pression régulière sur sa perle de plaisir, tandis que vos doigts glissent en elle seulement après son oui ; sa main guide votre rythme au lieu de vous laisser deviner.`
+    : `Vous prenez le membre viril de ${name} dans votre main, étalez le lubrifiant de son extrémité sensible jusqu’à la base puis le prenez dans votre bouche après son accord. Votre langue accompagne chaque va-et-vient et votre seconde main soutient ses hanches sans les retenir ; sa voix vous indique exactement quand accélérer.`;
   if (role === "guided") return [playerReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
   if (role === "offered") return [npcReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
-  return [npcReceiving, playerReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
+  const advancedExchange = npcFemale
+    ? sex === "femme"
+      ? `Après un nouveau oui, vous vous tournez sur le côté et entrelacez vos jambes dans une position en ciseaux. Vos lèvres de velours se pressent contre celles de ${name} ; vos bassins cherchent ensemble l’angle qui place vos deux points de feu au centre du frottement. ${name} agrippe votre hanche pour maintenir la pression, puis vous ralentissez et recommencez jusqu’à trouver une cadence commune, plus profonde que les caresses qui l’ont préparée.`
+      : sex === "homme"
+        ? `${name} vous attire entre ses cuisses et guide votre sexe dressé vers son intimité humide. Vous entrez lentement dans son écrin de chair, vous immobilisant chaque fois que son souffle change, puis reprenez lorsqu’elle vous ramène contre elle. Après plusieurs mouvements mesurés, elle vous fait rouler sur le dos et vous chevauche afin de choisir elle-même la profondeur, l’angle et la cadence de la pénétration.`
+        : `Vous nommez ensemble la suite qui convient réellement à vos corps : un frottement en ciseaux, une pénétration reçue ou une pénétration donnée. ${name} vous laisse guider l’angle, la profondeur et la cadence ; le mouvement commence lentement, s’interrompt à la moindre hésitation puis gagne en intensité lorsque vos deux voix demandent de continuer.`
+    : sex === "femme"
+      ? `Vous chevauchez ${name} face à face et guidez son membre viril vers votre intimité humide. Vous l’accueillez lentement, une main sur son épaule pour régler la profondeur, puis votre bassin trouve un mouvement qui fait glisser sa tige brûlante en vous sans rompre le baiser. ${name} ne pousse pas davantage : il soutient vos hanches et vous laisse décider de chaque reprise jusqu’à ce que vous réclamiez un rythme plus ferme.`
+      : sex === "homme"
+        ? `Après avoir préparé longuement celui qui souhaite recevoir, vous choisissez ensemble une pénétration sur le côté, assez proche pour rester enlacés. Le membre viril qui entre avance par pressions lentes dans l’intimité accueillante ; celui qui reçoit règle la profondeur d’une main et demande chaque accélération. Vous inversez ensuite les rôles seulement si un second désir est formulé, sans faire de la réciprocité une obligation.`
+        : `Vous demandez à ${name} quelle forme de pénétration correspond à vos corps et à vos envies présentes. La personne qui reçoit guide le membre dressé vers son intimité préparée, règle la profondeur et garde la main sur le bassin de l’autre ; vous changez de position uniquement lorsque les deux voix réclament une intensité différente.`;
+  return [npcReceiving, playerReceiving, advancedExchange, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
 }
 
 function routeExpansion(character: string, role: RouteRole, sex: PlayerSex): RouteExpansion {
@@ -228,7 +239,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Hylee descend entre vos cuisses et laisse vos réactions guider sa bouche et ses doigts. Le givre fond contre votre peau à mesure que le plaisir se concentre, jusqu’à vous faire trembler sous elle.", ["Hylee", "Je te sens céder. Ne retiens rien pour me rassurer.", "determined"]],
         ["Hylee referme sa main autour de votre désir, apprend votre rythme puis le prolonge de sa bouche. Sa magie répond à chaque tension de vos hanches jusqu’à faire éclater une neige fine autour de vous.", ["Hylee", "Comme ça ? Oui… ton corps vient de répondre avant toi.", "determined"]],
-        ["Hylee explore exactement les gestes que vous lui avez montrés, alternant bouche, doigts et chaleur de ses paumes sans réduire votre anatomie à une attente. Votre plaisir devient la seule carte qu’elle suit.", ["Hylee", "Je veux te connaître comme tu es, pas comme j’aurais pu t’imaginer.", "determined"]],
+        ["Hylee explore exactement les gestes que vous lui avez montrés, alternant bouche, doigts et chaleur de ses paumes sans réduire votre corps à une attente. Votre plaisir devient la seule carte qu’elle suit.", ["Hylee", "Je veux te connaître comme tu es, pas comme j’aurais pu t’imaginer.", "determined"]],
       ),
       ellipse: ["Hylee soulève la couverture et vous attire dans une neige minuscule. Vos indications deviennent des murmures, puis la chronique laisse la chambre garder la suite."],
       closing: ["Quand le givre cesse de tomber, Hylee ne s’éloigne pas. Elle pose l’oreille contre votre poitrine, encore étonnée d’avoir pu être aussi sûre sans cesser d’être elle-même.", ["Hylee", "La prochaine fois, je serai moins nerveuse. Peut-être. Mais je serai toujours attentive.", "soft"]],
@@ -264,7 +275,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Vos bouches et vos mains alternent sans ordre fixe. Hylee découvre votre plaisir entre vos cuisses, puis revient vous embrasser pendant que vous faites céder le sien, jusqu’à ce que vos orgasmes se répondent dans la neige.", ["Hylee", "Égalité. Et je demande une revanche.", "teasing"]],
         ["Hylee vous accueille contre elle, joue avec votre rythme puis renverse l’étreinte pour vous prendre à son tour entre ses mains et sa bouche. Le plaisir circule jusqu’à ne plus laisser de vainqueur.", ["Hylee", "Ne ralentis pas… je veux te sentir céder avec moi.", "determined"]],
-        ["Vous échangez les gestes que chacun·e vient de découvrir, sans rôle fixé ni anatomie supposée. Hylee suit vos indications, vous suivez les siennes, et vos plaisirs finissent par se rejoindre.", ["Hylee", "Ça, personne ne pouvait l’inventer à notre place.", "soft"]],
+        ["Vous échangez les gestes que chacun·e vient de découvrir, sans rôle fixé ni corps supposé. Hylee suit vos indications, vous suivez les siennes, et vos plaisirs finissent par se rejoindre.", ["Hylee", "Ça, personne ne pouvait l’inventer à notre place.", "soft"]],
       ),
       ellipse: ["Hylee fait tomber une neige épaisse autour du lit comme un rideau. Vos rires deviennent des souffles, puis la chronique accepte sa défaite."],
       closing: ["La neige fond lentement tandis que vous restez emmêlé·es. Hylee cherche encore qui a commencé, uniquement pour obtenir le droit de recommencer.", ["Hylee", "Je crois que nous avons triché exactement autant.", "teasing"]],
@@ -285,7 +296,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Remerii suit votre poitrine, votre ventre puis l’intérieur de vos cuisses avec une attention qui n’a plus rien d’académique. Sa bouche et ses doigts maintiennent exactement la pression que votre corps réclame jusqu’à l’orgasme.", ["Remerii", "Voilà. Ne retenez surtout pas cette conclusion.", "smirk"]],
         ["Ses mains découvrent votre tension avant que sa bouche n’en reprenne le rythme. Remerii varie méthodiquement la pression, puis abandonne toute distance lorsque votre plaisir la fait respirer aussi vite que vous.", ["Remerii", "Votre corps est remarquablement plus honnête que vos phrases.", "smirk"]],
-        ["Remerii applique chacune de vos indications, vérifie votre regard puis laisse son intuition compléter ce que les mots ne décrivent plus. Votre anatomie devient une connaissance partagée, jamais une catégorie.", ["Remerii", "Je comprends. Et je désire continuer, ce qui est une donnée essentielle.", "calm"]],
+        ["Remerii applique chacune de vos indications, vérifie votre regard puis laisse son intuition compléter ce que les mots ne décrivent plus. Votre corps devient une connaissance partagée, jamais une catégorie.", ["Remerii", "Je comprends. Et je désire continuer, ce qui est une donnée essentielle.", "calm"]],
       ),
       ellipse: ["Remerii éteint les runes l’une après l’autre, comme si elle retirait les numéros d’une expérience. Dans l’obscurité, seules vos indications demeurent."],
       closing: ["Elle reste contre vous sans corriger ses cheveux ni le drap froissé. L’ordre de la chambre a perdu ; Remerii, elle, semble plus présente que jamais.", ["Remerii", "Je n’ai pas perdu le contrôle. J’ai choisi où le déposer.", "calm"]],
@@ -342,7 +353,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Iriana s’installe entre vos cuisses, suit vos indications puis laisse son désir rendre sa bouche et ses doigts plus insistants. Elle vous conduit jusqu’à l’orgasme sans détourner le regard lorsqu’il vous traverse.", ["Iriana", "Ce plaisir n’appartient à aucun récit officiel. Seulement à nous.", "troubled"]],
         ["Elle prend votre désir en main, en éprouve le rythme puis vous fait céder avec une ardeur débarrassée de toute bienséance. Son propre souffle se brise lorsqu’elle sent votre corps perdre sa discipline.", ["Iriana", "Ne vous retenez pas devant moi. Pas ici.", "troubled"]],
-        ["Iriana suit exactement les gestes que vous nommez, puis vous demande d’une voix de plus en plus grave ce que vous souhaitez encore. Votre anatomie devient un territoire libre, jamais un dossier à classer.", ["Iriana", "Dites-le. Ce soir, vos mots n’engagent que votre plaisir.", "calm"]],
+        ["Iriana suit exactement les gestes que vous nommez, puis vous demande d’une voix de plus en plus grave ce que vous souhaitez encore. Votre corps devient un territoire libre, jamais un dossier à classer.", ["Iriana", "Dites-le. Ce soir, vos mots n’engagent que votre plaisir.", "calm"]],
       ),
       ellipse: ["Iriana tire les rideaux, dépose sa couronne de l’autre côté et prononce votre prénom dans l’obscurité. La chronique reste avec les insignes abandonnés."],
       closing: ["Elle demeure nue de tout titre bien après que vos souffles se sont apaisés. Sa main cherche la vôtre sans ordre, sans révérence et sans témoin.", ["Iriana", "Demain, je remettrai la couronne. Ne la laissez pas effacer la femme qui vous a choisi ce soir.", "calm"]],
@@ -399,7 +410,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Valurn descend entre vos cuisses sans détourner l’instant en jeu. Sa bouche et ses doigts suivent ce que votre corps réclame jusqu’à vous faire jouir, puis il reste là, bouleversé par une confiance qu’il n’a pas achetée.", ["Valurn", "Aucune dette. Promettez-moi seulement de ne pas appeler cela un paiement.", "away"]],
         ["Il prend votre désir entre ses mains, en éprouve le rythme puis vous accueille de la bouche avec une attention débarrassée de toute démonstration. Votre abandon lui retire son dernier sourire de façade.", ["Valurn", "Je n’ai rien gagné… et je n’ai jamais autant voulu rester.", "away"]],
-        ["Valurn suit vos mots et vos gestes sans supposer la forme de votre plaisir. Sa bouche, ses mains et sa magie répondent à votre anatomie réelle jusqu’à ce que toute négociation disparaisse.", ["Valurn", "Merci de m’avoir donné une vérité que je n’ai pas eu à voler.", "away"]],
+        ["Valurn suit vos mots et vos gestes sans supposer la forme de votre plaisir. Sa bouche, ses mains et sa magie répondent à votre corps réel jusqu’à ce que toute négociation disparaisse.", ["Valurn", "Merci de m’avoir donné une vérité que je n’ai pas eu à voler.", "away"]],
       ),
       ellipse: ["Valurn pose ses cartes face cachée et vous rejoint derrière le paravent. Pour une fois, aucun symbole ne raconte la suite à votre place."],
       closing: ["Au matin, la clé est toujours dans votre main et Valurn n’a pas quitté le lit avant l’aube. Il contemple ces deux faits comme une défaite espérée.", ["Valurn", "Je propose que nous ne décidions jamais lequel de nous a gagné.", "charming"]],
@@ -456,7 +467,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Naïah fait disparaître les copies et s’installe réellement entre vos cuisses. Sa bouche et ses doigts suivent vos réactions jusqu’à vous faire jouir, tandis que la clairière illusoire se couvre de fleurs à chaque spasme.", ["Naïah", "Ça, aucune illusion ne sait le fabriquer.", "thinking"]],
         ["Ses mirages reproduisent la chaleur mais seule Naïah garde votre désir entre sa main et sa bouche. Elle apprend votre rythme, le trouble puis le retrouve jusqu’à faire céder votre corps contre elle.", ["Naïah", "Le vrai tremble toujours un peu plus. J’adore ça.", "smirk"]],
-        ["Naïah suit vos indications et adapte ses formes magiques sans jamais remplacer votre anatomie réelle. Sa bouche et ses mains explorent ce qui vous fait céder jusqu’à ce que tous les mirages répondent à votre plaisir.", ["Naïah", "Je pourrais changer le décor mille fois. Je ne changerais rien à toi.", "thinking"]],
+        ["Naïah suit vos indications et adapte ses formes magiques sans jamais remplacer votre corps réel. Sa bouche et ses mains explorent ce qui vous fait céder jusqu’à ce que tous les mirages répondent à votre plaisir.", ["Naïah", "Je pourrais changer le décor mille fois. Je ne changerais rien à toi.", "thinking"]],
       ),
       ellipse: ["Naïah efface le décor pièce par pièce jusqu’à ne garder que votre silhouette près de la sienne. L’obscurité réelle vous accueille avant la suite."],
       closing: ["Au matin, une seule fleur illusoire repose encore près de vous. Naïah la rend réelle assez longtemps pour la glisser dans votre main.", ["Naïah", "Souvenir véritable. Enfin… véritable jusqu’à midi. Après, il faudra revenir me voir.", "smirk"]],
@@ -513,7 +524,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Lineva vous installe solidement contre les draps puis descend entre vos cuisses. Sa bouche et ses doigts gardent un rythme sûr jusqu’à votre orgasme, sans lâcher votre main lorsque votre corps se tend.", ["Lineva", "Je suis là. Laissez venir.", "thoughtful"]],
         ["Elle maintient votre bassin avec une force attentive tandis que sa main puis sa bouche suivent votre désir. Lineva ne ralentit qu’à votre signal et vous conduit au plaisir sans jamais transformer sa puissance en prise.", ["Lineva", "Vous pouvez céder. Je vous tiens encore.", "thoughtful"]],
-        ["Lineva suit vos repères avec la précision d’une garde devenue tendresse. Ses mains et sa bouche explorent votre anatomie selon vos mots jusqu’à ce que vous puissiez vous abandonner sans perdre le contrôle de vous-même.", ["Lineva", "Votre corps vous appartient. Je protège seulement l’espace autour.", "thoughtful"]],
+        ["Lineva suit vos repères avec la précision d’une garde devenue tendresse. Ses mains et sa bouche explorent votre corps selon vos mots jusqu’à ce que vous puissiez vous abandonner sans perdre le contrôle de vous-même.", ["Lineva", "Votre corps vous appartient. Je protège seulement l’espace autour.", "thoughtful"]],
       ),
       ellipse: ["Lineva dépose son épée hors de portée puis vous entoure de ses bras. La porte reste fermée ; pour une fois, elle ne l’écoute plus."],
       closing: ["Elle reste éveillée quelques minutes par réflexe, puis comprend que votre respiration calme ne réclame aucune relève.", ["Lineva", "Ne bougez pas. Ce n’est pas un ordre. C’est une demande bien formulée.", "thoughtful"]],
@@ -570,7 +581,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Saidin s’installe entre vos cuisses et suit votre plaisir seconde après seconde, sa bouche et ses doigts refusant tout raccourci temporel. L’orgasme arrive sans vision préalable et le bouleverse autant que vous.", ["Saidin", "C’était maintenant. Et maintenant était suffisant.", "surprised"]],
         ["Il découvre votre désir sous ses doigts puis avec sa bouche, chaque changement de rythme choisi dans l’instant. Saidin vous fait jouir sans ralentir le temps et reste contre vous pendant que la sensation passe réellement.", ["Saidin", "Je n’ai rien conservé. C’est ce qui rend cet instant précieux.", "surprised"]],
-        ["Saidin suit vos indications sans consulter la moindre possibilité. Sa bouche et ses mains apprennent votre anatomie dans le seul présent disponible jusqu’à ce que votre plaisir efface toute autre chronologie.", ["Saidin", "Aucune version de vous ne vaut celle qui me répond ici.", "surprised"]],
+        ["Saidin suit vos indications sans consulter la moindre possibilité. Sa bouche et ses mains apprennent votre corps dans le seul présent disponible jusqu’à ce que votre plaisir efface toute autre chronologie.", ["Saidin", "Aucune version de vous ne vaut celle qui me répond ici.", "surprised"]],
       ),
       ellipse: ["Saidin retourne la dernière horloge et souffle la bougie. Le temps poursuit sa route tandis que le récit renonce à connaître la suite."],
       closing: ["L’aube arrive sans effet magique. Saidin la regarde éclairer votre visage comme une couleur qu’il n’aurait jamais rencontrée.", ["Saidin", "Je pourrais dire ce que cette nuit changera. Je préfère vous demander ce que vous voulez aujourd’hui.", "surprised"]],
@@ -627,7 +638,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Bellirith descend entre vos cuisses et vous fait jouir avec sa bouche et ses doigts, portée seulement par l’attention qu’elle vous accorde. Lorsque votre plaisir cède, ses yeux brillent d’un soulagement qu’aucun sort n’a provoqué.", ["Bellirith", "C’était moi. Rien d’autre. J’avais besoin de l’entendre aussi fort.", "thoughtful"]],
         ["Elle prend votre désir entre ses mains, puis avec sa bouche, sans enchantement pour anticiper vos réactions. Bellirith apprend votre rythme et vous conduit à l’orgasme avec une fierté profondément personnelle.", ["Bellirith", "Votre corps vient de me choisir sans contrainte. Voilà un pouvoir qui m’impressionne.", "thoughtful"]],
-        ["Bellirith suit vos indications et laisse votre anatomie réelle déjouer tous ses scénarios. Sa bouche et ses mains trouvent votre plaisir sans charme, jusqu’à ce que votre abandon lui rende enfin sa propre confiance.", ["Bellirith", "Je préfère cette vérité à tous les désirs que j’aurais pu fabriquer.", "thoughtful"]],
+        ["Bellirith suit vos indications et laisse votre corps réel déjouer tous ses scénarios. Sa bouche et ses mains trouvent votre plaisir sans charme, jusqu’à ce que votre abandon lui rende enfin sa propre confiance.", ["Bellirith", "Je préfère cette vérité à tous les désirs que j’aurais pu fabriquer.", "thoughtful"]],
       ),
       ellipse: ["Bellirith laisse ses bijoux hors de portée et vous rejoint dans l’ombre. La porte se ferme sur une séduction devenue entièrement ordinaire et entièrement vôtre."],
       closing: ["Elle reste près de vous sans chercher une pose séduisante. Ses doigts trouvent les vôtres sous le drap avec une simplicité presque timide.", ["Bellirith", "Continuez à me désirer. Mais restez aussi lorsque je ne fais rien pour le mériter.", "thoughtful"]],
@@ -645,7 +656,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Votre bouche trouve son plaisir entre ses cuisses tandis que vos doigts prolongent le mouvement. Bellirith jouit sans mise en scène, agrippe vos cheveux et reste un instant incapable de reconstruire son sourire.", ["Bellirith", "Ne dites rien de séduisant. Je pourrais vous croire.", "thoughtful"]],
         ["Vous la maintenez contre les draps avec une force mesurée et faites céder son corps sous vos mains et votre bouche. Son orgasme lui retire toute réplique ; Bellirith vous attire contre elle avant que son masque revienne.", ["Bellirith", "Restez là où je ne suis plus impressionnante.", "thoughtful"]],
-        ["Vous lui faites formuler chaque désir sans jeu de rôle puis transformez ses mots en gestes. Bellirith atteint le plaisir dans une sincérité physique qui ne doit rien à son image ni à votre anatomie.", ["Bellirith", "Vous avez trouvé la seule vérité que je ne savais pas embellir.", "thoughtful"]],
+        ["Vous lui faites formuler chaque désir sans jeu de rôle puis transformez ses mots en gestes. Bellirith atteint le plaisir dans une sincérité physique qui ne doit rien à son image ni à la forme de votre corps.", ["Bellirith", "Vous avez trouvé la seule vérité que je ne savais pas embellir.", "thoughtful"]],
       ),
       ellipse: ["Vous retirez le dernier bijou et Bellirith vous attire hors du regard du récit, sans miroir ni lumière flatteuse pour répéter la scène."],
       closing: ["Son sourire revient, mais il n’est plus une défense parfaite. Bellirith vous laisse voir la fatigue heureuse qui le soutient.", ["Bellirith", "Vous pourrez me désarmer encore. À condition de me laisser parfois gagner.", "smirk"]],
@@ -684,7 +695,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       explicit: sexLines(
         ["Amanea descend entre vos cuisses et maintient votre plaisir avec une intensité précise. Sa bouche et ses doigts vous conduisent jusqu’à l’orgasme, puis elle remonte vous embrasser avec une douceur que son peuple ne verrait jamais.", ["Amanea", "Aucun ordre n’aurait valu ce que tu viens de me donner librement.", "smile"]],
         ["Elle referme sa main autour de votre désir puis vous prend dans sa bouche, sa puissance entièrement tournée vers votre plaisir. Amanea vous garde contre elle lorsque l’orgasme vous traverse, comme un secret choisi.", ["Amanea", "Tu peux t’abandonner sans t’agenouiller. Je le veux ainsi.", "smile"]],
-        ["Amanea suit les gestes que vous lui montrez et adapte sa force à votre anatomie réelle. Sa bouche et ses mains vous conduisent au plaisir sans titre, sans lignée et sans modèle imposé.", ["Amanea", "Ton corps ne représente personne. Il est à toi — et tu me l’as confié.", "smile"]],
+        ["Amanea suit les gestes que vous lui montrez et adapte sa force à votre corps réel. Sa bouche et ses mains vous conduisent au plaisir sans titre, sans lignée et sans modèle imposé.", ["Amanea", "Ton corps ne représente personne. Il est à toi — et tu me l’as confié.", "smile"]],
       ),
       ellipse: ["Amanea vous enveloppe dans sa cape noire et abaisse les flammes. La porte se referme sur une nuit qui n’appartient à aucun royaume."],
       closing: ["Elle repose près de vous, votre main emprisonnée contre son cœur. Au-dehors, Akuhn’Nabad continue sans réclamer sa présence.", ["Amanea", "La cité s’est passée de moi. Moi, je suis heureuse de ne pas m’être passée de toi.", "smile"]],
