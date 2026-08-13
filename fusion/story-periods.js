@@ -163,7 +163,7 @@
     const extraMoments = EXTRA_MOMENTS[`${periodId}:${definition.id}`] || [];
     return {
       id: definition.id,
-      icon: definition.icon || "✦",
+      icon: definition.icon || "⌖",
       name: definition.name,
       shortName: definition.shortName || definition.name,
       description: definition.description,
@@ -634,7 +634,7 @@
       spots: [
         {
           id: "dome",
-          icon: "✦",
+          icon: "◉",
           name: "Place du Grand Dôme",
           description: "Mages, apprentis et artisans circulent sous la barrière arcanique désormais familière.",
           presence: "Hylee peut enfin observer la ville sans courir vers une audience.",
@@ -805,7 +805,7 @@
       spots: [
         {
           id: "clairiere",
-          icon: "✦",
+          icon: "⌁",
           name: "Clairière de Naïah",
           description: "Le silence du pacte reste suspendu entre les racines.",
           presence: "Naïah n’a pas encore disparu, ce qui constitue déjà une forme d’invitation.",
@@ -1329,7 +1329,7 @@
       spots: [
         {
           id: "alcove",
-          icon: "✧",
+          icon: "◒",
           name: "Alcôve latérale",
           description: "Quelques rideaux offrent l’illusion d’une conversation privée.",
           presence: "Hylee et Remerii peuvent comparer ce qu’elles ont compris de la cour.",
@@ -1460,7 +1460,7 @@
       spots: [
         {
           id: "piste",
-          icon: "✧",
+          icon: "♫",
           name: "Bord de la piste",
           description: "Les danseurs changent de partenaires sous le regard calculateur de la cour.",
           presence: "Remerii tend déjà une main à Hylee, sans savoir quel ton prendra la prochaine danse.",

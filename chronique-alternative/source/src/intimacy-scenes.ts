@@ -1,5 +1,6 @@
 import type { DialogueLine } from "./game-data";
 import type { DateScene, IntimacyMode, PlayerSex } from "./date-scenes";
+import { intimacyRoutes, type IntimacyRoute } from "./intimacy-routes";
 
 export type IntimacyChoice = {
   id: string;
@@ -12,6 +13,8 @@ export type IntimacyFinalChoice = {
   text: string;
   lines: Record<IntimacyMode, DialogueLine[]>;
 };
+
+export type IntimacyDirectionChoice = IntimacyFinalChoice | IntimacyRoute;
 
 export type IntimacyProfile = {
   opening: DialogueLine[];
@@ -352,4 +355,16 @@ export function directionLines(characterId: string, directionId: string, mode: I
     }
     return line;
   });
+}
+
+export function intimacyDirections(characterId: string, sex: PlayerSex): IntimacyDirectionChoice[] {
+  const routes = intimacyRoutes(characterId, sex);
+  return routes.length ? routes : (INTIMACY_PROFILES[characterId]?.directions || []);
+}
+
+export function directionChapters(characterId: string, directionId: string, mode: IntimacyMode, sex: PlayerSex): DialogueLine[][] {
+  const richRoute = intimacyRoutes(characterId, sex).find((entry) => entry.id === directionId);
+  if (richRoute) return richRoute.chapters[mode];
+  const legacy = directionLines(characterId, directionId, mode, sex);
+  return legacy.length ? [legacy] : [];
 }
