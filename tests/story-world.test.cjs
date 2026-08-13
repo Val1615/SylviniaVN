@@ -131,6 +131,7 @@ window.startChapter3 = context.startChapter3;
 const momentsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-moments.js"), "utf8");
 new vm.Script(momentsSource, { filename: "story-moments.js" }).runInContext(context);
 const periodsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-periods.js"), "utf8");
+assert.doesNotMatch(periodsSource, /[✦✧]/, "les étoiles décoratives doivent être retirées du temps libre");
 new vm.Script(periodsSource, { filename: "story-periods.js" }).runInContext(context);
 const content = window.SylviniaStoryContent;
 
@@ -165,6 +166,11 @@ content.periods.forEach((period) => {
 
 S.c2_43.chars = [["remerii", "remerii_chapter2_exact", "right"]];
 A.remerii_chapter2_exact = "assets/sprites/chapter2/remerii_exact.png";
+S.c2_43.bg = "c2_key_example";
+A.c2_key_example = "assets/images/keyscenes/chapter2/c2_key_example.png";
+S.c2_42 = { bg: "bg_c2_apartments", chars: [["remerii", "remerii_room_exact", "right"]], next: "c2_43" };
+A.bg_c2_apartments = "assets/images/backgrounds/chapter2/apartments.png";
+A.remerii_room_exact = "assets/sprites/chapter2/remerii_room_exact.png";
 
 const engineSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-world.js"), "utf8");
 new vm.Script(engineSource, { filename: "story-world.js" }).runInContext(context);
@@ -179,6 +185,7 @@ const algratal = content.byId["algratal-preparatifs"];
 const apartment = algratal.spots.find((spot) => spot.id === "appartements");
 const apartmentVisual = window.SylviniaStoryWorld.resolveVisual(algratal, apartment);
 assert.equal(apartmentVisual.sprite, "remerii_chapter2_exact", "le sprite doit venir de la scène VN de référence");
+assert.equal(apartmentVisual.background, "bg_c2_apartments", "une image clé ne doit jamais servir de décor au temps libre");
 
 const partyPeriod = content.periods.find((period) => period.spots.some((spot) => spot.partyOutfits));
 const partySpot = partyPeriod.spots.find((spot) => spot.partyOutfits);

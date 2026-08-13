@@ -345,8 +345,85 @@
 
   function chapterPrefix(sceneId) {
     const id = String(sceneId || "");
-    const match = id.match(/^(c\d+(?:[a-z])?_)/i);
+    const match = id.match(/^([cx]\d+(?:[a-z])?_)/i);
     return match ? match[1] : id.match(/^s\d+/) ? "s" : "";
+  }
+
+  function isKeySceneBackground(backgroundKey, scene) {
+    const key = String(backgroundKey || "");
+    const source = String(assetUrl(backgroundKey) || "");
+    if (!key && !source) return false;
+    if (scene && scene.keyImage && String(scene.keyImage) === key) return true;
+    return /(?:^|\/)(?:keyscenes?|cg)(?:\/|_|-)/i.test(source)
+      || /\/keyscenes?\//i.test(source)
+      || /(?:^|_)(?:key|cg)(?:_|$)/i.test(key)
+      || /^x\d+[a-z]?_.*(?:seq|slide|user|custom)/i.test(key);
+  }
+
+  function sceneDestinations(scene) {
+    const destinations = [];
+    if (scene && typeof scene.next === "string") destinations.push(scene.next);
+    (scene && Array.isArray(scene.choices) ? scene.choices : []).forEach(function each(choice) {
+      if (choice && typeof choice.next === "string") destinations.push(choice.next);
+    });
+    return unique(destinations);
+  }
+
+  function connectedBackground(referenceId, prefix) {
+    if (!referenceId || !S[referenceId]) return "";
+    const incoming = {};
+    Object.entries(S).forEach(function each(entry) {
+      sceneDestinations(entry[1]).forEach(function eachDestination(destination) {
+        incoming[destination] = incoming[destination] || [];
+        incoming[destination].push(entry[0]);
+      });
+    });
+    const visited = new Set([referenceId]);
+    const queue = [referenceId];
+    while (queue.length && visited.size < 80) {
+      const currentId = queue.shift();
+      const neighbours = unique([...(incoming[currentId] || []), ...sceneDestinations(S[currentId])]);
+      for (const neighbourId of neighbours) {
+        if (visited.has(neighbourId) || (prefix && !neighbourId.startsWith(prefix))) continue;
+        visited.add(neighbourId);
+        const candidate = S[neighbourId];
+        if (candidate && candidate.bg && assetUrl(candidate.bg) && !isKeySceneBackground(candidate.bg, candidate)) return candidate.bg;
+        queue.push(neighbourId);
+      }
+    }
+    return "";
+  }
+
+  function environmentalBackground(period, spot, referenceScene) {
+    if (spot.background && assetUrl(spot.background) && !isKeySceneBackground(spot.background, null)) return spot.background;
+    const sceneIds = Object.keys(S);
+    const referenceId = spot.visualScene || period.anchorScene || period.nextScene;
+    const referenceIndex = Math.max(0, sceneIds.indexOf(referenceId));
+    const prefix = chapterPrefix(referenceId || period.anchorScene);
+    if (referenceScene && referenceScene.bg && assetUrl(referenceScene.bg) && !isKeySceneBackground(referenceScene.bg, referenceScene)) return referenceScene.bg;
+    const connected = connectedBackground(referenceId, prefix);
+    if (connected) return connected;
+    const candidates = sceneIds.filter(function filter(sceneId) {
+      const candidate = S[sceneId];
+      if (!candidate || !candidate.bg || !assetUrl(candidate.bg) || isKeySceneBackground(candidate.bg, candidate)) return false;
+      return !prefix || sceneId.startsWith(prefix);
+    }).sort(function sort(left, right) {
+      const leftDistance = Math.abs(sceneIds.indexOf(left) - referenceIndex);
+      const rightDistance = Math.abs(sceneIds.indexOf(right) - referenceIndex);
+      if (leftDistance !== rightDistance) return leftDistance - rightDistance;
+      const leftScene = S[left];
+      const rightScene = S[right];
+      const leftCharacter = sceneCharacter(leftScene, spot.character) ? 1 : 0;
+      const rightCharacter = sceneCharacter(rightScene, spot.character) ? 1 : 0;
+      if (leftCharacter !== rightCharacter) return rightCharacter - leftCharacter;
+      return 0;
+    });
+    if (candidates.length) return S[candidates[0]].bg;
+    const fallbacks = [referenceScene, S[period.anchorScene], S[period.nextScene]];
+    const safe = fallbacks.find(function find(scene) {
+      return scene && scene.bg && assetUrl(scene.bg) && !isKeySceneBackground(scene.bg, scene);
+    });
+    return safe ? safe.bg : "";
   }
 
   function resolveSceneVisual(period, spot) {
@@ -415,7 +492,7 @@
       companionPosition = primaryIsHylee ? "right" : "left";
     }
     return {
-      background: spot.background || (referenceScene && referenceScene.bg) || (S[period.anchorScene] && S[period.anchorScene].bg) || (S[period.nextScene] && S[period.nextScene].bg),
+      background: environmentalBackground(period, spot, referenceScene),
       sprite: spriteKey,
       character: (spriteData && spriteData.kind) || spot.character || "narrator",
       position: primaryPosition,
@@ -476,7 +553,6 @@
           </div>
           <button type="button" class="sw-drawer-toggle" data-sw-view="location" aria-controls="swDrawer" aria-expanded="false"><span>☰</span> Explorer</button>
         </header>
-        <div class="sw-status" id="swStatus" aria-label="État de Hylee et du temps libre"></div>
         <div class="sw-characters" aria-live="off">
           <img class="sw-character is-primary" id="swCharacter" alt="" hidden>
           <img class="sw-character is-companion" id="swCompanion" alt="" hidden>
@@ -488,14 +564,17 @@
             <button type="button" class="sw-drawer-close" data-sw-action="close-drawer" aria-label="Replier le panneau">×</button>
           </div>
           <nav class="sw-section-nav" aria-label="Sections du temps libre">
-            <button type="button" data-sw-view="location" class="is-selected">✦ <span>Lieux</span></button>
+            <button type="button" data-sw-view="location" class="is-selected">⌖ <span>Lieux</span></button>
             <button type="button" data-sw-view="relations">♡ <span>Relations</span></button>
             <button type="button" data-sw-view="journal">▤ <span>Journal</span></button>
           </nav>
           <div class="sw-drawer-panel" id="swDrawerPanel"></div>
           <div class="sw-drawer-foot"><span>Liberté contrôlée</span><p id="swWorldNote"></p></div>
         </aside>
-        <article class="sw-content" id="swContent"></article>
+        <div class="sw-hud">
+          <div class="sw-status" id="swStatus" aria-label="État de Hylee et du temps libre"></div>
+          <article class="sw-content" id="swContent"></article>
+        </div>
         <nav class="sw-toolbar" aria-label="Commandes du temps libre">
           <button type="button" data-sw-view="location">Lieux</button>
           <button type="button" data-sw-view="relations">Relations</button>
