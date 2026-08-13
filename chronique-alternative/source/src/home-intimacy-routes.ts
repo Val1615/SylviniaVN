@@ -46,14 +46,24 @@ const route = (character: string, sex: PlayerSex, seed: HomeRouteSeed): HomeInti
         : mode === "explicite" ? seed.explicit[sex]
           : seed.ellipse,
   );
-  const chapters = (mode: IntimacyMode) => [
-    rawLines(seed.threshold),
-    rawLines(seed.firstMovement),
-    rawLines(seed.variation),
-    modeChapter(mode),
-    rawLines(seed.reprise),
-    rawLines([...seed.closing, seed.after[sex]]),
-  ];
+  const chapters = (mode: IntimacyMode) => {
+    const sequence = [
+      rawLines(seed.threshold),
+      rawLines(seed.firstMovement),
+      rawLines(seed.variation),
+      modeChapter(mode),
+      rawLines(seed.reprise),
+      rawLines(seed.closing),
+      rawLines([seed.after[sex]]),
+    ];
+    const splitIndex = sequence.findIndex((chapter) => chapter.length > 1);
+    if (splitIndex >= 0) {
+      const chapter = sequence[splitIndex];
+      const pivot = Math.ceil(chapter.length / 2);
+      sequence.splice(splitIndex, 1, chapter.slice(0, pivot), chapter.slice(pivot));
+    }
+    return sequence;
+  };
   return {
     id: `home-${character}-${sex}-${seed.id}`,
     text: seed.labels[sex],
@@ -717,7 +727,7 @@ export function validateHomeIntimacyCatalog() {
       entries.forEach((entry) => {
         labels.push(entry.text);
         (["tendre", "suggestif", "explicite", "ellipse"] as IntimacyMode[]).forEach((mode) => {
-          if (entry.chapters[mode].length !== 6 || entry.chapters[mode].some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: six séquences requises`);
+          if (entry.chapters[mode].length !== 8 || entry.chapters[mode].some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: huit séquences requises`);
           chapters += entry.chapters[mode].length;
         });
       });

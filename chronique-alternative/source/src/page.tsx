@@ -20,6 +20,7 @@ import { AMBIENT_LINES, type AmbientDialogue } from "./ambient-dialogues";
 import { SOCIAL_SCENES, type SocialScene } from "./social-scenes";
 import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
+import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
 import {
   GROUP_DATES,
@@ -35,6 +36,30 @@ import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./na
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
 import { sceneClosure } from "./scene-closures";
 import { MUSIC_LABELS, musicForContext } from "./music-data";
+import {
+  DISPLAY_ITEMS,
+  HOME_INTIMACY_CITY,
+  HOUSING_PROPERTIES,
+  STORY_KEEPSAKE_BY_CHARACTER,
+  discountedPropertyPrice,
+  displayItemById,
+  emptyHousingState,
+  housingDiscount,
+  housingSaleValue,
+  propertyById,
+  type HousingState,
+} from "./housing-data";
+import {
+  HOME_DATE_PROFILES,
+  HOME_PAIR_DATES,
+  RESIDENT_MOMENTS,
+  availableSharedHomeMoment,
+  homeDateOpening,
+  pairDateOpening,
+  type HomePairDateProfile,
+  type HomeDateProfile,
+  type HomeDateTone,
+} from "./housing-scenes";
 import { JOBS, JOB_KIND_LABELS, allJobRounds, jobCratesForSession, jobPathForSession, jobRoundOrder, jobSessionLabel, jobsAtSpot, type JobData, type JobOption, type JobRound } from "./jobs-data";
 import {
   ASSEMBLY_PARTS,
@@ -127,6 +152,7 @@ type GameState = {
   dateHistory: string[];
   groupDateHistory: string[];
   jobRuns: Record<string, number>;
+  housing: HousingState;
   settings: GameSettings;
 };
 
@@ -138,12 +164,14 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date";
+  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date" | "home";
   route?: RouteScene;
   ambientId?: string;
   socialId?: string;
   date?: DateScene;
   groupDate?: GroupDateScene;
+  homeMomentId?: string;
+  homeMomentCharacters?: string[];
   cast: string[];
 };
 
@@ -211,8 +239,11 @@ type ModalState =
   | { kind: "character"; character: string }
   | { kind: "gift"; character: string }
   | { kind: "date-planner"; character: string }
+  | { kind: "home-date"; character: string }
+  | { kind: "home-pair-date"; pairId: string }
+  | { kind: "home-date-result"; character: string; score: number }
+  | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string; home?: boolean }
   | { kind: "date-result"; character: string; dateId: string }
-  | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string }
   | { kind: "group-date-planner" }
   | { kind: "group-date-result"; groupDateId: string }
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
@@ -338,6 +369,7 @@ function createGame(player: Player): GameState {
     dateHistory: [],
     groupDateHistory: [],
     jobRuns: {},
+    housing: emptyHousingState(),
     settings: { ...DEFAULT_SETTINGS },
   };
 }
@@ -360,7 +392,11 @@ function hydrateGame(raw: unknown): GameState | null {
   const fresh = createGame(value.player);
   const location = LOCATIONS.some((entry) => entry.id === value.location) ? value.location! : fresh.location;
   const requestedSpot = typeof value.spot === "string" ? spotById(value.spot) : undefined;
-  const spot = requestedSpot?.location === location ? requestedSpot.id : (DEFAULT_SPOTS[location] || fresh.spot);
+  const savedProperty = propertyById(value.housing?.propertyId);
+  const spotBelongsToSavedHome = Boolean(savedProperty && requestedSpot?.id === savedProperty.spot);
+  const spot = requestedSpot?.location === location && (!requestedSpot.housing || spotBelongsToSavedHome)
+    ? requestedSpot.id
+    : (DEFAULT_SPOTS[location] || fresh.spot);
   const legacyTimeline = Number((raw as { version?: number }).version || 0) < 8;
   const resetCharacters = new Set(["iriana", "valurn", "bellirith", "amanea", "draven"]);
   const oldRelationships = Object.fromEntries(CHARACTERS.map((character) => {
@@ -397,6 +433,21 @@ function hydrateGame(raw: unknown): GameState | null {
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
     groupDateHistory: value.groupDateHistory || [],
     jobRuns: value.jobRuns || {},
+    housing: {
+      ...emptyHousingState(),
+      ...(value.housing || {}),
+      propertyId: savedProperty?.id,
+      purchasePrice: savedProperty ? Math.max(0, Number(value.housing?.purchasePrice) || savedProperty.price) : 0,
+      displayed: Array.from({ length: 3 }, (_, index) => {
+        const item = value.housing?.displayed?.[index] || null;
+        return item && (value.inventory?.[item] || 0) > 0 ? item : null;
+      }),
+      residents: savedProperty ? unique(value.housing?.residents || []).filter((id) => CHARACTERS.some((character) => character.id === id)) : [],
+      homeDateHistory: value.housing?.homeDateHistory || [],
+      homeDateGifts: value.housing?.homeDateGifts || [],
+      residentMomentHistory: value.housing?.residentMomentHistory || {},
+      sharedMomentHistory: value.housing?.sharedMomentHistory || [],
+    },
   };
 }
 
@@ -470,7 +521,19 @@ function characterSchedule(character: CharacterData, day: number, flags: string[
   return { ...itinerary[0], untilDay: day, cycleDay, cycleLength, stopDay: 1 };
 }
 
-function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = []) {
+function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = [], housing?: HousingState) {
+  const home = propertyById(housing?.propertyId);
+  const residentIndex = housing?.residents.indexOf(character.id) ?? -1;
+  const residentHome = home && residentIndex >= 0 && (period === 0 || period === 3 || (day + residentIndex) % 4 === period);
+  if (residentHome) {
+    return {
+      location: home.location,
+      spot: home.spot,
+      action: period === 0 ? "commence sa journée dans votre logis" : period === 3 ? "retrouve le calme de votre logis" : "profite librement de votre logis",
+      traveling: false,
+      untilDay: day + 1,
+    };
+  }
   const schedule = characterSchedule(character, day, flags);
   let moment = schedule.location
     ? routineFor(character.id, schedule.location, PERIODS[period].id, day)
@@ -502,7 +565,7 @@ function nextPresence(
     const absolute = start + offset;
     const day = Math.floor(absolute / PERIODS.length);
     const period = absolute % PERIODS.length;
-    const place = characterPlace(character, day, period, game.flags);
+    const place = characterPlace(character, day, period, game.flags, game.housing);
     if (day >= minDay && place.spot === spotId && (!allowedPeriods || allowedPeriods.includes(PERIODS[period].id))) {
       return { day, period, place, offset };
     }
@@ -558,7 +621,7 @@ function socialSceneReady(scene: SocialScene, selectedCharacter: string, game: G
   if (scene.sublocations && !scene.sublocations.includes(game.spot)) return false;
   if ((scene.requiredPresent || scene.characters).some((id) => {
     const character = CHARACTERS.find((entry) => entry.id === id);
-    const place = character ? characterPlace(character, game.day, game.period, game.flags) : undefined;
+    const place = character ? characterPlace(character, game.day, game.period, game.flags, game.housing) : undefined;
     return !place || place.location !== game.location || place.spot !== game.spot;
   })) return false;
   if (scene.minStages && Object.entries(scene.minStages).some(([id, stage]) => game.relationships[id].stage < stage)) return false;
@@ -932,7 +995,7 @@ function routeBackground(scene: RouteScene) {
 function expandedLines(scene: SceneView, game: GameState, lines: DialogueLine[], phase: "intro" | "response", spotId = game.spot) {
   const spot = spotById(spotId);
   const lead = scene.cast[0] ? CHARACTERS.find((character) => character.id === scene.cast[0]) : undefined;
-  const place = lead ? characterPlace(lead, game.day, game.period, game.flags) : undefined;
+  const place = lead ? characterPlace(lead, game.day, game.period, game.flags, game.housing) : undefined;
   return enrichDialogueLines(lines, {
     sceneId: scene.id,
     title: scene.title,
@@ -1138,10 +1201,17 @@ export default function Home() {
         relationships[otherId] = relation;
       }
       const character = CHARACTERS.find((entry) => entry.id === characterId);
+      const inventory = { ...current.inventory };
+      for (const [itemId, amount] of Object.entries(effects.items || {})) inventory[itemId] = (inventory[itemId] || 0) + amount;
+      if (completedScene?.stage === 4 && characterId && characterId !== "valurn") {
+        const keepsake = STORY_KEEPSAKE_BY_CHARACTER[characterId];
+        if (keepsake && !inventory[keepsake]) inventory[keepsake] = 1;
+      }
       return {
         ...current,
         stats,
         relationships,
+        inventory,
         confluence: clamp(current.confluence + (effects.confluence || 0)),
         coins: Math.max(0, current.coins + (effects.coins || 0)),
         flags: unique([...current.flags, ...(effects.flags || [])]),
@@ -1157,6 +1227,36 @@ export default function Home() {
     const character = CHARACTERS.find((entry) => entry.id === characterId);
     if (!character) return;
     const relation = game.relationships[characterId];
+    const ownedHome = propertyById(game.housing.propertyId);
+    if (ownedHome?.spot === game.spot && game.housing.residents.includes(characterId)) {
+      const residentsHere = game.housing.residents.filter((id) => {
+        const resident = CHARACTERS.find((entry) => entry.id === id);
+        return resident && characterPlace(resident, game.day, game.period, game.flags, game.housing).spot === game.spot;
+      });
+      const sharedMoment = availableSharedHomeMoment(residentsHere, game.housing.sharedMomentHistory);
+      const sharedForCharacter = sharedMoment?.characters.includes(characterId) ? sharedMoment : undefined;
+      const seen = game.housing.residentMomentHistory[characterId] || [];
+      const personalDeck = RESIDENT_MOMENTS[characterId] || [];
+      const personalMoment = personalDeck.find((entry) => !seen.includes(entry.id)) || personalDeck[seen.length % Math.max(1, personalDeck.length)];
+      const homeMoment = sharedForCharacter || personalMoment;
+      if (homeMoment) {
+        const scene: SceneView = {
+          id: homeMoment.id,
+          title: homeMoment.title,
+          background: ownedHome.background,
+          mood: character.defaultMood,
+          character: homeMoment.characters[0],
+          cast: homeMoment.characters,
+          intro: homeMoment.intro,
+          choices: homeMoment.choices,
+          kind: "home",
+          homeMomentId: homeMoment.id,
+          homeMomentCharacters: homeMoment.characters,
+        };
+        setDialogue({ scene, lines: expandedLines(scene, game, scene.intro, "intro"), lineIndex: 0, phase: "intro" });
+        return;
+      }
+    }
     const route = sceneFor(characterId, relation.stage);
     const bond = relation.affection + relation.trust;
     const routeSpotId = route ? ROUTE_SPOTS[route.id] : undefined;
@@ -1231,7 +1331,7 @@ export default function Home() {
       ambientHistory,
     );
     if (!ambient) {
-      const place = characterPlace(character, game.day, game.period, game.flags);
+      const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
       setModal({ kind: "notice", title: `${character.name} est occupé·e`, text: `${character.name} ${place.action}. Revenez à une autre période : ses conversations suivent maintenant son activité et ce sous-lieu.` });
       return;
     }
@@ -1297,6 +1397,27 @@ export default function Home() {
         sceneMemories: { ...current.sceneMemories, [socialId]: current.spot },
         journal: social?.oneTime ? [...current.journal, `Liens croisés · ${social.title}`] : current.journal,
       }));
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "home" && dialogue.scene.homeMomentId) {
+      const momentId = dialogue.scene.homeMomentId;
+      const characters = dialogue.scene.homeMomentCharacters || dialogue.scene.cast;
+      updateGame((current) => {
+        const sharedMoment = momentId.startsWith("home-shared-");
+        const residentMomentHistory = { ...current.housing.residentMomentHistory };
+        if (!sharedMoment) {
+          const owner = characters[0];
+          residentMomentHistory[owner] = unique([...(residentMomentHistory[owner] || []), momentId]).slice(-24);
+        }
+        return {
+          ...current,
+          housing: {
+            ...current.housing,
+            residentMomentHistory,
+            sharedMomentHistory: sharedMoment ? unique([...current.housing.sharedMomentHistory, momentId]) : current.housing.sharedMomentHistory,
+          },
+          journal: [...current.journal, `Logis · ${dialogue.scene.title} · ${characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).filter(Boolean).join(" et ")}`],
+        };
+      });
     }
     if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date) {
       const date = dialogue.scene.date;
@@ -1831,7 +1952,7 @@ export default function Home() {
     const character = CHARACTERS.find((entry) => entry.id === characterId);
     const gift = GIFTS.find((entry) => entry.id === giftId);
     if (!character || !gift) return;
-    const place = characterPlace(character, game.day, game.period, game.flags);
+    const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     if (place.location !== game.location || place.spot !== game.spot) {
       setModal({ kind: "notice", title: "Impossible de remettre le présent", text: `${character.name} n’est plus dans ce sous-lieu. Retrouvez cette personne exactement au même endroit et à la même période.` });
       return;
@@ -1843,14 +1964,204 @@ export default function Home() {
       relation.gifts += 1;
       relation.affection = clamp(relation.affection + (liked ? 6 : 2));
       relation.trust = clamp(relation.trust + (liked ? 3 : 1));
+      const remaining = Math.max(0, (current.inventory[giftId] || 0) - 1);
+      const displayed = remaining > 0
+        ? current.housing.displayed
+        : current.housing.displayed.map((item) => item === giftId ? null : item);
       return {
         ...current,
         relationships: { ...current.relationships, [characterId]: relation },
-        inventory: { ...current.inventory, [giftId]: current.inventory[giftId] - 1 },
+        inventory: { ...current.inventory, [giftId]: remaining },
+        housing: { ...current.housing, displayed },
         journal: [...current.journal, `Présent offert à ${character.name} : ${gift.name}.`],
       };
     });
     setModal({ kind: "notice", title: liked ? "Un présent qui touche juste" : "Une attention remarquée", text: liked ? `${character.name} reconnaît immédiatement l’attention derrière ce choix.` : `${character.name} accepte le présent avec curiosité. L’intention compte, même si l’objet ne lui correspond pas tout à fait.`, consumeTime: true });
+  }
+
+  function buyProperty(propertyId: string) {
+    if (!game) return;
+    const property = propertyById(propertyId);
+    const city = property && LOCATIONS.find((entry) => entry.id === property.location);
+    if (!property || !city || (game.day < city.unlockDay && !game.settings.unlockAll)) return;
+    const price = discountedPropertyPrice(property, game.relationships);
+    const credit = housingSaleValue(game.housing);
+    const balance = price - credit;
+    if (balance > game.coins) {
+      setModal({ kind: "notice", title: "Fonds insuffisants", text: `L’échange demande encore ${balance - game.coins} pièces après la reprise de votre logement actuel.` });
+      return;
+    }
+    const former = propertyById(game.housing.propertyId);
+    updateGame((current) => ({
+      ...current,
+      coins: current.coins - balance,
+      housing: {
+        ...current.housing,
+        propertyId: property.id,
+        purchasePrice: price,
+        displayed: former ? current.housing.displayed : [null, null, null],
+        residents: former ? current.housing.residents : [],
+      },
+      journal: [...current.journal, `${former ? "Échange" : "Achat"} immobilier · ${property.name} à ${city.name} · ${price} pièces${credit ? `, reprise ${credit}` : ""}.`],
+      codex: unique([...current.codex, property.name]),
+      location: current.spot === former?.spot ? property.location : current.location,
+      spot: current.spot === former?.spot ? property.spot : current.spot,
+    }));
+    if (game.spot === former?.spot) {
+      setSelectedLocation(property.location);
+      setSelectedSpot(property.spot);
+    }
+  }
+
+  function sellProperty() {
+    if (!game) return;
+    const property = propertyById(game.housing.propertyId);
+    if (!property) return;
+    const value = housingSaleValue(game.housing);
+    updateGame((current) => ({
+      ...current,
+      coins: current.coins + value,
+      location: current.spot === property.spot ? property.location : current.location,
+      spot: current.spot === property.spot ? DEFAULT_SPOTS[property.location] : current.spot,
+      housing: {
+        ...current.housing,
+        propertyId: undefined,
+        purchasePrice: 0,
+        displayed: [null, null, null],
+        residents: [],
+      },
+      journal: [...current.journal, `Vente immobilière · ${property.name} · ${value} pièces récupérées.`],
+    }));
+    if (game.spot === property.spot) {
+      setSelectedLocation(property.location);
+      setSelectedSpot(DEFAULT_SPOTS[property.location]);
+    }
+  }
+
+  function setDisplayedItem(slot: number, itemId: string) {
+    if (!game?.housing.propertyId || slot < 0 || slot > 2) return;
+    const nextId = itemId || null;
+    if (nextId && !(game.inventory[nextId] > 0)) return;
+    updateGame((current) => {
+      const displayed = [...current.housing.displayed];
+      displayed[slot] = nextId;
+      return { ...current, housing: { ...current.housing, displayed } };
+    });
+  }
+
+  function toggleResident(characterId: string) {
+    if (!game?.housing.propertyId) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const relation = game.relationships[characterId];
+    if (!character || (!game.settings.unlockAll && (relation.stage < 3 || relation.trust < 24))) return;
+    const already = game.housing.residents.includes(characterId);
+    updateGame((current) => ({
+      ...current,
+      housing: { ...current.housing, residents: already ? current.housing.residents.filter((id) => id !== characterId) : unique([...current.housing.residents, characterId]) },
+      journal: [...current.journal, already ? `${character.name} conserve désormais son propre logement.` : `${character.name} accepte de vivre aussi dans votre logis.`],
+    }));
+  }
+
+  function startHomeDate(characterId: string) {
+    if (!game?.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return;
+    const relation = game.relationships[characterId];
+    if (!game.settings.unlockAll && (relation.stage < 3 || relation.affection < 22 || relation.trust < 22)) return;
+    setModal({ kind: "home-date", character: characterId });
+  }
+
+  function startHomePairDate(pairId: string) {
+    if (!game?.housing.propertyId) return;
+    const pair = HOME_PAIR_DATES.find((entry) => entry.id === pairId);
+    if (!pair) return;
+    const unlocked = game.settings.unlockAll || (
+      pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust)
+      && (pair.requiredFlags || []).every((flag) => game.flags.includes(flag))
+    );
+    if (unlocked) setModal({ kind: "home-pair-date", pairId });
+  }
+
+  function finishHomeDate(characterId: string, tone: HomeDateTone, score: number) {
+    if (!game) return;
+    const profile = HOME_DATE_PROFILES[characterId];
+    const property = propertyById(game.housing.propertyId);
+    if (!profile || !property) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId)!;
+    const effects = profile.tones[tone].effects;
+    const newGift = !game.housing.homeDateGifts.includes(characterId);
+    updateGame((current) => {
+      const relation = { ...current.relationships[characterId] };
+      relation.affection = clamp(relation.affection + (effects.affection || 0) + (score >= 5 ? 3 : score >= 3 ? 1 : 0));
+      relation.trust = clamp(relation.trust + (effects.trust || 0) + (score >= 4 ? 2 : 0));
+      relation.desire = clamp(relation.desire + (effects.desire || 0));
+      relation.met = true;
+      const inventory = { ...current.inventory };
+      if (newGift) inventory[profile.gift] = (inventory[profile.gift] || 0) + 1;
+      return {
+        ...current,
+        day: current.day + 1,
+        period: 3,
+        location: property.location,
+        spot: property.spot,
+        relationships: { ...current.relationships, [characterId]: relation },
+        inventory,
+        housing: {
+          ...current.housing,
+          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${current.day + 1}`].slice(-96),
+          homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
+        },
+        journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
+      };
+    });
+    setSelectedLocation(property.location);
+    setSelectedSpot(property.spot);
+    const relationAfter = {
+      affection: relation.affection + (effects.affection || 0) + (score >= 5 ? 3 : score >= 3 ? 1 : 0),
+      trust: relation.trust + (effects.trust || 0) + (score >= 4 ? 2 : 0),
+      desire: relation.desire + (effects.desire || 0),
+    };
+    const intimateCity = HOME_INTIMACY_CITY[characterId];
+    const canBecomeIntimate = tone === "desir" && characterId !== "draven" && (game.settings.unlockAll || (
+      relation.stage >= 4 && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && score >= 3 && (!intimateCity || intimateCity === property.location)
+    ));
+    setModal(canBecomeIntimate
+      ? { kind: "home-date-result", character: characterId, score }
+      : { kind: "notice", title: score >= 5 ? "Une soirée qui habitera les murs" : "Une soirée chez vous", text: `${character.name} repart en laissant derrière ${newGift ? displayItemById(profile.gift)?.name?.toLowerCase() : "un nouveau souvenir"}. Le rendez-vous est désormais inscrit dans l’histoire de ce logis.` });
+  }
+
+  function finishHomePairDate(pairId: string, tone: HomeDateTone, score: number) {
+    if (!game) return;
+    const pair = HOME_PAIR_DATES.find((entry) => entry.id === pairId);
+    const property = propertyById(game.housing.propertyId);
+    if (!pair || !property) return;
+    updateGame((current) => {
+      const relationships = { ...current.relationships };
+      pair.characters.forEach((id) => {
+        const relation = { ...relationships[id] };
+        relation.affection = clamp(relation.affection + (tone === "amical" ? 5 : 7) + (score >= 5 ? 2 : 0));
+        relation.trust = clamp(relation.trust + 6 + (score >= 4 ? 2 : 0));
+        relation.desire = clamp(relation.desire + (tone === "desir" ? 7 : tone === "amoureux" ? 3 : 0));
+        relationships[id] = relation;
+      });
+      return {
+        ...current,
+        day: current.day + 1,
+        period: 3,
+        location: property.location,
+        spot: property.spot,
+        relationships,
+        housing: { ...current.housing, homeDateHistory: [...current.housing.homeDateHistory, `pair:${pair.id}:${tone}@${current.day + 1}`].slice(-96) },
+        journal: [...current.journal, `Rendez-vous partagé au logis · ${pair.title} · ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")}.`],
+      };
+    });
+    setSelectedLocation(property.location);
+    setSelectedSpot(property.spot);
+    setModal({ kind: "notice", title: score >= 5 ? "Trois présences, un nouveau souvenir" : "Une visite partagée", text: `La dynamique entre ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")} a laissé une trace nouvelle dans votre logis. Ce rencard restera distinct de vos moments à deux.` });
+  }
+
+  function startHomeIntimacy(characterId: string) {
+    const property = game && propertyById(game.housing.propertyId);
+    if (!property || characterId === "draven") return;
+    setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
   function startDate(dateId: string) {
@@ -1937,10 +2248,10 @@ export default function Home() {
   function closeIntimacy(completed: boolean, memory?: string) {
     if (!modal || modal.kind !== "intimacy") return;
     if (completed && !modal.replay) {
-      const memoryKey = `intimacy:${modal.dateId || modal.character}`;
+      const memoryKey = `intimacy:${modal.home ? `home:${modal.character}` : modal.dateId || modal.character}`;
       updateGame((current) => ({
         ...current,
-        flags: modal.dateId ? unique([...current.flags, `date-intimate:${modal.dateId}`]) : current.flags,
+        flags: unique([...current.flags, ...(modal.dateId ? [`date-intimate:${modal.dateId}`] : []), ...(modal.home ? [`home-intimate:${modal.character}`] : [])]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
       }));
     }
@@ -2171,9 +2482,9 @@ export default function Home() {
   const viewedLocation = LOCATIONS.find((location) => location.id === selectedLocation) || currentLocation;
   const selectedSpotData = spotById(selectedSpot);
   const viewedSpot = selectedSpotData?.location === viewedLocation.id ? selectedSpotData : spotById(DEFAULT_SPOTS[viewedLocation.id])!;
-  const viewedSpots = spotsForLocation(viewedLocation.id);
+  const viewedSpots = spotsForLocation(viewedLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
   const presentCharacters = CHARACTERS.filter((character) => {
-    const place = characterPlace(character, game.day, game.period, game.flags);
+    const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     return (game.day >= character.unlockDay || game.settings.unlockAll) && place.location === game.location && place.spot === game.spot;
   });
   const visibleCharacters = CHARACTERS.filter((character) => game.day >= character.unlockDay || game.settings.unlockAll);
@@ -2223,7 +2534,7 @@ export default function Home() {
                 {presentCharacters.length ? presentCharacters.map((character) => {
                   const relation = game.relationships[character.id];
                   const nextScene = sceneFor(character.id, relation.stage);
-                  const place = characterPlace(character, game.day, game.period, game.flags);
+                  const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
                   const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage];
                   const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
                   return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
@@ -2260,7 +2571,7 @@ export default function Home() {
               <img src="/assets/map.png" alt="Carte de Sylvinia" />
               {LOCATIONS.map((location) => {
                 const locked = game.day < location.unlockDay && !game.settings.unlockAll;
-                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags).location === location.id);
+                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).location === location.id);
                 return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""} ${locked ? "locked" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { if (!locked) { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); } }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}{locked && <em>J{location.unlockDay}</em>}</button>;
               })}
             </div>
@@ -2275,7 +2586,7 @@ export default function Home() {
                 <div><p className="eyebrow">{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Position actuelle" : "Destination"}</p><h2 id="map-destination-title">{viewedLocation.name}</h2><span>{viewedSpot.name}</span></div>
               </div>
               {viewedSpots.length > 1 && <div className="sublocation-list"><div><strong>Sous-lieux</strong><small>{viewedSpots.length} endroits vivants</small></div>{viewedSpots.map((spot) => {
-                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags).spot === spot.id);
+                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).spot === spot.id);
                 const spotJobs = jobsAtSpot(spot.id);
                 return <button key={spot.id} className={viewedSpot.id === spot.id ? "active" : ""} onClick={() => setSelectedSpot(spot.id)}><span>{spot.icon}</span><div><b>{spot.shortName}</b><small>{spot.description}</small>{spotJobs.length > 0 && <span className="spot-job-badges">{spotJobs.map((job) => { const access = jobAccess(game, job); return <em className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}</em>; })}</span>}</div>{occupants.length > 0 && <span className="spot-occupants">{occupants.map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}</span>}</button>;
               })}</div>}
@@ -2288,13 +2599,13 @@ export default function Home() {
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
       {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} />}
-      {tab === "inventory" && <InventoryView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} />}
+      {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} onHomeDate={startHomeDate} onPairDate={startHomePairDate} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
 
       <nav className="game-nav">
         {([
-          ["place", "◉", "Lieu"], ["map", "⌖", "Carte"], ["jobs", "◈", "Jobs"], ["relations", "♡", "Relations"], ["journal", "≡", "Journal"], ["inventory", "◇", "Sac"], ["codex", "✧", "Codex"], ["options", "⚙", "Options"],
+          ["place", "◉", "Lieu"], ["map", "⌖", "Carte"], ["jobs", "◈", "Jobs"], ["relations", "♡", "Relations"], ["journal", "≡", "Journal"], ["inventory", "⌂", "Biens"], ["codex", "✧", "Codex"], ["options", "⚙", "Options"],
         ] as [Tab, string, string][]).map(([id, icon, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => { setMapDestinationOpen(false); setTab(id); }}><span>{icon}</span>{label}</button>)}
       </nav>
 
@@ -2308,6 +2619,9 @@ export default function Home() {
         giveGift={giveGift}
         startDate={startDate}
         startDateIntimacy={startDateIntimacy}
+        finishHomeDate={finishHomeDate}
+        finishHomePairDate={finishHomePairDate}
+        startHomeIntimacy={startHomeIntimacy}
         onIntimacyClose={closeIntimacy}
         startGroupDate={startGroupDate}
         startGroupDateIntimacy={startGroupDateIntimacy}
@@ -2328,7 +2642,7 @@ function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModa
   return <main className="title-screen">
     <div className="title-backdrop" /><div className="title-vignette" />
     <button className="chronicle-badge" onClick={onChronicle}><span>Chronique Alternative</span><small>Mode libre · Une autre Sylvinia</small></button>
-    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div><div className="title-meta"><span>Histoire principale sans date limite</span><span>18 rendez-vous + 6 rendez-vous à trois</span><span>135 routes intimes personnalisées</span><span>Amanea · Reine Noire vivante</span></div></section>
+    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div><div className="title-meta"><span>Histoire principale sans date limite</span><span>18 rendez-vous + 6 rendez-vous à trois</span><span>135 routes publiques + 81 au logis</span><span>Amanea · Reine Noire vivante</span></div></section>
     <p className="title-footer">Jeu narratif pour public adulte · Intimité réglable · Scènes interactives · Sauvegarde locale</p>
     {modal?.kind === "chronicle" && <ChronicleModal onClose={closeModal} />}
     {modal?.kind === "notice" && <SimpleModal title={modal.title} text={modal.text} onClose={closeModal} />}
@@ -2415,7 +2729,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
   return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><button className="group-date-launcher" onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{GROUP_DATES[0].characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Nouveau · relations croisées</p><h2>Rendez-vous à trois</h2><p>Six duos compatibles, chacun avec une dynamique, un mini-jeu et trois conclusions propres à votre sexe.</p></div><b>{availableGroupDates.length} / {GROUP_DATES.length}<small>accessibles</small></b></button><div className="relationship-grid">{CHARACTERS.map((character) => {
     const relation = game.relationships[character.id];
     const unlocked = game.day >= character.unlockDay || game.settings.unlockAll;
-    const schedule = characterPlace(character, game.day, game.period, game.flags);
+    const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const locationId = schedule.location;
     const location = LOCATIONS.find((entry) => entry.id === locationId);
     const exactSpot = spotById(schedule.spot);
@@ -2466,12 +2780,26 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
   </section>;
 }
 
-function InventoryView({ game, presentCharacters, onShop, onGive }: { game: GameState; presentCharacters: CharacterData[]; onShop: () => void; onGive: (character: string, gift: string) => void }) {
-  const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
-  return <section className="content-view">
-    <header className="content-header"><div><p className="eyebrow">Objets & présents</p><h1>Sac de voyage</h1><p>Achetez un objet, retrouvez une personne au même sous-lieu, puis choisissez « Offrir » ici ou sur sa carte de présence.</p></div><button className="coins-button" onClick={onShop}>◈ {game.coins} · Ouvrir le marché</button></header>
-    <div className="gift-steps"><span><b>1</b>Acheter au marché</span><span><b>2</b>Rejoindre le même sous-lieu</span><span><b>3</b>Choisir la personne</span></div>
-    {owned.length ? <div className="inventory-grid">{owned.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Possédé : {game.inventory[gift.id]}</small><div className="gift-recipient-row">{presentCharacters.length ? presentCharacters.map((character) => <button key={character.id} onClick={() => onGive(character.id, gift.id)}>Offrir à {character.name}</button>) : <em>Personne n’est avec vous dans ce sous-lieu.</em>}</div></div></article>)}</div> : <div className="empty-view"><span>◇</span><h2>Votre sac est vide</h2><p>Ouvrez le marché, achetez un présent, puis retrouvez son destinataire sur la carte.</p><button className="primary-action" onClick={onShop}>Voir les présents</button></div>}
+function AssetsView({ game, presentCharacters, onShop, onGive, onBuyProperty, onSellProperty, onDisplay, onResident, onHomeDate, onPairDate }: { game: GameState; presentCharacters: CharacterData[]; onShop: () => void; onGive: (character: string, gift: string) => void; onBuyProperty: (property: string) => void; onSellProperty: () => void; onDisplay: (slot: number, item: string) => void; onResident: (character: string) => void; onHomeDate: (character: string) => void; onPairDate: (pair: string) => void }) {
+  const [section, setSection] = useState<"logis" | "inventaire">("logis");
+  const ownedProperty = propertyById(game.housing.propertyId);
+  const ownedDisplayItems = DISPLAY_ITEMS.filter((item) => (game.inventory[item.id] || 0) > 0);
+  const unlockedCities = LOCATIONS.filter((location) => ["algratal", "forthaven", "miraldas", "akuhn"].includes(location.id) && (game.day >= location.unlockDay || game.settings.unlockAll));
+  return <section className="content-view assets-view">
+    <header className="content-header"><div><p className="eyebrow">Inventaire & patrimoine</p><h1>Biens</h1><p>Vos objets voyagent avec vous. Votre logis, lui, devient un véritable lieu de la carte et de vos relations.</p></div><button className="coins-button" onClick={onShop}>◈ {game.coins} · Marché</button></header>
+    <div className="assets-tabs"><button className={section === "logis" ? "active" : ""} onClick={() => setSection("logis")}>⌂ Logis</button><button className={section === "inventaire" ? "active" : ""} onClick={() => setSection("inventaire")}>◇ Inventaire</button></div>
+    {section === "inventaire" && <>
+      <div className="gift-steps"><span><b>1</b>Acheter ou découvrir</span><span><b>2</b>Exposer au logis</span><span><b>3</b>Offrir sur place</span></div>
+      {ownedDisplayItems.length ? <div className="inventory-grid">{ownedDisplayItems.map((item) => <article key={item.id}><span>{item.icon}</span><div><h3>{item.name}</h3><p>{item.description}</p><small>Possédé : {game.inventory[item.id]} · {item.source === "story" ? "Souvenir personnel" : item.source === "date" ? "Cadeau de visite" : "Objet du marché"}</small>{GIFTS.some((gift) => gift.id === item.id) && <div className="gift-recipient-row">{presentCharacters.length ? presentCharacters.map((character) => <button key={character.id} onClick={() => onGive(character.id, item.id)}>Offrir à {character.name}</button>) : <em>Personne n’est avec vous dans ce sous-lieu.</em>}</div>}</div></article>)}</div> : <div className="empty-view"><span>◇</span><h2>Votre inventaire est vide</h2><p>Les marchés, histoires personnelles et visites au logis y ajouteront des objets.</p><button className="primary-action" onClick={onShop}>Voir le marché</button></div>}
+    </>}
+    {section === "logis" && <div className="housing-layout">
+      {ownedProperty ? <>
+        <article className="owned-home-card" style={{ backgroundImage: `linear-gradient(180deg,rgba(6,7,14,.08),rgba(6,7,14,.94)),url(${ownedProperty.background})` }}><p className="eyebrow">Votre adresse à {LOCATIONS.find((entry) => entry.id === ownedProperty.location)?.name}</p><h2>{ownedProperty.name}</h2><p>{ownedProperty.description}</p><div><span>Gamme {ownedProperty.tier} · {ownedProperty.category}</span><span>Valeur de reprise : {housingSaleValue(game.housing)} ◈</span></div><button className="secondary-action" onClick={onSellProperty}>Vendre ce logis</button></article>
+        <section className="housing-panel"><header><div><p className="eyebrow">Vitrine personnelle</p><h2>Trois objets exposés</h2></div><span>3 emplacements</span></header><p>Chaque visiteur commentera ce que vous avez choisi de montrer, surtout lorsqu’un objet raconte sa propre histoire.</p><div className="display-slots">{[0, 1, 2].map((slot) => { const item = displayItemById(game.housing.displayed[slot]); return <label key={slot}><span>{item?.icon || "◇"}</span><strong>{item?.name || `Emplacement ${slot + 1}`}</strong><select value={game.housing.displayed[slot] || ""} onChange={(event) => onDisplay(slot, event.target.value)}><option value="">Ne rien exposer</option>{ownedDisplayItems.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</select></label>; })}</div></section>
+        <section className="housing-panel"><header><div><p className="eyebrow">Vie commune</p><h2>Habitant·es & visites</h2></div><span>{game.housing.residents.length} résident·es</span></header><p>Étape relationnelle 3 et confiance 24 requises. Les résident·es suivent leur propre rythme et peuvent apparaître ici sans vous attendre.</p><div className="resident-grid">{CHARACTERS.map((character) => { const relation = game.relationships[character.id]; const resident = game.housing.residents.includes(character.id); const eligible = game.settings.unlockAll || (relation.stage >= 3 && relation.trust >= 24); const dateReady = game.settings.unlockAll || (relation.stage >= 3 && relation.affection >= 22 && relation.trust >= 22); return <article key={character.id} className={resident ? "resident" : ""}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{resident ? "Vit dans ce logis" : eligible ? "Invitation possible" : `Étape ${relation.stage}/3 · confiance ${relation.trust}/24`}</small></div><button disabled={!eligible} onClick={() => onResident(character.id)}>{resident ? "Libérer la chambre" : "Inviter à vivre ici"}</button><button className="date-action" disabled={!dateReady} onClick={() => onHomeDate(character.id)}>♡ Rencard au logis</button></article>; })}</div><div className="pair-date-grid"><h3>Rendez-vous à trois</h3>{HOME_PAIR_DATES.map((pair) => { const unlocked = game.settings.unlockAll || (pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust) && (pair.requiredFlags || []).every((flag) => game.flags.includes(flag))); return <button key={pair.id} disabled={!unlocked} onClick={() => onPairDate(pair.id)}><span>{pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" · ")}</span><strong>{pair.title}</strong><small>{unlocked ? pair.description : `Étape ${pair.minStage}, confiance ${pair.minTrust} et dynamique relationnelle correspondante requises`}</small></button>; })}</div></section>
+      </> : <div className="housing-empty"><span>⌂</span><h2>Vous n’avez pas encore de logis</h2><p>Achetez une propriété dans une ville accessible. Vous pourrez ensuite l’habiter, l’exposer sur la carte et y inviter vos proches.</p></div>}
+      <section className="housing-panel housing-market"><header><div><p className="eyebrow">Agences de Sylvinia</p><h2>{ownedProperty ? "Changer de logis" : "Acheter un logis"}</h2></div><span>{unlockedCities.length} ville{unlockedCities.length > 1 ? "s" : ""} accessible{unlockedCities.length > 1 ? "s" : ""}</span></header>{unlockedCities.map((city) => { const discount = housingDiscount(city.id, game.relationships); const patron = CHARACTERS.find((entry) => entry.id === discount.character); return <div className="housing-city" key={city.id}><div className="housing-city-title"><div><h3>{city.name}</h3><small>{patron && discount.percent ? `Appui de ${patron.name} · remise ${discount.percent}%` : "Tarifs publics"}</small></div></div><div className="property-grid">{HOUSING_PROPERTIES.filter((entry) => entry.location === city.id).map((property) => { const price = discountedPropertyPrice(property, game.relationships); const credit = housingSaleValue(game.housing); const balance = price - credit; const current = property.id === ownedProperty?.id; return <article key={property.id} className={current ? "current" : ""} style={{ backgroundImage: `linear-gradient(180deg,rgba(8,8,16,.16),rgba(8,8,16,.96)),url(${property.background})` }}><span>Gamme {property.tier}</span><h4>{property.name}</h4><p>{property.description}</p><div><strong>{price} ◈</strong>{discount.percent > 0 && <del>{property.price} ◈</del>}</div>{current ? <button disabled>Votre logis</button> : <button disabled={balance > game.coins} onClick={() => onBuyProperty(property.id)}>{ownedProperty ? balance > 0 ? `Échanger · ${balance} ◈` : `Échanger · +${Math.abs(balance)} ◈` : `Acheter · ${price} ◈`}</button>}</article>; })}</div></div>; })}</section>
+    </div>}
   </section>;
 }
 
@@ -2498,10 +2826,12 @@ type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attuneme
 function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: IntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
   const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
   const date = modal.dateId ? DATE_SCENES.find((entry) => entry.id === modal.dateId) : undefined;
+  const homeProperty = modal.home ? propertyById(game.housing.propertyId) : undefined;
+  const homeItems = modal.home ? game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item)) : [];
   const profile = INTIMACY_PROFILES[character.id];
   const intimacyGame = INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
-  const [lines, setLines] = useState<DialogueLine[]>(() => intimacyOpening(character.id, date));
+  const [lines, setLines] = useState<DialogueLine[]>(() => homeProperty ? homeIntimacyOpening(character.id, homeProperty, homeItems) : intimacyOpening(character.id, date));
   const [lineIndex, setLineIndex] = useState(0);
   const [approach, setApproach] = useState<IntimacyChoice | null>(null);
   const [direction, setDirection] = useState<IntimacyDirectionChoice | null>(null);
@@ -2509,8 +2839,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices(profile.approaches, `${modal.character}:${modal.dateId || "route"}:approaches:${game.player.name}`));
-  const [directionChoices] = useState(() => shuffledChoices(intimacyDirections(character.id, game.player.sex), `${modal.character}:${game.player.sex}:${modal.dateId || "route"}:directions:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices(modal.home ? HOME_INTIMACY_APPROACHES[character.id] : profile.approaches, `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [directionChoices] = useState(() => shuffledChoices(modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   const currentLine = lines[lineIndex];
   const characterSpeaking = currentLine?.speaker === character.name;
   const spriteMood = characterSpeaking
@@ -2542,7 +2872,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
         const nextChapter = directionChapter + 1;
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
-      } else beginSegment("ending", intimacyEnding(character.id, date));
+      } else beginSegment("ending", homeProperty ? homeIntimacyEnding(character.id, homeProperty) : intimacyEnding(character.id, date));
     }
     else if (step === "ending") setStep("done");
   }
@@ -2554,11 +2884,11 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
-    const chapters = directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex);
+    const chapters = modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex);
     setDirectionSequence(chapters);
     setDirectionChapter(0);
     if (chapters.length) beginSegment("direction-lines", chapters[0]);
-    else beginSegment("ending", intimacyEnding(character.id, date));
+    else beginSegment("ending", homeProperty ? homeIntimacyEnding(character.id, homeProperty) : intimacyEnding(character.id, date));
   }
 
   function chooseAttunement(option: IntimacyGameOption) {
@@ -2572,7 +2902,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
 
   return <section className="interactive-intimacy" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
-    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `Scène intime · ${modeLabel}`}</p><h2>{character.name} · {date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
     <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
@@ -2582,7 +2912,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     </button>}
     {step === "approach-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">Comment entrer dans ce moment ?</p>{approachChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseApproach(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester simplement ensemble et terminer la soirée ici</button></div>}
     {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}</div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">Trois routes écrites pour {character.name} et pour le corps choisi de votre protagoniste. Chacune se développe en huit séquences détaillées.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">Trois routes écrites pour {character.name} et pour le corps choisi de votre protagoniste. Chacune se développe en huit séquences détaillées{modal.home ? ", entièrement propres au logement" : ""}.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button className="primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
   </section>;
 }
@@ -2834,24 +3164,106 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
   </section></div>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startDateIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startDateIntimacy: (dateId: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number) => void; onClose: () => void }) {
+  const profile = HOME_DATE_PROFILES[characterId];
+  const character = CHARACTERS.find((entry) => entry.id === characterId);
+  const property = propertyById(game.housing.propertyId);
+  const items = game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item));
+  const opening = profile && property ? homeDateOpening(profile, property, items) : [];
+  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "game" | "answer" | "result">("opening");
+  const [lineIndex, setLineIndex] = useState(0);
+  const [tone, setTone] = useState<HomeDateTone>("amical");
+  const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [answerLines, setAnswerLines] = useState<DialogueLine[]>([]);
+  const [resultLines, setResultLines] = useState<DialogueLine[]>([]);
+  if (!profile || !property || !character) return null;
+  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? profile.tones[tone].lines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
+  const shownText = displayedLine ? replacePlayer(displayedLine.text, game.player) : "";
+  const shownSpeaker = displayedLine?.speaker === "{player}" ? game.player.name : displayedLine?.speaker;
+  const nextLine = () => {
+    const lines = phase === "opening" ? opening : phase === "tone-lines" ? profile.tones[tone].lines : phase === "answer" ? answerLines : resultLines;
+    if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
+    setLineIndex(0);
+    if (phase === "opening") setPhase("tone");
+    else if (phase === "tone-lines") setPhase("game");
+    else if (phase === "answer") {
+      if (round + 1 < profile.rounds.length) { setRound(round + 1); setPhase("game"); }
+      else {
+        const bucket = score >= 5 ? profile.results.perfect : score >= 3 ? profile.results.warm : profile.results.close;
+        setResultLines(bucket);
+        setPhase("result");
+      }
+    } else onFinish(characterId, tone, score);
+  };
+  const chooseTone = (nextTone: HomeDateTone) => { setTone(nextTone); setLineIndex(0); setPhase("tone-lines"); };
+  const chooseAnswer = (option: HomeDateProfile["rounds"][number]["options"][number]) => {
+    const nextScore = score + option.score;
+    setScore(nextScore);
+    setAnswerLines(option.response);
+    setLineIndex(0);
+    setPhase("answer");
+  };
+  return <div className="modal-backdrop home-date-backdrop" style={{ backgroundImage: `linear-gradient(180deg,rgba(5,6,12,.16),rgba(5,6,12,.64)),url(${property.background})` }}><section className="home-date-modal"><button className="modal-close" onClick={onClose}>×</button><header><img src={character.portrait} alt="" /><div><p className="eyebrow">Rendez-vous dans votre logis · {property.name}</p><h2>{profile.title}</h2><p>{profile.description}</p></div></header>
+    {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className="home-date-dialogue" onClick={nextLine}><strong>{shownSpeaker}</strong><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} ›</small></button>}
+    {phase === "tone" && <div className="home-tone-grid"><div><p className="eyebrow">Donner le ton</p><h3>Quelle relation souhaitez-vous vivre ce soir ?</h3></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option]) => { const blocked = id !== "amical" && (character.id === "draven" || game.flags.includes(`${character.id}-platonic`)); return <button key={id} disabled={blocked} onClick={() => chooseTone(id)}><strong>{option.label}</strong><small>{blocked ? "Votre relation demeure amicale" : option.detail}</small></button>; })}</div>}
+    {phase === "game" && <div className="home-date-game"><p className="eyebrow">Activité unique · manche {round + 1}/{profile.rounds.length}</p><h3>{profile.activityTitle}</h3><p>{round === 0 ? profile.activityInstruction : profile.rounds[round].detail}</p><blockquote>{profile.rounds[round].prompt}</blockquote><div>{profile.rounds[round].options.map((option) => <button key={option.id} onClick={() => chooseAnswer(option)}>{option.label}</button>)}</div><small>Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
+  </section></div>;
+}
+
+function HomePairDateModal({ pairId, game, onFinish, onClose }: { pairId: string; game: GameState; onFinish: (pair: string, tone: HomeDateTone, score: number) => void; onClose: () => void }) {
+  const pair = HOME_PAIR_DATES.find((entry) => entry.id === pairId);
+  const property = propertyById(game.housing.propertyId);
+  const items = game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item));
+  const opening = pair && property ? pairDateOpening(pair, property, items) : [];
+  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "game" | "answer" | "result">("opening");
+  const [lineIndex, setLineIndex] = useState(0);
+  const [tone, setTone] = useState<HomeDateTone>("amical");
+  const [round, setRound] = useState(0);
+  const [score, setScore] = useState(0);
+  const [answerLines, setAnswerLines] = useState<DialogueLine[]>([]);
+  const [resultLines, setResultLines] = useState<DialogueLine[]>([]);
+  if (!pair || !property) return null;
+  const toneLines = pair.toneLines[tone];
+  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? toneLines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
+  const nextLine = () => {
+    const lines = phase === "opening" ? opening : phase === "tone-lines" ? toneLines : phase === "answer" ? answerLines : resultLines;
+    if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
+    setLineIndex(0);
+    if (phase === "opening") setPhase("tone");
+    else if (phase === "tone-lines") setPhase("game");
+    else if (phase === "answer") {
+      if (round + 1 < pair.rounds.length) { setRound(round + 1); setPhase("game"); }
+      else { setResultLines(score >= 5 ? pair.results.perfect : score >= 3 ? pair.results.warm : pair.results.close); setPhase("result"); }
+    } else onFinish(pair.id, tone, score);
+  };
+  const chooseTone = (nextTone: HomeDateTone) => { setTone(nextTone); setLineIndex(0); setPhase("tone-lines"); };
+  const chooseAnswer = (option: HomePairDateProfile["rounds"][number]["options"][number]) => { setScore(score + option.score); setAnswerLines(option.response); setLineIndex(0); setPhase("answer"); };
+  return <div className="modal-backdrop home-date-backdrop" style={{ backgroundImage: `linear-gradient(180deg,rgba(5,6,12,.16),rgba(5,6,12,.64)),url(${property.background})` }}><section className="home-date-modal pair-date-modal"><button className="modal-close" onClick={onClose}>×</button><header><div className="pair-date-portraits">{pair.characters.map((id) => { const character = CHARACTERS.find((entry) => entry.id === id)!; return <img key={id} src={character.portrait} alt={character.name} />; })}</div><div><p className="eyebrow">Rendez-vous à trois · {property.name}</p><h2>{pair.title}</h2><p>{pair.description}</p></div></header>
+    {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className="home-date-dialogue" onClick={nextLine}><strong>{displayedLine.speaker === "{player}" ? game.player.name : displayedLine.speaker}</strong><p>{replacePlayer(displayedLine.text, game.player)}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} ›</small></button>}
+    {phase === "tone" && <div className="home-tone-grid"><div><p className="eyebrow">Dynamique partagée</p><h3>Quel ton donner à cette visite ?</h3></div>{pair.tones.map((id) => <button key={id} onClick={() => chooseTone(id)}><strong>{id === "amical" ? "Complicité amicale" : id === "amoureux" ? "Tendresse à trois" : "Rivalité et désir"}</strong><small>Une variante écrite pour cette combinaison précise.</small></button>)}</div>}
+    {phase === "game" && <div className="home-date-game"><p className="eyebrow">Jeu partagé · manche {round + 1}/{pair.rounds.length}</p><h3>{pair.title}</h3><p>{pair.rounds[round].detail}</p><blockquote>{pair.rounds[round].prompt}</blockquote><div>{pair.rounds[round].options.map((option) => <button key={option.id} onClick={() => chooseAnswer(option)}>{option.label}</button>)}</div><small>Harmonie actuelle : {score} / {pair.rounds.length * 2}</small></div>}
+  </section></div>;
+}
+
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startDateIntimacy, finishHomeDate, finishHomePairDate, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startDateIntimacy: (dateId: string) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
-  if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint votre Sac. Vous pourrez le remettre depuis le Sac ou directement sur la carte quand son destinataire se trouve exactement avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans le sac : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
+  if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint vos Biens, dans la section Inventaire. Vous pourrez l’exposer au logis ou le remettre directement lorsque son destinataire se trouve avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans l’inventaire : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
   if (modal.kind === "gift") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
-    const place = characterPlace(character, game.day, game.period, game.flags);
+    const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const present = place.location === game.location && place.spot === game.spot;
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
-    return <div className="modal-backdrop"><section className="gift-modal"><button className="modal-close" onClick={onClose}>×</button><div className="gift-modal-title"><img src={character.portrait} alt="" /><div><p className="eyebrow">Remettre un présent</p><h2>Offrir à {character.name}</h2><small>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</small></div></div>{present && owned.length ? <div className="gift-list large">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>{gift.description} · x{game.inventory[gift.id]}</small></div><em>Offrir</em></button>)}</div> : <p className="hint">{present ? "Votre sac ne contient aucun présent. Achetez-en au marché depuis l’onglet Sac." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}<button className="secondary-action" onClick={onClose}>Annuler</button></section></div>;
+    return <div className="modal-backdrop"><section className="gift-modal"><button className="modal-close" onClick={onClose}>×</button><div className="gift-modal-title"><img src={character.portrait} alt="" /><div><p className="eyebrow">Remettre un présent</p><h2>Offrir à {character.name}</h2><small>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</small></div></div>{present && owned.length ? <div className="gift-list large">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>{gift.description} · x{game.inventory[gift.id]}</small></div><em>Offrir</em></button>)}</div> : <p className="hint">{present ? "Votre inventaire ne contient aucun présent. Achetez-en au marché depuis Biens." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}<button className="secondary-action" onClick={onClose}>Annuler</button></section></div>;
   }
   if (modal.kind === "character") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const relation = game.relationships[character.id];
-    const place = characterPlace(character, game.day, game.period, game.flags);
+    const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const present = place.location === game.location && place.spot === game.spot;
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
-    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{character.role} · {character.ageNote}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p><h3>Blessure centrale</h3><p>{character.wound}</p><h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre sac ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
+    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{character.role} · {character.ageNote}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p><h3>Blessure centrale</h3><p>{character.wound}</p><h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre inventaire ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
   }
   if (modal.kind === "group-date-planner") {
     return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Un rendez-vous avec deux personnages</h2><p>Les deux liens doivent être suffisamment avancés. Chaque duo possède sa propre dynamique, son rendez-vous, son mini-jeu et trois conclusions par sexe.</p></div></header><div className="date-grid group-date-grid">{GROUP_DATES.map((date) => {
@@ -2872,13 +3284,20 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const dates = DATE_SCENES.filter((date) => date.character === character.id);
     return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Chaque rendez-vous consomme une journée complète et vous conduit directement au bon sous-lieu, à la période prévue.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust); const place = spotById(date.spot); return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startDate(date.id)}>Réserver cette journée</button> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}</div></section></div>;
   }
+  if (modal.kind === "home-date") return <HomeDateModal characterId={modal.character} game={game} onFinish={finishHomeDate} onClose={onClose} />;
+  if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;
+  if (modal.kind === "home-date-result") {
+    const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
+    const property = propertyById(game.housing.propertyId)!;
+    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.28), #11101b 88%), url(${property.background})` }}><p className="eyebrow">Le reste du monde est derrière votre porte</p><h2>{character.name} ne semble pas pressé·e de partir</h2><p>Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à {character.name}, déclinée selon votre corps et votre réglage d’intimité.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomeIntimacy(character.id)}>Prolonger la nuit au logis</button><button className="secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button></div></section></div>;
+  }
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
     return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>Après « {date.title} », la conversation s’est tue sans que la proximité disparaisse. Il reste encore une porte à franchir — ou une nuit à laisser s’achever sur ce dernier regard.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startDateIntimacy(date.id)}>Suivre {character.name}</button><button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button></div></section></div>;
   }
   if (modal.kind === "intimacy") {
-    return <InteractiveIntimacyModal key={`${modal.character}:${modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
+    return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
   }
   if (modal.kind === "group-intimacy") {
     return <InteractiveGroupIntimacyModal key={`${modal.groupDateId}:${game.player.sex}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onGroupIntimacyClose(true, memory)} onStop={() => onGroupIntimacyClose(false)} />;
