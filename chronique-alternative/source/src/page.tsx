@@ -21,6 +21,16 @@ import { SOCIAL_SCENES, type SocialScene } from "./social-scenes";
 import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
+import {
+  GROUP_DATES,
+  GROUP_INTIMACY_GAMES,
+  groupIntimacyEnding,
+  groupIntimacyGameResult,
+  groupIntimacyOpening,
+  groupIntimacyRoutes,
+  type GroupDateScene,
+  type GroupIntimacyRoute,
+} from "./group-dates";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
 import { sceneClosure } from "./scene-closures";
@@ -96,7 +106,7 @@ type GameSettings = {
 };
 
 type GameState = {
-  version: 10;
+  version: 11;
   player: Player;
   day: number;
   period: number;
@@ -115,6 +125,7 @@ type GameState = {
   sharedHistory: string[];
   sceneMemories: Record<string, string>;
   dateHistory: string[];
+  groupDateHistory: string[];
   jobRuns: Record<string, number>;
   settings: GameSettings;
 };
@@ -127,11 +138,12 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "route" | "ambient" | "social" | "date";
+  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date";
   route?: RouteScene;
   ambientId?: string;
   socialId?: string;
   date?: DateScene;
+  groupDate?: GroupDateScene;
   cast: string[];
 };
 
@@ -201,12 +213,16 @@ type ModalState =
   | { kind: "date-planner"; character: string }
   | { kind: "date-result"; character: string; dateId: string }
   | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string }
+  | { kind: "group-date-planner" }
+  | { kind: "group-date-result"; groupDateId: string }
+  | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
   | { kind: "ritual" }
   | { kind: "job"; jobId: string }
   | { kind: "notice"; title: string; text: string; consumeTime?: boolean; actionLabel?: string }
   | null;
 
 type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
+type GroupIntimacyModalState = Extract<NonNullable<ModalState>, { kind: "group-intimacy" }>;
 
 const ECHOES = [
   ["Réflexe protecteur", "Votre corps se place instinctivement entre le danger et les autres"],
@@ -301,7 +317,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 10,
+    version: 11,
     player,
     day: 1,
     period: 0,
@@ -320,6 +336,7 @@ function createGame(player: Player): GameState {
     sharedHistory: [],
     sceneMemories: {},
     dateHistory: [],
+    groupDateHistory: [],
     jobRuns: {},
     settings: { ...DEFAULT_SETTINGS },
   };
@@ -362,7 +379,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 10,
+    version: 11,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -378,6 +395,7 @@ function hydrateGame(raw: unknown): GameState | null {
     sharedHistory: (value.sharedHistory || []).filter((id) => !legacyTimeline || !["amanea-family-truth", "draven-lineva-letter", "medig-window"].includes(id)),
     sceneMemories: value.sceneMemories || {},
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
+    groupDateHistory: value.groupDateHistory || [],
     jobRuns: value.jobRuns || {},
   };
 }
@@ -400,6 +418,18 @@ function clamp(value: number, min = 0, max = 100) {
 
 function unique(values: string[]) {
   return Array.from(new Set(values));
+}
+
+function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
+  if (game.settings.unlockAll) return true;
+  return date.characters.every((characterId) => {
+    const relation = game.relationships[characterId];
+    return !game.flags.includes(`${characterId}-platonic`)
+      && relation.stage >= date.minStage
+      && relation.affection >= date.minAffection
+      && relation.trust >= date.minTrust
+      && relation.desire >= date.minDesire;
+  });
 }
 
 function readSlotInfo() {
@@ -805,7 +835,7 @@ function finishServiceCustomer(current: JobState, correct: boolean, feedbackText
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
-  if (dialogue.replay || dialogue.scene.kind === "intro") return base;
+  if (dialogue.replay || dialogue.scene.kind === "intro" || dialogue.scene.kind === "group-date") return base;
   const characterId = dialogue.scene.character || dialogue.scene.cast[0];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
   const pool = MISREADS[characterId];
@@ -1276,6 +1306,16 @@ export default function Home() {
         journal: [...current.journal, `Rendez-vous · ${date.title} avec ${CHARACTERS.find((entry) => entry.id === date.character)?.name}`],
       }));
     }
+    if (!dialogue.replay && dialogue.scene.kind === "group-date" && dialogue.scene.groupDate) {
+      const groupDate = dialogue.scene.groupDate;
+      const names = groupDate.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name || id).join(" et ");
+      updateGame((current) => ({
+        ...current,
+        groupDateHistory: [...current.groupDateHistory, groupDate.id].slice(-96),
+        sceneMemories: { ...current.sceneMemories, [groupDate.id]: groupDate.spot },
+        journal: [...current.journal, `Rendez-vous à trois · ${groupDate.title} avec ${names}`],
+      }));
+    }
     const opening = choiceOpeningLine(choice);
     const injectedEnding = injectedChoiceAftermath(choice, dialogue.scene.character || dialogue.scene.cast[0]);
     const authoredEnding = injectedEnding.length ? injectedEnding : sceneClosure(dialogue.scene.id);
@@ -1296,17 +1336,34 @@ export default function Home() {
     const replay = dialogue.replay;
     const background = dialogue.scene.background;
     const date = dialogue.scene.date;
+    const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = date
       && dialogue.chosen?.dateOutcome === "great"
       && (game!.relationships[date.character].stage >= 4 || game!.settings.unlockAll)
       && (game!.relationships[date.character].affection + (dialogue.chosen.effects.affection || 0) >= 34 || game!.settings.unlockAll)
       && (game!.relationships[date.character].trust + (dialogue.chosen.effects.trust || 0) >= 32 || game!.settings.unlockAll);
+    const groupDateCanBecomeIntimate = Boolean(groupDate
+      && dialogue.chosen?.dateOutcome === "great"
+      && groupDate.characters.every((characterId, index) => {
+        const relation = game!.relationships[characterId];
+        const changes = index === 0
+          ? dialogue.chosen!.effects
+          : dialogue.chosen!.effects.relationshipEffects?.[characterId] || {};
+        return game!.settings.unlockAll || (
+          relation.stage >= groupDate.minStage
+          && relation.affection + (changes.affection || 0) >= groupDate.minAffection
+          && relation.trust + (changes.trust || 0) >= groupDate.minTrust
+          && relation.desire + (changes.desire || 0) >= groupDate.minDesire
+        );
+      }));
     setDialogue(null);
-    if (!replay && dateCanBecomeIntimate && date) {
+    if (!replay && groupDateCanBecomeIntimate && groupDate) {
+      setModal({ kind: "group-date-result", groupDateId: groupDate.id });
+    } else if (!replay && dateCanBecomeIntimate && date) {
       setModal({ kind: "date-result", character: date.character, dateId: date.id });
     } else if (intimateCharacter) {
       setModal({ kind: "intimacy", character: intimateCharacter, background, replay });
-    } else if (consumesTime && !date) {
+    } else if (consumesTime && !date && !groupDate) {
       advancePeriod();
     }
   }
@@ -1831,10 +1888,49 @@ export default function Home() {
     setDialogue({ scene, lines: expandedLines(scene, nextGame, date.intro, "intro"), lineIndex: 0, phase: "intro" });
   }
 
+  function startGroupDate(groupDateId: string) {
+    if (!game) return;
+    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    if (!date || !groupDateUnlocked(game, date)) return;
+    const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
+    const nextGame: GameState = {
+      ...game,
+      day: game.day + 1,
+      period: periodIndex,
+      location: date.location,
+      spot: date.spot,
+      codex: unique([...game.codex, spotById(date.spot)?.name || date.title]),
+    };
+    const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
+    const scene: SceneView = {
+      id: date.id,
+      title: date.title,
+      background: spotById(date.spot)?.background || backgroundUrl("streets"),
+      mood: date.mood || first.defaultMood,
+      character: first.id,
+      cast: date.characters,
+      intro: date.intro,
+      choices: date.choices,
+      kind: "group-date",
+      groupDate: date,
+    };
+    setGame(nextGame);
+    setSelectedLocation(date.location);
+    setSelectedSpot(date.spot);
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, nextGame, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro" });
+  }
+
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background });
+  }
+
+  function startGroupDateIntimacy(groupDateId: string) {
+    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    if (!date) return;
+    setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background });
   }
 
   function closeIntimacy(completed: boolean, memory?: string) {
@@ -1852,10 +1948,29 @@ export default function Home() {
     if (!noTime) advancePeriod();
   }
 
+  function closeGroupIntimacy(completed: boolean, memory?: string) {
+    if (!modal || modal.kind !== "group-intimacy") return;
+    if (completed && !modal.replay) {
+      const memoryKey = `group-intimacy:${modal.groupDateId}`;
+      updateGame((current) => ({
+        ...current,
+        flags: unique([...current.flags, `group-date-intimate:${modal.groupDateId}`]),
+        sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
+      }));
+    }
+    setModal(null);
+  }
+
   function replayDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date || !game?.flags.includes(`date-intimate:${date.id}`)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background, replay: true });
+  }
+
+  function replayGroupDateIntimacy(groupDateId: string) {
+    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    if (!date || !game?.flags.includes(`group-date-intimate:${date.id}`)) return;
+    setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background, replay: true });
   }
 
   function waitForCharacter(characterId: string, spotId = game?.spot || "") {
@@ -1947,6 +2062,15 @@ export default function Home() {
     if (!date) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || character.defaultMood, character: date.character, cast: [date.character], intro: date.intro, choices: date.choices, kind: "date", date };
+    setDialogue({ scene, lines: expandedLines(scene, game, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
+  }
+
+  function replayGroupDate(groupDateId: string) {
+    if (!game) return;
+    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    if (!date) return;
+    const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
+    const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || first.defaultMood, character: first.id, cast: date.characters, intro: date.intro, choices: date.choices, kind: "group-date", groupDate: date };
     setDialogue({ scene, lines: expandedLines(scene, game, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
   }
 
@@ -2057,7 +2181,7 @@ export default function Home() {
     .filter((entry): entry is { character: CharacterData; target: NonNullable<ReturnType<typeof nextPresence>> } => Boolean(entry.target))
     .sort((left, right) => left.target.offset - right.target.offset)
     .slice(0, 4);
-  const soundtrack = musicForContext(game.spot, { intimacy: modal?.kind === "intimacy", prologue: dialogue?.scene.kind === "intro" });
+  const soundtrack = musicForContext(game.spot, { intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
 
   return (
@@ -2162,7 +2286,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onWaitForRoute={waitForRoute} />}
+      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} />}
       {tab === "inventory" && <InventoryView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -2184,6 +2308,9 @@ export default function Home() {
         startDate={startDate}
         startDateIntimacy={startDateIntimacy}
         onIntimacyClose={closeIntimacy}
+        startGroupDate={startGroupDate}
+        startGroupDateIntimacy={startGroupDateIntimacy}
+        onGroupIntimacyClose={closeGroupIntimacy}
         ritual={{ sequence: ritualSequence, step: ritualStep, phase: ritualPhase, setPhase: setRitualPhase, play: playRitualRune }}
         onRitualClose={() => setModal(null)}
         jobState={jobState}
@@ -2200,7 +2327,7 @@ function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModa
   return <main className="title-screen">
     <div className="title-backdrop" /><div className="title-vignette" />
     <button className="chronicle-badge" onClick={onChronicle}><span>Chronique Alternative</span><small>Mode libre · Une autre Sylvinia</small></button>
-    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div><div className="title-meta"><span>Histoire principale sans date limite</span><span>18 rendez-vous uniques</span><span>81 routes intimes personnalisées</span><span>Amanea · Reine Noire vivante</span></div></section>
+    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div><div className="title-meta"><span>Histoire principale sans date limite</span><span>18 rendez-vous + 6 rendez-vous à trois</span><span>135 routes intimes personnalisées</span><span>Amanea · Reine Noire vivante</span></div></section>
     <p className="title-footer">Jeu narratif pour public adulte · Intimité réglable · Scènes interactives · Sauvegarde locale</p>
     {modal?.kind === "chronicle" && <ChronicleModal onClose={closeModal} />}
     {modal?.kind === "notice" && <SimpleModal title={modal.title} text={modal.text} onClose={closeModal} />}
@@ -2283,7 +2410,8 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
 }
 
 function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><div className="relationship-grid">{CHARACTERS.map((character) => {
+  const availableGroupDates = GROUP_DATES.filter((date) => groupDateUnlocked(game, date));
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><button className="group-date-launcher" onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{GROUP_DATES[0].characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Nouveau · relations croisées</p><h2>Rendez-vous à trois</h2><p>Six duos compatibles, chacun avec une dynamique, un mini-jeu et trois conclusions propres à votre sexe.</p></div><b>{availableGroupDates.length} / {GROUP_DATES.length}<small>accessibles</small></b></button><div className="relationship-grid">{CHARACTERS.map((character) => {
     const relation = game.relationships[character.id];
     const unlocked = game.day >= character.unlockDay || game.settings.unlockAll;
     const schedule = characterPlace(character, game.day, game.period, game.flags);
@@ -2308,10 +2436,11 @@ function Meter({ label, value, color }: { label: string; value: number; color: s
   return <div className="meter"><div><span>{label}</span><b>{value}</b></div><i><em style={{ width: `${value}%`, background: color }} /></i></div>;
 }
 
-function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onReplayDateIntimacy, onWaitForRoute }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void }) {
+function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void }) {
   const nextScenes = CHARACTERS.map((character) => ({ character, scene: sceneFor(character.id, game.relationships[character.id].stage) })).filter((item) => item.scene);
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
   const dateMemories = unique(game.dateHistory).map((id) => DATE_SCENES.find((date) => date.id === id)).filter((date): date is DateScene => Boolean(date));
+  const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
   const mainProgress = storyProgress(game.history, game.flags);
   return <section className="content-view">
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Vous pouvez rejouer toute scène mémorisée. En mode souvenir, aucun gain, drapeau ou temps n’est appliqué.</p></div><span>Jour {game.day}</span></header>
@@ -2325,7 +2454,9 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir selon le niveau d’intimité actuel</small></button>)}
-        {!game.history.length && !socialMemories.length && !dateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
+        {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
+        {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
+        {!game.history.length && !socialMemories.length && !dateMemories.length && !groupDateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
       </div>
       <h2>Histoire principale · Le rassemblement absent</h2>
       <p className="memory-explainer">Aucun acte ne peut être manqué : l’histoire avance par découvertes, jamais à un jour précis. Après le dernier acte, le monde reste ouvert.</p>
@@ -2450,8 +2581,93 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     </button>}
     {step === "approach-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">Comment entrer dans ce moment ?</p>{approachChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseApproach(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester simplement ensemble et terminer la soirée ici</button></div>}
     {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}</div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">Trois routes écrites pour {character.name} et pour le corps choisi de votre protagoniste. Chacune se développe en quatre séquences.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">Trois routes écrites pour {character.name} et pour le corps choisi de votre protagoniste. Chacune se développe en huit séquences détaillées.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button className="primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
+  </section>;
+}
+
+type GroupIntimacyStep = "opening" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
+
+function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { modal: GroupIntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
+  const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
+  const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
+  const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
+  const intimacyGame = GROUP_INTIMACY_GAMES[date.id];
+  const [step, setStep] = useState<GroupIntimacyStep>("opening");
+  const [lines, setLines] = useState<DialogueLine[]>(() => groupIntimacyOpening(date));
+  const [lineIndex, setLineIndex] = useState(0);
+  const [direction, setDirection] = useState<GroupIntimacyRoute | null>(null);
+  const [directionSequence, setDirectionSequence] = useState<DialogueLine[][]>([]);
+  const [directionChapter, setDirectionChapter] = useState(0);
+  const [attunementBeat, setAttunementBeat] = useState(0);
+  const [attunementScore, setAttunementScore] = useState(0);
+  const [directionChoices] = useState(() => shuffledChoices(groupIntimacyRoutes(date.id, game.player.sex), `${date.id}:${game.player.sex}:directions:${game.player.name}`));
+  const currentLine = lines[lineIndex];
+  const firstSpeaking = currentLine?.speaker === first.name;
+  const secondSpeaking = currentLine?.speaker === second.name;
+  const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
+  const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
+
+  function beginSegment(nextStep: GroupIntimacyStep, nextLines: DialogueLine[]) {
+    setStep(nextStep);
+    setLines(nextLines);
+    setLineIndex(0);
+  }
+
+  function advance() {
+    if (lineIndex < lines.length - 1) {
+      setLineIndex((index) => index + 1);
+      return;
+    }
+    if (step === "opening") setStep("attunement-choice");
+    else if (step === "attunement-lines") {
+      if (attunementBeat < intimacyGame.beats.length - 1) {
+        setAttunementBeat((beat) => beat + 1);
+        setStep("attunement-choice");
+      } else beginSegment("attunement-result", groupIntimacyGameResult(date.id, attunementScore));
+    } else if (step === "attunement-result") setStep("direction-choice");
+    else if (step === "direction-lines") {
+      if (directionChapter < directionSequence.length - 1) {
+        const nextChapter = directionChapter + 1;
+        setDirectionChapter(nextChapter);
+        beginSegment("direction-lines", directionSequence[nextChapter]);
+      } else beginSegment("ending", groupIntimacyEnding(date));
+    } else if (step === "ending") setStep("done");
+  }
+
+  function chooseAttunement(option: IntimacyGameOption) {
+    setAttunementScore((score) => score + option.score);
+    beginSegment("attunement-lines", option.lines);
+  }
+
+  function chooseDirection(choice: GroupIntimacyRoute) {
+    setDirection(choice);
+    const sequence = choice.chapters[game.player.intimacy];
+    setDirectionSequence(sequence);
+    setDirectionChapter(0);
+    beginSegment("direction-lines", sequence[0]);
+  }
+
+  const isChoice = step === "attunement-choice" || step === "direction-choice";
+  const isDone = step === "done";
+  const background = backgroundUrl(modal.background || spotById(date.spot)?.background || "/assets/backgrounds/bedroom.webp");
+  const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
+
+  return <section className="interactive-intimacy group-interactive-intimacy" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
+    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+    <div className="group-intimacy-sprites" aria-hidden="true">
+      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${first.id}/${firstMood}.webp`} alt="" /></div>
+      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${second.id}/${secondMood}.webp`} alt="" /></div>
+    </div>
+    <div className="dialogue-gradient" />
+    {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
+      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
+      <p>{replacePlayer(currentLine.text, game.player)}</p>
+      <small>{step === "direction-lines" ? `Séquence ${directionChapter + 1} / ${directionSequence.length} · ` : ""}{lineIndex + 1} / {lines.length} · Cliquer pour continuer</small>
+    </button>}
+    {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Accord à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Arrêter le jeu et terminer la soirée dans une proximité non sexuelle</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">Trois routes uniques pour {first.name}, {second.name} et le sexe choisi de votre protagoniste. Chacune comporte huit séquences détaillées et maintient les trois personnes actives.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester enlacé·es et clore la scène ici</button></div>}
+    {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button className="primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
   </section>;
 }
 
@@ -2617,7 +2833,7 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
   </section></div>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startDateIntimacy, onIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startDateIntimacy: (dateId: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startDateIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startDateIntimacy: (dateId: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
   if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint votre Sac. Vous pourrez le remettre depuis le Sac ou directement sur la carte quand son destinataire se trouve exactement avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans le sac : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
@@ -2636,6 +2852,19 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
     return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{character.role} · {character.ageNote}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p><h3>Blessure centrale</h3><p>{character.wound}</p><h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre sac ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
   }
+  if (modal.kind === "group-date-planner") {
+    return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Un rendez-vous avec deux personnages</h2><p>Les deux liens doivent être suffisamment avancés. Chaque duo possède sa propre dynamique, son rendez-vous, son mini-jeu et trois conclusions par sexe.</p></div></header><div className="date-grid group-date-grid">{GROUP_DATES.map((date) => {
+      const unlocked = groupDateUnlocked(game, date);
+      const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
+      const place = spotById(date.spot);
+      return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>Réserver cette journée à trois</button> : <div className="group-date-requirements">{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
+    })}</div></section></div>;
+  }
+  if (modal.kind === "group-date-result") {
+    const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
+    const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », chacun formule encore son envie et sa limite. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce duo et au sexe de votre protagoniste — ou clore la soirée sans perdre la confiance gagnée.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button><button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button></div></section></div>;
+  }
   if (modal.kind === "date-planner") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const relation = game.relationships[character.id];
@@ -2649,6 +2878,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
+  }
+  if (modal.kind === "group-intimacy") {
+    return <InteractiveGroupIntimacyModal key={`${modal.groupDateId}:${game.player.sex}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onGroupIntimacyClose(true, memory)} onStop={() => onGroupIntimacyClose(false)} />;
   }
   if (modal.kind === "ritual") {
     const runes = ["✦", "◇", "◐", "⌁", "✧"];

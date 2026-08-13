@@ -27,6 +27,14 @@ type RouteSeed = {
   after: SexText;
 };
 
+type RouteRole = "guided" | "offered" | "mutual";
+type RouteExpansion = {
+  orientation: RawLine[];
+  escalation: RawLine[];
+  continuation: Record<IntimacyMode, RawLine[]>;
+  aftercare: RawLine[];
+};
+
 const sexText = (femme: string, homme: string, intersexe: string): SexText => ({ femme, homme, intersexe });
 const sexLines = (femme: RawLine[], homme: RawLine[], intersexe: RawLine[]): SexLines => ({ femme, homme, intersexe });
 
@@ -34,9 +42,158 @@ const lines = (raw: RawLine[]): DialogueLine[] => raw.map((entry) => typeof entr
   ? { speaker: "Narration", text: entry }
   : { speaker: entry[0], text: entry[1], mood: entry[2] });
 
-const route = (character: string, sex: PlayerSex, seed: RouteSeed): IntimacyRoute => {
+const CHARACTER_NAMES: Record<string, string> = {
+  hylee: "Hylee", remerii: "Remerii", iriana: "Iriana", valurn: "Valurn", naiah: "Naïah",
+  lineva: "Lineva", saidin: "Saidin", bellirith: "Bellirith", amanea: "Amanea",
+};
+
+const FEMALE_BODY = new Set(["hylee", "remerii", "iriana", "naiah", "lineva", "bellirith", "amanea"]);
+
+const ORIENTATION_TEXTURES: Record<string, Record<RouteRole, string>> = {
+  hylee: {
+    guided: "Hylee vous fait reculer jusqu’au centre du lit, puis s’agenouille entre vos jambes sans se presser. Elle demande où poser ses mains, attend votre réponse entière et répète la limite convenue avant de commencer ; le givre qui borde ses doigts permet de suivre précisément chacun de ses déplacements.",
+    offered: "Vous invitez Hylee à s’allonger sur le dos et lui montrez la position que vous souhaitez prendre. Elle confirme d’un signe clair, pose une main sur votre nuque pour pouvoir vous ralentir à tout instant et nomme elle-même les gestes qu’elle veut recevoir en premier.",
+    mutual: "Vous vous placez sur le côté, face à face, afin que personne ne soit coincé sous le poids de l’autre. Hylee propose un mot pour ralentir et un autre pour arrêter ; vous les répétez avant que vos jambes ne s’entremêlent et que le jeu reprenne.",
+  },
+  remerii: {
+    guided: "Remerii vous installe contre les oreillers, vérifie que votre nuque et vos hanches sont soutenues, puis abandonne volontairement toute autre procédure. Elle vous demande une pression, un rythme et une limite ; vos trois réponses deviennent la seule méthode qu’elle conservera.",
+    offered: "Vous guidez Remerii jusqu’au bord du lit, là où elle peut garder les pieds au sol et changer de position sans difficulté. Elle vous donne un accord précis, puis ajoute avec une franchise troublée qu’elle préfère devoir demander la suite plutôt que la voir devinée.",
+    mutual: "Vous vous allongez en diagonale, assez proches pour vous toucher et assez libres pour reprendre votre souffle. Remerii établit deux signes de la main — ralentir, arrêter — puis froisse elle-même le drap soigneusement tiré, comme une permission de laisser la méthode derrière vous.",
+  },
+  iriana: {
+    guided: "Iriana retire le dernier bijou qui pourrait accrocher votre peau et vous place contre les coussins avec une autorité devenue entièrement privée. Elle demande votre accord sans formule de cour, attend un oui audible et vous fait préciser ce que vous ne voulez surtout pas qu’elle transforme en ordre.",
+    offered: "Vous laissez Iriana choisir l’endroit où s’allonger, puis vous lui demandez de guider votre première main. Sa réponse est directe : elle pose vos doigts exactement où elle les désire, garde votre regard et affirme que la couronne ne décidera d’aucune étape.",
+    mutual: "Iriana s’assied à califourchon sur vos cuisses sans vous immobiliser et vous offre ses deux mains. Vous convenez qu’un changement de position devra toujours être annoncé ; cette règle minuscule lui plaît parce qu’elle protège votre liberté à tous les deux sans ressembler au protocole.",
+  },
+  valurn: {
+    guided: "Valurn vous fait asseoir au bord du lit et s’agenouille devant vous, le sourire encore provocateur mais les mains parfaitement immobiles. Il vous demande de choisir entre lenteur, fermeté et surprise ; lorsque vous répondez, il reformule aussi la limite qui mettrait immédiatement fin au jeu.",
+    offered: "Vous retirez à Valurn ses cartes, son verre et la possibilité de détourner la question. Il s’allonge à votre demande, jambes entrouvertes, puis vous indique d’une voix moins moqueuse où il souhaite sentir votre bouche et où vos mains doivent rester visibles.",
+    mutual: "Vous vous placez de côté, une cuisse glissée entre les siennes, afin de pouvoir renverser l’initiative sans lutter. Valurn propose de compter les reprises plutôt que les victoires ; vous ajoutez qu’un seul mot arrêtera le pari, et il l’accepte sans plaisanter.",
+  },
+  naiah: {
+    guided: "Naïah dissipe ses doubles avant de vous allonger : une seule bouche, deux mains bien réelles et aucun reflet chargé de vous distraire. Elle vous fait nommer ce qui vous attire et ce qui vous inquiète, puis promet de ne réintroduire la magie que si vous le demandez clairement.",
+    offered: "Vous faites asseoir Naïah contre la tête du lit, ses mains posées à plat de chaque côté pour qu’aucune illusion ne prenne leur place. Elle vous donne la permission de mener, choisit elle-même la première caresse et vous avertit qu’elle dira sans détour si son plaisir change de direction.",
+    mutual: "Naïah laisse un unique reflet flotter au plafond, non pour multiplier les corps mais pour vous montrer vos positions. Vous vérifiez ensemble que chacun peut bouger, parler et s’arrêter ; seulement alors ses jambes viennent chercher les vôtres dans un sourire redevenu joueur.",
+  },
+  lineva: {
+    guided: "Lineva dépose ses armes hors de portée, vous aide à vous allonger puis place un coussin sous vos hanches avec la même attention qu’elle accorderait à une blessure. Elle vous demande pourtant ce qui procure du plaisir, pas ce qui fait mal, et attend votre réponse avant d’utiliser sa force.",
+    offered: "Vous invitez Lineva à remettre son poids au matelas plutôt qu’à ses épaules. Elle choisit une position où ses anciennes blessures ne tirent pas, guide votre main vers la chaleur qu’elle réclame et vous demande de ne pas confondre sa résistance habituelle avec un besoin de dureté.",
+    mutual: "Vous vous installez face à face, genoux et hanches alignés, chacun capable de soutenir l’autre sans le porter entièrement. Lineva teste le changement de position une première fois au ralenti ; vous confirmez, puis l’alternance devient un jeu au lieu d’une manœuvre.",
+  },
+  saidin: {
+    guided: "Saidin retourne toutes les horloges avant de vous placer au centre du lit. Il vous demande une seule chose à la fois — où commencer, quelle pression garder, quand continuer — et attend chaque réponse sans consulter le moindre futur possible.",
+    offered: "Vous faites asseoir Saidin devant vous et lui demandez de fermer les yeux, non pour l’aveugler mais pour l’obliger à rester dans ses sensations présentes. Il nomme sa limite, pose votre main là où il veut la sentir et renonce à expliquer ce que la scène pourrait devenir.",
+    mutual: "Vous vous allongez l’un contre l’autre tandis que sa montre reste fermée sur la table. Saidin convient d’un signe pour ralentir et vous d’un mot pour changer de geste ; cette petite grammaire du présent remplace toutes les bifurcations qu’il pourrait autrement observer.",
+  },
+  bellirith: {
+    guided: "Bellirith retire les enchantements visibles et vous fait vérifier qu’aucun charme ne pèse sur votre décision. Elle vous installe ensuite au bord du lit, demande un oui qui ne soit adressé qu’à elle et laisse votre main contrôler la distance entre vos deux corps.",
+    offered: "Vous faites allonger Bellirith sans miroir, sans bijou et sans angle flatteur à préserver. Elle guide votre paume vers ce qu’elle désire, nomme la limite qu’aucun jeu ne devra franchir et consent à vous laisser voir chaque réaction avant qu’elle puisse l’embellir.",
+    mutual: "Vous convenez que chaque renversement devra être demandé avant d’être joué. Bellirith choisit un mot pour céder l’initiative, vous un autre pour la lui rendre ; débarrassé de magie, le duel devient lisible dans vos mains, vos regards et vos corps réels.",
+  },
+  amanea: {
+    guided: "Amanea vous place sous sa cape ouverte, assez près pour vous envelopper mais sans bloquer aucun mouvement. Elle exige un accord audible avant de poser les mains sur vous, puis vous fait nommer la limite que même une reine n’aurait jamais le droit de négocier.",
+    offered: "Vous allongez Amanea loin de la couronne et prenez le temps de soutenir ses épaules fatiguées. Elle guide votre première main, indique la pression qu’elle veut recevoir et vous donne le droit de vous arrêter sans avoir à justifier ce choix devant elle.",
+    mutual: "Vous déposez ensemble la cape et la couronne avant de vous installer face à face. Amanea accepte que l’initiative circule seulement après une question ou un geste convenu ; l’égalité devient ainsi une pratique concrète, pas une belle formule ajoutée au désir.",
+  },
+};
+
+const ESCALATION_TEXTURES: Record<string, Record<RouteRole, string>> = {
+  hylee: { guided: "Elle commence par votre bouche, votre gorge puis votre ventre, et annonce chaque déplacement avant que le froid de ses doigts ne le rende évident. Vos réponses raccourcissent ; Hylee ralentit plutôt que de les interpréter à votre place.", offered: "Vous suivez la ligne de ses épaules jusqu’à ses hanches, en alternant paume chaude et baisers. Hylee cesse de retenir ses réactions, vous corrige une première fois puis réclame le même mouvement avec une assurance nouvelle.", mutual: "Une caresse reçue devient aussitôt une proposition rendue. Le givre dessine le trajet de vos mains sur vos deux peaux, si bien que chaque changement d’initiative reste visible et volontaire." },
+  remerii: { guided: "Sa bouche rejoint les endroits que ses doigts viennent de découvrir, et Remerii vous demande de distinguer ce qui est agréable de ce qui est simplement intense. Quand vous précisez la différence, elle adapte aussitôt sa cadence sans transformer votre réponse en examen.", offered: "Vous ouvrez sa tenue attache après attache, en laissant assez de temps pour que Remerii formule chaque envie. Sa voix perd peu à peu sa syntaxe parfaite, mais ses demandes deviennent plus nettes encore.", mutual: "Vos souffles donnent une mesure que ni l’un ni l’autre ne dirige longtemps. Remerii tente de compter, renonce sur votre bouche et remplace les chiffres par des gestes qui répondent exactement aux vôtres." },
+  iriana: { guided: "Iriana découvre votre peau avec une lenteur cérémonieuse qu’elle brise elle-même dès que votre souffle s’accélère. Elle ne réclame ni immobilité ni déférence : seulement votre regard et des réponses suffisamment franches pour la guider.", offered: "Vous défaites sa tenue tandis qu’Iriana nomme ce qu’elle veut au singulier. Ses épaules quittent leur posture publique et ses hanches répondent avant qu’une formule prudente ne puisse reprendre le contrôle.", mutual: "La danse se poursuit horizontalement : une main mène, l’autre répond, puis les rôles changent sur une demande clairement murmurée. Aucun pas n’est offert à un public, et cette absence rend Iriana plus audacieuse." },
+  valurn: { guided: "Valurn fait glisser ses lèvres le long de votre ventre sans quitter vos réactions des yeux. Chaque provocation est suivie d’une question réelle ; quand vous lui demandez plus de fermeté, son sourire change parce que le défi vient enfin de vous.", offered: "Vous explorez son torse, ses hanches et l’intérieur de ses cuisses en interrompant chaque trait d’humour par un geste plus précis. Valurn cesse de jouer l’indifférence et vous indique sans détour le rythme qu’il ne parvient plus à feindre.", mutual: "La lutte reste joueuse parce qu’elle ne porte jamais sur le droit de continuer. Vous échangez les positions, les baisers et les prises de contrôle, puis vérifiez chaque fois que le rire signifie bien encore oui." },
+  naiah: { guided: "Sa bouche et ses doigts prennent des chemins différents, mais Naïah garde un seul corps et un seul regard pour que vous puissiez toujours la suivre. La brume souligne vos frissons sans en inventer aucun.", offered: "Vous découvrez sous sa peau magique des réactions impossibles à contrefaire : la contraction de son ventre, la rupture de son souffle, la façon dont ses cuisses se resserrent. Naïah vous indique précisément laquelle elle veut sentir recommencer.", mutual: "Le reflet au plafond montre vos changements de position sans les idéaliser. Naïah vous laisse mener jusqu’à ce que votre plaisir demande une réponse, puis reprend l’initiative après vous avoir entendu l’accepter." },
+  lineva: { guided: "Sa force se traduit par un soutien ferme sous vos hanches, jamais par une immobilisation. Lineva observe votre souffle, demande confirmation lorsque son rythme augmente et garde toujours une main libre pour recevoir un signal d’arrêt.", offered: "Vous embrassez ses cicatrices sans les traiter comme des blessures ouvertes, puis descendez vers les zones où son corps réclame autre chose que de l’endurance. Lineva vous guide avec une franchise de plus en plus essoufflée.", mutual: "Vous changez de position sans brusquer ses anciennes blessures ni vous laisser porter seul·e. La force circule entre vos bras et vos cuisses ; Lineva rit en découvrant qu’elle peut céder du terrain sans abandonner personne." },
+  saidin: { guided: "Ses mains avancent lentement sur votre peau et s’arrêtent chaque fois qu’une nouvelle réaction apparaît. Saidin ne devine pas la suivante : il vous demande de la lui faire comprendre, puis recommence le geste au présent.", offered: "Vous ouvrez sa robe et suivez son corps sans lui laisser le temps de transformer vos caresses en symbole. Saidin nomme ce qu’il ressent au lieu de ce que cela annonce, jusqu’à ce que ses phrases deviennent de simples demandes.", mutual: "Chaque fois que l’un de vous croit reconnaître la suite, l’autre change doucement de rythme. Saidin accueille ces surprises sans se dédoubler dans l’avenir ; vos mouvements restent imparfaits, synchrones et entièrement vécus." },
+  bellirith: { guided: "Elle vous touche avec son expérience réelle plutôt qu’avec un sort, et vérifie chacune de vos réactions avant de s’en déclarer responsable. Le plaisir visible sur votre corps lui retire peu à peu le besoin de jouer la femme infaillible.", offered: "Vous ouvrez sa tenue et laissez volontairement les bijoux hors de portée. Bellirith vous donne une indication sans détour, puis une seconde ; son masque tombe à mesure que votre précision rend toute mise en scène inutile.", mutual: "Chaque provocation reçoit une caresse, chaque caresse une question, et chaque changement de position un accord. Le duel reste intense parce qu’aucun charme ne peut falsifier le moment où l’un de vous choisit de céder l’initiative." },
+  amanea: { guided: "Ses mains puissantes soutiennent votre bassin et votre nuque au lieu de vous maintenir. Amanea attend chacun de vos oui, puis transforme sa retenue en une intensité qui vous laisse pourtant libre de reculer.", offered: "Vous ouvrez sa cape, embrassez les muscles tendus et suivez le chemin que sa main vous indique. Amanea reçoit chaque geste sans le convertir en dette, et ses demandes deviennent plus franches lorsque son souffle cesse d’appartenir à une souveraine.", mutual: "Vos forces se rencontrent dans des positions choisies et réversibles. Amanea vous attire, vous la renversez après son accord, puis elle reprend la conduite sans qu’aucun mouvement ressemble à une victoire politique." },
+};
+
+const AFTERCARE_TEXTURES: Record<string, Record<RouteRole, string>> = {
+  hylee: { guided: "Hylee fait fondre le dernier givre avec sa paume, vous apporte de l’eau et vous demande ce qui vous a le plus rassuré·e. Elle écoute aussi ce qui pourrait être amélioré, sans laisser sa joie transformer la vérification en formalité.", offered: "Vous couvrez Hylee avant que le froid de sa magie ne retombe. Elle vérifie vos mains, vous demande si son corps a été assez lisible et sourit lorsque vous lui promettez que ses demandes n’avaient rien d’un poids.", mutual: "Vous restez emmêlé·es le temps que la neige disparaisse, partagez de l’eau puis nommez chacun un geste à conserver. Hylee en choisit un second uniquement pour avoir une raison de rougir encore." },
+  remerii: { guided: "Remerii vérifie votre respiration, vous tend de l’eau puis résiste à l’envie de transformer la nuit en rapport. Elle se contente de demander ce qui a été juste et ce qui devra changer, avant de se laisser rassurer à son tour.", offered: "Vous replacez un coussin sous sa nuque et laissez Remerii retrouver ses mots sans exiger qu’ils soient élégants. Elle confirme clairement que tout va bien, puis vous demande de rester assez près pour que cette réponse demeure physique.", mutual: "Vous comparez vos sensations sans les noter ni les classer. Remerii finit par refermer le carnet qu’elle avait sorti par réflexe et choisit de mémoriser la chaleur de votre peau plutôt que sa formulation." },
+  iriana: { guided: "Iriana vous couvre elle-même, apporte de l’eau et demande si quelque chose a ressemblé à un ordre au lieu d’une invitation. Votre réponse devient une conversation calme où elle accepte aussi d’être rassurée sans reprendre son titre.", offered: "Vous massez ses épaules pendant qu’Iriana remet des mots sur son corps et sur ses limites respectées. Elle ne cherche pas à minimiser ce qu’elle a reçu ; elle vous remercie en son nom, sans parler une seule fois pour l’Empire.", mutual: "Vous restez côte à côte jusqu’à ce que vos pulsations ralentissent. Iriana choisit un geste qu’elle voudra répéter et vous demande le vôtre, comme les deux seules clauses d’un traité qu’aucune chancellerie ne verra." },
+  valurn: { guided: "Valurn abandonne enfin les plaisanteries, vous tend de l’eau et demande d’une voix directe si un geste a dépassé ce que vous aviez choisi. Seulement après votre réponse, il risque un sourire et remet le score à zéro.", offered: "Vous vérifiez ses poignets, son souffle et la façon dont il revient contre vous. Valurn confirme qu’il va bien, reconnaît le moment où il a réellement cédé puis exige que cette honnêteté ne soit jamais utilisée comme mise future.", mutual: "Vous comptez les reprises, pas les victoires, puis partagez l’eau et les dernières caresses. Valurn déclare une égalité officielle avant d’avouer que votre attention après le jeu constituait probablement le meilleur coup." },
+  naiah: { guided: "Naïah dissipe toute la brume pour que l’après ne comporte aucun masque. Elle vous donne de l’eau, vérifie vos limites une à une et laisse sa véritable inquiétude apparaître jusqu’à ce que vous la rassuriez sans flatterie.", offered: "Vous enveloppez Naïah dans un drap réel, sans illusion de soie ni lumière avantageuse. Elle confirme son bien-être, vous confie ce qui l’a surprise puis reste assez longtemps silencieuse pour que son corps cesse de jouer.", mutual: "Le reflet disparaît et vous examinez ensemble les marques, les émotions et les limites tenues. Naïah choisit de ne rien embellir : elle garde seulement votre main contre elle et nomme franchement ce qu’elle voudra reprendre." },
+  lineva: { guided: "Lineva inspecte votre confort avec sérieux, puis vous laisse faire de même pour ses anciennes blessures. Eau, couverture et respiration retrouvée deviennent une petite relève à deux où personne ne prétend aller bien trop vite.", offered: "Vous soutenez ses jambes, massez les muscles sollicités et demandez si chaque changement de position est resté confortable. Lineva répond sans héroïsme, ajuste elle-même un coussin puis vous ramène contre elle avec gratitude.", mutual: "Vous répartissez encore les tâches : l’un apporte l’eau, l’autre arrange les draps, puis vous vérifiez ensemble vos corps. Lineva décide que cette organisation-là mérite de devenir une habitude, parce qu’elle ne laisse personne seul après l’effort." },
+  saidin: { guided: "Saidin ne cherche pas à savoir ce que la nuit changera. Il vous apporte de l’eau, vérifie chaque limite au passé concret et reste à l’écoute de votre corps présent jusqu’à ce que votre respiration redevienne paisible.", offered: "Vous attendez que Saidin rouvre les yeux et lui demandez ce qu’il ressent maintenant. Il répond sans métaphore, accepte l’eau et votre bras autour de lui, puis confirme clairement que l’inconnu a été choisi à chaque étape.", mutual: "Aucune montre n’est rouverte pendant que vous vérifiez vos sensations et partagez la chaleur du drap. Saidin formule un désir pour la prochaine fois, puis sourit de l’avoir laissé au futur sans tenter de l’observer." },
+  bellirith: { guided: "Bellirith laisse son visage au repos pendant qu’elle vous apporte de l’eau et vérifie qu’aucun charme résiduel n’a brouillé vos choix. Elle écoute vos remarques sans séduire la réponse, puis demande honnêtement à être rassurée elle aussi.", offered: "Vous replacez le drap sur Bellirith sans lui offrir de miroir. Elle confirme son bien-être, nomme le geste qui l’a rendue vulnérable et garde votre main sur elle au lieu de fabriquer immédiatement une posture avantageuse.", mutual: "Le duel terminé, vous vérifiez les limites, les marques et les émotions avec la même franchise que les plaisirs. Bellirith accepte le match nul, boit à votre verre et choisit de rester jolie seulement à vos yeux non enchantés." },
+  amanea: { guided: "Amanea vous couvre de sa cape, vous donne de l’eau et demande si sa force est restée un appui. Elle reçoit votre réponse sans la contester, puis accepte que vous vérifiiez à votre tour la femme derrière la reine.", offered: "Vous soutenez Amanea pendant que son souffle retrouve sa profondeur et lui demandez ce dont elle a besoin, pas ce que le royaume attend. Elle choisit l’eau, votre chaleur et quelques minutes supplémentaires sans couronne.", mutual: "Vous vérifiez ensemble que l’égalité a survécu à l’intensité : aucune douleur ignorée, aucune limite déplacée, aucun rôle imposé. Amanea partage sa cape et formule un prochain désir qui ne ressemble ni à un ordre ni à une dette." },
+};
+
+const MODE_CONTINUATIONS: Record<Exclude<IntimacyMode, "explicite">, Record<RouteRole, string>> = {
+  tendre: {
+    guided: "Le rythme demeure lent et entièrement lisible. La personne qui mène revient souvent à votre bouche, à vos mains et à votre regard ; la tendresse ne masque aucune étape, elle donne simplement à chacune le temps d’être ressentie avant la suivante.",
+    offered: "Vous prolongez chaque caresse au lieu de chercher une conclusion spectaculaire. Recevoir devient pour l’autre une action consciente : demander, rapprocher votre main, vous embrasser pour confirmer que la lenteur choisie est bien celle qu’il ou elle désire.",
+    mutual: "Vous échangez baisers, pressions de paume et étreintes jusqu’à ce que le partage lui-même devienne le centre de la scène. Aucun de vous n’est réduit au rôle de donner ou de recevoir ; chaque geste peut être accepté, transformé ou rendu.",
+  },
+  suggestif: {
+    guided: "Les vêtements ouverts rendent enfin la position de vos corps parfaitement claire : vous restez soutenu·e, libre de bouger, tandis que les mains et la bouche de l’autre suivent votre désir au lieu de le précéder. Les respirations indiquent chaque accélération mieux que les mots.",
+    offered: "Vous descendez sur le corps offert sans perdre le contact du regard. Les mains qui vous guident rendent la scène sans ambiguïté : l’endroit, la pression et le rythme changent seulement lorsqu’une demande ou une réaction claire vous y invite.",
+    mutual: "Vos vêtements quittent le lit à mesure que l’initiative circule. Une bouche se pose, une main répond, les hanches se rapprochent puis ralentissent ; même lorsque la scène devient plus intense, chaque corps reste identifiable et chaque mouvement choisi.",
+  },
+  ellipse: {
+    guided: "Une dernière question confirme que vous souhaitez poursuivre. La lumière baisse seulement après votre réponse, laissant à la chambre le rythme, les gestes et les mots que vous avez choisis ensemble.",
+    offered: "L’autre vous attire hors du regard du récit après avoir confirmé sa position, son envie et ses limites. La scène se poursuit pleinement pour les personnages, même si la chronique en respecte désormais l’intimité.",
+    mutual: "Vous répétez le signe qui ralentit et le mot qui arrête, puis vous laissez l’ombre envelopper vos deux corps encore distincts. Le récit se retire ; votre consentement, lui, reste actif pendant toute la suite.",
+  },
+};
+
+const EXPLICIT_CHARACTER_TEXTURES: Record<string, Record<RouteRole, string>> = {
+  hylee: { guided: "Hylee alterne chaleur et froid pour rendre chaque contact plus net, mais cesse aussitôt la magie lorsque vos muscles se contractent trop vite. Elle revient au geste que vous réclamez, maintient la même pression et vous regarde perdre pied avec une fierté tendre plutôt qu’avec triomphe.", offered: "Le plaisir d’Hylee fait tomber une neige désordonnée au-dessus de vous. Vous gardez le rythme qu’elle a demandé jusqu’à ce que ses cuisses tremblent, puis ralentissez assez pour entendre son oui avant de reprendre exactement là où elle vous attire.", mutual: "Le givre marque le trajet de vos mains sur vos deux corps. Hylee rit d’abord des traces, puis n’a plus assez de souffle pour plaisanter lorsque vos gestes se répondent et que votre plaisir devient le signal de poursuivre le sien." },
+  remerii: { guided: "Remerii annonce chaque variation avant de l’essayer, observe votre réaction puis conserve seulement ce qui vous fait revenir vers elle. Sa précision ne ressemble plus à une expérience : son propre souffle se brise chaque fois que votre plaisir confirme qu’elle vous atteint.", offered: "Remerii vous donne des indications de plus en plus courtes — plus lent, plus ferme, ne changez rien — et vous les suivez jusqu’à ce que sa voix disparaisse. Son corps continue de vous guider par ses hanches, sa main et la tension visible de ses jambes.", mutual: "Vous trouvez un contrepoint physique : l’un maintient le rythme pendant que l’autre change de geste, puis les rôles s’inversent. Remerii cesse de compter lorsque vos plaisirs se rapprochent et choisit de les laisser se désordonner ensemble." },
+  iriana: { guided: "Iriana soutient votre regard pendant que ses gestes deviennent plus intimes. Chaque fois que votre corps se tend, elle demande si elle doit garder, augmenter ou ralentir le rythme ; votre réponse, et non son autorité, conduit la progression jusqu’à l’abandon.", offered: "Iriana formule ses envies sans euphémisme et vous montre avec sa propre main la cadence qu’elle veut. Vous la remplacez seulement lorsqu’elle vous y invite, puis maintenez ce mouvement jusqu’à faire disparaître la voix officielle derrière ses réactions réelles.", mutual: "La valse devient une alternance de positions clairement demandées. Iriana mène une mesure, vous la suivante ; vos mains et vos bouches prolongent le plaisir de l’autre jusqu’à ce que les changements de rôle ne suivent plus qu’un souffle ou un regard accepté." },
+  valurn: { guided: "Valurn garde sa voix provocatrice, mais ses mains restent d’une franchise absolue. Il recommence le geste qui vous fait gémir, accélère uniquement sur votre demande et laisse son propre désir visible vous montrer que le pari l’engage autant que vous.", offered: "Le masque moqueur de Valurn cède lorsque vous gardez exactement le rythme qu’il a réclamé. Ses hanches répondent sans stratégie, ses doigts se crispent sur le drap et ses demandes deviennent trop directes pour ressembler encore à une feinte.", mutual: "Vous changez deux fois de position sans transformer l’échange en lutte. Valurn vous donne du plaisir, accepte d’en recevoir, puis rapproche vos corps pour que les deux rythmes puissent se maintenir ensemble ; le score disparaît dès que vos voix se brisent." },
+  naiah: { guided: "Naïah utilise la brume seulement pour souligner l’endroit précis où sa bouche ou ses doigts vous touchent. Aucune sensation n’est inventée : elle observe votre corps réel, demande confirmation avant d’intensifier et garde le mouvement que vous réclamez jusqu’au bout.", offered: "Chaque illusion tombe à mesure que le plaisir de Naïah devient impossible à mettre en scène. Vous suivez ses indications concrètes, gardez la pression qui lui fait lever les hanches et attendez son oui avant de reprendre lorsque son souffle se rompt.", mutual: "Un seul reflet vous montre l’échange sans le multiplier. Naïah vous regarde lui donner du plaisir tandis que sa main poursuit le vôtre, puis vous inversez la position après une question nette ; la brume tremble avec des réactions qu’elle ne contrôle plus." },
+  lineva: { guided: "Lineva utilise sa force pour vous soutenir et maintenir la position, jamais pour vous priver de mouvement. Elle garde le rythme que vous choisissez, vérifie votre souffle avant chaque accélération et laisse enfin son propre désir apparaître dans la tension de ses cuisses contre les vôtres.", offered: "Vous protégez ses anciennes blessures tout en refusant de traiter Lineva comme fragile. Elle vous guide vers ce qui lui procure du plaisir, demande davantage de pression puis se laisse aller parce qu’elle sait que votre main libre reste attentive à tout signal de recul.", mutual: "Vous partagez le poids et l’effort jusque dans les positions les plus intenses. Lineva donne, reçoit, change d’appui après votre accord et revient au mouvement qui vous fait tous deux perdre le rythme ; aucun corps n’est condamné à porter l’autre jusqu’au bout." },
+  saidin: { guided: "Saidin se concentre sur une sensation présente à la fois. Il garde sa bouche ou sa main là où vous la réclamez, vérifie chaque changement de rythme et vous conduit vers le plaisir sans ralentir le temps, ce qui rend chaque seconde irréversible et plus intense.", offered: "Vous empêchez Saidin de se réfugier dans une possibilité future en lui demandant ce qu’il ressent maintenant. Sa réponse vous indique le mouvement à garder ; ses hanches et sa voix perdent toute distance lorsque vous le répétez sans lui offrir d’autre instant que celui-ci.", mutual: "Vos gestes ne suivent aucun avenir écrit. Saidin vous donne du plaisir pendant que vous poursuivez le sien, vous changez de position sur une demande réelle et vos deux corps avancent sans savoir lequel cédera d’abord — découverte qui le bouleverse autant que la sensation." },
+  bellirith: { guided: "Bellirith n’emploie ni charme ni illusion : seule son expérience guide ses mains et sa bouche. Elle demande ce qui vous fait réellement céder, maintient le geste après votre réponse et laisse son soulagement apparaître quand votre plaisir prouve qu’elle suffit sans magie.", offered: "Vous refusez toute posture flatteuse et suivez seulement les indications de Bellirith. Son sexe, son souffle et ses hanches vous donnent une vérité impossible à maquiller ; vous conservez la pression qu’elle demande jusqu’à ce que sa séduction se dissolve en réactions entièrement spontanées.", mutual: "Le duel reste physique et négocié : Bellirith vous fait céder, vous reprenez l’initiative après son accord, puis vos plaisirs se poursuivent simultanément. Sans enchantement pour tricher, chaque tremblement devient un point que personne ne souhaite plus compter." },
+  amanea: { guided: "Amanea met toute sa force au service de la stabilité de votre corps et laisse vos mots régler l’intensité. Elle garde le geste qui vous ouvre au plaisir, demande avant d’aller plus loin et reçoit votre abandon comme un choix offert, jamais comme une soumission.", offered: "Vous faites de la puissance d’Amanea quelque chose qu’elle peut déposer sans disparaître. Elle vous indique avec franchise où concentrer la bouche ou les doigts, exige que vous mainteniez le rythme, puis cède parce que vous n’essayez ni de la vaincre ni de la posséder.", mutual: "Vos forces se répondent dans un échange sans hiérarchie. Amanea reçoit du plaisir, vous en donne à son tour, puis rapproche vos corps pour prolonger les deux sensations à la fois ; chaque changement reste une proposition acceptée plutôt qu’un ordre ou une conquête." },
+};
+
+const EXPLICIT_CULMINATIONS: Record<RouteRole, string> = {
+  guided: "Lorsque l’orgasme approche, vous le dites au lieu de laisser l’autre l’interpréter. Le geste ne change plus : même pression, même profondeur, même cadence jusqu’à ce que votre bassin se tende et que la sensation vous traverse entièrement ; seulement alors le mouvement ralentit, sans contact brusquement retiré.",
+  offered: "Vous reconnaissez l’approche de l’orgasme dans la demande répétée et la tension du corps sous vous. Vous conservez exactement la même stimulation jusqu’aux contractions et au souffle rompu, puis diminuez graduellement la pression tout en restant assez proche pour recevoir un changement ou un arrêt.",
+  mutual: "À l’approche de vos orgasmes, vous renoncez à chercher une simultanéité parfaite. Le premier corps qui cède reçoit le même rythme jusqu’au bout ; l’autre est ensuite guidé sans interruption vers son propre plaisir, avant que vos mains ne ralentissent ensemble et restent simplement posées.",
+};
+
+function explicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex): RawLine[] {
+  const name = CHARACTER_NAMES[character] || character;
+  const npcFemale = FEMALE_BODY.has(character);
+  const playerReceiving = sex === "femme"
+    ? `${name} écarte vos cuisses, embrasse l’intérieur de chacune puis pose sa bouche sur votre vulve. Sa langue trouve votre clitoris tandis qu’un doigt, puis deux après votre accord, pénètrent votre vagin au rythme que vous avez demandé ; l’autre main garde votre bassin soutenu sans l’immobiliser.`
+    : sex === "homme"
+      ? `${name} referme d’abord la main autour de votre pénis et répartit le lubrifiant avec des mouvements lents. Après votre accord, sa bouche descend sur votre gland puis le long de votre verge pendant que sa main poursuit la base ; chaque accélération répond à une demande ou à la poussée volontaire de vos hanches.`
+      : `${name} vous demande de désigner précisément la partie externe que vous souhaitez voir stimulée et si votre corps possède une ouverture que vous voulez inclure. Sa bouche suit votre indication, ses doigts massent la zone voisine et ne vous pénètrent que si vous le réclamez ; aucune anatomie n’est supposée à votre place.`;
+  const npcReceiving = npcFemale
+    ? `Vous écartez les cuisses de ${name}, embrassez son ventre puis posez votre bouche sur sa vulve. Votre langue maintient une pression régulière sur son clitoris tandis que vos doigts la pénètrent seulement après son oui ; sa main guide votre rythme au lieu de vous laisser deviner.`
+    : `Vous prenez le pénis de ${name} dans votre main, étalez le lubrifiant du gland jusqu’à la base puis le prenez dans votre bouche après son accord. Votre langue accompagne chaque va-et-vient et votre seconde main soutient ses hanches sans les retenir ; sa voix vous indique exactement quand accélérer.`;
+  if (role === "guided") return [playerReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
+  if (role === "offered") return [npcReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
+  return [npcReceiving, playerReceiving, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
+}
+
+function routeExpansion(character: string, role: RouteRole, sex: PlayerSex): RouteExpansion {
+  return {
+    orientation: [ORIENTATION_TEXTURES[character][role]],
+    escalation: [ESCALATION_TEXTURES[character][role]],
+    continuation: {
+      tendre: [MODE_CONTINUATIONS.tendre[role]],
+      suggestif: [MODE_CONTINUATIONS.suggestif[role]],
+      explicite: explicitBodyChapter(character, role, sex),
+      ellipse: [MODE_CONTINUATIONS.ellipse[role]],
+    },
+    aftercare: [AFTERCARE_TEXTURES[character][role]],
+  };
+}
+
+const route = (character: string, sex: PlayerSex, seed: RouteSeed, seedIndex: number): IntimacyRoute => {
+  const role: RouteRole = seedIndex === 0 ? "guided" : seedIndex === 1 ? "offered" : "mutual";
+  const expansion = routeExpansion(character, role, sex);
   const opening = lines([seed.prelude[sex], ...seed.setup]);
+  const orientation = lines(expansion.orientation);
   const deepening = lines(seed.deepening);
+  const escalation = lines(expansion.escalation);
   const closing = lines([...seed.closing, seed.after[sex]]);
   const modeChapter = (mode: IntimacyMode) => lines(
     mode === "tendre" ? seed.tender
@@ -49,10 +206,10 @@ const route = (character: string, sex: PlayerSex, seed: RouteSeed): IntimacyRout
     text: seed.labels[sex],
     detail: seed.detail,
     chapters: {
-      tendre: [opening, deepening, modeChapter("tendre"), closing],
-      suggestif: [opening, deepening, modeChapter("suggestif"), closing],
-      explicite: [opening, deepening, modeChapter("explicite"), closing],
-      ellipse: [opening, deepening, modeChapter("ellipse"), closing],
+      tendre: [opening, orientation, deepening, escalation, modeChapter("tendre"), lines(expansion.continuation.tendre), lines(expansion.aftercare), closing],
+      suggestif: [opening, orientation, deepening, escalation, modeChapter("suggestif"), lines(expansion.continuation.suggestif), lines(expansion.aftercare), closing],
+      explicite: [opening, orientation, deepening, escalation, modeChapter("explicite"), lines(expansion.continuation.explicite), lines(expansion.aftercare), closing],
+      ellipse: [opening, orientation, deepening, escalation, modeChapter("ellipse"), lines(expansion.continuation.ellipse), lines(expansion.aftercare), closing],
     },
   };
 };
@@ -574,9 +731,9 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
 
 export const INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, IntimacyRoute[]>> = Object.fromEntries(
   Object.entries(ROUTE_SEEDS).map(([character, seeds]) => [character, {
-    femme: seeds.map((seed) => route(character, "femme", seed)),
-    homme: seeds.map((seed) => route(character, "homme", seed)),
-    intersexe: seeds.map((seed) => route(character, "intersexe", seed)),
+    femme: seeds.map((seed, index) => route(character, "femme", seed, index)),
+    homme: seeds.map((seed, index) => route(character, "homme", seed, index)),
+    intersexe: seeds.map((seed, index) => route(character, "intersexe", seed, index)),
   }]),
 );
 
@@ -595,8 +752,13 @@ export function validateIntimacyRouteCatalog(): { characters: number; combinatio
       if (new Set(entries.map((entry) => entry.text)).size !== 3) throw new Error(`${character}/${sex}: les choix doivent être distincts`);
       entries.forEach((entry) => {
         (["tendre", "suggestif", "explicite", "ellipse"] as IntimacyMode[]).forEach((mode) => {
-          if (entry.chapters[mode].length < 4 || entry.chapters[mode].some((chapter) => chapter.length === 0)) {
-            throw new Error(`${entry.id}/${mode}: la route doit couvrir quatre séquences`);
+          const wordCount = entry.chapters[mode].flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0);
+          const minimumWords = mode === "explicite" ? 400 : 280;
+          if (entry.chapters[mode].length !== 8 || entry.chapters[mode].some((chapter) => chapter.length === 0)) {
+            throw new Error(`${entry.id}/${mode}: la route doit couvrir exactement huit séquences`);
+          }
+          if (wordCount < minimumWords) {
+            throw new Error(`${entry.id}/${mode}: ${wordCount} mots, minimum ${minimumWords}`);
           }
           chapters += entry.chapters[mode].length;
         });

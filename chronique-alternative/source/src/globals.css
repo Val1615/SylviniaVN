@@ -470,6 +470,43 @@ button:disabled { opacity: .42; cursor: not-allowed; }
 .date-result-modal h2 { margin: 0 0 1rem; font: 2rem var(--serif); }
 .date-result-modal > p:not(.eyebrow) { color: #c5bec8; font: .82rem/1.7 var(--serif); }
 .date-result-actions { display: flex; gap: .7rem; margin-top: 1.4rem; }
+.group-date-launcher { width: 100%; min-height: 150px; display: grid; grid-template-columns: 150px 1fr auto; gap: 1.2rem; align-items: center; margin: 0 0 1.2rem; padding: 1rem 1.2rem; overflow: hidden; border: 1px solid rgba(231,101,136,.34); color: #eee8ef; background: radial-gradient(circle at 8% 50%, rgba(137,100,196,.19), transparent 34%), linear-gradient(135deg, rgba(231,101,136,.09), rgba(13,14,24,.92)); text-align: left; cursor: pointer; box-shadow: 0 18px 50px rgba(0,0,0,.2); }
+.group-date-launcher:hover { border-color: rgba(231,101,136,.72); transform: translateY(-2px); }
+.group-date-launcher h2 { margin: .15rem 0 .35rem; font: 1.55rem var(--serif); }
+.group-date-launcher p:not(.eyebrow) { margin: 0; color: #a9a3af; font: .68rem/1.55 var(--serif); }
+.group-date-launcher > b { min-width: 74px; color: #f0a9bb; font: 1.45rem var(--serif); text-align: center; }
+.group-date-launcher > b small { display: block; margin-top: .2rem; color: #827d89; font: .45rem var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.group-date-portraits { position: relative; width: 142px; height: 112px; display: block; }
+.group-date-portraits img { position: absolute; top: 0; width: 82px; height: 108px; object-fit: cover; object-position: top; border: 1px solid rgba(255,255,255,.25); box-shadow: 0 12px 24px rgba(0,0,0,.42); }
+.group-date-portraits img:first-child { left: 0; transform: rotate(-4deg); }
+.group-date-portraits img:last-child { right: 0; transform: rotate(4deg); }
+.group-date-planner { width: min(1120px,100%); }
+.group-date-planner-header { display: grid; grid-template-columns: 86px 1fr; gap: 1rem; align-items: center; margin-bottom: 1rem; padding: 0 2rem 1rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.group-date-planner-header h2 { margin: .1rem 0 .35rem; font: 1.9rem var(--serif); }
+.group-date-planner-header p:last-child { margin: 0; color: #98929f; font: .66rem/1.55 var(--serif); }
+.group-date-header-mark { width: 78px; height: 78px; display: grid; place-items: center; border: 1px solid rgba(231,101,136,.45); color: #f0a9bb; background: radial-gradient(circle, rgba(231,101,136,.18), transparent 72%); font: 2rem var(--serif); transform: rotate(45deg); }
+.group-date-header-mark::first-line { transform: rotate(-45deg); }
+.group-date-grid article { min-height: 390px; position: relative; padding-top: 104px; }
+.group-date-grid article > span { color: #f0a9bb; }
+.group-date-grid blockquote { margin: .45rem 0 .65rem; padding: .5rem .65rem; border-left: 2px solid rgba(231,101,136,.45); color: #a9a1ad; background: rgba(8,8,14,.35); font: italic .56rem/1.5 var(--serif); }
+.group-date-card-portraits { position: absolute; z-index: 1; top: .8rem; left: .8rem; display: flex; }
+.group-date-card-portraits img { width: 72px; height: 92px; object-fit: cover; object-position: top; border: 1px solid rgba(255,255,255,.2); box-shadow: 0 9px 22px rgba(0,0,0,.45); }
+.group-date-card-portraits img + img { margin-left: -16px; }
+.group-date-requirements { width: 100%; display: grid; gap: .35rem; margin-top: .65rem; }
+.group-date-requirements > span { display: block; padding: .45rem .55rem; border: 1px solid rgba(255,255,255,.09); background: rgba(0,0,0,.42); }
+.group-date-requirements b, .group-date-requirements small { display: block; }
+.group-date-requirements b { color: #d9d1dc; font: .56rem var(--serif); }
+.group-date-requirements small { margin-top: .15rem; color: #8d8792; font-size: .44rem; }
+.group-date-result-modal { padding-top: 7.2rem; }
+.group-result-portraits { position: absolute; top: 1.1rem; left: clamp(1.5rem,5vw,3.5rem); display: flex; }
+.group-result-portraits img { width: 82px; height: 98px; object-fit: cover; object-position: top; border: 1px solid rgba(231,101,136,.34); box-shadow: 0 10px 24px rgba(0,0,0,.5); }
+.group-result-portraits img + img { margin-left: -14px; }
+.group-intimacy-sprites { position: absolute; z-index: 1; inset: 4vh 4vw 11vh; display: grid; grid-template-columns: 1fr 1fr; align-items: end; pointer-events: none; overflow: hidden; }
+.group-intimacy-sprite { min-width: 0; display: flex; align-items: flex-end; justify-content: center; transition: opacity .28s, filter .28s, transform .28s; }
+.group-intimacy-sprite img { width: auto; height: min(82vh, 920px); max-width: 58vw; object-fit: contain; object-position: bottom; filter: drop-shadow(0 22px 38px rgba(0,0,0,.78)); animation: sprite-enter .45s ease-out; }
+.group-intimacy-sprite.quiet { opacity: .67; filter: saturate(.76) brightness(.74); transform: scale(.96); }
+.group-intimacy-sprite.active { z-index: 2; opacity: 1; transform: scale(1.035) translateY(-.7vh); }
+.group-direction-choices { max-height: 72svh; overflow-y: auto; scrollbar-width: thin; }
 
 @media (max-width: 720px) {
   .map-pin .pin-occupants img { width: 18px; height: 18px; }
@@ -482,6 +519,19 @@ button:disabled { opacity: .42; cursor: not-allowed; }
   .date-planner-header { grid-template-columns: 70px 1fr; }
   .date-planner-header img { width: 70px; height: 86px; }
   .date-result-actions { flex-direction: column; }
+  .group-date-launcher { grid-template-columns: 92px 1fr; min-height: 126px; padding: .8rem; }
+  .group-date-launcher > b { display: none; }
+  .group-date-portraits { width: 88px; height: 94px; }
+  .group-date-portraits img { width: 56px; height: 88px; }
+  .group-date-launcher h2 { font-size: 1.15rem; }
+  .group-date-planner-header { grid-template-columns: 58px 1fr; padding-right: 1.5rem; }
+  .group-date-header-mark { width: 52px; height: 52px; font-size: 1.25rem; }
+  .group-date-planner-header h2 { font-size: 1.35rem; }
+  .group-date-grid article { min-height: 380px; }
+  .group-intimacy-sprites { inset: 9vh -16vw 18vh; gap: 0; }
+  .group-intimacy-sprite img { height: 62vh; max-width: 78vw; }
+  .group-intimacy-sprite.first { transform-origin: bottom right; }
+  .group-intimacy-sprite.second { transform-origin: bottom left; }
   .intimacy-sprite { inset: 7vh -8vw 18vh; }
   .intimacy-sprite img { height: 68vh; max-width: 112vw; }
   .intimacy-choices { max-height: 68svh; }
