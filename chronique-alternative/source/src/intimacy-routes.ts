@@ -1,5 +1,6 @@
 import type { DialogueLine } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
+import { individualExplicitScene } from "./individual-explicit-scenes";
 
 export type IntimacyRoute = {
   id: string;
@@ -157,7 +158,7 @@ const EXPLICIT_CULMINATIONS: Record<RouteRole, string> = {
   mutual: "À l’approche de vos orgasmes, vous renoncez à chercher une simultanéité parfaite. Le premier corps qui cède reçoit le même rythme jusqu’au bout ; l’autre est ensuite guidé sans interruption vers son propre plaisir, avant que vos mains ne ralentissent ensemble et restent simplement posées.",
 };
 
-function explicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex): RawLine[] {
+function legacyExplicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex): RawLine[] {
   const name = CHARACTER_NAMES[character] || character;
   const npcFemale = FEMALE_BODY.has(character);
   const playerReceiving = sex === "femme"
@@ -182,6 +183,10 @@ function explicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex)
         ? `Après avoir préparé longuement celui qui souhaite recevoir, vous choisissez ensemble une pénétration sur le côté, assez proche pour rester enlacés. Le membre viril qui entre avance par pressions lentes dans l’intimité accueillante ; celui qui reçoit règle la profondeur d’une main et demande chaque accélération. Vous inversez ensuite les rôles seulement si un second désir est formulé, sans faire de la réciprocité une obligation.`
         : `Vous demandez à ${name} quelle forme de pénétration correspond à vos corps et à vos envies présentes. La personne qui reçoit guide le membre dressé vers son intimité préparée, règle la profondeur et garde la main sur le bassin de l’autre ; vous changez de position uniquement lorsque les deux voix réclament une intensité différente.`;
   return [npcReceiving, playerReceiving, advancedExchange, EXPLICIT_CHARACTER_TEXTURES[character][role], EXPLICIT_CULMINATIONS[role]];
+}
+
+function explicitBodyChapter(character: string, role: RouteRole, sex: PlayerSex): RawLine[] {
+  return individualExplicitScene(character, sex, role);
 }
 
 function routeExpansion(character: string, role: RouteRole, sex: PlayerSex): RouteExpansion {

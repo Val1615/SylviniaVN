@@ -1,6 +1,7 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import type { IntimacyGame, IntimacyGameOption } from "./intimacy-games";
+import { groupExplicitScene } from "./group-explicit-scenes";
 
 export type GroupDateScene = {
   id: string;
@@ -336,7 +337,7 @@ function sharedAdvancedBody(pair: { first: string; second: string; firstFemale: 
   return `Vous choisissez à trois la progression adaptée à vos corps : frottement en ciseaux, pénétration reçue ou pénétration donnée. La personne au centre guide elle-même l’entrée, la profondeur et l’angle, pendant que la troisième maintient un contact désiré avec les deux autres. Un changement de configuration exige trois réponses claires ; ainsi, l’intensité augmente sans qu’aucun corps soit supposé ni relégué hors de la scène.`;
 }
 
-function groupExplicit(pairId: string, role: GroupRole): SexLines {
+function legacyGroupExplicit(pairId: string, role: GroupRole): SexLines {
   const pair = PAIR_BODIES[pairId];
   const build = (sex: PlayerSex): RawLine[] => {
     if (role === "first") return [
@@ -357,6 +358,14 @@ function groupExplicit(pairId: string, role: GroupRole): SexLines {
     ];
   };
   return { femme: build("femme"), homme: build("homme"), intersexe: build("intersexe") };
+}
+
+function groupExplicit(pairId: string, role: GroupRole): SexLines {
+  return {
+    femme: groupExplicitScene(pairId, "femme", role),
+    homme: groupExplicitScene(pairId, "homme", role),
+    intersexe: groupExplicitScene(pairId, "intersexe", role),
+  };
 }
 
 const PAIR_ROUTE_DATA: Record<string, PairRouteData> = {
