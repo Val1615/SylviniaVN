@@ -51504,25 +51504,58 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 <script src="fusion/game-modes.js"></script>
 
 
-<style id="sylvinia-v0325-video-disclaimer-style">
+<style id="sylvinia-v0326-intro-and-chapter-thumbs-style">
+/* Intro vidéo : aucun texte, aucun bouton, aucun voile. */
 #disclaimerCard.videoDisclaimerCard{min-height:100svh;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;background:#000!important;overflow:hidden!important}
-#disclaimerCard.videoDisclaimerCard::before,#disclaimerCard.videoDisclaimerCard::after{content:none!important}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerWrap{position:relative;width:100%;min-height:100svh;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerPlayer{width:100%;height:100%;object-fit:cover;background:#000;display:block}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerOverlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.08) 28%,rgba(0,0,0,.36))}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerTop{display:flex;justify-content:flex-end;padding:18px}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerBottom{display:grid;gap:10px;padding:20px 18px 24px;align-content:end}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerLabel{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(233,241,255,.82);text-shadow:0 2px 10px rgba(0,0,0,.7)}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerHint{font-size:13px;line-height:1.45;color:rgba(233,241,255,.72);text-shadow:0 2px 8px rgba(0,0,0,.7)}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerSkip{pointer-events:auto;border:1px solid rgba(255,255,255,.24);background:rgba(8,14,24,.58);color:#f5fbff;border-radius:999px;padding:10px 16px;font-weight:700;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(6px)}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerSkip:hover{background:rgba(18,28,44,.78)}
+#disclaimerCard.videoDisclaimerCard::before,#disclaimerCard.videoDisclaimerCard::after{content:none!important;display:none!important}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerWrap{position:relative;width:100%;height:100svh;min-height:100svh;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerPlayer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;background:#000;display:block}
+
+/* XIII_I et XIV : même cadrage plein cadre que XIII_G dans la sélection de chapitres. */
+#chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterOpenImageFrame,
+#chapterSelectGrid .chapterSelectCard.chapter14Card .chapterOpenImageFrame{
+  padding:0!important;
+  overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(16,18,26,.96),rgba(7,9,14,.98))!important;
+  border-color:rgba(82,55,25,.18)!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterOpenImage,
+#chapterSelectGrid .chapterSelectCard.chapter14Card .chapterOpenImage{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:3/4!important;
+  object-fit:cover!important;
+  object-position:center 22%!important;
+  background:transparent!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+#chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterBookCoverImg,
+#chapterSelectGrid .chapterSelectCard.chapter14Card .chapterBookCoverImg{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center 22%!important;
+  background:transparent!important;
+}
+@media(max-width:760px){
+  #chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterOpenImage,
+  #chapterSelectGrid .chapterSelectCard.chapter14Card .chapterOpenImage{
+    aspect-ratio:4/5!important;
+    object-position:center 20%!important;
+  }
+  #chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterBookCoverImg,
+  #chapterSelectGrid .chapterSelectCard.chapter14Card .chapterBookCoverImg{
+    object-position:center 20%!important;
+  }
+}
 </style>
-<script id="sylvinia-v0325-asset-patch">
+<script id="sylvinia-v0326-asset-patch">
 (function(){
   'use strict';
   try{
-    if(window.__sylviniaV0325AssetPatch) return;
-    window.__sylviniaV0325AssetPatch=true;
+    if(window.__sylviniaV0326AssetPatch) return;
+    window.__sylviniaV0326AssetPatch=true;
 
     const THUMB_G='assets/images/chapter_select/ch13_g_romance.png';
     const THUMB_I='assets/images/chapter_select/ch13_i_piano.png';
@@ -51590,8 +51623,8 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       CHAPTER_SELECT_DATA.forEach(ch=>{ if(ch && CHAPTER_IMAGES[ch.key]) ch.image=CHAPTER_IMAGES[ch.key]; });
     }
     syncChapterCards();
-    if(typeof renderChapterSelect==='function' && !window.__sylviniaV0325ChapterRenderWrapped){
-      window.__sylviniaV0325ChapterRenderWrapped=true;
+    if(typeof renderChapterSelect==='function' && !window.__sylviniaV0326ChapterRenderWrapped){
+      window.__sylviniaV0326ChapterRenderWrapped=true;
       const prevRender=renderChapterSelect;
       window.renderChapterSelect=function(){
         syncChapterCards();
@@ -51602,7 +51635,7 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     function finishVideoDisclaimer(){
       try{ if(typeof markDisclaimerSeen==='function') markDisclaimerSeen(); }catch(_e){}
       window.__sylviniaDisclaimerAcceptedThisLoad=true;
-      if(typeof setScreen==='function') setScreen('title');
+      if(typeof setScreen==='function') setScreen('splashTitle');
     }
     window.skipVideoDisclaimer=finishVideoDisclaimer;
     window.enterTitleFromDisclaimer=finishVideoDisclaimer;
@@ -51618,13 +51651,6 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
         +  '<video id="videoDisclaimerPlayer" class="videoDisclaimerPlayer" autoplay muted playsinline preload="auto">'
         +    '<source src="'+INTRO_VIDEO+'" type="video/mp4">'
         +  '</video>'
-        +  '<div class="videoDisclaimerOverlay">'
-        +    '<div class="videoDisclaimerTop"><button type="button" class="videoDisclaimerSkip" onclick="skipVideoDisclaimer()">Passer</button></div>'
-        +    '<div class="videoDisclaimerBottom">'
-        +      '<div class="videoDisclaimerLabel">Les Chroniques de Sylvinia</div>'
-        +      '<div class="videoDisclaimerHint">L’introduction vidéo remplace désormais le disclaimer. À la fin, l’écran titre s’ouvre automatiquement.</div>'
-        +    '</div>'
-        +  '</div>'
         +'</div>';
       const video=card.querySelector('video');
       if(video){
@@ -51636,7 +51662,7 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 
     function initVideoDisclaimer(forceReplay){
       const video=buildVideoDisclaimer();
-      if(typeof playMusic==='function') playMusic('music_menu');
+      if(typeof playMusic==='function') playMusic('music_title_intro');
       if(!video) return;
       try{
         if(forceReplay){ video.currentTime=0; }
@@ -51654,8 +51680,8 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       };
     }
 
-    if(typeof setScreen==='function' && !window.__sylviniaV0325SetScreenWrapped){
-      window.__sylviniaV0325SetScreenWrapped=true;
+    if(typeof setScreen==='function' && !window.__sylviniaV0326SetScreenWrapped){
+      window.__sylviniaV0326SetScreenWrapped=true;
       const prevSetScreen=setScreen;
       window.setScreen=function(name){
         const result=prevSetScreen.apply(this,arguments);
@@ -51669,10 +51695,10 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     }
 
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.325 · Intro vidéo + chapitres + scène clé';
-    console.info('[Sylvinia v0.325] Patch appliqué : chapitres, musique, image clé c14_i_int_007 et intro vidéo.');
+    if(bubble) bubble.textContent='Mise à jour · v0.326 · Intro + cadrage chapitres';
+    console.info('[Sylvinia v0.326] Correctif : cadrage XIII_I/XIV, intro vidéo nue, retour vers écran titre.');
   }catch(error){
-    console.error('[Sylvinia v0.325] Échec du patch complémentaire', error);
+    console.error('[Sylvinia v0.326] Échec du correctif intro/chapitres', error);
   }
 })();
 </script>
