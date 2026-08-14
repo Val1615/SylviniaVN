@@ -80,14 +80,41 @@
 .property-grid article { min-height:270px; display:flex; flex-direction:column; justify-content:flex-end; padding:.65rem; border:1px solid rgba(255,255,255,.09); background-size:cover; background-position:center; }
 .property-grid article.current { border-color:#d8bd78; box-shadow:inset 0 0 0 1px rgba(216,189,120,.28); }.property-grid article > span { color:#c0aa67; font-size:.42rem; text-transform:uppercase; }.property-grid h4 { margin:.15rem 0; color:#eee7e9; font:.7rem/1.2 var(--serif); }.property-grid p { min-height:4.4em; margin:.2rem 0; color:#9a949b; font:.48rem/1.4 var(--serif); }.property-grid strong { color:#f0da98; font:.66rem var(--serif); }.property-grid del { margin-left:.35rem; color:#756f79; font-size:.44rem; }.property-grid button { margin-top:.45rem; padding:.42rem; border:1px solid rgba(216,189,120,.32); color:#e3cf91; background:rgba(216,189,120,.08); cursor:pointer; font-size:.45rem; }.property-grid button:disabled { opacity:.45; cursor:not-allowed; }
 
-/* Le rencard masque intégralement l'interface du mode libre. */
-.home-date-backdrop { z-index:150; padding:clamp(.5rem,2vw,1.4rem); background-size:cover; background-position:center; backdrop-filter:none; }
-.home-date-modal { position:relative; width:min(1020px,100%); max-height:94svh; overflow:auto; padding:1rem; border:1px solid rgba(216,189,120,.38); background:linear-gradient(145deg,rgba(12,12,22,.93),rgba(8,9,16,.97)); box-shadow:0 30px 100px #000; }
-.home-date-modal > header { display:grid; grid-template-columns:110px 1fr; gap:1rem; align-items:end; min-height:150px; padding-right:2.6rem; border-bottom:1px solid rgba(216,189,120,.15); }.home-date-modal > header img { width:110px; height:150px; object-fit:cover; object-position:top; }.home-date-modal h2 { margin:.15rem 0; color:#f2e7dc; font:clamp(1.45rem,3vw,2.4rem) var(--serif); }.home-date-modal header p:last-child { max-width:70ch; color:#97919c; font:.66rem/1.55 var(--serif); }
-.pair-date-portraits { width:170px; display:flex; align-items:end; }.pair-date-portraits img { width:95px !important; height:145px !important; border:1px solid rgba(216,189,120,.25); }.pair-date-portraits img + img { margin-left:-22px; }.pair-date-modal > header { grid-template-columns:170px 1fr; }
-.home-date-dialogue { width:100%; min-height:190px; display:flex; flex-direction:column; align-items:flex-start; margin-top:.8rem; padding:1rem; border:1px solid rgba(216,189,120,.26); color:#ddd5d9; background:rgba(7,8,15,.78); text-align:left; cursor:pointer; }.home-date-dialogue strong { color:#d8bd78; font:.78rem var(--serif); }.home-date-dialogue p { margin:.65rem 0; font:clamp(.78rem,1.4vw,1rem)/1.65 var(--serif); }.home-date-dialogue small { align-self:flex-end; color:#918a96; }
-.home-tone-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.55rem; margin-top:.8rem; }.home-tone-grid > div { grid-column:1 / -1; }.home-tone-grid h3 { margin:.15rem 0; font:1.15rem var(--serif); }.home-tone-grid button { min-height:110px; display:grid; gap:.35rem; align-content:center; padding:.8rem; border:1px solid rgba(216,189,120,.2); color:#dfd6dd; background:rgba(216,189,120,.045); text-align:left; cursor:pointer; }.home-tone-grid button strong { color:#e7d59e; font:.75rem var(--serif); }.home-tone-grid button small { color:#8e8793; line-height:1.45; }.home-tone-grid button:disabled { opacity:.35; cursor:not-allowed; }
-.home-date-game { margin-top:.8rem; padding:1rem; border:1px solid rgba(137,100,196,.38); background:rgba(15,13,27,.86); }.home-date-game h3 { margin:.15rem 0; color:#e9dfee; font:1.2rem var(--serif); }.home-date-game > p { color:#9d95a3; font:.65rem/1.5 var(--serif); }.home-date-game blockquote { margin:.8rem 0; padding:.7rem; border-left:2px solid #b59bdc; color:#d6ccd9; font:.8rem/1.5 var(--serif); }.home-date-game > div { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.45rem; }.home-date-game button { min-height:72px; padding:.65rem; border:1px solid rgba(181,155,220,.25); color:#d8cbe5; background:rgba(181,155,220,.055); cursor:pointer; }.home-date-game > small { display:block; margin-top:.6rem; color:#a493ba; }
+/* Les actions du Journal gardent un contraste lisible sur mobile. */
+.quest-card > div > button { margin-top:.48rem; padding:.48rem .7rem; border:1px solid rgba(216,189,120,.42); color:#f3e4b5; background:linear-gradient(145deg,rgba(40,36,52,.98),rgba(20,20,32,.98)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.025); cursor:pointer; font-size:.52rem; font-weight:700; }
+.quest-card > div > button:hover { border-color:#d8bd78; color:#fff7df; background:rgba(216,189,120,.14); }
+
+/* Le rendez-vous au logis reprend la mise en scène plein écran du visual novel. */
+.game-shell.scene-active > .home-date-scene { visibility:visible !important; pointer-events:auto !important; }
+.home-date-scene { position:fixed; z-index:65; inset:0; overflow:hidden; isolation:isolate; background-color:#05060c; background-position:center; background-size:cover; }
+.home-date-scene::after { content:""; position:absolute; z-index:0; inset:0; pointer-events:none; box-shadow:inset 0 0 120px 35px rgba(2,2,8,.58); }
+.home-date-scene-top > div { max-width:min(780px,72vw); }
+.home-date-scene-top > div > p:last-child { max-width:70ch; margin:.35rem 0 0; color:#d0c8d1; font:.66rem/1.5 var(--serif); text-shadow:0 2px 10px #000; }
+.home-date-dialogue-box { border-color:rgba(216,189,120,.58); background:linear-gradient(145deg,rgba(18,18,31,.97),rgba(8,9,17,.985)); backdrop-filter:blur(12px); }
+.home-date-dialogue-box .speaker { min-width:180px; }
+.home-date-choice-panel { max-height:72svh; overflow-y:auto; border-color:rgba(216,189,120,.48); background:rgba(10,10,19,.965); box-shadow:0 22px 70px rgba(0,0,0,.62); scrollbar-width:thin; }
+.home-date-choice-heading { padding:.25rem .35rem .65rem; border-bottom:1px solid rgba(216,189,120,.13); }
+.home-date-choice-heading .eyebrow { margin-bottom:.3rem; }
+.home-date-choice-heading h3 { margin:.1rem 0 .25rem; color:#eee7ec; font:1.15rem var(--serif); }
+.home-date-choice-heading > small { display:block; color:#9c96a1; font:.58rem/1.5 var(--serif); }
+.home-date-choice-panel > .choice-question { margin:.15rem .35rem .2rem; color:#e8d9aa; font-size:.82rem; }
+.home-date-choice-panel > button { color:#e8e1e9; background:rgba(255,255,255,.035); }
+.home-date-choice-panel > button:hover:not(:disabled) { border-color:#d8bd78; background:rgba(216,189,120,.09); }
+.home-date-choice-panel > button small { display:block; margin-top:.25rem; color:#918a96; font-size:.52rem; line-height:1.4; }
+.home-choice-number { width:32px; height:32px; display:grid; place-items:center; border:1px solid rgba(216,189,120,.52); color:#f3e4b5; font:.72rem var(--serif); transform:rotate(45deg); }
+.home-date-score { display:block; padding:.25rem .35rem 0; color:#b3a4c7; font-size:.52rem; text-align:right; }
+.home-date-plan-card { border-color:rgba(216,189,120,.32) !important; }
+.home-date-plan-card > span { color:#e4cc89 !important; }
 
 @media (max-width:1000px) { .housing-layout { grid-template-columns:1fr; }.property-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.housing-market { grid-column:auto; }.owned-home-card { min-height:330px; } }
-@media (max-width:640px) { .content-header { flex-direction:column; }.assets-tabs button { min-width:0; flex:1; }.display-slots,.resident-grid,.property-grid,.pair-date-grid,.home-tone-grid,.home-date-game > div { grid-template-columns:1fr; }.property-grid article { min-height:230px; }.home-date-modal { padding:.65rem; }.home-date-modal > header { grid-template-columns:72px 1fr; min-height:105px; gap:.6rem; }.home-date-modal > header img { width:72px; height:100px; }.pair-date-modal > header { grid-template-columns:105px 1fr; }.pair-date-portraits { width:105px; }.pair-date-portraits img { width:62px !important; height:98px !important; }.pair-date-portraits img + img { margin-left:-19px; }.home-date-dialogue { min-height:210px; }.home-tone-grid button { min-height:86px; } }
+@media (max-width:640px) {
+  .content-header { flex-direction:column; }
+  .assets-tabs button { min-width:0; flex:1; }
+  .display-slots,.resident-grid,.property-grid,.pair-date-grid { grid-template-columns:1fr; }
+  .property-grid article { min-height:230px; }
+  .home-date-scene-top > div { max-width:72vw; }
+  .home-date-scene-top > div > p:last-child { display:none; }
+  .home-date-dialogue-box .speaker { min-width:120px; }
+  .home-date-choice-panel { max-height:66svh; }
+  .home-date-choice-heading h3 { font-size:.92rem; }
+}
