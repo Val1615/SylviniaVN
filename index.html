@@ -51503,5 +51503,179 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 <script src="fusion/story-world.js"></script>
 <script src="fusion/game-modes.js"></script>
 
+
+<style id="sylvinia-v0325-video-disclaimer-style">
+#disclaimerCard.videoDisclaimerCard{min-height:100svh;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;background:#000!important;overflow:hidden!important}
+#disclaimerCard.videoDisclaimerCard::before,#disclaimerCard.videoDisclaimerCard::after{content:none!important}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerWrap{position:relative;width:100%;min-height:100svh;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerPlayer{width:100%;height:100%;object-fit:cover;background:#000;display:block}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerOverlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.08) 28%,rgba(0,0,0,.36))}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerTop{display:flex;justify-content:flex-end;padding:18px}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerBottom{display:grid;gap:10px;padding:20px 18px 24px;align-content:end}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerLabel{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(233,241,255,.82);text-shadow:0 2px 10px rgba(0,0,0,.7)}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerHint{font-size:13px;line-height:1.45;color:rgba(233,241,255,.72);text-shadow:0 2px 8px rgba(0,0,0,.7)}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerSkip{pointer-events:auto;border:1px solid rgba(255,255,255,.24);background:rgba(8,14,24,.58);color:#f5fbff;border-radius:999px;padding:10px 16px;font-weight:700;letter-spacing:.04em;cursor:pointer;backdrop-filter:blur(6px)}
+#disclaimerCard.videoDisclaimerCard .videoDisclaimerSkip:hover{background:rgba(18,28,44,.78)}
+</style>
+<script id="sylvinia-v0325-asset-patch">
+(function(){
+  'use strict';
+  try{
+    if(window.__sylviniaV0325AssetPatch) return;
+    window.__sylviniaV0325AssetPatch=true;
+
+    const THUMB_G='assets/images/chapter_select/ch13_g_romance.png';
+    const THUMB_I='assets/images/chapter_select/ch13_i_piano.png';
+    const THUMB_14='assets/images/chapter_select/ch14_conseil.png';
+    const KEY_C14_INT_007='assets/images/keyscenes/chapter14/c14_i_int_007.png';
+    const MUSIC_KEY='music_c14_aller_au_diable';
+    const MUSIC_SRC='assets/audio/chapter14/aller_au_diable.mp3';
+    const INTRO_VIDEO='assets/video/intro/lv_0_20260814181240.mp4';
+    const CHAPTER_IMAGES={ch13_g:THUMB_G,ch13_i:THUMB_I,ch14:THUMB_14};
+
+    if(typeof A!=='undefined'){
+      A.c13g_chapter_thumb=THUMB_G;
+      A.c13i_chapter_thumb=THUMB_I;
+      A.c14_chapter_thumb=THUMB_14;
+      A[MUSIC_KEY]=MUSIC_SRC;
+      A.c14_i_int_007_missing=KEY_C14_INT_007;
+      A.video_intro_disclaimer=INTRO_VIDEO;
+    }
+
+    const setSceneMusic=(sceneId,key)=>{
+      if(typeof S==='undefined'||!S[sceneId]) return;
+      S[sceneId].music=key;
+    };
+    ['c14_i_019','c14_i_int_001','c14_i_int_002','c14_i_int_003','c14_i_int_004','c14_i_int_005','c14_i_int_006','c14_i_int_007','c14_i_int_008','c14_i_int_009'].forEach(id=>setSceneMusic(id,MUSIC_KEY));
+
+    if(typeof CODEX_MUSIC!=='undefined'){
+      CODEX_MUSIC[MUSIC_KEY]={
+        title:'Aller au diable',
+        body:'La piste de la séquence Iriana / Valurn du Chapitre XIV, de la scène c14_i_019 jusqu’à c14_i_int_009.',
+        src:(typeof A!=='undefined'?A[MUSIC_KEY]:MUSIC_SRC),
+        label:'Chapitre XIV'
+      };
+    }
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined'){
+      ['c14_i_019','c14_i_int_001','c14_i_int_002','c14_i_int_003','c14_i_int_004','c14_i_int_005','c14_i_int_006','c14_i_int_007','c14_i_int_008','c14_i_int_009'].forEach(sceneId=>{
+        const previous=Array.isArray(CODEX_MUSIC_BY_SCENE[sceneId])?CODEX_MUSIC_BY_SCENE[sceneId]:[];
+        CODEX_MUSIC_BY_SCENE[sceneId]=Array.from(new Set(previous.concat(MUSIC_KEY)));
+      });
+    }
+
+    if(typeof S!=='undefined' && S.c14_i_int_007){
+      const sc=S.c14_i_int_007;
+      sc.bg='c14_i_int_007_missing';
+      sc.bgCycle=['c14_i_int_007_missing'];
+      sc.bgCycleMs=5000;
+      sc.zoom=true;
+      sc.hideChars=true;
+      sc.clearChars=true;
+      sc.chars=[];
+    }
+    if(typeof CODEX_IMAGES!=='undefined'){
+      CODEX_IMAGES.c14_i_int_007_missing={
+        title:'XIV · Le Chaos dans le sang',
+        body:'Illustration clé ajoutée pour la scène c14_i_int_007.',
+        src:(typeof A!=='undefined'?A.c14_i_int_007_missing:KEY_C14_INT_007)
+      };
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      const prev=Array.isArray(CODEX_IMAGES_BY_SCENE.c14_i_int_007)?CODEX_IMAGES_BY_SCENE.c14_i_int_007:[];
+      CODEX_IMAGES_BY_SCENE.c14_i_int_007=Array.from(new Set(prev.concat('c14_i_int_007_missing')));
+    }
+
+    function syncChapterCards(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined' || !Array.isArray(CHAPTER_SELECT_DATA)) return;
+      CHAPTER_SELECT_DATA.forEach(ch=>{ if(ch && CHAPTER_IMAGES[ch.key]) ch.image=CHAPTER_IMAGES[ch.key]; });
+    }
+    syncChapterCards();
+    if(typeof renderChapterSelect==='function' && !window.__sylviniaV0325ChapterRenderWrapped){
+      window.__sylviniaV0325ChapterRenderWrapped=true;
+      const prevRender=renderChapterSelect;
+      window.renderChapterSelect=function(){
+        syncChapterCards();
+        return prevRender.apply(this,arguments);
+      };
+    }
+
+    function finishVideoDisclaimer(){
+      try{ if(typeof markDisclaimerSeen==='function') markDisclaimerSeen(); }catch(_e){}
+      window.__sylviniaDisclaimerAcceptedThisLoad=true;
+      if(typeof setScreen==='function') setScreen('title');
+    }
+    window.skipVideoDisclaimer=finishVideoDisclaimer;
+    window.enterTitleFromDisclaimer=finishVideoDisclaimer;
+
+    function buildVideoDisclaimer(){
+      const card=document.getElementById('disclaimerCard');
+      if(!card) return null;
+      if(card.dataset.videoDisclaimerReady==='true') return card.querySelector('video');
+      card.dataset.videoDisclaimerReady='true';
+      card.classList.add('videoDisclaimerCard');
+      card.innerHTML=''
+        +'<div class="videoDisclaimerWrap">'
+        +  '<video id="videoDisclaimerPlayer" class="videoDisclaimerPlayer" autoplay muted playsinline preload="auto">'
+        +    '<source src="'+INTRO_VIDEO+'" type="video/mp4">'
+        +  '</video>'
+        +  '<div class="videoDisclaimerOverlay">'
+        +    '<div class="videoDisclaimerTop"><button type="button" class="videoDisclaimerSkip" onclick="skipVideoDisclaimer()">Passer</button></div>'
+        +    '<div class="videoDisclaimerBottom">'
+        +      '<div class="videoDisclaimerLabel">Les Chroniques de Sylvinia</div>'
+        +      '<div class="videoDisclaimerHint">L’introduction vidéo remplace désormais le disclaimer. À la fin, l’écran titre s’ouvre automatiquement.</div>'
+        +    '</div>'
+        +  '</div>'
+        +'</div>';
+      const video=card.querySelector('video');
+      if(video){
+        video.onended=finishVideoDisclaimer;
+        video.onerror=finishVideoDisclaimer;
+      }
+      return video;
+    }
+
+    function initVideoDisclaimer(forceReplay){
+      const video=buildVideoDisclaimer();
+      if(typeof playMusic==='function') playMusic('music_menu');
+      if(!video) return;
+      try{
+        if(forceReplay){ video.currentTime=0; }
+        const p=video.play();
+        if(p && typeof p.catch==='function') p.catch(()=>{});
+      }catch(_e){}
+    }
+
+    if(typeof showDisclaimer==='function'){
+      window.showDisclaimer=function(){
+        load();
+        if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
+        setScreen('disclaimer');
+        initVideoDisclaimer(true);
+      };
+    }
+
+    if(typeof setScreen==='function' && !window.__sylviniaV0325SetScreenWrapped){
+      window.__sylviniaV0325SetScreenWrapped=true;
+      const prevSetScreen=setScreen;
+      window.setScreen=function(name){
+        const result=prevSetScreen.apply(this,arguments);
+        if(name==='disclaimer') initVideoDisclaimer(false);
+        return result;
+      };
+    }
+
+    if(document.getElementById('disclaimer') && !document.getElementById('disclaimer').classList.contains('hidden')){
+      initVideoDisclaimer(true);
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.325 · Intro vidéo + chapitres + scène clé';
+    console.info('[Sylvinia v0.325] Patch appliqué : chapitres, musique, image clé c14_i_int_007 et intro vidéo.');
+  }catch(error){
+    console.error('[Sylvinia v0.325] Échec du patch complémentaire', error);
+  }
+})();
+</script>
+
 </body>
 </html>
