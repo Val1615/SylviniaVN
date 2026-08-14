@@ -174,7 +174,7 @@ export const LOCATIONS: LocationData[] = [
 
 export const CHARACTERS: CharacterData[] = [
   {
-    id: "hylee", name: "Hylee", role: "Cryomancienne humaine", ageNote: "22 ans dans cette chronique", portrait: "/assets/portraits/hylee.jpg", color: "#b8efff", unlockDay: 1, defaultMood: "soft",
+    id: "hylee", name: "Hylee", role: "Apprentie Cryomancienne", ageNote: "", portrait: "/assets/portraits/hylee.jpg", color: "#b8efff", unlockDay: 1, defaultMood: "soft",
     tagline: "Elle apprend enfin à choisir ce qu’elle désire, pas seulement ce à quoi elle survit.",
     bio: "Hylee travaillait encore à l’Auberge du Forestier lorsque Remerii a reconnu sa cryomancie. Elle a choisi de la suivre sur les routes. Leur voyage reste discret : l’Empire ne doit pas identifier trop vite la puissance qu’elles transportent.",
     wound: "La peur de n’être aimée que pour son potentiel, et de redevenir prisonnière dès qu’elle baisse sa garde.",

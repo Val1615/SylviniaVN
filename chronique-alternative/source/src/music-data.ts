@@ -1,45 +1,59 @@
 export const SPOT_MUSIC: Record<string, string> = {
   "algratal-streets": "algratal",
-  "algratal-market": "algratal",
+  "algratal-market": "capital-market",
   "algratal-palace-audience": "algratal",
   "algratal-palace-council": "algratal",
-  "algratal-music-room": "algratal",
-  "algratal-ballroom": "algratal",
-  "algratal-palace-quarters": "algratal",
-  "algratal-catacombs": "algratal",
+  "algratal-music-room": "imperial-lament-instrumental",
+  "algratal-ballroom": "chosen-ball",
+  "algratal-palace-quarters": "marble-moon",
+  "algratal-catacombs": "catacombs",
 
   "miraldas-dome": "miraldas",
-  "miraldas-atelier": "miraldas",
-  "miraldas-archives": "miraldas",
-  "miraldas-hylee-glade": "miraldas",
-  "miraldas-purple-woods": "miraldas",
-  "miraldas-observatory": "miraldas",
-  "miraldas-quarters": "miraldas",
+  "miraldas-atelier": "training",
+  "miraldas-archives": "mage-city",
+  "miraldas-hylee-glade": "dawn-training",
+  "miraldas-purple-woods": "wild-calm",
+  "miraldas-observatory": "mage-city",
+  "miraldas-quarters": "two-stars-night",
 
   "forbidden-threshold": "forbidden",
   "forbidden-crossroads": "forbidden",
-  "forbidden-sanctuary": "forbidden",
+  "forbidden-sanctuary": "wild-calm",
   "forbidden-ruins": "forbidden",
 
   "forthaven-harbor": "forthaven-lullaby",
-  "forthaven-ramparts": "forthaven-lullaby",
-  "forthaven-war-room": "forthaven-lullaby",
-  "forthaven-memorial": "forthaven-lullaby",
+  "forthaven-ramparts": "dawn-training",
+  "forthaven-war-room": "storm-without-you",
+  "forthaven-memorial": "draven-daughter",
   "forthaven-quarters": "forthaven-lullaby",
 
   "akuhn-gates": "akuhn",
   "akuhn-palace-exterior": "akuhn",
-  "akuhn-throne-room": "akuhn",
-  "akuhn-archives": "akuhn",
-  "akuhn-war-room": "akuhn",
-  "akuhn-music-room": "akuhn",
-  "akuhn-terrace": "akuhn",
+  "akuhn-throne-room": "amanea-black-queen",
+  "akuhn-archives": "captive",
+  "akuhn-war-room": "tension",
+  "akuhn-music-room": "imperial-lament-instrumental",
+  "akuhn-terrace": "amanea-black-queen",
 
   "tzekarun-gates": "tzekarun-ost",
   "tzekarun-workshop": "tzekarun-ost",
   "tzekarun-archive": "tzekarun-ost",
 
   "forestier-inn": "forestier-ost",
+  "echo-clearing": "echo-clearing-ost",
+  "river-halt": "iriana-valurn-confessions",
+  "imperial-road": "valurn-memory",
+  "obsidian-waystation": "dune-relay",
+};
+
+const LOCATION_MUSIC: Record<string, string> = {
+  algratal: "algratal",
+  miraldas: "miraldas",
+  forbidden: "forbidden",
+  forthaven: "forthaven-lullaby",
+  akuhn: "akuhn",
+  tzekarun: "tzekarun-ost",
+  forestier: "forestier-ost",
   "echo-clearing": "echo-clearing-ost",
   "river-halt": "iriana-valurn-confessions",
   "imperial-road": "valurn-memory",
@@ -96,8 +110,15 @@ export const MUSIC_LABELS: Record<string, string> = {
   title: "Le portail emprunté",
 };
 
-export function musicForContext(spotId: string, context?: { intimacy?: boolean; prologue?: boolean }) {
+export function musicForContext(spotId: string, context?: { intimacy?: boolean; prologue?: boolean; locationId?: string }) {
   if (context?.intimacy) return "intimate";
-  if (context?.prologue) return "menu";
-  return SPOT_MUSIC[spotId] || "title";
+  if (context?.prologue) return "title";
+  if (SPOT_MUSIC[spotId]) return SPOT_MUSIC[spotId];
+  if (context?.locationId && LOCATION_MUSIC[context.locationId]) return LOCATION_MUSIC[context.locationId];
+
+  // Les sauvegardes anciennes et les vingt logements peuvent employer un
+  // sous-lieu ajouté après la table ci-dessus. Le préfixe évite alors de faire
+  // revenir la musique du prologue au milieu du mode libre.
+  const locationPrefix = Object.keys(LOCATION_MUSIC).find((location) => spotId === location || spotId.startsWith(`${location}-`));
+  return locationPrefix ? LOCATION_MUSIC[locationPrefix] : "algratal";
 }
