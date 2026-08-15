@@ -51148,13 +51148,13 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     function c14Unlocked(){
       if(state&&state.devMode)return true;
       const f=flags();
-      return f.chapter13IComplete===true||f.chapter13IRoute===true||f.chapter13GComplete===true||f.chapter13GRoute===true||f.chapter14Complete===true;
+      return f.chapter13IComplete===true||f.chapter13GComplete===true;
     }
     window.c14Unlocked=c14Unlocked;
     window.startChapter14=function(){
       const prev=(typeof readMainSave==='function'?readMainSave():null)||state||{};
       const pf=(prev&&prev.flags)||{};
-      const unlocked=(prev&&prev.devMode)||pf.chapter13IComplete===true||pf.chapter13IRoute===true||pf.chapter13GComplete===true||pf.chapter13GRoute===true||pf.chapter14Complete===true;
+      const unlocked=(prev&&prev.devMode)||pf.chapter13IComplete===true||pf.chapter13GComplete===true;
       if(!unlocked){if(typeof toast==='function')toast('Chapitre XIV verrouillé','Termine le Chapitre XIII_G ou XIII_I.');return;}
       state={...prev,scene:'c14_001',stats:{...START_STATS,...((prev&&prev.stats)||{})},flags:{...pf},history:[],lastScreen:'game'};
       setScreen('game');render();save();
@@ -51505,11 +51505,21 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 
 
 <style id="sylvinia-v0326-intro-and-chapter-thumbs-style">
-/* Intro vidéo : aucun texte, aucun bouton, aucun voile. */
-#disclaimerCard.videoDisclaimerCard{min-height:100svh;padding:0!important;display:flex!important;align-items:stretch!important;justify-content:stretch!important;background:#000!important;overflow:hidden!important}
-#disclaimerCard.videoDisclaimerCard::before,#disclaimerCard.videoDisclaimerCard::after{content:none!important;display:none!important}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerWrap{position:relative;width:100%;height:100svh;min-height:100svh;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#disclaimerCard.videoDisclaimerCard .videoDisclaimerPlayer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;background:#000;display:block}
+/* Intro vidéo : après le disclaimer historique, plein écran, sans texte ni bouton. */
+#sylviniaIntroVideoOverlay{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;touch-action:manipulation}
+#sylviniaIntroVideoOverlay.hidden{display:none!important}
+#sylviniaIntroVideoOverlay .sylviniaIntroVideoPlayer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;background:#000;display:block}
+
+/* Anti-spoil : un chapitre verrouillé ne révèle ni illustration, ni sous-titre, ni résumé, ni tags. */
+#chapterSelectGrid .chapterSelectCard.locked .chapterBookCoverImg,
+#chapterSelectGrid .chapterSelectCard.locked .chapterOpenImage{visibility:hidden!important;opacity:0!important}
+#chapterSelectGrid .chapterSelectCard.locked .chapterBookCover,
+#chapterSelectGrid .chapterSelectCard.locked .chapterOpenImageFrame{background:radial-gradient(circle at 50% 38%,rgba(167,240,255,.08),transparent 30%),linear-gradient(180deg,rgba(12,18,28,.98),rgba(3,6,11,.99))!important}
+#chapterSelectGrid .chapterSelectCard.locked .chapterOpenImageFrame{position:relative!important;min-height:220px}
+#chapterSelectGrid .chapterSelectCard.locked .chapterOpenImageFrame::after{content:"◆";position:absolute;inset:0;display:grid;place-items:center;color:rgba(167,240,255,.34);font-size:42px;text-shadow:0 0 28px rgba(167,240,255,.18);pointer-events:none}
+#chapterSelectGrid .chapterSelectCard.locked .chapterSelectKicker,
+#chapterSelectGrid .chapterSelectCard.locked .chapterOpenText>p:not(.chapterLockHint),
+#chapterSelectGrid .chapterSelectCard.locked .chapterSelectTags{display:none!important}
 
 /* XIII_I et XIV : même cadrage plein cadre que XIII_G dans la sélection de chapitres. */
 #chapterSelectGrid .chapterSelectCard.chapter13ICard .chapterOpenImageFrame,
@@ -51632,73 +51642,75 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
       };
     }
 
-    function finishVideoDisclaimer(){
+    let introVideoFinishing=false;
+
+    function ensureIntroVideoOverlay(){
+      let overlay=document.getElementById('sylviniaIntroVideoOverlay');
+      if(overlay) return overlay;
+      overlay=document.createElement('div');
+      overlay.id='sylviniaIntroVideoOverlay';
+      overlay.className='hidden';
+      overlay.setAttribute('aria-label','Introduction vidéo');
+      overlay.innerHTML='<video id="sylviniaIntroVideoPlayer" class="sylviniaIntroVideoPlayer" muted playsinline preload="auto"><source src="'+INTRO_VIDEO+'" type="video/mp4"></video>';
+      document.body.appendChild(overlay);
+      const video=overlay.querySelector('video');
+      if(video){
+        video.addEventListener('ended',finishIntroVideo);
+        video.addEventListener('error',finishIntroVideo);
+      }
+      /* Un clic ou tap n'importe où passe l'introduction, sans bouton ni texte. */
+      overlay.addEventListener('pointerup',ev=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        finishIntroVideo();
+      });
+      return overlay;
+    }
+
+    function finishIntroVideo(){
+      if(introVideoFinishing) return;
+      introVideoFinishing=true;
+      const overlay=document.getElementById('sylviniaIntroVideoOverlay');
+      const video=document.getElementById('sylviniaIntroVideoPlayer');
+      if(video){try{video.pause();}catch(_e){}}
+      if(overlay) overlay.classList.add('hidden');
+      if(typeof setScreen==='function') setScreen('splashTitle');
+      setTimeout(()=>{introVideoFinishing=false;},120);
+    }
+
+    function startIntroVideo(){
       try{ if(typeof markDisclaimerSeen==='function') markDisclaimerSeen(); }catch(_e){}
       window.__sylviniaDisclaimerAcceptedThisLoad=true;
-      if(typeof setScreen==='function') setScreen('splashTitle');
-    }
-    window.skipVideoDisclaimer=finishVideoDisclaimer;
-    window.enterTitleFromDisclaimer=finishVideoDisclaimer;
-
-    function buildVideoDisclaimer(){
-      const card=document.getElementById('disclaimerCard');
-      if(!card) return null;
-      if(card.dataset.videoDisclaimerReady==='true') return card.querySelector('video');
-      card.dataset.videoDisclaimerReady='true';
-      card.classList.add('videoDisclaimerCard');
-      card.innerHTML=''
-        +'<div class="videoDisclaimerWrap">'
-        +  '<video id="videoDisclaimerPlayer" class="videoDisclaimerPlayer" autoplay muted playsinline preload="auto">'
-        +    '<source src="'+INTRO_VIDEO+'" type="video/mp4">'
-        +  '</video>'
-        +'</div>';
-      const video=card.querySelector('video');
-      if(video){
-        video.onended=finishVideoDisclaimer;
-        video.onerror=finishVideoDisclaimer;
-      }
-      return video;
-    }
-
-    function initVideoDisclaimer(forceReplay){
-      const video=buildVideoDisclaimer();
+      const overlay=ensureIntroVideoOverlay();
+      const video=overlay&&overlay.querySelector('video');
       if(typeof playMusic==='function') playMusic('music_title_intro');
-      if(!video) return;
+      if(!overlay||!video){ finishIntroVideo(); return; }
+      introVideoFinishing=false;
+      overlay.classList.remove('hidden');
+      try{video.currentTime=0;}catch(_e){}
       try{
-        if(forceReplay){ video.currentTime=0; }
-        const p=video.play();
-        if(p && typeof p.catch==='function') p.catch(()=>{});
+        const promise=video.play();
+        if(promise&&typeof promise.catch==='function') promise.catch(()=>{});
       }catch(_e){}
     }
 
+    /* Le disclaimer original reste le premier écran de chaque chargement. */
+    window.enterTitleFromDisclaimer=startIntroVideo;
+    window.skipVideoDisclaimer=finishIntroVideo;
     if(typeof showDisclaimer==='function'){
       window.showDisclaimer=function(){
         load();
         if(typeof ensureCodexDefaults==='function') ensureCodexDefaults();
-        setScreen('disclaimer');
-        initVideoDisclaimer(true);
+        if(typeof disclaimerSeen==='function'&&disclaimerSeen()) setScreen('title');
+        else setScreen('disclaimer');
       };
-    }
-
-    if(typeof setScreen==='function' && !window.__sylviniaV0326SetScreenWrapped){
-      window.__sylviniaV0326SetScreenWrapped=true;
-      const prevSetScreen=setScreen;
-      window.setScreen=function(name){
-        const result=prevSetScreen.apply(this,arguments);
-        if(name==='disclaimer') initVideoDisclaimer(false);
-        return result;
-      };
-    }
-
-    if(document.getElementById('disclaimer') && !document.getElementById('disclaimer').classList.contains('hidden')){
-      initVideoDisclaimer(true);
     }
 
     const bubble=document.querySelector('.menuUpdateBubble');
-    if(bubble) bubble.textContent='Mise à jour · v0.326 · Intro + cadrage chapitres';
-    console.info('[Sylvinia v0.326] Correctif : cadrage XIII_I/XIV, intro vidéo nue, retour vers écran titre.');
+    if(bubble) bubble.textContent='Mise à jour · v0.327 · Disclaimer + intro skippable + anti-spoil';
+    console.info('[Sylvinia v0.327] Correctif : disclaimer restauré, intro vidéo skippable, anti-spoil chapitres, verrou XIV vérifié.');
   }catch(error){
-    console.error('[Sylvinia v0.326] Échec du correctif intro/chapitres', error);
+    console.error('[Sylvinia v0.327] Échec du correctif intro/chapitres', error);
   }
 })();
 </script>
