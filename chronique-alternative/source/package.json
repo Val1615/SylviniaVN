@@ -10,7 +10,9 @@
     "test:group-intimacy": "node scripts/validate-group-intimacy.mjs",
     "test:home-intimacy": "node scripts/validate-home-intimacy.mjs",
     "test:housing": "node scripts/validate-housing.mjs",
-    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing"
+    "test:heritages": "node scripts/validate-heritages.mjs",
+    "test:gameplay": "node scripts/validate-gameplay.mjs",
+    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay"
   },
   "dependencies": {
     "react": "19.2.6",
