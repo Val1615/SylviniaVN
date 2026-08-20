@@ -20,13 +20,14 @@ const server = await createServer({
 });
 
 try {
-  const [gameData, worldData, storyData, rules, musicData, housingData] = await Promise.all([
+  const [gameData, worldData, storyData, rules, musicData, housingData, campaignData] = await Promise.all([
     server.ssrLoadModule("/src/game-data.ts"),
     server.ssrLoadModule("/src/world-data.ts"),
     server.ssrLoadModule("/src/story-data.ts"),
     server.ssrLoadModule("/src/gameplay-rules.ts"),
     server.ssrLoadModule("/src/music-data.ts"),
     server.ssrLoadModule("/src/housing-data.ts"),
+    server.ssrLoadModule("/src/campaign-scenes.ts"),
   ]);
 
   assert.equal(gameData.CHARACTERS.length, 12, "le casting complet doit contenir douze personnages");
@@ -109,7 +110,8 @@ try {
   assert.match(irianaValurn, /excludedFlags:\s*\["iv-friends"\]/, "la branche amicale Iriana/Valurn doit exclure le rendez-vous romantique");
   assert.match(housingSceneSource, /id:\s*"hylee-remerii"[^\n]+requiredFlags:\s*\["hr-triad-established"\]/, "le rendez-vous au logis Hylee/Remerii doit suivre la même branche");
 
-  assert.match(pageSource, /!\["route", "ambient", "date"\]\.includes\(dialogue\.scene\.kind\)/, "les choix génériques doivent rester hors des scènes structurelles");
+  assert.match(pageSource, /dialogue\.scene\.kind !== "route" \|\| !dialogue\.scene\.route/, "seules les routes majeures peuvent recevoir des choix contextuels supplémentaires");
+  assert.match(pageSource, /ROUTE_CONTEXTUAL_CHOICES\[dialogue\.scene\.route\.id\]/, "les choix supplémentaires doivent provenir du catalogue propre à chaque scène");
   assert.match(pageSource, /routeChoiceCompletes\(choice\.id\) \? dialogue\.scene\.route/, "la validation de route doit filtrer les choix injectés");
   assert.match(pageSource, /publicDateUnlocked\(game, date\)/, "le démarrage d'un rendez-vous doit revérifier la branche");
   assert.match(pageSource, /visitedLocations:\s*\["algratal"\]/, "une nouvelle partie ne doit marquer que son lieu réellement visité");
@@ -133,10 +135,15 @@ try {
   assert.doesNotMatch(musicSource.slice(musicSource.indexOf("export function musicForContext")), /:\s*"title"\s*;/, "le fallback musical libre ne doit pas viser le titre");
 
   const socialFlags = ["social:medig-window", "social:amanea-family-truth"];
-  const storyHistory = ["iriana-0", "draven-0", "amanea-0", "valurn-2", "amanea-3", "iriana-3", "amanea-4", "draven-4", "bellirith-3"];
+  const storyHistory = [
+    "iriana-0", "draven-0", "amanea-0",
+    "campaign-archives-channel", "campaign-forged-proof",
+    "campaign-convergence-council", "campaign-convergence-operation", "campaign-epilogue",
+  ];
   assert.equal(storyData.storyProgress(storyHistory, socialFlags), storyData.MAIN_STORY.length, "la campagne doit pouvoir atteindre sa conclusion sans mode développeur");
+  const campaignIds = new Set(campaignData.CAMPAIGN_SCENES.map((scene) => scene.id));
   for (const requirement of storyData.MAIN_STORY.flatMap((act) => act.requiredScenes)) {
-    assert.ok(completedRoutes.includes(requirement) || socialFlags.includes(`social:${requirement}`), `jalon principal introuvable : ${requirement}`);
+    assert.ok(completedRoutes.includes(requirement) || socialFlags.includes(`social:${requirement}`) || campaignIds.has(requirement), `jalon principal introuvable : ${requirement}`);
   }
 
   console.log(`[Gameplay] ${completedRoutes.length} routes atteignables · ${storyData.MAIN_STORY.length} actes terminables · branches platoniques et rendez-vous croisés synchronisés · temps, Codex et ${housingData.HOUSING_PROPERTIES.length} logis validés.`);

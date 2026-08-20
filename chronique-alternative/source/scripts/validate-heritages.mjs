@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformWithOxc } from "vite";
+import { createServer } from "vite";
 
 const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const alternativeRoot = resolve(sourceRoot, "..");
@@ -15,9 +15,18 @@ const [heritagesSource, gameData, worldData, dateScenes, housingScenes, page, in
   readFile(resolve(sourceRoot, "src/integration.css"), "utf8"),
 ]);
 
-const transformed = await transformWithOxc(heritagesSource, resolve(sourceRoot, "src/heritages-data.ts"), { transformMode: "web" });
-const moduleUrl = `data:text/javascript;base64,${Buffer.from(transformed.code).toString("base64")}`;
-const catalog = await import(moduleUrl);
+const server = await createServer({
+  root: sourceRoot,
+  appType: "custom",
+  logLevel: "silent",
+  server: { middlewareMode: true },
+});
+let catalog;
+try {
+  catalog = await server.ssrLoadModule("/src/heritages-data.ts");
+} finally {
+  await server.close();
+}
 const report = catalog.validateHeritagesCatalog();
 const expectedCast = new Set(["hylee", "remerii", "iriana", "valurn", "naiah", "lineva", "saidin", "bellirith", "amanea", "draven", "allenna", "tia"]);
 const locationSection = gameData.slice(gameData.indexOf("export const LOCATIONS"), gameData.indexOf("export const CHARACTERS"));
@@ -54,14 +63,16 @@ async function validateWebp(path, label) {
   }
 }
 
-async function validateJpeg(path, label) {
+async function validatePortrait(path, label) {
   const contents = await readFile(path);
-  if (contents.length < 5_000 || contents[0] !== 0xff || contents[1] !== 0xd8 || contents.at(-2) !== 0xff || contents.at(-1) !== 0xd9) {
-    throw new Error(`${label}: portrait JPEG vide ou illisible`);
+  const jpeg = contents[0] === 0xff && contents[1] === 0xd8 && contents.at(-2) === 0xff && contents.at(-1) === 0xd9;
+  const png = contents.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  if (contents.length < 5_000 || (!jpeg && !png)) {
+    throw new Error(`${label}: portrait PNG/JPEG vide ou illisible`);
   }
 }
 
-const expected = { characters: 12, secrets: 49, knowledge: 61, letters: 24, invitations: 12, rumors: 24, spontaneousEvents: 14 };
+const expected = { characters: 12, secrets: 49, knowledge: 63, letters: 25, invitations: 12, rumors: 24, spontaneousEvents: 15 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }
@@ -78,7 +89,7 @@ for (const [character, unlockDay] of [["tia", 18], ["allenna", 8]]) {
   for (const mood of ["neutral", "smile", "angry", "shy", "troubled", "thinking", "sad", "smirk", "threatening", "stern"]) {
     await validateWebp(resolve(alternativeRoot, `assets/sprites/${character}/${mood}.webp`), `${character}/${mood}`);
   }
-  await validateJpeg(resolve(alternativeRoot, `assets/portraits/${character}.jpg`), character);
+  await validatePortrait(resolve(alternativeRoot, `assets/portraits/${character}.jpg`), character);
 }
 
 for (const field of ["knowledge", "secretHistory", "letters", "invitations", "rumors", "worldEventHistory", "livingWorldTick"]) {
