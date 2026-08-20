@@ -36,7 +36,7 @@ try {
 }
 
 const report = catalog.validateGroupIntimacyCatalog();
-const expected = { pairs: 6, combinations: 18, routes: 54, chapters: 1728, dates: 6, games: 6 };
+const expected = { pairs: 8, combinations: 24, routes: 72, chapters: 2304, dates: 8, games: 8 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }
@@ -90,8 +90,11 @@ if (physicalChapters.some((chapter) => !chapter || chapter.length < 4 || !chapte
   throw new Error("Chaque route explicite à trois doit contenir sa propre position, des dialogues et une réaction.");
 }
 const physicalSignatures = physicalChapters.map((chapter) => chapter.map((line) => `${line.speaker}:${line.text}`).join("\n"));
-if (new Set(physicalSignatures).size !== 54) throw new Error("Les 54 embranchements physiques à trois doivent tous être uniques.");
+if (new Set(physicalSignatures).size !== 72) throw new Error("Les 72 embranchements physiques à trois doivent tous être uniques.");
 const physicalLines = physicalChapters.flat().map((line) => line.text.trim());
-if (new Set(physicalLines).size !== physicalLines.length) throw new Error("Une ligne physique à trois est répétée entre deux embranchements.");
+if (new Set(physicalLines).size !== physicalLines.length) {
+  const repeated = [...new Set(physicalLines.filter((line, index) => physicalLines.indexOf(line) !== index))];
+  throw new Error(`Une ligne physique à trois est répétée entre deux embranchements :\n${repeated.slice(0, 12).join("\n")}`);
+}
 
 console.log(`[Intimité à trois] ${report.pairs} duos · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${report.games} mini-jeux · ${physicalSignatures.length} embranchements physiques uniques validés.`);

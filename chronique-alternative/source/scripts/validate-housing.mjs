@@ -8,7 +8,7 @@ const housingData = await readFile(resolve(sourceRoot, "src/housing-data.ts"), "
 const housingScenes = await readFile(resolve(sourceRoot, "src/housing-scenes.ts"), "utf8");
 const page = await readFile(resolve(sourceRoot, "src/page.tsx"), "utf8");
 const cities = ["algratal", "forthaven", "miraldas", "akuhn"];
-const characters = ["hylee", "remerii", "iriana", "valurn", "naiah", "lineva", "saidin", "bellirith", "amanea", "draven"];
+const characters = ["hylee", "remerii", "iriana", "tia", "valurn", "naiah", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven"];
 
 for (const city of cities) {
   for (let tier = 1; tier <= 5; tier += 1) {
@@ -29,4 +29,4 @@ for (const feature of ["discountedPropertyPrice", "housingSaleValue", "setDispla
   if (!page.includes(feature) && !housingScenes.includes(feature)) throw new Error(`Intégration manquante : ${feature}`);
 }
 
-console.log("[Logis] 4 villes · 20 logements · 20 décors · 20 objets personnels · 40 moments de résident validés.");
+console.log("[Logis] 4 villes · 20 logements · 20 décors · 24 objets personnels · 48 moments de résident validés.");
