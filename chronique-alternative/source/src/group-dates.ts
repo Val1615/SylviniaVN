@@ -18,6 +18,8 @@ export type GroupDateScene = {
   minAffection: number;
   minTrust: number;
   minDesire: number;
+  requiredFlags?: string[];
+  excludedFlags?: string[];
   mood: string;
   intro: DialogueLine[];
   choices: ChoiceData[];
@@ -108,6 +110,7 @@ export const GROUP_DATES: GroupDateScene[] = [
     dynamic: "Hylee cherche une place d’égale ; Remerii apprend à conseiller sans reprendre la conduite. Leur ancienne relation de mentore et d’élève devient une complicité adulte.",
     location: "miraldas", spot: "miraldas-atelier", period: "soirée",
     minStage: 4, minAffection: 34, minTrust: 32, minDesire: 22, mood: "soft",
+    requiredFlags: ["hr-triad-established"],
     intro: [
       N("Hylee a préparé trois blocs de glace. Remerii a préparé quatorze instruments, deux protocoles et une liste intitulée « ne pas transformer le rendez-vous en cours ».") ,
       C("Hylee", "Si elle prononce le mot calibrage plus de deux fois, tu as le droit de lui confisquer la baguette.", "teasing"),
@@ -159,6 +162,8 @@ export const GROUP_DATES: GroupDateScene[] = [
     dynamic: "Iriana connaît les conséquences de chaque geste ; Valurn teste les règles pour vérifier lesquelles la protègent et lesquelles l’emprisonnent. Ils se défient parce qu’ils se comprennent trop bien.",
     location: "algratal", spot: "algratal-palace-quarters", period: "soirée",
     minStage: 4, minAffection: 36, minTrust: 34, minDesire: 24, mood: "calm",
+    requiredFlags: ["iv-shared-dates"],
+    excludedFlags: ["iv-friends"],
     intro: [N("La table ne comporte que trois couverts. Iriana a congédié le service ; Valurn a tout de même inspecté le vin, davantage par habitude de contrarier que par inquiétude."), C("Iriana", "Une soirée sans protocole ne signifie pas une soirée sans attention."), C("Valurn", "Et une soirée attentive ne signifie pas que nous devons nous ennuyer avec discipline."), N("Ils vous laissent décider quelle règle survivra au premier plat.")],
     choices: [
       groupChoice("giv-names", "Bannir les titres, mais conserver le droit de demander une pause sans justification.", "sangFroid", [N("Valurn appelle Iriana par son prénom avec une prudence qu’il déguise mal. Elle lui répond sans rang, puis vous remercie d’avoir conservé la seule règle qui protège réellement la soirée."), C("Iriana", "La liberté n’est pas l’absence de limites. C’est pouvoir choisir celles qui nous gardent.", "calm")], "great", { affection: 8, trust: 9, desire: 4 }, "valurn", { affection: 7, trust: 9, desire: 5 }),

@@ -103,6 +103,15 @@ import {
   spotsForLocation,
   travelWaypoint,
 } from "./world-data";
+import {
+  SCOUT_VOCATION,
+  advanceClock,
+  contentBranchAllowed,
+  injectedChoiceKind,
+  routeChoiceCompletes,
+  travelDurationLabel,
+  travelPeriodCost,
+} from "./gameplay-rules";
 
 type Screen = "title" | "creator" | "game";
 type Tab = "place" | "map" | "jobs" | "relations" | "journal" | "inventory" | "codex" | "options";
@@ -172,6 +181,8 @@ type GameState = {
   flags: string[];
   journal: string[];
   codex: string[];
+  visitedLocations: string[];
+  visitedSpots: string[];
   history: string[];
   ambientHistory: Record<string, string[]>;
   sharedHistory: string[];
@@ -411,7 +422,9 @@ function createGame(player: Player): GameState {
     confluence: 8,
     flags: [],
     journal: ["Saidin vous a recueilli·e à la sortie d’un portail défectueux.", "Votre temporalité d’origine et vos souvenirs demeurent introuvables.", "Dans cette branche du temps, Iriana n’a jamais réuni l’expédition qui aurait dû l’accompagner.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
-    codex: ["La Confluence", "Al’Gratal", "Mir’Aldas"],
+    codex: ["La Confluence", "Al’Gratal"],
+    visitedLocations: ["algratal"],
+    visitedSpots: ["algratal-palace-quarters"],
     history: [],
     ambientHistory: emptyAmbientHistory(),
     sharedHistory: [],
@@ -469,6 +482,16 @@ function hydrateGame(raw: unknown): GameState | null {
   const migratedJournal = legacyTimeline
     ? ["Chronologie recalée : Amanea règne encore, Draven voyage vers l’Empire et le rassemblement d’Iriana n’a jamais eu lieu.", ...(value.journal || fresh.journal)]
     : (value.journal || fresh.journal);
+  const rememberedSpots = unique([
+    spot,
+    ...Object.values(value.sceneMemories || {}),
+    ...(value.history || []).map((id) => ROUTE_SPOTS[id]),
+    ...(value.dateHistory || []).map((id) => DATE_SCENES.find((date) => date.id === id)?.spot),
+    ...(value.groupDateHistory || []).map((id) => GROUP_DATES.find((date) => date.id === id)?.spot),
+  ].filter((id): id is string => Boolean(id && spotById(id))));
+  const visitedSpots = unique((value.visitedSpots || rememberedSpots).filter((id) => Boolean(spotById(id))));
+  const visitedLocations = unique((value.visitedLocations || [location, ...visitedSpots.map((id) => spotById(id)?.location)])
+    .filter((id): id is string => Boolean(id && LOCATIONS.some((entry) => entry.id === id))));
   return {
     ...fresh,
     ...value,
@@ -483,6 +506,8 @@ function hydrateGame(raw: unknown): GameState | null {
     flags: (value.flags || []).filter((flag) => !obsoleteFlag(flag)),
     journal: migratedJournal,
     codex: value.codex || fresh.codex,
+    visitedLocations,
+    visitedSpots,
     history: (value.history || []).filter((id) => !obsoleteRoute(id)),
     ambientHistory: Object.fromEntries(CHARACTERS.map((character) => [character.id, legacyTimeline && ["amanea", "draven"].includes(character.id) ? [] : (value.ambientHistory?.[character.id] || [])])),
     sharedHistory: (value.sharedHistory || []).filter((id) => !legacyTimeline || !["amanea-family-truth", "draven-lineva-letter", "medig-window"].includes(id)),
@@ -543,6 +568,16 @@ function clamp(value: number, min = 0, max = 100) {
 
 function unique(values: string[]) {
   return Array.from(new Set(values));
+}
+
+function placeDiscovery(game: GameState, locationId: string, spotId: string) {
+  const location = LOCATIONS.find((entry) => entry.id === locationId);
+  const spot = spotById(spotId);
+  return {
+    codex: unique([...game.codex, location?.name || "", spot?.name || ""].filter(Boolean)),
+    visitedLocations: unique([...game.visitedLocations, locationId]),
+    visitedSpots: unique([...game.visitedSpots, spotId]),
+  };
 }
 
 function hasKnowledge(game: GameState, ids: string[] = []) {
@@ -652,11 +687,11 @@ function evolveLivingWorld(game: GameState): GameState {
 }
 
 function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
+  if (!contentBranchAllowed(game.flags, date)) return false;
   if (game.settings.unlockAll) return true;
   return date.characters.every((characterId) => {
     const relation = game.relationships[characterId];
-    return !game.flags.includes(`${characterId}-platonic`)
-      && relation.stage >= date.minStage
+    return relation.stage >= date.minStage
       && relation.affection >= date.minAffection
       && relation.trust >= date.minTrust
       && relation.desire >= date.minDesire;
@@ -681,9 +716,9 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
 
 function homePairDateUnlocked(game: GameState, pair: HomePairDateProfile): boolean {
   if (!game.housing.propertyId) return false;
+  if (!contentBranchAllowed(game.flags, pair)) return false;
   return game.settings.unlockAll || (
     pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust)
-    && (pair.requiredFlags || []).every((flag) => game.flags.includes(flag))
   );
 }
 
@@ -773,10 +808,11 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     if (after.stage > before.stage) {
       const progress = relationshipNarrativeProgress(next, character.id);
       const nextScene = sceneFor(character.id, after.stage);
+      const nextVariant = nextScene ? relationRouteVariant(nextScene, next).route : undefined;
       relationChanges.push({
         kind: "relation",
         title: `Fil de ${character.name} · ${progress.completed}/${progress.total}`,
-        detail: nextScene ? `Prochaine scène · ${nextScene.title}` : "Toutes les scènes narratives sont accomplies.",
+        detail: nextVariant ? `Prochaine scène · ${nextVariant.title}` : "Toutes les scènes narratives sont accomplies.",
       });
     } else if (!before.met && after.met) {
       relationChanges.push({ kind: "relation", title: `Nouvelle relation · ${character.name}`, detail: character.role });
@@ -1164,6 +1200,54 @@ const PLATONIC_RESPONSES: Record<string, string> = {
   amanea: "Cette voie s’arrête donc ici. L’affection, elle, peut demeurer si tu acceptes qu’elle retrouve lentement sa place.",
 };
 
+const PLATONIC_CONTINUATIONS: Record<string, { title: string; intro: DialogueLine[]; response: DialogueLine[] }> = {
+  hylee: {
+    title: "Une place qui ne disparaît pas",
+    intro: [{ speaker: "Narration", text: "Hylee vous retrouve avec deux tartelettes et aucune tentative de revenir sur votre réponse. Elle veut seulement savoir quelle forme réelle votre amitié peut prendre." }, { speaker: "Hylee", text: "Je ne vais pas prétendre que cela n’a rien changé. Mais je refuse que ma déception efface tout ce qui compte encore entre nous." }],
+    response: [{ speaker: "Hylee", text: "Alors on garde une place l’un·e pour l’autre, sans lui donner un nom qui promettrait autre chose. Ça me va." }],
+  },
+  remerii: {
+    title: "La mesure qui demeure",
+    intro: [{ speaker: "Narration", text: "Remerii a préparé deux tasses et volontairement laissé la troisième chaise hors de toute conclusion symbolique." }, { speaker: "Remerii", text: "J’ai cessé de traiter votre réponse comme un problème à résoudre. J’aimerais maintenant apprendre ce que notre proximité devient lorsqu’elle n’attend aucune conversion." }],
+    response: [{ speaker: "Remerii", text: "Une relation définie par ce que nous choisissons réellement, et non par ce que j’avais anticipé. Je peux travailler avec cette vérité." }],
+  },
+  iriana: {
+    title: "Une confiance sans couronne",
+    intro: [{ speaker: "Narration", text: "Iriana vous accorde une heure privée qui n’est ni une audience ni un rendez-vous. Aucun protocole ne vous oblige à feindre que la conversation est inchangée." }, { speaker: "Iriana", text: "Votre refus m’a atteinte. Il ne vous a pourtant retiré ni votre voix auprès de moi, ni la confiance que vous avez gagnée." }],
+    response: [{ speaker: "Iriana", text: "Restez donc comme une personne capable de me contredire sans me posséder. Cette place est plus rare que la cour ne l’imagine." }],
+  },
+  valurn: {
+    title: "Une partie sans mise cachée",
+    intro: [{ speaker: "Narration", text: "Valurn étale un jeu dont il a retiré toutes les cartes de séduction, puis vous accuse de l’avoir rendu dramatiquement raisonnable." }, { speaker: "Valurn", text: "Je confirme que mon ego a survécu. Reste à savoir si notre amitié peut supporter une soirée où je ne tente pas de gagner davantage." }],
+    response: [{ speaker: "Valurn", text: "Aucune conquête, aucune dette. Seulement une alliance choisie et quelques tricheries parfaitement amicales." }],
+  },
+  naiah: {
+    title: "Le chemin qui reste ouvert",
+    intro: [{ speaker: "Narration", text: "Naïah a déplacé les sentiers afin qu’aucun ne conduise par accident à un décor romantique. Elle vous attend dans une clairière volontairement ordinaire." }, { speaker: "Naïah", text: "J’ai été triste. Je le suis encore un peu. Mais je préfère un chemin vrai qui reste ouvert à une illusion où tu finirais par te sentir prisonnier·e." }],
+    response: [{ speaker: "Naïah", text: "Alors reviens. Pas comme consolation, pas comme promesse. Comme toi — c’est déjà beaucoup." }],
+  },
+  lineva: {
+    title: "La relève choisie",
+    intro: [{ speaker: "Narration", text: "Lineva vous rejoint après la relève. Elle n’a préparé ni discours ni mission destinée à rendre votre proximité plus facile à classer." }, { speaker: "Lineva", text: "J’ai ajusté mes attentes. Pas votre importance. Je voulais que cette distinction soit dite aussi clairement qu’un ordre de relève." }],
+    response: [{ speaker: "Lineva", text: "Vous restez quelqu’un auprès de qui je peux déposer l’armure. Cela n’exige aucune autre promesse." }],
+  },
+  saidin: {
+    title: "Un présent sans branche secrète",
+    intro: [{ speaker: "Narration", text: "Saidin a fermé sa montre et refuse de consulter les futurs dans lesquels votre réponse aurait été différente." }, { speaker: "Saidin", text: "Une possibilité s’est close. Le présent, lui, contient encore votre amitié entière, à condition que je ne le traite pas comme une salle d’attente." }],
+    response: [{ speaker: "Saidin", text: "Alors restons dans cette minute-ci. Elle ne mène pas où je l’avais imaginé, mais elle nous appartient réellement." }],
+  },
+  bellirith: {
+    title: "Sans conquête à accomplir",
+    intro: [{ speaker: "Narration", text: "Bellirith vient sans charme et sans sourire de scène. Elle ne transforme pas votre refus en défi à renverser." }, { speaker: "Bellirith", text: "J’ai passé trop de temps à croire qu’une proximité devait devenir victoire ou humiliation. J’aimerais essayer une troisième option avec vous." }],
+    response: [{ speaker: "Bellirith", text: "Amis, donc — et assez honnêtes pour ne pas appeler tension ce qui n’est plus une invitation. C’est étrangement reposant." }],
+  },
+  amanea: {
+    title: "L’alliance sans chambre secrète",
+    intro: [{ speaker: "Narration", text: "Amanea vous reçoit sur la terrasse sans garde et sans transformer cet isolement en promesse romantique. La reine a besoin de votre franchise ; la femme respecte encore votre refus." }, { speaker: "Amanea", text: "Tu ne seras ni sujet, ni amant·e, ni consolation. Si tu demeures, ce sera comme l’égal·e qui connaît mes contradictions et choisit malgré tout de me répondre." }],
+    response: [{ speaker: "Amanea", text: "Alors l’alliance tient. Non parce qu’elle dissimule un désir, mais parce qu’aucun de nous n’a besoin de mentir sur sa nature." }],
+  },
+};
+
 const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | "platonic", DialogueLine[]>> = {
   hylee: {
     misread: [{ speaker: "Narration", text: "Hylee ramène une mèche derrière son oreille. Le geste lui donne le temps de reprendre sa pensée au point où votre réponse l’avait coupée." }],
@@ -1213,7 +1297,7 @@ const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | 
 };
 
 function injectedChoiceAftermath(choice: ChoiceData, characterId: string) {
-  const kind = choice.id.endsWith("-misread") ? "misread" : choice.id.endsWith("-boundary") ? "boundary" : choice.id.endsWith("-platonic") ? "platonic" : undefined;
+  const kind = injectedChoiceKind(choice.id);
   return kind ? INJECTED_CHOICE_AFTERMATH[characterId]?.[kind] || [] : [];
 }
 
@@ -1262,9 +1346,44 @@ function finishServiceCustomer(current: JobState, correct: boolean, feedbackText
   };
 }
 
+function flagsSharedByEveryChoice(choices: ChoiceData[]) {
+  if (!choices.length) return [];
+  const [first, ...rest] = choices;
+  return (first.effects.flags || []).filter((flag) => rest.every((choice) => choice.effects.flags?.includes(flag)));
+}
+
+function relationRouteVariant(route: RouteScene, game: GameState) {
+  const continuation = route.intimate && game.flags.includes(`${route.character}-platonic`)
+    ? PLATONIC_CONTINUATIONS[route.character]
+    : undefined;
+  if (!continuation) return { route, sceneId: route.id };
+  const character = CHARACTERS.find((entry) => entry.id === route.character);
+  const variant: RouteScene = {
+    ...route,
+    title: continuation.title,
+    mood: character?.defaultMood || route.mood,
+    intro: continuation.intro,
+    intimate: false,
+    choices: [{
+      id: `${route.id}-friendship-finale`,
+      text: `Confirmer à ${character?.name || "cette personne"} que ce lien compte sans devenir romantique.`,
+      stat: "sangFroid",
+      response: continuation.response,
+      effects: {
+        stats: { sangFroid: 1 },
+        affection: 6,
+        trust: 10,
+        confluence: 6,
+        flags: unique([...flagsSharedByEveryChoice(route.choices), `${route.character}-platonic`]),
+      },
+    }],
+  };
+  return { route: variant, sceneId: `${route.id}-friendship-finale` };
+}
+
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
-  if (dialogue.replay || dialogue.scene.kind === "intro" || dialogue.scene.kind === "group-date") return base;
+  if (dialogue.replay || !["route", "ambient", "date"].includes(dialogue.scene.kind)) return base;
   const characterId = dialogue.scene.character || dialogue.scene.cast[0];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
   const pool = MISREADS[characterId];
@@ -1295,7 +1414,12 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
     text: `Dire clairement à ${character.name} que vous souhaitez préserver une relation amicale, sans attente romantique.`,
     stat: "lucidite",
     response: [{ speaker: character.name, text: PLATONIC_RESPONSES[characterId] }],
-    effects: { stats: { lucidite: 1 }, trust: 3, desire: -15, flags: [`${characterId}-platonic`] },
+    effects: {
+      stats: { lucidite: 1 },
+      trust: 3,
+      desire: -15,
+      flags: unique([`${characterId}-platonic`, ...flagsSharedByEveryChoice(base)]),
+    },
     dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
   });
   return shuffledChoices([...base, ...extra], `${dialogue.scene.id}:${game.day}:${game.period}:${game.relationships[characterId]?.stage || 0}`);
@@ -1558,18 +1682,12 @@ export default function Home() {
     }
   }
 
-  function advancePeriod() {
+  function advancePeriod(steps = 1) {
     if (!game || game.settings.noTimeCost) return;
     updateGame((current) => {
-      const nextPeriod = current.period + 1;
-      if (nextPeriod < PERIODS.length) return { ...current, period: nextPeriod };
-      const nextDay = current.day + 1;
-      return {
-        ...current,
-        day: nextDay,
-        period: 0,
-        codex: unique([...current.codex, ...LOCATIONS.filter((location) => location.unlockDay <= nextDay).map((location) => location.name)]),
-      };
+      if (current.settings.noTimeCost) return current;
+      const clock = advanceClock(current, steps, PERIODS.length);
+      return { ...current, ...clock };
     });
   }
 
@@ -1687,10 +1805,11 @@ export default function Home() {
       return;
     }
     if (ready && route) {
-      const scene: SceneView = { ...route, background: routeBackground(route), cast: [route.character], kind: "route", route };
+      const playable = relationRouteVariant(route, game);
+      const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: [playable.route.character], kind: "route", route: playable.route };
       setDialogue({
         scene,
-        lines: expandedLines(scene, game, route.intro, "intro"),
+        lines: expandedLines(scene, game, playable.route.intro, "intro"),
         lineIndex: 0,
         phase: "intro",
       });
@@ -1854,6 +1973,7 @@ export default function Home() {
       location: invitation.location,
       spot: invitation.spot,
       period: period >= 0 ? period : current.period,
+      ...placeDiscovery(current, invitation.location, invitation.spot),
       invitations: current.invitations.map((entry) => entry.id === invitation.id ? { ...entry, status: "accepted" } : entry),
     }));
     setSelectedLocation(invitation.location);
@@ -1893,8 +2013,7 @@ export default function Home() {
     if (choice.requires && game.stats[choice.requires.stat] < choice.requires.value && !game.settings.unlockAll) return;
     if (!hasKnowledge(game, choice.requiresKnowledge) && !game.settings.unlockAll) return;
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
-    const pausedAdvance = choice.id.endsWith("-boundary");
-    const route = dialogue.scene.kind === "route" && !pausedAdvance ? dialogue.scene.route : undefined;
+    const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) ? dialogue.scene.route : undefined;
     if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
     if (!dialogue.replay && dialogue.scene.kind === "ambient" && dialogue.scene.character && dialogue.scene.ambientId) {
       const characterId = dialogue.scene.character;
@@ -1997,6 +2116,7 @@ export default function Home() {
   function closeDialogue() {
     if (!dialogue) return;
     const intimateCharacter = dialogue.scene.route?.intimate
+      && Boolean(dialogue.chosen && routeChoiceCompletes(dialogue.chosen.id))
       && !dialogue.chosen?.effects.flags?.some((flag) => flag.endsWith("-platonic"))
       && !dialogue.chosen?.id.endsWith("-boundary")
       && !dialogue.chosen?.id.endsWith("-platonic")
@@ -2008,11 +2128,13 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = date
       && dialogue.chosen?.dateOutcome === "great"
+      && !game!.flags.includes(`${date.character}-platonic`)
       && (game!.relationships[date.character].stage >= 4 || game!.settings.unlockAll)
       && (game!.relationships[date.character].affection + (dialogue.chosen.effects.affection || 0) >= 34 || game!.settings.unlockAll)
       && (game!.relationships[date.character].trust + (dialogue.chosen.effects.trust || 0) >= 32 || game!.settings.unlockAll);
     const groupDateCanBecomeIntimate = Boolean(groupDate
       && dialogue.chosen?.dateOutcome === "great"
+      && groupDateUnlocked(game!, groupDate)
       && groupDate.characters.every((characterId, index) => {
         const relation = game!.relationships[characterId];
         const changes = index === 0
@@ -2043,9 +2165,12 @@ export default function Home() {
     const spot = spotById(spotId);
     if (!location || !spot || spot.location !== locationId || (game.day < location.unlockDay && !game.settings.unlockAll)) return;
     if (game.location === locationId && game.spot === spotId) return;
-    updateGame((current) => ({ ...current, location: locationId, spot: spotId, codex: unique([...current.codex, location.name, spot.name]) }));
+    const periods = travelPeriodCost(game.location, locationId, game.player.vocation, LOCATIONS);
+    updateGame((current) => {
+      const clock = current.settings.noTimeCost ? { day: current.day, period: current.period } : advanceClock(current, periods, PERIODS.length);
+      return { ...current, ...clock, location: locationId, spot: spotId, ...placeDiscovery(current, locationId, spotId) };
+    });
     setTab("place");
-    advancePeriod();
   }
 
   function performActivity(activityId: string) {
@@ -2539,21 +2664,25 @@ export default function Home() {
       return;
     }
     const former = propertyById(game.housing.propertyId);
-    updateGame((current) => ({
-      ...current,
-      coins: current.coins - balance,
-      housing: {
-        ...current.housing,
-        propertyId: property.id,
-        purchasePrice: price,
-        displayed: former ? current.housing.displayed : [null, null, null],
-        residents: former ? current.housing.residents : [],
-      },
-      journal: [...current.journal, `${former ? "Échange" : "Achat"} immobilier · ${property.name} à ${city.name} · ${price} pièces${credit ? `, reprise ${credit}` : ""}.`],
-      codex: unique([...current.codex, property.name]),
-      location: current.spot === former?.spot ? property.location : current.location,
-      spot: current.spot === former?.spot ? property.spot : current.spot,
-    }));
+    updateGame((current) => {
+      const movingHome = current.spot === former?.spot;
+      return {
+        ...current,
+        coins: current.coins - balance,
+        housing: {
+          ...current.housing,
+          propertyId: property.id,
+          purchasePrice: price,
+          displayed: former ? current.housing.displayed : [null, null, null],
+          residents: former ? current.housing.residents : [],
+        },
+        journal: [...current.journal, `${former ? "Échange" : "Achat"} immobilier · ${property.name} à ${city.name} · ${price} pièces${credit ? `, reprise ${credit}` : ""}.`],
+        location: movingHome ? property.location : current.location,
+        spot: movingHome ? property.spot : current.spot,
+        ...(movingHome ? placeDiscovery(current, property.location, property.spot) : {}),
+        codex: unique([...current.codex, property.name, ...(movingHome ? [city.name, property.name] : [])]),
+      };
+    });
     if (game.spot === former?.spot) {
       setSelectedLocation(property.location);
       setSelectedSpot(property.spot);
@@ -2565,20 +2694,25 @@ export default function Home() {
     const property = propertyById(game.housing.propertyId);
     if (!property) return;
     const value = housingSaleValue(game.housing);
-    updateGame((current) => ({
-      ...current,
-      coins: current.coins + value,
-      location: current.spot === property.spot ? property.location : current.location,
-      spot: current.spot === property.spot ? DEFAULT_SPOTS[property.location] : current.spot,
-      housing: {
-        ...current.housing,
-        propertyId: undefined,
-        purchasePrice: 0,
-        displayed: [null, null, null],
-        residents: [],
-      },
-      journal: [...current.journal, `Vente immobilière · ${property.name} · ${value} pièces récupérées.`],
-    }));
+    updateGame((current) => {
+      const leavingHome = current.spot === property.spot;
+      const nextSpot = leavingHome ? DEFAULT_SPOTS[property.location] : current.spot;
+      return {
+        ...current,
+        coins: current.coins + value,
+        location: leavingHome ? property.location : current.location,
+        spot: nextSpot,
+        ...(leavingHome ? placeDiscovery(current, property.location, nextSpot) : {}),
+        housing: {
+          ...current.housing,
+          propertyId: undefined,
+          purchasePrice: 0,
+          displayed: [null, null, null],
+          residents: [],
+        },
+        journal: [...current.journal, `Vente immobilière · ${property.name} · ${value} pièces récupérées.`],
+      };
+    });
     if (game.spot === property.spot) {
       setSelectedLocation(property.location);
       setSelectedSpot(DEFAULT_SPOTS[property.location]);
@@ -2620,15 +2754,12 @@ export default function Home() {
     if (!game?.housing.propertyId) return;
     const pair = HOME_PAIR_DATES.find((entry) => entry.id === pairId);
     if (!pair) return;
-    const unlocked = game.settings.unlockAll || (
-      pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust)
-      && (pair.requiredFlags || []).every((flag) => game.flags.includes(flag))
-    );
-    if (unlocked) setModal({ kind: "home-pair-date", pairId });
+    if (homePairDateUnlocked(game, pair)) setModal({ kind: "home-pair-date", pairId });
   }
 
   function finishHomeDate(characterId: string, tone: HomeDateTone, score: number) {
     if (!game) return;
+    if (game.flags.includes(`${characterId}-platonic`) && tone !== "amical") return;
     const profile = HOME_DATE_PROFILES[characterId];
     const property = propertyById(game.housing.propertyId);
     if (!profile || !property) return;
@@ -2650,6 +2781,7 @@ export default function Home() {
         period: 3,
         location: property.location,
         spot: property.spot,
+        ...placeDiscovery(current, property.location, property.spot),
         relationships: { ...current.relationships, [characterId]: relation },
         inventory,
         housing: {
@@ -2668,7 +2800,7 @@ export default function Home() {
       desire: relation.desire + (effects.desire || 0),
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
-    const canBecomeIntimate = tone === "desir" && characterId !== "draven" && (game.settings.unlockAll || (
+    const canBecomeIntimate = tone === "desir" && characterId !== "draven" && !game.flags.includes(`${characterId}-platonic`) && (game.settings.unlockAll || (
       relation.stage >= 4 && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && score >= 3 && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
@@ -2680,7 +2812,7 @@ export default function Home() {
     if (!game) return;
     const pair = HOME_PAIR_DATES.find((entry) => entry.id === pairId);
     const property = propertyById(game.housing.propertyId);
-    if (!pair || !property) return;
+    if (!pair || !property || !homePairDateUnlocked(game, pair)) return;
     updateGame((current) => {
       const relationships = { ...current.relationships };
       pair.characters.forEach((id) => {
@@ -2696,6 +2828,7 @@ export default function Home() {
         period: 3,
         location: property.location,
         spot: property.spot,
+        ...placeDiscovery(current, property.location, property.spot),
         relationships,
         housing: { ...current.housing, homeDateHistory: [...current.housing.homeDateHistory, `pair:${pair.id}:${tone}@${current.day + 1}`].slice(-96) },
         journal: [...current.journal, `Rendez-vous partagé au logis · ${pair.title} · ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")}.`],
@@ -2708,17 +2841,15 @@ export default function Home() {
 
   function startHomeIntimacy(characterId: string) {
     const property = game && propertyById(game.housing.propertyId);
-    if (!property || characterId === "draven") return;
+    const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
+    if (!game || !property || characterId === "draven" || game.flags.includes(`${characterId}-platonic`) || !hasCompletedDesiredDate) return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
   function startDate(dateId: string) {
     if (!game) return;
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date) return;
-    const relation = game.relationships[date.character];
-    const unlocked = game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust);
-    if (!unlocked) return;
+    if (!date || !publicDateUnlocked(game, date)) return;
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
     const nextGame: GameState = {
       ...game,
@@ -2726,7 +2857,7 @@ export default function Home() {
       period: periodIndex,
       location: date.location,
       spot: date.spot,
-      codex: unique([...game.codex, spotById(date.spot)?.name || date.title]),
+      ...placeDiscovery(game, date.location, date.spot),
     };
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     const scene: SceneView = {
@@ -2759,7 +2890,7 @@ export default function Home() {
       period: periodIndex,
       location: date.location,
       spot: date.spot,
-      codex: unique([...game.codex, spotById(date.spot)?.name || date.title]),
+      ...placeDiscovery(game, date.location, date.spot),
     };
     const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
     const scene: SceneView = {
@@ -2783,13 +2914,13 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date) return;
+    if (!game || !date || game.flags.includes(`${date.character}-platonic`) || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background });
   }
 
   function startGroupDateIntimacy(groupDateId: string) {
     const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
-    if (!date) return;
+    if (!game || !date || !game.groupDateHistory.includes(date.id) || !groupDateUnlocked(game, date)) return;
     setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background });
   }
 
@@ -2867,6 +2998,7 @@ export default function Home() {
       period: target.period,
       location: route.location,
       spot: spotId,
+      ...placeDiscovery(current, route.location, spotId),
       journal: [...current.journal, `Attente scénarisée · ${character.name} arrive à ${spotById(spotId)?.name}.`],
     }));
     setSelectedLocation(route.location);
@@ -2877,11 +3009,12 @@ export default function Home() {
 
   function replayRoute(sceneId: string) {
     const route = ROUTE_SCENES.find((scene) => scene.id === sceneId);
-    if (!route) return;
-    const scene: SceneView = { ...route, background: routeBackground(route), cast: [route.character], kind: "route", route };
+    if (!route || !game) return;
+    const playable = relationRouteVariant(route, game);
+    const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: [playable.route.character], kind: "route", route: playable.route };
     setDialogue({
       scene,
-      lines: expandedLines(scene, game!, route.intro, "intro", ROUTE_SPOTS[route.id]),
+      lines: expandedLines(scene, game, playable.route.intro, "intro", ROUTE_SPOTS[route.id]),
       lineIndex: 0,
       phase: "intro",
       replay: true,
@@ -3073,6 +3206,7 @@ export default function Home() {
   const selectedSpotData = spotById(selectedSpot);
   const viewedSpot = selectedSpotData?.location === viewedLocation.id ? selectedSpotData : spotById(DEFAULT_SPOTS[viewedLocation.id])!;
   const viewedSpots = spotsForLocation(viewedLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
+  const viewedTravelPeriods = travelPeriodCost(game.location, viewedLocation.id, game.player.vocation, LOCATIONS);
   const presentCharacters = CHARACTERS.filter((character) => {
     const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     return characterUnlocked(game, character) && place.location === game.location && place.spot === game.spot;
@@ -3130,7 +3264,8 @@ export default function Home() {
               <div className="immersive-presence-list">
                 {presentCharacters.length ? presentCharacters.map((character) => {
                   const relation = game.relationships[character.id];
-                  const nextScene = sceneFor(character.id, relation.stage);
+                  const rawNextScene = sceneFor(character.id, relation.stage);
+                  const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
                   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
                   const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage];
                   const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
@@ -3144,7 +3279,7 @@ export default function Home() {
 
             <section className="place-panel place-waiting">
               <header><div><p className="eyebrow">Rythme du monde</p><h2>Attendre</h2></div><span>{period.icon}</span></header>
-              <button className="wait-period" onClick={advancePeriod}><span>◷</span><div><strong>Attendre une période</strong><small>Passer à l’étape suivante de la journée</small></div><b>›</b></button>
+              <button className="wait-period" onClick={() => advancePeriod()}><span>◷</span><div><strong>Attendre une période</strong><small>Passer à l’étape suivante de la journée</small></div><b>›</b></button>
               {upcomingVisitors.length > 0 && <div className="next-arrivals"><small>Prochains passages dans ce lieu</small>{upcomingVisitors.slice(0, 3).map(({ character, target }) => <button key={character.id} onClick={() => waitForCharacter(character.id)}><img src={character.portrait} alt="" /><span><strong>{character.name}</strong><small>{waitDurationLabel(game, target)} · {PERIODS[target.period].label}</small></span></button>)}</div>}
               {!upcomingVisitors.length && <p className="waiting-note">Aucun passage connu n’est prévu prochainement. Le monde continuera néanmoins d’évoluer.</p>}
             </section>
@@ -3172,7 +3307,7 @@ export default function Home() {
                 return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""} ${locked ? "locked" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { if (!locked) { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); } }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}{locked && <em>J{location.unlockDay}</em>}</button>;
               })}
             </div>
-            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span><i className="locked" />À découvrir</span><span>Le voyage consomme une période.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
+            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span><i className="locked" />À découvrir</span><span>Trajet : 1 période sur place, davantage entre régions.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
           </div>
 
           {mapDestinationOpen && <div className="map-destination-layer">
@@ -3187,7 +3322,7 @@ export default function Home() {
                 const spotJobs = jobsAtSpot(spot.id);
                 return <button key={spot.id} className={viewedSpot.id === spot.id ? "active" : ""} onClick={() => setSelectedSpot(spot.id)}><span>{spot.icon}</span><div><b>{spot.shortName}</b><small>{spot.description}</small>{spotJobs.length > 0 && <span className="spot-job-badges">{spotJobs.map((job) => { const access = jobAccess(game, job); return <em className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}</em>; })}</span>}</div>{occupants.length > 0 && <span className="spot-occupants">{occupants.map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}</span>}</button>;
               })}</div>}
-              <div className={`travel-card ${game.location === viewedLocation.id && game.spot === viewedSpot.id ? "is-current" : ""}`}><p>{viewedSpot.description}</p>{jobsAtSpot(viewedSpot.id).length > 0 && <div className="travel-job-list"><strong>Jobs dans ce sous-lieu</strong>{jobsAtSpot(viewedSpot.id).map((job) => { const access = jobAccess(game, job); return <span className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}<small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} ${access.value}/${access.target}`}</small></span>; })}</div>}{game.location === viewedLocation.id && game.spot === viewedSpot.id ? <button className="secondary-action" onClick={() => setTab("place")}>Revenir dans le lieu</button> : <button className="primary-action" onClick={() => travel(viewedLocation.id, viewedSpot.id)}>{game.location === viewedLocation.id ? `Se rendre à ${viewedSpot.shortName}` : `Voyager vers ${viewedLocation.name}`}</button>}<small>{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Votre position actuelle" : "Arrivée à la période suivante"}</small></div>
+              <div className={`travel-card ${game.location === viewedLocation.id && game.spot === viewedSpot.id ? "is-current" : ""}`}><p>{viewedSpot.description}</p>{jobsAtSpot(viewedSpot.id).length > 0 && <div className="travel-job-list"><strong>Jobs dans ce sous-lieu</strong>{jobsAtSpot(viewedSpot.id).map((job) => { const access = jobAccess(game, job); return <span className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}<small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} ${access.value}/${access.target}`}</small></span>; })}</div>}{game.location === viewedLocation.id && game.spot === viewedSpot.id ? <button className="secondary-action" onClick={() => setTab("place")}>Revenir dans le lieu</button> : <button className="primary-action" onClick={() => travel(viewedLocation.id, viewedSpot.id)}>{game.location === viewedLocation.id ? `Se rendre à ${viewedSpot.shortName}` : `Voyager vers ${viewedLocation.name}`}</button>}<small>{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Votre position actuelle" : `Temps de trajet · ${travelDurationLabel(viewedTravelPeriods)}${game.location !== viewedLocation.id && game.player.vocation === SCOUT_VOCATION ? " · bonus d’éclaireur actif" : ""}`}</small></div>
             </aside>
           </div>}
         </section>
@@ -3339,7 +3474,8 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
     const locationId = schedule.location;
     const location = LOCATIONS.find((entry) => entry.id === locationId);
     const exactSpot = spotById(schedule.spot);
-    const next = sceneFor(character.id, relation.stage);
+    const rawNext = sceneFor(character.id, relation.stage);
+    const next = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
     const needed = next ? Math.max(0, BOND_THRESHOLDS[next.stage] - relation.affection - relation.trust) : 0;
     const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id);
     const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
@@ -3517,7 +3653,7 @@ function AssetsView({ game, presentCharacters, onShop, onGive, onBuyProperty, on
 
 function CodexView({ game }: { game: GameState }) {
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Archives personnelles</p><h1>Codex</h1><p>Les entrées se complètent en voyageant, en rencontrant les personnages et en vivant leurs scènes.</p></div><span>{game.codex.length} entrées</span></header><div className="codex-layout"><div><h2>Personnages rencontrables</h2><div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? characterDescriptor(character) : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div><h2>Figures de la chronique</h2><div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div></div><div><h2>Lieux découverts</h2>{LOCATIONS.map((location) => { const known = game.day >= location.unlockDay || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}<h2>Scènes mémorisées</h2><div className="memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title}</span>) : <p>Aucune scène majeure consignée.</p>}</div></div></div></section>;
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Archives personnelles</p><h1>Codex</h1><p>Les entrées se complètent en voyageant, en rencontrant les personnages et en vivant leurs scènes.</p></div><span>{game.codex.length} entrées</span></header><div className="codex-layout"><div><h2>Personnages rencontrables</h2><div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? characterDescriptor(character) : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div><h2>Figures de la chronique</h2><div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div></div><div><h2>Lieux découverts</h2>{LOCATIONS.map((location) => { const known = game.visitedLocations.includes(location.id) || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : game.day >= location.unlockDay ? "Route accessible · lieu non visité" : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}<h2>Scènes mémorisées</h2><div className="memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title}</span>) : <p>Aucune scène majeure consignée.</p>}</div></div></div></section>;
 }
 
 function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
@@ -4037,9 +4173,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
       return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>Réserver cette journée à trois</button> : <div className="group-date-requirements">{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
     })}{HOME_PAIR_DATES.map((pair) => {
       const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-      const relationshipReady = pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust)
-        && (pair.requiredFlags || []).every((flag) => game.flags.includes(flag));
-      const unlocked = Boolean(property) && (game.settings.unlockAll || relationshipReady);
+      const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);
       return <article key={`home-${pair.id}`} className={`home-date-plan-card ${!unlocked ? "locked" : ""}`} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.24), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>{unlocked ? <button className="primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="date-lock">{property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</div>}</article>;
     })}</div></section></div>;
   }

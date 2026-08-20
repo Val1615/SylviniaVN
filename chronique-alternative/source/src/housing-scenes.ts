@@ -438,7 +438,7 @@ export function availableSharedHomeMoment(residents: string[], histories: string
 
 export const HOME_PAIR_DATES: HomePairDateProfile[] = [
   {
-    id: "hylee-remerii", characters: ["hylee", "remerii"], title: "Une recette sans professeure", description: "Hylee et Remerii essaient d’inventer dans votre cuisine sans retomber dans une leçon.", requiredFlags: ["hr-resolution-triad"], minStage: 4, minTrust: 30, tones: ["amical", "amoureux", "desir"],
+    id: "hylee-remerii", characters: ["hylee", "remerii"], title: "Une recette sans professeure", description: "Hylee et Remerii essaient d’inventer dans votre cuisine sans retomber dans une leçon.", requiredFlags: ["hr-triad-established"], minStage: 4, minTrust: 30, tones: ["amical", "amoureux", "desir"],
     opening: [N("Hylee arrive avec des fruits glacés. Remerii porte trois livres de cuisine et affirme, sans convaincre personne, qu’ils ne serviront qu’en cas d’urgence."), C("Hylee", "Si elle ouvre le troisième avant que j’aie cassé quelque chose, tu le confisques."), C("Remerii", "J’accepte cette règle arbitraire dans le seul but de démontrer ma souplesse.")],
     cityComments: {
       algratal: [C("Remerii", "Une cuisine d’Al’Gratal possède davantage de protocole qu’un conseil de Mir’Aldas."), C("Hylee", "Alors on mange directement dans le plat. Révolution." )],

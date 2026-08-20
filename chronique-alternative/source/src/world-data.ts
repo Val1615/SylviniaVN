@@ -323,6 +323,9 @@ export function routineFor(characterId: string, location: string, period: Period
   if (characterId === "lineva" && location === "forthaven" && period === "apres-midi" && cycleDay % 3 === 0) {
     return moment("forthaven-memorial", "se recueille au mémorial sans abandonner la ville à sa vigilance");
   }
+  if (characterId === "amanea" && location === "akuhn" && period === "soirée" && cycleDay % 5 === 0) {
+    return moment("akuhn-terrace", "confie la dernière audience à Allenna et rejoint seule la terrasse des feux verts");
+  }
   // Les scènes personnelles tardives utilisent des espaces réellement inscrits
   // dans l'emploi du temps, afin qu'elles restent atteignables sans téléportation
   // ni mode développeur. Elles se répètent avec le même cycle de trente-huit jours.
@@ -460,10 +463,10 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "bellirith-2": ["matin"],
   "bellirith-3": ["apres-midi"],
   "bellirith-4": ["soirée"],
-  "amanea-0": ["aube"],
-  "amanea-1": ["soirée"],
-  "amanea-2": ["soirée"],
-  "amanea-3": ["matin", "apres-midi"],
+  "amanea-0": ["matin"],
+  "amanea-1": ["apres-midi"],
+  "amanea-2": ["aube"],
+  "amanea-3": ["aube"],
   "amanea-4": ["soirée"],
   "allenna-0": ["aube"],
   "allenna-1": ["matin"],
@@ -472,7 +475,7 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "allenna-4": ["soirée"],
   "draven-0": ["aube"],
   "draven-1": ["soirée"],
-  "draven-2": ["matin"],
+  "draven-2": ["apres-midi"],
   "draven-3": ["soirée"],
   "draven-4": ["aube"],
 };
