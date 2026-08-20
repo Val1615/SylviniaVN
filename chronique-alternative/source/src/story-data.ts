@@ -19,7 +19,7 @@ export type SupportingFigure = {
 
 /**
  * Cette chronique diverge au début du Tome 1 : Hylee a rencontré Remerii,
- * mais Iriana n'a jamais réuni l'équipe. Les actes avancent par découvertes,
+ * tandis qu’Iriana poursuit seule son enquête. Les actes avancent par découvertes,
  * sans date butoir et sans empêcher le monde de rester ouvert ensuite.
  */
 export const MAIN_STORY: StoryAct[] = [
@@ -27,24 +27,24 @@ export const MAIN_STORY: StoryAct[] = [
     id: "borrowed-portal",
     number: "I",
     title: "Le portail emprunté",
-    objective: "Comprendre dans quelle Sylvinia le passage défectueux vous a déposé·e.",
-    detail: "Saidin vous recueille à Al’Gratal. Tout ressemble au commencement d’une histoire connue, sauf un fait : la décision qui devait réunir plusieurs destins autour d’Iriana n’a jamais été prise.",
+    objective: "Retrouver vos repères dans une Sylvinia que vous reconnaissez sans pouvoir dire d’où.",
+    detail: "Saidin vous recueille à Al’Gratal après l’ouverture d’un portail instable. Votre mémoire ne livre aucune chronologie à comparer à celle-ci : seulement la certitude intime et inexpliquée que vous n’êtes pas né·e dans cette réalité.",
     requiredScenes: [],
   },
   {
     id: "missing-gathering",
     number: "II",
-    title: "Le rassemblement absent",
-    objective: "Approcher Iriana et découvrir pourquoi sa quête contre le pacte d’Alamma demeure solitaire.",
-    detail: "Iriana cherche toujours à révoquer le pacte conclu par son père avec un démon. Pourtant, elle n’a envoyé aucune invitation et ne se souvient même pas d’avoir envisagé l’équipe qui aurait dû changer le cours des événements.",
+    title: "Le pacte sans escorte",
+    objective: "Approcher Iriana et comprendre ce qu’elle cherche à défaire sans livrer une autre vie au pacte d’Alamma.",
+    detail: "Iriana enquête seule sur le contrat démoniaque conclu par son père. Elle refuse la solution qui consisterait à lui substituer une autre âme et garde ses recherches hors du Conseil, où les faux d’Alamma possèdent encore des défenseurs.",
     requiredScenes: ["iriana-0"],
   },
   {
     id: "separate-roads",
     number: "III",
-    title: "Des routes qui ne se croisent plus",
-    objective: "Retrouver les personnes que l’expédition absente aurait dû rassembler.",
-    detail: "Hylee et Remerii parcourent le continent en dissimulant leur magie à l’Empire. Draven cherche des renforts pour Forthaven. Naïah demeure dans ses brumes. Chacun poursuit une vie cohérente — mais séparée des autres.",
+    title: "Des routes séparées",
+    objective: "Suivre les indices laissés par le portail et décider quelles personnes mettre en relation.",
+    detail: "Hylee et Remerii viennent de prendre la route. Draven cherche des renforts pour Forthaven. Naïah protège ses brumes et Akuhn’Nabad reste hors des cartes impériales. Aucun destin ne vous attend : les liens naîtront de rencontres, d’accords et de refus réels.",
     requiredScenes: ["medig-window", "draven-0"],
   },
   {
@@ -58,18 +58,18 @@ export const MAIN_STORY: StoryAct[] = [
   {
     id: "pact-seam",
     number: "V",
-    title: "La couture du pacte",
-    objective: "Relier la défaillance de votre portail au pacte qu’Iriana tente de révoquer.",
-    detail: "Valurn reconnaît dans votre fracture la même logique que dans les contrats démoniaques d’Alamma. Bellirith connaît des chemins que son frère préférerait ignorer ; Amanea possède des archives que l’Empire ne doit jamais voir. D’autres traces ressemblantes devront être étudiées sans être confondues entre elles.",
-    requiredScenes: ["valurn-2", "amanea-3", "iriana-3"],
+    title: "Les encres du mensonge",
+    objective: "Protéger un canal d’archives, puis recouper le registre impérial, les journaux d’Akuhn’Nabad et le faux ordre.",
+    detail: "L’enquête politique progresse sans exiger les confidences privées des personnages. Valurn examine la grammaire démoniaque sous la cire, Amanea cherche dans les rapports de ses loyalistes et Iriana dans les réserves d’Alamma. La résonance de votre passage demeure une piste distincte, jamais une preuve de votre origine.",
+    requiredScenes: ["campaign-archives-channel", "campaign-forged-proof"],
   },
   {
     id: "chosen-convergence",
     number: "VI",
     title: "La convergence choisie",
-    objective: "Faire coopérer des vies séparées sans recréer de force l’équipe qui n’a jamais existé.",
-    detail: "Vous devenez le trait d’union de cette chronologie alternative : des alliances discrètes remplacent l’expédition absente. La décision finale n’est liée à aucun jour et le monde reste entièrement ouvert après sa résolution.",
-    requiredScenes: ["amanea-4", "draven-4", "bellirith-3"],
+    objective: "Fermer le relais d’Alamma, empêcher une offensive fondée sur ses faux et préserver l’autonomie de chaque camp.",
+    detail: "Douze trajectoires acceptent de coordonner une seule opération sans former un groupe permanent. L’Empire et Akuhn’Nabad ne se réconcilient pas, et les fractures personnelles restent soumises à la confiance de celles et ceux qui les portent. La conclusion ferme la campagne, pas le monde ni les relations.",
+    requiredScenes: ["campaign-convergence-council", "campaign-convergence-operation", "campaign-epilogue"],
   },
 ];
 
@@ -95,6 +95,10 @@ export const SUPPORTING_FIGURES: SupportingFigure[] = [
 ];
 
 export function storyProgress(history: string[], flags: string[]) {
+  // Une sauvegarde ayant déjà achevé l'ancienne campagne conserve son état.
+  // Les nouvelles scènes restent alors disponibles en relecture grâce à la
+  // migration de sauvegarde, sans retirer au joueur une fin déjà obtenue.
+  if (flags.includes("main-story-complete")) return MAIN_STORY.length;
   const completed = new Set([...history, ...flags, ...flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
   let current = 0;
   for (const act of MAIN_STORY) {

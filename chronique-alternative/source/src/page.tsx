@@ -9,6 +9,8 @@ import {
   LOCATIONS,
   PERIODS,
   ROUTE_SCENES,
+  routeFlagRequirements,
+  routeKnowledgeRequirements,
   type CharacterData,
   type ChoiceData,
   type DialogueLine,
@@ -47,6 +49,8 @@ import {
 } from "./group-dates";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
+import { CAMPAIGN_SCENES, campaignSceneById, type CampaignScene } from "./campaign-scenes";
+import { ROUTE_CONTEXTUAL_CHOICES } from "./route-contextual-choices";
 import { sceneClosure } from "./scene-closures";
 import { MUSIC_LABELS, musicForContext } from "./music-data";
 import {
@@ -167,7 +171,7 @@ type ReceivedInvitation = {
 };
 
 type GameState = {
-  version: 12;
+  version: 13;
   player: Player;
   day: number;
   period: number;
@@ -209,7 +213,7 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date" | "home" | "secret" | "world" | "invitation";
+  kind: "intro" | "story" | "route" | "ambient" | "social" | "date" | "group-date" | "home" | "secret" | "world" | "invitation";
   route?: RouteScene;
   ambientId?: string;
   socialId?: string;
@@ -220,6 +224,7 @@ type SceneView = {
   secretId?: string;
   worldEventId?: string;
   invitationId?: string;
+  campaignSceneId?: string;
   cast: string[];
 };
 
@@ -409,7 +414,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 12,
+    version: 13,
     player,
     day: 1,
     period: 0,
@@ -421,7 +426,7 @@ function createGame(player: Player): GameState {
     coins: 32,
     confluence: 8,
     flags: [],
-    journal: ["Saidin vous a recueilli·e à la sortie d’un portail défectueux.", "Votre temporalité d’origine et vos souvenirs demeurent introuvables.", "Dans cette branche du temps, Iriana n’a jamais réuni l’expédition qui aurait dû l’accompagner.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
+    journal: ["Saidin vous a recueilli·e à la sortie d’un portail défectueux.", "Vous savez instinctivement que cette réalité n’est pas la vôtre, mais vos souvenirs demeurent introuvables.", "Iriana enquête seule sur des irrégularités impériales ; aucune expédition commune n’a été constituée.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
     codex: ["La Confluence", "Al’Gratal"],
     visitedLocations: ["algratal"],
     visitedSpots: ["algratal-palace-quarters"],
@@ -449,7 +454,7 @@ function originLine(player: Player): DialogueLine {
     "Réflexe protecteur": "Lorsque le portail crépite encore, votre corps se place entre Saidin et la fracture avant même que vous sachiez qui il est. Ce réflexe vous appartient ; le souvenir qui l’a forgé, lui, demeure absent.",
     "Familiarité du pouvoir": "Les appartements impériaux ne vous rappellent aucun lieu, pourtant vous reconnaissez instinctivement les distances, les silences et les portes réservées au pouvoir. Saidin refuse d’appeler cela une preuve d’origine.",
     "Affinité des ombres": "Les résidus sombres du portail glissent sur votre peau sans éveiller de souvenir ni de panique. Saidin note seulement que votre prudence ressemble à une habitude très ancienne.",
-    "Curiosité mécanique": "Malgré l’amnésie, vos doigts cherchent aussitôt le défaut du mécanisme emprunté. Vous ne savez pas où vous avez appris ce geste ; Saidin ignore si la compétence vient de votre temporalité ou du portail lui-même.",
+    "Curiosité mécanique": "Malgré l’amnésie, vos doigts cherchent aussitôt le défaut du mécanisme emprunté. Vous ne savez pas où vous avez appris ce geste ; Saidin ignore si la compétence vient de votre réalité d’origine ou du portail lui-même.",
     "Mémoire de la pierre": "Le marbre d’Al’Gratal vous paraît à la fois neuf et familier. Aucune image ne revient, seulement la certitude physique que la pierre de votre monde ne vibrait pas exactement ainsi.",
   };
   return { speaker: "Narration", text: lines[player.origin] || "Votre corps conserve des réflexes dont votre mémoire ne peut plus raconter l’origine." };
@@ -467,7 +472,8 @@ function hydrateGame(raw: unknown): GameState | null {
   const spot = requestedSpot?.location === location && (!requestedSpot.housing || spotBelongsToSavedHome)
     ? requestedSpot.id
     : (DEFAULT_SPOTS[location] || fresh.spot);
-  const legacyTimeline = Number((raw as { version?: number }).version || 0) < 8;
+  const savedVersion = Number((raw as { version?: number }).version || 0);
+  const legacyTimeline = savedVersion < 8;
   const resetCharacters = new Set(["iriana", "valurn", "bellirith", "amanea", "draven"]);
   const oldRelationships = Object.fromEntries(CHARACTERS.map((character) => {
     const saved = { ...fresh.relationships[character.id], ...(value.relationships?.[character.id] || {}) };
@@ -479,6 +485,13 @@ function hydrateGame(raw: unknown): GameState | null {
     flag === "main-story-complete" || flag === "amanea-platonic" ||
     /^(story-(amanea|draven|pact|allenna|naiah)|social:(amanea-family-truth|draven-lineva-letter|medig-window)|date(-intimate)?:date-amanea)/.test(flag)
   );
+  const migratedFlags = (value.flags || []).filter((flag) => !obsoleteFlag(flag));
+  const migratedRouteHistory = (value.history || []).filter((id) => !obsoleteRoute(id));
+  const preserveCompletedCampaign = savedVersion >= 8 && savedVersion < 13 && migratedFlags.includes("main-story-complete");
+  const migratedHistory = unique([
+    ...migratedRouteHistory,
+    ...(preserveCompletedCampaign ? CAMPAIGN_SCENES.map((scene) => scene.id) : []),
+  ]);
   const migratedJournal = legacyTimeline
     ? ["Chronologie recalée : Amanea règne encore, Draven voyage vers l’Empire et le rassemblement d’Iriana n’a jamais eu lieu.", ...(value.journal || fresh.journal)]
     : (value.journal || fresh.journal);
@@ -495,7 +508,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 12,
+    version: 13,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -503,12 +516,12 @@ function hydrateGame(raw: unknown): GameState | null {
     relationships: oldRelationships,
     inventory: { ...fresh.inventory, ...(value.inventory || {}) },
     settings: { ...DEFAULT_SETTINGS, ...(value.settings || {}) },
-    flags: (value.flags || []).filter((flag) => !obsoleteFlag(flag)),
+    flags: migratedFlags,
     journal: migratedJournal,
     codex: value.codex || fresh.codex,
     visitedLocations,
     visitedSpots,
-    history: (value.history || []).filter((id) => !obsoleteRoute(id)),
+    history: migratedHistory,
     ambientHistory: Object.fromEntries(CHARACTERS.map((character) => [character.id, legacyTimeline && ["amanea", "draven"].includes(character.id) ? [] : (value.ambientHistory?.[character.id] || [])])),
     sharedHistory: (value.sharedHistory || []).filter((id) => !legacyTimeline || !["amanea-family-truth", "draven-lineva-letter", "medig-window"].includes(id)),
     sceneMemories: value.sceneMemories || {},
@@ -584,6 +597,77 @@ function hasKnowledge(game: GameState, ids: string[] = []) {
   return ids.every((id) => game.knowledge.includes(id));
 }
 
+function routeNarrativeReady(scene: RouteScene, game: GameState) {
+  return game.settings.unlockAll || (
+    hasKnowledge(game, routeKnowledgeRequirements(scene))
+    && routeFlagRequirements(scene).every((flag) => game.flags.includes(flag))
+  );
+}
+
+function routeNarrativeObjective(scene: RouteScene, game: GameState): string | undefined {
+  if (game.settings.unlockAll) return undefined;
+  if (!hasKnowledge(game, routeKnowledgeRequirements(scene))) {
+    const bond = game.relationships[scene.character].affection + game.relationships[scene.character].trust;
+    const confidenceThreshold = scene.stage * 20;
+    const missingBond = Math.max(0, confidenceThreshold - bond);
+    if (missingBond > 0) {
+      return `Approfondissez encore ce lien de ${missingBond} point${missingBond > 1 ? "s" : ""}. Une conversation personnelle devra précéder la prochaine scène.`;
+    }
+    const character = CHARACTERS.find((entry) => entry.id === scene.character);
+    return `Une conversation personnelle semble maintenant possible avec ${character?.name || "cette personne"}. Retrouvez-la dans l’un de ses lieux habituels.`;
+  }
+  const missingFlags = routeFlagRequirements(scene).filter((flag) => !game.flags.includes(flag));
+  if (!missingFlags.length) return undefined;
+  if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
+  if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
+  if (scene.id === "valurn-4" || scene.id === "bellirith-4") {
+    if (!game.flags.includes("fracture-valurn-bellirith-truth")) return "Bellirith doit encore recevoir la partie de l’histoire que Valurn lui a cachée. Une copie de l’inscription pourrait les réunir dans les Archives profondes d’Akuhn’Nabad.";
+    if (!game.flags.includes("fracture-valurn-bellirith-distance-set")) return "Après la révélation, Bellirith et Valurn doivent encore poser une distance qui ne soit ni pardon ni punition. Retrouvez-les dans la salle de musique d’Akuhn’Nabad.";
+    if (scene.id === "valurn-4") return "Valurn doit d’abord assumer son récit sans transformer l’aveu en acquittement. Retrouvez-le au Grand Marché d’Al’Gratal.";
+    return "Bellirith doit d’abord reprendre possession de son histoire loin de toute attente intime. Retrouvez-la dans la salle de musique d’Akuhn’Nabad.";
+  }
+  if (scene.id === "amanea-4") return "Amanea doit d’abord poser avec vous les limites qu’impose le secret de Naïah. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
+  if (scene.id === "allenna-4") return "Allenna doit d’abord éprouver une présence qui ne devienne ni surveillance ni sauvetage. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
+  if (scene.id === "lineva-4" || scene.id === "draven-4") {
+    if (!game.flags.includes("lineva-mother-truth-resolved")) return "Lineva doit encore décider comment annoncer à Draven la mort de sa mère. Retrouvez-les sur les quais de Forthaven.";
+    return "Après l’annonce, Lineva et Draven doivent traverser leur première soirée de deuil sans vous confier la décision à leur place. Retrouvez-les dans les quartiers de Forthaven.";
+  }
+  return "Un événement lié à cette relation doit encore avoir lieu avant la prochaine scène.";
+}
+
+function campaignHistorySatisfied(id: string, game: GameState) {
+  if (game.history.includes(id)) return true;
+  if (game.flags.includes(`social:${id}`) || game.flags.includes(id)) return true;
+  // Compatibilité avec les anciennes sauvegardes dont l’étape relationnelle
+  // était enregistrée mais pas toujours son identifiant de scène.
+  const route = ROUTE_SCENES.find((entry) => entry.id === id);
+  return Boolean(route && (game.relationships[route.character]?.stage || 0) > route.stage);
+}
+
+function campaignBlockingObjective(scene: CampaignScene, game: GameState) {
+  if (!game.settings.unlockAll && game.day < scene.minDay) return `Cette étape commence au plus tôt au jour ${scene.minDay}.`;
+  const missingHistory = (scene.requiresHistory || []).filter((id) => !campaignHistorySatisfied(id, game));
+  if (missingHistory.length) {
+    const missingRoutes = missingHistory.map((id) => ROUTE_SCENES.find((route) => route.id === id)).filter((route): route is RouteScene => Boolean(route));
+    const missingCampaign = missingHistory.map((id) => campaignSceneById(id)).find(Boolean);
+    if (missingCampaign) return `Terminez d’abord le jalon de campagne « ${missingCampaign.title} ».`;
+    if (missingRoutes.length) {
+      const names = unique(missingRoutes.map((route) => CHARACTERS.find((character) => character.id === route.character)?.name).filter((name): name is string => Boolean(name)));
+      return `Rencontrez encore ${names.slice(0, 4).join(", ")}${names.length > 4 ? ` et ${names.length - 4} autre${names.length > 5 ? "s" : ""}` : ""} dans leur première scène majeure.`;
+    }
+    return "Une scène précédente du fil principal doit encore être vécue.";
+  }
+  const missingFlags = (scene.requiresFlags || []).filter((flag) => !game.flags.includes(flag));
+  if (missingFlags.length) return "Les preuves ou garanties produites par l’étape précédente ne sont pas encore réunies.";
+  if (!hasKnowledge(game, scene.requiresKnowledge)) return "Une connaissance indispensable doit encore être découverte.";
+  return undefined;
+}
+
+function campaignSceneReady(scene: CampaignScene, game: GameState) {
+  if (game.history.includes(scene.id)) return false;
+  return !campaignBlockingObjective(scene, game);
+}
+
 function characterUnlocked(game: GameState, character: CharacterData) {
   if (game.settings.unlockAll) return true;
   if (game.day < character.unlockDay) return false;
@@ -596,6 +680,10 @@ function characterUnlocked(game: GameState, character: CharacterData) {
 function secretConversationReady(secret: SecretConversation, game: GameState, requirePlace = true) {
   const relation = game.relationships[secret.character];
   if (!relation || !relation.met || game.secretHistory.includes(secret.id)) return false;
+  // Chaque couche de passé répond à une scène réellement vécue : une forte
+  // relation obtenue par cadeaux ou moments libres ne peut plus sauter le
+  // premier chapitre de la route ni révéler plusieurs niveaux à l’avance.
+  if (!game.settings.unlockAll && relation.stage < secret.tier / 20) return false;
   if (!game.settings.unlockAll && relation.affection + relation.trust < secret.tier) return false;
   if (!game.settings.unlockAll && game.day < (secret.minDay || 1)) return false;
   if (!game.settings.unlockAll && !hasKnowledge(game, secret.requiresKnowledge)) return false;
@@ -611,9 +699,17 @@ function availableSecretForCharacter(characterId: string, game: GameState) {
 
 function spontaneousEventReady(event: SpontaneousEvent, game: GameState) {
   if (game.worldEventHistory.includes(event.id)) return false;
+  const containsForbiddenPair = event.characters.includes("amanea") && event.characters.includes("naiah");
+  if (containsForbiddenPair && !event.amaneaNaiahSafeguard) return false;
   if (game.day < event.minDay && !game.settings.unlockAll) return false;
   if (event.location !== game.location) return false;
   if (event.spots?.length && !event.spots.includes(game.spot)) return false;
+  if (!game.settings.unlockAll && event.characters.some((id) => {
+    if (event.remoteCharacters?.includes(id)) return false;
+    const character = CHARACTERS.find((entry) => entry.id === id);
+    const place = character ? characterPlace(character, game.day, game.period, game.flags, game.housing) : undefined;
+    return !place || place.location !== game.location || place.spot !== game.spot;
+  })) return false;
   if (!game.settings.unlockAll && event.characters.some((id) => {
     const character = CHARACTERS.find((entry) => entry.id === id);
     return !character || !characterUnlocked(game, character);
@@ -650,6 +746,8 @@ function letterReady(letter: LetterTemplate, game: GameState) {
     && game.day >= letter.minDay
     && relation.stage >= letter.minStage
     && hasKnowledge(game, letter.requiresKnowledge)
+    && !letter.requiresFlags?.some((flag) => !game.flags.includes(flag))
+    && !letter.excludesFlags?.some((flag) => game.flags.includes(flag))
     && !game.letters.some((entry) => entry.id === letter.id));
 }
 
@@ -738,6 +836,10 @@ function relationshipNarrativeProgress(game: GameState, characterId: string) {
 }
 
 function storyMilestone(id: string) {
+  const campaign = campaignSceneById(id);
+  if (campaign) {
+    return { title: campaign.title, place: spotById(campaign.spot)?.name || "Scène de campagne" };
+  }
   const route = ROUTE_SCENES.find((scene) => scene.id === id);
   if (route) {
     const spot = spotById(ROUTE_SPOTS[route.id]);
@@ -809,10 +911,13 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
       const progress = relationshipNarrativeProgress(next, character.id);
       const nextScene = sceneFor(character.id, after.stage);
       const nextVariant = nextScene ? relationRouteVariant(nextScene, next).route : undefined;
+      const confidenceObjective = nextVariant ? routeNarrativeObjective(nextVariant, next) : undefined;
       relationChanges.push({
         kind: "relation",
         title: `Fil de ${character.name} · ${progress.completed}/${progress.total}`,
-        detail: nextVariant ? `Prochaine scène · ${nextVariant.title}` : "Toutes les scènes narratives sont accomplies.",
+        detail: nextVariant
+          ? confidenceObjective || `Prochaine scène · ${nextVariant.title}`
+          : "Toutes les scènes narratives sont accomplies.",
       });
     } else if (!before.met && after.met) {
       relationChanges.push({ kind: "relation", title: `Nouvelle relation · ${character.name}`, detail: character.role });
@@ -906,8 +1011,24 @@ const LINEVA_TRAVEL_ITINERARY: CharacterData["itinerary"] = [
   { days: 15, location: "forthaven", note: "Reprend le commandement et mesure ce que sa relève a accompli" },
 ];
 
+const IRIANA_FORTHAVEN_ITINERARY: CharacterData["itinerary"] = [
+  { days: 12, location: "algratal", note: "Audiences impériales et recherches secrètes sur le pacte" },
+  { days: 3, travelTo: "akuhn", note: "Voyage clandestin organisé avec Valurn" },
+  { days: 3, location: "akuhn", note: "Consultation discrète des archives d’Amanea" },
+  { days: 3, travelTo: "algratal", note: "Retour secret vers la capitale" },
+  { days: 6, location: "algratal", note: "Finalise l’accord de renfort avec Draven" },
+  { days: 3, travelTo: "forthaven", note: "Accompagne la délégation sans réclamer le commandement du port" },
+  { days: 3, location: "forthaven", note: "Travaille sous l’autorité militaire de Lineva" },
+  { days: 3, travelTo: "algratal", note: "Regagne la capitale après l’inspection des renforts" },
+  { days: 2, location: "algratal", note: "Présente au Conseil les corrections décidées à Forthaven" },
+];
+
 function characterSchedule(character: CharacterData, day: number, flags: string[] = []) {
-  const itinerary = character.id === "lineva" && flags.includes("lineva-travel") ? LINEVA_TRAVEL_ITINERARY : character.itinerary;
+  const itinerary = character.id === "lineva" && flags.includes("lineva-travel")
+    ? LINEVA_TRAVEL_ITINERARY
+    : character.id === "iriana" && flags.includes("story-forthaven-accord-drafted")
+      ? IRIANA_FORTHAVEN_ITINERARY
+      : character.itinerary;
   const cycleLength = itinerary.reduce((total, stop) => total + stop.days, 0);
   const cycleDay = ((Math.max(1, day) - 1) % cycleLength) + 1;
   let cursor = 1;
@@ -1027,6 +1148,7 @@ function socialSceneReady(scene: SocialScene, selectedCharacter: string, game: G
   })) return false;
   if (scene.minStages && Object.entries(scene.minStages).some(([id, stage]) => game.relationships[id].stage < stage)) return false;
   if (scene.stageSum && scene.characters.reduce((sum, id) => sum + game.relationships[id].stage, 0) < scene.stageSum) return false;
+  if (!hasKnowledge(game, scene.requiresKnowledge)) return false;
   if (scene.requiresFlags?.some((flag) => !game.flags.includes(flag))) return false;
   if (scene.requiresAnyFlags && !scene.requiresAnyFlags.some((flag) => game.flags.includes(flag))) return false;
   if (scene.excludesFlags?.some((flag) => game.flags.includes(flag))) return false;
@@ -1246,6 +1368,16 @@ const PLATONIC_CONTINUATIONS: Record<string, { title: string; intro: DialogueLin
     intro: [{ speaker: "Narration", text: "Amanea vous reçoit sur la terrasse sans garde et sans transformer cet isolement en promesse romantique. La reine a besoin de votre franchise ; la femme respecte encore votre refus." }, { speaker: "Amanea", text: "Tu ne seras ni sujet, ni amant·e, ni consolation. Si tu demeures, ce sera comme l’égal·e qui connaît mes contradictions et choisit malgré tout de me répondre." }],
     response: [{ speaker: "Amanea", text: "Alors l’alliance tient. Non parce qu’elle dissimule un désir, mais parce qu’aucun de nous n’a besoin de mentir sur sa nature." }],
   },
+  tia: {
+    title: "Une audience sans conquête",
+    intro: [{ speaker: "Narration", text: "Tia a maintenu l’heure qu’elle vous réservait. La porte reste fermée aux courtisans, mais rien dans la pièce ne tente de rebaptiser votre refus." }, { speaker: "Tia", text: "Votre réponse a modifié les termes de cet accès. Elle ne l’a pas annulé. Je préfère une présence exacte à une dévotion entretenue par l’ambiguïté." }],
+    response: [{ speaker: "Tia", text: "Vous demeurerez donc un regard privé que je n’ai ni acheté ni conquis. Ne confondez pas cette confiance avec de la douceur ; elle est plus rare, et je la tiendrai avec davantage de soin." }],
+  },
+  allenna: {
+    title: "La place laissée libre",
+    intro: [{ speaker: "Narration", text: "Allenna a laissé deux chaises près de la fenêtre et rangé le rapport qu’elle relisait. Elle ne dissimule ni sa déception ni sa décision de respecter la limite posée entre vous." }, { speaker: "Allenna", text: "J’ai vérifié si votre refus changeait mon jugement. Ce n’est pas le cas. Il change seulement ce que j’avais commencé à attendre de ces heures sans ordre." }],
+    response: [{ speaker: "Allenna", text: "Confiance maintenue. Aucun commandement ne lui donnera un autre nom, pas même l’un des miens." }],
+  },
 };
 
 const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | "platonic", DialogueLine[]>> = {
@@ -1263,6 +1395,11 @@ const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | 
     misread: [{ speaker: "Narration", text: "Le visage de la princesse se referme avant que celui d’Iriana ait fini de parler. Vous venez de remettre son titre entre vous." }],
     boundary: [{ speaker: "Narration", text: "Iriana lisse le bord de son gant. Quand elle relève la tête, la déception demeure visible, mais elle ne vous demande pas de la réparer." }],
     platonic: [{ speaker: "Narration", text: "Elle reçoit votre réponse comme une décision privée, sans témoin ni appel. Sa main quitte la vôtre avec lenteur." }],
+  },
+  tia: {
+    misread: [{ speaker: "Narration", text: "Le visage de Tia ne livre rien à la cour absente. Seul le silence, plus long que le protocole ne l’autorise, trahit que votre réponse a atteint la femme derrière la fonction." }],
+    boundary: [{ speaker: "Narration", text: "Tia rappelle la garde d’un geste, puis se ravise. Elle vous laisse l’espace demandé sans convertir votre limite en fin d’audience." }],
+    platonic: [{ speaker: "Narration", text: "Elle reformule mentalement votre place comme elle corrigerait un traité : sans effacer ce qui demeure valide, sans conserver une clause que l’autre partie a refusée." }],
   },
   valurn: {
     misread: [{ speaker: "Narration", text: "Le sourire de Valurn tient une seconde de trop, puis tombe. Cette fois, aucune plaisanterie ne vient récupérer ce qu’il avait confié." }],
@@ -1293,6 +1430,11 @@ const INJECTED_CHOICE_AFTERMATH: Record<string, Record<"misread" | "boundary" | 
     misread: [{ speaker: "Narration", text: "Amanea s’immobilise. Son silence n’est pas une menace : il contient seulement tout ce qu’elle refuse de laisser la reine répondre à la place de la mère ou de la femme." }],
     boundary: [{ speaker: "Narration", text: "La souveraine reprend sa cape sur ses épaules. Amanea, elle, demeure encore un instant dans son regard." }],
     platonic: [{ speaker: "Narration", text: "Elle remet sa couronne sans cérémonie. Le métal referme une possibilité, pas la confiance déjà déposée entre vous." }],
+  },
+  allenna: {
+    misread: [{ speaker: "Narration", text: "Allenna se redresse comme devant une erreur de manœuvre. Elle ne hausse pas la voix ; la précision de son retrait suffit à mesurer ce que vous avez mal compris." }],
+    boundary: [{ speaker: "Narration", text: "Elle recule d’un pas réglementaire, puis laisse tomber ses mains le long du corps. Cette fois, elle ne transforme pas la distance demandée en position de combat." }],
+    platonic: [{ speaker: "Narration", text: "Allenna acquiesce une seule fois. Sa déception reste visible, mais elle ne devient ni ordre, ni dette, ni épreuve supplémentaire." }],
   },
 };
 
@@ -1383,44 +1525,47 @@ function relationRouteVariant(route: RouteScene, game: GameState) {
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
-  if (dialogue.replay || !["route", "ambient", "date"].includes(dialogue.scene.kind)) return base;
+  // Les moments libres et rendez-vous conservent uniquement leurs choix
+  // écrits. Les anciennes réponses génériques pouvaient y contredire la scène
+  // ou valider une branche sans son flag. Seules les routes majeures reçoivent
+  // des issues supplémentaires, toutes rédigées pour leur scène exacte.
+  if (dialogue.replay || dialogue.scene.kind !== "route" || !dialogue.scene.route) return base;
+  // La conclusion amicale est déjà une scène de conséquence entièrement
+  // écrite : y réinjecter une « mauvaise lecture » romantique recréerait la
+  // contradiction que cette variante vient précisément résoudre.
+  if (dialogue.scene.id.endsWith("-friendship-finale")) return base;
   const characterId = dialogue.scene.character || dialogue.scene.cast[0];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
-  const pool = MISREADS[characterId];
-  if (!character || !pool?.length) return base;
-  const misread = pool[stableChoiceIndex(dialogue.scene.id, pool.length)];
+  const contextual = ROUTE_CONTEXTUAL_CHOICES[dialogue.scene.route.id];
+  if (!character || !contextual) return base;
+  const misread = contextual.misread;
   const extra: ChoiceData[] = [{
     id: `${dialogue.scene.id}-misread`, text: misread.text, stat: misread.stat,
     response: [{ speaker: character.name, text: misread.response }],
     effects: { stats: { [misread.stat]: 1 }, affection: -3, trust: -5, desire: -2 },
-    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
   }];
-  const relation = game.relationships[characterId];
-  const romanticMoment = characterId !== "draven" && !game.flags.includes(`${characterId}-platonic`) && Boolean(BOUNDARY_RESPONSES[characterId]) && (
-    dialogue.scene.kind === "date" ||
-    (dialogue.scene.kind === "route" && (dialogue.scene.route?.stage || 0) >= 3) ||
-    (dialogue.scene.kind === "ambient" && relation?.stage >= 3)
-  );
-  if (romanticMoment) extra.push({
+  const romanticMoment = characterId !== "draven"
+    && !game.flags.includes(`${characterId}-platonic`)
+    && dialogue.scene.route.stage >= 3;
+  if (romanticMoment && contextual.boundary) extra.push({
     id: `${dialogue.scene.id}-boundary`,
-    text: "Dire honnêtement que vous ne souhaitez pas aller plus loin pour le moment.",
-    stat: "sangFroid",
-    response: [{ speaker: character.name, text: BOUNDARY_RESPONSES[characterId] }],
-    effects: { stats: { sangFroid: 1 }, affection: -1, trust: 2, desire: -8 },
-    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
+    text: contextual.boundary.text,
+    stat: contextual.boundary.stat,
+    response: [{ speaker: character.name, text: contextual.boundary.response }],
+    effects: { stats: { [contextual.boundary.stat]: 1 }, affection: -1, trust: 2, desire: -8 },
   });
-  if (romanticMoment) extra.push({
+  const baseAlreadyOffersPlatonic = base.some((choice) => choice.effects.flags?.includes(`${characterId}-platonic`));
+  if (romanticMoment && contextual.platonic && !baseAlreadyOffersPlatonic) extra.push({
     id: `${dialogue.scene.id}-platonic`,
-    text: `Dire clairement à ${character.name} que vous souhaitez préserver une relation amicale, sans attente romantique.`,
-    stat: "lucidite",
-    response: [{ speaker: character.name, text: PLATONIC_RESPONSES[characterId] }],
+    text: contextual.platonic.text,
+    stat: contextual.platonic.stat,
+    response: [{ speaker: character.name, text: contextual.platonic.response }],
     effects: {
-      stats: { lucidite: 1 },
+      stats: { [contextual.platonic.stat]: 1 },
       trust: 3,
       desire: -15,
       flags: unique([`${characterId}-platonic`, ...flagsSharedByEveryChoice(base)]),
     },
-    dateOutcome: dialogue.scene.kind === "date" ? "awkward" : undefined,
   });
   return shuffledChoices([...base, ...extra], `${dialogue.scene.id}:${game.day}:${game.period}:${game.relationships[characterId]?.stage || 0}`);
 }
@@ -1454,8 +1599,8 @@ function choiceOpeningLine(choice: ChoiceData): DialogueLine | undefined {
     [/^Déchirer\s+/i, "Vous déchirez "], [/^Jeter\s+/i, "Vous jetez "], [/^Mélanger\s+/i, "Vous mélangez "], [/^Rendre\s+/i, "Vous rendez "], [/^Stabiliser\s+/i, "Vous stabilisez "],
   ];
   const form = forms.find(([pattern]) => pattern.test(action));
-  const text = form ? action.replace(form[0], form[1]) : "Vous prenez le temps de répondre sans détour";
-  return { speaker: "Narration", text: `${text}.` };
+  if (!form) return undefined;
+  return { speaker: "Narration", text: `${action.replace(form[0], form[1])}.` };
 }
 
 function ambientPromptLines(prompt: string, characterName: string): DialogueLine[] {
@@ -1781,7 +1926,8 @@ export default function Home() {
       && route.location === game.location
       && routeSpotId === game.spot
       && (!routePeriods || routePeriods.includes(PERIODS[game.period].id))
-      && bond >= BOND_THRESHOLDS[route.stage];
+      && bond >= BOND_THRESHOLDS[route.stage]
+      && routeNarrativeReady(route, game);
     const queuedSocial = chooseSocialScene(characterId, game);
     if (queuedSocial?.oneTime) {
       const scene: SceneView = {
@@ -2015,6 +2161,16 @@ export default function Home() {
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) ? dialogue.scene.route : undefined;
     if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && dialogue.scene.kind === "story" && dialogue.scene.campaignSceneId) {
+      const campaign = campaignSceneById(dialogue.scene.campaignSceneId);
+      if (campaign) updateGame((current) => ({
+        ...current,
+        history: unique([...current.history, campaign.id]),
+        sceneMemories: { ...current.sceneMemories, [campaign.id]: campaign.spot },
+        journal: [...current.journal, `Campagne · ${campaign.title}`],
+        codex: unique([...current.codex, campaign.title]),
+      }));
+    }
     if (!dialogue.replay && dialogue.scene.kind === "ambient" && dialogue.scene.character && dialogue.scene.ambientId) {
       const characterId = dialogue.scene.character;
       const ambientId = dialogue.scene.ambientId;
@@ -2986,6 +3142,11 @@ export default function Home() {
     const route = ROUTE_SCENES.find((entry) => entry.id === sceneId);
     const character = CHARACTERS.find((entry) => entry.id === route?.character);
     if (!route || !character) return;
+    const confidenceObjective = routeNarrativeObjective(route, game);
+    if (confidenceObjective) {
+      setModal({ kind: "notice", title: "Un chapitre manque encore", text: confidenceObjective });
+      return;
+    }
     const spotId = ROUTE_SPOTS[route.id];
     const target = nextPresence(character, game, spotId, ROUTE_PERIODS[route.id], route.dayMin);
     if (!target) {
@@ -3005,6 +3166,58 @@ export default function Home() {
     setSelectedSpot(spotId);
     setMapDestinationOpen(false);
     setTab("map");
+  }
+
+  function startCampaignScene(sceneId: string) {
+    if (!game) return;
+    const campaign = campaignSceneById(sceneId);
+    if (!campaign || !campaignSceneReady(campaign, game)) {
+      setModal({ kind: "notice", title: "Jalon encore inaccessible", text: campaign ? campaignBlockingObjective(campaign, game) || "Cette scène a déjà été accomplie." : "Ce jalon n’existe pas." });
+      return;
+    }
+    const scene: SceneView = {
+      id: campaign.id,
+      title: campaign.title,
+      background: campaign.background,
+      mood: campaign.mood,
+      character: campaign.lead,
+      cast: campaign.cast,
+      intro: campaign.intro,
+      choices: campaign.choices,
+      kind: "story",
+      campaignSceneId: campaign.id,
+    };
+    const sceneGame = { ...game, location: campaign.location, spot: campaign.spot };
+    updateGame((current) => ({
+      ...current,
+      location: campaign.location,
+      spot: campaign.spot,
+      ...placeDiscovery(current, campaign.location, campaign.spot),
+      journal: [...current.journal, `Campagne · En route vers ${spotById(campaign.spot)?.name || campaign.title}`],
+    }));
+    setSelectedLocation(campaign.location);
+    setSelectedSpot(campaign.spot);
+    setMapDestinationOpen(false);
+    setDialogue({ scene, lines: expandedLines(scene, sceneGame, campaign.intro, "intro", campaign.spot), lineIndex: 0, phase: "intro" });
+  }
+
+  function replayCampaignScene(sceneId: string) {
+    if (!game || !game.history.includes(sceneId)) return;
+    const campaign = campaignSceneById(sceneId);
+    if (!campaign) return;
+    const scene: SceneView = {
+      id: campaign.id,
+      title: campaign.title,
+      background: campaign.background,
+      mood: campaign.mood,
+      character: campaign.lead,
+      cast: campaign.cast,
+      intro: campaign.intro,
+      choices: campaign.choices,
+      kind: "story",
+      campaignSceneId: campaign.id,
+    };
+    setDialogue({ scene, lines: expandedLines(scene, game, campaign.intro, "intro", campaign.spot), lineIndex: 0, phase: "intro", replay: true });
   }
 
   function replayRoute(sceneId: string) {
@@ -3267,7 +3480,7 @@ export default function Home() {
                   const rawNextScene = sceneFor(character.id, relation.stage);
                   const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
                   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
-                  const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage];
+                  const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage] && routeNarrativeReady(nextScene, game);
                   const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
                   return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
                     <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{special ? `Scène · ${nextScene.title}` : relation.met ? "Moment libre" : "Première rencontre"}</span></div></button>
@@ -3330,7 +3543,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
+      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
       {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -3379,7 +3592,7 @@ function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModa
   return <main className="title-screen">
     <div className="title-backdrop" /><div className="title-vignette" />
     <button className="chronicle-badge" onClick={onChronicle}><span>Chronique Alternative</span><small>Mode libre · Une autre Sylvinia</small></button>
-    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e depuis une autre temporalité, explorez une Sylvinia où l’équipe d’Iriana ne s’est jamais formée et tissez vos propres alliances.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></section>
+    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e dans une réalité qui n’est pas la vôtre, explorez une Sylvinia où Iriana enquête seule et tissez des alliances qui n’appartiennent qu’à vous.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></section>
     <p className="title-footer">Intimité réglable · Scènes interactives · Sauvegarde locale</p>
     {modal?.kind === "chronicle" && <ChronicleModal onClose={closeModal} />}
     {modal?.kind === "notice" && <SimpleModal title={modal.title} text={modal.text} onClose={closeModal} />}
@@ -3418,7 +3631,7 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const currentLine = dialogue.lines[dialogue.lineIndex];
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
-  const sceneLabel = dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Conversation personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : "Moment libre";
+  const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Conversation personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : "Moment libre";
   return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
     <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
     <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => { const character = CHARACTERS.find((entry) => entry.id === id); if (!character) return null; const active = activeIds.includes(id); const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined; const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, character.defaultMood)) : character.defaultMood; return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${id}/${mood}.webp`} alt={character.name} />; })}</div>
@@ -3477,14 +3690,16 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
     const rawNext = sceneFor(character.id, relation.stage);
     const next = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
     const needed = next ? Math.max(0, BOND_THRESHOLDS[next.stage] - relation.affection - relation.trust) : 0;
+    const confidenceObjective = next ? routeNarrativeObjective(next, game) : undefined;
+    const narrativeReady = Boolean(next && !confidenceObjective);
     const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id);
     const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
-    const routeTarget = next ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
+    const routeTarget = next && narrativeReady ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
     return <article key={character.id} className={`relationship-card ${!unlocked ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties}>
       <button className="relationship-portrait" disabled={!unlocked} onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{unlocked ? character.name : "Inconnu·e"}</span><small>{unlocked ? character.role : character.id === "tia" && game.day >= character.unlockDay ? "Une puissance impériale encore inaccessible" : `Disponible au jour ${character.unlockDay}`}</small></div></button>
       <div className="relationship-body"><div className="stage-line"><strong>{STAGE_LABELS[relation.stage]}</strong><span>{relation.stage} / 5</span></div><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" />
-        {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible" : "Route accomplie · rencontres libres disponibles"}</small></div>}
-        {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{hasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
+        {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? confidenceObjective || (game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible") : "Route accomplie · rencontres libres disponibles"}</small></div>}
+        {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{hasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && narrativeReady && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
       </div>
     </article>;
   })}</div></section>;
@@ -3505,7 +3720,8 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+  const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
   const secretMemories = game.secretHistory.map((id) => SECRET_CONVERSATIONS.find((secret) => secret.id === id)).filter((secret): secret is SecretConversation => Boolean(secret));
   const worldMemories = game.worldEventHistory.map((id) => SPONTANEOUS_EVENTS.find((event) => event.id === id)).filter((event): event is SpontaneousEvent => Boolean(event));
@@ -3518,15 +3734,19 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
   const activeDone = activeAct.requiredScenes.filter((id) => discovered.has(id)).length;
   const nextMilestoneId = storyComplete ? undefined : activeAct.requiredScenes.find((id) => !discovered.has(id));
   const nextMilestone = nextMilestoneId ? storyMilestone(nextMilestoneId) : undefined;
+  const nextCampaign = nextMilestoneId ? campaignSceneById(nextMilestoneId) : undefined;
+  const nextCampaignReady = Boolean(nextCampaign && campaignSceneReady(nextCampaign, game));
+  const nextCampaignBlocker = nextCampaign && !nextCampaignReady ? campaignBlockingObjective(nextCampaign, game) : undefined;
   const threads = CHARACTERS.map((character) => {
     const relation = game.relationships[character.id];
     const progress = relationshipNarrativeProgress(game, character.id);
     const scene = sceneFor(character.id, relation.stage);
     const unlocked = characterUnlocked(game, character);
     const needed = scene ? Math.max(0, BOND_THRESHOLDS[scene.stage] - relation.affection - relation.trust) : 0;
-    const target = scene ? nextPresence(character, game, ROUTE_SPOTS[scene.id], ROUTE_PERIODS[scene.id], scene.dayMin) : undefined;
+    const confidenceObjective = scene ? routeNarrativeObjective(scene, game) : undefined;
+    const target = scene && !confidenceObjective ? nextPresence(character, game, ROUTE_SPOTS[scene.id], ROUTE_PERIODS[scene.id], scene.dayMin) : undefined;
     const confidences = secretMemories.filter((secret) => secret.character === character.id).length;
-    return { character, relation, progress, scene, unlocked, needed, target, confidences };
+    return { character, relation, progress, scene, unlocked, needed, confidenceObjective, target, confidences };
   });
   const completedRelationScenes = threads.reduce((total, thread) => total + thread.progress.completed, 0);
   const totalRelationScenes = threads.reduce((total, thread) => total + thread.progress.total, 0);
@@ -3542,7 +3762,7 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
         <div className="story-progress-heading"><div><p className="eyebrow">Fil principal · {storyComplete ? "accompli" : `Acte ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "La convergence est stabilisée" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} actes</strong></div>
         <div className="story-overall-bar"><i style={{ width: `${Math.round((mainProgress / MAIN_STORY.length) * 100)}%` }} /></div>
         <div className="story-current-objective"><span>{storyComplete ? "Monde ouvert" : "Objectif actuel"}</span><p>{storyComplete ? "Le fil principal est terminé. Tous les voyages, relations, rendez-vous et activités restent disponibles sans limite de temps." : activeAct.objective}</p></div>
-        {!storyComplete && <div className="story-next-step"><b>Prochain jalon</b><span>{nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{nextMilestone?.place || `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis`}</small></div>}
+        {!storyComplete && <div className="story-next-step"><b>Prochain jalon</b><span>{nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{nextCampaignBlocker || nextMilestone?.place || `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis`}</small>{nextCampaignReady && nextCampaign && <button className="primary-action" onClick={() => onStartCampaign(nextCampaign.id)}>Rejoindre cette scène de campagne</button>}</div>}
       </section>
 
       <section className="living-journal">
@@ -3558,19 +3778,21 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
       </section>
 
       <div className="journal-section-title"><div><h2>Fils relationnels</h2><p>Chaque personnage possède cinq scènes narratives majeures, distinctes des moments libres et des rendez-vous.</p></div><strong>{completedRelationScenes} / {totalRelationScenes}</strong></div>
-      {threads.map(({ character, relation, progress, scene, unlocked, needed, target, confidences }) => {
+      {threads.map(({ character, relation, progress, scene, unlocked, needed, confidenceObjective, target, confidences }) => {
         const scenePlace = scene ? spotById(ROUTE_SPOTS[scene.id]) : undefined;
         const periods = scene ? ROUTE_PERIODS[scene.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).filter(Boolean).join(" / ") : "";
         const objective = !unlocked
           ? character.id === "tia" && game.day >= character.unlockDay ? "Approfondissez d’abord votre compréhension d’Amanea : Tia demeure encore une institution, pas une relation personnelle." : `Ce fil deviendra accessible au jour ${character.unlockDay}.`
           : !scene
             ? "Toutes les scènes narratives de ce personnage ont été accomplies. Les moments libres et rendez-vous restent disponibles."
-            : game.day < scene.dayMin
+            : confidenceObjective
+              ? confidenceObjective
+              : game.day < scene.dayMin
               ? `Patientez jusqu’au jour ${scene.dayMin}, puis rejoignez ${scenePlace?.name || "le lieu indiqué"}${periods ? ` · ${periods}` : ""}.`
               : needed > 0
                 ? `Renforcez encore ce lien de ${needed} point${needed > 1 ? "s" : ""}, puis rejoignez ${scenePlace?.name || "le lieu indiqué"}.`
                 : `Rejoignez ${scenePlace?.name || "le lieu indiqué"}${periods ? ` · ${periods}` : ""}.`;
-        const status = !unlocked ? character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial" : `Jour ${character.unlockDay}` : !scene ? "Accompli" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
+        const status = !unlocked ? character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial" : `Jour ${character.unlockDay}` : !scene ? "Accompli" : confidenceObjective ? "Confidence" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
         return <article className={`quest-card relation-thread-card ${!unlocked ? "locked" : ""} ${!scene ? "complete" : ""}`} key={character.id}>
           <img src={character.portrait} alt="" />
           <div>
@@ -3578,7 +3800,7 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
             <div className="relation-thread-progress"><i style={{ width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`, background: character.color }} /></div>
             <h3>{scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
             <p><b>Objectif :</b> {objective}</p>
-            {unlocked && scene && !needed && target && <button onClick={() => onWaitForRoute(scene.id)}>Attendre et rejoindre · {waitDurationLabel(game, target)}</button>}
+            {unlocked && scene && !confidenceObjective && !needed && target && <button onClick={() => onWaitForRoute(scene.id)}>Attendre et rejoindre · {waitDurationLabel(game, target)}</button>}
           </div>
           <b>{status}</b>
         </article>;
@@ -3587,6 +3809,7 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
       <h2>Scènes mémorisées</h2>
       <p className="memory-explainer">✦ Relecture protégée : les caractéristiques, relations, objets et l’heure restent strictement inchangés.</p>
       <div className="memory-replay-grid">
+        {campaignMemories.map((scene) => <button key={scene.id} onClick={() => onReplayCampaign(scene.id)}><span>◆ Campagne · Acte {scene.act}</span><strong>{scene.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {game.history.map((id) => { const scene = ROUTE_SCENES.find((entry) => entry.id === id); const character = CHARACTERS.find((entry) => entry.id === scene?.character); return scene && <button key={id} onClick={() => onReplayRoute(id)}><span style={{ color: character?.color }}>◇ {character?.name}</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>; })}
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
         {secretMemories.map((secret) => <button key={secret.id} onClick={() => onReplaySecret(secret.id)}><span style={{ color: CHARACTERS.find((character) => character.id === secret.character)?.color }}>◇ Confidence · {CHARACTERS.find((character) => character.id === secret.character)?.name}</span><strong>{secret.title}</strong><small>Revoir sans gain ni nouvelle découverte</small></button>)}
@@ -3601,16 +3824,17 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onRe
       {MAIN_STORY.map((act, index) => {
         const done = index < mainProgress;
         const current = !storyComplete && index === mainProgress;
+        const revealed = done || current;
         const milestonesDone = act.requiredScenes.filter((id) => discovered.has(id)).length;
         return <article className={`story-timeline ${done ? "done" : ""} ${current ? "current" : ""}`} key={act.id}>
           <span>{act.number}</span>
           <div>
-            <strong>{act.title}</strong>
-            <div className="story-act-objective"><b>Objectif</b><p>{act.objective}</p></div>
+            <strong>{revealed ? act.title : "Acte à découvrir"}</strong>
+            {revealed ? <><div className="story-act-objective"><b>Objectif</b><p>{act.objective}</p></div>
             <small>{act.detail}</small>
             <div className="story-milestones">
               {act.requiredScenes.length ? act.requiredScenes.map((id) => { const milestone = storyMilestone(id); const achieved = discovered.has(id); return <div className={achieved ? "achieved" : ""} key={id}><i>{achieved ? "✓" : "◇"}</i><span><b>{milestone.title}</b><small>{milestone.place}</small></span></div>; }) : <div className="achieved"><i>✓</i><span><b>Passage dans cette chronologie</b><small>Le prologue ouvre automatiquement ce premier acte.</small></span></div>}
-            </div>
+            </div></> : <small>Poursuivez l’acte actuel pour révéler cet objectif sans dévoiler les secrets qui le précèdent.</small>}
           </div>
           <b>{done ? "Accompli" : current ? `${milestonesDone}/${act.requiredScenes.length} jalons` : "À découvrir"}</b>
         </article>;
@@ -3653,7 +3877,7 @@ function AssetsView({ game, presentCharacters, onShop, onGive, onBuyProperty, on
 
 function CodexView({ game }: { game: GameState }) {
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Archives personnelles</p><h1>Codex</h1><p>Les entrées se complètent en voyageant, en rencontrant les personnages et en vivant leurs scènes.</p></div><span>{game.codex.length} entrées</span></header><div className="codex-layout"><div><h2>Personnages rencontrables</h2><div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? characterDescriptor(character) : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div><h2>Figures de la chronique</h2><div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div></div><div><h2>Lieux découverts</h2>{LOCATIONS.map((location) => { const known = game.visitedLocations.includes(location.id) || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : game.day >= location.unlockDay ? "Route accessible · lieu non visité" : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}<h2>Scènes mémorisées</h2><div className="memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title}</span>) : <p>Aucune scène majeure consignée.</p>}</div></div></div></section>;
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Archives personnelles</p><h1>Codex</h1><p>Les entrées se complètent en voyageant, en rencontrant les personnages et en vivant leurs scènes.</p></div><span>{game.codex.length} entrées</span></header><div className="codex-layout"><div><h2>Personnages rencontrables</h2><div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? characterDescriptor(character) : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div><h2>Figures de la chronique</h2><div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div></div><div><h2>Lieux découverts</h2>{LOCATIONS.map((location) => { const known = game.visitedLocations.includes(location.id) || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : game.day >= location.unlockDay ? "Route accessible · lieu non visité" : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}<h2>Scènes mémorisées</h2><div className="memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title || campaignSceneById(id)?.title || id}</span>) : <p>Aucune scène majeure consignée.</p>}</div></div></div></section>;
 }
 
 function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
@@ -4226,5 +4450,5 @@ function SimpleModal({ title, text, actionLabel, onClose }: { title: string; tex
 }
 
 function ChronicleModal({ onClose }: { onClose: () => void }) {
-  return <div className="modal-backdrop" onMouseDown={onClose}><section className="chronicle-modal" onMouseDown={(event) => event.stopPropagation()}><button className="modal-close" onClick={onClose}>×</button><p className="eyebrow">À propos de cette histoire</p><h2>Une branche alternative au début du Tome 1</h2><p>Hylee a rencontré Remerii à l’Auberge du Forestier et l’a suivie sur les routes. Mais Iriana n’a mystérieusement jamais réuni l’équipe qui devait lancer les événements du premier roman. Amanea règne donc encore à Akuhn’Nabad, Draven cherche l’aide de l’Empire et chaque personnage poursuit sa propre trajectoire jusqu’à votre arrivée.</p><p>Leurs personnalités, leurs liens et leurs blessures viennent des romans, du site et du Visual Novel ; les alliances que vous tisserez appartiennent à cette chronique parallèle.</p><button className="primary-action" onClick={onClose}>Compris</button></section></div>;
+  return <div className="modal-backdrop" onMouseDown={onClose}><section className="chronicle-modal" onMouseDown={(event) => event.stopPropagation()}><button className="modal-close" onClick={onClose}>×</button><p className="eyebrow">À propos de cette histoire</p><h2>Une branche alternative au début du Tome 1</h2><p>Hylee vient de quitter l’Auberge du Forestier avec Remerii. Iriana enquête seule sur des irrégularités impériales, Amanea règne encore à Akuhn’Nabad et Draven cherche l’aide nécessaire pour défendre Forthaven. Chacun suit déjà sa propre trajectoire lorsque votre arrivée déplace, à petite échelle, les liens entre ces routes.</p><p>Vous savez être étranger·e à cette réalité, sans vous souvenir de celle dont vous venez. Vous ne connaissez ni l’avenir ni les événements des romans : les alliances que vous bâtirez appartiennent entièrement à cette chronique.</p><button className="primary-action" onClick={onClose}>Compris</button></section></div>;
 }

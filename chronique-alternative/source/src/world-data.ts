@@ -315,16 +315,35 @@ const PERIOD_INDEX: Record<PeriodKey, number> = { aube: 0, matin: 1, "apres-midi
 
 export function routineFor(characterId: string, location: string, period: PeriodKey, day: number): RoutineMoment {
   const cycleDay = ((Math.max(1, day) - 1) % 38) + 1;
-  // La rare visite d'Hylee à Naïah est volontairement synchronisée : Naïah
-  // l'attend et l'accueille dans sa clairière pendant les deux jours entiers.
-  if (location === "forbidden" && (characterId === "hylee" || (characterId === "naiah" && (cycleDay === 33 || cycleDay === 34)))) {
-    return moment("forbidden-sanctuary", characterId === "hylee" ? "passe cette rare visite auprès de Naïah" : "accueille Hylee et maintient le chemin de la clairière stable");
+  // Hylee rejoint toujours la clairière durant sa rare escale. La présence de
+  // Naïah est synchronisée dans characterPlace avec l'itinéraire réel de Hylee.
+  if (location === "forbidden" && characterId === "hylee") {
+    return moment("forbidden-sanctuary", "passe cette rare visite auprès de Naïah");
   }
   if (characterId === "lineva" && location === "forthaven" && period === "apres-midi" && cycleDay % 3 === 0) {
     return moment("forthaven-memorial", "se recueille au mémorial sans abandonner la ville à sa vigilance");
   }
   if (characterId === "amanea" && location === "akuhn" && period === "soirée" && cycleDay % 5 === 0) {
     return moment("akuhn-terrace", "confie la dernière audience à Allenna et rejoint seule la terrasse des feux verts");
+  }
+  // Les événements croisés disposent de véritables créneaux communs. Ces
+  // exceptions n'inventent pas une téléportation : elles déplacent seulement
+  // une activité au sein de la ville où l'itinéraire place déjà le personnage.
+  if (characterId === "iriana" && location === "algratal" && period === "matin" && cycleDay === 22) {
+    return moment("algratal-palace-council", "prépare l’audience avec Tia sans lui abandonner sa propre posture");
+  }
+  if (characterId === "allenna" && location === "akuhn" && period === "matin" && cycleDay === 14) {
+    return moment("akuhn-throne-room", "présente à Amanea le rapport qui précède l’arrivée de Naïah");
+  }
+  if (characterId === "saidin" && location === "miraldas" && cycleDay === 23) {
+    if (period === "apres-midi") return moment("miraldas-hylee-glade", "observe avec Hylee une flamme qui répond contre toute logique au givre");
+    if (period === "soirée") return moment("miraldas-observatory", "partage avec Remerii un thé qu’aucun des deux ne sait laisser refroidir en paix");
+  }
+  if (characterId === "iriana" && location === "algratal" && period === "soirée" && cycleDay === 27) {
+    return moment("algratal-ballroom", "reprend avec Tia une mesure apprise trop parfaitement");
+  }
+  if (characterId === "bellirith" && location === "akuhn" && period === "matin" && cycleDay >= 24 && cycleDay <= 29) {
+    return moment("akuhn-archives", "confronte Valurn à la copie de l’inscription qu’il lui avait cachée");
   }
   // Les scènes personnelles tardives utilisent des espaces réellement inscrits
   // dans l'emploi du temps, afin qu'elles restent atteignables sans téléportation
@@ -336,6 +355,8 @@ export function routineFor(characterId: string, location: string, period: Period
   }
   if (characterId === "allenna" && location === "akuhn" && period === "soirée") {
     if (cycleDay === 24 || cycleDay === 25) return moment("akuhn-music-room", "accorde une heure sans ordre dans la salle de musique basse");
+    if (cycleDay === 26 || (cycleDay >= 30 && cycleDay % 4 === 2)) return moment("akuhn-terrace", "termine sa relève sur la terrasse sans convertir votre présence en surveillance");
+    if (cycleDay >= 27) return moment("akuhn-music-room", "revient au Salon nocturne par choix, après avoir confié la dernière relève");
   }
   const routine = ROUTINES[characterId]?.[location];
   return routine?.[PERIOD_INDEX[period]] || moment(DEFAULT_SPOTS[location] || "algratal-streets", "poursuit ses affaires dans les environs");

@@ -274,9 +274,13 @@ export const CHARACTERS: CharacterData[] = [
     itinerary: [
       { days: 9, location: "forbidden", note: "Veille sur ses brumes et son territoire" },
       { days: 2, travelTo: "akuhn", note: "Route secrète vers Akuhn’Nabad" },
-      { days: 5, location: "akuhn", note: "Affaires obscurcies et blessures familiales" },
-      { days: 2, travelTo: "forbidden", note: "Retour dans les brumes" },
-      { days: 20, location: "forbidden", note: "Garde de la forêt ; Hylee peut lui rendre visite" },
+      { days: 3, location: "akuhn", note: "Affaires obscurcies et blessures familiales" },
+      { days: 1, travelTo: "forbidden", note: "Retour rapide par une route que ses brumes maintiennent ouverte" },
+      { days: 10, location: "forbidden", note: "Garde de la forêt ; Hylee peut lui rendre visite" },
+      { days: 1, travelTo: "akuhn", note: "Traverse de nouveau les brumes sans annoncer sa visite" },
+      { days: 2, location: "akuhn", note: "Revient brièvement aux archives et à la cour obscurcie" },
+      { days: 1, travelTo: "forbidden", note: "Referme derrière elle le passage vers la cité" },
+      { days: 9, location: "forbidden", note: "Reprend la garde de son territoire" },
     ],
   },
   {
@@ -401,45 +405,45 @@ export const ROUTE_SCENES: RouteScene[] = [
     line("Hylee", "Je maîtrise. Enfin… normalement. Vous pouvez me dire s’il regarde encore par ici sans avoir l’air de surveiller quelqu’un ?"),
     line("Narration", "Remerii termine les préparatifs à l’étage. Hylee, elle, oscille entre la peur d’être repérée et l’impatience de choisir enfin la route."),
   ], [
-    choice("h0-a", "« Si c’est ta façon de dire bonjour, elle est plutôt mémorable. »", "audace", [line("Hylee", "Un rire lui échappe malgré elle. D’accord… bonjour. Et désolée pour vos chaussures."), line("Narration", "La peur quitte un instant ses épaules.")], { stats: { audace: 1 }, affection: 5, trust: 2, desire: 1, confluence: 2 }),
-    choice("h0-l", "Observer les reflets avant de répondre : le givre s’est arrêté autour d’elle.", "lucidite", [line("{player}", "La magie ne cherchait pas à fuir. Elle te protégeait de la foule."), line("Hylee", "Vous… avez réellement regardé. La plupart se contentent d’avoir peur.")], { stats: { lucidite: 1 }, affection: 2, trust: 6, confluence: 2 }),
+    choice("h0-a", "« Si c’est votre façon de dire bonjour, elle est plutôt mémorable. »", "audace", [line("Hylee", "Un rire lui échappe malgré elle. D’accord… bonjour. Et désolée pour vos chaussures."), line("Narration", "La peur quitte un instant ses épaules.")], { stats: { audace: 1 }, affection: 5, trust: 2, desire: 1, confluence: 2 }),
+    choice("h0-l", "Observer les reflets avant de répondre : le givre s’est arrêté autour d’elle.", "lucidite", [line("{player}", "La magie ne cherchait pas à fuir. Elle vous protégeait de la foule."), line("Hylee", "Vous… avez réellement regardé. La plupart se contentent d’avoir peur.")], { stats: { lucidite: 1 }, affection: 2, trust: 6, confluence: 2 }),
     choice("h0-r", "Poser la paume près du givre et étouffer sa signature sans l’effacer.", "resonance", [line("Hylee", "Vous la sentez aussi ? Pas le froid. Ce qu’il y a juste dessous."), line("Narration", "La glace reste présente mais cesse d’appeler les mages à des kilomètres. Pour la première fois, Hylee vous sourit sans réserve.")], { stats: { resonance: 1 }, affection: 4, trust: 4, confluence: 3 }, { stat: "resonance", value: 5 }),
   ]),
   routeScene("hylee", 1, 4, "Un bâton, deux mains", "miraldas", "atelier", "determined", [
     line("Narration", "Dans l’atelier de Mir’Aldas, le bâton d’Hylee vibre jusqu’à faire tinter tous les cristaux suspendus."),
     line("Hylee", "Je pourrais le forcer. Remerii dirait que c’est une idée catastrophique… ce qui signifie souvent qu’elle fonctionnerait une fois."),
-    line("Hylee", "Vous restez ? J’ai moins peur de me ridiculiser quand quelqu’un se ridiculise avec moi."),
+    line("Hylee", "On peut peut-être arrêter de se vouvoyer avant de provoquer une catastrophe ensemble. Tu restes ? J’ai moins peur de me ridiculiser quand quelqu’un se ridiculise avec moi."),
   ], [
-    choice("h1-s", "Stabiliser sa respiration plutôt que sa magie.", "sangFroid", [line("{player}", "Quatre souffles. Le sort peut attendre."), line("Hylee", "Vous parlez comme elle… mais sans me donner envie de vous jeter un cristal."), line("Narration", "Elle cale son rythme sur le vôtre. Le bâton s’apaise.")], { stats: { sangFroid: 1 }, trust: 6, affection: 3, confluence: 3 }),
+    choice("h1-s", "Stabiliser sa respiration plutôt que sa magie.", "sangFroid", [line("{player}", "Quatre souffles. Le sort peut attendre."), line("Hylee", "Tu parles comme elle… mais sans me donner envie de te jeter un cristal."), line("Narration", "Elle cale son rythme sur le vôtre. Le bâton s’apaise.")], { stats: { sangFroid: 1 }, trust: 6, affection: 3, confluence: 3 }),
     choice("h1-a", "« On le force ensemble. Comme ça, le désastre sera équitablement partagé. »", "audace", [line("Hylee", "Voilà une philosophie magique absolument irresponsable."), line("Narration", "Son sourire ravi dit exactement le contraire. Vos deux mains se referment sur le bois noir.")], { stats: { audace: 1 }, affection: 6, desire: 2, trust: 2, confluence: 3 }),
-    choice("h1-r", "Laisser le bâton répondre avant de décider du geste.", "resonance", [line("Narration", "La vibration devient une pulsation lente. Hylee ferme les yeux, vos doigts toujours proches des siens."), line("Hylee", "Il ne demandait pas de puissance. Il demandait… qu’on l’écoute.")], { stats: { resonance: 1 }, trust: 5, affection: 4, confluence: 5 }, { stat: "resonance", value: 6 }),
+    choice("h1-r", "Laisser le bâton répondre avant de décider du geste.", "resonance", [line("Narration", "La vibration devient une pulsation lente. Hylee ferme les yeux, vos doigts toujours proches des siens."), line("Hylee", "Tu la sens aussi ? Il ne demandait pas de puissance. Il demandait… qu’on l’écoute.")], { stats: { resonance: 1 }, trust: 5, affection: 4, confluence: 5 }, { stat: "resonance", value: 6 }),
   ]),
   routeScene("hylee", 2, 8, "La cicatrice sous la neige", "miraldas", "camp", "sad", [
     line("Narration", "La nuit tombe sur la clairière. Hylee garde sa cape serrée autour d’elle malgré la douceur de l’air."),
     line("Hylee", "Quand quelqu’un lève la main trop vite, je sais que ce n’est pas mon père. Mon corps, lui, ne le sait pas toujours."),
-    line("Hylee", "Je ne veux pas que vous me regardiez comme quelque chose de cassé."),
+    line("Hylee", "Je ne veux pas que tu me regardes comme quelque chose de cassé."),
   ], [
-    choice("h2-l", "« Je vois ce que tu protèges, pas seulement ce qui t’a blessée. »", "lucidite", [line("Narration", "Elle vous étudie longuement, puis desserre enfin sa cape."), line("Hylee", "Alors restez. Sans question, juste… restez un peu.")], { stats: { lucidite: 1 }, trust: 8, affection: 5, confluence: 3 }),
+    choice("h2-l", "« Je vois ce que tu protèges, pas seulement ce qui t’a blessée. »", "lucidite", [line("Narration", "Elle vous étudie longuement, puis desserre enfin sa cape."), line("Hylee", "Alors reste. Sans question, juste… reste un peu.")], { stats: { lucidite: 1 }, trust: 8, affection: 5, confluence: 3 }),
     choice("h2-s", "Garder les mains bien visibles et lui laisser choisir la distance.", "sangFroid", [line("Narration", "Hylee fait elle-même le dernier pas et appuie son épaule contre la vôtre."), line("Hylee", "Merci de ne pas décider à ma place de ce qui devrait me rassurer.")], { stats: { sangFroid: 1 }, trust: 9, affection: 4, desire: 1, confluence: 3 }),
     choice("h2-a", "« Cassée ? Non. Terriblement impressionnante et un peu têtue ? Oui. »", "audace", [line("Hylee", "Un peu ?"), line("Narration", "Son rire tremble au début, puis devient réel. Elle essuie une larme sans détourner le regard.")], { stats: { audace: 1 }, trust: 5, affection: 7, desire: 2, confluence: 3 }),
   ]),
   routeScene("hylee", 3, 13, "La danse du campement", "echo-clearing", "camp", "teasing", [
     line("Narration", "À la Clairière des Échos, une caravane a sorti un violon et quelques lanternes. Hylee vous trouve avant que vous puissiez utiliser la surveillance de la route comme excuse."),
     line("Hylee", "J’ai beaucoup réfléchi. C’est généralement à cet instant que je fais quelque chose d’irraisonnable."),
-    line("Hylee", "Dansez avec moi. Et ne dites pas que vous ne savez pas : moi non plus."),
+    line("Hylee", "Danse avec moi. Et ne dis pas que tu ne sais pas : moi non plus."),
   ], [
-    choice("h3-a", "L’entraîner au centre de la piste avant que son courage ne retombe.", "audace", [line("Hylee", "Oh. Vous êtes vraiment pire que moi."), line("Narration", "Elle rate le premier pas, vous le fait rater à votre tour, puis rit assez fort pour que le protocole cesse d’exister.")], { stats: { audace: 1 }, affection: 8, desire: 5, trust: 3, confluence: 4 }),
+    choice("h3-a", "L’entraîner au centre de la piste avant que son courage ne retombe.", "audace", [line("Hylee", "Oh. Tu es vraiment pire que moi."), line("Narration", "Elle rate le premier pas, vous le fait rater à votre tour, puis rit assez fort pour que le protocole cesse d’exister.")], { stats: { audace: 1 }, affection: 8, desire: 5, trust: 3, confluence: 4 }),
     choice("h3-s", "Lui offrir votre main, immobile, et attendre qu’elle la prenne.", "sangFroid", [line("Narration", "Ses doigts se posent dans les vôtres avec un soin presque solennel."), line("Hylee", "C’est fou comme attendre peut parfois être plus courageux que foncer.")], { stats: { sangFroid: 1 }, affection: 6, desire: 3, trust: 7, confluence: 4 }),
-    choice("h3-r", "« Suivons la musique comme on suivrait un courant magique. »", "resonance", [line("Narration", "Vous cessez de compter. La danse devient une vibration partagée, fragile et intuitive."), line("Hylee", "Avec vous, j’ai l’impression que mon corps sait avant moi où il veut aller.")], { stats: { resonance: 1 }, affection: 7, desire: 5, trust: 5, confluence: 5 }, { stat: "resonance", value: 8 }),
+    choice("h3-r", "« Suivons la musique comme on suivrait un courant magique. »", "resonance", [line("Narration", "Vous cessez de compter. La danse devient une vibration partagée, fragile et intuitive."), line("Hylee", "Avec toi, j’ai l’impression que mon corps sait avant moi où il veut aller.")], { stats: { resonance: 1 }, affection: 7, desire: 5, trust: 5, confluence: 5 }, { stat: "resonance", value: 8 }),
   ]),
   routeScene("hylee", 4, 19, "Choisir sans fuir", "miraldas", "bedroom", "soft", [
     line("Narration", "Hylee referme la porte de la chambre sans la verrouiller. Ce détail semble important pour elle."),
     line("Hylee", "Je ne veux pas d’une autre personne qui décide de ma vie. Je veux quelqu’un à qui je peux dire oui… parce que je sais que mon non aurait la même valeur."),
-    line("Hylee", "Alors je vais être très claire : j’ai envie que vous restiez. Et vous ?"),
+    line("Hylee", "Alors je vais être très claire : j’ai envie que tu restes. Et toi ?"),
   ], [
     choice("h4-l", "Nommer clairement votre désir et vos limites, puis lui demander les siennes.", "lucidite", [line("Narration", "Vous prenez le temps de tout dire. Hylee répond sans détour, rougissante mais sûre d’elle."), line("Hylee", "Oui. Comme ça. Pas une devinette, pas une épreuve. Nous deux, parce que nous le choisissons.")], { stats: { lucidite: 1 }, affection: 10, trust: 10, desire: 7, confluence: 6 }, { stat: "lucidite", value: 8 }),
-    choice("h4-s", "« Je reste. Et tu peux changer d’avis à chaque instant. »", "sangFroid", [line("Hylee", "Vous aussi."), line("Narration", "Elle vous rejoint avec une lenteur assumée, son sourire intimidé devenu lumineux.")], { stats: { sangFroid: 1 }, affection: 9, trust: 11, desire: 6, confluence: 6 }),
-    choice("h4-a", "« J’espérais que tu le demanderais depuis cette catastrophe avec le bâton. »", "audace", [line("Hylee", "J’aurais dû vous assommer avec. Cela nous aurait fait gagner du temps."), line("Narration", "Elle rit contre vous avant de vous embrasser, franche et tremblante à la fois.")], { stats: { audace: 1 }, affection: 11, trust: 7, desire: 9, confluence: 6 }),
+    choice("h4-s", "« Je reste. Et tu peux changer d’avis à chaque instant. »", "sangFroid", [line("Hylee", "Toi aussi."), line("Narration", "Elle vous rejoint avec une lenteur assumée, son sourire intimidé devenu lumineux.")], { stats: { sangFroid: 1 }, affection: 9, trust: 11, desire: 6, confluence: 6 }),
+    choice("h4-a", "« J’espérais que tu le demanderais depuis cette catastrophe avec le bâton. »", "audace", [line("Hylee", "J’aurais dû t’assommer avec. Cela nous aurait fait gagner du temps."), line("Narration", "Elle rit contre vous avant de vous embrasser, franche et tremblante à la fois.")], { stats: { audace: 1 }, affection: 11, trust: 7, desire: 9, confluence: 6 }),
   ], true),
 
   // REMERII
@@ -492,13 +496,14 @@ export const ROUTE_SCENES: RouteScene[] = [
 
   // IRIANA
   routeScene("iriana", 0, 2, "Audience sans témoin", "algratal", "throne_room", "stern", [
-    line("Narration", "La salle d’audience est vide. Sur la table d’Iriana, une carte réunit plusieurs noms — Hylee, Remerii, Naïah, Valurn — sans qu’aucune convocation n’ait été écrite."),
-    line("Iriana", "Saidin prétend qu’une décision manque à cette chronologie. Je vois surtout quatre personnes utiles que je n’ai aucune raison raisonnable de réunir."),
-    line("Iriana", "Ma seule certitude concerne le pacte de mon père : je le révoquerai. Pour le reste, dites-moi pourquoi votre arrivée semble remplir une place que je n’avais jamais dessinée."),
+    line("Narration", "La salle d’audience a été vidée de ses secrétaires. Sur la table, Iriana a réuni les premiers rapports sur votre arrivée : le portail au-dessus d’Al’Gratal, le témoignage de Saidin et trois relevés qui se contredisent sur l’heure exacte."),
+    line("Iriana", "Vous ne figurez dans aucun registre antérieur à cette nuit. Cela ne fait pas de vous une réponse. Seulement un fait que ma cour préférerait transformer trop vite en menace ou en présage."),
+    line("Iriana", "Mon père a lié mon sang et mon âme à un pouvoir démoniaque. Je cherche Alamma et le moyen de révoquer ce pacte sans offrir une autre vie à ma place. Votre fracture porte une structure voisine, pas identique."),
+    line("Iriana", "Je veux savoir ce que vous acceptez d’enquêter avec moi — et ce que vous refusez de me laisser décider pour vous."),
   ], [
-    choice("i0-a", "« Essayez. Nous découvrirons ensemble votre budget. »", "audace", [line("Iriana", "Un sourire fin lui échappe. Enfin quelqu’un qui comprend la cour sans prétendre être au-dessus d’elle."), line("Iriana", "Je vais apprécier cette négociation.")], { stats: { audace: 1 }, affection: 5, desire: 3, trust: 2, confluence: 2 }),
-    choice("i0-l", "« Vous ne cherchez pas à m’acheter. Vous cherchez à savoir qui essaiera avant vous. »", "lucidite", [line("Narration", "Le regard vert d’Iriana se durcit, puis s’éclaire d’un respect prudent."), line("Iriana", "Vous venez de devenir plus utile — et plus dangereux·se.")], { stats: { lucidite: 1 }, trust: 6, affection: 3, confluence: 2 }),
-    choice("i0-s", "« Je préfère d’abord connaître les termes de votre proposition. »", "sangFroid", [line("Iriana", "Mesuré. Ni docile, ni inutilement hostile."), line("Narration", "Elle descend de l’estrade pour vous parler à hauteur égale.")], { stats: { sangFroid: 1 }, trust: 5, affection: 3, confluence: 2 }),
+    choice("i0-a", "« Je chercherai avec vous, mais je ne deviendrai ni votre preuve ni votre appât. »", "audace", [line("Iriana", "Une limite posée avant que j’aie formulé une mission. Vous apprenez vite les usages de cette cour."), line("{player}", "J’apprends surtout ce qu’ils pourraient me coûter."), line("Iriana", "Alors nous commencerons par les relevés du portail, sans exposition publique et sans contrainte magique.")], { stats: { audace: 1 }, affection: 5, trust: 4, confluence: 3, flags: ["story-iriana-contact"] }),
+    choice("i0-l", "Distinguer ce que les relevés prouvent de ce qu’Iriana et Saidin supposent.", "lucidite", [line("{player}", "Le portail a réagi à une structure démoniaque. Rien ne prouve qu’Alamma l’a ouvert, que j’en viens ou que mon arrivée peut rompre votre pacte."), line("Narration", "Iriana barre elle-même trois conclusions déjà écrites dans la marge d’un conseiller."), line("Iriana", "Bien. Nous conserverons l’hypothèse sans lui donner le rang d’un fait.")], { stats: { lucidite: 1 }, trust: 7, affection: 3, confluence: 3, flags: ["story-iriana-contact"] }),
+    choice("i0-s", "Demander un droit de retrait et l’accès aux mêmes informations qu’elle.", "sangFroid", [line("{player}", "Je peux refuser une étape, quitter l’enquête et lire tout document utilisé pour décider du risque que je prends."), line("Iriana", "Vous ne demandez pas l’égalité de pouvoir. Vous exigez l’égalité devant les faits qui vous concernent."), line("Narration", "Elle descend de l’estrade et vous tend la copie non annotée du premier relevé."), line("Iriana", "Accordé.")], { stats: { sangFroid: 1 }, trust: 7, affection: 3, confluence: 3, flags: ["story-iriana-contact"] }),
   ]),
   routeScene("iriana", 1, 6, "Une mesure suspendue", "algratal", "music_room", "troubled", [
     line("Narration", "Dans la salle de musique, Iriana maintient un doigt au-dessus d’une touche sans l’abaisser."),
@@ -518,14 +523,15 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("i2-l", "« Vous me montrez déjà l’endroit en me demandant de ne pas le voir. »", "lucidite", [line("Iriana", "Je sais."), line("Narration", "C’est la réponse la plus désarmée que vous lui ayez entendue."), line("Iriana", "Je voulais savoir ce que vous en feriez.")], { stats: { lucidite: 1 }, trust: 10, affection: 5, desire: 2, confluence: 3 }),
     choice("i2-a", "« Je suis plus intéressé·e par l’endroit où vous aimeriez être touchée. »", "audace", [line("Narration", "Le silence devient soudain beaucoup plus chaud."), line("Iriana", "Une formulation dangereuse."), line("{player}", "Vous pouvez refuser."), line("Iriana", "Je peux aussi choisir de répondre plus tard.")], { stats: { audace: 1 }, trust: 5, affection: 7, desire: 6, confluence: 3 }, { stat: "audace", value: 7 }),
   ]),
-  routeScene("iriana", 3, 15, "Révoquer l’héritage", "algratal", "war_room", "stern", [
-    line("Narration", "Les copies du pacte d’Alamma couvrent la table. Valurn a marqué les clauses démoniaques ; Amanea a fait transmettre, par une route clandestine, les paragraphes que l’Empire ignorait."),
-    line("Iriana", "Mon père a décidé que ce contrat ferait partie de mon héritage. Je peux le rompre, mais pas seule — et certainement pas en reproduisant sa manière de lier les autres."),
-    line("Iriana", "Je vous demande de coopérer. Pas d’obéir, pas de remplacer l’équipe que je n’ai jamais rassemblée. Décidez en connaissance de cause, même si votre décision me déplaît."),
+  routeScene("iriana", 3, 15, "La clause sans victime", "algratal", "war_room", "stern", [
+    line("Narration", "Depuis l’ouverture du canal d’archives, Iriana relit le pacte d’Alamma avec une attention nouvelle. Dans la marge d’une annexe, la même syntaxe de Chaos que sous le faux ordre encadre une clause de révocation."),
+    line("Iriana", "Le texte autorise le transfert de ma dette vers une âme de valeur comparable. Plusieurs conseillers appelleraient cela une issue. Mon père l’a probablement rédigée pour que sa violence puisse un jour passer pour une solution juridique."),
+    line("Narration", "Votre nom ne figure nulle part. La fracture de votre portail suffirait pourtant à donner aux plus pressés l’idée de vous mesurer contre la clause."),
+    line("Iriana", "Je ne livrerai personne à ma place. Je veux consigner ce refus de manière qu’aucun héritier, aucun régent et aucune version future de moi-même ne puisse prétendre l’avoir mal compris."),
   ], [
-    choice("i3-l", "Lire chaque clause, en corriger deux, puis signer de votre propre nom.", "lucidite", [line("Iriana", "Vous avez remplacé ‘obéira’ par ‘coopérera’."), line("{player}", "Vous m’avez demandé un choix."), line("Iriana", "Et vous venez de me rappeler pourquoi je vous fais confiance.")], { stats: { lucidite: 1 }, trust: 9, affection: 6, confluence: 6 }),
-    choice("i3-a", "Déchirer le contrat et lui offrir une poignée de main.", "audace", [line("Narration", "Iriana regarde les morceaux tomber, scandalisée… puis prend votre main."), line("Iriana", "C’est juridiquement absurde."), line("{player}", "Mais librement consenti."), line("Iriana", "Ne prenez pas cet air victorieux.")], { stats: { audace: 1 }, trust: 6, affection: 8, desire: 3, confluence: 6 }),
-    choice("i3-s", "Refuser d’agir tant qu’elle n’a pas prévu une sortie pour tous les envoyés.", "sangFroid", [line("Iriana", "Vous retardez une opération critique."), line("{player}", "Je vous empêche de traiter des vies comme des variables."), line("Narration", "Après un long silence, elle redessine le plan.")], { stats: { sangFroid: 1 }, trust: 10, affection: 4, confluence: 7 }, { stat: "sangFroid", value: 8 }),
+    choice("i3-l", "Séparer ce que la clause permet de ce qu’Iriana consent à faire.", "lucidite", [line("{player}", "Le pacte décrit un mécanisme. Il ne transforme pas son prix en choix acceptable."), line("Narration", "Iriana recopie la clause, puis inscrit sous elle son refus sans employer la langue du contrat."), line("Iriana", "Qu’il demeure deux faits distincts : cette issue existe, et je l’interdis.")], { stats: { lucidite: 1 }, trust: 10, affection: 5, confluence: 7, flags: ["story-pact-clause", "iriana-no-substitution"] }),
+    choice("i3-s", "Placer l’annexe sous une double garde qui interdit toute activation solitaire.", "sangFroid", [line("{player}", "Une copie reste auprès de vous. L’autre est confiée à une archiviste sans lien avec Alamma. Aucun essai ne peut être autorisé par une seule personne."), line("Iriana", "Y compris par moi."), line("Narration", "Elle signe la restriction avant de vous demander d’en être le second témoin."), line("Iriana", "Une limite qui me protège aussi de mon propre désespoir.")], { stats: { sangFroid: 1 }, trust: 11, affection: 4, confluence: 8, flags: ["story-pact-clause", "iriana-no-substitution"] }, { stat: "sangFroid", value: 8 }),
+    choice("i3-a", "Faire inscrire publiquement que la Couronne refuse toute substitution d’âme.", "audace", [line("Iriana", "Le Conseil saura alors qu’une issue existe."), line("{player}", "Et que vous avez refusé de la laisser devenir une tentation secrète."), line("Narration", "Iriana fait appeler deux greffiers et dicte la décision avant que la prudence politique ne puisse la reformuler."), line("Iriana", "Qu’Alamma ne continue pas à choisir mes victimes depuis son absence.")], { stats: { audace: 1 }, trust: 7, affection: 7, confluence: 7, flags: ["story-pact-clause", "iriana-no-substitution"] }),
   ]),
   routeScene("iriana", 4, 21, "Sans ordre ni couronne", "algratal", "alcove", "calm", [
     line("Narration", "Iriana a retiré sa couronne. Elle repose entre vous sur le velours de l’alcôve, simple objet enfin séparé de son corps."),
@@ -540,11 +546,11 @@ export const ROUTE_SCENES: RouteScene[] = [
   // TIA FARAE · accès tardif, d’abord institutionnel puis progressivement personnel
   routeScene("tia", 0, 18, "L’institution vous reçoit", "algratal", "algratal_council", "neutral", [
     line("Narration", "La Salle du Conseil est déjà en session lorsque Tia vous autorise à entrer. Elle ne vous présente pas : votre nom figure sur un dossier placé exactement au centre de la table."),
-    line("Tia", "Vous avez circulé entre Mir’Aldas, Forthaven et Akuhn’Nabad sans appartenir à aucun de ces pouvoirs. L’Empire appelle cela une anomalie. Je préfère déterminer si elle est utile."),
+    line("Tia", "Vous avez franchi des frontières que l’Empire surveille mal et obtenu une audience à Akuhn’Nabad sans appartenir à aucun pouvoir reconnu. Mes conseillers appellent cela une anomalie. Je préfère déterminer ce que vous en faites."),
     line("Narration", "Iriana demeure au fond de la salle, silencieuse. Tia ne vous demande pas de vous incliner, mais toute l’architecture semble le faire à sa place."),
-    line("Tia", "Exposez ce que vous savez de cette chronologie. N’inventez pas ce que votre amnésie vous refuse."),
+    line("Tia", "Exposez ce que vous savez de cette réalité. N’inventez pas ce que votre amnésie vous refuse."),
   ], [
-    choice("t0-l", "Séparer rigoureusement les faits, les hypothèses et les rumeurs.", "lucidite", [line("{player}", "Je sais que je suis étranger·ère à ce monde. Je sais qu’Iriana n’a jamais constitué l’expédition attendue. Le reste exige encore des preuves."), line("Tia", "Vous résistez à la tentation de transformer une lacune en autorité. C’est un commencement acceptable."), line("Narration", "Elle referme la moitié des accusations préparées dans le dossier.")], { stats: { lucidite: 1 }, trust: 8, affection: 2, confluence: 5, flags: ["story-tia-access"] }),
+    choice("t0-l", "Séparer rigoureusement les faits, les hypothèses et les rumeurs.", "lucidite", [line("{player}", "Je sais que ce monde n’est pas le mien. Je sais que ma fracture réagit à certaines traces du pacte et qu’Iriana enquête seule. Je ne sais ni d’où je viens, ni pourquoi ces faits se croisent."), line("Tia", "Vous résistez à la tentation de transformer une lacune en autorité. C’est un commencement acceptable."), line("Narration", "Elle referme la moitié des accusations préparées dans le dossier.")], { stats: { lucidite: 1 }, trust: 8, affection: 2, confluence: 5, flags: ["story-tia-access"] }),
     choice("t0-s", "Demander quelles limites l’Empire vous impose avant de répondre davantage.", "sangFroid", [line("Tia", "Vous négociez depuis une position qui pourrait être qualifiée de fragile."), line("{player}", "Une limite n’est utile que si elle existe avant l’interrogatoire."), line("Tia", "Soit. Aucun sort de contrainte, aucune détention sans acte formel et le droit de taire ce que vous ignorez réellement."), line("Narration", "La concession est froide, précise et parfaitement réelle.")], { stats: { sangFroid: 1 }, trust: 9, affection: 2, confluence: 4, flags: ["story-tia-access"] }),
     choice("t0-a", "Refuser de devenir un rapport et lui poser une question en retour.", "audace", [line("{player}", "Pourquoi me recevoir vous-même si je ne suis qu’une anomalie ?"), line("Tia", "Parce que vous avez obtenu l’attention de personnes que mes titres ne peuvent approcher sans les braquer."), line("Narration", "La réponse reconnaît votre valeur sans tenter de la rendre flatteuse."), line("Tia", "Ne me forcez pas à regretter cette franchise.")], { stats: { audace: 1 }, trust: 5, affection: 5, confluence: 4, flags: ["story-tia-access"] }),
   ]),
@@ -673,8 +679,9 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("n3-a", "« Il reste une femme qui me plaît terriblement et m’inquiète régulièrement. »", "audace", [line("Naïah", "Voilà une déclaration presque parfaite."), line("{player}", "Presque ?"), line("Naïah", "Tu aurais pu commencer par ‘terriblement’.")], { stats: { audace: 1 }, affection: 9, trust: 5, desire: 7, confluence: 5 }),
     choice("n3-s", "Lui rendre la question : ce qui reste doit être nommé par elle.", "sangFroid", [line("Naïah", "Quelqu’un qui veut être aimée sans savoir quoi faire de cet amour."), line("{player}", "C’est un début."), line("Naïah", "Reste pour la suite.")], { stats: { sangFroid: 1 }, trust: 10, affection: 6, desire: 3, confluence: 5 }),
   ]),
-  routeScene("naiah", 4, 23, "Meilleure qu’elle", "forbidden", "bedroom", "smirk", [
-    line("Narration", "Dans son refuge au cœur de la Forêt Interdite, la brume violette forme une porte autour de vous, mais Naïah la dissipe avant de s’approcher."),
+  routeScene("naiah", 4, 23, "Pas une victoire sur elle", "forbidden", "bedroom", "smirk", [
+    line("Narration", "Dans son refuge au cœur de la Forêt Interdite, Naïah défait une couronne de brume puis dissipe la porte violette qui s’était formée autour de vous."),
+    line("Naïah", "J’ai passé des années à vouloir tout ce qu’elle refusait de me donner. Je ne veux pas faire de ton désir une preuve que je l’ai enfin dépassée."),
     line("Naïah", "Je pourrais te faire croire que tu me désires. Je pourrais enfermer le monde dehors et appeler cela de la protection."),
     line("Naïah", "Je ne le ferai pas. Je veux savoir ce que tu choisis quand je ne touche pas à ton esprit."),
   ], [
@@ -700,7 +707,7 @@ export const ROUTE_SCENES: RouteScene[] = [
   ], [
     choice("l1-l", "Prendre en charge une seule question précise, sans prétendre porter le reste.", "lucidite", [line("{player}", "Donnez-moi les patrouilles du secteur est. Seulement cela."), line("Narration", "Lineva hésite, puis vous transmet le registre."), line("Lineva", "Une aide délimitée. Vous savez parler aux gens méfiants.")], { stats: { lucidite: 1 }, trust: 8, affection: 4, confluence: 3 }),
     choice("l1-s", "Rester éveillé·e avec elle et instaurer des pauses à deux.", "sangFroid", [line("Lineva", "Cinq minutes ne sauveront pas la ville."), line("{player}", "Une commandante qui tient debout, peut-être."), line("Narration", "Elle accepte la tasse que vous lui tendez.")], { stats: { sangFroid: 1 }, trust: 7, affection: 5, confluence: 3 }),
-    choice("l1-a", "Fermer la carte. « Vous pouvez me destituer après huit heures de sommeil. »", "audace", [line("Lineva", "C’est de l’insubordination."), line("{player}", "Je ne suis pas sous vos ordres."), line("Lineva", "C’est bien le seul argument qui vous sauve.")], { stats: { audace: 1 }, affection: 7, trust: 3, desire: 2, confluence: 3 }),
+    choice("l1-a", "Poser une pièce sur la carte. « Je parie que ce problème sera encore ici après une heure de repos. »", "audace", [line("Lineva", "Et s’il empire pendant cette heure ?"), line("{player}", "Vous gagnez la pièce. S’il ne bouge pas, vous gagnez une heure pendant laquelle personne ne vous demande de sauver la ville."), line("Narration", "Lineva étudie la carte, referme elle-même le registre, puis empoche la pièce."), line("Lineva", "Une heure. Je garde la mise dans les deux cas.")], { stats: { audace: 1 }, affection: 7, trust: 3, desire: 2, confluence: 3 }),
   ]),
   routeScene("lineva", 2, 13, "Quitter le rempart", "forthaven", "forthaven", "teary", [
     line("Narration", "Au mémorial maritime, Lineva tient la dernière lettre de Draven. Il est vivant, déjà sur la route d’Al’Gratal, et lui demande de le rejoindre quelques jours pour défendre elle-même les besoins de Forthaven."),
@@ -714,16 +721,18 @@ export const ROUTE_SCENES: RouteScene[] = [
   routeScene("lineva", 3, 18, "Une nuit loin du port", "algratal", "ballroom", "smirk", [
     line("Narration", "Après sa première audience à Al’Gratal, Lineva porte une tenue de bal comme une armure étrangère. Elle s’est réfugiée sur un balcon d’où, pour la première fois, elle ne peut pas voir Forthaven."),
     line("Lineva", "La relève n’a envoyé qu’un rapport. Aucun incendie, aucune brèche, aucune supplique pour mon retour. Je devrais être soulagée. Je me sens surtout inutile."),
-    line("{player}", "Ils dansent, parfois."),
-    line("Lineva", "Cela semble logistiquement discutable. Ce qui est peut-être précisément ce dont j’ai besoin avant de rentrer."),
+    line("{player}", "Le bal continue derrière cette porte. Vous pourriez commencer par une danse qui ne protège aucun quai."),
+    line("Lineva", "Une heure sans objectif. Cela semble logistiquement discutable — et c’est peut-être précisément ce dont j’ai besoin avant de rentrer."),
   ], [
     choice("l3-a", "L’inviter avec une révérence excessivement théâtrale.", "audace", [line("Lineva", "Si vous racontez que j’ai accepté, je nierai sous serment."), line("Narration", "Elle prend votre main et vous entraîne avant de pouvoir changer d’avis.")], { stats: { audace: 1 }, affection: 8, desire: 6, trust: 4, confluence: 4 }),
     choice("l3-s", "Proposer une danse lente, loin du centre et sans public.", "sangFroid", [line("Narration", "Lineva pose ses mains avec précaution, comme si la douceur exigeait plus de courage qu’une bataille."), line("Lineva", "Je pourrais apprendre à apprécier une heure inutile.")], { stats: { sangFroid: 1 }, affection: 7, desire: 4, trust: 7, confluence: 4 }),
     choice("l3-l", "Lui demander ce qu’elle voudrait faire si personne n’attendait rien d’elle.", "lucidite", [line("Lineva", "Rester ici. Vous regarder. Ne résoudre absolument aucun problème."), line("Narration", "Elle se tourne enfin vers vous plutôt que vers le port invisible à l’horizon.")], { stats: { lucidite: 1 }, affection: 7, desire: 5, trust: 7, confluence: 4 }),
   ]),
-  routeScene("lineva", 4, 23, "Le port après la tempête", "forthaven", "bedroom", "smirk", [
+  routeScene("lineva", 4, 23, "Le port après le silence", "forthaven", "bedroom", "smirk", [
+    line("Narration", "Depuis la conversation sur le quai, Draven connaît la mort de sa femme. Il n’a pas repris le commandement à Lineva ; il lui a seulement demandé la permission de rester près d’elle. Ce soir, la lettre si longtemps retenue demeure ouverte sur le bureau."),
     line("Narration", "La fenêtre donne sur les lanternes du port. Lineva a laissé son épée, son manteau et ses insignes près de la porte."),
-    line("Lineva", "Je ne veux pas que cette nuit soit une récompense après une victoire. Je veux qu’elle existe même si demain est difficile."),
+    line("Lineva", "Mon père sait. Le port n’est pas tombé, et moi non plus. Je ne veux pourtant pas que cette nuit soit une récompense après avoir survécu à tout cela."),
+    line("Lineva", "Je veux qu’elle existe même si demain est difficile."),
     line("Lineva", "Je vous demande de rester avec la femme qui fatigue, pas avec le symbole qui tient toujours."),
   ], [
     choice("l4-s", "« Je reste. Et demain, nous déciderons à nouveau. »", "sangFroid", [line("Lineva", "Une décision renouvelable."), line("Narration", "Elle sourit, soulagée par la simplicité du terme, puis vient chercher votre baiser.")], { stats: { sangFroid: 1 }, affection: 10, trust: 12, desire: 8, confluence: 6 }),
@@ -822,18 +831,18 @@ export const ROUTE_SCENES: RouteScene[] = [
   ], [
     choice("b4-s", "Nommer vos limites, puis lui demander les siennes une dernière fois.", "sangFroid", [line("Narration", "Bellirith répond sans ironie et accueille chacune de vos conditions."), line("Bellirith", "Alors oui. Nous nous choisissons — et nous pouvons encore changer d’avis à chaque instant.")], { stats: { sangFroid: 1 }, affection: 10, trust: 12, desire: 8, confluence: 6 }),
     choice("b4-l", "« Aucun pouvoir entre nous. Aucun rôle. Seulement ce que nous demanderons clairement. »", "lucidite", [line("Bellirith", "La clarté est indécente sur vos lèvres."), line("Narration", "Elle attend votre sourire, votre geste et votre oui avant de s’approcher.")], { stats: { lucidite: 1 }, affection: 10, trust: 11, desire: 9, confluence: 6 }, { stat: "lucidite", value: 9 }),
-    choice("b4-a", "« Je vous choisis, Bellirith. Maintenant cessez de me faire attendre. »", "audace", [line("Bellirith", "Avec plaisir. Mais jamais sans votre prochain oui."), line("Narration", "Son baiser garde sa promesse : intense, libre et parfaitement humain dans sa vulnérabilité.")], { stats: { audace: 1 }, affection: 12, trust: 8, desire: 11, confluence: 6 }),
+    choice("b4-a", "« Je vous choisis, Bellirith. Maintenant cessez de me faire attendre. »", "audace", [line("Bellirith", "Avec plaisir. Mais jamais sans votre prochain oui."), line("Narration", "Son baiser garde sa promesse : intense, libre, dépourvu du moindre enchantement — et entièrement sien dans sa vulnérabilité.")], { stats: { audace: 1 }, affection: 12, trust: 8, desire: 11, confluence: 6 }),
   ], true),
 
   // AMANEA · Reine Noire vivante dans cette chronologie alternative
   routeScene("amanea", 0, 8, "Audience sous les feux verts", "akuhn", "throne_room", "away", [
     line("Narration", "Dans la salle du trône d’Akuhn’Nabad, Amanea vous reçoit entourée de gardes obscurcis. Allenna demeure à sa droite ; le sceau de Saidin qui vous a permis d’entrer repose, brisé, sur la table."),
-    line("Amanea", "Une personne surgit d’une autre temporalité, se réveille dans le palais de ma sœur puis demande à entrer chez son ennemie. Soit tu es inconscient·e, soit quelqu’un écrit une très mauvaise provocation."),
+    line("Amanea", "Une personne traverse un portail impossible, se réveille dans le palais de ma sœur puis demande à entrer chez son ennemie. Soit tu es inconscient·e, soit quelqu’un a soigneusement préparé cette provocation."),
     line("Narration", "Elle est parfaitement vivante. Sa magie verte parcourt sa peau sans transparence ni faiblesse, et son autorité ne dépend d’aucun ancrage."),
     line("Amanea", "Explique-moi pourquoi la fracture de ton portail porte une couture semblable au pacte d’Alamma. Ensuite, je déciderai si tu quittes cette salle comme invité·e, prisonnier·e… ou partenaire utile."),
   ], [
     choice("a0-r", "Laisser Amanea examiner la signature du portail sans lui céder votre volonté.", "resonance", [line("{player}", "Vous pouvez lire la fracture. Pas décider de ce qu’elle fera de moi."), line("Amanea", "Une limite posée devant mon trône, avec mes gardes autour de toi. Allenna, retiens cette personne : elle comprend mieux la diplomatie que la moitié des ambassadeurs."), line("Narration", "Sa magie effleure la vôtre, précise et retenue. Elle respecte la frontière annoncée.")], { stats: { resonance: 1 }, affection: 3, trust: 8, confluence: 6, flags: ["story-amanea-met"] }),
-    choice("a0-l", "Présenter les faits sans prétendre comprendre le pacte d’Alamma.", "lucidite", [line("{player}", "Le passage était emprunté, défectueux et lié à une temporalité que j’ai oubliée. La ressemblance avec Alamma vient de vous, pas de mes souvenirs."), line("Amanea", "Tu sais distinguer ignorance et mensonge. C’est assez rare pour justifier que je diffère ton interrogatoire."), line("Allenna", "Ce qui, dans sa bouche, constitue presque un accueil.")], { stats: { lucidite: 1 }, affection: 2, trust: 9, confluence: 5, flags: ["story-amanea-met"] }),
+    choice("a0-l", "Présenter les faits sans prétendre comprendre le pacte d’Alamma.", "lucidite", [line("{player}", "Le passage était emprunté et défectueux. Je sais seulement que cette réalité n’est pas la mienne. La ressemblance avec le pacte d’Alamma vient de votre examen, pas de mes souvenirs."), line("Amanea", "Tu sais distinguer ignorance et mensonge. C’est assez rare pour justifier que je diffère ton interrogatoire."), line("Allenna", "Ce qui, dans sa bouche, constitue presque un accueil.")], { stats: { lucidite: 1 }, affection: 2, trust: 9, confluence: 5, flags: ["story-amanea-met"] }),
     choice("a0-s", "Demander les règles d’Akuhn’Nabad avant d’accepter toute coopération.", "sangFroid", [line("Amanea", "Tu ne réclames ni ma confiance ni ma protection. Bien."), line("{player}", "Je veux savoir ce qui mettrait votre peuple en danger."), line("Amanea", "Révéler à l’Empire ce que tu vois ici. Prononcer le nom de Naïah devant ma cour sans y être invité·e. Et confondre ma discrétion avec de la peur.")], { stats: { sangFroid: 1 }, affection: 4, trust: 7, confluence: 5, flags: ["story-amanea-met"] }),
   ]),
   routeScene("amanea", 1, 8, "L’héritière choisie", "akuhn", "war_room", "thinking", [
@@ -856,15 +865,15 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("a2-s", "Recouvrir le coffret sans l’ouvrir ni lui demander de se retourner.", "sangFroid", [line("Narration", "Vous rabattez le tissu noir. Amanea reprend sa lecture après un silence assez long pour devenir un remerciement."), line("Amanea", "Tu n’as ni fouillé ni prétendu réparer ce que tu ne comprends pas. Reste. J’ai encore deux registres à comparer.")], { stats: { sangFroid: 1 }, affection: 5, trust: 12, confluence: 7, flags: ["story-naiah-witness"] }),
     choice("a2-a", "Lui demander pourquoi elle protège les souvenirs d’une personne qu’elle refuse de voir.", "audace", [line("{player}", "L’indifférence aurait brûlé ce coffret depuis longtemps."), line("Amanea", "Je n’ai jamais revendiqué l’indifférence. Ce sont les témoins qui l’ont choisie parce qu’elle rend mon comportement explicable."), line("Narration", "Elle ne révèle rien de plus, mais pour la première fois la contradiction est formulée sans être effacée.")], { stats: { audace: 1 }, affection: 8, trust: 8, confluence: 7, flags: ["story-naiah-witness"] }),
   ]),
-  routeScene("amanea", 3, 8, "L’alliance que l’Empire ne verra pas", "akuhn", "deep_archives", "menacing", [
-    line("Narration", "Dans les Archives profondes, une copie du pacte d’Alamma repose à côté des relevés de votre portail. Iriana écoute à travers un miroir sans tain ; Amanea refuse qu’une princesse impériale entre physiquement dans sa cité."),
-    line("Amanea", "Nous poursuivons le même ennemi sans devenir alliées aux yeux de nos peuples. Tia ne doit pas pouvoir présenter ma coopération comme une soumission, et mes sujets ne doivent pas croire que j’ouvre nos portes à l’Empire."),
-    line("Iriana", "Je n’ai demandé ni trône ni bannière. Seulement la clause qui permettrait de révoquer le pacte de mon père."),
-    line("Amanea", "Et cette clause emprunte la même couture que ton portail. La partager peut libérer Iriana, protéger Naïah… ou offrir à Alamma un chemin jusqu’à ta temporalité perdue."),
+  routeScene("amanea", 3, 8, "Les noms qu’elle garde", "akuhn", "deep_archives", "menacing", [
+    line("Narration", "Après l’ouverture du canal d’archives, Amanea reprend seule les journaux de celles et ceux qui ont saboté le portail d’Alamma. Les extraits utiles sont marqués ; les noms, eux, restent couverts par sa main."),
+    line("Amanea", "Leurs morts peuvent empêcher une nouvelle attaque. Cela ne donne pas à l’Empire le droit de transformer leurs familles en suspects, ni à moi celui d’utiliser leur sacrifice pour blanchir mon règne."),
+    line("Narration", "Plusieurs pages contiennent assez de détails pour confirmer la chronologie du sabotage. Les transmettre sans précaution exposerait pourtant des refuges, des enfants et des survivants qui n’ont jamais consenti à devenir des preuves."),
+    line("Amanea", "Je veux que leurs actes parlent. Je refuse que leurs vies deviennent la propriété de notre enquête. Trouve avec moi une limite qui protège les deux."),
   ], [
-    choice("a3-r", "Séparer la signature du portail de celle du pacte avant de transmettre la clause.", "resonance", [line("Narration", "Vous accordez les deux coutures sans les fusionner. Iriana reçoit les mots nécessaires ; la route vers votre passé demeure illisible pour le démon."), line("Amanea", "Proches sans devenir une seule chose. Une architecture que les pactes comprennent mal."), line("Iriana", "Et une alliance que personne ne pourra posséder entièrement.")], { stats: { resonance: 1 }, affection: 7, trust: 12, confluence: 12, flags: ["story-pact-clause"] }, { stat: "resonance", value: 9 }),
-    choice("a3-s", "Établir des règles de partage avant de laisser quiconque toucher au document.", "sangFroid", [line("{player}", "Aucune copie complète. Chaque personne garde seulement la partie dont elle a besoin."), line("Amanea", "Une confiance construite avec des limites vérifiables. J’approuve."), line("Iriana", "Moi aussi. Ce qui constitue probablement le premier accord entre nous qui ne soit pas une menace différée."), line("Narration", "Le réseau de savoir devient une coopération, pas une nouvelle centralisation du pouvoir.")], { stats: { sangFroid: 1 }, affection: 6, trust: 13, confluence: 10, flags: ["story-pact-clause"] }),
-    choice("a3-a", "Utiliser la clause comme un leurre et laisser Bellirith attirer le regard du démon ailleurs.", "audace", [line("Bellirith", "Enfin un plan où ma mauvaise influence devient un service public."), line("Narration", "Pendant qu’elle provoque une fausse rupture du pacte, Amanea transmet à Iriana les véritables lignes par un second miroir."), line("Amanea", "Je déteste la méthode."), line("Bellirith", "Mais pas le résultat."), line("Amanea", "Ne confonds pas mon silence avec un compliment.")], { stats: { audace: 1 }, affection: 9, trust: 8, desire: 3, confluence: 11, flags: ["story-pact-clause"] }, { stat: "audace", value: 9 }),
+    choice("a3-r", "Extraire uniquement les marques magiques qui datent le sabotage, sans lire les identités liées.", "resonance", [line("Narration", "À travers une plaque noire, vous relevez l’ordre des ruptures et l’heure à laquelle chaque ancrage a cédé. Les noms restent sous le sceau d’Amanea."), line("Amanea", "Leur travail devient vérifiable sans que leur sang accompagne la copie."), line("Narration", "Elle autorise la transmission de cette empreinte et conserve le journal entier.")], { stats: { resonance: 1 }, affection: 7, trust: 11, confluence: 9, flags: ["story-shadow-channel", "story-loyalists-honored"] }, { stat: "resonance", value: 8 }),
+    choice("a3-l", "Distinguer les faits nécessaires des détails qui ne serviraient qu’à rendre le récit plus convaincant.", "lucidite", [line("{player}", "La date, les ancrages détruits et leurs conséquences doivent être vérifiables. Les maisons, les parentés et les dernières lettres ne prouvent rien de plus."), line("Amanea", "Exact. La vérité n’exige pas que nous livrions chaque intimité pour paraître sincères."), line("Narration", "Vous préparez un extrait dont chaque omission est déclarée plutôt que dissimulée.")], { stats: { lucidite: 1 }, affection: 6, trust: 12, confluence: 9, flags: ["story-shadow-channel", "story-loyalists-honored"] }),
+    choice("a3-s", "Confier les extraits à Allenna, avec un droit de retrait pour chaque famille encore vivante.", "sangFroid", [line("Allenna", "Je les contacterai sans expliquer où se trouvent les journaux. Un refus supprimera leur témoignage, pas leur protection."), line("Amanea", "Alors l’enquête recevra ce qui lui est donné, jamais ce qu’elle estime mériter."), line("Narration", "Amanea retire enfin sa main des noms, sans les exposer à la lumière du miroir.")], { stats: { sangFroid: 1 }, affection: 6, trust: 13, confluence: 9, flags: ["story-shadow-channel", "story-loyalists-honored"] }),
   ]),
   routeScene("amanea", 4, 8, "La reine et la femme", "akuhn", "terrace", "smile", [
     line("Narration", "Sur la terrasse d’Akuhn’Nabad, Amanea vient de confier la cour du lendemain à Allenna. Ce n’est ni une abdication ni une épreuve : seulement une première journée où son héritière gouvernera sans correction immédiate."),
@@ -904,9 +913,9 @@ export const ROUTE_SCENES: RouteScene[] = [
     line("Allenna", "Je connais les faits. Mon corps continue pourtant de compter les minutes où je ne peux pas vérifier qu’elle respire."),
     line("Narration", "Elle ne demande pas d’être rassurée. Elle vous montre seulement l’endroit exact où sa discipline cesse d’être un choix."),
   ], [
-    choice("al2-l", "Établir une relève d’information plutôt qu’une surveillance supplémentaire.", "lucidite", [line("{player}", "Un seul message à mi-parcours, envoyé par l’escorte. Ensuite tu quittes la terrasse."), line("Allenna", "Contrôle limité, vérifiable, sans modifier sa mission."), line("Narration", "Elle accepte le protocole et confie enfin la garde à la personne prévue.")], { stats: { lucidite: 1 }, trust: 10, affection: 4, confluence: 4 }),
+    choice("al2-l", "Établir une relève d’information plutôt qu’une surveillance supplémentaire.", "lucidite", [line("{player}", "Un seul message à mi-parcours, envoyé par l’escorte. Ensuite, vous quittez la terrasse."), line("Allenna", "Contrôle limité, vérifiable, sans modifier sa mission."), line("Narration", "Elle accepte le protocole et confie enfin la garde à la personne prévue.")], { stats: { lucidite: 1 }, trust: 10, affection: 4, confluence: 4 }),
     choice("al2-s", "Rester jusqu’à la relève sans prétendre pouvoir garantir le retour d’Amanea.", "sangFroid", [line("{player}", "Je ne peux pas promettre qu’aucun danger n’existe. Je peux rester pendant que tu n’y réponds pas seule."), line("Allenna", "Une solution insuffisante."), line("Narration", "Elle s’assied néanmoins à côté de vous."), line("Allenna", "Restez.")], { stats: { sangFroid: 1 }, trust: 11, affection: 4, confluence: 4 }),
-    choice("al2-a", "Lui voler une fiole vide et l’obliger à quitter son poste pour la récupérer.", "audace", [line("Narration", "Allenna vous rattrape avant la porte, vous plaque contre le mur sans brutalité et récupère la fiole."), line("Allenna", "Tactique infantile."), line("{player}", "Tu as quitté la balustrade."), line("Narration", "Son irritation se fend d’un sourire bref."), line("Allenna", "Ne recommencez pas exactement de cette façon.")], { stats: { audace: 1 }, trust: 6, affection: 7, desire: 3, confluence: 3 }),
+    choice("al2-a", "« Commandante : que faites-vous d’une sentinelle qui vient d’enchaîner deux tours qui n’étaient pas les siens ? »", "audace", [line("Allenna", "Je la relève avant que sa vigilance ne devienne un risque."), line("{player}", "Alors relevez-la."), line("Narration", "Allenna vous fixe comme si elle cherchait une faille dans son propre règlement. Puis elle appelle la garde prévue et quitte enfin la balustrade."), line("Allenna", "Argument insolent. Application correcte.")], { stats: { audace: 1 }, trust: 6, affection: 7, desire: 3, confluence: 3 }),
   ]),
   routeScene("allenna", 3, 20, "Une heure sans ordre", "akuhn", "music_room", "troubled", [
     line("Narration", "Dans le Salon nocturne, Allenna a retiré ses gantelets mais conserve son uniforme. Le piano joue seul une mélodie lente qu’elle prétend ne pas avoir choisie."),
@@ -914,7 +923,7 @@ export const ROUTE_SCENES: RouteScene[] = [
     line("Allenna", "Vous êtes cette autre raison, si vous acceptez une heure durant laquelle je ne commanderai ni troupe, ni blessure, ni vous."),
     line("Narration", "La demande est plus vulnérable que tout ce qu’elle a laissé voir sur un champ d’entraînement."),
   ], [
-    choice("al3-s", "Accepter une heure où chaque initiative peut être proposée et refusée.", "sangFroid", [line("{player}", "Commence par une chose que tu veux, pas une chose utile."), line("Allenna", "Danser. Lentement. Sans leçon."), line("Narration", "Elle pose une main à votre taille et attend votre accord avant le premier pas.")], { stats: { sangFroid: 1 }, affection: 8, trust: 10, desire: 4, confluence: 5 }),
+    choice("al3-s", "Accepter une heure où chaque initiative peut être proposée et refusée.", "sangFroid", [line("{player}", "Commencez par une chose que vous voulez, pas une chose utile."), line("Allenna", "Danser. Lentement. Sans leçon."), line("Narration", "Elle pose une main à votre taille et attend votre accord avant le premier pas.")], { stats: { sangFroid: 1 }, affection: 8, trust: 10, desire: 4, confluence: 5 }),
     choice("al3-a", "Lui demander de vous apprendre la seule danse interdite au règlement militaire.", "audace", [line("Allenna", "Toutes les danses sont interdites pendant la garde."), line("{player}", "Nous avons donc beaucoup de choix."), line("Narration", "Elle vous entraîne dans une variation courte, précise, puis volontairement désordonnée."), line("Allenna", "Cette partie ne figure dans aucun manuel.")], { stats: { audace: 1 }, affection: 10, trust: 6, desire: 6, confluence: 4 }),
     choice("al3-l", "Lui faire remarquer que choisir le repos n’abandonne personne.", "lucidite", [line("Allenna", "Je le sais comme un fait. Je tente de l’apprendre comme une sensation."), line("Narration", "Elle s’assied près de vous, assez proche pour que vos épaules se touchent sans que la posture soit tactique.")], { stats: { lucidite: 1 }, affection: 7, trust: 10, desire: 3, confluence: 5 }),
   ]),
@@ -926,7 +935,7 @@ export const ROUTE_SCENES: RouteScene[] = [
   ], [
     choice("al4-s", "Choisir une proximité profonde sans prolongement romantique.", "sangFroid", [line("{player}", "Je reste. Je ne souhaite pas que ce lien devienne amoureux."), line("Allenna", "Réponse claire."), line("Narration", "Elle expire, déçue mais jamais hostile, puis vous confie la chaise près de la fenêtre."), line("Allenna", "Notre confiance ne dépendra pas d’un désir identique.")], { stats: { sangFroid: 1 }, affection: 7, trust: 14, desire: -8, confluence: 7, flags: ["story-allenna-trust", "allenna-platonic"] }),
     choice("al4-l", "Lui demander ce qu’elle veut, geste après geste, sans transformer sa précision en froideur.", "lucidite", [line("Allenna", "Votre main ici. Puis un baiser, si vous le voulez toujours."), line("Narration", "La méthode ne retire rien au désir ; elle lui donne une netteté qui fait trembler sa voix."), line("Allenna", "Oui. Encore.")], { stats: { lucidite: 1 }, affection: 11, trust: 12, desire: 9, confluence: 8, flags: ["story-allenna-trust"] }, { stat: "lucidite", value: 9 }),
-    choice("al4-a", "Lui rendre la question avec la même franchise, puis réduire la distance après son oui.", "audace", [line("{player}", "Je te désire aussi. Est-ce que tu veux que je t’embrasse maintenant ?"), line("Allenna", "Oui."), line("Narration", "Le premier contact est contenu. Le second porte toute la force qu’elle avait refusé d’imposer."), line("Allenna", "Restez. Cette fois, ce n’est pas un ordre.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 8, flags: ["story-allenna-trust"] }),
+    choice("al4-a", "Lui rendre la question avec la même franchise, puis réduire la distance après son oui.", "audace", [line("{player}", "Je vous désire aussi. Est-ce que vous voulez que je vous embrasse maintenant ?"), line("Allenna", "Oui."), line("Narration", "Le premier contact est contenu. Le second porte toute la force qu’elle avait refusé d’imposer."), line("Allenna", "Restez. Cette fois, ce n’est pas un ordre.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 8, flags: ["story-allenna-trust"] }),
   ], true),
 
   // DRAVEN · route narrative non romantique, vivant et en mission diplomatique
@@ -953,9 +962,9 @@ export const ROUTE_SCENES: RouteScene[] = [
     line("Draven", "Ils offrent des soldats aujourd’hui pour posséder nos quais demain. Refuser peut coûter des vies. Accepter peut transformer la ville que nous sauvons en autre chose."),
     line("Draven", "Je veux une troisième réponse. Donnez-moi les faits, pas ce qu’un patriote de Forthaven aimerait entendre."),
   ], [
-    choice("d2-l", "Dissocier l’accès commercial du commandement militaire.", "lucidite", [line("{player}", "Négociez des entrepôts et des droits temporaires, jamais la chaîne de commandement."), line("Draven", "Ils gagnent un intérêt à notre survie sans obtenir nos remparts."), line("Iriana", "Une proposition que le Conseil pourra vendre comme une victoire. J’appuierai ce texte.")], { stats: { lucidite: 1 }, trust: 10, affection: 5, confluence: 4 }),
-    choice("d2-s", "Fixer une clause d’expiration et un retrait automatique des troupes.", "sangFroid", [line("Draven", "Aucune occupation ne survivra juridiquement à l’urgence qui la justifie."), line("{player}", "Et Lineva contrôlera seule le déclenchement du retrait."), line("Draven", "Bien. Sa ville, sa décision.")], { stats: { sangFroid: 1 }, trust: 11, affection: 3, confluence: 4 }),
-    choice("d2-a", "Menacer de rendre public le prix réel exigé par l’Empire.", "audace", [line("{player}", "Que préférera la cour : un accord honorable ou expliquer pourquoi elle a voulu acheter une ville assiégée ?"), line("Draven", "Vous auriez fait une très mauvaise recrue."), line("Iriana", "Et un négociateur remarquablement utile."), line("Narration", "Le conseiller demande une suspension de séance.")], { stats: { audace: 1 }, trust: 8, affection: 6, confluence: 4 }),
+    choice("d2-l", "Dissocier l’accès commercial du commandement militaire.", "lucidite", [line("{player}", "Négociez des entrepôts et des droits temporaires, jamais la chaîne de commandement."), line("Draven", "Ils gagnent un intérêt à notre survie sans obtenir nos remparts."), line("Iriana", "Une proposition que le Conseil pourra vendre comme une victoire. J’appuierai ce texte.")], { stats: { lucidite: 1 }, trust: 10, affection: 5, confluence: 4, flags: ["story-forthaven-accord-drafted"] }),
+    choice("d2-s", "Fixer une clause d’expiration et un retrait automatique des troupes.", "sangFroid", [line("Draven", "Aucune occupation ne survivra juridiquement à l’urgence qui la justifie."), line("{player}", "Et Lineva contrôlera seule le déclenchement du retrait."), line("Draven", "Bien. Sa ville, sa décision.")], { stats: { sangFroid: 1 }, trust: 11, affection: 3, confluence: 4, flags: ["story-forthaven-accord-drafted"] }),
+    choice("d2-a", "Menacer de rendre public le prix réel exigé par l’Empire.", "audace", [line("{player}", "Que préférera la cour : un accord honorable ou expliquer pourquoi elle a voulu acheter une ville assiégée ?"), line("Draven", "Vous auriez fait une très mauvaise recrue."), line("Iriana", "Et un négociateur remarquablement utile."), line("Narration", "Le conseiller demande une suspension de séance.")], { stats: { audace: 1 }, trust: 8, affection: 6, confluence: 4, flags: ["story-forthaven-accord-drafted"] }),
   ]),
   routeScene("draven", 3, 5, "Le père loin du port", "algratal", "bedroom", "gruff", [
     line("Narration", "Dans les appartements d’hôtes, Draven a retiré son manteau et ses insignes. La réponse de Lineva vient d’arriver : elle envisage de rejoindre Al’Gratal pour défendre elle-même le dossier de Forthaven."),
@@ -966,32 +975,78 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("d3-s", "Lui laisser le temps de trouver une phrase qui ne demande rien à sa fille.", "sangFroid", [line("Narration", "Il reste longtemps silencieux."), line("Draven", "Je te fais confiance. Dis-moi seulement quand tu pars, et ce dont tu as besoin."), line("Narration", "Il acquiesce une fois. La phrase ne contient ni mission ni condition.")], { stats: { sangFroid: 1 }, trust: 13, affection: 4, confluence: 5 }),
     choice("d3-a", "« Essayez : je suis inquiet, et ce n’est pas un ordre. »", "audace", [line("Draven", "Je suis inquiet, et ce n’est pas un ordre."), line("Narration", "Les mots paraissent presque trop simples pour sa voix grave."), line("Draven", "C’est tout ?"), line("{player}", "Vous pouvez ajouter que vous serez heureux de la voir."), line("Draven", "N’exigez pas deux miracles diplomatiques le même soir.")], { stats: { audace: 1 }, trust: 9, affection: 8, confluence: 5 }),
   ]),
-  routeScene("draven", 4, 5, "Le retour au port", "forthaven", "forthaven", "approving", [
-    line("Narration", "Le navire de Draven entre dans le port avec les premiers renforts et l’accord impérial scellé. Lineva l’attend sur le quai, entourée d’officiers qu’elle a choisis elle-même."),
-    line("Lineva", "Forthaven a tenu sans toi."),
-    line("Draven", "Je le vois."),
-    line("Lineva", "Et je suis heureuse que tu sois revenu. Les deux phrases sont vraies. Essaie de ne pas en transformer une en reproche."),
-    line("Narration", "Draven descend la passerelle sans inspection préalable et serre sa fille dans ses bras devant toute la garnison."),
+  routeScene("draven", 4, 5, "Le port après l’annonce", "forthaven", "forthaven", "approving", [
+    line("Narration", "Le lendemain de l’annonce, le premier transport de renforts franchit la jetée. Draven reste auprès de Lineva, jamais devant elle, tandis qu’elle accueille les soldats au nom de Forthaven."),
+    line("Lineva", "La ville a tenu sans toi. Mère est morte sans toi. Je refuse que l’une de ces vérités serve à te chasser ou à me rendre ton commandement."),
+    line("Draven", "Je ne peux transformer ni ta victoire ni notre deuil en ordre. Dis-moi seulement quelle place tu veux que j’occupe."),
+    line("Lineva", "Mon père, ici. L’amiral, quand je le demanderai."),
+    line("Draven", "Tu auras les deux. Dans cet ordre."),
   ], [
-    choice("d4-s", "Laisser leurs retrouvailles exister avant de parler de la mission.", "sangFroid", [line("Narration", "Personne ne réclame immédiatement le traité. Draven et Lineva restent simplement enlacés pendant que les cloches du port annoncent le retour."), line("Draven", "Le rapport attendra."), line("Lineva", "Je veux une copie de cette phrase."), line("Narration", "Leur rire commun vaut davantage que n’importe quelle cérémonie.")], { stats: { sangFroid: 1 }, trust: 14, affection: 7, confluence: 8, flags: ["story-draven-returned"] }),
+    choice("d4-s", "Laisser Lineva présenter sa relève et les décisions prises pendant l’absence de Draven.", "sangFroid", [line("Narration", "Draven écoute chaque officier jusqu’au bout. Il demande avant de proposer une correction et ne reprend aucun poste par habitude."), line("Draven", "Tu n’as pas gardé ma place. Tu as construit la tienne."), line("Lineva", "Reste assez longtemps pour apprendre à la respecter."), line("Draven", "C’est mon intention.")], { stats: { sangFroid: 1 }, trust: 14, affection: 7, confluence: 8, flags: ["story-draven-returned"] }),
     choice("d4-l", "Souligner que Forthaven a gagné de l’aide sans perdre son autonomie.", "lucidite", [line("{player}", "Les renforts repartiront, la ville gardera son commandement et Lineva siège dans le comité qui contrôle l’accord."), line("Draven", "Une victoire qu’elle a améliorée depuis Forthaven."), line("Lineva", "Et que tu as accepté de me laisser améliorer."), line("Narration", "Le compliment passe de l’Amiral à la Commandante sans devenir une dette.")], { stats: { lucidite: 1 }, trust: 13, affection: 8, confluence: 8, flags: ["story-draven-returned"] }),
     choice("d4-a", "Lever la boussole : « Permission de prendre un jour de repos, Amiral. »", "audace", [line("Draven", "Refusée."), line("Lineva", "Ordre annulé par la commandante du port."), line("Draven", "Mutinerie familiale."), line("Narration", "Son rire bref surprend la garnison."), line("Lineva", "Bienvenue chez toi, père.")], { stats: { audace: 1 }, trust: 10, affection: 10, confluence: 8, flags: ["story-draven-returned"] }),
   ]),
 ];
 
+/**
+ * Les scènes majeures et les confidences forment désormais un seul arc :
+ * route 0 → confidence 20 → route 1 → confidence 40, etc. Les identifiants
+ * restent des connaissances narratives afin que les anciennes sauvegardes
+ * puissent récupérer leur progression en jouant simplement les confidences
+ * manquantes, sans migration destructive ni secret affiché avant sa découverte.
+ */
+export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
+  hylee: ["knows_hylee_tartlets", "knows_hylee_star_pendant", "knows_hylee_adoptive_abuse", "knows_hylee_origin_unease"],
+  remerii: ["knows_remerii_child_prodigy", "knows_remerii_dome", "knows_remerii_curse", "knows_remerii_cryo_origin"],
+  iriana: ["knows_iriana_mother_tenderness", "knows_iriana_tia_control", "knows_iriana_alamma_abuse", "knows_iriana_mother_death"],
+  valurn: ["knows_valurn_bhaal_childhood", "knows_valurn_bellirith_past", "knows_valurn_artifact_search", "knows_valurn_true_abandonment"],
+  naiah: ["knows_naiah_tartlets", "knows_naiah_exile", "knows_naiah_surpass_amanea", "knows_naiah_maternal_rejection"],
+  lineva: ["knows_lineva_scars", "knows_lineva_draven_childhood", "knows_lineva_forthaven_burden", "knows_lineva_mother_dead"],
+  saidin: ["knows_saidin_remerii_childhood", "knows_saidin_time_philosophy", "knows_saidin_fear_for_remerii", "knows_saidin_silver_eyes"],
+  bellirith: ["knows_bellirith_bhaal_family", "knows_bellirith_human_past", "knows_bellirith_stasis", "knows_bellirith_mortal_death"],
+  amanea: ["knows_amanea_farae_childhood", "knows_amanea_allenna_origin", "knows_amanea_naiah_pain", "knows_amanea_naiah_pact"],
+  allenna: ["knows_allenna_war_medicine", "knows_allenna_orphan", "knows_allenna_amanea_rescue", "knows_allenna_control_origin"],
+  tia: ["knows_tia_eladri_discipline", "knows_farae_broken_sisters_legend", "knows_tia_amanea_sentence", "knows_tia_first_doubt"],
+  draven: ["knows_draven_lineva_childhood", "knows_draven_family_absence", "knows_draven_heart_governance", "knows_draven_fear_return"],
+};
+
+export function routeKnowledgeRequirements(scene: Pick<RouteScene, "character" | "stage">): string[] {
+  if (scene.stage <= 0) return [];
+  const knowledge = ROUTE_KNOWLEDGE_ORDER[scene.character]?.[scene.stage - 1];
+  return knowledge ? [knowledge] : [];
+}
+
+export const ROUTE_FLAG_REQUIREMENTS: Record<string, readonly string[]> = {
+  "amanea-3": ["story-shadow-channel"],
+  "iriana-3": ["story-shadow-channel"],
+  "iriana-4": ["iriana-private-choice"],
+  "valurn-4": ["valurn-accountability", "fracture-valurn-bellirith-distance-set"],
+  "bellirith-4": ["bellirith-memory-space", "fracture-valurn-bellirith-distance-set"],
+  "amanea-4": ["amanea-pact-boundary"],
+  "allenna-4": ["allenna-care-without-command"],
+  "lineva-4": ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"],
+  "draven-4": ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"],
+};
+
+export function routeFlagRequirements(scene: Pick<RouteScene, "id">): string[] {
+  return [...(ROUTE_FLAG_REQUIREMENTS[scene.id] || [])];
+}
+
 export const INTRO_SCENE: DialogueLine[] = [
-  line("Narration", "Votre dernier souvenir n’est pas un visage, ni un lieu. C’est votre main posée sur l’armature froide d’un portail emprunté — un passage qui devait vous reconduire dans votre propre temporalité."),
-  line("Narration", "Puis le mécanisme se détraque. Les runes s’allument dans le désordre, plusieurs ciels se superposent et un bruit blanc emporte jusqu’au sens du mot « retour »."),
+  line("Narration", "Votre dernier souvenir n’est pas un visage, ni un lieu. C’est votre main posée sur l’armature froide d’un portail emprunté et la certitude qu’au-delà se trouvait quelque chose que vous appeliez chez vous."),
+  line("Narration", "Puis le mécanisme se détraque. Les runes s’allument dans le désordre, plusieurs ciels se superposent et un bruit blanc emporte les noms avant les images."),
   line("Narration", "Vous reprenez connaissance dans une chambre inconnue. Au-delà des rideaux, une cité dorée s’étage sous la lumière du matin. Un homme est assis près de la fenêtre, seul, une montre fermée dans la paume."),
   line("Saidin", "Ne vous redressez pas trop vite. Vous êtes à Al’Gratal, dans une chambre d’hôte du palais. Personne d’autre ne viendra vous interroger avant que vous l’ayez décidé."),
   line("Saidin", "Je m’appelle Saidin. C’est moi qui vous ai tiré du portail lorsqu’il s’est ouvert au-dessus de la ville — ou, plus exactement, lorsqu’il a tenté de s’ouvrir dans plusieurs versions de la ville à la fois."),
   line("Narration", "Vous cherchez un nom de pays, une maison, une voix familière. Rien ne vient. Votre nom demeure ; derrière lui, votre passé n’est qu’une porte sans poignée."),
-  line("Saidin", "Votre signature ne correspond à aucune temporalité de Sylvinia que je puisse reconnaître. Je vois des traces incompatibles, comme si le passage avait effacé la route tout en vous laissant arriver."),
+  line("Narration", "Pourtant, Al’Gratal ne vous paraît pas entièrement inconnue. Ses tours provoquent une reconnaissance sans souvenir, suivie d’une certitude plus profonde encore : ce monde existe, mais il n’est pas le vôtre."),
+  line("Saidin", "Votre signature ne correspond à aucun passage que je sache identifier. J’y vois plusieurs coutures incompatibles, comme si la route avait disparu après vous avoir laissé arriver."),
   line("Saidin", "Je ne vais pas prétendre savoir d’où vous venez. Je ne sais pas davantage restaurer vos souvenirs, et toute certitude que je vous offrirais maintenant serait un mensonge élégant."),
-  line("Saidin", "Cette Sylvinia possède elle aussi une absence. Hylee a rencontré Remerii à l’Auberge du Forestier et l’a suivie sur les routes. Iriana cherche toujours à défaire le pacte de son père. Draven vogue vers le continent. Amanea règne encore sur Akuhn’Nabad."),
-  line("Saidin", "Tout devait conduire Iriana à rassembler ces personnes. Pourtant, elle ne l’a pas fait. Aucune invitation perdue, aucun refus : la décision elle-même semble manquer. Pourquoi une histoire oublierait-elle son propre commencement ?"),
-  line("Narration", "Vous lui demandez si votre arrivée a provoqué cette divergence. Saidin incline légèrement la tête, comme si votre question en contenait une autre qui l’intéressait davantage."),
-  line("Saidin", "Êtes-vous la cause d’une route différente… ou la personne qu’elle a créée pour continuer malgré ce qui manque ?"),
+  line("Narration", "Sur la table, le fragment récupéré dans le portail pulse vers l’est. Saidin l’a placé entre deux cercles de protection, sans inscrire de destination sur la carte."),
+  line("Saidin", "Cette réaction vous donne une direction, pas une explication. Elle traverse des signatures humaines, impériales et démoniaques que personne ne devrait confondre à partir d’un seul éclat."),
+  line("Narration", "Vous lui demandez s’il peut au moins vous dire ce qui vous attend au bout de cette direction."),
+  line("Saidin", "Des personnes occupées à vivre sans vous. Iriana enquête sur le pacte de son père. Hylee et Remerii viennent de quitter une auberge. Draven cherche une route vers Forthaven. Plus loin, certains noms ne sont prononcés qu’à voix basse. Ce sont des faits présents, pas le plan d’une histoire."),
+  line("Saidin", "Si leurs chemins se croisent un jour, ce sera parce que quelqu’un aura parlé, voyagé, demandé de l’aide — et parce que les autres auront accepté. Je ne connais aucune version de ce monde qui vous autorise à décider cela d’avance."),
   line("Narration", "Saidin pose sa montre sur la table, cadran contre le bois. Le geste ressemble moins à une précaution qu’à une promesse de rester dans le présent avec vous."),
   line("Saidin", "Vous pouvez demeurer ici le temps qu’il faudra. Al’Gratal vous donnera une chambre, des papiers provisoires et la liberté de choisir la place que vous souhaitez construire. Votre passé manque ; votre volonté, elle, est toujours là."),
   line("Saidin", "Quand vous serez prêt·e, je vous montrerai la ville. Ensuite, les rencontres vous appartiendront. Je peux vous aider à comprendre ce monde — mais je ne choisirai pas à votre place la personne que vous y deviendrez."),

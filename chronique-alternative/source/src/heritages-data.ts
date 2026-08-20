@@ -39,6 +39,8 @@ export type LetterTemplate = {
   minDay: number;
   minStage: number;
   requiresKnowledge?: string[];
+  requiresFlags?: string[];
+  excludesFlags?: string[];
   attachedItem?: string;
   replies?: LetterReply[];
 };
@@ -80,6 +82,7 @@ export type SpontaneousEvent = {
   location: string;
   spots?: string[];
   characters: string[];
+  remoteCharacters?: string[];
   minDay: number;
   minStages?: Record<string, number>;
   requiresKnowledge?: string[];
@@ -176,6 +179,9 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_farae_broken_sisters_legend", title: "La légende des fractures Farae", summary: "Une vieille histoire familiale décrit des générations de sœurs et de parents brisés. Elle n’est pas une malédiction prouvée, mais un motif que Tia croit pouvoir arrêter par le contrôle.", people: ["tia", "amanea", "allenna", "naiah", "iriana"] },
   { id: "knows_tia_amanea_sentence", title: "La sentence justifiée", summary: "Tia considère encore la condamnation d’Amanea comme une mesure légitime contre une branche contaminée par les Ombres.", people: ["tia", "amanea"] },
   { id: "knows_tia_first_doubt", title: "Une certitude fissurée", summary: "Confrontée à des faits qu’elle ignorait, Tia a admis une seule possibilité : elle n’avait peut-être pas tout compris. Pour elle, ce doute est déjà un séisme.", people: ["tia", "amanea"] },
+
+  { id: "knows_alamma_forged_archives", title: "Les doubles sceaux d’Alamma", summary: "Alamma a falsifié des ordres impériaux et dissimulé sous leur cire une signature de Chaos. Les archives d’Akuhn’Nabad montrent qu’Amanea et ses loyalistes tentaient au contraire de saboter le portail démoniaque.", people: ["iriana", "amanea", "allenna", "valurn"] },
+  { id: "knows_portal_resonance_uncertain", title: "Une résonance n’est pas une origine", summary: "Le fragment du portail du protagoniste réagit à la grammaire magique employée par Alamma, mais possède aussi une couture temporelle distincte. Cette proximité ne révèle ni sa provenance ni la cause de son arrivée.", people: ["saidin", "iriana", "amanea", "valurn"] },
 ];
 
 export const SECRET_CONVERSATIONS: SecretConversation[] = [
@@ -354,7 +360,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
 
   S("lineva", 20, "secret-lineva-scars", "La cicatrice du tonneau", [
     N("En recousant une manche, Lineva désigne plusieurs cicatrices comme les étapes d’une carte militaire."),
-    L("Lineva", "Celle-ci vient d’un mort-vivant. Celle-là d’un abordage. Et celle au genou… d’un tonneau que j’avais juré pouvoir sauter à douze ans."),
+    L("Lineva", "Celle-ci vient d’un mort-vivant. Celle-là d’un abordage. Et celle du genou… d’un tonneau que j’avais juré pouvoir sauter à douze ans."),
     L("Lineva", "Mon père a interdit aux soldats d’en faire une chanson. Ils ont donc composé deux couplets de plus."),
   ], [
     Q("sli20-a", "Exiger le refrain pour des raisons historiques.", "audace", [L("Lineva", "Classifié. Mais le tonneau y reçoit un grade supérieur au mien.", "smirk")], { affection: 5, trust: 2 }),
@@ -406,7 +412,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     L("Saidin", "J’ai retrouvé Remerii après l’agression. Je connaissais mille protections possibles et aucune n’avait été là au moment nécessaire."),
     L("Saidin", "Depuis, je crains de la perdre et je crains presque autant que cette peur me transforme en geôlier."),
   ], [
-    Q("ssa60-l", "Distinguer sa responsabilité de l’illusion qu’il pouvait contrôler toute violence.", "lucidite", [L("Saidin", "Vous retirez à mon regret son omnipotence. Il devra apprendre à être seulement humain.")], { trust: 9, affection: 2 }),
+    Q("ssa60-l", "Distinguer sa responsabilité de l’illusion qu’il pouvait contrôler toute violence.", "lucidite", [L("Saidin", "Vous retirez à mon regret son omnipotence. Il devra apprendre à reconnaître ses limites.")], { trust: 9, affection: 2 }),
     Q("ssa60-s", "Lui rappeler que Remerii peut demander sa présence sans lui céder sa vie.", "sangFroid", [L("Saidin", "Être appelé, pas imposé. Voilà un rôle que je peux encore choisir.")], { trust: 8, affection: 3 }),
   ], ["knows_saidin_fear_for_remerii"]),
   S("saidin", 80, "secret-saidin-eyes", "L’argent au bord du souvenir", [
@@ -457,7 +463,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     L("Amanea", "On appelle parfois cela le jour où je me suis détournée. Je me souviens surtout du moment où les autres regards ont changé avant le mien."),
   ], [
     Q("sam20-l", "Lui demander quel souvenir de Tia précède encore cette fracture.", "lucidite", [L("Amanea", "Elle trichait aux courses et exigeait ensuite une cérémonie de victoire. Une enfant, avant de devenir une institution.")], { trust: 6, affection: 3 }),
-    Q("sam20-s", "Replacer les deux morceaux du vitrail sans prétendre réparer la famille.", "sangFroid", [L("Amanea", "Ils se touchent encore. Ce n’est ni une guérison ni rien.")], { trust: 6, affection: 2 }),
+    Q("sam20-s", "Replacer les deux morceaux du vitrail sans prétendre réparer la famille.", "sangFroid", [L("Amanea", "Ils se touchent encore. Ce n’est ni une guérison ni une promesse.")], { trust: 6, affection: 2 }),
   ], ["knows_amanea_farae_childhood"]),
   S("amanea", 40, "secret-amanea-allenna", "L’enfant qui ne partit pas", [
     N("Dans l’infirmerie, Amanea reconnaît une couture ancienne sur un bandage d’entraînement d’Allenna."),
@@ -502,7 +508,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("sdr40-s", "Reconnaître son amour sans en faire une preuve qu’il fut toujours présent.", "sangFroid", [L("Draven", "Juste. Aimer quelqu’un ne remplit pas automatiquement la chaise vide.")], { trust: 8, affection: 2 }),
   ], ["knows_draven_family_absence"]),
   S("draven", 60, "secret-draven-heart", "La carte que Lineva corrigera", [
-    N("Draven superpose son ancien plan de défense à celui de Lineva. Le sien protège les murs ; le sien, les quartiers habités."),
+    N("Draven superpose son ancien plan de défense à celui de Lineva. Le sien protège les murs ; celui de sa fille, les quartiers habités."),
     L("Draven", "Elle me surpassera. Pas en devenant un meilleur Draven. En gouvernant avec le cœur là où j’ai toujours remis mon armure avant de parler."),
     L("Draven", "Je veux qu’elle sache faire ce que je n’ai jamais su : protéger sans transformer chaque personne en poste à tenir."),
   ], [
@@ -587,7 +593,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
 
 export const LETTERS: LetterTemplate[] = [
   {
-    id: "letter-hylee-first-road", character: "hylee", subject: "Une route qui n’était pas prévue", delivery: "Une plume blanche retient le billet sous votre fenêtre.", minDay: 3, minStage: 1,
+    id: "letter-hylee-first-road", character: "hylee", subject: "Une route qui n’était pas prévue", delivery: "Une plume blanche retient le billet sous votre fenêtre.", minDay: 4, minStage: 2,
     body: ["Nous avons pris la mauvaise route. Remerii dit qu’elle était ‘géographiquement discutable’. J’ai trouvé une clairière où la neige tombe vers le haut, donc je refuse de considérer cela comme une erreur.", "J’ai gardé un flocon dans le pli de la feuille. Il fondra probablement avant d’arriver. C’est peut-être mieux ainsi : tu devras me croire."], signature: "Hylee",
     replies: [
       { id: "hylee-road-believe", label: "Je te crois. Garde-moi la prochaine erreur de route.", response: "Medig revient le lendemain avec un minuscule plan volontairement faux.", effects: { affection: 3, trust: 2 } },
@@ -639,6 +645,7 @@ export const LETTERS: LetterTemplate[] = [
   {
     id: "letter-valurn-truth", character: "valurn", subject: "Aucune formulation avantageuse", delivery: "Le pli arrive par messager ordinaire, détail inhabituel chez Valurn.", minDay: 20, minStage: 4, requiresKnowledge: ["knows_valurn_true_abandonment"],
     body: ["Je cherche depuis deux jours une manière de présenter ma décision concernant Bellirith qui me rende intelligent, tragique ou pardonnable.", "Il n’en existe aucune. C’est probablement la première phrase honnête de cette lettre."], signature: "Valurn",
+    requiresFlags: ["fracture-valurn-bellirith-truth"],
     replies: [{ id: "valurn-no-absolution", label: "L’honnêteté n’annule pas la faute. Elle permet seulement d’en faire autre chose maintenant.", response: "Il répond : « Une perspective atrocement adulte. Je vais tenter de la supporter. »", effects: { trust: 5 } }],
   },
 
@@ -668,6 +675,11 @@ export const LETTERS: LetterTemplate[] = [
     id: "letter-lineva-seal", character: "lineva", subject: "Toujours sans sceau", delivery: "La même enveloppe non cachetée a voyagé jusqu’à vous dans une seconde enveloppe.", minDay: 18, minStage: 4, requiresKnowledge: ["knows_lineva_mother_dead"],
     body: ["Je l’ai encore sortie du coffre. Je n’ai pas envoyé la lettre.", "Mais j’ai écrit la première phrase que je voudrais prononcer devant mon père : ‘Il faut que je te parle de maman.’ Pour aujourd’hui, c’est un mouvement."], signature: "Lineva",
     replies: [{ id: "lineva-step", label: "Un mouvement n’a pas besoin de devenir immédiatement une marche forcée.", response: "Lineva répond : « Formulation agaçante. Je la garde. »", effects: { trust: 6, affection: 1 } }],
+  },
+  {
+    id: "letter-lineva-after-news", character: "lineva", subject: "Après le quai", delivery: "Le pli porte cette fois le sceau de Forthaven, sans mention d’urgence.", minDay: 23, minStage: 4, requiresKnowledge: ["knows_lineva_mother_dead"], requiresFlags: ["lineva-mother-truth-resolved"],
+    body: ["Mon père connaît maintenant la vérité. Il ne m’a pas demandé pourquoi j’avais attendu avant de me demander comment elle était morte.", "Nous n’avons réparé ni les mois de silence ni la chaise vide. Nous avons seulement cessé de les porter séparément. Pour aujourd’hui, cela suffit."], signature: "Lineva",
+    replies: [{ id: "lineva-after-space", label: "Ce qui suffit aujourd’hui n’a pas besoin de promettre que demain sera simple.", response: "Lineva répond : « Reçu. Nous avançons sans transformer le deuil en objectif à accomplir. »", effects: { trust: 6, affection: 2 } }],
   },
 
   {
@@ -753,6 +765,7 @@ export const LETTERS: LetterTemplate[] = [
   },
   {
     id: "letter-tia-question", character: "tia", subject: "Question non destinée au Conseil", delivery: "Le sceau personnel de Tia remplace pour la première fois celui de l’Empire.", minDay: 28, minStage: 4, requiresKnowledge: ["knows_tia_first_doubt"],
+    requiresFlags: ["story-alamma-forgery"],
     body: ["Je souhaite revoir les documents concernant Amanea que vous m’avez montrés.", "Ceci ne constitue ni une révision officielle de sa sentence ni une ouverture diplomatique. J’examine la possibilité d’une erreur de compréhension. Ne donnez pas à cette phrase davantage de portée qu’elle n’en a.", "N’en retirez pas moins celle qu’elle possède."], signature: "Tia",
     replies: [{ id: "tia-evidence", label: "Je viendrai avec les faits, sans exiger une conclusion avant votre examen.", response: "Tia répond : « C’est la seule méthode acceptable. » Le pli suivant utilise votre prénom.", effects: { trust: 6, affection: 2 } }],
   },
@@ -760,7 +773,7 @@ export const LETTERS: LetterTemplate[] = [
 
 export const INVITATIONS: InvitationTemplate[] = [
   {
-    id: "invite-hylee-snow", character: "hylee", title: "Une neige qui monte", message: "Hylee vous attend à la Clairière des Échos avant que le phénomène disparaisse.", location: "echo-clearing", spot: "echo-clearing", period: "soirée", minDay: 5, minStage: 1, expiresAfter: 3,
+    id: "invite-hylee-snow", character: "hylee", title: "Une neige qui monte", message: "Hylee vous attend à la Clairière des Échos avant que le phénomène disparaisse.", location: "echo-clearing", spot: "echo-clearing", period: "soirée", minDay: 5, minStage: 2, expiresAfter: 3,
     declineText: "Hylee comprend que la route vous retient. Elle garde un dessin maladroit de la neige pour la prochaine fois.",
     intro: [N("La neige remonte lentement vers les nuages. Hylee tourne au milieu des flocons inversés sans tenter de les contrôler."), L("Hylee", "Je voulais te montrer quelque chose qui n’avait besoin ni d’exercice ni d’explication. Tu es venu·e.", "soft")],
     choices: [
@@ -871,7 +884,7 @@ export const INVITATIONS: InvitationTemplate[] = [
 
 export const RUMORS: RumorTemplate[] = [
   { id: "rumor-algratal-tia-shadow", location: "algratal", spots: ["algratal-market", "algratal-streets"], source: "Marchande de rubans", text: "On dit que l’Impératrice fait mesurer l’ombre de chaque courtisan : si elle dépasse la sienne, il disparaît du palais.", minDay: 3, truth: "fausse" },
-  { id: "rumor-algratal-iriana-group", location: "algratal", spots: ["algratal-palace-audience", "algratal-market"], source: "Clerc de cour", text: "La princesse Iriana devait organiser une expédition secrète. Les convocations n’ont jamais été envoyées et personne ne sait pourquoi.", minDay: 4, truth: "vraie" },
+  { id: "rumor-algratal-iriana-group", location: "algratal", spots: ["algratal-palace-audience", "algratal-market"], source: "Clerc de cour", text: "La princesse Iriana consulte seule des cartes que trois services lui avaient déconseillé d’ouvrir. Aucun ordre de mission, aucune délégation : même ses alliés ignorent ce qu’elle poursuit.", minDay: 4, truth: "vraie" },
   { id: "rumor-algratal-farae-cycle", location: "algratal", spots: ["algratal-palace-audience", "algratal-palace-council"], source: "Archiviste impérial", text: "Dans la lignée Farae, les sœurs finissent toujours ennemies. Certains parlent de malédiction ; les registres parlent surtout de décisions très humaines.", minDay: 12, truth: "déformée", leadKnowledge: "heard_rumor_farae_cycle" },
   { id: "rumor-algratal-tia-amanea", location: "algratal", spots: ["algratal-streets", "algratal-market"], source: "Cocher du palais", text: "Tia aurait banni sa jumelle le jour même où Amanea refusa de s’incliner devant la Lumière. Les chansons raccourcissent probablement plusieurs années en une scène.", minDay: 10, truth: "déformée", leadKnowledge: "heard_rumor_tia_amanea" },
 
@@ -927,7 +940,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-iriana-tia-posture", title: "La posture héritée", location: "algratal", spots: ["algratal-palace-council"], characters: ["iriana", "tia"], minDay: 19, minStages: { iriana: 2, tia: 1 }, oneTime: true,
+    id: "world-iriana-tia-posture", title: "La posture héritée", location: "algratal", spots: ["algratal-palace-council"], characters: ["iriana", "tia"], minDay: 19, minStages: { iriana: 2, tia: 1 }, requiresKnowledge: ["knows_iriana_tia_control"], oneTime: true,
     intro: [N("Tia corrige d’un geste l’angle des épaules d’Iriana avant une audience. Iriana se raidit davantage sous le contact."), L("Tia", "La cour exploitera la fatigue qu’elle verra."), L("Iriana", "Alors peut-être faut-il cesser de lui enseigner que mon corps appartient à son examen."), N("La phrase reste suspendue lorsque vous entrez.")],
     choices: [
       Q("wit-l", "Nommer la protection et la dépossession présentes dans le même geste.", "lucidite", [L("Tia", "Vous simplifiez une discipline nécessaire."), L("Iriana", "Non. Pour une fois, quelqu’un refuse justement de simplifier.")], { trust: 2, relationshipEffects: { iriana: { trust: 4 }, tia: { trust: 2 } } }, ["knows_iriana_tia_control"]),
@@ -959,7 +972,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-hylee-saidin-fire", title: "La flamme qui reconnaît", location: "miraldas", spots: ["miraldas-hylee-glade", "miraldas-atelier"], characters: ["hylee", "saidin"], minDay: 15, minStages: { hylee: 2, saidin: 2 }, oneTime: true,
+    id: "world-hylee-saidin-fire", title: "La flamme qui reconnaît", location: "miraldas", spots: ["miraldas-hylee-glade", "miraldas-atelier"], characters: ["hylee", "saidin"], minDay: 15, minStages: { hylee: 4, saidin: 2 }, requiresKnowledge: ["knows_hylee_origin_unease"], oneTime: true,
     intro: [N("Hylee travaille un sort de givre. La flamme témoin se penche soudain vers elle au lieu de fuir le froid."), L("Hylee", "Elle fait encore ça."), L("Saidin", "Oui."), L("Hylee", "Tu pourrais essayer une réponse plus longue."), L("Saidin", "Je pourrais. Elle ne serait pas nécessairement plus juste.")],
     choices: [
       Q("whs-r", "Mesurer le phénomène sans lui attribuer d’origine.", "resonance", [N("Le feu répond à une signature profonde, illisible sous la cryomancie."), L("Hylee", "Une donnée, pas une étiquette. Je peux vivre avec ça aujourd’hui."), L("Saidin", "Sage décision.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
@@ -967,7 +980,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-remerii-saidin-cup", title: "Le thé de l’ancienne élève", location: "miraldas", spots: ["miraldas-observatory"], characters: ["remerii", "saidin"], minDay: 13, minStages: { remerii: 2, saidin: 2 }, oneTime: true,
+    id: "world-remerii-saidin-cup", title: "Le thé de l’ancienne élève", location: "miraldas", spots: ["miraldas-observatory"], characters: ["remerii", "saidin"], minDay: 13, minStages: { remerii: 2, saidin: 2 }, requiresKnowledge: ["knows_remerii_child_prodigy", "knows_saidin_remerii_childhood"], oneTime: true,
     intro: [N("Remerii a apporté du thé. Saidin corrige encore la position de la théière comme si elle avait huit ans."), L("Remerii", "Je dirige un atelier et participe au maintien du Dôme."), L("Saidin", "La poignée brûle toujours."), L("Remerii", "Je sais."), N("Aucun des deux ne déplace la main.")],
     choices: [
       Q("wrs-l", "Nommer l’affection derrière le geste et l’étouffement qu’il peut produire.", "lucidite", [L("Saidin", "Je protège parfois le souvenir de l’enfant au détriment de la femme présente."), L("Remerii", "Et je transforme parfois toute aide en preuve qu’on me croit incapable. Nous pouvons déplacer la théière ensemble.")], { trust: 3, relationshipEffects: { remerii: { trust: 4 }, saidin: { trust: 4 } } }),
@@ -975,7 +988,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-tia-iriana-training", title: "La mesure parfaite", location: "algratal", spots: ["algratal-ballroom"], characters: ["tia", "iriana"], minDay: 21, minStages: { tia: 2, iriana: 3 }, oneTime: true,
+    id: "world-tia-iriana-training", title: "La mesure parfaite", location: "algratal", spots: ["algratal-ballroom"], characters: ["tia", "iriana"], minDay: 21, minStages: { tia: 2, iriana: 3 }, requiresKnowledge: ["knows_iriana_tia_control", "knows_tia_eladri_discipline"], oneTime: true,
     intro: [N("Tia observe Iriana répéter une marche cérémonielle. La musique s’arrête ; Iriana poursuit encore quatre pas avant de s’autoriser à respirer."), L("Tia", "La mesure était correcte."), L("Iriana", "Je sais. C’est le problème : je continue même lorsque personne ne joue."), N("Tia regarde le musicien, pas sa petite-fille.")],
     choices: [
       Q("wtit-a", "Relancer la musique sur un rythme impossible à marcher dignement.", "audace", [N("Iriana transforme la marche en danse. Tia ne participe pas, mais ne l’arrête pas."), L("Tia", "L’exercice est terminé."), L("Iriana", "Enfin.")], { affection: 3, relationshipEffects: { iriana: { affection: 4 }, tia: { trust: 2 } } }),
@@ -983,7 +996,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-tia-amanea-mirror", title: "Deux voix, aucun accord", location: "algratal", spots: ["algratal-palace-council"], characters: ["tia", "amanea"], minDay: 25, minStages: { tia: 3, amanea: 3 }, oneTime: true, requiresKnowledge: ["knows_tia_amanea_sentence", "knows_amanea_farae_childhood"],
+    id: "world-tia-amanea-mirror", title: "Deux voix, aucun accord", location: "algratal", spots: ["algratal-palace-council"], characters: ["tia", "amanea"], remoteCharacters: ["amanea"], minDay: 25, minStages: { tia: 4, amanea: 3 }, oneTime: true, requiresKnowledge: ["knows_tia_first_doubt", "knows_amanea_farae_childhood"],
     intro: [N("Un miroir diplomatique relie la Salle du Conseil à Akuhn’Nabad. Tia et Amanea se voient pour la première fois depuis longtemps."), L("Tia", "Tu as fait de ton bannissement un royaume."), L("Amanea", "Tu as fait de ta peur une loi."), N("Aucune ne prononce le mot sœur. Le miroir reste ouvert malgré tout.")],
     choices: [
       Q("wtam-l", "Rappeler un souvenir d’enfance qu’elles ont raconté séparément.", "lucidite", [P("Vous trichiez toutes les deux aux courses."), L("Tia", "Elle partait avant le signal."), L("Amanea", "Elle déplaçait la ligne d’arrivée."), N("Le même souvenir produit deux sourires qui disparaissent aussitôt.")], { trust: 3, relationshipEffects: { tia: { trust: 3 }, amanea: { trust: 3 } } }),
@@ -991,7 +1004,7 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-bellirith-valurn-truth", title: "La version qu’elle ignorait", location: "akuhn", spots: ["akuhn-archives"], characters: ["bellirith", "valurn"], minDay: 24, minStages: { bellirith: 4, valurn: 4 }, oneTime: true, requiresKnowledge: ["knows_valurn_true_abandonment", "knows_bellirith_mortal_death"],
+    id: "world-bellirith-valurn-truth", title: "La version qu’elle ignorait", location: "akuhn", spots: ["akuhn-archives"], characters: ["bellirith", "valurn"], minDay: 24, minStages: { bellirith: 4, valurn: 4 }, oneTime: true, requiresKnowledge: ["knows_valurn_true_abandonment", "knows_bellirith_mortal_death"], requiresFlags: ["valurn-accountability"], excludesFlags: ["fracture-valurn-bellirith-truth"],
     intro: [N("Bellirith tient la copie de l’inscription de l’artefact. Valurn ne tente ni plaisanterie ni défense."), L("Bellirith", "Tu l’avais trouvé."), L("Valurn", "Oui."), L("Bellirith", "Et tu as décidé que ma mort était une solution."), L("Valurn", "Oui."), N("Le mot ne demande ni pardon ni compréhension. Il laisse enfin la faute entière dans la pièce.")],
     choices: [
       Q("wbvt-s", "Rester disponible sans empêcher Bellirith de partir ni protéger Valurn de sa réaction.", "sangFroid", [L("Bellirith", "Je ne te pardonne pas."), L("Valurn", "Je sais."), N("Bellirith quitte les archives. Vous ne la suivez que lorsqu’elle vous le demande d’un signe.")], { trust: 3, relationshipEffects: { bellirith: { trust: 5 }, valurn: { trust: 3 } }, flags: ["fracture-valurn-bellirith-truth"] }),
@@ -1008,8 +1021,16 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-allenna-naiah-cycle", title: "Deux filles, la même vieille fracture", location: "akuhn", spots: ["akuhn-palace-exterior"], characters: ["allenna", "naiah"], minDay: 18, minStages: { allenna: 3, naiah: 3 }, oneTime: true, requiresKnowledge: ["knows_farae_broken_sisters_legend", "knows_naiah_exile", "knows_allenna_amanea_rescue"],
-    intro: [N("Naïah reproche à Allenna d’avoir accepté la place qu’elle n’a jamais reçue. Allenna lui reproche de traiter toute loyauté comme une soumission."), L("Naïah", "Tu es la fille qu’elle a choisie."), L("Allenna", "Et tu es celle qui transforme chaque absence en droit de blesser les personnes encore là."), N("Leur colère ressemble moins à une dispute neuve qu’à une histoire familiale trouvant deux nouvelles voix.")],
+    id: "world-amanea-naiah-after-pact", title: "Le prix devenu visible", location: "akuhn", spots: ["akuhn-throne-room"], characters: ["amanea", "naiah"], minDay: 24, minStages: { amanea: 4, naiah: 4 }, oneTime: true, amaneaNaiahSafeguard: true, requiresKnowledge: ["knows_amanea_naiah_pact", "knows_naiah_maternal_rejection"], excludesFlags: ["amanea-naiah-pact-witnessed"],
+    intro: [N("Naïah traverse la salle du trône pendant qu’Amanea écoute un rapport. Vous connaissez maintenant le prix du moindre regard. La reine ne bouge pas ; sous la table, ses ongles s’enfoncent pourtant dans sa paume jusqu’à blanchir les jointures."), L("Naïah", "Toujours rien. Même quand elle sait que je suis là."), N("Amanea répond au rapporteur sur l’état des routes. Aucun mot ne suit la voix de sa fille, aucun regard ne dévie. Ce qui ressemblait autrefois à du mépris ressemble désormais à une discipline atroce — sans rendre la blessure de Naïah moins réelle.")],
+    choices: [
+      Q("wanp-s", "Rester auprès de Naïah sans révéler un secret qui ne vous autorise pas à décider pour elle.", "sangFroid", [P("Je reste. Je ne vais pas inventer une explication ni agir dans ton dos."), L("Naïah", "Tu sais quelque chose."), P("Je sais assez pour ne pas te traiter comme une enfant qu’on déplace sans lui parler."), N("Amanea poursuit le rapport. Son poing fermé ne se desserre qu’après le départ de Naïah.")], { trust: 4, relationshipEffects: { naiah: { trust: 6 }, amanea: { trust: 4 } }, flags: ["amanea-naiah-pact-witnessed"] }),
+      Q("wanp-l", "Demander à l’officière de service de suspendre la séance, sans adresser à Amanea un geste qui répondrait à Naïah.", "lucidite", [P("Cette salle ne permet plus à personne d’entendre correctement le rapport. Suspendez la séance."), N("L’officière fait sortir la cour sans demander à Amanea de réagir. Naïah conserve le choix de rester ou de partir ; elle choisit la porte, et vous suit seulement lorsque vous lui laissez assez d’avance."), L("Naïah", "Merci de ne pas avoir essayé de fabriquer une scène de famille.")], { trust: 4, relationshipEffects: { naiah: { trust: 5 }, amanea: { trust: 5 } }, flags: ["amanea-naiah-pact-witnessed"] }),
+    ],
+  },
+  {
+    id: "world-allenna-naiah-cycle", title: "Deux filles, la même vieille fracture", location: "forbidden", spots: ["forbidden-crossroads"], characters: ["allenna", "naiah"], minDay: 18, minStages: { allenna: 3, naiah: 3 }, oneTime: true, requiresKnowledge: ["knows_farae_broken_sisters_legend", "knows_naiah_exile", "knows_allenna_amanea_rescue"],
+    intro: [N("Au carrefour des brumes, Naïah reproche à Allenna d’avoir accepté la place qu’elle n’a jamais reçue. Allenna lui reproche de traiter toute loyauté comme une soumission."), L("Naïah", "Tu es la fille qu’elle a choisie."), L("Allenna", "Et tu es celle qui transforme chaque absence en droit de blesser les personnes encore là."), N("Leur colère ressemble moins à une dispute neuve qu’à une histoire familiale trouvant deux nouvelles voix.")],
     choices: [
       Q("wanc-l", "Nommer le cycle sans le présenter comme une fatalité.", "lucidite", [P("Vous rejouez une fracture ancienne. Cela n’oblige aucune de vous à en écrire la même fin."), L("Allenna", "Je refuse les légendes qui décident de mes ordres."), L("Naïah", "Moi aussi. Voilà au moins une chose répugnante en commun.")], { trust: 4, relationshipEffects: { allenna: { trust: 4 }, naiah: { trust: 4 } }, flags: ["fracture-allenna-naiah-named"] }),
       Q("wanc-s", "Leur demander une seule limite qu’elles accepteront de respecter lors du prochain conflit.", "sangFroid", [L("Allenna", "Aucune menace contre les soldats pour atteindre Amanea."), L("Naïah", "Aucun ordre donné en mon nom. Je peux accepter ça. Une fois.")], { trust: 4, relationshipEffects: { allenna: { trust: 5 }, naiah: { trust: 5 } }, flags: ["fracture-allenna-naiah-boundary"] }),
@@ -1062,7 +1083,7 @@ export function validateHeritagesCatalog() {
   SPONTANEOUS_EVENTS.forEach((event) => {
     if (event.characters.length < 2 || event.characters.length > 4) throw new Error(`${event.id}: groupe de deux à quatre personnages requis`);
     const forbiddenPair = event.characters.includes("amanea") && event.characters.includes("naiah");
-    if (forbiddenPair && (!event.amaneaNaiahSafeguard || event.id !== "world-amanea-naiah-silence")) {
+    if (forbiddenPair && !event.amaneaNaiahSafeguard) {
       throw new Error(`${event.id}: Amanea et Naïah ne peuvent jamais être associées par le générateur générique`);
     }
     if (forbiddenPair) {

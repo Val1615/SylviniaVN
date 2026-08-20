@@ -1,6 +1,6 @@
 import type { DialogueLine } from "./game-data";
 
-export type NarrativeKind = "intro" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation";
+export type NarrativeKind = "intro" | "story" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation";
 
 export type NarrativeContext = {
   sceneId: string;
