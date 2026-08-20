@@ -43,10 +43,10 @@ export const HOUSING_TIERS: Record<HousingTier, { label: string; short: string; 
 };
 
 export const HOUSING_PATRONS: Record<string, string[]> = {
-  algratal: ["iriana"],
+  algratal: ["iriana", "tia"],
   forthaven: ["draven", "lineva"],
   miraldas: ["saidin", "remerii"],
-  akuhn: ["amanea"],
+  akuhn: ["amanea", "allenna"],
 };
 
 const property = (
@@ -103,6 +103,8 @@ export const STORY_KEEPSAKES: DisplayItem[] = [
   { id: "keepsake-saidin", name: "Aiguille d’une heure inconnue", description: "Une aiguille retirée d’une horloge afin qu’un instant puisse exister sans être prévu.", icon: "⌛", source: "story", character: "saidin" },
   { id: "keepsake-bellirith", name: "Gant sans enchantement", description: "Un gant noir qui neutralise les charmes et ne conserve que la chaleur réelle d’une main.", icon: "♢", source: "story", character: "bellirith" },
   { id: "keepsake-amanea", name: "Sceau de la soirée sans couronne", description: "Un sceau noir qu’Amanea a volontairement laissé vierge, puisqu’aucun ordre ne devait survivre à cette soirée.", icon: "♛", source: "story", character: "amanea" },
+  { id: "keepsake-tia", name: "Sceau personnel de Tia", description: "Le petit sceau qui n’engage ni l’Empire ni la cour : seulement une femme ayant choisi d’écrire en son nom.", icon: "☼", source: "story", character: "tia" },
+  { id: "keepsake-allenna", name: "Gantelet ouvert d’Allenna", description: "Un gantelet d’entraînement dont la paume a été volontairement découpée pour rappeler qu’une main peut protéger sans saisir.", icon: "⛨", source: "story", character: "allenna" },
   { id: "keepsake-draven", name: "Boussole de relève", description: "Une ancienne boussole de Forthaven dont Draven a confié l’aiguille à la génération qui commande désormais.", icon: "⌖", source: "story", character: "draven" },
 ];
 
@@ -116,6 +118,8 @@ export const HOME_DATE_GIFTS: DisplayItem[] = [
   { id: "homegift-saidin", name: "Montre qui ignore demain", description: "Son cadran n’indique que l’heure présente et refuse toute tentative de divination.", icon: "◷", source: "date", character: "saidin" },
   { id: "homegift-bellirith", name: "Miroir au tain honnête", description: "Un miroir sans charme, incapable de flatter ou de corriger la personne qui s’y regarde.", icon: "◐", source: "date", character: "bellirith" },
   { id: "homegift-amanea", name: "Coupe de basalte sans titre", description: "Une coupe sombre choisie par Amanea pour boire sans cérémonie dans une maison qui n’est pas sa cour.", icon: "♜", source: "date", character: "amanea" },
+  { id: "homegift-tia", name: "Partition sans dernière mesure", description: "Tia en a retiré la conclusion officielle afin que la musique puisse s’arrêter lorsqu’elle le choisit.", icon: "♩", source: "date", character: "tia" },
+  { id: "homegift-allenna", name: "Boîte de suture de campagne", description: "Une boîte parfaitement rangée, accompagnée d’une note rappelant que demander du renfort reste une compétence médicale.", icon: "✚", source: "date", character: "allenna" },
   { id: "homegift-draven", name: "Nœud marin de l’Amiral", description: "Un nœud de relève monté sur bois, conçu pour rappeler que tenir signifie aussi savoir transmettre.", icon: "≋", source: "date", character: "draven" },
 ];
 
@@ -177,8 +181,10 @@ export function discountedPropertyPrice(property: HousingProperty, relationships
 export const HOME_INTIMACY_CITY: Partial<Record<string, HousingProperty["location"]>> = {
   lineva: "forthaven",
   iriana: "algratal",
+  tia: "algratal",
   saidin: "miraldas",
   amanea: "akuhn",
+  allenna: "akuhn",
 };
 
 export function housingSaleValue(housing: HousingState) {

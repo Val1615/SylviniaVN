@@ -257,4 +257,64 @@ export const DATE_SCENES: DateScene[] = [
     ],
     intimacySetting: { opening: ["Amanea vous conduit dans une chambre donnant sur la terrasse, loin de ses appartements officiels. Elle dépose sa couronne, laisse sa magie retomber avec les lourds pans de sa cape et soupire en comprenant que personne ne viendra la réclamer.", "La Reine Noire demeure près de la porte ; Amanea, elle, s’avance jusqu’à vous avec la franchise rare d’une femme qui n’a rien à gouverner pendant quelques heures."], closing: ["À l’aube, Akuhn’Nabad a été gouvernée une nuit entière par Allenna. Amanea reste près de vous, nue sous une cape simple, fière de son héritière et nullement pressée de transformer votre proximité en serment."] },
   },
+  {
+    id: "date-allenna-field", character: "allenna", title: "L’exercice qui n’évalue personne", type: "Entraînement choisi", description: "Transformer avec Allenna un terrain d’exercice en espace d’écoute, de confiance et de jeu.", location: "akuhn", spot: "akuhn-war-room", period: "apres-midi", unlockStage: 3, minAffection: 26, minTrust: 30, mood: "neutral",
+    intro: [
+      line("Narration", "Allenna a vidé le terrain et remplacé les armes par des rubans noués aux poignets. Le premier qui saisit celui de l’autre gagne la manche."),
+      line("Allenna", "Aucun soldat, aucun rapport et aucune compétence à prouver. Si vous tombez, la manche s’arrête. Si vous riez, elle continue."),
+      line("Narration", "Elle adopte sa garde habituelle, puis relâche volontairement ses épaules. Le geste lui coûte davantage qu’une attaque."),
+      line("Allenna", "Choisissez le rythme. Je m’adapterai sans transformer votre choix en faiblesse."),
+    ],
+    choices: [
+      dateChoice("daf-s", "Commencer lentement et annoncer chaque changement de rythme.", "sangFroid", [line("Narration", "Vos appuis se répondent jusqu’à ce que l’exercice ressemble à une danse précise."), line("Allenna", "Vous me laissez anticiper sans tout contrôler. C’est… agréable."), line("Narration", "Elle vous laisse saisir son ruban, puis conserve votre main dans la sienne après la fin de la manche.")], "great", { affection: 8, trust: 10, desire: 4 }),
+      dateChoice("daf-a", "Feindre une chute, puis voler son ruban lorsqu’elle vient vous aider.", "audace", [line("Narration", "Allenna comprend la feinte une demi-seconde trop tard. Elle vous immobilise au sol, son visage à quelques centimètres du vôtre."), line("Allenna", "Déloyal."), line("{player}", "J’ai gagné."), line("Allenna", "Vous avez surtout choisi une position intéressante pour la revanche.")], "great", { affection: 10, trust: 6, desire: 7 }),
+      dateChoice("daf-l", "Observer qu’elle protège encore son ancien appui blessé et proposer une autre règle.", "lucidite", [line("Allenna", "Vous avez remarqué sans exploiter."), line("Narration", "Vous jouez assis·es, uniquement avec les mains et les feintes du regard. Allenna perd deux fois et rit une fois, résultat qu’elle juge acceptable.")], "great", { affection: 7, trust: 11, desire: 3 }),
+    ],
+    intimacySetting: { opening: ["Allenna ferme la salle de guerre et déroule sur le sol les tapis d’exercice. Aucun soldat ne viendra interrompre la dernière manche.", "Les rubans restent autour de vos poignets sans jamais devenir des liens imposés : chacun peut les défaire, changer la distance ou demander une pause. Cette maîtrise partagée rend son désir plus visible encore."], closing: ["Lorsque la salle rouvre, deux rubans froissés restent noués ensemble près de la carte. Allenna les range dans sa poche plutôt qu’avec le matériel d’entraînement."] },
+  },
+  {
+    id: "date-allenna-terrace", character: "allenna", title: "La relève tient sans elle", type: "Souper après la garde", description: "Inviter Allenna à regarder Akuhn’Nabad sans surveiller chaque mouvement de la cité.", location: "akuhn", spot: "akuhn-terrace", period: "soirée", unlockStage: 4, minAffection: 33, minTrust: 35, mood: "troubled",
+    intro: [
+      line("Narration", "La relève a reçu ses ordres. Allenna dépose ses fioles et son épée sur une table éloignée du parapet, puis vérifie une dernière fois les signaux verts."),
+      line("Allenna", "Tout fonctionne sans moi. J’ai passé ma vie à obtenir ce résultat et mon premier réflexe consiste à le trouver suspect."),
+      line("Narration", "Elle vous sert un repas simple préparé par les cuisines de la garnison, non par le palais."),
+      line("Allenna", "Aidez-moi à traverser une soirée où personne ne doit être sauvé. N’inventez pas une urgence pour me rendre utile."),
+    ],
+    choices: [
+      dateChoice("datr-s", "Partager le repas et laisser chaque signal être traité par la relève.", "sangFroid", [line("Narration", "Trois lumières changent au loin. Allenna les identifie, mais ne se lève pas."), line("Allenna", "Ils savent quoi faire."), line("{player}", "Et toi ?"), line("Allenna", "Je reste ici. Avec vous.")], "great", { affection: 9, trust: 11, desire: 4 }),
+      dateChoice("datr-a", "Lui demander la pire plaisanterie apprise à la caserne.", "audace", [line("Allenna", "Non."), line("Narration", "Vous attendez. Elle finit par raconter une histoire de squelette sans colonne vertébrale ; sa propre gêne la fait rire avant la chute."), line("Allenna", "Cette information est classifiée. Un baiser garantira votre silence.")], "great", { affection: 11, trust: 6, desire: 7 }),
+      dateChoice("datr-l", "Lui demander ce qu’elle aimerait apprendre sans raison militaire.", "lucidite", [line("Allenna", "La peinture. Quelque chose qui ne puisse ni soigner ni tuer."), line("Narration", "Vous esquissez ensemble les feux de la cité sur une serviette. Son trait est trop précis ; le second devient volontairement libre.")], "great", { affection: 8, trust: 11, desire: 3 }),
+    ],
+    intimacySetting: { opening: ["Allenna vous conduit dans une chambre de repos réservée aux officiers et place elle-même ses armes hors de portée, non par défiance mais pour que ses mains ne retrouvent pas un rôle connu.", "Elle énonce avec sa précision habituelle ce qu’elle souhaite, ce qu’elle ne souhaite pas et ce qu’elle désire découvrir avec vous. La franchise ne refroidit rien : elle transforme chaque geste en choix partagé."], closing: ["À l’aube, la relève présente un rapport sans incident. Allenna le lit après vous avoir embrassé·e, ordre des priorités qu’elle note mentalement sans encore le commenter."] },
+  },
+  {
+    id: "date-tia-ballroom", character: "tia", title: "Une danse sans ambassade", type: "Bal privé", description: "Occuper avec Tia une salle conçue pour représenter l’Empire, sans représenter personne.", location: "algratal", spot: "algratal-ballroom", period: "soirée", unlockStage: 3, minAffection: 27, minTrust: 32, mood: "troubled",
+    intro: [
+      line("Narration", "La Salle des Élus est vide. Tia a conservé une musicienne derrière un paravent et congédié tous les autres témoins."),
+      line("Tia", "Chaque danse de cette salle possède normalement une fonction : alliance, rang, succession. Celle-ci n’en aura aucune que nous n’aurons pas choisie."),
+      line("Narration", "Elle vous tend la main mais ne réduit pas la distance. La possibilité du refus demeure au centre du parquet."),
+      line("Tia", "Je ne serai pas offensée par un non. Je serai peut-être contrariée. Vous avez le droit de me contrarier."),
+    ],
+    choices: [
+      dateChoice("dtb-s", "Commencer à distance et laisser chaque mesure demander la suivante.", "sangFroid", [line("Narration", "Vos doigts se touchent à la première mesure, vos épaules à la quatrième. Tia attend toujours votre mouvement avant de refermer la distance."), line("Tia", "Une chorégraphie dont aucune étape ne devient acquise. Je comprends pourquoi elle reste vivante.")], "great", { affection: 8, trust: 11, desire: 4 }),
+      dateChoice("dtb-a", "Transformer la valse en pas populaire appris sur la route.", "audace", [line("Tia", "Ce mouvement n’a aucune dignité."), line("Narration", "Elle l’exécute pourtant avec une précision parfaite, puis accepte de le rater volontairement lorsque vous l’entraînez."), line("Tia", "Toute mention de ceci sera traitée comme une déclaration de guerre privée.")], "great", { affection: 11, trust: 6, desire: 6 }),
+      dateChoice("dtb-l", "Lui demander quel pas elle préfère avant de choisir le vôtre.", "lucidite", [line("Tia", "Celui où le partenaire recule sans être abandonné."), line("Narration", "Vous construisez la danse autour de cette distance, qui devient confiance plutôt que retrait.")], "great", { affection: 8, trust: 10, desire: 4 }),
+    ],
+    intimacySetting: { opening: ["Tia ouvre une porte latérale vers les appartements de réception et la referme elle-même, sans garde à l’intérieur. La musique demeure un battement étouffé derrière le mur.", "Elle conserve son autorité, mais aucun geste ne devient ordre : chaque rapprochement est formulé, attendu et choisi. Le contrôle qu’elle refuse d’imposer se transforme peu à peu en intensité."], closing: ["Vous regagnez le parquet avant le retour des gardes. Tia reprend sa couronne, puis laisse sa main dans la vôtre une mesure de plus que le protocole ne l’autoriserait."] },
+  },
+  {
+    id: "date-tia-archives", character: "tia", title: "Le dossier sans conclusion", type: "Soirée aux archives", description: "Lire avec Tia des fragments de vies qui résistent à la version officielle et laisser un dossier inachevé.", location: "algratal", spot: "algratal-palace-council", period: "soirée", unlockStage: 4, minAffection: 34, minTrust: 37, mood: "thinking",
+    intro: [
+      line("Narration", "Tia a préparé deux dossiers : l’un porte le sceau impérial, l’autre seulement son prénom. Elle ouvre le second."),
+      line("Tia", "Il contient des lettres familiales, des contradictions et des événements que les archives publiques rendent inutilement propres."),
+      line("Narration", "Au lieu de vous demander une analyse, elle verse deux coupes et s’assied du même côté de la table."),
+      line("Tia", "Nous n’achèverons pas ce dossier ce soir. Je souhaite vérifier si je peux laisser une histoire ouverte sans la traiter comme une menace."),
+    ],
+    choices: [
+      dateChoice("dta-l", "Comparer deux versions incompatibles sans choisir immédiatement la vraie.", "lucidite", [line("Tia", "Une souveraine déteste les récits qui refusent le verdict."), line("{player}", "Et Tia ?"), line("Narration", "Elle ferme le document avant la réponse."), line("Tia", "Tia souhaite que vous restiez après la dernière page.")], "great", { affection: 9, trust: 11, desire: 4 }),
+      dateChoice("dta-s", "Lire en silence et refermer le dossier lorsqu’elle en manifeste le besoin.", "sangFroid", [line("Narration", "Tia pose deux doigts sur la marge. Vous refermez sans lui demander pourquoi."), line("Tia", "Vous avez compris une limite avant qu’elle devienne défense. Approchez.")], "great", { affection: 8, trust: 12, desire: 4 }),
+      dateChoice("dta-a", "Écrire sur une feuille séparée une conclusion volontairement provisoire.", "audace", [line("{player}", "Conclusion : l’Impératrice a tort de croire qu’une soirée inachevée est perdue."), line("Tia", "Argument insuffisamment étayé."), line("Narration", "Elle vous embrasse avant d’ajouter une note en marge."), line("Tia", "Nouvelle donnée. À réexaminer demain.")], "great", { affection: 11, trust: 7, desire: 7 }),
+    ],
+    intimacySetting: { opening: ["Tia verrouille le dossier et laisse la clef sur la table, geste de confiance qui n’exige aucune lecture supplémentaire. Les appartements privés sont à quelques pas.", "Elle ne devient ni docile ni soudainement accessible. Elle choisit pourtant de vous montrer chaque désir avant de le transformer en geste, et d’accueillir le vôtre sans en faire une concession impériale."], closing: ["Le dossier reste inachevé au matin. Tia ajoute seulement une feuille : « La suite nécessite deux présences et aucun secrétaire. » Votre prochaine soirée possède déjà une place."] },
+  },
 ];

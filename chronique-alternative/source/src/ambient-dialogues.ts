@@ -49,6 +49,8 @@ const S = (id: string, text: string, stat: StatKey, response: string | DialogueL
 const B = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Bellirith", id, text, stat, response, effects);
 const A = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Amanea", id, text, stat, response, effects);
 const D = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Draven", id, text, stat, response, effects);
+const T = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Tia", id, text, stat, response, effects);
+const X = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Allenna", id, text, stat, response, effects);
 
 export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
   hylee: [
@@ -757,15 +759,15 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       A("ama-tia-l", "Demander ce qu’elle souhaiterait que Tia comprenne avant tout pardon.", "lucidite", "Que je l’aimais lorsque je l’ai haïe. Et que cet amour ne rendait ni son abandon ni mes crimes moins réels.", { trust: 4, affection: 1 }),
       A("ama-tia-a", "Ajouter une seule note en réponse, sans promesse de suite.", "audace", "Une note n’accorde aucun pardon. Elle dit seulement que sa sœur a entendu. Très bien… celle-ci.", { affection: 4, confluence: 1 }),
     ], { minStage: 2, mood: "sad" }),
-    scene("amanea-naiah", "Le nom de sa fille", "Amanea s’arrête au seuil de la Forêt interdite, là où ses propres ordres exigeraient que Naïah soit chassée. « Elle me déteste. Le plus cruel est qu’avec ce que je lui ai laissé comprendre, elle a raison. »", [
-      A("ama-nai-l", "Lui demander ce qu’elle protège en gardant le secret.", "lucidite", "Sa vie. Peut-être son âme. Le pacte d’Alamma sait transformer les liens du sang en portes ; si je nomme la clause, je crains de l’éveiller.", { trust: 4, affection: 1 }),
-      A("ama-nai-s", "Respecter avec elle la limite de la forêt.", "sangFroid", "Ne pas franchir le seuil ne réparera rien. Mais je refuse que mon besoin de la voir devienne une nouvelle violence.", { trust: 5 }),
-      A("ama-nai-a", "Lancer à Naïah un défi qu’elle peut accepter sans s’approcher.", "audace", [line("{player}", "Qui fera pousser la fleur la plus insolente ?"), line("Naïah", "Moi."), line("Amanea", "Elle répond avant même de connaître les règles. C’est bien ma fille."), line("Naïah", "N’exagère pas.")], { affection: 4 }),
+    scene("amanea-naiah", "Le coffret sans inventaire", "Un coffret sans sceau reste couvert dans les archives privées. Amanea travaille à l’autre bout de la table. « Certaines choses ne peuvent être ni exposées, ni jetées. Ne prends pas cette phrase pour une explication. »", [
+      A("ama-nai-l", "Noter seulement ce que vous pouvez réellement observer.", "lucidite", "Le coffret existe. Je sais exactement où il se trouve. Je refuse de le regarder. Trois faits ; aucune conclusion offerte.", { trust: 5 }),
+      A("ama-nai-s", "Ne pas demander à l’ouvrir.", "sangFroid", "Tu laisses une porte fermée sans prétendre qu’elle n’existe pas. C’est une forme de confiance que je comprends.", { trust: 5 }),
+      A("ama-nai-a", "Faire remarquer que l’indifférence aurait exigé moins de précautions.", "audace", "L’indifférence est l’histoire que les témoins ont choisie. Je ne la confirmerai pas pour leur confort.", { affection: 4, trust: 1 }),
     ], { minStage: 2, mood: "sad" }),
-    scene("amanea-calciterres", "La clause qui menace Naïah", "Sur la carte du pacte d’Alamma, un fil rejoint le nom de Naïah puis disparaît sous le sceau impérial. Amanea garde une main posée sur la page. « Voilà pourquoi je l’ai tenue loin de moi. Voilà aussi pourquoi je ne peux encore lui expliquer sans risquer de désigner sa cachette au démon. »", [
-      A("ama-cal-r", "Cartographier la clause sans prononcer le véritable nom du démon.", "resonance", "Observer sans appeler. Voilà une discipline qu’Alamma aurait dû graver au-dessus de chaque porte.", { trust: 4, confluence: 2 }),
-      A("ama-cal-s", "Séparer ce qu’elle sait de ce qu’elle suppose.", "sangFroid", "Fait : la clause existe. Crainte : elle vise Naïah. Inconnu : comment la briser. Tu rends la peur assez petite pour être étudiée.", { trust: 5 }),
-      A("ama-cal-a", "Promettre de trouver une manière de prévenir Naïah sans la livrer.", "audace", "Ne promets pas de réussir. Promets de ne pas décider à sa place quand nous aurons une voie sûre. Cela me suffira.", { affection: 4 }),
+    scene("amanea-calciterres", "La page arrachée", "Un journal ancien passe brusquement de la naissance d’Allenna à plusieurs années plus tard. Les fibres montrent qu’Amanea a elle-même retiré les pages manquantes. « Ce vide est intentionnel. Il ne concerne pas le pacte d’Alamma. Ne fusionne pas deux mystères parce qu’ils ont tous deux laissé une cicatrice. »", [
+      A("ama-cal-r", "Lire la trace magique sans tenter de rappeler les mots détruits.", "resonance", "La page a été séparée, pas effacée. Quelque part, elle existe encore. Pour l’instant, savoir cela suffit.", { trust: 4, confluence: 2 }),
+      A("ama-cal-s", "Respecter la différence entre cacher une preuve et inventer une version.", "sangFroid", "Je te demande d’attendre, pas de me croire innocente. Cette nuance est la seule honnêteté que je puisse offrir aujourd’hui.", { trust: 5 }),
+      A("ama-cal-a", "Lui annoncer que vous reviendrez à cette absence lorsqu’elle pourra répondre.", "audace", "Je m’y attendais. C’est probablement la raison pour laquelle je t’ai laissé voir les fibres.", { affection: 4 }),
     ], { minStage: 3, mood: "menacing" }),
     scene("amanea-silence", "La Reine sans public", "Amanea reste longtemps silencieuse avant d’avouer : « Je savais tenir une salle entière par un regard. Je ne sais pas encore quoi faire d’une personne qui reste lorsque je n’offre ni menace ni révélation. »", [
       A("ama-sil-s", "Rester sans demander qu’elle remplisse le silence.", "sangFroid", "Alors le silence n’est peut-être pas un vide à gouverner. Reste encore un peu dans celui-ci.", { trust: 5, affection: 2 }),
@@ -782,6 +784,90 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       A("ama-corps-l", "Lui demander quelle sensation demeure trop intense.", "lucidite", "La chaleur d’une autre peau. Pas désagréable. Seulement impossible à ignorer… et je ne veux plus prétendre le contraire.", { trust: 4, desire: 2 }),
       A("ama-corps-a", "Poser un baiser sur sa paume après son accord.", "audace", "Je m’attendais à la chaleur. Pas à ce que ce geste me donne envie de refermer les doigts pour le garder.", { affection: 4, desire: 3 }),
     ], { minStage: 4, mood: "smile" }),
+  ],
+  tia: [
+    scene("tia-cierge", "La flamme inclinée", "Tia redresse un cierge dont la flamme penche vers la fenêtre. « Le courant d’air est minime. Il ne justifie pas cette irrégularité. »", [
+      T("tia-cie-l", "Examiner la fenêtre plutôt que corriger encore la flamme.", "lucidite", "Le joint est usé. Une architecture imparfaite produit parfois un comportement parfaitement logique.", { trust: 4 }),
+      T("tia-cie-a", "Incliner volontairement un second cierge dans l’autre direction.", "audace", "Vous venez de créer une opposition symbolique parfaitement inutile… et visuellement satisfaisante.", { affection: 3, trust: 1 }),
+      T("tia-cie-s", "Laisser la flamme bouger sans appeler cela un défaut.", "sangFroid", "Elle éclaire toujours. Je reconnais que sa fonction n’exigeait pas l’immobilité.", { trust: 4 }),
+    ], { locations: ["algratal"], mood: "thinking" }),
+    scene("tia-the", "La seconde infusion", "Tia goûte son thé et pose la tasse avec une discrète grimace. « Le service connaît mes préférences. Cette infusion constitue donc soit une erreur, soit une tentative de diplomatie. »", [
+      T("tia-the-a", "Goûter et accuser le thé d’insubordination.", "audace", "Charge recevable. La sentence sera une troisième infusion, surveillée par vous.", { affection: 4 }),
+      T("tia-the-l", "Reconnaître une herbe calmante ajoutée sans l’en avertir.", "lucidite", "Une intention bienveillante qui décide à ma place. Faites demander une tasse neuve ; le serviteur ne sera pas sanctionné.", { trust: 5 }),
+      T("tia-the-s", "Lui proposer votre propre tasse sans supposer qu’elle la souhaite.", "sangFroid", "Je l’accepte. Une offre, pas une correction. La nuance devient récurrente avec vous.", { trust: 4, affection: 1 }),
+    ], { locations: ["algratal"], mood: "neutral" }),
+    scene("tia-encrier", "L’encrier sans sceau", "Tia examine un encrier offert par une délégation. « Ils ont oublié leur emblème. L’objet ne réclame donc aucune fidélité avant même de contenir l’encre. »", [
+      T("tia-enc-l", "Suggérer que l’oubli constitue sa meilleure qualité.", "lucidite", "Un objet impérialement neutre. Je comprends l’attrait, même si le Conseil le qualifierait d’inachevé.", { trust: 4 }),
+      T("tia-enc-a", "Lui demander ce qu’elle écrirait si le texte ne pouvait devenir un décret.", "audace", "Une lettre que je ne ferais relire par personne. Cette réponse est déjà trop précise.", { affection: 3, trust: 2 }),
+      T("tia-enc-s", "Laisser l’encrier sur son bureau sans lui attribuer immédiatement une fonction.", "sangFroid", "Vous tolérez qu’une chose existe avant d’être utile. Je vais tenter la même extravagance.", { trust: 5 }),
+    ], { minStage: 1, locations: ["algratal"], mood: "thinking" }),
+    scene("tia-garde", "La garde congédiée", "Tia a demandé à ses gardes de rester derrière la porte. Elle vérifie pourtant leur ombre sous le battant. « La confiance ne supprime pas les procédures. Elle devrait peut-être éviter qu’elles occupent toute la pièce. »", [
+      T("tia-gar-s", "Vous placer à distance égale de la porte et d’elle.", "sangFroid", "Une position qui ne prétend ni me protéger ni m’encercler. Convenable.", { trust: 5 }),
+      T("tia-gar-l", "Lui demander ce que l’absence d’escorte doit lui permettre de faire.", "lucidite", "Parler sans que chaque phrase devienne un signal interprété par six personnes. Commençons.", { trust: 5 }),
+      T("tia-gar-a", "Frapper une fois à la porte pour vérifier si toute la garde entre.", "audace", [line("Narration", "Trois mains se posent simultanément sur la poignée."), line("Tia", "Expérience concluante. Ne recommencez pas.")], { affection: 4 }),
+    ], { minStage: 1, locations: ["algratal"], mood: "neutral" }),
+    scene("tia-musique", "La note non écrite", "Dans le Salon de musique, Tia reprend toujours la même mesure sans jouer la dernière note. « La partition l’exige. Je trouve pourtant sa conclusion trop satisfaite d’elle-même. »", [
+      T("tia-mus-a", "Jouer une note manifestement indigne à sa place.", "audace", "Abominable. Elle possède néanmoins le mérite de ne rien prétendre résoudre.", { affection: 4 }),
+      T("tia-mus-l", "Lui demander ce qu’elle voudrait entendre après la mesure.", "lucidite", "Un silence qui ne soit ni échec ni attente d’un ordre. Celui-ci pourrait convenir.", { trust: 5 }),
+      T("tia-mus-s", "Refermer doucement la partition sans toucher au clavier.", "sangFroid", "La musique peut donc finir parce que je le décide, pas parce que la page l’autorise.", { trust: 4, affection: 1 }),
+    ], { minStage: 2, locations: ["algratal"], periods: ["soirée"], mood: "troubled" }),
+    scene("tia-fenetre", "La capitale sous la pluie", "La pluie brouille Al’Gratal derrière les vitres. Tia garde un rapport fermé. « Une souveraine devrait apprécier que la ville devienne momentanément impossible à surveiller. J’éprouve surtout l’envie de vérifier les drains. »", [
+      T("tia-fen-s", "Regarder la pluie avec elle pendant une minute chronométrée.", "sangFroid", "Une minute sans inspection. L’Empire a survécu. Nous pouvons risquer une seconde.", { trust: 5, affection: 1 }),
+      T("tia-fen-l", "Distinguer responsabilité et vigilance sans repos.", "lucidite", "La seconde imite la première jusqu’à devenir une vertu. Votre distinction est désagréablement utile.", { trust: 5 }),
+      T("tia-fen-a", "Inventer un ministère exclusivement chargé des drains.", "audace", "Il existe déjà. Ne demandez pas le budget, vous perdriez votre légèreté.", { affection: 4 }),
+    ], { minStage: 2, locations: ["algratal"], mood: "thinking" }),
+    scene("tia-prenom", "Le sceau personnel", "Tia tient deux sceaux : celui de l’Empire et un plus petit portant seulement ses initiales. « Le second n’a aucune valeur administrative. C’est précisément ce qui le rend difficile à utiliser. »", [
+      T("tia-pre-l", "Lui demander quelle lettre mérite une signature qui n’engage qu’elle.", "lucidite", "Une invitation. Pas une convocation. Je perçois pourquoi vous posez cette question.", { trust: 5, affection: 2 }),
+      T("tia-pre-s", "Ne pas lui demander à qui elle songe.", "sangFroid", "Votre silence me laisse la possibilité de choisir sans devoir protéger la réponse. Merci.", { trust: 6 }),
+      T("tia-pre-a", "Lui tendre une feuille vierge et votre prénom.", "audace", "Vous confondez initiative et insolence avec une constance remarquable. Laissez la feuille.", { affection: 5, desire: 1 }),
+    ], { minStage: 3, locations: ["algratal"], mood: "troubled" }),
+    scene("tia-aube", "Une couronne avant l’aube", "Tia n’a pas encore mis sa couronne. Ses cheveux sont simplement retenus et son visage paraît moins jeune que privé d’armure. « Regardez suffisamment et vous transformerez cette minute en événement diplomatique. »", [
+      T("tia-aub-s", "Détourner les yeux jusqu’à ce qu’elle vous invite à les relever.", "sangFroid", "Maintenant. Je préfère être vue après avoir choisi de l’être.", { trust: 6, affection: 2 }),
+      T("tia-aub-l", "Lui dire que l’absence de couronne ne rend pas la femme plus vraie, seulement différente.", "lucidite", "Exact. Je refuse le romantisme commode qui ferait de mon pouvoir un déguisement.", { trust: 5, affection: 2 }),
+      T("tia-aub-a", "Lui dire qu’elle est belle avant que la fonction puisse répondre.", "audace", "Tia a entendu. L’Impératrice formulera son objection plus tard.", { affection: 5, desire: 3 }),
+    ], { minStage: 4, locations: ["algratal"], periods: ["aube"], mood: "troubled" }),
+  ],
+  allenna: [
+    scene("allenna-bandage", "Le bandage trop serré", "Allenna refait le bandage d’une recrue qui a voulu le poser seul. « Un pansement qui coupe la circulation protège surtout l’orgueil de la personne qui l’a noué. »", [
+      X("all-ban-l", "Observer la couleur des doigts avant de proposer une tension.", "lucidite", "Bonne lecture. La plaie n’est jamais le seul élément à surveiller.", { trust: 4 }),
+      X("all-ban-s", "Demander à la recrue quelle pression reste confortable.", "sangFroid", "Vous rendez le blessé participant du soin. Continuez.", { trust: 5 }),
+      X("all-ban-a", "Faire promettre au bandage de mieux se comporter.", "audace", "La recrue rit, donc sa respiration se détend. Méthode ridicule. Effet utile.", { affection: 3, trust: 1 }),
+    ], { locations: ["akuhn"], mood: "neutral" }),
+    scene("allenna-lame", "La lame émoussée", "Allenna teste une épée d’entraînement et fronce les sourcils. « Une arme trop sûre enseigne de mauvaises distances. Une arme trop dangereuse enseigne seulement la peur. »", [
+      X("all-lam-l", "Proposer une marque visible sur la zone qui ne doit jamais toucher.", "lucidite", "Une limite intégrée à l’exercice. Adopté.", { trust: 5 }),
+      X("all-lam-s", "Tester lentement la distance avec elle avant tout duel.", "sangFroid", "Vous préparez le risque au lieu de prétendre qu’il n’existe pas. Correct.", { trust: 4, affection: 1 }),
+      X("all-lam-a", "La défier avec deux cuillères en bois parfaitement inoffensives.", "audace", "Je peux encore vous faire perdre. Prenez la plus longue ; vous en aurez besoin.", { affection: 4 }),
+    ], { locations: ["akuhn"], mood: "thinking" }),
+    scene("allenna-herbes", "Trois feuilles amères", "Allenna trie des plantes sur une table noire. « Antidote, calmant, poison. La même feuille change de fonction selon la dose et le moment. »", [
+      X("all-her-l", "Comparer les nervures plutôt que la couleur trompeuse.", "lucidite", "Vous regardez la structure. La lumière ment souvent sur ces feuilles.", { trust: 5 }),
+      X("all-her-r", "Sentir leur signature sans les toucher.", "resonance", "L’une attire la magie, l’autre la disperse. Votre lecture complète la mienne.", { trust: 4, confluence: 2 }),
+      X("all-her-a", "Étiqueter la plus amère « diplomatie impériale ».", "audace", "Inexact. La diplomatie impériale agit plus lentement et laisse un arrière-goût durable.", { affection: 4 }),
+    ], { minStage: 1, locations: ["akuhn", "forbidden"], mood: "thinking" }),
+    scene("allenna-repas", "La ration intacte", "Allenna a terminé son rapport mais pas touché à son repas. « Je mangerai après la relève. Cette phrase ne constitue pas une invitation à me surveiller. »", [
+      X("all-rep-s", "Commencer votre propre repas sans lui ordonner de faire de même.", "sangFroid", "Vous rendez l’action possible sans en faire une confrontation. Donnez-moi le pain.", { trust: 5, affection: 1 }),
+      X("all-rep-l", "Lui demander si la relève dépend réellement de sa faim.", "lucidite", "Non. Mon attente n’aide personne. Point reçu.", { trust: 4 }),
+      X("all-rep-a", "Confisquer le rapport jusqu’à la première bouchée.", "audace", "Manœuvre dangereuse. Efficace cette fois. Ne généralisez pas.", { affection: 4, trust: 1 }),
+    ], { minStage: 1, locations: ["akuhn"], mood: "neutral" }),
+    scene("allenna-pluie", "L’armure sous la pluie", "La pluie assombrit l’armure d’Allenna. Elle refuse l’abri tant que la patrouille n’a pas fini de passer. « Un commandant couvert avant ses soldats enseigne le mauvais ordre des priorités. »", [
+      X("all-plu-s", "Tenir l’abri au-dessus de la personne blessée qui ferme la marche.", "sangFroid", "Bonne priorité. Ensuite nous nous abritons tous les deux.", { trust: 5 }),
+      X("all-plu-l", "Faire remarquer qu’un commandant malade enseigne aussi une mauvaise leçon.", "lucidite", "Argument fonctionnel. Je l’accepte sans apprécier votre ton satisfait.", { trust: 4, affection: 1 }),
+      X("all-plu-a", "Lui proposer une course jusqu’au porche lorsque la relève passe.", "audace", "Vous perdrez. Mais vous arriverez au sec, ce qui rend le résultat acceptable.", { affection: 4 }),
+    ], { minStage: 2, mood: "neutral" }),
+    scene("allenna-sommeil", "Le rapport à l’envers", "Allenna lit depuis plusieurs minutes un rapport tenu à l’envers. « Je vérifie votre capacité à remarquer une anomalie. »", [
+      X("all-som-a", "Retourner également votre propre livre.", "audace", "Deux anomalies ne forment pas une méthode. Elles forment apparemment une pause.", { affection: 4 }),
+      X("all-som-l", "Lui demander la dernière phrase qu’elle a réellement comprise.", "lucidite", "La troisième. Il y a une page. Conclusion : je dors.", { trust: 5 }),
+      X("all-som-s", "Préparer l’endroit où elle peut dormir sans lui retirer le document.", "sangFroid", "Vous n’avez pas arraché le rapport. C’est probablement pourquoi je peux le poser moi-même.", { trust: 5, affection: 1 }),
+    ], { minStage: 2, periods: ["soirée"], mood: "troubled" }),
+    scene("allenna-naiah", "Une insulte anatomiquement fausse", "Allenna relit un billet de Naïah et barre une phrase. « Elle affirme que je n’ai pas de cœur. Anatomiquement faux et rhétoriquement paresseux. »", [
+      X("all-nai-a", "Proposer une insulte médicalement plus exacte.", "audace", "‘Rigidité chronique avec complications affectives’. Je refuse de lui offrir cette qualité de formulation.", { affection: 4 }),
+      X("all-nai-l", "Demander pourquoi elle conserve le billet.", "lucidite", "Parce qu’il contient aussi une information utile sur la frontière. Et parce que le jeter lui donnerait trop d’importance.", { trust: 5 }),
+      X("all-nai-s", "Ne pas lui demander de transformer leur haine en affection cachée.", "sangFroid", "Merci. Toutes les fractures familiales ne dissimulent pas une tendresse prête à résoudre le problème.", { trust: 5 }),
+    ], { minStage: 3, locations: ["akuhn", "forbidden"], mood: "angry" }),
+    scene("allenna-gants", "Les mains sans gantelets", "Allenna retire ses gantelets après l’entraînement. De fines cicatrices couvrent ses doigts. « Elles gênent la précision lorsque je les porte trop longtemps. Je continue pourtant à les remettre avant chaque conversation difficile. »", [
+      X("all-gan-s", "Présenter votre main sans réduire la distance.", "sangFroid", "Une offre qui ne franchit rien. Je la vois.", { trust: 5, affection: 2 }),
+      X("all-gan-l", "Lui demander ce que les gantelets lui évitent de sentir.", "lucidite", "La chaleur d’une peau. Et la possibilité qu’elle compte trop.", { trust: 5, desire: 2 }),
+      X("all-gan-a", "Demander la permission de suivre une cicatrice du bout du doigt.", "audace", "Oui. Celle-ci. Lentement.", { affection: 4, trust: 2, desire: 3 }),
+    ], { minStage: 4, mood: "troubled" }),
   ],
   draven: [
     scene("draven-des", "Les dés du mauvais perdant", "Au camp de la route impériale, Draven fait rouler deux dés cabossés. « Lineva prétendait que le vent trichait lorsqu’elle perdait. Elle soutient désormais que l’amiral truque les tables. »", [

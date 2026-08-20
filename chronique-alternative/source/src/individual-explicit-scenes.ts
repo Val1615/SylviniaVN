@@ -10,7 +10,7 @@ const P = (text: string): AdvancedRawLine => ["{player}", text];
 const C = (speaker: string, text: string, mood?: string): AdvancedRawLine => [speaker, text, mood];
 
 /**
- * Le chapitre explicite propre à chacune des 81 routes individuelles.
+ * Le chapitre explicite propre à chacune des 99 routes individuelles.
  * Aucun texte de ce catalogue n'est partagé entre deux embranchements :
  * posture, échange verbal et réaction sont écrits pour le personnage, le
  * corps choisi par le joueur et la direction exacte de la scène.
@@ -500,6 +500,114 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous lui donnez raison par vos mouvements. Amanea jouit sous une profondeur et une cadence qu’elle a définies, puis vous rejoint dans la posture que vous avez choisie et adapte entièrement ses mains et son bassin ; votre orgasme conclut une scène où aucun corps n’a servi de mesure à l’autre, mais où les deux désirs ont reçu la même force.",
       ),
     },
+  },
+};
+
+INDIVIDUAL_EXPLICIT_SCENES.tia = {
+  femme: {
+    guided: scene(
+      "Tia vous installe assise contre les oreillers et vient entre vos cuisses, couronne et gants laissés dans la pièce voisine. Sa langue suit d’abord le bord de votre chaleur intime, puis se fixe sur votre perle sensible pendant que deux doigts avancent selon la profondeur indiquée par votre bassin. Elle vous demande de garder une main dans ses cheveux afin que votre rythme puisse corriger le sien sans phrase officielle.",
+      C("Tia", "Dans cette position, votre voix et votre main possèdent seules le droit de me conduire. Donnez-moi la mesure que vous voulez réellement recevoir.", "troubled"),
+      "Vous resserrez doucement les doigts et Tia conserve le même mouvement recourbé, la bouche assez ferme pour concentrer chaque vague. Elle ne cherche aucune variation lorsque l’orgasme approche : vos cuisses tremblent autour de ses épaules, votre plaisir se contracte contre ses doigts et elle reste au contact jusqu’à ce que vous lui demandiez vous-même de remonter vers votre bouche.",
+    ),
+    offered: scene(
+      "Vous allongez Tia en travers du lit et repliez ses jambes sans jamais forcer l’angle. Votre bouche trouve son intimité déjà humide ; votre langue travaille sa petite amande tandis que vos doigts prolongent la pression à l’intérieur. Elle tente de formuler une indication complète, mais la cadence choisie transforme la fin de sa phrase en souffle et ses mains viennent guider votre nuque avec une franchise entièrement privée.",
+      P("Pour cette première relève, demande ce que tu veux comme femme. Aucun mot prononcé ici ne deviendra un ordre au-dehors."),
+      "Tia réclame une pression plus soutenue et vous la maintenez exactement, sans chercher une conclusion exemplaire. Ses hanches quittent les draps, sa respiration se brise puis l’orgasme la traverse dans une série de contractions qu’elle ne dissimule pas. Vous ralentissez par degrés ; elle garde votre main contre son ventre et vous remercie en son nom, sans pluriel impérial ni formule de clôture.",
+    ),
+    mutual: scene(
+      "Vous vous placez de côté, jambes entrelacées, puis Tia ajuste votre hanche jusqu’à ce que vos plis de velours se rencontrent. Le frottement commence par des cercles lents ; chacune garde une main sur le point de feu de l’autre afin que le plaisir ne dépende pas d’une symétrie parfaite. Le signe prévu pour échanger la conduite devient un simple baiser contre l’épaule.",
+      C("Tia", "Pour cette danse sans rang, je prends une mesure et vous la suivante. Si nous perdons le compte, nous aurons enfin réussi.", "smirk"),
+      "Vous perdez effectivement le compte lorsque Tia augmente l’angle et que vos bassins trouvent une pression commune. Son orgasme arrive d’abord ; elle continue pourtant la caresse exacte que votre corps réclame, soutient votre cuisse et vous accompagne jusqu’au vôtre. Aucun plaisir ne sert de preuve à l’autre : vous restez enlacées, égales parce que vos deux réponses différentes ont été entendues jusqu’au bout.",
+    ),
+  },
+  homme: {
+    guided: scene(
+      "Tia s’agenouille devant vous sans laisser ce geste devenir une image de soumission. Elle répartit le lubrifiant sur votre membre dressé, suit son extrémité sensible avec la langue puis l’accueille progressivement entre ses lèvres. Une main poursuit la base ; l’autre repose ouverte sur votre hanche afin que vous puissiez choisir la profondeur de chaque mouvement sans jamais être retenu.",
+      C("Tia", "Dans cette posture, mon genou ne concède aucune victoire. Il signifie seulement que j’ai choisi de conduire votre plaisir depuis ici.", "troubled"),
+      "Votre main trouve sa nuque et Tia approfondit uniquement lorsque vous l’y ramenez. À l’approche de l’orgasme, vous l’avertissez ; elle maintient la même aspiration, le même trajet de langue et le même rythme à la base jusqu’à votre abandon. Elle reçoit votre plaisir sans détourner les yeux, puis se relève pour vous embrasser à hauteur égale avant que votre souffle soit entièrement revenu.",
+    ),
+    offered: scene(
+      "Vous installez Tia face à vous, une jambe relevée pour garder ses appuis libres. Après l’avoir préparée avec la bouche et les doigts, vous guidez votre membre contre son écrin brûlant et entrez par pressions lentes. Tia garde une main sur votre bassin pour définir la profondeur, tandis que l’autre revient à sa perle sensible afin que la pénétration ne décide jamais seule de son plaisir.",
+      P("Dans cette position face à face, ta main règle chaque avancée. Je ne traite ni ta couronne ni ton silence comme une réponse."),
+      "Elle vous attire plus près et demande un rythme ferme, toujours interrompable. Vos mouvements restent courts, sa caresse extérieure devient plus rapide et Tia jouit en vous maintenant au plus profond qu’elle a choisi. Vous demeurez immobile pendant ses contractions, puis reprenez seulement lorsqu’elle vous le demande ; son regard ouvert vous accompagne ensuite jusqu’à votre propre orgasme sans retrouver la distance de l’audience.",
+    ),
+    mutual: scene(
+      "Tia vient vous chevaucher, guide elle-même votre longueur brûlante dans sa chaleur et descend jusqu’à la profondeur qui lui convient. Elle conduit par rotations lentes, puis vous offre le signe convenu : vous la faites rouler sous vous sans rompre le contact et reprenez la cadence depuis un angle où vos visages restent assez proches pour chaque question.",
+      C("Tia", "Dans cette alternance, conduire et recevoir sont deux désirs, pas deux rangs. Prenez maintenant la mesure que je viens de vous confier.", "smirk"),
+      "Vous gardez une main sur sa source du plaisir et l’autre mêlée à la sienne. Tia atteint l’orgasme sous la profondeur qu’elle réclame, puis utilise encore ses hanches pour soutenir votre rythme plutôt que pour l’accélérer sans réponse. Votre plaisir suit dans la même étreinte ; elle ne compte ni ordre ni vainqueur, seulement deux corps restés libres jusque dans l’instant où ils ont cédé.",
+    ),
+  },
+  intersexe: {
+    guided: scene(
+      "Tia vous demande de définir la configuration au lieu de choisir pour vous. Vous placez sa bouche sur votre pointe de feu et guidez ses doigts vers l’intimité que vous souhaitez voir caressée, avec ou sans profondeur. Elle maintient votre bassin sur un coussin, assez fermement pour vous soutenir et jamais assez pour vous empêcher de modifier l’angle ou de retirer sa main.",
+      C("Tia", "Pour ce corps que vous seul·e pouvez nommer, je ne déduirai rien. Indiquez la prochaine sensation et je la servirai sans doctrine.", "troubled"),
+      "Vous réclamez une combinaison plus intense ; Tia accorde alors sa langue, ses doigts et la chaleur de sa paume selon vos mots exacts. Elle ralentit lorsque votre souffle se suspend, reprend lorsque vos hanches reviennent vers elle et conserve ensuite la même pression jusqu’à votre orgasme. Le plaisir traverse une anatomie reconnue sans être classée, et son regard demeure attentif à vous plutôt qu’à une catégorie.",
+    ),
+    offered: scene(
+      "Vous demandez à Tia quelle rencontre elle souhaite recevoir et ce que votre corps peut offrir sans imitation. Elle choisit de s’agenouiller face à vous, guide votre main contre sa rose entrouverte puis définit si le mouvement suivant sera oral, manuel, un frottement ou une pénétration adaptée. Ses demandes restent précises, mais aucune ne prétend déterminer votre rôle par votre anatomie.",
+      P("Pour cette configuration choisie, je peux te donner toute l’intensité demandée sans devenir un corps que je ne suis pas."),
+      "Tia acquiesce et vous guide vers l’angle qui rassemble le mieux vos sensations. Vous gardez une caresse extérieure pendant chaque mouvement, ralentissez sur son signal puis retrouvez la cadence qu’elle réclame. Son orgasme rompt sa posture officielle sans effacer sa puissance ; elle demeure contre vous, souffle court, et demande ensuite comment rendre à votre propre corps un plaisir aussi singulier.",
+    ),
+    mutual: scene(
+      "Vous tracez deux espaces dans les draps, non pour séparer les corps mais pour garantir deux désirs complets. Dans le premier, Tia reçoit la bouche, les mains, le frottement ou la pénétration qu’elle choisit ; dans le second, vous définissez une stimulation différente, sans devoir reproduire son plaisir. Le passage de l’un à l’autre se fait sur un signe librement révisable.",
+      C("Tia", "Dans ce relais adapté, l’égalité ne réclame aucune ressemblance. Elle exige seulement que chaque vérité corporelle reçoive la même attention.", "smirk"),
+      "Vous lui donnez raison par les gestes. Tia jouit sous une cadence qu’elle a elle-même formulée, puis vient vers votre anatomie avec des mains, une bouche et un bassin entièrement réaccordés. Votre orgasme n’imite pas le sien et n’en devient pas moins partagé ; vous terminez enlacé·es, certains que la circulation de l’initiative n’a assigné aucun rôle permanent.",
+    ),
+  },
+};
+
+INDIVIDUAL_EXPLICIT_SCENES.allenna = {
+  femme: {
+    guided: scene(
+      "Allenna place un coussin sous vos hanches, vérifie que vos jambes peuvent changer d’angle puis s’installe entre elles. Sa bouche suit votre chaleur intime jusqu’à la perle sensible, tandis que deux doigts avancent selon le mouvement que vous lui montrez. Toute sa précision demeure, mais son propre souffle s’accélère chaque fois que vos cuisses se resserrent autour de ses épaules nues.",
+      C("Allenna", "Dans cette exploration, votre réaction est la seule carte utile. Gardez ma main là où elle vous sert et repoussez-la si elle cesse de le faire.", "smirk"),
+      "Vous guidez son poignet vers un angle plus recourbé et Allenna l’adopte sans hésiter. Sa langue conserve la même pression, ses doigts le même rythme ; lorsque l’orgasme approche, elle refuse toute variation spectaculaire et vous accompagne jusqu’aux contractions complètes. Elle reste contre vous pendant leur reflux, heureuse que son savoir ait servi votre plaisir sans transformer votre corps en problème à résoudre.",
+    ),
+    offered: scene(
+      "Vous allongez Allenna sur le dos, écartez ses cuisses et embrassez chaque cicatrice sans l’inventorier. Votre bouche trouve sa petite amande pendant que vos doigts glissent dans son secret humide selon la profondeur demandée. Elle corrige une fois votre angle, puis laisse sa main ouverte dans la vôtre au lieu de surveiller le geste suivant.",
+      P("Pour cette relève, tu n’as rien à diagnostiquer ni à rendre. Tu peux demander davantage et me laisser le maintenir."),
+      "Allenna le fait : plus ferme, même rythme, ne changez rien. Vous suivez ces trois demandes jusqu’à ce que ses hanches quittent les draps et que l’orgasme fasse trembler ses jambes puissantes. Elle ne se redresse pas pour reprendre le contrôle ; elle vous attire contre son ventre, accepte le ralentissement progressif et garde votre bouche près de la sienne pendant que la sensation retombe.",
+    ),
+    mutual: scene(
+      "Vous entrelacez vos jambes dans une position en ciseaux, puis Allenna ajuste les appuis afin qu’aucune ancienne blessure ne tire. Vos lèvres de velours se pressent ensemble ; chacune entretient de ses doigts le point incandescent de l’autre pendant que les bassins trouvent une diagonale commune. Le changement de conduite s’effectue sur le mot de relève plutôt que sur l’épuisement.",
+      C("Allenna", "Dans ce relais en ciseaux, je soutiens votre hanche pendant que vous choisissez la pression. Ensuite nous inverserons avant qu’aucune de nous ait à tenir seule.", "smirk"),
+      "La première cadence conduit Allenna à l’orgasme ; elle garde pourtant votre jambe stable et votre plaisir sous sa main, puis prononce elle-même la relève. Vous changez d’angle, resserrez les cuisses et cédez peu après sous le rythme qu’elle conserve avec la même rigueur. Deux abandons successifs remplacent toute idée de performance, et vos corps restent emmêlés sans devoir prouver leur endurance.",
+    ),
+  },
+  homme: {
+    guided: scene(
+      "Allenna vous fait asseoir au bord du lit, s’agenouille entre vos genoux et répartit lentement le lubrifiant sur votre membre dressé. Sa main teste la pression demandée, puis sa bouche accueille l’extrémité sensible avant de descendre davantage. Elle surveille votre souffle sans distance clinique ; le désir visible dans ses yeux rend chaque vérification profondément personnelle.",
+      C("Allenna", "Dans cette prise guidée, je maintiens votre bassin mais je ne le retiens pas. Donnez-moi la cadence et avertissez-moi avant qu’elle devienne trop intense.", "smirk"),
+      "Votre paume rejoint sa nuque et Allenna suit le mouvement choisi, main et bouche accordées jusque dans les variations les plus courtes. Lorsque vous annoncez l’orgasme, elle ne ralentit pas trop tôt : sa langue reste sous votre pointe sensible, ses doigts fermes à la base et vos hanches libres d’avancer seulement autant qu’elle les reçoit. Elle vous garde ensuite contre elle, partenaire plutôt que soigneuse.",
+    ),
+    offered: scene(
+      "Vous préparez longuement Allenna avec la bouche et les doigts avant de vous placer entre ses cuisses. Une jambe repose sur votre hanche pour régler l’angle ; votre membre brûlant entre par étapes dans son écrin, tandis que votre main conserve la stimulation extérieure qu’elle a désignée. Vous marquez une pause chaque fois que son ancienne blessure réclame un autre appui.",
+      P("Dans cette position protégée, ta force peut demander plus de profondeur. Elle ne t’oblige jamais à supporter ce qui ne te plaît plus."),
+      "Allenna vous attire plus près et réclame un rythme stable. Vous gardez les mouvements longs mais mesurés, la caresse exacte sur sa source du plaisir et le contact de vos fronts. Son orgasme vous serre contre elle ; vous restez immobile pendant les contractions, puis reprenez uniquement lorsqu’elle vous le demande et atteignez votre propre abandon dans une position qu’aucun de vous n’a dû endurer.",
+    ),
+    mutual: scene(
+      "Allenna vient vous chevaucher face à face et guide votre longueur tendue dans sa chaleur, descendant jusqu’à la profondeur choisie. Ses rotations maintiennent le contact extérieur pendant qu’elle conduit la première reprise. Sur le mot convenu, vous roulez ensemble sur le côté : le changement protège ses appuis et vous permet de mener sans que la transition ressemble à une prise de pouvoir.",
+      C("Allenna", "Dans cette relève face à face, je conduis tant que mon corps le réclame. Vous prendrez la suite parce que je vous la confie, pas parce que je cède.", "smirk"),
+      "Elle jouit sous sa propre cadence, garde votre membre en elle pendant le reflux puis vous offre le changement d’angle qui intensifie votre sensation. Vous reprenez par mouvements courts, une main liée à la sienne, jusqu’à votre orgasme. Allenna soutient vos hanches au lieu de les contraindre ; aucun vainqueur ne reste sur les draps, seulement deux personnes capables de porter et d’être portées.",
+    ),
+  },
+  intersexe: {
+    guided: scene(
+      "Allenna vous demande de placer ses mains sur les zones que vous souhaitez voir stimulées et de nommer toute profondeur possible. Elle soutient votre cuisse, pose sa bouche sur le point de feu désigné puis associe ses doigts ou son bassin uniquement selon vos indications. La précision de la commandante devient une cartographie choisie de votre plaisir, jamais une hypothèse anatomique.",
+      C("Allenna", "Pour cette carte corporelle, je ne complète aucun blanc. Montrez-moi le trajet réel et je le suivrai aussi longtemps qu’il vous plaît.", "smirk"),
+      "Vous modifiez une première combinaison, en refusez une seconde et réclamez la troisième plus fermement. Allenna s’adapte sans traiter ces changements comme des erreurs ; elle coordonne bouche, mains et appuis jusqu’à ce que votre orgasme fasse céder son propre contrôle. Son sourire reconnaît une réussite qui appartient à votre langage singulier plutôt qu’à sa connaissance générale des corps.",
+    ),
+    offered: scene(
+      "Vous demandez à Allenna ce qu’elle veut recevoir et ce que votre corps souhaite donner. Elle choisit une posture à genoux où votre bouche, vos mains, votre bassin ou une pénétration adaptée peuvent se relayer sans rôle fixé. Sa paume reste sur votre hanche comme un point de communication, jamais comme une prise destinée à décider du mouvement suivant.",
+      P("Dans cette relève choisie, je ne reproduirai pas un scénario prévu. Dis ce qui sert ton plaisir et demande-moi ce que mon corps peut réellement offrir."),
+      "Allenna formule des besoins concrets : pression, angle, durée. Vous les suivez tout en gardant votre propre limite visible ; la stimulation extérieure accompagne chaque reprise jusqu’à son orgasme. Elle ne transforme pas le plaisir reçu en dette et vous demande ensuite quelle configuration vous permettrait de recevoir à votre tour, prête à réapprendre entièrement la scène plutôt qu’à la refléter.",
+    ),
+    mutual: scene(
+      "Vous organisez la scène comme une relève, sans imposer que les deux tours emploient le même geste. Allenna reçoit d’abord la bouche, les mains, le frottement ou la pénétration qu’elle définit ; vous recevez ensuite une combinaison différente adaptée à votre anatomie. Le changement survient avant toute fatigue, dans une étreinte qui garde les deux désirs présents.",
+      C("Allenna", "Dans ce relais sans symétrie, l’équité signifie que personne ne doit s’épuiser ni disparaître pour que l’autre soit satisfait·e.", "smirk"),
+      "Son orgasme arrive sous la cadence demandée ; Allenna prononce ensuite la relève et vient vers votre corps avec une attention entièrement renouvelée. Votre propre plaisir monte sous des gestes qui ne copient pas les siens et n’en sont pas moins intenses. Lorsque vous cédez, elle maintient le soutien choisi jusqu’au bout, puis vos deux souffles redescendent ensemble sans score ni objectif suivant.",
+    ),
   },
 };
 

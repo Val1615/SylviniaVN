@@ -268,9 +268,31 @@ const ROUTINES: Record<string, Record<string, RoutineMoment[]>> = {
     ],
     forbidden: [
       moment("forbidden-threshold", "arrive sous une cape sans emblème et renvoie son escorte"),
-      moment("forbidden-crossroads", "suit seule le chemin que Naïah accepte de laisser ouvert"),
-      moment("forbidden-ruins", "cherche comment le pacte d’Alamma menace encore sa fille"),
-      moment("forbidden-sanctuary", "demeure au seuil de la clairière sans violer la frontière posée par Naïah"),
+      moment("forbidden-crossroads", "inspecte seule un ancien chemin effacé par la brume"),
+      moment("forbidden-ruins", "compare les ruines à un relevé conservé dans ses archives"),
+      moment("forbidden-sanctuary", "demeure immobile devant un sanctuaire qu’elle refuse d’approcher"),
+    ],
+  },
+  tia: {
+    algratal: [
+      moment("algratal-palace-quarters", "commence la journée par les dossiers qu’elle refuse de déléguer"),
+      moment("algratal-palace-council", "préside le Conseil et observe les décisions d’Iriana"),
+      moment("algratal-palace-audience", "accorde des audiences où chaque silence devient politique"),
+      moment("algratal-music-room", "consacre une rare heure sans secrétaire à la musique et aux archives familiales"),
+    ],
+  },
+  allenna: {
+    akuhn: [
+      moment("akuhn-war-room", "ouvre l’entraînement avant la première relève"),
+      moment("akuhn-gates", "inspecte les patrouilles et soigne les blessures du retour"),
+      moment("akuhn-war-room", "commande les défenses aux côtés d’Amanea sans attendre chacune de ses corrections"),
+      moment("akuhn-terrace", "termine ses rapports et vérifie une dernière fois les feux de la cité"),
+    ],
+    forbidden: [
+      moment("forbidden-threshold", "inspecte les traces autour de la frontière des brumes"),
+      moment("forbidden-crossroads", "sécurise un passage que Naïah déplace par pure hostilité"),
+      moment("forbidden-ruins", "recense les plantes médicinales et les risques de poison"),
+      moment("forbidden-threshold", "rassemble la patrouille avant le retour vers Akuhn’Nabad"),
     ],
   },
   draven: {
@@ -300,6 +322,17 @@ export function routineFor(characterId: string, location: string, period: Period
   }
   if (characterId === "lineva" && location === "forthaven" && period === "apres-midi" && cycleDay % 3 === 0) {
     return moment("forthaven-memorial", "se recueille au mémorial sans abandonner la ville à sa vigilance");
+  }
+  // Les scènes personnelles tardives utilisent des espaces réellement inscrits
+  // dans l'emploi du temps, afin qu'elles restent atteignables sans téléportation
+  // ni mode développeur. Elles se répètent avec le même cycle de trente-huit jours.
+  if (characterId === "tia" && location === "algratal" && period === "soirée") {
+    if (cycleDay === 23) return moment("algratal-palace-audience", "fait fermer la galerie après les audiences pour une conversation sans témoin");
+    if (cycleDay === 27) return moment("algratal-ballroom", "reste dans la Salle des Élus après le départ de l'orchestre");
+    if (cycleDay === 31) return moment("algratal-palace-quarters", "retire enfin la couronne dans ses appartements privés");
+  }
+  if (characterId === "allenna" && location === "akuhn" && period === "soirée") {
+    if (cycleDay === 24 || cycleDay === 25) return moment("akuhn-music-room", "accorde une heure sans ordre dans la salle de musique basse");
   }
   const routine = ROUTINES[characterId]?.[location];
   return routine?.[PERIOD_INDEX[period]] || moment(DEFAULT_SPOTS[location] || "algratal-streets", "poursuit ses affaires dans les environs");
@@ -334,6 +367,11 @@ export const ROUTE_SPOTS: Record<string, string> = {
   "iriana-2": "algratal-palace-audience",
   "iriana-3": "algratal-palace-council",
   "iriana-4": "algratal-palace-quarters",
+  "tia-0": "algratal-palace-council",
+  "tia-1": "algratal-palace-audience",
+  "tia-2": "algratal-palace-audience",
+  "tia-3": "algratal-ballroom",
+  "tia-4": "algratal-palace-quarters",
   "valurn-0": "algratal-market",
   "valurn-1": "forbidden-crossroads",
   "valurn-2": "akuhn-archives",
@@ -361,9 +399,14 @@ export const ROUTE_SPOTS: Record<string, string> = {
   "bellirith-4": "akuhn-music-room",
   "amanea-0": "akuhn-throne-room",
   "amanea-1": "akuhn-war-room",
-  "amanea-2": "forbidden-sanctuary",
+  "amanea-2": "akuhn-archives",
   "amanea-3": "akuhn-archives",
   "amanea-4": "akuhn-terrace",
+  "allenna-0": "akuhn-war-room",
+  "allenna-1": "akuhn-gates",
+  "allenna-2": "akuhn-terrace",
+  "allenna-3": "akuhn-music-room",
+  "allenna-4": "akuhn-music-room",
   "draven-0": "forthaven-harbor",
   "draven-1": "imperial-road",
   "draven-2": "algratal-palace-council",
@@ -387,6 +430,11 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "iriana-2": ["matin"],
   "iriana-3": ["apres-midi"],
   "iriana-4": ["aube"],
+  "tia-0": ["matin"],
+  "tia-1": ["matin", "apres-midi"],
+  "tia-2": ["soirée"],
+  "tia-3": ["soirée"],
+  "tia-4": ["soirée"],
   "valurn-0": ["matin"],
   "valurn-1": ["matin"],
   "valurn-2": ["matin"],
@@ -417,6 +465,11 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "amanea-2": ["soirée"],
   "amanea-3": ["matin", "apres-midi"],
   "amanea-4": ["soirée"],
+  "allenna-0": ["aube"],
+  "allenna-1": ["matin"],
+  "allenna-2": ["aube", "soirée"],
+  "allenna-3": ["soirée"],
+  "allenna-4": ["soirée"],
   "draven-0": ["aube"],
   "draven-1": ["soirée"],
   "draven-2": ["matin"],
@@ -527,7 +580,7 @@ export const AMBIENT_SPOT_HINTS: Record<string, string[]> = {
   "amanea-trone": ["akuhn-throne-room", "akuhn-terrace"],
   "amanea-allenna": ["akuhn-throne-room", "akuhn-war-room", "akuhn-terrace"],
   "amanea-tia": ["akuhn-music-room", "akuhn-war-room"],
-  "amanea-naiah": ["forbidden-crossroads", "forbidden-sanctuary", "forbidden-ruins"],
+  "amanea-naiah": ["akuhn-archives"],
   "amanea-calciterres": ["akuhn-archives", "akuhn-war-room"],
   "amanea-silence": ["akuhn-archives", "akuhn-terrace", "forbidden-sanctuary"],
   "amanea-ordinaire": ["akuhn-music-room", "akuhn-terrace"],

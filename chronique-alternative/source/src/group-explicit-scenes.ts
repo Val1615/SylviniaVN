@@ -9,7 +9,60 @@ const scene = (...entries: AdvancedGroupRawLine[]): AdvancedGroupRawLine[] => en
 const P = (text: string): AdvancedGroupRawLine => ["{player}", text];
 const C = (speaker: string, text: string, mood?: string): AdvancedGroupRawLine => [speaker, text, mood];
 
-/** Un passage explicite distinct pour chacune des 54 routes à trois. */
+type HeritageExplicitPair = {
+  first: string;
+  second: string;
+  setting: string;
+  firstGesture: string;
+  secondGesture: string;
+  sharedGesture: string;
+  firstMood: string;
+  secondMood: string;
+};
+
+const bodyFocus = (sex: PlayerSex): string => {
+  if (sex === "femme") return "votre intimité humide, la perle sensible entre vos lèvres de velours et le rythme précis de vos hanches";
+  if (sex === "homme") return "votre membre dressé, son extrémité sensible et la cadence que votre bassin choisit de soutenir";
+  return "les zones de plaisir que vous nommez vous-même, sans qu’aucun geste soit déduit de votre apparence";
+};
+
+const sexCue = (sex: PlayerSex): string => {
+  if (sex === "femme") return "vos cuisses qui s’ouvrent et se referment autour de la caresse";
+  if (sex === "homme") return "votre désir tendu qui réagit sous leurs bouches et leurs mains";
+  return "vos indications qui redessinent librement bouche, mains, frottement ou pénétration";
+};
+
+function heritageExplicitPair(config: HeritageExplicitPair): Record<PlayerSex, Record<AdvancedGroupRole, AdvancedGroupRawLine[]>> {
+  const make = (sex: PlayerSex, role: AdvancedGroupRole): AdvancedGroupRawLine[] => {
+    const focus = bodyFocus(sex);
+    const cue = sexCue(sex);
+    if (role === "first") return scene(
+      `Dans ${config.setting}, ${config.first} prend la première initiative : ${config.firstGesture}. ${config.second} reste pressée contre son dos et transforme chaque réaction en contact partagé, tandis que leurs deux attentions se rejoignent sur ${focus}.`,
+      C(config.first, `Je garde ce mouvement sur toi et je veux sentir ${config.second} me troubler sans me faire perdre ${cue}.`, config.firstMood),
+      C(config.second, `Alors je suivrai ton souffle, ${config.first}, jusque dans ses réactions, attentive à ${cue}. Cette fois, ton initiative nous relie toutes les trois au lieu de nous mettre en rang.`, config.secondMood),
+      `Vous guidez ${config.first} jusqu’au rythme qui vous fait céder, sans lâcher ${config.second}, et ${cue} devient leur repère commun. Votre plaisir traverse leurs corps : ${config.first} jouit sous la main de ${config.second}, puis toutes deux vous ramènent vers elle afin que la femme qui soutenait la scène reçoive à son tour leurs bouches, leurs doigts et votre présence entière.`,
+    );
+    if (role === "second") return scene(
+      `La lumière de ${config.setting} change lorsque ${config.second} conduit : ${config.secondGesture}. ${config.first} se glisse contre elle, entretient son plaisir et garde une main sur vous ; ${focus} devient ainsi le troisième point d’un triangle qui ne se referme jamais en duo.`,
+      C(config.second, `Je mène cette reprise, mais ${config.first} garde sur moi le geste qui me rend incapable de masquer ${cue}.`, config.secondMood),
+      C(config.first, `Je ne cherche pas à te faire perdre la conduite, ${config.second}. Je veux seulement que ton plaisir soit aussi lisible que ${cue} pendant celui que tu donnes.`, config.firstMood),
+      `Vous laissez ${config.second} maintenir la cadence jusqu’à votre orgasme, reconnaissable à ${cue}, puis vous l’attirez entre vous et ${config.first}. Les places tournent sans copier la première configuration : celle qui menait reçoit deux attentions différentes, choisit laquelle approfondir et finit par jouir sans que l’une des deux autres devienne spectatrice.`,
+    );
+    return scene(
+      `Vous réunissez vos trois désirs au centre de ${config.setting} : ${config.sharedGesture}. La première configuration suit ${focus} ; la suivante répond au corps de ${config.first}, et la troisième à celui de ${config.second}, chacune possédant sa propre profondeur et sa propre vitesse.`,
+      C(config.first, `Je prends ce passage, puis je vous rends l’initiative, ${config.second}. Je veux que ${cue} reste une voix parmi trois, jamais un modèle imposé aux deux autres.`, config.firstMood),
+      C(config.second, `Et je changerai complètement la forme quand viendra mon tour, ${config.first}, sans prendre ${cue} pour une règle générale. L’attention sera égale ; nos plaisirs n’ont aucune raison de se ressembler.`, config.secondMood),
+      `Le relais devient charnel sans devenir mécanique, même lorsque ${cue} accélère la première reprise. ${config.first} reçoit les gestes de vous deux, ${config.second} choisit ensuite une autre position, puis elles adaptent ensemble leur bouche, leurs mains et leur bassin à votre demande. Les trois orgasmes arrivent séparément ; après chacun, la personne comblée reste engagée auprès des deux autres jusqu’au dernier frisson.`,
+    );
+  };
+  return {
+    femme: { first: make("femme", "first"), second: make("femme", "second"), shared: make("femme", "shared") },
+    homme: { first: make("homme", "first"), second: make("homme", "second"), shared: make("homme", "shared") },
+    intersexe: { first: make("intersexe", "first"), second: make("intersexe", "second"), shared: make("intersexe", "shared") },
+  };
+}
+
+/** Un passage explicite distinct pour chacune des routes à trois. */
 export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
   "group-date-hylee-remerii": {
     femme: {
@@ -389,6 +442,26 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       ),
     },
   },
+  "group-date-tia-remerii": heritageExplicitPair({
+    first: "Tia",
+    second: "Remerii",
+    setting: "la salle des sceaux, ses rideaux tirés et la carte impériale roulée hors de portée",
+    firstGesture: "elle abandonne ses gants, guide vos mains avec une autorité devenue offrande et laisse Remerii délier chaque attache qu’elle ne peut plus traiter comme une armure",
+    secondGesture: "elle remplace les protocoles par une précision sensuelle, suit votre corps puis laisse Tia déranger volontairement la mesure qu’elle croyait pouvoir conserver",
+    sharedGesture: "le sceau de Tia, le fil de givre de Remerii et votre ruban forment trois repères que la personne au centre peut déplacer pour réclamer une autre posture",
+    firstMood: "stern",
+    secondMood: "calm",
+  }),
+  "group-date-allenna-lineva": heritageExplicitPair({
+    first: "Allenna",
+    second: "Lineva",
+    setting: "l’infirmerie d’entraînement fermée, entre les bandes propres, la lampe basse et deux épées laissées contre le mur",
+    firstGesture: "elle pose ses armes, explore votre peau avec des mains de soigneuse et accepte que Lineva lise derrière sa discipline chaque trouble qu’elle ne formule pas",
+    secondGesture: "elle défait son baudrier, vous attire contre ses cicatrices puis confie à Allenna le soin de soutenir la force qu’elle n’a plus besoin de démontrer",
+    sharedGesture: "trois bandes de tissu deviennent des repères mobiles, non des liens, et chacune choisit comment les deux autres accompagnent sa bouche, ses mains, son bassin et ses changements de rythme",
+    firstMood: "troubled",
+    secondMood: "soft",
+  }),
 };
 
 export function groupExplicitScene(pairId: string, sex: PlayerSex, role: AdvancedGroupRole): AdvancedGroupRawLine[] {

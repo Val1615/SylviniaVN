@@ -11,6 +11,7 @@ export type Effects = {
   coins?: number;
   items?: Record<string, number>;
   flags?: string[];
+  knowledge?: string[];
   relationshipEffects?: Record<string, Partial<Pick<Effects, "affection" | "trust" | "desire">>>;
 };
 
@@ -23,6 +24,7 @@ export type ChoiceData = {
   effects: Effects;
   requires?: { stat: StatKey; value: number };
   requiresRelationship?: { character: string; stage?: number; trust?: number; affection?: number }[];
+  requiresKnowledge?: string[];
   dateOutcome?: "great" | "good" | "awkward";
 };
 
@@ -231,6 +233,17 @@ export const CHARACTERS: CharacterData[] = [
     ],
   },
   {
+    id: "tia", name: "Tia Farae", role: "Impératrice de Sylvinia", ageNote: "Adulte d’âge ancien", portrait: "/assets/portraits/tia.jpg", color: "#f3c86a", unlockDay: 18, defaultMood: "neutral",
+    tagline: "Approcher la femme exige d’abord de traverser l’institution sans se laisser absorber par elle.",
+    bio: "Sœur jumelle d’Amanea et souveraine de l’Empire, Tia apparaît d’abord à travers ses lois, ses convocations et son influence sur Iriana. Son accès personnel demeure tardif : même lorsqu’elle consent à l’intimité, elle ne cesse jamais soudainement d’être autoritaire, disciplinée et difficile à atteindre.",
+    wound: "Avoir confondu toute sa vie la rigidité avec la protection, au point de participer aux fractures familiales qu’elle prétend empêcher.",
+    appreciates: "Les faits vérifiables, le courage calme, la contradiction argumentée et les personnes qui respectent une fonction sans s’y soumettre.",
+    giftLikes: ["encrier", "partition", "sablier"],
+    itinerary: [
+      { days: 38, location: "algratal", note: "Gouverne l’Empire, observe Iriana et accorde de rares audiences personnelles" },
+    ],
+  },
+  {
     id: "valurn", name: "Valurn", role: "Demi-démon et démonologue", ageNote: "Adulte", portrait: "/assets/portraits/valurn.jpg", color: "#ff725d", unlockDay: 3, defaultMood: "charming",
     tagline: "Il parie sur tout, surtout lorsqu’avouer qu’il tient à quelqu’un serait plus dangereux.",
     bio: "Séduisant, sarcastique et dangereux, Valurn connaît les pactes mieux que quiconque. Il aide Iriana à chercher une faille dans le contrat d’Alamma ; leur union reste libre, mais la liberté ne les protège ni de l’attachement ni des interventions de Bellirith.",
@@ -254,8 +267,8 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: "naiah", name: "Naïah", role: "Héritière des brumes", ageNote: "Adulte", portrait: "/assets/portraits/naiah.jpg", color: "#b477ff", unlockDay: 4, defaultMood: "smirk",
     tagline: "Elle sourit comme une amie et règne comme une menace que la forêt connaît déjà.",
-    bio: "Joueuse, théâtrale et blessée, Naïah règne sur les chemins mouvants de la Forêt Interdite. Amie proche de Hylee, elle déteste Amanea avec une intensité qui trahit encore le lien maternel. Sa mère l’a fait chasser sans jamais lui en donner la véritable raison.",
-    wound: "Avoir été créée puis bannie par une mère qui affirme encore l’aimer, sans lui expliquer pourquoi elle n’avait prétendument pas le choix.",
+    bio: "Joueuse, théâtrale et blessée, Naïah règne sur les chemins mouvants de la Forêt Interdite. Amie proche de Hylee, elle déteste Amanea avec une intensité qui trahit encore le lien maternel. Elle a grandi puis vécu son exil sans comprendre pourquoi sa propre mère refusait jusqu’à son regard.",
+    wound: "Avoir interprété toute sa vie le silence absolu d’Amanea comme la preuve qu’elle était une aberration indigne d’être reconnue.",
     appreciates: "Les personnes qui restent sans se soumettre, et celles qui distinguent son jeu de sa vérité.",
     giftLikes: ["boite", "rose", "plume"],
     itinerary: [
@@ -318,16 +331,31 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: "amanea", name: "Amanea", role: "Reine Noire d’Akuhn’Nabad", ageNote: "Adulte", portrait: "/assets/portraits/amanea.jpg", color: "#70e49b", unlockDay: 8, defaultMood: "neutral",
     tagline: "Elle protège les siens avec une férocité qui rend parfois impossible de distinguer l’amour de la sentence.",
-    bio: "Amanea est vivante et règne toujours sur Akuhn’Nabad. Ennemie déclarée de l’Empire, elle limite ses déplacements et agit par réseaux discrets. Elle aime Naïah malgré l’ordre de la chasser, sans révéler ce qui l’y a contrainte, et voit en Allenna sa fille autant que l’héritière dont elle est profondément fière.",
+    bio: "Amanea est vivante et règne toujours sur Akuhn’Nabad. Ennemie déclarée de l’Empire, elle limite ses déplacements et agit par réseaux discrets. Son refus obstiné de regarder ou de répondre à Naïah paraît aussi cruel qu’incompréhensible. Elle voit en Allenna sa fille autant que l’héritière dont elle est profondément fière.",
     wound: "Avoir appris à protéger par le secret, l’autorité et la violence, jusqu’à rendre ses décisions les plus maternelles presque indiscernables d’un abandon.",
     appreciates: "La franchise qui résiste à son autorité, le respect des faits et les personnes qui n’effacent ni ses crimes ni son humanité.",
     giftLikes: ["partition", "rose", "encrier"],
     itinerary: [
       { days: 14, location: "akuhn", note: "Gouverne la Cité Noire et prépare Allenna à lui succéder" },
       { days: 3, travelTo: "forbidden", note: "Emprunte une route secrète vers la frontière des brumes" },
-      { days: 2, location: "forbidden", note: "Rare visite à Naïah, loin des regards de l’Empire" },
+      { days: 2, location: "forbidden", note: "Inspection solitaire d’anciennes traces laissées dans les brumes" },
       { days: 3, travelTo: "akuhn", note: "Retour discret vers Akuhn’Nabad" },
       { days: 16, location: "akuhn", note: "Reprend la cour, les archives et l’instruction d’Allenna" },
+    ],
+  },
+  {
+    id: "allenna", name: "Allenna", role: "Commandante des Obscurcis", ageNote: "Adulte", portrait: "/assets/portraits/allenna.jpg", color: "#9fe0c3", unlockDay: 8, defaultMood: "neutral",
+    tagline: "Elle combat l’impuissance avec des ordres précis, une lame sûre et des mains capables de recoudre ce que la guerre ouvre.",
+    bio: "Fille adoptive d’Amanea, Allenna commande une partie des forces d’Akuhn’Nabad. Sylvinienne devenue Obscurcie par une longue exposition aux énergies de la cité, elle dirige, s’entraîne, inspecte les défenses et soigne parfois elle-même les soldats avant que sa route personnelle ne commence.",
+    wound: "La terreur de redevenir l’enfant incapable d’empêcher une personne aimée de mourir sous ses yeux.",
+    appreciates: "La compétence sans spectacle, les limites claires, la fiabilité et l’aide qui ne retire pas aux autres leur capacité d’agir.",
+    giftLikes: ["boussole", "carte", "the"],
+    itinerary: [
+      { days: 16, location: "akuhn", note: "Commande, soigne et inspecte les défenses d’Akuhn’Nabad" },
+      { days: 2, travelTo: "forbidden", note: "Inspection d’une route obscurcie à la frontière des brumes" },
+      { days: 3, location: "forbidden", note: "Sécurise les passages et supporte la présence de Naïah sans concession" },
+      { days: 2, travelTo: "akuhn", note: "Retour avec les patrouilles de la frontière" },
+      { days: 15, location: "akuhn", note: "Reprend le commandement et seconde Amanea sans devenir son ombre" },
     ],
   },
   {
@@ -509,6 +537,58 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("i4-a", "Repousser doucement la couronne et l’embrasser avant qu’elle ne reconstruise un discours.", "audace", [line("Narration", "Iriana vous rend le baiser avec une intensité longtemps disciplinée."), line("Iriana", "Je suppose que c’était votre manière de dire oui."), line("{player}", "Je peux le dire aussi."), line("Iriana", "Dites-le.")], { stats: { audace: 1 }, affection: 11, trust: 8, desire: 11, confluence: 6 }),
   ], true),
 
+  // TIA FARAE · accès tardif, d’abord institutionnel puis progressivement personnel
+  routeScene("tia", 0, 18, "L’institution vous reçoit", "algratal", "algratal_council", "neutral", [
+    line("Narration", "La Salle du Conseil est déjà en session lorsque Tia vous autorise à entrer. Elle ne vous présente pas : votre nom figure sur un dossier placé exactement au centre de la table."),
+    line("Tia", "Vous avez circulé entre Mir’Aldas, Forthaven et Akuhn’Nabad sans appartenir à aucun de ces pouvoirs. L’Empire appelle cela une anomalie. Je préfère déterminer si elle est utile."),
+    line("Narration", "Iriana demeure au fond de la salle, silencieuse. Tia ne vous demande pas de vous incliner, mais toute l’architecture semble le faire à sa place."),
+    line("Tia", "Exposez ce que vous savez de cette chronologie. N’inventez pas ce que votre amnésie vous refuse."),
+  ], [
+    choice("t0-l", "Séparer rigoureusement les faits, les hypothèses et les rumeurs.", "lucidite", [line("{player}", "Je sais que je suis étranger·ère à ce monde. Je sais qu’Iriana n’a jamais constitué l’expédition attendue. Le reste exige encore des preuves."), line("Tia", "Vous résistez à la tentation de transformer une lacune en autorité. C’est un commencement acceptable."), line("Narration", "Elle referme la moitié des accusations préparées dans le dossier.")], { stats: { lucidite: 1 }, trust: 8, affection: 2, confluence: 5, flags: ["story-tia-access"] }),
+    choice("t0-s", "Demander quelles limites l’Empire vous impose avant de répondre davantage.", "sangFroid", [line("Tia", "Vous négociez depuis une position qui pourrait être qualifiée de fragile."), line("{player}", "Une limite n’est utile que si elle existe avant l’interrogatoire."), line("Tia", "Soit. Aucun sort de contrainte, aucune détention sans acte formel et le droit de taire ce que vous ignorez réellement."), line("Narration", "La concession est froide, précise et parfaitement réelle.")], { stats: { sangFroid: 1 }, trust: 9, affection: 2, confluence: 4, flags: ["story-tia-access"] }),
+    choice("t0-a", "Refuser de devenir un rapport et lui poser une question en retour.", "audace", [line("{player}", "Pourquoi me recevoir vous-même si je ne suis qu’une anomalie ?"), line("Tia", "Parce que vous avez obtenu l’attention de personnes que mes titres ne peuvent approcher sans les braquer."), line("Narration", "La réponse reconnaît votre valeur sans tenter de la rendre flatteuse."), line("Tia", "Ne me forcez pas à regretter cette franchise.")], { stats: { audace: 1 }, trust: 5, affection: 5, confluence: 4, flags: ["story-tia-access"] }),
+  ]),
+  routeScene("tia", 1, 20, "L’erreur dans le protocole", "algratal", "algratal_palace", "thinking", [
+    line("Narration", "Dans la Galerie d’audience, un jeune secrétaire inverse deux sceaux. Tia interrompt la lecture, mais ne prononce pas la sanction attendue."),
+    line("Tia", "Il s’attend à être renvoyé. Iriana me reproche d’avoir construit une cour où chaque erreur paraît annoncer une catastrophe."),
+    line("Narration", "Le secrétaire attend à distance, livide. Tia vous consulte avec l’expression de quelqu’un qui n’a jamais considéré l’indulgence comme une compétence de gouvernement."),
+    line("Tia", "Une institution doit survivre aux faiblesses individuelles. Dites-moi comment corriger sans enseigner que l’imprécision est acceptable."),
+  ], [
+    choice("t1-l", "Corriger la procédure et chercher pourquoi deux sceaux pouvaient être confondus.", "lucidite", [line("Narration", "Les boîtes sont identiques et rangées dans un ordre contraire au registre."), line("Tia", "Une erreur humaine facilitée par une mauvaise architecture. Le secrétaire corrigera les deux, sans perdre sa fonction."), line("Narration", "La cour découvre qu’une faute peut produire une amélioration plutôt qu’une disparition.")], { stats: { lucidite: 1 }, trust: 9, affection: 3, confluence: 4 }),
+    choice("t1-s", "Demander au secrétaire de proposer lui-même une protection contre la récidive.", "sangFroid", [line("Tia", "Vous lui rendez une responsabilité au lieu de la lui retirer."), line("Narration", "Le jeune homme propose un marquage tactile. Tia le charge de l’appliquer à toutes les boîtes."), line("Tia", "La confiance n’exclut donc pas l’exigence. Elle la rend vérifiable.")], { stats: { sangFroid: 1 }, trust: 8, affection: 4, confluence: 4 }),
+    choice("t1-a", "Admettre devant la galerie que même un protocole impérial peut être mal conçu.", "audace", [line("Narration", "Un silence horrifié parcourt la cour."), line("Tia", "Formulation inutilement spectaculaire."), line("{player}", "Mais exacte."), line("Tia", "Exacte. Que le registre en conserve la conclusion, pas votre plaisir à la prononcer.")], { stats: { audace: 1 }, trust: 5, affection: 6, confluence: 3 }),
+  ]),
+  routeScene("tia", 2, 23, "La garde au bord du jardin", "algratal", "terrace", "troubled", [
+    line("Narration", "Tia vous retrouve sur une terrasse sans escorte visible. Les gardes restent pourtant derrière chaque porte ; même son isolement est organisé."),
+    line("Tia", "On me décrit comme inaccessible. Cette distance protège la fonction, évite les pressions et réduit les occasions d’erreur."),
+    line("Tia", "Elle produit également une conséquence que mes conseillers omettent : personne ne me parle avant d’avoir remplacé sa pensée par ce qu’il croit que l’Impératrice acceptera."),
+    line("Narration", "Elle pose devant vous deux tasses. Le geste ressemble davantage à une expérience qu’à une invitation, mais la seconde tasse est déjà servie."),
+  ], [
+    choice("t2-l", "Lui dire une vérité mineure qu’aucune audience ne jugerait assez utile.", "lucidite", [line("{player}", "Votre thé est trop infusé et vous regardez la porte chaque fois qu’un pas approche."), line("Tia", "Deux observations exactes, politiquement nulles et étrangement difficiles à entendre."), line("Narration", "Elle fait remplacer le thé, pas la conversation.")], { stats: { lucidite: 1 }, trust: 10, affection: 4, confluence: 4 }),
+    choice("t2-s", "Lui laisser le contrôle de la distance sans prétendre qu’elle n’existe pas.", "sangFroid", [line("{player}", "Je peux rester à cette place. Vous n’avez pas besoin de rendre la terrasse plus intime qu’elle ne l’est."), line("Tia", "Vous acceptez une limite sans la présenter comme un échec. Restez."), line("Narration", "Elle déplace néanmoins sa chaise de quelques centimètres vers la vôtre.")], { stats: { sangFroid: 1 }, trust: 10, affection: 4, confluence: 4 }),
+    choice("t2-a", "Demander si la femme derrière la fonction déteste vraiment ce thé.", "audace", [line("Tia", "La femme derrière la fonction considère cette expression terriblement commode."), line("Narration", "Elle goûte pourtant la tasse et grimace presque imperceptiblement."), line("Tia", "Et oui. Il est exécrable.")], { stats: { audace: 1 }, trust: 6, affection: 7, desire: 2, confluence: 3 }),
+  ]),
+  routeScene("tia", 3, 27, "Une danse sans délégation", "algratal", "ballroom", "troubled", [
+    line("Narration", "Après une réception, Tia renvoie l’orchestre mais conserve une seule musicienne. La Salle des Élus paraît démesurée pour trois personnes."),
+    line("Tia", "Une souveraine danse pour représenter une alliance, ouvrir une négociation ou confirmer un rang. Je ne me souviens pas de la dernière fois où le mouvement n’engageait que moi."),
+    line("Narration", "Elle vous tend la main sans avancer. L’attente est si contrôlée qu’elle en devient visible."),
+    line("Tia", "Vous pouvez refuser. Je ne vous promets pas d’apprécier ce refus ; je vous garantis qu’il restera sans sanction."),
+  ], [
+    choice("t3-s", "Accepter en définissant une danse qui peut s’arrêter à chaque mesure.", "sangFroid", [line("{player}", "Une mesure à la fois. Chacun peut lâcher la main."), line("Tia", "Condition claire."), line("Narration", "À la quatrième mesure, Tia ne compte plus à voix basse. À la huitième, son pouce caresse volontairement le vôtre.")], { stats: { sangFroid: 1 }, affection: 8, trust: 10, desire: 4, confluence: 5 }),
+    choice("t3-a", "Rompre la chorégraphie officielle dès le second pas.", "audace", [line("Narration", "Vous tournez du mauvais côté. Tia corrige par réflexe, comprend le défi et choisit une variation que la cour n’aurait jamais validée."), line("Tia", "Vous avez transformé une invitation rare en insubordination rythmique."), line("{player}", "Vous souriez."), line("Tia", "Constat non destiné aux archives.")], { stats: { audace: 1 }, affection: 10, trust: 6, desire: 6, confluence: 4 }),
+    choice("t3-l", "Lui demander ce qu’elle désire de cette danse avant de prendre sa main.", "lucidite", [line("Tia", "Ne devoir représenter personne. Et découvrir si cette proximité me plaît lorsqu’elle ne sert aucune stratégie."), line("Narration", "Votre premier pas attend son mouvement. Tia choisit alors de réduire la distance.")], { stats: { lucidite: 1 }, affection: 8, trust: 9, desire: 5, confluence: 5 }),
+  ]),
+  routeScene("tia", 4, 31, "Ce qui ne devient pas un décret", "algratal", "bedroom", "neutral", [
+    line("Narration", "Dans ses appartements privés, Tia retire sa couronne puis la place dans un coffret fermé. Elle conserve son maintien, sa voix exacte et la prudence qui ne disparaîtra pas en une soirée."),
+    line("Tia", "Je ne deviendrai pas soudainement douce parce que vous avez franchi plusieurs de mes défenses. Je continuerai de gouverner, d’exiger et probablement de vous irriter."),
+    line("Tia", "Je peux toutefois choisir une relation qui ne devienne ni décret, ni faveur, ni preuve de loyauté. Si vous la voulez encore dans ces conditions."),
+    line("Narration", "Pour la première fois, son incertitude ne se dissimule derrière aucune question impériale."),
+  ], [
+    choice("t4-l", "Choisir la femme sans lui demander d’abandonner la souveraine.", "lucidite", [line("{player}", "Je ne veux ni vous sauver de votre trône ni m’y soumettre. Je veux continuer à vous rencontrer là où vous choisissez d’être présente."), line("Tia", "Une relation sans annexion réciproque. Formulation acceptable."), line("Narration", "Elle demande votre accord avant de poser sa main contre votre joue, puis attend encore avant le baiser.")], { stats: { lucidite: 1 }, affection: 12, trust: 12, desire: 8, confluence: 8, flags: ["story-tia-personal"] }, { stat: "lucidite", value: 10 }),
+    choice("t4-s", "Lui offrir une proximité profonde qui ne doit pas devenir romantique.", "sangFroid", [line("{player}", "Je veux rester une personne à qui vous pouvez parler sans audience. Je ne souhaite pas que ce lien devienne amoureux."), line("Tia", "Vous refusez une faveur que la cour rêverait d’obtenir et protégez pourtant la relation."), line("Narration", "Elle incline la tête, sans froideur."), line("Tia", "Votre place demeure. Elle sera simplement nommée avec exactitude.")], { stats: { sangFroid: 1 }, affection: 8, trust: 14, confluence: 8, flags: ["story-tia-personal", "tia-platonic"] }),
+    choice("t4-a", "Lui demander un oui personnel, puis l’embrasser sans attendre une permission de l’Empire.", "audace", [line("{player}", "Tia — pas l’Impératrice — est-ce que vous voulez m’embrasser ?"), line("Tia", "Oui."), line("Narration", "Son premier baiser reste mesuré. Le second ne représente plus rien d’autre que son désir et le vôtre."), line("Tia", "N’interprétez pas mon manque de regret comme une promesse d’accessibilité permanente.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 8, flags: ["story-tia-personal"] }),
+  ], true),
+
   // VALURN
   routeScene("valurn", 0, 3, "La première mise", "algratal", "market", "amused", [
     line("Narration", "Valurn fait tourner un jeton entre ses doigts devant l’enseigne du Croissant. Ses yeux rouges vous suivent depuis assez longtemps pour que le hasard ne soit plus crédible."),
@@ -577,8 +657,8 @@ export const ROUTE_SCENES: RouteScene[] = [
   ]),
   routeScene("naiah", 2, 12, "Quand elle ne joue plus", "akuhn", "akuhn_palace", "sad", [
     line("Narration", "Dans un couloir dérobé du palais obscurci, Naïah ne porte ni couronne ni sourire. Elle n’est entrée que parce qu’Allenna a détourné la garde pendant quelques minutes."),
-    line("Naïah", "Amanea m’appelle encore sa fille, puis ordonne que l’on me chasse si je franchis les portes. Elle dit qu’elle n’a pas le choix. C’est pratique, un secret : il permet d’aimer quelqu’un tout en le laissant seul dans une forêt."),
-    line("Naïah", "Hylee croit qu’il existe une raison. Moi, je crois surtout qu’une mère devrait regarder sa fille lorsqu’elle la condamne."),
+    line("Naïah", "Tout le royaume sait de qui je suis la fille. Elle, pourtant, ne prononce jamais mon nom devant moi. Elle détourne les yeux avant même que je puisse décider si je voulais lui parler."),
+    line("Naïah", "Hylee croit qu’il existe une raison. Moi, je crois surtout qu’une mère devrait être capable de regarder sa fille avant de la laisser grandir avec le silence pour seule réponse."),
   ], [
     choice("n2-s", "Vous asseoir près de la sortie sans faire mine de la prendre.", "sangFroid", [line("Narration", "Les minutes passent. Naïah finit par poser sa tête contre votre épaule."), line("Naïah", "Tu me montres que tu peux partir. Et tu restes quand même.")], { stats: { sangFroid: 1 }, trust: 10, affection: 5, confluence: 3 }),
     choice("n2-l", "« Tu n’as pas à être agréable pour mériter une présence. Mais tu restes responsable de ce que tu fais. »", "lucidite", [line("Naïah", "Même maintenant, tu refuses de me pardonner d’avance."), line("{player}", "Je refuse surtout de te réduire à tes blessures."), line("Narration", "Elle ferme les yeux, bouleversée.")], { stats: { lucidite: 1 }, trust: 11, affection: 5, confluence: 3 }, { stat: "lucidite", value: 7 }),
@@ -766,16 +846,15 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("a1-l", "Lui demander comment préparer Allenna sans choisir son avenir à sa place.", "lucidite", [line("Amanea", "En lui donnant toutes les armes, y compris celles qui pourront un jour servir à me contredire."), line("{player}", "Et si elle choisit une paix que vous jugez dangereuse ?"), line("Amanea", "Alors mon devoir sera de l’avertir. Pas de redevenir reine à sa place avant même qu’elle le soit devenue.")], { stats: { lucidite: 1 }, affection: 5, trust: 10, confluence: 6, flags: ["story-allenna-heir"] }),
     choice("a1-r", "Comparer l’autorité d’Allenna à la stabilité propre de sa signature magique.", "resonance", [line("Narration", "La magie d’Allenna demeure dans la pièce : moins écrasante que celle d’Amanea, mais plus souple, déjà indépendante."), line("Amanea", "Tu la perçois sans la mesurer contre moi. Garde cette lecture. Trop de cours détruisent leurs héritiers en les traitant comme des versions incomplètes du souverain."), line("Narration", "Elle vous confie l’accès à une partie des archives réservées à sa fille.")], { stats: { resonance: 1 }, affection: 6, trust: 8, confluence: 8, flags: ["story-allenna-heir"] }),
   ]),
-  routeScene("amanea", 2, 8, "La fille qu’elle fait chasser", "forbidden", "forbidden_forest", "sad", [
-    line("Narration", "Amanea a quitté Akuhn’Nabad sous une cape sans emblème. Elle s’arrête à la limite exacte de la clairière de Naïah ; les gardes obscurcis restent plusieurs lieues derrière."),
-    line("Naïah", "La grande Reine Noire vient vérifier que son ordre est toujours appliqué ? Je peux te faciliter la tâche : oui, mère, je suis encore parfaitement chassée."),
-    line("Amanea", "Je ne te demanderai pas de croire que je n’avais pas le choix. Je te demanderai seulement de croire que cette décision me coûte chaque jour."),
-    line("Naïah", "Alors dis-moi pourquoi."),
-    line("Narration", "Amanea se tait. Ce secret semble protéger quelque chose, mais sa protection ressemble exactement à la blessure qu’elle inflige."),
+  routeScene("amanea", 2, 8, "Le coffret qu’elle ne regarde pas", "akuhn", "deep_archives", "sad", [
+    line("Narration", "Dans les Archives profondes, un coffret sans sceau occupe seul une étagère entière. Amanea travaille dos à lui. Elle sait pourtant exactement lorsque votre regard s’y pose."),
+    line("Amanea", "Il contient quelques objets qui n’ont aucune valeur politique : un ruban trop court, une pierre peinte, la moitié d’une figurine. Je devrais pouvoir les jeter."),
+    line("Narration", "Elle ne se retourne pas. Sur le couvercle, une main enfantine a dessiné une brume violette autour d’une couronne noire."),
+    line("Amanea", "Ne confonds pas ce que les autres appellent indifférence avec une explication. Je ne peux pas encore te donner la seconde."),
   ], [
-    choice("a2-l", "Dire à Amanea qu’un secret protecteur doit avoir une limite et un terme.", "lucidite", [line("{player}", "Si la vérité met Naïah en danger, dites au moins ce qui doit changer pour qu’elle puisse l’entendre."), line("Amanea", "Lorsque le pacte d’Alamma ne pourra plus utiliser son existence comme une porte."), line("Naïah", "Ce n’est pas une réponse. Mais c’est enfin une direction."), line("Narration", "Amanea vient de révéler davantage qu’elle ne l’avait prévu.")], { stats: { lucidite: 1 }, affection: 6, trust: 11, confluence: 7, flags: ["story-naiah-witness"] }),
-    choice("a2-s", "Maintenir la distance et refuser de transformer cette visite en réconciliation forcée.", "sangFroid", [line("Narration", "Vous restez entre elles sans devenir une barrière. Amanea ne franchit pas la limite ; Naïah ne lui offre aucun pardon."), line("Naïah", "Tu peux revenir au seuil. Pas entrer."), line("Amanea", "J’accepte."), line("Narration", "Pour une reine habituée à imposer les frontières, accepter celle de sa fille constitue déjà un bouleversement.")], { stats: { sangFroid: 1 }, affection: 5, trust: 12, confluence: 8, flags: ["story-naiah-witness"] }),
-    choice("a2-a", "Accuser Amanea d’utiliser sa douleur pour éviter de rendre des comptes.", "audace", [line("{player}", "Votre peine ne donne aucune réponse à Naïah. Elle vous permet seulement de souffrir en gardant le contrôle."), line("Amanea", "Tu choisis un moment remarquable pour me défier."), line("Naïah", "Moi, je trouve le moment parfait."), line("Narration", "La colère d’Amanea retombe avant de devenir un ordre."), line("Amanea", "Alors je reviendrai avec une réponse que je pourrai réellement donner.")], { stats: { audace: 1 }, affection: 9, trust: 7, confluence: 7, flags: ["story-naiah-witness"] }),
+    choice("a2-l", "Distinguer les faits visibles de l’histoire que chacun en déduit.", "lucidite", [line("{player}", "Fait : vous conservez ces objets. Fait : vous refusez tout contact. Je ne transformerai pas l’espace entre les deux en réponse inventée."), line("Amanea", "Exact. Le silence est déjà assez cruel sans lui prêter une certitude commode."), line("Narration", "Elle vous autorise à noter l’existence du coffret, mais pas son contenu.")], { stats: { lucidite: 1 }, affection: 5, trust: 12, confluence: 7, flags: ["story-naiah-witness"] }),
+    choice("a2-s", "Recouvrir le coffret sans l’ouvrir ni lui demander de se retourner.", "sangFroid", [line("Narration", "Vous rabattez le tissu noir. Amanea reprend sa lecture après un silence assez long pour devenir un remerciement."), line("Amanea", "Tu n’as ni fouillé ni prétendu réparer ce que tu ne comprends pas. Reste. J’ai encore deux registres à comparer.")], { stats: { sangFroid: 1 }, affection: 5, trust: 12, confluence: 7, flags: ["story-naiah-witness"] }),
+    choice("a2-a", "Lui demander pourquoi elle protège les souvenirs d’une personne qu’elle refuse de voir.", "audace", [line("{player}", "L’indifférence aurait brûlé ce coffret depuis longtemps."), line("Amanea", "Je n’ai jamais revendiqué l’indifférence. Ce sont les témoins qui l’ont choisie parce qu’elle rend mon comportement explicable."), line("Narration", "Elle ne révèle rien de plus, mais pour la première fois la contradiction est formulée sans être effacée.")], { stats: { audace: 1 }, affection: 8, trust: 8, confluence: 7, flags: ["story-naiah-witness"] }),
   ]),
   routeScene("amanea", 3, 8, "L’alliance que l’Empire ne verra pas", "akuhn", "deep_archives", "menacing", [
     line("Narration", "Dans les Archives profondes, une copie du pacte d’Alamma repose à côté des relevés de votre portail. Iriana écoute à travers un miroir sans tain ; Amanea refuse qu’une princesse impériale entre physiquement dans sa cité."),
@@ -790,12 +869,64 @@ export const ROUTE_SCENES: RouteScene[] = [
   routeScene("amanea", 4, 8, "La reine et la femme", "akuhn", "terrace", "smile", [
     line("Narration", "Sur la terrasse d’Akuhn’Nabad, Amanea vient de confier la cour du lendemain à Allenna. Ce n’est ni une abdication ni une épreuve : seulement une première journée où son héritière gouvernera sans correction immédiate."),
     line("Amanea", "Je reste reine. Je ne vais pas prétendre que l’amour, la famille ou ta présence ont soudain rendu le pouvoir inutile. Mais je refuse désormais qu’il soit la seule forme sous laquelle les autres puissent me rencontrer."),
-    line("Amanea", "Naïah me déteste et je dois encore mériter le droit de lui donner une réponse. Allenna me succédera sans devenir moi. Tia reste mon ennemie, même si une part de moi se souvient qu’elle fut ma sœur avant d’être l’Empire."),
+    line("Amanea", "Naïah me déteste, et je ne peux lui offrir l’explication qui donnerait enfin un sens à ce silence. Allenna me succédera sans devenir moi. Tia reste mon ennemie, même si une part de moi se souvient qu’elle fut ma sœur avant d’être l’Empire."),
     line("Amanea", "Et je te désire. Pas comme agent, sujet ou garantie contre Alamma. Comme la personne assez insupportable pour me contredire dans ma propre salle du trône. Dis-moi ce que tu veux, même si ce n’est pas moi."),
   ], [
     choice("a4-l", "Choisir une relation qui n’efface ni son règne ni votre liberté future.", "lucidite", [line("{player}", "Je vous choisis sans devenir votre sujet, et sans vous demander de cesser d’être reine pour me rassurer."), line("Amanea", "Enfin une déclaration digne de confiance."), line("Narration", "Elle prend votre visage entre ses mains et attend votre mouvement avant le premier baiser."), line("Amanea", "Alors rencontrons-nous encore. Chaque fois comme un choix neuf, même lorsque ma cour préférera y voir un serment.")], { stats: { lucidite: 1 }, affection: 12, trust: 12, desire: 8, confluence: 10, flags: ["story-amanea-alliance"] }, { stat: "lucidite", value: 10 }),
     choice("a4-s", "Lui offrir un lien profond qui n’a pas besoin de devenir amoureux.", "sangFroid", [line("{player}", "Je veux rester dans votre vie. Je ne veux pas transformer cette proximité en désir pour qu’elle compte."), line("Amanea", "Tu refuses même le rôle séduisant de la personne qui devient l’amant·e secret·ète de la Reine Noire."), line("Narration", "Son sourire se fait doux, sans amertume."), line("Amanea", "Très bien. Reste comme mon égal·e et mon ami·e. Une relation que ma cour ne saura pas classer me paraît presque plus dangereuse.")], { stats: { sangFroid: 1 }, affection: 10, trust: 14, confluence: 10, flags: ["story-amanea-alliance", "amanea-platonic"] }),
     choice("a4-a", "L’embrasser après un oui explicite et accepter le risque politique de cette relation.", "audace", [line("{player}", "Je vous veux, Amanea. Pas votre trône, pas votre protection. Puis-je vous embrasser ?"), line("Amanea", "Oui."), line("Narration", "Le baiser est prudent une seconde, féroce la suivante, puis s’arrête dès que vos souffles exigent une nouvelle question."), line("Amanea", "Tu viens de choisir la femme. La reine devra apprendre à ne pas convoquer le Conseil pendant nos rendez-vous.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 10, flags: ["story-amanea-alliance"] }),
+  ], true),
+
+  // ALLENNA · commandante, soigneuse et fille adoptive d’Amanea
+  routeScene("allenna", 0, 8, "Le terrain déjà occupé", "akuhn", "war_room", "neutral", [
+    line("Narration", "Dans la salle de guerre transformée en terrain d’entraînement, Allenna corrige trois soldats tout en terminant un rapport destiné à Amanea."),
+    line("Allenna", "Vous bloquez le passage."),
+    line("Narration", "Avant que vous reculiez, elle lance un bâton d’exercice dans votre direction. Votre corps le rattrape par réflexe."),
+    line("Allenna", "Réflexe correct. Position mauvaise. Puisque vous êtes là, montrez-moi si l’erreur est accidentelle."),
+  ], [
+    choice("al0-s", "Adopter une garde prudente et annoncer chaque limite physique.", "sangFroid", [line("Allenna", "Une limite signalée avant l’échec évite deux blessures et une excuse. Bien."), line("Narration", "Elle adapte aussitôt ses attaques, ferme sans humilier les ouvertures et vous rend le bâton poignée en avant."), line("Allenna", "Vous pouvez revenir.")], { stats: { sangFroid: 1 }, trust: 8, affection: 2, confluence: 4, flags: ["story-allenna-met"] }),
+    choice("al0-l", "Observer son appui blessé et modifier votre angle pour ne pas l’exploiter.", "lucidite", [line("Allenna", "Vous l’avez vu."), line("{player}", "Oui. Je n’ai pas supposé que le duel m’autorisait à m’en servir."), line("Narration", "Elle teste encore deux attaques avant d’abaisser sa garde."), line("Allenna", "Jugement acceptable. Technique à corriger.")], { stats: { lucidite: 1 }, trust: 9, affection: 2, confluence: 4, flags: ["story-allenna-met"] }),
+    choice("al0-a", "Transformer le bâton attrapé en feinte immédiate.", "audace", [line("Narration", "Allenna bloque à un doigt de son épaule. Son regard s’éclaire d’un plaisir compétitif qu’elle ne commente pas."), line("Allenna", "Imprudent. Presque efficace."), line("{player}", "Je retiens surtout ‘presque’."), line("Allenna", "Revenez demain. Nous supprimerons cet adverbe.")], { stats: { audace: 1 }, trust: 4, affection: 6, confluence: 3, flags: ["story-allenna-met"] }),
+  ]),
+  routeScene("allenna", 1, 11, "Deux points, pas trois", "akuhn", "akuhn_palace", "thinking", [
+    line("Narration", "Une patrouille revient avec un soldat blessé. Allenna abandonne immédiatement le Conseil, pose son épée et ouvre une trousse de soins usée."),
+    line("Allenna", "La lame a évité l’artère. Le poison, non. Tenez sa main et faites-le parler pendant que je prépare l’antidote."),
+    line("Narration", "Ses ordres restent courts, mais jamais déshumanisants. Elle nomme chaque geste avant de toucher le blessé."),
+    line("Allenna", "Il survivra. Aidez-moi à faire en sorte qu’il ne traverse pas ces minutes seul."),
+  ], [
+    choice("al1-s", "Caler votre respiration sur celle du soldat sans lui promettre que rien ne fera mal.", "sangFroid", [line("{player}", "La douleur vient par vagues. Nous prenons la suivante ensemble."), line("Narration", "Le soldat cesse de lutter contre chaque souffle. Allenna injecte l’antidote et referme la plaie en deux points précis."), line("Allenna", "Vous avez dit vrai sans laisser la peur seule. Retenez cette méthode.")], { stats: { sangFroid: 1 }, trust: 9, affection: 3, confluence: 5 }),
+    choice("al1-l", "Identifier les symptômes pendant qu’Allenna prépare le dosage.", "lucidite", [line("Narration", "Pupilles réactives, froid aux extrémités, spasmes courts : le poison attaque la respiration, pas le cœur."), line("Allenna", "Dose réduite. Bonne lecture."), line("Narration", "Elle vous confie ensuite le nœud final plutôt que de garder toute compétence pour elle.")], { stats: { lucidite: 1 }, trust: 10, affection: 2, confluence: 5 }, { stat: "lucidite", value: 6 }),
+    choice("al1-r", "Stabiliser le flux obscurci autour du poison sans tenter de l’extraire de force.", "resonance", [line("Narration", "La magie cesse de pousser le poison vers le cœur. Allenna observe votre accord avant d’administrer l’antidote."), line("Allenna", "Vous avez soutenu le traitement sans improviser à sa place. Compétence rare.")], { stats: { resonance: 1 }, trust: 8, affection: 3, confluence: 7 }),
+  ]),
+  routeScene("allenna", 2, 15, "La garde qui ne dort pas", "akuhn", "terrace", "troubled", [
+    line("Narration", "À l’aube, Allenna se tient encore sur la terrasse après deux tours de garde qui n’étaient pas les siens. Sa main vérifie machinalement les fioles à sa ceinture."),
+    line("Allenna", "Amanea a quitté le palais pour une inspection. Elle dispose d’une escorte, d’itinéraires de secours et de davantage de puissance que toute cette garde réunie."),
+    line("Allenna", "Je connais les faits. Mon corps continue pourtant de compter les minutes où je ne peux pas vérifier qu’elle respire."),
+    line("Narration", "Elle ne demande pas d’être rassurée. Elle vous montre seulement l’endroit exact où sa discipline cesse d’être un choix."),
+  ], [
+    choice("al2-l", "Établir une relève d’information plutôt qu’une surveillance supplémentaire.", "lucidite", [line("{player}", "Un seul message à mi-parcours, envoyé par l’escorte. Ensuite tu quittes la terrasse."), line("Allenna", "Contrôle limité, vérifiable, sans modifier sa mission."), line("Narration", "Elle accepte le protocole et confie enfin la garde à la personne prévue.")], { stats: { lucidite: 1 }, trust: 10, affection: 4, confluence: 4 }),
+    choice("al2-s", "Rester jusqu’à la relève sans prétendre pouvoir garantir le retour d’Amanea.", "sangFroid", [line("{player}", "Je ne peux pas promettre qu’aucun danger n’existe. Je peux rester pendant que tu n’y réponds pas seule."), line("Allenna", "Une solution insuffisante."), line("Narration", "Elle s’assied néanmoins à côté de vous."), line("Allenna", "Restez.")], { stats: { sangFroid: 1 }, trust: 11, affection: 4, confluence: 4 }),
+    choice("al2-a", "Lui voler une fiole vide et l’obliger à quitter son poste pour la récupérer.", "audace", [line("Narration", "Allenna vous rattrape avant la porte, vous plaque contre le mur sans brutalité et récupère la fiole."), line("Allenna", "Tactique infantile."), line("{player}", "Tu as quitté la balustrade."), line("Narration", "Son irritation se fend d’un sourire bref."), line("Allenna", "Ne recommencez pas exactement de cette façon.")], { stats: { audace: 1 }, trust: 6, affection: 7, desire: 3, confluence: 3 }),
+  ]),
+  routeScene("allenna", 3, 20, "Une heure sans ordre", "akuhn", "music_room", "troubled", [
+    line("Narration", "Dans le Salon nocturne, Allenna a retiré ses gantelets mais conserve son uniforme. Le piano joue seul une mélodie lente qu’elle prétend ne pas avoir choisie."),
+    line("Allenna", "Amanea m’a ordonné de prendre une soirée. J’ai objecté qu’un repos imposé reste un ordre. Elle a répondu que je pouvais désobéir en me reposant pour une autre raison."),
+    line("Allenna", "Vous êtes cette autre raison, si vous acceptez une heure durant laquelle je ne commanderai ni troupe, ni blessure, ni vous."),
+    line("Narration", "La demande est plus vulnérable que tout ce qu’elle a laissé voir sur un champ d’entraînement."),
+  ], [
+    choice("al3-s", "Accepter une heure où chaque initiative peut être proposée et refusée.", "sangFroid", [line("{player}", "Commence par une chose que tu veux, pas une chose utile."), line("Allenna", "Danser. Lentement. Sans leçon."), line("Narration", "Elle pose une main à votre taille et attend votre accord avant le premier pas.")], { stats: { sangFroid: 1 }, affection: 8, trust: 10, desire: 4, confluence: 5 }),
+    choice("al3-a", "Lui demander de vous apprendre la seule danse interdite au règlement militaire.", "audace", [line("Allenna", "Toutes les danses sont interdites pendant la garde."), line("{player}", "Nous avons donc beaucoup de choix."), line("Narration", "Elle vous entraîne dans une variation courte, précise, puis volontairement désordonnée."), line("Allenna", "Cette partie ne figure dans aucun manuel.")], { stats: { audace: 1 }, affection: 10, trust: 6, desire: 6, confluence: 4 }),
+    choice("al3-l", "Lui faire remarquer que choisir le repos n’abandonne personne.", "lucidite", [line("Allenna", "Je le sais comme un fait. Je tente de l’apprendre comme une sensation."), line("Narration", "Elle s’assied près de vous, assez proche pour que vos épaules se touchent sans que la posture soit tactique.")], { stats: { lucidite: 1 }, affection: 7, trust: 10, desire: 3, confluence: 5 }),
+  ]),
+  routeScene("allenna", 4, 25, "La force qui demande", "akuhn", "bedroom", "neutral", [
+    line("Narration", "Dans ses quartiers, Allenna pose méthodiquement son épée, ses fioles et ses gantelets. Aucun objet ne demeure entre elle et la porte."),
+    line("Allenna", "Je sais protéger, soigner, retenir et ordonner. Je sais moins bien demander sans préparer d’abord la réponse attendue."),
+    line("Allenna", "Je veux que vous restiez. Je vous désire. Si votre réponse est différente, elle ne deviendra ni faiblesse ni insubordination."),
+    line("Narration", "Elle garde les mains ouvertes, prête à recevoir un choix qu’elle ne contrôlera pas."),
+  ], [
+    choice("al4-s", "Choisir une proximité profonde sans prolongement romantique.", "sangFroid", [line("{player}", "Je reste. Je ne souhaite pas que ce lien devienne amoureux."), line("Allenna", "Réponse claire."), line("Narration", "Elle expire, déçue mais jamais hostile, puis vous confie la chaise près de la fenêtre."), line("Allenna", "Notre confiance ne dépendra pas d’un désir identique.")], { stats: { sangFroid: 1 }, affection: 7, trust: 14, desire: -8, confluence: 7, flags: ["story-allenna-trust", "allenna-platonic"] }),
+    choice("al4-l", "Lui demander ce qu’elle veut, geste après geste, sans transformer sa précision en froideur.", "lucidite", [line("Allenna", "Votre main ici. Puis un baiser, si vous le voulez toujours."), line("Narration", "La méthode ne retire rien au désir ; elle lui donne une netteté qui fait trembler sa voix."), line("Allenna", "Oui. Encore.")], { stats: { lucidite: 1 }, affection: 11, trust: 12, desire: 9, confluence: 8, flags: ["story-allenna-trust"] }, { stat: "lucidite", value: 9 }),
+    choice("al4-a", "Lui rendre la question avec la même franchise, puis réduire la distance après son oui.", "audace", [line("{player}", "Je te désire aussi. Est-ce que tu veux que je t’embrasse maintenant ?"), line("Allenna", "Oui."), line("Narration", "Le premier contact est contenu. Le second porte toute la force qu’elle avait refusé d’imposer."), line("Allenna", "Restez. Cette fois, ce n’est pas un ordre.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 8, flags: ["story-allenna-trust"] }),
   ], true),
 
   // DRAVEN · route narrative non romantique, vivant et en mission diplomatique

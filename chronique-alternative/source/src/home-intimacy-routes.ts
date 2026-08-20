@@ -617,6 +617,124 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       after: sexText("Elle embrasse vos lèvres de rose avant de remonter contre votre cœur.", "Elle garde votre visage entre ses mains comme la seule autorité admise.", "Elle vous laisse choisir qui portera symboliquement la couronne lors de la prochaine nuit."),
     },
   ],
+  tia: [
+    {
+      id: "partition-inachevee",
+      labels: sexText("Faire de chaque pièce une mesure privée avec Tia", "Laisser Tia conduire le salon avant de renverser la partition", "Composer une nuit adaptée à vos deux corps sans protocole"),
+      detail: "La partition sans dernière mesure guide Tia du salon à la chambre, où la conduite circule sans audience.",
+      threshold: ["Tia pose la partition sur votre piano ou, à défaut, sur la table du salon. La dernière mesure manque réellement.", ["Tia", "Chez vous, aucune institution ne réclame la conclusion. Je propose que nos corps l’écrivent à la place.", "troubled"]],
+      firstMovement: ["Elle joue le rythme contre votre paume, puis contre votre gorge. Vous lui rendez la mesure par un baiser qui défait la première attache d’or et déplace la musique du salon vers le canapé."],
+      variation: ["La conduite change à chaque pièce : Tia vous guide près de la fenêtre, vous la renversez sur le tapis, puis la chambre accueille une reprise où plus personne ne compte.", ["Tia", "Nous avons perdu le tempo. Ne le retrouvez pas.", "smirk"]],
+      tender: ["La partition devient une suite d’étreintes lentes. Tia vous couvre, reçoit vos mains et laisse chaque pause durer sans la remplir d’une nouvelle règle."],
+      suggestive: ["Les notes restantes servent de prétexte à des baisers plus bas et des mains plus directes. Tia essaie encore de diriger la cadence, puis vous offre volontairement la mesure suivante."],
+      explicit: sexLines(
+        ["Tia vous allonge sur le tapis, garde sa bouche sur votre perle sensible et fait glisser ses doigts dans votre chaleur au rythme frappé plus tôt. Au lit, vous échangez la conduite dans une position en ciseaux jusqu’à deux orgasmes successifs.", ["Tia", "La mesure finale nous appartient. Ne la rendez surtout pas régulière.", "troubled"]],
+        ["Tia prend votre membre dressé entre ses lèvres près du piano, puis vous accueille dans la chambre face à face. Elle choisit la première profondeur ; vous la seconde, et vos plaisirs concluent la partition sans pose officielle.", ["Tia", "Je refuse toute cadence qui ne laisse pas chacun conduire à son tour.", "troubled"]],
+        ["Tia vous demande la forme exacte de plaisir que votre corps souhaite recevoir, puis choisit la sienne sans exiger de symétrie. Bouche, mains, frottements ou pénétration se relaient entre le salon et le lit jusqu’à vos abandons distincts.", ["Tia", "Deux conclusions différentes. Une seule nuit entière.", "troubled"]],
+      ),
+      ellipse: ["Tia retire la dernière page, la plie et vous entraîne vers la chambre. La musique continue derrière la porte tandis que la chronique laisse la mesure inachevée."],
+      reprise: ["Avant l’aube, Tia rejoue trois notes sur votre peau. La reprise est plus lente, couchée sur le côté, avec davantage de baisers que de structure."],
+      closing: ["La partition reste ouverte sur le silence final. Tia inscrit seulement la date dans la marge et refuse d’ajouter un titre.", ["Tia", "Une œuvre privée n’a pas besoin de légitimer son existence.", "thinking"]],
+      after: sexText("Elle garde votre jambe entre les siennes comme une dernière mesure tenue.", "Elle écoute votre cœur sans tenter d’en fixer le tempo.", "Elle vous demande quelle sensation votre corps voudra choisir lors de la reprise."),
+    },
+    {
+      id: "diner-sans-service",
+      labels: sexText("Déranger le dîner de Tia jusqu’à faire de la table un refuge", "Lui retirer chaque tâche avant de l’attirer près de l’âtre", "Partager cuisine, table et lit sans distribuer de rôles fixes"),
+      detail: "Un repas sans service devient une nuit domestique, joueuse et mobile où Tia apprend l’imprévu sans cesser d’être elle-même.",
+      threshold: ["Tia a dressé la table avec une exactitude intimidante. Vous déplacez volontairement un verre et attendez sa réaction.", ["Tia", "Je sais que c’est une provocation. Je constate également que personne ne mourra de cette asymétrie.", "smirk"]],
+      firstMovement: ["Elle goûte la sauce sur votre doigt, puis votre bouche. Le repas refroidit tandis que vous l’asseyez sur le plan de travail et que Tia choisit de ne sauver aucune assiette."],
+      variation: ["Vous passez du marbre au fauteuil puis au lit, laissant dans chaque pièce un vêtement ou une règle devenue inutile. Tia renverse elle-même le dernier coussin parfaitement aligné."],
+      tender: ["Vous vous nourrissez de bouchées volées et de longs baisers. Tia se laisse envelopper par une chaleur qui ne réclame aucune décision au-delà de rester."],
+      suggestive: ["Le contraste du marbre froid et de vos mains accélère son souffle. Elle vous attire contre elle, formule une envie directe puis accepte que votre réponse change l’itinéraire prévu."],
+      explicit: sexLines(
+        ["Tia vous fait asseoir sur la table, ouvre vos cuisses et entretient votre point incandescent avec sa langue tandis que ses doigts trouvent le rythme intérieur demandé. Au lit, vous lui rendez le plaisir puis mêlez vos jambes pour une seconde montée.", ["Tia", "Le dîner est perdu. Je considère cette conséquence parfaitement acceptable.", "smirk"]],
+        ["Tia s’agenouille près de l’âtre et prend votre longueur brûlante dans sa bouche. Dans la chambre, vous entrez lentement en elle, puis elle vous chevauche et choisit la cadence jusqu’à ce que vos deux souffles rompent toute conversation.", ["Tia", "Aucune cour n’apprendra que j’ai préféré ceci au dessert.", "smirk"]],
+        ["Cuisine, fauteuil et lit deviennent trois configurations choisies selon vos anatomies : donner, recevoir, puis mêler les plaisirs sans copie obligatoire. Tia abandonne la soirée à vos corps jusqu’à ce que chacun ait obtenu sa propre conclusion.", ["Tia", "L’imprévu possède donc parfois une architecture remarquable.", "smirk"]],
+      ),
+      ellipse: ["La nappe glisse avec le dernier couvert. Tia vous suit jusqu’au couloir et la chronique reste auprès du dîner froid pendant que la chambre devient plus importante."],
+      reprise: ["Vous revenez partager le dessert à même le tapis. Tia recueille une trace sucrée sur votre peau et transforme la dégustation en reprise plus lente."],
+      closing: ["Au matin, la table est encore de travers. Tia redresse un verre, regarde le reste et décide de laisser exactement ainsi.", ["Tia", "Une preuve discrète que cette maison a survécu à mon absence de contrôle.", "troubled"]],
+      after: sexText("Elle goûte une dernière trace sucrée au creux de votre ventre.", "Elle repose contre votre torse pendant que le repas attend.", "Elle vous laisse définir la prochaine recette et la prochaine configuration corporelle."),
+    },
+    {
+      id: "sceau-a-la-porte",
+      labels: sexText("Laisser les deux sceaux à l’entrée et inviter seulement Tia", "Fermer la porte à l’Empire avant de prendre la seconde conduite", "Créer sous votre toit une égalité sans corps ni fonction assignés"),
+      detail: "Tia dépose ses sceaux, explore la maison sans escorte et construit avec vous une égalité intime durable.",
+      threshold: ["Tia aligne le sceau impérial et son sceau personnel sur la console. Après réflexion, elle laisse les deux.", ["Tia", "Même mon prénom peut devenir une armure. Ce soir, je voudrais entrer sans preuve de fonction.", "troubled"]],
+      firstMovement: ["Vous lui tendez la main sans révérence. Tia la prend, traverse chaque pièce à vos côtés puis vous embrasse devant la porte de la chambre qu’elle choisit elle-même d’ouvrir."],
+      variation: ["Le fauteuil accueille sa première conduite, le tapis la vôtre, et le lit rend enfin les échanges trop naturels pour conserver le moindre compte."],
+      tender: ["Vous partagez le poids, la chaleur et le calme. Tia reçoit un soin qui ne diminue pas sa puissance et vous rend une tendresse sans la faire passer pour une récompense."],
+      suggestive: ["Chaque renversement retire une attache et une distance. Tia vous guide, vous la faites céder à votre tour, puis vos hanches trouvent un rythme que ni sceau ni rang ne pourrait enregistrer."],
+      explicit: sexLines(
+        ["Vous donnez d’abord du plaisir à Tia avec votre bouche et vos doigts, puis elle vous renverse et maintient votre perle sensible jusqu’à votre propre orgasme. Une seconde position en ciseaux fait circuler le désir sans fixer de gagnante.", ["Tia", "Aucune de nous ne s’efface. Voilà la seule loi admise ici.", "troubled"]],
+        ["Tia conduit la première pénétration face à face, puis vous changez de position sur le côté et prenez la seconde cadence. Ses doigts gardent son plaisir vivant pendant que vos orgasmes arrivent sans classement ni simultanéité exigée.", ["Tia", "Ni souveraine ni sujet. Deux personnes capables de reprendre la conduite.", "troubled"]],
+        ["Vous alternez bouche, mains, frottement et pénétration selon les possibilités choisies de vos corps. Tia reçoit une forme de plaisir, vous une autre, et l’intensité identique n’exige jamais que les gestes se ressemblent.", ["Tia", "Cette égalité demeure exacte précisément parce qu’elle ne nous rend pas identiques.", "troubled"]],
+      ),
+      ellipse: ["Les sceaux restent seuls dans l’entrée. Tia referme la chambre sans verrou officiel et la chronique abandonne toute tentative d’archiver la suite."],
+      reprise: ["Après une longue accalmie, vous échangez encore la conduite sur le côté, front contre front, dans une reprise plus calme où chaque demande peut devenir un baiser."],
+      closing: ["Tia récupère le grand sceau seulement après avoir franchi le seuil. Le petit reste sur votre console jusqu’à sa prochaine visite.", ["Tia", "Gardez-le. Une invitation personnelle doit pouvoir trouver son chemin de retour.", "troubled"]],
+      after: sexText("Elle garde votre hanche contre la sienne sans hiérarchie visible.", "Elle laisse sa main ouverte sur votre poitrine, sans sceau dans la paume.", "Elle vous demande une prochaine nuit tout aussi précise et tout aussi différente."),
+    },
+  ],
+  allenna: [
+    {
+      id: "boite-de-suture",
+      labels: sexText("Fermer la boîte de soins et confier votre plaisir aux mains d’Allenna", "Laisser ses mains nues apprendre votre rythme au salon", "Définir avec Allenna une anatomie de plaisir entièrement personnelle"),
+      detail: "La boîte de campagne devient le symbole d’une nuit où Allenna touche sans soigner et reçoit sans surveiller.",
+      threshold: ["Allenna vérifie la boîte de suture offerte, puis la ferme volontairement avant de retirer ses gantelets.", ["Allenna", "Aucune blessure. Aucun patient. Si mes mains travaillent ce soir, ce sera pour une raison que j’ai choisie.", "troubled"]],
+      firstMovement: ["Ses doigts nus commencent sur votre visage, descendent vers votre gorge puis sous vos vêtements. Vous les guidez une fois ; Allenna retient votre réponse et non une règle générale."],
+      variation: ["Du canapé au tapis, puis du tapis au lit, elle adapte chaque appui avant de reprendre exactement là où votre souffle s’était brisé."],
+      tender: ["Allenna vous enveloppe de longues caresses et accepte vos soins en retour. Le contact ne répare rien : il existe seulement parce qu’il vous plaît à tous deux."],
+      suggestive: ["Sa précision devient sensuelle à mesure que les vêtements tombent. Allenna suit chaque réaction, mais son propre désir dérange bientôt délicieusement la régularité de ses gestes."],
+      explicit: sexLines(
+        ["Allenna vous ouvre contre les coussins, garde sa bouche sur votre petite amande et fait glisser ses doigts dans votre secret humide. Après votre orgasme, vous échangez les places et lui rendez la même attention jusqu’à son abandon.", ["Allenna", "La boîte reste fermée. Ces mains ont une mission beaucoup plus agréable.", "smirk"]],
+        ["Allenna prend votre membre dressé dans sa main puis entre ses lèvres, attentive au rythme que vous lui donnez. Dans la chambre, vous la préparez avant une pénétration sur le côté qui protège ses appuis et intensifie vos deux plaisirs.", ["Allenna", "Stable, profond, entièrement choisi. Continuez.", "smirk"]],
+        ["Allenna suit les indications de votre anatomie avec bouche, doigts, frottement ou pénétration adaptés. Vous lui demandez ensuite sa propre configuration ; vos plaisirs différents reçoivent la même précision jusqu’au bout.", ["Allenna", "Deux corps réels. Aucun manuel ne remplacera cette information.", "smirk"]],
+      ),
+      ellipse: ["Allenna laisse la boîte fermée dans le salon et vous suit vers la chambre, mains nues. Le récit ne franchit pas la porte."],
+      reprise: ["Avant de dormir, elle revient sur le canapé et vous attire au-dessus d’elle pour une reprise plus douce, guidée par les souvenirs précis de ce qui a plu."],
+      closing: ["La boîte n’a pas bougé. Allenna replace seulement un coussin sous votre nuque et accepte celui que vous glissez sous la sienne.", ["Allenna", "Aucun soin nécessaire. Je conserve pourtant volontiers cette surveillance mutuelle.", "troubled"]],
+      after: sexText("Elle suit votre ventre du bout de ses doigts sans chercher une douleur.", "Elle garde votre pouls sous sa paume sans le compter.", "Elle mémorise les mots propres à votre corps plutôt qu’un protocole."),
+    },
+    {
+      id: "terrain-domestique",
+      labels: sexText("Transformer le tapis en terrain de relève avec Allenna", "Échanger force et conduite dans toute la maison", "Inventer des appuis adaptés sans distribuer les rôles par anatomie"),
+      detail: "Un exercice sur le tapis devient un parcours charnel où force, appuis et conduite changent à chaque pièce.",
+      threshold: ["Allenna écarte la table basse et teste le tapis d’un pied. Votre salon devient un terrain d’entraînement parfaitement indigne d’un rapport officiel.", ["Allenna", "Pas de victoire. Le mot de relève change seulement la personne qui porte le mouvement.", "smirk"]],
+      firstMovement: ["Vous testez une prise, la transformez en baiser puis roulez ensemble sur le tapis. Allenna rit lorsque vous exploitez déloyalement la distraction qu’elle vient elle-même de provoquer."],
+      variation: ["Le parcours continue contre le canapé, le mur puis le lit. Chaque position protège les anciennes blessures sans imposer de douceur ni réduire sa force."],
+      tender: ["L’exercice ralentit jusqu’à devenir une suite d’étreintes capables de porter tout le poids. Allenna accepte d’être soutenue avant la fatigue et vous rend la même sécurité."],
+      suggestive: ["Les prises ouvrent vêtements et distances. Le mot de relève circule avec les mains, les bouches et les bassins jusqu’à ne plus désigner qu’un désir de changer l’angle."],
+      explicit: sexLines(
+        ["Vous échangez bouche, doigts et frottements sur le tapis puis au lit. Allenna reçoit jusqu’à son orgasme, prononce la relève et maintient votre point de feu avec la même constance jusqu’au vôtre.", ["Allenna", "Aucune gagnante. Deux relèves parfaitement exécutées.", "smirk"]],
+        ["Allenna vous accueille face à face, conduit la première cadence puis vous confie la position suivante sur le côté. La pénétration reste soutenue par une caresse extérieure et vos orgasmes successifs n’exigent aucun classement.", ["Allenna", "La force soutient. Elle ne décide rien à notre place.", "smirk"]],
+        ["Chaque configuration est choisie selon vos corps : toucher, recevoir, pénétrer ou frotter sans rôle fixe. Allenna échange le soutien avant l’épuisement et garde chaque plaisir entier jusqu’à sa conclusion propre.", ["Allenna", "Relève corporelle accomplie. Demande de reprise en préparation.", "smirk"]],
+      ),
+      ellipse: ["Le mot de relève vous conduit du tapis au couloir, puis la chambre absorbe le reste de l’exercice hors du regard de la chronique."],
+      reprise: ["Après l’intensité, Allenna choisit une position assise dans le fauteuil où vos corps peuvent reprendre lentement sans porter leur poids seuls."],
+      closing: ["Le salon porte encore les traces du parcours. Allenna remet la table en place, mais laisse le tapis de travers comme une promesse visible.", ["Allenna", "Nous corrigerons l’aménagement après la prochaine séance. Pas avant.", "smirk"]],
+      after: sexText("Elle masse votre cuisse avant de vous confier la sienne.", "Elle laisse vos épaules partager le même appui.", "Elle vérifie que chaque rôle est resté modifiable jusqu’au bout."),
+    },
+    {
+      id: "veille-interrompue",
+      labels: sexText("Faire tomber la garde d’Allenna près de la fenêtre nocturne", "Prendre la relève de sa veille et l’attirer dans votre lit", "Partager une nuit où aucun corps ne doit monter la garde"),
+      detail: "Une veille à la fenêtre devient une scène lente où Allenna accepte le repos, la vulnérabilité et plusieurs reprises.",
+      threshold: ["Allenna se tient devant la fenêtre comme devant un rempart. Vous fermez les rideaux et lui montrez la porte déjà verrouillée.", ["Allenna", "Je sais qu’il n’y a pas de menace. Mon corps n’a pas encore reçu le rapport.", "troubled"]],
+      firstMovement: ["Vous vous placez entre elle et la fenêtre sans l’emprisonner. Allenna choisit de reculer vers vous, dépose son front contre le vôtre et laisse un premier baiser interrompre la veille."],
+      variation: ["Le fauteuil reçoit son poids, le tapis vos genoux, puis le lit devient enfin un endroit où ni l’un ni l’autre ne surveille la sortie."],
+      tender: ["Vous gardez Allenna contre vous jusqu’à ce que ses épaules descendent. Elle répond par des baisers lents et accepte de fermer les yeux sans disparaître de la scène."],
+      suggestive: ["Vos mains remplacent progressivement les pièces d’armure. Allenna ouvre les vôtres en retour, plus attentive au désir qui monte qu’au silence de la rue."],
+      explicit: sexLines(
+        ["Allenna vous fait asseoir dans le fauteuil et entretient votre perle sensible avec sa bouche et ses doigts. Dans le lit, vous lui rendez le plaisir, puis une position en ciseaux prolonge la nuit jusqu’à une seconde jouissance partagée.", ["Allenna", "La fenêtre est fermée. Je préfère nettement ce qui se passe ici.", "troubled"]],
+        ["Allenna prend votre longueur brûlante près de la fenêtre, puis vous accueille dans le lit sur le côté, assez proche pour guider chaque profondeur. Elle vient ensuite au-dessus et conduit la reprise jusqu’à vos orgasmes successifs.", ["Allenna", "Aucune garde. Seulement cette cadence et la certitude de pouvoir la changer.", "troubled"]],
+        ["Vous choisissez une première stimulation pour votre corps, puis une seconde pour Allenna, sans symétrie imposée. La reprise mêle les deux par les mains, les bouches, le frottement ou la pénétration que vous avez définis ensemble.", ["Allenna", "Personne ne monte la garde. Personne ne disparaît. Continuez.", "troubled"]],
+      ),
+      ellipse: ["Les rideaux se ferment. Allenna laisse ses gantelets sur le rebord et rejoint le lit pendant que la chronique demeure de l’autre côté."],
+      reprise: ["Au milieu de la nuit, elle se réveille sans sursaut et vient chercher votre chaleur. La reprise naît de cette demande silencieuse, lente et entièrement présente."],
+      closing: ["À l’aube, Allenna ouvre les rideaux sans remettre immédiatement l’armure. La rue existe toujours ; elle n’a pas eu besoin de la sauver.", ["Allenna", "Le monde a tenu. Je pourrais risquer une autre nuit.", "troubled"]],
+      after: sexText("Elle dort enfin avec votre main sur son ventre.", "Elle laisse votre torse remplacer le rempart sous sa joue.", "Elle demande quelle proximité permettra à votre propre corps de se reposer."),
+    },
+  ],
 };
 
 export const HOME_INTIMACY_APPROACHES: Record<string, IntimacyChoice[]> = {
@@ -665,6 +783,16 @@ export const HOME_INTIMACY_APPROACHES: Record<string, IntimacyChoice[]> = {
     { id: "home-amanea-fire", text: "Attiser les flammes vertes jusqu’à faire vaciller son calme.", lines: [C("Amanea", "Le feu révèle l’intensité, pas l’intention."), P("La mienne est très claire."), N("Vous la poussez contre l’âtre et les flammes bondissent.")] },
     { id: "home-amanea-crown", text: "Laisser sa couronne à l’entrée et accueillir la femme dans toute la maison.", lines: [N("La couronne reste sur la console."), C("Amanea", "Elle sera encore là demain. Cette nuit, venez à moi.", "troubled")] },
   ],
+  tia: [
+    { id: "home-tia-score", text: "Ouvrir sa partition inachevée et lui confier la première mesure.", lines: [N("Tia pose deux doigts sur la page avant de les offrir à votre paume."), C("Tia", "Je conduis une mesure. Vous prenez la suivante, sans devoir la rendre régulière.", "troubled")] },
+    { id: "home-tia-table", text: "Déplacer un couvert et l’embrasser avant qu’elle ne le corrige.", lines: [N("Son regard rejoint le verre asymétrique, puis votre bouche."), C("Tia", "Une provocation domestique remarquablement efficace.", "smirk")] },
+    { id: "home-tia-seals", text: "Laisser ses deux sceaux à l’entrée et lui tendre une main sans révérence.", lines: [N("Tia abandonne les symboles sur la console et franchit la distance en son nom."), C("Tia", "Cette invitation ne concerne que moi. Répondez de même.", "troubled")] },
+  ],
+  allenna: [
+    { id: "home-allenna-kit", text: "Fermer sa boîte de soins et embrasser ses mains comme des mains.", lines: [N("Le fermoir claque. Allenna retire ses gantelets et vous confie ses doigts nus."), C("Allenna", "Aucune réparation. Seulement ce que nous voulons en faire.", "troubled")] },
+    { id: "home-allenna-floor", text: "Écarter la table basse et proposer une relève sur le tapis.", lines: [C("Allenna", "Pas de vainqueur. Chacun porte le mouvement avant de le transmettre."), N("La première prise devient un baiser avant même que l’exercice commence.")] },
+    { id: "home-allenna-curtains", text: "Fermer les rideaux et prendre officiellement la relève de sa veille.", lines: [P("Le monde tiendra jusqu’à l’aube."), C("Allenna", "Je vais tester cette hypothèse depuis votre lit.", "smirk"), N("Elle laisse les gantelets sur la fenêtre et revient vers vous.")] },
+  ],
 };
 
 const HOME_CHARACTER_OPENING: Record<string, DialogueLine[]> = {
@@ -677,6 +805,8 @@ const HOME_CHARACTER_OPENING: Record<string, DialogueLine[]> = {
   saidin: [C("Saidin", "Je n’ai regardé aucun futur au-delà de cette porte. La pièce me paraît immense.", "mysterious")],
   bellirith: [C("Bellirith", "J’ai laissé mon aura dehors. Si tu me désires ici, je saurai enfin que c’est moi.", "seductive")],
   amanea: [C("Amanea", "Aucun garde, aucun trône, aucun sujet. Une soirée rare mérite une franchise rare.", "neutral")],
+  tia: [C("Tia", "J’ai laissé mes sceaux dans l’entrée. S’ils parlent avant moi, retournez-les face contre la console.", "troubled")],
+  allenna: [C("Allenna", "La relève est prévenue, la porte verrouillée et la trousse fermée. Je n’ai plus aucune excuse fonctionnelle.", "troubled")],
 };
 
 const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
@@ -689,6 +819,8 @@ const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
   saidin: [C("Saidin", "Je connais moins bien demain qu’hier. C’est une conséquence délicieuse.", "soft")],
   bellirith: [C("Bellirith", "Garde le miroir tourné vers le lit. J’ai l’intention de lui donner d’autres vérités.", "soft")],
   amanea: [C("Amanea", "À l’extérieur, je reprendrai ma couronne. Ici, je laisse une promesse de retour.", "soft")],
+  tia: [C("Tia", "Le petit sceau peut rester ici. Je préfère qu’une prochaine invitation connaisse déjà l’adresse.", "troubled")],
+  allenna: [C("Allenna", "Le monde a tenu sans ma surveillance. Je reviendrai vérifier que cette méthode reste reproductible.", "smirk")],
 };
 
 export function homeIntimacyRoutes(character: string, sex: PlayerSex): HomeIntimacyRoute[] {

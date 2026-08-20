@@ -324,6 +324,68 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
       discordant: [N("L’hymne et les vieux réflexes ont trop souvent repris le clavier. Amanea le referme, puis dépose ses mains dans les vôtres comme un instrument plus honnête."), C("Amanea", "Assez de musique. Je n’ai plus envie de transformer ce moment en œuvre.", "stern")],
     },
   },
+  tia: {
+    title: "Une lettre sans sceau",
+    instruction: "Tia pose devant vous une page vierge, le sceau impérial et son sceau personnel. Construisez une invitation qui n’appartienne qu’à la personne qui l’écrit.",
+    beats: [
+      { prompt: "Tia commence par la formule d’une convocation.", detail: "Chaque mot est irréprochable et ne laisse pourtant aucune place à un véritable refus.", options: [
+        O("tia-erase", "Barrer le titre et conserver seulement son prénom", 2, N("Tia suit le trait sans protester. La phrase perd son autorité automatique et devient soudain beaucoup plus difficile à écrire."), C("Tia", "Tia demande donc votre présence. C’est moins solide… et plus vrai.", "thinking")),
+        O("tia-soften", "Remplacer « devez » par « pourriez »", 1, N("La phrase s’assouplit, même si le reste ressemble encore à un ordre très poli.")),
+        O("tia-obey", "Recopier exactement la formule officielle", 0, N("La convocation est parfaite. Tia la contemple avec le visage de quelqu’un qui vient de reconstruire précisément la distance qu’elle voulait quitter.")),
+      ]},
+      { prompt: "Elle hésite devant l’objet de la lettre.", detail: "Un dîner, une conversation ou simplement du temps : aucune raison politique ne justifie l’invitation.", options: [
+        O("tia-desire", "Écrire : « Parce que j’en ai envie »", 2, N("Tia relit la phrase deux fois, puis la conserve sans ajouter d’argument."), C("Tia", "Une motivation impossible à défendre devant le Conseil. Elle restera donc ici.", "troubled")),
+        O("tia-talk", "Choisir le motif neutre d’une conversation", 1, N("Le mot protège encore un peu son désir, mais Tia accepte qu’aucun dossier ne l’accompagne.")),
+        O("tia-duty", "Inventer une urgence administrative", 0, N("La page redevient une mission. Tia ferme un instant les yeux, contrariée d’avoir repris la sortie la plus familière.")),
+      ]},
+      { prompt: "Le sceau impérial attend dans sa main droite.", detail: "Le petit sceau personnel reste dans la gauche, rarement utilisé.", options: [
+        O("tia-personal", "Lui tendre le sceau personnel sans toucher à sa main", 2, N("Tia choisit elle-même de le prendre. La cire reçoit seulement ses initiales et aucune institution ne peut désormais parler à sa place.")),
+        O("tia-none", "Plier la lettre sans aucun sceau", 1, N("L’absence d’emblème l’inquiète, puis lui plaît. La feuille ne prouve rien d’autre que sa provenance.")),
+        O("tia-empire", "Apposer le grand sceau pour garantir la réception", 0, N("Le poids de l’Empire écrase presque la phrase personnelle. Tia repose la lettre avant que la cire soit froide.")),
+      ]},
+      { prompt: "Il manque la dernière ligne.", detail: "Tia a l’habitude d’exiger une réponse à une date précise.", options: [
+        O("tia-choice", "Écrire qu’une absence de réponse sera comprise", 2, N("Elle n’aime visiblement pas l’incertitude, mais signe tout de même."), C("Tia", "Je préférerais un refus clair. Je reconnais néanmoins le droit de ne pas répondre.", "troubled")),
+        O("tia-later", "Proposer qu’elle renouvelle l’invitation plus tard", 1, N("La possibilité d’un autre moment donne à la lettre une souplesse que Tia accepte avec prudence.")),
+        O("tia-deadline", "Ajouter une heure impérative", 0, N("La dernière ligne transforme de nouveau l’invitation en devoir. Tia rature elle-même l’heure, contrariée par son réflexe.")),
+      ]},
+    ],
+    results: {
+      attuned: [N("La lettre porte son prénom, un désir simple et un sceau qui n’engage qu’elle. Tia la replie, puis vous la tend sans messager entre vous."), C("Tia", "Je vous invite à rester cette nuit. Cette fois, aucun texte ne peut décider de votre réponse.", "troubled")],
+      searching: [N("Quelques formules officielles subsistent, mais elles entourent désormais une demande réelle. Tia garde la page au lieu de la faire archiver."), C("Tia", "Je distingue encore mal protection et contrôle. Vous saurez au moins où j’ai hésité.", "thinking")],
+      discordant: [N("La page ressemble trop à une convocation pour servir de pont intime. Tia la déchire avec une précision calme et revient près de vous sans papier."), C("Tia", "La lettre a échoué. Ma présence, elle, peut encore demander autrement.", "stern")],
+    },
+  },
+  allenna: {
+    title: "La relève des mains nues",
+    instruction: "Allenna noue un ruban souple entre vos poignets. Quatre mouvements doivent vous apprendre à porter, céder et reprendre sans transformer la proximité en lutte.",
+    beats: [
+      { prompt: "Le ruban se tend dès le premier mouvement.", detail: "Allenna attend de voir si vous chercherez à vaincre sa force ou à comprendre son appui.", options: [
+        O("allenna-follow", "Suivre la tension jusqu’à trouver son centre", 2, N("Vos poignets cessent de tirer en sens contraire. Allenna déplace son poids et la tension devient un lien stable plutôt qu’une entrave."), C("Allenna", "Vous lisez l’appui avant d’employer la force. Bien.", "thinking")),
+        O("allenna-hold", "Garder votre position sans avancer", 1, N("Le ruban reste tendu mais prévisible. Allenna approuve la stabilité sans encore réduire la distance.")),
+        O("allenna-pull", "Tirer brusquement pour prendre l’avantage", 0, N("Allenna compense par réflexe et le ruban mord vos poignets. Elle le relâche aussitôt, plus commandante que partenaire.")),
+      ]},
+      { prompt: "Allenna ferme les yeux.", detail: "Elle vous confie la direction suivante sans pouvoir surveiller votre posture.", options: [
+        O("allenna-guide", "Guider lentement sa main jusqu’à votre joue", 2, N("Ses doigts trouvent votre visage. Allenna expire, surprise que l’absence de contrôle l’ait conduite vers quelque chose de doux.")),
+        O("allenna-wait", "Laisser vos poignets immobiles", 1, N("Elle rouvre les yeux après un silence calme. La confiance n’a pas progressé, mais rien ne l’a menacée.")),
+        O("allenna-surprise", "La faire pivoter sans l’avertir", 0, N("Son corps bloque le mouvement avant sa pensée. Allenna ouvre les yeux, déjà prête à combattre.")),
+      ]},
+      { prompt: "Votre appui devient moins sûr.", detail: "Allenna pourrait vous retenir seule, mais le ruban permet aussi de demander une autre position.", options: [
+        O("allenna-relay", "Prononcer « relève » et changer ensemble d’appui", 2, N("Elle répond immédiatement, non par automatisme mais parce que le mot construit un mouvement partagé. Vous retrouvez l’équilibre contre elle.")),
+        O("allenna-lean", "Laisser davantage de poids dans sa main", 1, N("Allenna vous soutient sans difficulté, même si vous ne lui rendez pas encore une part de l’effort.")),
+        O("allenna-hide", "Masquer l’instabilité et continuer", 0, N("Le faux équilibre cède. Allenna vous rattrape, contrariée que vous ayez préféré l’apparence à une demande simple.")),
+      ]},
+      { prompt: "Il faut dénouer le ruban.", detail: "Allenna garde encore les doigts sur le nœud, comme si terminer l’exercice signifiait perdre le contact.", options: [
+        O("allenna-hands", "Dénouer le ruban et conserver ses mains", 2, N("La contrainte disparaît ; la proximité reste parce que vous la choisissez tous deux. Allenna entrelace alors ses doigts aux vôtres.")),
+        O("allenna-knot", "Desserrer seulement le nœud", 1, N("Le ruban devient décoratif. Allenna sourit devant ce compromis qui prolonge encore un peu le jeu.")),
+        O("allenna-cut", "Couper le ruban d’un geste net", 0, N("La sortie est efficace mais abrupte. Allenna récupère les deux morceaux comme un exercice achevé trop vite.")),
+      ]},
+    ],
+    results: {
+      attuned: [N("Le ruban tombe entre vos pieds tandis que vos mains restent liées par leur propre choix. Allenna ne vérifie ni la porte ni ses gantelets."), C("Allenna", "Nous avons gardé l’appui et perdu la contrainte. Cette méthode mérite une application moins habillée.", "smirk")],
+      searching: [N("Le ruban porte quelques tensions inutiles et plusieurs relais réussis. Allenna masse votre poignet avant de vous tendre l’autre main."), C("Allenna", "Nous pouvons ajuster. Pas recommencer depuis zéro — ajuster ensemble.", "thinking")],
+      discordant: [N("Allenna retire le ruban avant que l’exercice ne devienne un duel. Elle pose ensuite ses mains nues sur les vôtres, sans règle à gagner."), C("Allenna", "La technique n’aide plus. Pour la suite, dites seulement où vous voulez que je reste.", "troubled")],
+    },
+  },
 };
 
 export function intimacyGameResult(characterId: string, score: number) {

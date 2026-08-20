@@ -324,6 +324,26 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
     ],
     afterglow: [N("Amanea repose nue sous sa cape, votre main emprisonnée contre son cœur. Au-dehors, Akuhn’Nabad continue sans réclamer sa présence."), C("Amanea", "Allenna a gouverné la cité. Tu as gardé Amanea. Je crois que nous avons toutes deux choisi correctement.", "smile")],
   },
+  tia: {
+    opening: [C("Tia", "La porte est fermée. Aucun garde, aucun conseiller et aucun registre ne décidera de ce qui arrive ensuite.", "troubled"), N("Elle dépose sa couronne dans la pièce voisine, puis revient sans tenter de donner à cette vulnérabilité l’apparence d’une cérémonie.")],
+    approaches: [
+      { id: "tia-singulier", text: "Lui demander de formuler une envie entièrement au singulier.", lines: [N("Tia commence une phrase au nom de l’Empire, s’interrompt et pose ses doigts nus dans votre paume."), C("Tia", "Je veux que vous restiez. Je veux vous toucher. Et je refuse que la fonction réponde à ma place.", "troubled"), N("Votre baiser accueille cette première demande sans lui réclamer davantage.")] },
+      { id: "tia-distance", text: "La laisser choisir elle-même le dernier pas qui réduit la distance.", lines: [N("Vous demeurez devant elle, assez près pour être désiré·e et assez loin pour que le mouvement reste sien."), C("Tia", "Vous rendez le choix presque insupportablement visible.", "shy"), N("Elle franchit pourtant l’espace, pose votre main sur sa taille et vous embrasse sans revenir sur sa décision.")] },
+      { id: "tia-imprevu", text: "Rompre la solennité avec un premier geste volontairement imprévu.", lines: [N("Vous défaites la mauvaise attache et la chaîne d’or se retrouve de travers. Tia la regarde, puis choisit de rire plutôt que de la corriger."), C("Tia", "Une ouverture techniquement imparfaite. Continuez avant que je ne retrouve le protocole.", "smirk"), N("Elle vous attire contre elle avec une impatience qui n’appartient à aucune audience.")] },
+    ],
+    directions: [],
+    afterglow: [N("Tia reste près de vous tandis que sa couronne attend hors de la chambre. Elle boit à votre verre et laisse le silence n’être ni ordre ni jugement."), C("Tia", "L’Empire n’a rien appris cette nuit. Moi, si. Je souhaite recommencer avant d’avoir parfaitement compris.", "troubled")],
+  },
+  allenna: {
+    opening: [C("Allenna", "J’ai vérifié la porte, les fioles et la relève. Il ne reste plus aucune urgence que je puisse raisonnablement inventer.", "troubled"), N("Elle retire ses gantelets et les pose assez loin pour devoir choisir consciemment de les reprendre. Ses mains nues restent ouvertes devant vous.")],
+    approaches: [
+      { id: "allenna-hands", text: "Prendre ses mains sans traiter leurs cicatrices comme des blessures à réparer.", lines: [N("Vous embrassez sa paume, puis une jointure marquée par l’entraînement. Allenna ne retire pas ses doigts et ne vous donne aucune explication."), C("Allenna", "Vous pouvez les toucher comme des mains, pas comme un dossier médical.", "troubled"), N("Elle referme doucement les doigts autour des vôtres et vous rapproche.")] },
+      { id: "allenna-relay", text: "Lui annoncer clairement que vous prenez la première relève.", lines: [N("Allenna ouvre la bouche pour répartir les tâches. Votre main sur sa joue interrompt la procédure sans nier son besoin de comprendre."), C("Allenna", "Très bien. Vous menez. Je conserve le droit de vous corriger si votre stratégie est mauvaise.", "smirk"), N("Son sourire transforme la menace en invitation lorsqu’elle s’allonge.")] },
+      { id: "allenna-choice", text: "Lui demander ce qu’elle veut lorsqu’aucune vie ne dépend de sa réponse.", lines: [N("La question la déstabilise davantage qu’un danger immédiat. Allenna regarde vos lèvres, vos mains puis la porte qu’elle a déjà verrouillée."), C("Allenna", "Vous. Lentement d’abord. Et sans me laisser prétendre que je surveille encore quelque chose.", "shy"), N("Elle vous embrasse avant de pouvoir reformuler en termes plus prudents.")] },
+    ],
+    directions: [],
+    afterglow: [N("Allenna replace un coussin sous votre nuque puis accepte que vous fassiez de même pour elle. Ses gantelets restent au sol, inutiles dans la chaleur partagée."), C("Allenna", "Relève terminée. Personne n’a été abandonné. Je peux apprendre à appeler cela du repos.", "troubled")],
+  },
 };
 
 export function intimacyOpening(characterId: string, date?: DateScene): DialogueLine[] {

@@ -1,6 +1,6 @@
 import type { DialogueLine } from "./game-data";
 
-export type NarrativeKind = "intro" | "route" | "ambient" | "social" | "date" | "home";
+export type NarrativeKind = "intro" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation";
 
 export type NarrativeContext = {
   sceneId: string;
@@ -33,6 +33,8 @@ export const CHARACTER_NAMES: Record<string, string> = {
   bellirith: "Bellirith",
   amanea: "Amanea",
   draven: "Draven",
+  allenna: "Allenna",
+  tia: "Tia",
 };
 
 const VOICES: Record<string, VoiceTexture> = {
@@ -115,6 +117,33 @@ const VOICES: Record<string, VoiceTexture> = {
       "Cette minute restera hors des archives. Cela ne la rend pas moins réelle.",
       "Revenez me parler ainsi, même lorsque la cour se trouvera entre nous.",
       "Je dois reprendre mon titre. Laissez-moi seulement quelques respirations avant de le remettre.",
+    ],
+  },
+  tia: {
+    name: "Tia",
+    moods: ["neutral", "thinking", "stern", "troubled", "smile", "angry"],
+    gestures: [
+      "Tia replace un document au millimètre, puis laisse volontairement le suivant de travers comme si cette irrégularité exigeait davantage de courage qu’un décret.",
+      "Son regard vérifie portes, gardes et témoins avant de revenir vers vous ; la femme n’apparaît jamais sans négocier avec l’institution.",
+      "Elle commence une réponse au pluriel impérial, s’interrompt et reprend au singulier sans commenter l’effort.",
+      "Tia pose deux doigts sur son sceau personnel plutôt que sur celui de l’Empire, choix minuscule dont elle mesure parfaitement la portée.",
+    ],
+    invitations: [
+      "Répondez avec exactitude. Je n’exige pas l’accord ; j’exige que votre désaccord ait une forme que nous puissions examiner.",
+      "Vous pouvez refuser. Je ne promets pas d’apprécier ce mot, seulement de ne pas le punir.",
+      "Ne confondez pas mon attention avec une ouverture sans limite. Dites néanmoins ce que vous êtes venu·e dire.",
+      "Parlez à Tia si vous y parvenez. L’Impératrice écoutera sans interrompre pendant quelques minutes.",
+    ],
+    reflections: [
+      "Votre réponse ne cède ni à la fonction ni au plaisir de la provoquer. Cette position mérite d’être conservée.",
+      "Je ne partage pas votre conclusion. J’admets cependant que les faits que vous avancez déplacent la question.",
+      "Une limite claire ne constitue pas une offense. Je découvre qu’elle peut même rendre une proximité possible.",
+      "Vous venez de laisser une incertitude entière sans l’utiliser contre moi. Je mesure la rareté de ce geste.",
+    ],
+    closures: [
+      "Cette conversation ne deviendra ni décret ni précédent. Elle pourra toutefois recommencer.",
+      "Restez jusqu’à ce que les gardes frappent. Après cela, je devrai redevenir parfaitement disponible pour l’Empire.",
+      "Je n’accorde aucune promesse de douceur. Seulement la possibilité d’une prochaine vérité.",
     ],
   },
   valurn: {
@@ -277,6 +306,33 @@ const VOICES: Record<string, VoiceTexture> = {
       "Reste encore. Allenna gouverne la prochaine heure ; je refuse de lui voler cette victoire en retournant trop tôt au conseil.",
       "Nous reprendrons cette conversation sans trône, sans tribunal et sans prononcer le nom qui pourrait guider le démon jusqu’à Naïah.",
       "Je choisis de garder cette minute. Pas comme une dette — comme quelque chose que la reine et la femme désirent ensemble.",
+    ],
+  },
+  allenna: {
+    name: "Allenna",
+    moods: ["neutral", "thinking", "angry", "troubled", "smile", "sad", "threatening"],
+    gestures: [
+      "Allenna vérifie par réflexe la sortie, votre posture et l’état de ses fioles avant d’accepter qu’aucune urgence n’exige sa main immédiatement.",
+      "Elle retire un gantelet, observe ses doigts nus comme un équipement inhabituel et choisit de ne pas les cacher de nouveau.",
+      "Un ordre se forme sur ses lèvres ; elle l’abandonne et reformule avec la précision plus difficile d’une demande.",
+      "Son regard suit une patrouille jusqu’à la porte, puis revient vers vous lorsque la relève prouve qu’elle peut cesser de tout porter seule.",
+    ],
+    invitations: [
+      "Dites ce que vous pouvez faire. Dites également ce que vous refusez. Une stratégie correcte a besoin des deux informations.",
+      "Je propose, je n’ordonne pas. Si ma voix rend la différence difficile à entendre, demandez-moi de recommencer.",
+      "Votre peur n’annule pas votre décision. Je veux connaître l’une et l’autre avant d’avancer.",
+      "Ne choisissez pas selon ce qui me serait le plus utile. Je vous demande ce que vous voulez réellement donner.",
+    ],
+    reflections: [
+      "Votre réponse conserve l’action sans confisquer la personne. C’est une méthode que je peux respecter.",
+      "Vous n’avez pas promis de supprimer le risque. Vous avez offert de ne pas me laisser seule devant lui.",
+      "Je connais les faits. Vous venez de m’aider à apprendre ce qu’ils font au corps, partie moins confortable du rapport.",
+      "Cette solution ne dépend pas de mon contrôle total. Je la trouve irritante et probablement meilleure.",
+    ],
+    closures: [
+      "La relève tient. Je peux rester quelques minutes supplémentaires sans transformer cela en faute.",
+      "Nous reprendrons après l’entraînement — ou sans entraînement, si vous insistez sur cette étrange possibilité.",
+      "Merci. Le mot est complet ; n’essayez pas de lui ajouter une procédure.",
     ],
   },
   draven: {

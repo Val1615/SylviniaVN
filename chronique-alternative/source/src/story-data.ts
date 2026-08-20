@@ -52,7 +52,7 @@ export const MAIN_STORY: StoryAct[] = [
     number: "IV",
     title: "La Reine Noire vivante",
     objective: "Entrer à Akuhn’Nabad et négocier avec Amanea sans exposer sa cité à l’Empire.",
-    detail: "Dans cette branche, Amanea règne encore. Ennemie de l’Empire, elle reste loin d’Al’Gratal, prépare Allenna à lui succéder et porte en silence la douleur d’avoir dû chasser Naïah.",
+    detail: "Dans cette branche, Amanea règne encore. Ennemie de l’Empire, elle reste loin d’Al’Gratal, prépare Allenna à lui succéder et oppose à Naïah un silence dont personne ne comprend encore la cause.",
     requiredScenes: ["amanea-0", "amanea-family-truth"],
   },
   {
@@ -60,7 +60,7 @@ export const MAIN_STORY: StoryAct[] = [
     number: "V",
     title: "La couture du pacte",
     objective: "Relier la défaillance de votre portail au pacte qu’Iriana tente de révoquer.",
-    detail: "Valurn reconnaît dans votre fracture la même logique que dans les contrats démoniaques d’Alamma. Bellirith connaît des chemins que son frère préférerait ignorer ; Amanea possède des archives que l’Empire ne doit jamais voir.",
+    detail: "Valurn reconnaît dans votre fracture la même logique que dans les contrats démoniaques d’Alamma. Bellirith connaît des chemins que son frère préférerait ignorer ; Amanea possède des archives que l’Empire ne doit jamais voir. D’autres traces ressemblantes devront être étudiées sans être confondues entre elles.",
     requiredScenes: ["valurn-2", "amanea-3", "iriana-3"],
   },
   {
@@ -74,24 +74,6 @@ export const MAIN_STORY: StoryAct[] = [
 ];
 
 export const SUPPORTING_FIGURES: SupportingFigure[] = [
-  {
-    id: "tia",
-    name: "Tia Farae",
-    role: "Impératrice de Sylvinia",
-    portrait: "/assets/portraits/tia.jpg",
-    unlockScenes: ["amanea-0", "iriana-0"],
-    place: "Al’Gratal · Palais impérial",
-    bio: "Sœur d’Amanea et souveraine de l’Empire. Leur ancienne fracture politique a fait d’Akuhn’Nabad une puissance ennemie. Tia tolère mal les zones qu’elle ne contrôle pas ; Amanea, elle, refuse de remettre les siens à la merci de la Lumière impériale.",
-  },
-  {
-    id: "allenna",
-    name: "Allenna",
-    role: "Héritière et commandante des Obscurcis",
-    portrait: "/assets/backgrounds/akuhn_palace.webp",
-    unlockScenes: ["amanea-1", "amanea-family-truth"],
-    place: "Akuhn’Nabad · Palais obscurci",
-    bio: "Recueillie par Amanea puis élevée comme sa fille, Allenna est devenue son bras droit et l’héritière qu’elle a choisie. Amanea se montre exigeante avec elle, mais sa fierté maternelle est évidente dès qu’Allenna quitte la pièce.",
-  },
   {
     id: "medig",
     name: "Medig",

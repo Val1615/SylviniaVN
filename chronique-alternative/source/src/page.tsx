@@ -17,6 +17,19 @@ import {
   type StatKey,
 } from "./game-data";
 import { AMBIENT_LINES, type AmbientDialogue } from "./ambient-dialogues";
+import {
+  ALL_KNOWLEDGE_ENTRIES,
+  INVITATIONS,
+  LETTERS,
+  RUMORS,
+  SECRET_CONVERSATIONS,
+  SPONTANEOUS_EVENTS,
+  type InvitationTemplate,
+  type LetterTemplate,
+  type RumorTemplate,
+  type SecretConversation,
+  type SpontaneousEvent,
+} from "./heritages-data";
 import { SOCIAL_SCENES, type SocialScene } from "./social-scenes";
 import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
@@ -130,8 +143,22 @@ type GameSettings = {
   unlockAll: boolean;
 };
 
+type ReceivedLetter = {
+  id: string;
+  receivedDay: number;
+  read: boolean;
+  replyId?: string;
+};
+
+type ReceivedInvitation = {
+  id: string;
+  receivedDay: number;
+  expiresDay: number;
+  status: "pending" | "accepted" | "declined" | "expired";
+};
+
 type GameState = {
-  version: 11;
+  version: 12;
   player: Player;
   day: number;
   period: number;
@@ -151,6 +178,13 @@ type GameState = {
   sceneMemories: Record<string, string>;
   dateHistory: string[];
   groupDateHistory: string[];
+  knowledge: string[];
+  secretHistory: string[];
+  letters: ReceivedLetter[];
+  invitations: ReceivedInvitation[];
+  rumors: { id: string; heardDay: number }[];
+  worldEventHistory: string[];
+  livingWorldTick: string;
   jobRuns: Record<string, number>;
   housing: HousingState;
   settings: GameSettings;
@@ -164,7 +198,7 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date" | "home";
+  kind: "intro" | "route" | "ambient" | "social" | "date" | "group-date" | "home" | "secret" | "world" | "invitation";
   route?: RouteScene;
   ambientId?: string;
   socialId?: string;
@@ -172,6 +206,9 @@ type SceneView = {
   groupDate?: GroupDateScene;
   homeMomentId?: string;
   homeMomentCharacters?: string[];
+  secretId?: string;
+  worldEventId?: string;
+  invitationId?: string;
   cast: string[];
 };
 
@@ -247,6 +284,8 @@ type ModalState =
   | { kind: "group-date-planner" }
   | { kind: "group-date-result"; groupDateId: string }
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
+  | { kind: "letter"; letterId: string }
+  | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
   | { kind: "job"; jobId: string }
   | { kind: "notice"; title: string; text: string; consumeTime?: boolean; actionLabel?: string }
@@ -255,7 +294,7 @@ type ModalState =
 type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
 type GroupIntimacyModalState = Extract<NonNullable<ModalState>, { kind: "group-intimacy" }>;
 
-type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home";
+type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home" | "letter" | "invitation" | "rumor" | "knowledge";
 
 type ChronicleNotification = {
   id: number;
@@ -359,7 +398,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 11,
+    version: 12,
     player,
     day: 1,
     period: 0,
@@ -379,6 +418,13 @@ function createGame(player: Player): GameState {
     sceneMemories: {},
     dateHistory: [],
     groupDateHistory: [],
+    knowledge: [],
+    secretHistory: [],
+    letters: [],
+    invitations: [],
+    rumors: [],
+    worldEventHistory: [],
+    livingWorldTick: "",
     jobRuns: {},
     housing: emptyHousingState(),
     settings: { ...DEFAULT_SETTINGS },
@@ -426,7 +472,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 11,
+    version: 12,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -443,6 +489,23 @@ function hydrateGame(raw: unknown): GameState | null {
     sceneMemories: value.sceneMemories || {},
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
     groupDateHistory: value.groupDateHistory || [],
+    knowledge: unique((value.knowledge || []).filter((id) => ALL_KNOWLEDGE_ENTRIES.some((entry) => entry.id === id))),
+    secretHistory: unique((value.secretHistory || []).filter((id) => SECRET_CONVERSATIONS.some((entry) => entry.id === id))),
+    letters: (value.letters || []).filter((entry) => LETTERS.some((letter) => letter.id === entry.id)).map((entry) => ({
+      id: entry.id,
+      receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
+      read: Boolean(entry.read),
+      replyId: entry.replyId,
+    })),
+    invitations: (value.invitations || []).filter((entry) => INVITATIONS.some((invitation) => invitation.id === entry.id)).map((entry) => ({
+      id: entry.id,
+      receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
+      expiresDay: Math.max(1, Number(entry.expiresDay) || 1),
+      status: ["pending", "accepted", "declined", "expired"].includes(entry.status) ? entry.status : "expired",
+    })) as ReceivedInvitation[],
+    rumors: (value.rumors || []).filter((entry) => RUMORS.some((rumor) => rumor.id === entry.id)).map((entry) => ({ id: entry.id, heardDay: Math.max(1, Number(entry.heardDay) || 1) })),
+    worldEventHistory: unique((value.worldEventHistory || []).filter((id) => SPONTANEOUS_EVENTS.some((entry) => entry.id === id))),
+    livingWorldTick: typeof value.livingWorldTick === "string" ? value.livingWorldTick : "",
     jobRuns: value.jobRuns || {},
     housing: {
       ...emptyHousingState(),
@@ -480,6 +543,112 @@ function clamp(value: number, min = 0, max = 100) {
 
 function unique(values: string[]) {
   return Array.from(new Set(values));
+}
+
+function hasKnowledge(game: GameState, ids: string[] = []) {
+  return ids.every((id) => game.knowledge.includes(id));
+}
+
+function characterUnlocked(game: GameState, character: CharacterData) {
+  if (game.settings.unlockAll) return true;
+  if (game.day < character.unlockDay) return false;
+  // Tia doit d'abord exister comme institution. Son accès personnel n'apparaît
+  // qu'après un premier véritable approfondissement du fil d'Amanea.
+  if (character.id === "tia") return (game.relationships.amanea?.stage || 0) >= 2;
+  return true;
+}
+
+function secretConversationReady(secret: SecretConversation, game: GameState, requirePlace = true) {
+  const relation = game.relationships[secret.character];
+  if (!relation || !relation.met || game.secretHistory.includes(secret.id)) return false;
+  if (!game.settings.unlockAll && relation.affection + relation.trust < secret.tier) return false;
+  if (!game.settings.unlockAll && game.day < (secret.minDay || 1)) return false;
+  if (!game.settings.unlockAll && !hasKnowledge(game, secret.requiresKnowledge)) return false;
+  if (requirePlace && secret.locations?.length && !secret.locations.includes(game.location)) return false;
+  return true;
+}
+
+function availableSecretForCharacter(characterId: string, game: GameState) {
+  return SECRET_CONVERSATIONS
+    .filter((secret) => secret.character === characterId && secretConversationReady(secret, game))
+    .sort((left, right) => left.tier - right.tier)[0];
+}
+
+function spontaneousEventReady(event: SpontaneousEvent, game: GameState) {
+  if (game.worldEventHistory.includes(event.id)) return false;
+  if (game.day < event.minDay && !game.settings.unlockAll) return false;
+  if (event.location !== game.location) return false;
+  if (event.spots?.length && !event.spots.includes(game.spot)) return false;
+  if (!game.settings.unlockAll && event.characters.some((id) => {
+    const character = CHARACTERS.find((entry) => entry.id === id);
+    return !character || !characterUnlocked(game, character);
+  })) return false;
+  if (!game.settings.unlockAll && Object.entries(event.minStages || {}).some(([id, stage]) => (game.relationships[id]?.stage || 0) < stage)) return false;
+  if (!game.settings.unlockAll && !hasKnowledge(game, event.requiresKnowledge)) return false;
+  if (event.requiresFlags?.some((flag) => !game.flags.includes(flag))) return false;
+  if (event.excludesFlags?.some((flag) => game.flags.includes(flag))) return false;
+  return true;
+}
+
+function availableSpontaneousEvent(game: GameState) {
+  return SPONTANEOUS_EVENTS.find((event) => spontaneousEventReady(event, game));
+}
+
+function rumorReady(rumor: RumorTemplate, game: GameState) {
+  return rumor.location === game.location
+    && game.day >= rumor.minDay
+    && (!rumor.spots?.length || rumor.spots.includes(game.spot))
+    && !game.rumors.some((entry) => entry.id === rumor.id);
+}
+
+function availableRumor(game: GameState) {
+  const deck = RUMORS.filter((rumor) => rumorReady(rumor, game));
+  if (!deck.length) return undefined;
+  return deck[(game.day + game.period + game.rumors.length) % deck.length];
+}
+
+function letterReady(letter: LetterTemplate, game: GameState) {
+  const character = CHARACTERS.find((entry) => entry.id === letter.character);
+  const relation = game.relationships[letter.character];
+  return Boolean(character && relation && characterUnlocked(game, character)
+    && relation.met
+    && game.day >= letter.minDay
+    && relation.stage >= letter.minStage
+    && hasKnowledge(game, letter.requiresKnowledge)
+    && !game.letters.some((entry) => entry.id === letter.id));
+}
+
+function invitationReady(invitation: InvitationTemplate, game: GameState) {
+  const character = CHARACTERS.find((entry) => entry.id === invitation.character);
+  const relation = game.relationships[invitation.character];
+  return Boolean(character && relation && characterUnlocked(game, character)
+    && relation.met
+    && game.day >= invitation.minDay
+    && relation.stage >= invitation.minStage
+    && hasKnowledge(game, invitation.requiresKnowledge)
+    && !game.invitations.some((entry) => entry.id === invitation.id));
+}
+
+function evolveLivingWorld(game: GameState): GameState {
+  const tick = `${game.day}:${game.period}`;
+  if (game.livingWorldTick === tick) return game;
+  const invitations = game.invitations.map((entry) => entry.status === "pending" && game.day > entry.expiresDay ? { ...entry, status: "expired" as const } : entry);
+  const base = { ...game, invitations, livingWorldTick: tick };
+  const letter = LETTERS.find((entry) => letterReady(entry, base));
+  const invitation = INVITATIONS.find((entry) => invitationReady(entry, base));
+  const newLetters = letter ? [...base.letters, { id: letter.id, receivedDay: base.day, read: false }] : base.letters;
+  const newInvitations = invitation ? [...base.invitations, { id: invitation.id, receivedDay: base.day, expiresDay: base.day + invitation.expiresAfter, status: "pending" as const }] : base.invitations;
+  if (!letter && !invitation && invitations === game.invitations) return base;
+  return {
+    ...base,
+    letters: newLetters,
+    invitations: newInvitations,
+    journal: [
+      ...base.journal,
+      ...(letter ? [`Correspondance reçue · ${letter.subject}`] : []),
+      ...(invitation ? [`Invitation reçue · ${invitation.title}`] : []),
+    ],
+  };
 }
 
 function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
@@ -552,7 +721,7 @@ function newlyUnlockedContent(previous: GameState, next: GameState) {
     if (previous.day < location.unlockDay && next.day >= location.unlockDay) labels.push(`Lieu · ${location.name}`);
   });
   CHARACTERS.forEach((character) => {
-    if (previous.day < character.unlockDay && next.day >= character.unlockDay) labels.push(`Relation · ${character.name}`);
+    if (!characterUnlocked(previous, character) && characterUnlocked(next, character)) labels.push(`Relation · ${character.name}`);
   });
   JOBS.forEach((job) => {
     if (!jobAccess(previous, job).unlocked && jobAccess(next, job).unlocked) labels.push(`Job · ${job.title}`);
@@ -583,6 +752,7 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
   const homeChanges: ChronicleNotificationDraft[] = [];
   const unlockChanges: ChronicleNotificationDraft[] = [];
   const codexChanges: ChronicleNotificationDraft[] = [];
+  const livingWorldChanges: ChronicleNotificationDraft[] = [];
 
   const previousStory = storyProgress(previous.history, previous.flags);
   const nextStory = storyProgress(next.history, next.flags);
@@ -610,6 +780,11 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
       });
     } else if (!before.met && after.met) {
       relationChanges.push({ kind: "relation", title: `Nouvelle relation · ${character.name}`, detail: character.role });
+    }
+    const beforeSecret = SECRET_CONVERSATIONS.find((secret) => secret.character === character.id && secretConversationReady(secret, previous, false));
+    const afterSecret = SECRET_CONVERSATIONS.find((secret) => secret.character === character.id && secretConversationReady(secret, next, false));
+    if (!beforeSecret && afterSecret) {
+      relationChanges.push({ kind: "relation", title: `Une nouvelle conversation pourrait être possible avec ${character.name}.`, detail: "Retrouvez cette personne dans l’un de ses lieux habituels." });
     }
   });
 
@@ -647,7 +822,30 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     });
   }
 
-  return [...storyChanges, ...relationChanges, ...itemChanges, ...homeChanges, ...unlockChanges, ...codexChanges].slice(0, 4);
+  const newLetters = next.letters.filter((entry) => !previous.letters.some((before) => before.id === entry.id));
+  newLetters.forEach((entry) => {
+    const letter = LETTERS.find((candidate) => candidate.id === entry.id);
+    livingWorldChanges.push({ kind: "letter", title: "Une correspondance vous attend", detail: letter?.subject || "Consultez le Journal." });
+  });
+  const newInvitations = next.invitations.filter((entry) => !previous.invitations.some((before) => before.id === entry.id));
+  newInvitations.forEach((entry) => {
+    const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
+    livingWorldChanges.push({ kind: "invitation", title: invitation?.message || "Quelqu’un souhaite vous voir.", detail: invitation ? `Réponse possible jusqu’au jour ${entry.expiresDay}.` : "Consultez le Journal." });
+  });
+  const expiredInvitations = next.invitations.filter((entry) => entry.status === "expired" && previous.invitations.some((before) => before.id === entry.id && before.status === "pending"));
+  expiredInvitations.forEach((entry) => {
+    const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
+    livingWorldChanges.push({ kind: "invitation", title: "Une invitation a expiré", detail: invitation?.title || "Le personnage a poursuivi sa propre journée." });
+  });
+  const newRumors = next.rumors.filter((entry) => !previous.rumors.some((before) => before.id === entry.id));
+  if (newRumors.length) livingWorldChanges.push({ kind: "rumor", title: "Une rumeur rejoint votre Journal", detail: "Son exactitude demeure inconnue." });
+  const newKnowledge = next.knowledge.filter((id) => !previous.knowledge.includes(id));
+  if (newKnowledge.length) {
+    const entry = ALL_KNOWLEDGE_ENTRIES.find((candidate) => candidate.id === newKnowledge[0]);
+    livingWorldChanges.push({ kind: "knowledge", title: "Votre compréhension a changé", detail: entry?.title || "Une information pourra éclairer d’autres conversations." });
+  }
+
+  return [...storyChanges, ...relationChanges, ...livingWorldChanges, ...itemChanges, ...homeChanges, ...unlockChanges, ...codexChanges].slice(0, 4);
 }
 
 function readSlotInfo() {
@@ -817,13 +1015,14 @@ function chooseSocialScene(characterId: string, game: GameState) {
 }
 
 function relationshipRequirementMet(choice: ChoiceData, game: GameState) {
-  return !choice.requiresRelationship?.some((requirement) => {
+  const relationshipMissing = choice.requiresRelationship?.some((requirement) => {
     const relation = game.relationships[requirement.character];
     return !relation
       || (requirement.stage !== undefined && relation.stage < requirement.stage)
       || (requirement.trust !== undefined && relation.trust < requirement.trust)
       || (requirement.affection !== undefined && relation.affection < requirement.affection);
   });
+  return !relationshipMissing;
 }
 
 function impactText(choice: ChoiceData) {
@@ -1314,7 +1513,7 @@ export default function Home() {
   }, []);
 
   function updateGame(transform: (current: GameState) => GameState) {
-    setGame((current) => current ? transform(current) : current);
+    setGame((current) => current ? evolveLivingWorld(transform(current)) : current);
   }
 
   function refreshSlots() {
@@ -1412,6 +1611,7 @@ export default function Home() {
         confluence: clamp(current.confluence + (effects.confluence || 0)),
         coins: Math.max(0, current.coins + (effects.coins || 0)),
         flags: unique([...current.flags, ...(effects.flags || [])]),
+        knowledge: unique([...current.knowledge, ...(effects.knowledge || [])]),
         history: completedScene ? unique([...current.history, completedScene.id]) : current.history,
         journal: completedScene ? [...current.journal, `${character?.name || "Rencontre"} · ${completedScene.title}`] : current.journal,
         codex: completedScene ? unique([...current.codex, character?.name || "", completedScene.title].filter(Boolean)) : current.codex,
@@ -1496,6 +1696,23 @@ export default function Home() {
       });
       return;
     }
+    const secret = availableSecretForCharacter(characterId, game);
+    if (secret) {
+      const scene: SceneView = {
+        id: secret.id,
+        title: secret.title,
+        background: spotById(game.spot)?.background || backgroundUrl("streets"),
+        mood: character.defaultMood,
+        character: characterId,
+        cast: [characterId],
+        intro: secret.intro,
+        choices: secret.choices,
+        kind: "secret",
+        secretId: secret.id,
+      };
+      setDialogue({ scene, lines: expandedLines(scene, game, secret.intro, "intro"), lineIndex: 0, phase: "intro" });
+      return;
+    }
     const social = queuedSocial;
     if (social) {
       const scene: SceneView = {
@@ -1553,6 +1770,111 @@ export default function Home() {
     });
   }
 
+  function openSpontaneousEvent(event: SpontaneousEvent) {
+    if (!game || !spontaneousEventReady(event, game)) return;
+    const lead = CHARACTERS.find((entry) => entry.id === event.characters[0]);
+    const scene: SceneView = {
+      id: event.id,
+      title: event.title,
+      background: spotById(game.spot)?.background || backgroundUrl("streets"),
+      mood: event.mood || lead?.defaultMood || "neutral",
+      character: event.characters[0],
+      cast: event.characters,
+      intro: event.intro,
+      choices: event.choices,
+      kind: "world",
+      worldEventId: event.id,
+    };
+    setDialogue({ scene, lines: expandedLines(scene, game, event.intro, "intro"), lineIndex: 0, phase: "intro" });
+  }
+
+  function hearRumor(rumor: RumorTemplate) {
+    if (!game || !rumorReady(rumor, game)) return;
+    updateGame((current) => ({
+      ...current,
+      rumors: [...current.rumors, { id: rumor.id, heardDay: current.day }],
+      knowledge: rumor.leadKnowledge ? unique([...current.knowledge, rumor.leadKnowledge]) : current.knowledge,
+      journal: [...current.journal, `Rumeur entendue · ${rumor.source}`],
+    }));
+    setModal({ kind: "notice", title: rumor.source, text: `« ${rumor.text} »\n\nLe Journal conserve cette version sans prétendre qu’elle soit vraie.` });
+  }
+
+  function readLetter(letterId: string) {
+    if (!game) return;
+    const letter = LETTERS.find((entry) => entry.id === letterId);
+    const received = game.letters.find((entry) => entry.id === letterId);
+    if (!letter || !received) return;
+    const firstRead = !received.read;
+    updateGame((current) => {
+      const inventory = { ...current.inventory };
+      if (firstRead && letter.attachedItem) inventory[letter.attachedItem] = (inventory[letter.attachedItem] || 0) + 1;
+      return {
+        ...current,
+        inventory,
+        letters: current.letters.map((entry) => entry.id === letterId ? { ...entry, read: true } : entry),
+        journal: firstRead ? [...current.journal, `Lettre lue · ${letter.subject}`] : current.journal,
+      };
+    });
+    setModal({ kind: "letter", letterId });
+  }
+
+  function replyToLetter(letter: LetterTemplate, replyId: string) {
+    if (!game) return;
+    const reply = letter.replies?.find((entry) => entry.id === replyId);
+    const received = game.letters.find((entry) => entry.id === letter.id);
+    if (!reply || !received || received.replyId) return;
+    applyEffects(letter.character, reply.effects);
+    updateGame((current) => ({
+      ...current,
+      letters: current.letters.map((entry) => entry.id === letter.id ? { ...entry, replyId } : entry),
+      journal: [...current.journal, `Réponse envoyée · ${letter.subject}`],
+    }));
+  }
+
+  function acceptInvitation(invitation: InvitationTemplate) {
+    if (!game) return;
+    const received = game.invitations.find((entry) => entry.id === invitation.id);
+    if (!received || received.status !== "pending" || game.day > received.expiresDay) return;
+    const character = CHARACTERS.find((entry) => entry.id === invitation.character);
+    const period = PERIODS.findIndex((entry) => entry.id === invitation.period);
+    const scene: SceneView = {
+      id: invitation.id,
+      title: invitation.title,
+      background: spotById(invitation.spot)?.background || backgroundUrl("streets"),
+      mood: character?.defaultMood || "neutral",
+      character: invitation.character,
+      cast: [invitation.character],
+      intro: invitation.intro,
+      choices: invitation.choices,
+      kind: "invitation",
+      invitationId: invitation.id,
+    };
+    updateGame((current) => ({
+      ...current,
+      location: invitation.location,
+      spot: invitation.spot,
+      period: period >= 0 ? period : current.period,
+      invitations: current.invitations.map((entry) => entry.id === invitation.id ? { ...entry, status: "accepted" } : entry),
+    }));
+    setSelectedLocation(invitation.location);
+    setSelectedSpot(invitation.spot);
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, { ...game, location: invitation.location, spot: invitation.spot, period: period >= 0 ? period : game.period }, invitation.intro, "intro", invitation.spot), lineIndex: 0, phase: "intro" });
+  }
+
+  function declineInvitation(invitation: InvitationTemplate) {
+    if (!game) return;
+    const received = game.invitations.find((entry) => entry.id === invitation.id);
+    if (!received || received.status !== "pending") return;
+    if (invitation.declineEffects) applyEffects(invitation.character, invitation.declineEffects);
+    updateGame((current) => ({
+      ...current,
+      invitations: current.invitations.map((entry) => entry.id === invitation.id ? { ...entry, status: "declined" } : entry),
+      journal: [...current.journal, `Invitation refusée · ${invitation.title}`],
+    }));
+    setModal({ kind: "notice", title: "Invitation refusée", text: invitation.declineText });
+  }
+
   function advanceDialogue() {
     if (!dialogue) return;
     if (dialogue.lineIndex < dialogue.lines.length - 1) {
@@ -1569,6 +1891,7 @@ export default function Home() {
   function selectChoice(choice: ChoiceData) {
     if (!dialogue || !game) return;
     if (choice.requires && game.stats[choice.requires.stat] < choice.requires.value && !game.settings.unlockAll) return;
+    if (!hasKnowledge(game, choice.requiresKnowledge) && !game.settings.unlockAll) return;
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const pausedAdvance = choice.id.endsWith("-boundary");
     const route = dialogue.scene.kind === "route" && !pausedAdvance ? dialogue.scene.route : undefined;
@@ -1615,6 +1938,33 @@ export default function Home() {
           journal: [...current.journal, `Logis · ${dialogue.scene.title} · ${characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).filter(Boolean).join(" et ")}`],
         };
       });
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "secret" && dialogue.scene.secretId) {
+      const secret = SECRET_CONVERSATIONS.find((entry) => entry.id === dialogue.scene.secretId);
+      if (secret) updateGame((current) => ({
+        ...current,
+        secretHistory: unique([...current.secretHistory, secret.id]),
+        knowledge: unique([...current.knowledge, ...secret.reveals]),
+        sceneMemories: { ...current.sceneMemories, [secret.id]: current.spot },
+        journal: [...current.journal, `Confidence · ${CHARACTERS.find((entry) => entry.id === secret.character)?.name} · ${secret.title}`],
+      }));
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "world" && dialogue.scene.worldEventId) {
+      const event = SPONTANEOUS_EVENTS.find((entry) => entry.id === dialogue.scene.worldEventId);
+      if (event) updateGame((current) => ({
+        ...current,
+        worldEventHistory: unique([...current.worldEventHistory, event.id]),
+        sceneMemories: { ...current.sceneMemories, [event.id]: current.spot },
+        journal: [...current.journal, `Événement croisé · ${event.title}`],
+      }));
+    }
+    if (!dialogue.replay && dialogue.scene.kind === "invitation" && dialogue.scene.invitationId) {
+      const invitation = INVITATIONS.find((entry) => entry.id === dialogue.scene.invitationId);
+      if (invitation) updateGame((current) => ({
+        ...current,
+        invitations: current.invitations.map((entry) => entry.id === invitation.id ? { ...entry, status: "accepted" } : entry),
+        journal: [...current.journal, `Invitation honorée · ${invitation.title}`],
+      }));
     }
     if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date) {
       const date = dialogue.scene.date;
@@ -2566,6 +2916,46 @@ export default function Home() {
     });
   }
 
+  function replaySecret(secretId: string) {
+    if (!game) return;
+    const secret = SECRET_CONVERSATIONS.find((entry) => entry.id === secretId);
+    const character = CHARACTERS.find((entry) => entry.id === secret?.character);
+    if (!secret || !character || !game.secretHistory.includes(secret.id)) return;
+    const scene: SceneView = {
+      id: secret.id,
+      title: secret.title,
+      background: spotById(game.sceneMemories[secret.id] || game.spot)?.background || backgroundUrl("streets"),
+      mood: character.defaultMood,
+      character: character.id,
+      cast: [character.id],
+      intro: secret.intro,
+      choices: secret.choices,
+      kind: "secret",
+      secretId: secret.id,
+    };
+    setDialogue({ scene, lines: expandedLines(scene, game, secret.intro, "intro"), lineIndex: 0, phase: "intro", replay: true });
+  }
+
+  function replayWorldEvent(eventId: string) {
+    if (!game) return;
+    const event = SPONTANEOUS_EVENTS.find((entry) => entry.id === eventId);
+    const lead = CHARACTERS.find((entry) => entry.id === event?.characters[0]);
+    if (!event || !lead || !game.worldEventHistory.includes(event.id)) return;
+    const scene: SceneView = {
+      id: event.id,
+      title: event.title,
+      background: spotById(game.sceneMemories[event.id] || event.spots?.[0] || game.spot)?.background || backgroundUrl("streets"),
+      mood: event.mood || lead.defaultMood,
+      character: lead.id,
+      cast: event.characters,
+      intro: event.intro,
+      choices: event.choices,
+      kind: "world",
+      worldEventId: event.id,
+    };
+    setDialogue({ scene, lines: expandedLines(scene, game, event.intro, "intro"), lineIndex: 0, phase: "intro", replay: true });
+  }
+
   function replayDate(dateId: string) {
     if (!game) return;
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
@@ -2685,14 +3075,16 @@ export default function Home() {
   const viewedSpots = spotsForLocation(viewedLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
   const presentCharacters = CHARACTERS.filter((character) => {
     const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
-    return (game.day >= character.unlockDay || game.settings.unlockAll) && place.location === game.location && place.spot === game.spot;
+    return characterUnlocked(game, character) && place.location === game.location && place.spot === game.spot;
   });
-  const visibleCharacters = CHARACTERS.filter((character) => game.day >= character.unlockDay || game.settings.unlockAll);
+  const visibleCharacters = CHARACTERS.filter((character) => characterUnlocked(game, character));
   const upcomingVisitors = visibleCharacters
     .map((character) => ({ character, target: nextPresence(character, game, game.spot) }))
     .filter((entry): entry is { character: CharacterData; target: NonNullable<ReturnType<typeof nextPresence>> } => Boolean(entry.target))
     .sort((left, right) => left.target.offset - right.target.offset)
     .slice(0, 4);
+  const spontaneousEvent = availableSpontaneousEvent(game);
+  const localRumor = availableRumor(game);
   const soundtrack = musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
 
@@ -2729,6 +3121,10 @@ export default function Home() {
           </div>
 
           <div className="place-bottom-deck">
+            {(spontaneousEvent || localRumor) && <section className="living-world-panel">
+              {spontaneousEvent && <button className="living-world-event" onClick={() => openSpontaneousEvent(spontaneousEvent)}><span>◈</span><div><small>Une scène est déjà en cours</small><strong>{spontaneousEvent.title}</strong><p>{spontaneousEvent.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).filter(Boolean).join(" · ")}</p></div><b>Intervenir ›</b></button>}
+              {localRumor && <button className="living-world-rumor" onClick={() => hearRumor(localRumor)}><span>◌</span><div><small>Échos de {currentSpot.shortName}</small><strong>Écouter une rumeur</strong><p>Sa vérité ne sera pas indiquée.</p></div><b>Écouter ›</b></button>}
+            </section>}
             <section className="place-panel place-presences">
               <header><div><p className="eyebrow">Rencontres</p><h2>Présences maintenant</h2></div><span>{presentCharacters.length}</span></header>
               <div className="immersive-presence-list">
@@ -2799,7 +3195,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} />}
+      {tab === "journal" && <JournalView game={game} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
       {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -2829,6 +3225,9 @@ export default function Home() {
         startGroupDate={startGroupDate}
         startGroupDateIntimacy={startGroupDateIntimacy}
         onGroupIntimacyClose={closeGroupIntimacy}
+        replyToLetter={replyToLetter}
+        acceptInvitation={acceptInvitation}
+        declineInvitation={declineInvitation}
         ritual={{ sequence: ritualSequence, step: ritualStep, phase: ritualPhase, setPhase: setRitualPhase, play: playRitualRune }}
         onRitualClose={() => setModal(null)}
         jobState={jobState}
@@ -2884,17 +3283,19 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const currentLine = dialogue.lines[dialogue.lineIndex];
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
+  const sceneLabel = dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Conversation personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : "Moment libre";
   return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
-    <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : "Moment libre"}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
+    <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
     <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => { const character = CHARACTERS.find((entry) => entry.id === id); if (!character) return null; const active = activeIds.includes(id); const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined; const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, character.defaultMood)) : character.defaultMood; return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${id}/${mood}.webp`} alt={character.name} />; })}</div>
     <div className="dialogue-gradient" />
     {dialogue.phase !== "choices" ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={onAdvance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length} · Cliquer pour continuer</small>
     </button> : <div className="choice-box"><p className="choice-question">Comment répondre ?</p>{availableChoices.map((choice) => {
       const statLocked = Boolean(choice.requires && game.stats[choice.requires.stat] < choice.requires.value);
+      const knowledgeLocked = !hasKnowledge(game, choice.requiresKnowledge);
       const relationLocked = !relationshipRequirementMet(choice, game);
-      const locked = (statLocked || relationLocked) && !game.settings.unlockAll;
-      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat}`}>{STAT_LABELS[choice.stat].charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
+      const locked = (statLocked || knowledgeLocked || relationLocked) && !game.settings.unlockAll;
+      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat}`}>{STAT_LABELS[choice.stat].charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
     })}</div>}
   </section>;
 }
@@ -2931,9 +3332,9 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
 
 function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
   const availableGroupDates = GROUP_DATES.filter((date) => groupDateUnlocked(game, date));
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><button className="group-date-launcher" onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{GROUP_DATES[0].characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Nouveau · relations croisées</p><h2>Rendez-vous à trois</h2><p>Six duos compatibles, chacun avec une dynamique, un mini-jeu et trois conclusions propres à votre sexe.</p></div><b>{availableGroupDates.length} / {GROUP_DATES.length}<small>accessibles</small></b></button><div className="relationship-grid">{CHARACTERS.map((character) => {
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>La confiance et l’affection ouvrent les scènes importantes. Le désir ne remplace jamais l’une ou l’autre. La route de Draven est narrative et non romantique.</p></div><span>{CHARACTERS.filter((character) => game.relationships[character.id].met).length} / {CHARACTERS.length} rencontré·es</span></header><button className="group-date-launcher" onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{GROUP_DATES[0].characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Relations croisées</p><h2>Rendez-vous à trois</h2><p>{GROUP_DATES.length} duos compatibles, chacun avec une dynamique, un mini-jeu et trois conclusions propres à votre sexe.</p></div><b>{availableGroupDates.length} / {GROUP_DATES.length}<small>accessibles</small></b></button><div className="relationship-grid">{CHARACTERS.map((character) => {
     const relation = game.relationships[character.id];
-    const unlocked = game.day >= character.unlockDay || game.settings.unlockAll;
+    const unlocked = characterUnlocked(game, character);
     const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const locationId = schedule.location;
     const location = LOCATIONS.find((entry) => entry.id === locationId);
@@ -2944,7 +3345,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
     const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
     const routeTarget = next ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
     return <article key={character.id} className={`relationship-card ${!unlocked ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties}>
-      <button className="relationship-portrait" disabled={!unlocked} onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{unlocked ? character.name : "Inconnu·e"}</span><small>{unlocked ? character.role : `Disponible au jour ${character.unlockDay}`}</small></div></button>
+      <button className="relationship-portrait" disabled={!unlocked} onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{unlocked ? character.name : "Inconnu·e"}</span><small>{unlocked ? character.role : character.id === "tia" && game.day >= character.unlockDay ? "Une puissance impériale encore inaccessible" : `Disponible au jour ${character.unlockDay}`}</small></div></button>
       <div className="relationship-body"><div className="stage-line"><strong>{STAGE_LABELS[relation.stage]}</strong><span>{relation.stage} / 5</span></div><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" />
         {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible" : "Route accomplie · rencontres libres disponibles"}</small></div>}
         {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{hasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
@@ -2958,8 +3359,8 @@ function Meter({ label, value, color }: { label: string; value: number; color: s
 }
 
 function NotificationLayer({ notifications }: { notifications: ChronicleNotification[] }) {
-  const icons: Record<NotificationKind, string> = { unlock: "✦", item: "◇", relation: "♡", story: "▤", codex: "⌁", home: "⌂" };
-  const labels: Record<NotificationKind, string> = { unlock: "Déblocage", item: "Inventaire", relation: "Relation", story: "Chronique", codex: "Codex", home: "Logis" };
+  const icons: Record<NotificationKind, string> = { unlock: "✦", item: "◇", relation: "♡", story: "▤", codex: "⌁", home: "⌂", letter: "✉", invitation: "◈", rumor: "◌", knowledge: "◇" };
+  const labels: Record<NotificationKind, string> = { unlock: "Déblocage", item: "Inventaire", relation: "Relation", story: "Chronique", codex: "Codex", home: "Logis", letter: "Correspondance", invitation: "Invitation", rumor: "Rumeur", knowledge: "Découverte" };
   return <aside className="chronicle-notifications" aria-live="polite" aria-atomic="false">
     {notifications.map((notification) => <article className={`chronicle-notification ${notification.kind}`} key={notification.id}>
       <span className="notification-sigil">{icons[notification.kind]}</span>
@@ -2968,8 +3369,10 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void }) {
+function JournalView({ game, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
+  const secretMemories = game.secretHistory.map((id) => SECRET_CONVERSATIONS.find((secret) => secret.id === id)).filter((secret): secret is SecretConversation => Boolean(secret));
+  const worldMemories = game.worldEventHistory.map((id) => SPONTANEOUS_EVENTS.find((event) => event.id === id)).filter((event): event is SpontaneousEvent => Boolean(event));
   const dateMemories = unique(game.dateHistory).map((id) => DATE_SCENES.find((date) => date.id === id)).filter((date): date is DateScene => Boolean(date));
   const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
@@ -2983,13 +3386,18 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
     const relation = game.relationships[character.id];
     const progress = relationshipNarrativeProgress(game, character.id);
     const scene = sceneFor(character.id, relation.stage);
-    const unlocked = game.day >= character.unlockDay || game.settings.unlockAll;
+    const unlocked = characterUnlocked(game, character);
     const needed = scene ? Math.max(0, BOND_THRESHOLDS[scene.stage] - relation.affection - relation.trust) : 0;
     const target = scene ? nextPresence(character, game, ROUTE_SPOTS[scene.id], ROUTE_PERIODS[scene.id], scene.dayMin) : undefined;
-    return { character, relation, progress, scene, unlocked, needed, target };
+    const confidences = secretMemories.filter((secret) => secret.character === character.id).length;
+    return { character, relation, progress, scene, unlocked, needed, target, confidences };
   });
   const completedRelationScenes = threads.reduce((total, thread) => total + thread.progress.completed, 0);
   const totalRelationScenes = threads.reduce((total, thread) => total + thread.progress.total, 0);
+  const letters = game.letters.map((received) => ({ received, letter: LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedLetter; letter: LetterTemplate } => Boolean(entry.letter));
+  const invitations = game.invitations.map((received) => ({ received, invitation: INVITATIONS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedInvitation; invitation: InvitationTemplate } => Boolean(entry.invitation));
+  const rumors = game.rumors.map((heard) => ({ heard, rumor: RUMORS.find((entry) => entry.id === heard.id) })).filter((entry): entry is { heard: { id: string; heardDay: number }; rumor: RumorTemplate } => Boolean(entry.rumor));
+  const knowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
 
   return <section className="content-view">
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Suivez ici vos objectifs, vos fils relationnels et les scènes déjà mémorisées. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
@@ -3001,12 +3409,24 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
         {!storyComplete && <div className="story-next-step"><b>Prochain jalon</b><span>{nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{nextMilestone?.place || `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis`}</small></div>}
       </section>
 
+      <section className="living-journal">
+        <div className="journal-section-title"><div><h2>Le monde vous écrit</h2><p>Correspondances et invitations apparaissent ici lorsqu’elles existent réellement. Une invitation ignorée peut expirer sans sanction automatique.</p></div><strong>{letters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length} en attente</strong></div>
+        <div className="living-journal-grid">
+          <article className="living-journal-panel"><header><span>✉</span><div><h3>Correspondances</h3><small>{letters.length} reçue{letters.length > 1 ? "s" : ""}</small></div></header><div className="living-journal-list">{letters.length ? [...letters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadLetter(letter.id)}><span>{!received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>) : <p>Aucune lettre reçue pour l’instant.</p>}</div></article>
+          <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? `Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Expirée"}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
+        </div>
+        <div className="living-journal-grid discoveries">
+          <article className="living-journal-panel"><header><span>◌</span><div><h3>Rumeurs entendues</h3><small>Leur vérité n’est jamais certifiée</small></div></header><div className="rumor-notes">{rumors.length ? [...rumors].reverse().map(({ heard, rumor }) => <div key={rumor.id}><small>{rumor.source} · Jour {heard.heardDay}</small><p>« {rumor.text} »</p></div>) : <p>Aucune rumeur consignée.</p>}</div></article>
+          <article className="living-journal-panel"><header><span>◇</span><div><h3>Ce que vous savez</h3><small>Uniquement les faits et recoupements découverts</small></div></header><div className="knowledge-notes">{knowledge.length ? [...knowledge].reverse().map((entry) => <div key={entry.id}><strong>{entry.title}</strong><p>{entry.summary}</p><small>{entry.people.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" · ")}</small></div>) : <p>Aucune confidence personnelle n’a encore été consignée.</p>}</div></article>
+        </div>
+      </section>
+
       <div className="journal-section-title"><div><h2>Fils relationnels</h2><p>Chaque personnage possède cinq scènes narratives majeures, distinctes des moments libres et des rendez-vous.</p></div><strong>{completedRelationScenes} / {totalRelationScenes}</strong></div>
-      {threads.map(({ character, relation, progress, scene, unlocked, needed, target }) => {
+      {threads.map(({ character, relation, progress, scene, unlocked, needed, target, confidences }) => {
         const scenePlace = scene ? spotById(ROUTE_SPOTS[scene.id]) : undefined;
         const periods = scene ? ROUTE_PERIODS[scene.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).filter(Boolean).join(" / ") : "";
         const objective = !unlocked
-          ? `Ce fil deviendra accessible au jour ${character.unlockDay}.`
+          ? character.id === "tia" && game.day >= character.unlockDay ? "Approfondissez d’abord votre compréhension d’Amanea : Tia demeure encore une institution, pas une relation personnelle." : `Ce fil deviendra accessible au jour ${character.unlockDay}.`
           : !scene
             ? "Toutes les scènes narratives de ce personnage ont été accomplies. Les moments libres et rendez-vous restent disponibles."
             : game.day < scene.dayMin
@@ -3014,11 +3434,11 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
               : needed > 0
                 ? `Renforcez encore ce lien de ${needed} point${needed > 1 ? "s" : ""}, puis rejoignez ${scenePlace?.name || "le lieu indiqué"}.`
                 : `Rejoignez ${scenePlace?.name || "le lieu indiqué"}${periods ? ` · ${periods}` : ""}.`;
-        const status = !unlocked ? `Jour ${character.unlockDay}` : !scene ? "Accompli" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
+        const status = !unlocked ? character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial" : `Jour ${character.unlockDay}` : !scene ? "Accompli" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
         return <article className={`quest-card relation-thread-card ${!unlocked ? "locked" : ""} ${!scene ? "complete" : ""}`} key={character.id}>
           <img src={character.portrait} alt="" />
           <div>
-            <div className="relation-thread-heading"><span style={{ color: character.color }}>{character.name}</span><small>Scènes narratives · {progress.completed} / {progress.total}</small></div>
+            <div className="relation-thread-heading"><span style={{ color: character.color }}>{character.name}</span><small>Scènes narratives · {progress.completed} / {progress.total}{confidences ? ` · ${confidences} confidence${confidences > 1 ? "s" : ""} découverte${confidences > 1 ? "s" : ""}` : ""}</small></div>
             <div className="relation-thread-progress"><i style={{ width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`, background: character.color }} /></div>
             <h3>{scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
             <p><b>Objectif :</b> {objective}</p>
@@ -3033,11 +3453,13 @@ function JournalView({ game, onReplayRoute, onReplaySocial, onReplayDate, onRepl
       <div className="memory-replay-grid">
         {game.history.map((id) => { const scene = ROUTE_SCENES.find((entry) => entry.id === id); const character = CHARACTERS.find((entry) => entry.id === scene?.character); return scene && <button key={id} onClick={() => onReplayRoute(id)}><span style={{ color: character?.color }}>◇ {character?.name}</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>; })}
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
+        {secretMemories.map((secret) => <button key={secret.id} onClick={() => onReplaySecret(secret.id)}><span style={{ color: CHARACTERS.find((character) => character.id === secret.character)?.color }}>◇ Confidence · {CHARACTERS.find((character) => character.id === secret.character)?.name}</span><strong>{secret.title}</strong><small>Revoir sans gain ni nouvelle découverte</small></button>)}
+        {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir selon le niveau d’intimité actuel</small></button>)}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
-        {!game.history.length && !socialMemories.length && !dateMemories.length && !groupDateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
+        {!game.history.length && !socialMemories.length && !secretMemories.length && !worldMemories.length && !dateMemories.length && !groupDateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
       </div>
       <div className="journal-section-title story-section-title"><div><h2>Histoire principale</h2><p>Les objectifs n’expirent jamais. Les jalons cochés indiquent exactement ce qui a déjà été découvert.</p></div><strong>{mainProgress} / {MAIN_STORY.length}</strong></div>
       {MAIN_STORY.map((act, index) => {
@@ -3568,9 +3990,27 @@ function HomePairDateModal({ pairId, game, onFinish, onClose }: { pairId: string
   </section>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishHomeDate, finishHomePairDate, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishHomeDate, finishHomePairDate, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, replyToLetter, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
+  if (modal.kind === "letter") {
+    const letter = LETTERS.find((entry) => entry.id === modal.letterId);
+    const received = game.letters.find((entry) => entry.id === modal.letterId);
+    if (!letter || !received) return null;
+    const character = CHARACTERS.find((entry) => entry.id === letter.character);
+    const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
+    const attachment = letter.attachedItem ? GIFTS.find((entry) => entry.id === letter.attachedItem)?.name || displayItemById(letter.attachedItem)?.name || letter.attachedItem : undefined;
+    return <div className="modal-backdrop"><section className="correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Correspondance · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{attachment && <div className="letter-attachment"><span>◇</span><div><small>Objet joint</small><strong>{attachment}</strong></div></div>}{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre — ce choix nuance la relation sans transformer la lettre en épreuve.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : null}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
+  }
+  if (modal.kind === "invitation") {
+    const invitation = INVITATIONS.find((entry) => entry.id === modal.invitationId);
+    const received = game.invitations.find((entry) => entry.id === modal.invitationId);
+    if (!invitation || !received) return null;
+    const character = CHARACTERS.find((entry) => entry.id === invitation.character);
+    const pending = received.status === "pending" && game.day <= received.expiresDay;
+    const status = pending ? `Réponse possible jusqu’au jour ${received.expiresDay}` : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : "Invitation expirée";
+    return <div className="modal-backdrop"><section className="invitation-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Initiative de {character?.name}</p><h2>{invitation.title}</h2><span>{status}</span></div></header><blockquote>{invitation.message}</blockquote><div className="invitation-place"><span>⌖</span><div><strong>{spotById(invitation.spot)?.name}</strong><small>{LOCATIONS.find((entry) => entry.id === invitation.location)?.name} · {PERIODS.find((entry) => entry.id === invitation.period)?.label}</small></div></div>{pending ? <div className="invitation-actions"><button className="primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button><button className="secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button className="text-button" onClick={onClose}>Décider plus tard</button></div> : <button className="secondary-action" onClick={onClose}>Refermer</button>}</section></div>;
+  }
   if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint vos Biens, dans la section Inventaire. Vous pourrez l’exposer au logis ou le remettre directement lorsque son destinataire se trouve avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans l’inventaire : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
   if (modal.kind === "gift") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -3585,7 +4025,8 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const present = place.location === game.location && place.spot === game.spot;
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
-    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{characterDescriptor(character)}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p><h3>Blessure centrale</h3><p>{character.wound}</p><h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre inventaire ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
+    const discoveredKnowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry) => entry?.people.includes(character.id));
+    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{characterDescriptor(character)}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p>{discoveredKnowledge.length > 0 && <div className="character-discoveries">{discoveredKnowledge.map((entry) => entry && <article key={entry.id}><strong>{entry.title}</strong><p>{entry.summary}</p></article>)}</div>}<h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre inventaire ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
   }
   if (modal.kind === "group-date-planner") {
     const property = propertyById(game.housing.propertyId);
