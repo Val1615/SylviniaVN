@@ -51741,7 +51741,7 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     const INTIMATE='music_c14_aller_au_diable';
     const GROUP='music_c14_group_v0340';
 
-    A[COUNCIL]='assets/audio/chapter14/catacombes.mp3';
+    A[COUNCIL]='assets/audio/catacombes.mp3';
     A[IRIANA]='assets/audio/chapter14/entree_iriana.mp3';
     A[INTIMATE]='assets/audio/chapter14/aller_au_diable.mp3';
     A[GROUP]='assets/audio/chapter14/moonlight_in_marble.mp3';
@@ -52197,6 +52197,1218 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
     const el=byId(id);if(el)observer.observe(el,{childList:true,subtree:true});
   });
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refreshLibraryUI);else refreshLibraryUI();
+})();
+</script>
+
+
+<!-- sylvinia-chapter15-departure-v0350 -->
+<script id="sylvinia-chapter15-departure-v0350">
+(()=>{
+  'use strict';
+  try{
+    if(window.__sylviniaChapter15V0350) return;
+    window.__sylviniaChapter15V0350=true;
+    if(typeof S==='undefined'||typeof A==='undefined') throw new Error('Registres de scènes ou assets indisponibles');
+
+    const TITLE='Chapitre XV · L’heure du départ';
+    const DEPART='c15_bg_depart';
+    const TRAINING='c15_key_training';
+    const IRIANA_CG='c15_key_iriana';
+    const PORTAL='c15_key_portal';
+    const TIA_CG='c15_key_tia';
+    const FOREST='c15_bg_forest';
+    const FOREST_KEY='c15_key_forest';
+
+    const DAWN='music_algratal';
+    const DUEL='music_duel';
+    const PORTAL_MUSIC='music_c10_group_portal';
+    const FOREST_MUSIC=(A.music_c9_foret?'music_c9_foret':'music_c7_foret_interdite');
+    const DRAVEN_MUSIC='music_draven_storm';
+
+    /* Le chapitre réemploie uniquement des illustrations réellement présentes.
+       Les CG dédiées pourront remplacer ces alias plus tard sans toucher aux scènes. */
+    A.c15_bg_depart=A.c2_algratal_gate_cg||A.c2_algratal_panorama_cg||A.bg_algratal_panorama||A.bg_algratal;
+    A.c15_key_training=A.c3_key_test_remerii||A.c10g_key_draven_remerii_hylee||A.c15_bg_depart;
+    A.c15_key_iriana=A.c9_key_valurn_iriana_taquinerie||A.c13i_key_portal_departure||A.c15_bg_depart;
+    A.c15_key_portal=A.c13i_key_portal_departure||A.c4v_portal_temple||A.c15_bg_depart;
+    A.c15_key_tia=A.c12g_key_tia_couronnement_balcon||A.c13g_ball_04_tia_conseiller_close||A.c15_bg_depart;
+    A.c15_bg_forest=A.c9_foret_interdite||A.c9_key_lisiere_foret_interdite||A.c3_bg_foret_route||A.bg_forest_decor;
+    A.c15_key_forest=A.c9_key_naiah_guide||A.c15_bg_forest;
+    A.c15_chapter_thumb=A.c2_algratal_gate_cg||A.c2_algratal_panorama_cg||A.c15_bg_depart;
+
+    const flags=()=>((state&&state.flags)||{});
+    const scene=(sub,bg,music,speaker,text,chars=[],next=null,extra={})=>({title:TITLE,sub,bg,music,speaker,text,chars,...(next?{next}:{}),...extra});
+    const narr=(sub,bg,music,text,next,extra={})=>scene(sub,bg,music,'Narrateur',text,[],next,extra);
+
+    const C15={
+      c15_001:narr('Une aube qui n’en est pas une',DEPART,DAWN,`L’aube se lève sur Al’Gratal, pâle et froide, mais personne ne la regarde comme un nouveau jour.\n\nDevant les portes massives de la cité, l’armée sylvinienne s’étend en rangées impeccables. Armures argentées, robes de guerre, destriers caparaçonnés, bannières frappées d’or. Des prêtres passent entre les lignes et déposent sur les armes une huile parfumée d’encens. Plus loin, les chariots grincent sous le poids des vivres, des tentes et des réserves de mana.\n\nTout bouge. Tout s’ordonne. Tout se prépare.\n\nEt pourtant, au milieu de cette mécanique gigantesque, quelques personnes ont encore trouvé le moyen de faire comme si la guerre pouvait attendre cinq minutes.`,'c15_002',{zoom:true}),
+
+      c15_002:scene('Cinq minutes avant la guerre',TRAINING,DUEL,'Hylee',`Un projectile de givre fend l’air et explose à quelques centimètres de l’épaule de Remerii. L’archimage incline simplement le buste. La glace poursuit sa course et vient mourir contre une caisse vide dans un craquement sec.\n\nHylee esquisse un sourire.\n\n« Tu vas trop doucement. Je vais finir par croire que tu me ménages. »`,[['hylee','hylee2_teasing','left'],['remerii','remerii_smirk','right']],'c15_003'),
+
+      c15_003:scene('Remerii accepte le défi',TRAINING,DUEL,'Remerii',`Remerii hausse un sourcil.\n\n« Je t’épargne surtout un énième coup de jus avant notre départ. Mais si tu insistes… »\n\nL’énergie bleutée qui courait jusque-là paresseusement autour de ses doigts se resserre. Son sourire, lui, ne bouge pas.\n\nHylee comprend une demi-seconde trop tard qu’elle vient peut-être de demander quelque chose de stupide.`,[['hylee','hylee2_surprised','left'],['remerii','remerii_smirk','right']],'c15_train_choice'),
+
+      c15_train_choice:scene('Une dernière passe',TRAINING,DUEL,'Narrateur',`Remerii attaque réellement cette fois. Une décharge claque dans l’air. Hylee n’a que le temps de choisir comment lui répondre.`,[['hylee','hylee2_determined','left'],['remerii','remerii_strict','right']],null,{choices:[
+        {label:'Glisser sous l’attaque et lui rendre le coup immédiatement',next:'c15_train_riposte',effects:{audace:1,lien:1},flags:{c15TrainingRiposte:true}},
+        {label:'Geler le sol sous ses pieds au lieu de viser Remerii',next:'c15_train_feinte',effects:{lucidite:1},flags:{c15TrainingFeint:true}},
+        {label:'Attendre une fraction de seconde de trop, juste pour voir ce qu’elle prépare',next:'c15_train_attente',effects:{sangfroid:1},flags:{c15TrainingWait:true}}
+      ]}),
+
+      c15_train_riposte:scene('Répondre au défi',TRAINING,DUEL,'Narrateur',`Hylee se laisse tomber presque à genoux. La décharge passe au-dessus de sa tête, hérissant ses cheveux, et son bras remonte dans le même mouvement. Une lame de glace jaillit de sa paume.\n\nRemerii la brise d’un geste sec. Les éclats tournent autour d’elle comme une pluie de verre.\n\n« Mieux. »\n\nHylee se redresse, faussement vexée.\n\n« C’est tout ? »\n\n« Tu es encore debout. Considère ça comme un compliment. »`,[['hylee','hylee2_smile','left'],['remerii','remerii_smirk','right']],'c15_004'),
+
+      c15_train_feinte:scene('Ne pas viser la cible',TRAINING,DUEL,'Narrateur',`Hylee ne cherche pas à toucher Remerii. Son froid plonge dans le sol. Une pellicule de glace court sous les bottes de l’archimage.\n\nRemerii perd l’équilibre une seconde. Une seule.\n\nElle se rattrape avec une dignité presque insultante et regarde la glace sous ses pieds.\n\n« Déloyal. »\n\nHylee lui adresse son sourire le plus innocent.\n\n« Efficace. »\n\nCette fois, Remerii rit vraiment.`,[['hylee','hylee2_teasing','left'],['remerii','remerii_smile','right']],'c15_004'),
+
+      c15_train_attente:scene('Lire avant de frapper',TRAINING,DUEL,'Narrateur',`Hylee ne bouge pas tout de suite.\n\nElle regarde l’épaule de Remerii. Son coude. Le mouvement infime de ses doigts. Puis elle pivote juste avant que l’attaque ne parte et laisse l’énergie mourir derrière elle.\n\nRemerii la fixe, un bref éclat de fierté dans le regard.\n\n« Tu apprends. »\n\n« J’essaie surtout d’éviter de sentir le brûlé pendant toute la marche. »`,[['hylee','hylee2_confident','left'],['remerii','remerii_soft','right']],'c15_004'),
+
+      c15_004:scene('Les spectateurs',DEPART,DAWN,'Naïah',`« Elles vont finir sur les rotules avant même d’arriver. »\n\nNaïah est adossée à un chariot de ravitaillement, les bras croisés, parfaitement installée dans le rôle de celle qui juge les efforts des autres sans participer.`,[['naiah','naiah_smirk','left'],['draven','draven_gruff','right']],'c15_005'),
+
+      c15_005:scene('Se détendre avant la guerre',DEPART,DAWN,'Draven',`Draven suit du regard un éclat de glace qui traverse le camp.\n\n« C’est peut-être leur façon de se détendre. »\n\nNaïah tourne lentement la tête vers lui.\n\n« C’est inquiétant, venant de toi. »\n\n« J’ai connu des marins qui se détendaient en se lançant des tabourets. Je relativise. »`,[['naiah','naiah_laugh','left'],['draven','draven_gruff','right']],'c15_006'),
+
+      c15_006:scene('Chacun sa préparation',DEPART,DAWN,'Saidin',`Assis sur un muret, Saidin laisse échapper un rire discret.\n\n« Chacun se prépare à la guerre à sa manière. Certaines s’échauffent. D’autres organisent. »\n\nSon regard glisse vers Ellion.`,[['saidin','saidin_fete_soft','left'],['draven','draven_stern','right']],'c15_007'),
+
+      c15_007:scene('La machine d’Ellion',DEPART,DAWN,'Ellion',`Le Haut-Général traverse les lignes sans ralentir.\n\n« Les chevaliers de la troisième cohorte derrière les lanciers. Les mages au centre tant que le portail n’est pas stabilisé. Je ne veux personne devant les balises de Saidin. Personne. »\n\nUn officier s’approche avec un parchemin. Ellion le lit en marchant.\n\n« Les derniers chariots restent ici. Nous ne franchissons le seuil qu’avec ce qui peut suivre une formation en mouvement. Faites passer le mot. »\n\nIl ne crie presque jamais. Il n’en a pas besoin. Les ordres courent plus vite que lui.` ,[['ellion','ellion_valendil','center']],'c15_008'),
+
+      c15_008:narr('Une présence qui coupe le mouvement',DEPART,DAWN,`Le duel s’interrompt sans qu’aucune attaque ne l’impose.\n\nQuelqu’un vient d’entrer dans le camp.\n\nLes conversations s’éteignent une à une. Les soldats se retournent. Même Ellion suspend un ordre au milieu d’une phrase.\n\nIriana avance entre les rangées comme si elle n’avait jamais disparu.\n\nEt Valurn marche derrière elle. Pas assez loin pour prétendre qu’ils se sont simplement croisés en chemin.`,'c15_iriana_context'),
+
+      c15_iriana_context:scene('Ce que la nuit a laissé',IRIANA_CG,DAWN,'Narrateur',function(){
+        if(flags().chapter14IrianaEnding||flags().c14IrianaValurnIntimate) return `Le joueur connaît déjà ce que le camp ignore. La nuit a laissé entre Iriana et Valurn quelque chose qu’aucun d’eux n’a encore nommé. Ils n’ont pas besoin de se toucher pour que cela se voie. Une distance plus courte. Un regard tenu une seconde de trop. Une absence inhabituelle de guerre entre eux.`;
+        return `Le groupe ignore ce qui s’est joué après la fermeture des portes du Conseil. Il ne voit que le résultat : Iriana est revenue, Valurn est avec elle, et leur manière d’occuper le même espace n’a plus rien à voir avec la veille. Quelque chose s’est déplacé. Personne ne sait encore quoi.`;
+      },[['iriana','iriana_calm','left'],['valurn','valurn_charming','right']],'c15_009'),
+
+      c15_009:scene('Vivante',IRIANA_CG,DAWN,'Hylee',`Hylee reste immobile, un bras encore levé après son dernier sort.\n\n« Par Sylvinia… »\n\nElle cligne des yeux. Puis une seconde fois.\n\n« T’es… vivante ? »`,[['hylee','hylee2_surprised','left'],['iriana','iriana_calm','right']],'c15_010'),
+
+      c15_010:scene('La phrase qui ne vient pas',IRIANA_CG,DAWN,'Remerii',`Remerii laisse son énergie se dissiper autour de ses doigts.\n\n« Iriana… On nous avait dit que… »\n\nElle s’arrête. La fin de la phrase n’a plus beaucoup de sens devant une femme qui se tient debout à quelques mètres d’elle.\n\nIriana incline légèrement la tête. Son sourire est bref, presque chaleureux.\n\n« Je sais. »`,[['remerii','remerii_surprised','left'],['iriana','iriana_calm','right']],'c15_011'),
+
+      c15_011:scene('Le mauvais homme à côté',IRIANA_CG,DAWN,'Valurn',`Valurn regarde successivement Hylee, Remerii et Naïah.\n\n« Charmant accueil. Moi aussi, je suis ravi de vous revoir. »\n\nHylee retrouve assez vite ses réflexes.\n\n« Toi, personne ne s’inquiétait. »\n\n« Je prends ça comme une marque de confiance. »`,[['hylee','hylee2_teasing','left'],['valurn','valurn_amused','right']],'c15_012'),
+
+      c15_012:scene('Naïah compte les anomalies',IRIANA_CG,DAWN,'Naïah',`Naïah plisse les yeux en observant Iriana puis Valurn.\n\n« Je sais pas ce qui est le plus inquiétant. Qu’elle soit revenue… ou que lui la suive sans qu’on l’ait attaché. »\n\nValurn entrouvre les bras.\n\n« Je peux repartir, si ma présence te bouleverse. »\n\n« Non. Reste. C’est plus drôle comme ça. »\n\nIriana ferme les yeux une seconde. Juste une.\n\nLe groupe est bien de nouveau réuni.` ,[['naiah','naiah_smirk','left'],['valurn','valurn_charming','right'],['iriana','iriana_smirk','center','back']],'c15_013'),
+
+      c15_013:scene('Un peu d’espace',DEPART,PORTAL_MUSIC,'Saidin',`Saidin quitte enfin son muret et rejoint une zone dégagée devant les portes.\n\n« Un peu d’espace. »\n\nHylee regarde autour d’elle.\n\n« Combien, un peu ? »\n\nLe vieux mage réfléchit avec un sérieux suspect.\n\n« Assez pour que personne ne se trouve à l’endroit exact où l’espace cessera momentanément d’être d’accord avec lui-même. »\n\nHylee recule de plusieurs pas.\n\n« J’aurais préféré “trois mètres”. »\n\n« Trois mètres, alors. »`,[['saidin','saidin_mysterious','left'],['hylee','hylee2_thinking','right']],'c15_014'),
+
+      c15_014:narr('La déchirure',PORTAL,PORTAL_MUSIC,`Saidin tend les mains vers le vide.\n\nD’abord, rien.\n\nPuis une vibration. Faible. Presque trop subtile pour être distinguée du grondement du camp.\n\nL’air se courbe. Une ligne lumineuse apparaît là où il ne devrait rien y avoir. Elle tremble, se fend, s’élargit.\n\nLa réalité ne s’ouvre pas proprement. Elle se déchire.\n\nDes éclats de lumière jaillissent autour de Saidin et meurent avant de toucher le sol. Les mages les plus proches reculent malgré eux. Ils savent ce qu’ils regardent. Ils savent surtout qu’aucun d’eux ne pourrait le reproduire avec sa seule puissance.`,'c15_015',{zoom:true,hideChars:true}),
+
+      c15_015:scene('De l’autre côté',PORTAL,PORTAL_MUSIC,'Narrateur',`La fracture finit par se stabiliser.\n\nDerrière la lumière mouvante apparaît une forêt noyée de brume. Des troncs tordus. Une mousse sombre. Une profondeur sans horizon.\n\nLa Forêt Interdite.\n\nNaïah cesse de sourire. Remerii observe les bords du portail avec une attention presque académique. Hylee, elle, regarde Saidin.\n\nLe vieux mage n’a pas bougé d’un pas. Il respire seulement un peu plus lentement.\n\nComme si arracher un passage au monde venait de lui demander exactement l’effort qu’il avait prévu. Pas davantage.` ,[['saidin','saidin_thinking','left'],['naiah','naiah_thinking','right']],'c15_016'),
+
+      c15_016:narr('L’Impératrice monte',TIA_CG,DAWN,`C’est à cet instant que Tia choisit de prendre la parole.\n\nElle monte sur l’estrade dressée devant les portes. Son armure capte à la fois la lumière du soleil levant, celle des torches encore allumées et les reflets impossibles du portail.\n\nUne main se lève.\n\nDes milliers de soldats se taisent.\n\nLe silence tombe si vite qu’il paraît plus violent que le bruit.`,'c15_017',{zoom:true,hideChars:true}),
+
+      c15_017:scene('Trop longtemps',TIA_CG,DAWN,'Tia',`« Trop longtemps, ils ont rampé dans les ombres. »\n\nSa voix traverse les rangs sans effort.\n\n« Trop longtemps, ils ont infecté notre terre, perverti notre peuple, souillé la pureté de ce que nous sommes. »\n\nElle marque une pause.\n\n« Trop longtemps, nous avons toléré leur existence. »`,[],'c15_018',{hideChars:true}),
+
+      c15_018:scene('Aujourd’hui, nous allons les chercher',TIA_CG,DAWN,'Tia',`Le poing de Tia se referme.\n\n« Corrigeons cela. Aujourd’hui, nous allons les chercher. »\n\nUn frisson parcourt les rangs.\n\n« Nous ne laisserons plus de place à l’erreur. Nous ne leur laisserons plus de refuge. Plus d’abri. Plus d’espoir. »`,[],'c15_019',{hideChars:true}),
+
+      c15_019:scene('Nous sommes Sylvinia',TIA_CG,DAWN,'Tia',`Elle désigne le portail derrière elle.\n\n« Ils croient pouvoir défier notre monde. Ils pensent que leurs pactes impies, leurs rituels, leurs alliances avec le mal leur offriront le pouvoir. »\n\nSon regard balaie l’armée.\n\n« Mais ils oublient une chose. »\n\nLe silence se tend.\n\n« Nous sommes Sylvinia. »`,[],'c15_020',{hideChars:true}),
+
+      c15_020:scene('Purifier',TIA_CG,DAWN,'Tia',`« Nous sommes ceux qui brûlent la souillure. »\n\nLes prêtres redressent la tête.\n\n« Nous sommes ceux qui purifient la corruption. »\n\nLes chevaliers frappent du poing contre leur plastron.\n\n« Et aujourd’hui… nous les écraserons. »`,[],'c15_021',{hideChars:true}),
+
+      c15_021:scene('Pour l’affront d’exister',TIA_CG,DAWN,'Tia',`Le grondement de l’armée enfle, mais Tia l’écrase encore d’une dernière phrase.\n\n« Aujourd’hui, nous faisons justice. Pour notre honneur souillé. Pour notre héritage profané. »\n\nSon regard ne tremble pas.\n\n« Pour l’affront d’exister. »\n\nLe rugissement qui lui répond fait vibrer les portes d’Al’Gratal.` ,[],'c15_speech_choice',{hideChars:true}),
+
+      c15_speech_choice:scene('Au milieu du rugissement',DEPART,DAWN,'Narrateur',`Les armes se lèvent. Les voix se mêlent. Hylee ne crie pas. Il y a trop de choses à regarder dans ce que Tia vient de déclencher.`,[['hylee','hylee2_thinking','left'],['naiah','naiah_away','right']],null,{choices:[
+        {label:'Regarder les soldats plutôt que l’Impératrice',next:'c15_speech_soldiers',effects:{lucidite:1},flags:{c15WatchedArmy:true}},
+        {label:'Chercher Naïah dans la foule',next:'c15_speech_naiah',effects:{resonance:1},flags:{c15WatchedNaiah:true}},
+        {label:'Retenir mot pour mot ce que Tia vient de dire',next:'c15_speech_words',effects:{sangfroid:1},flags:{c15RememberedTiaWords:true}}
+      ]}),
+
+      c15_speech_soldiers:scene('Ce que la foule transforme',DEPART,DAWN,'Narrateur',`Hylee regarde les visages plutôt que le trône. Certains soldats sont exaltés. D’autres frappent leur armure parce que les autres le font. Quelques-uns restent silencieux, la mâchoire serrée.\n\nUn même cri peut contenir beaucoup de choses.\n\nLa certitude de Tia, elle, ne contient rien d’autre qu’elle-même.` ,[['hylee','hylee2_thinking','center']],'c15_022'),
+
+      c15_speech_naiah:scene('Celle que les mots visent aussi',DEPART,DAWN,'Narrateur',`Naïah est restée à l’écart des rangs.\n\nSon sourire n’a pas disparu. Il s’est seulement vidé de toute joie.\n\n« Charmant. »\n\nUn seul mot. Presque léger. Hylee n’y croit pas une seconde.` ,[['naiah','naiah_away','left'],['hylee','hylee2_sad','right']],'c15_022'),
+
+      c15_speech_words:scene('Ne pas oublier',DEPART,DAWN,'Narrateur',`Hylee ne regarde plus personne.\n\nRefuge. Abri. Espoir. Souillure. Purifier. Écraser.\n\nElle garde les mots. Tous.\n\nParce qu’il sera peut-être important, plus tard, que quelqu’un se souvienne exactement de ce qui a été ordonné avant le premier mort.` ,[['hylee','hylee2_determined','center']],'c15_022'),
+
+      c15_022:narr('La marée franchit le seuil',PORTAL,PORTAL_MUSIC,`L’armée s’ébranle.\n\nLes premiers rangs disparaissent dans la lumière. Puis les suivants. Une marée d’armures, de capes et de bannières passe d’un monde à l’autre au son strident de la fracture.\n\nHylee sent son estomac se soulever lorsqu’elle traverse. Pendant une fraction de seconde, elle n’a plus de poids. Plus de souffle. Plus de direction.\n\nPuis la réalité la reprend brutalement.`,'c15_023',{zoom:true,hideChars:true}),
+
+      c15_023:narr('La Forêt Interdite',FOREST_KEY,FOREST_MUSIC,`La lumière disparaît derrière eux.\n\nLa Forêt Interdite referme aussitôt son silence sur l’armée.\n\nLes arbres se tordent vers le ciel dans des angles impossibles. La mousse avale le bruit des bottes. L’air sent la terre humide, la cendre et la végétation morte.\n\nEn quelques minutes, la puissance déployée devant Al’Gratal paraît très loin. Ici, les milliers de soldats ne donnent pas l’impression d’occuper la forêt.\n\nIls donnent l’impression d’y avoir été acceptés provisoirement.`,'c15_024',{hideChars:true}),
+
+      c15_024:scene('La route d’Iriana',FOREST,FOREST_MUSIC,'Narrateur',`L’armée se reforme. Ellion répartit les éclaireurs. Draven vérifie les flancs. Remerii et Hylee restent proches. Naïah regarde les arbres comme on regarde une vieille connaissance dont on ne sait pas encore si elle est de bonne humeur.\n\nIriana, elle, prend la tête.\n\nElle choisit le passage annoncé au Conseil. Un chemin étroit, à peine praticable, qui s’enfonce plus profondément dans la végétation avant de repartir vers le sud.\n\nValurn la rejoint sans presser le pas.` ,[['iriana','iriana_stern','left'],['valurn','valurn_neutral','right']],'c15_025'),
+
+      c15_025:scene('Je vois ce que tu fais',FOREST,FOREST_MUSIC,'Valurn',`« Tu sais où tu vas ? »\n\nIriana ne tourne pas la tête.\n\n« Oui. »\n\n« C’est ce qui m’inquiète. »\n\nElle lui lance enfin un regard.\n\nValurn sourit. Pas assez pour attirer l’attention d’Ellion. Juste assez pour lui dire qu’il a compris.\n\nIl n’argumente pas.\n\nIl la suit.` ,[['iriana','iriana_stern','left'],['valurn','valurn_charming','right']],'c15_walk_choice'),
+
+      c15_walk_choice:scene('Dans la colonne',FOREST,FOREST_MUSIC,'Narrateur',`La marche s’étire. Les conversations se réduisent d’elles-mêmes. Dans cette forêt, même parler trop fort semble être une manière de se signaler.\n\nHylee ralentit légèrement. Elle peut encore choisir auprès de qui marcher avant que les rangs ne se resserrent.` ,[['hylee','hylee2_thinking','center']],null,{choices:[
+        {label:'Ralentir jusqu’à Draven',next:'c15_walk_draven',effects:{lucidite:1},flags:{c15WalkedWithDraven:true}},
+        {label:'Demander à Naïah ce qu’elle pense du chemin',next:'c15_walk_naiah',effects:{resonance:1},flags:{c15AskedNaiahRoute:true}},
+        {label:'Rester avec Remerii et économiser son souffle',next:'c15_walk_remerii',effects:{lien:1},flags:{c15WalkedWithRemerii:true}}
+      ]}),
+
+      c15_walk_draven:scene('Un terrain qui n’aime pas les armées',FOREST,FOREST_MUSIC,'Draven',`Draven ne quitte pas les arbres des yeux.\n\n« Les rangs sont trop longs. »\n\nHylee regarde derrière eux.\n\n« On est des milliers. »\n\n« Justement. Ici, mille hommes peuvent être aveugles en même temps. »\n\nIl désigne d’un mouvement du menton les racines, les troncs, les poches de brume.\n\n« Garde Remerii près de toi. Et si la ligne se casse, ne cherche pas à rejoindre l’avant. Trouve de l’espace. »\n\nCe n’est pas un conseil rassurant. Draven n’a jamais eu vocation à l’être.` ,[['draven','draven_stern','left'],['hylee','hylee2_thinking','right']],'c15_026'),
+
+      c15_walk_naiah:scene('La forêt ne dit pas la même chose',FOREST,FOREST_MUSIC,'Naïah',function(){
+        if(flags().c14GroupNaiahScouting) return `Naïah garde les yeux sur les branches.\n\n« J’ai vérifié ce passage cette nuit. Il était calme. Trop calme, mais vide. »\n\nHylee baisse la voix. « Et maintenant ? »\n\nNaïah renifle l’air, puis cesse de sourire.\n\n« Maintenant, il y a quelque chose qui n’était pas là. »`;
+        return `Naïah garde les yeux sur les branches.\n\n« Le chemin existe. Ça, Iriana n’a pas menti. »\n\n« Tu dis ça comme si le reste t’inquiétait. »\n\n« Le reste m’inquiète toujours. C’est ce qui me maintient charmante. »\n\nElle s’interrompt, le regard fixé plus loin.\n\n« Et là… la forêt est trop silencieuse. »`;
+      },[['naiah','naiah_thinking','left'],['hylee','hylee2_thinking','right']],'c15_026'),
+
+      c15_walk_remerii:scene('Marcher ensemble',FOREST,FOREST_MUSIC,'Remerii',`Remerii ralentit juste assez pour marcher épaule contre épaule avec Hylee.\n\n« Tu trembles ? »\n\nHylee regarde ses propres mains.\n\n« Non. »\n\n« Bien. »\n\nUn silence.\n\n« Toi, oui. »\n\nRemerii baisse les yeux vers ses doigts. Un frémissement presque invisible les traverse.\n\n« Alors nous sommes deux à ne pas trembler. »\n\nHylee sourit malgré elle.\n\nÇa ne rend pas la forêt moins inquiétante. Mais ça la rend un peu moins seule.` ,[['hylee','hylee2_soft','left'],['remerii','remerii_soft','right']],'c15_026'),
+
+      c15_026:narr('Trop calme',FOREST,FOREST_MUSIC,function(){
+        let extra='';
+        if(flags().c15WalkedWithDraven) extra=`\n\nLes mots de Draven reviennent immédiatement à Hylee : mille hommes peuvent être aveugles en même temps.`;
+        else if(flags().c15AskedNaiahRoute) extra=`\n\nNaïah ne plaisante plus. Chez elle, c’est déjà une alarme.`;
+        else if(flags().c15WalkedWithRemerii) extra=`\n\nRemerii cesse de parler au même instant qu’elle. Elles ont senti le changement ensemble.`;
+        return `Les arbres se resserrent.\n\nLes pas deviennent sourds. Les oiseaux ont disparu depuis longtemps, mais Hylee réalise seulement maintenant qu’il n’y a même plus d’insectes.\n\nRien.\n\nPas un battement d’aile. Pas un craquement qui n’appartienne à l’armée.\n\nPuis Draven s’arrête.${extra}`;
+      },'c15_027'),
+
+      c15_027:scene('Quelque chose les regarde',FOREST,FOREST_MUSIC,'Narrateur',`Draven lève lentement une main. Le geste se propage derrière lui. Les soldats ralentissent.\n\nSon regard glisse entre les troncs.\n\nUne ombre bouge. Puis une autre.\n\nElles ne se cachent pas vraiment. Elles se déplacent juste assez loin pour rester indistinctes. Trop nombreuses. Trop régulières.\n\nDraven pose la main sur la garde de son épée.\n\nCe ne sont pas des Obscurcis.\n\nCe ne sont pas des vivants.` ,[['draven','draven_stern','center']],'c15_028'),
+
+      c15_028:narr('Les insignes',FOREST,DRAVEN_MUSIC,`Les premières silhouettes sortent de la brume.\n\nArmures décomposées. Chairs rongées par une moisissure noire. Tabards déchirés, collés à des torses qui n’auraient jamais dû se relever.\n\nLeurs yeux sont vides, traversés d’une lueur spectrale. Leurs mouvements n’ont rien de la lenteur d’un cadavre. Ils avancent avec une détermination mécanique.\n\nDraven ne regarde pas leurs visages.\n\nIl regarde leurs insignes.\n\nEt son sang se glace.`,'c15_029',{zoom:true}),
+
+      c15_029:scene('Ses hommes',FOREST,DRAVEN_MUSIC,'Narrateur',`Forthaven.\n\nLe symbole est abîmé, noirci, parfois à moitié arraché. Mais Draven le reconnaîtrait dans le noir.\n\nCe sont ses hommes.\n\nCeux qu’il a fait venir sur le continent. Ceux que Lineva lui a confiés. Ceux qu’il devait ramener.\n\nIls auraient dû défendre leur foyer. Pas mourir pour une nation qui les considère à peine comme les siens.\n\nEt pourtant ils sont là.\n\nMorts.\n\nNon. Pire que morts.` ,[['draven','draven_surprised','center']],'c15_030'),
+
+      c15_030:scene('Le fléau de Forthaven',FOREST,DRAVEN_MUSIC,'Narrateur',`La corruption pulse sur leurs corps comme une seconde peau. Une mousse acide s’accroche à leurs armures, s’insinue dans les jointures, maintient ensemble ce qui aurait dû s’effondrer depuis longtemps.\n\nDraven connaît ce fléau.\n\nIl l’a vu dans les profondeurs de Forthaven. Il l’a combattu. Il l’a traqué.\n\nEt maintenant il le retrouve ici, à des lieues de son archipel, dans une forêt où il n’aurait jamais dû exister.\n\nUne pensée lui traverse l’esprit.\n\nLes Obscurcis.\n\nEt si ce n’était pas une coïncidence ?` ,[['draven','draven_sad','center']],'c15_031'),
+
+      c15_031:scene('Valurn frappe là où ça fait mal',FOREST,DRAVEN_MUSIC,'Valurn',`« Ah… alors c’est ça, l’élite de Forthaven ? »\n\nValurn vient se placer à côté de Draven. Son ton est presque léger. Presque.\n\n« Je comprends mieux pourquoi votre ville a toujours eu besoin d’un mur pour tenir debout. »\n\nDraven ne répond pas.\n\nValurn regarde les morts approcher. Puis Draven.\n\nEt il continue.` ,[['valurn','valurn_amused','left'],['draven','draven_sad','right']],'c15_032'),
+
+      c15_032:scene('Ne pas le laisser se noyer',FOREST,DRAVEN_MUSIC,'Valurn',`« Regarde-les. J’ai vu des cadavres plus frais dans les bas-fonds d’Al’Gratal. »\n\nHylee se retourne brusquement.\n\n« Valurn, ferme-la. »\n\nRemerii pose une main sur son avant-bras avant qu’elle n’avance.\n\nPas pour défendre Valurn.\n\nSon regard reste sur Draven.\n\n« Attends. »`,[['hylee','hylee2_angry','left'],['remerii','remerii_strict','center'],['valurn','valurn_amused','right']],'c15_033'),
+
+      c15_033:scene('La dernière provocation',FOREST,DRAVEN_MUSIC,'Valurn',`Valurn ne quitte pas Draven des yeux.\n\n« Tu crois qu’ils se souviennent de toi ? »\n\nLe demi-démon penche légèrement la tête.\n\n« Qu’ils t’ont attendu pendant qu’on fuyait ? Pendant qu’on profitait des festivités impériales ? »\n\nUne flamme apparaît dans sa paume. Petite. Dense. Affamée.\n\n« Ça fait quoi, Draven ? De voir tes hommes massacrés… puis relevés comme des charognes ? »\n\nLes doigts de Draven se crispent sur la garde de son épée.` ,[['valurn','valurn_charming','left'],['draven','draven_angry','right']],'c15_034'),
+
+      c15_034:scene('Ce qu’il voulait obtenir',FOREST,DRAVEN_MUSIC,'Valurn',`Valurn voit enfin la colère remplacer la stupeur.\n\nSon sourire disparaît.\n\nEntièrement.\n\n« Peu importe ce qu’ils étaient il y a une heure. Maintenant, c’est toi leur ennemi. »\n\nIl désigne la horde d’un mouvement de tête.\n\n« Et en tant que commandant, t’as un dernier ordre à leur donner. »`,[['valurn','valurn_neutral','left'],['draven','draven_angry','right']],'c15_035'),
+
+      c15_035:scene('Le dernier ordre',FOREST,DRAVEN_MUSIC,'Valurn',`Sa voix est basse. Sèche. Il n’y a plus la moindre moquerie dedans.\n\n« Accorde-leur le repos qu’ils méritent. »\n\nDraven inspire profondément.\n\nUne fois.\n\nIl ferme les yeux. Toute la rage, toute la douleur, toute la culpabilité passent sur son visage sans qu’un mot ne sorte.` ,[['valurn','valurn_neutral','left'],['draven','draven_sad','right']],'c15_036'),
+
+      c15_036:narr('L’heure du départ',FOREST,DRAVEN_MUSIC,`Puis Draven tire son épée.\n\nLe métal glisse hors du fourreau avec un son clair. Presque calme.\n\nIl ouvre les yeux.\n\nSon regard n’a plus rien de perdu.\n\nHylee murmure son nom. Il ne répond pas.\n\nSans un mot, Draven avance vers ses hommes.\n\nSans un mot, il va leur accorder le salut.`,'c15_end',{zoom:true}),
+
+      c15_end:scene('Fin du Chapitre XV',FOREST,DRAVEN_MUSIC,'Narrateur',`La forêt retient son souffle.\n\nDevant l’armée sylvinienne, les morts de Forthaven continuent d’avancer. Draven marche à leur rencontre, seul sur les premiers mètres, l’épée basse.\n\nLe combat ne fait que commencer.`,[],null,{hideChars:true,choices:[{label:'Retour au menu',next:'menu',effects:{},note:'Chapitre XV terminé'}]})
+    };
+
+    Object.assign(S,C15);
+
+    function c15Unlocked(){
+      if(state&&state.devMode)return true;
+      const f=flags();
+      return f.chapter14Complete===true||f.chapter14ReachedEnd===true;
+    }
+    window.c15Unlocked=c15Unlocked;
+    window.startChapter15=function(){
+      const prev=(typeof readMainSave==='function'?readMainSave():null)||state||{};
+      const pf=(prev&&prev.flags)||{};
+      const unlocked=(prev&&prev.devMode)||pf.chapter14Complete===true||pf.chapter14ReachedEnd===true;
+      if(!unlocked){if(typeof toast==='function')toast('Chapitre XV verrouillé','Termine le Chapitre XIV.');return;}
+      state={...prev,scene:'c15_001',stats:{...START_STATS,...((prev&&prev.stats)||{})},flags:{...pf},history:[],lastScreen:'game'};
+      setScreen('game');render();save();
+    };
+
+    function upsertC15Card(){
+      if(typeof CHAPTER_SELECT_DATA==='undefined'||!Array.isArray(CHAPTER_SELECT_DATA))return;
+      let ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch15');
+      if(!ch){ch={key:'ch15'};CHAPTER_SELECT_DATA.push(ch);}
+      Object.assign(ch,{key:'ch15',label:'Chapitre XV',title:'L’heure du départ',subtitle:'Routes réunies · Adaptation développée du chapitre 17 du roman',image:A.c15_chapter_thumb||'',tags:['Routes réunies','Al’Gratal','Forêt Interdite','Draven'],body:`À l’aube, l’armée quitte Al’Gratal. Hylee et Remerii s’accordent une dernière passe d’entraînement, Iriana réapparaît au milieu du groupe, Saidin ouvre la route et Tia transforme le départ en croisade. Puis la Forêt Interdite referme ses arbres sur l’armée et rend à Draven des hommes qu’il croyait seulement morts.`,action:'Lancer le Chapitre XV'});
+      const order=['intro','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','ch11_i','ch11_g','ch12_i','ch12_g','ch13_i','ch13_g','ch14','ch15'];
+      CHAPTER_SELECT_DATA.sort((a,b)=>{const ia=order.indexOf(a&&a.key),ib=order.indexOf(b&&b.key);return (ia<0?999:ia)-(ib<0?999:ib);});
+    }
+    upsertC15Card();
+
+    if(typeof chapterSelectUnlocked==='function'&&!window.__sylviniaC15UnlockWrapped){
+      window.__sylviniaC15UnlockWrapped=true;
+      const prev=chapterSelectUnlocked;
+      chapterSelectUnlocked=window.chapterSelectUnlocked=function(key){if(key==='ch15')return c15Unlocked();return prev(key);};
+    }
+    if(typeof launchChapterSelect==='function'&&!window.__sylviniaC15LaunchWrapped){
+      window.__sylviniaC15LaunchWrapped=true;
+      const prev=launchChapterSelect;
+      launchChapterSelect=window.launchChapterSelect=function(key){if(key==='ch15')return window.startChapter15();return prev(key);};
+    }
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaC15RenderWrapped){
+      window.__sylviniaC15RenderWrapped=true;
+      const prev=renderChapterSelect;
+      renderChapterSelect=window.renderChapterSelect=function(){
+        upsertC15Card();
+        const out=prev.apply(this,arguments);
+        const idx=CHAPTER_SELECT_DATA.findIndex(x=>x&&x.key==='ch15');
+        const card=document.querySelectorAll('#chapterSelectGrid .chapterSelectCard')[idx];
+        if(card){
+          card.dataset.chapterKey='ch15';card.classList.add('chapter15Card');
+          const hint=card.querySelector('.chapterLockHint');
+          if(hint&&!c15Unlocked())hint.textContent='Termine le Chapitre XIV.';
+        }
+        return out;
+      };
+    }
+    if(typeof getSceneChapterLabel==='function'&&!window.__sylviniaC15LabelWrapped){
+      window.__sylviniaC15LabelWrapped=true;
+      const prev=getSceneChapterLabel;
+      getSceneChapterLabel=window.getSceneChapterLabel=function(id=state.scene){if(String(id||'').startsWith('c15_'))return TITLE;return prev(id);};
+    }
+
+    /* Le XIV mène désormais naturellement à l'aube du XV, sans supprimer le retour au menu. */
+    if(S.c14_end){
+      const choices=Array.isArray(S.c14_end.choices)?S.c14_end.choices:[];
+      const menu=choices.find(ch=>ch&&ch.next==='menu')||{label:'Retour au menu',next:'menu',effects:{}};
+      S.c14_end.choices=[
+        {label:'Continuer vers le Chapitre XV',next:'c15_001',effects:{...((menu&&menu.effects)||{})},flags:{...((menu&&menu.flags)||{}),chapter14Complete:true},memories:[...new Set([...(menu.memories||[])])],items:[...(menu.items||[])],note:'L’aube se lève sur Al’Gratal.'},
+        {...menu,next:'menu'}
+      ];
+    }
+
+    if(typeof go==='function'&&!window.__sylviniaC15GoWrapped){
+      window.__sylviniaC15GoWrapped=true;
+      const previousGo=go;
+      go=window.go=function(next,opts={}){
+        if(next==='c15_end'){
+          state.journalFragments=[...new Set([...(state.journalFragments||[]),'ch15'])];
+          state.flags={...flags(),chapter15ReachedEnd:true,chapter15Complete:true};
+        }
+        return previousGo(next,opts);
+      };
+    }
+
+    /* Progression, journal et Codex : uniquement des ajouts, aucun contenu antérieur n'est remplacé. */
+    if(typeof PROGRESSION_MEMORIES!=='undefined')Object.assign(PROGRESSION_MEMORIES,{
+      c15_aube_algratal:{title:'L’aube du départ',type:'Souvenir · Groupe',icon:'☀',body:`Au pied d’Al’Gratal, l’armée entière s’est préparée tandis que Hylee et Remerii trouvaient encore le temps de s’entraîner. Iriana est revenue au milieu du groupe avec Valurn à ses côtés.`},
+      c15_discours_tia:{title:'Pour l’affront d’exister',type:'Souvenir · Empire',icon:'⚔',body:`Avant le passage du portail, Tia a transformé l’offensive en croisade. Ses mots ne promettaient ni capture ni compromis : seulement la purification et l’écrasement de l’ennemi.`},
+      c15_draven_hommes:{title:'Le dernier ordre de Draven',type:'Souvenir · Draven',icon:'⚓',body:`Dans la Forêt Interdite, Draven a reconnu parmi les morts relevés les soldats de Forthaven qu’il avait fait venir sur le continent. Valurn l’a poussé hors de sa stupeur jusqu’à ce qu’il puisse leur donner un dernier ordre : le repos.`}
+    });
+    if(typeof CODEX_ENTRIES!=='undefined')Object.assign(CODEX_ENTRIES,{
+      depart_algratal:{title:'Le départ d’Al’Gratal',body:`À l’aube suivant le Conseil de Guerre, l’armée sylvinienne se rassemble devant la capitale avant de franchir un portail ouvert par Saidin vers la Forêt Interdite.`},
+      discours_tia_depart:{title:'Le discours de Tia',body:`Tia présente l’offensive comme une purification. Devant toute l’armée, elle promet de retirer aux Obscurcis refuge, abri et espoir, puis réclame justice pour « l’affront d’exister ».`},
+      portail_saidin_armee:{title:'Le portail de Saidin',body:`Saidin ouvre devant l’armée une fracture spatio-temporelle assez stable pour laisser passer des milliers de soldats. Même les mages aguerris reculent devant la puissance brute nécessaire.`},
+      releves_forthaven:{title:'Les relevés de Forthaven',body:`Dans la Forêt Interdite, Draven découvre des soldats de Forthaven morts puis relevés par la même corruption qu’il connaît dans son archipel. Leur présence pose une question immédiate : comment ce fléau a-t-il atteint cet endroit ?`}
+    });
+    if(typeof CODEX_ORDER!=='undefined'&&Array.isArray(CODEX_ORDER))['depart_algratal','discours_tia_depart','portail_saidin_armee','releves_forthaven'].forEach(k=>{if(!CODEX_ORDER.includes(k))CODEX_ORDER.push(k);});
+    if(typeof CODEX_BY_SCENE!=='undefined')Object.assign(CODEX_BY_SCENE,{c15_001:['depart_algratal'],c15_014:['portail_saidin_armee'],c15_017:['discours_tia_depart'],c15_028:['releves_forthaven']});
+
+    if(typeof JOURNAL_FRAGMENTS!=='undefined')JOURNAL_FRAGMENTS.ch15={title:'Chapitre XV · L’heure du départ',chapter:'Chapitre XV',unlockLabel:'Termine le Chapitre XV',blocks:[
+      {kind:'journal',text:`Nous avons quitté Al’Gratal sous les mots de Tia. Elle n’a pas parlé d’une bataille, mais d’une purification. Saidin a ouvert le passage et l’armée entière s’est engouffrée dans la Forêt Interdite derrière Iriana.`},
+      {kind:'projection',text:`La forêt nous a rendu les hommes de Draven. Morts, corrompus, relevés. Valurn a été cruel jusqu’à ce que Draven cesse d’être immobile. Puis il lui a rappelé ce qu’il était encore : leur commandant. Il s’avance maintenant vers eux.`}
+    ]};
+    if(typeof JOURNAL_FRAGMENT_ORDER!=='undefined'&&Array.isArray(JOURNAL_FRAGMENT_ORDER)&&!JOURNAL_FRAGMENT_ORDER.includes('ch15'))JOURNAL_FRAGMENT_ORDER.push('ch15');
+
+    if(typeof CODEX_MUSIC_BY_SCENE!=='undefined')Object.assign(CODEX_MUSIC_BY_SCENE,{
+      c15_001:['music_algratal'],c15_002:['music_duel'],c15_013:['music_c10_group_portal'],c15_023:[FOREST_MUSIC],c15_028:['music_draven_storm']
+    });
+
+    /* Corrige aussi la simple métadonnée de la carte XIV : le Conseil de Guerre vient du chapitre 16 du roman. */
+    const c14Card=typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)?CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch14'):null;
+    if(c14Card)c14Card.subtitle='Routes réunies · Adaptation du chapitre 16 du roman';
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble)bubble.textContent='Mise à jour · v0.350 · Chapitre XV · L’heure du départ';
+    console.info('[Sylvinia v0.350] Chapitre XV installé :',Object.keys(C15).length,'scènes · adaptation développée du chapitre 17 du Tome 1.');
+    if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden'))renderChapterSelect();
+    if(typeof save==='function')save();
+  }catch(error){console.error('[Sylvinia v0.350] Échec de l’intégration du Chapitre XV',error);}
+})();
+</script>
+
+
+
+<!-- sylvinia-chapter15-memory-flags-v0400 -->
+<script id="sylvinia-chapter15-memory-flags-v0400">
+(()=>{
+  'use strict';
+  try{
+    if(typeof S==='undefined') throw new Error('Registre des scènes indisponible');
+    if(window.__sylviniaC15MemoryFlagsV0400) return;
+    window.__sylviniaC15MemoryFlagsV0400=true;
+
+    const TITLE=(S.c15_001&&S.c15_001.title)||'Chapitre XV · L’heure du départ';
+    const f=()=>((state&&state.flags)||{});
+    const uniq=(arr)=>[...new Set((arr||[]).filter(Boolean))];
+
+    const scene=(sub,bg,music,speaker,body,chars,next,extra={})=>({
+      title:TITLE,sub,bg,music,speaker,text:body,chars:chars||[],
+      ...(next?{next}:{}),...extra
+    });
+
+    const appendChoice=(sceneId,choice)=>{
+      const sc=S[sceneId];
+      if(!sc) return;
+      sc.choices=Array.isArray(sc.choices)?sc.choices:[];
+      if(!sc.choices.some(ch=>ch&&ch.next===choice.next)) sc.choices.push(choice);
+    };
+
+    /* ==========================================================
+       1. ENTRAÎNEMENT : la préparation Remerii de la veille
+       ========================================================== */
+    appendChoice('c15_train_choice',{
+      label:'Reprendre l’enchaînement travaillé cette nuit',
+      next:'c15_mem_train_sync_1',
+      effects:{lien:1},
+      requiresFlags:{c14GroupPreparedWithRemerii:true},
+      flags:{c15ReusedNightTraining:true},
+      note:'Souvenir du Chapitre XIV · Coordination préparée avec Remerii'
+    });
+
+    S.c15_mem_train_sync_1=scene(
+      'Le mouvement déjà appris',
+      (S.c15_003&&S.c15_003.bg)||'c15_training',
+      (S.c15_003&&S.c15_003.music)||'music_c15_duel',
+      'Narrateur',
+      `Hylee ne cherche ni à esquiver ni à riposter tout de suite.
+
+Elle reconnaît le départ du geste.
+
+La veille, dans une cour presque vide, Remerii lui avait fait répéter exactement cette ouverture. Pas pour gagner un duel. Pour apprendre à couvrir l’autre lorsque le champ de bataille ne laisserait pas le temps de parler.
+
+Alors Hylee se décale d’un pas.
+
+Pas davantage.
+
+L’attaque de Remerii passe à l’endroit précis où elle se trouvait et, dans le même mouvement, Hylee élève devant son flanc une plaque de glace que l’archimage utilise comme appui pour pivoter.`,
+      [['hylee','hylee2_determined','left'],['remerii','remerii_strict','right']],
+      'c15_mem_train_sync_2'
+    );
+
+    S.c15_mem_train_sync_2=scene(
+      'Pas besoin de le redire',
+      (S.c15_003&&S.c15_003.bg)||'c15_training',
+      (S.c15_003&&S.c15_003.music)||'music_c15_duel',
+      'Remerii',
+      `Remerii atterrit derrière elle.
+
+Un bref silence.
+
+Puis son regard descend vers la plaque de glace avant de revenir à Hylee.
+
+« Tu t’en souvenais. »
+
+Hylee hausse une épaule, légèrement essoufflée.
+
+« Tu m’as fait recommencer six fois. J’aurais été vexée d’oublier. »
+
+« Sept. »
+
+« Voilà. C’est exactement pour ça que je préfère retenir les sorts et oublier les chiffres. »
+
+Le sourire de Remerii apparaît malgré elle.
+
+Cette fois, lorsqu’elles se remettent en garde, elles ne ressemblent plus tout à fait à une maîtresse et son apprentie.
+
+Plutôt à deux personnes qui savent déjà de quel côté l’autre va bouger.`,
+      [['hylee','hylee2_teasing','left'],['remerii','remerii_soft','right']],
+      'c15_004'
+    );
+
+    /* ==========================================================
+       2. REPOS : seulement si le joueur avait choisi de dormir
+       Pas de clic supplémentaire pour les autres sauvegardes.
+       ========================================================== */
+    if(S.c15_004) S.c15_004.next='c15_after_training_memory_gate';
+
+    S.c15_rest_memory_choice=scene(
+      'Une remarque méritée',
+      (S.c15_004&&S.c15_004.bg)||'c15_depart',
+      (S.c15_004&&S.c15_004.music)||'music_c15_dawn',
+      'Narrateur',
+      `Naïah vient de prédire qu’elles finiront sur les rotules.
+
+Pour une fois, Hylee possède une défense parfaitement raisonnable.`,
+      [['naiah','naiah_smirk','left'],['hylee','hylee2_teasing','right']],
+      null,
+      {choices:[
+        {label:'Laisser Draven répondre',next:'c15_005'},
+        {
+          label:'Rappeler à Naïah qu’on a dormi exprès pour ça',
+          next:'c15_mem_rest_1',
+          effects:{sangfroid:1},
+          requiresFlags:{c14GroupRested:true},
+          flags:{c15RestChoiceRemembered:true},
+          note:'Souvenir du Chapitre XIV · Forces conservées avant le départ'
+        }
+      ]}
+    );
+
+    S.c15_mem_rest_1=scene(
+      'L’énergie économisée',
+      (S.c15_004&&S.c15_004.bg)||'c15_depart',
+      (S.c15_004&&S.c15_004.music)||'music_c15_dawn',
+      'Hylee',
+      `« J’ai dormi. »
+
+Naïah la regarde.
+
+Hylee ajoute, très sérieuse :
+
+« J’ai même dormi volontairement. Donc techniquement, j’ai économisé de l’énergie spécialement pour pouvoir la gaspiller maintenant. »
+
+Naïah plisse les yeux.
+
+« Cette logique me paraît dangereusement convaincante. »`,
+      [['hylee','hylee2_confident','left'],['naiah','naiah_smirk','right']],
+      'c15_mem_rest_2'
+    );
+
+    S.c15_mem_rest_2=scene(
+      'Le témoin',
+      (S.c15_004&&S.c15_004.bg)||'c15_depart',
+      (S.c15_004&&S.c15_004.music)||'music_c15_dawn',
+      'Remerii',
+      `« Elle a dormi. J’ai vérifié. »
+
+Hylee tourne la tête vers elle.
+
+« Tu n’étais pas obligée de formuler ça comme si j’étais une expérience sous surveillance. »
+
+Remerii lui offre son calme le plus innocent.
+
+« Je pourrais employer le terme “suivi pédagogique”. »
+
+Naïah éclate de rire.
+
+À quelques dizaines de mètres, personne n’a cessé de préparer la guerre.
+
+Pendant trois secondes, pourtant, elle paraît un peu plus loin.`,
+      [['remerii','remerii_smirk','left'],['hylee','hylee2_teasing','center'],['naiah','naiah_laugh','right']],
+      'c15_005'
+    );
+
+    /* ==========================================================
+       3. SAIDIN / PORTAIL : vieux apprentissages de Hylee
+       ========================================================== */
+    if(S.c15_015) S.c15_015.next='c15_portal_memory_gate';
+
+    S.c15_portal_memory_choice=scene(
+      'Ce que Hylee reconnaît dans la déchirure',
+      (S.c15_015&&S.c15_015.bg)||'c15_portal',
+      (S.c15_015&&S.c15_015.music)||'music_c15_portal',
+      'Narrateur',
+      `Le portail tient.
+
+Autour de Saidin, pourtant, quelque chose rappelle à Hylee des dangers qu’elle a déjà appris à regarder autrement.`,
+      [['hylee','hylee2_thinking','left'],['saidin','saidin_thinking','right']],
+      null,
+      {choices:[
+        {label:'Laisser Saidin stabiliser le passage',next:'c15_016'},
+        {
+          label:'Écouter le vide autour de Saidin',
+          next:'c15_mem_saidin_gap_1',
+          effects:{resonance:1},
+          requiresFlags:{c10gHyleeFeltSaidinGap:true},
+          flags:{c15FeltSaidinGapAgain:true},
+          note:'Souvenir d’Akuhn’Nabad · Hylee a déjà senti l’absence laissée par Saidin'
+        },
+        {
+          label:'Observer ce qui arriverait si la déchirure lâchait',
+          next:'c15_mem_portal_threat_1',
+          effects:{lucidite:1},
+          requiresFlags:{c10gHyleeNamedPortalThreat:true},
+          flags:{c15ReadPortalThreat:true},
+          note:'Souvenir d’Akuhn’Nabad · Hylee a déjà nommé le danger d’un portail incontrôlé'
+        }
+      ]}
+    );
+
+    S.c15_mem_saidin_gap_1=scene(
+      'Une absence trop propre',
+      (S.c15_015&&S.c15_015.bg)||'c15_portal',
+      (S.c15_015&&S.c15_015.music)||'music_c15_portal',
+      'Narrateur',
+      `Hylee ferme les yeux une seconde.
+
+La magie du portail rugit. Celle de Saidin, elle, ne déborde presque pas.
+
+C’est précisément ce qui la dérange.
+
+Elle retrouve cette sensation déjà perçue à Akuhn’Nabad : non pas un vide naturel, mais une place laissée propre. Comme si quelque chose savait retirer sa propre trace du monde.
+
+Lorsqu’elle rouvre les yeux, Saidin la regarde déjà.`,
+      [['hylee','hylee2_thinking','left'],['saidin','saidin_mysterious','right']],
+      'c15_mem_saidin_gap_2'
+    );
+
+    S.c15_mem_saidin_gap_2=scene(
+      'Un regard de trop',
+      (S.c15_015&&S.c15_015.bg)||'c15_portal',
+      (S.c15_015&&S.c15_015.music)||'music_c15_portal',
+      'Saidin',
+      `Le vieux mage ne lui demande pas ce qu’elle a senti.
+
+Il incline seulement la tête.
+
+« Plus tard. »
+
+Un seul mot.
+
+Hylee fronce les sourcils.
+
+Elle n’avait rien demandé.
+
+Saidin se retourne vers la fracture avant qu’elle puisse relever l’étrangeté.`,
+      [['saidin','saidin_mysterious','left'],['hylee','hylee2_surprised','right']],
+      'c15_016'
+    );
+
+    S.c15_mem_portal_threat_1=scene(
+      'La porte et ce qu’elle pourrait devenir',
+      (S.c15_015&&S.c15_015.bg)||'c15_portal',
+      (S.c15_015&&S.c15_015.music)||'music_c15_portal',
+      'Hylee',
+      `Hylee ne regarde pas la destination.
+
+Elle regarde les bords.
+
+La lumière y tremble sous une tension monstrueuse. Une rupture infime, un mouvement mal compensé, et ce passage pourrait cesser d’être une route pour devenir une blessure.
+
+« Si ça lâche ? »
+
+Remerii tourne la tête vers elle. Saidin, lui, garde les mains levées.`,
+      [['hylee','hylee2_thinking','left'],['remerii','remerii_strict','center'],['saidin','saidin_thinking','right']],
+      'c15_mem_portal_threat_2'
+    );
+
+    S.c15_mem_portal_threat_2=scene(
+      'Assez longtemps',
+      (S.c15_015&&S.c15_015.bg)||'c15_portal',
+      (S.c15_015&&S.c15_015.music)||'music_c15_portal',
+      'Saidin',
+      `« Alors nous aurions un problème beaucoup plus vaste que cette guerre. »
+
+Hylee n’apprécie pas la réponse.
+
+« C’était censé me rassurer ? »
+
+Un pli amusé apparaît au coin de la bouche de Saidin.
+
+« Non. »
+
+Il ramène légèrement ses mains l’une vers l’autre. Les bords du portail cessent de trembler.
+
+« Ceci, en revanche, devrait le faire. Il tiendra assez longtemps. »
+
+Assez longtemps.
+
+Dans la bouche de Saidin, l’expression ressemble presque à une mesure exacte.`,
+      [['saidin','saidin_mysterious','left'],['hylee','hylee2_thinking','right']],
+      'c15_016'
+    );
+
+    /* ==========================================================
+       4. DISCOURS DE TIA : choix hérités des routes précédentes
+       ========================================================== */
+    appendChoice('c15_speech_choice',{
+      label:'Soutenir le regard de Tia comme au palais',
+      next:'c15_mem_tia_gaze_1',
+      effects:{sangfroid:1},
+      requiresFlags:{c10gHyleeHeldBeforeTia:true},
+      flags:{c15HeldBeforeTiaAgain:true},
+      note:'Souvenir du palais · Hylee a déjà refusé de disparaître devant la Lumière de Tia'
+    });
+
+    appendChoice('c15_speech_choice',{
+      label:'Reconnaître le sourire que Naïah utilise comme armure',
+      next:'c15_mem_naiah_armor_1',
+      effects:{resonance:1},
+      requiresFlags:{rem_c9_read_naiah:true},
+      flags:{c15ReadNaiahArmor:true},
+      note:'Souvenir de la Forêt Interdite · Hylee sait déjà lire derrière le rire de Naïah'
+    });
+
+    appendChoice('c15_speech_choice',{
+      label:'Suivre le silence d’Iriana',
+      next:'c15_mem_iriana_tia_1',
+      effects:{lucidite:1},
+      requiresAnyFlags:[
+        'c13iReadTiaNarrative',
+        'c13iRepeatedTiaPattern',
+        'c13iHeldAmaneaWhole',
+        'c13iPromisedNotToForget',
+        'c13iTruthWithoutDefense'
+      ],
+      flags:{c15FollowedIrianaDuringSpeech:true},
+      note:'Route Iriana · Les choix du Chapitre XIII_I changent la manière dont elle reçoit les mots de Tia'
+    });
+
+    S.c15_mem_tia_gaze_1=scene(
+      'Ne pas disparaître',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Narrateur',
+      `Hylee relève les yeux vers l’estrade.
+
+La dernière fois qu’elle s’est trouvée sous le regard de Tia, la Lumière de l’Impératrice lui avait donné l’impression qu’elle pouvait l’écraser simplement en existant plus fort qu’elle.
+
+Ses mains avaient tremblé.
+
+Elles tremblent encore un peu.
+
+Hylee ne baisse pourtant pas la tête.
+
+Ce n’est pas un défi.
+
+Elle refuse seulement, une seconde fois, de devenir plus petite pour rendre Tia plus grande.`,
+      [['hylee','hylee2_determined','left'],['tia','tia_stern','right']],
+      'c15_022'
+    );
+
+    S.c15_mem_naiah_armor_1=scene(
+      'Un sourire déjà vu',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Narrateur',
+      `Hylee connaît ce sourire.
+
+Naïah l’utilisait déjà dans la forêt, lorsqu’une question s’approchait trop près d’une peur qu’elle ne voulait pas offrir aux autres.
+
+Léger.
+
+Presque insolent.
+
+Parfaitement faux.
+
+« Charmant », souffle Naïah.
+
+Cette fois, Hylee n’entend pas la plaisanterie.
+
+Elle entend ce qu’elle protège.`,
+      [['naiah','naiah_away','left'],['hylee','hylee2_sad','right']],
+      'c15_mem_naiah_armor_2'
+    );
+
+    S.c15_mem_naiah_armor_2=scene(
+      'Ne pas lui arracher le masque',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Hylee',
+      `Hylee pourrait lui dire qu’elle a compris.
+
+Elle ne le fait pas.
+
+Elle se contente de se rapprocher d’un demi-pas.
+
+Naïah remarque le mouvement du coin de l’œil.
+
+« Ne deviens pas sentimentale. Ça te va mal. »
+
+« Je bougeais juste parce que tu prends trop de place. »
+
+Le sourire de Naïah revient.
+
+Toujours fragile.
+
+Mais un peu moins seul.`,
+      [['hylee','hylee2_soft','left'],['naiah','naiah_smirk','right']],
+      'c15_022'
+    );
+
+    S.c15_mem_iriana_tia_1=scene(
+      'Les mots qu’Iriana connaît',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Narrateur',
+      function(){
+        const x=f();
+        let out=`Au milieu du rugissement, Iriana ne bouge presque pas.
+
+Tia parle de souillure, de corruption, de purification.
+
+Les soldats entendent des raisons de partir en guerre.`;
+
+        if(x.c13iReadTiaNarrative) out+=`
+
+Iriana, elle, entend une voix qu’elle connaît depuis l’enfance.
+
+Les mêmes mots ont seulement changé de taille. Hier, ils servaient à lui expliquer Amanea. Aujourd’hui, ils servent à expliquer tout un peuple.`;
+
+        if(x.c13iTruthWithoutDefense) out+=`
+
+Et elle reconnaît aussi l’autre confort : celui d’avoir besoin d’un monstre pour que la trahison reste propre. Elle avait eu le courage de le dire à Amanea. Tia vient d’en offrir une version à des milliers de personnes.`;
+
+        return out;
+      },
+      [['iriana','iriana_sad','left'],['tia','tia_stern','right']],
+      'c15_mem_iriana_tia_2'
+    );
+
+    S.c15_mem_iriana_tia_2=scene(
+      'Le geste qui se répète',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Narrateur',
+      function(){
+        const x=f();
+        let out=`Iriana garde les mains immobiles le long de son corps.
+
+C’est plus difficile qu’il n’y paraît.`;
+
+        if(x.c13iRepeatedTiaPattern) out+=`
+
+Elle a déjà compris qu’on pouvait répéter la violence de Tia tout en se croyant plus juste qu’elle.
+
+Cette pensée revient maintenant avec une cruauté parfaite : il ne suffit pas de vouloir sauver quelqu’un pour cesser de choisir à sa place.`;
+
+        if(x.c13iHeldAmaneaWhole) out+=`
+
+Amanea refuse désormais d’entrer dans la case commode que le discours lui prépare. Iriana l’a vue blessée. Elle l’a vue dangereuse. Elle l’a vue capable d’affection, de colère, de calcul et de confiance.
+
+Une personne entière résiste mal au mot “souillure”.`;
+
+        return out;
+      },
+      [['iriana','iriana_sad','center']],
+      'c15_mem_iriana_tia_3'
+    );
+
+    S.c15_mem_iriana_tia_3=scene(
+      'Ce qu’elle a promis au seuil',
+      (S.c15_speech_choice&&S.c15_speech_choice.bg)||'c15_depart',
+      (S.c15_speech_choice&&S.c15_speech_choice.music)||'music_c15_dawn',
+      'Narrateur',
+      function(){
+        const x=f();
+        let out=`Lorsque l’armée rugit, Iriana tourne les yeux vers le portail.
+
+De l’autre côté se trouve la route qu’elle a elle-même proposée.`;
+
+        if(x.c13iPromisedNotToForget) out+=`
+
+Avant de quitter Amanea, elle lui avait promis une seule chose : ne pas oublier ce qu’elle avait fait.
+
+Quelques heures plus tard, ce souvenir pèse davantage qu’une armure.`;
+
+        out+=`
+
+Valurn se tient assez près pour voir sa mâchoire se contracter.
+
+Il ne demande rien.
+
+Iriana non plus.
+
+Mais lorsqu’elle regardera la carte dans quelques minutes et guidera l’armée ailleurs que là où elle prétend aller, ce silence aura déjà choisi son camp.`;
+
+        return out;
+      },
+      [['iriana','iriana_stern','left'],['valurn','valurn_neutral','right']],
+      'c15_022'
+    );
+
+    /* ==========================================================
+       5. MARCHE : tactique de Draven et reconnaissance de Naïah
+       ========================================================== */
+    appendChoice('c15_walk_choice',{
+      label:'Rappeler à Draven les voies de repli tracées cette nuit',
+      next:'c15_mem_retreat_1',
+      effects:{lucidite:1},
+      requiresFlags:{c14GroupRetreatPlan:true},
+      flags:{c15RetreatPlanRecalled:true},
+      note:'Souvenir du Chapitre XIV · Le plan de repli est conservé pour la bataille'
+    });
+
+    appendChoice('c15_walk_choice',{
+      label:'Demander à Naïah ce qui a changé depuis cette nuit',
+      next:'c15_mem_naiah_scout_1',
+      effects:{resonance:1},
+      requiresFlags:{c14GroupNaiahScouting:true},
+      flags:{c15PressedNaiahScoutingMemory:true},
+      note:'Souvenir du Chapitre XIV · Naïah a reconnu ce passage avant l’aube'
+    });
+
+    S.c15_mem_retreat_1=scene(
+      'Les petites marques sur la carte',
+      (S.c15_walk_choice&&S.c15_walk_choice.bg)||'c15_forest',
+      (S.c15_walk_choice&&S.c15_walk_choice.music)||'music_c15_forest',
+      'Hylee',
+      `Hylee rejoint Draven sans regarder directement vers lui.
+
+« La troisième marque. »
+
+L’amiral ralentit d’un demi-pas.
+
+« Tu t’en souviens ? »
+
+« Terrain ouvert derrière la crête. Deux accès. Assez de place pour regrouper des blessés si la colonne casse. »
+
+Draven acquiesce.
+
+La carte n’est plus dans ses mains.
+
+Elle est dans leur mémoire.`,
+      [['hylee','hylee2_thinking','left'],['draven','draven_stern','right']],
+      'c15_mem_retreat_2'
+    );
+
+    S.c15_mem_retreat_2=scene(
+      'Ce qui sert quand le plan cesse d’obéir',
+      (S.c15_walk_choice&&S.c15_walk_choice.bg)||'c15_forest',
+      (S.c15_walk_choice&&S.c15_walk_choice.music)||'music_c15_forest',
+      'Draven',
+      `« Si tout se passe bien, tu oublies cette carte. »
+
+Hylee arque un sourcil.
+
+« Et si tout se passe mal ? »
+
+« Tu oublies les ordres qui t’enverraient mourir pour sauver une formation déjà brisée. Tu prends Remerii, ceux qui peuvent encore marcher, et tu vas à ce point. »
+
+« Et toi ? »
+
+Draven garde les yeux devant lui.
+
+« Je suis l’une des raisons pour lesquelles on a préparé plusieurs voies. Ne reviens pas me chercher. »
+
+Hylee n’aime pas cette phrase.
+
+C’est précisément pour cela qu’elle la retient.`,
+      [['draven','draven_stern','left'],['hylee','hylee2_sad','right']],
+      'c15_026'
+    );
+
+    S.c15_mem_naiah_scout_1=scene(
+      'Le chemin de cette nuit',
+      (S.c15_walk_choice&&S.c15_walk_choice.bg)||'c15_forest',
+      (S.c15_walk_choice&&S.c15_walk_choice.music)||'music_c15_forest',
+      'Hylee',
+      `Hylee attend que deux soldats dépassent Naïah avant de baisser la voix.
+
+« Tu es passée ici cette nuit. Qu’est-ce qui a changé ? »
+
+Naïah ne plaisante pas.
+
+Pas tout de suite.
+
+Elle regarde une branche brisée, puis la mousse au pied d’un arbre.
+
+« Presque rien. »
+
+Hylee attend.
+
+« C’est ça qui m’ennuie. »`,
+      [['hylee','hylee2_thinking','left'],['naiah','naiah_thinking','right']],
+      'c15_mem_naiah_scout_2'
+    );
+
+    S.c15_mem_naiah_scout_2=scene(
+      'Une forêt qui retient quelque chose',
+      (S.c15_walk_choice&&S.c15_walk_choice.bg)||'c15_forest',
+      (S.c15_walk_choice&&S.c15_walk_choice.music)||'music_c15_forest',
+      'Naïah',
+      `« Cette nuit, le passage était vide. Calme. Trop calme, mais vide. »
+
+Elle renifle doucement l’air.
+
+Son expression change.
+
+« Maintenant, la forêt se tait de la même manière… sauf qu’elle retient quelque chose. »
+
+« Quoi ? »
+
+Naïah sourit sans joie.
+
+« Si je le savais, ce serait beaucoup moins intéressant. »
+
+Puis son regard se fixe entre deux troncs.
+
+« Et beaucoup moins dangereux. »`,
+      [['naiah','naiah_away','left'],['hylee','hylee2_determined','right']],
+      'c15_026'
+    );
+
+    /* Deuxième couche de choix seulement si d'anciens souvenirs le permettent. */
+    if(S.c15_026) S.c15_026.next='c15_silence_memory_gate';
+
+    S.c15_silence_memory_choice=scene(
+      'Avant que le silence se referme',
+      (S.c15_026&&S.c15_026.bg)||'c15_forest',
+      (S.c15_026&&S.c15_026.music)||'music_c15_forest',
+      'Narrateur',
+      `Quelque chose vient de changer.
+
+Hylee peut suivre l’instinct immédiat de Draven, ou s’appuyer sur une manière d’écouter qu’elle a déjà apprise.`,
+      [['hylee','hylee2_thinking','left'],['remerii','remerii_strict','right']],
+      null,
+      {choices:[
+        {label:'Suivre le geste de Draven',next:'c15_027'},
+        {
+          label:'Écouter ce que la forêt a cessé de dire',
+          next:'c15_mem_listen_forest_1',
+          effects:{lucidite:1},
+          requiresFlags:{rem_c9_listen_fog:true},
+          flags:{c15HeardForestSilenceEarly:true},
+          note:'Souvenir du Chapitre IX · Hylee avait déjà choisi d’écouter le vide plutôt que de le remplir'
+        },
+        {
+          label:'Chercher Remerii du regard avant de bouger',
+          next:'c15_mem_shared_gaze_1',
+          effects:{lien:1},
+          requiresAnyFlags:['rem_c9_shared_gaze','c14GroupPreparedWithRemerii'],
+          flags:{c15SharedSilentSignal:true},
+          note:'Souvenir relationnel · Hylee et Remerii savent déjà se coordonner sans parler'
+        }
+      ]}
+    );
+
+    S.c15_mem_listen_forest_1=scene(
+      'Ce que le silence retire',
+      (S.c15_026&&S.c15_026.bg)||'c15_forest',
+      (S.c15_026&&S.c15_026.music)||'music_c15_forest',
+      'Narrateur',
+      `Hylee ne cherche pas immédiatement une présence.
+
+Elle cherche une absence.
+
+Dans la brume, autrefois, elle avait appris qu’un silence n’est pas seulement ce qui reste lorsqu’aucun son n’existe. Il peut être une trace.
+
+Ici, les oiseaux manquent.
+
+Les insectes manquent.
+
+Même les petits craquements de branches semblent attendre que l’armée soit passée pour recommencer à vivre.
+
+Hylee s’arrête avant que Draven ne lève la main.`,
+      [['hylee','hylee2_thinking','center']],
+      'c15_mem_listen_forest_2'
+    );
+
+    S.c15_mem_listen_forest_2=scene(
+      'Une seconde d’avance',
+      (S.c15_026&&S.c15_026.bg)||'c15_forest',
+      (S.c15_026&&S.c15_026.music)||'music_c15_forest',
+      'Hylee',
+      `« Remerii. »
+
+Elle ne parle pas fort.
+
+Elle n’en a pas besoin.
+
+Remerii se tourne immédiatement.
+
+Puis Draven s’immobilise à son tour et lève la main.
+
+Une seconde.
+
+C’est tout ce que l’ancien choix d’Hylee lui a offert.
+
+Mais sur un champ de bataille, une seconde peut devenir beaucoup.`,
+      [['hylee','hylee2_determined','left'],['remerii','remerii_strict','right']],
+      'c15_027'
+    );
+
+    S.c15_mem_shared_gaze_1=scene(
+      'La consigne sans paroles',
+      (S.c15_026&&S.c15_026.bg)||'c15_forest',
+      (S.c15_026&&S.c15_026.music)||'music_c15_forest',
+      'Narrateur',
+      `Hylee tourne seulement les yeux vers Remerii.
+
+Pas la tête.
+
+Pas le corps.
+
+Le regard suffit.
+
+Remerii cesse de marcher au même instant et sa main s’abaisse légèrement, prête à appeler sa magie sans encore la montrer.
+
+Ni l’une ni l’autre ne demande ce que l’autre a senti.
+
+Elles ont déjà appris que certaines questions viennent après avoir survécu.`,
+      [['hylee','hylee2_determined','left'],['remerii','remerii_strict','right']],
+      'c15_mem_shared_gaze_2'
+    );
+
+    S.c15_mem_shared_gaze_2=scene(
+      'Avant les autres',
+      (S.c15_026&&S.c15_026.bg)||'c15_forest',
+      (S.c15_026&&S.c15_026.music)||'music_c15_forest',
+      'Remerii',
+      `Remerii murmure sans regarder Hylee :
+
+« Gauche. Entre les deux troncs. »
+
+Hylee avait vu le mouvement à droite.
+
+Deux ombres.
+
+Deux directions.
+
+Elles ne se rapprochent pas.
+
+Elles se couvrent.
+
+Puis Draven lève la main et toute la colonne ralentit.
+
+Leur vieux pacte silencieux vient de gagner une utilité beaucoup moins romantique.`,
+      [['remerii','remerii_strict','left'],['hylee','hylee2_determined','right']],
+      'c15_027'
+    );
+
+    /* ==========================================================
+       6. DRAVEN / VALURN : souvenir de l'ancienne confrontation
+       ========================================================== */
+    if(S.c15_032) S.c15_032.next='c15_draven_valurn_memory_gate';
+
+    S.c15_draven_valurn_memory_choice=scene(
+      'Le même mouvement, ou presque',
+      (S.c15_032&&S.c15_032.bg)||'c15_forest',
+      (S.c15_032&&S.c15_032.music)||'music_c15_draven',
+      'Narrateur',
+      `La main de Remerii retient Hylee.
+
+Valurn continue de parler.
+
+Hylee peut attendre, ou laisser un souvenir ancien guider sa réaction.`,
+      [['hylee','hylee2_angry','left'],['remerii','remerii_strict','center'],['valurn','valurn_amused','right']],
+      null,
+      {choices:[
+        {label:'Faire confiance à Remerii et attendre',next:'c15_033'},
+        {
+          label:'Faire le même pas qu’à Akuhn’Nabad',
+          next:'c15_mem_between_draven_valurn_1',
+          effects:{audace:1},
+          requiresFlags:{c10gHyleeBetweenDravenValurn:true},
+          flags:{c15AlmostSteppedBetweenAgain:true},
+          note:'Souvenir d’Akuhn’Nabad · Hylee s’était déjà interposée entre Draven et Valurn'
+        },
+        {
+          label:'Demander d’un regard si Remerii a compris Valurn',
+          next:'c15_mem_draven_shared_gaze_1',
+          effects:{lien:1},
+          requiresFlags:{rem_c9_shared_gaze:true},
+          flags:{c15AskedRemeriiWithoutWords:true},
+          note:'Souvenir relationnel · Une question peut encore passer sans paroles'
+        }
+      ]}
+    );
+
+    S.c15_mem_between_draven_valurn_1=scene(
+      'Le corps se souvient avant elle',
+      (S.c15_032&&S.c15_032.bg)||'c15_forest',
+      (S.c15_032&&S.c15_032.music)||'music_c15_draven',
+      'Narrateur',
+      `Hylee fait un pas.
+
+Le même.
+
+Presque exactement.
+
+À Akuhn’Nabad, elle s’était déjà placée entre Draven et Valurn avant que leurs mots deviennent des coups.
+
+Son corps retrouve la décision avant son esprit.
+
+La main de Remerii se resserre sur son avant-bras.
+
+Hylee tourne vers elle un regard furieux.`,
+      [['hylee','hylee2_angry','left'],['remerii','remerii_strict','right']],
+      'c15_mem_between_draven_valurn_2'
+    );
+
+    S.c15_mem_between_draven_valurn_2=scene(
+      'Cette fois, attendre',
+      (S.c15_032&&S.c15_032.bg)||'c15_forest',
+      (S.c15_032&&S.c15_032.music)||'music_c15_draven',
+      'Remerii',
+      `Remerii ne secoue pas la tête.
+
+Elle regarde Draven.
+
+Puis Valurn.
+
+Puis de nouveau Draven.
+
+Hylee comprend enfin.
+
+La dernière fois, Valurn cherchait à blesser.
+
+Cette fois, il cherche encore à blesser.
+
+Mais il veut que la douleur produise quelque chose.
+
+Hylee recule son pied.
+
+À peine.
+
+Valurn voit le mouvement du coin de l’œil.
+
+Il ne la remercie pas.
+
+Ce serait insupportable pour tout le monde.`,
+      [['remerii','remerii_strict','left'],['hylee','hylee2_thinking','center'],['valurn','valurn_neutral','right']],
+      'c15_033'
+    );
+
+    S.c15_mem_draven_shared_gaze_1=scene(
+      'La question muette',
+      (S.c15_032&&S.c15_032.bg)||'c15_forest',
+      (S.c15_032&&S.c15_032.music)||'music_c15_draven',
+      'Narrateur',
+      `Hylee ne tire pas sur son bras.
+
+Elle regarde Remerii.
+
+Une question entière tient dans ce regard :
+
+Tu as compris quelque chose que je n’ai pas compris ?
+
+Remerii répond de la même manière.
+
+Ses yeux glissent vers la main de Draven crispée sur son épée, puis vers Valurn.
+
+Attends.
+
+Hylee déteste la réponse.
+
+Mais elle la comprend.`,
+      [['hylee','hylee2_angry','left'],['remerii','remerii_strict','right']],
+      'c15_mem_draven_shared_gaze_2'
+    );
+
+    S.c15_mem_draven_shared_gaze_2=scene(
+      'Laisser la colère revenir',
+      (S.c15_032&&S.c15_032.bg)||'c15_forest',
+      (S.c15_032&&S.c15_032.music)||'music_c15_draven',
+      'Narrateur',
+      `Alors Hylee reste où elle est.
+
+Valurn continue.
+
+Chaque phrase est odieuse.
+
+Chaque phrase ramène pourtant un peu plus de colère dans le visage de Draven.
+
+La stupeur recule.
+
+Pas la douleur.
+
+Seulement la paralysie.
+
+Remerii retire enfin sa main de l’avant-bras d’Hylee.
+
+Le choix d’attendre devient, lui aussi, une manière d’agir.`,
+      [['hylee','hylee2_sad','left'],['remerii','remerii_soft','right']],
+      'c15_033'
+    );
+
+    /* ==========================================================
+       7. GATES : ne montrent les choix mémoire que si nécessaires
+       ========================================================== */
+    if(typeof go==='function'&&!window.__sylviniaC15MemoryGateWrappedV0400){
+      window.__sylviniaC15MemoryGateWrappedV0400=true;
+      const previousGo=go;
+      go=window.go=function(next,opts={}){
+        const x=f();
+
+        if(next==='c15_after_training_memory_gate'){
+          return previousGo(x.c14GroupRested===true?'c15_rest_memory_choice':'c15_005',opts);
+        }
+
+        if(next==='c15_portal_memory_gate'){
+          const hasMemory=x.c10gHyleeFeltSaidinGap===true||x.c10gHyleeNamedPortalThreat===true;
+          return previousGo(hasMemory?'c15_portal_memory_choice':'c15_016',opts);
+        }
+
+        if(next==='c15_silence_memory_gate'){
+          const hasMemory=x.rem_c9_listen_fog===true||x.rem_c9_shared_gaze===true||x.c14GroupPreparedWithRemerii===true;
+          return previousGo(hasMemory?'c15_silence_memory_choice':'c15_027',opts);
+        }
+
+        if(next==='c15_draven_valurn_memory_gate'){
+          const hasMemory=x.c10gHyleeBetweenDravenValurn===true||x.rem_c9_shared_gaze===true;
+          return previousGo(hasMemory?'c15_draven_valurn_memory_choice':'c15_033',opts);
+        }
+
+        return previousGo(next,opts);
+      };
+    }
+
+    /* Quelques traces utiles pour le chapitre XVI. */
+    if(typeof PROGRESSION_MEMORIES!=='undefined'){
+      Object.assign(PROGRESSION_MEMORIES,{
+        c15_anciens_choix_repondent:{
+          title:'Ce que le voyage n’a pas oublié',
+          type:'Souvenir · Continuité',
+          icon:'✦',
+          body:`À l’heure du départ, plusieurs décisions prises auparavant peuvent revenir sous forme de réflexes, de souvenirs ou de choix tactiques : coordination avec Remerii, lecture de Naïah, prudence devant les portails, plan de repli avec Draven et compréhension du conflit entre Tia et Amanea.`
+        }
+      });
+    }
+
+    console.log('[Sylvinia] Chapitre XV · variantes de continuité v0.400 installées.');
+  }catch(err){
+    console.error('[Sylvinia] Chapitre XV · variantes de continuité non installées',err);
+  }
 })();
 </script>
 
