@@ -51781,5 +51781,424 @@ Le dôme se contracte jusqu’à devenir une pupille rouge. Puis il se ferme.`;
 })();
 </script>
 
+
+<!-- =========================================================
+     REFONTE UI · GRANDE BIBLIOTHÈQUE
+     Codex / Progression / Sélection des chapitres
+     Additif : conserve les IDs, renderers, médias et sauvegardes existants.
+========================================================== -->
+<style id="sylviniaGreatLibraryPatch">
+:root{
+  --lib-wood-0:#160d08;
+  --lib-wood-1:#24150d;
+  --lib-wood-2:#3b2416;
+  --lib-wood-3:#55351f;
+  --lib-wood-4:#765033;
+  --lib-paper-0:#f3e7ca;
+  --lib-paper-1:#e4d0a6;
+  --lib-paper-2:#cfb783;
+  --lib-ink:#302116;
+  --lib-ink-soft:#665037;
+  --lib-gold:#c69f58;
+  --lib-gold-soft:#ead39a;
+  --lib-blue:#3a6175;
+  --lib-wine:#6d3038;
+  --lib-green:#405643;
+}
+
+/* ---------- Base commune ---------- */
+#chaptersCard,#codexCard,#progressionCard{
+  background:
+    radial-gradient(circle at 18% 0%,rgba(200,159,88,.13),transparent 25%),
+    radial-gradient(circle at 92% 100%,rgba(89,57,33,.18),transparent 32%),
+    linear-gradient(180deg,#17100b,#0d0906 72%)!important;
+}
+#chaptersCard *,#codexCard *,#progressionCard *{box-sizing:border-box}
+
+/* ---------- Bois / panneaux latéraux ---------- */
+.chaptersSidebar,.codexSidebar,.progressionSidebar{
+  background:
+    linear-gradient(180deg,rgba(24,14,9,.26),rgba(14,8,5,.34)),
+    repeating-linear-gradient(90deg,
+      var(--lib-wood-2) 0,var(--lib-wood-2) 24px,
+      #43291a 24px,#43291a 48px)!important;
+  border:1px solid rgba(232,205,153,.17)!important;
+  box-shadow:inset -12px 0 26px rgba(0,0,0,.23),0 22px 52px rgba(0,0,0,.22)!important;
+  color:#f1dfc2!important;
+}
+.chaptersSidebar::before,.codexSidebar::before,.progressionSidebar::before{
+  content:"";display:block;height:5px;border-radius:99px;margin:-4px 0 8px;
+  background:linear-gradient(90deg,transparent,var(--lib-gold),transparent);opacity:.52;
+}
+.chaptersTitle,.codexTitle,.progressionTitle{font-family:Georgia,'Times New Roman',serif!important;color:#f3dfb8!important;letter-spacing:.01em}
+.chaptersLead,.codexSidebar .subtitle,.progressionSidebar .subtitle{color:#cfbea4!important}
+.chaptersHint,.grimoireNote,.progressionHint{
+  border:1px solid rgba(234,211,164,.16)!important;
+  background:rgba(16,9,6,.38)!important;color:#ddcdb5!important;
+  box-shadow:inset 0 0 22px rgba(0,0,0,.16)!important;
+}
+.menuSectionTitle{color:var(--lib-gold-soft)!important}
+
+/* ---------- Pages / livres principaux ---------- */
+.chaptersBook,.codexBook,.progressionBook{
+  position:relative;
+  background:
+    radial-gradient(circle at 15% 8%,rgba(255,255,255,.34),transparent 20%),
+    linear-gradient(180deg,var(--lib-paper-0),var(--lib-paper-1) 56%,var(--lib-paper-2))!important;
+  color:var(--lib-ink)!important;
+  border:1px solid rgba(82,54,30,.34)!important;
+  box-shadow:
+    inset 0 0 80px rgba(96,59,27,.17),
+    inset 0 0 0 2px rgba(255,255,255,.17),
+    0 28px 66px rgba(0,0,0,.28)!important;
+}
+.chaptersBook::before,.codexBook::before,.progressionBook::before{
+  content:"";position:absolute;inset:8px;border:1px solid rgba(84,54,31,.11);border-radius:22px;pointer-events:none;
+}
+.chaptersBookTitle,.codexBookTitle,.progressionBookTitle,
+.progressionSectionHead h4{font-family:Georgia,'Times New Roman',serif!important;color:#382618!important}
+.chaptersBookSubtitle,.codexBookSubtitle,.progressionBookSubtitle{color:#6a5236!important}
+
+/* ---------- Boutons retour ---------- */
+#chaptersBackBtn,#backBtn,#progressBackBtn{
+  margin-top:auto!important;background:linear-gradient(180deg,#805735,#4a2f1e)!important;
+  border-color:rgba(237,211,164,.24)!important;color:#fff1d8!important;
+}
+#chaptersBackBtn:hover,#backBtn:hover,#progressBackBtn:hover{filter:brightness(1.1)}
+
+/* =========================================================
+   CHAPITRES · vraie étagère de bibliothèque
+========================================================== */
+.chaptersFrame{gap:20px!important;grid-template-columns:285px minmax(0,1fr)!important}
+.chaptersBook{padding:22px 22px 30px!important;overflow:hidden!important}
+.chaptersBookHead{position:relative;z-index:2;border-bottom:1px solid rgba(92,60,34,.16);padding-bottom:16px!important;margin-bottom:16px!important}
+.chaptersMetaBadge{
+  background:rgba(255,255,255,.28)!important;border-color:rgba(81,53,29,.18)!important;
+  color:#60482f!important
+}
+.chaptersMetaBadge b{color:var(--lib-blue)!important}
+.chapterLibraryBanner{
+  min-height:180px!important;border:8px solid var(--lib-wood-3)!important;border-radius:18px!important;
+  box-shadow:inset 0 0 0 2px rgba(238,214,170,.16),0 12px 26px rgba(54,32,17,.22)!important;
+  margin-bottom:22px!important;
+}
+.chapterLibraryBanner img{filter:saturate(.86) sepia(.08) contrast(1.02)!important}
+.chapterLibraryBannerShade{background:linear-gradient(90deg,rgba(18,10,5,.86),rgba(18,10,5,.36) 58%,rgba(18,10,5,.18))!important}
+.chapterLibraryBannerText strong{font-family:Georgia,'Times New Roman',serif!important;color:#fff0cf!important}
+
+.chapterSelectGrid{
+  position:relative!important;
+  display:flex!important;align-items:flex-end!important;gap:7px!important;
+  min-height:650px!important;padding:22px 18px 42px!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  border:10px solid var(--lib-wood-3)!important;border-radius:20px!important;
+  background:
+    radial-gradient(circle at 50% 12%,rgba(220,172,97,.08),transparent 28%),
+    linear-gradient(180deg,#1b100a,#120a06)!important;
+  box-shadow:inset 0 0 58px rgba(0,0,0,.48),0 18px 36px rgba(60,37,19,.18)!important;
+}
+.chapterSelectGrid::after{
+  content:"";position:absolute;left:0;right:0;bottom:15px;height:22px;
+  background:linear-gradient(180deg,#745036,#3c2517)!important;
+  border-top:2px solid rgba(237,205,149,.16);box-shadow:0 10px 16px rgba(0,0,0,.48),inset 0 2px rgba(255,255,255,.06);z-index:0
+}
+.chapterSelectCard{
+  z-index:1!important;flex:0 0 64px!important;grid-template-columns:64px 0!important;min-height:570px!important;
+  border-radius:7px 9px 3px 3px!important;border-color:rgba(232,209,165,.13)!important;
+  background:linear-gradient(90deg,#5a3423,#754d31)!important;
+  box-shadow:-4px 4px 12px rgba(0,0,0,.52),inset 4px 0 rgba(255,255,255,.045)!important;
+  transform-origin:bottom center!important;
+}
+.chapterSelectCard:nth-child(5n+1){background:linear-gradient(90deg,#54262e,#793946)!important}
+.chapterSelectCard:nth-child(5n+2){background:linear-gradient(90deg,#344837,#55705a)!important}
+.chapterSelectCard:nth-child(5n+3){background:linear-gradient(90deg,#304352,#47677a)!important}
+.chapterSelectCard:nth-child(5n+4){background:linear-gradient(90deg,#5d432b,#826342)!important}
+.chapterSelectCard:nth-child(5n){background:linear-gradient(90deg,#493752,#695078)!important}
+.chapterSelectCard:hover:not([open]){transform:translateY(-9px) rotate(-.5deg)!important;filter:brightness(1.06)}
+.chapterSelectCard[open]{
+  flex-basis:min(910px,calc(100vw - 150px))!important;grid-template-columns:76px minmax(0,1fr)!important;
+  border-radius:10px 22px 22px 10px!important;transform:translateY(-8px)!important;
+  background:linear-gradient(90deg,#5b3924 0 76px,#ead8b5 76px,#d8c092 100%)!important;
+  box-shadow:0 26px 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.18)!important;
+}
+.chapterBookCover{background:transparent!important;border:0!important}
+.chapterBookSpine{
+  background:linear-gradient(90deg,rgba(0,0,0,.14),transparent 26%,rgba(255,255,255,.08) 55%,rgba(0,0,0,.12))!important;
+  border-right:1px solid rgba(255,255,255,.08)!important;
+}
+.chapterBookSpine span{font-family:Georgia,'Times New Roman',serif!important;color:#f5e2bd!important;text-shadow:0 2px 3px rgba(0,0,0,.5)!important}
+.chapterBookCoverImg{opacity:.34!important;mix-blend-mode:luminosity!important}
+.chapterSelectCard[open] .chapterBookCoverImg{opacity:.18!important}
+.chapterSelectState{background:rgba(21,12,7,.74)!important;color:#f0dcb8!important;border-color:rgba(255,255,255,.13)!important}
+.chapterSelectCard[open] .chapterBookOpened{
+  position:relative!important;grid-template-columns:minmax(240px,340px) minmax(300px,1fr)!important;
+  gap:0!important;padding:22px 24px!important;background:transparent!important;
+}
+.chapterSelectCard[open] .chapterBookOpened::before{
+  content:"";position:absolute;top:16px;bottom:16px;left:calc(40% + 1px);width:38px;transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,rgba(80,49,24,.13),rgba(80,49,24,.18),transparent);pointer-events:none
+}
+.chapterOpenImageFrame{margin-right:18px!important;border:1px solid rgba(80,51,29,.25)!important;border-radius:12px!important;background:#20140d!important;box-shadow:0 12px 24px rgba(69,43,22,.18)!important}
+.chapterOpenImage{border-radius:11px!important}
+.chapterOpenText{padding:10px 2px 8px 24px!important}
+.chapterOpenText h4{font-family:Georgia,'Times New Roman',serif!important;color:#382618!important;font-size:30px!important}
+.chapterOpenText p{color:#665037!important;font-family:Georgia,'Times New Roman',serif!important;line-height:1.62!important}
+.chapterSelectKicker{color:#79592f!important}
+.chapterSelectTags span{background:rgba(255,255,255,.28)!important;color:#654d31!important;border-color:rgba(81,53,29,.16)!important}
+.chapterSelectAction{background:linear-gradient(180deg,#7d5936,#4a311f)!important;border-color:rgba(78,50,29,.18)!important;color:#fff0d2!important}
+.chapterSelectAction:disabled{background:linear-gradient(180deg,#7a6c58,#554b3d)!important}
+
+/* =========================================================
+   CODEX · catalogue de bibliothèque
+========================================================== */
+.codexFrame{grid-template-columns:285px minmax(0,1fr)!important;gap:20px!important}
+.codexSidebar{padding:22px 18px!important}
+.codexSidebarBlock{background:rgba(18,10,6,.34)!important;border-color:rgba(238,215,169,.12)!important}
+.codexSidebarLabel{color:#e3c384!important}
+.codexSidebar .codexTabs{gap:7px!important}
+.codexSidebar .codexTab{
+  position:relative!important;padding:12px 13px 12px 44px!important;border-radius:8px 16px 16px 8px!important;
+  background:linear-gradient(90deg,#57351f,#342014)!important;border-color:rgba(236,210,165,.12)!important;color:#ead8bc!important;
+  box-shadow:inset 4px 0 rgba(255,255,255,.045),0 5px 10px rgba(0,0,0,.18)!important
+}
+.codexSidebar .codexTab::before{content:"▥";position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#cda86c;font-size:15px}
+.codexSidebar .codexTab.active{background:linear-gradient(90deg,#8a6037,#5a3a22)!important;border-color:rgba(239,208,147,.28)!important;color:#fff1d6!important}
+.codexQuickStats{gap:9px!important}
+.codexProgressCard{background:rgba(15,9,6,.28)!important;border-color:rgba(238,215,169,.12)!important;color:#ead9bf!important}
+.codexProgressCard .row span{color:#ddc59b!important}
+.codexProgressCard .progressTrack{background:rgba(255,255,255,.08)!important}
+.codexProgressCard .progressFill{background:linear-gradient(90deg,#9a703c,#d1b16e)!important}
+
+.codexBook{padding:24px 24px 28px!important}
+.codexBookHeader{padding-bottom:14px!important;border-bottom:1px solid rgba(85,56,32,.14)!important}
+.codexMetaBadge{background:rgba(255,255,255,.27)!important;border-color:rgba(83,54,31,.16)!important}
+.codexMetaBadge b{color:var(--lib-blue)!important}.codexMetaBadge span{color:#6c563a!important}
+.codexRibbon{
+  position:relative!important;margin:16px 0!important;padding:12px 16px 12px 48px!important;
+  border:1px solid rgba(83,54,31,.16)!important;border-radius:9px!important;
+  background:linear-gradient(90deg,rgba(123,82,49,.16),rgba(255,255,255,.19),rgba(123,82,49,.12))!important;color:#5f482e!important
+}
+.codexRibbon::before{content:"⌕";position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px;color:#8c6739}
+.codexRibbon strong{font-family:Georgia,'Times New Roman',serif!important;color:#3e2b1c!important}
+.codexRibbon span{color:#766047!important}
+
+/* barre de recherche ajoutée par JS */
+.libraryCodexSearch{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin:-4px 0 16px;
+  padding:10px;border:1px solid rgba(83,54,31,.15);border-radius:14px;background:rgba(255,255,255,.18)
+}
+.libraryCodexSearch input{
+  width:100%;min-width:0;border:1px solid rgba(83,54,31,.18);border-radius:10px;background:rgba(255,255,255,.54);color:#342416;
+  padding:11px 13px;outline:none
+}
+.libraryCodexSearch input:focus{border-color:rgba(58,97,117,.45);box-shadow:0 0 0 3px rgba(58,97,117,.08)}
+.libraryCodexSearch span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#795f3d;font-weight:900;padding:0 6px}
+.libraryCodexNoResult{grid-column:1/-1;padding:20px;border:1px dashed rgba(85,56,32,.25);border-radius:14px;color:#70583b;text-align:center;background:rgba(255,255,255,.16)}
+
+.codexBook .codexGrid,.codexBook .mediaGrid{gap:12px!important}
+.codexItem,.mediaCard,.codexGallerySection,.codexSceneBlock{
+  border-color:rgba(83,54,31,.16)!important;background:rgba(255,255,255,.26)!important;color:var(--lib-ink)!important;
+  box-shadow:0 6px 14px rgba(81,49,24,.06)!important
+}
+.codexItem:hover,.mediaCard:hover{border-color:rgba(58,97,117,.33)!important;box-shadow:0 12px 24px rgba(81,49,24,.10)!important}
+.codexItem h3,.mediaCard h3,.codexSceneTitle,.codexGalleryLabel{color:#3a2818!important;font-family:Georgia,'Times New Roman',serif!important}
+.codexItem p,.mediaCard p{color:#665037!important}
+.mediaTag,.codexGalleryCount,.codexSceneCount{color:var(--lib-blue)!important}
+.mediaThumb,.mediaThumbWrap{border-color:rgba(82,54,30,.18)!important;background:#21150e!important}
+.musicPlayer{background:linear-gradient(180deg,rgba(74,52,33,.12),rgba(255,255,255,.18))!important;border-color:rgba(82,54,30,.15)!important}
+.musicPlayerMeta strong{color:#3a2818!important}.musicPlayerMeta span{color:#735c3e!important}
+.audioPlayBtn,.listenBtn{background:linear-gradient(180deg,#795536,#4d341f)!important;border-color:rgba(86,56,31,.2)!important;color:#fff0d2!important}
+.sitePortalCard{background:rgba(255,255,255,.29)!important;border-color:rgba(83,54,31,.18)!important;color:#3a2818!important}
+.sitePortalCard p{color:#665037!important}.sitePortalTags span{color:#604c33!important;background:rgba(255,255,255,.25)!important;border-color:rgba(83,54,31,.16)!important}
+.sitePortalBtn{background:linear-gradient(180deg,#765235,#49311f)!important;color:#fff0d3!important}.sitePortalBtn.ghost{background:rgba(255,255,255,.25)!important;color:#4e3824!important}
+.grimoireFootnote{color:#70583d!important}
+
+/* =========================================================
+   PROGRESSION · registre à onglets, pas de mur vertical
+========================================================== */
+.progressionFrame{grid-template-columns:285px minmax(0,1fr)!important;gap:20px!important}
+.progressionSidebar{min-height:680px!important;padding:22px 20px!important}
+.progressionBook{padding:24px!important}
+.progressionHeader{padding-bottom:14px!important;border-bottom:1px solid rgba(84,55,31,.14)!important;margin-bottom:14px!important}
+.progressionMetaBadge{background:rgba(255,255,255,.26)!important;border-color:rgba(83,54,31,.17)!important}
+.progressionMetaBadge b{color:var(--lib-blue)!important}.progressionMetaBadge span{color:#6c563a!important}
+
+.libraryProgressTabs{
+  position:sticky;top:8px;z-index:8;display:flex;gap:7px;overflow-x:auto;padding:10px;margin:0 0 14px;
+  border:1px solid rgba(83,54,31,.15);border-radius:14px;background:rgba(225,204,165,.90);backdrop-filter:blur(8px);
+  box-shadow:0 8px 20px rgba(84,52,27,.08)
+}
+.libraryProgressTabs button{
+  flex:0 0 auto;border:1px solid rgba(83,54,31,.17);background:rgba(255,255,255,.28);color:#5f482f;border-radius:999px;
+  padding:9px 12px;font-weight:900;font-size:12px;cursor:pointer;white-space:nowrap
+}
+.libraryProgressTabs button:hover{background:rgba(255,255,255,.45)}
+.libraryProgressTabs button.active{background:linear-gradient(180deg,#815a36,#563820);color:#fff0d5;border-color:rgba(84,54,31,.25);box-shadow:0 5px 12px rgba(75,45,23,.18)}
+.progressionSection.librarySectionHidden{display:none!important}
+.progressionSection.librarySectionActive{display:block!important;animation:librarySectionIn .22s ease both}
+@keyframes librarySectionIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.progressionSection{
+  margin-top:0!important;padding:18px!important;border-radius:18px!important;border-color:rgba(83,54,31,.15)!important;
+  background:rgba(255,255,255,.23)!important;box-shadow:0 8px 18px rgba(81,49,24,.05)!important
+}
+.progressionSectionHead{border-bottom-color:rgba(83,54,31,.12)!important}
+.progressionSectionHead span{color:#755b3a!important}
+.progressionStatCard,.progressionEntry,.remeriiBondCard,.remeriiObservationBlock,.remeriiMemoryBlock,.journalFragmentCard{
+  background:rgba(255,255,255,.34)!important;border-color:rgba(83,54,31,.14)!important
+}
+.progressionStatTop strong,.progressionEntryBody h5,.remeriiBondTop h5,.remeriiBlockTitle{color:#372617!important}
+.progressionStatTop b,.remeriiBondTop b{color:var(--lib-blue)!important}
+.progressionStatTier,.progressionEntryBody p{color:#665037!important}
+.progressionTrack{background:rgba(83,54,31,.15)!important}.progressionFill{background:linear-gradient(90deg,#52788b,#9c753c)!important}
+.progressionIcon{background:linear-gradient(180deg,rgba(58,97,117,.16),rgba(156,117,60,.19))!important}
+.progressionEntryType{color:var(--lib-blue)!important}
+
+/* les deux illustrations historiques sont volontairement conservées et mieux intégrées */
+.remeriiBanner,.journalBanner{
+  border:7px solid var(--lib-wood-3)!important;border-radius:15px!important;
+  box-shadow:inset 0 0 0 2px rgba(240,215,166,.14),0 12px 25px rgba(69,41,20,.15)!important
+}
+.remeriiBanner img,.journalBanner img{filter:saturate(.93) sepia(.04) contrast(1.02)!important}
+.remeriiBannerOverlay,.journalBannerOverlay{background:linear-gradient(180deg,rgba(22,13,8,.02),rgba(22,13,8,.12) 45%,rgba(22,13,8,.68))!important}
+.remeriiBannerTitle,.journalBannerTitle{font-family:Georgia,'Times New Roman',serif!important;color:#fff0d4!important}
+.remeriiBannerEyebrow,.journalBannerEyebrow{color:#e4c789!important}
+
+/* ---------- Mobile / petits écrans ---------- */
+@media(max-width:1100px){
+  .chaptersFrame,.codexFrame,.progressionFrame{grid-template-columns:1fr!important}
+  .chaptersSidebar,.codexSidebar,.progressionSidebar{min-height:0!important}
+  .chapterSelectCard[open]{flex-basis:min(860px,calc(100vw - 64px))!important}
+  .codexLayout{grid-template-columns:1fr!important}
+}
+@media(max-width:760px){
+  #chaptersCard,#codexCard,#progressionCard{padding:10px!important}
+  .chaptersBook,.codexBook,.progressionBook{padding:14px!important;border-radius:18px!important}
+  .chapterLibraryBanner{min-height:150px!important;border-width:5px!important}
+  .chapterSelectGrid{min-height:550px!important;padding:14px 10px 34px!important;border-width:6px!important}
+  .chapterSelectCard{flex-basis:54px!important;grid-template-columns:54px 0!important;min-height:510px!important}
+  .chapterSelectCard[open]{flex-basis:calc(100vw - 34px)!important;grid-template-columns:54px minmax(0,1fr)!important}
+  .chapterSelectCard[open] .chapterBookOpened{grid-template-columns:1fr!important;padding:12px!important;max-height:510px!important;overflow-y:auto!important}
+  .chapterSelectCard[open] .chapterBookOpened::before{display:none!important}
+  .chapterOpenImageFrame{margin:0 0 12px!important}
+  .chapterOpenText{padding:4px!important}
+  .libraryCodexSearch{grid-template-columns:1fr!important}
+  .libraryProgressTabs{top:0;padding:7px;margin-bottom:10px}
+  .progressionMeta,.codexBookMeta{justify-content:flex-start!important}
+}
+</style>
+<script id="sylviniaGreatLibraryBehavior">
+(function(){
+  const byId=id=>document.getElementById(id);
+
+  /* ===== Codex : recherche non destructive ===== */
+  function ensureCodexSearch(){
+    const book=byId('codexCard')?.querySelector('.codexBook');
+    const ribbon=book?.querySelector('.codexRibbon');
+    if(!book||!ribbon||book.querySelector('.libraryCodexSearch')) return;
+    const box=document.createElement('div');
+    box.className='libraryCodexSearch';
+    box.innerHTML='<input id="libraryCodexSearchInput" type="search" autocomplete="off" placeholder="Rechercher dans la section ouverte…"><span id="libraryCodexSearchCount">Catalogue complet</span>';
+    ribbon.insertAdjacentElement('afterend',box);
+    const input=byId('libraryCodexSearchInput');
+    input?.addEventListener('input',filterCodexVisible);
+  }
+  function visibleCodexContainer(){
+    const ids=['codexGrid','codexImagesGrid','codexMusicGrid'];
+    for(const id of ids){const el=byId(id);if(el&&!el.classList.contains('hidden'))return el;}
+    return null;
+  }
+  function filterCodexVisible(){
+    const input=byId('libraryCodexSearchInput');
+    const count=byId('libraryCodexSearchCount');
+    const q=(input?.value||'').trim().toLowerCase();
+    const container=visibleCodexContainer();
+    if(!container){if(count)count.textContent='Section spéciale';return;}
+    const candidates=[...container.querySelectorAll('.codexItem,.mediaCard,.codexSceneBlock')];
+    let shown=0;
+    candidates.forEach(el=>{
+      const hay=(el.innerText||el.textContent||'').toLowerCase();
+      const ok=!q||hay.includes(q);
+      el.style.display=ok?'':'none'; if(ok)shown++;
+    });
+    // Une section groupée reste visible si elle contient au moins une carte visible.
+    container.querySelectorAll('.codexGallerySection').forEach(sec=>{
+      const cards=[...sec.querySelectorAll('.codexItem,.mediaCard,.codexSceneBlock')];
+      if(cards.length) sec.style.display=cards.some(x=>x.style.display!=='none')?'':'none';
+    });
+    let empty=container.querySelector('.libraryCodexNoResult');
+    if(!shown&&q){
+      if(!empty){empty=document.createElement('div');empty.className='libraryCodexNoResult';container.appendChild(empty)}
+      empty.textContent='Aucune archive ne correspond à cette recherche.';
+    }else empty?.remove();
+    if(count) count.textContent=q?shown+' résultat'+(shown>1?'s':''):'Catalogue complet';
+  }
+  function resetCodexSearch(){
+    const i=byId('libraryCodexSearchInput');if(i)i.value='';
+    ['codexGrid','codexImagesGrid','codexMusicGrid'].forEach(id=>{
+      const c=byId(id);if(!c)return;
+      c.querySelectorAll('.codexItem,.mediaCard,.codexSceneBlock,.codexGallerySection').forEach(el=>el.style.display='');
+      c.querySelector('.libraryCodexNoResult')?.remove();
+    });
+    const count=byId('libraryCodexSearchCount');if(count)count.textContent='Catalogue complet';
+  }
+
+  /* ===== Progression : toutes les anciennes sections restent présentes, une seule est montrée ===== */
+  const progressionTabData=[
+    ['values','Valeurs'],['remerii','Remerii'],['inventory','Inventaire'],['memories','Souvenirs'],['journal','Carnet du Némésis']
+  ];
+  function getProgressSections(){
+    const book=byId('progressionCard')?.querySelector('.progressionBook');
+    if(!book)return [];
+    const secs=[...book.querySelectorAll(':scope > .progressionSection')];
+    // HTML actuel : valeurs, Remerii, inventaire, souvenirs, journal.
+    return progressionTabData.map((meta,i)=>({key:meta[0],label:meta[1],el:secs[i]})).filter(x=>x.el);
+  }
+  function ensureProgressTabs(){
+    const book=byId('progressionCard')?.querySelector('.progressionBook');
+    const header=book?.querySelector('.progressionHeader');
+    if(!book||!header)return;
+    let tabs=book.querySelector('.libraryProgressTabs');
+    if(!tabs){
+      tabs=document.createElement('nav');tabs.className='libraryProgressTabs';tabs.setAttribute('aria-label','Sections de progression');
+      tabs.innerHTML=getProgressSections().map((x,i)=>'<button type="button" data-library-progress="'+x.key+'"'+(i===0?' class="active"':'')+'>'+x.label+'</button>').join('');
+      header.insertAdjacentElement('afterend',tabs);
+      tabs.addEventListener('click',e=>{const b=e.target.closest('[data-library-progress]');if(b)showProgressSection(b.dataset.libraryProgress)});
+    }
+    const remembered=window.__sylviniaProgressLibraryTab||'values';
+    showProgressSection(remembered,false);
+  }
+  function showProgressSection(key,scroll=true){
+    const secs=getProgressSections();if(!secs.length)return;
+    if(!secs.some(x=>x.key===key))key=secs[0].key;
+    window.__sylviniaProgressLibraryTab=key;
+    secs.forEach(x=>{
+      x.el.classList.toggle('librarySectionActive',x.key===key);
+      x.el.classList.toggle('librarySectionHidden',x.key!==key);
+    });
+    const tabs=byId('progressionCard')?.querySelector('.libraryProgressTabs');
+    tabs?.querySelectorAll('[data-library-progress]').forEach(b=>b.classList.toggle('active',b.dataset.libraryProgress===key));
+    if(scroll){const active=secs.find(x=>x.key===key)?.el;active?.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  }
+
+  /* ===== Ré-appliquer après les renderers historiques ===== */
+  function refreshLibraryUI(){
+    ensureCodexSearch();
+    ensureProgressTabs();
+    if(byId('codex')&&!byId('codex').classList.contains('hidden')) filterCodexVisible();
+  }
+  document.addEventListener('click',e=>{
+    if(e.target.closest('.codexTab')) setTimeout(()=>{resetCodexSearch();refreshLibraryUI()},0);
+    if(e.target.closest('#codexBtn,#codexBtn2,#progressionBtn,#progressionBtn2,#chaptersBtn')) setTimeout(refreshLibraryUI,0);
+  });
+  const observer=new MutationObserver(()=>{
+    clearTimeout(observer.__t);observer.__t=setTimeout(refreshLibraryUI,30);
+  });
+  ['codexGrid','codexImagesGrid','codexMusicGrid','progressionStatsGrid','progressionInventoryList','progressionMemoryList','progressionJournalList'].forEach(id=>{
+    const el=byId(id);if(el)observer.observe(el,{childList:true,subtree:true});
+  });
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refreshLibraryUI);else refreshLibraryUI();
+})();
+</script>
+
 </body>
 </html>
