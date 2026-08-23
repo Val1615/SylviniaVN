@@ -53635,5 +53635,495 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
 })();
 </script>
 
+
+
+<!-- sylvinia-v0411-chapters-journal-fix -->
+<style id="sylviniaV0411ChaptersJournalFix">
+/* =========================================================
+   v0.411 · Sélection des chapitres
+   - palette rapprochée de Progression
+   - jaquettes sans filtre chromatique artificiel
+   - panneau gauche lisible
+   - tablette bois continue sur toute la largeur scrollable
+========================================================== */
+#chaptersCard{
+  background:
+    radial-gradient(circle at 14% 0%,rgba(201,177,129,.10),transparent 28%),
+    radial-gradient(circle at 100% 100%,rgba(73,47,31,.16),transparent 34%),
+    linear-gradient(180deg,#17110d,#0d0907 74%)!important;
+}
+#chaptersCard .chaptersFrame{
+  grid-template-columns:250px minmax(0,1fr)!important;
+  gap:18px!important;
+  align-items:stretch!important;
+}
+#chaptersCard .chaptersSidebar{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:16px!important;
+  min-width:0!important;
+  width:auto!important;
+  padding:22px 20px!important;
+  background:
+    linear-gradient(180deg,rgba(31,20,14,.36),rgba(15,10,7,.48)),
+    repeating-linear-gradient(90deg,#342217 0,#342217 22px,#3d281b 22px,#3d281b 44px)!important;
+  border-color:rgba(224,205,169,.14)!important;
+}
+#chaptersCard .chaptersSidebar>div:first-child,
+#chaptersCard .chaptersHint,
+#chaptersCard #chaptersBackBtn{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+}
+#chaptersCard .chaptersLead{
+  max-width:none!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-height:1.55!important;
+}
+#chaptersCard .chaptersHint{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  line-height:1.52!important;
+  padding:15px 16px!important;
+  margin:0!important;
+  background:rgba(14,9,6,.32)!important;
+}
+#chaptersCard #chaptersBackBtn{
+  margin:0!important;
+  margin-top:2px!important;
+  align-self:stretch!important;
+}
+
+#chaptersCard .chaptersBook{
+  background:
+    radial-gradient(circle at 14% 7%,rgba(255,255,255,.54),transparent 22%),
+    linear-gradient(180deg,#f3eddf 0%,#ece2cf 54%,#e2d4ba 100%)!important;
+  border-color:rgba(82,58,38,.25)!important;
+  box-shadow:
+    inset 0 0 74px rgba(91,64,36,.11),
+    inset 0 0 0 2px rgba(255,255,255,.28),
+    0 26px 60px rgba(0,0,0,.26)!important;
+}
+#chaptersCard .chaptersBookTitle{color:#39291e!important}
+#chaptersCard .chaptersBookSubtitle{color:#6a5946!important}
+#chaptersCard .chaptersMetaBadge{
+  background:rgba(255,255,255,.42)!important;
+  border-color:rgba(86,62,42,.14)!important;
+}
+#chaptersCard .chapterLibraryBanner{
+  border-color:#463125!important;
+  box-shadow:inset 0 0 0 2px rgba(234,220,191,.12),0 10px 25px rgba(45,29,20,.19)!important;
+}
+#chaptersCard .chapterLibraryBanner img{
+  filter:saturate(.94) contrast(1.03) brightness(.90)!important;
+}
+#chaptersCard .chapterLibraryBannerShade{
+  background:linear-gradient(90deg,rgba(15,12,11,.82),rgba(15,12,11,.35) 60%,rgba(15,12,11,.12))!important;
+}
+
+#chaptersCard .chapterSelectGrid{
+  border-color:#493225!important;
+  background:
+    radial-gradient(circle at 50% 8%,rgba(222,205,170,.055),transparent 30%),
+    linear-gradient(180deg,#15110f,#0e0b09)!important;
+  box-shadow:inset 0 0 58px rgba(0,0,0,.52),0 15px 30px rgba(52,34,23,.16)!important;
+  scrollbar-color:#76543a #18110d;
+}
+#chaptersCard .chapterSelectGrid::after{display:none!important}
+#chaptersCard .chapterShelfRail{
+  position:absolute;
+  height:24px;
+  bottom:14px;
+  left:0;
+  z-index:0;
+  pointer-events:none;
+  border-top:1px solid rgba(238,218,181,.13);
+  border-bottom:1px solid rgba(0,0,0,.48);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.055),transparent 23%),
+    linear-gradient(180deg,#684a35,#3a281d 72%,#251810)!important;
+  box-shadow:0 11px 18px rgba(0,0,0,.54),inset 0 2px rgba(255,255,255,.04);
+}
+#chaptersCard .chapterSelectCard{
+  background:#30241e!important;
+  border-color:rgba(226,210,181,.15)!important;
+  box-shadow:-4px 5px 13px rgba(0,0,0,.48),inset 3px 0 rgba(255,255,255,.035)!important;
+}
+/* Les anciens nth-child coloraient artificiellement toutes les couvertures. */
+#chaptersCard .chapterSelectCard:nth-child(n){background:#30241e!important}
+#chaptersCard .chapterBookCoverImg{
+  opacity:.92!important;
+  mix-blend-mode:normal!important;
+  filter:saturate(.92) contrast(1.04) brightness(.84)!important;
+}
+#chaptersCard .chapterSelectCard[open] .chapterBookCoverImg{
+  opacity:.90!important;
+  mix-blend-mode:normal!important;
+  filter:saturate(.94) contrast(1.03) brightness(.86)!important;
+}
+#chaptersCard .chapterSelectCard.locked .chapterBookCoverImg{
+  opacity:.62!important;
+  mix-blend-mode:normal!important;
+  filter:grayscale(.72) saturate(.50) brightness(.58) contrast(1.04)!important;
+}
+#chaptersCard .chapterBookSpine{
+  background:
+    linear-gradient(90deg,rgba(3,4,6,.34),rgba(6,8,11,.10) 26%,rgba(255,255,255,.035) 55%,rgba(2,3,5,.42))!important;
+  border-right-color:rgba(236,221,194,.10)!important;
+}
+#chaptersCard .chapterBookShade{
+  background:
+    linear-gradient(90deg,rgba(5,6,8,.28),rgba(5,6,8,.02) 46%,rgba(4,5,7,.34)),
+    linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.32))!important;
+}
+#chaptersCard .chapterSelectCard[open]{
+  background:linear-gradient(90deg,#3f2d22 0 76px,#eee5d4 76px,#ded0b8 100%)!important;
+}
+#chaptersCard .chapterSelectCard[open] .chapterBookSpine{
+  background:linear-gradient(90deg,rgba(8,7,7,.34),rgba(255,255,255,.025) 50%,rgba(5,5,6,.32))!important;
+}
+#chaptersCard .chapterOpenText p{color:#655746!important}
+#chaptersCard .chapterSelectTags span{
+  background:rgba(255,255,255,.38)!important;
+  color:#5e5040!important;
+}
+
+@media(max-width:1100px){
+  #chaptersCard .chaptersFrame{grid-template-columns:1fr!important}
+  #chaptersCard .chaptersSidebar{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(220px,330px)!important;align-items:center!important}
+  #chaptersCard .chaptersSidebar>div:first-child{grid-column:1!important;grid-row:1 / span 2!important}
+  #chaptersCard .chaptersHint{grid-column:2!important;grid-row:1!important}
+  #chaptersCard #chaptersBackBtn{grid-column:2!important;grid-row:2!important}
+}
+@media(max-width:700px){
+  #chaptersCard .chaptersSidebar{display:flex!important}
+}
+</style>
+<script id="sylviniaV0411ChaptersJournalFixScript">
+(()=>{
+  try{
+    /* ---------- Étagère continue : vrai élément scrollable, pas pseudo-élément limité au viewport. ---------- */
+    function syncChapterShelfRail(){
+      const grid=document.getElementById('chapterSelectGrid');
+      if(!grid)return;
+      let rail=grid.querySelector(':scope > .chapterShelfRail');
+      if(!rail){
+        rail=document.createElement('div');
+        rail.className='chapterShelfRail';
+        rail.setAttribute('aria-hidden','true');
+        grid.prepend(rail);
+      }
+      rail.style.width='0px';
+      const measured=Math.max(grid.clientWidth,grid.scrollWidth);
+      rail.style.width=Math.ceil(measured)+'px';
+    }
+    window.syncChapterShelfRail=syncChapterShelfRail;
+
+    if(typeof renderChapterSelect==='function'&&!window.__sylviniaV0411ChapterRenderWrapped){
+      window.__sylviniaV0411ChapterRenderWrapped=true;
+      const previous=renderChapterSelect;
+      window.renderChapterSelect=renderChapterSelect=function(){
+        const out=previous.apply(this,arguments);
+        const grid=document.getElementById('chapterSelectGrid');
+        if(grid&&!grid.dataset.v0411ShelfBound){
+          grid.dataset.v0411ShelfBound='1';
+          grid.addEventListener('toggle',()=>requestAnimationFrame(()=>requestAnimationFrame(syncChapterShelfRail)),true);
+        }
+        requestAnimationFrame(()=>requestAnimationFrame(syncChapterShelfRail));
+        return out;
+      };
+    }
+    window.addEventListener('resize',()=>requestAnimationFrame(syncChapterShelfRail),{passive:true});
+
+    /* ---------- Carnet du Némésis : canon arrêté à X-I. ---------- */
+    if(typeof JOURNAL_FRAGMENTS!=='undefined'&&typeof JOURNAL_FRAGMENT_ORDER!=='undefined'){
+      // Le fragment stocké sous ch9 dans les vieux patches est en réalité le VIII.
+      const misplacedVIII=(JOURNAL_FRAGMENTS.ch9&&/^Chapitre VIII\b/.test(String(JOURNAL_FRAGMENTS.ch9.title||'')))
+        ? JOURNAL_FRAGMENTS.ch9
+        : null;
+      if(misplacedVIII) JOURNAL_FRAGMENTS.ch8=misplacedVIII;
+
+      // Le véritable IX existait déjà dans le code mais son garde "if (!ch9)" l'empêchait de remplacer le VIII mal indexé.
+      JOURNAL_FRAGMENTS.ch9={
+        title:'Chapitre IX · La fracture assumée',
+        chapter:'Chapitre IX',
+        unlockLabel:'Termine le Chapitre IX',
+        blocks:[
+          {kind:'journal',text:`En relisant ces mots, je ne ressens ni honte ni regret pour ce que j’ai fait. Je ne m’excuserai pas d’avoir utilisé les armes qui étaient à ma disposition. La Lumière de Tia n’aurait jamais pu me donner la force nécessaire pour faire ce qui devait être fait. Alors j’ai pris ce qui m’était accessible, et j’ai frappé avec la brutalité qu’exigeait la situation.\n\nCe village humain devait être un exemple. Pas seulement une vengeance, pas seulement une réponse à la douleur. C’était un message. Ils ont pris notre mère ? J’ai pris tout ce qu’ils avaient. Ils ont détruit un foyer ? J’ai détruit une lignée entière. Ils ont semé le chaos ? J’ai imposé un chaos plus grand encore, pour que jamais l’idée ne leur vienne de recommencer.\n\nNon, je ne regrette pas d’avoir utilisé la magie que l’on me reproche. Ce pouvoir m’appartenait, et il a été un outil. Ce que je regrette… c’est l’escalade.`},
+          {kind:'projection',text:`Nous étions à un carrefour, et nous avons pris deux routes opposées. Pas par trahison, ni par haine. Par nécessité. Elle a fait ce qu’elle pensait juste. Et moi aussi.\n\nPeut-être que si j’avais contenu ma fureur, peut-être que si j’avais canalisé ma vengeance autrement, tout cela aurait pris une autre tournure. Peut-être que nous aurions pu nous retrouver, au lieu de nous perdre dans cette division absurde.\n\nMais le passé est figé, immuable.\n\nNous avons toutes les deux agi selon ce que nous sommes.\n\nJe ne regrette pas mon choix. Je regrette seulement qu’il nous ait séparées.`}
+        ]
+      };
+
+      // Ces entrées avaient été ajoutées par erreur : le Carnet s'arrête au Journal d'Amanea du X-I.
+      ['ch11i','ch12i','ch13i','ch14','ch15'].forEach(k=>{if(Object.prototype.hasOwnProperty.call(JOURNAL_FRAGMENTS,k))delete JOURNAL_FRAGMENTS[k];});
+
+      const canonical=['intro','ch1','ch2','ch3','ch4v','ch4d','ch5','ch6','ch7','ch8','ch9','ch10'];
+      JOURNAL_FRAGMENT_ORDER.splice(0,JOURNAL_FRAGMENT_ORDER.length,...canonical);
+      window.__SYLVINIA_CANONICAL_JOURNAL_ORDER=canonical.slice();
+
+      function currentChapterRank(){
+        const id=String((state&&state.scene)||'');
+        if(/^c15_/.test(id))return 15;
+        if(/^c14_/.test(id))return 14;
+        if(/^c13/.test(id))return 13;
+        if(/^c12/.test(id))return 12;
+        if(/^c11/.test(id))return 11;
+        if(/^c10/.test(id))return 10;
+        const m=id.match(/^c(\d+)_/);
+        return m?Number(m[1]):0;
+      }
+
+      window.visibleJournalFragmentOrder=visibleJournalFragmentOrder=function(){
+        const order=window.__SYLVINIA_CANONICAL_JOURNAL_ORDER.slice();
+        const f=(state&&state.flags)||{};
+        const forced=!!(state&&state.devMode&&state.devJournalForceAccess===true);
+        return (!forced&&f.chapter10Route==='group')?order.filter(k=>k!=='ch10'):order;
+      };
+
+      window.journalFragmentUnlocked=journalFragmentUnlocked=function(key){
+        if(typeof ensureProgressDefaults==='function')ensureProgressDefaults();
+        if(state&&state.devMode&&state.devJournalForceAccess===true)return true;
+        const f=(state&&state.flags)||{};
+        const inv=(state&&Array.isArray(state.journalFragments))?state.journalFragments:[];
+        const id=String((state&&state.scene)||'');
+        const rank=currentChapterRank();
+        if(inv.includes(key))return true;
+        switch(key){
+          case 'intro': return !!(f.introComplete||(typeof isIntroEndingScene==='function'&&isIntroEndingScene(id)));
+          case 'ch1': return !!(f.chapter1Complete||rank>1||state.seenEnding===true);
+          case 'ch2': return !!(f.chapter2Complete||rank>2);
+          case 'ch3': return !!(f.chapter3Complete||rank>3);
+          case 'ch4v': return !!(f.chapter4VComplete||id==='c4v_61');
+          case 'ch4d': return !!(f.chapter4DComplete||id==='c4d_38');
+          case 'ch5': return !!(f.chapter5Complete||rank>5);
+          case 'ch6': return !!(f.chapter6Complete||rank>6||inv.includes('ch7')); // ancien alias
+          case 'ch7': return !!(f.chapter7Complete||rank>7||inv.includes('ch8')); // ancien alias
+          case 'ch8': return !!(f.chapter8Complete||rank>8||inv.includes('ch9')); // ancien ch9 = VIII
+          case 'ch9': return !!(f.chapter9Complete||rank>9);
+          case 'ch10': return !!(f.chapter10IrianaComplete||inv.includes('ch10'));
+          default: return false;
+        }
+      };
+
+      // Nettoie immédiatement les sauvegardes chargées des clés de carnet postérieures au X-I.
+      if(state&&Array.isArray(state.journalFragments)){
+        state.journalFragments=[...new Set(state.journalFragments.filter(k=>canonical.includes(k)))];
+      }
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble)bubble.textContent='Mise à jour · v0.411 · Bibliothèque & Carnet du Némésis';
+
+    if(typeof renderChapterSelect==='function'&&document.getElementById('chapters')&&!document.getElementById('chapters').classList.contains('hidden'))renderChapterSelect();
+    if(typeof renderProgression==='function'&&document.getElementById('progression')&&!document.getElementById('progression').classList.contains('hidden'))renderProgression();
+    console.log('[Sylvinia] v0.411 · Chapitres + Carnet du Némésis corrigés');
+  }catch(err){
+    console.error('[Sylvinia] v0.411 · échec correctif Chapitres/Carnet',err);
+  }
+})();
+</script>
+
+
+
+<!-- sylvinia-v0412-chapter15-visual-integrity -->
+<script id="sylvinia-v0412-chapter15-visual-integrity">
+(()=>{
+  'use strict';
+  try{
+    if(window.__sylviniaC15VisualIntegrityV0412) return;
+    window.__sylviniaC15VisualIntegrityV0412=true;
+    if(typeof S==='undefined'||typeof A==='undefined') throw new Error('Registres de scènes ou assets indisponibles');
+
+    /* ==========================================================
+       Chapitre XV · intégrité visuelle
+       - aucun CG d'un ancien chapitre ne doit être affiché ici ;
+       - les scènes sans illustration XV dédiée reviennent au
+         langage normal du VN : décor + sprites ;
+       - les CG XV ne restent que lorsque leur composition colle
+         réellement au texte.
+       ========================================================== */
+
+    /* Décors neutres réutilisables, jamais des images clés. */
+    A.c15_vn_camp = A.c8_camp_base || A.bg_camp || A.c3_bg_porte_sud || A.bg_algratal_portes || A.bg_training || 'assets/images/bg_camp.png';
+    A.c15_vn_training = A.bg_training || A.c15_vn_camp || 'assets/images/bg_training_sunset.png';
+    A.c15_vn_forest = A.bg_forest_decor || A.c3_bg_foret_route || A.bg_path || A.c7_bg_foret_racines || 'assets/images/chemin_ensorcele_foret.png';
+
+    const setVN=(ids,bg)=>{
+      (Array.isArray(ids)?ids:[ids]).forEach(id=>{
+        const sc=S[id]; if(!sc) return;
+        sc.bg=bg;
+        sc.hideChars=false;
+        sc.clearChars=false;
+        sc.zoom=false;
+        try{delete sc.keyImage;}catch(_){sc.keyImage=null;}
+      });
+    };
+    const setCG=(ids,key)=>{
+      (Array.isArray(ids)?ids:[ids]).forEach(id=>{
+        const sc=S[id]; if(!sc) return;
+        sc.bg=key;
+        sc.keyImage=key;
+        sc.hideChars=true;
+        sc.clearChars=true;
+        sc.zoom=false;
+      });
+    };
+
+    /* ----------------------------------------------------------
+       SCÈNES VN · CAMP
+       Ces scènes avaient hérité d'anciens CG via les alias
+       DEPART / IRIANA_CG / PORTAL / TIA_CG. On remet les sprites.
+       ---------------------------------------------------------- */
+    const campVN=[
+      'c15_001','c15_004','c15_005','c15_006','c15_007',
+      'c15_011','c15_012','c15_013',
+      'c15_rest_memory_choice','c15_mem_rest_1','c15_mem_rest_2',
+      'c15_portal_memory_choice','c15_mem_saidin_gap_1','c15_mem_saidin_gap_2',
+      'c15_mem_portal_threat_1','c15_mem_portal_threat_2',
+      'c15_speech_choice','c15_speech_soldiers','c15_speech_words',
+      'c15_mem_tia_gaze_1'
+    ];
+    setVN(campVN,'c15_vn_camp');
+
+    /* ----------------------------------------------------------
+       SCÈNES VN · FORÊT INTERDITE
+       Les choix, souvenirs et battements sans CG précis utilisent
+       le décor de forêt et les sprites correspondant au dialogue.
+       ---------------------------------------------------------- */
+    const forestVN=[
+      'c15_023','c15_walk_choice','c15_walk_draven','c15_walk_naiah','c15_walk_remerii',
+      'c15_mem_retreat_1','c15_mem_retreat_2','c15_mem_naiah_scout_1','c15_mem_naiah_scout_2',
+      'c15_silence_memory_choice','c15_mem_listen_forest_1','c15_mem_listen_forest_2',
+      'c15_mem_shared_gaze_1','c15_mem_shared_gaze_2',
+      'c15_027','c15_028','c15_032','c15_draven_valurn_memory_choice',
+      'c15_mem_between_draven_valurn_1','c15_mem_between_draven_valurn_2',
+      'c15_mem_draven_shared_gaze_1','c15_mem_draven_shared_gaze_2'
+    ];
+    setVN(forestVN,'c15_vn_forest');
+
+    /* ----------------------------------------------------------
+       CG XV CONSERVÉS / RÉAJUSTÉS
+       ---------------------------------------------------------- */
+
+    /* Entraînement : deux plans d'action, puis un vrai battement
+       de fin de feinte. L'image pédagogique est déplacée vers le
+       souvenir où Hylee et Remerii reparlent du geste appris. */
+    setCG('c15_002','c15cg_training_01');
+    setCG(['c15_003','c15_train_choice','c15_train_riposte','c15_train_attente','c15_mem_train_sync_1'],'c15cg_training_02');
+    setCG('c15_train_feinte','c15cg_training_03');
+    setCG('c15_mem_train_sync_2','c15cg_training_04');
+
+    /* Retour d'Iriana : arrivée -> réaction -> lecture de la
+       proximité. Les dialogues Valurn/Naïah suivants repassent VN. */
+    setCG('c15_008','c15cg_iriana_arrival_01');
+    setCG(['c15_009','c15_010'],'c15cg_iriana_arrival_02');
+    setCG('c15_iriana_context','c15cg_iriana_arrival_03');
+
+    /* Briefing Iriana / Ellion : les cinq images ont un raccord
+       direct avec les cinq battements correspondants. */
+    ['01','02','03','04','05'].forEach(n=>setCG('c15_briefing_'+n,'c15cg_briefing_'+n));
+
+    /* Saidin : seulement l'ouverture et la fracture stabilisée.
+       Les analyses d'Hylee autour du phénomène restent en sprites. */
+    setCG('c15_014','c15cg_portal_opening');
+    setCG(['c15_015','c15_022'],'c15cg_portal_open');
+
+    /* Discours : Tia peut rester à l'écran pendant le discours ;
+       les deux réactions dédiées prennent ensuite le relais. */
+    setCG(['c15_016','c15_017','c15_018','c15_019','c15_020','c15_021'],'c15cg_tia_speech');
+    setCG(['c15_speech_naiah','c15_mem_naiah_armor_1','c15_mem_naiah_armor_2'],'c15cg_tia_naiah');
+    setCG(['c15_mem_iriana_tia_1','c15_mem_iriana_tia_2','c15_mem_iriana_tia_3'],'c15cg_tia_iriana');
+
+    /* Forêt : chaque CG n'est conservé que sur le battement qu'il
+       représente. Le plan de Draven parmi ses hommes reste deux
+       scènes, car il couvre à la fois la reconnaissance et l'état
+       des corps sans créer un faux raccord. */
+    setCG('c15_024','c15cg_forest_01');
+    setCG('c15_025','c15cg_forest_02');
+    setCG('c15_026','c15cg_forest_03');
+    setCG(['c15_029','c15_030'],'c15cg_forest_04');
+    setCG('c15_031','c15cg_forest_05');
+    setCG('c15_033','c15cg_forest_06');
+    setCG('c15_034','c15cg_forest_07');
+    setCG('c15_035','c15cg_forest_08');
+    setCG('c15_036','c15cg_forest_09');
+    setCG('c15_end','c15cg_forest_10');
+
+    /* ----------------------------------------------------------
+       FILET DE SÉCURITÉ
+       Si une scène XV oubliée pointe encore vers un CG d'un autre
+       chapitre, elle est automatiquement ramenée à un décor VN.
+       ---------------------------------------------------------- */
+    const forestSet=new Set(forestVN);
+    Object.keys(S).filter(id=>id.startsWith('c15_')).forEach(id=>{
+      const sc=S[id]; if(!sc) return;
+      const src=String(A[sc.bg]||'');
+      if(src.includes('/keyscenes/')&&!src.includes('/keyscenes/chapter15/')){
+        setVN(id,forestSet.has(id)?'c15_vn_forest':'c15_vn_camp');
+      }
+    });
+
+    /* ----------------------------------------------------------
+       CODEX : l'illustration assise Hylee/Remerii ne correspond à
+       aucune scène XV telle qu'écrite. Elle reste hors du jeu et
+       hors de la galerie. L'image pédagogique change de rôle.
+       ---------------------------------------------------------- */
+    if(typeof CODEX_IMAGES!=='undefined'){
+      delete CODEX_IMAGES.c15cg_training_05;
+      if(CODEX_IMAGES.c15cg_training_04){
+        CODEX_IMAGES.c15cg_training_04.title='Chapitre XV · Pas besoin de le redire';
+        CODEX_IMAGES.c15cg_training_04.body='Après la passe, Hylee et Remerii reviennent sur un geste déjà travaillé ensemble avant de reprendre leur garde.';
+      }
+    }
+    if(typeof CODEX_IMAGE_ORDER!=='undefined'&&Array.isArray(CODEX_IMAGE_ORDER)){
+      for(let i=CODEX_IMAGE_ORDER.length-1;i>=0;i--) if(CODEX_IMAGE_ORDER[i]==='c15cg_training_05') CODEX_IMAGE_ORDER.splice(i,1);
+    }
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'&&Array.isArray(CODEX_IMAGE_GROUPS)){
+      const g=CODEX_IMAGE_GROUPS.find(x=>x&&x.id==='chapter15');
+      if(g&&Array.isArray(g.sections)) g.sections.forEach(sec=>{if(Array.isArray(sec.keys)) sec.keys=sec.keys.filter(k=>k!=='c15cg_training_05');});
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      CODEX_IMAGES_BY_SCENE.c15_002=['c15cg_training_01'];
+      CODEX_IMAGES_BY_SCENE.c15_003=['c15cg_training_02'];
+      CODEX_IMAGES_BY_SCENE.c15_train_riposte=['c15cg_training_02'];
+      CODEX_IMAGES_BY_SCENE.c15_train_attente=['c15cg_training_02'];
+      CODEX_IMAGES_BY_SCENE.c15_mem_train_sync_1=['c15cg_training_02'];
+      CODEX_IMAGES_BY_SCENE.c15_train_feinte=['c15cg_training_03'];
+      CODEX_IMAGES_BY_SCENE.c15_mem_train_sync_2=['c15cg_training_04'];
+      CODEX_IMAGES_BY_SCENE.c15_030=['c15cg_forest_04'];
+    }
+
+    /* Nettoyage des anciens liens d'image erronés pour les scènes
+       redevenues VN afin qu'elles ne débloquent pas un CG absent. */
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      [...campVN,...forestVN].forEach(id=>{
+        if(['c15_mem_naiah_armor_1','c15_mem_naiah_armor_2','c15_mem_iriana_tia_1','c15_mem_iriana_tia_2','c15_mem_iriana_tia_3'].includes(id)) return;
+        if(id in CODEX_IMAGES_BY_SCENE && !String(CODEX_IMAGES_BY_SCENE[id]||'').includes('c15cg_')) return;
+      });
+    }
+
+    const foreign=[];
+    Object.keys(S).filter(id=>id.startsWith('c15_')).forEach(id=>{
+      const src=String(A[(S[id]||{}).bg]||'');
+      if(src.includes('/keyscenes/')&&!src.includes('/keyscenes/chapter15/')) foreign.push(id);
+    });
+    if(foreign.length) console.warn('[Sylvinia] v0.412 · CG étrangers encore détectés dans le Chapitre XV :',foreign);
+    else console.log('[Sylvinia] v0.412 · Chapitre XV : aucun CG d’un ancien chapitre utilisé.');
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.412 · Chapitre XV · Visuels recalés';
+    if(typeof renderCodex==='function'&&!document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+    console.log('[Sylvinia] v0.412 · Chapitre XV · scènes VN et images clés recalées');
+  }catch(err){
+    console.error('[Sylvinia] v0.412 · échec correctif visuel du Chapitre XV',err);
+  }
+})();
+</script>
 </body>
 </html>
