@@ -53412,5 +53412,228 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
 })();
 </script>
 
+
+
+<!-- sylvinia-chapter15-keyscenes-v0410 -->
+<script id="sylvinia-chapter15-keyscenes-v0410">
+(()=>{
+  'use strict';
+  try{
+    if(window.__sylviniaC15KeyscenesV0410) return;
+    window.__sylviniaC15KeyscenesV0410=true;
+    if(typeof S==='undefined'||typeof A==='undefined') throw new Error('Registres de scènes ou assets indisponibles');
+
+    const P='assets/images/keyscenes/chapter15/';
+    Object.assign(A,{
+      c15cg_training_01:P+'c15_training_01_opening.png',
+      c15cg_training_02:P+'c15_training_02_duel.png',
+      c15cg_training_03:P+'c15_training_03_feinte.png',
+      c15cg_training_04:P+'c15_training_04_lecture.png',
+      c15cg_training_05:P+'c15_training_05_complicite.png',
+      c15cg_iriana_arrival_01:P+'c15_iriana_arrival_01.png',
+      c15cg_iriana_arrival_02:P+'c15_iriana_arrival_02_reaction.png',
+      c15cg_iriana_arrival_03:P+'c15_iriana_arrival_03_valurn.png',
+      c15cg_briefing_01:P+'c15_briefing_01_camp.png',
+      c15cg_briefing_02:P+'c15_briefing_02_exchange.png',
+      c15cg_briefing_03:P+'c15_briefing_03_map.png',
+      c15cg_briefing_04:P+'c15_briefing_04_overlook.png',
+      c15cg_briefing_05:P+'c15_briefing_05_final.png',
+      c15cg_tia_speech:P+'c15_tia_speech.png',
+      c15cg_tia_iriana:P+'c15_tia_iriana_reaction.png',
+      c15cg_tia_naiah:P+'c15_tia_naiah_reaction.png',
+      c15cg_portal_opening:P+'c15_portal_opening.png',
+      c15cg_portal_open:P+'c15_portal_open.png',
+      c15cg_forest_01:P+'c15_forest_01_march.png',
+      c15cg_forest_02:P+'c15_forest_02_iriana_valurn.png',
+      c15cg_forest_03:P+'c15_forest_03_silence.png',
+      c15cg_forest_04:P+'c15_forest_04_draven_dead.png',
+      c15cg_forest_05:P+'c15_forest_05_valurn_approach.png',
+      c15cg_forest_06:P+'c15_forest_06_provocation.png',
+      c15cg_forest_07:P+'c15_forest_07_draven_anger.png',
+      c15cg_forest_08:P+'c15_forest_08_last_order.png',
+      c15cg_forest_09:P+'c15_forest_09_draven_forward.png',
+      c15cg_forest_10:P+'c15_forest_10_final_lowangle.png'
+    });
+
+    const setCG=(ids,key)=>{
+      (Array.isArray(ids)?ids:[ids]).forEach(id=>{
+        const sc=S[id]; if(!sc) return;
+        sc.bg=key;
+        sc.keyImage=key;
+        sc.hideChars=true;
+        sc.zoom=false;
+      });
+    };
+
+    /* Camp · entraînement */
+    setCG('c15_002','c15cg_training_01');
+    setCG(['c15_003','c15_train_choice','c15_train_riposte','c15_mem_train_sync_1'],'c15cg_training_02');
+    setCG('c15_train_feinte','c15cg_training_03');
+    setCG('c15_train_attente','c15cg_training_04');
+    setCG('c15_mem_train_sync_2','c15cg_training_05');
+
+    /* Retour d’Iriana */
+    setCG('c15_008','c15cg_iriana_arrival_01');
+    setCG(['c15_009','c15_010'],'c15cg_iriana_arrival_02');
+    setCG('c15_iriana_context','c15cg_iriana_arrival_03');
+
+    /* Nouveau battement tactique Iriana / Ellion : établit le tracé officiel avant la déviation en forêt. */
+    const TITLE=(S.c15_001&&S.c15_001.title)||'Chapitre XV · L’heure du départ';
+    const MUSIC=(S.c15_012&&S.c15_012.music)||'music_algratal';
+    const mk=(sub,bg,speaker,text,next)=>({title:TITLE,sub,bg,music:MUSIC,speaker,text,chars:[],next,hideChars:true,keyImage:bg,zoom:false});
+    S.c15_briefing_01=mk('Le rapport avant le seuil','c15cg_briefing_01','Narrateur',`La plaisanterie de Naïah retombe à peine qu’Ellion revient vers Iriana.\n\n« Princesse. Une minute. »\n\nIl n’élève pas la voix. Il n’en a pas besoin. Iriana le suit jusqu’au secteur de commandement tandis qu’autour d’eux le camp continue de se démonter, de charger et de compter.\n\nL’armée n’attend plus qu’un passage.`, 'c15_briefing_02');
+    S.c15_briefing_02=mk('Le tracé du Conseil','c15cg_briefing_02','Ellion',`« Le tracé proposé au Conseil reste notre base ? »\n\nIriana soutient son regard.\n\n« Oui. »\n\nEllion observe un instant les mouvements des dernières cohortes.\n\n« Dans la Forêt Interdite, une base peut devenir une suggestion très vite. »\n\n« Je sais. »\n\nCe n’est pas la réponse qui le rassure. C’est seulement celle qu’il attendait.`, 'c15_briefing_03');
+    S.c15_briefing_03=mk('Ce que dit la carte','c15cg_briefing_03','Narrateur',`La carte est déjà ouverte sur la table de campagne. Des marqueurs noirs figurent les cohortes. Une ligne claire s’enfonce dans la Forêt Interdite avant de repartir vers le sud.\n\nEllion suit le tracé du doigt.\n\n« Les éclaireurs garderont cette ligne. Les chevaliers ici. Les mages au centre tant que le terrain le permet. »\n\nIriana déplace un marqueur d’à peine quelques centimètres.\n\nSur le papier, cela ne ressemble à rien. Dans une forêt pareille, quelques centimètres peuvent devenir des heures.`, 'c15_briefing_04');
+    S.c15_briefing_04=mk('Une carte n’est pas un terrain','c15cg_briefing_04','Iriana',`« Nous ne tiendrons pas cette formation partout. »\n\nEllion ne conteste pas.\n\n« Non. Mais je préfère savoir ce que nous perdrons avant que la forêt le décide à notre place. »\n\nIriana regarde au-delà des bannières rouges frappées du phénix d’or.\n\n« Alors gardez les rangs assez souples pour qu’ils puissent respirer. »\n\n« Et assez serrés pour qu’ils ne disparaissent pas. »`, 'c15_briefing_05');
+    S.c15_briefing_05=mk('Tout est prêt','c15cg_briefing_05','Narrateur',`Ellion replie la carte.\n\n« Très bien. Nous partons sur ce tracé. »\n\nIriana acquiesce.\n\nUne seconde de plus, son regard reste sur le parchemin désormais fermé.\n\nUne ligne sur une carte est propre. Docile. Elle ne possède ni brume, ni arbres, ni morts.\n\nSaidin se lève enfin de son muret.`, 'c15_013');
+    if(S.c15_012) S.c15_012.next='c15_briefing_01';
+
+    /* Saidin · aucune énergie colorée : une fracture grise de la réalité. */
+    if(S.c15_014){
+      S.c15_014.text=`Saidin tend les mains vers le vide.\n\nD’abord, rien.\n\nPuis l’air se plisse comme une surface trop tendue. Une ligne grise apparaît là où il ne devrait rien y avoir. Pas une lumière. Une cassure.\n\nElle tremble, se ramifie et fend l’espace en plusieurs éclats ternes. Les contours du monde se décalent autour d’elle, comme si la réalité avait été brisée puis mal remise en place.\n\nLa fracture s’élargit. Des fragments gris, presque transparents, se détachent de ses bords avant de disparaître sans toucher le sol.\n\nLes mages les plus proches reculent malgré eux. Ils savent ce qu’ils regardent. Ils savent surtout qu’aucun d’eux ne pourrait imposer une telle blessure au monde avec sa seule puissance.`;
+      setCG('c15_014','c15cg_portal_opening');
+    }
+    if(S.c15_015){
+      S.c15_015.text=`La fracture finit par se stabiliser.\n\nAu centre de la déchirure grise apparaît une forêt noyée de brume. Des troncs tordus. Une mousse sombre. Une profondeur sans horizon.\n\nLa Forêt Interdite.\n\nNaïah cesse de sourire. Remerii observe les bords cassés du passage avec une attention presque académique. Hylee, elle, regarde Saidin.\n\nLe vieux mage n’a pas bougé d’un pas. Il respire seulement un peu plus lentement.\n\nComme si arracher un passage au monde venait de lui demander exactement l’effort qu’il avait prévu. Pas davantage.`;
+      setCG('c15_015','c15cg_portal_open');
+    }
+    if(S.c15_022){
+      S.c15_022.text=`L’armée s’ébranle.\n\nLes premiers rangs franchissent la fracture grise. Puis les suivants. Une marée d’armures, de capes et de bannières passe d’un côté de la réalité à l’autre au son sec et strident de l’espace qui résiste.\n\nSaidin maintient la déchirure ouverte pendant que les cohortes s’y engouffrent.\n\nHylee sent son estomac se soulever lorsqu’elle traverse. Pendant une fraction de seconde, elle n’a plus de poids. Plus de souffle. Plus de direction.\n\nPuis la réalité la reprend brutalement.`;
+      setCG('c15_022','c15cg_portal_open');
+    }
+
+    /* Discours de Tia et réactions. */
+    setCG(['c15_016','c15_017','c15_018','c15_019','c15_020','c15_021'],'c15cg_tia_speech');
+    setCG(['c15_speech_naiah','c15_mem_naiah_armor_1','c15_mem_naiah_armor_2'],'c15cg_tia_naiah');
+    setCG(['c15_mem_iriana_tia_1','c15_mem_iriana_tia_2','c15_mem_iriana_tia_3'],'c15cg_tia_iriana');
+
+    /* La bannière impériale est explicitement le phénix d’or sur fond rouge. */
+    if(S.c15_001&&typeof S.c15_001.text==='string'){
+      S.c15_001.text=S.c15_001.text.replace('bannières frappées d’or','bannières rouges frappées du phénix d’or');
+    }
+
+    /* Forêt Interdite · déviation volontaire d’Iriana puis montée Draven / Valurn. */
+    if(S.c15_024){
+      S.c15_024.text=`L’armée se reforme. Ellion répartit les éclaireurs. Draven vérifie les flancs. Remerii et Hylee restent proches. Naïah regarde les arbres comme on regarde une vieille connaissance dont on ne sait pas encore si elle est de bonne humeur.\n\nIriana, elle, prend la tête.\n\nAu premier embranchement noyé sous les racines, elle ne suit pas la ligne choisie quelques minutes plus tôt sur la carte d’Ellion.\n\nElle prend un passage plus étroit, presque effacé, qui s’enfonce plus profondément dans la végétation avant de repartir vers le sud.\n\nLe changement est assez discret pour que la colonne continue sans hésiter.\n\nPas assez pour Valurn.\n\nIl la rejoint sans presser le pas.`;
+      setCG('c15_024','c15cg_forest_01');
+    }
+    if(S.c15_025){
+      S.c15_025.text=`« Ça, ce n’était pas sur la carte. »\n\nIriana ne tourne pas la tête.\n\n« Non. »\n\nValurn laisse passer deux pas.\n\n« Tu sais où tu vas ? »\n\n« Oui. »\n\n« C’est ce qui m’inquiète. »\n\nElle lui lance enfin un regard.\n\nValurn sourit. Pas assez pour attirer l’attention d’Ellion. Juste assez pour lui dire qu’il a compris.\n\nIl n’argumente pas.\n\nIl la suit.`;
+      setCG('c15_025','c15cg_forest_02');
+    }
+    setCG('c15_026','c15cg_forest_03');
+    setCG('c15_029','c15cg_forest_04');
+
+    if(S.c15_031&&typeof S.c15_031.text==='string'){
+      S.c15_031.text=S.c15_031.text.replace('Valurn vient se placer à côté de Draven. Son ton est presque léger. Presque.','Valurn passe derrière Draven et vient se placer juste assez près pour que sa voix lui arrive sans effort. Son ton est presque léger. Presque.');
+    }
+    setCG('c15_031','c15cg_forest_05');
+    setCG('c15_033','c15cg_forest_06');
+    setCG('c15_034','c15cg_forest_07');
+    setCG('c15_035','c15cg_forest_08');
+    setCG('c15_036','c15cg_forest_09');
+    setCG('c15_end','c15cg_forest_10');
+
+    /* Le plan final reste Draven seul, entièrement de dos, face aux morts-vivants. */
+    if(S.c15_end){
+      S.c15_end.text=`La forêt retient son souffle.\n\nDevant lui, les morts de Forthaven continuent d’avancer dans la brume.\n\nDraven s’est détaché des autres. Seul au milieu du chemin, entièrement tourné vers ses hommes relevés, il serre son épée dans sa main.\n\nLe combat ne fait que commencer.`;
+    }
+
+    /* Miniature du chapitre : camp militaire, sans révéler le cliffhanger final. */
+    A.c15_chapter_thumb=A.c15cg_briefing_01;
+    if(typeof CHAPTER_SELECT_DATA!=='undefined'&&Array.isArray(CHAPTER_SELECT_DATA)){
+      const ch=CHAPTER_SELECT_DATA.find(x=>x&&x.key==='ch15');
+      if(ch) ch.image=A.c15_chapter_thumb;
+    }
+
+    /* Galerie du Codex : les 28 illustrations sont archivées et se débloquent sur leurs scènes. */
+    const gallery={
+      c15cg_training_01:{title:'Chapitre XV · Cinq minutes avant la guerre',body:'Hylee et Remerii s’accordent encore un entraînement magique au milieu du camp en préparation.',src:A.c15cg_training_01},
+      c15cg_training_02:{title:'Chapitre XV · Remerii accepte le défi',body:'L’exercice cesse d’être une simple mise en jambes lorsque Remerii répond réellement à Hylee.',src:A.c15cg_training_02},
+      c15cg_training_03:{title:'Chapitre XV · La feinte de Hylee',body:'Hylee choisit l’efficacité et force Remerii à réagir autrement qu’en opposant simplement sa magie.',src:A.c15cg_training_03},
+      c15cg_training_04:{title:'Chapitre XV · Lire avant de frapper',body:'Hylee apprend à lire le geste de Remerii avant de répondre.',src:A.c15cg_training_04},
+      c15cg_training_05:{title:'Chapitre XV · Pas besoin de le redire',body:'Un instant de complicité après un mouvement déjà travaillé ensemble.',src:A.c15cg_training_05},
+      c15cg_iriana_arrival_01:{title:'Chapitre XV · Le retour d’Iriana',body:'Iriana traverse le camp avec Valurn à ses côtés, assez proches pour que tout le monde le remarque.',src:A.c15cg_iriana_arrival_01},
+      c15cg_iriana_arrival_02:{title:'Chapitre XV · Le groupe les voit revenir',body:'Hylee et Remerii interrompent leur entraînement en découvrant Iriana et Valurn.',src:A.c15cg_iriana_arrival_02},
+      c15cg_iriana_arrival_03:{title:'Chapitre XV · Ce que la nuit a laissé',body:'La nouvelle proximité entre Iriana et Valurn se lit dans leur manière d’occuper le même espace.',src:A.c15cg_iriana_arrival_03},
+      c15cg_briefing_01:{title:'Chapitre XV · Le rapport avant le seuil',body:'Iriana rejoint Ellion dans un camp qui démonte déjà ses dernières installations.',src:A.c15cg_briefing_01},
+      c15cg_briefing_02:{title:'Chapitre XV · Le tracé du Conseil',body:'Ellion vérifie une dernière fois avec Iriana l’itinéraire prévu.',src:A.c15cg_briefing_02},
+      c15cg_briefing_03:{title:'Chapitre XV · Ce que dit la carte',body:'La route officielle est posée sur le papier avant que la forêt ne la rende incertaine.',src:A.c15cg_briefing_03},
+      c15cg_briefing_04:{title:'Chapitre XV · Une carte n’est pas un terrain',body:'Iriana et Ellion mesurent ce qu’une armée risque de perdre dans la Forêt Interdite.',src:A.c15cg_briefing_04},
+      c15cg_briefing_05:{title:'Chapitre XV · Tout est prêt',body:'Le dernier échange tactique s’achève. Saidin peut enfin ouvrir la route.',src:A.c15cg_briefing_05},
+      c15cg_tia_speech:{title:'Chapitre XV · Pour l’affront d’exister',body:'Tia transforme le départ de l’armée en croisade sous les bannières rouges au phénix d’or.',src:A.c15cg_tia_speech},
+      c15cg_tia_iriana:{title:'Chapitre XV · Le silence d’Iriana',body:'Les mots de Tia prennent un autre sens pour Iriana après ce qu’elle a appris d’Amanea.',src:A.c15cg_tia_iriana},
+      c15cg_tia_naiah:{title:'Chapitre XV · Le sourire de Naïah',body:'Hylee reconnaît le sourire de façade de Naïah pendant le discours de l’Impératrice.',src:A.c15cg_tia_naiah},
+      c15cg_portal_opening:{title:'Chapitre XV · La réalité se fracture',body:'Saidin n’invoque pas un cercle lumineux : il brise l’espace en une déchirure d’énergie grise.',src:A.c15cg_portal_opening},
+      c15cg_portal_open:{title:'Chapitre XV · De l’autre côté',body:'La fracture stabilisée révèle la Forêt Interdite et devient assez vaste pour laisser passer l’armée.',src:A.c15cg_portal_open},
+      c15cg_forest_01:{title:'Chapitre XV · La route d’Iriana',body:'Iriana mène la colonne et quitte volontairement le tracé présenté à Ellion.',src:A.c15cg_forest_01},
+      c15cg_forest_02:{title:'Chapitre XV · Valurn comprend',body:'Valurn remarque aussitôt la déviation et choisit de suivre Iriana sans la dénoncer.',src:A.c15cg_forest_02},
+      c15cg_forest_03:{title:'Chapitre XV · Trop calme',body:'Le silence de la Forêt Interdite referme progressivement ses mâchoires sur la colonne.',src:A.c15cg_forest_03},
+      c15cg_forest_04:{title:'Chapitre XV · Ses hommes',body:'Draven découvre les hommes de Forthaven tombés dans la forêt.',src:A.c15cg_forest_04},
+      c15cg_forest_05:{title:'Chapitre XV · Valurn passe derrière',body:'Valurn rejoint Draven dans son dos et commence volontairement à le provoquer.',src:A.c15cg_forest_05},
+      c15cg_forest_06:{title:'Chapitre XV · La dernière provocation',body:'Valurn pousse Draven jusqu’à ce que la colère remplace la stupeur.',src:A.c15cg_forest_06},
+      c15cg_forest_07:{title:'Chapitre XV · La colère revient',body:'Draven se tourne vers les morts-vivants qui émergent de la brume.',src:A.c15cg_forest_07},
+      c15cg_forest_08:{title:'Chapitre XV · Le dernier ordre',body:'La provocation cesse. Il ne reste plus que le commandant et le devoir qu’il doit à ses hommes.',src:A.c15cg_forest_08},
+      c15cg_forest_09:{title:'Chapitre XV · Draven avance seul',body:'Draven se détache du groupe, épée basse, et marche à la rencontre des relevés.',src:A.c15cg_forest_09},
+      c15cg_forest_10:{title:'Chapitre XV · Face aux morts',body:'Contre-plongée finale : Draven, entièrement de dos, seul face à la masse des morts-vivants.',src:A.c15cg_forest_10}
+    };
+    if(typeof CODEX_IMAGES!=='undefined') Object.assign(CODEX_IMAGES,gallery);
+    const imageKeys=Object.keys(gallery);
+    if(typeof CODEX_IMAGE_ORDER!=='undefined'&&Array.isArray(CODEX_IMAGE_ORDER)) imageKeys.forEach(k=>{if(!CODEX_IMAGE_ORDER.includes(k))CODEX_IMAGE_ORDER.push(k);});
+    if(typeof CODEX_IMAGE_GROUPS!=='undefined'&&Array.isArray(CODEX_IMAGE_GROUPS)&&!CODEX_IMAGE_GROUPS.some(g=>g&&g.id==='chapter15')){
+      CODEX_IMAGE_GROUPS.push({id:'chapter15',title:'Chapitre XV · L’heure du départ',sections:[
+        {title:'Entraînement de Hylee et Remerii',keys:['c15cg_training_01','c15cg_training_02','c15cg_training_03','c15cg_training_04','c15cg_training_05']},
+        {title:'Retour d’Iriana',keys:['c15cg_iriana_arrival_01','c15cg_iriana_arrival_02','c15cg_iriana_arrival_03']},
+        {title:'Dernier briefing avec Ellion',keys:['c15cg_briefing_01','c15cg_briefing_02','c15cg_briefing_03','c15cg_briefing_04','c15cg_briefing_05']},
+        {title:'Discours et réactions',keys:['c15cg_tia_speech','c15cg_tia_iriana','c15cg_tia_naiah']},
+        {title:'La fracture de Saidin',keys:['c15cg_portal_opening','c15cg_portal_open']},
+        {title:'Forêt Interdite et Forthaven',keys:['c15cg_forest_01','c15cg_forest_02','c15cg_forest_03','c15cg_forest_04','c15cg_forest_05','c15cg_forest_06','c15cg_forest_07','c15cg_forest_08','c15cg_forest_09','c15cg_forest_10']}
+      ]});
+    }
+    if(typeof CODEX_IMAGES_BY_SCENE!=='undefined'){
+      Object.assign(CODEX_IMAGES_BY_SCENE,{
+        c15_002:['c15cg_training_01'],
+        c15_003:['c15cg_training_02'],
+        c15_train_riposte:['c15cg_training_02'],
+        c15_train_feinte:['c15cg_training_03'],
+        c15_train_attente:['c15cg_training_04'],
+        c15_mem_train_sync_2:['c15cg_training_05'],
+        c15_008:['c15cg_iriana_arrival_01'],
+        c15_009:['c15cg_iriana_arrival_02'],
+        c15_iriana_context:['c15cg_iriana_arrival_03'],
+        c15_briefing_01:['c15cg_briefing_01'],
+        c15_briefing_02:['c15cg_briefing_02'],
+        c15_briefing_03:['c15cg_briefing_03'],
+        c15_briefing_04:['c15cg_briefing_04'],
+        c15_briefing_05:['c15cg_briefing_05'],
+        c15_016:['c15cg_tia_speech'],
+        c15_mem_iriana_tia_1:['c15cg_tia_iriana'],
+        c15_speech_naiah:['c15cg_tia_naiah'],
+        c15_014:['c15cg_portal_opening'],
+        c15_015:['c15cg_portal_open'],
+        c15_024:['c15cg_forest_01'],
+        c15_025:['c15cg_forest_02'],
+        c15_026:['c15cg_forest_03'],
+        c15_029:['c15cg_forest_04'],
+        c15_031:['c15cg_forest_05'],
+        c15_033:['c15cg_forest_06'],
+        c15_034:['c15cg_forest_07'],
+        c15_035:['c15cg_forest_08'],
+        c15_036:['c15cg_forest_09'],
+        c15_end:['c15cg_forest_10']
+      });
+    }
+
+    const bubble=document.querySelector('.menuUpdateBubble');
+    if(bubble) bubble.textContent='Mise à jour · v0.410 · Chapitre XV · Images clés';
+    if(typeof renderChapterSelect==='function'&&!document.getElementById('chapters')?.classList.contains('hidden')) renderChapterSelect();
+    if(typeof renderCodex==='function'&&!document.getElementById('codex')?.classList.contains('hidden')) renderCodex();
+    console.log('[Sylvinia] Chapitre XV · 28 images clés intégrées · v0.410');
+  }catch(err){
+    console.error('[Sylvinia] Chapitre XV · échec intégration images clés v0.410',err);
+  }
+})();
+</script>
+
 </body>
 </html>
