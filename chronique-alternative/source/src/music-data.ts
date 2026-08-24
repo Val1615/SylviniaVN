@@ -113,8 +113,15 @@ export const MUSIC_LABELS: Record<string, string> = {
 export function musicForContext(spotId: string, context?: { intimacy?: boolean; prologue?: boolean; locationId?: string }) {
   if (context?.intimacy) return "intimate";
   if (context?.prologue) return "title";
-  if (SPOT_MUSIC[spotId]) return SPOT_MUSIC[spotId];
+  // Un grand lieu conserve désormais une identité musicale unique, quel que
+  // soit le sous-lieu visité. Les pistes plus spécialisées restent référencées
+  // dans le catalogue pour les scènes scénarisées, mais l'exploration libre ne
+  // change plus de morceau à chaque porte franchie.
   if (context?.locationId && LOCATION_MUSIC[context.locationId]) return LOCATION_MUSIC[context.locationId];
+  if (SPOT_MUSIC[spotId]) {
+    const spotLocation = Object.keys(LOCATION_MUSIC).find((location) => spotId === location || spotId.startsWith(`${location}-`));
+    return spotLocation ? LOCATION_MUSIC[spotLocation] : SPOT_MUSIC[spotId];
+  }
 
   // Les sauvegardes anciennes et les vingt logements peuvent employer un
   // sous-lieu ajouté après la table ci-dessus. Le préfixe évite alors de faire

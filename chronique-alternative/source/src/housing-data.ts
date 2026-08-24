@@ -179,6 +179,7 @@ export function discountedPropertyPrice(property: HousingProperty, relationships
 }
 
 export const HOME_INTIMACY_CITY: Partial<Record<string, HousingProperty["location"]>> = {
+  draven: "forthaven",
   lineva: "forthaven",
   iriana: "algratal",
   tia: "algratal",
@@ -192,5 +193,5 @@ export function housingSaleValue(housing: HousingState) {
 }
 
 export function housingResidentsEligible(characters: CharacterData[]) {
-  return characters.filter((character) => character.id !== "draven" || character.unlockDay <= 5);
+  return characters;
 }

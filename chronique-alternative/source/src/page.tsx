@@ -169,6 +169,7 @@ type ReceivedInvitation = {
   receivedDay: number;
   expiresDay: number;
   status: "pending" | "accepted" | "declined" | "expired";
+  reoffers?: number;
 };
 
 type GameState = {
@@ -541,6 +542,7 @@ function hydrateGame(raw: unknown): GameState | null {
       receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
       expiresDay: Math.max(1, Number(entry.expiresDay) || 1),
       status: ["pending", "accepted", "declined", "expired"].includes(entry.status) ? entry.status : "expired",
+      reoffers: Math.max(0, Number(entry.reoffers) || 0),
     })) as ReceivedInvitation[],
     rumors: (value.rumors || []).filter((entry) => RUMORS.some((rumor) => rumor.id === entry.id)).map((entry) => ({ id: entry.id, heardDay: Math.max(1, Number(entry.heardDay) || 1) })),
     worldEventHistory: unique((value.worldEventHistory || []).filter((id) => SPONTANEOUS_EVENTS.some((entry) => entry.id === id))),
@@ -739,6 +741,10 @@ function availableRumor(game: GameState) {
   return deck[(game.day + game.period + game.rumors.length) % deck.length];
 }
 
+const LIVING_WORLD_DELIVERY_GAP = 2;
+const INVITATION_REOFFER_DELAY = 6;
+const MAX_UNREAD_LETTERS = 2;
+
 function letterReady(letter: LetterTemplate, game: GameState) {
   const character = CHARACTERS.find((entry) => entry.id === letter.character);
   const relation = game.relationships[letter.character];
@@ -766,21 +772,64 @@ function invitationReady(invitation: InvitationTemplate, game: GameState) {
 function evolveLivingWorld(game: GameState): GameState {
   const tick = `${game.day}:${game.period}`;
   if (game.livingWorldTick === tick) return game;
-  const invitations = game.invitations.map((entry) => entry.status === "pending" && game.day > entry.expiresDay ? { ...entry, status: "expired" as const } : entry);
+  const invitations = game.invitations.map((entry) => {
+    if (entry.status !== "pending" || game.day <= entry.expiresDay) return entry;
+    return { ...entry, status: "expired" as const };
+  });
   const base = { ...game, invitations, livingWorldTick: tick };
-  const letter = LETTERS.find((entry) => letterReady(entry, base));
-  const invitation = INVITATIONS.find((entry) => invitationReady(entry, base));
-  const newLetters = letter ? [...base.letters, { id: letter.id, receivedDay: base.day, read: false }] : base.letters;
-  const newInvitations = invitation ? [...base.invitations, { id: invitation.id, receivedDay: base.day, expiresDay: base.day + invitation.expiresAfter, status: "pending" as const }] : base.invitations;
-  if (!letter && !invitation && invitations === game.invitations) return base;
+
+  const deliveries = [
+    ...base.letters.map((entry) => ({ day: entry.receivedDay, kind: "letter" as const })),
+    ...base.invitations.map((entry) => ({ day: entry.receivedDay, kind: "invitation" as const })),
+  ].sort((left, right) => right.day - left.day);
+  const previousDelivery = deliveries[0];
+  const deliveryAllowed = !previousDelivery || base.day - previousDelivery.day >= LIVING_WORLD_DELIVERY_GAP;
+  if (!deliveryAllowed) return base;
+
+  const unreadLetters = base.letters.filter((entry) => !entry.read).length;
+  const hasPendingInvitation = base.invitations.some((entry) => entry.status === "pending");
+  const letter = unreadLetters < MAX_UNREAD_LETTERS ? LETTERS.find((entry) => letterReady(entry, base)) : undefined;
+  const expiredInvitation = !hasPendingInvitation
+    ? base.invitations.find((entry) => entry.status === "expired" && base.day >= entry.expiresDay + INVITATION_REOFFER_DELAY)
+    : undefined;
+  const freshInvitation = !hasPendingInvitation && !expiredInvitation
+    ? INVITATIONS.find((entry) => invitationReady(entry, base))
+    : undefined;
+  const invitationEntry = expiredInvitation || undefined;
+  const invitation = invitationEntry
+    ? INVITATIONS.find((entry) => entry.id === invitationEntry.id)
+    : freshInvitation;
+
+  // Une seule initiative peut arriver au cours d'un même créneau. Lorsque les
+  // deux types de contenu sont prêts, on alterne avec le dernier reçu afin que
+  // les lettres ne noient pas les invitations (et inversement).
+  const preferredKind = previousDelivery?.kind === "letter" ? "invitation" : "letter";
+  const deliverLetter = Boolean(letter && (preferredKind === "letter" || !invitation));
+  const deliverInvitation = Boolean(invitation && !deliverLetter);
+  if (!deliverLetter && !deliverInvitation) return base;
+
+  const newLetters = deliverLetter && letter
+    ? [...base.letters, { id: letter.id, receivedDay: base.day, read: false }]
+    : base.letters;
+  const newInvitations = deliverInvitation && invitation
+    ? invitationEntry
+      ? base.invitations.map((entry) => entry.id === invitation.id ? {
+        ...entry,
+        receivedDay: base.day,
+        expiresDay: base.day + invitation.expiresAfter,
+        status: "pending" as const,
+        reoffers: (entry.reoffers || 0) + 1,
+      } : entry)
+      : [...base.invitations, { id: invitation.id, receivedDay: base.day, expiresDay: base.day + invitation.expiresAfter, status: "pending" as const, reoffers: 0 }]
+    : base.invitations;
   return {
     ...base,
     letters: newLetters,
     invitations: newInvitations,
     journal: [
       ...base.journal,
-      ...(letter ? [`Correspondance reçue · ${letter.subject}`] : []),
-      ...(invitation ? [`Invitation reçue · ${invitation.title}`] : []),
+      ...(deliverLetter && letter ? [`Correspondance reçue · ${letter.subject}`] : []),
+      ...(deliverInvitation && invitation ? [`${invitationEntry ? "Invitation renouvelée" : "Invitation reçue"} · ${invitation.title}`] : []),
     ],
   };
 }
@@ -899,7 +948,7 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     const followingAct = MAIN_STORY[nextStory];
     storyChanges.push({
       kind: "story",
-      title: `Acte ${completedAct.number} accompli`,
+      title: `Chapitre ${completedAct.number} accompli`,
       detail: followingAct ? `Nouvel objectif · ${followingAct.title}` : "Le fil principal est accompli ; le monde reste ouvert.",
     });
   }
@@ -973,6 +1022,11 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
   newInvitations.forEach((entry) => {
     const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
     livingWorldChanges.push({ kind: "invitation", title: invitation?.message || "Quelqu’un souhaite vous voir.", detail: invitation ? `Réponse possible jusqu’au jour ${entry.expiresDay}.` : "Consultez le Journal." });
+  });
+  const renewedInvitations = next.invitations.filter((entry) => entry.status === "pending" && previous.invitations.some((before) => before.id === entry.id && before.status === "expired"));
+  renewedInvitations.forEach((entry) => {
+    const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
+    livingWorldChanges.push({ kind: "invitation", title: `${invitation?.message || "Quelqu’un vous propose une nouvelle date."}`, detail: `L’occasion revient jusqu’au jour ${entry.expiresDay}.` });
   });
   const expiredInvitations = next.invitations.filter((entry) => entry.status === "expired" && previous.invitations.some((before) => before.id === entry.id && before.status === "pending"));
   expiredInvitations.forEach((entry) => {
@@ -1504,6 +1558,9 @@ function memoryWaveLength(round: number, maximum: number) {
   return Math.min([3, 4, 6][round] || maximum, maximum);
 }
 
+const SERVICE_TIME_LIMIT = 35;
+const SERVICE_ERROR_PENALTY = 3;
+
 function finishServiceCustomer(current: JobState, correct: boolean, feedbackText: string): JobState {
   const total = serviceCustomers(current.variant).length;
   const score = current.score + (correct ? 1 : 0);
@@ -1522,7 +1579,7 @@ function finishServiceCustomer(current: JobState, correct: boolean, feedbackText
   return {
     ...current, round, score, mistakes, combo, maxCombo, feedbackText,
     serviceSelections: {},
-    serviceTimeLeft: correct ? 20 : 17,
+    serviceTimeLeft: correct ? SERVICE_TIME_LIMIT : SERVICE_TIME_LIMIT - SERVICE_ERROR_PENALTY,
     lastResult: correct ? "correct" : "wrong",
   };
 }
@@ -1583,8 +1640,7 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
     response: [{ speaker: character.name, text: misread.response }],
     effects: { stats: { [misread.stat]: 1 }, affection: -3, trust: -5, desire: -2 },
   }];
-  const romanticMoment = characterId !== "draven"
-    && !game.flags.includes(`${characterId}-platonic`)
+  const romanticMoment = !game.flags.includes(`${characterId}-platonic`)
     && dialogue.scene.route.stage >= 3;
   if (romanticMoment && contextual.boundary) extra.push({
     id: `${dialogue.scene.id}-boundary`,
@@ -2444,7 +2500,7 @@ export default function Home() {
       combo: 0,
       maxCombo: 0,
       serviceSelections: {},
-      serviceTimeLeft: 20,
+      serviceTimeLeft: SERVICE_TIME_LIMIT,
       inspectionFound: [],
       inspectionScanUsed: false,
       assemblySlots: [null, null, null, null],
@@ -2999,7 +3055,7 @@ export default function Home() {
       desire: relation.desire + (effects.desire || 0),
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
-    const canBecomeIntimate = tone === "desir" && characterId !== "draven" && !game.flags.includes(`${characterId}-platonic`) && (game.settings.unlockAll || (
+    const canBecomeIntimate = tone === "desir" && !game.flags.includes(`${characterId}-platonic`) && (game.settings.unlockAll || (
       relation.stage >= 4 && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && score >= 3 && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
@@ -3041,7 +3097,7 @@ export default function Home() {
   function startHomeIntimacy(characterId: string) {
     const property = game && propertyById(game.housing.propertyId);
     const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
-    if (!game || !property || characterId === "draven" || game.flags.includes(`${characterId}-platonic`) || !hasCompletedDesiredDate) return;
+    if (!game || !property || game.flags.includes(`${characterId}-platonic`) || !hasCompletedDesiredDate) return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -3516,10 +3572,27 @@ export default function Home() {
                   const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
                   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
                   const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage] && routeNarrativeReady(nextScene, game);
+                  const queuedSocial = chooseSocialScene(character.id, game);
+                  const confidence = availableSecretForCharacter(character.id, game);
+                  const homeInteraction = propertyById(game.housing.propertyId)?.spot === game.spot && game.housing.residents.includes(character.id);
+                  const interactionLabel = !relation.met
+                    ? "Première rencontre"
+                    : homeInteraction
+                      ? "Moment au logis"
+                      : queuedSocial?.oneTime
+                        ? `Événement croisé · ${queuedSocial.title}`
+                        : special
+                          ? `Scène de relation · ${nextScene.title}`
+                          : confidence
+                            ? `Confidence · ${confidence.title}`
+                            : queuedSocial
+                              ? `Liens croisés · ${queuedSocial.title}`
+                              : "Moment libre";
+                  const interactionAction = confidence && !homeInteraction && !queuedSocial?.oneTime && !special ? "Écouter" : special || queuedSocial?.oneTime ? "Vivre la scène" : "Parler";
                   const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
                   return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
-                    <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{special ? `Scène · ${nextScene.title}` : relation.met ? "Moment libre" : "Première rencontre"}</span></div></button>
-                    <div className="immersive-presence-actions"><button onClick={() => openCharacterScene(character.id)}>Parler</button><button onClick={() => setModal({ kind: "gift", character: character.id })}>Offrir</button>{canDate && <button onClick={() => setModal({ kind: "date-planner", character: character.id })}>Rendez-vous</button>}</div>
+                    <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{interactionLabel}</span></div></button>
+                    <div className="immersive-presence-actions"><button onClick={() => openCharacterScene(character.id)}>{interactionAction}</button><button onClick={() => setModal({ kind: "gift", character: character.id })}>Offrir</button>{canDate && <button onClick={() => setModal({ kind: "date-planner", character: character.id })}>Rendez-vous</button>}</div>
                   </article>;
                 }) : <div className="place-empty"><span>☾</span><p>Le lieu est calme pour l’instant.</p></div>}
               </div>
@@ -3699,7 +3772,7 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const currentLine = dialogue.lines[dialogue.lineIndex];
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
-  const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Conversation personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : "Moment libre";
+  const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
     <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
     <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => { const character = CHARACTERS.find((entry) => entry.id === id); if (!character) return null; const active = activeIds.includes(id); const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined; const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, character.defaultMood)) : character.defaultMood; return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${id}/${mood}.webp`} alt={character.name} />; })}</div>
@@ -3869,7 +3942,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
   return <section className="content-view journal-view">
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
     <SectionTabs label="Registres du Journal" active={section} onChange={setSection} items={[
-      { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et actes" },
+      { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et chapitres" },
       { id: "relations", icon: "♡", label: "Relations", count: `${completedRelationScenes}/${totalRelationScenes}`, hint: "Fils narratifs" },
       { id: "messages", icon: "✉", label: "Courrier", count: pendingMessages, hint: "Lettres et invitations" },
       { id: "discoveries", icon: "◌", label: "Découvertes", count: rumors.length + knowledge.length, hint: "Rumeurs et savoirs" },
@@ -3877,7 +3950,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
     ]} />
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
       {section === "campaign" && <section className={`story-progress-overview ${storyComplete ? "complete" : ""}`}>
-        <div className="story-progress-heading"><div><p className="eyebrow">Fil principal · {storyComplete ? "accompli" : `Acte ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "La convergence est stabilisée" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} actes</strong></div>
+        <div className="story-progress-heading"><div><p className="eyebrow">Fil principal · {storyComplete ? "accompli" : `Chapitre ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "La convergence est stabilisée" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} chapitres</strong></div>
         <div className="story-overall-bar"><i style={{ width: `${Math.round((mainProgress / MAIN_STORY.length) * 100)}%` }} /></div>
         <div className="story-current-objective"><span>{storyComplete ? "Monde ouvert" : "Objectif actuel"}</span><p>{storyComplete ? "Le fil principal est terminé. Tous les voyages, relations, rendez-vous et activités restent disponibles sans limite de temps." : activeAct.objective}</p></div>
         {!storyComplete && <div className="story-next-step"><b>Prochain jalon</b><span>{nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{nextCampaignBlocker || nextMilestone?.place || `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis`}</small>{nextCampaignReady && nextCampaign && <button className="primary-action" onClick={() => onStartCampaign(nextCampaign.id)}>Rejoindre cette scène de campagne</button>}</div>}
@@ -3885,10 +3958,10 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
 
       {(section === "messages" || section === "discoveries") && <section className="living-journal section-surface">
         {section === "messages" && <>
-          <div className="journal-section-title"><div><h2>Le monde vous écrit</h2><p>Une invitation ignorée peut expirer sans sanction automatique.</p></div><strong>{pendingMessages} en attente</strong></div>
+          <div className="journal-section-title"><div><h2>Le monde vous écrit</h2><p>Les initiatives sont espacées. Une invitation simplement manquée reviendra plus tard, sans sanction automatique.</p></div><strong>{pendingMessages} en attente</strong></div>
           <div className="living-journal-grid">
             <article className="living-journal-panel"><header><span>✉</span><div><h3>Correspondances</h3><small>{letters.length} reçue{letters.length > 1 ? "s" : ""}</small></div></header><div className="living-journal-list">{letters.length ? [...letters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadLetter(letter.id)}><span>{!received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>) : <p>Aucune lettre reçue pour l’instant.</p>}</div></article>
-            <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? `Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Expirée"}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
+            <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? `${received.reoffers ? "Renouvelée · " : ""}Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : `Manquée · reviendra après J${received.expiresDay + INVITATION_REOFFER_DELAY}`}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
           </div>
         </>}
         {section === "discoveries" && <>
@@ -3935,7 +4008,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
       <h2>Scènes mémorisées</h2>
       <p className="memory-explainer">✦ Relecture protégée : les caractéristiques, relations, objets et l’heure restent strictement inchangés.</p>
       <div className="memory-replay-grid">
-        {campaignMemories.map((scene) => <button key={scene.id} onClick={() => onReplayCampaign(scene.id)}><span>◆ Campagne · Acte {scene.act}</span><strong>{scene.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
+        {campaignMemories.map((scene) => <button key={scene.id} onClick={() => onReplayCampaign(scene.id)}><span>◆ Campagne · Chapitre {scene.act}</span><strong>{scene.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {game.history.map((id) => { const scene = ROUTE_SCENES.find((entry) => entry.id === id); const character = CHARACTERS.find((entry) => entry.id === scene?.character); return scene && <button key={id} onClick={() => onReplayRoute(id)}><span style={{ color: character?.color }}>◇ {character?.name}</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>; })}
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
         {secretMemories.map((secret) => <button key={secret.id} onClick={() => onReplaySecret(secret.id)}><span style={{ color: CHARACTERS.find((character) => character.id === secret.character)?.color }}>◇ Confidence · {CHARACTERS.find((character) => character.id === secret.character)?.name}</span><strong>{secret.title}</strong><small>Revoir sans gain ni nouvelle découverte</small></button>)}
@@ -3957,12 +4030,12 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
         return <article className={`story-timeline ${done ? "done" : ""} ${current ? "current" : ""}`} key={act.id}>
           <span>{act.number}</span>
           <div>
-            <strong>{revealed ? act.title : "Acte à découvrir"}</strong>
+            <strong>{revealed ? act.title : "Chapitre à découvrir"}</strong>
             {revealed ? <><div className="story-act-objective"><b>Objectif</b><p>{act.objective}</p></div>
             <small>{act.detail}</small>
             <div className="story-milestones">
-              {act.requiredScenes.length ? act.requiredScenes.map((id) => { const milestone = storyMilestone(id); const achieved = discovered.has(id); return <div className={achieved ? "achieved" : ""} key={id}><i>{achieved ? "✓" : "◇"}</i><span><b>{milestone.title}</b><small>{milestone.place}</small></span></div>; }) : <div className="achieved"><i>✓</i><span><b>Passage dans cette chronologie</b><small>Le prologue ouvre automatiquement ce premier acte.</small></span></div>}
-            </div></> : <small>Poursuivez l’acte actuel pour révéler cet objectif sans dévoiler les secrets qui le précèdent.</small>}
+              {act.requiredScenes.length ? act.requiredScenes.map((id) => { const milestone = storyMilestone(id); const achieved = discovered.has(id); return <div className={achieved ? "achieved" : ""} key={id}><i>{achieved ? "✓" : "◇"}</i><span><b>{milestone.title}</b><small>{milestone.place}</small></span></div>; }) : <div className="achieved"><i>✓</i><span><b>Passage dans cette chronologie</b><small>Le prologue ouvre automatiquement ce premier chapitre.</small></span></div>}
+            </div></> : <small>Poursuivez le chapitre actuel pour révéler cet objectif sans dévoiler les secrets qui le précèdent.</small>}
           </div>
           <b>{done ? "Accompli" : current ? `${milestonesDone}/${act.requiredScenes.length} jalons` : "À découvrir"}</b>
         </article>;
@@ -4329,7 +4402,7 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
     const selectedItems = Object.values(state.serviceSelections).filter(Boolean).map((id) => TAVERN_MENU.find((item) => item.id === id)).filter(Boolean);
     return <div className="job-challenge service-game advanced-service">
       <div className="job-round-title"><span>Client {state.round + 1} / {customers.length}</span><b>Série : {state.combo} · Record : {state.maxCombo}</b></div>
-      <div className={`job-timer ${state.serviceTimeLeft <= 6 ? "urgent" : ""}`}><div><span>Temps de commande</span><strong>{state.serviceTimeLeft}s</strong></div><i style={{ width: `${(state.serviceTimeLeft / 20) * 100}%` }} /></div>
+      <div className={`job-timer ${state.serviceTimeLeft <= 8 ? "urgent" : ""}`}><div><span>Temps de commande</span><strong>{state.serviceTimeLeft}s</strong></div><i style={{ width: `${(state.serviceTimeLeft / SERVICE_TIME_LIMIT) * 100}%` }} /></div>
       {state.feedbackText && <div className={`job-live-feedback ${state.lastResult || ""}`}>{state.feedbackText}</div>}
       <div className="service-customer-card"><span>{customer.mode === "suggestion" ? "?" : "✎"}</span><div><small>{customer.title}</small><h3>{customer.name}</h3><p>{customer.request}</p></div></div>
       <div className="full-menu">{(["starter", "main", "drink", "dessert"] as MenuCategory[]).map((category) => <section key={category}><header><h4>{MENU_CATEGORY_LABELS[category]}</h4><small>{TAVERN_MENU.filter((item) => item.category === category).length} choix</small></header>{TAVERN_MENU.filter((item) => item.category === category).map((item) => <button key={item.id} className={state.serviceSelections[category] === item.id ? "selected" : ""} onClick={() => onAction(`service:item:${item.id}`)}><span><strong>{item.name}</strong><small>{item.description}</small></span><b>{item.price} ◈</b></button>)}</section>)}</div>
@@ -4488,7 +4561,7 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
     <div className="dialogue-gradient" />
     {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
-    {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => { const blocked = id !== "amical" && (character.id === "draven" || game.flags.includes(`${character.id}-platonic`)); return <button key={id} disabled={blocked} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{blocked ? "Votre relation demeure amicale" : option.detail}</small></div></button>; })}</div>}
+    {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => { const blocked = id !== "amical" && game.flags.includes(`${character.id}-platonic`); return <button key={id} disabled={blocked} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{blocked ? "Votre relation demeure amicale" : option.detail}</small></div></button>; })}</div>}
     {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{profile.rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : profile.rounds[round].detail}</small></div><p className="choice-question">{profile.rounds[round].prompt}</p>{profile.rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
   </section>;
 }
@@ -4551,7 +4624,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     if (!invitation || !received) return null;
     const character = CHARACTERS.find((entry) => entry.id === invitation.character);
     const pending = received.status === "pending" && game.day <= received.expiresDay;
-    const status = pending ? `Réponse possible jusqu’au jour ${received.expiresDay}` : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : "Invitation expirée";
+    const status = pending ? `${received.reoffers ? "Invitation renouvelée · " : ""}Réponse possible jusqu’au jour ${received.expiresDay}` : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : `Invitation manquée · elle pourra revenir après le jour ${received.expiresDay + INVITATION_REOFFER_DELAY}`;
     return <div className="modal-backdrop"><section className="invitation-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Initiative de {character?.name}</p><h2>{invitation.title}</h2><span>{status}</span></div></header><blockquote>{invitation.message}</blockquote><div className="invitation-place"><span>⌖</span><div><strong>{spotById(invitation.spot)?.name}</strong><small>{LOCATIONS.find((entry) => entry.id === invitation.location)?.name} · {PERIODS.find((entry) => entry.id === invitation.period)?.label}</small></div></div>{pending ? <div className="invitation-actions"><button className="primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button><button className="secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button className="text-button" onClick={onClose}>Décider plus tard</button></div> : <button className="secondary-action" onClick={onClose}>Refermer</button>}</section></div>;
   }
   if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint vos Biens, dans la section Inventaire. Vous pourrez l’exposer au logis ou le remettre directement lorsque son destinataire se trouve avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans l’inventaire : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;

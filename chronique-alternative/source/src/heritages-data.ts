@@ -1109,7 +1109,7 @@ export const LETTERS: LetterTemplate[] = [
 
 export const INVITATIONS: InvitationTemplate[] = [
   {
-    id: "invite-hylee-snow", character: "hylee", title: "Une neige qui monte", message: "Hylee vous attend à la Clairière des Échos avant que le phénomène disparaisse.", location: "echo-clearing", spot: "echo-clearing", period: "soirée", minDay: 5, minStage: 2, expiresAfter: 3,
+    id: "invite-hylee-snow", character: "hylee", title: "Une neige qui monte", message: "Hylee vous attend à la Clairière des Échos avant que le phénomène disparaisse.", location: "echo-clearing", spot: "echo-clearing", period: "soirée", minDay: 5, minStage: 2, expiresAfter: 5,
     declineText: "Hylee comprend que la route vous retient. Elle garde un dessin maladroit de la neige pour la prochaine fois.",
     intro: [
       N("La neige remonte lentement vers les nuages. Hylee tourne au milieu des flocons inversés sans tenter de les contrôler. L’un d’eux quitte sa manche, hésite devant son nez puis repart vers le ciel."),
@@ -1124,7 +1124,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-remerii-tea", character: "remerii", title: "Une heure non planifiée", message: "Remerii a réservé une table de bibliothèque et, fait remarquable, aucun programme.", location: "miraldas", spot: "miraldas-archives", period: "apres-midi", minDay: 7, minStage: 1, expiresAfter: 4,
+    id: "invite-remerii-tea", character: "remerii", title: "Une heure non planifiée", message: "Remerii a réservé une table de bibliothèque et, fait remarquable, aucun programme.", location: "miraldas", spot: "miraldas-archives", period: "apres-midi", minDay: 7, minStage: 1, expiresAfter: 6,
     declineText: "Remerii reprogramme l’expérience sans commentaire blessé et vous envoie les nouvelles disponibilités.",
     intro: [
       N("La table ne porte qu’une théière et deux livres choisis au hasard. Le sablier, posé sur le côté, a été recouvert d’un mouchoir comme un instrument indécent."),
@@ -1139,7 +1139,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-iriana-courier", character: "iriana", title: "Un courrier du palais", message: "Iriana souhaite vous voir dans le Salon de musique. Le courrier précise deux fois que vous pouvez refuser.", location: "algratal", spot: "algratal-music-room", period: "soirée", minDay: 8, minStage: 2, expiresAfter: 3,
+    id: "invite-iriana-courier", character: "iriana", title: "Un courrier du palais", message: "Iriana souhaite vous voir dans le Salon de musique. Le courrier précise deux fois que vous pouvez refuser.", location: "algratal", spot: "algratal-music-room", period: "soirée", minDay: 8, minStage: 2, expiresAfter: 5,
     declineText: "Iriana accepte votre refus sans le transformer en test. Le musicien garde la salle pour une autre soirée.",
     intro: [
       N("Iriana attend sans diadème devant un piano fermé. Trois fauteuils ont été déplacés avant votre arrivée ; elle a manifestement testé plusieurs distances avant de retenir celle-ci."),
@@ -1154,7 +1154,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-valurn-market", character: "valurn", title: "Un pari sans mise", message: "Valurn vous cherche au Grand Marché pour départager deux objets absolument inutiles.", location: "algratal", spot: "algratal-market", period: "matin", minDay: 6, minStage: 1, expiresAfter: 2,
+    id: "invite-valurn-market", character: "valurn", title: "Un pari sans mise", message: "Valurn vous cherche au Grand Marché pour départager deux objets absolument inutiles.", location: "algratal", spot: "algratal-market", period: "matin", minDay: 6, minStage: 1, expiresAfter: 5,
     declineText: "Valurn achète les deux objets et vous accuse par lettre d’avoir rendu le choix impossible.",
     intro: [
       N("Valurn tient une cuillère qui prédit la pluie et une clochette qui refuse de sonner. Le marchand les observe comme s’il regrettait déjà d’avoir commencé cette négociation."),
@@ -1169,7 +1169,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-naiah-branches", character: "naiah", title: "Le chemin qui boude", message: "Une branche frappe trois fois à votre fenêtre. Naïah prétend qu’un sentier refuse d’avancer sans témoin.", location: "forbidden", spot: "forbidden-crossroads", period: "soirée", minDay: 7, minStage: 1, expiresAfter: 3,
+    id: "invite-naiah-branches", character: "naiah", title: "Le chemin qui boude", message: "Une branche frappe trois fois à votre fenêtre. Naïah prétend qu’un sentier refuse d’avancer sans témoin.", location: "forbidden", spot: "forbidden-crossroads", period: "soirée", minDay: 7, minStage: 1, expiresAfter: 5,
     declineText: "Le sentier survit à votre absence. Naïah lui apprend toutefois une imitation dramatique de votre voix.",
     intro: [
       N("Le sentier s’enroule autour d’un arbre chaque fois que Naïah lui ordonne d’être raisonnable. Un écriteau « SORTIE » pousse dans la mousse et pointe successivement vers quatre directions."),
@@ -1184,7 +1184,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-lineva-port", character: "lineva", title: "Avant la tombée de la nuit", message: "Lineva souhaite vous voir au port avant la dernière relève. Aucun incident n’est signalé.", location: "forthaven", spot: "forthaven-harbor", period: "apres-midi", minDay: 9, minStage: 1, expiresAfter: 2,
+    id: "invite-lineva-port", character: "lineva", title: "Avant la tombée de la nuit", message: "Lineva souhaite vous voir au port avant la dernière relève. Aucun incident n’est signalé.", location: "forthaven", spot: "forthaven-harbor", period: "apres-midi", minDay: 9, minStage: 1, expiresAfter: 5,
     declineText: "Lineva confirme que l’affaire n’était pas urgente et vous remercie d’avoir répondu franchement.",
     intro: [
       N("Lineva vous attend au bout d’un quai désert, deux bols de soupe posés sur une caisse. Elle en retient un du coude pendant qu’elle finit de réparer un flotteur fendu."),
@@ -1199,7 +1199,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-saidin-observatory", character: "saidin", title: "Une étoile en retard", message: "Saidin vous invite à l’Observatoire. Une étoile devrait apparaître dans un ciel où elle n’existe plus.", location: "miraldas", spot: "miraldas-observatory", period: "soirée", minDay: 10, minStage: 2, expiresAfter: 2,
+    id: "invite-saidin-observatory", character: "saidin", title: "Une étoile en retard", message: "Saidin vous invite à l’Observatoire. Une étoile devrait apparaître dans un ciel où elle n’existe plus.", location: "miraldas", spot: "miraldas-observatory", period: "soirée", minDay: 10, minStage: 2, expiresAfter: 5,
     declineText: "Saidin observe l’étoile seul et vous envoie un croquis volontairement incomplet, sans reproche.",
     intro: [
       N("L’observatoire est plongé dans le noir, à l’exception de deux tasses déjà refroidies. Saidin vous tend la vôtre une seconde avant que vous ne demandiez laquelle était prévue pour vous."),
@@ -1214,7 +1214,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-bellirith-mask", character: "bellirith", title: "Une soirée sans aura", message: "Bellirith réserve une alcôve et promet de n’utiliser aucun charme. Elle ajoute que la difficulté la divertit.", location: "akuhn", spot: "akuhn-music-room", period: "soirée", minDay: 12, minStage: 2, expiresAfter: 3,
+    id: "invite-bellirith-mask", character: "bellirith", title: "Une soirée sans aura", message: "Bellirith réserve une alcôve et promet de n’utiliser aucun charme. Elle ajoute que la difficulté la divertit.", location: "akuhn", spot: "akuhn-music-room", period: "soirée", minDay: 12, minStage: 2, expiresAfter: 5,
     declineText: "Bellirith accepte le refus et annule l’alcôve. Sa réponse demeure piquante, jamais punitive.",
     intro: [
       N("Bellirith a retiré bijoux et enchantements. Sa robe reste provocante, mais rien dans l’air ne pousse votre regard à s’y attarder. Elle paraît plus nerveuse que lors d’un duel."),
@@ -1229,7 +1229,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-amanea-terrace", character: "amanea", title: "Une audience sans siège", message: "Amanea vous demande de la rejoindre sur la terrasse après le Conseil. Le billet ne porte pas le mot ‘ordre’.", location: "akuhn", spot: "akuhn-terrace", period: "soirée", minDay: 13, minStage: 2, expiresAfter: 3,
+    id: "invite-amanea-terrace", character: "amanea", title: "Une audience sans siège", message: "Amanea vous demande de la rejoindre sur la terrasse après le Conseil. Le billet ne porte pas le mot ‘ordre’.", location: "akuhn", spot: "akuhn-terrace", period: "soirée", minDay: 13, minStage: 2, expiresAfter: 5,
     declineText: "Amanea accuse réception de votre refus. Elle ne le traite ni comme une offense ni comme une dette future.",
     intro: [
       N("Amanea attend debout, sa couronne posée sur le parapet. Une pile de rapports demeure à l’intérieur ; elle a fermé la porte dessus sans les signer."),
@@ -1245,7 +1245,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-draven-walk", character: "draven", title: "Inspection non officielle", message: "Draven propose de marcher sur les quais sans escorte ni rapport à signer.", location: "forthaven", spot: "forthaven-memorial", period: "apres-midi", minDay: 11, minStage: 2, expiresAfter: 3,
+    id: "invite-draven-walk", character: "draven", title: "Inspection non officielle", message: "Draven propose de marcher sur les quais sans escorte ni rapport à signer.", location: "forthaven", spot: "forthaven-memorial", period: "apres-midi", minDay: 11, minStage: 2, expiresAfter: 5,
     declineText: "Draven maintient sa promenade et vous écrit qu’une invitation refusée reste une invitation correctement formulée.",
     intro: [
       N("Draven vous attend devant le mémorial, les mains volontairement vides. Il inspecte tout de même la fixation d’une lanterne pendant votre approche."),
@@ -1262,7 +1262,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-allenna-training", character: "allenna", title: "La faille dans votre garde", message: "Allenna vous attend au terrain d’entraînement. Elle prétend que la correction prendra vingt minutes.", location: "akuhn", spot: "akuhn-war-room", period: "aube", minDay: 11, minStage: 1, expiresAfter: 2,
+    id: "invite-allenna-training", character: "allenna", title: "La faille dans votre garde", message: "Allenna vous attend au terrain d’entraînement. Elle prétend que la correction prendra vingt minutes.", location: "akuhn", spot: "akuhn-war-room", period: "aube", minDay: 11, minStage: 1, expiresAfter: 5,
     declineText: "Allenna reporte la correction sans commentaire. Votre garde demeure, selon elle, ‘votre risque à assumer’. ",
     intro: [
       N("Le terrain provisoire de la salle de guerre a été débarrassé de ses cartes. Allenna a disposé deux lames émoussées, des bandes de soin et, détail révélateur, deux tasses de tonique."),
@@ -1279,7 +1279,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-tia-seal", character: "tia", title: "Le sceau personnel de Tia", message: "Une convocation impériale vous demande de vous présenter dans la Salle du Conseil. Pour la première fois, Tia a signé de sa propre main.", location: "algratal", spot: "algratal-palace-council", period: "matin", minDay: 22, minStage: 2, expiresAfter: 3,
+    id: "invite-tia-seal", character: "tia", title: "Le sceau personnel de Tia", message: "Une convocation impériale vous demande de vous présenter dans la Salle du Conseil. Pour la première fois, Tia a signé de sa propre main.", location: "algratal", spot: "algratal-palace-council", period: "matin", minDay: 22, minStage: 2, expiresAfter: 6,
     declineText: "Tia enregistre votre indisponibilité et fixe une nouvelle fenêtre. L’Empire survit manifestement à votre agenda.",
     intro: [
       N("La Salle du Conseil est vide. Tia a fait retirer les secrétaires et conservé seulement deux dossiers. Une seconde chaise se trouve à sa droite, pas de l’autre côté de la table."),

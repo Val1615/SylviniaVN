@@ -735,6 +735,65 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       after: sexText("Elle dort enfin avec votre main sur son ventre.", "Elle laisse votre torse remplacer le rempart sous sa joue.", "Elle demande quelle proximité permettra à votre propre corps de se reposer."),
     },
   ],
+  draven: [
+    {
+      id: "noeud-pres-de-la-porte",
+      labels: sexText("Laisser Draven suivre la corde jusqu’à votre plaisir", "Confier votre rythme à ses mains de marin", "Tracer avec lui une carte adaptée à votre corps"),
+      detail: "Le nœud offert au logis devient le fil d’une exploration où Draven guide sans commander et reste sans surveiller le port.",
+      threshold: ["Draven décroche le nœud marin près de la porte et fait glisser la corde entre ses doigts. Il la pose ensuite au sol, inutile, avant de revenir vers vous.", ["Draven", "Une amarre sert à retrouver le port, pas à retenir quelqu’un. Cette nuit, je préfère vos mains.", "approving"]],
+      firstMovement: ["Il vous installe au fond du canapé, demande où commencer puis suit votre réponse de la bouche et des doigts. Sa force soutient votre position sans en fermer aucune issue."],
+      variation: ["Du canapé au couloir, puis du couloir au lit, Draven change d’appui chaque fois que vous le réclamez. Sa voix rauque vérifie la cadence sans transformer vos mots en ordres permanents."],
+      tender: ["Il vous garde contre son torse et laisse chaque baiser durer. Le foyer craque, le port demeure loin et Draven découvre qu’une nuit peut avancer sans objectif à atteindre."],
+      suggestive: ["Ses mains deviennent plus directes à mesure que vos vêtements restent derrière vous. Il conserve exactement le geste qui raccourcit votre souffle et abandonne un juron satisfait contre votre bouche."],
+      explicit: sexLines(
+        ["Draven ouvre vos cuisses dans le lit, maintient sa bouche sur votre perle sensible et accorde ses doigts à la profondeur choisie. Votre plaisir arrive sous la même pression attentive, puis il remonte sans retirer la chaleur de sa paume.", ["Draven", "Pas besoin de tenir. Laissez-moi seulement rester là jusqu’au bout.", "approving"]],
+        ["Draven prend votre longueur brûlante dans sa main puis entre ses lèvres, gardant votre bassin libre de répondre. Il maintient le rythme annoncé jusqu’à votre abandon et ne quitte votre regard qu’après le dernier frisson.", ["Draven", "Voilà une consigne que j’accepte volontiers de répéter.", "gruff"]],
+        ["Vous guidez la bouche, les mains et le bassin de Draven vers la combinaison propre à votre anatomie. Il adapte contact et profondeur sans rien supposer, puis garde la cadence qui vous mène entièrement au plaisir.", ["Draven", "Votre carte, vos mots. Je suis capable d’apprendre une route qui en vaut la peine.", "approving"]],
+      ),
+      ellipse: ["La corde reste près de la porte. Draven vous porte seulement après votre rire d’accord, et la chronique demeure dans le salon lorsque la chambre se referme."],
+      reprise: ["Plus tard, il revient au canapé avec vous et échange la conduite. La seconde reprise est plus lente, débarrassée de toute prudence devenue inutile."],
+      closing: ["À l’aube, le nœud attend encore au sol. Draven le regarde, hausse les épaules et choisit de garder votre main à la place.", ["Draven", "Le port nous retrouvera. Pour une fois, il peut faire l’effort.", "approving"]],
+      after: sexText("Il conserve une paume chaude contre votre ventre.", "Il laisse votre tête reposer sous son menton sans se relever.", "Il retient les mots de votre corps et abandonne toutes les suppositions."),
+    },
+    {
+      id: "carte-du-salon",
+      labels: sexText("Prendre la relève de Draven dans chaque pièce", "Le faire céder du salon à la chambre", "Alterner les rôles sans les confier à l’anatomie"),
+      detail: "Vous menez Draven à travers son premier itinéraire sans commandement, puis lui rendez l’initiative lorsque le désir le demande.",
+      threshold: ["Vous retournez la carte du salon face contre table et faites asseoir Draven à sa place. Il observe le détournement avec un mélange de méfiance et d’envie.", ["Draven", "Vous venez de remplacer une route sûre par une personne dangereusement proche. Décision discutable. Continuez.", "gruff"]],
+      firstMovement: ["Vous ouvrez sa chemise, embrassez son cou et l’empêchez d’expliquer chaque vieille cicatrice. Draven reçoit l’attention sans inventer de dette ni de rôle protecteur."],
+      variation: ["Le fauteuil accueille votre première conduite, le tapis la sienne et le bord du lit une alternance devenue trop naturelle pour garder un score."],
+      tender: ["Vous partagez le poids et la chaleur. Draven accepte d’être entouré sans se présenter comme un fardeau, puis vous rend une tendresse aussi franche que ses jurons."],
+      suggestive: ["Chaque changement de pièce retire une attache et une défense. Ses demandes deviennent plus crues, vos réponses plus directes, jusqu’à ce que le trajet entier appartienne à vos deux désirs."],
+      explicit: sexLines(
+        ["Vous faites céder Draven sous votre bouche et vos mains, puis il vous renverse après votre invitation et entretient votre point incandescent jusqu’à votre propre orgasme. La reprise échange encore la conduite sans fixer de gagnante.", ["Draven", "Rapport final : excellente insubordination et aucune perte regrettable.", "approving"]],
+        ["Vous donnez d’abord du plaisir à Draven avec votre bouche et votre main, puis choisissez ensemble une position sur le côté où pénétration, caresses et rythme restent négociés. Vos abandons successifs ne réclament aucun classement.", ["Draven", "Je refuse le score. Je réclame toutefois une revanche.", "approving"]],
+        ["Vous choisissez pour chaque reprise qui donne, qui reçoit et quel contact convient aux corps présents. Draven reçoit une forme de plaisir, vous une autre, et l’intensité partagée ne demande jamais une fausse symétrie.", ["Draven", "Deux routes différentes, même attention. C’est la première carte honnête de la soirée.", "approving"]],
+      ),
+      ellipse: ["La carte reste retournée. Vous entraînez Draven dans le couloir, où son rire rauque suit la chronique jusqu’à la porte de la chambre et pas au-delà."],
+      reprise: ["Vous revenez sur le tapis après une longue pause. Draven propose une nouvelle position, attend votre accord et laisse la reprise se construire sans plan préalable."],
+      closing: ["Le salon ressemble à un pont après tempête. Draven redresse un coussin, contemple le reste et renonce avec une sagesse nouvelle.", ["Draven", "Le ménage est une mission pour demain. Je viens d’apprendre à respecter les priorités.", "gruff"]],
+      after: sexText("Il masse votre hanche avant de vous offrir la sienne.", "Il garde vos épaules au même niveau sous la couverture.", "Il vérifie que chaque rôle est resté modifiable jusqu’à la fin."),
+    },
+    {
+      id: "fenetre-sur-la-releve",
+      labels: sexText("Fermer la fenêtre sur Forthaven et garder Draven près de vous", "Laisser la relève tenir pendant une nuit entière", "Construire un repos où aucun corps ne doit faire le guet"),
+      detail: "Une veille à la fenêtre devient une nuit longue où Draven accepte le désir, le repos et plusieurs reprises sans reprendre son poste.",
+      threshold: ["Draven se tient devant la fenêtre avec le port dans le dos. Vous fermez les volets et lui montrez le billet de Lineva : « La relève tient. Ne touche à rien. »", ["Draven", "Ma propre fille me donne l’ordre de ne rien commander. Trahison familiale d’une grande efficacité.", "gruff"]],
+      firstMovement: ["Vous vous placez entre lui et les volets sans l’emprisonner. Draven choisit de reculer vers vous, pose son front contre le vôtre et laisse un premier baiser interrompre la garde."],
+      variation: ["Le fauteuil reçoit sa carrure, le tapis vos genoux, puis le lit devient enfin un endroit où aucune oreille ne surveille les cloches du port."],
+      tender: ["Vous gardez Draven contre vous jusqu’à ce que ses épaules descendent. Il répond par des baisers lents et accepte de fermer les yeux sans quitter le moment."],
+      suggestive: ["Vos mains remplacent progressivement l’uniforme. Draven ouvre vos vêtements en retour, plus attentif au désir qui monte qu’au silence des remparts."],
+      explicit: sexLines(
+        ["Draven vous installe dans le fauteuil et travaille votre perle sensible avec sa bouche et ses doigts. Dans le lit, vous lui rendez le plaisir, puis une position face à face prolonge la nuit jusqu’à une seconde jouissance partagée.", ["Draven", "Les volets sont fermés. Je préfère nettement le rapport que me donne votre corps.", "approving"]],
+        ["Draven prend votre désir près de la fenêtre, puis vous choisissez au lit une position assez proche pour guider chaque profondeur. Il reçoit ensuite votre conduite avant de reprendre la cadence jusqu’à vos orgasmes successifs.", ["Draven", "Aucune veille. Seulement ce rythme et la certitude de pouvoir le changer.", "approving"]],
+        ["Vous définissez une première stimulation pour votre corps, puis une seconde pour Draven, sans symétrie imposée. La reprise mêle mains, bouche, frottement ou pénétration selon les besoins que vous formulez ensemble.", ["Draven", "Personne ne monte la garde. Personne ne se tait. Continuez.", "approving"]],
+      ),
+      ellipse: ["Les volets se ferment. Draven laisse son uniforme sur la chaise et rejoint le lit pendant que la chronique demeure de l’autre côté."],
+      reprise: ["Au milieu de la nuit, il se réveille sans bondir vers la fenêtre et vient chercher votre chaleur. La reprise naît de cette demande silencieuse, lente et entièrement présente."],
+      closing: ["À l’aube, Draven ouvre les volets sans remettre aussitôt son manteau. Le port existe toujours ; il n’a pas eu besoin d’être sauvé.", ["Draven", "La ville a tenu. Je pourrais risquer une autre nuit — avec entraînement régulier.", "approving"]],
+      after: sexText("Il dort enfin avec votre main sur son ventre.", "Il laisse votre torse remplacer le rempart sous sa joue.", "Il demande quelle proximité permettra à votre propre corps de se reposer."),
+    },
+  ],
 };
 
 export const HOME_INTIMACY_APPROACHES: Record<string, IntimacyChoice[]> = {
@@ -793,6 +852,11 @@ export const HOME_INTIMACY_APPROACHES: Record<string, IntimacyChoice[]> = {
     { id: "home-allenna-floor", text: "Écarter la table basse et proposer une relève sur le tapis.", lines: [C("Allenna", "Pas de vainqueur. Chacun porte le mouvement avant de le transmettre."), N("La première prise devient un baiser avant même que l’exercice commence.")] },
     { id: "home-allenna-curtains", text: "Fermer les rideaux et prendre officiellement la relève de sa veille.", lines: [P("Le monde tiendra jusqu’à l’aube."), C("Allenna", "Je vais tester cette hypothèse depuis ton lit.", "smirk"), N("Elle laisse les gantelets sur la fenêtre et revient vers vous.")] },
   ],
+  draven: [
+    { id: "home-draven-knot", text: "Décrocher son nœud marin et lui demander de garder seulement vos mains.", lines: [N("La corde tombe près de la porte."), C("Draven", "Une amarre de moins. Une excellente raison de rester.", "approving"), N("Il entrelace ses doigts aux vôtres avant de vous attirer contre lui.")] },
+    { id: "home-draven-map", text: "Retourner la carte et lui confier un itinéraire de pièce en pièce.", lines: [C("Draven", "Aucun objectif, aucun rapport et trois meubles manifestement compromis."), P("Tu protestes ?"), C("Draven", "Je prends de l’avance.", "gruff")] },
+    { id: "home-draven-shutters", text: "Fermer les volets sur le port et prendre la relève jusqu’à l’aube.", lines: [P("Forthaven survivra sans toi."), C("Draven", "C’est vexant. Et terriblement attirant.", "approving"), N("Son manteau rejoint la chaise ; sa bouche, la vôtre.")] },
+  ],
 };
 
 const HOME_CHARACTER_OPENING: Record<string, DialogueLine[]> = {
@@ -807,6 +871,7 @@ const HOME_CHARACTER_OPENING: Record<string, DialogueLine[]> = {
   amanea: [C("Amanea", "Aucun garde, aucun trône, aucun sujet. Une soirée rare mérite une franchise rare.", "neutral")],
   tia: [C("Tia", "J’ai laissé mes sceaux dans l’entrée. S’ils parlent avant moi, retournez-les face contre la console.", "troubled")],
   allenna: [C("Allenna", "La relève est prévenue, la porte verrouillée et la trousse fermée. Je n’ai plus aucune excuse fonctionnelle.", "troubled")],
+  draven: [C("Draven", "Les volets sont fermés, la relève tient et je n’ai apporté aucun rapport. Ne me laissez pas gâcher ce miracle.", "approving")],
 };
 
 const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
@@ -821,6 +886,7 @@ const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
   amanea: [C("Amanea", "À l’extérieur, je reprendrai ma couronne. Ici, je laisse une promesse de retour.", "soft")],
   tia: [C("Tia", "Le petit sceau peut rester ici. Je préfère qu’une prochaine invitation connaisse déjà l’adresse.", "troubled")],
   allenna: [C("Allenna", "Le monde a tenu sans ma surveillance. Je reviendrai vérifier que cette méthode reste reproductible.", "smirk")],
+  draven: [C("Draven", "Le port a survécu à mon absence. Cette maison, elle, vient de gagner une visite régulière.", "approving")],
 };
 
 export function homeIntimacyRoutes(character: string, sex: PlayerSex): HomeIntimacyRoute[] {

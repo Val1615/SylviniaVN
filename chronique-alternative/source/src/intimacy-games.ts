@@ -386,6 +386,37 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
       discordant: [N("Allenna retire le ruban avant que l’exercice ne devienne un duel. Elle pose ensuite ses mains nues sur les vôtres, sans règle à gagner."), C("Allenna", "La technique n’aide plus. Pour la suite, dis seulement où tu veux que je reste.", "troubled")],
     },
   },
+  draven: {
+    title: "Le nœud qui ne retient personne",
+    instruction: "Draven pose une corde souple entre vous. Quatre nœuds doivent devenir des demandes lisibles, jamais des contraintes ni des ordres.",
+    beats: [
+      { prompt: "Le premier nœud est celui de l’amarrage.", detail: "Draven le serre par habitude jusqu’à ce que la corde ne laisse plus aucun jeu.", options: [
+        O("draven-loose", "Lui demander une boucle assez lâche pour y glisser deux doigts", 2, N("Il desserre immédiatement. La corde tient encore, mais votre marge de mouvement devient visible et vérifiable."), C("Draven", "Sûr ne veut pas dire immobile. Je devrais le savoir.", "gruff")),
+        O("draven-trust", "Accepter le nœud tel quel", 1, N("Draven en vérifie la solidité puis votre expression, conscient que l’efficacité n’a pas suffi à construire le jeu.")),
+        O("draven-tight", "Lui demander de serrer davantage pour le défier", 0, N("Sa mâchoire se ferme. Il défait aussitôt la corde plutôt que de transformer votre proximité en épreuve d’endurance.")),
+      ]},
+      { prompt: "La corde passe maintenant dans votre paume.", detail: "Un simple mouvement peut signifier continuer, ralentir ou arrêter.", options: [
+        O("draven-signals", "Inventer avec lui trois signaux distincts", 2, N("Draven les répète jusqu’à ne plus pouvoir les confondre, puis sourit devant votre air faussement sévère."), C("Draven", "Enfin un code utile et aucune flotte à déplacer.", "approving")),
+        O("draven-one", "Conserver seulement un signal d’arrêt", 1, N("Le langage reste sommaire mais clair. Draven garde toute son attention sur votre main.")),
+        O("draven-guess", "Lui dire qu’il saura deviner", 0, N("Il pose la corde."), C("Draven", "J’ai enterré trop de gens après avoir cru qu’un chef devait deviner. Nous allons parler.", "stern")),
+      ]},
+      { prompt: "Draven vous cède l’extrémité de la corde.", detail: "Il s’attend manifestement à recevoir une directive précise.", options: [
+        O("draven-invite", "L’attirer près de vous puis lui rendre l’initiative", 2, N("Le premier pas est le vôtre, le second le sien. La corde décrit entre vous une courbe libre qu’aucun des deux ne possède.")),
+        O("draven-lead", "Le guider jusqu’au bord du lit", 1, N("Il suit sans résistance et attend encore, attentif mais trop prêt à transformer votre envie en mission.")),
+        O("draven-command", "Lui ordonner de prouver sa discipline", 0, N("L’expression de Draven se ferme. Le grade que vous cherchiez à provoquer revient entre vous comme une porte.")),
+      ]},
+      { prompt: "Il reste à défaire le dernier nœud.", detail: "Draven tient la boucle sans tirer, comme s’il avait enfin compris que la fin du jeu ne devait pas être une retraite.", options: [
+        O("draven-hands", "Défaire le nœud et conserver ses mains dans les vôtres", 2, N("La corde tombe. Ses doigts restent entrelacés aux vôtres parce qu’aucun nœud ne les y oblige."), C("Draven", "Voilà une amarre que je consens à garder.", "approving")),
+        O("draven-kiss", "Couper court aux explications par un baiser", 1, N("Le nœud résiste encore une seconde entre vos poignets, puis Draven le libère sans rompre le baiser.")),
+        O("draven-leave", "Lui confier seul le rangement de la corde", 0, N("Il enroule méthodiquement le cordage. Le moment demeure possible, mais la complicité du jeu s’est retirée avec vos mains.")),
+      ]},
+    ],
+    results: {
+      attuned: [N("La corde repose au sol, inutile. Draven vous attire contre lui sans employer ni force excessive ni prudence théâtrale."), C("Draven", "Nous avons gardé le lien et jeté l’amarre. C’est une manœuvre que je veux revoir de très près.", "approving")],
+      searching: [N("Certains nœuds ont résisté plus que nécessaire, mais vos signaux sont devenus clairs. Draven masse lentement votre paume avant de la poser sur lui."), C("Draven", "Nous ajusterons en mouvement. Pour une fois, je n’exige pas de répétition générale.", "gruff")],
+      discordant: [N("Draven range la corde hors de portée et revient les mains ouvertes. Le jeu n’a pas trouvé son rythme ; votre conversation, elle, peut encore le faire."), C("Draven", "Assez de manœuvres. Dites-moi ce que vous voulez, et laissez-moi répondre comme un homme, pas comme une consigne.", "stern")],
+    },
+  },
 };
 
 export function intimacyGameResult(characterId: string, score: number) {

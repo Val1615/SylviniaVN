@@ -19,7 +19,7 @@ export type SupportingFigure = {
 
 /**
  * Cette chronique diverge au début du Tome 1 : Hylee a rencontré Remerii,
- * tandis qu’Iriana poursuit seule son enquête. Les actes avancent par découvertes,
+ * tandis qu’Iriana poursuit seule son enquête. Les chapitres avancent par découvertes,
  * sans date butoir et sans empêcher le monde de rester ouvert ensuite.
  */
 export const MAIN_STORY: StoryAct[] = [

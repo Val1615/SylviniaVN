@@ -344,6 +344,16 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
     directions: [],
     afterglow: [N("Allenna replace un coussin sous votre nuque puis accepte que vous fassiez de même pour elle. Ses gantelets restent au sol, inutiles dans la chaleur partagée."), C("Allenna", "Relève terminée. Personne n’a été abandonné. Je peux apprendre à appeler cela du repos.", "troubled")],
   },
+  draven: {
+    opening: [C("Draven", "Je vais être clair : je vous désire. Je vais être moins doué pour la suite, mais au moins nous partons d’un rapport honnête.", "gruff"), N("Il retire son ceinturon et le pose loin du lit. Le geste ressemble d’abord à celui d’un officier ; la main qui revient caresser votre joue n’obéit plus à aucun règlement.")],
+    approaches: [
+      { id: "draven-franc", text: "Répondre avec la même franchise, sans lui laisser le grade comme refuge.", lines: [P("Je vous désire aussi. Pas l’Amiral, pas le héros de Forthaven : vous."), N("Draven ferme les yeux une seconde, touché à un endroit qu’aucune décoration n’a jamais protégé."), C("Draven", "Alors approchez avant que je gâche ça avec une phrase raisonnable.", "approving")] },
+      { id: "draven-relache", text: "Défaire vous-même l’attache qu’il resserre par réflexe.", lines: [N("Vos doigts rencontrent les siens sur le col. Draven commence à protester, puis abandonne l’attache et toute la posture qui allait avec."), C("Draven", "Cinquante ans à fermer correctement cet uniforme. Vous le rendez inutile en trois secondes.", "gruff"), N("Il vous embrasse avec un rire rauque qui s’éteint lentement contre votre bouche.")] },
+      { id: "draven-ordre", text: "Lui donner un seul ordre : ne pas anticiper ce que vous attendez de lui.", lines: [C("Draven", "Ordre mal formulé, impossible à mesurer et remarquablement nécessaire.", "approving"), N("Il place vos mains sur son torse et attend réellement. Lorsque vous choisissez le premier geste, toute sa force se met à l’écoute au lieu de prendre la direction.")] },
+    ],
+    directions: [],
+    afterglow: [N("Draven reste sur le dos, votre tête contre son épaule et ses doigts immobiles dans vos cheveux. Aucun bruit du port ne réussit à le remettre debout."), C("Draven", "La ville tient. Vous êtes encore là. Pour une fois, je ne vais pas chercher quel désastre cette phrase dissimule.", "approving")],
+  },
 };
 
 export function intimacyOpening(characterId: string, date?: DateScene): DialogueLine[] {

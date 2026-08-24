@@ -317,4 +317,34 @@ export const DATE_SCENES: DateScene[] = [
     ],
     intimacySetting: { opening: ["Tia verrouille le dossier et laisse la clef sur la table, geste de confiance qui n’exige aucune lecture supplémentaire. Les appartements privés sont à quelques pas.", "Elle ne devient ni docile ni soudainement accessible. Elle choisit pourtant de vous montrer chaque désir avant de le transformer en geste, et d’accueillir le vôtre sans en faire une concession impériale."], closing: ["Le dossier reste inachevé au matin. Tia ajoute seulement une feuille : « La suite nécessite deux présences et aucun secrétaire. » Votre prochaine soirée possède déjà une place."] },
   },
+  {
+    id: "date-draven-quays", character: "draven", title: "Le dernier verre avant la marée", type: "Soirée sur les quais", description: "Marcher avec Draven dans un port qui n’exige aucun rapport et découvrir l’homme derrière le commandement.", location: "forthaven", spot: "forthaven-harbor", period: "soirée", unlockStage: 3, minAffection: 26, minTrust: 28, mood: "gruff",
+    intro: [
+      line("Narration", "La relève a pris les remparts. Draven vous attend au bout du quai avec deux gobelets et une bouteille dont l’étiquette a manifestement perdu une bataille."),
+      line("Draven", "C’est du rhum de marin. La marine prétend qu’il désinfecte, réchauffe et améliore les chants. Deux de ces affirmations sont des mensonges."),
+      line("Narration", "Il vous tend un gobelet, puis retire de lui-même son manteau d’amiral. Sans les galons, sa carrure reste impressionnante ; son silence, beaucoup moins officiel."),
+      line("Draven", "Nous avons deux heures avant la marée. Interdiction de parler stratégie pendant la première. Pour la seconde, nous improviserons comme des adultes irresponsables."),
+    ],
+    choices: [
+      dateChoice("ddq-a", "Lui voler son gobelet et exiger la véritable histoire de sa pire chanson de bord.", "audace", [line("Draven", "Vol aggravé et atteinte à la dignité navale. J’ai fait pendre des gens pour moins que ça."), line("Narration", "Son sourire ruine entièrement la menace. L’histoire implique un gouverneur, trois tonneaux et Draven nu jusqu’aux bottes ; il jure que ce dernier détail est une calomnie.")], "great", { affection: 10, trust: 6, desire: 5 }),
+      dateChoice("ddq-l", "Lui demander ce qu’il fait lorsqu’il n’a personne à protéger.", "lucidite", [line("Narration", "Draven regarde le port assez longtemps pour que la question cesse de sembler simple."), line("Draven", "J’apprends. Mal. Ce soir, par exemple, j’essaie de rester près de quelqu’un sans inventer un danger qui justifierait ma présence."), line("Narration", "Il rapproche son épaule de la vôtre, geste minuscule pour un homme habitué aux grandes manœuvres.")], "great", { affection: 8, trust: 10, desire: 4 }),
+      dateChoice("ddq-s", "Admettre que son grade vous intimide encore et lui demander de ralentir.", "sangFroid", [line("Draven", "Alors le grade reste sur le manteau. Si je recommence à donner des ordres, vous avez permission de me jeter à l’eau."), line("Narration", "La tension s’allège. Il garde une distance rassurante, mais sa main reste ouverte entre vous sur le bois du quai.")], "good", { affection: 6, trust: 9, desire: 2 }),
+    ],
+    intimacySetting: { opening: ["La pluie arrive avant la marée. Draven vous entraîne dans une ancienne capitainerie désaffectée, pousse une table contre la porte et allume une lampe qui donne aux cartes murales une couleur d’ambre.", "Il pose le manteau, les armes et enfin son gobelet. Lorsqu’il s’approche, sa question est brève et parfaitement claire ; votre réponse l’est tout autant."], closing: ["La pluie s’achève avant vous. Draven remet ses galons dans le mauvais ordre, vous accuse d’avoir saboté l’uniforme et renonce à les corriger lorsqu’il comprend que votre sourire lui plaît davantage."] },
+  },
+  {
+    id: "date-draven-watch", character: "draven", title: "Une nuit sans relève", type: "Veillée hors service", description: "Confier Forthaven à sa garde et offrir à Draven une nuit où rester n’est ni un ordre ni un sacrifice.", location: "forthaven", spot: "forthaven-quarters", period: "soirée", unlockStage: 4, minAffection: 34, minTrust: 34, mood: "approving",
+    intro: [
+      line("Narration", "Draven a fait préparer un repas dans une chambre d’officier donnant sur la mer. La porte reste ouverte jusqu’à ce qu’un messager confirme que Lineva commande la relève."),
+      line("Draven", "La ville tient sans moi. J’éprouve une fierté immense et une envie très raisonnable d’aller vérifier quand même."),
+      line("Narration", "Il ferme la porte avant que l’envie ne gagne, puis découvre sur la table une assiette trop délicate pour ses mains de marin."),
+      line("Draven", "On m’a servi une fleur comestible. Si vous riez, je la mange avec une bravoure tactique et nous n’en parlons plus jamais."),
+    ],
+    choices: [
+      dateChoice("ddw-a", "Manger la fleur avant lui et porter un toast à l’insubordination culinaire.", "audace", [line("Draven", "Enfin un commandement digne de confiance."), line("Narration", "Il trinque, goûte la seconde fleur et grimace avec une dignité si offensée que votre rire gagne le sien. Plus tard, il vous embrasse encore en souriant.")], "great", { affection: 10, trust: 6, desire: 7 }),
+      dateChoice("ddw-l", "Lui dire que vous ne cherchez ni un héros ni un père de substitution.", "lucidite", [line("Narration", "Draven cesse de couper son pain. La franchise le heurte, puis lui rend visiblement de l’air."), line("Draven", "Bien. Parce que je vous regarde depuis des semaines d’une façon qu’aucun père digne de ce nom ne devrait employer."), line("Narration", "La rudesse de l’aveu n’en masque pas la prudence : il attend que vous réduisiez vous-même la distance.")], "great", { affection: 9, trust: 10, desire: 6 }),
+      dateChoice("ddw-s", "Lui proposer de laisser la nuit ouverte, sans décider maintenant de sa conclusion.", "sangFroid", [line("Draven", "Une position défensive avec possibilité d’avancée consentie. Je comprends ce langage."), line("Narration", "Vous mangez lentement. La soirée demeure tendre ; lorsque sa main trouve la vôtre, elle n’en exige pas davantage.")], "good", { affection: 7, trust: 10, desire: 3 }),
+    ],
+    intimacySetting: { opening: ["Après le repas, aucun rapport n’arrive. Draven reste d’abord debout devant la fenêtre, puis se retourne et vous avoue d’une voix rauque qu’il a oublié comment demander quelque chose uniquement pour lui.", "Vous lui répondez sans détour. Il vient à vous avec la force d’un homme qui sait se retenir et le soulagement d’un homme auquel on ne demande plus de le faire seul."], closing: ["Au matin, Lineva fait glisser sous la porte un billet : « La ville a survécu. Essaie encore demain. » Draven jure, rit, puis replie le mot avec un soin qu’il ne cherche pas à cacher."] },
+  },
 ];

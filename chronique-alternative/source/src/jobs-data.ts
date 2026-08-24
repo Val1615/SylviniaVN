@@ -78,7 +78,7 @@ export const JOBS: JobData[] = [
     id: "forestier-service", title: "Coup de feu à l’auberge", employer: "Auberge du Forestier",
     description: "Prendre des commandes variables sur une carte complète et servir chaque table avant qu’elle ne s’impatiente.", spot: "forestier-inn",
     reward: 9, stat: "sangFroid", kind: "service",
-    briefing: "Sept client·es se succèdent. Chacun peut commander une seule catégorie, plusieurs services précis ou vous demander une suggestion. Toute la carte — entrées, plats, boissons et desserts — reste disponible. Vous disposez de vingt secondes par table ; une erreur retire trois secondes à la suivante.",
+    briefing: "Sept client·es se succèdent. Chacun peut commander une seule catégorie, plusieurs services précis ou vous demander une suggestion. Toute la carte — entrées, plats, boissons et desserts — reste disponible. Vous disposez de trente-cinq secondes par table ; une erreur retire trois secondes à la suivante.",
     success: "Le service tient jusqu’à la dernière assiette et le tenancier vous paie sans recompter la vaisselle.",
     perfect: "Aucune erreur, aucune attente : même Hylee aurait approuvé votre manière de traverser la salle.",
     failure: "Deux plateaux reviennent en cuisine. Le tenancier sauve le service et vous verse seulement une compensation.",

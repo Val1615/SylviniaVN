@@ -10,7 +10,7 @@ const P = (text: string): AdvancedRawLine => ["{player}", text];
 const C = (speaker: string, text: string, mood?: string): AdvancedRawLine => [speaker, text, mood];
 
 /**
- * Le chapitre explicite propre à chacune des 99 routes individuelles.
+ * Le chapitre explicite propre à chacune des 108 routes individuelles.
  * Aucun texte de ce catalogue n'est partagé entre deux embranchements :
  * posture, échange verbal et réaction sont écrits pour le personnage, le
  * corps choisi par le joueur et la direction exacte de la scène.
@@ -607,6 +607,60 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
       "Vous organisez la scène comme une relève, sans imposer que les deux tours emploient le même geste. Allenna reçoit d’abord la bouche, les mains, le frottement ou la pénétration qu’elle définit ; vous recevez ensuite une combinaison différente adaptée à votre anatomie. Le changement survient avant toute fatigue, dans une étreinte qui garde les deux désirs présents.",
       C("Allenna", "Dans ce relais sans symétrie, l’équité signifie que personne ne doit s’épuiser ni disparaître pour que l’autre soit satisfait·e.", "smirk"),
       "Son orgasme arrive sous la cadence demandée ; Allenna prononce ensuite la relève et vient vers votre corps avec une attention entièrement renouvelée. Votre propre plaisir monte sous des gestes qui ne copient pas les siens et n’en sont pas moins intenses. Lorsque vous cédez, elle maintient le soutien choisi jusqu’au bout, puis vos deux souffles redescendent ensemble sans score ni objectif suivant.",
+    ),
+  },
+};
+
+INDIVIDUAL_EXPLICIT_SCENES.draven = {
+  femme: {
+    guided: scene(
+      "Draven vous installe contre les oreillers puis vient entre vos cuisses, ses avant-bras soutenant vos hanches sans les immobiliser. Sa bouche suit votre chaleur intime jusqu’à la perle sensible ; sa langue maintient une pression lente pendant que ses doigts avancent selon l’angle que votre main lui indique. Toute sa carrure demeure au service de votre liberté de bouger.",
+      C("Draven", "Je garde ce rythme. Si vous en voulez davantage, dites-le sans ménager mes vieux réflexes ni mon foutu orgueil.", "approving"),
+      "Vous réclamez une pression plus ferme et Draven obéit à votre désir, pas à une idée qu’il s’en faisait. Sa bouche et ses doigts restent accordés lorsque votre bassin se tend ; l’orgasme vous traverse contre lui, et il conserve le contact jusqu’à ce que vos cuisses cessent de trembler avant de remonter vous embrasser.",
+    ),
+    offered: scene(
+      "Vous faites allonger Draven en travers du lit, ouvrez sa chemise et descendez sur les cicatrices qu’il ne commente pas. Votre main referme lentement ses doigts autour de son membre dressé avant que votre bouche ne prenne le relais ; vous gardez l’autre paume sur sa hanche afin qu’il puisse régler chaque avancée plutôt que de seulement supporter.",
+      P("Tu ne tiens aucun rempart. Dis-moi seulement ce que tu veux recevoir et laisse-moi le maintenir."),
+      "Sa première demande est rauque, la seconde beaucoup moins polie. Vous conservez la cadence qu’il réclame, accompagnez la poussée volontaire de ses hanches et sentez toute sa maîtrise céder sans honte ; son plaisir arrive dans votre bouche tandis que sa main reste liée à la vôtre, non pour commander mais pour demeurer présent.",
+    ),
+    mutual: scene(
+      "Vous vous placez à califourchon sur Draven, vos plis de velours frottant contre sa longueur brûlante avant toute pénétration. Vous guidez ensuite son membre dans votre écrin de chair par étapes, une main sur son torse pour fixer la profondeur ; Draven soutient vos hanches et vous laisse choisir les rotations qui stimulent votre point de feu contre son bassin.",
+      C("Draven", "Vous conduisez cette reprise. Quand vous voudrez que je prenne la suivante, utilisez vos mots — ou cette façon très efficace de serrer mes épaules.", "gruff"),
+      "Vous augmentez ensemble la cadence, puis Draven vous fait rouler sur le côté seulement après votre signal. La nouvelle position garde vos visages proches et vos corps libres ; votre orgasme serre son désir en vous, le sien suit sous les mouvements que vous maintenez jusqu’au bout, sans vainqueur ni ordre final.",
+    ),
+  },
+  homme: {
+    guided: scene(
+      "Draven vous fait asseoir au bord du lit et s’agenouille entre vos genoux. Sa main répartit lentement le lubrifiant sur votre sexe tendu, puis sa bouche accueille l’extrémité sensible tandis que ses doigts poursuivent la base. Il garde votre bassin libre ; chaque changement de profondeur suit l’indication que vous lui donnez plutôt que sa seule force.",
+      C("Draven", "Vous avancez seulement autant que je vous y invite. En échange, je ne ralentis pas avant que vous me le demandiez. Marché clair ?", "approving"),
+      "Votre oui devient une main dans ses cheveux. Draven reçoit plusieurs poussées mesurées, revient ensuite à sa propre cadence et la maintient lorsque vous l’avertissez ; votre plaisir vous tend contre sa bouche, qui reste chaude et ferme jusqu’au dernier frisson avant qu’il ne se relève à votre hauteur.",
+    ),
+    offered: scene(
+      "Vous allongez Draven sur le côté et ouvrez sa chemise jusqu’à ses hanches. Votre main entoure sa hampe tendue tandis que votre bouche explore son torse, puis descend la remplacer ; la position lui permet de vous regarder, de vous guider et de se retirer à tout moment sans transformer sa vulnérabilité en épreuve.",
+      P("Pas de relève héroïque. Tu reçois jusqu’à ce que tu veuilles autre chose, et tu le dis."),
+      "Draven réclame davantage sans détour. Vous creusez les joues, maintenez la pression de votre main et laissez ses hanches accompagner le mouvement qu’il a choisi ; son orgasme brise sa voix en un juron étouffé, puis sa carrure retombe enfin dans les draps pendant que vous ralentissez sans rompre le contact.",
+    ),
+    mutual: scene(
+      "Après vous être préparés et avoir choisi qui reçoit d’abord, vous vous allongez sur le côté, assez proches pour rester enlacés. La tige dressée qui entre avance par pressions lentes dans l’intimité accueillante ; la personne qui reçoit garde une main sur le bassin de l’autre, règle la profondeur et demande chaque accélération sans transformer la réciprocité en obligation.",
+      C("Draven", "Nous pouvons changer de rôle, de rythme ou d’avis. La seule manœuvre interdite consiste à se taire pour paraître solide.", "gruff"),
+      "Vous gardez la première configuration jusqu’au plaisir de la personne qui reçoit, puis inversez seulement après une nouvelle demande explicite. Draven utilise sa force pour soutenir l’angle et non pour l’imposer ; le second orgasme arrive sous une cadence entièrement renégociée, vos mains encore jointes entre vos deux corps.",
+    ),
+  },
+  intersexe: {
+    guided: scene(
+      "Draven vous demande de placer sa bouche et ses mains exactement où vous souhaitez les sentir. Vous choisissez le point incandescent, le contact extérieur et la profondeur éventuelle ; il soutient votre cuisse, associe langue et doigts selon vos indications puis ajuste l’angle sans supposer quelle sensation devrait compter davantage pour votre anatomie.",
+      C("Draven", "Je ne navigue pas avec une carte inventée. Donnez-moi la vôtre, corrigez-moi, et je suivrai le trajet réel.", "approving"),
+      "Vous refusez une première combinaison, en réclamez une seconde et resserrez votre main sur sa nuque lorsque la troisième devient juste. Draven la conserve avec une patience brûlante jusqu’à votre orgasme ; il accompagne chaque contraction sans renommer votre corps ni transformer vos changements en erreurs.",
+    ),
+    offered: scene(
+      "Vous demandez à Draven quel plaisir il souhaite recevoir de votre corps réel. Il choisit d’abord votre main sur sa virilité tendue, puis votre bouche et enfin un frottement ou une pénétration adaptée que vous définissez ensemble ; sa paume reste ouverte contre votre hanche comme signal de cadence, jamais comme prise de commandement.",
+      P("Je ne reproduis aucun rôle prévu. Dis ce que tu veux de moi maintenant, puis demande ce que je veux offrir."),
+      "Draven formule des besoins concrets et vous les suivez sans nier les vôtres. La stimulation garde la pression qu’il réclame jusqu’à son orgasme, puis il demeure immobile contre vous et demande comment rendre à votre propre corps un plaisir distinct, prêt à réapprendre entièrement les gestes au lieu de les refléter.",
+    ),
+    mutual: scene(
+      "Vous organisez deux reprises différentes. Dans la première, Draven reçoit la bouche, les mains, le frottement ou la pénétration qu’il choisit ; dans la seconde, vous définissez une combinaison adaptée à votre anatomie sans devoir imiter son plaisir. Le changement se fait avant toute fatigue, sur un signal que chacun peut réviser.",
+      C("Draven", "Même intensité ne signifie pas même manœuvre. Chacun reçoit ce qu’il demande, et personne ne disparaît dans la méthode de l’autre.", "gruff"),
+      "Son plaisir arrive sous le rythme défini, puis Draven vient vers votre corps avec une attention entièrement renouvelée. Vos zones sensibles, vos limites et votre profondeur deviennent la nouvelle carte ; lorsque vous jouissez, il maintient exactement le soutien choisi avant que vos deux souffles ne redescendent sans score ni rôle permanent.",
     ),
   },
 };
