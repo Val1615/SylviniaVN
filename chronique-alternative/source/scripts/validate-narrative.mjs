@@ -229,7 +229,7 @@ try {
   assert.deepEqual([...mandatorySocialIds].filter((id) => !socialsDone.has(id)), [], "une transition sociale obligatoire reste inaccessible");
   assert.deepEqual([...mandatoryEventIds].filter((id) => !eventsDone.has(id)), [], "un événement croisé obligatoire reste inaccessible");
   assert.deepEqual(campaignOrder.filter((id) => !history.has(id)), [], "la campagne ne rejoint pas sa conclusion");
-  assert.equal(story.storyProgress([...history], [...flags]), story.MAIN_STORY.length, "les Actes I–VI ne se terminent pas lors d’une run légitime");
+  assert.equal(story.storyProgress([...history], [...flags]), story.MAIN_STORY.length, "les Chapitres I–VI ne se terminent pas lors d’une run légitime");
   assert.ok(flags.has("main-story-complete"), "l’épilogue doit produire le flag de conclusion");
 
   const linevaTravelItinerary = [
@@ -312,7 +312,7 @@ try {
     assert.ok(closures.sceneClosure(scene.id).length >= 2, `${scene.id}: conséquence sociale manquante`);
   }
 
-  console.log(`[Narration] run complète en ${passes} passes · 6 actes · ${history.size} scènes majeures/campagne · ${secretsDone.size} confidences · ${socialsDone.size} transitions obligatoires · ${eventsDone.size} confrontations causales · horaires croisés validés.`);
+  console.log(`[Narration] run complète en ${passes} passes · 6 chapitres · ${history.size} scènes majeures/campagne · ${secretsDone.size} confidences · ${socialsDone.size} transitions obligatoires · ${eventsDone.size} confrontations causales · horaires croisés validés.`);
 } finally {
   await server.close();
 }

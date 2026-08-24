@@ -146,7 +146,7 @@ try {
     assert.ok(completedRoutes.includes(requirement) || socialFlags.includes(`social:${requirement}`) || campaignIds.has(requirement), `jalon principal introuvable : ${requirement}`);
   }
 
-  console.log(`[Gameplay] ${completedRoutes.length} routes atteignables · ${storyData.MAIN_STORY.length} actes terminables · branches platoniques et rendez-vous croisés synchronisés · temps, Codex et ${housingData.HOUSING_PROPERTIES.length} logis validés.`);
+  console.log(`[Gameplay] ${completedRoutes.length} routes atteignables · ${storyData.MAIN_STORY.length} chapitres terminables · branches platoniques et rendez-vous croisés synchronisés · temps, Codex et ${housingData.HOUSING_PROPERTIES.length} logis validés.`);
 } finally {
   await server.close();
 }

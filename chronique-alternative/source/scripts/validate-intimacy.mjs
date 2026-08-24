@@ -36,7 +36,7 @@ try {
 }
 const report = catalog.validateIntimacyRouteCatalog();
 
-const expected = { characters: 11, combinations: 33, routes: 99, chapters: 3168 };
+const expected = { characters: 12, combinations: 36, routes: 108, chapters: 3456 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) {
     throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
@@ -84,7 +84,7 @@ if (physicalChapters.some((chapter) => !chapter || chapter.length < 3 || !chapte
   throw new Error("Chaque route explicite doit contenir sa propre position, au moins un dialogue et une réaction.");
 }
 const physicalSignatures = physicalChapters.map((chapter) => chapter.map((line) => `${line.speaker}:${line.text}`).join("\n"));
-if (new Set(physicalSignatures).size !== 99) throw new Error("Les 99 embranchements physiques individuels doivent tous être uniques.");
+if (new Set(physicalSignatures).size !== 108) throw new Error("Les 108 embranchements physiques individuels doivent tous être uniques.");
 const physicalLines = physicalChapters.flat().map((line) => line.text.trim());
 if (new Set(physicalLines).size !== physicalLines.length) throw new Error("Une ligne physique individuelle est répétée entre deux embranchements.");
 
