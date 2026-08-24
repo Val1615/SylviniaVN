@@ -137,7 +137,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       ),
       second: scene(
         "Bellirith vous attire à califourchon sur sa cuisse nue et fait glisser deux doigts dans votre intimité pendant que votre perle de plaisir frotte sa peau. Valurn se place derrière elle, embrasse sa nuque puis stimule son point de feu d’une main ; Bellirith doit ainsi conserver votre cadence alors que son rival s’applique à fissurer chaque expression séduisante qu’elle lui oppose.",
-        C("Bellirith", "Il espère me faire perdre votre rythme. Ce serait presque inquiétant si je ne sentais pas déjà votre corps me réclamer davantage."),
+        C("Bellirith", "Il espère me faire perdre ton rythme. Ce serait presque inquiétant si je ne sentais pas déjà ton corps me réclamer davantage."),
         C("Valurn", "Je ne veux pas qu’elle échoue. Je veux qu’elle réussisse en cessant enfin de prétendre que cela ne lui coûte rien."),
         "Vous poussez Bellirith à formuler sa propre demande et augmentez le frottement sur sa cuisse. Elle vous conduit à l’orgasme au moment où Valurn la fait jouir sous sa main ; aucun des deux ne peut s’attribuer le double résultat, et vous les obligez à s’embrasser avant de reprendre une nouvelle position où vos doigts restent le seul arbitre accepté.",
       ),
@@ -172,19 +172,19 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       first: scene(
         "Valurn vous demande de désigner le contact qu’il doit mener pendant que Bellirith le distrait. Vous choisissez sa bouche sur votre point de feu et précisez la pénétration ou le frottement que votre intimité accepte ; Bellirith se place contre son dos, stimule son membre viril et garde une main sur vous, afin que la provocation traverse les trois corps plutôt que de viser une performance isolée.",
         C("Valurn", "Je connais cent manières de feindre l’assurance. Celle-ci n’en fait pas partie : dites-moi simplement si ma bouche reste au bon endroit."),
-        C("Bellirith", "Il devient presque séduisant lorsqu’il cesse de se croire mystérieux. Ne le rassurez pas trop vite."),
+        C("Bellirith", "Il devient presque séduisant lorsqu’il cesse de se croire mystérieux. Ne le rassure pas trop vite."),
         "Vous répondez par une indication précise et modifiez la position lorsque votre corps le demande. Valurn s’adapte sans détour, Bellirith accélère sur lui et votre orgasme fait perdre leurs deux masques en même temps ; vous reprenez ensuite le jeu sur Bellirith selon le contact qu’elle formule, Valurn continuant à vous toucher pour que personne ne quitte le cercle après avoir joui.",
       ),
       second: scene(
         "Bellirith vous installe face au miroir neutre et demande comment son corps doit rencontrer le vôtre : langue, main, frottement ou pénétration. Valurn vient derrière elle et suit ses réactions réelles pendant qu’elle accomplit votre choix ; chaque fois qu’il la pousse vers le plaisir, Bellirith doit vous demander si elle conserve encore la pression exacte plutôt que de sauver sa pose.",
-        C("Bellirith", "Je peux être troublée et rester attentive. Ne laissez surtout pas son sourire vous convaincre que l’un exclut l’autre."),
+        C("Bellirith", "Je peux être troublée et rester attentive. Ne laisse surtout pas son sourire te convaincre que l’un exclut l’autre."),
         C("Valurn", "Je souris seulement parce qu’elle vient de vous demander la même chose deux fois. Voilà une sincérité historiquement rare."),
         "Vous confirmez, puis exigez un changement propre à votre corps. Bellirith l’adopte sans charme, Valurn l’accompagne d’une caresse sur elle et la chaîne de réactions vous conduit tous trois vers des plaisirs distincts ; son orgasme se reflète sans retouche, le vôtre sans catégorie imposée, celui de Valurn dans la main que vous avez choisie de lui offrir.",
       ),
       shared: scene(
         "Vous tracez trois marques sur la table : donner, recevoir, surprendre. Chacun y choisit une posture adaptée — Bellirith peut accueillir une pénétration ou un frottement, Valurn recevoir une bouche ou un corps, vous définir entièrement votre propre intimité. La personne hors de la marque centrale doit garder une main sur les deux autres, ce qui transforme leur rivalité en relais physique.",
         P("Aucun de vous ne gagne en devinant mon corps. Vous gagnez seulement le droit de continuer en écoutant sa prochaine demande."),
-        C("Valurn", "Enfin une règle qui rend la triche inutile. Bellirith, je vous laisse la première surprise — uniquement parce que je prépare mieux."),
+        C("Valurn", "Enfin une règle qui rend la triche inutile. Bellirith, je te laisse la première surprise — uniquement parce que je prépare mieux."),
         "Les surprises restent toutes différentes : Bellirith choisit une position sans charme, Valurn une pénétration ou un frottement sans pari, vous une configuration qu’aucun des deux n’avait anticipée. Les orgasmes interrompent la compétition à trois moments distincts, mais chacun continue d’employer bouche, mains ou paroles jusqu’à ce que le dernier corps ait réellement terminé.",
       ),
     },
@@ -389,7 +389,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       ),
       second: scene(
         "Bellirith vous fait asseoir devant un miroir sans charme et s’agenouille entre vos cuisses. Sa langue trouve votre perle de plaisir, ses doigts glissent en vous, tandis que Naïah vient derrière elle et remplace chaque lumière flatteuse par une brume transparente ; ses mains suivent l’intimité de Bellirith jusqu’à lui faire perdre le sourire qu’elle utilisait encore comme dernier masque.",
-        C("Bellirith", "Je peux continuer sur vous même lorsqu’elle me trouble. Mais dites-moi si mon rythme devient une performance plutôt qu’une attention."),
+        C("Bellirith", "Je peux continuer sur toi même lorsqu’elle me trouble. Mais dis-moi si mon rythme devient une performance plutôt qu’une attention."),
         C("Naïah", "Je te le dirai aussi si ton visage recommence à mentir. Pour l’instant… il est délicieusement honnête."),
         "Votre voix maintient Bellirith sur le geste exact et vous jouissez pendant qu’elle cède sous Naïah. La séductrice n’a plus de sourire lorsqu’elle se tourne vers sa rivale ; vous glissez vos doigts entre leurs deux corps et elles atteignent chacune l’orgasme dans une position visible, sans miroir amélioré ni sensation inventée.",
       ),
@@ -409,7 +409,7 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       ),
       second: scene(
         "Bellirith se place à quatre pattes devant le miroir neutre et vous guide derrière elle. Votre membre viril entre lentement dans son écrin de chair, tandis que Naïah s’allonge face à elle et maintient sa perle de plaisir sous sa langue ; le reflet montre chaque pénétration réelle et chaque fois que le sourire de Bellirith disparaît sans qu’aucune magie ne puisse le redessiner.",
-        C("Bellirith", "Je vous interdis de rendre cette image plus belle, Naïah. S’il me fait perdre toute grâce, je veux voir exactement ce qu’il obtient."),
+        C("Bellirith", "Je t’interdis de rendre cette image plus belle, Naïah. S’il me fait perdre toute grâce, je veux voir exactement ce qu’il obtient."),
         C("Naïah", "Je n’ajoute rien. Mais ton vrai visage vient de rendre le miroir beaucoup plus intéressant."),
         "Vous gardez la cadence demandée, Naïah la pression extérieure. Bellirith jouit autour de votre membre, puis vous vous retirez seulement lorsqu’elle le formule ; elle prend ensuite Naïah entre ses cuisses et vous garde par la main et la bouche, offrant à sa rivale un plaisir réel pendant que votre propre orgasme reçoit encore deux attentions.",
       ),
@@ -425,19 +425,19 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
       first: scene(
         "Naïah fait apparaître des symboles de posture sans leur associer aucune anatomie. Vous choisissez celui qui permet à sa bouche, ses doigts ou son bassin de rencontrer votre point de feu selon vos mots ; Bellirith touche simultanément Naïah sans charme et garde une main sur vous, vérifiant que l’illusionniste ne remplace jamais votre demande par une version plus spectaculaire.",
         C("Naïah", "Je dessine seulement l’espace. C’est toi qui décides ce que nos corps y font vraiment."),
-        C("Bellirith", "Et moi je m’assure qu’elle ne confonde pas beauté et vérité. Pour l’instant, votre plaisir lui donne une leçon remarquable."),
+        C("Bellirith", "Et moi je m’assure qu’elle ne confonde pas beauté et vérité. Pour l’instant, ton plaisir lui donne une leçon remarquable."),
         "Vous modifiez le contact et Naïah dissipe aussitôt l’ancien symbole. Bellirith adapte sa pression sur elle, votre orgasme arrive dans une configuration redessinée, puis vous prenez toutes deux la séductrice entre vos mains ; elle choisit un geste sans miroir ni modèle, et sa conclusion ne ressemble ni à la vôtre ni à celle de Naïah.",
       ),
       second: scene(
         "Bellirith vous invite à composer la position devant un miroir dépourvu de charme. Vous guidez sa bouche, sa main ou son bassin selon votre intimité et nommez l’éventuelle pénétration ou le frottement désiré ; Naïah reste derrière elle, touche son corps réel et maintient la brume assez claire pour que chaque changement demeure attribuable à la personne qui l’accomplit.",
-        C("Bellirith", "Je ne vous offrirai pas le geste que votre apparence semble appeler. Je veux celui que votre voix me confie, même s’il ruine toute mon élégante préparation."),
+        C("Bellirith", "Je ne t’offrirai pas le geste que ton apparence semble appeler. Je veux celui que ta voix me confie, même s’il ruine toute mon élégante préparation."),
         C("Naïah", "Elle vient de préférer une vérité à sa mise en scène. Profite : c’est plus rare qu’une éclipse violette."),
         "Bellirith suit votre demande jusqu’à votre orgasme, son propre masque tombant sous les mains de Naïah. Vous échangez ensuite les hauteurs, mais pas les gestes : la séductrice formule un désir entièrement différent, reçu par vous deux, puis Naïah choisit une troisième configuration sans double qui donne à chacune une conclusion physique unique.",
       ),
       shared: scene(
         "Vous placez trois fragments de masque au sol et associez chacun à une configuration choisie par la personne concernée. Naïah demande un contact sans illusion, Bellirith une posture sans angle flatteur, vous bouche, frottement ou pénétration selon votre corps réel. Les deux partenaires hors du fragment central doivent rester engagées avec la personne au centre et entre elles.",
         P("Nous ne cherchons pas trois versions d’une même scène. Nous cherchons trois vérités physiques que les deux autres peuvent accompagner sans les réécrire."),
-        C("Bellirith", "Alors mon désir n’aura pas à ressembler au vôtre pour mériter la même attention. Voilà une règle dangereusement séduisante."),
+        C("Bellirith", "Alors mon désir n’aura pas à ressembler au tien pour mériter la même attention. Voilà une règle dangereusement séduisante."),
         "Chaque fragment produit une posture, une réaction et un orgasme distincts. La brume de Naïah ne cache rien, le talent de Bellirith n’embellit rien, et votre propre choix n’est jamais traduit par leur anatomie ; lorsque le dernier masque se brise, trois corps différents restent reliés par des mains qui ont appris à ne pas répéter paresseusement le geste précédent.",
       ),
     },

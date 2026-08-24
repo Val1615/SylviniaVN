@@ -398,7 +398,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
     femme: {
       guided: scene(
         "Bellirith vous installe devant un miroir qu’elle a rendu parfaitement neutre, sans charme ni retouche. Elle s’agenouille entre vos cuisses et vous fait regarder sa bouche rejoindre votre intimité humide ; sa langue se fixe sur votre perle de plaisir, ses doigts glissent en vous et elle modifie l’angle jusqu’à ce que le reflet montre votre corps se cambrer sans aucun embellissement magique.",
-        C("Bellirith", "Regardez bien. Ce visage, ce frisson, cette façon de m’ouvrir davantage… je veux savoir qu’aucun sort ne me les a offerts."),
+        C("Bellirith", "Regarde bien. Ce visage, ce frisson, cette façon de m’ouvrir davantage… je veux savoir qu’aucun sort ne me les a offerts."),
         "Vous maintenez son regard dans le miroir pendant qu’elle accélère. Bellirith perd peu à peu la pose flatteuse de ses épaules, absorbée par la pression exacte qui vous conduit à l’orgasme ; lorsque vous jouissez contre sa bouche, son propre visage se défait dans le reflet, bouleversé par une victoire qu’elle n’a ni enchantée ni mise en scène.",
       ),
       offered: scene(
@@ -408,14 +408,14 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       ),
       mutual: scene(
         "Vous transformez le duel en une série de renversements désirés : Bellirith au-dessus pour frotter son intimité contre votre cuisse, vous au-dessus pour maintenir votre perle de plaisir contre la sienne, puis toutes deux sur le côté dans un ciseau serré. Aucun charme ne décide de l’angle ; vos mains sur les hanches de l’autre règlent la pression réelle.",
-        C("Bellirith", "Je ne sais plus si je préfère vous faire céder ou sentir mon propre masque tomber. Ne choisissez pas : reprenez cette position et obligez-moi à perdre les deux fois."),
+        C("Bellirith", "Je ne sais plus si je préfère te faire céder ou sentir mon propre masque tomber. Ne choisis pas : reprends cette position et oblige-moi à perdre les deux fois."),
         "Vous reprenez le ciseau avec une fermeté nouvelle. Bellirith jouit d’abord, visage nu contre votre épaule, mais garde ses doigts entre vos bassins et transforme sa défaite en attention ; votre orgasme suit sous son geste tremblant, laissant le miroir refléter deux corps sans vainqueur et sans image corrigée.",
       ),
     },
     homme: {
       guided: scene(
         "Bellirith vous fait asseoir devant elle et retire son dernier bijou avant de toucher votre sexe dressé. Sa main lubrifiée établit un rythme lent, puis sa bouche prend l’extrémité sensible et descend progressivement le long de votre membre viril ; elle garde les yeux levés, non pour jouer une pose, mais pour vérifier que votre plaisir reste dirigé vers elle plutôt que vers son ancienne magie.",
-        C("Bellirith", "Dites-moi que c’est ma bouche. Pas mon charme, pas votre imagination. Moi — et ce que je suis en train de vous faire."),
+        C("Bellirith", "Dis-moi que c’est ma bouche. Pas mon charme, pas ton imagination. Moi — et ce que je suis en train de te faire."),
         "Votre réponse la trouble davantage que le geste. Bellirith vous accueille plus profondément après votre demande, accompagne les mouvements de vos hanches et maintient sa langue à l’endroit qui vous fait perdre la voix ; votre orgasme lui arrache un soupir soulagé, comme si chaque pulsation prouvait qu’elle suffit enfin sans enchantement.",
       ),
       offered: scene(
@@ -425,14 +425,14 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       ),
       mutual: scene(
         "Bellirith vous pousse sur le dos et vient vous chevaucher à l’envers, offrant d’abord son dos plutôt que son visage étudié. Elle guide votre membre viril dans son intimité, règle la profondeur par ses cuisses et caresse elle-même sa perle de plaisir ; vous la faites ensuite pivoter face à vous, toujours unis, afin que la seconde moitié du duel se joue sans qu’elle puisse fuir votre regard.",
-        C("Bellirith", "Vous avez retourné la seule position où je pouvais encore prétendre ne rien ressentir. C’est déloyal… Continuez."),
+        C("Bellirith", "Tu as retourné la seule position où je pouvais encore prétendre ne rien ressentir. C’est déloyal… Continue."),
         "Elle reprend ses mouvements plus lentement, poitrine contre la vôtre. Chaque montée de plaisir efface une part de son sourire de scène ; son orgasme la suspend autour de vous, et vos mains sur ses hanches prolongent la chevauchée jusqu’à votre propre jouissance, reçue par une Bellirith trop sincère pour compter les points.",
       ),
     },
     intersexe: {
       guided: scene(
         "Bellirith éteint tous ses charmes puis vous demande de composer vous-même la posture qu’elle devra suivre. Vous placez son visage, sa main et son bassin selon les contacts désirés : langue sur le point de feu, doigts dans l’intimité choisie ou frottement contre son corps. Elle reproduit votre carte sans ajouter une seule suggestion magique et vous laisse modifier chaque détail pendant l’action.",
-        C("Bellirith", "Je suis habituée à donner aux autres ce qu’ils croient vouloir. Avec vous, je dois attendre que le désir me soit réellement confié… C’est bien plus troublant."),
+        C("Bellirith", "Je suis habituée à donner aux autres ce qu’ils croient vouloir. Avec toi, je dois attendre que le désir me soit réellement confié… C’est bien plus troublant."),
         "Vous changez l’ordre des gestes pour éprouver sa présence plutôt que sa technique. Bellirith suit, perd son masque lorsque votre plaisir s’intensifie et vous mène à l’orgasme par une combinaison que vous avez construite ensemble ; elle reste ensuite immobile, fière que le corps tremblant sous elle n’ait répondu à aucune illusion.",
       ),
       offered: scene(
@@ -442,7 +442,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       ),
       mutual: scene(
         "Vous convenez d’un duel sans imitation : chacun choisira une position que l’autre n’aurait pas devinée. Bellirith commence assise, vous guidant contre elle dans un frottement ou une pénétration adapté ; vous répondez en la renversant sur le côté et en redistribuant bouche, mains et bassins selon votre propre désir. Chaque surprise est annoncée avant d’être accomplie.",
-        C("Bellirith", "Vous me privez de mon meilleur talent : anticiper ce que l’on attend de moi. Je découvre que céder à l’inconnu peut être une séduction beaucoup plus dangereuse."),
+        C("Bellirith", "Tu me prives de mon meilleur talent : anticiper ce que l’on attend de moi. Je découvre que céder à l’inconnu peut être une séduction beaucoup plus dangereuse."),
         "Les deux configurations ne se ressemblent pas et personne ne cherche à les départager. Bellirith jouit dans celle que vous avez inventée, incapable d’en revendiquer la mise en scène ; elle reprend ensuite sa proposition en l’adaptant à votre plaisir et vous accompagne jusqu’à un orgasme aussi personnel que le sien.",
       ),
     },
@@ -561,7 +561,7 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
   femme: {
     guided: scene(
       "Allenna place un coussin sous vos hanches, vérifie que vos jambes peuvent changer d’angle puis s’installe entre elles. Sa bouche suit votre chaleur intime jusqu’à la perle sensible, tandis que deux doigts avancent selon le mouvement que vous lui montrez. Toute sa précision demeure, mais son propre souffle s’accélère chaque fois que vos cuisses se resserrent autour de ses épaules nues.",
-      C("Allenna", "Dans cette exploration, votre réaction est la seule carte utile. Gardez ma main là où elle vous sert et repoussez-la si elle cesse de le faire.", "smirk"),
+      C("Allenna", "Dans cette exploration, ta réaction est la seule carte utile. Garde ma main là où elle te sert et repousse-la si elle cesse de le faire.", "smirk"),
       "Vous guidez son poignet vers un angle plus recourbé et Allenna l’adopte sans hésiter. Sa langue conserve la même pression, ses doigts le même rythme ; lorsque l’orgasme approche, elle refuse toute variation spectaculaire et vous accompagne jusqu’aux contractions complètes. Elle reste contre vous pendant leur reflux, heureuse que son savoir ait servi votre plaisir sans transformer votre corps en problème à résoudre.",
     ),
     offered: scene(
@@ -571,14 +571,14 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
     ),
     mutual: scene(
       "Vous entrelacez vos jambes dans une position en ciseaux, puis Allenna ajuste les appuis afin qu’aucune ancienne blessure ne tire. Vos lèvres de velours se pressent ensemble ; chacune entretient de ses doigts le point incandescent de l’autre pendant que les bassins trouvent une diagonale commune. Le changement de conduite s’effectue sur le mot de relève plutôt que sur l’épuisement.",
-      C("Allenna", "Dans ce relais en ciseaux, je soutiens votre hanche pendant que vous choisissez la pression. Ensuite nous inverserons avant qu’aucune de nous ait à tenir seule.", "smirk"),
+      C("Allenna", "Dans ce relais en ciseaux, je soutiens ta hanche pendant que tu choisis la pression. Ensuite nous inverserons avant qu’aucune de nous ait à tenir seule.", "smirk"),
       "La première cadence conduit Allenna à l’orgasme ; elle garde pourtant votre jambe stable et votre plaisir sous sa main, puis prononce elle-même la relève. Vous changez d’angle, resserrez les cuisses et cédez peu après sous le rythme qu’elle conserve avec la même rigueur. Deux abandons successifs remplacent toute idée de performance, et vos corps restent emmêlés sans devoir prouver leur endurance.",
     ),
   },
   homme: {
     guided: scene(
       "Allenna vous fait asseoir au bord du lit, s’agenouille entre vos genoux et répartit lentement le lubrifiant sur votre membre dressé. Sa main teste la pression demandée, puis sa bouche accueille l’extrémité sensible avant de descendre davantage. Elle surveille votre souffle sans distance clinique ; le désir visible dans ses yeux rend chaque vérification profondément personnelle.",
-      C("Allenna", "Dans cette prise guidée, je maintiens votre bassin mais je ne le retiens pas. Donnez-moi la cadence et avertissez-moi avant qu’elle devienne trop intense.", "smirk"),
+      C("Allenna", "Dans cette prise guidée, je maintiens ton bassin mais je ne le retiens pas. Donne-moi la cadence et avertis-moi avant qu’elle devienne trop intense.", "smirk"),
       "Votre paume rejoint sa nuque et Allenna suit le mouvement choisi, main et bouche accordées jusque dans les variations les plus courtes. Lorsque vous annoncez l’orgasme, elle ne ralentit pas trop tôt : sa langue reste sous votre pointe sensible, ses doigts fermes à la base et vos hanches libres d’avancer seulement autant qu’elle les reçoit. Elle vous garde ensuite contre elle, partenaire plutôt que soigneuse.",
     ),
     offered: scene(
@@ -588,14 +588,14 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
     ),
     mutual: scene(
       "Allenna vient vous chevaucher face à face et guide votre longueur tendue dans sa chaleur, descendant jusqu’à la profondeur choisie. Ses rotations maintiennent le contact extérieur pendant qu’elle conduit la première reprise. Sur le mot convenu, vous roulez ensemble sur le côté : le changement protège ses appuis et vous permet de mener sans que la transition ressemble à une prise de pouvoir.",
-      C("Allenna", "Dans cette relève face à face, je conduis tant que mon corps le réclame. Vous prendrez la suite parce que je vous la confie, pas parce que je cède.", "smirk"),
+      C("Allenna", "Dans cette relève face à face, je conduis tant que mon corps le réclame. Tu prendras la suite parce que je te la confie, pas parce que je cède.", "smirk"),
       "Elle jouit sous sa propre cadence, garde votre membre en elle pendant le reflux puis vous offre le changement d’angle qui intensifie votre sensation. Vous reprenez par mouvements courts, une main liée à la sienne, jusqu’à votre orgasme. Allenna soutient vos hanches au lieu de les contraindre ; aucun vainqueur ne reste sur les draps, seulement deux personnes capables de porter et d’être portées.",
     ),
   },
   intersexe: {
     guided: scene(
       "Allenna vous demande de placer ses mains sur les zones que vous souhaitez voir stimulées et de nommer toute profondeur possible. Elle soutient votre cuisse, pose sa bouche sur le point de feu désigné puis associe ses doigts ou son bassin uniquement selon vos indications. La précision de la commandante devient une cartographie choisie de votre plaisir, jamais une hypothèse anatomique.",
-      C("Allenna", "Pour cette carte corporelle, je ne complète aucun blanc. Montrez-moi le trajet réel et je le suivrai aussi longtemps qu’il vous plaît.", "smirk"),
+      C("Allenna", "Pour cette carte corporelle, je ne complète aucun blanc. Montre-moi le trajet réel et je le suivrai aussi longtemps qu’il te plaît.", "smirk"),
       "Vous modifiez une première combinaison, en refusez une seconde et réclamez la troisième plus fermement. Allenna s’adapte sans traiter ces changements comme des erreurs ; elle coordonne bouche, mains et appuis jusqu’à ce que votre orgasme fasse céder son propre contrôle. Son sourire reconnaît une réussite qui appartient à votre langage singulier plutôt qu’à sa connaissance générale des corps.",
     ),
     offered: scene(

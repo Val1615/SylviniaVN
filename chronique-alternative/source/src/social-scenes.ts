@@ -200,8 +200,8 @@ export const SOCIAL_SCENES: SocialScene[] = [
     id: "bellirith-after-memory", title: "Les rideaux rouverts", characters: ["bellirith"], triggerCharacters: ["bellirith"], requiredPresent: ["bellirith"], locations: ["akuhn"], sublocations: ["akuhn-music-room"], minStages: { bellirith: 4 }, requiresKnowledge: ["knows_bellirith_mortal_death"], excludesFlags: ["bellirith-memory-space"], oneTime: true, priority: 125, mood: "calm",
     prompt: [
       line("Narration", "Lors de votre visite suivante, Bellirith a rouvert les rideaux de la salle de musique. Elle classe des partitions, jette deux flacons de parfum éventés et vous indique une pile sans vous demander de commenter son silence."),
-      line("Bellirith", "Ce que je vous ai raconté n’était ni une invitation à me trouver fragile, ni un prélude destiné à rendre notre prochaine proximité plus intense."),
-      line("Bellirith", "Je veux reprendre possession de cette pièce avec des gestes qui ne doivent rien à ma mort. Aidez-moi à choisir ce qui reste. Le reste de mon histoire attendra que je décide de le reprendre."),
+      line("Bellirith", "Ce que je t’ai raconté n’était ni une invitation à me trouver fragile, ni un prélude destiné à rendre notre prochaine proximité plus intense."),
+      line("Bellirith", "Je veux reprendre possession de cette pièce avec des gestes qui ne doivent rien à ma mort. Aide-moi à choisir ce qui reste. Le reste de mon histoire attendra que je décide de le reprendre."),
     ],
     choices: [
       choice("bam-s", "Classer les partitions en suivant ses indications, sans rouvrir la confidence.", "sangFroid", [line("Narration", "Vous travaillez jusqu’à ce que le piano redevienne un instrument plutôt qu’un témoin."), line("Bellirith", "Merci de ne pas avoir transformé mon silence en question. Cette soirée m’appartient de nouveau.")], { trust: 8, affection: 2, flags: ["bellirith-memory-space"] }),
@@ -248,7 +248,7 @@ export const SOCIAL_SCENES: SocialScene[] = [
     id: "allenna-after-powerlessness", title: "Recevoir sans capituler", characters: ["allenna"], triggerCharacters: ["allenna"], requiredPresent: ["allenna"], locations: ["akuhn"], sublocations: ["akuhn-terrace"], minStages: { allenna: 4 }, requiresKnowledge: ["knows_allenna_control_origin"], excludesFlags: ["allenna-care-without-command"], oneTime: true, priority: 128, mood: "troubled",
     prompt: [
       line("Narration", "Une soigneuse vient de refaire le bandage de l’avant-bras d’Allenna. La commandante a donné une seule indication, puis s’est obligée à laisser une autre personne terminer le nœud."),
-      line("Allenna", "Ce que je vous ai raconté explique mon besoin de contrôle. Cela ne vous autorise pas à me surveiller, à prévoir mes décisions ou à devenir indispensable pour que je me sente en sécurité."),
+      line("Allenna", "Ce que je t’ai raconté explique mon besoin de contrôle. Cela ne t’autorise pas à me surveiller, à prévoir mes décisions ou à devenir indispensable pour que je me sente en sécurité."),
       line("Allenna", "Je veux apprendre à recevoir une présence sans la transformer en garde supplémentaire. Je ne sais pas encore le faire avec élégance."),
     ],
     choices: [

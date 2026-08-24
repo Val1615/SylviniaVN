@@ -223,7 +223,7 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
       ]},
     ],
     results: {
-      attuned: [N("L’armure repose pièce par pièce, non comme une défaite mais comme une tâche enfin terminée. Lineva prend votre main nue et la guide contre sa taille."), C("Lineva", "La ville est gardée. Maintenant… restez avec moi.", "thoughtful")],
+      attuned: [N("L’armure repose pièce par pièce, non comme une défaite mais comme une tâche enfin terminée. Lineva prend votre main nue et la guide contre sa taille."), C("Lineva", "La ville est gardée. Maintenant… reste avec moi.", "thoughtful")],
       searching: [N("Quelques attaches ont résisté, quelques réflexes aussi. Lineva se tient pourtant devant vous sans manteau ni rapport à achever."), C("Lineva", "Je ne sais pas encore déposer tout le reste aussi facilement. Ce soir, cela suffira.", "smirk")],
       discordant: [N("Lineva range elle-même les dernières pièces, reprenant le contrôle dont vos gestes l’avaient privée. Puis elle revient, sans armure et sans jeu."), C("Lineva", "Assez de manœuvres. La suite demande moins d’adresse et davantage de présence.", "stern")],
     },
@@ -287,9 +287,9 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
       ]},
     ],
     results: {
-      attuned: [N("Sans bijoux, sans fard et sans aura, Bellirith n’a rien perdu de sa présence. Elle semble seulement plus proche, et cette proximité la trouble davantage que n’importe quelle conquête."), C("Bellirith", "Vous me regardez encore. Voilà qui ruine une quantité embarrassante de mes théories.", "thoughtful")],
+      attuned: [N("Sans bijoux, sans fard et sans aura, Bellirith n’a rien perdu de sa présence. Elle semble seulement plus proche, et cette proximité la trouble davantage que n’importe quelle conquête."), C("Bellirith", "Tu me regardes encore. Voilà qui ruine une quantité embarrassante de mes théories.", "thoughtful")],
       searching: [N("Quelques compliments ont servi de masques, quelques silences les ont retirés. Bellirith garde sa main nue dans la vôtre."), C("Bellirith", "Nous ne savons pas toujours qui se montre. Au moins, cette fois, nous cherchons ensemble.", "soft")],
-      discordant: [N("Bellirith repose ses artifices sur la table comme des armes qu’elle pourrait reprendre. Elle choisit pourtant de revenir sans eux, plus prudente."), C("Bellirith", "Cessons de deviner laquelle de mes versions mérite votre désir. Parlez à celle qui est devant vous.", "stern")],
+      discordant: [N("Bellirith repose ses artifices sur la table comme des armes qu’elle pourrait reprendre. Elle choisit pourtant de revenir sans eux, plus prudente."), C("Bellirith", "Cessons de deviner laquelle de mes versions mérite ton désir. Parle à celle qui est devant toi.", "stern")],
     },
   },
 
@@ -360,7 +360,7 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
     instruction: "Allenna noue un ruban souple entre vos poignets. Quatre mouvements doivent vous apprendre à porter, céder et reprendre sans transformer la proximité en lutte.",
     beats: [
       { prompt: "Le ruban se tend dès le premier mouvement.", detail: "Allenna attend de voir si vous chercherez à vaincre sa force ou à comprendre son appui.", options: [
-        O("allenna-follow", "Suivre la tension jusqu’à trouver son centre", 2, N("Vos poignets cessent de tirer en sens contraire. Allenna déplace son poids et la tension devient un lien stable plutôt qu’une entrave."), C("Allenna", "Vous lisez l’appui avant d’employer la force. Bien.", "thinking")),
+        O("allenna-follow", "Suivre la tension jusqu’à trouver son centre", 2, N("Vos poignets cessent de tirer en sens contraire. Allenna déplace son poids et la tension devient un lien stable plutôt qu’une entrave."), C("Allenna", "Tu lis l’appui avant d’employer la force. Bien.", "thinking")),
         O("allenna-hold", "Garder votre position sans avancer", 1, N("Le ruban reste tendu mais prévisible. Allenna approuve la stabilité sans encore réduire la distance.")),
         O("allenna-pull", "Tirer brusquement pour prendre l’avantage", 0, N("Allenna compense par réflexe et le ruban mord vos poignets. Elle le relâche aussitôt, plus commandante que partenaire.")),
       ]},
@@ -383,7 +383,7 @@ export const INTIMACY_GAMES: Record<string, IntimacyGame> = {
     results: {
       attuned: [N("Le ruban tombe entre vos pieds tandis que vos mains restent liées par leur propre choix. Allenna ne vérifie ni la porte ni ses gantelets."), C("Allenna", "Nous avons gardé l’appui et perdu la contrainte. Cette méthode mérite une application moins habillée.", "smirk")],
       searching: [N("Le ruban porte quelques tensions inutiles et plusieurs relais réussis. Allenna masse votre poignet avant de vous tendre l’autre main."), C("Allenna", "Nous pouvons ajuster. Pas recommencer depuis zéro — ajuster ensemble.", "thinking")],
-      discordant: [N("Allenna retire le ruban avant que l’exercice ne devienne un duel. Elle pose ensuite ses mains nues sur les vôtres, sans règle à gagner."), C("Allenna", "La technique n’aide plus. Pour la suite, dites seulement où vous voulez que je reste.", "troubled")],
+      discordant: [N("Allenna retire le ruban avant que l’exercice ne devienne un duel. Elle pose ensuite ses mains nues sur les vôtres, sans règle à gagner."), C("Allenna", "La technique n’aide plus. Pour la suite, dis seulement où tu veux que je reste.", "troubled")],
     },
   },
 };
