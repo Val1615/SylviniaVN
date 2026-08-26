@@ -17,8 +17,11 @@ Le moteur générique couvre tous les chapitres actuellement présents, du chapi
 |---|---:|
 | Périodes libres | 19 |
 | Sous-lieux contextuels | 62 |
-| Activités et scènes facultatives | 124 |
-| Approches proposées au joueur | 375 |
+| Activités et scènes facultatives | 145 |
+| Confidences relationnelles | 21 |
+| Retours sur les chapitres | 12 |
+| Mini-jeux contextuels | 4 |
+| Approches proposées au joueur | 438 |
 
 Les transitions urgentes ne proposent qu’un créneau court. Les respirations narratives plus calmes offrent jusqu’à quatre activités. Une période peut toujours être ignorée afin de reprendre immédiatement le chapitre suivant.
 
@@ -41,7 +44,7 @@ Le moteur ajoute un espace versionné dans la sauvegarde principale du VN :
 
 ```js
 state.storyWorld = {
-  version: 3,
+  version: 4,
   mode: "story",
   activePeriod: null,
   completedPeriods: [],
@@ -64,7 +67,7 @@ Les activités peuvent modifier :
 
 - Audace, Lucidité, Sang-froid et Résonance ;
 - le Lien canonique avec Remerii ;
-- affection, confiance et désir pour les autres personnages ;
+- affection et confiance pour les personnages ; les conversations canoniques n’ajoutent aucun désir hors de la relation avec Remerii ;
 - pièces et provisions ;
 - inventaire, drapeaux narratifs et historique.
 
@@ -128,6 +131,7 @@ index.html
 fusion/
   game-modes.js           navigation entre les deux modes
   story-moments.js        62 situations supplémentaires propres à chaque lieu
+  story-dialogues.js      séquences VN, voix, confidences, débriefings et mini-jeux
   story-periods.js        contenu des 19 périodes libres
   story-world.js          moteur générique et sauvegarde
   story-world.css         interface du Mode Histoire
@@ -158,6 +162,9 @@ Les tests automatisés vérifient notamment :
 
 - l’enregistrement des 19 périodes et de leurs portes de chapitre ;
 - la présence d’au moins deux situations dans chacun des 62 lieux ;
+- les quatre écrans d’amorce et cinq écrans de conséquence minimum de chaque scène ;
+- les seuils relationnels des 21 confidences et l’absence de désir hors récit romantique ;
+- les 12 retours explicites sur les événements des chapitres et les 4 mini-jeux non bloquants ;
 - l’ouverture repliée et la navigation du tiroir de gestion ;
 - la reprise d’une période active après retour au menu ;
 - l’application des statistiques, relations, ressources et objets ;
