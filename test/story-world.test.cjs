@@ -183,9 +183,12 @@ const authoredText = Object.values(window.SylviniaAuthoredStoryScenes.scenes).fl
 assert.doesNotMatch(authoredText, /—/, "les dialogues ne doivent pas dépendre du tiret cadratin");
 assert.doesNotMatch(authoredText, /\bce n['’]est pas\b/i, "la construction automatique « ce n'est pas » doit être retirée");
 const indexSource = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
-const authoredScriptIndex = indexSource.indexOf('src="fusion/story-authored-scenes.js"');
-const dialoguesScriptIndex = indexSource.indexOf('src="fusion/story-dialogues.js"');
-const periodsScriptIndex = indexSource.indexOf('src="fusion/story-periods.js"');
+const worldCssSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-world.css"), "utf8");
+assert.match(worldCssSource, /\.sw-choice-list\s*\{[\s\S]*?overflow-y:\s*auto;/, "la liste des choix doit défiler verticalement");
+assert.match(worldCssSource, /touch-action:\s*pan-y;/, "le défilement tactile des choix doit être explicite");
+const authoredScriptIndex = indexSource.indexOf('src="fusion/story-authored-scenes.js');
+const dialoguesScriptIndex = indexSource.indexOf('src="fusion/story-dialogues.js');
+const periodsScriptIndex = indexSource.indexOf('src="fusion/story-periods.js');
 assert.ok(authoredScriptIndex >= 0 && authoredScriptIndex < dialoguesScriptIndex && dialoguesScriptIndex < periodsScriptIndex, "les scripts écrits doivent être chargés avant leur registre et les périodes");
 allActivities.filter((activity) => activity.kind === "confession").forEach((activity) => {
   assert.ok(activity.requiresRelation && activity.requiresRelation.min > 0, `confidence sans seuil: ${activity.id}`);
@@ -226,6 +229,12 @@ content.periods.forEach((period) => {
   });
 });
 
+A.hylee2_thinking = "assets/sprites/chapter3/hylee2_thinking.png";
+A.hylee2_determined = "assets/sprites/chapter3/hylee2_determined.png";
+A.hylee2_soft = "assets/sprites/chapter3/hylee2_soft.png";
+A.remerii_soft = "assets/sprites/remerii_soft.png";
+S.c6_20.chars = [["hylee", "hylee2_soft", "left"], ["remerii", "remerii_soft", "right"]];
+
 S.c2_43.chars = [["remerii", "remerii_chapter2_exact", "right"]];
 A.remerii_chapter2_exact = "assets/sprites/chapter2/remerii_exact.png";
 S.c2_43.bg = "c2_key_example";
@@ -255,6 +264,46 @@ const partyVisual = window.SylviniaStoryWorld.resolveVisual(partyPeriod, partySp
 assert.match(partyVisual.sprite, /_party$/);
 assert.ok(partyRemaps > 0, "le remappage des tenues de bal doit être appelé");
 
+const chapterThreeCamp = content.byId["camp-avant-croisee"];
+const chapterThreeHyleeSpots = chapterThreeCamp.spots.filter((spot) => spot.character === "hylee");
+assert.ok(chapterThreeHyleeSpots.length >= 2);
+chapterThreeHyleeSpots.forEach((spot) => {
+  const visual = window.SylviniaStoryWorld.resolveVisual(chapterThreeCamp, spot);
+  assert.match(visual.sprite, /^hylee2_/, `ancienne apparence d’Hylee encore utilisée: ${spot.id}`);
+});
+
+const chapterSix = content.byId["miraldas-matin-libre"];
+const chapterSixTerrace = chapterSix.spots.find((spot) => spot.id === "terrasse");
+const chapterSixTerraceVisual = window.SylviniaStoryWorld.resolveVisual(chapterSix, chapterSixTerrace);
+assert.equal(chapterSixTerraceVisual.character, "hylee");
+assert.equal(chapterSixTerraceVisual.sprite, "hylee2_soft");
+assert.equal(chapterSixTerraceVisual.companion, null, "Remerii ne doit pas apparaître dans une scène solitaire d’Hylee");
+
+content.periods.forEach((period) => period.spots.forEach((spot) => {
+  const visual = window.SylviniaStoryWorld.resolveVisual(period, spot);
+  if (spot.character) assert.equal(visual.character, spot.character, `personnage focal incorrect: ${period.id}/${spot.id}`);
+  if (!spot.showCompanion) assert.equal(visual.companion, null, `sprite secondaire injecté: ${period.id}/${spot.id}`);
+}));
+
+const dravenCountershot = content.byId["forthaven-apres-draven"];
+assert.equal(dravenCountershot.perspective, "Lineva");
+assert.match(dravenCountershot.locationNote, /Draven demeure au palais d’Al’Gratal/);
+dravenCountershot.spots.forEach((spot) => assert.equal(spot.character, "lineva"));
+const dravenCountershotActivities = dravenCountershot.spots.flatMap((spot) => spot.activities);
+dravenCountershotActivities.forEach((activity) => {
+  assert.notEqual(activity.speaker, "Draven", `Draven présent physiquement dans ${activity.id}`);
+  assert.doesNotMatch(activity.prompt, /Choisissez la manière|Quelle place donner/i, `question générique dans ${activity.id}`);
+  [...activity.opening, ...activity.choices.flatMap((choice) => choice.outcome)].forEach((entry) => {
+    assert.notEqual(entry.speaker, "Draven", `réplique physique de Draven dans ${activity.id}`);
+  });
+});
+const dravenCountershotText = dravenCountershotActivities.flatMap((activity) => [
+  ...activity.opening,
+  ...activity.choices.flatMap((choice) => choice.outcome),
+]).map((entry) => entry.text).join("\n");
+assert.match(dravenCountershotText, /morts-vivants/i);
+assert.match(dravenCountershotText, /faim|grain|ration/i);
+
 window.SylviniaStoryWorld.open("algratal-preparatifs");
 assert.equal(state.storyWorld.activePeriod, "algratal-preparatifs");
 const root = elements.get("storyWorldRoot");
@@ -280,6 +329,18 @@ function playActivity(activityId, choiceId) {
     run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
   }
   assert.equal(run.pendingActivity.phase, "choices");
+  const slotBeforePreview = run.slot;
+  const statsBeforePreview = clonePlain(state.stats);
+  click({ swChoice: choiceId });
+  run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  assert.equal(run.pendingActivity.phase, "choices", `premier clic validant prématurément: ${activityId}/${choiceId}`);
+  assert.equal(run.pendingActivity.previewChoiceId, choiceId);
+  assert.equal(run.slot, slotBeforePreview);
+  assert.deepEqual(clonePlain(state.stats), statsBeforePreview);
+  assert.match(getElement("swContent").innerHTML, /sw-choice is-preview/);
+  assert.match(getElement("swContent").innerHTML, /Toucher à nouveau pour confirmer/);
+  const displayedEffects = (getElement("swContent").innerHTML.match(/class="sw-choice-effects"/g) || []).length;
+  assert.equal(displayedEffects, 1, `les valeurs de tous les choix restent affichées: ${activityId}`);
   click({ swChoice: choiceId });
   run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
   while (run.view === "activity" && run.pendingActivity && run.pendingActivity.phase === "outcome" && guard-- > 0) {
@@ -364,6 +425,7 @@ for (let beat = 0; beat < 8; beat += 1) {
 }
 assert.equal(rhythmRun.pendingActivity.phase, "choices");
 click({ swChoice: "audace" });
+click({ swChoice: "audace" });
 while (rhythmRun.view === "activity" && rhythmRun.pendingActivity && rhythmRun.pendingActivity.phase === "outcome") click({ swAction: "advance-scene" });
 assert.match(rhythmRun.lastResult.miniGameLabel, /Accord remarquable/);
 click({ swAction: "title" });
@@ -382,6 +444,7 @@ runNextTimer();
 const pattern = patternRun.pendingActivity.miniGameState.sequence.slice();
 pattern.forEach((symbol) => click({ swGameSymbol: symbol }));
 assert.equal(patternRun.pendingActivity.phase, "choices");
+click({ swChoice: "lucidite" });
 click({ swChoice: "lucidite" });
 while (patternRun.view === "activity" && patternRun.pendingActivity && patternRun.pendingActivity.phase === "outcome") click({ swAction: "advance-scene" });
 assert.match(patternRun.lastResult.miniGameLabel, /Accord remarquable/);
