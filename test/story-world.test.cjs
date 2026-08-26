@@ -95,6 +95,25 @@ let saved = 0;
 let destination = null;
 let screen = null;
 let partyRemaps = 0;
+let timerSequence = 0;
+const timers = new Map();
+
+function queueTimer(callback) {
+  timerSequence += 1;
+  timers.set(timerSequence, callback);
+  return timerSequence;
+}
+
+function cancelTimer(id) {
+  timers.delete(id);
+}
+
+function runNextTimer() {
+  const entry = timers.entries().next().value;
+  assert.ok(entry, "aucun minuteur à exécuter");
+  timers.delete(entry[0]);
+  entry[1]();
+}
 
 const window = {
   requestAnimationFrame(callback) { callback(); return 1; },
@@ -108,6 +127,8 @@ const context = vm.createContext({
   S,
   A,
   console,
+  setTimeout: queueTimer,
+  clearTimeout: cancelTimer,
   save() { saved += 1; },
   playMusic() {},
   setScreen(name) { screen = name; },
@@ -130,6 +151,8 @@ window.startChapter3 = context.startChapter3;
 
 const momentsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-moments.js"), "utf8");
 new vm.Script(momentsSource, { filename: "story-moments.js" }).runInContext(context);
+const dialoguesSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-dialogues.js"), "utf8");
+new vm.Script(dialoguesSource, { filename: "story-dialogues.js" }).runInContext(context);
 const periodsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-periods.js"), "utf8");
 assert.doesNotMatch(periodsSource, /[✦✧]/, "les étoiles décoratives doivent être retirées du temps libre");
 new vm.Script(periodsSource, { filename: "story-periods.js" }).runInContext(context);
@@ -137,8 +160,29 @@ const content = window.SylviniaStoryContent;
 
 assert.equal(content.periods.length, 19);
 assert.equal(Object.keys(window.SylviniaStoryMoments).length, 62);
-assert.equal(content.periods.flatMap((period) => period.spots).reduce((total, spot) => total + spot.activities.length, 0), 124);
+const allActivities = content.periods.flatMap((period) => period.spots.flatMap((spot) => spot.activities));
+assert.equal(allActivities.length, 145);
+assert.equal(allActivities.filter((activity) => activity.kind === "confession").length, 21);
+assert.equal(allActivities.filter((activity) => activity.kind === "debrief").length, 12);
+assert.equal(allActivities.filter((activity) => activity.miniGame).length, 4);
+allActivities.forEach((activity) => {
+  assert.ok(activity.opening.length >= 4, `amorce VN trop courte: ${activity.id}`);
+  activity.choices.forEach((choice) => assert.ok(choice.outcome.length >= 5, `conséquence VN trop courte: ${activity.id}/${choice.id}`));
+});
+allActivities.filter((activity) => activity.kind === "confession").forEach((activity) => {
+  assert.ok(activity.requiresRelation && activity.requiresRelation.min > 0, `confidence sans seuil: ${activity.id}`);
+  activity.choices.forEach((choice) => {
+    Object.entries(choice.effects.relationships || {}).forEach(([id, relation]) => {
+      assert.equal(Number(relation.desire) || 0, 0, `désir injecté par ${activity.id} vers ${id}`);
+    });
+  });
+});
+content.periods.filter((period) => period.perspective === "Hylee").forEach((period) => {
+  assert.ok(period.spots.some((spot) => spot.activities.some((activity) => activity.kind === "debrief")), `aucun retour sur le chapitre: ${period.id}`);
+});
 content.periods.forEach((period) => period.spots.forEach((spot) => assert.ok(spot.activities.length >= 2, `lieu non enrichi: ${period.id}/${spot.id}`)));
+assert.equal(content.byId["forestier-avant-depart"].location, "Campement de la forêt sylvinienne");
+assert.equal(content.byId["algratal-apres-conseil"].nextScene, "c15_001");
 
 content.periods.forEach((period) => {
   S[period.anchorScene] = S[period.anchorScene] || {};
@@ -179,7 +223,7 @@ content.periods.forEach((period) => {
   assert.ok(S[period.anchorScene].choices.some((choice) => choice.storyWorldPeriodId === period.id), `porte absente: ${period.id}`);
 });
 assert.equal(state.storyWorld.mode, "story");
-assert.equal(state.storyWorld.version, 3);
+assert.equal(state.storyWorld.version, 4);
 
 const algratal = content.byId["algratal-preparatifs"];
 const apartment = algratal.spots.find((spot) => spot.id === "appartements");
@@ -205,6 +249,29 @@ function click(dataset, disabled = false) {
   root.listeners.click({ target: { closest: () => button } });
 }
 
+function playActivity(activityId, choiceId) {
+  click({ swActivity: activityId });
+  let guard = 40;
+  let run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  while (run.view === "activity" && run.pendingActivity && run.pendingActivity.phase === "opening" && guard-- > 0) {
+    click({ swAction: "advance-scene" });
+    run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  }
+  if (run.view === "minigame") {
+    click({ swAction: "skip-minigame" });
+    run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  }
+  assert.equal(run.pendingActivity.phase, "choices");
+  click({ swChoice: choiceId });
+  run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  while (run.view === "activity" && run.pendingActivity && run.pendingActivity.phase === "outcome" && guard-- > 0) {
+    click({ swAction: "advance-scene" });
+    run = state.storyWorld.periodRuns[state.storyWorld.activePeriod];
+  }
+  assert.ok(guard > 0, `séquence bloquée: ${activityId}`);
+  assert.equal(run.view, "result");
+}
+
 click({ swView: "location" });
 assert.equal(root.classList.contains("is-drawer-open"), true, "le joueur doit pouvoir ouvrir le tiroir des lieux");
 click({ swAction: "close-drawer" });
@@ -212,6 +279,9 @@ assert.equal(root.classList.contains("is-drawer-open"), false);
 
 click({ swActivity: "provisions" });
 click({ swChoice: "lucidite" });
+assert.equal(state.stats.lucidite, 0, "un choix ne peut pas être injecté avant la fin de l’amorce");
+click({ swAction: "location" });
+playActivity("provisions", "lucidite");
 assert.equal(state.stats.lucidite, 1);
 assert.equal(state.stats.lien, 1);
 assert.ok(state.inventory.includes("necessaire_de_route"));
@@ -226,8 +296,7 @@ assert.equal(root.hidden, false, "la période active doit reprendre avec la sauv
 
 click({ swAction: "continue" });
 click({ swSpot: "palais" });
-click({ swActivity: "requetes-introduction" });
-click({ swChoice: "sangfroid" });
+playActivity("requetes-introduction", "sangfroid");
 assert.equal(state.stats.sangfroid, 1);
 assert.equal(state.storyWorld.resources.coins, 5);
 assert.equal(state.storyWorld.relationships.iriana.trust, 2);
@@ -235,8 +304,7 @@ assert.equal(state.storyWorld.relationships.iriana.trust, 2);
 click({ swAction: "continue" });
 click({ swSpot: "appartements" });
 assert.equal(getElement("swCharacter").src, A.remerii_chapter2_exact);
-click({ swActivity: "retour-miraldas" });
-click({ swChoice: "audace" });
+playActivity("retour-miraldas", "audace");
 assert.equal(state.stats.audace, 1);
 assert.equal(state.storyWorld.periodRuns["algratal-preparatifs"].slot, 3);
 
@@ -245,7 +313,7 @@ assert.equal(destination, "c3_01");
 assert.equal(state.storyWorld.activePeriod, null);
 assert.ok(state.storyWorld.completedPeriods.includes("algratal-preparatifs"));
 assert.match(S.c3_01.text(), /Al’Gratal n’est plus seulement/);
-assert.match(S.c3_01.text(), /trois requêtes/i);
+assert.match(S.c3_01.text(), /Iriana attend réellement/i);
 
 window.SylviniaStoryWorld.patchGates();
 assert.equal(S.c2_45.choices.some((choice) => choice.storyWorldPeriodId === "algratal-preparatifs"), false);
@@ -254,10 +322,83 @@ state.scene = "c8_end";
 state.storyWorld.relationships.iriana.trust = 0;
 state.storyWorld.relationships.iriana.affection = 0;
 window.SylviniaStoryWorld.open("algratal-avant-expedition");
+assert.match(getElement("swContent").innerHTML, /Une conversation attend encore/);
+assert.doesNotMatch(getElement("swContent").innerHTML, /Forthaven au-delà de ses remparts/);
 click({ swSpot: "palais" });
 assert.match(getElement("swContent").innerHTML, /Lien requis · Iriana 0\/2/);
 click({ swAction: "title" });
 assert.equal(screen, "title");
+
+state.scene = "c12g_end";
+window.SylviniaStoryWorld.open("bal-entre-duels");
+click({ swActivity: "choisir-danse" });
+let rhythmRun = state.storyWorld.periodRuns["bal-entre-duels"];
+while (rhythmRun.view === "activity" && rhythmRun.pendingActivity.phase === "opening") {
+  click({ swAction: "advance-scene" });
+  rhythmRun = state.storyWorld.periodRuns["bal-entre-duels"];
+}
+assert.equal(rhythmRun.view, "minigame");
+click({ swAction: "start-minigame" });
+for (let beat = 0; beat < 8; beat += 1) {
+  runNextTimer();
+  assert.equal(rhythmRun.pendingActivity.miniGameState.status, "cue");
+  click({ swAction: "rhythm-hit" });
+}
+assert.equal(rhythmRun.pendingActivity.phase, "choices");
+click({ swChoice: "audace" });
+while (rhythmRun.view === "activity" && rhythmRun.pendingActivity && rhythmRun.pendingActivity.phase === "outcome") click({ swAction: "advance-scene" });
+assert.match(rhythmRun.lastResult.miniGameLabel, /Accord remarquable/);
+click({ swAction: "title" });
+
+state.scene = "c6_32";
+window.SylviniaStoryWorld.open("miraldas-matin-libre");
+click({ swSpot: "atelier" });
+click({ swActivity: "tri-cristaux" });
+let patternRun = state.storyWorld.periodRuns["miraldas-matin-libre"];
+while (patternRun.view === "activity" && patternRun.pendingActivity.phase === "opening") {
+  click({ swAction: "advance-scene" });
+  patternRun = state.storyWorld.periodRuns["miraldas-matin-libre"];
+}
+click({ swAction: "start-minigame" });
+runNextTimer();
+const pattern = patternRun.pendingActivity.miniGameState.sequence.slice();
+pattern.forEach((symbol) => click({ swGameSymbol: symbol }));
+assert.equal(patternRun.pendingActivity.phase, "choices");
+click({ swChoice: "lucidite" });
+while (patternRun.view === "activity" && patternRun.pendingActivity && patternRun.pendingActivity.phase === "outcome") click({ swAction: "advance-scene" });
+assert.match(patternRun.lastResult.miniGameLabel, /Accord remarquable/);
+click({ swAction: "title" });
+
+/* Run de non-régression : chaque scène doit pouvoir aller de son amorce à son résultat. */
+state.devMode = true;
+state.storyWorld.resources.coins = 1000;
+state.storyWorld.resources.supplies = 1000;
+Object.keys(state.storyWorld.relationships).forEach((id) => {
+  state.storyWorld.relationships[id].affection = 50;
+  state.storyWorld.relationships[id].trust = 50;
+  state.storyWorld.relationships[id].met = true;
+});
+let traversed = 0;
+content.periods.forEach((period) => {
+  period.spots.forEach((spot) => {
+    spot.activities.forEach((activity) => {
+      delete state.storyWorld.periodRuns[period.id];
+      state.scene = period.anchorScene;
+      window.SylviniaStoryWorld.open(period.id);
+      const run = state.storyWorld.periodRuns[period.id];
+      run.slot = Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0);
+      run.selectedSpot = spot.id;
+      run.view = "location";
+      window.SylviniaStoryWorld.render();
+      playActivity(activity.id, activity.choices[0].id);
+      assert.equal(run.slot, Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0) + 1, `créneau non consommé: ${period.id}/${spot.id}/${activity.id}`);
+      traversed += 1;
+      window.SylviniaStoryWorld.close();
+    });
+  });
+});
+assert.equal(traversed, 145);
+state.devMode = false;
 
 const preservedWorld = clonePlain(state.storyWorld);
 window.startChapter3();
