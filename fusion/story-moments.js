@@ -132,30 +132,45 @@
     resolution: "Valurn choisit ce que l’Empire saura de son retour. La patrouille lui révèle en échange une information imprévue.",
   });
 
-  /* Route Draven · Forthaven */
+  /* Route Draven · contrechamp Lineva à Forthaven */
   add("forthaven-apres-draven", "quais", {
     id: "plus-caisse-civile",
-    title: "La caisse marquée pour la ville basse",
-    speaker: "Quartier-maître",
-    intro: "Une caisse de médicaments destinée à la ville basse a été chargée avec le détachement. La reprendre affaiblit l’expédition ; l’emporter prive des familles qui l’attendent déjà.",
-    resolution: "Draven fait inscrire la décision et son responsable. À Forthaven, même un choix nécessaire doit rester une dette visible.",
-    relation: "lineva",
+    title: "Des remèdes pour deux infirmeries",
+    speaker: "Lineva",
+    intro: "Une seule caisse de remèdes peut rejoindre l’infirmerie des remparts ou celle du quartier des réfugiés. Les blessés de guerre et les malades de la faim attendent le même produit.",
+    prompt: "Comment Lineva partage-t-elle des remèdes déjà insuffisants pour une seule infirmerie ?",
+    resolution: "Lineva partage les traitements selon les urgences vérifiées et fait escorter les deux lots. La pénurie reste entière, mais aucun service ne disparaît d’un trait de plume.",
+    choiceText: {
+      observer: { label: "Comparer les listes de malades", note: "Attribuer chaque traitement à l’urgence réelle." },
+      agir: { label: "Diviser la caisse sous contrôle militaire", note: "Assurer immédiatement un lot à chaque infirmerie." },
+      temporiser: { label: "Faire venir les deux soigneuses-cheffes", note: "Refuser de décider sans leur diagnostic." },
+    },
   });
   add("forthaven-apres-draven", "remparts", {
     id: "plus-releve-silencieuse",
-    title: "Une relève de garde sans discours",
+    title: "Le garde qui tient par la fièvre",
     speaker: "Lineva",
-    intro: "Un jeune garde refuse de quitter son poste malgré sa fièvre. Lineva pourrait l’ordonner ; elle attend de voir si Draven saura lui parler sans transformer l’épuisement en honte.",
-    resolution: "Le garde finit par céder sa place. Il ne part pas vaincu : quelqu’un lui a rappelé qu’un rempart tient aussi parce que ses défenseurs reviennent le lendemain.",
-    relation: "lineva",
+    intro: "Un jeune garde refuse de quitter son poste malgré sa fièvre. Chaque remplaçant manque déjà ailleurs, et les morts-vivants se rapprochent du fossé.",
+    prompt: "Comment Lineva retire-t-elle un garde épuisé alors que personne ne peut facilement le remplacer ?",
+    resolution: "Le garde descend avec la relève et reçoit un lit à l’infirmerie. Lineva perd une paire d’yeux pour la nuit, plutôt qu’un soldat pour toujours.",
+    choiceText: {
+      observer: { label: "Lui faire reprendre son rapport", note: "Prouver par ses propres mots qu’il ne surveille plus rien." },
+      agir: { label: "L’envoyer à l’infirmerie par ordre direct", note: "Assumer une place vide plutôt qu’un mort évitable." },
+      temporiser: { label: "Le garder assis jusqu’à la relève", note: "Éviter une rupture brutale sans prolonger son service." },
+    },
   });
   add("forthaven-apres-draven", "salle-guerre", {
     id: "plus-marque-effacee",
-    title: "La marque effacée de la carte",
-    speaker: "Draven",
-    intro: "Une position abandonnée a disparu de la carte officielle. Les soldats perdus avec elle aussi. Le greffier invoque un simple besoin de lisibilité.",
-    resolution: "La marque retrouve sa place, plus petite mais intacte. Une carte de guerre doit guider les vivants sans effacer le prix déjà payé.",
-    relation: "lineva",
+    title: "Le village rayé trop tôt",
+    speaker: "Lineva",
+    intro: "Un village isolé a été rayé de la carte après le passage des morts-vivants. Trois réfugiés affirment pourtant que des familles se cachent encore dans les caves.",
+    prompt: "Quelle place Lineva accorde-t-elle à un espoir que ses effectifs ne lui permettent presque plus de poursuivre ?",
+    resolution: "La marque revient sur la carte avec une mention claire : contact perdu, survivants possibles. Forthaven ne confond plus silence et disparition certaine.",
+    choiceText: {
+      observer: { label: "Recouper les récits des réfugiés", note: "Distinguer une piste exploitable d’un espoir désespéré." },
+      agir: { label: "Préparer une reconnaissance à l’aube", note: "Engager une petite unité malgré le manque de soldats." },
+      temporiser: { label: "Rétablir la marque sans promettre de secours", note: "Conserver l’information jusqu’à une fenêtre possible." },
+    },
   });
 
   /* Chapitre V · Mir’Aldas */

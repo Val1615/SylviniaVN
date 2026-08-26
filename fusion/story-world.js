@@ -132,6 +132,7 @@
         : "opening";
       run.pendingActivity.step = Math.max(0, Number(run.pendingActivity.step) || 0);
       run.pendingActivity.choiceId = run.pendingActivity.choiceId || null;
+      run.pendingActivity.previewChoiceId = run.pendingActivity.previewChoiceId || null;
       run.pendingActivity.miniGameResult = run.pendingActivity.miniGameResult || null;
       run.pendingActivity.miniGameState = run.pendingActivity.miniGameState || null;
     }
@@ -469,8 +470,7 @@
       });
     }
 
-    let spriteKey = spriteData && spriteData.sprite;
-    if (!spriteKey && spot.sprite && assetUrl(spot.sprite)) spriteKey = spot.sprite;
+    let spriteKey = spot.sprite && assetUrl(spot.sprite) ? spot.sprite : (spriteData && spriteData.sprite);
     const referenceScene = S[spot.visualScene] || scene || S[period.anchorScene] || S[period.nextScene];
     let usePartyOutfit = spot.partyOutfits === true;
     try {
@@ -489,7 +489,11 @@
       const wanted = period.perspective === "Hylee" ? "hylee" : String(period.perspective || "").toLowerCase();
       return Number(right.kind === wanted) - Number(left.kind === wanted);
     });
-    let companion = referenceCharacters[0] || null;
+    /* Une scène de temps libre possède un personnage focal. Le protagoniste ou un
+       tiers présent dans la scène VN de référence ne doit pas être réinjecté par
+       accident. Les duos restent possibles, mais uniquement lorsqu’un lieu les
+       demande explicitement. */
+    let companion = spot.showCompanion === true ? (referenceCharacters[0] || null) : null;
     if (companion && usePartyOutfit && typeof window.__sylviniaPartySpriteRemap === "function") {
       const remapped = window.__sylviniaPartySpriteRemap(companion.sprite);
       if (assetUrl(remapped)) companion = { ...companion, sprite: remapped };
@@ -739,25 +743,34 @@
         </div>`;
       return;
     }
+    const previewChoiceId = session.previewChoiceId || null;
     const choices = (pending.activity.choices || []).map(function map(choice) {
       const effects = mergeEffects(pending.activity.commonEffects, choice.effects);
       const affordable = canAfford(effects);
       const labels = effectLabels(effects);
-      return `<button type="button" class="sw-choice${affordable ? "" : " is-unaffordable"}" data-sw-choice="${escapeHtml(choice.id)}" ${affordable ? "" : "disabled"}>
-        <span><strong>${escapeHtml(choice.label)}</strong><small>${escapeHtml(choice.note)}${affordable ? "" : " · Ressources insuffisantes"}</small></span>
-        <span class="sw-choice-effects">${labels.map(function label(value) { return `<em>${escapeHtml(value)}</em>`; }).join("")}</span>
+      const selected = previewChoiceId === choice.id;
+      const preview = selected
+        ? `<span class="sw-choice-preview">
+            <span class="sw-choice-note">${escapeHtml(choice.note || "Cette réponse poursuit la scène sans modifier de valeur.")}${affordable ? "" : " · Ressources insuffisantes"}</span>
+            <span class="sw-choice-effects">${labels.length ? labels.map(function label(value) { return `<em>${escapeHtml(value)}</em>`; }).join("") : "<em>Aucune valeur modifiée</em>"}</span>
+            <span class="sw-choice-confirm">Toucher à nouveau pour confirmer</span>
+          </span>`
+        : "";
+      return `<button type="button" class="sw-choice${selected ? " is-preview" : ""}${affordable ? "" : " is-unaffordable"}" data-sw-choice="${escapeHtml(choice.id)}" aria-pressed="${selected ? "true" : "false"}" ${affordable ? "" : "disabled"}>
+        <span class="sw-choice-main"><strong>${escapeHtml(choice.label)}</strong></span>
+        ${preview}
       </button>`;
     }).join("");
     document.getElementById("swContent").innerHTML = `
-      <div class="sw-card sw-event-card">
+      <div class="sw-card sw-event-card sw-choice-card">
         <div class="sw-dialogue-copy">
           <button type="button" class="sw-back-button" data-sw-action="location">‹ Interrompre et revenir</button>
           <span class="sw-eyebrow">${escapeHtml(pending.activity.eyebrow)} · ${escapeHtml(pending.activity.title)}</span>
           <div class="sw-speaker">${escapeHtml(pending.activity.speaker)}</div>
-          <p class="sw-dialogue-text">La conversation a atteint un point où la réponse d’Hylee peut réellement en changer le ton.</p>
+          <p class="sw-dialogue-text">Le prochain geste peut réellement changer le ton de la scène.</p>
           <p class="sw-prompt">${escapeHtml(pending.activity.prompt)}</p>
         </div>
-        <div class="sw-dialogue-actions"><span class="sw-actions-label">Comment réagir ?</span><div class="sw-choice-list">${choices}</div></div>
+        <div class="sw-dialogue-actions sw-choice-actions"><span class="sw-actions-label">${previewChoiceId ? "Conséquences du choix" : "Comment réagir ?"}</span><div class="sw-choice-list">${choices}</div></div>
       </div>`;
   }
 
@@ -765,7 +778,10 @@
     const pending = getPending(period, run);
     if (!pending.spot || !pending.activity || !pending.activity.miniGame) {
       run.view = "activity";
-      if (run.pendingActivity) run.pendingActivity.phase = "choices";
+      if (run.pendingActivity) {
+        run.pendingActivity.phase = "choices";
+        run.pendingActivity.previewChoiceId = null;
+      }
       renderWorld();
       return;
     }
@@ -983,7 +999,10 @@
     if (phase === "opening") {
       session.step = 0;
       if (pending.activity.miniGame && !session.miniGameResult) run.view = "minigame";
-      else session.phase = "choices";
+      else {
+        session.phase = "choices";
+        session.previewChoiceId = null;
+      }
       safeSave();
       renderWorld();
       return;
@@ -1003,7 +1022,22 @@
     if (!choice) return;
     const previewEffects = mergeEffects(pending.activity.commonEffects, choice.effects);
     if (!canAfford(previewEffects)) return;
+    if (run.pendingActivity.previewChoiceId !== choice.id) {
+      run.pendingActivity.previewChoiceId = choice.id;
+      safeSave();
+      renderWorld();
+      if (typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(function revealChoicePreview() {
+          const selected = root && root.querySelector(`[data-sw-choice="${String(choice.id).replace(/"/g, "\\\"")}"]`);
+          if (!selected) return;
+          if (typeof selected.focus === "function") selected.focus({ preventScroll: true });
+          if (typeof selected.scrollIntoView === "function") selected.scrollIntoView({ block: "nearest", inline: "nearest" });
+        });
+      }
+      return;
+    }
     run.pendingActivity.choiceId = choice.id;
+    run.pendingActivity.previewChoiceId = null;
     run.pendingActivity.phase = "outcome";
     run.pendingActivity.step = 0;
     run.view = "activity";
@@ -1101,6 +1135,7 @@
     run.pendingActivity.miniGameResult = result;
     run.pendingActivity.miniGameState = null;
     run.pendingActivity.phase = "choices";
+    run.pendingActivity.previewChoiceId = null;
     run.pendingActivity.step = 0;
     run.view = "activity";
     safeSave();
@@ -1247,7 +1282,7 @@
       const spot = spotById(activePeriod, run.selectedSpot);
       const activity = activityById(spot, activityId);
       if (!activity || !activityState(activePeriod, run, spot, activity).available) return;
-      run.pendingActivity = { spotId: spot.id, activityId: activity.id, phase: "opening", step: 0, choiceId: null, miniGameResult: null, miniGameState: null };
+      run.pendingActivity = { spotId: spot.id, activityId: activity.id, phase: "opening", step: 0, choiceId: null, previewChoiceId: null, miniGameResult: null, miniGameState: null };
       run.view = "activity";
       run.drawerOpen = false;
       renderWorld();

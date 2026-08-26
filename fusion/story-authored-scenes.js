@@ -676,151 +676,153 @@
   ]);
 
   add("forthaven-apres-draven:quais:chargement", [
-    ["Narrateur", "Le navire s’enfonce trop bas dans l’eau. Armes, remèdes et vivres occupent chaque espace disponible."],
-    ["Draven", "On retire du poids maintenant, ou la mer le fera pour nous."],
-    ["Quartier-maître", "Les soldats refusent de céder des carreaux. Les soigneurs refusent de céder une caisse."],
-    ["Draven", "Excellent. Qu’ils viennent expliquer leurs refus devant la coque ouverte."],
+    ["Narrateur", "La barge arrive après la tombée du jour. Plusieurs sacs de grain ont pris l’eau et l’un d’eux répand déjà une odeur aigre sur les planches."],
+    ["Intendant", "Cent trente-sept sacs utilisables. Quarante-deux à trier. Dix-neuf perdus."],
+    ["Lineva", "Tu viens de me donner trois nombres et toujours aucun repas."],
+    ["Intendant", "Deux jours pour la garnison. Moins si nous maintenons les cuisines civiles."],
+    ["Lineva", "On maintient les cuisines. Maintenant, trouve-moi des chiffres qui permettent aux gens de survivre jusqu’au troisième jour."],
   ], {
     observer: [
-      ["Narrateur", "Draven vérifie les registres et trouve deux caisses de matériel identique chargées par des unités différentes."],
-      ["Draven", "On garde la mieux conditionnée. L’autre retourne au dépôt, et les deux officiers apprennent à se parler."],
+      ["Narrateur", "Lineva fait ouvrir les sacs gonflés par l’humidité. Sous la première couche saine, deux lots ont déjà noirci."],
+      ["Lineva", "Ceux-là partent au feu. Je préfère annoncer une ration courte qu’envoyer la moitié de la ville à l’infirmerie."],
     ],
     agir: [
-      ["Draven", "On retire un lot d’armes lourdes. Si nous avons besoin de tout ça, le navire sera déjà foutu."],
-      ["Quartier-maître", "Les soldats vont protester."],
+      ["Lineva", "Ouvre les réserves des officiers et verse-les au stock commun. Même pain pour tout le monde à partir de ce soir."],
+      ["Intendant", "Le commandement va protester."],
     ],
     temporiser: [
-      ["Draven", "On décharge tout le pont arrière et on recommence par les vivres. Je veux voir ce que chacun essaie de cacher sous l’urgence."],
-      ["Narrateur", "Les premières caisses reviennent à quai sous une pluie de jurons."],
+      ["Lineva", "Aucune distribution avant le retour des registres de cuisine. Je veux le nombre de bouches, pas le nombre prévu le mois dernier."],
+      ["Narrateur", "Des coureurs partent vers les quartiers. La file gronde, puis se calme lorsque Lineva reste sur place avec elle."],
     ],
   }, [
-    ["Draven", "Les remèdes restent. Les vivres aussi. Les héros qui veulent trois armes apprendront à viser avec une seule."],
-    ["Narrateur", "Le navire remonte de quelques centimètres."],
-    ["Quartier-maître", "Elle peut partir, Amiral."],
+    ["Narrateur", "Trois coups de cloche éclatent du côté sud. Les guetteurs ont vu les morts bouger près de la chaussée."],
+    ["Lineva", "Affiche les rations avant que la rumeur le fasse à notre place. Et garde-moi un sac pour les cuisines du rempart."],
+    ["Narrateur", "Elle quitte le port au pas de course. Derrière elle, l’intendant inscrit la même mesure à côté des soldats, des officiers et des civils."],
   ]);
 
   add("forthaven-apres-draven:quais:plus-caisse-civile", [
-    ["Narrateur", "Une caisse de médicaments porte la marque de la ville basse. Elle a été chargée parmi les provisions militaires."],
-    ["Quartier-maître", "Nous en aurons besoin pendant l’expédition."],
-    ["Draven", "Les familles qui attendent cette caisse en ont besoin ce soir."],
-    ["Quartier-maître", "Je sais."],
-    ["Narrateur", "Personne sur le quai ne prétend que la décision sera propre."],
+    ["Narrateur", "La caisse contient des poudres contre la fièvre, des désinfectants et six fioles capables de ralentir la nécrose."],
+    ["Soigneuse des remparts", "Mes blessés ont touché les morts-vivants. Sans ces fioles, je vais perdre des bras avant l’aube."],
+    ["Soigneuse des réfugiés", "J’ai trente enfants avec la même fièvre. La faim les vide plus vite que je ne peux les hydrater."],
+    ["Lineva", "Vous auriez pu choisir une nuit où une seule de vous avait raison."],
+    ["Narrateur", "Aucune des deux femmes ne sourit. Lineva tire la caisse entre elles et ouvre le registre."],
   ], {
     observer: [
-      ["Narrateur", "Draven ouvre l’inventaire et sépare les produits rares des bandages disponibles au dépôt."],
-      ["Draven", "On partage. Les traitements irremplaçables repartent en ville, le reste embarque."],
+      ["Narrateur", "Lineva fait lire chaque diagnostic à voix haute. Deux traitements demandés aux remparts peuvent être remplacés par des produits encore en stock."],
+      ["Lineva", "Les fioles irremplaçables suivent les blessés contaminés. Le reste va aux réfugiés, avec la liste exacte."],
     ],
     agir: [
-      ["Draven", "Déchargez-la. Je trouverai du matériel ailleurs ou je répondrai moi-même du manque."],
-      ["Quartier-maître", "Vous signez ?"],
+      ["Lineva", "Deux tables. Vous partagez tout devant moi, dose par dose. Aucun flacon ne disparaît dans une manche ou un placard."],
+      ["Soigneuse des remparts", "Cela nous laissera trop peu des deux côtés."],
     ],
     temporiser: [
-      ["Draven", "Envoyez un coureur à l’infirmerie. Je veux savoir ce qu’ils peuvent fournir avant le départ."],
-      ["Narrateur", "La caisse reste sur la passerelle pendant que chaque minute se fait entendre."],
+      ["Lineva", "Vous avez dix minutes pour me donner les noms et les urgences. Si vous voulez la caisse entière, prouvez que l’autre service peut attendre."],
+      ["Narrateur", "Les deux soigneuses se penchent sur leurs listes et commencent enfin à chercher des remplacements ensemble."],
     ],
   }, [
-    ["Narrateur", "Draven inscrit la répartition et signe de son nom."],
-    ["Draven", "Cette dette reste dans le registre. Personne ne l’efface quand nous aurons quitté le port."],
-    ["Quartier-maître", "Compris."],
+    ["Narrateur", "Deux lots quittent l’entrepôt sous escorte. La caisse vide reste au milieu du sol."],
+    ["Soigneuse des réfugiés", "Et si les réserves restent vides ?"],
+    ["Lineva", "Alors on cherchera encore. Demain, vous me dites qui a répondu au traitement et qui manque de quoi tenir."],
   ]);
 
   add("forthaven-apres-draven:remparts:lineva", [
-    ["Narrateur", "Lineva termine son inspection sans attendre Draven. Elle frappe du poing chaque attache et note trois défauts."],
-    ["Draven", "Tu aurais pu déléguer."],
-    ["Lineva", "J’aurais aussi pu dormir. Les deux idées avaient le même défaut."],
-    ["Draven", "Lequel ?"],
-    ["Lineva", "Je t’ai vu choisir mes soldats pour ton expédition."],
+    ["Narrateur", "Le parchemin de communication a refroidi sous la veste de Lineva. La voix de Draven, resté au palais d’Al’Gratal, résonne encore dans sa tête."],
+    ["Capitaine", "Mouvement au sud. Deux groupes sortent du cimetière et un troisième longe la chaussée."],
+    ["Lineva", "Combien ?"],
+    ["Capitaine", "Assez pour tester la porte. Peut-être davantage dans le bois."],
+    ["Lineva", "Le parchemin est fermé. Parle-moi de ceux qui sont devant nos murs."],
   ], {
     observer: [
-      ["Draven", "Tu as renforcé la porte ouest avec les réservistes du port. Tu prépares déjà leur absence."],
-      ["Lineva", "Quelqu’un devait le faire pendant que tu promettais nos hommes à l’Empire."],
+      ["Narrateur", "Lineva suit les lanternes ennemies. Le groupe le plus visible ralentit chaque fois que les archers changent de position."],
+      ["Lineva", "Ils nous regardent. Garde les réserves hors du parapet et double les guetteurs sur la poterne."],
     ],
     agir: [
-      ["Draven", "Dis-moi combien tu peux réellement céder. Je modifierai le détachement."],
-      ["Lineva", "Tu aurais pu commencer par cette question avant le Conseil."],
+      ["Lineva", "Deux sections à la porte sud. Pieux, huile et cordes de retraite. Je veux la position tenue avant qu’ils atteignent le fossé."],
+      ["Capitaine", "Cela vide la tour est."],
     ],
     temporiser: [
-      ["Draven", "On reprend la liste demain à l’aube, ensemble. Aucun nom ne part ce soir."],
-      ["Lineva", "Ça retarde ton départ."],
+      ["Lineva", "On ne mord pas à leur première feinte. Une section prête dans l’escalier, aucune torche supplémentaire sur le mur."],
+      ["Narrateur", "Les soldats attendent dans l’ombre pendant que les silhouettes mortes cherchent une réaction."],
     ],
   }, [
-    ["Draven", "Je sais ce que je demande à Forthaven."],
-    ["Lineva", "Non. Tu sais ce que tu demandes à une carte. Moi, je connais les familles."],
-    ["Narrateur", "Draven encaisse la phrase et garde la liste ouverte entre eux."],
+    ["Narrateur", "Les morts s’arrêtent hors de portée, puis se dispersent vers l’est. Une reconnaissance, pour cette fois."],
+    ["Capitaine", "Et le détachement promis à votre père ?"],
+    ["Lineva", "Il partira. Alors cette nuit, nous apprenons à tenir sans lui et sans eux."],
   ]);
 
   add("forthaven-apres-draven:remparts:plus-releve-silencieuse", [
-    ["Narrateur", "Un jeune garde refuse de quitter son poste. La fièvre rougit ses joues jusque sous le casque."],
-    ["Lineva", "Je peux lui donner l’ordre. Il remontera dès que j’aurai le dos tourné."],
-    ["Draven", "Depuis combien de temps tu tiens ?"],
-    ["Jeune garde", "Je peux finir la nuit, Amiral."],
-    ["Draven", "Je n’ai pas demandé ce que tu pouvais prétendre."],
+    ["Narrateur", "Un jeune garde s’agrippe au parapet lorsque la relève arrive. La fièvre a rougi son visage jusque sous le casque."],
+    ["Lineva", "Depuis quand tes jambes tremblent ?"],
+    ["Jeune garde", "Elles ne tremblent pas, Commandante. Le mur vibre."],
+    ["Lineva", "Le mur a donc aussi vomi derrière la citerne ?"],
+    ["Narrateur", "Le garçon baisse les yeux. En contrebas, les morts raclent leurs armes contre les pierres."],
   ], {
     observer: [
-      ["Narrateur", "Draven regarde ses jambes trembler et la main qu’il garde contre le mur."],
-      ["Draven", "Tu ne surveilles plus la mer. Tu surveilles seulement ton équilibre."],
+      ["Lineva", "Reprends ton rapport depuis le dernier changement de torche."],
+      ["Narrateur", "Il mélange deux mouvements ennemis et oublie le signal de la tour voisine. Sa propre voix lui retire son dernier argument."],
     ],
     agir: [
-      ["Draven", "Tu descends maintenant. Si je te revois avant demain, je te confie les latrines du port."],
-      ["Jeune garde", "Oui, Amiral."],
+      ["Lineva", "Tu descends maintenant. Si je te revois sur ce mur avant l’avis d’une soigneuse, tu récureras les latrines avec ta belle armure."],
+      ["Jeune garde", "Oui, Commandante."],
     ],
     temporiser: [
-      ["Draven", "Reste jusqu’à la relève, assis. Tu lui donnes ton rapport et tu pars avec lui."],
-      ["Lineva", "Je m’assure qu’il franchit l’escalier."],
+      ["Lineva", "Assieds-toi jusqu’à la relève. Tu lui donnes ton rapport, puis tu descends avec elle."],
+      ["Jeune garde", "Je peux encore servir assis."],
     ],
   }, [
-    ["Jeune garde", "Je ne voulais pas abandonner mon poste."],
-    ["Draven", "Alors reviens vivant le reprendre demain."],
-    ["Narrateur", "Le garde descend sans baisser la tête. Lineva cache un début de sourire."],
+    ["Jeune garde", "On manque déjà de monde."],
+    ["Lineva", "Justement. Reviens vivant reprendre ta place demain."],
+    ["Narrateur", "La relève l’emmène vers l’infirmerie. Lineva prend elle-même son créneau jusqu’à l’arrivée d’un remplaçant."],
   ]);
 
   add("forthaven-apres-draven:salle-guerre:replis", [
-    ["Narrateur", "La carte montre trois voies d’assaut et aucune retraite. Draven prend un morceau de craie."],
-    ["Officier de garde", "Les hommes pourraient y voir un manque de confiance."],
-    ["Draven", "Les morts se soucient peu de notre confiance."],
-    ["Narrateur", "Il cherche un passage capable d’accueillir des blessés, des civils et une unité en désordre."],
+    ["Narrateur", "Une nouvelle croix noire apparaît dans la ville basse. Les morts ont franchi une cour et poussent les habitants vers trois rues trop étroites."],
+    ["Capitaine", "Si nous fermons la rue des Tanneurs, nous tenons le carrefour."],
+    ["Lineva", "Combien de civils derrière la barricade ?"],
+    ["Greffier", "Le registre en compte quarante-sept. Il date d’hier."],
+    ["Lineva", "Alors la carte ignore déjà ceux que nous allons enfermer. On recommence."],
   ], {
     observer: [
-      ["Narrateur", "Draven suit les pentes et écarte le chemin le plus court, trop étroit pour les brancards."],
-      ["Draven", "On utilise le quai sec. Plus long, assez large, deux issues."],
+      ["Narrateur", "Lineva superpose le registre des réfugiés à celui des puits encore sains. Une ruelle oubliée rejoint la cour des Tanneurs."],
+      ["Lineva", "Ouvrez cette sortie et placez deux hommes au croisement. La barricade attend leur signal."],
     ],
     agir: [
-      ["Draven", "Tracez une voie au nord et affectez deux éclaireurs dès maintenant."],
-      ["Officier de garde", "Sans attendre l’ordre de l’état-major ?"],
+      ["Lineva", "J’envoie six soldats chercher les retardataires. Ils ont dix minutes, puis ils reviennent, même si quelqu’un crie encore derrière eux."],
+      ["Capitaine", "Six soldats peuvent nous manquer au carrefour."],
     ],
     temporiser: [
-      ["Draven", "On fait marcher une section à vide avant de l’inscrire. Je veux le temps réel, pas celui de la carte."],
-      ["Narrateur", "L’officier envoie un messager vers la cour."],
+      ["Lineva", "Montez la barricade sans poser la traverse. Les archers gagnent du temps, les civils gardent une issue."],
+      ["Narrateur", "Le capitaine transmet l’ordre avec un délai précis et trois signaux de fermeture."],
     ],
   }, [
-    ["Narrateur", "Deux lignes de repli apparaissent derrière les flèches d’attaque."],
-    ["Draven", "On ne les montrera pas pendant les discours. On les apprendra aux hommes."],
-    ["Officier de garde", "Ils sauront rentrer."],
+    ["Narrateur", "Le dernier groupe recensé traverse le carrefour pendant que les premières mains mortes apparaissent au bout de la rue."],
+    ["Lineva", "Fermez. Personne ne rouvre sans mon ordre, même si ça frappe de l’autre côté."],
+    ["Narrateur", "La traverse tombe. Dans la salle, personne ne demande combien de personnes le registre a pu oublier."],
   ]);
 
   add("forthaven-apres-draven:salle-guerre:plus-marque-effacee", [
-    ["Narrateur", "Une ancienne position a disparu de la carte officielle. Draven reconnaît pourtant les traces de gomme."],
-    ["Draven", "Où est la batterie du cap Rouge ?"],
-    ["Greffier", "Perdue depuis six mois. Elle encombrait la lecture des défenses actuelles."],
-    ["Draven", "Trente-deux hommes encombrent donc ton papier."],
-    ["Narrateur", "Le greffier cesse de toucher la gomme."],
+    ["Narrateur", "Le village de Sorneval a disparu de la carte. Une trace grise marque encore l’endroit où le greffier a frotté le charbon."],
+    ["Lineva", "Qui a ordonné de le rayer ?"],
+    ["Greffier", "Aucun signal depuis quatre jours. Les morts ont traversé toute la vallée."],
+    ["Réfugiée", "Ma sœur connaît des caves sous le moulin. Ils peuvent tenir là-dessous."],
+    ["Lineva", "Peuvent, ou tiennent ? J’ai besoin de la différence avant d’envoyer des gens mourir."],
   ], {
     observer: [
-      ["Narrateur", "Draven retrouve les coordonnées dans un ancien registre et compare les lignes côtières."],
-      ["Draven", "Leur chute explique cette brèche. L’effacer rend le prochain plan plus mauvais."],
+      ["Narrateur", "Lineva fait reprendre les récits séparément. Le moulin, le puits couvert et le passage sous la grange reviennent dans les trois versions."],
+      ["Lineva", "Nous avons une piste. Inscris les accès et le nombre maximal de survivants."],
     ],
     agir: [
-      ["Narrateur", "Il reprend le crayon du greffier et redessine la position lui-même."],
-      ["Draven", "Petite marque, nom lisible. Tu trouveras la place."],
+      ["Lineva", "Six éclaireurs à l’aube, avec un cor et aucune obligation d’entrer dans le village. Ils confirment d’abord les signes de vie."],
+      ["Greffier", "Je prépare l’ordre de mission."],
     ],
     temporiser: [
-      ["Draven", "Prépare deux cartes. Une tactique, une complète. Aucune ne quitte cette salle sans la position."],
-      ["Greffier", "Ce sera fait cette nuit."],
+      ["Lineva", "Remets Sorneval sur la carte avec la mention contact perdu. Aucune promesse de secours tant que la route reste fermée."],
+      ["Réfugiée", "Au moins, vous ne les appelez plus morts."],
     ],
   }, [
-    ["Narrateur", "Le cap Rouge retrouve sa place, discret et impossible à ignorer."],
-    ["Draven", "Une carte sert aux vivants. Elle leur doit la vérité sur les morts."],
-    ["Narrateur", "Le greffier range la gomme."],
+    ["Narrateur", "Sorneval retrouve sa place, entouré d’un cercle rouge et de trois points d’interrogation."],
+    ["Lineva", "Une carte sert à décider où risquer les vivants. Elle n’a pas le droit de tuer les absents par facilité."],
+    ["Narrateur", "Le greffier range la gomme. La réfugiée reste devant le nom jusqu’à ce qu’on lui apporte une chaise."],
   ]);
 })();
 
