@@ -4,6 +4,7 @@
   if (window.SylviniaStoryContent) return;
 
   const EXTRA_MOMENTS = window.SylviniaStoryMoments || {};
+  const DIALOGUES = window.SylviniaStoryDialogues || {};
 
   const APPROACHES = {
     lucidite: {
@@ -117,7 +118,7 @@
       .toLowerCase();
   }
 
-  function makeActivity(periodId, definition, routeOnly) {
+  function makeActivity(periodId, spot, definition, routeOnly, perspective) {
     const source = routeOnly ? ROUTE_APPROACHES : APPROACHES;
     const approachIds = definition.approaches || Object.keys(source).slice(0, 3);
     const relationId = definition.relation || null;
@@ -145,7 +146,7 @@
         },
       };
     });
-    return {
+    const activity = {
       id: definition.id,
       kind: definition.kind || "activity",
       title: definition.title,
@@ -157,10 +158,15 @@
       requiresRelation: definition.requiresRelation || null,
       choices,
     };
+    if (typeof DIALOGUES.enrichActivity === "function") {
+      return DIALOGUES.enrichActivity({ periodId, spot, definition, routeOnly, perspective, activity });
+    }
+    return activity;
   }
 
-  function makeSpot(periodId, definition, routeOnly) {
+  function makeSpot(periodId, definition, routeOnly, perspective) {
     const extraMoments = EXTRA_MOMENTS[`${periodId}:${definition.id}`] || [];
+    const dialogueMoments = (DIALOGUES.additions && DIALOGUES.additions[`${periodId}:${definition.id}`]) || [];
     return {
       id: definition.id,
       icon: definition.icon || "⌖",
@@ -174,8 +180,11 @@
       sprite: definition.sprite || null,
       partyOutfits: definition.partyOutfits === true,
       availableFrom: definition.availableFrom || 0,
-      activities: [...(definition.activities || []), ...extraMoments].map(function activity(entry) {
-        return makeActivity(periodId, entry, routeOnly || entry.routeOnly === true);
+      activities: [...(definition.activities || []), ...extraMoments, ...dialogueMoments].map(function activity(entry) {
+        const patched = typeof DIALOGUES.patchDefinition === "function"
+          ? DIALOGUES.patchDefinition(periodId, definition.id, entry)
+          : entry;
+        return makeActivity(periodId, definition, patched, routeOnly || patched.routeOnly === true, perspective);
       }),
     };
   }
@@ -200,7 +209,7 @@
       slots: definition.slots,
       echo: definition.echo,
       completionFlags: definition.completionFlags || [],
-      spots: definition.spots.map(function spot(entry) { return makeSpot(definition.id, entry, routeOnly); }),
+      spots: definition.spots.map(function spot(entry) { return makeSpot(definition.id, entry, routeOnly, definition.perspective || "Hylee"); }),
     };
   }
 
@@ -210,54 +219,52 @@
       anchorScene: "ending",
       nextScene: "c2_01",
       chapterGate: "Fin du chapitre I",
-      title: "Les dernières heures à l’Auberge",
-      subtitle: "Avant la route d’Al’Gratal",
-      entryLabel: "Vivre les dernières heures à l’Auberge",
-      location: "Auberge du Forestier",
-      locationNote: "Hylee ne peut pas encore quitter les environs avant le départ décidé avec Remerii.",
+      title: "Le camp avant Al’Gratal",
+      subtitle: "Quelques heures avant de reprendre la route",
+      entryLabel: "Vivre la halte avant Al’Gratal",
+      location: "Campement de la forêt sylvinienne",
+      locationNote: "Hylee et Remerii restent près du camp. Après deux années loin de l’auberge, la prochaine étape est Al’Gratal.",
       music: "music_confessions",
       maxActions: 2,
       slots: [
-        { id: "soir", label: "Soirée", detail: "Les habitués apprennent que Hylee va s’absenter." },
-        { id: "aube", label: "Avant l’aube", detail: "Les sacs attendent près de la porte encore fermée." },
+        { id: "soir", label: "Soirée", detail: "Le feu baisse après la décision de rejoindre Al’Gratal." },
+        { id: "aube", label: "Avant l’aube", detail: "Les sacs attendent près du sentier encore sombre." },
       ],
-      echo: "Les dernières heures passées à l’Auberge donnent au départ un poids concret : Hylee ne quitte plus seulement un lieu, mais les gestes ordinaires qui lui tenaient lieu de foyer.",
+      echo: "La halte donne au départ un poids concret : Hylee ne suit plus seulement Remerii, elle choisit de reprendre la route vers Al’Gratal avec elle.",
       spots: [
         {
           id: "salle",
-          icon: "⌂",
-          name: "Salle commune",
-          description: "Les dernières chopes circulent tandis que chacun prétend que ce départ ne changera rien.",
-          presence: "Remerii corrige la route dans un coin ; les habitués observent Hylee sans oser l’interroger.",
-          visualScene: "s23",
+          icon: "♨",
+          name: "Feu du camp",
+          description: "Les braises éclairent les cartes, deux gamelles et la route qu’elles reprendront au matin.",
+          presence: "Remerii corrige l’itinéraire tandis qu’Hylee cherche ce que ce nouveau départ change réellement.",
+          visualScene: "p03",
           character: "remerii",
           activities: [{
             id: "dernier-service",
-            kind: "job",
-            title: "Un dernier service",
-            speaker: "Aubergiste",
-            intro: "Une table entière arrive au moment où l’aubergiste pensait fermer. Hylee peut aider une dernière fois, mais les commandes se contredisent et le départ doit encore être préparé.",
-            resolution: "Le service s’achève sans que la soirée s’écroule. Hylee reconnaît chaque bruit de la salle avec une précision qu’elle n’avait jamais remarquée avant de devoir la quitter.",
+            title: "Ce que le départ change vraiment",
+            speaker: "Remerii",
+            intro: "Le feu baisse après leur décision. Hylee veut savoir si Remerii l’emmène encore comme une jeune femme à protéger ou déjà comme une apprentie capable de choisir la route.",
+            resolution: "La destination ne change pas. La place d’Hylee, elle, devient plus claire : Remerii approfondira son apprentissage, sans prétendre marcher à sa place.",
             relation: "remerii",
-            resources: { coins: 4 },
             approaches: ["lucidite", "audace", "sangfroid"],
           }],
         },
         {
           id: "chambre",
-          icon: "☾",
-          name: "Petite chambre de Hylee",
-          description: "Le sac trop grand, les vêtements simples et quelques souvenirs doivent tenir dans un espace dérisoire.",
-          presence: "Remerii passe vérifier les provisions et essaie de ne pas transformer l’aide en inspection militaire.",
-          visualScene: "s24",
+          icon: "⚑",
+          name: "Paquetages",
+          description: "Couvertures, vivres et matériel magique doivent tenir dans deux sacs déjà marqués par deux années de voyage.",
+          presence: "Remerii vérifie les provisions et essaie de ne pas transformer l’aide en inspection militaire.",
+          visualScene: "p03",
           character: "remerii",
           availableFrom: 1,
           activities: [{
             id: "faire-le-sac",
             title: "Ce que l’on emporte",
             speaker: "Hylee",
-            intro: "Chaque objet semble soudain essentiel. Remerii rappelle que la route, elle, ne négociera pas avec le poids du sac.",
-            resolution: "Le sac devient plus léger. Ce qui reste n’est pas tout ce que Hylee aime, mais tout ce dont elle accepte la responsabilité.",
+            intro: "Après deux années sur les routes, Hylee sait faire un sac. Cela n’empêche pas Remerii de discuter chaque fiole comme si leur survie dépendait de l’ordre exact des poches.",
+            resolution: "Le paquetage devient plus cohérent et la discussion moins technique. Elles reconnaissent les habitudes prises ensemble depuis l’auberge — celles qui font déjà de cette route une vie partagée.",
             relation: "remerii",
             approaches: ["lucidite", "sangfroid", "resonance"],
           }],
@@ -265,17 +272,17 @@
         {
           id: "lisiere",
           icon: "⌁",
-          name: "Lisière derrière l’auberge",
-          description: "Le chemin s’enfonce entre les arbres qui ont entouré toute la vie récente d’Hylee.",
-          presence: "Une silhouette familière semble parfois se déplacer plus loin entre les troncs, sans approcher.",
-          visualScene: "s25",
+          name: "Sentier vers Al’Gratal",
+          description: "Le chemin disparaît entre les arbres. Hylee connaît désormais le bruit de la forêt, sans prétendre en comprendre tous les avertissements.",
+          presence: "Une présence animale tourne à distance du camp sans chercher à approcher.",
+          visualScene: "p03",
           character: "hylee",
           activities: [{
             id: "dire-au-revoir",
-            title: "Un lieu qui ne répond pas",
+            title: "La route qu’elle choisit encore",
             speaker: "Narrateur",
-            intro: "Hylee marche jusqu’à la première borne, là où le sentier cesse d’appartenir à l’auberge et devient déjà la route.",
-            resolution: "Aucun signe ne lui promet qu’elle reviendra identique. Le lieu reste pourtant là, assez silencieux pour recevoir un au revoir qu’elle ne saurait dire devant les autres.",
+            intro: "Hylee marche jusqu’à la première borne. Deux ans plus tôt, quitter l’auberge avait ressemblé à une fuite. Cette fois, elle peut regarder le chemin et décider consciemment de continuer.",
+            resolution: "La forêt ne lui promet rien. Hylee revient pourtant vers le camp avec une certitude simple : elle ne va pas à Al’Gratal parce qu’elle n’a nulle part ailleurs où aller.",
             approaches: ["sangfroid", "resonance", "audace"],
           }],
         },
@@ -1673,14 +1680,14 @@
     makePeriod({
       id: "algratal-apres-conseil",
       anchorScene: "c14_end",
-      nextScene: "menu",
-      echoScene: null,
+      nextScene: "c15_001",
+      echoScene: "c15_001",
       chapterGate: "Fin du chapitre XIV",
       title: "La nuit avant l’offensive",
-      subtitle: "Fin actuelle du Mode Histoire",
+      subtitle: "Avant l’aube et le départ de l’armée",
       entryLabel: "Continuer à vivre la nuit avant la guerre",
       location: "Al’Gratal",
-      locationNote: "Cette période clôt le contenu actuel. Elle peut être explorée avant de retourner au menu principal.",
+      locationNote: "Al’Gratal reste accessible jusqu’au rassemblement des premières colonnes. L’armée partira à l’aube.",
       music: "music_c14_night",
       maxActions: 3,
       slots: [
@@ -1688,7 +1695,7 @@
         { id: "nuit-profonde", label: "Nuit profonde", detail: "Les casernes et les infirmeries restent éveillées." },
         { id: "avant-aube", label: "Avant l’aube", detail: "Les premières colonnes se préparent au départ." },
       ],
-      echo: "La sauvegarde conserve les préparatifs de cette nuit pour les futurs chapitres, même si le récit principal s’arrête ici pour le moment.",
+      echo: "Les préparatifs de cette nuit accompagnent Hylee lorsque l’aube rassemble l’armée devant les portes d’Al’Gratal.",
       spots: [
         {
           id: "caserne",
@@ -1768,7 +1775,7 @@
   ];
 
   window.SylviniaStoryContent = {
-    version: 2,
+    version: 3,
     approaches: { ...APPROACHES, ...ROUTE_APPROACHES },
     periods,
     byId: Object.fromEntries(periods.map(function byId(period) { return [period.id, period]; })),

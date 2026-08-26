@@ -512,6 +512,148 @@ body.sw-open {
   justify-content: center;
 }
 
+.sw-sequence-actions {
+  justify-content: flex-end;
+}
+
+.sw-sequence-progress {
+  width: 100%;
+  height: 5px;
+  margin: auto 0 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+}
+
+.sw-sequence-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5ca9ba, #efd38a);
+  box-shadow: 0 0 16px rgba(169, 231, 242, .42);
+  transition: width .22s ease;
+}
+
+.sw-minigame-actions {
+  justify-content: center;
+}
+
+.sw-minigame-intro,
+.sw-rhythm-board,
+.sw-pattern-preview,
+.sw-pattern-input {
+  min-height: 108px;
+  padding: 10px;
+  display: grid;
+  place-items: center;
+  gap: 9px;
+  color: rgba(246, 238, 221, .86);
+  text-align: center;
+  border: 1px solid rgba(169, 231, 242, .2);
+  border-radius: 7px;
+  background: rgba(39, 76, 89, .12);
+}
+
+.sw-minigame-intro p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.sw-rhythm-pulse {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(232, 201, 130, .32);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .22);
+}
+
+.sw-rhythm-pulse span {
+  width: 18px;
+  height: 18px;
+  border-radius: inherit;
+  background: rgba(232, 201, 130, .4);
+  transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+}
+
+.sw-rhythm-board.is-cue .sw-rhythm-pulse span {
+  background: #f3d784;
+  box-shadow: 0 0 24px rgba(243, 215, 132, .86);
+  transform: scale(2.15);
+  animation: sw-rhythm-cue .62s ease-out both;
+}
+
+@keyframes sw-rhythm-cue {
+  from { opacity: 1; transform: scale(2.15); }
+  to { opacity: .55; transform: scale(.9); }
+}
+
+.sw-rhythm-pips {
+  display: flex;
+  gap: 5px;
+}
+
+.sw-rhythm-pips i {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+}
+
+.sw-rhythm-pips i.is-hit { background: #9edee7; box-shadow: 0 0 8px rgba(158, 222, 231, .6); }
+.sw-rhythm-pips i.is-missed { background: rgba(196, 104, 104, .58); }
+
+.sw-minigame-actions button:disabled {
+  opacity: .52;
+  cursor: default;
+  transform: none;
+}
+
+.sw-pattern-preview > div,
+.sw-pattern-entered,
+.sw-pattern-choices {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.sw-pattern-preview b,
+.sw-pattern-entered b,
+.sw-pattern-choices button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: #d9f5f8;
+  border: 1px solid rgba(169, 231, 242, .35);
+  border-radius: 7px;
+  background: rgba(73, 145, 162, .16);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sw-pattern-choices button {
+  cursor: pointer;
+}
+
+.sw-pattern-choices button:hover {
+  color: #fff0ca;
+  border-color: rgba(255, 222, 149, .8);
+  background: rgba(97, 67, 30, .6);
+}
+
+.sw-minigame-result {
+  margin: 9px 0 0;
+  padding: 6px 9px;
+  color: #d4f4f7;
+  border-left: 2px solid rgba(169, 231, 242, .55);
+  background: rgba(73, 145, 162, .1);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 11px;
+}
+
 .sw-back-button {
   width: auto;
   margin: 0 0 5px;
@@ -997,6 +1139,27 @@ body.sw-open {
 
   .sw-choice-effects {
     display: none;
+  }
+
+  .sw-minigame-intro,
+  .sw-rhythm-board,
+  .sw-pattern-preview,
+  .sw-pattern-input {
+    min-height: 88px;
+    padding: 7px;
+  }
+
+  .sw-rhythm-pulse {
+    width: 44px;
+    height: 44px;
+  }
+
+  .sw-pattern-preview b,
+  .sw-pattern-entered b,
+  .sw-pattern-choices button {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
   }
 
   .sw-toolbar {

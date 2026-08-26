@@ -15,31 +15,31 @@
     });
   }
 
-  /* Chapitre I · Auberge du Forestier */
+  /* Chapitre I · Campement sur la route d’Al’Gratal */
   add("forestier-avant-depart", "salle", {
     id: "plus-conseils-habitués",
-    title: "Les conseils que personne n’a demandés",
+    title: "Les trois versions du même itinéraire",
     speaker: "Remerii",
-    intro: "En apprenant le départ d’Hylee, trois habitués lui donnent simultanément des conseils incompatibles. Remerii se retient d’intervenir, curieuse de voir lesquels Hylee acceptera d’entendre.",
-    resolution: "Les conseils finissent par parler davantage de ceux qui les donnent que de la route. Hylee comprend que leurs maladresses sont aussi une manière de lui dire qu’elle laissera un vide.",
+    intro: "La carte de Remerii, les notes prises à Al’Gratal deux ans plus tôt et l’intuition magique d’Hylee proposent trois chemins différents. Remerii prétend qu’elle n’est pas contrariée par cette concurrence.",
+    resolution: "Elles conservent la route la plus sûre et notent les deux autres comme replis. Hylee n’a pas seulement suivi une leçon : son observation a réellement changé leur trajet.",
     relation: "remerii",
     approaches: ["lucidite", "audace", "sangfroid"],
   });
   add("forestier-avant-depart", "chambre", {
     id: "plus-place-dans-le-sac",
-    title: "La place laissée vide",
+    title: "Une place pour ce qu’elles trouveront",
     speaker: "Hylee",
-    intro: "Une fois le sac fermé, il reste un espace étrange au fond. Remerii demande ce qu’Hylee espère y rapporter, comme si revenir de cette route était déjà une certitude.",
-    resolution: "Hylee ne choisit pas seulement un objet à emporter. Elle choisit ce qu’elle veut encore être capable de ramener avec elle.",
+    intro: "Une fois le sac refermé, Hylee remarque qu’elle a laissé volontairement une poche vide. Remerii veut savoir si c’est un oubli ou une forme très optimiste d’organisation.",
+    resolution: "La poche reste vide pour ce que la route leur fera découvrir. Remerii juge l’idée peu rigoureuse, puis déplace discrètement une fiole afin de lui laisser davantage de place.",
     relation: "remerii",
     approaches: ["resonance", "lucidite", "audace"],
   });
   add("forestier-avant-depart", "lisiere", {
     id: "plus-bruits-derriere",
-    title: "Les bruits qui continueront sans elle",
+    title: "Les bruits qui suivent le camp",
     speaker: "Narrateur",
-    intro: "Depuis la lisière, Hylee reconnaît le volet mal fixé, la pompe de la cour et les pas de l’aubergiste. Demain, tous ces bruits existeront sans attendre qu’elle y réponde.",
-    resolution: "L’idée lui serre la poitrine, puis l’allège. Un foyer peut continuer sans elle sans cesser d’avoir compté.",
+    intro: "Depuis le sentier, Hylee distingue les pas de Remerii, le bois humide dans le feu et une troisième cadence qui s’arrête chaque fois qu’elle tend l’oreille.",
+    resolution: "La présence ne franchit pas le cercle du camp. Hylee apprend à ne pas transformer chaque mystère de la forêt en menace, sans renoncer pour autant à la prudence.",
     approaches: ["sangfroid", "resonance", "audace"],
   });
 

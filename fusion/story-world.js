@@ -5,7 +5,7 @@
   window.__sylviniaStoryWorldFusionLoaded = true;
 
   const CONTENT = window.SylviniaStoryContent;
-  const ENGINE_VERSION = 3;
+  const ENGINE_VERSION = 4;
   const RELATION_THRESHOLDS = [0, 5, 14, 26, 40];
   const RELATION_STAGES = ["Rencontre", "Connaissance", "Confiance", "Proximité", "Lien profond"];
   const STAT_LABELS = {
@@ -18,6 +18,7 @@
 
   let root = null;
   let activePeriod = null;
+  let miniGameTimer = null;
 
   function canUseCanon() {
     return Boolean(CONTENT && typeof state !== "undefined" && typeof S !== "undefined" && typeof A !== "undefined");
@@ -121,10 +122,19 @@
       run.drawerOpen = true;
       run.view = "location";
     }
-    run.view = ["location", "activity", "result"].includes(run.view) ? run.view : "location";
+    run.view = ["location", "activity", "minigame", "result"].includes(run.view) ? run.view : "location";
     run.drawerView = ["location", "relations", "journal"].includes(run.drawerView) ? run.drawerView : "location";
     run.drawerOpen = run.drawerOpen === true;
     if (run.pendingEvent && !run.pendingActivity) run.pendingActivity = { activityId: run.pendingEvent };
+    if (run.pendingActivity && typeof run.pendingActivity === "object") {
+      run.pendingActivity.phase = ["opening", "choices", "outcome"].includes(run.pendingActivity.phase)
+        ? run.pendingActivity.phase
+        : "opening";
+      run.pendingActivity.step = Math.max(0, Number(run.pendingActivity.step) || 0);
+      run.pendingActivity.choiceId = run.pendingActivity.choiceId || null;
+      run.pendingActivity.miniGameResult = run.pendingActivity.miniGameResult || null;
+      run.pendingActivity.miniGameState = run.pendingActivity.miniGameState || null;
+    }
     return run;
   }
 
@@ -618,12 +628,21 @@
     panel.innerHTML = `<div class="sw-drawer-intro"><span>Lieux disponibles</span><p>Choisir un lieu replie automatiquement ce panneau pour rendre la scène au décor.</p></div><div class="sw-spot-list">${spots}</div>`;
   }
 
-  function activityStatusText(value) {
+  function activityStatusText(value, activity) {
     if (value.done) return "Déjà vécu";
     if (value.ended) return "Temps écoulé";
     if (value.timeLocked) return "Disponible plus tard";
+    if (value.relationLocked && activity && activity.kind === "confession") return "Davantage de confiance est nécessaire";
     if (value.relationLocked) return `Lien requis · ${value.requirement}`;
     return "Disponible · 1 créneau";
+  }
+
+  function activityKindLabel(activity) {
+    if (activity.kind === "confession") return "Conversation personnelle";
+    if (activity.kind === "debrief") return "Revenir sur le chapitre";
+    if (activity.kind === "job") return "Activité sur place";
+    if (activity.kind === "minigame" || activity.miniGame) return "Mini-jeu facultatif";
+    return "Moment libre";
   }
 
   function renderLocation(period, run) {
@@ -637,8 +656,11 @@
     const activities = (spot.activities || []).map(function map(activity) {
       const status = activityState(period, run, spot, activity);
       const relationClass = status.relationLocked ? " is-relation-locked" : "";
+      const title = status.relationLocked && activity.kind === "confession" && activity.hiddenTitle
+        ? activity.hiddenTitle
+        : activity.title;
       return `<button type="button" class="sw-activity${relationClass}" data-sw-activity="${escapeHtml(activity.id)}" ${status.available ? "" : "disabled"}>
-        <span><small>${activity.kind === "job" ? "Travail ou service" : "Scène facultative"}</small><strong>${escapeHtml(activity.title)}</strong><em>${escapeHtml(activityStatusText(status))}</em></span><b>›</b>
+        <span><small>${escapeHtml(activityKindLabel(activity))}</small><strong>${escapeHtml(title)}</strong><em>${escapeHtml(activityStatusText(status, activity))}</em></span><b>›</b>
       </button>`;
     }).join("");
     const ended = run.slot >= period.maxActions;
@@ -659,6 +681,7 @@
   }
 
   function getPending(period, run) {
+    if (!period || !run) return { spot: null, activity: null };
     const pending = run.pendingActivity || {};
     let spot = spotById(period, pending.spotId || run.selectedSpot);
     let activity = activityById(spot, pending.activityId);
@@ -678,6 +701,44 @@
     const pending = getPending(period, run);
     if (!pending.spot || !pending.activity) { run.view = "location"; renderWorld(); return; }
     setVisuals(period, pending.spot);
+    const session = run.pendingActivity || {};
+    const phase = session.phase || "opening";
+    if (phase === "opening" || phase === "outcome") {
+      const choice = phase === "outcome"
+        ? (pending.activity.choices || []).find(function find(candidate) { return candidate.id === session.choiceId; })
+        : null;
+      const sequence = phase === "opening"
+        ? (pending.activity.opening || [{ speaker: pending.activity.speaker, text: pending.activity.intro }])
+        : ((choice && choice.outcome) || [{ speaker: "Narrateur", text: (choice && choice.response) || pending.activity.summary }]);
+      if (!sequence.length) {
+        session.phase = phase === "opening" ? "choices" : "outcome";
+        session.step = 0;
+        if (phase === "outcome") finaliseChoice();
+        else renderWorld();
+        return;
+      }
+      session.step = Math.min(Math.max(0, Number(session.step) || 0), sequence.length - 1);
+      const current = sequence[session.step] || sequence[0];
+      const label = phase === "opening" ? activityKindLabel(pending.activity) : `Conséquence · ${choice ? choice.label : pending.activity.title}`;
+      const actionLabel = session.step >= sequence.length - 1
+        ? (phase === "opening" ? (pending.activity.miniGame && !session.miniGameResult ? "Commencer le mini-jeu" : "Choisir comment agir") : "Conclure ce moment")
+        : "Continuer";
+      document.getElementById("swContent").innerHTML = `
+        <div class="sw-card sw-event-card sw-sequence-card">
+          <div class="sw-dialogue-copy">
+            <button type="button" class="sw-back-button" data-sw-action="location">‹ Interrompre et revenir</button>
+            <span class="sw-eyebrow">${escapeHtml(label)} · ${escapeHtml(pending.activity.title)}</span>
+            <div class="sw-speaker">${escapeHtml(current.speaker || "Narrateur")}</div>
+            <p class="sw-dialogue-text">${escapeHtml(current.text || "").replace(/\n/g, "<br>")}</p>
+          </div>
+          <div class="sw-dialogue-actions sw-sequence-actions">
+            <span class="sw-actions-label">Échange ${session.step + 1}/${sequence.length}</span>
+            <div class="sw-sequence-progress" aria-hidden="true"><i style="width:${Math.round(((session.step + 1) / sequence.length) * 100)}%"></i></div>
+            <button type="button" class="sw-primary-button" data-sw-action="advance-scene">${escapeHtml(actionLabel)} ›</button>
+          </div>
+        </div>`;
+      return;
+    }
     const choices = (pending.activity.choices || []).map(function map(choice) {
       const effects = mergeEffects(pending.activity.commonEffects, choice.effects);
       const affordable = canAfford(effects);
@@ -690,13 +751,63 @@
     document.getElementById("swContent").innerHTML = `
       <div class="sw-card sw-event-card">
         <div class="sw-dialogue-copy">
-          <button type="button" class="sw-back-button" data-sw-action="location">‹ ${escapeHtml(pending.spot.shortName)}</button>
+          <button type="button" class="sw-back-button" data-sw-action="location">‹ Interrompre et revenir</button>
           <span class="sw-eyebrow">${escapeHtml(pending.activity.eyebrow)} · ${escapeHtml(pending.activity.title)}</span>
           <div class="sw-speaker">${escapeHtml(pending.activity.speaker)}</div>
-          <p class="sw-dialogue-text">${escapeHtml(pending.activity.intro)}</p>
+          <p class="sw-dialogue-text">La conversation a atteint un point où la réponse d’Hylee peut réellement en changer le ton.</p>
           <p class="sw-prompt">${escapeHtml(pending.activity.prompt)}</p>
         </div>
         <div class="sw-dialogue-actions"><span class="sw-actions-label">Comment réagir ?</span><div class="sw-choice-list">${choices}</div></div>
+      </div>`;
+  }
+
+  function renderMiniGame(period, run) {
+    const pending = getPending(period, run);
+    if (!pending.spot || !pending.activity || !pending.activity.miniGame) {
+      run.view = "activity";
+      if (run.pendingActivity) run.pendingActivity.phase = "choices";
+      renderWorld();
+      return;
+    }
+    setVisuals(period, pending.spot);
+    const game = pending.activity.miniGame;
+    const gameState = (run.pendingActivity && run.pendingActivity.miniGameState) || null;
+    let board = "";
+    if (!gameState) {
+      board = `<div class="sw-minigame-intro"><p>${escapeHtml(game.instruction)}</p><button type="button" class="sw-primary-button" data-sw-action="start-minigame">Commencer</button></div>`;
+    } else if (game.type === "rhythm") {
+      const total = Math.max(1, Number(game.beats) || 8);
+      const pips = Array.from({ length: total }, function map(_value, index) {
+        const hit = index < (gameState.round || 0) && (gameState.results || [])[index] === true;
+        const missed = index < (gameState.round || 0) && !hit;
+        return `<i class="${hit ? "is-hit" : missed ? "is-missed" : ""}"></i>`;
+      }).join("");
+      const waiting = gameState.status !== "cue";
+      board = `<div class="sw-rhythm-board ${waiting ? "is-waiting" : "is-cue"}">
+        <div class="sw-rhythm-pulse" aria-hidden="true"><span></span></div>
+        <strong>${waiting ? "Écoutez la mesure…" : "Maintenant !"}</strong>
+        <div class="sw-rhythm-pips">${pips}</div>
+        <button type="button" class="sw-primary-button" data-sw-action="rhythm-hit" ${waiting ? "disabled" : ""}>Marquer le pas</button>
+      </div>`;
+    } else {
+      const sequence = gameState.sequence || [];
+      if (gameState.status === "preview") {
+        board = `<div class="sw-pattern-preview"><small>Mémorisez</small><div>${sequence.map(function map(symbol) { return `<b>${escapeHtml(symbol)}</b>`; }).join("")}</div></div>`;
+      } else {
+        const entered = gameState.input || [];
+        board = `<div class="sw-pattern-input"><small>${entered.length}/${sequence.length} signes</small><div class="sw-pattern-entered">${entered.map(function map(symbol) { return `<b>${escapeHtml(symbol)}</b>`; }).join("")}</div><div class="sw-pattern-choices">${(game.symbols || []).map(function map(symbol) { return `<button type="button" data-sw-game-symbol="${escapeHtml(symbol)}">${escapeHtml(symbol)}</button>`; }).join("")}</div></div>`;
+      }
+    }
+    document.getElementById("swContent").innerHTML = `
+      <div class="sw-card sw-event-card sw-minigame-card">
+        <div class="sw-dialogue-copy">
+          <button type="button" class="sw-back-button" data-sw-action="location">‹ Interrompre et revenir</button>
+          <span class="sw-eyebrow">Mini-jeu facultatif · ${escapeHtml(pending.activity.title)}</span>
+          <div class="sw-speaker">${escapeHtml(game.title || "Épreuve")}</div>
+          <p class="sw-dialogue-text">${escapeHtml(game.instruction || "")}</p>
+          <p class="sw-prompt">Une réussite nuance la scène et offre un petit bonus. Un échec ne bloque jamais la suite.</p>
+        </div>
+        <div class="sw-dialogue-actions sw-minigame-actions">${board}<button type="button" class="sw-back-button" data-sw-action="skip-minigame">Passer sans pénalité</button></div>
       </div>`;
   }
 
@@ -712,6 +823,7 @@
           <span class="sw-eyebrow">Conséquence enregistrée · ${escapeHtml(result.choiceLabel)}</span>
           <div class="sw-speaker">Narrateur</div>
           <p class="sw-dialogue-text">${escapeHtml(result.response).replace(/\n/g, "<br>")}</p>
+          ${result.miniGameLabel ? `<p class="sw-minigame-result">${escapeHtml(result.miniGameLabel)}</p>` : ""}
           <div class="sw-gain-list">${result.labels.map(function map(label) { return `<span>${escapeHtml(label)}</span>`; }).join("")}</div>
         </div>
         <div class="sw-dialogue-actions sw-result-actions">
@@ -758,7 +870,8 @@
     const world = ensureWorldState();
     const entries = world.history.slice(-12).reverse().map(function map(entry) {
       const sourcePeriod = periodById(entry.period);
-      return `<article class="sw-journal-entry"><small>${escapeHtml((sourcePeriod && sourcePeriod.chapterGate) || "Temps libre")}</small><strong>${escapeHtml(entry.activityTitle || entry.activity || "Scène facultative")}</strong><p>${escapeHtml(entry.choiceLabel || entry.choice || "Décision enregistrée")}</p></article>`;
+      const kind = entry.kind === "confession" ? "Conversation personnelle" : entry.kind === "debrief" ? "Retour sur le chapitre" : entry.kind === "minigame" ? "Mini-jeu" : "Moment libre";
+      return `<article class="sw-journal-entry"><small>${escapeHtml((sourcePeriod && sourcePeriod.chapterGate) || "Temps libre")} · ${escapeHtml(kind)}</small><strong>${escapeHtml(entry.activityTitle || entry.activity || "Scène facultative")}</strong><p>${escapeHtml(entry.summary || entry.choiceLabel || entry.choice || "Décision enregistrée")}</p></article>`;
     }).join("");
     document.getElementById("swDrawerPanel").innerHTML = `
       <div class="sw-drawer-intro"><span>Journal du monde</span><p>Les décisions prises entre les chapitres restent inscrites dans cette partie.</p></div>
@@ -797,6 +910,7 @@
     renderStatus(period, run);
     renderDrawer(period, run);
     if (run.view === "activity") renderActivity(period, run);
+    else if (run.view === "minigame") renderMiniGame(period, run);
     else if (run.view === "result") renderResult(period, run);
     else renderLocation(period, run);
   }
@@ -830,22 +944,99 @@
   }
 
   function hidePeriod() {
+    if (miniGameTimer) {
+      clearTimeout(miniGameTimer);
+      miniGameTimer = null;
+    }
     if (!root) return;
     root.hidden = true;
     document.body.classList.remove("sw-open");
     activePeriod = null;
   }
 
-  function resolveChoice(choiceId) {
+  function clearMiniGameTimer() {
+    if (!miniGameTimer) return;
+    clearTimeout(miniGameTimer);
+    miniGameTimer = null;
+  }
+
+  function activitySequence(activity, session, phase) {
+    if (phase === "opening") return activity.opening || [{ speaker: activity.speaker, text: activity.intro }];
+    const choice = (activity.choices || []).find(function find(candidate) { return candidate.id === session.choiceId; });
+    return (choice && choice.outcome) || [{ speaker: "Narrateur", text: (choice && choice.response) || activity.summary }];
+  }
+
+  function advanceActivity() {
+    const period = activePeriod;
+    const run = getRun(period, true);
+    const pending = getPending(period, run);
+    const session = run.pendingActivity;
+    if (!pending.activity || !session) return;
+    const phase = session.phase || "opening";
+    const sequence = activitySequence(pending.activity, session, phase);
+    if (session.step < sequence.length - 1) {
+      session.step += 1;
+      safeSave();
+      renderWorld();
+      return;
+    }
+    if (phase === "opening") {
+      session.step = 0;
+      if (pending.activity.miniGame && !session.miniGameResult) run.view = "minigame";
+      else session.phase = "choices";
+      safeSave();
+      renderWorld();
+      return;
+    }
+    finaliseChoice();
+  }
+
+  function selectChoice(choiceId) {
     const period = activePeriod;
     const run = getRun(period, true);
     const pending = getPending(period, run);
     if (!pending.spot || !pending.activity || run.slot >= period.maxActions) return;
+    if (!run.pendingActivity || run.pendingActivity.phase !== "choices") return;
     const status = activityState(period, run, pending.spot, pending.activity);
     if (!status.available) return;
     const choice = (pending.activity.choices || []).find(function find(candidate) { return candidate.id === choiceId; });
     if (!choice) return;
-    const effects = mergeEffects(pending.activity.commonEffects, choice.effects);
+    const previewEffects = mergeEffects(pending.activity.commonEffects, choice.effects);
+    if (!canAfford(previewEffects)) return;
+    run.pendingActivity.choiceId = choice.id;
+    run.pendingActivity.phase = "outcome";
+    run.pendingActivity.step = 0;
+    run.view = "activity";
+    safeSave();
+    renderWorld();
+  }
+
+  function miniGameLabel(result) {
+    if (!result) return "";
+    if (result.skipped) return "Mini-jeu passé sans pénalité.";
+    const ratio = (Number(result.score) || 0) / Math.max(1, Number(result.max) || 1);
+    if (ratio >= 0.85) return `Mini-jeu · Accord remarquable (${result.score}/${result.max})`;
+    if (ratio >= 0.6) return `Mini-jeu · Réussite (${result.score}/${result.max})`;
+    return `Mini-jeu · Essai imparfait, scène poursuivie (${result.score}/${result.max})`;
+  }
+
+  function miniGameBonus(activity, result) {
+    if (!activity || !activity.miniGame || !result || result.skipped) return {};
+    const ratio = (Number(result.score) || 0) / Math.max(1, Number(result.max) || 1);
+    return ratio >= 0.6 ? (activity.miniGame.reward || {}) : {};
+  }
+
+  function finaliseChoice() {
+    const period = activePeriod;
+    const run = getRun(period, true);
+    const pending = getPending(period, run);
+    const session = run.pendingActivity || {};
+    if (!pending.spot || !pending.activity || run.slot >= period.maxActions) return;
+    const status = activityState(period, run, pending.spot, pending.activity);
+    if (!status.available) return;
+    const choice = (pending.activity.choices || []).find(function find(candidate) { return candidate.id === session.choiceId; });
+    if (!choice) return;
+    const effects = mergeEffects(mergeEffects(pending.activity.commonEffects, choice.effects), miniGameBonus(pending.activity, session.miniGameResult));
     if (!canAfford(effects)) return;
     applyEffects(effects);
     const key = activityKey(pending.spot, pending.activity);
@@ -856,8 +1047,10 @@
       activityTitle: pending.activity.title,
       choiceId: choice.id,
       choiceLabel: choice.label,
+      kind: pending.activity.kind,
       slot: run.slot,
       effects: clone(effects),
+      miniGame: clone(session.miniGameResult),
     });
     run.slot = Math.min(period.maxActions, run.slot + 1);
     run.lastResult = {
@@ -865,8 +1058,9 @@
       activityId: pending.activity.id,
       choiceId: choice.id,
       choiceLabel: choice.label,
-      response: choice.response,
+      response: pending.activity.summary || choice.response,
       labels: effectLabels(effects),
+      miniGameLabel: miniGameLabel(session.miniGameResult),
     };
     run.pendingActivity = null;
     run.view = "result";
@@ -877,12 +1071,120 @@
       activityTitle: pending.activity.title,
       choice: choice.id,
       choiceLabel: choice.label,
+      kind: pending.activity.kind,
+      summary: pending.activity.summary,
+      miniGame: clone(session.miniGameResult),
       slot: run.slot,
       scene: state.scene,
     });
     installChapterConsequences();
     safeSave();
     renderWorld();
+  }
+
+  function deterministicPattern(activity, symbols) {
+    const values = (symbols || []).slice();
+    if (!values.length) return ["◇", "○", "△", "□"];
+    const source = `${activePeriod && activePeriod.id}:${activity && activity.id}`;
+    let hash = 0;
+    source.split("").forEach(function each(character) { hash = ((hash << 5) - hash + character.charCodeAt(0)) | 0; });
+    const offset = Math.abs(hash) % values.length;
+    const rotated = values.slice(offset).concat(values.slice(0, offset));
+    if (rotated.length >= 4) return [rotated[0], rotated[2], rotated[1], rotated[3]];
+    return rotated;
+  }
+
+  function completeMiniGame(result) {
+    clearMiniGameTimer();
+    const run = getRun(activePeriod, true);
+    if (!run || !run.pendingActivity) return;
+    run.pendingActivity.miniGameResult = result;
+    run.pendingActivity.miniGameState = null;
+    run.pendingActivity.phase = "choices";
+    run.pendingActivity.step = 0;
+    run.view = "activity";
+    safeSave();
+    renderWorld();
+  }
+
+  function scheduleRhythmCue() {
+    clearMiniGameTimer();
+    const period = activePeriod;
+    const run = getRun(period, true);
+    if (!run) return;
+    const pending = getPending(period, run);
+    const session = run.pendingActivity;
+    const gameState = session && session.miniGameState;
+    if (!pending.activity || !gameState) return;
+    const total = Math.max(1, Number(pending.activity.miniGame.beats) || 8);
+    if (gameState.round >= total) {
+      completeMiniGame({ type: "rhythm", score: gameState.score, max: total * 2, results: gameState.results });
+      return;
+    }
+    gameState.status = "waiting";
+    renderWorld();
+    const delay = 620 + ((gameState.round % 3) * 130);
+    miniGameTimer = setTimeout(function showCue() {
+      const currentRun = activePeriod === period ? getRun(period, true) : null;
+      const current = currentRun && currentRun.pendingActivity && currentRun.pendingActivity.miniGameState;
+      if (!current || current !== gameState) return;
+      gameState.status = "cue";
+      gameState.cueAt = Date.now();
+      renderWorld();
+      miniGameTimer = setTimeout(function missCue() { resolveRhythmBeat(false); }, 680);
+    }, delay);
+  }
+
+  function resolveRhythmBeat(hit) {
+    clearMiniGameTimer();
+    const run = getRun(activePeriod, true);
+    if (!run) return;
+    const pending = getPending(activePeriod, run);
+    const gameState = run.pendingActivity && run.pendingActivity.miniGameState;
+    if (!pending.activity || !gameState || gameState.status !== "cue") return;
+    const elapsed = Math.max(0, Date.now() - (Number(gameState.cueAt) || Date.now()));
+    gameState.results.push(Boolean(hit));
+    if (hit) gameState.score += elapsed <= 300 ? 2 : 1;
+    gameState.round += 1;
+    scheduleRhythmCue();
+  }
+
+  function startMiniGame() {
+    const run = getRun(activePeriod, true);
+    if (!run) return;
+    const pending = getPending(activePeriod, run);
+    if (!pending.activity || !pending.activity.miniGame || !run.pendingActivity) return;
+    const game = pending.activity.miniGame;
+    if (game.type === "rhythm") {
+      run.pendingActivity.miniGameState = { type: "rhythm", status: "waiting", round: 0, score: 0, results: [] };
+      scheduleRhythmCue();
+      return;
+    }
+    const sequence = deterministicPattern(pending.activity, game.symbols);
+    const gameState = { type: "pattern", status: "preview", sequence, input: [], score: 0 };
+    run.pendingActivity.miniGameState = gameState;
+    renderWorld();
+    clearMiniGameTimer();
+    miniGameTimer = setTimeout(function hidePattern() {
+      const currentRun = getRun(activePeriod, true);
+      const current = currentRun && currentRun.pendingActivity && currentRun.pendingActivity.miniGameState;
+      if (!current || current !== gameState) return;
+      current.status = "input";
+      renderWorld();
+    }, 2200);
+  }
+
+  function enterPatternSymbol(symbol) {
+    const run = getRun(activePeriod, true);
+    if (!run) return;
+    const gameState = run.pendingActivity && run.pendingActivity.miniGameState;
+    if (!gameState || gameState.type !== "pattern" || gameState.status !== "input") return;
+    const index = gameState.input.length;
+    gameState.input.push(symbol);
+    if (gameState.sequence[index] === symbol) gameState.score += 1;
+    if (gameState.input.length >= gameState.sequence.length) {
+      completeMiniGame({ type: "pattern", score: gameState.score, max: gameState.sequence.length, input: gameState.input });
+    } else renderWorld();
   }
 
   function completePeriod() {
@@ -910,7 +1212,7 @@
   function returnToTitle() {
     const period = activePeriod;
     const run = period && getRun(period, true);
-    if (run && run.view === "activity") { run.view = "location"; run.pendingActivity = null; }
+    if (run && ["activity", "minigame"].includes(run.view)) { run.view = "location"; run.pendingActivity = null; }
     safeSave();
     hidePeriod();
     if (typeof setScreen === "function") setScreen("title");
@@ -928,6 +1230,7 @@
       run.view = "location";
       run.drawerOpen = false;
       run.pendingActivity = null;
+      clearMiniGameTimer();
       renderWorld();
       return;
     }
@@ -944,16 +1247,19 @@
       const spot = spotById(activePeriod, run.selectedSpot);
       const activity = activityById(spot, activityId);
       if (!activity || !activityState(activePeriod, run, spot, activity).available) return;
-      run.pendingActivity = { spotId: spot.id, activityId: activity.id };
+      run.pendingActivity = { spotId: spot.id, activityId: activity.id, phase: "opening", step: 0, choiceId: null, miniGameResult: null, miniGameState: null };
       run.view = "activity";
       run.drawerOpen = false;
       renderWorld();
       return;
     }
     const choiceId = button.dataset.swChoice;
-    if (choiceId) { resolveChoice(choiceId); return; }
+    if (choiceId) { selectChoice(choiceId); return; }
+    const gameSymbol = button.dataset.swGameSymbol;
+    if (gameSymbol) { enterPatternSymbol(gameSymbol); return; }
     const action = button.dataset.swAction;
     if (action === "location") {
+      clearMiniGameTimer();
       run.pendingActivity = null;
       run.view = "location";
       renderWorld();
@@ -964,6 +1270,14 @@
       run.lastResult = null;
       run.view = "location";
       renderWorld();
+    } else if (action === "advance-scene") {
+      advanceActivity();
+    } else if (action === "start-minigame") {
+      startMiniGame();
+    } else if (action === "rhythm-hit") {
+      resolveRhythmBeat(true);
+    } else if (action === "skip-minigame") {
+      completeMiniGame({ type: "skipped", score: 0, max: 1, skipped: true });
     } else if (action === "finish") completePeriod();
     else if (action === "title") returnToTitle();
   }
@@ -975,8 +1289,9 @@
       event.preventDefault();
       run.drawerOpen = false;
       renderWorld();
-    } else if (["activity", "result"].includes(run.view)) {
+    } else if (["activity", "minigame", "result"].includes(run.view)) {
       event.preventDefault();
+      clearMiniGameTimer();
       run.view = "location";
       run.pendingActivity = null;
       renderWorld();
