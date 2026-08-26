@@ -74,7 +74,7 @@
     id: "plus-repas-refroidi",
     title: "Un repas oublié sur les cartes",
     speaker: "Remerii",
-    intro: "Le plateau livré depuis une heure refroidit près des cartes de Mir’Aldas. Remerii prétend qu’elle mangera après avoir vérifié un dernier itinéraire — exactement comme lors des trois vérifications précédentes.",
+    intro: "Le plateau livré depuis une heure refroidit près des cartes de Mir’Aldas. Remerii promet de manger après un dernier itinéraire. Elle en a déjà vérifié trois.",
     resolution: "Les cartes restent incomplètes, mais le repas est partagé. Hylee comprend que prendre soin de Remerii exige parfois de lui opposer une limite très ordinaire.",
     relation: "remerii",
     approaches: ["audace", "sangfroid", "lucidite"],
@@ -85,7 +85,7 @@
     id: "plus-main-fatiguee",
     title: "La main qui tremble près du feu",
     speaker: "Hylee",
-    intro: "En ravivant les braises, Remerii laisse sa main trembler une seule fois. Elle la retire aussitôt, comme si la fatigue pouvait être annulée avant d’avoir été vue.",
+    intro: "En ravivant les braises, Remerii laisse sa main trembler une seule fois. Elle la retire aussitôt et tente de poursuivre avant qu’Hylee ne remarque sa fatigue.",
     resolution: "Remerii n’avoue pas avoir veillé. Elle accepte pourtant qu’Hylee prenne le prochain tour, ce qui revient presque au même entre elles.",
     relation: "remerii",
     approaches: ["lucidite", "sangfroid", "audace"],
@@ -94,8 +94,8 @@
     id: "plus-traces-autour-camp",
     title: "Des traces qui tournent sans approcher",
     speaker: "Narrateur",
-    intro: "De petites empreintes font deux fois le tour du camp avant de repartir vers Mir’Aldas. Ni animal affamé ni éclaireur, leur régularité ressemble à une curiosité prudente.",
-    resolution: "Hylee ne découvre pas qui observait le camp, mais elle apprend à reconnaître la frontière entre une menace et une présence qui hésite encore.",
+    intro: "De petites empreintes font deux fois le tour du camp avant de repartir vers Mir’Aldas. Leur propriétaire a observé longuement sans tenter d’approcher.",
+    resolution: "L’identité de l’observateur reste inconnue. Hylee distingue toutefois une menace d’une présence encore hésitante.",
     approaches: ["lucidite", "resonance", "sangfroid"],
   });
   add("camp-avant-croisee", "bagages", {
@@ -129,7 +129,7 @@
     title: "Une patrouille sur la mauvaise route",
     speaker: "Valurn",
     intro: "Des lanternes impériales avancent hors de l’itinéraire habituel. Être reconnu expliquerait sa présence ; rester invisible permettrait de découvrir ce qu’elles cherchent ici.",
-    resolution: "Valurn choisit ce que l’Empire saura de son retour — et ce que lui-même apprendra de cette patrouille déplacée.",
+    resolution: "Valurn choisit ce que l’Empire saura de son retour. La patrouille lui révèle en échange une information imprévue.",
   });
 
   /* Route Draven · Forthaven */
@@ -153,7 +153,7 @@
     id: "plus-marque-effacee",
     title: "La marque effacée de la carte",
     speaker: "Draven",
-    intro: "Une position abandonnée a disparu de la carte officielle, comme si les soldats perdus avec elle n’avaient jamais existé. Le greffier invoque un simple besoin de lisibilité.",
+    intro: "Une position abandonnée a disparu de la carte officielle. Les soldats perdus avec elle aussi. Le greffier invoque un simple besoin de lisibilité.",
     resolution: "La marque retrouve sa place, plus petite mais intacte. Une carte de guerre doit guider les vivants sans effacer le prix déjà payé.",
     relation: "lineva",
   });
@@ -280,7 +280,7 @@
     title: "Trop de murs pour Naïah",
     speaker: "Naïah",
     intro: "Naïah ouvre successivement la fenêtre, la porte puis de nouveau la fenêtre. Le palais est trop silencieux au loin et beaucoup trop bruyant de près.",
-    resolution: "Hylee l’aide à trouver un endroit où les sons ont un sens. Naïah ne remercie pas directement, mais cesse enfin de chercher une sortie.",
+    resolution: "Hylee l’aide à trouver un endroit où chaque son possède une origine claire. Naïah cesse enfin de chercher une sortie.",
     relation: "naiah",
     approaches: ["resonance", "sangfroid", "audace"],
   });
@@ -289,7 +289,7 @@
     title: "Le message sans destinataire",
     speaker: "Saidin",
     intro: "Saidin trouve sous une tuile un billet codé qui ne lui est pas destiné. Il pourrait le remettre aux gardes, le lire ou le replacer exactement où il était.",
-    resolution: "Le billet continue — ou non — son voyage. Hylee découvre au passage que Saidin traite parfois la curiosité comme une responsabilité plutôt que comme un droit.",
+    resolution: "Le billet poursuit son voyage ou reste entre leurs mains. Saidin rappelle à Hylee que lire un secret oblige ensuite à répondre de ce qu’on sait.",
     relation: "saidin",
     approaches: ["lucidite", "sangfroid", "audace"],
   });
@@ -299,7 +299,7 @@
     id: "plus-froid-partage",
     title: "Le froid que Remerii ne peut pas chasser",
     speaker: "Remerii",
-    intro: "La pierre aspire la chaleur et lancer un sort attirerait immédiatement les gardes. Remerii rapproche sa cape d’Hylee comme si ce geste n’avait rien d’une inquiétude.",
+    intro: "La pierre aspire la chaleur et lancer un sort attirerait immédiatement les gardes. Remerii rapproche sa cape d’Hylee tout en prétendant ajuster le tissu.",
     resolution: "Elles trouvent une chaleur dérisoire mais suffisante. Dans la cellule, cette proximité devient une forme de résistance que les geôliers ne peuvent pas confisquer.",
     relation: "remerii",
     approaches: ["sangfroid", "resonance", "lucidite"],
@@ -328,7 +328,7 @@
     id: "plus-flamme-eteinte",
     title: "Une flamme verte qui refuse de reprendre",
     speaker: "Iriana",
-    intro: "L’un des feux rituels de la terrasse s’éteint au passage d’Iriana. Un serviteur obscurci détourne les yeux, comme si le phénomène avait une signification qu’il ne pouvait pas commenter.",
+    intro: "L’un des feux rituels de la terrasse s’éteint au passage d’Iriana. Un serviteur obscurci détourne les yeux et refuse d’abord d’en expliquer la signification.",
     resolution: "Iriana obtient une explication partielle. À Akuhn’Nabad, même la lumière semble savoir à quelle lignée elle s’adresse.",
     relation: "amanea",
   });
@@ -345,7 +345,7 @@
     title: "La page qui n’est vide que pour elle",
     speaker: "Iriana",
     intro: "Un registre paraît blanc sous les yeux d’Iriana, alors que le scribe obscurci affirme y lire plusieurs noms. L’enchantement distingue manifestement ses lecteurs.",
-    resolution: "Iriana ne brise pas la protection, mais en comprend la règle. Le registre lui refuse ses mots tout en lui révélant ce qu’il cherche à protéger.",
+    resolution: "Iriana préserve la protection et en comprend la règle. Le registre lui refuse ses mots tout en lui révélant ce qu’il protège.",
     relation: "amanea",
   });
   add("akuhn-iriana-apres-audience", "appartements", {
@@ -381,7 +381,7 @@
     title: "Le groupe derrière les cloisons",
     speaker: "Narrateur",
     intro: "À travers les murs, Hylee reconnaît une dispute étouffée, un rire de Valurn et les pas lourds de Draven. Personne n’est vraiment seul, même portes fermées.",
-    resolution: "Elle choisit une porte à laquelle frapper — ou le silence de sa propre chambre. Ce choix discret détermine avec qui la nuit se termine réellement.",
+    resolution: "Elle choisit une porte à laquelle frapper ou le calme de sa propre chambre. Ce geste détermine avec qui la nuit se termine réellement.",
     approaches: ["lucidite", "audace", "sangfroid"],
   });
 
@@ -391,7 +391,7 @@
     title: "La seule note qui sonne faux",
     speaker: "Iriana",
     intro: "Toutes les touches répondent avec justesse sauf une, trop grave d’un demi-ton. Le défaut paraît volontaire et correspond à une mesure qu’Amanea jouait autrefois.",
-    resolution: "La fausse note devient un repère. Iriana comprend que le piano ne conserve pas seulement une musique, mais peut-être une manière de retrouver ce qui a été caché.",
+    resolution: "La fausse note devient un repère. Le piano conserve une musique et peut-être un moyen de retrouver ce qui a été caché.",
     relation: "amanea",
   });
   add("akuhn-iriana-coffret", "bureau", {
@@ -446,7 +446,7 @@
     title: "Une empreinte dans la poussière du coffret",
     speaker: "Iriana",
     intro: "Sous le coffret, la poussière dessine l’empreinte d’un objet plus large qui occupait autrefois cette place. Quelqu’un a retiré une partie du souvenir avant son arrivée.",
-    resolution: "L’absence acquiert une forme précise. Iriana ne sait pas encore ce qui manque, mais elle sait désormais quelle question poser sans révéler ce qu’elle a vu.",
+    resolution: "L’absence acquiert une forme précise. Iriana ignore encore ce qui manque. Elle sait désormais quelle question poser sans révéler ce qu’elle a vu.",
     relation: "amanea",
   });
   add("akuhn-apres-souvenir", "fenetre", {
@@ -508,7 +508,7 @@
     id: "plus-phrase-a-amanea",
     title: "La phrase qu’Iriana pourrait encore laisser",
     speaker: "Narrateur",
-    intro: "Avant de rejoindre le portail, Iriana dispose d’un messager fiable et de quelques lignes. Elle peut écrire à Amanea — à condition d’accepter que l’absence de message soit elle aussi une réponse.",
+    intro: "Avant de rejoindre le portail, Iriana dispose d’un messager fiable et de quelques lignes. Écrire à Amanea exige d’accepter que garder la feuille puisse aussi porter un sens.",
     resolution: "Les mots sont envoyés, modifiés ou gardés. Dans chaque cas, Iriana choisit ce qu’Amanea emportera de leur rencontre après son départ.",
     relation: "amanea",
   });
