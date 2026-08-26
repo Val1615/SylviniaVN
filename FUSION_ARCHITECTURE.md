@@ -84,6 +84,8 @@ Le temps libre est présenté comme une scène du Visual Novel et non plus comme
 - les lieux, relations, ressources et le journal sont réunis dans un tiroir latéral replié par défaut ;
 - la barre inférieure permet d’ouvrir directement une section, revenir au menu ou reprendre le récit.
 
+Les 145 scènes possèdent désormais une écriture intégralement dédiée. Chaque amorce, chaque branche de choix et chaque conclusion est rédigée pour son personnage et son moment du Tome I. Aucun générateur de répliques génériques ne complète silencieusement une scène inachevée : une entrée ou une branche absente provoque une erreur de validation.
+
 Choisir un lieu replie automatiquement le tiroir. Sur téléphone, le cadre narratif et la liste de choix possèdent chacun leur propre défilement afin de préserver au moins la moitié supérieure de l’illustration.
 
 Le joueur peut quitter vers le menu à tout moment. La période reprend au même endroit au chargement de la sauvegarde. Une activité terminée ne peut pas être répétée pour exploiter ses récompenses.
@@ -131,7 +133,8 @@ index.html
 fusion/
   game-modes.js           navigation entre les deux modes
   story-moments.js        62 situations supplémentaires propres à chaque lieu
-  story-dialogues.js      séquences VN, voix, confidences, débriefings et mini-jeux
+  story-authored-scenes.js 145 scripts VN et toutes leurs branches écrites à la main
+  story-dialogues.js      confidences, débriefings, mini-jeux et liaison des scripts
   story-periods.js        contenu des 19 périodes libres
   story-world.js          moteur générique et sauvegarde
   story-world.css         interface du Mode Histoire
@@ -154,6 +157,8 @@ Une période libre doit toujours respecter :
 - une sortie directe vers le chapitre suivant ;
 - une reprise sûre après sauvegarde.
 
+Chaque scène doit également conserver une voix propre au personnage, faire avancer la relation par des gestes et des réactions concrètes, et proposer des conséquences distinctes pour chaque choix. Les formulations automatiques, les validations mécaniques du choix du joueur et les tournures répétées sont refusées par la validation éditoriale.
+
 Elle ne doit pas téléporter un personnage, ouvrir artificiellement tout le continent, imposer un job incohérent ou laisser le monde attendre une catastrophe pendant une durée indéfinie.
 
 ## Validation
@@ -163,6 +168,8 @@ Les tests automatisés vérifient notamment :
 - l’enregistrement des 19 périodes et de leurs portes de chapitre ;
 - la présence d’au moins deux situations dans chacun des 62 lieux ;
 - les quatre écrans d’amorce et cinq écrans de conséquence minimum de chaque scène ;
+- la couverture exacte des 145 scènes par 145 scripts dédiés et l’existence de chaque branche ;
+- l’absence du générateur historique, des tirets cadratins et de la tournure automatique « ce n’est pas » dans les scripts joués ;
 - les seuils relationnels des 21 confidences et l’absence de désir hors récit romantique ;
 - les 12 retours explicites sur les événements des chapitres et les 4 mini-jeux non bloquants ;
 - l’ouverture repliée et la navigation du tiroir de gestion ;

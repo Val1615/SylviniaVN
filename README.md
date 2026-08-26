@@ -9,6 +9,8 @@ La branche de fusion ajoute désormais deux expériences depuis le même menu :
 
 Les périodes libres reprennent automatiquement les décors et sprites du VN. Leur interface conserve désormais la scène en plein écran : le HUD narratif reste en bas comme pendant les chapitres, tandis que les lieux, relations et le journal sont rangés dans un tiroir replié par défaut. Les sprites propres au Dating Sim restent réservés à la Chronique Alternative.
 
+Les 145 temps libres utilisent chacun un script VN dédié, y compris leurs différentes réponses. Les dialogues ne reposent plus sur une banque de réactions commune : l’humour, les silences, les tensions et l’évolution du lien suivent la voix et la situation propres à chaque personnage.
+
 Pour jouer localement, ouvrir `index.html`. Sur GitHub Pages, le cinquième bouton coulissant **Chronique Alternative** ouvre le Mode libre sans installation supplémentaire.
 
 Les détails de l’intégration sont décrits dans [FUSION_ARCHITECTURE.md](FUSION_ARCHITECTURE.md).
