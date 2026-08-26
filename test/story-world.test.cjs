@@ -151,7 +151,10 @@ window.startChapter3 = context.startChapter3;
 
 const momentsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-moments.js"), "utf8");
 new vm.Script(momentsSource, { filename: "story-moments.js" }).runInContext(context);
+const authoredSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-authored-scenes.js"), "utf8");
+new vm.Script(authoredSource, { filename: "story-authored-scenes.js" }).runInContext(context);
 const dialoguesSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-dialogues.js"), "utf8");
+assert.doesNotMatch(dialoguesSource, /generatedOpening|generatedOutcome|POV_LINES|VOICES/, "aucun générateur de répliques ne doit subsister");
 new vm.Script(dialoguesSource, { filename: "story-dialogues.js" }).runInContext(context);
 const periodsSource = fs.readFileSync(path.join(__dirname, "..", "fusion", "story-periods.js"), "utf8");
 assert.doesNotMatch(periodsSource, /[✦✧]/, "les étoiles décoratives doivent être retirées du temps libre");
@@ -160,8 +163,11 @@ const content = window.SylviniaStoryContent;
 
 assert.equal(content.periods.length, 19);
 assert.equal(Object.keys(window.SylviniaStoryMoments).length, 62);
+assert.equal(Object.keys(window.SylviniaAuthoredStoryScenes.scenes).length, 145);
 const allActivities = content.periods.flatMap((period) => period.spots.flatMap((spot) => spot.activities));
 assert.equal(allActivities.length, 145);
+const runtimeSceneIds = Array.from(content.periods.flatMap((period) => period.spots.flatMap((spot) => spot.activities.map((activity) => `${period.id}:${spot.id}:${activity.id}`)))).sort();
+assert.deepEqual(Object.keys(window.SylviniaAuthoredStoryScenes.scenes).sort(), runtimeSceneIds, "chaque activité doit posséder exactement un script dédié");
 assert.equal(allActivities.filter((activity) => activity.kind === "confession").length, 21);
 assert.equal(allActivities.filter((activity) => activity.kind === "debrief").length, 12);
 assert.equal(allActivities.filter((activity) => activity.miniGame).length, 4);
@@ -169,6 +175,18 @@ allActivities.forEach((activity) => {
   assert.ok(activity.opening.length >= 4, `amorce VN trop courte: ${activity.id}`);
   activity.choices.forEach((choice) => assert.ok(choice.outcome.length >= 5, `conséquence VN trop courte: ${activity.id}/${choice.id}`));
 });
+const authoredText = Object.values(window.SylviniaAuthoredStoryScenes.scenes).flatMap((scene) => [
+  ...scene.opening,
+  ...scene.ending,
+  ...Object.values(scene.branches).flat(),
+]).map((entry) => entry.text).join("\n");
+assert.doesNotMatch(authoredText, /—/, "les dialogues ne doivent pas dépendre du tiret cadratin");
+assert.doesNotMatch(authoredText, /\bce n['’]est pas\b/i, "la construction automatique « ce n'est pas » doit être retirée");
+const indexSource = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const authoredScriptIndex = indexSource.indexOf('src="fusion/story-authored-scenes.js"');
+const dialoguesScriptIndex = indexSource.indexOf('src="fusion/story-dialogues.js"');
+const periodsScriptIndex = indexSource.indexOf('src="fusion/story-periods.js"');
+assert.ok(authoredScriptIndex >= 0 && authoredScriptIndex < dialoguesScriptIndex && dialoguesScriptIndex < periodsScriptIndex, "les scripts écrits doivent être chargés avant leur registre et les périodes");
 allActivities.filter((activity) => activity.kind === "confession").forEach((activity) => {
   assert.ok(activity.requiresRelation && activity.requiresRelation.min > 0, `confidence sans seuil: ${activity.id}`);
   activity.choices.forEach((choice) => {
@@ -382,22 +400,26 @@ let traversed = 0;
 content.periods.forEach((period) => {
   period.spots.forEach((spot) => {
     spot.activities.forEach((activity) => {
-      delete state.storyWorld.periodRuns[period.id];
-      state.scene = period.anchorScene;
-      window.SylviniaStoryWorld.open(period.id);
-      const run = state.storyWorld.periodRuns[period.id];
-      run.slot = Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0);
-      run.selectedSpot = spot.id;
-      run.view = "location";
-      window.SylviniaStoryWorld.render();
-      playActivity(activity.id, activity.choices[0].id);
-      assert.equal(run.slot, Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0) + 1, `créneau non consommé: ${period.id}/${spot.id}/${activity.id}`);
-      traversed += 1;
-      window.SylviniaStoryWorld.close();
+      activity.choices.forEach((choice) => {
+        delete state.storyWorld.periodRuns[period.id];
+        state.storyWorld.resources.coins = 1000;
+        state.storyWorld.resources.supplies = 1000;
+        state.scene = period.anchorScene;
+        window.SylviniaStoryWorld.open(period.id);
+        const run = state.storyWorld.periodRuns[period.id];
+        run.slot = Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0);
+        run.selectedSpot = spot.id;
+        run.view = "location";
+        window.SylviniaStoryWorld.render();
+        playActivity(activity.id, choice.id);
+        assert.equal(run.slot, Math.max(Number(spot.availableFrom) || 0, Number(activity.availableFrom) || 0) + 1, `créneau non consommé: ${period.id}/${spot.id}/${activity.id}/${choice.id}`);
+        traversed += 1;
+        window.SylviniaStoryWorld.close();
+      });
     });
   });
 });
-assert.equal(traversed, 145);
+assert.equal(traversed, 438);
 state.devMode = false;
 
 const preservedWorld = clonePlain(state.storyWorld);
