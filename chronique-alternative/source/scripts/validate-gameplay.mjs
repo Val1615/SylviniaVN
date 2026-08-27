@@ -114,7 +114,7 @@ try {
   assert.match(pageSource, /ROUTE_CONTEXTUAL_CHOICES\[dialogue\.scene\.route\.id\]/, "les choix supplémentaires doivent provenir du catalogue propre à chaque scène");
   assert.match(pageSource, /routeChoiceCompletes\(choice\.id\) \? dialogue\.scene\.route/, "la validation de route doit filtrer les choix injectés");
   assert.match(pageSource, /publicDateUnlocked\(game, date\)/, "le démarrage d'un rendez-vous doit revérifier la branche");
-  assert.match(pageSource, /visitedLocations:\s*\["algratal"\]/, "une nouvelle partie ne doit marquer que son lieu réellement visité");
+  assert.match(pageSource, /visitedLocations:\s*\["echo-clearing"\]/, "une nouvelle partie ne doit marquer que son lieu réellement visité");
   const advanceSection = pageSource.slice(pageSource.indexOf("function advancePeriod"), pageSource.indexOf("function applyEffects"));
   assert.doesNotMatch(advanceSection, /LOCATIONS\.filter|codex:/, "le passage d'un jour ne doit pas découvrir automatiquement la carte");
 
@@ -135,11 +135,7 @@ try {
   assert.doesNotMatch(musicSource.slice(musicSource.indexOf("export function musicForContext")), /:\s*"title"\s*;/, "le fallback musical libre ne doit pas viser le titre");
 
   const socialFlags = ["social:medig-window", "social:amanea-family-truth"];
-  const storyHistory = [
-    "iriana-0", "draven-0", "amanea-0",
-    "campaign-archives-channel", "campaign-forged-proof",
-    "campaign-convergence-council", "campaign-convergence-operation", "campaign-epilogue",
-  ];
+  const storyHistory = [...campaignData.ACT_ONE_SCENE_ORDER];
   assert.equal(storyData.storyProgress(storyHistory, socialFlags), storyData.MAIN_STORY.length, "la campagne doit pouvoir atteindre sa conclusion sans mode développeur");
   const campaignIds = new Set(campaignData.CAMPAIGN_SCENES.map((scene) => scene.id));
   for (const requirement of storyData.MAIN_STORY.flatMap((act) => act.requiredScenes)) {
