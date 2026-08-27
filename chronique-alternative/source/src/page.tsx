@@ -5,6 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
   CHARACTERS,
   GIFTS,
+  INTRO_CHOICES,
   INTRO_SCENE,
   LOCATIONS,
   PERIODS,
@@ -49,7 +50,7 @@ import {
 } from "./group-dates";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
-import { CAMPAIGN_SCENES, campaignSceneById, type CampaignScene } from "./campaign-scenes";
+import { ACT_ONE_SCENE_ORDER, CAMPAIGN_SCENES, campaignSceneById, campaignSceneDialogue, campaignSceneOutro, type CampaignScene } from "./campaign-scenes";
 import { ROUTE_CONTEXTUAL_CHOICES } from "./route-contextual-choices";
 import { sceneClosure } from "./scene-closures";
 import { MUSIC_LABELS, musicForContext } from "./music-data";
@@ -173,7 +174,7 @@ type ReceivedInvitation = {
 };
 
 type GameState = {
-  version: 13;
+  version: 14;
   player: Player;
   day: number;
   period: number;
@@ -416,22 +417,22 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 13,
+    version: 14,
     player,
     day: 1,
     period: 0,
-    location: "algratal",
-    spot: "algratal-palace-quarters",
+    location: "echo-clearing",
+    spot: "echo-clearing",
     stats: playerStats(player),
     relationships: emptyRelationships(),
     inventory: { tartelette: 1, the: 1 },
     coins: 32,
     confluence: 8,
     flags: [],
-    journal: ["Saidin vous a recueilli·e à la sortie d’un portail défectueux.", "Vous savez instinctivement que cette réalité n’est pas la vôtre, mais vos souvenirs demeurent introuvables.", "Iriana enquête seule sur des irrégularités impériales ; aucune expédition commune n’a été constituée.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
-    codex: ["La Confluence", "Al’Gratal"],
-    visitedLocations: ["algratal"],
-    visitedSpots: ["algratal-palace-quarters"],
+    journal: ["Un portail défectueux vous a abandonné·e dans une réalité qui n'est pas la vôtre.", "Saidin vous a trouvé·e sur la route, sans prétendre connaître votre origine.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
+    codex: ["La Confluence"],
+    visitedLocations: ["echo-clearing"],
+    visitedSpots: ["echo-clearing"],
     history: [],
     ambientHistory: emptyAmbientHistory(),
     sharedHistory: [],
@@ -453,11 +454,11 @@ function createGame(player: Player): GameState {
 
 function originLine(player: Player): DialogueLine {
   const lines: Record<string, string> = {
-    "Réflexe protecteur": "Lorsque le portail crépite encore, votre corps se place entre Saidin et la fracture avant même que vous sachiez qui il est. Ce réflexe vous appartient ; le souvenir qui l’a forgé, lui, demeure absent.",
-    "Familiarité du pouvoir": "Les appartements impériaux ne vous rappellent aucun lieu, pourtant vous reconnaissez instinctivement les distances, les silences et les portes réservées au pouvoir. Saidin refuse d’appeler cela une preuve d’origine.",
+    "Réflexe protecteur": "Lorsque le portail crépite encore, votre corps se place entre Saidin et la fracture avant même que vous sachiez qui il est. Ce réflexe vous appartient ; le souvenir qui l'a forgé demeure absent.",
+    "Familiarité du pouvoir": "Le phénix gravé sur le jeton vous semble lié à une autorité avant même que Saidin parle d'Al’Gratal. Il refuse d'appeler cette intuition une preuve d'origine.",
     "Affinité des ombres": "Les résidus sombres du portail glissent sur votre peau sans éveiller de souvenir ni de panique. Saidin note seulement que votre prudence ressemble à une habitude très ancienne.",
     "Curiosité mécanique": "Malgré l’amnésie, vos doigts cherchent aussitôt le défaut du mécanisme emprunté. Vous ne savez pas où vous avez appris ce geste ; Saidin ignore si la compétence vient de votre réalité d’origine ou du portail lui-même.",
-    "Mémoire de la pierre": "Le marbre d’Al’Gratal vous paraît à la fois neuf et familier. Aucune image ne revient, seulement la certitude physique que la pierre de votre monde ne vibrait pas exactement ainsi.",
+    "Mémoire de la pierre": "La roche humide du chemin vous paraît à la fois neuve et familière. Aucune image ne revient, seulement la certitude physique que la pierre de votre monde ne vibrait pas exactement ainsi.",
   };
   return { speaker: "Narration", text: lines[player.origin] || "Votre corps conserve des réflexes dont votre mémoire ne peut plus raconter l’origine." };
 }
@@ -487,9 +488,20 @@ function hydrateGame(raw: unknown): GameState | null {
     flag === "main-story-complete" || flag === "amanea-platonic" ||
     /^(story-(amanea|draven|pact|allenna|naiah)|social:(amanea-family-truth|draven-lineva-letter|medig-window)|date(-intimate)?:date-amanea)/.test(flag)
   );
-  const migratedFlags = (value.flags || []).filter((flag) => !obsoleteFlag(flag));
-  const migratedRouteHistory = (value.history || []).filter((id) => !obsoleteRoute(id));
-  const preserveCompletedCampaign = savedVersion >= 8 && savedVersion < 13 && migratedFlags.includes("main-story-complete");
+  const previousCampaignIds = new Set([
+    "campaign-archives-channel",
+    "campaign-forged-proof",
+    "campaign-convergence-council",
+    "campaign-convergence-operation",
+    "campaign-epilogue",
+  ]);
+  const preserveCompletedCampaign = savedVersion < 14 && (value.flags || []).includes("main-story-complete");
+  const migratedFlags = unique([
+    ...(value.flags || []).filter((flag) => !obsoleteFlag(flag)),
+    ...(savedVersion < 14 ? ["story-saidin-met", "story-phoenix-token", "story-route-algratal"] : []),
+    ...(preserveCompletedCampaign ? ["main-story-act-1-complete", "amanea-letter-to-tia", "story-rocky-portal-open", "story-empire-obscurci-rupture"] : []),
+  ]);
+  const migratedRouteHistory = (value.history || []).filter((id) => !obsoleteRoute(id) && !(savedVersion < 14 && previousCampaignIds.has(id)));
   const migratedHistory = unique([
     ...migratedRouteHistory,
     ...(preserveCompletedCampaign ? CAMPAIGN_SCENES.map((scene) => scene.id) : []),
@@ -510,7 +522,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 13,
+    version: 14,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -671,13 +683,42 @@ function campaignSceneReady(scene: CampaignScene, game: GameState) {
   return !campaignBlockingObjective(scene, game);
 }
 
+const CHARACTER_INTRODUCTIONS: Record<string, { history?: string; flag?: string }> = {
+  saidin: { flag: "story-saidin-met" },
+  hylee: { history: "campaign-echoes" },
+  remerii: { history: "campaign-echoes" },
+  iriana: { history: "campaign-imperial-audience" },
+  valurn: { history: "campaign-imperial-audience" },
+  naiah: { history: "campaign-naiah-promise" },
+  draven: { history: "campaign-forthaven-assault" },
+  lineva: { history: "campaign-lineva-departure" },
+  allenna: { history: "campaign-akuhn-gates" },
+  amanea: { history: "campaign-amanea-audience" },
+  tia: { history: "campaign-before-light" },
+  bellirith: { history: "campaign-coalition-preparation" },
+};
+
 function characterUnlocked(game: GameState, character: CharacterData) {
   if (game.settings.unlockAll) return true;
-  if (game.day < character.unlockDay) return false;
-  // Tia doit d'abord exister comme institution. Son accès personnel n'apparaît
-  // qu'après un premier véritable approfondissement du fil d'Amanea.
-  if (character.id === "tia") return (game.relationships.amanea?.stage || 0) >= 2;
-  return true;
+  if (game.relationships[character.id]?.met) return true;
+  const introduction = CHARACTER_INTRODUCTIONS[character.id];
+  if (!introduction) return false;
+  return Boolean(
+    (introduction.history && game.history.includes(introduction.history))
+    || (introduction.flag && game.flags.includes(introduction.flag)),
+  );
+}
+
+function locationUnlocked(game: GameState, locationId: string) {
+  if (game.settings.unlockAll || game.visitedLocations.includes(locationId)) return true;
+  if (locationId === "echo-clearing") return true;
+  if (locationId === "algratal") return game.flags.includes("story-route-algratal");
+  if (["forestier", "miraldas"].includes(locationId)) return game.history.includes("campaign-echoes");
+  if (["forbidden", "forthaven", "river-halt", "imperial-road"].includes(locationId)) return game.history.includes("campaign-imperial-audience");
+  if (locationId === "akuhn") return game.history.includes("campaign-akuhn-gates");
+  if (locationId === "rocky-spires") return game.history.includes("campaign-rocky-spires") || game.flags.includes("story-rocky-portal-open");
+  if (["tzekarun", "obsidian-waystation"].includes(locationId)) return game.flags.includes("story-tzekarun-discovered");
+  return false;
 }
 
 function secretConversationReady(secret: SecretConversation, game: GameState, requirePlace = true) {
@@ -905,7 +946,7 @@ function newlyUnlockedContent(previous: GameState, next: GameState) {
   const labels: string[] = [];
 
   LOCATIONS.forEach((location) => {
-    if (previous.day < location.unlockDay && next.day >= location.unlockDay) labels.push(`Lieu · ${location.name}`);
+    if (!locationUnlocked(previous, location.id) && locationUnlocked(next, location.id)) labels.push(`Lieu · ${location.name}`);
   });
   CHARACTERS.forEach((character) => {
     if (!characterUnlocked(previous, character) && characterUnlocked(next, character)) labels.push(`Relation · ${character.name}`);
@@ -1098,7 +1139,77 @@ function characterSchedule(character: CharacterData, day: number, flags: string[
   return { ...itinerary[0], untilDay: day, cycleDay, cycleLength, stopDay: 1 };
 }
 
+function storyCharacterPlace(characterId: string, day: number, period: number, flags: string[]) {
+  const has = (flag: string) => flags.includes(flag);
+  const fixed = (location: string, spot: string, action: string) => ({
+    location,
+    spot,
+    action,
+    traveling: false,
+    untilDay: day + 1,
+    days: 1,
+    note: action,
+    cycleDay: 1,
+    cycleLength: 1,
+    stopDay: 1,
+  });
+
+  if (["hylee", "remerii"].includes(characterId) && has("campaign-echoes") && !has("campaign-algratal-road")) {
+    return fixed("echo-clearing", "echo-clearing", characterId === "hylee" ? "explore la clairière avant le départ vers Al’Gratal" : "prépare discrètement la traversée vers Al’Gratal");
+  }
+  if (["hylee", "remerii"].includes(characterId) && has("campaign-algratal-road") && !has("campaign-imperial-audience")) {
+    return fixed("algratal", period === 2 ? "algratal-market" : "algratal-streets", characterId === "hylee" ? "découvre la capitale sans attendre une invitation du palais" : "surveille les contrôles magiques pendant que Hylee découvre la ville");
+  }
+
+  if (characterId === "naiah" && has("campaign-naiah-promise")) {
+    const spots = ["forbidden-sanctuary", "forbidden-crossroads", "forbidden-ruins", "forbidden-sanctuary"];
+    return fixed("forbidden", spots[period], has("campaign-akuhn-gates") ? "reste dans la forêt après avoir été arrêtée aux portes d'Akuhn’Nabad" : "maintient ouvert le passage qu'elle a promis vers Akuhn’Nabad");
+  }
+
+  if (characterId === "lineva" && has("campaign-lineva-departure") && !has("main-story-act-1-complete")) {
+    const spots = ["forthaven-harbor", "forthaven-war-room", "forthaven-ramparts", "forthaven-quarters"];
+    return fixed("forthaven", spots[period], "commande Forthaven pendant l'absence de Draven et la poursuite des vagues de morts-vivants");
+  }
+
+  if (characterId === "draven" && has("campaign-lineva-departure") && !has("campaign-price-of-aid")) {
+    return fixed("algratal", period === 2 ? "algratal-palace-council" : "algratal-palace-quarters", "attend l'audience d'Iriana après avoir laissé le commandement de Forthaven à Lineva");
+  }
+  if (characterId === "draven" && has("campaign-price-of-aid") && !has("campaign-akuhn-gates")) {
+    return fixed("river-halt", "river-halt", "escorte le protagoniste vers la Forêt Interdite et Akuhn’Nabad");
+  }
+  if (characterId === "draven" && has("campaign-akuhn-gates") && !has("campaign-amanea-letter")) {
+    return fixed("akuhn", period === 0 ? "akuhn-palace-exterior" : period === 1 ? "akuhn-archives" : "akuhn-war-room", "reste à Akuhn’Nabad comme escorte et logisticien de l'enquête");
+  }
+  if (characterId === "draven" && has("campaign-amanea-letter") && !has("campaign-before-light")) {
+    return fixed("algratal", "algratal-palace-quarters", "rapporte les preuves d'Alamma et prépare l'audience de Tia");
+  }
+  if (characterId === "draven" && has("campaign-before-light") && !has("campaign-false-portal")) {
+    return fixed("forbidden", period < 2 ? "forbidden-threshold" : "forbidden-ruins", "commande le détachement de Forthaven contre le portail de la Forêt Interdite");
+  }
+  if (characterId === "draven" && has("campaign-false-portal") && !has("campaign-rocky-spires")) {
+    return fixed("algratal", "algratal-palace-quarters", "fait le bilan des pertes avant de ramener ses soldats à Forthaven");
+  }
+
+  if (["allenna", "amanea"].includes(characterId) && has("campaign-akuhn-gates") && !has("campaign-before-light")) {
+    const spot = characterId === "allenna" ? (period === 1 ? "akuhn-archives" : "akuhn-war-room") : (period === 1 ? "akuhn-throne-room" : "akuhn-terrace");
+    return fixed("akuhn", spot, characterId === "allenna" ? "encadre l'enquête puis prépare les forces d'Akuhn’Nabad" : "gouverne la cité pendant que l'enquête sur Alamma progresse");
+  }
+  if (["allenna", "amanea"].includes(characterId) && has("campaign-before-light") && !has("campaign-false-portal")) {
+    return fixed("forbidden", characterId === "allenna" ? "forbidden-ruins" : "forbidden-threshold", characterId === "allenna" ? "commande l'aile obscurcie de l'opération" : "dirige ses forces depuis une ligne séparée de celle de Tia");
+  }
+
+  if (["iriana", "valurn"].includes(characterId) && has("campaign-coalition-preparation") && !has("campaign-false-portal")) {
+    return fixed("forbidden", characterId === "iriana" ? "forbidden-threshold" : "forbidden-ruins", characterId === "iriana" ? "coordonne les deux lignes sans fusionner leurs commandements" : "stabilise les ancrages démoniaques du faux portail");
+  }
+  if (characterId === "tia" && has("campaign-before-light") && !has("main-story-act-1-complete")) {
+    return fixed("algratal", period === 1 ? "algratal-palace-audience" : "algratal-palace-council", "dirige la mobilisation impériale sans rejoindre personnellement les lignes obscurcies");
+  }
+  return undefined;
+}
+
 function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = [], housing?: HousingState) {
+  const campaignPlace = storyCharacterPlace(character.id, day, period, flags);
+  if (campaignPlace) return campaignPlace;
   const home = propertyById(housing?.propertyId);
   const residentIndex = housing?.residents.indexOf(character.id) ?? -1;
   const residentHome = home && residentIndex >= 0 && (period === 0 || period === 3 || (day + residentIndex) % 4 === period);
@@ -1888,11 +1999,11 @@ export default function Home() {
   function begin() {
     if (!player.name.trim() || player.age < 18) return;
     const next = createGame({ ...player, name: player.name.trim() });
-    const introLines = [...INTRO_SCENE, originLine(next.player)];
-    const introScene: SceneView = { id: "intro", title: "Prologue · Le portail emprunté", background: "/assets/backgrounds/bedroom.webp", mood: "mysterious", character: "saidin", cast: ["saidin"], intro: introLines, kind: "intro" };
+    const introLines = [...INTRO_SCENE.slice(0, 5), originLine(next.player), ...INTRO_SCENE.slice(5)];
+    const introScene: SceneView = { id: "intro", title: "Prologue · Le jeton du Phénix", background: "/assets/backgrounds/camp.webp", mood: "mysterious", character: "saidin", cast: ["saidin"], intro: introLines, choices: INTRO_CHOICES, kind: "intro" };
     setGame(next);
     setHasSave(true);
-    setSelectedLocation("algratal");
+    setSelectedLocation("echo-clearing");
     setSelectedSpot(next.spot);
     setPlacePanel(null);
     setTab("place");
@@ -2261,13 +2372,26 @@ export default function Home() {
     if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
     if (!dialogue.replay && dialogue.scene.kind === "story" && dialogue.scene.campaignSceneId) {
       const campaign = campaignSceneById(dialogue.scene.campaignSceneId);
-      if (campaign) updateGame((current) => ({
-        ...current,
-        history: unique([...current.history, campaign.id]),
-        sceneMemories: { ...current.sceneMemories, [campaign.id]: campaign.spot },
-        journal: [...current.journal, `Campagne · ${campaign.title}`],
-        codex: unique([...current.codex, campaign.title]),
-      }));
+      if (campaign) updateGame((current) => {
+        const firstRouteFlag = campaign.id === "campaign-naiah-promise" && !current.history.includes("campaign-forthaven-assault")
+          ? "act1-first-route-naiah"
+          : campaign.id === "campaign-forthaven-assault" && !current.history.includes("campaign-naiah-promise")
+            ? "act1-first-route-forthaven"
+            : undefined;
+        const relationships = { ...current.relationships };
+        campaign.cast.forEach((characterId) => {
+          if (relationships[characterId]) relationships[characterId] = { ...relationships[characterId], met: true };
+        });
+        return {
+          ...current,
+          relationships,
+          flags: unique([...current.flags, campaign.id, ...(firstRouteFlag ? [firstRouteFlag] : [])]),
+          history: unique([...current.history, campaign.id]),
+          sceneMemories: { ...current.sceneMemories, [campaign.id]: campaign.spot },
+          journal: [...current.journal, `Acte I · Chapitre ${campaign.chapter} · ${campaign.title}`],
+          codex: unique([...current.codex, campaign.title, ...campaign.cast.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name || "").filter(Boolean)]),
+        };
+      });
     }
     if (!dialogue.replay && dialogue.scene.kind === "ambient" && dialogue.scene.character && dialogue.scene.ambientId) {
       const characterId = dialogue.scene.character;
@@ -2360,7 +2484,13 @@ export default function Home() {
     }
     const opening = choiceOpeningLine(choice);
     const injectedEnding = injectedChoiceAftermath(choice, dialogue.scene.character || dialogue.scene.cast[0]);
-    const authoredEnding = injectedEnding.length ? injectedEnding : sceneClosure(dialogue.scene.id);
+    const endingCampaign = dialogue.scene.campaignSceneId ? campaignSceneById(dialogue.scene.campaignSceneId) : undefined;
+    const campaignEnding = endingCampaign ? campaignSceneOutro(endingCampaign) : [];
+    const authoredEnding = injectedEnding.length
+      ? injectedEnding
+      : campaignEnding.length
+        ? campaignEnding
+        : sceneClosure(dialogue.scene.id);
     const response = opening
       ? [opening, ...choice.response, ...authoredEnding]
       : [...choice.response, ...authoredEnding];
@@ -2369,6 +2499,15 @@ export default function Home() {
 
   function closeDialogue() {
     if (!dialogue) return;
+    if (dialogue.scene.kind === "intro" && !dialogue.replay) {
+      updateGame((current) => ({
+        ...current,
+        flags: unique([...current.flags, "story-saidin-met", "story-phoenix-token", "story-route-algratal"]),
+        relationships: { ...current.relationships, saidin: { ...current.relationships.saidin, met: true } },
+        journal: current.flags.includes("story-saidin-met") ? current.journal : [...current.journal, "Saidin vous a confié le jeton du Phénix et indiqué la route d'Al’Gratal."],
+        codex: unique([...current.codex, "Saidin", "Jeton du Phénix"]),
+      }));
+    }
     const intimateCharacter = dialogue.scene.route?.intimate
       && Boolean(dialogue.chosen && routeChoiceCompletes(dialogue.chosen.id))
       && !dialogue.chosen?.effects.flags?.some((flag) => flag.endsWith("-platonic"))
@@ -2417,7 +2556,7 @@ export default function Home() {
     if (!game) return;
     const location = LOCATIONS.find((entry) => entry.id === locationId);
     const spot = spotById(spotId);
-    if (!location || !spot || spot.location !== locationId || (game.day < location.unlockDay && !game.settings.unlockAll)) return;
+    if (!location || !spot || spot.location !== locationId || !locationUnlocked(game, locationId)) return;
     if (game.location === locationId && game.spot === spotId) return;
     const periods = travelPeriodCost(game.location, locationId, game.player.vocation, LOCATIONS);
     updateGame((current) => {
@@ -2910,7 +3049,7 @@ export default function Home() {
     if (!game) return;
     const property = propertyById(propertyId);
     const city = property && LOCATIONS.find((entry) => entry.id === property.location);
-    if (!property || !city || (game.day < city.unlockDay && !game.settings.unlockAll)) return;
+    if (!property || !city || !locationUnlocked(game, city.id)) return;
     const price = discountedPropertyPrice(property, game.relationships);
     const credit = housingSaleValue(game.housing);
     const balance = price - credit;
@@ -3274,6 +3413,15 @@ export default function Home() {
       setModal({ kind: "notice", title: "Jalon encore inaccessible", text: campaign ? campaignBlockingObjective(campaign, game) || "Cette scène a déjà été accomplie." : "Ce jalon n’existe pas." });
       return;
     }
+    const targetPeriod = Math.max(0, PERIODS.findIndex((entry) => entry.id === campaign.period));
+    const travelCost = travelPeriodCost(game.location, campaign.location, game.player.vocation, LOCATIONS);
+    const afterTravel = game.settings.noTimeCost ? { day: game.day, period: game.period } : advanceClock(game, travelCost, PERIODS.length);
+    const waitPeriods = (targetPeriod - afterTravel.period + PERIODS.length) % PERIODS.length;
+    const arrival = game.settings.noTimeCost
+      ? { day: game.day, period: targetPeriod }
+      : advanceClock(afterTravel, waitPeriods, PERIODS.length);
+    const sceneGame = { ...game, ...arrival, location: campaign.location, spot: campaign.spot };
+    const intro = campaignSceneDialogue(campaign, sceneGame);
     const scene: SceneView = {
       id: campaign.id,
       title: campaign.title,
@@ -3281,14 +3429,14 @@ export default function Home() {
       mood: campaign.mood,
       character: campaign.lead,
       cast: campaign.cast,
-      intro: campaign.intro,
+      intro,
       choices: campaign.choices,
       kind: "story",
       campaignSceneId: campaign.id,
     };
-    const sceneGame = { ...game, location: campaign.location, spot: campaign.spot };
     updateGame((current) => ({
       ...current,
+      ...arrival,
       location: campaign.location,
       spot: campaign.spot,
       ...placeDiscovery(current, campaign.location, campaign.spot),
@@ -3297,13 +3445,14 @@ export default function Home() {
     setSelectedLocation(campaign.location);
     setSelectedSpot(campaign.spot);
     setMapDestinationOpen(false);
-    setDialogue({ scene, lines: expandedLines(scene, sceneGame, campaign.intro, "intro", campaign.spot), lineIndex: 0, phase: "intro" });
+    setDialogue({ scene, lines: expandedLines(scene, sceneGame, intro, "intro", campaign.spot), lineIndex: 0, phase: "intro" });
   }
 
   function replayCampaignScene(sceneId: string) {
     if (!game || !game.history.includes(sceneId)) return;
     const campaign = campaignSceneById(sceneId);
     if (!campaign) return;
+    const intro = campaignSceneDialogue(campaign, game);
     const scene: SceneView = {
       id: campaign.id,
       title: campaign.title,
@@ -3311,12 +3460,12 @@ export default function Home() {
       mood: campaign.mood,
       character: campaign.lead,
       cast: campaign.cast,
-      intro: campaign.intro,
+      intro,
       choices: campaign.choices,
       kind: "story",
       campaignSceneId: campaign.id,
     };
-    setDialogue({ scene, lines: expandedLines(scene, game, campaign.intro, "intro", campaign.spot), lineIndex: 0, phase: "intro", replay: true });
+    setDialogue({ scene, lines: expandedLines(scene, game, intro, "intro", campaign.spot), lineIndex: 0, phase: "intro", replay: true });
   }
 
   function replayRoute(sceneId: string) {
@@ -3628,13 +3777,12 @@ export default function Home() {
             <div className="panel-heading"><div><p className="eyebrow">Carte des routes</p><h1>Où souhaitez-vous aller ?</h1></div><span className="weather">{period.icon} {game.period === 3 ? "Brume nocturne" : "Ciel de Confluence"}</span></div>
             <div className="world-map">
               <img src="/assets/map.png" alt="Carte de Sylvinia" />
-              {LOCATIONS.map((location) => {
-                const locked = game.day < location.unlockDay && !game.settings.unlockAll;
+              {LOCATIONS.filter((location) => locationUnlocked(game, location.id)).map((location) => {
                 const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).location === location.id);
-                return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""} ${locked ? "locked" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { if (!locked) { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); } }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}{locked && <em>J{location.unlockDay}</em>}</button>;
+                return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}</button>;
               })}
             </div>
-            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span><i className="locked" />À découvrir</span><span>Trajet : 1 période sur place, davantage entre régions.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
+            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span>La carte s'étend avec vos rencontres.</span><span>Trajet : 1 période sur place, davantage entre régions.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
           </div>
 
           {mapDestinationOpen && <div className="map-destination-layer">
@@ -3797,9 +3945,10 @@ function SectionTabs<T extends string>({ label, active, items, onChange }: { lab
 
 function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job: JobData) => void; onLocate: (job: JobData) => void }) {
   const [section, setSection] = useState<"local" | "available" | "all">("local");
-  const unlockedCount = JOBS.filter((job) => jobAccess(game, job).unlocked).length;
-  const localCount = JOBS.filter((job) => job.spot === game.spot && jobAccess(game, job).unlocked).length;
-  const filtered = JOBS.filter((job) => section === "local" ? job.spot === game.spot : section === "available" ? jobAccess(game, job).unlocked : true);
+  const knownJobs = JOBS.filter((job) => { const location = spotById(job.spot)?.location; return Boolean(location && locationUnlocked(game, location)); });
+  const unlockedCount = knownJobs.filter((job) => jobAccess(game, job).unlocked).length;
+  const localCount = knownJobs.filter((job) => job.spot === game.spot && jobAccess(game, job).unlocked).length;
+  const filtered = knownJobs.filter((job) => section === "local" ? job.spot === game.spot : section === "available" ? jobAccess(game, job).unlocked : true);
   const ordered = [...filtered].sort((left, right) => {
     const leftLocal = left.spot === game.spot ? 0 : 1;
     const rightLocal = right.spot === game.spot ? 0 : 1;
@@ -3808,11 +3957,11 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
     return leftLocal - rightLocal || leftLocked - rightLocked || left.title.localeCompare(right.title, "fr");
   });
   return <section className="jobs-stage">
-    <header className="jobs-heading"><div><p className="eyebrow">Registre des contrats</p><h1>Jobs & travaux de Sylvinia</h1><p>Chaque employeur conserve sa propre rotation. Les situations inédites sont distribuées avant le retour des anciennes, puis les banques sont rebattues.</p></div><div className="jobs-summary"><span><b>{localCount}</b> ici</span><span><b>{unlockedCount}</b> accessibles</span><span><b>{JOBS.length}</b> contrats</span></div></header>
+    <header className="jobs-heading"><div><p className="eyebrow">Registre des contrats</p><h1>Jobs & travaux de Sylvinia</h1><p>Chaque employeur conserve sa propre rotation. De nouveaux contrats apparaissent à mesure que vos routes s'ouvrent.</p></div><div className="jobs-summary"><span><b>{localCount}</b> ici</span><span><b>{unlockedCount}</b> accessibles</span><span><b>{knownJobs.length}</b> connus</span></div></header>
     <SectionTabs label="Filtrer les jobs" active={section} onChange={setSection} items={[
       { id: "local", icon: "⌖", label: "Ici", count: localCount, hint: "Dans ce sous-lieu" },
       { id: "available", icon: "◈", label: "Accessibles", count: unlockedCount, hint: "Prêts à être rejoints" },
-      { id: "all", icon: "≡", label: "Tous les contrats", count: JOBS.length, hint: "Inclut les prérequis" },
+      { id: "all", icon: "≡", label: "Contrats connus", count: knownJobs.length, hint: "Inclut les prérequis" },
     ]} />
     {ordered.length ? <div className="jobs-grid">{ordered.map((job) => {
       const access = jobAccess(game, job);
@@ -3834,31 +3983,32 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
 
 function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
   const [section, setSection] = useState<"links" | "dates" | "crossed">("links");
-  const availableGroupDates = GROUP_DATES.filter((date) => groupDateUnlocked(game, date));
-  const metCount = CHARACTERS.filter((character) => game.relationships[character.id].met).length;
-  const dateCharacters = CHARACTERS.filter((character) => characterUnlocked(game, character) && !game.flags.includes(`${character.id}-platonic`) && (DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]));
+  const unlockedCharacters = CHARACTERS.filter((character) => characterUnlocked(game, character));
+  const knownGroupDates = GROUP_DATES.filter((date) => date.characters.every((id) => unlockedCharacters.some((character) => character.id === id)));
+  const availableGroupDates = knownGroupDates.filter((date) => groupDateUnlocked(game, date));
+  const metCount = unlockedCharacters.length;
+  const dateCharacters = unlockedCharacters.filter((character) => !game.flags.includes(`${character.id}-platonic`) && (DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]));
 
-  return <section className="content-view relations-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>Consultez séparément les liens, les rendez-vous et les dynamiques croisées. Rien n’est affiché comme une liste de secrets à compléter.</p></div><span>{metCount} / {CHARACTERS.length} rencontré·es</span></header>
+  return <section className="content-view relations-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>Consultez séparément les liens, les rendez-vous et les dynamiques croisées. Seules les personnes réellement rencontrées apparaissent.</p></div><span>{metCount} relation{metCount > 1 ? "s" : ""}</span></header>
     <SectionTabs label="Sections des relations" active={section} onChange={setSection} items={[
       { id: "links", icon: "♡", label: "Fils relationnels", count: metCount, hint: "Progression et localisation" },
       { id: "dates", icon: "◇", label: "Rendez-vous", count: dateCharacters.length, hint: "Sorties publiques et logis" },
       { id: "crossed", icon: "3", label: "À trois", count: availableGroupDates.length, hint: "Dynamiques croisées" },
     ]} />
 
-    {section === "crossed" && <div className="relation-section-panel"><button className="group-date-launcher" onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{GROUP_DATES[0].characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Relations croisées</p><h2>Rendez-vous à trois</h2><p>{GROUP_DATES.length} duos compatibles, chacun avec une dynamique, un mini-jeu et trois conclusions propres à votre sexe.</p></div><b>{availableGroupDates.length} / {GROUP_DATES.length}<small>accessibles</small></b></button><div className="crossed-date-grid">{GROUP_DATES.map((date) => { const unlocked = groupDateUnlocked(game, date); return <article className={unlocked ? "unlocked" : "locked"} key={date.id}><div>{date.characters.map((id) => { const character = CHARACTERS.find((entry) => entry.id === id); return <img src={character?.portrait} alt="" key={id} />; })}</div><span>{date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" · ")}</span><strong>{date.title}</strong><small>{unlocked ? "Dynamique disponible" : "Liens et décisions encore insuffisants"}</small></article>; })}</div></div>}
+    {section === "crossed" && <div className="relation-section-panel"><button className="group-date-launcher" disabled={!knownGroupDates.length} onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{knownGroupDates[0]?.characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Relations croisées</p><h2>Rendez-vous à trois</h2><p>Les dynamiques n'apparaissent qu'après avoir rencontré toutes les personnes concernées.</p></div><b>{availableGroupDates.length} / {knownGroupDates.length}<small>accessibles</small></b></button><div className="crossed-date-grid">{knownGroupDates.map((date) => { const unlocked = groupDateUnlocked(game, date); return <article className={unlocked ? "unlocked" : "locked"} key={date.id}><div>{date.characters.map((id) => { const character = CHARACTERS.find((entry) => entry.id === id); return <img src={character?.portrait} alt="" key={id} />; })}</div><span>{date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" · ")}</span><strong>{date.title}</strong><small>{unlocked ? "Dynamique disponible" : "Liens et décisions encore insuffisants"}</small></article>; })}</div></div>}
 
-    {section === "dates" && <div className="date-directory">{CHARACTERS.map((character) => {
+    {section === "dates" && <div className="date-directory">{dateCharacters.map((character) => {
       const relation = game.relationships[character.id];
-      const unlocked = characterUnlocked(game, character);
       const platonic = game.flags.includes(`${character.id}-platonic`);
       const publicDates = DATE_SCENES.filter((date) => date.character === character.id);
       const availableDates = publicDates.filter((date) => game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust));
       const homeAvailable = Boolean(game.housing.propertyId && HOME_DATE_PROFILES[character.id] && (game.settings.unlockAll || (relation.stage >= 3 && relation.affection >= 22 && relation.trust >= 22)));
       const hasPlanner = publicDates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
-      return <article className={`date-directory-card ${!unlocked || platonic || !hasPlanner ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties} key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{unlocked ? character.name : "Inconnu·e"}</span><strong>{platonic ? "Relation amicale" : !unlocked ? `Accessible au jour ${character.unlockDay}` : `${availableDates.length} sortie${availableDates.length > 1 ? "s" : ""} accessible${availableDates.length > 1 ? "s" : ""}`}</strong><small>{platonic ? "Les scènes majeures restent amicales et les rendez-vous romantiques sont fermés." : homeAvailable ? "Une visite au logis est également disponible." : game.housing.propertyId ? "La visite au logis demande encore un lien plus avancé." : "Achetez un logis pour ouvrir les visites privées."}</small></div><button disabled={!unlocked || platonic || !hasPlanner} onClick={() => setModal({ kind: "date-planner", character: character.id })}>Planifier</button></article>;
+      return <article className={`date-directory-card ${platonic || !hasPlanner ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties} key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{character.name}</span><strong>{platonic ? "Relation amicale" : `${availableDates.length} sortie${availableDates.length > 1 ? "s" : ""} accessible${availableDates.length > 1 ? "s" : ""}`}</strong><small>{platonic ? "Les scènes majeures restent amicales et les rendez-vous romantiques sont fermés." : homeAvailable ? "Une visite au logis est également disponible." : game.housing.propertyId ? "La visite au logis demande encore un lien plus avancé." : "Achetez un logis pour ouvrir les visites privées."}</small></div><button disabled={platonic || !hasPlanner} onClick={() => setModal({ kind: "date-planner", character: character.id })}>Planifier</button></article>;
     })}</div>}
 
-    {section === "links" && <div className="relationship-grid">{CHARACTERS.map((character) => {
+    {section === "links" && <div className="relationship-grid">{unlockedCharacters.map((character) => {
     const relation = game.relationships[character.id];
     const unlocked = characterUnlocked(game, character);
     const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
@@ -3873,8 +4023,8 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
     const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id);
     const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
     const routeTarget = next && narrativeReady ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
-    return <article key={character.id} className={`relationship-card ${!unlocked ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties}>
-      <button className="relationship-portrait" disabled={!unlocked} onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{unlocked ? character.name : "Inconnu·e"}</span><small>{unlocked ? character.role : character.id === "tia" && game.day >= character.unlockDay ? "Une puissance impériale encore inaccessible" : `Disponible au jour ${character.unlockDay}`}</small></div></button>
+    return <article key={character.id} className="relationship-card" style={{ "--character": character.color } as React.CSSProperties}>
+      <button className="relationship-portrait" onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{character.name}</span><small>{character.role}</small></div></button>
       <div className="relationship-body"><div className="stage-line"><strong>{STAGE_LABELS[relation.stage]}</strong><span>{relation.stage} / 5</span></div><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" />
         {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? confidenceObjective || (game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible") : "Route accomplie · rencontres libres disponibles"}</small></div>}
         {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{hasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && narrativeReady && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
@@ -3917,7 +4067,12 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
   const nextCampaign = nextMilestoneId ? campaignSceneById(nextMilestoneId) : undefined;
   const nextCampaignReady = Boolean(nextCampaign && campaignSceneReady(nextCampaign, game));
   const nextCampaignBlocker = nextCampaign && !nextCampaignReady ? campaignBlockingObjective(nextCampaign, game) : undefined;
-  const threads = CHARACTERS.map((character) => {
+  const activeCampaignOptions = storyComplete ? [] : activeAct.requiredScenes
+    .filter((id) => !discovered.has(id))
+    .map((id) => campaignSceneById(id))
+    .filter((scene): scene is CampaignScene => Boolean(scene));
+  const readyCampaignOptions = activeCampaignOptions.filter((scene) => campaignSceneReady(scene, game));
+  const threads = CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => {
     const relation = game.relationships[character.id];
     const progress = relationshipNarrativeProgress(game, character.id);
     const scene = sceneFor(character.id, relation.stage);
@@ -3950,10 +4105,10 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
     ]} />
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
       {section === "campaign" && <section className={`story-progress-overview ${storyComplete ? "complete" : ""}`}>
-        <div className="story-progress-heading"><div><p className="eyebrow">Fil principal · {storyComplete ? "accompli" : `Chapitre ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "La convergence est stabilisée" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} chapitres</strong></div>
+        <div className="story-progress-heading"><div><p className="eyebrow">Acte I · {storyComplete ? "achevé" : `Chapitre ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "Les Serres Rocheuses" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} chapitres</strong></div>
         <div className="story-overall-bar"><i style={{ width: `${Math.round((mainProgress / MAIN_STORY.length) * 100)}%` }} /></div>
-        <div className="story-current-objective"><span>{storyComplete ? "Monde ouvert" : "Objectif actuel"}</span><p>{storyComplete ? "Le fil principal est terminé. Tous les voyages, relations, rendez-vous et activités restent disponibles sans limite de temps." : activeAct.objective}</p></div>
-        {!storyComplete && <div className="story-next-step"><b>Prochain jalon</b><span>{nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{nextCampaignBlocker || nextMilestone?.place || `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis`}</small>{nextCampaignReady && nextCampaign && <button className="primary-action" onClick={() => onStartCampaign(nextCampaign.id)}>Rejoindre cette scène de campagne</button>}</div>}
+        <div className="story-current-objective"><span>{storyComplete ? "Entrée de l'Acte II préparée" : "Objectif actuel"}</span><p>{storyComplete ? "Le véritable portail est ouvert et les négociations sont rompues. Le bac à sable reste disponible ; la suite de la campagne commencera avec l'Acte II." : activeAct.objective}</p></div>
+        {!storyComplete && <div className="story-next-step"><b>{readyCampaignOptions.length > 1 ? "Pistes disponibles" : "Prochain jalon"}</b><span>{readyCampaignOptions.length > 1 ? `${readyCampaignOptions.length} routes peuvent être entreprises dans l'ordre de votre choix.` : nextMilestone?.title || "Explorez les pistes déjà découvertes"}</span><small>{readyCampaignOptions.length ? `${activeDone} / ${activeAct.requiredScenes.length} jalons accomplis` : nextCampaignBlocker || nextMilestone?.place}</small><div className="story-ready-actions">{readyCampaignOptions.map((scene) => <button className="primary-action" key={scene.id} onClick={() => onStartCampaign(scene.id)}>{scene.title} · {spotById(scene.spot)?.shortName}</button>)}</div>{!readyCampaignOptions.length && nextCampaignReady && nextCampaign && <button className="primary-action" onClick={() => onStartCampaign(nextCampaign.id)}>Rejoindre cette scène de campagne</button>}</div>}
       </section>}
 
       {(section === "messages" || section === "discoveries") && <section className="living-journal section-surface">
@@ -4008,7 +4163,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
       <h2>Scènes mémorisées</h2>
       <p className="memory-explainer">✦ Relecture protégée : les caractéristiques, relations, objets et l’heure restent strictement inchangés.</p>
       <div className="memory-replay-grid">
-        {campaignMemories.map((scene) => <button key={scene.id} onClick={() => onReplayCampaign(scene.id)}><span>◆ Campagne · Chapitre {scene.act}</span><strong>{scene.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
+        {campaignMemories.map((scene) => <button key={scene.id} onClick={() => onReplayCampaign(scene.id)}><span>◆ Acte {scene.act} · Chapitre {scene.chapter}</span><strong>{scene.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {game.history.map((id) => { const scene = ROUTE_SCENES.find((entry) => entry.id === id); const character = CHARACTERS.find((entry) => entry.id === scene?.character); return scene && <button key={id} onClick={() => onReplayRoute(id)}><span style={{ color: character?.color }}>◇ {character?.name}</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>; })}
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
         {secretMemories.map((secret) => <button key={secret.id} onClick={() => onReplaySecret(secret.id)}><span style={{ color: CHARACTERS.find((character) => character.id === secret.character)?.color }}>◇ Confidence · {CHARACTERS.find((character) => character.id === secret.character)?.name}</span><strong>{secret.title}</strong><small>Revoir sans gain ni nouvelle découverte</small></button>)}
@@ -4049,7 +4204,7 @@ function AssetsView({ game, presentCharacters, onShop, onGive, onBuyProperty, on
   const [section, setSection] = useState<"logis" | "inventaire">("logis");
   const ownedProperty = propertyById(game.housing.propertyId);
   const ownedDisplayItems = DISPLAY_ITEMS.filter((item) => (game.inventory[item.id] || 0) > 0);
-  const unlockedCities = LOCATIONS.filter((location) => ["algratal", "forthaven", "miraldas", "akuhn"].includes(location.id) && (game.day >= location.unlockDay || game.settings.unlockAll));
+  const unlockedCities = LOCATIONS.filter((location) => ["algratal", "forthaven", "miraldas", "akuhn"].includes(location.id) && locationUnlocked(game, location.id));
   return <section className="content-view assets-view">
     <header className="content-header"><div><p className="eyebrow">Inventaire & patrimoine</p><h1>Biens</h1><p>Vos objets voyagent avec vous. Votre logis, lui, devient un véritable lieu de la carte et de vos relations.</p></div><button className="coins-button" onClick={onShop}>◈ {game.coins} · Marché</button></header>
     <div className="assets-tabs"><button className={section === "logis" ? "active" : ""} onClick={() => setSection("logis")}>⌂ Logis</button><button className={section === "inventaire" ? "active" : ""} onClick={() => setSection("inventaire")}>◇ Inventaire</button></div>
@@ -4064,7 +4219,7 @@ function AssetsView({ game, presentCharacters, onShop, onGive, onBuyProperty, on
         <section className="housing-panel">
           <header><div><p className="eyebrow">Vie commune</p><h2>Habitant·es du logis</h2></div><span>{game.housing.residents.length} résident·es</span></header>
           <p>Étape relationnelle 3 et confiance 24 requises. Gérez ici la cohabitation ; les visites et rendez-vous se planifient désormais depuis Relations → Rendez-vous.</p>
-          <div className="resident-grid">{CHARACTERS.map((character) => {
+          <div className="resident-grid">{CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => {
             const relation = game.relationships[character.id];
             const resident = game.housing.residents.includes(character.id);
             const eligible = game.settings.unlockAll || (relation.stage >= 3 && relation.trust >= 24);
@@ -4091,9 +4246,9 @@ function CodexView({ game }: { game: GameState }) {
       { id: "memories", icon: "✦", label: "Scènes", count: game.history.length, hint: "Mémoire de la chronique" },
     ]} />
     <div className="codex-section">
-      {section === "characters" && <div className="codex-characters">{CHARACTERS.map((character) => { const known = game.relationships[character.id].met || game.settings.unlockAll; return <article key={character.id} className={!known ? "unknown" : ""}><img src={character.portrait} alt="" /><div><span>{known ? character.name : "Entrée verrouillée"}</span><small>{known ? characterDescriptor(character) : "Rencontrez cette personne"}</small>{known && <p>{character.bio}</p>}</div></article>; })}</div>}
-      {section === "figures" && <div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.map((figure) => { const known = game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)); return <article key={figure.id} className={!known ? "unknown" : ""}><img src={figure.portrait} alt="" /><div><span>{known ? figure.name : "Entrée verrouillée"}</span><small>{known ? `${figure.role} · ${figure.place}` : "Progressez dans l’histoire principale"}</small>{known && <p>{figure.bio}</p>}</div></article>; })}</div>}
-      {section === "locations" && <div className="codex-location-grid">{LOCATIONS.map((location) => { const known = game.visitedLocations.includes(location.id) || game.settings.unlockAll; return <article className={`location-codex ${!known ? "unknown" : ""}`} key={location.id}><img src={location.image} alt="" /><div><strong>{known ? location.name : "Terre inconnue"}</strong><small>{known ? location.subtitle : game.day >= location.unlockDay ? "Route accessible · lieu non visité" : `Route stable au jour ${location.unlockDay}`}</small>{known && <p>{location.description}</p>}</div></article>; })}</div>}
+      {section === "characters" && <div className="codex-characters">{CHARACTERS.filter((character) => game.relationships[character.id].met || game.settings.unlockAll).map((character) => <article key={character.id}><img src={character.portrait} alt="" /><div><span>{character.name}</span><small>{characterDescriptor(character)}</small><p>{character.bio}</p></div></article>)}</div>}
+      {section === "figures" && <div className="codex-characters supporting-figures">{SUPPORTING_FIGURES.filter((figure) => game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene))).map((figure) => <article key={figure.id}><img src={figure.portrait} alt="" /><div><span>{figure.name}</span><small>{figure.role} · {figure.place}</small><p>{figure.bio}</p></div></article>)}</div>}
+      {section === "locations" && <div className="codex-location-grid">{LOCATIONS.filter((location) => game.visitedLocations.includes(location.id) || game.settings.unlockAll).map((location) => <article className="location-codex" key={location.id}><img src={location.image} alt="" /><div><strong>{location.name}</strong><small>{location.subtitle}</small><p>{location.description}</p></div></article>)}</div>}
       {section === "memories" && <div className="memory-list codex-memory-list">{game.history.length ? game.history.map((id) => <span key={id}>✦ {ROUTE_SCENES.find((scene) => scene.id === id)?.title || campaignSceneById(id)?.title || id}</span>) : <div className="empty-view"><span>✦</span><h2>Aucune scène majeure consignée</h2><p>La mémoire de la chronique se remplira à mesure que vous avancerez.</p></div>}</div>}
     </div>
   </section>;
@@ -4646,12 +4801,15 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   }
   if (modal.kind === "group-date-planner") {
     const property = propertyById(game.housing.propertyId);
-    return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Tous les rendez-vous à trois</h2><p>Les sorties publiques et les visites dans votre logis sont réunies ici. Chaque duo conserve sa dynamique et son mini-jeu propres.</p></div></header><div className="date-grid group-date-grid">{GROUP_DATES.map((date) => {
+    const knownCharacters = new Set(CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => character.id));
+    const knownGroupDates = GROUP_DATES.filter((date) => date.characters.every((id) => knownCharacters.has(id)));
+    const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.characters.every((id) => knownCharacters.has(id)));
+    return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Rendez-vous à trois connus</h2><p>Les sorties publiques et les visites dans votre logis apparaissent seulement après la rencontre des deux personnes concernées.</p></div></header><div className="date-grid group-date-grid">{knownGroupDates.map((date) => {
       const unlocked = groupDateUnlocked(game, date);
       const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
       const place = spotById(date.spot);
       return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>Réserver cette journée à trois</button> : <div className="group-date-requirements">{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
-    })}{HOME_PAIR_DATES.map((pair) => {
+    })}{knownHomePairs.map((pair) => {
       const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
       const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);
       return <article key={`home-${pair.id}`} className={`home-date-plan-card ${!unlocked ? "locked" : ""}`} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.24), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>{unlocked ? <button className="primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="date-lock">{property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</div>}</article>;

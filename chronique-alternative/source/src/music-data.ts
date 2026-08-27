@@ -44,6 +44,7 @@ export const SPOT_MUSIC: Record<string, string> = {
   "river-halt": "iriana-valurn-confessions",
   "imperial-road": "valurn-memory",
   "obsidian-waystation": "dune-relay",
+  "rocky-spires-pass": "tension",
 };
 
 const LOCATION_MUSIC: Record<string, string> = {
@@ -58,6 +59,7 @@ const LOCATION_MUSIC: Record<string, string> = {
   "river-halt": "iriana-valurn-confessions",
   "imperial-road": "valurn-memory",
   "obsidian-waystation": "dune-relay",
+  "rocky-spires": "tension",
 };
 
 export const MUSIC_LABELS: Record<string, string> = {

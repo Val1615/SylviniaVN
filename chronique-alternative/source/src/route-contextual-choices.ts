@@ -54,7 +54,7 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Lui dire que la confiance entre vous doit rester amicale.", "Je ne négocierai pas votre conclusion. Donnez-moi seulement le temps d’apprendre cette proximité sans la traiter comme une attente.", "lucidite"),
   ),
 
-  "iriana-0": R(C("Lui remettre le fragment du portail et accepter qu’elle choisisse seule les expériences nécessaires.", "Vous venez de vous offrir comme ressource à la première personne qui a nommé votre anomalie. Je cherchais un partenaire informé, pas un nouvel instrument de cour.", "sangFroid")),
+  "iriana-0": R(C("Lui remettre le fragment et renoncer aux limites qu’elle vient précisément de vous demander de formuler.", "Après l’audience, je vous ai offert un espace pour négocier. Vous venez de le remplir par une obéissance que je n’ai ni demandée ni méritée.", "sangFroid")),
   "iriana-1": R(C("Jouer toute la mélodie à sa place pour lui rendre le souvenir de sa mère.", "Vous pouvez reproduire des notes. Vous ne pouvez ni me rendre ma mère, ni décider que cette imitation me consolera.", "resonance")),
   "iriana-2": R(C("Lui promettre de garder toutes ses vulnérabilités secrètes, quoi qu’elles puissent mettre en danger.", "Une promesse absolue est une autre forme de contrôle. Je vous demande du discernement, pas une loyauté qui refuse déjà de penser.", "sangFroid")),
   "iriana-3": R(
@@ -152,7 +152,7 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Lui proposer une amitié sans charme, conquête ni attente romantique.", "Ce sera terriblement peu glamour et beaucoup plus difficile que de gagner. J’accepte d’apprendre cette proximité-là.", "lucidite"),
   ),
 
-  "amanea-0": R(C("Jurer obéissance à la Reine Noire afin d’obtenir le droit d’entrer dans sa cité.", "Akuhn’Nabad accueille des personnes capables de résister aux mauvais ordres. Gardez votre serment et donnez-moi plutôt une raison vérifiable de vous laisser passer.", "sangFroid")),
+  "amanea-0": R(C("Traiter le laissez-passer provisoire comme un droit permanent sur toutes les archives.", "Tu confonds déjà une permission bornée avec une conquête. Allenna va reprendre ce document jusqu’à ce que tu aies réappris à lire ses limites.", "sangFroid")),
   "amanea-1": R(C("Présenter Allenna comme la preuve qu’Amanea peut corriger ses erreurs de mère.", "Allenna n’est ni ma réparation ni une version réussie de Naïah. Elle est ma fille parce qu’elle est elle-même, pas parce qu’elle efface une autre blessure.", "lucidite")),
   "amanea-2": R(C("Ouvrir le coffret pour obtenir enfin la preuve de ce qu’elle ressent pour Naïah.", "Vous venez de traiter une trace confiée comme un dossier à saisir. Le coffret se referme — et cette conversation avec lui.", "audace")),
   "amanea-3": R(

@@ -493,16 +493,16 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       N("nai-route-l", "Nommer ce qui demeure sous son contrôle : la destination et le droit de repartir.", "lucidite", "Deux choix réels. C’est peu, mais ce sont les miens. Je vais les garder.", { trust: 3, affection: 1 }),
       N("nai-route-a", "Défier la brume de trouver un chemin plus élégant que le vôtre.", "audace", "Elle accepte. Moi aussi. Si nous nous perdons, je nierai avoir participé.", { affection: 3 }),
     ], { locations: ["river-halt"], mood: "thinking" }),
-    scene("naiah-court", "Le siège qu’elle refuse", "Dans la salle du trône d’Akuhn’Nabad, Naïah reste debout devant le siège réservé à sa lignée. « Ils l’ont gardé pour me rappeler ce que je devrais être. Je le garde vide pour leur rappeler que je peux partir. »", [
+    scene("naiah-court", "Le siège qu’elle refuse", "Dans les ruines de la frontière, Naïah a façonné en brume une copie du siège réservé à sa lignée. « Ils l’ont gardé dans leur salle pour me rappeler ce que je devrais être. Moi, je peux le faire disparaître sans leur demander la permission. »", [
       N("nai-court-s", "Rester debout à ses côtés sans occuper le siège.", "sangFroid", "Tu ne remplis pas le vide à ma place. C’est exactement pour cela que ta présence n’en est pas un autre.", { trust: 3 }),
       N("nai-court-l", "Demander ce qu’elle choisirait d’emporter de cette ville.", "lucidite", "Deux noms. Une vieille chanson. Aucun trône. C’est une réponse étonnamment courte.", { trust: 2, affection: 1 }),
       N("nai-court-a", "Vous asseoir sur une marche : « Celle-ci semble moins autoritaire. »", "audace", "Et pourtant tu viens de fonder une cour rivale. Je demande le poste de conseillère imprévisible.", { affection: 3 }),
-    ], { locations: ["akuhn"], mood: "thinking" }),
-    scene("naiah-lignage", "Ce que les murs prétendent savoir", "Dans le palais d’Akuhn’Nabad, Naïah effleure un blason familial sans y laisser son empreinte. « Ces murs racontent mon histoire comme si elle leur appartenait. Ils oublient toujours les chapitres où je leur ai désobéi. »", [
+    ], { locations: ["forbidden"], mood: "thinking" }),
+    scene("naiah-lignage", "Ce que les pierres prétendent savoir", "Dans les ruines, Naïah déplie un ancien morceau d’étoffe portant le blason familial. « À Akuhn’Nabad, les murs racontent mon histoire comme si elle leur appartenait. Ils oublient toujours les chapitres où je leur ai désobéi. »", [
       N("nai-lignage-l", "Lui demander quel chapitre elle écrirait à la place.", "lucidite", "Celui où je reviens sans redevenir leur arme. Et celui où je repars parce que je l’ai décidé.", { trust: 3, affection: 1 }),
       N("nai-lignage-s", "Ne pas toucher au blason et lui laisser choisir la distance.", "sangFroid", "Tu ne traites pas chaque cicatrice comme une porte à ouvrir. Cela me donne presque envie de te montrer la clé.", { trust: 3 }),
       N("nai-lignage-a", "Ajouter à voix basse : « Chapitre suivant : elle change les serrures. »", "audace", "Et garde toutes les clés. Voilà une biographie enfin exacte.", { affection: 3 }),
-    ], { locations: ["akuhn"], mood: "thinking" }),
+    ], { locations: ["forbidden"], mood: "thinking" }),
     scene("naiah-caillou", "Le caillou parfaitement ordinaire", "Naïah ouvre la paume sur un petit caillou gris. « Il n’est ni maudit, ni illusoire, ni héritier d’un ancien royaume. Je l’ai ramassé parce qu’il me plaisait. Tu peux vérifier, mais tu risques de découvrir qu’il est seulement joli. »", [
       N("nai-caillou-r", "Examiner sa Résonance et confirmer son absence totale de magie.", "resonance", "Rien du tout, n’est-ce pas ? C’est reposant. Pour une fois, le mystère est que je n’en ai ajouté aucun.", { trust: 3 }),
       N("nai-caillou-l", "Lui demander ce qui lui plaît dans sa forme irrégulière.", "lucidite", "Il ne ressemble à rien de prévu. Et malgré cela, personne ne lui demande de changer. Oui… c’est probablement pour ça.", { trust: 3, affection: 1 }),

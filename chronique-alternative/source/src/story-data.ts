@@ -18,58 +18,90 @@ export type SupportingFigure = {
 };
 
 /**
- * Cette chronique diverge au début du Tome 1 : Hylee a rencontré Remerii,
- * tandis qu’Iriana poursuit seule son enquête. Les chapitres avancent par découvertes,
- * sans date butoir et sans empêcher le monde de rester ouvert ensuite.
+ * L'Acte I de Chroniques Alternatives se compose de dix chapitres. Chacun
+ * naît du précédent ; les deux pistes du chapitre IV sont les seules branches
+ * parallèles et se rejoignent sans ordre privilégié au chapitre V.
  */
 export const MAIN_STORY: StoryAct[] = [
   {
-    id: "borrowed-portal",
+    id: "echoes-clearing",
     number: "I",
-    title: "Le portail emprunté",
-    objective: "Retrouver vos repères dans une Sylvinia que vous reconnaissez sans pouvoir dire d’où.",
-    detail: "Saidin vous recueille à Al’Gratal après l’ouverture d’un portail instable. Votre mémoire ne livre aucune chronologie à comparer à celle-ci : seulement la certitude intime et inexpliquée que vous n’êtes pas né·e dans cette réalité.",
-    requiredScenes: [],
+    title: "La Clairière des Échos",
+    objective: "Trouver la route d'Al’Gratal sans exposer la magie de deux inconnues.",
+    detail: "Le conseil de Saidin vous mène à Hylee et Remerii en plein entraînement. Votre première négociation décide moins de la destination que de la confiance avec laquelle le trajet commencera.",
+    requiredScenes: ["campaign-echoes"],
   },
   {
-    id: "missing-gathering",
+    id: "three-humans-algratal",
     number: "II",
-    title: "Le pacte sans escorte",
-    objective: "Approcher Iriana et comprendre ce qu’elle cherche à défaire sans livrer une autre vie au pacte d’Alamma.",
-    detail: "Iriana enquête seule sur le contrat démoniaque conclu par son père. Elle refuse la solution qui consisterait à lui substituer une autre âme et garde ses recherches hors du Conseil, où les faux d’Alamma possèdent encore des défenseurs.",
-    requiredScenes: ["iriana-0"],
+    title: "Trois humains à Al’Gratal",
+    objective: "Atteindre la capitale et découvrir à qui le phénix de Saidin ouvre réellement la porte.",
+    detail: "La ville s'offre d'abord au regard de Hylee, puis le jeton transforme l'attitude des gardes. Il autorise une prise en charge officielle, jamais une promenade libre dans le palais.",
+    requiredScenes: ["campaign-algratal-road"],
   },
   {
-    id: "separate-roads",
+    id: "audience-without-witness",
     number: "III",
-    title: "Des routes séparées",
-    objective: "Suivre les indices laissés par le portail et décider quelles personnes mettre en relation.",
-    detail: "Hylee et Remerii viennent de prendre la route. Draven cherche des renforts pour Forthaven. Naïah protège ses brumes et Akuhn’Nabad reste hors des cartes impériales. Aucun destin ne vous attend : les liens naîtront de rencontres, d’accords et de refus réels.",
-    requiredScenes: ["medig-window", "draven-0"],
+    title: "Audience sans témoin",
+    objective: "Faire examiner votre anomalie par Iriana et Valurn, puis ouvrir deux pistes distinctes.",
+    detail: "La signature de votre portail ressemble en partie à la grammaire du pacte d'Alamma sans révéler votre origine. Forthaven et Naïah deviennent deux directions à explorer dans l'ordre de votre choix.",
+    requiredScenes: ["campaign-imperial-audience"],
   },
   {
-    id: "living-black-queen",
+    id: "two-roads",
     number: "IV",
-    title: "La Reine Noire vivante",
-    objective: "Entrer à Akuhn’Nabad et négocier avec Amanea sans exposer sa cité à l’Empire.",
-    detail: "Dans cette branche, Amanea règne encore. Ennemie de l’Empire, elle reste loin d’Al’Gratal, prépare Allenna à lui succéder et oppose à Naïah un silence dont personne ne comprend encore la cause.",
-    requiredScenes: ["amanea-0", "amanea-family-truth"],
+    title: "Deux routes",
+    objective: "Obtenir le passage de Naïah et ramener Draven à Al’Gratal.",
+    detail: "La Forêt Interdite exige une négociation avec Naïah. Forthaven impose d'abord de survivre à une nouvelle vague de morts-vivants, puis d'assumer le départ de Draven devant Lineva. Aucune route n'accorde un avantage mécanique sur l'autre.",
+    requiredScenes: ["campaign-naiah-promise", "campaign-forthaven-assault", "campaign-lineva-departure"],
   },
   {
-    id: "pact-seam",
+    id: "price-of-help",
     number: "V",
-    title: "Les encres du mensonge",
-    objective: "Protéger un canal d’archives, puis recouper le registre impérial, les journaux d’Akuhn’Nabad et le faux ordre.",
-    detail: "L’enquête politique progresse sans exiger les confidences privées des personnages. Valurn examine la grammaire démoniaque sous la cire, Amanea cherche dans les rapports de ses loyalistes et Iriana dans les réserves d’Alamma. La résonance de votre passage demeure une piste distincte, jamais une preuve de votre origine.",
-    requiredScenes: ["campaign-archives-channel", "campaign-forged-proof"],
+    title: "Le prix de l'aide",
+    objective: "Obtenir l'appui politique d'Iriana et former l'escorte vers Akuhn’Nabad.",
+    detail: "Iriana promet son poids devant Tia, jamais une armée qu'elle ne contrôle pas. Draven accepte de prolonger son absence si la mission peut enfin rendre le danger de Forthaven impossible à ignorer.",
+    requiredScenes: ["campaign-price-of-aid"],
   },
   {
-    id: "chosen-convergence",
+    id: "forbidden-city",
     number: "VI",
-    title: "La convergence choisie",
-    objective: "Fermer le relais d’Alamma, empêcher une offensive fondée sur ses faux et préserver l’autonomie de chaque camp.",
-    detail: "Douze trajectoires acceptent de coordonner une seule opération sans former un groupe permanent. L’Empire et Akuhn’Nabad ne se réconcilient pas, et les fractures personnelles restent soumises à la confiance de celles et ceux qui les portent. La conclusion ferme la campagne, pas le monde ni les relations.",
-    requiredScenes: ["campaign-convergence-council", "campaign-convergence-operation", "campaign-epilogue"],
+    title: "La cité interdite",
+    objective: "Franchir les portes d'Akuhn’Nabad sans contourner le bannissement de Naïah.",
+    detail: "Naïah tient sa promesse et s'arrête aux portes. Allenna maintient son bannissement, interroge les visiteurs et décide seule si la mission peut entrer dans la cité.",
+    requiredScenes: ["campaign-akuhn-gates"],
+  },
+  {
+    id: "alamma-archives",
+    number: "VII",
+    title: "Les archives d'Alamma",
+    objective: "Gagner l'accès d'Amanea, reconstruire le plan d'Alamma et tenter une coopération avec Tia.",
+    detail: "Allenna, Draven et le protagoniste recoupent des preuves dispersées. La demande de lettre à Tia peut réussir ou échouer ; les deux décisions sont persistantes et conduisent à la suite sans correction artificielle.",
+    requiredScenes: ["campaign-amanea-audience", "campaign-alamma-archives", "campaign-amanea-letter"],
+  },
+  {
+    id: "before-light",
+    number: "VIII",
+    title: "Devant la Lumière",
+    objective: "Convaincre Tia de mobiliser contre le portail et de répondre enfin à Forthaven.",
+    detail: "La lettre d'Amanea, si elle existe, modifie profondément l'audience sans annuler les soupçons. L'aide arrive, mais Tia demande simultanément un détachement aux soldats que Forthaven peut le moins perdre.",
+    requiredScenes: ["campaign-before-light"],
+  },
+  {
+    id: "convergence",
+    number: "IX",
+    title: "La convergence",
+    objective: "Préparer puis mener l'opération commune dans la Forêt Interdite.",
+    detail: "Les camps coopèrent sans se réconcilier. Bellirith perturbe les personnes, jamais l'enquête. Le portail est réellement dangereux et sa destruction constitue une victoire crédible.",
+    requiredScenes: ["campaign-coalition-preparation", "campaign-false-portal"],
+  },
+  {
+    id: "rocky-spires",
+    number: "X",
+    title: "Les Serres Rocheuses",
+    objective: "Comprendre pourquoi la victoire de la forêt servait le véritable plan d'Alamma.",
+    detail: "Iriana vous convoque personnellement lorsque les rapports découvrent un second chantier. Le véritable portail s'ouvre, les négociations se rompent et l'Acte II devient inévitable sans résoudre Alamma, Forthaven, Saidin ni votre origine.",
+    requiredScenes: ["campaign-rocky-spires"],
   },
 ];
 
@@ -80,29 +112,30 @@ export const SUPPORTING_FIGURES: SupportingFigure[] = [
     role: "Chouette blanche de Hylee",
     portrait: "/assets/portraits/medig.jpg",
     unlockScenes: ["medig-window"],
-    place: "Entre l’Auberge du Forestier et les routes de Hylee",
-    bio: "Hylee l’a sauvée près de l’Auberge du Forestier. Medig retrouve toujours sa route jusqu’à elle et transporte parfois des messages entre Hylee, Remerii et Naïah lorsque les déplacements magiques seraient trop faciles à repérer.",
+    place: "Entre l'Auberge du Forestier et les routes de Hylee",
+    bio: "Hylee l'a sauvée près de l'Auberge du Forestier. Medig retrouve toujours sa route jusqu'à elle et transporte parfois des messages. Elle reste un lien relationnel facultatif, jamais la clef imposée des archives d'Akuhn’Nabad.",
   },
   {
     id: "alamma",
     name: "Alamma Farae",
-    role: "Père d’Iriana · auteur du pacte",
+    role: "Père d'Iriana · auteur du pacte",
     portrait: "/assets/backgrounds/algratal_catacombs.webp",
-    unlockScenes: ["iriana-3", "amanea-3"],
-    place: "Influence dissimulée entre les plans",
-    bio: "Père d’Iriana, Alamma a conclu avec un démon un pacte dont les clauses continuent d’agir sur sa fille et sur les équilibres de Sylvinia. Iriana cherche à le révoquer ; Valurn et Amanea savent qu’un contrat démoniaque ne se brise jamais sans révéler ce qu’il protégeait réellement.",
+    unlockScenes: ["campaign-imperial-audience", "campaign-alamma-archives"],
+    place: "Influence dissimulée entre les faux ordres et les portails",
+    bio: "Père d'Iriana et fils de Tia, Alamma a conclu un pacte dont la grammaire ressemble partiellement à celle de votre apparition. Cette parenté guide l'enquête sans prouver votre origine. Ses faux ordres et ses chantiers transforment la méfiance entre Empire et Obscurcis en ressource stratégique.",
   },
 ];
 
 export function storyProgress(history: string[], flags: string[]) {
-  // Une sauvegarde ayant déjà achevé l'ancienne campagne conserve son état.
-  // Les nouvelles scènes restent alors disponibles en relecture grâce à la
-  // migration de sauvegarde, sans retirer au joueur une fin déjà obtenue.
-  if (flags.includes("main-story-complete")) return MAIN_STORY.length;
-  const completed = new Set([...history, ...flags, ...flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
+  if (flags.includes("main-story-complete") || flags.includes("main-story-act-1-complete")) return MAIN_STORY.length;
+  const completed = new Set([
+    ...history,
+    ...flags,
+    ...flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)),
+  ]);
   let current = 0;
-  for (const act of MAIN_STORY) {
-    if (!act.requiredScenes.every((scene) => completed.has(scene))) break;
+  for (const chapter of MAIN_STORY) {
+    if (!chapter.requiredScenes.every((scene) => completed.has(scene))) break;
     current += 1;
   }
   return Math.min(current, MAIN_STORY.length);

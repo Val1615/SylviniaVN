@@ -78,6 +78,7 @@ export const SUBLOCATIONS: SpotData[] = [
   { id: "echo-clearing", location: "echo-clearing", name: "Clairière des Échos", shortName: "Clairière", description: "Une halte discrète entre Al’Gratal et Mir’Aldas, assez sûre pour dresser un camp et reprendre un entraînement interrompu.", background: bg("camp"), activities: ["training", "rest", "attunement"], icon: "✦" },
   { id: "river-halt", location: "river-halt", name: "Halte du Fleuve bleu", shortName: "Halte du fleuve", description: "La route longe ici un large fleuve avant les montagnes et les brumes de la Forêt Interdite.", background: place("foret-algratal"), activities: ["explore", "rest"], icon: "≋" },
   { id: "imperial-road", location: "imperial-road", name: "Camp de la route impériale", shortName: "Camp impérial", description: "Une escale fortifiée sur la longue route de Forthaven, utilisée par les convois et les renforts.", background: bg("camp"), activities: ["training", "rest"], icon: "⚑" },
+  { id: "rocky-spires-pass", location: "rocky-spires", name: "Col des Serres Rocheuses", shortName: "Col des Serres", description: "Les avant-postes surveillent le véritable portail depuis un col battu par les vents et les retombées des Calciterres.", background: bg("camp"), activities: ["explore", "attunement", "rest"], icon: "△" },
   { id: "obsidian-waystation", location: "obsidian-waystation", name: "Relais des dunes d’obsidienne", shortName: "Relais des dunes", description: "À l’entrée du désert Hil’dinis, les caravanes vérifient leurs réserves avant de rejoindre les galeries de Tzekarun.", background: place("hildinis"), activities: ["rest", "explore"], icon: "◇" },
   ...HOUSING_PROPERTIES.map((entry): SpotData => ({
     id: entry.spot,
@@ -103,6 +104,7 @@ export const DEFAULT_SPOTS: Record<string, string> = {
   "echo-clearing": "echo-clearing",
   "river-halt": "river-halt",
   "imperial-road": "imperial-road",
+  "rocky-spires": "rocky-spires-pass",
   "obsidian-waystation": "obsidian-waystation",
 };
 
@@ -197,12 +199,6 @@ const ROUTINES: Record<string, Record<string, RoutineMoment[]>> = {
       moment("forbidden-crossroads", "déplace les sentiers pour écarter les intrus"),
       moment("forbidden-ruins", "inspecte les anciennes pierres gagnées par les Ombres"),
       moment("forbidden-sanctuary", "reçoit celles et ceux auxquels elle laisse un chemin"),
-    ],
-    akuhn: [
-      moment("akuhn-terrace", "observe la ville de sa famille sans s’y sentir chez elle"),
-      moment("akuhn-throne-room", "affronte les affaires de la cour obscurcie"),
-      moment("akuhn-archives", "cherche les traces de ce que sa lignée a effacé"),
-      moment("akuhn-terrace", "évite le palais aussi longtemps que possible"),
     ],
   },
   lineva: {
@@ -333,7 +329,7 @@ export function routineFor(characterId: string, location: string, period: Period
     return moment("algratal-palace-council", "prépare l’audience avec Tia sans lui abandonner sa propre posture");
   }
   if (characterId === "allenna" && location === "akuhn" && period === "matin" && cycleDay === 14) {
-    return moment("akuhn-throne-room", "présente à Amanea le rapport qui précède l’arrivée de Naïah");
+    return moment("akuhn-throne-room", "présente à Amanea le rapport qui redessine les patrouilles près du territoire de Naïah");
   }
   if (characterId === "saidin" && location === "miraldas" && cycleDay === 23) {
     if (period === "apres-midi") return moment("miraldas-hylee-glade", "observe avec Hylee une flamme qui répond contre toute logique au givre");
@@ -403,7 +399,7 @@ export const ROUTE_SPOTS: Record<string, string> = {
   "valurn-4": "algratal-palace-quarters",
   "naiah-0": "forbidden-sanctuary",
   "naiah-1": "forbidden-crossroads",
-  "naiah-2": "akuhn-throne-room",
+  "naiah-2": "forbidden-ruins",
   "naiah-3": "forbidden-sanctuary",
   "naiah-4": "forbidden-sanctuary",
   "lineva-0": "forthaven-harbor",
@@ -466,7 +462,7 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "valurn-4": ["aube"],
   "naiah-0": ["soirée"],
   "naiah-1": ["matin"],
-  "naiah-2": ["matin"],
+  "naiah-2": ["apres-midi"],
   "naiah-3": ["soirée"],
   "naiah-4": ["soirée"],
   "lineva-0": ["aube"],
@@ -559,14 +555,15 @@ export const AMBIENT_SPOT_HINTS: Record<string, string[]> = {
   "naiah-ennui": ["forbidden-sanctuary"],
   "naiah-oiseau": ["forbidden-sanctuary"],
   "naiah-chemin": ["forbidden-crossroads"],
-  "naiah-excuse": ["forbidden-sanctuary", "akuhn-terrace"],
-  "naiah-matin": ["forbidden-sanctuary", "akuhn-terrace"],
-  "naiah-tasse": ["forbidden-sanctuary", "akuhn-terrace", "akuhn-music-room"],
+  "naiah-excuse": ["forbidden-sanctuary", "forbidden-ruins"],
+  "naiah-matin": ["forbidden-sanctuary", "forbidden-ruins"],
+  "naiah-tasse": ["forbidden-sanctuary", "forbidden-ruins"],
   "naiah-permission": ["forbidden-sanctuary", "forbidden-crossroads"],
   "naiah-couronne": ["forbidden-sanctuary", "forbidden-crossroads", "forbidden-ruins"],
   "naiah-jalousie": ["forbidden-sanctuary", "forbidden-crossroads", "forbidden-ruins"],
   "naiah-route": ["river-halt"],
-  "naiah-court": ["akuhn-throne-room"],
+  "naiah-court": ["forbidden-ruins"],
+  "naiah-lignage": ["forbidden-ruins"],
   "lineva-promenade": ["forthaven-ramparts"],
   "lineva-noeud": ["forthaven-harbor"],
   "lineva-repas": ["forthaven-war-room"],
