@@ -260,6 +260,14 @@ button:disabled { opacity: .42; cursor: not-allowed; }
 .intimacy-sprite img { width: auto; height: min(84vh, 940px); max-width: 72vw; object-fit: contain; object-position: bottom; filter: drop-shadow(0 22px 38px rgba(0,0,0,.78)); animation: sprite-enter .45s ease-out; }
 .intimacy-sprite.quiet { opacity: .78; filter: saturate(.84) brightness(.86); transform: scale(.98); }
 .intimacy-sprite.active { opacity: 1; transform: scale(1.025) translateY(-.7vh); }
+.intimacy-cg { position: absolute; z-index: 1; inset: 0; display: grid; place-items: center; overflow: hidden; background: #05060c; pointer-events: none; animation: intimacy-cg-enter .42s ease-out both; }
+.intimacy-cg::before { content: ""; position: absolute; inset: -3%; background-image: linear-gradient(rgba(5,6,12,.36),rgba(5,6,12,.36)), var(--intimacy-cg); background-position: center; background-size: cover; filter: blur(22px) saturate(.82) brightness(.55); transform: scale(1.08); }
+.intimacy-cg::after { content: ""; position: absolute; z-index: 2; inset: 0; background: linear-gradient(180deg, rgba(4,5,10,.26) 0, transparent 23%, transparent 52%, rgba(5,5,11,.36) 78%, rgba(5,5,11,.72) 100%); }
+.intimacy-cg img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; filter: saturate(.96) contrast(1.02); }
+.has-intimacy-cg .intimacy-top { padding: .65rem .75rem; background: linear-gradient(90deg, rgba(5,6,12,.72), rgba(5,6,12,.18) 70%, transparent); }
+.has-intimacy-cg .intimacy-dialogue { background: linear-gradient(145deg, rgba(18,18,31,.91), rgba(10,10,18,.94)); backdrop-filter: blur(10px); }
+.has-intimacy-cg .intimacy-complete { background: linear-gradient(145deg, rgba(20,18,31,.92), rgba(9,9,17,.95)); backdrop-filter: blur(10px); }
+@keyframes intimacy-cg-enter { from { opacity: 0; transform: scale(1.012); } to { opacity: 1; transform: scale(1); } }
 .intimacy-dialogue { border-color: rgba(231,101,136,.46); }
 .intimacy-dialogue .speaker { border-color: rgba(231,101,136,.7); }
 .intimacy-choices { max-width: 980px; margin-inline: auto; }
@@ -535,6 +543,12 @@ button:disabled { opacity: .42; cursor: not-allowed; }
   .group-intimacy-sprite.second { transform-origin: bottom left; }
   .intimacy-sprite { inset: 7vh -8vw 18vh; }
   .intimacy-sprite img { height: 68vh; max-width: 112vw; }
+  .intimacy-cg::before { inset: -5%; filter: blur(16px) saturate(.8) brightness(.5); }
+  .intimacy-cg img { width: 100%; height: 100%; object-fit: contain; }
+  .has-intimacy-cg .intimacy-top { top: .55rem; left: .55rem; right: .55rem; padding: .45rem .5rem; }
+  .has-intimacy-cg .intimacy-top h2 { max-width: 72vw; font-size: .95rem; line-height: 1.2; }
+  .has-intimacy-cg .intimacy-top .eyebrow { font-size: .42rem; }
+  .has-intimacy-cg .intimacy-dialogue { left: .65rem; right: .65rem; bottom: .65rem; min-height: 148px; padding: 1.15rem 1rem 1.45rem; }
   .intimacy-choices { max-height: 68svh; }
   .intimacy-complete { bottom: 1rem; }
   .varied-job { min-height: 0; max-height: 96svh; padding: 1rem; }

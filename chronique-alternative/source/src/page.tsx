@@ -38,6 +38,7 @@ import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
+import { groupIntimateCgState, soloIntimateCgState, type IntimateCgState } from "./intimate-cg";
 import {
   GROUP_DATES,
   GROUP_INTIMACY_GAMES,
@@ -4319,6 +4320,16 @@ function ExplicitModeWarning({ onConfirm, onCancel }: { onConfirm: () => void; o
   </div>;
 }
 
+function IntimateCg({ cg }: { cg: IntimateCgState }) {
+  return <div
+    className={`intimacy-cg intimacy-cg-${cg.phase}`}
+    style={{ "--intimacy-cg": `url(${cg.src})` } as React.CSSProperties}
+    data-intimacy-cg={cg.phase}
+  >
+    <img src={cg.src} alt="Illustration intime de la scène" />
+  </div>;
+}
+
 function DeveloperPanel({ game, updateGame }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void }) {
   if (!game.settings.developer) return <div className="option-panel dev-panel locked"><h2>Mode développeur</h2><p>Accès rapide aux jours, caractéristiques, routes et ressources. Raccourci : Ctrl + Maj + D.</p><button className="secondary-action" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: true } }))}>Activer le mode développeur</button></div>;
   return <div className="option-panel dev-panel"><div className="dev-title"><div><span>DEV</span><h2>Mode développeur</h2></div><button onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button></div><div className="dev-row"><label>Jour<input type="number" min={1} value={game.day} onChange={(event) => updateGame((current) => ({ ...current, day: Math.max(1, Number(event.target.value) || 1) }))} /></label><label>Période<select value={game.period} onChange={(event) => updateGame((current) => ({ ...current, period: Number(event.target.value) }))}>{PERIODS.map((period, index) => <option value={index} key={period.id}>{period.label}</option>)}</select></label><button onClick={() => updateGame((current) => ({ ...current, day: current.day + 7, period: 0 }))}>+7 jours</button><button onClick={() => updateGame((current) => ({ ...current, coins: current.coins + 100 }))}>+100 pièces</button><button onClick={() => updateGame((current) => ({ ...current, confluence: 100 }))}>Confluence 100</button><button onClick={() => updateGame((current) => ({ ...current, ambientHistory: emptyAmbientHistory(), sharedHistory: [] }))}>Réinitialiser les conversations</button></div><div className="dev-stats">{(Object.keys(game.stats) as StatKey[]).map((stat) => <button key={stat} onClick={() => updateGame((current) => ({ ...current, stats: { ...current.stats, [stat]: current.stats[stat] + 1 } }))}>{STAT_LABELS[stat]} <b>{game.stats[stat]}</b> +</button>)}</div><div className="dev-toggles"><Toggle label="Aucun coût de temps" detail="Voyages et scènes ne font plus avancer l’heure." active={game.settings.noTimeCost} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, noTimeCost: !current.settings.noTimeCost } }))} /><Toggle label="Tout déverrouiller" detail="Ignore jours, seuils et routes fermées." active={game.settings.unlockAll} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, unlockAll: !current.settings.unlockAll } }))} /></div><h3>Fil principal</h3><div className="dev-row"><button onClick={() => updateGame((current) => ({ ...current, day: Math.max(8, current.day), location: "akuhn", spot: "akuhn-throne-room", period: 0 }))}>Aller à l’audience d’Amanea</button><button onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "iriana-0", "draven-0", "amanea-0", "valurn-2", "amanea-3", "iriana-3", "amanea-4", "draven-4", "bellirith-3"]), flags: unique([...current.flags, "social:medig-window", "social:amanea-family-truth", "main-story-complete"]), relationships: { ...current.relationships, iriana: { ...current.relationships.iriana, stage: 5, met: true, affection: 60, trust: 70 }, valurn: { ...current.relationships.valurn, stage: 5, met: true, affection: 60, trust: 70 }, bellirith: { ...current.relationships.bellirith, stage: 5, met: true, affection: 60, trust: 70 }, amanea: { ...current.relationships.amanea, stage: 5, met: true, affection: 60, trust: 70, desire: 45 }, draven: { ...current.relationships.draven, stage: 5, met: true, affection: 40, trust: 75, desire: 0 } } }))}>Accomplir l’histoire</button></div><h3>Étapes relationnelles</h3><div className="dev-routes">{CHARACTERS.map((character) => <label key={character.id}><span>{character.name}</span><select value={game.relationships[character.id].stage} onChange={(event) => updateGame((current) => ({ ...current, relationships: { ...current.relationships, [character.id]: { ...current.relationships[character.id], stage: Number(event.target.value), met: true, affection: Math.max(current.relationships[character.id].affection, Number(event.target.value) * 10), trust: Math.max(current.relationships[character.id].trust, Number(event.target.value) * 10) } } }))}>{[0, 1, 2, 3, 4, 5].map((stage) => <option key={stage} value={stage}>{stage} · {STAGE_LABELS[stage]}</option>)}</select></label>)}</div></div>;
@@ -4403,10 +4414,17 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const isDone = step === "done";
   const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
+  const intimateCg = soloIntimateCgState({
+    character: character.id,
+    mode: game.player.intimacy,
+    surface: modal.home ? "home" : "route",
+    step,
+    chapter: directionChapter,
+  });
 
-  return <section className="interactive-intimacy" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
+  return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
-    <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
@@ -4486,13 +4504,19 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const isDone = step === "done";
   const background = backgroundUrl(modal.background || spotById(date.spot)?.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
+  const intimateCg = groupIntimateCgState({
+    pairId: date.id,
+    mode: game.player.intimacy,
+    step,
+    chapter: directionChapter,
+  });
 
-  return <section className="interactive-intimacy group-interactive-intimacy" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
+  return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
-    <div className="group-intimacy-sprites" aria-hidden="true">
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className="group-intimacy-sprites" aria-hidden="true">
       <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${first.id}/${firstMood}.webp`} alt="" /></div>
       <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${second.id}/${secondMood}.webp`} alt="" /></div>
-    </div>
+    </div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
