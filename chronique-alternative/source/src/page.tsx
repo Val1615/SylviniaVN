@@ -11,7 +11,9 @@ import {
   PERIODS,
   ROUTE_SCENES,
   routeFlagRequirements,
+  routeHistoryRequirements,
   routeKnowledgeRequirements,
+  routeStoryRequirement,
   type CharacterData,
   type ChoiceData,
   type DialogueLine,
@@ -36,6 +38,7 @@ import {
 import { SOCIAL_SCENES, type SocialScene } from "./social-scenes";
 import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
+import { linevaDateApproaches } from "./lineva-date-intimacy";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
 import { groupIntimateCgState, soloIntimateCgState, type IntimateCgState } from "./intimate-cg";
@@ -616,6 +619,8 @@ function hasKnowledge(game: GameState, ids: string[] = []) {
 function routeNarrativeReady(scene: RouteScene, game: GameState) {
   return game.settings.unlockAll || (
     hasKnowledge(game, routeKnowledgeRequirements(scene))
+    && routeHistoryRequirements(scene).every((id) => game.history.includes(id))
+    && storyProgress(game.history, game.flags) >= routeStoryRequirement(scene)
     && routeFlagRequirements(scene).every((flag) => game.flags.includes(flag))
   );
 }
@@ -632,6 +637,16 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
     const character = CHARACTERS.find((entry) => entry.id === scene.character);
     return `Une conversation personnelle semble maintenant possible avec ${character?.name || "cette personne"}. Retrouvez-la dans l’un de ses lieux habituels.`;
   }
+  const missingHistory = routeHistoryRequirements(scene).filter((id) => !game.history.includes(id));
+  if (missingHistory.length) {
+    if (scene.id === "lineva-0") return "Rencontrez d’abord Lineva lors du départ de Draven à Forthaven.";
+    return "Une étape de l’histoire principale doit encore présenter cette situation.";
+  }
+  const requiredStory = routeStoryRequirement(scene);
+  const currentStory = storyProgress(game.history, game.flags);
+  if (currentStory < requiredStory) {
+    return `Poursuivez l’histoire principale jusqu’à la fin du chapitre ${MAIN_STORY[requiredStory - 1]?.number || requiredStory}.`;
+  }
   const missingFlags = routeFlagRequirements(scene).filter((flag) => !game.flags.includes(flag));
   if (!missingFlags.length) return undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
@@ -644,7 +659,7 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
   }
   if (scene.id === "amanea-4") return "Amanea doit d’abord poser avec vous les limites qu’impose le secret de Naïah. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
   if (scene.id === "allenna-4") return "Allenna doit d’abord éprouver une présence qui ne devienne ni surveillance ni sauvetage. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
-  if (scene.id === "lineva-4" || scene.id === "draven-4") {
+  if (scene.id === "draven-4") {
     if (!game.flags.includes("lineva-mother-truth-resolved")) return "Lineva doit encore décider comment annoncer à Draven la mort de sa mère. Retrouvez-les sur les quais de Forthaven.";
     return "Après l’annonce, Lineva et Draven doivent traverser leur première soirée de deuil sans vous confier la décision à leur place. Retrouvez-les dans les quartiers de Forthaven.";
   }
@@ -1100,14 +1115,6 @@ function readSlotInfo() {
   return next;
 }
 
-const LINEVA_TRAVEL_ITINERARY: CharacterData["itinerary"] = [
-  { days: 14, location: "forthaven", note: "Tient Forthaven et prépare une relève capable de voyager sans elle" },
-  { days: 3, travelTo: "algratal", note: "Voyage vers Al’Gratal après avoir été convaincue de défendre elle-même son dossier" },
-  { days: 3, location: "algratal", note: "Plaide pour Forthaven aux côtés de Draven" },
-  { days: 3, travelTo: "forthaven", note: "Retour vers le front avec l’accord négocié" },
-  { days: 15, location: "forthaven", note: "Reprend le commandement et mesure ce que sa relève a accompli" },
-];
-
 const IRIANA_FORTHAVEN_ITINERARY: CharacterData["itinerary"] = [
   { days: 12, location: "algratal", note: "Audiences impériales et recherches secrètes sur le pacte" },
   { days: 3, travelTo: "akuhn", note: "Voyage clandestin organisé avec Valurn" },
@@ -1121,9 +1128,7 @@ const IRIANA_FORTHAVEN_ITINERARY: CharacterData["itinerary"] = [
 ];
 
 function characterSchedule(character: CharacterData, day: number, flags: string[] = []) {
-  const itinerary = character.id === "lineva" && flags.includes("lineva-travel")
-    ? LINEVA_TRAVEL_ITINERARY
-    : character.id === "iriana" && flags.includes("story-forthaven-accord-drafted")
+  const itinerary = character.id === "iriana" && flags.includes("story-forthaven-accord-drafted")
       ? IRIANA_FORTHAVEN_ITINERARY
       : character.itinerary;
   const cycleLength = itinerary.reduce((total, stop) => total + stop.days, 0);
@@ -1753,7 +1758,7 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
     effects: { stats: { [misread.stat]: 1 }, affection: -3, trust: -5, desire: -2 },
   }];
   const romanticMoment = !game.flags.includes(`${characterId}-platonic`)
-    && dialogue.scene.route.stage >= 3;
+    && dialogue.scene.route.stage >= (characterId === "lineva" ? 4 : 3);
   if (romanticMoment && contextual.boundary) extra.push({
     id: `${dialogue.scene.id}-boundary`,
     text: contextual.boundary.text,
@@ -4343,7 +4348,10 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const homeProperty = modal.home ? propertyById(game.housing.propertyId) : undefined;
   const homeItems = modal.home ? game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item)) : [];
   const profile = INTIMACY_PROFILES[character.id];
-  const intimacyGame = INTIMACY_GAMES[character.id];
+  // Les deux rendez-vous de Lineva la placent déjà sans garde complète : le
+  // mini-jeu générique « Défaire la garde » réintroduirait des pièces d’équipement
+  // explicitement déposées dans la continuité de la scène.
+  const intimacyGame = modal.dateId?.startsWith("date-lineva-") ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => homeProperty ? homeIntimacyOpening(character.id, homeProperty, homeItems) : intimacyOpening(character.id, date));
   const [lineIndex, setLineIndex] = useState(0);
@@ -4353,8 +4361,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices(modal.home ? HOME_INTIMACY_APPROACHES[character.id] : profile.approaches, `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
-  const [directionChoices] = useState(() => shuffledChoices(modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices(modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || profile.approaches, `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [directionChoices] = useState(() => shuffledChoices(modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   const currentLine = lines[lineIndex];
   const characterSpeaking = currentLine?.speaker === character.name;
   const spriteMood = characterSpeaking
@@ -4398,7 +4406,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
-    const chapters = modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex);
+    const chapters = modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     setDirectionSequence(chapters);
     setDirectionChapter(0);
     if (chapters.length) beginSegment("direction-lines", chapters[0]);

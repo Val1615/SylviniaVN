@@ -110,18 +110,14 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Lui dire que votre lien doit demeurer une amitié réelle.", "Je préférerais une autre réponse. Je préfère encore davantage que tu me la donnes avant que j’invente un avenir qui n’existe pas.", "lucidite"),
   ),
 
-  "lineva-0": R(C("Lui conseiller de remettre immédiatement le commandement à un officier moins épuisé.", "Vous ne connaissez ni mes officiers ni cette relève. Proposez une aide précise ; ne transformez pas ma fatigue en destitution improvisée.", "lucidite")),
-  "lineva-1": R(C("Fermer ses cartes et lui ordonner huit heures de repos au nom de sa propre sécurité.", "Je peux entendre que je dois dormir. Je n’accepterai pas que votre inquiétude s’empare de mon commandement pour me l’expliquer.", "audace")),
-  "lineva-2": R(C("Lui garantir que Forthaven ne connaîtra aucune perte pendant son absence.", "Cette promesse est impossible, et vous le savez. Aidez-moi à préparer une relève ; ne me demandez pas de partir sur un mensonge.", "sangFroid")),
-  "lineva-3": R(
-    C("Lui dire que sa relève prouve qu’elle n’était finalement pas indispensable au port.", "Une relève compétente prouve que j’ai construit quelque chose, pas que mon absence ne coûte rien ni que ma place était inutile.", "lucidite"),
-    C("Proposer de quitter le bal avec elle sans transformer ce départ en rendez-vous.", "Merci. J’ai besoin d’air et de compagnie, pas d’une nouvelle mission sentimentale à réussir ce soir.", "sangFroid"),
-    C("Lui dire que vous voulez être la personne auprès de qui elle se repose, sans devenir son amante.", "Reçu. Il me faudra ajuster ce que j’espérais, pas la confiance avec laquelle je vous confie mon armure.", "lucidite"),
-  ),
+  "lineva-0": R(C("Profiter du départ de Draven pour lui expliquer comment un continent devrait administrer Forthaven.", "Vous êtes ici depuis assez longtemps pour porter une caisse, pas pour redessiner ma chaîne de commandement. Commencez par le poids devant vous.", "lucidite")),
+  "lineva-1": R(C("Insister pour conserver la Tour des Filets afin que son premier recul ne ressemble pas à une défaite.", "Si je sacrifie dix-neuf personnes pour protéger mon apparence, la tour ne sera plus une position. Ce sera mon monument à la connerie.", "audace")),
+  "lineva-2": R(C("Lui demander les circonstances exactes de la mort de sa mère avant de reprendre l’évacuation.", "Je viens de vous dire ce que je pouvais dire ici. Le garçon saigne encore. Si votre curiosité passe avant lui, quittez le treuil.", "lucidite")),
+  "lineva-3": R(C("Signer vous-même “Amirale Lineva” afin de lui montrer que le titre lui revient déjà.", "Vous n’allez pas décider de ce mot avec ma plume. Posez-la. Mon père est absent ; je n’ai pas besoin que vous l’enterriez administrativement.", "audace")),
   "lineva-4": R(
-    C("Lui promettre de prendre toutes les décisions du lendemain afin qu’elle n’ait plus à commander.", "Déposer mon armure n’est pas vous remettre Forthaven ni ma volonté. Je demandais une nuit, pas une relève de ma propre vie.", "audace"),
-    C("Rester auprès d’elle tout en disant que vous ne souhaitez pas d’intimité ce soir.", "Compris. La fenêtre, le silence et votre présence suffiront. Rien ici ne deviendra un ordre d’aller plus loin.", "sangFroid"),
-    C("Lui dire que votre lien est une confiance profonde, mais non romantique.", "Votre importance ne disparaît pas. Je vais seulement lui rendre une forme qui ne vous demande pas d’attendre autre chose.", "lucidite"),
+    C("Lui dire que cette victoire prouve enfin que le fauteuil d’Amiral lui appartient.", "Une ville brûlée n’est pas une cérémonie de promotion. Aidez-moi à compter les absents ou laissez ce titre dans les gravats.", "lucidite"),
+    C("Lui dire que vous tenez à elle, mais que vous ignorez encore quelle forme prendra votre proximité.", "Alors ne lui donnez pas de nom au milieu de la fumée. Restez pour les listes, et nous parlerons quand les cloches auront cessé depuis plus d’une heure.", "sangFroid"),
+    C("Lui dire clairement que vous souhaitez rester son ami·e, sans attente amoureuse.", "D’accord. Vous serez l’ami·e qui connaît le code des cloches et vole mes mauvaises répliques. Pour l’instant, prenez ce registre.", "lucidite"),
   ),
 
   "saidin-0": R(C("Lui demander d’arrêter le temps jusqu’à ce que l’horloge donne enfin une réponse.", "Une minute emprisonnée ne devient pas plus compréhensible. Elle cesse seulement de nous laisser vivre assez longtemps pour apprendre.", "resonance")),

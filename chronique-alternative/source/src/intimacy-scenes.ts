@@ -2,6 +2,7 @@ import type { DialogueLine } from "./game-data";
 import type { DateScene, IntimacyMode, PlayerSex } from "./date-scenes";
 import { intimacyRoutes, type IntimacyRoute } from "./intimacy-routes";
 import { polishIntimacyText } from "./intimacy-prose";
+import { linevaDateIntimacyRoutes } from "./lineva-date-intimacy";
 
 export type IntimacyChoice = {
   id: string;
@@ -359,12 +360,14 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
 export function intimacyOpening(characterId: string, date?: DateScene): DialogueLine[] {
   const profile = INTIMACY_PROFILES[characterId];
   const setting = date?.intimacySetting.opening.map((text) => N(text)) || [];
+  if (date?.intimacySetting.replaceProfile) return setting;
   return [...setting, ...profile.opening];
 }
 
 export function intimacyEnding(characterId: string, date?: DateScene): DialogueLine[] {
   const profile = INTIMACY_PROFILES[characterId];
   const setting = date?.intimacySetting.closing.map((text) => N(text)) || [];
+  if (date?.intimacySetting.replaceProfile) return setting;
   return [...profile.afterglow, ...setting];
 }
 
@@ -388,12 +391,16 @@ export function directionLines(characterId: string, directionId: string, mode: I
   });
 }
 
-export function intimacyDirections(characterId: string, sex: PlayerSex): IntimacyDirectionChoice[] {
+export function intimacyDirections(characterId: string, sex: PlayerSex, dateId?: string): IntimacyDirectionChoice[] {
+  const dateRoutes = characterId === "lineva" ? linevaDateIntimacyRoutes(dateId, sex) : [];
+  if (dateRoutes.length) return dateRoutes;
   const routes = intimacyRoutes(characterId, sex);
   return routes.length ? routes : (INTIMACY_PROFILES[characterId]?.directions || []);
 }
 
-export function directionChapters(characterId: string, directionId: string, mode: IntimacyMode, sex: PlayerSex): DialogueLine[][] {
+export function directionChapters(characterId: string, directionId: string, mode: IntimacyMode, sex: PlayerSex, dateId?: string): DialogueLine[][] {
+  const dateRoute = characterId === "lineva" ? linevaDateIntimacyRoutes(dateId, sex).find((entry) => entry.id === directionId) : undefined;
+  if (dateRoute) return dateRoute.chapters[mode];
   const richRoute = intimacyRoutes(characterId, sex).find((entry) => entry.id === directionId);
   if (richRoute) return richRoute.chapters[mode];
   const legacy = directionLines(characterId, directionId, mode, sex);
