@@ -34,16 +34,8 @@ try {
   assert.equal(gameData.ROUTE_SCENES.length, 60, "chaque personnage doit conserver cinq scènes majeures");
   assert.equal(new Set(gameData.ROUTE_SCENES.map((scene) => scene.id)).size, 60, "les identifiants de route doivent être uniques");
 
-  const linevaTravelItinerary = [
-    { days: 14, location: "forthaven", note: "Tient Forthaven" },
-    { days: 3, travelTo: "algratal", note: "Voyage vers Al’Gratal" },
-    { days: 3, location: "algratal", note: "Plaide pour Forthaven" },
-    { days: 3, travelTo: "forthaven", note: "Retour vers le front" },
-    { days: 15, location: "forthaven", note: "Reprend le commandement" },
-  ];
-
   function schedule(character, day, flags) {
-    const itinerary = character.id === "lineva" && flags.has("lineva-travel") ? linevaTravelItinerary : character.itinerary;
+    const itinerary = character.itinerary;
     const cycleLength = itinerary.reduce((total, stop) => total + stop.days, 0);
     const cycleDay = ((Math.max(1, day) - 1) % cycleLength) + 1;
     let cursor = 1;
@@ -92,10 +84,12 @@ try {
   }
 
   const linevaTwo = gameData.ROUTE_SCENES.find((scene) => scene.id === "lineva-2");
-  assert.ok(linevaTwo.choices.every((choice) => choice.effects.flags?.includes("lineva-travel")), "lineva-2 doit toujours transmettre son itinéraire");
+  assert.ok(linevaTwo.choices.every((choice) => choice.effects.knowledge?.includes("knows_lineva_mother_dead")), "lineva-2 doit révéler sobrement la mort de sa mère dans toutes les variantes");
+  assert.ok(gameData.ROUTE_SCENES.filter((scene) => scene.character === "lineva").every((scene) => scene.location === "forthaven"), "Lineva doit rester physiquement à Forthaven pendant son Acte I");
+  assert.ok(gameData.ROUTE_SCENES.filter((scene) => scene.character === "lineva").flatMap((scene) => scene.choices).every((choice) => !choice.effects.flags?.includes("lineva-travel")), "aucun choix Lineva ne doit rétablir l’ancien voyage à Al’Gratal");
   assert.equal(rules.routeChoiceCompletes("lineva-2-misread"), false, "une maladresse ne doit pas valider une route");
-  assert.equal(rules.routeChoiceCompletes("lineva-2-boundary"), false, "une pause ne doit pas valider une route");
-  assert.equal(rules.routeChoiceCompletes("lineva-2-platonic"), true, "une décision amicale claire doit clore l’étape");
+  assert.equal(rules.routeChoiceCompletes("lineva-4-boundary"), false, "une pause ne doit pas valider la dernière route");
+  assert.equal(rules.routeChoiceCompletes("lineva-4-platonic"), true, "une décision amicale claire doit clore la dernière étape");
   assert.equal(rules.routeChoiceCompletes("l2-s"), true, "un choix écrit doit valider la route");
 
   assert.equal(rules.contentBranchAllowed(["hr-triad-established"], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), true);
