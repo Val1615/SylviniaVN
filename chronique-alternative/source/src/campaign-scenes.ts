@@ -1124,7 +1124,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
     requiresHistory: ["campaign-before-light"],
     intro: [
       N("La coalition n'a pas de salle commune. Les plans voyagent sous double sceau. Allenna commandera les forces d'Akuhn’Nabad depuis l'est, Draven tiendra l'ouest, et aucun soldat ne franchira la ligne centrale sans signal."),
-      L("Iriana", "Le protagoniste circulera entre les postes avec les copies vérifiées. Si les communications divergent, nous revenons aux originaux."),
+      L("Iriana", "{player} circulera entre les postes avec les copies vérifiées. Si les communications divergent, nous revenons aux originaux."),
       L("Tia", "Vous lui confiez une liberté considérable."),
       L("Iriana", "Je lui confie une tâche qu'il a déjà accomplie sous davantage de contraintes."),
       N("Iriana ne cherche pas votre réaction après cette phrase. Elle vous consulte sur la position du fragment et modifie le plan lorsque vous signalez une résonance instable."),

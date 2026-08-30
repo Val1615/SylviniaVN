@@ -76,7 +76,7 @@ export const MAIN_STORY: StoryAct[] = [
     number: "VII",
     title: "Les archives d'Alamma",
     objective: "Gagner l'accès d'Amanea, reconstruire le plan d'Alamma et tenter une coopération avec Tia.",
-    detail: "Allenna, Draven et le protagoniste recoupent des preuves dispersées. La demande de lettre à Tia peut réussir ou échouer ; les deux décisions sont persistantes et conduisent à la suite sans correction artificielle.",
+    detail: "Allenna, Draven et vous recoupez des preuves dispersées. La demande de lettre à Tia peut réussir ou échouer ; les deux décisions sont persistantes et conduisent à la suite sans correction artificielle.",
     requiredScenes: ["campaign-amanea-audience", "campaign-alamma-archives", "campaign-amanea-letter"],
   },
   {

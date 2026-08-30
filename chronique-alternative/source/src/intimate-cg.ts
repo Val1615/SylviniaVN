@@ -1,4 +1,5 @@
 import type { IntimacyMode } from "./date-scenes";
+import type { LinevaIntimacyPhase } from "./lineva-date-intimacy";
 
 export type IntimateCgPhase = "reveal" | "post-orgasm";
 export type IntimateCgSurface = "route" | "home" | "group";
@@ -47,11 +48,18 @@ export function soloIntimateCgState(options: {
   surface: Exclude<IntimateCgSurface, "group">;
   step: string;
   chapter: number;
+  narrativePhase?: LinevaIntimacyPhase;
 }): IntimateCgState | undefined {
   if (options.mode !== "explicite") return undefined;
   const assets = SOLO_INTIMATE_CG[options.character];
   if (options.step === "ending" || options.step === "done") return stateFromAssets(assets, "post-orgasm");
   if (options.step !== "direction-lines") return undefined;
+
+  if (options.narrativePhase) {
+    if (options.narrativePhase === "intensification") return stateFromAssets(assets, "reveal");
+    if (options.narrativePhase === "afterglow" || options.narrativePhase === "ending") return stateFromAssets(assets, "post-orgasm");
+    return undefined;
+  }
 
   // Les scènes au logis placent leur climax au chapitre 4 ; les routes solo au chapitre 5.
   const revealChapter = options.surface === "home" ? 3 : 4;

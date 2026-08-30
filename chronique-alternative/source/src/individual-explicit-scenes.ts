@@ -290,51 +290,51 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
     femme: {
       guided: scene(
         "Lineva vous fait allonger sur le dos, place un coussin ferme sous vos hanches et s’agenouille entre vos jambes. Sa bouche rejoint votre intimité humide avec une franchise sans détour ; sa langue appuie sur votre perle de plaisir pendant que ses doigts entrent en vous, et la force de son avant-bras soutient votre bassin lorsque vos mouvements deviennent trop amples pour rester sur le matelas.",
-        C("Lineva", "Je peux tenir cette position toute la nuit. La seule question utile, c’est de savoir si ton corps veut que je garde cette pression."),
+        C("Lineva", "Je peux tenir cette position toute la nuit. La seule question utile, c’est de savoir si votre corps veut que je garde cette pression."),
         "Votre oui lui fait perdre sa prudence sans perdre son attention. Lineva conserve l’angle, accélère les mouvements de ses doigts et vous maintient assez fermement pour que vous puissiez vous abandonner sans glisser ; votre orgasme vous traverse contre sa bouche, puis elle relâche sa prise par étapes comme on dépose quelque chose de précieux plutôt qu’une charge accomplie.",
       ),
       offered: scene(
         "Vous asseyez Lineva sur le bord du coffre, une jambe posée sur votre épaule afin de ménager ses anciennes blessures. Votre bouche descend entre ses cuisses et votre langue suit son point de feu tandis que votre main caresse l’intérieur de son intimité ; elle garde une paume sur le mur, non pour résister, mais pour pouvoir pousser librement son bassin vers vous.",
-        P("Tu n’as rien à endurer. Si tu veux plus fort, tu le demandes parce que ça te plaît — jamais parce que tu crois devoir tenir."),
+        P("Vous n’avez rien à endurer. Si vous voulez plus fort, demandez-le parce que cela vous plaît, jamais parce que vous croyez devoir tenir."),
         "Lineva ferme les yeux et formule la demande. Vous augmentez la profondeur sans changer la pression de votre langue ; son corps puissant se tend, sa voix se brise et son orgasme lui fait enfin lâcher le mur pour saisir vos épaules. Elle reste assise, jambes tremblantes, presque amusée qu’une position si stable l’ait rendue incapable de se lever.",
       ),
       mutual: scene(
         "Vous vous placez face à face sur le côté, une cuisse de Lineva entre les vôtres et la vôtre contre son intimité. Vos bassins glissent en sens opposés, chaque femme frottant sa perle de plaisir contre la jambe de l’autre ; vos doigts ajoutent une pénétration alternée qui ne demande jamais à Lineva de porter votre poids ni à vous de soutenir le sien.",
-        C("Lineva", "Une relève sans poste fixe. Quand ta jambe fatigue, je prends l’angle ; quand la mienne tremble, tu le reprends. Ça, je sais le partager."),
+        C("Lineva", "Une relève sans poste fixe. Quand votre jambe fatigue, je prends l’angle ; quand la mienne tremble, vous le reprenez. Ça, je sais le partager."),
         "L’alternance devient plus rapide mais reste lisible. Lineva jouit en serrant votre cuisse, garde ensuite deux doigts au creux de vos lèvres de velours et ajuste sa force à votre demande ; votre propre orgasme arrive sous sa main, dans une position où aucune des deux n’a dû protéger l’autre en silence.",
       ),
     },
     homme: {
       guided: scene(
         "Lineva vous fait asseoir sur un banc solide et se place entre vos genoux. Elle lubrifie votre sexe dressé d’une main ferme, puis le prend dans sa bouche avec des mouvements lents et profonds ; son autre paume maintient votre cuisse, assez forte pour absorber chaque tension sans vous immobiliser, tandis qu’elle vous invite à annoncer les poussées que vous souhaitez.",
-        C("Lineva", "Je ne suis pas fragile, mais je ne suis pas un exercice d’endurance non plus. Donne-moi ton rythme, pas une épreuve à réussir."),
+        C("Lineva", "Je ne suis pas fragile, mais je ne suis pas un exercice d’endurance non plus. Donnez-moi votre rythme, pas une épreuve à réussir."),
         "Vous suivez sa règle. Lineva accueille plusieurs mouvements, reprend la conduite quand votre souffle se brise et garde sa langue contre l’extrémité sensible jusqu’à votre avertissement ; elle vous fait jouir dans sa bouche sans changer de cadence, puis relève la tête avec une douceur étonnante, satisfaite d’avoir employé sa force à soutenir plutôt qu’à résister.",
       ),
       offered: scene(
         "Vous placez Lineva debout face au mur, non pour la contraindre mais parce qu’elle choisit cette posture qui épargne son épaule. Elle guide votre membre viril vers son intimité humide et recule contre vous jusqu’à l’accueillir ; votre main passe sous son ventre pour stimuler sa perle de plaisir pendant que l’autre suit les muscles de sa hanche à chaque pénétration.",
-        P("Tu gardes les pieds au sol et tu commandes la distance. Moi, je suis le mouvement que tu viens chercher."),
+        P("Vous gardez les pieds au sol et vous commandez la distance. Moi, je suis le mouvement que vous venez chercher."),
         "Lineva teste votre promesse puis l’utilise pleinement. Elle règle la profondeur en avançant ou reculant, demande une cadence plus ferme et finit par se cambrer contre votre poitrine ; son orgasme contracte tout son corps autour de vous, et vous cédez peu après lorsque sa main se referme sur la vôtre plutôt que sur une arme absente.",
       ),
       mutual: scene(
         "Lineva vous renverse sur le lit avec un rire, vient vous chevaucher et guide votre membre viril dans son écrin de chair. Elle commence en position haute, utilisant la force de ses cuisses pour contrôler chaque descente ; lorsque la fatigue effleure son ancienne blessure, vous roulez ensemble sur le côté et poursuivez dans une étreinte où vos jambes assurent le mouvement à parts égales.",
-        C("Lineva", "Je cède la position, pas le plaisir. Reste contre moi et garde exactement cet angle."),
+        C("Lineva", "Je cède la position, pas le plaisir. Restez contre moi et gardez exactement cet angle."),
         "La seconde posture ralentit sans diminuer l’intensité. Votre main entretient sa perle de plaisir, la sienne guide vos hanches et ses contractions annoncent l’orgasme avant sa voix ; Lineva continue pourtant le mouvement latéral jusqu’à vous faire jouir en elle, fière d’avoir choisi la relève plutôt que d’avoir caché sa fatigue.",
       ),
     },
     intersexe: {
       guided: scene(
         "Lineva vous propose une position où tout votre dos repose sur elle, vos jambes ouvertes entre les siennes. Vous guidez ses mains vers le point de feu et l’intimité que vous voulez stimuler ; elle utilise sa force pour maintenir un frottement précis, ajoute une pénétration digitale ou corporelle seulement à votre demande et vous laisse régler la profondeur en saisissant ses avant-bras.",
-        C("Lineva", "Je te tiens parce que tu me l’as demandé. Le moment où cette prise cesse d’aider, tu me le dis et mes bras deviennent simplement une étreinte."),
+        C("Lineva", "Je vous tiens parce que vous me l’avez demandé. Le moment où cette prise cesse d’aider, dites-le-moi et mes bras deviennent simplement une étreinte."),
         "Vous vous abandonnez à ce soutien sans perdre la conduite. Lineva adapte chaque mouvement à vos indications, ralentit lorsqu’une zone devient trop sensible et reprend ailleurs avec la même assurance ; votre orgasme vous soulève contre sa poitrine, mais ses bras restent souples, transformant la puissance de la commandante en un refuge entièrement choisi.",
       ),
       offered: scene(
         "Vous demandez à Lineva de choisir la posture la plus confortable plutôt que la plus impressionnante. Elle s’allonge sur le ventre avec une hanche relevée et vous montre le contact désiré : bouche d’abord, puis frottement ou pénétration selon ce que vos deux corps peuvent donner sans douleur. Vous gardez une main sur ses cicatrices et l’autre au point de plaisir qu’elle nomme.",
-        P("Je ne veux pas vaincre ta résistance. Je veux la position dans laquelle tu n’as plus besoin d’en avoir."),
+        P("Je ne veux pas vaincre votre résistance. Je veux la position dans laquelle vous n’avez plus besoin d’en avoir."),
         "Lineva expire comme après une longue garde et vous guide avec une franchise débarrassée d’héroïsme. Le mouvement choisi devient plus profond, sa jambe s’ouvre davantage et son plaisir monte sans qu’elle ait à tenir une posture pour vous ; son orgasme la fait trembler sous votre paume, puis elle se retourne pour vérifier aussitôt ce que votre propre corps souhaite recevoir.",
       ),
       mutual: scene(
         "Vous organisez une relève en trois positions : assis face à face pour nommer les gestes, sur le côté pour le frottement et la pénétration éventuelle, puis l’un derrière l’autre pour que la personne fatiguée puisse être soutenue. Lineva refuse que votre sexe détermine qui porte ou reçoit ; chaque transition dépend seulement de la demande formulée à cet instant.",
-        C("Lineva", "On ne change pas parce qu’un rôle l’exige. On change quand un corps le demande — et l’autre répond s’il en a envie."),
+        C("Lineva", "On ne change pas parce qu’un rôle l’exige. On change quand un corps le demande, et l’autre répond s’il en a envie."),
         "Cette logique rend la scène fluide plutôt que militaire. Vous donnez à Lineva un orgasme dans la position où elle peut relâcher tout son poids, puis elle vous ramène contre elle et reprend le geste précis qui vous avait fait hésiter de plaisir ; votre conclusion arrive sous une force adaptée, jamais identique à celle qu’elle avait reçue.",
       ),
     },

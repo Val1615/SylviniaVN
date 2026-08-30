@@ -22,8 +22,8 @@ const R = (
 /**
  * Chaque scène majeure possède sa propre erreur de lecture. Les scènes où la
  * proximité devient romantique possèdent en plus une pause et une bifurcation
- * amicale écrites dans le contexte exact du moment. Aucun de ces choix ne
- * remplace les décisions positives déjà écrites dans game-data.
+ * amicale écrites dans le contexte exact du moment. Pour Lineva, ces deux
+ * décisions restent à la fin du rendez-vous et ne coupent jamais son Acte I.
  */
 export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = {
   "hylee-0": R(C("Lui conseiller de rester à l’auberge jusqu’à ce qu’elle maîtrise parfaitement sa magie.", "Rester ici parce que j’ai peur ne serait pas de la maîtrise. Ce serait encore quelqu’un d’autre qui décide quand j’ai le droit de partir.", "sangFroid")),
@@ -114,11 +114,7 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
   "lineva-1": R(C("Insister pour conserver la Tour des Filets afin que son premier recul ne ressemble pas à une défaite.", "Si je sacrifie dix-neuf personnes pour protéger mon apparence, la tour ne sera plus une position. Ce sera mon monument à la connerie.", "audace")),
   "lineva-2": R(C("Lui demander les circonstances exactes de la mort de sa mère avant de reprendre l’évacuation.", "Je viens de vous dire ce que je pouvais dire ici. Le garçon saigne encore. Si votre curiosité passe avant lui, quittez le treuil.", "lucidite")),
   "lineva-3": R(C("Signer vous-même “Amirale Lineva” afin de lui montrer que le titre lui revient déjà.", "Vous n’allez pas décider de ce mot avec ma plume. Posez-la. Mon père est absent ; je n’ai pas besoin que vous l’enterriez administrativement.", "audace")),
-  "lineva-4": R(
-    C("Lui dire que cette victoire prouve enfin que le fauteuil d’Amiral lui appartient.", "Une ville brûlée n’est pas une cérémonie de promotion. Aidez-moi à compter les absents ou laissez ce titre dans les gravats.", "lucidite"),
-    C("Lui dire que vous tenez à elle, mais que vous ignorez encore quelle forme prendra votre proximité.", "Alors ne lui donnez pas de nom au milieu de la fumée. Restez pour les listes, et nous parlerons quand les cloches auront cessé depuis plus d’une heure.", "sangFroid"),
-    C("Lui dire clairement que vous souhaitez rester son ami·e, sans attente amoureuse.", "D’accord. Vous serez l’ami·e qui connaît le code des cloches et vole mes mauvaises répliques. Pour l’instant, prenez ce registre.", "lucidite"),
-  ),
+  "lineva-4": R(C("Lui dire que cette victoire prouve enfin que le fauteuil d’Amiral lui appartient.", "Une ville brûlée n’est pas une cérémonie de promotion. Aidez-moi à compter les absents ou laissez ce titre dans les gravats.", "lucidite")),
 
   "saidin-0": R(C("Lui demander d’arrêter le temps jusqu’à ce que l’horloge donne enfin une réponse.", "Une minute emprisonnée ne devient pas plus compréhensible. Elle cesse seulement de nous laisser vivre assez longtemps pour apprendre.", "resonance")),
   "saidin-1": R(C("Accepter la réponse qu’il avait prévue sans formuler votre propre question.", "Vous venez d’obéir à une anticipation parce qu’elle portait ma voix. Je préférerais encore votre désaccord présent.", "lucidite")),

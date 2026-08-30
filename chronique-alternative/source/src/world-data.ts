@@ -203,10 +203,10 @@ const ROUTINES: Record<string, Record<string, RoutineMoment[]>> = {
   },
   lineva: {
     forthaven: [
-      moment("forthaven-harbor", "assiste à la première relève et vérifie les quais"),
+      moment("forthaven-harbor", "supervise la première relève et répartit les inspections des quais"),
       moment("forthaven-war-room", "commande le front contre les morts-vivants"),
-      moment("forthaven-ramparts", "inspecte elle-même les défenses de la ville haute"),
-      moment("forthaven-quarters", "termine les rapports qu’elle aurait dû déléguer"),
+      moment("forthaven-ramparts", "fait remonter les états des défenses de la ville haute"),
+      moment("forthaven-quarters", "fait compiler les rapports de relève avant de signer les priorités"),
     ],
     algratal: [
       moment("algratal-palace-quarters", "lit le rapport de sa relève avant de quitter sa chambre"),

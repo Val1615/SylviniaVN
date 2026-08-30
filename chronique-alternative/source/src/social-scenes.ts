@@ -285,7 +285,7 @@ export const SOCIAL_SCENES: SocialScene[] = [
   },
 
   // Rencontres récurrentes : elles donnent aux personnages une vie commune
-  // en dehors de la romance du protagoniste et respectent leurs itinéraires.
+  // en dehors de la romance du personnage joueur et respectent leurs itinéraires.
   {
     id: "shared-hylee-remerii-atelier", title: "Une leçon à deux voix", characters: ["hylee", "remerii"], locations: ["miraldas"], sublocations: ["miraldas-atelier"], minStages: { hylee: 1, remerii: 1 }, oneTime: false, mood: "teasing",
     prompt: [line("Narration", "Hylee maintient une sphère de givre tandis que Remerii corrige la position de son poignet. Leur complicité est évidente : la professeure n’achève plus les gestes de l’élève ; elle attend qu’Hylee les invente."), line("Hylee", "Elle prétend que ce n’est plus une leçon."), line("Remerii", "C’est une collaboration dans laquelle l’une de nous oublie régulièrement les propriétés élémentaires de la glace."), line("Hylee", "Et l’autre oublie régulièrement de déjeuner.")],

@@ -4,8 +4,33 @@ import type { IntimacyRoute } from "./intimacy-routes";
 import { polishIntimacyText } from "./intimacy-prose";
 
 type RawLine = string | [speaker: string, text: string, mood?: string];
-type LinevaMood = "joueuse" | "lente" | "passionnee";
+type LinevaMood = "joueuse" | "tendre" | "passionnee";
 type LinevaDateId = "date-lineva-ramparts" | "date-lineva-quarters";
+
+export type LinevaIntimacyPhase =
+  | "approach"
+  | "undressing"
+  | "naked-reveal"
+  | "partner-discovery"
+  | "lineva-discovery"
+  | "preliminaries"
+  | "intensification"
+  | "climax"
+  | "afterglow"
+  | "ending";
+
+const LINEVA_INTIMACY_PHASES: LinevaIntimacyPhase[] = [
+  "approach",
+  "undressing",
+  "naked-reveal",
+  "partner-discovery",
+  "lineva-discovery",
+  "preliminaries",
+  "intensification",
+  "climax",
+  "afterglow",
+  "ending",
+];
 
 export type LinevaDateApproach = {
   id: string;
@@ -59,29 +84,29 @@ const HARBOR_SEEDS: MoodSeed[] = [
     detail: "Une intimité physique et joueuse, nourrie par la graisse du mécanisme, les paris du quai et l’humour très concret de Lineva.",
     opening: [
       "La trappe se referme sous vos pieds. Lineva écoute une seconde le brouhaha du quai, puis utilise votre manche pour effacer la trace de graisse qu’elle vous a laissée sur la joue.",
-      ["Lineva", "Je pourrais prétendre que c’est un accident. Mais tu as vu mes mains avant de monter.", "smirk"],
+      ["Lineva", "Je pourrais prétendre que c’est un accident. Mais vous avez vu mes mains avant de monter.", "smirk"],
       "Vous lui rendez la marque du pouce sous la pommette. Elle attrape votre poignet, examine le résultat dans la vitre du fanal et décide que l’affront exige une réponse immédiate.",
     ],
     undressing: [
       "Le premier baiser vous pousse contre la table des cartes de marée. Lineva rit lorsque la roue réparée fait vibrer les outils, puis retire votre manteau et le sien de l’établi avant qu’une clé ne vous tombe dessus.",
       "Sa chemise reste retroussée au-dessus des coudes. Vous ouvrez les premiers boutons pendant qu’elle défait votre ceinture, chacun essayant de faire perdre à l’autre la cadence sans jamais arracher un geste non attendu.",
-      ["Lineva", "Celui qui fait tomber la lampe descend la rallumer nu. Je préfère annoncer les enjeux.", "smirk"],
+      ["Lineva", "Si vous faites tomber la lampe, vous descendez la rallumer sans vêtements. Je préfère annoncer les enjeux.", "smirk"],
     ],
     linevaDiscovery: [
       "Vous faites glisser la chemise de Lineva hors de ses épaules. Ses cicatrices apparaissent sans présentation solennelle : une ligne pâle près des côtes, la marque ronde d’un éclat au-dessus de la hanche et celle, plus ridicule, que le fameux tonneau a laissée au genou.",
       "Votre bouche choisit la cicatrice du tonneau. Lineva vous accuse de manquer de respect à l’histoire militaire, mais son rire se brise lorsque vos doigts suivent l’intérieur de sa cuisse.",
-      ["Lineva", "Continue et je rétrograde le tonneau à titre posthume.", "smirk"],
+      ["Lineva", "Continuez et je rétrograde le tonneau à titre posthume.", "smirk"],
     ],
     reveal: {
-      tendre: ["Lineva vous attire avec elle sur les couvertures de veille. La lumière tournante traverse vos corps découverts, une fois claire, une fois sombre, tandis que votre jeu ralentit de lui-même.", ["Lineva", "Reste là. J’aime bien te voir revenir à chaque tour.", "thoughtful"]],
-      suggestif: ["Sur les couvertures, Lineva se place à califourchon au-dessus de vous puis s’arrête pour laisser vos mains choisir où reprendre. Le fanal balaie sa peau nue et révèle à chaque passage une nouvelle trace de graisse, de sel ou de désir.", ["Lineva", "Tu regardes beaucoup pour quelqu’un qui prétendait vouloir gagner.", "smirk"]],
-      explicite: ["Lineva s’agenouille nue sur les couvertures, une cuisse de chaque côté de vos hanches. La lumière du fanal glisse sur sa poitrine, son ventre et le désir visible entre ses jambes ; elle prend votre main, la conduit exactement là où la chaleur est la plus vive, puis la relâche pour que le geste suivant reste le vôtre.", ["Lineva", "Voilà le terrain. Maintenant, montre-moi ce que ton pari valait vraiment.", "smirk"]],
+      tendre: ["Lineva vous attire avec elle sur les couvertures de veille. La lumière tournante traverse vos corps découverts, une fois claire, une fois sombre, tandis que votre jeu ralentit de lui-même.", ["Lineva", "Restez là. J’aime bien vous voir revenir à chaque tour.", "thoughtful"]],
+      suggestif: ["Sur les couvertures, Lineva se place à califourchon au-dessus de vous puis s’arrête pour laisser vos mains choisir où reprendre. Le fanal balaie sa peau nue et révèle à chaque passage une nouvelle trace de graisse, de sel ou de désir.", ["Lineva", "Vous regardez beaucoup pour quelqu’un qui prétendait vouloir gagner.", "smirk"]],
+      explicite: ["Lineva s’agenouille nue sur les couvertures, une cuisse de chaque côté de vos hanches. La lumière du fanal glisse sur sa poitrine, son ventre et le désir visible entre ses jambes ; elle prend votre main, la conduit exactement là où la chaleur est la plus vive, puis la relâche pour que le geste suivant reste le vôtre.", ["Lineva", "Voilà le terrain. Maintenant, montrez-moi ce que votre pari valait vraiment.", "smirk"]],
       ellipse: ["Lineva tire le rideau de maintenance devant la fenêtre. Vos silhouettes disparaissent du quai au moment où elle vous renverse sur les couvertures avec un rire victorieux.", ["Lineva", "La lampe reste debout. Pour le reste, aucun témoin fiable.", "smirk"]],
     },
     afterClimax: [
       "Le vieux mécanisme poursuit sa rotation. Lineva reste sur le côté, une jambe lourde passée sur les vôtres, le souffle encore irrégulier et le sourire dépourvu de toute tentative de dignité.",
       "Elle trouve sur votre peau une nouvelle marque de graisse, essaie de l’essuyer avec le drap et ne fait que l’étendre. Son rire revient plus bas, contre votre épaule.",
-      ["Lineva", "Réparation réussie. Propreté tactiquement compromise.", "smirk"],
+      ["Lineva", "Tu peux déclarer la réparation réussie. La propreté reste tactiquement compromise.", "smirk"],
     ],
     ending: [
       "Les voix des marins montent depuis le quai avec le refrain du tonneau. Lineva ne se rhabille pas pour les faire taire. Elle se contente de frapper trois coups du talon contre le plancher, exactement sur la mesure.",
@@ -90,7 +115,7 @@ const HARBOR_SEEDS: MoodSeed[] = [
     ],
   },
   {
-    id: "lente",
+    id: "tendre",
     labels: {
       femme: "Découvrir lentement la femme sous la chemise de travail, sans faire de ses cicatrices un récit obligé",
       homme: "Laisser Lineva guider une proximité lente où aucun de vos corps ne doit faire ses preuves",
@@ -110,12 +135,12 @@ const HARBOR_SEEDS: MoodSeed[] = [
     linevaDiscovery: [
       "Lorsque le reste de ses vêtements glisse enfin, Lineva ne redresse pas les épaules pour présenter son corps. Elle s’allonge simplement, une main derrière la nuque, l’autre ouverte près de vous.",
       "Vous suivez son ventre, ses hanches et l’intérieur de ses cuisses avec la paume avant d’y poser la bouche. Elle vous guide une fois par les cheveux, relâche aussitôt et laisse son bassin répondre là où les mots s’arrêtent.",
-      ["Lineva", "Oui. Garde cette lenteur.", "thoughtful"],
+      ["Lineva", "Oui. Gardez cette lenteur.", "thoughtful"],
     ],
     reveal: {
       tendre: ["La lumière du fanal revient sur Lineva étendue contre vous. Elle ne cache ni les marques de l’armure ni les frissons qui les traversent ; votre main repose entre ses côtes et sa hanche, là où elle l’a elle-même placée."],
       suggestif: ["Lineva ouvre davantage les jambes sous la lumière tournante et vous ramène contre elle par la nuque. Son désir n’est ni annoncé ni dissimulé : il se lit dans la façon dont son bassin cherche votre cuisse et dont sa bouche refuse de quitter la vôtre."],
-      explicite: ["Sous le passage lent du fanal, Lineva reste nue sur le dos, les jambes ouvertes autour de vous. Sa vulve est déjà humide ; elle pose deux de vos doigts contre elle, montre la pression désirée par un mouvement précis du bassin, puis vous regarde continuer sans détourner les yeux.", ["Lineva", "Comme ça. Ne transforme pas mon silence en hésitation.", "thoughtful"]],
+      explicite: ["Sous le passage lent du fanal, Lineva reste nue sur le dos, les jambes ouvertes autour de vous. Sa vulve est déjà humide ; elle pose deux de vos doigts contre elle, montre la pression désirée par un mouvement précis du bassin, puis vous regarde continuer sans détourner les yeux.", ["Lineva", "Comme ça. Ne transformez pas mon silence en hésitation.", "thoughtful"]],
       ellipse: ["La lumière tourne et emporte alternativement vos corps dans l’ombre. Lineva vous attire sur elle au passage suivant ; le récit reste du côté obscur de la vitre."],
     },
     afterClimax: [
@@ -139,29 +164,29 @@ const HARBOR_SEEDS: MoodSeed[] = [
     detail: "Une intimité directe et passionnée où Lineva nomme ce qu’elle veut, reçoit des réponses nettes et ne confond jamais force avec autorité.",
     opening: [
       "À peine la trappe fermée, Lineva revient contre vous et saisit votre chemise à deux mains. Elle attend votre mouvement vers elle, puis vous embrasse avec assez de force pour faire grincer la table contre le mur.",
-      ["Lineva", "Je te veux ici. Pas après un autre verre, pas après une meilleure phrase. Ici.", "determined"],
+      ["Lineva", "Je vous veux ici. Pas après un autre verre, pas après une meilleure phrase. Ici.", "determined"],
       "Votre réponse la fait sourire une seule seconde. Le baiser suivant efface le sourire sans diminuer la certitude.",
     ],
     undressing: [
       "Vos manteaux tombent sur l’escalier. Lineva ouvre votre haut, vous aide lorsque le tissu résiste et vous laisse faire sauter les boutons de sa chemise sans protéger l’uniformité de la rangée.",
       "Elle recule pour retirer son pantalon, vous regarde vous dévêtir et revient avant que vous ayez fini. Ses mains trouvent votre peau avec une impatience attentive, ralentissant uniquement lorsqu’un geste exige votre indication.",
-      ["Lineva", "Dis-moi si tu veux moins. Pour davantage, rapproche-moi.", "determined"],
+      ["Lineva", "Dites-moi si vous voulez moins. Pour davantage, rapprochez-moi.", "determined"],
     ],
     linevaDiscovery: [
       "Vous la plaquez à votre tour contre le mur de bois, une main sous sa cuisse. Lineva utilise l’appui pour ouvrir ses jambes autour de vous sans vous laisser porter seul·e son poids.",
       "Votre bouche descend sur sa poitrine, son ventre puis plus bas. Sa respiration devient rauque ; elle demande une pression plus ferme et vous montre le rythme par des mouvements qui ne laissent aucune place au doute.",
-      ["Lineva", "Oui. Là. Ne ralentis pas pour me regarder tenir.", "determined"],
+      ["Lineva", "Oui. Là. Ne ralentissez pas pour me regarder tenir.", "determined"],
     ],
     reveal: {
       tendre: ["La force du premier élan cède à une étreinte serrée sur les couvertures. Lineva garde votre visage entre ses mains tandis que le fanal découvre vos corps puis les rend à l’ombre."],
       suggestif: ["Lineva vous renverse sur les couvertures et vient se placer au-dessus de vous. Sa poitrine se soulève vite ; ses cuisses encadrent les vôtres et toute sa posture annonce une suite qu’elle vous laisse pourtant relancer."],
-      explicite: ["Nue au-dessus de vous, Lineva ouvre les jambes et frotte son sexe humide contre votre cuisse avant de guider votre main entre elles. La lumière tournante révèle son plaisir sans l’adoucir : muscles tendus, poitrine offerte, bouche entrouverte sur votre nom. Elle vous tire ensuite contre elle pour choisir ensemble la position du mouvement suivant.", ["Lineva", "Je ne veux pas être ménagée. Je veux être écoutée quand je te demande plus.", "determined"]],
+      explicite: ["Nue au-dessus de vous, Lineva ouvre les jambes et frotte son sexe humide contre votre cuisse avant de guider votre main entre elles. La lumière tournante révèle son plaisir sans l’adoucir : muscles tendus, poitrine offerte, bouche entrouverte sur votre nom. Elle vous tire ensuite contre elle pour choisir ensemble la position du mouvement suivant.", ["Lineva", "Je ne veux pas être ménagée. Je veux être écoutée quand je vous demande plus.", "determined"]],
       ellipse: ["Lineva vous renverse sur les couvertures et tire le rideau d’un coup de pied. Le fanal continue sa garde pendant que le récit abandonne la sienne."],
     },
     afterClimax: [
       "Lineva retombe contre vous avec un souffle presque rieur, le cœur battant sous votre paume. Elle garde une cuisse entre les vôtres et ne cherche pas encore à retrouver une position plus présentable.",
       "Lorsque vous bougez pour atteindre l’eau, elle vous retient une seconde, boit à la même gourde puis la laisse rouler sans vérifier où elle s’arrête.",
-      ["Lineva", "La lampe est debout. Nous aussi, approximativement. Je considère la soirée bien engagée.", "smirk"],
+      ["Lineva", "Tu peux noter que la lampe est debout. Nous aussi, approximativement.", "smirk"],
     ],
     ending: [
       "La lumière balaie les outils, les vêtements et vos corps encore mêlés. Lineva suit le désordre du regard, choisit de ne rien ramasser et revient mordre doucement votre épaule.",
@@ -188,22 +213,22 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     undressing: [
       "La partie vous conduit autour de la table repoussée. Une carte tombe de sa manche avec la chemise ; deux autres apparaissent sous votre ceinture parce que Lineva les y a placées pendant le dernier baiser.",
       "Ses mains rient presque autant qu’elle : rapides, franches, capables de s’arrêter net lorsque vous changez la règle puis de reprendre ailleurs avec votre accord.",
-      ["Lineva", "Si tu trouves le roi, tu choisis la position. Si tu trouves le valet, je nie avoir acheté ce jeu.", "smirk"],
+      ["Lineva", "Si vous trouvez le roi, vous choisissez la position. Si vous trouvez le valet, je nie avoir acheté ce jeu.", "smirk"],
     ],
     linevaDiscovery: [
       "Vous trouvez le roi sous le dernier vêtement de Lineva, posé contre sa hanche. Elle affirme que l’emplacement ne prouve aucune préméditation, puis s’allonge sur la table pour honorer une règle qu’elle vient elle-même d’inventer.",
       "Vous découvrez sa poitrine, son ventre et l’intérieur de ses cuisses entre les cartes éparpillées. Lineva tente encore une plaisanterie ; votre bouche plus bas lui en fait perdre la fin.",
-      ["Lineva", "Garde le roi. Continue avec ta bouche.", "smirk"],
+      ["Lineva", "Gardez le roi. Continuez avec votre bouche.", "smirk"],
     ],
     reveal: {
       tendre: ["Lineva vous attire contre elle au pied de la table. Les cartes collent aux draps et à vos peaux ; elle en retire une de votre épaule avant de vous embrasser avec une douceur qui ne respecte plus aucune règle."],
       suggestif: ["Nue parmi les cartes, Lineva s’assied sur vos cuisses et glisse le roi entre vos corps avant de le laisser tomber. Ses hanches reprennent le rythme de la danse tandis que ses mains ouvrent l’espace dont vous avez besoin."],
-      explicite: ["Lineva s’allonge nue sur les draps, une jambe repliée et l’autre ouverte contre la table. Les cartes encadrent sa vulve brillante de désir ; elle récupère le roi près de sa cuisse, vous le tend comme une invitation dérisoire puis guide votre bouche et vos doigts jusqu’au contact qu’elle réclame.", ["Lineva", "Tu as gagné la position. Fais-en quelque chose avant que je change les règles.", "smirk"]],
+      explicite: ["Lineva s’allonge nue sur les draps, une jambe repliée et l’autre ouverte contre la table. Les cartes encadrent sa vulve brillante de désir ; elle récupère le roi près de sa cuisse, vous le tend comme une invitation dérisoire puis guide votre bouche et vos doigts jusqu’au contact qu’elle réclame.", ["Lineva", "Vous avez gagné la position. Faites-en quelque chose avant que je change les règles.", "smirk"]],
       ellipse: ["Lineva jette le paquet en l’air. Les cartes retombent autour de vos vêtements tandis qu’elle vous entraîne hors du champ du récit."],
     },
     afterClimax: [
       "Lineva reste au milieu du désordre, le dos contre le pied de la table et votre corps contre le sien. Une carte colle à sa poitrine ; elle la retourne et découvre le valet.",
-      ["Lineva", "Je nie avoir acheté ce jeu.", "smirk"],
+      ["Lineva", "Tu peux garder le roi. Je nie avoir acheté ce jeu.", "smirk"],
       "Son rire secoue encore son souffle. Elle pose le valet sur votre ventre comme si le point avait une importance véritable, puis laisse sa tête tomber contre votre épaule.",
     ],
     ending: [
@@ -213,7 +238,7 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     ],
   },
   {
-    id: "lente",
+    id: "tendre",
     labels: {
       femme: "Laisser la danse ralentir jusqu’à une découverte patiente du corps d’une autre femme",
       homme: "Suivre les gestes silencieux de Lineva sans transformer leur lenteur en fragilité",
@@ -244,7 +269,7 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     afterClimax: [
       "Lineva reste sur le dos, votre main sous la sienne au milieu de son ventre. Son autre pied, toujours en chaussette, dépasse du drap ; elle le regarde sans avoir l’énergie de le défendre.",
       "Vous riez doucement. Elle tourne la tête vers vous, faussement sévère, puis son expression cède avant la menace.",
-      ["Lineva", "Un mot sur cette chaussette et je nie toute la soirée. Mal, mais avec conviction.", "thoughtful"],
+      ["Lineva", "Tu peux rire de la chaussette. Une seule fois, et sans témoin.", "thoughtful"],
     ],
     ending: [
       "Le ragoût froid parfume encore la pièce. Lineva partage avec vous la gourde laissée près du lit et garde ensuite ses doigts mêlés aux vôtres.",
@@ -268,23 +293,23 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     undressing: [
       "La chemise de Lineva s’ouvre contre le bord de la table. Elle retire la vôtre, fait glisser vos vêtements hors de ses appuis et pose chaque fois une question courte lorsque le geste suivant peut changer l’intensité.",
       "Vous répondez de la même façon. Bientôt, la nappe rejoint le sol, les assiettes sont à l’abri sur le coffre et Lineva est nue devant vous, les paumes posées à plat derrière elle.",
-      ["Lineva", "La table tient. Viens vérifier le reste.", "determined"],
+      ["Lineva", "La table tient. Venez vérifier le reste.", "determined"],
     ],
     linevaDiscovery: [
       "Vous prenez place entre ses jambes et mordez doucement la ligne de sa mâchoire. Lineva vous ramène par les hanches, guide une de vos mains sur sa poitrine et l’autre entre ses cuisses.",
       "Son désir mouille déjà vos doigts. Elle ne tente pas de contenir le mouvement qui la rapproche, vous indique plus vite, plus ferme, puis vous rend chaque caresse avec la même franchise.",
-      ["Lineva", "Oui. Maintenant, ne me fais pas attendre pour une belle mise en scène.", "determined"],
+      ["Lineva", "Oui. Maintenant, ne me faites pas attendre pour une belle mise en scène.", "determined"],
     ],
     reveal: {
       tendre: ["L’élan se ralentit au bord du lit. Lineva garde vos deux mains contre elle et vous embrasse jusqu’à ce que la force devienne une chaleur continue plutôt qu’une urgence."],
       suggestif: ["Lineva s’allonge en travers du lit, nue, les jambes ouvertes vers vous. Elle vous montre l’endroit qu’elle veut sentir, puis tend la main vers votre propre désir sans quitter vos yeux."],
-      explicite: ["Lineva s’allonge nue en travers du lit, les cuisses largement ouvertes et le bassin au bord du matelas. Son sexe luit sous la lumière du port ; elle prend votre main, presse vos doigts contre son clitoris puis plus bas, là où elle veut être remplie, avant d’ouvrir les bras pour vous attirer dans la position choisie ensemble.", ["Lineva", "Là. Je veux ton rythme, pas une démonstration.", "determined"]],
+      explicite: ["Lineva s’allonge nue en travers du lit, les cuisses largement ouvertes et le bassin au bord du matelas. Son sexe luit sous la lumière du port ; elle prend votre main, presse vos doigts contre son clitoris puis plus bas, là où elle veut être remplie, avant d’ouvrir les bras pour vous attirer dans la position choisie ensemble.", ["Lineva", "Là. Je veux votre rythme, pas une démonstration.", "determined"]],
       ellipse: ["Lineva balaie les dernières cartes du lit, vous attire entre ses jambes et ferme le rideau sur la seule règle qui compte encore : chaque geste reste demandé."],
     },
     afterClimax: [
       "Lineva reste en travers du lit, une jambe pendante et le souffle encore rude. Elle vous attire sur sa poitrine, récupère assez d’air pour rire de la table déplacée puis abandonne la phrase avant sa conclusion.",
       "Vous lui donnez de l’eau. Elle boit, vous tend la gourde et essuie du pouce une trace de vin près de votre bouche.",
-      ["Lineva", "Le dîner était une catastrophe. Je maintiens le reste du programme.", "smirk"],
+      ["Lineva", "Tu peux oublier le dîner. Je maintiens le reste du programme.", "smirk"],
     ],
     ending: [
       "Le port se reflète au plafond. Lineva ne ferme pas les rideaux ; elle tire seulement le drap sur vos hanches et reste nue contre vous dans la lumière mouvante.",
@@ -324,7 +349,7 @@ const SEX_BEATS: Record<LinevaMood, Record<PlayerSex, SexBeat>> = {
       ellipse: ["Vous échangez les règles, les appuis et les rires jusqu’à ce que le jeu ne puisse plus être raconté sans trahir vos choix précis."],
     },
   },
-  lente: {
+  tendre: {
     femme: {
       tenderDiscovery: ["Lineva suit votre poitrine puis votre ventre avec la paume entière. Sa cuisse trouve la vôtre, mais elle garde le mouvement lent, laissant vos bassins se rapprocher seulement quand vous l’attirez."],
       suggestiveDiscovery: ["Elle ouvre vos jambes et embrasse longtemps l’intérieur de vos cuisses. Ses doigts passent sur votre vulve sans insister, apprennent votre humidité puis reviennent à votre clitoris lorsque vous guidez sa main."],
@@ -391,19 +416,19 @@ const SEEDS: Record<LinevaDateId, MoodSeed[]> = {
 
 const DATE_APPROACHES: Record<LinevaDateId, LinevaDateApproach[]> = {
   "date-lineva-ramparts": [
-    { id: "lineva-fanal-graisse", text: "Essuyer du pouce la graisse sur sa joue, puis goûter votre provocation sur sa bouche.", lines: lines(["Votre pouce traverse la trace noire. Lineva le suit des yeux, referme ses doigts autour de votre poignet et embrasse d’abord la pulpe tachée avant de venir chercher votre bouche.", ["Lineva", "Tu nettoies très mal. Recommence plus près.", "smirk"]], "lineva-date-harbor-approach") },
+    { id: "lineva-fanal-graisse", text: "Essuyer du pouce la graisse sur sa joue, puis goûter votre provocation sur sa bouche.", lines: lines(["Votre pouce traverse la trace noire. Lineva le suit des yeux, referme ses doigts autour de votre poignet et embrasse d’abord la pulpe tachée avant de venir chercher votre bouche.", ["Lineva", "Vous nettoyez très mal. Recommencez plus près.", "smirk"]], "lineva-date-harbor-approach") },
     { id: "lineva-fanal-cle", text: "Poser la clé du fanal dans sa paume et la laisser choisir ce qu’elle souhaite ouvrir ensuite.", lines: lines(["Lineva referme la main sur la clé, la pose à côté de son couteau et revient sans objet entre vous.", ["Lineva", "La trappe est fermée. Ma chemise, beaucoup moins. Je choisis celle-là.", "thoughtful"], "Elle prend votre main et la conduit au premier bouton."], "lineva-date-harbor-approach") },
     { id: "lineva-fanal-pari", text: "Parier que la lumière accomplira un tour avant qu’elle ne vous fasse perdre le fil.", lines: lines([["Lineva", "Pari stupide. J’accepte.", "smirk"], "Le faisceau quitte la fenêtre. Lineva vous embrasse, change d’appui puis mord doucement votre lèvre. Quand la lumière revient, vous avez oublié de compter depuis longtemps.", ["Lineva", "Je réclamerai mon gain plus tard. Plusieurs fois.", "smirk"]], "lineva-date-harbor-approach") },
   ],
   "date-lineva-quarters": [
     { id: "lineva-soiree-danse", text: "Reprendre le dernier pas de danse et laisser vos corps décider où la mesure se termine.", lines: lines(["Vous replacez sa main à votre taille et reprenez le tour dans l’espace étroit. Lineva vous ramène contre elle à la dernière mesure, puis refuse de créer la distance nécessaire au pas suivant.", ["Lineva", "La chorégraphie s’arrête ici. J’ai mieux.", "smirk"]], "lineva-date-quarters-approach") },
     { id: "lineva-soiree-as", text: "Récupérer l’as contre sa peau et proposer une règle que vous pourrez tricher ensemble.", lines: lines(["Vos doigts glissent sous sa chemise pour retrouver la carte. Lineva les emprisonne contre sa taille, déplace elle-même l’as plus haut et vous offre un sourire parfaitement coupable.", ["Lineva", "Il faut fouiller plus sérieusement. Règlement de Forthaven.", "smirk"]], "lineva-date-quarters-approach") },
-    { id: "lineva-soiree-franche", text: "Lui dire que le dîner a raté et que votre désir, lui, n’a besoin d’aucune correction.", lines: lines([["{player}", "Le poisson est perdu. Je te veux quand même."], "Lineva baisse les yeux vers la casserole, puis vers votre bouche. Son rire bref laisse place à une franchise plus chaude.", ["Lineva", "Enfin un bilan utile. Viens ici.", "determined"]], "lineva-date-quarters-approach") },
+    { id: "lineva-soiree-franche", text: "Lui dire que le dîner est oublié et que votre désir n’a besoin d’aucune correction.", lines: lines([["{player}", "Le poisson est oublié. Je vous veux quand même."], "Lineva baisse les yeux vers la table, puis vers votre bouche. Son rire bref laisse place à une franchise plus chaude.", ["Lineva", "Enfin un bilan utile. Venez ici.", "determined"]], "lineva-date-quarters-approach") },
   ],
 };
 
 function sexChapter(beat: SexBeat, mode: IntimacyMode, phase: "discovery" | "climax"): RawLine[] {
-  if (mode === "ellipse") return beat.ellipse;
+  if (mode === "ellipse") return phase === "discovery" ? beat.tenderDiscovery : beat.ellipse;
   if (phase === "discovery") {
     if (mode === "tendre") return beat.tenderDiscovery;
     if (mode === "suggestif") return beat.suggestiveDiscovery;
@@ -414,19 +439,32 @@ function sexChapter(beat: SexBeat, mode: IntimacyMode, phase: "discovery" | "cli
   return beat.explicitClimax;
 }
 
+function splitChapter(raw: RawLine[]): [RawLine[], RawLine[]] {
+  const pivot = Math.max(1, Math.ceil(raw.length / 2));
+  return [raw.slice(0, pivot), raw.slice(pivot)];
+}
+
 function routeChapters(dateId: LinevaDateId, seed: MoodSeed, sex: PlayerSex, mode: IntimacyMode): DialogueLine[][] {
   const beat = SEX_BEATS[seed.id][sex];
   const context = `lineva-${dateId}-${seed.id}-${sex}-${mode}`;
+  const [firstUndressing, nakedReveal] = splitChapter(seed.undressing);
+  const [linevaDiscovery, preliminaries] = splitChapter(seed.linevaDiscovery);
   return [
     lines(seed.opening, context),
-    lines(seed.undressing, context),
+    lines(firstUndressing, context),
+    lines(nakedReveal, context),
     lines(sexChapter(beat, mode, "discovery"), context),
-    lines(seed.linevaDiscovery, context),
+    lines(linevaDiscovery, context),
+    lines(preliminaries, context),
     lines(seed.reveal[mode], context),
     lines(sexChapter(beat, mode, "climax"), context),
     lines(seed.afterClimax, context),
     lines(seed.ending, context),
   ];
+}
+
+export function linevaDateIntimacyPhase(chapter: number): LinevaIntimacyPhase | undefined {
+  return LINEVA_INTIMACY_PHASES[chapter];
 }
 
 export function linevaDateApproaches(dateId?: string): LinevaDateApproach[] | undefined {
@@ -456,12 +494,22 @@ export function validateLinevaDateIntimacy(): { dates: number; combinations: num
       entries.forEach((entry) => {
         MODES.forEach((mode) => {
           const sequence = entry.chapters[mode];
-          if (sequence.length !== 8 || sequence.some((chapter) => chapter.length === 0)) {
-            throw new Error(`${entry.id}/${mode}: huit séquences substantielles sont requises`);
+          if (sequence.length < 8 || sequence.some((chapter) => chapter.length === 0)) {
+            throw new Error(`${entry.id}/${mode}: au moins huit séquences substantielles sont requises`);
+          }
+          const phases = sequence.map((_, chapter) => linevaDateIntimacyPhase(chapter));
+          for (const required of LINEVA_INTIMACY_PHASES) {
+            if (!phases.includes(required)) throw new Error(`${entry.id}/${mode}: jalon manquant ${required}`);
           }
           const words = sequence.flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0);
           const minimum = mode === "explicite" ? 360 : 170;
           if (words < minimum) throw new Error(`${entry.id}/${mode}: ${words} mots, minimum ${minimum}`);
+          const climax = phases.indexOf("climax");
+          const beforeClimax = sequence.slice(0, climax + 1).flat().filter((line) => line.speaker === "Lineva");
+          const informal = /(?:^|[\s’'])(?:tu|toi|te|ton|ta|tes)(?=$|[\s.,;:!?…’'])|t[’']/iu;
+          if (beforeClimax.some((line) => informal.test(line.text))) throw new Error(`${entry.id}/${mode}: tutoiement avant le climax`);
+          const firstAfter = sequence[climax + 1]?.find((line) => line.speaker === "Lineva");
+          if (!firstAfter || !informal.test(firstAfter.text)) throw new Error(`${entry.id}/${mode}: premier tu post-climax absent`);
           chapters += sequence.length;
         });
       });
