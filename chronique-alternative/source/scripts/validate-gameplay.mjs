@@ -88,8 +88,8 @@ try {
   assert.ok(gameData.ROUTE_SCENES.filter((scene) => scene.character === "lineva").every((scene) => scene.location === "forthaven"), "Lineva doit rester physiquement à Forthaven pendant son Acte I");
   assert.ok(gameData.ROUTE_SCENES.filter((scene) => scene.character === "lineva").flatMap((scene) => scene.choices).every((choice) => !choice.effects.flags?.includes("lineva-travel")), "aucun choix Lineva ne doit rétablir l’ancien voyage à Al’Gratal");
   assert.equal(rules.routeChoiceCompletes("lineva-2-misread"), false, "une maladresse ne doit pas valider une route");
-  assert.equal(rules.routeChoiceCompletes("lineva-4-boundary"), false, "une pause ne doit pas valider la dernière route");
-  assert.equal(rules.routeChoiceCompletes("lineva-4-platonic"), true, "une décision amicale claire doit clore la dernière étape");
+  assert.equal(rules.routeChoiceCompletes("lineva-beat-4-franc"), true, "le battement relationnel écrit doit clore la dernière route");
+  assert.equal(rules.routeChoiceCompletes("lineva-4-misread"), false, "une mauvaise lecture ne doit pas valider la dernière route");
   assert.equal(rules.routeChoiceCompletes("l2-s"), true, "un choix écrit doit valider la route");
 
   assert.equal(rules.contentBranchAllowed(["hr-triad-established"], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), true);
@@ -106,7 +106,7 @@ try {
 
   assert.match(pageSource, /dialogue\.scene\.kind !== "route" \|\| !dialogue\.scene\.route/, "seules les routes majeures peuvent recevoir des choix contextuels supplémentaires");
   assert.match(pageSource, /ROUTE_CONTEXTUAL_CHOICES\[dialogue\.scene\.route\.id\]/, "les choix supplémentaires doivent provenir du catalogue propre à chaque scène");
-  assert.match(pageSource, /routeChoiceCompletes\(choice\.id\) \? dialogue\.scene\.route/, "la validation de route doit filtrer les choix injectés");
+  assert.match(pageSource, /routeChoiceCompletes\(choice\.id\) && \(!hasRelationBeat \|\| isRelationChoice\)/, "la validation de route doit filtrer les choix injectés et attendre le battement Lineva");
   assert.match(pageSource, /publicDateUnlocked\(game, date\)/, "le démarrage d'un rendez-vous doit revérifier la branche");
   assert.match(pageSource, /visitedLocations:\s*\["echo-clearing"\]/, "une nouvelle partie ne doit marquer que son lieu réellement visité");
   const advanceSection = pageSource.slice(pageSource.indexOf("function advancePeriod"), pageSource.indexOf("function applyEffects"));
@@ -136,7 +136,7 @@ try {
     assert.ok(completedRoutes.includes(requirement) || socialFlags.includes(`social:${requirement}`) || campaignIds.has(requirement), `jalon principal introuvable : ${requirement}`);
   }
 
-  console.log(`[Gameplay] ${completedRoutes.length} routes atteignables · ${storyData.MAIN_STORY.length} chapitres terminables · branches platoniques et rendez-vous croisés synchronisés · temps, Codex et ${housingData.HOUSING_PROPERTIES.length} logis validés.`);
+  console.log(`[Gameplay] ${completedRoutes.length} routes atteignables · ${storyData.MAIN_STORY.length} chapitres terminables · décisions relationnelles et rendez-vous croisés synchronisés · temps, Codex et ${housingData.HOUSING_PROPERTIES.length} logis validés.`);
 } finally {
   await server.close();
 }
