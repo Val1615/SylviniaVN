@@ -13,7 +13,8 @@
     "test:heritages": "node scripts/validate-heritages.mjs",
     "test:gameplay": "node scripts/validate-gameplay.mjs",
     "test:act-one": "node scripts/validate-act-one.mjs",
-    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one"
+    "test:lineva": "node scripts/validate-lineva-refactor.mjs",
+    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one && npm run test:lineva"
   },
   "dependencies": {
     "react": "19.2.6",
