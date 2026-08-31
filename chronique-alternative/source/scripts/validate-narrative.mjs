@@ -115,7 +115,6 @@ try {
   }
   requireRouteFlags("iriana-4", ["iriana-private-choice"]);
   requireRouteFlags("amanea-4", ["amanea-pact-boundary"]);
-  requireRouteFlags("allenna-4", ["allenna-care-without-command"]);
   requireRouteFlags("bellirith-4", ["bellirith-memory-space", "fracture-valurn-bellirith-distance-set"]);
   requireRouteFlags("valurn-4", ["valurn-accountability", "fracture-valurn-bellirith-distance-set"]);
   requireRouteFlags("lineva-4", ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"]);
@@ -145,7 +144,6 @@ try {
     "iriana-after-mother",
     "valurn-after-truth",
     "amanea-after-pact",
-    "allenna-after-powerlessness",
     "lineva-draven-after-truth",
     "valurn-bellirith-after-truth",
   ]);

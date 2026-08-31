@@ -95,7 +95,7 @@ try {
   assert.doesNotMatch(JSON.stringify(linevaDates[1]), /cuisine ratée|plat brûlé|incapable de cuisiner/iu, "la cuisine médiocre ne doit pas devenir un gimmick");
   const publicGate = pageSource.slice(pageSource.indexOf("function publicDateUnlocked"), pageSource.indexOf("function homeDateUnlocked"));
   assert.doesNotMatch(publicGate, /desire|minDesire/, "l’accès au rendez-vous ne doit pas dépendre du désir");
-  assert.match(pageSource, /date\.character === "lineva"\s*\? true/, "les trois décisions de fin doivent être proposées même si l’intimité reste verrouillée");
+  assert.match(pageSource, /\["lineva", "allenna"\]\.includes\(date\.character\)/, "les trois décisions de fin doivent être proposées même si l’intimité reste verrouillée");
 
   // B, C et D — flirt fort, flirt modéré et absence de flirt.
   const strongFlirt = sum(relationBeats.map((beat) => Math.max(...beat.choices.map((choice) => choice.effects.desire || 0))));
@@ -111,7 +111,7 @@ try {
   // E, F et G — pas ce soir, amitié définitive et interruption.
   const endingHandler = pageSource.slice(pageSource.indexOf("function finishDateEnding"), pageSource.indexOf("function startGroupDateIntimacy"));
   assert.match(endingHandler, /if \(permanentlyPlatonic\)/);
-  assert.match(endingHandler, /"lineva-platonic"/);
+  assert.match(endingHandler, /`\$\{date\.character\}-platonic`/);
   assert.doesNotMatch(endingHandler, /affection\s*:|trust\s*:|desire\s*:/, "ni pas ce soir ni l’amitié ne doivent infliger de pénalité statistique");
   assert.match(pageSource, />Pas ce soir</);
   assert.match(pageSource, />Choisir une amitié durable</);
@@ -203,7 +203,7 @@ try {
   assert.doesNotMatch(linevaNarrative, /bonne réponse|tu as compris|vous avez compris|lâcher prise|guérir son trauma/iu);
   assert.doesNotMatch(linevaNarrative, /—/u, "les scènes refondues ne doivent pas retomber dans le tic du tiret cadratin");
   assert.doesNotMatch(`${intimacySource}\n${legacyIntimacySource}\n${homeSource}`, /Défaire la garde/u);
-  assert.match(pageSource, /linevaDateApproaches\(modal\.dateId\) \|\| profile\.approaches/);
+  assert.match(pageSource, /linevaDateApproaches\(modal\.dateId\) \|\| allennaDateApproaches\(modal\.dateId\) \|\| profile\.approaches/);
   assert.match(pageSource, /linevaDateIntimacyPhase\(directionChapter\)/);
 
   console.log("[Lineva V2] scénarios A–H validés · 5 scènes et 5 battements relationnels · 2 rendez-vous · seuil de désir post-rendez-vous · 18 variantes corporelles · 720 chapitres modaux · CG sémantiques · vouvoiement puis premier tu.");
