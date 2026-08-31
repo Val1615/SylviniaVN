@@ -1,5 +1,6 @@
 import type { IntimacyMode } from "./date-scenes";
 import type { LinevaIntimacyPhase } from "./lineva-date-intimacy";
+import type { AllennaIntimacyPhase } from "./allenna-date-intimacy";
 
 export type IntimateCgPhase = "reveal" | "post-orgasm";
 export type IntimateCgSurface = "route" | "home" | "group";
@@ -48,7 +49,7 @@ export function soloIntimateCgState(options: {
   surface: Exclude<IntimateCgSurface, "group">;
   step: string;
   chapter: number;
-  narrativePhase?: LinevaIntimacyPhase;
+  narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase;
 }): IntimateCgState | undefined {
   if (options.mode !== "explicite") return undefined;
   const assets = SOLO_INTIMATE_CG[options.character];

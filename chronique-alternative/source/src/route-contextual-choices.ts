@@ -158,19 +158,11 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Choisir une alliance personnelle profonde, mais non amoureuse.", "Très bien. Tu resteras mon égal et mon ami, une catégorie que ma cour trouvera sans doute plus inquiétante encore.", "lucidite"),
   ),
 
-  "allenna-0": R(C("Exploiter volontairement son appui blessé pour prouver que vous savez gagner.", "Vous avez identifié une limite physique et choisi d’en faire un raccourci. Le duel s’arrête ; le jugement, lui, restera dans mon rapport.", "audace")),
-  "allenna-1": R(C("Promettre au soldat qu’il ne sentira rien pendant qu’Allenna prépare l’antidote.", "Il va souffrir. Votre mensonge lui retire la possibilité de se préparer et m’oblige à réparer votre réconfort en même temps que sa plaie.", "sangFroid")),
-  "allenna-2": R(C("Envoyer une seconde escorte derrière Amanea sans l’en informer.", "Vous apaisez mon corps en violant sa décision et son plan. Voilà exactement la forme que prend mon contrôle lorsqu’il se déguise en protection.", "lucidite")),
-  "allenna-3": R(
-    C("Transformer son heure de repos en nouvel exercice destiné à lui apprendre à lâcher prise.", "Vous venez de donner un objectif à la seule heure où je demandais de n’en servir aucun. Je n’ai pas besoin d’un instructeur de repos.", "lucidite"),
-    C("Accepter sa compagnie, mais refuser la danse et toute progression romantique ce soir.", "Réponse comprise. Nous pouvons écouter la musique sans lui imposer un second objectif.", "sangFroid"),
-    C("Lui dire que votre confiance ne doit pas devenir une relation amoureuse.", "La déception est réelle. Elle n’annule ni votre compétence, ni la place que je vous ai donnée auprès de moi.", "lucidite"),
-  ),
-  "allenna-4": R(
-    C("Lui demander de choisir elle-même votre réponse puisqu’elle connaît mieux les risques.", "Demander n’a de sens que si votre réponse reste hors de mon contrôle. Ne rendez pas mon ancien réflexe plus confortable au moment où j’essaie de le quitter.", "lucidite"),
-    C("Lui dire que vous restez, mais sans intimité ce soir.", "Réponse claire. La chaise près de la fenêtre reste disponible ; rien d’autre ne sera déduit de votre présence.", "sangFroid"),
-    C("Choisir une confiance durable sans relation romantique.", "Notre confiance ne dépendra pas d’un désir identique. Je prendrai acte de la limite et je la défendrai aussi contre moi-même.", "lucidite"),
-  ),
+  "allenna-0": R(C("Rompre les règles annoncées dès que le duel tourne à votre désavantage.", "Une limite ne devient pas facultative au moment où elle cesse de vous aider. La manche est terminée.", "audace")),
+  "allenna-1": R(C("Exiger qu’Allenna désobéisse pour prouver qu’elle pense par elle-même.", "Je n’ai rien à vous prouver en fabriquant une opposition à ma mère. Jugez la décision et ses conséquences, pas le spectacle de ma loyauté.", "audace")),
+  "allenna-2": R(C("Dire à Naïah qu’Allenna finira forcément par reconnaître que sa mère a tort.", "Vous ne connaissez ni la cause du bannissement ni la femme que vous accusez à ma place. Ne transformez pas votre ignorance en prophétie familiale.", "lucidite")),
+  "allenna-3": R(C("Présenter son commandement comme une répétition provisoire de celui d’Amanea.", "Amanea ne m’a pas confié la cité pour que j’imite ses gestes. Si vous cherchez sa copie, vous vous êtes trompé·e de salle.", "lucidite")),
+  "allenna-4": R(C("Déclarer Amanea coupable avant l’examen des sceaux et des ordres.", "Une hypothèse doit entrer dans l’enquête. Un verdict sans preuve en sort immédiatement.", "sangFroid")),
 
   "draven-0": R(C("Lui conseiller de reprendre Lineva sous ses ordres avant de partir.", "Lineva commande déjà Forthaven. Si mon départ commence par lui retirer cette autorité, je ne cherche pas de l’aide : je prépare son échec.", "lucidite")),
   "draven-1": R(C("Réécrire ses deux lettres en un seul ordre plus efficace.", "C’est précisément le problème. Une phrase efficace pour la commandante peut blesser ma fille, et l’inverse. Je dois apprendre à ne pas les écraser l’une sur l’autre.", "sangFroid")),

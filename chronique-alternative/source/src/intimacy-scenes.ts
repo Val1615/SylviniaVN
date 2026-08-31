@@ -3,6 +3,7 @@ import type { DateScene, IntimacyMode, PlayerSex } from "./date-scenes";
 import { intimacyRoutes, type IntimacyRoute } from "./intimacy-routes";
 import { polishIntimacyText } from "./intimacy-prose";
 import { linevaDateIntimacyRoutes } from "./lineva-date-intimacy";
+import { allennaDateIntimacyRoutes } from "./allenna-date-intimacy";
 
 export type IntimacyChoice = {
   id: string;
@@ -336,14 +337,14 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
     afterglow: [N("Tia reste près de vous tandis que sa couronne attend hors de la chambre. Elle boit à votre verre et laisse le silence n’être ni ordre ni jugement."), C("Tia", "L’Empire n’a rien appris cette nuit. Moi, si. Je souhaite recommencer avant d’avoir parfaitement compris.", "troubled")],
   },
   allenna: {
-    opening: [C("Allenna", "J’ai vérifié la porte, les fioles et la relève. Il ne reste plus aucune urgence que je puisse raisonnablement inventer.", "troubled"), N("Elle retire ses gantelets et les pose assez loin pour devoir choisir consciemment de les reprendre. Ses mains nues restent ouvertes devant vous.")],
+    opening: [N("Allenna ferme la porte, retire son ceinturon puis vient à vous sans transformer la chambre en poste de garde."), C("Allenna", "Je te désire. J'ignore encore si cette phrase devient plus facile en la répétant.", "troubled")],
     approaches: [
-      { id: "allenna-hands", text: "Prendre ses mains sans traiter leurs cicatrices comme des blessures à réparer.", lines: [N("Vous embrassez sa paume, puis une jointure marquée par l’entraînement. Allenna ne retire pas ses doigts et ne vous donne aucune explication."), C("Allenna", "Tu peux les toucher comme des mains, pas comme un dossier médical.", "troubled"), N("Elle referme doucement les doigts autour des vôtres et vous rapproche.")] },
-      { id: "allenna-relay", text: "Lui annoncer clairement que vous prenez la première relève.", lines: [N("Allenna ouvre la bouche pour répartir les tâches. Votre main sur sa joue interrompt la procédure sans nier son besoin de comprendre."), C("Allenna", "Très bien. Tu mènes. Je conserve le droit de te corriger si ta stratégie est mauvaise.", "smirk"), N("Son sourire transforme la menace en invitation lorsqu’elle s’allonge.")] },
-      { id: "allenna-choice", text: "Lui demander ce qu’elle veut lorsqu’aucune vie ne dépend de sa réponse.", lines: [N("La question la déstabilise davantage qu’un danger immédiat. Allenna regarde vos lèvres, vos mains puis la porte qu’elle a déjà verrouillée."), C("Allenna", "Toi. Lentement d’abord. Et sans me laisser prétendre que je surveille encore quelque chose.", "shy"), N("Elle vous embrasse avant de pouvoir reformuler en termes plus prudents.")] },
+      { id: "allenna-hands", text: "Prendre ses mains et l'attirer dans un premier baiser lent.", lines: [N("Vous embrassez sa paume, puis ramenez ses doigts contre votre nuque. Allenna hésite une seconde avant de réduire elle-même la distance."), C("Allenna", "Lentement d'abord.", "troubled"), N("Son second baiser possède déjà davantage d'assurance.")] },
+      { id: "allenna-challenge", text: "Soutenir son regard et lui demander qui détournera les yeux en premier.", lines: [N("Allenna relève le menton. La provocation tient jusqu'à ce que vos vêtements commencent à tomber et qu'une rougeur gagne ses joues."), C("Allenna", "La manche n'est pas terminée.", "smirk"), N("Elle détourne pourtant les yeux une seconde avant de revenir vous embrasser.")] },
+      { id: "allenna-frank", text: "Lui dire simplement où vous voulez sentir ses mains.", lines: [N("Votre demande la surprend, puis lui rend un terrain concret. Allenna pose une main à l'endroit indiqué et laisse l'autre découvrir sans méthode préparée."), C("Allenna", "Comme ceci ?", "troubled"), N("Votre réponse efface la dernière distance entre vous.")] },
     ],
     directions: [],
-    afterglow: [N("Allenna replace un coussin sous votre nuque puis accepte que vous fassiez de même pour elle. Ses gantelets restent au sol, inutiles dans la chaleur partagée."), C("Allenna", "Relève terminée. Personne n’a été abandonné. Je peux apprendre à appeler cela du repos.", "troubled")],
+    afterglow: [N("Allenna reste nue contre vous, encore rougie par l'attention qui demeure sur son corps longtemps après l'urgence du désir."), C("Allenna", "Je n'avais rien préparé pour l'après. Reste tout de même.", "troubled")],
   },
   draven: {
     opening: [C("Draven", "Je vais être clair : je vous désire. Je vais être moins doué pour la suite, mais au moins nous partons d’un rapport honnête.", "gruff"), N("Il retire son ceinturon et le pose loin du lit. Le geste ressemble d’abord à celui d’un officier ; la main qui revient caresser votre joue n’obéit plus à aucun règlement.")],
@@ -392,14 +393,22 @@ export function directionLines(characterId: string, directionId: string, mode: I
 }
 
 export function intimacyDirections(characterId: string, sex: PlayerSex, dateId?: string): IntimacyDirectionChoice[] {
-  const dateRoutes = characterId === "lineva" ? linevaDateIntimacyRoutes(dateId, sex) : [];
+  const dateRoutes = characterId === "lineva"
+    ? linevaDateIntimacyRoutes(dateId, sex)
+    : characterId === "allenna"
+      ? allennaDateIntimacyRoutes(dateId, sex)
+      : [];
   if (dateRoutes.length) return dateRoutes;
   const routes = intimacyRoutes(characterId, sex);
   return routes.length ? routes : (INTIMACY_PROFILES[characterId]?.directions || []);
 }
 
 export function directionChapters(characterId: string, directionId: string, mode: IntimacyMode, sex: PlayerSex, dateId?: string): DialogueLine[][] {
-  const dateRoute = characterId === "lineva" ? linevaDateIntimacyRoutes(dateId, sex).find((entry) => entry.id === directionId) : undefined;
+  const dateRoute = characterId === "lineva"
+    ? linevaDateIntimacyRoutes(dateId, sex).find((entry) => entry.id === directionId)
+    : characterId === "allenna"
+      ? allennaDateIntimacyRoutes(dateId, sex).find((entry) => entry.id === directionId)
+      : undefined;
   if (dateRoute) return dateRoute.chapters[mode];
   const richRoute = intimacyRoutes(characterId, sex).find((entry) => entry.id === directionId);
   if (richRoute) return richRoute.chapters[mode];

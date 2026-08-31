@@ -257,6 +257,7 @@ export const GROUP_DATES: GroupDateScene[] = [
     dynamic: "Allenna contrôle pour que personne ne meure sous ses yeux ; Lineva endure pour que personne ne porte sa charge. Elles se comprennent immédiatement, ce qui rend plus difficile encore le fait d’accepter d’être aidées.",
     location: "akuhn", spot: "akuhn-training", period: "soirée",
     minStage: 4, minAffection: 35, minTrust: 36, minDesire: 25, mood: "focused",
+    requiredFlags: ["story-allenna-lineva-met"],
     intro: [
       N("Le terrain est vide, sauf pour trois armes émoussées et une trousse de soins qu’Allenna a préparée avant même que Lineva ne remarque la coupure à sa paume."),
       C("Lineva", "Une égratignure ne met personne en danger."),

@@ -245,18 +245,6 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "allenna-after-powerlessness", title: "Recevoir sans capituler", characters: ["allenna"], triggerCharacters: ["allenna"], requiredPresent: ["allenna"], locations: ["akuhn"], sublocations: ["akuhn-terrace"], minStages: { allenna: 4 }, requiresKnowledge: ["knows_allenna_control_origin"], excludesFlags: ["allenna-care-without-command"], oneTime: true, priority: 128, mood: "troubled",
-    prompt: [
-      line("Narration", "Une soigneuse vient de refaire le bandage de l’avant-bras d’Allenna. La commandante a donné une seule indication, puis s’est obligée à laisser une autre personne terminer le nœud."),
-      line("Allenna", "Ce que je t’ai raconté explique mon besoin de contrôle. Cela ne t’autorise pas à me surveiller, à prévoir mes décisions ou à devenir indispensable pour que je me sente en sécurité."),
-      line("Allenna", "Je veux apprendre à recevoir une présence sans la transformer en garde supplémentaire. Je ne sais pas encore le faire avec élégance."),
-    ],
-    choices: [
-      choice("aapw-s", "Lui demander si elle souhaite dix minutes de compagnie ou la terrasse pour elle seule.", "sangFroid", [line("Allenna", "Dix minutes. Sans rapport sur mon état à Amanea, et sans prolongation supposée."), line("Narration", "Vous vous asseyez. Lorsque les dix minutes passent, Allenna vous demande elle-même d’en rester cinq de plus.")], { trust: 10, affection: 3, flags: ["allenna-care-without-command"] }),
-      choice("aapw-l", "L’aider à inventorier ce que la soigneuse a utilisé, sans reprendre le soin ni son corps en charge.", "lucidite", [line("Allenna", "Compresses, fil, alcool. Une tâche finie, pas une dette."), line("Narration", "Elle range avec vous, puis laisse volontairement la dernière fiole à la soigneuse."), line("Allenna", "Recevoir n’a donc pas besoin de signifier céder le commandement de soi.")], { trust: 8, affection: 5, flags: ["allenna-care-without-command"] }),
-    ],
-  },
-  {
     id: "lineva-draven-after-truth", title: "La chaise qui reste vide", characters: ["lineva", "draven"], requiredPresent: ["lineva", "draven"], locations: ["forthaven"], sublocations: ["forthaven-quarters"], minStages: { lineva: 4, draven: 4 }, requiresFlags: ["lineva-mother-truth-resolved"], excludesFlags: ["lineva-draven-grief-shared"], oneTime: true, priority: 120, mood: "calm",
     prompt: [
       line("Narration", "Le soir suivant, trois assiettes sont encore rangées dans l’armoire. Draven en sort deux, s’arrête devant la troisième et attend que Lineva choisisse elle-même ce qu’elle veut en faire."),
