@@ -2,6 +2,7 @@ import type { ChoiceData, DialogueLine, Effects } from "./game-data";
 import type { AlphaHuntState } from "./alpha-hunt";
 
 export const LINEVA_ALLENNA_SERIES_ID = "lineva-allenna";
+export const LINEVA_ALLENNA_CORRESPONDENCE_DAYS = 29;
 
 export type CrossLetterReply = {
   id: string;
@@ -157,7 +158,29 @@ export function nextCrossLetter(progress: CrossQuestProgress, day: number) {
 }
 
 export function crossSilenceReady(progress: CrossQuestProgress, day: number) {
-  return progress.stage === 3 && progress.letters.length === LINEVA_ALLENNA_LETTERS.length && day >= progress.stageStartedDay + 29;
+  return progress.stage === 3 && progress.letters.length === LINEVA_ALLENNA_LETTERS.length && day >= progress.stageStartedDay + LINEVA_ALLENNA_CORRESPONDENCE_DAYS;
+}
+
+export function nextCrossTimelineDay(progress: CrossQuestProgress, day: number) {
+  if (progress.stage !== 3) return day;
+  const pendingLetter = LINEVA_ALLENNA_LETTERS.find((letter) => !progress.letters.some((entry) => entry.id === letter.id));
+  const target = pendingLetter
+    ? progress.stageStartedDay + pendingLetter.dayOffset
+    : progress.stageStartedDay + LINEVA_ALLENNA_CORRESPONDENCE_DAYS;
+  return Math.max(day, target);
+}
+
+export function advanceCrossTimeline(progress: CrossQuestProgress, day: number): CrossQuestProgress {
+  if (progress.stage !== 3) return progress;
+  const receivedIds = new Set(progress.letters.map((entry) => entry.id));
+  const dueLetters = LINEVA_ALLENNA_LETTERS
+    .filter((letter) => !receivedIds.has(letter.id) && day >= progress.stageStartedDay + letter.dayOffset)
+    .map((letter) => ({ id: letter.id, receivedDay: progress.stageStartedDay + letter.dayOffset, read: false }));
+  const updated = dueLetters.length ? { ...progress, letters: [...progress.letters, ...dueLetters] } : progress;
+  if (updated.letters.length === LINEVA_ALLENNA_LETTERS.length && day >= progress.stageStartedDay + LINEVA_ALLENNA_CORRESPONDENCE_DAYS) {
+    return { ...updated, stage: 4, stageStartedDay: day };
+  }
+  return updated;
 }
 
 const BOTH_LIGHT: Effects = { affection: 2, trust: 2, relationshipEffects: { allenna: { affection: 2, trust: 2 } } };
@@ -166,58 +189,202 @@ const BOTH_FLIRT: Effects = { affection: 1, trust: 1, desire: 2, relationshipEff
 export const LINEVA_ALLENNA_SCENES: CrossQuestScene[] = [
   {
     id: "cross-la-01-allenna", stage: 0, title: "Le mauvais allié · Une piste extérieure", location: "akuhn", spot: "akuhn-war-room", lead: "allenna", cast: ["allenna"],
-    intro: [N("Allenna aligne les traces relevées dans les Serres sans leur faire dire davantage qu’elles ne prouvent."), C("Allenna", "Je vérifierai cette piste. Cela ne signifie pas que j’accepte une accusation contre Amanea, ni contre tout mon peuple.", "stern"), N("Un canal indépendant de l’Empire lui manque. Forthaven possède l’expérience militaire, l’autonomie et toutes les raisons de rester méfiante.")],
+    intro: [
+      N("La salle de guerre d’Akuhn’Nabad s’est vidée. Allenna reste debout devant trois pièces rapportées des Serres : un relevé de traces, un croquis de formation et un résidu enfermé sous verre noir."),
+      N("Elle rapproche les documents avec la pointe de son couteau, puis retire aussitôt celui dont l’encre a bavé. Son geste tranche avant que son visage laisse paraître le doute."),
+      C("Allenna", "Ces éléments prouvent une méthode. Ils ne donnent ni ordre, ni auteur, ni mobile."),
+      C("Allenna", "Je vérifierai la piste. Je n’accepterai pas qu’on transforme cette vérification en accusation contre Amanea ou contre les Obscurcis.", "stern"),
+      N("Elle referme elle-même le coffret de prélèvement et garde la clé dans son poing. Sa loyauté demeure entière ; son refus d’ignorer les faits l’est tout autant."),
+      C("Allenna", "Les rapports impériaux se citent les uns les autres. Il me faut une lecture qui ne leur doive rien."),
+      N("Forthaven possède des archives de siège, des morts qui marchent encore et une commandante peu disposée à ménager l’Empire. Allenna relève enfin les yeux vers vous."),
+      C("Allenna", "Vous connaissez Lineva. Dites-moi si elle écoutera des faits apportés par la mauvaise personne.", "thinking"),
+    ],
     choices: [
-      choice("cross-la-01-information", "Proposer Forthaven comme source à confronter, pas comme alliée acquise", [C("Allenna", "Une cité qui nous soupçonne examinera chaque incohérence. C’est inconfortable. C’est donc utile.", "thinking")], { trust: 3 }),
-      choice("cross-la-01-strategy", "Souligner l’intérêt commun face aux morts des Serres", [C("Allenna", "Un intérêt commun suffit à ouvrir une porte. Il ne suffit pas à la laisser sans garde.")], { affection: 2, trust: 2 }),
-      choice("cross-la-01-empire", "Rappeler qu’aucune des deux cités ne doit dépendre d’une seule lecture impériale", [C("Allenna", "Comparer deux rapports n’exige aucune trahison. J’irai si Lineva accepte de m’entendre.")], { trust: 3 }),
+      choice("cross-la-01-information", "Proposer Forthaven comme source à confronter, sans la présenter comme une alliée acquise", [
+        C("Allenna", "Une cité qui nous soupçonne cherchera l’erreur avant de chercher à me croire."),
+        N("Elle reprend le rapport écarté, marque la tache d’encre et note la faiblesse dans la marge au lieu de la dissimuler."),
+        C("Allenna", "Cette hostilité peut servir l’enquête. Elle ne décidera pas de sa conclusion.", "thinking"),
+        N("Allenna tire une feuille vierge et commence elle-même la demande de rencontre."),
+      ], { trust: 3 }),
+      choice("cross-la-01-strategy", "Souligner l’intérêt commun face aux morts relevés dans les Serres et à Forthaven", [
+        C("Allenna", "Un ennemi commun ouvre un passage. Il n’efface rien de ce qui nous sépare."),
+        N("Son pouce reste posé sur le croquis des Serres tandis qu’elle examine la route maritime vers Forthaven."),
+        C("Allenna", "J’irai avec une équipe réduite. Si Lineva refuse, nous repartirons avec nos informations intactes."),
+        C("Allenna", "Si elle accepte, nous jugerons la coopération sur ses résultats."),
+      ], { affection: 2, trust: 2 }),
+      choice("cross-la-01-empire", "Rappeler que comparer deux lectures indépendantes sert aussi la loyauté d’Allenna", [
+        C("Allenna", "Amanea ne m’a jamais demandé de préférer un rapport commode à un rapport exact."),
+        N("La réponse vient sans hésitation. Allenna appose son sceau personnel, pas celui de la couronne, au bas du message."),
+        C("Allenna", "Je confronterai les faits à Forthaven. Ensuite seulement, je saurai quelle question rapporter.", "stern"),
+      ], { trust: 3 }),
     ],
   },
   {
     id: "cross-la-01-lineva", stage: 1, title: "Le mauvais allié · Une rencontre, rien de plus", location: "forthaven", spot: "forthaven-war-room", lead: "lineva", cast: ["lineva"],
-    intro: [N("Lineva écoute la proposition debout, les deux poings sur une carte où la ville basse porte encore les marques de la peste."), C("Lineva", "Des morts se lèvent chez nous, des noms obscurcis apparaissent dans les Serres, et l’idée serait d’inviter leur commandante sur mes quais ?", "determined"), C("Lineva", "Aucune preuve ne dit qu’ils sont innocents.")],
+    intro: [
+      N("À Forthaven, une poutre neuve traverse la salle de guerre encore lézardée. Lineva vient de la caler avec l’épaule lorsque vous posez le billet d’Allenna sur la carte."),
+      N("Elle essuie ses paumes sur son pantalon, boit une gorgée d’un café assez noir pour attaquer le gobelet et lit le message deux fois."),
+      C("Lineva", "Des morts se lèvent dans nos rues. Des traces obscurcies apparaissent dans les Serres. Et vous me proposez d’inviter la commandante d’Amanea sur mes quais.", "determined"),
+      N("Son index suit la ligne des Docks Brisés, s’arrête sur chaque accès encore habité, puis remonte vers la Ville Haute."),
+      C("Lineva", "Aucune preuve ne les innocente. Aucune ne suffit davantage à les condamner, ce qui rend la situation particulièrement désagréable."),
+      N("Elle appelle la responsable du quai, lui fait doubler une relève et réserve une passerelle extérieure avant même de vous demander la suite."),
+      C("Lineva", "Je peux écouter une mauvaise alliée. Je refuse seulement qu’elle découvre nos faiblesses pendant que nous échangeons des politesses."),
+      C("Lineva", "Donnez-moi une raison concrète de la laisser débarquer.", "stern"),
+    ],
     choices: [
-      choice("cross-la-01-observe", "Répondre qu’un contact direct permet justement de les observer et de confronter leurs informations", [C("Lineva", "Une rencontre. Sous mes règles. Ne transformez pas ça en alliance avant qu’elle ait posé le pied ici.")], { trust: 4 }),
-      choice("cross-la-01-autonomy", "Refuser de laisser l’Empire choisir seul quels témoignages Forthaven entend", [C("Lineva", "Voilà une manière de rendre une mauvaise idée difficile à jeter. Une rencontre, donc.", "smirk")], { affection: 2, trust: 3 }),
-      choice("cross-la-01-certain", "Affirmer qu’Allenna ne représente aucun danger", [C("Lineva", "Vous n’en savez rien. Moi non plus. C’est précisément pour ça que la rencontre restera surveillée.", "stern")], { trust: -2 }),
-      choice("cross-la-01-flirt", "Ajouter qu’elle pourra toujours vous faire payer l’idée après la rencontre", [C("Lineva", "Je retiens surtout que vous venez de proposer les deux risques dans la même phrase.", "smirk")], { desire: 2, affection: 1 }),
+      choice("cross-la-01-observe", "Répondre qu’un contact direct permettra de confronter les informations et d’observer Allenna en action", [
+        C("Lineva", "Une rencontre sur le quai extérieur. Six personnes de chaque côté, aucun accès aux réserves."),
+        N("Elle déplace déjà les jetons sur la carte. Votre argument n’a pas créé son plan ; il lui a donné une raison de l’essayer."),
+        C("Lineva", "Si elle apporte des faits, nous les vérifierons. Si elle apporte un discours, la marée la remportera avec son bateau."),
+      ], { trust: 4 }),
+      choice("cross-la-01-autonomy", "Refuser de laisser l’Empire choisir seul les témoignages que Forthaven peut entendre", [
+        C("Lineva", "Voilà une mauvaise idée devenue difficile à jeter."),
+        N("Elle renverse son café dans un seau, grimace devant le bruit qu’il fait et inscrit elle-même l’heure d’arrivée sur le registre du port."),
+        C("Lineva", "Elle parlera devant les gens qui ont tenu ces quais. L’Empire n’écrira pas le résumé à notre place.", "smirk"),
+      ], { affection: 2, trust: 3 }),
+      choice("cross-la-01-certain", "Affirmer qu’Allenna ne représente aucun danger pour Forthaven", [
+        N("Lineva cesse de toucher la carte. Son regard remonte lentement jusqu’au vôtre."),
+        C("Lineva", "Vous n’en savez rien. Moi non plus."),
+        C("Lineva", "Je la recevrai parce que le risque peut être contenu, pas parce que vous venez de le nier. La rencontre restera surveillée.", "stern"),
+      ], { trust: -2 }),
+      choice("cross-la-01-flirt", "Ajouter qu’elle pourra vous faire payer cette idée après la rencontre", [
+        C("Lineva", "Vous venez de proposer une commandante obscurcie et votre propre punition dans la même minute."),
+        N("Elle pose le billet contre votre poitrine, mais le sourire au coin de sa bouche survit au geste."),
+        C("Lineva", "Commencez par accueillir votre invitée. Nous reparlerons du prix quand mes quais seront encore debout.", "smirk"),
+      ], { desire: 2, affection: 1 }),
     ],
   },
   {
     id: "cross-la-02-quay", stage: 2, title: "Deux commandantes sur le même quai", location: "forthaven", spot: "forthaven-harbor", lead: "lineva", cast: ["lineva", "allenna"],
-    intro: [N("Allenna franchit seule la dernière passerelle. Lineva l’attend devant les équipes de relève, sans escorte d’apparat."), C("Lineva", "Ici, la peste n’est pas une hypothèse diplomatique."), C("Allenna", "Et je ne suis pas venue demander pardon au nom d’un peuple entier. Je suis venue comparer nos faits et combattre ce qui se lève."), N("Allenna propose trente jours, une petite présence obscurcie, des observations partagées et des secteurs strictement définis. Lineva fixe les accès sensibles, la transmission des rapports et le droit d’interrompre l’essai.")],
+    intro: [
+      N("Le navire obscurci accoste au quai extérieur sans bannière déployée. Allenna franchit seule la dernière passerelle ; derrière elle, six soldats attendent encore l’autorisation de poser le pied à terre."),
+      N("Lineva l’accueille entre deux équipes de débardeurs. Aucun tapis, aucun officier d’apparat : seulement du sel, des marteaux et les cloches qui comptent les rues condamnées."),
+      C("Lineva", "Ici, la peste a des visages. Certaines familles les reconnaissent encore quand ils reviennent cogner aux portes."),
+      C("Allenna", "Je ne leur demanderai ni oubli ni pardon au nom d’un peuple entier. J’apporte des faits, des combattants et trente jours de mon commandement."),
+      N("Lineva prend le dossier tendu, en vérifie le poids puis le passe à la responsable du quai sans l’ouvrir devant les soldats."),
+      C("Lineva", "Trente jours, c’est assez long pour causer beaucoup de dégâts."),
+      C("Allenna", "C’est également assez long pour rendre les résultats difficiles à falsifier."),
+      N("Allenna propose une présence réduite et des observations partagées. Lineva retire les réserves, les quartiers habités et les souterrains de la carte commune. Elles discutent directement, se coupent deux fois et ne vous demandent d’intervenir qu’au moment de fixer la règle vérifiable."),
+    ],
     choices: [
-      choice("cross-la-02-ledger", "Faire consigner chaque accès et chaque information transmise dans un registre commun", [C("Allenna", "Traçable des deux côtés."), C("Lineva", "Et lisible sans votre encre de cérémonie. Marché conclu.", "smirk")], BOTH_LIGHT),
-      choice("cross-la-02-patrol", "Proposer des patrouilles mixtes hors des positions les plus sensibles", [C("Lineva", "On juge les actes là où ils ont lieu."), C("Allenna", "Avec une chaîne de décision explicite. J’accepte.")], BOTH_LIGHT),
-      choice("cross-la-02-command", "Leur laisser chacune un droit de retrait immédiat si une limite est franchie", [C("Allenna", "Une coopération sans confiance aveugle."), C("Lineva", "Enfin une formule que je peux signer.")], BOTH_LIGHT),
-      choice("cross-la-02-flirt", "Observer que trente jours devraient suffire pour découvrir laquelle supporte le moins d’avoir tort", [C("Lineva", "Elle."), C("Allenna", "Cette réponse constitue déjà un élément de comparaison."), N("Le premier sourire ne dure pas, mais il existe." )], BOTH_FLIRT),
+      choice("cross-la-02-ledger", "Faire consigner chaque accès et chaque information transmise dans un registre commun", [
+        C("Allenna", "Deux copies, deux sceaux, une heure inscrite pour chaque ajout."),
+        C("Lineva", "Et des mots lisibles par quelqu’un qui n’a pas grandi dans une chancellerie."),
+        N("Allenna rature elle-même le premier intitulé, trop impérial au goût de Lineva, puis lui tend la plume."),
+        C("Lineva", "Marché conclu. Mara gardera notre copie ; choisissez qui aura le courage de garder la vôtre.", "smirk"),
+      ], BOTH_LIGHT),
+      choice("cross-la-02-patrol", "Proposer des patrouilles mixtes hors des positions les plus sensibles", [
+        C("Lineva", "Mes gens choisissent les rues. Les vôtres annoncent leurs capacités avant le départ."),
+        C("Allenna", "La décision revient à la personne qui voit le danger en premier. Le compte rendu suivra, s’il reste utile."),
+        N("Lineva jauge Allenna une seconde, puis appelle deux responsables d’équipe et leur fait former les premières paires."),
+        C("Lineva", "On jugera les actes là où ils ont lieu."),
+      ], BOTH_LIGHT),
+      choice("cross-la-02-command", "Donner à chacune un droit de retrait immédiat si une limite convenue est franchie", [
+        C("Allenna", "Aucun retrait n’exigera d’aveu ni de justification immédiate."),
+        C("Lineva", "La personne qui le demande ramène tout le monde. Les explications viendront derrière une porte fermée."),
+        N("Elles se serrent l’avant-bras. La prise ressemble moins à une promesse qu’à une règle qu’elles comptent faire respecter."),
+        C("Allenna", "J’accepte."),
+      ], BOTH_LIGHT),
+      choice("cross-la-02-flirt", "Observer que trente jours révéleront surtout laquelle supporte le moins d’avoir tort", [
+        C("Lineva", "Elle."),
+        C("Allenna", "Cette réponse fournit déjà un élément de comparaison."),
+        N("Lineva souffle un rire. Allenna autorise enfin ses soldats à descendre et lui laisse volontairement le premier pas sur le quai."),
+        C("Lineva", "Venez. Je vais vous montrer tout ce que votre plan oublie encore.", "smirk"),
+      ], BOTH_FLIRT),
     ],
   },
   {
     id: "cross-la-04-silence", stage: 4, title: "Le silence", location: "forthaven", spot: "forthaven-harbor", lead: "lineva", cast: ["lineva", "allenna"],
-    intro: [N("Trois jours sans billet. À Forthaven, la ville basse brûle par endroits ; les quais sont coupés et les civils remontent vers la citadelle."), N("Vous n’avez ni lame ni pouvoir à inventer. Il reste les rythmes d’une patrouille, une venelle enfumée et le passage d’une équipe de porteurs." )],
+    intro: [
+      N("Trois jours passent sans billet de Forthaven. Le premier bateau dérive au large avec ses cordages tranchés ; le suivant apporte des blessés et une seule phrase : la ville basse ne répond plus."),
+      N("Quand votre embarcation atteint enfin la côte, les Docks Brisés brûlent jusque dans l’eau. Des cloches courtes appellent les civils vers la Ville Haute tandis qu’un grondement irrégulier remonte du Vieux Port."),
+      N("La rampe principale est perdue. Une marchande tire deux enfants par la main ; des porteurs poussent une charrette de bandages ; plus loin, une patrouille de morts répète le même circuit entre les maisons effondrées."),
+      N("Vous ne possédez ni la force de Lineva ni les techniques d’Allenna. La ville offre pourtant trois passages : le rythme de la ronde, les entrepôts ouverts sur l’arrière et la charrette trop lourde qui bloque une venelle."),
+      N("Au-dessus de la fumée, une cloche de Forthaven sonne deux fois. Une lueur violette lui répond depuis les remparts. Elles tiennent encore."),
+    ],
     choices: [
-      choice("cross-la-04-observe", "Observer deux rondes avant de traverser derrière les porteurs", [N("Vous gagnez la rampe sans attirer la horde. Au-dessus, des ordres obscurcis répondent aux cloches de Forthaven.")], { stats: { lucidite: 1 } }),
-      choice("cross-la-04-detour", "Contourner les docks par les entrepôts effondrés", [N("Le détour est lent, mais les murs coupent les lignes de vue. Vous atteignez la ville intermédiaire avec les derniers civils." )], { stats: { sangFroid: 1 } }),
-      choice("cross-la-04-help", "Aider une porteuse à dégager une charrette, puis suivre son groupe", [N("La charrette ouvre quelques secondes de passage. Personne ne vous prend pour un héros ; une personne de plus atteint simplement la rampe." )], { affection: 1, relationshipEffects: { allenna: { affection: 1 } } }),
+      choice("cross-la-04-observe", "Observer deux rondes complètes avant de traverser derrière les porteurs", [
+        N("La patrouille tourne la tête au même coup de cloche. Vous attendez le second passage, prévenez les porteurs et traversez dans leur sillage sans rompre leur cadence."),
+        N("Une morte s’écarte soudain de sa boucle ; un trait violet frappe le pavé devant elle et lui rend sa trajectoire. Allenna a vu le danger depuis le rempart."),
+        N("Vous gagnez la Place du Marché avec le groupe. Là-haut, les ordres brefs de Lineva répondent aux signaux obscurcis."),
+      ], { stats: { lucidite: 1 } }),
+      choice("cross-la-04-detour", "Contourner les docks par les entrepôts effondrés", [
+        N("Le premier entrepôt n’offre qu’un mur brûlant. Le second a perdu son toit, mais ses poutres cachent la venelle aux regards de la horde."),
+        N("Vous progressez avec trois habitants qui connaissent encore les portes intérieures. Chacun attend que le précédent ait franchi les gravats avant d’avancer."),
+        N("Le détour vous dépose au Quartier des Ateliers. Une équipe mixte couvre déjà l’escalier vers la Ville Haute sans demander d’où vous venez."),
+      ], { stats: { sangFroid: 1 } }),
+      choice("cross-la-04-help", "Aider la porteuse à dégager sa charrette, puis suivre son groupe", [
+        N("Vous poussez avec elle pendant que les deux enfants tirent les bandages hors d’une roue brisée. La charrette bouge juste assez pour libérer la venelle."),
+        N("Une équipe descend du rempart, prend les caisses et répartit leur poids sans discours. Vous suivez la porteuse jusqu’à la rampe, une main encore crispée sur le bois."),
+        N("Personne ne vous acclame. Une personne de plus, plusieurs caisses et deux enfants atteignent simplement la Ville Haute."),
+      ], { affection: 1, relationshipEffects: { allenna: { affection: 1 } } }),
     ],
   },
   {
     id: "cross-la-05-high-city", stage: 5, title: "La ville haute tient", location: "forthaven", spot: "forthaven-ramparts", lead: "lineva", cast: ["lineva", "allenna"],
-    intro: [N("Sur les remparts, les capes de Forthaven et les armures obscurcies tiennent les mêmes créneaux. Aucun traité n’est affiché ; la coopération existe dans la manière dont les blessés et les munitions circulent."), C("Lineva", "Bon moment pour revenir. Trois rues plus tôt et l’accueil aurait été moins poli.", "smirk"), C("Allenna", "La route a tenu. C’était l’incertitude principale."), N("Lineva désigne les mouvements de la ville basse. Allenna complète avec les intervalles d’énergie observés. L’une annonce la limite d’une sortie ; l’autre change déjà l’angle de la carte sans discuter."), C("Allenna", "Quelque chose coordonne les morts."), C("Lineva", "Assez gros pour attirer leurs rondes. Pas assez visible pour qu’on sache encore où frapper.")],
+    intro: [
+      N("Sur les remparts, les capes de Forthaven et les armures obscurcies occupent les mêmes créneaux. Les munitions montent par une chaîne commune ; les blessés redescendent vers l’infirmerie qu’Allenna a fait installer derrière la seconde porte."),
+      N("Lineva vous attrape par l’avant-bras dès votre arrivée, vérifie d’un regard la suie sur vos vêtements et vous pousse un gobelet d’eau dans la main."),
+      C("Lineva", "Bon moment pour revenir. Trois rues plus tôt et je vous aurais confié à quelqu’un de beaucoup moins poli.", "smirk"),
+      C("Allenna", "La route civile a tenu. J’avais évalué sa perte comme notre risque principal."),
+      C("Lineva", "Elle veut dire qu’elle a déplacé la moitié de son dispositif dès que la première cloche a menti."),
+      N("Allenna serre un dernier bandage autour du bras d’une combattante, lui ordonne de descendre et vient replacer deux poids sur la carte. Lineva lui cède la place sans interrompre son propre compte des rues."),
+      C("Allenna", "Les morts cessent parfois de poursuivre une cible proche pour rejoindre une convergence plus lointaine."),
+      C("Lineva", "Quelque chose les rappelle. Ça occupe plusieurs rues et ça se déplace sous les toits effondrés."),
+      N("Lineva connaît chaque passage praticable. Allenna a relevé les intervalles d’énergie. Elles vous tendent les rapports afin que vous superposiez les deux séries pendant qu’elles préparent déjà la descente."),
+    ],
     choices: [
-      choice("cross-la-05-pattern", "Comparer les rondes autour des quartiers détruits", [C("Allenna", "Elles convergent sans poursuivre directement la cible la plus proche."), C("Lineva", "Donc on suit la ronde jusqu’à son centre.")], BOTH_LIGHT),
-      choice("cross-la-05-energy", "Superposer les rapports d’énergie aux déplacements", [C("Allenna", "Les pics dessinent plusieurs cases contiguës."), C("Lineva", "Une créature énorme, alors. Ça manquait à la journée.", "smirk")], BOTH_LIGHT),
-      choice("cross-la-05-route", "Préparer une lecture de carte pendant qu’elles avancent ensemble", [C("Lineva", "Nous descendons toutes les deux. La route nous viendra de la carte, pas d’une troisième lame."), C("Allenna", "Et nous confirmerons chaque réaction sur le terrain.")], BOTH_LIGHT),
+      choice("cross-la-05-pattern", "Comparer les rondes autour des cinq quartiers détruits", [
+        N("Les itinéraires paraissent d’abord indépendants. Allenna pose un fil sur chaque changement de direction ; Lineva retire les rues où les morts n’auraient jamais pu passer."),
+        C("Allenna", "Elles convergent par vagues, même lorsqu’une cible plus proche devrait les détourner."),
+        C("Lineva", "Alors nous suivons la prochaine vague jusqu’à son centre. Je choisis les passages ; tu comptes les écarts."),
+        C("Allenna", "Départ dans six minutes."),
+      ], BOTH_LIGHT),
+      choice("cross-la-05-energy", "Superposer les pics d’énergie aux déplacements signalés", [
+        N("Les heures ne correspondent pas parfaitement. Allenna décale le premier rapport ; Lineva reconnaît aussitôt la cloche qui avait sonné en retard pendant l’évacuation."),
+        C("Allenna", "Quatre pics contigus. Une empreinte unique, masquée par les bâtiments."),
+        C("Lineva", "Une créature assez grande pour occuper un pâté de maisons. Ça manquait à la journée.", "smirk"),
+        N("Elle roule déjà la carte et la glisse sous son bras."),
+      ], BOTH_LIGHT),
+      choice("cross-la-05-route", "Préparer une lecture de carte pendant qu’elles avancent ensemble", [
+        C("Lineva", "Nous descendons toutes les deux. La carte nous donnera la route, pas une troisième lame."),
+        C("Allenna", "Chaque frappe d’observation provoquera une réaction. Notez-la ; nous confirmerons sa forme sur le terrain."),
+        N("Lineva marque la Ville Haute comme point de départ. Allenna place les patrouilles venues du bassin et vous confie les deux jetons qui les représenteront en mouvement."),
+        C("Lineva", "Quand vous ouvrez un passage, nous l’exploitons. Quand il se referme, nous en trouvons un autre."),
+      ], BOTH_LIGHT),
     ],
   },
   {
     id: "cross-la-07-after", stage: 7, title: "Après la bataille", location: "forthaven", spot: "forthaven-war-room", lead: "lineva", cast: ["lineva", "allenna"],
-    intro: [N("La horde n’a pas disparu, mais ses mouvements se sont défaits. À une table rayée attendent trois gobelets et une ration qu’Allenna a partagée avec une précision inutile."), C("Lineva", "Elle soutient que couper le pain en trois parts égales améliore la victoire."), C("Allenna", "Je soutiens que tu avais déjà pris la plus grande."), N("Le silence qui suit n’exige ni médiation ni définition. Elles discutent d’une relève future qui vous inclut, puis d’un entraînement qui ne ressemble déjà plus tout à fait à une mission.")],
+    intro: [
+      N("La horde n’a pas disparu, mais sa convergence est brisée. Dans la salle de guerre, la table porte de nouvelles entailles, trois gobelets et un pain qu’Allenna vient de partager avec une précision presque provocante."),
+      C("Lineva", "Elle soutient que trois parts égales améliorent la victoire."),
+      C("Allenna", "Je soutiens que tu avais déjà choisi la plus grande."),
+      N("Lineva échange les morceaux pendant qu’Allenna boit dans son gobelet. Le geste déclenche une brève lutte de poignets, gagnée par Allenna lorsque Lineva préfère sauver le pain."),
+      C("Lineva", "Victoire administrative. Profite-en."),
+      C("Allenna", "Je compte surtout profiter du terrain que tu m’as promis."),
+      N("Sans vous consulter, elles fixent un prochain entraînement à Forthaven, un échange mensuel de relevés et une visite de Lineva dans les quartiers ordinaires d’Akuhn’Nabad. Leur amitié a déjà son calendrier, ses disputes et ses projets."),
+      N("Lineva pousse le troisième siège de votre côté. Allenna déplace sa ration pour faire de la place ; toutes deux vous regardent, cette fois, avec une invitation qui vous appartient aussi."),
+    ],
     choices: [
-      choice("cross-la-07-toast", "Lever le gobelet aux deux villes qui ont tenu sans promettre davantage", [C("Allenna", "Aux actes vérifiés."), C("Lineva", "Et aux prochains, si personne ne se met à écrire un traité pendant qu’on boit." )], BOTH_LIGHT),
-      choice("cross-la-07-rest", "Demander seulement où poser le troisième siège", [N("Lineva le pousse du pied. Allenna déplace sa ration pour faire de la place. La réponse tient dans ces deux gestes." )], { affection: 3, trust: 3, relationshipEffects: { allenna: { affection: 3, trust: 3 } } }),
-      choice("cross-la-07-flirt", "Suggérer de tester leur coordination un jour sans armée autour", [C("Lineva", "Sur un terrain d’entraînement ?"), C("Allenna", "Ou dans un lieu où elle ne pourra pas prétendre que chaque détour était tactique."), N("Leurs regards restent sur vous un battement de plus que nécessaire." )], { affection: 2, desire: 4, relationshipEffects: { allenna: { affection: 2, desire: 4 } } }),
+      choice("cross-la-07-toast", "Lever le gobelet aux deux villes qui ont tenu sans promettre davantage", [
+        C("Allenna", "Aux actes vérifiés, et à ceux qu’il reste à accomplir."),
+        C("Lineva", "Aux prochains, tant que personne ne rédige un traité pendant qu’on boit."),
+        N("Les trois gobelets se heurtent. Allenna garde déjà le prochain rapport ; Lineva garde la date de leur revanche. Rien n’exige une promesse plus vaste."),
+      ], BOTH_LIGHT),
+      choice("cross-la-07-rest", "Prendre le troisième siège et partager le pain avec elles", [
+        N("Vous vous asseyez entre le mur rayé et leurs deux épaules. Lineva vous rend le morceau disputé ; Allenna en coupe un autre et le pose devant elle sans commentaire."),
+        C("Lineva", "Ne vous habituez pas au calme. Elle a réservé le terrain de demain à l’aube."),
+        C("Allenna", "Tu as demandé une revanche."),
+        N("Leur discussion repart au-dessus de votre gobelet. Cette fois, vous en faites partie sans avoir à la conduire."),
+      ], { affection: 3, trust: 3, relationshipEffects: { allenna: { affection: 3, trust: 3 } } }),
+      choice("cross-la-07-flirt", "Suggérer de tester leur coordination un soir sans armée autour", [
+        C("Lineva", "Sur un terrain d’entraînement ?", "smirk"),
+        C("Allenna", "Ou dans un lieu où elle ne pourra pas attribuer chaque détour à la tactique."),
+        C("Lineva", "Tu as préparé cette réponse."),
+        C("Allenna", "J’ai préparé plusieurs possibilités."),
+        N("Le défi qu’elles échangent reste celui de deux amies. Les deux regards qui reviennent vers vous portent, eux, une proposition nettement moins militaire."),
+      ], { affection: 2, desire: 4, relationshipEffects: { allenna: { affection: 2, desire: 4 } } }),
     ],
   },
 ];

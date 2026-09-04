@@ -57,16 +57,17 @@ import {
   type GroupIntimacyRoute,
 } from "./group-dates";
 import {
+  LINEVA_ALLENNA_CORRESPONDENCE_DAYS,
   LINEVA_ALLENNA_FINAL_FLAGS,
   LINEVA_ALLENNA_LETTERS,
   LINEVA_ALLENNA_MILESTONES,
+  advanceCrossTimeline,
   completedCrossMilestones,
   createLinevaAllennaProgress,
   crossMilestone,
   crossSceneForStage,
-  crossSilenceReady,
   linevaAllennaSeriesUnlocked,
-  nextCrossLetter,
+  nextCrossTimelineDay,
   type CrossLetter,
   type CrossQuestProgress,
 } from "./cross-quests";
@@ -75,6 +76,7 @@ import {
   ALPHA_SECTOR_NAMES,
   alphaAdjacent,
   alphaCellInRange,
+  alphaCellName,
   alphaMoveAllowed,
   createAlphaHunt,
   launchAlphaAssault,
@@ -950,21 +952,22 @@ function evolveCrossQuests(game: GameState): GameState {
     };
   }
   if (!progress) return game;
-  if (crossSilenceReady(progress, game.day)) {
-    const updated = { ...progress, stage: 4, stageStartedDay: game.day };
-    return {
-      ...game,
-      crossQuestSeries: { ...game.crossQuestSeries, linevaAllenna: updated },
-      journal: [...game.journal, "Quêtes croisées · Trois jours sans nouvelles de Forthaven."],
-    };
-  }
-  const letter = nextCrossLetter(progress, game.day);
-  if (!letter) return game;
-  const updated = { ...progress, letters: [...progress.letters, { id: letter.id, receivedDay: game.day, read: false }] };
+  const updated = advanceCrossTimeline(progress, game.day);
+  if (updated === progress) return game;
+  const previousIds = new Set(progress.letters.map((entry) => entry.id));
+  const newLetters = updated.letters
+    .filter((entry) => !previousIds.has(entry.id))
+    .map((entry) => LINEVA_ALLENNA_LETTERS.find((letter) => letter.id === entry.id))
+    .filter((letter): letter is CrossLetter => Boolean(letter));
+  const silenceReached = progress.stage === 3 && updated.stage === 4;
   return {
     ...game,
     crossQuestSeries: { ...game.crossQuestSeries, linevaAllenna: updated },
-    journal: [...game.journal, `Correspondance croisée reçue · ${letter.subject}`],
+    journal: [
+      ...game.journal,
+      ...newLetters.map((letter) => `Correspondance croisée reçue · ${letter.subject}`),
+      ...(silenceReached ? ["Quêtes croisées · Trois jours sans nouvelles de Forthaven."] : []),
+    ],
   };
 }
 
@@ -2444,11 +2447,25 @@ export default function Home() {
       crossQuestStage: stage,
     };
     if (!replay) {
-      setGame(nextGame);
+      setGame(evolveLivingWorld(evolveCrossQuests(nextGame)));
       setSelectedLocation(data.location);
       setSelectedSpot(data.spot);
     }
     setDialogue({ scene, lines: expandedLines(scene, nextGame, data.intro, "intro", data.spot), lineIndex: 0, phase: "intro", replay });
+  }
+
+  function waitForCrossTimeline() {
+    if (!game) return;
+    const progress = game.crossQuestSeries.linevaAllenna;
+    if (!progress || progress.stage !== 3) return;
+    const targetDay = nextCrossTimelineDay(progress, game.day);
+    updateGame((current) => ({
+      ...current,
+      day: targetDay,
+      journal: targetDay > current.day
+        ? [...current.journal, `Attente · Prochain courrier de Forthaven au jour ${targetDay}.`]
+        : current.journal,
+    }));
   }
 
   function startAlphaHunt() {
@@ -3522,7 +3539,7 @@ export default function Home() {
       kind: "date",
       date,
     };
-    setGame(nextGame);
+    setGame(evolveLivingWorld(evolveCrossQuests(nextGame)));
     setSelectedLocation(date.location);
     setSelectedSpot(date.spot);
     setModal(null);
@@ -3555,7 +3572,7 @@ export default function Home() {
       kind: "group-date",
       groupDate: date,
     };
-    setGame(nextGame);
+    setGame(evolveLivingWorld(evolveCrossQuests(nextGame)));
     setSelectedLocation(date.location);
     setSelectedSpot(date.spot);
     setModal(null);
@@ -3981,7 +3998,9 @@ export default function Home() {
     .slice(0, 4);
   const spontaneousEvent = availableSpontaneousEvent(game);
   const localRumor = availableRumor(game);
-  const soundtrack = musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
+  const soundtrack = modal?.kind === "alpha-hunt"
+    ? "alpha-chases"
+    : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
 
   return (
@@ -4108,7 +4127,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
+      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
       {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -4359,7 +4378,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
   const [section, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
@@ -4369,6 +4388,9 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
   const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
   const crossProgress = game.crossQuestSeries.linevaAllenna;
   const crossLetters = (crossProgress?.letters || []).map((received) => ({ received, letter: LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: NonNullable<typeof crossProgress>["letters"][number]; letter: CrossLetter } => Boolean(entry.letter));
+  const crossTimelineTarget = crossProgress?.stage === 3 ? nextCrossTimelineDay(crossProgress, game.day) : game.day;
+  const crossTimelineElapsed = crossProgress?.stage === 3 ? Math.min(LINEVA_ALLENNA_CORRESPONDENCE_DAYS, Math.max(0, game.day - crossProgress.stageStartedDay)) : 0;
+  const crossCorrespondenceComplete = crossProgress?.stage === 3 && crossProgress.letters.length === LINEVA_ALLENNA_LETTERS.length;
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
   const mainProgress = storyProgress(game.history, game.flags);
   const storyComplete = mainProgress >= MAIN_STORY.length;
@@ -4422,7 +4444,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
       {section === "crossed" && crossProgress && <section className={`cross-quest-dossier ${crossProgress.stage >= 8 ? "complete" : ""}`}>
         <header><div className="cross-dossier-portraits"><img src={CHARACTERS.find((entry) => entry.id === "lineva")?.portrait} alt="Lineva" /><img src={CHARACTERS.find((entry) => entry.id === "allenna")?.portrait} alt="Allenna" /></div><div><p className="eyebrow">Forthaven ↔ Akuhn’Nabad</p><h2>Lineva & Allenna</h2><p>Amitié, camaraderie et coopération entre deux commandantes qui continuent d’agir sans attendre votre médiation.</p></div><strong>{completedCrossMilestones(crossProgress.stage)} / 7</strong></header>
         <div className="cross-progress"><i style={{ width: `${(completedCrossMilestones(crossProgress.stage) / 7) * 100}%` }} /></div>
-        {crossProgress.stage < 8 ? <div className="cross-current"><span>Objectif actuel</span><h3>{crossMilestone(crossProgress.stage)?.title}</h3><p>{crossMilestone(crossProgress.stage)?.objective}</p>{crossSceneForStage(crossProgress.stage) && <button className="primary-action" onClick={() => onStartCrossQuest(crossProgress.stage)}>Vivre cette étape</button>}{crossProgress.stage === 6 && <button className="primary-action" onClick={onStartAlphaHunt}>{crossProgress.alphaState ? "Reprendre la traque de l’Alpha" : "Ouvrir la carte tactique"}</button>}</div> : <div className="cross-current"><span>Série accomplie</span><h3>Une relation qui existe aussi sans vous</h3><p>Le canal entre les deux cités tient par les actes. Deux rendez-vous publics à trois sont disponibles dans Relations.</p></div>}
+        {crossProgress.stage < 8 ? <div className="cross-current"><span>Objectif actuel</span><h3>{crossMilestone(crossProgress.stage)?.title}</h3><p>{crossMilestone(crossProgress.stage)?.objective}</p>{crossProgress.stage === 3 && <div className="cross-timeline"><small>{crossProgress.letters.length} / {LINEVA_ALLENNA_LETTERS.length} courriers · {crossTimelineElapsed} / {LINEVA_ALLENNA_CORRESPONDENCE_DAYS} jours</small><p>La coopération avance entre vos visites. Chaque attente conduit au prochain courrier, puis au silence qui déclenche la suite.</p><button className="primary-action" onClick={onWaitForCrossTimeline}>{crossCorrespondenceComplete ? `Attendre trois jours sans nouvelles · Jour ${crossTimelineTarget}` : crossTimelineTarget > game.day ? `Attendre le prochain courrier · Jour ${crossTimelineTarget}` : "Recevoir les courriers en attente"}</button></div>}{crossSceneForStage(crossProgress.stage) && <button className="primary-action" onClick={() => onStartCrossQuest(crossProgress.stage)}>Vivre cette étape</button>}{crossProgress.stage === 6 && <button className="primary-action" onClick={onStartAlphaHunt}>{crossProgress.alphaState ? "Reprendre la traque de l’Alpha" : "Ouvrir la carte tactique"}</button>}</div> : <div className="cross-current"><span>Série accomplie</span><h3>Une relation qui existe aussi sans vous</h3><p>Le canal entre les deux cités tient par les actes. Deux rendez-vous publics à trois sont disponibles dans Relations.</p></div>}
         <div className="cross-milestones"><h3>Étapes vécues</h3>{LINEVA_ALLENNA_MILESTONES.filter((entry) => entry.stage < Math.min(8, crossProgress.stage) && !(entry.stage === 1)).map((entry) => <div key={entry.stage}><span>✓</span><strong>{entry.title}</strong></div>)}</div>
       </section>}
       {section === "campaign" && <section className={`story-progress-overview ${storyComplete ? "complete" : ""}`}>
@@ -5126,10 +5148,10 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
     else if ((state.phase === "movement" || state.phase === "localized") && alphaMoveAllowed(state, cell)) onChange(moveAlphaDuo(state, cell));
   };
   const phaseLabel = state.phase === "observation" ? "Observation" : state.phase === "movement" || state.phase === "localized" ? "Déplacement" : state.phase === "failure" ? "Repli" : "Assaut";
-  return <div className="modal-backdrop alpha-hunt-backdrop"><section className="alpha-hunt-modal" style={{ backgroundImage: `linear-gradient(180deg,rgba(4,5,10,.28),rgba(4,5,10,.8)),url(${spotById("forthaven-harbor")?.background})` }}>
+  return <div className="modal-backdrop alpha-hunt-backdrop"><section className="alpha-hunt-modal">
     <header><div><p className="eyebrow">Quête croisée · Le cœur de la ruche</p><h2>Traque de l’Alpha</h2><p>{state.lastReaction}</p></div><button className="modal-close" aria-label="Sauvegarder et fermer" onClick={onClose}>×</button></header>
     <div className="alpha-hud"><span><small>Impact Alpha</small><b>{state.revealed.length}/4</b></span><span><small>Patrouilles</small><b>{state.patrols.filter((patrol) => !patrol.respawnTurn).length}</b></span><span><small>Accrochages</small><b>{state.clashes}/2</b></span><span><small>Phase</small><b>{phaseLabel}</b></span></div>
-    <div className="alpha-board-wrap"><div className="alpha-sector-labels">{ALPHA_SECTOR_NAMES.map((name) => <span key={name}>{name}</span>)}</div><div className="alpha-board" role="grid" aria-label="Carte tactique de Forthaven, grille sept par sept">{Array.from({ length: ALPHA_GRID_SIZE }, (_, row) => Array.from({ length: ALPHA_GRID_SIZE }, (_, col) => {
+    <div className="alpha-board-wrap"><div className="alpha-map-key" aria-label="Quartiers de la carte">{ALPHA_SECTOR_NAMES.map((name) => <span key={name}>{name}</span>)}</div><div className="alpha-board" style={{ backgroundImage: "linear-gradient(rgba(4,6,12,.1),rgba(4,6,12,.24)),url('/assets/backgrounds/forthaven-alpha-map.jpg')" }} role="grid" aria-label="Carte tactique de Forthaven, grille sept par sept">{Array.from({ length: ALPHA_GRID_SIZE }, (_, row) => Array.from({ length: ALPHA_GRID_SIZE }, (_, col) => {
       const cell = cellAt(row, col);
       const key = cellKey(cell);
       const inRange = alphaCellInRange(state, cell);
@@ -5138,7 +5160,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
       const patrols = state.patrols.filter((patrol) => !patrol.respawnTurn && cellKey(patrol.cell) === key);
       const alpha = state.alpha.some((entry) => cellKey(entry) === key) && (showAlpha || revealed.has(key));
       const usable = state.phase === "observation" ? inRange : movable;
-      return <button role="gridcell" aria-label={`Ligne ${row + 1}, colonne ${col + 1}${isDuo ? ", Lineva et Allenna" : ""}${patrols.length ? ", patrouille" : ""}${alpha ? ", Alpha" : ""}`} disabled={!usable || state.phase === "failure" || state.phase === "victory"} className={`${row === 0 ? "high-city" : ""} ${inRange ? "in-range" : "out-range"} ${movable ? "movable" : ""} ${alpha ? "alpha-cell" : ""} ${isDuo ? "duo-cell" : ""} ${patrols.length ? "patrol-cell" : ""}`} key={key} onClick={() => onCell(cell)}>{alpha && <span className="alpha-mark">◆</span>}{patrols.length > 0 && <span className="patrol-mark">☠</span>}{isDuo && <span className="duo-mark"><img src="/assets/portraits/lineva.jpg" alt="" /><img src="/assets/portraits/allenna.jpg" alt="" /></span>}</button>;
+      return <button role="gridcell" title={alphaCellName(cell)} aria-label={`${alphaCellName(cell)}${isDuo ? ", Lineva et Allenna" : ""}${patrols.length ? ", patrouille" : ""}${alpha ? ", Alpha" : ""}`} disabled={!usable || state.phase === "failure" || state.phase === "victory"} className={`${row === 0 ? "high-city" : ""} ${inRange ? "in-range" : "out-range"} ${movable ? "movable" : ""} ${alpha ? "alpha-cell" : ""} ${isDuo ? "duo-cell" : ""} ${patrols.length ? "patrol-cell" : ""}`} key={key} onClick={() => onCell(cell)}>{alpha && <span className="alpha-mark">◆</span>}{patrols.length > 0 && <span className="patrol-mark">☠</span>}{isDuo && <span className="duo-mark"><img src="/assets/portraits/lineva.jpg" alt="" /><img src="/assets/portraits/allenna.jpg" alt="" /></span>}</button>;
     }))}</div></div>
     <div className="alpha-objective"><strong>{state.phase === "observation" ? "Sondez ou frappez une case éclairée." : state.phase === "movement" || state.phase === "localized" ? "Déplacez le duo d’une ou deux cases." : state.phase === "failure" ? "Deux accrochages : la tentative doit être reprise." : "La convergence est brisée."}</strong>{alphaAdjacent(state) && state.phase !== "victory" && <button className="primary-action" onClick={() => onChange(launchAlphaAssault(state))}>Déclencher l’assaut final</button>}{state.phase === "failure" && <button className="primary-action" onClick={() => onChange(retryAlphaHunt(state))}>Reprendre la même bataille</button>}{state.phase === "victory" && <button className="primary-action" onClick={onFinish}>Revenir auprès des défenseurs</button>}</div>
     <aside className="alpha-vn-notices" aria-live="polite">{state.notices.slice(-3).map((notice) => <div key={notice.id}><img src={`/assets/sprites/${notice.speaker}/${notice.speaker === "lineva" ? "determined" : "stern"}.webp`} alt="" /><span><b>{notice.speaker === "lineva" ? "Lineva" : "Allenna"}</b>{notice.text}</span></div>)}</aside>

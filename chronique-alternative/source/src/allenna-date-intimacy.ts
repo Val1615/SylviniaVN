@@ -125,7 +125,7 @@ function climax(sex: PlayerSex, mode: IntimacyMode): RawLine[] {
     ? ["Allenna garde deux doigts en vous tandis que votre main travaille son clitoris humide. Vos bassins trouvent une cadence commune ; votre orgasme serre ses doigts, puis vous prolongez les caresses jusqu'à la sentir jouir à son tour contre votre cuisse."]
     : ["Vos cuisses se mêlent et vos mains alternent entre vos sexes. Allenna perd le rythme sous votre paume, le retrouve sur vous et vous conduit au plaisir presque avec elle."];
   if (sex === "homme") return mode === "explicite"
-    ? ["La protection en place, Allenna guide votre pénis contre son entrée humide puis vous accueille selon l'angle choisi ensemble. Votre main reste sur son clitoris ; elle jouit autour de vous avant que ses mouvements vous entraînent jusqu'à l'orgasme."]
+    ? ["Allenna guide votre pénis contre son entrée humide puis vous accueille selon l'angle choisi ensemble. Votre main reste sur son clitoris ; elle jouit autour de vous avant que ses mouvements vous entraînent jusqu'à l'orgasme."]
     : ["Allenna vient s'asseoir sur vous et choisit une cadence qui devient plus franche à chaque mouvement. Son plaisir sous votre main précède le vôtre sans interrompre le rythme."];
   return mode === "explicite"
     ? ["Vous choisissez pénétration, frottement ou stimulation externe selon votre anatomie. Allenna maintient la pression demandée pendant que votre main travaille son clitoris ; vos orgasmes arrivent par deux chemins distincts dans la même étreinte."]

@@ -22,8 +22,18 @@ export const ALPHA_GRID_SIZE = 7;
 export const ALPHA_HIGH_CITY_ROW = 0;
 export const ALPHA_RANGE = 3;
 export const ALPHA_SECTOR_NAMES = [
-  "Ville haute", "Rampe des cloches", "Quartiers intermédiaires", "Marché rompu", "Ville basse", "Docks incendiés", "Bassin et brise-lames",
+  "Ville Haute", "Quartier des Ateliers", "Place du Marché", "Vieux Port", "Docks Brisés",
 ];
+
+export function alphaSectorName(cell: AlphaCell) {
+  if (cell.row <= 1) return "Ville Haute";
+  if (cell.row <= 3) return cell.col <= 2 ? "Quartier des Ateliers" : "Place du Marché";
+  return cell.col <= 3 ? "Vieux Port" : "Docks Brisés";
+}
+
+export function alphaCellName(cell: AlphaCell) {
+  return `${alphaSectorName(cell)} · secteur ${String.fromCharCode(65 + cell.col)}${cell.row + 1}`;
+}
 
 const SHAPES: AlphaCell[][] = [
   [{ row: 0, col: 0 }, { row: 0, col: 1 }, { row: 0, col: 2 }, { row: 0, col: 3 }],
@@ -81,8 +91,8 @@ export function createAlphaHunt(seed: number): AlphaHuntState {
     turn: 1,
     clashes: 0,
     reinforcementsDeployed: false,
-    lastReaction: "Choisissez une case dans un rayon de trois secteurs.",
-    notices: [{ id: 1, speaker: "lineva", text: "On descend ensemble. Donnez-nous la route." }],
+    lastReaction: "Depuis la Ville Haute, choisissez une case dans un rayon de trois secteurs.",
+    notices: [{ id: 1, speaker: "lineva", text: "On part de la Ville Haute. Donnez-nous la route." }],
   };
 }
 
@@ -120,7 +130,7 @@ export function strikeAlphaCell(state: AlphaHuntState, cell: AlphaCell): AlphaHu
   const minDistance = Math.min(...state.alpha.map((entry) => alphaDistance(entry, cell)));
   const notices = [...state.notices];
   if (hit && !already) notices.push({ id: Date.now() + notices.length, speaker: "allenna", text: revealed.length === 4 ? "Empreinte complète. Il faut maintenant l’atteindre." : `Impact confirmé. ${revealed.length} sur 4.` });
-  else if (patrolHit) notices.push({ id: Date.now() + notices.length, speaker: "lineva", text: "Route ouverte. Elle ne le restera pas longtemps." });
+  else if (patrolHit) notices.push({ id: Date.now() + notices.length, speaker: "lineva", text: `${alphaSectorName(cell)} : route ouverte. Elle ne le restera pas longtemps.` });
   const secondImpact = revealed.length >= 2 && state.revealed.length < 2 && !state.reinforcementsDeployed;
   if (secondImpact) notices.push({ id: Date.now() + notices.length + 1, speaker: "allenna", text: "Deux nouvelles convergences depuis le bassin. La ruche réagit." });
   const reinforcements = secondImpact ? [
@@ -133,7 +143,7 @@ export function strikeAlphaCell(state: AlphaHuntState, cell: AlphaCell): AlphaHu
     patrols: [...patrols, ...reinforcements],
     phase: revealed.length === 4 ? "localized" : "movement",
     reinforcementsDeployed: state.reinforcementsDeployed || secondImpact,
-    lastReaction: hit && already ? "Impact déjà confirmé" : reactionFor(minDistance, hit),
+    lastReaction: `${alphaCellName(cell)} · ${hit && already ? "Impact déjà confirmé" : reactionFor(minDistance, hit)}`,
     notices: notices.slice(-6),
   };
 }
@@ -178,7 +188,7 @@ export function moveAlphaDuo(state: AlphaHuntState, destination: AlphaCell): Alp
     turn: nextTurn,
     clashes,
     phase: clashes >= 2 ? "failure" : "observation",
-    lastReaction: clashesNow ? "Accrochage sur la route" : state.revealed.length === 4 ? "Alpha localisé · approchez de l’empreinte" : "Nouvelle position · observation disponible",
+    lastReaction: `${alphaCellName(destination)} · ${clashesNow ? "Accrochage sur la route" : state.revealed.length === 4 ? "Alpha localisé, approchez de l’empreinte" : "Nouvelle position, observation disponible"}`,
     notices: notices.slice(-6),
   };
 }

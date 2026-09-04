@@ -108,6 +108,7 @@ export const MUSIC_LABELS: Record<string, string> = {
   "midnight-waltz": "Midnight Waltz",
   "dune-relay": "Les Tzekarii",
   intimate: "Une nuit sous tes étoiles — intime",
+  "alpha-chases": "Alpha Chases",
   menu: "Le grimoire de Sylvinia",
   title: "Le portail emprunté",
 };
