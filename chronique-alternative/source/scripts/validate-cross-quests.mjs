@@ -17,8 +17,11 @@ try {
   assert.ok(cross.LINEVA_ALLENNA_LETTERS.some((letter) => !letter.replies));
   assert.ok(cross.LINEVA_ALLENNA_LETTERS.some((letter) => letter.replies?.some((reply) => reply.effects.desire || Object.values(reply.effects.relationshipEffects || {}).some((effect) => effect.desire))));
   assert.deepEqual(cross.LINEVA_ALLENNA_SCENES.map((scene) => scene.stage), [0, 1, 2, 4, 5, 7]);
+  const validChoiceStats = new Set(["audace", "lucidite", "sangFroid", "resonance"]);
   for (const scene of cross.LINEVA_ALLENNA_SCENES) {
     assert.ok(scene.intro.length >= 5, `${scene.id}: introduction trop courte`);
+    assert.ok(scene.choices.length > 0, `${scene.id}: aucun choix jouable`);
+    assert.ok(scene.choices.every((choice) => validChoiceStats.has(choice.stat)), `${scene.id}: caractéristique de choix absente ou invalide`);
     assert.ok(scene.choices.every((choice) => choice.response.length >= 3), `${scene.id}: réponse insuffisamment développée`);
   }
   const crossNarrative = JSON.stringify(cross.LINEVA_ALLENNA_SCENES);
