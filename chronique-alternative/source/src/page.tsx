@@ -4261,7 +4261,8 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
       const knowledgeLocked = !hasKnowledge(game, choice.requiresKnowledge);
       const relationLocked = !relationshipRequirementMet(choice, game);
       const locked = (statLocked || knowledgeLocked || relationLocked) && !game.settings.unlockAll;
-      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat}`}>{STAT_LABELS[choice.stat].charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
+      const statLabel = STAT_LABELS[choice.stat] || "Choix";
+      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat || "neutral"}`}>{statLabel.charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
     })}</div>}
   </section>;
 }
