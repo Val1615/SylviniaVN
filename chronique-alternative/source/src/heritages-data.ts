@@ -1455,6 +1455,21 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
       Q("wanc-s", "Leur demander une seule limite qu’elles accepteront de respecter lors du prochain conflit.", "sangFroid", [L("Allenna", "Aucune menace contre les soldats pour atteindre Amanea."), L("Naïah", "Aucun ordre donné en mon nom. Je peux accepter ça. Une fois.")], { trust: 4, relationshipEffects: { allenna: { trust: 5 }, naiah: { trust: 5 } }, flags: ["fracture-allenna-naiah-boundary"] }),
     ],
   },
+  {
+    id: "world-lineva-allenna-quay-repair", title: "La poutre et le registre", location: "forthaven", spots: ["forthaven-harbor"], characters: ["lineva", "allenna"], remoteCharacters: ["allenna"], minDay: 1, minStages: { lineva: 5, allenna: 5 }, oneTime: true, requiresFlags: ["cross-la-world-friendship"],
+    intro: [N("Lineva maintient une poutre pendant qu’Allenna vérifie un registre de matériaux. Elles ont commencé avant de vous voir."), L("Lineva", "En retard pour une réunion sans convocation. Bel exploit."), L("Allenna", "Elle appelle réunion le fait de refuser l’équipe de levage."), N("Le désaccord ne les empêche pas d’ajuster ensemble la pièce au millimètre nécessaire." )],
+    choices: [Q("wla-repair-help", "Prendre le coin libre sans arbitrer leur méthode.", "sangFroid", [N("La poutre se place. Allenna corrige un chiffre ; Lineva lui tend déjà le crayon." )], { affection: 2, relationshipEffects: { lineva: { affection: 2 }, allenna: { affection: 2 } } }), Q("wla-repair-watch", "Les laisser finir leur routine commune.", "lucidite", [N("Lineva soulève au signal d’Allenna. Allenna change le signal quand Lineva modifie l’appui. Elles n’ont besoin d’aucun médiateur." )], { trust: 2, relationshipEffects: { lineva: { trust: 2 }, allenna: { trust: 2 } } })],
+  },
+  {
+    id: "world-lineva-allenna-market-parcel", title: "Le paquet sans escorte", location: "akuhn", spots: ["akuhn-gates"], characters: ["allenna", "lineva"], remoteCharacters: ["lineva"], minDay: 1, minStages: { lineva: 5, allenna: 5 }, oneTime: true, requiresFlags: ["cross-la-world-friendship"],
+    intro: [N("Allenna reçoit un paquet de pièces navales marqué du sceau de Forthaven. À l’intérieur, aucune lettre officielle : seulement un dessin de nœud volontairement faux."), L("Allenna", "Elle sait que ce nœud ne tient pas."), N("Allenna le corrige, puis prépare un paquet de lames d’entraînement en retour." )],
+    choices: [Q("wla-parcel-note", "Ajouter une note sans transformer l’échange en diplomatie.", "audace", [P("Le prochain dessin sera pire."), L("Allenna", "Alors elle répondra plus vite." )], { affection: 2, relationshipEffects: { allenna: { affection: 2 }, lineva: { affection: 2 } } }), Q("wla-parcel-seal", "Laisser Allenna envoyer le paquet sous son seul nom.", "lucidite", [N("Elle ferme le colis. Leur canal n’a besoin de votre signature pour exister." )], { trust: 3, relationshipEffects: { allenna: { trust: 2 }, lineva: { trust: 2 } } })],
+  },
+  {
+    id: "world-lineva-allenna-second-bell", title: "La deuxième cloche", location: "forthaven", spots: ["forthaven-ramparts"], characters: ["lineva", "allenna"], remoteCharacters: ["allenna"], minDay: 1, minStages: { lineva: 5, allenna: 5 }, oneTime: true, requiresFlags: ["cross-la-world-friendship"],
+    intro: [N("À la deuxième cloche, Lineva laisse une relève obscurcie modifier seule un secteur de garde. Allenna observe depuis la rampe sans intervenir."), L("Lineva", "Tu leur as appris à décider."), L("Allenna", "Et tu leur as laissé une vraie décision."), N("Elles partagent ensuite une ration face à la ville blessée, sans réunion ni occasion officielle." )],
+    choices: [Q("wla-bell-seat", "Vous asseoir près d’elles sans poser de question.", "sangFroid", [N("Allenna décale sa ration. Lineva pousse un gobelet. La conversation reprend là où elle en était avant votre arrivée." )], { affection: 3, relationshipEffects: { allenna: { affection: 2 }, lineva: { affection: 2 } } }), Q("wla-bell-joke", "Demander qui a gagné la dernière dispute sur les nœuds.", "audace", [L("Lineva", "Moi."), L("Allenna", "Le nœud."), N("Leur réponse simultanée transforme la rampe en table familière." )], { affection: 2, relationshipEffects: { allenna: { affection: 2 }, lineva: { affection: 2 } } })],
+  },
 ];
 
 export const RUMOR_KNOWLEDGE: KnowledgeEntry[] = [

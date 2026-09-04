@@ -47,6 +47,7 @@ export type HomePairDateProfile = {
   title: string;
   description: string;
   requiredFlags?: string[];
+  locations?: string[];
   minStage: number;
   minTrust: number;
   tones: HomeDateTone[];
@@ -835,6 +836,34 @@ export const HOME_PAIR_DATES: HomePairDateProfile[] = [
       { prompt: "Valurn doit reconnaître sa défaite sur le dernier verre.", detail: "Il cherche une formulation qui n’en soit pas vraiment une.", options: [O("plain", "Lui demander seulement : ‘Bellirith avait raison’", 2, C("Valurn", "Bellirith avait raison."), C("Bellirith", "Encore."), C("Valurn", "N’abusons pas des miracles.")), O("poem", "L’autoriser à le dire en métaphore", 1, N("Le compliment dure une minute et contient deux échappatoires.")), O("escape", "Le laisser changer de sujet", 0, C("Bellirith", "Il perd deux fois : au jeu et au courage."))] },
     ],
     results: { close: [C("Valurn", "Je conteste les règles."), C("Bellirith", "Tu contestes surtout le résultat.")], warm: [C("Bellirith", "La revanche aura lieu ici. Même ruban, meilleurs enjeux.")], perfect: [N("Ils retirent leurs rubans sans s’éloigner. Leur rivalité ne s’est pas éteinte ; elle a appris à produire de l’attention."), C("Valurn", "Je n’ai pas aimé perdre."), C("Bellirith", "Menteur.")] },
+  },
+  {
+    id: "allenna-lineva", characters: ["allenna", "lineva"], title: "Rien au programme", description: "Inviter Allenna et Lineva pour une soirée où aucun briefing, entraînement ou problème à résoudre ne leur donne une fonction.", requiredFlags: ["cross-la-series-complete"], locations: ["forthaven", "akuhn"], minStage: 5, minTrust: 0, tones: ["amical", "desir"],
+    opening: [N("Allenna arrive avec de quoi préparer un repas. Lineva n’apporte rien et soutient que c’était précisément la consigne."), C("Lineva", "Rien au programme. J’ai vérifié deux fois."), C("Allenna", "J’ai apporté une activité de secours."), C("Lineva", "Un repas n’est pas une activité. C’est ce qui arrive pendant qu’on ne fait rien." )],
+    cityComments: {
+      algratal: [C("Lineva", "Trop loin de nos deux villes. La prochaine fois, on choisit un toit qui connaît au moins l’une de nos cloches." )],
+      forthaven: [C("Allenna", "La mer couvre les bruits du couloir."), C("Lineva", "Et personne ne sonnera la relève ici." )],
+      miraldas: [C("Allenna", "Une ville neutre aurait des avantages."), C("Lineva", "On avait dit aucune stratégie." )],
+      akuhn: [C("Lineva", "Les feux verts rendent le salon moins raisonnable."), C("Allenna", "Ils n’ont reçu aucune mission ce soir." )],
+    },
+    tierComments: [
+      [C("Lineva", "Le canapé impose déjà le rapprochement."), C("Allenna", "Ce n’est pas une objection." )],
+      [C("Allenna", "Trois personnes peuvent circuler sans se croiser."), C("Lineva", "On corrigera ça." )],
+      [C("Lineva", "Assez de place pour perdre une tasse."), C("Allenna", "Elle est dans ta main." )],
+      [C("Allenna", "La pièce n’exige aucune organisation."), C("Lineva", "Tu survivras." )],
+      [C("Lineva", "Si on se perd, on annule officiellement la soirée."), C("Allenna", "Ou nous utilisons une pièce plus petite." )],
+    ],
+    toneLines: {
+      amical: [P("Ce soir peut rester doux, proche et entièrement amical."), C("Allenna", "Une limite claire n’enlève rien à la soirée."), C("Lineva", "Sauf les malentendus. Bon débarras." )],
+      amoureux: [P("Je tiens à vous deux, sans vous demander de former un couple entre vous."), C("Allenna", "Alors aucune place ne sera supposée."), C("Lineva", "Et aucune déclaration collective ne sera nécessaire." )],
+      desir: [P("J’ai envie de voir ce que notre complicité devient quand personne ne nous regarde."), C("Lineva", "Voilà une manière efficace de ruiner une soirée sans programme.", "smirk"), C("Allenna", "Ou de lui donner une direction choisie.", "troubled")],
+    },
+    rounds: [
+      { prompt: "Le canapé est trop petit pour trois postures raisonnables.", detail: "Personne ne veut transformer le salon en formation.", options: [O("close", "Vous serrer et laisser les places changer", 2, N("Les jambes se mêlent, puis Lineva récupère un coussin qu’Allenna prétendait ne pas vouloir.")), O("floor", "Vous asseoir au sol", 1, N("Lineva vous rejoint. Allenna tient encore une minute avant de céder.")), O("assign", "Attribuer officiellement chaque place", 0, C("Lineva", "Tu viens d’inventer un ordre pour s’asseoir."))] },
+      { prompt: "Après minuit, Allenna commence à ranger la cuisine.", detail: "Lineva lui vole le torchon.", options: [O("hands", "Fermer le placard et garder leurs deux mains", 2, N("La cuisine redevient une pièce, pas une tâche.")), O("finish", "L’aider à finir", 1, N("Le rangement s’achève vite ; la détente arrive ensuite.")), O("watch", "Les laisser régler la question", 0, N("Le vieux partage des fonctions reprend la soirée."))] },
+      { prompt: "Dans la chambre, le silence ne demande rien.", detail: "Aucune urgence ne justifie leur présence.", options: [O("silence", "Rester dans ce silence à trois", 2, N("Allenna ne cherche pas de consigne. Lineva ne fabrique pas de plaisanterie.")), O("tomorrow", "Préparer le lendemain", 0, N("Une mission imaginaire rentre avec vous.")), O("embrace", "Demander simplement une étreinte", 1, N("Deux réponses différentes vous entourent."))] },
+    ],
+    results: { close: [N("Vous dormez ensemble sans transformer la proximité en promesse ni en échec." )], warm: [N("La cuisine reste en désordre. Personne ne se lève pour la reprendre." )], perfect: [N("Le canapé, le comptoir puis la chambre ont accueilli trois présences sans leur donner de mission."), C("Lineva", "Rien au programme. Réussite complète."), C("Allenna", "Je recommande de ne pas en tirer de méthode." )] },
   },
 ];
 

@@ -28,7 +28,10 @@ const DUO_NAMES: Record<string, string> = {
   "group-date-remerii-iriana": "remerii_iriana",
   "group-date-naiah-bellirith": "naiah_bellirith",
   "group-date-tia-remerii": "tia_remerii",
-  "group-date-allenna-lineva": "allenna_lineva",
+  // L’illustration existante montre un intérieur privé : elle appartient au
+  // rendez-vous du logis. Les deux sorties publiques n’emploient pas ce CG
+  // hors contexte et restent prêtes à recevoir leurs assets dédiés.
+  "group-date-allenna-lineva-home": "allenna_lineva",
 };
 
 export const DUO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(

@@ -38,21 +38,21 @@ function heritageExplicitPair(config: HeritageExplicitPair): Record<PlayerSex, R
     const cue = sexCue(sex);
     if (role === "first") return scene(
       `Dans ${config.setting}, ${config.first} prend la première initiative : ${config.firstGesture}. ${config.second} reste pressée contre son dos et transforme chaque réaction en contact partagé, tandis que leurs deux attentions se rejoignent sur ${focus}.`,
-      C(config.first, `Je garde ce mouvement sur toi et je veux sentir ${config.second} me troubler sans me faire perdre ${cue}.`, config.firstMood),
-      C(config.second, `Alors je suivrai ton souffle, ${config.first}, jusque dans ses réactions, attentive à ${cue}. Cette fois, ton initiative nous relie toutes les trois au lieu de nous mettre en rang.`, config.secondMood),
-      `Vous guidez ${config.first} jusqu’au rythme qui vous fait céder, sans lâcher ${config.second}, et ${cue} devient leur repère commun. Votre plaisir traverse leurs corps : ${config.first} jouit sous la main de ${config.second}, puis toutes deux vous ramènent vers elle afin que la femme qui soutenait la scène reçoive à son tour leurs bouches, leurs doigts et votre présence entière.`,
+      C(config.first, `Ici, dans ${config.setting}, je garde ce mouvement sur toi et je veux sentir ${config.second} me troubler sans me faire perdre ${cue}.`, config.firstMood),
+      C(config.second, `Dans ${config.setting}, je suivrai ton souffle, ${config.first}, jusque dans ses réactions, attentive à ${cue}. Cette fois, ton initiative nous relie toutes les trois au lieu de nous mettre en rang.`, config.secondMood),
+      `Vous guidez ${config.first} jusqu’au rythme qui vous fait céder dans ${config.setting}, sans lâcher ${config.second}, et ${cue} devient leur repère commun. Votre plaisir traverse leurs corps : ${config.first} jouit sous la main de ${config.second}, puis toutes deux vous ramènent vers elle afin que la femme qui soutenait la scène reçoive à son tour leurs bouches, leurs doigts et votre présence entière.`,
     );
     if (role === "second") return scene(
       `La lumière de ${config.setting} change lorsque ${config.second} conduit : ${config.secondGesture}. ${config.first} se glisse contre elle, entretient son plaisir et garde une main sur vous ; ${focus} devient ainsi le troisième point d’un triangle qui ne se referme jamais en duo.`,
-      C(config.second, `Je mène cette reprise, mais ${config.first} garde sur moi le geste qui me rend incapable de masquer ${cue}.`, config.secondMood),
-      C(config.first, `Je ne cherche pas à te faire perdre la conduite, ${config.second}. Je veux seulement que ton plaisir soit aussi lisible que ${cue} pendant celui que tu donnes.`, config.firstMood),
-      `Vous laissez ${config.second} maintenir la cadence jusqu’à votre orgasme, reconnaissable à ${cue}, puis vous l’attirez entre vous et ${config.first}. Les places tournent sans copier la première configuration : celle qui menait reçoit deux attentions différentes, choisit laquelle approfondir et finit par jouir sans que l’une des deux autres devienne spectatrice.`,
+      C(config.second, `Dans ${config.setting}, je mène cette reprise, mais ${config.first} garde sur moi le geste qui me rend incapable de masquer ${cue}.`, config.secondMood),
+      C(config.first, `Ici, je ne cherche pas à te faire perdre la conduite, ${config.second}. Je veux seulement que ton plaisir soit aussi lisible que ${cue} pendant celui que tu donnes dans ${config.setting}.`, config.firstMood),
+      `Vous laissez ${config.second} maintenir la cadence jusqu’à votre orgasme dans ${config.setting}, reconnaissable à ${cue}, puis vous l’attirez entre vous et ${config.first}. Les places tournent sans copier la première configuration : celle qui menait reçoit deux attentions différentes, choisit laquelle approfondir et finit par jouir sans que l’une des deux autres devienne spectatrice.`,
     );
     return scene(
       `Vous réunissez vos trois désirs au centre de ${config.setting} : ${config.sharedGesture}. La première configuration suit ${focus} ; la suivante répond au corps de ${config.first}, et la troisième à celui de ${config.second}, chacune possédant sa propre profondeur et sa propre vitesse.`,
-      C(config.first, `Je prends ce passage, puis je vous rends l’initiative, ${config.second}. Je veux que ${cue} reste une voix parmi trois, jamais un modèle imposé aux deux autres.`, config.firstMood),
-      C(config.second, `Et je changerai complètement la forme quand viendra mon tour, ${config.first}, sans prendre ${cue} pour une règle générale. L’attention sera égale ; nos plaisirs n’ont aucune raison de se ressembler.`, config.secondMood),
-      `Le relais devient charnel sans devenir mécanique, même lorsque ${cue} accélère la première reprise. ${config.first} reçoit les gestes de vous deux, ${config.second} choisit ensuite une autre position, puis elles adaptent ensemble leur bouche, leurs mains et leur bassin à votre demande. Les trois orgasmes arrivent séparément ; après chacun, la personne comblée reste engagée auprès des deux autres jusqu’au dernier frisson.`,
+      C(config.first, `Dans ${config.setting}, je prends ce passage, puis je vous rends l’initiative, ${config.second}. Je veux que ${cue} reste une voix parmi trois, jamais un modèle imposé aux deux autres.`, config.firstMood),
+      C(config.second, `Et dans ${config.setting}, je changerai complètement la forme quand viendra mon tour, ${config.first}, sans prendre ${cue} pour une règle générale. L’attention sera égale ; nos plaisirs n’ont aucune raison de se ressembler.`, config.secondMood),
+      `Le relais devient charnel sans devenir mécanique dans ${config.setting}, même lorsque ${cue} accélère la première reprise. ${config.first} reçoit les gestes de vous deux, ${config.second} choisit ensuite une autre position, puis elles adaptent ensemble leur bouche, leurs mains et leur bassin à votre demande. Les trois orgasmes arrivent séparément ; après chacun, la personne comblée reste engagée auprès des deux autres jusqu’au dernier frisson.`,
     );
   };
   return {
@@ -452,15 +452,31 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
     firstMood: "stern",
     secondMood: "calm",
   }),
-  "group-date-allenna-lineva": heritageExplicitPair({
+  "group-date-allenna-lineva-training": heritageExplicitPair({
     first: "Allenna",
     second: "Lineva",
-    setting: "l’infirmerie d’entraînement fermée, entre les bandes propres, la lampe basse et deux épées laissées contre le mur",
-    firstGesture: "elle pose ses armes, explore votre peau avec des mains de soigneuse et accepte que Lineva lise derrière sa discipline chaque trouble qu’elle ne formule pas",
-    secondGesture: "elle défait son baudrier, vous attire contre ses cicatrices puis confie à Allenna le soin de soutenir la force qu’elle n’a plus besoin de démontrer",
-    sharedGesture: "trois bandes de tissu deviennent des repères mobiles, non des liens, et chacune choisit comment les deux autres accompagnent sa bouche, ses mains, son bassin et ses changements de rythme",
+    setting: "les vestiaires de Forthaven, la vapeur des douches et la ligne de craie effacée par l’eau",
+    firstGesture: "elle garde le menton haut sous vos regards, choisit la première prise puis laisse Lineva changer l’angle de cette revanche sans score",
+    secondGesture: "elle vous attire sous l’eau, transforme le dernier duel en jeu physique et confie à Allenna le moment exact où sa force peut céder",
+    sharedGesture: "la personne au centre mène une manche entièrement différente, pendant que les deux autres restent engagées sans arbitre ni trophée",
     firstMood: "troubled",
     secondMood: "soft",
+  }),
+  "group-date-allenna-lineva-basin": heritageExplicitPair({
+    first: "Allenna", second: "Lineva",
+    setting: "le bassin caché d’Akuhn’Nabad, son rebord de pierre noire et l’alcôve où le courant devient plus chaud",
+    firstGesture: "elle soutient les deux regards, rougit sans baisser le menton puis guide elle-même les mains et les bouches vers les gestes qu’elle veut recevoir",
+    secondGesture: "elle joue avec l’eau, vous attire contre le rebord et laisse Allenna choisir quand la provocation devient une caresse plus lente",
+    sharedGesture: "trois reflets changent de place entre l’eau, le rebord et l’alcôve, chaque corps donnant une forme nouvelle au plaisir partagé",
+    firstMood: "troubled", secondMood: "soft",
+  }),
+  "group-date-allenna-lineva-home": heritageExplicitPair({
+    first: "Allenna", second: "Lineva",
+    setting: "votre logis silencieux, du canapé trop petit à la cuisine après minuit puis à la chambre sans urgence",
+    firstGesture: "elle cesse de ranger, s’appuie au comptoir et formule enfin une envie qui n’a aucune utilité avant de vous guider vers elle",
+    secondGesture: "elle abandonne sa plaisanterie au bord du canapé, vous attire contre elle et accepte qu’Allenna donne le rythme de cette nuit ordinaire",
+    sharedGesture: "le canapé, le comptoir et le lit accueillent trois configurations distinctes, choisies sans mission et sans fonction à remplir",
+    firstMood: "troubled", secondMood: "soft",
   }),
 };
 

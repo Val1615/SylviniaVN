@@ -52,9 +52,39 @@ import {
   groupIntimacyGameResult,
   groupIntimacyOpening,
   groupIntimacyRoutes,
+  groupIntimacyContextById,
   type GroupDateScene,
   type GroupIntimacyRoute,
 } from "./group-dates";
+import {
+  LINEVA_ALLENNA_FINAL_FLAGS,
+  LINEVA_ALLENNA_LETTERS,
+  LINEVA_ALLENNA_MILESTONES,
+  completedCrossMilestones,
+  createLinevaAllennaProgress,
+  crossMilestone,
+  crossSceneForStage,
+  crossSilenceReady,
+  linevaAllennaSeriesUnlocked,
+  nextCrossLetter,
+  type CrossLetter,
+  type CrossQuestProgress,
+} from "./cross-quests";
+import {
+  ALPHA_GRID_SIZE,
+  ALPHA_SECTOR_NAMES,
+  alphaAdjacent,
+  alphaCellInRange,
+  alphaMoveAllowed,
+  createAlphaHunt,
+  launchAlphaAssault,
+  moveAlphaDuo,
+  retryAlphaHunt,
+  strikeAlphaCell,
+  validateAlphaState,
+  type AlphaCell,
+  type AlphaHuntState,
+} from "./alpha-hunt";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
 import { ACT_ONE_SCENE_ORDER, CAMPAIGN_SCENES, campaignSceneById, campaignSceneDialogue, campaignSceneOutro, type CampaignScene } from "./campaign-scenes";
@@ -181,7 +211,7 @@ type ReceivedInvitation = {
 };
 
 type GameState = {
-  version: 14;
+  version: 15;
   player: Player;
   day: number;
   period: number;
@@ -203,6 +233,7 @@ type GameState = {
   sceneMemories: Record<string, string>;
   dateHistory: string[];
   groupDateHistory: string[];
+  crossQuestSeries: Record<string, CrossQuestProgress>;
   knowledge: string[];
   secretHistory: string[];
   letters: ReceivedLetter[];
@@ -223,7 +254,7 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "story" | "route" | "ambient" | "social" | "date" | "group-date" | "home" | "secret" | "world" | "invitation";
+  kind: "intro" | "story" | "route" | "ambient" | "social" | "date" | "group-date" | "cross-quest" | "home" | "secret" | "world" | "invitation";
   route?: RouteScene;
   ambientId?: string;
   socialId?: string;
@@ -235,6 +266,7 @@ type SceneView = {
   worldEventId?: string;
   invitationId?: string;
   campaignSceneId?: string;
+  crossQuestStage?: number;
   cast: string[];
 };
 
@@ -305,12 +337,15 @@ type ModalState =
   | { kind: "date-planner"; character: string }
   | { kind: "home-date"; character: string }
   | { kind: "home-pair-date"; pairId: string }
+  | { kind: "home-pair-date-result"; pairId: string }
   | { kind: "home-date-result"; character: string; score: number }
   | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string; home?: boolean }
   | { kind: "date-result"; character: string; dateId: string }
   | { kind: "group-date-planner" }
   | { kind: "group-date-result"; groupDateId: string }
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
+  | { kind: "cross-letter"; letterId: string }
+  | { kind: "alpha-hunt" }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
@@ -425,7 +460,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 14,
+    version: 15,
     player,
     day: 1,
     period: 0,
@@ -447,6 +482,7 @@ function createGame(player: Player): GameState {
     sceneMemories: {},
     dateHistory: [],
     groupDateHistory: [],
+    crossQuestSeries: {},
     knowledge: [],
     secretHistory: [],
     letters: [],
@@ -530,7 +566,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 14,
+    version: 15,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -549,6 +585,15 @@ function hydrateGame(raw: unknown): GameState | null {
     sceneMemories: value.sceneMemories || {},
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
     groupDateHistory: value.groupDateHistory || [],
+    crossQuestSeries: Object.fromEntries(Object.entries(value.crossQuestSeries || {}).map(([id, progress]) => [id, {
+      ...progress,
+      id,
+      stage: Math.max(0, Math.min(8, Number(progress.stage) || 0)),
+      startedDay: Math.max(1, Number(progress.startedDay) || 1),
+      stageStartedDay: Math.max(1, Number(progress.stageStartedDay) || Number(progress.startedDay) || 1),
+      letters: Array.isArray(progress.letters) ? progress.letters.filter((entry) => LINEVA_ALLENNA_LETTERS.some((letter) => letter.id === entry.id)) : [],
+      alphaState: progress.alphaState && validateAlphaState(progress.alphaState) ? progress.alphaState : undefined,
+    }])),
     knowledge: unique((value.knowledge || []).filter((id) => ALL_KNOWLEDGE_ENTRIES.some((entry) => entry.id === id))),
     secretHistory: unique((value.secretHistory || []).filter((id) => SECRET_CONVERSATIONS.some((entry) => entry.id === id))),
     letters: (value.letters || []).filter((entry) => LETTERS.some((letter) => letter.id === entry.id)).map((entry) => ({
@@ -894,6 +939,35 @@ function evolveLivingWorld(game: GameState): GameState {
   };
 }
 
+function evolveCrossQuests(game: GameState): GameState {
+  let progress = game.crossQuestSeries.linevaAllenna;
+  if (!progress && linevaAllennaSeriesUnlocked({ ...game, unlockAll: game.settings.unlockAll })) {
+    progress = createLinevaAllennaProgress(game.day);
+    return {
+      ...game,
+      crossQuestSeries: { ...game.crossQuestSeries, linevaAllenna: progress },
+      journal: [...game.journal, "Quêtes croisées · Lineva & Allenna · Le mauvais allié"],
+    };
+  }
+  if (!progress) return game;
+  if (crossSilenceReady(progress, game.day)) {
+    const updated = { ...progress, stage: 4, stageStartedDay: game.day };
+    return {
+      ...game,
+      crossQuestSeries: { ...game.crossQuestSeries, linevaAllenna: updated },
+      journal: [...game.journal, "Quêtes croisées · Trois jours sans nouvelles de Forthaven."],
+    };
+  }
+  const letter = nextCrossLetter(progress, game.day);
+  if (!letter) return game;
+  const updated = { ...progress, letters: [...progress.letters, { id: letter.id, receivedDay: game.day, read: false }] };
+  return {
+    ...game,
+    crossQuestSeries: { ...game.crossQuestSeries, linevaAllenna: updated },
+    journal: [...game.journal, `Correspondance croisée reçue · ${letter.subject}`],
+  };
+}
+
 function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
   if (!contentBranchAllowed(game.flags, date)) return false;
   if (game.settings.unlockAll) return true;
@@ -924,8 +998,11 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
 }
 
 function homePairDateUnlocked(game: GameState, pair: HomePairDateProfile): boolean {
-  if (!game.housing.propertyId) return false;
+  const property = propertyById(game.housing.propertyId);
+  if (!property) return false;
+  if (pair.locations?.length && !pair.locations.includes(property.location)) return false;
   if (!contentBranchAllowed(game.flags, pair)) return false;
+  if (pair.id === "allenna-lineva" && !game.settings.unlockAll && !game.groupDateHistory.some((id) => id === "group-date-allenna-lineva-training" || id === "group-date-allenna-lineva-basin")) return false;
   return game.settings.unlockAll || (
     pair.characters.every((id) => game.relationships[id].stage >= pair.minStage && game.relationships[id].trust >= pair.minTrust)
   );
@@ -1079,6 +1156,12 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     const letter = LETTERS.find((candidate) => candidate.id === entry.id);
     livingWorldChanges.push({ kind: "letter", title: "Une correspondance vous attend", detail: letter?.subject || "Consultez le Journal." });
   });
+  const previousCross = previous.crossQuestSeries.linevaAllenna;
+  const nextCross = next.crossQuestSeries.linevaAllenna;
+  if (!previousCross && nextCross) livingWorldChanges.push({ kind: "story", title: "Quêtes croisées débloquées", detail: "Lineva & Allenna · Le mauvais allié" });
+  if (previousCross && nextCross?.stage === 4 && previousCross.stage === 3) livingWorldChanges.push({ kind: "story", title: "Trois jours de silence", detail: "Retournez à Forthaven." });
+  const newCrossLetters = nextCross?.letters.filter((entry) => !previousCross?.letters.some((before) => before.id === entry.id)) || [];
+  newCrossLetters.forEach((entry) => livingWorldChanges.push({ kind: "letter", title: "Une correspondance croisée vous attend", detail: LINEVA_ALLENNA_LETTERS.find((letter) => letter.id === entry.id)?.subject }));
   const newInvitations = next.invitations.filter((entry) => !previous.invitations.some((before) => before.id === entry.id));
   newInvitations.forEach((entry) => {
     const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
@@ -2002,7 +2085,7 @@ export default function Home() {
   }, []);
 
   function updateGame(transform: (current: GameState) => GameState) {
-    setGame((current) => current ? evolveLivingWorld(transform(current)) : current);
+    setGame((current) => current ? evolveLivingWorld(evolveCrossQuests(transform(current))) : current);
   }
 
   function refreshSlots() {
@@ -2305,6 +2388,104 @@ export default function Home() {
     setModal({ kind: "letter", letterId });
   }
 
+  function readCrossLetter(letterId: string) {
+    if (!game) return;
+    const letter = LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === letterId);
+    const progress = game.crossQuestSeries.linevaAllenna;
+    const received = progress?.letters.find((entry) => entry.id === letterId);
+    if (!letter || !progress || !received) return;
+    updateGame((current) => {
+      const currentProgress = current.crossQuestSeries.linevaAllenna;
+      if (!currentProgress) return current;
+      return {
+        ...current,
+        crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...currentProgress, letters: currentProgress.letters.map((entry) => entry.id === letterId ? { ...entry, read: true } : entry) } },
+        journal: received.read ? current.journal : [...current.journal, `Lettre croisée lue · ${letter.subject}`],
+      };
+    });
+    setModal({ kind: "cross-letter", letterId });
+  }
+
+  function replyToCrossLetter(letter: CrossLetter, replyId: string) {
+    if (!game) return;
+    const reply = letter.replies?.find((entry) => entry.id === replyId);
+    const progress = game.crossQuestSeries.linevaAllenna;
+    const received = progress?.letters.find((entry) => entry.id === letter.id);
+    if (!reply || !progress || !received || received.replyId) return;
+    applyEffects(letter.character, reply.effects);
+    updateGame((current) => {
+      const currentProgress = current.crossQuestSeries.linevaAllenna;
+      if (!currentProgress) return current;
+      return {
+        ...current,
+        crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...currentProgress, letters: currentProgress.letters.map((entry) => entry.id === letter.id ? { ...entry, replyId } : entry) } },
+        journal: [...current.journal, `Réponse croisée envoyée · ${letter.subject}`],
+      };
+    });
+  }
+
+  function startCrossQuestScene(stage: number, replay = false) {
+    if (!game) return;
+    const progress = game.crossQuestSeries.linevaAllenna;
+    const data = crossSceneForStage(stage);
+    if (!progress || !data || (!replay && progress.stage !== stage)) return;
+    const first = CHARACTERS.find((entry) => entry.id === data.lead)!;
+    const nextGame = replay ? game : { ...game, location: data.location, spot: data.spot, ...placeDiscovery(game, data.location, data.spot) };
+    const scene: SceneView = {
+      id: data.id,
+      title: data.title,
+      background: spotById(data.spot)?.background || backgroundUrl("streets"),
+      mood: first.defaultMood,
+      character: data.lead,
+      cast: data.cast,
+      intro: data.intro,
+      choices: data.choices,
+      kind: "cross-quest",
+      crossQuestStage: stage,
+    };
+    if (!replay) {
+      setGame(nextGame);
+      setSelectedLocation(data.location);
+      setSelectedSpot(data.spot);
+    }
+    setDialogue({ scene, lines: expandedLines(scene, nextGame, data.intro, "intro", data.spot), lineIndex: 0, phase: "intro", replay });
+  }
+
+  function startAlphaHunt() {
+    if (!game) return;
+    const progress = game.crossQuestSeries.linevaAllenna;
+    if (!progress || progress.stage !== 6) return;
+    if (!progress.alphaState) {
+      const alphaState = createAlphaHunt(game.day * 97 + game.history.length * 13 + 41);
+      updateGame((current) => ({
+        ...current,
+        crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...current.crossQuestSeries.linevaAllenna, alphaState } },
+      }));
+    }
+    setModal({ kind: "alpha-hunt" });
+  }
+
+  function setAlphaHuntState(alphaState: AlphaHuntState) {
+    updateGame((current) => {
+      const progress = current.crossQuestSeries.linevaAllenna;
+      if (!progress || progress.stage !== 6) return current;
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...progress, alphaState } } };
+    });
+  }
+
+  function finishAlphaHunt() {
+    if (!game) return;
+    const progress = game.crossQuestSeries.linevaAllenna;
+    if (!progress?.alphaState || progress.alphaState.phase !== "victory") return;
+    updateGame((current) => ({
+      ...current,
+      flags: unique([...current.flags, "cross-la-milestone-6-seen"]),
+      crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...current.crossQuestSeries.linevaAllenna, stage: 7, stageStartedDay: current.day, alphaState: progress.alphaState } },
+      journal: [...current.journal, "Quêtes croisées · Le cœur de la ruche · Alpha abattu"],
+    }));
+    setModal(null);
+  }
+
   function replyToLetter(letter: LetterTemplate, replyId: string) {
     if (!game) return;
     const reply = letter.replies?.find((entry) => entry.id === replyId);
@@ -2498,6 +2679,22 @@ export default function Home() {
         journal: [...current.journal, `Invitation honorée · ${invitation.title}`],
       }));
     }
+    if (!dialogue.replay && dialogue.scene.kind === "cross-quest" && dialogue.scene.crossQuestStage !== undefined) {
+      const stage = dialogue.scene.crossQuestStage;
+      updateGame((current) => {
+        const progress = current.crossQuestSeries.linevaAllenna;
+        if (!progress || progress.stage !== stage) return current;
+        const nextStage = Math.min(8, stage + 1);
+        const final = nextStage === 8;
+        return {
+          ...current,
+          flags: unique([...current.flags, `cross-la-scene:${dialogue.scene.id}`, ...(final ? LINEVA_ALLENNA_FINAL_FLAGS : [])]),
+          crossQuestSeries: { ...current.crossQuestSeries, linevaAllenna: { ...progress, stage: nextStage, stageStartedDay: current.day } },
+          sceneMemories: { ...current.sceneMemories, [dialogue.scene.id]: crossSceneForStage(stage)?.spot || current.spot },
+          journal: [...current.journal, `Quêtes croisées · ${crossMilestone(stage)?.title || dialogue.scene.title}${final ? " · Série terminée" : ""}`],
+        };
+      });
+    }
     if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date) {
       const date = dialogue.scene.date;
       updateGame((current) => ({
@@ -2575,6 +2772,7 @@ export default function Home() {
     const groupDateCanBecomeIntimate = Boolean(groupDate
       && dialogue.chosen?.dateOutcome === "great"
       && groupDateUnlocked(game!, groupDate)
+      && !game!.flags.includes("cross-la-trio-platonic")
       && groupDate.characters.every((characterId, index) => {
         const relation = game!.relationships[characterId];
         const changes = index === 0
@@ -2584,7 +2782,7 @@ export default function Home() {
           relation.stage >= groupDate.minStage
           && relation.affection + (changes.affection || 0) >= groupDate.minAffection
           && relation.trust + (changes.trust || 0) >= groupDate.minTrust
-          && relation.desire + (changes.desire || 0) >= groupDate.minDesire
+          && relation.desire + (changes.desire || 0) >= (groupDate.intimacyMinDesire ?? groupDate.minDesire)
         );
       }));
     setDialogue(null);
@@ -3276,7 +3474,19 @@ export default function Home() {
     });
     setSelectedLocation(property.location);
     setSelectedSpot(property.spot);
-    setModal({ kind: "notice", title: score >= 5 ? "Trois présences, un nouveau souvenir" : "Une visite partagée", text: `La dynamique entre ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")} a laissé une trace nouvelle dans votre logis. Ce rencard restera distinct de vos moments à deux.` });
+    const canBecomeIntimate = pair.id === "allenna-lineva" && tone === "desir" && !game.flags.includes("cross-la-trio-platonic") && (game.settings.unlockAll || pair.characters.every((id) => game.relationships[id].desire + 7 >= 25));
+    setModal(canBecomeIntimate
+      ? { kind: "home-pair-date-result", pairId }
+      : { kind: "notice", title: score >= 5 ? "Trois présences, un nouveau souvenir" : "Une visite partagée", text: `La dynamique entre ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")} a laissé une trace nouvelle dans votre logis. Ce rencard restera distinct de vos moments à deux.` });
+  }
+
+  function startHomePairIntimacy(pairId: string) {
+    if (!game || pairId !== "allenna-lineva") return;
+    const property = propertyById(game.housing.propertyId);
+    const contextId = "group-date-allenna-lineva-home";
+    const played = game.housing.homeDateHistory.some((entry) => entry.startsWith(`pair:${pairId}:desir@`));
+    if (!property || !played || game.flags.includes("cross-la-trio-platonic") || (!game.settings.unlockAll && !["allenna", "lineva"].every((id) => game.relationships[id].desire >= 25))) return;
+    setModal({ kind: "group-intimacy", groupDateId: contextId, background: property.background });
   }
 
   function startHomeIntimacy(characterId: string) {
@@ -3385,9 +3595,24 @@ export default function Home() {
   }
 
   function startGroupDateIntimacy(groupDateId: string) {
-    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
-    if (!game || !date || !game.groupDateHistory.includes(date.id) || !groupDateUnlocked(game, date)) return;
+    const date = groupIntimacyContextById(groupDateId);
+    if (!game || !date || game.flags.includes("cross-la-trio-platonic")) return;
+    const played = date.id.endsWith("-home")
+      ? game.housing.homeDateHistory.some((entry) => entry.startsWith("pair:allenna-lineva:desir@"))
+      : game.groupDateHistory.includes(date.id);
+    const desireReady = game.settings.unlockAll || date.characters.every((id) => game.relationships[id].desire >= (date.intimacyMinDesire ?? date.minDesire));
+    if (!played || !desireReady || (!date.id.endsWith("-home") && !groupDateUnlocked(game, date))) return;
     setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background });
+  }
+
+  function finishTrioEnding(groupDateId: string, permanentlyPlatonic: boolean) {
+    if (!game || !groupIntimacyContextById(groupDateId)) return;
+    if (permanentlyPlatonic) {
+      updateGame((current) => ({ ...current, flags: unique([...current.flags, "cross-la-trio-platonic"]), journal: [...current.journal, "Lineva & Allenna · complicité à trois explicitement platonique."] }));
+      setModal({ kind: "notice", title: "Une complicité choisie", text: "Les rendez-vous à trois restent disponibles, sans attente sexuelle. Lineva et Allenna conservent aussi leur amitié autonome." });
+    } else {
+      setModal({ kind: "notice", title: "Pas ce soir", text: "La proximité demeure. Aucune porte n’est fermée pour un prochain rendez-vous." });
+    }
   }
 
   function closeIntimacy(completed: boolean, memory?: string) {
@@ -3416,7 +3641,7 @@ export default function Home() {
       const memoryKey = `group-intimacy:${modal.groupDateId}`;
       updateGame((current) => ({
         ...current,
-        flags: unique([...current.flags, `group-date-intimate:${modal.groupDateId}`]),
+        flags: unique([...current.flags, `group-date-intimate:${modal.groupDateId}`, ...(modal.groupDateId.includes("allenna-lineva") ? ["lineva-tutoiement"] : [])]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
       }));
     }
@@ -3430,9 +3655,10 @@ export default function Home() {
   }
 
   function replayGroupDateIntimacy(groupDateId: string) {
-    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    const date = groupIntimacyContextById(groupDateId);
     if (!date || !game?.flags.includes(`group-date-intimate:${date.id}`)) return;
-    setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background, replay: true });
+    const homeBackground = date.id.endsWith("-home") ? propertyById(game.housing.propertyId)?.background : undefined;
+    setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true });
   }
 
   function waitForCharacter(characterId: string, spotId = game?.spot || "") {
@@ -3882,7 +4108,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
+      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
       {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -3908,12 +4134,17 @@ export default function Home() {
         finishDateEnding={finishDateEnding}
         finishHomeDate={finishHomeDate}
         finishHomePairDate={finishHomePairDate}
+        startHomePairIntimacy={startHomePairIntimacy}
         startHomeIntimacy={startHomeIntimacy}
         onIntimacyClose={closeIntimacy}
         startGroupDate={startGroupDate}
         startGroupDateIntimacy={startGroupDateIntimacy}
+        finishTrioEnding={finishTrioEnding}
         onGroupIntimacyClose={closeGroupIntimacy}
         replyToLetter={replyToLetter}
+        replyToCrossLetter={replyToCrossLetter}
+        setAlphaHuntState={setAlphaHuntState}
+        finishAlphaHunt={finishAlphaHunt}
         acceptInvitation={acceptInvitation}
         declineInvitation={declineInvitation}
         ritual={{ sequence: ritualSequence, step: ritualStep, phase: ritualPhase, setPhase: setRitualPhase, play: playRitualRune }}
@@ -4128,14 +4359,16 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
-  const [section, setSection] = useState<"campaign" | "relations" | "messages" | "discoveries" | "memories">("campaign");
+function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+  const [section, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
   const secretMemories = game.secretHistory.map((id) => SECRET_CONVERSATIONS.find((secret) => secret.id === id)).filter((secret): secret is SecretConversation => Boolean(secret));
   const worldMemories = game.worldEventHistory.map((id) => SPONTANEOUS_EVENTS.find((event) => event.id === id)).filter((event): event is SpontaneousEvent => Boolean(event));
   const dateMemories = unique(game.dateHistory).map((id) => DATE_SCENES.find((date) => date.id === id)).filter((date): date is DateScene => Boolean(date));
   const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
+  const crossProgress = game.crossQuestSeries.linevaAllenna;
+  const crossLetters = (crossProgress?.letters || []).map((received) => ({ received, letter: LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: NonNullable<typeof crossProgress>["letters"][number]; letter: CrossLetter } => Boolean(entry.letter));
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
   const mainProgress = storyProgress(game.history, game.flags);
   const storyComplete = mainProgress >= MAIN_STORY.length;
@@ -4168,21 +4401,30 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
   const invitations = game.invitations.map((received) => ({ received, invitation: INVITATIONS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedInvitation; invitation: InvitationTemplate } => Boolean(entry.invitation));
   const rumors = game.rumors.map((heard) => ({ heard, rumor: RUMORS.find((entry) => entry.id === heard.id) })).filter((entry): entry is { heard: { id: string; heardDay: number }; rumor: RumorTemplate } => Boolean(entry.rumor));
   const knowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
-  const pendingMessages = letters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length;
+  const pendingMessages = letters.filter(({ received }) => !received.read).length + crossLetters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length;
   const intimateDateMemories = dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).length;
   const intimateGroupMemories = groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).length;
-  const memoryCount = game.history.length + socialMemories.length + secretMemories.length + worldMemories.length + dateMemories.length + intimateDateMemories + groupDateMemories.length + intimateGroupMemories;
+  const crossSceneMemories = crossProgress ? [0, 1, 2, 4, 5, 7].filter((stage) => { const scene = crossSceneForStage(stage); return Boolean(scene && game.flags.includes(`cross-la-scene:${scene.id}`)); }) : [];
+  const homeTrioIntimateMemory = game.flags.includes("group-date-intimate:group-date-allenna-lineva-home") ? 1 : 0;
+  const memoryCount = game.history.length + socialMemories.length + secretMemories.length + worldMemories.length + dateMemories.length + intimateDateMemories + groupDateMemories.length + intimateGroupMemories + crossSceneMemories.length + homeTrioIntimateMemory;
 
   return <section className="content-view journal-view">
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
     <SectionTabs label="Registres du Journal" active={section} onChange={setSection} items={[
       { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et chapitres" },
+      ...(crossProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${completedCrossMilestones(crossProgress.stage)}/7`, hint: "Lineva & Allenna" }] : []),
       { id: "relations", icon: "♡", label: "Relations", count: `${completedRelationScenes}/${totalRelationScenes}`, hint: "Fils narratifs" },
       { id: "messages", icon: "✉", label: "Courrier", count: pendingMessages, hint: "Lettres et invitations" },
       { id: "discoveries", icon: "◌", label: "Découvertes", count: rumors.length + knowledge.length, hint: "Rumeurs et savoirs" },
       { id: "memories", icon: "◇", label: "Souvenirs", count: memoryCount, hint: "Relecture protégée" },
     ]} />
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
+      {section === "crossed" && crossProgress && <section className={`cross-quest-dossier ${crossProgress.stage >= 8 ? "complete" : ""}`}>
+        <header><div className="cross-dossier-portraits"><img src={CHARACTERS.find((entry) => entry.id === "lineva")?.portrait} alt="Lineva" /><img src={CHARACTERS.find((entry) => entry.id === "allenna")?.portrait} alt="Allenna" /></div><div><p className="eyebrow">Forthaven ↔ Akuhn’Nabad</p><h2>Lineva & Allenna</h2><p>Amitié, camaraderie et coopération entre deux commandantes qui continuent d’agir sans attendre votre médiation.</p></div><strong>{completedCrossMilestones(crossProgress.stage)} / 7</strong></header>
+        <div className="cross-progress"><i style={{ width: `${(completedCrossMilestones(crossProgress.stage) / 7) * 100}%` }} /></div>
+        {crossProgress.stage < 8 ? <div className="cross-current"><span>Objectif actuel</span><h3>{crossMilestone(crossProgress.stage)?.title}</h3><p>{crossMilestone(crossProgress.stage)?.objective}</p>{crossSceneForStage(crossProgress.stage) && <button className="primary-action" onClick={() => onStartCrossQuest(crossProgress.stage)}>Vivre cette étape</button>}{crossProgress.stage === 6 && <button className="primary-action" onClick={onStartAlphaHunt}>{crossProgress.alphaState ? "Reprendre la traque de l’Alpha" : "Ouvrir la carte tactique"}</button>}</div> : <div className="cross-current"><span>Série accomplie</span><h3>Une relation qui existe aussi sans vous</h3><p>Le canal entre les deux cités tient par les actes. Deux rendez-vous publics à trois sont disponibles dans Relations.</p></div>}
+        <div className="cross-milestones"><h3>Étapes vécues</h3>{LINEVA_ALLENNA_MILESTONES.filter((entry) => entry.stage < Math.min(8, crossProgress.stage) && !(entry.stage === 1)).map((entry) => <div key={entry.stage}><span>✓</span><strong>{entry.title}</strong></div>)}</div>
+      </section>}
       {section === "campaign" && <section className={`story-progress-overview ${storyComplete ? "complete" : ""}`}>
         <div className="story-progress-heading"><div><p className="eyebrow">Acte I · {storyComplete ? "achevé" : `Chapitre ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "Les Serres Rocheuses" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} chapitres</strong></div>
         <div className="story-overall-bar"><i style={{ width: `${Math.round((mainProgress / MAIN_STORY.length) * 100)}%` }} /></div>
@@ -4194,7 +4436,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
         {section === "messages" && <>
           <div className="journal-section-title"><div><h2>Le monde vous écrit</h2><p>Les initiatives sont espacées. Une invitation simplement manquée reviendra plus tard, sans sanction automatique.</p></div><strong>{pendingMessages} en attente</strong></div>
           <div className="living-journal-grid">
-            <article className="living-journal-panel"><header><span>✉</span><div><h3>Correspondances</h3><small>{letters.length} reçue{letters.length > 1 ? "s" : ""}</small></div></header><div className="living-journal-list">{letters.length ? [...letters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadLetter(letter.id)}><span>{!received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>) : <p>Aucune lettre reçue pour l’instant.</p>}</div></article>
+            <article className="living-journal-panel"><header><span>✉</span><div><h3>Correspondances</h3><small>{letters.length + crossLetters.length} reçue{letters.length + crossLetters.length > 1 ? "s" : ""}</small></div></header><div className="living-journal-list">{letters.length + crossLetters.length ? <>{[...crossLetters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadCrossLetter(letter.id)}><span>{!received.read ? "Nouveau · Quête croisée" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>)}{[...letters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadLetter(letter.id)}><span>{!received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>)}</> : <p>Aucune lettre reçue pour l’instant.</p>}</div></article>
             <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? `${received.reoffers ? "Renouvelée · " : ""}Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : `Manquée · reviendra après J${received.expiresDay + INVITATION_REOFFER_DELAY}`}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
           </div>
         </>}
@@ -4247,10 +4489,12 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
         {socialMemories.map((scene) => <button key={scene.id} onClick={() => onReplaySocial(scene.id)}><span>✦ Liens croisés</span><strong>{scene.title}</strong><small>Revoir la scène</small></button>)}
         {secretMemories.map((secret) => <button key={secret.id} onClick={() => onReplaySecret(secret.id)}><span style={{ color: CHARACTERS.find((character) => character.id === secret.character)?.color }}>◇ Confidence · {CHARACTERS.find((character) => character.id === secret.character)?.name}</span><strong>{secret.title}</strong><small>Revoir sans gain ni nouvelle découverte</small></button>)}
         {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
+        {crossSceneMemories.map((stage) => <button key={`cross-${stage}`} onClick={() => onStartCrossQuest(stage, true)}><span>⇄ Quête croisée · Lineva & Allenna</span><strong>{crossSceneForStage(stage)?.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir selon le niveau d’intimité actuel</small></button>)}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
+        {homeTrioIntimateMemory > 0 && <button onClick={() => onReplayGroupDateIntimacy("group-date-allenna-lineva-home")}><span>🔥 Souvenir au logis · Allenna & Lineva</span><strong>Rien au programme</strong><small>Revoir les trois routes propres au logis</small></button>}
         {!game.history.length && !socialMemories.length && !secretMemories.length && !worldMemories.length && !dateMemories.length && !groupDateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
       </div>
       </>}
@@ -4528,7 +4772,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 type GroupIntimacyStep = "opening" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
 
 function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { modal: GroupIntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
-  const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
+  const date = groupIntimacyContextById(modal.groupDateId)!;
   const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
   const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
   const intimacyGame = GROUP_INTIMACY_GAMES[date.id];
@@ -4872,7 +5116,36 @@ function HomePairDateModal({ pairId, game, onFinish, onClose }: { pairId: string
   </section>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, onGroupIntimacyClose, replyToLetter, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, permanentlyPlatonic: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHuntState; onChange: (state: AlphaHuntState) => void; onFinish: () => void; onClose: () => void }) {
+  const cellAt = (row: number, col: number): AlphaCell => ({ row, col });
+  const cellKey = (cell: AlphaCell) => `${cell.row}:${cell.col}`;
+  const revealed = new Set(state.revealed.map(cellKey));
+  const showAlpha = state.revealed.length === 4 || state.phase === "victory";
+  const onCell = (cell: AlphaCell) => {
+    if (state.phase === "observation" && alphaCellInRange(state, cell)) onChange(strikeAlphaCell(state, cell));
+    else if ((state.phase === "movement" || state.phase === "localized") && alphaMoveAllowed(state, cell)) onChange(moveAlphaDuo(state, cell));
+  };
+  const phaseLabel = state.phase === "observation" ? "Observation" : state.phase === "movement" || state.phase === "localized" ? "Déplacement" : state.phase === "failure" ? "Repli" : "Assaut";
+  return <div className="modal-backdrop alpha-hunt-backdrop"><section className="alpha-hunt-modal" style={{ backgroundImage: `linear-gradient(180deg,rgba(4,5,10,.28),rgba(4,5,10,.8)),url(${spotById("forthaven-harbor")?.background})` }}>
+    <header><div><p className="eyebrow">Quête croisée · Le cœur de la ruche</p><h2>Traque de l’Alpha</h2><p>{state.lastReaction}</p></div><button className="modal-close" aria-label="Sauvegarder et fermer" onClick={onClose}>×</button></header>
+    <div className="alpha-hud"><span><small>Impact Alpha</small><b>{state.revealed.length}/4</b></span><span><small>Patrouilles</small><b>{state.patrols.filter((patrol) => !patrol.respawnTurn).length}</b></span><span><small>Accrochages</small><b>{state.clashes}/2</b></span><span><small>Phase</small><b>{phaseLabel}</b></span></div>
+    <div className="alpha-board-wrap"><div className="alpha-sector-labels">{ALPHA_SECTOR_NAMES.map((name) => <span key={name}>{name}</span>)}</div><div className="alpha-board" role="grid" aria-label="Carte tactique de Forthaven, grille sept par sept">{Array.from({ length: ALPHA_GRID_SIZE }, (_, row) => Array.from({ length: ALPHA_GRID_SIZE }, (_, col) => {
+      const cell = cellAt(row, col);
+      const key = cellKey(cell);
+      const inRange = alphaCellInRange(state, cell);
+      const movable = alphaMoveAllowed(state, cell);
+      const isDuo = cellKey(state.duo) === key;
+      const patrols = state.patrols.filter((patrol) => !patrol.respawnTurn && cellKey(patrol.cell) === key);
+      const alpha = state.alpha.some((entry) => cellKey(entry) === key) && (showAlpha || revealed.has(key));
+      const usable = state.phase === "observation" ? inRange : movable;
+      return <button role="gridcell" aria-label={`Ligne ${row + 1}, colonne ${col + 1}${isDuo ? ", Lineva et Allenna" : ""}${patrols.length ? ", patrouille" : ""}${alpha ? ", Alpha" : ""}`} disabled={!usable || state.phase === "failure" || state.phase === "victory"} className={`${row === 0 ? "high-city" : ""} ${inRange ? "in-range" : "out-range"} ${movable ? "movable" : ""} ${alpha ? "alpha-cell" : ""} ${isDuo ? "duo-cell" : ""} ${patrols.length ? "patrol-cell" : ""}`} key={key} onClick={() => onCell(cell)}>{alpha && <span className="alpha-mark">◆</span>}{patrols.length > 0 && <span className="patrol-mark">☠</span>}{isDuo && <span className="duo-mark"><img src="/assets/portraits/lineva.jpg" alt="" /><img src="/assets/portraits/allenna.jpg" alt="" /></span>}</button>;
+    }))}</div></div>
+    <div className="alpha-objective"><strong>{state.phase === "observation" ? "Sondez ou frappez une case éclairée." : state.phase === "movement" || state.phase === "localized" ? "Déplacez le duo d’une ou deux cases." : state.phase === "failure" ? "Deux accrochages : la tentative doit être reprise." : "La convergence est brisée."}</strong>{alphaAdjacent(state) && state.phase !== "victory" && <button className="primary-action" onClick={() => onChange(launchAlphaAssault(state))}>Déclencher l’assaut final</button>}{state.phase === "failure" && <button className="primary-action" onClick={() => onChange(retryAlphaHunt(state))}>Reprendre la même bataille</button>}{state.phase === "victory" && <button className="primary-action" onClick={onFinish}>Revenir auprès des défenseurs</button>}</div>
+    <aside className="alpha-vn-notices" aria-live="polite">{state.notices.slice(-3).map((notice) => <div key={notice.id}><img src={`/assets/sprites/${notice.speaker}/${notice.speaker === "lineva" ? "determined" : "stern"}.webp`} alt="" /><span><b>{notice.speaker === "lineva" ? "Lineva" : "Allenna"}</b>{notice.text}</span></div>)}</aside>
+  </section></div>;
+}
+
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, permanentlyPlatonic: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; finishTrioEnding: (dateId: string, permanentlyPlatonic: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
   if (modal.kind === "letter") {
@@ -4883,6 +5156,18 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
     const attachment = letter.attachedItem ? GIFTS.find((entry) => entry.id === letter.attachedItem)?.name || displayItemById(letter.attachedItem)?.name || letter.attachedItem : undefined;
     return <div className="modal-backdrop"><section className="correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Correspondance · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{attachment && <div className="letter-attachment"><span>◇</span><div><small>Objet joint</small><strong>{attachment}</strong></div></div>}{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre — ce choix nuance la relation sans transformer la lettre en épreuve.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : null}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
+  }
+  if (modal.kind === "cross-letter") {
+    const letter = LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === modal.letterId);
+    const received = game.crossQuestSeries.linevaAllenna?.letters.find((entry) => entry.id === modal.letterId);
+    if (!letter || !received) return null;
+    const character = CHARACTERS.find((entry) => entry.id === letter.character);
+    const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
+    return <div className="modal-backdrop"><section className="correspondence-modal cross-correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Quête croisée · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre est facultatif : Lineva et Allenna poursuivent leur relation sans attendre votre intervention.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToCrossLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : <p className="hint">Ce courrier n’appelle aucune réponse.</p>}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
+  }
+  if (modal.kind === "alpha-hunt") {
+    const state = game.crossQuestSeries.linevaAllenna?.alphaState;
+    return state ? <AlphaHuntModal state={state} onChange={setAlphaHuntState} onFinish={finishAlphaHunt} onClose={onClose} /> : null;
   }
   if (modal.kind === "invitation") {
     const invitation = INVITATIONS.find((entry) => entry.id === modal.invitationId);
@@ -4914,7 +5199,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const property = propertyById(game.housing.propertyId);
     const knownCharacters = new Set(CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => character.id));
     const knownGroupDates = GROUP_DATES.filter((date) => contentBranchAllowed(game.flags, date) && date.characters.every((id) => knownCharacters.has(id)));
-    const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.characters.every((id) => knownCharacters.has(id)));
+    const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.characters.every((id) => knownCharacters.has(id)) && (pair.id !== "allenna-lineva" || game.flags.includes("cross-la-series-complete")));
     return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Rendez-vous à trois connus</h2><p>Les sorties publiques et les visites dans votre logis apparaissent seulement après la rencontre des deux personnes concernées.</p></div></header><div className="date-grid group-date-grid">{knownGroupDates.map((date) => {
       const unlocked = groupDateUnlocked(game, date);
       const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
@@ -4923,13 +5208,14 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     })}{knownHomePairs.map((pair) => {
       const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
       const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);
-      return <article key={`home-${pair.id}`} className={`home-date-plan-card ${!unlocked ? "locked" : ""}`} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.24), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>{unlocked ? <button className="primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="date-lock">{property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</div>}</article>;
+      return <article key={`home-${pair.id}`} className={`home-date-plan-card ${!unlocked ? "locked" : ""}`} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.24), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>{unlocked ? <button className="primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="date-lock">{pair.id === "allenna-lineva" ? "Requis : logis à Forthaven ou Akuhn’Nabad et au moins un rendez-vous public joué" : property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</div>}</article>;
     })}</div></section></div>;
   }
   if (modal.kind === "group-date-result") {
     const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
     const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce duo et au corps que vous avez choisi — ou laisser la soirée s’achever sur cette promesse.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button><button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button></div></section></div>;
+    const refactored = date.id.includes("allenna-lineva");
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou préserver une autre forme de proximité.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Choisir une complicité platonique</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
   }
   if (modal.kind === "date-planner") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -4942,6 +5228,10 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   }
   if (modal.kind === "home-date") return <HomeDateModal characterId={modal.character} game={game} onFinish={finishHomeDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;
+  if (modal.kind === "home-pair-date-result") {
+    const property = propertyById(game.housing.propertyId)!;
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.32), #11101b 88%), url(${property.background})` }}><div className="group-result-portraits"><img src="/assets/portraits/allenna.jpg" alt="Allenna" /><img src="/assets/portraits/lineva.jpg" alt="Lineva" /></div><p className="eyebrow">Rien au programme</p><h2>Personne ne cherche encore la porte</h2><p>Le désir de Lineva et celui d’Allenna permettent de prolonger cette soirée au logis. Le canapé, la cuisine et la chambre ouvrent trois routes qui n’appartiennent à aucun rendez-vous public.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomePairIntimacy(modal.pairId)}>Prolonger la nuit à trois</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", true)}>Choisir une complicité platonique</button></div></section></div>;
+  }
   if (modal.kind === "home-date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const property = propertyById(game.housing.propertyId)!;
