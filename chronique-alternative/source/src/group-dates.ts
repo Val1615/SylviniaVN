@@ -3,6 +3,10 @@ import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import type { IntimacyGame, IntimacyGameOption } from "./intimacy-games";
 import { groupExplicitScene } from "./group-explicit-scenes";
 import { polishIntimacyText } from "./intimacy-prose";
+import {
+  LINEVA_ALLENNA_MANUAL_CONTEXT_IDS,
+  LINEVA_ALLENNA_MANUAL_ROUTES,
+} from "./lineva-allenna-group-intimacy";
 
 export type GroupDateScene = {
   id: string;
@@ -32,6 +36,17 @@ export type GroupIntimacyRoute = {
   text: string;
   detail: string;
   chapters: Record<IntimacyMode, DialogueLine[][]>;
+  manual?: true;
+  linevaAddress?: {
+    firstTime: DialogueLine[];
+    familiar: DialogueLine[];
+  };
+  progression?: {
+    playerClimaxChapter: Record<IntimacyMode, number>;
+    linevaFirstTuChapter: Record<IntimacyMode, number>;
+    revealChapter: number;
+    postOrgasmChapter: number;
+  };
 };
 
 type RawLine = string | DialogueLine | [speaker: string, text: string, mood?: string];
@@ -261,7 +276,7 @@ export const GROUP_DATES: GroupDateScene[] = [
       groupChoice("gal-training-read", "Lire le changement d’appui d’Allenna pour forcer Lineva à improviser", "lucidite", [C("Allenna", "Vous avez vu le signal."), C("Lineva", "Et m’avez obligée à en inventer un autre. Correct."), N("Leurs deux regards restent sur votre posture bien après la fin de la passe." )], "great", { affection: 6, trust: 8, desire: 5 }, "lineva", { affection: 6, trust: 8, desire: 5 }),
       groupChoice("gal-training-yield", "Céder le point, puis réclamer la revanche dans les vestiaires", "sangFroid", [N("Allenna relève le menton comme si la formulation était purement tactique. Sa rougeur la trahit avant qu’elle détourne les yeux."), C("Lineva", "Notre attention était l’objectif. Mauvaise nouvelle : elle est entière.", "smirk")], "great", { affection: 6, trust: 6, desire: 9 }, "lineva", { affection: 6, trust: 6, desire: 9 }),
     ],
-    intimacySetting: { opening: ["La porte des vestiaires se referme sur la rumeur du terrain. La vapeur des douches efface la ligne de craie sans refroidir la revanche.", "Les gants et les plastrons d’exercice rejoignent les armes. Allenna garde le menton haut sous votre regard, puis Lineva la fait sourire en réclamant une manche où personne ne comptera les points."], closing: ["La vapeur se dissipe sur trois serviettes abandonnées. Dehors, le terrain attendra une revanche moins privée."] },
+    intimacySetting: { opening: [], closing: [] },
   },
   {
     id: "group-date-allenna-lineva-basin", characters: ["allenna", "lineva"], title: "Akuhn’Nabad et le bassin caché", type: "Visite de la cité et bain privé",
@@ -275,7 +290,7 @@ export const GROUP_DATES: GroupDateScene[] = [
       groupChoice("gal-basin-water", "Entrer dans l’eau et leur laisser décider laquelle vous rejoint d’abord", "resonance", [N("Allenna soutient votre regard, le menton haut, jusqu’à ce que la chaleur colore ses joues. Lineva entre sans cérémonie et lui tend une main mouillée."), C("Allenna", "Ne confondez pas patience et hésitation.", "stern")], "great", { affection: 6, trust: 6, desire: 9, confluence: 1 }, "lineva", { affection: 6, trust: 6, desire: 9 }),
       groupChoice("gal-basin-detour", "Confier à Lineva le prochain détour et à Allenna le droit de l’arrêter", "audace", [C("Lineva", "Alors tu choisiras aussi quand nous approcher."), N("Allenna ne l’arrête pas. Dans l’alcôve chaude, leurs épaules touchent les vôtres avant que quiconque ne propose une raison de bouger." )], "great", { affection: 7, trust: 7, desire: 7 }, "lineva", { affection: 7, trust: 7, desire: 7 }),
     ],
-    intimacySetting: { opening: ["Le bassin caché ne garde plus que trois respirations et le bruit de l’eau contre la pierre noire.", "Allenna soutient d’abord les deux regards posés sur elle ; Lineva ramène doucement son menton vers vous lorsqu’elle cherche à détourner les yeux, puis lui laisse choisir le dernier pas."], closing: ["Le dernier feu vert tremble sur l’eau. Allenna promet un autre détour sans itinéraire ; Lineva prétend qu’elle vient enfin de comprendre le principe d’une visite."] },
+    intimacySetting: { opening: [], closing: [] },
   },
 ];
 
@@ -405,9 +420,6 @@ const PAIR_BODIES: Record<string, { first: string; second: string; firstFemale: 
   "group-date-remerii-iriana": { first: "Remerii", second: "Iriana", firstFemale: true, secondFemale: true },
   "group-date-naiah-bellirith": { first: "Naïah", second: "Bellirith", firstFemale: true, secondFemale: true },
   "group-date-tia-remerii": { first: "Tia", second: "Remerii", firstFemale: true, secondFemale: true },
-  "group-date-allenna-lineva-training": { first: "Allenna", second: "Lineva", firstFemale: true, secondFemale: true },
-  "group-date-allenna-lineva-basin": { first: "Allenna", second: "Lineva", firstFemale: true, secondFemale: true },
-  "group-date-allenna-lineva-home": { first: "Allenna", second: "Lineva", firstFemale: true, secondFemale: true },
 };
 
 function protagonistBody(sex: PlayerSex, giver: string, companion: string): string {
@@ -674,132 +686,8 @@ const PAIR_ROUTE_DATA: Record<string, PairRouteData> = {
       { id: "sceau-trois-marques", labels: sexText("Faire circuler trois plaisirs sous le sceau recomposé", "Changer de place jusqu’à délier autorité et méthode", "Composer trois formes de plaisir sans modèle anatomique unique"), detail: "Les trois personnes conduisent et reçoivent ; le sceau ne protège plus une hiérarchie, mais la lisibilité de chaque désir.", opening: ["Vous posez les trois marques sur le drap et proposez qu’elles désignent seulement la prochaine personne au centre.", ["Tia", "Aucune marque permanente."], ["Remerii", "Aucune configuration obligatoire."]], tender: ["Les baisers tournent avec les lueurs. Chacun reçoit deux attentions, puis rend la place sans perdre le contact avec les deux autres."], suggestive: ["Vos vêtements rejoignent les insignes et les instruments. Les trois marques éclairent des gestes différents, tous reliés par les mains restées ouvertes."], explicit: groupExplicit("group-date-tia-remerii", "shared"), ellipse: ["Les lumières se mêlent sans perdre leurs couleurs. Le récit se retire avant que le sceau ne mémorise davantage."], closing: ["Trois signatures restent invisibles dans la matrice.", ["Remerii", "Stable sans préséance."], ["Tia", "Exceptionnel. Et reproductible.", "smirk"]] },
     ],
   },
-  "group-date-allenna-lineva-training": {
-    agreement: ["Les armes reposent contre le mur. Lineva fait sauter son bracelet de relève d’une chiquenaude ; Allenna le rattrape avant qu’il touche le sol et vous lance le troisième.", ["Lineva", "Même règle que sur le terrain : si quelque chose ne va pas, on le dit."], ["Allenna", "Et si tout va bien, nous éviterons les rapports inutiles.", "smirk"], ["Lineva", "Tu apprends vite.", "smirk"]],
-    deepening: {
-      first: ["Allenna prend l’initiative avec une précision qui dure jusqu’à ce que Lineva change brusquement l’angle. La riposte d’Allenna vous entraîne avec Lineva contre le banc, où son rire bref vaut mieux qu’un ordre de reprendre."],
-      second: ["Lineva impose d’abord une cadence franche. Allenna connaît déjà chacune de ses feintes ; vous trouvez la troisième variation, celle qui coupe sa plaisanterie et lui fait réclamer la suite sans détour."],
-      shared: ["Les bracelets passent de main en main. La personne au centre choisit le prochain geste ; les deux autres rivalisent d’attention jusqu’à ce que la compétition se dissolve dans trois souffles aussi désordonnés."],
-    },
-    escalation: {
-      first: ["Allenna ouvre vos vêtements lentement, puis perd sa belle mesure lorsque Lineva défait son baudrier par derrière. Elle reprend l’avantage en vous attirant avec Lineva à portée de ses mains."],
-      second: ["Lineva guide vos mains avec la même franchise que sur le terrain. Allenna embrasse son épaule, devance sa prochaine demande et reçoit en retour un regard qui promet une revanche très proche."],
-      shared: ["Les bracelets passent d’un poignet à l’autre avec l’initiative. Deux corps entourent le troisième, puis les places changent dès qu’une nouvelle envie est soufflée ou montrée."],
-    },
-    continuations: {
-      first: { tender: ["Allenna vous embrasse avec une concentration bientôt adoucie ; Lineva vient contre son dos et glisse votre main dans la sienne. La chaleur circule dans trois directions sans ralentir leur jeu."], suggestive: ["Allenna suit votre peau tandis que Lineva ouvre sa tenue. Sa précision vacille lorsque deux bouches répondent à son propre désir, et elle vous ramène avec Lineva plus près d’elle."], explicitFlavor: ["Allenna maintient le plaisir que vous lui indiquez pendant que Lineva la stimule et provoque chacune de ses réactions. Sa voix reste claire quand elle demande davantage ; elle vous entraîne avec elle lorsque son plaisir rompt enfin sa cadence."], ellipse: ["Allenna ferme la trousse, Lineva tire le rideau et trois bracelets restent visibles lorsque la chronique quitte l’infirmerie."] },
-      second: { tender: ["Lineva vous attire contre sa poitrine ; Allenna embrasse sa tempe et mêle ses jambes aux vôtres. Lineva tente encore une plaisanterie, mais deux baisers simultanés lui en font perdre la fin."], suggestive: ["Lineva descend sur votre peau pendant qu’Allenna défait son baudrier. Vos mains la font revenir, et son rire rauque devient une demande beaucoup plus directe."], explicitFlavor: ["Lineva garde sur votre corps le rythme demandé tandis qu’Allenna lui donne du plaisir. Quand ses mouvements se troublent, elle vous réclame avec Allenna sans détour ; la cadence repart plus vive et l’emporte dans un orgasme qu’Allenna accompagne d’un sourire victorieux."], ellipse: ["Lineva pose son épée hors de portée, Allenna sa dernière bande. Le rideau se ferme sur trois corps décidés à prolonger la revanche."] },
-      shared: { tender: ["Les places changent au rythme des bracelets. Chacun passe entre deux épaules, offre ensuite ses mains et demeure relié aux deux autres dans une douceur encore traversée de rires."], suggestive: ["Les vêtements et les dernières pièces d’équipement rejoignent le sol. Les bouches et les mains suivent trois désirs formulés au présent, sans laisser longtemps la même personne reprendre son souffle."], explicitFlavor: ["Vous faites circuler le plaisir sans ordre fixe. Allenna, Lineva puis vous choisissez une configuration propre à votre corps ; les deux autres accompagnent la cadence, restent actives après chaque orgasme et modifient entièrement leurs gestes pour la personne suivante."], ellipse: ["Les trois bracelets sont noués au pied de la lampe. La lumière baisse lorsque la revanche devient trop intime pour le registre."] },
-    },
-    aftercare: {
-      first: ["Lineva vous tend l’eau ; Allenna la lui vole, boit la première et vous rend la gourde avec un sérieux démenti par ses joues encore rouges. Vous partagez le banc et décidez que la revanche attendra au moins le prochain repas."],
-      second: ["Allenna jette une serviette sur les épaules de Lineva. Vous vous serrez à trois sur le banc pendant qu’elles contestent chacune le dernier point, puis Allenna concède que personne ne tenait encore le compte."],
-      shared: ["Les trois bracelets finissent noués ensemble au fond d’un sac. Allenna choisit le prochain repas, Lineva le prochain terrain et vous gardez le droit de modifier les deux programmes."],
-    },
-    routes: [
-      { id: "allenna-depose-les-armes", labels: sexText("Recevoir les mains d’Allenna tandis que Lineva trouble sa cadence", "Laisser Allenna suivre votre désir sous les caresses de Lineva", "Guider Allenna selon votre corps réel pendant que Lineva la provoque"), detail: "Allenna mène avec une attention précise ; Lineva transforme chaque hésitation en jeu et chaque réponse en nouvel élan.", opening: [["Allenna", "Je commence. Vous me dites si je dois ralentir."], ["Lineva", "Et moi, je me réserve le droit de l’accélérer.", "smirk"], ["Allenna", "Seulement si nous sommes deux à te le demander.", "smirk"]], tender: ["Allenna vous embrasse ; Lineva embrasse sa nuque et pose votre main sur son cœur. Le battement rapide arrache à Lineva un sourire qu’Allenna fait taire de sa bouche."], suggestive: ["Allenna ouvre vos vêtements avec soin tandis que Lineva ouvre les siens. Deux respirations chauffent votre peau ; Allenna cesse bientôt de compter pour vous rappeler plus près."], explicit: groupExplicit("group-date-allenna-lineva-training", "first"), ellipse: ["La vapeur monte, les armes restent au mur et le rideau laisse seulement trois ombres rapprochées."], closing: ["Allenna reste entre vous, une jambe encore mêlée à celle de Lineva.", ["Lineva", "Tu veux toujours rédiger le rapport ?"], ["Allenna", "Demain. Après confirmation du résultat.", "smirk"]] },
-      { id: "lineva-quitte-la-garde", labels: sexText("Suivre l’élan de Lineva pendant qu’Allenna la fait céder", "Recevoir Lineva sous l’attention joueuse d’Allenna", "Définir votre plaisir avec Lineva tandis qu’Allenna soutient son abandon"), detail: "Lineva mène avec sa franchise physique ; Allenna anticipe ses feintes et vous aide à lui rendre chaque provocation.", opening: [["Lineva", "Cette manche est à moi.", "smirk"], ["Allenna", "Tu confonds encore initiative et victoire."], ["Lineva", "Alors viens corriger l’erreur.", "determined"]], tender: ["Lineva vous embrasse lentement ; Allenna suit sa joue, son épaule et votre main. Lorsqu’elle les attire toutes deux, aucun sourire ne reste longtemps sage."], suggestive: ["Lineva guide vos gestes tandis qu’Allenna défait son baudrier. Elle demande davantage, puis rit quand Allenna lui en offre plus qu’elle n’avait prévu."], explicit: groupExplicit("group-date-allenna-lineva-training", "second"), ellipse: ["Lineva pose son dernier défi, Allenna y répond. La chronique laisse les vestiaires à leur revanche privée."], closing: ["Lineva repose entre vous et Allenna, encore satisfaite de sa prétendue victoire.", ["Allenna", "Le point final était à nous."], ["Lineva", "Alors ne bougeons pas avant la revanche.", "soft"]] },
-      { id: "releve-trois-bracelets", labels: sexText("Faire tourner trois plaisirs au rythme des bracelets", "Partager la conduite jusqu’à satisfaire trois envies", "Inventer trois configurations adaptées, sans rôle fixé par le corps"), detail: "Chacun conduit, provoque et récupère à tour de rôle ; le jeu change dès que l’un des trois en réclame davantage.", opening: ["Vous réunissez les bracelets et proposez que leur couleur désigne la prochaine personne au centre.", ["Allenna", "Une règle simple."], ["Lineva", "Que nous allons compliquer très vite.", "smirk"]], tender: ["Les étreintes tournent lentement. Deux personnes gardent chaque corps au chaud, puis les places changent sans que le contact précédent disparaisse."], suggestive: ["Les dernières pièces d’équipement rejoignent le sol. Bouches, mains et bassins suivent la personne au centre, tandis que la troisième reste toujours reliée aux deux autres."], explicit: groupExplicit("group-date-allenna-lineva-training", "shared"), ellipse: ["Trois bracelets entourent la lampe et les silhouettes se déplacent encore lorsque le rideau devient opaque."], closing: ["La partie s’achève sans qu’aucune ne reprenne immédiatement son arme.", ["Lineva", "J’exige une revanche."], ["Allenna", "Après le repas. Cette fois, je choisis le terrain.", "soft"]] },
-    ],
-  },
 };
 
-function contextualLinevaAllennaPair(pairId: string, setting: "basin" | "home"): PairRouteData {
-  const base = PAIR_ROUTE_DATA["group-date-allenna-lineva-training"];
-  const swaps = setting === "basin" ? [
-    ["armes", "vêtements"], ["arme", "vêtement"], ["mur", "rebord de pierre"], ["infirmerie", "alcôve chaude"], ["vestiaires", "bassin"], ["trousse", "serviette"], ["bandage", "gouttes d’eau"], ["bracelets", "reflets"], ["bracelet", "reflet"], ["relève", "courant"], ["garde", "distance"], ["lampe", "brasero vert"],
-  ] : [
-    ["armes", "coussins"], ["arme", "coussin"], ["mur", "canapé"], ["infirmerie", "logis"], ["vestiaires", "salon"], ["trousse", "théière"], ["bandage", "couverture"], ["bracelets", "tasses"], ["bracelet", "tasse"], ["relève", "soirée"], ["garde", "habitude"], ["lampe", "veilleuse"],
-  ];
-  let serialized = JSON.stringify(base);
-  swaps.forEach(([from, to]) => {
-    const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const capitalized = from[0].toUpperCase() + from.slice(1);
-    const escapedCapitalized = capitalized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    serialized = serialized
-      .replace(new RegExp(`\\b${escaped}\\b`, "g"), to)
-      .replace(new RegExp(`\\b${escapedCapitalized}\\b`, "g"), to[0].toUpperCase() + to.slice(1));
-  });
-  const clone = JSON.parse(serialized) as PairRouteData;
-  if (setting === "basin") {
-    clone.agreement = [
-      "Dans l’alcôve du bassin, Lineva chasse une vague vers Allenna. La guerrière lui saisit le poignet avant la seconde éclaboussure et vous entraîne dans leur déséquilibre.",
-      ["Lineva", "Si tu comptes les points, compte au moins ce que chacun marque.", "smirk"],
-      ["Allenna", "Je comptais surtout le temps avant ta prochaine provocation."],
-      ["Lineva", "Trop tard.", "smirk"],
-    ];
-    clone.deepening = {
-      first: ["Allenna vous attire contre la pierre chaude et prend l’initiative avec une précision vite troublée par Lineva dans son dos. Quand l’eau déborde sous vos trois mouvements, elle rit au lieu de reprendre sa mesure."],
-      second: ["Lineva vous ramène dans l’eau par la taille. Allenna anticipe son élan, la rejoint de l’autre côté et vous refermez ensemble une prise dont personne ne cherche vraiment à sortir."],
-      shared: ["Vous changez de place entre l’eau, le rebord et l’alcôve. La personne au centre choisit le geste suivant ; les deux autres répondent avant que la chaleur permette de retrouver une cadence raisonnable."],
-    };
-    clone.escalation = {
-      first: ["Allenna ouvre ce qui reste de vos vêtements mouillés. Lineva défait les attaches de la guerrière et recueille d’un baiser la réplique qu’elle allait formuler."],
-      second: ["Lineva guide vos mains sous l’eau puis réclame celles d’Allenna avec la même franchise. La pierre offre un nouvel appui ; elle l’utilise aussitôt pour vous rapprocher d’Allenna."],
-      shared: ["Trois reflets glissent sur la pierre noire et changent avec vos positions. Une envie dite à voix haute suffit à déplacer l’ensemble vers le rebord ou l’eau plus profonde."],
-    };
-    clone.continuations = {
-      first: { tender: ["Allenna vous embrasse lentement ; Lineva reste contre son dos et glisse votre main dans la sienne. L’eau porte vos trois corps assez près pour que chaque sourire trouve une bouche."], suggestive: ["Allenna descend sur votre peau pendant que Lineva ouvre sa tenue humide. Sa concentration se défait sous deux caresses simultanées et revient sous la forme d’une demande plus pressante."], explicitFlavor: ["Allenna maintient le plaisir que vous lui indiquez pendant que Lineva la stimule sous l’eau. Son rythme gagne en franchise jusqu’à l’orgasme, puis elle vous entraîne avec Lineva vers une nouvelle place."], ellipse: ["La vapeur épaissit au-dessus du bassin. Trois silhouettes quittent le rebord avant que leurs reflets cessent de se rejoindre."] },
-      second: { tender: ["Lineva vous serre contre elle ; Allenna embrasse sa tempe et garde vos jambes mêlées sous l’eau. Une plaisanterie commence, puis se perd entre vos deux baisers."], suggestive: ["Lineva vous attire contre le rebord tandis qu’Allenna suit sa nuque et ses hanches. Elle réclame davantage et reçoit deux réponses qui lui arrachent un rire rauque."], explicitFlavor: ["Lineva garde sur votre corps la cadence demandée pendant qu’Allenna lui donne du plaisir. Son élan se trouble, repart sous vos mains et l’emporte dans un orgasme qu’elle accueille sans cesser de vous provoquer."], ellipse: ["Lineva disparaît dans la vapeur ; Allenna et vous la rejoignez avant que l’eau retrouve son calme."] },
-      shared: { tender: ["Les places tournent dans l’eau chaude. Chacun passe entre deux bras, offre ensuite ses mains et reste relié aux deux autres dans une douceur ponctuée d’éclaboussures."], suggestive: ["Les derniers vêtements humides restent sur la pierre. Bouches et mains suivent trois désirs successifs, puis brouillent l’ordre dès que la personne au centre réclame une autre attention."], explicitFlavor: ["Allenna, Lineva puis vous choisissez une configuration adaptée à votre corps. Les deux autres maintiennent la cadence, changent entièrement leurs gestes à la rotation suivante et prolongent le jeu après chaque orgasme."], ellipse: ["Les trois reflets se fondent dans la vapeur lorsque la lumière du brasero vert baisse."] },
-    };
-    clone.aftercare = {
-      first: ["Lineva apporte une serviette ; Allenna la lui vole, vous en couvre d’abord et garde le reste autour de ses propres épaules. Vous partagez ensuite les dernières galettes au bord de l’eau."],
-      second: ["Allenna essore les cheveux de Lineva avec une serviette pendant que vous récupérez vos vêtements. Leur dispute sur la personne qui a commencé s’achève faute de témoin impartial."],
-      shared: ["Vous restez tous trois dans l’eau jusqu’à ce que le brasero faiblisse. Allenna choisit le prochain étal de la visite ; Lineva choisit le détour qui y conduira."],
-    };
-    const basinRoutes: Array<Pick<GroupRouteSeed, "opening" | "tender" | "suggestive" | "ellipse" | "closing">> = [
-      { opening: [["Allenna", "Je commence. Vous me dites si la pierre devient inconfortable."], ["Lineva", "Et moi si elle devient trop raisonnable.", "smirk"]], tender: ["Allenna vous embrasse au bord du bassin ; Lineva vient contre sa nuque et mêle vos trois mains sous l’eau."], suggestive: ["Allenna ouvre vos vêtements humides tandis que Lineva ouvre les siens. La guerrière vous attire à elle avant que Lineva puisse revendiquer l’initiative."], ellipse: ["La vapeur avale le rebord de pierre. Vos trois reflets poursuivent seuls la scène dans l’eau sombre."], closing: ["Allenna reste entre vous, les joues encore chaudes.", ["Lineva", "Tu veux toujours prétendre que la visite était fonctionnelle ?"], ["Allenna", "La fonction vient seulement de changer.", "smirk"]] },
-      { opening: [["Lineva", "Je choisis le rebord.", "smirk"], ["Allenna", "Tu choisis surtout l’endroit où tu crois pouvoir nous surprendre."], ["Lineva", "Venez vérifier.", "determined"]], tender: ["Lineva vous embrasse lentement ; Allenna suit sa joue puis son épaule mouillée. Elle vous attire avec Allenna dans un même mouvement, le sourire sans retenue."], suggestive: ["Lineva guide vos gestes sous l’eau pendant qu’Allenna défait ses attaches. Elle réclame plus, et la réponse d’Allenna lui fait perdre sa prochaine plaisanterie."], ellipse: ["Lineva recule vers l’alcôve chaude. Allenna et vous la suivez avant que le courant efface ses traces."], closing: ["Lineva repose contre la pierre entre vous et Allenna.", ["Allenna", "Le détour était donc tactique ?"], ["Lineva", "Je défendrai cette version demain.", "soft"]] },
-      { opening: ["Vous laissez les reflets désigner la prochaine personne au centre.", ["Allenna", "Une règle suffisamment simple."], ["Lineva", "Attends la deuxième manche.", "smirk"]], tender: ["Les étreintes tournent lentement dans l’eau. Deux personnes entourent le troisième corps, puis les places changent sans rompre le contact."], suggestive: ["Bouches, mains et bassins suivent la personne au centre tandis que la troisième reste reliée aux deux autres. L’eau rend chaque changement plus proche."], ellipse: ["Trois reflets entourent le brasero vert et se confondent lorsque la vapeur devient opaque."], closing: ["Vous restez enlacés dans le bassin après la dernière rotation.", ["Lineva", "Revanche à Forthaven."], ["Allenna", "Après les galettes. Je refuse de négocier ce point.", "soft"]] },
-    ];
-    clone.routes.forEach((route, index) => Object.assign(route, basinRoutes[index]));
-  } else {
-    clone.agreement = [
-      "Au logis, trois tasses encombrent la table basse. Lineva s’étend sur le canapé comme si elle en avait remporté chaque coussin ; Allenna déplace simplement ses jambes et s’assied dans l’espace libéré contre vous.",
-      ["Lineva", "Je constate une prise de position hostile.", "smirk"],
-      ["Allenna", "Tu peux faire appel. Depuis le canapé."],
-      "Vous récupérez la troisième tasse. Personne ne fait mine de consulter l’heure.",
-    ];
-    clone.deepening = {
-      first: ["Allenna pose sa tasse et vient vers vous avec une décision tranquille. Lineva se glisse derrière elle, défait une attache et reçoit un regard qui l’invite à continuer plutôt qu’à commenter."],
-      second: ["Lineva vous attire à moitié sur elle dans le canapé trop petit. Allenna connaît la feinte, prend l’autre côté et transforme son rire en une demande directe."],
-      shared: ["Vous passez du canapé au comptoir, puis du comptoir à la chambre sans fixer d’ordre. La personne qui formule l’envie choisit la place ; les deux autres inventent la suite."],
-    };
-    clone.escalation = {
-      first: ["Allenna ouvre vos vêtements dans la lumière de la cuisine. Lineva ouvre les siens derrière elle et interrompt sa lenteur par une caresse qu’elle accueille sans détour."],
-      second: ["Lineva guide vos mains contre elle, puis saisit celle d’Allenna pour lui montrer ce qu’elle veut. Le canapé proteste sous le déplacement ; personne ne propose de s’arrêter."],
-      shared: ["Les vêtements jalonnent le passage vers la chambre. Chaque changement de pièce donne une nouvelle position au trio et une nouvelle personne à provoquer."],
-    };
-    clone.continuations = {
-      first: { tender: ["Allenna vous embrasse lentement ; Lineva vient contre son dos et garde votre main dans la sienne. La veilleuse éclaire trois visages assez proches pour partager le même sourire."], suggestive: ["Allenna suit votre peau tandis que Lineva ouvre sa tenue. Sa précision cède sous deux bouches et revient dans une demande qui vous ramène avec Lineva vers elle."], explicitFlavor: ["Allenna maintient le plaisir que vous lui indiquez pendant que Lineva la stimule contre le comptoir. Son mouvement gagne en franchise jusqu’à l’orgasme, puis elle inverse elle-même vos places."], ellipse: ["Allenna pose enfin sa tasse. Lineva ferme la porte de la chambre et la veilleuse garde trois ombres rapprochées."] },
-      second: { tender: ["Lineva vous attire contre sa poitrine ; Allenna embrasse sa tempe et mêle ses jambes aux vôtres. Deux baisers simultanés lui font perdre la fin de sa plaisanterie."], suggestive: ["Lineva descend sur votre peau pendant qu’Allenna défait ses vêtements. Elle vous rappelle avec Allenna sur le canapé, avec une impatience qui rend le meuble encore plus étroit."], explicitFlavor: ["Lineva garde sur votre corps le rythme demandé tandis qu’Allenna lui donne du plaisir. Quand sa cadence se trouble, elle vous réclame avec Allenna plus près d’elle et cède sans abandonner son sourire de défi."], ellipse: ["Lineva recule vers la chambre ; Allenna et vous la rejoignez avant que le canapé cesse de grincer."] },
-      shared: { tender: ["Les places changent entre le canapé et le lit. Chacun passe entre deux épaules, offre ensuite ses mains et reste relié aux deux autres dans une douceur encore traversée de rires."], suggestive: ["Les derniers vêtements restent au pied du lit. Bouches et mains suivent trois désirs successifs, puis brouillent l’ordre dès qu’une nouvelle envie se fait entendre."], explicitFlavor: ["Allenna, Lineva puis vous choisissez une configuration propre à votre corps. Les deux autres accompagnent la cadence, changent entièrement leurs gestes à la rotation suivante et prolongent le jeu après chaque orgasme."], ellipse: ["Trois tasses refroidissent près de la veilleuse tandis que les silhouettes disparaissent derrière la porte."] },
-    };
-    clone.aftercare = {
-      first: ["Lineva retrouve l’eau sur le comptoir ; Allenna boit la première et vous tend le verre avant de regagner le canapé. Vous décidez que le rangement appartient au lendemain."],
-      second: ["Allenna ramène une couverture sur Lineva et vous. La discussion sur la personne qui a fait céder le canapé s’achève par une décision commune : personne ne le quitte."],
-      shared: ["Les trois tasses restent dans l’évier. Allenna choisit le petit déjeuner, Lineva réclame la grasse matinée et vous gardez le droit de modifier les deux programmes."],
-    };
-    const homeRoutes: Array<Pick<GroupRouteSeed, "opening" | "tender" | "suggestive" | "ellipse" | "closing">> = [
-      { opening: [["Allenna", "Je commence. Vous me dites si je dois ralentir."], ["Lineva", "Et moi, je me réserve le droit de la distraire.", "smirk"], ["Allenna", "Tu viens de perdre l’avantage de la surprise."]], tender: ["Allenna vous embrasse sur le canapé ; Lineva embrasse sa nuque et place votre main dans la sienne."], suggestive: ["Allenna ouvre vos vêtements tandis que Lineva ouvre les siens. Elle vous attire contre elle avant que Lineva puisse réclamer la meilleure place."], ellipse: ["La veilleuse reste près des trois tasses. Vos ombres gagnent la chambre avant que le thé refroidisse tout à fait."], closing: ["Allenna reste entre vous, une jambe encore mêlée à celle de Lineva.", ["Lineva", "Tu veux rédiger le programme de demain ?"], ["Allenna", "Demain n’a encore rien demandé.", "smirk"]] },
-      { opening: [["Lineva", "Le canapé est à moi.", "smirk"], ["Allenna", "Tu occupes surtout la place où nous pouvons t’encercler."], ["Lineva", "Voilà enfin un projet utile.", "determined"]], tender: ["Lineva vous embrasse lentement ; Allenna suit sa joue, son épaule et votre main. Quand elle vous attire avec Allenna, le canapé devient réellement trop petit."], suggestive: ["Lineva guide vos gestes pendant qu’Allenna défait sa tenue. Elle réclame davantage et rit quand Allenna lui en offre plus qu’elle ne prévoyait."], ellipse: ["Lineva recule vers la chambre. Allenna emporte la veilleuse ; vous laissez les tasses où elles sont."], closing: ["Lineva repose entre vous et Allenna, satisfaite de sa prétendue victoire.", ["Allenna", "Le canapé a perdu."], ["Lineva", "Nous aussi, si nous bougeons maintenant.", "soft"]] },
-      { opening: ["Vous rapprochez les trois tasses et décidez que leur place désignera seulement la prochaine personne au centre.", ["Allenna", "Une règle simple."], ["Lineva", "Que nous oublierons dans la chambre.", "smirk"]], tender: ["Les étreintes tournent lentement. Deux personnes entourent le troisième corps, puis les places changent sans que le contact précédent disparaisse."], suggestive: ["Bouches, mains et bassins suivent la personne au centre tandis que la troisième reste toujours reliée aux deux autres."], ellipse: ["Trois tasses entourent la veilleuse. Les silhouettes se déplacent encore lorsque la porte de la chambre se ferme."], closing: ["La partie s’achève sans que personne quitte le lit.", ["Lineva", "Petit déjeuner au lit."], ["Allenna", "Accordé. Puis nous verrons qui se lève pour le préparer.", "soft"]] },
-    ];
-    clone.routes.forEach((route, index) => Object.assign(route, homeRoutes[index]));
-  }
-  const routeNames = setting === "basin" ? ["jeu-d-eau", "rebord-de-pierre", "alcove-chaude"] : ["canape-trop-petit", "cuisine-apres-minuit", "chambre-sans-urgence"];
-  clone.routes.forEach((route, index) => {
-    route.id = routeNames[index];
-    (Object.keys(route.labels) as PlayerSex[]).forEach((sex) => { route.labels[sex] = `${route.labels[sex]} · ${setting === "basin" ? "au bassin" : "au logis"}`; });
-    const role: GroupRole = index === 0 ? "first" : index === 1 ? "second" : "shared";
-    route.explicit = groupExplicit(pairId, role);
-  });
-  return clone;
-}
-
-PAIR_ROUTE_DATA["group-date-allenna-lineva-basin"] = contextualLinevaAllennaPair("group-date-allenna-lineva-basin", "basin");
-PAIR_ROUTE_DATA["group-date-allenna-lineva-home"] = contextualLinevaAllennaPair("group-date-allenna-lineva-home", "home");
 
 function buildGroupRoute(pairId: string, sex: PlayerSex, seed: GroupRouteSeed, routeIndex: number): GroupIntimacyRoute {
   const pair = PAIR_ROUTE_DATA[pairId];
@@ -825,7 +713,7 @@ function buildGroupRoute(pairId: string, sex: PlayerSex, seed: GroupRouteSeed, r
   };
 }
 
-export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, GroupIntimacyRoute[]>> = Object.fromEntries(
+const GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, GroupIntimacyRoute[]>> = Object.fromEntries(
   Object.entries(PAIR_ROUTE_DATA).map(([pairId, pair]) => [pairId, {
     femme: pair.routes.map((seed, index) => buildGroupRoute(pairId, "femme", seed, index)),
     homme: pair.routes.map((seed, index) => buildGroupRoute(pairId, "homme", seed, index)),
@@ -833,16 +721,25 @@ export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, Grou
   }]),
 );
 
+export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, GroupIntimacyRoute[]>> = {
+  ...GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX,
+  ...LINEVA_ALLENNA_MANUAL_ROUTES,
+};
+
+export function isManualLinevaAllennaIntimacy(id: string): boolean {
+  return (LINEVA_ALLENNA_MANUAL_CONTEXT_IDS as readonly string[]).includes(id);
+}
+
 export function groupIntimacyRoutes(pairId: string, sex: PlayerSex): GroupIntimacyRoute[] {
   return GROUP_INTIMACY_ROUTES_BY_SEX[pairId]?.[sex] || [];
 }
 
 export const HOME_GROUP_INTIMACY_DATES: GroupDateScene[] = [{
   id: "group-date-allenna-lineva-home", characters: ["allenna", "lineva"], title: "Rien au programme", type: "Nuit au logis",
-  description: "Canapé trop petit, cuisine après minuit et chambre sans urgence.", dynamic: "Une intimité sans mission, briefing ni entraînement.",
+  description: "Canapé trop petit, cuisine après minuit et chambre sans urgence.", dynamic: "Une nuit ordinaire où personne n’a rien à accomplir ni aucune heure à surveiller.",
   location: "forthaven", spot: "forthaven-quarters", period: "soirée", minStage: 5, minAffection: 0, minTrust: 0, minDesire: 0, intimacyMinDesire: 25, mood: "soft",
   requiredFlags: ["cross-la-series-complete"], intro: [], choices: [],
-  intimacySetting: { opening: ["La porte du logis est fermée. Aucun rapport, aucun exercice et aucun ordre n’attendent sur la table.", "Le canapé était déjà trop petit ; la chambre ne prétend pas offrir davantage de distance."], closing: ["Au matin, rien n’a été planifié. Trois tasses dans la cuisine suffisent à raconter la nuit."] },
+  intimacySetting: { opening: [], closing: [] },
 }];
 
 export function groupIntimacyContextById(id: string) {
@@ -850,6 +747,7 @@ export function groupIntimacyContextById(id: string) {
 }
 
 export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
+  if (isManualLinevaAllennaIntimacy(date.id)) return [];
   return [
     ...date.intimacySetting.opening.map(N),
     N("Le dernier espace entre vous disparaît dans un échange de regards, de baisers et de mains attirées contre la peau. Chacun trouve sa place auprès des deux autres sans transformer l’instant en mode d’emploi."),
@@ -857,6 +755,7 @@ export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
 }
 
 export function groupIntimacyEnding(date: GroupDateScene): DialogueLine[] {
+  if (isManualLinevaAllennaIntimacy(date.id)) return [];
   return [
     N("Le rythme retombe lentement. Vous restez enlacés dans la même chaleur, partageant l’eau, les sourires épuisés et les quelques mots qui viennent lorsque les respirations retrouvent leur calme."),
     ...date.intimacySetting.closing.map(N),
@@ -877,8 +776,10 @@ export function validateGroupIntimacyCatalog(): { pairs: number; combinations: n
         (["tendre", "suggestif", "explicite", "ellipse"] as IntimacyMode[]).forEach((mode) => {
           const sequence = entry.chapters[mode];
           const words = sequence.flat().reduce((total, current) => total + current.text.trim().split(/\s+/u).length, 0);
-          const minimum = mode === "explicite" ? 320 : 200;
-          if (sequence.length !== 8 || sequence.some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: huit séquences requises`);
+          const minimum = entry.manual
+            ? mode === "explicite" ? 400 : 150
+            : mode === "explicite" ? 320 : 200;
+          if (sequence.length < 8 || sequence.some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: huit séquences minimum requises`);
           if (words < minimum) throw new Error(`${entry.id}/${mode}: ${words} mots, minimum ${minimum}`);
           chapters += sequence.length;
         });
@@ -890,8 +791,8 @@ export function validateGroupIntimacyCatalog(): { pairs: number; combinations: n
     if (!game || game.beats.length !== 4 || game.beats.some((beat) => beat.options.length !== 3)) throw new Error(`${pairId}: mini-jeu incomplet`);
   });
   if (new Set(labels).size !== labels.length) throw new Error("Chaque route à trois doit avoir un libellé unique par duo et par sexe");
-  if (GROUP_DATES.length + HOME_GROUP_INTIMACY_DATES.length !== Object.keys(PAIR_ROUTE_DATA).length) throw new Error("Chaque contexte intime doit avoir un rendez-vous public ou au logis");
-  return { pairs: Object.keys(PAIR_ROUTE_DATA).length, combinations, routes, chapters, dates: GROUP_DATES.length, games: Object.keys(GROUP_INTIMACY_GAMES).length };
+  if (GROUP_DATES.length + HOME_GROUP_INTIMACY_DATES.length !== Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length) throw new Error("Chaque contexte intime doit avoir un rendez-vous public ou au logis");
+  return { pairs: Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length, combinations, routes, chapters, dates: GROUP_DATES.length, games: Object.keys(GROUP_INTIMACY_GAMES).length };
 }
 
 validateGroupIntimacyCatalog();

@@ -53,6 +53,7 @@ import {
   groupIntimacyOpening,
   groupIntimacyRoutes,
   groupIntimacyContextById,
+  isManualLinevaAllennaIntimacy,
   type GroupDateScene,
   type GroupIntimacyRoute,
 } from "./group-dates";
@@ -4799,8 +4800,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
   const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
   const intimacyGame = GROUP_INTIMACY_GAMES[date.id];
-  const [step, setStep] = useState<GroupIntimacyStep>("opening");
-  const [lines, setLines] = useState<DialogueLine[]>(() => groupIntimacyOpening(date));
+  const manualLinevaAllenna = isManualLinevaAllennaIntimacy(date.id);
+  const [step, setStep] = useState<GroupIntimacyStep>(manualLinevaAllenna ? "attunement-choice" : "opening");
+  const [lines, setLines] = useState<DialogueLine[]>(() => manualLinevaAllenna ? [] : groupIntimacyOpening(date));
   const [lineIndex, setLineIndex] = useState(0);
   const [direction, setDirection] = useState<GroupIntimacyRoute | null>(null);
   const [directionSequence, setDirectionSequence] = useState<DialogueLine[][]>([]);
@@ -4837,7 +4839,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
         const nextChapter = directionChapter + 1;
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
-      } else beginSegment("ending", groupIntimacyEnding(date));
+      } else if (manualLinevaAllenna) setStep("done");
+      else beginSegment("ending", groupIntimacyEnding(date));
     } else if (step === "ending") setStep("done");
   }
 
@@ -4848,7 +4851,12 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
 
   function chooseDirection(choice: GroupIntimacyRoute) {
     setDirection(choice);
-    const sequence = choice.chapters[game.player.intimacy];
+    const linevaAddress = game.flags.includes("lineva-tutoiement")
+      ? choice.linevaAddress?.familiar
+      : choice.linevaAddress?.firstTime;
+    const sequence = choice.chapters[game.player.intimacy].map((chapter, index) => index === 0 && linevaAddress
+      ? [...linevaAddress, ...chapter]
+      : chapter);
     setDirectionSequence(sequence);
     setDirectionChapter(0);
     beginSegment("direction-lines", sequence[0]);
@@ -4863,6 +4871,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     mode: game.player.intimacy,
     step,
     chapter: directionChapter,
+    revealChapter: direction?.progression?.revealChapter,
+    postOrgasmChapter: direction?.progression?.postOrgasmChapter,
   });
 
   return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
@@ -4878,7 +4888,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
       <small>{step === "direction-lines" ? `Séquence ${directionChapter + 1} / ${directionSequence.length} · ` : ""}{lineIndex + 1} / {lines.length} · Cliquer pour continuer</small>
     </button>}
     {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Terminer la soirée dans une proximité non sexuelle</button></div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">Trois routes uniques pour {first.name}, {second.name} et le corps que vous avez choisi. Chacune comporte huit séquences détaillées et maintient les trois personnes actives.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester enlacé·es et clore la scène ici</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">Trois routes uniques pour {first.name}, {second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester enlacé·es et clore la scène ici</button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button className="primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
   </section>;
 }

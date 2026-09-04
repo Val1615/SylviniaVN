@@ -452,32 +452,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
     firstMood: "stern",
     secondMood: "calm",
   }),
-  "group-date-allenna-lineva-training": heritageExplicitPair({
-    first: "Allenna",
-    second: "Lineva",
-    setting: "les vestiaires de Forthaven, la vapeur des douches et la ligne de craie effacée par l’eau",
-    firstGesture: "elle garde le menton haut sous vos regards, choisit la première prise puis laisse Lineva changer l’angle de cette revanche sans score",
-    secondGesture: "elle vous attire sous l’eau, transforme le dernier duel en jeu physique et confie à Allenna le moment exact où sa force peut céder",
-    sharedGesture: "la personne au centre mène une manche entièrement différente, pendant que les deux autres restent engagées sans arbitre ni trophée",
-    firstMood: "troubled",
-    secondMood: "soft",
-  }),
-  "group-date-allenna-lineva-basin": heritageExplicitPair({
-    first: "Allenna", second: "Lineva",
-    setting: "le bassin caché d’Akuhn’Nabad, son rebord de pierre noire et l’alcôve où le courant devient plus chaud",
-    firstGesture: "elle soutient les deux regards, rougit sans baisser le menton puis guide elle-même les mains et les bouches vers les gestes qu’elle veut recevoir",
-    secondGesture: "elle joue avec l’eau, vous attire contre le rebord et laisse Allenna choisir quand la provocation devient une caresse plus lente",
-    sharedGesture: "trois reflets changent de place entre l’eau, le rebord et l’alcôve, chaque corps donnant une forme nouvelle au plaisir partagé",
-    firstMood: "troubled", secondMood: "soft",
-  }),
-  "group-date-allenna-lineva-home": heritageExplicitPair({
-    first: "Allenna", second: "Lineva",
-    setting: "votre logis silencieux, du canapé trop petit à la cuisine après minuit puis à la chambre sans urgence",
-    firstGesture: "elle cesse de ranger, s’appuie au comptoir et formule enfin une envie qui n’a aucune utilité avant de vous guider vers elle",
-    secondGesture: "elle abandonne sa plaisanterie au bord du canapé, vous attire contre elle et accepte qu’Allenna donne le rythme de cette nuit ordinaire",
-    sharedGesture: "le canapé, le comptoir et le lit accueillent trois configurations distinctes, choisies sans mission et sans fonction à remplir",
-    firstMood: "troubled", secondMood: "soft",
-  }),
 };
 
 export function groupExplicitScene(pairId: string, sex: PlayerSex, role: AdvancedGroupRole): AdvancedGroupRawLine[] {

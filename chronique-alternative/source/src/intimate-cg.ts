@@ -78,14 +78,17 @@ export function groupIntimateCgState(options: {
   mode: IntimacyMode;
   step: string;
   chapter: number;
+  revealChapter?: number;
+  postOrgasmChapter?: number;
 }): IntimateCgState | undefined {
   if (options.mode !== "explicite") return undefined;
   const assets = DUO_INTIMATE_CG[options.pairId];
   if (options.step === "ending" || options.step === "done") return stateFromAssets(assets, "post-orgasm");
   if (options.step !== "direction-lines") return undefined;
 
-  // Le chapitre 4 contient le climax à trois : reveal au 3, post-orgasm à partir du 5.
-  if (options.chapter === 3) return stateFromAssets(assets, "reveal");
-  if (options.chapter >= 5) return stateFromAssets(assets, "post-orgasm");
+  const revealChapter = options.revealChapter ?? 3;
+  const postOrgasmChapter = options.postOrgasmChapter ?? 5;
+  if (options.chapter === revealChapter) return stateFromAssets(assets, "reveal");
+  if (options.chapter >= postOrgasmChapter) return stateFromAssets(assets, "post-orgasm");
   return undefined;
 }
