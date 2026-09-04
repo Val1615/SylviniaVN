@@ -15,7 +15,8 @@
     "test:act-one": "node scripts/validate-act-one.mjs",
     "test:lineva": "node scripts/validate-lineva-refactor.mjs",
     "test:allenna": "node scripts/validate-allenna-refactor.mjs",
-    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one && npm run test:lineva && npm run test:allenna"
+    "test:cross-quests": "node scripts/validate-cross-quests.mjs",
+    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one && npm run test:lineva && npm run test:allenna && npm run test:cross-quests"
   },
   "dependencies": {
     "react": "19.2.6",
