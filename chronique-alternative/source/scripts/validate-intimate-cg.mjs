@@ -79,6 +79,19 @@ try {
   assert.equal(group("explicite", "ending", 7)?.phase, "post-orgasm", "duo : post-orgasm pendant le dénouement");
   assert.equal(group("explicite", "done", 7)?.phase, "post-orgasm", "duo : post-orgasm jusqu’au bouton final");
 
+  const manualGroup = (chapter) => cg.groupIntimateCgState({
+    pairId: "group-date-allenna-lineva-home",
+    mode: "explicite",
+    step: "direction-lines",
+    chapter,
+    revealChapter: 4,
+    postOrgasmChapter: 11,
+  });
+  assert.equal(manualGroup(3), undefined, "trio manuel : reveal trop précoce");
+  assert.equal(manualGroup(4)?.phase, "reveal", "trio manuel : reveal au chapitre propre à la route");
+  assert.equal(manualGroup(10), undefined, "trio manuel : retour aux sprites jusqu’au dernier climax");
+  assert.equal(manualGroup(11)?.phase, "post-orgasm", "trio manuel : post-orgasm seulement après le seuil déclaré");
+
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`intimacy-sprite/, "solo : la CG doit remplacer le sprite");
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className="group-intimacy-sprites"/, "duo : la CG doit remplacer tous les sprites");
   assert.match(pageSource, /data-intimacy-cg=\{cg\.phase\}/, "la phase CG doit rester inspectable en test visuel");

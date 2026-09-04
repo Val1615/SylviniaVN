@@ -57,21 +57,25 @@ try {
 
   const linevaIntimacy = readFileSync(resolve(root, "src/lineva-date-intimacy.ts"), "utf8");
   const allennaIntimacy = readFileSync(resolve(root, "src/allenna-date-intimacy.ts"), "utf8");
-  const groupDates = readFileSync(resolve(root, "src/group-dates.ts"), "utf8");
-  const linevaAllennaGroup = groupDates.slice(groupDates.indexOf('"group-date-allenna-lineva-training": {'), groupDates.indexOf("function contextualLinevaAllennaPair"));
-  const protectionLanguage = /\bprotections?\b|\bprotégés?\b|\bprotégées?\b/i;
+  const linevaAllennaGroup = [
+    "lineva-allenna-training-intimacy.ts",
+    "lineva-allenna-basin-intimacy.ts",
+    "lineva-allenna-home-intimacy.ts",
+  ].map((file) => readFileSync(resolve(root, "src", file), "utf8")).join("\n");
+  const contraceptiveLanguage = /\b(?:préservatifs?|contracepti\w*|prophylacti\w*|se protéger avant|protection intime|protection contre une grossesse)\b/i;
   for (const intimateText of [linevaIntimacy, allennaIntimacy, linevaAllennaGroup]) {
-    assert.doesNotMatch(intimateText, protectionLanguage);
+    assert.doesNotMatch(intimateText, contraceptiveLanguage);
   }
   for (const pairId of ["group-date-allenna-lineva-training", "group-date-allenna-lineva-basin", "group-date-allenna-lineva-home"]) {
     for (const sex of ["femme", "homme", "intersexe"]) {
-      const generated = JSON.stringify(group.groupIntimacyRoutes(pairId, sex));
-      assert.doesNotMatch(generated, protectionLanguage);
-      if (pairId !== "group-date-allenna-lineva-training") assert.doesNotMatch(generated, /distanceent|habitudeent|d’une chiquenaude/);
+      const rendered = JSON.stringify(group.groupIntimacyRoutes(pairId, sex));
+      assert.doesNotMatch(rendered, contraceptiveLanguage);
+      if (pairId !== "group-date-allenna-lineva-training") assert.doesNotMatch(rendered, /distanceent|habitudeent|d’une chiquenaude/);
     }
     const context = group.groupIntimacyContextById(pairId);
     assert.ok(context);
-    assert.doesNotMatch(JSON.stringify(group.groupIntimacyEnding(context)), protectionLanguage);
+    assert.deepEqual(group.groupIntimacyOpening(context), []);
+    assert.deepEqual(group.groupIntimacyEnding(context), []);
   }
 
   const shapeSignatures = new Set();
