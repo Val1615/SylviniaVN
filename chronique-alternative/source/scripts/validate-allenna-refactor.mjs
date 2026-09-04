@@ -73,8 +73,10 @@ try {
     entries.forEach((entry) => Object.values(entry.chapters).forEach((chapters) => assert.ok(chapters.length >= 8)));
   }
 
-  const duo = groups.GROUP_DATES.find((date) => date.id === "group-date-allenna-lineva");
-  assert.deepEqual(duo.requiredFlags, ["story-allenna-lineva-met"]);
+  const duoDates = groups.GROUP_DATES.filter((date) => date.characters.includes("allenna") && date.characters.includes("lineva"));
+  assert.deepEqual(duoDates.map((date) => date.title), ["Deux contre un", "Akuhn’Nabad et le bassin caché"]);
+  assert.ok(duoDates.every((date) => date.requiredFlags.includes("cross-la-public-dates-unlocked") && date.minDesire === 0 && date.intimacyMinDesire === 25));
+  assert.equal(groups.HOME_GROUP_INTIMACY_DATES.find((date) => date.id === "group-date-allenna-lineva-home")?.title, "Rien au programme");
   assert.match(pageSource, /contentBranchAllowed\(game\.flags, date\).*date\.characters\.every/s);
   assert.doesNotMatch([gameSource, dateSource, homeSource].join("\n"), /protagoniste/iu);
   assert.doesNotMatch([gameSource.slice(gameSource.indexOf('routeScene("allenna", 0'), gameSource.indexOf("// DRAVEN")), dateSource.slice(dateSource.indexOf('id: "date-allenna-field"'), dateSource.indexOf('id: "date-tia-ballroom"'))].join("\n"), /—/u);

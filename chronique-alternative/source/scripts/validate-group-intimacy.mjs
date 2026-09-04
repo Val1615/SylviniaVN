@@ -36,7 +36,7 @@ try {
 }
 
 const report = catalog.validateGroupIntimacyCatalog();
-const expected = { pairs: 8, combinations: 24, routes: 72, chapters: 2304, dates: 8, games: 8 };
+const expected = { pairs: 10, combinations: 30, routes: 90, chapters: 2880, dates: 9, games: 10 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }
@@ -60,7 +60,7 @@ const gameLines = Object.entries(catalog.GROUP_INTIMACY_GAMES).flatMap(([gameId,
   ]),
   ...Object.values(game.results).flat().map((line) => `${gameId} — ${line.text}`),
 ]);
-const openingLines = catalog.GROUP_DATES.flatMap((date) => [
+const openingLines = [...catalog.GROUP_DATES, ...catalog.HOME_GROUP_INTIMACY_DATES].flatMap((date) => [
   ...catalog.groupIntimacyOpening(date),
   ...catalog.groupIntimacyEnding(date),
 ].map((line) => `${date.id} — ${line.text}`));
@@ -90,11 +90,11 @@ if (physicalChapters.some((chapter) => !chapter || chapter.length < 4 || !chapte
   throw new Error("Chaque route explicite à trois doit contenir sa propre position, des dialogues et une réaction.");
 }
 const physicalSignatures = physicalChapters.map((chapter) => chapter.map((line) => `${line.speaker}:${line.text}`).join("\n"));
-if (new Set(physicalSignatures).size !== 72) throw new Error("Les 72 embranchements physiques à trois doivent tous être uniques.");
+if (new Set(physicalSignatures).size !== physicalSignatures.length) throw new Error("Les embranchements physiques à trois doivent tous être uniques.");
 const physicalLines = physicalChapters.flat().map((line) => line.text.trim());
 if (new Set(physicalLines).size !== physicalLines.length) {
   const repeated = [...new Set(physicalLines.filter((line, index) => physicalLines.indexOf(line) !== index))];
   throw new Error(`Une ligne physique à trois est répétée entre deux embranchements :\n${repeated.slice(0, 12).join("\n")}`);
 }
 
-console.log(`[Intimité à trois] ${report.pairs} duos · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${report.games} mini-jeux · ${physicalSignatures.length} embranchements physiques uniques validés.`);
+console.log(`[Intimité à trois] ${report.pairs} contextes · ${report.combinations} combinaisons · ${report.routes} routes · ${report.chapters} séquences · ${report.games} mini-jeux · ${physicalSignatures.length} embranchements physiques uniques validés.`);
