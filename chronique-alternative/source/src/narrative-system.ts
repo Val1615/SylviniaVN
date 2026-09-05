@@ -1,4 +1,5 @@
 import type { DialogueLine } from "./game-data";
+import { resolveSpriteMood } from "./sprite-system";
 
 export type NarrativeKind = "intro" | "story" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation";
 
@@ -15,7 +16,6 @@ export type NarrativeContext = {
 
 type VoiceTexture = {
   name: string;
-  moods: string[];
   gestures: string[];
   invitations: string[];
   reflections: string[];
@@ -37,10 +37,9 @@ export const CHARACTER_NAMES: Record<string, string> = {
   tia: "Tia",
 };
 
-const VOICES: Record<string, VoiceTexture> = {
+export const VOICES: Record<string, VoiceTexture> = {
   hylee: {
     name: "Hylee",
-    moods: ["soft", "teasing", "surprised", "determined", "soft", "sad"],
     gestures: [
       "Hylee ramène une mèche blanche derrière son oreille, puis renonce à dissimuler le léger tremblement de ses doigts.",
       "Un fil de givre court sur sa manche avant de fondre ; elle le regarde disparaître comme on vérifie qu’une peur est restée sous contrôle.",
@@ -67,7 +66,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   remerii: {
     name: "Remerii",
-    moods: ["strict", "calm", "smirk", "neutral", "calm", "sad"],
     gestures: [
       "Remerii aligne machinalement deux objets, s’en aperçoit et laisse volontairement le second de travers.",
       "Son regard vous examine avec précision, puis s’adoucit lorsqu’elle comprend que vous ne cherchez pas à deviner la réponse attendue.",
@@ -94,7 +92,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   iriana: {
     name: "Iriana",
-    moods: ["stern", "calm", "smirk", "troubled", "neutral", "calm"],
     gestures: [
       "Iriana vérifie d’un regard que personne ne réclame son attention, puis relâche cette posture droite que la cour prend pour son état naturel.",
       "Sa main monte vers l’endroit où reposerait une couronne, s’arrête à mi-chemin et redescend avec une lenteur presque soulagée.",
@@ -121,7 +118,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   tia: {
     name: "Tia",
-    moods: ["neutral", "thinking", "stern", "troubled", "smile", "angry"],
     gestures: [
       "Tia replace un document au millimètre, puis laisse volontairement le suivant de travers comme si cette irrégularité exigeait davantage de courage qu’un décret.",
       "Son regard vérifie portes, gardes et témoins avant de revenir vers vous ; la femme n’apparaît jamais sans négocier avec l’institution.",
@@ -148,7 +144,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   valurn: {
     name: "Valurn",
-    moods: ["amused", "charming", "away", "surprised", "neutral", "annoyed"],
     gestures: [
       "Valurn fait tourner une pièce entre ses doigts ; elle s’immobilise lorsqu’il réalise que sa plaisanterie ne suffira pas à détourner votre attention.",
       "Son sourire gagne d’abord ses lèvres, puis hésite avant d’atteindre ses yeux — comme s’il cherchait encore la sortie la plus proche.",
@@ -175,7 +170,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   naiah: {
     name: "Naïah",
-    moods: ["smirk", "thinking", "laugh", "neutral", "sad", "angry"],
     gestures: [
       "La brume autour de Naïah esquisse une forme, puis se défait lorsqu’elle décide de ne pas laisser sa magie parler avant elle.",
       "Son sourire semble annoncer une farce ; son regard, lui, demeure immobile et attend une réponse qu’elle ne contrôlera pas.",
@@ -202,7 +196,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   lineva: {
     name: "Lineva",
-    moods: ["determined", "stern", "thoughtful", "smirk", "teary", "sad"],
     gestures: [
       "Lineva vérifie machinalement une sortie, une fenêtre et l’état de votre équipement avant d’accepter que rien n’exige son intervention immédiate.",
       "Ses épaules restent droites, mais ses mains cessent enfin de chercher un rapport, une arme ou une tâche à distribuer.",
@@ -229,7 +222,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   saidin: {
     name: "Saidin",
-    moods: ["mysterious", "thinking", "surprised", "neutral", "sad", "stern"],
     gestures: [
       "Le regard de Saidin se trouble comme s’il contemplait plusieurs réponses, puis redevient net lorsqu’il choisit de n’en suivre aucune avant la vôtre.",
       "Il retourne sa montre contre sa paume afin qu’aucune aiguille ne transforme cet instant en compte à rebours.",
@@ -256,7 +248,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   bellirith: {
     name: "Bellirith",
-    moods: ["seductive", "smirk", "teasing", "thoughtful", "cold", "angry"],
     gestures: [
       "Bellirith réduit volontairement l’éclat de son aura ; son assurance demeure, mais rien ne pousse désormais votre regard à rester sur elle.",
       "Elle avance une main, paume ouverte, puis attend avant de franchir le dernier espace que son charme aurait autrefois ignoré.",
@@ -283,7 +274,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   amanea: {
     name: "Amanea",
-    moods: ["neutral", "away", "thinking", "sad", "smile", "rictus", "angry", "menacing"],
     gestures: [
       "Amanea pose sa couronne sur la table ; sans ce poids familier, son silence paraît tout à coup plus personnel que politique.",
       "Elle redresse le menton comme devant une cour, puis relâche volontairement cette posture lorsqu’elle se souvient qu’aucun sujet n’assiste à votre échange.",
@@ -310,7 +300,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   allenna: {
     name: "Allenna",
-    moods: ["neutral", "thinking", "angry", "troubled", "smile", "sad", "threatening"],
     gestures: [
       "Allenna vérifie par réflexe la sortie, votre posture et l’état de ses fioles avant d’accepter qu’aucune urgence n’exige sa main immédiatement.",
       "Elle retire un gantelet, observe ses doigts nus comme un équipement inhabituel et choisit de ne pas les cacher de nouveau.",
@@ -337,7 +326,6 @@ const VOICES: Record<string, VoiceTexture> = {
   },
   draven: {
     name: "Draven",
-    moods: ["stern", "gruff", "neutral", "approving", "surprised", "angry"],
     gestures: [
       "Draven vérifie par réflexe l’horizon, les accès et l’état du convoi avant de revenir à une conversation qui ne relève pourtant d’aucun rapport.",
       "Sa grande silhouette se met au garde-à-vous, puis ses épaules retombent lorsqu’il se rappelle qu’il voyage ici comme père et négociateur autant que comme amiral.",
@@ -364,33 +352,24 @@ const VOICES: Record<string, VoiceTexture> = {
   },
 };
 
-function hash(value: string) {
-  let result = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    result ^= value.charCodeAt(index);
-    result = Math.imul(result, 16777619);
-  }
-  return Math.abs(result);
-}
-
-function pick(values: string[], seed: string, offset = 0) {
-  return values[(hash(seed) + offset) % values.length];
-}
-
 export function speakerCharacterIds(speaker: string, cast: string[]) {
   const normalized = speaker.toLocaleLowerCase("fr-FR");
   return cast.filter((id) => normalized.includes((CHARACTER_NAMES[id] || id).toLocaleLowerCase("fr-FR")));
 }
 
-export function moodForCharacter(characterId: string, seed: string, fallback: string) {
-  const moods = VOICES[characterId]?.moods;
-  return moods?.length ? pick(moods, seed) : fallback;
+export function moodForCharacter(characterId: string, _seed: string, fallback: string) {
+  // L’ancienne sélection pseudo-aléatoire pouvait tirer « sad » ou « angry »
+  // sur une réplique heureuse. Une ligne non annotée conserve désormais
+  // l’humeur de sa scène, traduite vers un sprite réellement disponible.
+  return resolveSpriteMood(characterId, fallback, fallback);
 }
 
 function decorate(lines: DialogueLine[], context: NarrativeContext) {
-  return lines.map((line, index) => {
+  return lines.map((line) => {
     const active = speakerCharacterIds(line.speaker, context.cast)[0];
-    return active ? { ...line, mood: line.mood || moodForCharacter(active, `${context.sceneId}-${context.phase}-${index}`, context.baseMood) } : line;
+    return active
+      ? { ...line, mood: resolveSpriteMood(active, line.mood || context.baseMood, context.baseMood) }
+      : line;
   });
 }
 

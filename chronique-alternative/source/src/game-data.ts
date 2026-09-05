@@ -281,7 +281,7 @@ export const CHARACTERS: CharacterData[] = [
     ],
   },
   {
-    id: "lineva", name: "Lineva", role: "Commandante de Forthaven", ageNote: "Adulte", portrait: "/assets/portraits/lineva.jpg", color: "#6db6dc", unlockDay: 5, defaultMood: "determined",
+    id: "lineva", name: "Lineva", role: "Commandante de Forthaven", ageNote: "Adulte", portrait: "/assets/portraits/lineva.jpg", color: "#6db6dc", unlockDay: 5, defaultMood: "thoughtful",
     tagline: "Elle commande la place laissée vide et compte chaque personne que Forthaven ramène.",
     bio: "Lineva tient Forthaven contre les morts-vivants pendant que Draven cherche de l’aide sur le continent. Son autorité vient du terrain, des équipages et des décisions qu’elle assume, jusque dans les reculs qu’elle ordonne pour sauver celles et ceux qui peuvent encore l’être.",
     wound: "Comprendre le départ de Draven et lui en vouloir tout de même, avec la crainte très concrète qu’il ne revienne pas.",

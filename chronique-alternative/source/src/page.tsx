@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- sprites and map assets use dynamic canon paths */
 
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import type { SyntheticEvent } from "react";
 import {
   CHARACTERS,
   GIFTS,
@@ -89,6 +90,7 @@ import {
   type AlphaHuntState,
 } from "./alpha-hunt";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
+import { spritePath } from "./sprite-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
 import { ACT_ONE_SCENE_ORDER, CAMPAIGN_SCENES, campaignSceneById, campaignSceneDialogue, campaignSceneOutro, type CampaignScene } from "./campaign-scenes";
 import { ROUTE_CONTEXTUAL_CHOICES } from "./route-contextual-choices";
@@ -1675,6 +1677,13 @@ function ambientPromptLines(prompt: string, characterName: string): DialogueLine
 function backgroundUrl(background: string) {
   if (/^(?:\/|\.{1,2}\/|assets\/|https?:\/\/|data:)/iu.test(background)) return background;
   return `/assets/backgrounds/${background}.webp`;
+}
+
+function recoverMissingSprite(event: SyntheticEvent<HTMLImageElement>, portrait: string) {
+  const image = event.currentTarget;
+  if (image.dataset.spriteFallback === "portrait") return;
+  image.dataset.spriteFallback = "portrait";
+  image.src = portrait;
 }
 
 function routeBackground(scene: RouteScene) {
@@ -4002,7 +4011,14 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
     <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
-    <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => { const character = CHARACTERS.find((entry) => entry.id === id); if (!character) return null; const active = activeIds.includes(id); const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined; const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, character.defaultMood)) : character.defaultMood; return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${id}/${mood}.webp`} alt={character.name} />; })}</div>
+    <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => {
+      const character = CHARACTERS.find((entry) => entry.id === id);
+      if (!character) return null;
+      const active = activeIds.includes(id);
+      const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined;
+      const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, dialogue.scene.mood)) : character.defaultMood;
+      return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={spritePath(id, mood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} />;
+    })}</div>
     <div className="dialogue-gradient" />
     {!choosing ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={onAdvance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length} · Cliquer pour continuer</small>
@@ -4454,7 +4470,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [approachChoices] = useState(() => shuffledChoices(modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches, `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const [directionChoices] = useState(() => shuffledChoices(modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   const currentLine = lines[lineIndex];
-  const characterSpeaking = currentLine?.speaker === character.name;
+  const characterSpeaking = currentLine ? speakerCharacterIds(currentLine.speaker, [character.id]).includes(character.id) : false;
   const spriteMood = characterSpeaking
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
@@ -4527,7 +4543,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
-    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>}
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
@@ -4559,8 +4575,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const [attunementScore, setAttunementScore] = useState(0);
   const [directionChoices] = useState(() => shuffledChoices(groupIntimacyRoutes(date.id, game.player.sex), `${date.id}:${game.player.sex}:directions:${game.player.name}`));
   const currentLine = lines[lineIndex];
-  const firstSpeaking = currentLine?.speaker === first.name;
-  const secondSpeaking = currentLine?.speaker === second.name;
+  const speakingIds = currentLine ? speakerCharacterIds(currentLine.speaker, [first.id, second.id]) : [];
+  const firstSpeaking = speakingIds.includes(first.id);
+  const secondSpeaking = speakingIds.includes(second.id);
   const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
   const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
 
@@ -4626,8 +4643,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className="group-intimacy-sprites" aria-hidden="true">
-      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${first.id}/${firstMood}.webp`} alt="" /></div>
-      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img src={`/assets/sprites/${second.id}/${secondMood}.webp`} alt="" /></div>
+      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img src={spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => recoverMissingSprite(event, first.portrait)} alt="" /></div>
+      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img src={spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => recoverMissingSprite(event, second.portrait)} alt="" /></div>
     </div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
@@ -4849,7 +4866,7 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
   };
   return <section className="home-date-scene" style={{ backgroundImage: `linear-gradient(180deg,rgba(5,6,12,.14),rgba(5,6,12,.72)),url(${property.background})` }}>
     <div className="scene-top home-date-scene-top"><div><p className="eyebrow">Rendez-vous dans votre logis · {property.name}</p><h2>{profile.title}</h2><p>{profile.description}</p></div><button onClick={onClose}>Quitter le rendez-vous</button></div>
-    <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
+    <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>
     <div className="dialogue-gradient" />
     {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
     {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => <button key={id} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{option.detail}</small></div></button>)}</div>}
@@ -4889,7 +4906,7 @@ function HomePairDateModal({ pairId, game, onFinish, onClose }: { pairId: string
   const chooseAnswer = (option: HomePairDateProfile["rounds"][number]["options"][number]) => { setScore(score + option.score); setAnswerLines(option.response); setLineIndex(0); setPhase("answer"); };
   return <section className="home-date-scene" style={{ backgroundImage: `linear-gradient(180deg,rgba(5,6,12,.14),rgba(5,6,12,.72)),url(${property.background})` }}>
     <div className="scene-top home-date-scene-top"><div><p className="eyebrow">Rendez-vous à trois dans votre logis · {property.name}</p><h2>{pair.title}</h2><p>{pair.description}</p></div><button onClick={onClose}>Quitter le rendez-vous</button></div>
-    <div className={`scene-cast cast-${characters.length}`}>{characters.map((character, index) => { const active = activeIds.includes(character.id); const mood = active && displayedLine ? (displayedLine.mood || moodForCharacter(character.id, `home-pair-${pair.id}-${phase}-${lineIndex}-${character.id}`, character.defaultMood)) : character.defaultMood; return <img key={character.id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={`/assets/sprites/${character.id}/${mood}.webp`} alt={character.name} />; })}</div>
+    <div className={`scene-cast cast-${characters.length}`}>{characters.map((character, index) => { const active = activeIds.includes(character.id); const mood = active && displayedLine ? (displayedLine.mood || moodForCharacter(character.id, `home-pair-${pair.id}-${phase}-${lineIndex}-${character.id}`, character.defaultMood)) : character.defaultMood; return <img key={character.id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={spritePath(character.id, mood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} />; })}</div>
     <div className="dialogue-gradient" />
     {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{displayedLine.speaker === "{player}" ? game.player.name : displayedLine.speaker}</span><p>{replacePlayer(displayedLine.text, game.player)}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
     {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Dynamique partagée</p><p className="choice-question">Quel ton donner à cette visite ?</p></div>{pair.tones.map((id, index) => <button key={id} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{id === "amical" ? "Complicité amicale" : id === "amoureux" ? "Tendresse à trois" : "Rivalité et désir"}</strong><small>Une variante écrite pour cette combinaison précise.</small></div></button>)}</div>}
@@ -4922,7 +4939,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
       return <button role="gridcell" title={alphaCellName(cell)} aria-label={`${alphaCellName(cell)}${isDuo ? ", Lineva et Allenna" : ""}${patrols.length ? ", patrouille" : ""}${alpha ? ", Alpha" : ""}`} disabled={!usable || state.phase === "failure" || state.phase === "victory"} className={`${row === 0 ? "high-city" : ""} ${inRange ? "in-range" : "out-range"} ${movable ? "movable" : ""} ${alpha ? "alpha-cell" : ""} ${isDuo ? "duo-cell" : ""} ${patrols.length ? "patrol-cell" : ""}`} key={key} onClick={() => onCell(cell)}>{alpha && <span className="alpha-mark">◆</span>}{patrols.length > 0 && <span className="patrol-mark">☠</span>}{isDuo && <span className="duo-mark"><img src="/assets/portraits/lineva.jpg" alt="" /><img src="/assets/portraits/allenna.jpg" alt="" /></span>}</button>;
     }))}</div></div>
     <div className="alpha-objective"><strong>{state.phase === "observation" ? "Sondez ou frappez une case éclairée." : state.phase === "movement" || state.phase === "localized" ? "Déplacez le duo d’une ou deux cases." : state.phase === "failure" ? "Deux accrochages : la tentative doit être reprise." : "La convergence est brisée."}</strong>{alphaAdjacent(state) && state.phase !== "victory" && <button className="primary-action" onClick={() => onChange(launchAlphaAssault(state))}>Déclencher l’assaut final</button>}{state.phase === "failure" && <button className="primary-action" onClick={() => onChange(retryAlphaHunt(state))}>Reprendre la même bataille</button>}{state.phase === "victory" && <button className="primary-action" onClick={onFinish}>Revenir auprès des défenseurs</button>}</div>
-    <aside className="alpha-vn-notices" aria-live="polite">{state.notices.slice(-3).map((notice) => <div key={notice.id}><img src={`/assets/sprites/${notice.speaker}/${notice.speaker === "lineva" ? "determined" : "stern"}.webp`} alt="" /><span><b>{notice.speaker === "lineva" ? "Lineva" : "Allenna"}</b>{notice.text}</span></div>)}</aside>
+    <aside className="alpha-vn-notices" aria-live="polite">{state.notices.slice(-3).map((notice) => { const character = CHARACTERS.find((entry) => entry.id === notice.speaker); return <div key={notice.id}><img src={spritePath(notice.speaker, notice.speaker === "lineva" ? "determined" : "stern", character?.defaultMood)} onError={(event) => character && recoverMissingSprite(event, character.portrait)} alt="" /><span><b>{notice.speaker === "lineva" ? "Lineva" : "Allenna"}</b>{notice.text}</span></div>; })}</aside>
   </section></div>;
 }
 
