@@ -153,9 +153,11 @@ import {
   advanceClock,
   contentBranchAllowed,
   injectedChoiceKind,
+  isObsoletePermanentFriendshipFlag,
   routeChoiceCompletes,
   travelDurationLabel,
   travelPeriodCost,
+  withoutObsoletePermanentFriendshipFlags,
 } from "./gameplay-rules";
 
 type Screen = "title" | "creator" | "game";
@@ -214,7 +216,7 @@ type ReceivedInvitation = {
 };
 
 type GameState = {
-  version: 15;
+  version: 16;
   player: Player;
   day: number;
   period: number;
@@ -463,7 +465,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 15,
+    version: 16,
     player,
     day: 1,
     period: 0,
@@ -532,7 +534,7 @@ function hydrateGame(raw: unknown): GameState | null {
   }));
   const obsoleteRoute = (id: string) => legacyTimeline && /^(iriana|valurn|bellirith|amanea|draven)-[0-4]$/.test(id);
   const obsoleteFlag = (flag: string) => legacyTimeline && (
-    flag === "main-story-complete" || flag === "amanea-platonic" ||
+    flag === "main-story-complete" ||
     /^(story-(amanea|draven|pact|allenna|naiah)|social:(amanea-family-truth|draven-lineva-letter|medig-window)|date(-intimate)?:date-amanea)/.test(flag)
   );
   const previousCampaignIds = new Set([
@@ -544,7 +546,7 @@ function hydrateGame(raw: unknown): GameState | null {
   ]);
   const preserveCompletedCampaign = savedVersion < 14 && (value.flags || []).includes("main-story-complete");
   const migratedFlags = unique([
-    ...(value.flags || []).filter((flag) => !obsoleteFlag(flag)),
+    ...(value.flags || []).filter((flag) => !obsoleteFlag(flag) && !isObsoletePermanentFriendshipFlag(flag)),
     ...(savedVersion < 14 ? ["story-saidin-met", "story-phoenix-token", "story-route-algratal"] : []),
     ...(preserveCompletedCampaign ? ["main-story-act-1-complete", "amanea-letter-to-tia", "story-rocky-portal-open", "story-empire-obscurci-rupture"] : []),
   ]);
@@ -553,9 +555,11 @@ function hydrateGame(raw: unknown): GameState | null {
     ...migratedRouteHistory,
     ...(preserveCompletedCampaign ? CAMPAIGN_SCENES.map((scene) => scene.id) : []),
   ]);
+  const friendshipLockJournal = /^(?:Lien avec .+ · amitié choisie après .+\.|Lineva & Allenna · complicité à trois explicitement platonique\.)$/u;
+  const cleanedJournal = (value.journal || fresh.journal).filter((entry) => !friendshipLockJournal.test(entry));
   const migratedJournal = legacyTimeline
-    ? ["Chronologie recalée : Amanea règne encore, Draven voyage vers l’Empire et le rassemblement d’Iriana n’a jamais eu lieu.", ...(value.journal || fresh.journal)]
-    : (value.journal || fresh.journal);
+    ? ["Chronologie recalée : Amanea règne encore, Draven voyage vers l’Empire et le rassemblement d’Iriana n’a jamais eu lieu.", ...cleanedJournal]
+    : cleanedJournal;
   const rememberedSpots = unique([
     spot,
     ...Object.values(value.sceneMemories || {}),
@@ -569,7 +573,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 15,
+    version: 16,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -985,7 +989,6 @@ function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
 }
 
 function publicDateUnlocked(game: GameState, date: DateScene): boolean {
-  if (game.flags.includes(`${date.character}-platonic`)) return false;
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[date.character];
   return relation.stage >= date.unlockStage
@@ -1456,231 +1459,6 @@ function impactText(choice: ChoiceData) {
   return values.join(" · ");
 }
 
-const PLATONIC_CONTINUATIONS: Record<string, { title: string; intro: DialogueLine[]; choice: string; response: DialogueLine[] }> = {
-  hylee: {
-    title: "Une place qui ne disparaît pas",
-    intro: [
-      { speaker: "Narration", text: "Hylee vous retrouve avec deux tartelettes, une couverture roulée sous le bras et aucune tentative de revenir sur votre réponse. Elle pose le goûter entre vous, puis choisit délibérément une place assez proche pour ne pas transformer sa peine en distance." },
-      { speaker: "Hylee", text: "J’ai répété trois discours très adultes. Ils étaient tous affreux. Alors je vais faire plus simple : ça m’a fait mal, et j’ai quand même envie que tu sois dans ma vie." },
-      { speaker: "Narration", text: "Elle brise une tartelette en deux. Les morceaux sont manifestement inégaux ; Hylee vous donne le plus grand avant de remarquer son propre geste." },
-      { speaker: "Hylee", text: "Je ne veux pas passer chaque promenade à me demander si ton amitié cache un ‘peut-être plus tard’. Dis-moi ce que nous pouvons vraiment garder." },
-    ],
-    choice: "Lui proposer une amitié tendre, sans attente cachée, et commencer par partager la tartelette.",
-    response: [
-      { speaker: "{player}", text: "Je veux garder nos promenades, nos bêtises et les silences aussi. Pas comme une salle d’attente. Comme notre amitié." },
-      { speaker: "Narration", text: "Hylee regarde longuement le morceau entre ses doigts, puis vous vole une baie sur le vôtre." },
-      { speaker: "Hylee", text: "Bien. Première règle de notre amitié définitive : je peux être triste sans que tu te sentes obligé·e de me consoler avec de faux espoirs." },
-      { speaker: "{player}", text: "Et la seconde ?" },
-      { speaker: "Hylee", text: "Les parts sont égales." },
-      { speaker: "Narration", text: "Elle compare les deux morceaux, rougit, puis mord ostensiblement dans le plus petit comme si elle pouvait détruire la preuve." },
-      { speaker: "Hylee", text: "À partir de la prochaine tartelette. Celle-ci relève d’une ancienne législation." },
-      { speaker: "Narration", text: "Son rire n’efface pas la déception. Il lui rend seulement une place qui ne dépend plus de votre réponse amoureuse." },
-    ],
-  },
-  remerii: {
-    title: "La mesure qui demeure",
-    intro: [
-      { speaker: "Narration", text: "Remerii a préparé deux tasses, un plateau de biscuits et aucun document intitulé ‘réorganisation de notre relation’. Le mérite de ce dernier détail lui coûte visiblement." },
-      { speaker: "Remerii", text: "J’ai cessé de traiter votre réponse comme une erreur dont une meilleure argumentation pourrait venir à bout." },
-      { speaker: "Narration", text: "Elle pousse votre tasse jusqu’à sa place habituelle. Son geste est précis ; le biscuit posé de travers à côté ne l’est pas." },
-      { speaker: "Remerii", text: "Je ne souhaite ni diminuer notre proximité pour protéger mon orgueil, ni l’entretenir dans l’espoir que vous révisiez votre conclusion. Les deux méthodes seraient indignes — quoique la seconde soit intellectuellement tentante." },
-    ],
-    choice: "Définir avec elle une amitié entière, sans laisser le désir devenir un argument différé.",
-    response: [
-      { speaker: "{player}", text: "Je ne changerai pas de réponse. Je ne veux pas non plus perdre la personne avec qui je peux rater une mesure sans être abandonné·e au premier silence." },
-      { speaker: "Remerii", text: "Votre métaphore musicale manque de précision." },
-      { speaker: "Narration", text: "Elle prend le biscuit de travers, le casse proprement et vous en tend la moitié." },
-      { speaker: "Remerii", text: "Elle demeure néanmoins recevable. Nous conserverons les conversations, les désaccords et les soirées où rien n’exige de conclusion romantique." },
-      { speaker: "{player}", text: "Vous venez encore d’établir un protocole." },
-      { speaker: "Remerii", text: "Une liste de possibilités. La nuance est fondamentale et je suis prête à la défendre beaucoup trop longtemps." },
-      { speaker: "Narration", text: "Sa main reste près de la vôtre sur la table, sans chercher un contact qu’elle transformerait ensuite en preuve." },
-      { speaker: "Remerii", text: "Restez pour le thé. Voilà une invitation, pas une négociation." },
-    ],
-  },
-  iriana: {
-    title: "Une confiance sans couronne",
-    intro: [
-      { speaker: "Narration", text: "Iriana vous accorde une heure privée qui n’est ni une audience ni un rendez-vous. Sur la table, deux dossiers attendent ; entre eux, l’oiseau mécanique du marché chante une note atroce." },
-      { speaker: "Iriana", text: "Votre refus m’a atteinte. J’ai envisagé quatre façons élégantes de prétendre le contraire et une cinquième où je vous affectais à une frontière très lointaine." },
-      { speaker: "Narration", text: "Le coin de sa bouche bouge. Elle remonte l’oiseau et l’écoute rater la note suivante avec une patience nouvelle." },
-      { speaker: "Iriana", text: "Aucune n’aurait changé les faits. Vous ne me devez pas un désir parce que je vous ai offert ma confiance. Reste à savoir si nous savons conserver la seconde sans nourrir l’attente du premier." },
-    ],
-    choice: "Lui offrir une loyauté privée qui conserve le désaccord et ne réclame aucun titre.",
-    response: [
-      { speaker: "{player}", text: "Je resterai la personne qui vous dit quand vous manipulez une pièce — y compris quand cette pièce, c’est moi." },
-      { speaker: "Iriana", text: "Une fonction d’une insolence remarquable. Elle vous convient." },
-      { speaker: "Narration", text: "Elle fait glisser le premier dossier vers vous et garde le second fermé." },
-      { speaker: "Iriana", text: "Celui-ci concerne l’Empire. L’autre concerne ma famille et attendra que j’aie réellement envie de l’ouvrir. Vous pouvez me demander lequel je vous confie ; vous ne déciderez plus à partir de mon silence." },
-      { speaker: "{player}", text: "Et notre relation ?" },
-      { speaker: "Iriana", text: "Elle n’aura pas de titre. La cour en sera malade de frustration." },
-      { speaker: "Narration", text: "L’oiseau chante faux. Iriana rit sans dissimuler que la réponse lui coûte encore." },
-      { speaker: "Iriana", text: "Asseyez-vous. Nous avons un Empire à contrarier en amis." },
-    ],
-  },
-  valurn: {
-    title: "Une partie sans mise cachée",
-    intro: [
-      { speaker: "Narration", text: "Valurn étale un jeu dont il a retiré toutes les cartes de séduction. Il affirme avoir dû brûler la moitié du paquet et deux excellentes répliques." },
-      { speaker: "Valurn", text: "Je confirme que mon ego a survécu. Il exige toutefois une pension, des fleurs et le droit de raconter que c’est moi qui vous ai refusé·e." },
-      { speaker: "Narration", text: "Il vous distribue cinq cartes sans en regarder une seule. La plaisanterie tient ; sa main, un peu moins." },
-      { speaker: "Valurn", text: "Je sais transformer chaque lien en mise avant que quelqu’un d’autre puisse fixer le prix. Une amitié sans dette me laisse scandaleusement peu de défenses." },
-    ],
-    choice: "Jouer une partie où l’unique enjeu consiste à revenir librement pour la revanche.",
-    response: [
-      { speaker: "{player}", text: "Si je gagne, vous revenez pour une revanche. Si vous gagnez, je reviens. Aucun autre paiement." },
-      { speaker: "Valurn", text: "Un contrat qui condamne les deux parties à choisir encore. Vous êtes plus dangereux·se que votre réputation." },
-      { speaker: "Narration", text: "Il abat une carte, triche d’une manière volontairement visible et attend votre protestation avec un sourire enfin plus naturel." },
-      { speaker: "{player}", text: "Cette carte était dans votre manche." },
-      { speaker: "Valurn", text: "C’est là que je conserve mes sentiments les plus présentables." },
-      { speaker: "Narration", text: "Vous lui rendez sa carte et remportez la manche sans demander ce qu’elle cachait." },
-      { speaker: "Valurn", text: "Aucune conquête, aucun lit promis, aucune dette. Seulement une alliance choisie et des tricheries parfaitement amicales." },
-      { speaker: "Narration", text: "Il mélange déjà pour la revanche. Cette fois, la porte reste derrière son dos." },
-    ],
-  },
-  naiah: {
-    title: "Le chemin qui reste ouvert",
-    intro: [
-      { speaker: "Narration", text: "Naïah a déplacé les sentiers afin qu’aucun ne conduise par accident à un décor romantique. La clairière ne contient ni lune géante, ni doubles amoureux, ni violons invisibles — seulement un panier et une couverture de travers." },
-      { speaker: "Naïah", text: "J’ai été triste. Je le suis encore un peu. J’ai transformé ton nez en navet pendant trois nuits pour retrouver mon équilibre émotionnel." },
-      { speaker: "{player}", text: "Dans tes illusions ?" },
-      { speaker: "Naïah", text: "Cela ne regarde pas ton vrai nez. Le point important, c’est que je préfère un chemin vrai à une illusion où tu finirais prisonnier·e." },
-    ],
-    choice: "Lui proposer une amitié assez solide pour supporter sa peine, ses farces et de vraies limites.",
-    response: [
-      { speaker: "{player}", text: "Je reviendrai comme ton ami·e. Je pourrai rire avec toi, te contredire et partir si une farce dépasse ma limite." },
-      { speaker: "Naïah", text: "Tu négocies très mal. Tu aurais pu exiger une immunité contre les crapauds." },
-      { speaker: "Narration", text: "Une petite couronne apparaît au-dessus de votre tête. Naïah la dissipe avant même que vous ayez besoin de protester." },
-      { speaker: "Naïah", text: "Tu vois ? Progrès spectaculaire. J’ai eu une mauvaise idée et je ne l’ai pas menée jusqu’au bout." },
-      { speaker: "{player}", text: "Je suis bouleversé·e." },
-      { speaker: "Naïah", text: "Tu devrais. C’était probablement mon dernier acte de maturité du mois." },
-      { speaker: "Narration", text: "Elle vous tend le panier. À l’intérieur, deux tartelettes reposent sans piège ni illusion." },
-      { speaker: "Naïah", text: "Alors reviens comme toi. Et si j’oublie la différence entre retenir et garder, rappelle-la-moi avant de disparaître." },
-    ],
-  },
-  lineva: {
-    title: "La relève choisie",
-    intro: [
-      { speaker: "Narration", text: "Lineva vous rejoint après la relève avec deux chopes et une manche encore tachée de graisse. Elle n’a préparé ni discours ni mission destinée à rendre votre proximité plus facile à classer." },
-      { speaker: "Lineva", text: "J’ai ajusté mes attentes. Pas ton importance. Je voulais le dire clairement avant qu’on passe six semaines à marcher autour comme deux recrues incapables de lire une carte." },
-      { speaker: "Narration", text: "Elle vous donne la chope la plus pleine, s’en aperçoit et hausse les épaules au lieu de corriger la répartition." },
-      { speaker: "Lineva", text: "Je peux encore déposer l’armure près de toi. Je dois seulement cesser d’attendre qu’un baiser en soit la récompense." },
-    ],
-    choice: "Lui proposer de rester sa relève choisie, son allié·e et son ami·e, sans promesse romantique.",
-    response: [
-      { speaker: "{player}", text: "Tu peux continuer à m’appeler quand la nuit est trop longue. Je viendrai comme ton ami·e, pas comme une dette sentimentale." },
-      { speaker: "Lineva", text: "Bien. Et tu peux m’appeler quand tu as besoin de quelqu’un capable de réparer une porte, tenir un mur ou boire sans faire de discours." },
-      { speaker: "{player}", text: "La troisième compétence paraît douteuse." },
-      { speaker: "Narration", text: "Lineva vide la moitié de sa chope sans reprendre son souffle, puis vous adresse un sourcil levé." },
-      { speaker: "Lineva", text: "Rapport de terrain concluant." },
-      { speaker: "Narration", text: "Vos épaules se touchent contre le parapet. Elle ne s’écarte pas ; elle ne transforme pas non plus le contact en question." },
-      { speaker: "Lineva", text: "Reste jusqu’à la prochaine cloche. Après, on ira graisser la porte sud. L’amitié à Forthaven manque parfois de raffinement." },
-      { speaker: "{player}", text: "Ça tombe bien." },
-    ],
-  },
-  saidin: {
-    title: "Un présent sans branche secrète",
-    intro: [
-      { speaker: "Narration", text: "Saidin a fermé sa montre et retourné les trois sabliers de la pièce contre le mur. Sur la table, une théière fume sans qu’aucun de vous sache depuis combien de temps." },
-      { speaker: "Saidin", text: "Une possibilité s’est close. J’ai eu le réflexe de regarder ce qu’elle aurait contenu, comme on vérifie une chambre après le départ d’un invité." },
-      { speaker: "Narration", text: "Il tapote la montre, puis éloigne sa main. Le regret demeure sans devenir prophétie." },
-      { speaker: "Saidin", text: "Je ne le ferai pas. Votre amitié mérite mieux que d’être comparée à un avenir que vous n’avez pas choisi." },
-    ],
-    choice: "Partager avec lui une amitié vécue au présent, sans consulter les branches refermées.",
-    response: [
-      { speaker: "{player}", text: "Alors ne me dites pas ce que nous aurions pu être. Demandez-moi ce que nous faisons maintenant." },
-      { speaker: "Saidin", text: "Maintenant… le thé a probablement dépassé son meilleur futur." },
-      { speaker: "Narration", text: "Il le goûte, grimace et paraît sincèrement surpris par l’amertume." },
-      { speaker: "{player}", text: "Vous ne l’aviez pas prévu ?" },
-      { speaker: "Saidin", text: "Je m’exerce. L’échec possède un goût très précis." },
-      { speaker: "Narration", text: "Vous recommencez l’infusion ensemble. Saidin mesure l’eau, puis abandonne la cuillère avant la quantité exacte." },
-      { speaker: "Saidin", text: "Restons dans cette minute-ci. Elle ne mène pas où je l’avais imaginé ; elle contient pourtant une personne que je ne souhaite pas perdre." },
-      { speaker: "Narration", text: "La montre demeure fermée jusqu’à ce que les tasses soient vides." },
-    ],
-  },
-  bellirith: {
-    title: "Sans conquête à accomplir",
-    intro: [
-      { speaker: "Narration", text: "Bellirith vient sans charme, dans une chemise simple, et s’installe de biais afin que sa proximité ne ressemble pas à une approche calculée. Ses doigts cherchent pourtant encore une pose séduisante avant de se refermer autour de sa tasse." },
-      { speaker: "Bellirith", text: "J’ai passé trop de temps à croire qu’une proximité devait finir en victoire ou en humiliation. Ton refus a vexé la succube, blessé la femme et profondément ennuyé la comédienne." },
-      { speaker: "Narration", text: "Elle sourit enfin, mais le sourire ne cherche rien à obtenir." },
-      { speaker: "Bellirith", text: "J’aimerais essayer une troisième option. Elle manque de nudité et de mauvaises décisions ; je crains qu’on l’appelle amitié." },
-    ],
-    choice: "Lui offrir une amitié sans charme ni conquête, où la sensualité ne vaut jamais consentement différé.",
-    response: [
-      { speaker: "{player}", text: "Tu pourras plaisanter, séduire pour le plaisir du jeu et parler de tes désirs. Je ne prendrai rien de cela pour une promesse cachée." },
-      { speaker: "Bellirith", text: "Tu m’autorises donc à rester scandaleuse sans craindre que chaque sourire devienne une dette. C’est presque érotique, cette clarté." },
-      { speaker: "{player}", text: "Presque." },
-      { speaker: "Narration", text: "Bellirith porte une main à son cœur avec une indignation magnifique, puis vous lance un coussin." },
-      { speaker: "Bellirith", text: "Cruel·le. Je vais devoir investir dans l’ironie pour compenser mes pertes." },
-      { speaker: "Narration", text: "Elle ramasse le coussin, le garde contre elle et laisse sa tête reposer contre le dossier sans chercher le meilleur angle." },
-      { speaker: "Bellirith", text: "Amis, alors. Assez honnêtes pour ne pas appeler tension ce qui n’est plus une invitation — et assez proches pour ne pas traiter mon désir comme une faute." },
-      { speaker: "{player}", text: "Marché conclu." },
-    ],
-  },
-  amanea: {
-    title: "L’alliance sans chambre secrète",
-    intro: [
-      { speaker: "Narration", text: "Amanea vous reçoit sur la terrasse sans garde. Deux sièges font face à la cité, côte à côte plutôt que séparés par une table d’audience." },
-      { speaker: "Amanea", text: "J’ai envisagé de t’éloigner. Une reine maîtrise mieux une absence qu’un désir refusé." },
-      { speaker: "Narration", text: "Elle retire sa couronne, la pose sur le siège vide derrière elle et vous regarde sans le pouvoir qu’elle aurait pu remettre entre vous." },
-      { speaker: "Amanea", text: "Ce serait lâche. Tu ne seras ni sujet, ni amant·e, ni consolation. Si tu demeures, ce sera comme l’égal·e qui connaît mes contradictions et continue de me répondre." },
-    ],
-    choice: "Rester son égal·e et son ami·e, capable de servir la cité sans obéir à la solitude de sa reine.",
-    response: [
-      { speaker: "{player}", text: "Je resterai. Je te contredirai quand la fin te semblera justifier trop de moyens, et je ne réclamerai aucun accès que tu ne veux pas offrir." },
-      { speaker: "Amanea", text: "Tu décris une présence particulièrement irritante." },
-      { speaker: "{player}", text: "Tu pourrais me bannir." },
-      { speaker: "Amanea", text: "J’y ai pensé. Allenna a fait remarquer que tu reviendrais probablement par une fenêtre moins bien gardée." },
-      { speaker: "Narration", text: "Son rire est bref, grave, presque incrédule d’exister après cette conversation." },
-      { speaker: "Amanea", text: "Alors l’alliance tient. Pas comme la ruine discrète d’un amour, ni comme l’antichambre d’une autre réponse." },
-      { speaker: "Narration", text: "Elle reprend sa couronne mais ne la remet pas. En contrebas, Akuhn’Nabad poursuit sa soirée sans attendre son ordre." },
-      { speaker: "Amanea", text: "Assieds-toi. J’ai besoin de l’avis d’un ami sur une décision que la Reine Noire croit déjà excellente." },
-    ],
-  },
-  tia: {
-    title: "Une audience sans conquête",
-    intro: [
-      { speaker: "Narration", text: "Tia a maintenu l’heure qu’elle vous réservait. La porte reste fermée aux courtisans, mais deux sièges ont été replacés de part et d’autre d’un bureau, distance exacte qui ne promet rien." },
-      { speaker: "Tia", text: "Votre réponse a modifié les termes de cet accès. Elle ne l’a pas annulé." },
-      { speaker: "Narration", text: "Elle ouvre le livre de prières qu’elle vous avait autrefois interdit de toucher, puis le tourne afin que vous puissiez lire la même page." },
-      { speaker: "Tia", text: "Je préfère une présence exacte à une dévotion entretenue par l’ambiguïté. La Lumière n’exige pas que je punisse une vérité parce qu’elle contrarie mon désir." },
-    ],
-    choice: "Accepter sa confiance privée sans adoucir vos désaccords ni lui offrir une dévotion de remplacement.",
-    response: [
-      { speaker: "{player}", text: "Je resterai si je peux encore contester vos jugements, y compris ceux que vous appelez sacrés." },
-      { speaker: "Tia", text: "Vous choisissez toujours la clause la plus pénible." },
-      { speaker: "{player}", text: "Vous pourriez refuser." },
-      { speaker: "Narration", text: "Tia pose un marque-page à l’endroit précis où le texte évoque l’épreuve du doute." },
-      { speaker: "Tia", text: "Je pourrais. Je refuse plutôt de construire une amitié qui ne survivrait qu’à votre silence." },
-      { speaker: "Narration", text: "Elle vous confie le livre. Sa main ne lâche la couverture qu’après s’être assurée que la vôtre la soutient." },
-      { speaker: "Tia", text: "Vous demeurerez un regard privé que je n’ai ni acheté ni conquis. Ne confondez pas cette confiance avec de la douceur." },
-      { speaker: "{player}", text: "Je n’oserais pas." },
-      { speaker: "Tia", text: "Votre ironie est superflue. Gardez-la néanmoins ; elle m’oblige parfois à mieux choisir mes certitudes." },
-    ],
-  },
-  allenna: {
-    title: "La revanche qui reste",
-    intro: [
-      { speaker: "Narration", text: "Allenna a déployé sur la table le jeu de siège de votre dernière soirée. Deux pions attendent dans le même camp, face à une armée manifestement avantagée." },
-      { speaker: "Allenna", text: "Votre réponse n'a changé ni mon jugement ni la confiance que je vous accorde. Elle a modifié les règles de ce lien. J'en prends acte." },
-      { speaker: "Narration", text: "Elle vous tend le pion voisin du sien. La déception existe encore dans sa voix ; elle n'efface pas l'invitation." },
-      { speaker: "Allenna", text: "Je propose une alliance. Strictement amicale, tactiquement solide et révocable si vous trichez mal." },
-    ],
-    choice: "Accepter l'alliance et préparer avec elle une revanche franchement amicale.",
-    response: [
-      { speaker: "{player}", text: "Alliance acceptée. Je garde toutefois le droit de contester votre plan." },
-      { speaker: "Allenna", text: "C'est la raison principale pour laquelle je vous ai donné ce pion." },
-      { speaker: "Narration", text: "Vous ouvrez la première brèche ensemble. Allenna sacrifie une unité, vous volez les provisions et son rire bref transforme la table en champ de bataille parfaitement inoffensif." },
-      { speaker: "{player}", text: "Nous formons une équipe inquiétante." },
-      { speaker: "Allenna", text: "Pour l'adversaire uniquement." },
-      { speaker: "Narration", text: "Elle couche le dernier pion ennemi et laisse les vôtres côte à côte." },
-      { speaker: "Allenna", text: "Confiance maintenue. Et demain, entraînement à l'aube." },
-      { speaker: "{player}", text: "Notre amitié ressemble encore beaucoup à une punition." },
-      { speaker: "Allenna", text: "Alors venez en retard. Je vous offrirai l'occasion de découvrir la différence." },
-    ],
-  },
-};
-
 const INJECTED_CHOICE_AFTERMATH: Record<string, Partial<Record<"misread" | "boundary" | "platonic", DialogueLine[]>>> = {
   hylee: {
     misread: [{ speaker: "Narration", text: "Hylee ramène une mèche derrière son oreille. Le geste lui donne le temps de reprendre sa pensée au point où votre réponse l’avait coupée." }],
@@ -1796,33 +1574,8 @@ function flagsSharedByEveryChoice(choices: ChoiceData[]) {
   return (first.effects.flags || []).filter((flag) => rest.every((choice) => choice.effects.flags?.includes(flag)));
 }
 
-function relationRouteVariant(route: RouteScene, game: GameState) {
-  const continuation = route.intimate && game.flags.includes(`${route.character}-platonic`)
-    ? PLATONIC_CONTINUATIONS[route.character]
-    : undefined;
-  if (!continuation) return { route, sceneId: route.id };
-  const character = CHARACTERS.find((entry) => entry.id === route.character);
-  const variant: RouteScene = {
-    ...route,
-    title: continuation.title,
-    mood: character?.defaultMood || route.mood,
-    intro: continuation.intro,
-    intimate: false,
-    choices: [{
-      id: `${route.id}-friendship-finale`,
-      text: continuation.choice,
-      stat: "sangFroid",
-      response: continuation.response,
-      effects: {
-        stats: { sangFroid: 1 },
-        affection: 6,
-        trust: 10,
-        confluence: 6,
-        flags: unique([...flagsSharedByEveryChoice(route.choices), `${route.character}-platonic`]),
-      },
-    }],
-  };
-  return { route: variant, sceneId: `${route.id}-friendship-finale` };
+function relationRouteVariant(route: RouteScene, _game: GameState) {
+  return { route, sceneId: route.id };
 }
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
@@ -1836,10 +1589,6 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   // ou valider une branche sans son flag. Seules les routes majeures reçoivent
   // des issues supplémentaires, toutes rédigées pour leur scène exacte.
   if (dialogue.replay || dialogue.scene.kind !== "route" || !dialogue.scene.route) return base;
-  // La conclusion amicale est déjà une scène de conséquence entièrement
-  // écrite : y réinjecter une « mauvaise lecture » romantique recréerait la
-  // contradiction que cette variante vient précisément résoudre.
-  if (dialogue.scene.id.endsWith("-friendship-finale")) return base;
   const characterId = dialogue.scene.character || dialogue.scene.cast[0];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
   const contextual = ROUTE_CONTEXTUAL_CHOICES[dialogue.scene.route.id];
@@ -1851,7 +1600,6 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
     effects: { stats: { [misread.stat]: 1 }, affection: -3, trust: -5, desire: -2 },
   }];
   const romanticMoment = !["lineva", "allenna"].includes(characterId)
-    && !game.flags.includes(`${characterId}-platonic`)
     && dialogue.scene.route.stage >= 3;
   if (romanticMoment && contextual.boundary) extra.push({
     id: `${dialogue.scene.id}-boundary`,
@@ -1870,7 +1618,7 @@ function choicesForDialogue(dialogue: DialogueState, game: GameState) {
       stats: { [contextual.platonic.stat]: 1 },
       trust: 3,
       desire: -15,
-      flags: unique([`${characterId}-platonic`, ...flagsSharedByEveryChoice(base)]),
+      flags: flagsSharedByEveryChoice(base),
     },
   });
   return shuffledChoices([...base, ...extra], `${dialogue.scene.id}:${game.day}:${game.period}:${game.relationships[characterId]?.stage || 0}`);
@@ -2182,7 +1930,7 @@ export default function Home() {
         inventory,
         confluence: clamp(current.confluence + (effects.confluence || 0)),
         coins: Math.max(0, current.coins + (effects.coins || 0)),
-        flags: unique([...current.flags, ...(effects.flags || [])]),
+        flags: unique(withoutObsoletePermanentFriendshipFlags([...current.flags, ...(effects.flags || [])])),
         knowledge: unique([...current.knowledge, ...(effects.knowledge || [])]),
         history: completedScene ? unique([...current.history, completedScene.id]) : current.history,
         journal: completedScene ? [...current.journal, `${character?.name || "Rencontre"} · ${completedScene.title}`] : current.journal,
@@ -2780,7 +2528,6 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && !game!.flags.includes(`${date.character}-platonic`)
       && (["lineva", "allenna"].includes(date.character)
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
@@ -2790,7 +2537,6 @@ export default function Home() {
     const groupDateCanBecomeIntimate = Boolean(groupDate
       && dialogue.chosen?.dateOutcome === "great"
       && groupDateUnlocked(game!, groupDate)
-      && !game!.flags.includes("cross-la-trio-platonic")
       && groupDate.characters.every((characterId, index) => {
         const relation = game!.relationships[characterId];
         const changes = index === 0
@@ -3415,7 +3161,6 @@ export default function Home() {
 
   function finishHomeDate(characterId: string, tone: HomeDateTone, score: number) {
     if (!game) return;
-    if (game.flags.includes(`${characterId}-platonic`) && tone !== "amical") return;
     const profile = HOME_DATE_PROFILES[characterId];
     const property = propertyById(game.housing.propertyId);
     if (!profile || !property) return;
@@ -3456,7 +3201,7 @@ export default function Home() {
       desire: relation.desire + (effects.desire || 0),
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
-    const canBecomeIntimate = tone === "desir" && !game.flags.includes(`${characterId}-platonic`) && (game.settings.unlockAll || (
+    const canBecomeIntimate = tone === "desir" && (game.settings.unlockAll || (
       relation.stage >= (characterId === "lineva" ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && score >= 3 && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
@@ -3492,7 +3237,7 @@ export default function Home() {
     });
     setSelectedLocation(property.location);
     setSelectedSpot(property.spot);
-    const canBecomeIntimate = pair.id === "allenna-lineva" && tone === "desir" && !game.flags.includes("cross-la-trio-platonic") && (game.settings.unlockAll || pair.characters.every((id) => game.relationships[id].desire + 7 >= 25));
+    const canBecomeIntimate = pair.id === "allenna-lineva" && tone === "desir" && (game.settings.unlockAll || pair.characters.every((id) => game.relationships[id].desire + 7 >= 25));
     setModal(canBecomeIntimate
       ? { kind: "home-pair-date-result", pairId }
       : { kind: "notice", title: score >= 5 ? "Trois présences, un nouveau souvenir" : "Une visite partagée", text: `La dynamique entre ${pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" et ")} a laissé une trace nouvelle dans votre logis. Ce rencard restera distinct de vos moments à deux.` });
@@ -3503,14 +3248,14 @@ export default function Home() {
     const property = propertyById(game.housing.propertyId);
     const contextId = "group-date-allenna-lineva-home";
     const played = game.housing.homeDateHistory.some((entry) => entry.startsWith(`pair:${pairId}:desir@`));
-    if (!property || !played || game.flags.includes("cross-la-trio-platonic") || (!game.settings.unlockAll && !["allenna", "lineva"].every((id) => game.relationships[id].desire >= 25))) return;
+    if (!property || !played || (!game.settings.unlockAll && !["allenna", "lineva"].every((id) => game.relationships[id].desire >= 25))) return;
     setModal({ kind: "group-intimacy", groupDateId: contextId, background: property.background });
   }
 
   function startHomeIntimacy(characterId: string) {
     const property = game && propertyById(game.housing.propertyId);
     const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
-    if (!game || !property || game.flags.includes(`${characterId}-platonic`) || !hasCompletedDesiredDate) return;
+    if (!game || !property || !hasCompletedDesiredDate) return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -3584,24 +3329,24 @@ export default function Home() {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     const refactoredDate = Boolean(date && ["lineva", "allenna"].includes(date.character));
     const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
-    if (!game || !date || !desireReady || game.flags.includes(`${date.character}-platonic`) || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
+    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background });
   }
 
-  function finishDateEnding(dateId: string, permanentlyPlatonic: boolean) {
+  function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!game || !date || !["lineva", "allenna"].includes(date.character) || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
-    if (permanentlyPlatonic) {
+    if (friendlyForThisDate) {
       updateGame((current) => ({
         ...current,
-        flags: unique([...current.flags, `${date.character}-platonic`]),
-        journal: [...current.journal, `Lien avec ${character.name} · amitié choisie après ${date.title}.`],
+        flags: withoutObsoletePermanentFriendshipFlags(current.flags),
+        journal: [...current.journal, `Rendez-vous avec ${character.name} · proximité amicale choisie pour « ${date.title} ».`],
       }));
       setModal({
         kind: "notice",
-        title: "Une amitié choisie",
-        text: `${character.name} reçoit votre réponse sans la discuter. Votre proximité demeure, désormais sans attente amoureuse.`,
+        title: "Une soirée amicale",
+        text: `${character.name} reçoit votre réponse sans la discuter. Cette soirée se termine dans une proximité amicale, sans fermer les conversations ni les rendez-vous suivants.`,
       });
       return;
     }
@@ -3614,7 +3359,7 @@ export default function Home() {
 
   function startGroupDateIntimacy(groupDateId: string) {
     const date = groupIntimacyContextById(groupDateId);
-    if (!game || !date || game.flags.includes("cross-la-trio-platonic")) return;
+    if (!game || !date) return;
     const played = date.id.endsWith("-home")
       ? game.housing.homeDateHistory.some((entry) => entry.startsWith("pair:allenna-lineva:desir@"))
       : game.groupDateHistory.includes(date.id);
@@ -3623,11 +3368,15 @@ export default function Home() {
     setModal({ kind: "group-intimacy", groupDateId: date.id, background: spotById(date.spot)?.background });
   }
 
-  function finishTrioEnding(groupDateId: string, permanentlyPlatonic: boolean) {
+  function finishTrioEnding(groupDateId: string, friendlyForThisDate: boolean) {
     if (!game || !groupIntimacyContextById(groupDateId)) return;
-    if (permanentlyPlatonic) {
-      updateGame((current) => ({ ...current, flags: unique([...current.flags, "cross-la-trio-platonic"]), journal: [...current.journal, "Lineva & Allenna · complicité à trois explicitement platonique."] }));
-      setModal({ kind: "notice", title: "Une complicité choisie", text: "Les rendez-vous à trois restent disponibles, sans attente sexuelle. Lineva et Allenna conservent aussi leur amitié autonome." });
+    if (friendlyForThisDate) {
+      updateGame((current) => ({
+        ...current,
+        flags: withoutObsoletePermanentFriendshipFlags(current.flags),
+        journal: [...current.journal, "Lineva & Allenna · complicité amicale choisie pour ce rendez-vous."],
+      }));
+      setModal({ kind: "notice", title: "Une soirée complice", text: "Ce rendez-vous se termine sur une complicité amicale. Les prochaines conversations et les futures possibilités à trois restent entièrement ouvertes." });
     } else {
       setModal({ kind: "notice", title: "Pas ce soir", text: "La proximité demeure. Aucune porte n’est fermée pour un prochain rendez-vous." });
     }
@@ -4061,7 +3810,7 @@ export default function Home() {
                               ? `Liens croisés · ${queuedSocial.title}`
                               : "Moment libre";
                   const interactionAction = confidence && !homeInteraction && !queuedSocial?.oneTime && !special ? "Écouter" : special || queuedSocial?.oneTime ? "Vivre la scène" : "Parler";
-                  const canDate = !game.flags.includes(`${character.id}-platonic`) && DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
+                  const canDate = DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
                   return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
                     <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{interactionLabel}</span></div></button>
                     <div className="immersive-presence-actions"><button onClick={() => openCharacterScene(character.id)}>{interactionAction}</button><button onClick={() => setModal({ kind: "gift", character: character.id })}>Offrir</button>{canDate && <button onClick={() => setModal({ kind: "date-planner", character: character.id })}>Rendez-vous</button>}</div>
@@ -4318,7 +4067,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
   const knownGroupDates = GROUP_DATES.filter((date) => contentBranchAllowed(game.flags, date) && date.characters.every((id) => unlockedCharacters.some((character) => character.id === id)));
   const availableGroupDates = knownGroupDates.filter((date) => groupDateUnlocked(game, date));
   const metCount = unlockedCharacters.length;
-  const dateCharacters = unlockedCharacters.filter((character) => !game.flags.includes(`${character.id}-platonic`) && (DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]));
+  const dateCharacters = unlockedCharacters.filter((character) => DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]);
 
   return <section className="content-view relations-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>Consultez séparément les liens, les rendez-vous et les dynamiques croisées. Seules les personnes réellement rencontrées apparaissent.</p></div><span>{metCount} relation{metCount > 1 ? "s" : ""}</span></header>
     <SectionTabs label="Sections des relations" active={section} onChange={setSection} items={[
@@ -4331,12 +4080,11 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
 
     {section === "dates" && <div className="date-directory">{dateCharacters.map((character) => {
       const relation = game.relationships[character.id];
-      const platonic = game.flags.includes(`${character.id}-platonic`);
       const publicDates = DATE_SCENES.filter((date) => date.character === character.id);
       const availableDates = publicDates.filter((date) => game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust));
       const homeAvailable = homeDateUnlocked(game, character.id);
       const hasPlanner = publicDates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
-      return <article className={`date-directory-card ${platonic || !hasPlanner ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties} key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{character.name}</span><strong>{platonic ? "Relation amicale" : `${availableDates.length} sortie${availableDates.length > 1 ? "s" : ""} accessible${availableDates.length > 1 ? "s" : ""}`}</strong><small>{platonic ? "Les scènes majeures restent amicales et les rendez-vous romantiques sont fermés." : homeAvailable ? "Une visite au logis est également disponible." : game.housing.propertyId ? "La visite au logis demande encore un lien plus avancé." : "Achetez un logis pour ouvrir les visites privées."}</small></div><button disabled={platonic || !hasPlanner} onClick={() => setModal({ kind: "date-planner", character: character.id })}>Planifier</button></article>;
+      return <article className={`date-directory-card ${!hasPlanner ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties} key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{character.name}</span><strong>{availableDates.length} sortie${availableDates.length > 1 ? "s" : ""} accessible${availableDates.length > 1 ? "s" : ""}</strong><small>{homeAvailable ? "Une visite au logis est également disponible." : game.housing.propertyId ? "La visite au logis demande encore un lien plus avancé." : "Achetez un logis pour ouvrir les visites privées."}</small></div><button disabled={!hasPlanner} onClick={() => setModal({ kind: "date-planner", character: character.id })}>Planifier</button></article>;
     })}</div>}
 
     {section === "links" && <div className="relationship-grid">{unlockedCharacters.map((character) => {
@@ -4351,7 +4099,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
     const needed = next ? Math.max(0, BOND_THRESHOLDS[next.stage] - relation.affection - relation.trust) : 0;
     const confidenceObjective = next ? routeNarrativeObjective(next, game) : undefined;
     const narrativeReady = Boolean(next && !confidenceObjective);
-    const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id);
+    const dates = DATE_SCENES.filter((date) => date.character === character.id);
     const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
     const routeTarget = next && narrativeReady ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
     return <article key={character.id} className="relationship-card" style={{ "--character": character.color } as React.CSSProperties}>
@@ -5104,7 +4852,7 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={`/assets/sprites/${character.id}/${spriteMood}.webp`} alt={character.name} /></div>
     <div className="dialogue-gradient" />
     {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
-    {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => { const blocked = id !== "amical" && game.flags.includes(`${character.id}-platonic`); return <button key={id} disabled={blocked} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{blocked ? "Votre relation demeure amicale" : option.detail}</small></div></button>; })}</div>}
+    {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => <button key={id} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{option.detail}</small></div></button>)}</div>}
     {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{profile.rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : profile.rounds[round].detail}</small></div><p className="choice-question">{profile.rounds[round].prompt}</p>{profile.rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
   </section>;
 }
@@ -5178,7 +4926,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
   </section></div>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, permanentlyPlatonic: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; finishTrioEnding: (dateId: string, permanentlyPlatonic: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, friendlyForThisDate: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; finishTrioEnding: (dateId: string, friendlyForThisDate: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
   if (modal.kind === "letter") {
@@ -5248,12 +4996,12 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
     const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
     const refactored = date.id.includes("allenna-lineva");
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou préserver une autre forme de proximité.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Choisir une complicité platonique</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou garder une proximité amicale pour cette soirée seulement.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
   }
   if (modal.kind === "date-planner") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const relation = game.relationships[character.id];
-    const dates = game.flags.includes(`${character.id}-platonic`) ? [] : DATE_SCENES.filter((date) => date.character === character.id);
+    const dates = DATE_SCENES.filter((date) => date.character === character.id);
     const homeProfile = HOME_DATE_PROFILES[character.id];
     const property = propertyById(game.housing.propertyId);
     const homeUnlocked = Boolean(property) && homeDateUnlocked(game, character.id);
@@ -5263,7 +5011,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date-result") {
     const property = propertyById(game.housing.propertyId)!;
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.32), #11101b 88%), url(${property.background})` }}><div className="group-result-portraits"><img src="/assets/portraits/allenna.jpg" alt="Allenna" /><img src="/assets/portraits/lineva.jpg" alt="Lineva" /></div><p className="eyebrow">Rien au programme</p><h2>Personne ne cherche encore la porte</h2><p>Le désir de Lineva et celui d’Allenna permettent de prolonger cette soirée au logis. Le canapé, la cuisine et la chambre ouvrent trois routes qui n’appartiennent à aucun rendez-vous public.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomePairIntimacy(modal.pairId)}>Prolonger la nuit à trois</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", true)}>Choisir une complicité platonique</button></div></section></div>;
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.32), #11101b 88%), url(${property.background})` }}><div className="group-result-portraits"><img src="/assets/portraits/allenna.jpg" alt="Allenna" /><img src="/assets/portraits/lineva.jpg" alt="Lineva" /></div><p className="eyebrow">Rien au programme</p><h2>Personne ne cherche encore la porte</h2><p>Le désir de Lineva et celui d’Allenna permettent de prolonger cette soirée au logis. Le canapé, la cuisine et la chambre ouvrent trois routes qui n’appartiennent à aucun rendez-vous public. Une fin amicale ne vaut que pour cette visite.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomePairIntimacy(modal.pairId)}>Prolonger la nuit à trois</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", true)}>Rester complices ce soir</button></div></section></div>;
   }
   if (modal.kind === "home-date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5276,9 +5024,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const refactored = ["lineva", "allenna"].includes(character.id);
     const desireReady = !refactored || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
     const closeText = desireReady
-      ? `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou choisir clairement une amitié durable.`
+      ? `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
       : `Après « ${date.title} », la proximité demeure douce, mais la tension physique ne demande pas encore à être prolongée. La soirée peut s'achever naturellement, sans fermer les suivantes.`;
-    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>{closeText}</p><div className="date-result-actions">{desireReady && <button className="primary-action" onClick={() => startDateIntimacy(date.id)}>Suivre {character.name}</button>}{refactored && desireReady ? <><button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishDateEnding(date.id, true)}>Choisir une amitié durable</button></> : refactored ? <button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>{closeText}</p><div className="date-result-actions">{desireReady && <button className="primary-action" onClick={() => startDateIntimacy(date.id)}>Suivre {character.name}</button>}{refactored && desireReady ? <><button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}</div></section></div>;
   }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;

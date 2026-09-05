@@ -27,17 +27,30 @@ export function injectedChoiceKind(choiceId: string): InjectedChoiceKind | undef
 
 /**
  * Une maladresse ou une pause ne doit jamais valider silencieusement une scène
- * majeure. Une décision amicale claire, elle, clôt bien l'étape relationnelle.
+ * majeure. Une réponse amicale peut clore la conversation actuelle, mais ne
+ * verrouille jamais la nature des conversations suivantes.
  */
 export function routeChoiceCompletes(choiceId: string): boolean {
   const kind = injectedChoiceKind(choiceId);
   return kind !== "misread" && kind !== "boundary";
 }
 
+/**
+ * Les anciennes versions sauvegardaient les réponses amicales comme des choix
+ * relationnels irrévocables. Ces marqueurs ne décrivent plus qu'un ton de scène
+ * et doivent être ignorés puis retirés des sauvegardes existantes.
+ */
+export function isObsoletePermanentFriendshipFlag(flag: string): boolean {
+  return flag === "cross-la-trio-platonic" || /^[a-z][a-z0-9-]*-platonic$/u.test(flag);
+}
+
+export function withoutObsoletePermanentFriendshipFlags(flags: readonly string[]): string[] {
+  return flags.filter((flag) => !isObsoletePermanentFriendshipFlag(flag));
+}
+
 export function contentBranchAllowed(flags: readonly string[], content: FlaggedContent): boolean {
-  const known = new Set(flags);
-  return !(content.characters || []).some((character) => known.has(`${character}-platonic`))
-    && (content.requiredFlags || []).every((flag) => known.has(flag))
+  const known = new Set(withoutObsoletePermanentFriendshipFlags(flags));
+  return (content.requiredFlags || []).every((flag) => known.has(flag))
     && !(content.excludedFlags || []).some((flag) => known.has(flag));
 }
 
