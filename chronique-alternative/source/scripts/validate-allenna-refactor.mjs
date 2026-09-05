@@ -51,9 +51,11 @@ try {
   const publicGate = pageSource.slice(pageSource.indexOf("function publicDateUnlocked"), pageSource.indexOf("function homeDateUnlocked"));
   assert.doesNotMatch(publicGate, /desire|minDesire/);
   assert.match(pageSource, /\["lineva", "allenna"\]\.includes\(date\.character\)/);
-  assert.match(pageSource, /`\$\{date\.character\}-platonic`/);
+  const endingHandler = pageSource.slice(pageSource.indexOf("function finishDateEnding"), pageSource.indexOf("function startGroupDateIntimacy"));
+  assert.match(endingHandler, /if \(friendlyForThisDate\)/);
+  assert.doesNotMatch(endingHandler, /`\$\{date\.character\}-platonic`/, "la réponse amicale ne doit plus verrouiller Allenna");
   assert.match(pageSource, />Pas ce soir</);
-  assert.match(pageSource, />Choisir une amitié durable</);
+  assert.match(pageSource, />Rester proches amicalement</);
 
   assert.deepEqual(intimacy.validateAllennaDateIntimacy(), { dates: 2, combinations: 6, routes: 18, chapters: 720 });
   for (const date of allennaDates) for (const sex of ["femme", "homme", "intersexe"]) {

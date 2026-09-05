@@ -94,7 +94,12 @@ try {
 
   assert.equal(rules.contentBranchAllowed(["hr-triad-established"], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), true);
   assert.equal(rules.contentBranchAllowed([], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), false);
-  assert.equal(rules.contentBranchAllowed(["hr-triad-established", "hylee-platonic"], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), false);
+  assert.equal(rules.contentBranchAllowed(["hr-triad-established", "hylee-platonic"], { characters: ["hylee", "remerii"], requiredFlags: ["hr-triad-established"] }), true, "un ancien choix amical ne doit plus fermer les conversations suivantes");
+  assert.deepEqual(
+    rules.withoutObsoletePermanentFriendshipFlags(["hr-triad-established", "hylee-platonic", "cross-la-trio-platonic"]),
+    ["hr-triad-established"],
+    "les anciens verrous amicaux doivent être retirés des sauvegardes",
+  );
   assert.equal(rules.contentBranchAllowed(["iv-shared-dates", "iv-friends"], { characters: ["iriana", "valurn"], requiredFlags: ["iv-shared-dates"], excludedFlags: ["iv-friends"] }), false);
 
   const hyleeRemerii = groupSource.slice(groupSource.indexOf('id: "group-date-hylee-remerii"'), groupSource.indexOf('id: "group-date-valurn-bellirith"'));
@@ -108,6 +113,8 @@ try {
   assert.match(pageSource, /ROUTE_CONTEXTUAL_CHOICES\[dialogue\.scene\.route\.id\]/, "les choix supplémentaires doivent provenir du catalogue propre à chaque scène");
   assert.match(pageSource, /routeChoiceCompletes\(choice\.id\) && \(!hasRelationBeat \|\| isRelationChoice\)/, "la validation de route doit filtrer les choix injectés et attendre le battement Lineva");
   assert.match(pageSource, /publicDateUnlocked\(game, date\)/, "le démarrage d'un rendez-vous doit revérifier la branche");
+  assert.match(pageSource, /!isObsoletePermanentFriendshipFlag\(flag\)/, "le chargement doit réparer les sauvegardes où une amitié avait été enregistrée comme irrévocable");
+  assert.doesNotMatch(pageSource, /game!?\.flags\.includes\([^\n]*-platonic|game!?\.flags\.includes\([^\n]*cross-la-trio-platonic/u, "aucun écran futur ne doit relire un choix amical comme un verrou");
   assert.match(pageSource, /visitedLocations:\s*\["echo-clearing"\]/, "une nouvelle partie ne doit marquer que son lieu réellement visité");
   const advanceSection = pageSource.slice(pageSource.indexOf("function advancePeriod"), pageSource.indexOf("function applyEffects"));
   assert.doesNotMatch(advanceSection, /LOCATIONS\.filter|codex:/, "le passage d'un jour ne doit pas découvrir automatiquement la carte");

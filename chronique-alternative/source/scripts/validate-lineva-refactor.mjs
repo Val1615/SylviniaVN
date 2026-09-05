@@ -108,13 +108,14 @@ try {
   assert.ok(noFlirt + mostDateDesire < 22, "une route sans flirt doit pouvoir rester non sexuelle sans perdre le rendez-vous");
   assert.ok(relationBeats.every((beat) => (beat.choices[2].effects.affection || 0) > 0 && (beat.choices[2].effects.trust || 0) > 0), "la voie non flirt doit construire affection et confiance");
 
-  // E, F et G — pas ce soir, amitié définitive et interruption.
+  // E, F et G — pas ce soir, ton amical limité au rendez-vous et interruption.
   const endingHandler = pageSource.slice(pageSource.indexOf("function finishDateEnding"), pageSource.indexOf("function startGroupDateIntimacy"));
-  assert.match(endingHandler, /if \(permanentlyPlatonic\)/);
-  assert.match(endingHandler, /`\$\{date\.character\}-platonic`/);
+  assert.match(endingHandler, /if \(friendlyForThisDate\)/);
+  assert.match(endingHandler, /withoutObsoletePermanentFriendshipFlags\(current\.flags\)/);
+  assert.doesNotMatch(endingHandler, /`\$\{date\.character\}-platonic`/, "la réponse amicale ne doit plus créer de verrou permanent");
   assert.doesNotMatch(endingHandler, /affection\s*:|trust\s*:|desire\s*:/, "ni pas ce soir ni l’amitié ne doivent infliger de pénalité statistique");
   assert.match(pageSource, />Pas ce soir</);
-  assert.match(pageSource, />Choisir une amitié durable</);
+  assert.match(pageSource, />Rester proches amicalement</);
   const closeIntimacy = pageSource.slice(pageSource.indexOf("function closeIntimacy"), pageSource.indexOf("function closeGroupIntimacy"));
   assert.match(closeIntimacy, /if \(completed && !modal\.replay\)[\s\S]*"lineva-tutoiement"/, "le tutoiement doit être enregistré uniquement après une scène achevée");
 

@@ -174,6 +174,11 @@ try {
   assert.match(pageSource, /manualLinevaAllenna \? \[\] : groupIntimacyOpening\(date\)/u, "l’interface doit ignorer l’ouverture commune pour Lineva/Allenna");
   assert.match(pageSource, /else if \(manualLinevaAllenna\) setStep\("done"\)/u, "l’interface doit ignorer la fermeture commune pour Lineva/Allenna");
   assert.match(pageSource, /game\.flags\.includes\("lineva-tutoiement"\)/u, "la variante de tutoiement doit dépendre du drapeau sauvegardé");
+  const trioEnding = pageSource.slice(pageSource.indexOf("function finishTrioEnding"), pageSource.indexOf("function closeIntimacy"));
+  assert.match(trioEnding, /if \(friendlyForThisDate\)/u, "la fin amicale doit rester un choix propre au rendez-vous courant");
+  assert.match(trioEnding, /withoutObsoletePermanentFriendshipFlags\(current\.flags\)/u, "une ancienne sauvegarde verrouillée doit être nettoyée");
+  assert.doesNotMatch(trioEnding, /cross-la-trio-platonic/u, "la fin amicale ne doit plus poser de verrou permanent sur le trio");
+  assert.match(pageSource, />Rester complices ce soir</u, "le bouton doit annoncer clairement la portée temporaire du choix");
   assert.doesNotMatch(manualSource, contraceptiveLanguage, "une préparation contraceptive artificielle subsiste");
 
   const homeSource = manualSources[3];
