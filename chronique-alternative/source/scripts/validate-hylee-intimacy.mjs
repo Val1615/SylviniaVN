@@ -44,7 +44,12 @@ try {
       }
       assert.ok(words(route.chapters.explicite) >= 400, `${route.id}: scène explicite trop courte`);
       const explicit = routeText(route);
-      assert.match(explicit, sex === "femme" ? /vulve|clitoris/iu : /pénis|érection/iu, `${route.id}: anatomie non écrite`);
+      assert.doesNotMatch(explicit, /\b(?:vulve?s?|pénis|penis|clitoris|gland|érection)\b/iu, `${route.id}: vocabulaire anatomique trop clinique`);
+      assert.match(explicit, sex === "femme"
+        ? /chaleur|intimité|lèvres|entre (?:vos|ses) cuisses|en (?:vous|elle)/iu
+        : /désir|vous (?:prend|guide|accueille|chevauche)|en elle/iu, `${route.id}: corporalité devenue trop vague`);
+      const sensualTerms = explicit.match(/chaleur|intimité|désir|point (?:le plus )?sensible|frisson|plaisir|jouissance/giu) || [];
+      assert.ok(new Set(sensualTerms.map((term) => term.toLocaleLowerCase("fr"))).size >= 3, `${route.id}: lexique sensuel insuffisamment varié`);
       const magicPhenomena = explicit.match(/givre|flocon|neige|buée froide|pellicule froide|cristal|blanchi/giu) || [];
       assert.ok(magicPhenomena.length <= 3, `${route.id}: magie trop répétitive`);
       route.chapters.explicite.flat().filter((line) => line.speaker === "Hylee" && line.mood).forEach((line) => {
