@@ -235,7 +235,8 @@ try {
     init(game); act("startDate", date.id); finishDialogue();
     act("startDateIntimacy", date.id);
     assert.equal(api.modal.kind, "intimacy");
-    assert.match(api.modal.background, /miraldas_quarters/);
+    assert.match(api.modal.background, date.id === "date-hylee-glade" ? /miraldas\.webp/ : /miraldas_lake\.png/);
+    assert.equal(api.game.spot, date.spot, "l'intimité publique reste dans le lieu du rendez-vous");
     act("finishDateEnding", date.id, false);
     act("startDate", date.id);
     assert.equal(api.dialogue.scene.id, date.id, "un refus temporaire laisse le prochain rendez-vous ouvert");
