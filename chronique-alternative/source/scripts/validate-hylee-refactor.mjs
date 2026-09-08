@@ -22,7 +22,7 @@ export function useRef(current) { return useState({ current })[0]; }
 export function useEffect() {}
 export function useCallback(callback) { return callback; }
 `;
-const exportNames = ["createGame", "hydrateGame", "DEFAULT_PLAYER", "routeNarrativeReady", "routeNarrativeObjective", "secretConversationReady", "publicDateUnlocked", "homeDateUnlocked", "nextHyleeDateDay", "characterPlace", "characterSchedule", "choicesForDialogue", "dialogueSpriteMoods", "expandedLines"];
+const exportNames = ["createGame", "hydrateGame", "DEFAULT_PLAYER", "routeNarrativeReady", "routeAvailableAtPlace", "routeNarrativeObjective", "secretConversationReady", "publicDateUnlocked", "homeDateUnlocked", "characterPlace", "characterSchedule", "choicesForDialogue", "dialogueSpriteMoods", "expandedLines"];
 const actions = ["game", "dialogue", "modal", "setGame", "setDialogue", "setModal", "openCharacterScene", "advanceDialogue", "selectChoice", "closeDialogue", "travel", "startDate", "finishDateEnding", "startDateIntimacy", "startHomeDate", "finishHomeDate", "startHomeIntimacy", "replayRoute", "replayDate", "replaySecret", "startCampaignScene"];
 const server = await createServer({
   root, appType: "custom", logLevel: "silent", server: { middlewareMode: true },
@@ -50,6 +50,8 @@ try {
   const relation = await server.ssrLoadModule("/src/hylee-relation.ts");
   const confidences = await server.ssrLoadModule("/src/hylee-confidences.ts");
   const dates = await server.ssrLoadModule("/src/hylee-dates.ts");
+  const allDates = await server.ssrLoadModule("/src/date-scenes.ts");
+  const heritages = await server.ssrLoadModule("/src/heritages-data.ts");
   const housing = await server.ssrLoadModule("/src/housing-data.ts");
   const home = await server.ssrLoadModule("/src/hylee-home-date.ts");
   const sprites = await server.ssrLoadModule("/src/sprite-system.ts");
@@ -143,8 +145,34 @@ try {
     assert.equal(api.game.relationships.hylee.desire, 0);
     assert.equal(api.game.history.filter(id => id === route.id).length, 1);
   }
-  // Scène 5 déclenchée par un vrai départ ; le choix paie le trajet une fois.
+  // Régression : le bouton annoncé disponible doit réellement ouvrir la scène 5,
+  // puis valider chaque réponse, y compris avec une ancienne sauvegarde à 4.
   const departureGame = structuredClone(api.game);
+  for (const ending of routes[4].choices) {
+    const game = structuredClone(departureGame);
+    game.day = 1;
+    game.period = [0, 1, 2, 3].find(period => page.characterPlace(hylee, game.day, period, game.flags, game.housing).spot === "algratal-streets");
+    assert.notEqual(game.period, undefined);
+    game.location = "algratal"; game.spot = "algratal-streets";
+    assert.equal(page.characterPlace(hylee, game.day, game.period, game.flags, game.housing).spot, game.spot);
+    assert.equal(page.routeAvailableAtPlace(routes[4], game), true);
+    assert.equal(page.routeNarrativeObjective(routes[4], game), undefined);
+    init(page.hydrateGame(JSON.parse(JSON.stringify(game))));
+    act("openCharacterScene", "hylee");
+    assert.equal(api.dialogue?.scene.id, "hylee-4", "le bouton ne doit plus lancer un moment libre");
+    assert.equal(api.dialogue.scene.kind, "route");
+    finishDialogue(choices => choices.find(c => c.id === ending.id));
+    assert.equal(api.game.relationships.hylee.stage, 5, ending.id);
+    assert.equal(api.game.history.filter(id => id === "hylee-4").length, 1);
+    const restored = page.hydrateGame(JSON.parse(JSON.stringify(api.game)));
+    assert.equal(restored.relationships.hylee.stage, 5);
+    assert.equal(routes.find(route => route.stage === restored.relationships.hylee.stage), undefined);
+    assert.equal(page.publicDateUnlocked(restored, dates.HYLEE_DATES[0]), true);
+    init(restored);
+    act("openCharacterScene", "hylee");
+    assert.notEqual(api.dialogue?.scene.id, "hylee-4", "la scène terminée ne doit plus rester disponible");
+  }
+  // Le raccourci de la carte reste possible : trajet payé une seule fois.
   departureGame.day = 9; departureGame.period = 2;
   const here = page.characterPlace(hylee, departureGame.day, departureGame.period, departureGame.flags, departureGame.housing);
   departureGame.location = here.location; departureGame.spot = here.spot;
@@ -184,10 +212,7 @@ try {
       const game = structuredClone(saved);
       game.location = "miraldas"; game.spot = "miraldas-hylee-glade";
       init(game);
-      const day = page.nextHyleeDateDay(game, "miraldas", 2);
-      assert.ok(day > game.day);
-      const actual = page.characterPlace(hylee, day, 2, game.flags, game.housing);
-      assert.equal(actual.location, "miraldas"); assert.equal(actual.traveling, false);
+      const day = game.day + 1;
       act("startDate", date.id);
       assert.equal(api.dialogue?.scene.id, date.id);
       assert.equal(api.game.day, day);
@@ -215,22 +240,53 @@ try {
     act("startDate", date.id);
     assert.equal(api.dialogue.scene.id, date.id, "un refus temporaire laisse le prochain rendez-vous ouvert");
   }
-  init(saved);
-  assert.equal(page.nextHyleeDateDay(api.game, "miraldas", 2), undefined, "pas de téléportation depuis une autre région");
-  act("startDate", "date-hylee-glade");
-  assert.equal(api.dialogue, null);
+  // Une invitation se fait depuis une autre région, même pendant son voyage.
+  for (const date of dates.HYLEE_DATES) {
+    const game = structuredClone(saved);
+    game.day = 2; game.location = "algratal"; game.spot = "algratal-streets";
+    assert.equal(page.characterPlace(hylee, 3, 2, game.flags, game.housing).traveling, true);
+    init(game); act("startDate", date.id);
+    assert.equal(api.dialogue?.scene.id, date.id);
+    assert.equal(api.game.day, 3);
+    assert.equal(api.game.location, date.location);
+    assert.equal(api.game.spot, date.spot);
+    finishDialogue();
+    assert.equal(api.game.day, 3);
+  }
+
+  // Tous les rendez-vous individuels attendent la fin du fil relationnel.
+  // Ni le désir, ni la présence, ni le calendrier n'ajoutent un verrou.
+  for (const date of allDates.DATE_SCENES) {
+    const game = campaignGame();
+    game.relationships[date.character] = { ...game.relationships[date.character], met: true, stage: 4, affection: 100, trust: 100, desire: 0 };
+    assert.equal(page.publicDateUnlocked(game, date), false, date.id);
+    game.relationships[date.character].stage = 5;
+    game.relationships[date.character].affection = date.minAffection;
+    game.relationships[date.character].trust = date.minTrust;
+    assert.equal(page.publicDateUnlocked(game, date), true, date.id);
+    for (const [stat, minimum] of [["affection", date.minAffection], ["trust", date.minTrust]]) {
+      game.relationships[date.character][stat] = minimum - 1;
+      assert.equal(page.publicDateUnlocked(game, date), false, `${date.id}/${stat}`);
+      game.relationships[date.character][stat] = minimum;
+    }
+    init(game); act("startDate", date.id);
+    assert.equal(api.dialogue?.scene.id, date.id);
+  }
 
   // Soirée au logis : trois tons ; désir post-rendez-vous, jour compté une fois.
   const property = housing.HOUSING_PROPERTIES.find(p => p.location === "miraldas");
   for (const tone of ["amical", "amoureux", "desir"]) {
     const game = structuredClone(saved);
     game.housing.propertyId = property.id;
-    game.location = property.location; game.spot = property.spot;
+    game.day = 2; game.location = "algratal"; game.spot = "algratal-streets";
     game.relationships.hylee.desire = tone === "desir" ? 30 : 0;
     init(game);
     act("startHomeDate", "hylee");
     assert.equal(api.modal.kind, "home-date");
     const reservedDay = api.game.day;
+    assert.equal(reservedDay, game.day + 1);
+    assert.equal(api.game.location, property.location);
+    assert.equal(api.game.spot, property.spot);
     act("finishHomeDate", "hylee", tone, 6);
     assert.equal(api.game.day, reservedDay);
     assert.ok(api.game.housing.homeDateHistory.includes(`hylee:${tone}@${reservedDay}`));
@@ -253,12 +309,30 @@ try {
   assert.equal(page.dialogueSpriteMoods(fixture).hylee, "sad");
 
   const ambient = await server.ssrLoadModule("/src/ambient-dialogues.ts");
+  const closures = await server.ssrLoadModule("/src/scene-closures.ts");
+  assert.equal(ambient.AMBIENT_LINES.hylee.length, 20);
+  assert.equal(new Set(ambient.AMBIENT_LINES.hylee.map(s => s.id)).size, 20);
+  for (const scene of ambient.AMBIENT_LINES.hylee) {
+    assert.equal(scene.choices.length, 3, scene.id);
+    assert.deepEqual(closures.sceneClosure(scene.id), [], "aucune fin commune ne doit contredire le choix");
+    for (const choice of scene.choices) {
+      assert.ok(choice.response.length >= 3, choice.id);
+      for (const line of choice.response) if (line.speaker === "Hylee") assert.ok(sprites.SPRITE_MOODS.hylee.includes(line.mood));
+    }
+  }
+  const routeText = JSON.stringify(routes) + JSON.stringify(routes.map(r => relation.hyleeRelationBeat(r.id)));
+  assert.doesNotMatch(routeText, /baiser|embrass|tempe contre|main se pose sur votre taille/iu);
+  assert.doesNotMatch(JSON.stringify(ambient.AMBIENT_LINES.hylee), /baiser|embrass|tête contre votre épaule/iu);
+  const hyleeFood = confidences.HYLEE_CONFIDENCES.find(s => s.id === "secret-hylee-naiah-v2");
+  const naiahFood = heritages.SECRET_CONVERSATIONS.find(s => s.id === "secret-naiah-tartlets");
+  assert.match(JSON.stringify(hyleeFood), /nourriture de côté pour elle/);
+  assert.match(JSON.stringify(naiahFood), /Hylee m’en gardait/);
+  assert.doesNotMatch(JSON.stringify([hyleeFood, naiahFood]), /grenier|J’en apportais à Hylee|Elle t’en apportait/);
   const forbidden = /votre Résonance|souffle arcanique|courant magique|Confluence révéler|sentir ma magie|motif magique/iu;
   assert.doesNotMatch(JSON.stringify(ambient.AMBIENT_LINES.hylee), forbidden);
   const source = await readFile(resolve(root, "src/page.tsx"), "utf8");
-  assert.match(source, /route\.id !== "hylee-4"/, "pas de départ fictif depuis le bouton Parler");
   assert.match(source, /spriteMoods: dialogueSpriteMoods\(dialogue\)/);
-  console.log(`[Hylee] 5 scènes · 6 confidences indépendantes · ${datePaths} parcours de mini-jeux · 3 tons au logis · départ réel · refus temporaires · sauvegarde/relecture · horaires et continuité des sprites validés (hors DOM).`);
+  console.log(`[Hylee] scène 5 par le bouton (4 réponses) et par voyage · sauvegarde/relecture · 20 moments / 60 réponses · canon Hylee/Naïah · aucun baiser dans le fil · ${datePaths} parcours de mini-jeux · invitations sans présence · 3 tons au logis · seuils de tous les rendez-vous individuels · sprites validés (hors DOM).`);
 } finally {
   await server.close();
 }
