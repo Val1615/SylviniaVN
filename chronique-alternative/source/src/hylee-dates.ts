@@ -32,12 +32,11 @@ export const HYLEE_DATES: DateScene[] = [
       Q("hyg-friendly", "Installer votre atelier face au sien et partager le repas.", "lucidite", [N("Vous répartissez les outils au milieu. Hylee vous donne la moitié du pain avant de commencer à manger la sienne."), H("Très bien. On pourra comparer sans espionner." , "teasing")], { affection: 5, trust: 5 }),
       Q("hyg-close", "Vous asseoir près d’elle, épaule contre épaule.", "audace", [N("Hylee décale son assiette pour vous faire une place. Votre épaule touche la sienne ; elle s’y appuie au moment de vous tendre la cuillère."), H("C’est pratique. Maintenant, si je me trompe, je peux accuser ton coude." , "teasing")], { affection: 5, trust: 2, desire: 5 }),
     ],
-    // Le catalogue intime antérieur reste inchangé. Le raccord conduit au
-    // vrai intérieur qu'il décrit ; aucune fausse version spécifique n'est créée.
     intimacySetting: {
-      background: "/assets/backgrounds/miraldas_quarters.webp",
-      opening: ["Après avoir rangé la couverture et les outils, vous reprenez ensemble le chemin de Mir’Aldas. Hylee vous propose de rester avec elle dans ses quartiers ; vous la suivez jusque dans la chambre."],
-      closing: ["Le panier repose au pied de la porte. Hylee en tire les derniers fruits et les pose entre vous."],
+      background: "/assets/backgrounds/miraldas.webp",
+      opening: ["Hylee laisse la couverture dans un repli de la clairière, à l’abri du sentier. Le panier et les outils restent près de vous dans l’herbe."],
+      closing: ["Le panier reste ouvert dans l’herbe. Hylee en tire les derniers fruits et les pose entre vous."],
+      replaceProfile: true,
     },
   },
   {
@@ -64,9 +63,10 @@ export const HYLEE_DATES: DateScene[] = [
       Q("hyl-close", "Garder sa main et proposer d’apprendre ensemble.", "audace", [P("On commence comme ça ?"), N("Hylee regarde votre main qui n’a pas lâché la sienne. Elle entrelace vos doigts et ramène vos bras entre vous."), H("Oui. Et si je tombe, j’essaierai de te prévenir avant." , "teasing")], { affection: 5, trust: 3, desire: 5 }),
     ],
     intimacySetting: {
-      background: "/assets/backgrounds/miraldas_quarters.webp",
-      opening: ["Hylee retire vos lames, ouvre le barrage pour que le ruisseau retrouve son cours et vous accompagne jusqu’à Mir’Aldas. Une fois le matériel rendu, elle vous invite dans ses quartiers. Vous entrez ensemble dans la chambre."],
-      closing: ["Vos bottes sèchent près de la porte. Hylee les regarde, rit tout bas et se rapproche de vous."],
+      background: "/assets/backgrounds/miraldas_lake.png",
+      opening: ["Hylee retire vos lames et vous entraîne sur la rive cachée par les saules, avant de rendre l’eau au ruisseau."],
+      closing: ["Le sac de lames et vos bottes attendent toujours près de la rive. Hylee rit tout bas et se rapproche de vous."],
+      replaceProfile: true,
     },
   },
 ];

@@ -41,6 +41,7 @@ import { DATE_SCENES, type DateScene, type PlayerSex } from "./date-scenes";
 import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEnding, intimacyOpening, type IntimacyChoice, type IntimacyDirectionChoice } from "./intimacy-scenes";
 import { linevaDateApproaches, linevaDateIntimacyPhase } from "./lineva-date-intimacy";
 import { allennaDateApproaches, allennaDateIntimacyPhase } from "./allenna-date-intimacy";
+import { hyleeDateApproaches, hyleeDateIntimacyEnding, hyleeDateIntimacyOpening, hyleeDateIntimacyPhase, hyleeDateIntimacyRoutes, hyleeIntimacyContext } from "./hylee-date-intimacy";
 import { linevaRelationBeat } from "./lineva-relation-beats";
 import { allennaRelationBeat } from "./allenna-relation-beats";
 import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
@@ -3414,10 +3415,6 @@ export default function Home() {
     const refactoredDate = Boolean(date && (["lineva", "allenna"].includes(date.character) || date.character === "hylee"));
     const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
     if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
-    if (date.character === "hylee") updateGame((current) => ({
-      ...current, location: "miraldas", spot: "miraldas-quarters", period: 3,
-      ...placeDiscovery(current, "miraldas", "miraldas-quarters"),
-    }));
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
@@ -4544,13 +4541,16 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const homeProperty = modal.home ? propertyById(game.housing.propertyId) : undefined;
   const homeItems = modal.home ? game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item)) : [];
   const profile = INTIMACY_PROFILES[character.id];
-  // Les deux rendez-vous de Lineva la placent déjà sans garde complète : le
-  // mini-jeu générique « Défaire la garde » réintroduirait des pièces d’équipement
-  // explicitement déposées dans la continuité de la scène.
-  const dedicatedDate = Boolean(modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix)));
-  const intimacyGame = dedicatedDate ? undefined : INTIMACY_GAMES[character.id];
+  // Le traitement intersexe Hylee reste volontairement celui déjà en place :
+  // son canon corporel attend encore une décision de direction. Les 18 scènes
+  // dédiées couvrent intégralement les parcours femme et homme demandés.
+  const hyleeContext = character.id === "hylee" && game.player.sex !== "intersexe"
+    ? hyleeIntimacyContext(modal.dateId, Boolean(modal.home))
+    : undefined;
+  const dedicatedIntimacy = Boolean(hyleeContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
+  const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
-  const [lines, setLines] = useState<DialogueLine[]>(() => homeProperty ? homeIntimacyOpening(character.id, homeProperty, homeItems) : intimacyOpening(character.id, date));
+  const [lines, setLines] = useState<DialogueLine[]>(() => hyleeContext ? hyleeDateIntimacyOpening(hyleeContext) : homeProperty ? homeIntimacyOpening(character.id, homeProperty, homeItems) : intimacyOpening(character.id, date));
   const [lineIndex, setLineIndex] = useState(0);
   const [approach, setApproach] = useState<IntimacyChoice | null>(null);
   const [direction, setDirection] = useState<IntimacyDirectionChoice | null>(null);
@@ -4558,8 +4558,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices(modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches, `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
-  const [directionChoices] = useState(() => shuffledChoices(modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices(hyleeDateApproaches(hyleeContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [directionChoices] = useState(() => shuffledChoices(hyleeContext ? hyleeDateIntimacyRoutes(hyleeContext, game.player.sex) : modal.home ? homeIntimacyRoutes(character.id, game.player.sex) : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   const currentLine = lines[lineIndex];
   const characterSpeaking = currentLine ? speakerCharacterIds(currentLine.speaker, [character.id]).includes(character.id) : false;
   const spriteMood = characterSpeaking
@@ -4570,6 +4570,10 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     setStep(nextStep);
     setLines(nextLines);
     setLineIndex(0);
+  }
+
+  function endingLines() {
+    return hyleeContext ? hyleeDateIntimacyEnding(hyleeContext) : homeProperty ? homeIntimacyEnding(character.id, homeProperty) : intimacyEnding(character.id, date);
   }
 
   function advance() {
@@ -4591,7 +4595,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
         const nextChapter = directionChapter + 1;
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
-      } else beginSegment("ending", homeProperty ? homeIntimacyEnding(character.id, homeProperty) : intimacyEnding(character.id, date));
+      } else beginSegment("ending", endingLines());
     }
     else if (step === "ending") setStep("done");
   }
@@ -4603,11 +4607,11 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
-    const chapters = modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
+    const chapters = hyleeContext || modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     setDirectionSequence(chapters);
     setDirectionChapter(0);
     if (chapters.length) beginSegment("direction-lines", chapters[0]);
-    else beginSegment("ending", homeProperty ? homeIntimacyEnding(character.id, homeProperty) : intimacyEnding(character.id, date));
+    else beginSegment("ending", endingLines());
   }
 
   function chooseAttunement(option: IntimacyGameOption) {
@@ -4629,7 +4633,10 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? linevaDateIntimacyPhase(directionChapter)
       : character.id === "allenna" && modal.dateId?.startsWith("date-allenna-")
         ? allennaDateIntimacyPhase(directionChapter)
-        : undefined,
+        : hyleeContext
+          ? hyleeDateIntimacyPhase(directionChapter)
+          : undefined,
+    retainRevealThroughClimax: Boolean(hyleeContext),
   });
 
   return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
