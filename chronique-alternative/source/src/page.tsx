@@ -689,6 +689,18 @@ function routeNarrativeReady(scene: RouteScene, game: GameState) {
   );
 }
 
+function routeAvailableAtPlace(scene: RouteScene | undefined, game: GameState): boolean {
+  if (!scene) return false;
+  const relation = game.relationships[scene.character];
+  const periods = ROUTE_PERIODS[scene.id];
+  return game.day >= scene.dayMin
+    && scene.location === game.location
+    && ROUTE_SPOTS[scene.id] === game.spot
+    && (!periods || periods.includes(PERIODS[game.period].id))
+    && relation.affection + relation.trust >= BOND_THRESHOLDS[scene.stage]
+    && routeNarrativeReady(scene, game);
+}
+
 function routeNarrativeObjective(scene: RouteScene, game: GameState): string | undefined {
   if (game.settings.unlockAll) return undefined;
   if (!hasKnowledge(game, routeKnowledgeRequirements(scene))) {
@@ -712,9 +724,7 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
     return `Poursuivez l’histoire principale jusqu’à la fin du chapitre ${MAIN_STORY[requiredStory - 1]?.number || requiredStory}.`;
   }
   const missingFlags = routeFlagRequirements(scene).filter((flag) => !game.flags.includes(flag));
-  if (!missingFlags.length) return scene.id === "hylee-4"
-    ? "Retrouvez Hylee dans son sous-lieu actuel, puis choisissez un trajet vers une autre région sur la carte. Cette conversation accompagne votre départ réel."
-    : undefined;
+  if (!missingFlags.length) return undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
   if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
   if (scene.id === "valurn-4" || scene.id === "bellirith-4") {
@@ -1011,7 +1021,7 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
   if (!game.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return false;
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[characterId];
-  const requiredStage = ["lineva", "allenna"].includes(characterId) || characterId === "hylee" ? 5 : 3;
+  const requiredStage = 5;
   return relation.stage >= requiredStage && relation.affection >= 22 && relation.trust >= 22;
 }
 
@@ -1371,18 +1381,6 @@ function nextPresence(
     if (day >= minDay && place.spot === spotId && (!allowedPeriods || allowedPeriods.includes(PERIODS[period].id))) {
       return { day, period, place, offset };
     }
-  }
-  return undefined;
-}
-
-/** Une invitation individuelle peut déplacer Hylee dans la ville où elle
- * séjourne, jamais l'arracher à un voyage ni la faire traverser une région. */
-function nextHyleeDateDay(game: GameState, location: string, period: number): number | undefined {
-  if (game.location !== location) return undefined;
-  const character = CHARACTERS.find((entry) => entry.id === "hylee")!;
-  for (let day = game.day + 1; day <= game.day + 38; day += 1) {
-    const place = characterPlace(character, day, period, game.flags, game.housing);
-    if (!place.traveling && place.location === location) return day;
   }
   return undefined;
 }
@@ -2018,17 +2016,7 @@ export default function Home() {
       }
     }
     const route = sceneFor(characterId, relation.stage);
-    const bond = relation.affection + relation.trust;
-    const routeSpotId = route ? ROUTE_SPOTS[route.id] : undefined;
-    const routePeriods = route ? ROUTE_PERIODS[route.id] : undefined;
-    const ready = route
-      && route.id !== "hylee-4"
-      && game.day >= route.dayMin
-      && route.location === game.location
-      && routeSpotId === game.spot
-      && (!routePeriods || routePeriods.includes(PERIODS[game.period].id))
-      && bond >= BOND_THRESHOLDS[route.stage]
-      && routeNarrativeReady(route, game);
+    const ready = routeAvailableAtPlace(route, game);
     const queuedSocial = chooseSocialScene(characterId, game);
     if (queuedSocial?.oneTime) {
       const scene: SceneView = {
@@ -2639,7 +2627,7 @@ export default function Home() {
     if (locationId !== game.location && game.relationships.hylee.stage === 4
       && hyleePlace.spot === game.spot && routeNarrativeReady(farewell, game)
       && game.relationships.hylee.affection + game.relationships.hylee.trust >= BOND_THRESHOLDS[4]) {
-      const intro = farewell.intro.map((line) => line.text === "Oui. J’ai choisi la route. Il faut que je me mette en marche."
+      const intro = farewell.intro.map((line) => line.text === "Oui. Je voulais te voir avant de reprendre la route."
         ? { ...line, text: `Oui. Je pars vers ${location.name}. Il faut que je me mette en marche.` } : line);
       const scene: SceneView = {
         ...farewell, intro, background: spotById(game.spot)?.background || routeBackground(farewell),
@@ -3233,11 +3221,7 @@ export default function Home() {
     if (!homeDateUnlocked(game, characterId)) return;
     if (characterId === "hylee") {
       const property = propertyById(game.housing.propertyId)!;
-      const day = nextHyleeDateDay(game, property.location, 3);
-      if (!day) {
-        setModal({ kind: "notice", title: "Une invitation à prévoir", text: game.location !== property.location ? "Rejoignez d’abord la ville de votre logis. Hylee pourra venir pendant une halte dans cette même ville." : "Hylee ne prévoit pas de halte dans cette ville pour le moment. Son itinéraire reste visible dans Relations." });
-        return;
-      }
+      const day = game.day + 1;
       updateGame((current) => ({ ...current, day, period: 3, location: property.location, spot: property.spot, ...placeDiscovery(current, property.location, property.spot) }));
       setSelectedLocation(property.location);
       setSelectedSpot(property.spot);
@@ -3363,11 +3347,7 @@ export default function Home() {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date || !publicDateUnlocked(game, date)) return;
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
-    const scheduledDay = date.character === "hylee" ? nextHyleeDateDay(game, date.location, periodIndex) : game.day + 1;
-    if (!scheduledDay) {
-      setModal({ kind: "notice", title: "Retrouver Hylee", text: game.location !== date.location ? "Rejoignez Mir’Aldas pour cette sortie. Vous pourrez réserver une journée pendant une halte d’Hylee." : "Hylee n’a pas de halte disponible dans les prochaines semaines. Retrouvez son itinéraire dans Relations." });
-      return;
-    }
+    const scheduledDay = game.day + 1;
     const nextGame: GameState = {
       ...game,
       day: scheduledDay,
@@ -3560,7 +3540,7 @@ export default function Home() {
     if (!route || !character) return;
     const confidenceObjective = routeNarrativeObjective(route, game);
     if (confidenceObjective) {
-      setModal({ kind: "notice", title: route.id === "hylee-4" && routeNarrativeReady(route, game) ? "Préparer votre départ" : "Un chapitre manque encore", text: confidenceObjective });
+      setModal({ kind: "notice", title: "Un chapitre manque encore", text: confidenceObjective });
       return;
     }
     const spotId = ROUTE_SPOTS[route.id];
@@ -3900,7 +3880,7 @@ export default function Home() {
                   const rawNextScene = sceneFor(character.id, relation.stage);
                   const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
                   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
-                  const special = nextScene && nextScene.location === game.location && ROUTE_SPOTS[nextScene.id] === game.spot && (!ROUTE_PERIODS[nextScene.id] || ROUTE_PERIODS[nextScene.id].includes(period.id)) && game.day >= nextScene.dayMin && relation.affection + relation.trust >= BOND_THRESHOLDS[nextScene.stage] && routeNarrativeReady(nextScene, game);
+                  const special = routeAvailableAtPlace(nextScene, game);
                   const queuedSocial = chooseSocialScene(character.id, game);
                   const confidence = availableSecretForCharacter(character.id, game);
                   const homeInteraction = propertyById(game.housing.propertyId)?.spot === game.spot && game.housing.residents.includes(character.id);
@@ -5133,7 +5113,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const homeProfile = HOME_DATE_PROFILES[character.id];
     const property = propertyById(game.housing.propertyId);
     const homeUnlocked = Boolean(property) && homeDateUnlocked(game, character.id);
-    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Les rendez-vous publics et votre soirée au logis sont réunis ici. Une journée est réservée. Pour Hylee, le calendrier attend sa prochaine halte dans la ville : le délai exact est indiqué avant de confirmer.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); const day = date.character === "hylee" ? nextHyleeDateDay(game, date.location, PERIODS.findIndex((period) => period.id === date.period)) : game.day + 1; return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <><button className="primary-action" disabled={!day} onClick={() => startDate(date.id)}>{day ? `Réserver le jour ${day}` : "Rejoindre le lieu du rendez-vous"}</button>{date.character === "hylee" && <small>{day ? `Départ du rendez-vous dans ${day - game.day} jour(s), pendant sa halte à Mir’Aldas.` : "Rejoignez Mir’Aldas. Hylee doit y séjourner pour honorer cette invitation."}</small>}</> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}{homeProfile && <article className={`home-date-plan-card ${!homeUnlocked ? "locked" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.2), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` }}><span>Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>{homeUnlocked ? <><button className="primary-action" disabled={character.id === "hylee" && !nextHyleeDateDay(game, property!.location, 3)} onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button>{character.id === "hylee" && <small>{nextHyleeDateDay(game, property!.location, 3) ? `Soirée réservée au jour ${nextHyleeDateDay(game, property!.location, 3)}, pendant sa halte dans cette ville.` : "Rejoignez votre ville et vérifiez qu’Hylee y prévoit une halte."}</small>}</> : <div className="date-lock">{property ? `Requis : étape ${["lineva", "allenna"].includes(character.id) || character.id === "hylee" ? 5 : 3} · affection 22 · confiance 22` : "Requis : posséder un logis"}</div>}</article>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Invitez la personne pour le lendemain, quel que soit son lieu de séjour. Une journée est réservée pour votre sortie ou votre soirée au logis.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); const day = game.day + 1; return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <><button className="primary-action" onClick={() => startDate(date.id)}>{`Inviter pour le jour ${day}`}</button></> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}{homeProfile && <article className={`home-date-plan-card ${!homeUnlocked ? "locked" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.2), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` }}><span>Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>{homeUnlocked ? <><button className="primary-action" onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button><small>Soirée prévue au jour {game.day + 1}.</small></> : <div className="date-lock">{property ? `Requis : étape ${5} · affection 22 · confiance 22` : "Requis : posséder un logis"}</div>}</article>}</div></section></div>;
   }
   if (modal.kind === "home-date") return <HomeDateModal characterId={modal.character} game={game} onFinish={finishHomeDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;

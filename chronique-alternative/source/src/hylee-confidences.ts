@@ -11,7 +11,7 @@ const secret = (id: string, title: string, tier: SecretTier, minTrust: number, r
 });
 
 export const HYLEE_KNOWLEDGE: KnowledgeEntry[] = [
-  { id: "knows_hylee_tartlets", title: "Les visites de Naïah", summary: "Naïah rendait visite à Hylee à l’auberge. Elles parlaient, jouaient et dansaient la nuit. Naïah cachait parfois Hylee au grenier et lui apportait des tartelettes aux pommes. Ses visites ont cessé sans explication connue d’Hylee.", people: ["hylee", "naiah"] },
+  { id: "knows_hylee_tartlets", title: "Les repas mis de côté", summary: "Quand Hylee travaillait à l’auberge, elle offrait en secret des restes à Naïah. Elles parlaient, jouaient et dansaient lors de ses visites nocturnes. Naïah a cessé de venir sans explication connue d’Hylee.", people: ["hylee", "naiah"] },
   { id: "knows_hylee_medig", title: "Medig retrouve le chemin", summary: "Hylee a nourri une chouette affamée près de l’Auberge du Forestier. Medig est revenue, puis l’a retrouvée après son départ avec Remerii.", people: ["hylee"] },
   { id: "knows_hylee_star_pendant", title: "Le pendentif étoilé", summary: "La petite étoile est presque tout ce qu’Hylee conserve de ses origines. Elle ignore qui la lui a donnée et ce qu’elle signifie. Aucune propriété magique n’est établie.", people: ["hylee"] },
   { id: "knows_hylee_adoptive_abuse", title: "Le travail et la peur", summary: "Hylee a raconté le travail imposé, les humiliations et la violence de ses parents adoptifs à l’auberge. Elle devait aussi dissimuler sa magie aux autorités.", people: ["hylee"] },
@@ -23,19 +23,20 @@ export const HYLEE_KNOWLEDGE: KnowledgeEntry[] = [
 ];
 
 export const HYLEE_CONFIDENCES: SecretConversation[] = [
-  secret("secret-hylee-naiah-v2", "Les nuits sous le toit", 20, 10, ["knows_hylee_tartlets"], [
+  secret("secret-hylee-naiah-v2", "Après le dernier service", 20, 10, ["knows_hylee_tartlets"], [
     N("Hylee ouvre un sachet de tartelettes aux pommes. Elle en renifle une, mord un coin de pâte et regarde aussitôt la garniture."),
-    H("Celles de Naïah avaient plus de pommes. Elle disait que la pâte servait seulement à ne pas se salir les doigts." , "teasing"),
-    P("Elle t’en apportait ?"),
-    H("À l’auberge. Quand je n’avais pas eu assez à manger. Elle me cachait au grenier, et elle revenait avec ça."),
+    H("Naïah aurait pris celle-là. Elle cherchait toujours celle avec le plus de pommes." , "teasing"),
+    P("Vous en mangiez ensemble ?"),
+    H("Quand il en restait après le service. Je travaillais à l’auberge, alors je mettais de la nourriture de côté pour elle. Du pain, un fond de plat… Une tartelette, les bons soirs."),
+    H("En cachette. Je lui passais le paquet quand personne ne regardait. Elle venait parfois avant que j’aie fini et me faisait des signes pour que je me dépêche."),
     N("Hylee remet délicatement la tartelette dans le sachet. Ses doigts portent encore de la farine."),
-    H("On parlait presque toute la nuit. Elle inventait des jeux, elle me faisait danser. Pas trop près de l’escalier : une marche grinçait dès qu’on sautait."),
+    H("Après, on parlait. Elle inventait des jeux, elle me faisait danser. Je devais lui rappeler de faire moins de bruit, et elle me faisait rire juste au mauvais moment."),
     P("Vous vous voyiez souvent ?"),
     H("Assez pour que j’écoute après le dernier service. Des fois elle arrivait quand j’avais déjà abandonné. Elle trouvait très drôle de me réveiller."),
     N("Elle replie le bord du sachet, puis le rouvre pour vous laisser choisir."),
     H("Et puis elle n’est plus venue."),
     P("Elle t’avait prévenue ?"),
-    H("Non. Je suis remontée plusieurs soirs. Après, j’ai arrêté de mettre deux morceaux de pain de côté." , "sad"),
+    H("Non. J’ai continué à garder des restes pour elle plusieurs soirs. À la fin, je les remettais avec les autres." , "sad"),
     N("Une miette reste collée à son doigt. Hylee l’enlève avec soin."),
     H("Je ne sais pas pourquoi elle a arrêté. J’ai inventé plein de raisons. Aucune ne m’a aidée à dormir.", "sad"),
   ], [
@@ -55,7 +56,7 @@ export const HYLEE_CONFIDENCES: SecretConversation[] = [
     ], { affection: 2, trust: 7 }),
     Q("hys-naiah-present", "Partager les tartelettes sans chercher une explication à sa place.", "sangFroid", [
       N("Vous rapprochez le sachet. Hylee prend une deuxième tartelette et examine d’abord combien de pommes elle contient."),
-      H("Elle les choisissait mieux. Il faudra que je lui demande où elle les trouvait."),
+      H("Elle me demandait toujours s’il en restait une autre. Même quand je venais de lui donner la dernière." , "teasing"),
       P("Celles-là sont bonnes aussi."),
       H("Oui. Je n’ai pas dit que je te laissais la dernière."),
       N("Elle la coupe pourtant en deux avant de ranger les miettes."),

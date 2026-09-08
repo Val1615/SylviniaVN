@@ -189,7 +189,7 @@ export const HYLEE_ROUTES: RouteScene[] = [
       P("Tu as dit que tu retrouvais le début."),
       H("Oui. Il a bougé."),
       N("Vous traversez enfin deux mesures sans vous marcher dessus. Hylee desserre les doigts, prend plus d’espace et vous fait tourner sous vos mains jointes."),
-      N("Au retour, elle se retrouve tout près. Elle ne recule pas avant la note suivante."),
+      N("Au retour, Hylee cherche déjà du regard où poser le pied pour la figure suivante."),
       H("Celui-là, on le garde."),
     ], { affection: 7, trust: 5 }),
     Q("hy3-ronde", "L’entraîner dans la ronde des voyageurs.", "audace", [
@@ -210,8 +210,8 @@ export const HYLEE_ROUTES: RouteScene[] = [
     ], { affection: 7, trust: 5 }),
   ]),
 
-  // Cette scène est jouée lors d'un vrai trajet choisi sur la carte. Le lieu et
-  // le nom de destination sont adaptés au départ, jamais inventés par un délai.
+  // Accessible comme les autres scènes, pendant les préparatifs. Si le joueur
+  // la déclenche en voyageant, le moteur adapte le texte au trajet choisi.
   scene(4, "Tu reviendras ?", "algratal", "streets", [
     N("Hylee vous rattrape pendant que vous refaites votre sac. Elle tient un paquet froissé et une boucle de cuir trouvée dans ses affaires."),
     H("J’ai acheté trop de pain. Remerii dit que prendre tout un panier parce qu’il sent bon n’est pas une méthode de ravitaillement." , "teasing"),
@@ -222,8 +222,8 @@ export const HYLEE_ROUTES: RouteScene[] = [
     N("Vous terminez le pain en discutant du chemin. Hylee dessine un détour avec la boucle de cuir, s’embrouille et retourne le sac pour retrouver le bon côté."),
     H("Non, attends. Là, tu repars vers nous. Ce qui m’arrange, mais ne t’aide pas beaucoup."),
     N("Vous repliez la carte. Hylee défait la boucle qu’elle avait nouée autour de son index."),
-    H("Tu pars maintenant ?"),
-    P("Oui. J’ai choisi la route. Il faut que je me mette en marche."),
+    H("Tu prépares ton départ ?"),
+    P("Oui. Je voulais te voir avant de reprendre la route."),
     N("Elle remet le paquet bien droit dans votre sac, puis vérifie une attache qui tient déjà."),
     H("Tu reviendras ?"),
     N("Elle lève enfin les yeux."),
@@ -231,7 +231,7 @@ export const HYLEE_ROUTES: RouteScene[] = [
   ], [
     Q("hy4-realiste", "Promettre de donner des nouvelles, sans inventer une date de retour.", "sangFroid", [
       P("Je veux revenir. Je ne sais pas combien de temps la route prendra. Si je suis retenu, je ferai passer un mot à votre prochaine halte."),
-      N("Hylee sort son crayon. Elle note votre destination au bord de sa carte, puis vous indique où leur propre route doit les mener."),
+      N("Hylee sort son crayon. Elle note leurs prochaines haltes au bord de votre carte, puis vous indique où faire porter une lettre."),
       H("Même un mot mal écrit. Je saurai me débrouiller."),
       P("Et si vous partez avant ?"),
       H("Je te laisserai le chemin. Ou je t’enverrai Medig. Si elle accepte de travailler."),
@@ -253,7 +253,7 @@ export const HYLEE_ROUTES: RouteScene[] = [
       H("Prends-la quand même. Celle de ta poche va lâcher."),
       P("Merci."),
       H("Je suis contente que tu sois revenu aujourd’hui."),
-      N("Elle vous accompagne quelques pas et s’arrête quand le chemin se rétrécit. Son salut tarde une seconde, mais elle vous regarde partir."),
+      N("Elle remet votre carte dans la poche extérieure du sac. Au moment de retirer sa main, elle vérifie une dernière fois la boucle."),
     ], { affection: 2, trust: 4, flags: ["hylee-return-uncertain"] }),
     Q("hy4-toujours", "Lui assurer que rien ne pourra jamais vous séparer.", "audace", [
       P("Rien ne pourra nous séparer. Je reviendrai toujours."),
@@ -284,7 +284,7 @@ export function hyleeRelationBeat(sceneId: string, flags: readonly string[] = []
     ],
     choices: [
       Q("hyb0-fontaine", "Lui demander de vous montrer la fontaine.", "lucidite", [P("Montre-moi."), N("Hylee saute du muret et pointe deux rues successives, puis choisit la troisième."), H("Je reconnais mieux en marchant. Garde la pomme, il reste du chemin.", "teasing")], { affection: 5, trust: 2 }),
-      Q("hyb0-flirt", "Avouer que vous êtes surtout revenu pour elle.", "audace", [P("La fontaine peut attendre. C’est surtout toi que je voulais revoir."), N("Hylee s’immobilise au bord du muret."), H("Ah. Il fallait commencer par ça."), N("Elle descend près de vous, l’épaule contre la vôtre, et commence à vous montrer le chemin sans s’écarter.")], { affection: 3, desire: 6 }),
+      Q("hyb0-flirt", "Avouer que vous êtes surtout revenu pour elle.", "audace", [P("La fontaine peut attendre. C’est surtout toi que je voulais revoir."), N("Hylee s’immobilise au bord du muret."), H("Ah. Il fallait commencer par ça."), N("Elle saute à terre, sourit, puis désigne la rue d’un geste pressé."), H("Tu peux me revoir en marchant. Je veux quand même te montrer la fontaine.", "teasing")], { affection: 3, desire: 3 }),
       Q("hyb0-partage", "Partager la pomme en discutant encore un moment.", "sangFroid", [N("Vous coupez la pomme avec votre couteau et lui donnez une moitié. Hylee regarde le ciel entre les toits."), H("On voit mieux les tours d’ici. Je vais finir par me faire mal au cou."), N("Elle reste à côté de vous jusqu’à ce que Remerii revienne avec le panier.")], { affection: 4, trust: 3 }),
     ],
   };
@@ -293,16 +293,16 @@ export function hyleeRelationBeat(sceneId: string, flags: readonly string[] = []
     intro: [N("Le sac réparé, Hylee choisit un repas sur un étal ouvert à tout le monde. Elle mord dans un chausson et vous tend le second avant même de l’avoir goûté."), H("Celui-là est à toi. J’ai vérifié : personne ne demande de répondant pour la compote.", "teasing")],
     choices: [
       Q("hyb1-repas", "Choisir un coin à l’ombre pour manger ensemble.", "sangFroid", [N("Vous trouvez les marches d’une boutique fermée. Hylee y installe le sac entre vos pieds et raconte les trois versions de sa couleur données par la marchande."), H("Je vais garder “bleu”. C’est plus court.")], { affection: 5, trust: 2 }),
-      Q("hyb1-bouche", "Lui signaler la compote au coin des lèvres et proposer de l’essuyer.", "audace", [P("Tu en as juste là. Je peux ?"), H("Où ?"), N("Elle cesse de chercher quand votre pouce approche. Vous retirez la trace avec un coin de serviette. Hylee regarde votre bouche avant de reprendre son chausson."), H("Je vais essayer de manger proprement. Je ne garantis rien.", "teasing")], { affection: 3, desire: 6 }),
+      Q("hyb1-bouche", "Lui tendre une serviette pour la compote au coin des lèvres.", "audace", [P("Tu en gardes pour plus tard ?"), H("Quoi ? Ah."), N("Elle prend la serviette, s’essuie du mauvais côté, puis se corrige en voyant votre sourire."), H("Tu pouvais me le dire avant que je parle à la marchande !", "teasing"), N("Elle vérifie les deux coins cette fois, puis reprend son chausson.")], { affection: 4, trust: 2 }),
       Q("hyb1-retour", "Acheter aussi un chausson pour Remerii.", "lucidite", [H("Oui. Sans lui demander combien de temps il se conserve, sinon elle va nous gâcher la surprise."), N("Hylee emballe le troisième chausson et cale le paquet au-dessus du sac. La nouvelle lanière tient pendant tout le retour.")], { affection: 4, trust: 3 }),
     ],
   };
   if (sceneId === "hylee-3") return {
     cast: ["hylee"],
-    intro: [N("Le morceau suivant tarde à commencer. Hylee vient s’asseoir près de vous avec deux gobelets d’eau. Elle pose le vôtre loin de ses pieds."), H("Je te l’avais dit. Pas besoin de bâton pour faire des dégâts.", "teasing"), N("Elle regarde la piste, puis le petit espace entre vous.")],
+    intro: [N("Le morceau suivant tarde à commencer. Hylee vient s’asseoir près de vous avec deux gobelets d’eau. Elle pose le vôtre loin de ses pieds."), H("Je te l’avais dit. Pas besoin de bâton pour faire des dégâts.", "teasing"), N("Elle regarde la violoniste changer une corde et recommence le dernier pas sous le banc.")],
     choices: [
-      { ...Q("hyb3-baiser", "Lui proposer de recommencer plus près.", "audace", [P("On essaie plus près, au prochain ?"), H("Comme ça ?"), N("Elle vient contre vous. Sa main se pose sur votre taille, attend votre mouvement, puis vous ramène doucement. Vous l’embrassez ; Hylee revient chercher un second baiser avant la première note."), H("On va encore rater le début.", "teasing")], { affection: 5, trust: 2, desire: 9 }), requiresRelationship: [{ character: "hylee", desire: 12 }] },
-      Q("hyb3-tendre", "Lui prendre la main en attendant la musique.", "sangFroid", [N("Hylee regarde vos doigts entre les siens. Elle les serre, puis vient poser sa tempe contre votre épaule."), H("Préviens-moi quand ça recommence. Je regarde mal, là."), N("Vous restez ainsi pendant que la violoniste change une corde.")], { affection: 6, desire: 5 }),
+      Q("hyb3-revanche", "La défier de réussir le prochain tour sans regarder ses pieds.", "audace", [P("Au prochain, on regarde devant. Pas une fois par terre."), H("Tu me diras si la racine se déplace ?", "teasing"), N("Elle pose son gobelet, teste un pas les yeux levés et manque aussitôt de heurter le banc."), H("Ça ne comptait pas. Il n’y avait pas encore de musique."), N("Elle attend la première note pour vous faire signe de la suivre.")], { affection: 5, trust: 2 }),
+      Q("hyb3-tendre", "Lui dire que vous avez passé une bonne soirée.", "sangFroid", [P("Je suis content d’être resté pour la musique."), H("Moi aussi."), N("Hylee fait tourner son gobelet entre ses paumes. Elle relève les yeux avec un petit sourire."), H("Même si on a raté la moitié. Tu reviendras écouter le prochain morceau avec moi ?"), N("La corde neuve résonne. Hylee se retourne aussitôt vers la piste.")], { affection: 6, trust: 3 }),
       Q("hyb3-amis", "Reprendre avec elle le rythme sur le baquet.", "lucidite", [N("Vous ramenez le baquet. Hylee rit, vous donne le second gobelet pour battre la mesure et appelle la violoniste."), H("Nous avons une proposition. Elle fait beaucoup de bruit."), N("Remerii lève les yeux au premier essai, puis retourne parler à sa voisine. Hylee vous donne le signal du second.")], { affection: 7, trust: 3 }),
     ],
   };

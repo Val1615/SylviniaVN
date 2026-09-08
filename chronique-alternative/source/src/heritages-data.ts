@@ -139,7 +139,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_valurn_artifact_search", title: "L’artefact promis", summary: "Valurn aida Bellirith à rechercher un artefact supposé sceller sa part démoniaque, avant de la cacher dans une pierre de stase.", people: ["valurn", "bellirith"] },
   { id: "knows_valurn_true_abandonment", title: "La décision de ne pas revenir", summary: "Valurn découvrit que l’artefact était une légende. Convaincu que Bellirith souffrirait moins sans sa part humaine, il décida consciemment de ne jamais revenir la libérer.", people: ["valurn", "bellirith"] },
 
-  { id: "knows_naiah_tartlets", title: "Les tartelettes sans prix", summary: "Naïah rendait régulièrement visite à Hylee à l’auberge, lui apportait des tartelettes aux pommes et la cachait dans le grenier pour la soustraire à ses parents adoptifs.", people: ["naiah", "hylee"] },
+  { id: "knows_naiah_tartlets", title: "Les repas d’Hylee", summary: "Pendant qu’elle travaillait à l’auberge, Hylee offrait secrètement des restes à Naïah, parfois des tartelettes aux pommes. Naïah se souvient aussi de leurs jeux et de leurs danses nocturnes.", people: ["naiah", "hylee"] },
   { id: "knows_naiah_exile", title: "Deux sœurs après l’exil", summary: "Naïah a vécu son exil comme le rejet définitif d’Amanea. Sa haine d’Allenna mêle rivalité, jalousie et blessure familiale.", people: ["naiah", "allenna", "amanea"] },
   { id: "knows_naiah_surpass_amanea", title: "Dépasser une mère absente", summary: "Naïah transforme son incompréhension en obsession : devenir assez puissante pour ne plus jamais attendre l’attention d’Amanea.", people: ["naiah", "amanea"] },
   { id: "knows_naiah_maternal_rejection", title: "Pourquoi aucun regard ?", summary: "Sous sa colère, Naïah ne comprend toujours pas pourquoi sa mère paraît incapable de la regarder. Elle ignore entièrement la cause réelle.", people: ["naiah", "amanea"] },
@@ -380,22 +380,22 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("sva80-s", "Lui demander ce qu’il compte faire d’une vérité qui appartient aussi à Bellirith.", "sangFroid", [P("Maintenant que je sais, qu’est-ce que vous allez faire ?"), L("Valurn", "Trouver une plaisanterie assez bonne pour fuir cette pièce."), N("Vous ne souriez pas. Il n’essaie pas une seconde fois."), L("Valurn", "Je lui dirai si elle accepte de m’entendre. Pas au détour d’une dispute, pas pour obtenir son pardon avant une bataille. Entièrement."), P("Et si elle refuse ?"), L("Valurn", "Alors je respecterai enfin un choix de sa part, même celui qui me condamne au silence."), N("Il replie la copie et ne la reprend pas."), P("Vous la laissez ici ?"), L("Valurn", "La vérité ne peut plus rester seulement dans ma poche. Gardez-la jusqu’à ce que Bellirith décide si elle veut la voir."), P("Cela ne vous absout pas."), L("Valurn", "Non. Mais peut-être que supporter sa haine avec toutes ses raisons vaut mieux que d’être pardonné par une histoire fausse.")], { trust: 9, affection: 1 }),
   ], ["knows_valurn_true_abandonment"], { requiresKnowledge: ["knows_bellirith_stasis"] }),
 
-  S("naiah", 20, "secret-naiah-tartlets", "Les tartelettes du grenier", [
+  S("naiah", 20, "secret-naiah-tartlets", "Ce qu’Hylee gardait pour elle", [
     N("Naïah fait apparaître une tartelette aux pommes au-dessus de votre tête. Quand vous tendez la main, elle retire le parfum de son illusion."),
     P("C’est un crime."),
     L("Naïah", "C’est une reconstitution historique. Respecte les archives."),
     N("Elle réduit l’illusion et y ajoute un petit morceau de tissu noué."),
-    L("Naïah", "J’en apportais à Hylee, à l’auberge. Elle avait faim. Elle essayait de manger vite pour que ses parents adoptifs ne la voient pas."),
+    L("Naïah", "Hylee m’en gardait quand elle travaillait à l’auberge. Des restes du service, qu’elle m’offrait en secret. Je préférais nettement les soirs avec des pommes."),
     P("Tu allais la voir souvent ?"),
-    L("Naïah", "Oui. On parlait, on jouait. La nuit, on dansait quand on pouvait. Et parfois je la cachais dans le grenier."),
-    N("Son doigt dessine un toit au-dessus de la tartelette."),
-    L("Naïah", "Là-haut, elle pouvait finir de manger. En bas, il fallait écouter les pas."),
-    P("Elle m’a parlé de toi."),
+    L("Naïah", "Oui. Elle finissait son travail, puis on parlait, on jouait. On dansait aussi. Très discrètement, d’après moi. Beaucoup moins, d’après elle."),
+    N("Elle fait tourner le petit paquet. Le tissu de l’illusion porte une tache de sauce."),
+    L("Naïah", "Elle vérifiait que personne ne regardait avant de me le donner. Je faisais semblant de venir seulement pour le repas. Elle n’était pas dupe."),
+    P("Et les jeux ?"),
     L("Naïah", "J’espère qu’elle a précisé que je gagnais aux jeux. Sinon, ce témoignage est incomplet."),
     N("La tartelette retrouve son parfum. Naïah la garde un instant avant de vous la tendre.")
   ], [
     Q("sna20-a", "« Vous devriez organiser une revanche. Avec de vraies tartelettes. »", "audace", [L("Naïah", "Une excellente idée. Tu apportes les pommes, je me charge de gagner."), P("Et Hylee ?"), L("Naïah", "Elle dira que j’ai triché. Ce sera faux au moins une fois."), N("Naïah fait apparaître deux assiettes. Elle ajoute une troisième, plus petite, devant vous."), L("Naïah", "Pour le témoin impartial. Tu auras évidemment droit à une part.")], { affection: 5, trust: 2 }),
-    Q("sna20-l", "Lui demander comment elle savait quand il fallait se cacher.", "lucidite", [L("Naïah", "Au bruit dans l’escalier. Et à la tête d’Hylee."), N("Naïah efface le petit toit, puis le redessine plus haut."), L("Naïah", "Elle ramassait déjà ses affaires avant que la porte s’ouvre. Alors je l’emmenais là-haut."), P("Tu restais avec elle ?"), L("Naïah", "Quand je pouvais. Je n’allais pas lui laisser toute la poussière."), N("L’illusion se dissipe. Le parfum des pommes reste quelques secondes de plus.")], { trust: 6, affection: 2 }),
+    Q("sna20-l", "Lui demander ce qu’Hylee glissait dans les paquets.", "lucidite", [L("Naïah", "Ce qu’elle pouvait récupérer après le service. Elle s’excusait quand il n’y avait que du pain."), N("Naïah remplace la tartelette par un morceau de miche."), L("Naïah", "Je lui disais qu’il manquait une couronne. Elle me traitait de difficile et retournait voir s’il restait autre chose."), P("Elle en trouvait ?"), L("Naïah", "Parfois. Sinon, elle revenait s’asseoir. Ça m’allait aussi."), N("Elle referme les doigts sur l’illusion. Le parfum des pommes se dissipe à son tour.")], { trust: 6, affection: 2 }),
   ], ["knows_naiah_tartlets"]),
   S("naiah", 40, "secret-naiah-exile", "Deux héritières, aucune sœur", [
     N("Naïah répare un piège de forêt neutralisé par Allenna. La commandante a coupé la corde, retiré le mécanisme et laissé une note : “Trop visible.” Naïah a encadré l’insulte."),
