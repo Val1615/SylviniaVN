@@ -1,4 +1,5 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
+import { HYLEE_CONFIDENCES, HYLEE_KNOWLEDGE } from "./hylee-confidences.ts";
 
 export type SecretTier = 20 | 40 | 60 | 80;
 
@@ -9,6 +10,7 @@ export type SecretConversation = {
   title: string;
   locations?: string[];
   minDay?: number;
+  minTrust?: number;
   requiresKnowledge?: string[];
   intro: DialogueLine[];
   choices: ChoiceData[];
@@ -119,10 +121,7 @@ const S = (
 ): SecretConversation => ({ character, tier, id, title, intro, choices, reveals, ...options });
 
 export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
-  { id: "knows_hylee_tartlets", title: "Un geste que Hylee avait oublié", summary: "Enfant, Hylee a donné des tartelettes à une Naïah affamée. Pour Hylee, ce n’était presque rien ; Naïah ne l’a jamais oublié.", people: ["hylee", "naiah"] },
-  { id: "knows_hylee_star_pendant", title: "Le pendentif étoilé", summary: "Hylee a été abandonnée vers dix ans. Un pendentif en forme d’étoile demeure son seul indice sur ses origines.", people: ["hylee"] },
-  { id: "knows_hylee_adoptive_abuse", title: "Sous le plancher de l’auberge", summary: "Ses parents adoptifs exploitaient Hylee et sa magie humaine devait rester cachée pour ne pas attirer les Sylviniens.", people: ["hylee", "remerii"] },
-  { id: "knows_hylee_origin_unease", title: "Une différence sans réponse", summary: "Hylee éprouve parfois des affinités et des sensations que sa magie humaine n’explique pas. Saidin semble les remarquer, sans jamais les nommer.", people: ["hylee", "saidin"] },
+  ...HYLEE_KNOWLEDGE,
 
   { id: "knows_remerii_child_prodigy", title: "La petite prodige de Mir’Aldas", summary: "Saidin a recueilli Remerii très jeune. Son talent l’a rendue célèbre avant qu’elle ait appris à être simplement une enfant.", people: ["remerii", "saidin"] },
   { id: "knows_remerii_dome", title: "Une enfant dans le Dôme", summary: "Remerii a participé très jeune à la création du Dôme. Après cet exploit, admiration et crainte l’ont isolée de ses camarades.", people: ["remerii", "saidin"] },
@@ -140,7 +139,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_valurn_artifact_search", title: "L’artefact promis", summary: "Valurn aida Bellirith à rechercher un artefact supposé sceller sa part démoniaque, avant de la cacher dans une pierre de stase.", people: ["valurn", "bellirith"] },
   { id: "knows_valurn_true_abandonment", title: "La décision de ne pas revenir", summary: "Valurn découvrit que l’artefact était une légende. Convaincu que Bellirith souffrirait moins sans sa part humaine, il décida consciemment de ne jamais revenir la libérer.", people: ["valurn", "bellirith"] },
 
-  { id: "knows_naiah_tartlets", title: "Les tartelettes sans prix", summary: "Naïah se souvient encore de la nourriture donnée par Hylee sans dette, menace ni contrepartie.", people: ["naiah", "hylee"] },
+  { id: "knows_naiah_tartlets", title: "Les tartelettes sans prix", summary: "Naïah rendait régulièrement visite à Hylee à l’auberge, lui apportait des tartelettes aux pommes et la cachait dans le grenier pour la soustraire à ses parents adoptifs.", people: ["naiah", "hylee"] },
   { id: "knows_naiah_exile", title: "Deux sœurs après l’exil", summary: "Naïah a vécu son exil comme le rejet définitif d’Amanea. Sa haine d’Allenna mêle rivalité, jalousie et blessure familiale.", people: ["naiah", "allenna", "amanea"] },
   { id: "knows_naiah_surpass_amanea", title: "Dépasser une mère absente", summary: "Naïah transforme son incompréhension en obsession : devenir assez puissante pour ne plus jamais attendre l’attention d’Amanea.", people: ["naiah", "amanea"] },
   { id: "knows_naiah_maternal_rejection", title: "Pourquoi aucun regard ?", summary: "Sous sa colère, Naïah ne comprend toujours pas pourquoi sa mère paraît incapable de la regarder. Elle ignore entièrement la cause réelle.", people: ["naiah", "amanea"] },
@@ -188,61 +187,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
 ];
 
 export const SECRET_CONVERSATIONS: SecretConversation[] = [
-  S("hylee", 20, "secret-hylee-tartlets", "Une boîte presque vide", [
-    N("En rangeant des provisions, Hylee extrait d’un sac une boîte cabossée. Elle l’ouvre avec l’enthousiasme d’un trésor, découvre trois miettes et les compte tout de même."),
-    L("Hylee", "C’est elle ! Enfin, pas exactement elle. La première avait davantage de tartelettes et moins de moisissure. Ne touche pas à ce coin."),
-    P("Quel rapport avec Naïah ?"),
-    L("Hylee", "Elle venait parfois derrière les cuisines de l’auberge. Toute petite, affamée, déjà capable de regarder une tarte comme si elle envisageait de lui voler son royaume."),
-    N("Hylee imite une Naïah impériale devant la boîte vide, puis son sourire se calme."),
-    L("Hylee", "Je lui ai donné les restes. Je ne m’en souvenais même plus jusqu’à ce qu’elle me décrive la bosse sur le couvercle."),
-    L("Hylee", "Pour moi, c’était une collation. Pour elle… peut-être la première chose qu’on lui donnait sans prix caché. C’est étrange de découvrir qu’on a compté dans une histoire qu’on avait soi-même oubliée.", "thinking"),
-  ], [
-    Q("shy20-l", "Lui demander ce que cette importance inattendue change pour elle.", "lucidite", [P("Ça te fait peur d’avoir compté sans le savoir ?"), L("Hylee", "Un peu. J’aimerais toujours savoir quand je fais quelque chose d’important. Il y aurait une musique, peut-être des étincelles…"), N("Elle referme la boîte, la rouvre, puis récupère une miette encore saine."), L("Hylee", "Mais ça veut aussi dire que je peux aider sans être une grande mage ni trouver la phrase parfaite. Parfois, il suffit d’avoir deux tartelettes et de ne pas réclamer la seconde en paiement."), P("Tu vas garder la boîte ?"), L("Hylee", "Évidemment. Elle est historiquement importante. Et elle pourra servir à transporter la prochaine fournée."), N("Elle la range sur l’étagère des objets précieux, entre son pendentif et une cuillère tordue dont elle refuse d’expliquer l’importance.")], { trust: 5, affection: 2 }),
-    Q("shy20-a", "Proposer une nouvelle fournée, livrée sans discours ni dette.", "audace", [P("On en refait. On les dépose chez Naïah et on fuit avant qu’elle puisse transformer le geste en cérémonie politique."), L("Hylee", "Oui ! Une opération clandestine de pâtisserie."), N("Hylee sort aussitôt la farine, renverse un tiers du sac et dessine dans la poussière un plan d’infiltration beaucoup trop détaillé."), L("Hylee", "Entrée par la fenêtre nord, dépôt sur le trône, retraite sous couverture de cannelle."), P("Pourquoi ne pas frapper à la porte ?"), L("Hylee", "Parce qu’elle dirait que ça ne lui fait rien, mangerait les six et remplacerait notre porte par un mur pour se venger."), N("Elle vous tend un tablier et goûte déjà les pommes."), L("Hylee", "Cette fois, je lui en laisse plus d’une. Et je me souviendrai du moment — surtout si elle nous poursuit.")], { affection: 5, trust: 2 }),
-  ], ["knows_hylee_tartlets"]),
-  S("hylee", 40, "secret-hylee-pendant", "L’étoile sans adresse", [
-    N("Sous une pluie soudaine, Hylee tente de rabattre son col. La chaîne de son pendentif s’y prend ; elle s’arrête au milieu du chemin plutôt que de tirer dessus."),
-    L("Hylee", "Attends. Si je casse encore cette attache, Remerii va me faire suivre un cours sur la métallurgie responsable."),
-    N("Vous vous abritez sous un porche. Hylee libère enfin la petite étoile et l’essuie avec la doublure de sa manche."),
-    L("Hylee", "C’est tout ce que j’avais quand on m’a abandonnée. J’avais dix ans… enfin, autour de dix. Je ne tenais pas encore un calendrier très rigoureux."),
-    L("Hylee", "Une étoile, aucun nom de lieu et la certitude que quelqu’un avait décidé de continuer sans moi."),
-    N("Elle fait tourner le pendentif. La plaisanterie suivante tarde à venir."),
-    L("Hylee", "Certains jours, je veux fouiller toutes les archives du monde. D’autres, je voudrais jeter cette chose dans un puits et inventer moi-même la famille qui me convient."),
-    L("Hylee", "Je ne sais pas quelle réponse je veux. Je voudrais seulement qu’elle cesse de décider combien je vaux avant même d’exister.", "sad"),
-  ], [
-    Q("shy40-s", "Ne prendre le pendentif que lorsqu’elle le dépose elle-même dans votre paume.", "sangFroid", [N("Hylee hésite, puis pose l’étoile dans votre main sans retirer la chaîne de son cou."), P("Tu peux chercher, ne pas chercher, t’arrêter et recommencer plus tard."), L("Hylee", "C’est terriblement peu spectaculaire comme conseil."), P("Je peux ajouter une carte au trésor."), L("Hylee", "Avec un monstre marin ?"), P("Deux."), N("Son pouce rejoint le vôtre sur le métal."), L("Hylee", "Tu viens de rendre l’incertitude moins étroite. Je ne savais pas qu’elle pouvait avoir une porte."), N("Elle reprend le pendentif, puis vous confie l’attache cassée."), L("Hylee", "On commence par une quête moins dangereuse : trouver quelqu’un qui répare ça sans convoquer Remerii.")], { trust: 7, affection: 2 }),
-    Q("shy40-r", "Écouter l’écho magique de l’étoile sans tirer sur son origine.", "resonance", [N("Votre Résonance effleure le pendentif. Une chaleur ancienne répond au froid d’Hylee ; quelque chose d’immense semble tourner dans un ciel sans horizon, puis l’écho se referme avant de former un nom."), L("Hylee", "Tu as fait cette tête."), P("Quelle tête ?"), L("Hylee", "Celle de Saidin quand il sait une chose, refuse de la dire et espère qu’une énigme fera passer l’impolitesse."), P("J’ai senti de la chaleur. Une présence ancienne. Rien qui me permette de conclure."), N("Hylee étudie votre visage, prête à détecter la réponse rassurante inventée pour elle."), L("Hylee", "Tu l’as senti aussi… et tu n’en fabriques pas une origine."), P("Ce n’est qu’un écho."), L("Hylee", "Alors gardons-le comme ça. Un écho, pas un verdict."), N("Elle remet l’étoile sous son col et bondit dans la pluie."), L("Hylee", "Et maintenant, cours. L’écho ancien peut attendre ; mes bottes prennent l’eau.")], { trust: 6, confluence: 2 }),
-  ], ["knows_hylee_star_pendant"]),
-  S("hylee", 60, "secret-hylee-floorboards", "Sous le plancher de l’auberge", [
-    N("En réparant une latte, Hylee glisse instinctivement un livre sous le plancher avant de se figer. Elle le ressort aussitôt, furieuse contre son propre geste."),
-    L("Hylee", "Voilà. Des années plus tard, une bibliothèque entière à ma disposition, et mes mains pensent encore qu’un livre de magie doit dormir sous une chaussette sale."),
-    P("C’est là que tu les cachais ?"),
-    L("Hylee", "Sous ma chambre. La troisième latte grinçait, la cinquième se soulevait. J’avais mis un faux carnet sous la quatrième pour piéger les curieux. Il ne contenait que des recettes très mauvaises."),
-    N("Elle rit, puis pose le marteau à côté d’elle."),
-    L("Hylee", "Mes parents adoptifs prenaient mon salaire, mon temps… puis ils ont commencé à décider de la quantité d’air que j’avais le droit de prendre dans une pièce."),
-    L("Hylee", "Si un Sylvinien avait découvert ma magie, ils m’auraient livrée en disant que c’était pour ma sécurité. Ils savaient rendre chaque cruauté raisonnable."),
-    N("Elle aligne le livre avec la latte ouverte sans l’y remettre."),
-    L("Hylee", "Remerii ne m’a pas sauvée comme dans une chanson. Elle m’a montré une porte, m’a expliqué les risques et m’a laissée choisir de la franchir. C’était plus difficile. Et beaucoup plus important."),
-  ], [
-    Q("shy60-l", "Reconnaître sa peur sans lui retirer le mérite d’être partie.", "lucidite", [P("Tu n’étais pas faible parce que tu avais peur. Et Remerii n’a pas franchi la porte à ta place."), L("Hylee", "Non. C’est moi qui ai emballé trois robes, deux livres et une casserole dont je n’avais absolument pas besoin."), P("La casserole t’a donné du courage ?"), L("Hylee", "Elle faisait un bruit épouvantable à chaque pas. Impossible de fuir discrètement, donc j’ai dû appeler ça un départ officiel."), N("Son sourire tremble, mais ne disparaît pas."), L("Hylee", "J’aime Remerii pour la porte. J’essaie aussi d’aimer la fille qui a choisi de l’ouvrir en ayant les jambes si faibles qu’elle a raté la première marche."), P("Elle s’est relevée."), L("Hylee", "Et elle a juré très fort. Cette partie aussi mérite d’être conservée.", "determined")], { trust: 8, affection: 3 }),
-    Q("shy60-s", "Réparer la latte avec elle, sans cacher de nouveau le livre.", "sangFroid", [N("Vous replacez la latte. Hylee garde le livre sur ses genoux et vous tend un petit couteau."), L("Hylee", "Grave quelque chose."), P("Quoi ?"), L("Hylee", "Une indication pour la prochaine personne qui cherchera une cachette."), N("Vous tracez une flèche vers l’étagère ouverte. Hylee ajoute une étoile et les mots : “Les livres vont là, idiot·e.”"), P("C’est subtil."), L("Hylee", "J’ai passé assez de temps à être subtile."), N("Elle pose le grimoire bien en vue, puis saute sur la latte pour éprouver la réparation. Le bois tient ; vous manquez tous les deux de tomber."), L("Hylee", "Parfait. Plus de cachette."), P("Et la chaussette ?"), L("Hylee", "Elle garde ses secrets.")], { trust: 7, affection: 4 }),
-  ], ["knows_hylee_adoptive_abuse"]),
-  S("hylee", 80, "secret-hylee-unnamed", "Ce qui ne porte aucun nom", [
-    N("Devant un brasier, Hylee tend les mains pour sécher ses gants. La flamme s’incline soudain vers elle ; un cercle de givre l’enveloppe sans l’étouffer."),
-    L("Hylee", "Je précise que je n’ai rien fait."),
-    P("Tu dis cela comme quelqu’un qui a souvent fait quelque chose."),
-    L("Hylee", "D’habitude, il y a une explication et Remerii l’énonce d’un air déçu. Là… regarde."),
-    N("Elle déplace sa main. La flamme la suit avec une lenteur presque attentive. Le froid d’Hylee ne l’attaque pas ; les deux magies se reconnaissent sans se confondre."),
-    L("Hylee", "Cela arrive parfois. Un feu, une vieille pierre, une vibration dans le Dôme. Quelque chose qui n’est pas ma magie agit comme si nous nous étions déjà rencontrés."),
-    L("Hylee", "Et Saidin fait cette tête. Tu sais, celle où il semble retrouver une phrase perdue trois siècles avant notre naissance."),
-    P("Tu lui as demandé ?"),
-    L("Hylee", "Il m’a répondu qu’une graine n’est pas obligée de connaître l’arbre pour choisir où pousser. Puis il a disparu avant que je lui lance un coussin."),
-    N("Le rire d’Hylee retombe. Elle laisse la flamme s’éloigner."),
-    L("Hylee", "Je ne veux pas d’une réponse inventée. Mais j’ai peur qu’une vraie réponse arrive avec des devoirs, une famille et quelqu’un pour m’expliquer que la vie choisie depuis l’auberge n’était qu’une erreur."),
-  ], [
-    Q("shy80-s", "Lui promettre que toute vérité future devra encore lui laisser ses choix.", "sangFroid", [P("Aucune origine ne peut rendre faux ce que tu as choisi depuis. Si une réponse arrive, elle devra entrer dans ta vie — pas la remplacer."), L("Hylee", "Tu ne promets pas qu’elle sera belle."), P("Non."), L("Hylee", "Ni que tu pourras la réparer."), P("Non plus."), N("Hylee observe le feu, puis avance de nouveau sa main. Cette fois, le mouvement vient d’elle."), L("Hylee", "Voilà la seule promesse que je peux croire."), N("Le givre et la flamme se rejoignent au bout de ses doigts. Son sourire revient, prudent mais curieux."), L("Hylee", "Je resterai moi, même si mon histoire devient très étrange. Et si elle apporte des devoirs, je les ferai trier par Remerii. Elle adore ça."), P("Elle affirme le contraire."), L("Hylee", "Oui. Avec beaucoup trop de dossiers pour être crédible.")], { trust: 10, affection: 5 }),
-    Q("shy80-r", "Décrire exactement la réaction du feu sans décider de ce qu’elle révèle.", "resonance", [N("Vous laissez votre Résonance suivre le mouvement. Le feu ne se soumet pas à Hylee : il la reconnaît, comme une porte reconnaît une clé sans expliquer qui l’a forgée."), P("Il t’a reconnue. Je ne sais pas comme quoi."), L("Hylee", "Pas comme une cryomancienne ?"), P("Pas seulement. Mais ce n’est pas une réponse."), N("La chaleur grandit, vaste et fugitive. Au bord de votre perception, quelque chose évoque des ailes avant de redevenir une simple flamme."), L("Hylee", "Tu as vu autre chose."), P("Une impression. Pas un fait que je te demanderai de porter."), N("Elle vous fixe encore, puis hoche la tête."), L("Hylee", "Une pièce du puzzle, pas l’image sur la boîte."), P("Exactement."), L("Hylee", "Saidin approuverait cette cruauté. Ensuite il prétendrait avoir perdu la boîte."), N("Elle referme les doigts ; le feu reprend sa place."), L("Hylee", "Gardons la pièce. Je déciderai plus tard si j’ai envie de chercher les suivantes.")], { trust: 9, confluence: 3 }),
-  ], ["knows_hylee_origin_unease"]),
+  ...HYLEE_CONFIDENCES,
 
   S("remerii", 20, "secret-remerii-prodigy", "La chaise trop haute", [
     N("Remerii ajuste une chaise d’atelier et découvre, sous le coussin, six empreintes rectangulaires laissées par d’anciens grimoires."),
@@ -435,19 +380,22 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("sva80-s", "Lui demander ce qu’il compte faire d’une vérité qui appartient aussi à Bellirith.", "sangFroid", [P("Maintenant que je sais, qu’est-ce que vous allez faire ?"), L("Valurn", "Trouver une plaisanterie assez bonne pour fuir cette pièce."), N("Vous ne souriez pas. Il n’essaie pas une seconde fois."), L("Valurn", "Je lui dirai si elle accepte de m’entendre. Pas au détour d’une dispute, pas pour obtenir son pardon avant une bataille. Entièrement."), P("Et si elle refuse ?"), L("Valurn", "Alors je respecterai enfin un choix de sa part, même celui qui me condamne au silence."), N("Il replie la copie et ne la reprend pas."), P("Vous la laissez ici ?"), L("Valurn", "La vérité ne peut plus rester seulement dans ma poche. Gardez-la jusqu’à ce que Bellirith décide si elle veut la voir."), P("Cela ne vous absout pas."), L("Valurn", "Non. Mais peut-être que supporter sa haine avec toutes ses raisons vaut mieux que d’être pardonné par une histoire fausse.")], { trust: 9, affection: 1 }),
   ], ["knows_valurn_true_abandonment"], { requiresKnowledge: ["knows_bellirith_stasis"] }),
 
-  S("naiah", 20, "secret-naiah-tartlets", "Le goût d’une dette absente", [
-    N("Naïah crée l’illusion exacte d’une tartelette et la fait danser au-dessus de votre tête. Lorsque vous tentez de l’attraper, elle lui retire son parfum avec une cruauté très étudiée."),
+  S("naiah", 20, "secret-naiah-tartlets", "Les tartelettes du grenier", [
+    N("Naïah fait apparaître une tartelette aux pommes au-dessus de votre tête. Quand vous tendez la main, elle retire le parfum de son illusion."),
     P("C’est un crime."),
     L("Naïah", "C’est une reconstitution historique. Respecte les archives."),
-    N("La fausse pâtisserie se pose dans sa main. Elle en examine le bord comme si elle comparait le souvenir à une pièce à conviction."),
-    L("Naïah", "Hylee m’en a donné quand j’avais faim. Pas pour m’apprivoiser, pas pour franchir la forêt, pas même pour obtenir une gratitude convenablement humble."),
-    P("Elle s’en souvient ?"),
-    L("Naïah", "Non. Il a fallu que je lui décrive la boîte. Imagine l’humiliation : mon souvenir fondateur était une collation oubliée dans l’histoire de quelqu’un d’autre."),
-    N("Elle fait mine de croquer l’illusion ; ses dents traversent la brume."),
-    L("Naïah", "J’ai attendu le prix pendant des années. Il n’est jamais venu. C’est extrêmement suspect.")
+    N("Elle réduit l’illusion et y ajoute un petit morceau de tissu noué."),
+    L("Naïah", "J’en apportais à Hylee, à l’auberge. Elle avait faim. Elle essayait de manger vite pour que ses parents adoptifs ne la voient pas."),
+    P("Tu allais la voir souvent ?"),
+    L("Naïah", "Oui. On parlait, on jouait. La nuit, on dansait quand on pouvait. Et parfois je la cachais dans le grenier."),
+    N("Son doigt dessine un toit au-dessus de la tartelette."),
+    L("Naïah", "Là-haut, elle pouvait finir de manger. En bas, il fallait écouter les pas."),
+    P("Elle m’a parlé de toi."),
+    L("Naïah", "J’espère qu’elle a précisé que je gagnais aux jeux. Sinon, ce témoignage est incomplet."),
+    N("La tartelette retrouve son parfum. Naïah la garde un instant avant de vous la tendre.")
   ], [
-    Q("sna20-a", "Décréter que les meilleures révolutions commencent par une pâtisserie.", "audace", [P("Les grandes révolutions commencent par une tartelette offerte au bon moment."), L("Naïah", "Enfin quelqu’un qui mesure correctement la portée historique du dessert."), N("Elle agrandit l’illusion jusqu’à ce qu’une tarte géante flotte au-dessus de la clairière comme un astre menaçant."), L("Naïah", "Premier décret : les cuisines appartiennent au peuple. Deuxième décret : je suis le peuple."), P("Voilà une révolution très courte."), L("Naïah", "Les longues révolutions refroidissent la pâte."), N("Elle fait pleuvoir de fausses pommes. L’une d’elles rebondit sur son propre nez ; elle prétend aussitôt que le geste était prévu."), P("Et Hylee ?"), L("Naïah", "Ministre des Tartes et des Décisions Impulsives. Elle sera excellente."), N("La grande tarte se réduit enfin à une portion dans votre main."), L("Naïah", "Celle-ci est pour toi. Elle n’a aucun goût, mais elle ne coûte rien. J’expérimente.", "smirk")], { affection: 5, trust: 2 }),
-    Q("sna20-l", "Comprendre que l’absence de contrepartie comptait davantage que la nourriture.", "lucidite", [P("Ce n’était pas seulement la faim. Hylee n’a rien réclamé de toi."), L("Naïah", "Pas même un sourire. Je lui en ai donné un faux pour voir si elle reviendrait chercher le vrai."), P("Elle l’a fait ?"), L("Naïah", "Non. Elle est repartie avec de la farine sur le nez."), N("Naïah tente de recréer ce détail sur l’illusion d’Hylee, puis efface le visage avant qu’il devienne trop précis."), L("Naïah", "Les cadeaux avaient toujours une corde. Une faveur, un passage, une petite reine obéissante. Cette tartelette n’en avait aucune."), P("Et cela t’a inquiétée."), L("Naïah", "Énormément. Je l’ai disséquée avant de la manger."), P("La tartelette ?"), L("Naïah", "La situation. La tartelette, je l’ai dévorée."), N("Elle vous laisse enfin sentir le parfum de pomme avant de dissiper l’image."), L("Naïah", "Elle n’a rien pris de moi, pas même une gratitude bien présentée. Je n’ai jamais complètement su quoi faire de cette liberté.")], { trust: 6, affection: 2 }),
+    Q("sna20-a", "« Vous devriez organiser une revanche. Avec de vraies tartelettes. »", "audace", [L("Naïah", "Une excellente idée. Tu apportes les pommes, je me charge de gagner."), P("Et Hylee ?"), L("Naïah", "Elle dira que j’ai triché. Ce sera faux au moins une fois."), N("Naïah fait apparaître deux assiettes. Elle ajoute une troisième, plus petite, devant vous."), L("Naïah", "Pour le témoin impartial. Tu auras évidemment droit à une part.")], { affection: 5, trust: 2 }),
+    Q("sna20-l", "Lui demander comment elle savait quand il fallait se cacher.", "lucidite", [L("Naïah", "Au bruit dans l’escalier. Et à la tête d’Hylee."), N("Naïah efface le petit toit, puis le redessine plus haut."), L("Naïah", "Elle ramassait déjà ses affaires avant que la porte s’ouvre. Alors je l’emmenais là-haut."), P("Tu restais avec elle ?"), L("Naïah", "Quand je pouvais. Je n’allais pas lui laisser toute la poussière."), N("L’illusion se dissipe. Le parfum des pommes reste quelques secondes de plus.")], { trust: 6, affection: 2 }),
   ], ["knows_naiah_tartlets"]),
   S("naiah", 40, "secret-naiah-exile", "Deux héritières, aucune sœur", [
     N("Naïah répare un piège de forêt neutralisé par Allenna. La commandante a coupé la corde, retiré le mécanisme et laissé une note : “Trop visible.” Naïah a encadré l’insulte."),
@@ -942,13 +890,13 @@ export const LETTERS: LetterTemplate[] = [
   },
   {
     id: "letter-hylee-star", character: "hylee", subject: "La chaîne réparée", delivery: "Le billet porte une empreinte de pouce givrée.", minDay: 10, minStage: 3, requiresKnowledge: ["knows_hylee_star_pendant"],
-    body: ["J’ai réparé la chaîne du pendentif. Pas pour chercher aujourd’hui. Seulement pour décider moi-même quand je l’ouvrirai au passé.", "Merci de ne pas avoir transformé mon étoile en carte au trésor."], signature: "Hylee",
-    replies: [{ id: "hylee-star-choice", label: "Ton rythme suffit. La question restera ouverte sans te pousser.", response: "Sa réponse tient sur deux mots : « Je sais. » Le givre autour est parfaitement régulier.", effects: { trust: 4, affection: 2 } }],
+    body: ["J’ai réparé la chaîne. Enfin, Remerii a tenu la pince et j’ai essayé de ne pas perdre le petit anneau. L’étoile tient de nouveau.", "Merci de ne pas avoir transformé mon étoile en carte au trésor."], signature: "Hylee",
+    replies: [{ id: "hylee-star-choice", label: "Bonne nouvelle. Fais attention au petit anneau.", response: "Hylee répond : « Je l’ai vérifié trois fois. Remerii menace de confisquer la pince. »", effects: { trust: 4, affection: 2 } }],
   },
 
   {
     id: "letter-remerii-correction", character: "remerii", subject: "Rectification méthodologique", delivery: "Une enveloppe droite au millimètre attend sur votre bureau.", minDay: 3, minStage: 1,
-    body: ["Votre manière d’accorder une matrice reste techniquement imprudente.", "Je dois néanmoins reconnaître qu’elle a fonctionné et qu’elle a permis à Hylee de comprendre un principe que mon explication rendait inutilement abstrait. Considérez ceci comme une correction de mon évaluation, pas comme un compliment. Même si la distinction devient fragile."], signature: "Remerii",
+    body: ["Votre manière de noter les oscillations du bâton manque de précision.", "Je dois néanmoins reconnaître que vos marques sur le papier ont permis à Hylee de repérer à quel moment elle commençait à forcer sur son sort. Considérez ceci comme une correction de mon évaluation, pas comme un compliment. Même si la distinction devient fragile."], signature: "Remerii",
     replies: [
       { id: "remerii-annotate", label: "Renvoyer la lettre annotée : « Compliment reçu. »", response: "Elle ajoute en marge : « Interprétation abusive, malheureusement défendable. »", effects: { affection: 3, trust: 2 } },
       { id: "remerii-method", label: "Décrire précisément ce que votre méthode cherchait à préserver.", response: "Remerii répond par deux pages, puis termine : « Cette conversation mérite une table et du thé. »", effects: { trust: 4 } },
@@ -1124,7 +1072,7 @@ export const INVITATIONS: InvitationTemplate[] = [
     choices: [
       Q("ihs-a", "Danser avec elle jusqu’à perdre le sens de la chute.", "audace", [N("Vous attrapez ses deux mains et manquez le premier pas. Hylee rit chaque fois qu’un flocon quitte vos cheveux pour regagner le ciel."), L("Hylee", "Attends, si tout tombe vers le haut, ça veut dire que notre faux pas était peut-être parfaitement exécuté."), N("Elle recommence exprès, vous entraîne dans sa chute et reste couchée dans la neige, essoufflée."), L("Hylee", "Voilà. Ce souvenir n’est utile à rien. Il est parfait.")], { affection: 6, trust: 2 }),
       Q("ihs-s", "Vous asseoir dans la neige et regarder sans lui demander de remplir le silence.", "sangFroid", [N("Hylee s’assied près de vous. Son épaule cherche la vôtre, recule d’un souffle, puis revient d’elle-même."), L("Hylee", "Je croyais devoir t’expliquer pourquoi c’était beau. Mais si je parle maintenant, je vais surtout dire quelque chose sur les cristaux et gâcher le ciel."), P("Alors ne le sauve pas."), N("Elle sourit et laisse la neige parler à sa place jusqu’au dernier flocon.")], { trust: 6, affection: 2 }),
-      Q("ihs-r", "Tendre la main pour sentir le courant magique sans détourner le phénomène.", "resonance", [N("La Résonance révèle une boucle fragile : chaque flocon remonte dans la trace laissée par sa propre chute."), L("Hylee", "Ils retrouvent leur chemin sans l’emprunter dans le bon sens… C’est idiot, mais ça me rassure."), P("On peut se perdre et revenir autrement."), L("Hylee", "Oui. Et on peut même inviter quelqu’un pour la partie étrange du trajet.", "soft")], { trust: 5, affection: 3, confluence: 2 }),
+      Q("ihs-r", "Suivre des yeux un flocon depuis sa manche jusqu’aux branches.", "resonance", [N("Vous pointez un flocon accroché à sa manche. Il se détache, monte et rejoint les autres au-dessus de la branche basse."), L("Hylee", "Celui-là revient toujours vers l’arbre. Regarde, encore !"), P("On essaie d’en compter dix ?"), L("Hylee", "D’accord. Mais tu prends ceux de gauche, je perds les miens quand on parle.", "soft")], { trust: 5, affection: 3, confluence: 2 }),
     ],
   },
   {
@@ -1309,7 +1257,7 @@ export const RUMORS: RumorTemplate[] = [
 
   { id: "rumor-miraldas-saidin-clock", location: "miraldas", spots: ["miraldas-dome", "miraldas-archives"], source: "Étudiant du Dôme", text: "Saidin possède une horloge qui sonne lorsqu’un mensonge sera prononcé demain. Elle sonne surtout pendant ses propres conférences.", minDay: 4, truth: "fausse" },
   { id: "rumor-miraldas-remerii-dome", location: "miraldas", spots: ["miraldas-archives", "miraldas-atelier"], source: "Ancienne bibliothécaire", text: "Une enfant a gravé la matrice la plus stable du Dôme. Les professeurs ont ensuite prétendu lui avoir tenu la main.", minDay: 6, truth: "vraie", leadKnowledge: "heard_rumor_remerii_dome" },
-  { id: "rumor-miraldas-hylee-fire", location: "miraldas", spots: ["miraldas-dome", "miraldas-hylee-glade"], source: "Apprenti mage", text: "La nouvelle cryomancienne aurait fait pencher une flamme sans sort connu. Remerii a interdit aux étudiants d’en tirer une théorie avant le dîner.", minDay: 14, truth: "vraie", leadKnowledge: "heard_rumor_hylee_affinity" },
+  { id: "rumor-miraldas-hylee-fire", location: "miraldas", spots: ["miraldas-dome", "miraldas-hylee-glade"], source: "Apprenti mage", text: "La nouvelle cryomancienne a rempli la clairière d’oiseaux de glace. Remerii a fait reculer les curieux : regarder un entraînement ne dispense pas de garder ses distances.", minDay: 14, truth: "vraie", leadKnowledge: "heard_rumor_hylee_affinity" },
   { id: "rumor-miraldas-curse", location: "miraldas", spots: ["miraldas-archives"], source: "Copiste", text: "La malédiction de Remerii viendrait d’un rival de l’Académie. Ou d’un espion impérial. Ou d’elle-même. Ceux qui prétendent savoir changent de version chaque semaine.", minDay: 12, truth: "déformée" },
 
   { id: "rumor-forbidden-naiah-crown", location: "forbidden", spots: ["forbidden-crossroads", "forbidden-threshold"], source: "Chasseur égaré", text: "Naïah vole les couronnes des voyageurs et les rend seulement si on la fait rire. Je n’avais pas de couronne, alors elle a pris mon déjeuner.", minDay: 5, truth: "déformée" },
@@ -1391,11 +1339,11 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-hylee-saidin-fire", title: "La flamme qui reconnaît", location: "miraldas", spots: ["miraldas-hylee-glade", "miraldas-atelier"], characters: ["hylee", "saidin"], minDay: 15, minStages: { hylee: 4, saidin: 2 }, requiresKnowledge: ["knows_hylee_origin_unease"], oneTime: true,
-    intro: [N("Hylee travaille un sort de givre. La flamme témoin se penche soudain vers elle au lieu de fuir le froid."), L("Hylee", "Elle fait encore ça."), L("Saidin", "Oui."), L("Hylee", "Tu pourrais essayer une réponse plus longue."), L("Saidin", "Je pourrais. Elle ne serait pas nécessairement plus juste.")],
+    id: "world-hylee-saidin-fire", title: "La lampe de travers", location: "miraldas", spots: ["miraldas-hylee-glade", "miraldas-atelier"], characters: ["hylee", "saidin"], minDay: 15, minStages: { hylee: 4, saidin: 2 }, oneTime: true,
+    intro: [N("Une lampe éclaire le carnet d’Hylee. Chaque fois qu’elle avance le bras, sa manche pousse la flamme de côté."), L("Hylee", "Elle va finir par brûler mes notes."), L("Saidin", "Ou ta manche."), N("Hylee retire son bras. Saidin pose une coupelle vide devant la lampe."), L("Hylee", "Tu pourrais me prévenir avant."), L("Saidin", "Je viens de le faire.")],
     choices: [
-      Q("whs-r", "Mesurer le phénomène sans lui attribuer d’origine.", "resonance", [N("Le feu répond à une signature profonde, illisible sous la cryomancie."), L("Hylee", "Une donnée, pas une étiquette. Je peux vivre avec ça aujourd’hui."), L("Saidin", "Sage décision.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
-      Q("whs-s", "Éteindre la flamme lorsqu’Hylee demande que l’expérience s’arrête.", "sangFroid", [N("Saidin ne proteste pas. Le mystère attendra."), L("Hylee", "Merci. Une question ne devient pas propriétaire de ma soirée.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
+      Q("whs-r", "Déplacer le carnet et observer d’où vient le courant d’air.", "resonance", [N("Vous poussez le carnet hors de portée de la flamme. Le vent passe entre deux planches du paravent."), L("Hylee", "Ah. Attends, je vais le déplacer."), N("Elle revient, teste la place de sa manche et reprend ses notes."), L("Saidin", "Aucun sort requis."), L("Hylee", "Ne le note pas dans mon évaluation.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
+      Q("whs-s", "Lui proposer de souffler la lampe et de se mettre au jour.", "sangFroid", [N("Hylee souffle la flamme. Vous portez le carnet jusqu’à la lumière, Saidin emporte la coupelle."), L("Hylee", "Pourquoi tu gardes ça ?"), L("Saidin", "Pour les biscuits."), L("Hylee", "Tu aurais dû commencer par là.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
     ],
   },
   {

@@ -12,6 +12,7 @@ export const SPOT_MUSIC: Record<string, string> = {
   "miraldas-atelier": "training",
   "miraldas-archives": "mage-city",
   "miraldas-hylee-glade": "dawn-training",
+  "miraldas-lake": "wild-calm",
   "miraldas-purple-woods": "wild-calm",
   "miraldas-observatory": "mage-city",
   "miraldas-quarters": "two-stars-night",

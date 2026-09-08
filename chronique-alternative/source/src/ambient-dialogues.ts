@@ -56,38 +56,38 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
   hylee: [
     scene("hylee-flocon", "Le flocon obstiné", "Hylee fait danser un flocon au-dessus de sa paume. « Il refuse de fondre. Tu penses qu’il est têtu ou simplement bien entouré ? »", [
       H("hyl-flocon-a", "« Il tient cela de sa créatrice. »", "audace", "Je vais prendre ça pour un compliment. Cette fois.", { affection: 2, desire: 1 }),
-      H("hyl-flocon-r", "Observer le motif magique qui le maintient.", "resonance", "Tu vois les filaments ? J’espérais ne pas être la seule. Ils bougent quand tu respires.", { trust: 2 }),
+      H("hyl-flocon-r", "Observer le flocon quand le vent le fait tourner.", "resonance", "Il tourne plus vite quand tu souffles. Attends, recommence… Voilà. Une toute petite tempête.", { trust: 2 }),
       H("hyl-flocon-s", "Lui offrir votre paume pour qu’elle y pose le flocon.", "sangFroid", "Il ne te brûlera pas. Enfin… normalement. Non, attends, ce n’était pas rassurant.", { affection: 2, trust: 1 }),
-    ], { mood: "soft" }),
+    ], { locations: ["miraldas", "echo-clearing"], mood: "soft" }),
 
     scene("hylee-tartelette", "La dernière tartelette", "Hylee tient une petite boîte contre elle. À l’intérieur, une seule tartelette aux baies lunaires. « J’avais prévu de la garder pour plus tard. Mais maintenant que tu es là, ça ressemble un peu à une décision égoïste. »", [
       H("hyl-tarte-a", "Croquer dedans avant qu’elle ait fini sa phrase.", "audace", [line("Narration", "Hylee reste bouche entrouverte, puis éclate de rire."), line("Hylee", "D’accord. La prochaine fois, je formule les règles avant de montrer le dessert.")], { affection: 3 }),
       H("hyl-tarte-l", "La couper exactement en deux et lui laisser choisir sa part.", "lucidite", "Tu as vu que le côté gauche avait plus de baies. Très bien… je prends le droit. Je veux savoir si tu protestes.", { trust: 2, affection: 1 }),
-      H("hyl-tarte-r", "Réchauffer légèrement les baies sans toucher à la pâte givrée.", "resonance", "C’est parfait… chaud et froid sans que l’un chasse l’autre. J’aimerais savoir faire ça avec certaines pensées.", { trust: 2, affection: 2 }),
+      H("hyl-tarte-r", "Poser la boîte au soleil et guetter les premières baies dégelées.", "resonance", "Celle-ci est prête ! Non, pas celle du milieu, elle va te casser une dent. Je l’ai peut-être gardée trop froide.", { trust: 2, affection: 2 }),
     ], { locations: ["algratal", "miraldas"], mood: "teasing" }),
 
-    scene("hylee-baton", "Le bâton qui écoute", "Dans l’atelier, Hylee garde son bâton à quelques centimètres de sa main. Il flotte sans trembler. « Avant, j’aurais essayé de l’attraper. Maintenant, j’attends qu’il décide si j’ai vraiment besoin de lui. C’est étrange de progresser en forçant moins. »", [
-      H("hyl-baton-r", "Écouter avec elle l’espace entre sa main et le bois.", "resonance", "Oui… c’est là. Pas dans le bâton, pas dans ma paume. Entre les deux. Remerii disait vrai, mais ne lui répète pas trop vite.", { trust: 3 }),
+    scene("hylee-baton", "Le bâton qui écoute", "Dans l’atelier, Hylee garde son bâton à quelques centimètres de sa main. Il flotte sans trembler. « Remerii veut que je tienne jusqu’à dix. J’en suis à sept, mais tu m’as fait perdre le compte. Je recommence. »", [
+      H("hyl-baton-r", "Observer le mouvement du bâton et lui signaler quand il penche.", "resonance", "Vers toi ? Ah oui. Recule un peu, je vais le reposer. Remerii veut qu’on recommence dès que ça penche.", { trust: 3 }),
       H("hyl-baton-l", "Remarquer qu’elle ne retient plus sa respiration.", "lucidite", "Je le faisais encore ? Enfin… je ne le faisais plus. Tu comprends. Je crois que mon corps apprend avant moi.", { trust: 3, affection: 1 }),
       H("hyl-baton-a", "« Et s’il refuse, nous partirons sans lui. »", "audace", "Tu menaces mon bâton de rater une promenade ? C’est ridicule… Continue, il s’est rapproché.", { affection: 3, desire: 1 }),
     ], { locations: ["miraldas"], mood: "determined" }),
 
     scene("hylee-foule", "À hauteur d’épaule", "Une délégation traverse la place. Hylee se décale instinctivement pour éviter les regards, puis s’arrête. « Je déteste encore les foules. Mais je déteste aussi leur céder tout l’espace. On peut traverser au milieu ? Pas devant moi. Avec moi. »", [
-      H("hyl-foule-s", "Marcher à son rythme, épaule contre épaule.", "sangFroid", "Merci. Tu n’as pas ralenti comme si j’allais me briser. Tu as juste… ajusté ton pas.", { trust: 3, affection: 1 }),
+      H("hyl-foule-s", "Marcher à son rythme, épaule contre épaule.", "sangFroid", "Par là ! Il y a un passage derrière les paniers. Attends, ton sac s’est accroché au mien.", { trust: 3, affection: 1 }),
       H("hyl-foule-a", "Lui offrir votre bras avec une révérence exagérée.", "audace", "Tu es impossible. Très bien, guide-moi à travers cette redoutable assemblée de marchands de tissus.", { affection: 3 }),
-      H("hyl-foule-l", "Choisir le chemin où personne ne pourra la coincer contre un mur.", "lucidite", "Tu as repéré les sorties sans même me le dire. C’est le genre d’attention qui ne ressemble pas à une cage.", { trust: 4 }),
+      H("hyl-foule-l", "Choisir le passage où la foule est moins serrée.", "lucidite", "Bonne idée. Je préfère éviter les gardes devant la grande porte. Le marché est de ce côté, viens.", { trust: 4 }),
     ], { locations: ["algratal"], mood: "soft" }),
 
     scene("hylee-plume", "Une plume sur la manche", "Une plume blanche s’est accrochée à la manche d’Hylee. Elle la fait tourner entre ses doigts. « Les chouettes ont une manière très sûre d’elles de regarder les gens. Comme si elles savaient quelque chose et jugeaient qu’on n’était pas prêt à l’entendre. »", [
       H("hyl-plume-a", "Prendre une voix solennelle : « Elle désapprouve tes choix récents. »", "audace", "Alors elle devra déposer une réclamation écrite. Et signer lisiblement avec sa petite patte.", { affection: 3 }),
       H("hyl-plume-l", "« Peut-être qu’elle vérifie seulement que tu vas bien. »", "lucidite", "C’est pire. Maintenant j’ai envie qu’elle revienne… juste pour lui prouver que oui.", { trust: 2, affection: 1 }),
-      H("hyl-plume-r", "Laisser la plume suivre le courant magique au lieu de tomber.", "resonance", "Regarde. Elle ne choisit ni toi ni moi ; elle suit ce qui circule entre nous. C’est joli, non ?", { trust: 2, affection: 2 }),
+      H("hyl-plume-r", "Souffler sous la plume pour la renvoyer vers elle.", "resonance", "Tu triches, tu as le vent avec toi ! Attends… Ah, dans mes cheveux. Tu peux me l’enlever ?", { trust: 2, affection: 2 }),
     ], { mood: "soft" }),
 
     scene("hylee-mer", "Le goût du vent", "Sur les remparts de Forthaven, Hylee goûte une goutte d’embrun au coin de ses lèvres et grimace. « La mer est beaucoup trop salée. On dirait une soupe préparée par quelqu’un qui déteste ses invités. »", [
       H("hyl-mer-a", "« Insulte-la plus fort. Elle a peut-être besoin d’une critique honnête. »", "audace", "Très bien ! Mer de Forthaven, ta soupe est infecte ! …Les soldats nous regardent. Partons dignement.", { affection: 3 }),
       H("hyl-mer-s", "Lui montrer comment respirer avec le roulis plutôt que contre lui.", "sangFroid", "Oh. Ça bouge toujours, mais mon ventre a cessé de vouloir déposer sa démission. Reste encore une minute.", { trust: 3 }),
-      H("hyl-mer-r", "Lui faire sentir l’eau douce cachée dans le brouillard.", "resonance", "Je la sens… une fraîcheur au milieu du sel. Même ici, le froid ne parle pas d’une seule voix.", { trust: 2, affection: 2 }),
+      H("hyl-mer-r", "Lui proposer une gorgée de votre gourde pour chasser le sel.", "resonance", "Merci. Voilà, ça, c’est de l’eau qui sait se tenir. La mer devrait essayer.", { trust: 2, affection: 2 }),
     ], { locations: ["forthaven"], mood: "teasing" }),
 
     scene("hylee-livre", "Les marges de Remerii", "Hylee vous montre un manuel couvert d’annotations serrées. « Remerii a écrit “approximation dangereuse” dix-sept fois. À la dix-huitième, elle a seulement souligné en rouge. Je crois que l’auteur est officiellement mort à ses yeux. »", [
@@ -99,78 +99,78 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     scene("hylee-danse", "Un pas sans musique", "Hylee essaie discrètement un pas de danse, manque de heurter un banc et se redresse comme si rien ne s’était passé. « Tu n’as rien vu. Ou alors tu as vu une technique très avancée. »", [
       H("hyl-danse-a", "Reproduire exactement son faux pas.", "audace", [line("Narration", "Elle tente de retenir son rire et échoue complètement."), line("Hylee", "Parfait. Si nous tombons au prochain bal, au moins ce sera chorégraphié.")], { affection: 4 }),
       H("hyl-danse-s", "Lui tendre la main et reprendre le mouvement lentement.", "sangFroid", "Comme ça… oui. Quand personne ne compte les pas à ma place, j’aime bien danser.", { trust: 2, affection: 2, desire: 1 }),
-      H("hyl-danse-l", "Comprendre qu’elle s’entraîne pour une invitation qu’elle n’ose pas formuler.", "lucidite", "Tu pourrais parfois faire semblant de ne pas tout comprendre. Mais… puisque c’est trop tard, tu danserais avec moi ?", { trust: 3, affection: 2 }),
+      H("hyl-danse-l", "Lui demander si elle cherche quelqu’un pour essayer le pas suivant.", "lucidite", "Oui. Tu veux essayer ? Éloigne juste le banc avant. Il ne sait pas éviter les pieds.", { trust: 3, affection: 2 }),
     ], { periods: ["apres-midi", "soirée"], minStage: 1, mood: "teasing" }),
 
     scene("hylee-chaleur", "Une tasse trop chaude", "Hylee enveloppe une tasse entre ses mains. Une fine buée monte, sans que le thé refroidisse. « Je peux geler une serrure à vingt pas, mais garder une boisson chaude me demande une concentration ridicule. »", [
-      H("hyl-tasse-r", "L’aider à faire circuler le froid autour de la chaleur plutôt que contre elle.", "resonance", "Voilà… je ne repousse rien. Je lui laisse juste une place. C’est beaucoup plus difficile que détruire.", { trust: 3 }),
+      H("hyl-tasse-r", "Rapprocher la théière pour qu’elle puisse ajouter de l’eau chaude.", "resonance", "Remerii appellerait ça contourner l’exercice. Moi, j’appelle ça boire avant le soir.", { trust: 3 }),
       H("hyl-tasse-a", "Boire une gorgée pour vérifier le résultat.", "audace", "Attends—! …Bon. Tu n’as pas crié. Soit j’ai réussi, soit tu es beaucoup trop fier·e.", { affection: 3 }),
-      H("hyl-tasse-s", "Attendre sans lui offrir de solution immédiate.", "sangFroid", "Merci de ne pas avoir pris la tasse. J’avais besoin de réussir une chose minuscule toute seule.", { trust: 4 }),
-    ], { minStage: 1, mood: "determined" }),
+      H("hyl-tasse-s", "Attendre sans lui offrir de solution immédiate.", "sangFroid", "Encore un peu… Voilà. Tu veux goûter ? Attends, je vérifie avec la cuillère d’abord.", { trust: 4 }),
+    ], { locations: ["miraldas", "echo-clearing"], minStage: 1, mood: "determined" }),
 
-    scene("hylee-chanson", "La chanson sans dernier couplet", "Hylee fredonne une vieille chanson de taverne, puis s’interrompt dès qu’elle vous aperçoit. « Je ne connais pas le dernier couplet. À Forthaven, les clients en inventaient un différent chaque soir — généralement après avoir trop bu. »", [
+    scene("hylee-chanson", "La chanson sans dernier couplet", "Hylee fredonne une vieille chanson de taverne, puis s’interrompt dès qu’elle vous aperçoit. « Je ne connais pas le dernier couplet. À l’Auberge Forestière, les clients en inventaient un différent chaque soir — généralement après avoir trop bu. »", [
       H("hyl-chanson-a", "Inventer un couplet héroïque sur une serveuse terrassant un dragon avec son plateau.", "audace", "Le dragon renverse quand même trois chopes avant de mourir. Il faut rester crédible. Recommence depuis le refrain.", { affection: 4 }),
       H("hyl-chanson-l", "Lui demander lequel des couplets inventés elle préférait.", "lucidite", "Celui où personne ne sauvait la princesse : elle quittait le château parce que le service y était mauvais. J’aurais dû me douter que tu choisirais cette question.", { trust: 3, affection: 1 }),
       H("hyl-chanson-s", "L’écouter reprendre sans exiger qu’elle chante plus fort.", "sangFroid", "Tu ne vas pas applaudir, hein ? Bien. Alors je peux peut-être aller jusqu’au refrain.", { trust: 3, affection: 1 }),
     ], { minStage: 1, mood: "teasing" }),
 
-    scene("hylee-bouton", "Le bouton récalcitrant", "Hylee tient son manteau sur ses genoux et lutte avec un bouton neuf. « Je pourrais le fixer avec de la glace. Il tomberait dès que j’aurais chaud, ce qui ressemble beaucoup à une métaphore, mais surtout à une mauvaise réparation. »", [
-      H("hyl-bouton-l", "Lui montrer le nœud, puis lui rendre aussitôt l’aiguille.", "lucidite", "Tu m’aides sans finir à ma place. C’est… étonnamment rare. Regarde, celui-ci tiendra même en été.", { trust: 4 }),
+    scene("hylee-bouton", "Le bouton récalcitrant", "Hylee tient son manteau sur ses genoux et lutte avec un bouton neuf. « Je pourrais le fixer avec de la glace. Il tomberait dès que j’aurais chaud. Et Remerii le retrouverait encore dans sa tasse. »", [
+      H("hyl-bouton-l", "Lui montrer le nœud, puis lui rendre l’aiguille.", "lucidite", "Attends, repasse le fil une fois… Ah ! D’accord. Je fais le prochain.", { trust: 4 }),
       H("hyl-bouton-a", "Proposer un duel loyal contre le bouton.", "audace", "Il est petit, rond et sans pitié. Très bien, mais je choisis les armes. Passe-moi le dé à coudre.", { affection: 3 }),
-      H("hyl-bouton-r", "Maintenir le fil avec un souffle arcanique assez doux pour ne pas le geler.", "resonance", "Comme ça… La magie ne fait pas le travail, elle garde juste le fil tranquille. J’aime cette façon de l’utiliser.", { trust: 3, affection: 1 }),
+      H("hyl-bouton-r", "Tenir le tissu entre vos doigts pendant qu’elle passe le fil.", "resonance", "Ne bouge pas. Je passe juste là… Voilà ! Tu peux lâcher, et tu as toujours tous tes doigts.", { trust: 3, affection: 1 }),
     ], { minStage: 1, mood: "determined" }),
 
     scene("hylee-statue", "Le terrible seigneur de pierre", "Une petite statue sans plaque garde l’entrée d’une cour. Hylee la dévisage. « Personne ne sait qui c’est. Je propose qu’on lui invente une vie avant qu’un historien arrive et gâche tout avec des faits. »", [
       H("hyl-statue-a", "En faire le redoutable protecteur des pâtisseries abandonnées.", "audace", "Son ordre sacré retrouvait les tartes orphelines et les confiait aux plus méritants. C’est-à-dire nous.", { affection: 4 }),
       H("hyl-statue-l", "Relever les bottes usées et les mains d’artisan sculptées dans la pierre.", "lucidite", "Alors pas un seigneur. Quelqu’un qui construisait les portes pendant que d’autres gravaient leur nom dessus. Je préfère ton histoire.", { trust: 3, affection: 1 }),
-      H("hyl-statue-r", "Écouter si la pierre conserve un écho de la personne représentée.", "resonance", "Rien qu’une sensation de sciure et un rire très grave… C’est peu, mais ce n’est plus personne.", { trust: 3, confluence: 1 }),
+      H("hyl-statue-r", "Inventer à voix basse le discours que la statue ferait aux pigeons.", "resonance", "Plus grave, la voix ! Il a l’air très fâché contre celui de gauche. Regarde son épaule, on comprend pourquoi.", { trust: 3, confluence: 1 }),
     ], { minStage: 1, mood: "teasing" }),
 
-    scene("hylee-pluie", "La pluie reste de la pluie", "Une averse soudaine mouille les cheveux d’Hylee. L’eau perle sur ses épaules sans se changer en givre. Elle lève le visage, étonnée. « Je viens de sentir le froid sans qu’il m’obéisse. Enfin… sans qu’il croie devoir me défendre. »", [
-      H("hyl-pluie-r", "L’aider à écouter la pluie sans chercher le courant magique dessous.", "resonance", "Elle ne demande rien. Elle tombe, c’est tout. J’avais oublié qu’une sensation pouvait ne pas être un ordre.", { trust: 4 }),
+    scene("hylee-pluie", "La pluie reste de la pluie", "Une averse soudaine mouille les cheveux d’Hylee. L’eau perle sur ses épaules sans se changer en givre. Elle lève le visage, étonnée. « Ça ne gèle pas. Je vais finir trempée. Remerii va dire qu’on avait un toit à cinq pas. »", [
+      H("hyl-pluie-r", "Comparer le bruit de la pluie sur les feuilles et sur votre capuche.", "resonance", "Ta capuche fait un bruit de tambour. Bouge la tête… Oui ! On peut jouer la chanson de tout à l’heure.", { trust: 4 }),
       H("hyl-pluie-s", "Rester sous l’averse avec elle, sans commenter ce progrès.", "sangFroid", "Merci de ne pas en faire une leçon. Pour une fois, j’aimerais seulement être trempée et contente.", { trust: 3, affection: 2 }),
       H("hyl-pluie-a", "L’éclabousser avant qu’elle devienne trop solennelle.", "audace", [line("Narration", "Hylee pousse un cri, puis vous rend une vague entière d’un coup de botte."), line("Hylee", "Tu voulais de la pluie ? Maintenant elle est dirigée.")], { affection: 4 }),
     ], { minStage: 1, mood: "soft" }),
 
     scene("hylee-nom", "Plus qu’un prodige", "Hylee observe deux apprentis qui la désignent de loin. « Ils ne connaissent même pas mon nom. Pour eux, je suis “la cryomancienne”. Avant, j’aurais été heureuse qu’on voie enfin quelque chose en moi. Maintenant… j’aimerais qu’on voie autre chose aussi. »", [
-      H("hyl-nom-l", "Lui demander ce qu’elle voudrait que l’on remarque en premier.", "lucidite", "Que je suis drôle ? Non, n’acquiesce pas si vite. Peut-être… que j’écoute. Que je choisis avant d’agir.", { trust: 4, affection: 1 }),
+      H("hyl-nom-l", "Lui demander ce qu’elle voudrait que l’on remarque en premier.", "lucidite", "Mon nom, déjà. Après, s’ils veulent m’inviter à manger, je ne les empêcherai pas.", { trust: 4, affection: 1 }),
       H("hyl-nom-a", "L’appeler très fort par son nom devant les apprentis.", "audace", "Hylee suffit ! Pas besoin d’annoncer tous mes titres imaginaires ! …Mais merci.", { affection: 3, trust: 1 }),
-      H("hyl-nom-s", "Rester près d’elle sans transformer son malaise en discours.", "sangFroid", "Tu sais ce qui aide ? Avec toi, je n’ai pas besoin de prouver que je suis davantage. Tu attends de le découvrir.", { trust: 4 }),
+      H("hyl-nom-s", "Lui proposer de continuer la promenade.", "sangFroid", "Ils sont partis ? Tant mieux. J’ai de la confiture sur la manche et je ne voulais pas qu’ils la prennent pour une expérience.", { trust: 4 }),
     ], { minStage: 2, mood: "sad" }),
 
-    scene("hylee-maison", "L’endroit où revenir", "Hylee suit du doigt les routes de la carte. « Tout le monde me demande où je veux aller maintenant que je peux voyager. Personne ne demande où j’aimerais pouvoir revenir. Ce n’est pas exactement la même question. »", [
-      H("hyl-maison-l", "« Qu’est-ce qui ferait d’un endroit un retour plutôt qu’une destination ? »", "lucidite", "Une porte que je peux ouvrir sans permission. Des affaires laissées en désordre. Quelqu’un qui sait que je reviendrai sans l’exiger.", { trust: 4, affection: 1 }),
+    scene("hylee-maison", "L’endroit où revenir", "Hylee suit du doigt les routes de la carte. « J’ai laissé mon gros sac à Mir’Aldas. Remerii a dégagé une étagère. Je n’arrête pas de penser aux choses que j’aurais pu y poser avant de repartir. »", [
+      H("hyl-maison-l", "Lui demander ce qu’elle mettrait en premier sur l’étagère.", "lucidite", "Mes chaussures de rechange. Et la boîte de fil. Après, il faudrait une deuxième étagère. Ne le dis pas à Remerii tout de suite.", { trust: 4, affection: 1 }),
       H("hyl-maison-a", "Tracer un cercle autour de toute la carte.", "audace", "C’est ambitieux. Et terriblement peu pratique. J’aime bien l’idée que le retour puisse aussi bouger.", { affection: 3, trust: 1 }),
-      H("hyl-maison-r", "Laisser la Confluence révéler les lieux où sa magie se sent en paix.", "resonance", "Il y en a plusieurs… Je croyais qu’il fallait choisir une seule maison. Peut-être que je confondais encore foyer et frontière.", { trust: 4, confluence: 1 }),
+      H("hyl-maison-r", "Lui demander où elle a laissé ses affaires pour les prochains jours.", "resonance", "À Mir’Aldas. Enfin, le gros sac. Remerii dit que je prends trop de place. Elle a quand même dégagé une étagère.", { trust: 4, confluence: 1 }),
     ], { minStage: 2, mood: "soft" }),
 
-    scene("hylee-silence", "Les jours de silence", "Hylee garde longtemps les yeux sur ses mains. « Il y a des jours où je parle beaucoup pour que personne ne remarque que je ne sais pas quoi dire. Et d’autres où je me tais parce que j’ai peur qu’on décide ce que mon silence signifie. »", [
+    scene("hylee-silence", "Les jours de silence", "Hylee garde longtemps les yeux sur ses mains. « Je suis de mauvaise humeur. Non, tu n’as rien fait. Je voulais te raconter quelque chose et maintenant que tu es là, je ne sais plus comment commencer. »", [
       H("hyl-silence-s", "« Tu n’as rien à remplir maintenant. Je peux rester quand même. »", "sangFroid", [line("Narration", "Ses épaules descendent lentement."), line("Hylee", "Alors reste. Sans question, juste un moment.")], { trust: 5, affection: 1 }),
-      H("hyl-silence-l", "Lui promettre de demander plutôt que d’interpréter.", "lucidite", "Oui. Même si la réponse paraît évidente. Surtout si elle paraît évidente.", { trust: 5 }),
+      H("hyl-silence-l", "Lui promettre de demander plutôt que d’interpréter.", "lucidite", "D’accord. Pour l’instant, je veux bien du thé. Je trouverai peut-être les mots avant qu’il refroidisse.", { trust: 5 }),
       H("hyl-silence-a", "« Et aujourd’hui, tu veux parler ou me faire taire ? »", "audace", "Un peu des deux. Commence par t’asseoir. Je déciderai ensuite comment te faire taire.", { affection: 3, desire: 2, trust: 2 }),
     ], { minStage: 2, periods: ["soirée"], mood: "sad" }),
 
     scene("hylee-jalousie", "Une question qui rougit", "Hylee arrange inutilement une mèche derrière son oreille. « Quand tu passes du temps avec les autres… je suis contente que tu les aides. Vraiment. Mais parfois je voudrais être la personne que tu cherches en premier. C’est laid de penser ça ? »", [
-      H("hyl-jal-l", "Distinguer son envie d’être choisie d’un droit sur vos choix.", "lucidite", "Oui… Je peux vouloir compter sans te posséder. J’avais besoin de l’entendre formulé comme ça.", { trust: 5, affection: 2 }),
-      H("hyl-jal-s", "La rassurer sans lui promettre une exclusivité que vous n’avez pas choisie.", "sangFroid", "C’est honnête. Et tu n’as pas essayé d’éteindre ma peur avec une promesse trop grande.", { trust: 5, affection: 2 }),
+      H("hyl-jal-l", "« J’avais envie de te voir. On mange ensemble ? »", "lucidite", "Oui. J’ai déjà pris du pain pour deux… Au cas où. Ne souris pas comme ça.", { trust: 5, affection: 2 }),
+      H("hyl-jal-s", "Lui expliquer votre programme sans promettre d’être toujours disponible.", "sangFroid", "D’accord. Tu me préviens si tu changes de programme ? Je vais chercher quelque chose à manger.", { trust: 5, affection: 2 }),
       H("hyl-jal-a", "« Ce n’est pas laid. C’est même assez adorable quand tu rougis. »", "audace", "Je tentais d’avoir une conversation adulte. Tu pourrais au moins avoir la décence de rougir aussi.", { affection: 4, desire: 2 }),
     ], { minStage: 3, mood: "teasing" }),
 
-    scene("hylee-demain", "Demain sans serment", "La nuit est calme. Hylee pose sa tête contre votre épaule sans regarder le ciel. « Je ne veux plus des promesses qui enferment tout l’avenir. Mais j’aimerais quand même savoir si tu as envie d’être là demain. Juste demain. »", [
-      H("hyl-demain-s", "« Oui. Et demain, tu pourras me le redemander. »", "sangFroid", "C’est peut-être la promesse la plus rassurante qu’on m’ait faite. Parce qu’elle me laisse encore choisir aussi.", { trust: 5, affection: 3 }),
+    scene("hylee-demain", "Demain sans serment", "La nuit est calme. Hylee pose sa tête contre votre épaule sans regarder le ciel. « Tu fais quoi demain ? Je pensais retourner voir le bout du sentier. Tu peux venir ? »", [
+      H("hyl-demain-s", "« Oui. Après le petit déjeuner ? »", "sangFroid", "Bien. Pas avant : Remerii a déjà pris le début de ma matinée.", { trust: 5, affection: 3 }),
       H("hyl-demain-a", "« J’avais même prévu le surlendemain, mais avançons doucement. »", "audace", "Prétentieux·se. …Garde quand même le surlendemain quelque part, au cas où.", { affection: 5, desire: 2 }),
-      H("hyl-demain-r", "Accorder votre Résonance à la sienne pour ancrer seulement l’instant présent.", "resonance", "Pas d’éternité. Pas de chaîne. Seulement ce oui-là… Je le sens. Il est assez grand.", { trust: 4, affection: 4, confluence: 1 }),
+      H("hyl-demain-r", "Écouter les pas qui s’éloignent, puis lui proposer de rester encore un peu.", "resonance", "Encore un peu, oui. Le banc est sec de ce côté. Rapproche-toi, tu vas finir dans la flaque.", { trust: 4, affection: 4, confluence: 1 }),
     ], { minStage: 4, periods: ["soirée"], mood: "soft" }),
-    scene("hylee-petit-choix", "Le choix qui ne décide de rien", "Hylee désigne deux directions d’un geste grave. « À gauche ou à droite. Aucun piège, aucune prophétie, aucune conséquence historique. J’essaie de m’entraîner sur des choix qui ont le droit d’être seulement des choix. »", [
-      H("hyl-choix-l", "Comparer les deux chemins, puis lui rendre la décision.", "lucidite", "Tu me donnes des informations sans fabriquer une réponse à ma place. D’accord… à gauche. Et je refuse d’expliquer pourquoi.", { trust: 3 }),
+    scene("hylee-petit-choix", "Le choix qui ne décide de rien", "Hylee désigne deux directions d’un geste grave. « À gauche ou à droite. Aucun piège, aucune prophétie, aucune conséquence historique. Celui de gauche sent les pommes. Celui de droite a l’air de descendre. J’hésite beaucoup. »", [
+      H("hyl-choix-l", "Comparer les deux chemins, puis lui rendre la décision.", "lucidite", "À droite, alors. Avec un peu de chance, on reviendra par les pommes.", { trust: 3 }),
       H("hyl-choix-a", "Choisir à pile ou face et refuser de regarder la pièce.", "audace", "C’est une méthode affreusement peu raisonnable. J’adore. Si on se perd, la pièce portera toute la responsabilité.", { affection: 3 }),
-      H("hyl-choix-s", "Lui rappeler qu’elle pourra changer d’avis après dix pas.", "sangFroid", "Voilà ce que j’oublie toujours : choisir une route ne fait pas disparaître mes jambes. Allons voir à droite… pour commencer.", { trust: 3, affection: 1 }),
+      H("hyl-choix-s", "Lui rappeler qu’elle pourra changer d’avis après dix pas.", "sangFroid", "D’accord. À droite. Mais si je dis qu’on a déjà vu cet arbre, tu m’écoutes.", { trust: 3, affection: 1 }),
     ], { mood: "determined" }),
     scene("hylee-temperature", "Une température à demander", "Une fine buée quitte les doigts d’Hylee, puis s’arrête avant de vous atteindre. « J’allais rafraîchir l’air sans demander. Tu as froid, toi ? Je préfère une réponse réelle à une magie qui devine. »", [
-      H("hyl-temperature-s", "Lui dire exactement ce qui serait confortable.", "sangFroid", "Merci. C’est beaucoup plus simple quand je ne transforme pas ton silence en énigme à résoudre.", { trust: 3 }),
-      H("hyl-temperature-r", "Accorder votre Résonance au froid sans lui abandonner la décision.", "resonance", "Tu peux sentir ma magie sans la laisser parler pour toi. Alors je garde seulement cette petite brise.", { trust: 2, affection: 1 }),
+      H("hyl-temperature-s", "Lui dire exactement ce qui serait confortable.", "sangFroid", "D’accord, un peu moins. Là ? Je garde comme ça, alors.", { trust: 3 }),
+      H("hyl-temperature-r", "Approcher la main et lui signaler quand la fraîcheur suffit.", "resonance", "Là ? D’accord, je m’arrête. Dis-moi si tu préfères que je laisse l’air tranquille.", { trust: 2, affection: 1 }),
       H("hyl-temperature-a", "Réclamer un minuscule flocon personnel, purement décoratif.", "audace", "Une commande très précise. Voilà votre flocon, honorable client·e. Il fondra si vous devenez trop prétentieux·se.", { affection: 3 }),
-    ], { mood: "soft" }),
+    ], { locations: ["miraldas", "echo-clearing"], mood: "soft" }),
   ],
 
   remerii: [

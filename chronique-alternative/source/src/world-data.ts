@@ -42,6 +42,7 @@ export const SUBLOCATIONS: SpotData[] = [
   { id: "miraldas-atelier", location: "miraldas", name: "Atelier arcanique", shortName: "Atelier", description: "Cristaux, bâtons et matrices de sort emplissent cet atelier où Hylee et Remerii travaillent souvent ensemble.", background: bg("atelier"), activities: ["workshop", "training", "attunement"], icon: "⚙" },
   { id: "miraldas-archives", location: "miraldas", name: "Grande Bibliothèque", shortName: "Bibliothèque", description: "Des rayonnages mouvants et des globes de lecture conservent les savoirs de la cité des mages.", background: bg("miraldas_archives"), activities: ["archives", "attunement"], icon: "▤" },
   { id: "miraldas-hylee-glade", location: "miraldas", name: "Clairière du Givre", shortName: "Clairière du Givre", description: "À la lisière du Dôme, une clairière d’entraînement porte encore la bannière au flocon d’Hylee.", background: bg("miraldas"), activities: ["training", "rest"], icon: "❄" },
+  { id: "miraldas-lake", location: "miraldas", name: "Le petit lac d’Hylee", shortName: "Petit lac", description: "Une cuvette peu profonde à l’écart du ruisseau, où Hylee prépare sa piste de glace pour vos sorties.", background: "/assets/backgrounds/miraldas_lake.png", activities: ["rest"], icon: "❄" },
   { id: "miraldas-purple-woods", location: "miraldas", name: "Bois cristallins du Dôme", shortName: "Bois cristallins", description: "La forêt violette qui entoure Mir’Aldas reflète le bouclier de la cité dans ses cristaux et ses ruisseaux.", background: place("foret-miraldas"), activities: ["explore", "attunement", "rest"], icon: "⌁" },
   { id: "miraldas-observatory", location: "miraldas", name: "Observatoire des Archimages", shortName: "Observatoire", description: "Une terrasse d’astrolabes tournée vers le Dôme, où Saidin étudie le temps sans toujours accepter de le laisser passer.", background: bg("miraldas_observatory"), activities: ["archives", "attunement", "rest"], icon: "⌛" },
   { id: "miraldas-quarters", location: "miraldas", name: "Résidence des mages", shortName: "Résidence", description: "Des appartements sobres et chaleureux, ouverts sur les lumières violettes de la cité.", background: bg("miraldas_quarters"), activities: ["rest"], icon: "☾" },
@@ -122,11 +123,17 @@ const moment = (spot: string, action: string): RoutineMoment => ({ spot, action 
 
 const ROUTINES: Record<string, Record<string, RoutineMoment[]>> = {
   hylee: {
+    algratal: [
+      moment("algratal-streets", "sort acheter du pain avec Remerii"),
+      moment("algratal-market", "fait réparer son équipement avant la prochaine étape"),
+      moment("algratal-streets", "retrouve les voyageurs près des étals"),
+      moment("algratal-streets", "termine ses achats avant de retrouver Remerii"),
+    ],
     forestier: [
-      moment("forestier-inn", "aide encore au premier service avant le départ"),
-      moment("forestier-inn", "prépare son sac sous le regard attentif de Remerii"),
-      moment("forestier-inn", "dit au revoir aux habitué·es sans annoncer sa magie"),
-      moment("forestier-inn", "retrouve Naïah lorsqu’elle ose approcher l’auberge à la nuit tombée"),
+      moment("forestier-inn", "fait une halte de voyage, sans reprendre le service"),
+      moment("forestier-inn", "achète des provisions pour la route"),
+      moment("forestier-inn", "attend Remerii avant de reprendre le sentier"),
+      moment("forestier-inn", "se repose pendant cette halte de ravitaillement"),
     ],
     miraldas: [
       moment("miraldas-quarters", "partage le thé du matin avec Remerii avant l’entraînement"),
@@ -142,11 +149,17 @@ const ROUTINES: Record<string, Record<string, RoutineMoment[]>> = {
     ],
   },
   remerii: {
+    algratal: [
+      moment("algratal-streets", "achète les provisions avec Hylee"),
+      moment("algratal-market", "compare les fournitures de voyage"),
+      moment("algratal-streets", "veille aux contrôles avant le retour au camp"),
+      moment("algratal-streets", "retrouve Hylee après ses achats"),
+    ],
     forestier: [
       moment("forestier-inn", "corrige la carte de leur prochaine étape"),
       moment("forestier-inn", "prend un thé qu’elle oublie en surveillant les uniformes de passage"),
       moment("forestier-inn", "apprend à Hylee à masquer sa signature magique"),
-      moment("forestier-inn", "organise le départ avant que l’Empire ne s’intéresse à elles"),
+      moment("forestier-inn", "prépare la reprise du voyage après cette halte"),
     ],
     miraldas: [
       moment("miraldas-quarters", "prépare le programme du jour avec Hylee"),
@@ -334,7 +347,7 @@ export function routineFor(characterId: string, location: string, period: Period
     return moment("akuhn-throne-room", "présente à Amanea le rapport qui redessine les patrouilles près du territoire de Naïah");
   }
   if (characterId === "saidin" && location === "miraldas" && cycleDay === 23) {
-    if (period === "apres-midi") return moment("miraldas-hylee-glade", "observe avec Hylee une flamme qui répond contre toute logique au givre");
+    if (period === "apres-midi") return moment("miraldas-hylee-glade", "aide Hylee à protéger une lampe du courant d’air");
     if (period === "soirée") return moment("miraldas-observatory", "partage avec Remerii un thé qu’aucun des deux ne sait laisser refroidir en paix");
   }
   if (characterId === "iriana" && location === "algratal" && period === "soirée" && cycleDay === 27) {
@@ -374,11 +387,11 @@ export function travelWaypoint(characterId: string, travelTo: string | undefined
 }
 
 export const ROUTE_SPOTS: Record<string, string> = {
-  "hylee-0": "forestier-inn",
-  "hylee-1": "miraldas-atelier",
+  "hylee-0": "algratal-streets",
+  "hylee-1": "algratal-market",
   "hylee-2": "miraldas-hylee-glade",
   "hylee-3": "echo-clearing",
-  "hylee-4": "miraldas-quarters",
+  "hylee-4": "algratal-streets",
   "remerii-0": "forestier-inn",
   "remerii-1": "miraldas-atelier",
   "remerii-2": "miraldas-archives",
@@ -437,11 +450,11 @@ export const ROUTE_SPOTS: Record<string, string> = {
 };
 
 export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
-  "hylee-0": ["apres-midi"],
+  "hylee-0": ["aube", "apres-midi", "soirée"],
   "hylee-1": ["matin"],
   "hylee-2": ["apres-midi"],
   "hylee-3": ["soirée"],
-  "hylee-4": ["soirée"],
+  "hylee-4": ["aube", "matin", "apres-midi", "soirée"],
   "remerii-0": ["matin"],
   "remerii-1": ["matin"],
   "remerii-2": ["apres-midi"],

@@ -1,4 +1,5 @@
 import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
+import { HYLEE_HOME_DATE } from "./hylee-home-date.ts";
 import type { DisplayItem, HousingProperty } from "./housing-data";
 
 export type HomeDateTone = "amical" | "amoureux" | "desir";
@@ -76,25 +77,7 @@ const cities = (character: string, algratal: string, forthaven: string, miraldas
 });
 
 export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
-  hylee: {
-    character: "hylee", title: "La maison qui ne fond pas", description: "Cuisiner avec Hylee, apprivoiser un espace stable et transformer quelques maladresses en souvenirs domestiques.", gift: "homegift-hylee",
-    activityTitle: "Dessert sous zéro", activityInstruction: "Aidez Hylee à composer un dessert glacé : texture, température et décoration réagissent à sa magie comme à votre humeur.",
-    arrival: [N("Hylee arrive avec un panier trop grand pour elle et un photophore où tombe une neige minuscule."), C("Hylee", "Je voulais offrir quelque chose qui dise ‘merci de m’inviter’ sans dire ‘je me suis déjà imaginée revenir’. J’ai manifestement échoué à rester subtile.", "teasing")],
-    cityComments: cities("Hylee", "Ici, même les fenêtres ont l’air de connaître les règles de la cour. La tienne peut apprendre à les oublier.", "On entend la mer avant même d’ouvrir. C’est moins silencieux que Mir’Aldas… mais étrangement rassurant.", "Je connais cette lumière. Pourtant, la voir depuis chez toi lui donne une couleur différente.", "Les feux verts me font encore frissonner. Tant que ta porte s’ouvre de l’intérieur, je peux apprendre à les regarder autrement."),
-    tierComments: tier("Hylee", ["C’est petit. Pas étroit : petit comme un endroit qui sait exactement qui il abrite.", "Tu as assez de place pour vivre sans te perdre dans les pièces. J’aime bien cet équilibre.", "On peut respirer ici. Et peut-être danser sans renverser la moitié des meubles.", "J’ai peur de casser quelque chose rien qu’en respirant… mais je reconnais que la vue vaut le risque.", "Si tu cries depuis l’autre bout, il faudra probablement envoyer Medig avec le message."]),
-    ownItemComment: "Tu l’as vraiment exposé… La branche de travers aussi. Alors tu as compris pourquoi je refusais de la corriger.", otherItemComment: "Je ne connais pas toute son histoire, mais tu l’as placé comme un souvenir, pas comme un trophée. Ça change tout.",
-    tones: {
-      amical: { label: "Une soirée refuge", detail: "Cuisiner, rire et lui offrir un lieu où elle n’a rien à prouver.", effects: { affection: 5, trust: 8 }, lines: [P("Ce soir, aucun exercice et aucune attente. Je veux seulement que tu te sentes chez une amie."), C("Hylee", "Alors je réclame le droit de rater le dessert sans transformer l’échec en leçon.", "soft")] },
-      amoureux: { label: "Un premier chez-nous", detail: "Faire de la préparation un moment tendre et ouvertement romantique.", effects: { affection: 9, trust: 6, desire: 3 }, lines: [P("J’aimerais que cet endroit garde un peu de toi après ton départ."), C("Hylee", "Tu pourrais commencer par garder mon sourire. Il est déjà partout, apparemment.", "soft")] },
-      desir: { label: "Faire monter la température", detail: "Laisser les gestes domestiques devenir un jeu de proximité et de désir.", effects: { affection: 6, trust: 4, desire: 9 }, lines: [P("Le dessert peut attendre. Toi, beaucoup moins."), C("Hylee", "C’est terriblement injuste de dire ça quand je tiens un bol glacé et que mes joues brûlent.", "teasing")] },
-    },
-    rounds: [
-      { prompt: "La crème gèle trop vite autour du fouet.", detail: "Hylee lutte contre son réflexe de forcer le sort.", options: [O("warm", "Entourer le bol de vos mains et réchauffer par petites vagues", 2, N("La glace devient souple sans s’effondrer. Hylee accorde son souffle au vôtre.")), O("break", "Briser la couche et recommencer immédiatement", 1, C("Hylee", "Efficace, mais ce dessert commence à ressembler à un entraînement militaire.")), O("fire", "Approcher le bol directement du feu", 0, N("La préparation se sépare. Hylee sauve le reste dans un nuage de neige consterné."))] },
-      { prompt: "Il faut choisir un cœur au dessert.", detail: "Baies acides, miel chaud ou cristal de menthe.", options: [O("berries", "Mêler les baies à une veine de miel", 2, C("Hylee", "Deux choses contraires qui se rendent meilleures. Ne fais aucun commentaire romantique.")), O("mint", "Choisir le cristal le plus spectaculaire", 1, N("Le résultat scintille magnifiquement et craque un peu trop sous la dent.")), O("all", "Tout verser pour ne vexer aucun ingrédient", 0, C("Hylee", "Nous venons d’inventer une menace diplomatique comestible."))] },
-      { prompt: "La dernière forme refuse de tenir.", detail: "Le flocon central reste asymétrique.", options: [O("keep", "Garder sa branche irrégulière et signer à deux", 2, N("Hylee pose son doigt près du vôtre. Le flocon tient précisément parce que vous cessez de le corriger.")), O("owl", "Le transformer en petite chouette", 1, C("Hylee", "Medig poursuivra probablement le dessert. Cela compte comme une animation.")), O("perfect", "Lisser chaque branche jusqu’à la symétrie", 0, N("Le résultat est impeccable. Hylee regrette silencieusement la petite erreur qui vous ressemblait."))] },
-    ],
-    results: { close: [C("Hylee", "Le dessert est discutable. La soirée, beaucoup moins.", "soft")], warm: [C("Hylee", "Je crois que je pourrais m’habituer à fabriquer des choses ici avec toi.", "teasing")], perfect: [N("La neige du photophore s’accorde au dessert achevé."), C("Hylee", "D’accord. Celui-là devient notre recette. Personne ne corrige la branche.", "soft")] },
-  },
+  hylee: HYLEE_HOME_DATE,
   remerii: {
     character: "remerii", title: "Une soirée sans programme", description: "Inviter Remerii à classer une bibliothèque qui résiste délicieusement à toute méthode parfaite.", gift: "homegift-remerii",
     activityTitle: "La bibliothèque impossible", activityInstruction: "Classez quelques livres selon des règles mouvantes sans laisser l’organisation dévorer la soirée.",
@@ -406,22 +389,22 @@ const RESIDENT_REPLIES: Record<string, Array<[ResidentReply, ResidentReply, Resi
   hylee: [
     [
       { beat: "Son inquiétude éclate en rire. Elle vous cède un coin de vitre et dessine aussitôt une lune beaucoup trop grande.", line: "D’accord, mais je refuse la prison. Notre peine sera de finir le paysage avant le soleil." },
-      { beat: "Son doigt reste suspendu sur une petite maison de givre. Elle n’avait pas remarqué qu’elle lui avait dessiné deux fenêtres éclairées.", line: "Je croyais faire une montagne. Apparemment, ma main avait une autre idée… On peut la garder jusqu’à midi ?" },
+      { beat: "Hylee suit du doigt un trait entre les arbres. Elle y ajoute deux petites pierres de glace.", line: "Là. On tourne après les rochers. Je les avais oubliés, c’est pour ça que tu ne reconnaissais pas." },
       { beat: "Hylee vient poser son épaule contre la vôtre. La première branche fond sans qu’elle tente de la sauver.", line: "C’est joli aussi quand ça disparaît doucement. Surtout si je ne suis pas la seule à regarder." },
     ],
     [
       { beat: "Hylee brandit une cuillère de garniture comme une épée et pose un pied sur une chaise.", line: "Le royaume sera collant, mais il survivra. Sa reine exige maintenant une dégustation héroïque." },
-      { beat: "La cuillère redescend. Elle gratte du pouce une tache de farine sur le plan de travail.", line: "Remerii me fait essayer un sort devant deux maîtres demain. Je sais que je peux le faire… mon ventre n’a pas reçu l’information." },
+      { beat: "Hylee retourne le sachet de pommes et goûte un morceau resté sur la cuillère.", line: "Des pommes, du miel… Et j’ai oublié de sortir le plat. La garniture est bonne. Il faut juste l’atteindre." },
       { beat: "Elle vous tend un torchon, puis garde l’autre. La croûte brûlée craque entre vos gestes coordonnés.", line: "Alors ce n’est pas une défaite. C’est juste une cuisine qui aura besoin d’aération et de beaucoup de mauvaise foi." },
     ],
     [
       { beat: "Elle vous drape dans la cape et recule pour juger le résultat avec un sérieux théâtral.", line: "Elle te va beaucoup trop bien. Je vais devoir rester près de toi si je veux la récupérer un jour." },
-      { beat: "Hylee regarde les deux chaises, puis en tire une tout contre la vôtre.", line: "Je choisis celle-là. Enfin… aujourd’hui. C’est rassurant de pouvoir changer demain sans être chassée." },
-      { beat: "Elle laisse la cape telle quelle. Un pan glisse au sol ; cette fois, elle ne se précipite pas pour le ramasser.", line: "Lentement, ça me va. J’ai passé assez de temps à croire qu’il fallait mériter chaque chaise." },
+      { beat: "Hylee soulève la cape et mesure sa longueur contre le mur près de la porte.", line: "Ici ? Pas trop haut, sinon tu vas devoir me la décrocher à chaque fois." },
+      { beat: "Elle remonte le pan qui touchait le sol, puis s’installe sur la chaise que vous lui laissez.", line: "D’accord. Tu viens t’asseoir ? Je te raconterai pourquoi elle est aussi mouillée." },
     ],
     [
       { beat: "Hylee attrape un tisonnier comme une lance et se place derrière vous avec un courage très dépendant de votre présence.", line: "Je propose ‘Griffe-la-Poubelle’. Si le monstre est un chat, il sera humilié avant même le combat." },
-      { beat: "Sa respiration se bloque, puis reprend plus bas. Elle acquiesce sans chercher à sourire tout de suite.", line: "À l’auberge, un bruit la nuit annonçait rarement quelque chose de gentil. Ici… ici, je peux apprendre un autre bruit." },
+      { beat: "Hylee approche de la fenêtre. Elle attend que le bruit des roues s’éloigne, puis rabat le rideau.", line: "Oui. C’est bien un chariot. On peut éteindre celle de l’entrée, maintenant." },
       { beat: "Elle s’assied au sol, dos au canapé, et vous ménage une place contre elle.", line: "Alors on veille. Mais au prochain craquement, tu inventes l’histoire rassurante. Moi, je fais le chocolat." },
     ],
   ],
@@ -692,10 +675,10 @@ const moment = (character: string, index: number, title: string, prompt: string,
 
 export const RESIDENT_MOMENTS: Record<string, HomeMoment[]> = {
   hylee: [
-    moment("hylee", 0, "Du givre sur les carreaux", "Hylee dessine au réveil un paysage de glace sur votre fenêtre, puis s’arrête en réalisant qu’elle a modifié votre maison sans demander.", ["Alors je dessine aussi. Si nous sommes deux responsables, aucun de nous ne peut être puni.", "Tu as dessiné un endroit où tu te sens en sécurité. Ne l’efface pas encore.", "Merci. Je peux juste rester là pendant que le soleil le transforme."]),
-    moment("hylee", 1, "La tarte héroïque", "La cuisine porte les traces d’une tentative de tarte. Hylee prétend que la croûte carbonisée constitue une armure narrative.", ["Très bien : sauvons le royaume en mangeant la garniture.", "Tu cuisines quand tu es nerveuse. Qu’est-ce qui t’attend aujourd’hui ?", "On peut nettoyer ensemble sans décider si c’était un échec."]),
-    moment("hylee", 2, "Une cape sur deux chaises", "Hylee a laissé sa cape entre deux chaises comme si elle n’avait pas encore choisi laquelle était la sienne.", ["Je vote pour la troisième option : directement sur mes épaules.", "Tu peux choisir une place ici sans demander si elle dérange.", "Laisse-la là. La maison peut apprendre tes habitudes lentement."]),
-    moment("hylee", 3, "La nuit trop calme", "Un bruit dans la rue a réveillé Hylee. Elle se tient dans le salon, prête à s’excuser d’avoir allumé toutes les lampes.", ["Nous allons inspecter la menace : elle mérite probablement un nom ridicule.", "Ton corps a reconnu un danger ancien. Ici, il peut vérifier puis revenir.", "Je reste éveillé·e avec toi. Aucune explication nécessaire."]),
+    moment("hylee", 0, "Du givre sur les carreaux", "Hylee dessine au réveil un paysage de glace sur votre fenêtre, puis s’arrête en réalisant qu’elle a modifié votre maison sans demander.", ["Alors je dessine aussi. Si nous sommes deux responsables, aucun de nous ne peut être puni.", "C’est le chemin de Mir’Aldas ? Tu me montres où il tourne ?", "Merci. Je peux juste rester là pendant que le soleil le transforme."]),
+    moment("hylee", 1, "La tarte héroïque", "La cuisine porte les traces d’une tentative de tarte. Hylee tapote la croûte brûlée et déclare qu’au moins, celle-ci ne s’écroulera pas.", ["Très bien : sauvons le royaume en mangeant la garniture.", "Tu as mis quoi dedans ? On peut encore sauver la garniture.", "On peut nettoyer ensemble sans décider si c’était un échec."]),
+    moment("hylee", 2, "Une cape sur deux chaises", "Hylee a laissé sa cape entre deux chaises comme si elle n’avait pas encore choisi laquelle était la sienne.", ["Je vote pour la troisième option : directement sur mes épaules.", "On met un crochet près de la porte ? Ta cape sèchera mieux.", "Laisse-la là, je prends l’autre chaise."]),
+    moment("hylee", 3, "La nuit trop calme", "Un bruit dans la rue a réveillé Hylee. Elle se tient dans le salon, prête à s’excuser d’avoir allumé toutes les lampes.", ["Nous allons inspecter la menace : elle mérite probablement un nom ridicule.", "C’était un chariot. Je l’ai vu passer. Tu veux quand même regarder la rue ?", "Je reste éveillé·e avec toi. Aucune explication nécessaire."]),
   ],
   remerii: [
     moment("remerii", 0, "Le tiroir corrigé", "Remerii a réorganisé un tiroir, puis laissé volontairement un objet à la mauvaise place pour vérifier si elle peut vivre avec.", ["J’en ajoute un second. Appelons cela une exposition expérimentale.", "Vous n’essayez pas de ranger le tiroir. Vous essayez d’habiter l’imperfection.", "Je ne toucherai à rien. Nous verrons demain si le monde tient."]),

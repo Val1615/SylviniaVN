@@ -1,4 +1,5 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
+import { HYLEE_DATES } from "./hylee-dates.ts";
 
 export type DateOutcome = "great" | "good" | "awkward";
 export type PlayerSex = "femme" | "homme" | "intersexe";
@@ -22,6 +23,7 @@ export type DateScene = {
   intro: DialogueLine[];
   choices: ChoiceData[];
   intimacySetting: {
+    background?: string;
     opening: string[];
     closing: string[];
     /** Le rendez-vous possède une continuité intime complète et ne reçoit pas le prologue générique du personnage. */
@@ -47,42 +49,7 @@ const dateChoice = (
 });
 
 export const DATE_SCENES: DateScene[] = [
-  {
-    id: "date-hylee-forestier", character: "hylee", title: "La table près de l’ancienne cheminée", type: "Dîner à l’auberge", description: "Retourner à l’Auberge du Forestier, là où l’histoire d’Hylee avait recommencé bien avant votre arrivée.", location: "forestier", spot: "forestier-inn", period: "soirée", unlockStage: 3, minAffection: 26, minTrust: 24, mood: "soft",
-    intro: [
-      line("Narration", "L’Auberge du Forestier a changé de tenancier, mais pas de cheminée. Hylee choisit la table d’où l’on voit à la fois la porte, l’escalier et les premières lueurs de la route."),
-      line("Hylee", "J’ai vécu ici en essayant de prendre le moins de place possible. Revenir pour un rendez-vous… c’est presque une provocation adressée à la fille que j’étais.", "soft"),
-      line("Narration", "Elle commande deux parts de tarte avant de vous demander votre avis, s’en aperçoit et rougit jusqu’aux oreilles."),
-      line("Hylee", "On peut recommencer correctement. Qu’est-ce que tu voudrais faire de cette soirée — écouter mes souvenirs, en fabriquer un nouveau, ou un peu des deux ?", "teasing"),
-    ],
-    choices: [
-      dateChoice("dhf-l", "Lui demander de raconter un souvenir, puis lui confier quelque chose que vous n’avez encore dit à personne.", "lucidite", [line("Hylee", "Tu ne me demandes pas de rouvrir une blessure pour satisfaire ta curiosité. Tu poses quelque chose de toi à côté… Ça change tout."), line("Narration", "La tarte refroidit pendant que vos confidences occupent lentement la table entière.")], "great", { affection: 8, trust: 8, desire: 3 }),
-      dateChoice("dhf-a", "Lever votre verre à la personne qu’elle est devenue et entraîner Hylee dans une chanson de taverne.", "audace", [line("Hylee", "Je refuse de chanter seule. Et si tu inventes encore un couplet sur les tartes héroïques, je te couvre de givre."), line("Narration", "Elle rit trop fort, oublie de surveiller la porte et garde sa main dans la vôtre sous la table.")], "great", { affection: 10, trust: 5, desire: 4 }),
-      dateChoice("dhf-s", "Lui proposer de partir si revenir ici devient trop lourd.", "sangFroid", [line("Hylee", "Merci. Je ne veux pas partir, mais savoir que je peux le faire rend l’endroit beaucoup moins étroit."), line("Narration", "Vous restez près de la sortie. Le rendez-vous demeure doux, encore prudent, mais entièrement choisi.")], "good", { affection: 5, trust: 7, desire: 1 }),
-    ],
-    intimacySetting: {
-      opening: ["Lorsque la salle se vide, Hylee loue l’ancienne chambre sous les combles. Le bois craque comme autrefois, mais elle monte l’escalier en tenant votre main au lieu de longer le mur.", "Dans la chambre, elle ouvre elle-même les rideaux et laisse la porte déverrouillée. La route, la cheminée et le passé restent derrière vous ; aucun d’eux ne décide de la suite."],
-      closing: ["Bien plus tard, vous redescendez chercher la dernière part de tarte. Hylee la partage sur les marches, cheveux défaits et sourire tranquille, heureuse d’avoir remplacé un souvenir de survie par un souvenir de désir libre."],
-    },
-  },
-  {
-    id: "date-hylee-glade", character: "hylee", title: "Un pique-nique sous la neige d’été", type: "Pique-nique arcanique", description: "Laisser Hylee inventer une neige qui ne protège, n’attaque et n’emprisonne personne.", location: "miraldas", spot: "miraldas-hylee-glade", period: "apres-midi", unlockStage: 3, minAffection: 28, minTrust: 25, mood: "teasing",
-    intro: [
-      line("Narration", "Au centre de la clairière, Hylee a étendu une couverture trop petite et préparé une neige légère qui fond avant de toucher les plats."),
-      line("Hylee", "C’est mon premier rendez-vous avec une météo sur invitation. Si tu préfères du soleil, je peux arrêter. Je ne le prendrai même pas personnellement… longtemps.", "teasing"),
-      line("Narration", "Elle vous montre trois sculptures de glace : une chouette, une couronne de travers et une forme abstraite qu’elle refuse de nommer."),
-      line("Hylee", "Choisis celle qu’on terminera ensemble. Je veux voir ce que ma magie devient quand elle n’a rien à prouver.", "soft"),
-    ],
-    choices: [
-      dateChoice("dhg-r", "Accorder votre Résonance à la sculpture abstraite sans prendre le contrôle de sa magie.", "resonance", [line("Narration", "La forme devient deux silhouettes distinctes reliées par un arc de givre qui reste souple sous vos doigts."), line("Hylee", "Tu n’as pas essayé de finir mon idée. Tu lui as donné assez de place pour qu’elle te réponde.")], "great", { affection: 8, trust: 8, desire: 4, confluence: 2 }),
-      dateChoice("dhg-a", "Transformer la couronne en chapeau ridicule et défier Hylee de le porter.", "audace", [line("Hylee", "Seulement si tu portes la chouette. Oui, sur ta tête. Nous allons être majestueux·ses."), line("Narration", "Le duel dégénère en bataille de neige parfaitement inoffensive et en baiser essoufflé sur la couverture.")], "great", { affection: 10, trust: 4, desire: 5 }),
-      dateChoice("dhg-s", "Observer ses gestes, puis prolonger seulement la branche de givre qu’elle laisse ouverte.", "sangFroid", [line("Hylee", "Tu as vu l’endroit où je m’étais arrêtée… Je ne savais même pas que j’attendais quelqu’un pour le continuer."), line("Narration", "La sculpture avance lentement, attentive, et vos doigts finissent par se rejoindre dans la glace.")], "good", { affection: 5, trust: 7, desire: 2 }),
-    ],
-    intimacySetting: {
-      opening: ["Hylee dresse autour de la couverture une coupole de givre translucide. Mir’Aldas se diffracte dans ses parois et la clairière devient un petit monde bleuté.", "La neige d’été se change en vapeur sur vos peaux. Le sort réagit à ses frissons : des fleurs de glace s’ouvrent au-dessus de vous chaque fois que son désir gagne en intensité."],
-      closing: ["La coupole fond au rythme de vos souffles retrouvés. Lorsque la clairière réapparaît, Hylee reste étendue contre vous, amusée de voir sa magie raconter tout ce qu’elle avait essayé de taire."],
-    },
-  },
+  ...HYLEE_DATES,
   {
     id: "date-remerii-observatory", character: "remerii", title: "Une constellation sans correction", type: "Observation des étoiles", description: "Passer une nuit à l’observatoire de Mir’Aldas sans transformer le ciel en exercice académique.", location: "miraldas", spot: "miraldas-observatory", period: "soirée", unlockStage: 3, minAffection: 25, minTrust: 28, mood: "calm",
     intro: [

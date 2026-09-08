@@ -1,3 +1,5 @@
+import { HYLEE_ROUTES } from "./hylee-relation.ts";
+
 export type StatKey = "audace" | "lucidite" | "sangFroid" | "resonance";
 export type PeriodKey = "aube" | "matin" | "apres-midi" | "soirée";
 
@@ -23,7 +25,7 @@ export type ChoiceData = {
   response: DialogueLine[];
   effects: Effects;
   requires?: { stat: StatKey; value: number };
-  requiresRelationship?: { character: string; stage?: number; trust?: number; affection?: number }[];
+  requiresRelationship?: { character: string; stage?: number; trust?: number; affection?: number; desire?: number }[];
   requiresKnowledge?: string[];
   dateOutcome?: "great" | "good" | "awkward";
 };
@@ -40,6 +42,7 @@ export type RouteScene = {
   intro: DialogueLine[];
   choices: ChoiceData[];
   intimate?: boolean;
+  cast?: string[];
 };
 
 export type CharacterData = {
@@ -184,19 +187,19 @@ export const CHARACTERS: CharacterData[] = [
     id: "hylee", name: "Hylee", role: "Apprentie Cryomancienne", ageNote: "", portrait: "/assets/portraits/hylee.jpg", color: "#b8efff", unlockDay: 1, defaultMood: "soft",
     tagline: "Elle apprend enfin à choisir ce qu’elle désire, pas seulement ce à quoi elle survit.",
     bio: "Hylee travaillait encore à l’Auberge du Forestier lorsque Remerii a reconnu sa cryomancie. Elle a choisi de la suivre sur les routes. Leur voyage reste discret : l’Empire ne doit pas identifier trop vite la puissance qu’elles transportent.",
-    wound: "La peur de n’être aimée que pour son potentiel, et de redevenir prisonnière dès qu’elle baisse sa garde.",
+    wound: "La peur que ceux qu’elle aime partent sans revenir, et que sa puissance fasse du mal à ceux qui restent.",
     appreciates: "La patience sincère, l’humour tendre, les gestes qui n’exigent rien en retour.",
     giftLikes: ["tartelette", "cristal", "plume"],
     itinerary: [
-      { days: 2, location: "forestier", note: "Derniers préparatifs à l’auberge où Remerii l’a rencontrée" },
-      { days: 3, travelTo: "miraldas", note: "Première route discrète avec Remerii" },
+      { days: 2, location: "algratal", note: "Halte avec Remerii après la rencontre sur les routes" },
+      { days: 3, travelTo: "miraldas", note: "Voyage discret avec Remerii" },
       { days: 6, location: "miraldas", note: "Études cryomantiques à l’abri du Dôme" },
       { days: 3, travelTo: "forbidden", note: "Chemin protégé vers les brumes" },
       { days: 2, location: "forbidden", note: "Rare visite personnelle à Naïah" },
       { days: 3, travelTo: "miraldas", note: "Retour prudent hors de la forêt" },
       { days: 6, location: "miraldas", note: "Atelier commun avec Remerii" },
-      { days: 3, travelTo: "forestier", note: "Retour vers l’Auberge du Forestier" },
-      { days: 4, location: "forestier", note: "Halte familière et ravitaillement" },
+      { days: 3, travelTo: "algratal", note: "Retour vers les marchés d’Al’Gratal" },
+      { days: 4, location: "algratal", note: "Achats et réparations avant de reprendre la route" },
       { days: 3, travelTo: "miraldas", note: "Nouveau départ loin des routes impériales" },
       { days: 3, location: "miraldas", note: "Repos sous la protection du Dôme" },
     ],
@@ -209,15 +212,15 @@ export const CHARACTERS: CharacterData[] = [
     appreciates: "La maîtrise, l’intelligence émotionnelle et l’audace qui sait où s’arrêter.",
     giftLikes: ["the", "cristal", "partition"],
     itinerary: [
-      { days: 2, location: "forestier", note: "Organise le départ de Hylee sans attirer l’attention" },
-      { days: 3, travelTo: "miraldas", note: "Première route discrète avec Hylee" },
+      { days: 2, location: "algratal", note: "Halte discrète avec Hylee, déjà sa compagne de voyage" },
+      { days: 3, travelTo: "miraldas", note: "Voyage discret avec Hylee" },
       { days: 6, location: "miraldas", note: "Enseignement et recherches sous le Dôme" },
       { days: 3, travelTo: "forbidden", note: "Accompagne Hylee jusqu’aux brumes" },
       { days: 2, location: "forbidden", note: "Reste en retrait pendant la visite à Naïah" },
       { days: 3, travelTo: "miraldas", note: "Retour prudent hors de la forêt" },
       { days: 6, location: "miraldas", note: "Direction de l’atelier et présence auprès d’Hylee" },
-      { days: 3, travelTo: "forestier", note: "Retour vers l’auberge par des chemins secondaires" },
-      { days: 4, location: "forestier", note: "Ravitaillement et étude des prochaines routes" },
+      { days: 3, travelTo: "algratal", note: "Retour vers la capitale par des chemins secondaires" },
+      { days: 4, location: "algratal", note: "Ravitaillement et étude des prochaines routes" },
       { days: 3, travelTo: "miraldas", note: "Nouveau départ loin des contrôles impériaux" },
       { days: 3, location: "miraldas", note: "Classe ses relevés de voyage" },
     ],
@@ -396,67 +399,8 @@ export const GIFTS: GiftData[] = [
 ];
 
 export const ROUTE_SCENES: RouteScene[] = [
-  // HYLEE
-  routeScene("hylee", 0, 1, "Le dernier service", "forestier", "forestier_inn", "surprised", [
-    line("Narration", "À l’Auberge du Forestier, Hylee pose une dernière chope sur le comptoir. Un voyageur en uniforme impérial pousse la porte ; le bois blanchit aussitôt sous ses doigts."),
-    line("Hylee", "Mince. Pas maintenant."),
-    line("Narration", "Elle plaque son torchon sur le givre. La glace traverse le tissu et dessine un flocon très net sur le comptoir."),
-    line("Hylee", "Tu peux regarder derrière moi ? Discrètement. Enfin, plus discrètement que moi en train d’étouffer une table avec un torchon."),
-    line("Hylee", "Et on peut se tutoyer. Si je dois quitter cette auberge aujourd’hui, je refuse d’emporter le “vous” du service avec mes bagages."),
-    line("Narration", "À l’étage, Remerii ferme un coffre. Hylee jette un regard à l’escalier, partagé entre la peur d’être reconnue et une impatience si vive qu’elle en oublie presque l’uniforme."),
-  ], [
-    choice("h0-a", "« Si c’est ta façon de dire bonjour, elle est plutôt mémorable. »", "audace", [line("Hylee", "Bonjour. Bienvenue. La boisson est comprise, le gel des chaussures aussi."), line("Narration", "Elle baisse les yeux vers vos bottes prises dans une pellicule blanche, puis étouffe un rire dans son torchon."), line("Hylee", "Ne bouge pas. Je vais réparer ça avant que Remerii descende et transforme notre rencontre en leçon de sécurité de trois heures."), line("Narration", "Le voyageur impérial passe sans s’arrêter. Hylee relève la tête, victorieuse pour une raison qui dépasse largement vos chaussures.")], { stats: { audace: 1 }, affection: 5, trust: 2, desire: 1, confluence: 2 }),
-    choice("h0-l", "Observer les reflets avant de répondre : le givre s’est refermé autour d’elle, pas autour de la salle.", "lucidite", [line("{player}", "Il ne regarde plus. Et ta magie n’essayait pas de l’attaquer : elle t’a construit un bord."), line("Hylee", "Un bord…"), line("Narration", "Elle soulève le torchon. La glace s’arrête exactement à la largeur de ses avant-bras."), line("Hylee", "D’habitude, les gens voient du givre et choisissent entre crier et donner un conseil. Toi, tu as regardé où il allait."), line("Hylee", "Reste près du comptoir. Je vais peut-être réussir à sortir d’ici sans congeler la porte.")], { stats: { lucidite: 1 }, affection: 2, trust: 6, confluence: 2 }),
-    choice("h0-r", "Poser la paume près du givre et étouffer sa signature sans l’effacer.", "resonance", [line("Narration", "Vous approchez sans toucher. La signature magique se replie comme une flamme protégée du vent ; le froid, lui, demeure."), line("Hylee", "Tu la sens aussi ? Pas la glace. Le petit mouvement juste dessous."), line("{player}", "Oui. Je peux le masquer, pas le prendre."), line("Hylee", "Parfait. J’ai déjà une professeure qui prend toute la place lorsqu’elle explique."), line("Narration", "Elle ose enfin retirer ses mains. Le flocon reste sage sur le comptoir et son sourire, lui, ne l’est plus du tout.")], { stats: { resonance: 1 }, affection: 4, trust: 4, confluence: 3 }, { stat: "resonance", value: 5 }),
-  ]),
-  routeScene("hylee", 1, 4, "Un bâton, deux mains", "miraldas", "atelier", "determined", [
-    line("Narration", "Dans l’atelier de Mir’Aldas, le bâton d’Hylee vibre jusqu’à faire tinter tous les cristaux suspendus. Elle le tient à bout de bras comme un animal qu’elle aurait insulté par erreur."),
-    line("Hylee", "Je lui ai demandé une pointe de glace. Il a décidé de réveiller toute l’Académie."),
-    line("Narration", "Une fiole saute d’une étagère. Hylee la rattrape contre son ventre, très fière pendant une seconde, puis une seconde fiole tombe derrière elle."),
-    line("Hylee", "Ne raconte jamais cette partie à Remerii. La première, tu peux : elle me trouvait presque brillante."),
-    line("Hylee", "J’ai envie d’essayer encore. Tu restes ? Si je me ridiculise, j’exige au moins un témoin capable de faire pire."),
-  ], [
-    choice("h1-s", "Stabiliser sa respiration plutôt que sa magie.", "sangFroid", [line("{player}", "Quatre souffles. Le bâton peut faire son caprice tout seul."), line("Hylee", "Un… deux… Tu sais qu’il t’entend ?"), line("{player}", "Qu’il apprenne la patience."), line("Narration", "Au quatrième souffle, le tintement cesse. Hylee ouvre un œil, puis l’autre."), line("Hylee", "Tu parles un peu comme Remerii, mais tu as l’immense avantage de ne pas corriger ma posture pendant que je respire."), line("Narration", "Elle vous donne un léger coup d’épaule avant de reprendre le bâton, cette fois sans crispation.")], { stats: { sangFroid: 1 }, trust: 6, affection: 3, confluence: 3 }),
-    choice("h1-a", "« On le force ensemble. Comme ça, le désastre sera équitablement partagé. »", "audace", [line("Hylee", "Voilà une philosophie magique absolument irresponsable."), line("{player}", "Tu refuses ?"), line("Hylee", "Je cherche seulement une formulation élégante pour dire que j’adore."), line("Narration", "Vos deux mains se referment sur le bois. Le bâton bondit, projette un nuage de neige au plafond et vous couvre tous les deux de poudre blanche."), line("Hylee", "Réussite incontestable : personne n’a été blessé, et l’atelier est beaucoup plus joli."), line("Narration", "Son rire attire Remerii dans le couloir. Hylee vous pousse derrière un paravent sans cesser de sourire.")], { stats: { audace: 1 }, affection: 6, desire: 2, trust: 2, confluence: 3 }),
-    choice("h1-r", "Laisser le bâton répondre avant de décider du geste.", "resonance", [line("Narration", "Vous ne saisissez pas le bois. Votre main demeure près de celle d’Hylee tandis que la vibration perd son bruit et devient une pulsation lente."), line("Hylee", "Là. Tu la sens ?"), line("{player}", "Il attend."), line("Hylee", "Moi aussi, je crois."), line("Narration", "Elle desserre les doigts. Le bâton vient de lui-même se loger dans sa paume."), line("Hylee", "Je passe des années à croire que progresser signifie serrer plus fort, et cette chose exige que je lui fasse de la place. C’est vexant."), line("Narration", "Elle garde votre main près de la sienne encore quelques secondes, sans chercher d’excuse magique.")], { stats: { resonance: 1 }, trust: 5, affection: 4, confluence: 5 }, { stat: "resonance", value: 6 }),
-  ]),
-  routeScene("hylee", 2, 8, "La cicatrice sous la neige", "miraldas", "camp", "sad", [
-    line("Narration", "La nuit tombe sur la clairière. En voulant chasser un insecte, un caravanier lève brusquement le bras. Hylee se protège le visage avant même de comprendre le geste."),
-    line("Narration", "Le caravanier s’excuse et s’éloigne. Hylee fixe ses propres mains avec une colère muette, puis donne un coup de botte à une pomme de pin."),
-    line("Hylee", "Je savais que ce n’était pas lui. Je l’ai su tout le temps. Mon corps, lui, a apparemment raté l’information."),
-    line("Hylee", "Et maintenant j’ai envie de faire une blague pour que tu arrêtes d’avoir cette tête."),
-    line("{player}", "Quelle tête ?"),
-    line("Hylee", "Celle qui me transforme déjà en vase fêlé. Je ne suis pas cassée. Je suis furieuse… et j’ai un peu peur. Les deux peuvent tenir ensemble."),
-  ], [
-    choice("h2-l", "« Je vois surtout la fille qui vient de déclarer la guerre à une pomme de pin. »", "lucidite", [line("Hylee", "Elle avait une attitude suspecte."), line("Narration", "Vous ramassez la pomme de pin et la posez entre vous comme une ennemie capturée. Le rire d’Hylee tarde, mais il vient."), line("{player}", "Je ne vais pas faire semblant que rien ne t’a blessée. Je ne vais pas non plus laisser cette blessure raconter tout le reste."), line("Hylee", "Bien. Parce qu’il y a aussi ma victoire sur le bâton, mon talent pour les tartes et une ennemie végétale désormais vaincue."), line("Narration", "Elle desserre sa cape et garde la pomme de pin en trophée ridicule.")], { stats: { lucidite: 1 }, trust: 8, affection: 5, confluence: 3 }),
-    choice("h2-s", "Garder les mains visibles et lui laisser choisir la distance.", "sangFroid", [line("Narration", "Vous vous asseyez sans avancer. Hylee regarde l’espace entre vous, agacée qu’il lui faille encore y réfléchir."), line("Hylee", "Tu peux parler, tu sais. Je ne suis pas devenue un animal qu’un bruit ferait fuir."), line("{player}", "Je sais. Je te laisse seulement décider si tu veux que je sois plus près."), line("Narration", "Elle roule des yeux, se lève et vient cogner son épaule contre la vôtre avec une vigueur presque punitive."), line("Hylee", "Là. Et si tu racontes que c’était émouvant, je nierai tout."), line("Narration", "Elle reste pourtant appuyée contre vous jusqu’à ce que ses doigts cessent de trembler.")], { stats: { sangFroid: 1 }, trust: 9, affection: 4, desire: 1, confluence: 3 }),
-    choice("h2-a", "« Cassée ? Non. Terriblement impressionnante et beaucoup trop têtue ? Oui. »", "audace", [line("Hylee", "Beaucoup trop ?"), line("{player}", "La pomme de pin n’avait aucune chance."), line("Narration", "Son premier rire se brise au milieu. Elle essuie une larme du revers de la manche, puis reprend depuis le début jusqu’à rire pour de vrai."), line("Hylee", "Merci. Pas pour la plaisanterie, elle était médiocre. Pour ne pas avoir eu peur de rire avec moi."), line("{player}", "Je peux en essayer une meilleure."), line("Hylee", "N’abusons pas de ce moment de faiblesse.")], { stats: { audace: 1 }, trust: 5, affection: 7, desire: 2, confluence: 3 }),
-  ]),
-  routeScene("hylee", 3, 13, "La danse du campement", "echo-clearing", "camp", "teasing", [
-    line("Narration", "À la Clairière des Échos, une caravane a sorti un violon et suspendu des lanternes aux branches. Hylee fend la foule droit vers vous avant que vous puissiez vous réfugier derrière la surveillance du camp."),
-    line("Hylee", "J’ai beaucoup réfléchi."),
-    line("{player}", "Je dois m’inquiéter ?"),
-    line("Hylee", "Énormément. C’est généralement après avoir beaucoup réfléchi que je fais quelque chose d’irraisonnable."),
-    line("Narration", "Elle tend la main, puis la retire pour essuyer sa paume sur sa jupe et la tend de nouveau, le menton relevé."),
-    line("Hylee", "Danse avec moi. Et ne prétends pas que tu ne sais pas : je t’ai vu·e regarder tes pieds pendant tout le premier morceau. Nous serons mauvais ensemble."),
-  ], [
-    choice("h3-a", "L’entraîner au centre de la piste avant que son courage ne retombe.", "audace", [line("Hylee", "Oh ! Tu es vraiment pire que moi."), line("Narration", "Elle rate le premier pas, vous écrase le pied et s’excuse si fort que le violoniste manque une note en riant."), line("Hylee", "À ton tour. Il faut que la honte reste équitable."), line("Narration", "Vous exécutez un faux pas volontaire. Hylee vous imite, puis invente une variation si absurde que deux enfants de la caravane se joignent à vous."), line("Hylee", "Regarde ! Nous lançons une école. Remerii va détester le programme."), line("Narration", "Quand la musique ralentit, son rire demeure entre vous et sa main ne quitte pas la vôtre.")], { stats: { audace: 1 }, affection: 8, desire: 5, trust: 3, confluence: 4 }),
-    choice("h3-s", "Lui offrir votre main, immobile, et attendre qu’elle la prenne.", "sangFroid", [line("Narration", "Hylee regarde votre paume, puis votre visage."), line("Hylee", "Tu ne vas pas me sauver au dernier moment si je panique ?"), line("{player}", "Je vais te suivre si tu avances, et m’arrêter si tu t’arrêtes."), line("Hylee", "C’est moins héroïque. J’aime mieux."), line("Narration", "Ses doigts se posent dans les vôtres. Elle choisit le premier pas, le second, puis accélère assez pour vous obliger à suivre vraiment."), line("Hylee", "Ne prends pas cet air surpris. C’est moi qui t’ai invité·e.")], { stats: { sangFroid: 1 }, affection: 6, desire: 3, trust: 7, confluence: 4 }),
-    choice("h3-r", "« Suivons la musique comme on suivrait un courant magique. »", "resonance", [line("Hylee", "C’est soit très beau, soit une excellente excuse pour ne pas connaître les pas."), line("Narration", "Vous cessez de compter. Sous les dalles, le rythme du violon rencontre les filaments de magie ; Hylee les suit d’abord des yeux, puis avec tout son corps."), line("Hylee", "Là — tu l’as senti ?"), line("{player}", "Le changement de mesure ?"), line("Hylee", "Non. Moi qui prenais la direction."), line("Narration", "Elle vous fait tourner, manque de vous perdre, vous rattrape par la taille et reste soudain très proche."), line("Hylee", "Je crois que mon corps savait exactement où il voulait aller.")], { stats: { resonance: 1 }, affection: 7, desire: 5, trust: 5, confluence: 5 }, { stat: "resonance", value: 8 }),
-  ]),
-  routeScene("hylee", 4, 19, "Choisir sans fuir", "miraldas", "bedroom", "soft", [
-    line("Narration", "Hylee referme la porte de la chambre sans la verrouiller. Elle vérifie la poignée, ouvre de nouveau, puis soupire contre le battant."),
-    line("Hylee", "Je viens de répéter cette entrée trois fois dans le couloir. Dans aucune version je ne discutais avec une poignée."),
-    line("{player}", "Je peux ressortir et te laisser recommencer."),
-    line("Hylee", "Tu n’oses pas."),
-    line("Narration", "Elle rit, vous attrape par la manche avant que vous puissiez obéir et vous ramène près d’elle. Le rire tombe peu à peu ; pas son initiative."),
-    line("Hylee", "Je ne veux plus que quelqu’un décide de ma vie en appelant ça de l’amour. Avec toi, je peux dire oui parce que je sais que mon non ne cassera rien."),
-    line("Hylee", "Alors voilà, sans poignée et sans répétition : j’ai envie que tu restes. J’ai envie de t’embrasser. Et toi ?"),
-  ], [
-    choice("h4-l", "Nommer clairement votre désir et vos limites, puis lui demander les siennes.", "lucidite", [line("Narration", "Vous lui dites ce que vous voulez, ce que vous ignorez encore et ce qui vous ferait arrêter. Hylee écoute sans cacher le rouge qui gagne ses joues."), line("Hylee", "Moi, je veux pouvoir rire si c’est maladroit. Je veux qu’on parle au lieu de deviner. Et je ne veux pas que tu me demandes toutes les deux secondes si je vais me briser."), line("{player}", "C’est beaucoup plus précis que mon discours."), line("Hylee", "J’ai répété avec la poignée, je te rappelle."), line("Narration", "Elle vient poser son front contre le vôtre, attend une dernière respiration, puis choisit le baiser.")], { stats: { lucidite: 1 }, affection: 10, trust: 10, desire: 7, confluence: 6 }, { stat: "lucidite", value: 8 }),
-    choice("h4-s", "« Je reste. Et tu peux changer d’avis à chaque instant. »", "sangFroid", [line("Hylee", "Toi aussi."), line("Narration", "Elle se rapproche, s’arrête à un souffle de vos lèvres et plisse les yeux."), line("Hylee", "Tu vois ? Là, c’est moi qui te fais attendre."), line("{player}", "Cruauté remarquable."), line("Hylee", "Je découvre le pouvoir. Laisse-moi une seconde."), line("Narration", "Elle savoure exactement cette seconde, puis vous embrasse avec un sourire qu’elle ne parvient pas à contenir.")], { stats: { sangFroid: 1 }, affection: 9, trust: 11, desire: 6, confluence: 6 }),
-    choice("h4-a", "« J’espérais que tu le demanderais depuis cette catastrophe avec le bâton. »", "audace", [line("Hylee", "J’aurais dû t’assommer avec. Nous aurions gagné des semaines."), line("{player}", "Tu aurais dû me rater."), line("Hylee", "Évidemment. Je suis joueuse, pas meurtrière."), line("Narration", "Elle vous pousse contre la porte, surprise une demi-seconde par sa propre audace, puis refuse de reculer."), line("Hylee", "Je t’embrasse maintenant. Tu as encore le temps de faire une remarque stupide."), line("{player}", "Je la garde pour après."), line("Narration", "Son rire se perd contre votre bouche.")], { stats: { audace: 1 }, affection: 11, trust: 7, desire: 9, confluence: 6 }),
-  ], true),
+  // HYLEE — Acte I personnel, confidences indépendantes.
+  ...HYLEE_ROUTES,
 
   // REMERII
   routeScene("remerii", 0, 1, "Le thé avant la route", "forestier", "forestier_inn", "smirk", [
@@ -1343,7 +1287,7 @@ export const ROUTE_SCENES: RouteScene[] = [
  * tandis que ses confidences restent entièrement facultatives.
  */
 export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
-  hylee: ["knows_hylee_tartlets", "knows_hylee_star_pendant", "knows_hylee_adoptive_abuse", "knows_hylee_origin_unease"],
+  hylee: [],
   remerii: ["knows_remerii_child_prodigy", "knows_remerii_dome", "knows_remerii_curse", "knows_remerii_cryo_origin"],
   iriana: ["knows_iriana_mother_tenderness", "knows_iriana_tia_control", "knows_iriana_alamma_abuse", "knows_iriana_mother_death"],
   valurn: ["knows_valurn_bhaal_childhood", "knows_valurn_bellirith_past", "knows_valurn_artifact_search", "knows_valurn_true_abandonment"],
@@ -1358,7 +1302,7 @@ export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
 };
 
 export function routeKnowledgeRequirements(scene: Pick<RouteScene, "character" | "stage">): string[] {
-  if (scene.character === "lineva" || scene.character === "allenna") return [];
+  if (scene.character === "lineva" || scene.character === "allenna" || scene.character === "hylee") return [];
   if (scene.stage <= 0) return [];
   const knowledge = ROUTE_KNOWLEDGE_ORDER[scene.character]?.[scene.stage - 1];
   return knowledge ? [knowledge] : [];
@@ -1379,6 +1323,11 @@ export function routeFlagRequirements(scene: Pick<RouteScene, "id">): string[] {
 }
 
 export const ROUTE_HISTORY_REQUIREMENTS: Record<string, readonly string[]> = {
+  "hylee-0": ["campaign-imperial-audience"],
+  "hylee-1": ["hylee-0"],
+  "hylee-2": ["hylee-1"],
+  "hylee-3": ["hylee-2"],
+  "hylee-4": ["hylee-3"],
   "lineva-0": ["campaign-lineva-departure"],
   "allenna-0": ["campaign-akuhn-gates"],
   "allenna-1": ["campaign-amanea-audience", "allenna-0"],
@@ -1393,6 +1342,11 @@ export function routeHistoryRequirements(scene: Pick<RouteScene, "id">): string[
 
 /** Nombre de chapitres principaux entièrement achevés avant la scène. */
 export const ROUTE_STORY_REQUIREMENTS: Record<string, number> = {
+  "hylee-0": 3,
+  "hylee-1": 3,
+  "hylee-2": 4,
+  "hylee-3": 4,
+  "hylee-4": 4,
   "lineva-1": 4,
   "lineva-2": 5,
   "lineva-3": 8,

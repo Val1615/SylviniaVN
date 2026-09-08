@@ -26,19 +26,7 @@ const R = (
  * décisions restent à la fin du rendez-vous et ne coupent jamais son Acte I.
  */
 export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = {
-  "hylee-0": R(C("Lui conseiller de rester à l’auberge jusqu’à ce qu’elle maîtrise parfaitement sa magie.", "Rester ici parce que j’ai peur ne serait pas de la maîtrise. Ce serait encore quelqu’un d’autre qui décide quand j’ai le droit de partir.", "sangFroid")),
-  "hylee-1": R(C("Prendre le bâton et terminer vous-même la stabilisation.", "Je t’ai demandé de rester avec moi, pas de réussir à ma place. Rends-le-moi avant que cette leçon ressemble trop aux anciennes.", "lucidite")),
-  "hylee-2": R(C("Lui promettre que personne ne pourra plus jamais lui faire peur tant que vous serez là.", "Je ne veux pas remplacer une dépendance par une autre. Reste si tu le choisis, mais ne fais pas de toi la serrure de toutes mes portes.", "audace")),
-  "hylee-3": R(
-    C("Rire de sa maladresse avant même qu’elle ait posé le premier pas.", "Je sais que je vais me tromper. J’espérais simplement que tu danserais avec moi, pas que tu prendrais une place dans le public.", "audace"),
-    C("Garder sa main sans entrer dans la danse et lui dire que vous avez besoin de ralentir.", "D’accord. On peut rester près de la musique sans lui demander davantage ce soir.", "sangFroid"),
-    C("Avant la première mesure, lui dire que votre tendresse pour elle est amicale.", "Ça change la danse que j’imaginais. Pas le fait que j’ai envie de la partager avec toi, si tu veux encore.", "lucidite"),
-  ),
-  "hylee-4": R(
-    C("Verrouiller la porte pour lui prouver que personne ne viendra interrompre la soirée.", "Non. La porte ouverte n’était pas un oubli. J’avais besoin de savoir que je pouvais sortir avant de choisir de rester.", "sangFroid"),
-    C("Lui dire que vous souhaitez rester près d’elle, sans franchir ce seuil ce soir.", "Oui. Reste, alors. Le fait que tu puisses dire pas ce soir rend tous les autres oui plus vrais.", "sangFroid"),
-    C("Lui dire que vous choisissez son amitié, sans attendre qu’elle devienne une histoire d’amour.", "J’aurai mal un moment. Mais je préfère une place vraie auprès de toi à une chambre où tu resterais pour ne pas me décevoir.", "lucidite"),
-  ),
+  // Hylee : les réponses divergentes font partie des scènes écrites.
 
   "remerii-0": R(C("Lui reprocher de voir une menace dans chaque voyageur de l’auberge.", "La prudence qui protège Hylee n’est pas une coquetterie paranoïaque. Vous pouviez contester mon analyse sans ridiculiser le danger.", "lucidite")),
   "remerii-1": R(C("Pousser la sphère jusqu’à la rupture pour lui prouver votre puissance.", "Je vous ai demandé une maîtrise, pas une démonstration qui oblige toute la pièce à survivre à votre ego.", "audace")),

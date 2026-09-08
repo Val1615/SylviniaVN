@@ -43,6 +43,8 @@ import { linevaDateApproaches, linevaDateIntimacyPhase } from "./lineva-date-int
 import { allennaDateApproaches, allennaDateIntimacyPhase } from "./allenna-date-intimacy";
 import { linevaRelationBeat } from "./lineva-relation-beats";
 import { allennaRelationBeat } from "./allenna-relation-beats";
+import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
+import { hyleeDateBeat } from "./hylee-dates";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
 import { groupIntimateCgState, soloIntimateCgState, type IntimateCgState } from "./intimate-cg";
@@ -275,6 +277,7 @@ type SceneView = {
   campaignSceneId?: string;
   crossQuestStage?: number;
   cast: string[];
+  departure?: { location: string; spot: string };
 };
 
 type DialogueState = {
@@ -284,6 +287,9 @@ type DialogueState = {
   phase: "intro" | "choices" | "response" | "relation-intro" | "relation-choices" | "relation-response";
   chosen?: ChoiceData;
   primaryChoice?: ChoiceData;
+  dateRound?: number;
+  datePicks?: string[];
+  spriteMoods?: Record<string, string>;
   replay?: boolean;
 };
 
@@ -677,7 +683,7 @@ function hasKnowledge(game: GameState, ids: string[] = []) {
 function routeNarrativeReady(scene: RouteScene, game: GameState) {
   return game.settings.unlockAll || (
     hasKnowledge(game, routeKnowledgeRequirements(scene))
-    && routeHistoryRequirements(scene).every((id) => game.history.includes(id))
+    && routeHistoryRequirements(scene).every((id) => scene.character === "hylee" ? campaignHistorySatisfied(id, game) : game.history.includes(id))
     && storyProgress(game.history, game.flags) >= routeStoryRequirement(scene)
     && routeFlagRequirements(scene).every((flag) => game.flags.includes(flag))
   );
@@ -695,7 +701,7 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
     const character = CHARACTERS.find((entry) => entry.id === scene.character);
     return `Une conversation personnelle semble maintenant possible avec ${character?.name || "cette personne"}. Retrouvez-la dans l’un de ses lieux habituels.`;
   }
-  const missingHistory = routeHistoryRequirements(scene).filter((id) => !game.history.includes(id));
+  const missingHistory = routeHistoryRequirements(scene).filter((id) => scene.character === "hylee" ? !campaignHistorySatisfied(id, game) : !game.history.includes(id));
   if (missingHistory.length) {
     if (scene.id === "lineva-0") return "Rencontrez d’abord Lineva lors du départ de Draven à Forthaven.";
     return "Une étape de l’histoire principale doit encore présenter cette situation.";
@@ -706,7 +712,9 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
     return `Poursuivez l’histoire principale jusqu’à la fin du chapitre ${MAIN_STORY[requiredStory - 1]?.number || requiredStory}.`;
   }
   const missingFlags = routeFlagRequirements(scene).filter((flag) => !game.flags.includes(flag));
-  if (!missingFlags.length) return undefined;
+  if (!missingFlags.length) return scene.id === "hylee-4"
+    ? "Retrouvez Hylee dans son sous-lieu actuel, puis choisissez un trajet vers une autre région sur la carte. Cette conversation accompagne votre départ réel."
+    : undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
   if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
   if (scene.id === "valurn-4" || scene.id === "bellirith-4") {
@@ -800,7 +808,8 @@ function secretConversationReady(secret: SecretConversation, game: GameState, re
   // Chaque couche de passé répond à une scène réellement vécue : une forte
   // relation obtenue par cadeaux ou moments libres ne peut plus sauter le
   // premier chapitre de la route ni révéler plusieurs niveaux à l’avance.
-  if (!game.settings.unlockAll && relation.stage < secret.tier / 20) return false;
+  if (!game.settings.unlockAll && secret.character !== "hylee" && relation.stage < secret.tier / 20) return false;
+  if (!game.settings.unlockAll && relation.trust < (secret.minTrust || 0)) return false;
   if (!game.settings.unlockAll && relation.affection + relation.trust < secret.tier) return false;
   if (!game.settings.unlockAll && game.day < (secret.minDay || 1)) return false;
   if (!game.settings.unlockAll && !hasKnowledge(game, secret.requiresKnowledge)) return false;
@@ -1002,7 +1011,7 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
   if (!game.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return false;
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[characterId];
-  const requiredStage = ["lineva", "allenna"].includes(characterId) ? 5 : 3;
+  const requiredStage = ["lineva", "allenna"].includes(characterId) || characterId === "hylee" ? 5 : 3;
   return relation.stage >= requiredStage && relation.affection >= 22 && relation.trust >= 22;
 }
 
@@ -1228,7 +1237,10 @@ function characterSchedule(character: CharacterData, day: number, flags: string[
       ? IRIANA_FORTHAVEN_ITINERARY
       : character.itinerary;
   const cycleLength = itinerary.reduce((total, stop) => total + stop.days, 0);
-  const cycleDay = ((Math.max(1, day) - 1) % cycleLength) + 1;
+  const anchor = ["hylee", "remerii"].includes(character.id)
+    ? Number(flags.find((flag) => flag.startsWith("hylee-itinerary-start:"))?.split(":")[1]) || 1
+    : 1;
+  const cycleDay = ((Math.max(1, day - anchor + 1) - 1) % cycleLength) + 1;
   let cursor = 1;
   for (const stop of itinerary) {
     const end = cursor + stop.days - 1;
@@ -1256,7 +1268,7 @@ function storyCharacterPlace(characterId: string, day: number, period: number, f
     stopDay: 1,
   });
 
-  if (["hylee", "remerii"].includes(characterId) && has("campaign-echoes") && !has("campaign-algratal-road")) {
+  if (["hylee", "remerii"].includes(characterId) && !has("campaign-algratal-road")) {
     return fixed("echo-clearing", "echo-clearing", characterId === "hylee" ? "explore la clairière avant le départ vers Al’Gratal" : "prépare discrètement la traversée vers Al’Gratal");
   }
   if (["hylee", "remerii"].includes(characterId) && has("campaign-algratal-road") && !has("campaign-imperial-audience")) {
@@ -1363,6 +1375,18 @@ function nextPresence(
   return undefined;
 }
 
+/** Une invitation individuelle peut déplacer Hylee dans la ville où elle
+ * séjourne, jamais l'arracher à un voyage ni la faire traverser une région. */
+function nextHyleeDateDay(game: GameState, location: string, period: number): number | undefined {
+  if (game.location !== location) return undefined;
+  const character = CHARACTERS.find((entry) => entry.id === "hylee")!;
+  for (let day = game.day + 1; day <= game.day + 38; day += 1) {
+    const place = characterPlace(character, day, period, game.flags, game.housing);
+    if (!place.traveling && place.location === location) return day;
+  }
+  return undefined;
+}
+
 function waitDurationLabel(game: GameState, target: { day: number; period: number }) {
   const days = target.day - game.day;
   if (days <= 0) return `${target.period - game.period} période${target.period - game.period > 1 ? "s" : ""}`;
@@ -1446,7 +1470,8 @@ function relationshipRequirementMet(choice: ChoiceData, game: GameState) {
     return !relation
       || (requirement.stage !== undefined && relation.stage < requirement.stage)
       || (requirement.trust !== undefined && relation.trust < requirement.trust)
-      || (requirement.affection !== undefined && relation.affection < requirement.affection);
+      || (requirement.affection !== undefined && relation.affection < requirement.affection)
+      || (requirement.desire !== undefined && relation.desire < requirement.desire);
   });
   return !relationshipMissing;
 }
@@ -1576,14 +1601,23 @@ function flagsSharedByEveryChoice(choices: ChoiceData[]) {
   return (first.effects.flags || []).filter((flag) => rest.every((choice) => choice.effects.flags?.includes(flag)));
 }
 
-function relationRouteVariant(route: RouteScene, _game: GameState) {
-  return { route, sceneId: route.id };
+function relationRouteVariant(route: RouteScene, game: GameState) {
+  return { route: hyleeRouteVariant(route, game.knowledge, game.flags), sceneId: route.id };
+}
+
+function relationBeatFor(sceneId: string, game: GameState) {
+  if (sceneId === "allenna-4") return undefined;
+  return hyleeRelationBeat(sceneId, game.flags) || linevaRelationBeat(sceneId) || allennaRelationBeat(sceneId);
 }
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
+  if (dialogue.phase === "relation-choices" && dialogue.scene.date?.character === "hylee") {
+    const beat = hyleeDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
+    return beat?.choices || [];
+  }
   if (dialogue.phase === "relation-choices" && dialogue.scene.route) {
-    const beat = dialogue.scene.route.id === "allenna-4" ? undefined : linevaRelationBeat(dialogue.scene.route.id) || allennaRelationBeat(dialogue.scene.route.id);
+    const beat = relationBeatFor(dialogue.scene.route.id, game);
     return beat ? shuffledChoices(beat.choices, `${dialogue.scene.id}:relation:${game.player.name}`) : [];
   }
   // Les moments libres et rendez-vous conservent uniquement leurs choix
@@ -1988,6 +2022,7 @@ export default function Home() {
     const routeSpotId = route ? ROUTE_SPOTS[route.id] : undefined;
     const routePeriods = route ? ROUTE_PERIODS[route.id] : undefined;
     const ready = route
+      && route.id !== "hylee-4"
       && game.day >= route.dayMin
       && route.location === game.location
       && routeSpotId === game.spot
@@ -2018,7 +2053,7 @@ export default function Home() {
     }
     if (ready && route) {
       const playable = relationRouteVariant(route, game);
-      const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: [playable.route.character], kind: "route", route: playable.route };
+      const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: playable.route.cast || [playable.route.character], kind: "route", route: playable.route };
       setDialogue({
         scene,
         lines: expandedLines(scene, game, playable.route.intro, "intro"),
@@ -2322,18 +2357,27 @@ export default function Home() {
   function advanceDialogue() {
     if (!dialogue) return;
     if (dialogue.lineIndex < dialogue.lines.length - 1) {
-      setDialogue({ ...dialogue, lineIndex: dialogue.lineIndex + 1 });
+      setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), lineIndex: dialogue.lineIndex + 1 });
       return;
     }
     if (dialogue.phase === "intro" && dialogue.scene.choices?.length) {
-      setDialogue({ ...dialogue, phase: "choices" });
+      setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "choices" });
       return;
     }
+    if (dialogue.scene.date?.character === "hylee" && ["response", "relation-response"].includes(dialogue.phase)) {
+      const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
+      const beat = hyleeDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
+      if (beat) {
+        setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" });
+        return;
+      }
+    }
     if (dialogue.phase === "response" && dialogue.scene.route && dialogue.chosen && routeChoiceCompletes(dialogue.chosen.id)) {
-      const beat = dialogue.scene.route.id === "allenna-4" ? undefined : linevaRelationBeat(dialogue.scene.route.id) || allennaRelationBeat(dialogue.scene.route.id);
+      const beat = relationBeatFor(dialogue.scene.route.id, game!);
       if (beat) {
         setDialogue({
-          ...dialogue,
+          ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
+          scene: { ...dialogue.scene, cast: "cast" in beat && beat.cast ? beat.cast : dialogue.scene.cast },
           primaryChoice: dialogue.chosen,
           chosen: undefined,
           lines: expandedLines(dialogue.scene, game!, beat.intro, "response"),
@@ -2344,7 +2388,7 @@ export default function Home() {
       }
     }
     if (dialogue.phase === "relation-intro") {
-      setDialogue({ ...dialogue, phase: "relation-choices" });
+      setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "relation-choices" });
       return;
     }
     closeDialogue();
@@ -2356,11 +2400,23 @@ export default function Home() {
     if (!hasKnowledge(game, choice.requiresKnowledge) && !game.settings.unlockAll) return;
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const isRelationChoice = dialogue.phase === "relation-choices";
-    const hasRelationBeat = Boolean(dialogue.scene.route && dialogue.scene.route.id !== "allenna-4" && (linevaRelationBeat(dialogue.scene.route.id) || allennaRelationBeat(dialogue.scene.route.id)));
+    const hasRelationBeat = Boolean(dialogue.scene.route && relationBeatFor(dialogue.scene.route.id, game));
+    const hyleeDateContinues = dialogue.scene.date?.character === "hylee"
+      && Boolean(hyleeDateBeat(dialogue.scene.id, isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0, dialogue.datePicks));
     const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) && (!hasRelationBeat || isRelationChoice)
       ? dialogue.scene.route
       : undefined;
     if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && route?.id === "hylee-4" && dialogue.scene.departure) {
+      const destination = dialogue.scene.departure;
+      updateGame((current) => {
+        const cost = travelPeriodCost(current.location, destination.location, current.player.vocation, LOCATIONS);
+        const clock = current.settings.noTimeCost ? { day: current.day, period: current.period } : advanceClock(current, cost, PERIODS.length);
+        return { ...current, ...clock, location: destination.location, spot: destination.spot, ...placeDiscovery(current, destination.location, destination.spot) };
+      });
+      setSelectedLocation(destination.location);
+      setSelectedSpot(destination.spot);
+    }
     if (!dialogue.replay && dialogue.scene.kind === "story" && dialogue.scene.campaignSceneId) {
       const campaign = campaignSceneById(dialogue.scene.campaignSceneId);
       if (campaign) updateGame((current) => {
@@ -2376,7 +2432,7 @@ export default function Home() {
         return {
           ...current,
           relationships,
-          flags: unique([...current.flags, campaign.id, ...(firstRouteFlag ? [firstRouteFlag] : [])]),
+          flags: unique([...current.flags, campaign.id, ...(firstRouteFlag ? [firstRouteFlag] : []), ...(campaign.id === "campaign-imperial-audience" && !current.flags.some((flag) => flag.startsWith("hylee-itinerary-start:")) ? [`hylee-itinerary-start:${current.day}`] : [])]),
           history: unique([...current.history, campaign.id]),
           sceneMemories: { ...current.sceneMemories, [campaign.id]: campaign.spot },
           journal: [...current.journal, `Acte I · Chapitre ${campaign.chapter} · ${campaign.title}`],
@@ -2470,7 +2526,7 @@ export default function Home() {
         };
       });
     }
-    if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date) {
+    if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date && !hyleeDateContinues) {
       const date = dialogue.scene.date;
       updateGame((current) => ({
         ...current,
@@ -2494,7 +2550,7 @@ export default function Home() {
     const endingCampaign = dialogue.scene.campaignSceneId ? campaignSceneById(dialogue.scene.campaignSceneId) : undefined;
     const campaignEnding = endingCampaign ? campaignSceneOutro(endingCampaign) : [];
     const continuesToRelationBeat = !isRelationChoice && hasRelationBeat && routeChoiceCompletes(choice.id) && !injectedEnding.length;
-    const authoredEnding = continuesToRelationBeat
+    const authoredEnding = continuesToRelationBeat || hyleeDateContinues
       ? []
       : injectedEnding.length
       ? injectedEnding
@@ -2505,8 +2561,9 @@ export default function Home() {
       ? [opening, ...choice.response, ...authoredEnding]
       : [...choice.response, ...authoredEnding];
     setDialogue({
-      ...dialogue,
+      ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
       chosen: choice,
+      datePicks: dialogue.scene.date?.character === "hylee" ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
@@ -2537,7 +2594,7 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && (["lineva", "allenna"].includes(date.character)
+      && (["lineva", "allenna"].includes(date.character) || date.character === "hylee"
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
           && game!.relationships[date.character].stage >= 4
@@ -2565,7 +2622,7 @@ export default function Home() {
       setModal({ kind: "date-result", character: date.character, dateId: date.id });
     } else if (intimateCharacter) {
       setModal({ kind: "intimacy", character: intimateCharacter, background, replay });
-    } else if (consumesTime && !date && !groupDate) {
+    } else if (consumesTime && !date && !groupDate && !dialogue.scene.departure) {
       advancePeriod();
     }
   }
@@ -2576,6 +2633,22 @@ export default function Home() {
     const spot = spotById(spotId);
     if (!location || !spot || spot.location !== locationId || !locationUnlocked(game, locationId)) return;
     if (game.location === locationId && game.spot === spotId) return;
+    const hylee = CHARACTERS.find((entry) => entry.id === "hylee")!;
+    const farewell = sceneFor("hylee", 4)!;
+    const hyleePlace = characterPlace(hylee, game.day, game.period, game.flags, game.housing);
+    if (locationId !== game.location && game.relationships.hylee.stage === 4
+      && hyleePlace.spot === game.spot && routeNarrativeReady(farewell, game)
+      && game.relationships.hylee.affection + game.relationships.hylee.trust >= BOND_THRESHOLDS[4]) {
+      const intro = farewell.intro.map((line) => line.text === "Oui. J’ai choisi la route. Il faut que je me mette en marche."
+        ? { ...line, text: `Oui. Je pars vers ${location.name}. Il faut que je me mette en marche.` } : line);
+      const scene: SceneView = {
+        ...farewell, intro, background: spotById(game.spot)?.background || routeBackground(farewell),
+        cast: ["hylee"], kind: "route", route: farewell, departure: { location: locationId, spot: spotId },
+      };
+      setPlacePanel(null);
+      setDialogue({ scene, lines: expandedLines(scene, game, intro, "intro"), lineIndex: 0, phase: "intro" });
+      return;
+    }
     const periods = travelPeriodCost(game.location, locationId, game.player.vocation, LOCATIONS);
     updateGame((current) => {
       const clock = current.settings.noTimeCost ? { day: current.day, period: current.period } : advanceClock(current, periods, PERIODS.length);
@@ -3158,6 +3231,17 @@ export default function Home() {
   function startHomeDate(characterId: string) {
     if (!game?.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return;
     if (!homeDateUnlocked(game, characterId)) return;
+    if (characterId === "hylee") {
+      const property = propertyById(game.housing.propertyId)!;
+      const day = nextHyleeDateDay(game, property.location, 3);
+      if (!day) {
+        setModal({ kind: "notice", title: "Une invitation à prévoir", text: game.location !== property.location ? "Rejoignez d’abord la ville de votre logis. Hylee pourra venir pendant une halte dans cette même ville." : "Hylee ne prévoit pas de halte dans cette ville pour le moment. Son itinéraire reste visible dans Relations." });
+        return;
+      }
+      updateGame((current) => ({ ...current, day, period: 3, location: property.location, spot: property.spot, ...placeDiscovery(current, property.location, property.spot) }));
+      setSelectedLocation(property.location);
+      setSelectedSpot(property.spot);
+    }
     setModal({ kind: "home-date", character: characterId });
   }
 
@@ -3187,7 +3271,7 @@ export default function Home() {
       if (newGift) inventory[profile.gift] = (inventory[profile.gift] || 0) + 1;
       return {
         ...current,
-        day: current.day + 1,
+        day: characterId === "hylee" ? current.day : current.day + 1,
         period: 3,
         location: property.location,
         spot: property.spot,
@@ -3196,7 +3280,7 @@ export default function Home() {
         inventory,
         housing: {
           ...current.housing,
-          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${current.day + 1}`].slice(-96),
+          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${characterId === "hylee" ? current.day : current.day + 1}`].slice(-96),
           homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
         },
         journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
@@ -3211,7 +3295,7 @@ export default function Home() {
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
     const canBecomeIntimate = tone === "desir" && (game.settings.unlockAll || (
-      relation.stage >= (characterId === "lineva" ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && score >= 3 && (!intimateCity || intimateCity === property.location)
+      relation.stage >= (["lineva", "hylee"].includes(characterId) ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && (characterId === "hylee" || score >= 3) && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
       ? { kind: "home-date-result", character: characterId, score }
@@ -3265,6 +3349,12 @@ export default function Home() {
     const property = game && propertyById(game.housing.propertyId);
     const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
     if (!game || !property || !hasCompletedDesiredDate) return;
+    if (characterId === "hylee" && !game.settings.unlockAll) {
+      const relation = game.relationships.hylee;
+      const lastDate = game.housing.homeDateHistory.at(-1);
+      if (relation.stage < 5 || relation.affection < 34 || relation.trust < 32 || relation.desire < 24
+        || lastDate !== `hylee:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
+    }
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -3273,9 +3363,14 @@ export default function Home() {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date || !publicDateUnlocked(game, date)) return;
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
+    const scheduledDay = date.character === "hylee" ? nextHyleeDateDay(game, date.location, periodIndex) : game.day + 1;
+    if (!scheduledDay) {
+      setModal({ kind: "notice", title: "Retrouver Hylee", text: game.location !== date.location ? "Rejoignez Mir’Aldas pour cette sortie. Vous pourrez réserver une journée pendant une halte d’Hylee." : "Hylee n’a pas de halte disponible dans les prochaines semaines. Retrouvez son itinéraire dans Relations." });
+      return;
+    }
     const nextGame: GameState = {
       ...game,
-      day: game.day + 1,
+      day: scheduledDay,
       period: periodIndex,
       location: date.location,
       spot: date.spot,
@@ -3336,15 +3431,19 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    const refactoredDate = Boolean(date && ["lineva", "allenna"].includes(date.character));
+    const refactoredDate = Boolean(date && (["lineva", "allenna"].includes(date.character) || date.character === "hylee"));
     const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
     if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
-    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background });
+    if (date.character === "hylee") updateGame((current) => ({
+      ...current, location: "miraldas", spot: "miraldas-quarters", period: 3,
+      ...placeDiscovery(current, "miraldas", "miraldas-quarters"),
+    }));
+    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
   function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!game || !date || !["lineva", "allenna"].includes(date.character) || !game.dateHistory.includes(date.id)) return;
+    if (!game || !date || (!["lineva", "allenna"].includes(date.character) && date.character !== "hylee") || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     if (friendlyForThisDate) {
       updateGame((current) => ({
@@ -3427,7 +3526,7 @@ export default function Home() {
   function replayDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date || !game?.flags.includes(`date-intimate:${date.id}`)) return;
-    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: spotById(date.spot)?.background, replay: true });
+    setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background, replay: true });
   }
 
   function replayGroupDateIntimacy(groupDateId: string) {
@@ -3461,7 +3560,7 @@ export default function Home() {
     if (!route || !character) return;
     const confidenceObjective = routeNarrativeObjective(route, game);
     if (confidenceObjective) {
-      setModal({ kind: "notice", title: "Un chapitre manque encore", text: confidenceObjective });
+      setModal({ kind: "notice", title: route.id === "hylee-4" && routeNarrativeReady(route, game) ? "Préparer votre départ" : "Un chapitre manque encore", text: confidenceObjective });
       return;
     }
     const spotId = ROUTE_SPOTS[route.id];
@@ -3551,7 +3650,7 @@ export default function Home() {
     const route = ROUTE_SCENES.find((scene) => scene.id === sceneId);
     if (!route || !game) return;
     const playable = relationRouteVariant(route, game);
-    const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: [playable.route.character], kind: "route", route: playable.route };
+    const scene: SceneView = { ...playable.route, id: playable.sceneId, background: routeBackground(playable.route), cast: playable.route.cast || [playable.route.character], kind: "route", route: playable.route };
     setDialogue({
       scene,
       lines: expandedLines(scene, game, playable.route.intro, "intro", ROUTE_SPOTS[route.id]),
@@ -4003,11 +4102,21 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
   return <label className="color-field"><span>{label}</span><input type="color" value={value} onChange={(event) => onChange(event.target.value)} /><code>{value}</code></label>;
 }
 
+function dialogueSpriteMoods(dialogue: DialogueState): Record<string, string> {
+  const moods = { ...dialogue.spriteMoods };
+  for (const line of dialogue.lines.slice(0, dialogue.lineIndex + 1)) {
+    const speaker = speakerCharacterIds(line.speaker, dialogue.scene.cast)[0];
+    if (speaker && line.mood) moods[speaker] = line.mood;
+  }
+  return moods;
+}
+
 function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dialogue: DialogueState; game: GameState; onAdvance: () => void; onChoice: (choice: ChoiceData) => void; onClose: () => void }) {
   const currentLine = dialogue.lines[dialogue.lineIndex];
   const choosing = dialogue.phase === "choices" || dialogue.phase === "relation-choices";
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
+  const stableMoods = dialogue.scene.cast.includes("hylee") ? dialogueSpriteMoods(dialogue) : undefined;
   const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
     <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
@@ -4016,13 +4125,15 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
       if (!character) return null;
       const active = activeIds.includes(id);
       const lineMood = active && (activeIds.length === 1 || activeIds[0] === id) ? currentLine?.mood : undefined;
-      const mood = active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, dialogue.scene.mood)) : character.defaultMood;
+      const mood = stableMoods
+        ? stableMoods[id] || (id === dialogue.scene.cast[0] ? dialogue.scene.mood : character.defaultMood)
+        : active ? (lineMood || moodForCharacter(id, `${dialogue.scene.id}-${dialogue.lineIndex}-${id}`, dialogue.scene.mood)) : character.defaultMood;
       return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={spritePath(id, mood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} />;
     })}</div>
     <div className="dialogue-gradient" />
     {!choosing ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={onAdvance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length} · Cliquer pour continuer</small>
-    </button> : <div className="choice-box"><p className="choice-question">{dialogue.phase === "relation-choices" ? "Que laisser paraître après l’action ?" : "Comment répondre ?"}</p>{availableChoices.map((choice) => {
+    </button> : <div className="choice-box"><p className="choice-question">{dialogue.scene.date?.character === "hylee" && dialogue.phase === "relation-choices" ? "Que faire ensuite ?" : dialogue.phase === "relation-choices" ? "Que laisser paraître après l’action ?" : "Comment répondre ?"}</p>{availableChoices.map((choice) => {
       const statLocked = Boolean(choice.requires && game.stats[choice.requires.stat] < choice.requires.value);
       const knowledgeLocked = !hasKnowledge(game, choice.requiresKnowledge);
       const relationLocked = !relationshipRequirementMet(choice, game);
@@ -5022,7 +5133,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const homeProfile = HOME_DATE_PROFILES[character.id];
     const property = propertyById(game.housing.propertyId);
     const homeUnlocked = Boolean(property) && homeDateUnlocked(game, character.id);
-    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Les rendez-vous publics et votre soirée au logis sont réunis ici. Chacun consomme une journée complète.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startDate(date.id)}>Réserver cette journée</button> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}{homeProfile && <article className={`home-date-plan-card ${!homeUnlocked ? "locked" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.2), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` }}><span>Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>{homeUnlocked ? <button className="primary-action" onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button> : <div className="date-lock">{property ? `Requis : étape ${["lineva", "allenna"].includes(character.id) ? 5 : 3} · affection 22 · confiance 22` : "Requis : posséder un logis"}</div>}</article>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Les rendez-vous publics et votre soirée au logis sont réunis ici. Une journée est réservée. Pour Hylee, le calendrier attend sa prochaine halte dans la ville : le délai exact est indiqué avant de confirmer.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); const day = date.character === "hylee" ? nextHyleeDateDay(game, date.location, PERIODS.findIndex((period) => period.id === date.period)) : game.day + 1; return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <><button className="primary-action" disabled={!day} onClick={() => startDate(date.id)}>{day ? `Réserver le jour ${day}` : "Rejoindre le lieu du rendez-vous"}</button>{date.character === "hylee" && <small>{day ? `Départ du rendez-vous dans ${day - game.day} jour(s), pendant sa halte à Mir’Aldas.` : "Rejoignez Mir’Aldas. Hylee doit y séjourner pour honorer cette invitation."}</small>}</> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}{homeProfile && <article className={`home-date-plan-card ${!homeUnlocked ? "locked" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.2), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` }}><span>Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>{homeUnlocked ? <><button className="primary-action" disabled={character.id === "hylee" && !nextHyleeDateDay(game, property!.location, 3)} onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button>{character.id === "hylee" && <small>{nextHyleeDateDay(game, property!.location, 3) ? `Soirée réservée au jour ${nextHyleeDateDay(game, property!.location, 3)}, pendant sa halte dans cette ville.` : "Rejoignez votre ville et vérifiez qu’Hylee y prévoit une halte."}</small>}</> : <div className="date-lock">{property ? `Requis : étape ${["lineva", "allenna"].includes(character.id) || character.id === "hylee" ? 5 : 3} · affection 22 · confiance 22` : "Requis : posséder un logis"}</div>}</article>}</div></section></div>;
   }
   if (modal.kind === "home-date") return <HomeDateModal characterId={modal.character} game={game} onFinish={finishHomeDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;
@@ -5038,7 +5149,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
-    const refactored = ["lineva", "allenna"].includes(character.id);
+    const refactored = ["lineva", "allenna"].includes(character.id) || character.id === "hylee";
     const desireReady = !refactored || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
     const closeText = desireReady
       ? `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
