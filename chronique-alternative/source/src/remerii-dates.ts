@@ -29,9 +29,9 @@ export const REMERII_DATES: DateScene[] = [
       Q("rem-lantern-friend", "Lui demander ce qu’elle compte vous faire goûter.", "lucidite", [R("Les agrumes, d’abord. Mais gardez un peu de votre pain, nous risquons d’avoir envie d’échanger les assiettes."), N("Elle vous montre le plat qu’elle a choisi et écoute votre commande sans y ajouter de correction.")], { affection: 4, trust: 5 }),
     ],
     intimacySetting: {
-      background: "/assets/backgrounds/miraldas_quarters.webp", replaceProfile: true,
-      opening: ["Vous quittez la terrasse ensemble. Remerii vous invite à prolonger la soirée dans ses appartements, à quelques rues de là ; vous acceptez avant qu’elle prenne cette direction.", "À l’abri des regards, elle pose ses gants et vient vous embrasser. Le dîner et les lanternes reviennent dans votre conversation, entre deux silences."],
-      closing: ["Au moment de repartir, vous retrouvez le billet de réservation dans votre poche. Remerii y inscrit une autre date, puis vous demande si elle vous convient."],
+      background: "/assets/backgrounds/miraldas_observatory.webp", replaceProfile: true,
+      opening: ["Le service s’achève, mais vous restez dans les galeries hautes. Remerii ouvre un petit salon privé derrière l’arche de la terrasse ; ses panneaux ajourés cachent entièrement la pièce tout en laissant les lanternes visibles.", "Elle ferme le panneau, pose ses gants près du billet de réservation et revient vous embrasser dans la même lumière dorée."],
+      closing: ["Vous retrouvez la terrasse silencieuse sans avoir quitté les galeries. Remerii glisse dans votre poche le billet où elle vient d’inscrire une autre date."],
     },
   },
   {

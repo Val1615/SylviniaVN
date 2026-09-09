@@ -2,6 +2,7 @@ import type { IntimacyMode } from "./date-scenes";
 import type { LinevaIntimacyPhase } from "./lineva-date-intimacy";
 import type { AllennaIntimacyPhase } from "./allenna-date-intimacy";
 import type { HyleeIntimacyPhase } from "./hylee-date-intimacy";
+import type { RemeriiIntimacyPhase } from "./remerii-date-intimacy";
 
 export type IntimateCgPhase = "reveal" | "post-orgasm";
 export type IntimateCgSurface = "route" | "home" | "group";
@@ -53,7 +54,7 @@ export function soloIntimateCgState(options: {
   surface: Exclude<IntimateCgSurface, "group">;
   step: string;
   chapter: number;
-  narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase | HyleeIntimacyPhase;
+  narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase | HyleeIntimacyPhase | RemeriiIntimacyPhase;
   retainRevealThroughClimax?: boolean;
 }): IntimateCgState | undefined {
   if (options.mode !== "explicite") return undefined;
