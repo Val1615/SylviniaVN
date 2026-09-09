@@ -1,4 +1,5 @@
 import { HYLEE_ROUTES } from "./hylee-relation.ts";
+import { REMERII_ROUTES } from "./remerii-relation.ts";
 
 export type StatKey = "audace" | "lucidite" | "sangFroid" | "resonance";
 export type PeriodKey = "aube" | "matin" | "apres-midi" | "soirée";
@@ -206,10 +207,10 @@ export const CHARACTERS: CharacterData[] = [
   },
   {
     id: "remerii", name: "Remerii", role: "Mage de Mir’Aldas", ageNote: "Adulte", portrait: "/assets/portraits/remerii.jpg", color: "#79a9ff", unlockDay: 1, defaultMood: "calm",
-    tagline: "Son exigence est une protection ; son ironie, une porte entrouverte.",
-    bio: "Mage humaine raffinée, puissante et surveillée, Remerii a rencontré Hylee à l’Auberge du Forestier puis l’a entraînée sur les routes. Elle enseigne sans posséder et masque leur magie pour éviter que l’Empire ne s’intéresse trop tôt à sa protégée.",
+    tagline: "Elle remarque vos imprécisions. Elle se souvient aussi de vos visites.",
+    bio: "Mage humaine de Mir’Aldas, Remerii voyage avec Hylee et lui enseigne la cryomancie. Cultivée, élégante et fière, elle peut blesser d’un mot quand elle s’inquiète. Elle choisit avec soin les personnes qu’elle laisse approcher.",
     wound: "Avoir appris trop tôt que la puissance attire autant la convoitise que le rejet.",
-    appreciates: "La maîtrise, l’intelligence émotionnelle et l’audace qui sait où s’arrêter.",
+    appreciates: "La franchise, l’attention aux autres et l’audace qui sait s’arrêter.",
     giftLikes: ["the", "cristal", "partition"],
     itinerary: [
       { days: 2, location: "algratal", note: "Halte discrète avec Hylee, déjà sa compagne de voyage" },
@@ -402,73 +403,7 @@ export const ROUTE_SCENES: RouteScene[] = [
   // HYLEE — Acte I personnel, confidences indépendantes.
   ...HYLEE_ROUTES,
 
-  // REMERII
-  routeScene("remerii", 0, 1, "Le thé avant la route", "forestier", "forestier_inn", "smirk", [
-    line("Narration", "Remerii occupe la table la plus éloignée de la porte. Un gros traité masque la carte glissée dessous ; son thé refroidit pendant qu’elle surveille Hylee dans le reflet d’une cuillère."),
-    line("Narration", "Lorsque vous cherchez une chaise libre, elle pose deux doigts sur celle qui lui fait face avant même que vous la touchiez."),
-    line("Remerii", "Vous observez beaucoup pour quelqu’un qui prétend seulement vouloir s’asseoir."),
-    line("{player}", "Et vous surveillez beaucoup pour quelqu’un qui lit."),
-    line("Remerii", "Je lis. Je surveille. Je laisse refroidir un thé médiocre. Certaines personnes savent accomplir plusieurs déceptions à la fois."),
-    line("Narration", "Elle pousse enfin la chaise vers vous, sans découvrir la carte."),
-    line("Remerii", "Asseyez-vous. Voyons si votre conversation se montre moins indiscrète que vos yeux.")
-  ], [
-    choice("r0-a", "« J’allais justement vous reprocher de monopoliser la meilleure table. »", "audace", [line("Remerii", "La meilleure table ? Elle boite, le courant d’air vient de gauche et le thé est une offense."), line("{player}", "Vous y tenez pourtant depuis une heure."), line("Remerii", "Parce qu’elle permet de voir la porte sans être vu·e de l’escalier. Votre insolence manque de données, mais possède du potentiel."), line("Narration", "Elle libère un coin de table en déplaçant le livre — juste assez pour révéler une ligne de la carte, probablement exprès."), line("Remerii", "Asseyez-vous avant que je révise mon jugement. Et ne prenez pas cet air satisfait, il vous dessert.")], { stats: { audace: 1 }, affection: 5, desire: 2, trust: 2, confluence: 2 }),
-    choice("r0-l", "« Vous attendiez quelqu’un. Mais pas la personne qui vient de passer la porte. »", "lucidite", [line("Remerii", "Précis. Vous avez aussi eu la délicatesse de ne pas demander qui."), line("Narration", "Dans la cuillère, Hylee disparaît un instant derrière le voyageur impérial. Remerii tourne à peine le poignet pour retrouver son reflet."), line("{player}", "La personne que vous attendez est encore dans la salle."), line("Remerii", "Et vous venez de dépenser votre réserve de délicatesse."), line("Narration", "Son regard se durcit une seconde, puis cède à une curiosité réelle."), line("Remerii", "Restez assis·e. Si vous représentiez un danger, vous auriez déjà choisi une question moins intelligente.")], { stats: { lucidite: 1 }, trust: 6, affection: 2, confluence: 2 }),
-    choice("r0-s", "Vous asseoir sans toucher au livre ni au thé.", "sangFroid", [line("Narration", "Vous prenez place et laissez le silence s’installer. Remerii tourne une page qu’elle ne lit manifestement pas."), line("Remerii", "Vous savez occuper une chaise sans revendiquer la table entière. Compétence sous-estimée."), line("{player}", "Je peux aussi parler, si l’expérience l’exige."), line("Remerii", "N’abusons pas de nos pouvoirs."), line("Narration", "Une minute plus tard, elle pousse sa tasse vers vous."), line("Remerii", "Goûtez. Je souhaite un second avis avant d’accuser officiellement l’auberge.")], { stats: { sangFroid: 1 }, trust: 5, affection: 4, confluence: 2 }),
-  ]),
-  routeScene("remerii", 1, 5, "Leçon de maîtrise", "miraldas", "atelier", "strict", [
-    line("Narration", "Une sphère arcanique tourne entre les mains de Remerii, si stable qu’elle semble avoir honte du reste de l’atelier. D’un mouvement sec, elle la scinde en huit anneaux puis les rappelle dans sa paume."),
-    line("Remerii", "La puissance est une faim. Si vous ne la tenez pas en laisse, elle finira par vous promener."),
-    line("{player}", "Cette image vient de vous ?"),
-    line("Remerii", "Non. Saidin l’employait lorsque j’avais douze ans. J’ai passé deux semaines à lui démontrer qu’une faim ne possède pas de jambes."),
-    line("Narration", "Elle place une sphère neuve devant vous. Une minuscule fissure y palpite déjà."),
-    line("Remerii", "À vous. Et épargnez-moi l’héroïsme improvisé : l’infirmerie connaît déjà votre nom, elle n’a pas besoin d’un visage.")
-  ], [
-    choice("r1-s", "Construire lentement, puis dissiper le sort avant qu’il ne vous échappe.", "sangFroid", [line("Narration", "Vous refermez la matrice alors qu’elle pourrait encore grandir. La sphère s’éteint sans éclat."), line("Remerii", "Vous auriez pu pousser davantage."), line("{player}", "Mais je n’en avais pas besoin."), line("Remerii", "Non. Vous aviez seulement envie de m’impressionner."), line("{player}", "Cela a fonctionné ?"), line("Narration", "Le coin de sa bouche bouge. Elle se détourne aussitôt pour corriger une note sur son carnet."), line("Remerii", "La dissipation était propre. Ne bâtissez pas une carrière sur ce compliment.")], { stats: { sangFroid: 1 }, trust: 7, affection: 3, confluence: 4 }),
-    choice("r1-r", "Écouter le point de rupture au lieu de le calculer.", "resonance", [line("Narration", "Au lieu de mesurer la fissure, vous en suivez le rythme. Le sort vacille, se déforme, puis trouve un équilibre irrégulier qui tient."), line("Remerii", "Ce n’est pas orthodoxe."), line("Narration", "Elle approche si vite que sa manche frôle la vôtre. Ses yeux parcourent la matrice, fascinés malgré son froncement de sourcils."), line("{player}", "Je dois arrêter ?"), line("Remerii", "Certainement pas. Recommencez avant que mon bon sens ne revienne."), line("Narration", "Elle déplace votre poignet d’un doigt, avec une précaution qui trahit combien elle prend l’expérience au sérieux.")], { stats: { resonance: 1 }, trust: 5, affection: 5, desire: 2, confluence: 5 }, { stat: "resonance", value: 6 }),
-    choice("r1-a", "« Vous dites cela à toutes les personnes que vous invitez à jouer avec des sphères instables ? »", "audace", [line("Remerii", "Seulement à celles dont j’aimerais éviter de ramasser les morceaux."), line("{player}", "Quelle déclaration bouleversante."), line("Remerii", "Ne la dégradez pas en romance. Je tiens également au tapis."), line("Narration", "Vous poussez la sphère ; elle claque et projette vos cheveux en arrière. Remerii l’arrête d’une seule main, imperturbable."), line("Remerii", "Voilà. Héroïsme improvisé, vanité blessée, tapis sauf. Une leçon complète."), line("Narration", "Elle vous tend pourtant la main pour vous aider à vous redresser, et la garde une seconde de trop.")], { stats: { audace: 1 }, affection: 6, trust: 3, desire: 3, confluence: 3 }),
-  ]),
-  routeScene("remerii", 2, 9, "Ce que l’exigence protège", "miraldas", "deep_archives", "sad", [
-    line("Narration", "Dans les archives, Remerii tient une ancienne liste d’élèves humains. Presque tous les noms sont rayés. Elle suit l’un d’eux du bout de l’ongle, puis referme le registre trop vite."),
-    line("Remerii", "Il s’appelait Orven. Il improvisait ses barrières, mentait sur ses blessures et avait une passion déplorable pour les manches trop longues. J’ai passé un trimestre à le corriger."),
-    line("{player}", "Que lui est-il arrivé ?"),
-    line("Remerii", "Il a été découvert avant de savoir se cacher."),
-    line("Narration", "Sa voix reste exacte. Sa main a froissé toute la bordure de la page."),
-    line("Remerii", "On me reproche d’être dure. Ceux qui le font n’ont jamais préparé quelqu’un à survivre dans un monde qui préférerait sa disparition."),
-    line("Remerii", "Le problème, c’est que la peur sait très bien imiter l’exigence. Certains jours, je ne distingue plus laquelle parle à Hylee.")
-  ], [
-    choice("r2-l", "« Quand l’élève ne peut plus dire non, ce n’est plus une leçon. »", "lucidite", [line("Remerii", "Voilà une phrase beaucoup trop courte pour être confortable."), line("Narration", "Elle rouvre le registre et aplatit lentement la page froissée."), line("Remerii", "Orven disait non à tout, y compris aux idées qui l’auraient maintenu en vie. J’ai appris à entendre son refus comme une faute."), line("{player}", "Et Hylee n’est pas Orven."), line("Remerii", "Non. Elle mérite que je le sache avant de parler, pas après."), line("Narration", "Remerii inscrit le nom d’Orven dans la marge propre, sans le transformer en argument contre Hylee.")], { stats: { lucidite: 1 }, trust: 9, affection: 4, confluence: 3 }),
-    choice("r2-s", "Refermer le registre avec elle et proposer de marcher avant de poursuivre.", "sangFroid", [line("Narration", "Vous n’essayez pas de lui retirer le livre. Vous posez seulement deux doigts sur la couverture ouverte."), line("{player}", "On peut sortir cinq minutes. Les morts ne réclament pas que vous souffriez correctement devant eux."), line("Remerii", "Phrase discutable. Proposition raisonnable."), line("Narration", "Elle referme le registre et vous suit jusqu’au corridor. À la première fenêtre, elle inspire enfin sans compter."), line("Remerii", "Restez là. Je ne veux pas encore parler, et je n’ai aucune envie d’être seule. Il paraît que ces deux faits peuvent coexister.")], { stats: { sangFroid: 1 }, trust: 8, affection: 6, desire: 1, confluence: 3 }),
-    choice("r2-a", "« Vous pourriez commencer par admettre que vous tenez aux gens. »", "audace", [line("Remerii", "Et perdre vingt années de mystère savamment entretenu ? Inconcevable."), line("{player}", "Vous avez froissé la page d’Orven jusqu’à la déchirer."), line("Narration", "Elle regarde sa main, puis vous lance une expression capable de congeler un argument moins solide."), line("Remerii", "Je tiens à Hylee. Je tenais à Orven. Je tiens à plusieurs personnes d’un goût parfois douteux."), line("{player}", "Plusieurs ?"), line("Remerii", "N’exploitez pas une confession obtenue sous contrainte rhétorique."), line("Narration", "Mais elle ne retire pas le mot.")], { stats: { audace: 1 }, trust: 5, affection: 7, desire: 3, confluence: 3 }),
-  ]),
-  routeScene("remerii", 3, 14, "Danse hors itinéraire", "echo-clearing", "camp", "smirk", [
-    line("Narration", "Autour du feu de la Clairière des Échos, Remerii observe les voyageur·ses danser comme une équation dont tout le monde aurait décidé d’ignorer les erreurs."),
-    line("Remerii", "Le couple près du tonneau a changé de mesure quatre fois sans s’en apercevoir."),
-    line("{player}", "Vous les regardez depuis longtemps."),
-    line("Remerii", "Je vérifie une hypothèse."),
-    line("{player}", "Laquelle ?"),
-    line("Remerii", "Que vous allez finir par me demander cette danse."),
-    line("Narration", "Elle se lève avant votre réponse et lisse sa jupe, satisfaite d’avoir confisqué votre mise en scène."),
-    line("Remerii", "Ne prenez pas cet air surpris. J’ai préparé votre leçon.")
-  ], [
-    choice("r3-a", "La prendre au mot et tenter une figure beaucoup trop ambitieuse.", "audace", [line("Narration", "Vous tentez de la faire tourner sous votre bras. Votre appui cède ; Remerii vous rattrape d’une main ferme à la taille sans perdre un seul temps."), line("Remerii", "Votre optimisme biomécanique est presque touchant."), line("{player}", "Vous ne m’avez pas lâché."), line("Remerii", "Je protège les personnes placées sous ma responsabilité."), line("{player}", "Quelle responsabilité ?"), line("Narration", "Elle vous rapproche pour éviter un autre couple, puis tarde ostensiblement à rendre la distance."), line("Remerii", "Celle que vous m’imposez en dansant comme une chaise jetée dans un escalier."), line("Narration", "Son sourire contre votre joue ruine tout l’effet de la critique.")], { stats: { audace: 1 }, affection: 7, desire: 6, trust: 3, confluence: 4 }),
-    choice("r3-l", "Lire les indications de ses épaules et lui rendre peu à peu la conduite.", "lucidite", [line("Narration", "Remerii commence par corriger chaque détail. Vous cessez de résister à ses indications, puis réduisez volontairement votre impulsion jusqu’à ce qu’elle mène sans avoir à vous pousser."), line("Remerii", "Vous apprenez vite."), line("{player}", "Vous enseignez moins fort."), line("Narration", "Elle arque un sourcil, puis comprend. Ses doigts se détendent sur votre épaule."), line("Remerii", "Voilà une critique insupportablement bien placée."), line("{player}", "Je peux la retirer."), line("Remerii", "Certainement pas. Gardez-la. Et gardez aussi le rythme."), line("Narration", "Elle vous entraîne dans un tour qui n’appartient plus à aucune leçon.")], { stats: { lucidite: 1 }, affection: 6, desire: 5, trust: 6, confluence: 4 }),
-    choice("r3-r", "Accorder vos pas au flux arcanique sous les dalles.", "resonance", [line("Narration", "Sous la musique, un courant arcanique traverse les dalles. Vous lui accordez vos pas ; Remerii le perçoit à la mesure suivante et corrige aussitôt son mouvement."), line("Remerii", "Vous trichez."), line("{player}", "Vous avez suivi."), line("Remerii", "Je recueille des données."), line("Narration", "Le courant change. Pour la première fois, elle ne l’anticipe pas : elle rit lorsque vos pieds se heurtent et reprend la danse sans corriger l’accident."), line("Remerii", "Encore un tour."), line("{player}", "Pour la théorie ?"), line("Remerii", "Non. La théorie est déjà convaincue. Essayez de suivre.")], { stats: { resonance: 1 }, affection: 7, desire: 5, trust: 6, confluence: 5 }, { stat: "resonance", value: 8 }),
-  ]),
-  routeScene("remerii", 4, 20, "La faim et la laisse", "miraldas", "bedroom", "calm", [
-    line("Narration", "Remerii détache ses bijoux de mage et les aligne sur la table. Au troisième, elle remarque la rangée parfaite, pousse volontairement l’un d’eux de travers et paraît aussitôt le regretter."),
-    line("{player}", "Un geste de rébellion ?"),
-    line("Remerii", "Une expérience. N’en faites pas un événement historique."),
-    line("Narration", "Elle retire enfin le dernier anneau enchanté. Sans son éclat de mage, son silence paraît moins maîtrisé ; ses doigts cherchent une formule et n’en trouvent aucune qui la protège assez."),
-    line("Remerii", "Je sais enseigner le contrôle. Je sais aussi le perdre avec une élégance généralement convaincante."),
-    line("Remerii", "Demander ce que je veux est plus difficile. Je vous veux près de moi, {player}. Pas comme élève, pas comme disciple, et certainement pas comme récompense à une leçon réussie."),
-    line("Narration", "Elle s’appuie contre la table, trop fière pour baisser les yeux et trop atteinte pour prétendre que la réponse importe peu."),
-    line("Remerii", "Voilà. C’est dit. À vous de ruiner ou d’améliorer cette soirée.")
-  ], [
-    choice("r4-a", "« Alors demandez-moi, Remerii. Sans détour. »", "audace", [line("Narration", "Une couleur légère gagne ses joues. Elle soutient néanmoins votre regard comme si détourner les yeux constituait une concession inadmissible."), line("Remerii", "Restez."), line("Narration", "Elle marque une pause, irritée par sa propre prudence."), line("Remerii", "Embrassez-moi. Et si vous désirez davantage, dites-le sans métaphore pédagogique, sans héroïsme et sans me laisser effectuer tout le travail verbal."), line("{player}", "C’était très direct."), line("Remerii", "Je peux recommencer plus lentement si votre compréhension exige un second passage."), line("Narration", "Vous n’en avez pas besoin. Son sourire disparaît dans le baiser qu’elle réclamait.")], { stats: { audace: 1 }, affection: 10, trust: 8, desire: 10, confluence: 6 }),
-    choice("r4-l", "Distinguer ensemble désir, confiance et pouvoir avant de vous approcher.", "lucidite", [line("Narration", "Vous lui demandez ce qu’elle attend de cette nuit, ce qu’elle refuse et ce qui appartient encore à la relation de maîtresse qu’elle ne veut pas reproduire."), line("Remerii", "Vous rendez ceci terriblement peu spontané."), line("{player}", "Vous préférez improviser ?"), line("Remerii", "Absolument pas. Je déplore seulement que votre méthode soit séduisante."), line("Narration", "Elle répond à chaque question, en pose deux qui vous prennent au dépourvu et corrige une de vos suppositions d’un regard acéré."), line("Remerii", "Bien. Nous avons été raisonnables assez longtemps pour mériter de cesser."), line("Narration", "Cette fois, c’est elle qui réduit la distance.")], { stats: { lucidite: 1 }, affection: 9, trust: 11, desire: 7, confluence: 6 }, { stat: "lucidite", value: 8 }),
-    choice("r4-s", "Lui tendre la main et attendre qu’elle choisisse le premier geste.", "sangFroid", [line("Narration", "Remerii observe votre main comme un problème dont la simplicité l’agace."), line("Remerii", "Vous savez que ce silence m’oblige à agir."), line("{player}", "Je peux retirer ma main."), line("Remerii", "N’en faites rien."), line("Narration", "Elle glisse ses doigts entre les vôtres, vérifie votre réponse et vous attire avec une douceur qui ne ressemble à aucune de ses leçons."), line("Remerii", "Je choisis ceci."), line("Narration", "Son pouce frôle votre paume."), line("Remerii", "Et je vous choisis. Ne me faites pas regretter d’avoir employé une phrase aussi dangereusement simple.")], { stats: { sangFroid: 1 }, affection: 10, trust: 10, desire: 8, confluence: 6 }),
-  ], true),
+  ...REMERII_ROUTES,
 
   // IRIANA
   routeScene("iriana", 0, 2, "Les termes après l’audience", "algratal", "throne_room", "stern", [
@@ -1288,7 +1223,7 @@ export const ROUTE_SCENES: RouteScene[] = [
  */
 export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
   hylee: [],
-  remerii: ["knows_remerii_child_prodigy", "knows_remerii_dome", "knows_remerii_curse", "knows_remerii_cryo_origin"],
+  remerii: [],
   iriana: ["knows_iriana_mother_tenderness", "knows_iriana_tia_control", "knows_iriana_alamma_abuse", "knows_iriana_mother_death"],
   valurn: ["knows_valurn_bhaal_childhood", "knows_valurn_bellirith_past", "knows_valurn_artifact_search", "knows_valurn_true_abandonment"],
   naiah: ["knows_naiah_tartlets", "knows_naiah_exile", "knows_naiah_surpass_amanea", "knows_naiah_maternal_rejection"],
@@ -1302,7 +1237,7 @@ export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
 };
 
 export function routeKnowledgeRequirements(scene: Pick<RouteScene, "character" | "stage">): string[] {
-  if (scene.character === "lineva" || scene.character === "allenna" || scene.character === "hylee") return [];
+  if (["lineva", "allenna", "hylee", "remerii"].includes(scene.character)) return [];
   if (scene.stage <= 0) return [];
   const knowledge = ROUTE_KNOWLEDGE_ORDER[scene.character]?.[scene.stage - 1];
   return knowledge ? [knowledge] : [];
@@ -1323,6 +1258,11 @@ export function routeFlagRequirements(scene: Pick<RouteScene, "id">): string[] {
 }
 
 export const ROUTE_HISTORY_REQUIREMENTS: Record<string, readonly string[]> = {
+  "remerii-0": ["hylee-0"],
+  "remerii-1": ["remerii-0"],
+  "remerii-2": ["remerii-1"],
+  "remerii-3": ["remerii-2"],
+  "remerii-4": ["remerii-3"],
   "hylee-0": ["campaign-imperial-audience"],
   "hylee-1": ["hylee-0"],
   "hylee-2": ["hylee-1"],
@@ -1342,6 +1282,11 @@ export function routeHistoryRequirements(scene: Pick<RouteScene, "id">): string[
 
 /** Nombre de chapitres principaux entièrement achevés avant la scène. */
 export const ROUTE_STORY_REQUIREMENTS: Record<string, number> = {
+  "remerii-0": 3,
+  "remerii-1": 4,
+  "remerii-2": 4,
+  "remerii-3": 4,
+  "remerii-4": 4,
   "hylee-0": 3,
   "hylee-1": 3,
   "hylee-2": 4,

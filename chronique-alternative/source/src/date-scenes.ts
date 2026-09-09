@@ -1,5 +1,6 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import { HYLEE_DATES } from "./hylee-dates.ts";
+import { REMERII_DATES } from "./remerii-dates";
 
 export type DateOutcome = "great" | "good" | "awkward";
 export type PlayerSex = "femme" | "homme" | "intersexe";
@@ -50,34 +51,7 @@ const dateChoice = (
 
 export const DATE_SCENES: DateScene[] = [
   ...HYLEE_DATES,
-  {
-    id: "date-remerii-observatory", character: "remerii", title: "Une constellation sans correction", type: "Observation des étoiles", description: "Passer une nuit à l’observatoire de Mir’Aldas sans transformer le ciel en exercice académique.", location: "miraldas", spot: "miraldas-observatory", period: "soirée", unlockStage: 5, minAffection: 25, minTrust: 28, mood: "calm",
-    intro: [
-      line("Narration", "Remerii a préparé deux fauteuils, trois cartes du ciel et une liste intitulée « sujets à ne surtout pas enseigner pendant le rendez-vous »."),
-      line("Remerii", "J’ai ajouté la liste à la liste, ce qui constitue probablement un échec méthodologique. Vous êtes prié·e de ne pas sourire aussi visiblement.", "strict"),
-      line("Narration", "Elle éteint l’instrument principal et ouvre simplement la coupole. Le ciel apparaît sans annotation ni mesure."),
-      line("Remerii", "Choisissez une étoile. Nous lui inventerons une histoire fausse, inutile et impossible à publier.", "smirk"),
-    ],
-    choices: [
-      dateChoice("dro-a", "Inventer une romance scandaleuse entre deux étoiles que tout sépare.", "audace", [line("Remerii", "Votre mécanique céleste est absurde. Rapprochez votre fauteuil : il nous faut manifestement davantage de données compromettantes."), line("Narration", "Son épaule rejoint la vôtre bien avant que l’histoire trouve une fin.")], "great", { affection: 9, trust: 5, desire: 5 }),
-      dateChoice("dro-l", "Choisir l’étoile que Remerii évite de regarder et lui demander ce qu’elle évoque.", "lucidite", [line("Remerii", "Hylee était inconsciente la première fois que je l’ai observée toute une nuit. Je craignais que l’aube arrive sans elle."), line("Narration", "Vous ne cherchez pas à réparer le souvenir. Remerii finit par regarder l’étoile avec vous.")], "great", { affection: 7, trust: 10, desire: 3 }),
-      dateChoice("dro-s", "Ranger les cartes et partager un silence sans objectif.", "sangFroid", [line("Remerii", "Vous avez compris que mon véritable exercice était de ne rien produire. C’est irritant et… reposant."), line("Narration", "Le silence devient intime, quoique Remerii conserve encore une petite distance entre vos mains.")], "good", { affection: 5, trust: 8, desire: 2 }),
-    ],
-    intimacySetting: {
-      opening: ["Remerii verrouille les instruments fragiles mais laisse la coupole ouverte. Sous les étoiles, elle tente d’expliquer pourquoi cette précaution est parfaitement raisonnable, puis abandonne son exposé au milieu d’une phrase.", "Elle retire ses bijoux un à un sur la table d’observation. Le dernier reste de travers ; Remerii remarque l’erreur et choisit, avec un sourire troublé, de la laisser exister."],
-      closing: ["À l’aube, aucune donnée n’a été relevée. Remerii inscrit pourtant la nuit dans le registre de l’observatoire sous le titre : « phénomène non reproductible, valeur considérable »."],
-    },
-  },
-  {
-    id: "date-remerii-music", character: "remerii", title: "La mesure laissée ouverte", type: "Duo musical", description: "Jouer avec Remerii dans le salon de musique, avec le droit de manquer une note et de continuer.", location: "algratal", spot: "algratal-music-room", period: "soirée", unlockStage: 5, minAffection: 28, minTrust: 26, mood: "smirk",
-    intro: [line("Narration", "Remerii a choisi une pièce facile et couvert la partition de corrections. À votre arrivée, elle retourne pourtant les pages face contre table."), line("Remerii", "Nous jouerons de mémoire. La mienne est excellente ; la décision reste donc objectivement mauvaise."), line("Narration", "Elle vous cède la première note, puis attend sans battre la mesure à votre place."), line("Remerii", "Commencez quand vous le souhaitez. Je vous rejoindrai au lieu de vous ramener vers moi.", "calm")],
-    choices: [
-      dateChoice("drm-r", "Improviser une phrase simple et laisser sa magie harmoniser sans diriger.", "resonance", [line("Remerii", "Vous m’obligez à écouter plutôt qu’à prévoir. Recommencez cette mesure — non pour la corriger, pour la prolonger."), line("Narration", "Le duo gagne en assurance jusqu’à devenir une conversation où vos mains se frôlent entre deux accords.")], "great", { affection: 8, trust: 8, desire: 4, confluence: 2 }),
-      dateChoice("drm-a", "Introduire volontairement une note insolente et soutenir son regard.", "audace", [line("Remerii", "Provocation harmonique caractérisée. La réponse pédagogique appropriée consiste apparemment à vous embrasser avant le prochain accord."), line("Narration", "Elle applique sa nouvelle méthode avec un sérieux qui ne trompe personne.")], "great", { affection: 9, trust: 5, desire: 6 }),
-      dateChoice("drm-s", "Admettre que vous êtes nerveux·se et demander de ralentir.", "sangFroid", [line("Remerii", "Merci de ne pas déguiser votre inconfort en incompétence. Nous reprendrons à votre rythme."), line("Narration", "Le morceau reste prudent, mais sa main demeure sur la vôtre après la dernière note.")], "good", { affection: 5, trust: 8, desire: 2 }),
-    ],
-    intimacySetting: { opening: ["La dernière note continue de vibrer lorsque Remerii ferme le clavier. Elle reste assise une seconde, les doigts posés sur le bois, puis rapproche son banc du vôtre d’un mouvement qui manque volontairement de mesure.", "Le salon demeure éclairé par les runes de la partition. À chaque frôlement, une note répond et transforme peu à peu votre proximité en musique imprévisible."], closing: ["Quand vous rejouez enfin, vos rythmes ont changé. Remerii manque une note, rit contre votre bouche et refuse catégoriquement de la corriger."] },
-  },
+  ...REMERII_DATES,
   {
     id: "date-iriana-market", character: "iriana", title: "Une pièce qui n’appartient pas à l’Empire", type: "Promenade incognito", description: "Arpenter le Grand Marché sans escorte visible et laisser Iriana choisir quelque chose qui ne soit utile à personne.", location: "algratal", spot: "algratal-market", period: "matin", unlockStage: 5, minAffection: 26, minTrust: 26, mood: "smirk",
     intro: [line("Narration", "Iriana porte une cape simple et une bourse contenant exactement trois pièces. Deux gardes très peu discrets prétendent examiner des étoffes à distance."), line("Iriana", "J’ai une mission : dépenser une pièce pour quelque chose qui ne serve ni l’Empire, ni la diplomatie, ni ma réputation."), line("Narration", "Elle s’arrête devant des rubans, des pâtisseries puis un petit oiseau mécanique, incapable de traiter le désir comme un critère suffisant."), line("Iriana", "Aidez-moi, mais ne décidez pas à ma place. C’est apparemment la difficulté centrale de cette sortie.")],

@@ -12,21 +12,6 @@ export const SCENE_CLOSURES: Record<string, DialogueLine[]> = {
   // Hylee : fins propres à chaque choix dans hylee-ambient.ts.
 
   // Remerii — moments libres
-  "remerii-lecture": [N("La page demeure ouverte, mais Remerii ne cherche plus la ligne où elle s'est arrêtée. Son attention a changé d'objet sans qu'elle s'en excuse."), C("Remerii", "Le livre survivra à cette interruption. Je commence à soupçonner qu'elle n'en était pas une.", "calm")],
-  "remerii-the": [N("Elle ajoute exactement deux gouttes d'eau chaude, goûte de nouveau et vous tend la tasse comme s'il s'agissait d'une expérience commune."), C("Remerii", "Voilà. Imparfait selon ma méthode, juste selon mon palais. Ne prenez pas cet aveu en note.", "smirk")],
-  "remerii-erreur": [N("La rune fautive reste visible au milieu des autres. Remerii la cerne d'encre au lieu de l'effacer."), C("Remerii", "Une erreur conservée enseigne parfois davantage qu'une démonstration impeccable. Cette phrase ne quittera pas la pièce.", "calm")],
-  "remerii-bijoux": [N("Le dernier bijou demeure légèrement désaxé. Remerii l'effleure, rencontre votre regard et choisit de ne pas le remettre en place."), C("Remerii", "Quiconque le remarquera devra admettre m'avoir observée avec une attention inconvenante.", "smirk")],
-  "remerii-medig": [N("Medig gonfle ses plumes puis tourne ostensiblement le dos à Remerii. L'archimage accepte le verdict avec une dignité remarquable."), C("Remerii", "Je note que votre témoin expert manque de neutralité. Sa conclusion reste malheureusement solide.", "strict")],
-  "remerii-ponctuation": [N("La virgule change de place et, avec elle, tout le ton de la lettre. Remerii relit la phrase moins comme une diplomate que comme sa destinataire."), C("Remerii", "Un déplacement minuscule, une intention entièrement différente. Les relations possèdent une grammaire cruelle.", "calm")],
-  "remerii-parapluie": [N("Votre construction penche contre le vent, mais elle vous garde au sec. Remerii mesure l'angle du regard avant d'abandonner le calcul."), C("Remerii", "La géométrie est offensante. Le résultat, lui, mérite que nous restions dessous.", "smirk")],
-  "remerii-sablier": [N("Le dernier grain tombe sans qu'aucune question ne soit posée. Remerii retourne le sablier, cette fois uniquement pour prolonger la pause."), C("Remerii", "Je peux donc laisser passer du temps sans en produire un résultat. L'expérience demande confirmation.", "calm")],
-  "remerii-enigme": [N("Elle barre la question initiale et écrit la vôtre en dessous. L'encre met quelques secondes à sécher ; Remerii ne la presse pas."), C("Remerii", "La bonne réponse était inaccessible parce que je protégeais une mauvaise question. C'est… utilement vexant.", "strict")],
-  "remerii-musique": [N("La note suspendue trouve enfin une résolution, différente de celle portée par la partition. Remerii laisse vibrer l'accord jusqu'au silence."), C("Remerii", "Ne la rejouons pas tout de suite. J'aimerais conserver le fait qu'elle nous a surpris·es.", "smirk")],
-  "remerii-fatigue": [N("Elle ferme deux dossiers et laisse le troisième inachevé. Le bureau paraît presque désordonné ; son souffle, lui, retrouve un rythme normal."), C("Remerii", "Je reprendrai demain. Si le monde s'effondre avant, il devra justifier son manque de patience.", "calm")],
-  "remerii-tendresse": [N("Remerii renonce à définir le mot. Sa main se pose sur la vôtre avec une précision qui n'a pourtant rien de théorique."), C("Remerii", "Considérons ceci comme une démonstration provisoire. Sans conclusion obligatoire.", "calm")],
-  "remerii-question-franche": [N("Aucun piège ne suit la question. Remerii attend réellement, quitte à recevoir une réponse qu'elle n'avait pas préparée."), C("Remerii", "Je découvre que demander clairement expose davantage que deviner avec élégance.", "calm")],
-  "remerii-rature": [N("La phrase rayée demeure lisible sous l'encre. Remerii referme le carnet sans arracher la page."), C("Remerii", "Je n'ai plus besoin qu'une pensée soit fausse pour décider de ne pas la suivre.", "calm")],
-  "remerii-cinq-minutes": [N("La cinquième minute s'achève. Remerii consulte l'horloge, puis s'accorde ostensiblement une sixième."), C("Remerii", "Nous venons de dépasser le protocole. Les conséquences semblent remarquablement agréables.", "smirk")],
 
   // Iriana — moments libres
   "iriana-invitations": [N("Iriana superpose les deux invitations, puis les sépare de nouveau. Elle en conserve une et rend l'autre au secrétaire sans explication mensongère."), C("Iriana", "Je viens de préférer une soirée à une stratégie. Que personne n'en fasse une réforme institutionnelle.", "smirk")],
@@ -158,11 +143,6 @@ export const SCENE_CLOSURES: Record<string, DialogueLine[]> = {
   // Routes de Hylee
 
   // Routes de Remerii
-  "remerii-0": [N("Le thé refroidit tandis que la route se précise. Remerii replie la carte sans reprendre la conversation sous forme de leçon."), C("Remerii", "Voyagez avec nous si vous le souhaitez. Je préfère une présence choisie à une escorte docile.", "calm")],
-  "remerii-1": [N("La dernière étincelle se stabilise, puis s'éteint proprement. Remerii abaisse enfin sa main, satisfaite sans dissimuler son soulagement."), C("Remerii", "Vous avez corrigé votre geste sans renoncer à votre intuition. C'est exactement ce que je voulais vous voir conserver.", "calm")],
-  "remerii-2": [N("Son exigence ne disparaît pas ; elle change de place. Remerii referme le grimoire et reste auprès de vous sans produire un nouvel exercice."), C("Remerii", "Je peux vouloir vous protéger sans exiger que votre réussite me rassure à chaque instant. Il faudra me le rappeler.", "sad")],
-  "remerii-3": [N("La musique continue sans itinéraire. Remerii manque volontairement le retour vers la mesure principale et sourit lorsque vous la suivez."), C("Remerii", "Nous avons techniquement perdu le morceau. Je n'ai aucune intention de le retrouver ce soir.", "smirk")],
-  "remerii-4": [N("Ses bijoux restent alignés sur la table, mais Remerii renonce à ordonner le reste de la soirée. Elle attend votre réponse sans préparer à votre place le geste qui suivra."), C("Remerii", "Restez parce que vous le décidez — ou partez avec la même liberté. Mon désir doit savoir survivre aux deux possibilités.", "calm")],
 
   // Routes d'Iriana
   "iriana-0": [N("L’antichambre retrouve son silence. Iriana rassemble les relevés, mais vous laisse la copie où ses hypothèses demeurent visibles à côté des faits."), C("Iriana", "Revenez avec des objections. Après l’audience, c’est la seule forme de loyauté dont j’aie réellement besoin.", "calm")],
@@ -271,8 +251,6 @@ export const SCENE_CLOSURES: Record<string, DialogueLine[]> = {
   "shared-bellirith-naiah": [N("Les deux couronnes imaginaires s'entrechoquent puis éclatent en pluie violette. Bellirith et Naïah restent face à face, dépourvues de cour et nullement diminuées."), C("Bellirith", "Nous aurions gouverné un royaume insupportable."), C("Naïah", "Donc absolument magnifique.", "laugh")],
 
   // Rendez-vous
-  "date-remerii-observatory": [N("La constellation inventée ne figurera sur aucune carte. Remerii lui donne tout de même un nom secret et l'inscrit au bord d'une page blanche."), C("Remerii", "Inexacte, invérifiable et précieuse. Votre influence scientifique devient préoccupante.", "smirk")],
-  "date-remerii-music": [N("Le morceau s'achève sur une note qui n'appartenait à aucune partition. Remerii garde sa main près de la vôtre sur le clavier silencieux."), C("Remerii", "Ne corrigeons rien. J'aimerais savoir où cette musique nous conduit lorsqu'elle cesse d'être sage.", "smirk")],
   "date-iriana-market": [N("La dernière pièce a disparu et Iriana tient un achat dont personne ne pourra réclamer l'utilité. Les gardes renoncent à comprendre son sourire."), C("Iriana", "Je ne sauverai aucun royaume avec ceci. Je crois que je vais le conserver très longtemps.", "smirk")],
   "date-iriana-ballroom": [N("La musique s'arrête mais Iriana ne lâche pas immédiatement votre main. La salle vide lui rend un visage que la cour ne voit jamais."), C("Iriana", "Demain, je danserai peut-être pour l'Empire. Cette danse-ci ne lui appartiendra pas.", "calm")],
   "date-valurn-forestier": [N("Les cartes restent face visible et la dernière mise n'est réclamée par personne. Valurn commande un autre verre sans vérifier la porte."), C("Valurn", "Une soirée qui ne rapporte rien et que je regretterais de perdre. Vous ruinez admirablement mes principes.", "away")],

@@ -86,7 +86,7 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "hr-remerii-truth", title: "Une vérité sans détour", characters: ["remerii"], triggerCharacters: ["remerii"], requiredPresent: ["remerii"], sublocations: ["miraldas-quarters"], minStages: { remerii: 2 }, excludesFlags: ["hr-started", "remerii-platonic"], oneTime: true, priority: 100, mood: "strict",
+    id: "hr-remerii-truth", title: "Une vérité sans détour", characters: ["remerii"], triggerCharacters: ["remerii"], requiredPresent: ["remerii"], sublocations: ["miraldas-quarters"], minStages: { remerii: 5 }, requiresFlags: ["remerii-intimacy-lived"], excludesFlags: ["hr-started", "remerii-platonic"], oneTime: true, priority: 100, mood: "strict",
     prompt: [
       line("Remerii", "Avant que votre imagination ne transforme mon silence en permission : Hylee et moi sommes en couple."),
       line("Narration", "La phrase est nette, mais sa main se crispe sur le bord de la table."),
@@ -280,7 +280,7 @@ export const SOCIAL_SCENES: SocialScene[] = [
     choices: [
       choice("shr-help", "Installer le déjeuner pendant qu’Hylee termine son exercice.", "resonance", [line("Remerii", "Vous avez trouvé les assiettes. Je soupçonne un complot nutritionnel."), line("Hylee", "Exactement. Tu viens aussi, {player}.")], { trust: 2, affection: 2, relationshipEffects: { remerii: { trust: 2, affection: 1 } } }),
       choice("shr-hylee", "Demander à Hylee quelle solution elle veut tester.", "lucidite", [line("Hylee", "Merci. Tout le monde regarde Remerii quand une magie devient compliquée."), line("Remerii", "Et aujourd’hui, nous regarderons Hylee. Je n’ai aucune objection.")], { trust: 3, relationshipEffects: { remerii: { affection: 1 } } }),
-      choice("shr-joke", "« Je peux surveiller la glace pendant que vous débattez du déjeuner. »", "audace", [line("Hylee", "Parfait. Si elle explose, cours."), line("Remerii", "Si elle explose, ne cours surtout pas. Voilà pourquoi je reste indispensable.")], { affection: 3, relationshipEffects: { remerii: { affection: 2 } } }),
+      choice("shr-joke", "« Je peux surveiller le déjeuner pendant que vous terminez avec la glace. »", "audace", [line("Hylee", "Surveiller, pas le manger."), line("Remerii", "Tu ferais bien de terminer vite, dans ce cas.", "smirk"), line("Narration", "Hylee défait sa sphère avant de vous rejoindre. Remerii la suit avec les assiettes.")], { affection: 3, relationshipEffects: { remerii: { affection: 2 } } }),
     ],
   },
   {
@@ -293,12 +293,12 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "shared-remerii-saidin", title: "Deux archimages, un paradoxe", characters: ["remerii", "saidin"], locations: ["miraldas"], sublocations: ["miraldas-archives"], minStages: { remerii: 1, saidin: 1 }, oneTime: false, mood: "calm",
-    prompt: [line("Saidin", "Dans trois futurs, Remerii admet que j’ai raison."), line("Remerii", "Ces futurs sont manifestement corrompus."), line("Saidin", "Dans le quatrième, {player} nous oblige à reformuler la question."), line("Remerii", "Enfin une possibilité crédible.")],
+    id: "shared-remerii-saidin", title: "L’adresse au dos", characters: ["remerii", "saidin"], locations: ["miraldas"], sublocations: ["miraldas-archives"], minStages: { remerii: 1, saidin: 1 }, oneTime: false, mood: "calm",
+    prompt: [line("Narration", "Remerii compare deux adresses devant Saidin. Il lui indique celle de gauche."), line("Saidin", "C’est la bonne porte."), line("Remerii", "C’est celle que j’ai essayée hier."), line("Saidin", "Alors elle a changé."), line("Remerii", "La porte, ou votre souvenir ?"), line("Narration", "Saidin retourne le papier. Une troisième adresse apparaît au dos.")],
     choices: [
-      choice("srs-question", "Demander quelle hypothèse ils ont oublié de vérifier.", "lucidite", [line("Remerii", "Celle qui suppose que le temps veut être résolu."), line("Saidin", "Excellent. Le paradoxe peut être une demeure, pas une serrure.")], { trust: 2, relationshipEffects: { saidin: { trust: 3 } } }),
-      choice("srs-present", "Confisquer le sablier et imposer cinq minutes au présent.", "audace", [line("Remerii", "Une méthode brutale."), line("Saidin", "Et déjà quatre secondes ont échappé à notre analyse. Délicieux.")], { affection: 2, relationshipEffects: { saidin: { affection: 3 } } }),
-      choice("srs-listen", "Les laisser débattre sans chercher à départager deux vieux collègues.", "sangFroid", [line("Remerii", "Vous avez compris que notre désaccord n’est pas une détresse à réparer."), line("Saidin", "C’est notre manière très sophistiquée de prendre le thé.")], { trust: 3, relationshipEffects: { saidin: { trust: 2 } } }),
+      choice("srs-question", "Demander laquelle des adresses est la plus récente.", "lucidite", [line("Saidin", "Celle du dos. J’avais oublié de retourner le billet."), line("Remerii", "Je vais en faire une copie avec un seul côté."), line("Narration", "Elle prend une feuille et lui demande de vérifier le numéro avant de la plier.")], { trust: 2, relationshipEffects: { saidin: { trust: 3 } } }),
+      choice("srs-present", "Proposer de mettre les trois portes sur le même itinéraire.", "audace", [line("Remerii", "Promenade ambitieuse. Nous pourrions aussi demander au voisin."), line("Saidin", "Qui habite à la quatrième adresse."), line("Narration", "Remerii le regarde. Il finit par lui donner le bon numéro en souriant.")], { affection: 2, relationshipEffects: { saidin: { affection: 3 } } }),
+      choice("srs-listen", "Les écouter retrouver ensemble le trajet.", "sangFroid", [line("Narration", "Ils s’accordent sur le carrefour, puis sur l’escalier. Remerii trace le trajet sur sa feuille."), line("Remerii", "Voilà. Cette fois, je saurai où frapper."), line("Saidin", "Tu peux me raconter en revenant."), line("Remerii", "Comptez sur moi.", "smirk")], { trust: 3, relationshipEffects: { saidin: { trust: 2 } } }),
     ],
   },
   {

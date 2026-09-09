@@ -28,19 +28,6 @@ const R = (
 export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = {
   // Hylee : les réponses divergentes font partie des scènes écrites.
 
-  "remerii-0": R(C("Lui reprocher de voir une menace dans chaque voyageur de l’auberge.", "La prudence qui protège Hylee n’est pas une coquetterie paranoïaque. Vous pouviez contester mon analyse sans ridiculiser le danger.", "lucidite")),
-  "remerii-1": R(C("Pousser la sphère jusqu’à la rupture pour lui prouver votre puissance.", "Je vous ai demandé une maîtrise, pas une démonstration qui oblige toute la pièce à survivre à votre ego.", "audace")),
-  "remerii-2": R(C("La féliciter d’avoir toujours su ce qui était bon pour Hylee.", "Toujours ? Je viens précisément de vous confier que ma peur a parfois parlé avec la voix de la protection.", "lucidite")),
-  "remerii-3": R(
-    C("La laisser tout diriger en prétendant qu’une parfaite obéissance lui fera plaisir.", "Une leçon exige une élève. Je vous invitais à danser avec moi ; ne transformez pas votre effacement en cadeau.", "sangFroid"),
-    C("Refuser la leçon sans quitter sa compagnie et proposer de regarder la danse ensemble.", "Contrariant, mais parfaitement recevable. Asseyons-nous avant que je ne transforme votre limite en exercice argumentatif.", "sangFroid"),
-    C("Lui dire que vous souhaitez préserver cette proximité comme une amitié.", "La formulation est nette. J’aurai besoin de temps pour que mon désir cesse d’en contester la ponctuation, mais je respecterai la phrase.", "lucidite"),
-  ),
-  "remerii-4": R(
-    C("Lui demander de décider seule de tout ce qui se passera puisqu’elle maîtrise mieux les limites.", "Vous me rendez le pouvoir au moment précis où je vous demande de le partager. Je ne veux ni disciple, ni responsabilité totale sur votre désir.", "lucidite"),
-    C("Lui répondre que vous la désirez, mais que vous ne voulez pas aller plus loin ce soir.", "Désir et consentement ne sont pas synonymes. Merci de me permettre de recevoir les deux séparément, même si ma déception manque d’élégance.", "sangFroid"),
-    C("Lui dire que la confiance entre vous doit rester amicale.", "Je ne négocierai pas votre conclusion. Donnez-moi seulement le temps d’apprendre cette proximité sans la traiter comme une attente.", "lucidite"),
-  ),
 
   "iriana-0": R(C("Lui remettre le fragment et renoncer aux limites qu’elle vient précisément de vous demander de formuler.", "Après l’audience, je vous ai offert un espace pour négocier. Vous venez de le remplir par une obéissance que je n’ai ni demandée ni méritée.", "sangFroid")),
   "iriana-1": R(C("Jouer toute la mélodie à sa place pour lui rendre le souvenir de sa mère.", "Vous pouvez reproduire des notes. Vous ne pouvez ni me rendre ma mère, ni décider que cette imitation me consolera.", "resonance")),

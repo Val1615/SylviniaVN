@@ -46,6 +46,8 @@ import { linevaRelationBeat } from "./lineva-relation-beats";
 import { allennaRelationBeat } from "./allenna-relation-beats";
 import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
 import { hyleeDateBeat } from "./hylee-dates";
+import { remeriiRouteVariant } from "./remerii-relation";
+import { remeriiDateBeat, migrateRemeriiDateId } from "./remerii-dates";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
 import { groupIntimateCgState, soloIntimateCgState, type IntimateCgState } from "./intimate-cg";
@@ -590,7 +592,10 @@ function hydrateGame(raw: unknown): GameState | null {
     relationships: oldRelationships,
     inventory: { ...fresh.inventory, ...(value.inventory || {}) },
     settings: { ...DEFAULT_SETTINGS, ...(value.settings || {}) },
-    flags: migratedFlags,
+    flags: unique([
+      ...migratedFlags.map(flag => flag === "date-intimate:date-remerii-music" ? "date-intimate:date-remerii-lanterns" : flag),
+      ...(migratedFlags.some(flag => flag === "home-intimate:remerii" || flag.startsWith("date-intimate:date-remerii-")) ? ["remerii-intimacy-lived"] : []),
+    ]),
     journal: migratedJournal,
     codex: value.codex || fresh.codex,
     visitedLocations,
@@ -598,8 +603,11 @@ function hydrateGame(raw: unknown): GameState | null {
     history: migratedHistory,
     ambientHistory: Object.fromEntries(CHARACTERS.map((character) => [character.id, legacyTimeline && ["amanea", "draven"].includes(character.id) ? [] : (value.ambientHistory?.[character.id] || [])])),
     sharedHistory: (value.sharedHistory || []).filter((id) => !legacyTimeline || !["amanea-family-truth", "draven-lineva-letter", "medig-window"].includes(id)),
-    sceneMemories: value.sceneMemories || {},
-    dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")),
+    sceneMemories: Object.fromEntries(Object.entries(value.sceneMemories || {}).map(([id, place]) => [
+      id === "intimacy:date-remerii-music" ? "intimacy:date-remerii-lanterns" : migrateRemeriiDateId(id),
+      id === "date-remerii-music" ? "miraldas-lanterns" : place,
+    ])),
+    dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")).map(migrateRemeriiDateId),
     groupDateHistory: value.groupDateHistory || [],
     crossQuestSeries: Object.fromEntries(Object.entries(value.crossQuestSeries || {}).map(([id, progress]) => [id, {
       ...progress,
@@ -684,7 +692,7 @@ function hasKnowledge(game: GameState, ids: string[] = []) {
 function routeNarrativeReady(scene: RouteScene, game: GameState) {
   return game.settings.unlockAll || (
     hasKnowledge(game, routeKnowledgeRequirements(scene))
-    && routeHistoryRequirements(scene).every((id) => scene.character === "hylee" ? campaignHistorySatisfied(id, game) : game.history.includes(id))
+    && routeHistoryRequirements(scene).every((id) => ["hylee", "remerii"].includes(scene.character) ? campaignHistorySatisfied(id, game) : game.history.includes(id))
     && storyProgress(game.history, game.flags) >= routeStoryRequirement(scene)
     && routeFlagRequirements(scene).every((flag) => game.flags.includes(flag))
   );
@@ -714,7 +722,7 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
     const character = CHARACTERS.find((entry) => entry.id === scene.character);
     return `Une conversation personnelle semble maintenant possible avec ${character?.name || "cette personne"}. Retrouvez-la dans l’un de ses lieux habituels.`;
   }
-  const missingHistory = routeHistoryRequirements(scene).filter((id) => scene.character === "hylee" ? !campaignHistorySatisfied(id, game) : !game.history.includes(id));
+  const missingHistory = routeHistoryRequirements(scene).filter((id) => ["hylee", "remerii"].includes(scene.character) ? !campaignHistorySatisfied(id, game) : !game.history.includes(id));
   if (missingHistory.length) {
     if (scene.id === "lineva-0") return "Rencontrez d’abord Lineva lors du départ de Draven à Forthaven.";
     return "Une étape de l’histoire principale doit encore présenter cette situation.";
@@ -819,12 +827,13 @@ function secretConversationReady(secret: SecretConversation, game: GameState, re
   // Chaque couche de passé répond à une scène réellement vécue : une forte
   // relation obtenue par cadeaux ou moments libres ne peut plus sauter le
   // premier chapitre de la route ni révéler plusieurs niveaux à l’avance.
-  if (!game.settings.unlockAll && secret.character !== "hylee" && relation.stage < secret.tier / 20) return false;
+  if (!game.settings.unlockAll && !["hylee", "remerii"].includes(secret.character) && relation.stage < secret.tier / 20) return false;
   if (!game.settings.unlockAll && relation.trust < (secret.minTrust || 0)) return false;
   if (!game.settings.unlockAll && relation.affection + relation.trust < secret.tier) return false;
   if (!game.settings.unlockAll && game.day < (secret.minDay || 1)) return false;
   if (!game.settings.unlockAll && !hasKnowledge(game, secret.requiresKnowledge)) return false;
   if (requirePlace && secret.locations?.length && !secret.locations.includes(game.location)) return false;
+  if (requirePlace && secret.spots?.length && !secret.spots.includes(game.spot)) return false;
   return true;
 }
 
@@ -1601,7 +1610,16 @@ function flagsSharedByEveryChoice(choices: ChoiceData[]) {
 }
 
 function relationRouteVariant(route: RouteScene, game: GameState) {
-  return { route: hyleeRouteVariant(route, game.knowledge, game.flags), sceneId: route.id };
+  let playable = remeriiRouteVariant(hyleeRouteVariant(route, game.knowledge, game.flags), game.knowledge, game.flags);
+  if (route.id === "remerii-0" && !game.flags.some(flag => flag.startsWith("hylee-return-choice:"))) {
+    // Rattrapage d'une sauvegarde antérieure, sans inventer un second retour.
+    playable = { ...playable, intro: [{ speaker: "Narration", text: "Ce souvenir reprend juste après votre retour auprès d’Hylee, dans les rues d’Al’Gratal. Remerii avait encore une question avant votre promenade à la fontaine." }, ...playable.intro] };
+  }
+  return { route: playable, sceneId: route.id };
+}
+
+function authoredDateBeat(sceneId: string, round: number, picks?: string[]) {
+  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round);
 }
 
 function relationBeatFor(sceneId: string, game: GameState) {
@@ -1611,8 +1629,8 @@ function relationBeatFor(sceneId: string, game: GameState) {
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
-  if (dialogue.phase === "relation-choices" && dialogue.scene.date?.character === "hylee") {
-    const beat = hyleeDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
+  if (dialogue.phase === "relation-choices" && dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)) {
+    const beat = authoredDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
     return beat?.choices || [];
   }
   if (dialogue.phase === "relation-choices" && dialogue.scene.route) {
@@ -2353,9 +2371,9 @@ export default function Home() {
       setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "choices" });
       return;
     }
-    if (dialogue.scene.date?.character === "hylee" && ["response", "relation-response"].includes(dialogue.phase)) {
+    if (dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) && ["response", "relation-response"].includes(dialogue.phase)) {
       const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
-      const beat = hyleeDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
+      const beat = authoredDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
       if (beat) {
         setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" });
         return;
@@ -2390,12 +2408,19 @@ export default function Home() {
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const isRelationChoice = dialogue.phase === "relation-choices";
     const hasRelationBeat = Boolean(dialogue.scene.route && relationBeatFor(dialogue.scene.route.id, game));
-    const hyleeDateContinues = dialogue.scene.date?.character === "hylee"
-      && Boolean(hyleeDateBeat(dialogue.scene.id, isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0, dialogue.datePicks));
+    const authoredDateContinues = Boolean(dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)
+      && authoredDateBeat(dialogue.scene.id, isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0, dialogue.datePicks));
     const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) && (!hasRelationBeat || isRelationChoice)
       ? dialogue.scene.route
       : undefined;
     if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && dialogue.scene.route?.id === "hylee-0") {
+      const main = isRelationChoice ? dialogue.primaryChoice?.id : choice.id;
+      if (main) updateGame(current => ({ ...current, flags: [
+        ...current.flags.filter(flag => !flag.startsWith("hylee-return-choice:")),
+        `hylee-return-choice:${main}${isRelationChoice ? `:${choice.id}` : ""}`,
+      ] }));
+    }
     if (!dialogue.replay && route?.id === "hylee-4" && dialogue.scene.departure) {
       const destination = dialogue.scene.departure;
       updateGame((current) => {
@@ -2515,7 +2540,7 @@ export default function Home() {
         };
       });
     }
-    if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date && !hyleeDateContinues) {
+    if (!dialogue.replay && dialogue.scene.kind === "date" && dialogue.scene.date && !authoredDateContinues) {
       const date = dialogue.scene.date;
       updateGame((current) => ({
         ...current,
@@ -2539,7 +2564,7 @@ export default function Home() {
     const endingCampaign = dialogue.scene.campaignSceneId ? campaignSceneById(dialogue.scene.campaignSceneId) : undefined;
     const campaignEnding = endingCampaign ? campaignSceneOutro(endingCampaign) : [];
     const continuesToRelationBeat = !isRelationChoice && hasRelationBeat && routeChoiceCompletes(choice.id) && !injectedEnding.length;
-    const authoredEnding = continuesToRelationBeat || hyleeDateContinues
+    const authoredEnding = continuesToRelationBeat || authoredDateContinues
       ? []
       : injectedEnding.length
       ? injectedEnding
@@ -2552,7 +2577,7 @@ export default function Home() {
     setDialogue({
       ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
       chosen: choice,
-      datePicks: dialogue.scene.date?.character === "hylee" ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
+      datePicks: dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
@@ -2561,6 +2586,14 @@ export default function Home() {
 
   function closeDialogue() {
     if (!dialogue) return;
+    if (!dialogue.replay && dialogue.scene.route?.id === "hylee-0" && game
+      && game.relationships.hylee.stage >= 1 && game.relationships.remerii.stage === 0
+      && !game.history.includes("remerii-0")) {
+      const route = relationRouteVariant(sceneFor("remerii", 0)!, game).route;
+      const scene: SceneView = { ...route, cast: route.cast || ["remerii"], background: dialogue.scene.background, kind: "route", route };
+      setDialogue({ scene, lines: expandedLines(scene, game, scene.intro, "intro"), lineIndex: 0, phase: "intro" });
+      return; // Une conversation continue, sans voyage ni avancement d'heure.
+    }
     if (dialogue.scene.kind === "intro" && !dialogue.replay) {
       updateGame((current) => ({
         ...current,
@@ -2583,7 +2616,7 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && (["lineva", "allenna"].includes(date.character) || date.character === "hylee"
+      && (["lineva", "allenna"].includes(date.character) || ["hylee", "remerii"].includes(date.character)
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
           && game!.relationships[date.character].stage >= 4
@@ -3220,7 +3253,7 @@ export default function Home() {
   function startHomeDate(characterId: string) {
     if (!game?.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return;
     if (!homeDateUnlocked(game, characterId)) return;
-    if (characterId === "hylee") {
+    if (["hylee", "remerii"].includes(characterId)) {
       const property = propertyById(game.housing.propertyId)!;
       const day = game.day + 1;
       updateGame((current) => ({ ...current, day, period: 3, location: property.location, spot: property.spot, ...placeDiscovery(current, property.location, property.spot) }));
@@ -3256,7 +3289,7 @@ export default function Home() {
       if (newGift) inventory[profile.gift] = (inventory[profile.gift] || 0) + 1;
       return {
         ...current,
-        day: characterId === "hylee" ? current.day : current.day + 1,
+        day: ["hylee", "remerii"].includes(characterId) ? current.day : current.day + 1,
         period: 3,
         location: property.location,
         spot: property.spot,
@@ -3265,7 +3298,7 @@ export default function Home() {
         inventory,
         housing: {
           ...current.housing,
-          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${characterId === "hylee" ? current.day : current.day + 1}`].slice(-96),
+          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${["hylee", "remerii"].includes(characterId) ? current.day : current.day + 1}`].slice(-96),
           homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
         },
         journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
@@ -3280,7 +3313,7 @@ export default function Home() {
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
     const canBecomeIntimate = tone === "desir" && (game.settings.unlockAll || (
-      relation.stage >= (["lineva", "hylee"].includes(characterId) ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && (characterId === "hylee" || score >= 3) && (!intimateCity || intimateCity === property.location)
+      relation.stage >= (["lineva", "hylee", "remerii"].includes(characterId) ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && (["hylee", "remerii"].includes(characterId) || score >= 3) && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
       ? { kind: "home-date-result", character: characterId, score }
@@ -3334,11 +3367,11 @@ export default function Home() {
     const property = game && propertyById(game.housing.propertyId);
     const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
     if (!game || !property || !hasCompletedDesiredDate) return;
-    if (characterId === "hylee" && !game.settings.unlockAll) {
-      const relation = game.relationships.hylee;
+    if (["hylee", "remerii"].includes(characterId) && !game.settings.unlockAll) {
+      const relation = game.relationships[characterId];
       const lastDate = game.housing.homeDateHistory.at(-1);
       if (relation.stage < 5 || relation.affection < 34 || relation.trust < 32 || relation.desire < 24
-        || lastDate !== `hylee:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
+        || lastDate !== `${characterId}:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
     }
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
@@ -3412,7 +3445,7 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    const refactoredDate = Boolean(date && (["lineva", "allenna"].includes(date.character) || date.character === "hylee"));
+    const refactoredDate = Boolean(date && (["lineva", "allenna", "remerii"].includes(date.character) || date.character === "hylee"));
     const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
     if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
@@ -3420,7 +3453,7 @@ export default function Home() {
 
   function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!game || !date || (!["lineva", "allenna"].includes(date.character) && date.character !== "hylee") || !game.dateHistory.includes(date.id)) return;
+    if (!game || !date || (!["lineva", "allenna", "remerii"].includes(date.character) && date.character !== "hylee") || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     if (friendlyForThisDate) {
       updateGame((current) => ({
@@ -3477,6 +3510,7 @@ export default function Home() {
           ...current.flags,
           ...(modal.dateId ? [`date-intimate:${modal.dateId}`] : []),
           ...(modal.home ? [`home-intimate:${modal.character}`] : []),
+          ...(modal.character === "remerii" ? ["remerii-intimacy-lived"] : []),
           ...(modal.character === "lineva" ? ["lineva-tutoiement"] : []),
         ]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
@@ -5136,7 +5170,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
-    const refactored = ["lineva", "allenna"].includes(character.id) || character.id === "hylee";
+    const refactored = ["lineva", "allenna", "remerii"].includes(character.id) || character.id === "hylee";
     const desireReady = !refactored || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
     const closeText = desireReady
       ? `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`

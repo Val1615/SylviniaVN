@@ -1,5 +1,7 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import { HYLEE_CONFIDENCES, HYLEE_KNOWLEDGE } from "./hylee-confidences.ts";
+import { REMERII_CONFIDENCES, REMERII_KNOWLEDGE } from "./remerii-confidences";
+import { REMERII_LETTERS, REMERII_INVITATIONS, REMERII_WORLD_EVENTS } from "./remerii-living-world";
 
 export type SecretTier = 20 | 40 | 60 | 80;
 
@@ -9,6 +11,7 @@ export type SecretConversation = {
   tier: SecretTier;
   title: string;
   locations?: string[];
+  spots?: string[];
   minDay?: number;
   minTrust?: number;
   requiresKnowledge?: string[];
@@ -123,10 +126,7 @@ const S = (
 export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   ...HYLEE_KNOWLEDGE,
 
-  { id: "knows_remerii_child_prodigy", title: "La petite prodige de Mir’Aldas", summary: "Saidin a recueilli Remerii très jeune. Son talent l’a rendue célèbre avant qu’elle ait appris à être simplement une enfant.", people: ["remerii", "saidin"] },
-  { id: "knows_remerii_dome", title: "Une enfant dans le Dôme", summary: "Remerii a participé très jeune à la création du Dôme. Après cet exploit, admiration et crainte l’ont isolée de ses camarades.", people: ["remerii", "saidin"] },
-  { id: "knows_remerii_curse", title: "La magie perdue", summary: "Une agression et une malédiction ont arraché à Remerii une grande partie de ses capacités. L’identité de l’agresseur demeure inconnue.", people: ["remerii", "saidin"] },
-  { id: "knows_remerii_cryo_origin", title: "Transformer la blessure", summary: "La cryomancie n’était pas sa discipline première : Remerii a étudié le froid de sa malédiction jusqu’à en faire sa spécialité.", people: ["remerii"] },
+  ...REMERII_KNOWLEDGE,
 
   { id: "knows_iriana_mother_tenderness", title: "Les visites volées", summary: "La mère d’Iriana n’était pas noble. Malgré les obstacles de la cour, leur affection était réelle et profonde.", people: ["iriana", "tia"] },
   { id: "knows_iriana_tia_control", title: "La protection devenue cage", summary: "Tia a façonné la posture, la voix, la magie et les émotions d’Iriana au nom de sa sécurité et de l’Empire.", people: ["iriana", "tia"] },
@@ -189,58 +189,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
 export const SECRET_CONVERSATIONS: SecretConversation[] = [
   ...HYLEE_CONFIDENCES,
 
-  S("remerii", 20, "secret-remerii-prodigy", "La chaise trop haute", [
-    N("Remerii ajuste une chaise d’atelier et découvre, sous le coussin, six empreintes rectangulaires laissées par d’anciens grimoires."),
-    L("Remerii", "Saidin refusait d’abaisser les tables. Il affirmait que l’architecture devait apprendre à s’adapter à moi."),
-    P("Une philosophie très commode pour quelqu’un qui ne voulait pas scier les pieds."),
-    L("Remerii", "Je soupçonne cette motivation depuis vingt ans. J’ai donc travaillé assise sur six volumes, dont deux étaient essentiels et quatre choisis pour leur épaisseur."),
-    N("Elle s’installe sur la chaise, les pieds touchent naturellement le sol, puis elle se redresse comme si quelqu’un pouvait encore noter sa posture."),
-    L("Remerii", "À sept ans, je corrigeais des matrices d’adultes. À huit, on m’invitait aux démonstrations sans prévoir de goûter. À neuf, plus aucun élève ne me demandait de jouer sans vouloir ensuite copier mes devoirs."),
-    L("Remerii", "J’étais une enfant prodige. Le second mot a très vite fait disparaître le premier."),
-  ], [
-    Q("sre20-a", "Reconstituer solennellement le trône de grimoires de la petite prodige.", "audace", [N("Vous empilez deux dictionnaires sous ses pieds et déposez un troisième sur l’accoudoir comme un sceptre."), P("Maîtresse Remerii, souveraine des tables trop hautes."), L("Remerii", "Votre reconstitution est historiquement douteuse. J’exigeais une couronne davantage proportionnée."), N("Elle accepte néanmoins le dictionnaire-sceptre et frappe le sol avec une dignité absurde."), L("Remerii", "Premier décret : toute conférence savante servira une pâtisserie aux enfants qu’elle exploite pour son prestige."), P("Et Saidin ?"), L("Remerii", "Condamné à scier lui-même les pieds de toutes les tables."), N("Son sourire devient plus tendre qu’elle ne l’avait prévu."), L("Remerii", "Émotionnellement recevable. Ne consignez pas cette appréciation.", "smirk")], { affection: 5, trust: 2 }),
-    Q("sre20-l", "Lui demander ce que Saidin faisait lorsqu’elle se comportait réellement comme une enfant.", "lucidite", [P("Et lorsque vous renversiez l’encre ou refusiez une leçon ?"), L("Remerii", "Je vous prie de ne pas construire une hypothèse aussi téméraire sur ma conduite."), P("Il y a encore une tache violette sur le plafond."), L("Remerii", "Une expérience balistique."), N("Elle passe un doigt sur l’une des marques laissées par les livres."), L("Remerii", "Saidin prétendait ne rien voir. Puis il déplaçait le traité dangereux, laissait des biscuits près de mon lit ou oubliait opportunément de me demander pourquoi un couloir était gelé."), P("Il savait."), L("Remerii", "Toujours. C’était exaspérant."), N("Elle remet le coussin en place sans cacher les empreintes."), L("Remerii", "Et probablement sa forme la plus délicate de tendresse.")], { trust: 6, affection: 2 }),
-  ], ["knows_remerii_child_prodigy"]),
-  S("remerii", 40, "secret-remerii-dome", "La pierre qui porte encore son nom", [
-    N("Au pied du Dôme, Remerii s’agenouille devant une rune minuscule gravée si bas qu’un adulte aurait dû s’allonger pour la tracer."),
-    L("Remerii", "Celle-ci est à moi. J’avais besoin des deux mains pour stabiliser le burin et Saidin tenait ma tresse afin qu’elle ne tombe pas dans la matrice."),
-    P("Vous avez participé au Dôme à cet âge ?"),
-    L("Remerii", "J’ai corrigé un nœud de convergence. Les maîtres ont ensuite raconté que j’avais sauvé l’ensemble de l’ouvrage. Leur version convenait mieux aux discours."),
-    N("Elle suit la rune du bout de l’ongle, précise comme si elle vérifiait encore son travail."),
-    L("Remerii", "Après cela, les autres élèves ont cessé de me demander de jouer. Ils me demandaient des solutions, des corrections, parfois une bénédiction avant leurs examens."),
-    L("Remerii", "On m’admirait. C’est une solitude difficile à dénoncer : les gens vous répondent que vous avez de la chance d’être placée si haut, sans remarquer qu’ils ont retiré la chaise."),
-  ], [
-    Q("sre40-l", "Reconnaître ensemble l’exploit et le prix qu’on lui a fait payer.", "lucidite", [P("Vous avez accompli quelque chose d’immense. Les adultes en ont fait une raison de cesser de voir l’enfant qui l’avait accompli."), L("Remerii", "Habituellement, on choisit l’une des deux phrases."), P("Elles sont toutes les deux vraies."), N("Remerii lève les yeux vers le Dôme. La lumière de sa propre rune passe sur son visage."), L("Remerii", "Oui. Je suis fière de cette matrice. Je déteste encore certaines conséquences de cette fierté."), P("Ce n’est pas ingrat."), L("Remerii", "Je le sais intellectuellement. Émotionnellement, le dossier reste en instruction."), N("Elle vous tend la main pour se relever."), L("Remerii", "Merci de ne sacrifier aucune vérité pour rendre l’autre plus présentable. C’est une précision que la plupart des historiens gagneraient à apprendre.")], { trust: 8, affection: 2 }),
-    Q("sre40-s", "Vous asseoir au sol, exactement à la hauteur qu’elle avait alors.", "sangFroid", [N("Vous vous asseyez près de la rune. Remerii hésite, vérifie que personne ne regarde, puis s’installe à côté de vous."), P("Le Dôme paraît gigantesque d’ici."), L("Remerii", "Il l’était. La table aussi. Saidin aussi, bien qu’il le nie avec une mauvaise foi temporelle."), N("Deux étudiants passent et saluent respectueusement Remerii sans remarquer la petite inscription."), L("Remerii", "Voilà. Ils voient le monument, puis mon nom dans les archives. Personne ne voit les genoux écorchés ni la tresse tenue à distance du feu."), P("Moi, je les vois maintenant."), L("Remerii", "Ne devenez pas sentimental·e. Le sol est humide et ma dignité menace déjà de contracter un rhume."), N("Elle reste pourtant jusqu’au passage suivant de la lumière sur la rune."), L("Remerii", "C’était cette taille-là que personne ne voyait.")], { trust: 7, affection: 3 }),
-  ], ["knows_remerii_dome"]),
-  S("remerii", 60, "secret-remerii-curse", "Réapprendre un geste", [
-    N("Une matrice d’éclairage échappe aux doigts de Remerii et éclate en poussière froide. Trois ans plus tôt, elle aurait recommencé avant que quiconque puisse remarquer. Cette fois, elle laisse l’échec visible."),
-    L("Remerii", "Ne proposez pas de tenir le cristal. Ce n’est pas son poids."),
-    P("Je n’allais rien proposer."),
-    L("Remerii", "Vous progresserez donc plus vite que la moitié de mes anciens collègues."),
-    N("Elle remet la matrice à zéro, mais ses doigts restent une seconde trop longtemps au-dessus du premier signe."),
-    L("Remerii", "Après l’agression, je ne savais plus accomplir des gestes qui avaient été plus naturels que respirer. Je comprenais chaque formule et mon corps répondait dans une langue détruite."),
-    L("Remerii", "La malédiction a pris mes certitudes avant de prendre ma puissance. Saidin m’a retrouvée. Il n’a pas retrouvé la personne qui m’avait fait cela."),
-    P("Et vous ?"),
-    L("Remerii", "Moi non plus. Certains jours, l’absence de réponse me met plus en colère que la douleur. Une ennemie connue aurait au moins la décence d’avoir un visage."),
-  ], [
-    Q("sre60-s", "Rester présent·e pendant qu’elle recommence, sans toucher à la matrice.", "sangFroid", [N("Remerii reprend le premier signe. La seconde tentative s’effondre plus vite que la première."), L("Remerii", "Vous pouvez détourner les yeux."), P("Je peux. Je n’en ai pas envie."), L("Remerii", "La distinction est acceptable."), N("À la troisième tentative, la matrice tient. Sa lumière est faible, stable et entièrement sienne."), P("Vous l’avez."), L("Remerii", "J’en avais une version plus élégante il y a vingt ans."), P("Celle-ci existe maintenant."), N("Elle vous regarde enfin au lieu de regarder l’écart avec son souvenir."), L("Remerii", "Vous avez assisté à l’échec sans vous précipiter pour le réparer ni l’utiliser comme preuve que je suis brisée."), P("Je regardais une mage travailler."), L("Remerii", "Alors regardez bien. Je vais la refaire sans trembler.")], { trust: 9, affection: 3 }),
-    Q("sre60-r", "Lire la forme actuelle comme son langage propre, pas comme l’ombre de celui qu’elle a perdu.", "resonance", [N("Votre Résonance suit la matrice. Son architecture n’est pas incomplète : elle contourne la marque, emploie le froid comme appui et transforme chaque hésitation en articulation."), P("Ce n’est pas une copie diminuée de votre ancien geste."), L("Remerii", "Non. C’est ce que je m’efforce de répéter à mes mains depuis des années."), P("La structure se tient autrement. Ici, le froid porte la liaison."), N("Remerii reprend le tracé en suivant votre observation. La lumière se stabilise dans un réseau de givre."), L("Remerii", "Vous mesurez ce que je construis au lieu de calculer l’écart avec un fantôme."), P("Le fantôme n’a pas fait cette matrice."), N("Elle referme les doigts. La lumière froide devient une petite étoile entre vous."), L("Remerii", "Continuez à regarder de cette manière. Mais ne prenez pas cet encouragement pour une licence à commenter tous mes exercices.")], { trust: 8, confluence: 3 }),
-  ], ["knows_remerii_curse"]),
-  S("remerii", 80, "secret-remerii-cold", "Étudier la blessure", [
-    N("Remerii plonge les mains dans un bassin. Le givre remonte aussitôt jusqu’à ses poignets et dessine la structure exacte de sa malédiction : crochets, ruptures et un centre qui tente encore de mordre."),
-    L("Remerii", "Voici l’élégance de mon agresseur. Beaucoup d’effort pour faire passer une cruauté pour une œuvre."),
-    P("Vous pouvez arrêter."),
-    L("Remerii", "Je peux. Aujourd’hui, je ne le souhaite pas."),
-    N("Elle modifie un signe. Le crochet devient une branche ; la rupture, un passage où circule sa propre magie."),
-    L("Remerii", "Le froid n’était pas mon élément. C’était l’arme laissée en moi. Je l’ai étudiée, disséquée et reprise jusqu’à ce qu’elle cesse de parler uniquement avec la voix de la personne qui m’avait frappée."),
-    L("Remerii", "On appelle parfois cela une résilience admirable. Le mot convient aux discours. En pratique, il y eut surtout de la rage, des engelures et Saidin qui remplaçait les bassins que je brisais."),
-    N("La matrice finale s’ouvre comme une fleur de glace."),
-    L("Remerii", "Ma cryomancie n’est pas une guérison. C’est une langue conquise sur la blessure — et j’en suis désormais la seule grammairienne."),
-  ], [
-    Q("sre80-l", "Refuser que son agresseur puisse revendiquer ce qu’elle a bâti après lui.", "lucidite", [P("Cette personne a laissé une arme. Elle n’a créé ni votre discipline, ni cette structure, ni la mage qui les manie."), L("Remerii", "Certains diraient que sans l’agression, cette magie n’existerait pas."), P("Sans l’incendie, la maison reconstruite n’existerait pas non plus. Le feu n’en devient pas l’architecte."), N("Remerii immobilise la fleur de glace. Un silence long et précis s’installe."), L("Remerii", "Voilà une comparaison étonnamment convenable."), P("Je l’encadrerai."), L("Remerii", "N’exagérez rien. J’ai dit “convenable”."), N("Elle retire les mains du bassin. Le givre demeure sous sa forme, indépendant de la malédiction."), L("Remerii", "Ce que j’ai créé ensuite m’appartient entièrement. Je ne lui dois même pas le premier flocon.", "determined")], { trust: 10, affection: 4 }),
-    Q("sre80-r", "Suivre par Résonance la langue qu’elle a reconstruite.", "resonance", [N("Votre Résonance longe les signes. Au centre, la malédiction pousse encore le froid comme une injonction ; autour, la structure de Remerii le reçoit, le divise et lui donne un sens qu’il n’avait jamais possédé."), P("La marque ordonne. Votre magie répond autrement."), L("Remerii", "Précisez."), P("Le froid de la blessure veut fermer. Le vôtre construit des passages."), N("La fleur s’épanouit entre vos mains, traversée de veines lumineuses."), L("Remerii", "Vous sentez la différence."), P("Oui."), L("Remerii", "Alors ne cherchez pas à la résumer davantage. Certaines compréhensions deviennent moins exactes lorsqu’on veut les rendre faciles."), N("Elle vous laisse tenir la structure une seconde, privilège qu’elle ne commente pas."), L("Remerii", "Gardez ce langage en mémoire. Pas pour expliquer ma magie aux autres. Pour reconnaître ma voix lorsqu’elle tremble encore.")], { trust: 9, confluence: 4 }),
-  ], ["knows_remerii_cryo_origin"]),
+  ...REMERII_CONFIDENCES,
 
   S("iriana", 20, "secret-iriana-mother", "Les rubans défaits", [
     N("Iriana ouvre une boîte de couture saisie dans les appartements d’Alamma. Au milieu de fils impériaux impeccables, un ruban fané porte encore un nœud maladroit."),
@@ -894,19 +843,7 @@ export const LETTERS: LetterTemplate[] = [
     replies: [{ id: "hylee-star-choice", label: "Bonne nouvelle. Fais attention au petit anneau.", response: "Hylee répond : « Je l’ai vérifié trois fois. Remerii menace de confisquer la pince. »", effects: { trust: 4, affection: 2 } }],
   },
 
-  {
-    id: "letter-remerii-correction", character: "remerii", subject: "Rectification méthodologique", delivery: "Une enveloppe droite au millimètre attend sur votre bureau.", minDay: 3, minStage: 1,
-    body: ["Votre manière de noter les oscillations du bâton manque de précision.", "Je dois néanmoins reconnaître que vos marques sur le papier ont permis à Hylee de repérer à quel moment elle commençait à forcer sur son sort. Considérez ceci comme une correction de mon évaluation, pas comme un compliment. Même si la distinction devient fragile."], signature: "Remerii",
-    replies: [
-      { id: "remerii-annotate", label: "Renvoyer la lettre annotée : « Compliment reçu. »", response: "Elle ajoute en marge : « Interprétation abusive, malheureusement défendable. »", effects: { affection: 3, trust: 2 } },
-      { id: "remerii-method", label: "Décrire précisément ce que votre méthode cherchait à préserver.", response: "Remerii répond par deux pages, puis termine : « Cette conversation mérite une table et du thé. »", effects: { trust: 4 } },
-    ],
-  },
-  {
-    id: "letter-remerii-cold", character: "remerii", subject: "Une expérience non reproductible", delivery: "Le papier reste froid sans être humide.", minDay: 14, minStage: 4, requiresKnowledge: ["knows_remerii_cryo_origin"],
-    body: ["Aujourd’hui, le froid m’a obéi sans rappeler la malédiction. J’ai attendu une heure avant d’écrire, afin de vérifier que je ne confondais pas progrès et euphorie.", "Je vous écris tout de même. Certaines expériences gagnent à avoir un témoin même lorsqu’elles ne seront jamais reproductibles exactement."], signature: "Remerii",
-    replies: [{ id: "remerii-witness", label: "Je garderai le souvenir, pas une mesure à dépasser.", response: "Sa réponse est exceptionnellement brève : « Exactement. Merci. »", effects: { trust: 5, affection: 2 } }],
-  },
+  ...REMERII_LETTERS,
 
   {
     id: "letter-iriana-summons", character: "iriana", subject: "Présence souhaitée — non obligatoire", delivery: "Un coursier du palais insiste sur le dernier mot du sceau.", minDay: 4, minStage: 1,
@@ -1075,21 +1012,7 @@ export const INVITATIONS: InvitationTemplate[] = [
       Q("ihs-r", "Suivre des yeux un flocon depuis sa manche jusqu’aux branches.", "resonance", [N("Vous pointez un flocon accroché à sa manche. Il se détache, monte et rejoint les autres au-dessus de la branche basse."), L("Hylee", "Celui-là revient toujours vers l’arbre. Regarde, encore !"), P("On essaie d’en compter dix ?"), L("Hylee", "D’accord. Mais tu prends ceux de gauche, je perds les miens quand on parle.", "soft")], { trust: 5, affection: 3, confluence: 2 }),
     ],
   },
-  {
-    id: "invite-remerii-tea", character: "remerii", title: "Une heure non planifiée", message: "Remerii a réservé une table de bibliothèque et, fait remarquable, aucun programme.", location: "miraldas", spot: "miraldas-archives", period: "apres-midi", minDay: 7, minStage: 1, expiresAfter: 6,
-    declineText: "Remerii reprogramme l’expérience sans commentaire blessé et vous envoie les nouvelles disponibilités.",
-    intro: [
-      N("La table ne porte qu’une théière et deux livres choisis au hasard. Le sablier, posé sur le côté, a été recouvert d’un mouchoir comme un instrument indécent."),
-      L("Remerii", "L’objectif consiste à passer une heure sans optimiser l’heure. Je reconnais la contradiction.", "smirk"),
-      P("Vous avez tout de même caché le sablier."),
-      L("Remerii", "Je l’ai neutralisé. Nuance importante. Si je demande combien de minutes il reste, vous avez l’autorisation exceptionnelle de me servir davantage de thé au lieu de répondre.") ,
-    ],
-    choices: [
-      Q("irt-a", "Choisir le roman au titre le plus ridicule.", "audace", [P("La Duchesse et le Troll fiscal."), L("Remerii", "Excellent. Sa vraisemblance historique est insultante et son système d’imposition davantage encore."), N("Vous lisez à voix basse. Au troisième chapitre, Remerii interrompt chaque déclaration d’amour par une objection juridique plus passionnée que le texte."), L("Remerii", "Ne me regardez pas ainsi. Si l’auteur voulait du silence, il n’avait qu’à vérifier son droit successoral.")], { affection: 5, trust: 3 }),
-      Q("irt-l", "Lui demander ce qu’elle aimerait faire avant de consulter les livres.", "lucidite", [N("Remerii ouvre la bouche avec une réponse déjà structurée, puis regarde la vapeur au-dessus de sa tasse."), L("Remerii", "Boire le thé pendant qu’il est chaud. Une ambition modeste et étonnamment difficile."), P("Alors commençons par l’ambition."), N("Elle prend une première gorgée sans consulter le sablier. Son soupir satisfait lui échappe avant qu’elle puisse l’habiller d’une remarque.")], { trust: 6, affection: 2 }),
-      Q("irt-s", "Tirer un livre au hasard et accepter de l’abandonner s’il vous ennuie.", "sangFroid", [L("Remerii", "Abandonner une lecture sans rédiger d’abord un avis argumenté ?"), N("Elle parcourt deux pages, fronce le nez puis referme brutalement le volume."), L("Remerii", "Insipide. Voilà. Aucun rapport, aucune justification en annexe."), P("Vous semblez presque fière."), L("Remerii", "Je suis scandalisée par la facilité de l’expérience. Recommençons.", "smirk")], { trust: 5, affection: 3 }),
-    ],
-  },
+  ...REMERII_INVITATIONS,
   {
     id: "invite-iriana-courier", character: "iriana", title: "Un courrier du palais", message: "Iriana souhaite vous voir dans le Salon de musique. Le courrier précise deux fois que vous pouvez refuser.", location: "algratal", spot: "algratal-music-room", period: "soirée", minDay: 8, minStage: 2, expiresAfter: 5,
     declineText: "Iriana accepte votre refus sans le transformer en test. Le musicien garde la salle pour une autre soirée.",
@@ -1282,14 +1205,7 @@ export const RUMORS: RumorTemplate[] = [
 ];
 
 export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
-  {
-    id: "world-hylee-remerii-lesson", title: "La leçon qui devient découverte", location: "miraldas", spots: ["miraldas-atelier"], characters: ["hylee", "remerii"], minDay: 4, minStages: { hylee: 1, remerii: 1 }, oneTime: true,
-    intro: [N("Lorsque vous entrez, Hylee a déjà démonté la matrice prévue par Remerii et construit autre chose avec les fragments."), L("Remerii", "Ce n’était pas l’exercice."), L("Hylee", "Je sais. Mais celui-ci fonctionne.", "determined"), N("Remerii retient une correction et examine enfin le résultat.")],
-    choices: [
-      Q("whr-l", "Décrire ce que l’invention réussit sans choisir une gagnante.", "lucidite", [P("La méthode de Remerii a rendu les pièces lisibles. Hylee leur a donné un usage neuf."), L("Remerii", "Une conclusion acceptable."), L("Hylee", "Elle veut dire excellente.")], { trust: 3, relationshipEffects: { remerii: { trust: 3 }, hylee: { affection: 2 } } }),
-      Q("whr-s", "Leur laisser tester la matrice avant toute conclusion.", "sangFroid", [N("Le sort tient, tremble, puis trouve un équilibre qu’aucune n’avait prévu."), L("Remerii", "Nous documentons après."), L("Hylee", "Victoire historique.")], { trust: 3, relationshipEffects: { remerii: { trust: 3 }, hylee: { trust: 3 } } }),
-    ],
-  },
+  ...REMERII_WORLD_EVENTS,
   {
     id: "world-valurn-bellirith-bottle", title: "Le compliment piégé", location: "akuhn", spots: ["akuhn-music-room"], characters: ["valurn", "bellirith"], minDay: 10, minStages: { valurn: 1, bellirith: 1 }, oneTime: true,
     intro: [N("Valurn et Bellirith goûtent un vin sans étiquette. Leur dispute a commencé avant votre arrivée."), L("Bellirith", "Admets seulement que j’ai choisi mieux."), L("Valurn", "Je préférerais signer une dette centenaire."), N("Tous deux se tournent vers vous pour obtenir un arbitrage prétendument impartial.")],
@@ -1344,14 +1260,6 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     choices: [
       Q("whs-r", "Déplacer le carnet et observer d’où vient le courant d’air.", "resonance", [N("Vous poussez le carnet hors de portée de la flamme. Le vent passe entre deux planches du paravent."), L("Hylee", "Ah. Attends, je vais le déplacer."), N("Elle revient, teste la place de sa manche et reprend ses notes."), L("Saidin", "Aucun sort requis."), L("Hylee", "Ne le note pas dans mon évaluation.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
       Q("whs-s", "Lui proposer de souffler la lampe et de se mettre au jour.", "sangFroid", [N("Hylee souffle la flamme. Vous portez le carnet jusqu’à la lumière, Saidin emporte la coupelle."), L("Hylee", "Pourquoi tu gardes ça ?"), L("Saidin", "Pour les biscuits."), L("Hylee", "Tu aurais dû commencer par là.")], { trust: 3, relationshipEffects: { hylee: { trust: 4 }, saidin: { trust: 3 } } }),
-    ],
-  },
-  {
-    id: "world-remerii-saidin-cup", title: "Le thé de l’ancienne élève", location: "miraldas", spots: ["miraldas-observatory"], characters: ["remerii", "saidin"], minDay: 13, minStages: { remerii: 2, saidin: 2 }, requiresKnowledge: ["knows_remerii_child_prodigy", "knows_saidin_remerii_childhood"], oneTime: true,
-    intro: [N("Remerii a apporté du thé. Saidin corrige encore la position de la théière comme si elle avait huit ans."), L("Remerii", "Je dirige un atelier et participe au maintien du Dôme."), L("Saidin", "La poignée brûle toujours."), L("Remerii", "Je sais."), N("Aucun des deux ne déplace la main.")],
-    choices: [
-      Q("wrs-l", "Nommer l’affection derrière le geste et l’étouffement qu’il peut produire.", "lucidite", [L("Saidin", "Je protège parfois le souvenir de l’enfant au détriment de la femme présente."), L("Remerii", "Et je transforme parfois toute aide en preuve qu’on me croit incapable. Nous pouvons déplacer la théière ensemble.")], { trust: 3, relationshipEffects: { remerii: { trust: 4 }, saidin: { trust: 4 } } }),
-      Q("wrs-a", "Verser le thé avant qu’ils terminent cette négociation minuscule.", "audace", [L("Remerii", "Intervention non autorisée."), L("Saidin", "Le thé, lui, vient de voter pour l’urgence."), N("Remerii lève les yeux au ciel, mais prend enfin sa tasse pendant qu’elle est chaude."), L("Remerii", "Je protesterai après la première gorgée. Peut-être la seconde.")], { affection: 3, relationshipEffects: { remerii: { affection: 3 }, saidin: { affection: 3 } } }),
     ],
   },
   {

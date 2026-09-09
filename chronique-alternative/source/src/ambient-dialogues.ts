@@ -1,4 +1,5 @@
 import { HYLEE_AMBIENT_LINES } from "./hylee-ambient";
+import { REMERII_AMBIENT_LINES } from "./remerii-ambient";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 
 export type AmbientDialogue = {
@@ -55,83 +56,7 @@ const X = (id: string, text: string, stat: StatKey, response: string | DialogueL
 export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
   hylee: HYLEE_AMBIENT_LINES,
 
-  remerii: [
-    scene("remerii-lecture", "La page immobile", "Remerii referme son livre. « Si vous me dérangez, faites au moins l’effort d’être intéressant·e. »", [
-      R("rem-livre-a", "Lui demander quelle page elle relisait depuis dix minutes.", "audace", [line("Narration", "Remerii abaisse lentement le livre. Son marque-page n’a effectivement pas bougé."), line("Remerii", "Vous surveillez donc mes progrès de lecture avec une assiduité indiscrète."), line("Remerii", "La page quarante-sept. Elle est mal argumentée ; je prépare une objection depuis neuf minutes. Asseyez-vous, vous servirez de public hostile.")], { affection: 2 }),
-      R("rem-livre-l", "Lui proposer de repartir si elle a besoin de solitude.", "lucidite", "Je ne vous l’ai pas demandé. Asseyez-vous.", { trust: 2, affection: 1 }),
-      R("rem-livre-s", "S’installer avec votre propre lecture.", "sangFroid", [line("Narration", "Le silence partagé devient étrangement confortable."), line("Remerii", "Vous maîtrisez donc l’art rare de la présence non envahissante.")], { trust: 2 }),
-    ], { mood: "calm" }),
-    scene("remerii-the", "Deux degrés trop froid", "Remerii goûte son thé et fronce à peine les sourcils. « Deux degrés trop froid. J’envisage une plainte officielle contre l’univers. »", [
-      R("rem-the-a", "Boire sa tasse pour supprimer la preuve.", "audace", "C’était ma tasse. Votre sens de la justice est aussi rapide qu’approximatif.", { affection: 3 }),
-      R("rem-the-r", "Réchauffer la porcelaine sans altérer l’infusion.", "resonance", "Précis, discret, efficace. Ne prenez pas cet air satisfait, je pourrais m’y habituer.", { trust: 3, affection: 1 }),
-      R("rem-the-l", "Remarquer qu’elle cherchait surtout une raison de faire une pause.", "lucidite", "Je déteste la manière dont vous rendez mes prétextes transparents. Restez pendant que je termine cette pause involontaire.", { trust: 3, affection: 1 }),
-    ], { minStage: 0, mood: "smirk" }),
-    scene("remerii-erreur", "L’erreur volontaire", "Remerii laisse volontairement une rune imparfaite au centre d’un exercice. « J’attends de voir combien de mages admireront le dessin avant de regarder ce qu’il fait réellement. »", [
-      R("rem-rune-l", "Identifier la rupture dans le troisième trait.", "lucidite", "Bien. Vous avez examiné l’effet avant de respecter l’auteur. Continuez.", { trust: 3 }),
-      R("rem-rune-a", "Activer la rune à distance pour forcer la démonstration.", "audace", "Méthode dangereuse, résultat concluant. Vous êtes une objection pédagogique ambulante.", { affection: 2, trust: 1 }),
-      R("rem-rune-s", "Empêcher un apprenti de la toucher sans l’humilier.", "sangFroid", "Vous avez corrigé la situation sans corriger la personne en public. Voilà une maîtrise plus rare que la magie.", { trust: 4 }),
-    ], { locations: ["miraldas"], mood: "strict" }),
-    scene("remerii-bijoux", "L’ordre des bijoux", "Remerii aligne ses bijoux sur une table, puis déplace soudain une boucle d’oreille de quelques centimètres. « J’essaie une expérience. Jusqu’ici, le désordre ne m’a pas encore tuée. »", [
-      R("rem-bijou-a", "Déplacer aussi le pendentif.", "audace", "N’abusez pas de mon courage expérimental.", { affection: 3, desire: 1 }),
-      R("rem-bijou-l", "Lui demander ce qu’elle cherche réellement à rendre moins parfait.", "lucidite", "Pas mes bijoux. Mes réflexes. Je voudrais cesser de croire qu’une chose déplacée annonce forcément une catastrophe.", { trust: 4 }),
-      R("rem-bijou-s", "Ne rien toucher et la laisser décider du prochain déplacement.", "sangFroid", "Merci. Beaucoup confondent aider à lâcher prise et prendre le contrôle à ma place.", { trust: 4 }),
-    ], { minStage: 1, mood: "calm" }),
-    scene("remerii-medig", "Le verdict de la chouette", "Une chouette blanche observe Remerii depuis une corniche. « Medig refuse de descendre. Elle estime probablement que ma compagnie a perdu en qualité. »", [
-      R("rem-chouette-a", "« Elle est jalouse. Je monopolise votre meilleur fauteuil. »", "audace", "Medig n’est jamais jalouse. Possessive, rancunière et manipulatrice, peut-être. Nous avons beaucoup en commun.", { affection: 3 }),
-      R("rem-chouette-r", "Envoyer une pulsation magique douce plutôt qu’un appel.", "resonance", [line("Narration", "La chouette incline la tête, puis vient se poser près de Remerii."), line("Remerii", "Vous avez demandé sans contraindre. Elle apprécie. Moi aussi.")], { trust: 4 }),
-      R("rem-chouette-s", "Attendre que Medig décide seule de les rejoindre.", "sangFroid", "Votre patience devient agaçante de cohérence. Regardez, elle descend.", { trust: 3, affection: 1 }),
-    ], { locations: ["miraldas", "algratal", "echo-clearing"], mood: "smirk" }),
-    scene("remerii-ponctuation", "Une virgule diplomatique", "Remerii vous montre un décret dont une virgule a été grattée puis réécrite trois fois. « Selon sa position, l’Empire offre une protection aux voyageurs ou les protège de force. La ponctuation est une magie coercitive très sous-estimée. »", [
-      R("rem-virgule-l", "Reformuler la phrase pour que le consentement ne dépende plus d’une virgule.", "lucidite", "Vous éliminez l’ambiguïté au lieu de gagner grâce à elle. Voilà une compétence que la cour devrait trouver terrifiante.", { trust: 4 }),
-      R("rem-virgule-a", "Proposer un point final : « Les voyageurs décident. »", "audace", "Brutal, presque insolent… et parfaitement lisible. Je vais prétendre que l’idée venait de moi.", { affection: 3, trust: 1 }),
-      R("rem-virgule-s", "Demander qui devra vivre avec la phrase avant de la corriger.", "sangFroid", "Enfin quelqu’un qui lit un décret depuis le sol plutôt que depuis le bureau. Gardez cette habitude.", { trust: 4 }),
-    ], { mood: "strict" }),
-    scene("remerii-parapluie", "Une géométrie contre la pluie", "Au-dessus de Remerii flotte un écran arcanique parfaitement hexagonal. Chaque goutte est repoussée — sauf une, qui tombe obstinément sur le bout de son nez. « Ne commentez pas. Je suis en guerre contre un phénomène météorologique. »", [
-      R("rem-pluie-r", "Repérer le minuscule déphasage à la jonction des runes.", "resonance", "Vous avez trouvé la faille avant de rire. Une discipline admirable, quoique votre sourire reste très visible.", { trust: 3, affection: 1 }),
-      R("rem-pluie-a", "Passer sous le bouclier et recevoir la goutte à sa place.", "audace", "Un sacrifice héroïque et parfaitement inutile. Restez tout de même : l’hexagone est prévu pour deux.", { affection: 4 }),
-      R("rem-pluie-s", "Ouvrir un parapluie ordinaire au-dessus d’elle.", "sangFroid", "Du tissu. Une tige. Aucun calcul. Cette solution manque scandaleusement d’élégance… Ne la retirez pas.", { trust: 3, affection: 1 }),
-    ], { minStage: 1, mood: "smirk" }),
-    scene("remerii-sablier", "Le sable sans examen", "Remerii retourne un sablier, puis pousse ses notes hors de portée. « Pendant que le sable tombe, nous n’optimiserons rien. J’ai lu que certaines personnes appellent cela une pause. La méthode manque de critères d’évaluation. »", [
-      R("rem-sable-s", "Regarder simplement les grains tomber avec elle.", "sangFroid", "Aucun résultat, aucune conclusion… et je respire mieux. Ne paraissez pas trop victorieux·se.", { trust: 4, affection: 1 }),
-      R("rem-sable-a", "Coucher le sablier pour rendre la pause indéfinie.", "audace", "Vous venez de saboter mon unique limite raisonnable. Très bien. Cinq minutes supplémentaires.", { affection: 4 }),
-      R("rem-sable-l", "Remarquer qu’elle a choisi un sablier impossible à consulter discrètement.", "lucidite", "Je me connais assez pour retirer l’option de tricher. Vous me connaissez déjà assez pour le remarquer. C’est préoccupant.", { trust: 4 }),
-    ], { minStage: 1, mood: "calm" }),
-    scene("remerii-enigme", "La question mal posée", "Remerii trace un problème arcanique sur une ardoise. « Tout le monde cherche la solution. Personne ne remarque que les données se contredisent. C’est une manière efficace d’identifier ceux qui préfèrent paraître savants à demander des précisions. »", [
-      R("rem-enigme-l", "Désigner les deux hypothèses incompatibles.", "lucidite", "Exact. Vous refusez la prémisse quand elle ne mérite pas votre obéissance. Continuez ainsi.", { trust: 4 }),
-      R("rem-enigme-a", "Écrire en grand : « Question défectueuse, professeur suspect. »", "audace", "L’insolence n’est pas une démonstration. Dans ce cas précis, elle constitue néanmoins une annotation recevable.", { affection: 3 }),
-      R("rem-enigme-r", "Tester les deux versions de l’énoncé sans forcer leur convergence.", "resonance", "Vous laissez deux réponses coexister au lieu d’en mutiler une pour sauver l’exercice. La Confluence vous a bien choisi·e.", { trust: 3, confluence: 1 }),
-    ], { minStage: 1, mood: "strict" }),
-    scene("remerii-musique", "La note laissée ouverte", "Remerii joue trois notes au piano et garde la quatrième en suspens. « Terminer la phrase serait trop facile. Quelle suite entendez-vous ? »", [
-      R("rem-note-r", "Répondre par une harmonie ressentie plutôt qu’apprise.", "resonance", "Techniquement surprenant. Émotionnellement juste. Je vais devoir vivre avec cette contradiction.", { trust: 3, affection: 2 }),
-      R("rem-note-a", "Jouer une note volontairement insolente.", "audace", "Absolument pas. …Encore une fois, pour confirmer l’étendue du désastre.", { affection: 4 }),
-      R("rem-note-l", "Laisser la phrase inachevée.", "lucidite", "Oui. Certaines tensions méritent de rester ouvertes assez longtemps pour dire autre chose.", { trust: 4, desire: 1 }),
-    ], { periods: ["apres-midi", "soirée"], mood: "calm" }),
-    scene("remerii-fatigue", "Ce qu’elle ne corrige pas", "Une faute évidente demeure sur le rapport de Remerii. Elle fixe la ligne sans la corriger. « Si vous la mentionnez, je vous transforme en presse-papier. »", [
-      R("rem-fatigue-s", "Fermer le dossier et lui apporter de quoi manger.", "sangFroid", "Vous obéissez remarquablement mal à mes menaces. Posez le plateau ici.", { trust: 4, affection: 2 }),
-      R("rem-fatigue-l", "Comprendre que ses mains tremblent de fatigue, pas de colère.", "lucidite", "Ne dites rien. Aidez-moi seulement à quitter cette table sans en faire un événement.", { trust: 5 }),
-      R("rem-fatigue-a", "Corriger la faute, puis vous déclarer presse-papier de grande qualité.", "audace", "Votre candidature est rejetée. Vous bougez trop et vous parlez davantage encore.", { affection: 4, trust: 1 }),
-    ], { minStage: 2, periods: ["soirée"], mood: "sad" }),
-    scene("remerii-tendresse", "Une définition imprécise", "Remerii regarde vos mains rapprochées sur la table. « J’ai toujours considéré l’imprécision comme un défaut. Pourtant, ce que nous sommes devient moins facile à définir à mesure que cela compte. »", [
-      R("rem-def-l", "« Nous pouvons définir les limites sans enfermer le lien. »", "lucidite", "Une distinction élégante. Et utile. Je consens à laisser le titre en suspens.", { trust: 5, affection: 3 }),
-      R("rem-def-a", "« Je peux proposer plusieurs définitions, toutes scandaleusement flatteuses. »", "audace", "Épargnez-moi la liste. Commencez par celle qui explique pourquoi j’ai envie de vous embrasser.", { affection: 5, desire: 3 }),
-      R("rem-def-s", "Poser votre main près de la sienne et attendre son geste.", "sangFroid", [line("Narration", "Remerii réduit elle-même le dernier centimètre."), line("Remerii", "Cela me paraît suffisamment précis pour ce soir.")], { trust: 5, affection: 3, desire: 1 }),
-    ], { minStage: 4, periods: ["soirée"], mood: "smirk" }),
-    scene("remerii-question-franche", "Une question sans examen", "Remerii referme ses notes. « Vous avez droit à une question. Pas une énigme, pas une évaluation déguisée : une question à laquelle je peux aussi répondre que je ne sais pas. Profitez de cette anomalie pédagogique. »", [
-      R("rem-question-l", "Lui demander ce qu’elle aimerait apprendre sans devoir l’enseigner ensuite.", "lucidite", "À improviser. Sans publier une méthode de l’improvisation le lendemain. Votre question est déplaisamment bien choisie.", { trust: 3 }),
-      R("rem-question-s", "Lui demander si elle préfère garder ce droit pour plus tard.", "sangFroid", "Vous venez de protéger mon droit au silence à l’intérieur même de l’invitation. Je répondrai maintenant : je vais bien, mais je suis fatiguée.", { trust: 4 }),
-      R("rem-question-a", "« Combien de secondes avant que cette conversation redevienne un cours ? »", "audace", "Dix-sept. Vous venez d’en gaspiller trois. Asseyez-vous, nous allons tenter de battre mon record.", { affection: 3 }),
-    ], { mood: "strict" }),
-    scene("remerii-rature", "La rature conservée", "Une phrase entière est barrée sur le feuillet de Remerii. Elle ne l’a ni recopiée ni arrachée. « J’expérimente l’idée qu’une erreur visible peut prouver un travail accompli au lieu de le contaminer. Ne manifestez pas trop d’enthousiasme. »", [
-      R("rem-rature-l", "Lire la correction sans chercher à deviner la phrase effacée.", "lucidite", "Vous vous intéressez à ce que j’ai choisi de garder, pas à ce que j’ai retiré. C’est une discrétion intellectuelle rare.", { trust: 3 }),
-      R("rem-rature-s", "Laisser votre propre petite rature à côté de la sienne.", "sangFroid", "Une solidarité graphiquement médiocre, mais étonnamment efficace. Je tolère cette marge commune.", { trust: 2, affection: 1 }),
-      R("rem-rature-a", "Encadrer la rature et la titrer « progrès majeur ».", "audace", "Rendez-moi cette plume. Immédiatement. …Le cadre peut rester, à condition qu’il soit parfaitement droit.", { affection: 3 }),
-    ], { mood: "calm" }),
-    scene("remerii-cinq-minutes", "Cinq minutes non productives", "Remerii retourne un petit sablier et pose ses deux mains à plat. « Jusqu’à la dernière graine, nous ne corrigerons, n’optimiserons ni ne résoudrons rien. Si une idée utile survient, nous l’ignorerons avec discipline. »", [
-      R("rem-cinq-s", "Observer le silence avec le sérieux qu’elle mettrait à un examen.", "sangFroid", "Vous rendez même l’inaction méthodique. Étrangement, cela m’aide à ne pas la fuir.", { trust: 3 }),
-      R("rem-cinq-l", "Lui faire remarquer que la règle interdit aussi d’évaluer la pause.", "lucidite", "Objection recevable. Je cesserai donc de vérifier si je me repose correctement… à partir de maintenant.", { trust: 3, affection: 1 }),
-      R("rem-cinq-a", "Retourner discrètement le sablier avant qu’il se vide.", "audace", "Fraude temporelle grossière. Puisque je n’ai pas le droit de corriger le problème, vous gagnez cinq minutes supplémentaires.", { affection: 3 }),
-    ], { mood: "smirk" }),
-  ],
+  remerii: REMERII_AMBIENT_LINES,
 
   iriana: [
     scene("iriana-invitations", "Deux invitations", "Iriana vous tend deux invitations identiques. « L’une est un piège politique. L’autre, un dîner atrocement ennuyeux. Votre choix ? »", [

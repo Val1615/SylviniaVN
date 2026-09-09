@@ -95,7 +95,7 @@ export const HOUSING_PROPERTIES: HousingProperty[] = [
 
 export const STORY_KEEPSAKES: DisplayItem[] = [
   { id: "keepsake-hylee", name: "Flocon imparfait d’Hylee", description: "Une sculpture de glace stabilisée dont la branche asymétrique est précisément celle qu’Hylee préfère.", icon: "❄", source: "story", character: "hylee" },
-  { id: "keepsake-remerii", name: "Feuillet annoté de Remerii", description: "Une mesure volontairement laissée imparfaite sous une forêt de corrections devenues inutiles.", icon: "♫", source: "story", character: "remerii" },
+  { id: "keepsake-remerii", name: "Billet de Remerii", description: "Le billet par lequel Remerii vous a proposé de la retrouver, simplement pour passer un moment ensemble.", icon: "✉", source: "story", character: "remerii" },
   { id: "keepsake-iriana", name: "Ruban sans blason d’Iriana", description: "Un ruban choisi au marché pour la seule raison qu’il lui plaisait et qu’il n’engageait aucun royaume.", icon: "⌁", source: "story", character: "iriana" },
   { id: "keepsake-valurn", name: "Jeton de la première mise", description: "Le véritable jeton que Valurn vous a laissé prendre. Aucune dette n’est gravée sur sa tranche.", icon: "◈", source: "story", character: "valurn" },
   { id: "keepsake-naiah", name: "Tasse ébréchée de Naïah", description: "Une tasse sauvée d’Akuhn’Nabad, plus précieuse pour ses souvenirs que pour sa valeur.", icon: "☕", source: "story", character: "naiah" },
@@ -110,7 +110,7 @@ export const STORY_KEEPSAKES: DisplayItem[] = [
 
 export const HOME_DATE_GIFTS: DisplayItem[] = [
   { id: "homegift-hylee", name: "Photophore de givre", description: "La flamme ne chauffe pas, mais sa neige intérieure change avec l’humeur de la pièce.", icon: "❅", source: "date", character: "hylee" },
-  { id: "homegift-remerii", name: "Métronome arcanique", description: "Il garde le tempo demandé, sauf lorsque Remerii décide qu’une imperfection mérite de durer.", icon: "♬", source: "date", character: "remerii" },
+  { id: "homegift-remerii", name: "Signet de Remerii", description: "Un signet de métal fin apporté lors de sa première visite au logis. Remerii vous a prié d’épargner désormais les coins des pages.", icon: "▱", source: "date", character: "remerii" },
   { id: "homegift-iriana", name: "Oiseau mécanique sans blason", description: "Un petit oiseau de marché qui chante faux avec une assurance parfaitement apolitique.", icon: "♮", source: "date", character: "iriana" },
   { id: "homegift-valurn", name: "Carte blanche de Valurn", description: "Une carte sans règle, sans mise et sans signature, pliée une seule fois au milieu.", icon: "▱", source: "date", character: "valurn" },
   { id: "homegift-naiah", name: "Lanterne à luciole illusoire", description: "La luciole est fausse ; la lumière violette qu’elle répand et le rire lié à son souvenir sont bien réels.", icon: "✦", source: "date", character: "naiah" },

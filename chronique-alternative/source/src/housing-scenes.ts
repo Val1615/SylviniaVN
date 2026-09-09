@@ -1,5 +1,6 @@
 import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
 import { HYLEE_HOME_DATE } from "./hylee-home-date.ts";
+import { REMERII_HOME_DATE, REMERII_RESIDENT_MOMENTS } from "./remerii-home-date";
 import type { DisplayItem, HousingProperty } from "./housing-data";
 
 export type HomeDateTone = "amical" | "amoureux" | "desir";
@@ -78,25 +79,7 @@ const cities = (character: string, algratal: string, forthaven: string, miraldas
 
 export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
   hylee: HYLEE_HOME_DATE,
-  remerii: {
-    character: "remerii", title: "Une soirée sans programme", description: "Inviter Remerii à classer une bibliothèque qui résiste délicieusement à toute méthode parfaite.", gift: "homegift-remerii",
-    activityTitle: "La bibliothèque impossible", activityInstruction: "Classez quelques livres selon des règles mouvantes sans laisser l’organisation dévorer la soirée.",
-    arrival: [N("Remerii entre avec un métronome arcanique sous le bras et prétend qu’il s’agit d’un cadeau purement pratique."), C("Remerii", "Il permet de mesurer le silence. J’ai découvert avec contrariété que le vôtre possède parfois un excellent tempo.", "smirk")],
-    cityComments: cities("Remerii", "La capitale a déjà décidé ce que votre adresse signifie. Nous pourrons prendre un plaisir méthodique à la faire mentir.", "Le sel attaque les reliures. Votre choix de ville exige donc une bibliothèque fermée — et peut-être davantage de visites de contrôle.", "Vous vous installez à portée de mes archives. C’est une décision dangereusement efficace.", "Akuhn’Nabad conserve mieux ses secrets que ses livres. J’apporterai des protections et aucune question inutile."),
-    tierComments: tier("Remerii", ["Chaque objet a une fonction. Même la chaise la plus proche de la théière. Votre prétention manque admirablement d’espace.", "Une pièce de travail, une pièce de repos, et aucune galerie destinée à impressionner des inconnus : raisonnable.", "Le confort est passé avant l’apparat. J’avais préparé une critique ; ce fauteuil vient malheureusement d’affaiblir ma position.", "Cette demeure dispose de davantage de chambres que certaines écoles de magie. Nous trouverons à les rendre utiles.", "J’avais préparé une remarque sur l’excès. La lumière vient malheureusement de rendre mon argument moins solide."]),
-    ownItemComment: "Vous exposez une partition annotée plutôt qu’une édition propre. Votre goût du désordre devient parfois étonnamment précis.", otherItemComment: "Sa valeur réside manifestement dans la personne qui vous l’a confié. Voilà un classement que je peux respecter.",
-    tones: {
-      amical: { label: "Complicité studieuse", detail: "Partager une activité calme sans transformer sa présence en attente.", effects: { affection: 5, trust: 9 }, lines: [P("Je vous ai invitée pour votre compagnie, pas pour obtenir un cours particulier."), C("Remerii", "Excellent. Je pourrai donc critiquer vos rayonnages à titre strictement amical.", "smirk")] },
-      amoureux: { label: "Déranger doucement l’ordre", detail: "Glisser une tendresse assumée entre les livres et les silences.", effects: { affection: 8, trust: 7, desire: 4 }, lines: [P("J’aime l’idée que votre désordre puisse rester ici après la soirée."), C("Remerii", "Je ne produis aucun désordre. Cette mèche, ce livre et mon rythme cardiaque sont des anomalies locales.", "calm")] },
-      desir: { label: "Changer de mesure", detail: "Faire du classement un prétexte à une proximité beaucoup moins académique.", effects: { affection: 6, trust: 5, desire: 9 }, lines: [P("Si nous classions les livres selon le nombre de fois où vous perdez le fil en me regardant ?"), C("Remerii", "Nous manquerions rapidement de catégories. Continuez l’expérience.", "smirk")] },
-    },
-    rounds: [
-      { prompt: "Premier livre : un traité exact contenant une conclusion fausse.", detail: "La reliure exige une catégorie unique.", options: [O("question", "Rayon des certitudes à rouvrir", 2, C("Remerii", "Une catégorie qui admet sa propre révision. Je la tolère avec enthousiasme.")), O("science", "Sciences exactes", 1, N("Remerii hésite, puis ajoute une note de réserve très visible.")), O("trash", "Le jeter", 0, C("Remerii", "Une erreur conservée avec son contexte instruit davantage qu’un vide satisfait."))] },
-      { prompt: "Deuxième livre : un roman sentimental annoté par Remerii.", detail: "Les marges contiennent plus de texte que le chapitre.", options: [O("private", "Le placer dans votre étagère privée", 2, C("Remerii", "Vous n’utiliserez jamais ces annotations contre moi. Je constate simplement leur valeur documentaire.")), O("romance", "Romans", 1, N("Elle l’accepte, non sans retourner discrètement le dos annoté vers le mur.")), O("manual", "Manuels tactiques", 0, C("Remerii", "Je critiquais la syntaxe, pas la stratégie de séduction. Enfin… pas seulement."))] },
-      { prompt: "Le métronome accélère devant le dernier ouvrage.", detail: "C’est un carnet vide portant vos deux noms.", options: [O("leave", "Le laisser vide jusqu’à la prochaine visite", 2, N("Remerii arrête le métronome. Le silence devient votre première page.")), O("rule", "Écrire les règles de classement", 1, C("Remerii", "Prévisible. Rassurant. Peut-être un peu lâche.")), O("finish", "Inventer immédiatement une fin parfaite", 0, C("Remerii", "Vous venez de conclure une histoire qui n’a pas commencé. Crime narratif caractérisé."))] },
-    ],
-    results: { close: [C("Remerii", "Votre classement survivra probablement jusqu’à demain. C’est déjà remarquable.", "calm")], warm: [C("Remerii", "Je reviendrai vérifier le rayon privé. Régulièrement. Par rigueur.", "smirk")], perfect: [N("Le métronome s’arrête sur un silence parfaitement partagé."), C("Remerii", "Ne le relancez pas. Cette mesure-ci peut rester inachevée.", "calm")] },
-  },
+  remerii: REMERII_HOME_DATE,
   iriana: {
     character: "iriana", title: "Une table sans audience", description: "Recevoir Iriana sans protocole et composer un repas dont aucune décision ne concerne l’Empire.", gift: "homegift-iriana",
     activityTitle: "Le menu inutile", activityInstruction: "Composez un repas uniquement à partir de préférences personnelles, sans optimiser prestige, coût diplomatique ni rendement.",
@@ -291,7 +274,7 @@ export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
 
 const EMPTY_DISPLAY_COMMENTS: Record<string, string> = {
   hylee: "Oh, tout est encore vide. On pourrait y mettre un souvenir sérieux, un souvenir ridicule et… quelque chose qui soit les deux à la fois.",
-  remerii: "Trois emplacements vacants. Je pourrais vous proposer un système de classement ; je vais plutôt attendre de voir quelles histoires résistent à vos catégories.",
+  remerii: "Vous avez encore de la place ici. J’aimerai voir ce que vous choisirez d’y poser.",
   iriana: "Trois places que personne n’a encore remplies à votre place. Même une galerie impériale offre rarement un luxe aussi simple.",
   valurn: "Trois places vides et aucune dette accrochée au mur. Votre décoration manque d’ambition criminelle, mais elle commence admirablement.",
   naiah: "Trois places vides ? Parfait. J’ai une grenouille empaillée, une fausse relique et quelque chose qui mord. Tu me laisses choisir l’ordre ?",
@@ -311,9 +294,9 @@ const DISPLAY_COMMENTS: Record<string, Array<(item: DisplayItem) => string>> = {
     (item) => `${item.name} rend la pièce moins parfaite et beaucoup plus vivante. Oui, c’est un compliment.`,
   ],
   remerii: [
-    (item) => `${item.name} a manifestement été placé selon une logique affective. Elle est impossible à mesurer et, contre toute attente, parfaitement lisible.`,
-    (item) => `Je pourrais vous demander la provenance de ${item.name}. Votre manière de le regarder constitue déjà une réponse plus exacte.`,
-    (item) => `${item.name} déséquilibre légèrement l’ensemble. Ne le déplacez surtout pas : ce serait ruiner la seule erreur intéressante de cette étagère.`,
+    (item) => `Je n’avais pas encore vu ${item.name} ici. Vous venez de lui trouver cette place ?`,
+    (item) => `La lumière tombe bien sur ${item.name}. On le voit dès la porte.`,
+    (item) => `J’aimerais regarder ${item.name} de plus près, si vous permettez.`,
   ],
   iriana: [
     (item) => `${item.name} serait accompagné d’un cartel et d’une version officielle au palais. Ici, votre silence lui permet enfin de raconter autre chose.`,
@@ -406,28 +389,6 @@ const RESIDENT_REPLIES: Record<string, Array<[ResidentReply, ResidentReply, Resi
       { beat: "Hylee attrape un tisonnier comme une lance et se place derrière vous avec un courage très dépendant de votre présence.", line: "Je propose ‘Griffe-la-Poubelle’. Si le monstre est un chat, il sera humilié avant même le combat." },
       { beat: "Hylee approche de la fenêtre. Elle attend que le bruit des roues s’éloigne, puis rabat le rideau.", line: "Oui. C’est bien un chariot. On peut éteindre celle de l’entrée, maintenant." },
       { beat: "Elle s’assied au sol, dos au canapé, et vous ménage une place contre elle.", line: "Alors on veille. Mais au prochain craquement, tu inventes l’histoire rassurante. Moi, je fais le chocolat." },
-    ],
-  ],
-  remerii: [
-    [
-      { beat: "Remerii fixe le second objet déplacé, pince les lèvres, puis en décale volontairement un troisième.", line: "Votre protocole manque de toute rigueur. Il produit néanmoins des résultats étrangement libérateurs." },
-      { beat: "Son regard quitte le tiroir pour se poser sur vous. La justesse de la remarque l’agace assez pour la faire sourire.", line: "Je déteste lorsque vous formulez en une phrase ce que je comptais analyser pendant trois jours." },
-      { beat: "Elle ferme le tiroir avec une lenteur cérémonieuse et pose les deux mains à plat dessus.", line: "S’il s’effondre, nous rédigerons demain une élégie pour l’ordre perdu. Pas avant le petit-déjeuner." },
-    ],
-    [
-      { beat: "Elle tente de vous faire taire, puis cède au troisième duc sanglotant avec une indignité particulièrement inspirée.", line: "Votre duchesse ressemble à un corbeau enrhumé. Continuez : le texte en devient presque défendable." },
-      { beat: "Remerii garde un doigt entre les pages. Son expression se dépouille un instant de toute ironie.", line: "Personne ne risque de mourir si je manque un indice. Cette médiocrité possède donc une vertu que je n’avais pas prévue." },
-      { beat: "La chaleur revient dans la tasse. Elle tourne une page, puis incline le livre afin que vous puissiez lire avec elle.", line: "Le chapitre reste mauvais. Votre présence améliore toutefois sensiblement les conditions de l’étude." },
-    ],
-    [
-      { beat: "Remerii résiste exactement deux secondes avant de s’enrouler dans la couverture avec vous. Son rire disparaît dans le tissu.", line: "Cette méthode est inadmissible, inefficace et remarquablement chaude. Je suspends donc mon jugement." },
-      { beat: "Elle défait elle-même un angle trop net et observe le pli retomber de travers.", line: "Une préférence peut être proposée. Une règle exige une raison. J’avais oublié de vérifier laquelle des deux je vous imposais." },
-      { beat: "Vos mains reprennent le geste ensemble. Remerii abandonne le dernier coin imparfait et s’assied dessus pour empêcher toute rechute.", line: "Voilà. L’erreur est désormais structurelle. Il serait irresponsable d’y toucher." },
-    ],
-    [
-      { beat: "Votre première casserole manque le temps. À la seconde, Remerii déplace le métronome pour vous laisser une vraie place dans la mesure.", line: "Vous êtes rythmiquement coupable, mais musicalement utile. C’est une catégorie nouvelle." },
-      { beat: "Elle écoute la bouilloire répondre au métronome et laisse son sourire apparaître sans le corriger.", line: "L’ordinaire ne demande peut-être pas à être élevé. Il suffisait que je cesse de parler par-dessus." },
-      { beat: "Elle modifie la phrase pour y faire entrer le choc des deux tasses. Le morceau s’achève sur ce son minuscule.", line: "Ne buvez pas encore. Cette cadence-ci avait besoin de vous pour conclure." },
     ],
   ],
   iriana: [
@@ -680,12 +641,7 @@ export const RESIDENT_MOMENTS: Record<string, HomeMoment[]> = {
     moment("hylee", 2, "Une cape sur deux chaises", "Hylee a laissé sa cape entre deux chaises comme si elle n’avait pas encore choisi laquelle était la sienne.", ["Je vote pour la troisième option : directement sur mes épaules.", "On met un crochet près de la porte ? Ta cape sèchera mieux.", "Laisse-la là, je prends l’autre chaise."]),
     moment("hylee", 3, "La nuit trop calme", "Un bruit dans la rue a réveillé Hylee. Elle se tient dans le salon, prête à s’excuser d’avoir allumé toutes les lampes.", ["Nous allons inspecter la menace : elle mérite probablement un nom ridicule.", "C’était un chariot. Je l’ai vu passer. Tu veux quand même regarder la rue ?", "Je reste éveillé·e avec toi. Aucune explication nécessaire."]),
   ],
-  remerii: [
-    moment("remerii", 0, "Le tiroir corrigé", "Remerii a réorganisé un tiroir, puis laissé volontairement un objet à la mauvaise place pour vérifier si elle peut vivre avec.", ["J’en ajoute un second. Appelons cela une exposition expérimentale.", "Vous n’essayez pas de ranger le tiroir. Vous essayez d’habiter l’imperfection.", "Je ne toucherai à rien. Nous verrons demain si le monde tient."]),
-    moment("remerii", 1, "Thé oublié", "Deux tasses refroidissent sur la table pendant que Remerii lit, étonnamment absorbée par un roman médiocre.", ["Je lis les dialogues dramatiques avec les voix les plus indignes.", "Vous aviez besoin d’une histoire qui ne vous demande aucune solution.", "Je réchauffe le thé et reste près d’elle sans interrompre le chapitre."]),
-    moment("remerii", 2, "La leçon interdite", "Remerii corrige votre manière de plier une couverture, puis comprend que son ton vient de transformer le salon en salle de cours.", ["Examen pratique : réussir à nous rouler dedans sans aucune méthode.", "Vous pouvez partager une préférence sans qu’elle devienne une règle.", "Je replie avec elle, puis lui laisse choisir ce qui peut rester imparfait."]),
-    moment("remerii", 3, "Une note dans la cuisine", "Le métronome arcanique bat depuis la cuisine. Remerii y compose une phrase musicale avec les bruits ordinaires du logis.", ["J’ajoute une percussion avec les casseroles. La critique peut attendre.", "Vous transformez enfin l’ordinaire en musique au lieu de le corriger.", "Je suis son rythme en préparant deux tasses."]),
-  ],
+  remerii: REMERII_RESIDENT_MOMENTS,
   iriana: [
     moment("iriana", 0, "Le décret du petit-déjeuner", "Iriana a rédigé une liste pour choisir le petit-déjeuner, puis l’a barrée avec irritation.", ["Je décrète que le premier aliment attrapé devient loi jusqu’à midi.", "Vous cherchez encore la bonne décision là où une envie suffirait.", "Je lui présente deux assiettes et attends simplement son choix."]),
     moment("iriana", 1, "Une couronne dans l’entrée", "Iriana a laissé son diadème près de la porte et traverse la maison sans y revenir du regard.", ["Je lui construis un minuscule coussin excessivement solennel.", "Vous vouliez savoir si vous restiez vous-même hors de son poids.", "Je ferme doucement le coffret et poursuis la matinée avec elle."]),
