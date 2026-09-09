@@ -72,7 +72,7 @@ async function validatePortrait(path, label) {
   }
 }
 
-const expected = { characters: 12, secrets: 51, knowledge: 69, letters: 25, invitations: 12, rumors: 24, spontaneousEvents: 18 };
+const expected = { characters: 12, secrets: 52, knowledge: 70, letters: 28, invitations: 13, rumors: 24, spontaneousEvents: 19 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }

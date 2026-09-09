@@ -140,7 +140,9 @@ try {
     game.spot = world.ROUTE_SPOTS[route.id];
     api.setDialogue(routeFixture(route, game)); render();
     const count = finishDialogue();
-    assert.equal(count, relation.hyleeRelationBeat(route.id, game.flags) ? 2 : 1);
+    const followOn = route.id === "hylee-0" ? 1 : 0;
+    assert.equal(count, (relation.hyleeRelationBeat(route.id, game.flags) ? 2 : 1) + followOn);
+    if (followOn) assert.equal(api.game.relationships.remerii.stage, 1, "le raccord Remerii suit les deux décisions d’Hylee");
     assert.equal(api.game.relationships.hylee.stage, route.stage + 1);
     assert.equal(api.game.relationships.hylee.desire, 0);
     assert.equal(api.game.history.filter(id => id === route.id).length, 1);

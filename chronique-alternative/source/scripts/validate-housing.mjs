@@ -6,6 +6,7 @@ const sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const alternativeRoot = resolve(sourceRoot, "..");
 const housingData = await readFile(resolve(sourceRoot, "src/housing-data.ts"), "utf8");
 const housingScenes = await readFile(resolve(sourceRoot, "src/housing-scenes.ts"), "utf8");
+const remeriiHome = await readFile(resolve(sourceRoot, "src/remerii-home-date.ts"), "utf8");
 const page = await readFile(resolve(sourceRoot, "src/page.tsx"), "utf8");
 const cities = ["algratal", "forthaven", "miraldas", "akuhn"];
 const characters = ["hylee", "remerii", "iriana", "tia", "valurn", "naiah", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven"];
@@ -21,7 +22,9 @@ for (const character of characters) {
   for (const id of [`keepsake-${character}`, `homegift-${character}`]) {
     if (!housingData.includes(`id: "${id}"`)) throw new Error(`Objet exposable manquant : ${id}`);
   }
-  const momentCount = [...housingScenes.matchAll(new RegExp(`moment\\("${character}",`, "g"))].length;
+  const momentCount = character === "remerii"
+    ? [...remeriiHome.matchAll(/id: "home-remerii-[0-3]"/g)].length
+    : [...housingScenes.matchAll(new RegExp(`moment\\("${character}",`, "g"))].length;
   if (momentCount !== 4) throw new Error(`${character}: quatre moments de résident requis, ${momentCount} obtenu(s)`);
 }
 
