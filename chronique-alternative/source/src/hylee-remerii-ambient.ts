@@ -1,0 +1,19 @@
+import type { SocialScene } from "./social-scenes";
+import { H, R, N, Q, HR_KEY } from "./hylee-remerii-cross-quest";
+export const HR_AMBIENT_SCENES: SocialScene[] = [
+ { id: "cross-hr-world-reports", title: "Le coin de la page", characters: ["hylee","remerii"], locations: ["miraldas"], sublocations: ["miraldas-atelier","miraldas-archives"], oneTime: true, priority: 110, mood: "soft", crossStage: { series: HR_KEY, min: 2, max: 3 },
+ prompt: [N("Hylee garde un doigt sur une ligne du registre pendant que Remerii retourne une copie."), H("Tu l’avais entourée de l’autre côté."), R("Il y a deux heures sur ce relevé."), H("Oui. Mais celle-ci, c’est l’arrivée de la charrette."), N("Remerii compare les deux pages, puis glisse le crayon vers elle."), R("Corrige. Je tiens le bord.")], choices: [
+ Q("cross-hr-world-reports-help", "Poser votre tasse vide sur le coin qui se soulève.", [N("Hylee peut enfin retirer sa main. Elle étire ses doigts avant de reprendre le crayon."), H("Merci. Je commençais à faire partie du mobilier."), R("Du mobilier qui conteste les légendes."), H("Du bon mobilier, donc.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
+ Q("cross-hr-world-reports-pass", "Les laisser finir sans les interrompre.", [N("Remerii tourne la page seulement quand Hylee a levé le crayon. Vous les entendez encore discuter de l’heure en quittant la pièce."), H("Celle-là, je ne la comprends pas."), R("Moi non plus. On demandera l’original.")]),
+ ] },
+ { id: "cross-hr-world-silence", title: "La chaise dégagée", characters: ["remerii"], locations: ["miraldas"], sublocations: ["miraldas-atelier"], oneTime: true, priority: 110, mood: "sad", crossStage: { series: HR_KEY, min: 4, max: 4 },
+ prompt: [N("Remerii a retiré les livres de la chaise d’Hylee. Elle les reprend sur la table, cherche une autre place et finit par les poser au sol."), R("Vous cherchez le registre ?", "sad"), N("Le registre est ouvert devant elle. Aucun nouveau trait n’a rejoint le plan depuis votre dernier passage.")], choices: [
+ Q("cross-hr-world-silence-stay", "Lui demander si vous pouvez rester un moment.", [R("Oui. Prenez l’autre chaise."), N("Vous vous asseyez près de la porte. Elle laisse celle d’Hylee libre."), R("Je n’ai pas beaucoup avancé."), N("Elle ne précise pas de quel travail elle parle.")]),
+ Q("cross-hr-world-silence-leave", "Lui laisser le temps de finir ce qu’elle faisait.", [R("Je viendrai à la résidence plus tard."), N("Remerii referme le registre. Lorsque vous partez, elle se lève enfin de sa table."), R("Merci d’être passé.")], { trust: 1 }),
+ ] },
+ { id: "cross-hr-world-buckle", title: "Deux trous plus loin", characters: ["hylee","remerii"], locations: ["miraldas"], sublocations: ["miraldas-quarters","miraldas-atelier"], oneTime: true, priority: 110, mood: "soft", crossStage: { series: HR_KEY, min: 5, max: 7 },
+ prompt: [N("Hylee présente une boucle à Remerii, qui rapproche la lampe."), H("Le deuxième trou."), R("Celui-là tirera sur la couture."), H("Je peux doubler le fil."), N("Remerii vérifie l’épaisseur du cuir, puis lui passe le poinçon."), R("Essaie. Je maintiens dessous."), N("Hylee attend qu’elle ait bien placé ses doigts avant de percer.")], choices: [
+ Q("cross-hr-world-buckle-hold", "Leur tenir la lampe.", [N("Remerii libère sa main pour retourner la boucle. Hylee tire sur la couture neuve ; rien ne bouge."), H("Ça tiendra."), R("Oui."), N("Elles reprennent le sac chacune par un côté pour le redresser.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
+ Q("cross-hr-world-buckle-joke", "Demander combien de réparations ce sac peut encore supporter.", [H("Autant qu’il faudra. Maintenant, il y a plus de fil neuf que d’ancien."), R("Cela ne vous oblige pas à vérifier chaque couture aujourd’hui."), N("Hylee s’arrête au milieu d’une traction et vous adresse un sourire surpris.")], { affection: 1 }),
+ ] },
+];

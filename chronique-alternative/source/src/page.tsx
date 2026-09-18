@@ -102,6 +102,10 @@ import { ACT_ONE_SCENE_ORDER, CAMPAIGN_SCENES, campaignSceneById, campaignSceneD
 import { ROUTE_CONTEXTUAL_CHOICES } from "./route-contextual-choices";
 import { sceneClosure } from "./scene-closures";
 import { MUSIC_LABELS, musicForContext } from "./music-data";
+import { HR_KEY, HR_OPEN, HR_TITLES, HR_LETTERS, hrUnlocked, hrIndividualIntimacy, createHRProgress, hydrateHR, hrQuestScene, hrRecognition, type HRBeat } from "./hylee-remerii-cross-quest";
+import { HR_DATE_IDS, HR_DATE_BEATS, hrDateReason } from "./hylee-remerii-dates";
+import { HRDossier, AnchorOperationModal } from "./hylee-remerii-ui";
+import { createAnchorOperation, type AnchorState } from "./anchor-operation";
 import {
   DISPLAY_ITEMS,
   HOME_INTIMACY_CITY,
@@ -260,6 +264,9 @@ type GameState = {
 };
 
 type SceneView = {
+  hrScene?: boolean;
+  beats?: HRBeat[];
+  music?: string;
   id: string;
   title: string;
   background: string;
@@ -363,6 +370,7 @@ type ModalState =
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
   | { kind: "cross-letter"; letterId: string }
   | { kind: "alpha-hunt" }
+  | { kind: "anchor-operation" }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
@@ -610,7 +618,7 @@ function hydrateGame(raw: unknown): GameState | null {
     ])),
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")).map(migrateRemeriiDateId),
     groupDateHistory: value.groupDateHistory || [],
-    crossQuestSeries: Object.fromEntries(Object.entries(value.crossQuestSeries || {}).map(([id, progress]) => [id, {
+    crossQuestSeries: Object.fromEntries(Object.entries(value.crossQuestSeries || {}).map(([id, progress]) => [id, id === HR_KEY ? hydrateHR(progress) : {
       ...progress,
       id,
       stage: Math.max(0, Math.min(8, Number(progress.stage) || 0)),
@@ -845,6 +853,7 @@ function availableSecretForCharacter(characterId: string, game: GameState) {
 }
 
 function spontaneousEventReady(event: SpontaneousEvent, game: GameState) {
+  if (game.crossQuestSeries[HR_KEY]?.stage === 4 && event.characters.includes("hylee") && event.characters.includes("remerii")) return false;
   if (game.worldEventHistory.includes(event.id)) return false;
   const containsForbiddenPair = event.characters.includes("amanea") && event.characters.includes("naiah");
   if (containsForbiddenPair && !event.amaneaNaiahSafeguard) return false;
@@ -979,6 +988,7 @@ function evolveLivingWorld(game: GameState): GameState {
 }
 
 function evolveCrossQuests(game: GameState): GameState {
+  if (!game.crossQuestSeries[HR_KEY] && hrUnlocked(game)) game = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [HR_KEY]: createHRProgress(game.day) }, journal: [...game.journal, "Quêtes croisées · Hylee & Remerii · Après les Serres"] };
   let progress = game.crossQuestSeries.linevaAllenna;
   if (!progress && linevaAllennaSeriesUnlocked({ ...game, unlockAll: game.settings.unlockAll })) {
     progress = createLinevaAllennaProgress(game.day);
@@ -1009,6 +1019,8 @@ function evolveCrossQuests(game: GameState): GameState {
 }
 
 function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
+  if (date.legacyOnly) return false;
+  if (HR_DATE_IDS.includes(date.id)) return !hrDateReason(date, game);
   if (!contentBranchAllowed(game.flags, date)) return false;
   if (game.settings.unlockAll) return true;
   return date.characters.every((characterId) => {
@@ -1037,6 +1049,7 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
 }
 
 function homePairDateUnlocked(game: GameState, pair: HomePairDateProfile): boolean {
+  if (pair.id === "hylee-remerii") return false; // Replaced by authored dates. Historical memories stay available.
   const property = propertyById(game.housing.propertyId);
   if (!property) return false;
   if (pair.locations?.length && !pair.locations.includes(property.location)) return false;
@@ -1195,6 +1208,9 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     const letter = LETTERS.find((candidate) => candidate.id === entry.id);
     livingWorldChanges.push({ kind: "letter", title: "Une correspondance vous attend", detail: letter?.subject || "Consultez le Journal." });
   });
+  const beforeHR = previous.crossQuestSeries[HR_KEY], afterHR = next.crossQuestSeries[HR_KEY];
+  if (!beforeHR && afterHR) livingWorldChanges.push({ kind: "story", title: "Une nouvelle série croisée est disponible", detail: "Hylee & Remerii · Après les Serres" });
+  if (beforeHR && afterHR && beforeHR.stage !== afterHR.stage && afterHR.stage < 7) livingWorldChanges.push({ kind: "story", title: afterHR.stage === 6 ? "Une opération est prête aux Serres Rocheuses" : "Hylee et Remerii · La suite vous attend", detail: HR_TITLES[afterHR.stage] });
   const previousCross = previous.crossQuestSeries.linevaAllenna;
   const nextCross = next.crossQuestSeries.linevaAllenna;
   if (!previousCross && nextCross) livingWorldChanges.push({ kind: "story", title: "Quêtes croisées débloquées", detail: "Lineva & Allenna · Le mauvais allié" });
@@ -1437,6 +1453,9 @@ function chooseAmbientDialogue(
 }
 
 function socialSceneReady(scene: SocialScene, selectedCharacter: string, game: GameState) {
+  if (scene.crossStage) { const stage = game.crossQuestSeries[scene.crossStage.series]?.stage; if (stage === undefined || stage < scene.crossStage.min || stage > scene.crossStage.max) return false; }
+  if (game.crossQuestSeries[HR_KEY]?.stage === 4 && !scene.crossStage && scene.characters.includes("hylee") && scene.characters.includes("remerii")) return false;
+  if (scene.id.startsWith("hr-")) return false;
   const triggers = scene.triggerCharacters || scene.characters;
   if (!triggers.includes(selectedCharacter)) return false;
   if (scene.oneTime && game.flags.includes(`social:${scene.id}`)) return false;
@@ -1630,6 +1649,7 @@ function relationBeatFor(sceneId: string, game: GameState) {
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
+  if (dialogue.scene.beats && dialogue.phase === "relation-choices") return dialogue.scene.beats[dialogue.dateRound ?? 0]?.choices || [];
   if (dialogue.phase === "relation-choices" && dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)) {
     const beat = authoredDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
     return beat?.choices || [];
@@ -2228,6 +2248,49 @@ export default function Home() {
     });
   }
 
+  function openHRDialogue(scene: SceneView, nextGame: GameState, replay = false) {
+    const cp = !replay && nextGame.crossQuestSeries[HR_KEY]?.hr?.checkpoint;
+    const resume = cp && cp.sceneId === scene.id ? cp : undefined;
+    const beat = resume && resume.round >= 0 ? scene.beats?.[resume.round] : undefined;
+    const chosen = resume ? (beat?.choices || scene.choices)?.find(c => c.id === resume.picks.at(-1)) : undefined;
+    const cast = chosen ? beat?.responseCast || beat?.cast : beat?.cast;
+    setModal(null);
+    setDialogue({ scene: cast ? { ...scene, cast } : scene, lines: expandedLines(scene, nextGame, chosen ? chosen.response : scene.intro, chosen ? "response" : "intro"), lineIndex: 0, phase: chosen ? resume!.round >= 0 ? "relation-response" : "response" : "intro", chosen, dateRound: resume?.round, datePicks: resume?.picks || [], replay });
+  }
+
+  function startHRScene(stage: number, replay = false, recognition = false) {
+    if (!game) return;
+    const progress = game.crossQuestSeries[HR_KEY];
+    if (!progress?.hr || (!replay && progress.stage !== stage) || (replay && !recognition && stage >= progress.stage)) return;
+    let hr = progress.hr;
+    if (recognition) {
+      if (hr.branch !== "double" || progress.stage !== 7) return;
+      if (!replay && hr.configuration && hr.configuration !== "waiting") return;
+      if (!replay && hr.configuration === "waiting" && game.day <= (hr.recognitionDay || 0)) return;
+    }
+    if (!replay && stage === 5 && !hr.branch) hr = { ...hr, branch: hrIndividualIntimacy(game.flags, "hylee") && hrIndividualIntimacy(game.flags, "remerii") ? "double" : "standard" };
+    const data = recognition ? hrRecognition(!replay && hr.configuration === "waiting") : hrQuestScene(stage, hr);
+    if (!data) return;
+    let nextGame = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [HR_KEY]: { ...progress, hr } } };
+    if (!replay) { nextGame = { ...nextGame, location: data.location, spot: data.spot, ...placeDiscovery(nextGame, data.location, data.spot) }; setGame(evolveLivingWorld(evolveCrossQuests(nextGame))); setSelectedLocation(data.location); setSelectedSpot(data.spot); }
+    const scene: SceneView = { ...data, kind: "cross-quest", hrScene: true, character: "hylee", mood: "soft", background: spotById(data.spot)?.background || backgroundUrl("camp") };
+    openHRDialogue(scene, nextGame, replay);
+  }
+
+  function startAnchorOperation() {
+    if (!game) return;
+    const p = game.crossQuestSeries[HR_KEY];
+    if (p?.stage !== 6 || !p.hr?.prepared) return;
+    if (!p.hr.anchor) updateGame(current => { const p = current.crossQuestSeries[HR_KEY]; return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr!, anchor: createAnchorOperation(current.day * 97 + current.history.length * 13) } } } }; });
+    setModal({ kind: "anchor-operation" });
+  }
+  function setAnchorState(anchor: AnchorState) {
+    updateGame(current => { const p = current.crossQuestSeries[HR_KEY]; if (p?.stage !== 6 || !p.hr?.prepared || (p.hr.anchor?.result && p.hr.anchor.result !== "retreat")) return current; return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr, anchor } } } }; });
+  }
+  function readHRLetter(id: string) {
+    updateGame(current => { const p = current.crossQuestSeries[HR_KEY]; if (!p || !p.letters.some(l => l.id === id && !l.read)) return current; return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, letters: p.letters.map(l => l.id === id ? { ...l, read: true } : l) } } }; });
+  }
+
   function startCrossQuestScene(stage: number, replay = false) {
     if (!game) return;
     const progress = game.crossQuestSeries.linevaAllenna;
@@ -2372,6 +2435,11 @@ export default function Home() {
       setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "choices" });
       return;
     }
+    if (dialogue.scene.beats && ["response", "relation-response"].includes(dialogue.phase)) {
+      const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
+      const beat = dialogue.scene.beats[nextRound];
+      if (beat) { setDialogue({ ...dialogue, scene: beat.cast ? { ...dialogue.scene, cast: beat.cast } : dialogue.scene, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" }); return; }
+    }
     if (dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) && ["response", "relation-response"].includes(dialogue.phase)) {
       const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
       const beat = authoredDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
@@ -2409,12 +2477,16 @@ export default function Home() {
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const isRelationChoice = dialogue.phase === "relation-choices";
     const hasRelationBeat = Boolean(dialogue.scene.route && relationBeatFor(dialogue.scene.route.id, game));
-    const authoredDateContinues = Boolean(dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)
+    const authoredDateContinues = Boolean(dialogue.scene.beats?.[isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0] || dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)
       && authoredDateBeat(dialogue.scene.id, isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0, dialogue.datePicks));
     const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) && (!hasRelationBeat || isRelationChoice)
       ? dialogue.scene.route
       : undefined;
-    if (!dialogue.replay) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && !(dialogue.scene.hrScene && game.crossQuestSeries[HR_KEY]?.hr?.choices[dialogue.scene.id])) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (dialogue.scene.hrScene && !dialogue.replay) updateGame(current => {
+      const p = current.crossQuestSeries[HR_KEY]; if (!p?.hr) return current;
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr, checkpoint: { sceneId: dialogue.scene.id, round: isRelationChoice ? dialogue.dateRound ?? 0 : -1, picks: [...(dialogue.datePicks || []), choice.id] } } } } };
+    });
     if (!dialogue.replay && dialogue.scene.route?.id === "hylee-0") {
       const main = isRelationChoice ? dialogue.primaryChoice?.id : choice.id;
       if (main) updateGame(current => ({ ...current, flags: [
@@ -2550,7 +2622,7 @@ export default function Home() {
         journal: [...current.journal, `Rendez-vous · ${date.title} avec ${CHARACTERS.find((entry) => entry.id === date.character)?.name}`],
       }));
     }
-    if (!dialogue.replay && dialogue.scene.kind === "group-date" && dialogue.scene.groupDate) {
+    if (!dialogue.replay && !dialogue.scene.hrScene && dialogue.scene.kind === "group-date" && dialogue.scene.groupDate) {
       const groupDate = dialogue.scene.groupDate;
       const names = groupDate.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name || id).join(" et ");
       updateGame((current) => ({
@@ -2565,7 +2637,7 @@ export default function Home() {
     const endingCampaign = dialogue.scene.campaignSceneId ? campaignSceneById(dialogue.scene.campaignSceneId) : undefined;
     const campaignEnding = endingCampaign ? campaignSceneOutro(endingCampaign) : [];
     const continuesToRelationBeat = !isRelationChoice && hasRelationBeat && routeChoiceCompletes(choice.id) && !injectedEnding.length;
-    const authoredEnding = continuesToRelationBeat || authoredDateContinues
+    const authoredEnding = dialogue.scene.hrScene || continuesToRelationBeat || authoredDateContinues
       ? []
       : injectedEnding.length
       ? injectedEnding
@@ -2577,8 +2649,9 @@ export default function Home() {
       : [...choice.response, ...authoredEnding];
     setDialogue({
       ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
+      scene: isRelationChoice && dialogue.scene.beats?.[dialogue.dateRound ?? 0]?.responseCast ? { ...dialogue.scene, cast: dialogue.scene.beats[dialogue.dateRound ?? 0].responseCast } : dialogue.scene,
       chosen: choice,
-      datePicks: dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
+      datePicks: dialogue.scene.hrScene || dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
@@ -2587,6 +2660,25 @@ export default function Home() {
 
   function closeDialogue() {
     if (!dialogue) return;
+    if (dialogue.scene.hrScene && !dialogue.replay) {
+      if (!dialogue.chosen || dialogue.lineIndex < dialogue.lines.length - 1 || !["response", "relation-response"].includes(dialogue.phase) || dialogue.scene.beats?.[dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1]) return;
+      updateGame(current => {
+        const p = current.crossQuestSeries[HR_KEY]; if (!p?.hr) return current;
+        if (p.hr.choices[dialogue.scene.id] && !dialogue.scene.id.startsWith("cross-hr-recognition")) return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr, checkpoint: undefined } } } };
+        const choices = { ...p.hr.choices, [dialogue.scene.id]: dialogue.datePicks || [dialogue.chosen!.id] };
+        let hr = { ...p.hr, choices, checkpoint: undefined };
+        let stage = p.stage, flags = current.flags;
+        const isDate = Boolean(dialogue.scene.groupDate);
+        if (dialogue.scene.id === "cross-hr-07-prepare") hr.prepared = true;
+        else if (dialogue.scene.id.startsWith("cross-hr-recognition")) {
+          const configuration = dialogue.chosen!.id.replace("cross-hr-config-", "") as NonNullable<typeof hr.configuration>;
+          hr = { ...hr, configuration, recognitionDay: current.day };
+          if (configuration === "accepted") flags = unique([...flags, HR_OPEN]);
+        } else if (!isDate) stage = Math.min(7, stage + 1);
+        const due = HR_LETTERS.filter(l => l.stage <= stage && !p.letters.some(e => l.id === e.id)).map(l => ({ id: l.id, receivedDay: current.day, read: false }));
+        return { ...current, flags, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr, stage, stageStartedDay: current.day, letters: [...p.letters, ...due] } }, groupDateHistory: isDate ? unique([...current.groupDateHistory, dialogue.scene.id]) : current.groupDateHistory, sceneMemories: { ...current.sceneMemories, [dialogue.scene.id]: current.spot }, journal: [...current.journal, `${isDate ? "Rendez-vous" : "Quêtes croisées"} · Hylee & Remerii · ${dialogue.scene.title}`] };
+      });
+    }
     if (!dialogue.replay && dialogue.scene.route?.id === "hylee-0" && game
       && game.relationships.hylee.stage >= 1 && game.relationships.remerii.stage === 0
       && !game.history.includes("remerii-0")) {
@@ -2623,7 +2715,7 @@ export default function Home() {
           && game!.relationships[date.character].stage >= 4
           && game!.relationships[date.character].affection + (dialogue.chosen.effects.affection || 0) >= 34
           && game!.relationships[date.character].trust + (dialogue.chosen.effects.trust || 0) >= 32)));
-    const groupDateCanBecomeIntimate = Boolean(groupDate
+    const groupDateCanBecomeIntimate = Boolean(groupDate && !groupDate.intimacyDisabled
       && dialogue.chosen?.dateOutcome === "great"
       && groupDateUnlocked(game!, groupDate)
       && groupDate.characters.every((characterId, index) => {
@@ -3413,12 +3505,15 @@ export default function Home() {
 
   function startGroupDate(groupDateId: string) {
     if (!game) return;
-    const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
+    let date = GROUP_DATES.find((entry) => entry.id === groupDateId);
     if (!date || !groupDateUnlocked(game, date)) return;
+    const home = date.home ? propertyById(game.housing.propertyId) : undefined;
+    if (date.home && !home) return;
+    if (home) date = { ...date, location: home.location, spot: home.spot };
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
     const nextGame: GameState = {
       ...game,
-      day: game.day + 1,
+      day: game.day + (game.crossQuestSeries[HR_KEY]?.hr?.checkpoint?.sceneId === date.id ? 0 : 1),
       period: periodIndex,
       location: date.location,
       spot: date.spot,
@@ -3436,11 +3531,17 @@ export default function Home() {
       choices: date.choices,
       kind: "group-date",
       groupDate: date,
+      ...(date.authoredBeats ? { hrScene: true, beats: HR_DATE_BEATS[date.id], music: date.music } : {}),
     };
+    if (scene.hrScene) {
+      const progress = nextGame.crossQuestSeries[HR_KEY];
+      if (progress?.hr && progress.hr.checkpoint?.sceneId !== date.id) nextGame.crossQuestSeries = { ...nextGame.crossQuestSeries, [HR_KEY]: { ...progress, hr: { ...progress.hr, checkpoint: { sceneId: date.id, round: -1, picks: [] } } } };
+    }
     setGame(evolveLivingWorld(evolveCrossQuests(nextGame)));
     setSelectedLocation(date.location);
     setSelectedSpot(date.spot);
     setModal(null);
+    if (scene.hrScene) { openHRDialogue(scene, nextGame); return; }
     setDialogue({ scene, lines: expandedLines(scene, nextGame, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro" });
   }
 
@@ -3478,6 +3579,7 @@ export default function Home() {
 
   function startGroupDateIntimacy(groupDateId: string) {
     const date = groupIntimacyContextById(groupDateId);
+    if (date?.intimacyDisabled) return;
     if (!game || !date) return;
     const played = date.id.endsWith("-home")
       ? game.housing.homeDateHistory.some((entry) => entry.startsWith("pair:allenna-lineva:desir@"))
@@ -3754,7 +3856,7 @@ export default function Home() {
     const date = GROUP_DATES.find((entry) => entry.id === groupDateId);
     if (!date) return;
     const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
-    const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || first.defaultMood, character: first.id, cast: date.characters, intro: date.intro, choices: date.choices, kind: "group-date", groupDate: date };
+    const scene: SceneView = { id: date.id, title: date.title, background: spotById(game.sceneMemories[date.id] || date.spot)?.background || backgroundUrl("streets"), mood: date.mood || first.defaultMood, character: first.id, cast: date.characters, intro: date.intro, choices: date.choices, kind: "group-date", groupDate: date, ...(date.authoredBeats ? { hrScene: true, beats: HR_DATE_BEATS[date.id], music: date.music } : {}) };
     setDialogue({ scene, lines: expandedLines(scene, game, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
   }
 
@@ -3868,7 +3970,7 @@ export default function Home() {
     .slice(0, 4);
   const spontaneousEvent = availableSpontaneousEvent(game);
   const localRumor = availableRumor(game);
-  const soundtrack = modal?.kind === "alpha-hunt"
+  const soundtrack = modal?.kind === "anchor-operation" ? "tension" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
     ? "alpha-chases"
     : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
@@ -3997,7 +4099,7 @@ export default function Home() {
 
       {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
       {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
+      {tab === "journal" && <JournalView game={game} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
       {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
@@ -4009,7 +4111,8 @@ export default function Home() {
       </nav>
 
       {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue() : undefined} />}
-      {modal && <GameModal
+      {modal?.kind === "anchor-operation" && game.crossQuestSeries[HR_KEY]?.hr?.anchor && <AnchorOperationModal state={game.crossQuestSeries[HR_KEY].hr!.anchor!} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => startHRScene(6)} />}
+      {modal && modal.kind !== "anchor-operation" && <GameModal
         modal={modal}
         game={game}
         onClose={() => setModal(null)}
@@ -4203,7 +4306,7 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
 function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
   const [section, setSection] = useState<"links" | "dates" | "crossed">("links");
   const unlockedCharacters = CHARACTERS.filter((character) => characterUnlocked(game, character));
-  const knownGroupDates = GROUP_DATES.filter((date) => contentBranchAllowed(game.flags, date) && date.characters.every((id) => unlockedCharacters.some((character) => character.id === id)));
+  const knownGroupDates = GROUP_DATES.filter((date) => !date.legacyOnly && (!date.authoredBeats || game.flags.includes(HR_OPEN)) && contentBranchAllowed(game.flags, date) && date.characters.every((id) => unlockedCharacters.some((character) => character.id === id)));
   const availableGroupDates = knownGroupDates.filter((date) => groupDateUnlocked(game, date));
   const metCount = unlockedCharacters.length;
   const dateCharacters = unlockedCharacters.filter((character) => DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]);
@@ -4215,6 +4318,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
       { id: "crossed", icon: "3", label: "À trois", count: availableGroupDates.length, hint: "Dynamiques croisées" },
     ]} />
 
+    {section === "dates" && availableGroupDates.length > 0 && <button className="primary-action" onClick={() => setModal({ kind: "group-date-planner" })}>Rendez-vous à plusieurs · sorties et logis</button>}
     {section === "crossed" && <div className="relation-section-panel"><button className="group-date-launcher" disabled={!knownGroupDates.length} onClick={() => setModal({ kind: "group-date-planner" })}><span className="group-date-portraits">{knownGroupDates[0]?.characters.map((id) => <img key={id} src={CHARACTERS.find((entry) => entry.id === id)?.portrait} alt="" />)}</span><div><p className="eyebrow">Relations croisées</p><h2>Rendez-vous à trois</h2><p>Les dynamiques n'apparaissent qu'après avoir rencontré toutes les personnes concernées.</p></div><b>{availableGroupDates.length} / {knownGroupDates.length}<small>accessibles</small></b></button><div className="crossed-date-grid">{knownGroupDates.map((date) => { const unlocked = groupDateUnlocked(game, date); return <article className={unlocked ? "unlocked" : "locked"} key={date.id}><div>{date.characters.map((id) => { const character = CHARACTERS.find((entry) => entry.id === id); return <img src={character?.portrait} alt="" key={id} />; })}</div><span>{date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)?.name).join(" · ")}</span><strong>{date.title}</strong><small>{unlocked ? "Dynamique disponible" : "Liens et décisions encore insuffisants"}</small></article>; })}</div></div>}
 
     {section === "dates" && <div className="date-directory">{dateCharacters.map((character) => {
@@ -4267,7 +4371,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: () => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
   const [section, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
@@ -4275,6 +4379,7 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
   const worldMemories = game.worldEventHistory.map((id) => SPONTANEOUS_EVENTS.find((event) => event.id === id)).filter((event): event is SpontaneousEvent => Boolean(event));
   const dateMemories = unique(game.dateHistory).map((id) => DATE_SCENES.find((date) => date.id === id)).filter((date): date is DateScene => Boolean(date));
   const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
+  const hrProgress = game.crossQuestSeries[HR_KEY];
   const crossProgress = game.crossQuestSeries.linevaAllenna;
   const crossLetters = (crossProgress?.letters || []).map((received) => ({ received, letter: LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: NonNullable<typeof crossProgress>["letters"][number]; letter: CrossLetter } => Boolean(entry.letter));
   const crossTimelineTarget = crossProgress?.stage === 3 ? nextCrossTimelineDay(crossProgress, game.day) : game.day;
@@ -4323,13 +4428,14 @@ function JournalView({ game, onStartCampaign, onReplayCampaign, onReplayRoute, o
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
     <SectionTabs label="Registres du Journal" active={section} onChange={setSection} items={[
       { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et chapitres" },
-      ...(crossProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${completedCrossMilestones(crossProgress.stage)}/7`, hint: "Lineva & Allenna" }] : []),
+      ...(crossProgress || hrProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${(crossProgress ? completedCrossMilestones(crossProgress.stage) : 0) + (hrProgress?.stage || 0)}/${7 * (Number(Boolean(crossProgress)) + Number(Boolean(hrProgress)))}`, hint: "Vos histoires croisées" }] : []),
       { id: "relations", icon: "♡", label: "Relations", count: `${completedRelationScenes}/${totalRelationScenes}`, hint: "Fils narratifs" },
       { id: "messages", icon: "✉", label: "Courrier", count: pendingMessages, hint: "Lettres et invitations" },
       { id: "discoveries", icon: "◌", label: "Découvertes", count: rumors.length + knowledge.length, hint: "Rumeurs et savoirs" },
       { id: "memories", icon: "◇", label: "Souvenirs", count: memoryCount, hint: "Relecture protégée" },
     ]} />
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
+      {section === "crossed" && hrProgress && <HRDossier progress={hrProgress} day={game.day} onScene={onHRScene} onOperation={onOperation} onLetter={onHRLetter} />}
       {section === "crossed" && crossProgress && <section className={`cross-quest-dossier ${crossProgress.stage >= 8 ? "complete" : ""}`}>
         <header><div className="cross-dossier-portraits"><img src={CHARACTERS.find((entry) => entry.id === "lineva")?.portrait} alt="Lineva" /><img src={CHARACTERS.find((entry) => entry.id === "allenna")?.portrait} alt="Allenna" /></div><div><p className="eyebrow">Forthaven ↔ Akuhn’Nabad</p><h2>Lineva & Allenna</h2><p>Amitié, camaraderie et coopération entre deux commandantes qui continuent d’agir sans attendre votre médiation.</p></div><strong>{completedCrossMilestones(crossProgress.stage)} / 7</strong></header>
         <div className="cross-progress"><i style={{ width: `${(completedCrossMilestones(crossProgress.stage) / 7) * 100}%` }} /></div>
@@ -5152,13 +5258,13 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "group-date-planner") {
     const property = propertyById(game.housing.propertyId);
     const knownCharacters = new Set(CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => character.id));
-    const knownGroupDates = GROUP_DATES.filter((date) => contentBranchAllowed(game.flags, date) && date.characters.every((id) => knownCharacters.has(id)));
-    const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.characters.every((id) => knownCharacters.has(id)) && (pair.id !== "allenna-lineva" || game.flags.includes("cross-la-series-complete")));
+    const knownGroupDates = GROUP_DATES.filter((date) => !date.legacyOnly && (!date.authoredBeats || game.flags.includes(HR_OPEN)) && contentBranchAllowed(game.flags, date) && date.characters.every((id) => knownCharacters.has(id)));
+    const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.id !== "hylee-remerii" && pair.characters.every((id) => knownCharacters.has(id)) && (pair.id !== "allenna-lineva" || game.flags.includes("cross-la-series-complete")));
     return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Rendez-vous à trois connus</h2><p>Les sorties publiques et les visites dans votre logis apparaissent seulement après la rencontre des deux personnes concernées.</p></div></header><div className="date-grid group-date-grid">{knownGroupDates.map((date) => {
       const unlocked = groupDateUnlocked(game, date);
       const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-      const place = spotById(date.spot);
-      return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>Réserver cette journée à trois</button> : <div className="group-date-requirements">{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
+      const place = date.home ? propertyById(game.housing.propertyId) : spotById(date.spot);
+      return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name || "Votre futur logis"}{game.groupDateHistory.includes(date.id) ? " · Déjà vécu" : ""}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>{game.crossQuestSeries[HR_KEY]?.hr?.checkpoint?.sceneId === date.id ? "Reprendre ce rendez-vous" : "Réserver ce moment à trois"}</button> : <div className="group-date-requirements">{date.authoredBeats && <p>{hrDateReason(date, game)}</p>}{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
     })}{knownHomePairs.map((pair) => {
       const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
       const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);

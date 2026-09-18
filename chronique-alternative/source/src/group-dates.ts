@@ -1,3 +1,4 @@
+import { HR_DATES } from "./hylee-remerii-dates";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import type { IntimacyGame, IntimacyGameOption } from "./intimacy-games";
@@ -9,6 +10,7 @@ import {
 } from "./lineva-allenna-group-intimacy";
 
 export type GroupDateScene = {
+  authoredBeats?: boolean; intimacyDisabled?: boolean; legacyOnly?: boolean; home?: boolean; afterDates?: string[]; music?: string;
   id: string;
   characters: [string, string];
   title: string;
@@ -117,8 +119,9 @@ function groupChoice(
 }
 
 export const GROUP_DATES: GroupDateScene[] = [
+  ...HR_DATES,
   {
-    id: "group-date-hylee-remerii",
+    id: "group-date-hylee-remerii", legacyOnly: true,
     characters: ["hylee", "remerii"],
     title: "Une expérience sans sujet d’étude",
     type: "Atelier et dîner improvisé",
@@ -747,7 +750,7 @@ export function groupIntimacyContextById(id: string) {
 }
 
 export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
-  if (isManualLinevaAllennaIntimacy(date.id)) return [];
+  if (date.intimacyDisabled || isManualLinevaAllennaIntimacy(date.id)) return [];
   return [
     ...date.intimacySetting.opening.map(N),
     N("Le dernier espace entre vous disparaît dans un échange de regards, de baisers et de mains attirées contre la peau. Chacun trouve sa place auprès des deux autres sans transformer l’instant en mode d’emploi."),
@@ -755,7 +758,7 @@ export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
 }
 
 export function groupIntimacyEnding(date: GroupDateScene): DialogueLine[] {
-  if (isManualLinevaAllennaIntimacy(date.id)) return [];
+  if (date.intimacyDisabled || isManualLinevaAllennaIntimacy(date.id)) return [];
   return [
     N("Le rythme retombe lentement. Vous restez enlacés dans la même chaleur, partageant l’eau, les sourires épuisés et les quelques mots qui viennent lorsque les respirations retrouvent leur calme."),
     ...date.intimacySetting.closing.map(N),
@@ -791,8 +794,8 @@ export function validateGroupIntimacyCatalog(): { pairs: number; combinations: n
     if (!game || game.beats.length !== 4 || game.beats.some((beat) => beat.options.length !== 3)) throw new Error(`${pairId}: mini-jeu incomplet`);
   });
   if (new Set(labels).size !== labels.length) throw new Error("Chaque route à trois doit avoir un libellé unique par duo et par sexe");
-  if (GROUP_DATES.length + HOME_GROUP_INTIMACY_DATES.length !== Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length) throw new Error("Chaque contexte intime doit avoir un rendez-vous public ou au logis");
-  return { pairs: Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length, combinations, routes, chapters, dates: GROUP_DATES.length, games: Object.keys(GROUP_INTIMACY_GAMES).length };
+  if (GROUP_DATES.filter(date => !date.intimacyDisabled).length + HOME_GROUP_INTIMACY_DATES.length !== Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length) throw new Error("Chaque contexte intime doit avoir un rendez-vous public ou au logis");
+  return { pairs: Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length, combinations, routes, chapters, dates: GROUP_DATES.filter(date => !date.intimacyDisabled).length, games: Object.keys(GROUP_INTIMACY_GAMES).length };
 }
 
 validateGroupIntimacyCatalog();

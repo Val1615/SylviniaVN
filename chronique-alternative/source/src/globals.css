@@ -1,3 +1,38 @@
+/* Hylee–Remerii: scoped dossier and anchor operation */
+.hr-dossier { margin-bottom: 24px; }
+.hr-dossier .cross-milestones { display: grid; gap: 8px; }
+.hr-dossier button, .hr-mail summary { color: #f2e9fa; cursor: pointer; }
+.hr-dossier .cross-milestones button, .hr-mail details { border: 1px solid #51465f; background: #211e30; padding: 12px; text-align: left; border-radius: 8px; }
+.hr-mail { margin-block: 20px; display: grid; gap: 8px; }
+.hr-mail p, .hr-ambient { line-height: 1.7; }
+.anchor-backdrop { z-index: 200; padding: 16px; overflow-y: auto; }
+.anchor-operation { position: relative; width: min(1120px,100%); max-height: calc(100dvh - 32px); overflow-y: auto; color: #f5eafa; background: #17151f; border: 1px solid #6f5264; border-radius: 14px; box-shadow: 0 18px 80px #000a; }
+.anchor-operation:focus { outline: none; }
+.anchor-heading { padding: 22px 64px 8px 24px; }
+.anchor-heading h2 { margin: 0; font-size: clamp(20px,3vw,30px); }
+.anchor-heading p { margin: 8px 0; color: #d7bdcc; }
+.anchor-notice { min-height: 4.5em; max-width: 750px; line-height: 1.4; opacity: 0; transition: opacity .45s; }
+.anchor-notice.visible { opacity: 1; }
+.anchor-close { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; color: #fff; background: #322738; border-radius: 8px; font-size: 28px; }
+.anchor-map { position: relative; aspect-ratio: 16/9; min-height: 260px; background-position: center; background-size: 100% 100%; overflow: hidden; }
+.anchor-map svg { position: absolute; width: 100%; height: 100%; }
+.anchor-portal-label { position: absolute; top: 9%; left: 52%; transform: translateX(-50%); font-size: 12px; color: #eed3d3; background: #1a1116c9; padding: 5px 8px; border-radius: 6px; }
+.anchor-point { position: absolute; transform: translate(-50%,-50%); width: 52px; height: 52px; min-width: 44px; border: 2px solid #e1b8cc; border-radius: 50%; background: #211a2ded; color: #fff; font-size: 22px; box-shadow: 0 0 20px #c64b6044; cursor: pointer; }
+.anchor-point.selected { border-color: #b9e4ee; background: #325064; }
+.anchor-point:disabled { opacity: .6; cursor: default; }
+.anchor-controls { padding: 20px 24px 28px; min-height: 230px; line-height: 1.6; background: #1c1927; }
+.anchor-controls h3 { margin: 0 0 6px; }
+.anchor-controls button { color: #f9ecff; background: #342d46; border: 1px solid #796080; border-radius: 8px; min-height: 44px; padding: 10px 16px; cursor: pointer; }
+.anchor-controls button:disabled { opacity: .45; cursor: default; }
+.anchor-controls .primary-action { background: #70517a; margin-top: 12px; }
+.anchor-runes, .anchor-dials, .anchor-sequence { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+.anchor-runes button, .anchor-dials button, .anchor-sequence span { font-size: 28px; min-width: 48px; text-align: center; }
+.anchor-dials > div { display: grid; gap: 8px; }
+.anchor-sequence { min-height: 45px; color: #badeeb; }
+.anchor-operation button:focus-visible, .hr-dossier button:focus-visible, .hr-mail summary:focus-visible { outline: 3px solid #badeeb; outline-offset: 3px; }
+@media (max-width: 600px) { .anchor-backdrop { padding: 6px; } .anchor-operation { max-height: calc(100dvh - 12px); } .anchor-heading { padding: 18px 56px 4px 16px; } .anchor-map { min-height: 270px; } .anchor-controls { padding: 16px; } .anchor-runes { gap: 6px; } .anchor-runes button { padding: 8px; min-width: 40px; } .anchor-portal-label { max-width: 130px; text-align: center; } }
+@media (prefers-reduced-motion: reduce) { .anchor-notice { transition: none; } }
+
 :root {
   --ink: #0b0d18;
   --ink-soft: #141526;

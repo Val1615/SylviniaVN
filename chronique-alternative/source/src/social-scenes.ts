@@ -1,6 +1,8 @@
+import { HR_AMBIENT_SCENES } from "./hylee-remerii-ambient";
 import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
 
 export type SocialScene = {
+  crossStage?: { series: string; min: number; max: number };
   id: string;
   title: string;
   characters: string[];
@@ -25,6 +27,7 @@ const line = (speaker: string, text: string): DialogueLine => ({ speaker, text }
 const choice = (id: string, text: string, stat: StatKey, response: DialogueLine[], effects: Effects, requiresRelationship?: ChoiceData["requiresRelationship"]): ChoiceData => ({ id, text, stat, response, effects, requiresRelationship });
 
 export const SOCIAL_SCENES: SocialScene[] = [
+  ...HR_AMBIENT_SCENES,
   {
     id: "amanea-family-truth", title: "Le couloir des trois jours", characters: ["amanea", "allenna", "iriana"], triggerCharacters: ["amanea", "allenna"], requiredPresent: ["amanea", "allenna"], locations: ["akuhn"], sublocations: ["akuhn-war-room"], minStages: { amanea: 2, allenna: 1 }, requiresFlags: ["story-amanea-met", "story-medig-guide"], excludesFlags: ["amanea-family-truth"], oneTime: true, priority: 110, mood: "thinking",
     prompt: [
