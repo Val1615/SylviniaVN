@@ -1,146 +1,1110 @@
-import type { ChoiceData, DialogueLine, Effects } from "./game-data";
+import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
 import type { CrossQuestProgress } from "./cross-quests";
 import { validAnchorState, type AnchorState } from "./anchor-operation";
+
 export const HR_KEY = "hyleeRemerii";
 export const HR_OPEN = "cross-hr-dates-unlocked";
-export type HRBeat = { intro: DialogueLine[]; choices: ChoiceData[]; cast?: string[]; responseCast?: string[] };
-export type HRScene = HRBeat & { id: string; title: string; location: string; spot: string; cast: string[]; beats: HRBeat[]; music: string };
-export type HRState = { branch?: "standard" | "double"; configuration?: "waiting" | "separate" | "refused" | "accepted"; prepared?: boolean; anchor?: AnchorState; recognitionDay?: number; checkpoint?: { sceneId: string; round: number; picks: string[] }; choices: Record<string,string[]> };
+
+export type HRBeat = {
+  intro: DialogueLine[];
+  choices: ChoiceData[];
+  cast?: string[];
+  responseCast?: string[];
+};
+
+export type HRScene = HRBeat & {
+  id: string;
+  title: string;
+  location: string;
+  spot: string;
+  cast: string[];
+  beats: HRBeat[];
+  music: string;
+};
+
+export type HRConfiguration = "waiting" | "separate" | "refused" | "accepted";
+
+export type HRState = {
+  branch?: "standard" | "double";
+  configuration?: HRConfiguration;
+  prepared?: boolean;
+  anchor?: AnchorState;
+  recognitionDay?: number;
+  checkpoint?: { sceneId: string; round: number; picks: string[] };
+  choices: Record<string, string[]>;
+};
+
+export type HRHydrationEvidence = {
+  flags?: string[];
+  groupDateHistory?: string[];
+};
+
 export const N = (text: string): DialogueLine => ({ speaker: "Narration", text });
 export const H = (text: string, mood = "soft"): DialogueLine => ({ speaker: "Hylee", text, mood });
 export const R = (text: string, mood = "calm"): DialogueLine => ({ speaker: "Remerii", text, mood });
 export const P = (text: string): DialogueLine => ({ speaker: "{player}", text });
-export const Q = (id: string, text: string, response: DialogueLine[], effects: Effects = {}, stat: ChoiceData["stat"] = "lucidite"): ChoiceData => ({ id, text, response, effects, stat });
-export const HR_TITLES = ["Après les Serres", "Quelque chose dans les relevés", "La distance correcte", "Ce qu’on dit quand on a peur", "Ce qu’on n’a pas su dire", "Ce qui existait déjà", "Les Trois Points d’Ancrage"];
-export const HR_OBJECTIVES = ["Retrouver Hylee et Remerii à Mir’Aldas.", "Comparer les relevés à la bibliothèque.", "Reconnaître les terrasses périphériques des Serres.", "Convenir du rôle d’Hylee dans l’opération.", "Revoir Hylee, puis Remerii, après leur dispute.", "Les rejoindre à la résidence avant le départ.", "Préparer les mécanismes, neutraliser les ancrages et retrouver les deux mages au col."];
+
+// Une nouvelle réponse ne peut pas hériter silencieusement de Lucidité.
+export const Q = (
+  id: string,
+  text: string,
+  stat: StatKey,
+  response: DialogueLine[],
+  effects: Effects = {},
+): ChoiceData => ({ id, text, stat, response, effects });
+
+export const HR_TITLES = [
+  "Après les Serres",
+  "Quelque chose dans les relevés",
+  "La distance correcte",
+  "Ce qu’on dit quand on a peur",
+  "Ce qu’on n’a pas su dire",
+  "Ce qui existait déjà",
+  "Les Trois Points d’Ancrage",
+];
+
+export const HR_OBJECTIVES = [
+  "Des secousses continuent autour des installations périphériques du portail. Retrouver Hylee et Remerii à Mir’Aldas et examiner les premiers rapports.",
+  "Plusieurs témoignages semblent décrire les mêmes perturbations. Comparer les horaires et la géographie pour isoler leur origine réelle.",
+  "Trois terrasses pourraient relayer l’activité du portail. Les observer depuis le col, sans approcher l’ouverture ni engager les mécanismes.",
+  "Le plan expose Hylee. Rejoindre l’atelier et définir son rôle sans laisser la peur décider à sa place.",
+  "La dispute a blessé leur confiance. Revoir Hylee puis Remerii, et leur laisser réparer elles-mêmes ce qui s’est rompu.",
+  "La relève du col approche. Les retrouver à la résidence pour préparer le départ et partager un moment ordinaire avant l’opération.",
+  "Gagner les terrasses, neutraliser les trois relais et préserver une voie de repli. La progression de l’opération sera conservée.",
+];
+
 export const HR_LETTERS = [
- { id: "cross-hr-letter-reports", stage: 1, subject: "Les relevés", body: ["Les copies seront à la bibliothèque. Je vous y attends lorsque vous pourrez venir. — Remerii", "Prends quelque chose pour retenir les feuilles. Elle a déjà pris les trois presse-papiers. — Hylee"] },
- { id: "cross-hr-letter-detail", stage: 2, subject: "La deuxième secousse", body: ["J’ai retrouvé le récit du carrier. Il a compté deux secousses, pas trois. La dernière venait de la charrette. — Hylee", "Exact. J’ai barré la troisième sur notre copie. Garde l’original. — R."] },
- { id: "cross-hr-letter-bag", stage: 5, subject: "Le sac bleu", body: ["Nous partons avec les deux cordes. Le sac bleu est réparé. — Remerii", "Par moi. Elle a seulement tenu la boucle. Nous mangerons avant de partir ; il y a de la place. — Hylee"] },
- { id: "cross-hr-letter-window", stage: 6, subject: "Le passage du col", body: ["Le poste nous laissera gagner les terrasses après la relève. Le portail reste hors de portée. Nous repartons si le chemin n’est plus libre. — Remerii", "J’ai essayé les gants. Cette fois, je peux fermer les doigts. — Hylee"] },
+  {
+    id: "cross-hr-letter-reports",
+    stage: 1,
+    subject: "Les relevés",
+    body: [
+      "Les originaux seront à la bibliothèque. Nous cherchons d’abord à savoir si les secousses menacent encore les convois ; personne ne retourne au portail. — Remerii",
+      "J’ai réservé les trois presse-papiers avant qu’elle ne le fasse. Prends de quoi écrire au dos des copies. — Hylee",
+    ],
+  },
+  {
+    id: "cross-hr-letter-detail",
+    stage: 2,
+    subject: "La deuxième secousse",
+    body: [
+      "Le carrier confirme deux secousses. La troisième venait de sa charrette ; il a refait le bruit pour être certain. — Hylee",
+      "Elle a également fait sursauter la moitié des archives. Le détail reste utile. Garde l’original. — R.",
+    ],
+  },
+  {
+    id: "cross-hr-letter-bag",
+    stage: 5,
+    subject: "Le sac bleu",
+    body: [
+      "Nous partons avec les deux cordes. Le sac bleu est réparé et Hylee a ajouté le repère de repli sur notre copie. — Remerii",
+      "Par moi. Elle a tenu la boucle et prétend maintenant avoir fait la moitié. Nous mangerons avant de partir ; il y a une troisième assiette. — Hylee",
+    ],
+  },
+  {
+    id: "cross-hr-letter-window",
+    stage: 6,
+    subject: "Le passage du col",
+    body: [
+      "Le poste nous laissera gagner les terrasses après la relève. Le portail reste hors de portée. Si la voie de retour se ferme, nous nous replions. — Remerii",
+      "J’ai essayé les gants. Cette fois je peux fermer les doigts, et elle les a vérifiés seulement deux fois. — Hylee",
+    ],
+  },
 ];
-export function hrUnlocked(g: { flags: string[]; relationships: Record<string,{stage:number}> }) { return g.flags.some(f => ["main-story-act-1-complete","main-story-complete"].includes(f)) && g.relationships.hylee?.stage >= 5 && g.relationships.remerii?.stage >= 5; }
-export function hrIndividualIntimacy(flags: string[], person: "hylee" | "remerii") { return flags.some(f => f === `home-intimate:${person}` || f.startsWith(`date-intimate:date-${person}-`)); }
-export function createHRProgress(day: number): CrossQuestProgress { return { id: HR_KEY, stage: 0, startedDay: day, stageStartedDay: day, letters: [], hr: { choices: {} } }; }
-export function hydrateHR(p: CrossQuestProgress): CrossQuestProgress {
- const h = p.hr || { choices: {} };
- return { ...p, stage: Math.max(0, Math.min(7, Math.floor(Number(p.stage)||0))), letters: Array.isArray(p.letters) ? p.letters.filter(e => HR_LETTERS.some(l => l.id === e.id)) : [], hr: { ...h, choices: h.choices && typeof h.choices === "object" ? h.choices : {}, anchor: validAnchorState(h.anchor) ? h.anchor : undefined, checkpoint: h.checkpoint && typeof h.checkpoint.sceneId === "string" && Number.isInteger(h.checkpoint.round) && h.checkpoint.round >= -1 && Array.isArray(h.checkpoint.picks) && h.checkpoint.picks.every(p => typeof p === "string") ? h.checkpoint : undefined } };
+
+export function hrUnlocked(g: {
+  flags: string[];
+  relationships: Record<string, { stage: number }>;
+}) {
+  return g.flags.some((flag) => ["main-story-act-1-complete", "main-story-complete"].includes(flag))
+    && g.relationships.hylee?.stage >= 5
+    && g.relationships.remerii?.stage >= 5;
 }
+
+export function hrIndividualIntimacy(flags: string[], person: "hylee" | "remerii") {
+  return flags.some((flag) => flag === `home-intimate:${person}` || flag.startsWith(`date-intimate:date-${person}-`));
+}
+
+export function createHRProgress(day: number): CrossQuestProgress {
+  return {
+    id: HR_KEY,
+    stage: 0,
+    startedDay: day,
+    stageStartedDay: day,
+    letters: [],
+    hr: { choices: {} },
+  };
+}
+
+function configurationFromChoices(choices: Record<string, string[]>): HRConfiguration | undefined {
+  const picked = Object.entries(choices)
+    .filter(([sceneId]) => sceneId.startsWith("cross-hr-recognition"))
+    .flatMap(([, ids]) => ids)
+    .filter((id) => id.startsWith("cross-hr-config-"))
+    .at(-1);
+  const candidate = picked?.slice("cross-hr-config-".length);
+  return ["waiting", "separate", "refused", "accepted"].includes(candidate || "")
+    ? candidate as HRConfiguration
+    : undefined;
+}
+
+export function hrTriadAccepted(
+  progress: CrossQuestProgress | undefined,
+  evidence: HRHydrationEvidence = {},
+) {
+  if (!progress?.hr || progress.stage < 7) return false;
+  const normalized = hydrateHR(progress, evidence);
+  return normalized.hr?.branch === "double" && normalized.hr.configuration === "accepted";
+}
+
+export function hydrateHR(
+  progress: CrossQuestProgress,
+  evidence: HRHydrationEvidence = {},
+): CrossQuestProgress {
+  const source = progress.hr || { choices: {} };
+  const choices = source.choices && typeof source.choices === "object"
+    ? Object.fromEntries(Object.entries(source.choices).filter(([, ids]) => Array.isArray(ids) && ids.every((id) => typeof id === "string")))
+    : {};
+  const canonicalChoice = configurationFromChoices(choices);
+  const historyProvesAcceptance = (evidence.groupDateHistory || []).some((id) => id.startsWith("group-date-hylee-remerii-"));
+  const flagProvesAcceptance = (evidence.flags || []).includes(HR_OPEN);
+  const storedConfiguration = ["waiting", "separate", "refused", "accepted"].includes(source.configuration || "")
+    ? source.configuration
+    : undefined;
+  const acceptanceProved = canonicalChoice === "accepted"
+    || storedConfiguration === "accepted"
+    || flagProvesAcceptance
+    || historyProvesAcceptance;
+  const configuration = acceptanceProved ? "accepted" : canonicalChoice || storedConfiguration;
+  const branch = source.branch === "double" || source.branch === "standard"
+    ? source.branch
+    : configuration ? "double" : undefined;
+  const normalizedBranch = configuration === "accepted" ? "double" : branch;
+  const checkpoint = source.checkpoint
+    && typeof source.checkpoint.sceneId === "string"
+    && Number.isInteger(source.checkpoint.round)
+    && source.checkpoint.round >= -1
+    && Array.isArray(source.checkpoint.picks)
+    && source.checkpoint.picks.every((pick) => typeof pick === "string")
+    ? source.checkpoint
+    : undefined;
+
+  return {
+    ...progress,
+    stage: Math.max(0, Math.min(7, Math.floor(Number(progress.stage) || 0))),
+    letters: Array.isArray(progress.letters)
+      ? progress.letters.filter((entry) => HR_LETTERS.some((letter) => letter.id === entry.id))
+      : [],
+    hr: {
+      ...source,
+      branch: normalizedBranch,
+      configuration,
+      choices,
+      anchor: validAnchorState(source.anchor) ? source.anchor : undefined,
+      checkpoint,
+    },
+  };
+}
+
 export function hrAmbient(stage: number): DialogueLine[] {
- if (stage === 4) return [N("La chaise d’Hylee reste vide à l’atelier. Remerii l’a dégagée des livres, puis a remis les livres ailleurs. À la résidence, Hylee raccommode la même lanière sans venir la chercher.")];
- if (stage === 5) return [N("Hylee pose une boucle sur la table. Remerii rapproche la lampe. Elles essaient deux trous, échangent le poinçon et reprennent leur couture.")];
- if (stage > 1 && stage < 4) return [N("Une feuille dépasse du livre de Remerii. Hylee la retourne avant qu’elle soit rangée : au dos, une heure manque encore. Remerii lui passe la plume.")];
- return [];
+  if (stage === 4) {
+    return [N("La chaise d’Hylee reste vide à l’atelier. Remerii en a retiré les livres par réflexe, puis a posé près du dossier l’écharpe qu’Hylee oublie toujours lorsqu’elle est contrariée.")];
+  }
+  if (stage === 5) {
+    return [N("Hylee pose une boucle sur la table. Remerii rapproche la lampe avant qu’elle le demande. Elles essaient deux trous, échangent le poinçon et reprennent leur couture.")];
+  }
+  if (stage > 1 && stage < 4) {
+    return [N("Une feuille dépasse du livre de Remerii. Hylee la retourne avant qu’elle soit rangée : au dos, une heure manque encore. Remerii lui passe déjà la plume.")];
+  }
+  return [];
 }
-const S = (id: string, title: string, spot: string, intro: DialogueLine[], choices: ChoiceData[], beats: HRBeat[] = [], cast = ["hylee","remerii"], music = "mage-city"): HRScene => ({ id, title, location: spot.startsWith("rocky-") ? "rocky-spires" : "miraldas", spot, intro, choices, beats, cast, music });
+
+const S = (
+  id: string,
+  title: string,
+  spot: string,
+  intro: DialogueLine[],
+  choices: ChoiceData[],
+  beats: HRBeat[] = [],
+  cast = ["hylee", "remerii"],
+  music = "mage-city",
+): HRScene => ({
+  id,
+  title,
+  location: spot.startsWith("rocky-") ? "rocky-spires" : "miraldas",
+  spot,
+  intro,
+  choices,
+  beats,
+  cast,
+  music,
+});
+
 export const HR_SCENES: HRScene[] = [
- S("cross-hr-01", HR_TITLES[0], "miraldas-atelier", [
- N("Une caisse venue des Serres occupe la place du banc d’essai. La poussière rouge a traversé la toile. Remerii en éloigne son livre ; Hylee, accroupie, retient le couvercle avec son genou."), H("Tu peux tirer le dernier clou ? Il tourne dans le bois."), N("Vous prenez la pince. Le clou cède avec une plainte. À l’intérieur, des relevés et deux instruments cassés ; aucun fragment du portail."),
- R("Posez la pince. Il y a des éclats sous le tissu."), H("Je les ai vus."), N("Hylee replie la toile autour d’eux avant de sortir les feuilles. Remerii lui prend une copie des mains pour la lire ; Hylee conserve l’autre."),
- R("Trois secousses au poste nord. Puis deux au retour du convoi."), P("Ils ont vu quelque chose tomber ?"), R("Pas d’ici. Le rapport dit seulement que la passerelle bougeait."), H("Les heures ne sont pas les mêmes sur les deux feuilles."), N("Elle les rapproche. Remerii laisse aussitôt son instrument et se penche sur la seconde."),
- H("Si ça continue sous le portail, ça ne va pas disparaître parce qu’on est rentrés."), R("Non. J’ai demandé qu’on m’envoie les originaux."), H("Nous, alors. J’aimerais les voir aussi."), R("Vous les avez dans les mains."), H("Les originaux. Quand ils arriveront."), N("Remerii regarde la feuille, puis Hylee. Elle finit par hocher la tête."),
- R("Nous les lirons ensemble."), N("Hylee lui tend la copie. Au passage, elle retire une écharde accrochée à sa manche. Remerii attend que ses doigts aient fini avant de replier le bras."),
- ], [
- Q("cross-hr-01-copy", "Proposer de classer les copies par heure.", [P("Je peux remettre les témoignages dans l’ordre. Vous me direz ce qui manque."), H("Je prends ceux du convoi. Ils ont écrit au dos aussi."), R("Laissez les trous dans la liste ; ne leur inventons pas une heure pour que tout s’aligne."), N("Vous dégagez une place sur le banc. Hylee pose sa feuille près de celle de Remerii et tire un tabouret vers vous.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-01-source", "Demander où trouver les témoins encore en ville.", [H("Le carrier vient demain chercher son reçu. J’ai gardé son nom."), R("Demandez-lui seulement ce qu’il a vu. Il a déjà reçu assez d’explications de gens qui n’étaient pas là."), P("Je noterai ses mots."), N("Hylee vous montre le nom, souligné une seule fois dans la marge.")], { trust: 2 }),
- Q("cross-hr-01-sure", "Dire que Remerii saura certainement régler le problème seule.", [R("Je ne sais pas encore ce qui l’alimente.", "strict"), H("Et j’aimerais éviter de préparer des affaires pour un départ dont on me préviendrait à la porte."), N("Remerii repose la feuille entre vous trois."), R("Personne ne part ce soir. Commençons par lire.")], { trust: -2 }),
- ]),
- S("cross-hr-02", HR_TITLES[1], "miraldas-archives", [
- N("La bibliothèque vous a réservé le bout d’une table. Des copies s’étendent sous trois presse-papiers différents. Hylee apporte une feuille pliée en quatre, dont le bord porte une trace de farine."), H("Le carrier avait noté ça sur le reçu de son déjeuner. Il n’y a eu que deux secousses. La troisième, c’était sa charrette."), R("Vous lui avez demandé combien de temps les roues avaient tremblé ?"), H("Oui. Il a refait le bruit. Deux fois. Très fort."), N("Remerii barre un chiffre. Le bibliothécaire lève les yeux ; Hylee lui fait signe qu’elle n’a pas l’intention de refaire la démonstration."),
- P("Les gardes étaient ici. Ils pouvaient voir la terrasse du centre, mais pas celle de gauche."), N("Vous posez le doigt sur la copie du chemin. Remerii rapproche sa chaise."), R("Alors ces deux rapports décrivent probablement la même secousse."), H("Et celle-ci vient après, plus à droite."), N("Elle relie deux heures au crayon. Le trait atteint une petite terrasse jusqu’alors couverte par le presse-papier."),
- R("Trois points éloignés du portail. S’ils répondent ainsi, ils pourraient le maintenir depuis les abords."), P("Des ancrages ?"), R("Peut-être. Nous pouvons aller vérifier les mécanismes périphériques sans approcher l’ouverture."), H("Le centre tire les deux autres. Regarde l’heure du deuxième relevé."), N("Remerii suit le trait jusqu’au bout. Elle hoche la tête et corrige son propre dessin."), R("Oui. C’est le centre qu’il faudra regarder d’abord."),
- ], [
- Q("cross-hr-02-order", "Noter séparément ce que les témoins ont vu et ce que vous en déduisez.", [P("Je mets les secousses ici. Les ancrages, au crayon."), R("Gardez de la place autour. Nous aurons des corrections."), H("Tu peux me laisser le dessin ? J’arrive mieux à suivre quand je le refais."), N("Elle recopie les passerelles tandis que Remerii indique les positions connues des postes.")], { trust: 1, relationshipEffects: { remerii: { trust: 2 } } }),
- Q("cross-hr-02-trace", "Demander à Hylee de comparer les trois terrasses.", [H("Celle du centre est reliée aux deux autres. Et celle de droite a une sortie derrière."), R("Bien vu. Cela pourrait nous laisser un repli."), H("Ou être un escalier écroulé. Je l’entoure aussi au crayon."), N("Remerii sourit brièvement et lui tend la gomme.")], { affection: 1, trust: 2 }),
- Q("cross-hr-02-certain", "Rédiger tout de suite un rapport annonçant trois ancrages.", [R("Écrivez trois terrasses. Nous ignorons encore ce qu’elles portent.", "strict"), H("On a déjà assez de copies qui se répètent. Celle-ci peut attendre."), N("Vous rayez le mot. La nouvelle ligne tient moins de place.")], { relationshipEffects: { remerii: { trust: -2 } } }),
- ]),
- S("cross-hr-03", HR_TITLES[2], "rocky-spires-pass", [
- N("Le portail occupe une entaille de la montagne, si loin que la brume passe devant lui en couches séparées. Sa lueur atteint pourtant les bords de vos cartes."), N("Sous le col, trois terrasses entourent un ravin. Des bandes sombres à motifs verts pendent à deux balustrades ; la pierre taillée autour des anneaux porte d’autres signes, anguleux, étrangers aux bannières."),
- R("Nous restons sur le chemin haut pour aujourd’hui."), P("Je vois les poignées depuis ici. Une sur chaque palier."), H("Et les fentes sous les anneaux. Elles ne s’allument pas ensemble."), N("Vous notez l’ordre. Hylee s’avance vers un rocher qui masque une partie de la terrasse orientale. Remerii lui barre le passage avec son bâton."), R("D’ici."), H("Je reste sur le sentier. Il me manque juste cet angle."), R("Je vais regarder."),
- N("Elle dépasse le rocher, vérifie le bord et revient décrire une gorge métallique. Hylee écoute sans tendre la main vers la carte."), H("Tu peux regarder si le sol tient. Après, je peux y aller aussi."), R("Une personne suffit à cet endroit."), H("Alors laisse-moi être cette personne quelquefois.", "determined"), N("Un bruit de chaînes arrive du ravin. Toutes deux se tournent aussitôt. Vous avez la pointe du crayon sur la seconde pulsation : B, puis C, puis A."), P("Le centre tire les autres. Ça recommence."), R("Oui. Reculez le papier sous votre manteau ; on repart avec cela."), H("Je l’ai vu aussi."),
- ], [
- Q("cross-hr-03-angle", "Montrer à Hylee la place depuis laquelle vous avez noté le cycle.", [N("Vous vous décalez sur la portion large du chemin. Hylee regarde une dernière fois, sans contourner le rocher."), H("C se vide plus lentement. Il faudra lui laisser du temps."), R("Je l’ajoute."), N("La remarque rejoint le relevé. Au retour, Hylee marche quelques pas devant.")], { trust: 2 }),
- Q("cross-hr-03-back", "Ranger le matériel et garder vos questions pour le retour.", [N("Vous attachez la carte. Remerii vérifie le chemin derrière le groupe ; Hylee vous demande le crayon pour ajouter un détail de mémoire."), H("Sinon, demain, ça sera devenu l’idée de personne."), N("Elle signe sa note et vous rend le crayon.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-03-proof", "Suggérer à Hylee un petit essai pour montrer ce qu’elle peut faire.", [H("Ici ? Pour le plaisir de nous faire voir ?", "surprised"), R("Rangez cette idée avec le matériel."), H("Je veux participer à ce qu’on prépare. Pas faire une démonstration pour obtenir une permission."), N("Vous reprenez le chemin du col sans essai.")], { trust: -3, relationshipEffects: { remerii: { trust: -1 } } }),
- ], [], ["hylee","remerii"], "tension"),
- S("cross-hr-04", HR_TITLES[3], "miraldas-atelier", [
- N("Hylee a dessiné trois anneaux au charbon sur la table. Des copeaux marquent les passerelles. Remerii a déplacé le copeau qui portait le nom d’Hylee jusqu’au bord du dessin."), H("Pourquoi là ?"), R("Vous maintiendrez la voie de retour."), H("Il n’y a rien à tenir à cet endroit. On l’a vérifié."), R("Il peut y avoir une rupture. Je veux savoir le chemin libre."), H("Tu as besoin de moi pour ça, ou tu veux me mettre derrière ?", "determined"), N("Remerii reprend le charbon. Il laisse une trace noire sur son pouce."),
- R("Le point A demandera une décharge visible depuis les postes. Si l’on vous distingue, nous ne pourrons plus choisir qui entendra parler de vous."), H("Je le sais. Et si personne ne fait rien, ce portail restera là. Il n’attendra pas que je sois prête à être vue."), R("Je peux maintenir A."), H("En gardant B et en nous couvrant ? Tout à l’heure tu as dit que non."), R("Je trouverai un autre angle."), H("On en a cherché pendant une heure. Le mien est utilisable."),
- N("Hylee replace son copeau. Remerii le retient du bout de l’ongle."), H("Je peux te dire quand ça devient trop lourd. Tu m’as appris à le sentir."), R("Une fois sur place, il sera trop tard pour apprendre ce que vous aviez mal évalué."), H("Alors je resterai toujours ici ? Parce que tu as déjà vu ce qu’on fait aux gens comme nous ?"), N("Remerii relève brusquement la tête."), R("Vous en parlez comme d’une histoire qu’on vous aurait racontée."), H("Je parle de demain. Je veux y être. Je ne te demande pas de trouver ça facile."), R("Vous voulez surtout que je vous dise oui."), N("Hylee retire sa main. Le petit copeau reste pris sous l’ongle de Remerii."),
- ], [
- Q("cross-hr-04-stop", "Proposer de poser le plan quelques instants.", [P("On peut poser le charbon. Vous n’êtes plus en train de regarder le dessin."), H("Je le regarde depuis le début."), R("Et vous continuez à ne pas vouloir voir ce qui vient après.", "strict")], { trust: 1 }),
- Q("cross-hr-04-hylee", "Rappeler qu’Hylee a répondu sur le risque du point A.", [P("Elle a dit combien de temps elle pouvait tenir."), R("Elle a dit combien elle voulait tenir."), H("Non. J’ai fait la différence. Tu m’as entendue.", "angry")], { trust: 2, relationshipEffects: { remerii: { trust: -1 } } }),
- Q("cross-hr-04-remerii", "Dire que l’expérience de Remerii devrait trancher.", [H("Alors pourquoi me demander un plan ?", "angry"), R("Je ne vous ai pas demandé de répondre pour moi, {player}."), N("Hylee se retourne vers Remerii, attendant toujours sa réponse.")], { trust: -3 }),
- Q("cross-hr-04-silence", "Les laisser poursuivre.", [N("Vous posez le registre. Hylee fixe la main qui retient le copeau."), H("Lâche-le."), R("Ce morceau de bois ne change rien."), H("Alors lâche-le.", "determined")]),
- ], [{ intro: [
- R("Vous croyez qu’il suffit de décider pour que les conséquences deviennent supportables."), H("Je n’ai jamais dit ça."), R("Moi, je sais ce que c’est que de n’avoir personne à appeler quand cela commence. Vous n’avez pas encore eu à l’apprendre.", "strict"), N("Hylee ne bouge plus. Derrière elle, la fenêtre claque doucement contre son crochet."), H("D’accord.", "sad"),
- N("Elle ramasse son gant, puis le second. Le copeau reste sur la table. Remerii regarde les gants et ouvre la main trop tard."), R("Hylee. Ce n’est pas ce que je voulais…"), H("Je sais ce que tu voulais dire.", "sad"), R("Je ne parlais pas de l’auberge."), N("Hylee lève enfin les yeux. Remerii n’achève pas la phrase suivante."), H("Je vais rentrer.", "sad"), N("Elle ferme la porte sans la claquer. Le charbon roule jusqu’au bord ; vous l’arrêtez avant qu’il tombe."),
- ], responseCast: ["remerii"], choices: [
- Q("cross-hr-04-after-plain", "Dire simplement qu’Hylee est partie blessée.", [R("Oui."), N("Remerii essuie son pouce. La marque ne part pas."), R("Laissez le plan. Je le rangerai.", "sad"), N("Elle ne remet pas le copeau d’Hylee au bord.")], { relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-04-after-quiet", "Laisser le registre et partir sans ajouter d’argument.", [N("Vous reposez le charbon près du dessin. Remerii reste debout tandis que vous gagnez la porte."), R("Si vous la voyez…"), N("Elle s’interrompt, puis secoue la tête."), R("Je lui parlerai moi-même.", "sad")]),
- ] }], ["hylee","remerii"], "imperial-lament-instrumental"),
- S("cross-hr-05", HR_TITLES[4], "miraldas-quarters", [
- N("Hylee répare une couture près de la fenêtre. Elle vous montre la chaise du menton. Le fil traverse deux fois le même trou."), H("Elle t’envoie ?", "sad"), P("Non."), H("Tant mieux. Je ne veux pas répondre à une lettre qu’elle te ferait réciter.", "sad"), N("L’aiguille bute. Hylee tire le fil en arrière et défait son dernier point."), H("Je sais qu’elle a souffert. Je l’écoute quand elle m’en parle. Mais elle sait où elle m’a trouvée.", "sad"), N("Elle pose enfin le vêtement sur ses genoux."), H("Je n’ai pas envie de sortir tout ce que j’ai vécu pour avoir le droit de dire que ça m’a fait mal.", "sad"), P("Tu n’as rien à me raconter de plus."), H("Je voulais qu’elle me garde une vraie place. Hier, j’avais l’impression qu’elle essayait surtout de trouver où me ranger.", "sad"),
- ], [
- Q("cross-hr-05-listen", "Lui demander si elle veut de la compagnie ou rester seule.", [H("Reste un peu. Tu peux tenir ce bord ?"), N("Vous tendez la couture. Cette fois, l’aiguille passe."), H("Je veux bien lui parler. Mais je ne vais pas commencer par la rassurer sur ce qu’elle m’a dit.")], { trust: 2 }),
- Q("cross-hr-05-excuse", "Faire remarquer que Remerii tient énormément à elle.", [H("Moi aussi, je tiens à elle. Ça n’a pas rendu sa phrase plus douce."), P("Tu as raison. Je voulais aller trop vite."), H("Alors reste ici deux minutes sans essayer de finir la conversation à sa place.")], { trust: -2 }),
- Q("cross-hr-05-blame", "Dire qu’elle devrait se passer de Remerii pour l’opération.", [H("Et laisser B tomber pendant que je tiens A ?"), N("Elle secoue la tête."), H("Je suis en colère. Je n’ai pas oublié ce qu’elle sait faire, ni envie de la perdre.")], { trust: -2 }),
- ], [
- { cast: ["remerii"], intro: [N("Plus tard, Remerii arrive à la résidence avec le registre sous le bras. Elle reste près de la porte. La même page est ouverte que lorsque vous l’avez quittée."), R("Elle est ici ?"), P("Elle a terminé sa couture."), R("Je sais ce qu’il faut reprendre dans le plan. Pour le reste…"), N("Elle referme le livre, l’ouvre, puis le referme vraiment."), R("Tout ce que je prépare finit par ressembler à une justification.")], choices: [
- Q("cross-hr-05-door", "Lui dire qu’Hylee veut bien l’entendre, puis lui laisser la porte.", [P("Elle veut bien vous entendre. Je peux l’appeler ; les mots, ce seront les vôtres."), R("Oui. Faites cela."), N("Remerii pose le registre hors de portée avant que vous frappiez.")], { relationshipEffects: { remerii: { trust: 2 } } }),
- Q("cross-hr-05-short", "Lui demander ce qu’elle dirait sans le registre.", [N("Remerii regarde le livre contre sa poitrine et l’abaisse."), R("Que j’ai été injuste."), P("Vous pouvez commencer là."), R("C’est assez court pour que je ne me perde pas en chemin.")], { relationshipEffects: { remerii: { trust: 1 } } }),
- ] },
- { cast: ["hylee","remerii"], intro: [
- N("Hylee ouvre. Elle regarde d’abord le livre sur le banc, puis Remerii. Vous reculez vers la fenêtre ; elles ont le passage entre elles."), R("Ce que je t’ai dit était injuste. Je savais assez de ce que tu as vécu pour ne pas te parler comme si rien ne t’avait jamais coûté.", "sad"), N("Hylee serre la poignée derrière elle, sans fermer."), R("J’ai eu peur qu’on te voie sur cette terrasse. Je me suis remise à chercher tous les moyens de t’en éloigner. Et quand tu as refusé, je t’ai blessée pour arrêter la discussion."), H("Tu pensais vraiment que je n’avais jamais été seule ?", "sad"), R("Non. Je n’ai aucune excuse pour l’avoir dit."),
- N("Le bois grince sous les doigts d’Hylee. Elle desserre sa prise."), H("La prochaine fois, dis-moi que tu as peur. Ne me dis pas que je ne comprends rien."), R("J’essaierai. Si je recommence à déplacer ton nom sans t’écouter, arrête-moi."), H("Je l’ai fait hier."), R("Oui. Et je ne me suis pas arrêtée."), N("Hylee baisse les yeux. Remerii attend ; le silence s’allonge sans qu’elle le remplisse."), H("Je ne peux pas te promettre que je ne me tromperai jamais."), R("Je ne peux pas te le promettre non plus."),
- H("Mais je peux te dire quand je ne tiens plus. Et tu peux m’aider à lâcher sans tout faire tomber."), R("Alors nous prévoirons cela dans le plan. Ensemble."), N("Hylee quitte enfin le seuil. Elle s’assoit près de Remerii et laisse une place pour le registre."),
- ], choices: [
- Q("cross-hr-05-return", "Apporter le livre, puis les laisser reprendre le dessin.", [N("Remerii demande à Hylee de replacer son copeau. Hylee prend le charbon à la place."), H("Il faut dessiner où la glace peut céder. Pas seulement où elle doit tenir."), R("Montre-moi."), N("Vous allez chercher une feuille propre. Elles discutent encore de ce passage lorsque vous revenez.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-05-tea", "Proposer de remettre le plan à demain et d’apporter à boire.", [H("Demain. J’ai assez parlé pour ce soir."), R("D’accord."), N("Vous sortez chercher de l’eau chaude. Derrière vous, Hylee pousse doucement le registre pour que Remerii puisse poser ses mains sur le banc.")], { affection: 1 }),
- ] },
- ], ["hylee"], "imperial-lament-instrumental"),
- S("cross-hr-06", HR_TITLES[5], "miraldas-quarters", [
- N("La relève du col n’est pas encore passée. Les sacs attendent près de la porte et une marmite refroidit sur la table. Hylee détache la longue épingle qui retient les cheveux de Remerii ; celle-ci penche la tête sans interrompre la lecture du billet."), H("Tu l’as encore enfoncée à travers deux mèches."), R("Elle tenait."), H("C’est ce que tu dis chaque fois."), N("L’épingle cède enfin. Hylee la pose hors de portée du bol avant d’aller chercher une troisième assiette."),
- P("Je tombe au milieu du repas ?"), H("Au bon moment. Sinon elle relit le billet jusqu’à ce que ce soit froid."), R("Le précédent annonçait une autre heure."), H("Et je te l’ai lu pendant que tu mangeais. On peut recommencer."), N("Remerii plie le papier. Hylee lui verse la partie la moins épaisse de la soupe, puis racle pour elle-même le fond de la marmite."),
- R("Vous faites encore cela."), H("Tu laisses tous les morceaux. Il faut bien que quelqu’un les mange."), R("Je pourrais changer d’avis."), H("Essaie. Il en reste."), N("Elle approche sa cuillère ; Remerii y prend un morceau sans reprendre son bol. Hylee reste un instant contre le dossier de sa chaise, la main posée sur son épaule."),
- H("On attendait déjà comme ça avant de te connaître. Pas les mêmes nouvelles."), R("Et pas toujours assez de bols."), H("Tu pouvais en acheter un deuxième."), R("Je n’avais pas prévu que vous resteriez aussi près du mien."), N("Le sourire d’Hylee se fait plus discret. Remerii lui prend brièvement les doigts sur son épaule, puis les libère pour qu’elle s’asseye."),
- ], [
- Q("cross-hr-06-bowl", "Partager le repas et leur demander comment elles occupaient ces attentes.", [H("Je lui posais des questions. Jusqu’à ce qu’elle prétende avoir besoin de silence."), R("J’avais réellement besoin de silence."), H("Tu répondais quand même."), R("Vous laissiez très peu de place au doute."), N("Vous vous servez. Le billet reste plié pendant qu’elles se disputent doucement le souvenir d’une soirée de pluie.")], { affection: 1, relationshipEffects: { remerii: { affection: 1 } } }),
- Q("cross-hr-06-help", "Prendre la marmite et proposer de faire réchauffer ce qui reste.", [R("Il y a encore assez de braises."), H("Je viens avec toi. Cette poignée tourne."), N("Remerii tend un linge à Hylee avant qu’elle touche le métal. Hylee le prend, l’effleure au poignet et vous aide à transporter la marmite.")], { trust: 1 }),
- Q("cross-hr-06-label", "Faire remarquer qu’elles auraient pu vous dire qu’elles étaient ensemble.", [H("On t’a dit où nous allions. On n’a pas toujours su dire le reste."), R("Et nous ne vous devons pas une version définitive de quelque chose que nous vivons encore."), N("Vous baissez votre cuillère. Hylee reprend la marmite et vous en propose malgré tout.")], { trust: -2, relationshipEffects: { remerii: { trust: -2 } } }),
- ], [], ["hylee","remerii"], "two-stars-night"),
+  S(
+    "cross-hr-01",
+    HR_TITLES[0],
+    "miraldas-atelier",
+    [
+      N("L’incident des Serres est terminé, mais la caisse déposée dans l’atelier prouve que le portail n’a pas cessé d’inquiéter les postes du col. Elle contient des rapports de gardes, deux instruments fendus et de la poussière rouge venue des terrasses périphériques."),
+      N("Hylee retient le couvercle avec son genou. Remerii lui tend la pince avant même qu’elle ouvre la main."),
+      H("Merci. Le dernier clou tourne dans le bois."),
+      R("Comme celui de Rivel. Tu l’avais arraché au couteau et nous avions mangé avec une lame tordue pendant trois jours."),
+      H("Tu avais dit que ce couteau était déjà inutilisable."),
+      R("J’essayais de sauver notre dîner."),
+      N("Le sourire de Remerii disparaît seulement lorsqu’elle déplie le premier rapport. Hylee pose aussitôt le clou dans la coupelle où Remerii range toujours les petites pièces dangereuses."),
+      R("Le portail n’a pas été réactivé. En revanche, deux convois et le poste nord signalent des secousses sur les installations extérieures."),
+      P("Quelqu’un propose d’y retourner ?"),
+      R("Certainement pas. Nous resterons loin de l’ouverture. Je veux savoir si ce qui bouge autour d’elle peut encore mettre la route en danger."),
+      H("Et si quelque chose continue de lui répondre, je viens le vérifier avec toi."),
+      R("Je savais que tu dirais cela."),
+      H("Alors tu as gagné du temps."),
+      N("Remerii tire déjà une seconde chaise avec le pied. Hylee s’y installe comme si la place avait toujours été prévue."),
+      R("{player}, vous savez lire une carte de convoi et reconnaître un mécanisme bloqué. Hylee et moi nous occuperons de ce qui relève de l’Arcane."),
+      N("Trois compétences, aucune invitation à franchir le portail : il faut d’abord comprendre ce qui secoue encore ses terrasses périphériques."),
+    ],
+    [
+      Q(
+        "cross-hr-01-order",
+        "Classer les rapports par heure et laisser visibles les contradictions.",
+        "lucidite",
+        [
+          P("Je place les faits dans l’ordre. Les hypothèses resteront dans la marge."),
+          R("Exactement. Ne corrigez pas les trous pour rendre le récit plus élégant."),
+          H("Je prends les convois. Ils écrivent toujours la fin au dos."),
+          N("Remerii lui passe le second presse-papier sans regarder. Hylee le rattrape au vol et vous fait une place entre leurs deux piles."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-01-witness",
+        "Retrouver les témoins avant de tirer une conclusion.",
+        "sangFroid",
+        [
+          H("Le carrier revient demain chercher son reçu. J’ai gardé son nom."),
+          R("Demandez-lui ce qu’il a vu, pas ce qu’on lui a déjà expliqué."),
+          P("Ses mots d’abord. Nos conclusions ensuite."),
+          N("Remerii acquiesce. Hylee souligne une seule fois le nom dans la marge : leur ancien code pour une piste encore ouverte."),
+        ],
+        { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      {
+        ...Q(
+          "cross-hr-01-habit",
+          "Leur faire remarquer qu’elles ont déjà organisé trois piles sans se consulter.",
+          "audace",
+          [
+            P("Vous pourriez au moins prétendre que je suis arrivé avant le milieu d’une conversation vieille de plusieurs années."),
+            H("Impossible. Elle avait déjà choisi mon presse-papier."),
+            R("Tu prends toujours le plus lourd, puis tu te plains de ne plus pouvoir tourner les pages."),
+            H("Et tu gardes toujours le léger pour me le donner ensuite."),
+            N("Elles se tournent vers vous avec le même sourire coupable. La place entre leurs piles devient officiellement la vôtre."),
+          ],
+          { affection: 1, desire: 1, relationshipEffects: { remerii: { affection: 1, desire: 1 } } },
+        ),
+        requiresRelationship: [
+          { character: "hylee", stage: 5, affection: 20 },
+          { character: "remerii", stage: 5, affection: 20 },
+        ],
+      },
+      Q(
+        "cross-hr-01-hero",
+        "Assurer que Remerii trouvera seule comment arrêter les secousses.",
+        "resonance",
+        [
+          R("Je ne sais pas encore ce qui les provoque."),
+          H("Et elle ne travaille pas seule quand je suis assise juste là."),
+          N("Remerii repose le rapport au centre de la table plutôt que devant elle."),
+          R("Commençons par ne retirer personne de l’équation."),
+        ],
+        { trust: -2, relationshipEffects: { remerii: { trust: -1 } } },
+      ),
+    ],
+  ),
+  S(
+    "cross-hr-02",
+    HR_TITLES[1],
+    "miraldas-archives",
+    [
+      N("Les archives ont réservé le bout d’une table aux rapports des Serres. Hylee apporte le reçu du carrier, plié en quatre et taché de farine."),
+      H("Il a compté deux secousses. La troisième, c’était sa charrette qui retombait dans une ornière."),
+      R("Tu lui as demandé ce qui avait bougé avant les roues ?"),
+      H("La rambarde. Puis la chaîne. Il a refait les deux bruits et s’est excusé auprès de la bibliothécaire."),
+      R("Je suppose que tu l’as aidé."),
+      H("Seulement pour la chaîne."),
+      N("Remerii barre un horaire avec un sourire qu’elle tente inutilement de cacher. Une fois le faux signal retiré, plusieurs témoignages cessent de se contredire."),
+      P("Le poste nord voyait la terrasse centrale, mais pas celle de gauche. Ce rapport et celui du convoi peuvent parler de la même pulsation."),
+      N("Vous posez les deux heures l’une sous l’autre. Hylee déplace le plan ; trois zones périphériques apparaissent, jamais l’ouverture elle-même."),
+      R("Les manifestations restent autour du portail. Celle du centre précède les deux autres de quelques instants."),
+      H("Pas toujours les deux. Regarde ici : la terrasse orientale répond avant celle de gauche, mais elle continue après."),
+      N("Remerii suit son doigt, gomme une flèche et en trace deux. Elle ne défend pas son premier dessin."),
+      R("Alors le centre ne commande peut-être pas seul. Ces trois mécanismes pourraient se relayer et maintenir une réponse périphérique."),
+      P("Des points d’ancrage ?"),
+      R("Une hypothèse, pas encore un nom. Pour la vérifier, nous devons observer les trois terrasses depuis le col et rester hors de portée du portail."),
+      H("A, B et C, alors. Des lettres sont plus faciles à corriger qu’une certitude."),
+    ],
+    [
+      Q(
+        "cross-hr-02-facts",
+        "Séparer sur la carte les observations, les heures et les hypothèses.",
+        "lucidite",
+        [
+          P("Trait plein pour ce qui a été vu, pointillé pour ce que nous supposons."),
+          R("Et aucun trait jusqu’au portail tant qu’un rapport ne le justifie."),
+          H("Je recopie les trois terrasses. Tu me diras si j’inverse encore l’est et la gauche."),
+          R("Tu les inverses seulement quand tu racontes le chemin."),
+          H("C’est donc une compétence narrative."),
+          N("Le modèle devient lisible sans devenir définitif."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-02-hylee",
+        "Suivre l’observation d’Hylee sur la terrasse est.",
+        "resonance",
+        [
+          P("Si C continue après les autres, son rôle n’est pas le même."),
+          H("Oui. Elle reçoit peut-être la charge au lieu de la lancer."),
+          R("Cela change notre ordre d’observation."),
+          N("Remerii retourne son crayon et le tend à Hylee pour qu’elle redessine la flèche elle-même."),
+          R("Montre-moi exactement où tu la places."),
+        ],
+        { affection: 1, trust: 1, relationshipEffects: { remerii: { affection: 1 } } },
+      ),
+      Q(
+        "cross-hr-02-route",
+        "Proposer un point d’observation qui garde le chemin de retour visible.",
+        "sangFroid",
+        [
+          P("Le col domine les trois terrasses et laisse le poste derrière nous. Nous n’avons aucune raison de descendre plus bas lors de la reconnaissance."),
+          R("C’est la bonne distance."),
+          H("Et depuis le rocher fendu, on verra C sans s’approcher de l’ouverture."),
+          N("Vous entourez ensemble un trajet qui observe sans engager l’opération."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      Q(
+        "cross-hr-02-certainty",
+        "Rédiger immédiatement un rapport annonçant trois ancrages.",
+        "audace",
+        [
+          R("Écrivez trois terrasses. Le reste serait une conclusion empruntée à demain."),
+          H("On a déjà assez de rapports qui se recopient entre eux."),
+          N("Vous rayez le mot. Sous la correction, la prochaine étape redevient simple : aller regarder."),
+        ],
+        { trust: -2, relationshipEffects: { remerii: { trust: -2 } } },
+      ),
+    ],
+  ),
+  S(
+    "cross-hr-03",
+    HR_TITLES[2],
+    "rocky-spires-pass",
+    [
+      N("Depuis le col, le portail n’est qu’une blessure rouge au fond des aiguilles rocheuses. Aucun chemin de votre reconnaissance ne s’en approche. Plus bas, trois terrasses reliées par des passerelles dominent le ravin."),
+      R("Nous restons sur le chemin haut. Aujourd’hui, nous regardons ; nous ne touchons à rien."),
+      H("Tu as répété la phrase au poste, dans la montée et devant ce rocher."),
+      R("Et tu l’as contestée au poste, dans la montée et devant ce rocher."),
+      H("Je vérifiais sa solidité."),
+      N("Remerii lui remet une mèche sous la capuche, geste bref que le vent défait aussitôt. Hylee rit et lui serre elle-même l’attache du manteau."),
+      P("Les poignées sont mécaniques. Une sur chaque palier."),
+      H("Les fentes sous les anneaux, elles, ne s’allument pas ensemble."),
+      N("Vous notez B, puis C, puis A. Hylee s’avance jusqu’au rocher fendu ; Remerii tend son bâton en travers du sentier sans la toucher."),
+      R("Le bord est friable derrière."),
+      H("Je reste sur le chemin. J’ai seulement besoin de l’angle que tu viens de me décrire."),
+      R("Je vais regarder."),
+      H("Tu l’as déjà fait. Laisse-moi voir maintenant."),
+      N("Le vieux désaccord est immédiatement reconnaissable : Remerii cherche le danger avant le passage ; Hylee refuse que cette précaution devienne une place assignée."),
+      N("Un bruit de chaîne traverse le ravin. Toutes deux se tournent vers les terrasses. La pulsation reprend : B, C, A."),
+      P("Le cycle confirme les rapports. On repart avec cela."),
+      R("Oui."),
+      H("Et demain, on parle de qui fait quoi. Pas seulement d’où tu préférerais me regarder."),
+      R("Demain."),
+    ],
+    [
+      Q(
+        "cross-hr-03-cycle",
+        "Décrire le cycle sans quitter le chemin haut.",
+        "lucidite",
+        [
+          P("B part en premier. C garde la charge plus longtemps. A répond quand les deux passerelles vibrent."),
+          H("C aura besoin d’un vrai temps de décharge."),
+          R("Et A d’une liaison qu’on puisse interrompre."),
+          N("La carte gagne un ordre exploitable sans transformer la reconnaissance en intervention."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-03-space",
+        "Laisser Hylee prendre l’angle prévu pendant que vous sécurisez le sentier.",
+        "sangFroid",
+        [
+          P("Je garde le bord et la corde. Hylee peut prendre l’angle sans franchir le rocher."),
+          N("Remerii observe le sol, puis abaisse son bâton."),
+          R("Trois pas. Tu me dis si la pierre bouge."),
+          H("Trois pas. Et je te le dis avant le quatrième."),
+          N("Hylee revient avec une lecture plus nette de C. Remerii l’inscrit sous son nom, sans la reformuler."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      {
+        ...Q(
+          "cross-hr-03-middle",
+          "Proposer de rester entre elles pour être surveillé par deux expertes à la fois.",
+          "audace",
+          [
+            P("Je peux rester au milieu. Ainsi, aucune de vous n’aura à prétendre qu’elle surveille seulement le terrain."),
+            H("C’est généreux. Elle allait justement vérifier ton nœud une quatrième fois."),
+            R("Troisième. Et le vôtre est mal fermé."),
+            N("Remerii resserre votre attache. Hylee pose sa main par-dessus la sienne et déclare le contrôle terminé."),
+            H("Voilà. Deux expertes satisfaites."),
+          ],
+          { affection: 1, desire: 2, relationshipEffects: { remerii: { affection: 1, desire: 2 } } },
+        ),
+        requiresRelationship: [
+          { character: "hylee", desire: 12 },
+          { character: "remerii", desire: 12 },
+        ],
+      },
+      Q(
+        "cross-hr-03-proof",
+        "Demander à Hylee une démonstration pour prouver qu’elle peut participer.",
+        "resonance",
+        [
+          H("Je n’ai pas besoin d’un examen improvisé au bord d’un ravin."),
+          R("Et je n’ai pas le droit de transformer sa place en récompense après une démonstration."),
+          N("Leur accord sur ce point est immédiat. Vous rangez l’idée avec le matériel."),
+        ],
+        { trust: -3, relationshipEffects: { remerii: { trust: -1 } } },
+      ),
+    ],
+    [],
+    ["hylee", "remerii"],
+    "tension",
+  ),
+  S(
+    "cross-hr-04",
+    HR_TITLES[3],
+    "miraldas-atelier",
+    [
+      N("Trois anneaux de charbon couvrent la table. Les copeaux représentent les positions ; celui d’Hylee attend près du point A depuis qu’elle l’y a posé. Remerii le déplace vers la voie de retour."),
+      H("Tu viens encore de me sortir du plan."),
+      R("Je t’ai placée là où tu peux maintenir le repli."),
+      H("Il n’y a rien à maintenir. Nous l’avons vérifié hier."),
+      R("Hier, tu as aussi avancé jusqu’au seul bord friable du col."),
+      H("Trois pas sur ton propre trajet. Ne déplace pas le problème."),
+      N("Remerii cesse de faire tourner le charbon. Elle connaît ce ton : Hylee ne plaisante plus, même si sa voix reste basse."),
+      R("A te rendrait visible depuis les postes. Si quelqu’un comprend ce que tu es capable de faire, nous ne choisirons plus qui l’apprend."),
+      H("Je le sais. Je sais aussi que tu ne peux pas tenir A et B en même temps."),
+      R("Je trouverai un autre angle."),
+      H("Tu as cherché tout le matin. Ton autre angle, c’est moi derrière toi."),
+      N("Hylee remet son copeau sur A. Remerii le retient du bout de l’ongle, vieux geste de leurs cartes de voyage qu’Hylee reconnaît aussitôt."),
+      H("Tu fais ça quand tu as déjà décidé et que tu veux encore avoir l’air de réfléchir."),
+      R("Et tu frottes ton pouce quand tu vas me promettre que tout ira bien."),
+      H("Je ne te promets pas ça. Je te promets de dire quand je ne tiens plus. C’est toi qui m’as appris à reconnaître la limite."),
+      R("Une limite reconnue trop tard reste une chute."),
+      H("Alors aide-moi à préparer le repli. Ne m’efface pas avant que nous soyons parties."),
+    ],
+    [
+      Q(
+        "cross-hr-04-breathe",
+        "Poser le charbon et laisser quelques secondes au silence.",
+        "sangFroid",
+        [
+          P("Le plan peut attendre un instant."),
+          N("Vous retirez le charbon de la main de Remerii et le posez entre les deux copeaux. Personne ne parle. Hylee cesse enfin de frotter son pouce ; Remerii regarde ce geste disparaître."),
+          R("Je t’entends. Je ne sais pas encore le faire sans avoir peur."),
+          H("Tu peux commencer par ne pas appeler ta peur un plan."),
+        ],
+        { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      Q(
+        "cross-hr-04-risk",
+        "Revenir aux durées, aux limites et au signal de repli proposés par Hylee.",
+        "lucidite",
+        [
+          P("Elle a donné une durée, un signe d’alerte et une sortie. On peut vérifier ces trois éléments sans décider à sa place."),
+          R("Une durée annoncée n’empêche pas la panique."),
+          H("Non. Mais c’est la méthode que tu exiges de toi-même. Laisse-moi au moins l’utiliser."),
+          N("Remerii regarde le plan, puis sa main toujours posée sur le copeau d’Hylee."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      Q(
+        "cross-hr-04-fear",
+        "Nommer la peur de Remerii sans répondre à la place d’Hylee.",
+        "resonance",
+        [
+          P("Vous avez peur de la perdre. Hylee vous demande ce que cette peur change au plan, pas qu’on la fasse disparaître."),
+          H("Je peux entendre que tu as peur."),
+          R("Et si je n’arrive pas à distinguer ma peur du risque ?"),
+          H("Alors tu me le dis. Tu ne me ranges pas derrière en appelant ça une conclusion."),
+        ],
+        { affection: 1, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-04-arbitrate",
+        "Trancher que l’expérience de Remerii doit l’emporter.",
+        "audace",
+        [
+          H("Alors pourquoi m’avoir demandé de construire ce plan ?"),
+          R("Je ne vous ai pas demandé de décider pour moi, {player}."),
+          N("Pour la première fois de la dispute, elles se tournent toutes deux contre votre intervention. L’accord ne répare pourtant rien entre elles."),
+        ],
+        { trust: -3, relationshipEffects: { remerii: { trust: -2 } } },
+      ),
+    ],
+    [
+      {
+        intro: [
+          R("Tu parles de rester seule si le sort cède comme si tu savais déjà ce que c’est. Tu n’as jamais eu à appeler dans le vide en comprenant que personne ne viendrait.", "strict"),
+          N("La phrase tombe avec une précision dont Remerii mesure l’horreur une seconde trop tard. Elle connaît l’auberge, les départs et les portes derrière lesquelles Hylee a attendu."),
+          H("Tu sais où tu m’as trouvée.", "sad"),
+          R("Oui."),
+          H("Alors ne me dis jamais que je ne connais pas le vide."),
+          N("Hylee prend ses gants. Remerii lâche enfin le copeau, mais Hylee ne le ramasse pas."),
+          R("Hylee, je—"),
+          H("Pas maintenant."),
+          N("Elle ferme la porte sans la claquer. Remerii reconnaît aussi ce geste : Hylee ne veut pas détruire la pièce, seulement en sortir avant que la colère ne le fasse à sa place."),
+        ],
+        responseCast: ["remerii"],
+        choices: [
+          Q(
+            "cross-hr-04-after-truth",
+            "Dire seulement que cette phrase l’a blessée.",
+            "resonance",
+            [
+              P("Vous saviez où frapper. Elle aussi."),
+              R("Oui."),
+              N("Remerii frotte le bord de sa manche, tic qu’elle cache d’ordinaire dès qu’Hylee le remarque."),
+              R("Je lui parlerai moi-même. Pas pour expliquer la phrase. Pour en répondre."),
+            ],
+            { relationshipEffects: { remerii: { trust: 1 } } },
+          ),
+          Q(
+            "cross-hr-04-after-space",
+            "Laisser le registre et partir sans prolonger la dispute.",
+            "sangFroid",
+            [
+              N("Vous posez le registre près du copeau d’Hylee. Remerii ne vous demande ni de transmettre un message ni de la défendre."),
+              R("Je viendrai quand elle aura choisi de m’entendre."),
+              N("Elle remet le copeau sur A avant que vous quittiez l’atelier."),
+            ],
+          ),
+        ],
+      },
+    ],
+    ["hylee", "remerii"],
+    "imperial-lament-instrumental",
+  ),
+  S(
+    "cross-hr-05",
+    HR_TITLES[4],
+    "miraldas-quarters",
+    [
+      N("Hylee répare une couture près de la fenêtre. Elle vous montre la chaise du menton ; l’aiguille a déjà traversé deux fois le même trou."),
+      H("Elle t’envoie ?", "sad"),
+      P("Non."),
+      H("Tant mieux. Elle déteste faire porter ses excuses par quelqu’un d’autre. Moi aussi."),
+      N("Elle défait le point inutile, reprend le fil et vous tend le bord du tissu sans demander si vous savez le tenir."),
+      H("Je sais qu’elle a eu peur. Je l’ai vue vérifier trois fois mes gants et faire semblant de chercher autre chose."),
+      P("Tu connais ses détours."),
+      H("Presque tous. Elle connaît les miens aussi. C’est justement pour ça que sa phrase a fait mal."),
+      N("Hylee tire doucement sur la couture. Cette fois, le bord reste droit."),
+      H("Je veux lui parler. Je ne veux pas que tu répares la conversation avant son arrivée."),
+    ],
+    [
+      Q(
+        "cross-hr-05-company",
+        "Lui demander quelle compagnie elle souhaite en attendant.",
+        "resonance",
+        [
+          P("Je peux rester, partir ou simplement tenir ce bord."),
+          H("Tiens le bord. Et reste jusqu’à ce qu’elle arrive."),
+          N("Vous suivez la couture sans chercher une phrase de plus. Hylee reprend un second point seulement lorsqu’elle le choisit."),
+        ],
+        { trust: 2 },
+      ),
+      Q(
+        "cross-hr-05-no-message",
+        "Respecter son refus de recevoir un message indirect.",
+        "sangFroid",
+        [
+          P("Je ne parlerai pas pour elle. Je peux seulement ouvrir quand elle frappera."),
+          H("Ça me va."),
+          N("Hylee laisse retomber ses épaules. Le silence suivant n’est pas confortable, mais il lui appartient."),
+        ],
+        { trust: 1 },
+      ),
+      Q(
+        "cross-hr-05-excuse",
+        "Expliquer que Remerii tient trop à elle pour avoir voulu la blesser.",
+        "lucidite",
+        [
+          H("Moi aussi je tiens à elle. Ça ne transforme pas sa phrase en accident sans conséquence."),
+          P("Tu as raison. J’essayais d’aller trop vite."),
+          H("Alors aide-moi en ne finissant pas l’histoire avant nous."),
+        ],
+        { trust: -2 },
+      ),
+    ],
+    [
+      {
+        cast: ["remerii"],
+        intro: [
+          N("Remerii arrive avec le registre sous le bras. Elle reste près de la porte et frotte le bord de sa manche. Hylee avait prédit le geste avant même d’entendre ses pas."),
+          R("Elle est ici ?"),
+          P("Oui."),
+          R("Je sais ce que je dois corriger dans le plan. Pour le reste, chaque phrase que j’ai préparée ressemble à une défense."),
+          N("Elle pose le registre sur le banc, hors de ses mains, puis attend."),
+        ],
+        choices: [
+          Q(
+            "cross-hr-05-door",
+            "Ouvrir, puis leur laisser l’espace de se parler.",
+            "sangFroid",
+            [
+              P("Elle veut bien vous entendre. Je vais ouvrir ; les mots seront les vôtres."),
+              R("Merci."),
+              N("Remerii vérifie par réflexe que le registre reste sur le banc, puis entre sans le reprendre."),
+            ],
+            { relationshipEffects: { remerii: { trust: 2 } } },
+          ),
+          Q(
+            "cross-hr-05-simple",
+            "Lui demander la première phrase sans justification.",
+            "resonance",
+            [
+              P("Quelle phrase reste si vous retirez toutes les explications ?"),
+              R("J’ai été cruelle avec quelqu’un que j’aime."),
+              P("Commencez par ce que vous êtes prête à lui dire."),
+              R("J’ai été cruelle. Le reste lui appartient autant qu’à moi."),
+            ],
+            { relationshipEffects: { remerii: { trust: 1 } } },
+          ),
+        ],
+      },
+      {
+        cast: ["hylee", "remerii"],
+        intro: [
+          N("Hylee ouvre. Son regard va de la manche froissée de Remerii au registre abandonné sur le banc."),
+          H("Tu frottes encore le tissu."),
+          R("Depuis l’escalier."),
+          H("Je sais."),
+          N("Cette évidence ancienne les place face à face sans vous demander de devenir arbitre."),
+          R("Ce que je t’ai dit était cruel. Je connaissais assez ton histoire pour comprendre exactement ce que ma phrase nierait. J’ai eu peur, et j’ai utilisé cette peur pour te faire reculer."),
+          H("Tu pensais vraiment que je ne savais pas ce que c’était d’attendre seule ?", "sad"),
+          R("Non. Je savais le contraire. C’est pour cela que je ne chercherai aucune excuse."),
+          N("Hylee garde une main sur la poignée. Remerii ne s’avance pas."),
+          H("La prochaine fois, dis-moi que tu as peur."),
+          R("Même si cela me rend insupportable ?"),
+          H("Tu es déjà insupportable. Ce sera seulement plus honnête."),
+          N("Le rire de Remerii arrive trop court et trop fragile, mais Hylee le laisse revenir. Elle quitte enfin le seuil."),
+          R("Pour le plan : tu tiens A. Nous fixons ensemble un mot de repli. Si tu le prononces, je reprends sans discuter. Si je panique avant, je te le dis au lieu de déplacer ton copeau."),
+          H("Le mot sera ‘bleu’. Tu détestes le sac bleu, tu ne pourras pas prétendre ne pas l’avoir entendu."),
+          R("Je déteste sa boucle. Le sac n’y est pour rien."),
+          N("Hylee s’approche, remet correctement l’épingle qui glissait dans les cheveux de Remerii et laisse ses doigts une seconde contre sa tempe."),
+          H("Alors répare-la avec moi."),
+          N("Remerii prend le poinçon ; Hylee apporte le sac. Leur tendresse revient par une tâche commune, pas par une conclusion parfaite."),
+        ],
+        choices: [
+          Q(
+            "cross-hr-05-plan",
+            "Apporter la carte et leur laisser redessiner le repli.",
+            "lucidite",
+            [
+              N("Vous posez la carte sans toucher aux copeaux. Hylee dessine l’endroit où sa glace peut céder ; Remerii ajoute le passage par lequel elle la relayera."),
+              H("Ici, tu attends mon mot."),
+              R("Ici, je te fais confiance avant de le craindre."),
+              N("Le plan porte leurs deux écritures et votre itinéraire mécanique entre les terrasses."),
+            ],
+            { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+          ),
+          Q(
+            "cross-hr-05-tea",
+            "Leur proposer de laisser la carte fermée jusqu’à demain.",
+            "resonance",
+            [
+              H("Demain. J’ai assez parlé pour ce soir."),
+              R("D’accord."),
+              N("Vous apportez de l’eau chaude. Hylee garde le sac sur ses genoux ; Remerii répare la boucle pendant qu’elles discutent enfin d’autre chose."),
+            ],
+            { affection: 1, relationshipEffects: { remerii: { affection: 1 } } },
+          ),
+        ],
+      },
+    ],
+    ["hylee"],
+    "imperial-lament-instrumental",
+  ),
+  S(
+    "cross-hr-06",
+    HR_TITLES[5],
+    "miraldas-quarters",
+    [
+      N("La relève du col n’est pas encore passée. Les sacs attendent près de la porte et une marmite refroidit sur la table. Hylee retire la longue épingle prise dans les cheveux de Remerii ; celle-ci incline la tête sans interrompre sa lecture."),
+      H("Tu l’as encore passée à travers deux mèches."),
+      R("Elle tenait."),
+      H("C’est ta défense depuis la route de Rivel."),
+      R("À Rivel, tu avais perdu les deux tiennes."),
+      H("Je les avais prêtées."),
+      R("À un rideau."),
+      N("L’épingle cède. Hylee la pose hors de portée du bol et va chercher une troisième assiette."),
+      P("Je tombe au milieu du repas ?"),
+      H("Au bon moment. Sinon elle relit le billet jusqu’à ce que la soupe soit froide."),
+      R("Le précédent annonçait une autre heure."),
+      H("Et je te l’ai lu pendant que tu mangeais. Je peux encore accomplir cet exploit."),
+      N("Remerii plie enfin le papier. Hylee lui sert la partie la moins épaisse, puis racle le fond pour elle-même."),
+      R("Tu fais encore cela."),
+      H("Tu laisses tous les morceaux."),
+      R("Je pourrais changer d’avis."),
+      H("Essaie."),
+      N("Remerii prend un morceau directement dans la cuillère d’Hylee. Elles se regardent une seconde de trop pour que le geste soit seulement pratique, puis Hylee pose sa main sur son épaule en rejoignant sa place."),
+      H("On attendait déjà les mauvaises nouvelles comme ça avant de te connaître. Pas les mêmes nouvelles."),
+      R("Et pas toujours assez de bols."),
+      H("Tu pouvais en acheter un deuxième."),
+      R("Je n’avais pas prévu que tu resterais aussi près du mien."),
+    ],
+    [
+      Q(
+        "cross-hr-06-memories",
+        "Partager le repas et leur demander comment elles occupaient ces attentes.",
+        "resonance",
+        [
+          H("Je lui posais des questions jusqu’à ce qu’elle prétende avoir besoin de silence."),
+          R("J’avais réellement besoin de silence."),
+          H("Tu répondais quand même."),
+          R("Tu laissais très peu de place au doute."),
+          N("Vous vous servez. Le billet reste plié pendant qu’elles se disputent doucement le souvenir d’une auberge où la pluie entrait par le toit."),
+        ],
+        { affection: 1, relationshipEffects: { remerii: { affection: 1 } } },
+      ),
+      Q(
+        "cross-hr-06-hearth",
+        "Prendre la marmite et proposer de réchauffer ce qui reste.",
+        "sangFroid",
+        [
+          R("Il y a encore assez de braises."),
+          H("Je viens. La poignée tourne."),
+          N("Remerii tend déjà un linge à Hylee. Celle-ci le prend, effleure son poignet et vous aide à porter la marmite."),
+          R("Je surveille les bols."),
+          H("Elle veut dire qu’elle en garde trois."),
+        ],
+        { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      {
+        ...Q(
+          "cross-hr-06-conspiracy",
+          "Les accuser de s’être liguées pour vous donner le bol le plus rempli.",
+          "audace",
+          [
+            P("Je reconnais une opération coordonnée. Vous m’avez donné la meilleure part sans même vous consulter."),
+            H("Elle a choisi le bol."),
+            R("Tu as choisi la portion."),
+            P("Donc je suis bien victime de deux personnes très organisées."),
+            N("Hylee se penche pour goûter votre soupe. Remerii reprend la cuillère dans sa main, en goûte à son tour et conclut avec un calme suspect qu’elle est effectivement meilleure."),
+            H("On recommencera."),
+          ],
+          { affection: 2, desire: 2, relationshipEffects: { remerii: { affection: 2, desire: 2 } } },
+        ),
+        requiresRelationship: [
+          { character: "hylee", desire: 15 },
+          { character: "remerii", desire: 15 },
+        ],
+      },
+      Q(
+        "cross-hr-06-label",
+        "Exiger qu’elles donnent un nom définitif à ce qui existe entre elles.",
+        "lucidite",
+        [
+          H("On t’a raconté des routes, des repas et des disputes. Le reste n’a pas toujours eu besoin d’un titre."),
+          R("Et nous ne vous devons pas une conclusion avant d’avoir fini de la vivre."),
+          N("Vous revenez au repas. Elles vous gardent une place, mais pas le droit de réduire leur histoire à une définition commode."),
+        ],
+        { trust: -2, relationshipEffects: { remerii: { trust: -2 } } },
+      ),
+    ],
+    [],
+    ["hylee", "remerii"],
+    "two-stars-night",
+  ),
 ];
-const DOUBLE_BEAT: HRBeat = { intro: [
- N("Lorsque les bols sont vides, Hylee reste près de Remerii. Elle fait tourner l’épingle entre ses doigts."), H("Je voudrais te demander quelque chose. Et je préfère qu’on soit là tous les trois."), N("Remerii relève les yeux vers elle, puis vers vous."), H("Tu as envie de retrouver {player}, toi aussi ?"), R("Oui."), H("D’accord. Je pensais que oui. Je préférais l’entendre."), R("Je ne vais pas raconter ce qui nous appartient pour rendre ma réponse plus précise."), H("Je ne te le demande pas."),
- N("Hylee cesse de faire tourner l’épingle."), H("Je ne sais pas bien où me mettre quand je pense à toi et à {player} en même temps."), R("Je croyais pouvoir y réfléchir avant que vous posiez la question."), H("Tu as eu tout le repas."), N("Remerii laisse échapper un rire court. Sa main rejoint celle d’Hylee sur la table."), R("Un peu plus que cela, à vrai dire. Cela n’a pas suffi."), N("Elles se tournent vers vous sans retirer leurs mains."),
- ], choices: [
- Q("cross-hr-06-double-open", "Dire que vous aimeriez partager du temps avec elles, si elles en ont envie.", [P("Je ne sais pas encore à quoi cela ressemblerait. Mais j’aimerais vous retrouver ensemble, un jour où nous n’avons rien à préparer."), H("Moi aussi."), R("Alors commençons par rentrer des Serres. Je préfère avoir cette journée devant moi."), N("Hylee acquiesce. Elle rend l’épingle à Remerii sans quitter sa main.")]),
- Q("cross-hr-06-double-slow", "Leur dire que vous avez besoin de temps pour savoir ce que vous souhaitez.", [H("On peut en reparler."), R("Oui. Rien ne nous oblige à finir cette conversation avant le départ."), N("Vous rangez les bols ensemble. Remerii passe l’épingle dans sa manche au lieu de relever ses cheveux.")]),
- Q("cross-hr-06-double-separate", "Préférer, pour l’instant, continuer vos rencontres séparément.", [R("Je l’entends."), H("Ça ne m’empêche pas de vouloir te revoir."), N("Remerii acquiesce. Hylee ramasse les trois bols ; aucune ne s’écarte lorsque vous les aidez à débarrasser.")]),
- ] };
+
+const DOUBLE_BEAT: HRBeat = {
+  intro: [
+    N("Lorsque les bols sont vides, Hylee reste près de Remerii. Elle fait tourner l’épingle entre ses doigts, puis la remet elle-même dans ses cheveux."),
+    H("Je vais dire quelque chose sans demander qu’on décide quoi que ce soit ce soir."),
+    R("Cette introduction ne te ressemble pas."),
+    H("Laisse-moi profiter de l’effort."),
+    N("Remerii ferme la bouche avec un sourire. Hylee garde deux doigts sur son épingle."),
+    H("J’ai envie de retrouver {player}. Toi aussi."),
+    R("Oui."),
+    H("Et je n’ai pas envie que nous fassions semblant de découvrir cela séparément."),
+    R("Non."),
+    H("Tu pourrais développer un peu."),
+    R("Je pourrais. Mais tu sais déjà quand je regarde {player}, et {player} vient de nous voir partager une cuillère pendant tout un repas."),
+    N("Hylee rougit, puis rit. Remerii lui prend la main avant qu’elle recommence à torturer l’épingle."),
+    R("Ce qui existe entre nous ne disparaît pas. Ce que nous ressentons pour {player} non plus. C’est tout ce que je suis prête à constater avant une opération."),
+    H("C’était presque développé."),
+    N("Elles se tournent vers vous, non pour obtenir une décision, mais pour vous laisser une place dans ce constat."),
+  ],
+  choices: [
+    Q(
+      "cross-hr-06-double-playful",
+      "Faire remarquer que leurs dénégations sont remarquablement coordonnées.",
+      "audace",
+      [
+        P("Vous dites ‘constater’ avec l’air de deux personnes qui ont préparé la même dénégation."),
+        H("Je n’ai rien préparé."),
+        R("C’est précisément ce qu’elle avait prévu de dire."),
+        N("Hylee donne un coup d’épaule à Remerii. Elles se liguent aussitôt pour vous reprocher votre sourire, sans lâcher vos mains lorsqu’elles les trouvent."),
+      ],
+      { affection: 1, desire: 3, relationshipEffects: { remerii: { affection: 1, desire: 3 } } },
+    ),
+    Q(
+      "cross-hr-06-double-gentle",
+      "Leur dire que leur lien compte autant que ce que vous ressentez pour chacune.",
+      "resonance",
+      [
+        P("Je ne veux pas entrer entre vous. J’ai envie de découvrir s’il existe une place avec vous."),
+        H("C’est aussi la question que j’essayais de ne pas poser."),
+        R("Alors gardons-la entière jusqu’à notre retour."),
+        N("Remerii pose sa main sur celle d’Hylee. Vous couvrez les deux, sans promettre encore la forme que prendra cette proximité."),
+      ],
+      { trust: 2, affection: 1, relationshipEffects: { remerii: { trust: 2, affection: 1 } } },
+    ),
+    Q(
+      "cross-hr-06-double-space",
+      "Laisser le constat exister sans lui demander une conclusion avant le départ.",
+      "sangFroid",
+      [
+        P("Je l’entends. Nous n’avons pas besoin de décider davantage ce soir."),
+        R("Merci."),
+        H("Après les Serres, on pourra au moins choisir une journée où personne ne porte un sac bleu."),
+        N("La conversation revient au départ. Ce qui vient d’être reconnu ne se referme pas pour autant."),
+      ],
+      { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+    ),
+  ],
+};
+
 export function hrQuestScene(stage: number, hr: HRState): HRScene | undefined {
- if (stage < 6) { const s = HR_SCENES[stage]; return s && stage === 5 && hr.branch === "double" ? { ...s, beats: [...s.beats, DOUBLE_BEAT] } : s; }
- if (stage !== 6) return;
- if (!hr.anchor?.result || hr.anchor.result === "retreat") return S("cross-hr-07-prepare", HR_TITLES[6], "rocky-spires-pass", [
- N("Le poste vous laisse passer à la relève. Au-delà du dernier abri, les terrasses plongent dans la brume. Le portail reste bien plus haut, hors d’atteinte ; vous n’emprunterez aucun des chemins qui y mènent."), R("B alimente les deux autres. Je retiens sa charge. Hylee intervient sur A lorsque nous aurons vidé C."), H("Et je te dis quand j’approche de ma limite."), R("Je reprends la liaison à ce moment-là."),
- N("Vous vérifiez les poignées avec votre gant. Les mécanismes se manœuvrent à la main ; les signes indiquent leur position, pas un sort à prononcer."), P("Je m’occupe des verrous et je vous décris les repères."), H("Sur C, regarde toute la suite avant d’essayer. On a le temps de la revoir."), R("Deux ruptures, et nous nous retirons. Nous pourrons revenir avec les relevés conservés."), N("Hylee tend sa main à Remerii. Elles serrent leurs doigts une fois avant de gagner chacune leur poste."),
- ], [Q("cross-hr-07-ready", "Vérifier la corde de retour et gagner le premier mécanisme.", [N("Le nœud tient. Vous montrez votre gant aux deux mages pour signaler que vous êtes en place. Remerii relève son bâton ; Hylee attend la première pulsation, les yeux tournés vers les trois terrasses."), H("Je vous vois. On y va.", "determined")])], [], ["hylee","remerii"], "tension");
- return S("cross-hr-07-return", HR_TITLES[6], "rocky-spires-pass", [
- N(hr.anchor.result === "pressure" ? "Un bord du relevé a brûlé. Vous le gardez contre votre poitrine pendant la remontée ; les heures du dernier cycle restent lisibles. Derrière vous, les trois ancrages ont cessé de battre." : "Les cinq étapes du cycle sont notées. Vous rangez le relevé à l’abri de l’humidité ; derrière vous, les trois terrasses demeurent silencieuses."), N("Le portail luit encore au fond de la montagne. Les mécanismes périphériques sont neutralisés, mais l’ouverture reste une menace pour ceux qui gardent le col."),
- H("J’ai les doigts engourdis."), N("Remerii s’arrête aussitôt. Hylee ouvre et ferme les mains devant elle."), H("Ça revient. Je peux marcher."), R("D’accord."), N("Elle attend qu’Hylee remette son gant, puis reprend le chemin à sa hauteur. Hylee lui touche brièvement le bras."), H("Sur le dernier cycle, j’ai cru que tu allais reprendre avant le signal."), R("J’en ai eu envie."), H("Je sais."), R("Tu tenais."), N("Hylee garde les yeux sur le sentier pendant quelques pas. Elle finit par sourire."),
- P("Le poste voudra les heures."), R("Nous les leur donnerons. Ensuite, nous rentrons."), H("Et on mange quelque chose qui n’a pas voyagé dans ce sac."), R("Vous choisirez."), H("Je vais m’en souvenir."),
- ], [
- Q("cross-hr-07-report", "Confier vos notes au poste et les rejoindre pour le retour.", [N("Le garde recopie les heures. Vous revenez vers les deux femmes ; Hylee a pris une extrémité de la sangle du sac, Remerii l’autre. Elles vous laissent sa poignée centrale."), H("Il pèse moins qu’à l’aller."), R("Nous avons laissé les pièces cassées au poste."), H("Je parlais surtout de la montée. Mais oui, aussi."), N("Vous redescendez ensemble, assez proches pour parler sans hausser la voix.")], { trust: 2, relationshipEffects: { remerii: { trust: 2 } } }),
- Q("cross-hr-07-rest", "Proposer une pause à l’abri avant de redescendre.", [H("Oui. Là, je veux bien m’asseoir."), N("Remerii dégage une pierre plate et s’installe près d’elle. Hylee pose la tête contre son épaule ; Remerii lui tient le gant qu’elle a retiré."), R("Quelques minutes."), N("Vous vous asseyez de l’autre côté du sac. Quand les doigts d’Hylee ont retrouvé leur chaleur, elle le dit elle-même et vous repartez.")], { affection: 2, relationshipEffects: { remerii: { affection: 1 } } }),
- ], [], ["hylee","remerii"], "wild-calm");
+  if (stage < 6) {
+    const scene = HR_SCENES[stage];
+    return scene && stage === 5 && hr.branch === "double"
+      ? { ...scene, beats: [...scene.beats, DOUBLE_BEAT] }
+      : scene;
+  }
+  if (stage !== 6) return undefined;
+
+  if (!hr.anchor?.result || hr.anchor.result === "retreat") {
+    return S(
+      "cross-hr-07-prepare",
+      HR_TITLES[6],
+      "rocky-spires-pass",
+      [
+        N("Le poste vous laisse passer à la relève. Au-delà du dernier abri, les trois terrasses plongent dans la brume. Le portail reste loin au-dessus et aucune étape de l’opération ne mène jusqu’à lui."),
+        R("B donne le premier rythme. Je retiens sa charge. Hylee prend A après la décharge de C."),
+        H("Et je dis ‘bleu’ si je ne tiens plus."),
+        R("Je reprends alors la liaison sans discuter."),
+        H("Tu peux hésiter avant. Tu n’as simplement pas le droit de décider à ma place pendant."),
+        R("Je sais."),
+        N("Remerii vérifie une dernière fois le gant d’Hylee, puis lui offre sa paume plutôt que d’en reprendre la boucle. Hylee la serre."),
+        P("Je manœuvre les verrous, lis les repères et garde la voie de retour. Aucun sort de substitution."),
+        R("Exactement. Deux incidents imposent le repli. Les relevés seront conservés et nous reprendrons depuis une nouvelle tentative."),
+        H("Et si je dis que je tiens le dernier cycle ?"),
+        N("Remerii la regarde assez longtemps pour que l’ancienne peur soit visible."),
+        R("Alors je te crois. Un cycle, et j’attends votre signal."),
+      ],
+      [
+        Q(
+          "cross-hr-07-ready",
+          "Vérifier la corde, les poignées et le signe de repli avant d’avancer.",
+          "sangFroid",
+          [
+            N("Vous contrôlez chaque point sans vous presser. Le nœud tient, les poignées répondent et le chemin du col reste libre."),
+            H("Je vous vois tous les deux."),
+            R("Je suis en place."),
+            P("On commence."),
+          ],
+          { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+        ),
+      ],
+      [],
+      ["hylee", "remerii"],
+      "serres-operation",
+    );
+  }
+
+  return S(
+    "cross-hr-07-return",
+    HR_TITLES[6],
+    "rocky-spires-pass",
+    [
+      N(hr.anchor.result === "pressure"
+        ? "Un bord du relevé a brûlé pendant l’incident, mais les heures du dernier cycle restent lisibles. Derrière vous, les trois relais sont éteints."
+        : "Les cinq phases du cycle sont consignées. Derrière vous, les trois relais restent silencieux."),
+      N("Le portail luit encore au fond de la montagne. Vous n’avez pas prétendu l’anéantir : vous avez empêché ses installations périphériques de continuer à lui répondre."),
+      H("J’ai les doigts engourdis."),
+      N("Remerii s’arrête. Hylee ouvre et ferme les mains devant elle avant que l’inquiétude ne redevienne un ordre."),
+      H("Ça revient. Je peux marcher."),
+      R("D’accord."),
+      N("Elle attend qu’Hylee remette son gant, puis reprend le chemin à sa hauteur."),
+      H("Sur le dernier cycle, tu as voulu reprendre."),
+      R("Oui."),
+      H("Mais tu ne l’as pas fait."),
+      R("Tu avais dit que tu tenais."),
+      N("Hylee lui prend le bras. Remerii laisse enfin sortir son souffle et pose brièvement son front contre sa tempe."),
+      P("Le poste voudra les heures."),
+      H("Il les aura. Ensuite, je choisis ce qu’on mange."),
+      R("Cette fois, je mangerai les morceaux."),
+      H("Je veux voir ça."),
+    ],
+    [
+      Q(
+        "cross-hr-07-report",
+        "Confier les relevés au poste et organiser la surveillance suivante.",
+        "lucidite",
+        [
+          N("Le garde recopie les heures et marque les trois terrasses comme neutralisées. Vous lui laissez également les signes annonçant un nouveau cycle."),
+          R("Ils pourront évacuer la passerelle avant une reprise."),
+          H("Et nous saurons ce qui a recommencé, au lieu de courir jusqu’ici sur une rumeur."),
+          N("Vous repartez avec un problème circonscrit et un poste mieux préparé."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-07-rest",
+        "Proposer une pause où chacune peut enfin relâcher sa vigilance.",
+        "resonance",
+        [
+          H("Oui. Là, je veux bien m’asseoir."),
+          N("Remerii dégage une pierre plate et s’installe près d’elle. Hylee pose la tête sur son épaule ; Remerii lui tient le gant retiré plutôt que de lui reprendre la main."),
+          R("Quelques minutes."),
+          N("Vous vous asseyez de l’autre côté. Lorsque Hylee annonce d’elle-même que la chaleur est revenue, Remerii la croit encore."),
+        ],
+        { affection: 2, relationshipEffects: { remerii: { affection: 2 } } },
+      ),
+      {
+        ...Q(
+          "cross-hr-07-no-plan",
+          "Réclamer un repas où aucune d’elles n’a le droit d’apporter de carte.",
+          "audace",
+          [
+            P("Je pose une condition au repas : aucune carte, aucun relevé, et personne ne me laisse seul avec le sac bleu."),
+            H("J’accepte si Remerii promet de ne pas choisir les trois plats à l’avance."),
+            R("Je peux n’en choisir que deux."),
+            N("Elles se rapprochent de vous pour descendre. Hylee prend une poignée du sac, Remerii l’autre, et vous laisse celle du milieu."),
+          ],
+          { affection: 1, desire: 2, relationshipEffects: { remerii: { affection: 1, desire: 2 } } },
+        ),
+        requiresRelationship: [
+          { character: "hylee", affection: 20 },
+          { character: "remerii", affection: 20 },
+        ],
+      },
+    ],
+    [],
+    ["hylee", "remerii"],
+    "wild-calm",
+  );
 }
-export function hrRecognition(waiting = false): HRScene {
- return S(waiting ? "cross-hr-recognition-later" : "cross-hr-recognition", "Une place à la table", "miraldas-quarters", [
- N(waiting ? "Hylee vous garde une chaise. Le départ n’est plus une excuse pour remettre la conversation à demain." : "Le matériel est rendu et les relevés déposés. Hylee vous retrouve à la résidence ; Remerii a commandé trois boissons, sans rapport ouvert devant elle."), H("Je voudrais qu’on se revoie comme ça. Tous les trois, exprès. Sans qu’un portail nous fournisse la raison."), N("Remerii fait tourner son verre avant de regarder Hylee."), R("J’en ai envie aussi. Et j’aurai sûrement le réflexe d’essayer de prévoir la journée entière."), H("Je te laisserai choisir l’heure. Pour commencer."), R("Généreuse.", "smirk"), N("Hylee prend sa main sur la table. Remerii la serre, puis tourne vers vous son autre paume, ouverte."), R("Est-ce que vous voulez essayer ? Vous pouvez aussi vouloir nous voir séparément."),
- ], [
- { ...Q("cross-hr-config-accepted", "Proposer une première journée ensemble.", [P("Oui. Une journée, et on verra ce qui nous plaît."), H("J’ai déjà une idée."), R("Gardez-la jusqu’à ce que nous ayons fini de boire."), H("D’accord. Mais demain, pas de registre."), N("Remerii acquiesce. Hylee laisse sa main entre les vôtres.")]), requiresRelationship: [{ character: "hylee", stage: 5, trust: 22, affection: 22 }, { character: "remerii", stage: 5, trust: 22, affection: 22 }] },
- Q("cross-hr-config-separate", "Préférer continuer vos relations séparément.", [H("D’accord. Je voudrais quand même te revoir."), R("Moi aussi. Nous prendrons nos rendez-vous comme avant."), N("Remerii repose sa main près de celle d’Hylee. Aucune ne reprend la place qu’elle vous avait gardée.")]),
- Q("cross-hr-config-waiting", "Demander encore un peu de temps.", [R("Prenez-le. Revenez nous en parler quand vous saurez ce que vous voulez."), H("Pas besoin de recommencer toute la discussion. Tu nous diras."), N("Vous restez finir votre boisson. La table ne se vide pas à votre hésitation.")]),
- Q("cross-hr-config-refused", "Dire que vous ne souhaitez pas de rendez-vous à trois.", [H("Merci de le dire maintenant."), R("Nous n’en ferons pas la condition de nos autres rencontres."), N("Hylee reprend sa tasse. La conversation passe au repas du lendemain, sans vous demander de défendre votre réponse.")]),
- ], [], ["hylee","remerii"], "two-stars-night");
+
+function recognitionPrelude(hr: HRState, waiting: boolean): DialogueLine[] {
+  if (waiting) {
+    return [
+      N("Hylee vous garde la même chaise. Cette fois, aucune relève du col ne permet de remettre la réponse à demain."),
+      H("Tu nous avais demandé du temps. Est-ce que tu sais un peu mieux où tu en es ?"),
+    ];
+  }
+  const picks = hr.choices["cross-hr-06"] || [];
+  if (picks.includes("cross-hr-06-double-playful")) {
+    return [
+      N("Le matériel est rendu. Hylee a posé trois tasses sur la table ; Remerii affirme que leur disposition n’a rien de coordonné."),
+      H("Elle a préparé la même dénégation que l’autre soir."),
+      R("Et toi, la même accusation."),
+    ];
+  }
+  if (picks.includes("cross-hr-06-double-gentle")) {
+    return [
+      N("Le matériel est rendu. Hylee et Remerii ont gardé entre elles la place dont vous aviez parlé avant le départ : ni entre leur histoire, ni en dehors d’elle."),
+    ];
+  }
+  return [
+    N("Le matériel est rendu et les relevés déposés. Trois boissons attendent à la résidence ; aucun rapport n’est ouvert devant Remerii."),
+  ];
+}
+
+export function hrRecognition(hr: HRState, waiting = false): HRScene {
+  return S(
+    waiting ? "cross-hr-recognition-later" : "cross-hr-recognition",
+    "Une place à la table",
+    "miraldas-quarters",
+    [
+      ...recognitionPrelude(hr, waiting),
+      H("J’ai envie qu’on se revoie tous les trois, exprès. Sans portail, sans plan et sans prétendre que ce serait seulement deux rendez-vous posés côte à côte."),
+      R("J’en ai envie aussi."),
+      N("Hylee la regarde, surprise par la réponse sans détour. Remerii hausse légèrement un sourcil."),
+      R("Tu m’as reproché de ne pas développer. J’ai commencé par l’essentiel."),
+      H("Continue."),
+      R("Ce qui existe entre nous compte. Ce que je ressens pour {player} aussi. Je voudrais découvrir une forme où personne ne devient l’invitée de la relation des deux autres."),
+      N("Hylee prend sa main sur la table. Remerii la serre, puis tourne vers vous son autre paume, ouverte."),
+      H("On peut essayer une journée. Pas décider de toute notre vie avant d’avoir choisi où manger."),
+      R("Et vous pouvez préférer nous voir séparément. La réponse ne réécrira pas ce que nous avons déjà partagé."),
+    ],
+    [
+      {
+        ...Q(
+          "cross-hr-config-accepted",
+          "Proposer une première journée ensemble.",
+          "audace",
+          [
+            P("Oui. Une journée à trois, et on découvrira ce qui nous ressemble au lieu de le décider d’avance."),
+            H("J’ai déjà une idée."),
+            R("Garde-la jusqu’à ce que nous ayons fini de boire."),
+            H("D’accord. Mais pas de registre."),
+            N("Remerii acquiesce. Hylee glisse sa main entre les vôtres, puis attire celle de Remerii par-dessus."),
+          ],
+          { affection: 2, desire: 2, relationshipEffects: { remerii: { affection: 2, desire: 2 } } },
+        ),
+        requiresRelationship: [
+          { character: "hylee", stage: 5, trust: 22, affection: 22 },
+          { character: "remerii", stage: 5, trust: 22, affection: 22 },
+        ],
+      },
+      Q(
+        "cross-hr-config-separate",
+        "Préférer continuer vos relations séparément.",
+        "resonance",
+        [
+          H("D’accord. Je voudrais quand même te revoir."),
+          R("Moi aussi. Et cela ne change rien à ce que nous sommes l’une pour l’autre."),
+          N("Leurs mains restent jointes. La place qu’elles vous avaient gardée redevient une chaise d’amitié, sans punition ni promesse forcée."),
+        ],
+      ),
+      Q(
+        "cross-hr-config-waiting",
+        "Demander encore un peu de temps.",
+        "sangFroid",
+        [
+          R("Prenez-le. Nous ne vous demanderons pas de recommencer toute cette conversation."),
+          H("Reviens demain ou plus tard. Tu nous diras seulement où tu en es."),
+          N("Vous restez finir votre boisson. La table ne se vide pas à cause de votre hésitation."),
+        ],
+      ),
+      Q(
+        "cross-hr-config-refused",
+        "Dire que vous ne souhaitez pas de rendez-vous à trois.",
+        "lucidite",
+        [
+          H("Merci de le dire clairement."),
+          R("Nous n’en ferons pas la condition de nos autres rencontres."),
+          N("La conversation passe au repas du lendemain. Leur lien continue devant vous sans demander à votre refus de le valider ou de l’effacer."),
+        ],
+      ),
+    ],
+    [],
+    ["hylee", "remerii"],
+    "two-stars-night",
+  );
 }

@@ -34,6 +34,9 @@ const DUO_NAMES: Record<string, string> = {
   // rendez-vous du logis. Les deux sorties publiques n’emploient pas ce CG
   // hors contexte et restent prêtes à recevoir leurs assets dédiés.
   "group-date-allenna-lineva-home": "allenna_lineva",
+  // Même règle pour Hylee / Remerii : leurs CG montrent explicitement une
+  // chambre bordée de bibliothèques. Seule « La porte fermée » les utilise.
+  "group-date-hylee-remerii-home": "hylee_remerii",
 };
 
 export const DUO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(

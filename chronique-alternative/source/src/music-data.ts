@@ -110,6 +110,7 @@ export const MUSIC_LABELS: Record<string, string> = {
   "dune-relay": "Les Tzekarii",
   intimate: "Une nuit sous tes étoiles — intime",
   "alpha-chases": "Alpha Chases",
+  "serres-operation": "Opération Serres Rocheuses",
   menu: "Le grimoire de Sylvinia",
   title: "Le portail emprunté",
 };

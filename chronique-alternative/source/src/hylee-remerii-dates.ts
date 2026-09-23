@@ -1,78 +1,661 @@
 import type { GroupDateScene } from "./group-dates";
-import { H, R, P, N, Q, HR_OPEN, type HRBeat } from "./hylee-remerii-cross-quest";
-export const HR_DATE_IDS = ["group-date-hylee-remerii-free-day", "group-date-hylee-remerii-wind", "group-date-hylee-remerii-home"];
-export const HR_DATES: GroupDateScene[] = [
- { id: HR_DATE_IDS[0], characters: ["hylee","remerii"], title: "Une journée sans programme", type: "Une sortie à Mir’Aldas", description: "Retrouver Hylee et Remerii sous le dôme, sans rapport à rendre ni matériel à préparer.", dynamic: "Hylee veut choisir au fil des rues. Remerii a promis de laisser son registre à la résidence.", location: "miraldas", spot: "miraldas-dome", period: "apres-midi", minStage: 5, minAffection: 22, minTrust: 22, minDesire: 0, mood: "soft", requiredFlags: [HR_OPEN], authoredBeats: true, intimacyDisabled: true, music: "miraldas", intimacySetting: { opening: [], closing: [] },
- intro: [N("Hylee vous attend sous le dôme avec un sachet vide. Remerii vérifie machinalement sa manche, puis en retire la main quand elle vous voit."), H("Le registre est resté à la maison. J’ai regardé."), R("Vous auriez pu me croire."), H("Tu avais dit ça hier. Il y avait un carnet dans ta poche."), R("Ce n’était pas le registre."), N("Hylee lui adresse un regard satisfait : elle n’a même pas eu besoin d’ajouter quoi que ce soit."),
- P("Et ce sachet ?"), H("Pour ce qu’on trouvera. Ça laisse plus de possibilités qu’une liste."), N("Vous traversez une galerie où les commerçants commencent à dégager leurs étals. Hylee s’arrête devant une pile de rubans, en soulève un et le repose. Remerii, deux pas plus loin, a déjà trouvé une table à l’ombre."), R("Nous pourrions commencer par nous asseoir."), H("On vient d’arriver."), R("Cela ne rend pas la chaise moins utilisable."), N("Hylee éclate de rire. Elle rejoint Remerii, prend le dossier de la chaise et le tourne vers la rue pour pouvoir continuer à regarder.")],
- choices: [
- Q("cross-hr-day-sit", "Prendre la troisième chaise et demander ce qui se mange ici.", [H("Je n’ai aucune idée. C’est l’intérêt."), R("Il y a un menu accroché au montant, si l’incertitude vous devient pénible."), N("Hylee commande quelque chose dont elle n’a reconnu que le dernier mot. Remerii attend son explication, un sourire au coin des lèvres.")], { affection: 1, relationshipEffects: { remerii: { affection: 1 } } }),
- Q("cross-hr-day-follow", "Proposer de marcher encore un peu, puis de revenir à cette table.", [R("À condition qu’elle soit encore libre."), H("On peut en trouver une autre. Il y en a même une juste derrière toi."), N("Remerii se retourne, constate les chaises vides et prend les devants. Hylee vous rejoint en faisant mine de n’avoir rien remarqué.")], { trust: 1 }),
- Q("cross-hr-day-alone", "Entraîner Hylee vers les étals pendant que Remerii garde la table.", [H("Elle est venue se promener aussi."), R("La table se passera de surveillance."), N("Hylee reste près de sa chaise. Vous revenez chercher Remerii avant de repartir ; cette fois, vous attendez qu’elle ait fini de parler au marchand.")], { trust: -2, relationshipEffects: { remerii: { affection: -2 } } }),
- ] },
- { id: HR_DATE_IDS[1], characters: ["hylee","remerii"], title: "À trois contre le vent", type: "Une promenade sous le dôme", description: "Suivre les sentiers des bois pourpres jusqu’à un abri où partager quelques provisions.", dynamic: "Une sortie choisie pour le plaisir de marcher. Le vent décide de l’endroit où vous vous arrêterez.", location: "miraldas", spot: "miraldas-purple-woods", period: "apres-midi", minStage: 5, minAffection: 22, minTrust: 22, minDesire: 0, mood: "soft", requiredFlags: [HR_OPEN], afterDates: [HR_DATE_IDS[0]], authoredBeats: true, intimacyDisabled: true, music: "confessions-wind", intimacySetting: { opening: [], closing: [] },
- intro: [N("Le vent fait claquer une bande de tissu au bord du sentier. Au-dessus des branches pourpres, le dôme garde sa courbe familière ; les Serres sont loin de cette promenade."), H("J’avais prévu de poser la couverture près de l’eau."), R("Vous pouvez essayer. Nous la retrouverons probablement avant vous sur l’autre rive."), N("Hylee tient un coin de la couverture devant elle. Le vent le lui rabat au visage. Remerii attend qu’elle l’ait dégagé avant de sourire."), H("Tu aurais pu me prévenir."), R("J’avais commencé."),
- P("Il y a un mur bas plus haut sur le chemin."), H("Et un grand arbre derrière. On sera mieux."), N("Elle replie le tissu en le coinçant contre votre bras, puis regarde Remerii."), H("Tu préfères continuer jusqu’au lac ?"), R("Je préfère manger sans courir après mon assiette."), N("Elles prennent le chemin ensemble. Hylee tire Remerii par la manche pour lui montrer une feuille restée suspendue dans une toile ; Remerii s’arrête vraiment pour regarder.")],
- choices: [
- Q("cross-hr-wind-wall", "Prendre le panier pendant qu’elles cherchent le passage abrité.", [N("Hylee vous le confie et passe devant, attentive au sol. Remerii lui indique une racine ; elle l’enjambe sans interrompre son récit d’une promenade où le repas avait fini sous la pluie."), R("Vous aviez insisté pour garder le pain à découvert."), H("Pour qu’il ne s’écrase pas. Il s’est écrasé quand même.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-wind-route", "Leur proposer de faire le détour par le chemin large.", [H("Plus long, mais je pourrai tenir la couverture autrement qu’avec les dents."), N("Remerii lui prend un côté du paquet. Elles descendent côte à côte pendant que vous portez le panier."), R("Nous ne sommes pas attendus. Prenons celui-là.")], { affection: 1 }),
- Q("cross-hr-wind-risk", "Suggérer un essai de glace pour immobiliser la couverture au vent.", [H("Je préfère qu’on mange dessus sans rester collés avec."), R("Le mur fera l’affaire."), N("Hylee replie le dernier coin avec application. Vous prenez le panier ; la promenade reprend sans démonstration.")], { trust: -2 }),
- ] },
- { id: HR_DATE_IDS[2], characters: ["hylee","remerii"], title: "La porte fermée", type: "Une soirée chez vous", description: "Recevoir Hylee et Remerii dans votre propre logis, puis laisser la soirée trouver son rythme.", dynamic: "La visite commence par des détails ordinaires : où poser les manteaux, quoi servir et qui prend toute la place sur le banc.", location: "miraldas", spot: "miraldas-quarters", period: "soirée", minStage: 5, minAffection: 22, minTrust: 22, minDesire: 0, mood: "soft", requiredFlags: [HR_OPEN], afterDates: [HR_DATE_IDS[0],HR_DATE_IDS[1]], home: true, authoredBeats: true, intimacyDisabled: true, music: "two-stars-night", intimacySetting: { opening: [], closing: [] },
- intro: [N("Hylee passe la porte avec un paquet enveloppé dans un linge. Remerii la suit, retient le battant le temps de vous saluer et regarde où déposer son manteau."), H("On a apporté de quoi manger. Enfin, de quoi compléter. Je ne savais pas combien tu avais prévu."), R("Elle a changé deux fois la taille du paquet."), H("Tu as ajouté la moitié du dernier."), N("Remerii ne le nie pas. Elle vous tend le paquet le plus lourd, puis aide Hylee à dégager le linge pris dans sa manche."),
- P("Vous pouvez laisser vos affaires ici."), N("Hylee s’avance, regarde un objet exposé sans le toucher, puis revient vers la table. Remerii a gardé son manteau sur le bras."), H("Tu comptes repartir tout de suite ?"), R("Je cherchais à ne pas couvrir les affaires de {player}."), N("Vous lui faites une place. Elle pose enfin le manteau et remonte légèrement ses manches pour aider à disposer le repas."), H("Je peux ouvrir ?"), N("Elle vous montre le paquet. À peine le nœud défait, Remerii retient le bord de la table d’une main et glisse une assiette sous ce qui menace de rouler.")],
- choices: [
- Q("cross-hr-home-together", "Leur faire une place à table et leur confier les assiettes.", [N("Hylee rapproche sa chaise de Remerii pour lui passer les portions. Elles se corrigent sur les quantités sans ralentir le service."), R("Gardez-en pour vous."), H("Je me sers après. Tu sais bien."), N("Vous posez sa part près de son verre avant qu’elle puisse l’oublier.")], { affection: 1, relationshipEffects: { remerii: { affection: 1 } } }),
- Q("cross-hr-home-tour", "Leur proposer une courte visite pendant que le repas finit de chauffer.", [H("Je voulais justement regarder ce que tu avais posé là."), N("Elle vous suit, Remerii derrière elle. À chaque passage étroit, elles échangent leur place sans avoir à se demander qui avance en premier."), R("Vous avez trouvé un endroit agréable. On entend peu la rue.")], { trust: 1 }),
- Q("cross-hr-home-service", "Demander à Remerii de finir le service pour rester seul avec Hylee.", [R("Je suis venue passer la soirée avec vous deux."), H("Et je peux attendre qu’on ait posé les plats pour m’asseoir."), N("Vous reprenez la dernière assiette. Remerii vient s’installer avec vous ; Hylee lui garde la chaise voisine.")], { trust: -2, relationshipEffects: { remerii: { affection: -2 } } }),
- ] },
-];
-export const HR_DATE_BEATS: Record<string, HRBeat[]> = {
- [HR_DATE_IDS[0]]: [
- { intro: [N("Vous ressortez avec de quoi grignoter. Hylee a rempli son sachet ; Remerii s’arrête devant un étal de petits objets de bois et en soulève un sans demander l’avis de personne."), H("Tu avais dit que tu n’avais besoin de rien."), R("Je n’ai besoin de rien."), N("Elle fait tourner l’objet entre ses doigts : une boîte dont le couvercle refuse de rentrer droit."), R("C’est mal ajusté."), H("Tu vas l’acheter pour le réparer ?"), R("Non."), N("Elle repose la boîte, puis en prend une autre. Hylee vous regarde ; vous attendez ensemble. Remerii s’en aperçoit et finit par acheter la première."),
- R("Je veux savoir où elle accroche."), H("Évidemment."), N("Le marchand tend le paquet. Hylee ouvre son sachet pour y mettre la boîte ; Remerii lui retire doucement la main."), R("Il y a de la confiture dans celui-là."), H("Seulement d’un côté."), N("Elles repartent en discutant de la quantité de confiture nécessaire pour ruiner un assemblage. Vous marchez à leur hauteur, les provisions dans les bras.")], choices: [
- Q("cross-hr-day-box", "Demander à Remerii ce qu’elle compte mettre dans cette boîte.", [R("Je n’en sais rien."), H("C’est bien. Ça laisse plus de possibilités qu’une liste."), N("Remerii s’arrête et reconnaît la phrase. Son rire surprend Hylee, qui se met à rire aussi."), R("Je vous l’ai assez dit, je suppose.")], { relationshipEffects: { remerii: { affection: 2 } } }),
- Q("cross-hr-day-share", "Ouvrir les provisions pendant qu’elles parlent.", [N("Hylee prend un morceau, le partage et tend la moitié à Remerii. Celle-ci mord dedans avant de comprendre que le sachet n’était pas exagérément taché."), R("Vous auriez pu préciser pour la confiture."), H("Tu l’avais remarquée toute seule."), N("Vous lui tendez un linge ; elle le prend en secouant la tête.")], { affection: 2 }),
- Q("cross-hr-day-dismiss", "Dire qu’un achat aussi banal ne mérite pas qu’on s’y attarde.", [R("Il me plaisait."), N("Elle garde la boîte contre elle. Hylee referme le sachet un peu trop soigneusement."), H("On avait justement la journée pour s’attarder."), N("Vous ralentissez avec elles, sans relancer aussitôt une autre destination.")], { relationshipEffects: { remerii: { affection: -2 } } }),
- ] },
- { intro: [N("Plus tard, vous trouvez un banc où l’ombre avance déjà sur les pavés. Hylee s’assoit la première et attire Remerii près d’elle par le poignet. La boîte repose entre leurs genoux."), H("On n’a presque rien fait."), R("Vous avez choisi trois fois à manger, contesté deux prix et failli acheter un ruban plus long que votre manteau."), H("Je pensais à quelque chose qu’on serait obligés de raconter ensuite."), N("Remerii lui passe un doigt sur la joue pour en retirer une trace de sucre. Hylee suit le mouvement de sa main et la garde contre elle une seconde."),
- R("Alors non. Presque rien."), N("Vous vous asseyez au bord du banc. Hylee décale son sachet pour vous faire de la place."), P("Ça vous a plu ?"), H("Oui. Même l’attente devant la boîte."), R("La boîte aussi, pour ma part."), N("Elle lève les yeux vers vous. Hylee repose son épaule contre la sienne. Leurs mains restent jointes sur le paquet.")], choices: [
- Q("cross-hr-day-near", "Leur prendre la main et proposer de rester encore un peu.", [N("Remerii avance sa main libre. Hylee se penche vers vous pour déposer un baiser sur votre joue, puis en laisse un près de la tempe de Remerii."), H("On n’a toujours pas de programme."), R("Le banc me convient."), N("Vous restez jusqu’à ce que l’ombre atteigne vos chaussures. Au moment de partir, Hylee oublie son sachet ; c’est Remerii qui le ramasse sans lâcher sa main.")], { affection: 2, relationshipEffects: { remerii: { affection: 2 } } }),
- Q("cross-hr-day-quiet", "Rester à leurs côtés en regardant passer les gens.", [N("Hylee vous montre du menton un promeneur dont le paquet ressemble au vôtre. Remerii suit son regard et rapproche la boîte, comme si quelqu’un allait la confondre avec une autre."), H("Personne ne va te la prendre."), R("Je sais."), N("Elle sourit. Vous terminez la journée sur ce banc, sans chercher une dernière activité à y ajouter.")], { trust: 2, relationshipEffects: { remerii: { trust: 2 } } }),
- ] },
- ],
- [HR_DATE_IDS[1]]: [
- { intro: [N("L’abri coupe presque tout le vent. Hylee déplie la couverture pendant que Remerii cherche une pierre suffisamment lisse pour en retenir le coin. Vous posez le panier et vous occupez du second bord."), H("Cette fois, elle reste."), R("Attendez au moins d’avoir lâché."), N("Hylee ouvre ses deux mains avec ostentation. Le tissu ne bouge pas ; elle s’incline légèrement devant Remerii, qui finit par lui rendre sa révérence."),
- N("Le pain arrive sur la couverture. Remerii retire de son paquet une portion qu’elle avait gardée à part."), R("Sans la sauce."), H("Tu t’en es souvenue."), R("Vous avez assez protesté la dernière fois."), H("Une seule fois."), R("Pendant tout le chemin."), N("Hylee lui touche le genou pour l’empêcher de continuer, mais elle rit déjà. Remerii lui donne le paquet entier."),
- P("Je peux goûter ce qui a mérité tout un chemin de protestations ?"), H("Oui. Tu pourras témoigner."), N("Remerii vous tend la sauce avec un sérieux impeccable. Une rafale secoue les feuilles au-dessus du mur. Hylee rapproche le panier, puis se sert tranquillement.")], choices: [
- Q("cross-hr-wind-taste", "Goûter et donner votre avis sans chercher à les départager.", [P("Ça me plaît. Mais je comprends qu’on préfère en mettre moins."), H("On aurait dû t’avoir avec nous cette fois-là."), R("Pour que vous puissiez protester auprès de quelqu’un d’autre ?"), H("Entre autres."), N("Remerii se sert plus légèrement. Hylee le remarque et lui pousse le pain à portée.")], { affection: 1, relationshipEffects: { remerii: { affection: 1 } } }),
- Q("cross-hr-wind-memory", "Leur demander où les avait menées cette promenade.", [H("J’avais suivi un sentier parce que je pensais reconnaître un arbre."), R("Nous avons reconnu beaucoup d’arbres ce jour-là."), H("Mais tu m’as laissée chercher."), R("Il faisait beau."), N("Hylee sourit sans répliquer. Elle étend ses jambes près de celles de Remerii pendant que le récit continue.")], { trust: 2 }),
- Q("cross-hr-wind-mock", "Plaisanter sur la nécessité de toujours surveiller Hylee en promenade.", [H("Tu peux me demander si je connais le chemin. Ça suffira."), R("Nous nous étions perdues toutes les deux."), N("Vous reposez votre portion et reprenez plus simplement la question du retour. Hylee vous montre le sentier large, visible depuis le mur.")], { trust: -2 }),
- ] },
- { intro: [N("Le repas achevé, Remerii vous devance jusqu’au bout du mur. Elle regarde les feuilles emportées au-dessus du chemin, puis revient chercher Hylee."), R("Vous vouliez voir l’eau. On peut descendre jusqu’au dernier tournant avant de rentrer."), H("Tu viens de proposer le détour ?"), R("Il en reste un raisonnable."), N("Hylee se lève immédiatement, laisse Remerii lui tendre la main et vous attend pour prendre le panier."),
- N("Au tournant, l’eau apparaît entre les branches. Hylee se place du côté d’où souffle le vent, puis change d’avis et vient contre Remerii. Celle-ci ouvre un pan de son manteau pour lui abriter l’épaule."), H("Là, ça va."), R("Oui."), N("Remerii vous fait signe d’approcher à votre tour. Vous trouvez une place auprès d’elles, assez près pour sentir la chaleur restée sous leurs vêtements malgré l’air frais."), H("La prochaine fois, je prendrai des liens pour la couverture."), R("Je pensais plutôt à choisir un jour plus calme."), H("On peut faire les deux.")], choices: [
- Q("cross-hr-wind-close", "Vous rapprocher et les embrasser avant de reprendre le chemin.", [N("Hylee se tourne la première vers vous. Son baiser est bref, interrompu par une mèche que le vent ramène contre vos lèvres. Remerii la dégage en riant doucement, puis vous attire à elle."), R("Nous allons finir par devoir marcher pour nous réchauffer."), H("Dans un moment."), N("Elle embrasse Remerii à son tour. Vous restez encore quelques instants à l’abri de ce manteau trop petit pour trois, puis vous remontez ensemble.")], { affection: 2, relationshipEffects: { remerii: { affection: 2 } } }),
- Q("cross-hr-wind-back", "Proposer de rentrer prendre une boisson chaude.", [H("Avec ce qui reste du pain."), R("Si vous l’avez emballé."), N("Hylee ouvre le panier, vérifie et vous le confie, satisfaite. Remerii lui prend le bras sur la montée ; elles marchent assez lentement pour que vous restiez à leur hauteur."), N("Vous regagnez les rues de Mir’Aldas avec la couverture repliée, une poignée de miettes et l’envie très simple de prolonger encore la conversation.")], { trust: 2, relationshipEffects: { remerii: { trust: 2 } } }),
- ] },
- ],
- [HR_DATE_IDS[2]]: [
- { intro: [N("Les plats se vident lentement. Hylee se lève pour reprendre de l’eau et retrouve votre place en suivant l’endroit où vous avez posé le pichet ; Remerii tourne déjà son verre pour lui laisser passer le bras."), P("Vous faites souvent ça ?"), H("Se disputer la place sur une table ?"), R("Répondre avant que la question soit terminée, certainement."), N("Hylee lui verse moins d’eau qu’à vous. Remerii ne demande rien de plus."),
- H("On a partagé beaucoup de repas. Ça finit par se voir."), N("Elle pose le pichet, ramasse une miette du bout du doigt et regarde autour d’elle, comme si elle découvrait votre pièce plus lentement maintenant que les assiettes n’occupaient plus toute son attention."), H("C’est agréable de pouvoir rester sans attendre qu’on débarrasse autour de nous."), R("Nous pourrions tout de même débarrasser ici."), H("Je pensais après."), N("Remerii se rassoit. Hylee lui glisse le dernier morceau du plat qu’elle a préféré, puis reprend sa phrase à votre intention."), H("Tu t’installes souvent là quand tu es seul ?")], choices: [
- Q("cross-hr-home-place", "Leur montrer l’endroit où vous aimez vous installer.", [N("Hylee s’y rend aussitôt, s’arrête avant de s’asseoir et vous regarde. Vous lui faites signe. Remerii apporte les verres tandis que vous rapprochez un troisième siège."), R("Je comprends le choix. La lumière vient du bon côté."), H("Et on peut te voir quand tu parles depuis la table.")], { affection: 1, relationshipEffects: { remerii: { affection: 1 } } }),
- Q("cross-hr-home-clear", "Ranger rapidement ensemble pour profiter de la suite de la soirée.", [N("Vous emportez les assiettes. Hylee essuie et Remerii retrouve les places que vous lui indiquez. Le travail se termine avant que leur conversation sur le repas soit achevée."), H("La prochaine fois, je te ferai goûter l’autre."), R("Vous n’avez pas encore demandé si nous pouvions revenir."), N("Elles vous regardent toutes les deux, souriantes.")], { trust: 1, relationshipEffects: { remerii: { trust: 1 } } }),
- Q("cross-hr-home-promise", "Annoncer que vous les imaginez déjà vivre ici toutes les deux.", [N("Hylee repose le verre qu’elle allait emporter."), H("On est venues passer une soirée."), R("Laissez-nous d’abord la finir."), P("Je suis allé trop vite."), N("Remerii acquiesce. Hylee reprend son verre et vient s’asseoir ; vous lui laissez choisir sa place.")], { trust: -2, relationshipEffects: { remerii: { trust: -2 } } }),
- ] },
- { intro: [N("La conversation ralentit. Hylee a retiré ses chaussures et replié les jambes ; Remerii lui pousse les lacets hors du passage avant de s’asseoir près d’elle."), H("Tu tires sur ton col depuis tout à l’heure."), R("L’attache s’est prise dans mes cheveux."), H("Tourne un peu."), N("Remerii se tourne. Hylee cherche le petit nœud de cheveux à la lumière, le dégage avec patience et garde un instant la main posée sur sa nuque."),
- N("L’attache cède. Remerii ferme les yeux, puis garde la main d’Hylee contre son épaule."), H("Mieux ?"), R("Oui."), N("Elles restent ainsi tandis que vous abaissez un peu la lumière. Quand vous revenez, Hylee a avancé votre siège, sans le coller au leur."), H("On ne savait pas si tu voulais encore parler ou juste rester."), P("Je n’ai pas besoin de parler tout le temps."), R("C’est une qualité que j’apprécie davantage à cette heure."), N("Hylee rit doucement. Remerii vous tend l’autre main ; cette fois, elle vient vers vous sans attendre qu’Hylee fasse le premier geste.")], choices: [
- Q("cross-hr-home-near", "Prendre sa main et leur proposer de rester encore.", [N("Remerii enlace vos doigts. Hylee se rapproche pour vous embrasser, puis pose sa tempe contre celle de Remerii."), H("Encore un peu, oui."), R("Je n’ai plus de bonne raison de remettre mon manteau."), N("La soirée s’étire. Vous partagez le dernier fond de boisson, une couverture et des paroles de plus en plus espacées. Lorsque le calme s’installe, aucune chaise n’est restée vide.")], { affection: 2, relationshipEffects: { remerii: { affection: 2 } } }),
- Q("cross-hr-home-rest", "Leur dire que vous aimeriez une fin de soirée calme.", [H("Ça me va. Je commençais à perdre les mots."), R("Vous n’en avez pas perdu tant que cela."), N("Hylee lui donne un léger coup d’épaule et s’y appuie. Remerii vous réserve le bord de la couverture."), N("Vous restez ensemble sans chercher à prolonger la conversation. Plus tard, quand il faut vraiment se lever, Hylee retrouve ses lacets là où Remerii les avait dégagés. Elle ne dit rien ; elle lui serre simplement la main.")], { trust: 2, relationshipEffects: { remerii: { trust: 2 } } }),
- ] },
- ],
+import type { CrossQuestProgress } from "./cross-quests";
+import {
+  H,
+  R,
+  P,
+  N,
+  Q,
+  HR_KEY,
+  HR_OPEN,
+  hrTriadAccepted,
+  type HRBeat,
+} from "./hylee-remerii-cross-quest";
+
+export const HR_DATE_IDS = [
+  "group-date-hylee-remerii-free-day",
+  "group-date-hylee-remerii-wind",
+  "group-date-hylee-remerii-home",
+] as const;
+
+const sharedDateFields = {
+  characters: ["hylee", "remerii"] as [string, string],
+  minStage: 5,
+  minAffection: 22,
+  minTrust: 22,
+  minDesire: 0,
+  intimacyMinDesire: 25,
+  authoredBeats: true,
+  mood: "soft",
+  intimacySetting: { opening: [], closing: [] },
 };
-export function hrDateReason(date: GroupDateScene, g: { flags: string[]; groupDateHistory: string[]; housing: { propertyId?: string }; relationships: Record<string,{stage:number;affection:number;trust:number}> }) {
- if (!g.flags.includes(HR_OPEN)) return "Cette occasion ne s’est pas encore présentée.";
- if (date.afterDates?.some(id => !g.groupDateHistory.includes(id))) return date.home ? "Partagez d’abord les deux sorties publiques." : "Commencez par une journée sans programme.";
- if (date.home && !g.housing.propertyId) return "Un logis vous permettra de les recevoir.";
- if (date.characters.some(id => g.relationships[id].stage < 5 || g.relationships[id].affection < date.minAffection || g.relationships[id].trust < date.minTrust)) return "Retrouvez un peu de proximité avec chacune avant de proposer cette sortie.";
- return undefined;
+
+export const HR_DATES: GroupDateScene[] = [
+  {
+    ...sharedDateFields,
+    id: HR_DATE_IDS[0],
+    title: "Une journée sans programme",
+    type: "Une sortie à Mir’Aldas",
+    description: "Retrouver Hylee et Remerii sous le dôme, sans rapport à rendre ni destination à accomplir.",
+    dynamic: "Hylee choisit au fil des rues. Remerii a promis de laisser son registre à la résidence — ce qui ne l’empêche pas d’avoir gardé un crayon.",
+    location: "miraldas",
+    spot: "miraldas-dome",
+    period: "apres-midi",
+    music: "miraldas",
+    intro: [
+      N("Hylee vous attend sous le dôme avec un sachet vide. Remerii vérifie machinalement sa manche, puis retire sa main lorsque Hylee la surprend."),
+      H("Montre."),
+      R("Il n’y a rien."),
+      H("Tu as répondu trop vite."),
+      N("Hylee glisse deux doigts dans la manche et en ressort un crayon. Remerii le lui laisse prendre avec la dignité d’une femme victime d’une fouille manifestement habituelle."),
+      R("Ce n’est pas un registre."),
+      H("La journée part donc sur une victoire."),
+      P("Et le sachet vide ?"),
+      H("Pour ce qu’on trouvera. Une liste nous obligerait à savoir où nous allons."),
+      R("Une direction générale demeure souhaitable."),
+      H("Devant nous."),
+      N("Remerii ouvre la bouche, regarde la rue, puis rit. Hylee lui rend le crayon mais le glisse derrière son oreille pour qu’elle ne puisse pas écrire sans y penser."),
+      N("Vous traversez une galerie où les étals changent déjà de place. Hylee s’arrête devant des rubans, Remerii devant une petite table à l’ombre ; chacune attend que l’autre remarque son choix."),
+    ],
+    choices: [
+      Q(
+        "cross-hr-day-third",
+        "Prendre la troisième chaise et refuser de choisir entre la table et les étals.",
+        "audace",
+        [
+          P("Nous nous asseyons, puis nous repartons. Je refuse d’arbitrer un conflit aussi grave."),
+          H("Tu vois ? Une troisième proposition."),
+          R("Qui consiste à faire les deux dans un ordre raisonnable."),
+          H("Ne gâche pas sa victoire."),
+          N("Elles s’installent de part et d’autre de vous, momentanément unies contre votre prétendu sens de l’arbitrage."),
+        ],
+        { affection: 1, desire: 1, relationshipEffects: { remerii: { affection: 1, desire: 1 } } },
+      ),
+      Q(
+        "cross-hr-day-follow",
+        "Leur proposer de suivre la première chose qui attire l’une d’elles.",
+        "resonance",
+        [
+          N("Remerii regarde les étals ; Hylee regarde la table. Elles comprennent en même temps qu’elles ont choisi pour l’autre."),
+          H("On mange d’abord."),
+          R("Puis les rubans."),
+          N("Vous les suivez dans une décision qui leur appartenait déjà à toutes les deux."),
+        ],
+        { trust: 1, relationshipEffects: { remerii: { trust: 1 } } },
+      ),
+      Q(
+        "cross-hr-day-plan",
+        "Improviser un parcours précis pour éviter de perdre l’après-midi.",
+        "lucidite",
+        [
+          H("On vient justement de gagner une journée sans parcours."),
+          R("Je reconnais pourtant la tentation."),
+          N("Remerii retire le crayon de son oreille, vous le montre, puis le range."),
+          R("Aujourd’hui, nous allons essayer de nous perdre à une échelle raisonnable."),
+        ],
+        { trust: -1 },
+      ),
+    ],
+  },
+  {
+    ...sharedDateFields,
+    id: HR_DATE_IDS[1],
+    title: "À trois contre le vent",
+    type: "Une promenade dans les bois pourpres",
+    description: "Suivre les sentiers sous le dôme jusqu’à ce que le vent décide de votre abri et rapproche vos trois corps.",
+    dynamic: "La promenade prolonge les gestes de la première sortie. Le froid, le manteau partagé et les baisers rendent le désir plus difficile à ignorer.",
+    location: "miraldas",
+    spot: "miraldas-purple-woods",
+    period: "apres-midi",
+    afterDates: [HR_DATE_IDS[0]],
+    music: "confessions-wind",
+    intro: [
+      N("Le vent fait claquer la couverture avant même que vous quittiez le chemin principal. Hylee en tient un coin devant elle ; une rafale le lui rabat aussitôt au visage."),
+      R("J’allais te prévenir."),
+      H("Après ou avant de rire ?"),
+      R("Les deux étaient encore possibles."),
+      N("Remerii dégage le tissu de ses cheveux. Hylee en profite pour lui entourer les épaules avec la couverture et vous tend l’autre extrémité."),
+      H("Voilà. Elle ne s’envole plus."),
+      R("Parce que je suis devenue un lest."),
+      H("Un lest très élégant."),
+      P("Il y a un mur bas plus haut. L’arbre derrière coupera une partie du vent."),
+      R("Vous avez repéré cela avant que nous transformions la couverture en vêtement."),
+      H("Nous pouvons garder les deux solutions."),
+      N("Vous avancez serrés sous un tissu trop court. Hylee touche naturellement le bras de Remerii pour signaler une racine ; Remerii prend votre poignet quand le sentier se resserre."),
+    ],
+    choices: [
+      Q(
+        "cross-hr-wind-share",
+        "Garder la couverture autour de vous trois jusqu’à l’abri.",
+        "resonance",
+        [
+          N("Votre marche prend un rythme maladroit mais commun. À chaque rafale, Hylee se rapproche ; Remerii prétend corriger la prise tout en vous gardant contre elle."),
+          H("On ressemble à une tente qui a décidé de voyager."),
+          R("Une tente aurait davantage de tenue."),
+          P("Mais moins chaud."),
+        ],
+        { affection: 1, desire: 2, relationshipEffects: { remerii: { affection: 1, desire: 2 } } },
+      ),
+      Q(
+        "cross-hr-wind-route",
+        "Prendre le panier et choisir le chemin large pour qu’elles gardent la couverture.",
+        "sangFroid",
+        [
+          H("Plus long, mais je pourrai la tenir autrement qu’avec les dents."),
+          R("Nous ne sommes attendus nulle part. Prenons celui-là."),
+          N("Vous portez le panier. Hylee et Remerii descendent côte à côte, chacune un pan de couverture autour de l’autre."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-wind-ice",
+        "Suggérer à Hylee de fixer la couverture avec sa magie.",
+        "lucidite",
+        [
+          H("Je préfère qu’on puisse s’asseoir dessus sans rester collés avec."),
+          R("Et cette promenade n’est pas une démonstration."),
+          N("Vous prenez le panier. Hylee resserre la couverture sur les épaules de Remerii avant de reprendre le chemin."),
+        ],
+        { trust: -1 },
+      ),
+    ],
+  },
+  {
+    ...sharedDateFields,
+    id: HR_DATE_IDS[2],
+    title: "La porte fermée",
+    type: "Une soirée dans votre logis",
+    description: "Recevoir Hylee et Remerii chez vous, partager le repas et découvrir ce que change la possibilité de rester.",
+    dynamic: "Votre pièce, vos objets et vos habitudes deviennent le décor réel de la soirée. Le troisième rendez-vous ne pourrait exister nulle part ailleurs.",
+    location: "miraldas",
+    spot: "miraldas-quarters",
+    period: "soirée",
+    afterDates: [HR_DATE_IDS[0], HR_DATE_IDS[1]],
+    home: true,
+    music: "two-stars-night",
+    intro: [
+      N("Hylee passe votre porte avec un paquet enveloppé dans un linge. Remerii retient le battant derrière elle et cherche déjà où poser son manteau sans couvrir vos affaires."),
+      H("On a apporté de quoi compléter le repas. Enfin, c’était le principe avant qu’elle ajoute la moitié du marché."),
+      R("Tu as changé deux fois la taille du paquet."),
+      H("Parce que tu ajoutais des choses."),
+      R("Pour éviter que nous mangions seulement du pain et ce que tu appelais une surprise."),
+      N("Remerii vous tend le paquet le plus lourd, puis dégage le linge pris dans la manche d’Hylee avec la familiarité d’un geste répété cent fois."),
+      P("Vos manteaux peuvent rester ici."),
+      N("Hylee en retire le sien. Remerii garde encore le sien sur le bras."),
+      H("Tu comptes repartir avant le repas ?"),
+      R("Je cherchais à ne pas couvrir les objets de {player}."),
+      P("Ils survivront à votre manteau."),
+      N("Elle le pose enfin. Hylee observe un objet exposé sans le toucher ; Remerii regarde plutôt la lumière, les sièges et les traces de vos habitudes."),
+      H("Je peux ouvrir le paquet ?"),
+      R("Tu l’as fermé."),
+      H("Je demande quand même."),
+      N("Le nœud cède. Une petite boîte menace de rouler ; Remerii place une assiette dessous avant même qu’Hylee ne lève les yeux."),
+    ],
+    choices: [
+      Q(
+        "cross-hr-home-places",
+        "Leur montrer où déposer leurs affaires, puis leur laisser choisir leur place.",
+        "resonance",
+        [
+          N("Hylee choisit le siège depuis lequel elle peut vous voir et atteindre Remerii. Celle-ci déplace sa chaise de quelques doigts, vieux compromis silencieux entre proximité et espace."),
+          H("Tu peux la rapprocher encore."),
+          R("Je savais que tu le dirais."),
+          N("Elle le fait tout de même."),
+        ],
+        { affection: 1, relationshipEffects: { remerii: { affection: 1 } } },
+      ),
+      Q(
+        "cross-hr-home-tour",
+        "Leur faire visiter les détails du logement qui comptent pour vous.",
+        "resonance",
+        [
+          N("Hylee vous suit jusqu’aux objets exposés. Remerii reste un pas derrière, attentive aux histoires plutôt qu’à leur valeur."),
+          R("Je comprends pourquoi vous l’avez placé près de la lumière."),
+          H("Et pourquoi cette place reste vide quand tu n’es pas là."),
+          N("Votre logement cesse d’être un décor générique ; elles apprennent la pièce par la manière dont vous l’habitez."),
+        ],
+        { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+      ),
+      Q(
+        "cross-hr-home-service",
+        "Demander à Remerii de terminer seule le service pendant que vous gardez Hylee.",
+        "audace",
+        [
+          R("Je suis venue passer la soirée avec vous deux."),
+          H("Et je peux attendre qu’on ait posé trois assiettes."),
+          N("Vous reprenez le dernier plat. Hylee garde la chaise voisine de Remerii libre jusqu’à ce qu’elle s’y installe."),
+        ],
+        { trust: -2, relationshipEffects: { remerii: { affection: -2 } } },
+      ),
+    ],
+  },
+];
+
+export const HR_DATE_BEATS: Record<string, HRBeat[]> = {
+  [HR_DATE_IDS[0]]: [
+    {
+      intro: [
+        N("Vous ressortez avec de quoi grignoter. Remerii s’arrête devant un étal de petites boîtes en bois et en soulève une dont le couvercle ferme mal."),
+        H("Tu avais dit n’avoir besoin de rien."),
+        R("Je n’ai besoin de rien."),
+        H("Tu vas l’acheter pour la réparer."),
+        R("Non."),
+        N("Remerii repose la boîte, puis en prend une seconde. Hylee vous regarde ; vous attendez ensemble. Remerii lève les yeux et découvre le même sourire sur vos deux visages."),
+        R("Je veux seulement savoir où elle accroche."),
+        H("Évidemment."),
+        N("Elle achète la première. Hylee ouvre son sachet pour la ranger ; Remerii retient doucement son poignet."),
+        R("Il y a de la confiture dans celui-là."),
+        H("Seulement d’un côté."),
+        R("Le bois n’a pas besoin du second."),
+        N("Elles repartent en discutant de la quantité exacte de confiture capable de ruiner un assemblage."),
+      ],
+      choices: [
+        Q(
+          "cross-hr-day-box",
+          "Demander ce que la boîte contiendra une fois réparée.",
+          "resonance",
+          [
+            R("Je n’en sais rien."),
+            H("C’est bien. Ça laisse plus de possibilités qu’une liste."),
+            N("Remerii reconnaît la phrase du départ. Son rire surprend Hylee, qui rit avec elle."),
+            R("Je vous l’ai assez dit, je suppose."),
+          ],
+          { affection: 1, relationshipEffects: { remerii: { affection: 2 } } },
+        ),
+        Q(
+          "cross-hr-day-conspiracy",
+          "Les accuser de transformer une boîte bancale en aventure à trois.",
+          "audace",
+          [
+            P("Je croyais que nous n’avions pas de programme. Nous voilà engagés dans une affaire de couvercle et de confiture."),
+            H("Tu peux encore fuir."),
+            R("Après avoir porté les provisions ? Ce serait irresponsable."),
+            N("Elles vous reprennent chacune un paquet, puis continuent à marcher assez près pour que vos mains se heurtent entre les sacs."),
+          ],
+          { affection: 1, desire: 2, relationshipEffects: { remerii: { affection: 1, desire: 2 } } },
+        ),
+        Q(
+          "cross-hr-day-dismiss",
+          "Dire qu’un achat aussi banal ne mérite pas qu’on s’y attarde.",
+          "lucidite",
+          [
+            R("Il me plaisait."),
+            H("On avait justement la journée pour s’attarder."),
+            N("Remerii garde la boîte contre elle. Vous ralentissez sans essayer de remplacer trop vite ce petit plaisir par une destination plus importante."),
+          ],
+          { relationshipEffects: { remerii: { affection: -2 } } },
+        ),
+      ],
+    },
+    {
+      intro: [
+        N("Plus tard, l’ombre gagne un banc au bord d’une place. Hylee s’assoit la première et attire Remerii près d’elle par le poignet. La boîte repose entre leurs genoux."),
+        H("On n’a presque rien fait."),
+        R("Tu as choisi trois fois à manger, contesté deux prix et failli acheter un ruban plus long que ton manteau."),
+        H("Je pensais à quelque chose qu’on serait obligés de raconter ensuite."),
+        N("Remerii retire du pouce une trace de sucre sur sa joue. Hylee garde sa main une seconde contre ses lèvres, puis embrasse sa paume sans théâtralité."),
+        R("Alors non. Presque rien."),
+        N("Vous vous asseyez au bord du banc. Hylee pousse le sachet avec son pied pour vous faire une place ; Remerii pose la boîte ailleurs afin que votre épaule puisse rejoindre les leurs."),
+      ],
+      choices: [
+        {
+          ...Q(
+            "cross-hr-day-stay",
+            "Prendre leurs mains et proposer de ne toujours rien prévoir.",
+            "audace",
+            [
+              N("Hylee enlace vos doigts et pose un baiser sur votre joue. Remerii se penche vers elle avant qu’elle ne se retire ; leur baiser vous laisse le temps de les regarder rire contre la bouche de l’autre."),
+              H("On pourrait continuer la journée comme ça."),
+              R("Sur ce banc ?"),
+              H("Tu avais dit que la chaise était toujours utilisable."),
+              N("Remerii vous attire enfin dans leur mouvement. Le flirt accumulé au fil des rues cesse d’avoir besoin d’un programme pour avancer."),
+            ],
+            { affection: 2, desire: 4, relationshipEffects: { remerii: { affection: 2, desire: 4 } } },
+          ),
+          dateOutcome: "great",
+        },
+        {
+          ...Q(
+            "cross-hr-day-quiet",
+            "Rester serrés en regardant passer la place.",
+            "resonance",
+            [
+              N("Hylee appuie sa tête contre Remerii et garde votre main sur son genou. Remerii pose la sienne par-dessus."),
+              H("Tu vois ? Presque rien."),
+              R("Je commence à comprendre l’intérêt."),
+              N("Lorsque l’ombre atteint vos chaussures, personne ne retire tout de suite ses doigts."),
+            ],
+            { trust: 2, desire: 2, relationshipEffects: { remerii: { trust: 2, desire: 2 } } },
+          ),
+          dateOutcome: "great",
+        },
+      ],
+    },
+  ],
+  [HR_DATE_IDS[1]]: [
+    {
+      intro: [
+        N("Le mur coupe presque tout le vent. Hylee déplie la couverture pendant que Remerii trouve une pierre lisse pour en retenir le coin. Vous vous occupez du second bord."),
+        H("Cette fois, elle reste."),
+        R("Attends au moins d’avoir lâché."),
+        N("Hylee ouvre ses mains avec ostentation. Le tissu ne bouge pas ; elle s’incline devant Remerii, qui lui rend une révérence beaucoup trop sérieuse."),
+        N("Remerii retire du panier une portion gardée à part."),
+        R("Sans la sauce."),
+        H("Tu t’en es souvenue."),
+        R("Tu as protesté pendant tout le chemin la dernière fois."),
+        H("Une seule fois, très longtemps."),
+        N("Hylee touche son genou pour arrêter la liste, mais Remerii rit déjà. Elle lui donne le paquet entier."),
+        P("Je peux goûter ce qui a mérité une dispute de plusieurs kilomètres ?"),
+        H("Oui. Tu pourras témoigner."),
+        R("Ne l’encouragez pas à réviser la durée."),
+      ],
+      choices: [
+        Q(
+          "cross-hr-wind-taste",
+          "Goûter sans chercher à les départager.",
+          "sangFroid",
+          [
+            P("Ça me plaît. Et je comprends qu’on en préfère moins."),
+            H("On aurait dû t’avoir avec nous."),
+            R("Pour qu’elle puisse protester auprès de quelqu’un d’autre ?"),
+            H("Pour que nous ayons deux portions."),
+            N("Remerii se sert plus légèrement. Hylee le remarque et pousse le pain à sa portée."),
+          ],
+          { affection: 1, relationshipEffects: { remerii: { affection: 1 } } },
+        ),
+        Q(
+          "cross-hr-wind-memory",
+          "Leur demander où les avait menées cette ancienne promenade.",
+          "resonance",
+          [
+            H("J’avais suivi un sentier parce que je pensais reconnaître un arbre."),
+            R("Nous avons reconnu beaucoup d’arbres ce jour-là."),
+            H("Mais tu m’as laissée chercher."),
+            R("Il faisait beau. Et tu avais besoin de trouver toi-même que nous étions perdues."),
+            N("Hylee sourit et étend ses jambes contre les siennes pendant que le récit continue."),
+          ],
+          { trust: 2, relationshipEffects: { remerii: { trust: 1 } } },
+        ),
+        Q(
+          "cross-hr-wind-tease",
+          "Prétendre que vous refusez de témoigner sans être soudoyé par un baiser.",
+          "audace",
+          [
+            H("Un seul ? Tu négocies mal."),
+            N("Elle vous embrasse au coin des lèvres. Remerii prend le temps de ranger le paquet avant de venir chercher votre bouche, puis celle d’Hylee."),
+            R("Témoignage désormais compromis."),
+            H("Mais beaucoup plus intéressant."),
+          ],
+          { desire: 3, relationshipEffects: { remerii: { desire: 3 } } },
+        ),
+      ],
+    },
+    {
+      intro: [
+        N("Le repas terminé, une rafale contourne le mur. Remerii ouvre son manteau et Hylee se glisse contre son flanc avant même l’invitation."),
+        H("Là, ça va."),
+        R("Tu as les mains froides."),
+        H("Seulement les doigts."),
+        N("Remerii les prend sous le tissu. Hylee relève les yeux vers elle et l’embrasse, d’abord pour la surprendre, puis assez longtemps pour oublier la prochaine rafale."),
+        N("Remerii vous tend un pan du manteau sans lâcher sa main. Vous vous rapprochez. Trois épaules tiennent dans un vêtement prévu pour une seule personne à condition de renoncer à toute distance raisonnable."),
+        H("La prochaine fois, je prends un manteau plus grand."),
+        R("La prochaine fois, tu prétendras encore que celui-ci suffit."),
+        P("Il suffit pour l’instant."),
+      ],
+      choices: [
+        {
+          ...Q(
+            "cross-hr-wind-kiss",
+            "Les embrasser sans quitter la chaleur du manteau.",
+            "audace",
+            [
+              N("Hylee se tourne vers vous la première. Le vent ramène une mèche sur vos lèvres ; Remerii la dégage en riant, puis vous embrasse à son tour."),
+              N("Hylee rejoint ce second baiser au lieu d’attendre. Ses doigts restent mêlés à ceux de Remerii sous le manteau tandis que votre main trouve leurs deux tailles."),
+              R("Nous allons devoir marcher pour nous réchauffer."),
+              H("Dans un moment."),
+              N("Le froid n’a pas disparu. Il rend seulement la chaleur de vos corps trop précise pour être ignorée."),
+            ],
+            { affection: 2, desire: 5, relationshipEffects: { remerii: { affection: 2, desire: 5 } } },
+          ),
+          dateOutcome: "great",
+        },
+        {
+          ...Q(
+            "cross-hr-wind-return",
+            "Reprendre lentement le chemin en restant serrés.",
+            "resonance",
+            [
+              N("Vous marchez à trois sous le même manteau jusqu’à ce que le sentier exige de vous séparer. Hylee garde la main de Remerii ; celle-ci retient votre manche."),
+              H("Une boisson chaude en rentrant."),
+              R("Et le reste du pain."),
+              P("Sans nouvelle dispute sur la sauce ?"),
+              N("Elles refusent de promettre. Le désir vous suit tout de même jusqu’aux premières lumières."),
+            ],
+            { trust: 2, desire: 3, relationshipEffects: { remerii: { trust: 2, desire: 3 } } },
+          ),
+          dateOutcome: "great",
+        },
+      ],
+    },
+  ],
+  [HR_DATE_IDS[2]]: [
+    {
+      intro: [
+        N("Les plats se vident lentement. Hylee se lève pour reprendre de l’eau ; Remerii tourne déjà son verre pour lui laisser passer le bras."),
+        P("Vous faites souvent ça ?"),
+        H("Répondre avant la fin de la question ?"),
+        R("Certainement."),
+        H("Partager une table aussi. Ça finit par se voir."),
+        N("Hylee verse moins d’eau à Remerii, qui n’en demande jamais davantage le soir. Remerii pousse vers elle le dernier morceau de ce qu’elle préfère."),
+        H("C’est agréable de pouvoir rester sans attendre qu’on débarrasse autour de nous."),
+        R("Nous pourrions tout de même débarrasser ici."),
+        H("Je pensais après."),
+        N("Remerii se rassoit. Autour d’elles, votre vaisselle, la lumière choisie et les objets exposés donnent au mot « rester » une réalité que les sorties publiques n’avaient pas."),
+      ],
+      choices: [
+        Q(
+          "cross-hr-home-place",
+          "Leur montrer l’endroit où vous vous installez quand vous êtes seul.",
+          "resonance",
+          [
+            N("Hylee s’y rend, s’arrête avant de s’asseoir et vous demande la permission d’un regard. Remerii apporte les verres pendant que vous rapprochez un troisième siège."),
+            R("Je comprends. La lumière vient du bon côté."),
+            H("Et depuis la table, on peut te voir quand tu parles."),
+            N("Elles apprennent votre place sans la prendre entièrement."),
+          ],
+          { affection: 2, relationshipEffects: { remerii: { affection: 2 } } },
+        ),
+        Q(
+          "cross-hr-home-clear",
+          "Ranger ensemble pour transformer la pièce après le repas.",
+          "lucidite",
+          [
+            N("Vous emportez les assiettes. Hylee essuie ; Remerii retrouve les places que vous lui indiquez sans réorganiser les étagères."),
+            H("La prochaine fois, je te ferai goûter l’autre plat."),
+            R("Tu n’as pas encore demandé si nous pouvions revenir."),
+            N("Elles vous regardent en même temps. La question est taquine, mais la possibilité compte vraiment."),
+          ],
+          { trust: 2, relationshipEffects: { remerii: { trust: 2 } } },
+        ),
+        Q(
+          "cross-hr-home-future",
+          "Parler déjà de la manière dont elles pourraient vivre ici.",
+          "audace",
+          [
+            H("On est venues passer une soirée."),
+            R("Laissez-nous d’abord la finir."),
+            P("Je suis allé trop vite."),
+            N("Remerii acquiesce. Hylee reprend son verre et choisit elle-même l’endroit où s’asseoir près de vous deux."),
+          ],
+          { trust: -2, relationshipEffects: { remerii: { trust: -2 } } },
+        ),
+      ],
+    },
+    {
+      intro: [
+        N("La conversation ralentit. Hylee a retiré ses chaussures et replié les jambes sur le canapé. Remerii pousse les lacets hors du passage avant de s’asseoir près d’elle."),
+        H("Tu tires sur ton col depuis le dessert."),
+        R("L’attache s’est prise dans mes cheveux."),
+        H("Tourne."),
+        N("Remerii obéit sans protester. Hylee dégage le petit nœud à la lumière de votre lampe et garde sa main sur sa nuque après que l’attache a cédé."),
+        R("Mieux."),
+        N("Remerii tourne la tête et embrasse l’intérieur de son poignet. Hylee se penche vers sa bouche ; leur baiser appartient à leur histoire avant de s’ouvrir vers vous."),
+        N("Vous baissez la lumière. Hylee avance votre siège au lieu de vous appeler au centre ; Remerii vous tend la main depuis le canapé."),
+        H("On peut encore parler."),
+        R("Ou apprendre à nous taire à trois."),
+        N("Personne ne regarde la porte. Les manteaux sont restés là où vous leur aviez fait une place."),
+      ],
+      choices: [
+        {
+          ...Q(
+            "cross-hr-home-close",
+            "Fermer les rideaux et les rejoindre sur le canapé.",
+            "audace",
+            [
+              N("Le dernier reflet de la rue disparaît. Hylee vous attire par la main ; Remerii recule pour vous ouvrir une place sans quitter la chaleur de son corps."),
+              H("Ton canapé est vraiment trop petit."),
+              P("Vous pouvez encore récupérer vos manteaux."),
+              R("Ce serait une solution très peu convaincante."),
+              N("Hylee embrasse Remerii pour approuver, puis revient vers vous. La pièce, le repas encore présent dans l’air et les vêtements laissés près de la porte conduisent naturellement la soirée vers une intimité qui ne ressemble à aucun lieu emprunté."),
+            ],
+            { affection: 2, desire: 5, relationshipEffects: { remerii: { affection: 2, desire: 5 } } },
+          ),
+          dateOutcome: "great",
+        },
+        {
+          ...Q(
+            "cross-hr-home-rest",
+            "Partager une couverture et laisser la soirée finir doucement.",
+            "sangFroid",
+            [
+              H("Ça me va. Je commençais à perdre les mots."),
+              R("Tu n’en as pas perdu tant que cela."),
+              N("Hylee lui donne un léger coup d’épaule et s’y appuie. Remerii vous réserve le bord de la couverture."),
+              N("Quand il faut enfin se lever, leurs manteaux sont toujours près du vôtre. Elles partent sans urgence et la possibilité de revenir demeure entière."),
+            ],
+            { trust: 2, affection: 1, relationshipEffects: { remerii: { trust: 2, affection: 1 } } },
+          ),
+          dateOutcome: "good",
+        },
+      ],
+    },
+  ],
+};
+
+type HRDateGame = {
+  day: number;
+  flags: string[];
+  groupDateHistory: string[];
+  housing: { propertyId?: string };
+  relationships: Record<string, { stage: number; affection: number; trust: number; desire?: number }>;
+  crossQuestSeries: Record<string, CrossQuestProgress>;
+  settings?: { unlockAll?: boolean };
+};
+
+export type HRDateVisibility = {
+  visible: boolean;
+  unlocked: boolean;
+  status: "hidden" | "available" | "decision" | "waiting" | "locked" | "unavailable";
+  reason?: string;
+};
+
+export function hrDateVisibility(date: GroupDateScene, game: HRDateGame): HRDateVisibility {
+  const progress = game.crossQuestSeries[HR_KEY];
+  if (game.settings?.unlockAll) return { visible: true, unlocked: true, status: "available" };
+  if (!progress || progress.stage < 7 || !progress.hr) {
+    return { visible: false, unlocked: false, status: "hidden" };
+  }
+
+  const hr = progress.hr;
+  const accepted = hrTriadAccepted(progress, {
+    flags: game.flags,
+    groupDateHistory: game.groupDateHistory,
+  });
+  if (hr.branch !== "double") {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "unavailable",
+      reason: "Cette chronologie n’a pas ouvert de relation à trois. Les liens individuels avec Hylee et Remerii restent disponibles.",
+    };
+  }
+  if (!accepted && !hr.configuration) {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "decision",
+      reason: "Hylee et Remerii souhaitent reparler avec vous de ce que pourrait devenir votre relation. Retrouvez « Une place à la table » dans les Quêtes croisées.",
+    };
+  }
+  if (hr.configuration === "waiting") {
+    const sameDay = game.day <= (hr.recognitionDay || 0);
+    return {
+      visible: true,
+      unlocked: false,
+      status: sameDay ? "waiting" : "decision",
+      reason: sameDay
+        ? "Vous avez demandé du temps. La conversation pourra reprendre à partir du jour suivant."
+        : "Vous avez demandé du temps. « Une place à la table » peut maintenant être reprise dans les Quêtes croisées.",
+    };
+  }
+  if (hr.configuration === "separate" || hr.configuration === "refused") {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "unavailable",
+      reason: hr.configuration === "separate"
+        ? "Vous avez choisi de poursuivre vos relations séparément. Ce rendez-vous n’est pas accessible dans cette branche narrative."
+        : "Vous avez refusé les rendez-vous à trois. Ce contenu reste visible pour rappeler la conséquence de ce choix.",
+    };
+  }
+  if (!accepted && !game.flags.includes(HR_OPEN)) {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "decision",
+      reason: "La dynamique à trois n’a pas encore été acceptée dans « Une place à la table ».",
+    };
+  }
+
+  if (date.afterDates?.some((id) => !game.groupDateHistory.includes(id))) {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "locked",
+      reason: date.home
+        ? "Les deux premières sorties doivent être accomplies avant « La porte fermée »."
+        : "« Une journée sans programme » doit être vécue avant cette promenade.",
+    };
+  }
+  if (date.home && !game.housing.propertyId) {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "locked",
+      reason: "Les deux premières sorties sont accomplies. Achetez un logis pour pouvoir proposer « La porte fermée ».",
+    };
+  }
+  if (date.characters.some((id) => {
+    const relation = game.relationships[id];
+    return !relation
+      || relation.stage < date.minStage
+      || relation.affection < date.minAffection
+      || relation.trust < date.minTrust;
+  })) {
+    return {
+      visible: true,
+      unlocked: false,
+      status: "locked",
+      reason: "Votre relation avec Hylee ou Remerii doit encore évoluer avant une première sortie à trois.",
+    };
+  }
+  return { visible: true, unlocked: true, status: "available" };
+}
+
+export function hrDateReason(date: GroupDateScene, game: HRDateGame) {
+  return hrDateVisibility(date, game).reason;
+}
+
+export function hrDatesVisible(game: HRDateGame) {
+  return HR_DATES.some((date) => hrDateVisibility(date, game).visible);
 }

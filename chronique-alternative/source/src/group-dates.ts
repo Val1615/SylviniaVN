@@ -8,6 +8,12 @@ import {
   LINEVA_ALLENNA_MANUAL_CONTEXT_IDS,
   LINEVA_ALLENNA_MANUAL_ROUTES,
 } from "./lineva-allenna-group-intimacy";
+import {
+  HYLEE_REMERII_INTIMACY_GAMES,
+  HYLEE_REMERII_MANUAL_CONTEXT_IDS,
+  HYLEE_REMERII_MANUAL_ROUTES,
+  isHyleeRemeriiManualContext,
+} from "./hylee-remerii-group-intimacy";
 
 export type GroupDateScene = {
   authoredBeats?: boolean; intimacyDisabled?: boolean; legacyOnly?: boolean; home?: boolean; afterDates?: string[]; music?: string;
@@ -45,7 +51,7 @@ export type GroupIntimacyRoute = {
   };
   progression?: {
     playerClimaxChapter: Record<IntimacyMode, number>;
-    linevaFirstTuChapter: Record<IntimacyMode, number>;
+    linevaFirstTuChapter?: Record<IntimacyMode, number>;
     revealChapter: number;
     postOrgasmChapter: number;
   };
@@ -300,6 +306,7 @@ export const GROUP_DATES: GroupDateScene[] = [
 const O = (id: string, label: string, score: 0 | 1 | 2, ...lines: DialogueLine[]): IntimacyGameOption => ({ id, label, score, lines });
 
 export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
+  ...HYLEE_REMERII_INTIMACY_GAMES,
   "group-date-hylee-remerii": {
     title: "La lanterne à trois souffles",
     instruction: "Hylee maintient le givre, Remerii règle la rune et vous alimentez la lumière. Répondez sans laisser une personne prendre tout le contrôle.",
@@ -727,10 +734,20 @@ const GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, G
 export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, GroupIntimacyRoute[]>> = {
   ...GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX,
   ...LINEVA_ALLENNA_MANUAL_ROUTES,
+  ...HYLEE_REMERII_MANUAL_ROUTES,
 };
 
 export function isManualLinevaAllennaIntimacy(id: string): boolean {
   return (LINEVA_ALLENNA_MANUAL_CONTEXT_IDS as readonly string[]).includes(id);
+}
+
+export const MANUAL_GROUP_CONTEXT_IDS = [
+  ...LINEVA_ALLENNA_MANUAL_CONTEXT_IDS,
+  ...HYLEE_REMERII_MANUAL_CONTEXT_IDS,
+] as const;
+
+export function isManualGroupIntimacy(id: string): boolean {
+  return isManualLinevaAllennaIntimacy(id) || isHyleeRemeriiManualContext(id);
 }
 
 export function groupIntimacyRoutes(pairId: string, sex: PlayerSex): GroupIntimacyRoute[] {
@@ -750,7 +767,7 @@ export function groupIntimacyContextById(id: string) {
 }
 
 export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
-  if (date.intimacyDisabled || isManualLinevaAllennaIntimacy(date.id)) return [];
+  if (date.intimacyDisabled || isManualGroupIntimacy(date.id)) return [];
   return [
     ...date.intimacySetting.opening.map(N),
     N("Le dernier espace entre vous disparaît dans un échange de regards, de baisers et de mains attirées contre la peau. Chacun trouve sa place auprès des deux autres sans transformer l’instant en mode d’emploi."),
@@ -758,7 +775,7 @@ export function groupIntimacyOpening(date: GroupDateScene): DialogueLine[] {
 }
 
 export function groupIntimacyEnding(date: GroupDateScene): DialogueLine[] {
-  if (date.intimacyDisabled || isManualLinevaAllennaIntimacy(date.id)) return [];
+  if (date.intimacyDisabled || isManualGroupIntimacy(date.id)) return [];
   return [
     N("Le rythme retombe lentement. Vous restez enlacés dans la même chaleur, partageant l’eau, les sourires épuisés et les quelques mots qui viennent lorsque les respirations retrouvent leur calme."),
     ...date.intimacySetting.closing.map(N),
