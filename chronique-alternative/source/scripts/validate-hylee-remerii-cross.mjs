@@ -23,7 +23,7 @@ export function useEffect() {}
 export function useCallback(callback) { return callback; }
 `;
 const exportNames = ["createGame", "hydrateGame", "DEFAULT_PLAYER", "choicesForDialogue", "groupDateUnlocked", "evolveCrossQuests", "socialSceneReady", "spontaneousEventReady", "characterPlace", "JournalView", "RelationsView", "GameModal"];
-const actions = ["game", "dialogue", "modal", "setGame", "setDialogue", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHRScene", "startAnchorOperation", "setAnchorState", "readHRLetter", "startGroupDate", "replayGroupDate", "startGroupDateIntimacy", "finishTrioEnding", "closeGroupIntimacy", "replayGroupDateIntimacy", "startCrossQuestScene", "startAlphaHunt", "finishAlphaHunt", "updateGame", "startDate"];
+const actions = ["game", "dialogue", "modal", "setGame", "setDialogue", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHRScene", "startAnchorOperation", "setAnchorState", "readHRLetter", "startGroupDate", "replayGroupDate", "startGroupDateIntimacy", "finishTrioEnding", "closeGroupIntimacy", "replayGroupDateIntimacy", "startCrossQuestScene", "startAlphaHunt", "setAlphaHuntState", "finishAlphaHunt", "updateGame", "startDate"];
 const server = await createServer({
   root, appType: "custom", logLevel: "silent", server: { middlewareMode: true },
   plugins: [{
@@ -41,7 +41,7 @@ const server = await createServer({
   }],
 });
 try {
- const [questSource,dateSource,uiSource,pageSource,groupSource,cgSource,cssSource]=await Promise.all([
+ const [questSource,dateSource,uiSource,pageSource,groupSource,cgSource,cssSource,dossierSource]=await Promise.all([
   readFile(resolve(root,'src/hylee-remerii-cross-quest.ts'),'utf8'),
   readFile(resolve(root,'src/hylee-remerii-dates.ts'),'utf8'),
   readFile(resolve(root,'src/hylee-remerii-ui.tsx'),'utf8'),
@@ -49,9 +49,11 @@ try {
   readFile(resolve(root,'src/group-dates.ts'),'utf8'),
   readFile(resolve(root,'src/intimate-cg.ts'),'utf8'),
   readFile(resolve(root,'src/globals.css'),'utf8'),
+  readFile(resolve(root,'src/cross-quest-dossier.tsx'),'utf8'),
  ]);
  const page = await server.ssrLoadModule('/src/page.tsx'), hooks = await server.ssrLoadModule('hr-test-hooks');
  const hr = await server.ssrLoadModule('/src/hylee-remerii-cross-quest.ts'), dates = await server.ssrLoadModule('/src/hylee-remerii-dates.ts'), anchor = await server.ssrLoadModule('/src/anchor-operation.ts');
+ const cross = await server.ssrLoadModule('/src/cross-quests.ts'), alpha = await server.ssrLoadModule('/src/alpha-hunt.ts');
  const housing = await server.ssrLoadModule('/src/housing-data.ts'), sprites = await server.ssrLoadModule('/src/sprite-system.ts'), world = await server.ssrLoadModule('/src/world-data.ts');
  const ui = await server.ssrLoadModule('/src/hylee-remerii-ui.tsx'), ambient = await server.ssrLoadModule('/src/hylee-remerii-ambient.ts'), social = await server.ssrLoadModule('/src/social-scenes.ts');
  const { renderToStaticMarkup } = await import('react-dom/server'), { createElement } = await import('react');
@@ -149,6 +151,21 @@ try {
   init(save());const before=structuredClone(api.game);act('replayGroupDate',date.id);assert.ok(api.dialogue);finish();assert.deepEqual(api.game,before);
   const relations=structuredClone(api.game.relationships);act('startGroupDate',date.id);finish();assert.deepEqual(api.game.relationships,relations);assert.equal(api.game.groupDateHistory.filter(id=>id===date.id).length,1);
  }
+ const beforeAnchorReplay=structuredClone(api.game);act('startAnchorOperation',true);assert.equal(api.modal?.kind,'anchor-operation');assert.equal(api.modal?.replay,true);assert.equal(api.modal?.state?.phase,0);
+ act('setAnchorState',{...api.modal.state,lastPoint:'A',revision:api.modal.state.revision+1});assert.deepEqual(api.game,beforeAnchorReplay,'rejouer les ancrages ne doit pas modifier la sauvegarde');act('setModal',null);
+ const completedHR=save();
+ const laReplay=fixture();
+ laReplay.crossQuestSeries.linevaAllenna={
+  ...laReplay.crossQuestSeries.linevaAllenna,
+  stage:8,
+  letters:cross.LINEVA_ALLENNA_LETTERS.map(letter=>({id:letter.id,receivedDay:laReplay.day,read:true})),
+  alphaState:alpha.createAlphaHunt(71),
+ };
+ init(laReplay);let beforeLAReplay=structuredClone(api.game);
+ act('startCrossQuestScene',0,true);assert.equal(api.dialogue?.replayNextCrossStage,1,'la première quête doit enchaîner ses deux scènes');assert.ok(finish()>=2,'les deux scènes du Mauvais allié ne sont pas toutes rejouées');assert.deepEqual(api.game,beforeLAReplay,'la première quête Lineva/Allenna rejouée mute la sauvegarde');
+ for(const stage of [2,4,5,7]) { beforeLAReplay=structuredClone(api.game);act('startCrossQuestScene',stage,true);assert.ok(api.dialogue,`relecture Lineva/Allenna ${stage} absente`);finish();assert.deepEqual(api.game,beforeLAReplay,`relecture Lineva/Allenna ${stage} mutante`); }
+ beforeLAReplay=structuredClone(api.game);act('startAlphaHunt',true);assert.equal(api.modal?.kind,'alpha-hunt');assert.equal(api.modal?.replay,true);assert.equal(api.modal?.state?.phase,'observation');act('setAlphaHuntState',{...api.modal.state,lastReaction:'Relecture isolée'});assert.deepEqual(api.game,beforeLAReplay,'rejouer la traque de l’Alpha doit rester isolé');act('finishAlphaHunt');assert.equal(api.modal,null);assert.deepEqual(api.game,beforeLAReplay);
+ init(completedHR);
  const html=renderToStaticMarkup(createElement(ui.HRDossier,{progress:progress(),day:api.game.day,onScene(){},onOperation(){},onLetter(){}}));assert.ok(html.includes('7 / 7'));for(const title of hr.HR_TITLES)assert.ok(html.includes(title));
  const planner=renderToStaticMarkup(createElement(page.GameModal,{modal:{kind:'group-date-planner'},game:api.game,onClose(){},startGroupDate(){}}));
  for(const date of dates.HR_DATES)assert.ok(planner.includes(date.title));assert.ok(!planner.includes('La leçon à trois voix'));
@@ -194,6 +211,13 @@ try {
  assert.match(uiSource,/CrossQuestDossier/u,'Hylee\/Remerii n’utilise pas le dossier partagé');
  assert.match(pageSource,/<CrossQuestDossier/u,'Lineva\/Allenna n’utilise pas le dossier partagé');
  assert.equal((pageSource.match(/<CrossQuestDossier/gu)||[]).length>=1,true,'dossier commun absent du Journal');
+ assert.match(dossierSource,/cross-dossier-mechanic/u,'la mécanique propre à chaque route n’est pas intégrée au composant commun');
+ assert.match(dossierSource,/cross-milestone-list/u,'les étapes ne partagent pas une structure de liste commune');
+ assert.match(pageSource,/mechanic=\{linevaAllennaMechanic\}/u,'la traque de l’Alpha n’est pas reliée au dossier Lineva\/Allenna');
+ assert.match(pageSource,/onStartAlphaHunt\(true\)/u,'la traque de l’Alpha n’est pas rejouable depuis le Journal');
+ assert.match(uiSource,/onOperation\(true\)/u,'les Trois Points d’Ancrage ne sont pas rejouables depuis le Journal');
+ assert.match(pageSource,/replayNextCrossStage/u,'les deux scènes de la première quête Lineva\/Allenna ne sont pas enchaînées en relecture');
+ assert.match(cssSource,/\.shared-cross-dossier/u,'la parité visuelle des dossiers n’est pas définie dans la feuille de style');
  assert.match(uiSource,/serres-three-anchors\.jpg/u,'la carte finale des Serres n’est pas utilisée');
  assert.doesNotMatch(uiSource,/approved map|fallback map|placeholder/iu,'le mini-jeu se présente encore comme un fallback');
  assert.match(cssSource,/\.anchor-operation\.state-(?:tension|incident|retreat|success)/u,'états visuels du mini-jeu absents');
@@ -204,5 +228,5 @@ try {
  assert.match(groupSource,/HYLEE_REMERII_MANUAL_ROUTES/u,'registre manuel Hylee\/Remerii non branché');
  assert.match(cgSource,/"group-date-hylee-remerii-home"\s*:\s*"hylee_remerii"/u,'CG du logis non attribuées');
  assert.doesNotMatch(cgSource,/"group-date-hylee-remerii-(?:free-day|wind)"\s*:/u,'CG de chambre injectées dans une sortie publique');
- console.log('Hylee–Remerii : 4 parcours, progression 0→7, sauvegardes/reprises, branches, visibilité expliquée, 3 rendez-vous, seuil/refus/relecture intime, migration, mini-jeu et dossier partagé validés.');
+ console.log('Quêtes croisées : dossiers harmonisés · relecture Lineva/Allenna protégée · deux mini-jeux accessibles et rejouables · progression Hylee/Remerii 0→7 validée.');
 } finally { await server.close(); }
