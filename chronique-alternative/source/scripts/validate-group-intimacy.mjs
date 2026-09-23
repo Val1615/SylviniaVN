@@ -11,6 +11,13 @@ const manualFiles = [
   "lineva-allenna-basin-intimacy.ts",
   "lineva-allenna-home-intimacy.ts",
 ];
+const hrManualFiles = [
+  "hylee-remerii-intimacy-shared.ts",
+  "hylee-remerii-free-day-intimacy.ts",
+  "hylee-remerii-wind-intimacy.ts",
+  "hylee-remerii-home-intimacy.ts",
+  "hylee-remerii-group-intimacy.ts",
+];
 const [groupSource, advancedSource, pageSource, ...manualSources] = await Promise.all([
   readFile(resolve(sourceRoot, "src/group-dates.ts"), "utf8"),
   readFile(resolve(sourceRoot, "src/group-explicit-scenes.ts"), "utf8"),
@@ -18,10 +25,17 @@ const [groupSource, advancedSource, pageSource, ...manualSources] = await Promis
   ...manualFiles.map((file) => readFile(resolve(sourceRoot, "src", file), "utf8")),
 ]);
 const manualSource = manualSources.join("\n");
+const hrManualSources = await Promise.all(hrManualFiles.map((file) => readFile(resolve(sourceRoot, "src", file), "utf8")));
+const hrManualSource = hrManualSources.join("\n");
 const contextIds = [
   "group-date-allenna-lineva-training",
   "group-date-allenna-lineva-basin",
   "group-date-allenna-lineva-home",
+];
+const hrContextIds = [
+  "group-date-hylee-remerii-free-day",
+  "group-date-hylee-remerii-wind",
+  "group-date-hylee-remerii-home",
 ];
 const sexes = ["femme", "homme", "intersexe"];
 const modes = ["tendre", "suggestif", "explicite", "ellipse"];
@@ -36,12 +50,12 @@ try {
   ]);
 
   const report = catalog.validateGroupIntimacyCatalog();
-  assert.equal(report.pairs, 10);
-  assert.equal(report.combinations, 30);
-  assert.equal(report.routes, 90);
-  assert.equal(report.dates, 9);
-  assert.equal(report.games, 10);
-  assert.ok(report.chapters >= 2880, `minimum 2880 séquences, ${report.chapters} obtenues`);
+  assert.equal(report.pairs, 13);
+  assert.equal(report.combinations, 39);
+  assert.equal(report.routes, 117);
+  assert.equal(report.dates, 12);
+  assert.equal(report.games, 13);
+  assert.ok(report.chapters >= 3798, `minimum 3798 séquences, ${report.chapters} obtenues`);
   assert.doesNotMatch(groupSource, /sequence\.length\s*!==\s*8/u, "huit doit rester un minimum, jamais un maximum");
   assert.match(groupSource, /sequence\.length\s*<\s*8/u, "le minimum de huit séquences doit être validé");
 
@@ -171,8 +185,8 @@ try {
   const generatedRegistry = groupSource.slice(groupSource.indexOf("const PAIR_ROUTE_DATA"), groupSource.indexOf("function buildGroupRoute"));
   assert.doesNotMatch(generatedRegistry, /group-date-allenna-lineva/u, "Lineva/Allenna figure encore dans le registre narratif généré");
   assert.match(groupSource, /\.\.\.LINEVA_ALLENNA_MANUAL_ROUTES/u, "le catalogue manuel doit être fusionné uniquement au niveau technique");
-  assert.match(pageSource, /manualLinevaAllenna \? \[\] : groupIntimacyOpening\(date\)/u, "l’interface doit ignorer l’ouverture commune pour Lineva/Allenna");
-  assert.match(pageSource, /else if \(manualLinevaAllenna\) setStep\("done"\)/u, "l’interface doit ignorer la fermeture commune pour Lineva/Allenna");
+  assert.match(pageSource, /manualGroupIntimacy \? \[\] : groupIntimacyOpening\(date\)/u, "l’interface doit ignorer l’ouverture commune pour toutes les routes manuelles");
+  assert.match(pageSource, /else if \(manualGroupIntimacy\) setStep\("done"\)/u, "l’interface doit ignorer la fermeture commune pour toutes les routes manuelles");
   assert.match(pageSource, /game\.flags\.includes\("lineva-tutoiement"\)/u, "la variante de tutoiement doit dépendre du drapeau sauvegardé");
   const trioEnding = pageSource.slice(pageSource.indexOf("function finishTrioEnding"), pageSource.indexOf("function closeIntimacy"));
   assert.match(trioEnding, /if \(friendlyForThisDate\)/u, "la fin amicale doit rester un choix propre au rendez-vous courant");
@@ -184,7 +198,64 @@ try {
   const homeSource = manualSources[3];
   assert.doesNotMatch(homeSource, /\b(?:mission|rapport|protocole|paramètres?|stratégie|commandement|entraînement|exercice|amarres?|manœuvres?|poste de garde|relève de la garde)\b/iu, "le logis reprend un vocabulaire professionnel ou militaire");
 
-  console.log(`[Intimité Lineva/Allenna] 18 scènes femme/homme + 9 variantes intersexes statiques · ${manualRoutes.length} routes · ${report.chapters} séquences · 13–14 chapitres explicites · tutoiement, climax, après-climax et décors validés.`);
+  const hrRoutes = hrContextIds.flatMap((contextId) => sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
+  assert.equal(hrRoutes.length, 27, "les trois rendez-vous Hylee/Remerii doivent fournir trois routes pour chacun des trois corps");
+  assert.ok(hrRoutes.every((route) => route.manual === true), "chaque route Hylee/Remerii doit être manuelle");
+  for (const contextId of hrContextIds) {
+    const context = catalog.groupIntimacyContextById(contextId);
+    assert.ok(context, `${contextId}: rendez-vous public absent`);
+    assert.equal(context.intimacyDisabled, undefined, `${contextId}: continuation intime encore désactivée`);
+    assert.equal(context.intimacyMinDesire, 25, `${contextId}: seuil de désir incohérent`);
+    assert.deepEqual(catalog.groupIntimacyOpening(context), [], `${contextId}: ouverture générique encore active`);
+    assert.deepEqual(catalog.groupIntimacyEnding(context), [], `${contextId}: fermeture générique encore active`);
+    for (const sex of sexes) {
+      const routes = catalog.groupIntimacyRoutes(contextId, sex);
+      assert.equal(routes.length, 3, `${contextId}/${sex}: trois orientations manuelles requises`);
+      for (const route of routes) {
+        assert.ok(route.progression, `${route.id}: progression CG/climax absente`);
+        for (const mode of modes) {
+          const sequence = route.chapters[mode];
+          const words = sequence.flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0);
+          assert.ok(sequence.length >= 8, `${route.id}/${mode}: huit séquences minimum`);
+          assert.ok(words >= (mode === "explicite" ? 400 : 150), `${route.id}/${mode}: scène trop courte (${words} mots)`);
+          const climax = route.progression.playerClimaxChapter[mode];
+          assert.ok(climax >= 0 && climax < sequence.length, `${route.id}/${mode}: climax hors séquence`);
+        }
+        const explicitText = route.chapters.explicite.flat().map((line) => line.text).join(" ");
+        assert.match(explicitText, /Hylee/iu, `${route.id}: Hylee absente de la chorégraphie`);
+        assert.match(explicitText, /Remerii/iu, `${route.id}: Remerii absente de la chorégraphie`);
+        assert.match(explicitText, /embrass/iu, `${route.id}: contact entre partenaires absent`);
+        assert.doesNotMatch(explicitText, /\b(?:vulves?|pénis|vagins?|clitoris)\b/iu, `${route.id}: vocabulaire clinique interdit`);
+      }
+    }
+  }
+  const hrExplicitSignatures = hrRoutes.map((route) => route.chapters.explicite.flat().map((line) => `${line.speaker}:${line.text}`).join("\n"));
+  assert.equal(new Set(hrExplicitSignatures).size, hrRoutes.length, "chaque variante explicite Hylee/Remerii doit être écrite séparément");
+  for (const contextId of hrContextIds) {
+    for (let index = 0; index < 3; index += 1) {
+      const woman = catalog.groupIntimacyRoutes(contextId, "femme")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
+      const man = catalog.groupIntimacyRoutes(contextId, "homme")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
+      const intersex = catalog.groupIntimacyRoutes(contextId, "intersexe")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
+      assert.notEqual(woman, man, `${contextId}/${index}: variantes femme/homme clonées`);
+      assert.notEqual(woman, intersex, `${contextId}/${index}: variante intersexe clonée`);
+    }
+  }
+  const hrContextVocabulary = {
+    "group-date-hylee-remerii-free-day": /Mir’Aldas|galerie|alcôve|échoppe|établi|loggia/iu,
+    "group-date-hylee-remerii-wind": /vent|manteau|abri|sentier|pierre/iu,
+    "group-date-hylee-remerii-home": /logis|canapé|étagère|chambre|lit|livres?/iu,
+  };
+  for (const contextId of hrContextIds) {
+    const text = sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)).flatMap((route) => route.chapters.explicite.flat()).map((line) => line.text).join(" ");
+    assert.match(text, hrContextVocabulary[contextId], `${contextId}: décor propre absent`);
+  }
+  assert.doesNotMatch(hrManualSource, /groupExplicitScene|PAIR_ROUTE_DATA|polishIntimacyText|heritageExplicitPair|contextualLinevaAllennaPair/u, "Hylee/Remerii dépend encore d’un générateur narratif générique");
+  assert.match(groupSource, /\.\.\.HYLEE_REMERII_MANUAL_ROUTES/u, "le registre manuel Hylee/Remerii doit être fusionné au niveau du catalogue");
+  assert.match(groupSource, /\.\.\.HYLEE_REMERII_INTIMACY_GAMES/u, "les trois mini-jeux contextuels doivent être enregistrés");
+  const generatedHrRegistry = groupSource.slice(groupSource.indexOf("const PAIR_ROUTE_DATA"), groupSource.indexOf("function buildGroupRoute"));
+  assert.doesNotMatch(generatedHrRegistry, /group-date-hylee-remerii-(?:free-day|wind|home)/u, "les nouveaux rendez-vous Hylee/Remerii figurent encore dans le générateur ancien");
+
+  console.log(`[Intimité de groupe] Lineva/Allenna préservées · Hylee/Remerii : 3 contextes, 27 routes manuelles, 8+ séquences · ${report.chapters} séquences cataloguées.`);
 } finally {
   await server.close();
 }

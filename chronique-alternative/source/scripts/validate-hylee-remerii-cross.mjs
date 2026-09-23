@@ -23,7 +23,7 @@ export function useEffect() {}
 export function useCallback(callback) { return callback; }
 `;
 const exportNames = ["createGame", "hydrateGame", "DEFAULT_PLAYER", "choicesForDialogue", "groupDateUnlocked", "evolveCrossQuests", "socialSceneReady", "spontaneousEventReady", "characterPlace", "JournalView", "RelationsView", "GameModal"];
-const actions = ["game", "dialogue", "modal", "setGame", "setDialogue", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHRScene", "startAnchorOperation", "setAnchorState", "readHRLetter", "startGroupDate", "replayGroupDate", "startCrossQuestScene", "startAlphaHunt", "finishAlphaHunt", "updateGame", "startDate"];
+const actions = ["game", "dialogue", "modal", "setGame", "setDialogue", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHRScene", "startAnchorOperation", "setAnchorState", "readHRLetter", "startGroupDate", "replayGroupDate", "startGroupDateIntimacy", "finishTrioEnding", "closeGroupIntimacy", "replayGroupDateIntimacy", "startCrossQuestScene", "startAlphaHunt", "finishAlphaHunt", "updateGame", "startDate"];
 const server = await createServer({
   root, appType: "custom", logLevel: "silent", server: { middlewareMode: true },
   plugins: [{
@@ -41,6 +41,15 @@ const server = await createServer({
   }],
 });
 try {
+ const [questSource,dateSource,uiSource,pageSource,groupSource,cgSource,cssSource]=await Promise.all([
+  readFile(resolve(root,'src/hylee-remerii-cross-quest.ts'),'utf8'),
+  readFile(resolve(root,'src/hylee-remerii-dates.ts'),'utf8'),
+  readFile(resolve(root,'src/hylee-remerii-ui.tsx'),'utf8'),
+  readFile(resolve(root,'src/page.tsx'),'utf8'),
+  readFile(resolve(root,'src/group-dates.ts'),'utf8'),
+  readFile(resolve(root,'src/intimate-cg.ts'),'utf8'),
+  readFile(resolve(root,'src/globals.css'),'utf8'),
+ ]);
  const page = await server.ssrLoadModule('/src/page.tsx'), hooks = await server.ssrLoadModule('hr-test-hooks');
  const hr = await server.ssrLoadModule('/src/hylee-remerii-cross-quest.ts'), dates = await server.ssrLoadModule('/src/hylee-remerii-dates.ts'), anchor = await server.ssrLoadModule('/src/anchor-operation.ts');
  const housing = await server.ssrLoadModule('/src/housing-data.ts'), sprites = await server.ssrLoadModule('/src/sprite-system.ts'), world = await server.ssrLoadModule('/src/world-data.ts');
@@ -125,18 +134,25 @@ try {
  for(let i=0;i<dates.HR_DATES.length;i++) {
   const date=dates.HR_DATES[i];if(i<2)assert.equal(page.groupDateUnlocked(api.game,dates.HR_DATES[i+1]),false);
   if(date.home) { assert.equal(page.groupDateUnlocked(api.game,date),false);act('setGame',{...api.game,housing:{...api.game.housing,propertyId:housing.HOUSING_PROPERTIES[0].id}}); }
+  act('setGame',{...api.game,relationships:{...api.game.relationships,hylee:{...api.game.relationships.hylee,desire:25},remerii:{...api.game.relationships.remerii,desire:25}}});
   assert.ok(page.groupDateUnlocked(api.game,date));act('startGroupDate',date.id);assert.ok(api.dialogue);
   const day=api.game.day;init(save());act('startGroupDate',date.id);assert.equal(api.game.day,day,'pas de nouveau jour à la reprise');
   assert.ok(!api.game.groupDateHistory.includes(date.id));
   if(date.home)assert.equal(api.dialogue.scene.background,world.spotById(housing.HOUSING_PROPERTIES[0].spot).background);
-  assert.ok(finish(cs=>cs.at(-1),true)>=3);assert.ok(api.game.groupDateHistory.includes(date.id));assert.notEqual(api.modal?.kind,'group-date-result');
+  const dateChoiceCount=finish(cs=>cs.find(choice=>choice.dateOutcome==='great')||cs[0],true);assert.ok(dateChoiceCount>=3,`${date.id}: ${dateChoiceCount} choix seulement`);assert.ok(api.game.groupDateHistory.includes(date.id));assert.equal(api.modal?.kind,'group-date-result',`${date.id}: la continuation doit être proposée après le seuil de désir`);
+  act('finishTrioEnding',date.id,false);assert.equal(api.modal?.kind,'notice','« pas ce soir » doit produire une fin locale');assert.ok(!api.game.flags.includes(`group-date-platonic:${date.id}`),'aucun verrou platonique permanent');
+  const lowDesire={...save(),relationships:{...api.game.relationships,hylee:{...api.game.relationships.hylee,desire:24},remerii:{...api.game.relationships.remerii,desire:24}}};
+  init(lowDesire);act('setModal',null);act('startGroupDateIntimacy',date.id);assert.equal(api.modal,null,'intimité accessible avant le seuil');
+  act('setGame',{...api.game,relationships:{...api.game.relationships,hylee:{...api.game.relationships.hylee,desire:25},remerii:{...api.game.relationships.remerii,desire:25}}});act('startGroupDateIntimacy',date.id);assert.equal(api.modal?.kind,'group-intimacy','intimité inaccessible après le seuil');
+  act('closeGroupIntimacy',true,`memory:${date.id}`);assert.ok(api.game.flags.includes(`group-date-intimate:${date.id}`));assert.equal(api.game.sceneMemories[`group-intimacy:${date.id}`],`memory:${date.id}`);
+  const afterIntimacy=save();act('replayGroupDateIntimacy',date.id);assert.equal(api.modal?.kind,'group-intimacy');assert.equal(api.modal?.replay,true);act('closeGroupIntimacy',false);assert.deepEqual(api.game,afterIntimacy,'la relecture intime ne doit rien muter');
   init(save());const before=structuredClone(api.game);act('replayGroupDate',date.id);assert.ok(api.dialogue);finish();assert.deepEqual(api.game,before);
   const relations=structuredClone(api.game.relationships);act('startGroupDate',date.id);finish();assert.deepEqual(api.game.relationships,relations);assert.equal(api.game.groupDateHistory.filter(id=>id===date.id).length,1);
  }
  const html=renderToStaticMarkup(createElement(ui.HRDossier,{progress:progress(),day:api.game.day,onScene(){},onOperation(){},onLetter(){}}));assert.ok(html.includes('7 / 7'));for(const title of hr.HR_TITLES)assert.ok(html.includes(title));
  const planner=renderToStaticMarkup(createElement(page.GameModal,{modal:{kind:'group-date-planner'},game:api.game,onClose(){},startGroupDate(){}}));
  for(const date of dates.HR_DATES)assert.ok(planner.includes(date.title));assert.ok(!planner.includes('La leçon à trois voix'));
- const scenes=[...hr.HR_SCENES,hr.hrQuestScene(6,{choices:{}}),hr.hrQuestScene(6,{choices:{},anchor:win(anchor.createAnchorOperation(2))}),hr.hrRecognition(),...dates.HR_DATES.map(d=>({...d,beats:dates.HR_DATE_BEATS[d.id]})),...ambient.HR_AMBIENT_SCENES.map(s=>({...s,intro:s.prompt}))];
+ const scenes=[...hr.HR_SCENES,hr.hrQuestScene(6,{choices:{}}),hr.hrQuestScene(6,{choices:{},anchor:win(anchor.createAnchorOperation(2))}),hr.hrRecognition({choices:{}}),...dates.HR_DATES.map(d=>({...d,beats:dates.HR_DATE_BEATS[d.id]})),...ambient.HR_AMBIENT_SCENES.map(s=>({...s,intro:s.prompt}))];
  for(const scene of scenes) for(const beat of [scene,...(scene.beats||[])]) for(const line of [...beat.intro,...beat.choices.flatMap(c=>c.response)]) if(line.mood&&['Hylee','Remerii'].includes(line.speaker))assert.ok(sprites.spriteMoodExists(line.speaker.toLowerCase(),line.mood),`${line.speaker}: sprite ${line.mood} inexistant`);
  const locked=fixture();locked.flags=[];assert.equal(hr.hrUnlocked(locked),false);
  for(const scene of ambient.HR_AMBIENT_SCENES) {
@@ -145,5 +161,48 @@ try {
   g.crossQuestSeries[hr.HR_KEY].stage=scene.crossStage.min;assert.ok(page.socialSceneReady(isolated,scene.characters[0],g));
   g.crossQuestSeries[hr.HR_KEY].stage=scene.crossStage.min-1;assert.equal(page.socialSceneReady(isolated,scene.characters[0],g),false);
  }
- console.log('Hylee–Remerii : 4 parcours, sauvegardes après chaque choix, branche figée, refus/attente, 3 rendez-vous, relectures, 16 opérations, ambiances et HTML du Journal/planificateur validés. Tests moteur ; rendu navigateur non certifié.');
+
+ const allQuestChoices=scenes.slice(0,9).flatMap(scene=>[...scene.choices,...(scene.beats||[]).flatMap(beat=>beat.choices)]);
+ const validStats=new Set(['audace','lucidite','sangFroid','resonance']);
+ assert.ok(allQuestChoices.length>=30,'nombre de choix croisés insuffisant');
+ assert.ok(allQuestChoices.every(choice=>validStats.has(choice.stat)),'un choix utilise encore une stat implicite ou invalide');
+ for(const stat of validStats)assert.ok(allQuestChoices.some(choice=>choice.stat===stat),`${stat}: orientation absente de la série`);
+ assert.ok(allQuestChoices.filter(choice=>(choice.effects.desire||0)>0||Object.values(choice.effects.relationshipEffects||{}).some(effect=>(effect.desire||0)>0)).length>=5,'courbe de désir insuffisante');
+ assert.doesNotMatch(questSource,/stat\s*=\s*["']lucidite["']/u,'Q possède encore une stat par défaut');
+ assert.match(questSource,/const Q = \(\s*id: string,\s*text: string,\s*stat: StatKey/u,'Q doit exiger explicitement StatKey');
+ for(const objective of hr.HR_OBJECTIVES)assert.ok(objective.length>60,`objectif de Journal trop vague : ${objective}`);
+ assert.match(questSource,/Certainement pas\. Nous resterons loin de l’ouverture/iu,'la quête 1 ne clarifie pas l’absence de retour au portail');
+ assert.match(questSource,/terrasse orientale répond/iu,'la progression de l’hypothèse en quête 2 est absente');
+ assert.match(questSource,/Tu sais où tu m’as trouvée/iu,'la blessure centrale de la quête 4 a disparu');
+ assert.match(questSource,/Je lui parlerai moi-même/iu,'la réparation n’appartient plus clairement à Hylee et Remerii');
+ assert.match(questSource,/Tu nous avais demandé du temps/iu,'la reprise après attente n’influence pas la reconnaissance');
+
+ const standardVisible=fixture();standardVisible.crossQuestSeries[hr.HR_KEY]={...standardVisible.crossQuestSeries[hr.HR_KEY],stage:7,hr:{choices:{},branch:'standard'}};
+ assert.equal(dates.hrDateVisibility(dates.HR_DATES[0],standardVisible).status,'unavailable');
+ const undecided=fixture();undecided.crossQuestSeries[hr.HR_KEY]={...undecided.crossQuestSeries[hr.HR_KEY],stage:7,hr:{choices:{},branch:'double'}};
+ assert.equal(dates.hrDateVisibility(dates.HR_DATES[0],undecided).status,'decision');
+ const waiting=structuredClone(undecided);waiting.crossQuestSeries[hr.HR_KEY].hr.configuration='waiting';waiting.crossQuestSeries[hr.HR_KEY].hr.recognitionDay=waiting.day;
+ assert.equal(dates.hrDateVisibility(dates.HR_DATES[0],waiting).status,'waiting');waiting.day+=1;assert.equal(dates.hrDateVisibility(dates.HR_DATES[0],waiting).status,'decision');
+ const accepted=structuredClone(undecided);accepted.crossQuestSeries[hr.HR_KEY].hr.configuration='accepted';accepted.flags=accepted.flags.filter(flag=>flag!==hr.HR_OPEN);
+ assert.equal(dates.hrDateVisibility(dates.HR_DATES[0],accepted).status,'available','configuration canonique acceptée non reconnue');
+ accepted.groupDateHistory=[dates.HR_DATE_IDS[0],dates.HR_DATE_IDS[1]];const homeLock=dates.hrDateVisibility(dates.HR_DATES[2],accepted);assert.equal(homeLock.status,'locked');assert.match(homeLock.reason,/Achetez un logis/iu);
+ const legacy=fixture();legacy.crossQuestSeries[hr.HR_KEY]={...legacy.crossQuestSeries[hr.HR_KEY],stage:7,hr:{choices:{'cross-hr-recognition':['cross-hr-config-waiting'],'cross-hr-recognition-later':['cross-hr-config-accepted']},branch:'double'}};legacy.flags=legacy.flags.filter(flag=>flag!==hr.HR_OPEN);
+ const migrated=page.hydrateGame(JSON.parse(JSON.stringify(legacy)));assert.equal(migrated.crossQuestSeries[hr.HR_KEY].hr.configuration,'accepted','le dernier choix canonique doit gagner');assert.ok(migrated.flags.includes(hr.HR_OPEN),'ancienne sauvegarde acceptée non normalisée');
+ const legacyFlag=fixture([hr.HR_OPEN]);legacyFlag.crossQuestSeries[hr.HR_KEY]={...legacyFlag.crossQuestSeries[hr.HR_KEY],stage:7,hr:{choices:{'cross-hr-recognition':['cross-hr-config-waiting']},branch:'double'}};
+ const migratedFlag=page.hydrateGame(JSON.parse(JSON.stringify(legacyFlag)));assert.equal(migratedFlag.crossQuestSeries[hr.HR_KEY].hr.configuration,'accepted','le flag canonique d’une ancienne sauvegarde doit prouver l’acceptation');
+
+ assert.match(uiSource,/CrossQuestDossier/u,'Hylee\/Remerii n’utilise pas le dossier partagé');
+ assert.match(pageSource,/<CrossQuestDossier/u,'Lineva\/Allenna n’utilise pas le dossier partagé');
+ assert.equal((pageSource.match(/<CrossQuestDossier/gu)||[]).length>=1,true,'dossier commun absent du Journal');
+ assert.match(uiSource,/serres-three-anchors\.jpg/u,'la carte finale des Serres n’est pas utilisée');
+ assert.doesNotMatch(uiSource,/approved map|fallback map|placeholder/iu,'le mini-jeu se présente encore comme un fallback');
+ assert.match(cssSource,/\.anchor-operation\.state-(?:tension|incident|retreat|success)/u,'états visuels du mini-jeu absents');
+ assert.equal(anchor.ANCHOR_PHASE_DATA.length,5,'phases scénarisées incomplètes');
+ assert.ok(anchor.ANCHOR_PHASE_DATA.every(phase=>phase.objective&&phase.hint&&phase.dialogue?.length>=2),'objectifs ou dialogues dynamiques incomplets');
+ await access(resolve(root,'../assets/backgrounds/serres-three-anchors.jpg'));await access(resolve(root,'../assets/audio/serres-operation.mp3'));
+ assert.doesNotMatch(dateSource,/intimacyDisabled\s*:\s*true/u,'les rendez-vous Hylee\/Remerii désactivent encore l’intimité');
+ assert.match(groupSource,/HYLEE_REMERII_MANUAL_ROUTES/u,'registre manuel Hylee\/Remerii non branché');
+ assert.match(cgSource,/"group-date-hylee-remerii-home"\s*:\s*"hylee_remerii"/u,'CG du logis non attribuées');
+ assert.doesNotMatch(cgSource,/"group-date-hylee-remerii-(?:free-day|wind)"\s*:/u,'CG de chambre injectées dans une sortie publique');
+ console.log('Hylee–Remerii : 4 parcours, progression 0→7, sauvegardes/reprises, branches, visibilité expliquée, 3 rendez-vous, seuil/refus/relecture intime, migration, mini-jeu et dossier partagé validés.');
 } finally { await server.close(); }
