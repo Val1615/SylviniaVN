@@ -1,15 +1,82 @@
-/* Hylee–Remerii · dossier partagé et opération des trois ancrages */
-.hr-dossier { margin-bottom: 24px; }
-.hr-dossier button, .hr-mail summary { color: #f2e9fa; cursor: pointer; }
-.hr-dossier .cross-milestones button, .hr-mail details { border: 1px solid #51465f; background: #211e30; padding: 12px; text-align: left; border-radius: 8px; }
-.hr-mail { margin-block: 20px; display: grid; gap: 8px; }
-.hr-mail p, .hr-ambient { line-height: 1.7; }
+/* Dossiers partagés des quêtes croisées */
+.shared-cross-dossier { position:relative; margin:0 0 24px; padding:clamp(16px,2.5vw,26px); overflow:hidden; border:1px solid rgba(137,100,196,.38); border-radius:18px; background:radial-gradient(circle at 8% 0,rgba(137,100,196,.17),transparent 33%),linear-gradient(145deg,rgba(35,25,53,.9),rgba(12,14,24,.96)); box-shadow:0 18px 46px rgba(0,0,0,.22); }
+.shared-cross-dossier.complete { border-color:rgba(216,189,120,.26); }
+.shared-cross-dossier button, .hr-mail summary { color:#f2e9fa; cursor:pointer; }
+.cross-dossier-heading { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:16px; align-items:center; }
+.cross-dossier-heading h2 { margin:.14rem 0 .42rem!important; font-size:1.25rem!important; }
+.cross-dossier-heading p:last-child { max-width:760px; margin:0; color:#b7b0bd; font:.7rem/1.58 var(--serif); }
+.cross-dossier-heading .eyebrow { margin:0; font-size:.54rem; }
+.cross-dossier-portraits { display:flex; align-items:center; min-width:76px; }
+.cross-dossier-portraits img { width:54px; height:68px; object-fit:cover; object-position:top; border:2px solid rgba(216,189,120,.72); border-radius:50%; background:#161421; box-shadow:0 8px 20px rgba(0,0,0,.48); }
+.cross-dossier-portraits img+img { margin-left:-24px; }
+.cross-dossier-count { align-self:start; min-width:55px; padding:8px 9px; color:#f1e4b8; border:1px solid rgba(216,189,120,.24); border-radius:9px; background:rgba(4,5,11,.3); font:.86rem var(--serif); text-align:center; }
+.cross-progress { height:7px; margin:20px 0 16px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.08); }
+.cross-progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#8e64ca,#d9bd78); box-shadow:0 0 16px rgba(168,126,214,.45); }
+.cross-current { padding:16px 17px; border:1px solid rgba(255,255,255,.07); border-radius:13px; background:rgba(5,6,13,.54); }
+.cross-current>span { color:#d6bd77; font-size:.54rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.cross-current h3 { margin:.34rem 0 .48rem; color:#f2edf3; font:1rem var(--serif); }
+.cross-current>p { margin:0 0 .8rem; color:#aaa4af; font:.66rem/1.6 var(--serif); }
+.cross-current>.primary-action,.cross-current>.secondary-action { margin-top:.35rem; }
+.cross-complete-state { border-color:rgba(216,189,120,.12); }
+.cross-dossier-mechanic { display:grid; grid-template-columns:44px minmax(0,1fr) auto; gap:14px; align-items:center; margin-top:14px; padding:14px 15px; border:1px solid rgba(216,189,120,.22); border-radius:13px; background:linear-gradient(105deg,rgba(216,189,120,.07),rgba(5,6,13,.44)); }
+.cross-mechanic-mark { width:38px; height:38px; display:grid; place-items:center; color:#d9c27f; border:1px solid rgba(216,189,120,.5); transform:rotate(45deg); font-size:1rem; }
+.cross-mechanic-copy { min-width:0; }
+.cross-mechanic-copy>small { color:#b79ae1; font-size:.49rem; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
+.cross-mechanic-copy h3 { margin:.25rem 0 .3rem; color:#eee8ef; font:.9rem var(--serif); }
+.cross-mechanic-copy p { margin:0; color:#9f99a5; font:.58rem/1.5 var(--serif); }
+.cross-mechanic-status { margin-top:.35rem; color:#d4c18b; font-size:.51rem; }
+.cross-mechanic-action { min-width:166px; }
+.cross-mechanic-action button { width:100%; margin:0; }
+.cross-milestones { margin-top:20px; }
+.cross-section-heading { display:flex; gap:12px; align-items:baseline; justify-content:space-between; margin-bottom:7px; }
+.cross-section-heading h3,.hr-mail h3 { margin:0; color:#eee8ef; font:.78rem var(--serif); }
+.cross-section-heading small { max-width:390px; color:#787381; font-size:.46rem; text-align:right; }
+.cross-milestone-list { display:grid; border-top:1px solid rgba(255,255,255,.07); }
+.cross-milestone-list>button,.cross-milestone-list>div { width:100%; display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:10px; align-items:center; min-height:52px; padding:8px 4px; border:0; border-bottom:1px solid rgba(255,255,255,.07); border-radius:0; color:inherit; background:transparent; text-align:left; }
+.cross-milestone-list>button:hover { padding-inline:9px; background:rgba(137,100,196,.1); }
+.cross-milestone-check { width:21px; height:21px; display:grid; place-items:center; color:#82c8a6; border:1px solid rgba(121,196,159,.34); border-radius:50%; font-size:.57rem; }
+.cross-milestone-copy { min-width:0; }
+.cross-milestone-copy strong,.cross-milestone-copy small { display:block; }
+.cross-milestone-copy strong { color:#ddd7df; font:.65rem var(--serif); }
+.cross-milestone-copy small { margin-top:3px; color:#76717d; font-size:.46rem; }
+.cross-milestone-action { min-width:76px; padding:6px 8px; color:#d9c386; border:1px solid rgba(216,189,120,.25); border-radius:99px; background:rgba(216,189,120,.05); font-size:.47rem; text-align:center; }
+.cross-dossier-correspondence,.cross-dossier-post-series { margin-top:20px; padding-top:18px; border-top:1px solid rgba(255,255,255,.08); }
+.hr-mail { margin:0; display:grid; gap:8px; }
+.hr-mail>p,.hr-mail details p,.hr-ambient { line-height:1.7; }
+.hr-mail>p { margin:0 0 5px; color:#8d8793; font:.56rem/1.55 var(--serif); }
+.hr-mail details,.cross-route-mail>button { border:1px solid rgba(81,70,95,.82); border-radius:8px; background:rgba(33,30,48,.78); }
+.hr-mail details { padding:10px 12px; }
+.hr-mail summary { font:.58rem var(--serif); }
+.cross-route-mail>button { width:100%; display:grid; grid-template-columns:68px minmax(0,1fr) auto; gap:10px; align-items:center; padding:10px 12px; text-align:left; }
+.cross-route-mail>button:hover { border-color:rgba(216,189,120,.42); background:rgba(49,42,61,.9); }
+.cross-route-mail>button.unread { border-left:3px solid #d8bd78; }
+.cross-route-mail>button span,.cross-route-mail>button small { color:#807a87; font-size:.45rem; }
+.cross-route-mail>button strong { color:#dfd8e1; font:.6rem var(--serif); }
 .cross-special-mechanic, .cross-post-series { margin-top: 12px; padding: 13px 15px; border: 1px solid rgba(214,190,113,.24); border-radius: 12px; background: rgba(4,5,11,.34); }
 .cross-special-mechanic strong, .cross-post-series > span { color: #dec77f; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .cross-special-mechanic p, .cross-post-series p { margin: .45rem 0; }
 .cross-post-series small { display: block; margin-top: 8px; color: #c7b77f; }
 .cross-trio-status { margin: 12px 0; padding: 11px 13px; border-left: 3px solid #826c9e; background: rgba(16,14,28,.56); }
 .cross-trio-status.available { border-left-color: #79c49f; }
+
+@media (max-width:720px) {
+  .shared-cross-dossier { padding:14px 12px; border-radius:14px; }
+  .cross-dossier-heading { grid-template-columns:70px minmax(0,1fr); gap:10px; }
+  .cross-dossier-count { grid-column:1/-1; justify-self:stretch; padding:5px; }
+  .cross-dossier-portraits img { width:48px; height:60px; }
+  .cross-dossier-portraits img+img { margin-left:-26px; }
+  .cross-dossier-heading h2 { font-size:1.05rem!important; }
+  .cross-dossier-heading p:last-child { font-size:.61rem; }
+  .cross-dossier-mechanic { grid-template-columns:34px minmax(0,1fr); padding:12px; }
+  .cross-mechanic-mark { width:30px; height:30px; }
+  .cross-mechanic-action { grid-column:1/-1; width:100%; min-width:0; }
+  .cross-section-heading { display:block; }
+  .cross-section-heading small { display:block; margin-top:4px; text-align:left; }
+  .cross-milestone-list>button,.cross-milestone-list>div { grid-template-columns:22px minmax(0,1fr); }
+  .cross-milestone-action { grid-column:2; justify-self:start; margin-top:2px; }
+  .cross-route-mail>button { grid-template-columns:56px minmax(0,1fr); }
+  .cross-route-mail>button small { grid-column:2; }
+}
 
 .anchor-backdrop { z-index: 200; padding: 12px; overflow: hidden; background: rgba(3,4,8,.92); backdrop-filter: blur(8px); }
 .anchor-operation { --anchor-state:#b99b6b; position: relative; display: grid; grid-template-rows: auto minmax(0,1fr) auto; width: min(1420px,100%); height: min(94dvh,940px); overflow: hidden; color: #f5eafa; background: radial-gradient(circle at 50% 0,rgba(78,38,47,.35),transparent 38%),#090a10; border: 1px solid rgba(216,189,120,.48); border-radius: 18px; box-shadow: 0 28px 110px #000; isolation: isolate; }

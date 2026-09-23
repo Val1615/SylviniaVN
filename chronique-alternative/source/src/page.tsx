@@ -303,6 +303,7 @@ type DialogueState = {
   datePicks?: string[];
   spriteMoods?: Record<string, string>;
   replay?: boolean;
+  replayNextCrossStage?: number;
 };
 
 type JobPhase = "briefing" | "memorize" | "play" | "perfect" | "success" | "failure";
@@ -370,8 +371,8 @@ type ModalState =
   | { kind: "group-date-result"; groupDateId: string }
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
   | { kind: "cross-letter"; letterId: string }
-  | { kind: "alpha-hunt" }
-  | { kind: "anchor-operation" }
+  | { kind: "alpha-hunt"; replay?: boolean; state?: AlphaHuntState }
+  | { kind: "anchor-operation"; replay?: boolean; state?: AnchorState }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
@@ -2287,14 +2288,24 @@ export default function Home() {
     openHRDialogue(scene, nextGame, replay);
   }
 
-  function startAnchorOperation() {
+  function startAnchorOperation(replay = false) {
     if (!game) return;
     const p = game.crossQuestSeries[HR_KEY];
+    if (replay) {
+      if (!p?.hr?.prepared || p.stage < 7) return;
+      const seed = p.hr.anchor?.seed || game.day * 97 + game.history.length * 13;
+      setModal({ kind: "anchor-operation", replay: true, state: createAnchorOperation(seed) });
+      return;
+    }
     if (p?.stage !== 6 || !p.hr?.prepared) return;
     if (!p.hr.anchor) updateGame(current => { const p = current.crossQuestSeries[HR_KEY]; return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr!, anchor: createAnchorOperation(current.day * 97 + current.history.length * 13) } } } }; });
     setModal({ kind: "anchor-operation" });
   }
   function setAnchorState(anchor: AnchorState) {
+    if (modal?.kind === "anchor-operation" && modal.replay) {
+      setModal({ ...modal, state: anchor });
+      return;
+    }
     updateGame(current => { const p = current.crossQuestSeries[HR_KEY]; if (p?.stage !== 6 || !p.hr?.prepared || (p.hr.anchor?.result && p.hr.anchor.result !== "retreat")) return current; return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [HR_KEY]: { ...p, hr: { ...p.hr, anchor } } } }; });
   }
   function readHRLetter(id: string) {
@@ -2325,7 +2336,7 @@ export default function Home() {
       setSelectedLocation(data.location);
       setSelectedSpot(data.spot);
     }
-    setDialogue({ scene, lines: expandedLines(scene, nextGame, data.intro, "intro", data.spot), lineIndex: 0, phase: "intro", replay });
+    setDialogue({ scene, lines: expandedLines(scene, nextGame, data.intro, "intro", data.spot), lineIndex: 0, phase: "intro", replay, replayNextCrossStage: replay && stage === 0 ? 1 : undefined });
   }
 
   function waitForCrossTimeline() {
@@ -2342,9 +2353,15 @@ export default function Home() {
     }));
   }
 
-  function startAlphaHunt() {
+  function startAlphaHunt(replay = false) {
     if (!game) return;
     const progress = game.crossQuestSeries.linevaAllenna;
+    if (replay) {
+      if (!progress || progress.stage < 7) return;
+      const seed = progress.alphaState?.originalSeed || game.day * 97 + game.history.length * 13 + 41;
+      setModal({ kind: "alpha-hunt", replay: true, state: createAlphaHunt(seed) });
+      return;
+    }
     if (!progress || progress.stage !== 6) return;
     if (!progress.alphaState) {
       const alphaState = createAlphaHunt(game.day * 97 + game.history.length * 13 + 41);
@@ -2357,6 +2374,10 @@ export default function Home() {
   }
 
   function setAlphaHuntState(alphaState: AlphaHuntState) {
+    if (modal?.kind === "alpha-hunt" && modal.replay) {
+      setModal({ ...modal, state: alphaState });
+      return;
+    }
     updateGame((current) => {
       const progress = current.crossQuestSeries.linevaAllenna;
       if (!progress || progress.stage !== 6) return current;
@@ -2366,6 +2387,10 @@ export default function Home() {
 
   function finishAlphaHunt() {
     if (!game) return;
+    if (modal?.kind === "alpha-hunt" && modal.replay) {
+      setModal(null);
+      return;
+    }
     const progress = game.crossQuestSeries.linevaAllenna;
     if (!progress?.alphaState || progress.alphaState.phase !== "victory") return;
     updateGame((current) => ({
@@ -2668,8 +2693,20 @@ export default function Home() {
     });
   }
 
-  function closeDialogue() {
+  function closeDialogue(abortReplay = false) {
     if (!dialogue) return;
+    const chainedCrossReplay = !abortReplay
+      && dialogue.replay
+      && dialogue.replayNextCrossStage !== undefined
+      && Boolean(dialogue.chosen)
+      && dialogue.lineIndex >= dialogue.lines.length - 1
+      && dialogue.phase === "response";
+    if (chainedCrossReplay) {
+      const nextStage = dialogue.replayNextCrossStage!;
+      setDialogue(null);
+      startCrossQuestScene(nextStage, true);
+      return;
+    }
     if (dialogue.scene.hrScene && !dialogue.replay) {
       if (!dialogue.chosen || dialogue.lineIndex < dialogue.lines.length - 1 || !["response", "relation-response"].includes(dialogue.phase) || dialogue.scene.beats?.[dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1]) return;
       updateGame(current => {
@@ -3992,6 +4029,9 @@ export default function Home() {
     ? "alpha-chases"
     : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
+  const anchorModalState = modal?.kind === "anchor-operation"
+    ? modal.replay ? modal.state : game.crossQuestSeries[HR_KEY]?.hr?.anchor
+    : undefined;
 
   return (
     <main className={`game-shell ${game.settings.reducedMotion ? "reduce-motion" : ""} ${dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" ? "scene-active" : ""}`} style={{ fontSize: `${game.settings.fontScale}%` }}>
@@ -4128,8 +4168,8 @@ export default function Home() {
         ] as [Tab, string, string][]).map(([id, icon, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => { setMapDestinationOpen(false); setPlacePanel(null); setTab(id); }}><span>{icon}</span>{label}</button>)}
       </nav>
 
-      {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue() : undefined} />}
-      {modal?.kind === "anchor-operation" && game.crossQuestSeries[HR_KEY]?.hr?.anchor && <AnchorOperationModal state={game.crossQuestSeries[HR_KEY].hr!.anchor!} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => startHRScene(6)} />}
+      {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
+      {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
       {modal && modal.kind !== "anchor-operation" && <GameModal
         modal={modal}
         game={game}
@@ -4392,7 +4432,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: () => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: () => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
+function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
   const [section, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
@@ -4444,6 +4484,54 @@ function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign
   const crossSceneMemories = crossProgress ? [0, 1, 2, 4, 5, 7].filter((stage) => { const scene = crossSceneForStage(stage); return Boolean(scene && game.flags.includes(`cross-la-scene:${scene.id}`)); }) : [];
   const homeTrioIntimateMemory = game.flags.includes("group-date-intimate:group-date-allenna-lineva-home") ? 1 : 0;
   const memoryCount = game.history.length + socialMemories.length + secretMemories.length + worldMemories.length + dateMemories.length + intimateDateMemories + groupDateMemories.length + intimateGroupMemories + crossSceneMemories.length + homeTrioIntimateMemory;
+  const alphaState = crossProgress?.alphaState;
+  const alphaStatus = alphaState?.phase === "victory"
+    ? "Alpha abattu · convergence brisée"
+    : alphaState?.phase === "failure"
+      ? "Repli effectué · la même bataille peut être reprise"
+      : alphaState
+        ? `Traque sauvegardée · ${alphaState.revealed.length}/4 impacts confirmés`
+        : "Carte tactique prête · progression sauvegardée à chaque action";
+  const linevaAllennaMechanic = crossProgress && crossProgress.stage >= 6 ? {
+    title: "Traque de l’Alpha",
+    description: "Une chasse tactique sur les quartiers de Forthaven : sonder la ruche, déplacer le duo et ouvrir l’assaut final.",
+    status: <span>{alphaStatus}</span>,
+    action: crossProgress.stage === 6
+      ? <button className="primary-action" onClick={() => onStartAlphaHunt(false)}>{alphaState ? "Reprendre la traque" : "Ouvrir la carte tactique"}</button>
+      : <button className="secondary-action" onClick={() => onStartAlphaHunt(true)}>Rejouer le mini-jeu</button>,
+  } : undefined;
+  const linevaAllennaCorrespondence = crossLetters.length ? (
+    <div className="hr-mail cross-route-mail" id="lineva-allenna-correspondence">
+      <h3>Correspondance</h3>
+      <p>Les vingt-neuf jours de coopération restent consultables sans rejouer artificiellement l’écoulement du temps.</p>
+      {crossLetters.map(({ received, letter }) => (
+        <button className={received.read ? "" : "unread"} type="button" key={letter.id} onClick={() => onReadCrossLetter(letter.id)}>
+          <span>{received.read ? `Jour ${received.receivedDay}` : "Nouveau"}</span>
+          <strong>{letter.subject}</strong>
+          <small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small>
+        </button>
+      ))}
+    </div>
+  ) : undefined;
+  const linevaAllennaMilestones = crossProgress ? LINEVA_ALLENNA_MILESTONES
+    .filter((entry) => entry.stage !== 1 && (entry.stage === 0 ? crossProgress.stage >= 2 : crossProgress.stage > entry.stage))
+    .map((entry) => ({
+      id: entry.stage,
+      title: entry.title,
+      detail: entry.stage === 0
+        ? "Deux scènes rejouées à la suite"
+        : entry.stage === 3
+          ? `${crossLetters.length} courriers conservés`
+          : entry.stage === 6
+            ? "Mini-jeu tactique"
+            : "Relecture protégée",
+      actionLabel: entry.stage === 3 ? "Voir les courriers" : entry.stage === 6 ? "Rejouer" : "Relire",
+      onReplay: entry.stage === 3
+        ? () => document.getElementById("lineva-allenna-correspondence")?.scrollIntoView({ behavior: "smooth", block: "start" })
+        : entry.stage === 6
+          ? () => onStartAlphaHunt(true)
+          : () => onStartCrossQuest(entry.stage, true),
+    })) : [];
 
   return <section className="content-view journal-view">
     <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
@@ -4472,15 +4560,15 @@ function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign
           title: crossMilestone(crossProgress.stage)?.title || "Coopération en cours",
           objective: crossMilestone(crossProgress.stage)?.objective || "Poursuivre leur série croisée.",
           mechanic: crossProgress.stage === 3 ? <div className="cross-timeline"><small>{crossProgress.letters.length} / {LINEVA_ALLENNA_LETTERS.length} courriers · {crossTimelineElapsed} / {LINEVA_ALLENNA_CORRESPONDENCE_DAYS} jours</small><p>La coopération avance entre vos visites. Chaque attente conduit au prochain courrier, puis au silence qui déclenche la suite.</p><button className="primary-action" onClick={onWaitForCrossTimeline}>{crossCorrespondenceComplete ? `Attendre trois jours sans nouvelles · Jour ${crossTimelineTarget}` : crossTimelineTarget > game.day ? `Attendre le prochain courrier · Jour ${crossTimelineTarget}` : "Recevoir les courriers en attente"}</button></div> : undefined,
-          action: <>{crossSceneForStage(crossProgress.stage) && <button className="primary-action" onClick={() => onStartCrossQuest(crossProgress.stage)}>Vivre cette étape</button>}{crossProgress.stage === 6 && <button className="primary-action" onClick={onStartAlphaHunt}>{crossProgress.alphaState ? "Reprendre la traque de l’Alpha" : "Ouvrir la carte tactique"}</button>}</>,
+          action: crossSceneForStage(crossProgress.stage) ? <button className="primary-action" onClick={() => onStartCrossQuest(crossProgress.stage)}>Vivre cette étape</button> : undefined,
         } : undefined}
         completed={crossProgress.stage >= 8 ? {
           title: "Une relation qui existe aussi sans vous",
           description: "Le canal entre les deux cités tient par les actes. Leurs rendez-vous publics à trois sont disponibles dans Relations.",
         } : undefined}
-        milestones={LINEVA_ALLENNA_MILESTONES
-          .filter((entry) => entry.stage < Math.min(8, crossProgress.stage) && entry.stage !== 1)
-          .map((entry) => ({ id: entry.stage, title: entry.title }))}
+        mechanic={linevaAllennaMechanic}
+        milestones={linevaAllennaMilestones}
+        correspondence={linevaAllennaCorrespondence}
       />}
       {section === "campaign" && <section className={`story-progress-overview ${storyComplete ? "complete" : ""}`}>
         <div className="story-progress-heading"><div><p className="eyebrow">Acte I · {storyComplete ? "achevé" : `Chapitre ${activeAct.number} sur ${MAIN_STORY.length}`}</p><h2>{storyComplete ? "Les Serres Rocheuses" : activeAct.title}</h2></div><strong>{mainProgress} / {MAIN_STORY.length} chapitres</strong></div>
@@ -5216,7 +5304,7 @@ function HomePairDateModal({ pairId, game, onFinish, onClose }: { pairId: string
   </section>;
 }
 
-function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHuntState; onChange: (state: AlphaHuntState) => void; onFinish: () => void; onClose: () => void }) {
+function AlphaHuntModal({ state, onChange, onFinish, onClose, replay = false }: { state: AlphaHuntState; onChange: (state: AlphaHuntState) => void; onFinish: () => void; onClose: () => void; replay?: boolean }) {
   const cellAt = (row: number, col: number): AlphaCell => ({ row, col });
   const cellKey = (cell: AlphaCell) => `${cell.row}:${cell.col}`;
   const revealed = new Set(state.revealed.map(cellKey));
@@ -5227,7 +5315,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
   };
   const phaseLabel = state.phase === "observation" ? "Observation" : state.phase === "movement" || state.phase === "localized" ? "Déplacement" : state.phase === "failure" ? "Repli" : "Assaut";
   return <div className="modal-backdrop alpha-hunt-backdrop"><section className="alpha-hunt-modal">
-    <header><div><p className="eyebrow">Quête croisée · Le cœur de la ruche</p><h2>Traque de l’Alpha</h2><p>{state.lastReaction}</p></div><button className="modal-close" aria-label="Sauvegarder et fermer" onClick={onClose}>×</button></header>
+    <header><div><p className="eyebrow">{replay ? "Relecture tactique · aucun gain" : "Quête croisée · Le cœur de la ruche"}</p><h2>Traque de l’Alpha</h2><p>{state.lastReaction}</p></div><button className="modal-close" aria-label={replay ? "Fermer la relecture" : "Sauvegarder et fermer"} onClick={onClose}>×</button></header>
     <div className="alpha-hud"><span><small>Impact Alpha</small><b>{state.revealed.length}/4</b></span><span><small>Patrouilles</small><b>{state.patrols.filter((patrol) => !patrol.respawnTurn).length}</b></span><span><small>Accrochages</small><b>{state.clashes}/2</b></span><span><small>Phase</small><b>{phaseLabel}</b></span></div>
     <div className="alpha-board-wrap"><div className="alpha-map-key" aria-label="Quartiers de la carte">{ALPHA_SECTOR_NAMES.map((name) => <span key={name}>{name}</span>)}</div><div className="alpha-board" style={{ backgroundImage: "linear-gradient(rgba(4,6,12,.1),rgba(4,6,12,.24)),url('/assets/backgrounds/forthaven-alpha-map.jpg')" }} role="grid" aria-label="Carte tactique de Forthaven, grille sept par sept">{Array.from({ length: ALPHA_GRID_SIZE }, (_, row) => Array.from({ length: ALPHA_GRID_SIZE }, (_, col) => {
       const cell = cellAt(row, col);
@@ -5240,7 +5328,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose }: { state: AlphaHu
       const usable = state.phase === "observation" ? inRange : movable;
       return <button role="gridcell" title={alphaCellName(cell)} aria-label={`${alphaCellName(cell)}${isDuo ? ", Lineva et Allenna" : ""}${patrols.length ? ", patrouille" : ""}${alpha ? ", Alpha" : ""}`} disabled={!usable || state.phase === "failure" || state.phase === "victory"} className={`${row === 0 ? "high-city" : ""} ${inRange ? "in-range" : "out-range"} ${movable ? "movable" : ""} ${alpha ? "alpha-cell" : ""} ${isDuo ? "duo-cell" : ""} ${patrols.length ? "patrol-cell" : ""}`} key={key} onClick={() => onCell(cell)}>{alpha && <span className="alpha-mark">◆</span>}{patrols.length > 0 && <span className="patrol-mark">☠</span>}{isDuo && <span className="duo-mark"><img src="/assets/portraits/lineva.jpg" alt="" /><img src="/assets/portraits/allenna.jpg" alt="" /></span>}</button>;
     }))}</div></div>
-    <div className="alpha-objective"><strong>{state.phase === "observation" ? "Sondez ou frappez une case éclairée." : state.phase === "movement" || state.phase === "localized" ? "Déplacez le duo d’une ou deux cases." : state.phase === "failure" ? "Deux accrochages : la tentative doit être reprise." : "La convergence est brisée."}</strong>{alphaAdjacent(state) && state.phase !== "victory" && <button className="primary-action" onClick={() => onChange(launchAlphaAssault(state))}>Déclencher l’assaut final</button>}{state.phase === "failure" && <button className="primary-action" onClick={() => onChange(retryAlphaHunt(state))}>Reprendre la même bataille</button>}{state.phase === "victory" && <button className="primary-action" onClick={onFinish}>Revenir auprès des défenseurs</button>}</div>
+    <div className="alpha-objective"><strong>{state.phase === "observation" ? "Sondez ou frappez une case éclairée." : state.phase === "movement" || state.phase === "localized" ? "Déplacez le duo d’une ou deux cases." : state.phase === "failure" ? "Deux accrochages : la tentative doit être reprise." : "La convergence est brisée."}</strong>{alphaAdjacent(state) && state.phase !== "victory" && <button className="primary-action" onClick={() => onChange(launchAlphaAssault(state))}>Déclencher l’assaut final</button>}{state.phase === "failure" && <button className="primary-action" onClick={() => onChange(retryAlphaHunt(state))}>Reprendre la même bataille</button>}{state.phase === "victory" && <button className="primary-action" onClick={onFinish}>{replay ? "Terminer la relecture" : "Revenir auprès des défenseurs"}</button>}</div>
     <aside className="alpha-vn-notices" aria-live="polite">{state.notices.slice(-3).map((notice) => { const character = CHARACTERS.find((entry) => entry.id === notice.speaker); return <div key={notice.id}><img src={spritePath(notice.speaker, notice.speaker === "lineva" ? "determined" : "stern", character?.defaultMood)} onError={(event) => character && recoverMissingSprite(event, character.portrait)} alt="" /><span><b>{notice.speaker === "lineva" ? "Lineva" : "Allenna"}</b>{notice.text}</span></div>; })}</aside>
   </section></div>;
 }
@@ -5266,8 +5354,8 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     return <div className="modal-backdrop"><section className="correspondence-modal cross-correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Quête croisée · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre est facultatif : Lineva et Allenna poursuivent leur relation sans attendre votre intervention.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToCrossLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : <p className="hint">Ce courrier n’appelle aucune réponse.</p>}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
   }
   if (modal.kind === "alpha-hunt") {
-    const state = game.crossQuestSeries.linevaAllenna?.alphaState;
-    return state ? <AlphaHuntModal state={state} onChange={setAlphaHuntState} onFinish={finishAlphaHunt} onClose={onClose} /> : null;
+    const state = modal.replay ? modal.state : game.crossQuestSeries.linevaAllenna?.alphaState;
+    return state ? <AlphaHuntModal state={state} replay={modal.replay} onChange={setAlphaHuntState} onFinish={finishAlphaHunt} onClose={onClose} /> : null;
   }
   if (modal.kind === "invitation") {
     const invitation = INVITATIONS.find((entry) => entry.id === modal.invitationId);

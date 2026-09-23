@@ -30,7 +30,7 @@ export function HRDossier({
   progress: CrossQuestProgress;
   day: number;
   onScene: (stage: number, replay?: boolean, recognition?: boolean) => void;
-  onOperation: () => void;
+  onOperation: (replay?: boolean) => void;
   onLetter: (id: string) => void;
 }) {
   const hr = progress.hr!;
@@ -47,19 +47,23 @@ export function HRDossier({
     && (!hr.configuration || hr.configuration === "waiting");
   const waitLocked = hr.configuration === "waiting" && day <= (hr.recognitionDay || 0);
 
-  const action = progress.stage < 7 ? (
-    progress.stage === 6 && hr.prepared && (!result || result === "retreat")
-      ? <button className="primary-action" onClick={onOperation}>{hr.anchor ? "Reprendre l’opération" : "Gagner les trois terrasses"}</button>
-      : <button className="primary-action" onClick={() => onScene(progress.stage)}>{hr.checkpoint ? "Reprendre la conversation" : result ? "Retrouver Hylee et Remerii au col" : "Vivre cette étape"}</button>
+  const operationActive = progress.stage === 6 && hr.prepared && (!result || result === "retreat");
+  const action = progress.stage < 7 && !operationActive ? (
+    <button className="primary-action" onClick={() => onScene(progress.stage)}>{hr.checkpoint ? "Reprendre la conversation" : result ? "Retrouver Hylee et Remerii au col" : "Vivre cette étape"}</button>
   ) : undefined;
 
-  const operationMechanic = progress.stage === 6 ? (
-    <div className="cross-special-mechanic">
-      <strong>Trois Points d’Ancrage</strong>
-      <p>Cinq phases sauvegardées · trois terrasses reliées · deux incidents imposent un repli.</p>
-      {resultLabel && <small>{resultLabel} · {hr.anchor?.incidents || 0} incident{(hr.anchor?.incidents || 0) > 1 ? "s" : ""}</small>}
-    </div>
-  ) : undefined;
+  const operationMechanic = progress.stage >= 6 ? {
+    title: "Les Trois Points d’Ancrage",
+    description: "Une opération tactique en cinq phases sur les trois terrasses périphériques des Serres Rocheuses.",
+    status: resultLabel
+      ? <span>{resultLabel} · {hr.anchor?.incidents || 0} incident{(hr.anchor?.incidents || 0) > 1 ? "s" : ""}</span>
+      : <span>{hr.prepared ? "Opération disponible · progression sauvegardée à chaque phase" : "Préparez d’abord l’opération avec Hylee et Remerii."}</span>,
+    action: operationActive
+      ? <button className="primary-action" onClick={() => onOperation(false)}>{hr.anchor ? "Reprendre l’opération" : "Gagner les trois terrasses"}</button>
+      : progress.stage >= 7
+        ? <button className="secondary-action" onClick={() => onOperation(true)}>Rejouer le mini-jeu</button>
+        : undefined,
+  } : undefined;
 
   const correspondence = progress.letters.length ? (
     <div className="hr-mail">
@@ -127,17 +131,17 @@ export function HRDossier({
         title: HR_TITLES[progress.stage],
         objective: HR_OBJECTIVES[progress.stage],
         action,
-        mechanic: operationMechanic,
       } : undefined}
       completed={progress.stage === 7 ? {
         title: "Les trois terrasses se sont tues",
         description: "Les relais périphériques ne répondent plus au portail. Hylee a tenu sa place, Remerii lui a fait confiance et leurs relevés protègent désormais les convois.",
         status: resultLabel ? <p>{resultLabel}</p> : undefined,
       } : undefined}
+      mechanic={operationMechanic}
       milestones={HR_TITLES.slice(0, progress.stage).map((title, stage) => ({
         id: stage,
         title,
-        detail: "Relire sans modifier la sauvegarde",
+        detail: "Relecture protégée",
         onReplay: () => onScene(stage, true),
       }))}
       correspondence={correspondence}
@@ -204,11 +208,13 @@ export function AnchorOperationModal({
   onChange,
   onFinish,
   onClose,
+  replay = false,
 }: {
   state: AnchorState;
   onChange: (state: AnchorState) => void;
   onFinish: () => void;
   onClose: () => void;
+  replay?: boolean;
 }) {
   const latest = useRef(state);
   const dialog = useRef<HTMLElement>(null);
@@ -283,7 +289,7 @@ export function AnchorOperationModal({
       >
         <header className="anchor-heading">
           <div>
-            <p className="eyebrow">Opération · Serres Rocheuses</p>
+            <p className="eyebrow">{replay ? "Relecture tactique · aucun gain" : "Opération · Serres Rocheuses"}</p>
             <h2>Les Trois Points d’Ancrage</h2>
             <p>Le portail reste hors de portée. Neutralisez seulement ses trois relais périphériques.</p>
           </div>
@@ -294,7 +300,7 @@ export function AnchorOperationModal({
             <span><small>État</small><b>{operationState === "normal" ? "Stable" : operationState === "tension" ? "Tension" : operationState === "incident" ? "Incident" : operationState === "retreat" ? "Repli" : "Réussite"}</b></span>
           </div>
         </header>
-        <button className="anchor-close" onClick={onClose} aria-label="Fermer et conserver la progression">×</button>
+        <button className="anchor-close" onClick={onClose} aria-label={replay ? "Fermer la relecture" : "Fermer et conserver la progression"}>×</button>
 
         <div className="anchor-stage">
           <div className="anchor-map" style={{ backgroundImage: `url(${ANCHOR_MAP.image})` }}>
@@ -377,7 +383,7 @@ export function AnchorOperationModal({
                   : "Le cycle complet est relevé et les trois mécanismes périphériques sont neutralisés sans incident."}</p>
               {state.result === "retreat"
                 ? <button className="primary-action" onClick={() => onChange(createAnchorOperation(state.seed + 1))}>Préparer une nouvelle tentative</button>
-                : <button className="primary-action" onClick={onFinish}>Retrouver Hylee et Remerii</button>}
+                : <button className="primary-action" onClick={onFinish}>{replay ? "Terminer la relecture" : "Retrouver Hylee et Remerii"}</button>}
             </div>
           ) : state.signalReady ? (
             <div className="anchor-signal-panel">
