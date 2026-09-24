@@ -1,6 +1,7 @@
 import type { DialogueLine } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import type { IntimacyChoice } from "./intimacy-scenes";
+import type { IntimacyVisualProgression } from "./intimacy-routes";
 import type { DisplayItem, HousingProperty } from "./housing-data";
 
 export type HomeIntimacyRoute = {
@@ -8,6 +9,7 @@ export type HomeIntimacyRoute = {
   text: string;
   detail: string;
   chapters: Record<IntimacyMode, DialogueLine[][]>;
+  visual?: IntimacyVisualProgression;
 };
 
 type RawLine = string | [speaker: string, text: string, mood?: string];
@@ -28,6 +30,7 @@ type HomeRouteSeed = {
   reprise: RawLine[];
   closing: RawLine[];
   after: SexText;
+  visual?: IntimacyVisualProgression;
 };
 
 const sexText = (femme: string, homme: string, intersexe: string): SexText => ({ femme, homme, intersexe });
@@ -68,6 +71,7 @@ const route = (character: string, sex: PlayerSex, seed: HomeRouteSeed): HomeInti
     id: `home-${character}-${sex}-${seed.id}`,
     text: seed.labels[sex],
     detail: seed.detail,
+    visual: seed.visual,
     chapters: {
       tendre: chapters("tendre"),
       suggestif: chapters("suggestif"),
@@ -83,9 +87,10 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "photophore-guide",
       labels: sexText("Laisser le photophore guider Hylee le long de vos courbes", "Lui confier votre désir dans la lumière du givre", "Laisser Hylee apprendre votre intimité à la lueur des flocons"),
       detail: "Hylee mène une exploration lente du canapé au lit, en utilisant la lumière froide de son cadeau pour lire chacune de vos réactions.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       threshold: ["Hylee pose son photophore sur la table basse. La neige enfermée éclaire le salon par vagues et transforme votre maison en refuge d’hiver.", ["Hylee", "Je veux prendre mon temps. Pas parce que j’hésite : parce que nous avons enfin une porte que personne ne viendra ouvrir.", "determined"]],
       firstMovement: ["Elle vous installe dans l’angle profond du canapé, embrasse votre bouche, votre gorge puis votre ventre, et déplace le photophore pour que sa lumière accompagne ses mains.", ["Hylee", "Chaque fois que la neige accélère, c’est moi. Je crois qu’elle me trahit mieux que mon visage.", "teasing"]],
-      variation: ["Vous gagnez ensuite la chambre sans rompre le contact. Hylee change votre position contre les oreillers, s’agenouille entre vos jambes puis remonte pour vous regarder lorsque votre souffle se brise.", ["{player}", "Ne détourne pas les yeux maintenant."]],
+      variation: ["Vous gagnez la chambre sans rompre le contact. Dans la lumière du photophore, Hylee défait votre tenue puis laisse la sienne glisser au pied du lit ; nue devant les flocons, elle soutient votre regard avant de vous rejoindre contre les oreillers.", ["{player}", "Ne détourne pas les yeux maintenant."]],
       tender: ["Ses gestes restent amples et paisibles. Elle réchauffe de sa paume chaque frisson laissé par le givre et vous garde enlacé·es assez longtemps pour que le désir devienne une confiance physique."],
       suggestive: ["Sa bouche suit le chemin bleuté que la lumière dessine sur votre peau. Une main vous maintient près d’elle tandis que l’autre cherche avec une curiosité de plus en plus sûre ce qui raccourcit vos phrases."],
       explicit: sexLines(
@@ -102,8 +107,9 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "cuisine-renversee",
       labels: sexText("Renverser la préparation et faire du plan de travail votre première étape", "La faire quitter les draps pour une aventure dans toute la maison", "Inventer avec elle un parcours sensuel sans rôle fixe"),
       detail: "Vous menez d’abord Hylee dans la cuisine, puis l’initiative circule entre le plan de travail, le tapis et le lit.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Le dessert abandonné garde encore le plan de travail froid. Vous y faites asseoir Hylee ; son rire s’interrompt lorsque vous prenez place entre ses genoux.", ["Hylee", "Je retire tout ce que j’ai dit sur la cuisine qui ne devait servir qu’à cuisiner.", "teasing"]],
-      firstMovement: ["Vous lui ôtez lentement les traces de farine et les vêtements qui les retiennent. Hylee s’appuie sur le marbre, surprise par le contraste entre sa magie froide et votre bouche contre sa peau."],
+      firstMovement: ["Vous lui ôtez lentement les traces de farine et les vêtements qui les retiennent. Hylee fait tomber la dernière étoffe sur une chaise et reste nue contre le marbre, surprise par le contraste entre sa magie froide, la pierre et votre bouche contre sa peau."],
       variation: ["Elle reprend l’avantage en vous attirant au sol sur le tapis du salon. Un coussin jeté derrière votre dos suffit à rendre la nouvelle position confortable ; Hylee vous chevauche un instant avant de vous entraîner vers la chambre.", ["Hylee", "Trois pièces. Aucune catastrophe. Nous faisons des progrès remarquables.", "determined"]],
       tender: ["La promenade devient une suite de baisers et d’étreintes, chaque pièce accueillant une manière différente de se tenir. Vous terminez au lit, encore amusé·es par l’itinéraire inventé."],
       suggestive: ["Contre le tapis puis le bord du lit, vos mains se montrent plus directes. Hylee répond à chaque nouvelle position par une audace plus nette, et le givre dessine sur le sol la route exacte de vos corps."],
@@ -121,9 +127,10 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "refuge-partage",
       labels: sexText("Construire sous les couvertures un refuge où vos plaisirs se répondent", "Laisser Hylee transformer le lit en bataille tendre et charnelle", "Partager une nuit de givre où chaque corps invente sa place"),
       detail: "Une route mutuelle sous un dais de glace, entre jeu, changements de conduite et longues reprises.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       threshold: ["Hylee dresse au-dessus du lit un dais translucide qui étouffe les bruits de la rue. La maison entière demeure visible à travers la glace, mais le monde ne peut plus vous atteindre.", ["Hylee", "Ce n’est pas une forteresse. Juste une cabane très ambitieuse.", "teasing"]],
       firstMovement: ["Sous la couverture, chaque main qui avance rencontre une autre main prête à répondre. Vous vous embrassez sur le côté, puis Hylee vous fait rouler au centre du matelas dans un éclat de rire étouffé."],
-      variation: ["La conduite change avec chaque flocon tombé du dais : au-dessus, en dessous, enlacé·es face à face puis assis·es l’un·e contre l’autre. Aucun rôle ne dure assez longtemps pour devenir une règle."],
+      variation: ["Sous le dais, Hylee transforme le déshabillage en bataille silencieuse : une manche conquise, une attache défaite, puis les derniers vêtements expulsés de la cabane. Lorsque vous vous retrouvez nus sous la glace, la conduite change avec chaque flocon sans qu’aucun rôle ne dure assez pour devenir une règle."],
       tender: ["Vous explorez surtout la chaleur de vos peaux, les creux où une bouche peut se reposer et les gestes qui rassurent sans interrompre le désir. La lenteur rend chaque reprise plus intime."],
       suggestive: ["Vos cuisses s’entremêlent et vos mains deviennent plus insistantes sous la couverture. Hylee mord doucement votre épaule lorsque vous découvrez un rythme commun et le dais se couvre de fissures lumineuses."],
       explicit: sexLines(
@@ -143,8 +150,9 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "metronome-indocile",
       labels: sexText("Confier votre rythme au métronome que Remerii accepte de dérégler", "La laisser mesurer votre plaisir puis perdre volontairement le compte", "Inventer avec Remerii une cadence adaptée à votre corps"),
       detail: "Remerii mène du fauteuil au lit ; le métronome devient un jeu de rythme qu’elle finit par abandonner à vos réactions.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Remerii installe son métronome arcanique sur l’accoudoir. Elle règle une pulsation lente, puis déplace volontairement le poids d’un cran imparfait.", ["Remerii", "Je souhaite savoir à quel moment cet instrument cessera d’être utile. Je soupçonne que votre corps proposera une mesure supérieure.", "smirk"]],
-      firstMovement: ["Assis·e dans le fauteuil, vous recevez ses baisers au tempo exact. Remerii ouvre vos vêtements entre deux pulsations, patiente une troisième, puis avance plus tôt simplement pour voir votre réaction."],
+      firstMovement: ["Assis·e dans le fauteuil, vous recevez ses baisers au tempo exact. Remerii ouvre vos vêtements entre deux pulsations, puis retire les siens sur la troisième ; nue devant le métronome, elle avance volontairement trop tôt afin de voir votre réaction plutôt que de respecter sa mesure."],
       variation: ["Elle vous conduit ensuite au bord du lit, une main dans votre dos et l’autre entre vos cuisses. Le métronome continue dans le salon ; votre souffle, plus proche, devient la seule mesure qu’elle écoute."],
       tender: ["Remerii ralentit jusqu’à ne plus compter. Ses caresses reviennent comme un thème doux, enrichi à chaque répétition par un détail qu’elle a appris de vous."],
       suggestive: ["Sa précision quitte le domaine de l’étude pour devenir franchement gourmande. Elle varie la pression au moindre frisson, garde votre regard et sourit lorsque vous perdez le fil avant elle."],
@@ -162,8 +170,9 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "bureau-sans-lecon",
       labels: sexText("Installer Remerii sur votre bureau et lui interdire toute leçon", "Faire du bureau le lieu où sa maîtrise change de mains", "Renverser ensemble le protocole sur le bois encore couvert de notes"),
       detail: "Vous prenez l’initiative au bureau, puis Remerii négocie chaque renversement par le désir plutôt que par l’autorité.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Vous poussez les livres sur un côté du bureau et y faites asseoir Remerii. Elle regarde une feuille tomber, résiste au réflexe de la ramasser et vous attire entre ses jambes.", ["Remerii", "Je vous préviens : cette utilisation du mobilier compromet plusieurs catégories de classement.", "smirk"]],
-      firstMovement: ["Vous défaites ses attaches une à une, sans suivre l’ordre qu’elle aurait choisi. Sa première correction meurt contre votre bouche ; la seconde devient une demande plus courte et beaucoup plus honnête."],
+      firstMovement: ["Vous défaites ses attaches une à une, sans suivre l’ordre qu’elle aurait choisi. Sa première correction meurt contre votre bouche ; quand la dernière pièce tombe au milieu des feuilles, Remerii demeure nue sur le bureau et sa seconde remarque devient une demande beaucoup plus honnête."],
       variation: ["Lorsque le bord du bureau devient inconfortable, vous glissez ensemble sur le tapis. Remerii vous renverse, reprend brièvement l’initiative, puis accepte de la rendre lorsqu’une autre position vous rapproche davantage."],
       tender: ["Votre audace se transforme en attention. Vous embrassez les endroits où sa posture accumule la tension et Remerii se laisse recevoir sans produire ni méthode ni dette."],
       suggestive: ["Le bois froid sous ses cuisses aiguise chacune de vos caresses. Remerii vous guide par des phrases de moins en moins complètes et finit par n’utiliser que votre prénom lorsqu’elle veut davantage."],
@@ -181,8 +190,9 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "partition-des-pieces",
       labels: sexText("Composer avec elle une partition qui traverse toutes les pièces", "Laisser chaque porte ouvrir une nouvelle manière de vous rejoindre", "Faire de la maison entière une musique de gestes partagés"),
       detail: "Une route mutuelle et mobile où chaque pièce impose un nouveau tempo, une nouvelle position et une nouvelle initiative.",
+      visual: { revealChapter: 1, postOrgasmChapter: 6 },
       threshold: ["Remerii propose trois notes et vous laisse attribuer chacune à une pièce. Le salon devient lenteur, le couloir surprise et la chambre résolution — classification qu’elle vous autorise aussitôt à trahir."],
-      firstMovement: ["Dans le salon, vous vous embrassez debout, mains patientes sous les vêtements. Dans le couloir, Remerii vous plaque contre le mur avec une audace soudaine puis rit de sa propre rupture de méthode."],
+      firstMovement: ["Dans le salon, vous vous embrassez debout, mains patientes sous les vêtements. Le trajet devient une partition de pièces abandonnées ; dans le couloir, Remerii laisse tomber la dernière, nue contre vous, puis vous plaque au mur avec une audace qui la fait rire de sa propre rupture de méthode."],
       variation: ["Vous atteignez la chambre sans décider qui conduit. Assis·es face à face, vous échangez les gestes comme des phrases musicales, puis roulez côte à côte lorsque la proximité réclame un autre angle."],
       tender: ["La composition reste charnelle mais douce : baisers posés, paumes qui rassurent, jambes mêlées. Chaque silence devient une tenue de note plutôt qu’une interruption."],
       suggestive: ["Vos vêtements marquent le trajet comme des signes de reprise. Remerii utilise le mur, le bord du lit puis votre propre poids pour varier la pression et laisse vos soupirs remplacer toute notation."],
@@ -383,9 +393,10 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "cle-de-la-releve",
       labels: sexText("Tourner la clé de la relève et attirer Lineva loin de toutes ses cartes", "Fermer le coffre des rapports avant de la soulever contre le bureau", "Confier les ordres à la clé et inventer avec elle une nuit sans grade"),
       detail: "Lineva dépose enfin sa garde : une scène directe et patiente entre bureau, fenêtre maritime et lit.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       threshold: ["Lineva pose la clé de la relève sur vos rapports, ferme le coffre et vérifie deux fois le déclic. Pour la première fois depuis son arrivée, ses épaules descendent.", ["Lineva", "J’ai confié la ville jusqu’à l’aube. Si je regarde encore cette serrure, embrassez-moi avant que je recommence.", "determined"]],
       firstMovement: ["Vous obéissez assez vite pour lui arracher un rire bref. Lineva vous plaque ensuite contre le bureau, défait vos vêtements avec l’efficacité d’un uniforme et ralentit volontairement au contact de votre peau."],
-      variation: ["Vous quittez le bois dur pour le tapis, puis le rebord de la fenêtre où le bruit de la mer couvre vos souffles. Au lit, Lineva accepte enfin de s’allonger sans surveiller la porte."],
+      variation: ["Vous quittez le bois dur pour le tapis. Lineva y abandonne chemise, pantalon et dernier réflexe de reprendre son uniforme ; nue dans la lumière de la fenêtre, elle vous laisse la regarder avant de vous entraîner jusqu’au lit sans surveiller la porte."],
       tender: ["Vous massez son dos avant de le couvrir de baisers. Lineva vous attire contre elle, rend chaque attention avec une application silencieuse et vous garde enlacé·es jusqu’à ce qu’un plaisir doux traverse vos deux corps."],
       suggestive: ["Sa discipline devient une précision charnelle : doigts au creux de vos hanches, bouche sur votre gorge, genou entre vos cuisses. Elle maintient le mouvement jusqu’à votre plaisir partagé, sans quitter votre regard."],
       explicit: sexLines(
@@ -402,9 +413,10 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "noeud-de-port",
       labels: sexText("Défaire sur Lineva chaque nœud qu’elle sait faire les yeux fermés", "Lui apprendre un nœud qui rapproche au lieu de retenir", "Utiliser l’écharpe de quart comme lien souple entre vos deux corps"),
       detail: "Une leçon de nœuds marins devient un jeu de proximité sur le tapis, le fauteuil et le lit, pensé autour de Lineva.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       threshold: ["Lineva sort une corde fine de son sac et réalise un nœud de chaise sans regarder. Vous tirez sur la boucle ; elle tient parfaitement.", ["Lineva", "Un bon nœud protège sans étrangler. C’est probablement la phrase la plus romantique que Forthaven m’ait apprise.", "soft"]],
       firstMovement: ["Vous remplacez la corde par son écharpe de quart et enroulez doucement vos poignets ensemble. Lineva teste le jeu d’une traction, vous rapproche et transforme la démonstration en baiser."],
-      variation: ["Le lien passe à vos tailles, puis à une cheville contre la sienne. Il ne vous immobilise jamais : il indique seulement la direction suivante, du tapis au fauteuil puis aux draps."],
+      variation: ["Le lien passe à vos tailles tandis que les vêtements quittent la boucle un à un. Lineva finit nue, l’écharpe seule contre sa peau ; elle vous en confie l’extrémité avant de désigner du menton la direction suivante, du tapis au fauteuil puis aux draps."],
       tender: ["Vous défaites chaque nœud avant d’en former un autre, ponctuant le jeu de caresses lentes. La boucle rapproche vos bassins jusqu’à ce qu’un plaisir doux vous laisse enlacé·es sur le tapis."],
       suggestive: ["L’écharpe glisse sous ses seins, autour de vos hanches puis entre vos mains jointes. Lineva utilise la tension du tissu pour guider vos corps jusqu’au plaisir dans des angles qu’un lit trop sage n’aurait pas proposés."],
       explicit: sexLines(
@@ -421,9 +433,10 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "maree-interieure",
       labels: sexText("Suivre Lineva à travers chaque pièce au rythme d’une marée montante", "La défier de laisser le roulis décider de vos appuis", "Transformer le logement en navire dont vous partagez la barre"),
       detail: "Une nuit mobile au rythme de la mer : équilibre, changements d’appui et longues reprises propres à la commandante.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       threshold: ["Lineva ouvre la fenêtre. Le vent salé traverse le logis et fait osciller la maquette de son premier navire.", ["Lineva", "À bord, on apprend à bouger avec le sol. Ici, le sol ne bouge pas. Il va falloir lui apprendre.", "determined"]],
       firstMovement: ["Elle vous prend par la taille et improvise un roulis. Vous reculez ensemble jusqu’au mur, puis au canapé, en transformant chaque perte d’équilibre en étreinte plus serrée."],
-      variation: ["La marée imaginaire gagne la table, le tapis puis la chambre. Lineva change vos appuis avec une sûreté de marin : debout, assis face à face, enfin allongés sur le côté lorsque le rythme devient plus profond."],
+      variation: ["La marée imaginaire gagne la table, le tapis puis la chambre. À chaque nouvel appui, Lineva laisse derrière elle une pièce de vêtement ; lorsqu’elle se tourne enfin nue devant la fenêtre ouverte, la mer éclaire son corps avant qu’elle vous ramène contre lui."],
       tender: ["Le jeu se calme comme une mer après l’orage. Lineva berce vos corps enlacés, embrasse votre front puis vos épaules, et garde le roulis jusqu’au plaisir qui vous laisse sans souffle."],
       suggestive: ["Chaque roulis presse vos hanches l’une contre l’autre. Lineva utilise la table comme rambarde, le canapé comme pont incliné et le lit comme cabine, jusqu’à ce que la vague de plaisir vous traverse ensemble."],
       explicit: sexLines(
@@ -681,6 +694,7 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "premiere-prise",
       labels: sexText("Laisser Allenna gagner la première prise et réclamer la suivante", "Transformer son avantage tactique en exploration de votre corps", "Inventer une première prise adaptée à vos appuis réels"),
       detail: "La partie continue sur le tapis : Allenna gagne la première position, puis le désir redistribue chaque avantage.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Allenna couche le dernier pion sur la carte et vous désigne le tapis du menton.", ["Allenna", "La partie de table est terminée. Je souhaite vérifier une variante plus physique.", "smirk"]],
       firstMovement: ["La première prise devient un baiser. Quand Allenna se redresse nue au-dessus de vous, elle relève le menton, rougit et soutient votre regard avant de le détourner malgré elle."],
       variation: ["Du tapis au canapé, puis du canapé au lit, elle transforme chaque avantage en une nouvelle position et accepte que vous repreniez l'initiative."],
@@ -700,6 +714,7 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "siege-du-canape",
       labels: sexText("Assiéger le canapé avec Allenna et changer de camp à chaque baiser", "Disputer le canapé puis le lit sans conserver longtemps la conduite", "Inventer des appuis adaptés sans distribuer les rôles par anatomie"),
       detail: "Le siège miniature quitte la carte pour occuper le canapé, le tapis et enfin le lit.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Allenna déclare le canapé forteresse imprenable et vous accorde dix secondes pour contester.", ["Allenna", "Pas de renfort, pas de négociation et aucune plainte lorsque je gagne.", "smirk"]],
       firstMovement: ["Vous testez une prise, la transformez en baiser puis roulez ensemble sur le tapis. Lorsque ses vêtements tombent, Allenna relève le menton, rougit sous votre regard et finit par détourner les yeux avant de reprendre le siège."],
       variation: ["Le parcours continue contre le canapé, le mur puis le lit. Chaque position protège les anciennes blessures sans imposer de douceur ni réduire sa force."],
@@ -719,6 +734,7 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       id: "derniere-manche",
       labels: sexText("Jouer la dernière manche au lit avec Allenna", "Miser la conduite de la première position sur un dernier pion", "Inventer une dernière manche dont vos corps écrivent les règles"),
       detail: "Un dernier pion décide seulement qui commence ; la nuit entière redistribue ensuite les initiatives.",
+      visual: { revealChapter: 2, postOrgasmChapter: 6 },
       threshold: ["Allenna cache un pion dans l'une de ses mains et vous fait choisir. Vous gagnez la première position ; elle paraît beaucoup trop satisfaite de perdre.", ["Allenna", "Vous commencez. Je conserve le droit de renverser la partie.", "smirk"]],
       firstMovement: ["Vous la conduisez jusqu'au lit et ouvrez son uniforme. Quand elle reste nue sous votre regard, Allenna relève le menton, rougit puis détourne brièvement les yeux avant de vous ramener contre elle."],
       variation: ["Le fauteuil reçoit son poids, le tapis vos genoux, puis le lit devient enfin un endroit où ni l’un ni l’autre ne surveille la sortie."],

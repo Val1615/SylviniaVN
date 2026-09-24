@@ -16,8 +16,8 @@ export type HRManualSeed = {
   explicite: Record<PlayerSex, DialogueLine[][]>;
   ellipse: DialogueLine[][];
   climax: Record<IntimacyMode, number>;
-  revealChapter?: number;
-  postOrgasmChapter?: number;
+  revealChapter: number;
+  postOrgasmChapter: number;
 };
 
 export function manualHRRoutes(
@@ -33,8 +33,8 @@ export function manualHRRoutes(
       manual: true as const,
       progression: {
         playerClimaxChapter: seed.climax,
-        revealChapter: seed.revealChapter ?? 4,
-        postOrgasmChapter: seed.postOrgasmChapter ?? 10,
+        revealChapter: seed.revealChapter,
+        postOrgasmChapter: seed.postOrgasmChapter,
       },
       chapters: {
         tendre: seed.tendre,

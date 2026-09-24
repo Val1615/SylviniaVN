@@ -458,7 +458,7 @@ const SCENES: AuthoredScene[] = [
     chapters: [
       A("Hylee pose le sac de lames, vous fait pivoter contre le tronc d'un saule et cale un pied entre les vôtres comme au départ d'une course.", ["Hylee", "Cette fois, je sais comment m'arrêter. Je n'en ai juste pas envie.", "determined"], "Elle vous embrasse avec assez d'élan pour faire glisser votre veste de votre épaule."),
       A("Elle retire votre veste puis votre haut en vous gardant contre l'écorce. Vous ouvrez sa robe ; Hylee en sort d'un mouvement et vous entraîne jusqu'aux manteaux par la ceinture.", "Elle s'agenouille pour défaire votre dernier vêtement, vous regarde pendant que le tissu descend puis se relève nue à son tour, sans demander à la lumière de l'épargner."),
-      A("Hylee prend vos mains et les pose sur ses seins. Elle suit votre regard sur son corps avec une fierté tranquille, puis recule pour découvrir le vôtre de la même façon.", ["Hylee", "Je te veux entière. Pas seulement la partie qui sait me rattraper."], "Son regard s'attarde entre vos cuisses avant que sa paume le rejoigne."),
+      A("Désormais nue, Hylee prend vos mains et les pose sur ses seins. Elle suit votre regard sur son corps avec une fierté tranquille, puis recule pour découvrir le vôtre de la même façon.", ["Hylee", "Je te veux entière. Pas seulement la partie qui sait me rattraper."], "Son regard s'attarde entre vos cuisses avant que sa paume le rejoigne."),
       V(
         ["Hylee vous embrasse debout, ses mains fermes sur vos seins et vos hanches. Elle apprécie chaque frisson et vous le dit sans diminuer la pression."],
         ["Sa bouche descend sur vos seins. Elle glisse une cuisse entre les vôtres, vous fait frotter contre elle et sourit lorsque vous perdez l'appui de l'arbre."],

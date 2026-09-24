@@ -15,6 +15,7 @@ export type IntimacyFinalChoice = {
   id: string;
   text: string;
   lines: Record<IntimacyMode, DialogueLine[]>;
+  visual?: IntimacyRoute["visual"];
 };
 
 export type IntimacyDirectionChoice = IntimacyFinalChoice | IntimacyRoute;

@@ -90,6 +90,7 @@ const HARBOR_SEEDS: MoodSeed[] = [
     undressing: [
       "Le premier baiser vous pousse contre la table des cartes de marée. Lineva rit lorsque la roue réparée fait vibrer les outils, puis retire votre manteau et le sien de l’établi avant qu’une clé ne vous tombe dessus.",
       "Sa chemise reste retroussée au-dessus des coudes. Vous ouvrez les premiers boutons pendant qu’elle défait votre ceinture, chacun essayant de faire perdre à l’autre la cadence sans jamais arracher un geste non attendu.",
+      "Lineva achève de se déshabiller contre la table, puis vous aide à quitter les dernières étoffes. Nue dans la lumière tournante du fanal, elle vous laisse découvrir sa silhouette avant de ramener votre regard au sien.",
       ["Lineva", "Si vous faites tomber la lampe, vous descendez la rallumer sans vêtements. Je préfère annoncer les enjeux.", "smirk"],
     ],
     linevaDiscovery: [
@@ -130,6 +131,7 @@ const HARBOR_SEEDS: MoodSeed[] = [
     undressing: [
       "Vous ouvrez sa chemise bouton après bouton. Lineva défait les vôtres au même rythme, sans transformer cette symétrie en règle. Parfois l’une de ses mains s’immobilise ; elle la remet en mouvement lorsqu’elle le décide.",
       "Ses bottes rejoignent les vôtres près de la trappe. Son pantalon reste encore en place lorsqu’elle s’assied sur les couvertures et vous attire entre ses genoux pour un baiser qui ne cherche aucune étape suivante avant d’avoir fini d’exister.",
+      "Quand le baiser s’achève, Lineva retire enfin son pantalon et vous débarrasse doucement du reste. Nue sur les couvertures, elle ne pose ni ne se protège : elle attend simplement que vous reveniez contre elle.",
       ["Lineva", "La roue fait assez de bruit pour deux. On peut se taire.", "thoughtful"],
     ],
     linevaDiscovery: [
@@ -170,6 +172,7 @@ const HARBOR_SEEDS: MoodSeed[] = [
     undressing: [
       "Vos manteaux tombent sur l’escalier. Lineva ouvre votre haut, vous aide lorsque le tissu résiste et vous laisse faire sauter les boutons de sa chemise sans protéger l’uniformité de la rangée.",
       "Elle recule pour retirer son pantalon, vous regarde vous dévêtir et revient avant que vous ayez fini. Ses mains trouvent votre peau avec une impatience attentive, ralentissant uniquement lorsqu’un geste exige votre indication.",
+      "Elle fait tomber votre dernière pièce avec la sienne. Lineva se tient nue contre le mur de bois, essoufflée mais sûre de son envie ; elle vous montre tout son corps avant de vous attirer dans l’espace qu’elle vient d’ouvrir.",
       ["Lineva", "Dites-moi si vous voulez moins. Pour davantage, rapprochez-moi.", "determined"],
     ],
     linevaDiscovery: [
@@ -213,10 +216,11 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     undressing: [
       "La partie vous conduit autour de la table repoussée. Une carte tombe de sa manche avec la chemise ; deux autres apparaissent sous votre ceinture parce que Lineva les y a placées pendant le dernier baiser.",
       "Ses mains rient presque autant qu’elle : rapides, franches, capables de s’arrêter net lorsque vous changez la règle puis de reprendre ailleurs avec votre accord.",
+      "Lineva fait glisser son dernier vêtement et révèle le roi posé contre sa hanche. Nue parmi les cartes éparpillées, elle vous offre la preuve de sa tricherie avec un sourire qui vous invite clairement à venir la réclamer.",
       ["Lineva", "Si vous trouvez le roi, vous choisissez la position. Si vous trouvez le valet, je nie avoir acheté ce jeu.", "smirk"],
     ],
     linevaDiscovery: [
-      "Vous trouvez le roi sous le dernier vêtement de Lineva, posé contre sa hanche. Elle affirme que l’emplacement ne prouve aucune préméditation, puis s’allonge sur la table pour honorer une règle qu’elle vient elle-même d’inventer.",
+      "Vous récupérez le roi contre la hanche nue de Lineva. Elle affirme que l’emplacement ne prouve aucune préméditation, puis s’allonge sur la table pour honorer une règle qu’elle vient elle-même d’inventer.",
       "Vous découvrez sa poitrine, son ventre et l’intérieur de ses cuisses entre les cartes éparpillées. Lineva tente encore une plaisanterie ; votre bouche plus bas lui en fait perdre la fin.",
       ["Lineva", "Gardez le roi. Continuez avec votre bouche.", "smirk"],
     ],
@@ -253,10 +257,11 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     undressing: [
       "Vous défaites sa chemise pendant qu’elle garde les mains à votre taille. Lineva regarde vos doigts, puis ouvre votre vêtement avec la même patience. Rien ne tombe avant d’avoir été posé sur le dossier de la chaise ou laissé volontairement au sol.",
       "Lorsqu’une ancienne cicatrice tire sous son épaule, elle change l’angle sans s’excuser. Vous déplacez votre appui ; elle vous remercie d’un baiser sous l’oreille plutôt que d’une explication.",
+      "Le reste de sa tenue quitte son corps sans hâte. Lineva s’assied nue au bord du lit, oublie une chaussette et rougit presque de rire lorsque votre regard s’attarde sur ce détail plus tendre que militaire.",
       ["Lineva", "Là, c’est mieux.", "thoughtful"],
     ],
     linevaDiscovery: [
-      "Lineva s’assied au bord du lit, nue à l’exception d’une chaussette qu’elle a oubliée. Elle la voit en même temps que vous, jure et refuse de corriger le détail.",
+      "Lineva retire finalement la chaussette, jure contre sa propre mise en scène et refuse pourtant de corriger le sourire qu’elle vous a laissé voir.",
       "Vous vous agenouillez entre ses jambes. Vos paumes remontent de ses mollets à ses cuisses ; sa main se pose sur votre nuque et vous arrête une seconde avant de vous rapprocher elle-même.",
       ["Lineva", "Maintenant.", "thoughtful"],
     ],
@@ -293,6 +298,7 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     undressing: [
       "La chemise de Lineva s’ouvre contre le bord de la table. Elle retire la vôtre, fait glisser vos vêtements hors de ses appuis et pose chaque fois une question courte lorsque le geste suivant peut changer l’intensité.",
       "Vous répondez de la même façon. Bientôt, la nappe rejoint le sol, les assiettes sont à l’abri sur le coffre et Lineva est nue devant vous, les paumes posées à plat derrière elle.",
+      "La table encadre son corps nu comme aucun uniforme ne le pourrait. Lineva vous laisse la regarder dans la lumière du repas abandonné, puis écarte légèrement les genoux pour transformer cette révélation en invitation.",
       ["Lineva", "La table tient. Venez vérifier le reste.", "determined"],
     ],
     linevaDiscovery: [

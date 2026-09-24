@@ -8,6 +8,14 @@ export type IntimacyRoute = {
   text: string;
   detail: string;
   chapters: Record<IntimacyMode, DialogueLine[][]>;
+  visual?: IntimacyVisualProgression;
+};
+
+export type IntimacyVisualProgression = {
+  /** Chapter that earns and displays the nude reveal CG. */
+  revealChapter: number;
+  /** Later reward CG; intimate sprites occupy the chapters in between. */
+  postOrgasmChapter: number;
 };
 
 type RawLine = string | [speaker: string, text: string, mood?: string];
@@ -27,6 +35,7 @@ type RouteSeed = {
   ellipse: RawLine[];
   closing: RawLine[];
   after: SexText;
+  visual?: IntimacyVisualProgression;
 };
 
 type RouteRole = "guided" | "offered" | "mutual";
@@ -117,17 +126,33 @@ const ORIENTATION_TEXTURES: Record<string, Record<RouteRole, string>> = {
 };
 
 const ESCALATION_TEXTURES: Record<string, Record<RouteRole, string>> = {
-  hylee: { guided: "Elle commence par votre bouche, votre gorge puis votre ventre, et le froid de ses doigts rend chaque déplacement délicieusement évident. Vos phrases raccourcissent ; Hylee suit les mouvements de votre bassin et revient là où ils deviennent les plus impatients.", offered: "Vous suivez la ligne de ses épaules jusqu’à ses hanches, en alternant paume chaude et baisers. Hylee cesse de retenir ses réactions, vous corrige une première fois puis réclame le même mouvement avec une assurance nouvelle.", mutual: "Une caresse reçue devient aussitôt une proposition rendue. Le givre dessine le trajet de vos mains sur vos deux peaux, si bien que chaque changement d’initiative devient un défi visible et volontaire." },
-  remerii: { guided: "Sa bouche rejoint les endroits que ses doigts viennent de découvrir, et Remerii vous demande de distinguer ce qui est agréable de ce qui est simplement intense. Quand vous précisez la différence, elle adapte aussitôt sa cadence sans transformer votre réponse en examen.", offered: "Vous ouvrez sa tenue attache après attache, en laissant assez de temps pour que Remerii formule chaque envie. Sa voix perd peu à peu sa syntaxe parfaite, mais ses demandes deviennent plus nettes encore.", mutual: "Vos souffles donnent une mesure que ni l’un ni l’autre ne dirige longtemps. Remerii tente de compter, renonce sur votre bouche et remplace les chiffres par des gestes qui répondent exactement aux vôtres." },
+  hylee: {
+    guided: "Hylee dénoue votre tenue avec une concentration vite trahie par son sourire, puis vous aide à faire glisser les dernières étoffes. Elle se déshabille à son tour, sans détourner les yeux cette fois ; lorsque vous vous retrouvez nus face à face, une neige légère célèbre son audace avant même le premier contact.",
+    offered: "Vous suivez la ligne des attaches d’Hylee et les ouvrez une à une, en lui laissant chaque fois le choix de poursuivre. Elle fait elle-même tomber le dernier vêtement, vous débarrasse du vôtre dans un rire nerveux, puis assume fièrement de rester nue sous votre regard.",
+    mutual: "Le jeu gagne vos vêtements : chacun en retire un à l’autre entre deux baisers, sans laisser la moindre manche devenir une victoire facile. Bientôt nus, vous contemplez les traces de givre laissées sur vos peaux avant qu’une caresse reçue ne devienne aussitôt une proposition rendue.",
+  },
+  remerii: {
+    guided: "Remerii commence par expliquer comment elle compte ouvrir votre tenue, puis sa voix se trouble lorsque vous l’invitez à agir plutôt qu’à commenter. Elle dépose vos vêtements avec soin, défait les siens avec beaucoup moins de méthode et reste nue devant vous, étonnamment calme dès que votre regard rejoint le sien.",
+    offered: "Vous ouvrez sa tenue attache après attache, en laissant assez de temps pour que Remerii formule chaque envie. Elle finit par retirer elle-même la dernière pièce, puis vous aide à vous déshabiller ; quand vos corps nus se rapprochent, sa syntaxe parfaite cède enfin la place à une demande très simple.",
+    mutual: "Vous convenez presque sérieusement d’alterner les attaches, mais le protocole ne survit pas au deuxième baiser. Vos vêtements abandonnés dessinent un chemin irrégulier jusqu’au lit ; nus l’un contre l’autre, vos souffles trouvent une mesure que ni l’un ni l’autre ne dirige longtemps.",
+  },
   iriana: { guided: "Iriana découvre votre peau avec une lenteur cérémonieuse qu’elle brise elle-même dès que votre souffle s’accélère. Elle ne réclame ni immobilité ni déférence : seulement votre regard et la franchise de vos hanches venant chercher les siennes.", offered: "Vous défaites sa tenue tandis qu’Iriana nomme ce qu’elle veut au singulier. Ses épaules quittent leur posture publique et ses hanches répondent avant qu’une formule prudente ne puisse reprendre le contrôle.", mutual: "La danse se poursuit horizontalement : une main mène, l’autre répond, puis les rôles changent dans un murmure contre la peau. Aucun pas n’est offert à un public, et cette absence rend Iriana plus audacieuse." },
   valurn: { guided: "Valurn fait glisser ses lèvres le long de votre ventre sans quitter vos réactions des yeux. Chaque provocation reçoit un mouvement plus ferme ; son sourire change lorsque vos doigts se nouent dans ses cheveux, parce que le défi vient enfin de vous.", offered: "Vous explorez son torse, ses hanches et l’intérieur de ses cuisses en interrompant chaque trait d’humour par un geste plus précis. Valurn cesse de jouer l’indifférence et vous indique sans détour le rythme qu’il ne parvient plus à feindre.", mutual: "La lutte reste joueuse parce que vos deux corps rendent coup pour coup. Vous échangez les positions, les baisers et les prises de contrôle, et chaque rire essoufflé relance le défi avec une intensité nouvelle." },
   naiah: { guided: "Sa bouche et ses doigts prennent des chemins différents, mais Naïah garde un seul corps et un seul regard pour que vous puissiez toujours la suivre. La brume souligne vos frissons sans en inventer aucun.", offered: "Vous découvrez sous sa peau magique des réactions impossibles à contrefaire : la contraction de son ventre, la rupture de son souffle, la façon dont ses cuisses se resserrent. Naïah vous indique précisément laquelle elle veut sentir recommencer.", mutual: "Le reflet au plafond montre vos changements de position sans les idéaliser. Naïah vous laisse mener jusqu’à ce que votre plaisir demande une réponse, puis reprend l’initiative après vous avoir entendu l’accepter." },
-  lineva: { guided: "Sa force se traduit par un soutien ferme sous vos hanches, jamais par une immobilisation. Lineva observe votre souffle ; lorsque son rythme augmente, une main reste mêlée à la vôtre tandis que l’autre entretient le mouvement qui vous fait vous cambrer.", offered: "Vous embrassez ses cicatrices sans les traiter comme des blessures ouvertes, puis descendez vers les zones où son corps réclame autre chose que de l’endurance. Lineva vous guide avec une franchise de plus en plus essoufflée.", mutual: "Vous changez de position sans brusquer ses anciennes blessures ni vous laisser porter seul·e. La force circule entre vos bras et vos cuisses ; Lineva rit en découvrant qu’elle peut céder du terrain sans abandonner personne." },
+  lineva: {
+    guided: "Lineva dépose son baudrier avant de vous aider à sortir de vos vêtements, avec la même attention qu’elle accorderait à une armure précieuse. Elle retire ensuite chemise et pantalon sans cérémonie ; nue devant vous, elle attend votre regard plutôt qu’un ordre et vous offre sa main pour franchir ensemble la dernière distance.",
+    offered: "Vous libérez Lineva de ses dernières attaches sans traiter chaque cicatrice comme une blessure à interroger. Elle vous déshabille à son tour d’un geste plus impatient ; lorsque son corps nu se détend enfin sous votre regard, sa main guide la vôtre vers ce qu’elle souhaite recevoir.",
+    mutual: "Chaque pièce retirée change la personne qui mène : Lineva ouvre votre tenue, vous faites glisser la sienne, puis un baiser interrompt le compte. Nus au milieu de l’armure déposée, vous vérifiez vos appuis avant de transformer ce réflexe de garde en jeu partagé.",
+  },
   saidin: { guided: "Ses mains avancent lentement sur votre peau et s’arrêtent chaque fois qu’une nouvelle réaction apparaît. Saidin ne devine pas la suivante : il vous demande de la lui faire comprendre, puis recommence le geste au présent.", offered: "Vous ouvrez sa robe et suivez son corps sans lui laisser le temps de transformer vos caresses en symbole. Saidin nomme ce qu’il ressent au lieu de ce que cela annonce, jusqu’à ce que ses phrases deviennent de simples demandes.", mutual: "Chaque fois que l’un de vous croit reconnaître la suite, l’autre change doucement de rythme. Saidin accueille ces surprises sans se dédoubler dans l’avenir ; vos mouvements restent imparfaits, synchrones et entièrement vécus." },
   bellirith: { guided: "Elle vous touche avec son expérience réelle plutôt qu’avec un sort, et suit chacune de vos réactions jusqu’à y perdre sa propre pose. Le plaisir visible sur votre corps lui retire peu à peu le besoin de jouer la femme infaillible.", offered: "Vous ouvrez sa tenue et laissez volontairement les bijoux hors de portée. Bellirith vous donne une indication sans détour, puis une seconde ; son masque tombe à mesure que votre précision rend toute mise en scène inutile.", mutual: "Chaque provocation reçoit une caresse, chaque caresse une riposte, et chaque changement de position relance le duel. L’intensité reste réelle parce qu’aucun charme ne peut falsifier le moment où l’un de vous cède l’initiative dans un soupir." },
   amanea: { guided: "Ses mains puissantes soutiennent votre bassin et votre nuque au lieu de vous maintenir. Votre corps vient chercher le sien, et Amanea transforme sa retenue en une intensité qui vous laisse pourtant toute liberté de mouvement.", offered: "Vous ouvrez sa cape, embrassez les muscles tendus et suivez le chemin que sa main vous indique. Amanea reçoit chaque geste sans le convertir en dette, et ses demandes deviennent plus franches lorsque son souffle cesse d’appartenir à une souveraine.", mutual: "Vos forces se rencontrent dans des positions choisies et réversibles. Amanea vous attire, vous la renversez lorsque son rire vous provoque, puis elle reprend la conduite sans qu’aucun mouvement ressemble à une victoire politique." },
   tia: { guided: "Tia suit votre souffle comme elle suivrait une partition, puis renonce volontairement à anticiper la mesure suivante. Sa bouche revient là où votre corps l’appelle, ses doigts conservent la pression demandée et son contrôle devient enfin une qualité d’écoute plutôt qu’une cage.", offered: "Vous ouvrez lentement les attaches d’or et découvrez les réactions que Tia n’autorise à aucune cour. Elle nomme chaque envie avec une précision troublante, puis ses hanches rendent bientôt les formules inutiles et vous indiquent seules où reprendre.", mutual: "Le protocole inventé pour la première mesure est oublié à la troisième. Vous échangez positions, baisers et caresses avec une rigueur devenue joueuse ; Tia rit lorsqu’un renversement imprévu lui plaît davantage que celui qu’elle avait prévu." },
-  allenna: { guided: "Allenna commence lentement, attentive à vos appuis et à chaque variation de souffle. Lorsque vous réclamez davantage, sa force soutient le rythme sans vous immobiliser ; la discipline de la commandante se transforme en une patience brûlante entièrement tournée vers votre plaisir.", offered: "Vous embrassez ses cicatrices sans les inventorier et suivez la chaleur sous l’armure retirée. Allenna formule une correction, puis une demande, puis votre prénom ; cette progression révèle exactement le moment où elle cesse de traiter le désir comme une procédure à maîtriser.", mutual: "Vous changez d’appui comme pendant un entraînement, mais chaque transition se conclut par une bouche, une main ou un bassin revenu contre l’autre. Allenna accepte d’être relayée avant l’épuisement et découvre que partager l’effort peut aussi intensifier le plaisir." },
+  allenna: {
+    guided: "Allenna retire d’abord ses gantelets, puis ouvre vos vêtements avec des mains nues dont la précision n’a plus rien de clinique. Elle vous laisse faire tomber les dernières pièces avant de se déshabiller elle-même ; lorsqu’elle se tient nue face à vous, elle demande où poser sa première caresse au lieu de supposer la réponse.",
+    offered: "Vous débarrassez Allenna de son uniforme sans inventorier les cicatrices qu’il révèle. Elle résiste une seconde au réflexe de vous aider, puis choisit plutôt de vous déshabiller à son tour ; nue et libérée de toute responsabilité, elle vous donne enfin une demande qui ne concerne qu’elle.",
+    mutual: "Votre signe de relève règle aussi le déshabillage : Allenna retire une pièce, vous la suivante, et chaque échange s’achève par une étreinte plus longue. Lorsque vos corps nus se retrouvent sans armure ni fonction, sa force devient un appui que vous pouvez offrir puis recevoir.",
+  },
   draven: { guided: "Sa bouche suit votre gorge et votre torse tandis que ses mains soutiennent vos hanches sans les retenir. Draven vérifie chaque accélération d’un mot bref ; votre réponse lui rend une assurance qui devient chaleur plutôt qu’autorité.", offered: "Vous ouvrez sa chemise, découvrez les vieilles marques qu’il n’exhibe jamais et refusez d’en faire un inventaire de guerre. Draven vous indique le rythme d’une voix rauque, puis cesse de surveiller sa propre retenue lorsque vous le maintenez exactement là où il vous réclame.", mutual: "Chaque reprise change la personne qui mène. Draven vous attire, vous le renversez, puis vos corps trouvent un mouvement commun où sa force sert l’appui et où votre désir, pas son grade, décide de la cadence." },
 };
 
@@ -250,6 +275,7 @@ const route = (character: string, sex: PlayerSex, seed: RouteSeed, seedIndex: nu
     id: `${character}-${sex}-${seed.id}`,
     text: polishIntimacyText(seed.labels[sex], { context }),
     detail: polishIntimacyText(seed.detail, { context }),
+    visual: seed.visual,
     chapters: {
       tendre: [opening, orientation, deepening, escalation, modeChapter("tendre"), asLines(expansion.continuation.tendre), asLines(expansion.aftercare), closing],
       suggestif: [opening, orientation, deepening, escalation, modeChapter("suggestif"), asLines(expansion.continuation.suggestif), asLines(expansion.aftercare), closing],
@@ -265,6 +291,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "givre-guide",
       labels: sexText("Laisser Hylee suivre vos frissons sous le givre", "Lui confier le rythme de votre désir", "Lui apprendre votre corps sans lui donner de modèle"),
       detail: "Hylee mène avec sa curiosité, attentive à chaque réaction plutôt qu’à une idée préconçue.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Hylee contemple votre silhouette avec une fascination qu’un flocon nerveux trahit aussitôt.", "Son regard descend sur votre torse avant de revenir, intimidé mais décidé, jusqu’à vos yeux.", "Vous guidez d’abord sa main ; Hylee mémorise le geste au lieu de supposer ce que votre corps attend."),
       setup: [["Hylee", "Dis-moi si le froid devient trop fort. Ou si tu veux que j’arrête de parler et que je continue.", "soft"], "Une poussière de givre suit ses doigts, assez fraîche pour rendre chaque contact distinct sans jamais devenir une armure."],
       deepening: ["Hylee prend confiance à mesure que vos réponses deviennent plus franches. Elle revient aux endroits qui vous ont fait respirer plus vite et sourit chaque fois qu’elle vous comprend sans phrase.", ["Hylee", "Je ne cherche pas une formule. Je cherche ce qui est vrai pour toi.", "determined"]],
@@ -283,6 +310,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "audace-renversee",
       labels: sexText("Faire de son propre désir une audace qu’elle peut revendiquer", "Lui montrer qu’elle peut vous désarmer sans être fragile", "L’inviter à choisir chaque geste et à le réclamer"),
       detail: "Vous prenez d’abord l’initiative, puis rendez à Hylee tout l’espace nécessaire pour devenir audacieuse.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous rapprochez Hylee de vous jusqu’à ce que sa gêne rencontre votre sourire plutôt qu’un miroir.", "Vous placez sa main contre vous et attendez qu’elle décide elle-même de la suite.", "Vous nommez ce qui vous plaît, puis lui demandez de nommer à son tour ce qu’elle désire."),
       setup: ["Votre premier geste est assuré, le second volontairement plus lent. Hylee comprend qu’elle n’a rien à rattraper et vous répond avec une audace qui grandit à vue d’œil.", ["Hylee", "Tu m’as donné une idée. Ne te plains pas maintenant si elle devient ambitieuse.", "teasing"]],
       deepening: ["Vous faites de chaque hésitation une invitation plutôt qu’un arrêt. Hylee apprend à demander, à reprendre votre main et à vous corriger sans s’excuser.", ["{player}", "Je veux t’entendre choisir."]],
@@ -301,6 +329,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "neige-partagee",
       labels: sexText("Mêler vos plaisirs dans une bataille de neige silencieuse", "Transformer l’étreinte en défi où personne ne mène longtemps", "Inventer ensemble un jeu que vos corps seuls comprennent"),
       detail: "Une route mutuelle et joueuse où la magie d’Hylee devient le reflet changeant de vos initiatives.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous volez un baiser à Hylee ; une poignée de neige apparaît aussitôt sur votre épaule comme une riposte.", "Hylee vous pousse contre les draps, puis proteste quand vous inversez la position avant qu’elle ait pu célébrer.", "Vous décidez qu’aucune règle ne survivra plus d’un baiser et Hylee accepte ce principe avec enthousiasme."),
       setup: ["Chaque geste reçoit une réponse : un souffle froid contre une nuque, une main capturée, un baiser rendu plus long. Votre complicité accélère avant vos corps.", ["Hylee", "On ne compte pas les points. Sauf si je gagne.", "teasing"]],
       deepening: ["Le jeu devient plus lent sans cesser d’être joueur. Vos initiatives s’entremêlent, l’une offrant ce que l’autre transforme, jusqu’à ce que la chambre semble respirer avec vous.", ["{player}", "À toi."], ["Hylee", "Non. À nous.", "soft"]],
@@ -322,6 +351,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "lecon-inversee",
       labels: sexText("Confier vos réactions à sa précision jusqu’à la troubler", "Laisser sa maîtrise apprendre votre rythme réel", "Lui donner des indications assez précises pour libérer son désir"),
       detail: "Remerii mène avec exactitude, mais votre plaisir transforme progressivement sa méthode en désir personnel.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Remerii vous observe comme une partition dont elle refuserait pourtant d’écrire la conclusion à l’avance.", "Elle pose deux doigts contre votre pouls, constate son accélération et oublie de formuler le diagnostic.", "Vous lui expliquez ce que votre corps attend ; Remerii répète vos mots pour ne pas les remplacer par une théorie."),
       setup: [["Remerii", "Je vais être attentive. Pas clinique. Si la différence devient floue, rappelez-la-moi.", "calm"], "Ses premiers gestes sont mesurés ; les suivants le sont moins, parce que vos réactions commencent à compter davantage que son plan."],
       deepening: ["Remerii retient les mouvements qui vous font revenir vers elle. Son regard gagne une chaleur presque fière lorsqu’elle constate que sa précision peut aussi la désarmer.", ["Remerii", "Ne minimisez pas. J’ai besoin de la réponse entière.", "smirk"]],
@@ -340,6 +370,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "ordre-defait",
       labels: sexText("Défaire son contrôle sans effacer la femme qui le porte", "La conduire jusqu’au point où sa voix cesse d’enseigner", "Renverser sa méthode et lui faire formuler chaque envie"),
       detail: "Vous menez Remerii hors de ses procédures et transformez sa vulnérabilité en choix assumé.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous dérangez volontairement l’alignement parfait de ses bijoux avant de revenir à sa bouche.", "Votre main immobilise doucement celle qui cherchait encore à arranger votre col.", "Vous lui demandez une envie précise ; Remerii commence par une explication et finit par un seul verbe."),
       setup: ["Vous imposez une lenteur qu’elle ne peut accélérer par compétence. Remerii essaie de prévoir votre prochain geste, se trompe, puis découvre qu’elle aime cette erreur.", ["{player}", "Pas de leçon. Demandez-moi."], ["Remerii", "Continuez.", "calm"]],
       deepening: ["Sa diction se fragmente à mesure que vos mains trouvent les endroits où son contrôle n’est plus une protection utile. Elle ne disparaît pas derrière le plaisir : elle devient plus directement elle-même.", ["Remerii", "Là… et ne changez rien sous prétexte d’innover.", "smirk"]],
@@ -358,6 +389,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "contrepoint-vivant",
       labels: sexText("Faire répondre vos corps comme deux voix d’un contrepoint", "Improviser jusqu’à perdre toute mesure commune", "Composer un rythme qui change avec chacun de vos gestes"),
       detail: "Une intimité mutuelle inspirée par la musique, où l’initiative circule et où Remerii accepte l’imprévu.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous rejouez du bout des doigts sur sa peau la phrase musicale laissée inachevée au rendez-vous.", "Remerii écoute votre pouls, puis vous demande de suivre le sien sans chercher lequel impose le tempo.", "Vous convenez d’un signal pour ralentir et d’un autre pour changer de rythme ; Remerii les transforme aussitôt en motif musical."),
       setup: ["Vos gestes se répondent comme deux phrases qui refusent la résolution attendue. Chaque changement d’initiative surprend Remerii et nourrit visiblement son envie.", ["Remerii", "Ne concluez pas encore. Cette dissonance commence à devenir intéressante.", "smirk"]],
       deepening: ["Vous apprenez à vous interrompre sans vous couper, à reprendre un geste offert par l’autre et à laisser les respirations remplacer le métronome.", ["{player}", "À votre tour."], ["Remerii", "Notre tour.", "calm"]],
@@ -550,6 +582,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "garde-reposee",
       labels: sexText("Laisser Lineva prendre soin de vous sans monter la garde", "Lui confier votre poids plutôt qu’une position à défendre", "Lui montrer comment protéger votre plaisir sans le contrôler"),
       detail: "Lineva mène avec force et attention, en adaptant chaque prise aux demandes qu’elle reçoit.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Lineva vérifie une dernière fois la porte avant que vous rameniez sa main contre votre hanche.", "Vous vous adossez entièrement contre elle ; Lineva comprend peu à peu que ce poids est offert, pas imposé.", "Vous placez ses mains là où vous les souhaitez et lui donnez un signal clair pour chaque changement."),
       setup: [["Lineva", "La ville est gardée. Vous êtes ici. Dites-moi exactement ce que vous voulez.", "thoughtful"], "Sa force reste présente sans devenir une consigne. Elle vous soutient, vous entoure et attend vos réactions avant d’avancer."],
       deepening: ["Lineva suit chaque tension de votre corps. Vos soupirs deviennent des indications auxquelles elle répond par un changement précis de pression ou d’angle.", ["Lineva", "Dites-moi où vous me voulez. Je préfère une demande franche à une devinette.", "smirk"]],
@@ -568,6 +601,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "armure-deposee",
       labels: sexText("Défaire son armure puis prendre soin de ce qu’elle cachait", "Lui offrir une force sur laquelle elle peut enfin s’appuyer", "Lui rendre chaque attache comme un choix plutôt qu’une reddition"),
       detail: "Vous prenez l’initiative ; Lineva nomme sans détour les gestes, les angles et le rythme qu’elle veut recevoir.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous dénouez son dernier lacet avec les dents ; Lineva oublie une seconde de surveiller la fenêtre.", "Vous soutenez son armure pendant qu’elle s’en libère, puis lui offrez votre épaule à la place.", "Vous demandez avant chaque attache. Lineva répond de plus en plus vite à mesure que le métal cesse de définir la scène."),
       setup: ["L’armure tombe pièce par pièce. La peau dessous porte les marques rouges du cuir et la chaleur d’une longue journée sur les remparts.", ["Lineva", "Commencez par mes épaules. Je vous dirai où poursuivre.", "thoughtful"]],
       deepening: ["Vous prenez le temps de masser ses épaules avant de descendre. Lineva vous indique sans honte les endroits qui réclament davantage.", ["Lineva", "Là. Pas pour réparer. Continuez simplement.", "smirk"]],
@@ -586,6 +620,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "releve-a-deux",
       labels: sexText("Échanger force et tendresse comme une relève à deux", "Alterner les appuis jusqu’à ce qu’aucun ne porte tout", "Changer de rôle à chaque fois que l’un·e en ressent le besoin"),
       detail: "Une route mutuelle où l’initiative circule et où la force de Lineva devient un jeu partagé.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous annoncez une relève et Lineva rit, avant de comprendre que vous parlez de l’étreinte.", "Lineva vous renverse par réflexe ; vous lui demandez aussitôt quand elle souhaite que vous repreniez la position.", "Vous choisissez un mot pour changer d’initiative. Lineva l’emploie d’abord très sérieusement, puis avec un sourire."),
       setup: ["Vous vous soutenez tour à tour : une main offerte quand l’autre se tend, une étreinte reprise quand le poids devient trop lourd. Lineva découvre une discipline qui ne ressemble pas à un ordre.", ["Lineva", "Une relève où personne n’abandonne son poste. Ça, je comprends.", "smirk"]],
       deepening: ["Le rythme devient plus vif. Lineva aime visiblement vous renverser autant que se laisser ramener contre les draps, sa force servant le désir plutôt que la défense.", ["{player}", "Relève."], ["Lineva", "Déjà ? Très bien. Profitez-en.", "smirk"]],
@@ -833,6 +868,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "mains-sans-gantelets",
       labels: sexText("Confier votre plaisir aux mains nues d’Allenna", "Laisser Allenna transformer sa précision en désir", "Guider ses mains sans laisser une anatomie supposée décider"),
       detail: "Allenna mène avec la précision de ses mains nues, mais laisse la commandante et la soigneuse hors de votre lit.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Allenna retire ses gantelets et pose ses doigts nus sur votre hanche avec une prudence qui ne masque plus son envie.", "Allenna suit votre torse du regard avant de demander où vous voulez sentir sa première main.", "Vous placez sa paume là où votre corps souhaite commencer ; Allenna retient ce geste plutôt qu’un modèle."),
       setup: [["Allenna", "Je connais les corps blessés, les corps épuisés et les corps qu’il faut maintenir en vie. Le tien n’est aucune de ces missions. Dis-moi ce qui lui plaît.", "troubled"], "Elle attend votre réponse avant de vous allonger, puis son baiser fait disparaître la dernière distance professionnelle qu’elle avait tenté de conserver."],
       deepening: ["Ses mains explorent avec méthode, mais la méthode change chaque fois que votre souffle ou vos hanches contredisent son hypothèse. Allenna sourit lorsqu’elle trouve enfin un geste qu’aucun manuel n’aurait pu lui apprendre.", ["Allenna", "Celui-ci. Ton corps vient de le classer prioritaire.", "smirk"]],
@@ -851,6 +887,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "relève-accordee",
       labels: sexText("Faire déposer à Allenna toute responsabilité avant de la toucher", "Prendre la relève et lui apprendre à recevoir sans surveiller", "Construire un plaisir qu’Allenna n’a pas à maintenir seule"),
       detail: "Vous prenez l’initiative et offrez à Allenna une relève réelle où recevoir ne signifie ni échouer ni perdre le contrôle.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Vous retirez son rapport de ses genoux et lui demandez une envie qui ne protégera personne d’autre.", "Vous posez son épée hors de portée, puis attendez qu’Allenna choisisse de fermer elle-même la porte.", "Vous lui demandez quel rôle elle ne veut surtout pas recevoir ; sa réponse devient la première limite de la nuit."),
       setup: ["Allenna vérifie encore la fenêtre, la trousse de soins et la position de sa lame. Vous ne vous moquez pas ; vous attendez qu’elle revienne volontairement vers le lit et vous offre tout son poids.", ["{player}", "La relève commence quand tu la choisis."], ["Allenna", "Je la choisis. Maintenant.", "troubled"]],
       deepening: ["Vous embrassez ses cicatrices sans raconter leur histoire à sa place. Allenna guide votre main vers la chaleur plutôt que vers les anciennes douleurs, puis cesse enfin de préparer le geste qu’elle devra vous rendre.", ["Allenna", "Continue. Je ne planifie pas la suite. C’est inconfortable… et très agréable.", "shy"]],
@@ -869,6 +906,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
       id: "entrainement-renverse",
       labels: sexText("Changer chaque prise d’Allenna en relais de plaisir", "Faire circuler la force sans vainqueur ni captif", "Alterner positions et rôles selon les possibilités de vos deux corps"),
       detail: "Une route mutuelle et physique où la force devient soutien, échange et jeu plutôt qu’épreuve à gagner.",
+      visual: { revealChapter: 3, postOrgasmChapter: 6 },
       prelude: sexText("Allenna propose un exercice de maintien ; vous le transformez en une étreinte au moment exact où elle croit avoir gagné.", "Vous testez sa garde, cédez volontairement puis la renversez seulement après son sourire d’accord.", "Vous définissez un signe de relève avant de chercher quelles positions conviennent réellement à vos deux corps."),
       setup: ["Le premier changement a lieu debout, le second sur le tapis et le troisième au bord du lit. Allenna protège chaque appui sans ralentir le désir, surprise de pouvoir employer toute sa force sans transformer l’autre en adversaire.", ["Allenna", "Aucun vainqueur. Mais je compte encore les renversements par habitude.", "smirk"]],
       deepening: ["Vous échangez conduite et soutien au rythme de vos souffles. Lorsque les vêtements gênent, Allenna les retire sans détour ; lorsque son ancienne blessure tire, vous adaptez ensemble l’angle sans traiter cette limite comme une défaite.", ["{player}", "Relève."], ["Allenna", "Reçue. À mon tour de te porter.", "smirk"]],

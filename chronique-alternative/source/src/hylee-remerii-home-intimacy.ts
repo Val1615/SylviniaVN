@@ -13,7 +13,7 @@ const seeds: HRManualSeed[] = [
     },
     detail: "Hylee refuse de reconnaître que le canapé ne peut pas accueillir trois personnes. La maladresse devient un jeu, puis un passage choisi vers la chambre ; Remerii cesse de ranger la soirée et aide à lui donner une place durable dans le logis.",
     climax: { tendre: 5, suggestif: 5, explicite: 7, ellipse: 5 },
-    revealChapter: 4,
+    revealChapter: 3,
     postOrgasmChapter: 8,
     tendre: [
       [N("Les bols vides restent sur la table basse. Hylee s’obstine à faire tenir trois personnes sur le canapé, une jambe sur vos genoux et l’épaule sous le bras de Remerii. Le logis paraît soudain plus habité que depuis votre emménagement.")],
@@ -93,7 +93,7 @@ const seeds: HRManualSeed[] = [
     },
     detail: "Remerii baisse elle-même les lampes et demande à rester. Son initiative naît des détails du logis et de la confiance acquise ; Hylee la connaît assez pour ne pas plaisanter trop tôt, puis assez bien pour rendre son désir moins solennel.",
     climax: { tendre: 5, suggestif: 5, explicite: 7, ellipse: 5 },
-    revealChapter: 4,
+    revealChapter: 3,
     postOrgasmChapter: 8,
     tendre: [
       [N("Remerii débarrasse trois bols, puis s’arrête devant une petite lampe laissée près de vos livres. Elle baisse la flamme au lieu de l’éteindre et replace machinalement un marque-page qui dépassait.")],
@@ -173,7 +173,7 @@ const seeds: HRManualSeed[] = [
     },
     detail: "Aucune personne ne mène durablement. Un objet exposé, un vêtement laissé et une place créée dans la bibliothèque transforment la soirée en promesse concrète : Hylee et Remerii ne sont pas seulement invitées à passer, mais à revenir et à rester.",
     climax: { tendre: 5, suggestif: 5, explicite: 7, ellipse: 5 },
-    revealChapter: 4,
+    revealChapter: 3,
     postOrgasmChapter: 8,
     tendre: [
       [N("Hylee dépose un petit galet ramassé durant la promenade parmi vos objets exposés. Remerii proteste qu’il tachera l’étagère, puis glisse dessous un morceau de tissu au lieu de le retirer.")],

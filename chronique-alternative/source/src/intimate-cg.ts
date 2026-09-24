@@ -12,6 +12,11 @@ export type IntimateCgState = {
   src: string;
 };
 
+export type IntimateVisualState = {
+  cg?: IntimateCgState;
+  useIntimateSprites: boolean;
+};
+
 const ROOT = "/assets/intimacy-cg";
 
 export const SOLO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(
@@ -30,12 +35,13 @@ const DUO_NAMES: Record<string, string> = {
   "group-date-remerii-iriana": "remerii_iriana",
   "group-date-naiah-bellirith": "naiah_bellirith",
   "group-date-tia-remerii": "tia_remerii",
-  // L’illustration existante montre un intérieur privé : elle appartient au
-  // rendez-vous du logis. Les deux sorties publiques n’emploient pas ce CG
-  // hors contexte et restent prêtes à recevoir leurs assets dédiés.
+  // Les CG sont des récompenses de révélation. Leur cadrage n'impose pas le
+  // décor narratif : chaque rendez-vous choisit lui-même son instant d'effeuillage.
+  "group-date-allenna-lineva-training": "allenna_lineva",
+  "group-date-allenna-lineva-basin": "allenna_lineva",
   "group-date-allenna-lineva-home": "allenna_lineva",
-  // Même règle pour Hylee / Remerii : leurs CG montrent explicitement une
-  // chambre bordée de bibliothèques. Seule « La porte fermée » les utilise.
+  "group-date-hylee-remerii-free-day": "hylee_remerii",
+  "group-date-hylee-remerii-wind": "hylee_remerii",
   "group-date-hylee-remerii-home": "hylee_remerii",
 };
 
@@ -51,51 +57,76 @@ function stateFromAssets(assets: { reveal: string; postOrgasm: string } | undefi
   return { phase, src: phase === "reveal" ? assets.reveal : assets.postOrgasm };
 }
 
-export function soloIntimateCgState(options: {
+const STANDARD_VISUAL: IntimateVisualState = { useIntimateSprites: false };
+
+const BEFORE_REVEAL_PHASES = new Set(["approach", "undressing"]);
+const AFTERGLOW_PHASES = new Set(["afterglow", "ending"]);
+
+export function soloIntimateVisualState(options: {
   character: string;
   mode: IntimacyMode;
   surface: Exclude<IntimateCgSurface, "group">;
   step: string;
   chapter: number;
   narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase | HyleeIntimacyPhase | RemeriiIntimacyPhase;
-  retainRevealThroughClimax?: boolean;
-}): IntimateCgState | undefined {
-  if (options.mode !== "explicite") return undefined;
+  revealChapter?: number;
+  postOrgasmChapter?: number;
+}): IntimateVisualState {
+  if (options.mode !== "explicite") return STANDARD_VISUAL;
   const assets = SOLO_INTIMATE_CG[options.character];
-  if (options.step === "ending" || options.step === "done") return stateFromAssets(assets, "post-orgasm");
-  if (options.step !== "direction-lines") return undefined;
+  if (!assets) return STANDARD_VISUAL;
+  if (options.step === "ending" || options.step === "done") {
+    return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
+  }
+  if (options.step !== "direction-lines") return STANDARD_VISUAL;
 
   if (options.narrativePhase) {
-    if (options.narrativePhase === "intensification") return stateFromAssets(assets, "reveal");
-    if (options.retainRevealThroughClimax && options.narrativePhase === "climax") return stateFromAssets(assets, "reveal");
-    if (options.narrativePhase === "afterglow" || options.narrativePhase === "ending") return stateFromAssets(assets, "post-orgasm");
-    return undefined;
+    if (options.narrativePhase === "naked-reveal") {
+      return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
+    }
+    if (AFTERGLOW_PHASES.has(options.narrativePhase)) {
+      return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
+    }
+    return { useIntimateSprites: !BEFORE_REVEAL_PHASES.has(options.narrativePhase) };
   }
 
-  // Les scènes au logis placent leur climax au chapitre 4 ; les routes solo au chapitre 5.
-  const revealChapter = options.surface === "home" ? 3 : 4;
-  const postOrgasmChapter = options.surface === "home" ? 5 : 6;
-  if (options.chapter === revealChapter) return stateFromAssets(assets, "reveal");
-  if (options.chapter >= postOrgasmChapter) return stateFromAssets(assets, "post-orgasm");
-  return undefined;
+  // Les routes sans phases doivent publier leur propre progression visuelle.
+  // Sans ce contrat narratif, aucun sprite nu n'est autorisé à apparaître.
+  if (options.revealChapter === undefined) return STANDARD_VISUAL;
+  if (options.chapter < options.revealChapter) return STANDARD_VISUAL;
+  if (options.chapter === options.revealChapter) {
+    return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
+  }
+  if (options.postOrgasmChapter !== undefined && options.chapter >= options.postOrgasmChapter) {
+    return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
+  }
+  return { useIntimateSprites: true };
 }
 
-export function groupIntimateCgState(options: {
+export function groupIntimateVisualState(options: {
   pairId: string;
   mode: IntimacyMode;
   step: string;
   chapter: number;
   revealChapter?: number;
   postOrgasmChapter?: number;
-}): IntimateCgState | undefined {
-  if (options.mode !== "explicite") return undefined;
+}): IntimateVisualState {
+  if (options.mode !== "explicite") return STANDARD_VISUAL;
   const assets = DUO_INTIMATE_CG[options.pairId];
-  if (options.step === "ending" || options.step === "done") return stateFromAssets(assets, "post-orgasm");
-  if (options.step !== "direction-lines") return undefined;
+  if (!assets) return STANDARD_VISUAL;
+  if (options.step === "ending" || options.step === "done") {
+    return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
+  }
+  if (options.step !== "direction-lines") return STANDARD_VISUAL;
 
   const revealChapter = options.revealChapter ?? 3;
   const postOrgasmChapter = options.postOrgasmChapter ?? 5;
-  if (options.chapter === revealChapter) return stateFromAssets(assets, "reveal");
-  if (options.chapter >= postOrgasmChapter) return stateFromAssets(assets, "post-orgasm");
-  return undefined;
+  if (options.chapter < revealChapter) return STANDARD_VISUAL;
+  if (options.chapter === revealChapter) {
+    return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
+  }
+  if (options.chapter >= postOrgasmChapter) {
+    return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
+  }
+  return { useIntimateSprites: true };
 }

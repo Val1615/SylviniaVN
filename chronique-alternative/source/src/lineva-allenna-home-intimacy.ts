@@ -20,7 +20,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -47,7 +47,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("La soirée a commencé par du thé et une histoire si insignifiante que Lineva en a oublié la fin. Elle occupe le canapé en diagonale ; Allenna se cale dans un coin et vous prenez l’espace entre elles. Vos jambes reposent sur Lineva, votre épaule sous la joue d’Allenna."), L("Voilà. Trois personnes tiennent parfaitement.", "pleased")],
         [N("Vous riez, tournez la tête et rencontrez la bouche de Lineva. Le baiser dure une seconde de trop ; Allenna le regarde, rouge mais souriante. Vous l’attirez par le col pour lui offrir le suivant, puis Lineva se penche au-dessus de vos jambes et embrasse Allenna à son tour."), A("Le thé va refroidir."), L("Il survivra.", "smirk")],
-        [N("Les chemises s’ouvrent sans décision annoncée. Allenna découvre votre poitrine, Lineva celle d’Allenna ; vous prenez un sein de chaque femme dans vos mains pendant qu’elles s’embrassent au-dessus de vous. Le dossier oblige Allenna à rester presque couchée sur votre flanc."), P("Ne cherchons pas une meilleure place.")],
+        [N("Les chemises s’ouvrent sans décision annoncée. Lineva aide Allenna à faire glisser le reste de sa tenue entre les coussins ; Allenna lui rend ce geste, et les derniers vêtements tombent derrière le canapé sans qu’aucune accepte de se lever. Nues contre votre flanc, elles s’embrassent au-dessus de vous pendant que le dossier les oblige à partager exactement le même espace."), P("Ne cherchons pas une meilleure place.")],
         [N("Lineva se glisse au bout du canapé et retire votre pantalon. Vous restez à moitié assise contre Allenna, les jambes ouvertes sur les genoux de la capitaine. Allenna embrasse votre cou et descend une main entre les cuisses de Lineva, agenouillée près de vos pieds."), L("Ce meuble vient de devenir beaucoup plus intéressant.", "breathless")],
         [N("Lineva pose sa bouche sur votre sexe. Sa langue trouve votre perle tandis que deux doigts entrent en vous. Allenna vous soutient contre le dossier, vous embrasse et caresse Lineva entre les cuisses ; vos propres doigts glissent sous sa jupe et l’ouvrent à votre main."), A("Nous sommes vraiment trop serrées.", "breathless"), P("C’est précisément ce qui me plaît.")],
         [N("Les doigts de Lineva et sa langue accélèrent. Vous pénétrez Allenna de deux doigts pendant qu’elle fait de même à Lineva, leurs hanches bougeant de part et d’autre de votre jambe. La chaîne se tend ; Allenna jouit la première contre votre main, sa bouche ouverte sur votre épaule."), A("Ne vous arrêtez pas pour moi.", "shaken")],
@@ -84,7 +84,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -111,7 +111,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("Vous trouvez Allenna dans la cuisine après minuit, occupée à ranger une assiette lavée. La petite lampe éclaire ses avant-bras et le verre d’eau que vous venez de remplir. Lineva apparaît derrière elle, prend l’assiette et la repose résolument sur le comptoir."), L("Le placard ne mérite pas autant d’attention.", "teasing")],
         [N("Il reste une part de tarte. Vous mangez dans la même assiette, trois fourchettes se heurtant au centre. Une miette reste sur la lèvre d’Allenna ; Lineva la cueille avec sa bouche. Allenna rougit, puis vous attire pour vous donner le même baiser sans miette comme excuse."), A("C’était plus équitable.", "smirk")],
-        [N("Vous la soulevez sur le comptoir. Ses jambes s’ouvrent autour de vos hanches ; Lineva reste dans son dos et dégage ses cheveux. Vous ouvrez sa chemise, embrassez ses seins, tandis que Lineva retire sa jupe et caresse les fesses posées sur le bois."), P("Ne rangez plus rien cette nuit.")],
+        [N("Vous soulevez Allenna sur le comptoir. Lineva ouvre sa chemise puis retire sa jupe, laissant la guerrière nue sur le bois encore tiède ; Allenna répond en défaisant la tenue de la capitaine et la fait tomber près du bol oublié. Lineva revient peau contre son dos pendant que vous embrassez sa poitrine."), P("Ne rangez plus rien cette nuit.")],
         [N("Allenna vous déshabille à son tour depuis sa place haute. Lineva embrasse votre poitrine, puis s’agenouille entre les jambes pendantes d’Allenna. La guerrière garde votre bouche sur la sienne pendant que la capitaine écarte ses lèvres et passe la langue sur sa perle."), A("Lineva… ne ralentis pas.", "breathless")],
         [N("Vous glissez deux doigts en Allenna par-dessus l’épaule de Lineva. Sa bouche gémit contre la vôtre ; Lineva maintient sa langue tandis que votre main se courbe profondément en elle. Allenna caresse votre sexe libre de l’autre main, dessinant un cercle sur votre perle sans perdre sa place sur le comptoir."), L("Elle sait très bien faire trois choses à la fois.", "smirk")],
         [N("Allenna jouit la première, assise au bord du bois, serrée entre votre main et la bouche de Lineva. Son talon frappe doucement le placard ; elle rit contre votre épaule quand le verre tremble. Lineva se relève pour l’embrasser et reçoit vos doigts entre ses propres cuisses."), A("Le verre tient encore.", "shaken")],
@@ -147,7 +147,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 5,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -174,7 +174,7 @@ const HOME_FEMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("Vous êtes déjà allongées sous la couverture, Allenna contre le mur, Lineva au bord, vous entre elles. La conversation s’efface sans malaise. Votre main est posée sur le ventre d’Allenna ; la paume de Lineva repose sur votre hanche depuis assez longtemps pour ne plus sembler distraite."), A("Je n’ai pas envie de dormir tout de suite.", "soft")],
         [N("Vous tournez la tête et embrassez Lineva. Le baiser commence paresseux, se creuse, puis Allenna se penche au-dessus de votre épaule pour prendre votre bouche à son tour. Lineva lui caresse la joue ; elles s’embrassent devant vous dans un silence où aucun geste n’a besoin d’être annoncé."), L("Alors restons éveillées.", "soft")],
-        [N("Les chemises s’ouvrent sous les draps. Vous caressez la poitrine d’Allenna pendant que Lineva embrasse sa nuque depuis l’autre côté ; Allenna glisse une main sur vos seins et l’autre entre les cuisses de la capitaine. Les corps demeurent couchés sur le flanc, serrés en une ligne."), P("J’aime cette lenteur.")],
+        [N("Les chemises s’ouvrent sous les draps, puis leurs pantalons et sous-vêtements glissent lentement jusqu’au pied du lit. Allenna et Lineva restent nues sur le flanc, serrées dans la même ligne que vous ; l’une caresse vos seins, l’autre embrasse sa nuque, et leurs jambes se mêlent sans que personne doive quitter la chaleur de la couverture."), P("J’aime cette lenteur.")],
         [N("Allenna descend sous la couverture et vient entre vos jambes. Lineva reste contre votre côté, vous offre un sein à embrasser et tend sa main vers son amie. La bouche d’Allenna trouve votre sexe ; Lineva glisse deux doigts en elle par-dessus votre cuisse."), A("Gardez vos mains où elles sont.", "breathless")],
         [N("La langue d’Allenna suit votre perle avec de longs mouvements. Lineva entre et sort ses doigts en elle tandis que vous sucez sa poitrine et caressez son propre sexe. Le matelas absorbe chaque déplacement ; personne n’a à soutenir une posture ou à regarder l’heure."), L("Elle devient très appliquée quand elle oublie d’être gênée.", "breathless")],
         [N("Allenna jouit la première autour des doigts de Lineva, sa bouche quittant votre perle dans un gémissement contre votre cuisse. Elle reste allongée entre vos jambes ; vous caressez ses cheveux, Lineva son dos, jusqu’à ce qu’elle relève les yeux et reprenne exactement où elle s’était arrêtée."), A("Je n’avais pas fini.", "determined")],
@@ -213,7 +213,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -240,7 +240,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("Lineva est étendue en diagonale sur le canapé, un pied posé sur les genoux d’Allenna. Vous prenez le milieu, recevez les jambes de l’une et l’épaule de l’autre, puis continuez une conversation qui ne mène nulle part. La théière refroidit entre deux phrases."), A("Si quelqu’un bouge, tout s’effondre.", "soft")],
         [N("Allenna se retourne pour répondre et sa bouche rencontre la vôtre. Le contact pourrait n’être qu’une maladresse ; elle revient pourtant l’embrasser, plus lentement. Lineva se redresse derrière votre épaule, pose un baiser sur votre nuque puis attire Allenna pour goûter à son tour ses lèvres."), L("Voilà une bien meilleure conversation.", "smirk")],
-        [N("Sous la couverture, votre main ouvre la chemise d’Allenna. Lineva prend ses seins depuis l’arrière pendant que vous en embrassez un ; Allenna défait votre pantalon et libère votre sexe déjà dur entre ses cuisses. Sa rougeur s’accompagne d’un mouvement volontaire de ses hanches."), A("Le canapé nous a vraiment trop rapprochés.", "breathless")],
+        [N("Sous la couverture, votre main ouvre la chemise d’Allenna. Lineva la débarrasse du reste, puis Allenna se retourne pour dévêtir la capitaine dans l’espace impossible laissé par les coussins. Nues et serrées contre vous, elles ouvrent votre pantalon ; votre sexe déjà dur apparaît entre leurs cuisses, accueilli par la paume d’Allenna et le sourire de Lineva."), A("Le canapé nous a vraiment trop rapprochés.", "breathless")],
         [N("Elle vient à califourchon sur vous, genoux coincés entre votre corps et le dossier. Lineva reste derrière elle, mord sa nuque et glisse deux doigts entre ses cuisses. Allenna referme une main sur votre sexe et le caresse contre son ventre tandis que vous embrassez sa poitrine."), P("Ne cherchez pas plus de place.")],
         [N("Allenna descend du canapé et s’agenouille devant vous. Elle prend votre sexe dans sa bouche ; Lineva s’allonge sur vos jambes, tournée vers elle, et glisse deux doigts en Allenna pendant que vous caressez la poitrine de la capitaine. Les trois corps remplissent toute la longueur du meuble."), L("Je crois que nous avons encore perdu un coussin.", "breathless")],
         [N("La bouche d’Allenna va et vient jusqu’à la base. Lineva l’embrasse à chaque retrait puis frotte sa perle du pouce ; Allenna gémit autour de votre sexe et accélère. Vous retenez les cheveux des deux femmes, les gardant à portée sans céder encore au plaisir."), P("Pas tout de suite. Venez ici.")],
@@ -276,7 +276,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -303,7 +303,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("La cuisine n’a gardé qu’une petite lampe allumée. Vous remplissez un verre pendant qu’Allenna range un bol propre. Lineva arrive pieds nus, prend le bol de ses mains et le pose près de la dernière part de tarte."), L("Demain saura très bien où le trouver.", "teasing")],
         [N("Vous mangez tous dans la même assiette. Lineva retire une miette de la bouche d’Allenna avec ses lèvres ; la guerrière rougit, puis vous embrasse sans chercher de prétexte. Vos mains se rejoignent à sa taille et la soulèvent presque ensemble sur le comptoir."), A("Je pouvais monter seule."), P("Mais nous avions envie de vous porter.")],
-        [N("Assise sur le bois, Allenna ouvre les jambes autour de vous. Lineva se place dans son dos, retire sa chemise et prend ses seins ; vous embrassez son ventre puis sa poitrine. Allenna laisse une main dans vos cheveux et l’autre entre les cuisses de Lineva, debout contre son flanc."), L("Elle ne range déjà plus rien.", "smirk")],
+        [N("Assise sur le bois, Allenna ouvre les jambes autour de vous. Lineva retire sa chemise puis fait descendre le reste de sa tenue ; Allenna, nue sur le comptoir, tire à son tour les vêtements de la capitaine jusqu’à ce qu’ils rejoignent l’assiette vide. Lineva revient peau contre son dos et prend ses seins tandis que vous embrassez son ventre."), L("Elle ne range déjà plus rien.", "smirk")],
         [N("Allenna défait votre pantalon et prend votre sexe en main. Lineva l’embrasse par-dessus son épaule, puis s’agenouille entre vos deux corps. Sa bouche se pose sur la perle d’Allenna tandis que vous restez debout, votre sexe frotté par la main de la guerrière contre votre ventre."), A("Plus près, tous les deux.", "breathless")],
         [N("Vous entrez deux doigts en Allenna depuis le côté pendant que Lineva la lèche. Allenna continue de vous masturber, sa cadence troublée par les mouvements de la langue. Vous embrassez Lineva lorsqu’elle relève brièvement le visage, puis la ramenez entre les cuisses ouvertes sur le comptoir."), P("Ne la laissez pas s’échapper.")],
         [N("Allenna jouit la première, ses talons frappant les portes basses. Votre main reste en elle ; Lineva garde sa bouche sur sa perle jusqu’au dernier spasme. La guerrière se penche ensuite pour l’embrasser, puis vous regarde comme si sa rougeur ne comptait plus."), A("Lineva sur le comptoir. Maintenant.", "determined")],
@@ -340,7 +340,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 5,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -367,7 +367,7 @@ const HOME_HOMME: GroupIntimacyRoute[] = [
       explicite: [
         [N("Vous êtes déjà couché entre Allenna et Lineva. La lampe est basse, la couverture chaude, la conversation achevée sans conclusion. Une main d’Allenna repose sur votre poitrine ; le genou de Lineva touche votre cuisse depuis plusieurs minutes. Personne n’a besoin de trouver un prétexte."), A("Je n’ai pas sommeil.", "soft")],
         [N("Vous embrassez Allenna. Sa bouche s’ouvre lentement sous la vôtre ; Lineva se rapproche dans votre dos, embrasse votre nuque puis attire Allenna au-dessus de votre épaule. Vous regardez leurs lèvres se joindre avant de reprendre chacune à votre tour."), L("Moi non plus.", "soft")],
-        [N("Les chemises s’ouvrent sous la couverture. Vous prenez les seins d’Allenna dans vos mains tandis que Lineva mord doucement son épaule et caresse votre ventre. Allenna descend jusqu’à votre pantalon, libère votre sexe dur et le garde contre sa paume sans presser la suite."), P("Nous avons toute la nuit.")],
+        [N("Les chemises s’ouvrent sous la couverture. Allenna et Lineva font passer leurs autres vêtements hors du lit sans rompre la ligne de leurs corps ; lorsqu’elles reviennent nues contre vous, l’une offre sa poitrine à vos mains tandis que l’autre mord doucement son épaule. Allenna descend ensuite jusqu’à votre pantalon et libère votre sexe dur dans sa paume."), P("Nous avons toute la nuit.")],
         [N("Allenna glisse entre vos jambes et prend votre sexe dans sa bouche. Lineva reste couchée contre votre côté, vous embrasse et tend une main vers son amie ; deux de ses doigts entrent en Allenna, dont le gémissement entoure votre membre. Vous caressez la poitrine de Lineva."), A("Ne la retirez pas.", "breathless")],
         [N("La bouche d’Allenna descend lentement, puis remonte en faisant jouer sa langue autour du gland. Lineva poursuit ses doigts en elle tout en vous offrant sa poitrine à embrasser. Allenna tend une main vers le sexe de la capitaine et la caresse pendant qu’elle vous suce."), L("Elle refuse décidément de choisir une seule personne.", "breathless")],
         [N("Vous arrêtez Allenna avant votre climax et la ramenez sur le matelas. Lineva s’allonge sur le dos ; Allenna vient entre ses cuisses et lèche sa perle. Vous vous placez derrière Allenna, deux doigts en elle et votre bouche sur son dos, pendant que Lineva caresse votre sexe."), A("Restez tous les deux près de moi.", "determined")],
@@ -405,7 +405,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -432,7 +432,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
       explicite: [
         [N("Vous prenez le dernier espace du canapé entre Allenna et Lineva. La conversation continue autour de rien ; les jambes se mêlent et la main de la capitaine reste sur votre hanche. Vous leur montrez sous la couverture les parties de votre corps qui répondent déjà à cette proximité."), P("Pas besoin de mieux nous installer.")],
         [N("Lineva vous embrasse quand vous tournez la tête. Allenna regarde, rouge et souriante, puis prend votre bouche à son tour. Les deux femmes se rejoignent au-dessus de votre poitrine tandis que vous placez une main de chacune sur un plaisir différent de votre corps."), A("Nous pouvons apprendre ici.", "soft")],
-        [N("Les vêtements s’ouvrent sans que personne ne se lève. Allenna caresse votre sexe extérieur ; Lineva glisse deux doigts dans l’ouverture que vous lui avez montrée. Vous prenez leurs seins dans vos mains et les regardez s’embrasser, serrées contre votre flanc par le dossier."), L("Le canapé nous garde honnêtes.", "breathless")],
+        [N("Les vêtements s’ouvrent sans que personne ne se lève. Allenna et Lineva se libèrent mutuellement des étoffes coincées sous leurs hanches, jusqu’à rester nues de chaque côté de vous sur le canapé défait. Allenna caresse votre sexe extérieur ; Lineva glisse deux doigts dans l’ouverture indiquée, puis elles s’embrassent au-dessus de votre poitrine."), L("Le canapé nous garde honnêtes.", "breathless")],
         [N("Vous faites allonger Lineva en travers des coussins. Allenna vient entre ses cuisses et lèche sa perle ; vous restez près de leurs visages, deux doigts en la capitaine et votre bouche sur celle d’Allenna à chaque fois qu’elle se relève."), L("Je retire toute plainte sur le manque de place.", "shaken")],
         [N("Lineva jouit la première sous la langue d’Allenna et vos doigts. Ses jambes se referment contre le dossier ; vous maintenez la caresse pendant qu’Allenna l’embrasse. La guerrière vous ramène ensuite au centre en tirant doucement sur vos hanches."), A("À vous maintenant.", "determined")],
         [N("Allenna s’allonge contre votre poitrine, tournée vers vos jambes. Elle prend votre désir extérieur dans sa bouche pendant que Lineva, agenouillée au bout du canapé, entre deux doigts dans votre ouverture. Leurs visages se rejoignent près de votre bassin à chaque changement de rythme."), P("Restez ensemble.")],
@@ -468,7 +468,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 4,
+      revealChapter: 1,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -494,7 +494,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
       ],
       explicite: [
         [N("Après minuit, Allenna range encore un bol. Lineva le lui retire ; vous posez votre verre d’eau près de la dernière part de tarte. Sous la petite lampe, vous leur montrez les deux façons dont votre corps répond déjà à leur proximité."), L("Le placard attendra. Ce corps-là, beaucoup moins.", "smirk")],
-        [N("Vous partagez la tarte. Allenna essuie une miette sur vos lèvres et vous embrasse ; Lineva goûte ensuite sa bouche. Vous les faites asseoir à moitié sur le comptoir, une cuisse de chaque femme contre votre hanche, et ouvrez leurs chemises."), A("La part est terminée."), P("Pas la soirée.")],
+        [N("Vous partagez la tarte. Allenna essuie une miette sur vos lèvres et vous embrasse ; Lineva goûte ensuite sa bouche. Assises à moitié sur le comptoir, elles ouvrent leurs chemises, puis se débarrassent l’une l’autre du reste de leurs vêtements entre le bol et la chaise. Leurs corps nus reviennent encadrer vos hanches sous la petite lampe."), A("La part est terminée."), P("Pas la soirée.")],
         [N("Vous caressez leurs seins pendant qu’elles s’embrassent. Allenna ouvre vos vêtements et prend votre sexe extérieur en main ; Lineva glisse deux doigts dans l’ouverture que vous lui montrez. Le bois soutient votre dos tandis que leurs gestes prennent chacun une cadence différente."), L("Dites-nous ce que le comptoir change.", "breathless")],
         [N("Vous vous asseyez sur le bord, jambes ouvertes. Allenna s’agenouille devant vous et prend votre plaisir extérieur dans sa bouche ; Lineva reste debout derrière elle, deux doigts en vous. Vous caressez Allenna entre les cuisses tandis que la capitaine embrasse sa nuque."), P("Il permet exactement ça.")],
         [N("La bouche d’Allenna descend et remonte pendant que les doigts de Lineva vous pénètrent. Les femmes se rejoignent près de votre bassin à chaque retrait ; Allenna gémit autour de votre sexe lorsque vos doigts trouvent sa perle."), A("Continuez à me toucher.", "breathless")],
@@ -531,7 +531,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
     progression: {
       playerClimaxChapter: { tendre: 5, suggestif: 5, explicite: 9, ellipse: 5 },
       linevaFirstTuChapter: { tendre: 6, suggestif: 6, explicite: 10, ellipse: 6 },
-      revealChapter: 5,
+      revealChapter: 2,
       postOrgasmChapter: 11,
     },
     chapters: {
@@ -558,7 +558,7 @@ const HOME_INTERSEXE: GroupIntimacyRoute[] = [
       explicite: [
         [N("Vous êtes déjà allongé entre Allenna et Lineva lorsque les mots s’épuisent. Sous la couverture, vous prenez leurs mains et leur montrez les deux plaisirs que votre corps veut offrir cette nuit. Allenna suit votre geste sans question ; Lineva embrasse vos doigts avant de prendre l’autre place."), P("Nous pouvons rester ici longtemps.")],
         [N("Vous embrassez Allenna, puis Lineva dans votre dos. Elles se rejoignent au-dessus de votre épaule ; leurs mains restent sur votre sexe extérieur et à l’ouverture choisie, lentes, encore presque immobiles. Le matelas rapproche les trois torses sans demander d’effort."), L("Toute la nuit, si nécessaire.", "soft")],
-        [N("Les chemises s’ouvrent sous les draps. Vous caressez les seins d’Allenna pendant que Lineva embrasse son dos ; Allenna prend votre poitrine et Lineva votre ventre. Chaque personne touche les deux autres dans la même ligne couchée."), A("Je préfère ne plus parler.", "soft")],
+        [N("Les chemises s’ouvrent sous les draps. Les vêtements restants quittent le lit par gestes lents, Allenna aidant Lineva à se dégager sans rompre leur étreinte, puis Lineva ramenant le corps nu de son amie contre le vôtre. Chaque personne touche les deux autres dans la même ligne couchée, peau contre peau sous la couverture."), A("Je préfère ne plus parler.", "soft")],
         [N("Allenna descend entre vos jambes et prend votre sexe extérieur dans sa bouche. Lineva reste derrière vous, glisse deux doigts dans votre ouverture et vous offre sa poitrine par-dessus votre épaule. Vous caressez Allenna entre les cuisses pendant qu’elle vous donne ses lèvres."), P("Gardez vos deux rythmes.")],
         [N("La bouche d’Allenna enveloppe votre désir extérieur ; les doigts de Lineva entrent plus profondément en vous. Allenna tend une main vers le sexe de la capitaine et la caresse au même rythme que sa langue, tandis que votre bouche trouve la pointe d’un sein de Lineva."), L("Personne ne dort encore.", "breathless")],
         [N("Vous les arrêtez avant le climax et faites allonger Allenna sur le dos. Lineva se place entre ses cuisses, lèche sa perle ; vous entrez deux doigts en elle depuis le côté et embrassez Lineva à chaque fois qu’elle relève la tête."), A("Plus profond. Je veux vous sentir tous les deux.", "breathless")],

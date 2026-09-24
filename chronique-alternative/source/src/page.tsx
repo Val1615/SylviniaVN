@@ -51,7 +51,7 @@ import { remeriiRouteVariant } from "./remerii-relation";
 import { remeriiDateBeat, migrateRemeriiDateId } from "./remerii-dates";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
-import { groupIntimateCgState, soloIntimateCgState, type IntimateCgState } from "./intimate-cg";
+import { groupIntimateVisualState, soloIntimateVisualState, type IntimateCgState } from "./intimate-cg";
 import {
   GROUP_DATES,
   GROUP_INTIMACY_GAMES,
@@ -4868,7 +4868,6 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const spriteMood = characterSpeaking
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
-  const useIntimateSprite = hasIntimateSprites(character.id) && (step === "direction-lines" || step === "ending");
   const intimateMood = currentLine?.intimateMood || "soft";
 
   function beginSegment(nextStep: IntimacyStep, nextLines: DialogueLine[]) {
@@ -4935,7 +4934,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const isDone = step === "done";
   const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
-  const intimateCg = soloIntimateCgState({
+  const intimateVisual = soloIntimateVisualState({
     character: character.id,
     mode: game.player.intimacy,
     surface: modal.home ? "home" : "route",
@@ -4950,8 +4949,11 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
           : remeriiContext
             ? remeriiDateIntimacyPhase(directionChapter)
             : undefined,
-    retainRevealThroughClimax: Boolean(hyleeContext || remeriiContext),
+    revealChapter: direction?.visual?.revealChapter,
+    postOrgasmChapter: direction?.visual?.postOrgasmChapter,
   });
+  const intimateCg = intimateVisual.cg;
+  const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
   return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
@@ -4992,7 +4994,6 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const secondSpeaking = speakingIds.includes(second.id);
   const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
   const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
-  const useIntimateSprites = isIntimateGroupContext(date.id) && (step === "direction-lines" || step === "ending");
   const firstIntimateMood = currentLine?.intimateMoods?.[first.id] || "soft";
   const secondIntimateMood = currentLine?.intimateMoods?.[second.id] || "soft";
 
@@ -5047,7 +5048,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const isDone = step === "done";
   const background = backgroundUrl(modal.background || spotById(date.spot)?.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
-  const intimateCg = groupIntimateCgState({
+  const intimateVisual = groupIntimateVisualState({
     pairId: date.id,
     mode: game.player.intimacy,
     step,
@@ -5055,6 +5056,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     revealChapter: direction?.progression?.revealChapter,
     postOrgasmChapter: direction?.progression?.postOrgasmChapter,
   });
+  const intimateCg = intimateVisual.cg;
+  const useIntimateSprites = isIntimateGroupContext(date.id) && intimateVisual.useIntimateSprites;
 
   return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
