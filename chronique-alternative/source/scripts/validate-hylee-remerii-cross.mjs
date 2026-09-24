@@ -227,6 +227,7 @@ try {
  assert.doesNotMatch(dateSource,/intimacyDisabled\s*:\s*true/u,'les rendez-vous Hylee\/Remerii désactivent encore l’intimité');
  assert.match(groupSource,/HYLEE_REMERII_MANUAL_ROUTES/u,'registre manuel Hylee\/Remerii non branché');
  assert.match(cgSource,/"group-date-hylee-remerii-home"\s*:\s*"hylee_remerii"/u,'CG du logis non attribuées');
- assert.doesNotMatch(cgSource,/"group-date-hylee-remerii-(?:free-day|wind)"\s*:/u,'CG de chambre injectées dans une sortie publique');
+ assert.match(cgSource,/"group-date-hylee-remerii-free-day"\s*:\s*"hylee_remerii"/u,'CG bonus absente de la journée sans programme');
+ assert.match(cgSource,/"group-date-hylee-remerii-wind"\s*:\s*"hylee_remerii"/u,'CG bonus absente du rendez-vous contre le vent');
  console.log('Quêtes croisées : dossiers harmonisés · relecture Lineva/Allenna protégée · deux mini-jeux accessibles et rejouables · progression Hylee/Remerii 0→7 validée.');
 } finally { await server.close(); }

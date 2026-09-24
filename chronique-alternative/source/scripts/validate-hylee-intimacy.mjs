@@ -89,24 +89,27 @@ try {
   assert.equal(intimacy.hyleeDateIntimacyRoutes("date-hylee-lake", "intersexe").length, 0);
   assert.equal(intimacy.hyleeDateIntimacyRoutes("home-hylee", "intersexe").length, 0);
   assert.match(pageSource, /character\.id === "hylee" && game\.player\.sex !== "intersexe"/);
-  assert.match(pageSource, /hyleeContext \? hyleeDateIntimacyRoutes[\s\S]*modal\.home \? homeIntimacyRoutes/);
+  assert.match(pageSource, /hyleeContext\s*\? hyleeDateIntimacyRoutes[\s\S]*remeriiContext[\s\S]*modal\.home\s*\? homeIntimacyRoutes/);
 
-  // Reveal après découverte, maintien pendant le climax, puis CG post-orgasme
-  // sans retour du sprite dans la fin Hylee.
-  const hyleeCg = (chapter) => cg.soloIntimateCgState({
+  // Les sprites nus ne précèdent jamais la récompense CG : la révélation
+  // accompagne le déshabillage, puis les sprites prennent le relais.
+  const hyleeVisual = (chapter) => cg.soloIntimateVisualState({
     character: "hylee", mode: "explicite", surface: "route", step: "direction-lines", chapter,
-    narrativePhase: intimacy.hyleeDateIntimacyPhase(chapter), retainRevealThroughClimax: true,
+    narrativePhase: intimacy.hyleeDateIntimacyPhase(chapter),
   });
-  assert.equal(hyleeCg(5), undefined);
-  assert.equal(hyleeCg(6)?.phase, "reveal");
-  assert.equal(hyleeCg(7)?.phase, "reveal");
-  assert.equal(hyleeCg(8)?.phase, "post-orgasm");
-  assert.equal(hyleeCg(9)?.phase, "post-orgasm");
-  assert.equal(cg.soloIntimateCgState({ character: "hylee", mode: "explicite", surface: "route", step: "ending", chapter: 9 })?.phase, "post-orgasm");
+  assert.equal(hyleeVisual(1).useIntimateSprites, false);
+  assert.equal(hyleeVisual(2).cg?.phase, "reveal");
+  assert.equal(hyleeVisual(2).useIntimateSprites, false);
+  assert.equal(hyleeVisual(3).cg, undefined);
+  assert.equal(hyleeVisual(3).useIntimateSprites, true);
+  assert.equal(hyleeVisual(7).useIntimateSprites, true);
+  assert.equal(hyleeVisual(8).cg?.phase, "post-orgasm");
+  assert.equal(hyleeVisual(9).cg?.phase, "post-orgasm");
+  assert.equal(cg.soloIntimateVisualState({ character: "hylee", mode: "explicite", surface: "route", step: "ending", chapter: 9 }).cg?.phase, "post-orgasm");
 
   assert.doesNotMatch(intimacySource, /polishIntimacyText|individualExplicitScene|intimacyRoutes\(/u);
   assert.match(pageSource, /const dedicatedIntimacy = Boolean\(hyleeContext/);
-  assert.match(pageSource, /retainRevealThroughClimax:\s*Boolean\(hyleeContext\)/);
+  assert.match(pageSource, /useIntimateSprite = hasIntimateSprites\(character\.id\) && intimateVisual\.useIntimateSprites/);
 
   console.log("[Hylee intimité] 3 contextes · 18 scènes manuelles · 720 chapitres modaux · clairière et rive conservées · logis dédié · intersexe préservé · CG sémantiques validées.");
 } finally {

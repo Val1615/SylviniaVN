@@ -35,15 +35,15 @@ const server = await createServer({ root: sourceRoot, appType: "custom", logLeve
 try {
   const cg = await server.ssrLoadModule("/src/intimate-cg.ts");
   assert.equal(Object.keys(cg.SOLO_INTIMATE_CG).length, 12, "douze couples de CG solo requis");
-  assert.equal(Object.keys(cg.DUO_INTIMATE_CG).length, 8, "huit couples de CG duo requis");
+  assert.equal(Object.keys(cg.DUO_INTIMATE_CG).length, 13, "treize contextes de CG duo requis");
 
   const assets = [
     ...Object.values(cg.SOLO_INTIMATE_CG),
     ...Object.values(cg.DUO_INTIMATE_CG),
   ].flatMap((entry) => [entry.reveal, entry.postOrgasm]);
-  assert.equal(assets.length, 40, "quarante CG requises");
-  assert.equal(new Set(assets).size, 40, "chaque CG doit posséder un chemin unique");
-  for (const asset of assets) {
+  assert.equal(assets.length, 50, "cinquante références de CG requises");
+  assert.equal(new Set(assets).size, 40, "les nouveaux rendez-vous doivent réutiliser uniquement les deux récompenses duo autorisées");
+  for (const asset of new Set(assets)) {
     const relativeAsset = asset.replace(/^\/?assets\//, "assets/");
     const buffer = await readFile(resolve(projectRoot, relativeAsset));
     assert.ok(buffer.length > 50_000, `${asset}: image trop petite ou vide`);
@@ -53,33 +53,28 @@ try {
     assert.equal(width / height, 16 / 9, `${asset}: ratio 16:9 requis`);
   }
 
-  const solo = (mode, surface, step, chapter) => cg.soloIntimateCgState({ character: "hylee", mode, surface, step, chapter });
+  const solo = (mode, step, chapter, narrativePhase) => cg.soloIntimateVisualState({ character: "hylee", mode, surface: "route", step, chapter, narrativePhase });
   for (const mode of ["tendre", "suggestif", "ellipse"]) {
-    assert.equal(solo(mode, "route", "direction-lines", 4), undefined, `${mode}: aucune CG ne doit être chargée hors mode explicite`);
-    assert.equal(solo(mode, "home", "ending", 7), undefined, `${mode}: aucune CG finale ne doit être chargée hors mode explicite`);
+    assert.equal(solo(mode, "direction-lines", 4, "naked-reveal").cg, undefined, `${mode}: aucune CG ne doit être chargée hors mode explicite`);
+    assert.equal(solo(mode, "ending", 7).cg, undefined, `${mode}: aucune CG finale ne doit être chargée hors mode explicite`);
   }
 
-  assert.equal(solo("explicite", "route", "direction-lines", 3), undefined, "route solo : reveal trop précoce");
-  assert.equal(solo("explicite", "route", "direction-lines", 4)?.phase, "reveal", "route solo : reveal au chapitre 4");
-  assert.equal(solo("explicite", "route", "direction-lines", 5), undefined, "route solo : retour aux sprites pour le climax");
-  assert.equal(solo("explicite", "route", "direction-lines", 6)?.phase, "post-orgasm", "route solo : post-orgasm après climax");
-  assert.equal(solo("explicite", "route", "ending", 7)?.phase, "post-orgasm", "route solo : post-orgasm pendant le dénouement");
-  assert.equal(solo("explicite", "route", "done", 7)?.phase, "post-orgasm", "route solo : post-orgasm jusqu’à la fermeture");
+  assert.equal(solo("explicite", "direction-lines", 5, "undressing").useIntimateSprites, false, "route solo : sprite nu trop précoce");
+  assert.equal(solo("explicite", "direction-lines", 6, "naked-reveal").cg?.phase, "reveal", "route solo : reveal pendant le déshabillage");
+  assert.equal(solo("explicite", "direction-lines", 6, "naked-reveal").useIntimateSprites, false, "route solo : sprite superposé à la CG");
+  assert.equal(solo("explicite", "direction-lines", 7, "partner-discovery").useIntimateSprites, true, "route solo : sprites après la CG");
+  assert.equal(solo("explicite", "direction-lines", 8, "afterglow").cg?.phase, "post-orgasm", "route solo : post-orgasm après climax");
+  assert.equal(solo("explicite", "ending", 9).cg?.phase, "post-orgasm", "route solo : post-orgasm pendant le dénouement");
 
-  assert.equal(solo("explicite", "home", "direction-lines", 3)?.phase, "reveal", "logis : reveal avant le chapitre physique");
-  assert.equal(solo("explicite", "home", "direction-lines", 4), undefined, "logis : retour aux sprites pour le climax");
-  assert.equal(solo("explicite", "home", "direction-lines", 5)?.phase, "post-orgasm", "logis : post-orgasm après le climax");
-  assert.equal(solo("explicite", "home", "ending", 7)?.phase, "post-orgasm", "logis : post-orgasm pendant toute la clôture");
+  const group = (mode, step, chapter) => cg.groupIntimateVisualState({ pairId: "group-date-hylee-remerii", mode, step, chapter });
+  assert.equal(group("suggestif", "direction-lines", 3).cg, undefined, "duo : aucune CG hors mode explicite");
+  assert.equal(group("explicite", "direction-lines", 3).cg?.phase, "reveal", "duo : reveal après trois montées");
+  assert.equal(group("explicite", "direction-lines", 4).useIntimateSprites, true, "duo : retour aux sprites après la CG");
+  assert.equal(group("explicite", "direction-lines", 5).cg?.phase, "post-orgasm", "duo : post-orgasm après le climax");
+  assert.equal(group("explicite", "ending", 7).cg?.phase, "post-orgasm", "duo : post-orgasm pendant le dénouement");
+  assert.equal(group("explicite", "done", 7).cg?.phase, "post-orgasm", "duo : post-orgasm jusqu’au bouton final");
 
-  const group = (mode, step, chapter) => cg.groupIntimateCgState({ pairId: "group-date-hylee-remerii", mode, step, chapter });
-  assert.equal(group("suggestif", "direction-lines", 3), undefined, "duo : aucune CG hors mode explicite");
-  assert.equal(group("explicite", "direction-lines", 3)?.phase, "reveal", "duo : reveal après trois montées");
-  assert.equal(group("explicite", "direction-lines", 4), undefined, "duo : retour aux sprites pour le climax");
-  assert.equal(group("explicite", "direction-lines", 5)?.phase, "post-orgasm", "duo : post-orgasm après le climax");
-  assert.equal(group("explicite", "ending", 7)?.phase, "post-orgasm", "duo : post-orgasm pendant le dénouement");
-  assert.equal(group("explicite", "done", 7)?.phase, "post-orgasm", "duo : post-orgasm jusqu’au bouton final");
-
-  const manualGroup = (chapter) => cg.groupIntimateCgState({
+  const manualGroup = (chapter) => cg.groupIntimateVisualState({
     pairId: "group-date-allenna-lineva-home",
     mode: "explicite",
     step: "direction-lines",
@@ -87,20 +82,21 @@ try {
     revealChapter: 4,
     postOrgasmChapter: 11,
   });
-  assert.equal(manualGroup(3), undefined, "trio manuel : reveal trop précoce");
-  assert.equal(manualGroup(4)?.phase, "reveal", "trio manuel : reveal au chapitre propre à la route");
-  assert.equal(manualGroup(10), undefined, "trio manuel : retour aux sprites jusqu’au dernier climax");
-  assert.equal(manualGroup(11)?.phase, "post-orgasm", "trio manuel : post-orgasm seulement après le seuil déclaré");
+  assert.equal(manualGroup(3).useIntimateSprites, false, "trio manuel : reveal trop précoce");
+  assert.equal(manualGroup(4).cg?.phase, "reveal", "trio manuel : reveal au chapitre propre à la route");
+  assert.equal(manualGroup(5).useIntimateSprites, true, "trio manuel : sprites absents après la CG");
+  assert.equal(manualGroup(10).useIntimateSprites, true, "trio manuel : sprites perdus avant l’après-scène");
+  assert.equal(manualGroup(11).cg?.phase, "post-orgasm", "trio manuel : post-orgasm seulement après le seuil déclaré");
 
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`intimacy-sprite/, "solo : la CG doit remplacer le sprite");
-  assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className="group-intimacy-sprites"/, "duo : la CG doit remplacer tous les sprites");
+  assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`group-intimacy-sprites/, "duo : la CG doit remplacer tous les sprites");
   assert.match(pageSource, /data-intimacy-cg=\{cg\.phase\}/, "la phase CG doit rester inspectable en test visuel");
   assert.match(cssSource, /\.intimacy-cg img[^}]*object-fit:\s*contain/s, "les CG doivent préserver leur composition sans crop agressif");
   assert.match(cssSource, /@media \(max-width: 720px\)[\s\S]*\.intimacy-cg img/, "un rendu mobile explicite doit être défini");
   assert.doesNotMatch(musicSource, /intimateCg|intimacy-cg/, "les CG ne doivent jamais piloter ou redémarrer la musique");
   assert.match(pageSource, /musicForContext\(game\.spot, \{ locationId: game\.location, intimacy: modal\?\.kind === "intimacy" \|\| modal\?\.kind === "group-intimacy"/, "la musique intime doit rester liée au modal, pas à la phase CG");
 
-  console.log("[CG intimes] 40 images 16:9 · mode explicite seul · solo, duo et logis · reveal, climax, post-orgasm persistant · desktop/mobile validés.");
+  console.log("[CG intimes] 40 images 16:9 · 13 contextes duo · CG de déshabillage puis sprites nus · post-orgasm persistant · desktop/mobile validés.");
 } finally {
   await server.close();
 }

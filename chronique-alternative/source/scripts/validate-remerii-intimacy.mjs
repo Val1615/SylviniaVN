@@ -94,20 +94,23 @@ try {
   assert.match(pageSource, /character\.id === "remerii" && game\.player\.sex !== "intersexe"/u);
   assert.match(pageSource, /remeriiContext[\s\S]*?remeriiDateIntimacyRoutes\(remeriiContext/u);
   assert.match(pageSource, /const dedicatedIntimacy = Boolean\(hyleeContext \|\| remeriiContext/u);
-  assert.match(pageSource, /retainRevealThroughClimax:\s*Boolean\(hyleeContext \|\| remeriiContext\)/u);
+  assert.match(pageSource, /useIntimateSprite = hasIntimateSprites\(character\.id\) && intimateVisual\.useIntimateSprites/u);
 
   // La CG demeure un bonus de mise en scène : elle apparaît après la
   // découverte des corps et ne change jamais le lieu écrit.
-  const state = (chapter) => cg.soloIntimateCgState({
+  const state = (chapter) => cg.soloIntimateVisualState({
     character: "remerii", mode: "explicite", surface: "route", step: "direction-lines", chapter,
-    narrativePhase: intimacy.remeriiDateIntimacyPhase(chapter), retainRevealThroughClimax: true,
+    narrativePhase: intimacy.remeriiDateIntimacyPhase(chapter),
   });
-  assert.equal(state(5), undefined);
-  assert.equal(state(6)?.phase, "reveal");
-  assert.equal(state(7)?.phase, "reveal");
-  assert.equal(state(8)?.phase, "post-orgasm");
-  assert.equal(state(9)?.phase, "post-orgasm");
-  assert.equal(cg.soloIntimateCgState({ character: "remerii", mode: "explicite", surface: "route", step: "ending", chapter: 9 })?.phase, "post-orgasm");
+  assert.equal(state(1).useIntimateSprites, false);
+  assert.equal(state(2).cg?.phase, "reveal");
+  assert.equal(state(2).useIntimateSprites, false);
+  assert.equal(state(3).cg, undefined);
+  assert.equal(state(3).useIntimateSprites, true);
+  assert.equal(state(7).useIntimateSprites, true);
+  assert.equal(state(8).cg?.phase, "post-orgasm");
+  assert.equal(state(9).cg?.phase, "post-orgasm");
+  assert.equal(cg.soloIntimateVisualState({ character: "remerii", mode: "explicite", surface: "route", step: "ending", chapter: 9 }).cg?.phase, "post-orgasm");
   await Promise.all(["remerii_reveal.jpg", "remerii_post_orgasm.jpg"].map((file) => access(resolve(root, `../assets/intimacy-cg/${file}`))));
 
   assert.doesNotMatch(intimacySource, /polishIntimacyText|individualExplicitScene|intimacyRoutes\(/u);

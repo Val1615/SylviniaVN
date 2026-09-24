@@ -139,7 +139,7 @@ try {
     }
   }
 
-  const linevaCg = (chapter) => cg.soloIntimateCgState({
+  const linevaVisual = (chapter) => cg.soloIntimateVisualState({
     character: "lineva",
     mode: "explicite",
     surface: "route",
@@ -147,12 +147,15 @@ try {
     chapter,
     narrativePhase: intimacy.linevaDateIntimacyPhase(chapter),
   });
-  assert.equal(linevaCg(5), undefined);
-  assert.equal(linevaCg(6)?.phase, "reveal");
-  assert.equal(linevaCg(7), undefined, "les sprites doivent revenir pendant le climax");
-  assert.equal(linevaCg(8)?.phase, "post-orgasm");
-  assert.equal(linevaCg(9)?.phase, "post-orgasm");
-  assert.equal(cg.soloIntimateCgState({ character: "lineva", mode: "explicite", surface: "route", step: "ending", chapter: 9 })?.phase, "post-orgasm");
+  assert.equal(linevaVisual(1).useIntimateSprites, false);
+  assert.equal(linevaVisual(2).cg?.phase, "reveal");
+  assert.equal(linevaVisual(2).useIntimateSprites, false);
+  assert.equal(linevaVisual(3).cg, undefined, "la CG doit laisser place aux sprites dès la séquence suivante");
+  assert.equal(linevaVisual(3).useIntimateSprites, true, "les sprites nus doivent suivre la CG");
+  assert.equal(linevaVisual(7).useIntimateSprites, true, "les sprites nus doivent rester pendant le climax");
+  assert.equal(linevaVisual(8).cg?.phase, "post-orgasm");
+  assert.equal(linevaVisual(9).cg?.phase, "post-orgasm");
+  assert.equal(cg.soloIntimateVisualState({ character: "lineva", mode: "explicite", surface: "route", step: "ending", chapter: 9 }).cg?.phase, "post-orgasm");
 
   // La première intimité peut aussi venir du logis : mêmes règles de registre.
   for (const sex of ["femme", "homme", "intersexe"]) {
