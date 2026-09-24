@@ -4,7 +4,15 @@ import { REMERII_ROUTES } from "./remerii-relation.ts";
 export type StatKey = "audace" | "lucidite" | "sangFroid" | "resonance";
 export type PeriodKey = "aube" | "matin" | "apres-midi" | "soirée";
 
-export type DialogueLine = { speaker: string; text: string; mood?: string };
+export type DialogueLine = {
+  speaker: string;
+  text: string;
+  mood?: string;
+  /** Expression from the dedicated, undressed sprite channel. */
+  intimateMood?: string;
+  /** Independent expressions for every visible partner in a group intimacy. */
+  intimateMoods?: Partial<Record<string, string>>;
+};
 export type Effects = {
   stats?: Partial<Record<StatKey, number>>;
   affection?: number;

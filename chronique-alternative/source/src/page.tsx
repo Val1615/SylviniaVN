@@ -97,6 +97,15 @@ import {
 } from "./alpha-hunt";
 import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { spritePath } from "./sprite-system";
+import {
+  hasIntimateSprites,
+  intimateSpriteFallbackPath,
+  intimateSpritePath,
+  isIntimateGroupContext,
+  withGroupIntimateMoods,
+  withSoloIntimateEnding,
+  withSoloIntimateMoods,
+} from "./intimate-sprite-system";
 import { MAIN_STORY, SUPPORTING_FIGURES, storyProgress } from "./story-data";
 import { ACT_ONE_SCENE_ORDER, CAMPAIGN_SCENES, campaignSceneById, campaignSceneDialogue, campaignSceneOutro, type CampaignScene } from "./campaign-scenes";
 import { ROUTE_CONTEXTUAL_CHOICES } from "./route-contextual-choices";
@@ -1767,6 +1776,16 @@ function recoverMissingSprite(event: SyntheticEvent<HTMLImageElement>, portrait:
   if (image.dataset.spriteFallback === "portrait") return;
   image.dataset.spriteFallback = "portrait";
   image.src = portrait;
+}
+
+function recoverMissingIntimateSprite(event: SyntheticEvent<HTMLImageElement>, characterId: string) {
+  const image = event.currentTarget;
+  if (image.dataset.spriteFallback === "intimate-soft") {
+    image.hidden = true;
+    return;
+  }
+  image.dataset.spriteFallback = "intimate-soft";
+  image.src = intimateSpriteFallbackPath(characterId);
 }
 
 function routeBackground(scene: RouteScene) {
@@ -4849,6 +4868,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const spriteMood = characterSpeaking
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
+  const useIntimateSprite = hasIntimateSprites(character.id) && (step === "direction-lines" || step === "ending");
+  const intimateMood = currentLine?.intimateMood || "soft";
 
   function beginSegment(nextStep: IntimacyStep, nextLines: DialogueLine[]) {
     setStep(nextStep);
@@ -4885,7 +4906,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
         const nextChapter = directionChapter + 1;
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
-      } else beginSegment("ending", endingLines());
+      } else beginSegment("ending", withSoloIntimateEnding(endingLines(), character.id, direction?.id || modal.dateId || character.id, directionSequence.length));
     }
     else if (step === "ending") setStep("done");
   }
@@ -4898,10 +4919,11 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
     const chapters = hyleeContext || remeriiContext || modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
-    setDirectionSequence(chapters);
+    const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
+    setDirectionSequence(intimateChapters);
     setDirectionChapter(0);
-    if (chapters.length) beginSegment("direction-lines", chapters[0]);
-    else beginSegment("ending", endingLines());
+    if (intimateChapters.length) beginSegment("direction-lines", intimateChapters[0]);
+    else beginSegment("ending", withSoloIntimateEnding(endingLines(), character.id, choice.id, 0));
   }
 
   function chooseAttunement(option: IntimacyGameOption) {
@@ -4933,7 +4955,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
-    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${characterSpeaking ? "active" : "quiet"}`}><img src={spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
@@ -4970,6 +4992,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const secondSpeaking = speakingIds.includes(second.id);
   const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
   const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
+  const useIntimateSprites = isIntimateGroupContext(date.id) && (step === "direction-lines" || step === "ending");
+  const firstIntimateMood = currentLine?.intimateMoods?.[first.id] || "soft";
+  const secondIntimateMood = currentLine?.intimateMoods?.[second.id] || "soft";
 
   function beginSegment(nextStep: GroupIntimacyStep, nextLines: DialogueLine[]) {
     setStep(nextStep);
@@ -5009,9 +5034,10 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     const linevaAddress = game.flags.includes("lineva-tutoiement")
       ? choice.linevaAddress?.familiar
       : choice.linevaAddress?.firstTime;
-    const sequence = choice.chapters[game.player.intimacy].map((chapter, index) => index === 0 && linevaAddress
+    const authoredSequence = choice.chapters[game.player.intimacy].map((chapter, index) => index === 0 && linevaAddress
       ? [...linevaAddress, ...chapter]
       : chapter);
+    const sequence = withGroupIntimateMoods(authoredSequence, date.id, [first.id, second.id]);
     setDirectionSequence(sequence);
     setDirectionChapter(0);
     beginSegment("direction-lines", sequence[0]);
@@ -5032,9 +5058,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
 
   return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
-    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className="group-intimacy-sprites" aria-hidden="true">
-      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img src={spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => recoverMissingSprite(event, first.portrait)} alt="" /></div>
-      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img src={spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => recoverMissingSprite(event, second.portrait)} alt="" /></div>
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
+      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprites ? "intimate" : "standard"} src={useIntimateSprites ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useIntimateSprites ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} alt="" /></div>
+      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprites ? "intimate" : "standard"} src={useIntimateSprites ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useIntimateSprites ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} alt="" /></div>
     </div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
