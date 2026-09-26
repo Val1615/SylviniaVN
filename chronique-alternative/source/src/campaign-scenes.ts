@@ -281,7 +281,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         P("Laquelle des deux phrases ?"),
         L("Naïah", "La seconde. Elle serait trop occupée à expliquer que je ne lui dois rien."),
         N("Un vrai sourire apparaît, bref et contrarié."),
-        L("Naïah", "Je te conduirai. Une fois. Si tu racontes que c'est grâce aux tartelettes, je te perds au retour."),
+        L("Naïah", "Je te conduirai. Une fois. Si tu racontes qu'Hylee savait exactement quoi dire, je te perds au retour."),
       ], { flags: ["story-naiah-promise", "naiah-promise-hylee"], affection: 5, trust: 4 }, { requiresRelationship: [{ character: "hylee", affection: 3 }] }),
       Q("naiah-amanea", "Utiliser la rancœur révélée par Iriana", "sangFroid", "Iriana m'a dit que tu avais de bonnes raisons de ne pas rendre service à Amanea. M'ouvrir la route pourrait contrarier ses certitudes.", [
         N("Naïah cesse de bouger. Son sourire reste en place, mais n'atteint plus ses yeux."),

@@ -11,7 +11,7 @@ const secret = (id: string, title: string, tier: SecretTier, minTrust: number, r
 });
 
 export const HYLEE_KNOWLEDGE: KnowledgeEntry[] = [
-  { id: "knows_hylee_tartlets", title: "Les repas mis de côté", summary: "Quand Hylee travaillait à l’auberge, elle offrait en secret des restes à Naïah. Elles parlaient, jouaient et dansaient lors de ses visites nocturnes. Naïah a cessé de venir sans explication connue d’Hylee.", people: ["hylee", "naiah"] },
+  { id: "knows_hylee_naiah_nights", title: "Les nuits après le service", summary: "Quand Hylee travaillait encore à l'auberge, Naïah la retrouvait après le dernier service. Elles parlaient des heures, inventaient des jeux et dansaient à l'écart des regards. Naïah a cessé de venir sans explication connue d'Hylee.", people: ["hylee", "naiah"] },
   { id: "knows_hylee_medig", title: "Medig retrouve le chemin", summary: "Hylee a nourri une chouette affamée près de l’Auberge du Forestier. Medig est revenue, puis l’a retrouvée après son départ avec Remerii.", people: ["hylee"] },
   { id: "knows_hylee_star_pendant", title: "Le pendentif étoilé", summary: "La petite étoile est presque tout ce qu’Hylee conserve de ses origines. Elle ignore qui la lui a donnée et ce qu’elle signifie. Aucune propriété magique n’est établie.", people: ["hylee"] },
   { id: "knows_hylee_adoptive_abuse", title: "Le travail et la peur", summary: "Hylee a raconté le travail imposé, les humiliations et la violence de ses parents adoptifs à l’auberge. Elle devait aussi dissimuler sa magie aux autorités.", people: ["hylee"] },
@@ -23,46 +23,47 @@ export const HYLEE_KNOWLEDGE: KnowledgeEntry[] = [
 ];
 
 export const HYLEE_CONFIDENCES: SecretConversation[] = [
-  secret("secret-hylee-naiah-v2", "Après le dernier service", 20, 10, ["knows_hylee_tartlets"], [
-    N("Hylee ouvre un sachet de tartelettes aux pommes. Elle en renifle une, mord un coin de pâte et regarde aussitôt la garniture."),
-    H("Naïah aurait pris celle-là. Elle cherchait toujours celle avec le plus de pommes." , "teasing"),
-    P("Vous en mangiez ensemble ?"),
-    H("Quand il en restait après le service. Je travaillais à l’auberge, alors je mettais de la nourriture de côté pour elle. Du pain, un fond de plat… Une tartelette, les bons soirs."),
-    H("En cachette. Je lui passais le paquet quand personne ne regardait. Elle venait parfois avant que j’aie fini et me faisait des signes pour que je me dépêche."),
-    N("Hylee remet délicatement la tartelette dans le sachet. Ses doigts portent encore de la farine."),
-    H("Après, on parlait. Elle inventait des jeux, elle me faisait danser. Je devais lui rappeler de faire moins de bruit, et elle me faisait rire juste au mauvais moment."),
-    P("Vous vous voyiez souvent ?"),
-    H("Assez pour que j’écoute après le dernier service. Des fois elle arrivait quand j’avais déjà abandonné. Elle trouvait très drôle de me réveiller."),
-    N("Elle replie le bord du sachet, puis le rouvre pour vous laisser choisir."),
-    H("Et puis elle n’est plus venue."),
-    P("Elle t’avait prévenue ?"),
-    H("Non. J’ai continué à garder des restes pour elle plusieurs soirs. À la fin, je les remettais avec les autres." , "sad"),
-    N("Une miette reste collée à son doigt. Hylee l’enlève avec soin."),
-    H("Je ne sais pas pourquoi elle a arrêté. J’ai inventé plein de raisons. Aucune ne m’a aidée à dormir.", "sad"),
+  secret("secret-hylee-naiah-nights", "Après le dernier service", 20, 10, ["knows_hylee_naiah_nights"], [
+    N("Hylee s'arrête derrière une auberge de Mir’Aldas. Une marche de pierre longe la porte de service ; elle y passe la paume comme pour en chasser une poussière ancienne."),
+    H("À l'Auberge du Forestier, je m'asseyais sur une marche comme celle-là quand j'avais enfin terminé. Naïah apparaissait presque toujours après que j'avais décidé qu'elle ne viendrait pas.", "teasing"),
+    P("Elle te faisait attendre ?"),
+    H("Elle disait qu'elle vérifiait ma patience. Moi, je crois qu'elle aimait réussir son entrée."),
+    N("Hylee s'assied. Ses bottes dépassent du bord, exactement comme celles de la jeune fille qu'elle décrit."),
+    H("On parlait de nos journées. Les miennes étaient longues et se ressemblaient. Les siennes étaient impossibles et changeaient à chaque version."),
+    H("Mais au bout d'un moment, elle disait la partie vraie. Je n'avais pas besoin de la montrer du doigt."),
+    P("Que faisiez-vous quand vous aviez fini de parler ?"),
+    H("Elle inventait des jeux. Elle changeait les règles. On dansait parfois sans musique, derrière le bâtiment, et je lui écrasais les pieds quand elle me faisait rire.", "teasing"),
+    N("Hylee frappe deux fois la pierre du talon, retrouve un rythme et l'abandonne au quatrième temps."),
+    H("Pendant quelques heures, je ne travaillais plus pour personne. Elle n'était ni une héritière ni une catastrophe. On était juste… là."),
+    P("Puis elle a cessé de venir."),
+    H("Sans prévenir. J'ai écouté plusieurs nuits après le service. Je me disais que j'avais dû manquer un signe.", "sad"),
+    N("Elle relève la tête avant que le souvenir ne devienne toute la scène."),
+    H("Ce n'était pas seulement triste. On riait beaucoup. Je ne veux pas oublier ça parce que la fin était mauvaise."),
   ], [
-    Q("hys-naiah-jeu", "Lui demander de vous montrer l’un de leurs jeux.", "audace", [
-      N("Hylee relève la tête et cherche trois petits cailloux. Elle les cache sous ses paumes."),
-      H("Tu dois trouver celui que je déplace. Naïah changeait les règles après ma réponse, mais je vais essayer de résister." , "teasing"),
-      P("Essaie très fort."),
-      N("Elle ouvre les mains. Vous avez regardé la mauvaise. Hylee rit, récupère les cailloux et recommence assez lentement pour que vous suiviez cette fois."),
-      H("Voilà. Maintenant je peux tricher."),
+    Q("hys-naiah-jeu", "Lui demander de vous apprendre l'un de leurs jeux.", "audace", [
+      N("Hylee ramasse trois feuilles, en replie une et les cache successivement derrière son dos."),
+      H("Tu dois suivre celle qui est pliée. Naïah ajoutait une quatrième feuille après la réponse et prétendait qu'elle avait toujours été là.", "teasing"),
+      P("Je vais donc surveiller aussi tes manches."),
+      H("Tu apprends vite."),
+      N("La feuille pliée réapparaît dans votre poche. Hylee ouvre des yeux beaucoup trop innocents."),
+      H("Elle m'a aussi appris à préparer le jeu avant que l'autre arrive."),
     ], { affection: 5, trust: 4 }),
-    Q("hys-naiah-absente", "Demander si elle voudrait lui poser la question.", "lucidite", [
-      H("Oui. Et quand je la vois, je pense à autre chose. Ou je me dis que je demanderai avant de partir."),
-      N("Elle coupe sa tartelette en deux et garde la plus petite moitié."),
-      P("Tu ne me demandes pas d’y aller à ta place ?"),
-      H("Non. Si je lui demande, je veux entendre ce qu’elle dira. Même si elle essaie de changer de sujet."),
-      N("Elle vous tend la moitié restante, sans la remettre dans le sachet."),
+    Q("hys-naiah-absente", "Lui demander si elle veut encore parler de ce départ avec Naïah.", "lucidite", [
+      H("Oui. Et chaque fois que je la revois, je me rappelle d'abord une bonne nuit ou elle me montre quelque chose de nouveau."),
+      P("Tu ne veux pas que je pose la question à ta place."),
+      H("Non. Je veux l'entendre quand je serai capable d'écouter toute la réponse, même si elle commence par une plaisanterie."),
+      N("Hylee reprend le rythme interrompu sur la marche, puis le modifie comme si une seconde personne venait d'y ajouter un pas."),
+      H("Je lui demanderai. Pas pour récupérer le passé. Pour savoir comment on se parle maintenant."),
     ], { affection: 2, trust: 7 }),
-    Q("hys-naiah-present", "Partager les tartelettes sans chercher une explication à sa place.", "sangFroid", [
-      N("Vous rapprochez le sachet. Hylee prend une deuxième tartelette et examine d’abord combien de pommes elle contient."),
-      H("Elle me demandait toujours s’il en restait une autre. Même quand je venais de lui donner la dernière." , "teasing"),
-      P("Celles-là sont bonnes aussi."),
-      H("Oui. Je n’ai pas dit que je te laissais la dernière."),
-      N("Elle la coupe pourtant en deux avant de ranger les miettes."),
+    Q("hys-naiah-present", "Rester sur la marche et l'écouter raconter une nuit heureuse.", "sangFroid", [
+      P("Raconte-moi celle où tu as le plus ri."),
+      H("Elle avait donné une voix à toutes les chaises de la cour. Une seule était polie, alors j'ai voulu m'asseoir dessus."),
+      P("C'était un piège."),
+      H("Évidemment. Elle criait dès que je bougeais, toute l'auberge a cru qu'on égorgeait quelqu'un."),
+      N("Hylee rit avant d'avoir fini l'histoire et doit recommencer depuis le moment où Naïah avait imité l'aubergiste."),
+      H("Voilà. Celle-là. Garde-la sans lui inventer une morale."),
     ], { affection: 4, trust: 5 }),
   ]),
-
   secret("secret-hylee-medig", "La visiteuse affamée", 20, 8, ["knows_hylee_medig"], [
     N("Une chouette blanche atterrit sur le sac d’Hylee. La boucle bascule sous son poids ; Medig se redresse avec un hululement indigné."),
     H("Oui, pardon. La prochaine fois, je prendrai un sac avec une branche." , "teasing"),

@@ -238,7 +238,7 @@ type ReceivedInvitation = {
 };
 
 type GameState = {
-  version: 16;
+  version: 17;
   player: Player;
   day: number;
   period: number;
@@ -496,7 +496,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 16,
+    version: 17,
     player,
     day: 1,
     period: 0,
@@ -556,6 +556,18 @@ function hydrateGame(raw: unknown): GameState | null {
     ? requestedSpot.id
     : (DEFAULT_SPOTS[location] || fresh.spot);
   const savedVersion = Number((raw as { version?: number }).version || 0);
+  const knowledgeAliases: Record<string, string> = {
+    knows_naiah_tartlets: "knows_naiah_hylee_nights",
+    knows_hylee_tartlets: "knows_hylee_naiah_nights",
+    heard_rumor_naiah_tartlets: "heard_rumor_naiah_guardian",
+  };
+  const secretAliases: Record<string, string> = {
+    "secret-naiah-tartlets": "secret-naiah-hylee-nights",
+    "secret-hylee-naiah-v2": "secret-hylee-naiah-nights",
+  };
+  const migrateKnowledgeId = (id: string) => knowledgeAliases[id] || id;
+  const migrateSecretId = (id: string) => secretAliases[id] || id;
+  const migrateRumorId = (id: string) => id === "rumor-forbidden-tartlets" ? "rumor-forbidden-guardian" : id;
   const legacyTimeline = savedVersion < 8;
   const resetCharacters = new Set(["iriana", "valurn", "bellirith", "amanea", "draven"]);
   const oldRelationships = Object.fromEntries(CHARACTERS.map((character) => {
@@ -620,7 +632,7 @@ function hydrateGame(raw: unknown): GameState | null {
   return {
     ...fresh,
     ...value,
-    version: 16,
+    version: 17,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -647,13 +659,13 @@ function hydrateGame(raw: unknown): GameState | null {
     dateHistory: (value.dateHistory || []).filter((id) => !legacyTimeline || !id.startsWith("date-amanea")).map(migrateRemeriiDateId),
     groupDateHistory: value.groupDateHistory || [],
     crossQuestSeries: normalizedCrossQuestSeries,
-    knowledge: unique((value.knowledge || []).filter((id) => ALL_KNOWLEDGE_ENTRIES.some((entry) => entry.id === id))),
-    secretHistory: unique((value.secretHistory || []).filter((id) => SECRET_CONVERSATIONS.some((entry) => entry.id === id))),
+    knowledge: unique((value.knowledge || []).map(migrateKnowledgeId).filter((id) => ALL_KNOWLEDGE_ENTRIES.some((entry) => entry.id === id))),
+    secretHistory: unique((value.secretHistory || []).map(migrateSecretId).filter((id) => SECRET_CONVERSATIONS.some((entry) => entry.id === id))),
     letters: (value.letters || []).filter((entry) => LETTERS.some((letter) => letter.id === entry.id)).map((entry) => ({
       id: entry.id,
       receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
       read: Boolean(entry.read),
-      replyId: entry.replyId,
+      replyId: entry.id === "letter-naiah-margin" && entry.replyId === "naiah-food" ? "naiah-verso" : entry.replyId,
     })),
     invitations: (value.invitations || []).filter((entry) => INVITATIONS.some((invitation) => invitation.id === entry.id)).map((entry) => ({
       id: entry.id,
@@ -662,7 +674,7 @@ function hydrateGame(raw: unknown): GameState | null {
       status: ["pending", "accepted", "declined", "expired"].includes(entry.status) ? entry.status : "expired",
       reoffers: Math.max(0, Number(entry.reoffers) || 0),
     })) as ReceivedInvitation[],
-    rumors: (value.rumors || []).filter((entry) => RUMORS.some((rumor) => rumor.id === entry.id)).map((entry) => ({ id: entry.id, heardDay: Math.max(1, Number(entry.heardDay) || 1) })),
+    rumors: (value.rumors || []).map((entry) => ({ ...entry, id: migrateRumorId(entry.id) })).filter((entry) => RUMORS.some((rumor) => rumor.id === entry.id)).map((entry) => ({ id: entry.id, heardDay: Math.max(1, Number(entry.heardDay) || 1) })),
     worldEventHistory: unique((value.worldEventHistory || []).filter((id) => SPONTANEOUS_EVENTS.some((entry) => entry.id === id))),
     livingWorldTick: typeof value.livingWorldTick === "string" ? value.livingWorldTick : "",
     jobRuns: value.jobRuns || {},
@@ -1333,8 +1345,19 @@ function storyCharacterPlace(characterId: string, day: number, period: number, f
   }
 
   if (characterId === "naiah" && has("campaign-naiah-promise")) {
-    const spots = ["forbidden-sanctuary", "forbidden-crossroads", "forbidden-ruins", "forbidden-sanctuary"];
-    return fixed("forbidden", spots[period], has("campaign-akuhn-gates") ? "reste dans la forêt après avoir été arrêtée aux portes d'Akuhn’Nabad" : "maintient ouvert le passage qu'elle a promis vers Akuhn’Nabad");
+    const spots = ["forbidden-ruins", "forbidden-crossroads", "forbidden-threshold", "forbidden-sanctuary"];
+    const action = has("naiah-guardian-witnessed")
+      ? "réaccorde le réseau de brume après la défaillance des protections"
+      : has("naiah-intruders-routed")
+        ? "cherche les dernières balises copiées par les cartographes intrus"
+        : has("naiah-convoy-protected")
+          ? "surveille discrètement les routes empruntées par les petits convois"
+          : has("naiah-wards-serviced")
+            ? "inspecte les trois couches de protection de la Forêt Interdite"
+            : has("naiah-watchpoint-seen")
+              ? "vérifie les balises cachées derrière ses jeux de sentiers"
+              : "entretient les brumes et les chemins de renvoi autour de la frontière";
+    return fixed("forbidden", spots[period], action);
   }
 
   if (characterId === "lineva" && has("campaign-lineva-departure") && !has("main-story-act-1-complete")) {

@@ -1,5 +1,6 @@
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import { HYLEE_CONFIDENCES, HYLEE_KNOWLEDGE } from "./hylee-confidences.ts";
+import { NAIAH_CONFIDENCES, NAIAH_KNOWLEDGE } from "./naiah-confidences.ts";
 import { REMERII_CONFIDENCES, REMERII_KNOWLEDGE } from "./remerii-confidences";
 import { REMERII_LETTERS, REMERII_INVITATIONS, REMERII_WORLD_EVENTS } from "./remerii-living-world";
 
@@ -139,10 +140,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_valurn_artifact_search", title: "L’artefact promis", summary: "Valurn aida Bellirith à rechercher un artefact supposé sceller sa part démoniaque, avant de la cacher dans une pierre de stase.", people: ["valurn", "bellirith"] },
   { id: "knows_valurn_true_abandonment", title: "La décision de ne pas revenir", summary: "Valurn découvrit que l’artefact était une légende. Convaincu que Bellirith souffrirait moins sans sa part humaine, il décida consciemment de ne jamais revenir la libérer.", people: ["valurn", "bellirith"] },
 
-  { id: "knows_naiah_tartlets", title: "Les repas d’Hylee", summary: "Pendant qu’elle travaillait à l’auberge, Hylee offrait secrètement des restes à Naïah, parfois des tartelettes aux pommes. Naïah se souvient aussi de leurs jeux et de leurs danses nocturnes.", people: ["naiah", "hylee"] },
-  { id: "knows_naiah_exile", title: "Deux sœurs après l’exil", summary: "Naïah a vécu son exil comme le rejet définitif d’Amanea. Sa haine d’Allenna mêle rivalité, jalousie et blessure familiale.", people: ["naiah", "allenna", "amanea"] },
-  { id: "knows_naiah_surpass_amanea", title: "Dépasser une mère absente", summary: "Naïah transforme son incompréhension en obsession : devenir assez puissante pour ne plus jamais attendre l’attention d’Amanea.", people: ["naiah", "amanea"] },
-  { id: "knows_naiah_maternal_rejection", title: "Pourquoi aucun regard ?", summary: "Sous sa colère, Naïah ne comprend toujours pas pourquoi sa mère paraît incapable de la regarder. Elle ignore entièrement la cause réelle.", people: ["naiah", "amanea"] },
+  ...NAIAH_KNOWLEDGE,
 
   { id: "knows_lineva_scars", title: "Une carte de cicatrices", summary: "Les cicatrices de Lineva ont chacune une histoire de terrain, parfois grave, parfois presque ridicule.", people: ["lineva"] },
   { id: "knows_lineva_draven_childhood", title: "L’enfant qui recommençait", summary: "Lineva s’entraînait jusqu’à tomber, sous le regard d’un père fier mais souvent incapable de lui demander de s’arrêter autrement qu’en donnant un ordre.", people: ["lineva", "draven"] },
@@ -329,68 +327,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("sva80-s", "Lui demander ce qu’il compte faire d’une vérité qui appartient aussi à Bellirith.", "sangFroid", [P("Maintenant que je sais, qu’est-ce que vous allez faire ?"), L("Valurn", "Trouver une plaisanterie assez bonne pour fuir cette pièce."), N("Vous ne souriez pas. Il n’essaie pas une seconde fois."), L("Valurn", "Je lui dirai si elle accepte de m’entendre. Pas au détour d’une dispute, pas pour obtenir son pardon avant une bataille. Entièrement."), P("Et si elle refuse ?"), L("Valurn", "Alors je respecterai enfin un choix de sa part, même celui qui me condamne au silence."), N("Il replie la copie et ne la reprend pas."), P("Vous la laissez ici ?"), L("Valurn", "La vérité ne peut plus rester seulement dans ma poche. Gardez-la jusqu’à ce que Bellirith décide si elle veut la voir."), P("Cela ne vous absout pas."), L("Valurn", "Non. Mais peut-être que supporter sa haine avec toutes ses raisons vaut mieux que d’être pardonné par une histoire fausse.")], { trust: 9, affection: 1 }),
   ], ["knows_valurn_true_abandonment"], { requiresKnowledge: ["knows_bellirith_stasis"] }),
 
-  S("naiah", 20, "secret-naiah-tartlets", "Ce qu’Hylee gardait pour elle", [
-    N("Naïah fait apparaître une tartelette aux pommes au-dessus de votre tête. Quand vous tendez la main, elle retire le parfum de son illusion."),
-    P("C’est un crime."),
-    L("Naïah", "C’est une reconstitution historique. Respecte les archives."),
-    N("Elle réduit l’illusion et y ajoute un petit morceau de tissu noué."),
-    L("Naïah", "Hylee m’en gardait quand elle travaillait à l’auberge. Des restes du service, qu’elle m’offrait en secret. Je préférais nettement les soirs avec des pommes."),
-    P("Tu allais la voir souvent ?"),
-    L("Naïah", "Oui. Elle finissait son travail, puis on parlait, on jouait. On dansait aussi. Très discrètement, d’après moi. Beaucoup moins, d’après elle."),
-    N("Elle fait tourner le petit paquet. Le tissu de l’illusion porte une tache de sauce."),
-    L("Naïah", "Elle vérifiait que personne ne regardait avant de me le donner. Je faisais semblant de venir seulement pour le repas. Elle n’était pas dupe."),
-    P("Et les jeux ?"),
-    L("Naïah", "J’espère qu’elle a précisé que je gagnais aux jeux. Sinon, ce témoignage est incomplet."),
-    N("La tartelette retrouve son parfum. Naïah la garde un instant avant de vous la tendre.")
-  ], [
-    Q("sna20-a", "« Vous devriez organiser une revanche. Avec de vraies tartelettes. »", "audace", [L("Naïah", "Une excellente idée. Tu apportes les pommes, je me charge de gagner."), P("Et Hylee ?"), L("Naïah", "Elle dira que j’ai triché. Ce sera faux au moins une fois."), N("Naïah fait apparaître deux assiettes. Elle ajoute une troisième, plus petite, devant vous."), L("Naïah", "Pour le témoin impartial. Tu auras évidemment droit à une part.")], { affection: 5, trust: 2 }),
-    Q("sna20-l", "Lui demander ce qu’Hylee glissait dans les paquets.", "lucidite", [L("Naïah", "Ce qu’elle pouvait récupérer après le service. Elle s’excusait quand il n’y avait que du pain."), N("Naïah remplace la tartelette par un morceau de miche."), L("Naïah", "Je lui disais qu’il manquait une couronne. Elle me traitait de difficile et retournait voir s’il restait autre chose."), P("Elle en trouvait ?"), L("Naïah", "Parfois. Sinon, elle revenait s’asseoir. Ça m’allait aussi."), N("Elle referme les doigts sur l’illusion. Le parfum des pommes se dissipe à son tour.")], { trust: 6, affection: 2 }),
-  ], ["knows_naiah_tartlets"]),
-  S("naiah", 40, "secret-naiah-exile", "Deux héritières, aucune sœur", [
-    N("Naïah répare un piège de forêt neutralisé par Allenna. La commandante a coupé la corde, retiré le mécanisme et laissé une note : “Trop visible.” Naïah a encadré l’insulte."),
-    L("Naïah", "Regarde cette écriture. Même ses moqueries se tiennent au garde-à-vous."),
-    P("Elle avait raison ?"),
-    L("Naïah", "La pertinence est une circonstance aggravante."),
-    N("Elle remplace la corde par un fil invisible, ajoute deux fausses pistes et suspend la note d’Allenna au déclencheur."),
-    L("Naïah", "Allenna a reçu la place à droite d’Amanea, sa confiance, son nom choisi. Moi, sa fille biologique, j’ai reçu une frontière, des gardes et d’excellentes raisons d’apprendre à les contourner."),
-    P("Pour toi, Allenna reste ta sœur ?"),
-    L("Naïah", "Uniquement lorsque cela rend l’insulte plus précise. “Commandante sinistre” manque d’intimité. “Ma chère sœur sinistre” atteint beaucoup mieux la cible."),
-    N("Le nouveau piège se referme soudain sur sa propre manche. Naïah baisse les yeux, offensée."),
-    L("Naïah", "Tu n’as rien vu."),
-  ], [
-    Q("sna40-l", "Reconnaître sa jalousie sans réduire toute leur haine à Amanea.", "lucidite", [P("Tu envies la place qu’Allenna a reçue. Mais vous ne vous détestez pas seulement à cause de votre mère."), L("Naïah", "Merci. Allenna est insupportable par ses propres mérites."), N("Elle tente de libérer sa manche avec dignité. Le piège se resserre."), P("Tu veux de l’aide ?"), L("Naïah", "Non. Je veux qu’Allenna soit ici pour constater que son conseil était mauvais."), P("Il était bon."), L("Naïah", "Tu prends un risque relationnel considérable."), N("Vous coupez le fil. Naïah récupère la note encadrée et la glisse dans sa poche."), L("Naïah", "Elle est droite, loyale, brillante et absolument convaincue que le monde se répare avec assez de discipline. Je la détesterais même si Amanea n’existait pas."), P("Et tu gardes ses notes."), L("Naïah", "Pour constituer le dossier de l’accusation, évidemment.")], { trust: 7, affection: 3 }),
-    Q("sna40-s", "Lui demander ce qu’elle refuse encore de laisser Allenna décider à sa place.", "sangFroid", [P("Qu’est-ce qu’Allenna n’aura jamais le droit de décider pour toi ?"), L("Naïah", "Si mon exil fait de moi un monstre."), N("Elle renonce au fil invisible et choisit une corde visible, mais placée à un angle qu’Allenna n’avait pas prévu."), L("Naïah", "Elle peut commander ses soldats, protéger sa reine et raconter à la cité que je suis dangereuse. Tout cela repose sur des faits assez embarrassants."), P("Mais pas ton histoire."), L("Naïah", "Pas sa fin."), N("Elle arme le piège. Une silhouette de brume prend sa place devant le déclencheur et réussit à le franchir."), L("Naïah", "Je déciderai si je deviens ce qu’elles craignent, autre chose, ou quelque chose de beaucoup plus agaçant."), P("Tu as déjà une avance."), L("Naïah", "Sur “agaçante” ? Je maîtrise le domaine."), N("Elle vous tend la note d’Allenna."), L("Naïah", "Écris “moins visible”. Je veux qu’elle sache que j’ai amélioré sa critique.")], { trust: 8, affection: 2 }),
-  ], ["knows_naiah_exile"]),
-  S("naiah", 60, "secret-naiah-surpass", "Une couronne plus haute", [
-    N("Naïah façonne une couronne de brume au-dessus d’un bassin. Elle la rend plus haute que celle d’Amanea, ajoute des pointes, les retire parce qu’elles “manquent de subtilité”, puis recommence."),
-    P("Qui juge le concours ?"),
-    L("Naïah", "Moi. Je suis incorruptible lorsque je gagne."),
-    N("Elle pose presque la couronne sur sa tête, aperçoit son reflet à côté de celui peint d’Amanea sur le mur et brise l’illusion."),
-    L("Naïah", "Je répète que je la dépasserai. Plus de pouvoir, plus de sujets, une couronne que personne ne peut ignorer."),
-    P("Pour quoi faire ?"),
-    L("Naïah", "Forcer une mère à voir ce qu’elle refuse de regarder."),
-    N("La réponse sort avant qu’elle puisse l’orner d’une plaisanterie. Elle en fabrique une autre aussitôt."),
-    L("Naïah", "C’est un plan très raisonnable. J’écrase une souveraine, je fonde un royaume, je traumatise quelques diplomates et, quelque part au milieu, j’obtiens enfin un contact visuel."),
-    L("Naïah", "Le pire, c’est que je ne sais plus si je veux gagner ou seulement qu’elle sache que j’ai survécu sans elle."),
-  ], [
-    Q("sna60-l", "Séparer le pouvoir qu’elle construit du regard qu’elle attend encore.", "lucidite", [P("Ta puissance peut te protéger, gouverner, détruire ou créer. Elle ne peut pas ouvrir de force des yeux qui se ferment."), L("Naïah", "Cruel."), P("Tu le savais."), L("Naïah", "Oui, mais je préférais la version avec davantage de palais conquis."), N("Elle reforme une couronne minuscule et la pose sur votre tête."), L("Naïah", "Même au sommet, je pourrais rester une enfant qui crie plus fort pour que sa mère se retourne."), P("Et sans ce regard, ce que tu bâtis existe quand même."), N("Naïah examine votre couronne de travers, puis la redresse."), L("Naïah", "Très juste. Donc doublement cruel."), P("Tu veux que je retire la couronne ?"), L("Naïah", "Non. Elle te va ridiculement bien."), N("Son propre front reste nu, mais elle ne détruit pas le reflet dans le bassin."), L("Naïah", "Je trouverai une raison de la porter qui m’appartienne.")], { trust: 9, affection: 2 }),
-    Q("sna60-s", "Lui proposer une heure qui ne servira à prouver sa survie à personne.", "sangFroid", [P("Et si tu cessais de démontrer quoi que ce soit pendant une heure ?"), L("Naïah", "Une heure entière ? Mon royaume s’effondrera, Allenna sourira et trois bardes perdront leur sujet."), P("Nous prendrons le risque."), N("Vous vous asseyez près du bassin. Naïah fait apparaître une couronne, la transforme en poisson, puis laisse même le poisson disparaître."), L("Naïah", "Que fait-on lorsqu’on ne prépare ni vengeance ni spectacle ?"), P("Rien."), L("Naïah", "Concept suspect."), N("Cinq minutes plus tard, elle a posé ses pieds sur vos genoux et tente de faire flotter des cailloux sans leur donner de forme symbolique."), L("Naïah", "Je pourrais vivre sans public quelques heures."), P("Tu avais dit une."), L("Naïah", "J’ai changé les termes. Ne discute pas avec la reine.")], { trust: 8, affection: 4 }),
-  ], ["knows_naiah_surpass_amanea"]),
-  S("naiah", 80, "secret-naiah-look", "Ce qu’elle ne regarde jamais", [
-    N("La brume de Naïah cesse soudain de décorer la clairière. Les lucioles illusoires s’éteignent, sa couronne disparaît et même les ombres cessent de corriger ses expressions."),
-    L("Naïah", "Ne dis rien. J’essaie une expérience très dangereuse : terminer une pensée avant de savoir ce que tu vas répondre."),
-    N("Elle compte trois respirations, mécontente dès la première."),
-    L("Naïah", "Je peux comprendre une condamnation. Une guerre. Même une mère qui me hait parce que je lui ressemble trop ou pas assez."),
-    P("Mais pas son regard."),
-    L("Naïah", "Son absence de regard. Amanea répond à ses ennemis, écoute ses prisonniers, observe le moindre soldat blessé. Avec moi, elle sait toujours où ne pas tourner la tête."),
-    N("Naïah arrache un brin d’herbe et le déchire en morceaux identiques."),
-    L("Naïah", "J’ai essayé la menace, l’humiliation, la puissance, même le silence. Rien. Comme si un seul regard pouvait provoquer quelque chose de pire que toute notre haine."),
-    L("Naïah", "Et sous tout ce que j’ai brillamment construit, il reste cette question idiote : qu’est-ce qui était si monstrueux en moi qu’un regard aurait été de trop ?", "sad"),
-  ], [
-    Q("sna80-s", "Refuser de fabriquer à sa place la réponse que seule Amanea possède.", "sangFroid", [P("Je ne sais pas pourquoi elle fait cela."), L("Naïah", "Réponse décevante. Recommence avec davantage de sagesse."), P("Non. Je pourrais inventer quelque chose de rassurant, mais ce serait encore une personne qui décide de ton histoire sans savoir."), N("Le brin d’herbe se déchire entre ses doigts. Elle cesse pourtant d’en arracher un autre."), P("Son silence ne prouve rien de monstrueux en toi."), L("Naïah", "Tu ne peux pas le prouver."), P("Non plus."), N("Elle rit une fois, sans joie."), L("Naïah", "C’est donc cela, ton grand soutien : deux ignorances et une absence de preuve."), P("Et ma présence."), N("Naïah examine l’espace près d’elle, puis le frappe du plat de la main."), L("Naïah", "Assieds-toi. Reste pendant que j’essaie de croire la partie la moins démontrable."), N("Lorsque vous la rejoignez, elle laisse sa tête tomber contre votre épaule et menace aussitôt de vous transformer en mousse si vous commentez le geste.")], { trust: 11, affection: 4 }),
-    Q("sna80-l", "Observer que le comportement d’Amanea contredit l’explication la plus simple.", "lucidite", [P("Le mépris serait plus simple. Elle pourrait te regarder pour te condamner, comme elle le fait avec tous ses ennemis."), L("Naïah", "Tu crois donc à une raison mystérieuse et tragique. Très original."), P("Je crois seulement que son comportement ressemble à une contrainte. Elle conserve tes objets, évite ton regard même lorsqu’elle pourrait t’humilier et ne répond jamais directement."), N("Naïah se fige à la mention des objets."), L("Naïah", "Quels objets ?"), P("Je ne peux pas te les décrire sans trahir ce qu’on m’a montré. Mais ils existent."), N("La brume revient autour de ses doigts, violente, puis elle la force à retomber."), L("Naïah", "Une vérité pire que le mépris."), P("Peut-être. Ou seulement plus complexe."), L("Naïah", "Cela ne me rassure pas."), P("Je ne te le dis pas pour te rassurer."), N("Elle vous adresse enfin un sourire coupant, reconnaissable."), L("Naïah", "Bien. J’aurais dû te chasser si tu avais essayé. Maintenant, aide-moi à ne pas transformer cette piste en certitude avant d’avoir des faits.")], { trust: 10, affection: 3 }),
-  ], ["knows_naiah_maternal_rejection"]),
-
+  ...NAIAH_CONFIDENCES,
   S("lineva", 20, "secret-lineva-scars", "La cicatrice du tonneau", [
     N("En recousant une manche déchirée, Lineva découvre que votre regard s’est arrêté sur la cicatrice de son avant-bras."),
     L("Lineva", "Si vous cherchez une histoire héroïque, choisissez celle-là."),
@@ -879,13 +816,13 @@ export const LETTERS: LetterTemplate[] = [
     body: ["On m’avait donné une feuille avec une zone prévue pour écrire. J’ai trouvé cette exigence autoritaire.", "Retrouve-moi là où le chemin affirme qu’il n’existe pas. Apporte quelque chose à manger ou une très bonne excuse."], signature: "Naïah — partout sauf au bon endroit",
     replies: [
       { id: "naiah-margin", label: "Répondre au centre de la feuille, puis dessiner une flèche vers la marge.", response: "Une luciole violette apparaît et applaudit votre insolence.", effects: { affection: 4, trust: 2 } },
-      { id: "naiah-food", label: "Joindre la recette des tartelettes de Hylee.", response: "Naïah renvoie la moitié des ingrédients corrigés de façon absurde et deux modifications réellement excellentes.", effects: { trust: 3, affection: 3 } },
+      { id: "naiah-verso", label: "Écrire uniquement au verso : « Tu as oublié un bord. »", response: "La feuille revient pliée en une forme impossible. À l'intérieur : « J'ai vérifié. Il en reste onze. À toi. »", effects: { trust: 3, affection: 3 } },
     ],
   },
   {
     id: "letter-naiah-question", character: "naiah", subject: "Une question sans joli décor", delivery: "La lettre est droite, lisible et dépourvue d’illusion — ce qui la rend inquiétante.", minDay: 16, minStage: 4, requiresKnowledge: ["knows_naiah_maternal_rejection"],
-    body: ["Si tu apprends un jour pourquoi elle ne me regarde pas, ne me transforme pas en dernière personne protégée par mon propre secret.", "Je peux entendre une vérité laide. Je ne sais pas si je peux survivre encore à une décision prise pour moi."], signature: "Naïah",
-    replies: [{ id: "naiah-agency", label: "Je ne te mentirai pas. Je te parlerai avant d’agir avec ce que je saurai.", response: "Une seule phrase revient : « Je vais essayer de te croire avant de savoir. »", effects: { trust: 6 } }],
+    body: ["Si tu apprends un jour pourquoi elle ne me regarde pas, ne décide pas à ma place de ce que je dois savoir.", "Je préfère une vérité qui me blesse à un mensonge qui me garde tranquille. Et avant d'utiliser cette vérité contre quelqu'un — même pour m'aider — viens me parler."], signature: "Naïah",
+    replies: [{ id: "naiah-agency", label: "Je ne te mentirai pas, je n'agirai pas derrière ton dos et je te parlerai avant d'utiliser ce que j'aurai appris.", response: "Une seule phrase revient, sans effet magique : « Je vais essayer de te croire avant de savoir. »", effects: { trust: 6 } }],
   },
 
   {
@@ -1044,18 +981,23 @@ export const INVITATIONS: InvitationTemplate[] = [
     ],
   },
   {
-    id: "invite-naiah-branches", character: "naiah", title: "Le chemin qui boude", message: "Une branche frappe trois fois à votre fenêtre. Naïah prétend qu’un sentier refuse d’avancer sans témoin.", location: "forbidden", spot: "forbidden-crossroads", period: "soirée", minDay: 7, minStage: 1, expiresAfter: 5,
-    declineText: "Le sentier survit à votre absence. Naïah lui apprend toutefois une imitation dramatique de votre voix.",
+    id: "invite-naiah-branches", character: "naiah", title: "Le sentier qui se mord la queue", message: "Une branche frappe trois fois à votre fenêtre. Un ruban violet annonce : « Mon chemin tourne en rond. Viens rire avant qu'il ne devienne vexant. »", location: "forbidden", spot: "forbidden-crossroads", period: "soirée", minDay: 7, minStage: 1, expiresAfter: 5,
+    declineText: "Le lendemain, la branche rapporte un dessin du sentier réparé et cette précision : « Il a survécu sans toi. Mon sens dramatique aussi. »",
     intro: [
-      N("Le sentier s’enroule autour d’un arbre chaque fois que Naïah lui ordonne d’être raisonnable. Un écriteau « SORTIE » pousse dans la mousse et pointe successivement vers quatre directions."),
-      L("Naïah", "Il te ressemble : plus je le dirige, plus il invente une sortie.", "smirk"),
-      P("Et toi, tu ressembles au problème ou à la personne venue le résoudre ?"),
-      L("Naïah", "Je suis la personne qui a créé le problème pour voir comment tu le résoudrais. Enfin… peut-être. Le chemin refuse de me rendre mes propres souvenirs, ce qui est franchement impoli."),
+      N("Le sentier vous ramène trois fois devant le même sorbier. Naïah a numéroté chaque passage sur son tronc ; le chiffre quatre apparaît avant que vous ayez fini le troisième tour."),
+      L("Naïah", "Je l'avais conçu pour renvoyer les intrus vers l'extérieur. Il a développé une conception très personnelle de l'extérieur.", "smirk"),
+      P("Tu sais ce qui l'a dérèglé ?"),
+      N("Elle vous montre un vieux clou d'arpentage impérial planté dans une racine. Chaque fois qu'elle essaie de l'arracher, les balises lisent simultanément « avancer » et « revenir » ; le chemin recommence sa boucle."),
+      L("Naïah", "Un morceau de fer rouillé vient de me contredire quatre fois. Je reste d'un calme exemplaire."),
+      N("Elle tire encore. Le sorbier plie, la brume claque contre les troncs et toutes les sorties se rétrécissent d'un seul coup."),
+      L("Naïah", "Cinq.", "neutral"),
+      N("Le chiffre se grave seul dans l'écorce. Le jeu vient de devenir dangereux."),
     ],
     choices: [
-      Q("inb-r", "Écouter ce que le chemin évite plutôt que ce qu’il montre.", "resonance", [N("Sous les racines, une portée de petits animaux attend que la brume se lève. Le sentier les contourne en élargissant silencieusement sa boucle."), L("Naïah", "Il ne boudait pas. Il protégeait. Comme c’est décevant et joli."), P("Tu voulais vraiment le forcer à passer dessus ?"), L("Naïah", "Non. Je voulais voir si tu poserais la question avant de m’accuser. Tu as presque réussi.", "smirk")], { trust: 6, affection: 2, confluence: 2 }),
-      Q("inb-a", "Vous perdre volontairement avec elle.", "audace", [P("Très bien. Allons exactement là où il ne faut pas."), L("Naïah", "Enfin une méthode scientifique digne de la forêt."), N("Le chemin vous ramène deux fois au même arbre. Naïah change le sens des panneaux ; l’arbre fait pousser un cinquième panneau portant son prénom."), L("Naïah", "Il me provoque."), P("Tu sembles fière."), L("Naïah", "Évidemment. Je l’ai très bien élevé.")], { affection: 6, trust: 2 }),
-      Q("inb-l", "Demander au sentier ce qu’il attend de Naïah plutôt que de vous.", "lucidite", [N("Les quatre panneaux se retournent vers elle. Pour une fois, Naïah ne plaisante pas tout de suite."), L("Naïah", "Il veut que j’arrête de changer la destination dès qu’elle ressemble à un endroit où quelqu’un pourrait m’attendre."), P("Et tu vas l’écouter ?"), L("Naïah", "Une fois. Pas parce qu’il a raison. Parce que tu es déjà là, alors la catastrophe a pris de l’avance.", "soft")], { trust: 7, affection: 2 }),
+      Q("inb-r", "Suivre avec elle le moment exact où la forêt résiste.", "resonance", [N("Vous ne touchez pas à la magie. Vous regardez Naïah, puis la racine : chaque résistance commence lorsque le clou frotte contre une veine sombre du bois."), P("Il n'est pas seulement planté dedans. La racine a poussé autour."), L("Naïah", "Donc l'arracher lui demande de choisir entre deux blessures. Très théâtral pour un sorbier."), N("Naïah cesse de tirer. Elle ouvre l'écorce autour du fer, retire le clou sans arracher la veine puis referme le bois avec une ligature de brume."), N("Le chiffre six hésite et devient une flèche vers la sortie."), L("Naïah", "Tu as écouté ma forêt en me regardant travailler. Geste dangereusement compétent."), P("Tu comptais vraiment arracher tout l'arbre ?"), L("Naïah", "Seulement sa mauvaise humeur.")], { trust: 7, affection: 2, confluence: 2 }),
+      Q("inb-l", "Cartographier la contradiction à chaque boucle.", "lucidite", [N("Vous marquez d'une pierre l'endroit où le chemin inverse sa direction. Les quatre boucles changent de décor, mais toutes croisent la même racine juste après le signal de renvoi."), P("Le clou ne bloque pas la sortie. Il fait lire la borne d'entrée comme une seconde sortie."), L("Naïah", "Une règle qui signifie son contraire. L'Empire laisse vraiment ses meilleures idées partout."), N("Elle isole la borne, vous fait déplacer les pierres dans l'ordre puis extrait le fer lorsque le sentier ne reçoit plus qu'une instruction."), N("Le décor se déplie enfin en une seule route."), L("Naïah", "Tu as vaincu un chemin avec des cailloux. Je vais exagérer cette histoire pendant des années.")], { trust: 8, affection: 2, confluence: 2 }),
+      Q("inb-a", "Quitter le sentier et atteindre le sorbier par le ruisseau.", "audace", [P("S'il ramène tout ce qui marche sur lui, je vais cesser de marcher sur lui."), N("Vous descendez dans le ruisseau. Naïah vous suit sur les pierres, d'abord ravie, puis nettement moins lorsque le courant emporte une de ses bottes illusoires."), L("Naïah", "Elle était décorative. Je n'ai rien perdu."), N("Par l'arrière, le clou est accessible sans traverser la balise. Vous maintenez la branche pendant que Naïah le dégage de la racine."), N("Le sentier tente une dernière boucle, ne vous trouve plus sur son tracé et se déroule jusqu'à la sortie."), L("Naïah", "Méthode absurde, pieds trempés, résultat impeccable. Je suis contrariée de l'approuver."), P("Tu peux me rendre ma chaussure ?"), L("Naïah", "Le ruisseau négocie encore.")], { affection: 6, trust: 3, confluence: 2 }),
+      Q("inb-s", "Maintenir les balises immobiles pendant qu'elle relâche la pression.", "sangFroid", [N("Vous plaquez les deux repères physiques contre le sol et annoncez chaque nouvelle torsion sans essayer de commander au réseau."), P("La sortie nord se referme. Le retour tient encore."), N("Naïah cesse enfin de lutter contre toutes les couches à la fois. La brume retombe ; les branches se desserrent assez pour qu'elle coupe seulement le lien du clou."), N("Le chemin se stabilise autour de vous au lieu de se refermer."), L("Naïah", "Tu n'as pas bougé quand j'ai rendu la clairière dangereuse."), P("J'avais une borne sûre et une tâche précise."), L("Naïah", "Réponse correcte. Si tu avais dit que tu me faisais confiance aveuglément, je t'aurais perdu·e exprès au retour."), N("Elle vous rend pourtant une route parfaitement droite.")], { trust: 9, affection: 2, confluence: 2 }),
     ],
   },
   {
@@ -1185,7 +1127,7 @@ export const RUMORS: RumorTemplate[] = [
 
   { id: "rumor-forbidden-naiah-crown", location: "forbidden", spots: ["forbidden-crossroads", "forbidden-threshold"], source: "Chasseur égaré", text: "Naïah vole les couronnes des voyageurs et les rend seulement si on la fait rire. Je n’avais pas de couronne, alors elle a pris mon déjeuner.", minDay: 5, truth: "déformée" },
   { id: "rumor-forbidden-amanea-daughter", location: "forbidden", spots: ["forbidden-threshold", "forbidden-crossroads"], source: "Colporteuse des brumes", text: "La Reine Noire est incapable de supporter la vue de sa propre fille. On dit que c’est du mépris. Personne ne peut expliquer pourquoi elle quitte pourtant la route lorsqu’elles risquent de se croiser.", minDay: 12, truth: "déformée", leadKnowledge: "heard_rumor_amanea_gaze" },
-  { id: "rumor-forbidden-tartlets", location: "forbidden", spots: ["forbidden-sanctuary"], source: "Esprit gourmand", text: "La reine des brumes épargnerait toute personne portant des tartelettes aux pommes. Les baies fonctionnent moins bien et les poires constituent apparemment une offense.", minDay: 7, truth: "déformée", leadKnowledge: "heard_rumor_naiah_tartlets" },
+  { id: "rumor-forbidden-guardian", location: "forbidden", spots: ["forbidden-sanctuary", "forbidden-crossroads"], source: "Convoyeuse de la frontière", text: "Les patrouilles hostiles tournent trois jours dans la brume, mais certains petits convois trouvent une route sèche avant l'orage. On dit que la forêt choisit. Une voix qui riait dans les branches aurait pourtant donné les directions.", minDay: 7, truth: "déformée", leadKnowledge: "heard_rumor_naiah_guardian" },
   { id: "rumor-forbidden-fourth-path", location: "forbidden", spots: ["forbidden-crossroads"], source: "Bûcheron", text: "Un quatrième chemin apparaît uniquement à celles et ceux qui ont déjà décidé de ne pas le prendre.", minDay: 4, truth: "fausse" },
 
   { id: "rumor-forthaven-lineva-mother", location: "forthaven", spots: ["forthaven-harbor", "forthaven-memorial"], source: "Matelote du quai sud", text: "La commandante évite une maison depuis l’offensive. Certains disent qu’elle est maudite. D’autres qu’elle contient une lettre qu’elle n’arrive pas à envoyer.", minDay: 12, truth: "déformée", leadKnowledge: "heard_rumor_lineva_letter" },
@@ -1334,7 +1276,7 @@ export const RUMOR_KNOWLEDGE: KnowledgeEntry[] = [
   { id: "heard_rumor_remerii_dome", title: "Une enfant dans la matrice", summary: "Une rumeur de Mir’Aldas attribue à une enfant une part décisive dans la création du Dôme.", people: ["remerii"] },
   { id: "heard_rumor_hylee_affinity", title: "La flamme de l’apprentie", summary: "Certains mages ont vu une flamme se pencher vers Hylee malgré son givre. Personne ne sait pourquoi.", people: ["hylee", "saidin"] },
   { id: "heard_rumor_amanea_gaze", title: "L’absence de regard", summary: "La rumeur interprète l’attitude d’Amanea comme du mépris, mais note aussi des détours inexplicables pour éviter Naïah.", people: ["amanea", "naiah"] },
-  { id: "heard_rumor_naiah_tartlets", title: "Le tribut des tartelettes", summary: "Une histoire de la forêt associe Naïah à des tartelettes aux pommes et à une générosité ancienne.", people: ["naiah", "hylee"] },
+  { id: "heard_rumor_naiah_guardian", title: "La voix dans les brumes", summary: "Des voyageurs racontent que les routes de la Forêt Interdite repoussent les intrus mais ouvrent parfois un passage aux convois vulnérables. Une voix rieuse semble guider ce choix.", people: ["naiah"] },
   { id: "heard_rumor_lineva_letter", title: "La maison et la lettre", summary: "Une rumeur de Forthaven lie l’évitement d’une maison par Lineva à une lettre qu’elle ne parvient pas à envoyer.", people: ["lineva", "draven"] },
   { id: "heard_rumor_allenna_medicine", title: "La commandante soigneuse", summary: "Les soldats d’Akuhn’Nabad savent qu’Allenna maîtrise autant les soins de campagne que les armes.", people: ["allenna"] },
   { id: "heard_rumor_allenna_naiah", title: "Deux sœurs ennemies", summary: "À Akuhn’Nabad, personne n’ignore la haine entre Allenna et Naïah. Son origine exacte demeure discutée.", people: ["allenna", "naiah"] },

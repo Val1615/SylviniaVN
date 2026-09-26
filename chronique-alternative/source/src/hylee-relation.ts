@@ -314,7 +314,7 @@ export function hyleeRouteVariant(route: RouteScene, knowledge: readonly string[
     ...route,
     intro: [...route.intro, H("J’ai revu mes mains. Comme dans le rêve.", "sad"), N("Elle n’en dit pas davantage. Vous restez près d’elle pendant que Remerii remet le chemin en état.")],
   };
-  if (route.id === "hylee-3" && knowledge.includes("knows_hylee_tartlets")) return {
+  if (route.id === "hylee-3" && knowledge.includes("knows_hylee_naiah_nights")) return {
     ...route, intro: [...route.intro, H("Naïah changeait les pas au milieu pour me faire protester. Au moins, ce soir, le sol devrait rester à sa place.", "teasing")],
   };
   if (route.id === "hylee-0" && flags.includes("echoes-approach-blackmail")) return {

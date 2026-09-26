@@ -1,4 +1,5 @@
 import { HYLEE_ROUTES } from "./hylee-relation.ts";
+import { NAIAH_ROUTES } from "./naiah-relation.ts";
 import { REMERII_ROUTES } from "./remerii-relation.ts";
 
 export type StatKey = "audace" | "lucidite" | "sangFroid" | "resonance";
@@ -283,13 +284,13 @@ export const CHARACTERS: CharacterData[] = [
   },
   {
     id: "naiah", name: "Naïah", role: "Héritière des brumes", ageNote: "Adulte", portrait: "/assets/portraits/naiah.jpg", color: "#b477ff", unlockDay: 4, defaultMood: "smirk",
-    tagline: "Elle sourit comme une amie et règne comme une menace que la forêt connaît déjà.",
-    bio: "Joueuse, théâtrale et blessée, Naïah règne sur les chemins mouvants de la Forêt Interdite. Amie proche de Hylee, elle déteste Amanea avec une intensité qui trahit encore le lien maternel. Elle a grandi puis vécu son exil sans comprendre pourquoi sa propre mère refusait jusqu’à son regard.",
-    wound: "Avoir interprété toute sa vie le silence absolu d’Amanea comme la preuve qu’elle était une aberration indigne d’être reconnue.",
-    appreciates: "Les personnes qui restent sans se soumettre, et celles qui distinguent son jeu de sa vérité.",
+    tagline: "Elle joue avec les chemins, observe avant de répondre et cesse de rire lorsque la forêt court un vrai danger.",
+    bio: "Farceuse, théâtrale et redoutablement observatrice, Naïah déplace les chemins de la Forêt Interdite tout en entretenant les brumes qui cachent, désorientent et renvoient les intrus. Son exil d’Akuhn’Nabad nourrit sa rivalité avec Allenna et une colère intacte envers Amanea, sans résumer l’intelligence, les plaisirs ni les protections clandestines qu’elle a construits seule.",
+    wound: "Ne pas comprendre pourquoi Amanea refuse jusqu’à son regard, puis voir chaque récit public transformer ce silence en preuve qu’elle ne méritait pas d’être reconnue.",
+    appreciates: "Les personnes capables de jouer sans devenir dupes, d'agir sans lui voler sa place et de remarquer ce qu'elle protège sans exiger qu'elle l'avoue.",
     giftLikes: ["boite", "rose", "plume"],
     itinerary: [
-      { days: 38, location: "forbidden", note: "Règne sur ses brumes, surveille la frontière et reste hors d’Akuhn’Nabad conformément à son bannissement" },
+      { days: 38, location: "forbidden", note: "Entretient les brumes, déplace les routes dangereuses et surveille la frontière d’Akuhn’Nabad depuis son exil" },
     ],
   },
   {
@@ -641,83 +642,7 @@ export const ROUTE_SCENES: RouteScene[] = [
   ], true),
 
   // NAÏAH
-  routeScene("naiah", 0, 4, "Le jeu des branches", "forbidden", "forbidden_forest", "smirk", [
-    line("Narration", "Un rire voyage d’arbre en arbre. Lorsque vous levez enfin les yeux, Naïah est accroupie au-dessus de vous, une pomme à la main et vos lacets noués ensemble sans que vous l’ayez sentie approcher."),
-    line("Naïah", "Tu as mis moins de temps que le garde de la semaine dernière. Lui, il a accusé un buisson pendant vingt minutes."),
-    line("{player}", "Tu m’as fait venir pour comparer mon intelligence à celle d’un garde perdu ?"),
-    line("Naïah", "Non. Le garde avait une lance. La compétition aurait été injuste."),
-    line("Narration", "Elle mord dans la pomme, puis désigne trois sentiers qui n’existaient pas un instant plus tôt. Au fond de chacun, une silhouette porte son sourire."),
-    line("Naïah", "Voici les règles : retrouve-moi avant que mes ombres te retrouvent. Si tu gagnes, je réponds honnêtement à une question."),
-    line("{player}", "Et si je perds ?"),
-    line("Naïah", "Je réponds quand même, mais à une question que tu n’auras pas posée. C’est beaucoup plus dangereux."),
-    line("Narration", "Elle salue avec une gravité de reine, tombe volontairement en arrière et disparaît avant de toucher le sol."),
-  ], [
-    choice("n0-r", "Fermer les yeux et écouter ce que ses illusions ne savent pas imiter.", "resonance", [line("Narration", "Les faux sentiers respirent trop régulièrement. Sous leur murmure, vous percevez un froissement retenu, puis le craquement minuscule d’une mâchoire dans une pomme."), line("{player}", "Tu aurais dû choisir un fruit moins bruyant."), line("Naïah", "Je ne sacrifie pas mon goûter à l’intégrité d’une épreuve."), line("Narration", "Vous ouvrez les yeux. Elle pend tête en bas à deux pas de vous, vexée avec une application si visible qu’elle en devient suspecte."), line("Naïah", "Tu as gagné. Cela ne signifie pas que les règles étaient honnêtes."), line("{player}", "Elles ne l’étaient pas ?"), line("Naïah", "J’avais prévu de déplacer le vrai chemin si tu le trouvais trop vite."), line("Narration", "Elle vous tend la pomme déjà entamée comme un trophée, puis la reprend au dernier moment."), line("Naïah", "Une question. La pomme, elle, se mérite au deuxième jeu.")], { stats: { resonance: 1 }, trust: 5, affection: 5, confluence: 4 }, { stat: "resonance", value: 5 }),
-    choice("n0-l", "Observer Naïah plutôt que le décor qu’elle agite devant vous.", "lucidite", [line("Narration", "Chaque silhouette regarde ailleurs, mais toutes évitent le même vieux chêne. Vous contournez les trois sentiers et frappez directement contre son tronc."), line("{player}", "Tu peux sortir."), line("Naïah", "Je pourrais aussi te laisser parler à un arbre. Tu avais l’air très convaincant."), line("Narration", "Une petite porte violette s’ouvre dans l’écorce. Naïah en sort de côté, comme si elle avait toujours possédé une pièce privée à l’intérieur."), line("{player}", "Le jeu n’était pas dans la forêt. Il était dans ce que tu refusais de regarder."), line("Naïah", "C’est une phrase insupportablement satisfaite."), line("Narration", "Elle se rapproche, inspecte votre visage, puis sourit de toutes ses dents."), line("Naïah", "J’allais dire la même. Tu peux rester."), line("{player}", "C’est ma récompense ?"), line("Naïah", "Non. C’est la mienne.")], { stats: { lucidite: 1 }, trust: 6, affection: 4, confluence: 3 }),
-    choice("n0-a", "Quitter volontairement les sentiers. « Je préfère voir ce que tu fais quand je refuse tes règles. »", "audace", [line("Narration", "Vous traversez un rideau de ronces qui se révèle être de la brume. Derrière, il n’y a ni piste ni piège : seulement une pente boueuse."), line("Naïah", "Tu sais que “refuser les règles” ne transforme pas automatiquement une mauvaise idée en bonne idée ?"), line("{player}", "Tu viens quand même."), line("Narration", "Elle apparaît à votre bras au moment précis où votre pied glisse. Elle pourrait vous retenir. Elle choisit de tomber avec vous."), line("Naïah", "Évidemment. Je veux voir jusqu’où va la mauvaise idée."), line("Narration", "Vous terminez au bas de la pente, couverts de terre. Naïah contemple sa manche ruinée, puis éclate d’un rire si franc que toutes les fausses silhouettes se dissipent."), line("Naïah", "Très bien, tu as gagné une question et le droit de ne raconter ça à personne."), line("{player}", "Je croyais que je n’avais pas gagné."), line("Naïah", "J’ai changé les règles. Essaie de suivre.")], { stats: { audace: 1 }, affection: 7, desire: 2, trust: 2, confluence: 3 }),
-  ]),
-  routeScene("naiah", 1, 8, "Le théâtre des brumes", "forbidden", "purple_forest", "laugh", [
-    line("Narration", "Naïah vous attend au centre d’une clairière transformée en théâtre. Des arbres portent des balcons, des corbeaux vendent des billets et une cité de brume brûle derrière un orchestre beaucoup trop enthousiaste."),
-    line("Naïah", "J’ai intitulé la pièce : “La chute inévitable de tous ceux qui m’ont contrariée”. C’est une comédie familiale."),
-    line("{player}", "Combien d’actes ?"),
-    line("Naïah", "Douze. Mais j’ai supprimé les entractes par cruauté."),
-    line("Narration", "Elle claque des doigts. Les silhouettes sans visage de la salle du trône se mettent à applaudir tandis que leurs couronnes fondent sur leurs yeux."),
-    line("Naïah", "Tout devient plus joli lorsqu’on cesse de demander la permission. Viens. Nous danserons pendant que leurs certitudes s’effondrent."),
-    line("Narration", "Elle vous tend la main, amusée, mais son regard reste sur vous plutôt que sur le spectacle. La ville est un décor ; votre réaction est la véritable représentation."),
-  ], [
-    choice("n1-l", "« C’est beau. C’est aussi une menace, et tu surveilles si elle me plaît. »", "lucidite", [line("Narration", "Sa main reste tendue. Derrière elle, une tour s’effondre avec un bruit de vaisselle cassée."), line("Naïah", "Tu pouvais simplement dire que j’avais du talent."), line("{player}", "Tu as du talent."), line("Naïah", "Trop tard. Maintenant, cela ressemble à une concession."), line("Narration", "Elle vous entraîne tout de même dans la valse. À chaque tour, les flammes gagnent un palais différent."), line("{player}", "Tu voulais que je détourne les yeux ou que j’applaudisse ?"), line("Naïah", "Je voulais savoir lequel tu choisirais."), line("{player}", "Aucun des deux."), line("Narration", "Le sourire de Naïah s’amincit, puis devient plus vrai."), line("Naïah", "Oui. C’est ce qui rend la suite intéressante.")], { stats: { lucidite: 1 }, trust: 8, affection: 3, confluence: 4 }),
-    choice("n1-s", "Prendre sa main, mais refuser de danser sur la destruction des silhouettes.", "sangFroid", [line("{player}", "Je danse avec toi. Pas avec leur mort."), line("Naïah", "Elles ne sont pas réelles."), line("{player}", "Alors tu ne perds rien à les laisser partir."), line("Narration", "Naïah lève les yeux au ciel. Les silhouettes cessent de brûler et deviennent des spectateurs assis sur des chaises beaucoup trop petites."), line("Naïah", "Voilà. Tout le monde est vivant, mal installé et profondément déçu. Comme dans un vrai théâtre."), line("Narration", "Elle pose votre main à sa taille et mène les premiers pas avec une assurance moqueuse."), line("Naïah", "Tu poses tes règles dans mon rêve."), line("{player}", "Tu m’as invité·e dedans."), line("Naïah", "C’est agaçant quand les gens lisent les petites clauses."), line("Narration", "Pourtant, elle ne remet pas le feu.")], { stats: { sangFroid: 1 }, trust: 7, affection: 5, desire: 3, confluence: 4 }),
-    choice("n1-a", "Saisir sa main et improviser une tout autre fin à sa pièce.", "audace", [line("Narration", "Vous faites pivoter Naïah sous votre bras, puis saluez l’orchestre. Les soldats d’ombre abandonnent leurs armes pour une chorégraphie approximative ; l’empereur de brume trébuche sur sa cape."), line("Naïah", "Tu viens de donner un solo de claquettes à mon bourreau symbolique."), line("{player}", "Il avait besoin d’un arc narratif."), line("Narration", "Elle tente de conserver une expression offensée. Le bourreau rate un pas, percute le trône et l’expression vole en éclats."), line("Naïah", "C’est ma catastrophe. Tu ne peux pas la rendre ridicule sans autorisation."), line("{player}", "Je croyais qu’on cessait d’en demander."), line("Narration", "Naïah vous fixe une seconde, prise à son propre piège, puis éclate de rire jusqu’à s’appuyer contre vous."), line("Naïah", "D’accord. Mais au prochain acte, je te donne une mort atrocement longue."), line("{player}", "Après le rappel ?"), line("Naïah", "Je ne suis pas un monstre. Après le rappel.")], { stats: { audace: 1 }, affection: 8, trust: 3, desire: 4, confluence: 4 }),
-  ]),
-  routeScene("naiah", 2, 12, "Quand elle ne joue plus", "forbidden", "purple_forest", "sad", [
-    line("Narration", "Naïah vous conduit jusqu’aux ruines qui dominent la frontière d’Akuhn’Nabad. Les lueurs vertes de la cité restent loin derrière les arbres. Ici, aucun garde ne peut prétendre qu’elle a franchi la limite de son bannissement."),
-    line("{player}", "Tu viens souvent jusqu’ici ?"),
-    line("Naïah", "Assez près pour me souvenir. Assez loin pour qu’Allenna n’ait pas à composer un discours sur les frontières, la discipline et mon goût déplorable pour les effractions."),
-    line("Narration", "Elle sort de son sac une petite miniature d’Amanea, enveloppée dans un morceau de tissu. Naïah la pose contre une pierre sans lever les yeux vers le visage peint."),
-    line("Naïah", "Tout le royaume sait de qui je suis la fille. Les serviteurs le savent, les soldats le savent, même les ivrognes du port ont une théorie."),
-    line("Naïah", "Elle, pourtant, ne prononce jamais mon nom devant moi. Elle détourne les yeux avant que je puisse décider si j’allais la supplier, l’insulter ou simplement passer mon chemin."),
-    line("{player}", "Hylee pense qu’il existe une raison."),
-    line("Naïah", "Hylee pense qu’un dessert chaud peut négocier une trêve entre deux armées. Le pire, c’est qu’elle finirait probablement par réussir."),
-    line("Narration", "Son rire ne vient pas. Elle gratte du bout de l’ongle une ancienne marque sur le petit cadre."),
-    line("Naïah", "Une raison n’élève pas un enfant. Le silence non plus. Moi, j’ai eu les deux et beaucoup de temps pour devenir créative."),
-  ], [
-    choice("n2-s", "Vous asseoir près du sentier et lui laisser le choix de poursuivre ou de partir.", "sangFroid", [line("Narration", "Vous vous asseyez contre une pierre, assez loin de la miniature pour ne pas l’obliger à la regarder. Naïah reste debout."), line("Naïah", "Tu devrais dire quelque chose de sage. C’est généralement ici que les gens deviennent très sages et très inutiles."), line("{player}", "Je peux aussi me taire de manière remarquable."), line("Naïah", "Prouve-le."), line("Narration", "Vous obéissez. Une minute passe, puis deux. Naïah examine le sentier, comme pour vérifier que vous pourriez partir quand vous le souhaitez."), line("Naïah", "C’est un piège assez médiocre. La forêt entière est ouverte."), line("{player}", "Je sais."), line("Narration", "Elle s’assied finalement à côté de vous, sans poser la tête sur votre épaule ; seulement son petit doigt contre le vôtre."), line("Naïah", "Ne t’habitue pas. Demain, je redeviens épouvantable."), line("{player}", "Demain seulement ?"), line("Narration", "Elle vous donne un coup d’épaule. Cette fois, son rire arrive.")], { stats: { sangFroid: 1 }, trust: 10, affection: 5, confluence: 3 }),
-    choice("n2-l", "« Ce qu’elle t’a fait explique certaines choses. Cela ne décide pas de ce que tu fais aux autres. »", "lucidite", [line("Naïah", "Magnifique. Je te montre la pire pièce de ma vie et tu y installes une leçon de morale."), line("{player}", "Tu préfères que je te dise que tout est permis parce que tu as souffert ?"), line("Naïah", "Ce serait pratique."), line("{player}", "Et insultant."), line("Narration", "Elle ouvre la bouche pour mordre, puis la referme. Son regard retourne à la marque sur le cadre."), line("Naïah", "Tu refuses donc de me pardonner d’avance."), line("{player}", "Je refuse de faire de toi une conséquence sans choix."), line("Narration", "La phrase l’atteint plus durement qu’un réconfort. Ses doigts cessent de gratter le bois."), line("Naïah", "C’est presque gentil. De travers, avec des bords coupants… mais presque."), line("{player}", "Je m’adapte à mon public."), line("Naïah", "Continue. Lentement.")], { stats: { lucidite: 1 }, trust: 11, affection: 5, confluence: 3 }, { stat: "lucidite", value: 7 }),
-    choice("n2-r", "Laisser votre Résonance effleurer sa brume sans chercher à franchir ses défenses.", "resonance", [line("Narration", "Votre Résonance rencontre la brume au bord de sa manche. Elle se hérisse d’abord en petites dents, puis hésite."), line("Naïah", "Elle pourrait te mordre."), line("{player}", "Elle attend ton ordre."), line("Naïah", "Ou elle juge ton goût."), line("Narration", "La brume glisse finalement autour de vos doigts. Au lieu d’un monstre, elle façonne une tartelette minuscule et bancale."), line("{player}", "Hylee ?"), line("Naïah", "Ne prends pas cet air. J’avais faim, elle avait des tartes. C’était une transaction économique majeure."), line("{player}", "Qu’est-ce qu’elle a demandé en échange ?"), line("Narration", "La fausse tartelette s’affaisse. Naïah fixe vos mains jointes à travers le brouillard."), line("Naïah", "Rien. C’est précisément ce qui rend l’histoire suspecte."), line("Narration", "La brume ne vous mord pas. Naïah ne la rappelle pas non plus.")], { stats: { resonance: 1 }, trust: 8, affection: 7, desire: 2, confluence: 4 }),
-  ]),
-  routeScene("naiah", 3, 17, "Une reine sans public", "forbidden", "forbidden_forest", "thinking", [
-    line("Narration", "Naïah vous conduit dans une alcôve dissimulée sous les racines. Avant de vous laisser entrer, elle vérifie trois sceaux, déplace un quatrième qui n’existait pas et menace une fougère de représailles si elle répète quoi que ce soit."),
-    line("{player}", "La fougère est-elle fiable ?"),
-    line("Naïah", "Absolument pas. Elle travaille pour les limaces."),
-    line("Narration", "À l’intérieur, aucune ombre ne l’acclame. Sa couronne repose dans un bol, près de deux dagues, d’un paquet de tartelettes et d’un carnet rempli d’une écriture minuscule."),
-    line("Naïah", "J’ai fait une liste de ce que je suis censée être : reine, arme, fille indigne, catastrophe forestière, cauchemar d’Allenna… Celui-là est souligné trois fois."),
-    line("{player}", "C’est toi qui as écrit la liste."),
-    line("Naïah", "Évidemment. Je ne délègue pas ma crise identitaire."),
-    line("Narration", "Elle referme le carnet, mais garde un doigt entre les pages pour pouvoir fuir dans l’ironie à la première occasion."),
-    line("Naïah", "Quand je retire tout cela, je ne sais pas très bien ce qui reste. Et je déteste ne pas savoir avant les autres."),
-    line("Naïah", "Alors regarde. Mais si tu réponds “une belle âme”, je te transforme en tabouret."),
-  ], [
-    choice("n3-l", "Nommer sans adoucir ce que vous avez réellement vu d’elle.", "lucidite", [line("{player}", "Il reste quelqu’un de curieux, cruel quand elle a peur, généreux quand personne ne regarde et beaucoup trop fier de ses propres pièges."), line("Naïah", "Mes pièges sont excellents."), line("{player}", "Tu es aussi capable de corriger un plan en trois secondes et de bouder trois heures si personne ne remarque que tu avais raison."), line("Naïah", "Deux heures. Trois serait immature."), line("Narration", "Elle compte les qualificatifs sur ses doigts, s’arrête à “généreux” et vous lance un regard soupçonneux."), line("Naïah", "Tu gardes même les parties laides."), line("{player}", "Elles sont à toi. Elles ne sont pas tout ce que tu es."), line("Narration", "Naïah approche ses mains de votre visage, puis les détourne au dernier moment pour vous voler une miette sur la joue."), line("Naïah", "Très bien. Pas de tabouret."), line("{player}", "Une déclaration bouleversante."), line("Naïah", "Ne la gâche pas. J’allais presque te toucher tendrement.")], { stats: { lucidite: 1 }, trust: 9, affection: 7, confluence: 5 }),
-    choice("n3-a", "« Il reste une femme qui me plaît terriblement et m’inquiète régulièrement. »", "audace", [line("Naïah", "Voilà une déclaration presque parfaite."), line("{player}", "Presque ?"), line("Naïah", "Tu aurais dû commencer par “terriblement”, marquer une pause, puis t’agenouiller. La mise en scène compte."), line("Narration", "Vous posez un genou au sol avec une solennité excessive. Naïah vous regarde faire, ravie, jusqu’à ce que vous saisissiez le paquet de tartelettes derrière elle."), line("{player}", "Terriblement affamé·e."), line("Naïah", "Trahison."), line("Narration", "Elle se jette sur vous pour récupérer son butin. La lutte se termine contre les coussins, son rire près de votre bouche et la tartelette écrasée entre vos mains."), line("Naïah", "Tu m’inquiètes aussi, tu sais."), line("{player}", "Pourquoi ?"), line("Naïah", "Parce que j’oublie parfois de prévoir ce que tu vas faire. Recommence.")], { stats: { audace: 1 }, affection: 9, trust: 5, desire: 7, confluence: 5 }),
-    choice("n3-s", "Lui rendre la question : elle doit pouvoir se nommer sans emprunter votre regard.", "sangFroid", [line("{player}", "J’ai ma réponse. Mais si je la donne à ta place, tu vas l’utiliser comme une nouvelle couronne."), line("Naïah", "C’est faux. Elle deviendrait peut-être un sceptre."), line("Narration", "Elle rouvre son carnet. Trois réponses sont déjà écrites, chacune rayée avec une violence différente."), line("{player}", "Tu avais préparé cette conversation."), line("Naïah", "Je prépare toutes les conversations importantes. Ensuite les gens disent n’importe quoi et ruinent mon travail."), line("Narration", "Elle laisse retomber le carnet sur ses genoux."), line("Naïah", "Il reste quelqu’un qui veut être aimée et qui, lorsqu’on l’aime, cherche aussitôt la trappe sous le tapis."), line("{player}", "Tu en as placé une ?"), line("Naïah", "Deux. Tu es assis·e entre les deux."), line("Narration", "Vous ne bougez pas. Elle attend, puis vient poser son épaule contre la vôtre."), line("Naïah", "Voilà. C’était la bonne réponse. Je déteste que ce soit aussi simple."), line("{player}", "Tu peux compliquer la suite."), line("Naïah", "Compte sur moi.")], { stats: { sangFroid: 1 }, trust: 10, affection: 6, desire: 3, confluence: 5 }),
-  ]),
-  routeScene("naiah", 4, 23, "Pas une victoire sur elle", "forbidden", "bedroom", "smirk", [
-    line("Narration", "Dans son refuge, Naïah ferme un coffre, dépose sa couronne de brume dessus et claque deux fois des doigts. La porte violette disparaît ; les ombres quittent les murs ; même le parfum sucré qui accompagne ses illusions se dissipe."),
-    line("{player}", "Tu viens de désenchanter toute la pièce ?"),
-    line("Naïah", "Oui. C’est affreusement terne. Les murs ont besoin de moi."),
-    line("Narration", "Elle s’assied au bord du lit, les mains bien visibles, et tapote nerveusement le bois avec un ongle. Le geste trahit ce que son sourire essaie encore de maquiller."),
-    line("Naïah", "J’ai passé des années à vouloir tout ce qu’elle refusait de me donner. Le pouvoir. Le regard des autres. La preuve que je pouvais être désirée là où elle ne voyait qu’une faute."),
-    line("Naïah", "Je ne veux pas faire de toi une médaille gagnée contre Amanea. Ce serait insultant pour toi… et franchement décevant pour mon ego. Je mérite une victoire qui ne dépend pas d’elle."),
-    line("{player}", "Et qu’est-ce que tu veux, alors ?"),
-    line("Narration", "Naïah cesse de sourire. Pour une fois, elle ne cherche pas la réponse sur votre visage avant de donner la sienne."),
-    line("Naïah", "Toi. Sans brume dans ta tête, sans porte verrouillée et sans tour assez joli pour rendre un refus difficile."),
-    line("Naïah", "Je pourrais tricher. Je ne le ferai pas. Alors choisis vite avant que cette honnêteté me donne de l’urticaire."),
-  ], [
-    choice("n4-l", "Vérifier ensemble ce qui est réellement désactivé et ce qui reste possible.", "lucidite", [line("{player}", "Pas d’illusion, pas d’influence, pas de porte qui se referme. Et si l’un de nous hésite, on s’arrête."), line("Naïah", "Tu as oublié : pas de métamorphose surprise, pas de double de brume et pas de voix volée."), line("{player}", "C’était prévu ?"), line("Naïah", "J’ai préparé une liste. La moitié est très créative."), line("Narration", "Elle vous la montre. Toutes les possibilités sont barrées, y compris “faire apparaître un orchestre au moment opportun”."), line("Naïah", "Il reste mes mots, mes mains et mon remarquable talent naturel."), line("{player}", "Modeste."), line("Naïah", "La magie est coupée, pas ma lucidité."), line("Narration", "Vous confirmez votre choix. Son souffle se brise une seconde avant qu’elle ne vous tende la main."), line("Naïah", "Alors viens. Et continue de me parler, même si c’est pour te moquer de la liste.")], { stats: { lucidite: 1 }, affection: 10, trust: 12, desire: 8, confluence: 6 }, { stat: "lucidite", value: 9 }),
-    choice("n4-s", "« Je te choisis, tant que je reste libre de te choisir à chaque instant. »", "sangFroid", [line("Naïah", "C’était presque romantique. Puis tu as ajouté une condition raisonnable."), line("{player}", "Tu peux encore refuser."), line("Naïah", "Je pourrais. Je pourrais aussi te faire attendre cinq minutes pour me venger de ton calme."), line("Narration", "Elle tient exactement trois secondes avant de tendre la main."), line("Naïah", "Très bien. Sois libre ici. Même de changer d’avis. Même de rire si je fais quelque chose de terriblement maladroit."), line("{player}", "Tu fais des choses maladroites ?"), line("Naïah", "Jamais. C’était un test et tu viens d’échouer."), line("Narration", "Vous prenez sa main. Elle vous attire à mi-distance, puis s’arrête pour vous laisser parcourir le reste."), line("Naïah", "Recommence. Cette réponse-là m’intéresse davantage.")], { stats: { sangFroid: 1 }, affection: 11, trust: 11, desire: 8, confluence: 6 }),
-    choice("n4-a", "« Sans magie ? Tu prends un risque : je pourrais t’aimer pour de vrai. »", "audace", [line("Naïah", "C’est exactement le genre de menace que j’espérais."), line("Narration", "Elle se lève d’un bond, vous saisit par le col et s’arrête à un souffle de votre bouche."), line("Naïah", "Tu m’aimes déjà un peu. J’ai des preuves, des témoins et un carnet très bien tenu."), line("{player}", "Voilà qui ressemble à une tentative d’influence."), line("Naïah", "Non. Seulement à de l’arrogance sans assistance magique."), line("Narration", "Son regard descend vers vos lèvres, mais elle ne réduit pas la distance."), line("Naïah", "Dis-le."), line("{player}", "Oui, Naïah."), line("Narration", "Elle vous embrasse en riant, s’écarte juste assez pour vérifier votre visage, puis revient avec beaucoup moins de spectacle et beaucoup plus de soin."), line("Naïah", "Parfait. Si cela tourne au désastre, je nierai avoir été sincère."), line("{player}", "Je garderai la liste."), line("Naïah", "Alors cela tournera forcément au désastre.")], { stats: { audace: 1 }, affection: 12, trust: 8, desire: 11, confluence: 6 }),
-  ], true),
-
+  ...NAIAH_ROUTES,
   // LINEVA
   routeScene("lineva", 0, 1, "Le quai qui tient encore", "forthaven", "forthaven", "stern", [
     line("Narration", "L’aube qui suit le départ de Draven trouve Forthaven déjà au travail. Sur le quai militaire, Lineva vérifie les équipes pendant que trois officiers lui demandent des ordres contradictoires."),
@@ -1224,17 +1149,16 @@ export const ROUTE_SCENES: RouteScene[] = [
 ];
 
 /**
- * La plupart des anciennes routes conservent encore leur alternance avec les
- * confidences. Lineva inaugure la structure relationnelle refondue : son arc
- * principal dépend de l’histoire, de la scène précédente et du niveau de lien,
- * tandis que ses confidences restent entièrement facultatives.
+ * Les routes refondues dépendent de leur scène d'introduction, de l'étape
+ * précédente et du niveau de lien. Leurs confidences restent facultatives et
+ * n'interrompent jamais l'arc principal.
  */
 export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
   hylee: [],
   remerii: [],
   iriana: ["knows_iriana_mother_tenderness", "knows_iriana_tia_control", "knows_iriana_alamma_abuse", "knows_iriana_mother_death"],
   valurn: ["knows_valurn_bhaal_childhood", "knows_valurn_bellirith_past", "knows_valurn_artifact_search", "knows_valurn_true_abandonment"],
-  naiah: ["knows_naiah_tartlets", "knows_naiah_exile", "knows_naiah_surpass_amanea", "knows_naiah_maternal_rejection"],
+  naiah: [],
   lineva: ["knows_lineva_scars", "knows_lineva_draven_childhood", "knows_lineva_forthaven_burden", "knows_lineva_mother_dead"],
   saidin: ["knows_saidin_remerii_childhood", "knows_saidin_time_philosophy", "knows_saidin_fear_for_remerii", "knows_saidin_silver_eyes"],
   bellirith: ["knows_bellirith_bhaal_family", "knows_bellirith_human_past", "knows_bellirith_stasis", "knows_bellirith_mortal_death"],
@@ -1245,7 +1169,7 @@ export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
 };
 
 export function routeKnowledgeRequirements(scene: Pick<RouteScene, "character" | "stage">): string[] {
-  if (["lineva", "allenna", "hylee", "remerii"].includes(scene.character)) return [];
+  if (["lineva", "allenna", "hylee", "remerii", "naiah"].includes(scene.character)) return [];
   if (scene.stage <= 0) return [];
   const knowledge = ROUTE_KNOWLEDGE_ORDER[scene.character]?.[scene.stage - 1];
   return knowledge ? [knowledge] : [];
@@ -1266,6 +1190,11 @@ export function routeFlagRequirements(scene: Pick<RouteScene, "id">): string[] {
 }
 
 export const ROUTE_HISTORY_REQUIREMENTS: Record<string, readonly string[]> = {
+  "naiah-0": ["campaign-naiah-promise"],
+  "naiah-1": ["naiah-0"],
+  "naiah-2": ["naiah-1"],
+  "naiah-3": ["naiah-2"],
+  "naiah-4": ["naiah-3"],
   "remerii-0": ["hylee-0"],
   "remerii-1": ["remerii-0"],
   "remerii-2": ["remerii-1"],

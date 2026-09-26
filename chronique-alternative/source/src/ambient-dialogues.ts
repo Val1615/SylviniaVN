@@ -1,4 +1,5 @@
 import { HYLEE_AMBIENT_LINES } from "./hylee-ambient";
+import { NAIAH_AMBIENT_LINES } from "./naiah-ambient";
 import { REMERII_AMBIENT_LINES } from "./remerii-ambient";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 
@@ -234,98 +235,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     ], { mood: "amused" }),
   ],
 
-  naiah: [
-    scene("naiah-illusions", "La troisième Naïah", "Trois Naïah tournent autour de vous. « Une seule est vraie. Les deux autres sont bien plus polies. »", [
-      N("nai-trois-r", "Saluer celle dont l’ombre respire au même rythme que la forêt.", "resonance", "Tu reconnais même mes silences. C’est presque inconvenant.", { trust: 2, affection: 1 }),
-      N("nai-trois-a", "Embrasser la joue de l’illusion la plus insolente.", "audace", "Mauvaise réponse. Excellente méthode. Recommence sur la vraie.", { affection: 2, desire: 2 }),
-      N("nai-trois-l", "Refuser de choisir tant qu’elle ne cesse pas le jeu.", "lucidite", "Tu es beaucoup moins manipulable que prévu. Heureusement, tu restes amusant·e.", { trust: 3 }),
-    ], { mood: "smirk" }),
-    scene("naiah-baies", "Les baies violettes", "Naïah vous tend une poignée de baies inconnues. « Elles sont peut-être délicieuses. Elles sont peut-être venimeuses. Ce suspense rend le goûter plus vivant. »", [
-      N("nai-baie-r", "Demander à la forêt ce qu’elle en pense.", "resonance", "Les racines te répondent avant moi. Trahison végétale… Elles sont seulement très acides.", { trust: 3 }),
-      N("nai-baie-l", "Observer qu’elle en a déjà mangé sans illusion active.", "lucidite", "Tu regardes mes lèvres pour des raisons beaucoup trop raisonnables.", { trust: 2, affection: 2 }),
-      N("nai-baie-a", "En manger deux sans cesser de la regarder.", "audace", "Soit tu me fais confiance, soit tu aimes le danger. Ne réponds pas, je préfère les deux.", { affection: 3, desire: 1 }),
-    ], { locations: ["forbidden"], mood: "smirk" }),
-    scene("naiah-noms", "Les noms de la forêt", "Naïah pose la main sur un tronc couvert de marques. « Chaque arbre porte un nom. Certains en ont changé trois fois parce qu’ils s’ennuyaient. Celui-ci refuse de me dire le sien depuis un siècle. »", [
-      N("nai-arbre-r", "Écouter sans chercher à traduire immédiatement.", "resonance", "Tu as compris : son silence est peut-être son nom. J’aurais dû y penser plus tôt.", { trust: 4 }),
-      N("nai-arbre-a", "Lui inventer un nom ridiculement noble.", "audace", "“Seigneur Écorce de la Troisième Branche” ? Il vient de laisser tomber une feuille sur toi. Je crois que c’est un duel.", { affection: 3 }),
-      N("nai-arbre-l", "Demander pourquoi son refus compte autant pour elle.", "lucidite", "Parce qu’il est resté ici sans jamais m’appartenir. J’aimerais savoir comment il fait.", { trust: 4 }),
-    ], { locations: ["forbidden"], mood: "thinking" }),
-    scene("naiah-ennui", "Une heure sans spectacle", "Naïah s’allonge dans l’herbe. Aucune illusion ne danse autour d’elle. « Je tente l’ennui. On m’a dit que les gens normaux le pratiquaient régulièrement. Pour l’instant, c’est très lent. »", [
-      N("nai-ennui-s", "Vous allonger près d’elle sans chercher à divertir.", "sangFroid", "C’est moins vide quand tu ne t’agites pas pour le remplir. Étrange.", { trust: 4, affection: 1 }),
-      N("nai-ennui-a", "« Je peux rendre cela pire en te racontant les règlements impériaux. »", "audace", "Menace acceptée. Si je m’endors, tu devras rester comme oreiller.", { affection: 3 }),
-      N("nai-ennui-l", "Remarquer qu’elle vérifie si votre présence survit sans mise en scène.", "lucidite", "Je déteste quand tu vois le test avant son résultat. …Tu es toujours là, pourtant.", { trust: 4 }),
-    ], { minStage: 1, mood: "neutral" }),
-    scene("naiah-oiseau", "L’oiseau qui ne chante pas", "Un oiseau d’illusion sautille sur le poignet de Naïah. Ses plumes semblent réelles, mais son bec s’ouvre sans produire un son. « Je peux imiter chaque couleur. Pas le chant. Je suppose que je n’ai jamais écouté assez longtemps sans vouloir améliorer ce que j’entendais. »", [
-      N("nai-oiseau-r", "Écouter avec elle les vrais oiseaux avant de toucher à l’illusion.", "resonance", "Celui-là manque une note et reprend quand même. J’aurais corrigé l’erreur. Maintenant je crois que c’est elle qui le rend vivant.", { trust: 4 }),
-      N("nai-oiseau-a", "Prêter à l’oiseau une voix héroïque terriblement fausse.", "audace", "Enfin ! Le grand rapace des brumes exige des miettes et la chute de ses ennemis ! …Ne t’arrête surtout pas.", { affection: 4 }),
-      N("nai-oiseau-l", "Lui demander si l’illusion a réellement besoin d’être parfaite.", "lucidite", "Non. Peut-être que je cherchais surtout à prouver que rien ne m’échappait. Il peut rester silencieux et être le mien.", { trust: 4 }),
-    ], { minStage: 1, mood: "thinking" }),
-    scene("naiah-tasse", "La tasse ébréchée", "Naïah fait apparaître une coupe translucide incrustée de gemmes, puis boit dans une vieille tasse fêlée. « Celle-ci impressionne les visiteurs. L’autre garde le thé chaud. Devine laquelle tout le monde me demande de servir. »", [
-      N("nai-tasse-l", "Choisir la tasse réelle sans prétendre qu’elle est secrètement plus belle.", "lucidite", "Merci. Elle est pratique, un peu laide et je l’aime ainsi. Tout n’a pas besoin de devenir une leçon sur la beauté intérieure.", { trust: 4 }),
-      N("nai-tasse-a", "Réclamer la coupe illusoire et feindre d’y boire avec majesté.", "audace", "Attention, grand souverain : ton thé n’existe pas. En revanche, ta moustache de mousse est splendide.", { affection: 4 }),
-      N("nai-tasse-r", "Donner juste assez de substance à l’illusion pour qu’elle porte une gorgée.", "resonance", "Un compromis entre apparence et usage… Elle restera fragile, mais cette fois je ne le cacherai pas.", { trust: 3, confluence: 1 }),
-    ], { minStage: 1, mood: "smirk" }),
-    scene("naiah-permission", "Une farce avec permission", "Naïah dissimule quelque chose derrière son dos. « J’ai préparé une illusion parfaitement inoffensive. Anciennement, je l’aurais déjà déclenchée. Maintenant je suis censée demander : as-tu envie d’être surpris·e ? C’est moins spontané, mais beaucoup plus compliqué. »", [
-      N("nai-farce-a", "Accepter sans demander le contenu.", "audace", [line("Narration", "Une couronne de minuscules Naïah apparaît autour de votre tête et vous acclame."), line("Naïah", "Elles voteront toutes pour toi, sauf celle de gauche. Elle est dans l’opposition.")], { affection: 4 }),
-      N("nai-farce-l", "Demander la nature de la surprise avant de consentir.", "lucidite", "Visuelle, brève, aucun souvenir modifié et tu peux l’arrêter d’un mot. Oui, détailler n’enlève rien au jeu. J’apprends.", { trust: 5 }),
-      N("nai-farce-s", "Refuser aujourd’hui et proposer qu’elle repose la question une autre fois.", "sangFroid", "Et le monde ne s’effondre pas. Mon idée ne devient pas mauvaise, ton non ne devient pas une offense. C’était donc vraiment possible.", { trust: 5 }),
-    ], { minStage: 1, mood: "smirk" }),
-    scene("naiah-chemin", "Le quatrième sentier", "Trois chemins identiques s’ouvrent entre les arbres. Naïah sourit. « Le premier est sûr, le deuxième joli, le troisième mène exactement là où tu prétends ne pas vouloir aller. Je te laisse choisir — et cette fois ils font réellement ce que j’annonce. »", [
-      N("nai-chemin-l", "Chercher pourquoi elle n’a pas décrit le sentier derrière vous.", "lucidite", "Le quatrième : repartir. Tu vérifies même les libertés que je ne mets pas en scène. C’est agaçant et très juste.", { trust: 4 }),
-      N("nai-chemin-a", "Prendre le troisième en assumant votre curiosité.", "audace", "Enfin une mauvaise idée choisie en pleine connaissance de cause ! Viens, elle mène à une cascade qui juge les vêtements.", { affection: 4 }),
-      N("nai-chemin-s", "Lui demander lequel elle aimerait parcourir avec vous.", "sangFroid", "Le joli. Je sais, c’est presque décevant. Mais j’aimerais une promenade qui ne prouve rien.", { trust: 3, affection: 2 }),
-    ], { minStage: 1, mood: "thinking" }),
-    scene("naiah-excuse", "Une excuse sans brume", "Naïah garde les mains derrière le dos. « J’ai blessé quelqu’un hier. Je pourrais expliquer pourquoi, raconter mon abandon, faire pleurer toute la forêt… Mais ce serait encore une manière de demander qu’on me pardonne avant de réparer. »", [
-      N("nai-excuse-l", "L’aider à distinguer explication, responsabilité et réparation.", "lucidite", "Je peux raconter mon histoire sans en faire une quittance. D’accord. Je vais commencer par écouter la sienne.", { trust: 5 }),
-      N("nai-excuse-s", "Lui proposer de rester présente même si l’excuse est refusée.", "sangFroid", "Oui… Réparer ne garantit pas d’être reprise dans les bras. C’est peut-être pour cela que le geste compte.", { trust: 5, affection: 1 }),
-      N("nai-excuse-a", "« Pour une fois, surprends tout le monde en étant simplement honnête. »", "audace", "Cruel. J’avais préparé une entrée dramatique. Très bien, je laisserai même les violons imaginaires ici.", { affection: 3, trust: 2 }),
-    ], { minStage: 2, mood: "sad" }),
-    scene("naiah-couronne", "La couronne de branches", "Une couronne de branches flotte devant Naïah. « Elle apparaît quand j’ai peur qu’on ne m’écoute plus. C’est embarrassant : même ma magie transforme mes blessures en accessoires de théâtre. »", [
-      N("nai-couronne-r", "Laisser la couronne se défaire sans arracher la magie.", "resonance", "Tu ne me l’enlèves pas. Tu attends que je n’en aie plus besoin. Reste près de moi pendant qu’elle tombe.", { trust: 5, affection: 2 }),
-      N("nai-couronne-l", "« Être écoutée n’exige pas d’être obéie. »", "lucidite", "Je sais. Enfin… je l’apprends. C’est une différence terriblement vaste.", { trust: 5 }),
-      N("nai-couronne-a", "Poser une branche de travers comme une seconde couronne.", "audace", "Oh, un souverain rival. Ton règne sera court, mais probablement très divertissant.", { affection: 4 }),
-    ], { minStage: 2, mood: "thinking" }),
-    scene("naiah-jalousie", "La brume indiscrète", "La brume se resserre autour de votre poignet lorsque vous mentionnez une autre personne. Naïah la dissipe aussitôt. « Elle a réagi avant moi. Ce n’est pas une excuse. »", [
-      N("nai-jal-s", "Reconnaître qu’elle a interrompu elle-même le geste.", "sangFroid", "Tu remarques l’effort sans prétendre que le risque n’existait pas. Merci.", { trust: 5 }),
-      N("nai-jal-l", "Lui demander ce qu’elle aurait voulu dire à la place de la brume.", "lucidite", "Que j’ai peur d’être oubliée dès que tu regardes ailleurs. Voilà. C’est moins élégant, mais ça ne t’attache pas.", { trust: 5, affection: 2 }),
-      N("nai-jal-a", "« Tu peux demander mon attention. Pas la capturer. Essaie. »", "audace", "Regarde-moi, alors. Parce que j’en ai envie… et parce que tu peux encore dire non.", { affection: 4, desire: 2, trust: 2 }),
-    ], { minStage: 3, mood: "sad" }),
-    scene("naiah-matin", "Un visage sans illusion", "Au matin, Naïah ne porte aucun enchantement. « Je ressemble à quelqu’un qui a peu dormi, beaucoup pensé et regretté d’avoir banni les miroirs. Tu peux rire, mais sans magie je viserai mal en te poursuivant. »", [
-      N("nai-matin-a", "« Tu es terrifiante. Surtout cette mèche. »", "audace", "Cette mèche est désormais ton ennemie personnelle. Approche, elle exige vengeance.", { affection: 5 }),
-      N("nai-matin-l", "Lui dire précisément ce que vous trouvez beau sans idéaliser sa fatigue.", "lucidite", "Tu ne transformes pas mes cernes en poésie. Tu me regardes quand même avec tendresse. C’est mieux.", { trust: 4, affection: 3 }),
-      N("nai-matin-s", "Lui tendre de l’eau et rester près d’elle en silence.", "sangFroid", "Je croyais que le matin sans spectacle serait humiliant. Avec toi, il est seulement… ordinaire. J’aime bien.", { trust: 5, affection: 2 }),
-    ], { minStage: 4, periods: ["aube", "matin"], mood: "thinking" }),
-    scene("naiah-route", "La brume hors de chez elle", "À la halte du Fleuve bleu, la brume de Naïah s’accroche aux roseaux comme si elle regrettait déjà la forêt. « Elle me suit mal hors de mon territoire. Moi aussi, apparemment. Ne prends pas cet aveu pour une invitation à devenir rassurant·e. »", [
-      N("nai-route-s", "Lui laisser le silence et surveiller simplement la route.", "sangFroid", "Tu peux rester sans remplir chaque vide. C’est agaçant de constater à quel point cela aide.", { trust: 3 }),
-      N("nai-route-l", "Nommer ce qui demeure sous son contrôle : la destination et le droit de repartir.", "lucidite", "Deux choix réels. C’est peu, mais ce sont les miens. Je vais les garder.", { trust: 3, affection: 1 }),
-      N("nai-route-a", "Défier la brume de trouver un chemin plus élégant que le vôtre.", "audace", "Elle accepte. Moi aussi. Si nous nous perdons, je nierai avoir participé.", { affection: 3 }),
-    ], { locations: ["river-halt"], mood: "thinking" }),
-    scene("naiah-court", "Le siège qu’elle refuse", "Dans les ruines de la frontière, Naïah a façonné en brume une copie du siège réservé à sa lignée. « Ils l’ont gardé dans leur salle pour me rappeler ce que je devrais être. Moi, je peux le faire disparaître sans leur demander la permission. »", [
-      N("nai-court-s", "Rester debout à ses côtés sans occuper le siège.", "sangFroid", "Tu ne remplis pas le vide à ma place. C’est exactement pour cela que ta présence n’en est pas un autre.", { trust: 3 }),
-      N("nai-court-l", "Demander ce qu’elle choisirait d’emporter de cette ville.", "lucidite", "Deux noms. Une vieille chanson. Aucun trône. C’est une réponse étonnamment courte.", { trust: 2, affection: 1 }),
-      N("nai-court-a", "Vous asseoir sur une marche : « Celle-ci semble moins autoritaire. »", "audace", "Et pourtant tu viens de fonder une cour rivale. Je demande le poste de conseillère imprévisible.", { affection: 3 }),
-    ], { locations: ["forbidden"], mood: "thinking" }),
-    scene("naiah-lignage", "Ce que les pierres prétendent savoir", "Dans les ruines, Naïah déplie un ancien morceau d’étoffe portant le blason familial. « À Akuhn’Nabad, les murs racontent mon histoire comme si elle leur appartenait. Ils oublient toujours les chapitres où je leur ai désobéi. »", [
-      N("nai-lignage-l", "Lui demander quel chapitre elle écrirait à la place.", "lucidite", "Celui où je reviens sans redevenir leur arme. Et celui où je repars parce que je l’ai décidé.", { trust: 3, affection: 1 }),
-      N("nai-lignage-s", "Ne pas toucher au blason et lui laisser choisir la distance.", "sangFroid", "Tu ne traites pas chaque cicatrice comme une porte à ouvrir. Cela me donne presque envie de te montrer la clé.", { trust: 3 }),
-      N("nai-lignage-a", "Ajouter à voix basse : « Chapitre suivant : elle change les serrures. »", "audace", "Et garde toutes les clés. Voilà une biographie enfin exacte.", { affection: 3 }),
-    ], { locations: ["forbidden"], mood: "thinking" }),
-    scene("naiah-caillou", "Le caillou parfaitement ordinaire", "Naïah ouvre la paume sur un petit caillou gris. « Il n’est ni maudit, ni illusoire, ni héritier d’un ancien royaume. Je l’ai ramassé parce qu’il me plaisait. Tu peux vérifier, mais tu risques de découvrir qu’il est seulement joli. »", [
-      N("nai-caillou-r", "Examiner sa Résonance et confirmer son absence totale de magie.", "resonance", "Rien du tout, n’est-ce pas ? C’est reposant. Pour une fois, le mystère est que je n’en ai ajouté aucun.", { trust: 3 }),
-      N("nai-caillou-l", "Lui demander ce qui lui plaît dans sa forme irrégulière.", "lucidite", "Il ne ressemble à rien de prévu. Et malgré cela, personne ne lui demande de changer. Oui… c’est probablement pour ça.", { trust: 3, affection: 1 }),
-      N("nai-caillou-a", "Déclarer le caillou conseiller royal des décisions inutiles.", "audace", "Il accepte la charge et exige qu’on ignore immédiatement son premier conseil. Un souverain prometteur.", { affection: 3 }),
-    ], { mood: "smirk" }),
-    scene("naiah-permission-simple", "Une magie qui attend", "Une lueur violette danse au bout des doigts de Naïah sans prendre forme. « J’ai une idée. Elle te concerne, donc je demande avant : est-ce que tu as envie d’une surprise, d’une démonstration, ou de rien du tout ? »", [
-      N("nai-attend-s", "Choisir de ne rien voir et rester malgré tout avec elle.", "sangFroid", "Tu refuses le spectacle sans me refuser, moi. C’est encore une nuance que ma magie apprend lentement.", { trust: 4 }),
-      N("nai-attend-r", "Demander une démonstration dont vous pourrez interrompre la forme.", "resonance", "Une magie partagée, avec une sortie réelle. D’accord. Garde ta main près de la mienne et dis stop quand tu veux.", { trust: 3, confluence: 1 }),
-      N("nai-attend-a", "Accepter la surprise à condition qu’elle soit aussi surprise par votre réaction.", "audace", "Marché conclu. Enfin… pas un marché. Un jeu auquel nous venons tous les deux de dire oui.", { affection: 3 }),
-    ], { mood: "thinking" }),
-    scene("naiah-bruit", "Le bruit qu’elle ne transforme pas", "Naïah incline la tête vers un bruit lointain. Aucun décor ne surgit pour l’expliquer. « D’habitude, j’invente aussitôt une histoire plus intéressante. Aujourd’hui j’essaie d’écouter assez longtemps pour que le monde termine la sienne. »", [
-      N("nai-bruit-s", "Écouter avec elle sans proposer d’explication.", "sangFroid", "Tu laisses le silence garder sa place. Le monde parle moins fort quand personne ne tente de le séduire.", { trust: 3 }),
-      N("nai-bruit-l", "Distinguer les détails certains de ceux que votre imagination ajoute.", "lucidite", "Des pas, du métal, puis rien. C’est déjà beaucoup. Nous n’avons pas besoin d’y ajouter un monstre pour mériter d’être attentifs.", { trust: 3 }),
-      N("nai-bruit-a", "Inventer quand même une histoire, mais lui laisser décider si elle veut l’entendre.", "audace", "Tu demandes la permission même pour mentir joliment. Très bien : raconte. Je promets de ne pas améliorer la fin sans prévenir.", { affection: 3 }),
-    ], { mood: "neutral" }),
-  ],
+  naiah: NAIAH_AMBIENT_LINES,
 
   lineva: [
     scene("lineva-promenade", "La promenade inspectée", "Lineva a transformé une promenade en inspection des remparts. « Je sais. Vous aviez demandé une soirée sans travail. »", [

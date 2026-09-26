@@ -71,19 +71,11 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Lui proposer une alliance profonde et amicale, sans pacte amoureux.", "Aucune conquête, aucune dette, aucun lit promis. Vous rendez l’amitié presque scandaleuse ; j’accepte.", "lucidite"),
   ),
 
-  "naiah-0": R(C("Exiger qu’elle immobilise les branches avant d’accepter de jouer.", "Si tu veux une route parfaitement sage, prends celle qui sort de ma forêt. Ici, tu peux poser des limites sans m’ordonner de ne plus être moi.", "sangFroid")),
-  "naiah-1": R(C("Lui demander de supprimer toutes ses illusions pour prouver que la scène est sincère.", "Ma magie n’est pas automatiquement un mensonge. Demande ce qui est réel ; ne m’efface pas pour te rassurer.", "resonance")),
-  "naiah-2": R(C("Défendre Amanea en supposant que son silence doit cacher une bonne raison.", "Tu viens de lui offrir une explication tendre sans savoir ce qu’elle m’a laissé porter. Moi, tu ne m’as même pas encore demandé ce que cela a coûté.", "lucidite")),
-  "naiah-3": R(
-    C("La couronner par jeu avant qu’elle ait terminé d’expliquer pourquoi le public lui pèse.", "Je te parle de la fatigue d’être regardée comme un rôle et tu me rends déjà un autre décor à tenir.", "audace"),
-    C("Rester dans sa clairière en retirant toute attente romantique pour ce soir.", "Je vais bouder un peu. Mais tu peux rester sans que la forêt invente une suite à ta place.", "sangFroid"),
-    C("Lui dire que vous souhaitez être son ami, sans chercher une place auprès de la reine.", "Ça fait mal, mais moins qu’une illusion entretenue. Reviens comme toi ; je saurai apprendre ce chemin-là.", "lucidite"),
-  ),
-  "naiah-4": R(
-    C("Lui promettre qu’elle dépassera forcément Amanea si elle reste avec vous.", "Je ne veux pas devenir meilleure qu’elle pour mériter ton désir. Et toi, tu n’es pas le trophée qui prouvera ma victoire.", "audace"),
-    C("Lui demander de garder la porte ouverte tout en arrêtant la soirée avant l’intimité.", "D’accord. Aucune brume ne transformera ton pas en oui. Tu peux rester, partir, ou changer d’avis sans piège.", "sangFroid"),
-    C("Lui dire que votre lien doit demeurer une amitié réelle.", "Je préférerais une autre réponse. Je préfère encore davantage que tu me la donnes avant que j’invente un avenir qui n’existe pas.", "lucidite"),
-  ),
+  "naiah-0": R(C("Emporter la balise grise comme trophée sans lui demander à quoi elle sert.", "Repose-la. Tu viens de prendre la pièce qui indique à la brume où ne pas avaler les voyageurs. Mes jeux ont des pièges ; mes protections, elles, ont un travail.", "audace")),
+  "naiah-1": R(C("Lui demander de s’écarter et tenter de réaccorder vous-même les trois protections.", "Non. Tes mains peuvent tenir mes repères ; elles ne connaissent ni la forêt ni ce que ce nœud renvoie. M’aider ne signifie pas devenir mage à ma place.", "audace")),
+  "naiah-2": R(C("L’encourager à poursuivre l’interrogatoire tant que la peur du chef peut encore livrer des détails.", "Tu as vu que j’y prenais goût et tu as décidé d’en faire une méthode. Garde au moins assez de lucidité pour craindre ce que j’apprécie trop.", "lucidite")),
+  "naiah-3": R(C("Répéter l’insulte sur Allenna pour rendre sa colère plus utile contre le captif.", "Tu viens de reprendre la lame qui l’a touchée pour choisir où je devais frapper. Si tu veux une décision, propose-la. Ne te sers pas de ma famille comme d’une poignée.", "resonance")),
+  "naiah-4": R(C("Exiger qu’elle explique tout le réseau avant de déplacer la première borne.", "Le ravin n’attendra pas ton cours magistral. Je t’ai donné des gestes que tu peux accomplir sans magie ; décide maintenant si tu me fais assez confiance pour sauver ces gens avec moi.", "lucidite")),
 
   "lineva-0": R(C("Profiter du départ de Draven pour lui expliquer comment un continent devrait administrer Forthaven.", "Vous êtes ici depuis assez longtemps pour porter une caisse, pas pour redessiner ma chaîne de commandement. Commencez par le poids devant vous.", "lucidite")),
   "lineva-1": R(C("Insister pour conserver la Tour des Filets afin que son premier recul ne ressemble pas à une défaite.", "Si je sacrifie dix-neuf personnes pour protéger mon apparence, la tour ne sera plus une position. Ce sera mon monument à la connerie.", "audace")),
