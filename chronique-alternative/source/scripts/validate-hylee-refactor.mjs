@@ -326,11 +326,12 @@ try {
   const routeText = JSON.stringify(routes) + JSON.stringify(routes.map(r => relation.hyleeRelationBeat(r.id)));
   assert.doesNotMatch(routeText, /baiser|embrass|tempe contre|main se pose sur votre taille/iu);
   assert.doesNotMatch(JSON.stringify(ambient.AMBIENT_LINES.hylee), /baiser|embrass|tête contre votre épaule/iu);
-  const hyleeFood = confidences.HYLEE_CONFIDENCES.find(s => s.id === "secret-hylee-naiah-v2");
-  const naiahFood = heritages.SECRET_CONVERSATIONS.find(s => s.id === "secret-naiah-tartlets");
-  assert.match(JSON.stringify(hyleeFood), /nourriture de côté pour elle/);
-  assert.match(JSON.stringify(naiahFood), /Hylee m’en gardait/);
-  assert.doesNotMatch(JSON.stringify([hyleeFood, naiahFood]), /grenier|J’en apportais à Hylee|Elle t’en apportait/);
+  const hyleeNights = confidences.HYLEE_CONFIDENCES.find(s => s.id === "secret-hylee-naiah-nights");
+  const naiahNights = heritages.SECRET_CONVERSATIONS.find(s => s.id === "secret-naiah-hylee-nights");
+  assert.ok(hyleeNights && naiahNights, "les deux points de vue sur les nuits après le service doivent exister");
+  assert.match(JSON.stringify(hyleeNights), /après le dernier service|parlait|dansait/iu);
+  assert.match(JSON.stringify(naiahNights), /après le dernier service|parlait|dansait/iu);
+  assert.doesNotMatch(JSON.stringify([hyleeNights, naiahNights]), /grenier|tartelette|nourriture de côté|restes du service/iu);
   const forbidden = /votre Résonance|souffle arcanique|courant magique|Confluence révéler|sentir ma magie|motif magique/iu;
   assert.doesNotMatch(JSON.stringify(ambient.AMBIENT_LINES.hylee), forbidden);
   const source = await readFile(resolve(root, "src/page.tsx"), "utf8");
