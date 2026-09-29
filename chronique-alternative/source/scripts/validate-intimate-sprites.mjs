@@ -7,13 +7,15 @@ import { createServer } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const src = (relative) => path.join(root, "source", "src", relative);
-const asset = (character, mood) => path.join(root, "assets", "sprites-intimate", character, `${mood}.webp`);
+const extensions = { naiah: "png" };
+const asset = (character, mood) => path.join(root, "assets", "sprites-intimate", character, `${mood}.${extensions[character] || "webp"}`);
 
 const moods = {
   hylee: ["soft", "shy", "seductive", "tender", "teasing", "annoyed"],
   remerii: ["teasing", "soft", "inviting", "shy", "strict", "smirk"],
   allenna: ["seductive", "angry", "shy", "soft", "troubled", "stern"],
   lineva: ["teasing", "passionate", "pouting", "smirk", "annoyed", "soft"],
+  naiah: ["laugh", "soft", "teasing", "stern", "inviting", "smirk"],
 };
 
 function webpDeclaresAlpha(buffer) {
@@ -39,18 +41,21 @@ for (const [character, expressions] of Object.entries(moods)) {
   assert(expressions.includes("soft"), `${character}: fallback soft absent`);
   for (const expression of expressions) {
     const file = asset(character, expression);
-    assert(existsSync(file), `asset intime introuvable: ${character}/${expression}.webp`);
+    assert(existsSync(file), `asset intime introuvable: ${character}/${expression}.${extensions[character] || "webp"}`);
     const buffer = readFileSync(file);
     totalBytes += buffer.length;
     assert(buffer.length > 25_000, `${character}/${expression}: asset anormalement petit`);
-    assert(webpDeclaresAlpha(buffer), `${character}/${expression}: WebP sans canal alpha déclaré`);
+    if (character !== "naiah") assert(webpDeclaresAlpha(buffer), `${character}/${expression}: WebP sans canal alpha déclaré`);
 
     const identified = spawnSync("identify", ["-format", "%[channels]|%[opaque]", file], { encoding: "utf8" });
+    assert.equal(identified.status, 0, `${character}/${expression}: image placeholder illisible`);
     if (identified.status === 0) {
       const [channels, opaque] = identified.stdout.trim().split("|");
-      assert(channels.includes("a"), `${character}/${expression}: canal alpha non décodé`);
-      assert.equal(opaque.toLocaleLowerCase(), "false", `${character}/${expression}: alpha présent mais aucun pixel transparent`);
-      exactAlphaChecks += 1;
+      if (character !== "naiah") {
+        assert(channels.includes("a"), `${character}/${expression}: canal alpha non décodé`);
+        assert.equal(opaque.toLocaleLowerCase(), "false", `${character}/${expression}: alpha présent mais aucun pixel transparent`);
+        exactAlphaChecks += 1;
+      }
     }
   }
 }
@@ -71,9 +76,11 @@ assert(dialogue.includes("intimateMoods?: Partial<Record<string, string>>"), "mo
 
 assert(system.includes("withSoloIntimateMoods"), "pilotage des expressions solo absent");
 assert(system.includes("withGroupIntimateMoods"), "pilotage des expressions de groupe absent");
-assert(system.includes("[characters[0]]") && system.includes("[characters[1]]"), "les deux partenaires ne reçoivent pas de moods indépendants");
+assert(system.includes("characters.forEach") && system.includes("intimateMoods[characterId]"), "les partenaires disponibles ne reçoivent pas de moods indépendants");
 assert(system.includes('"group-date-hylee-remerii-free-day"'), "contextes Hylee/Remerii absents");
 assert(system.includes('"group-date-allenna-lineva-training"'), "contextes Lineva/Allenna absents");
+assert(system.includes('"group-date-hylee-naiah"'), "contexte Hylee/Naïah absent");
+assert(system.includes('"group-date-naiah-bellirith"'), "contexte Naïah/Bellirith absent");
 
 const intimateModalStart = page.indexOf("function InteractiveIntimacyModal");
 const intimateModalEnd = page.indexOf("function JobGameModal");
@@ -86,6 +93,7 @@ assert(intimateUi.includes("soloIntimateVisualState"), "orchestration CG → spr
 assert(intimateUi.includes("groupIntimateVisualState"), "orchestration CG → sprites trio absente");
 assert(!intimateUi.includes('step === "direction-lines" || step === "ending"'), "ancienne bascule nue dès l’entrée encore présente");
 assert(intimateUi.includes("recoverMissingIntimateSprite"), "fallback intime non utilisé par le rendu");
+assert(intimateUi.includes("useFirstIntimateSprite") && intimateUi.includes("useSecondIntimateSprite"), "le rendu de groupe ne gère pas les sprites intimes individuellement");
 assert(page.includes('modal.replay ? `${naiahContext ? "Souvenir de proximité" : "Souvenir intime"}'), "relecture intime ou de proximité non reliée à la même mise en scène");
 
 for (const [character, expressions] of Object.entries(moods)) {
@@ -103,14 +111,18 @@ const trioContexts = [
   "group-date-allenna-lineva-home",
 ];
 for (const context of trioContexts) assert(cgSource.includes(`"${context}"`), `${context}: CG duo non reliée`);
+for (const context of ["group-date-hylee-naiah", "group-date-naiah-bellirith"]) assert(cgSource.includes(`"${context}"`), `${context}: CG de révélation Naïah non reliée`);
 
 const cgFiles = [
   "hylee_reveal.jpg", "hylee_post_orgasm.jpg",
   "remerii_reveal.jpg", "remerii_post_orgasm.jpg",
   "lineva_reveal.jpg", "lineva_post_orgasm.jpg",
   "allenna_reveal.jpg", "allenna_post_orgasm.jpg",
+  "naiah_reveal.jpg", "naiah_post_orgasm.jpg",
   "hylee_remerii_reveal.jpg", "hylee_remerii_post_orgasm.jpg",
   "allenna_lineva_reveal.jpg", "allenna_lineva_post_orgasm.jpg",
+  "hylee_naiah_reveal.jpg", "hylee_naiah_post_orgasm.jpg",
+  "naiah_bellirith_reveal.jpg", "naiah_bellirith_post_orgasm.jpg",
 ];
 for (const file of cgFiles) assert(existsSync(path.join(root, "assets", "intimacy-cg", file)), `CG absente: ${file}`);
 
@@ -138,6 +150,24 @@ try {
   assert.equal(soloState("preliminaries").useIntimateSprites, true, "solo: sprite nu perdu pendant la scène");
   assert.equal(soloState("afterglow").cg?.phase, "post-orgasm", "solo: CG finale absente");
   assert.equal(cg.soloIntimateVisualState({ character: "hylee", mode: "tendre", surface: "route", step: "direction-lines", chapter: 8, narrativePhase: "afterglow" }).cg, undefined, "solo: CG chargée hors explicite");
+
+  const naiahState = (narrativePhase) => cg.soloIntimateVisualState({
+    character: "naiah", mode: "explicite", surface: "route", step: "direction-lines", chapter: 0, narrativePhase,
+  });
+  assert.equal(naiahState("device").useIntimateSprites, false, "Naïah: placeholder intime trop précoce");
+  assert.equal(naiahState("reaction").cg?.phase, "reveal", "Naïah: CG de révélation absente");
+  assert.equal(naiahState("reaction").useIntimateSprites, false, "Naïah: placeholder superposé à la CG");
+  assert.equal(naiahState("trust").useIntimateSprites, true, "Naïah: placeholder absent après la CG");
+  assert.equal(cg.soloIntimateVisualState({ character: "naiah", mode: "tendre", surface: "route", step: "direction-lines", chapter: 4, narrativePhase: "trust" }).useIntimateSprites, false, "Naïah: placeholder chargé hors explicite");
+
+  for (const pairId of ["group-date-hylee-naiah", "group-date-naiah-bellirith"]) {
+    const before = cg.groupIntimateVisualState({ pairId, mode: "explicite", step: "direction-lines", chapter: 2 });
+    const reveal = cg.groupIntimateVisualState({ pairId, mode: "explicite", step: "direction-lines", chapter: 3 });
+    const after = cg.groupIntimateVisualState({ pairId, mode: "explicite", step: "direction-lines", chapter: 4 });
+    assert.equal(before.useIntimateSprites, false, `${pairId}: placeholder trop précoce`);
+    assert.equal(reveal.cg?.phase, "reveal", `${pairId}: CG de révélation absente`);
+    assert.equal(after.useIntimateSprites, true, `${pairId}: placeholder absent après la CG`);
+  }
 
   const dedicatedCatalogs = [
     { character: "hylee", module: hyleeDates, route: "hyleeDateIntimacyRoutes", phase: "hyleeDateIntimacyPhase", contexts: ["date-hylee-glade", "date-hylee-lake", "home-hylee"], sexes: ["femme", "homme"] },
@@ -200,4 +230,4 @@ try {
   await server.close();
 }
 
-console.log(`Sprites intimes validés: 24 assets, 12 CG, ${exactAlphaChecks || 24} contrôles alpha, solo + 54 routes trio avec transition CG → sprites.`);
+console.log(`Sprites intimes validés: 30 assets dont 6 placeholders Naïah inchangés, 18 CG, ${exactAlphaChecks || 24} contrôles alpha, transitions CG → sprites solo et trio.`);

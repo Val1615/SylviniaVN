@@ -201,10 +201,11 @@ try {
 
   assert.equal(soloRoutes.intimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles individuelles génériques");
   assert.equal(homeRoutes.homeIntimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles génériques du logis");
-  assert.equal(intimateCg.SOLO_INTIMATE_CG.naiah, undefined, "aucune CG nue ne doit être affectée à Naïah");
-  assert.equal(intimateCg.DUO_INTIMATE_CG["group-date-hylee-naiah"], undefined);
-  assert.equal(intimateCg.DUO_INTIMATE_CG["group-date-naiah-bellirith"], undefined);
-  assert.equal(intimateSprites.hasIntimateSprites("naiah"), false, "les sprites intimes de Naïah n'existent pas encore et ne doivent pas être simulés");
+  assert.ok(intimateCg.SOLO_INTIMATE_CG.naiah.reveal.endsWith("assets/intimacy-cg/naiah_reveal.jpg"), "la CG doit introduire les placeholders Naïah");
+  assert.ok(intimateCg.DUO_INTIMATE_CG["group-date-hylee-naiah"].reveal.endsWith("assets/intimacy-cg/hylee_naiah_reveal.jpg"));
+  assert.ok(intimateCg.DUO_INTIMATE_CG["group-date-naiah-bellirith"].reveal.endsWith("assets/intimacy-cg/naiah_bellirith_reveal.jpg"));
+  assert.equal(intimateSprites.hasIntimateSprites("naiah"), true, "les placeholders intimes de Naïah doivent être enregistrés");
+  assert.ok(intimateSprites.intimateSpritePath("naiah", "laugh").endsWith("assets/sprites-intimate/naiah/laugh.png"));
 
   assert.deepEqual(groupProximity.validateNaiahGroupProximity(), { contexts: 2, combinations: 6, routes: 18, chapters: 576 });
   for (const pairId of groupProximity.NAIAH_GROUP_CONTEXT_IDS) for (const sex of ["femme", "homme", "intersexe"]) {
