@@ -86,7 +86,7 @@ assert(intimateUi.includes("soloIntimateVisualState"), "orchestration CG → spr
 assert(intimateUi.includes("groupIntimateVisualState"), "orchestration CG → sprites trio absente");
 assert(!intimateUi.includes('step === "direction-lines" || step === "ending"'), "ancienne bascule nue dès l’entrée encore présente");
 assert(intimateUi.includes("recoverMissingIntimateSprite"), "fallback intime non utilisé par le rendu");
-assert(page.includes('modal.replay ? "Souvenir intime'), "relecture intime non reliée à la même mise en scène");
+assert(page.includes('modal.replay ? `${naiahContext ? "Souvenir de proximité" : "Souvenir intime"}'), "relecture intime ou de proximité non reliée à la même mise en scène");
 
 for (const [character, expressions] of Object.entries(moods)) {
   const trackLine = system.match(new RegExp(`${character}: \\[([^\\]]+)\\]`))?.[1] || "";

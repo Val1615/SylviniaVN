@@ -15,13 +15,13 @@ const server = await createServer({
     name: "naiah-save-migration-test",
     enforce: "pre",
     transform(code, id) {
-      if (id.endsWith("/src/page.tsx")) return `${code}\nexport { hydrateGame };`;
+      if (id.endsWith("/src/page.tsx")) return `${code}\nexport { hydrateGame, createGame, DEFAULT_PLAYER, publicDateUnlocked, homeDateUnlocked };`;
     },
   }],
 });
 
 try {
-  const [game, heritage, ambient, social, campaign, world, closures, page] = await Promise.all([
+  const [game, heritage, ambient, social, campaign, world, closures, page, dates, dateWriting, housing, housingData, proximity, groupProximity, groups, soloRoutes, homeRoutes, intimateCg, intimateSprites] = await Promise.all([
     server.ssrLoadModule("/src/game-data.ts"),
     server.ssrLoadModule("/src/heritages-data.ts"),
     server.ssrLoadModule("/src/ambient-dialogues.ts"),
@@ -30,6 +30,17 @@ try {
     server.ssrLoadModule("/src/world-data.ts"),
     server.ssrLoadModule("/src/scene-closures.ts"),
     server.ssrLoadModule("/src/page.tsx"),
+    server.ssrLoadModule("/src/date-scenes.ts"),
+    server.ssrLoadModule("/src/naiah-dates.ts"),
+    server.ssrLoadModule("/src/housing-scenes.ts"),
+    server.ssrLoadModule("/src/housing-data.ts"),
+    server.ssrLoadModule("/src/naiah-date-intimacy.ts"),
+    server.ssrLoadModule("/src/naiah-group-proximity.ts"),
+    server.ssrLoadModule("/src/group-dates.ts"),
+    server.ssrLoadModule("/src/intimacy-routes.ts"),
+    server.ssrLoadModule("/src/home-intimacy-routes.ts"),
+    server.ssrLoadModule("/src/intimate-cg.ts"),
+    server.ssrLoadModule("/src/intimate-sprite-system.ts"),
   ]);
 
   const routes = game.ROUTE_SCENES.filter((scene) => scene.character === "naiah").sort((a, b) => a.stage - b.stage);
@@ -127,7 +138,7 @@ try {
   assert.ok(firstMeeting, "première rencontre de campagne manquante");
   assert.doesNotMatch(JSON.stringify(firstMeeting), /tartelette/iu);
 
-  const naiahSources = await Promise.all([read("src/naiah-relation.ts"), read("src/naiah-confidences.ts"), read("src/naiah-ambient.ts")]);
+  const naiahSources = await Promise.all([read("src/naiah-relation.ts"), read("src/naiah-confidences.ts"), read("src/naiah-ambient.ts"), read("src/naiah-dates.ts"), read("src/naiah-home-date.ts"), read("src/naiah-date-intimacy.ts"), read("src/naiah-group-proximity.ts")]);
   assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée");
 
   const migrated = page.hydrateGame({
@@ -148,7 +159,72 @@ try {
   assert.ok(migrated.rumors.some((entry) => entry.id === "rumor-forbidden-guardian"));
   assert.equal(migrated.letters.find((entry) => entry.id === "letter-naiah-margin")?.replyId, "naiah-verso");
 
-  console.log(`[Naïah] 5 quêtes autonomes · 4 confidences facultatives · 18 moments libres · 3 moments partagés · courrier/invitation · migration v17 validés.`);
+  const naiahDates = dates.DATE_SCENES.filter((date) => date.character === "naiah");
+  assert.deepEqual(naiahDates.map((date) => date.id), ["date-naiah-sanctuary", "date-naiah-akuhn"]);
+  assert.deepEqual(naiahDates.map((date) => date.title), ["Le jeu des apparences", "Au bord de son royaume"]);
+  assert.ok(naiahDates.every((date) => date.unlockStage === 5 && date.minDesire === 24));
+  assert.ok(naiahDates.every((date) => date.intro.length >= 12 && date.choices.length === 3), "les rendez-vous publics doivent disposer d'une vraie scène d'ouverture");
+  assert.deepEqual([...new Set(naiahDates.flatMap((date) => [date.choices, ...[0, 1, 2].map((round) => dateWriting.naiahDateBeat(date.id, round)?.choices || [])]).flat().map((choice) => choice.stat))].sort(), ["audace", "lucidite", "resonance", "sangFroid"]);
+
+  const homeProfile = housing.HOME_DATE_PROFILES.naiah;
+  assert.equal(homeProfile.title, "Une place qui n’était pas là");
+  assert.equal(homeProfile.rounds.length, 3);
+  assert.equal(homeProfile.rounds.flatMap((round) => round.options).length, 9);
+
+  const playable = page.createGame({ ...page.DEFAULT_PLAYER, name: "Test Naïah", sex: "femme" });
+  playable.relationships.naiah = { ...playable.relationships.naiah, met: true, stage: 5, affection: 60, trust: 60, desire: 30 };
+  playable.housing.propertyId = housingData.HOUSING_PROPERTIES[0].id;
+  assert.ok(naiahDates.every((date) => page.publicDateUnlocked(playable, date)), "les deux rendez-vous publics doivent être indépendamment accessibles");
+  playable.dateHistory = [naiahDates[0].id];
+  assert.ok(page.publicDateUnlocked(playable, naiahDates[1]), "le premier rendez-vous ne doit pas conditionner le second");
+  playable.dateHistory = [naiahDates[1].id];
+  assert.ok(page.publicDateUnlocked(playable, naiahDates[0]), "le second rendez-vous ne doit pas conditionner le premier");
+  assert.ok(page.homeDateUnlocked(playable, "naiah"), "le rendez-vous au logis doit être indépendant des deux sorties publiques");
+
+  assert.deepEqual(proximity.validateNaiahProximity(), { contexts: 3, combinations: 6, routes: 18, chapters: 720 });
+  const contexts = ["date-naiah-sanctuary", "date-naiah-akuhn", "home-naiah"];
+  const modes = ["tendre", "suggestif", "explicite", "ellipse"];
+  const sexualLanguage = /\b(?:orgasme|joui(?:r|t|ssance)?|p[eé]n[eé]tr\w*|vulv\w*|p[eé]nis|membre dress[eé]|sexe dress[eé]|nud(?:e|it[eé])|d[eé]shabill\w*)\b/iu;
+  for (const context of contexts) for (const sex of ["femme", "homme"]) {
+    const entries = proximity.naiahProximityRoutes(context, sex);
+    assert.equal(entries.length, 3, `${context}/${sex}: trois orientations manuelles requises`);
+    assert.equal(new Set(entries.map((entry) => entry.id)).size, 3);
+    for (const entry of entries) for (const mode of modes) {
+      const sequence = entry.chapters[mode];
+      const wordCount = sequence.flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0);
+      assert.equal(sequence.length, 10, `${entry.id}/${mode}: dix séquences requises`);
+      assert.ok(wordCount >= 250, `${entry.id}/${mode}: scène trop courte (${wordCount} mots)`);
+      assert.doesNotMatch(sequence.flat().map((line) => line.text).join("\n"), sexualLanguage, `${entry.id}/${mode}: Naïah a été sexualisée`);
+    }
+  }
+  assert.equal(proximity.naiahProximityRoutes("home-naiah", "intersexe").length, 0, "aucun canon corporel intersexe ne doit être improvisé");
+
+  assert.equal(soloRoutes.intimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles individuelles génériques");
+  assert.equal(homeRoutes.homeIntimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles génériques du logis");
+  assert.equal(intimateCg.SOLO_INTIMATE_CG.naiah, undefined, "aucune CG nue ne doit être affectée à Naïah");
+  assert.equal(intimateCg.DUO_INTIMATE_CG["group-date-hylee-naiah"], undefined);
+  assert.equal(intimateCg.DUO_INTIMATE_CG["group-date-naiah-bellirith"], undefined);
+  assert.equal(intimateSprites.hasIntimateSprites("naiah"), false, "les sprites intimes de Naïah n'existent pas encore et ne doivent pas être simulés");
+
+  assert.deepEqual(groupProximity.validateNaiahGroupProximity(), { contexts: 2, combinations: 6, routes: 18, chapters: 576 });
+  for (const pairId of groupProximity.NAIAH_GROUP_CONTEXT_IDS) for (const sex of ["femme", "homme", "intersexe"]) {
+    const entries = groups.groupIntimacyRoutes(pairId, sex);
+    assert.equal(entries.length, 3, `${pairId}/${sex}: trois routes de proximité à trois requises`);
+    assert.ok(groups.isManualGroupIntimacy(pairId), `${pairId}: le contexte dédié doit contourner le générateur sexuel`);
+    assert.doesNotMatch(entries.flatMap((entry) => modes.flatMap((mode) => entry.chapters[mode].flat().map((line) => line.text))).join("\n"), sexualLanguage, `${pairId}/${sex}: ancienne route sexuelle encore rendue`);
+  }
+
+  assert.match(secretText, /Comité des réponses insuffisantes/iu, "les confidences graves doivent conserver le rebond propre à Naïah");
+  assert.match(secretText, /ARGUMENT FAIBLE|inspecteur compétent/iu);
+  assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée dans les rendez-vous");
+
+  const pageSource = await read("src/page.tsx");
+  assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
+  assert.match(pageSource, /DEDICATED_HOME_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
+  assert.match(pageSource, /Souvenir de proximité/u);
+  assert.match(pageSource, /game\.player\.sex === "intersexe"/u, "le blocage intersexe doit être expliqué avant l'ouverture d'une continuation");
+
+  console.log(`[Naïah] 5 quêtes · 4 confidences · 18 moments libres · 2 sorties + 1 logis · 18 continuations manuelles · groupes neutralisés · migration v17 validés.`);
 } finally {
   await server.close();
 }
