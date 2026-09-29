@@ -14,6 +14,7 @@ import {
   HYLEE_REMERII_MANUAL_ROUTES,
   isHyleeRemeriiManualContext,
 } from "./hylee-remerii-group-intimacy";
+import { NAIAH_GROUP_CONTEXT_IDS, NAIAH_GROUP_GAMES, NAIAH_GROUP_ROUTES, isNaiahGroupProximity } from "./naiah-group-proximity";
 
 export type GroupDateScene = {
   authoredBeats?: boolean; intimacyDisabled?: boolean; legacyOnly?: boolean; home?: boolean; afterDates?: string[]; music?: string;
@@ -212,7 +213,7 @@ export const GROUP_DATES: GroupDateScene[] = [
       groupChoice("ghn-mirror", "Demander à chaque reflet de montrer un désir plutôt qu’un souvenir douloureux.", "resonance", [N("Hylee se voit construire un refuge qui n’est pas une prison. Naïah se voit aimée sans devoir rester fascinante. Votre propre reflet demeure flou, mais leurs deux mains le rejoignent."), C("Hylee", "Pour une fois, l’image ne me dit pas ce que je crains. Elle me demande ce que je veux.", "soft")], "great", { affection: 9, trust: 8, desire: 5, confluence: 2 }, "naiah", { affection: 9, trust: 8, desire: 5 }),
       groupChoice("ghn-chase", "Défier Naïah de vous surprendre sans jamais séparer Hylee de vous.", "audace", [N("Les arbres tournent, le sol devient eau puis verre, mais vos doigts restent mêlés à ceux d’Hylee. Elle finit par créer sa propre fausse neige pour tromper Naïah à son tour."), C("Hylee", "Elle n’avait pas précisé que nous ne pouvions pas tricher ensemble.", "teasing")], "great", { affection: 10, trust: 6, desire: 7 }, "naiah", { affection: 9, trust: 6, desire: 8 }),
     ],
-    intimacySetting: { opening: ["Naïah dissipe ses doubles et garde seulement un reflet au plafond. Hylee fait apparaître un fil de givre entre vos trois mains ; la brume le colore aussitôt, comme si leurs magies avaient déjà commencé à se courtiser.", "Le reflet reproduit vos rapprochements avec un léger retard. Hylee en rit, Naïah prétend l’avoir voulu, puis leurs deux corps réels viennent vous prendre en étau avant que l’image ne puisse les rattraper."], closing: ["La brume revient seulement pour vous couvrir lorsque vous quittez la clairière. Le ruban réel et le fil de givre restent noués ensemble, preuve que l’illusion et l’ancrage ont appris à partager la même nuit."] },
+    intimacySetting: { opening: ["Naïah dissipe ses doubles et ne garde qu’un reflet au plafond. Hylee fait apparaître un fil de givre entre vos trois mains ; la brume le colore aussitôt, comme si leurs magies avaient déjà décidé de jouer ensemble.", "Le reflet reproduit vos rapprochements avec un léger retard. Hylee en rit, Naïah prétend l’avoir voulu, puis elles viennent s’asseoir de part et d’autre de vous pour voir lequel de vos trois gestes l’image oubliera en premier."], closing: ["La brume revient seulement pour accompagner votre départ de la clairière. Le ruban réel et le fil de givre restent noués ensemble, preuve que l’illusion et l’ancrage peuvent partager le même chemin."] },
   },
   {
     id: "group-date-remerii-iriana",
@@ -246,7 +247,7 @@ export const GROUP_DATES: GroupDateScene[] = [
       groupChoice("gnb-truth", "Demander un désir sans image à Naïah, puis une peur sans sourire à Bellirith.", "resonance", [C("Naïah", "Je veux être suivie même lorsque le chemin ne change plus."), C("Bellirith", "J’ai peur que mon visage au repos ressemble à une absence."), N("Vous leur répondez sans flatterie. La salle perd deux lustres et gagne deux mains serrées contre les vôtres.")], "great", { affection: 8, trust: 10, desire: 4, confluence: 2 }, "bellirith", { affection: 8, trust: 10, desire: 4 }),
       groupChoice("gnb-stage", "Prendre le contrôle de la scène et leur interdire toute magie pendant une danse.", "audace", [N("Naïah trébuche sur une pierre qu’elle aurait pu effacer. Bellirith manque un pas sans charme pour le dissimuler. Elles rient, vous renversent ensemble au dernier tour et réclament immédiatement une revanche."), C("Naïah", "Sans magie, tu restes dangereusement intéressant·e."), C("Bellirith", "Et nous, terriblement réelles.", "seductive")], "great", { affection: 9, trust: 6, desire: 8 }, "bellirith", { affection: 9, trust: 6, desire: 8 }),
     ],
-    intimacySetting: { opening: ["Naïah dissipe les doubles ; Bellirith retire ses charmes. Il reste trois corps réels dans une salle trop vaste, et deux femmes qui se défient de vous faire oublier laquelle a créé le décor.", "Un masque de brume flotte entre elles. Bellirith le retire de la bouche de Naïah avec ses dents ; Naïah répond en effaçant sa robe illusoire. La rivalité vient de trouver un langage beaucoup moins mondain."], closing: ["Lorsque les ruines retrouvent leur vraie forme, personne ne cherche à reconstruire la salle de bal. Naïah et Bellirith marchent de chaque côté de vous, sans masque, assez proches pour que leurs épaules se heurtent encore."] },
+    intimacySetting: { opening: ["Naïah dissipe les doubles ; Bellirith retire ses charmes. Il reste trois présences réelles dans une salle trop vaste, et deux femmes qui se défient encore de faire tomber le prochain masque.", "Bellirith confisque le fragment de brume que Naïah voulait lui poser sur le nez. Naïah transforme aussitôt le masque en juge miniature ; il les condamne toutes les deux à dire une vérité avant de pouvoir reprendre la danse."], closing: ["Lorsque les ruines retrouvent leur vraie forme, personne ne cherche à reconstruire la salle de bal. Naïah et Bellirith marchent de chaque côté de vous, sans masque, assez proches pour que leurs épaules se heurtent encore."] },
   },
   {
     id: "group-date-tia-remerii",
@@ -305,7 +306,7 @@ export const GROUP_DATES: GroupDateScene[] = [
 
 const O = (id: string, label: string, score: 0 | 1 | 2, ...lines: DialogueLine[]): IntimacyGameOption => ({ id, label, score, lines });
 
-export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
+const LEGACY_GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
   ...HYLEE_REMERII_INTIMACY_GAMES,
   "group-date-hylee-remerii": {
     title: "La lanterne à trois souffles",
@@ -371,7 +372,7 @@ export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
       { prompt: "Elles tentent de vous impressionner en même temps.", detail: "Le décor et la posture deviennent presque impossibles à lire.", options: [O("nb-off", "Demander cinq respirations sans aucune magie", 2, N("Tout s’éteint. Naïah et Bellirith restent là, essoufflées et réelles, puis se rapprochent sans artifice.")), O("nb-more", "Les encourager à continuer", 0, N("La scène devient spectaculaire au point de dissimuler les trois personnes qui devaient l’habiter.")), O("nb-one", "Choisir l’illusion de Naïah", 1, N("Le décor demeure ; Bellirith retire son charme, mais l’équilibre se déplace vers une seule magie."))] },
       { prompt: "Le dernier masque flotte entre vos trois visages.", detail: "Naïah veut le changer en brume ; Bellirith prétend pouvoir le porter mieux que quiconque.", options: [O("nb-three", "Le déchirer à trois et garder chacun un fragment", 2, N("Le masque cède sous vos doigts mêlés. Bellirith rit sans pose, Naïah laisse le décor trembler et les trois fragments fondent contre vos poignets.")), O("nb-kiss", "Le pousser sur la bouche de Bellirith avant de l’embrasser", 1, N("Bellirith accepte la provocation avec éclat ; Naïah vous rejoint, légèrement piquée d’avoir dû attendre une seconde.")), O("nb-naiah", "Laisser Naïah le dissoudre seule", 0, N("La brume dévore le masque dans un beau spectacle, mais Bellirith remet aussitôt son sourire le plus parfait pour ne pas sembler vaincue."))] },
     ],
-    results: { attuned: [N("Les trois fragments restent intacts. Naïah et Bellirith retirent pourtant leurs artifices, choisissant de poursuivre avec leurs corps et leurs visages réels."), C("Bellirith", "Aucun public."), C("Naïah", "Aucun masque obligatoire. Je crois que nous sommes prêtes.")], searching: [N("Quelques artifices restent difficiles à lire. Vous en retirez la moitié et continuez seulement avec ceux que chacun peut nommer.")], discordant: [N("Un fragment se brise. Toute magie disparaît ; vous accueillez l’arrêt sans débat et terminez la soirée dans une proximité non sexuelle."), C("Bellirith", "Une scène interrompue peut rester une confiance réussie.")] },
+    results: { attuned: [N("Les trois fragments restent intacts. Naïah et Bellirith retirent pourtant leurs artifices, choisissant de poursuivre avec leurs gestes et leurs visages réels."), C("Bellirith", "Aucun public."), C("Naïah", "Aucun masque obligatoire. Je crois que nous sommes prêtes.")], searching: [N("Quelques artifices restent difficiles à lire. Vous en retirez la moitié et continuez seulement avec ceux que chacun peut nommer.")], discordant: [N("Un fragment se brise. Toute magie disparaît ; vous accueillez l’arrêt sans débat et terminez la soirée simplement enlacé·es."), C("Bellirith", "Une scène interrompue peut rester une confiance réussie.")] },
   },
   "group-date-tia-remerii": {
     title: "Les trois autorités du sceau",
@@ -411,6 +412,11 @@ export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
       { prompt: "Personne n’a de raison de partir.", detail: "Il reste seulement à choisir la forme de la nuit.", options: [O("alh-ask", "Demander à chacune ce qu’elle veut", 2, N("La réponse se construit à trois voix, sans poste ni priorité.")), O("alh-sleep", "Proposer de dormir", 1, N("La proximité reste tendre et entière.")), O("alh-decide", "Décider pour le groupe", 0, N("Allenna relève le menton ; Lineva interrompt doucement l’élan."))] },
     ], results: { attuned: [N("Le programme est resté vide. La nuit, elle, a trouvé trois places." )], searching: [N("La proximité avance sans urgence, au rythme du logis." )], discordant: [N("Vous dormez simplement ensemble. La confiance n’en est pas diminuée." )] },
   },
+};
+
+export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
+  ...LEGACY_GROUP_INTIMACY_GAMES,
+  ...NAIAH_GROUP_GAMES,
 };
 
 export function groupIntimacyGameResult(pairId: string, score: number): DialogueLine[] {
@@ -487,6 +493,10 @@ function legacyGroupExplicit(pairId: string, role: GroupRole): SexLines {
 }
 
 function groupExplicit(pairId: string, role: GroupRole): SexLines {
+  if (isNaiahGroupProximity(pairId)) {
+    const safe: RawLine[] = ["Cette ancienne branche n'est plus exposée : les rendez-vous comprenant Naïah utilisent désormais leurs routes dédiées de proximité."];
+    return { femme: safe, homme: safe, intersexe: safe };
+  }
   return {
     femme: groupExplicitScene(pairId, "femme", role),
     homme: groupExplicitScene(pairId, "homme", role),
@@ -724,7 +734,7 @@ function buildGroupRoute(pairId: string, sex: PlayerSex, seed: GroupRouteSeed, r
 }
 
 const GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, GroupIntimacyRoute[]>> = Object.fromEntries(
-  Object.entries(PAIR_ROUTE_DATA).map(([pairId, pair]) => [pairId, {
+  Object.entries(PAIR_ROUTE_DATA).filter(([pairId]) => !isNaiahGroupProximity(pairId)).map(([pairId, pair]) => [pairId, {
     femme: pair.routes.map((seed, index) => buildGroupRoute(pairId, "femme", seed, index)),
     homme: pair.routes.map((seed, index) => buildGroupRoute(pairId, "homme", seed, index)),
     intersexe: pair.routes.map((seed, index) => buildGroupRoute(pairId, "intersexe", seed, index)),
@@ -735,6 +745,7 @@ export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, Grou
   ...GENERATED_GROUP_INTIMACY_ROUTES_BY_SEX,
   ...LINEVA_ALLENNA_MANUAL_ROUTES,
   ...HYLEE_REMERII_MANUAL_ROUTES,
+  ...NAIAH_GROUP_ROUTES,
 };
 
 export function isManualLinevaAllennaIntimacy(id: string): boolean {
@@ -744,10 +755,11 @@ export function isManualLinevaAllennaIntimacy(id: string): boolean {
 export const MANUAL_GROUP_CONTEXT_IDS = [
   ...LINEVA_ALLENNA_MANUAL_CONTEXT_IDS,
   ...HYLEE_REMERII_MANUAL_CONTEXT_IDS,
+  ...NAIAH_GROUP_CONTEXT_IDS,
 ] as const;
 
 export function isManualGroupIntimacy(id: string): boolean {
-  return isManualLinevaAllennaIntimacy(id) || isHyleeRemeriiManualContext(id);
+  return isManualLinevaAllennaIntimacy(id) || isHyleeRemeriiManualContext(id) || isNaiahGroupProximity(id);
 }
 
 export function groupIntimacyRoutes(pairId: string, sex: PlayerSex): GroupIntimacyRoute[] {

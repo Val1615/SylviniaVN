@@ -172,6 +172,8 @@ export const NAIAH_CONFIDENCES: SecretConversation[] = [
       A("C'est beaucoup moins théâtral qu'une victoire absolue."),
       P("Mais plus difficile."),
       A("Voilà enfin un argument séduisant."),
+      N("Elle couronne le passage d'un point lumineux. Le point se met aussitôt à fuir sur la carte, poursuivi par trois sentinelles minuscules qui réclament ses papiers."),
+      A("Regarde. Mon œuvre autonome vient de commettre un délit frontalier. Elle a déjà très bien appris de moi.", "laugh"),
     ], { trust: 10, affection: 3 }),
     Q("sna60-r", "Reconnaître que son désir d'être vue n'annule pas l'autonomie de ce qu'elle accomplit.", "resonance", [
       P("Tu peux vouloir qu'elle sache. Cela ne transforme pas chaque geste en message pour elle."),
@@ -181,6 +183,8 @@ export const NAIAH_CONFIDENCES: SecretConversation[] = [
       A("Non."),
       N("Elle souffle sur la silhouette. Seule cette image disparaît ; les routes restent."),
       A("Alors garde les deux vérités. Je construis pour moi. Et j'espère encore, certains jours, qu'elle le voie."),
+      N("Deux pancartes surgissent au-dessus du réseau : « POUR MOI » et « QU'ELLE REGARDE ». Elles se heurtent, se volent leurs flèches puis finissent par indiquer le même chemin."),
+      A("Elles vont se quereller longtemps. Je refuse de payer un médiateur.", "smirk"),
     ], { trust: 11, affection: 4 }),
     Q("sna60-a", "Lui demander de vous montrer l'œuvre dont elle est la plus fière, sans mentionner Amanea.", "audace", [
       N("Naïah cherche aussitôt une réponse brillante, puis désigne un petit nœud perdu au bord de la carte."),
@@ -214,6 +218,8 @@ export const NAIAH_CONFIDENCES: SecretConversation[] = [
       P("Tu m'as demandé de ne pas choisir l'histoire à ta place."),
       N("Elle frappe la terre près d'elle du plat de la main."),
       A("Assieds-toi. Tu peux au moins rendre l'ignorance moins solitaire."),
+      N("Un banc de brume apparaît sous l'inscription « Comité des réponses insuffisantes ». Naïah y ajoute votre nom, puis dessine une pâtisserie au titre de budget de fonctionnement."),
+      A("Le comité se réunit sans ordre du jour. C'est presque reposant.", "smirk"),
     ], { trust: 12, affection: 3 }),
     Q("sna80-l", "Dire seulement que l'indifférence n'explique pas tout ce que vous avez observé.", "lucidite", [
       P("Je n'ai pas la réponse. Mais l'indifférence simple ne suffit pas à expliquer tout ce que j'ai vu."),
@@ -225,6 +231,8 @@ export const NAIAH_CONFIDENCES: SecretConversation[] = [
       A("Bien. Si tu le découvres, tu viens d'abord me parler. Tu n'emploies pas la réponse pour agir dans mon dos."),
       P("D'accord."),
       A("Je vais détester attendre. Je préfère encore cela à un joli mensonge."),
+      N("Un scarabée coiffé d'une minuscule visière inspecte la fissure imaginaire, note quelque chose et vous présente un formulaire entièrement blanc."),
+      A("L'inspecteur confirme : le mystère reste mystérieux. Enfin un fonctionnaire compétent.", "smirk"),
     ], { trust: 12, affection: 2 }, ["knows_amanea_naiah_pain"]),
     Q("sna80-a", "Promettre une conversation avant toute utilisation future de cette vérité.", "audace", [
       P("Si j'apprends quelque chose, je te le dirai avant de m'en servir. Même si cela fait mal. Même si tu me demandes ensuite de ne rien faire."),
@@ -234,6 +242,8 @@ export const NAIAH_CONFIDENCES: SecretConversation[] = [
       A("Tu viens de promettre une dispute future avec une assurance très séduisante."),
       P("Je m'entraîne."),
       A("Alors reste. J'aimerais vérifier si ta bravoure survit à mon silence."),
+      N("Un mannequin de brume portant votre visage lève une pancarte : « ARGUMENT FAIBLE ». Naïah lui lance le dernier morceau d'herbe ; il s'effondre avec une dignité offensée."),
+      A("Première objection rejetée. La prochaine devra apporter ses propres biscuits.", "laugh"),
     ], { trust: 10, affection: 5 }),
   ]),
 ];

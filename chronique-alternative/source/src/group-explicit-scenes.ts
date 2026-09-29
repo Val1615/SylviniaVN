@@ -455,6 +455,9 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
 };
 
 export function groupExplicitScene(pairId: string, sex: PlayerSex, role: AdvancedGroupRole): AdvancedGroupRawLine[] {
+  if (pairId === "group-date-hylee-naiah" || pairId === "group-date-naiah-bellirith") {
+    throw new Error("Les groupes comprenant Naïah utilisent leurs scènes de proximité dédiées.");
+  }
   const selected = GROUP_EXPLICIT_SCENES[pairId]?.[sex]?.[role];
   if (!selected) throw new Error(`Scène explicite à trois manquante : ${pairId}/${sex}/${role}`);
   return selected;

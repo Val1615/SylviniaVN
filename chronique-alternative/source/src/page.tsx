@@ -49,6 +49,8 @@ import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
 import { hyleeDateBeat } from "./hylee-dates";
 import { remeriiRouteVariant } from "./remerii-relation";
 import { remeriiDateBeat, migrateRemeriiDateId } from "./remerii-dates";
+import { naiahDateBeat } from "./naiah-dates";
+import { naiahProximityApproaches, naiahProximityContext, naiahProximityEnding, naiahProximityOpening, naiahProximityPhase, naiahProximityRoutes } from "./naiah-date-intimacy";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
 import { INTIMACY_GAMES, intimacyGameResult, type IntimacyGameOption } from "./intimacy-games";
 import { groupIntimateVisualState, soloIntimateVisualState, type IntimateCgState } from "./intimate-cg";
@@ -431,6 +433,9 @@ const STAT_LABELS: Record<StatKey, string> = {
   sangFroid: "Sang-froid",
   resonance: "Résonance",
 };
+
+const AUTHORED_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
+const DEDICATED_HOME_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
 
 const STAGE_LABELS = ["Inconnu·e", "Première impression", "Complicité", "Confidence", "Attirance", "Lien accompli"];
 const BOND_THRESHOLDS = [0, 5, 14, 26, 40];
@@ -1682,7 +1687,7 @@ function relationRouteVariant(route: RouteScene, game: GameState) {
 }
 
 function authoredDateBeat(sceneId: string, round: number, picks?: string[]) {
-  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round);
+  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round) || naiahDateBeat(sceneId, round);
 }
 
 function relationBeatFor(sceneId: string, game: GameState) {
@@ -1693,7 +1698,7 @@ function relationBeatFor(sceneId: string, game: GameState) {
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
   const base = dialogue.scene.choices || [];
   if (dialogue.scene.beats && dialogue.phase === "relation-choices") return dialogue.scene.beats[dialogue.dateRound ?? 0]?.choices || [];
-  if (dialogue.phase === "relation-choices" && dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)) {
+  if (dialogue.phase === "relation-choices" && dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character)) {
     const beat = authoredDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
     return beat?.choices || [];
   }
@@ -2517,7 +2522,7 @@ export default function Home() {
       const beat = dialogue.scene.beats[nextRound];
       if (beat) { setDialogue({ ...dialogue, scene: beat.cast ? { ...dialogue.scene, cast: beat.cast } : dialogue.scene, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" }); return; }
     }
-    if (dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) && ["response", "relation-response"].includes(dialogue.phase)) {
+    if (dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character) && ["response", "relation-response"].includes(dialogue.phase)) {
       const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
       const beat = authoredDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
       if (beat) {
@@ -2554,7 +2559,7 @@ export default function Home() {
     if (!relationshipRequirementMet(choice, game) && !game.settings.unlockAll) return;
     const isRelationChoice = dialogue.phase === "relation-choices";
     const hasRelationBeat = Boolean(dialogue.scene.route && relationBeatFor(dialogue.scene.route.id, game));
-    const authoredDateContinues = Boolean(dialogue.scene.beats?.[isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0] || dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character)
+    const authoredDateContinues = Boolean(dialogue.scene.beats?.[isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0] || dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character)
       && authoredDateBeat(dialogue.scene.id, isRelationChoice ? (dialogue.dateRound ?? 0) + 1 : 0, dialogue.datePicks));
     const route = dialogue.scene.kind === "route" && routeChoiceCompletes(choice.id) && (!hasRelationBeat || isRelationChoice)
       ? dialogue.scene.route
@@ -2728,7 +2733,7 @@ export default function Home() {
       ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
       scene: isRelationChoice && dialogue.scene.beats?.[dialogue.dateRound ?? 0]?.responseCast ? { ...dialogue.scene, cast: dialogue.scene.beats[dialogue.dateRound ?? 0].responseCast } : dialogue.scene,
       chosen: choice,
-      datePicks: dialogue.scene.hrScene || dialogue.scene.date && ["hylee", "remerii"].includes(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
+      datePicks: dialogue.scene.hrScene || dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
@@ -2798,7 +2803,7 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && (["lineva", "allenna"].includes(date.character) || ["hylee", "remerii"].includes(date.character)
+      && (["lineva", "allenna"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
           && game!.relationships[date.character].stage >= 4
@@ -3435,7 +3440,7 @@ export default function Home() {
   function startHomeDate(characterId: string) {
     if (!game?.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return;
     if (!homeDateUnlocked(game, characterId)) return;
-    if (["hylee", "remerii"].includes(characterId)) {
+    if (DEDICATED_HOME_DATE_CHARACTERS.has(characterId)) {
       const property = propertyById(game.housing.propertyId)!;
       const day = game.day + 1;
       updateGame((current) => ({ ...current, day, period: 3, location: property.location, spot: property.spot, ...placeDiscovery(current, property.location, property.spot) }));
@@ -3471,7 +3476,7 @@ export default function Home() {
       if (newGift) inventory[profile.gift] = (inventory[profile.gift] || 0) + 1;
       return {
         ...current,
-        day: ["hylee", "remerii"].includes(characterId) ? current.day : current.day + 1,
+        day: DEDICATED_HOME_DATE_CHARACTERS.has(characterId) ? current.day : current.day + 1,
         period: 3,
         location: property.location,
         spot: property.spot,
@@ -3480,7 +3485,7 @@ export default function Home() {
         inventory,
         housing: {
           ...current.housing,
-          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${["hylee", "remerii"].includes(characterId) ? current.day : current.day + 1}`].slice(-96),
+          homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${DEDICATED_HOME_DATE_CHARACTERS.has(characterId) ? current.day : current.day + 1}`].slice(-96),
           homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
         },
         journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
@@ -3495,7 +3500,7 @@ export default function Home() {
     };
     const intimateCity = HOME_INTIMACY_CITY[characterId];
     const canBecomeIntimate = tone === "desir" && (game.settings.unlockAll || (
-      relation.stage >= (["lineva", "hylee", "remerii"].includes(characterId) ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && (["hylee", "remerii"].includes(characterId) || score >= 3) && (!intimateCity || intimateCity === property.location)
+      relation.stage >= (["lineva", "hylee", "remerii", "naiah"].includes(characterId) ? 5 : 4) && relationAfter.affection >= 34 && relationAfter.trust >= 32 && relationAfter.desire >= 24 && (DEDICATED_HOME_DATE_CHARACTERS.has(characterId) || score >= 3) && (!intimateCity || intimateCity === property.location)
     ));
     setModal(canBecomeIntimate
       ? { kind: "home-date-result", character: characterId, score }
@@ -3549,12 +3554,13 @@ export default function Home() {
     const property = game && propertyById(game.housing.propertyId);
     const hasCompletedDesiredDate = game?.housing.homeDateHistory.some((entry) => entry.startsWith(`${characterId}:desir@`));
     if (!game || !property || !hasCompletedDesiredDate) return;
-    if (["hylee", "remerii"].includes(characterId) && !game.settings.unlockAll) {
+    if (DEDICATED_HOME_DATE_CHARACTERS.has(characterId) && !game.settings.unlockAll) {
       const relation = game.relationships[characterId];
       const lastDate = game.housing.homeDateHistory.at(-1);
       if (relation.stage < 5 || relation.affection < 34 || relation.trust < 32 || relation.desire < 24
         || lastDate !== `${characterId}:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
     }
+    if (characterId === "naiah" && game.player.sex === "intersexe") return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -3636,15 +3642,15 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    const refactoredDate = Boolean(date && (["lineva", "allenna", "remerii"].includes(date.character) || date.character === "hylee"));
+    const refactoredDate = Boolean(date && (["lineva", "allenna"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)));
     const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
-    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
+    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
   function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!game || !date || (!["lineva", "allenna", "remerii"].includes(date.character) && date.character !== "hylee") || !game.dateHistory.includes(date.id)) return;
+    if (!game || !date || (!["lineva", "allenna"].includes(date.character) && !AUTHORED_DATE_CHARACTERS.has(date.character)) || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     if (friendlyForThisDate) {
       updateGame((current) => ({
@@ -3736,7 +3742,7 @@ export default function Home() {
 
   function replayDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date || !game?.flags.includes(`date-intimate:${date.id}`)) return;
+    if (!date || !game?.flags.includes(`date-intimate:${date.id}`) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background, replay: true });
   }
 
@@ -4678,7 +4684,7 @@ function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign
         {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
         {crossSceneMemories.map((stage) => <button key={`cross-${stage}`} onClick={() => onStartCrossQuest(stage, true)}><span>⇄ Quête croisée · Lineva & Allenna</span><strong>{crossSceneForStage(stage)?.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
-        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir selon le niveau d’intimité actuel</small></button>)}
+        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 {date.character === "naiah" ? "Souvenir de proximité" : "Souvenir intime"} · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : date.character === "naiah" ? "Revoir cette scène de jeu, de baisers et de confiance" : "Revoir selon le niveau d’intimité actuel"}</small></button>; })}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
         {homeTrioIntimateMemory > 0 && <button onClick={() => onReplayGroupDateIntimacy("group-date-allenna-lineva-home")}><span>🔥 Souvenir au logis · Allenna & Lineva</span><strong>Rien au programme</strong><small>Revoir les trois routes propres au logis</small></button>}
@@ -4861,13 +4867,18 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const remeriiContext = character.id === "remerii" && game.player.sex !== "intersexe"
     ? remeriiIntimacyContext(modal.dateId, Boolean(modal.home))
     : undefined;
-  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
+  const naiahContext = character.id === "naiah" && game.player.sex !== "intersexe"
+    ? naiahProximityContext(modal.dateId, Boolean(modal.home))
+    : undefined;
+  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => hyleeContext
     ? hyleeDateIntimacyOpening(hyleeContext)
     : remeriiContext
       ? remeriiDateIntimacyOpening(remeriiContext)
+      : naiahContext
+        ? naiahProximityOpening(naiahContext)
       : homeProperty
         ? homeIntimacyOpening(character.id, homeProperty, homeItems)
         : intimacyOpening(character.id, date));
@@ -4878,11 +4889,13 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices(hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices(hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const [directionChoices] = useState(() => shuffledChoices(hyleeContext
     ? hyleeDateIntimacyRoutes(hyleeContext, game.player.sex)
     : remeriiContext
       ? remeriiDateIntimacyRoutes(remeriiContext, game.player.sex, game.knowledge.includes("knows_remerii_curse"))
+      : naiahContext
+        ? naiahProximityRoutes(naiahContext, game.player.sex)
       : modal.home
         ? homeIntimacyRoutes(character.id, game.player.sex)
         : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
@@ -4904,6 +4917,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? hyleeDateIntimacyEnding(hyleeContext)
       : remeriiContext
         ? remeriiDateIntimacyEnding(remeriiContext)
+        : naiahContext
+          ? naiahProximityEnding(naiahContext)
         : homeProperty
           ? homeIntimacyEnding(character.id, homeProperty)
           : intimacyEnding(character.id, date);
@@ -4940,7 +4955,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
-    const chapters = hyleeContext || remeriiContext || modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
+    const chapters = hyleeContext || remeriiContext || naiahContext || modal.home ? choice.chapters[game.player.intimacy] : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
     setDirectionSequence(intimateChapters);
     setDirectionChapter(0);
@@ -4971,6 +4986,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
           ? hyleeDateIntimacyPhase(directionChapter)
           : remeriiContext
             ? remeriiDateIntimacyPhase(directionChapter)
+            : naiahContext
+              ? naiahProximityPhase(directionChapter)
             : undefined,
     revealChapter: direction?.visual?.revealChapter,
     postOrgasmChapter: direction?.visual?.postOrgasmChapter,
@@ -4979,7 +4996,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
   return <section className={`interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }}>
-    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir intime · aucun gain" : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? `${naiahContext ? "Souvenir de proximité" : "Souvenir intime"} · aucun gain` : `${naiahContext ? modal.home ? "Proximité au logis" : "Proximité choisie" : modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{character.name} · {modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={advance}>
@@ -4989,7 +5006,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     </button>}
     {step === "approach-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">Comment entrer dans ce moment ?</p>{approachChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseApproach(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester simplement ensemble et terminer la soirée ici</button></div>}
     {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}</div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">Trois routes écrites pour {character.name} et pour le corps que vous avez choisi. Chacune se développe en au moins huit séquences détaillées{modal.home ? ", entièrement propres au logement" : ""}.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">{naiahContext ? "Trois façons de prolonger ce moment. Chacune transforme un élément concret du rendez-vous en une progression faite de jeu, de baisers et de confiance." : `Trois routes écrites pour ${character.name} et pour le corps que vous avez choisi. Chacune se développe en au moins huit séquences détaillées${modal.home ? ", entièrement propres au logement" : ""}.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Ralentir, rester enlacé·es et clore la scène ici</button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button className="primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
   </section>;
 }
@@ -5002,6 +5019,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
   const intimacyGame = GROUP_INTIMACY_GAMES[date.id];
   const manualGroupIntimacy = isManualGroupIntimacy(date.id);
+  const naiahGroup = date.characters.includes("naiah");
   const [step, setStep] = useState<GroupIntimacyStep>(manualGroupIntimacy ? "attunement-choice" : "opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => manualGroupIntimacy ? [] : groupIntimacyOpening(date));
   const [lineIndex, setLineIndex] = useState(0);
@@ -5083,7 +5101,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const useIntimateSprites = isIntimateGroupContext(date.id) && intimateVisual.useIntimateSprites;
 
   return <section className={`interactive-intimacy group-interactive-intimacy ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
-    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? "Souvenir à trois · aucun gain" : `Scène intime à trois · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+    <div className="scene-top intimacy-top"><div><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{first.name} · {second.name} · {date.title}</h2></div><button onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
       <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprites ? "intimate" : "standard"} src={useIntimateSprites ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useIntimateSprites ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} alt="" /></div>
       <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprites ? "intimate" : "standard"} src={useIntimateSprites ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useIntimateSprites ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} alt="" /></div>
@@ -5094,8 +5112,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
       <p>{replacePlayer(currentLine.text, game.player)}</p>
       <small>{step === "direction-lines" ? `Séquence ${directionChapter + 1} / ${directionSequence.length} · ` : ""}{lineIndex + 1} / {lines.length} · Cliquer pour continuer</small>
     </button>}
-    {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Terminer la soirée dans une proximité non sexuelle</button></div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">Trois routes uniques pour {first.name}, {second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester enlacé·es et clore la scène ici</button></div>}
+    {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} onClick={() => chooseAttunement(option)}><span className="choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester simplement proches et terminer la soirée ici</button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} onClick={() => chooseDirection(choice)}><span className="choice-number">{index + 1}</span><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button className="intimacy-stop-choice" onClick={onStop}>Rester enlacé·es et clore la scène ici</button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button className="primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
   </section>;
 }
@@ -5457,9 +5475,10 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "group-date-result") {
     const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
     const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-    const refactored = date.id.includes("allenna-lineva") || (HR_DATE_IDS as readonly string[]).includes(date.id);
+    const naiahGroup = date.characters.includes("naiah");
+    const refactored = naiahGroup || date.id.includes("allenna-lineva") || (HR_DATE_IDS as readonly string[]).includes(date.id);
     const resultBackground = date.home ? propertyById(game.housing.propertyId)?.background : spotById(date.spot)?.background;
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${resultBackground})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>Après « {date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou garder une proximité amicale pour cette soirée seulement.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>Poursuivre à trois</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${resultBackground})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>{naiahGroup ? `Après « ${date.title} », le jeu peut se prolonger à trois : baisers, contact choisi et confiance partagée. Personne n’a besoin de donner à ce moment une autre forme que celle qui vous convient.` : `Après « ${date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou garder une proximité amicale pour cette soirée seulement.`}</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>{naiahGroup ? "Prolonger la proximité à trois" : "Poursuivre à trois"}</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
   }
   if (modal.kind === "date-planner") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5479,17 +5498,30 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "home-date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const property = propertyById(game.housing.propertyId)!;
-    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.28), #11101b 88%), url(${property.background})` }}><p className="eyebrow">Le reste du monde est derrière votre porte</p><h2>{character.name} ne semble pas pressé·e de partir</h2><p>Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à {character.name}, déclinée selon votre corps et votre réglage d’intimité.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomeIntimacy(character.id)}>Prolonger la nuit au logis</button><button className="secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button></div></section></div>;
+    const naiah = character.id === "naiah";
+    const naiahIntersex = naiah && game.player.sex === "intersexe";
+    const copy = naiahIntersex
+      ? "Cette continuation n’est pas encore écrite pour la configuration choisie. Le rendez-vous reste accompli et rejouable ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
+      : naiah
+        ? "La lanterne est posée, le fauteuil reste annexé et Naïah a choisi de ne pas disparaître derrière un double. Vous pouvez prolonger cette proximité d’une façon propre à ce logis."
+        : `Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à ${character.name}, déclinée selon votre corps et votre réglage d’intimité.`;
+    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.28), #11101b 88%), url(${property.background})` }}><p className="eyebrow">Le reste du monde est derrière votre porte</p><h2>{character.name} ne semble pas pressé·e de partir</h2><p>{copy}</p><div className="date-result-actions">{!naiahIntersex && <button className="primary-action" onClick={() => startHomeIntimacy(character.id)}>{naiah ? "Rester proches au logis" : "Prolonger la nuit au logis"}</button>}<button className="secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button></div></section></div>;
   }
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
-    const refactored = ["lineva", "allenna", "remerii"].includes(character.id) || character.id === "hylee";
+    const naiah = character.id === "naiah";
+    const naiahIntersex = naiah && game.player.sex === "intersexe";
+    const refactored = ["lineva", "allenna"].includes(character.id) || AUTHORED_DATE_CHARACTERS.has(character.id);
     const desireReady = !refactored || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
-    const closeText = desireReady
-      ? `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
+    const closeText = naiahIntersex
+      ? "Le rendez-vous reste accompli et rejouable. Cette continuation n’est pas encore écrite pour la configuration choisie ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
+      : desireReady
+      ? naiah
+        ? `${character.name} reste près de vous. Le jeu, les baisers et le contact choisi peuvent se prolonger, ou attendre simplement un autre soir.`
+        : `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
       : `Après « ${date.title} », la proximité demeure douce, mais la tension physique ne demande pas encore à être prolongée. La soirée peut s'achever naturellement, sans fermer les suivantes.`;
-    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>{closeText}</p><div className="date-result-actions">{desireReady && <button className="primary-action" onClick={() => startDateIntimacy(date.id)}>Suivre {character.name}</button>}{refactored && desireReady ? <><button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}</div></section></div>;
+    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>{closeText}</p><div className="date-result-actions">{desireReady && !naiahIntersex && <button className="primary-action" onClick={() => startDateIntimacy(date.id)}>{naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}</div></section></div>;
   }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;

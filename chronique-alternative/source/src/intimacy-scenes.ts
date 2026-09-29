@@ -179,33 +179,14 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
   },
 
   naiah: {
-    opening: [C("Naïah", "Je pourrais rendre tout ça spectaculaire. Des étoiles, des doubles de nous, une lune beaucoup trop grande…"), N("La brume frémit, puis retombe. Naïah demeure seule devant vous, presque déconcertée par la nudité d’un moment sans numéro."), C("Naïah", "Mais si tu restes, j’aimerais essayer d’être seulement moi.", "thinking")],
+    opening: [C("Naïah", "Je pourrais rendre tout ça spectaculaire. Des étoiles, des doubles de nous, une lune beaucoup trop grande…"), N("La brume frémit, puis retombe. Naïah demeure devant vous, déconcertée par un moment sans numéro préparé."), C("Naïah", "Mais si tu restes, j'aimerais que le jeu, les baisers et la place contre toi suffisent.", "thinking")],
     approaches: [
-      { id: "naiah-see", text: "Lui dire que c’est précisément elle que vous êtes venu·e retrouver.", lines: [P("Je ne suis pas venu·e pour la brume."), C("Naïah", "Réponse dangereuse. Maintenant je vais devoir te croire un peu.", "thinking"), N("Elle vient poser son front contre le vôtre. Aucun effet ne souligne le geste ; son souffle tremble suffisamment.")] },
-      { id: "naiah-play", text: "Lui proposer un jeu où chaque baiser fait disparaître une illusion.", lines: [C("Naïah", "Oooh. Enfin une règle que j’ai envie de respecter."), N("Un premier baiser éteint les lucioles. Le second fait tomber la fausse lune. Au troisième, il ne reste que sa bouche souriante et la vraie nuit."), C("Naïah", "Encore deux. J’ai peut-être caché des illusions sous mes vêtements.", "smirk")] },
-      { id: "naiah-first", text: "Lui demander ce qu’elle n’ose pas faire sans son spectacle.", lines: [N("Naïah cesse de bouger. Le silence est si inhabituel qu’il ressemble à une réponse."), C("Naïah", "Te laisser me regarder quand je ne sais pas quoi faire ensuite.", "sad"), P("Alors ne fais rien."), N("Vous l’embrassez lentement. Ses mains restent immobiles une seconde, puis s’accrochent à vous avec une sincérité presque féroce.")] },
+      { id: "naiah-see", text: "Lui dire que c’est précisément elle que vous êtes venu·e retrouver.", lines: [P("Je ne suis pas venu·e pour la brume."), C("Naïah", "Réponse dangereuse. Maintenant je vais devoir te croire un peu.", "thinking"), N("Elle vient poser son front contre le vôtre, puis invente une médaille pour récompenser votre témérité.")] },
+      { id: "naiah-play", text: "Lui proposer un jeu où chaque baiser fait disparaître une illusion.", lines: [C("Naïah", "Enfin une règle que j'ai envie de respecter."), N("Un premier baiser éteint les lucioles. Le second fait tomber la fausse lune. Au troisième, il ne reste que son sourire et la vraie nuit."), C("Naïah", "La forêt réclame une revanche.", "smirk")] },
+      { id: "naiah-first", text: "Lui demander ce qu’elle n’ose pas faire sans son spectacle.", lines: [N("Naïah cesse de bouger."), C("Naïah", "Rester contre toi sans préparer l'étape suivante.", "thinking"), P("Alors reste."), N("Elle se blottit contre votre côté et fait apparaître un sablier qu'elle renverse dès qu'il approche de la fin.")] },
     ],
-    directions: [
-      { id: "naiah-receive", text: "La laisser découvrir votre corps sans aucun artifice.", lines: modes(
-        [N("Naïah suit vos traits du bout des doigts comme si votre visage constituait déjà une aventure suffisante. Elle s’émerveille sans exagérer, ce qui rend chaque sourire plus précieux."), C("Naïah", "Tu es beaucoup plus étrange de près. J’aime bien.", "smirk")],
-        [N("Ses mains se glissent sous vos vêtements, curieuses et étonnamment lentes. Chaque frisson lui arrache un vrai sourire, dépourvu de mise en scène ; sa bouche poursuit là où ses doigts vous ont déjà rendu·e sensible."), C("Naïah", "Ne te cache pas maintenant. J’adore cette version de toi.", "thinking")],
-        [receivedBody("femme", "Naïah"), N("La brume pulse loin autour de vous au moment où l’orgasme vous traverse, comme un ciel incapable de rester tout à fait silencieux. Naïah garde sa bouche contre votre peau jusqu’à sentir votre corps se détendre."), C("Naïah", "Ça, je ne l’ai pas inventé. Et c’était mieux que tout ce que j’aurais pu fabriquer.", "thinking")],
-        [N("Naïah chasse la dernière illusion d’un claquement de doigts. L’obscurité réelle vous enveloppe avant que la chronique ne s’éloigne.")],
-      ) },
-      { id: "naiah-give", text: "Lui faire oublier qu’elle devait encore vous divertir.", lines: modes(
-        [N("Vous l’allongez et lui offrez une tendresse sans épreuve à réussir. Naïah commence par plaisanter, puis ses phrases se raccourcissent jusqu’à ne laisser que votre prénom."), C("Naïah", "Ne t’arrête pas pour me faire parler. Je suis bien là.", "thinking")],
-        [N("Vous découvrez sa peau sous les bijoux et la brume. Ses provocations se brisent sous vos baisers ; bientôt, ses hanches répondent avec une franchise que son visage ne cherche plus à déguiser."), C("Naïah", "Plus bas. Je peux être sage pendant… probablement trois secondes.", "smirk")],
-        [targetBody("naiah"), N("Naïah cesse entièrement de jouer lorsque votre langue trouve le rythme qui la traverse. Ses cuisses se ferment autour de vous et son orgasme fait éclater la brume en milliers de points violets."), C("Naïah", "Tu as gagné. Je ne sais pas à quoi, mais je refuse une revanche avant d’avoir repris mon souffle.", "smirk")],
-        [N("Vous faites disparaître sa dernière plaisanterie sous un baiser. La brume se referme autour de la suite sans changer ce qu’elle contient.")],
-      ) },
-      { id: "naiah-mutual", text: "Inviter la brume à suivre vos corps sans les remplacer.", lines: modes(
-        [N("La brume dessine autour de vous les émotions que Naïah ne formule pas : chaleur dorée, trouble violet, tendresse presque blanche. Elle rit de se voir trahie par sa propre magie."), C("Naïah", "Elle raconte tout. Quelle petite traîtresse.", "smirk")],
-        [N("Vos silhouettes se mêlent à leurs reflets de brume sans jamais s’y perdre. Chaque changement de position repeint la clairière ; Naïah répond à vos caresses par des couleurs de plus en plus intenses."), C("Naïah", "Regarde-moi, pas eux. Eux, ils ne ressentent rien.", "thinking")],
-        [targetBody("naiah"), receivedBody("femme", "Naïah"), N("Vos plaisirs se répondent et la brume éclate autour de chaque orgasme sans en fabriquer aucun. Naïah revient toujours à votre vrai visage, vos corps recommençant là où les doubles lumineux s’arrêtent.")],
-        [N("La brume dessine un rideau de lucioles autour de vous. Derrière lui, vos silhouettes restent vraies même lorsque le récit détourne les yeux.")],
-      ) },
-    ],
-    afterglow: [N("Naïah reste étonnamment immobile, la joue posée sur votre poitrine. Une seule luciole réelle — ou presque — se pose dans ses cheveux."), C("Naïah", "Si tu racontes que je sais rester tranquille, je nierai tout. Mais… tu peux rester encore un peu.", "thinking")],
+    directions: [],
+    afterglow: [N("Naïah reste étonnamment immobile, la joue posée contre votre épaule. Une luciole réelle — ou presque — se pose dans ses cheveux."), C("Naïah", "Si tu racontes que je sais rester tranquille, je nierai tout. Mais tu peux rester encore un peu.", "thinking")],
   },
 
   lineva: {
@@ -400,6 +381,7 @@ export function intimacyDirections(characterId: string, sex: PlayerSex, dateId?:
       ? allennaDateIntimacyRoutes(dateId, sex)
       : [];
   if (dateRoutes.length) return dateRoutes;
+  if (characterId === "naiah") return [];
   const routes = intimacyRoutes(characterId, sex);
   return routes.length ? routes : (INTIMACY_PROFILES[characterId]?.directions || []);
 }
@@ -411,6 +393,7 @@ export function directionChapters(characterId: string, directionId: string, mode
       ? allennaDateIntimacyRoutes(dateId, sex).find((entry) => entry.id === directionId)
       : undefined;
   if (dateRoute) return dateRoute.chapters[mode];
+  if (characterId === "naiah") return [];
   const richRoute = intimacyRoutes(characterId, sex).find((entry) => entry.id === directionId);
   if (richRoute) return richRoute.chapters[mode];
   const legacy = directionLines(characterId, directionId, mode, sex);

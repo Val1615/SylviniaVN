@@ -1,6 +1,7 @@
 import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
 import { HYLEE_HOME_DATE } from "./hylee-home-date.ts";
 import { REMERII_HOME_DATE, REMERII_RESIDENT_MOMENTS } from "./remerii-home-date";
+import { NAIAH_HOME_DATE } from "./naiah-home-date";
 import type { DisplayItem, HousingProperty } from "./housing-data";
 
 export type HomeDateTone = "amical" | "amoureux" | "desir";
@@ -118,25 +119,7 @@ export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
     ],
     results: { close: [C("Valurn", "J’ai perdu deux manches et conservé toutes mes libertés. Votre jeu manque délicieusement de rentabilité.", "amused")], warm: [C("Valurn", "Gardez la carte blanche. J’aimerais revenir voir ce que nous n’y avons pas encore écrit.", "away")], perfect: [N("Valurn glisse la carte de la maison sous son verre au lieu de l’emporter."), C("Valurn", "Une mise laissée ici volontairement. Prenez la mesure historique du geste.", "charming")] },
   },
-  naiah: {
-    character: "naiah", title: "Trois vérités dans un salon", description: "Laisser Naïah métamorphoser votre intérieur sans lui permettre de cacher la soirée sous ses illusions.", gift: "homegift-naiah",
-    activityTitle: "Le vrai, le faux et le souhaité", activityInstruction: "Naïah transforme trois détails du logis. Distinguez l’illusion, la vérité et ce qu’elle aimerait rendre réel.",
-    arrival: [N("Naïah entre par la fenêtre, puis rouvre ostensiblement la porte pour recommencer son arrivée. Elle dépose une lanterne violette sur la table."), C("Naïah", "La luciole est fausse, la lanterne est vraie et j’ai réellement hésité douze minutes devant ta porte. Première énigme gratuite.", "smirk")],
-    cityComments: cities("Naïah", "Al’Gratal a beaucoup trop de fenêtres pour une ville qui adore les secrets. J’approuve ce défaut.", "La mer détruit mes brumes et recommence chaque matin. Je pourrais finir par respecter cette insolence.", "Le Dôme rend toutes les illusions légèrement prétentieuses. Les miennes se sentent enfin comprises.", "Je connais la vue… pas depuis une maison où je peux partir quand je veux. Ce détail change la ville entière."),
-    tierComments: tier("Naïah", ["Petit, caché, facile à transformer. Cette pièce a d’excellentes dispositions criminelles.", "Tu as juste assez de murs pour que je puisse en déplacer un sans provoquer de crise architecturale.", "C’est beau sans avoir l’air de vouloir t’avaler. J’aime bien.", "Je pourrais créer trois bals différents ici et n’inviter personne. Très tentant.", "Ce lieu est absurdement grand. Promets-moi qu’une pièce restera inutile." ]),
-    ownItemComment: "Ma tasse… Tu as même laissé la fêlure tournée vers la lumière. Elle n’a jamais été aussi bien regardée au palais.", otherItemComment: "Je pourrais inventer une histoire plus spectaculaire. Mais la vraie trace sur ton visage quand tu le regardes est déjà meilleure.",
-    tones: {
-      amical: { label: "Cabane au milieu du monde", detail: "Jouer, parler et protéger une amitié sans ambiguïté imposée.", effects: { affection: 7, trust: 8 }, lines: [P("Tu peux transformer les murs. Pas besoin de transformer ce que nous sommes pour que la soirée compte."), C("Naïah", "Une amitié assez solide pour survivre à un plafond violet. J’accepte le défi.", "laugh")] },
-      amoureux: { label: "Laisser une vraie trace", detail: "Choisir la tendresse derrière le spectacle.", effects: { affection: 9, trust: 7, desire: 4 }, lines: [P("Je veux savoir ce que tu laisserais ici si tu ne pouvais pas le cacher dans la brume."), C("Naïah", "Peut-être moi. Une soirée. Ne prends pas cet aveu pour une habitude.", "thinking")] },
-      desir: { label: "Jouer avec les reflets", detail: "Laisser les illusions amplifier une tension déjà bien réelle.", effects: { affection: 6, trust: 5, desire: 10 }, lines: [P("Je veux retrouver la vraie Naïah parmi toutes celles qui me provoquent."), C("Naïah", "Mauvaise nouvelle : elles ont toutes la même idée pour la suite.", "smirk")] },
-    },
-    rounds: [
-      { prompt: "Le mur s’ouvre sur une forêt impossible.", detail: "Un seul détail vient de la mémoire de Naïah.", options: [O("rain", "Suivre l’odeur de pluie sur la pierre", 2, C("Naïah", "C’était la cuisine d’Allenna et moi. Tu as trouvé le souvenir sous le spectacle.")), O("moon", "Choisir la lune la plus brillante", 1, N("Elle éclate en lucioles ravies d’avoir été remarquées.")), O("door", "Fermer immédiatement l’illusion", 0, C("Naïah", "Tu pouvais simplement me demander de la réduire."))] },
-      { prompt: "Trois versions de votre table apparaissent.", detail: "L’une montre ce que Naïah souhaiterait y voir demain.", options: [O("breakfast", "Choisir les deux tasses du petit-déjeuner", 2, N("Naïah rougit avant de pouvoir remplacer l’image par quelque chose de plus insolent.")), O("feast", "Choisir le banquet spectaculaire", 1, C("Naïah", "Joli. Trop de couverts et pas assez de vérité.")), O("empty", "Choisir la table parfaitement vide", 0, N("L’illusion s’éteint ; la vraie Naïah garde les yeux sur la tasse qu’elle avait ajoutée."))] },
-      { prompt: "Votre reflet prend la main de Naïah avant vous.", detail: "Elle sourit, mais attend votre décision réelle.", options: [O("real", "Ignorer le reflet et tendre votre vraie main", 2, N("Toutes les copies disparaissent dès que ses doigts rejoignent les vôtres.")), O("race", "Défier le reflet de vous devancer", 1, C("Naïah", "Enfin une compétition suffisamment absurde.")), O("watch", "Laisser l’illusion jouer la scène à votre place", 0, C("Naïah", "Je t’ai invité·e, pas ta doublure prudente."))] },
-    ],
-    results: { close: [C("Naïah", "Tu as trouvé assez de vrai pour que je n’aie pas besoin de gagner.", "thinking")], warm: [C("Naïah", "Je laisserai la lanterne. Comme ça, une de mes illusions aura officiellement ton adresse.", "smirk")], perfect: [N("La dernière illusion disparaît. La pièce réelle paraît plus intime qu’avant."), C("Naïah", "Voilà. Aucun truc. Juste moi qui ai très envie de rester.", "thinking")] },
-  },
+  naiah: NAIAH_HOME_DATE,
   lineva: {
     character: "lineva", title: "Une relève à domicile", description: "Assembler une maquette avec Lineva, entre copeaux, café solide et plaisanteries de quai.", gift: "homegift-lineva",
     activityTitle: "Le navire qui ne part pas", activityInstruction: "Assemblez avec Lineva une petite maquette destinée à rester sur une étagère, sans fonction militaire ni urgence.",

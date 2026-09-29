@@ -3,6 +3,7 @@ import type { LinevaIntimacyPhase } from "./lineva-date-intimacy";
 import type { AllennaIntimacyPhase } from "./allenna-date-intimacy";
 import type { HyleeIntimacyPhase } from "./hylee-date-intimacy";
 import type { RemeriiIntimacyPhase } from "./remerii-date-intimacy";
+import type { NaiahProximityPhase } from "./naiah-date-intimacy";
 
 export type IntimateCgPhase = "reveal" | "post-orgasm";
 export type IntimateCgSurface = "route" | "home" | "group";
@@ -20,7 +21,7 @@ export type IntimateVisualState = {
 const ROOT = "/assets/intimacy-cg";
 
 export const SOLO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(
-  ["hylee", "remerii", "iriana", "tia", "valurn", "naiah", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven"]
+  ["hylee", "remerii", "iriana", "tia", "valurn", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven"]
     .map((character) => [character, {
       reveal: `${ROOT}/${character}_reveal.jpg`,
       postOrgasm: `${ROOT}/${character}_post_orgasm.jpg`,
@@ -31,9 +32,7 @@ const DUO_NAMES: Record<string, string> = {
   "group-date-hylee-remerii": "hylee_remerii",
   "group-date-valurn-bellirith": "valurn_bellirith",
   "group-date-iriana-valurn": "iriana_valurn",
-  "group-date-hylee-naiah": "hylee_naiah",
   "group-date-remerii-iriana": "remerii_iriana",
-  "group-date-naiah-bellirith": "naiah_bellirith",
   "group-date-tia-remerii": "tia_remerii",
   // Les CG sont des récompenses de révélation. Leur cadrage n'impose pas le
   // décor narratif : chaque rendez-vous choisit lui-même son instant d'effeuillage.
@@ -68,7 +67,7 @@ export function soloIntimateVisualState(options: {
   surface: Exclude<IntimateCgSurface, "group">;
   step: string;
   chapter: number;
-  narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase | HyleeIntimacyPhase | RemeriiIntimacyPhase;
+  narrativePhase?: LinevaIntimacyPhase | AllennaIntimacyPhase | HyleeIntimacyPhase | RemeriiIntimacyPhase | NaiahProximityPhase;
   revealChapter?: number;
   postOrgasmChapter?: number;
 }): IntimateVisualState {

@@ -666,6 +666,9 @@ INDIVIDUAL_EXPLICIT_SCENES.draven = {
 };
 
 export function individualExplicitScene(character: string, sex: PlayerSex, role: AdvancedRouteRole): AdvancedRawLine[] {
+  if (character === "naiah") {
+    throw new Error("Naïah utilise ses scènes de proximité dédiées, jamais le catalogue sexuel générique.");
+  }
   const selected = INDIVIDUAL_EXPLICIT_SCENES[character]?.[sex]?.[role];
   if (!selected) throw new Error(`Scène explicite individuelle manquante : ${character}/${sex}/${role}`);
   return selected;

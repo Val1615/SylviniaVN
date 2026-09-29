@@ -906,6 +906,7 @@ const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
 };
 
 export function homeIntimacyRoutes(character: string, sex: PlayerSex): HomeIntimacyRoute[] {
+  if (character === "naiah") return [];
   return (HOME_ROUTE_SEEDS[character] || []).map((seed) => route(character, sex, seed));
 }
 
@@ -930,11 +931,12 @@ export function homeIntimacyEnding(character: string, property: HousingProperty)
 
 export function validateHomeIntimacyCatalog() {
   const sexes: PlayerSex[] = ["femme", "homme", "intersexe"];
+  const characters = Object.keys(HOME_ROUTE_SEEDS).filter((character) => character !== "naiah");
   let combinations = 0;
   let routes = 0;
   let chapters = 0;
   const labels: string[] = [];
-  Object.keys(HOME_ROUTE_SEEDS).forEach((character) => {
+  characters.forEach((character) => {
     sexes.forEach((sex) => {
       const entries = homeIntimacyRoutes(character, sex);
       if (entries.length !== 3) throw new Error(`${character}/${sex}: trois routes domestiques requises`);
@@ -950,5 +952,5 @@ export function validateHomeIntimacyCatalog() {
     });
   });
   if (new Set(labels).size !== labels.length) throw new Error("Chaque choix domestique par sexe doit avoir un libellé unique.");
-  return { characters: Object.keys(HOME_ROUTE_SEEDS).length, combinations, routes, chapters };
+  return { characters: characters.length, combinations, routes, chapters };
 }

@@ -981,7 +981,7 @@ const ROUTE_SEEDS: Record<string, RouteSeed[]> = {
 };
 
 export const INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, IntimacyRoute[]>> = Object.fromEntries(
-  Object.entries(ROUTE_SEEDS).map(([character, seeds]) => [character, {
+  Object.entries(ROUTE_SEEDS).filter(([character]) => character !== "naiah").map(([character, seeds]) => [character, {
     femme: seeds.map((seed, index) => route(character, "femme", seed, index)),
     homme: seeds.map((seed, index) => route(character, "homme", seed, index)),
     intersexe: seeds.map((seed, index) => route(character, "intersexe", seed, index)),
