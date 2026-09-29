@@ -10,6 +10,7 @@ export const INTIMATE_SPRITE_MOODS = {
   remerii: ["teasing", "soft", "inviting", "shy", "strict", "smirk"],
   allenna: ["seductive", "angry", "shy", "soft", "troubled", "stern"],
   lineva: ["teasing", "passionate", "pouting", "smirk", "annoyed", "soft"],
+  naiah: ["laugh", "soft", "teasing", "stern", "inviting", "smirk"],
 } as const;
 
 export type IntimateSpriteCharacter = keyof typeof INTIMATE_SPRITE_MOODS;
@@ -18,6 +19,17 @@ export const INTIMATE_SPRITE_FALLBACKS: Record<IntimateSpriteCharacter, "soft"> 
   remerii: "soft",
   allenna: "soft",
   lineva: "soft",
+  naiah: "soft",
+};
+
+const INTIMATE_SPRITE_EXTENSIONS: Record<IntimateSpriteCharacter, "webp" | "png"> = {
+  hylee: "webp",
+  remerii: "webp",
+  allenna: "webp",
+  lineva: "webp",
+  // Les six fichiers Naïah sont volontairement conservés tels que livrés.
+  // Leurs noms stables permettent de remplacer les placeholders sans toucher au code.
+  naiah: "png",
 };
 
 const SOLO_PHASE_TRACKS: Record<IntimateSpriteCharacter, readonly string[]> = {
@@ -25,6 +37,7 @@ const SOLO_PHASE_TRACKS: Record<IntimateSpriteCharacter, readonly string[]> = {
   remerii: ["soft", "shy", "inviting", "soft", "teasing", "inviting", "strict", "inviting", "shy", "soft"],
   allenna: ["soft", "shy", "shy", "troubled", "soft", "seductive", "stern", "seductive", "shy", "soft"],
   lineva: ["soft", "pouting", "smirk", "soft", "teasing", "passionate", "annoyed", "passionate", "soft", "soft"],
+  naiah: ["soft", "smirk", "teasing", "laugh", "soft", "inviting", "stern", "teasing", "smirk", "soft"],
 };
 
 const SOLO_ROUTE_ACCENTS: Record<IntimateSpriteCharacter, readonly [needle: string, mood: string][]> = {
@@ -32,6 +45,7 @@ const SOLO_ROUTE_ACCENTS: Record<IntimateSpriteCharacter, readonly [needle: stri
   remerii: [["complice", "teasing"], ["attentive", "soft"], ["elan", "inviting"], ["hypothese", "strict"]],
   allenna: [["defi", "stern"], ["tendre", "soft"], ["passion", "seductive"], ["discipline", "stern"]],
   lineva: [["joueuse", "teasing"], ["tendre", "soft"], ["passionnee", "passionate"], ["commandement", "annoyed"]],
+  naiah: [["jeu", "teasing"], ["illusion", "smirk"], ["rire", "laugh"], ["confiance", "soft"]],
 };
 
 const GROUP_CONTEXTS = {
@@ -59,6 +73,13 @@ const GROUP_CONTEXTS = {
     allenna: ["soft", "shy", "troubled", "seductive", "soft", "seductive", "stern", "seductive", "shy", "soft"],
     lineva: ["soft", "pouting", "smirk", "teasing", "passionate", "passionate", "annoyed", "passionate", "soft", "soft"],
   },
+  "group-date-hylee-naiah": {
+    hylee: ["soft", "teasing", "shy", "tender", "seductive", "teasing", "tender", "soft"],
+    naiah: ["smirk", "teasing", "laugh", "inviting", "soft", "teasing", "stern", "soft"],
+  },
+  "group-date-naiah-bellirith": {
+    naiah: ["soft", "smirk", "teasing", "stern", "inviting", "laugh", "teasing", "soft"],
+  },
 } as const;
 
 export type IntimateGroupContext = keyof typeof GROUP_CONTEXTS;
@@ -79,7 +100,8 @@ export function resolveIntimateSpriteMood(characterId: string, requestedMood?: s
 }
 
 export function intimateSpritePath(characterId: string, requestedMood?: string): string {
-  return `/assets/sprites-intimate/${characterId}/${resolveIntimateSpriteMood(characterId, requestedMood)}.webp`;
+  const extension = hasIntimateSprites(characterId) ? INTIMATE_SPRITE_EXTENSIONS[characterId] : "webp";
+  return `/assets/sprites-intimate/${characterId}/${resolveIntimateSpriteMood(characterId, requestedMood)}.${extension}`;
 }
 
 export function intimateSpriteFallbackPath(characterId: string): string {
@@ -140,13 +162,12 @@ export function withGroupIntimateMoods(
   contextId: string,
   characters: readonly [string, string],
 ): DialogueLine[][] {
-  if (!isIntimateGroupContext(contextId) || !characters.every(hasIntimateSprites)) return chapters;
-  return chapters.map((chapter, chapterIndex) => chapter.map((line) => ({
-    ...line,
-    intimateMoods: {
-      ...line.intimateMoods,
-      [characters[0]]: groupMood(contextId, characters[0], chapterIndex),
-      [characters[1]]: groupMood(contextId, characters[1], chapterIndex),
-    },
-  })));
+  if (!isIntimateGroupContext(contextId) || !characters.some(hasIntimateSprites)) return chapters;
+  return chapters.map((chapter, chapterIndex) => chapter.map((line) => {
+    const intimateMoods: Partial<Record<string, string>> = { ...line.intimateMoods };
+    characters.forEach((characterId) => {
+      if (hasIntimateSprites(characterId)) intimateMoods[characterId] = groupMood(contextId, characterId, chapterIndex);
+    });
+    return { ...line, intimateMoods };
+  }));
 }

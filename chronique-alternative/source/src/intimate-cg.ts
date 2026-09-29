@@ -21,7 +21,7 @@ export type IntimateVisualState = {
 const ROOT = "/assets/intimacy-cg";
 
 export const SOLO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(
-  ["hylee", "remerii", "iriana", "tia", "valurn", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven"]
+  ["hylee", "remerii", "iriana", "tia", "valurn", "lineva", "saidin", "bellirith", "amanea", "allenna", "draven", "naiah"]
     .map((character) => [character, {
       reveal: `${ROOT}/${character}_reveal.jpg`,
       postOrgasm: `${ROOT}/${character}_post_orgasm.jpg`,
@@ -42,6 +42,8 @@ const DUO_NAMES: Record<string, string> = {
   "group-date-hylee-remerii-free-day": "hylee_remerii",
   "group-date-hylee-remerii-wind": "hylee_remerii",
   "group-date-hylee-remerii-home": "hylee_remerii",
+  "group-date-hylee-naiah": "hylee_naiah",
+  "group-date-naiah-bellirith": "naiah_bellirith",
 };
 
 export const DUO_INTIMATE_CG: Record<string, { reveal: string; postOrgasm: string }> = Object.fromEntries(
@@ -60,6 +62,8 @@ const STANDARD_VISUAL: IntimateVisualState = { useIntimateSprites: false };
 
 const BEFORE_REVEAL_PHASES = new Set(["approach", "undressing"]);
 const AFTERGLOW_PHASES = new Set(["afterglow", "ending"]);
+const NAIAH_AFTER_REVEAL_PHASES = new Set<NaiahProximityPhase>(["trust", "shift", "truth", "rebound", "calm", "closure"]);
+const NAIAH_GROUP_CONTEXTS = new Set(["group-date-hylee-naiah", "group-date-naiah-bellirith"]);
 
 export function soloIntimateVisualState(options: {
   character: string;
@@ -74,6 +78,14 @@ export function soloIntimateVisualState(options: {
   if (options.mode !== "explicite") return STANDARD_VISUAL;
   const assets = SOLO_INTIMATE_CG[options.character];
   if (!assets) return STANDARD_VISUAL;
+  if (options.character === "naiah") {
+    if (options.step === "ending" || options.step === "done") return { useIntimateSprites: true };
+    if (options.step !== "direction-lines") return STANDARD_VISUAL;
+    if (options.narrativePhase === "reaction") {
+      return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
+    }
+    return { useIntimateSprites: Boolean(options.narrativePhase && NAIAH_AFTER_REVEAL_PHASES.has(options.narrativePhase as NaiahProximityPhase)) };
+  }
   if (options.step === "ending" || options.step === "done") {
     return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
   }
@@ -113,6 +125,16 @@ export function groupIntimateVisualState(options: {
   if (options.mode !== "explicite") return STANDARD_VISUAL;
   const assets = DUO_INTIMATE_CG[options.pairId];
   if (!assets) return STANDARD_VISUAL;
+  if (NAIAH_GROUP_CONTEXTS.has(options.pairId)) {
+    if (options.step === "ending" || options.step === "done") return { useIntimateSprites: true };
+    if (options.step !== "direction-lines") return STANDARD_VISUAL;
+    const revealChapter = options.revealChapter ?? 3;
+    if (options.chapter < revealChapter) return STANDARD_VISUAL;
+    if (options.chapter === revealChapter) {
+      return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
+    }
+    return { useIntimateSprites: true };
+  }
   if (options.step === "ending" || options.step === "done") {
     return { cg: stateFromAssets(assets, "post-orgasm"), useIntimateSprites: false };
   }
