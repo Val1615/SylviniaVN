@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { CHARACTERS } from "../src/game-data.ts";
-import { KNOWN_MOOD_LABELS, SPRITE_MOODS, resolveSpriteMood, spritePath } from "../src/sprite-system.ts";
+import { KNOWN_MOOD_LABELS, SPRITE_MOODS, resolveSpriteMood, spriteExtension, spritePath } from "../src/sprite-system.ts";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const sourceDirectory = path.resolve(scriptDirectory, "../src");
@@ -28,12 +28,15 @@ let checkedResolutions = 0;
 
 for (const character of CHARACTERS) {
   const directory = path.join(spriteDirectory, character.id);
-  const actualMoods = (await readdir(directory))
-    .filter((file) => file.endsWith(".webp"))
-    .map((file) => file.replace(/\.webp$/u, ""))
+  const expectedExtension = spriteExtension(character.id);
+  const spriteFiles = (await readdir(directory)).filter((file) => /\.(?:png|webp)$/u.test(file));
+  const actualMoods = spriteFiles
+    .filter((file) => file.endsWith(`.${expectedExtension}`))
+    .map((file) => file.replace(/\.(?:png|webp)$/u, ""))
     .sort();
   const registeredMoods = [...SPRITE_MOODS[character.id]].sort();
 
+  assert.ok(spriteFiles.every((file) => file.endsWith(`.${expectedExtension}`)), `${character.name} : formats de sprites publics mélangés.`);
   assert.deepEqual(registeredMoods, actualMoods, `${character.name} : registre et fichiers de sprites désynchronisés.`);
   assert.ok(actualMoods.includes(character.defaultMood), `${character.name} : humeur par défaut absente (${character.defaultMood}).`);
 
@@ -51,6 +54,11 @@ assert.equal(resolveSpriteMood("lineva", "teasing", "thoughtful"), "smirk");
 assert.equal(resolveSpriteMood("lineva", "calm", "thoughtful"), "thoughtful");
 assert.equal(resolveSpriteMood("allenna", "soft", "neutral"), "shy");
 assert.equal(resolveSpriteMood("allenna", "determined", "neutral"), "stern");
+assert.equal(spriteExtension("allenna"), "png");
+assert.equal(spriteExtension("tia"), "png");
+assert.equal(spriteExtension("hylee"), "webp");
+assert.match(spritePath("allenna", "smile", "neutral"), /\/allenna\/smile\.png$/u);
+assert.match(spritePath("tia", "stern", "neutral"), /\/tia\/stern\.png$/u);
 
 const pageSource = await readFile(path.join(sourceDirectory, "page.tsx"), "utf8");
 assert.ok(!pageSource.includes("/assets/sprites/${"), "Les vues doivent utiliser spritePath au lieu de construire une URL non validée.");

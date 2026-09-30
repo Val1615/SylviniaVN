@@ -56,10 +56,11 @@ for (const [label, entries] of Object.entries({
   }
 }
 
-async function validateWebp(path, label) {
+async function validatePng(path, label) {
   const contents = await readFile(path);
-  if (contents.length < 5_000 || contents.toString("ascii", 0, 4) !== "RIFF" || contents.toString("ascii", 8, 12) !== "WEBP") {
-    throw new Error(`${label}: sprite WebP vide ou illisible`);
+  const png = contents.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  if (contents.length < 5_000 || !png) {
+    throw new Error(`${label}: sprite PNG vide ou illisible`);
   }
 }
 
@@ -87,7 +88,7 @@ for (const [character, unlockDay] of [["tia", 18], ["allenna", 8]]) {
   const residentCount = [...housingScenes.matchAll(new RegExp(`moment\\("${character}"`, "g"))].length;
   if (residentCount !== 4) throw new Error(`${character}: quatre moments de résident requis, ${residentCount} obtenu(s)`);
   for (const mood of ["neutral", "smile", "angry", "shy", "troubled", "thinking", "sad", "smirk", "threatening", "stern"]) {
-    await validateWebp(resolve(alternativeRoot, `assets/sprites/${character}/${mood}.webp`), `${character}/${mood}`);
+    await validatePng(resolve(alternativeRoot, `assets/sprites/${character}/${mood}.png`), `${character}/${mood}`);
   }
   await validatePortrait(resolve(alternativeRoot, `assets/portraits/${character}.jpg`), character);
 }
