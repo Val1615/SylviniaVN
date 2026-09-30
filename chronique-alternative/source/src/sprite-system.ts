@@ -22,6 +22,16 @@ export const SPRITE_MOODS: Record<string, readonly string[]> = {
   draven: ["angry", "approving", "gruff", "neutral", "stern", "surprised"],
 };
 
+/**
+ * Les sprites publics restent en WebP par défaut. Allenna et Tia utilisent
+ * volontairement des PNG éditables : leurs modèles sont encore susceptibles
+ * d'être remplacés sans imposer une conversion WebP à chaque retouche.
+ */
+export const SPRITE_EXTENSIONS: Readonly<Record<string, "png" | "webp">> = Object.freeze({
+  allenna: "png",
+  tia: "png",
+});
+
 type MoodFamily =
   | "neutral"
   | "calm"
@@ -209,6 +219,11 @@ export function resolveSpriteMood(characterId: string, requestedMood?: string, f
   return firstAvailable(available, [SAFE_DEFAULT[characterId], "neutral", ...available]) || available[0];
 }
 
+export function spriteExtension(characterId: string): "png" | "webp" {
+  return SPRITE_EXTENSIONS[characterId] || "webp";
+}
+
 export function spritePath(characterId: string, requestedMood?: string, fallbackMood?: string) {
-  return `/assets/sprites/${characterId}/${resolveSpriteMood(characterId, requestedMood, fallbackMood)}.webp`;
+  const mood = resolveSpriteMood(characterId, requestedMood, fallbackMood);
+  return `/assets/sprites/${characterId}/${mood}.${spriteExtension(characterId)}`;
 }
