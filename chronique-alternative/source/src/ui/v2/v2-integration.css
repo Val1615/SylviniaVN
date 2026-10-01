@@ -1,0 +1,140 @@
+/* Interface V2 — raccords propres au jeu réel (éléments sans équivalent dans le prototype,
+   cohabitation avec les fenêtres héritées : dialogues VN, modales, mini-jeux). */
+
+/* Calques sans boîte : toasts, transitions, fenêtres natives. */
+.v2-calque, .v2-legacy-layer { display: contents; }
+
+/* Les règles globales historiques ne doivent pas déteindre sur la V2. */
+:where(.v2) button:disabled { opacity: 1; }
+:where(.v2) :is(button, input, select, a):focus-visible { outline: none; }
+.v2 .t-item:disabled, .v2 .pin.voile:disabled { opacity: .55; }
+
+/* Pendant une scène (dialogue VN, intimité, logis, mini-jeu tactique) le HUD s’efface. */
+.jeu.scene-active { visibility: hidden; }
+.jeu.scene-active ~ .v2-calque .toasts { z-index: 120; }
+
+/* Fenêtres héritées au-dessus du jeu V2 (elles gardent leur propre style). */
+.modal-backdrop { z-index: 100; }
+.dialogue-overlay { z-index: 60; }
+
+/* Lieu : sous-lieux du même lieu (trajet réel via travel). */
+.lieu-sous { margin-top: calc(1rem * var(--k, 1)); }
+.lieu-sous > div { display: flex; flex-wrap: wrap; gap: calc(.35rem * var(--k, 1)); margin-top: calc(.35rem * var(--k, 1)); }
+.sous-lieu { display: inline-flex; align-items: center; gap: calc(.4rem * var(--k, 1)); padding: calc(.35rem * var(--k, 1)) calc(.85rem * var(--k, 1)); transform: skewX(-12deg); background: rgba(8,8,16,.7); border: 1px solid var(--ligne-douce); color: var(--texte-2); font: 600 calc(.875rem * var(--tr, 1)) var(--v2-sans); transition: border-color .15s, background .15s, color .15s; }
+.sous-lieu > * { transform: skewX(12deg); }
+.sous-lieu i { font-style: normal; color: var(--or); }
+.sous-lieu b { font-size: calc(.75rem * var(--tr, 1)); color: var(--rose, #ff8fb4); }
+.sous-lieu:hover:not(:disabled), .sous-lieu:focus-visible { border-color: var(--or-vif); color: var(--or-pale); background: rgba(216,189,120,.14); }
+.sous-lieu.actif { border-color: var(--or-vif); color: #1a1206; background: linear-gradient(90deg, #fff1c9, #d9b56a); cursor: default; }
+.sous-lieu.actif i { color: #3a2a0c; }
+.pres-vide { color: var(--texte-3); font: italic 500 calc(1rem * var(--tr, 1)) var(--v2-serif); }
+.cmd-item small { max-width: 52%; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.cmd-item.verrou .cmd-ico { color: var(--texte-3); }
+.cmd-important .cmd-item { border-left-color: var(--rose, #ff8fb4); box-shadow: inset 4px 0 0 rgba(255,143,180,.35); }
+.cmd-attente { list-style: none; }
+
+/* Création : couleur libre et message de validation. */
+.couleur-libre { position: relative; display: grid; place-items: center; width: calc(32px * var(--echelle, 1)); height: calc(32px * var(--echelle, 1)); transform: rotate(45deg) scale(.85); border: 2px dashed rgba(255,255,255,.35); background: var(--c); cursor: pointer; }
+.couleur-libre span { transform: rotate(-45deg); color: #fff; font-size: calc(.8rem * var(--tr, 1)); text-shadow: 0 1px 3px #000; }
+.couleur-libre input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.couleur-libre.on { border-style: solid; border-color: var(--or-vif); transform: rotate(45deg) scale(1); box-shadow: 0 0 14px var(--c); }
+.c-erreur { margin-top: calc(.8rem * var(--k, 1)); color: #ffb0c0; font-size: calc(.9375rem * var(--tr, 1)); }
+
+/* Carte : sous-lieux sélectionnables dans la fiche. */
+.cf-spots .cf-spot { width: 100%; display: flex; align-items: center; gap: calc(.45rem * var(--k, 1)); padding: calc(.2rem * var(--k, 1)) calc(.35rem * var(--k, 1)); text-align: left; color: var(--texte-2); border-left: 2px solid transparent; }
+.cf-spots .cf-spot i { font-style: normal; color: var(--or); }
+.cf-spots .cf-spot span { flex: 1; min-width: 0; }
+.cf-spots .cf-spot em { color: var(--or); font-style: normal; }
+.cf-spots .cf-spot b { font-size: calc(.75rem * var(--tr, 1)); color: var(--rose, #ff8fb4); }
+.cf-spots .cf-spot b.cf-job { color: var(--or); }
+.cf-spots .cf-spot:hover, .cf-spots .cf-spot:focus-visible, .cf-spots .cf-spot.sel { color: var(--or-pale); border-left-color: var(--or-vif); background: rgba(216,189,120,.1); }
+.cf-spot-desc { margin-top: calc(.4rem * var(--k, 1)); font-size: calc(.875rem * var(--tr, 1)); }
+
+/* Liens : cartes inconnues sans divulgation. */
+.lc-img.lc-inconnu { display: grid; place-items: center; font: 900 calc(3rem * var(--tr, 1)) var(--display); color: rgba(216,189,120,.25); background: radial-gradient(circle at 50% 35%, rgba(137,100,196,.18), rgba(8,8,16,.9)); }
+.rdv-carte.logis .rc-txt small { color: var(--or); }
+.trio-vide { padding: calc(2rem * var(--k, 1)); max-width: calc(640px * var(--echelle, 1)); }
+.fiche-actions { flex-wrap: wrap; }
+.retour-lien { background: none; border: 0; cursor: pointer; }
+
+/* Journal : jalons, traces, page pleine pour les registres hérités. */
+.j-jalons { list-style: none; margin: calc(.8rem * var(--k, 1)) 0 0; padding: 0; display: grid; gap: calc(.35rem * var(--k, 1)); }
+.j-jalons li { display: flex; gap: calc(.55rem * var(--k, 1)); align-items: flex-start; color: var(--texte-2); }
+.j-jalons li i { font-style: normal; color: var(--texte-3); }
+.j-jalons li.ok i { color: var(--or-vif); }
+.j-jalons small { display: block; color: var(--texte-3); font-size: calc(.8125rem * var(--tr, 1)); }
+.j-actions { display: flex; flex-wrap: wrap; gap: calc(.45rem * var(--k, 1)); margin-top: calc(.6rem * var(--k, 1)); }
+.j-traces { margin-top: calc(1rem * var(--k, 1)); }
+.j-traces ul { list-style: none; margin: calc(.3rem * var(--k, 1)) 0 0; padding: 0; color: var(--texte-3); font-size: calc(.875rem * var(--tr, 1)); display: grid; gap: calc(.2rem * var(--k, 1)); }
+.j-vide .texte { margin-top: calc(.6rem * var(--k, 1)); }
+.j-liste span.j-entree { cursor: default; }
+.grimoire.grimoire-plein .page.pleine { grid-column: 1 / -1; min-width: 0; overflow: auto; max-height: 100%; }
+.journal-embarque { padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+
+/* Registres hérités (Relations, Souvenirs, Quêtes croisées, panneau développeur) rhabillés aux couleurs V2. */
+.v2-legacy { color: var(--texte); font-family: var(--v2-sans); }
+.v2-legacy h2, .v2-legacy h3 { font-family: var(--display); color: var(--or-pale); letter-spacing: .04em; margin: .2em 0 .35em; }
+.v2-legacy p, .v2-legacy small { color: var(--texte-2); }
+.v2-legacy button { padding: calc(.45rem * var(--k, 1)) calc(1rem * var(--k, 1)); border: 1px solid var(--ligne); background: linear-gradient(180deg, #1d1b2c, #12111d); color: var(--or-pale); cursor: pointer; font: 600 calc(.875rem * var(--tr, 1)) var(--v2-sans); }
+.v2-legacy button:hover:not(:disabled), .v2-legacy button:focus-visible { border-color: var(--or-vif); color: #1a1206; background: linear-gradient(180deg, #fff1c9, #e2c47f); }
+.v2-legacy button:disabled { opacity: .45; }
+.v2-legacy .quest-card, .v2-legacy .memory-replay-grid > button, .v2-legacy .option-panel { background: rgba(10,10,20,.62); border: 1px solid var(--ligne-douce); }
+.v2-legacy .memory-replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(220px * var(--echelle, 1)), 1fr)); gap: calc(.5rem * var(--k, 1)); }
+.v2-legacy .memory-replay-grid > button { display: grid; text-align: left; gap: .2em; color: var(--texte); }
+.v2-legacy .memory-replay-grid > button span { font-size: calc(.75rem * var(--tr, 1)); letter-spacing: .08em; text-transform: uppercase; color: var(--or); }
+.v2-dev { margin-top: calc(1rem * var(--k, 1)); }
+.v2-dev .option-panel { padding: calc(1rem * var(--k, 1)); }
+
+/* Options : import de fichier dans un bouton. */
+.v2-fichier { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.session label.btn { position: relative; overflow: hidden; cursor: pointer; }
+
+/* Biens. */
+.od-dons { display: flex; flex-wrap: wrap; gap: calc(.35rem * var(--k, 1)); }
+.logis-aucun { background: radial-gradient(circle at 30% 30%, rgba(137,100,196,.25), rgba(8,8,16,.92)); }
+.af-diff { font-size: calc(.75rem * var(--tr, 1)); color: var(--texte-3); }
+.affiche.verrou { filter: saturate(.55); }
+
+/* HUD : bouton musique (bande-son réelle du lieu). */
+.hud-musique:not(.on) svg { opacity: .45; }
+
+/* Commandes : le libellé réel (souvent plus long que dans le prototype) passe avant le sous-titre. */
+.v2 .cmd > li:not(.cmd-temps) > .cmd-item, .v2 .cmd-attente .cmd-item { grid-template-columns: calc(2rem * var(--k, 1)) minmax(0, max-content) minmax(0, 1fr) calc(1rem * var(--k, 1)); }
+.v2 .cmd-item small { min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+
+/* Fenêtres héritées (dons, rendez-vous, lettres, jobs, mini-jeux…) : même logique, habillage V2 (typo + or), sans toucher à leur mise en page. */
+.modal-backdrop { background: radial-gradient(ellipse at 50% 35%, rgba(60,40,90,.35), transparent 60%), rgba(5,6,12,.86); }
+.modal-backdrop h2, .modal-backdrop h3 { font-family: var(--display); letter-spacing: .03em; color: var(--or-pale); }
+.modal-backdrop .eyebrow { font-family: var(--display); letter-spacing: .2em; color: var(--or); }
+.modal-backdrop > section, .modal-backdrop > div > section { border-color: var(--ligne-forte); box-shadow: 0 30px 100px #000, inset 0 0 0 1px rgba(216,189,120,.08); }
+.modal-backdrop .primary-action { font-family: var(--display); letter-spacing: .08em; background: linear-gradient(90deg, #fff1c9, #d9b56a); color: #1a1206; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
+.modal-backdrop .primary-action:hover:not(:disabled), .modal-backdrop .primary-action:focus-visible { box-shadow: 0 0 22px rgba(216,189,120,.5); filter: brightness(1.08); }
+.modal-backdrop .secondary-action { font-family: var(--display); letter-spacing: .08em; border-color: var(--ligne-forte); color: var(--or-pale); background: rgba(8,8,16,.7); clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
+.modal-backdrop .modal-close { color: var(--or); }
+.modal-backdrop .modal-close:hover { color: var(--or-vif); }
+.dialogue-overlay .scene-top h2 { font-family: var(--display); letter-spacing: .04em; color: var(--or-pale); text-shadow: 0 2px 12px #000; }
+.dialogue-overlay .eyebrow { font-family: var(--display); }
+.dialogue-overlay .speaker { font-family: var(--display); letter-spacing: .1em; }
+.dialogue-overlay .dialogue-box p, .dialogue-overlay .choice-box button { font-family: var(--v2-serif); font-size: 1.08em; }
+
+/* Pendant une scène, les toasts quittent la zone du texte pour le coin haut droit. */
+.v2-calque.en-scene .toasts { top: calc(4.2rem + env(safe-area-inset-top)); bottom: auto; left: auto; right: calc(1rem * var(--k, 1)); width: min(calc(320px * var(--echelle, 1)), calc(100vw - 2rem)); }
+@media (max-width: 760px) { .v2-calque.en-scene .toasts { top: calc(3.6rem + env(safe-area-inset-top)); left: .6rem; right: .6rem; width: auto; } }
+
+/* Registres hérités embarqués (Relations, Souvenirs, Croisées) : agrandis pour rester lisibles dans la page V2. */
+@media (min-width: 1024px) { .journal-embarque { zoom: 1.22; } }
+@media (min-width: 1600px) { .journal-embarque { zoom: 1.4; } }
+
+/* Création, écrans intermédiaires paysage (Galaxy Fold ouvert, tablettes) : la plaque récapitulative garde sa colonne. */
+@media (min-width: 761px) and (max-width: 1100px) and (orientation: landscape) {
+  .v2 .creation { grid-template-columns: minmax(calc(200px * var(--echelle, 1)), .7fr) minmax(0, 1.3fr); column-gap: calc(1.2rem * var(--k, 1)); }
+  .v2 .c-plaque { width: 100%; }
+}
+
+/* Journal : 6 signets réels (le prototype en avait moins) ; sous 1280 px les signets inactifs passent en icône. */
+@media (min-width: 761px) and (max-width: 1279px) {
+  .v2 .signets { right: calc(1rem * var(--k, 1)); }
+  .v2 .signet:not(.actif) > span { display: none; }
+  .v2 .signet:not(.actif) { padding-inline: calc(.8rem * var(--k, 1)); }
+}
+.v2 .tampon { margin-bottom: calc(1.1rem * var(--k, 1)); }
