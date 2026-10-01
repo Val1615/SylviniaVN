@@ -4,6 +4,7 @@ import "./globals.css";
 import "./integration.css";
 import "./ui/v2/v2.css";
 import "./ui/v2/v2-integration.css";
+import "./ui/v2/v2-fenetres.css";
 
 const root = document.getElementById("root");
 

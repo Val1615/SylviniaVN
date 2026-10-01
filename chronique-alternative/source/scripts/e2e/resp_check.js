@@ -13,7 +13,7 @@
       if (cs.position === "fixed") break; }
     return { x1, y1, x2, y2, ...info }; };
   const nm = (e) => (e.className && typeof e.className === "string" ? "." + e.className.trim().split(/\s+/).slice(0, 2).join(".") : e.tagName.toLowerCase()) + (e.textContent ? `"${e.textContent.trim().replace(/\s+/g, " ").slice(0, 22)}"` : "");
-  const root = document.querySelector("dialog[open]") || document.querySelector(".modal-backdrop") || document.querySelector("#root") || document.body;
+  const root = (window.__respRoot && document.querySelector(window.__respRoot)) || document.querySelector("dialog[open]") || document.querySelector(".modal-backdrop") || document.querySelector("#root") || document.body;
   const items = []; const seen = new Set();
   const inter = "button, a[href], input, select, textarea, [role=button], [role=tab]";
   const deskew = (el, r) => { const m = getComputedStyle(el).transform; const mm = m && m.startsWith("matrix(") ? m.slice(7, -1).split(",").map(Number) : null; if (!mm || Math.abs(mm[2]) < .05) return r; const k = Math.abs(mm[2] / mm[3]) * r.height / 2; return { left: r.left + k, right: r.right - k, top: r.top, bottom: r.bottom, width: r.width - 2 * k, height: r.height }; };

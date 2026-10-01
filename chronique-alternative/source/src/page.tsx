@@ -404,7 +404,7 @@ type ModalState =
   | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
   | { kind: "job"; jobId: string }
-  | { kind: "notice"; title: string; text: string; consumeTime?: boolean; actionLabel?: string }
+  | { kind: "notice"; title: string; text: string; consumeTime?: boolean; actionLabel?: string; gift?: V2GiftReaction }
   | null;
 
 type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
@@ -1901,6 +1901,8 @@ export default function Home() {
   const titleAudioRef = useRef<HTMLAudioElement>(null);
   const gameRef = useRef<GameState | null>(null);
   const rankPrevRef = useRef<GameState | null>(null);
+  const dayStartRef = useRef<GameState | null>(null);
+  const [dayRecap, setDayRecap] = useState<{ from: GameState; to: GameState } | null>(null);
 
   useEffect(() => { gameRef.current = game; }, [game]);
   useEffect(() => { installGlobalSfx(); applyScales(readScales()); return subscribeUiPrefs(() => setV2Prefs(uiPrefs())); }, []);
@@ -1939,6 +1941,17 @@ export default function Home() {
     const ups = CHARACTERS.filter((character) => (game.relationships[character.id]?.stage ?? 0) > (previous.relationships[character.id]?.stage ?? 0))
       .map((character) => ({ id: character.id, from: previous.relationships[character.id]?.stage ?? 0, to: game.relationships[character.id].stage }));
     if (ups.length && ups.length <= 3) setRankQueue((current) => [...current, ...ups]);
+  }, [game, screen]);
+
+  /* Bilan de fin de journée : état au début du jour (comme rankPrevRef, réinitialisé au chargement) → état au changement de jour. */
+  useEffect(() => {
+    if (!game || screen !== "game") { dayStartRef.current = null; return; }
+    const start = dayStartRef.current;
+    if (!start || game.day < start.day) { dayStartRef.current = game; return; }
+    if (game.day > start.day) {
+      dayStartRef.current = game;
+      if (!game.settings.noTimeCost) setDayRecap((pending) => ({ from: pending?.from || start, to: game }));
+    }
   }, [game, screen]);
 
   const rankVisible = Boolean(rankQueue.length && !dialogue && !modal && !v2Dialog);
@@ -2173,7 +2186,7 @@ export default function Home() {
       if (!loaded) throw new Error("invalid save");
       setPlayer(loaded.player);
       previousGameRef.current = loaded;
-      rankPrevRef.current = loaded;
+      rankPrevRef.current = loaded; dayStartRef.current = loaded; setDayRecap(null);
       setGame(loaded);
       setSelectedLocation(loaded.location);
       setSelectedSpot(loaded.spot);
@@ -3487,6 +3500,9 @@ export default function Home() {
       return;
     }
     const liked = character.giftLikes.includes(giftId);
+    // Gains réels affichés par la fenêtre de réaction (mêmes formules que la mise à jour ci-dessous).
+    const before = game.relationships[characterId];
+    const reaction: V2GiftReaction = { character: characterId, giftId, liked, affection: clamp(before.affection + (liked ? 6 : 2)) - before.affection, trust: clamp(before.trust + (liked ? 3 : 1)) - before.trust };
     updateGame((current) => {
       const relation = { ...current.relationships[characterId] };
       relation.met = true;
@@ -3505,7 +3521,7 @@ export default function Home() {
         journal: [...current.journal, `Présent offert à ${character.name} : ${gift.name}.`],
       };
     });
-    setModal({ kind: "notice", title: liked ? "Un présent qui touche juste" : "Une attention remarquée", text: liked ? `${character.name} reconnaît immédiatement l’attention derrière ce choix.` : `${character.name} accepte le présent avec curiosité. L’intention compte, même si l’objet ne lui correspond pas tout à fait.`, consumeTime: true });
+    setModal({ kind: "notice", title: liked ? "Un présent qui touche juste" : "Une attention remarquée", text: liked ? `${character.name} reconnaît immédiatement l’attention derrière ce choix.` : `${character.name} accepte le présent avec curiosité. L’intention compte, même si l’objet ne lui correspond pas tout à fait.`, consumeTime: true, gift: reaction });
   }
 
   function buyProperty(propertyId: string) {
@@ -4140,7 +4156,7 @@ export default function Home() {
       const loaded = hydrateGame(JSON.parse(raw));
       if (!loaded) return;
       previousGameRef.current = loaded;
-      rankPrevRef.current = loaded;
+      rankPrevRef.current = loaded; dayStartRef.current = loaded; setDayRecap(null);
       setGame(loaded);
       setPlayer(loaded.player);
       setSelectedLocation(loaded.location);
@@ -4176,7 +4192,7 @@ export default function Home() {
         const loaded = hydrateGame(JSON.parse(String(reader.result)));
         if (!loaded) throw new Error("invalid");
         previousGameRef.current = loaded;
-        rankPrevRef.current = loaded;
+        rankPrevRef.current = loaded; dayStartRef.current = loaded; setDayRecap(null);
         setGame(loaded);
         setPlayer(loaded.player);
         setSelectedLocation(loaded.location);
@@ -4356,6 +4372,7 @@ export default function Home() {
       <div className={`v2 v2-calque ${dialogue ? "en-scene" : ""}`}>
         <V2Toasts toasts={notifications.map((entry) => ({ id: entry.id, type: V2_NOTIF[entry.kind].type, icon: V2_NOTIF[entry.kind].icon, label: V2_NOTIF[entry.kind].label, title: entry.title, detail: entry.detail, t: "", read: false }))} onDismiss={(id) => setNotifications((current) => current.filter((entry) => entry.id !== id))} />
         {timeJump && <V2TimeJump day={timeJump.day} period={timeJump.period} leaving={timeJump.leaving} />}
+        {dayRecap && !timeJump && !showRank && !dialogue && !modal && !v2Dialog && <V2BilanJour key={`${dayRecap.from.day}-${dayRecap.to.day}`} from={dayRecap.from} to={dayRecap.to} onClose={() => setDayRecap(null)} />}
         {showRank && rank && rankCharacter && <V2RankUp character={rankCharacter} from={rank.from} to={rank.to} leaving={rankLeaving} onClose={dismissRank} />}
         {titleDialogs}
         {v2Dialog?.kind === "pause" && <V2Dialog key="pause" surtitre="Pause" titre="Menu système" classe="pause" onClose={closeV2}>
@@ -4533,8 +4550,37 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const availableChoices = choicesForDialogue(dialogue, game);
   const stableMoods = dialogue.scene.cast.includes("hylee") ? dialogueSpriteMoods(dialogue) : undefined;
   const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
-  return <section className="dialogue-overlay" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }}>
-    <div className="scene-top"><div><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div>
+  // Historique (backlog) : chaque réplique affichée et chaque choix pris pendant la scène, dans l’ordre.
+  const [backlog, setBacklog] = useState<V2BacklogEntry[]>([]);
+  const [backlogOpen, setBacklogOpen] = useState(false);
+  const backlogRef = useRef<HTMLDivElement>(null);
+  const lastLogged = useRef("");
+  useEffect(() => { setBacklog([]); lastLogged.current = ""; }, [dialogue.scene.id]);
+  useEffect(() => {
+    if (choosing || !currentLine) return;
+    const key = `${dialogue.scene.id}|${dialogue.phase}|${dialogue.lineIndex}|${currentLine.speaker}|${currentLine.text}`;
+    if (lastLogged.current === key) return;
+    lastLogged.current = key;
+    const speakerId = speakerCharacterIds(currentLine.speaker, dialogue.scene.cast)[0];
+    setBacklog((entries) => [...entries, { speaker: replacePlayer(currentLine.speaker, game.player), text: replacePlayer(currentLine.text, game.player), color: CHARACTERS.find((entry) => entry.id === speakerId)?.color, narration: currentLine.speaker === "Narration" }]);
+  }, [choosing, currentLine, dialogue.scene.id, dialogue.phase, dialogue.lineIndex, dialogue.scene.cast, game.player]);
+  const choose = (choice: ChoiceData) => { setBacklog((entries) => [...entries, { speaker: "Votre choix", text: choice.text, choice: true }]); onChoice(choice); };
+  useEffect(() => {
+    if (!backlogOpen) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape" || event.key.toLowerCase() === "h") { event.preventDefault(); event.stopPropagation(); setBacklogOpen(false); } };
+    window.addEventListener("keydown", onKey, true);
+    requestAnimationFrame(() => { const list = backlogRef.current; if (list) list.scrollTop = list.scrollHeight; });
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [backlogOpen]);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => { if (!backlogOpen && event.key.toLowerCase() === "h" && !(event.target as HTMLElement)?.closest?.("input, textarea")) { event.preventDefault(); setBacklogOpen(true); } };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [backlogOpen]);
+  const speakerId = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast)[0] : undefined;
+  const speakerColor = CHARACTERS.find((entry) => entry.id === speakerId)?.color;
+  return <section className="dialogue-overlay v2-scene" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+    <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button type="button" className="scene-outil passer" onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div></div>
     <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => {
       const character = CHARACTERS.find((entry) => entry.id === id);
       if (!character) return null;
@@ -4546,18 +4592,25 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
       return <img key={id} className={`scene-sprite ${active ? "active" : "inactive"} speaker-${index}`} src={spritePath(id, mood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} />;
     })}</div>
     <div className="dialogue-gradient" />
-    {!choosing ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} onClick={onAdvance}>
-      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length} · Cliquer pour continuer</small>
-    </button> : <div className="choice-box"><p className="choice-question">{dialogue.scene.date?.character === "hylee" && dialogue.phase === "relation-choices" ? "Que faire ensuite ?" : dialogue.phase === "relation-choices" ? "Que laisser paraître après l’action ?" : "Comment répondre ?"}</p>{availableChoices.map((choice) => {
+    {!choosing ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={onAdvance}>
+      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p key={`${dialogue.phase}-${dialogue.lineIndex}`}>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
+    </button> : <div className="choice-box"><p className="choice-question">{dialogue.scene.date?.character === "hylee" && dialogue.phase === "relation-choices" ? "Que faire ensuite ?" : dialogue.phase === "relation-choices" ? "Que laisser paraître après l’action ?" : "Comment répondre ?"}</p>{availableChoices.map((choice, choiceIndex) => {
       const statLocked = Boolean(choice.requires && game.stats[choice.requires.stat] < choice.requires.value);
       const knowledgeLocked = !hasKnowledge(game, choice.requiresKnowledge);
       const relationLocked = !relationshipRequirementMet(choice, game);
       const locked = (statLocked || knowledgeLocked || relationLocked) && !game.settings.unlockAll;
       const statLabel = STAT_LABELS[choice.stat] || "Choix";
-      return <button key={choice.id} disabled={locked} onClick={() => onChoice(choice)}><span className={`stat-icon ${choice.stat || "neutral"}`}>{statLabel.charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
+      return <button key={choice.id} className="v2-choix-carte" style={{ "--i": choiceIndex } as React.CSSProperties} disabled={locked} onClick={() => choose(choice)}><i className="choix-num">{ROMAINS[choiceIndex + 1] || choiceIndex + 1}</i><span className={`stat-icon ${choice.stat || "neutral"}`}>{statLabel.charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
     })}</div>}
+    {backlogOpen && <div className="scene-backlog" role="dialog" aria-modal="true" aria-label="Historique de la scène" onClick={(event) => { if (event.target === event.currentTarget) setBacklogOpen(false); }}>
+      <div className="backlog-boite"><header><div><span className="surtitre">Historique</span><h3>{dialogue.scene.title}</h3></div><button type="button" className="dlg-x" data-close aria-label="Fermer l’historique" onClick={() => setBacklogOpen(false)}><span>✕</span><kbd>Échap</kbd></button></header>
+        <div className="backlog-liste" ref={backlogRef}>{backlog.map((entry, index) => <div key={index} className={`backlog-ligne ${entry.narration ? "narration" : ""} ${entry.choice ? "choix" : ""}`} style={{ "--c": entry.color || "var(--or)" } as React.CSSProperties}>{!entry.narration && <b>{entry.choice ? "➤ Votre choix" : entry.speaker}</b>}<p>{entry.text}</p></div>)}</div>
+      </div>
+    </div>}
   </section>;
 }
+
+type V2BacklogEntry = { speaker: string; text: string; color?: string; narration?: boolean; choice?: boolean };
 
 function SectionTabs<T extends string>({ label, active, items, onChange }: { label: string; active: T; items: { id: T; icon: string; label: string; count?: number | string; hint?: string }[]; onChange: (id: T) => void }) {
   return <nav className="section-tabs" role="tablist" aria-label={label}>
@@ -5533,11 +5586,23 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
     return state.phase === "memorize" ? <div className="job-challenge memory-game"><div className="job-round-title"><span>Vague {Math.min(3, state.round + 1)} / 3</span><b>{state.mistakes} erreur{state.mistakes > 1 ? "s" : ""}</b></div>{state.lastResult && <div className={`job-live-feedback ${state.lastResult}`}>{state.lastResult === "correct" ? "La vague précédente dort. Une nouvelle marque rejoint la chaîne." : "La chaîne s’est tendue. Réobservez cette vague avant un second essai."}</div>}<p>Observez l’ordre d’endormissement des sceaux. La série disparaîtra lorsque vous commencerez.</p><div className="ritual-sequence">{wave.map((symbol, index) => <span key={`${symbol}-${index}`}>{symbol}</span>)}</div><button className="primary-action" onClick={onMemoryStart}>Toucher les sceaux</button></div> : <div className="job-challenge memory-game"><div className="job-round-title"><span>Vague {state.round + 1} / 3</span><b>{wave.length} signes</b></div><p>Reproduisez la séquence sans réveiller les protections.</p><div className="ritual-progress">{wave.map((_, index) => <i className={index < state.step ? "done" : ""} key={index} />)}</div><div className="rune-buttons">{shuffledChoices((job.symbols || []).map((symbol) => ({ id: symbol, symbol })), `${job.id}:${state.variant}:${state.round}:symbols`).map(({ symbol }) => <button key={symbol} onClick={() => onAction(symbol)}>{symbol}</button>)}</div></div>;
   };
 
-  return <div className="modal-backdrop job-backdrop"><section ref={modalScrollRef} className={`ritual-modal job-modal varied-job job-kind-${job.kind} job-id-${job.id}`}><p className="eyebrow">Job local · {spotById(job.spot)?.shortName}</p><h2>{job.title}</h2>
-    {state.phase === "briefing" && <><p className="job-session-name">Rotation {state.variant + 1} · {jobSessionLabel(job, state.variant)}</p><p className="job-employer">Proposé par {job.employer} · Salaire : <b>{job.reward} pièces</b> · Perfection : <b>{perfectPay}</b></p><p>{job.description}</p><blockquote>{job.briefing}</blockquote><div className="job-mechanic"><span>{job.kind === "service" ? "☕" : job.kind === "observation" ? "◉" : job.kind === "bargain" ? "◈" : job.kind === "sort" ? "▤" : job.kind === "timing" ? "⌖" : job.kind === "packing" ? "▦" : job.kind === "path" ? "⌁" : job.kind === "assembly" ? "⚙" : "◇"}</span><div><strong>{job.kind === "service" ? "Lecture de commandes" : JOB_KIND_LABELS[job.kind]}</strong><small>Stat associée : {STAT_LABELS[job.stat]} {statValue}{assisted ? " · avantage actif" : " · avantage au niveau 6"}</small></div></div><button className="primary-action" onClick={onBegin}>Accepter le travail</button><button className="text-button" onClick={onCancel}>Refuser sans perdre de temps</button></>}
+  const jobSpot = spotById(job.spot);
+  const jobEmblem = job.kind === "service" ? "☕" : job.kind === "observation" ? "◉" : job.kind === "bargain" ? "◈" : job.kind === "sort" ? "▤" : job.kind === "timing" ? "⌖" : job.kind === "packing" ? "▦" : job.kind === "path" ? "⌁" : job.kind === "assembly" ? "⚙" : "◇";
+  useEffect(() => { sfx("ouvrir"); }, []);
+  return <div className="v2 v2-fen-calque"><div className="modal-backdrop job-backdrop v2-fen-fond v2-job-fond"><section className={`v2-fen dlg-boite v2-jeu v2-job ritual-modal job-modal varied-job job-kind-${job.kind} job-id-${job.id} phase-${state.phase}`} style={{ "--job-bg": jobSpot?.background ? `url(${jobSpot.background})` : "none" } as React.CSSProperties}><Orn4 />
+    <header className="dlg-tete job-tete"><div><span className="surtitre eyebrow">Job local · {jobSpot?.shortName}</span><h2>{job.title}</h2></div><span className="job-emb" aria-hidden="true">{jobEmblem}</span></header>
+    <div className="dlg-corps" ref={modalScrollRef as React.RefObject<HTMLDivElement>}>
+    {state.phase === "briefing" && <div className="job-lanceur">
+      <div className="job-banniere"><span className="job-rotation">Rotation {state.variant + 1} · {jobSessionLabel(job, state.variant)}</span><div className="job-gains"><span className="af-gain">+{job.reward} <i>◈</i></span><span className="job-perf">Perfection · {perfectPay} ◈</span></div></div>
+      <p className="job-employer">Proposé par <b>{job.employer}</b></p>
+      <p className="texte">{job.description}</p><blockquote className="fen-citation">{job.briefing}</blockquote>
+      <div className="job-mechanic"><span>{jobEmblem}</span><div><strong>{job.kind === "service" ? "Lecture de commandes" : JOB_KIND_LABELS[job.kind]}</strong><small>Stat associée : {STAT_LABELS[job.stat]} {statValue}{assisted ? " · avantage actif" : " · avantage au niveau 6"}</small></div></div>
+      <div className="job-lanceur-actions"><button type="button" className="btn text-button" onClick={onCancel}>Refuser sans perdre de temps</button><button type="button" className="btn principal primary-action" data-act="job-accepter" onClick={onBegin}>Accepter le travail</button></div>
+    </div>}
     {(state.phase === "play" || state.phase === "memorize") && <><div className="job-progress-line"><i style={{ width: `${progressTotal ? Math.min(100, (progressNow / progressTotal) * 100) : 0}%` }} /></div>{job.id === "forestier-service" ? renderService() : job.id === "forestier-rooms" ? renderInspection() : job.id === "algratal-petitions" ? renderPetitions() : job.id === "tzekarun-mechanism" ? renderAssembly() : job.id === "forbidden-herbs" ? renderHarvest() : job.id === "algratal-merchant" ? renderMarket() : ["observation", "bargain", "sort", "assembly"].includes(job.kind) ? renderChoiceGame() : job.kind === "timing" ? renderTiming() : job.kind === "packing" ? renderPacking() : job.kind === "path" ? renderPath() : renderMemory()}</>}
-    {complete && <div className={`ritual-result ${state.phase !== "failure" ? "success" : ""}`}><span>{state.phase === "perfect" ? "✦" : state.phase === "success" ? "◈" : "◇"}</span><h3>{state.phase === "perfect" ? "Travail impeccable" : state.phase === "success" ? "Travail accompli" : "Travail partiel"}</h3><p>{state.phase === "perfect" ? job.perfect : state.phase === "success" ? job.success : job.failure}</p><strong className="job-pay">{state.phase === "perfect" ? perfectPay : state.phase === "success" ? job.reward : partialPay} pièces{state.phase !== "failure" ? ` · ${STAT_LABELS[job.stat]} +1` : ""}</strong><button className={state.phase === "failure" ? "secondary-action" : "primary-action"} onClick={onFinish}>{state.phase === "failure" ? "Recevoir la compensation" : "Recevoir le salaire"}</button></div>}
-  </section></div>;
+    {complete && <V2JeuResultat succes={state.phase !== "failure"} icone={state.phase === "perfect" ? "✦" : state.phase === "success" ? "◈" : "◇"} titre={state.phase === "perfect" ? "Travail impeccable" : state.phase === "success" ? "Travail accompli" : "Travail partiel"} texte={state.phase === "perfect" ? job.perfect : state.phase === "success" ? job.success : job.failure} gain={`${state.phase === "perfect" ? perfectPay : state.phase === "success" ? job.reward : partialPay} pièces${state.phase !== "failure" ? ` · ${STAT_LABELS[job.stat]} +1` : ""}`}><button type="button" className={`btn ${state.phase === "failure" ? "secondary-action" : "principal primary-action"}`} onClick={onFinish}>{state.phase === "failure" ? "Recevoir la compensation" : "Recevoir le salaire"}</button></V2JeuResultat>}
+    </div>
+  </section></div></div>;
 }
 
 function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number) => void; onClose: () => void }) {
@@ -5665,7 +5730,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose, replay = false }: 
 
 function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, friendlyForThisDate: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; finishTrioEnding: (dateId: string, friendlyForThisDate: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
-  if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} onClose={modal.consumeTime ? onActivityClose : onClose} />;
+  if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} gift={modal.gift} onClose={modal.consumeTime ? onActivityClose : onClose} />;
   if (modal.kind === "letter") {
     const letter = LETTERS.find((entry) => entry.id === modal.letterId);
     const received = game.letters.find((entry) => entry.id === modal.letterId);
@@ -5673,7 +5738,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === letter.character);
     const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
     const attachment = letter.attachedItem ? GIFTS.find((entry) => entry.id === letter.attachedItem)?.name || displayItemById(letter.attachedItem)?.name || letter.attachedItem : undefined;
-    return <div className="modal-backdrop"><section className="correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Correspondance · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{attachment && <div className="letter-attachment"><span>◇</span><div><small>Objet joint</small><strong>{attachment}</strong></div></div>}{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre — ce choix nuance la relation sans transformer la lettre en épreuve.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : null}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
+    return <V2Lettre game={game} character={character} surtitre={`Correspondance · Jour ${received.receivedDay}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature} attachment={attachment}
+      replies={letter.replies?.length && !received.replyId ? letter.replies : undefined} repliesHint="Répondre — ce choix nuance la relation sans transformer la lettre en épreuve." onReply={(replyId) => replyToLetter(letter, replyId)}
+      response={selectedReply?.response} onClose={onClose} />;
   }
   if (modal.kind === "cross-letter") {
     const letter = LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === modal.letterId);
@@ -5681,7 +5748,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     if (!letter || !received) return null;
     const character = CHARACTERS.find((entry) => entry.id === letter.character);
     const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
-    return <div className="modal-backdrop"><section className="correspondence-modal cross-correspondence-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Quête croisée · Jour {received.receivedDay}</p><h2>{letter.subject}</h2><small>{letter.delivery}</small></div></header><div className="letter-paper">{letter.body.map((paragraph, index) => <p key={index}>{replacePlayer(paragraph, game.player)}</p>)}<strong>{letter.signature}</strong></div>{letter.replies?.length && !received.replyId ? <div className="letter-replies"><small>Répondre est facultatif : Lineva et Allenna poursuivent leur relation sans attendre votre intervention.</small>{letter.replies.map((reply) => <button key={reply.id} onClick={() => replyToCrossLetter(letter, reply.id)}>{reply.label}</button>)}</div> : selectedReply ? <div className="letter-response"><small>Votre réponse</small><p>{selectedReply.response}</p></div> : <p className="hint">Ce courrier n’appelle aucune réponse.</p>}<button className="secondary-action" onClick={onClose}>Refermer la lettre</button></section></div>;
+    return <V2Lettre game={game} character={character} surtitre={`Quête croisée · Jour ${received.receivedDay}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature}
+      replies={letter.replies?.length && !received.replyId ? letter.replies : undefined} repliesHint="Répondre est facultatif : Lineva et Allenna poursuivent leur relation sans attendre votre intervention." onReply={(replyId) => replyToCrossLetter(letter, replyId)}
+      response={selectedReply?.response} noReplyHint="Ce courrier n’appelle aucune réponse." onClose={onClose} />;
   }
   if (modal.kind === "alpha-hunt") {
     const state = modal.replay ? modal.state : game.crossQuestSeries.linevaAllenna?.alphaState;
@@ -5694,15 +5763,30 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === invitation.character);
     const pending = received.status === "pending" && game.day <= received.expiresDay;
     const status = pending ? `${received.reoffers ? "Invitation renouvelée · " : ""}Réponse possible jusqu’au jour ${received.expiresDay}` : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : `Invitation manquée · elle pourra revenir après le jour ${received.expiresDay + INVITATION_REOFFER_DELAY}`;
-    return <div className="modal-backdrop"><section className="invitation-modal" style={{ "--character": character?.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header><img src={character?.portrait} alt="" /><div><p className="eyebrow">Initiative de {character?.name}</p><h2>{invitation.title}</h2><span>{status}</span></div></header><blockquote>{invitation.message}</blockquote><div className="invitation-place"><span>⌖</span><div><strong>{spotById(invitation.spot)?.name}</strong><small>{LOCATIONS.find((entry) => entry.id === invitation.location)?.name} · {PERIODS.find((entry) => entry.id === invitation.period)?.label}</small></div></div>{pending ? <div className="invitation-actions"><button className="primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button><button className="secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button className="text-button" onClick={onClose}>Décider plus tard</button></div> : <button className="secondary-action" onClick={onClose}>Refermer</button>}</section></div>;
+    const spot = spotById(invitation.spot);
+    return <V2Fenetre surtitre={`Initiative de ${character?.name || ""}`} titre={invitation.title} classe="large v2-invitation" style={{ "--c": character?.color } as React.CSSProperties} onClose={onClose}
+      pied={pending ? <><button type="button" className="btn text-button" onClick={onClose}>Décider plus tard</button><button type="button" className="btn secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button type="button" className="btn principal primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button></> : <button type="button" className="btn secondary-action" onClick={onClose}>Refermer</button>}>
+      <div className="fen-vn">
+        {character && <V2Portrait character={character} />}
+        <div className="fen-vn-texte">
+          <span className={`fen-etat ${pending ? "ouvert" : ""}`}>{status}</span>
+          <blockquote className="fen-citation">{invitation.message}</blockquote>
+          <div className="fen-lieu" style={{ backgroundImage: spot?.background ? `linear-gradient(90deg, rgba(6,6,14,.92), rgba(6,6,14,.35)), url(${spot.background})` : undefined }}><span>⌖</span><div><strong>{spot?.name}</strong><small>{LOCATIONS.find((entry) => entry.id === invitation.location)?.name} · {PERIODS.find((entry) => entry.id === invitation.period)?.label}</small></div></div>
+        </div>
+      </div>
+    </V2Fenetre>;
   }
-  if (modal.kind === "shop") return <div className="modal-backdrop"><section className="wide-modal"><button className="modal-close" onClick={onClose}>×</button><div className="shop-header"><div><p className="eyebrow">Marché de la Confluence</p><h2>Présents & curiosités</h2></div><strong>◈ {game.coins}</strong></div><div className="gift-steps compact"><span><b>1</b>Achetez ici</span><span><b>2</b>Rejoignez la personne</span><span><b>3</b>Cliquez sur « Offrir »</span></div><p className="shop-help">L’objet rejoint vos Biens, dans la section Inventaire. Vous pourrez l’exposer au logis ou le remettre directement lorsque son destinataire se trouve avec vous.</p><div className="shop-grid">{GIFTS.map((gift) => <article key={gift.id}><span>{gift.icon}</span><div><h3>{gift.name}</h3><p>{gift.description}</p><small>Dans l’inventaire : {game.inventory[gift.id] || 0}</small></div><button disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div></section></div>;
+  if (modal.kind === "shop") return <V2Fenetre surtitre="Marché de la Confluence" titre="Présents & curiosités" classe="large v2-marche" onClose={onClose} pied={<button type="button" className="btn secondary-action" onClick={onClose}>Quitter l’étal</button>}>
+    <div className="marche-bandeau"><ol className="marche-etapes"><li><b>I</b>Achetez ici</li><li><b>II</b>Rejoignez la personne</li><li><b>III</b>Choisissez « Offrir »</li></ol><span className="hud-bourse"><i>◈</i><b>{game.coins}</b></span></div>
+    <p className="discret">L’objet rejoint vos Biens, dans la section Inventaire. Vous pourrez l’exposer au logis ou le remettre directement lorsque son destinataire se trouve avec vous.</p>
+    <div className="cad-grille marche-grille">{GIFTS.map((gift, index) => <article key={gift.id} className={`cad-carte rar-${v2Rarity(gift.price)}`} style={{ "--i": index } as React.CSSProperties}><span className="od-ico"><i>{gift.icon}</i></span><b>{gift.name}</b><small>{gift.description}</small><span className="cd-n" title="Dans l’inventaire">×{game.inventory[gift.id] || 0}</span><span className="cad-rar">{v2RarityLabel(gift.price)}</span><button type="button" className="btn petit" data-achat={gift.id} disabled={game.coins < gift.price} onClick={() => buyGift(gift.id)}>Acheter · {gift.price} ◈</button></article>)}</div>
+  </V2Fenetre>;
   if (modal.kind === "gift") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     const present = place.location === game.location && place.spot === game.spot;
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
-    return <div className="modal-backdrop"><section className="gift-modal"><button className="modal-close" onClick={onClose}>×</button><div className="gift-modal-title"><img src={character.portrait} alt="" /><div><p className="eyebrow">Remettre un présent</p><h2>Offrir à {character.name}</h2><small>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</small></div></div>{present && owned.length ? <div className="gift-list large">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>{gift.description} · x{game.inventory[gift.id]}</small></div><em>Offrir</em></button>)}</div> : <p className="hint">{present ? "Votre inventaire ne contient aucun présent. Achetez-en au marché depuis Biens." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}<button className="secondary-action" onClick={onClose}>Annuler</button></section></div>;
+    return <V2Cadeau game={game} character={character} present={present} owned={owned} onGive={giveGift} onClose={onClose} />;
   }
   if (modal.kind === "character") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5711,7 +5795,22 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const present = place.location === game.location && place.spot === game.spot;
     const owned = GIFTS.filter((gift) => (game.inventory[gift.id] || 0) > 0);
     const discoveredKnowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry) => entry?.people.includes(character.id));
-    return <div className="modal-backdrop"><section className="character-modal" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><div className="character-hero"><img src={character.portrait} alt="" /><div><p className="eyebrow">Dossier relationnel</p><h2>{character.name}</h2><span>{characterDescriptor(character)}</span><blockquote>« {character.tagline} »</blockquote></div></div><div className="character-details"><div><h3>Ce que vous savez</h3><p>{character.bio}</p>{discoveredKnowledge.length > 0 && <div className="character-discoveries">{discoveredKnowledge.map((entry) => entry && <article key={entry.id}><strong>{entry.title}</strong><p>{entry.summary}</p></article>)}</div>}<h3>Apprécie</h3><p>{character.appreciates}</p></div><aside><strong>{STAGE_LABELS[relation.stage]}</strong><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" /><h3>Offrir un présent</h3>{present ? owned.length ? <div className="gift-list">{owned.map((gift) => <button key={gift.id} onClick={() => giveGift(character.id, gift.id)}><span>{gift.icon}</span><div><b>{gift.name}</b><small>x{game.inventory[gift.id]}</small></div></button>)}</div> : <p className="hint">Votre inventaire ne contient aucun présent.</p> : <p className="hint">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}</aside></div></section></div>;
+    return <V2Fenetre surtitre="Dossier relationnel" titre={character.name} classe="large v2-dossier" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}>
+      <div className="fen-vn">
+        <V2Portrait character={character} />
+        <div className="fen-vn-texte">
+          <p className="dossier-desc">{characterDescriptor(character)}</p>
+          <blockquote className="fen-citation">« {character.tagline} »</blockquote>
+          <div className="dossier-rang"><span className="surtitre">Rang de lien</span><b>{STAGE_LABELS[relation.stage]}</b></div>
+          <div className="stats"><V2Stat cls="aff" label="Affection" value={relation.affection} /><V2Stat cls="conf" label="Confiance" value={relation.trust} /><V2Stat cls="des" label="Désir" value={relation.desire} /></div>
+          <h3 className="fen-h">Ce que vous savez</h3><p className="texte">{character.bio}</p>
+          {discoveredKnowledge.length > 0 && <div className="dossier-decouvertes">{discoveredKnowledge.map((entry, index) => entry && <article key={entry.id} style={{ "--i": index } as React.CSSProperties}><strong>{entry.title}</strong><p>{entry.summary}</p></article>)}</div>}
+          <h3 className="fen-h">Apprécie</h3><p className="texte">{character.appreciates}</p>
+          <h3 className="fen-h">Offrir un présent</h3>
+          {present ? owned.length ? <div className="cad-grille compacte">{owned.map((gift, index) => <button type="button" key={gift.id} data-don={gift.id} className={`cad-carte rar-${v2Rarity(gift.price)} ${character.giftLikes.includes(gift.id) ? "aime" : ""}`} style={{ "--i": index } as React.CSSProperties} onClick={() => giveGift(character.id, gift.id)}><span className="od-ico"><i>{gift.icon}</i></span><b>{gift.name}</b><span className="cd-n">×{game.inventory[gift.id]}</span>{character.giftLikes.includes(gift.id) && <em>♥ Favori</em>}</button>)}</div> : <p className="discret">Votre inventaire ne contient aucun présent.</p> : <p className="discret">{character.name} se trouve actuellement à {spotById(place.spot)?.name}. Rejoignez exactement ce sous-lieu pour offrir quelque chose.</p>}
+        </div>
+      </div>
+    </V2Fenetre>;
   }
   if (modal.kind === "group-date-planner") {
     const property = propertyById(game.housing.propertyId);
@@ -5721,16 +5820,27 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
       && contentBranchAllowed(game.flags, date)
       && date.characters.every((id) => knownCharacters.has(id)));
     const knownHomePairs = HOME_PAIR_DATES.filter((pair) => pair.id !== "hylee-remerii" && pair.characters.every((id) => knownCharacters.has(id)) && (pair.id !== "allenna-lineva" || game.flags.includes("cross-la-series-complete")));
-    return <div className="modal-backdrop"><section className="wide-modal date-planner group-date-planner"><button className="modal-close" onClick={onClose}>×</button><header className="group-date-planner-header"><div className="group-date-header-mark">3</div><div><p className="eyebrow">Planifier une relation croisée</p><h2>Rendez-vous à trois connus</h2><p>Les sorties publiques et les visites dans votre logis apparaissent seulement après la rencontre des deux personnes concernées.</p></div></header><div className="date-grid group-date-grid">{knownGroupDates.map((date) => {
-      const unlocked = groupDateUnlocked(game, date);
-      const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-      const place = date.home ? propertyById(game.housing.propertyId) : spotById(date.spot);
-      return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.26), #12111d 78%), url(${place?.background})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name || "Votre futur logis"}{game.groupDateHistory.includes(date.id) ? " · Déjà vécu" : ""}</small>{unlocked ? <button className="primary-action" onClick={() => startGroupDate(date.id)}>{game.crossQuestSeries[HR_KEY]?.hr?.checkpoint?.sceneId === date.id ? "Reprendre ce rendez-vous" : "Réserver ce moment à trois"}</button> : <div className="group-date-requirements">{date.authoredBeats && <p>{hrDateReason(date, game)}</p>}{characters.map((character) => { const relation = game.relationships[character.id]; return <span key={character.id}><b>{character.name}</b><small>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</small></span>; })}</div>}</article>;
-    })}{knownHomePairs.map((pair) => {
-      const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-      const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);
-      return <article key={`home-${pair.id}`} className={`home-date-plan-card ${!unlocked ? "locked" : ""}`} style={{ "--character": characters[0].color, backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.24), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}><div className="group-date-card-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><span>Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>{unlocked ? <button className="primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="date-lock">{pair.id === "allenna-lineva" ? "Requis : logis à Forthaven ou Akuhn’Nabad et au moins un rendez-vous public joué" : property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</div>}</article>;
-    })}</div></section></div>;
+    return <V2Fenetre surtitre="Planifier une relation croisée" titre="Rendez-vous à trois connus" classe="large v2-planif" onClose={onClose}>
+      <p className="discret">Les sorties publiques et les visites dans votre logis apparaissent seulement après la rencontre des deux personnes concernées.</p>
+      <div className="planif-grille">{knownGroupDates.map((date, index) => {
+        const unlocked = groupDateUnlocked(game, date);
+        const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
+        const place = date.home ? propertyById(game.housing.propertyId) : spotById(date.spot);
+        return <article key={date.id} className={`planif-carte ${!unlocked ? "verrou" : ""}`} style={{ "--c": characters[0].color, "--i": index, backgroundImage: `linear-gradient(180deg, rgba(8,8,16,.2), rgba(8,8,16,.96) 72%), url(${place?.background})` } as React.CSSProperties}>
+          <div className="planif-sceaux">{characters.map((character) => <Seau key={character.id} color={character.color} portrait={character.portrait} />)}</div>
+          <span className="planif-sur">{characters.map((character) => character.name).join(" · ")} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><blockquote>{date.dynamic}</blockquote><small>⌖ {place?.name || "Votre futur logis"}{game.groupDateHistory.includes(date.id) ? " · Déjà vécu" : ""}</small>
+          {unlocked ? <button type="button" className="btn principal primary-action" onClick={() => startGroupDate(date.id)}>{game.crossQuestSeries[HR_KEY]?.hr?.checkpoint?.sceneId === date.id ? "Reprendre ce rendez-vous" : "Réserver ce moment à trois"}</button> : <div className="planif-verrou">{date.authoredBeats && <p>{hrDateReason(date, game)}</p>}<ul className="conditions">{characters.map((character) => { const relation = game.relationships[character.id]; return <li key={character.id} className="ko"><span>{character.name}</span><b>Étape {relation.stage}/{date.minStage} · Aff. {relation.affection}/{date.minAffection} · Conf. {relation.trust}/{date.minTrust} · Désir {relation.desire}/{date.minDesire}</b></li>; })}</ul></div>}
+        </article>;
+      })}{knownHomePairs.map((pair, index) => {
+        const characters = pair.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
+        const unlocked = Boolean(property) && homePairDateUnlocked(game, pair);
+        return <article key={`home-${pair.id}`} className={`planif-carte logis ${!unlocked ? "verrou" : ""}`} style={{ "--c": characters[0].color, "--i": knownGroupDates.length + index, backgroundImage: `linear-gradient(180deg, rgba(8,8,16,.2), rgba(8,8,16,.96) 72%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}>
+          <div className="planif-sceaux">{characters.map((character) => <Seau key={character.id} color={character.color} portrait={character.portrait} />)}</div>
+          <span className="planif-sur">Au logis · {characters.map((character) => character.name).join(" · ")}</span><h3>{pair.title}</h3><p>{pair.description}</p><blockquote>Une visite privée construite autour de votre logement, de ses objets et de cette dynamique précise.</blockquote><small>⌂ {property?.name || "Aucun logis acheté"}</small>
+          {unlocked ? <button type="button" className="btn principal primary-action" onClick={() => startHomePairDate(pair.id)}>Inviter au logis</button> : <div className="planif-verrou"><p>{pair.id === "allenna-lineva" ? "Requis : logis à Forthaven ou Akuhn’Nabad et au moins un rendez-vous public joué" : property ? `Requis : étape ${pair.minStage} · confiance ${pair.minTrust} · dynamique correspondante` : "Requis : posséder un logis"}</p></div>}
+        </article>;
+      })}</div>
+    </V2Fenetre>;
   }
   if (modal.kind === "group-date-result") {
     const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
@@ -5738,7 +5848,10 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const naiahGroup = date.characters.includes("naiah");
     const refactored = naiahGroup || date.id.includes("allenna-lineva") || (HR_DATE_IDS as readonly string[]).includes(date.id);
     const resultBackground = date.home ? propertyById(game.housing.propertyId)?.background : spotById(date.spot)?.background;
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${resultBackground})` }}><div className="group-result-portraits">{characters.map((character) => <img key={character.id} src={character.portrait} alt={character.name} />)}</div><p className="eyebrow">La soirée garde trois places ouvertes</p><h2>{characters[0].name} et {characters[1].name} restent avec vous</h2><p>{naiahGroup ? `Après « ${date.title} », le jeu peut se prolonger à trois : baisers, contact choisi et confiance partagée. Personne n’a besoin de donner à ce moment une autre forme que celle qui vous convient.` : `Après « ${date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou garder une proximité amicale pour cette soirée seulement.`}</p><div className="date-result-actions"><button className="primary-action" onClick={() => startGroupDateIntimacy(date.id)}>{naiahGroup ? "Prolonger la proximité à trois" : "Poursuivre à trois"}</button>{refactored ? <><button className="secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></> : <button className="secondary-action" onClick={onClose}>Terminer la soirée ici</button>}</div></section></div>;
+    return <V2Resultat background={resultBackground} characters={characters} surtitre="La soirée garde trois places ouvertes" titre={`${characters[0].name} et ${characters[1].name} restent avec vous`}
+      texte={naiahGroup ? `Après « ${date.title} », le jeu peut se prolonger à trois : baisers, contact choisi et confiance partagée. Personne n’a besoin de donner à ce moment une autre forme que celle qui vous convient.` : `Après « ${date.title} », la tension entre vous ne demande plus d’explication. Vous pouvez ouvrir une scène intime à trois — avec un mini-jeu et trois routes propres à ce lieu et au corps que vous avez choisi — ou garder une proximité amicale pour cette soirée seulement.`}>
+      <button type="button" className="btn principal primary-action" onClick={() => startGroupDateIntimacy(date.id)}>{naiahGroup ? "Prolonger la proximité à trois" : "Poursuivre à trois"}</button>{refactored ? <><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></> : <button type="button" className="btn secondary-action" onClick={onClose}>Terminer la soirée ici</button>}
+    </V2Resultat>;
   }
   if (modal.kind === "date-planner") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5747,13 +5860,25 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const homeProfile = HOME_DATE_PROFILES[character.id];
     const property = propertyById(game.housing.propertyId);
     const homeUnlocked = Boolean(property) && homeDateUnlocked(game, character.id);
-    return <div className="modal-backdrop"><section className="wide-modal date-planner" style={{ "--character": character.color } as React.CSSProperties}><button className="modal-close" onClick={onClose}>×</button><header className="date-planner-header"><img src={character.portrait} alt="" /><div><p className="eyebrow">Planifier un rendez-vous</p><h2>Une journée avec {character.name}</h2><p>Invitez la personne pour le lendemain, quel que soit son lieu de séjour. Une journée est réservée pour votre sortie ou votre soirée au logis.</p></div></header><div className="date-grid">{dates.map((date) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); const day = game.day + 1; return <article key={date.id} className={!unlocked ? "locked" : ""} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.25), #12111d 78%), url(${place?.background})` }}><span>{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>{unlocked ? <><button className="primary-action" onClick={() => startDate(date.id)}>{`Inviter pour le jour ${day}`}</button></> : <div className="date-lock">Requis : étape {date.unlockStage} · affection {date.minAffection} · confiance {date.minTrust}</div>}</article>; })}{homeProfile && <article className={`home-date-plan-card ${!homeUnlocked ? "locked" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.2), #12111d 78%), url(${property?.background || backgroundUrl("bedroom")})` }}><span>Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>{homeUnlocked ? <><button className="primary-action" onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button><small>Soirée prévue au jour {game.day + 1}.</small></> : <div className="date-lock">{property ? `Requis : étape ${5} · affection 22 · confiance 22` : "Requis : posséder un logis"}</div>}</article>}</div></section></div>;
+    return <V2Fenetre surtitre="Planifier un rendez-vous" titre={`Une journée avec ${character.name}`} classe="large v2-planif" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}>
+      <div className="planif-tete"><Seau color={character.color} portrait={character.portrait} className="grand" /><p className="discret">Invitez la personne pour le lendemain, quel que soit son lieu de séjour. Une journée est réservée pour votre sortie ou votre soirée au logis.</p></div>
+      <div className="planif-grille">{dates.map((date, index) => { const unlocked = publicDateUnlocked(game, date); const place = spotById(date.spot); const day = game.day + 1; return <article key={date.id} className={`planif-carte ${!unlocked ? "verrou" : ""}`} style={{ "--c": character.color, "--i": index, backgroundImage: `linear-gradient(180deg, rgba(8,8,16,.15), rgba(8,8,16,.96) 70%), url(${place?.background})` } as React.CSSProperties}>
+        <span className="planif-sur">{date.type} · {PERIODS.find((period) => period.id === date.period)?.label}</span><h3>{date.title}</h3><p>{date.description}</p><small>⌖ {place?.name}</small>
+        {unlocked ? <button type="button" className="btn principal primary-action" onClick={() => startDate(date.id)}>{`Inviter pour le jour ${day}`}</button> : <ul className="conditions"><li className={relation.stage >= date.unlockStage ? "ok" : "ko"}><span>Étape</span><b>{relation.stage} / {date.unlockStage}</b></li><li className={relation.affection >= date.minAffection ? "ok" : "ko"}><span>Affection</span><b>{relation.affection} / {date.minAffection}</b></li><li className={relation.trust >= date.minTrust ? "ok" : "ko"}><span>Confiance</span><b>{relation.trust} / {date.minTrust}</b></li></ul>}
+      </article>; })}{homeProfile && <article className={`planif-carte logis ${!homeUnlocked ? "verrou" : ""}`} style={{ "--c": character.color, "--i": dates.length, backgroundImage: `linear-gradient(180deg, rgba(8,8,16,.15), rgba(8,8,16,.96) 70%), url(${property?.background || backgroundUrl("bedroom")})` } as React.CSSProperties}>
+        <span className="planif-sur">Rendez-vous au logis · Soirée</span><h3>{homeProfile.title}</h3><p>{homeProfile.description}</p><small>⌂ {property?.name || "Aucun logis acheté"}</small>
+        {homeUnlocked ? <><button type="button" className="btn principal primary-action" onClick={() => startHomeDate(character.id)}>Inviter {character.name} au logis</button><small>Soirée prévue au jour {game.day + 1}.</small></> : <div className="planif-verrou"><p>{property ? `Requis : étape ${5} · affection 22 · confiance 22` : "Requis : posséder un logis"}</p></div>}
+      </article>}</div>
+    </V2Fenetre>;
   }
   if (modal.kind === "home-date") return <HomeDateModal characterId={modal.character} game={game} onFinish={finishHomeDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date") return <HomePairDateModal pairId={modal.pairId} game={game} onFinish={finishHomePairDate} onClose={onClose} />;
   if (modal.kind === "home-pair-date-result") {
     const property = propertyById(game.housing.propertyId)!;
-    return <div className="modal-backdrop"><section className="date-result-modal group-date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.32), #11101b 88%), url(${property.background})` }}><div className="group-result-portraits"><img src="/assets/portraits/allenna.jpg" alt="Allenna" /><img src="/assets/portraits/lineva.jpg" alt="Lineva" /></div><p className="eyebrow">Rien au programme</p><h2>Personne ne cherche encore la porte</h2><p>Le désir de Lineva et celui d’Allenna permettent de prolonger cette soirée au logis. Le canapé, la cuisine et la chambre ouvrent trois routes qui n’appartiennent à aucun rendez-vous public. Une fin amicale ne vaut que pour cette visite.</p><div className="date-result-actions"><button className="primary-action" onClick={() => startHomePairIntimacy(modal.pairId)}>Prolonger la nuit à trois</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", true)}>Rester complices ce soir</button></div></section></div>;
+    const pairCharacters = ["allenna", "lineva"].map((id) => CHARACTERS.find((entry) => entry.id === id)!);
+    return <V2Resultat background={property.background} characters={pairCharacters} surtitre="Rien au programme" titre="Personne ne cherche encore la porte" texte="Le désir de Lineva et celui d’Allenna permettent de prolonger cette soirée au logis. Le canapé, la cuisine et la chambre ouvrent trois routes qui n’appartiennent à aucun rendez-vous public. Une fin amicale ne vaut que pour cette visite.">
+      <button type="button" className="btn principal primary-action" onClick={() => startHomePairIntimacy(modal.pairId)}>Prolonger la nuit à trois</button><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding("group-date-allenna-lineva-home", true)}>Rester complices ce soir</button>
+    </V2Resultat>;
   }
   if (modal.kind === "home-date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5765,7 +5890,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
       : naiah
         ? "La lanterne est posée, le fauteuil reste annexé et Naïah a choisi de ne pas disparaître derrière un double. Vous pouvez prolonger cette proximité d’une façon propre à ce logis."
         : `Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à ${character.name}, déclinée selon votre corps et votre réglage d’intimité.`;
-    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.28), #11101b 88%), url(${property.background})` }}><p className="eyebrow">Le reste du monde est derrière votre porte</p><h2>{character.name} ne semble pas pressé·e de partir</h2><p>{copy}</p><div className="date-result-actions">{!naiahIntersex && <button className="primary-action" onClick={() => startHomeIntimacy(character.id)}>{naiah ? "Rester proches au logis" : "Prolonger la nuit au logis"}</button>}<button className="secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button></div></section></div>;
+    return <V2Resultat background={property.background} characters={[character]} surtitre="Le reste du monde est derrière votre porte" titre={`${character.name} ne semble pas pressé·e de partir`} texte={copy}>
+      {!naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startHomeIntimacy(character.id)}>{naiah ? "Rester proches au logis" : "Prolonger la nuit au logis"}</button>}<button type="button" className="btn secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button>
+    </V2Resultat>;
   }
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -5781,7 +5908,9 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
         ? `${character.name} reste près de vous. Le jeu, les baisers et le contact choisi peuvent se prolonger, ou attendre simplement un autre soir.`
         : `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
       : `Après « ${date.title} », la proximité demeure douce, mais la tension physique ne demande pas encore à être prolongée. La soirée peut s'achever naturellement, sans fermer les suivantes.`;
-    return <div className="modal-backdrop"><section className="date-result-modal" style={{ backgroundImage: `linear-gradient(180deg, rgba(10,9,16,.38), #11101b 86%), url(${spotById(date.spot)?.background})` }}><p className="eyebrow">La soirée refuse de finir</p><h2>{character.name} reste près de vous</h2><p>{closeText}</p><div className="date-result-actions">{desireReady && !naiahIntersex && <button className="primary-action" onClick={() => startDateIntimacy(date.id)}>{naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button className="secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button className="secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button className="secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}</div></section></div>;
+    return <V2Resultat background={spotById(date.spot)?.background} characters={[character]} surtitre="La soirée refuse de finir" titre={`${character.name} reste près de vous`} texte={closeText}>
+      {desireReady && !naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startDateIntimacy(date.id)}>{naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button type="button" className="btn secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}
+    </V2Resultat>;
   }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
@@ -5791,7 +5920,12 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   }
   if (modal.kind === "ritual") {
     const runes = ["✦", "◇", "◐", "⌁", "✧"];
-    return <div className="modal-backdrop"><section className="ritual-modal"><p className="eyebrow">Mini-jeu de Résonance</p><h2>Accorder les quatre échos</h2>{ritual.phase === "memorize" && <><p>Mémorisez la séquence. Elle disparaîtra lorsque vous commencerez.</p><div className="ritual-sequence">{ritual.sequence.map((rune, index) => <span key={`${rune}-${index}`}>{rune}</span>)}</div><button className="primary-action" onClick={() => ritual.setPhase("play")}>Je suis prêt·e</button></>}{ritual.phase === "play" && <><p>Reproduisez les échos dans le bon ordre.</p><div className="ritual-progress">{ritual.sequence.map((_, index) => <i className={index < ritual.step ? "done" : ""} key={index} />)}</div><div className="rune-buttons">{runes.map((rune) => <button key={rune} onClick={() => ritual.play(rune)}>{rune}</button>)}</div></>}{ritual.phase === "success" && <div className="ritual-result success"><span>✦</span><h3>Accord parfait</h3><p>Résonance +1 · Confluence +8</p><button className="primary-action" onClick={onRitualClose}>Revenir</button></div>}{ritual.phase === "failure" && <div className="ritual-result"><span>◇</span><h3>Écho dissonant</h3><p>La tentative stabilise tout de même la Confluence de 2 points.</p><button className="secondary-action" onClick={onRitualClose}>Revenir</button></div>}</section></div>;
+    return <V2Fenetre surtitre="Mini-jeu de Résonance" titre="Accorder les quatre échos" classe="v2-jeu v2-rituel">
+      {ritual.phase === "memorize" && <div className="jeu-phase"><p className="texte">Mémorisez la séquence. Elle disparaîtra lorsque vous commencerez.</p><div className="ritual-sequence runes-v2">{ritual.sequence.map((rune, index) => <span key={`${rune}-${index}`} style={{ "--i": index } as React.CSSProperties}>{rune}</span>)}</div><button type="button" className="btn principal primary-action" onClick={() => ritual.setPhase("play")}>Je suis prêt·e</button></div>}
+      {ritual.phase === "play" && <div className="jeu-phase"><p className="texte">Reproduisez les échos dans le bon ordre.</p><div className="ritual-progress">{ritual.sequence.map((_, index) => <i className={index < ritual.step ? "done" : ""} key={index} />)}</div><div className="rune-buttons runes-v2">{runes.map((rune) => <button type="button" key={rune} onClick={() => ritual.play(rune)}>{rune}</button>)}</div></div>}
+      {ritual.phase === "success" && <V2JeuResultat succes icone="✦" titre="Accord parfait" texte="Résonance +1 · Confluence +8"><button type="button" className="btn principal primary-action" onClick={onRitualClose}>Revenir</button></V2JeuResultat>}
+      {ritual.phase === "failure" && <V2JeuResultat icone="◇" titre="Écho dissonant" texte="La tentative stabilise tout de même la Confluence de 2 points."><button type="button" className="btn secondary-action" onClick={onRitualClose}>Revenir</button></V2JeuResultat>}
+    </V2Fenetre>;
   }
   if (modal.kind === "job") {
     const job = JOBS.find((entry) => entry.id === modal.jobId);
@@ -5801,12 +5935,104 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   return null;
 }
 
-function SimpleModal({ title, text, actionLabel, onClose }: { title: string; text: string; actionLabel?: string; onClose: () => void }) {
-  return <div className="modal-backdrop"><section className="chronicle-modal"><p className="eyebrow">Chronique</p><h2>{title}</h2><p>{text}</p><button className="primary-action" onClick={onClose}>{actionLabel || "Continuer"}</button></section></div>;
+type V2GiftReaction = { character: string; giftId: string; liked: boolean; affection: number; trust: number };
+
+function SimpleModal({ title, text, actionLabel, gift, onClose }: { title: string; text: string; actionLabel?: string; gift?: V2GiftReaction; onClose: () => void }) {
+  if (gift) return <V2CadeauReaction title={title} text={text} gift={gift} onClose={onClose} />;
+  return <V2Fenetre surtitre="Chronique" titre={title} classe="etroit v2-avis" onClose={onClose} pied={<button type="button" className="btn principal primary-action" onClick={onClose}>{actionLabel || "Continuer"}</button>}>
+    {text.split(/\n+/).filter(Boolean).map((paragraph, index) => <p key={index} className="texte grand">{paragraph}</p>)}
+  </V2Fenetre>;
 }
 
 function ChronicleModal({ onClose }: { onClose: () => void }) {
-  return <div className="modal-backdrop" onMouseDown={onClose}><section className="chronicle-modal" onMouseDown={(event) => event.stopPropagation()}><button className="modal-close" onClick={onClose}>×</button><p className="eyebrow">À propos de cette histoire</p><h2>Une branche alternative au début du Tome 1</h2><p>Hylee vient de quitter l’Auberge du Forestier avec Remerii. Iriana enquête seule sur des irrégularités impériales, Amanea règne encore à Akuhn’Nabad et Draven cherche l’aide nécessaire pour défendre Forthaven. Chacun suit déjà sa propre trajectoire lorsque votre arrivée déplace, à petite échelle, les liens entre ces routes.</p><p>Vous savez être étranger·e à cette réalité, sans vous souvenir de celle dont vous venez. Vous ne connaissez ni l’avenir ni les événements des romans : les alliances que vous bâtirez appartiennent entièrement à cette chronique.</p><button className="primary-action" onClick={onClose}>Compris</button></section></div>;
+  return <V2Fenetre surtitre="À propos de cette histoire" titre="Une branche alternative au début du Tome 1" classe="v2-avis" onClose={onClose} pied={<button type="button" className="btn principal primary-action" onClick={onClose}>Compris</button>}>
+    <p className="texte grand">Hylee vient de quitter l’Auberge du Forestier avec Remerii. Iriana enquête seule sur des irrégularités impériales, Amanea règne encore à Akuhn’Nabad et Draven cherche l’aide nécessaire pour défendre Forthaven. Chacun suit déjà sa propre trajectoire lorsque votre arrivée déplace, à petite échelle, les liens entre ces routes.</p>
+    <p className="texte grand">Vous savez être étranger·e à cette réalité, sans vous souvenir de celle dont vous venez. Vous ne connaissez ni l’avenir ni les événements des romans : les alliances que vous bâtirez appartiennent entièrement à cette chronique.</p>
+  </V2Fenetre>;
+}
+
+/* ---------- Fenêtres V2.5 : cadre commun, portraits réactifs, cartes animées (aucune logique propre). ---------- */
+function V2Fenetre({ surtitre, titre, classe = "", onClose, children, pied, style, label }: { surtitre?: string; titre: React.ReactNode; classe?: string; onClose?: () => void; children: React.ReactNode; pied?: React.ReactNode; style?: React.CSSProperties; label?: string }) {
+  useEffect(() => { sfx("ouvrir"); }, []);
+  return <div className="v2 v2-fen-calque"><div className="modal-backdrop v2-fen-fond" role="presentation">
+    <section className={`v2-fen dlg-boite ${classe}`} role="dialog" aria-modal="true" aria-label={label || (typeof titre === "string" ? titre : undefined)} style={style}>
+      <Orn4 />
+      <header className="dlg-tete"><div>{surtitre && <span className="surtitre">{surtitre}</span>}<h2>{titre}</h2></div>{onClose && <button type="button" className="dlg-x modal-close" data-close aria-label="Fermer" onClick={onClose}><span>✕</span><kbd>Échap</kbd></button>}</header>
+      <div className="dlg-corps">{children}</div>
+      {pied && <footer className="dlg-pied">{pied}</footer>}
+    </section>
+  </div></div>;
+}
+
+function V2Portrait({ character, mood, classe = "" }: { character: CharacterData; mood?: string; classe?: string }) {
+  const resolved = mood || character.defaultMood;
+  return <figure className={`fen-sprite ${classe}`} style={{ "--c": character.color } as React.CSSProperties} aria-hidden="true">
+    <div className="halo" />
+    <img key={resolved} className="fen-sprite-img" src={spritePath(character.id, resolved, character.defaultMood)} alt="" onError={(event) => recoverMissingSprite(event, character.portrait)} />
+    <figcaption className="fen-plaque"><b>{character.name}</b></figcaption>
+  </figure>;
+}
+
+/* Cadeau : la personne réagit selon la vraie préférence (giftLikes) — mêmes sprites réactifs que les scènes. */
+const V2_GIFT_MOOD = { liked: "happy", other: "curious" } as const;
+function V2Cadeau({ game, character, present, owned, onGive, onClose }: { game: GameState; character: CharacterData; present: boolean; owned: typeof GIFTS; onGive: (character: string, gift: string) => void; onClose: () => void }) {
+  const [hover, setHover] = useState<string | null>(null);
+  const hovered = owned.find((gift) => gift.id === hover);
+  const hoveredLiked = Boolean(hovered && character.giftLikes.includes(hovered.id));
+  return <V2Fenetre surtitre="Remettre un présent" titre={`Offrir à ${character.name}`} classe="large v2-cadeau" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose} pied={<button type="button" className="btn secondary-action" onClick={onClose}>Annuler</button>}>
+    <div className="fen-vn">
+      <V2Portrait character={character} mood={hovered ? (hoveredLiked ? V2_GIFT_MOOD.liked : V2_GIFT_MOOD.other) : undefined} classe={hovered ? (hoveredLiked ? "ravi" : "poli") : ""} />
+      <div className="fen-vn-texte">
+        <span className={`fen-etat ${present ? "ouvert" : ""}`}>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</span>
+        {present && owned.length ? <div className="cad-grille">{owned.map((gift, index) => { const liked = character.giftLikes.includes(gift.id); return <button type="button" key={gift.id} data-don={gift.id} className={`cad-carte rar-${v2Rarity(gift.price)} ${liked ? "aime" : ""}`} style={{ "--i": index } as React.CSSProperties} onPointerEnter={() => setHover(gift.id)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(gift.id)} onBlur={() => setHover(null)} onClick={() => onGive(character.id, gift.id)}><span className="od-ico"><i>{gift.icon}</i></span><b>{gift.name}</b><small>{gift.description}</small><span className="cd-n">×{game.inventory[gift.id]}</span>{liked && <em>♥ Favori</em>}<span className="cad-rar">{v2RarityLabel(gift.price)}</span></button>; })}</div>
+          : <p className="discret">{present ? "Votre inventaire ne contient aucun présent. Achetez-en au marché depuis Biens." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2CadeauReaction({ title, text, gift, onClose }: { title: string; text: string; gift: V2GiftReaction; onClose: () => void }) {
+  const character = CHARACTERS.find((entry) => entry.id === gift.character);
+  const item = GIFTS.find((entry) => entry.id === gift.giftId);
+  if (!character || !item) return null;
+  return <V2Fenetre surtitre={`Présent remis · ${item.name}`} titre={title} classe="large v2-cadeau v2-reaction" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose} pied={<button type="button" className="btn principal primary-action" onClick={onClose}>Continuer</button>}>
+    <div className="fen-vn">
+      <V2Portrait character={character} mood={gift.liked ? V2_GIFT_MOOD.liked : V2_GIFT_MOOD.other} classe={gift.liked ? "ravi" : "poli"} />
+      <div className="fen-vn-texte">
+        <div className={`cad-remis rar-${v2Rarity(item.price)} ${gift.liked ? "aime" : ""}`}><span className="od-ico"><i>{item.icon}</i></span><b>{item.name}</b>{gift.liked && <em>♥ Favori</em>}</div>
+        {gift.liked && <span className="cad-coeurs" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((index) => <i key={index} style={{ "--i": index } as React.CSSProperties}>♥</i>)}</span>}
+        {text.split(/\n+/).filter(Boolean).map((paragraph, index) => <p key={index} className="texte grand">{paragraph}</p>)}
+        {(gift.affection > 0 || gift.trust > 0) && <div className="cad-gains">{gift.affection > 0 && <span className="aff">♥ Affection +{gift.affection}</span>}{gift.trust > 0 && <span className="conf">✦ Confiance +{gift.trust}</span>}</div>}
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2Lettre({ game, character, surtitre, subject, delivery, body, signature, attachment, replies, repliesHint, onReply, response, noReplyHint, onClose }: { game: GameState; character?: CharacterData; surtitre: string; subject: string; delivery: string; body: string[]; signature: string; attachment?: string; replies?: { id: string; label: string }[]; repliesHint: string; onReply: (replyId: string) => void; response?: string; noReplyHint?: string; onClose: () => void }) {
+  return <V2Fenetre surtitre={surtitre} titre={subject} classe="large v2-lettre" style={{ "--c": character?.color } as React.CSSProperties} onClose={onClose} pied={<button type="button" className="btn secondary-action" onClick={onClose}>Refermer la lettre</button>}>
+    <div className="lettre-tete">{character && <Seau color={character.color} portrait={character.portrait} className="grand" />}<div><b>{character?.name}</b><small>{delivery}</small></div></div>
+    <article className="lettre-papier">{body.map((paragraph, index) => <p key={index} style={{ "--i": index } as React.CSSProperties}>{replacePlayer(paragraph, game.player)}</p>)}<strong className="lettre-signature">{signature}</strong><span className="lettre-cachet" aria-hidden="true">✦</span></article>
+    {attachment && <div className="lettre-jointe"><span className="od-ico petit"><i>◇</i></span><div><small>Objet joint</small><strong>{attachment}</strong></div></div>}
+    {replies ? <div className="lettre-reponses"><span className="surtitre">{repliesHint}</span>{replies.map((reply, index) => <button type="button" key={reply.id} className="v2-choix-carte" data-reponse={reply.id} style={{ "--i": index } as React.CSSProperties} onClick={() => onReply(reply.id)}><i>{ROMAINS[index + 1] || index + 1}</i><span>{reply.label}</span></button>)}</div>
+      : response ? <div className="lettre-reponse"><span className="surtitre">Votre réponse</span><p>{response}</p></div>
+      : noReplyHint ? <p className="discret">{noReplyHint}</p> : null}
+  </V2Fenetre>;
+}
+
+function V2Resultat({ background, characters, surtitre, titre, texte, children }: { background?: string; characters: CharacterData[]; surtitre: string; titre: string; texte: string; children: React.ReactNode }) {
+  useEffect(() => { sfx("ouvrir"); }, []);
+  return <div className="v2 v2-fen-calque"><div className="modal-backdrop v2-fen-fond v2-resultat" role="presentation" style={{ backgroundImage: background ? `linear-gradient(180deg, rgba(5,6,12,.25), rgba(5,6,12,.92) 82%), url(${background})` : undefined }}>
+    <div className={`resultat-scene cast-${characters.length}`}>{characters.map((character) => <V2Portrait key={character.id} character={character} />)}</div>
+    <section className="v2-fen dlg-boite resultat-boite" role="dialog" aria-modal="true" aria-label={titre}><Orn4 />
+      <header className="dlg-tete"><div><span className="surtitre">{surtitre}</span><h2>{titre}</h2></div></header>
+      <div className="dlg-corps"><p className="texte grand">{texte}</p></div>
+      <footer className="dlg-pied date-result-actions">{children}</footer>
+    </section>
+  </div></div>;
+}
+
+function V2JeuResultat({ succes = false, icone, titre, texte, gain, children }: { succes?: boolean; icone: string; titre: string; texte: string; gain?: string; children: React.ReactNode }) {
+  return <div className={`jeu-resultat ritual-result ${succes ? "success" : ""}`}><span className="jeu-embleme">{icone}</span><h3>{titre}</h3><p className="texte">{texte}</p>{gain && <strong className="job-pay jeu-gain">{gain}</strong>}<div className="jeu-resultat-actions">{children}</div></div>;
 }
 
 type V2DialogState =
@@ -6782,5 +7008,93 @@ function V2RankUp({ character, from, to, leaving, onClose }: { character: Charac
     <img className="ru-portrait" src={character.portrait} alt="" />
     <div className="ru-txt"><small>{character.name}</small><b>Rang supérieur</b><span><s>{STAGE_LABELS[from]}</s> ▸ {STAGE_LABELS[to]}</span><em>{ROMAINS[to]}</em></div>
     {Array.from({ length: 18 }, (_, k) => <i key={k} className="ru-coeur" style={{ "--x": `${Math.round(Math.cos((k / 18) * 6.28) * (180 + (k % 3) * 60))}px`, "--y": `${Math.round(Math.sin((k / 18) * 6.28) * (120 + (k % 4) * 40))}px`, "--d": `${(k % 5) * 60}ms` } as React.CSSProperties}>♥</i>)}
+  </div>;
+}
+
+/* ---------- Bilan de fin de journée (style calendrier) : uniquement des écarts réels entre deux états du jeu. ---------- */
+type V2BilanLigne =
+  | { kind: "lien"; character: CharacterData; affection: number; trust: number; desire: number; from: number; to: number; met: boolean }
+  | { kind: "bourse"; delta: number }
+  | { kind: "stat"; label: string; delta: number }
+  | { kind: "confluence"; delta: number }
+  | { kind: "liste"; icon: string; label: string; items: string[] }
+  | { kind: "compte"; icon: string; label: string; count: number };
+
+function v2DayRecap(from: GameState, to: GameState): V2BilanLigne[] {
+  const rows: V2BilanLigne[] = [];
+  const added = (before: string[], after: string[]) => after.filter((entry) => !before.includes(entry));
+  for (const character of CHARACTERS) {
+    const a = from.relationships[character.id]; const b = to.relationships[character.id];
+    if (!a || !b) continue;
+    const row = { kind: "lien" as const, character, affection: b.affection - a.affection, trust: b.trust - a.trust, desire: b.desire - a.desire, from: a.stage, to: b.stage, met: !a.met && b.met };
+    if (row.affection || row.trust || row.desire || row.from !== row.to || row.met) rows.push(row);
+  }
+  if (to.coins !== from.coins) rows.push({ kind: "bourse", delta: to.coins - from.coins });
+  for (const key of Object.keys(STAT_LABELS) as StatKey[]) {
+    const delta = (to.stats[key] || 0) - (from.stats[key] || 0);
+    if (delta) rows.push({ kind: "stat", label: STAT_LABELS[key], delta });
+  }
+  if (to.confluence !== from.confluence) rows.push({ kind: "confluence", delta: to.confluence - from.confluence });
+  const places = [...added(from.visitedLocations, to.visitedLocations).map((id) => LOCATIONS.find((entry) => entry.id === id)?.name), ...added(from.visitedSpots, to.visitedSpots).map((id) => spotById(id)?.name)].filter((name): name is string => Boolean(name));
+  if (places.length) rows.push({ kind: "liste", icon: "⌖", label: "Lieux découverts", items: places });
+  const scenes = added(from.history, to.history).map((id) => ROUTE_SCENES.find((scene) => scene.id === id)?.title || campaignSceneById(id)?.title).filter((title): title is string => Boolean(title));
+  if (scenes.length) rows.push({ kind: "liste", icon: "✦", label: "Scènes vécues", items: scenes });
+  const codex = added(from.codex, to.codex).filter((name) => !places.includes(name) && !scenes.includes(name));
+  if (codex.length) rows.push({ kind: "liste", icon: "❖", label: "Codex", items: codex });
+  const knowledge = added(from.knowledge, to.knowledge).map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)?.title).filter((title): title is string => Boolean(title));
+  if (knowledge.length) rows.push({ kind: "liste", icon: "◌", label: "Découvertes", items: knowledge });
+  const letters = to.letters.filter((letter) => !from.letters.some((entry) => entry.id === letter.id)).map((letter) => LETTERS.find((entry) => entry.id === letter.id)?.subject).filter((subject): subject is string => Boolean(subject));
+  if (letters.length) rows.push({ kind: "liste", icon: "✉", label: "Courrier reçu", items: letters });
+  const rumors = to.rumors.length - from.rumors.length;
+  if (rumors > 0) rows.push({ kind: "compte", icon: "❝", label: "Rumeurs entendues", count: rumors });
+  const jobs = Object.values(to.jobRuns).reduce((sum, value) => sum + value, 0) - Object.values(from.jobRuns).reduce((sum, value) => sum + value, 0);
+  if (jobs > 0) rows.push({ kind: "compte", icon: "⚒", label: "Jobs accomplis", count: jobs });
+  return rows;
+}
+
+function V2Delta({ value, label, cls }: { value: number; label: string; cls?: string }) {
+  if (!value) return null;
+  return <span className={`bj-delta ${cls || ""} ${value < 0 ? "moins" : ""}`}><small>{label}</small><b>{value > 0 ? "+" : "−"}{Math.abs(value)}</b></span>;
+}
+
+function V2BilanJour({ from, to, onClose }: { from: GameState; to: GameState; onClose: () => void }) {
+  const rows = v2DayRecap(from, to);
+  const [complet, setComplet] = useState(() => reduit());
+  const completRef = useRef(complet);
+  completRef.current = complet;
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    sfx("temps");
+    const timer = window.setTimeout(() => setComplet(true), 1300 + rows.length * 160);
+    const onKey = (event: KeyboardEvent) => {
+      if (!["Enter", " ", "Escape"].includes(event.key)) return;
+      event.preventDefault(); event.stopPropagation();
+      if (completRef.current) closeRef.current(); else setComplet(true);
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => { window.clearTimeout(timer); window.removeEventListener("keydown", onKey, true); };
+  }, [rows.length]);
+  const elapsed = to.day - from.day;
+  const more = (items: string[]) => items.length > 4 ? [...items.slice(0, 4), `+${items.length - 4}`] : items;
+  return <div className={`bilan-jour ${complet ? "complet" : ""}`} role="dialog" aria-modal="true" aria-label={`Bilan du jour ${from.day}`} data-bilan onClick={() => { if (completRef.current) onClose(); else setComplet(true); }}>
+    <div className="bj-bandes" aria-hidden="true"><i /><i /><i /></div>
+    <div className="bj-calendrier" aria-hidden="true">
+      <div className="bj-feuille ancienne"><small>Jour</small><b>{from.day}</b><em>{PERIODS[from.period]?.label}</em></div>
+      <div className="bj-feuille nouvelle"><small>Jour</small><b>{to.day}</b><em>{PERIODS[to.period]?.label}</em></div>
+    </div>
+    <div className="bj-corps">
+      <span className="surtitre">Fin du jour {from.day}{elapsed > 1 ? ` · ${elapsed} jours écoulés` : ""}</span>
+      <h2>Bilan de la journée</h2>
+      {rows.length ? <ul className="bj-liste">{rows.map((row, index) => <li key={index} className={`bj-ligne bj-${row.kind}`} style={{ "--i": index, "--c": row.kind === "lien" ? row.character.color : undefined } as React.CSSProperties}>
+        {row.kind === "lien" && <><Seau color={row.character.color} portrait={row.character.portrait} /><span className="bj-nom">{row.character.name}{row.met && <i className="bj-tag">Rencontre</i>}{row.to > row.from && <i className="bj-tag rang">Rang {ROMAINS[row.from]} ▸ {ROMAINS[row.to]}</i>}</span><span className="bj-valeurs"><V2Delta value={row.affection} label="Aff." cls="aff" /><V2Delta value={row.trust} label="Conf." cls="conf" /><V2Delta value={row.desire} label="Désir" cls="des" /></span></>}
+        {row.kind === "bourse" && <><span className="bj-ico">◈</span><span className="bj-nom">Bourse</span><span className="bj-valeurs"><V2Delta value={row.delta} label="Pièces" cls="or" /></span></>}
+        {row.kind === "stat" && <><span className="bj-ico">◆</span><span className="bj-nom">{row.label}</span><span className="bj-valeurs"><V2Delta value={row.delta} label="Aptitude" /></span></>}
+        {row.kind === "confluence" && <><span className="bj-ico">✧</span><span className="bj-nom">Confluence</span><span className="bj-valeurs"><V2Delta value={row.delta} label="Stabilité" /></span></>}
+        {row.kind === "liste" && <><span className="bj-ico">{row.icon}</span><span className="bj-nom">{row.label}</span><span className="bj-items">{more(row.items).map((item) => <i key={item}>{item}</i>)}</span></>}
+        {row.kind === "compte" && <><span className="bj-ico">{row.icon}</span><span className="bj-nom">{row.label}</span><span className="bj-valeurs"><V2Delta value={row.count} label="Nouv." /></span></>}
+      </li>)}</ul> : <p className="discret bj-vide">Aucun changement consigné pendant cette journée.</p>}
+      <p className="bj-suite">{complet ? "Toucher pour continuer" : "Toucher pour tout afficher"} <kbd>Entrée</kbd></p>
+    </div>
   </div>;
 }
