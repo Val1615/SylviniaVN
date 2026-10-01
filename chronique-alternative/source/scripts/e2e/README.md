@@ -18,5 +18,10 @@ export CA_SHOTS=/tmp/ca-shots   # dossier des captures (créer flow/ dedans)
 | `flow_fiche.py` | Fiche centrée sur le personnage (830×525 et 412×915 tactiles, 1920×1080) : pas de bandeau, ‹ n/N ›, glisser sur le portrait, Échap → Liens |
 | `flow_mobile.py` | 830×525 et 412×915 tactiles : scène au doigt, barre mobile, feuille « Plus », pause |
 | `resp.py` | Détecteur de chevauchements / textes coupés (`resp_check.js`) sur 5 formats |
+| `flow_v25.py` | V2.5 : présent aimé → réaction et gains réels, lettre → réponse, scène → choix en cartes + historique (H, Échap), lanceur de job → partie, attente jusqu’au jour suivant → bilan (toucher : tout afficher puis continuer), sauvegarde/chargement sans bilan parasite — 5 formats |
+| `resp_v25.py` | Chevauchements dans les fenêtres V2.5, la scène, l’historique et le bilan, sur 5 formats + échelles extrêmes (`?texte=140&cases=125&sprite=130`, `?texte=70&cases=70&sprite=70`) |
+| `shots_v25.py` | Captures avant/après V2.5 (`python3 shots_v25.py apres <dossier> 830x525t,1920x1080`) |
+
+Le bilan de fin de journée intercepte les clics jusqu’à ce qu’on le touche deux fois : `common.close_modals` appelle `dismiss_bilan` avant de fermer les fenêtres.
 
 Les sauvegardes de `saves/` ont été produites par la version en ligne (avant V2) : elles servent de test de compatibilité.
