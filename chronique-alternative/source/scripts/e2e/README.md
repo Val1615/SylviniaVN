@@ -15,6 +15,7 @@ export CA_SHOTS=/tmp/ca-shots   # dossier des captures (créer flow/ dedans)
 | `flow_c.py` | Carte → voyage réel → Liens → fiche → Localiser → Rendez-vous / À trois → 6 sections du Journal → Jobs → Marché / Logis → Codex |
 | `flow_d.py` | Pause → sauvegarder emplacement 1 → attendre → charger → Options (curseurs persistés après rechargement, réinitialisation) → Mode Histoire → retour |
 | `flow_e.py` | Charger depuis le titre (emplacement de l’ancienne version) → registre → écran titre → confirmation « Nouvelle chronique » |
+| `flow_fiche.py` | Fiche centrée sur le personnage (830×525 et 412×915 tactiles, 1920×1080) : pas de bandeau, ‹ n/N ›, glisser sur le portrait, Échap → Liens |
 | `flow_mobile.py` | 830×525 et 412×915 tactiles : scène au doigt, barre mobile, feuille « Plus », pause |
 | `resp.py` | Détecteur de chevauchements / textes coupés (`resp_check.js`) sur 5 formats |
 

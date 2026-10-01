@@ -50,6 +50,8 @@ assert.match(page, /\.\.\/index\.html/, "Le retour au Mode Histoire doit rester 
 for (const forbidden of ["Démo rang", "Temps de jeu", "données fictives", "Vitesse du texte"]) {
   assert.ok(!page.includes(forbidden), `Contenu de prototype non adossé au jeu : ${forbidden}`);
 }
+assert.ok(!page.includes('className="fiche-defil"'), "La fiche doit rester centrée sur le personnage choisi (pas de bandeau de portraits).");
+assert.match(page, /className="fiche-pas"/, "La fiche doit garder un sélecteur discret précédent/suivant.");
 assert.match(fxSource, /sylvinia-ca-v2-echelles/, "Les échelles doivent être persistées.");
 assert.match(main, /ui\/v2\/v2\.css/, "La feuille V2 doit être importée.");
 assert.match(main, /ui\/v2\/v2-integration\.css/, "La feuille de raccord V2 doit être importée.");

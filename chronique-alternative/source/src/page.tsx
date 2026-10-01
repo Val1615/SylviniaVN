@@ -6263,6 +6263,7 @@ function V2Liens({ game, onView, onFiche }: { game: GameState; onView: (view: V2
 }
 
 function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate, onDossier, onWaitRoute }: { game: GameState; characterId: string; onView: (view: V2LinksView) => void; onFiche: (id: string) => void; onGift: (id: string) => void; onDate: (id: string) => void; onLocate: (location: string, spot: string) => void; onDossier: (id: string) => void; onWaitRoute: (sceneId: string) => void }) {
+  const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const known = CHARACTERS.filter((character) => characterUnlocked(game, character));
   const character = known.find((entry) => entry.id === characterId) || known[0];
   if (!character) return null;
@@ -6287,7 +6288,10 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
   const circ = 2 * Math.PI * 54;
   const tastes = character.giftLikes.map((id) => GIFTS.find((gift) => gift.id === id)).filter((gift): gift is (typeof GIFTS)[number] => Boolean(gift));
   const hasPlanner = DATE_SCENES.some((date) => date.character === character.id) || Boolean(HOME_DATE_PROFILES[character.id]);
-  return <div className="fiche" style={{ "--c": character.color } as React.CSSProperties}>
+  // Glisser horizontalement sur le portrait = personnage voisin (le panneau garde son défilement normal).
+  const onTouchStart = (event: React.TouchEvent) => { const t = event.touches[0]; swipeRef.current = (event.target as HTMLElement).closest(".fiche-panneau, .fiche-pas") ? null : { x: t.clientX, y: t.clientY }; };
+  const onTouchEnd = (event: React.TouchEvent) => { const start = swipeRef.current; swipeRef.current = null; if (!start || known.length < 2) return; const t = event.changedTouches[0]; const dx = t.clientX - start.x; if (Math.abs(dx) > 60 && Math.abs(t.clientY - start.y) < 50) { sfx("survol"); onFiche((dx < 0 ? next : prev).id); } };
+  return <div className="fiche" style={{ "--c": character.color } as React.CSSProperties} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
     <div className="fiche-filigrane" aria-hidden="true">{character.name}</div>
     <figure className="fiche-sprite" key={character.id}><div className="halo" /><img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} /></figure>
     <section className="fiche-panneau cadre"><Orn4 />
@@ -6317,11 +6321,11 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
         {nextScene && narrativeReady && !needed && routeTarget && <button type="button" className="btn principal" data-act="attendre-route" onClick={() => onWaitRoute(nextScene.id)}>⧗ Attendre · {waitDurationLabel(game, routeTarget)}</button>}
       </div>
     </section>
-    <nav className="fiche-defil" aria-label="Autres personnages">
-      <button type="button" className="df-fl" aria-label={`Précédent : ${prev.name}`} onClick={() => onFiche(prev.id)}>◀</button>
-      {known.map((entry) => <button type="button" key={entry.id} className={entry === character ? "on" : ""} style={{ "--c": entry.color } as React.CSSProperties} aria-label={entry.name} onClick={() => onFiche(entry.id)}><img src={entry.portrait} alt="" /></button>)}
-      <button type="button" className="df-fl" aria-label={`Suivant : ${next.name}`} onClick={() => onFiche(next.id)}>▶</button>
-    </nav>
+    {known.length > 1 && <nav className="fiche-pas" aria-label="Changer de personnage">
+      <button type="button" aria-label={`Précédent : ${prev.name}`} title={prev.name} onClick={() => { sfx("survol"); onFiche(prev.id); }}>‹</button>
+      <span aria-live="polite">{index + 1}<i>/</i>{known.length}</span>
+      <button type="button" aria-label={`Suivant : ${next.name}`} title={next.name} onClick={() => { sfx("survol"); onFiche(next.id); }}>›</button>
+    </nav>}
   </div>;
 }
 

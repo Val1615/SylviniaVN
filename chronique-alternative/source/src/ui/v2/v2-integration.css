@@ -138,3 +138,18 @@
   .v2 .signet:not(.actif) { padding-inline: calc(.8rem * var(--k, 1)); }
 }
 .v2 .tampon { margin-bottom: calc(1.1rem * var(--k, 1)); }
+
+/* Fiche : focus sur le personnage choisi — plus de bandeau de portraits, un sélecteur discret ‹ n/N › (+ glisser sur le portrait, Échap = Liens). */
+.v2 .fiche-defil { display: none; }
+.v2 .fiche-pas { position: fixed; z-index: 4; left: calc(var(--pad, 1.5rem) + .4rem); bottom: calc(1.1rem * var(--k, 1) + env(safe-area-inset-bottom)); display: inline-flex; align-items: center; gap: calc(.2rem * var(--k, 1)); padding: calc(.15rem * var(--k, 1)); background: rgba(5,5,12,.55); border: 1px solid var(--ligne-douce); border-radius: 999px; backdrop-filter: blur(4px); }
+.v2 .fiche-pas button { width: calc(34px * var(--echelle, 1)); height: calc(34px * var(--echelle, 1)); min-width: 34px; min-height: 34px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--or); font-family: var(--display); font-size: calc(1.4rem * var(--tr, 1)); line-height: 1; cursor: pointer; transition: background .2s, color .2s; }
+.v2 .fiche-pas button:hover, .v2 .fiche-pas button:focus-visible { background: rgba(216,189,120,.16); color: var(--or-vif); outline: none; }
+.v2 .fiche-pas span { min-width: 3.2em; text-align: center; font-family: var(--display); font-size: calc(.8rem * var(--tr, 1)); letter-spacing: .12em; color: var(--texte-2); }
+.v2 .fiche-pas span i { font-style: normal; margin: 0 .25em; color: var(--texte-3); }
+@media (max-width: 760px), (min-width: 761px) and (orientation: portrait) {
+  .v2 .fiche-pas { position: absolute; left: auto; right: calc(.6rem * var(--k, 1)); top: calc(.4rem * var(--k, 1)); bottom: auto; }
+}
+/* Portrait de la fiche sur mobile / portrait : la largeur « desktop » (100vw − panneau) écrasait le cadre et décentrait le visage. */
+@media (max-width: 760px) { .v2 .fiche-sprite { width: 120%; } .v2 .fiche-sprite .sprite { height: calc(72vh * var(--sprite, 1)); top: calc((1 - var(--sprite, 1)) * 20vh); } }
+@media (min-width: 761px) and (orientation: portrait) { .v2 .fiche-sprite { width: 110%; } }
+@media (min-width: 1600px) { .v2 .fiche-pas button { width: 44px; height: 44px; font-size: 1.8rem; } .v2 .fiche-pas span { font-size: 1rem; } }
