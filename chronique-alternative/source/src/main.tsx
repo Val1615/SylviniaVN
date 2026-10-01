@@ -2,7 +2,8 @@ import { createRoot } from "react-dom/client";
 import Home from "./page";
 import "./globals.css";
 import "./integration.css";
-import "./ui/atlas/atlas.css";
+import "./ui/v2/v2.css";
+import "./ui/v2/v2-integration.css";
 
 const root = document.getElementById("root");
 

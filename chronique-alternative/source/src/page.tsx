@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- sprites and map assets use dynamic canon paths */
 
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { SyntheticEvent } from "react";
 import {
   CHARACTERS,
@@ -194,8 +194,10 @@ import {
   type TouchNavigation,
   type UiStyle,
 } from "./ui/atlas/atlas-ui";
-import { AtlasChrome, ATLAS_NAVIGATION, type AtlasTab } from "./ui/atlas/atlas-shell";
-import { useAdaptiveLayout } from "./ui/atlas/use-adaptive-layout";
+import type { AtlasTab } from "./ui/atlas/atlas-shell";
+import { V2Title } from "./ui/v2/title";
+import { AudioButtons, Kbd, Orn4, ROMAINS, Seau, V2Dialog, moveFocus } from "./ui/v2/common";
+import { DEFAULT_SCALES, ECHELLES, SCALE_KEYS, applyScales, borne, createParticles, installGlobalSfx, playTransition, readScales, reduit, setReducedSetting, setUiPrefs, sfx, storeScales, subscribeUiPrefs, uiPrefs, type FxMode, type ScaleKey, type Scales } from "./ui/v2/fx";
 
 type Screen = "title" | "creator" | "game";
 type Tab = AtlasTab;
@@ -1880,15 +1882,152 @@ export default function Home() {
   const notificationIdRef = useRef(0);
   const notificationTimersRef = useRef<number[]>([]);
   const audioVolume = game?.settings.volume ?? DEFAULT_SETTINGS.volume;
-  const atlasDevice = useAdaptiveLayout(game?.settings.adaptiveLayout ?? DEFAULT_SETTINGS.adaptiveLayout);
   const activeJobId = jobState?.jobId;
   const activeJobPhase = jobState?.phase;
   const activeAssemblyStage = jobState?.assemblyStage;
   const currentPlaceKey = game ? `${game.location}:${game.spot}` : "";
+  /* ---------- Interface V2 : état d’affichage (aucune donnée de jeu propre) ---------- */
+  const [v2Dialog, setV2Dialog] = useState<V2DialogState>(null);
+  const [linksView, setLinksView] = useState<V2LinksView>("liens");
+  const [ficheId, setFicheId] = useState("");
+  const [v2Log, setV2Log] = useState<V2LogEntry[]>([]);
+  const [timeJump, setTimeJump] = useState<{ day: number; period: number; leaving: boolean } | null>(null);
+  const [rankQueue, setRankQueue] = useState<{ id: string; from: number; to: number }[]>([]);
+  const [rankLeaving, setRankLeaving] = useState(false);
+  const [slotVersion, setSlotVersion] = useState(0);
+  const [v2Prefs, setV2Prefs] = useState(() => uiPrefs());
+  const fxCanvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<ReturnType<typeof createParticles> | null>(null);
+  const titleAudioRef = useRef<HTMLAudioElement>(null);
+  const gameRef = useRef<GameState | null>(null);
+  const rankPrevRef = useRef<GameState | null>(null);
+
+  useEffect(() => { gameRef.current = game; }, [game]);
+  useEffect(() => { installGlobalSfx(); applyScales(readScales()); return subscribeUiPrefs(() => setV2Prefs(uiPrefs())); }, []);
+  useEffect(() => {
+    const reduced = Boolean(game?.settings.reducedMotion);
+    setReducedSetting(reduced);
+    document.body.classList.toggle("reduit", reduced);
+    document.body.classList.toggle("contraste", Boolean(game?.settings.highContrastText));
+  }, [game?.settings.reducedMotion, game?.settings.highContrastText]);
+
+  /* Particules : une ambiance par écran (le titre reste la cinématique seule). */
+  useEffect(() => {
+    const canvas = fxCanvasRef.current;
+    if (!canvas) return;
+    if (!particlesRef.current) particlesRef.current = createParticles(canvas);
+    const fx = particlesRef.current;
+    if (screen === "title" || reduit()) { fx.stop(); return; }
+    if (screen === "creator") { fx.mode("lucioles"); return; }
+    const mode: FxMode = tab === "place" ? (["petales", "poussiere", "poussiere", "lucioles"] as FxMode[])[game?.period ?? 0] : V2_FX_BY_TAB[tab] || "poussiere";
+    fx.mode(mode);
+  }, [screen, tab, game?.period, game?.settings.reducedMotion]);
+
+  /* Thème du menu : lancé dès que le navigateur l’autorise (geste « Appuyez »). */
+  useEffect(() => {
+    const audio = titleAudioRef.current;
+    if (screen !== "title" || !audio) return;
+    if (v2Prefs.titleMusic) void audio.play().catch(() => undefined); else audio.pause();
+  }, [screen, v2Prefs.titleMusic]);
+
+  /* Animation « rang supérieur » quand un stade de relation augmente réellement. */
+  useEffect(() => {
+    if (!game || screen !== "game") { rankPrevRef.current = null; return; }
+    const previous = rankPrevRef.current;
+    rankPrevRef.current = game;
+    if (!previous || previous === game) return;
+    const ups = CHARACTERS.filter((character) => (game.relationships[character.id]?.stage ?? 0) > (previous.relationships[character.id]?.stage ?? 0))
+      .map((character) => ({ id: character.id, from: previous.relationships[character.id]?.stage ?? 0, to: game.relationships[character.id].stage }));
+    if (ups.length && ups.length <= 3) setRankQueue((current) => [...current, ...ups]);
+  }, [game, screen]);
+
+  const rankVisible = Boolean(rankQueue.length && !dialogue && !modal && !v2Dialog);
+  useEffect(() => {
+    if (!rankVisible) return;
+    sfx("rang");
+    const leave = window.setTimeout(() => setRankLeaving(true), reduit() ? 1800 : 2800);
+    const next = window.setTimeout(() => { setRankLeaving(false); setRankQueue((current) => current.slice(1)); }, reduit() ? 1900 : 3200);
+    return () => { window.clearTimeout(leave); window.clearTimeout(next); };
+  }, [rankVisible, rankQueue[0]?.id, rankQueue[0]?.to]);
+  function dismissRank() { setRankLeaving(false); setRankQueue((current) => current.slice(1)); }
+
+  function goTab(next: Tab, instant = false) {
+    if (!game) return;
+    if (next === tab && !(next === "relations" && linksView !== "liens")) return;
+    const apply = () => {
+      if (next === "relations") setLinksView("liens");
+      if (next === "map" && tab !== "map" && !instant) { setSelectedLocation(game.location); setSelectedSpot(game.spot); }
+      setMapDestinationOpen(false);
+      setPlacePanel(null);
+      setTab(next);
+    };
+    sfx("onglet");
+    if (instant) { apply(); return; }
+    void playTransition("entaille").then(apply);
+  }
+
+  function v2Wait() {
+    if (!game) return;
+    if (game.settings.noTimeCost) { setModal({ kind: "notice", title: "Temps figé", text: "Le mode développeur « sans coût de temps » est actif : attendre ne fait pas avancer l’horloge." }); return; }
+    const nextPeriod = (game.period + 1) % PERIODS.length;
+    const day = nextPeriod === 0 ? game.day + 1 : game.day;
+    if (reduit()) { advancePeriod(); return; }
+    sfx("temps");
+    setTimeJump({ day, period: nextPeriod, leaving: false });
+    window.setTimeout(() => advancePeriod(), 900);
+    window.setTimeout(() => setTimeJump((current) => current && { ...current, leaving: true }), 1500);
+    window.setTimeout(() => setTimeJump(null), 2000);
+  }
+
+  /* Clavier V2 : Échap (pause / retour), Q-E (onglets), 1-7, flèches (focus spatial). */
+  useEffect(() => {
+    if (screen !== "game") return;
+    const listener = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (modal && event.key === "Escape" && !dialogue) {
+        // Échap = la croix de fermeture réelle de la fenêtre héritée, quand elle en propose une.
+        const close = document.querySelector<HTMLButtonElement>(".modal-backdrop .modal-close");
+        if (close) { event.preventDefault(); close.click(); }
+        return;
+      }
+      if (modal || dialogue || timeJump) return;
+      const arrows: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+      const target = event.target as HTMLElement | null;
+      const typing = target?.closest("input, textarea, select, [contenteditable='true']");
+      if (document.querySelector("dialog[open]")) {
+        if (arrows[event.key] && !typing) { event.preventDefault(); moveFocus(...arrows[event.key]); }
+        return;
+      }
+      if (rankQueue.length && event.key === "Escape") { dismissRank(); return; }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (tab === "relations" && linksView !== "liens") { sfx("retour"); setLinksView("liens"); } else setV2Dialog({ kind: "pause" });
+        return;
+      }
+      if (typing) return;
+      const key = event.key.toLowerCase();
+      if (key === "q" || key === "e") {
+        event.preventDefault();
+        const index = Math.max(0, V2_TABS.findIndex(([id]) => id === tab));
+        const nextIndex = (index + (key === "e" ? 1 : -1) + V2_TABS.length) % V2_TABS.length;
+        goTab(V2_TABS[nextIndex][0]);
+        return;
+      }
+      const digit = Number(event.key);
+      if (digit >= 1 && digit <= V2_TABS.length) { event.preventDefault(); goTab(V2_TABS[digit - 1][0]); return; }
+      if (arrows[event.key]) { event.preventDefault(); moveFocus(...arrows[event.key]); }
+    };
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  });
 
   const pushNotification = useCallback((draft: ChronicleNotificationDraft) => {
     const id = ++notificationIdRef.current;
     setNotifications((current) => [...current, { ...draft, id }].slice(-4));
+    const meta = V2_NOTIF[draft.kind];
+    const clock = gameRef.current;
+    setV2Log((current) => [{ id, type: meta.type, icon: meta.icon, label: meta.label, title: draft.title, detail: draft.detail, t: clock ? `Jour ${clock.day} · ${PERIODS[clock.period].label}` : "", read: false }, ...current].slice(0, 80));
+    sfx("notif");
     const timer = window.setTimeout(() => {
       setNotifications((current) => current.filter((entry) => entry.id !== id));
       notificationTimersRef.current = notificationTimersRef.current.filter((entry) => entry !== timer);
@@ -1997,23 +2136,6 @@ export default function Home() {
     return () => window.removeEventListener("keydown", listener);
   }, []);
 
-  useEffect(() => {
-    if (screen !== "game" || modal || dialogue) return;
-    const listener = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey || event.altKey) return;
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
-      const index = Number(event.key) - 1;
-      const destination = ATLAS_NAVIGATION[index]?.id;
-      if (!destination) return;
-      event.preventDefault();
-      setMapDestinationOpen(false);
-      setPlacePanel(null);
-      setTab(destination);
-    };
-    window.addEventListener("keydown", listener);
-    return () => window.removeEventListener("keydown", listener);
-  }, [dialogue, modal, screen]);
 
   function updateGame(transform: (current: GameState) => GameState) {
     setGame((current) => current ? evolveLivingWorld(evolveCrossQuests(transform(current))) : current);
@@ -2051,6 +2173,7 @@ export default function Home() {
       if (!loaded) throw new Error("invalid save");
       setPlayer(loaded.player);
       previousGameRef.current = loaded;
+      rankPrevRef.current = loaded;
       setGame(loaded);
       setSelectedLocation(loaded.location);
       setSelectedSpot(loaded.spot);
@@ -4017,12 +4140,19 @@ export default function Home() {
       const loaded = hydrateGame(JSON.parse(raw));
       if (!loaded) return;
       previousGameRef.current = loaded;
+      rankPrevRef.current = loaded;
       setGame(loaded);
       setPlayer(loaded.player);
       setSelectedLocation(loaded.location);
       setSelectedSpot(loaded.spot);
       setMapDestinationOpen(false);
-      setTab("map");
+      setDialogue(null);
+      setModal(null);
+      setV2Dialog(null);
+      setLinksView("liens");
+      setTab("place");
+      setScreen("game");
+      pushNotification({ kind: "story", title: `Chronique chargée · emplacement ${slot}`, detail: `${loaded.player.name} · Jour ${loaded.day} · ${PERIODS[loaded.period].label}` });
     } catch { /* sauvegarde invalide ignorée */ }
   }
 
@@ -4046,10 +4176,14 @@ export default function Home() {
         const loaded = hydrateGame(JSON.parse(String(reader.result)));
         if (!loaded) throw new Error("invalid");
         previousGameRef.current = loaded;
+        rankPrevRef.current = loaded;
         setGame(loaded);
         setPlayer(loaded.player);
         setSelectedLocation(loaded.location);
         setSelectedSpot(loaded.spot);
+        setDialogue(null);
+        setTab("place");
+        setScreen("game");
         setModal({ kind: "notice", title: "Chronique importée", text: "La sauvegarde a été restaurée et enregistrée automatiquement sur cet appareil." });
       } catch {
         setModal({ kind: "notice", title: "Import impossible", text: "Ce fichier ne contient pas une chronique compatible." });
@@ -4074,22 +4208,63 @@ export default function Home() {
     setRitualStep(ritualStep + 1);
   }
 
+  const sons = v2Prefs.sons;
+  const toggleSons = () => { setUiPrefs({ sons: !uiPrefs().sons }); if (uiPrefs().sons) sfx("valider"); };
+  const toggleTitleMusic = () => setUiPrefs({ titleMusic: !uiPrefs().titleMusic });
+  const goStory = () => { window.location.href = "../index.html"; };
+  const closeV2 = () => setV2Dialog(null);
+  const autosave = hasSave ? v2SlotDetails("auto") : undefined;
+  const savesCount = (autosave ? 1 : 0) + Object.keys(slotInfo).length;
+  const legacyNotice = modal?.kind === "notice" ? <div className="v2-legacy-layer"><SimpleModal title={modal.title} text={modal.text} onClose={() => (modal.consumeTime ? closeActivityNotice() : setModal(null))} /></div> : null;
+  const commonLayers = <>
+    <canvas id="fx" ref={fxCanvasRef} aria-hidden="true" />
+    <div id="v2-transition" className="transition" aria-hidden="true"><i /><i /><i /></div>
+  </>;
+  const titleDialogs = v2Dialog && <div className="v2 v2-calque">
+    {v2Dialog.kind === "load" && <V2Dialog key="load" surtitre="Reprendre une chronique" titre="Charger" classe="large" onClose={closeV2}><V2SaveSlots game={game} mode="load" onSave={() => undefined} onLoad={(slot) => { closeV2(); loadSlot(slot); }} onLoadAuto={() => { closeV2(); continueGame(); }} version={slotVersion} /></V2Dialog>}
+    {v2Dialog.kind === "options" && <V2Dialog key="options" surtitre="Configuration" titre="Options" classe="large" onClose={closeV2}><V2OptionsBody game={screen === "game" ? game : null} updateGame={screen === "game" ? updateGame : undefined} cats={screen === "game" ? ["affichage", "audio", "acces"] : ["affichage", "audio", "acces", "session"]} sons={sons} onToggleSons={toggleSons} titleMusic={v2Prefs.titleMusic} onToggleTitleMusic={toggleTitleMusic} onSave={saveSlot} onLoad={(slot) => { closeV2(); loadSlot(slot); }} onExport={exportSave} onImport={(event) => { closeV2(); importSave(event); }} onTitle={() => { closeV2(); setScreen("title"); }} onStory={() => setV2Dialog({ kind: "story" })} slotVersion={slotVersion} layout="dialog" /></V2Dialog>}
+    {v2Dialog.kind === "about" && <V2Dialog key="about" surtitre="Chronique Alternative" titre="À propos du Mode libre" classe="etroit" onClose={closeV2} pied={<button type="button" className="btn principal" data-close onClick={closeV2}>Compris</button>}><p className="texte grand">Une chronique parallèle au Visual Novel : vous vivez librement en Sylvinia, choisissez vos lieux, vos journées et les liens que vous tissez.</p><ul className="puces"><li>{CHARACTERS.length} personnages, des rendez-vous seul à seul et à trois</li><li>Campagne de l’Acte I en {MAIN_STORY.length} chapitres, quêtes croisées</li><li>Jobs, logis, présents et correspondance</li><li>Intimité réglable (18+), sauvegarde locale sur cet appareil</li></ul><p className="discret">Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le Visual Novel Sylvinia et Les mondes du Chroniqueur. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p></V2Dialog>}
+    {v2Dialog.kind === "story" && <V2Dialog key="story" surtitre="Quitter la branche alternative" titre="Retour au Mode Histoire" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Rester</button><button type="button" className="btn principal" data-act="confirmer-histoire" onClick={goStory}>Revenir au Visual Novel ▸</button></>}><p className="texte grand">Le Visual Novel principal va s’ouvrir.</p><p className="discret">{screen === "game" ? "Votre chronique est enregistrée automatiquement : « Continuer » la reprendra exactement ici." : "Vos sauvegardes de la Chronique Alternative restent sur cet appareil."}</p></V2Dialog>}
+    {v2Dialog.kind === "new" && <V2Dialog key="new" surtitre="Nouvelle chronique" titre="Recommencer ?" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Annuler</button><button type="button" className="btn principal" data-act="confirmer-nouvelle" onClick={() => { closeV2(); setScreen("creator"); }}>Créer un personnage ▸</button></>}><p className="texte grand">La sauvegarde automatique {autosave ? `(${autosave.name} · Jour ${autosave.day})` : ""} sera remplacée dès le début du prologue.</p><p className="discret">Les emplacements manuels 1 à 3 sont conservés. Pensez à y sauvegarder la chronique actuelle si vous souhaitez la garder.</p></V2Dialog>}
+  </div>;
+
   if (screen === "title") {
-    return (
-      <TitleScreen
-        hasSave={hasSave}
-        onNew={() => setScreen("creator")}
-        onContinue={continueGame}
-        onChronicle={() => setModal({ kind: "chronicle" })}
-        onOptions={() => setModal({ kind: "title-options" })}
-        modal={modal}
-        closeModal={() => setModal(null)}
-      />
-    );
+    return <>
+      {commonLayers}
+      <div className="v2 v2-root v2-ecran-titre" onPointerDownCapture={() => { if (v2Prefs.titleMusic) { const audio = titleAudioRef.current; if (audio && audio.paused) void audio.play().catch(() => undefined); } }}>
+        <audio ref={titleAudioRef} src="/assets/menu/chroniques-alternatives-theme.mp3" loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} />
+        <V2Title
+          hasSave={hasSave}
+          saveSummary={autosave ? `${autosave.name} · Jour ${autosave.day} · ${autosave.place.split(" · ")[0] || autosave.period}` : undefined}
+          savesCount={savesCount}
+          music={v2Prefs.titleMusic}
+          onToggleMusic={toggleTitleMusic}
+          sons={sons}
+          onToggleSons={toggleSons}
+          dialogOpen={Boolean(v2Dialog) || Boolean(modal)}
+          onAction={(action) => {
+            if (action === "continuer") void playTransition("encre").then(continueGame);
+            else if (action === "nouvelle") { if (hasSave) setV2Dialog({ kind: "new" }); else void playTransition("encre").then(() => setScreen("creator")); }
+            else if (action === "charger") { refreshSlots(); setSlotVersion((v) => v + 1); setV2Dialog({ kind: "load" }); }
+            else if (action === "options") setV2Dialog({ kind: "options" });
+            else if (action === "apropos") setV2Dialog({ kind: "about" });
+            else setV2Dialog({ kind: "story" });
+          }}
+        />
+        {titleDialogs}
+      </div>
+      {legacyNotice}
+    </>;
   }
 
   if (screen === "creator") {
-    return <CreatorScreen player={player} setPlayer={setPlayer} onBack={() => setScreen("title")} onBegin={begin} />;
+    return <>
+      {commonLayers}
+      <div className="v2 v2-root v2-ecran-creation">
+        <V2Creation player={player} setPlayer={setPlayer} onBack={() => setScreen("title")} onBegin={() => void playTransition("encre").then(begin)} music={v2Prefs.titleMusic} onToggleMusic={toggleTitleMusic} sons={sons} onToggleSons={toggleSons} />
+      </div>
+      {legacyNotice}
+    </>;
   }
 
   if (!game) return null;
@@ -4098,11 +4273,6 @@ export default function Home() {
   const currentLocation = LOCATIONS.find((location) => location.id === game.location) || LOCATIONS[0];
   const currentSpot = spotById(game.spot) || spotById(DEFAULT_SPOTS[currentLocation.id])!;
   const currentSpots = spotsForLocation(currentLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
-  const viewedLocation = LOCATIONS.find((location) => location.id === selectedLocation) || currentLocation;
-  const selectedSpotData = spotById(selectedSpot);
-  const viewedSpot = selectedSpotData?.location === viewedLocation.id ? selectedSpotData : spotById(DEFAULT_SPOTS[viewedLocation.id])!;
-  const viewedSpots = spotsForLocation(viewedLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
-  const viewedTravelPeriods = travelPeriodCost(game.location, viewedLocation.id, game.player.vocation, LOCATIONS);
   const presentCharacters = CHARACTERS.filter((character) => {
     const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
     return characterUnlocked(game, character) && place.location === game.location && place.spot === game.spot;
@@ -4122,182 +4292,112 @@ export default function Home() {
   const anchorModalState = modal?.kind === "anchor-operation"
     ? modal.replay ? modal.state : game.crossQuestSeries[HR_KEY]?.hr?.anchor
     : undefined;
-  const atlasContext: Record<Tab, string> = {
-    place: currentSpot.shortName,
-    map: "Routes de Sylvinia",
-    jobs: "Registre des contrats",
-    relations: "Constellation des liens",
-    journal: "Journal de la Confluence",
-    inventory: "Biens & logis",
-    codex: "Codex du monde",
-    options: "Préférences",
+  const sceneActive = Boolean(dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation");
+  const pendingMail = game.letters.filter((entry) => !entry.read).length + (game.crossQuestSeries.linevaAllenna?.letters.filter((entry) => !entry.read).length || 0) + game.invitations.filter((entry) => entry.status === "pending").length;
+  const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail };
+  const unread = v2Log.filter((entry) => !entry.read).length;
+  const v2Tab = tab as V2Tab;
+  const toggleMusic = () => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }));
+  const background = v2Tab === "place" ? currentSpot.background
+    : v2Tab === "map" ? "/assets/map.png"
+      : v2Tab === "relations" ? (linksView === "fiche" && ficheId ? spotById(characterPlace(CHARACTERS.find((c) => c.id === ficheId) || CHARACTERS[0], game.day, game.period, game.flags, game.housing).spot)?.background : undefined) || "/assets/backgrounds/purple_forest.webp"
+        : v2Tab === "journal" ? "/assets/backgrounds/deep_archives.webp"
+          : v2Tab === "jobs" ? "/assets/backgrounds/streets.webp"
+            : v2Tab === "inventory" ? propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/streets.webp"
+              : v2Tab === "codex" ? "/assets/backgrounds/miraldas_archives.webp"
+                : "/assets/backgrounds/throne_room.webp";
+  const sceneName = v2Tab === "place" ? "lieu" : v2Tab === "map" ? "carte" : v2Tab === "relations" ? linksView : v2Tab === "inventory" ? "biens" : v2Tab;
+  const hints: Record<string, React.ReactNode> = {
+    lieu: <><Kbd>↑</Kbd><Kbd>↓</Kbd> Commande <Kbd>Entrée</Kbd> Valider</>,
+    carte: <><Kbd>↑</Kbd><Kbd>↓</Kbd><Kbd>←</Kbd><Kbd>→</Kbd> Destination <Kbd>Entrée</Kbd> Voyager</>,
+    fiche: <><Kbd>←</Kbd><Kbd>→</Kbd> Naviguer</>,
   };
+  const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
+  const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
+  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />;
+  const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), slotVersion };
+  const rank = rankQueue[0];
+  const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
+  const showRank = Boolean(rank && rankCharacter && !dialogue && !modal && !v2Dialog);
+  const dialogJob = v2Dialog?.kind === "job" ? JOBS.find((job) => job.id === v2Dialog.jobId) : undefined;
+  const dialogDate = v2Dialog?.kind === "date" ? DATE_SCENES.find((date) => date.id === v2Dialog.dateId) : undefined;
+  const ownedProperty = propertyById(game.housing.propertyId);
 
   return (
-    <main
-      className={`game-shell atlas-app ${game.settings.reducedMotion ? "reduce-motion" : ""} ${dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" ? "scene-active" : ""}`}
-      data-ui={game.settings.uiStyle}
-      data-device={atlasDevice}
-      data-accent={game.settings.accentTone}
-      data-secondary={game.settings.secondaryDetails ? "on" : "off"}
-      data-titles={game.settings.monumentalTitles ? "on" : "off"}
-      data-contrast={game.settings.highContrastText ? "on" : "off"}
-      data-grain={game.settings.decorativeGrain ? "on" : "off"}
-      data-nav={game.settings.touchNavigation}
-      style={{ fontSize: `${game.settings.fontScale}%`, ...atlasCssVariables(game.settings) } as React.CSSProperties}
-    >
+    <>
+      {commonLayers}
       {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = audioVolume / 100; }} autoPlay loop />}
-      <NotificationLayer notifications={notifications} />
-      <AtlasChrome
-        active={tab}
-        onNavigate={(destination) => { setMapDestinationOpen(false); setPlacePanel(null); setTab(destination); }}
-        location={currentLocation.name}
-        context={atlasContext[tab]}
-        day={game.day}
-        period={period.label}
-        periodIcon={period.icon}
-        coins={game.coins}
-        confluence={game.confluence}
-        style={game.settings.uiStyle}
-        onCycleStyle={() => updateGame((current) => ({ ...current, settings: { ...current.settings, uiStyle: nextUiStyle(current.settings.uiStyle) } }))}
-        device={atlasDevice}
-        touchNavigation={game.settings.touchNavigation}
-        statusVisible={game.settings.statusBar}
-        music={game.settings.music}
-        soundtrack={soundtrackLabel}
-        onToggleMusic={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))}
-      />
+      <div className={`v2 v2-root jeu ${V2_PERIOD_CLASSES[game.period] || ""} ${sceneActive ? "scene-active" : ""}`} data-scene={sceneName} inert={sceneActive || undefined}>
+        <V2Fond src={background} flou={v2Tab !== "place"} />
+        <div className="eclairage" aria-hidden="true" />
+        <V2Hud game={game} tab={v2Tab} onTab={(next) => goTab(next)} badges={badges} unread={unread} onRegistre={() => setV2Dialog({ kind: "registre" })} onPause={() => setV2Dialog({ kind: "pause" })} music={game.settings.music} onToggleMusic={toggleMusic} soundtrackLabel={soundtrackLabel} />
+        <main id="scene" className={`scene scene-${sceneName}`} tabIndex={-1} key={`${v2Tab}-${linksView}`}>
+          {v2Tab === "place" && <V2Lieu game={game} location={currentLocation} spot={currentSpot} spots={currentSpots} present={presentCharacters} visible={visibleCharacters} visitors={upcomingVisitors} event={spontaneousEvent} rumor={localRumor}
+            onTalk={openCharacterScene} onGift={(id) => setModal({ kind: "gift", character: id })} onDate={(id) => setModal({ kind: "date-planner", character: id })} onFiche={openFiche}
+            onActivity={performActivity} onJob={openJob} onWait={v2Wait} onWaitFor={() => setV2Dialog({ kind: "wait" })} onMap={() => locateOnMap(game.location, game.spot)} onSpot={(spotId) => travel(currentLocation.id, spotId)} onEvent={openSpontaneousEvent} onRumor={hearRumor} />}
+          {v2Tab === "map" && <V2Carte game={game} visible={visibleCharacters} selectedLocation={selectedLocation} selectedSpot={selectedSpot} onSelectLocation={setSelectedLocation} onSelectSpot={setSelectedSpot} onTravel={(locationId, spotId) => { void playTransition("encre").then(() => travel(locationId, spotId)); }} onPlace={() => goTab("place")} />}
+          {v2Tab === "relations" && linksView === "liens" && <V2Liens game={game} onView={setLinksView} onFiche={openFiche} />}
+          {v2Tab === "relations" && linksView === "fiche" && <V2Fiche game={game} characterId={ficheId} onView={setLinksView} onFiche={setFicheId} onGift={(id) => setModal({ kind: "gift", character: id })} onDate={(id) => setModal({ kind: "date-planner", character: id })} onLocate={locateOnMap} onDossier={(id) => setModal({ kind: "character", character: id })} onWaitRoute={waitForRoute} />}
+          {v2Tab === "relations" && linksView === "rdv" && <V2Rdv game={game} onView={setLinksView} onDate={(date) => setV2Dialog({ kind: "date", dateId: date.id })} onHome={(id) => setModal({ kind: "date-planner", character: id })} />}
+          {v2Tab === "relations" && linksView === "trio" && <V2Trio game={game} onView={setLinksView} onStart={(id) => startGroupDate(id)} />}
+          {v2Tab === "journal" && <V2Journal game={game} onStartCampaign={startCampaignScene} onReadLetter={readLetter} onReadCrossLetter={readCrossLetter} onInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onLocateSpot={(spotId) => { const spot = spotById(spotId); if (spot) locateOnMap(spot.location, spot.id); }} legacy={legacyJournal} />}
+          {v2Tab === "jobs" && <V2Jobs game={game} onJob={(job) => setV2Dialog({ kind: "job", jobId: job.id })} />}
+          {v2Tab === "inventory" && <V2Biens game={game} present={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onHousing={() => setV2Dialog({ kind: "housing" })} onSell={() => setV2Dialog({ kind: "sell" })} onDisplaySlot={(slot) => setV2Dialog({ kind: "display", slot })} onResidents={() => setV2Dialog({ kind: "residents" })} />}
+          {v2Tab === "codex" && <V2Codex game={game} />}
+          {v2Tab === "options" && <V2Options {...optionsProps} />}
+        </main>
+        <footer className="hints-jeu" aria-hidden="true">{hints[sceneName] || <><Kbd>↑</Kbd><Kbd>↓</Kbd><Kbd>←</Kbd><Kbd>→</Kbd> Naviguer <Kbd>Entrée</Kbd> Valider</>}<span className="sep" /><Kbd>Q</Kbd><Kbd>E</Kbd> Onglets <Kbd>Échap</Kbd> {v2Tab === "relations" && linksView !== "liens" ? "Retour" : "Menu"}</footer>
+        <nav className="nav-mobile" aria-label="Navigation">
+          {V2_TABS.slice(0, 4).map(([id, label, icon]) => <button type="button" key={id} data-onglet={id} className={v2Tab === id ? "actif" : ""} aria-current={v2Tab === id ? "page" : undefined} onClick={() => goTab(id)}><i>{icon}</i><span>{label}</span>{badges[id] ? <b className="pastille">{badges[id]}</b> : null}</button>)}
+          <button type="button" data-onglet="plus" className={["jobs", "inventory", "codex", "options"].includes(v2Tab) ? "actif" : ""} onClick={() => setV2Dialog({ kind: "plus" })}><i>☰</i><span>Plus</span>{unread > 0 && <b className="pastille">{unread}</b>}</button>
+        </nav>
+      </div>
 
-      {tab === "place" && (
-        <section className="place-stage" style={{ backgroundImage: `url(${currentSpot.background})` }}>
-          <div className="place-atmosphere" aria-hidden="true" />
-          <header className="place-identity">
-            <p className="eyebrow">{currentLocation.subtitle}</p>
-            <h1>{currentLocation.name}</h1>
-            <div className="place-subtitle"><span>{currentSpot.icon}</span><strong>{currentSpot.name}</strong></div>
-            <p>{currentSpot.description}</p>
-            <div className="place-context-chips">
-              <span>{period.icon} {period.label} · {period.time}</span>
-              <span>Jour {game.day}</span>
-              <span>{presentCharacters.length} présence{presentCharacters.length > 1 ? "s" : ""}</span>
-            </div>
-          </header>
-          <div className="place-quick-actions">
-            <button onClick={() => { setSelectedLocation(game.location); setSelectedSpot(game.spot); setMapDestinationOpen(false); setPlacePanel(null); setTab("map"); }}>◇ Ouvrir la carte</button>
-            <button className="place-sound-toggle" title={soundtrackLabel} aria-label={game.settings.music ? `Couper la musique · ${soundtrackLabel}` : `Activer la musique · ${soundtrackLabel}`} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))}>{game.settings.music ? "♫" : "♩"}<span>{soundtrackLabel}</span></button>
-          </div>
-
-          {(spontaneousEvent || localRumor) && <aside className="place-world-signals" aria-label="Échos du lieu">
-            {spontaneousEvent && <button className="place-world-signal event" onClick={() => openSpontaneousEvent(spontaneousEvent)} title={`Événement : ${spontaneousEvent.title}`}><span>◈</span><div><small>Événement</small><strong>{spontaneousEvent.title}</strong></div></button>}
-            {localRumor && <button className="place-world-signal rumor" onClick={() => hearRumor(localRumor)} title={`Écouter une rumeur à ${currentSpot.shortName}`}><span>◌</span><div><small>Rumeur locale</small><strong>Un écho circule ici</strong></div></button>}
-          </aside>}
-
-          {currentSpots.length > 1 && <nav className="atlas-subplace-strip" aria-label={`Sous-lieux de ${currentLocation.name}`}>
-            {currentSpots.map((spot) => {
-              const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).spot === spot.id);
-              return <button type="button" key={spot.id} className={spot.id === game.spot ? "active" : ""} disabled={spot.id === game.spot} onClick={() => travel(currentLocation.id, spot.id)} style={{ "--atlas-spot": `url(${spot.background})` } as React.CSSProperties}><span>{spot.icon}</span><div><strong>{spot.shortName}</strong><small>{occupants.length ? occupants.map((character) => character.name).join(" · ") : "Lieu calme"}</small></div></button>;
-            })}
-          </nav>}
-
-          {placePanel && <section className={`place-panel place-drawer place-${placePanel}`} aria-live="polite">
-            <button className="place-drawer-close" aria-label="Réduire le panneau" onClick={() => setPlacePanel(null)}>×</button>
-            {placePanel === "presences" && <>
-              <header><div><p className="eyebrow">Rencontres</p><h2>Présences maintenant</h2></div><span>{presentCharacters.length}</span></header>
-              <div className="immersive-presence-list">
-                {presentCharacters.length ? presentCharacters.map((character) => {
-                  const relation = game.relationships[character.id];
-                  const rawNextScene = sceneFor(character.id, relation.stage);
-                  const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
-                  const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
-                  const special = routeAvailableAtPlace(nextScene, game);
-                  const queuedSocial = chooseSocialScene(character.id, game);
-                  const confidence = availableSecretForCharacter(character.id, game);
-                  const homeInteraction = propertyById(game.housing.propertyId)?.spot === game.spot && game.housing.residents.includes(character.id);
-                  const interactionLabel = !relation.met
-                    ? "Première rencontre"
-                    : homeInteraction
-                      ? "Moment au logis"
-                      : queuedSocial?.oneTime
-                        ? `Événement croisé · ${queuedSocial.title}`
-                        : special
-                          ? `Scène de relation · ${nextScene.title}`
-                          : confidence
-                            ? `Confidence · ${confidence.title}`
-                            : queuedSocial
-                              ? `Liens croisés · ${queuedSocial.title}`
-                              : "Moment libre";
-                  const interactionAction = confidence && !homeInteraction && !queuedSocial?.oneTime && !special ? "Écouter" : special || queuedSocial?.oneTime ? "Vivre la scène" : "Parler";
-                  const canDate = DATE_SCENES.some((date) => date.character === character.id && (game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust)));
-                  return <article className="immersive-presence" key={character.id} style={{ "--character": character.color } as React.CSSProperties}>
-                    <button className="immersive-presence-main" onClick={() => openCharacterScene(character.id)}><img src={character.portrait} alt="" /><div><strong>{character.name}</strong><small>{place.action}</small><span>{interactionLabel}</span></div></button>
-                    <div className="immersive-presence-actions"><button onClick={() => openCharacterScene(character.id)}>{interactionAction}</button><button onClick={() => setModal({ kind: "gift", character: character.id })}>Offrir</button>{canDate && <button onClick={() => setModal({ kind: "date-planner", character: character.id })}>Rendez-vous</button>}</div>
-                  </article>;
-                }) : <div className="place-empty"><span>☾</span><p>Le lieu est calme pour l’instant.</p></div>}
-              </div>
-            </>}
-
-            {placePanel === "waiting" && <>
-              <header><div><p className="eyebrow">Rythme du monde</p><h2>Attendre</h2></div><span>{period.icon}</span></header>
-              <button className="wait-period" onClick={() => advancePeriod()}><span>◷</span><div><strong>Attendre une période</strong><small>Passer à l’étape suivante de la journée</small></div><b>›</b></button>
-              {upcomingVisitors.length > 0 && <div className="next-arrivals"><small>Prochains passages dans ce lieu</small>{upcomingVisitors.slice(0, 3).map(({ character, target }) => <button key={character.id} onClick={() => waitForCharacter(character.id)}><img src={character.portrait} alt="" /><span><strong>{character.name}</strong><small>{waitDurationLabel(game, target)} · {PERIODS[target.period].label}</small></span></button>)}</div>}
-              {!upcomingVisitors.length && <p className="waiting-note">Aucun passage connu n’est prévu prochainement. Le monde continuera néanmoins d’évoluer.</p>}
-            </>}
-
-            {placePanel === "actions" && <>
-              <header><div><p className="eyebrow">Sur place</p><h2>Actions disponibles</h2></div><span>{currentSpot.icon}</span></header>
-              <div className="immersive-action-grid">
-                {currentSpot.activities.map((activityId) => { const activity = ACTIVITIES[activityId]; return <button key={activityId} onClick={() => performActivity(activityId)}><span>{activity.icon}</span><div><b>{activity.label}</b><small>{activity.detail}</small></div></button>; })}
-                {jobsAtSpot(currentSpot.id).map((job) => { const access = jobAccess(game, job); return <button className={`immersive-job-action ${access.unlocked ? "" : "locked"}`} key={job.id} onClick={() => openJob(job)}><span>{access.unlocked ? "◈" : "♙"}</span><div><b>{job.title}</b><small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} · ${access.value}/${access.target}`}</small></div></button>; })}
-              </div>
-            </>}
-          </section>}
-
-          <nav className="place-control-dock" aria-label="Actions du lieu">
-            <button className={placePanel === "actions" ? "active" : ""} aria-expanded={placePanel === "actions"} onClick={() => setPlacePanel((current) => current === "actions" ? null : "actions")}><span>{currentSpot.icon}</span><div><strong>Actions</strong><small>{currentSpot.activities.length + jobsAtSpot(currentSpot.id).length} disponible{currentSpot.activities.length + jobsAtSpot(currentSpot.id).length > 1 ? "s" : ""}</small></div></button>
-            <button className={placePanel === "presences" ? "active" : ""} aria-expanded={placePanel === "presences"} onClick={() => setPlacePanel((current) => current === "presences" ? null : "presences")}><span>♡</span><div><strong>Présences</strong><small>{presentCharacters.length ? `${presentCharacters.length} maintenant` : "Lieu calme"}</small></div></button>
-            <button className={placePanel === "waiting" ? "active" : ""} aria-expanded={placePanel === "waiting"} onClick={() => setPlacePanel((current) => current === "waiting" ? null : "waiting")}><span>◷</span><div><strong>Attendre</strong><small>{upcomingVisitors[0] ? `${upcomingVisitors[0].character.name} · ${waitDurationLabel(game, upcomingVisitors[0].target)}` : "Faire avancer le temps"}</small></div></button>
-          </nav>
-        </section>
-      )}
-
-      {tab === "map" && (
-        <section className="game-stage map-stage">
-          <div className="map-panel">
-            <div className="panel-heading"><div><p className="eyebrow">Carte des routes</p><h1>Où souhaitez-vous aller ?</h1></div><span className="weather">{period.icon} {game.period === 3 ? "Brume nocturne" : "Ciel de Confluence"}</span></div>
-            <div className="world-map">
-              <img src="/assets/map.png" alt="Carte de Sylvinia" />
-              {LOCATIONS.filter((location) => locationUnlocked(game, location.id)).map((location) => {
-                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).location === location.id);
-                return <button key={location.id} aria-label={`${location.name}${occupants.length ? ` · ${occupants.map((character) => character.name).join(", ")}` : ""}`} className={`map-pin ${location.minor ? "minor" : ""} ${selectedLocation === location.id ? "active" : ""} ${game.location === location.id ? "current" : ""}`} style={{ left: `${location.pin[0]}%`, top: `${location.pin[1]}%` }} onClick={() => { setSelectedLocation(location.id); setSelectedSpot(location.id === game.location ? game.spot : DEFAULT_SPOTS[location.id]); setMapDestinationOpen(true); }}><i /><span>{location.name}</span>{occupants.length > 0 && <span className="pin-occupants">{occupants.slice(0, 4).map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}{occupants.length > 4 && <b>+{occupants.length - 4}</b>}</span>}</button>;
-              })}
-            </div>
-            <div className="map-legend"><span><i className="open" />Accessible</span><span><i className="current" />Position</span><span>La carte s'étend avec vos rencontres.</span><span>Trajet : 1 période sur place, davantage entre régions.</span><span className="map-selection-hint">Touchez un lieu pour l’examiner</span></div>
-          </div>
-
-          {mapDestinationOpen && <div className="map-destination-layer">
-            <button className="map-destination-backdrop" type="button" aria-label="Fermer la destination" onClick={() => setMapDestinationOpen(false)} />
-            <aside id="map-destination" role="dialog" aria-modal="true" aria-labelledby="map-destination-title" className={`location-panel map-location-panel ${viewedSpots.length > 1 ? "has-sublocations" : "single-destination"}`}>
-              <button className="map-destination-close" type="button" aria-label="Fermer" onClick={() => setMapDestinationOpen(false)}>×</button>
-              <div className="location-visual" style={{ backgroundImage: `url(${viewedSpot.background})` }}>
-                <div><p className="eyebrow">{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Position actuelle" : "Destination"}</p><h2 id="map-destination-title">{viewedLocation.name}</h2><span>{viewedSpot.name}</span></div>
-              </div>
-              {viewedSpots.length > 1 && <div className="sublocation-list"><div><strong>Sous-lieux</strong><small>{viewedSpots.length} endroits vivants</small></div>{viewedSpots.map((spot) => {
-                const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).spot === spot.id);
-                const spotJobs = jobsAtSpot(spot.id);
-                return <button key={spot.id} className={viewedSpot.id === spot.id ? "active" : ""} onClick={() => setSelectedSpot(spot.id)}><span>{spot.icon}</span><div><b>{spot.shortName}</b><small>{spot.description}</small>{spotJobs.length > 0 && <span className="spot-job-badges">{spotJobs.map((job) => { const access = jobAccess(game, job); return <em className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}</em>; })}</span>}</div>{occupants.length > 0 && <span className="spot-occupants">{occupants.map((character) => <img key={character.id} src={character.portrait} alt={character.name} title={character.name} />)}</span>}</button>;
-              })}</div>}
-              <div className={`travel-card ${game.location === viewedLocation.id && game.spot === viewedSpot.id ? "is-current" : ""}`}><p>{viewedSpot.description}</p>{jobsAtSpot(viewedSpot.id).length > 0 && <div className="travel-job-list"><strong>Jobs dans ce sous-lieu</strong>{jobsAtSpot(viewedSpot.id).map((job) => { const access = jobAccess(game, job); return <span className={access.unlocked ? "" : "locked"} key={job.id}>{access.unlocked ? "◈" : "♙"} {job.title}<small>{access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · ${job.reward} pièces` : `Lien avec ${access.characterName} ${access.value}/${access.target}`}</small></span>; })}</div>}{game.location === viewedLocation.id && game.spot === viewedSpot.id ? <button className="secondary-action" onClick={() => { setPlacePanel(null); setTab("place"); }}>Revenir dans le lieu</button> : <button className="primary-action" onClick={() => travel(viewedLocation.id, viewedSpot.id)}>{game.location === viewedLocation.id ? `Se rendre à ${viewedSpot.shortName}` : `Voyager vers ${viewedLocation.name}`}</button>}<small>{game.location === viewedLocation.id && game.spot === viewedSpot.id ? "Votre position actuelle" : `Temps de trajet · ${travelDurationLabel(viewedTravelPeriods)}${game.location !== viewedLocation.id && game.player.vocation === SCOUT_VOCATION ? " · bonus d’éclaireur actif" : ""}`}</small></div>
-            </aside>
-          </div>}
-        </section>
-      )}
-
-      {tab === "jobs" && <JobsView game={game} onStart={openJob} onLocate={(job) => { const spot = spotById(job.spot); if (!spot) return; setSelectedLocation(spot.location); setSelectedSpot(spot.id); setMapDestinationOpen(true); setTab("map"); }} />}
-      {tab === "relations" && <RelationsView game={game} setModal={setModal} setSelectedLocation={setSelectedLocation} setSelectedSpot={setSelectedSpot} setTab={setTab} onWaitForRoute={waitForRoute} />}
-      {tab === "journal" && <JournalView game={game} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />}
-      {tab === "inventory" && <AssetsView game={game} presentCharacters={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onBuyProperty={buyProperty} onSellProperty={sellProperty} onDisplay={setDisplayedItem} onResident={toggleResident} />}
-      {tab === "codex" && <CodexView game={game} />}
-      {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
+      <div className={`v2 v2-calque ${dialogue ? "en-scene" : ""}`}>
+        <V2Toasts toasts={notifications.map((entry) => ({ id: entry.id, type: V2_NOTIF[entry.kind].type, icon: V2_NOTIF[entry.kind].icon, label: V2_NOTIF[entry.kind].label, title: entry.title, detail: entry.detail, t: "", read: false }))} onDismiss={(id) => setNotifications((current) => current.filter((entry) => entry.id !== id))} />
+        {timeJump && <V2TimeJump day={timeJump.day} period={timeJump.period} leaving={timeJump.leaving} />}
+        {showRank && rank && rankCharacter && <V2RankUp character={rankCharacter} from={rank.from} to={rank.to} leaving={rankLeaving} onClose={dismissRank} />}
+        {titleDialogs}
+        {v2Dialog?.kind === "pause" && <V2Dialog key="pause" surtitre="Pause" titre="Menu système" classe="pause" onClose={closeV2}>
+          <div className="pause-grille"><ul className="pause-menu">{([["reprendre", "▶", "Reprendre"], ["sauver", "▤", "Sauvegarder"], ["charger", "⟲", "Charger"], ["options", "⚙", "Options"], ["registre", "✉", "Registre"], ["titre", "⏻", "Écran titre"], ["histoire", "↩", "Mode Histoire"]] as const).map(([id, icon, label], index) => <li key={id}><button type="button" className={`pause-item ${index === 0 ? "principal" : ""}`} data-p={id} style={{ "--i": index } as React.CSSProperties} onClick={() => {
+            if (id === "reprendre") closeV2();
+            else if (id === "sauver") { refreshSlots(); setSlotVersion((v) => v + 1); setV2Dialog({ kind: "save" }); }
+            else if (id === "charger") { refreshSlots(); setSlotVersion((v) => v + 1); setV2Dialog({ kind: "load" }); }
+            else if (id === "options") { closeV2(); goTab("options", true); }
+            else if (id === "registre") setV2Dialog({ kind: "registre" });
+            else if (id === "titre") { closeV2(); void playTransition("encre").then(() => { setDialogue(null); setModal(null); setScreen("title"); }); }
+            else setV2Dialog({ kind: "story" });
+          }}><i>{icon}</i><span>{label}</span></button></li>)}</ul>
+            <aside className="pause-etat"><div className="pe-img" style={{ backgroundImage: `url(${currentSpot.background})` }} /><b>{game.player.name}</b><small>Jour {game.day} · {period.label} {period.time}</small><small>{currentSpot.name} · {currentLocation.name}</small><div className="pe-l"><span>Pièces</span><b>◈ {game.coins}</b></div><div className="pe-l"><span>Liens</span><b>{CHARACTERS.filter((c) => game.relationships[c.id].met).length} / {CHARACTERS.length}</b></div><div className="pe-l"><span>Chapitre</span><b>{Math.min(storyProgress(game.history, game.flags) + 1, MAIN_STORY.length)} / {MAIN_STORY.length}</b></div></aside></div>
+        </V2Dialog>}
+        {v2Dialog?.kind === "save" && <V2Dialog key="save" surtitre="Chronique" titre="Sauvegarder" classe="large" onClose={closeV2}><V2SaveSlots game={game} mode="save" onSave={(slot) => { saveSlot(slot); setSlotVersion((v) => v + 1); pushNotification({ kind: "story", title: `Sauvegardé · emplacement ${slot}`, detail: `Jour ${game.day} · ${period.label} · ${currentSpot.name}` }); }} onLoad={() => undefined} version={slotVersion} /></V2Dialog>}
+        {v2Dialog?.kind === "plus" && <V2Dialog key="plus" surtitre="Menu" titre="Plus" classe="etroit plus" onClose={closeV2}><div className="plus-grille">{([["jobs", "◈", "Jobs", "Contrats et pièces"], ["inventory", "⌂", "Biens", "Inventaire et logis"], ["codex", "✧", "Codex", "Encyclopédie"], ["options", "⚙", "Options", "Réglages"], ["registre", "✉", "Registre", "Notifications"], ["pause", "▤", "Système", "Sauvegarder, titre"]] as const).map(([id, icon, label, detail]) => <button type="button" key={id} className="plus-tuile" data-plus={id} onClick={() => { if (id === "registre") setV2Dialog({ kind: "registre" }); else if (id === "pause") setV2Dialog({ kind: "pause" }); else { closeV2(); goTab(id, true); } }}><i>{icon}</i><b>{label}</b><small>{detail}</small>{id === "registre" && unread > 0 && <em className="pastille">{unread}</em>}</button>)}</div></V2Dialog>}
+        {v2Dialog?.kind === "registre" && <V2Dialog key="registre" surtitre="Notifications de la session" titre="Registre" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-act="toutlu" onClick={() => setV2Log((current) => current.map((entry) => ({ ...entry, read: true })))}>Tout marquer comme lu</button><button type="button" className="btn principal" data-close onClick={closeV2}>Fermer</button></>}>{v2Log.length ? <ul className="registre">{v2Log.map((entry) => <li key={entry.id} className={`t-${entry.type} ${entry.read ? "" : "nonlu"}`}><span className="t-ico"><b>{entry.icon}</b></span><div><strong>{entry.title}</strong><small>{entry.label}{entry.detail ? ` · ${entry.detail}` : ""}</small></div><time>{entry.t}</time></li>)}</ul> : <p className="discret">Aucune notification depuis l’ouverture de la chronique. Les déblocages, lettres, objets et progrès de relation s’afficheront ici.</p>}</V2Dialog>}
+        {v2Dialog?.kind === "wait" && <V2Dialog key="wait" surtitre="Rythme du monde" titre="Attendre quelqu’un" classe="etroit" onClose={closeV2}><div className="dons">{upcomingVisitors.map(({ character, target }) => <button type="button" key={character.id} className="choix-don" data-attendre={character.id} onClick={() => { closeV2(); waitForCharacter(character.id); }}><Seau color={character.color} portrait={character.portrait} /><span><b>{character.name}</b><small>{PERIODS[target.period].icon} {PERIODS[target.period].label} · Jour {target.day} · {target.place.action}</small></span><span className="cd-n">{waitDurationLabel(game, target)}</span></button>)}{!upcomingVisitors.length && <p className="discret">Aucun passage connu n’est prévu prochainement dans ce lieu.</p>}</div></V2Dialog>}
+        {v2Dialog?.kind === "job" && dialogJob && (() => {
+          const spot = spotById(dialogJob.spot); const location = LOCATIONS.find((entry) => entry.id === spot?.location); const access = jobAccess(game, dialogJob); const local = dialogJob.spot === game.spot; const run = game.jobRuns[dialogJob.id] || 0;
+          return <V2Dialog key="job" surtitre={`${JOB_KIND_LABELS[dialogJob.kind]} · ${dialogJob.employer}`} titre={dialogJob.title} classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Retour</button><button type="button" className="btn principal" data-act="go" onClick={() => { closeV2(); if (!access.unlocked || local) openJob(dialogJob); else if (spot) locateOnMap(spot.location, spot.id); }}>{!access.unlocked ? "Voir la condition" : local ? "Commencer ▸" : "Localiser ⌖"}</button></>}>
+            <div className="job-illu" style={{ backgroundImage: `url(${spot?.background || ""})` }}><span className="af-gain">+{dialogJob.reward} <i>◈</i></span></div>
+            <p className="texte">{dialogJob.description}</p>
+            <div className="job-meta"><span>⌖ {spot?.name} · {location?.name}</span><span>Prochaine session · {jobSessionLabel(dialogJob, run)}</span><span>{run ? `${run} rotation${run > 1 ? "s" : ""} jouée${run > 1 ? "s" : ""}` : "Banque intacte"}</span></div>
+            {!access.unlocked && <ul className="conditions"><li className="ko"><span>Lien avec {access.characterName}</span><b>{access.value} / {access.target}</b></li></ul>}
+          </V2Dialog>;
+        })()}
+        {v2Dialog?.kind === "date" && dialogDate && (() => {
+          const character = CHARACTERS.find((entry) => entry.id === dialogDate.character)!; const relation = game.relationships[character.id]; const open = publicDateUnlocked(game, dialogDate); const spot = spotById(dialogDate.spot); const datePeriod = PERIODS.find((entry) => entry.id === dialogDate.period);
+          const conditions: [string, boolean, string][] = [["Rang", relation.stage >= dialogDate.unlockStage, `${ROMAINS[relation.stage]} / ${ROMAINS[dialogDate.unlockStage]}`], ["Affection", relation.affection >= dialogDate.minAffection, `${relation.affection} / ${dialogDate.minAffection}`], ["Confiance", relation.trust >= dialogDate.minTrust, `${relation.trust} / ${dialogDate.minTrust}`]];
+          return <V2Dialog key="date" surtitre={`Rendez-vous · ${character.name}`} titre={dialogDate.title} classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Retour</button><button type="button" className="btn principal" data-act="plan" disabled={!open} onClick={() => { closeV2(); startDate(dialogDate.id); }}>{open ? "Planifier ▸" : "🔒 Verrouillé"}</button></>}>
+            <div className="job-illu" style={{ backgroundImage: `url(${spot?.background || ""})` }}><Seau color={character.color} portrait={character.portrait} className="grand" /></div>
+            <p className="texte">{dialogDate.description}</p>
+            <div className="job-meta"><span>{datePeriod?.icon} {datePeriod?.label} · le lendemain</span><span>⌖ {spot?.name}</span><span>{dialogDate.type}</span></div>
+            <ul className="conditions">{conditions.map(([name, ok, text]) => <li key={name} className={ok || game.settings.unlockAll ? "ok" : "ko"}><span>{name}</span><b>{text}</b></li>)}</ul>
+          </V2Dialog>;
+        })()}
+        {v2Dialog?.kind === "housing" && <V2Dialog key="housing" surtitre="Agences de Sylvinia" titre={ownedProperty ? "Changer de logis" : "Acheter un logis"} classe="large" onClose={closeV2}><div className="logis-liste">{LOCATIONS.filter((city) => ["algratal", "forthaven", "miraldas", "akuhn"].includes(city.id) && locationUnlocked(game, city.id)).flatMap((city) => { const discount = housingDiscount(city.id, game.relationships); return HOUSING_PROPERTIES.filter((entry) => entry.location === city.id).map((property) => { const price = discountedPropertyPrice(property, game.relationships); const balance = price - housingSaleValue(game.housing); const current = property.id === ownedProperty?.id; return <article key={property.id} className={`lg-carte ${current ? "sel" : ""}`}><span className="lg-img" style={{ backgroundImage: `url(${property.background})` }} /><div><span className="surtitre">{city.name} · Gamme {ROMAINS[property.tier] || property.tier}{discount.percent ? ` · remise ${discount.percent} %` : ""}</span><b>{property.name}</b><small>{property.category} · {price} ◈</small></div><button type="button" className="btn petit" data-acheter={property.id} disabled={current || balance > game.coins} onClick={() => { buyProperty(property.id); closeV2(); }}>{current ? "Actuel" : ownedProperty ? balance > 0 ? `Échanger · ${balance} ◈` : `Échanger · +${Math.abs(balance)} ◈` : `${price} ◈`}</button></article>; }); })}</div></V2Dialog>}
+        {v2Dialog?.kind === "sell" && ownedProperty && <V2Dialog key="sell" surtitre="Immobilier" titre="Vendre ce logis ?" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Garder</button><button type="button" className="btn principal danger" onClick={() => { sellProperty(); closeV2(); }}>Vendre · {housingSaleValue(game.housing)} ◈</button></>}><p className="texte grand">{ownedProperty.name} sera revendu {housingSaleValue(game.housing)} ◈.</p><p className="discret">Les résidents quitteront le logis et la vitrine sera vidée.</p></V2Dialog>}
+        {v2Dialog?.kind === "residents" && <V2Dialog key="residents" surtitre="Vie commune" titre="Habitant·es du logis" classe="etroit" onClose={closeV2}><p className="discret">Étape relationnelle 3 et confiance 24 requises.</p><div className="dons">{visibleCharacters.map((character) => { const relation = game.relationships[character.id]; const resident = game.housing.residents.includes(character.id); const eligible = game.settings.unlockAll || (relation.stage >= 3 && relation.trust >= 24); return <button type="button" key={character.id} className={`choix-don ${resident ? "aime" : ""}`} disabled={!eligible} data-resident={character.id} onClick={() => toggleResident(character.id)}><Seau color={character.color} portrait={character.portrait} /><span><b>{character.name}</b><small>{resident ? "Vit dans ce logis · libérer la chambre" : eligible ? "Inviter à vivre ici" : `Étape ${relation.stage}/3 · confiance ${relation.trust}/24`}</small></span>{resident && <em>⌂ Résident</em>}</button>; })}</div></V2Dialog>}
+        {v2Dialog?.kind === "display" && <V2Dialog key="display" surtitre="Vitrine personnelle" titre={`Emplacement ${v2Dialog.slot + 1}`} classe="etroit" onClose={closeV2}><div className="dons"><button type="button" className="choix-don" onClick={() => { setDisplayedItem(v2Dialog.slot, ""); closeV2(); }}><span className="od-ico petit"><i>◇</i></span><span><b>Ne rien exposer</b><small>Libérer cet emplacement</small></span></button>{DISPLAY_ITEMS.filter((item) => (game.inventory[item.id] || 0) > 0).map((item) => <button type="button" key={item.id} className={`choix-don ${game.housing.displayed[v2Dialog.slot] === item.id ? "aime" : ""}`} onClick={() => { setDisplayedItem(v2Dialog.slot, item.id); closeV2(); }}><span className="od-ico petit"><i>{item.icon}</i></span><span><b>{item.name}</b><small>{item.description}</small></span><span className="cd-n">×{game.inventory[item.id]}</span></button>)}</div></V2Dialog>}
+      </div>
 
       {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
       {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
@@ -4336,7 +4436,7 @@ export default function Home() {
         onJobAction={playJobAction}
         onJobClose={closeJob}
       />}
-    </main>
+    </>
   );
 }
 
@@ -4579,8 +4679,9 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void }) {
-  const [section, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
+function JournalView({ embedded = false, forcedSection, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
+  const [chosenSection, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
+  const section = forcedSection ?? chosenSection;
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
   const socialMemories = game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7)).map((id) => SOCIAL_SCENES.find((scene) => scene.id === id)).filter((scene): scene is SocialScene => Boolean(scene));
   const secretMemories = game.secretHistory.map((id) => SECRET_CONVERSATIONS.find((secret) => secret.id === id)).filter((secret): secret is SecretConversation => Boolean(secret));
@@ -4680,8 +4781,8 @@ function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign
           : () => onStartCrossQuest(entry.stage, true),
     })) : [];
 
-  return <section className="content-view journal-view">
-    <header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
+  return <section className={`content-view journal-view ${embedded ? "journal-embarque" : ""}`}>
+    {!embedded && <><header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
     <SectionTabs label="Registres du Journal" active={section} onChange={setSection} items={[
       { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et chapitres" },
       ...(crossProgress || hrProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${(crossProgress ? completedCrossMilestones(crossProgress.stage) : 0) + (hrProgress?.stage || 0)}/${7 * (Number(Boolean(crossProgress)) + Number(Boolean(hrProgress)))}`, hint: "Vos histoires croisées" }] : []),
@@ -4689,7 +4790,7 @@ function JournalView({ onHRScene, onOperation, onHRLetter, game, onStartCampaign
       { id: "messages", icon: "✉", label: "Courrier", count: pendingMessages, hint: "Lettres et invitations" },
       { id: "discoveries", icon: "◌", label: "Découvertes", count: rumors.length + knowledge.length, hint: "Rumeurs et savoirs" },
       { id: "memories", icon: "◇", label: "Souvenirs", count: memoryCount, hint: "Relecture protégée" },
-    ]} />
+    ]} /></>}
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
       {section === "crossed" && hrProgress && <HRDossier progress={hrProgress} day={game.day} onScene={onHRScene} onOperation={onOperation} onLetter={onHRLetter} />}
       {section === "crossed" && crossProgress && <CrossQuestDossier
@@ -5706,4 +5807,980 @@ function SimpleModal({ title, text, actionLabel, onClose }: { title: string; tex
 
 function ChronicleModal({ onClose }: { onClose: () => void }) {
   return <div className="modal-backdrop" onMouseDown={onClose}><section className="chronicle-modal" onMouseDown={(event) => event.stopPropagation()}><button className="modal-close" onClick={onClose}>×</button><p className="eyebrow">À propos de cette histoire</p><h2>Une branche alternative au début du Tome 1</h2><p>Hylee vient de quitter l’Auberge du Forestier avec Remerii. Iriana enquête seule sur des irrégularités impériales, Amanea règne encore à Akuhn’Nabad et Draven cherche l’aide nécessaire pour défendre Forthaven. Chacun suit déjà sa propre trajectoire lorsque votre arrivée déplace, à petite échelle, les liens entre ces routes.</p><p>Vous savez être étranger·e à cette réalité, sans vous souvenir de celle dont vous venez. Vous ne connaissez ni l’avenir ni les événements des romans : les alliances que vous bâtirez appartiennent entièrement à cette chronique.</p><button className="primary-action" onClick={onClose}>Compris</button></section></div>;
+}
+
+type V2DialogState =
+  | { kind: "pause" | "save" | "load" | "options" | "about" | "story" | "new" | "registre" | "plus" | "wait" | "housing" | "sell" | "residents" }
+  | { kind: "job"; jobId: string }
+  | { kind: "date"; dateId: string }
+  | { kind: "display"; slot: number }
+  | null;
+
+/* ==========================================================================
+   Interface V2 « Les Liens du Crépuscule » — scènes branchées sur l’état réel
+   ========================================================================== */
+
+type V2Tab = "place" | "map" | "relations" | "journal" | "jobs" | "inventory" | "codex" | "options";
+type V2LinksView = "liens" | "fiche" | "rdv" | "trio";
+type V2ToastType = "relation" | "romance" | "lettre" | "codex" | "chronique" | "butin" | "temps";
+type V2LogEntry = { id: number; type: V2ToastType; icon: string; title: string; detail?: string; label: string; t: string; read: boolean };
+
+const V2_TABS: [V2Tab, string, string][] = [["place", "Lieu", "◉"], ["map", "Carte", "⌖"], ["relations", "Liens", "♡"], ["journal", "Journal", "✎"], ["jobs", "Jobs", "◈"], ["inventory", "Biens", "⌂"], ["codex", "Codex", "✧"]];
+const V2_PERIOD_CLASSES = ["p-aube", "p-matin", "p-apres", "p-soir"];
+const V2_NOTIF: Record<NotificationKind, { type: V2ToastType; icon: string; label: string }> = {
+  unlock: { type: "romance", icon: "✦", label: "Déblocage" },
+  item: { type: "butin", icon: "◇", label: "Inventaire" },
+  relation: { type: "relation", icon: "♥", label: "Relation" },
+  story: { type: "chronique", icon: "▤", label: "Chronique" },
+  codex: { type: "codex", icon: "✧", label: "Codex" },
+  home: { type: "chronique", icon: "⌂", label: "Logis" },
+  letter: { type: "lettre", icon: "✉", label: "Correspondance" },
+  invitation: { type: "romance", icon: "◈", label: "Invitation" },
+  rumor: { type: "chronique", icon: "◌", label: "Rumeur" },
+  knowledge: { type: "codex", icon: "◇", label: "Découverte" },
+};
+const V2_JOB_ICONS: Record<string, string> = { service: "♨", observation: "◎", bargain: "⚖", sort: "▦", timing: "◷", packing: "▣", path: "⌁", assembly: "⚙", memory: "✧" };
+const V2_FX_BY_TAB: Record<string, FxMode> = { map: "givre", relations: "petales", journal: "poussiere", jobs: "poussiere", inventory: "poussiere", codex: "lucioles", options: "lucioles" };
+
+function v2Rarity(price: number) { return price >= 14 ? "rare" : price >= 10 ? "fin" : "commun"; }
+function v2RarityLabel(price: number) { return price >= 14 ? "Rare" : price >= 10 ? "Raffiné" : "Commun"; }
+
+/** Libellés réels d’interaction d’une présence (même logique que l’ancien panneau Présences). */
+function presenceInteraction(game: GameState, character: CharacterData) {
+  const relation = game.relationships[character.id];
+  const rawNextScene = sceneFor(character.id, relation.stage);
+  const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
+  const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
+  const special = routeAvailableAtPlace(nextScene, game);
+  const queuedSocial = chooseSocialScene(character.id, game);
+  const confidence = availableSecretForCharacter(character.id, game);
+  const homeInteraction = propertyById(game.housing.propertyId)?.spot === game.spot && game.housing.residents.includes(character.id);
+  const label = !relation.met
+    ? "Première rencontre"
+    : homeInteraction
+      ? "Moment au logis"
+      : queuedSocial?.oneTime
+        ? `Événement croisé · ${queuedSocial.title}`
+        : special && nextScene
+          ? `Scène de relation · ${nextScene.title}`
+          : confidence
+            ? `Confidence · ${confidence.title}`
+            : queuedSocial
+              ? `Liens croisés · ${queuedSocial.title}`
+              : "Moment libre";
+  const action = confidence && !homeInteraction && !queuedSocial?.oneTime && !special ? "Écouter" : special || queuedSocial?.oneTime ? "Vivre la scène" : "Parler";
+  const hasDatePlanner = DATE_SCENES.some((date) => date.character === character.id) || Boolean(HOME_DATE_PROFILES[character.id]);
+  return { relation, place, label, action, hasDatePlanner, important: Boolean(special || queuedSocial?.oneTime) };
+}
+
+function v2SlotDetails(slot: number | "auto") {
+  if (typeof window === "undefined") return undefined;
+  const raw = window.localStorage.getItem(slot === "auto" ? SAVE_KEY : `sylvinia-liens-slot-${slot}`);
+  if (!raw) return undefined;
+  try {
+    const parsed = JSON.parse(raw) as Partial<GameState> & { savedAt?: string };
+    const spot = parsed.spot ? spotById(parsed.spot) : undefined;
+    const location = LOCATIONS.find((entry) => entry.id === parsed.location);
+    return {
+      name: parsed.player?.name || "Chronique",
+      day: parsed.day ?? 1,
+      period: PERIODS[parsed.period ?? 0]?.label || "",
+      place: [spot?.name, location?.name].filter(Boolean).join(" · "),
+      background: spot?.background || location?.background || "",
+      savedAt: parsed.savedAt,
+      coins: parsed.coins,
+    };
+  } catch { return { name: "Sauvegarde illisible", day: 0, period: "", place: "", background: "", savedAt: undefined, coins: undefined }; }
+}
+
+function V2SceneTete({ surtitre, titre, children }: { surtitre: string; titre: string; children?: React.ReactNode }) {
+  return <header className="scene-tete"><div><span className="surtitre">{surtitre}</span><h1 className="titre-jeu">{titre}</h1></div>{children}</header>;
+}
+
+function V2Compteur({ value }: { value: number }) {
+  const [shown, setShown] = useState(() => (reduit() ? value : 0));
+  useEffect(() => {
+    if (reduit()) { setShown(value); return; }
+    const start = performance.now();
+    let frame = 0;
+    const step = (now: number) => { const k = Math.min(1, (now - start) / 900); setShown(Math.round(value * (1 - Math.pow(1 - k, 3)))); if (k < 1) frame = requestAnimationFrame(step); };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+  return <b className="compteur">{shown}</b>;
+}
+
+function V2Stat({ cls, label, value, max = 100 }: { cls: string; label: string; value: number; max?: number }) {
+  return <div className={`stat ${cls}`}><span className="stat-lib">{label}</span><span className="stat-barre"><i style={{ "--v": `${Math.min(100, Math.max(0, (value / max) * 100))}%` } as React.CSSProperties} /></span><V2Compteur value={value} /></div>;
+}
+
+function V2RangLosange({ stage }: { stage: number }) { return <span className="rang-losange"><b>{ROMAINS[stage] ?? stage}</b></span>; }
+
+function V2Fond({ src, flou }: { src: string; flou: boolean }) {
+  const [layers, setLayers] = useState<{ a: string; b: string; showA: boolean }>({ a: src, b: "", showA: true });
+  useEffect(() => {
+    setLayers((current) => {
+      const visible = current.showA ? current.a : current.b;
+      if (visible === src) return current;
+      return current.showA ? { a: current.a, b: src, showA: false } : { a: src, b: current.b, showA: true };
+    });
+  }, [src]);
+  return <div className={`fond ${flou ? "flou" : ""}`} aria-hidden="true">
+    {layers.a && <img alt="" src={layers.a} style={{ opacity: layers.showA ? 1 : 0 }} />}
+    {layers.b && <img alt="" src={layers.b} style={{ opacity: layers.showA ? 0 : 1 }} />}
+  </div>;
+}
+
+const V2_HAIR = ["#3a2230", "#1b1b22", "#e8d6a8", "#b8563a", "#dfe7f2", "#6d4bb0"];
+const V2_EYES = ["#62d4c7", "#d8bd78", "#8964c4", "#6fa7e8", "#c0473f", "#6c8a4f"];
+const V2_SKIN = ["#f3d2b8", "#e2b48f", "#c68e62", "#9a6440", "#6b4128", "#f0c9a8"];
+const V2_INTIMACY: [Intimacy, string, string][] = [["tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure — confirmation requise"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]];
+const V2_PRONOUNS: Pronouns[] = ["elle", "iel", "il"];
+const V2_SEXES: PlayerSex[] = ["femme", "intersexe", "homme"];
+const v2SexLabel = (sex: PlayerSex) => (sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe");
+const v2Cap = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+function V2Selecteur<T extends string>({ values, value, label, onChange }: { values: T[]; value: T; label: (value: T) => string; onChange: (value: T) => void }) {
+  const index = Math.max(0, values.indexOf(value));
+  const move = (dir: number) => { sfx("survol"); onChange(values[(index + dir + values.length) % values.length]); };
+  return <div className="selecteur"><button type="button" className="sel-fl" aria-label="Précédent" onClick={() => move(-1)}>◀</button><span className="sel-val">{label(value)}</span><button type="button" className="sel-fl" aria-label="Suivant" onClick={() => move(1)}>▶</button><i className="sel-pts">{values.map((entry) => <b key={entry} className={entry === value ? "on" : ""} />)}</i></div>;
+}
+
+function V2Palette({ colors, value, label, onChange }: { colors: string[]; value: string; label: string; onChange: (value: string) => void }) {
+  const custom = !colors.includes(value);
+  return <div className="couleurs">
+    {colors.map((color) => <button type="button" key={color} style={{ "--c": color } as React.CSSProperties} aria-label={`${label} ${color}`} aria-pressed={value === color} onClick={() => onChange(color)} />)}
+    <label className={`couleur-libre ${custom ? "on" : ""}`} style={{ "--c": value } as React.CSSProperties} title="Couleur personnalisée"><input type="color" value={value} aria-label={`${label} : couleur personnalisée`} onChange={(event) => onChange(event.target.value)} /><span aria-hidden="true">✎</span></label>
+  </div>;
+}
+
+function V2ChoiceCards({ items, value, cls = "", onChoose }: { items: readonly (readonly string[])[]; value: string; cls?: string; onChoose: (name: string) => void }) {
+  return <div className={`cartes-choix ${cls}`}>{items.map(([name, detail], index) => <button type="button" key={name} className="carte-choix" aria-pressed={value === name} style={{ "--i": index } as React.CSSProperties} onClick={() => onChoose(name)}><span className="cc-num">{ROMAINS[index + 1] || index + 1}</span><strong>{name}</strong><span>{detail}</span></button>)}</div>;
+}
+
+function V2Creation({ player, setPlayer, onBack, onBegin, music, onToggleMusic, sons, onToggleSons }: { player: Player; setPlayer: (player: Player) => void; onBack: () => void; onBegin: () => void; music: boolean; onToggleMusic: () => void; sons: boolean; onToggleSons: () => void }) {
+  const [step, setStep] = useState(0);
+  const [explicitWarning, setExplicitWarning] = useState(false);
+  const names = ["Identité", "Écho", "Vocation", "Intimité"];
+  const identityValid = Boolean(player.name.trim()) && player.age >= 18;
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { contentRef.current?.scrollTo({ top: 0 }); }, [step]);
+  const back = useCallback(() => { sfx("retour"); if (step > 0) setStep((current) => current - 1); else onBack(); }, [step, onBack]);
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if (explicitWarning || document.querySelector("dialog[open], .modal-backdrop")) return;
+      const target = event.target as HTMLElement | null;
+      const typing = target?.closest("input[type=text], input[type=number]");
+      if (event.key === "Escape") { event.preventDefault(); back(); return; }
+      if (typing) return;
+      const dirs: Record<string, [number, number]> = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
+      if (dirs[event.key]) { event.preventDefault(); moveFocus(...dirs[event.key]); }
+    };
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, [back, explicitWarning]);
+  const next = () => {
+    if (step === 0 && !identityValid) return;
+    if (step < 3) { sfx("valider"); setStep(step + 1); return; }
+    if (!identityValid) { setStep(0); return; }
+    sfx("depart");
+    onBegin();
+  };
+  const chooseIntimacy = (id: Intimacy) => { if (id === "explicite" && player.intimacy !== "explicite") setExplicitWarning(true); else setPlayer({ ...player, intimacy: id }); };
+  const glyphs = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃ";
+  return <main className="creation" aria-label="Création de personnage">
+    <div className="c-fond" aria-hidden="true" />
+    <header className="c-tete">
+      <button type="button" className="bouton-coin retour-btn" onClick={() => { sfx("retour"); onBack(); }}><Kbd>Échap</Kbd> Titre</button>
+      <ol className="c-etapes">{names.map((name, index) => <li key={name} className={index === step ? "actif" : index < step ? "fait" : ""} aria-current={index === step ? "step" : undefined}><b>{index < step ? "✓" : ROMAINS[index + 1]}</b><span>{name}</span></li>)}</ol>
+      <div className="t-coin statique"><AudioButtons music={music} onMusic={onToggleMusic} sons={sons} onSons={onToggleSons} /></div>
+    </header>
+    <section className="c-portail" aria-label="Aperçu">
+      <svg className="runes" viewBox="0 0 400 400" aria-hidden="true">
+        <circle cx="200" cy="200" r="186" className="r1" /><circle cx="200" cy="200" r="170" className="r2" /><circle cx="200" cy="200" r="132" className="r3" />
+        <g className="r-glyphes">{Array.from({ length: 24 }, (_, index) => <text key={index} x="200" y="26" transform={`rotate(${index * 15} 200 200)`} textAnchor="middle">{glyphs[index % 12]}</text>)}</g>
+        <g className="r-etoile"><path d="M200 70 L313 265 L87 265 Z" /><path d="M200 330 L87 135 L313 135 Z" /></g>
+      </svg>
+      <svg className="silhouette" viewBox="0 0 200 260" aria-hidden="true">
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2a2140" /><stop offset="1" stopColor="#0b0d18" /></linearGradient></defs>
+        <path d="M100 18c-30 0-46 22-46 50 0 20 8 36 20 46-30 8-54 28-60 60l-6 86h184l-6-86c-6-32-30-52-60-60 12-10 20-26 20-46 0-28-16-50-46-50z" fill="url(#sg)" stroke="rgba(243,228,181,.55)" strokeWidth="1.5" />
+        <ellipse cx="100" cy="74" rx="34" ry="40" fill={player.skin} opacity=".22" />
+        <path d="M56 70c-4-34 20-56 44-56s50 18 46 58c-8-22-22-34-46-34S62 50 56 70z" fill={player.hair} opacity=".95" />
+        <circle cx="84" cy="74" r="4" fill={player.eyes} className="oeil" /><circle cx="116" cy="74" r="4" fill={player.eyes} className="oeil" />
+      </svg>
+      <div className="c-plaque"><span className="surtitre">Votre chronique</span><strong>{player.name.trim() || "Sans nom"}</strong><small>{v2Cap(player.pronouns)} · {player.age} ans · {v2SexLabel(player.sex)}</small>
+        <dl><dt>Écho</dt><dd>{player.origin}</dd><dt>Vocation</dt><dd>{player.vocation}</dd><dt>Trait</dt><dd>{player.trait}</dd></dl></div>
+    </section>
+    <section className="c-panneau cadre"><Orn4 /><div className="c-contenu" ref={contentRef}>
+      {step === 0 && <>
+        <h2 className="titre-jeu">Qui franchit le portail ?</h2><p className="intro">Votre passé s’est effacé. Ce que vous choisirez ici vous appartiendra.</p>
+        <div className="c-champs">
+          <label className="c-ligne"><span>Nom</span><input id="c-nom" type="text" value={player.name} maxLength={24} autoComplete="off" placeholder="Votre nom" onChange={(event) => setPlayer({ ...player, name: event.target.value })} /></label>
+          <div className="c-ligne"><span>Pronoms</span><V2Selecteur values={V2_PRONOUNS} value={player.pronouns} label={v2Cap} onChange={(pronouns) => setPlayer({ ...player, pronouns })} /></div>
+          <div className="c-ligne"><span>Corps</span><V2Selecteur values={V2_SEXES} value={player.sex} label={v2SexLabel} onChange={(sex) => setPlayer({ ...player, sex })} /></div>
+          <label className="c-ligne"><span>Âge</span><input id="c-age" type="number" min={18} max={120} value={player.age} onChange={(event) => setPlayer({ ...player, age: Number(event.target.value) })} /></label>
+          <div className="c-ligne"><span>Cheveux</span><V2Palette colors={V2_HAIR} value={player.hair} label="Cheveux" onChange={(hair) => setPlayer({ ...player, hair })} /></div>
+          <div className="c-ligne"><span>Yeux</span><V2Palette colors={V2_EYES} value={player.eyes} label="Yeux" onChange={(eyes) => setPlayer({ ...player, eyes })} /></div>
+          <div className="c-ligne"><span>Peau</span><V2Palette colors={V2_SKIN} value={player.skin} label="Peau" onChange={(skin) => setPlayer({ ...player, skin })} /></div>
+        </div>
+        {!identityValid && <p className="c-erreur" role="alert">{!player.name.trim() ? "Indiquez un nom pour continuer." : "La chronique est réservée aux personnes majeures (18 ans minimum)."}</p>}
+      </>}
+      {step === 1 && <><h2 className="titre-jeu">Un écho vous suit</h2><p className="intro">Votre mémoire est vide, mais certains réflexes ont traversé le portail avec vous.</p><V2ChoiceCards items={ECHOES} value={player.origin} onChoose={(origin) => setPlayer({ ...player, origin })} /></>}
+      {step === 2 && <><h2 className="titre-jeu">Votre manière d’avancer</h2><p className="intro">La vocation est la place que vous choisissez de construire à Al’Gratal ; le trait révèle ce que les autres remarquent d’abord.</p><V2ChoiceCards items={VOCATIONS} value={player.vocation} cls="deux" onChoose={(vocation) => setPlayer({ ...player, vocation })} /><h3 className="c-sous">Trait dominant</h3><V2ChoiceCards items={TRAITS} value={player.trait} cls="quatre" onChoose={(trait) => setPlayer({ ...player, trait })} /></>}
+      {step === 3 && <><h2 className="titre-jeu">Réglage d’intimité</h2><p className="intro">Adapte la narration des scènes concernées. Le corps choisi adapte les scènes intimes ; il ne détermine ni vos pronoms ni vos relations. Modifiable à tout moment dans les Options.</p>
+        <div className="cartes-choix deux">{V2_INTIMACY.map(([id, title, detail], index) => <button type="button" key={id} className="carte-choix" aria-pressed={player.intimacy === id} style={{ "--i": index } as React.CSSProperties} onClick={() => chooseIntimacy(id)}><span className="cc-num">{ROMAINS[index + 1]}</span><strong>{title}</strong><span>{detail}</span></button>)}</div>
+        <div className="avert"><b>18+</b><p>Chronique réservée aux personnes majeures. Aucune scène intime ne se déclenche sans votre choix explicite ; chaque lien peut rester platonique. Une sauvegarde automatique sera créée au début du prologue.</p></div></>}
+    </div></section>
+    <footer className="c-pied">
+      <span className="hints"><Kbd>↑</Kbd><Kbd>↓</Kbd><Kbd>←</Kbd><Kbd>→</Kbd> Naviguer <Kbd>Entrée</Kbd> Choisir <Kbd>Échap</Kbd> Retour</span>
+      <div className="c-boutons"><button type="button" className="btn" onClick={back}>{step === 0 ? "Annuler" : "◀ Précédent"}</button><button type="button" className="btn principal" disabled={step === 0 && !identityValid} onClick={next}>{step === 3 ? "Franchir le portail ✦" : "Suivant ▶"}</button></div>
+    </footer>
+    {explicitWarning && <div className="v2-legacy-layer"><ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { setPlayer({ ...player, intimacy: "explicite" }); setExplicitWarning(false); }} /></div>}
+  </main>;
+}
+
+function V2Hud({ game, tab, onTab, badges, unread, onRegistre, onPause, music, onToggleMusic, soundtrackLabel }: { game: GameState; tab: V2Tab; onTab: (tab: V2Tab) => void; badges: Partial<Record<V2Tab, number>>; unread: number; onRegistre: () => void; onPause: () => void; music: boolean; onToggleMusic: () => void; soundtrackLabel: string }) {
+  const period = PERIODS[game.period];
+  return <header className="hud">
+    <div className="hud-date" aria-live="polite">
+      <div className="hud-jour"><small>Jour</small><b>{game.day}</b></div>
+      <div className="hud-periode"><span className="hud-per-nom"><i>{period.icon}</i>{period.label}</span><em>{period.time}</em>
+        <span className="hud-phases" aria-label={`Période ${game.period + 1} sur ${PERIODS.length}`}>{PERIODS.map((entry, index) => <b key={entry.id} className={index === game.period ? "on" : index < game.period ? "passe" : ""} title={entry.label} />)}</span></div>
+    </div>
+    <nav className="hud-onglets" aria-label="Menu du jeu">
+      <span className="hud-touche"><Kbd>Q</Kbd></span>
+      {V2_TABS.map(([id, label, icon]) => <button type="button" key={id} className={`onglet ${tab === id ? "actif" : ""}`} data-onglet={id} title={label} aria-label={label} aria-current={tab === id ? "page" : undefined} onClick={() => onTab(id)}><i aria-hidden="true">{icon}</i><span>{label}</span>{badges[id] ? <b className="pastille">{badges[id]}</b> : null}</button>)}
+      <span className="hud-touche"><Kbd>E</Kbd></span>
+    </nav>
+    <div className="hud-droite">
+      <span className="hud-bourse" title="Pièces"><i>◈</i><b>{game.coins}</b></span>
+      <button type="button" className={`rond hud-musique ${music ? "on" : ""}`} aria-pressed={music} title={music ? `Couper la musique · ${soundtrackLabel}` : `Activer la musique · ${soundtrackLabel}`} aria-label={music ? `Couper la musique · ${soundtrackLabel}` : `Activer la musique · ${soundtrackLabel}`} onClick={onToggleMusic}><svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" strokeWidth="1.8" /><circle cx="6.5" cy="18" r="2.6" fill="currentColor" /><circle cx="17.5" cy="16" r="2.6" fill="currentColor" /></svg></button>
+      <button type="button" className="rond" aria-label="Registre des notifications" title="Registre" onClick={onRegistre}><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z M10 21h4" fill="none" stroke="currentColor" strokeWidth="1.8" /></svg>{unread > 0 && <b className="pastille badge-registre">{unread}</b>}</button>
+      <button type="button" className="rond" aria-label="Menu système" title="Menu système (Échap)" onClick={onPause}><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="1.8" /></svg></button>
+    </div>
+  </header>;
+}
+
+type V2LieuProps = {
+  game: GameState;
+  location: (typeof LOCATIONS)[number];
+  spot: NonNullable<ReturnType<typeof spotById>>;
+  spots: NonNullable<ReturnType<typeof spotById>>[];
+  present: CharacterData[];
+  visible: CharacterData[];
+  visitors: { character: CharacterData; target: NonNullable<ReturnType<typeof nextPresence>> }[];
+  event?: SpontaneousEvent;
+  rumor?: RumorTemplate;
+  onTalk: (id: string) => void;
+  onGift: (id: string) => void;
+  onDate: (id: string) => void;
+  onFiche: (id: string) => void;
+  onActivity: (id: string) => void;
+  onJob: (job: JobData) => void;
+  onWait: () => void;
+  onWaitFor: () => void;
+  onMap: () => void;
+  onSpot: (spotId: string) => void;
+  onEvent: (event: SpontaneousEvent) => void;
+  onRumor: (rumor: RumorTemplate) => void;
+};
+
+function V2Lieu({ game, location, spot, spots, present, visible, visitors, event, rumor, onTalk, onGift, onDate, onFiche, onActivity, onJob, onWait, onWaitFor, onMap, onSpot, onEvent, onRumor }: V2LieuProps) {
+  const [selectedId, setSelectedId] = useState<string | undefined>(present[0]?.id);
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => { setExpanded(false); }, [spot.id]);
+  const character = present.find((entry) => entry.id === selectedId) || present[0];
+  const info = character ? presenceInteraction(game, character) : undefined;
+  const nextPeriod = PERIODS[(game.period + 1) % PERIODS.length];
+  const jobs = jobsAtSpot(spot.id);
+  type Cmd = { key: string; icon: string; label: string; sub?: string; onClick: () => void; locked?: boolean };
+  const activities: Cmd[] = [
+    ...spot.activities.flatMap((id): Cmd[] => { const activity = ACTIVITIES[id]; return activity ? [{ key: `act-${id}`, icon: activity.icon, label: activity.label, sub: activity.detail, onClick: () => onActivity(id) }] : []; }),
+    ...jobs.map((job) => { const access = jobAccess(game, job); return { key: `job-${job.id}`, icon: access.unlocked ? "◈" : "♙", label: job.title, sub: access.unlocked ? `${JOB_KIND_LABELS[job.kind]} · +${job.reward} ◈` : `Lien avec ${access.characterName} · ${access.value}/${access.target}`, onClick: () => onJob(job), locked: !access.unlocked }; }),
+  ];
+  const item = (cmd: Cmd, extra = "", principal = false) => <li key={cmd.key} className={extra}><button type="button" className={`cmd-item ${cmd.locked ? "verrou" : ""}`} data-cmd={cmd.key} data-principal={principal ? "" : undefined} onClick={cmd.onClick}><i className="cmd-ico">{cmd.icon}</i><span className="cmd-lib">{cmd.label}</span>{cmd.sub && <small>{cmd.sub}</small>}<b className="cmd-fl">▸</b></button></li>;
+  const otherSpots = spots.filter((entry) => entry.id !== spot.id);
+  return <div className="lieu">
+    <section className="lieu-plaque">
+      <span className="surtitre">{location.subtitle}</span>
+      <h1 className="titre-jeu geant">{location.name}</h1>
+      <div className="lieu-spot"><i>{spot.icon}</i><span>{spot.name}</span></div>
+      <p className="lieu-desc">{spot.description}</p>
+      {(event || rumor) && <div className="lieu-evts">
+        {event && <button type="button" className="evt" data-act="evenement" onClick={() => onEvent(event)}><i>✦</i><span><small>Événement</small>{event.title}</span></button>}
+        {rumor && <button type="button" className="evt rumeur" data-act="rumeur" onClick={() => onRumor(rumor)}><i>◌</i><span><small>Rumeur</small>Un écho circule ici</span></button>}
+      </div>}
+      {otherSpots.length > 0 && <nav className="lieu-sous" aria-label={`Sous-lieux de ${location.name}`}>
+        <span className="surtitre">Sous-lieux · même lieu</span>
+        <div>{spots.map((entry) => { const occupants = visible.filter((who) => characterPlace(who, game.day, game.period, game.flags, game.housing).spot === entry.id); return <button type="button" key={entry.id} className={`sous-lieu ${entry.id === spot.id ? "actif" : ""}`} disabled={entry.id === spot.id} aria-current={entry.id === spot.id ? "true" : undefined} title={occupants.length ? occupants.map((who) => who.name).join(" · ") : "Lieu calme"} onClick={() => onSpot(entry.id)}><i>{entry.icon}</i><span>{entry.shortName}</span>{occupants.length > 0 && <b>{occupants.length} ♡</b>}</button>; })}</div>
+      </nav>}
+    </section>
+    {character && info && <figure className="lieu-perso" key={character.id} style={{ "--c": character.color } as React.CSSProperties} aria-label={character.name}>
+      <div className="halo" />
+      <img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} />
+      <figcaption className="plaque-nom"><V2RangLosange stage={info.relation.stage} /><span className="pn-txt"><b>{character.name}</b><small>{character.role} · {STAGE_LABELS[info.relation.stage]}</small></span>{!info.relation.met && <em className="neuf">Nouveau</em>}</figcaption>
+      <p className="bulle">{info.place.action}…</p>
+    </figure>}
+    <aside className="commandes" aria-label="Actions">
+      <div className="pres">
+        <span className="surtitre">Présences <b>{present.length}</b></span>
+        {character && info && <div className="pn-mini" style={{ "--c": character.color } as React.CSSProperties}><V2RangLosange stage={info.relation.stage} /><span className="pn-txt"><b>{character.name}</b><small>{character.role} · {STAGE_LABELS[info.relation.stage]}</small><em>{info.place.action}…</em></span></div>}
+        {present.length > 0 ? <div className="pres-liste">{present.map((entry) => <button type="button" key={entry.id} className={`pres-btn ${entry === character ? "on" : ""}`} style={{ "--c": entry.color } as React.CSSProperties} aria-pressed={entry === character} aria-label={entry.name} onClick={() => { sfx("survol"); setSelectedId(entry.id); }}><img src={entry.portrait} alt="" /><span>{entry.name}</span>{!game.relationships[entry.id].met && <i className="point-neuf" />}</button>)}</div>
+          : <p className="pres-vide">Le lieu est calme pour l’instant.</p>}
+      </div>
+      <ul className={`cmd ${expanded ? "deplie" : ""}`}>
+        {character && info && <>
+          {item({ key: "parler", icon: "❝", label: `${info.action} · ${character.name}`, sub: info.label, onClick: () => onTalk(character.id) }, info.important ? "cmd-important" : "", true)}
+          {item({ key: "offrir", icon: "❖", label: "Offrir un présent", onClick: () => onGift(character.id) })}
+          {info.hasDatePlanner && item({ key: "rdv", icon: "♡", label: "Proposer un rendez-vous", onClick: () => onDate(character.id) })}
+          {item({ key: "fiche", icon: "✦", label: "Fiche de lien", sub: `${STAGE_LABELS[info.relation.stage]} · rang ${info.relation.stage}/5`, onClick: () => onFiche(character.id) })}
+        </>}
+        {activities.length > 0 && <li className="cmd-sep"><span>Activités</span></li>}
+        {activities.map((cmd, index) => item(cmd, index >= 2 ? "cmd-extra" : ""))}
+        {activities.length > 2 && <li className="cmd-plus-li"><button type="button" className="cmd-plus" data-act="cmd-plus" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}><i>{expanded ? "－" : "＋"}</i><span>{expanded ? "Moins d’activités" : `${activities.length - 2} autre${activities.length > 3 ? "s" : ""} activité${activities.length > 3 ? "s" : ""}`}</span></button></li>}
+        <li className="cmd-sep"><span>Temps</span></li>
+        <li className="cmd-temps"><ul>
+          {item({ key: "attendre", icon: "⧗", label: "Attendre", sub: game.settings.noTimeCost ? "Temps figé (mode développeur)" : `→ ${nextPeriod.label}`, onClick: onWait })}
+          {item({ key: "voyager", icon: "⌖", label: "Voyager", sub: "Ouvrir la carte", onClick: onMap })}
+        </ul></li>
+        {visitors.length > 0 && <li className="cmd-attente">{item({ key: "attendre-qui", icon: "◷", label: "Attendre quelqu’un", sub: `${visitors[0].character.name} · ${waitDurationLabel(game, visitors[0].target)}`, onClick: onWaitFor })}</li>}
+      </ul>
+    </aside>
+  </div>;
+}
+
+function v2DeclutterPins(cadreEl: HTMLElement | null) {
+  if (!cadreEl) return;
+  const pins = [...cadreEl.querySelectorAll<HTMLElement>(".pin")];
+  if (!pins.length) return;
+  pins.forEach((pin) => pin.classList.remove("nom-cache", "nom-haut", "nom-droite", "nom-gauche"));
+  const prio = (pin: HTMLElement) => (pin.classList.contains("sel") ? 0 : pin.classList.contains("ici") ? 1 : pin.classList.contains("voile") ? 4 : pin.classList.contains("mineur") ? 3 : 2);
+  const sorted = [...pins].sort((a, b) => prio(a) - prio(b));
+  const cadre = cadreEl.getBoundingClientRect();
+  const margin = 4;
+  const marks = new Map(pins.map((pin) => [pin, (pin.querySelector(".pin-los") || pin).getBoundingClientRect()]));
+  const hit = (r: DOMRect, q: DOMRect) => !(r.right + margin < q.left || r.left - margin > q.right || r.bottom + margin < q.top || r.top - margin > q.bottom);
+  const taken: DOMRect[] = [];
+  for (const pin of sorted) {
+    const others = [...marks].filter(([other]) => other !== pin).map(([, rect]) => rect);
+    const fits = () => { const r = pin.getBoundingClientRect(); const out = r.left < cadre.left || r.right > cadre.right || r.top < cadre.top || r.bottom > cadre.bottom; return !out && !taken.some((q) => hit(r, q)) && !others.some((q) => hit(r, q)); };
+    if (fits()) { taken.push(pin.getBoundingClientRect()); continue; }
+    let ok = false;
+    for (const variant of ["nom-haut", "nom-droite", "nom-gauche"]) { pin.classList.add(variant); if (fits()) { ok = true; break; } pin.classList.remove(variant); }
+    if (ok || prio(pin) === 0) { taken.push(pin.getBoundingClientRect()); continue; }
+    pin.classList.add("nom-cache");
+    taken.push(marks.get(pin)!);
+  }
+}
+
+function V2Carte({ game, visible, selectedLocation, selectedSpot, onSelectLocation, onSelectSpot, onTravel, onPlace }: { game: GameState; visible: CharacterData[]; selectedLocation: string; selectedSpot: string; onSelectLocation: (id: string) => void; onSelectSpot: (id: string) => void; onTravel: (location: string, spot: string) => void; onPlace: () => void }) {
+  const cadreRef = useRef<HTMLDivElement>(null);
+  const [destOpen, setDestOpen] = useState(false);
+  const known = LOCATIONS.filter((entry) => locationUnlocked(game, entry.id));
+  const location = known.find((entry) => entry.id === selectedLocation) || LOCATIONS.find((entry) => entry.id === game.location) || LOCATIONS[0];
+  const spots = spotsForLocation(location.id).filter((entry) => !entry.housing || entry.id === propertyById(game.housing.propertyId)?.spot);
+  const spotSel = spots.find((entry) => entry.id === selectedSpot) || (location.id === game.location ? spots.find((entry) => entry.id === game.spot) : undefined) || spotById(DEFAULT_SPOTS[location.id]) || spots[0];
+  const presentAt = (locationId: string) => visible.filter((who) => characterPlace(who, game.day, game.period, game.flags, game.housing).location === locationId);
+  const presentAtSpot = (spotId: string) => visible.filter((who) => characterPlace(who, game.day, game.period, game.flags, game.housing).spot === spotId);
+  const here = game.location === location.id && game.spot === spotSel?.id;
+  const travelPeriods = travelPeriodCost(game.location, location.id, game.player.vocation, LOCATIONS);
+  useLayoutEffect(() => {
+    const run = () => v2DeclutterPins(cadreRef.current);
+    const frame = requestAnimationFrame(() => requestAnimationFrame(run));
+    window.addEventListener("resize", run);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("resize", run); };
+  }, [location.id, game.location, game.period]);
+  const visibleLocations = LOCATIONS.filter((entry) => locationUnlocked(game, entry.id) || !entry.minor);
+  return <div className="carte">
+    <div className="carte-zone">
+      <div className="carte-cadre" ref={cadreRef}><Orn4 />
+        <img className="carte-img" src="/assets/map.png" alt="Carte de Sylvinia" />
+        <div className="brume" aria-hidden="true"><i /><i /><i /></div>
+        {visibleLocations.map((entry) => {
+          const isKnown = locationUnlocked(game, entry.id);
+          const occupants = isKnown ? presentAt(entry.id) : [];
+          return <button type="button" key={entry.id} className={`pin ${entry.id === game.location ? "ici" : ""} ${entry.id === location.id ? "sel" : ""} ${isKnown ? "" : "voile"} ${occupants.length ? "" : "mineur"}`} style={{ left: `${entry.pin[0]}%`, top: `${entry.pin[1]}%` }} data-loc={entry.id} disabled={!isKnown} aria-label={isKnown ? `${entry.name}${occupants.length ? ` · ${occupants.map((who) => who.name).join(", ")}` : ""}` : "Lieu inconnu"} onClick={() => { sfx("survol"); onSelectLocation(entry.id); onSelectSpot(entry.id === game.location ? game.spot : DEFAULT_SPOTS[entry.id]); }}>
+            <i className="pin-los" />{entry.id === game.location && <span className="pin-vous">Vous</span>}<span className="pin-nom">{isKnown ? entry.name : "???"}</span>
+            {occupants.length > 0 && <span className="pin-pres">{occupants.slice(0, 3).map((who) => <img key={who.id} src={who.portrait} alt="" />)}</span>}
+          </button>;
+        })}
+        <div className="rose-vents" aria-hidden="true">✧</div>
+      </div>
+    </div>
+    <aside className="carte-fiche cadre" aria-live="polite"><Orn4 />
+      <div className="cf-img" style={{ backgroundImage: `url(${spotSel?.background || location.image})` }}><span className="surtitre">{location.subtitle}</span></div>
+      <div className="cf-corps">
+        <h2 className="titre-jeu">{location.name}</h2>
+        <p className="texte">{location.description}</p>
+        <div className="cf-bloc"><span className="surtitre">Présences</span><div className="cf-pres">{presentAt(location.id).length ? presentAt(location.id).map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}</span></Fragment>) : <span className="discret">Personne de connu</span>}</div></div>
+        <details className="cf-dest" open={destOpen} onToggle={(event) => setDestOpen((event.currentTarget as HTMLDetailsElement).open)}><summary><span className="surtitre">Destinations connues · {known.length}</span><i aria-hidden="true">▾</i></summary><ul>{known.map((entry) => <li key={entry.id}><button type="button" className={entry.id === location.id ? "sel" : ""} data-dest={entry.id} onClick={() => { onSelectLocation(entry.id); onSelectSpot(entry.id === game.location ? game.spot : DEFAULT_SPOTS[entry.id]); }}>{entry.id === game.location ? <i className="ici">◆</i> : <i>◇</i>}<span>{entry.name}</span>{presentAt(entry.id).length > 0 && <b>{presentAt(entry.id).length} ♡</b>}</button></li>)}</ul></details>
+        <div className="cf-bloc"><span className="surtitre">Lieux · {spots.length}</span><ul className="cf-spots">{spots.map((entry) => { const occupants = presentAtSpot(entry.id); const spotJobs = jobsAtSpot(entry.id); return <li key={entry.id}><button type="button" className={`cf-spot ${entry.id === spotSel?.id ? "sel" : ""}`} aria-pressed={entry.id === spotSel?.id} onClick={() => onSelectSpot(entry.id)}><i>{entry.icon}</i><span>{entry.name}{entry.id === game.spot && location.id === game.location && <em> · vous</em>}</span>{occupants.length > 0 && <b title={occupants.map((who) => who.name).join(", ")}>{occupants.length} ♡</b>}{spotJobs.length > 0 && <b className="cf-job" title={spotJobs.map((job) => job.title).join(", ")}>◈{spotJobs.length}</b>}</button></li>; })}</ul></div>
+        {spotSel && <p className="cf-spot-desc discret">{spotSel.description}</p>}
+      </div>
+      {here ? <button type="button" className="btn principal large" data-act="voyager" onClick={onPlace}>Vous êtes ici · revenir au lieu</button>
+        : spotSel && <button type="button" className="btn principal large" data-act="voyager" onClick={() => onTravel(location.id, spotSel.id)}>{game.location === location.id ? `Se rendre à ${spotSel.shortName}` : `Voyager · ${travelDurationLabel(travelPeriods)}`}{game.location !== location.id && game.player.vocation === SCOUT_VOCATION ? " · éclaireur" : ""} ▸</button>}
+    </aside>
+  </div>;
+}
+
+function v2KnownGroupDates(game: GameState) {
+  const unlocked = CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => character.id);
+  return GROUP_DATES.filter((date) => !date.legacyOnly
+    && (!(HR_DATE_IDS as readonly string[]).includes(date.id) || hrDateVisibility(date, game).visible)
+    && contentBranchAllowed(game.flags, date)
+    && date.characters.every((id) => unlocked.includes(id)));
+}
+function v2DateOpen(game: GameState, date: DateScene) {
+  const relation = game.relationships[date.character];
+  return game.settings.unlockAll || (relation.stage >= date.unlockStage && relation.affection >= date.minAffection && relation.trust >= date.minTrust);
+}
+
+function V2SousOnglets({ game, active, onView }: { game: GameState; active: V2LinksView; onView: (view: V2LinksView) => void }) {
+  const unlocked = CHARACTERS.filter((character) => characterUnlocked(game, character));
+  const dates = DATE_SCENES.filter((date) => unlocked.some((character) => character.id === date.character));
+  const groups = v2KnownGroupDates(game);
+  const items: [V2LinksView, string, string][] = [["liens", "Personnes", String(unlocked.length)], ["rdv", "Rendez-vous", String(dates.filter((date) => v2DateOpen(game, date)).length)], ["trio", "À trois", `${groups.filter((date) => groupDateUnlocked(game, date)).length}/${groups.length}`]];
+  return <nav className="sous-onglets" aria-label="Sections des liens">{items.map(([id, label, count]) => <button type="button" key={id} className={active === id || (active === "fiche" && id === "liens") ? "actif" : ""} aria-current={active === id ? "page" : undefined} onClick={() => onView(id)}><span>{label}</span><b>{count}</b></button>)}</nav>;
+}
+
+function V2Liens({ game, onView, onFiche }: { game: GameState; onView: (view: V2LinksView) => void; onFiche: (id: string) => void }) {
+  const ordered = CHARACTERS.slice().sort((a, b) => Number(characterUnlocked(game, b)) - Number(characterUnlocked(game, a)) || game.relationships[b.id].stage - game.relationships[a.id].stage);
+  return <div className="liens">
+    <V2SceneTete surtitre="Constellation des liens" titre="Liens"><V2SousOnglets game={game} active="liens" onView={onView} /></V2SceneTete>
+    <div className="galerie">{ordered.map((character, index) => {
+      const relation = game.relationships[character.id];
+      if (!characterUnlocked(game, character)) return <div className="lien-carte verrou" key={character.id} style={{ "--i": index } as React.CSSProperties}><div className="lc-img lc-inconnu" aria-hidden="true">?</div><div className="lc-bas"><b className="lc-nom">???</b><small>{character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial requis" : `Pas encore rencontré·e`}</small></div></div>;
+      return <button type="button" className="lien-carte" key={character.id} data-fiche={character.id} style={{ "--c": character.color, "--i": index } as React.CSSProperties} aria-label={`${character.name}, ${STAGE_LABELS[relation.stage]}`} onClick={() => onFiche(character.id)}>
+        <div className="lc-img"><img src={character.portrait} alt="" /></div>
+        <V2RangLosange stage={relation.stage} />
+        {!relation.met && <em className="neuf">À rencontrer</em>}
+        <div className="lc-bas"><b className="lc-nom">{character.name}</b><small>{STAGE_LABELS[relation.stage]}</small>
+          <span className="lc-jauges"><i className="aff" style={{ "--v": `${Math.min(100, relation.affection)}%` } as React.CSSProperties} /><i className="conf" style={{ "--v": `${Math.min(100, relation.trust)}%` } as React.CSSProperties} /><i className="des" style={{ "--v": `${Math.min(100, relation.desire)}%` } as React.CSSProperties} /></span></div>
+      </button>;
+    })}</div>
+    <p className="legende"><i className="aff" />Affection <i className="conf" />Confiance <i className="des" />Désir</p>
+  </div>;
+}
+
+function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate, onDossier, onWaitRoute }: { game: GameState; characterId: string; onView: (view: V2LinksView) => void; onFiche: (id: string) => void; onGift: (id: string) => void; onDate: (id: string) => void; onLocate: (location: string, spot: string) => void; onDossier: (id: string) => void; onWaitRoute: (sceneId: string) => void }) {
+  const swipeRef = useRef<{ x: number; y: number } | null>(null);
+  const known = CHARACTERS.filter((character) => characterUnlocked(game, character));
+  const character = known.find((entry) => entry.id === characterId) || known[0];
+  if (!character) return null;
+  const relation = game.relationships[character.id];
+  const index = known.indexOf(character);
+  const prev = known[(index - 1 + known.length) % known.length];
+  const next = known[(index + 1) % known.length];
+  const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
+  const scheduleLocation = LOCATIONS.find((entry) => entry.id === schedule.location);
+  const scheduleSpot = spotById(schedule.spot);
+  const rawNext = sceneFor(character.id, relation.stage);
+  const nextScene = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
+  const bond = relation.affection + relation.trust;
+  const threshold = nextScene ? BOND_THRESHOLDS[nextScene.stage] : 0;
+  const needed = nextScene ? Math.max(0, threshold - bond) : 0;
+  const objective = nextScene ? routeNarrativeObjective(nextScene, game) : undefined;
+  const narrativeReady = Boolean(nextScene && !objective);
+  const routeTarget = nextScene && narrativeReady ? nextPresence(character, game, ROUTE_SPOTS[nextScene.id], ROUTE_PERIODS[nextScene.id], nextScene.dayMin) : null;
+  const routeSpot = nextScene ? spotById(ROUTE_SPOTS[nextScene.id]) : undefined;
+  const routePeriods = nextScene ? ROUTE_PERIODS[nextScene.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).filter(Boolean).join(" ou ") : "";
+  const progress = relationshipNarrativeProgress(game, character.id);
+  const circ = 2 * Math.PI * 54;
+  const tastes = character.giftLikes.map((id) => GIFTS.find((gift) => gift.id === id)).filter((gift): gift is (typeof GIFTS)[number] => Boolean(gift));
+  const hasPlanner = DATE_SCENES.some((date) => date.character === character.id) || Boolean(HOME_DATE_PROFILES[character.id]);
+  // Glisser horizontalement sur le portrait = personnage voisin (le panneau garde son défilement normal).
+  const onTouchStart = (event: React.TouchEvent) => { const t = event.touches[0]; swipeRef.current = (event.target as HTMLElement).closest(".fiche-panneau, .fiche-pas") ? null : { x: t.clientX, y: t.clientY }; };
+  const onTouchEnd = (event: React.TouchEvent) => { const start = swipeRef.current; swipeRef.current = null; if (!start || known.length < 2) return; const t = event.changedTouches[0]; const dx = t.clientX - start.x; if (Math.abs(dx) > 60 && Math.abs(t.clientY - start.y) < 50) { sfx("survol"); onFiche((dx < 0 ? next : prev).id); } };
+  return <div className="fiche" style={{ "--c": character.color } as React.CSSProperties} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div className="fiche-filigrane" aria-hidden="true">{character.name}</div>
+    <figure className="fiche-sprite" key={character.id}><div className="halo" /><img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} /></figure>
+    <section className="fiche-panneau cadre"><Orn4 />
+      <button type="button" className="retour-lien" onClick={() => { sfx("retour"); onView("liens"); }}><Kbd>Échap</Kbd> Liens</button>
+      <span className="surtitre">{character.role}</span>
+      <h1 className="titre-jeu geant">{character.name}</h1>
+      <div className="rang-bloc">
+        <svg className="anneau" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="54" className="a-fond" /><circle cx="64" cy="64" r="54" className="a-val" style={{ "--circ": circ, "--off": circ * (1 - relation.stage / 5) } as React.CSSProperties} />{[0, 1, 2, 3, 4].map((k) => <circle key={k} cx={64 + 54 * Math.sin(((k + 1) / 5) * 2 * Math.PI)} cy={64 - 54 * Math.cos(((k + 1) / 5) * 2 * Math.PI)} r="4" className={`a-cran ${k < relation.stage ? "on" : ""}`} />)}<text x="64" y="76" textAnchor="middle" className="a-num">{ROMAINS[relation.stage]}</text></svg>
+        <div className="rang-txt"><small>Rang de lien</small><b>{STAGE_LABELS[relation.stage]}</b><span className="coeurs">{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= relation.stage ? "on" : ""}>♥</i>)}</span></div>
+      </div>
+      <div className="stats"><V2Stat cls="aff" label="Affection" value={relation.affection} /><V2Stat cls="conf" label="Confiance" value={relation.trust} /><V2Stat cls="des" label="Désir" value={relation.desire} /></div>
+      {nextScene ? <div className="prochain"><span className="surtitre">Prochaine scène · {nextScene.title}</span><ul>
+        <li className={needed ? "" : "ok"}>Lien {bond} / {threshold}{needed ? ` · encore ${needed}` : ""}</li>
+        {game.day < nextScene.dayMin ? <li>À partir du jour {nextScene.dayMin}</li> : <li className="ok">Jour atteint</li>}
+        {objective ? <li>{objective}</li> : <li className={routeSpot && schedule.spot === routeSpot.id ? "ok" : ""}>{routeSpot?.name || "Lieu indiqué"}{routePeriods ? ` · ${routePeriods}` : ""}</li>}
+      </ul></div> : <div className="prochain max"><span className="surtitre">Fil narratif accompli</span><p>Les {progress.total} scènes de lien sont vécues. Les moments libres et rendez-vous restent disponibles.</p></div>}
+      <blockquote className="citation">{character.tagline}</blockquote>
+      <div className="fiche-infos">
+        <div><span className="surtitre">Présence actuelle</span><p className="texte">{schedule.traveling ? `Escale · ${scheduleSpot?.name || ""}` : `${scheduleLocation?.name || ""} · ${scheduleSpot?.shortName || ""}`} — {schedule.action}</p></div>
+        <div><span className="surtitre">Présents favoris</span><p className="gouts">{tastes.map((gift) => <span key={gift.id} title={gift.name}><i>{gift.icon}</i>{gift.name.split(" ")[0]}</span>)}</p></div>
+      </div>
+      <div className="fiche-actions">
+        <button type="button" className="btn" data-act="offrir" onClick={() => onGift(character.id)}>❖ Offrir</button>
+        {hasPlanner && <button type="button" className="btn" data-act="rdv" onClick={() => onDate(character.id)}>♡ Rendez-vous</button>}
+        <button type="button" className="btn" data-act="localiser" onClick={() => onLocate(schedule.location, schedule.spot)}>⌖ Localiser</button>
+        <button type="button" className="btn" data-act="dossier" onClick={() => onDossier(character.id)}>▤ Dossier complet</button>
+        {nextScene && narrativeReady && !needed && routeTarget && <button type="button" className="btn principal" data-act="attendre-route" onClick={() => onWaitRoute(nextScene.id)}>⧗ Attendre · {waitDurationLabel(game, routeTarget)}</button>}
+      </div>
+    </section>
+    {known.length > 1 && <nav className="fiche-pas" aria-label="Changer de personnage">
+      <button type="button" aria-label={`Précédent : ${prev.name}`} title={prev.name} onClick={() => { sfx("survol"); onFiche(prev.id); }}>‹</button>
+      <span aria-live="polite">{index + 1}<i>/</i>{known.length}</span>
+      <button type="button" aria-label={`Suivant : ${next.name}`} title={next.name} onClick={() => { sfx("survol"); onFiche(next.id); }}>›</button>
+    </nav>}
+  </div>;
+}
+
+function V2Rdv({ game, onView, onDate, onHome }: { game: GameState; onView: (view: V2LinksView) => void; onDate: (date: DateScene) => void; onHome: (characterId: string) => void }) {
+  const unlocked = CHARACTERS.filter((character) => characterUnlocked(game, character));
+  const list = DATE_SCENES.filter((date) => unlocked.some((character) => character.id === date.character)).sort((a, b) => Number(v2DateOpen(game, b)) - Number(v2DateOpen(game, a)));
+  const homes = unlocked.filter((character) => HOME_DATE_PROFILES[character.id]);
+  const home = propertyById(game.housing.propertyId);
+  return <div className="rdv">
+    <V2SceneTete surtitre="Constellation des liens" titre="Rendez-vous"><V2SousOnglets game={game} active="rdv" onView={onView} /></V2SceneTete>
+    <div className="rdv-grille">
+      {list.map((date, index) => {
+        const character = CHARACTERS.find((entry) => entry.id === date.character)!;
+        const open = v2DateOpen(game, date);
+        const spot = spotById(date.spot);
+        const period = PERIODS.find((entry) => entry.id === date.period);
+        const done = game.dateHistory.includes(date.id);
+        return <button type="button" key={date.id} className={`rdv-carte ${open ? "" : "verrou"}`} data-date={date.id} style={{ "--c": character.color, "--i": index } as React.CSSProperties} onClick={() => onDate(date)}>
+          <span className="rc-img" style={{ backgroundImage: `url(${spot?.background || ""})` }} />
+          <Seau color={character.color} portrait={character.portrait} className="grand" />
+          <span className="rc-txt"><small>{character.name} · {date.type}</small><b>{date.title}</b><span className="rc-meta">{period ? `${period.icon} ${period.label}` : ""} · {spot?.shortName || spot?.name || ""}</span></span>
+          <span className="rc-etat">{open ? done ? "Déjà vécu · rejouable" : "Disponible" : `🔒 Rang ${ROMAINS[date.unlockStage]}`}</span>
+        </button>;
+      })}
+      {homes.map((character, index) => {
+        const open = homeDateUnlocked(game, character.id);
+        return <button type="button" key={`home-${character.id}`} className={`rdv-carte logis ${open ? "" : "verrou"}`} data-home={character.id} style={{ "--c": character.color, "--i": list.length + index } as React.CSSProperties} onClick={() => onHome(character.id)}>
+          <span className="rc-img" style={{ backgroundImage: `url(${home?.background || "/assets/backgrounds/terrace.webp"})` }} />
+          <Seau color={character.color} portrait={character.portrait} className="grand" />
+          <span className="rc-txt"><small>{character.name} · Visite au logis</small><b>{home ? home.name : "Logis requis"}</b><span className="rc-meta">⌂ {home ? "Votre adresse" : "Achetez un logis dans Biens"}</span></span>
+          <span className="rc-etat">{open ? "Disponible" : home ? "🔒 Lien plus avancé" : "🔒 Logis requis"}</span>
+        </button>;
+      })}
+      {!list.length && !homes.length && <p className="discret">Aucun rendez-vous connu pour l’instant : rencontrez d’abord les habitants de Sylvinia.</p>}
+    </div>
+  </div>;
+}
+
+function V2Trio({ game, onView, onStart }: { game: GameState; onView: (view: V2LinksView) => void; onStart: (id: string) => void }) {
+  const list = v2KnownGroupDates(game);
+  const [selectedId, setSelectedId] = useState(list[0]?.id);
+  const selected = list.find((entry) => entry.id === selectedId) || list[0];
+  const listRef = useRef<HTMLUListElement>(null);
+  useEffect(() => { listRef.current?.querySelector(".trio-entree.sel")?.scrollIntoView({ block: "nearest", inline: "nearest" }); }, [selectedId]);
+  if (!selected) return <div className="trio">
+    <V2SceneTete surtitre="Relations croisées" titre="À trois"><V2SousOnglets game={game} active="trio" onView={onView} /></V2SceneTete>
+    <div className="trio-vide cadre"><Orn4 /><p className="texte grand">Aucune dynamique à trois n’est encore connue.</p><p className="discret">Elles apparaissent lorsque vous avez rencontré les deux personnes concernées et que l’histoire les rend possibles.</p></div>
+  </div>;
+  const open = groupDateUnlocked(game, selected);
+  const reason = (HR_DATE_IDS as readonly string[]).includes(selected.id) ? hrDateReason(selected, game) : undefined;
+  const homeMissing = Boolean(selected.home && !game.housing.propertyId);
+  const spot = spotById(selected.spot);
+  const period = PERIODS.find((entry) => entry.id === selected.period);
+  const slot = (id: string) => {
+    const character = CHARACTERS.find((entry) => entry.id === id)!;
+    const relation = game.relationships[id];
+    const conditions: [string, number, number, string?][] = [["Rang", relation.stage, selected.minStage, `${ROMAINS[relation.stage]} / ${ROMAINS[selected.minStage]}`], ["Affection", relation.affection, selected.minAffection], ["Confiance", relation.trust, selected.minTrust], ["Désir", relation.desire, selected.minDesire]];
+    return <div className="slot" key={id} style={{ "--c": character.color } as React.CSSProperties}><div className="halo" /><img className="slot-sprite entree" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} /><div className="slot-plaque"><b>{character.name}</b><small>{STAGE_LABELS[relation.stage]}</small><ul>{conditions.map(([name, value, min, text]) => <li key={name} className={game.settings.unlockAll || value >= min ? "ok" : "ko"}><span>{name}</span><b>{text || `${value} / ${min}`}</b></li>)}</ul></div></div>;
+  };
+  return <div className="trio">
+    <V2SceneTete surtitre="Relations croisées" titre="À trois"><V2SousOnglets game={game} active="trio" onView={onView} /></V2SceneTete>
+    <div className="trio-corps">
+      <ul className="trio-liste" aria-label="Rendez-vous à trois" ref={listRef}>{list.map((entry) => { const entryOpen = groupDateUnlocked(game, entry); return <li key={entry.id}><button type="button" className={`trio-entree ${entry.id === selected.id ? "sel" : ""} ${entryOpen ? "ouvert" : ""}`} aria-pressed={entry.id === selected.id} data-trio={entry.id} onClick={() => { sfx("survol"); setSelectedId(entry.id); }}><span className="te-duo">{entry.characters.map((id) => { const who = CHARACTERS.find((c) => c.id === id)!; return <Seau key={id} color={who.color} portrait={who.portrait} />; })}</span><span className="te-txt"><b>{entry.title}</b><small>{entry.characters.map((id) => CHARACTERS.find((c) => c.id === id)?.name).join(" · ")}</small></span><span className="te-etat">{entryOpen ? "✦" : "🔒"}</span></button></li>; })}</ul>
+      <section className="trio-scene">
+        <div className="equipe">
+          <div className="slot vous"><div className="slot-vous-ico">✦</div><div className="slot-plaque"><b>{game.player.name}</b><small>Vous</small><ul><li className={homeMissing ? "ko" : "ok"}><span>Logis</span><b>{selected.home ? homeMissing ? "Requis ✗" : "Requis ✓" : "—"}</b></li></ul></div></div>
+          {selected.characters.map(slot)}
+        </div>
+        <div className="trio-info cadre"><Orn4 />
+          <span className="surtitre">{period ? `${period.icon} ${period.label}` : ""} · {selected.home ? "Votre logis" : spot?.name || ""}</span>
+          <h2 className="titre-jeu">{selected.title}</h2>
+          <p className="texte">{selected.description}</p>
+          {selected.dynamic && <blockquote className="citation petite">{selected.dynamic}</blockquote>}
+          <div className="ti-pied">{open && !homeMissing ? <span className="etat ok">✦ Toutes les conditions sont réunies · le rendez-vous aura lieu le lendemain</span> : <span className="etat ko">🔒 {reason || (homeMissing ? "Un logis est nécessaire" : "Conditions manquantes en rouge")}</span>}<button type="button" className="btn principal" data-act="lancer" disabled={!open || homeMissing} onClick={() => onStart(selected.id)}>{game.groupDateHistory.includes(selected.id) ? "Revivre ▸" : "Planifier ▸"}</button></div>
+        </div>
+      </section>
+    </div>
+  </div>;
+}
+
+type V2JournalTab = "chronique" | "courrier" | "decouvertes" | "relations" | "souvenirs" | "croisees";
+type V2JournalProps = {
+  game: GameState;
+  onStartCampaign: (id: string) => void;
+  onReadLetter: (id: string) => void;
+  onReadCrossLetter: (id: string) => void;
+  onInvitation: (id: string) => void;
+  onLocateSpot: (spotId: string) => void;
+  legacy: (section: "crossed" | "relations" | "memories") => React.ReactNode;
+};
+
+function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onInvitation, onLocateSpot, legacy }: V2JournalProps) {
+  const [tab, setTab] = useState<V2JournalTab>("chronique");
+  const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
+  const progress = storyProgress(game.history, game.flags);
+  const storyComplete = progress >= MAIN_STORY.length;
+  const [actIndex, setActIndex] = useState(Math.min(progress, MAIN_STORY.length - 1));
+  const crossProgress = game.crossQuestSeries.linevaAllenna;
+  const hrProgress = game.crossQuestSeries[HR_KEY];
+  const letters = game.letters.map((received) => ({ received, letter: LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedLetter; letter: LetterTemplate } => Boolean(entry.letter));
+  const crossLetters = (crossProgress?.letters || []).map((received) => ({ received, letter: LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: NonNullable<typeof crossProgress>["letters"][number]; letter: CrossLetter } => Boolean(entry.letter));
+  const invitations = game.invitations.map((received) => ({ received, invitation: INVITATIONS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedInvitation; invitation: InvitationTemplate } => Boolean(entry.invitation));
+  const rumors = game.rumors.map((heard) => ({ heard, rumor: RUMORS.find((entry) => entry.id === heard.id) })).filter((entry): entry is { heard: { id: string; heardDay: number }; rumor: RumorTemplate } => Boolean(entry.rumor));
+  const knowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+  const pending = letters.filter(({ received }) => !received.read).length + crossLetters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length;
+  type Mail = { key: string; kind: "letter" | "cross" | "invitation"; id: string; subject: string; character?: CharacterData; day: number; unread: boolean; status: string; body?: string[]; signature?: string };
+  const mails: Mail[] = [
+    ...crossLetters.map(({ received, letter }) => ({ key: `c-${letter.id}`, kind: "cross" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau · Quête croisée" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: (letter as { body?: string[] }).body, signature: (letter as { signature?: string }).signature })),
+    ...letters.map(({ received, letter }) => ({ key: `l-${letter.id}`, kind: "letter" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: letter.body, signature: letter.signature })),
+    ...invitations.map(({ received, invitation }) => ({ key: `i-${invitation.id}`, kind: "invitation" as const, id: invitation.id, subject: invitation.title, character: CHARACTERS.find((entry) => entry.id === invitation.character), day: received.receivedDay ?? 0, unread: received.status === "pending", status: received.status === "pending" ? `Invitation · expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Manquée · reviendra" })),
+  ].sort((a, b) => b.day - a.day);
+  const [mailKey, setMailKey] = useState<string | undefined>(undefined);
+  const mail = mails.find((entry) => entry.key === mailKey);
+  const openMail = (entry: Mail) => {
+    setMailKey(entry.key);
+    if (entry.kind === "letter") onReadLetter(entry.id);
+    else if (entry.kind === "cross") onReadCrossLetter(entry.id);
+    else onInvitation(entry.id);
+  };
+  const tabs: [V2JournalTab, string, string, number?][] = [
+    ["chronique", "Chronique", "▤"],
+    ["courrier", "Courrier", "✉", pending],
+    ["decouvertes", "Découvertes", "◌"],
+    ["relations", "Relations", "♡"],
+    ["souvenirs", "Souvenirs", "◇"],
+    ...(crossProgress || hrProgress ? [["croisees", "Croisées", "⇄"] as [V2JournalTab, string, string]] : []),
+  ];
+  let gauche: React.ReactNode = null;
+  let droite: React.ReactNode = null;
+  let leftTitle = "";
+  if (tab === "chronique") {
+    leftTitle = "Chapitres de l’Acte I";
+    const act = MAIN_STORY[actIndex];
+    const done = actIndex < progress;
+    const current = !storyComplete && actIndex === progress;
+    const options = current ? act.requiredScenes.filter((id) => !discovered.has(id)).map((id) => campaignSceneById(id)).filter((scene): scene is CampaignScene => Boolean(scene)) : [];
+    const ready = options.filter((scene) => campaignSceneReady(scene, game));
+    const blocked = options.find((scene) => !campaignSceneReady(scene, game));
+    const nextId = current ? act.requiredScenes.find((id) => !discovered.has(id)) : undefined;
+    const nextMilestone = nextId ? storyMilestone(nextId) : undefined;
+    const nextCampaign = nextId ? campaignSceneById(nextId) : undefined;
+    const illustration = (nextCampaign && spotById(nextCampaign.spot)?.background) || (act.requiredScenes[0] && campaignSceneById(act.requiredScenes[0]) && spotById(campaignSceneById(act.requiredScenes[0])!.spot)?.background) || "/assets/backgrounds/deep_archives.webp";
+    gauche = <ol className="j-liste">{MAIN_STORY.map((entry, index) => { const state = index < progress ? "fait" : !storyComplete && index === progress ? "encours" : "voile"; return <li key={entry.id}><button type="button" className={`j-entree ${state} ${index === actIndex ? "sel" : ""}`} data-chap={index} disabled={state === "voile"} onClick={() => setActIndex(index)}><span className="j-num">{entry.number}</span><span><b>{state === "voile" ? "Chapitre scellé" : entry.title}</b><small>{state === "fait" ? "Accompli" : state === "encours" ? "En cours" : "Pas encore révélé"}</small></span></button></li>; })}</ol>;
+    droite = <>
+      <span className="surtitre">Acte I · Chapitre {act.number}</span><h2 className="titre-jeu">{act.title}</h2>
+      <div className="j-illu" style={{ backgroundImage: `url(${illustration})` }} />
+      <div className="objectif"><span className="surtitre">Objectif</span><p>{act.objective}</p></div>
+      <p className="texte">{act.detail}</p>
+      <ul className="j-jalons">{act.requiredScenes.length ? act.requiredScenes.map((id) => { const milestone = storyMilestone(id); const achieved = discovered.has(id); return <li key={id} className={achieved ? "ok" : ""}><i>{achieved ? "✓" : "◇"}</i><span><b>{milestone.title}</b><small>{milestone.place}</small></span></li>; }) : <li className="ok"><i>✓</i><span><b>Passage dans cette chronologie</b><small>Le prologue ouvre automatiquement ce premier chapitre.</small></span></li>}</ul>
+      {current && <div className="prochaine"><span className="surtitre">{ready.length > 1 ? "Pistes disponibles" : "Prochaine étape"}</span>
+        <p>{ready.length ? `${ready.length} scène${ready.length > 1 ? "s" : ""} de campagne peu${ready.length > 1 ? "vent" : "t"} être vécue${ready.length > 1 ? "s" : ""} maintenant.` : blocked ? campaignBlockingObjective(blocked, game) || nextMilestone?.place : nextMilestone ? `${nextMilestone.title} · ${nextMilestone.place}` : "Explorez les pistes déjà découvertes."}</p>
+        <div className="j-actions">{ready.map((scene) => <button type="button" key={scene.id} className="btn principal" onClick={() => onStartCampaign(scene.id)}>✦ {scene.title} · {spotById(scene.spot)?.shortName}</button>)}{!ready.length && nextCampaign && <button type="button" className="btn" onClick={() => onLocateSpot(nextCampaign.spot)}>⌖ Montrer sur la carte</button>}</div>
+      </div>}
+      {done && <p className="tampon">Accompli</p>}
+      {storyComplete && actIndex === MAIN_STORY.length - 1 && <p className="texte">Le véritable portail est ouvert et les négociations sont rompues. Le bac à sable reste disponible ; la suite commencera avec l’Acte II.</p>}
+      {game.journal.length > 0 && <div className="j-traces"><span className="surtitre">Dernières traces</span><ul>{game.journal.slice(-6).reverse().map((entry, index) => <li key={`${entry}-${index}`}>✦ {entry}</li>)}</ul></div>}
+    </>;
+  } else if (tab === "courrier") {
+    leftTitle = "Correspondance";
+    gauche = mails.length ? <ul className="j-liste">{mails.map((entry) => <li key={entry.key}><button type="button" className={`j-entree lettre ${entry.key === mailKey ? "sel" : ""} ${entry.unread ? "neuve" : ""}`} data-lettre={entry.id} onClick={() => openMail(entry)}>{entry.character ? <Seau color={entry.character.color} portrait={entry.character.portrait} /> : <span className="j-num">✉</span>}<span><b>{entry.subject}</b><small>{entry.character?.name || ""} · {entry.status}</small></span>{entry.unread && <i className="point-neuf" />}</button></li>)}</ul> : <p className="discret">Aucune lettre ni invitation reçue pour l’instant. Les personnages écrivent à mesure que vos liens grandissent.</p>;
+    droite = mail && mail.character ? <article className="missive"><header><Seau color={mail.character.color} portrait={mail.character.portrait} className="grand" /><div><span className="surtitre">{mail.kind === "invitation" ? "Invitation" : `Jour ${mail.day}`} · de {mail.character.name}</span><h2 className="titre-jeu">{mail.subject}</h2></div></header>
+      {mail.body?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}{mail.signature && <p className="signature">{mail.signature}</p>}
+      <span className="cachet" aria-hidden="true" style={{ "--c": mail.character.color } as React.CSSProperties}>{mail.character.name[0]}</span>
+      <div className="reponses"><button type="button" className="reponse" onClick={() => openMail(mail)}><i>✉</i>{mail.kind === "invitation" ? "Ouvrir l’invitation (accepter / décliner)" : "Rouvrir la lettre et ses réponses"}</button></div>
+    </article> : <div className="j-vide"><span className="surtitre">Le monde vous écrit</span><h2 className="titre-jeu">{pending ? `${pending} message${pending > 1 ? "s" : ""} en attente` : "Courrier à jour"}</h2><p className="texte">Choisissez une lettre ou une invitation à gauche : elle s’ouvre avec ses réponses possibles. Une invitation manquée reviendra plus tard, sans sanction.</p></div>;
+  } else if (tab === "decouvertes") {
+    leftTitle = "Rumeurs & savoirs";
+    gauche = <ul className="j-liste">{rumors.length + knowledge.length ? <>{[...knowledge].reverse().map((entry) => <li key={`k-${entry.id}`}><span className="j-entree"><span className="j-num">◇</span><span><b>{entry.title}</b><small>Recoupé · {entry.people.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" · ")}</small></span></span></li>)}{[...rumors].reverse().map(({ heard, rumor }) => <li key={`r-${rumor.id}`}><span className="j-entree"><span className="j-num">◌</span><span><b>{rumor.source}</b><small>Jour {heard.heardDay}</small></span></span></li>)}</> : <li className="discret">Rien de consigné pour l’instant.</li>}</ul>;
+    droite = <><span className="surtitre">Échos et connaissances</span><h2 className="titre-jeu">Ce qui se murmure</h2>
+      {knowledge.length > 0 && <div className="j-savoirs">{[...knowledge].reverse().map((entry) => <div key={entry.id} className="objectif"><span className="surtitre">{entry.title}</span><p>{entry.summary}</p></div>)}</div>}
+      {[...rumors].reverse().map(({ heard, rumor }) => <blockquote className="citation" key={rumor.id}>« {rumor.text} »<cite>{rumor.source} · Jour {heard.heardDay}</cite></blockquote>)}
+      {!rumors.length && !knowledge.length && <p className="texte">Écoutez les rumeurs des lieux (bouton « Rumeur » dans la scène Lieu) et gagnez la confiance des personnages pour remplir ces pages.</p>}
+      <p className="discret">Le Journal distingue les paroles entendues des informations réellement recoupées.</p></>;
+  }
+  const legacySection = tab === "relations" ? "relations" : tab === "souvenirs" ? "memories" : tab === "croisees" ? "crossed" : undefined;
+  return <div className="journal">
+    <div className={`grimoire ${legacySection ? "grimoire-plein" : ""}`}>
+      <nav className="signets" aria-label="Sections du journal">{tabs.map(([id, label, icon, count]) => <button type="button" key={id} className={`signet ${tab === id ? "actif" : ""}`} data-jtab={id} aria-pressed={tab === id} onClick={() => { sfx("onglet"); setTab(id); }}><i>{icon}</i><span>{label}</span>{count ? <b className="pastille">{count}</b> : null}</button>)}</nav>
+      {legacySection ? <section className="page pleine v2-legacy">{legacy(legacySection)}</section> : <>
+        <section className="page gauche"><span className="surtitre">{leftTitle}</span>{gauche}</section>
+        <div className="reliure" aria-hidden="true" />
+        <section className="page droite">{droite}</section>
+      </>}
+      <Orn4 />
+    </div>
+  </div>;
+}
+
+function V2Jobs({ game, onJob }: { game: GameState; onJob: (job: JobData) => void }) {
+  const [filter, setFilter] = useState<"ici" | "accessibles" | "tous">("tous");
+  const known = JOBS.filter((job) => { const location = spotById(job.spot)?.location; return Boolean(location && locationUnlocked(game, location)); });
+  const here = known.filter((job) => spotById(job.spot)?.location === game.location);
+  const accessible = known.filter((job) => jobAccess(game, job).unlocked);
+  const list = (filter === "ici" ? here : filter === "accessibles" ? accessible : known).slice().sort((a, b) => {
+    const local = (job: JobData) => (job.spot === game.spot ? 0 : spotById(job.spot)?.location === game.location ? 1 : 2);
+    return local(a) - local(b) || Number(!jobAccess(game, a).unlocked) - Number(!jobAccess(game, b).unlocked) || a.title.localeCompare(b.title, "fr");
+  });
+  return <div className="jobs">
+    <V2SceneTete surtitre="Contrats & petits boulots" titre="Tableau des jobs"><div className="filtres">
+      <button type="button" className={`filtre ${filter === "tous" ? "actif" : ""}`} data-jf="tous" onClick={() => setFilter("tous")}>Connus <b>{known.length}</b></button>
+      <button type="button" className={`filtre ${filter === "accessibles" ? "actif" : ""}`} data-jf="accessibles" onClick={() => setFilter("accessibles")}>Accessibles <b>{accessible.length}</b></button>
+      <button type="button" className={`filtre ${filter === "ici" ? "actif" : ""}`} data-jf="ici" onClick={() => setFilter("ici")}>Ici <b>{here.length}</b></button>
+      <span className="hud-bourse"><i>◈</i><b>{game.coins}</b></span>
+    </div></V2SceneTete>
+    {list.length ? <div className="tableau">{list.map((job, index) => {
+      const spot = spotById(job.spot);
+      const location = LOCATIONS.find((entry) => entry.id === spot?.location);
+      const access = jobAccess(game, job);
+      const isHere = job.spot === game.spot;
+      return <button type="button" key={job.id} className={`affiche ${isHere ? "ici" : ""} ${access.unlocked ? "" : "verrou"}`} data-job={job.id} style={{ "--i": index, "--r": `${((index * 37) % 5) - 2}deg` } as React.CSSProperties} onClick={() => onJob(job)}>
+        <span className="punaise" aria-hidden="true" />
+        <span className="af-type"><i>{V2_JOB_ICONS[job.kind] || "◈"}</i>{JOB_KIND_LABELS[job.kind]}</span>
+        <b className="af-titre">{job.title}</b>
+        <span className="af-emp">{job.employer}</span>
+        <span className="af-lieu">⌖ {location?.name || ""} · {spot?.shortName || ""}{isHere && <em>Ici</em>}</span>
+        <span className="af-pied"><span className="af-diff">{access.unlocked ? `Session · ${jobSessionLabel(job, game.jobRuns[job.id] || 0)}` : `🔒 ${access.characterName} ${access.value}/${access.target}`}</span><span className="af-gain">+{job.reward} <i>◈</i></span></span>
+      </button>;
+    })}</div> : <p className="discret">Aucun contrat dans ce filtre pour l’instant.</p>}
+  </div>;
+}
+
+type V2BiensProps = {
+  game: GameState;
+  present: CharacterData[];
+  onShop: () => void;
+  onGive: (character: string, gift: string) => void;
+  onHousing: () => void;
+  onSell: () => void;
+  onDisplaySlot: (slot: number) => void;
+  onResidents: () => void;
+};
+
+function V2Biens({ game, present, onShop, onGive, onHousing, onSell, onDisplaySlot, onResidents }: V2BiensProps) {
+  const [tab, setTab] = useState<"inventaire" | "logis">("inventaire");
+  const owned = DISPLAY_ITEMS.filter((item) => (game.inventory[item.id] || 0) > 0);
+  const [selectedId, setSelectedId] = useState<string | undefined>(owned[0]?.id);
+  const selected = owned.find((item) => item.id === selectedId) || owned[0];
+  const property = propertyById(game.housing.propertyId);
+  const priceOf = (id: string) => GIFTS.find((gift) => gift.id === id)?.price;
+  const rarity = (id: string) => { const price = priceOf(id); return price === undefined ? "rare" : v2Rarity(price); };
+  const total = owned.reduce((sum, item) => sum + (game.inventory[item.id] || 0), 0);
+  const cells = [...owned, ...Array.from({ length: Math.max(0, 24 - owned.length) }, () => null)];
+  let body: React.ReactNode;
+  if (tab === "inventaire") {
+    const isGift = selected ? GIFTS.some((gift) => gift.id === selected.id) : false;
+    const likedBy = selected ? CHARACTERS.filter((character) => characterUnlocked(game, character) && character.giftLikes.includes(selected.id)) : [];
+    const price = selected ? priceOf(selected.id) : undefined;
+    body = <div className="inventaire">
+      <div className="cases cadre"><Orn4 />{cells.map((item, index) => item ? <button type="button" key={item.id} className={`case ${item.id === selected?.id ? "sel" : ""} rar-${rarity(item.id)}`} data-bien={item.id} aria-label={`${item.name}, ${game.inventory[item.id]}`} onClick={() => setSelectedId(item.id)}><i>{item.icon}</i><b>{game.inventory[item.id]}</b></button> : <span key={`vide-${index}`} className="case vide" aria-hidden="true" />)}</div>
+      <aside className="objet-detail cadre"><Orn4 />
+        {selected ? <>
+          <div className={`od-ico rar-${rarity(selected.id)}`}><i>{selected.icon}</i></div>
+          <span className="surtitre">{price !== undefined ? `${v2RarityLabel(price)} · Présent` : selected.source === "story" ? "Souvenir personnel" : selected.source === "date" ? "Cadeau de visite" : "Objet"}</span>
+          <h2 className="titre-jeu">{selected.name}</h2>
+          <p className="texte">{selected.description}</p>
+          <div className="cf-bloc"><span className="surtitre">Apprécié par</span><div className="cf-pres">{likedBy.length ? likedBy.map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}</span></Fragment>) : <span className="discret">Personne de connu pour l’instant</span>}</div></div>
+          {isGift && <div className="cf-bloc"><span className="surtitre">Offrir ici</span><div className="od-dons">{present.length ? present.map((who) => <button type="button" key={who.id} className="btn petit" onClick={() => onGive(who.id, selected.id)}>❖ {who.name}</button>) : <span className="discret">Personne n’est avec vous dans ce sous-lieu.</span>}</div></div>}
+          <div className="od-pied">{price !== undefined && <span>Valeur <b>{price} ◈</b></span>}<span>Possédé <b>×{game.inventory[selected.id] || 0}</b></span></div>
+        </> : <><h2 className="titre-jeu">Inventaire vide</h2><p className="texte">Les marchés, histoires personnelles et visites au logis y ajouteront des objets.</p></>}
+        <button type="button" className="btn principal large" data-act="marche" onClick={onShop}>◈ Ouvrir le marché</button>
+      </aside>
+    </div>;
+  } else {
+    const residents = game.housing.residents.map((id) => CHARACTERS.find((entry) => entry.id === id)).filter((entry): entry is CharacterData => Boolean(entry));
+    body = property ? <div className="logis">
+      <div className="logis-vue cadre" style={{ backgroundImage: `url(${property.background})` }}><Orn4 /><div className="lv-txt"><span className="surtitre">{property.category} · Gamme {ROMAINS[property.tier] || property.tier} · {LOCATIONS.find((entry) => entry.id === property.location)?.name}</span><h2 className="titre-jeu">{property.name}</h2><p>{property.description}</p></div></div>
+      <aside className="logis-cote">
+        <div className="cadre bloc"><Orn4 /><span className="surtitre">Résidents · {residents.length}</span><div className="cf-pres">{residents.map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}</span></Fragment>)}<button type="button" className="sceau ajout" data-act="inviter" aria-label="Gérer les résidents" onClick={onResidents}>+</button></div></div>
+        <div className="cadre bloc"><Orn4 /><span className="surtitre">Vitrine · 3 emplacements</span><div className="vitrine">{[0, 1, 2].map((slot) => { const item = displayItemById(game.housing.displayed[slot] || undefined); return <button type="button" key={slot} className={`case ${item ? `rar-${rarity(item.id)}` : "vide"}`} data-act="vitrine" aria-label={item ? item.name : "Emplacement libre"} title={item ? item.name : "Choisir un objet à exposer"} onClick={() => onDisplaySlot(slot)}>{item ? <i>{item.icon}</i> : "+"}</button>; })}</div></div>
+        <button type="button" className="btn large" data-act="demenager" onClick={onHousing}>⌂ Changer de logis</button>
+        <button type="button" className="btn large danger" data-act="vendre" onClick={onSell}>Vendre · {housingSaleValue(game.housing)} ◈</button>
+      </aside>
+    </div> : <div className="logis"><div className="logis-vue cadre logis-aucun"><Orn4 /><div className="lv-txt"><span className="surtitre">Aucune adresse</span><h2 className="titre-jeu">Vous n’avez pas encore de logis</h2><p>Achetez une propriété dans une ville accessible. Vous pourrez ensuite l’habiter, l’exposer sur la carte et y inviter vos proches.</p></div></div><aside className="logis-cote"><button type="button" className="btn principal large" data-act="demenager" onClick={onHousing}>⌂ Acheter un logis</button></aside></div>;
+  }
+  return <div className="biens">
+    <V2SceneTete surtitre="Possessions" titre="Biens"><nav className="sous-onglets">{([["inventaire", "Inventaire", total], ["logis", "Logis", property ? 1 : 0]] as const).map(([id, label, count]) => <button type="button" key={id} className={tab === id ? "actif" : ""} data-btab={id} onClick={() => setTab(id)}><span>{label}</span><b>{count}</b></button>)}<span className="hud-bourse"><i>◈</i><b>{game.coins}</b></span></nav></V2SceneTete>
+    {body}
+  </div>;
+}
+
+function V2Codex({ game }: { game: GameState }) {
+  const [tab, setTab] = useState<"personnages" | "figures" | "lieux" | "scenes">("personnages");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
+  type Entry = { id: string; ok: boolean; title: string; sub: string; img: string; text: string; quote?: string; pos: string };
+  const items: Entry[] = tab === "personnages"
+    ? CHARACTERS.map((character) => ({ id: character.id, ok: game.relationships[character.id].met || game.settings.unlockAll, title: character.name, sub: characterDescriptor(character), img: character.portrait, text: character.bio, quote: character.tagline, pos: "50% 16%" }))
+    : tab === "figures"
+      ? SUPPORTING_FIGURES.map((figure) => ({ id: figure.id, ok: game.settings.unlockAll || figure.unlockScenes.some((scene) => discovered.has(scene)), title: figure.name, sub: `${figure.role} · ${figure.place}`, img: figure.portrait, text: figure.bio, pos: "50% 16%" }))
+      : tab === "lieux"
+        ? LOCATIONS.map((location) => ({ id: location.id, ok: game.visitedLocations.includes(location.id) || game.settings.unlockAll, title: location.name, sub: location.subtitle, img: location.image, text: location.description, pos: "50% 42%" }))
+        : game.history.map((id) => {
+          const route = ROUTE_SCENES.find((scene) => scene.id === id);
+          const campaign = campaignSceneById(id);
+          const character = route ? CHARACTERS.find((entry) => entry.id === route.character) : undefined;
+          return { id, ok: true, title: route?.title || campaign?.title || id, sub: route ? `Lien · ${character?.name || ""}` : campaign ? `Acte ${campaign.act} · Chapitre ${campaign.chapter}` : "Scène", img: route ? routeBackground(route) : campaign ? spotById(campaign.spot)?.background || campaign.background : "/assets/backgrounds/deep_archives.webp", text: campaign?.objective || (route ? `Scène de lien vécue avec ${character?.name || ""}. Relecture possible depuis Journal › Souvenirs.` : "Scène consignée dans la chronique."), pos: "50% 45%" };
+        });
+  const selected = items.find((entry) => entry.id === selectedId && entry.ok) || items.find((entry) => entry.ok);
+  const count = items.filter((entry) => entry.ok).length;
+  const choose = (id: string) => {
+    const ul = listRef.current; const pos = ul ? [ul.scrollTop, ul.scrollLeft] : [0, 0];
+    setSelectedId(id);
+    requestAnimationFrame(() => { if (ul) { ul.scrollTop = pos[0]; ul.scrollLeft = pos[1]; } });
+  };
+  const cx = tab === "personnages" || tab === "figures" ? "personnages" : tab === "lieux" ? "lieux" : "chronique";
+  return <div className="codex">
+    <V2SceneTete surtitre="Encyclopédie de Sylvinia" titre="Codex"><nav className="sous-onglets" aria-label="Sections du codex">{([["personnages", "Personnages"], ["figures", "Figures"], ["lieux", "Lieux"], ["scenes", "Scènes"]] as const).map(([id, label]) => <button type="button" key={id} className={tab === id ? "actif" : ""} data-ctab={id} aria-current={tab === id ? "true" : undefined} onClick={() => { setTab(id); setSelectedId(null); }}><span>{label}</span></button>)}</nav></V2SceneTete>
+    <div className="codex-corps">
+      <div className="codex-liste cadre"><Orn4 /><div className="cl-prog"><span>Découvert</span><b>{count} / {items.length}</b><i style={{ "--v": `${items.length ? (count / items.length) * 100 : 0}%` } as React.CSSProperties} /></div>
+        <ul ref={listRef}>{items.map((entry) => <li key={entry.id}><button type="button" className={`cl-entree ${entry === selected ? "sel" : ""} ${entry.ok ? "" : "verrou"}`} data-cx={entry.id} disabled={!entry.ok} aria-current={entry === selected ? "true" : undefined} onClick={() => choose(entry.id)}><span className="cl-img" style={{ backgroundImage: entry.ok ? `url(${entry.img})` : undefined }} /><span className="cl-txt"><b>{entry.ok ? entry.title : "???"}</b><small>{entry.ok ? entry.sub : "Non découvert"}</small></span></button></li>)}</ul>
+      </div>
+      {selected ? <article className={`codex-page cadre cx-${cx}`} aria-label={selected.title}><Orn4 />
+        <div className="cp-grille" data-filigrane={selected.title}>
+          <figure className="cp-media"><img src={selected.img} alt="" style={{ objectPosition: selected.pos }} /><span className="cp-num">N° {String(items.indexOf(selected) + 1).padStart(2, "0")}</span></figure>
+          <div className="cp-txt"><span className="surtitre">{selected.sub}</span><h2 className="titre-jeu">{selected.title}</h2><i className="cp-filet" aria-hidden="true" /><p className="texte">{selected.text}</p>{selected.quote && <blockquote className="citation">{selected.quote}</blockquote>}</div>
+        </div>
+      </article> : <article className="codex-page cadre"><Orn4 /><div className="cp-txt"><h2 className="titre-jeu">Aucune entrée</h2><p className="texte">Ce registre se remplira à mesure que vous avancerez.</p></div></article>}
+    </div>
+  </div>;
+}
+
+type V2OptCat = "affichage" | "audio" | "acces" | "intimite" | "sauvegardes" | "session";
+const V2_OPT_CATS: [V2OptCat, string, string][] = [["affichage", "Affichage", "Aa"], ["audio", "Audio", "♫"], ["acces", "Accessibilité", "◐"], ["intimite", "Intimité", "♡"], ["sauvegardes", "Sauvegardes", "▤"], ["session", "Session", "⏻"]];
+
+function V2OptLigne({ id, label, desc, values, index, onMove }: { id: string; label: string; desc: string; values: string[]; index: number; onMove: (dir: number) => void }) {
+  return <div className="opt-ligne"><div><b>{label}</b><small>{desc}</small></div><div className="selecteur" data-opt={id}><button type="button" className="sel-fl" aria-label={`${label} : précédent`} onClick={() => onMove(-1)}>◀</button><span className="sel-val">{values[index]}</span><button type="button" className="sel-fl" aria-label={`${label} : suivant`} onClick={() => onMove(1)}>▶</button><i className="sel-pts">{values.map((value, i) => <b key={value} className={i === index ? "on" : ""} />)}</i></div></div>;
+}
+const V2_ONOFF = ["Désactivé", "Activé"];
+
+function V2Curseur({ k, value, onChange }: { k: ScaleKey; value: number; onChange: (value: number) => void }) {
+  const e = ECHELLES[k];
+  return <div className="opt-curseur" data-curseur={k} style={{ "--p": `${((value - e.min) / (e.max - e.min)) * 100}%` } as React.CSSProperties}>
+    <div className="oc-tete"><b>{e.lib}</b><small title={`${e.desc} · ${e.min}–${e.max} %`}>{e.desc}</small><output>{value} %</output></div>
+    <div className="curseur-opt"><button type="button" className="sel-fl" aria-label={`${e.lib} : moins 5 %`} onClick={() => onChange(borne(k, value - 5))}>◀</button><input type="range" min={e.min} max={e.max} step={5} value={value} aria-label={`${e.lib} (${e.min} à ${e.max} %)`} aria-valuetext={`${value} %`} onChange={(event) => onChange(borne(k, Number(event.target.value)))} /><button type="button" className="sel-fl" aria-label={`${e.lib} : plus 5 %`} onClick={() => onChange(borne(k, value + 5))}>▶</button></div>
+  </div>;
+}
+
+function useV2Scales() {
+  const [scales, setScales] = useState<Scales>(() => readScales());
+  const update = (key: ScaleKey, value: number) => setScales((current) => { const next = { ...current, [key]: value }; applyScales(next); storeScales(next); return next; });
+  const reset = () => { const next = { ...DEFAULT_SCALES }; applyScales(next); storeScales(next); setScales(next); };
+  return { scales, update, reset };
+}
+
+function V2SaveSlots({ game, mode, onSave, onLoad, onLoadAuto, version }: { game?: GameState | null; mode: "save" | "load" | "both"; onSave: (slot: number) => void; onLoad: (slot: number) => void; onLoadAuto?: () => void; version: number }) {
+  const rows: (number | "auto")[] = ["auto", 1, 2, 3];
+  void version;
+  return <div className="emplacements">{rows.map((slot, index) => {
+    const info = v2SlotDetails(slot);
+    const auto = slot === "auto";
+    return <article key={String(slot)} className={`emplacement ${auto ? "auto" : ""} ${info ? "" : "vide"}`} style={{ "--i": index } as React.CSSProperties} data-slot={slot}>
+      <span className="em-vignette" style={info?.background ? { backgroundImage: `url(${info.background})` } : undefined}><b>{info ? auto ? "AUTO" : String(slot).padStart(2, "0") : "—"}</b></span>
+      <div className="em-txt"><strong>{auto ? "Sauvegarde automatique" : `Emplacement ${slot}`}</strong>{info ? <><small>{info.name} · Jour {info.day} · {info.period}</small><small>{info.place}</small><small className="discret">{auto ? "Mise à jour à chaque action" : info.savedAt || "Sauvegarde existante"}{info.coins !== undefined ? ` · ${info.coins} ◈` : ""}</small></> : <small className="discret">Emplacement libre</small>}</div>
+      <div className="em-actions">
+        {mode !== "load" && !auto && game && <button type="button" className="btn petit" data-sauver={slot} onClick={() => onSave(slot as number)}>{info ? "Écraser" : "Sauvegarder"}</button>}
+        {mode !== "save" && info && (auto ? onLoadAuto && <button type="button" className={`btn petit ${mode === "load" ? "principal" : ""}`} data-charger="auto" onClick={onLoadAuto}>Charger</button> : <button type="button" className={`btn petit ${mode === "load" ? "principal" : ""}`} data-charger={slot} onClick={() => onLoad(slot as number)}>Charger</button>)}
+      </div>
+    </article>;
+  })}</div>;
+}
+
+type V2OptionsProps = {
+  game: GameState | null;
+  updateGame?: (fn: (game: GameState) => GameState) => void;
+  cats: V2OptCat[];
+  sons: boolean;
+  onToggleSons: () => void;
+  titleMusic?: boolean;
+  onToggleTitleMusic?: () => void;
+  onSave: (slot: number) => void;
+  onLoad: (slot: number) => void;
+  onExport: () => void;
+  onImport: (event: ChangeEvent<HTMLInputElement>) => void;
+  onTitle: () => void;
+  onStory: () => void;
+  slotVersion: number;
+  layout: "scene" | "dialog";
+};
+
+function V2OptionsBody({ game, updateGame, cats, sons, onToggleSons, titleMusic, onToggleTitleMusic, onSave, onLoad, onExport, onImport, onTitle, onStory, slotVersion, layout }: V2OptionsProps & { cat?: V2OptCat }) {
+  const { scales, update, reset } = useV2Scales();
+  const [explicitWarning, setExplicitWarning] = useState(false);
+  const settings = game?.settings;
+  const setSettings = (patch: Partial<GameSettings>) => updateGame?.((current) => ({ ...current, settings: { ...current.settings, ...patch } }));
+  const render = (cat: V2OptCat) => {
+    if (cat === "affichage") return <Fragment key={cat}>
+      <div className="oc-groupe"><span className="surtitre">Échelles · appliquées en direct</span><div className="oc-grille">{SCALE_KEYS.map((k) => <V2Curseur key={k} k={k} value={scales[k]} onChange={(value) => update(k, value)} />)}</div></div>
+      <div className="opt-ligne opt-reinit"><div><b>Échelles par défaut</b><small>Tous les curseurs à 100 %</small></div><button type="button" className="btn petit" data-act="echelles-defaut" onClick={reset}>↺ Réinitialiser</button></div>
+      {settings && <V2OptLigne id="impact" label="Impact des choix" desc="Révèle les gains de relation avant de répondre" values={V2_ONOFF} index={Number(settings.showImpact)} onMove={() => setSettings({ showImpact: !settings.showImpact })} />}
+    </Fragment>;
+    if (cat === "audio") return <Fragment key={cat}>
+      {settings ? <>
+        <V2OptLigne id="musique" label="Musique" desc="Thèmes originaux du Visual Novel" values={V2_ONOFF} index={Number(settings.music)} onMove={() => setSettings({ music: !settings.music })} />
+        <div className="opt-ligne"><div><b>Volume de la musique</b><small>Appliqué immédiatement</small></div><div className="jauge-opt" data-jauge="volume"><button type="button" className="sel-fl" aria-label="Volume : moins" onClick={() => setSettings({ volume: Math.max(0, settings.volume - 10) })}>◀</button><span className="jo-barre">{Array.from({ length: 10 }, (_, i) => <i key={i} className={i < Math.round(settings.volume / 10) ? "on" : ""} />)}</span><button type="button" className="sel-fl" aria-label="Volume : plus" onClick={() => setSettings({ volume: Math.min(100, settings.volume + 10) })}>▶</button><b>{settings.volume}</b></div></div>
+      </> : onToggleTitleMusic && <V2OptLigne id="musique-titre" label="Thème du menu" desc="Musique de l’écran titre" values={V2_ONOFF} index={Number(Boolean(titleMusic))} onMove={onToggleTitleMusic} />}
+      <V2OptLigne id="sons" label="Sons d’interface" desc="Survol, validation, retour — synthétisés" values={V2_ONOFF} index={Number(sons)} onMove={onToggleSons} />
+    </Fragment>;
+    if (cat === "acces") return <Fragment key={cat}>
+      {settings ? <>
+        <V2OptLigne id="reduit" label="Réduire les animations" desc="Coupe particules, parallaxe et transitions, fige la cinématique. Suit aussi le système." values={V2_ONOFF} index={Number(settings.reducedMotion)} onMove={() => setSettings({ reducedMotion: !settings.reducedMotion })} />
+        <V2OptLigne id="contraste" label="Contraste renforcé" desc="Éclaircit textes secondaires et bordures" values={V2_ONOFF} index={Number(settings.highContrastText)} onMove={() => setSettings({ highContrastText: !settings.highContrastText })} />
+      </> : <p className="discret">Animations réduites et contraste renforcé sont enregistrés avec votre chronique : réglables une fois la partie lancée. Le réglage système « réduire les animations » est toujours respecté.</p>}
+    </Fragment>;
+    if (cat === "intimite" && game) {
+      const intimacyIds = V2_INTIMACY.map(([id]) => id);
+      return <Fragment key={cat}>
+        <V2OptLigne id="intimite" label="Niveau de narration" desc="Modifiable à tout moment · le mode explicite demande une confirmation" values={V2_INTIMACY.map(([, title]) => title)} index={Math.max(0, intimacyIds.indexOf(game.player.intimacy))} onMove={(dir) => { const nextId = intimacyIds[(intimacyIds.indexOf(game.player.intimacy) + dir + intimacyIds.length) % intimacyIds.length]; if (nextId === "explicite") setExplicitWarning(true); else updateGame?.((current) => ({ ...current, player: { ...current.player, intimacy: nextId } })); }} />
+        <V2OptLigne id="corps" label="Corps du personnage" desc="Adapte les scènes concernées, sans changer pronoms ni relations" values={V2_SEXES.map(v2SexLabel)} index={Math.max(0, V2_SEXES.indexOf(game.player.sex))} onMove={(dir) => { const next = V2_SEXES[(V2_SEXES.indexOf(game.player.sex) + dir + V2_SEXES.length) % V2_SEXES.length]; updateGame?.((current) => ({ ...current, player: { ...current.player, sex: next } })); }} />
+      </Fragment>;
+    }
+    if (cat === "sauvegardes") return <V2SaveSlots key={cat} game={game} mode="both" onSave={onSave} onLoad={onLoad} version={slotVersion} />;
+    if (cat === "session") return <Fragment key={cat}>
+      <div className="session">
+        {game && <button type="button" className="btn large" data-act="exporter" onClick={onExport}>⇩ Exporter la sauvegarde</button>}
+        <label className="btn large" data-act="importer">⇧ Importer un fichier<input type="file" accept="application/json,.json" className="v2-fichier" onChange={onImport} /></label>
+        {game && <button type="button" className="btn large danger" data-act="titre" onClick={onTitle}>⏻ Retour à l’écran titre</button>}
+        <button type="button" className="btn large" data-act="histoire" onClick={onStory}>↩ Mode Histoire</button>
+      </div>
+      {game && updateGame && <div className="v2-legacy v2-dev"><DeveloperPanel game={game} updateGame={updateGame} /></div>}
+      <p className="discret">Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le Visual Novel Sylvinia et Les mondes du Chroniqueur.</p>
+    </Fragment>;
+    return null;
+  };
+  return <>
+    {layout === "dialog" ? <div className="opt-lignes">{cats.map(render)}</div> : render(cats[0])}
+    {explicitWarning && <div className="v2-legacy-layer"><ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame?.((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} /></div>}
+  </>;
+}
+
+function V2Options(props: Omit<V2OptionsProps, "cats" | "layout">) {
+  const [cat, setCat] = useState<V2OptCat>("affichage");
+  return <div className="options">
+    <V2SceneTete surtitre="Configuration" titre="Options" />
+    <div className="opt-corps">
+      <nav className="opt-cats">{V2_OPT_CATS.map(([id, label, icon]) => <button type="button" key={id} className={`opt-cat ${cat === id ? "actif" : ""}`} data-otab={id} onClick={() => { sfx("onglet"); setCat(id); }}><i>{icon}</i><span>{label}</span></button>)}</nav>
+      <section className="opt-panneau cadre"><Orn4 /><h2 className="titre-jeu">{V2_OPT_CATS.find(([id]) => id === cat)?.[1]}</h2><div className="opt-lignes"><V2OptionsBody {...props} cats={[cat]} layout="scene" key={cat} /></div><p className="discret">Les échelles sont enregistrées sur cet appareil ; les autres réglages voyagent avec votre chronique.</p></section>
+    </div>
+  </div>;
+}
+
+function V2Toasts({ toasts, onDismiss }: { toasts: V2LogEntry[]; onDismiss: (id: number) => void }) {
+  return <div className="toasts" aria-live="polite">{toasts.slice(-2).reverse().map((toast) => <div key={toast.id} className={`toast t-${toast.type}`} role="status" onClick={() => onDismiss(toast.id)}><span className="t-ico"><b>{toast.icon}</b></span><div className="t-txt"><span className="t-type">{toast.label}</span><strong>{toast.title}</strong>{toast.detail && <small>{toast.detail}</small>}</div><i className="t-duree" /></div>)}</div>;
+}
+
+function V2TimeJump({ day, period, leaving }: { day: number; period: number; leaving: boolean }) {
+  const entry = PERIODS[period];
+  return <div className={`saut-temps ${leaving ? "sort" : ""}`}><div className="st-bande" /><div className="st-txt"><small>Jour {day}</small><b>{entry.label}</b><em>{entry.time}</em></div><div className="st-cadran">{PERIODS.map((p, index) => <i key={p.id} className={index === period ? "on" : ""}>{p.icon}</i>)}</div></div>;
+}
+
+function V2RankUp({ character, from, to, leaving, onClose }: { character: CharacterData; from: number; to: number; leaving: boolean; onClose: () => void }) {
+  return <div className={`rang-up ${leaving ? "sort" : ""}`} style={{ "--c": character.color } as React.CSSProperties} onClick={onClose} role="status">
+    <div className="ru-bande b1" /><div className="ru-bande b2" /><div className="ru-eclat" />
+    <img className="ru-portrait" src={character.portrait} alt="" />
+    <div className="ru-txt"><small>{character.name}</small><b>Rang supérieur</b><span><s>{STAGE_LABELS[from]}</s> ▸ {STAGE_LABELS[to]}</span><em>{ROMAINS[to]}</em></div>
+    {Array.from({ length: 18 }, (_, k) => <i key={k} className="ru-coeur" style={{ "--x": `${Math.round(Math.cos((k / 18) * 6.28) * (180 + (k % 3) * 60))}px`, "--y": `${Math.round(Math.sin((k / 18) * 6.28) * (120 + (k % 4) * 40))}px`, "--d": `${(k % 5) * 60}ms` } as React.CSSProperties}>♥</i>)}
+  </div>;
 }
