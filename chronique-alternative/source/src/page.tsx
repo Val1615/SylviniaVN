@@ -183,9 +183,22 @@ import {
   travelPeriodCost,
   withoutObsoletePermanentFriendshipFlags,
 } from "./gameplay-rules";
+import {
+  DEFAULT_ATLAS_UI_SETTINGS,
+  UI_STYLE_META,
+  atlasCssVariables,
+  nextUiStyle,
+  normalizeAtlasUiSettings,
+  type AccentTone,
+  type AtlasUiSettings,
+  type TouchNavigation,
+  type UiStyle,
+} from "./ui/atlas/atlas-ui";
+import { AtlasChrome, ATLAS_NAVIGATION, type AtlasTab } from "./ui/atlas/atlas-shell";
+import { useAdaptiveLayout } from "./ui/atlas/use-adaptive-layout";
 
 type Screen = "title" | "creator" | "game";
-type Tab = "place" | "map" | "jobs" | "relations" | "journal" | "inventory" | "codex" | "options";
+type Tab = AtlasTab;
 type PlacePanel = "actions" | "presences" | "waiting";
 type Pronouns = "elle" | "il" | "iel";
 type Intimacy = "tendre" | "suggestif" | "explicite" | "ellipse";
@@ -213,7 +226,7 @@ type Relationship = {
   gifts: number;
 };
 
-type GameSettings = {
+type GameSettings = AtlasUiSettings & {
   fontScale: number;
   reducedMotion: boolean;
   showImpact: boolean;
@@ -368,6 +381,7 @@ type JobState = {
 
 type ModalState =
   | { kind: "chronicle" }
+  | { kind: "title-options" }
   | { kind: "shop" }
   | { kind: "character"; character: string }
   | { kind: "gift"; character: string }
@@ -455,6 +469,7 @@ const DEFAULT_PLAYER: Player = {
 };
 
 const DEFAULT_SETTINGS: GameSettings = {
+  ...DEFAULT_ATLAS_UI_SETTINGS,
   fontScale: 100,
   reducedMotion: false,
   showImpact: false,
@@ -644,7 +659,13 @@ function hydrateGame(raw: unknown): GameState | null {
     stats: { ...fresh.stats, ...(value.stats || {}) },
     relationships: oldRelationships,
     inventory: { ...fresh.inventory, ...(value.inventory || {}) },
-    settings: { ...DEFAULT_SETTINGS, ...(value.settings || {}) },
+    settings: {
+      ...DEFAULT_SETTINGS,
+      ...(value.settings || {}),
+      ...normalizeAtlasUiSettings(value.settings),
+      fontScale: Math.max(80, Math.min(140, Number(value.settings?.fontScale) || DEFAULT_SETTINGS.fontScale)),
+      volume: Math.max(0, Math.min(100, Number(value.settings?.volume) || DEFAULT_SETTINGS.volume)),
+    },
     flags: unique([
       ...migratedFlags.map(flag => flag === "date-intimate:date-remerii-music" ? "date-intimate:date-remerii-lanterns" : flag),
       ...(migratedFlags.some(flag => flag === "home-intimate:remerii" || flag.startsWith("date-intimate:date-remerii-")) ? ["remerii-intimacy-lived"] : []),
@@ -1859,6 +1880,7 @@ export default function Home() {
   const notificationIdRef = useRef(0);
   const notificationTimersRef = useRef<number[]>([]);
   const audioVolume = game?.settings.volume ?? DEFAULT_SETTINGS.volume;
+  const atlasDevice = useAdaptiveLayout(game?.settings.adaptiveLayout ?? DEFAULT_SETTINGS.adaptiveLayout);
   const activeJobId = jobState?.jobId;
   const activeJobPhase = jobState?.phase;
   const activeAssemblyStage = jobState?.assemblyStage;
@@ -1974,6 +1996,24 @@ export default function Home() {
     window.addEventListener("keydown", listener);
     return () => window.removeEventListener("keydown", listener);
   }, []);
+
+  useEffect(() => {
+    if (screen !== "game" || modal || dialogue) return;
+    const listener = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      const index = Number(event.key) - 1;
+      const destination = ATLAS_NAVIGATION[index]?.id;
+      if (!destination) return;
+      event.preventDefault();
+      setMapDestinationOpen(false);
+      setPlacePanel(null);
+      setTab(destination);
+    };
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, [dialogue, modal, screen]);
 
   function updateGame(transform: (current: GameState) => GameState) {
     setGame((current) => current ? evolveLivingWorld(evolveCrossQuests(transform(current))) : current);
@@ -4041,6 +4081,7 @@ export default function Home() {
         onNew={() => setScreen("creator")}
         onContinue={continueGame}
         onChronicle={() => setModal({ kind: "chronicle" })}
+        onOptions={() => setModal({ kind: "title-options" })}
         modal={modal}
         closeModal={() => setModal(null)}
       />
@@ -4056,6 +4097,7 @@ export default function Home() {
   const period = PERIODS[game.period];
   const currentLocation = LOCATIONS.find((location) => location.id === game.location) || LOCATIONS[0];
   const currentSpot = spotById(game.spot) || spotById(DEFAULT_SPOTS[currentLocation.id])!;
+  const currentSpots = spotsForLocation(currentLocation.id).filter((spot) => !spot.housing || spot.id === propertyById(game.housing.propertyId)?.spot);
   const viewedLocation = LOCATIONS.find((location) => location.id === selectedLocation) || currentLocation;
   const selectedSpotData = spotById(selectedSpot);
   const viewedSpot = selectedSpotData?.location === viewedLocation.id ? selectedSpotData : spotById(DEFAULT_SPOTS[viewedLocation.id])!;
@@ -4080,11 +4122,51 @@ export default function Home() {
   const anchorModalState = modal?.kind === "anchor-operation"
     ? modal.replay ? modal.state : game.crossQuestSeries[HR_KEY]?.hr?.anchor
     : undefined;
+  const atlasContext: Record<Tab, string> = {
+    place: currentSpot.shortName,
+    map: "Routes de Sylvinia",
+    jobs: "Registre des contrats",
+    relations: "Constellation des liens",
+    journal: "Journal de la Confluence",
+    inventory: "Biens & logis",
+    codex: "Codex du monde",
+    options: "Préférences",
+  };
 
   return (
-    <main className={`game-shell ${game.settings.reducedMotion ? "reduce-motion" : ""} ${dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" ? "scene-active" : ""}`} style={{ fontSize: `${game.settings.fontScale}%` }}>
+    <main
+      className={`game-shell atlas-app ${game.settings.reducedMotion ? "reduce-motion" : ""} ${dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" ? "scene-active" : ""}`}
+      data-ui={game.settings.uiStyle}
+      data-device={atlasDevice}
+      data-accent={game.settings.accentTone}
+      data-secondary={game.settings.secondaryDetails ? "on" : "off"}
+      data-titles={game.settings.monumentalTitles ? "on" : "off"}
+      data-contrast={game.settings.highContrastText ? "on" : "off"}
+      data-grain={game.settings.decorativeGrain ? "on" : "off"}
+      data-nav={game.settings.touchNavigation}
+      style={{ fontSize: `${game.settings.fontScale}%`, ...atlasCssVariables(game.settings) } as React.CSSProperties}
+    >
       {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = audioVolume / 100; }} autoPlay loop />}
       <NotificationLayer notifications={notifications} />
+      <AtlasChrome
+        active={tab}
+        onNavigate={(destination) => { setMapDestinationOpen(false); setPlacePanel(null); setTab(destination); }}
+        location={currentLocation.name}
+        context={atlasContext[tab]}
+        day={game.day}
+        period={period.label}
+        periodIcon={period.icon}
+        coins={game.coins}
+        confluence={game.confluence}
+        style={game.settings.uiStyle}
+        onCycleStyle={() => updateGame((current) => ({ ...current, settings: { ...current.settings, uiStyle: nextUiStyle(current.settings.uiStyle) } }))}
+        device={atlasDevice}
+        touchNavigation={game.settings.touchNavigation}
+        statusVisible={game.settings.statusBar}
+        music={game.settings.music}
+        soundtrack={soundtrackLabel}
+        onToggleMusic={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))}
+      />
 
       {tab === "place" && (
         <section className="place-stage" style={{ backgroundImage: `url(${currentSpot.background})` }}>
@@ -4101,7 +4183,7 @@ export default function Home() {
             </div>
           </header>
           <div className="place-quick-actions">
-            <button onClick={() => { setSelectedLocation(game.location); setSelectedSpot(game.spot); setMapDestinationOpen(false); setPlacePanel(null); setTab("map"); }}>⌖ Ouvrir la carte</button>
+            <button onClick={() => { setSelectedLocation(game.location); setSelectedSpot(game.spot); setMapDestinationOpen(false); setPlacePanel(null); setTab("map"); }}>◇ Ouvrir la carte</button>
             <button className="place-sound-toggle" title={soundtrackLabel} aria-label={game.settings.music ? `Couper la musique · ${soundtrackLabel}` : `Activer la musique · ${soundtrackLabel}`} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))}>{game.settings.music ? "♫" : "♩"}<span>{soundtrackLabel}</span></button>
           </div>
 
@@ -4109,6 +4191,13 @@ export default function Home() {
             {spontaneousEvent && <button className="place-world-signal event" onClick={() => openSpontaneousEvent(spontaneousEvent)} title={`Événement : ${spontaneousEvent.title}`}><span>◈</span><div><small>Événement</small><strong>{spontaneousEvent.title}</strong></div></button>}
             {localRumor && <button className="place-world-signal rumor" onClick={() => hearRumor(localRumor)} title={`Écouter une rumeur à ${currentSpot.shortName}`}><span>◌</span><div><small>Rumeur locale</small><strong>Un écho circule ici</strong></div></button>}
           </aside>}
+
+          {currentSpots.length > 1 && <nav className="atlas-subplace-strip" aria-label={`Sous-lieux de ${currentLocation.name}`}>
+            {currentSpots.map((spot) => {
+              const occupants = visibleCharacters.filter((character) => characterPlace(character, game.day, game.period, game.flags, game.housing).spot === spot.id);
+              return <button type="button" key={spot.id} className={spot.id === game.spot ? "active" : ""} disabled={spot.id === game.spot} onClick={() => travel(currentLocation.id, spot.id)} style={{ "--atlas-spot": `url(${spot.background})` } as React.CSSProperties}><span>{spot.icon}</span><div><strong>{spot.shortName}</strong><small>{occupants.length ? occupants.map((character) => character.name).join(" · ") : "Lieu calme"}</small></div></button>;
+            })}
+          </nav>}
 
           {placePanel && <section className={`place-panel place-drawer place-${placePanel}`} aria-live="polite">
             <button className="place-drawer-close" aria-label="Réduire le panneau" onClick={() => setPlacePanel(null)}>×</button>
@@ -4210,12 +4299,6 @@ export default function Home() {
       {tab === "codex" && <CodexView game={game} />}
       {tab === "options" && <OptionsView game={game} updateGame={updateGame} slotInfo={slotInfo} saveSlot={saveSlot} loadSlot={loadSlot} exportSave={exportSave} importSave={importSave} returnTitle={() => setScreen("title")} />}
 
-      <nav className="game-nav">
-        {([
-          ["place", "◉", "Lieu"], ["map", "⌖", "Carte"], ["jobs", "◈", "Jobs"], ["relations", "♡", "Relations"], ["journal", "≡", "Journal"], ["inventory", "⌂", "Biens"], ["codex", "✧", "Codex"], ["options", "⚙", "Options"],
-        ] as [Tab, string, string][]).map(([id, icon, label]) => <button key={id} className={tab === id ? "active" : ""} onClick={() => { setMapDestinationOpen(false); setPlacePanel(null); setTab(id); }}><span>{icon}</span>{label}</button>)}
-      </nav>
-
       {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
       {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
       {modal && modal.kind !== "anchor-operation" && <GameModal
@@ -4257,7 +4340,7 @@ export default function Home() {
   );
 }
 
-function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModal }: { hasSave: boolean; onNew: () => void; onContinue: () => void; onChronicle: () => void; modal: ModalState; closeModal: () => void }) {
+function TitleScreen({ hasSave, onNew, onContinue, onChronicle, onOptions, modal, closeModal }: { hasSave: boolean; onNew: () => void; onContinue: () => void; onChronicle: () => void; onOptions: () => void; modal: ModalState; closeModal: () => void }) {
   const titleAudioRef = useRef<HTMLAudioElement>(null);
   const [titleMuted, setTitleMuted] = useState(false);
   const [titleAudioStarted, setTitleAudioStarted] = useState(false);
@@ -4282,33 +4365,44 @@ function TitleScreen({ hasSave, onNew, onContinue, onChronicle, modal, closeModa
     setTitleMuted(true);
   };
 
-  return <main className="title-screen" onPointerDownCapture={ensureTitleMusic}>
+  return <main className="title-screen atlas-title-screen" onPointerDownCapture={ensureTitleMusic}>
     <video className="title-backdrop-video" autoPlay loop muted playsInline preload="auto" poster="/assets/hero.jpg" aria-hidden="true"><source src="/assets/menu/chroniques-alternatives.mp4" type="video/mp4" /></video>
     <audio ref={titleAudioRef} src="/assets/menu/chroniques-alternatives-theme.mp3" autoPlay loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} onPlay={() => setTitleAudioStarted(true)} onPause={() => setTitleAudioStarted(false)} />
-    <div className="title-vignette" />
-    <button className="chronicle-badge" onClick={onChronicle}><span>Chronique Alternative</span><small>Mode libre · Une autre Sylvinia</small></button>
+    <div className="atlas-title-shade" />
+    <section className="atlas-title-identity"><p>Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><strong>Chroniques Alternatives</strong><span>Une autre voie. Les mêmes mondes.</span></section>
+    <nav className="atlas-title-menu" aria-label="Menu principal">
+      <button className="major" onClick={onNew}><span>Nouvelle chronique</span><small>Franchir le portail</small></button>
+      <button disabled={!hasSave} onClick={onContinue}><span>Continuer</span><small>{hasSave ? "Reprendre la dernière sauvegarde" : "Aucune sauvegarde locale"}</small></button>
+      <button onClick={onChronicle}><span>À propos de cette chronique</span><small>Continuité, principe et avertissements</small></button>
+      <button onClick={onOptions}><span>Préférences</span><small>Son et présentation</small></button>
+      <a href="../index.html"><span>Mode Histoire</span><small>Retour au Visual Novel principal</small></a>
+    </nav>
     <button className="title-sound-control" onClick={toggleTitleMusic} aria-label={titleMuted ? "Activer la musique du menu" : "Couper la musique du menu"}><span>{titleMuted ? "♩" : "♫"}</span><small>{titleMuted ? "Musique coupée" : titleAudioStarted ? "Thème du menu" : "Activer la musique"}</small></button>
-    <section className="title-panel"><div className="title-mark">✦</div><p className="eyebrow">Mode libre · Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><p className="title-subtitle">Les Liens du Crépuscule</p><p className="title-copy">Égaré·e dans une réalité qui n’est pas la vôtre, explorez une Sylvinia où Iriana enquête seule et tissez des alliances qui n’appartiennent qu’à vous.</p><div className="title-actions"><button className="primary-action" onClick={onNew}>Nouvelle chronique</button><button className="secondary-action" disabled={!hasSave} onClick={onContinue}>Continuer</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></section>
-    <p className="title-footer">Intimité réglable · Scènes interactives · Sauvegarde locale</p>
+    <p className="title-footer">Une chronique libre dans les mondes de Sylvinia · Sauvegarde locale</p>
     {modal?.kind === "chronicle" && <ChronicleModal onClose={closeModal} />}
+    {modal?.kind === "title-options" && <div className="modal-backdrop atlas-title-options" role="presentation"><section role="dialog" aria-modal="true" aria-labelledby="title-options-heading"><button className="modal-close" onClick={closeModal} aria-label="Fermer">×</button><p className="eyebrow">Préférences rapides</p><h2 id="title-options-heading">Avant de franchir le portail</h2><p>Le volume du thème peut être contrôlé ici. Les profils Cinématique, Équilibré, Compact et Complet, la taille de l’interface et tous les réglages d’accessibilité restent disponibles à tout moment dans la chronique.</p><button className="secondary-action" onClick={toggleTitleMusic}>{titleMuted ? "Activer le thème" : "Couper le thème"}</button></section></div>}
     {modal?.kind === "notice" && <SimpleModal title={modal.title} text={modal.text} onClose={closeModal} />}
   </main>;
 }
 
 function CreatorScreen({ player, setPlayer, onBack, onBegin }: { player: Player; setPlayer: (player: Player) => void; onBack: () => void; onBegin: () => void }) {
   const [explicitWarning, setExplicitWarning] = useState(false);
+  const [step, setStep] = useState(0);
+  const screenRef = useRef<HTMLElement>(null);
   const initial = player.name.trim().charAt(0).toUpperCase() || "?";
-  return <main className="creator-screen">
-    <header className="screen-header"><button className="back-button" onClick={onBack}>← Retour</button><div><p className="eyebrow">Prologue · La personne entre les mondes</p><h1>Créez votre personnage</h1></div><span className="step-pill">Adulte · 18+</span></header>
+  const steps = ["Identité", "Écho", "Vocation", "Présence"];
+  useEffect(() => { screenRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" }); }, [step]);
+  return <main className="creator-screen atlas-creator-screen" ref={screenRef}>
+    <header className="screen-header"><button className="back-button" onClick={onBack}>← Titre</button><div><p className="eyebrow">Prologue · La personne entre les mondes</p><h1>Façonnez votre présence</h1></div><span className="step-pill">Adulte · 18+</span></header>
+    <nav className="atlas-creator-progress" aria-label="Étapes de création">{steps.map((label, index) => <button type="button" key={label} className={index === step ? "active" : index < step ? "done" : ""} onClick={() => index <= step && setStep(index)}><span>{index < step ? "✓" : index + 1}</span><strong>{label}</strong></button>)}</nav>
     <div className="creator-layout">
       <aside className="creator-preview"><div className="avatar-frame"><div className="avatar-glow" /><div className="avatar-hair" style={{ background: player.hair }} /><div className="avatar-head" style={{ background: player.skin }}><i style={{ background: player.eyes }} /><i style={{ background: player.eyes }} /></div><div className="avatar-body" /><strong>{initial}</strong></div><div className="preview-copy"><span className="kicker">Votre chronique</span><h2>{player.name || "Nom encore inconnu"}</h2><p>{player.age} ans · {player.pronouns} · {player.sex}</p><blockquote>« Mon passé s’est effacé. Ce que je choisirai ici, en revanche, m’appartiendra. »</blockquote></div><div className="preview-stats">{TRAITS.map(([name]) => <div key={name} className={name === player.trait ? "is-primary" : ""}><span>{name}</span><b>{name === player.trait ? 7 : 4}</b></div>)}</div></aside>
-      <section className="creator-form">
-        <FormSection number="01" title="Identité" detail="Le monde emploiera ces informations dans les dialogues."><div className="form-grid two"><label>Nom ou prénom<input value={player.name} maxLength={24} placeholder="Votre nom" onChange={(event) => setPlayer({ ...player, name: event.target.value })} /></label><label>Âge adulte<input type="number" min={18} max={120} value={player.age} onChange={(event) => setPlayer({ ...player, age: Number(event.target.value) })} /></label></div><div className="choice-row">{(["elle", "iel", "il"] as Pronouns[]).map((pronouns) => <button key={pronouns} className={player.pronouns === pronouns ? "selected" : ""} onClick={() => setPlayer({ ...player, pronouns })}>{pronouns}</button>)}</div></FormSection>
-        <FormSection number="02" title="Écho résiduel" detail="Votre mémoire est vide, mais certains réflexes ont traversé le portail avec vous."><div className="card-choices">{ECHOES.map(([name, detail]) => <button key={name} className={player.origin === name ? "selected" : ""} onClick={() => setPlayer({ ...player, origin: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>
-        <FormSection number="03" title="Vocation & tempérament" detail="Cette orientation décrit la place que vous choisissez de construire à Al’Gratal, pas un passé dont vous vous souviendriez."><div className="form-grid two"><label>Vocation choisie<select value={player.vocation} onChange={(event) => setPlayer({ ...player, vocation: event.target.value })}>{VOCATIONS.map(([name]) => <option key={name}>{name}</option>)}</select></label><label>Facette dominante<select value={player.trait} onChange={(event) => setPlayer({ ...player, trait: event.target.value })}>{TRAITS.map(([name]) => <option key={name}>{name}</option>)}</select></label></div><p className="trait-note">{TRAITS.find(([name]) => name === player.trait)?.[1]}</p></FormSection>
-        <FormSection number="04" title="Apparence, sexe & intimité" detail="Le sexe adapte la narration des scènes intimes ; il ne détermine ni vos pronoms ni vos relations."><div className="swatch-grid"><ColorField label="Cheveux" value={player.hair} onChange={(hair) => setPlayer({ ...player, hair })} /><ColorField label="Yeux" value={player.eyes} onChange={(eyes) => setPlayer({ ...player, eyes })} /><ColorField label="Peau" value={player.skin} onChange={(skin) => setPlayer({ ...player, skin })} /></div><div className="choice-row sex-choice">{(["femme", "intersexe", "homme"] as PlayerSex[]).map((sex) => <button key={sex} className={player.sex === sex ? "selected" : ""} onClick={() => setPlayer({ ...player, sex })}>{sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe"}</button>)}</div><div className="intimacy-options">{([[
-          "tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]] as [Intimacy, string, string][]).map(([id, title, detail]) => <button key={id} className={player.intimacy === id ? "selected" : ""} onClick={() => id === "explicite" && player.intimacy !== "explicite" ? setExplicitWarning(true) : setPlayer({ ...player, intimacy: id })}><strong>{title}</strong><small>{detail}</small></button>)}</div></FormSection>
-        <div className="creator-submit"><div><strong>Votre personnage est-il prêt ?</strong><small>Une sauvegarde automatique sera créée au début du prologue.</small></div><button className="primary-action" disabled={!player.name.trim() || player.age < 18} onClick={onBegin}>Franchir le portail</button></div>
+      <section className="creator-form atlas-creator-form">
+        {step === 0 && <FormSection number="01" title="Identité" detail="Le monde emploiera ces informations dans les dialogues."><div className="form-grid two"><label>Nom ou prénom<input autoFocus value={player.name} maxLength={24} placeholder="Votre nom" onChange={(event) => setPlayer({ ...player, name: event.target.value })} /></label><label>Âge adulte<input type="number" min={18} max={120} value={player.age} onChange={(event) => setPlayer({ ...player, age: Number(event.target.value) })} /></label></div><p className="creator-field-label">Pronoms employés</p><div className="choice-row">{(["elle", "iel", "il"] as Pronouns[]).map((pronouns) => <button key={pronouns} className={player.pronouns === pronouns ? "selected" : ""} onClick={() => setPlayer({ ...player, pronouns })}>{pronouns}</button>)}</div></FormSection>}
+        {step === 1 && <FormSection number="02" title="Écho résiduel" detail="Votre mémoire est vide, mais certains réflexes ont traversé le portail avec vous."><div className="card-choices">{ECHOES.map(([name, detail]) => <button key={name} className={player.origin === name ? "selected" : ""} onClick={() => setPlayer({ ...player, origin: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>}
+        {step === 2 && <FormSection number="03" title="Vocation & tempérament" detail="La place que vous choisissez de construire à Al’Gratal, et non un passé dont vous vous souviendriez."><div className="form-grid two"><label>Vocation choisie<select value={player.vocation} onChange={(event) => setPlayer({ ...player, vocation: event.target.value })}>{VOCATIONS.map(([name]) => <option key={name}>{name}</option>)}</select></label><label>Facette dominante<select value={player.trait} onChange={(event) => setPlayer({ ...player, trait: event.target.value })}>{TRAITS.map(([name]) => <option key={name}>{name}</option>)}</select></label></div><p className="trait-note">{TRAITS.find(([name]) => name === player.trait)?.[1]}</p><div className="creator-trait-preview">{TRAITS.map(([name, detail]) => <button key={name} type="button" className={player.trait === name ? "selected" : ""} onClick={() => setPlayer({ ...player, trait: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>}
+        {step === 3 && <FormSection number="04" title="Présence & intimité" detail="Le sexe adapte les scènes intimes ; il ne détermine ni vos pronoms ni vos relations."><div className="swatch-grid"><ColorField label="Cheveux" value={player.hair} onChange={(hair) => setPlayer({ ...player, hair })} /><ColorField label="Yeux" value={player.eyes} onChange={(eyes) => setPlayer({ ...player, eyes })} /><ColorField label="Peau" value={player.skin} onChange={(skin) => setPlayer({ ...player, skin })} /></div><p className="creator-field-label">Corps du personnage</p><div className="choice-row sex-choice">{(["femme", "intersexe", "homme"] as PlayerSex[]).map((sex) => <button key={sex} className={player.sex === sex ? "selected" : ""} onClick={() => setPlayer({ ...player, sex })}>{sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe"}</button>)}</div><p className="creator-field-label">Niveau de narration intime</p><div className="intimacy-options">{([["tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]] as [Intimacy, string, string][]).map(([id, title, detail]) => <button key={id} className={player.intimacy === id ? "selected" : ""} onClick={() => id === "explicite" && player.intimacy !== "explicite" ? setExplicitWarning(true) : setPlayer({ ...player, intimacy: id })}><strong>{title}</strong><small>{detail}</small></button>)}</div></FormSection>}
+        <div className="creator-submit"><button className="secondary-action" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))}>Étape précédente</button><div><strong>{step === 3 ? "Votre personnage est-il prêt ?" : `${step + 1} / ${steps.length} · ${steps[step]}`}</strong><small>{step === 3 ? "Une sauvegarde automatique sera créée au début du prologue." : "Vos choix peuvent encore être modifiés."}</small></div>{step < 3 ? <button className="primary-action" disabled={step === 0 && (!player.name.trim() || player.age < 18)} onClick={() => setStep((current) => Math.min(3, current + 1))}>Continuer</button> : <button className="primary-action" disabled={!player.name.trim() || player.age < 18} onClick={onBegin}>Franchir le portail</button>}</div>
       </section>
     </div>
     {explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { setPlayer({ ...player, intimacy: "explicite" }); setExplicitWarning(false); }} />}
@@ -4411,6 +4505,7 @@ function JobsView({ game, onStart, onLocate }: { game: GameState; onStart: (job:
 
 function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, setTab, onWaitForRoute }: { game: GameState; setModal: (modal: ModalState) => void; setSelectedLocation: (id: string) => void; setSelectedSpot: (id: string) => void; setTab: (tab: Tab) => void; onWaitForRoute: (id: string) => void }) {
   const [section, setSection] = useState<"links" | "dates" | "crossed">("links");
+  const [selectedCharacterId, setSelectedCharacterId] = useState("saidin");
   const unlockedCharacters = CHARACTERS.filter((character) => characterUnlocked(game, character));
   const knownGroupDates = GROUP_DATES.filter((date) => !date.legacyOnly
     && (!(HR_DATE_IDS as readonly string[]).includes(date.id) || hrDateVisibility(date, game).visible)
@@ -4419,6 +4514,18 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
   const availableGroupDates = knownGroupDates.filter((date) => groupDateUnlocked(game, date));
   const metCount = unlockedCharacters.length;
   const dateCharacters = unlockedCharacters.filter((character) => DATE_SCENES.some((date) => date.character === character.id) || HOME_DATE_PROFILES[character.id]);
+  const selectedCharacter = unlockedCharacters.find((character) => character.id === selectedCharacterId) || unlockedCharacters[0];
+  const selectedRelation = selectedCharacter ? game.relationships[selectedCharacter.id] : undefined;
+  const selectedSchedule = selectedCharacter ? characterPlace(selectedCharacter, game.day, game.period, game.flags, game.housing) : undefined;
+  const selectedLocationData = LOCATIONS.find((entry) => entry.id === selectedSchedule?.location);
+  const selectedSpotData = selectedSchedule ? spotById(selectedSchedule.spot) : undefined;
+  const selectedRawNext = selectedCharacter && selectedRelation ? sceneFor(selectedCharacter.id, selectedRelation.stage) : undefined;
+  const selectedNext = selectedRawNext ? relationRouteVariant(selectedRawNext, game).route : undefined;
+  const selectedNeeded = selectedNext && selectedRelation ? Math.max(0, BOND_THRESHOLDS[selectedNext.stage] - selectedRelation.affection - selectedRelation.trust) : 0;
+  const selectedObjective = selectedNext ? routeNarrativeObjective(selectedNext, game) : undefined;
+  const selectedNarrativeReady = Boolean(selectedNext && !selectedObjective);
+  const selectedRouteTarget = selectedCharacter && selectedNext && selectedNarrativeReady ? nextPresence(selectedCharacter, game, ROUTE_SPOTS[selectedNext.id], ROUTE_PERIODS[selectedNext.id], selectedNext.dayMin) : null;
+  const selectedHasDatePlanner = selectedCharacter ? DATE_SCENES.some((date) => date.character === selectedCharacter.id) || Boolean(HOME_DATE_PROFILES[selectedCharacter.id]) : false;
 
   return <section className="content-view relations-view"><header className="content-header"><div><p className="eyebrow">Constellation des liens</p><h1>Relations</h1><p>Consultez séparément les liens, les rendez-vous et les dynamiques croisées. Seules les personnes réellement rencontrées apparaissent.</p></div><span>{metCount} relation{metCount > 1 ? "s" : ""}</span></header>
     <SectionTabs label="Sections des relations" active={section} onChange={setSection} items={[
@@ -4439,29 +4546,21 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
       return <article className={`date-directory-card ${!hasPlanner ? "locked" : ""}`} style={{ "--character": character.color } as React.CSSProperties} key={character.id}><img src={character.portrait} alt="" /><div><span style={{ color: character.color }}>{character.name}</span><strong>{availableDates.length} sortie${availableDates.length > 1 ? "s" : ""} accessible${availableDates.length > 1 ? "s" : ""}</strong><small>{homeAvailable ? "Une visite au logis est également disponible." : game.housing.propertyId ? "La visite au logis demande encore un lien plus avancé." : "Achetez un logis pour ouvrir les visites privées."}</small></div><button disabled={!hasPlanner} onClick={() => setModal({ kind: "date-planner", character: character.id })}>Planifier</button></article>;
     })}</div>}
 
-    {section === "links" && <div className="relationship-grid">{unlockedCharacters.map((character) => {
-    const relation = game.relationships[character.id];
-    const unlocked = characterUnlocked(game, character);
-    const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
-    const locationId = schedule.location;
-    const location = LOCATIONS.find((entry) => entry.id === locationId);
-    const exactSpot = spotById(schedule.spot);
-    const rawNext = sceneFor(character.id, relation.stage);
-    const next = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
-    const needed = next ? Math.max(0, BOND_THRESHOLDS[next.stage] - relation.affection - relation.trust) : 0;
-    const confidenceObjective = next ? routeNarrativeObjective(next, game) : undefined;
-    const narrativeReady = Boolean(next && !confidenceObjective);
-    const dates = DATE_SCENES.filter((date) => date.character === character.id);
-    const hasDatePlanner = dates.length > 0 || Boolean(HOME_DATE_PROFILES[character.id]);
-    const routeTarget = next && narrativeReady ? nextPresence(character, game, ROUTE_SPOTS[next.id], ROUTE_PERIODS[next.id], next.dayMin) : null;
-    return <article key={character.id} className="relationship-card" style={{ "--character": character.color } as React.CSSProperties}>
-      <button className="relationship-portrait" onClick={() => setModal({ kind: "character", character: character.id })}><img src={character.portrait} alt="" /><div><span>{character.name}</span><small>{character.role}</small></div></button>
-      <div className="relationship-body"><div className="stage-line"><strong>{STAGE_LABELS[relation.stage]}</strong><span>{relation.stage} / 5</span></div><Meter label="Affection" value={relation.affection} color={character.color} /><Meter label="Confiance" value={relation.trust} color="#d6c176" /><Meter label="Désir" value={relation.desire} color="#e76588" />
-        {unlocked && <div className="relation-clue"><span>{schedule.traveling ? `↝ Escale · ${exactSpot?.name}` : `⌖ ${location?.name} · ${exactSpot?.shortName} · jusqu’au J${schedule.untilDay}`}</span><small>{schedule.action}</small><small>{next ? confidenceObjective || (game.day < next.dayMin ? `Prochaine scène au jour ${next.dayMin}` : needed ? `Lien requis : encore ${needed} points` : ROUTE_SPOTS[next.id] !== schedule.spot ? `Prochaine scène : ${spotById(ROUTE_SPOTS[next.id])?.name}` : !ROUTE_PERIODS[next.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[next.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}` : "Une scène importante est disponible") : "Route accomplie · rencontres libres disponibles"}</small></div>}
-        {unlocked && <div className="card-actions"><button onClick={() => setModal({ kind: "character", character: character.id })}>Voir le dossier</button><button onClick={() => { setSelectedLocation(locationId); setSelectedSpot(schedule.spot); setTab("map"); }}>Localiser</button>{hasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: character.id })}>♡ Rendez-vous</button>}{next && narrativeReady && !needed && routeTarget && <button onClick={() => onWaitForRoute(next.id)}>Attendre · {waitDurationLabel(game, routeTarget)}</button>}</div>}
-      </div>
-    </article>;
-  })}</div>}
+    {section === "links" && selectedCharacter && selectedRelation && selectedSchedule && <div className="atlas-relation-stage" style={{ "--character": selectedCharacter.color } as React.CSSProperties}>
+      <section className="atlas-relation-hero">
+        <div className="atlas-relation-aura" />
+        <img src={selectedCharacter.portrait} alt={selectedCharacter.name} />
+        <div className="atlas-relation-name"><p>{selectedCharacter.role}</p><h2>{selectedCharacter.name}</h2><span>{STAGE_LABELS[selectedRelation.stage]} · rang {selectedRelation.stage}/5</span></div>
+      </section>
+      <section className="atlas-relation-dossier">
+        <header><div><p className="eyebrow">Dossier relationnel</p><h2>{selectedCharacter.name}</h2></div><button type="button" onClick={() => setModal({ kind: "character", character: selectedCharacter.id })}>Dossier complet</button></header>
+        <p className="atlas-relation-role">{selectedCharacter.role}</p>
+        <div className="atlas-relation-metrics"><Meter label="Affection" value={selectedRelation.affection} color={selectedCharacter.color} /><Meter label="Confiance" value={selectedRelation.trust} color="#d6c176" /><Meter label="Désir" value={selectedRelation.desire} color="#e76588" /></div>
+        <article className="atlas-relation-objective"><span>Présence actuelle</span><strong>{selectedSchedule.traveling ? `Escale · ${selectedSpotData?.name}` : `${selectedLocationData?.name} · ${selectedSpotData?.shortName}`}</strong><p>{selectedSchedule.action}</p><small>{selectedNext ? selectedObjective || (game.day < selectedNext.dayMin ? `Prochaine scène au jour ${selectedNext.dayMin}` : selectedNeeded ? `Encore ${selectedNeeded} points de lien requis.` : ROUTE_SPOTS[selectedNext.id] !== selectedSchedule.spot ? `La prochaine scène vous attend à ${spotById(ROUTE_SPOTS[selectedNext.id])?.name}.` : !ROUTE_PERIODS[selectedNext.id]?.includes(PERIODS[game.period].id) ? `Moment requis : ${ROUTE_PERIODS[selectedNext.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).join(" ou ")}.` : "Une scène importante est disponible ici.") : "Fil accompli · les rencontres libres restent disponibles."}</small></article>
+        <div className="atlas-relation-actions"><button onClick={() => { setSelectedLocation(selectedSchedule.location); setSelectedSpot(selectedSchedule.spot); setTab("map"); }}>◇ Localiser</button>{selectedHasDatePlanner && <button className="date-action" onClick={() => setModal({ kind: "date-planner", character: selectedCharacter.id })}>♡ Rendez-vous</button>}{selectedNext && selectedNarrativeReady && !selectedNeeded && selectedRouteTarget && <button onClick={() => onWaitForRoute(selectedNext.id)}>Attendre · {waitDurationLabel(game, selectedRouteTarget)}</button>}</div>
+      </section>
+      <nav className="atlas-relation-strip" aria-label="Personnages rencontrés">{unlockedCharacters.map((character) => { const relation = game.relationships[character.id]; return <button type="button" key={character.id} className={character.id === selectedCharacter.id ? "active" : ""} onClick={() => setSelectedCharacterId(character.id)} style={{ "--character": character.color } as React.CSSProperties}><img src={character.portrait} alt="" /><span><strong>{character.name}</strong><small>{STAGE_LABELS[relation.stage]}</small></span></button>; })}</nav>
+    </div>}
   </section>;
 }
 
@@ -4782,7 +4881,7 @@ function LegacyOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exp
   return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><div className="options-header-actions"><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Ce réglage peut être modifié à tout moment et adapte la narration des scènes concernées.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p></footer></div>{explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}</section>;
 }
 
-function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
+function DeprecatedOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
   const [section, setSection] = useState<"experience" | "saves" | "developer" | "about">("experience");
   const [explicitWarning, setExplicitWarning] = useState(false);
   const chooseIntimacy = (intimacy: Intimacy) => {
@@ -4814,6 +4913,64 @@ function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSav
       {section === "saves" && <div className="option-panel"><div className="option-panel-heading"><div><p className="eyebrow">Progression</p><h2>Sauvegardes manuelles</h2></div><span>Sauvegarde automatique active</span></div><div className="save-slot-list">{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}</div><div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div>}
       {section === "developer" && <DeveloperPanel game={game} updateGame={updateGame} />}
       {section === "about" && <div className="option-panel credits-panel"><p className="eyebrow">Continuité du projet</p><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><div className="about-actions"><button className="secondary-action" onClick={returnTitle}>Revoir l’écran titre</button><a className="return-story-button" href="../index.html">Revenir au Mode Histoire</a></div></div>}
+    </div>
+    {explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}
+  </section>;
+}
+
+function RangeOption({ label, value, minimum, maximum, step = 1, suffix = "%", onChange }: { label: string; value: number; minimum: number; maximum: number; step?: number; suffix?: string; onChange: (value: number) => void }) {
+  return <label className="range-option atlas-range-option"><span>{label} <b>{value}{suffix}</b></span><input type="range" min={minimum} max={maximum} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
+}
+
+function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
+  const [section, setSection] = useState<"interface" | "readability" | "device" | "game" | "chronicle">("interface");
+  const [explicitWarning, setExplicitWarning] = useState(false);
+  const updateSettings = (settings: Partial<GameSettings>) => updateGame((current) => ({ ...current, settings: { ...current.settings, ...settings } }));
+  const chooseIntimacy = (intimacy: Intimacy) => {
+    if (intimacy === "explicite" && game.player.intimacy !== "explicite") {
+      setExplicitWarning(true);
+      return;
+    }
+    updateGame((current) => ({ ...current, player: { ...current.player, intimacy } }));
+  };
+
+  const sectionCopy = {
+    interface: ["Interface", "Composez la densité, la lumière et les détails du monde."],
+    readability: ["Lisibilité", "Ajustez le texte, le contraste et les retours de choix."],
+    device: ["Appareil", "Laissez l’interface reconnaître l’écran ou imposez une navigation."],
+    game: ["Audio & jeu", "Contrôlez l’ambiance sonore et les paramètres narratifs."],
+    chronicle: ["Chronique", "Gérez vos sauvegardes, les outils et la continuité du projet."],
+  } as const;
+
+  return <section className="content-view options-view atlas-options-view">
+    <header className="content-header"><div><p className="eyebrow">Atelier de présentation</p><h1>Options</h1><p>Chaque réglage est enregistré avec votre chronique et peut être modifié sans la recommencer.</p></div><span>{UI_STYLE_META[game.settings.uiStyle].glyph} {UI_STYLE_META[game.settings.uiStyle].label}</span></header>
+    <div className="atlas-options-workbench">
+      <nav className="atlas-options-categories" aria-label="Catégories des options">{([
+        ["interface", "◐", "Interface", "Profils et atmosphère"],
+        ["readability", "Aa", "Lisibilité", "Texte et contraste"],
+        ["device", "▣", "Appareil", "Adaptation et navigation"],
+        ["game", "♫", "Audio & jeu", "Son et narration"],
+        ["chronicle", "✦", "Chronique", "Sauvegardes et crédits"],
+      ] as [typeof section, string, string, string][]).map(([id, icon, label, detail]) => <button type="button" key={id} className={section === id ? "active" : ""} onClick={() => setSection(id)}><span>{icon}</span><div><strong>{label}</strong><small>{detail}</small></div></button>)}</nav>
+
+      <section className="atlas-options-panel">
+        <header><p className="eyebrow">{sectionCopy[section][0]}</p><h2>{sectionCopy[section][0]}</h2><p>{sectionCopy[section][1]}</p></header>
+
+        {section === "interface" && <div className="atlas-option-stack">
+          <div className="atlas-profile-grid">{(Object.entries(UI_STYLE_META) as [UiStyle, (typeof UI_STYLE_META)[UiStyle]][]).map(([id, meta]) => <button type="button" key={id} className={game.settings.uiStyle === id ? "active" : ""} onClick={() => updateSettings({ uiStyle: id })}><span>{meta.glyph}</span><strong>{meta.label}</strong><small>{meta.detail}</small></button>)}</div>
+          <div className="atlas-option-grid"><RangeOption label="Échelle de l’interface" value={game.settings.uiScale} minimum={78} maximum={125} onChange={(uiScale) => updateSettings({ uiScale })} /><RangeOption label="Opacité des panneaux" value={game.settings.panelOpacity} minimum={18} maximum={92} onChange={(panelOpacity) => updateSettings({ panelOpacity })} /><RangeOption label="Assombrissement du décor" value={game.settings.backgroundDim} minimum={0} maximum={70} onChange={(backgroundDim) => updateSettings({ backgroundDim })} /></div>
+          <fieldset className="atlas-accent-picker"><legend>Teinte d’accent</legend>{(["imperial", "crimson", "violet", "ice"] as AccentTone[]).map((tone) => <button type="button" key={tone} className={`${tone} ${game.settings.accentTone === tone ? "active" : ""}`} onClick={() => updateSettings({ accentTone: tone })}><i />{tone === "imperial" ? "Or impérial" : tone === "crimson" ? "Carmin" : tone === "violet" ? "Violet" : "Givre"}</button>)}</fieldset>
+          <div className="atlas-toggle-grid"><Toggle label="Détails secondaires" detail="Conserve les aides, descriptions et métadonnées." active={game.settings.secondaryDetails} onClick={() => updateSettings({ secondaryDetails: !game.settings.secondaryDetails })} /><Toggle label="Titres monumentaux" detail="Renforce l’identité visuelle des lieux et registres." active={game.settings.monumentalTitles} onClick={() => updateSettings({ monumentalTitles: !game.settings.monumentalTitles })} /><Toggle label="Grain décoratif" detail="Ajoute une texture légère aux surfaces." active={game.settings.decorativeGrain} onClick={() => updateSettings({ decorativeGrain: !game.settings.decorativeGrain })} /></div>
+        </div>}
+
+        {section === "readability" && <div className="atlas-option-stack"><div className="atlas-option-grid"><RangeOption label="Taille du texte" value={game.settings.fontScale} minimum={80} maximum={140} step={5} onChange={(fontScale) => updateSettings({ fontScale })} /></div><div className="atlas-reading-sample"><small>Aperçu de lecture</small><h3>Une lumière entre les mondes</h3><p>Les mots doivent rester lisibles sans recouvrir le décor qui leur donne du sens. Cette phrase suit immédiatement vos réglages.</p></div><div className="atlas-toggle-grid"><Toggle label="Contraste renforcé" detail="Éclaircit le texte principal et densifie les panneaux." active={game.settings.highContrastText} onClick={() => updateSettings({ highContrastText: !game.settings.highContrastText })} /><Toggle label="Réduire les animations" detail="Neutralise les transitions et mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateSettings({ reducedMotion: !game.settings.reducedMotion })} /><Toggle label="Impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateSettings({ showImpact: !game.settings.showImpact })} /></div></div>}
+
+        {section === "device" && <div className="atlas-option-stack"><div className="atlas-device-preview"><span>▱</span><div><small>Disposition reconnue</small><strong>L’interface tient compte de la largeur, de la hauteur, de l’orientation et du mode tactile.</strong></div></div><div className="atlas-toggle-grid"><Toggle label="Disposition adaptative" detail="Détecte automatiquement téléphone, écran pliable, tablette ou ordinateur." active={game.settings.adaptiveLayout} onClick={() => updateSettings({ adaptiveLayout: !game.settings.adaptiveLayout })} /><Toggle label="Barre d’état du monde" detail="Affiche le jour, la période, les pièces et la Confluence." active={game.settings.statusBar} onClick={() => updateSettings({ statusBar: !game.settings.statusBar })} /></div><label className="select-option"><span>Navigation tactile</span><select value={game.settings.touchNavigation} onChange={(event) => updateSettings({ touchNavigation: event.target.value as TouchNavigation })}><option value="auto">Automatique</option><option value="bottom">Barre inférieure</option><option value="side">Rail latéral</option></select></label><p className="hint">En mode automatique, le portrait utilise une barre inférieure et le paysage compact conserve un rail latéral pour laisser toute la hauteur au jeu.</p></div>}
+
+        {section === "game" && <div className="atlas-option-stack"><div className="atlas-toggle-grid"><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateSettings({ music: !game.settings.music })} /></div><RangeOption label="Volume" value={game.settings.volume} minimum={0} maximum={100} step={4} onChange={(volume) => updateSettings({ volume })} /><div className="option-select-grid"><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Narration intime</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label></div><p className="hint">Le réglage explicite est réservé aux adultes et demande une confirmation avant son activation.</p></div>}
+
+        {section === "chronicle" && <div className="atlas-option-stack"><div className="atlas-save-list">{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}</div><div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="atlas-about"><p className="eyebrow">Continuité du projet</p><h3>Chronique parallèle & crédits</h3><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>.</p><div><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Mode Histoire</a></div></footer></div>}
+      </section>
     </div>
     {explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}
   </section>;
