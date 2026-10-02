@@ -47,6 +47,13 @@ for (const action of ["continueGame", "loadSlot", "saveSlot", "advancePeriod", "
 assert.match(page, /chroniques-alternatives\.mp4/, "La cinématique réelle doit être conservée.");
 assert.match(title, /<video/, "L’écran-titre doit lire la cinématique.");
 assert.match(page, /\.\.\/index\.html/, "Le retour au Mode Histoire doit rester disponible.");
+const developerPanel = page.slice(page.indexOf("function DeveloperPanel"), page.indexOf("type IntimacyStep"));
+assert.match(developerPanel, /Accès direct aux scènes intimes/, "Le panneau développeur doit proposer l’accès direct aux continuations intimes.");
+assert.match(developerPanel, /Ouvrir la partie intime/, "Le saut de la première partie du rendez-vous doit être explicite.");
+assert.match(page, /function openDevIntimacy[\s\S]*replay:\s*true/, "Les prévisualisations intimes développeur doivent rester sans mutation de sauvegarde.");
+assert.match(developerPanel, /ACT_ONE_SCENE_ORDER/, "L’outil de campagne doit utiliser la chronologie actuelle.");
+assert.match(developerPanel, /main-story-act-1-complete/, "L’outil de campagne doit poser le flag canonique actuel.");
+assert.doesNotMatch(developerPanel, /["']main-story-complete["']/, "Le panneau développeur ne doit plus restaurer l’ancien état de campagne.");
 for (const forbidden of ["Démo rang", "Temps de jeu", "données fictives", "Vitesse du texte"]) {
   assert.ok(!page.includes(forbidden), `Contenu de prototype non adossé au jeu : ${forbidden}`);
 }

@@ -221,7 +221,7 @@ try {
       assert.match(explicitText, explicitSexualAction, `${entry.id}: le mode explicite doit contenir une vraie continuation sexuelle non pénétrative`);
       assert.match(explicitText, /(?:orgasme|joui(?:r|t|ssance)?)/iu, `${entry.id}: la progression explicite doit aller jusqu'à son terme`);
       assert.match(entry.chapters.explicite[2].map((line) => line.text).join(" "), /(?:retir|d[eé]shabill|v[eê]tement|chemise|veste|cape|pantalon|nue?)/iu, `${entry.id}: la nudité doit être racontée avant la CG`);
-      assert.match(entry.chapters.explicite[3].map((line) => line.text).join(" "), /(?:CG|r[eé]v[eè]le|nue?|nudit[eé])/iu, `${entry.id}: la CG doit introduire la nudité`);
+      assert.match(entry.chapters.explicite[3].map((line) => line.text).join(" "), /(?:r[eé]v[eè]le|nue?|nudit[eé]|peau)/iu, `${entry.id}: la révélation visuelle doit prolonger la nudité racontée`);
     }
   }
   for (const context of contexts) {
@@ -237,6 +237,7 @@ try {
     await read("src/naiah-date-intimacy-home.ts"),
   ].join("\n");
   assert.doesNotMatch(authoredIntimacySource, /PAIR_ROUTE_DATA|(?:role|route|position)\s*:\s*["'](?:first|second|shared)["']|\.replace\s*\(/u, "les dix-huit variantes doivent rester manuelles et non générées");
+  assert.doesNotMatch(authoredIntimacySource, /\bCG\b/u, "la narration ne doit jamais nommer la mécanique de CG au joueur");
   assert.doesNotMatch(authoredIntimacySource, forbiddenPenetration, "aucune route Naïah ne doit contenir de pénétration");
   assert.doesNotMatch(authoredIntimacySource, clinicalLanguage, "les scènes intimes ne doivent pas adopter un vocabulaire clinique");
 
