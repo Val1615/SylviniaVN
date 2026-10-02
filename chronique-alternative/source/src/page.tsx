@@ -57,6 +57,7 @@ import { groupIntimateVisualState, soloIntimateVisualState, type IntimateCgState
 import {
   GROUP_DATES,
   GROUP_INTIMACY_GAMES,
+  HOME_GROUP_INTIMACY_DATES,
   groupIntimacyEnding,
   groupIntimacyGameResult,
   groupIntimacyOpening,
@@ -409,6 +410,10 @@ type ModalState =
 
 type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
 type GroupIntimacyModalState = Extract<NonNullable<ModalState>, { kind: "group-intimacy" }>;
+type DevIntimacyTarget =
+  | { kind: "date"; dateId: string }
+  | { kind: "home"; character: string }
+  | { kind: "group"; groupDateId: string };
 
 type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home" | "letter" | "invitation" | "rumor" | "knowledge";
 
@@ -3916,6 +3921,37 @@ export default function Home() {
     setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true });
   }
 
+  function openDevIntimacy(target: DevIntimacyTarget) {
+    if (!game?.settings.developer) return;
+    setDialogue(null);
+    setV2Dialog(null);
+    if (target.kind === "date") {
+      const date = DATE_SCENES.find((entry) => entry.id === target.dateId);
+      if (!date) return;
+      setModal({
+        kind: "intimacy",
+        character: date.character,
+        dateId: date.id,
+        background: date.intimacySetting.background || spotById(date.spot)?.background,
+        replay: true,
+      });
+      return;
+    }
+    if (target.kind === "home") {
+      const property = propertyById(game.housing.propertyId);
+      if (!property || !HOME_DATE_PROFILES[target.character]) {
+        setModal({ kind: "notice", title: "Logis requis", text: "Installez d’abord un logis de test depuis les outils développeur." });
+        return;
+      }
+      setModal({ kind: "intimacy", character: target.character, background: property.background, home: true, replay: true });
+      return;
+    }
+    const date = groupIntimacyContextById(target.groupDateId);
+    if (!date) return;
+    const homeBackground = date.home || date.id.endsWith("-home") ? propertyById(game.housing.propertyId)?.background : undefined;
+    setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true });
+  }
+
   function waitForCharacter(characterId: string, spotId = game?.spot || "") {
     if (!game) return;
     const character = CHARACTERS.find((entry) => entry.id === characterId);
@@ -4315,7 +4351,7 @@ export default function Home() {
   const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
   const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
   const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />;
-  const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), slotVersion };
+  const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), onDevOpenIntimacy: openDevIntimacy, slotVersion };
   const rank = rankQueue[0];
   const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
   const showRank = Boolean(rank && rankCharacter && !dialogue && !modal && !v2Dialog);
@@ -5103,9 +5139,152 @@ function IntimateCg({ cg }: { cg: IntimateCgState }) {
   </div>;
 }
 
-function DeveloperPanel({ game, updateGame }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void }) {
-  if (!game.settings.developer) return <div className="option-panel dev-panel locked"><h2>Mode développeur</h2><p>Accès rapide aux jours, caractéristiques, routes et ressources. Raccourci : Ctrl + Maj + D.</p><button className="secondary-action" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: true } }))}>Activer le mode développeur</button></div>;
-  return <div className="option-panel dev-panel"><div className="dev-title"><div><span>DEV</span><h2>Mode développeur</h2></div><button onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button></div><div className="dev-row"><label>Jour<input type="number" min={1} value={game.day} onChange={(event) => updateGame((current) => ({ ...current, day: Math.max(1, Number(event.target.value) || 1) }))} /></label><label>Période<select value={game.period} onChange={(event) => updateGame((current) => ({ ...current, period: Number(event.target.value) }))}>{PERIODS.map((period, index) => <option value={index} key={period.id}>{period.label}</option>)}</select></label><button onClick={() => updateGame((current) => ({ ...current, day: current.day + 7, period: 0 }))}>+7 jours</button><button onClick={() => updateGame((current) => ({ ...current, coins: current.coins + 100 }))}>+100 pièces</button><button onClick={() => updateGame((current) => ({ ...current, confluence: 100 }))}>Confluence 100</button><button onClick={() => updateGame((current) => ({ ...current, ambientHistory: emptyAmbientHistory(), sharedHistory: [] }))}>Réinitialiser les conversations</button></div><div className="dev-stats">{(Object.keys(game.stats) as StatKey[]).map((stat) => <button key={stat} onClick={() => updateGame((current) => ({ ...current, stats: { ...current.stats, [stat]: current.stats[stat] + 1 } }))}>{STAT_LABELS[stat]} <b>{game.stats[stat]}</b> +</button>)}</div><div className="dev-toggles"><Toggle label="Aucun coût de temps" detail="Voyages et scènes ne font plus avancer l’heure." active={game.settings.noTimeCost} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, noTimeCost: !current.settings.noTimeCost } }))} /><Toggle label="Tout déverrouiller" detail="Ignore jours, seuils et routes fermées." active={game.settings.unlockAll} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, unlockAll: !current.settings.unlockAll } }))} /></div><h3>Fil principal</h3><div className="dev-row"><button onClick={() => updateGame((current) => ({ ...current, day: Math.max(8, current.day), location: "akuhn", spot: "akuhn-throne-room", period: 0 }))}>Aller à l’audience d’Amanea</button><button onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "iriana-0", "draven-0", "amanea-0", "valurn-2", "amanea-3", "iriana-3", "amanea-4", "draven-4", "bellirith-3"]), flags: unique([...current.flags, "social:medig-window", "social:amanea-family-truth", "main-story-complete"]), relationships: { ...current.relationships, iriana: { ...current.relationships.iriana, stage: 5, met: true, affection: 60, trust: 70 }, valurn: { ...current.relationships.valurn, stage: 5, met: true, affection: 60, trust: 70 }, bellirith: { ...current.relationships.bellirith, stage: 5, met: true, affection: 60, trust: 70 }, amanea: { ...current.relationships.amanea, stage: 5, met: true, affection: 60, trust: 70, desire: 45 }, draven: { ...current.relationships.draven, stage: 5, met: true, affection: 40, trust: 75, desire: 0 } } }))}>Accomplir l’histoire</button></div><h3>Étapes relationnelles</h3><div className="dev-routes">{CHARACTERS.map((character) => <label key={character.id}><span>{character.name}</span><select value={game.relationships[character.id].stage} onChange={(event) => updateGame((current) => ({ ...current, relationships: { ...current.relationships, [character.id]: { ...current.relationships[character.id], stage: Number(event.target.value), met: true, affection: Math.max(current.relationships[character.id].affection, Number(event.target.value) * 10), trust: Math.max(current.relationships[character.id].trust, Number(event.target.value) * 10) } } }))}>{[0, 1, 2, 3, 4, 5].map((stage) => <option key={stage} value={stage}>{stage} · {STAGE_LABELS[stage]}</option>)}</select></label>)}</div></div>;
+type DeveloperPanelProps = {
+  game: GameState;
+  updateGame: (fn: (game: GameState) => GameState) => void;
+  onOpenIntimacy?: (target: DevIntimacyTarget) => void;
+};
+
+function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProps) {
+  const [soloSelection, setSoloSelection] = useState("");
+  const [groupSelection, setGroupSelection] = useState("");
+  const characterName = (id: string) => CHARACTERS.find((entry) => entry.id === id)?.name || id;
+  const hasSoloRoute = (character: string, dateId?: string, home = false) => {
+    if (character === "hylee") return game.player.sex !== "intersexe" && Boolean(hyleeIntimacyContext(dateId, home));
+    if (character === "remerii") return game.player.sex !== "intersexe" && Boolean(remeriiIntimacyContext(dateId, home));
+    if (character === "naiah") return game.player.sex !== "intersexe" && Boolean(naiahProximityContext(dateId, home));
+    return home
+      ? homeIntimacyRoutes(character, game.player.sex).length > 0
+      : intimacyDirections(character, game.player.sex, dateId).length > 0;
+  };
+  const soloTargets: { key: string; label: string; target: DevIntimacyTarget }[] = [
+    ...DATE_SCENES.filter((date) => hasSoloRoute(date.character, date.id)).map((date) => ({
+      key: `date:${date.id}`,
+      label: `${characterName(date.character)} · ${date.title}`,
+      target: { kind: "date" as const, dateId: date.id },
+    })),
+    ...(game.housing.propertyId ? Object.values(HOME_DATE_PROFILES).filter((profile) => hasSoloRoute(profile.character, undefined, true)).map((profile) => ({
+      key: `home:${profile.character}`,
+      label: `${characterName(profile.character)} · ${profile.title} (logis)`,
+      target: { kind: "home" as const, character: profile.character },
+    })) : []),
+  ];
+  const groupTargets: { key: string; label: string; target: DevIntimacyTarget }[] = [...GROUP_DATES, ...HOME_GROUP_INTIMACY_DATES]
+    .filter((date) => !date.legacyOnly && !date.intimacyDisabled)
+    .filter((date) => !(date.home || date.id.endsWith("-home")) || Boolean(game.housing.propertyId))
+    .filter((date) => groupIntimacyRoutes(date.id, game.player.sex).length > 0)
+    .map((date) => ({
+      key: `group:${date.id}`,
+      label: `${date.characters.map(characterName).join(" & ")} · ${date.title}`,
+      target: { kind: "group" as const, groupDateId: date.id },
+    }));
+  const activeSoloKey = soloTargets.some((entry) => entry.key === soloSelection) ? soloSelection : soloTargets[0]?.key || "";
+  const activeGroupKey = groupTargets.some((entry) => entry.key === groupSelection) ? groupSelection : groupTargets[0]?.key || "";
+  const launchTarget = (entries: typeof soloTargets, key: string) => {
+    const entry = entries.find((candidate) => candidate.key === key);
+    if (entry) onOpenIntimacy?.(entry.target);
+  };
+
+  if (!game.settings.developer) return <div className="option-panel dev-panel locked">
+    <h2>Mode développeur</h2>
+    <p>Accès rapide aux jours, caractéristiques, routes, ressources et prévisualisations. Raccourci : Ctrl + Maj + D.</p>
+    <button type="button" className="secondary-action" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: true } }))}>Activer le mode développeur</button>
+  </div>;
+
+  const prepareRelationships = () => updateGame((current) => ({
+    ...current,
+    relationships: Object.fromEntries(CHARACTERS.map((character) => {
+      const relation = current.relationships[character.id];
+      return [character.id, {
+        ...relation,
+        met: true,
+        stage: 5,
+        affection: Math.max(relation.affection, 80),
+        trust: Math.max(relation.trust, 80),
+        desire: Math.max(relation.desire, 80),
+      }];
+    })),
+  }));
+  const completeActOne = () => updateGame((current) => ({
+    ...current,
+    day: Math.max(current.day, 30),
+    history: unique([...current.history, ...ACT_ONE_SCENE_ORDER]),
+    flags: unique([
+      ...current.flags,
+      "story-saidin-met",
+      "story-phoenix-token",
+      "story-route-algratal",
+      "story-rocky-portal-open",
+      "story-empire-obscurci-rupture",
+      "main-story-act-1-complete",
+      "act2-investigation-window",
+    ]),
+    journal: current.flags.includes("main-story-act-1-complete")
+      ? current.journal
+      : [...current.journal, "Outil développeur · Acte I marqué comme accompli avec l’état canonique actuel."],
+  }));
+  const installTestHome = () => updateGame((current) => {
+    if (current.housing.propertyId) return current;
+    const property = HOUSING_PROPERTIES[0];
+    return {
+      ...current,
+      location: property.location,
+      spot: property.spot,
+      visitedLocations: unique([...current.visitedLocations, property.location]),
+      visitedSpots: unique([...current.visitedSpots, property.spot]),
+      housing: { ...current.housing, propertyId: property.id, purchasePrice: 0 },
+      journal: [...current.journal, `Outil développeur · ${property.name} installé comme logis de test.`],
+    };
+  });
+
+  return <div className="option-panel dev-panel">
+    <div className="dev-title">
+      <div><span>DEV</span><h2>Mode développeur</h2></div>
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button>
+    </div>
+
+    <h3>Temps et ressources</h3>
+    <div className="dev-row">
+      <label>Jour<input type="number" min={1} value={game.day} onChange={(event) => updateGame((current) => ({ ...current, day: Math.max(1, Number(event.target.value) || 1) }))} /></label>
+      <label>Période<select value={game.period} onChange={(event) => updateGame((current) => ({ ...current, period: Number(event.target.value) }))}>{PERIODS.map((period, index) => <option value={index} key={period.id}>{period.label}</option>)}</select></label>
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, day: current.day + 7, period: 0 }))}>+7 jours</button>
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, coins: current.coins + 100 }))}>+100 pièces</button>
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, confluence: 100 }))}>Confluence 100</button>
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, ambientHistory: emptyAmbientHistory(), sharedHistory: [] }))}>Réinitialiser les conversations</button>
+    </div>
+    <div className="dev-stats">{(Object.keys(game.stats) as StatKey[]).map((stat) => <button type="button" key={stat} onClick={() => updateGame((current) => ({ ...current, stats: { ...current.stats, [stat]: current.stats[stat] + 1 } }))}>{STAT_LABELS[stat]} <b>{game.stats[stat]}</b> +</button>)}</div>
+    <div className="dev-toggles">
+      <Toggle label="Aucun coût de temps" detail="Voyages et scènes ne font plus avancer l’heure." active={game.settings.noTimeCost} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, noTimeCost: !current.settings.noTimeCost } }))} />
+      <Toggle label="Tout déverrouiller" detail="Ignore jours, seuils et routes fermées." active={game.settings.unlockAll} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, unlockAll: !current.settings.unlockAll } }))} />
+    </div>
+
+    <h3>Préparation de la partie</h3>
+    <div className="dev-row">
+      <button type="button" onClick={completeActOne}>Marquer l’Acte I accompli</button>
+      <button type="button" onClick={prepareRelationships}>Préparer toutes les relations</button>
+      <button type="button" disabled={Boolean(game.housing.propertyId)} onClick={installTestHome}>{game.housing.propertyId ? "Logis déjà disponible" : "Installer un logis de test"}</button>
+    </div>
+
+    <h3>Accès direct aux scènes intimes</h3>
+    <p className="dev-help">Ces lancements sautent le rendez-vous et ouvrent directement sa continuation intime en mode souvenir : aucun gain, aucun temps consommé et aucune mutation de la sauvegarde.</p>
+    <div className="dev-preview-grid">
+      <label>
+        <span>Rendez-vous solo</span>
+        <select value={activeSoloKey} onChange={(event) => setSoloSelection(event.target.value)} disabled={!soloTargets.length}>{soloTargets.map((entry) => <option key={entry.key} value={entry.key}>{entry.label}</option>)}</select>
+        <button type="button" disabled={!activeSoloKey || !onOpenIntimacy} onClick={() => launchTarget(soloTargets, activeSoloKey)}>Ouvrir la partie intime</button>
+      </label>
+      <label>
+        <span>Rendez-vous à trois</span>
+        <select value={activeGroupKey} onChange={(event) => setGroupSelection(event.target.value)} disabled={!groupTargets.length}>{groupTargets.map((entry) => <option key={entry.key} value={entry.key}>{entry.label}</option>)}</select>
+        <button type="button" disabled={!activeGroupKey || !onOpenIntimacy} onClick={() => launchTarget(groupTargets, activeGroupKey)}>Ouvrir la partie intime</button>
+      </label>
+    </div>
+    {game.player.sex === "intersexe" && <p className="dev-help">Les scènes dédiées sans variante intersexe validée sont masquées. Le corps peut être changé dans l’onglet Intimité.</p>}
+    {!game.housing.propertyId && <p className="dev-help">Installez un logis de test pour faire apparaître les continuations domestiques.</p>}
+
+    <h3>Étapes relationnelles</h3>
+    <div className="dev-routes">{CHARACTERS.map((character) => <label key={character.id}><span>{character.name}</span><select value={game.relationships[character.id].stage} onChange={(event) => updateGame((current) => ({ ...current, relationships: { ...current.relationships, [character.id]: { ...current.relationships[character.id], stage: Number(event.target.value), met: true, affection: Math.max(current.relationships[character.id].affection, Number(event.target.value) * 10), trust: Math.max(current.relationships[character.id].trust, Number(event.target.value) * 10) } } }))}>{[0, 1, 2, 3, 4, 5].map((stage) => <option key={stage} value={stage}>{stage} · {STAGE_LABELS[stage]}</option>)}</select></label>)}</div>
+  </div>;
 }
 
 type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
@@ -6702,11 +6881,12 @@ type V2OptionsProps = {
   onImport: (event: ChangeEvent<HTMLInputElement>) => void;
   onTitle: () => void;
   onStory: () => void;
+  onDevOpenIntimacy?: (target: DevIntimacyTarget) => void;
   slotVersion: number;
   layout: "scene" | "dialog";
 };
 
-function V2OptionsBody({ game, updateGame, cats, sons, onToggleSons, titleMusic, onToggleTitleMusic, onSave, onLoad, onExport, onImport, onTitle, onStory, slotVersion, layout }: V2OptionsProps & { cat?: V2OptCat }) {
+function V2OptionsBody({ game, updateGame, cats, sons, onToggleSons, titleMusic, onToggleTitleMusic, onSave, onLoad, onExport, onImport, onTitle, onStory, onDevOpenIntimacy, slotVersion, layout }: V2OptionsProps & { cat?: V2OptCat }) {
   const { scales, update, reset } = useV2Scales();
   const [explicitWarning, setExplicitWarning] = useState(false);
   const settings = game?.settings;
@@ -6745,7 +6925,7 @@ function V2OptionsBody({ game, updateGame, cats, sons, onToggleSons, titleMusic,
         {game && <button type="button" className="btn large danger" data-act="titre" onClick={onTitle}>⏻ Retour à l’écran titre</button>}
         <button type="button" className="btn large" data-act="histoire" onClick={onStory}>↩ Mode Histoire</button>
       </div>
-      {game && updateGame && <div className="v2-legacy v2-dev"><DeveloperPanel game={game} updateGame={updateGame} /></div>}
+      {game && updateGame && <div className="v2-legacy v2-dev"><DeveloperPanel game={game} updateGame={updateGame} onOpenIntimacy={onDevOpenIntimacy} /></div>}
       <p className="discret">Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le Visual Novel Sylvinia et Les mondes du Chroniqueur.</p>
     </Fragment>;
     return null;

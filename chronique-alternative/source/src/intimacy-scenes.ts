@@ -316,7 +316,7 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
       { id: "tia-imprevu", text: "Rompre la solennité avec un premier geste volontairement imprévu.", lines: [N("Vous défaites la mauvaise attache et la chaîne d’or se retrouve de travers. Tia la regarde, puis choisit de rire plutôt que de la corriger."), C("Tia", "Une ouverture techniquement imparfaite. Continuez avant que je ne retrouve le protocole.", "smirk"), N("Elle vous attire contre elle avec une impatience qui n’appartient à aucune audience.")] },
     ],
     directions: [],
-    afterglow: [N("Tia reste près de vous tandis que sa couronne attend hors de la chambre. Elle boit à votre verre et laisse le silence n’être ni ordre ni jugement."), C("Tia", "L’Empire n’a rien appris cette nuit. Moi, si. Je souhaite recommencer avant d’avoir parfaitement compris.", "troubled")],
+    afterglow: [N("Tia reste près de vous tandis que sa couronne attend hors de la chambre. Elle retire la dernière épingle de ses cheveux, la pose auprès du métal impérial et laisse le silence n’être ni ordre ni jugement."), C("Tia", "L’Empire n’a rien appris cette nuit. Moi, si. Je souhaite recommencer avant d’avoir parfaitement compris.", "troubled")],
   },
   allenna: {
     opening: [N("Allenna ferme la porte, retire son ceinturon puis vient à vous sans transformer la chambre en poste de garde."), C("Allenna", "Je te désire. J'ignore encore si cette phrase devient plus facile en la répétant.", "troubled")],
