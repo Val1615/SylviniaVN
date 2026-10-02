@@ -62,7 +62,7 @@ const STANDARD_VISUAL: IntimateVisualState = { useIntimateSprites: false };
 
 const BEFORE_REVEAL_PHASES = new Set(["approach", "undressing"]);
 const AFTERGLOW_PHASES = new Set(["afterglow", "ending"]);
-const NAIAH_AFTER_REVEAL_PHASES = new Set<NaiahProximityPhase>(["trust", "shift", "truth", "rebound", "calm", "closure"]);
+const NAIAH_AFTER_REVEAL_PHASES = new Set<NaiahProximityPhase>(["exploration", "turn", "climax", "afterglow"]);
 const NAIAH_GROUP_CONTEXTS = new Set(["group-date-hylee-naiah", "group-date-naiah-bellirith"]);
 
 export function soloIntimateVisualState(options: {
@@ -81,7 +81,7 @@ export function soloIntimateVisualState(options: {
   if (options.character === "naiah") {
     if (options.step === "ending" || options.step === "done") return { useIntimateSprites: true };
     if (options.step !== "direction-lines") return STANDARD_VISUAL;
-    if (options.narrativePhase === "reaction") {
+    if (options.narrativePhase === "reveal") {
       return { cg: stateFromAssets(assets, "reveal"), useIntimateSprites: false };
     }
     return { useIntimateSprites: Boolean(options.narrativePhase && NAIAH_AFTER_REVEAL_PHASES.has(options.narrativePhase as NaiahProximityPhase)) };

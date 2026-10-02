@@ -420,23 +420,23 @@ const RESIDENT_REPLIES: Record<string, Array<[ResidentReply, ResidentReply, Resi
   ],
   naiah: [
     [
-      { beat: "La couronne devient si grande qu’elle avale la moitié de la constellation. Naïah ricane et vous ajoute des moustaches stellaires.", line: "Voilà. Souverain·e du Très Mauvais Goût. Je suis ton unique conseillère, donc tout est perdu." },
-      { beat: "Les étoiles vacillent. Elle fait mine de corriger une branche alors que son regard s’est brusquement adouci.", line: "Ne prends pas cet air intelligent. J’ai juste raté une menace et obtenu… ça. Par accident cosmique." },
+      { beat: "La couronne devient une gueule constellée qui tente d’avaler votre portrait. Naïah lui ajoute des moustaches au moment où elle mord la lune.", line: "Voilà. Le ciel te trouve délicieux. Essaie de ne pas lui donner raison avant le matin." },
+      { beat: "Vous replacez une étoile tombée sur son épaule. Toute la constellation imite le geste, puis Naïah ordonne aux copies de se dévorer entre elles.", line: "Elles devenaient sentimentales. Je protège la qualité du spectacle." },
       { beat: "Naïah s’allonge près de vous. Une étoile descend assez bas pour se poser sur le bout de son nez avant de disparaître.", line: "Tu n’as pas le droit de t’endormir avant moi. C’est mon ciel, j’établis les règles." },
     ],
     [
       { beat: "La plante vous traite immédiatement d’escroc. Naïah, cachée derrière la porte, étouffe un rire beaucoup trop reconnaissable.", line: "Elle exige trois biscuits et l’exil définitif de son interprète. Personnellement, je trouve ses demandes raisonnables." },
-      { beat: "La feuille la plus haute s’incline vers vous. Naïah sort de sa cachette avec une moue faussement désinvolte.", line: "Une maison silencieuse oublie vite les gens. Je lui ai donné une meilleure mémoire, c’est tout." },
+      { beat: "La feuille la plus haute répète exactement le rire de Naïah. Depuis sa cachette, elle lui ordonne de recommencer moins bien ; la plante refuse.", line: "Elle m’imite pendant mes absences. Elle le fait très mal et je n’ai aucune intention de la corriger." },
       { beat: "Elle modifie le sort pour que la plante ait sa propre voix, grave et scandalisée.", line: "Elle reste. Mais si elle révèle où je cache les sucreries, je l’envoie vivre chez Allenna." },
     ],
     [
-      { beat: "Le faux couloir se couvre aussitôt de pancartes absurdes : ‘Conseil secret’, ‘Cuisine interdite’ et ‘Allenna dehors’.", line: "Enfin une institution sérieuse. Première décision : les réunions se font couchées et les comptes rendus sont comestibles." },
-      { beat: "Naïah vérifie votre visage comme si elle cherchait le piège caché derrière l’offre.", line: "Une vraie place ? Avec une porte que personne ne condamne ? C’est suspect. J’accepte pour mener l’enquête." },
+      { beat: "Le faux couloir se peuple aussitôt de portes trop petites, de fenêtres donnant sous le canapé et d’un monstre chargé de voler les chaussettes.", line: "Voilà. Maintenant cette maison possède enfin un organe digestif et une sortie qui mène au plafond." },
+      { beat: "Vous déplacez simplement un fauteuil pour lui libérer le recoin réel près de la fenêtre. Naïah ouvre trois fausses portes autour, puis les referme une à une.", line: "Celui-ci est à moi jusqu’à ce que je change d’avis. Si quelqu’un s’y assied, le parquet le mord." },
       { beat: "Elle choisit le recoin le moins pratique, précisément parce qu’on y voit la fenêtre depuis le sol.", line: "Celui-là. Et tu n’as pas le droit de l’appeler ‘le coin de Naïah’ devant les autres. Sauf si ça les rend jaloux." },
     ],
     [
-      { beat: "Ses cheveux se dressent davantage lorsqu’elle s’incline avec une majesté offensée.", line: "Enfin quelqu’un reconnaît mon autorité capillaire. Mon premier décret interdit les peignes jusqu’à midi." },
-      { beat: "La réplique qu’elle préparait meurt derrière ses dents. Elle baisse les yeux vers ses mains nues de toute illusion.", line: "Et si je ne fais rien, tu ne t’ennuies pas ? Question théorique. Réponds bien." },
+      { beat: "Ses cheveux se dressent davantage quand vous les comparez à un animal foudroyé. Elle fait apparaître l’animal ; la ressemblance devient accablante.", line: "Il s’appelle {player}. Lui aussi pose de très mauvaises questions au réveil." },
+      { beat: "Vous posez une seconde tasse devant elle sans attendre de tour. La réplique préparée reste derrière ses dents ; elle entoure la porcelaine de ses deux mains.", line: "Si tu racontes que je suis restée silencieuse, je donnerai ta voix à la plante." },
       { beat: "Naïah boit, grimace parce que le thé est trop chaud, puis ne transforme la grimace en aucun spectacle.", line: "Ce matin est terriblement mal écrit. Il ne se passe rien… J’aimerais bien voir combien de temps ça peut durer." },
     ],
   ],
@@ -638,10 +638,10 @@ export const RESIDENT_MOMENTS: Record<string, HomeMoment[]> = {
     moment("valurn", 3, "Un sac qui reste vide", "Le sac de voyage de Valurn est ouvert sur le lit, mais il n’y place aucun vêtement.", ["Je le remplis de coussins pour saboter toute fuite dramatique.", "Vous vérifiez encore que partir reste possible avant de choisir de rester.", "Je lui demande seulement s’il veut de l’aide pour le ranger."]),
   ],
   naiah: [
-    moment("naiah", 0, "Le plafond étoilé", "Naïah a remplacé le plafond par un ciel violet. Une constellation dessine maladroitement votre profil.", ["J’ajoute à son portrait une couronne de travers.", "C’est la première illusion ici qui ressemble à un souvenir heureux.", "Je regarde avec elle jusqu’à ce que les étoiles s’éteignent."]),
-    moment("naiah", 1, "La plante qui ment", "Une plante prétend parler avec la voix de Naïah chaque fois que vous passez près d’elle.", ["Je négocie avec la plante et refuse de parler à son interprète.", "Tu voulais laisser une présence ici même pendant tes absences.", "Je l’arrose et demande à Naïah si elle souhaite garder le sort."]),
-    moment("naiah", 2, "La pièce oubliée", "Naïah a créé derrière une porte un faux couloir vers une chambre supplémentaire, puis admet qu’elle voulait un endroit secret.", ["Nous en faisons le quartier général de décisions absurdes.", "Tu peux avoir une pièce à toi sans devoir la cacher au monde entier.", "Je lui propose de choisir un vrai coin de la maison."]),
-    moment("naiah", 3, "Le matin sans masque", "Au réveil, aucune illusion ne couvre les cheveux emmêlés ni le silence de Naïah. Elle semble attendre une plaisanterie.", ["Je déclare cette coiffure officiellement souveraine de la maison.", "Tu n’as pas besoin de produire une scène dès que quelqu’un te regarde.", "Je lui tends une tasse et laisse le matin rester ordinaire."]),
+    moment("naiah", 0, "Le plafond étoilé", "Naïah a remplacé le plafond par un ciel violet. Une constellation dessine maladroitement votre profil.", ["Je transforme son portrait en créature qui mord la lune.", "Je replace l’étoile tombée sur son épaule.", "Je regarde avec elle jusqu’à ce que les étoiles s’éteignent."]),
+    moment("naiah", 1, "La plante qui ment", "Une plante prétend parler avec la voix de Naïah chaque fois que vous passez près d’elle.", ["Je négocie avec la plante et refuse de parler à son interprète.", "Je demande à la plante d’imiter son rire aussi.", "Je l’arrose et demande à Naïah si elle souhaite garder le sort."]),
+    moment("naiah", 2, "La pièce oubliée", "Naïah a créé derrière une porte un faux couloir vers une chambre supplémentaire et y a déjà caché sa tasse fêlée.", ["Nous peuplons le couloir de portes impossibles et de monstres domestiques.", "Je libère le recoin réel près de la fenêtre sans commenter la tasse.", "Je lui propose de choisir un vrai coin de la maison."]),
+    moment("naiah", 3, "Le matin sans illusion", "Au réveil, aucune illusion ne couvre les cheveux emmêlés ni le silence de Naïah. Elle attend votre premier geste.", ["Je compare sa coiffure à un animal frappé par la foudre.", "Je pose une seconde tasse devant elle sans poser de question.", "Je lui tends une tasse et laisse le matin rester ordinaire."]),
   ],
   lineva: [
     moment("lineva", 0, "La ronde du salon", "Lineva vient de vérifier une seconde fois les fenêtres et s’arrête elle-même avant la troisième.", ["Je lui délivre un rapport officiel : le canapé tient toujours.", "La troisième ronde attendra. Le canapé réclame votre présence.", "Je fais le tour avec elle une dernière fois, puis nous nous asseyons."]),
