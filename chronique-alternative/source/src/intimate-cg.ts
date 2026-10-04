@@ -62,7 +62,7 @@ const STANDARD_VISUAL: IntimateVisualState = { useIntimateSprites: false };
 
 const BEFORE_REVEAL_PHASES = new Set(["approach", "undressing"]);
 const AFTERGLOW_PHASES = new Set(["afterglow", "ending"]);
-const NAIAH_AFTER_REVEAL_PHASES = new Set<NaiahProximityPhase>(["exploration", "turn", "climax", "afterglow"]);
+const NAIAH_AFTER_REVEAL_PHASES = new Set<NaiahProximityPhase>(["exploration", "adjustment", "counterplay", "experiment", "escalation", "surrender", "climax", "afterglow"]);
 const NAIAH_GROUP_CONTEXTS = new Set(["group-date-hylee-naiah", "group-date-naiah-bellirith"]);
 
 export function soloIntimateVisualState(options: {

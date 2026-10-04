@@ -10,8 +10,9 @@ export type NaiahProximityContext = NaiahIntimacyContext;
 export type NaiahProximityPhase = NaiahIntimacyPhase;
 export type NaiahProximityApproach = { id: string; text: string; lines: DialogueLine[] };
 
-const PHASES: NaiahIntimacyPhase[] = ["transition", "initiative", "undressing", "reveal", "exploration", "turn", "climax", "afterglow"];
+const PHASES: NaiahIntimacyPhase[] = ["transition", "initiative", "undressing", "reveal", "exploration", "adjustment", "counterplay", "experiment", "escalation", "surrender", "climax", "afterglow"];
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
+const MODE_SEQUENCE_COUNTS: Record<IntimacyMode, number> = { tendre: 8, suggestif: 8, explicite: 12, ellipse: 8 };
 const CONTEXTS: NaiahIntimacyContext[] = ["date-naiah-sanctuary", "date-naiah-akuhn", "home-naiah"];
 const SEXES = ["femme", "homme"] as const;
 const SCENES: NaiahAuthoredScene[] = [...NAIAH_FOREST_INTIMACY_SCENES, ...NAIAH_EDGE_INTIMACY_SCENES, ...NAIAH_HOME_INTIMACY_SCENES];
@@ -98,7 +99,7 @@ export function validateNaiahProximity() {
       MODES.forEach((mode) => {
         const routeChapters = entry.chapters[mode];
         const tooShort = routeChapters.some((chapter) => chapter.map((line) => line.text).join(" ").split(/\s+/u).length < 18);
-        if (routeChapters.length !== PHASES.length || tooShort) throw new Error(`${entry.id}/${mode}: huit séquences substantielles requises`);
+        if (routeChapters.length !== MODE_SEQUENCE_COUNTS[mode] || tooShort) throw new Error(`${entry.id}/${mode}: ${MODE_SEQUENCE_COUNTS[mode]} séquences substantielles requises`);
         chapters += routeChapters.length;
       });
     });
