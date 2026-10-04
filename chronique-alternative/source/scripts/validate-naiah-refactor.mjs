@@ -195,9 +195,10 @@ try {
   assert.ok(page.publicDateUnlocked(playable, naiahDates[0]), "le second rendez-vous ne doit pas conditionner le premier");
   assert.ok(page.homeDateUnlocked(playable, "naiah"), "le rendez-vous au logis doit être indépendant des deux sorties publiques");
 
-  assert.deepEqual(proximity.validateNaiahProximity(), { contexts: 3, combinations: 6, routes: 18, chapters: 576 });
+  assert.deepEqual(proximity.validateNaiahProximity(), { contexts: 3, combinations: 6, routes: 18, chapters: 648 });
   const contexts = ["date-naiah-sanctuary", "date-naiah-akuhn", "home-naiah"];
   const modes = ["tendre", "suggestif", "explicite", "ellipse"];
+  const sequenceCounts = { tendre: 8, suggestif: 8, explicite: 12, ellipse: 8 };
   const sexualLanguage = /\b(?:orgasme|joui(?:r|t|ssance)?|sexe|nud(?:e|it[eé])|d[eé]shabill\w*)\b/iu;
   const explicitSexualAction = /\b(?:orgasme|joui(?:r|t|ssance)?|bouche|langue|sexe|entre (?:vos|tes|ses) cuisses)\b/iu;
   const forbiddenPenetration = /\b(?:p[eé]n[eé]tr\w*|s['’]enfonc\w*|introdui\w*.{0,24}(?:anus|vagin|corps)|doigts?.{0,18}(?:entrent|s['’]enfoncent).{0,18}(?:corps|sexe|anus|vagin))\b/iu;
@@ -211,13 +212,15 @@ try {
       for (const mode of modes) {
         const sequence = entry.chapters[mode];
         const chapterCounts = sequence.map((chapter) => chapter.reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0));
-        assert.equal(sequence.length, 8, `${entry.id}/${mode}: huit séquences requises`);
+        assert.equal(sequence.length, sequenceCounts[mode], `${entry.id}/${mode}: ${sequenceCounts[mode]} séquences requises`);
         assert.ok(chapterCounts.every((count) => count >= 18), `${entry.id}/${mode}: une séquence n'est pas substantielle (${chapterCounts.join(", ")})`);
         const fullText = sequence.flat().map((line) => line.text).join("\n");
         assert.doesNotMatch(fullText, forbiddenPenetration, `${entry.id}/${mode}: pénétration interdite détectée`);
         assert.doesNotMatch(fullText, clinicalLanguage, `${entry.id}/${mode}: langage clinique détecté`);
       }
       const explicitText = entry.chapters.explicite.flat().map((line) => line.text).join("\n");
+      const explicitDialogue = entry.chapters.explicite.flat().filter((line) => line.speaker !== "Narration");
+      assert.ok(explicitDialogue.length >= 4, `${entry.id}: la version explicite doit réellement faire dialoguer Naïah et le protagoniste`);
       assert.match(explicitText, explicitSexualAction, `${entry.id}: le mode explicite doit contenir une vraie continuation sexuelle non pénétrative`);
       assert.match(explicitText, /(?:orgasme|joui(?:r|t|ssance)?)/iu, `${entry.id}: la progression explicite doit aller jusqu'à son terme`);
       assert.match(entry.chapters.explicite[2].map((line) => line.text).join(" "), /(?:retir|d[eé]shabill|v[eê]tement|chemise|veste|cape|pantalon|nue?)/iu, `${entry.id}: la nudité doit être racontée avant la CG`);
@@ -240,6 +243,7 @@ try {
   assert.doesNotMatch(authoredIntimacySource, /\bCG\b/u, "la narration ne doit jamais nommer la mécanique de CG au joueur");
   assert.doesNotMatch(authoredIntimacySource, forbiddenPenetration, "aucune route Naïah ne doit contenir de pénétration");
   assert.doesNotMatch(authoredIntimacySource, clinicalLanguage, "les scènes intimes ne doivent pas adopter un vocabulaire clinique");
+  assert.doesNotMatch(authoredIntimacySource, /\b(?:sexe|testicules?|vagins?|p[eé]nis|penis|penix|sternum)\b/iu, "le vocabulaire intime ne doit pas devenir anatomique ou médical");
 
   assert.equal(soloRoutes.intimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles individuelles génériques");
   assert.equal(homeRoutes.homeIntimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles génériques du logis");
