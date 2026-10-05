@@ -4284,7 +4284,7 @@ export default function Home() {
     return <>
       {commonLayers}
       <div className="v2 v2-root v2-ecran-titre" onPointerDownCapture={() => { if (v2Prefs.titleMusic) { const audio = titleAudioRef.current; if (audio && audio.paused) void audio.play().catch(() => undefined); } }}>
-        <audio ref={titleAudioRef} src="/assets/menu/chroniques-alternatives-theme.mp3" loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} />
+        <audio ref={titleAudioRef} src={`${import.meta.env.BASE_URL}assets/menu/chroniques-alternatives-theme.mp3`} loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} />
         <V2Title
           hasSave={hasSave}
           saveSummary={autosave ? `${autosave.name} · Jour ${autosave.day} · ${autosave.place.split(" · ")[0] || autosave.period}` : undefined}
@@ -4519,8 +4519,8 @@ function TitleScreen({ hasSave, onNew, onContinue, onChronicle, onOptions, modal
   };
 
   return <main className="title-screen atlas-title-screen" onPointerDownCapture={ensureTitleMusic}>
-    <video className="title-backdrop-video" autoPlay loop muted playsInline preload="auto" poster="/assets/hero.jpg" aria-hidden="true"><source src="/assets/menu/chroniques-alternatives.mp4" type="video/mp4" /></video>
-    <audio ref={titleAudioRef} src="/assets/menu/chroniques-alternatives-theme.mp3" autoPlay loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} onPlay={() => setTitleAudioStarted(true)} onPause={() => setTitleAudioStarted(false)} />
+    <video className="title-backdrop-video" autoPlay loop muted playsInline preload="auto" poster={`${import.meta.env.BASE_URL}assets/hero.jpg`} aria-hidden="true"><source src={`${import.meta.env.BASE_URL}assets/menu/chroniques-alternatives.mp4`} type="video/mp4" /></video>
+    <audio ref={titleAudioRef} src={`${import.meta.env.BASE_URL}assets/menu/chroniques-alternatives-theme.mp3`} autoPlay loop preload="auto" onLoadedMetadata={(event) => { event.currentTarget.volume = .45; }} onPlay={() => setTitleAudioStarted(true)} onPause={() => setTitleAudioStarted(false)} />
     <div className="atlas-title-shade" />
     <section className="atlas-title-identity"><p>Le Chroniqueur Vagabond présente</p><h1>Sylvinia</h1><strong>Chroniques Alternatives</strong><span>Une autre voie. Les mêmes mondes.</span></section>
     <nav className="atlas-title-menu" aria-label="Menu principal">

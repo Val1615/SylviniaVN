@@ -68,7 +68,7 @@ export function V2Title({ hasSave, saveSummary, savesCount, music, onToggleMusic
 
   return <main className={`titre etat-${etat}`} aria-label="Écran titre" onClick={(event) => { if (etat !== "menu" && !(event.target as Element).closest(".t-coin")) demarrer(); }}>
     <div className="t-couches" aria-hidden="true">
-      <video className="t-video" autoPlay={!reduit()} loop={!reduit()} muted playsInline preload="auto" disablePictureInPicture aria-hidden="true"><source src="/assets/menu/chroniques-alternatives.mp4" type="video/mp4" /></video>
+      <video className="t-video" autoPlay={!reduit()} loop={!reduit()} muted playsInline preload="auto" disablePictureInPicture aria-hidden="true"><source src={`${import.meta.env.BASE_URL}assets/menu/chroniques-alternatives.mp4`} type="video/mp4" /></video>
       <div className="t-vignette" />
     </div>
     <div className="t-noir" aria-hidden="true" />

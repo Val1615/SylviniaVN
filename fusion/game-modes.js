@@ -7,7 +7,9 @@
     try {
       if (typeof save === "function") save();
     } catch (_error) { /* Le mode libre possède sa propre sauvegarde. */ }
-    window.location.assign(CHRONICLE_PATH);
+    // Toujours rejouer l’intro cinématique depuis le sélecteur de mode
+    const dest = CHRONICLE_PATH.includes("?") ? CHRONICLE_PATH : (CHRONICLE_PATH.replace(/\/?$/, "/") + "?intro=intro");
+    window.location.assign(dest);
   }
 
   function bind() {

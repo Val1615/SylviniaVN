@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "44";
+const VER = "45";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -232,7 +232,7 @@ function ecranAvertissement() {
       </div>
       <div class="avert-col">
         <div class="fiche-note beta"><b class="fn-t">Version bêta</b><p>Ce jeu est actuellement en version bêta. Il peut encore contenir des bugs d’affichage, de sauvegarde, de navigation, d’audio ou de progression. Merci de signaler toute anomalie avec le bouton <strong>Signaler un bug</strong>.</p></div>
-        <div class="fiche-note mobile"><b class="fn-t">Conseil smartphone</b><p>Si vous jouez sur smartphone, il est recommandé d’activer le <strong>mode mobile</strong> dans les <strong>Options</strong>. L’interface est pensée pour un affichage vertical. À défaut, vous pouvez passer en plein écran une fois en jeu, idéalement en orientation horizontale, pour profiter d’une expérience plus proche de la version PC.</p></div>
+        <div class="fiche-note mobile"><b class="fn-t">Conseil smartphone</b><p>Sur téléphone, l’expérience est plus confortable en <strong>orientation horizontale</strong> et en plein écran une fois en jeu. L’interface Bibliothèque astrale s’adapte à l’écran ; le mode mobile classique reste disponible si vous repassez en interface Classique.</p></div>
       </div>
     </div>
     <footer class="avert-actions"><button class="btn-or grand" data-act="entrer"><span>Entrer dans le récit</span></button></footer>
@@ -283,6 +283,7 @@ function ecranMode() {
 function sceneLib(id) { const s = S_()[id]; const ch = CHAP[CH_OF(id)] || D.chapters[0] || { label: "" }; return { ch, s, court: `${(ch.label || "").replace("Chapitre ", "Ch. ")} · ${s ? s.title : ""}` }; }
 function aSauvegarde() { const s = ST(); if (!(s.scene && S_()[s.scene])) return false; try { const r = JSON.parse(localStorage.getItem("sylvinia_vn_v82") || "null"); return !!(r && r.scene); } catch { return true; } }
 function versionJeu() { const m = /v\s?0?\.(\d{3,4})/i.exec(document.querySelector(".versionTag, #versionLabel, .versionBadge")?.textContent || ""); return m ? `v0.${m[1]}` : "v0.412"; }
+let titreVu = false;
 function ecranTitre() {
   fond("video", VID.titre, IMG("titre-poster.jpg")); particules(0);
   const L = sceneLib(ST().scene); const nbImg = [...IMG_OK()].filter((k) => D.images[k]).length, totImg = Object.keys(D.images).length; const unl = unlockedCh();
@@ -298,20 +299,43 @@ function ecranTitre() {
   ];
   const coul = ["#1b2a5c", "#5a1e2e", "#4a2e1c", "#16404f", "#15403a", "#5b2a1c", "#3a2160", "#2a3340"];
   const dec = [0, 18, -8, 10, -14, 6, -4, 14];
-  monter(`<section class="titre">
+  const etat0 = titreVu || PB.classList.contains("reduit") ? "menu" : "press";
+  const touch = matchMedia("(pointer: coarse)").matches;
+  monter(`<section class="titre etat-${etat0}" data-titre-etat="${etat0}">
     <div class="titre-voile" aria-hidden="true"></div>
+    <h1 class="logo titre-logo" aria-label="Les Chroniques de Sylvinia"><span class="logo-k">Visual Novel interactif · Tome I <b class="badge-beta">Bêta</b></span><span class="logo-les">Les</span><span class="logo-l1 or-texte">Chroniques</span><span class="logo-l2"><em>de</em> <span class="or-texte">Sylvinia</span></span></h1>
+    <button type="button" class="titre-press" data-act="titre-demarrer" aria-label="Commencer"><span class="titre-press-txt">${touch ? "Touchez l’écran pour commencer" : "Appuyez pour commencer"}</span></button>
     <div class="titre-col">
-      <h1 class="logo"><span class="logo-k">Visual Novel interactif · Tome I <b class="badge-beta">Bêta</b></span><span class="logo-les">Les</span><span class="logo-l1 or-texte">Chroniques</span><span class="logo-l2"><em>de</em> <span class="or-texte">Sylvinia</span></span></h1>
       <nav class="pile" aria-label="Menu principal">
-        ${livres.map((l, i) => `<button class="livre dos z-lbl ${i === 0 ? "actif" : ""} ${l[0] === "ca" ? "ca" : ""}" style="--dc:${coul[i]};--x:${dec[i]}" ${l[2]} data-i="${i}">
+        ${livres.map((l, i) => `<button class="livre dos z-lbl ${i === 0 ? "actif" : ""} ${l[0] === "ca" ? "ca" : ""}" style="--dc:${coul[i]};--x:${dec[i]};--i:${i}" ${l[2]} data-i="${i}">
           <span class="tome">${l[0] === "ca" ? "✦" : ROM[i + 1]}</span><span class="etiq">${l[1]}</span>${l[3] ? `<span class="sup">${l[3]}</span>` : ""}</button>`).join("")}
       </nav>
     </div>
     <div class="titre-haut z-hud"><button class="rond ico ${musiqueOn() ? "" : "off"}" data-act="musique" aria-label="Musique">♪</button><button class="rond ico" data-act="plein-ecran" aria-label="Plein écran">⛶</button></div>
     <footer class="titre-bas"><span>${esc(versionJeu())} · Bêta · Le Chroniqueur Vagabond</span><span class="indices"><kbd>↑↓</kbd> Parcourir le rayon · <kbd>Entrée</kbd> Emprunter</span></footer>
   </section>`, "e-titre");
-  const pile = $(".pile"); const sel = (i) => $$(".livre", pile).forEach((b, j) => b.classList.toggle("actif", j === i));
+  const sec = $(".titre"); const pile = $(".pile");
+  const sel = (i) => $$(".livre", pile).forEach((b, j) => b.classList.toggle("actif", j === i));
   $$(".livre", pile).forEach((b, i) => { b.addEventListener("pointerenter", () => sel(i)); b.addEventListener("focus", () => sel(i)); });
+  const demarrer = () => {
+    if (!sec || sec.dataset.titreEtat === "menu") return;
+    titreVu = true; sec.dataset.titreEtat = "menu"; sec.classList.remove("etat-press"); sec.classList.add("etat-menu");
+    setTimeout(() => $$(".livre", pile)[0]?.focus({ preventScroll: true }), 480);
+  };
+  actions["titre-demarrer"] = demarrer;
+  if (etat0 === "press") {
+    sec.addEventListener("click", (ev) => {
+      if (sec.dataset.titreEtat === "menu") return;
+      if (ev.target.closest(".titre-haut, .titre-press, a, button.rond")) return;
+      demarrer();
+    });
+    const onKey = (ev) => {
+      if (!sec.isConnected || sec.dataset.titreEtat === "menu") { window.removeEventListener("keydown", onKey); return; }
+      if (ev.metaKey || ev.ctrlKey) return;
+      if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(ev.key)) { ev.preventDefault(); demarrer(); window.removeEventListener("keydown", onKey); }
+    };
+    window.addEventListener("keydown", onKey);
+  }
 }
 actions.reprendre = () => { if (!aSauvegarde()) return actions.nouvelle(); reprendre(); };
 function reprendre(h) {
@@ -548,7 +572,7 @@ function majJeu(force) {
     J.M = M; // boutons du moteur frais (le moteur peut re-rendre #choices sans changer les libellés)
     const hudEl = $(".combat-hud"); if (hudEl && hudEl.innerHTML !== M.hud) { hudEl.hidden = !M.hud; hudEl.innerHTML = M.hud; }
     if (M.combat && J.plein && J.pages.join("\n") !== M.text) { J.pages = [M.text]; const el = $(".dlg-texte"); if (el) el.innerHTML = M.text.split("\n").map((l) => `<span class="para">${esc(l)}</span>`).join(""); }
-    majSprites(M.chars, M.speaker); return;
+    majSprites(M.chars, M.speaker); majDevScene(); return;
   }
   const memeFond = J && $(".jeu") && J.M.bg === M.bg && J.M.video === M.video;
   // combat : une seule page défilante (pas de pagination qui coupe la consigne d’un tour chronométré)
@@ -590,7 +614,27 @@ function majJeu(force) {
   majSprites(M.chars, M.speaker); majLieu(); afficherPage(!!J.chrono);
   jouerMusique(pisteEcran());
 }
-function majLieu() { const M = J.M; const b = $(".jl-t b"); if (b) b.textContent = `${M.title}${M.sub ? " — " + M.sub : ""}`; }
+function majLieu() {
+  const M = J.M; const b = $(".jl-t b"); if (b) b.textContent = `${M.title}${M.sub ? " — " + M.sub : ""}`;
+  majDevScene();
+}
+function majDevScene() {
+  let badge = $(".ba-dev-scene");
+  const on = !!(ST().devMode && J && (J.id || ST().scene));
+  const id = on ? (J.id || ST().scene || "") : "";
+  if (!on) { if (badge) badge.hidden = true; return; }
+  if (!badge) {
+    const host = $(".jeu") || $("#ecran"); if (!host) return;
+    badge = document.createElement("button");
+    badge.type = "button"; badge.className = "ba-dev-scene"; badge.title = "Cliquer pour copier le code de scène";
+    badge.setAttribute("aria-label", "Code de scène développeur");
+    badge.addEventListener("click", (ev) => { ev.stopPropagation(); actions["dev-copier"]?.(); });
+    host.appendChild(badge);
+  }
+  badge.hidden = false;
+  badge.dataset.sceneCode = id;
+  badge.innerHTML = `DEV · <b>${esc(id)}</b>`;
+}
 function majSprites(chars, parleur) {
   const box = $(".sprites"); if (!box) return;
   const html = chars.map((c) => `<img class="sprite ${esc(c.cls)}" src="${esc(c.src)}" alt="">`).join("");
@@ -913,7 +957,7 @@ function ecranReglages([onglet = "affichage"]) {
     affichage: `<div class="reglage rg-ui"><span class="rg-t"><b>Interface en jeu</b><small>Complète, épurée ou cinématique (touche H, ou bouton ◐ en scène)</small></span><span class="rg-choix">${UI.map(([k, l]) => `<button class="puce ${G.reg.ui === k ? "actif" : ""}" data-act="ui-set" data-ui="${k}">${l}</button>`).join("")}</span></div><p class="rg-intro">Mêmes 7 curseurs que la Chronique Alternative — appliqués en direct, mémorisés.</p><div class="grille-curseurs">${ECH.map((e) => curs(e[0], e[1], e[2], e[3], e[4])).join("")}</div><button class="btn" data-act="reinit"><span>Réinitialiser à 100 %</span></button>`,
     audio: inter("musique", "Musique", "Thèmes du jeu (menu, scènes)", musiqueOn()) + curs("volume", "Volume de la musique", "", 0, 100, 5, " %", vol) + inter("sons", "Sons d’interface", "Page qui tourne, carillon de choix"),
     systeme: `<div class="reglage rg-ui rg-skin"><span class="rg-t"><b>Apparence</b><small>Bibliothèque astrale ou interface Classique d’origine</small></span><span class="rg-choix"><button class="puce actif" data-act="skin" data-skin="biblio">Bibliothèque</button><button class="puce" data-act="skin" data-skin="classique">Classique</button></span></div>` +
-      inter("mobile", "Mode mobile", "Format vertical optimisé (repris tel quel du jeu)", !!s.mobileUI) +
+      /* Mode mobile : masqué en Bibliothèque (n’affecte que body.mobileUI / Classique) — état conservé */
       `<div class="reglage"><span class="rg-t"><b>Mode développeur</b><small>${s.devMode ? "Activé · valeurs visibles · chapitres ouverts" : "Verrouillé · code requis"}</small></span>
         <button class="btn petit" data-act="dev">${s.devMode ? "Désactiver" : "Activer"}</button></div>` +
       (s.devMode ? htmlDev(s) + `
