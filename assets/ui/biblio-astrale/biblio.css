@@ -1,0 +1,477 @@
+/* Mode Histoire · Bibliothèque astrale de Mir’Aldas
+   Activé uniquement sous body.ui-biblio — n’affecte pas Chronique Alternative. */
+@import url("./fonts.css");
+
+body.ui-biblio{
+  --ba-encre:#07080f; --ba-nuit:#0b0d18; --ba-nuit-2:#121424;
+  --ba-or:#d8bd78; --ba-or-pale:#f3e4b5; --ba-or-vif:#ffd98a; --ba-or-sombre:#8a6a2e;
+  --ba-amethyste:#8964c4; --ba-rose:#e76588; --ba-glace:#79c8e8;
+  --ba-texte:#f1e9d6; --ba-texte-2:#c9bfa9; --ba-texte-3:#a69c88;
+  --ba-ligne:rgba(216,189,120,.28); --ba-ligne-forte:rgba(216,189,120,.55);
+  --ba-display:"Cinzel","Cormorant Garamond",serif;
+  --ba-logo:"Cinzel Decorative","Cinzel",serif;
+  --ba-serif:"Cormorant Garamond",Georgia,serif;
+  --ba-sans:"Inter",system-ui,sans-serif;
+  --ba-acc:var(--ba-or); --ba-acc-vif:var(--ba-or-vif);
+  --v-audace:#ef7a52; --v-sangfroid:#a9b8f0; --v-lucidite:#7cc6e6; --v-resonance:#c09af0; --v-lien:#f490b2;
+  color:var(--ba-texte); font-family:var(--ba-serif);
+  background:#000;
+}
+body.ui-biblio.intime,body.ui-biblio.ba-intime{--ba-acc:var(--ba-rose); --ba-acc-vif:#ff9cbc}
+
+/* ---------- Fond app / écrans ---------- */
+body.ui-biblio #app{background:radial-gradient(120% 90% at 50% 40%,#16142a,#07080f 70%)}
+body.ui-biblio .screen.card{background:transparent;border:0;box-shadow:none}
+body.ui-biblio .kicker,.ui-biblio .menuSectionTitle{font-family:var(--ba-display)!important;letter-spacing:.22em;text-transform:uppercase;color:var(--ba-acc)!important}
+
+/* ---------- 1. Avertissement ---------- */
+body.ui-biblio #disclaimerCard{
+  max-width:min(1280px,94vw);margin:auto;padding:clamp(18px,3vw,40px) clamp(18px,4vw,54px);
+  background:linear-gradient(180deg,rgba(24,23,56,.88),rgba(9,10,26,.94));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),inset 0 0 0 6px rgba(0,0,0,.25),inset 0 0 0 7px rgba(216,189,120,.14),0 20px 50px rgba(0,0,0,.55);
+  border-radius:4px;color:var(--ba-texte);
+}
+body.ui-biblio #disclaimerCard h1,body.ui-biblio #disclaimerCard h2{font-family:var(--ba-logo);color:var(--ba-or-pale);background:none;-webkit-text-fill-color:unset}
+body.ui-biblio #disclaimerCard p{font-family:var(--ba-serif);color:var(--ba-texte-2);line-height:1.5}
+body.ui-biblio #disclaimerCard button,body.ui-biblio #enterMenuFromSplashBtn,
+body.ui-biblio .btn-or,body.ui-biblio .goldBtn,body.ui-biblio .primaryDockBtn{
+  font-family:var(--ba-display)!important;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
+  color:#1a1206!important;border:0!important;background:transparent!important;position:relative;isolation:isolate;
+  min-height:48px;padding:0 28px;
+}
+body.ui-biblio #disclaimerCard button::before,body.ui-biblio #enterMenuFromSplashBtn::before,
+body.ui-biblio .goldBtn::before,body.ui-biblio .primaryDockBtn::before{
+  content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-14deg);
+  background:linear-gradient(90deg,#fff6dc,var(--ba-or) 40%,#a8823d);
+  box-shadow:4px 4px 0 rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.35);
+}
+
+/* ---------- 3. Splash « Appuyer pour commencer » — discret ---------- */
+body.ui-biblio #splashTitleCard{background:#000}
+body.ui-biblio .splashEnterBtn,body.ui-biblio #enterMenuFromSplashBtn.splashEnterBtn{
+  background:none!important;border:0!important;box-shadow:none!important;padding:10px 8px!important;
+  color:var(--ba-or-pale)!important;font:600 15px/1.2 var(--ba-display)!important;letter-spacing:.28em!important;
+  text-shadow:0 0 2px #000,0 1px 3px rgba(0,0,0,.95),0 0 14px rgba(255,217,138,.45);
+  animation:ba-souffle 2.8s ease-in-out infinite;
+}
+body.ui-biblio .splashEnterBtn::before,body.ui-biblio .splashEnterBtn::after{display:none!important}
+@keyframes ba-souffle{50%{opacity:.55}}
+@media(prefers-reduced-motion:reduce){body.ui-biblio .splashEnterBtn{animation:none}}
+
+/* ---------- 4. Choix du mode ---------- */
+body.ui-biblio #modeSelectCard{background:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.14),transparent 70%),rgba(7,8,15,.55)}
+body.ui-biblio .modeSelectPane{
+  border-radius:8px!important;overflow:hidden;
+  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),0 24px 60px rgba(0,0,0,.65)!important;
+  background:#0b0d18!important;
+}
+body.ui-biblio .modeSelectKicker{font-family:var(--ba-display);letter-spacing:.22em;color:var(--ba-or)!important}
+body.ui-biblio .modeSelectTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .modeSelectDescription{font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-2)!important}
+
+/* ---------- 5. Menu titre — pile compacte / cinématique dominante ---------- */
+body.ui-biblio #titleCard{background:#000}
+body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell,body.ui-biblio .menuOverlayTitle{
+  background:linear-gradient(180deg,rgba(12,12,30,.42),rgba(8,8,22,.55))!important;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(216,189,120,.22)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
+  max-width:min(420px,42vw)!important;
+}
+body.ui-biblio .menuAccordion,body.ui-biblio .accordionSummary{
+  background:color-mix(in srgb,#1b2a5c 42%,transparent)!important;
+  border:1px solid rgba(216,189,120,.2)!important;
+  border-radius:6px!important;color:var(--ba-or-pale)!important;
+  font-family:var(--ba-display)!important;letter-spacing:.1em;text-transform:uppercase;
+  min-height:40px;backdrop-filter:blur(4px);
+}
+body.ui-biblio .menuAccordion{margin:4px 0!important}
+body.ui-biblio .accordionSummary{padding:8px 14px!important}
+body.ui-biblio .menuActionBtn,body.ui-biblio .dockBtn{
+  background:rgba(10,10,26,.35)!important;border:1px solid var(--ba-ligne)!important;color:var(--ba-texte)!important;
+  border-radius:4px!important;box-shadow:none!important;
+}
+body.ui-biblio .btnTitle{font-family:var(--ba-display)!important;letter-spacing:.08em}
+body.ui-biblio .btnDesc{font-family:var(--ba-serif)!important;font-style:italic;color:var(--ba-texte-3)!important}
+body.ui-biblio .menuUpdateBubble{opacity:.7;font-family:var(--ba-display);letter-spacing:.12em;color:var(--ba-texte-3)!important;background:transparent!important;border:0!important}
+
+/* ---------- 6. Jeu : dialogue + choix discrets ---------- */
+body.ui-biblio #gameCard{background:transparent}
+body.ui-biblio .topbar{
+  background:linear-gradient(90deg,rgba(10,10,26,.72),rgba(10,10,26,.2) 70%,transparent)!important;
+  border:0!important;box-shadow:inset 0 1px 0 var(--ba-ligne)!important;backdrop-filter:blur(4px);
+  gap:10px;align-items:center;
+}
+body.ui-biblio .chapterLabel{font-family:var(--ba-display)!important;letter-spacing:.22em;color:var(--ba-acc)!important;font-size:11px}
+body.ui-biblio .chapterTitle{font-family:var(--ba-serif)!important;font-style:italic;font-weight:600;color:var(--ba-texte)!important;font-size:clamp(18px,2.2vw,24px)!important}
+body.ui-biblio .chapterSub{color:var(--ba-texte-2)!important;font-family:var(--ba-serif)}
+body.ui-biblio .topBtn{
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#1b2a5c!important;
+  border:1px solid rgba(216,189,120,.3)!important;color:var(--ba-or-pale)!important;
+  font-family:var(--ba-display)!important;letter-spacing:.08em;text-transform:uppercase;font-size:11px!important;
+  border-radius:0 0 6px 6px!important;min-height:44px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+body.ui-biblio .topBtn:nth-child(1){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#5a1e2e!important}
+body.ui-biblio .topBtn:nth-child(3){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#15403a!important}
+body.ui-biblio .topBtn:nth-child(4){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#2a3340!important}
+body.ui-biblio .dialogueWrap{padding:0 2vw 2vw}
+body.ui-biblio .dialogue{
+  background:linear-gradient(180deg,rgba(24,23,56,.82),rgba(9,10,26,.9))!important;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:0!important;border-radius:4px!important;
+  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),inset 0 0 0 5px rgba(0,0,0,.22),0 16px 40px rgba(0,0,0,.5)!important;
+  padding:18px 28px 14px!important;color:var(--ba-texte)!important;
+}
+body.ui-biblio .speaker{
+  display:inline-block;margin:0 0 8px!important;padding:6px 18px!important;
+  font-family:var(--ba-display)!important;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ba-or-pale)!important;background:linear-gradient(90deg,#5a1e2e,#3a0f1c)!important;
+  box-shadow:inset 0 0 0 1px var(--ba-or);clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+  font-size:14px!important;
+}
+body.ui-biblio .tag{display:none!important}
+body.ui-biblio .text{font-family:var(--ba-serif)!important;font-size:clamp(17px,2.1vw,22px)!important;line-height:1.45!important;color:var(--ba-texte)!important}
+body.ui-biblio .stats{gap:6px}
+body.ui-biblio .stat{background:rgba(0,0,0,.35)!important;border:1px solid var(--ba-ligne)!important;color:var(--ba-texte-2)!important;font-family:var(--ba-display)!important;font-size:11px;border-radius:999px}
+
+/* Choix : compacts, bas, translucides — ne pas couvrir les visages */
+body.ui-biblio .choices{
+  display:grid!important;grid-template-columns:1fr;gap:6px!important;margin-top:10px!important;
+  padding:0!important;background:none!important;position:static!important;
+}
+@media(min-width:700px){body.ui-biblio .choices{grid-template-columns:1fr 1fr}}
+body.ui-biblio .choiceBtn{
+  margin:0!important;min-height:42px!important;padding:8px 12px 8px 14px!important;
+  border-radius:3px!important;text-align:left!important;
+  background:linear-gradient(90deg,rgba(30,28,64,.62),rgba(10,10,26,.38) 70%)!important;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(216,189,120,.24)!important;border-left:5px solid #5a1e2e!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.3)!important;color:var(--ba-texte)!important;
+  font-family:var(--ba-serif)!important;font-size:clamp(14px,1.7vw,18px)!important;line-height:1.25!important;
+  font-weight:500!important;
+}
+body.ui-biblio .choiceBtn:nth-child(2){border-left-color:#1b2a5c!important}
+body.ui-biblio .choiceBtn:nth-child(3){border-left-color:#4a2e1c!important}
+body.ui-biblio .choiceBtn:nth-child(4){border-left-color:#3a2160!important}
+body.ui-biblio .choiceBtn:nth-child(5){border-left-color:#15403a!important}
+body.ui-biblio .choiceBtn:hover,body.ui-biblio .choiceBtn:focus-visible{
+  box-shadow:inset 0 0 0 1px rgba(255,217,138,.7),0 0 14px rgba(255,217,138,.22)!important;
+}
+body.ui-biblio .choiceBtn .arrow{display:none!important}
+body.ui-biblio .choiceBtn small,body.ui-biblio .choiceBtn .note{font-size:11px!important;opacity:.85;font-family:var(--ba-display)!important;letter-spacing:.06em}
+
+/* Moments libres / hubs : choix comme « lieux / personnages » */
+body.ui-biblio.ba-hub .choices{grid-template-columns:1fr!important;max-width:min(720px,100%);margin-left:auto;margin-right:auto}
+@media(min-width:900px){body.ui-biblio.ba-hub .choices{grid-template-columns:1fr 1fr!important}}
+body.ui-biblio.ba-hub .choiceBtn{
+  min-height:48px!important;padding:10px 14px!important;
+  background:linear-gradient(90deg,rgba(58,33,96,.55),rgba(10,10,26,.4) 75%)!important;
+  border-left-color:var(--ba-amethyste)!important;
+}
+body.ui-biblio.ba-hub .choiceBtn::before{
+  content:"◈";display:inline-block;margin-right:8px;color:var(--ba-or-vif);font-size:12px;
+}
+
+/* ---------- Préréglages d’interface ---------- */
+body.ui-biblio .ba-ui-btn{
+  flex:0 0 auto;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;
+  background:rgba(10,10,26,.4);border:1px solid rgba(216,189,120,.35);color:var(--ba-or-pale);
+  cursor:pointer;font-size:15px;line-height:1;margin-right:8px;
+}
+body.ui-biblio .ba-ui-btn:hover{box-shadow:0 0 0 1px var(--ba-or-vif),0 0 12px rgba(255,217,138,.35)}
+body.ui-biblio .topbar-left{display:flex;align-items:center;gap:8px;min-width:0}
+body.ui-biblio.ui-epuree .chapterSub,body.ui-biblio.ui-epuree .chapterLabel{display:none}
+body.ui-biblio.ui-epuree .topActions .volume{display:none}
+body.ui-biblio.ui-epuree .topBtn{opacity:.78;min-height:40px;font-size:10px!important}
+body.ui-biblio.ui-cine .topActions,body.ui-biblio.ui-cine .chapterLabel,body.ui-biblio.ui-cine .chapterSub,body.ui-biblio.ui-cine .stats,body.ui-biblio.ui-cine .tag{display:none!important}
+body.ui-biblio.ui-cine .topbar{background:none!important;box-shadow:none!important;pointer-events:none}
+body.ui-biblio.ui-cine .ba-ui-btn{pointer-events:auto;opacity:.55}
+body.ui-biblio.ui-cine .chapterTitle{font-size:14px!important;opacity:.55}
+body.ui-biblio.ui-cine .dialogue{
+  background:linear-gradient(180deg,rgba(8,8,22,.18),rgba(8,8,22,.58))!important;
+  box-shadow:inset 0 1px 0 rgba(216,189,120,.35)!important;backdrop-filter:blur(2px);
+}
+body.ui-biblio.ui-cine .speaker{background:color-mix(in srgb,#5a1e2e 55%,transparent)!important}
+
+/* ---------- Chapitres : étagère déjà présente, peaufinage biblio ---------- */
+body.ui-biblio #chaptersCard{
+  background:radial-gradient(70% 60% at 50% 30%,rgba(137,100,196,.12),transparent 65%),linear-gradient(180deg,rgba(10,12,28,.92),rgba(5,6,14,.97))!important;
+}
+body.ui-biblio .chaptersTitle,body.ui-biblio .chaptersBookTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .chaptersLead,body.ui-biblio .chaptersBookSubtitle,body.ui-biblio .chaptersHint{font-family:var(--ba-serif);color:var(--ba-texte-2)!important}
+body.ui-biblio .chaptersSidebar,body.ui-biblio .chaptersBook{
+  background:linear-gradient(180deg,rgba(24,23,56,.72),rgba(9,10,26,.86))!important;
+  border:1px solid var(--ba-ligne)!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)!important;
+}
+body.ui-biblio .chapterSelectCard{
+  box-shadow:0 8px 20px rgba(0,0,0,.45)!important;border:1px solid rgba(216,189,120,.22)!important;
+}
+body.ui-biblio .chapterBookSpine{
+  background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%,rgba(0,0,0,.35)),linear-gradient(90deg,#1b2a5c,#152048)!important;
+}
+body.ui-biblio .chapterBookSpine span{font-family:var(--ba-display)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .chapterSelectCard[open] .chapterBookOpened{
+  background:linear-gradient(90deg,#efe3c4,#e6d6b0 48%,#c9b68c 50%,#e6d6b0 52%,#efe3c4)!important;
+  color:#2a1c10!important;
+}
+body.ui-biblio .chapterOpenText h4{font-family:var(--ba-logo)!important;color:#2a1c10!important}
+body.ui-biblio .chapterOpenText p{font-family:var(--ba-serif)!important;color:#3a2814!important}
+body.ui-biblio .chapterSelectCard.locked .chapterBookSpine{filter:saturate(.25) brightness(.55)}
+body.ui-biblio .chapterLibraryBanner{border:1px solid var(--ba-ligne)!important;border-radius:4px;overflow:hidden}
+body.ui-biblio .chapterLibraryBannerText strong{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+
+/* ---------- Codex / Progression ---------- */
+body.ui-biblio #codexCard,body.ui-biblio #progressionCard{
+  background:radial-gradient(70% 50% at 50% 20%,rgba(137,100,196,.12),transparent 60%),linear-gradient(180deg,rgba(10,12,28,.95),rgba(5,6,14,.98))!important;
+  color:var(--ba-texte)!important;
+}
+body.ui-biblio .codexTab,body.ui-biblio .progressionTitle,body.ui-biblio .codexBook h2,body.ui-biblio .codexBook h3{
+  font-family:var(--ba-display)!important;color:var(--ba-or-pale)!important;
+}
+body.ui-biblio .codexTab.active{
+  background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d)!important;color:#1a1206!important;
+}
+body.ui-biblio .codexBook,.ui-biblio .progressionSidebar,.ui-biblio .progressionSection{
+  background:linear-gradient(180deg,rgba(24,23,56,.78),rgba(9,10,26,.9))!important;
+  border:1px solid var(--ba-ligne)!important;color:var(--ba-texte)!important;
+}
+body.ui-biblio .progressionSection h4{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+
+/* ---------- Carnet du Némésis ---------- */
+body.ui-biblio .progressionJournalSection{
+  background:linear-gradient(180deg,rgba(40,18,28,.55),rgba(12,8,20,.75))!important;
+  border:1px solid rgba(231,101,136,.28)!important;border-radius:8px;padding:16px!important;
+  box-shadow:inset 0 0 0 1px rgba(216,189,120,.12),0 12px 28px rgba(0,0,0,.35);
+}
+body.ui-biblio .progressionJournalSection h4{
+  font-family:var(--ba-logo)!important;color:#ffc2d6!important;letter-spacing:.04em;
+}
+body.ui-biblio .journalBanner{border-radius:4px;overflow:hidden;border:1px solid rgba(216,189,120,.35)!important;position:relative}
+body.ui-biblio .journalBannerOverlay{
+  background:linear-gradient(180deg,transparent,rgba(20,6,16,.88))!important;
+}
+body.ui-biblio .journalBannerEyebrow{font-family:var(--ba-display)!important;letter-spacing:.22em;color:var(--ba-rose)!important}
+body.ui-biblio .journalBannerTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .journalBannerOverlay p{font-family:var(--ba-serif)!important;font-style:italic;color:#e8d4dc!important}
+body.ui-biblio .journalFragmentsList article,body.ui-biblio .journalFragmentCard,.ui-biblio .journalFragmentsList > *{
+  background:linear-gradient(180deg,#efe3c4,#e6d6b0)!important;color:#2a1c10!important;
+  border:1px solid rgba(138,106,46,.45)!important;border-radius:4px!important;
+  box-shadow:0 6px 14px rgba(0,0,0,.35)!important;
+}
+body.ui-biblio .journalEmpty{font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-2)!important}
+body.ui-biblio .syl-toast.nemesis,body.ui-biblio .toast.nemesis{
+  border-color:rgba(231,101,136,.45)!important;box-shadow:0 0 18px rgba(231,101,136,.25)!important;
+}
+
+/* ---------- Toggle Bibliothèque / Classique + toasts ---------- */
+body.ui-biblio .ba-skin-toggle,body .ba-skin-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 14px;border:1px solid rgba(216,189,120,.28);border-radius:8px;
+  background:rgba(10,10,26,.4);margin:8px 0 12px;
+}
+body.ui-biblio .ba-skin-toggle strong{font-family:var(--ba-display);letter-spacing:.08em;color:var(--ba-or-pale)}
+body.ui-biblio .ba-skin-toggle small{display:block;font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-3)}
+body.ui-biblio .ba-skin-toggle .ba-puces{display:flex;gap:6px;flex-wrap:wrap}
+body.ui-biblio .ba-puce{
+  min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--ba-ligne);
+  background:rgba(0,0,0,.25);color:var(--ba-texte-2);font:700 11px/1 var(--ba-display);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+}
+body.ui-biblio .ba-puce.actif{background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d);color:#1a1206;border-color:transparent}
+.ba-toast{
+  position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:80;
+  padding:10px 22px;background:linear-gradient(90deg,rgba(20,18,46,.96),rgba(10,10,26,.96));
+  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte,#d8bd78),0 8px 24px rgba(0,0,0,.5);
+  color:#f1e9d6;font:600 15px/1.3 "Cormorant Garamond",serif;pointer-events:none;
+  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
+}
+.ba-toast b{font-family:"Cinzel",serif;letter-spacing:.06em;color:#f3e4b5}
+.ba-toast kbd{font:700 11px Inter,sans-serif;border:1px solid rgba(243,228,181,.45);border-bottom-width:3px;border-radius:5px;padding:0 6px;margin-left:6px}
+
+/* ---------- Fold / courte hauteur ---------- */
+@media(max-height:600px){
+  body.ui-biblio .dialogue{padding:12px 18px 8px!important}
+  body.ui-biblio .text{font-size:16px!important}
+  body.ui-biblio .choiceBtn{min-height:38px!important;padding:6px 10px!important;font-size:14px!important}
+  body.ui-biblio .topBtn{min-height:40px;font-size:10px!important}
+  body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell{max-width:min(360px,48vw)!important}
+}
+@media(max-aspect-ratio:1/1){
+  body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell,body.ui-biblio .menuOverlayTitle{max-width:none!important;width:min(100%,420px)!important}
+  body.ui-biblio .char{max-height:58%!important;bottom:22%!important}
+  body.ui-biblio .choices{grid-template-columns:1fr!important}
+}
+
+/* Classique : aucun style biblio — le JS retire ui-biblio */
+
+/* Splash overlay : bouton encore plus discret */
+body.ui-biblio .splashTitleOverlay{align-items:center!important;justify-content:flex-start!important;padding-left:clamp(18px,4vw,48px)!important}
+body.ui-biblio #enterMenuFromSplashBtn{
+  background:none!important;border:0!important;box-shadow:none!important;
+  color:var(--ba-or-pale)!important;font:600 15px/1.2 var(--ba-display)!important;letter-spacing:.3em!important;
+  text-shadow:0 0 2px #000,0 1px 4px rgba(0,0,0,.95),0 0 16px rgba(255,217,138,.5)!important;
+  padding:8px 4px!important;animation:ba-souffle 2.8s ease-in-out infinite;
+}
+body.ui-biblio #enterMenuFromSplashBtn::before,body.ui-biblio #enterMenuFromSplashBtn::after{content:none!important;display:none!important}
+
+/* Disclaimer panel alignment with biblio glass */
+body.ui-biblio .disclaimerPanel{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--ba-texte)!important}
+body.ui-biblio .disclaimerTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .disclaimerSigil{
+  display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#3b2f6e,#14122c 70%);
+  box-shadow:0 0 0 1px var(--ba-ligne-forte),0 0 0 6px rgba(0,0,0,.35),0 0 24px rgba(137,100,196,.4);
+  color:var(--ba-or-pale);font-size:28px;margin-bottom:10px;
+}
+body.ui-biblio .betaBadge{background:linear-gradient(90deg,var(--ba-rose),var(--ba-amethyste))!important;color:#fff!important;transform:skewX(-12deg);display:inline-block;padding:2px 10px;font:700 11px/1.3 var(--ba-display)!important;letter-spacing:.14em}
+
+/* Title menu: reduce overlay opacity further */
+body.ui-biblio .titleOverlayLayout,body.ui-biblio .menuOverlayTitle{background:transparent!important}
+body.ui-biblio .cinematicMenuShell{
+  background:linear-gradient(180deg,rgba(12,12,30,.38),rgba(8,8,22,.5))!important;
+  max-width:min(400px,40vw)!important;padding:14px!important;
+}
+
+/* Layout dialogue : texte puis choix en pleine largeur (pas en colonnes côte à côte) */
+body.ui-biblio .dialogue{
+  display:flex!important; flex-direction:column!important; gap:8px!important;
+}
+body.ui-biblio .dialogue .text{order:1}
+body.ui-biblio .dialogue .choices, body.ui-biblio #choices{
+  order:2!important; width:100%!important; max-width:100%!important;
+  display:flex!important; flex-direction:column!important; grid-template-columns:none!important;
+  gap:5px!important; margin-top:4px!important;
+}
+body.ui-biblio .dialogue .stats{order:3}
+body.ui-biblio .choiceBtn{
+  width:100%!important; max-width:100%!important;
+  min-height:38px!important; padding:7px 12px!important;
+  font-size:clamp(13px,1.6vw,17px)!important;
+  background:linear-gradient(90deg,rgba(30,28,64,.55),rgba(10,10,26,.32) 75%)!important;
+}
+@media(min-width:900px) and (min-height:700px){
+  body.ui-biblio.ba-hub #choices{
+    display:grid!important; grid-template-columns:1fr 1fr!important;
+  }
+}
+/* barre du bas (Historique / Retour / …) */
+body.ui-biblio .gameBottomBar, body.ui-biblio #gameBottomBar, body.ui-biblio .bottomBar,
+body.ui-biblio .vnToolbar, body.ui-biblio .toolbar, body.ui-biblio .quickBar{
+  background:rgba(8,8,22,.55)!important; border-top:1px solid var(--ba-ligne)!important;
+  font-family:var(--ba-display)!important; letter-spacing:.06em;
+}
+body.ui-biblio.ui-cine .gameBottomBar, body.ui-biblio.ui-cine #gameBottomBar,
+body.ui-biblio.ui-cine .bottomBar, body.ui-biblio.ui-cine .vnToolbar,
+body.ui-biblio.ui-cine .toolbar, body.ui-biblio.ui-cine .quickBar,
+body.ui-biblio.ui-cine .stats{display:none!important}
+
+/* Progression : titre § Némésis plus visible */
+body.ui-biblio .progressionJournalSection h4::before{content:"✧ "; color:#ffc2d6}
+body.ui-biblio #trailerVNControls{
+  background:rgba(8,8,22,.55)!important; border-top:1px solid rgba(216,189,120,.22)!important;
+  backdrop-filter:blur(4px);
+}
+body.ui-biblio #trailerVNControls .trailerVNBtn{
+  font-family:var(--ba-display)!important; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ba-texte-2)!important; border-color:rgba(216,189,120,.2)!important;
+  background:rgba(10,10,26,.35)!important;
+}
+body.ui-biblio.ui-cine #trailerVNControls,
+body.ui-biblio.ui-cine .topActions{display:none!important}
+body.ui-biblio.ui-epuree #trailerVNControls .trailerVNBtn{font-size:10px!important;padding:4px 6px!important}
+/* Forcer les choix sous le texte, même en mobileUI / trailer16x9 */
+body.ui-biblio .choices,
+body.ui-biblio.mobileUI .choices,
+body.ui-biblio.trailer16x9 .choices,
+body.ui-biblio.legacyVisualUI .choices,
+body.ui-biblio #choices{
+  position:static!important; inset:auto!important; right:auto!important; left:auto!important; bottom:auto!important; top:auto!important;
+  width:100%!important; max-width:100%!important; min-width:0!important;
+  display:flex!important; flex-direction:column!important; grid-template-columns:none!important;
+  gap:5px!important; margin:6px 0 0!important; padding:0!important; background:none!important;
+  max-height:none!important; overflow:visible!important;
+}
+body.ui-biblio .dialogue,
+body.ui-biblio.mobileUI .dialogue,
+body.ui-biblio.trailer16x9 .dialogue{
+  display:flex!important; flex-direction:column!important;
+  grid-template-rows:none!important; grid-template-columns:none!important;
+}
+body.ui-biblio .choiceBtn,
+body.ui-biblio.mobileUI .choiceBtn,
+body.ui-biblio.trailer16x9 .choiceBtn{
+  width:100%!important; min-height:36px!important; max-height:none!important;
+  padding:6px 12px!important; font-size:clamp(13px,1.55vw,16px)!important;
+  border-radius:3px!important;
+}
+body.ui-biblio .text, body.ui-biblio.mobileUI .text{
+  -webkit-line-clamp:unset!important; display:block!important; overflow:visible!important;
+  font-size:clamp(15px,1.9vw,20px)!important; line-height:1.4!important;
+}
+
+/* Gagner contre sylviniaV27–V32 (#gameCard + vn32CurrentCompact) */
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
+html body.ui-biblio.experimentalUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
+html body.ui-biblio #gameCard .dialogue{
+  display:flex!important;
+  flex-direction:column!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+  column-gap:0!important;
+  row-gap:6px!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow:visible!important;
+  padding:12px 16px 10px!important;
+}
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker,
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .tag,
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .stats{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  max-height:none!important;
+  max-width:100%!important;
+}
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard #choices,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #choices,
+html body.ui-biblio #gameCard .choices{
+  position:static!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  align-self:stretch!important;
+  width:100%!important;
+  max-width:100%!important;
+  max-height:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  margin:4px 0 0!important;
+  padding:0!important;
+  order:99!important;
+  overflow:visible!important;
+  right:auto!important; left:auto!important; bottom:auto!important; top:auto!important;
+}
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
+html body.ui-biblio #gameCard .choiceBtn{
+  width:100%!important;
+  min-height:34px!important;
+  padding:6px 12px!important;
+  font-size:clamp(12px,1.45vw,15px)!important;
+  border-radius:3px!important;
+  line-height:1.25!important;
+}
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text{
+  font-size:clamp(14px,1.7vw,18px)!important;
+  line-height:1.35!important;
+  overflow:visible!important;
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+}
