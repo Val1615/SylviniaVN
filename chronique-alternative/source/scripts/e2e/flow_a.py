@@ -44,6 +44,7 @@ async def main():
         ml=[]; await close_modals(p, ml); print("modals after date", ml)
         await p.screenshot(path=f"{OUT}/15b-apres-rdv.png"); print("state date", await state(p))
         # attendre
+        await dismiss_bilan(p)
         await p.click("[data-cmd=attendre]"); await p.wait_for_timeout(450)
         await p.screenshot(path=f"{OUT}/16-saut-temps.png")
         await p.wait_for_timeout(2500)
@@ -52,6 +53,7 @@ async def main():
             if await p.locator(".modal-backdrop, .dialogue-overlay").count():
                 print("blocking", await buttons(p, ".modal-backdrop, .dialogue-overlay")); break
             await p.click("[data-cmd=attendre]"); await p.wait_for_timeout(3000)
+            if await p.locator("[data-bilan]").count(): print("bilan affiché :", (await p.locator(".bj-liste, .bj-vide").first.inner_text()).replace("\n"," ")[:160]); await dismiss_bilan(p)
             print("state wait", k+2, await state(p))
         await p.screenshot(path=f"{OUT}/17-apres-attente.png")
         print(errs)

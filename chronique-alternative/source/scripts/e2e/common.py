@@ -21,7 +21,13 @@ async def play_scene(p, maxsteps=120, shot=None):
         n+=1; await p.wait_for_timeout(180)
         if shot and i==2: await p.screenshot(path=shot)
     return n
+async def dismiss_bilan(p):
+    """Bilan de fin de journée (V2.5) : 1er toucher = tout afficher, 2e = continuer."""
+    for i in range(3):
+        if not await p.locator("[data-bilan]").count(): return
+        await p.locator("[data-bilan]").first.click(); await p.wait_for_timeout(350)
 async def close_modals(p, log=None):
+    await dismiss_bilan(p)
     for i in range(6):
         if not await p.locator(".modal-backdrop").count(): return
         if log is not None: log.append(await buttons(p,".modal-backdrop"))
