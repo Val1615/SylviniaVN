@@ -5767,7 +5767,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     return <V2Fenetre surtitre={`Initiative de ${character?.name || ""}`} titre={invitation.title} classe="large v2-invitation" style={{ "--c": character?.color } as React.CSSProperties} onClose={onClose}
       pied={pending ? <><button type="button" className="btn text-button" onClick={onClose}>Décider plus tard</button><button type="button" className="btn secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button type="button" className="btn principal primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button></> : <button type="button" className="btn secondary-action" onClick={onClose}>Refermer</button>}>
       <div className="fen-vn">
-        {character && <V2Portrait character={character} />}
+        {character && <V2PortraitCarte character={character} />}
         <div className="fen-vn-texte">
           <span className={`fen-etat ${pending ? "ouvert" : ""}`}>{status}</span>
           <blockquote className="fen-citation">{invitation.message}</blockquote>
@@ -5797,7 +5797,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const discoveredKnowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry) => entry?.people.includes(character.id));
     return <V2Fenetre surtitre="Dossier relationnel" titre={character.name} classe="large v2-dossier" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}>
       <div className="fen-vn">
-        <V2Portrait character={character} />
+        <V2PortraitCarte character={character} />
         <div className="fen-vn-texte">
           <p className="dossier-desc">{characterDescriptor(character)}</p>
           <blockquote className="fen-citation">« {character.tagline} »</blockquote>
@@ -5962,6 +5962,25 @@ function V2Fenetre({ surtitre, titre, classe = "", onClose, children, pied, styl
       {pied && <footer className="dlg-pied">{pied}</footer>}
     </section>
   </div></div>;
+}
+
+/* Portrait illustré (avec son décor) fondu dans l’interface : fiches et dossiers. Repli sur le sprite si le personnage n’a pas de portrait. */
+function V2PortraitFiche({ character }: { character: CharacterData }) {
+  const [repli, setRepli] = useState(!character.portrait);
+  useEffect(() => { setRepli(!character.portrait); }, [character.id, character.portrait]);
+  if (repli) return <figure className="fiche-sprite" key={character.id}><div className="halo" /><img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} /></figure>;
+  return <figure className="fiche-sprite fiche-portrait" key={character.id} data-portrait={character.id}><div className="halo" /><img className="portrait-img entree" src={character.portrait} alt={character.name} onError={() => setRepli(true)} /><span className="portrait-voile" aria-hidden="true" /></figure>;
+}
+
+function V2PortraitCarte({ character }: { character: CharacterData }) {
+  const [repli, setRepli] = useState(!character.portrait);
+  useEffect(() => { setRepli(!character.portrait); }, [character.id, character.portrait]);
+  if (repli) return <V2Portrait character={character} />;
+  return <figure className="fen-sprite fen-portrait" style={{ "--c": character.color } as React.CSSProperties} data-portrait={character.id} aria-hidden="true">
+    <img className="fen-portrait-img" src={character.portrait} alt="" onError={() => setRepli(true)} />
+    <span className="portrait-voile" />
+    <figcaption className="fen-plaque"><b>{character.name}</b></figcaption>
+  </figure>;
 }
 
 function V2Portrait({ character, mood, classe = "" }: { character: CharacterData; mood?: string; classe?: string }) {
@@ -6519,7 +6538,7 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
   const onTouchEnd = (event: React.TouchEvent) => { const start = swipeRef.current; swipeRef.current = null; if (!start || known.length < 2) return; const t = event.changedTouches[0]; const dx = t.clientX - start.x; if (Math.abs(dx) > 60 && Math.abs(t.clientY - start.y) < 50) { sfx("survol"); onFiche((dx < 0 ? next : prev).id); } };
   return <div className="fiche" style={{ "--c": character.color } as React.CSSProperties} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
     <div className="fiche-filigrane" aria-hidden="true">{character.name}</div>
-    <figure className="fiche-sprite" key={character.id}><div className="halo" /><img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} /></figure>
+    <V2PortraitFiche character={character} />
     <section className="fiche-panneau cadre"><Orn4 />
       <button type="button" className="retour-lien" onClick={() => { sfx("retour"); onView("liens"); }}><Kbd>Échap</Kbd> Liens</button>
       <span className="surtitre">{character.role}</span>
