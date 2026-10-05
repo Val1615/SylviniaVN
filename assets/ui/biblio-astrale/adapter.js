@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "45";
+const VER = "46";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -317,20 +317,51 @@ function ecranTitre() {
   const sec = $(".titre"); const pile = $(".pile");
   const sel = (i) => $$(".livre", pile).forEach((b, j) => b.classList.toggle("actif", j === i));
   $$(".livre", pile).forEach((b, i) => { b.addEventListener("pointerenter", () => sel(i)); b.addEventListener("focus", () => sel(i)); });
+  const mesurerLogo = () => {
+    const logo = $(".titre-logo"); if (!logo || !sec) return;
+    const h = Math.ceil(logo.getBoundingClientRect().height);
+    sec.style.setProperty("--logo-dock-h", Math.max(56, h) + "px");
+  };
   const demarrer = () => {
-    if (!sec || sec.dataset.titreEtat === "menu") return;
-    titreVu = true; sec.dataset.titreEtat = "menu"; sec.classList.remove("etat-press"); sec.classList.add("etat-menu");
-    setTimeout(() => $$(".livre", pile)[0]?.focus({ preventScroll: true }), 480);
+    if (!sec || sec.dataset.titreEtat === "menu" || sec.dataset.titreEtat === "docking") return;
+    titreVu = true;
+    sec.dataset.titreEtat = "docking";
+    sec.classList.remove("etat-press");
+    sec.classList.add("etat-docking");
+    // flash or + micro-particules (panache Genshin/Persona)
+    const flash = document.createElement("div");
+    flash.className = "titre-flash"; flash.setAttribute("aria-hidden", "true");
+    sec.appendChild(flash);
+    const sparks = document.createElement("div");
+    sparks.className = "titre-etincelles"; sparks.setAttribute("aria-hidden", "true");
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement("i");
+      s.style.setProperty("--a", (i / 10) + "");
+      s.style.setProperty("--d", (80 + i * 28) + "ms");
+      sparks.appendChild(s);
+    }
+    sec.appendChild(sparks);
+    setTimeout(() => {
+      if (!sec.isConnected) return;
+      sec.dataset.titreEtat = "menu";
+      sec.classList.remove("etat-docking");
+      sec.classList.add("etat-menu");
+      mesurerLogo();
+      requestAnimationFrame(mesurerLogo);
+      setTimeout(() => { flash.remove(); sparks.remove(); }, 520);
+      setTimeout(() => $$(".livre", pile)[0]?.focus({ preventScroll: true }), 380);
+    }, 420);
   };
   actions["titre-demarrer"] = demarrer;
+  if (etat0 === "menu") { requestAnimationFrame(mesurerLogo); setTimeout(mesurerLogo, 50); }
   if (etat0 === "press") {
     sec.addEventListener("click", (ev) => {
-      if (sec.dataset.titreEtat === "menu") return;
+      if (sec.dataset.titreEtat !== "press") return;
       if (ev.target.closest(".titre-haut, .titre-press, a, button.rond")) return;
       demarrer();
     });
     const onKey = (ev) => {
-      if (!sec.isConnected || sec.dataset.titreEtat === "menu") { window.removeEventListener("keydown", onKey); return; }
+      if (!sec.isConnected || sec.dataset.titreEtat !== "press") { window.removeEventListener("keydown", onKey); return; }
       if (ev.metaKey || ev.ctrlKey) return;
       if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(ev.key)) { ev.preventDefault(); demarrer(); window.removeEventListener("keydown", onKey); }
     };
