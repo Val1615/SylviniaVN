@@ -41,3 +41,26 @@ a.btn,a.btn-or{text-decoration:none;display:inline-flex}
 /* Encyclopédie (onglet du codex) */
 .cx-encyclo .tags{margin:calc(18 * var(--c)) 0}
 .cx-encyclo .conf-act{justify-content:flex-start}
+/* Duel chronométré : consigne complète, retour à la ligne, défilement interne (jamais de boucle de frappe) */
+.jeu.combat .dlg-texte{font-size:calc(23 * var(--t));line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+.jeu.combat .dlg-corps{overflow-y:auto;overscroll-behavior:contain}
+.jeu.combat .dlg-zone:has(.choix:not([hidden])) .dlg-corps{font-size:calc(23 * var(--t));max-height:calc(4.3em + 16px)}
+/* Outils DEV (Réglages → Système) */
+.rg-dev-col{flex-wrap:wrap}
+.rg-dev-ligne{display:flex;flex-wrap:wrap;align-items:center;gap:calc(10 * var(--c));flex:1 1 calc(520 * var(--c));justify-content:flex-end}
+.rg-in{min-width:0;flex:1 1 calc(260 * var(--c));min-height:max(38px,calc(48 * var(--c)));padding:0 calc(14 * var(--c));border:0;border-radius:calc(6 * var(--c));background:rgba(4,6,18,.82);box-shadow:inset 0 0 0 1px var(--ligne-forte);color:var(--texte);font:600 calc(17 * var(--t)) var(--serif);outline:none}
+.rg-in:focus{box-shadow:inset 0 0 0 1px var(--or-vif),0 0 0 3px rgba(240,200,120,.15)}
+select.rg-in{flex:0 1 calc(200 * var(--c))}
+.rg-num{flex:0 0 calc(110 * var(--c));min-width:70px}
+.rg-dev small b{color:var(--or-vif)}
+.reglage.rg-dev-col{grid-template-columns:1fr;align-items:stretch}
+.reglage.rg-dev-col .rg-dev-ligne{justify-content:flex-start;width:100%}
+.reglage.rg-dev{z-index:1}
+.dev-dock{display:grid;gap:calc(12 * var(--c));margin:calc(8 * var(--c)) 0 calc(14 * var(--c))}
+.dev-card{display:grid;gap:calc(10 * var(--c));padding:calc(14 * var(--c)) calc(16 * var(--c));border-radius:calc(14 * var(--c));background:linear-gradient(180deg,rgba(10,14,36,.72),rgba(4,6,18,.78));box-shadow:inset 0 0 0 1px rgba(216,189,120,.22)}
+.dev-head{display:grid;gap:2px}.dev-head b{font:700 calc(17 * var(--t))/1.25 var(--display);letter-spacing:.08em;color:var(--texte)}.dev-head small{font:italic 500 calc(15 * var(--t))/1.35 var(--serif);color:var(--texte-3)}.dev-head small b{color:var(--or-vif);font-style:normal}
+.dev-row{display:flex;flex-wrap:wrap;gap:calc(8 * var(--c));align-items:center}
+.dev-row .rg-in{flex:1 1 calc(220 * var(--c))}
+.dev-row select.rg-in{flex:0 1 calc(180 * var(--c))}
+.dev-row .rg-num{flex:0 0 88px}
+.dev-row .btn,.dev-row .btn-or{flex:0 0 auto}

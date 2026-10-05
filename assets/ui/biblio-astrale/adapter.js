@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "38";
+const VER = "44";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -439,9 +439,12 @@ function mondeLibreActif() {
 function moteurPasse() {
   const b = document.body; if (!actif()) return false;
   if (mondeLibreActif()) return false; // géré à part via ba-monde
-  if (b.classList.contains("x12iQteMode") || b.classList.contains("x12iQteModeV250")) return true;
   const g = document.getElementById("game"); if (!g || g.classList.contains("hidden")) return false;
-  return !!document.querySelector("#gameCard .x12iQteLayer:not(.hidden), #gameCard [class*='QteLayer']:not(.hidden):not(:empty), #combatTransition.active");
+  // QTE réellement affiché (couche non vide) — ne pas se fier seul aux classes body qui peuvent rester collées
+  const couche = document.querySelector("#stage [class*='QteLayer']:not(.hidden), #gameCard [class*='QteLayer']:not(.hidden)");
+  if (couche && couche.childElementCount) return true;
+  if (document.querySelector("#combatTransition.active")) return true;
+  return false;
 }
 function syncCouches() {
   if (!actif()) { document.body.classList.remove("ba-passe", "ba-monde"); return; }
@@ -449,8 +452,43 @@ function syncCouches() {
   const passe = !monde && moteurPasse();
   document.body.classList.toggle("ba-monde", monde);
   document.body.classList.toggle("ba-passe", passe);
+  if (!passe && (document.body.classList.contains("x12iQteMode") || document.body.classList.contains("x12iQteModeV250")) && !syncCouches._cleanQte) {
+    // classes QTE orphelines (plus de couche) : retirer sans relancer l’observateur en boucle
+    syncCouches._cleanQte = true;
+    try {
+      document.body.classList.remove("x12iQteMode", "x12iQteModeV250");
+      document.getElementById("gameCard")?.classList.remove("x12iQteMode", "x12iQteModeV250");
+    } finally { queueMicrotask(() => { syncCouches._cleanQte = false; }); }
+  }
   if (!monde && !passe && PB.dataset.ecran === "jeu") planifierMaj();
 }
+// Le moteur (typewriter « trailer ») vide puis réécrit #text caractère par caractère : relire son DOM en
+// cours de frappe donne un fragment (« Naïah tourne autour d ») et relance notre propre frappe en boucle.
+// On mémorise donc le dernier texte complet posé par le moteur via innerHTML / textContent.
+const TXT = { html: "" };
+function hookTexte() {
+  const el = document.getElementById("text"); if (!el || el.__baHook) return; el.__baHook = true;
+  const dH = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML"), dT = Object.getOwnPropertyDescriptor(Node.prototype, "textContent");
+  try {
+    Object.defineProperty(el, "innerHTML", { configurable: true, get() { return dH.get.call(this); }, set(v) { const t = String(v ?? ""); if (t.trim()) TXT.html = t; dH.set.call(this, v); } });
+    Object.defineProperty(el, "textContent", { configurable: true, get() { return dT.get.call(this); }, set(v) { const t = String(v ?? ""); if (t.trim()) TXT.html = esc(t).replace(/\n/g, "<br>"); dT.set.call(this, v); } });
+  } catch {}
+  const t0 = dH.get.call(el); if (t0.trim()) TXT.html = t0;
+}
+const normTxt = (x) => String(x || "").replace(/\s+/g, " ").trim();
+function texteCombat() {
+  hookTexte();
+  const cur = brut(document.getElementById("text")?.innerHTML || ""), src = brut(TXT.html || "");
+  const nc = normTxt(cur), ns = normTxt(src);
+  // frappe en cours : le DOM est un préfixe non vide du texte complet → on affiche le texte complet
+  if (ns && nc && ns.startsWith(nc) && nc.length < ns.length) return src;
+  if (ns && !nc) return src; // typewriter a vidé la boîte le temps d’un tick
+  // changement de scène : le DOM a déjà le nouveau texte (plus long / différent)
+  if (nc && (!ns || !ns.startsWith(nc))) { TXT.html = document.getElementById("text")?.innerHTML || ""; return cur; }
+  return cur || src;
+}
+// chronomètre de duel actif (Temps / Réflexe) : le texte doit être lisible tout de suite
+const chronoActif = (hud) => /id="[^"]*Timer"[^>]*>\s*\d+([.,]\d+)?\s*s/i.test(hud || "");
 function lireMoteur() {
   const s0 = ST(); const id = s0.scene; const s = S_()[id] || {};
   const stage = document.getElementById("stage"), bgEl = document.getElementById("bg");
@@ -460,7 +498,7 @@ function lireMoteur() {
   const combat = !!(stage && stage.classList.contains("combatMode"));
   const speaker = (document.getElementById("speaker")?.textContent || s.speaker || "Narrateur").trim();
   let text;
-  if (combat) text = brut(document.getElementById("text")?.innerHTML || "");
+  if (combat) text = texteCombat();
   else { try { text = typeof s.text === "function" ? s.text() : s.text; } catch { text = ""; } text = brut(text || ""); if (!text) text = brut(document.getElementById("text")?.innerHTML || ""); if (s.direction) text = s.direction + "\n\n" + text; }
   const labelBouton = (b) => {
     const root = b.querySelector("span:not(.arrow)") || b;
@@ -503,12 +541,19 @@ function majJeu(force) {
   syncCouches(); if (document.body.classList.contains("ba-monde") || document.body.classList.contains("ba-passe")) return;
   const g = document.getElementById("game"); if (g && g.classList.contains("hidden") && !force) return;
   const M = lireMoteur(); const s = M.s; const ch = CHAP[CH_OF(M.id)] || D.chapters[0] || { label: "", title: "" };
-  const cle = M.id + "|" + M.text.length + "|" + M.choix.map((c) => c.label + (c.verrou ? "!" : "")).join("/") + "|" + (M.cont ? 1 : 0) + "|" + M.hud.length;
+  // clé de remontage : ni la jauge/chrono du HUD, ni les chiffres du texte (décompte) ne relancent la page
+  const cle = M.id + "|" + (M.combat ? normTxt(M.text).replace(/\d+([.,]\d+)?\s*s?\b/g, "#").length : M.text.length) + "|" + M.choix.map((c) => c.label + (c.verrou ? "!" : "")).join("/") + "|" + (M.cont ? 1 : 0) + "|" + (M.combat ? 1 : 0);
   const intime = estIntime(M.id, s); PB.classList.toggle("intime", intime);
-  if (J && J.cle === cle && !force && $(".jeu")) { majSprites(M.chars, M.speaker); return; }
+  if (J && J.cle === cle && !force && $(".jeu")) {
+    J.M = M; // boutons du moteur frais (le moteur peut re-rendre #choices sans changer les libellés)
+    const hudEl = $(".combat-hud"); if (hudEl && hudEl.innerHTML !== M.hud) { hudEl.hidden = !M.hud; hudEl.innerHTML = M.hud; }
+    if (M.combat && J.plein && J.pages.join("\n") !== M.text) { J.pages = [M.text]; const el = $(".dlg-texte"); if (el) el.innerHTML = M.text.split("\n").map((l) => `<span class="para">${esc(l)}</span>`).join(""); }
+    majSprites(M.chars, M.speaker); return;
+  }
   const memeFond = J && $(".jeu") && J.M.bg === M.bg && J.M.video === M.video;
-  const pages = pagesDe(M.text);
-  const prev = J; J = { id: M.id, M, s, pages, p: 0, plein: false, auto: prev ? prev.auto : false, cle };
+  // combat : une seule page défilante (pas de pagination qui coupe la consigne d’un tour chronométré)
+  const pages = M.combat ? [M.text] : pagesDe(M.text);
+  const prev = J; J = { id: M.id, M, s, pages, p: 0, plein: false, auto: prev ? prev.auto : false, cle, chrono: M.combat && chronoActif(M.hud) };
   if (!memeFond) {
     fond(); particules(intime ? 34 : 18);
     monter(`<section class="jeu ${M.zoom ? "zoom" : ""} ${M.combat ? "combat" : ""}">
@@ -542,7 +587,7 @@ function majJeu(force) {
   }
   const hudEl = $(".combat-hud"); if (hudEl) { hudEl.hidden = !M.hud; hudEl.innerHTML = M.hud; }
   $(".jeu")?.classList.toggle("combat", M.combat);
-  majSprites(M.chars, M.speaker); majLieu(); afficherPage(false);
+  majSprites(M.chars, M.speaker); majLieu(); afficherPage(!!J.chrono);
   jouerMusique(pisteEcran());
 }
 function majLieu() { const M = J.M; const b = $(".jl-t b"); if (b) b.textContent = `${M.title}${M.sub ? " — " + M.sub : ""}`; }
@@ -652,6 +697,12 @@ actions["ui-set"] = (b) => changerUI(b.dataset.ui);
 window.addEventListener("keydown", (e) => {
   if (!actif() || document.body.classList.contains("ba-passe")) return;
   const stop = () => { e.preventDefault(); e.stopImmediatePropagation(); };
+  const cible = e.composedPath ? e.composedPath()[0] : e.target;
+  if (cible && /^(INPUT|SELECT|TEXTAREA)$/.test(cible.tagName) && R.contains(cible)) {
+    // saisie dans l’interface (outils DEV) : laisser taper, ne pas déclencher les raccourcis du moteur
+    if (e.key === "Enter") { e.preventDefault(); if (cible.id === "baDevScene") actions["dev-aller"](); else if (cible.id === "baDevVal") actions["dev-val"](); }
+    e.stopImmediatePropagation(); return;
+  }
   if ((e.key === "h" || e.key === "H") && !e.ctrlKey && !e.metaKey && !e.altKey) { if (PB.dataset.ecran === "jeu") changerUI(); stop(); return; }
   if ($("#couche").childElementCount) { if (e.key === "Escape") fermerCouche(); if (["Escape", " ", "Enter"].includes(e.key)) stop(); return; }
   const ec = PB.dataset.ecran;
@@ -689,7 +740,8 @@ function ouvrirCouche(type, q) {
     const it = [["Reprendre", "fermer", "", "#1b2a5c"], ["Signets", "ov", 'data-ov="signets"', "#16404f"], ["Journal", "ov", 'data-ov="journal"', "#5a1e2e"], ["Chapitres", "", 'data-go="#/chapitres" data-retour="#/jeu"', "#4a2e1c"],
       ["Codex", "", 'data-go="#/codex" data-retour="#/jeu"', "#15403a"], ["Progression", "", 'data-go="#/progression" data-retour="#/jeu"', "#5b2a1c"], ["Réglages", "", 'data-go="#/reglages" data-retour="#/jeu"', "#2a3340"],
       [musiqueOn() ? "Couper la musique" : "Musique", "musique", "", "#3a2160"], ["Plein écran", "plein-ecran", "", "#24335e"], ["Écran titre", "", 'data-go="#/titre"', "#4a1f45"]];
-    fenetre("Menu", `${esc(sceneLib(ST().scene).court)} · page ${(J ? J.p : 0) + 1}`, `<nav class="menu-pile">${it.map((m, i) => `<button class="livre dos z-lbl ${i === 0 ? "actif" : ""}" style="--dc:${m[3]};--x:${[0, 10, -6, 14, -10, 6, -2, 12, -8, 4][i]}" ${m[1] ? `data-act="${m[1]}"` : ""} ${m[2]}><span class="tome">${ROM[i + 1]}</span><span class="etiq">${m[0]}</span></button>`).join("")}</nav>`, "menu-fen");
+    if (ST().devMode) it.splice(7, 0, ["Outils DEV", "", 'data-go="#/reglages/systeme" data-retour="#/jeu"', "#16404f"]);
+    fenetre("Menu", `${esc(sceneLib(ST().scene).court)} · page ${(J ? J.p : 0) + 1}`, `<nav class="menu-pile">${it.map((m, i) => `<button class="livre dos z-lbl ${i === 0 ? "actif" : ""}" style="--dc:${m[3]};--x:${[0, 10, -6, 14, -10, 6, -2, 12, -8, 4, -4][i] ?? 0}" ${m[1] ? `data-act="${m[1]}"` : ""} ${m[2]}><span class="tome">${ROM[i + 1]}</span><span class="etiq">${m[0]}</span></button>`).join("")}</nav>`, "menu-fen");
     const L = $$(".menu-pile .livre"); L.forEach((b, i) => b.addEventListener("pointerenter", () => L.forEach((x, j) => x.classList.toggle("actif", i === j))));
   } else if (type === "signets") {
     fenetre("Signets", "Ranger ou reprendre un emprunt", htmlSignets(PB.dataset.ecran === "jeu"), "large");
@@ -864,11 +916,9 @@ function ecranReglages([onglet = "affichage"]) {
       inter("mobile", "Mode mobile", "Format vertical optimisé (repris tel quel du jeu)", !!s.mobileUI) +
       `<div class="reglage"><span class="rg-t"><b>Mode développeur</b><small>${s.devMode ? "Activé · valeurs visibles · chapitres ouverts" : "Verrouillé · code requis"}</small></span>
         <button class="btn petit" data-act="dev">${s.devMode ? "Désactiver" : "Activer"}</button></div>` +
-      (s.devMode ? `<div class="reglage"><span class="rg-t"><b>DEV · scène</b><small id="ba-dev-scene">${esc(s.scene || "?")}</small></span><span class="verrou-lib">✦</span></div>
+      (s.devMode ? htmlDev(s) + `
         <div class="reglage"><span class="rg-t"><b>DEV · journal Némésis</b><small>Afficher et rendre lisibles tous les fragments</small></span>
-          <button class="btn petit ${s.devJournalForceAccess ? "actif" : ""}" data-act="dev-journal">${s.devJournalForceAccess ? "Accès forcé actif" : "Forcer l’accès"}</button></div>
-        <div class="reglage"><span class="rg-t"><b>DEV · retour scène</b><small>Revenir à la scène précédente (historique)</small></span>
-          <button class="btn petit" data-act="dev-back" ${(s.history && s.history.length) ? "" : "disabled"}>Retour</button></div>` : "") +
+          <button class="btn petit ${s.devJournalForceAccess ? "actif" : ""}" data-act="dev-journal">${s.devJournalForceAccess ? "Accès forcé actif" : "Forcer l’accès"}</button></div>` : "") +
       `<div class="reglage"><span class="rg-t"><b>Nouveau départ</b><small>Réinitialiser l’aventure (valeurs, choix, codex)</small></span><button class="btn danger petit" data-act="raz"><span>Réinitialiser</span></button></div>`,
   };
   monter(`<section class="reglages">${entete("Options", "Réglages", retourVers)}
@@ -882,6 +932,54 @@ function ecranReglages([onglet = "affichage"]) {
     if (k === "classique") { if (v) basculer("classique"); return; }
     G.reg[k] = v; appliquerEchelles(); sauver(); }));
 }
+/* ---------- Outils développeur (mêmes fonctions que Classique : recherche de scène v0.215, réglage des valeurs, Codex DEV) ---------- */
+const DEV_STATS = [["audace", "Audace"], ["sangfroid", "Sang-froid"], ["lucidite", "Lucidité"], ["resonance", "Résonance"], ["lien", "Lien Remerii"]];
+let devStatSel = "lucidite";
+function htmlDev(s) {
+  const st = s.stats || {}; const ids = Object.keys(S_()).sort();
+  const opts = ids.map((id) => { const sc = S_()[id] || {}; return `<option value="${esc(id)}" label="${esc([sc.title, sc.sub].filter(Boolean).join(" · ").slice(0, 90))}"></option>`; }).join("");
+  return `<div class="dev-dock">
+      <div class="dev-card"><div class="dev-head"><b>DEV · scène actuelle</b><small id="ba-dev-scene">${esc(s.scene || "?")}${S_()[s.scene] ? " — " + esc(S_()[s.scene].title || "") : ""}</small></div>
+        <div class="dev-row"><button class="btn petit" data-act="dev-copier"><span>Copier</span></button>
+          <button class="btn petit" data-act="dev-back" ${(s.history && s.history.length) ? "" : "disabled"}>Retour scène</button></div></div>
+      <div class="dev-card"><div class="dev-head"><b>DEV · aller à une scène</b><small>Identifiant exact, fragment ou titre · ${ids.length} scènes</small></div>
+        <div class="dev-row"><input id="baDevScene" class="rg-in" list="baDevScenes" placeholder="Ex : duel, c5_sage_start, c12i_000" autocomplete="off" spellcheck="false"><datalist id="baDevScenes">${opts}</datalist>
+        <button class="btn-or petit" data-act="dev-aller"><span>Aller</span></button></div></div>
+      <div class="dev-card"><div class="dev-head"><b>DEV · valeurs</b><small>${DEV_STATS.map(([k, l]) => `${l} <b data-dev-v="${k}">${st[k] || 0}</b>`).join(" · ")}</small></div>
+        <div class="dev-row"><select id="baDevStat" class="rg-in">${DEV_STATS.map(([k, l]) => `<option value="${k}" ${k === devStatSel ? "selected" : ""}>${l}</option>`).join("")}</select>
+        <input id="baDevVal" class="rg-in rg-num" type="number" inputmode="numeric" min="0" max="999" step="1" value="${st[devStatSel] || 0}">
+        <button class="btn-or petit" data-act="dev-val"><span>Définir</span></button></div></div>
+      <div class="dev-card"><div class="dev-head"><b>DEV · Codex complet</b><small>Révèle tout le Codex sans modifier les vrais déblocages</small></div>
+        <div class="dev-row"><button class="btn petit ${s.devCodexForceAccess ? "actif" : ""}" data-act="dev-codex"><span>${s.devCodexForceAccess ? "Codex normal" : "Tout révéler"}</span></button></div></div>
+    </div>`;
+}
+function trouverScene(raw) {
+  raw = String(raw || "").trim(); if (!raw) return null; const S = S_(); if (S[raw]) return raw;
+  const low = raw.toLowerCase(), ids = Object.keys(S).sort();
+  return ids.find((id) => id.toLowerCase() === low) || ids.find((id) => id.toLowerCase().includes(low)) || ids.find((id) => (((S[id].title || "") + " " + (S[id].sub || "")).toLowerCase().includes(low))) || null;
+}
+actions["dev-aller"] = () => {
+  const s = ST(); if (!s.devMode) { toast("Mode développeur requis"); return; }
+  const raw = $("#baDevScene")?.value; const id = trouverScene(raw);
+  if (!id) { toast(`Scène introuvable : <b>${esc(raw || "")}</b>`); return; }
+  if (!Array.isArray(s.history)) s.history = []; if (s.scene && s.scene !== id) s.history.push(s.scene);
+  // repartir proprement si la scène est un duel (sinon l’état d’un duel précédent bloque le rendu)
+  ["duel", "c3ShadowDuel", "c5SageDuel", "x12iDuel"].forEach((k) => { if (s[k] && s[k].finished) s[k] = null; });
+  s.scene = id; document.body.classList.remove("sw-open", "ba-monde");
+  moteurJeu(); fn("save")?.(); retourVers = "#/titre";
+  J = null; H = "#/jeu"; route(); toast(`Scène ouverte : <b>${esc(id)}</b>`);
+};
+actions["dev-val"] = () => {
+  const s = ST(); if (!s.devMode) { toast("Mode développeur requis"); return; }
+  const k = $("#baDevStat")?.value || "lucidite"; let v = parseInt($("#baDevVal")?.value, 10); if (!Number.isFinite(v)) v = 0; v = Math.max(0, Math.min(999, v));
+  if (!s.stats) s.stats = {}; s.stats[k] = v; devStatSel = k;
+  try { fn("updateProgressUI")?.(); } catch {} fn("save")?.();
+  const b = $(`[data-dev-v="${k}"]`); if (b) b.textContent = v; const inp = $("#baDevVal"); if (inp) inp.value = String(v);
+  toast(`${(DEV_STATS.find((x) => x[0] === k) || [k, k])[1]} = <b>${v}</b>`);
+};
+actions["dev-codex"] = () => { const s = ST(); if (!s.devMode) return; s.devCodexForceAccess = !s.devCodexForceAccess; fn("save")?.(); route(); toast(s.devCodexForceAccess ? "Codex DEV révélé" : "Codex normal restauré"); };
+actions["dev-copier"] = () => { const id = ST().scene || ""; try { navigator.clipboard?.writeText(id); } catch {} toast(`Code de scène : <b>${esc(id)}</b>`); };
+R.addEventListener("change", (e) => { if (e.target && e.target.id === "baDevStat") { devStatSel = e.target.value; const v = $("#baDevVal"); if (v) v.value = String((ST().stats || {})[devStatSel] || 0); } });
 actions.skin = (b) => basculer(b.dataset.skin);
 actions.dev = () => { const f = fn("toggleDevMode"); if (f) f(); else document.getElementById("devModeBtn")?.click();
   setTimeout(() => { if (PB.dataset.ecran === "reglages") route(); }, 80); };
@@ -918,7 +1016,7 @@ function brancher() {
 function observer() {
   const cible = document.getElementById("gameCard"); if (!cible) return;
   new MutationObserver(() => { if (actif() && PB.dataset.ecran === "jeu") planifierMaj(); }).observe(cible, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "disabled"] });
-  new MutationObserver(() => { if (!actif()) return; const avant = document.body.classList.contains("ba-monde"); syncCouches();
+  new MutationObserver(() => { if (!actif() || syncCouches._cleanQte) return; const avant = document.body.classList.contains("ba-monde"); syncCouches();
     if (avant && !document.body.classList.contains("ba-monde") && PB.dataset.ecran === "jeu") planifierMaj();
   }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
   const sw = document.getElementById("storyWorldRoot");

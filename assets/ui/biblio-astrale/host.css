@@ -17,6 +17,32 @@ body.ui-biblio > #sylviniaIntroVideoOverlay{display:none!important}
 /* Passage temporaire (duels QTE chronométrés) : la scène de combat du moteur reste interactive. */
 body.ui-biblio.ba-passe #bA-host{display:none}
 body.ui-biblio.ba-passe > #app{display:block!important}
+/* QTE : la scène du moteur occupe tout le viewport (Fold ~830×525 comme desktop) — sinon la
+   carte classique (aspect-ratio 16/9, hauteurs svh, layouts trailer/mobile) écrase l’image en
+   haut et laisse une grande bande noire en bas. */
+body.ui-biblio.ba-passe{overflow:hidden!important}
+body.ui-biblio.ba-passe > #app,
+body.ui-biblio.ba-passe #game,
+body.ui-biblio.ba-passe #gameCard{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;transform:none!important;background:#000!important;overflow:hidden!important}
+body.ui-biblio.ba-passe #gameCard > :not(#stage):not(.stage){visibility:hidden!important;pointer-events:none!important}
+body.ui-biblio.ba-passe #stage{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;border-radius:0!important;transform:none!important;z-index:5!important;visibility:visible!important}
+body.ui-biblio.ba-passe #stage .bg{background-size:cover!important;background-position:center!important}
+/* Vignette trailer16x9 (#gameCard::before) et overlays hors-scène : bandeaux noirs parasites pendant le QTE */
+body.ui-biblio.ba-passe #gameCard::before,
+body.ui-biblio.ba-passe #gameCard::after{content:none!important;display:none!important}
+body.ui-biblio.ba-passe #stage::before,
+body.ui-biblio.ba-passe #stage::after{opacity:.55}
+body.ui-biblio.ba-passe .x12iStageQteLayer,
+body.ui-biblio.ba-passe .c7StageQteLayer,
+body.ui-biblio.ba-passe [class*="QteLayer"]{visibility:visible!important;pointer-events:none!important}
+body.ui-biblio.ba-passe .x12iStageQteBtn,
+body.ui-biblio.ba-passe .c7StageQteBtn,
+body.ui-biblio.ba-passe [class*="QteBtn"]{pointer-events:auto!important;visibility:visible!important}
+body.ui-biblio.ba-passe #trailerVNControls,
+body.ui-biblio.ba-passe .topbar,
+body.ui-biblio.ba-passe .dialogueWrap,
+body.ui-biblio.ba-passe #stats{display:none!important}
+body.ui-biblio.ba-passe > #c7StickyTimer{z-index:2147480500!important}
 /* Moments libres (#storyWorldRoot sur body, z-index 1e6 < host) : on retire le host
    pour que le panneau Fusion soit visible et cliquable. */
 body.ui-biblio.ba-monde #bA-host{display:none!important}
