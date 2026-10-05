@@ -1,0 +1,20 @@
+/* Mode Histoire · Bibliothèque astrale — hôte du Shadow DOM.
+   En mode Bibliothèque, l’interface classique du Mode Histoire est entièrement masquée :
+   le moteur continue d’y écrire (logique, sauvegarde, musique), l’interface du prototype est
+   montée dans #bA-host (Shadow DOM, CSS du proto importée telle quelle).
+   En mode Classique (body sans .ui-biblio), rien ici ne s’applique. */
+#bA-host{display:none}
+body.ui-biblio #bA-host{display:block;position:fixed;inset:0;z-index:2147480000;contain:strict;background:#000}
+body.ui-biblio > #app,
+body.ui-biblio > #screenFade,
+body.ui-biblio > #toast,
+body.ui-biblio > #sylviniaNotifyLayer,
+body.ui-biblio > #lightbox,
+body.ui-biblio > #trailerHistoryModal,
+body.ui-biblio > #athRestoreBtn,
+body.ui-biblio > #bugReportBtn,
+body.ui-biblio > #sylviniaIntroVideoOverlay{display:none!important}
+/* Passage temporaire (duels, QTE) : la scène de combat du moteur reste interactive,
+   l’interface Bibliothèque se retire le temps de la séquence. */
+body.ui-biblio.ba-passe #bA-host{display:none}
+body.ui-biblio.ba-passe > #app{display:block!important}

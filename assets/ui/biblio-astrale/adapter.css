@@ -1,0 +1,43 @@
+/* Bibliothèque astrale — compléments pour les écrans du jeu absents du prototype.
+   Même vocabulaire que proto.css (verre, dos de livre, cotes, lettrines, gemmes) ; aucune règle du proto n’est redéfinie. */
+.pbody{position:fixed;inset:0}
+a.btn,a.btn-or{text-decoration:none;display:inline-flex}
+
+/* Scène : vidéo de clé (séquences animées du moteur) */
+.jeu-bg .jeu-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* Duel / combat du moteur : jauges reprises dans un cartouche de verre */
+.combat-hud{position:absolute;z-index:6;top:calc(96 * var(--c));left:50%;transform:translateX(-50%);width:min(calc(900 * var(--c)),92%);padding:calc(10 * var(--c)) calc(22 * var(--c));font:600 calc(15 * var(--t))/1.3 var(--display);color:var(--texte-2)}
+.combat-hud[hidden]{display:none}
+.combat-hud .combatHud{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(14 * var(--c))}
+.combat-hud .combatTop{display:flex;justify-content:space-between;letter-spacing:.12em;text-transform:uppercase;font-size:calc(12 * var(--t));color:var(--or-pale)}
+.combat-hud .combatTrack{height:calc(8 * var(--c));min-height:4px;margin-top:calc(4 * var(--c));background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 1px var(--ligne);transform:skewX(-14deg)}
+.combat-hud .combatFill{height:100%;background:linear-gradient(90deg,#9adfff,var(--glace))}
+.combat-hud .combatFill.fatigue{background:linear-gradient(90deg,#ffb38a,var(--v-audace))}
+.combat-hud .combatFill.read{background:linear-gradient(90deg,#e0c8ff,var(--amethyste-vif))}
+.combat-hud .combatMeta{display:flex;flex-wrap:wrap;gap:calc(6 * var(--c)) calc(16 * var(--c));margin-top:calc(8 * var(--c));font:500 calc(14 * var(--t)) var(--serif);color:var(--texte-2)}
+.combat-hud .combatMeta b{color:var(--or-vif)}
+.combat-hud > *:not(.combatHud):not(.combatMeta){font:500 calc(14 * var(--t)) var(--serif)}
+
+/* Progression : accès au Carnet du Némésis (cote en tête) + listes vides */
+.nemesis-btn{cursor:pointer;margin-left:auto}
+.nemesis-btn:hover{box-shadow:inset 0 0 0 1px var(--or-vif),0 0 calc(18 * var(--c)) rgba(255,217,138,.25)}
+.note-vide{font:italic 500 calc(18 * var(--t))/1.45 var(--serif);color:var(--texte-3);padding:calc(10 * var(--c)) calc(4 * var(--c))}
+
+/* Carnet du Némésis : même gabarit que la fiche du codex, en fenêtre */
+.nemesis-fen .fen-corps{display:flex;min-height:0;flex:1;padding-bottom:calc(24 * var(--c))}
+.nemesis{display:flex;gap:calc(22 * var(--c));min-height:0;flex:1;width:100%}
+.nemesis .nm-liste{flex:0 0 min(calc(380 * var(--c)),34%);padding:calc(6 * var(--c)) 0;box-shadow:inset -1px 0 0 var(--ligne)}
+.nemesis .nm-liste ul{list-style:none}
+.nemesis .nm-liste .cx-item small{display:block;font:italic 500 calc(15 * var(--t))/1.2 var(--serif);color:var(--texte-3)}
+.nemesis .nm-page{position:relative;padding:calc(10 * var(--c)) calc(30 * var(--c)) calc(20 * var(--c));background:none;box-shadow:none}
+.nm-bloc{position:relative;margin-top:calc(14 * var(--c))}
+.nm-bloc + .nm-bloc{padding-top:calc(12 * var(--c));border-top:1px dashed var(--ligne)}
+.nm-lab{display:block;margin-bottom:calc(4 * var(--c));font:700 calc(12 * var(--t)) var(--display);letter-spacing:.2em;text-transform:uppercase;color:var(--acc)}
+.nm-bloc.report .cx-texte{font-family:var(--sans);font-size:calc(19 * var(--t))}
+.nm-bloc.manuscript .cx-texte,.nm-bloc.projection .cx-texte{font-style:italic}
+.nm-flou{filter:blur(.4px);opacity:.85}
+
+/* Encyclopédie (onglet du codex) */
+.cx-encyclo .tags{margin:calc(18 * var(--c)) 0}
+.cx-encyclo .conf-act{justify-content:flex-start}

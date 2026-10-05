@@ -3040,12 +3040,11 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
 </style>
 
 <link rel="stylesheet" href="fusion/story-world.css?v=20260826-1">
-  <link rel="stylesheet" href="assets/ui/biblio-astrale/fonts.css">
-  <link rel="stylesheet" href="assets/ui/biblio-astrale/biblio.css?v=23">
+<link rel="stylesheet" href="assets/ui/biblio-astrale/fonts.css?v=34">
+<link rel="stylesheet" href="assets/ui/biblio-astrale/host.css?v=34">
 </head>
-<body class="ui-biblio">
-  <script src="assets/ui/biblio-astrale/biblio.js?v=23"></script>
-  <script src="assets/ui/biblio-astrale/biblio-panels.js?v=1"></script>
+<body>
+<script>/* Bibliothèque astrale : choisie par défaut, sans flash de l’interface classique */try{if((JSON.parse(localStorage.getItem("sylvinia_ui_biblio_v1")||"{}").skin)!=="classique")document.body.classList.add("ui-biblio")}catch(e){document.body.classList.add("ui-biblio")}</script>
 <div id="screenFade" aria-hidden="true"></div>
 <div id="app">
   <main id="disclaimer" class="screen card">
@@ -3445,7 +3444,7 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
             <div class="journalBanner">
               <img src="assets/images/progression/amanea_journal_banner.png" alt="Projection spectrale d’Amanea" />
               <div class="journalBannerOverlay">
-                <div class="journalBannerEyebrow">Carnet du Némésis · archives incomplètes</div>
+                <div class="journalBannerEyebrow">Archives incomplètes</div>
                 <div class="journalBannerTitle">Le Carnet du Némésis</div>
                 <p>À chaque fin de chapitre (Introduction compris), Hylee peut mettre la main sur un mystérieux fragment. Ils restent cependant illisibles pour le moment. Du moins, pour le moment...</p>
               </div>
@@ -54237,64 +54236,6 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
   }
 })();
 </script>
-<!-- BIBLIO-ASTRALE-LATE-OVERRIDES -->
-<style id="biblioAstraleLateOverrides">
-/* Pin dialogue wrap bottom; kill trailer stretch */
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap,
-html body.ui-biblio.experimentalUI #gameCard .dialogueWrap,
-html body.ui-biblio #gameCard .dialogueWrap{
-  position:absolute!important; left:3%!important; right:3%!important; bottom:2%!important;
-  top:unset!important; inset:unset unset 2% 3%!important;
-  width:auto!important; height:auto!important; max-height:46svh!important;
-  display:flex!important; flex-direction:column!important; justify-content:flex-end!important; align-items:center!important;
-  gap:6px!important; padding:0!important; margin:0!important; background:none!important; pointer-events:none!important; z-index:12!important;
-}
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio #gameCard .dialogue{
-  position:relative!important; inset:auto!important; display:grid!important;
-  grid-template-columns:auto 1fr!important; grid-template-rows:1fr!important;
-  width:min(94vw,980px)!important; max-width:100%!important; max-height:none!important; min-height:0!important;
-  margin:0!important; padding:0!important; overflow:hidden!important; flex:0 0 auto!important;
-}
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue #text,
-html body.ui-biblio #gameCard .dialogue #text{
-  grid-column:2!important; grid-row:1!important; position:static!important;
-  max-height:12svh!important; overflow:auto!important; display:block!important;
-}
-html body.ui-biblio.trailer16x9 #gameCard .dialogue #choices,
-html body.ui-biblio #gameCard .dialogue #choices,
-html body.ui-biblio #gameCard .dialogue #speaker,
-html body.ui-biblio #gameCard .dialogue .tag,
-html body.ui-biblio #gameCard .dialogue .stats,
-html body.ui-biblio #gameCard > .topbar,
-html body.ui-biblio #trailerVNControls,
-html body.ui-biblio #gameCard #trailerVNControls,
-html body.ui-biblio.trailer16x9 #gameCard #trailerVNControls,
-html body.ui-biblio .legacySheetPeek #legacySheetToggle,
-html body.ui-biblio #legacySheetToggle{
-  display:none!important; visibility:hidden!important; pointer-events:none!important;
-}
-html body.ui-biblio #baChoices{
-  pointer-events:auto!important; z-index:13!important; max-height:22svh!important;
-  margin:0!important; flex:0 0 auto!important; align-self:stretch!important;
-}
-html body.ui-biblio #baChoices .ba-ch{min-height:32px!important; padding:3px 10px!important}
-html body.ui-biblio #title .menuDockCorner,
-html body.ui-biblio #title .menuOverlayTitle{display:none!important}
-/* Chapitres : cacher entièrement le chrome classique */
-html body.ui-biblio #chapters .chaptersFrame{display:none!important; visibility:hidden!important}
-html body.ui-biblio #baShelf{z-index:30!important; background:#07080f!important;
-  background-image:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.16),transparent 70%),linear-gradient(180deg,#12101c,#07080f)!important}
-/* Stats flottants trailer */
-html body.ui-biblio #gameCard .stats,
-html body.ui-biblio.trailer16x9 #gameCard .stats,
-html body.ui-biblio #game .stat,
-html body.ui-biblio .vn32StatsStrip,
-html body.ui-biblio [class*="statsStrip"],
-html body.ui-biblio [class*="StatStrip"]{display:none!important}
-</style>
-
+<script src="assets/ui/biblio-astrale/adapter.js?v=34"></script>
 </body>
 </html>

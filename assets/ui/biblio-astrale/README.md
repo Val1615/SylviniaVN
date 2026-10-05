@@ -1,10 +1,33 @@
-# Bibliothèque astrale — Mode Histoire (port complet)
+# Bibliothèque astrale (Mode Histoire)
 
-Chrome + panneaux calqués sur `/workspace/vn-redesign/proto` :
+Remplace l’UI classique du Mode Histoire par le DOM/CSS/JS du prototype
+(`vn-redesign/proto/`), piloté par le moteur réel via un adaptateur Shadow DOM.
 
-- `biblio.css` / `biblio.js` — chrome titre, jeu, étagère, presets, bascule Classique
-- `biblio-panels.js` — menu pile, journal, signets, réglages, **livre 3D**, gemmes de choix
-- `proto-ref.css` — référence visuelle du proto
-- `fonts/` — Cinzel, Cinzel Decorative, Cormorant, Inter
+## Fichiers
 
-`body.ui-biblio` active tout ; `body.ui-classique` retire le chrome `#ba*`.
+| Fichier | Rôle |
+|---|---|
+| `host.css` | Masque `#app` et l’infra classique sous `body.ui-biblio` ; hôte `#bA-host` plein écran. `body.ba-passe` laisse passer les QTE/duels. |
+| `proto.css` | CSS du prototype, scopé sous `.pbody` (généré par `tools/build_proto_css.py`). |
+| `adapter.css` | Compléments (Némésis, encyclopédie, hubs, combat). |
+| `adapter.js` | Monte le Shadow DOM du prototype, route `#/…`, lit/écrit le moteur. |
+| `fonts.css` + `fonts/` | Mêmes polices que le prototype. |
+| `img/` | Posters vidéos + fonds bibliothèque. |
+
+## Bascule
+
+- Défaut : Bibliothèque (`localStorage sylvinia_ui_biblio_v1.skin`).
+- Réglages → Système → Apparence, ou pastille « ✦ Bibliothèque astrale » en Classique.
+- `BibliothequeAstrale.basculer('classique'|'biblio')`.
+
+## API test
+
+```js
+BibliothequeAstrale.aller('#/jeu/s02?choix=1')
+BibliothequeAstrale.route('#/codex/entrees')
+BibliothequeAstrale.setUI('epuree'|'cine'|'complete')
+BibliothequeAstrale.changerUI() // cycle ◐ / H
+BibliothequeAstrale.etat()
+```
+
+Cache-bust : `?v=` sur `adapter.js`, `host.css`, `fonts.css`, `proto.css`.
