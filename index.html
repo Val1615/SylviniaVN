@@ -3040,8 +3040,11 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
 </style>
 
 <link rel="stylesheet" href="fusion/story-world.css?v=20260826-1">
+<link rel="stylesheet" href="assets/ui/biblio-astrale/fonts.css?v=47">
+<link rel="stylesheet" href="assets/ui/biblio-astrale/host.css?v=47">
 </head>
 <body>
+<script>/* Bibliothèque astrale : choisie par défaut, sans flash de l’interface classique */try{if((JSON.parse(localStorage.getItem("sylvinia_ui_biblio_v1")||"{}").skin)!=="classique")document.body.classList.add("ui-biblio")}catch(e){document.body.classList.add("ui-biblio")}</script>
 <div id="screenFade" aria-hidden="true"></div>
 <div id="app">
   <main id="disclaimer" class="screen card">
@@ -18597,7 +18600,7 @@ function openAlternativeChronicleFromModeSelect(){
       window.SylviniaGameModes.openAlternativeChronicle();
       return;
     }
-    window.location.assign('chronique-alternative/');
+    window.location.assign('chronique-alternative/?intro=intro');
   };
   const fade=document.getElementById('screenFade');
   if(!fade){go();return;}
@@ -54233,5 +54236,6 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
   }
 })();
 </script>
+<script src="assets/ui/biblio-astrale/adapter.js?v=47"></script>
 </body>
 </html>
