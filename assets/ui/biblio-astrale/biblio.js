@@ -87,8 +87,9 @@
           <button type="button" class="ba-livre" style="--dc:#5a1e2e" data-ba-act="resume"><span class="tome">I</span><span class="etiq">Reprendre</span><span class="sup"><i>${esc(resumeSub)}</i></span></button>
           <button type="button" class="ba-livre" style="--dc:#1b2a5c" data-ba-act="new"><span class="tome">II</span><span class="etiq">Nouvelle chronique</span></button>
           <button type="button" class="ba-livre" style="--dc:#15403a" data-ba-act="chapters"><span class="tome">III</span><span class="etiq">Chapitres</span><span class="sup"><b>${esc(chaptersAvail||"…")}</b></span></button>
-          <button type="button" class="ba-livre" style="--dc:#3a2160" data-ba-act="progress"><span class="tome">IV</span><span class="etiq">Progression</span></button>
-          <button type="button" class="ba-livre" style="--dc:#4a2e1c" data-ba-act="codex"><span class="tome">V</span><span class="etiq">Codex & mémoire</span><span class="sup"><i>${esc(codexMetric)}</i></span></button>
+          <button type="button" class="ba-livre" style="--dc:#16404f" data-ba-act="signets"><span class="tome">IV</span><span class="etiq">Signets</span></button>
+          <button type="button" class="ba-livre" style="--dc:#3a2160" data-ba-act="progress"><span class="tome">V</span><span class="etiq">Progression</span></button>
+          <button type="button" class="ba-livre" style="--dc:#4a2e1c" data-ba-act="codex"><span class="tome">VI</span><span class="etiq">Codex & mémoire</span><span class="sup"><i>${esc(codexMetric)}</i></span></button>
           <button type="button" class="ba-livre ca" style="--dc:#2a1848" data-ba-act="ca"><span class="tome">✦</span><span class="etiq">Chronique Alternative</span></button>
           <button type="button" class="ba-livre" style="--dc:#2a3340" data-ba-act="opts"><span class="tome">VIII</span><span class="etiq">Réglages</span></button>
         </nav>
@@ -122,7 +123,8 @@
       else if(a==="progress") clickEl("#progressionBtn");
       else if(a==="codex") clickEl("#codexBtn");
       else if(a==="ca") clickEl("#chronicleModeBtn");
-      else if(a==="opts"){ const p=document.getElementById("baOptsPanel"); p.classList.toggle("open"); applySkin; applyPreset(); }
+      else if(a==="opts"){ if(window.SylviniaBiblioPanels?.openSettings) SylviniaBiblioPanels.openSettings(); else { const p=document.getElementById("baOptsPanel"); p?.classList.toggle("open"); applyPreset(); } }
+      else if(a==="signets"){ window.SylviniaBiblioPanels?.openSignets(false); }
       else if(a==="fs"){ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); }
     };
     applyPreset();
@@ -156,8 +158,8 @@
         <div class="ba-jl"><small>${esc((label||"Chapitre").toUpperCase())} · ${esc(title)}</small><b>${esc(sub||"")}</b></div>
       </div>
       <div class="ba-hud">
-        <button type="button" class="ba-dos-o" style="--dc:#5a1e2e;--h:118" data-ba-g="progress"><i>❦</i><span>Journal</span></button>
-        <button type="button" class="ba-dos-o" style="--dc:#1b2a5c;--h:132" data-ba-g="progress"><i>⚑</i><span>Signets</span></button>
+        <button type="button" class="ba-dos-o" style="--dc:#5a1e2e;--h:118" data-ba-g="journal"><i>❦</i><span>Journal</span></button>
+        <button type="button" class="ba-dos-o" style="--dc:#1b2a5c;--h:132" data-ba-g="signets"><i>⚑</i><span>Signets</span></button>
         <button type="button" class="ba-dos-o" style="--dc:#15403a;--h:112" data-ba-g="codex"><i>✦</i><span>Codex</span></button>
         <button type="button" class="ba-dos-o" style="--dc:#2a3340;--h:124" data-ba-g="menu"><i>☰</i><span>Menu</span></button>
       </div>`;

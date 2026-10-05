@@ -1,10 +1,10 @@
-# Bibliothèque astrale — Mode Histoire
+# Bibliothèque astrale — Mode Histoire (port complet)
 
-Chrome UI calqué sur le prototype validé (`vn-redesign/proto`), monté en overlay lorsque `body.ui-biblio` est actif.
+Chrome + panneaux calqués sur `/workspace/vn-redesign/proto` :
 
-- **Bibliothèque / Classique** : panneau Réglages du menu titre (épines), persisté `localStorage.sylvinia_ui_biblio_v1`.
-- **Classique** retire tout le chrome `#ba*` et restaure l’UI d’origine.
-- Préréglages en jeu : Complète / Épurée / Cinématique (bouton ◐ + touche `H`).
-- N’altère pas Chronique Alternative ni la logique de scènes / sauvegardes.
+- `biblio.css` / `biblio.js` — chrome titre, jeu, étagère, presets, bascule Classique
+- `biblio-panels.js` — menu pile, journal, signets, réglages, **livre 3D**, gemmes de choix
+- `proto-ref.css` — référence visuelle du proto
+- `fonts/` — Cinzel, Cinzel Decorative, Cormorant, Inter
 
-Fichiers : `biblio.css`, `biblio.js`, `fonts/`, `proto-ref.css` (référence visuelle).
+`body.ui-biblio` active tout ; `body.ui-classique` retire le chrome `#ba*`.
