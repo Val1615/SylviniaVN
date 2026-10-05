@@ -3040,10 +3040,11 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
 </style>
 
 <link rel="stylesheet" href="fusion/story-world.css?v=20260826-1">
-  <link rel="stylesheet" href="assets/ui/biblio-astrale/biblio.css?v=8">
+  <link rel="stylesheet" href="assets/ui/biblio-astrale/fonts.css">
+  <link rel="stylesheet" href="assets/ui/biblio-astrale/biblio.css?v=22">
 </head>
 <body class="ui-biblio">
-  <script src="assets/ui/biblio-astrale/biblio.js?v=4"></script>
+  <script src="assets/ui/biblio-astrale/biblio.js?v=22"></script>
 <div id="screenFade" aria-hidden="true"></div>
 <div id="app">
   <main id="disclaimer" class="screen card">
@@ -54237,61 +54238,62 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
 </script>
 <!-- BIBLIO-ASTRALE-LATE-OVERRIDES -->
 <style id="biblioAstraleLateOverrides">
-/* Contre V27–V32 : choix sous le texte, boîte assez haute (Fold 830×525) */
+/* Pin dialogue wrap bottom; kill trailer stretch */
 html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap{
-  left:5%!important; right:5%!important; bottom:3%!important;
-  max-height:40svh!important;
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogueWrap,
+html body.ui-biblio.experimentalUI #gameCard .dialogueWrap,
+html body.ui-biblio #gameCard .dialogueWrap{
+  position:absolute!important; left:3%!important; right:3%!important; bottom:2%!important;
+  top:unset!important; inset:unset unset 2% 3%!important;
+  width:auto!important; height:auto!important; max-height:46svh!important;
+  display:flex!important; flex-direction:column!important; justify-content:flex-end!important; align-items:center!important;
+  gap:6px!important; padding:0!important; margin:0!important; background:none!important; pointer-events:none!important; z-index:12!important;
 }
 html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue{
-  display:flex!important; flex-direction:column!important;
-  grid-template-columns:none!important; grid-template-rows:none!important;
-  max-height:38svh!important; min-height:0!important;
-  overflow:visible!important; height:auto!important;
-  padding:10px 14px 8px!important; gap:6px!important;
+html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
+html body.ui-biblio #gameCard .dialogue{
+  position:relative!important; inset:auto!important; display:grid!important;
+  grid-template-columns:auto 1fr!important; grid-template-rows:1fr!important;
+  width:min(94vw,980px)!important; max-width:100%!important; max-height:none!important; min-height:0!important;
+  margin:0!important; padding:0!important; overflow:hidden!important; flex:0 0 auto!important;
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker{
-  grid-column:auto!important; grid-row:auto!important;
-  flex:0 0 auto!important; height:auto!important; min-height:22px!important;
-  margin:0 0 4px!important; padding:2px 10px!important;
-  font-size:clamp(14px,1.5vw,18px)!important;
+html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue #text,
+html body.ui-biblio #gameCard .dialogue #text{
+  grid-column:2!important; grid-row:1!important; position:static!important;
+  max-height:12svh!important; overflow:auto!important; display:block!important;
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text{
-  grid-column:auto!important; grid-row:auto!important;
-  flex:0 1 auto!important; height:auto!important; min-height:2.4em!important;
-  max-height:10svh!important; overflow-y:auto!important;
-  font-size:clamp(13px,1.55vw,16px)!important; line-height:1.35!important;
-  display:block!important; -webkit-line-clamp:unset!important;
+html body.ui-biblio.trailer16x9 #gameCard .dialogue #choices,
+html body.ui-biblio #gameCard .dialogue #choices,
+html body.ui-biblio #gameCard .dialogue #speaker,
+html body.ui-biblio #gameCard .dialogue .tag,
+html body.ui-biblio #gameCard .dialogue .stats,
+html body.ui-biblio #gameCard > .topbar,
+html body.ui-biblio #trailerVNControls,
+html body.ui-biblio #gameCard #trailerVNControls,
+html body.ui-biblio.trailer16x9 #gameCard #trailerVNControls,
+html body.ui-biblio .legacySheetPeek #legacySheetToggle,
+html body.ui-biblio #legacySheetToggle{
+  display:none!important; visibility:hidden!important; pointer-events:none!important;
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard #choices{
-  position:static!important; grid-column:auto!important; grid-row:auto!important;
-  flex:0 0 auto!important; width:100%!important; max-width:100%!important;
-  display:flex!important; flex-direction:column!important;
-  order:99!important; gap:3px!important; margin:2px 0 0!important;
-  right:auto!important; bottom:auto!important; max-height:22svh!important;
-  overflow-y:auto!important; scrollbar-width:thin!important;
+html body.ui-biblio #baChoices{
+  pointer-events:auto!important; z-index:13!important; max-height:22svh!important;
+  margin:0!important; flex:0 0 auto!important; align-self:stretch!important;
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn{
-  width:100%!important; min-height:26px!important; max-height:32px!important;
-  padding:4px 10px!important; border-radius:3px!important;
-  font-size:clamp(11px,1.35vw,14px)!important; line-height:1.2!important;
-}
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .stats,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .stats{
-  order:-1!important; flex:0 0 auto!important; margin:0 0 4px!important;
-}
-/* Hub moments libres : choices un peu plus aérées, marqueur ba-hub */
-html body.ui-biblio.ba-hub #gameCard .choiceBtn{
-  letter-spacing:.04em; text-transform:none;
-  background:rgba(12,14,32,.55)!important;
-  border-color:rgba(216,189,120,.38)!important;
-}
+html body.ui-biblio #baChoices .ba-ch{min-height:32px!important; padding:3px 10px!important}
+html body.ui-biblio #title .menuDockCorner,
+html body.ui-biblio #title .menuOverlayTitle{display:none!important}
+/* Chapitres : cacher entièrement le chrome classique */
+html body.ui-biblio #chapters .chaptersFrame{display:none!important; visibility:hidden!important}
+html body.ui-biblio #baShelf{z-index:30!important; background:#07080f!important;
+  background-image:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.16),transparent 70%),linear-gradient(180deg,#12101c,#07080f)!important}
+/* Stats flottants trailer */
+html body.ui-biblio #gameCard .stats,
+html body.ui-biblio.trailer16x9 #gameCard .stats,
+html body.ui-biblio #game .stat,
+html body.ui-biblio .vn32StatsStrip,
+html body.ui-biblio [class*="statsStrip"],
+html body.ui-biblio [class*="StatStrip"]{display:none!important}
 </style>
+
 </body>
 </html>

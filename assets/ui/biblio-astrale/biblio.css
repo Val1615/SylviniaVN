@@ -1,477 +1,293 @@
-/* Mode Histoire · Bibliothèque astrale de Mir’Aldas
-   Activé uniquement sous body.ui-biblio — n’affecte pas Chronique Alternative. */
+/* Bibliothèque astrale — chrome proto monté (body.ui-biblio). Classique = aucune de ces règles. */
 @import url("./fonts.css");
 
 body.ui-biblio{
-  --ba-encre:#07080f; --ba-nuit:#0b0d18; --ba-nuit-2:#121424;
-  --ba-or:#d8bd78; --ba-or-pale:#f3e4b5; --ba-or-vif:#ffd98a; --ba-or-sombre:#8a6a2e;
-  --ba-amethyste:#8964c4; --ba-rose:#e76588; --ba-glace:#79c8e8;
+  --ba-encre:#07080f; --ba-nuit:#0b0d18; --ba-or:#d8bd78; --ba-or-pale:#f3e4b5; --ba-or-vif:#ffd98a; --ba-or-sombre:#8a6a2e;
+  --ba-am:#8964c4; --ba-rose:#e76588; --ba-glace:#79c8e8;
   --ba-texte:#f1e9d6; --ba-texte-2:#c9bfa9; --ba-texte-3:#a69c88;
-  --ba-ligne:rgba(216,189,120,.28); --ba-ligne-forte:rgba(216,189,120,.55);
-  --ba-display:"Cinzel","Cormorant Garamond",serif;
-  --ba-logo:"Cinzel Decorative","Cinzel",serif;
-  --ba-serif:"Cormorant Garamond",Georgia,serif;
-  --ba-sans:"Inter",system-ui,sans-serif;
+  --ba-ligne:rgba(216,189,120,.28); --ba-ligne-f:rgba(216,189,120,.55);
+  --ba-display:"Cinzel","Cormorant Garamond",serif; --ba-logo:"Cinzel Decorative","Cinzel",serif;
+  --ba-serif:"Cormorant Garamond",Georgia,serif; --ba-sans:"Inter",system-ui,sans-serif;
+  --ba-ease:cubic-bezier(.22,1,.36,1);
+  --ba-ub:max(.55px, min(100vw / 1920, 100vh / 1080));
+  --ba-c:calc(var(--ba-ub) * 1); --ba-t:calc(var(--ba-ub) * 1.05);
+  --ba-pad:max(10px, calc(22 * var(--ba-ub)));
   --ba-acc:var(--ba-or); --ba-acc-vif:var(--ba-or-vif);
-  --v-audace:#ef7a52; --v-sangfroid:#a9b8f0; --v-lucidite:#7cc6e6; --v-resonance:#c09af0; --v-lien:#f490b2;
-  color:var(--ba-texte); font-family:var(--ba-serif);
-  background:#000;
 }
-body.ui-biblio.intime,body.ui-biblio.ba-intime{--ba-acc:var(--ba-rose); --ba-acc-vif:#ff9cbc}
+body.ui-biblio.ba-intime,body.ui-biblio.intime{--ba-acc:var(--ba-rose); --ba-acc-vif:#ff9cbc}
+body.ui-classique #baChrome,body.ui-classique .ba-chrome{display:none!important}
 
-/* ---------- Fond app / écrans ---------- */
-body.ui-biblio #app{background:radial-gradient(120% 90% at 50% 40%,#16142a,#07080f 70%)}
-body.ui-biblio .screen.card{background:transparent;border:0;box-shadow:none}
-body.ui-biblio .kicker,.ui-biblio .menuSectionTitle{font-family:var(--ba-display)!important;letter-spacing:.22em;text-transform:uppercase;color:var(--ba-acc)!important}
+/* ===== Masquer le chrome classique (biblio only) ===== */
+body.ui-biblio #title .menuOverlayTitle,
+body.ui-biblio #title .menuDockCorner,
+body.ui-biblio #title .menuUpdateBubble,
+body.ui-biblio #title .titleParticles{display:none!important}
+body.ui-biblio #title .titleOverlayLayout{padding:0!important; pointer-events:none}
+body.ui-biblio #title #baTitleChrome{pointer-events:auto}
 
-/* ---------- 1. Avertissement ---------- */
-body.ui-biblio #disclaimerCard{
-  max-width:min(1280px,94vw);margin:auto;padding:clamp(18px,3vw,40px) clamp(18px,4vw,54px);
-  background:linear-gradient(180deg,rgba(24,23,56,.88),rgba(9,10,26,.94));
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),inset 0 0 0 6px rgba(0,0,0,.25),inset 0 0 0 7px rgba(216,189,120,.14),0 20px 50px rgba(0,0,0,.55);
-  border-radius:4px;color:var(--ba-texte);
-}
-body.ui-biblio #disclaimerCard h1,body.ui-biblio #disclaimerCard h2{font-family:var(--ba-logo);color:var(--ba-or-pale);background:none;-webkit-text-fill-color:unset}
-body.ui-biblio #disclaimerCard p{font-family:var(--ba-serif);color:var(--ba-texte-2);line-height:1.5}
-body.ui-biblio #disclaimerCard button,body.ui-biblio #enterMenuFromSplashBtn,
-body.ui-biblio .btn-or,body.ui-biblio .goldBtn,body.ui-biblio .primaryDockBtn{
-  font-family:var(--ba-display)!important;letter-spacing:.14em;text-transform:uppercase;font-weight:800;
-  color:#1a1206!important;border:0!important;background:transparent!important;position:relative;isolation:isolate;
-  min-height:48px;padding:0 28px;
-}
-body.ui-biblio #disclaimerCard button::before,body.ui-biblio #enterMenuFromSplashBtn::before,
-body.ui-biblio .goldBtn::before,body.ui-biblio .primaryDockBtn::before{
-  content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-14deg);
-  background:linear-gradient(90deg,#fff6dc,var(--ba-or) 40%,#a8823d);
-  box-shadow:4px 4px 0 rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.35);
-}
+body.ui-biblio #gameCard > .topbar,
+body.ui-biblio #trailerVNControls,
+body.ui-biblio #gameCard .dialogue .tag,
+body.ui-biblio #gameCard .dialogue > .stats{display:none!important}
 
-/* ---------- 3. Splash « Appuyer pour commencer » — discret ---------- */
-body.ui-biblio #splashTitleCard{background:#000}
-body.ui-biblio .splashEnterBtn,body.ui-biblio #enterMenuFromSplashBtn.splashEnterBtn{
-  background:none!important;border:0!important;box-shadow:none!important;padding:10px 8px!important;
-  color:var(--ba-or-pale)!important;font:600 15px/1.2 var(--ba-display)!important;letter-spacing:.28em!important;
-  text-shadow:0 0 2px #000,0 1px 3px rgba(0,0,0,.95),0 0 14px rgba(255,217,138,.45);
-  animation:ba-souffle 2.8s ease-in-out infinite;
-}
-body.ui-biblio .splashEnterBtn::before,body.ui-biblio .splashEnterBtn::after{display:none!important}
-@keyframes ba-souffle{50%{opacity:.55}}
-@media(prefers-reduced-motion:reduce){body.ui-biblio .splashEnterBtn{animation:none}}
+body.ui-biblio #chapters .chaptersSidebar,
+body.ui-biblio #chapters .chaptersBookHead,
+body.ui-biblio #chapters .chapterLibraryBanner,
+body.ui-biblio #chapters #chapterSelectGrid{display:none!important}
+body.ui-biblio #chapters .chaptersFrame{display:block!important; padding:0!important; background:transparent!important; border:0!important}
+body.ui-biblio #chapters .chaptersBook{padding:0!important; background:transparent!important; border:0!important; box-shadow:none!important}
 
-/* ---------- 4. Choix du mode ---------- */
-body.ui-biblio #modeSelectCard{background:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.14),transparent 70%),rgba(7,8,15,.55)}
-body.ui-biblio .modeSelectPane{
-  border-radius:8px!important;overflow:hidden;
-  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),0 24px 60px rgba(0,0,0,.65)!important;
-  background:#0b0d18!important;
-}
-body.ui-biblio .modeSelectKicker{font-family:var(--ba-display);letter-spacing:.22em;color:var(--ba-or)!important}
-body.ui-biblio .modeSelectTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-body.ui-biblio .modeSelectDescription{font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-2)!important}
-
-/* ---------- 5. Menu titre — pile compacte / cinématique dominante ---------- */
-body.ui-biblio #titleCard{background:#000}
-body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell,body.ui-biblio .menuOverlayTitle{
-  background:linear-gradient(180deg,rgba(12,12,30,.42),rgba(8,8,22,.55))!important;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  border:1px solid rgba(216,189,120,.22)!important;
-  box-shadow:0 12px 28px rgba(0,0,0,.35)!important;
-  max-width:min(420px,42vw)!important;
-}
-body.ui-biblio .menuAccordion,body.ui-biblio .accordionSummary{
-  background:color-mix(in srgb,#1b2a5c 42%,transparent)!important;
-  border:1px solid rgba(216,189,120,.2)!important;
-  border-radius:6px!important;color:var(--ba-or-pale)!important;
-  font-family:var(--ba-display)!important;letter-spacing:.1em;text-transform:uppercase;
-  min-height:40px;backdrop-filter:blur(4px);
-}
-body.ui-biblio .menuAccordion{margin:4px 0!important}
-body.ui-biblio .accordionSummary{padding:8px 14px!important}
-body.ui-biblio .menuActionBtn,body.ui-biblio .dockBtn{
-  background:rgba(10,10,26,.35)!important;border:1px solid var(--ba-ligne)!important;color:var(--ba-texte)!important;
-  border-radius:4px!important;box-shadow:none!important;
-}
-body.ui-biblio .btnTitle{font-family:var(--ba-display)!important;letter-spacing:.08em}
-body.ui-biblio .btnDesc{font-family:var(--ba-serif)!important;font-style:italic;color:var(--ba-texte-3)!important}
-body.ui-biblio .menuUpdateBubble{opacity:.7;font-family:var(--ba-display);letter-spacing:.12em;color:var(--ba-texte-3)!important;background:transparent!important;border:0!important}
-
-/* ---------- 6. Jeu : dialogue + choix discrets ---------- */
-body.ui-biblio #gameCard{background:transparent}
-body.ui-biblio .topbar{
-  background:linear-gradient(90deg,rgba(10,10,26,.72),rgba(10,10,26,.2) 70%,transparent)!important;
-  border:0!important;box-shadow:inset 0 1px 0 var(--ba-ligne)!important;backdrop-filter:blur(4px);
-  gap:10px;align-items:center;
-}
-body.ui-biblio .chapterLabel{font-family:var(--ba-display)!important;letter-spacing:.22em;color:var(--ba-acc)!important;font-size:11px}
-body.ui-biblio .chapterTitle{font-family:var(--ba-serif)!important;font-style:italic;font-weight:600;color:var(--ba-texte)!important;font-size:clamp(18px,2.2vw,24px)!important}
-body.ui-biblio .chapterSub{color:var(--ba-texte-2)!important;font-family:var(--ba-serif)}
-body.ui-biblio .topBtn{
-  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#1b2a5c!important;
-  border:1px solid rgba(216,189,120,.3)!important;color:var(--ba-or-pale)!important;
-  font-family:var(--ba-display)!important;letter-spacing:.08em;text-transform:uppercase;font-size:11px!important;
-  border-radius:0 0 6px 6px!important;min-height:44px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
-}
-body.ui-biblio .topBtn:nth-child(1){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#5a1e2e!important}
-body.ui-biblio .topBtn:nth-child(3){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#15403a!important}
-body.ui-biblio .topBtn:nth-child(4){background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.25)),#2a3340!important}
-body.ui-biblio .dialogueWrap{padding:0 2vw 2vw}
-body.ui-biblio .dialogue{
-  background:linear-gradient(180deg,rgba(24,23,56,.82),rgba(9,10,26,.9))!important;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:0!important;border-radius:4px!important;
-  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte),inset 0 0 0 5px rgba(0,0,0,.22),0 16px 40px rgba(0,0,0,.5)!important;
-  padding:18px 28px 14px!important;color:var(--ba-texte)!important;
-}
-body.ui-biblio .speaker{
-  display:inline-block;margin:0 0 8px!important;padding:6px 18px!important;
-  font-family:var(--ba-display)!important;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ba-or-pale)!important;background:linear-gradient(90deg,#5a1e2e,#3a0f1c)!important;
-  box-shadow:inset 0 0 0 1px var(--ba-or);clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
-  font-size:14px!important;
-}
-body.ui-biblio .tag{display:none!important}
-body.ui-biblio .text{font-family:var(--ba-serif)!important;font-size:clamp(17px,2.1vw,22px)!important;line-height:1.45!important;color:var(--ba-texte)!important}
-body.ui-biblio .stats{gap:6px}
-body.ui-biblio .stat{background:rgba(0,0,0,.35)!important;border:1px solid var(--ba-ligne)!important;color:var(--ba-texte-2)!important;font-family:var(--ba-display)!important;font-size:11px;border-radius:999px}
-
-/* Choix : compacts, bas, translucides — ne pas couvrir les visages */
-body.ui-biblio .choices{
-  display:grid!important;grid-template-columns:1fr;gap:6px!important;margin-top:10px!important;
-  padding:0!important;background:none!important;position:static!important;
-}
-@media(min-width:700px){body.ui-biblio .choices{grid-template-columns:1fr 1fr}}
-body.ui-biblio .choiceBtn{
-  margin:0!important;min-height:42px!important;padding:8px 12px 8px 14px!important;
-  border-radius:3px!important;text-align:left!important;
-  background:linear-gradient(90deg,rgba(30,28,64,.62),rgba(10,10,26,.38) 70%)!important;
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  border:1px solid rgba(216,189,120,.24)!important;border-left:5px solid #5a1e2e!important;
-  box-shadow:0 3px 10px rgba(0,0,0,.3)!important;color:var(--ba-texte)!important;
-  font-family:var(--ba-serif)!important;font-size:clamp(14px,1.7vw,18px)!important;line-height:1.25!important;
-  font-weight:500!important;
-}
-body.ui-biblio .choiceBtn:nth-child(2){border-left-color:#1b2a5c!important}
-body.ui-biblio .choiceBtn:nth-child(3){border-left-color:#4a2e1c!important}
-body.ui-biblio .choiceBtn:nth-child(4){border-left-color:#3a2160!important}
-body.ui-biblio .choiceBtn:nth-child(5){border-left-color:#15403a!important}
-body.ui-biblio .choiceBtn:hover,body.ui-biblio .choiceBtn:focus-visible{
-  box-shadow:inset 0 0 0 1px rgba(255,217,138,.7),0 0 14px rgba(255,217,138,.22)!important;
-}
-body.ui-biblio .choiceBtn .arrow{display:none!important}
-body.ui-biblio .choiceBtn small,body.ui-biblio .choiceBtn .note{font-size:11px!important;opacity:.85;font-family:var(--ba-display)!important;letter-spacing:.06em}
-
-/* Moments libres / hubs : choix comme « lieux / personnages » */
-body.ui-biblio.ba-hub .choices{grid-template-columns:1fr!important;max-width:min(720px,100%);margin-left:auto;margin-right:auto}
-@media(min-width:900px){body.ui-biblio.ba-hub .choices{grid-template-columns:1fr 1fr!important}}
-body.ui-biblio.ba-hub .choiceBtn{
-  min-height:48px!important;padding:10px 14px!important;
-  background:linear-gradient(90deg,rgba(58,33,96,.55),rgba(10,10,26,.4) 75%)!important;
-  border-left-color:var(--ba-amethyste)!important;
-}
-body.ui-biblio.ba-hub .choiceBtn::before{
-  content:"◈";display:inline-block;margin-right:8px;color:var(--ba-or-vif);font-size:12px;
-}
-
-/* ---------- Préréglages d’interface ---------- */
-body.ui-biblio .ba-ui-btn{
-  flex:0 0 auto;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;
-  background:rgba(10,10,26,.4);border:1px solid rgba(216,189,120,.35);color:var(--ba-or-pale);
-  cursor:pointer;font-size:15px;line-height:1;margin-right:8px;
-}
-body.ui-biblio .ba-ui-btn:hover{box-shadow:0 0 0 1px var(--ba-or-vif),0 0 12px rgba(255,217,138,.35)}
-body.ui-biblio .topbar-left{display:flex;align-items:center;gap:8px;min-width:0}
-body.ui-biblio.ui-epuree .chapterSub,body.ui-biblio.ui-epuree .chapterLabel{display:none}
-body.ui-biblio.ui-epuree .topActions .volume{display:none}
-body.ui-biblio.ui-epuree .topBtn{opacity:.78;min-height:40px;font-size:10px!important}
-body.ui-biblio.ui-cine .topActions,body.ui-biblio.ui-cine .chapterLabel,body.ui-biblio.ui-cine .chapterSub,body.ui-biblio.ui-cine .stats,body.ui-biblio.ui-cine .tag{display:none!important}
-body.ui-biblio.ui-cine .topbar{background:none!important;box-shadow:none!important;pointer-events:none}
-body.ui-biblio.ui-cine .ba-ui-btn{pointer-events:auto;opacity:.55}
-body.ui-biblio.ui-cine .chapterTitle{font-size:14px!important;opacity:.55}
-body.ui-biblio.ui-cine .dialogue{
-  background:linear-gradient(180deg,rgba(8,8,22,.18),rgba(8,8,22,.58))!important;
-  box-shadow:inset 0 1px 0 rgba(216,189,120,.35)!important;backdrop-filter:blur(2px);
-}
-body.ui-biblio.ui-cine .speaker{background:color-mix(in srgb,#5a1e2e 55%,transparent)!important}
-
-/* ---------- Chapitres : étagère déjà présente, peaufinage biblio ---------- */
-body.ui-biblio #chaptersCard{
-  background:radial-gradient(70% 60% at 50% 30%,rgba(137,100,196,.12),transparent 65%),linear-gradient(180deg,rgba(10,12,28,.92),rgba(5,6,14,.97))!important;
-}
-body.ui-biblio .chaptersTitle,body.ui-biblio .chaptersBookTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-body.ui-biblio .chaptersLead,body.ui-biblio .chaptersBookSubtitle,body.ui-biblio .chaptersHint{font-family:var(--ba-serif);color:var(--ba-texte-2)!important}
-body.ui-biblio .chaptersSidebar,body.ui-biblio .chaptersBook{
-  background:linear-gradient(180deg,rgba(24,23,56,.72),rgba(9,10,26,.86))!important;
-  border:1px solid var(--ba-ligne)!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)!important;
-}
-body.ui-biblio .chapterSelectCard{
-  box-shadow:0 8px 20px rgba(0,0,0,.45)!important;border:1px solid rgba(216,189,120,.22)!important;
-}
-body.ui-biblio .chapterBookSpine{
-  background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%,rgba(0,0,0,.35)),linear-gradient(90deg,#1b2a5c,#152048)!important;
-}
-body.ui-biblio .chapterBookSpine span{font-family:var(--ba-display)!important;color:var(--ba-or-pale)!important}
-body.ui-biblio .chapterSelectCard[open] .chapterBookOpened{
-  background:linear-gradient(90deg,#efe3c4,#e6d6b0 48%,#c9b68c 50%,#e6d6b0 52%,#efe3c4)!important;
-  color:#2a1c10!important;
-}
-body.ui-biblio .chapterOpenText h4{font-family:var(--ba-logo)!important;color:#2a1c10!important}
-body.ui-biblio .chapterOpenText p{font-family:var(--ba-serif)!important;color:#3a2814!important}
-body.ui-biblio .chapterSelectCard.locked .chapterBookSpine{filter:saturate(.25) brightness(.55)}
-body.ui-biblio .chapterLibraryBanner{border:1px solid var(--ba-ligne)!important;border-radius:4px;overflow:hidden}
-body.ui-biblio .chapterLibraryBannerText strong{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-
-/* ---------- Codex / Progression ---------- */
-body.ui-biblio #codexCard,body.ui-biblio #progressionCard{
-  background:radial-gradient(70% 50% at 50% 20%,rgba(137,100,196,.12),transparent 60%),linear-gradient(180deg,rgba(10,12,28,.95),rgba(5,6,14,.98))!important;
-  color:var(--ba-texte)!important;
-}
-body.ui-biblio .codexTab,body.ui-biblio .progressionTitle,body.ui-biblio .codexBook h2,body.ui-biblio .codexBook h3{
-  font-family:var(--ba-display)!important;color:var(--ba-or-pale)!important;
-}
-body.ui-biblio .codexTab.active{
-  background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d)!important;color:#1a1206!important;
-}
-body.ui-biblio .codexBook,.ui-biblio .progressionSidebar,.ui-biblio .progressionSection{
-  background:linear-gradient(180deg,rgba(24,23,56,.78),rgba(9,10,26,.9))!important;
-  border:1px solid var(--ba-ligne)!important;color:var(--ba-texte)!important;
-}
-body.ui-biblio .progressionSection h4{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-
-/* ---------- Carnet du Némésis ---------- */
-body.ui-biblio .progressionJournalSection{
-  background:linear-gradient(180deg,rgba(40,18,28,.55),rgba(12,8,20,.75))!important;
-  border:1px solid rgba(231,101,136,.28)!important;border-radius:8px;padding:16px!important;
-  box-shadow:inset 0 0 0 1px rgba(216,189,120,.12),0 12px 28px rgba(0,0,0,.35);
-}
-body.ui-biblio .progressionJournalSection h4{
-  font-family:var(--ba-logo)!important;color:#ffc2d6!important;letter-spacing:.04em;
-}
-body.ui-biblio .journalBanner{border-radius:4px;overflow:hidden;border:1px solid rgba(216,189,120,.35)!important;position:relative}
-body.ui-biblio .journalBannerOverlay{
-  background:linear-gradient(180deg,transparent,rgba(20,6,16,.88))!important;
-}
-body.ui-biblio .journalBannerEyebrow{font-family:var(--ba-display)!important;letter-spacing:.22em;color:var(--ba-rose)!important}
-body.ui-biblio .journalBannerTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-body.ui-biblio .journalBannerOverlay p{font-family:var(--ba-serif)!important;font-style:italic;color:#e8d4dc!important}
-body.ui-biblio .journalFragmentsList article,body.ui-biblio .journalFragmentCard,.ui-biblio .journalFragmentsList > *{
-  background:linear-gradient(180deg,#efe3c4,#e6d6b0)!important;color:#2a1c10!important;
-  border:1px solid rgba(138,106,46,.45)!important;border-radius:4px!important;
-  box-shadow:0 6px 14px rgba(0,0,0,.35)!important;
-}
-body.ui-biblio .journalEmpty{font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-2)!important}
-body.ui-biblio .syl-toast.nemesis,body.ui-biblio .toast.nemesis{
-  border-color:rgba(231,101,136,.45)!important;box-shadow:0 0 18px rgba(231,101,136,.25)!important;
-}
-
-/* ---------- Toggle Bibliothèque / Classique + toasts ---------- */
-body.ui-biblio .ba-skin-toggle,body .ba-skin-toggle{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:12px 14px;border:1px solid rgba(216,189,120,.28);border-radius:8px;
-  background:rgba(10,10,26,.4);margin:8px 0 12px;
-}
-body.ui-biblio .ba-skin-toggle strong{font-family:var(--ba-display);letter-spacing:.08em;color:var(--ba-or-pale)}
-body.ui-biblio .ba-skin-toggle small{display:block;font-family:var(--ba-serif);font-style:italic;color:var(--ba-texte-3)}
-body.ui-biblio .ba-skin-toggle .ba-puces{display:flex;gap:6px;flex-wrap:wrap}
-body.ui-biblio .ba-puce{
-  min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--ba-ligne);
-  background:rgba(0,0,0,.25);color:var(--ba-texte-2);font:700 11px/1 var(--ba-display);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
-}
-body.ui-biblio .ba-puce.actif{background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d);color:#1a1206;border-color:transparent}
-.ba-toast{
-  position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:80;
-  padding:10px 22px;background:linear-gradient(90deg,rgba(20,18,46,.96),rgba(10,10,26,.96));
-  box-shadow:inset 0 0 0 1px var(--ba-ligne-forte,#d8bd78),0 8px 24px rgba(0,0,0,.5);
-  color:#f1e9d6;font:600 15px/1.3 "Cormorant Garamond",serif;pointer-events:none;
-  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
-}
-.ba-toast b{font-family:"Cinzel",serif;letter-spacing:.06em;color:#f3e4b5}
-.ba-toast kbd{font:700 11px Inter,sans-serif;border:1px solid rgba(243,228,181,.45);border-bottom-width:3px;border-radius:5px;padding:0 6px;margin-left:6px}
-
-/* ---------- Fold / courte hauteur ---------- */
-@media(max-height:600px){
-  body.ui-biblio .dialogue{padding:12px 18px 8px!important}
-  body.ui-biblio .text{font-size:16px!important}
-  body.ui-biblio .choiceBtn{min-height:38px!important;padding:6px 10px!important;font-size:14px!important}
-  body.ui-biblio .topBtn{min-height:40px;font-size:10px!important}
-  body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell{max-width:min(360px,48vw)!important}
-}
-@media(max-aspect-ratio:1/1){
-  body.ui-biblio .titleContentWide,body.ui-biblio .cinematicMenuShell,body.ui-biblio .menuOverlayTitle{max-width:none!important;width:min(100%,420px)!important}
-  body.ui-biblio .char{max-height:58%!important;bottom:22%!important}
-  body.ui-biblio .choices{grid-template-columns:1fr!important}
-}
-
-/* Classique : aucun style biblio — le JS retire ui-biblio */
-
-/* Splash overlay : bouton encore plus discret */
-body.ui-biblio .splashTitleOverlay{align-items:center!important;justify-content:flex-start!important;padding-left:clamp(18px,4vw,48px)!important}
+/* Splash — presque transparent */
+body.ui-biblio #splashTitleCard .splashEnterBtn,
 body.ui-biblio #enterMenuFromSplashBtn{
-  background:none!important;border:0!important;box-shadow:none!important;
-  color:var(--ba-or-pale)!important;font:600 15px/1.2 var(--ba-display)!important;letter-spacing:.3em!important;
-  text-shadow:0 0 2px #000,0 1px 4px rgba(0,0,0,.95),0 0 16px rgba(255,217,138,.5)!important;
-  padding:8px 4px!important;animation:ba-souffle 2.8s ease-in-out infinite;
+  background:none!important; border:0!important; box-shadow:none!important;
+  font:600 max(14px,calc(19 * var(--ba-t)))/1.2 var(--ba-display)!important;
+  letter-spacing:.34em!important; text-transform:uppercase!important;
+  color:var(--ba-or-pale)!important; -webkit-text-fill-color:var(--ba-or-pale)!important;
+  text-shadow:0 0 2px #000,0 1px 3px rgba(0,0,0,.95),0 0 16px rgba(255,217,138,.55)!important;
+  padding:10px 16px!important; min-height:0!important; border-radius:0!important;
+  animation:baSouffle 2.8s ease-in-out infinite;
 }
-body.ui-biblio #enterMenuFromSplashBtn::before,body.ui-biblio #enterMenuFromSplashBtn::after{content:none!important;display:none!important}
+body.ui-biblio #splashTitleCard .splashEnterBtn::before,
+body.ui-biblio #splashTitleCard .splashEnterBtn::after{display:none!important}
+@keyframes baSouffle{0%,100%{opacity:1}50%{opacity:.62}}
 
-/* Disclaimer panel alignment with biblio glass */
-body.ui-biblio .disclaimerPanel{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--ba-texte)!important}
-body.ui-biblio .disclaimerTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
-body.ui-biblio .disclaimerSigil{
-  display:grid;place-items:center;width:64px;height:64px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#3b2f6e,#14122c 70%);
-  box-shadow:0 0 0 1px var(--ba-ligne-forte),0 0 0 6px rgba(0,0,0,.35),0 0 24px rgba(137,100,196,.4);
-  color:var(--ba-or-pale);font-size:28px;margin-bottom:10px;
-}
-body.ui-biblio .betaBadge{background:linear-gradient(90deg,var(--ba-rose),var(--ba-amethyste))!important;color:#fff!important;transform:skewX(-12deg);display:inline-block;padding:2px 10px;font:700 11px/1.3 var(--ba-display)!important;letter-spacing:.14em}
+/* Mode select — volumes style léger */
+body.ui-biblio #modeSelectCard{background:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.14),transparent 70%),rgba(7,8,15,.55)!important}
+body.ui-biblio .modeSelectTitle{font-family:var(--ba-logo)!important;color:var(--ba-or-pale)!important}
+body.ui-biblio .modeSelectKicker{font-family:var(--ba-display)!important;letter-spacing:.22em;color:var(--ba-or)!important}
+body.ui-biblio .modeSelectDescription{font-family:var(--ba-serif)!important;font-style:italic;color:var(--ba-texte-2)!important}
 
-/* Title menu: reduce overlay opacity further */
-body.ui-biblio .titleOverlayLayout,body.ui-biblio .menuOverlayTitle{background:transparent!important}
-body.ui-biblio .cinematicMenuShell{
-  background:linear-gradient(180deg,rgba(12,12,30,.38),rgba(8,8,22,.5))!important;
-  max-width:min(400px,40vw)!important;padding:14px!important;
+/* ===== Chrome titre ===== */
+#baTitleChrome{position:absolute;inset:0;z-index:5;pointer-events:none}
+#baTitleChrome .ba-titre-voile{position:absolute;inset:0;background:linear-gradient(90deg,transparent 58%,rgba(6,6,16,.28) 76%,rgba(6,6,16,.5)),linear-gradient(0deg,rgba(6,6,16,.42),transparent 14%);pointer-events:none}
+#baTitleChrome .ba-titre-haut{position:absolute;top:var(--ba-pad);left:var(--ba-pad);display:flex;gap:10px;pointer-events:auto;z-index:2}
+#baTitleChrome .ba-titre-bas{position:absolute;left:var(--ba-pad);right:var(--ba-pad);bottom:calc(var(--ba-pad)*.6);display:flex;justify-content:space-between;font:600 max(10px,calc(11 * var(--ba-t))) var(--ba-display);letter-spacing:.14em;color:var(--ba-texte-3);opacity:.75;text-shadow:0 1px 3px #000;pointer-events:none}
+#baTitleChrome .ba-titre-col{position:absolute;top:var(--ba-pad);bottom:calc(var(--ba-pad)+18px);right:var(--ba-pad);width:min(calc(460 * var(--ba-c)),36%);min-width:220px;display:flex;flex-direction:column;justify-content:center;gap:calc(14 * var(--ba-c));pointer-events:auto}
+#baTitleChrome .ba-logo{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1}
+#baTitleChrome .ba-logo-k{font:700 max(10px,calc(11 * var(--ba-t)))/1.3 var(--ba-display);letter-spacing:.26em;text-transform:uppercase;color:var(--ba-texte-2);margin-bottom:4px}
+#baTitleChrome .ba-logo-les{font:italic 500 max(16px,calc(22 * var(--ba-t))) var(--ba-serif);color:var(--ba-or-pale);text-shadow:0 1px 3px #000}
+#baTitleChrome .ba-logo-l1{font:900 max(28px,calc(56 * var(--ba-t)))/1.12 var(--ba-logo);margin-top:.06em;background:linear-gradient(180deg,#fffaf0,#f6df9c 38%,#d4a753 55%,#a8782f 66%,#f1d58f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.6))}
+#baTitleChrome .ba-logo-l2{font:700 max(22px,calc(40 * var(--ba-t)))/1.2 var(--ba-logo);margin-top:.1em;background:linear-gradient(180deg,#fffaf0,#f6df9c 40%,#c99a48 62%,#f1d58f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,.55))}
+#baTitleChrome .ba-pile{display:flex;flex-direction:column;gap:5px}
+#baTitleChrome .ba-livre{
+  position:relative;display:flex;align-items:center;gap:12px;width:calc(100% - 18px);margin-left:12px;
+  min-height:max(34px,calc(42 * var(--ba-c)));padding:2px 28px 2px 24px;text-align:left;border-radius:4px;
+  background:linear-gradient(180deg,rgba(255,255,255,.12),transparent 40%,rgba(0,0,0,.25)),color-mix(in srgb,var(--dc,#1b2a5c) 46%,transparent);
+  backdrop-filter:blur(5px) saturate(1.2);-webkit-backdrop-filter:blur(5px) saturate(1.2);
+  box-shadow:inset 0 0 0 1px rgba(216,189,120,.22),0 3px 8px rgba(0,0,0,.25);color:var(--ba-or-pale);cursor:pointer;border:0;font:inherit
 }
+#baTitleChrome .ba-livre::before,#baTitleChrome .ba-livre::after{content:"";position:absolute;top:0;bottom:0;width:6px;border-left:2px solid #d9b96a;border-right:1px solid #b08c45;opacity:.6}
+#baTitleChrome .ba-livre::before{left:9px}#baTitleChrome .ba-livre::after{right:9px}
+#baTitleChrome .ba-livre .tome{min-width:28px;font:700 max(11px,calc(12 * var(--ba-t))) var(--ba-display);color:var(--ba-or);text-align:center}
+#baTitleChrome .ba-livre .etiq{flex:1;min-width:0;font:600 max(12px,calc(15 * var(--ba-t)))/1.15 var(--ba-display);letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 0 #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#baTitleChrome .ba-livre .sup{flex:0 0 auto;font:italic 500 max(11px,calc(13 * var(--ba-t))) var(--ba-serif);color:var(--ba-texte-2)}
+#baTitleChrome .ba-livre .sup b{display:inline-block;padding:2px 8px;transform:skewX(-14deg);background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d);color:#1a1206;font:800 max(9px,calc(10 * var(--ba-t))) var(--ba-display);letter-spacing:.1em;text-transform:uppercase;font-style:normal}
+#baTitleChrome .ba-livre.actif,#baTitleChrome .ba-livre:hover{transform:translateX(-14px);background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 40%,rgba(0,0,0,.25)),color-mix(in srgb,var(--dc) 72%,transparent);box-shadow:inset 0 0 0 1px rgba(255,217,138,.75),0 0 18px rgba(255,217,138,.28)}
+#baTitleChrome .ba-rond{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid rgba(216,189,120,.3);background:rgba(10,10,26,.28);color:var(--ba-or-pale);font:600 15px var(--ba-sans);cursor:pointer;opacity:.85}
+#baTitleChrome .ba-panel{position:absolute;inset:auto var(--ba-pad) calc(var(--ba-pad)+40px) auto;width:min(420px,90vw);max-height:70vh;overflow:auto;padding:16px 18px;background:linear-gradient(180deg,rgba(24,23,56,.92),rgba(9,10,26,.96));box-shadow:inset 0 0 0 1px var(--ba-ligne-f),0 20px 50px rgba(0,0,0,.6);border-radius:4px;pointer-events:auto;z-index:6;display:none}
+#baTitleChrome .ba-panel.open{display:block}
+#baTitleChrome .ba-panel h3{font:700 22px var(--ba-logo);color:var(--ba-or-pale);margin-bottom:10px}
+#baTitleChrome .ba-puces{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}
+#baTitleChrome .ba-puce{padding:8px 14px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--ba-ligne);font:700 12px var(--ba-display);letter-spacing:.1em;text-transform:uppercase;color:var(--ba-texte-2);background:rgba(0,0,0,.25);cursor:pointer;border:0}
+#baTitleChrome .ba-puce.actif{background:linear-gradient(90deg,#fff6dc,var(--ba-or) 45%,#a8823d);color:#1a1206;box-shadow:none}
+#baTitleChrome .ba-panel small{display:block;font:italic 500 14px var(--ba-serif);color:var(--ba-texte-3);margin-bottom:8px}
 
-/* Layout dialogue : texte puis choix en pleine largeur (pas en colonnes côte à côte) */
-body.ui-biblio .dialogue{
-  display:flex!important; flex-direction:column!important; gap:8px!important;
-}
-body.ui-biblio .dialogue .text{order:1}
-body.ui-biblio .dialogue .choices, body.ui-biblio #choices{
-  order:2!important; width:100%!important; max-width:100%!important;
-  display:flex!important; flex-direction:column!important; grid-template-columns:none!important;
-  gap:5px!important; margin-top:4px!important;
-}
-body.ui-biblio .dialogue .stats{order:3}
-body.ui-biblio .choiceBtn{
-  width:100%!important; max-width:100%!important;
-  min-height:38px!important; padding:7px 12px!important;
-  font-size:clamp(13px,1.6vw,17px)!important;
-  background:linear-gradient(90deg,rgba(30,28,64,.55),rgba(10,10,26,.32) 75%)!important;
-}
-@media(min-width:900px) and (min-height:700px){
-  body.ui-biblio.ba-hub #choices{
-    display:grid!important; grid-template-columns:1fr 1fr!important;
-  }
-}
-/* barre du bas (Historique / Retour / …) */
-body.ui-biblio .gameBottomBar, body.ui-biblio #gameBottomBar, body.ui-biblio .bottomBar,
-body.ui-biblio .vnToolbar, body.ui-biblio .toolbar, body.ui-biblio .quickBar{
-  background:rgba(8,8,22,.55)!important; border-top:1px solid var(--ba-ligne)!important;
-  font-family:var(--ba-display)!important; letter-spacing:.06em;
-}
-body.ui-biblio.ui-cine .gameBottomBar, body.ui-biblio.ui-cine #gameBottomBar,
-body.ui-biblio.ui-cine .bottomBar, body.ui-biblio.ui-cine .vnToolbar,
-body.ui-biblio.ui-cine .toolbar, body.ui-biblio.ui-cine .quickBar,
-body.ui-biblio.ui-cine .stats{display:none!important}
-
-/* Progression : titre § Némésis plus visible */
-body.ui-biblio .progressionJournalSection h4::before{content:"✧ "; color:#ffc2d6}
-body.ui-biblio #trailerVNControls{
-  background:rgba(8,8,22,.55)!important; border-top:1px solid rgba(216,189,120,.22)!important;
-  backdrop-filter:blur(4px);
-}
-body.ui-biblio #trailerVNControls .trailerVNBtn{
-  font-family:var(--ba-display)!important; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--ba-texte-2)!important; border-color:rgba(216,189,120,.2)!important;
-  background:rgba(10,10,26,.35)!important;
-}
-body.ui-biblio.ui-cine #trailerVNControls,
-body.ui-biblio.ui-cine .topActions{display:none!important}
-body.ui-biblio.ui-epuree #trailerVNControls .trailerVNBtn{font-size:10px!important;padding:4px 6px!important}
-/* Forcer les choix sous le texte, même en mobileUI / trailer16x9 */
-body.ui-biblio .choices,
-body.ui-biblio.mobileUI .choices,
-body.ui-biblio.trailer16x9 .choices,
-body.ui-biblio.legacyVisualUI .choices,
-body.ui-biblio #choices{
-  position:static!important; inset:auto!important; right:auto!important; left:auto!important; bottom:auto!important; top:auto!important;
-  width:100%!important; max-width:100%!important; min-width:0!important;
-  display:flex!important; flex-direction:column!important; grid-template-columns:none!important;
-  gap:5px!important; margin:6px 0 0!important; padding:0!important; background:none!important;
-  max-height:none!important; overflow:visible!important;
-}
-body.ui-biblio .dialogue,
-body.ui-biblio.mobileUI .dialogue,
-body.ui-biblio.trailer16x9 .dialogue{
-  display:flex!important; flex-direction:column!important;
-  grid-template-rows:none!important; grid-template-columns:none!important;
-}
-body.ui-biblio .choiceBtn,
-body.ui-biblio.mobileUI .choiceBtn,
-body.ui-biblio.trailer16x9 .choiceBtn{
-  width:100%!important; min-height:36px!important; max-height:none!important;
-  padding:6px 12px!important; font-size:clamp(13px,1.55vw,16px)!important;
-  border-radius:3px!important;
-}
-body.ui-biblio .text, body.ui-biblio.mobileUI .text{
-  -webkit-line-clamp:unset!important; display:block!important; overflow:visible!important;
-  font-size:clamp(15px,1.9vw,20px)!important; line-height:1.4!important;
+@media(max-aspect-ratio:1/1){
+  #baTitleChrome .ba-titre-col{left:var(--ba-pad);right:var(--ba-pad);width:auto;min-width:0;top:calc(var(--ba-pad)+48px)}
+  #baTitleChrome .ba-pile{align-self:center;width:min(100%,360px)}
+  #baTitleChrome .ba-titre-voile{background:linear-gradient(180deg,rgba(6,6,16,.5),transparent 24%,transparent 56%,rgba(6,6,16,.55))}
 }
 
-/* Gagner contre sylviniaV27–V32 (#gameCard + vn32CurrentCompact) */
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio.experimentalUI.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue,
-html body.ui-biblio #gameCard .dialogue{
-  display:flex!important;
-  flex-direction:column!important;
-  grid-template-columns:none!important;
-  grid-template-rows:none!important;
-  column-gap:0!important;
-  row-gap:6px!important;
-  max-height:none!important;
-  min-height:0!important;
-  overflow:visible!important;
-  padding:12px 16px 10px!important;
+/* ===== Chrome jeu ===== */
+#baGameChrome{position:absolute;inset:0;z-index:8;pointer-events:none}
+#baGameChrome .ba-lieu{position:absolute;top:var(--ba-pad);left:var(--ba-pad);max-width:calc(100% - 2 * var(--ba-pad) - 220px);display:flex;align-items:center;gap:10px;padding:6px 18px 6px 6px;background:linear-gradient(90deg,rgba(10,10,26,.86),rgba(10,10,26,.5) 80%,transparent);box-shadow:inset 0 1px 0 var(--ba-ligne),inset 0 -1px 0 var(--ba-ligne);pointer-events:none}
+#baGameChrome .ba-cote{flex:0 0 auto;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7b2a40,#3a0f1c 70%);box-shadow:0 0 0 1px var(--ba-or),0 0 0 3px rgba(0,0,0,.4);font:700 14px var(--ba-display);color:var(--ba-or-vif)}
+#baGameChrome .ba-jl{min-width:0;display:flex;flex-direction:column}
+#baGameChrome .ba-jl small{font:700 10px/1.3 var(--ba-display);letter-spacing:.2em;text-transform:uppercase;color:var(--ba-acc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#baGameChrome .ba-jl b{font:600 max(14px,calc(18 * var(--ba-t)))/1.25 var(--ba-serif);font-style:italic;color:var(--ba-texte);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#baGameChrome .ba-ui-btn{pointer-events:auto;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(10,10,26,.35);box-shadow:inset 0 0 0 1px rgba(216,189,120,.35);color:var(--ba-or-pale);border:0;cursor:pointer;font:600 16px/1 var(--ba-sans);margin-right:4px}
+#baGameChrome .ba-hud{position:absolute;top:0;right:var(--ba-pad);display:flex;align-items:flex-start;gap:6px;pointer-events:auto}
+#baGameChrome .ba-dos-o{position:relative;width:max(40px,calc(52 * var(--ba-c)));height:max(56px,calc(var(--h,110) * var(--ba-c) * .55));border-radius:0 0 5px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;padding-bottom:8px;border:0;cursor:pointer;color:var(--ba-or-pale);
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.03) 20%,transparent 42%,rgba(0,0,0,.28) 80%,rgba(0,0,0,.55)),var(--dc,#5a1e2e);box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 0 0 1px rgba(0,0,0,.5)}
+#baGameChrome .ba-dos-o::before{content:"";position:absolute;left:0;right:0;top:16px;height:5px;border-top:2px solid #d9b96a;border-bottom:1px solid #b08c45;opacity:.85}
+#baGameChrome .ba-dos-o i{font-style:normal;font-size:14px;color:var(--ba-or-vif);line-height:1}
+#baGameChrome .ba-dos-o span{writing-mode:vertical-rl;text-orientation:sideways;transform:rotate(180deg);font:700 10px/1 var(--ba-display);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+#baGameChrome .ba-dos-o:hover{transform:translateY(8px)}
+
+/* Dialogue zone reshape — hide raw classic box looks, style wrap */
+body.ui-biblio #gameCard .dialogueWrap{
+  position:absolute!important;left:var(--ba-pad)!important;right:var(--ba-pad)!important;bottom:var(--ba-pad)!important;
+  top:auto!important;width:auto!important;height:auto!important;padding:0!important;background:none!important;
+  display:flex!important;flex-direction:column!important;justify-content:flex-end!important;align-items:center!important;
+  gap:8px!important;z-index:9!important;pointer-events:none!important;
+  /* kill trailer absolute */
+  inset:auto var(--ba-pad) var(--ba-pad) var(--ba-pad)!important;
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .speaker,
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .tag,
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .stats{
-  grid-column:auto!important;
-  grid-row:auto!important;
-  max-height:none!important;
-  max-width:100%!important;
+body.ui-biblio #gameCard .dialogueWrap > *{pointer-events:auto}
+body.ui-biblio #baChoices{
+  width:min(calc(1240 * var(--ba-c)),100%);display:grid;grid-template-columns:1fr;gap:6px 10px;align-content:end;
+  margin:0 0 2px;padding:0;max-height:28svh;overflow:auto;scrollbar-width:thin;pointer-events:auto;z-index:10
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .choices,
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard #choices,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard #choices,
-html body.ui-biblio #gameCard .choices{
-  position:static!important;
-  grid-column:auto!important;
-  grid-row:auto!important;
-  align-self:stretch!important;
-  width:100%!important;
-  max-width:100%!important;
-  max-height:none!important;
-  display:flex!important;
-  flex-direction:column!important;
-  gap:5px!important;
-  margin:4px 0 0!important;
-  padding:0!important;
-  order:99!important;
-  overflow:visible!important;
-  right:auto!important; left:auto!important; bottom:auto!important; top:auto!important;
+@media(min-width:700px){body.ui-biblio #baChoices{grid-template-columns:1fr 1fr}}
+body.ui-biblio #baChoices .ba-q{grid-column:1/-1;justify-self:start;padding:0 6px;font:600 max(10px,calc(12 * var(--ba-t))) var(--ba-display);letter-spacing:.26em;text-transform:uppercase;color:var(--ba-or-pale);text-shadow:0 1px 3px #000}
+body.ui-biblio #baChoices .ba-ch{
+  display:flex;align-items:center;gap:10px;min-height:max(36px,calc(46 * var(--ba-c)));padding:4px 12px 4px 12px;border-radius:3px;text-align:left;cursor:pointer;border:0;color:var(--ba-texte);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--dc,#5a1e2e) 62%,transparent),rgba(10,10,26,.38) 70%);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  box-shadow:inset 0 0 0 1px rgba(216,189,120,.24),0 3px 10px rgba(0,0,0,.3);border-left:5px solid var(--dc,#5a1e2e);font:inherit
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .choiceBtn,
-html body.ui-biblio #gameCard .choiceBtn{
-  width:100%!important;
-  min-height:34px!important;
-  padding:6px 12px!important;
-  font-size:clamp(12px,1.45vw,15px)!important;
-  border-radius:3px!important;
-  line-height:1.25!important;
+body.ui-biblio #baChoices .ba-ch .n{flex:0 0 auto;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid rgba(216,189,120,.6);font:700 10px var(--ba-display);color:var(--ba-or-vif)}
+body.ui-biblio #baChoices .ba-ch strong{flex:1;min-width:0;font:500 max(12px,calc(18 * var(--ba-t)))/1.22 var(--ba-serif);font-weight:500;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+body.ui-biblio #baChoices .ba-ch:hover{box-shadow:inset 0 0 0 1px rgba(255,217,138,.7),0 0 14px rgba(255,217,138,.22)}
+
+body.ui-biblio #baPlaque{
+  align-self:flex-start;display:flex;align-items:baseline;gap:12px;max-width:100%;margin:0 0 -10px calc(70 * var(--ba-c));
+  padding:6px 22px;position:relative;z-index:2;background:linear-gradient(90deg,#5a1e2e,#3a0f1c);
+  box-shadow:inset 0 0 0 1px var(--ba-or),4px 4px 0 rgba(0,0,0,.5);clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);pointer-events:none
 }
-html body.ui-biblio.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text,
-html body.ui-biblio.vn32CurrentCompact.trailer16x9:not(.legacyVisualUI) #gameCard .dialogue .text{
-  font-size:clamp(14px,1.7vw,18px)!important;
-  line-height:1.35!important;
-  overflow:visible!important;
-  display:block!important;
-  -webkit-line-clamp:unset!important;
+body.ui-biblio #baPlaque.narr{background:linear-gradient(90deg,#1e2350,#12142e)}
+body.ui-biblio.ba-intime #baPlaque{background:linear-gradient(90deg,#8e2f58,#4f1534)}
+body.ui-biblio #baPlaque .nom{font:700 max(14px,calc(20 * var(--ba-t)))/1.15 var(--ba-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ba-or-pale);white-space:nowrap}
+body.ui-biblio #baPlaque .didasc{font:italic 500 max(12px,calc(15 * var(--ba-t))) var(--ba-serif);color:var(--ba-texte-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+
+body.ui-biblio #gameCard .dialogue{
+  position:relative!important;inset:auto!important;width:min(calc(1500 * var(--ba-c)),100%)!important;max-width:100%!important;
+  display:grid!important;grid-template-columns:auto 1fr!important;grid-template-rows:1fr!important;
+  min-height:0!important;max-height:none!important;height:auto!important;margin:0!important;padding:0!important;
+  border-radius:4px!important;overflow:hidden!important;
+  background:linear-gradient(180deg,rgba(24,23,56,.78),rgba(9,10,26,.9))!important;
+  box-shadow:inset 0 0 0 1px rgba(216,189,120,.5),inset 0 0 0 5px rgba(0,0,0,.22),inset 0 0 0 6px rgba(216,189,120,.14),0 16px 40px rgba(0,0,0,.55)!important;
+  backdrop-filter:blur(6px)!important;-webkit-backdrop-filter:blur(6px)!important;
+  column-gap:0!important;row-gap:0!important;flex:0 0 auto!important
 }
+body.ui-biblio #baDlgDos{
+  grid-row:1;width:max(22px,calc(42 * var(--ba-c)));min-width:22px;border-radius:4px 0 0 4px;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:linear-gradient(90deg,rgba(0,0,0,.5),rgba(255,255,255,.12) 40%,rgba(0,0,0,.35)),#5a1e2e;position:relative
+}
+body.ui-biblio #baDlgDos::before,body.ui-biblio #baDlgDos::after{content:"";position:absolute;left:0;right:0;height:6px;border-top:2px solid #d9b96a;border-bottom:1px solid #b08c45;opacity:.85}
+body.ui-biblio #baDlgDos::before{top:12%}body.ui-biblio #baDlgDos::after{bottom:12%}
+body.ui-biblio #baDlgDos span{writing-mode:vertical-rl;text-orientation:sideways;transform:rotate(180deg);font:700 9px/1 var(--ba-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ba-or);white-space:nowrap}
+body.ui-biblio #gameCard .dialogue #speaker{display:none!important}
+body.ui-biblio #gameCard .dialogue #choices{display:none!important;position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+body.ui-biblio #gameCard .dialogue #text{
+  grid-column:2!important;grid-row:1!important;display:block!important;position:static!important;
+  padding:max(12px,calc(22 * var(--ba-c))) max(28px,calc(40 * var(--ba-c))) max(10px,calc(14 * var(--ba-c))) max(16px,calc(28 * var(--ba-c)))!important;
+  min-height:calc(90 * var(--ba-c))!important;max-height:calc(200 * var(--ba-c))!important;overflow:auto!important;
+  font:500 max(14px,calc(24 * var(--ba-t)))/1.4 var(--ba-serif)!important;color:var(--ba-texte)!important;
+  -webkit-line-clamp:unset!important;white-space:pre-line!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important
+}
+
+/* Presets */
+body.ui-biblio.ui-epuree #baGameChrome .ba-jl{display:none}
+body.ui-biblio.ui-epuree #baGameChrome .ba-dos-o span{display:none}
+body.ui-biblio.ui-epuree #baDlgDos{display:none}
+body.ui-biblio.ui-cine #baGameChrome .ba-lieu .ba-cote,
+body.ui-biblio.ui-cine #baGameChrome .ba-jl,
+body.ui-biblio.ui-cine #baGameChrome .ba-hud,
+body.ui-biblio.ui-cine #baDlgDos{display:none!important}
+body.ui-biblio.ui-cine #baGameChrome .ba-ui-btn{opacity:.5}
+body.ui-biblio.ui-cine #gameCard .dialogue{grid-template-columns:1fr!important;background:linear-gradient(180deg,rgba(8,8,22,.18),rgba(8,8,22,.58))!important;box-shadow:inset 0 1px 0 rgba(216,189,120,.35)!important}
+body.ui-biblio.ui-cine #baPlaque{background:color-mix(in srgb,#5a1e2e 60%,transparent);margin-left:32px}
+
+/* Stage faces clear — dialogue stays low */
+body.ui-biblio #gameCard .stage{height:auto!important;min-height:0!important;max-height:none!important;flex:1!important}
+body.ui-biblio #gameCard{display:flex!important;flex-direction:column!important;position:relative!important;min-height:100%!important}
+body.ui-biblio #gameCard .stage .char{max-height:88%!important}
+
+/* ===== Étagère chapitres ===== */
+#baShelf{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;padding:var(--ba-pad);background:radial-gradient(70% 60% at 50% 40%,rgba(137,100,196,.16),transparent 70%),linear-gradient(180deg,rgba(7,8,15,.55),rgba(7,8,15,.25) 40%,rgba(7,8,15,.88))}
+#baShelf .ba-entete{display:flex;align-items:center;gap:16px;flex:0 0 auto;margin-bottom:10px}
+#baShelf .ba-retour{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px 0 6px;color:var(--ba-or-pale);position:relative;isolation:isolate;border:0;cursor:pointer;background:none;font:inherit}
+#baShelf .ba-retour::before{content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-16deg);background:rgba(10,10,26,.72);box-shadow:inset 0 0 0 1px var(--ba-ligne-f)}
+#baShelf .ba-retour span{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#fff6dc,var(--ba-or) 50%,#a8823d);color:#1a1206;font:800 20px/1 var(--ba-sans)}
+#baShelf .ba-retour em{font:700 12px var(--ba-display);letter-spacing:.2em;text-transform:uppercase;font-style:normal}
+#baShelf .ba-entete-t{flex:1;min-width:0}
+#baShelf .ba-kicker{font:700 11px/1.2 var(--ba-display);letter-spacing:.22em;text-transform:uppercase;color:var(--ba-or)}
+#baShelf .ba-titre-ecran{font:700 max(22px,calc(34 * var(--ba-t)))/1.08 var(--ba-logo);color:var(--ba-or-pale)}
+#baShelf .ba-compteur{padding:6px 14px;transform:skewX(-14deg);background:rgba(10,10,26,.7);box-shadow:inset 0 0 0 1px var(--ba-ligne-f);font:600 13px var(--ba-display);color:var(--ba-texte-2);white-space:nowrap}
+#baShelf .ba-compteur b{font-size:18px;color:var(--ba-or-vif)}
+#baShelf .ba-etagere{flex:1;min-height:0;display:flex;flex-direction:column;overflow-x:auto;overflow-y:hidden;padding-top:12px;scrollbar-width:thin}
+#baShelf .ba-rayon{flex:1 1 0;min-height:0;display:flex;align-items:flex-end;justify-content:center;gap:5px;padding:0 20px;min-width:min-content}
+#baShelf .ba-planche{flex:0 0 auto;height:12px;min-width:min-content;margin:0 0 14px;background:linear-gradient(180deg,#8a6033,#5a3a1c 45%,#2e1c0c);box-shadow:0 6px 12px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,220,160,.35)}
+#baShelf .ba-dos-v{
+  position:relative;flex:0 0 auto;width:max(28px,calc(38 * var(--ba-c)));height:72%;max-height:220px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 0;overflow:hidden;cursor:pointer;border:0;color:var(--ba-or-pale);
+  border-radius:4px 4px 2px 2px;transform-origin:bottom center;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.03) 20%,transparent 42%,rgba(0,0,0,.28) 80%,rgba(0,0,0,.55)),var(--dc,#1b2a5c);
+  box-shadow:0 4px 10px rgba(0,0,0,.5),inset 0 0 0 1px rgba(0,0,0,.55)
+}
+#baShelf .ba-dos-v::before,#baShelf .ba-dos-v::after{content:"";position:absolute;left:0;right:0;height:5px;border-top:2px solid #d9b96a;border-bottom:1px solid #b08c45;opacity:.85}
+#baShelf .ba-dos-v::before{top:14%}#baShelf .ba-dos-v::after{bottom:14%}
+#baShelf .ba-dos-v .dv-num{font:700 12px var(--ba-display);color:var(--ba-or-vif);z-index:1}
+#baShelf .ba-dos-v .dv-titre{flex:1;min-height:0;writing-mode:vertical-rl;text-orientation:sideways;transform:rotate(180deg);font:700 11px/1.08 var(--ba-display);letter-spacing:.02em;overflow:hidden;text-align:center;margin:10px 0;text-shadow:0 1px 0 #000;z-index:1}
+#baShelf .ba-dos-v.verrou{filter:saturate(.2) brightness(.5);cursor:default}
+#baShelf .ba-dos-v:hover:not(.verrou){transform:translateY(-10px);box-shadow:0 0 0 2px var(--ba-or-vif),0 0 18px rgba(255,217,138,.4)}
+#baShelf .ba-bougie{flex:0 0 auto;align-self:flex-end;width:12px;height:22%;margin-left:18px;background:linear-gradient(90deg,#d8cbb0,#f6efe0 50%,#bfae8c);border-radius:2px 2px 0 0;position:relative}
+#baShelf .ba-bougie::before{content:"";position:absolute;left:50%;bottom:100%;width:10px;height:18px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 50% 70%,#fff6c8,#ffb347 55%,rgba(255,120,40,0) 75%);filter:drop-shadow(0 0 8px rgba(255,190,90,.9))}
+#baShelf .ba-indice{flex:0 0 auto;text-align:center;font:italic 500 14px var(--ba-serif);color:var(--ba-texte-2);padding-top:6px}
+
+/* Livre couverture / synopsis overlay */
+#baLivre{
+  position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:var(--ba-pad);
+  background:radial-gradient(70% 70% at 50% 50%,rgba(20,14,40,.6),rgba(2,2,8,.9));backdrop-filter:blur(3px)
+}
+#baLivre.open{display:grid}
+#baLivre .ba-l3-fermer{position:absolute;top:var(--ba-pad);right:var(--ba-pad);width:40px;height:40px;border-radius:50%;border:1px solid var(--ba-ligne-f);background:rgba(10,10,26,.5);color:var(--ba-or-pale);cursor:pointer;font:700 18px/1 var(--ba-sans)}
+#baLivre .ba-couv{
+  position:relative;width:min(340px,72vw);aspect-ratio:2/3;border-radius:4px 10px 10px 4px;overflow:hidden;cursor:pointer;
+  box-shadow:0 24px 60px rgba(0,0,0,.75),inset 0 0 0 1px rgba(216,189,120,.5);background:#3b1424;transform-origin:center;animation:baCouvIn .55s var(--ba-ease)
+}
+@keyframes baCouvIn{from{opacity:0;transform:scale(.88) rotateY(-12deg)}}
+#baLivre .ba-couv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#baLivre .ba-couv::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(255,255,255,.08) 4%,transparent 9%),linear-gradient(180deg,rgba(7,8,15,.2),transparent 35%,rgba(7,8,15,.92) 82%);pointer-events:none}
+#baLivre .ba-l3-cadre{position:absolute;inset:4.5% 5% 4.5% 9%;z-index:1;border:1px solid rgba(243,228,181,.55);box-shadow:inset 0 0 0 4px rgba(0,0,0,.15),inset 0 0 0 5px rgba(243,228,181,.25);pointer-events:none}
+#baLivre .ba-l3-plaque{position:absolute;left:9%;right:5%;bottom:6%;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:0 6%}
+#baLivre .ba-l3-num{font:900 max(36px,calc(56 * var(--ba-t)))/1.1 var(--ba-logo);background:linear-gradient(180deg,#fffaf0,#f6df9c 40%,#c99a48 62%,#f1d58f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
+#baLivre .ba-l3-lab{font:700 11px var(--ba-display);letter-spacing:.24em;text-transform:uppercase;color:var(--ba-or)}
+#baLivre .ba-l3-ct{font:700 max(16px,calc(22 * var(--ba-t)))/1.12 var(--ba-logo);color:var(--ba-or-pale);text-shadow:0 2px 6px #000}
+#baLivre .ba-l3-msg{font:italic 500 13px var(--ba-serif);color:var(--ba-texte-2);margin-top:4px}
+#baLivre .ba-syn{
+  display:none;width:min(520px,92vw);max-height:min(78vh,640px);overflow:auto;padding:22px 26px;background:linear-gradient(90deg,#efe3c4,#e6d6b0);color:#2a1c10;
+  box-shadow:0 24px 60px rgba(0,0,0,.7);border-radius:4px;animation:baCouvIn .45s var(--ba-ease)
+}
+#baLivre.synopsis .ba-couv{display:none}
+#baLivre.synopsis .ba-syn{display:flex;flex-direction:column;gap:10px}
+#baLivre .ba-syn .k{font:700 11px var(--ba-display);letter-spacing:.2em;text-transform:uppercase;color:#7a5420}
+#baLivre .ba-syn h3{font:700 max(22px,calc(32 * var(--ba-t)))/1.1 var(--ba-logo);color:#2a1c10}
+#baLivre .ba-syn p{font:500 15px/1.5 var(--ba-serif);color:#3a2814}
+#baLivre .ba-syn .tags{display:flex;flex-wrap:wrap;gap:6px}
+#baLivre .ba-syn .tags span{padding:3px 10px;transform:skewX(-14deg);background:rgba(122,31,53,.1);box-shadow:inset 0 0 0 1px rgba(122,31,53,.45);font:700 10px var(--ba-display);letter-spacing:.12em;text-transform:uppercase;color:#5a1e2e}
+#baLivre .ba-syn .ba-act{margin-top:8px;align-self:center;min-height:42px;padding:0 28px;border:0;cursor:pointer;position:relative;isolation:isolate;font:800 14px var(--ba-display);letter-spacing:.14em;text-transform:uppercase;color:#1a1206;background:none}
+#baLivre .ba-syn .ba-act::before{content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-16deg);background:linear-gradient(90deg,#fff6dc,var(--ba-or) 38%,#a8823d);box-shadow:4px 4px 0 rgba(0,0,0,.45)}
+
+/* Progression / Némésis — bookish accents */
+body.ui-biblio #progressionCard,body.ui-biblio .progressionFrame{font-family:var(--ba-serif)}
+body.ui-biblio .journalBannerEyebrow,body.ui-biblio .progressionJournalSection .journalBannerEyebrow{font-family:var(--ba-display)!important;letter-spacing:.16em;color:#a85a78!important}
+body.ui-biblio .journalBannerTitle,body.ui-biblio .progressionJournalSection h4{font-family:var(--ba-logo)!important;color:#7a1f35!important}
+
+/* Toast */
+.ba-toast{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:90;padding:10px 22px;background:linear-gradient(90deg,rgba(20,18,46,.96),rgba(10,10,26,.96));box-shadow:inset 0 0 0 1px var(--ba-ligne-f),0 8px 24px rgba(0,0,0,.5);font:600 15px var(--ba-serif);color:var(--ba-texte);text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);max-width:90vw}
+.ba-toast b{color:var(--ba-or-pale);font-family:var(--ba-display);letter-spacing:.06em}
+.ba-toast kbd{font:700 11px var(--ba-sans);border:1px solid rgba(243,228,181,.45);border-bottom-width:3px;border-radius:5px;padding:0 6px;margin-left:8px;color:var(--ba-or-pale)}
+
+@media(max-height:560px){
+  body.ui-biblio #baChoices{max-height:32svh;gap:4px}
+  body.ui-biblio #baChoices .ba-ch{min-height:34px;padding-top:2px;padding-bottom:2px}
+  body.ui-biblio #gameCard .dialogue #text{max-height:calc(120 * var(--ba-c))!important;padding-top:10px!important;font-size:max(13px,calc(20 * var(--ba-t)))!important}
+  #baGameChrome .ba-dos-o span{display:none}
+}
+
+/* Splash filets (injectés par JS) */
+body.ui-biblio #enterMenuFromSplashBtn{
+  display:inline-flex!important; align-items:center!important; gap:14px!important;
+}
+body.ui-biblio #enterMenuFromSplashBtn .ba-filet{
+  display:block; width:42px; height:1px; background:linear-gradient(90deg,transparent,rgba(255,217,138,.85)); position:relative; flex:0 0 auto;
+}
+body.ui-biblio #enterMenuFromSplashBtn .ba-filet::after{
+  content:""; position:absolute; right:-3px; top:-3px; width:6px; height:6px; transform:rotate(45deg);
+  background:var(--ba-or-vif,#ffd98a); box-shadow:0 0 6px rgba(255,217,138,.8);
+}
+body.ui-biblio #enterMenuFromSplashBtn .ba-filet.d{ transform:scaleX(-1); }
+body.ui-biblio #enterMenuFromSplashBtn span{ font:inherit; letter-spacing:inherit; }

@@ -1,17 +1,10 @@
 # Bibliothèque astrale — Mode Histoire
 
-Couche d’apparence pour le Visual Novel racine (`index.html`). **N’affecte pas Chronique Alternative.**
+Chrome UI calqué sur le prototype validé (`vn-redesign/proto`), monté en overlay lorsque `body.ui-biblio` est actif.
 
-## Activation
-- Activée par défaut (`body.ui-biblio`).
-- Basculable **Bibliothèque / Classique** dans Options du menu titre (persisté : `localStorage.sylvinia_ui_biblio_v1`).
-- Préréglages en jeu : **Complète / Épurée / Cinématique** (bouton ◐ près du titre de scène, touche `H`).
+- **Bibliothèque / Classique** : panneau Réglages du menu titre (épines), persisté `localStorage.sylvinia_ui_biblio_v1`.
+- **Classique** retire tout le chrome `#ba*` et restaure l’UI d’origine.
+- Préréglages en jeu : Complète / Épurée / Cinématique (bouton ◐ + touche `H`).
+- N’altère pas Chronique Alternative ni la logique de scènes / sauvegardes.
 
-## Fichiers
-- `biblio.css` — peaux (disclaimer, splash, mode, titre, jeu, choix, chapitres, codex, progression, **Carnet du Némésis**, moments libres / hubs).
-- `biblio.js` — bascule d’apparence, préréglages, détection des hubs (« moments libres »), déblocage audio au premier geste.
-- `fonts/` — Cinzel, Cinzel Decorative, Cormorant, Inter.
-
-## Notes
-- Le **Carnet du Némésis** (pas Amnésis) est la section journal de l’écran Progression.
-- Les **moments libres** sont les hubs de fin / exploration (ex. `c11g_bal_observation`) : choix de lieux / personnages restylés via `.ba-hub`.
+Fichiers : `biblio.css`, `biblio.js`, `fonts/`, `proto-ref.css` (référence visuelle).
