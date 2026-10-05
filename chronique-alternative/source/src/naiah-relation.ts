@@ -90,9 +90,9 @@ export const NAIAH_ROUTES: RouteScene[] = [
   scene(1, 6, "Les brumes ne s'entretiennent pas toutes seules", "purple_forest", "thinking", [
     N("Le ruban violet vous attend cette fois noué autour d'un petit maillet. Au dos, Naïah a gravé : « Apporte deux mains auxquelles tu ne tiens pas trop. »"),
     N("Au carrefour, trois cordelettes relient une balise de pierre, un anneau de racines et une clochette sans battant. Naïah est couchée sous l'anneau, les bras enfoncés dans la terre jusqu'aux coudes."),
-    A("Tu arrives juste à temps. La brume a décidé de développer une personnalité administrative."),
+    A("Tu arrives juste à temps. La brume essaie de manger ses propres chemins."),
     P("C'est-à-dire ?"),
-    A("Elle refuse le travail, déplace le problème et exige un formulaire que j'ai brûlé."),
+    A("Elle cache le passage, l'inverse, puis le rouvre au même endroit. Si je la laisse faire, elle guidera les intrus en cercle jusqu'à ce que leurs traces attirent les suivants."),
     N("Elle se relève et vous montre les trois protections. La première épaissit la brume pour cacher les routes. La deuxième échange leurs directions afin de désorienter les intrus. La dernière les renvoie vers l'extérieur au lieu de les laisser s'enfoncer dans la forêt."),
     A("Je les réaccorde. Toi, tu tiens les repères, tu annonces ce qui bouge et tu évites héroïquement de devenir mage par enthousiasme."),
     P("Cela arrive souvent ?"),
@@ -190,7 +190,7 @@ export const NAIAH_ROUTES: RouteScene[] = [
       A("S'il raconte qu'une très belle voix l'a sauvé, je nie tout."),
       P("Et le moment où tu souriais ?"),
       A("Je ne prétends pas être gentille. Seulement efficace."),
-      N("Elle regarde longtemps le convoi s'éloigner avant de remettre son masque d'indifférence."),
+      N("Elle regarde longtemps le convoi s'éloigner. Lorsqu'elle se retourne, son sourire est déjà revenu, beaucoup trop grand."),
     ], { trust: 7, affection: 4, confluence: 4, flags: ["naiah-convoy-protected"] }),
   ]),
 
@@ -265,7 +265,7 @@ export const NAIAH_ROUTES: RouteScene[] = [
     Q("n4-lucidite", "Ouvrir d'abord un corridor unique pour les civils, puis condamner les fausses routes.", "lucidite", [
       N("Vous plantez la borne blanche à l'endroit où la terre porte encore les traces réelles des roues. La grise ferme chaque bifurcation derrière le dernier chariot."),
       P("Une seule route ouverte. Toutes les autres peuvent tomber."),
-      N("Naïah comprend avant la fin de la phrase. Elle abandonne les illusions les plus lointaines et concentre le réseau sur ce corridor étroit."),
+      N("Avant la fin de votre phrase, les illusions les plus lointaines s'éteignent. Naïah concentre le réseau sur ce corridor étroit."),
       N("Les familles franchissent le passage. Dès que le dernier garde atteint la borne, vous plantez le noir face au ravin."),
       A("Violette."),
       N("Vous la levez. Naïah referme les trois couches dans le bon ordre ; les faux sentiers s'effondrent sans emporter le vrai."),

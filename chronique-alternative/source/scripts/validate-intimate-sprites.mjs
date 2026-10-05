@@ -94,7 +94,7 @@ assert(intimateUi.includes("groupIntimateVisualState"), "orchestration CG → sp
 assert(!intimateUi.includes('step === "direction-lines" || step === "ending"'), "ancienne bascule nue dès l’entrée encore présente");
 assert(intimateUi.includes("recoverMissingIntimateSprite"), "fallback intime non utilisé par le rendu");
 assert(intimateUi.includes("useFirstIntimateSprite") && intimateUi.includes("useSecondIntimateSprite"), "le rendu de groupe ne gère pas les sprites intimes individuellement");
-assert(page.includes('modal.replay ? `${naiahContext ? "Souvenir de proximité" : "Souvenir intime"}'), "relecture intime ou de proximité non reliée à la même mise en scène");
+assert(page.includes('modal.replay ? `Souvenir intime · aucun gain`'), "relecture intime de Naïah non reliée à la même mise en scène");
 
 for (const [character, expressions] of Object.entries(moods)) {
   const trackLine = system.match(new RegExp(`${character}: \\[([^\\]]+)\\]`))?.[1] || "";
@@ -154,11 +154,11 @@ try {
   const naiahState = (narrativePhase) => cg.soloIntimateVisualState({
     character: "naiah", mode: "explicite", surface: "route", step: "direction-lines", chapter: 0, narrativePhase,
   });
-  assert.equal(naiahState("device").useIntimateSprites, false, "Naïah: placeholder intime trop précoce");
-  assert.equal(naiahState("reaction").cg?.phase, "reveal", "Naïah: CG de révélation absente");
-  assert.equal(naiahState("reaction").useIntimateSprites, false, "Naïah: placeholder superposé à la CG");
-  assert.equal(naiahState("trust").useIntimateSprites, true, "Naïah: placeholder absent après la CG");
-  assert.equal(cg.soloIntimateVisualState({ character: "naiah", mode: "tendre", surface: "route", step: "direction-lines", chapter: 4, narrativePhase: "trust" }).useIntimateSprites, false, "Naïah: placeholder chargé hors explicite");
+  assert.equal(naiahState("undressing").useIntimateSprites, false, "Naïah: placeholder intime affiché avant que la nudité soit racontée");
+  assert.equal(naiahState("reveal").cg?.phase, "reveal", "Naïah: CG de révélation absente");
+  assert.equal(naiahState("reveal").useIntimateSprites, false, "Naïah: placeholder superposé à la CG");
+  assert.equal(naiahState("exploration").useIntimateSprites, true, "Naïah: placeholder absent après la CG");
+  assert.equal(cg.soloIntimateVisualState({ character: "naiah", mode: "tendre", surface: "route", step: "direction-lines", chapter: 4, narrativePhase: "exploration" }).useIntimateSprites, false, "Naïah: placeholder chargé hors explicite");
 
   for (const pairId of ["group-date-hylee-naiah", "group-date-naiah-bellirith"]) {
     const before = cg.groupIntimateVisualState({ pairId, mode: "explicite", step: "direction-lines", chapter: 2 });

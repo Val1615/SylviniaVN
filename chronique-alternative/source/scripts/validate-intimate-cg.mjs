@@ -91,12 +91,16 @@ try {
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`intimacy-sprite/, "solo : la CG doit remplacer le sprite");
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`group-intimacy-sprites/, "duo : la CG doit remplacer tous les sprites");
   assert.match(pageSource, /data-intimacy-cg=\{cg\.phase\}/, "la phase CG doit rester inspectable en test visuel");
-  assert.match(cssSource, /\.intimacy-cg img[^}]*object-fit:\s*contain/s, "les CG doivent préserver leur composition sans crop agressif");
+  assert.match(cssSource, /\.intimacy-cg\s*\{[^}]*inset:\s*0[^}]*overflow:\s*hidden/s, "les CG doivent occuper tout le cadre de la scène");
+  assert.match(cssSource, /\.intimacy-cg img[^}]*width:\s*100%[^}]*height:\s*100%[^}]*object-fit:\s*cover/s, "les CG 16:9 doivent remplir l’écran sans bandes résiduelles");
+  assert.match(cssSource, /\.intimacy-sprite\s*\{[^}]*overflow:\s*visible[^}]*transform-origin:\s*center bottom/s, "le cadre solo ne doit plus couper le haut des sprites pendant le zoom");
+  assert.match(cssSource, /\.group-intimacy-sprites\s*\{[^}]*overflow:\s*visible/s, "le cadre de groupe ne doit plus couper le haut des sprites");
+  assert.match(cssSource, /@keyframes intimacy-sprite-enter\s*\{[^}]*transform:\s*translateY/s, "l’animation des sprites doit conserver le centrage assuré par flex/grid");
   assert.match(cssSource, /@media \(max-width: 720px\)[\s\S]*\.intimacy-cg img/, "un rendu mobile explicite doit être défini");
   assert.doesNotMatch(musicSource, /intimateCg|intimacy-cg/, "les CG ne doivent jamais piloter ou redémarrer la musique");
   assert.match(pageSource, /musicForContext\(game\.spot, \{ locationId: game\.location, intimacy: modal\?\.kind === "intimacy" \|\| modal\?\.kind === "group-intimacy"/, "la musique intime doit rester liée au modal, pas à la phase CG");
 
-  console.log("[CG intimes] 40 images 16:9 · 13 contextes duo · CG de déshabillage puis sprites nus · post-orgasm persistant · desktop/mobile validés.");
+  console.log("[CG intimes] 40 images 16:9 plein écran · sprites non rognés · CG de déshabillage puis sprites nus · desktop/mobile validés.");
 } finally {
   await server.close();
 }

@@ -440,3 +440,35 @@ button.cad-carte:hover, button.cad-carte:focus-visible, .cad-carte:focus-within 
   .fiche-sprite.fiche-portrait { left: 0; width: 100%; top: 0; height: 58vh; --pm1: linear-gradient(90deg, transparent 0, #000 10%, #000 90%, transparent 100%); --pm2: linear-gradient(180deg, #000 0, #000 52%, transparent 98%); }
 }
 @media (prefers-reduced-motion: reduce) { .fiche-portrait .portrait-img.entree, .fen-portrait-img { animation: none !important; } }
+
+
+/* ==========================================================================
+   Scènes intimes — même chrome V2, palette rose/cramoisie (variables de thème)
+   ========================================================================== */
+.v2-scene-intime,
+.v2-scene-intime .scene-backlog {
+  --or: #e76588;
+  --or-pale: #ffc0d0;
+  --or-vif: #ff8fab;
+  --or-sombre: #8a2e4a;
+  --ligne: rgba(231,101,136,.34);
+  --ligne-forte: rgba(231,101,136,.62);
+  --ligne-douce: rgba(231,101,136,.16);
+  --amethyste: #c45a7a;
+  --amethyste-vif: #e76588;
+}
+.v2-scene-intime .scene-titre::before { border-left-color: var(--rose); background: linear-gradient(90deg, rgba(40,10,22,.94), rgba(12,8,16,.55) 80%, transparent); }
+.v2-scene-intime .scene-titre .eyebrow { color: var(--rose); }
+.v2-scene-intime .dialogue-box { --c: var(--or); }
+.v2-scene-intime .dialogue-box .speaker::after { background: rgba(200,40,70,.9); }
+.v2-scene-intime .choice-question { background: linear-gradient(90deg, rgba(200,40,70,.92), rgba(231,101,136,.82)); }
+.v2-scene-intime .v2-choix-carte::before { background: var(--rose); }
+.v2-scene-intime .v2-choix-carte.stop { opacity: .92; border-style: dashed; }
+.v2-scene-intime .intimacy-game-heading h3 { color: var(--or-pale); font-family: var(--display); }
+.v2-scene-intime .intimacy-game-progress i.done,
+.v2-scene-intime .intimacy-game-progress i.current { background: var(--rose); box-shadow: 0 0 10px var(--rose); }
+.v2-scene-intime .intimacy-complete { border: 1px solid var(--ligne-forte); background: linear-gradient(180deg, rgba(40,12,24,.94), rgba(10,8,16,.97)); box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 40px rgba(231,101,136,.18); clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px)); padding: calc(1.4rem * var(--k, 1)) calc(1.6rem * var(--k, 1)); }
+.v2-scene-intime .intimacy-complete .eyebrow { color: var(--rose); }
+.v2-scene-intime .intimacy-complete h3 { color: var(--or-pale); font-family: var(--display); }
+.v2-scene-intime .backlog-boite { border-color: var(--ligne-forte); }
+.v2-scene-intime .backlog-ligne.choix { border-left-color: var(--rose); background: linear-gradient(90deg, rgba(231,101,136,.16), transparent); }

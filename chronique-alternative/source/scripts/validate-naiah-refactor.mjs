@@ -94,8 +94,10 @@ try {
   assert.deepEqual(secrets.map((secret) => secret.reveals[0]), ["knows_naiah_hylee_nights", "knows_naiah_exile", "knows_naiah_surpass_amanea", "knows_naiah_maternal_rejection"]);
   const secretText = JSON.stringify(secrets);
   assert.match(secretText, /après le dernier service/iu);
-  assert.match(secretText, /ni grâce à elle|ni à cause d'elle/iu);
+  assert.match(secretText, /cent quarante et deux cents morts|calculé jusqu'aux morts/iu, "la lucidité stratégique et la dangerosité de Naïah doivent rester visibles");
+  assert.match(secretText, /une idée ne devient pas innocente/iu);
   assert.doesNotMatch(secretText, /tartelette|plus de sujets|une couronne plus haute|pacte de Llorea|Naïah meurt/iu);
+  assert.doesNotMatch(secretText, /Comité des réponses insuffisantes|inspecteur compétent|formulaire entièrement blanc/iu, "le rebond ne doit plus reposer sur la bureaucratie");
   const lastSecret = secrets.find((secret) => secret.tier === 80);
   assert.ok(lastSecret.choices.some((choice) => choice.requiresKnowledge?.includes("knows_amanea_naiah_pain")), "la nuance conditionnelle liée à Amanea doit rester facultative");
   assert.ok(lastSecret.choices.every((choice) => !choice.requiresKnowledge?.includes("knows_amanea_naiah_pact")), "le pacte ne doit jamais être requis ou révélé par Naïah");
@@ -138,7 +140,19 @@ try {
   assert.ok(firstMeeting, "première rencontre de campagne manquante");
   assert.doesNotMatch(JSON.stringify(firstMeeting), /tartelette/iu);
 
-  const naiahSources = await Promise.all([read("src/naiah-relation.ts"), read("src/naiah-confidences.ts"), read("src/naiah-ambient.ts"), read("src/naiah-dates.ts"), read("src/naiah-home-date.ts"), read("src/naiah-date-intimacy.ts"), read("src/naiah-group-proximity.ts")]);
+  const naiahSources = await Promise.all([
+    read("src/naiah-relation.ts"),
+    read("src/naiah-confidences.ts"),
+    read("src/naiah-ambient.ts"),
+    read("src/naiah-dates.ts"),
+    read("src/naiah-home-date.ts"),
+    read("src/naiah-date-intimacy.ts"),
+    read("src/naiah-date-intimacy-types.ts"),
+    read("src/naiah-date-intimacy-forest.ts"),
+    read("src/naiah-date-intimacy-edge.ts"),
+    read("src/naiah-date-intimacy-home.ts"),
+    read("src/naiah-group-proximity.ts"),
+  ]);
   assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée");
 
   const migrated = page.hydrateGame({
@@ -181,23 +195,55 @@ try {
   assert.ok(page.publicDateUnlocked(playable, naiahDates[0]), "le second rendez-vous ne doit pas conditionner le premier");
   assert.ok(page.homeDateUnlocked(playable, "naiah"), "le rendez-vous au logis doit être indépendant des deux sorties publiques");
 
-  assert.deepEqual(proximity.validateNaiahProximity(), { contexts: 3, combinations: 6, routes: 18, chapters: 720 });
+  assert.deepEqual(proximity.validateNaiahProximity(), { contexts: 3, combinations: 6, routes: 18, chapters: 648 });
   const contexts = ["date-naiah-sanctuary", "date-naiah-akuhn", "home-naiah"];
   const modes = ["tendre", "suggestif", "explicite", "ellipse"];
-  const sexualLanguage = /\b(?:orgasme|joui(?:r|t|ssance)?|p[eé]n[eé]tr\w*|vulv\w*|p[eé]nis|membre dress[eé]|sexe dress[eé]|nud(?:e|it[eé])|d[eé]shabill\w*)\b/iu;
+  const sequenceCounts = { tendre: 8, suggestif: 8, explicite: 12, ellipse: 8 };
+  const sexualLanguage = /\b(?:orgasme|joui(?:r|t|ssance)?|sexe|nud(?:e|it[eé])|d[eé]shabill\w*)\b/iu;
+  const explicitSexualAction = /\b(?:orgasme|joui(?:r|t|ssance)?|bouche|langue|sexe|entre (?:vos|tes|ses) cuisses)\b/iu;
+  const forbiddenPenetration = /\b(?:p[eé]n[eé]tr\w*|s['’]enfonc\w*|introdui\w*.{0,24}(?:anus|vagin|corps)|doigts?.{0,18}(?:entrent|s['’]enfoncent).{0,18}(?:corps|sexe|anus|vagin))\b/iu;
+  const clinicalLanguage = /(?:r[eé]ponse physiologique|r[eé]sultat exp[eé]rimental|protocole (?:de|du|d['’]essai)|variables? (?:du|de l['’])exp[eé]rience|donn[eé]es? (?:physiologiques|exp[eé]rimentales)|seuil (?:de r[eé]action|physiologique|sensoriel))/iu;
   for (const context of contexts) for (const sex of ["femme", "homme"]) {
     const entries = proximity.naiahProximityRoutes(context, sex);
     assert.equal(entries.length, 3, `${context}/${sex}: trois orientations manuelles requises`);
     assert.equal(new Set(entries.map((entry) => entry.id)).size, 3);
-    for (const entry of entries) for (const mode of modes) {
-      const sequence = entry.chapters[mode];
-      const wordCount = sequence.flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0);
-      assert.equal(sequence.length, 10, `${entry.id}/${mode}: dix séquences requises`);
-      assert.ok(wordCount >= 250, `${entry.id}/${mode}: scène trop courte (${wordCount} mots)`);
-      assert.doesNotMatch(sequence.flat().map((line) => line.text).join("\n"), sexualLanguage, `${entry.id}/${mode}: Naïah a été sexualisée`);
+    for (const entry of entries) {
+      assert.equal(new Set(modes.map((mode) => JSON.stringify(entry.chapters[mode]))).size, 4, `${entry.id}: les quatre modes doivent être écrits séparément`);
+      for (const mode of modes) {
+        const sequence = entry.chapters[mode];
+        const chapterCounts = sequence.map((chapter) => chapter.reduce((total, line) => total + line.text.trim().split(/\s+/u).length, 0));
+        assert.equal(sequence.length, sequenceCounts[mode], `${entry.id}/${mode}: ${sequenceCounts[mode]} séquences requises`);
+        assert.ok(chapterCounts.every((count) => count >= 18), `${entry.id}/${mode}: une séquence n'est pas substantielle (${chapterCounts.join(", ")})`);
+        const fullText = sequence.flat().map((line) => line.text).join("\n");
+        assert.doesNotMatch(fullText, forbiddenPenetration, `${entry.id}/${mode}: pénétration interdite détectée`);
+        assert.doesNotMatch(fullText, clinicalLanguage, `${entry.id}/${mode}: langage clinique détecté`);
+      }
+      const explicitText = entry.chapters.explicite.flat().map((line) => line.text).join("\n");
+      const explicitDialogue = entry.chapters.explicite.flat().filter((line) => line.speaker !== "Narration");
+      assert.ok(explicitDialogue.length >= 4, `${entry.id}: la version explicite doit réellement faire dialoguer Naïah et le protagoniste`);
+      assert.match(explicitText, explicitSexualAction, `${entry.id}: le mode explicite doit contenir une vraie continuation sexuelle non pénétrative`);
+      assert.match(explicitText, /(?:orgasme|joui(?:r|t|ssance)?)/iu, `${entry.id}: la progression explicite doit aller jusqu'à son terme`);
+      assert.match(entry.chapters.explicite[2].map((line) => line.text).join(" "), /(?:retir|d[eé]shabill|v[eê]tement|chemise|veste|cape|pantalon|nue?)/iu, `${entry.id}: la nudité doit être racontée avant la CG`);
+      assert.match(entry.chapters.explicite[3].map((line) => line.text).join(" "), /(?:r[eé]v[eè]le|nue?|nudit[eé]|peau)/iu, `${entry.id}: la révélation visuelle doit prolonger la nudité racontée`);
     }
   }
+  for (const context of contexts) {
+    const woman = proximity.naiahProximityRoutes(context, "femme");
+    const man = proximity.naiahProximityRoutes(context, "homme");
+    assert.deepEqual(woman.map((entry) => entry.text), man.map((entry) => entry.text), `${context}: femme et homme doivent partager les mêmes trois concepts`);
+  }
   assert.equal(proximity.naiahProximityRoutes("home-naiah", "intersexe").length, 0, "aucun canon corporel intersexe ne doit être improvisé");
+
+  const authoredIntimacySource = [
+    await read("src/naiah-date-intimacy-forest.ts"),
+    await read("src/naiah-date-intimacy-edge.ts"),
+    await read("src/naiah-date-intimacy-home.ts"),
+  ].join("\n");
+  assert.doesNotMatch(authoredIntimacySource, /PAIR_ROUTE_DATA|(?:role|route|position)\s*:\s*["'](?:first|second|shared)["']|\.replace\s*\(/u, "les dix-huit variantes doivent rester manuelles et non générées");
+  assert.doesNotMatch(authoredIntimacySource, /\bCG\b/u, "la narration ne doit jamais nommer la mécanique de CG au joueur");
+  assert.doesNotMatch(authoredIntimacySource, forbiddenPenetration, "aucune route Naïah ne doit contenir de pénétration");
+  assert.doesNotMatch(authoredIntimacySource, clinicalLanguage, "les scènes intimes ne doivent pas adopter un vocabulaire clinique");
+  assert.doesNotMatch(authoredIntimacySource, /\b(?:sexe|testicules?|vagins?|p[eé]nis|penis|penix|sternum)\b/iu, "le vocabulaire intime ne doit pas devenir anatomique ou médical");
 
   assert.equal(soloRoutes.intimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles individuelles génériques");
   assert.equal(homeRoutes.homeIntimacyRoutes("naiah", "femme").length, 0, "Naïah ne doit plus dépendre des routes sexuelles génériques du logis");
@@ -215,17 +261,15 @@ try {
     assert.doesNotMatch(entries.flatMap((entry) => modes.flatMap((mode) => entry.chapters[mode].flat().map((line) => line.text))).join("\n"), sexualLanguage, `${pairId}/${sex}: ancienne route sexuelle encore rendue`);
   }
 
-  assert.match(secretText, /Comité des réponses insuffisantes/iu, "les confidences graves doivent conserver le rebond propre à Naïah");
-  assert.match(secretText, /ARGUMENT FAIBLE|inspecteur compétent/iu);
   assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée dans les rendez-vous");
 
   const pageSource = await read("src/page.tsx");
   assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
   assert.match(pageSource, /DEDICATED_HOME_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
-  assert.match(pageSource, /Souvenir de proximité/u);
+  assert.match(pageSource, /Souvenir intime/u);
   assert.match(pageSource, /game\.player\.sex === "intersexe"/u, "le blocage intersexe doit être expliqué avant l'ouverture d'une continuation");
 
-  console.log(`[Naïah] 5 quêtes · 4 confidences · 18 moments libres · 2 sorties + 1 logis · 18 continuations manuelles · groupes neutralisés · migration v17 validés.`);
+  console.log(`[Naïah] 5 quêtes · 4 confidences · 18 moments libres · 2 sorties + 1 logis · 18 continuations sexuelles manuelles non pénétratives · groupes dédiés · migration v17 validés.`);
 } finally {
   await server.close();
 }

@@ -58,4 +58,13 @@ try {
 } finally {
   await server.close();
 }
-console.log("V2.5 fenêtres, scènes et bilan : OK");
+
+// Portraits illustrés + scènes intimes rose
+assert.match(page, /function V2PortraitFiche\b/, "La fiche doit utiliser le portrait illustré.");
+assert.match(page, /function V2PortraitCarte\b/, "Dossier/invitation doivent utiliser le portrait illustré.");
+assert.match(page, /v2-scene-intime/, "Les scènes intimes doivent porter le thème rose.");
+assert.match(page, /function useIntimacyBacklog\b/, "Les scènes intimes doivent partager l’historique V2.");
+assert.match(css, /\.v2-scene-intime/, "Le thème rose/cramoisi doit être défini en CSS.");
+assert.match(css, /fiche-portrait/, "Les masques de portrait fiche doivent exister.");
+console.log("V2.5 fenêtres, scènes, portraits et intimité rose : OK");
+
