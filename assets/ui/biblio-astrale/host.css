@@ -14,7 +14,11 @@ body.ui-biblio > #trailerHistoryModal,
 body.ui-biblio > #athRestoreBtn,
 body.ui-biblio > #bugReportBtn,
 body.ui-biblio > #sylviniaIntroVideoOverlay{display:none!important}
-/* Passage temporaire (duels, QTE) : la scène de combat du moteur reste interactive,
-   l’interface Bibliothèque se retire le temps de la séquence. */
+/* Passage temporaire (duels QTE chronométrés) : la scène de combat du moteur reste interactive. */
 body.ui-biblio.ba-passe #bA-host{display:none}
 body.ui-biblio.ba-passe > #app{display:block!important}
+/* Moments libres (#storyWorldRoot sur body, z-index 1e6 < host) : on retire le host
+   pour que le panneau Fusion soit visible et cliquable. */
+body.ui-biblio.ba-monde #bA-host{display:none!important}
+body.ui-biblio.ba-monde > #app{display:none!important}
+body.ui-biblio.ba-monde #storyWorldRoot{z-index:2147481000!important}

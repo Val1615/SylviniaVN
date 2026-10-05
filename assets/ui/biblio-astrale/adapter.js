@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "34";
+const VER = "38";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -316,7 +316,14 @@ function ecranTitre() {
 actions.reprendre = () => { if (!aSauvegarde()) return actions.nouvelle(); reprendre(); };
 function reprendre(h) {
   const id = h && /^#\/jeu\/([^?]+)/.exec(h)?.[1]; const q = new URLSearchParams((h || "").split("?")[1] || "");
-  if (id && S_()[id]) { if (id !== ST().scene) allerSceneMoteur(id); else if (PB.dataset.ecran !== "jeu") { moteurJeu(); H = "#/jeu"; route(); } apresJeu(q); return; }
+  if (id && S_()[id]) {
+    if (id !== ST().scene) allerSceneMoteur(id);
+    else if (PB.dataset.ecran !== "jeu") { moteurJeu(); H = "#/jeu"; route(); }
+    else { moteurJeu(); majJeu(true); }
+    // laisser majJeu construire J avant d’appliquer ?choix / ?p / ?ov
+    setTimeout(() => apresJeu(q), 0);
+    return;
+  }
   const f = fn("resume"); if (f) { pilote = true; try { f(); } catch (e) { console.warn(e); } finally { pilote = false; } } else document.getElementById("resumeBtn")?.click();
   aller("#/jeu");
 }
@@ -422,11 +429,27 @@ function pagesDe(txt) {
 const brut = (html) => String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li|h\d)>/gi, "\n\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "’").replace(/\n{3,}/g, "\n\n").trim();
 const estIntime = (id, s) => /^c6_/.test(id) || /^c13g_(soft|secret)_/.test(id) || /intim/i.test(String(s && s.music || ""));
 // séquences du moteur sans équivalent dans le prototype (QTE chronométrés) : la scène du moteur reste affichée le temps de la séquence
+function mondeLibreActif() {
+  const r = document.getElementById("storyWorldRoot");
+  const ouvert = !!(r && !r.hidden && (document.body.classList.contains("sw-open") || r.getClientRects().length > 0));
+  // si le panneau est refermé, nettoyer le flag moteur pour ne pas bloquer majJeu
+  if (!ouvert && document.body.classList.contains("sw-open")) document.body.classList.remove("sw-open");
+  return ouvert;
+}
 function moteurPasse() {
   const b = document.body; if (!actif()) return false;
+  if (mondeLibreActif()) return false; // géré à part via ba-monde
   if (b.classList.contains("x12iQteMode") || b.classList.contains("x12iQteModeV250")) return true;
   const g = document.getElementById("game"); if (!g || g.classList.contains("hidden")) return false;
   return !!document.querySelector("#gameCard .x12iQteLayer:not(.hidden), #gameCard [class*='QteLayer']:not(.hidden):not(:empty), #combatTransition.active");
+}
+function syncCouches() {
+  if (!actif()) { document.body.classList.remove("ba-passe", "ba-monde"); return; }
+  const monde = mondeLibreActif();
+  const passe = !monde && moteurPasse();
+  document.body.classList.toggle("ba-monde", monde);
+  document.body.classList.toggle("ba-passe", passe);
+  if (!monde && !passe && PB.dataset.ecran === "jeu") planifierMaj();
 }
 function lireMoteur() {
   const s0 = ST(); const id = s0.scene; const s = S_()[id] || {};
@@ -439,16 +462,31 @@ function lireMoteur() {
   let text;
   if (combat) text = brut(document.getElementById("text")?.innerHTML || "");
   else { try { text = typeof s.text === "function" ? s.text() : s.text; } catch { text = ""; } text = brut(text || ""); if (!text) text = brut(document.getElementById("text")?.innerHTML || ""); if (s.direction) text = s.direction + "\n\n" + text; }
+  const labelBouton = (b) => {
+    const root = b.querySelector("span:not(.arrow)") || b;
+    const clone = root.cloneNode(true);
+    clone.querySelectorAll("small, .arrow, .devReward").forEach((el) => el.remove());
+    return brut(clone.textContent || "").replace(/^🔒\s*/, "").replace(/›\s*$/, "").trim();
+  };
   const btns = [...document.querySelectorAll("#choices button")].filter((b) => b.style.display !== "none" && !b.hidden && !b.closest(".hidden"));
   const cont = btns.length === 1 && btns[0].classList.contains("continueBtn") ? btns[0] : null;
   const choix = cont ? [] : btns.map((b, i) => {
-    const sp = b.querySelector("span"); const lab = brut(sp ? [...sp.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ") : b.textContent).replace(/^🔒\s*/, "").replace(/›\s*$/, "").trim();
+    const lab = labelBouton(b);
     const nettoie = (x) => brut(x || "").replace(/\s+/g, " ").trim();
-    const ch = (s.choices || []).find((c) => c.label && nettoie(c.label) === lab.replace(/\s+/g, " ")) || (s.choices || []).find((c) => c.label && lab.startsWith(nettoie(c.label).slice(0, 24))) || (s.choices && s.choices.length === btns.length ? s.choices[i] : null);
-    let eff = {}; try { const f = fn("choiceValueEffects"); eff = ch ? (f ? f(ch) : ch.effects || {}) : {}; } catch { eff = (ch && ch.effects) || {}; }
+    const labN = lab.replace(/\s+/g, " ");
+    // Ne pas matcher par index en combat : les boutons viennent de DUEL_STEPS, pas de scene.choices
+    const liste = s.choices || [];
+    const ch = liste.find((c) => c && c.label && nettoie(c.label) === labN)
+      || liste.find((c) => c && c.label && labN && labN.startsWith(nettoie(c.label).slice(0, 24)))
+      || (!combat && liste.length === btns.length ? liste[i] : null);
+    let eff = {};
+    try { if (ch) { const f = fn("choiceValueEffects"); eff = f ? f(ch) : (ch.effects || {}); } }
+    catch { eff = (ch && ch.effects) || {}; }
+    // gemmes duel : effects numériques hors START_STATS sur le bouton (hint) — laisser vide si inconnu
     const smalls = [...b.querySelectorAll("small:not(.devReward)")].map((x) => x.textContent.trim()).filter(Boolean);
-    const note = ch && typeof ch.note === "string" ? ch.note : smalls.join(" · ");
-    return { b, ch, label: ch ? ch.label : lab, note, eff: eff || {}, verrou: b.disabled || b.classList.contains("lockedChoice"), req: ch && ch.requires };
+    const note = (ch && typeof ch.note === "string" && ch.note) || (!combat ? smalls.join(" · ") : (smalls[0] || ""));
+    const label = lab || (ch && ch.label) || "";
+    return { b, ch, label, note, eff: eff || {}, verrou: b.disabled || b.classList.contains("lockedChoice") || b.classList.contains("locked"), req: ch && ch.requires };
   });
   const hud = combat ? (document.getElementById("stats")?.innerHTML || "") : "";
   return { id, s, bg: bgm ? bgm[1] : (A_()[s.bg] || ""), zoom: !!(bgEl && bgEl.classList.contains("zoom")), video: vid ? (vid.currentSrc || vid.getAttribute("src") || vid.querySelector("source")?.getAttribute("src") || "") : "", chars, speaker, text, choix, cont, combat, hud,
@@ -462,7 +500,7 @@ function ecranJeu(_, q) {
 let majT = 0;
 function planifierMaj() { if (!actif()) return; clearTimeout(majT); majT = setTimeout(() => { if (PB.dataset.ecran === "jeu") majJeu(); }, 30); }
 function majJeu(force) {
-  if (moteurPasse()) { document.body.classList.add("ba-passe"); return; } document.body.classList.remove("ba-passe");
+  syncCouches(); if (document.body.classList.contains("ba-monde") || document.body.classList.contains("ba-passe")) return;
   const g = document.getElementById("game"); if (g && g.classList.contains("hidden") && !force) return;
   const M = lireMoteur(); const s = M.s; const ch = CHAP[CH_OF(M.id)] || D.chapters[0] || { label: "", title: "" };
   const cle = M.id + "|" + M.text.length + "|" + M.choix.map((c) => c.label + (c.verrou ? "!" : "")).join("/") + "|" + (M.cont ? 1 : 0) + "|" + M.hud.length;
@@ -544,7 +582,16 @@ function afficherPage(direct) {
     if (n >= total) { clearInterval(typeT); fini(); } }, 33);
 }
 // déclenche l’action exacte portée par le bouton du moteur (gestionnaire posé par le moteur et ses correctifs)
-function declencher(b) { if (!b) return false; try { if (typeof b.onclick === "function") b.onclick.call(b, new MouseEvent("click")); else b.click(); } catch (e) { console.warn("[biblio] action moteur", e); } return true; }
+function declencher(b) {
+  if (!b) return false;
+  try {
+    const ev = new MouseEvent("click", { bubbles: true, cancelable: true, view: window });
+    if (typeof b.onclick === "function") { b.onclick.call(b, ev); return true; }
+    b.dispatchEvent(ev);
+    if (!ev.defaultPrevented) b.click();
+    return true;
+  } catch (e) { console.warn("[biblio] action moteur", e); return false; }
+}
 function avancer() {
   if (!J) return; if (!J.plein) { clearInterval(typeT); afficherPage(true); return; }
   if (J.p < J.pages.length - 1) { J.p++; son("page"); afficherPage(); return; }
@@ -580,10 +627,16 @@ function choisir(c) {
   son("choix"); const eff = Object.entries(c.eff || {}).filter(([, v]) => v);
   G.journal.push({ id: J.id, choix: brut(c.label), eff: c.eff || {} }); sauver();
   if (eff.length) toast(eff.map(([k, v]) => `<span class="gem" style="--v:var(--v-${k},var(--or))">${VLAB[k] ? VLAB[k][1] : k} ${v > 0 ? "+" : ""}${v}</span>`).join(" "), "gemmes");
-  const versMenu = c.ch && c.ch.next === "menu";
-  if (!declencher(c.b) && c.ch && fn("choose")) fn("choose")(c.ch);
-  if (versMenu) setTimeout(() => ouvrirCouche("fin"), 480);
-  planifierMaj();
+  const next = c.ch && c.ch.next;
+  const versMenu = next === "menu";
+  const storyTarget = next && String(next).startsWith("story_world_");
+  if (!storyTarget && window.SylviniaStoryWorld) { try { window.SylviniaStoryWorld.close(); } catch {} document.body.classList.remove("sw-open", "ba-monde"); }
+  let ok = declencher(c.b);
+  if (!ok && c.ch && fn("choose")) { try { fn("choose")(c.ch); ok = true; } catch (e) { console.warn("[biblio] choose", e); } }
+  if (!ok && next && fn("go")) { try { fn("go")(next); ok = true; } catch (e) { console.warn("[biblio] go", e); } }
+  if (versMenu) setTimeout(() => { if (!document.body.classList.contains("ba-monde")) ouvrirCouche("fin"); }, 480);
+  // laisser openPeriod / QTE poser sw-open ou ba-passe avant de rafraîchir
+  setTimeout(() => { syncCouches(); if (!document.body.classList.contains("ba-monde") && !document.body.classList.contains("ba-passe")) planifierMaj(); }, storyTarget ? 80 : 40);
 }
 actions["retour-page"] = () => { if (!J) return; if (J.p > 0) { J.p--; afficherPage(true); return; }
   const s = ST(); const prev = Array.isArray(s.history) ? s.history.pop() : null; if (!prev || !S_()[prev]) { toast("Début du récit"); return; }
@@ -809,7 +862,14 @@ function ecranReglages([onglet = "affichage"]) {
     audio: inter("musique", "Musique", "Thèmes du jeu (menu, scènes)", musiqueOn()) + curs("volume", "Volume de la musique", "", 0, 100, 5, " %", vol) + inter("sons", "Sons d’interface", "Page qui tourne, carillon de choix"),
     systeme: `<div class="reglage rg-ui rg-skin"><span class="rg-t"><b>Apparence</b><small>Bibliothèque astrale ou interface Classique d’origine</small></span><span class="rg-choix"><button class="puce actif" data-act="skin" data-skin="biblio">Bibliothèque</button><button class="puce" data-act="skin" data-skin="classique">Classique</button></span></div>` +
       inter("mobile", "Mode mobile", "Format vertical optimisé (repris tel quel du jeu)", !!s.mobileUI) +
-      `<div class="reglage"><span class="rg-t"><b>Mode développeur</b><small>${s.devMode ? "Actif" : "Verrouillé"}</small></span><span class="verrou-lib">${s.devMode ? "✦" : "🔒&#xFE0E;"}</span></div><div class="reglage"><span class="rg-t"><b>Nouveau départ</b><small>Réinitialiser l’aventure (valeurs, choix, codex)</small></span><button class="btn danger petit" data-act="raz"><span>Réinitialiser</span></button></div>`,
+      `<div class="reglage"><span class="rg-t"><b>Mode développeur</b><small>${s.devMode ? "Activé · valeurs visibles · chapitres ouverts" : "Verrouillé · code requis"}</small></span>
+        <button class="btn petit" data-act="dev">${s.devMode ? "Désactiver" : "Activer"}</button></div>` +
+      (s.devMode ? `<div class="reglage"><span class="rg-t"><b>DEV · scène</b><small id="ba-dev-scene">${esc(s.scene || "?")}</small></span><span class="verrou-lib">✦</span></div>
+        <div class="reglage"><span class="rg-t"><b>DEV · journal Némésis</b><small>Afficher et rendre lisibles tous les fragments</small></span>
+          <button class="btn petit ${s.devJournalForceAccess ? "actif" : ""}" data-act="dev-journal">${s.devJournalForceAccess ? "Accès forcé actif" : "Forcer l’accès"}</button></div>
+        <div class="reglage"><span class="rg-t"><b>DEV · retour scène</b><small>Revenir à la scène précédente (historique)</small></span>
+          <button class="btn petit" data-act="dev-back" ${(s.history && s.history.length) ? "" : "disabled"}>Retour</button></div>` : "") +
+      `<div class="reglage"><span class="rg-t"><b>Nouveau départ</b><small>Réinitialiser l’aventure (valeurs, choix, codex)</small></span><button class="btn danger petit" data-act="raz"><span>Réinitialiser</span></button></div>`,
   };
   monter(`<section class="reglages">${entete("Options", "Réglages", retourVers)}
     <nav class="onglets z-hud" role="tablist">${tabs.map((t) => `<button class="onglet ${t[0] === onglet ? "actif" : ""}" role="tab" aria-selected="${t[0] === onglet}" data-go="#/reglages/${t[0]}"><span>${t[1]}</span></button>`).join("")}</nav>
@@ -823,6 +883,11 @@ function ecranReglages([onglet = "affichage"]) {
     G.reg[k] = v; appliquerEchelles(); sauver(); }));
 }
 actions.skin = (b) => basculer(b.dataset.skin);
+actions.dev = () => { const f = fn("toggleDevMode"); if (f) f(); else document.getElementById("devModeBtn")?.click();
+  setTimeout(() => { if (PB.dataset.ecran === "reglages") route(); }, 80); };
+actions["dev-journal"] = () => { const f = fn("toggleJournalForceAccess"); if (f) f(); else document.getElementById("journalForceAccessBtn")?.click();
+  setTimeout(() => { if (PB.dataset.ecran === "reglages") route(); }, 80); };
+actions["dev-back"] = () => { const f = fn("devBack"); if (f) f(); else document.getElementById("devBackBtn")?.click(); planifierMaj(); };
 actions.reinit = () => { ECH.forEach((e) => (G.reg[e[0]] = 100)); appliquerEchelles(); sauver(); route(); toast("Échelles remises à 100 %"); };
 actions.raz = () => confirmer("Nouveau départ", "Effacer l’aventure en cours (valeurs, choix, codex de l’aventure) et recommencer au Chapitre I ? Vos signets restent rangés.", "Réinitialiser", () => {
   G.journal = []; sauver(); carteLancer = () => { pilote = true; try { fn("newGame")?.({ confirm: false }); } finally { pilote = false; } }; aller("#/carte/ch1"); });
@@ -831,6 +896,8 @@ actions.raz = () => confirmer("Nouveau départ", "Effacer l’aventure en cours 
 function ecranMoteurVisible() { for (const id of ["game", "title", "chapters", "codex", "progression", "modeSelect", "splashTitle", "disclaimer"]) { const el = document.getElementById(id); if (el && !el.classList.contains("hidden")) return id; } return "title"; }
 function surSetScreen(nom) {
   if (!actif() || pilote) return;
+  syncCouches();
+  if (document.body.classList.contains("ba-monde")) return; // moments libres visibles
   const h = HASH_DE[nom]; if (!h) return;
   const e = h.slice(2), cur = PB.dataset.ecran;
   if (e === "jeu") { if (cur === "jeu") planifierMaj(); else if (cur !== "carte") aller("#/jeu"); return; }
@@ -851,8 +918,12 @@ function brancher() {
 function observer() {
   const cible = document.getElementById("gameCard"); if (!cible) return;
   new MutationObserver(() => { if (actif() && PB.dataset.ecran === "jeu") planifierMaj(); }).observe(cible, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "disabled"] });
-  new MutationObserver(() => { if (!actif()) return; const passe = moteurPasse(); const b = document.body.classList;
-    if (!passe && b.contains("ba-passe")) { b.remove("ba-passe"); planifierMaj(); } else if (passe && PB.dataset.ecran === "jeu" && !b.contains("ba-passe")) b.add("ba-passe"); }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  new MutationObserver(() => { if (!actif()) return; const avant = document.body.classList.contains("ba-monde"); syncCouches();
+    if (avant && !document.body.classList.contains("ba-monde") && PB.dataset.ecran === "jeu") planifierMaj();
+  }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+  const sw = document.getElementById("storyWorldRoot");
+  if (sw) new MutationObserver(() => syncCouches()).observe(sw, { attributes: true, attributeFilter: ["hidden", "class"] });
+  else setTimeout(() => { const r = document.getElementById("storyWorldRoot"); if (r) new MutationObserver(() => syncCouches()).observe(r, { attributes: true, attributeFilter: ["hidden", "class"] }); }, 2000);
 }
 
 /* ---------- Bascule Bibliothèque / Classique ---------- */
