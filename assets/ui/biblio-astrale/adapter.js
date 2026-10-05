@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "46";
+const VER = "47";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -81,7 +81,7 @@ const MUS_OK = () => new Set(ST().devCodexForceAccess ? Object.keys(D.music) : (
 const imgSrc = (k) => (D.images[k] && D.images[k].src) || A_()[k] || "";
 
 /* ---------- État d’interface (localStorage propre au mode Bibliothèque) ---------- */
-const REG0 = { texte: 100, cases: 100, sprite: 100, hud: 100, icones: 100, panneaux: 100, etiquettes: 100, vitesse: 55, auto: 3, facile: true, reduit: false, ui: "complete", sons: false };
+const REG0 = { texte: 100, cases: 100, sprite: 100, hud: 100, icones: 100, panneaux: 100, etiquettes: 100, vitesse: 55, auto: 3, facile: true, reduit: false, ui: "complete", sons: true };
 let G;
 try { G = Object.assign({ reg: {}, signets: [], journal: [] }, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch { G = { reg: {}, signets: [], journal: [] }; }
 G.reg = { ...REG0, ...(G.reg || {}) };
@@ -133,15 +133,46 @@ function jouerMusique(cle) {
 ["pointerdown", "keydown", "touchend"].forEach((t) => document.addEventListener(t, () => { if (!actif() || !musiqueOn()) return; const a = audioEl();
   if (a && a.paused) { if (a.currentSrc || a.getAttribute("src")) a.play().catch(() => {}); else jouerMusique(); } }, { capture: true, passive: true }));
 let actx;
-function son(type) {
-  if (!G.reg.sons) return;
-  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-    const t = actx.currentTime, g = actx.createGain(); g.connect(actx.destination);
-    if (type === "page") { const n = actx.createBufferSource(), b = actx.createBuffer(1, actx.sampleRate * .22, actx.sampleRate), d = b.getChannelData(0);
+function son(type, force) {
+  if (!force && !G.reg.sons) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume().catch(() => {});
+    const now = actx.currentTime;
+    const master = actx.createGain(); master.gain.value = .55; master.connect(actx.destination);
+    const tone = (f, t0, dur, typ = "sine", vol = .1, f2) => {
+      const o = actx.createOscillator(), g = actx.createGain(), t = now + t0;
+      o.type = typ; o.frequency.setValueAtTime(f, t);
+      if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+    };
+    const souffle = (t0, dur, freq, vol = .06) => {
+      const t = now + t0, b = actx.createBuffer(1, Math.floor(actx.sampleRate * dur), actx.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const s = actx.createBufferSource(); s.buffer = b;
+      const f = actx.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 1.4; f.frequency.setValueAtTime(freq, t); f.frequency.exponentialRampToValueAtTime(freq * 4, t + dur);
+      const g = actx.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .3); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      s.connect(f); f.connect(g); g.connect(master); s.start(t);
+    };
+    if (type === "depart") {
+      // Fanfare CA : basse + carillons + souffle
+      tone(196, 0, 1.2, "sine", .07, 392);
+      [784, 1175, 1568].forEach((f, i) => tone(f, .25 + i * .12, .8, "sine", .045));
+      souffle(0, 1, 180, .05);
+      return;
+    }
+    if (type === "page") {
+      const n = actx.createBufferSource(), b = actx.createBuffer(1, actx.sampleRate * .22, actx.sampleRate), d = b.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2) * Math.sin(i / d.length * Math.PI);
-      const f = actx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 2400; n.buffer = b; n.connect(f); f.connect(g); g.gain.value = .25; n.start(t); }
-    else { const o = actx.createOscillator(); o.type = "sine"; o.frequency.setValueAtTime(type === "choix" ? 880 : 660, t); o.frequency.exponentialRampToValueAtTime(type === "choix" ? 1320 : 990, t + .12);
-      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .5); o.connect(g); o.start(t); o.stop(t + .5); }
+      const f = actx.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = 2400;
+      const g = actx.createGain(); g.gain.value = .25; n.buffer = b; n.connect(f); f.connect(g); g.connect(master); n.start(now);
+      return;
+    }
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(type === "choix" ? 880 : 660, now); o.frequency.exponentialRampToValueAtTime(type === "choix" ? 1320 : 990, now + .12);
+    g.gain.setValueAtTime(.0001, now); g.gain.exponentialRampToValueAtTime(.12, now + .02); g.gain.exponentialRampToValueAtTime(.0001, now + .5);
+    o.connect(g); g.connect(master); o.start(now); o.stop(now + .5);
   } catch {}
 }
 
@@ -299,10 +330,13 @@ function ecranTitre() {
   ];
   const coul = ["#1b2a5c", "#5a1e2e", "#4a2e1c", "#16404f", "#15403a", "#5b2a1c", "#3a2160", "#2a3340"];
   const dec = [0, 18, -8, 10, -14, 6, -4, 14];
-  const etat0 = titreVu || PB.classList.contains("reduit") ? "menu" : "press";
+  const reduitAnim = PB.classList.contains("reduit") || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // intro cinématique (noir → titre → voile) uniquement à la 1ʳᵉ visite
+  const etat0 = titreVu || reduitAnim ? (titreVu ? "menu" : "press") : "intro";
   const touch = matchMedia("(pointer: coarse)").matches;
   monter(`<section class="titre etat-${etat0}" data-titre-etat="${etat0}">
     <div class="titre-voile" aria-hidden="true"></div>
+    <div class="titre-noir" aria-hidden="true"></div>
     <h1 class="logo titre-logo" aria-label="Les Chroniques de Sylvinia"><span class="logo-k">Visual Novel interactif · Tome I <b class="badge-beta">Bêta</b></span><span class="logo-les">Les</span><span class="logo-l1 or-texte">Chroniques</span><span class="logo-l2"><em>de</em> <span class="or-texte">Sylvinia</span></span></h1>
     <button type="button" class="titre-press" data-act="titre-demarrer" aria-label="Commencer"><span class="titre-press-txt">${touch ? "Touchez l’écran pour commencer" : "Appuyez pour commencer"}</span></button>
     <div class="titre-col">
@@ -322,13 +356,24 @@ function ecranTitre() {
     const h = Math.ceil(logo.getBoundingClientRect().height);
     sec.style.setProperty("--logo-dock-h", Math.max(56, h) + "px");
   };
+  const passerEnPress = () => {
+    if (!sec || !sec.isConnected) return;
+    if (sec.dataset.titreEtat !== "intro") return;
+    sec.dataset.titreEtat = "press";
+    sec.classList.remove("etat-intro");
+    sec.classList.add("etat-press");
+  };
   const demarrer = () => {
-    if (!sec || sec.dataset.titreEtat === "menu" || sec.dataset.titreEtat === "docking") return;
+    if (!sec) return;
+    // pendant l’intro : un geste saute au press (pas encore le dock)
+    if (sec.dataset.titreEtat === "intro") { passerEnPress(); return; }
+    if (sec.dataset.titreEtat !== "press") return;
     titreVu = true;
+    son("depart", true); // fanfare cinématique — toujours audible
+    try { jouerMusique("music_menu"); } catch {}
     sec.dataset.titreEtat = "docking";
-    sec.classList.remove("etat-press");
+    sec.classList.remove("etat-press", "etat-intro");
     sec.classList.add("etat-docking");
-    // flash or + micro-particules (panache Genshin/Persona)
     const flash = document.createElement("div");
     flash.className = "titre-flash"; flash.setAttribute("aria-hidden", "true");
     sec.appendChild(flash);
@@ -354,7 +399,25 @@ function ecranTitre() {
   };
   actions["titre-demarrer"] = demarrer;
   if (etat0 === "menu") { requestAnimationFrame(mesurerLogo); setTimeout(mesurerLogo, 50); }
-  if (etat0 === "press") {
+  if (etat0 === "intro") {
+    // noir → titre (~1.6s) → voile (~2s) → press CTA ; total ~3.6s
+    const introT = setTimeout(passerEnPress, 3600);
+    sec._titreIntroT = introT;
+    sec.addEventListener("click", (ev) => {
+      if (ev.target.closest(".titre-haut, a, button.rond")) return;
+      if (sec.dataset.titreEtat === "intro") { clearTimeout(introT); demarrer(); return; }
+      if (sec.dataset.titreEtat === "press") demarrer();
+    });
+    const onKey = (ev) => {
+      if (!sec.isConnected) { window.removeEventListener("keydown", onKey); return; }
+      if (ev.metaKey || ev.ctrlKey) return;
+      if (!["Enter", " ", "ArrowDown", "ArrowUp"].includes(ev.key)) return;
+      ev.preventDefault();
+      if (sec.dataset.titreEtat === "intro") { clearTimeout(introT); demarrer(); }
+      else if (sec.dataset.titreEtat === "press") { demarrer(); window.removeEventListener("keydown", onKey); }
+    };
+    window.addEventListener("keydown", onKey);
+  } else if (etat0 === "press") {
     sec.addEventListener("click", (ev) => {
       if (sec.dataset.titreEtat !== "press") return;
       if (ev.target.closest(".titre-haut, .titre-press, a, button.rond")) return;
