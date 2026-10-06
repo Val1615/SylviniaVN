@@ -23,11 +23,12 @@
     "test:naiah": "node scripts/validate-naiah-refactor.mjs",
     "test:remerii": "node scripts/validate-remerii-refactor.mjs",
     "test:remerii-intimacy": "node scripts/validate-remerii-intimacy.mjs",
-    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one && npm run test:lineva && npm run test:allenna && npm run test:cross-quests && npm run test:sprites && npm run test:intimate-sprites && npm run test:intimate-cg && npm run test:hylee && npm run test:naiah && npm run test:remerii && npm run test:remerii-intimacy && npm run test:hr-cross && npm run test:atlas-ui && npm run test:sprite-alpha && npm run test:v25",
+    "test": "npm run test:intimacy && npm run test:group-intimacy && npm run test:home-intimacy && npm run test:housing && npm run test:heritages && npm run test:gameplay && npm run test:act-one && npm run test:lineva && npm run test:allenna && npm run test:cross-quests && npm run test:sprites && npm run test:intimate-sprites && npm run test:intimate-cg && npm run test:hylee && npm run test:naiah && npm run test:remerii && npm run test:remerii-intimacy && npm run test:hr-cross && npm run test:atlas-ui && npm run test:sprite-alpha && npm run test:v25 && npm run test:hn-cross",
     "test:hr-cross": "node scripts/validate-hylee-remerii-cross.mjs",
     "test:atlas-ui": "node scripts/validate-v2-ui.mjs",
     "test:sprite-alpha": "node scripts/validate-sprite-alpha.mjs",
-    "test:v25": "node scripts/validate-v25-fenetres.mjs"
+    "test:v25": "node scripts/validate-v25-fenetres.mjs",
+    "test:hn-cross": "node scripts/validate-hylee-naiah-cross.mjs"
   },
   "dependencies": {
     "react": "19.2.6",
