@@ -9,6 +9,8 @@ export type DialogueLine = {
   speaker: string;
   text: string;
   mood?: string;
+  /** Change visible characters when this authored line begins. */
+  cast?: string[];
   /** Expression from the dedicated, undressed sprite channel. */
   intimateMood?: string;
   /** Independent expressions for every visible partner in a group intimacy. */

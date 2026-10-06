@@ -1,4 +1,5 @@
 import { HR_DATES } from "./hylee-remerii-dates";
+import { HN_DATES } from "./hylee-naiah-dates";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import type { IntimacyGame, IntimacyGameOption } from "./intimacy-games";
@@ -127,6 +128,7 @@ function groupChoice(
 
 export const GROUP_DATES: GroupDateScene[] = [
   ...HR_DATES,
+  ...HN_DATES,
   {
     id: "group-date-hylee-remerii", legacyOnly: true,
     characters: ["hylee", "remerii"],

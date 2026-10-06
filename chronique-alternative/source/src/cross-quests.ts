@@ -31,6 +31,7 @@ export type ReceivedCrossLetter = {
 };
 
 export type CrossQuestProgress = {
+  hn?: import("./hylee-naiah-cross-quest").HNState;
   hr?: import("./hylee-remerii-cross-quest").HRState;
   id: string;
   stage: number;
