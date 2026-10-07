@@ -120,9 +120,10 @@ import { HRDossier, AnchorOperationModal } from "./hylee-remerii-ui";
 import { CrossQuestDossier } from "./cross-quest-dossier";
 import { createAnchorOperation, type AnchorState } from "./anchor-operation";
 import { HN_KEY, HN_TITLES, hnUnlocked, createHNProgress, hydrateHN, hnQuestScene, motherOutcomeFromChoice, hnMotherFlags, finishHNScene } from "./hylee-naiah-cross-quest";
-import { HN_DATE_IDS, hnDateReason, hnDateScene } from "./hylee-naiah-dates";
+import { HN_DATE_IDS, hnDateReason, hnDateScene, hnIntimacyReady } from "./hylee-naiah-dates";
+import { isHyleeNaiahManualContext, hyleeNaiahRouteChapters } from "./hylee-naiah-group-intimacy";
 import { HNDossier, HyleeSearchModal } from "./hylee-naiah-ui";
-import { createHyleeSearch, type HyleeSearchState } from "./hylee-search";
+import { createHyleeSearch, type HyleeSearchState, type MotherOutcome } from "./hylee-search";
 import {
   DISPLAY_ITEMS,
   HOME_INTIMACY_CITY,
@@ -401,7 +402,7 @@ type ModalState =
   | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string; home?: boolean }
   | { kind: "date-result"; character: string; dateId: string }
   | { kind: "group-date-planner" }
-  | { kind: "group-date-result"; groupDateId: string }
+  | { kind: "group-date-result"; groupDateId: string; replay?: boolean }
   | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
   | { kind: "cross-letter"; letterId: string }
   | { kind: "alpha-hunt"; replay?: boolean; state?: AlphaHuntState }
@@ -2535,7 +2536,7 @@ export default function Home() {
     const completed = !!p.hn.choices[id];
     if (replay && !completed) return;
     if (!replay && completed) { startHNDate(id, true); return; }
-    if (!replay && (p.stage !== 5 + HN_DATE_IDS.indexOf(id) || hnDateReason(id, game))) return;
+    if (!replay && (p.stage < 5 || hnDateReason(id, game))) return;
     const cp = !replay && p.hn.checkpoint?.sceneId === id ? p.hn.checkpoint : undefined;
     const data = hnDateScene(id, p.hn, cp?.picks || [], game); if (!data) return;
     const property = date.home ? propertyById(game.housing.propertyId) : undefined;
@@ -3050,9 +3051,11 @@ export default function Home() {
         if (progress.stage === 4 && progress.hn?.motherOutcome && !progress.hn.search) progress.hn.search = createHyleeSearch(progress.hn.motherOutcome, progress.startedDay);
         const isDate = !!dialogue.scene.groupDate;
         const flags = unique([...current.flags,
-          ...(progress.stage >= 6 ? ["cross-hn-hylee-date-complete"] : []),
-          ...(progress.stage >= 7 ? ["cross-hn-naiah-date-complete", "cross-hn-world-friendship"] : []),
-          ...(progress.stage >= 8 ? ["cross-hn-home-date-complete", "cross-hn-series-complete"] : []),
+          ...(progress.hn?.hyleeDateDone ? ["cross-hn-hylee-date-complete"] : []),
+          ...(progress.hn?.naiahDateDone ? ["cross-hn-naiah-date-complete"] : []),
+          ...(progress.hn?.homeDateDone ? ["cross-hn-home-date-complete"] : []),
+          ...([progress.hn?.hyleeDateDone, progress.hn?.naiahDateDone, progress.hn?.homeDateDone].filter(Boolean).length >= 2 ? ["cross-hn-world-friendship"] : []),
+          ...(progress.hn?.completed ? ["cross-hn-series-complete"] : []),
         ]);
         return { ...current, flags, crossQuestSeries: { ...current.crossQuestSeries, [HN_KEY]: progress },
           groupDateHistory: isDate ? unique([...current.groupDateHistory, dialogue.scene.id]) : current.groupDateHistory,
@@ -3116,10 +3119,12 @@ export default function Home() {
           && game!.relationships[date.character].stage >= 4
           && game!.relationships[date.character].affection + (dialogue.chosen.effects.affection || 0) >= 34
           && game!.relationships[date.character].trust + (dialogue.chosen.effects.trust || 0) >= 32)));
+    // Hylee & Naïah : seule compte la paire de désirs (≥ 25), pas l’étape relationnelle.
+    const hnGroupDate = Boolean(groupDate && isHyleeNaiahManualContext(groupDate.id));
     const groupDateCanBecomeIntimate = Boolean(groupDate && !groupDate.intimacyDisabled
       && dialogue.chosen?.dateOutcome === "great"
       && groupDateUnlocked(game!, groupDate)
-      && groupDate.characters.every((characterId, index) => {
+      && (hnGroupDate ? hnIntimacyReady(game!) : groupDate.characters.every((characterId, index) => {
         const relation = game!.relationships[characterId];
         const changes = index === 0
           ? dialogue.chosen!.effects
@@ -3130,10 +3135,10 @@ export default function Home() {
           && relation.trust + (changes.trust || 0) >= groupDate.minTrust
           && relation.desire + (changes.desire || 0) >= (groupDate.intimacyMinDesire ?? groupDate.minDesire)
         );
-      }));
+      })));
     setDialogue(null);
-    if (!replay && groupDateCanBecomeIntimate && groupDate) {
-      setModal({ kind: "group-date-result", groupDateId: groupDate.id });
+    if ((!replay || hnGroupDate) && groupDateCanBecomeIntimate && groupDate) {
+      setModal({ kind: "group-date-result", groupDateId: groupDate.id, ...(replay ? { replay: true } : {}) });
     } else if (!replay && dateCanBecomeIntimate && date) {
       setModal({ kind: "date-result", character: date.character, dateId: date.id });
     } else if (intimateCharacter) {
@@ -3983,7 +3988,7 @@ export default function Home() {
     });
   }
 
-  function startGroupDateIntimacy(groupDateId: string) {
+  function startGroupDateIntimacy(groupDateId: string, replay = false) {
     const date = groupIntimacyContextById(groupDateId);
     if (date?.intimacyDisabled) return;
     if (!game || !date) return;
@@ -3996,7 +4001,7 @@ export default function Home() {
     const background = date.home
       ? propertyById(game.housing.propertyId)?.background
       : spotById(date.spot)?.background;
-    setModal({ kind: "group-intimacy", groupDateId: date.id, background });
+    setModal({ kind: "group-intimacy", groupDateId: date.id, background, ...(replay ? { replay: true } : {}) });
   }
 
   function finishTrioEnding(groupDateId: string, friendlyForThisDate: boolean) {
@@ -5411,6 +5416,18 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       ? current.journal
       : [...current.journal, "Outil développeur · Acte I marqué comme accompli avec l’état canonique actuel."],
   }));
+  const openHNDates = (outcome: MotherOutcome) => updateGame((current) => {
+    const existing = current.crossQuestSeries[HN_KEY] || createHNProgress(current.day);
+    const choices = Object.fromEntries(Object.entries(existing.hn?.choices || {}).filter(([id]) => id.startsWith("group-date-hylee-naiah-")));
+    return {
+      ...current,
+      flags: unique([...hnMotherFlags(current.flags, outcome), "cross-hn-search-complete"]),
+      crossQuestSeries: { ...current.crossQuestSeries, [HN_KEY]: { ...existing, stage: Math.max(5, existing.stage), hn: {
+        ...existing.hn, choices, checkpoint: undefined, motherOutcome: outcome, search: undefined, firstAttemptDone: true, secondAttemptDone: true,
+      } } },
+      journal: [...current.journal, `Outil développeur · Hylee & Naïah : les trois rendez-vous sont ouverts (mère : ${outcome}).`],
+    };
+  });
   const installTestHome = () => updateGame((current) => {
     if (current.housing.propertyId) return current;
     const property = HOUSING_PROPERTIES[0];
@@ -5451,6 +5468,12 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={completeActOne}>Marquer l’Acte I accompli</button>
       <button type="button" onClick={prepareRelationships}>Préparer toutes les relations</button>
       <button type="button" disabled={Boolean(game.housing.propertyId)} onClick={installTestHome}>{game.housing.propertyId ? "Logis déjà disponible" : "Installer un logis de test"}</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Hylee &amp; Naïah · ouvrir les trois rendez-vous (sort de la mère) :</span>
+      <button type="button" onClick={() => openHNDates("killed")}>Mère tuée</button>
+      <button type="button" onClick={() => openHNDates("memory-erased")}>Mémoire effacée</button>
+      <button type="button" onClick={() => openHNDates("vegetative")}>État végétatif</button>
     </div>
 
     <h3>Accès direct aux scènes intimes</h3>
@@ -5690,7 +5713,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
   const intimacyGame = GROUP_INTIMACY_GAMES[date.id];
   const manualGroupIntimacy = isManualGroupIntimacy(date.id);
-  const naiahGroup = date.characters.includes("naiah");
+  const hnManual = isHyleeNaiahManualContext(date.id);
+  const naiahGroup = date.characters.includes("naiah") && !hnManual;
   const [step, setStep] = useState<GroupIntimacyStep>(manualGroupIntimacy ? "attunement-choice" : "opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => manualGroupIntimacy ? [] : groupIntimacyOpening(date));
   const [lineIndex, setLineIndex] = useState(0);
@@ -5747,7 +5771,10 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     const linevaAddress = game.flags.includes("lineva-tutoiement")
       ? choice.linevaAddress?.familiar
       : choice.linevaAddress?.firstTime;
-    const authoredSequence = choice.chapters[game.player.intimacy].map((chapter, index) => index === 0 && linevaAddress
+    const baseChapters = hnManual
+      ? hyleeNaiahRouteChapters(choice, date.id, game.player.intimacy, game.crossQuestSeries[HN_KEY]?.hn?.motherOutcome)
+      : choice.chapters[game.player.intimacy];
+    const authoredSequence = baseChapters.map((chapter, index) => index === 0 && linevaAddress
       ? [...linevaAddress, ...chapter]
       : chapter);
     const sequence = withGroupIntimateMoods(authoredSequence, date.id, [first.id, second.id]);
@@ -5789,7 +5816,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
       <small>{step === "direction-lines" ? `Séquence ${directionChapter + 1} / ${directionSequence.length} · ` : ""}{lineIndex + 1} / {lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
     </button>}
     {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester simplement proches et terminer la soirée ici</span></button></div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester enlacé·es et clore la scène ici</span></button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{hnManual ? `Trois façons de jouer la revanche avec ${first.name} et ${second.name} : chaque route a sa règle, ses alliances et sa chute.` : naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester enlacé·es et clore la scène ici</span></button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button type="button" className="btn principal primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
     {backlogOpen && <V2IntimacyBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
@@ -6092,7 +6119,7 @@ function AlphaHuntModal({ state, onChange, onFinish, onClose, replay = false }: 
   </section></div>;
 }
 
-function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, friendlyForThisDate: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string) => void; finishTrioEnding: (dateId: string, friendlyForThisDate: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
+function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, startDate, startHomeDate, startHomePairDate, startDateIntimacy, finishDateEnding, finishHomeDate, finishHomePairDate, startHomePairIntimacy, startHomeIntimacy, onIntimacyClose, startGroupDate, startGroupDateIntimacy, finishTrioEnding, onGroupIntimacyClose, replyToLetter, replyToCrossLetter, setAlphaHuntState, finishAlphaHunt, acceptInvitation, declineInvitation, ritual, onRitualClose, jobState, onJobBegin, onMemoryStart, onJobAction, onJobClose }: { modal: NonNullable<ModalState>; game: GameState; onClose: () => void; onActivityClose: () => void; buyGift: (gift: string) => void; giveGift: (character: string, gift: string) => void; startDate: (dateId: string) => void; startHomeDate: (characterId: string) => void; startHomePairDate: (pairId: string) => void; startDateIntimacy: (dateId: string) => void; finishDateEnding: (dateId: string, friendlyForThisDate: boolean) => void; finishHomeDate: (character: string, tone: HomeDateTone, score: number) => void; finishHomePairDate: (pair: string, tone: HomeDateTone, score: number) => void; startHomePairIntimacy: (pair: string) => void; startHomeIntimacy: (character: string) => void; onIntimacyClose: (completed: boolean, memory?: string) => void; startGroupDate: (dateId: string) => void; startGroupDateIntimacy: (dateId: string, replay?: boolean) => void; finishTrioEnding: (dateId: string, friendlyForThisDate: boolean) => void; onGroupIntimacyClose: (completed: boolean, memory?: string) => void; replyToLetter: (letter: LetterTemplate, replyId: string) => void; replyToCrossLetter: (letter: CrossLetter, replyId: string) => void; setAlphaHuntState: (state: AlphaHuntState) => void; finishAlphaHunt: () => void; acceptInvitation: (invitation: InvitationTemplate) => void; declineInvitation: (invitation: InvitationTemplate) => void; ritual: { sequence: string[]; step: number; phase: string; setPhase: (phase: "memorize" | "play" | "success" | "failure") => void; play: (rune: string) => void }; onRitualClose: () => void; jobState: JobState | null; onJobBegin: () => void; onMemoryStart: () => void; onJobAction: (action: string) => void; onJobClose: () => void }) {
   if (modal.kind === "chronicle") return <ChronicleModal onClose={onClose} />;
   if (modal.kind === "notice") return <SimpleModal title={modal.title} text={modal.text} actionLabel={modal.actionLabel} gift={modal.gift} onClose={modal.consumeTime ? onActivityClose : onClose} />;
   if (modal.kind === "letter") {
@@ -6210,7 +6237,16 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   if (modal.kind === "group-date-result") {
     const date = GROUP_DATES.find((entry) => entry.id === modal.groupDateId)!;
     const characters = date.characters.map((id) => CHARACTERS.find((entry) => entry.id === id)!);
-    const naiahGroup = date.characters.includes("naiah");
+    const hnManual = isHyleeNaiahManualContext(date.id);
+    const naiahGroup = date.characters.includes("naiah") && !hnManual;
+    if (hnManual) {
+      const hnBackground = date.home ? propertyById(game.housing.propertyId)?.background : spotById(date.spot)?.background;
+      return <V2Resultat background={hnBackground} characters={characters} surtitre="La partie n’est pas finie" titre="Hylee et Naïah relancent le jeu"
+        texte={`« ${date.title} » peut basculer : une dernière manche, des alliances qui changent de camp et trois façons de la jouer selon votre corps. Vous pouvez aussi en rester là ; rien ne se perd.`}>
+        <button type="button" className="btn principal primary-action" onClick={() => startGroupDateIntimacy(date.id, Boolean(modal.replay))}>Relancer la partie</button>
+        {modal.replay ? <button type="button" className="btn secondary-action" onClick={onClose}>Pas ce soir</button> : <><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishTrioEnding(date.id, true)}>Rester complices ce soir</button></>}
+      </V2Resultat>;
+    }
     const refactored = naiahGroup || date.id.includes("allenna-lineva") || (HR_DATE_IDS as readonly string[]).includes(date.id);
     const resultBackground = date.home ? propertyById(game.housing.propertyId)?.background : spotById(date.spot)?.background;
     return <V2Resultat background={resultBackground} characters={characters} surtitre="La soirée garde trois places ouvertes" titre={`${characters[0].name} et ${characters[1].name} restent avec vous`}

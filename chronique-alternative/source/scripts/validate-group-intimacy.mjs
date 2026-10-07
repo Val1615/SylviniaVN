@@ -18,6 +18,13 @@ const hrManualFiles = [
   "hylee-remerii-home-intimacy.ts",
   "hylee-remerii-group-intimacy.ts",
 ];
+const hnManualFiles = [
+  "hylee-naiah-intimacy-shared.ts",
+  "hylee-naiah-intimacy-place.ts",
+  "hylee-naiah-intimacy-one.ts",
+  "hylee-naiah-intimacy-home.ts",
+  "hylee-naiah-group-intimacy.ts",
+];
 const [groupSource, advancedSource, pageSource, ...manualSources] = await Promise.all([
   readFile(resolve(sourceRoot, "src/group-dates.ts"), "utf8"),
   readFile(resolve(sourceRoot, "src/group-explicit-scenes.ts"), "utf8"),
@@ -27,6 +34,14 @@ const [groupSource, advancedSource, pageSource, ...manualSources] = await Promis
 const manualSource = manualSources.join("\n");
 const hrManualSources = await Promise.all(hrManualFiles.map((file) => readFile(resolve(sourceRoot, "src", file), "utf8")));
 const hrManualSource = hrManualSources.join("\n");
+const hnManualSources = await Promise.all(hnManualFiles.map((file) => readFile(resolve(sourceRoot, "src", file), "utf8")));
+const hnManualSource = hnManualSources.join("\n");
+const hnDatesSource = await readFile(resolve(sourceRoot, "src/hylee-naiah-dates.ts"), "utf8");
+const hnContextIds = [
+  "group-date-hylee-naiah-place",
+  "group-date-hylee-naiah-one",
+  "group-date-hylee-naiah-home",
+];
 const contextIds = [
   "group-date-allenna-lineva-training",
   "group-date-allenna-lineva-basin",
@@ -50,14 +65,15 @@ try {
   ]);
 
   const report = catalog.validateGroupIntimacyCatalog();
-  assert.equal(report.pairs, 13);
-  assert.equal(report.combinations, 39);
-  assert.equal(report.routes, 117);
-  assert.equal(report.dates, 12);
-  assert.equal(report.games, 13);
-  assert.ok(report.chapters >= 3798, `minimum 3798 séquences, ${report.chapters} obtenues`);
+  assert.equal(report.pairs, 16);
+  assert.equal(report.combinations, 48);
+  assert.equal(report.routes, 144);
+  assert.equal(report.dates, 15);
+  assert.equal(report.games, 16);
+  assert.ok(report.chapters >= 5160, `minimum 5160 séquences, ${report.chapters} obtenues`);
   assert.doesNotMatch(groupSource, /sequence\.length\s*!==\s*8/u, "huit doit rester un minimum, jamais un maximum");
-  assert.match(groupSource, /sequence\.length\s*<\s*8/u, "le minimum de huit séquences doit être validé");
+  assert.match(groupSource, /isHyleeNaiahManualContext\(pairId\) \? 12 : 8/u, "le minimum de huit séquences (douze pour Hylee/Naïah) doit être validé");
+  assert.match(groupSource, /sequence\.length\s*<\s*minimumSequences/u, "le minimum de séquences doit être un plancher");
 
   const allRoutes = Object.values(catalog.GROUP_INTIMACY_ROUTES_BY_SEX)
     .flatMap((bySex) => Object.values(bySex))
@@ -255,7 +271,57 @@ try {
   const generatedHrRegistry = groupSource.slice(groupSource.indexOf("const PAIR_ROUTE_DATA"), groupSource.indexOf("function buildGroupRoute"));
   assert.doesNotMatch(generatedHrRegistry, /group-date-hylee-remerii-(?:free-day|wind|home)/u, "les nouveaux rendez-vous Hylee/Remerii figurent encore dans le générateur ancien");
 
-  console.log(`[Intimité de groupe] Lineva/Allenna préservées · Hylee/Remerii : 3 contextes, 27 routes manuelles, 8+ séquences · ${report.chapters} séquences cataloguées.`);
+  // Hylee / Naïah : trois rendez-vous autonomes, 27 routes manuelles, 12+ séquences.
+  const hnCatalog = await server.ssrLoadModule("/src/hylee-naiah-group-intimacy.ts");
+  const hnReport = hnCatalog.validateHyleeNaiahIntimacy();
+  assert.equal(hnReport.routes, 27, "Hylee/Naïah : 27 routes attendues (3 contextes × 3 branches × 3 corps)");
+  assert.ok(hnReport.explicitWords.min >= 1000, `Hylee/Naïah : scène explicite trop courte (${hnReport.explicitWords.min} mots)`);
+  const legacyHN = catalog.GROUP_DATES.find((date) => date.id === "group-date-hylee-naiah");
+  assert.ok(!legacyHN || legacyHN.legacyOnly === true, "l’ancien rendez-vous Hylee/Naïah doit rester en compatibilité seulement");
+  const hnRoutes = hnContextIds.flatMap((contextId) => sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
+  assert.equal(hnRoutes.length, 27);
+  assert.ok(hnRoutes.every((route) => route.manual === true && route.progression), "chaque route Hylee/Naïah doit être manuelle et porter sa progression");
+  const hnBannedAnatomy = /\b(?:chatte|bite|pénis|vagins?|anus|testicules?|clitoris|vulves?)\b/iu;
+  for (const contextId of hnContextIds) {
+    const context = catalog.groupIntimacyContextById(contextId);
+    assert.ok(context, `${contextId}: rendez-vous absent`);
+    assert.equal(context.intimacyDisabled, undefined, `${contextId}: continuation intime encore désactivée`);
+    assert.equal(context.intimacyMinDesire, 25, `${contextId}: seuil de désir incohérent`);
+    assert.equal(context.minDesire, 0, `${contextId}: le rendez-vous lui-même doit rester accessible en amitié`);
+    assert.ok(catalog.isManualGroupIntimacy(contextId), `${contextId}: contexte non routé comme manuel`);
+    assert.deepEqual(catalog.groupIntimacyOpening(context), [], `${contextId}: ouverture générique encore active`);
+    assert.deepEqual(catalog.groupIntimacyEnding(context), [], `${contextId}: fermeture générique encore active`);
+    const game = catalog.GROUP_INTIMACY_GAMES[contextId];
+    assert.ok(game && game.beats.length === 4 && game.beats.every((beat) => beat.options.length === 3), `${contextId}: mini-jeu 4 × 3 requis`);
+    for (const sex of sexes) {
+      const routes = catalog.groupIntimacyRoutes(contextId, sex);
+      assert.equal(routes.length, 3, `${contextId}/${sex}: trois branches requises`);
+      for (const route of routes) for (const mode of modes) {
+        assert.ok(route.chapters[mode].length >= 12, `${route.id}/${mode}: douze séquences minimum`);
+        const text = route.chapters[mode].flat().map((line) => line.text).join(" ");
+        assert.doesNotMatch(text, hnBannedAnatomy, `${route.id}/${mode}: vocabulaire anatomique interdit`);
+      }
+    }
+    for (let index = 0; index < 3; index += 1) {
+      const [woman, man, intersex] = sexes.map((sex) => catalog.groupIntimacyRoutes(contextId, sex)[index].chapters.explicite.flat().map((line) => line.text).join("\n"));
+      assert.notEqual(woman, man, `${contextId}/${index}: variantes femme/homme clonées`);
+      assert.notEqual(woman, intersex, `${contextId}/${index}: variante intersexe clonée`);
+    }
+  }
+  const hnSignatures = hnRoutes.map((route) => route.chapters.explicite.flat().map((line) => `${line.speaker}:${line.text}`).join("\n"));
+  assert.equal(new Set(hnSignatures).size, hnRoutes.length, "chaque variante explicite Hylee/Naïah doit être écrite séparément");
+  assert.doesNotMatch(hnManualSource, /groupExplicitScene|PAIR_ROUTE_DATA|polishIntimacyText|heritageExplicitPair|naiahGroupProximity/u, "Hylee/Naïah dépend encore d’un générateur narratif générique");
+  assert.doesNotMatch(hnManualSource + hnDatesSource, /trio-romance|romance-trio|cross-hn-romance|triad/iu, "aucun drapeau de romance à trois ne doit exister");
+  assert.doesNotMatch(hnDatesSource, /intimacyDisabled/u, "les trois rendez-vous doivent ouvrir une continuation intime");
+  assert.doesNotMatch(hnDatesSource, /proximity\(|groupDateHistory\.includes/u, "aucun rendez-vous Hylee/Naïah ne doit dépendre d’un autre");
+  assert.match(groupSource, /\.\.\.HYLEE_NAIAH_MANUAL_ROUTES/u, "le registre manuel Hylee/Naïah doit être fusionné au catalogue");
+  assert.match(groupSource, /\.\.\.HYLEE_NAIAH_INTIMACY_GAMES/u, "les trois mini-jeux Hylee/Naïah doivent être enregistrés");
+  assert.match(pageSource, /hyleeNaiahRouteChapters\(/u, "les variantes du sort de la mère doivent être injectées dans les routes");
+  assert.match(pageSource, /hnGroupDate \? hnIntimacyReady\(game!\)/u, "la bascule Hylee/Naïah doit dépendre uniquement des deux désirs");
+  const groupClose = pageSource.slice(pageSource.indexOf("function closeGroupIntimacy"), pageSource.indexOf("function replayDateIntimacy"));
+  assert.match(groupClose, /completed && !modal\.replay/u, "une relecture ne doit écrire aucun drapeau");
+
+  console.log(`[Intimité de groupe] Lineva/Allenna préservées · Hylee/Remerii : 27 routes · Hylee/Naïah : ${hnReport.routes} routes, ${hnReport.sequences} séquences, explicite ${hnReport.explicitWords.min}–${hnReport.explicitWords.max} mots · ${report.chapters} séquences cataloguées.`);
 } finally {
   await server.close();
 }

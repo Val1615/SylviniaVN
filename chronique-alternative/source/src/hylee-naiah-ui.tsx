@@ -15,27 +15,39 @@ export function HNDossier({ progress, game, onScene, onSearch }: {
 }) {
   const hn = progress.hn!;
   const searchActive = progress.stage === 4 && hn.search?.result !== "success";
-  const dateReason = progress.stage >= 5 && progress.stage < 8 ? hnDateReason(HN_DATE_IDS[progress.stage - 5], game) : undefined;
+  // À partir de l’étape 5, les trois rendez-vous sont autonomes : chacun s’ouvre seul, dans n’importe quel ordre.
+  const datesOpen = progress.stage >= 5;
+  const dates = HN_DATE_IDS.map((id, index) => ({ id, stage: 5 + index, title: HN_TITLES[5 + index], done: Boolean(hn.choices[id]), reason: hnDateReason(id, game) }));
+  const doneDates = dates.filter((date) => date.done);
+  const allDone = doneDates.length === dates.length;
+  const dateActions = <div className="hn-date-choices">{dates.map((date) => date.done
+    ? <button key={date.id} className="secondary-action" onClick={() => onScene(date.stage, true)}>Revivre « {date.title} »</button>
+    : <button key={date.id} className="primary-action" disabled={!!date.reason} title={date.reason} onClick={() => onScene(date.stage)}>{hn.checkpoint?.sceneId === date.id ? "Reprendre" : "Vivre"} « {date.title} »{date.reason ? <small> · {date.reason}</small> : null}</button>)}</div>;
   return <CrossQuestDossier
     className="hn-dossier"
     portraits={[{ src: "/assets/portraits/hylee.jpg", alt: "Hylee" }, { src: "/assets/portraits/naiah.jpg", alt: "Naïah" }]}
     eyebrow="Des Échos à la Forêt Interdite"
     title="Hylee & Naïah"
-    description="Naïah aimerait revoir Hylee. Quelques occasions de se retrouver, un retour près de l’Auberge, et les décisions qui changent la suite."
+    description="Naïah aimerait revoir Hylee. Quelques occasions de se retrouver, un retour près de l’Auberge, puis trois rendez-vous indépendants : le lac d’Hylee, l’activité de Naïah et votre logis."
     progress={progress.stage} total={8}
-    current={progress.stage < 8 ? {
-      title: HN_TITLES[progress.stage], objective: dateReason || HN_OBJECTIVES[progress.stage],
-      action: !searchActive ? <button className="primary-action" disabled={!!dateReason} onClick={() => onScene(progress.stage)}>{hn.checkpoint ? "Reprendre la conversation" : progress.stage >= 5 ? "Vivre cette rencontre" : "Vivre cette étape"}</button> : undefined,
+    current={!datesOpen ? {
+      title: HN_TITLES[progress.stage], objective: HN_OBJECTIVES[progress.stage],
+      action: !searchActive ? <button className="primary-action" onClick={() => onScene(progress.stage)}>{hn.checkpoint ? "Reprendre la conversation" : "Vivre cette étape"}</button> : undefined,
+    } : !allDone ? {
+      label: "Rendez-vous ouverts", title: "Trois rendez-vous, dans l’ordre de votre choix", objective: HN_OBJECTIVES[5], action: dateActions,
     } : undefined}
-    completed={progress.stage >= 8 ? { title: "Elles ont déjà fixé leur prochaine sortie", description: "Hylee et Naïah se retrouvent désormais de leur propre initiative. Votre porte reste ouverte, sans que chaque rencontre dépende de vous." } : undefined}
+    completed={allDone ? { title: "Les trois rendez-vous ont eu lieu", description: "Hylee et Naïah se retrouvent désormais de leur propre initiative. Chaque rendez-vous reste rejouable, sans rien changer à la chronique.", status: dateActions } : undefined}
     mechanic={progress.stage >= 4 ? {
       title: "Retrouver Hylee", description: "Recoupez ses habitudes, les traces du terrain et les témoignages pour choisir un refuge, un trajet et une manifestation du froid.",
       status: <span>{hn.search?.result === "success" ? "Hylee localisée · enquête conservée" : hn.search?.phase === "retreat" ? "Repli effectué · indices conservés" : `${hn.search?.clues.length || 0} indices · ${hn.search?.turn || 0} / 8 actions`}</span>,
       action: searchActive ? <button className="primary-action" onClick={() => onSearch(false)}>{hn.search ? "Reprendre la recherche" : "Chercher Hylee"}</button>
         : hn.search?.result === "success" ? <button className="secondary-action" onClick={() => onSearch(true)}>Rejouer l’enquête</button> : undefined,
     } : undefined}
-    milestones={HN_TITLES.slice(0, progress.stage).map((title, stage) => ({ id: stage, title, detail: "Relecture protégée", onReplay: () => onScene(stage, true) }))}
-    postSeries={progress.stage >= 7 ? <p>Hylee et Naïah se proposent déjà des moments ensemble. L’invitation au logis reste disponible lorsque vous possédez un logement.</p> : undefined}
+    milestones={[
+      ...HN_TITLES.slice(0, Math.min(progress.stage, 5)).map((title, stage) => ({ id: stage, title, detail: "Relecture protégée", onReplay: () => onScene(stage, true) })),
+      ...doneDates.map((date) => ({ id: date.stage, title: date.title, detail: "Rendez-vous vécu · relecture protégée", onReplay: () => onScene(date.stage, true) })),
+    ]}
+    postSeries={doneDates.length >= 2 ? <p>Hylee et Naïah se proposent déjà des moments ensemble, sans attendre votre invitation.</p> : undefined}
   />;
 }
 
