@@ -2,6 +2,7 @@ import { HYLEE_AMBIENT_LINES } from "./hylee-ambient";
 import { NAIAH_AMBIENT_LINES } from "./naiah-ambient";
 import { REMERII_AMBIENT_LINES } from "./remerii-ambient";
 import { BELLIRITH_AMBIENT_LINES } from "./bellirith-ambient";
+import { IRIANA_BELLIRITH_REACTIONS, VALURN_BELLIRITH_REACTIONS } from "./bellirith-reactions";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 
 export type AmbientDialogue = {
@@ -175,6 +176,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       I("iri-detail-l", "Demander lequel lui donne envie de sourire avant de répondre.", "lucidite", "Le bleu. Vous avez encore déplacé la question du convenable vers le désiré. Je choisis le bleu.", { trust: 3, affection: 1 }),
       I("iri-detail-s", "Lui proposer d’en porter un aujourd’hui et l’autre demain.", "sangFroid", "Aucun verdict définitif. Voilà une souplesse que le conseil jugerait révolutionnaire.", { trust: 3 }),
     ], { mood: "smirk" }),
+    ...IRIANA_BELLIRITH_REACTIONS,
   ],
 
   valurn: [
@@ -253,6 +255,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       V("val-tes-l", "Repérer le pot de miel prévu comme antidote derrière son coude.", "lucidite", [line("Narration", "Vous lui tendez le miel. Il en avale une cuillerée sans abandonner sa pose funèbre."), line("Valurn", "Vous venez de sauver ma vie en ruinant une excellente sortie dramatique."), line("{player}", "Vous aviez préparé l’antidote."), line("Valurn", "L’humour noir n’interdit pas la logistique. Il la rend seulement plus élégante.")], { trust: 4, affection: 1 }),
       V("val-tes-s", "Lui laisser le temps de récupérer sans rire de la panique sous la plaisanterie.", "sangFroid", [line("Narration", "Vous poussez l’eau et attendez. Valurn garde les yeux baissés jusqu’à ce que sa respiration redevienne régulière."), line("Valurn", "Merci de ne pas avoir confondu mon numéro avec l’absence de peur."), line("Narration", "Il déchire la serviette, puis en garde un coin."), line("Valurn", "Je lègue tout de même cette pâtisserie à mon père. On ne sait jamais.")], { trust: 5 }),
     ], { mood: "amused" }),
+    ...VALURN_BELLIRITH_REACTIONS,
   ],
 
   naiah: NAIAH_AMBIENT_LINES,

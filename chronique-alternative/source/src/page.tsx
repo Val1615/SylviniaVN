@@ -457,7 +457,9 @@ type DevIntimacyTarget =
   | { kind: "bellirith-intrusion"; id: BellirithIntrusionId; mode: BellirithIntrusionMode }
   | { kind: "bellirith-intimacy"; dateId: string }
   | { kind: "bellirith-confidence"; secretId: string }
-  | { kind: "bellirith-date"; dateId: string };
+  | { kind: "bellirith-date"; dateId: string }
+  | { kind: "bellirith-ambient"; character: string; ambientId: string }
+  | { kind: "bellirith-home" };
 
 type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home" | "letter" | "invitation" | "rumor" | "knowledge";
 
@@ -4316,6 +4318,29 @@ export default function Home() {
     setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true });
   }
 
+  /** Raccourci développeur : joue un moment libre précis (effets appliqués, comme en jeu). */
+  function startAmbientById(characterId: string, ambientId: string) {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const ambient = (AMBIENT_LINES[characterId] || []).find((entry) => entry.id === ambientId);
+    if (!character || !ambient) return;
+    const ambientIntro = ambientPromptLines(ambientPromptFor(ambient, game.flags), character.name);
+    const scene: SceneView = {
+      id: ambient.id,
+      title: ambient.title,
+      background: spotById(game.spot)?.background || backgroundUrl("streets"),
+      mood: ambient.mood || character.defaultMood,
+      character: characterId,
+      cast: [characterId],
+      intro: ambientIntro,
+      choices: ambient.choices,
+      kind: "ambient",
+      ambientId: ambient.id,
+    };
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, game, ambientIntro, "intro"), lineIndex: 0, phase: "intro" });
+  }
+
   function openDevIntimacy(target: DevIntimacyTarget) {
     if (!game?.settings.developer) return;
     setDialogue(null);
@@ -4326,6 +4351,8 @@ export default function Home() {
     if (target.kind === "bellirith-intimacy") { openBellirithIntimacy(target.dateId, true); return; }
     if (target.kind === "bellirith-confidence") { startSecretConversation(target.secretId, true); return; }
     if (target.kind === "bellirith-date") { startDate(target.dateId, true); return; }
+    if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
+    if (target.kind === "bellirith-home") { setModal({ kind: "intimacy", character: "bellirith", home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-free"], replay: true }); return; }
     if (target.kind === "date") {
       const date = DATE_SCENES.find((entry) => entry.id === target.dateId);
       if (!date) return;
@@ -5774,6 +5801,15 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <span className="dev-help">Confidences &amp; rendez-vous :</span>
       {SECRET_CONVERSATIONS.filter((secret) => secret.character === "bellirith").map((secret) => <button type="button" key={secret.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-confidence", secretId: secret.id })}>{secret.tier} · {secret.title}</button>)}
       {DATE_SCENES.filter((date) => date.character === "bellirith").map((date) => <button type="button" key={date.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-date", dateId: date.id })}>{date.title}</button>)}
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Moments libres (les variantes suivent l’historique actuel) :</span>
+      {(AMBIENT_LINES.bellirith || []).map((entry) => <button type="button" key={entry.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-ambient", character: "bellirith", ambientId: entry.id })}>{entry.title}</button>)}
+      <button type="button" disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-home" })}>Intimité au logis</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Réactions de Valurn et d’Iriana :</span>
+      {(["valurn", "iriana"] as const).flatMap((characterId) => (AMBIENT_LINES[characterId] || []).filter((entry) => entry.id.includes("-bellirith-")).map((entry) => <button type="button" key={entry.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-ambient", character: characterId, ambientId: entry.id })}>{entry.title}</button>))}
     </div>
 
     <h3>Accès direct aux scènes intimes</h3>
