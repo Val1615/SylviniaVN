@@ -164,7 +164,7 @@ try {
     letters: [{ id: "letter-naiah-margin", receivedDay: 7, read: true, replyId: "naiah-food" }],
   });
   assert.ok(migrated, "la sauvegarde de migration doit être hydratable");
-  assert.equal(migrated.version, 17);
+  assert.ok(migrated.version >= 17, "la migration Naïah doit produire une sauvegarde au moins en version 17 (18 depuis la refonte Bellirith)");
   assert.ok(migrated.knowledge.includes("knows_naiah_hylee_nights"));
   assert.ok(migrated.knowledge.includes("knows_hylee_naiah_nights"));
   assert.ok(migrated.knowledge.includes("heard_rumor_naiah_guardian"));

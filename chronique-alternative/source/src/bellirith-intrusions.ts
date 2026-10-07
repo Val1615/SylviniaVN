@@ -36,6 +36,7 @@ export type BellirithIntrusion = {
 
 export const BELLIRITH_INTRUSION_IDS: BellirithIntrusionId[] = ["01", "02", "03", "04"];
 export const BELLIRITH_MIGRATION_MARKER = "bellirith-refactor-v1-migrated";
+export const BELLIRITH_RESISTED_FLAG = "bellirith-has-resisted";
 export const BELLIRITH_FAVORITE_FLAG = "bellirith-favorite";
 export const BELLIRITH_SLEPT_FLAG = "bellirith-has-slept";
 export const BELLIRITH_COALITION_CEDED_FLAG = "bellirith-coalition:accepted";
@@ -165,7 +166,10 @@ export function bellirithFilStage(state: BellirithState) {
 
 export function bellirithFlagsWithTrend(flags: string[]) {
   const base = flags.filter((entry) => !BELLIRITH_TREND_FLAGS.includes(entry));
-  return [...base, `bellirith-trend:${bellirithTrend({ flags: base, history: [] })}`];
+  const trend = `bellirith-trend:${bellirithTrend({ flags: base, history: [] })}`;
+  // Stable : si la tendance est déjà la bonne, ne rien réordonner (relectures sans mutation).
+  if (flags.length === base.length + 1 && flags.includes(trend)) return flags;
+  return [...base, trend];
 }
 
 /** Intrusion jouable en direct juste après un jalon de campagne — jamais deux fois. */
@@ -250,6 +254,8 @@ export function bellirithResolutionFlags(flags: string[], id: BellirithIntrusion
   if (isBellirithCedeChoice(choice)) {
     const accepted = bellirithAcceptedCount({ flags: next, history: [] });
     if (accepted >= 2 || choice.id.includes("-cede-dare")) next.push(BELLIRITH_FAVORITE_FLAG);
+  } else {
+    next.push(BELLIRITH_RESISTED_FLAG);
   }
   return bellirithFlagsWithTrend(Array.from(new Set(next)));
 }

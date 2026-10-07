@@ -73,7 +73,10 @@ async function validatePortrait(path, label) {
   }
 }
 
-const expected = { characters: 12, secrets: 52, knowledge: 70, letters: 28, invitations: 13, rumors: 24, spontaneousEvents: 19 };
+// Refonte Bellirith : +4 connaissances nettes (faux canon de la stase retiré, nouvelles
+// lectures de Bellirith/Valurn), courriers dynamiques (+5), quatre invitations persistantes
+// de rattrapage (+4), deux rumeurs et un événement sur la « vérité de la stase » retirés.
+const expected = { characters: 12, secrets: 52, knowledge: 72, letters: 33, invitations: 17, rumors: 22, spontaneousEvents: 18 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }

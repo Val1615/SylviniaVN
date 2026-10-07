@@ -97,20 +97,6 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Lui dire que vous voulez continuer à partager le présent comme amis.", "Je ferme les autres branches sans traiter celle-ci comme une salle d’attente. Votre amitié est une réponse entière.", "lucidite"),
   ),
 
-  "bellirith-0": R(C("Accepter ses limites tout en supposant qu’elle les abandonnera si la séduction réussit.", "Une limite n’est pas le premier obstacle d’un jeu de conquête. Si vous attendez sa disparition, vous n’avez rien accepté.", "audace")),
-  "bellirith-1": R(C("Lui demander un charme très léger pour rendre le désir plus intense.", "Très léger signifie tout de même que votre volonté ne m’appartiendra plus entièrement. Je veux savoir ce que je provoque sans cet avantage.", "resonance")),
-  "bellirith-2": R(C("Traiter sa demande de rester comme une nouvelle technique de séduction.", "Si chaque vulnérabilité devient encore une performance à vos yeux, je n’ai aucun moyen de parler sans mon masque.", "lucidite")),
-  "bellirith-3": R(
-    C("Lui ordonner d’utiliser le sceau puisque des vies pourraient être sauvées.", "Je vous ai offert les deux réponses qui me retiraient mon choix. Vous venez d’en sélectionner une comme si l’obéissance devenait morale avec de bonnes intentions.", "audace"),
-    C("Refuser toute proximité ce soir sans décider à sa place ce qu’elle fera du sceau.", "Vous reculez sans transformer votre limite en commandement. Je peux être déçue et garder ma décision entière.", "sangFroid"),
-    C("Lui dire que vous resterez un allié et un ami, pas un partenaire amoureux.", "Voilà donc la troisième stratégie : une proximité sans conquête. Elle me contrarie assez pour mériter d’être respectée.", "lucidite"),
-  ),
-  "bellirith-4": R(
-    C("Lui demander de remettre un bijou enchanté afin de retrouver la Bellirith qui vous séduisait.", "Vous préférez l’arme au moment où je vous offre la femme sans défense. Je ne remettrai rien pour rendre votre désir plus facile.", "resonance"),
-    C("Lui dire que vous la choisissez, mais que votre limite s’arrête avant l’intimité ce soir.", "Cela m’atteint. Et je recule tout de même. Être choisie ne m’accorde aucun droit sur l’étape suivante.", "sangFroid"),
-    C("Lui proposer une amitié sans charme, conquête ni attente romantique.", "Ce sera terriblement peu glamour et beaucoup plus difficile que de gagner. J’accepte d’apprendre cette proximité-là.", "lucidite"),
-  ),
-
   "amanea-0": R(C("Traiter le laissez-passer provisoire comme un droit permanent sur toutes les archives.", "Tu confonds déjà une permission bornée avec une conquête. Allenna va reprendre ce document jusqu’à ce que tu aies réappris à lire ses limites.", "sangFroid")),
   "amanea-1": R(C("Présenter Allenna comme la preuve qu’Amanea peut corriger ses erreurs de mère.", "Allenna n’est ni ma réparation ni une version réussie de Naïah. Elle est ma fille parce qu’elle est elle-même, pas parce qu’elle efface une autre blessure.", "lucidite")),
   "amanea-2": R(C("Ouvrir le coffret pour obtenir enfin la preuve de ce qu’elle ressent pour Naïah.", "Vous venez de traiter une trace confiée comme un dossier à saisir. Le coffret se referme — et cette conversation avec lui.", "audace")),

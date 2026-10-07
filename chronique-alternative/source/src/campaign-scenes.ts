@@ -1210,13 +1210,13 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Iriana", "Et par ceux d'Allenna. Une confirmation unique ne vaut rien."),
         L("Valurn", "Je propose un quatrième signal pour annoncer que Bellirith s'ennuie."),
         L("Bellirith", "Inutile. Tout le monde le sent déjà."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-verification", "bellirith-coalition:resisted"], trust: 4, relationshipEffects: { tia: { trust: 3 }, valurn: { trust: 3 }, bellirith: { affection: 1, desire: 4 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-verification", "bellirith-coalition:resisted", "bellirith-has-resisted"], trust: 4, relationshipEffects: { tia: { trust: 3 }, valurn: { trust: 3 }, bellirith: { affection: 1, desire: 4 } } }),
       Q("coalition-friction", "Prévoir les désaccords au lieu d'exiger l'unité", "sangFroid", "Désignons maintenant qui tranche chaque type de conflit. La coopération survivra mieux à sa première dispute si elle ne dépend pas de la bonne volonté.", [
         N("Tia approuve d'un mouvement presque imperceptible. Iriana vous laisse répartir les cas militaires, magiques et civils avant de corriger deux chevauchements."),
         L("Valurn", "Une alliance fondée sur la certitude qu'elle va se disputer. Enfin une institution honnête."),
         L("Bellirith", "Tu as toujours préféré les relations qui annoncent leurs défauts."),
         N("Valurn ne répond pas. Elle a obtenu son second silence et décide que la soirée n'est pas perdue."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-conflict-rules", "bellirith-coalition:resisted"], trust: 3, relationshipEffects: { tia: { trust: 4 }, valurn: { trust: 2 }, bellirith: { desire: 5 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-conflict-rules", "bellirith-coalition:resisted", "bellirith-has-resisted"], trust: 3, relationshipEffects: { tia: { trust: 4 }, valurn: { trust: 2 }, bellirith: { desire: 5 } } }),
       Q("coalition-bellirith", "Refuser de laisser Bellirith détourner la préparation", "audace", "Tu as trouvé ce que tu cherchais chez Valurn. Maintenant, soit tu restes sans saboter le plan, soit tu sors.", [
         N("Bellirith vous regarde avec un intérêt soudain et aigu, comme si la soirée venait enfin de commencer."),
         L("Bellirith", "Une limite en public. Tu espères me vexer ou m'intéresser ?"),
@@ -1225,7 +1225,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Bellirith", "Alors termine. Je serai parfaitement sage pendant au moins trois minutes."),
         L("Iriana", "Deux suffiront."),
         N("Bellirith rit. Le travail reprend sans qu'elle ait pris le volant de l'enquête."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-bellirith-boundary", "bellirith-coalition:resisted"], affection: 2, trust: 2, relationshipEffects: { iriana: { affection: 2, trust: 2 }, valurn: { trust: 4 }, tia: { trust: 1 }, bellirith: { affection: 1, desire: 6 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-bellirith-boundary", "bellirith-coalition:resisted", "bellirith-has-resisted"], affection: 2, trust: 2, relationshipEffects: { iriana: { affection: 2, trust: 2 }, valurn: { trust: 4 }, tia: { trust: 1 }, bellirith: { affection: 1, desire: 6 } } }),
       Q("coalition-follow-bellirith", "Laisser la carte et suivre Bellirith", "audace", "Le protocole peut s'écrire sans moi pendant une heure.", [
         L("Bellirith", "Une heure. Tu es adorable quand tu crois que c'est toi qui fixes la durée.", "seductive"),
         L("Iriana", "Le protocole partira à l'aube, avec ou sans votre regard. Je le préférais avec."),

@@ -899,12 +899,7 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
   if (!missingFlags.length) return undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
   if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
-  if (scene.id === "valurn-4" || scene.id === "bellirith-4") {
-    if (!game.flags.includes("fracture-valurn-bellirith-truth")) return "Bellirith doit encore recevoir la partie de l’histoire que Valurn lui a cachée. Une copie de l’inscription pourrait les réunir dans les Archives profondes d’Akuhn’Nabad.";
-    if (!game.flags.includes("fracture-valurn-bellirith-distance-set")) return "Après la révélation, Bellirith et Valurn doivent encore poser une distance qui ne soit ni pardon ni punition. Retrouvez-les dans la salle de musique d’Akuhn’Nabad.";
-    if (scene.id === "valurn-4") return "Valurn doit d’abord assumer son récit sans transformer l’aveu en acquittement. Retrouvez-le au Grand Marché d’Al’Gratal.";
-    return "Bellirith doit d’abord reprendre possession de son histoire loin de toute attente intime. Retrouvez-la dans la salle de musique d’Akuhn’Nabad.";
-  }
+  if (scene.id === "valurn-4") return "Valurn doit d’abord assumer son récit sans transformer l’aveu en acquittement. Retrouvez-le au Grand Marché d’Al’Gratal.";
   if (scene.id === "amanea-4") return "Amanea doit d’abord poser avec vous les limites qu’impose le secret de Naïah. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
   if (scene.id === "draven-4") {
     if (!game.flags.includes("lineva-mother-truth-resolved")) return "Lineva doit encore décider comment annoncer à Draven la mort de sa mère. Retrouvez-les sur les quais de Forthaven.";
@@ -3280,7 +3275,7 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && (["lineva", "allenna", "bellirith"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)
+      && ((["lineva", "allenna"].includes(date.character) || date.character === "bellirith") || AUTHORED_DATE_CHARACTERS.has(date.character)
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
           && game!.relationships[date.character].stage >= 4
@@ -4146,7 +4141,7 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    const refactoredDate = Boolean(date && (["lineva", "allenna", "bellirith"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)));
+    const refactoredDate = Boolean(date && ((["lineva", "allenna"].includes(date.character) || date.character === "bellirith") || AUTHORED_DATE_CHARACTERS.has(date.character)));
     // Bellirith : sa jauge de désir est inversée (céder la fait baisser) ;
     // elle ne conditionne donc jamais la suite d’un rendez-vous choisi.
     const desireReady = !refactoredDate || date?.character === "bellirith" || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
@@ -4156,7 +4151,7 @@ export default function Home() {
 
   function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!game || !date || (!["lineva", "allenna", "bellirith"].includes(date.character) && !AUTHORED_DATE_CHARACTERS.has(date.character)) || !game.dateHistory.includes(date.id)) return;
+    if (!game || !date || (!(["lineva", "allenna"].includes(date.character) || date.character === "bellirith") && !AUTHORED_DATE_CHARACTERS.has(date.character)) || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     if (friendlyForThisDate) {
       updateGame((current) => ({
@@ -6610,7 +6605,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
     const naiah = character.id === "naiah";
     const naiahIntersex = naiah && game.player.sex === "intersexe";
-    const refactored = ["lineva", "allenna", "bellirith"].includes(character.id) || AUTHORED_DATE_CHARACTERS.has(character.id);
+    const refactored = (["lineva", "allenna"].includes(character.id) || character.id === "bellirith") || AUTHORED_DATE_CHARACTERS.has(character.id);
     const bellirith = character.id === "bellirith";
     const desireReady = !refactored || bellirith || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
     const closeText = bellirith

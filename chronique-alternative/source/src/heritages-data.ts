@@ -3,6 +3,14 @@ import { HYLEE_CONFIDENCES, HYLEE_KNOWLEDGE } from "./hylee-confidences.ts";
 import { NAIAH_CONFIDENCES, NAIAH_KNOWLEDGE } from "./naiah-confidences.ts";
 import { REMERII_CONFIDENCES, REMERII_KNOWLEDGE } from "./remerii-confidences";
 import { REMERII_LETTERS, REMERII_INVITATIONS, REMERII_WORLD_EVENTS } from "./remerii-living-world";
+import {
+  BELLIRITH_CONFIDENCES,
+  BELLIRITH_INVITATIONS,
+  BELLIRITH_KNOWLEDGE,
+  BELLIRITH_LETTERS,
+  VALURN_BELLIRITH_CONFIDENCES,
+  VALURN_BELLIRITH_KNOWLEDGE,
+} from "./bellirith-living-world";
 
 export type SecretTier = 20 | 40 | 60 | 80;
 
@@ -146,8 +154,8 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
 
   { id: "knows_valurn_bhaal_childhood", title: "Grandir sous Bhaal", summary: "Valurn a grandi sous l’autorité d’un père démoniaque qui traitait le sang comme un droit de propriété.", people: ["valurn", "bellirith"] },
   { id: "knows_valurn_bellirith_past", title: "Avant la haine", summary: "Valurn et Bellirith furent autrefois très proches. Leur lien de demi-frère et demi-sœur était aussi intime que difficile à nommer.", people: ["valurn", "bellirith"] },
-  { id: "knows_valurn_artifact_search", title: "L’artefact promis", summary: "Valurn aida Bellirith à rechercher un artefact supposé sceller sa part démoniaque, avant de la cacher dans une pierre de stase.", people: ["valurn", "bellirith"] },
-  { id: "knows_valurn_true_abandonment", title: "La décision de ne pas revenir", summary: "Valurn découvrit que l’artefact était une légende. Convaincu que Bellirith souffrirait moins sans sa part humaine, il décida consciemment de ne jamais revenir la libérer.", people: ["valurn", "bellirith"] },
+  // Refonte Bellirith : pierre de stase et artefact retirés (spec §32).
+  ...VALURN_BELLIRITH_KNOWLEDGE,
 
   ...NAIAH_KNOWLEDGE,
 
@@ -162,10 +170,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_saidin_fear_for_remerii", title: "Le mentor arrivé trop tard", summary: "Saidin se reproche de ne pas avoir protégé Remerii de son agression et craint encore de confondre protection et possession.", people: ["saidin", "remerii"] },
   { id: "knows_saidin_silver_eyes", title: "Des yeux impossibles", summary: "Lors du sauvetage de Remerii, les yeux de Saidin auraient brièvement pris un éclat argenté et des pupilles verticales. Aucune réponse n’accompagne ce souvenir.", people: ["saidin", "remerii", "hylee"] },
 
-  { id: "knows_bellirith_bhaal_family", title: "Une famille des Calciterres", summary: "Bellirith partage Bhaal comme père avec Valurn, mais pas la même mère. La provocation masque une histoire familiale qu’elle supporte mal.", people: ["bellirith", "valurn"] },
-  { id: "knows_bellirith_human_past", title: "Le rêve d’être humaine", summary: "Bellirith détestait la part de succube qu’elle n’avait jamais choisie et rêvait de devenir entièrement humaine.", people: ["bellirith", "valurn"] },
-  { id: "knows_bellirith_stasis", title: "La promesse dans la pierre", summary: "Poursuivie, Bellirith fut cachée dans une pierre de stase par Valurn. Il promit de revenir avec l’artefact et ne revint jamais.", people: ["bellirith", "valurn"] },
-  { id: "knows_bellirith_mortal_death", title: "Ce qui survécut à la mort", summary: "Après l’effondrement de la stase, Bellirith fut capturée, torturée et tuée. Revenue démone complète, elle croit que sa haine de Valurn est le dernier fragment de sa vie mortelle.", people: ["bellirith", "valurn"] },
+  ...BELLIRITH_KNOWLEDGE,
 
   { id: "knows_amanea_farae_childhood", title: "Deux jumelles sous la Lumière", summary: "Amanea et Tia furent élevées sous l’autorité d’Eladri. L’échec d’Amanea à s’éveiller à la Lumière devint une première fracture intime.", people: ["amanea", "tia"] },
   { id: "knows_amanea_allenna_origin", title: "L’enfant qui resta", summary: "Allenna trouva Amanea grièvement blessée et refusa de fuir. Amanea reconnut sa solitude et décida de l’adopter.", people: ["amanea", "allenna"] },
@@ -299,42 +304,10 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     N("Il vous tend enfin la carte. Sur le devant, Bellirith a dessiné des cornes ridicules au roi."),
     L("Valurn", "Sa haine n’a pas inventé ce qui l’a précédée. C’est précisément pour cela qu’elle sait où frapper."),
   ], [
-    Q("sva40-s", "Ne pas enfermer leur ancien lien dans une catégorie plus confortable.", "sangFroid", [P("Vous n’êtes pas obligé de me donner un mot plus propre."), L("Valurn", "Quel dommage. J’en avais plusieurs d’une saleté remarquable."), P("Je parle sérieusement."), N("Il replie la carte entre ses doigts, sans la cacher."), L("Valurn", "Je sais. Les gens bien intentionnés aiment classer ce qu’ils comprennent mal. Famille ici, désir là, dépendance dans une boîte honteuse, affection dans une boîte respectable."), P("Et vous ?"), L("Valurn", "Je garde la vérité moins confortable : nous nous sommes aimés, mal parfois, profondément toujours. Puis j’ai utilisé cette connaissance pour prendre la pire décision possible à sa place."), N("Il replace la carte dans le paquet, pas parmi celles de Bhaal."), L("Valurn", "Merci de ne pas rendre notre passé plus convenable pour supporter notre présent.")], { trust: 8, affection: 2 }),
-    Q("sva40-l", "Lui demander ce qui comptait le plus pour Bellirith avant leur rupture.", "lucidite", [P("Qu’est-ce qui comptait pour elle avant que la haine prenne toute la place ?"), L("Valurn", "Choisir."), P("Choisir quoi ?"), L("Valurn", "Tout. Ses vêtements avant qu’on lui dise qu’ils prouvaient sa nature. Son désir avant qu’on lui explique qu’une succube ne pouvait pas en être propriétaire. Le nom sous lequel elle voulait être regardée."), N("Il retourne la carte et suit du pouce l’écriture de Bellirith."), L("Valurn", "Elle voulait devenir humaine parce qu’elle croyait que ce serait enfin une nature choisie."), P("Vous l’avez aidée."), L("Valurn", "Jusqu’au moment où j’ai décidé que je comprenais mieux qu’elle ce qu’elle devait perdre."), N("La plaisanterie écrite entre eux se termine par un petit cœur barré trois fois."), L("Valurn", "J’aurais dû comprendre que son désir était sacré. J’ai compris la phrase. J’ai échoué au verbe.")], { trust: 7, affection: 3 }),
+    Q("sva40-s", "Ne pas enfermer leur ancien lien dans une catégorie plus confortable.", "sangFroid", [P("Vous n’êtes pas obligé de me donner un mot plus propre."), L("Valurn", "Quel dommage. J’en avais plusieurs d’une saleté remarquable."), P("Je parle sérieusement."), N("Il replie la carte entre ses doigts, sans la cacher."), L("Valurn", "Je sais. Les gens bien intentionnés aiment classer ce qu’ils comprennent mal. Famille ici, désir là, dépendance dans une boîte honteuse, affection dans une boîte respectable."), P("Et vous ?"), L("Valurn", "Je garde la vérité moins confortable : nous nous sommes aimés, mal parfois, profondément toujours. Puis je lui ai fait une promesse que je n’ai pas tenue à temps."), N("Il replace la carte dans le paquet, pas parmi celles de Bhaal."), L("Valurn", "Merci de ne pas rendre notre passé plus convenable pour supporter notre présent.")], { trust: 8, affection: 2 }),
+    Q("sva40-l", "Lui demander ce qui comptait le plus pour Bellirith avant leur rupture.", "lucidite", [P("Qu’est-ce qui comptait pour elle avant que la haine prenne toute la place ?"), L("Valurn", "Choisir."), P("Choisir quoi ?"), L("Valurn", "Tout. Ses jeux, ses amants, ses règles, la couleur exacte de ses scandales. Bhaal décidait de tout dans cette famille ; elle s’est juré que personne ne déciderait jamais plus rien à sa place."), N("Il retourne la carte et suit du pouce l’écriture de Bellirith."), L("Valurn", "Et un jour, elle m’a laissé décider d’une chose. Une seule. Elle m’a cru."), P("Et ?"), L("Valurn", "Et vous connaissez assez Bellirith pour savoir comment se termine une phrase qui commence par « elle m’a cru »."), N("La plaisanterie écrite entre eux se termine par un petit cœur barré trois fois."), L("Valurn", "Ne lui demandez pas la suite pour me faire plaisir. Ce n’est pas une histoire que j’ai le droit de lui faire raconter.")], { trust: 7, affection: 3 }),
   ], ["knows_valurn_bellirith_past"]),
-  S("valurn", 60, "secret-valurn-artifact", "La promesse derrière la stase", [
-    N("Valurn dessine un ancien artefact sur une nappe de taverne. Chaque fois qu’il atteint le centre, sa plume s’arrête et transforme le symbole manquant en visage ridicule."),
-    P("Vous avez donné une moustache à une relique sacrée."),
-    L("Valurn", "Elle n’a jamais eu de dignité. Seulement un excellent service de propagande."),
-    N("Il retourne la plume. Avec l’extrémité sèche, il retrace le véritable contour sans déposer d’encre."),
-    L("Valurn", "Bellirith voulait sceller sa part démoniaque. Nous avons cherché une relique censée accomplir ce miracle. Lorsque les Sylviniens nous ont rattrapés, je l’ai cachée dans une pierre de stase."),
-    P("Et vous êtes parti chercher l’artefact."),
-    L("Valurn", "Après lui avoir promis de revenir. Une belle promesse : courte, claire, prononcée avec assez d’assurance pour remplacer tous les risques que je refusais de nommer."),
-    N("La plume casse entre ses doigts. Il regarde l’encre couler sur le faux centre."),
-    L("Valurn", "Tout le monde connaît la suite la plus commode. Valurn, lâche charmant mais fondamentalement prévisible, a abandonné Bellirith."),
-    P("Pourquoi “commode” ?"),
-    L("Valurn", "Parce qu’un lâche peut encore espérer être pardonné."),
-  ], [
-    Q("sva60-l", "Refuser l’histoire commode et lui demander ce qu’elle protège.", "lucidite", [P("La lâcheté est donc la version qui vous avantage."), L("Valurn", "Vous avez une manière délicieuse d’enfoncer la lame tout en vérifiant son angle."), P("Qu’est-ce qu’elle cache ?"), N("Il plie la nappe sur l’artefact, mais l’encre traverse le tissu."), L("Valurn", "Que je l’ai trouvé. Que la promesse ne s’est pas perdue dans un chemin trop long ni une bataille impossible."), P("Que s’est-il passé ?"), L("Valurn", "Pas encore."), N("Sa voix a perdu tout second degré. Il ramasse les morceaux de la plume un à un."), L("Valurn", "Mais retenez ceci : l’abandon n’était pas un accident. Et lorsque je raconterai la suite, ne me laissez pas me réfugier derrière l’amour que j’avais pour elle.", "away")], { trust: 9, affection: 2 }),
-    Q("sva60-s", "Lui laisser le temps sans lui promettre que la fin changera votre jugement.", "sangFroid", [N("Vous repliez la nappe sans dissimuler la tache d’encre."), P("Vous me direz la suite quand vous pourrez la dire entièrement."), L("Valurn", "Et d’ici là, vous conserverez de moi la version du lâche ?"), P("Je conserverai la version incomplète."), L("Valurn", "Vous pourriez au moins me promettre une absolution spectaculaire. J’ai besoin d’une musique et de flammes."), P("Non."), N("Un sourire revient par habitude, trouve votre regard et renonce à jouer."), L("Valurn", "Bien. Les promesses faciles nous ont déjà coûté assez cher."), N("Il glisse la nappe tachée dans sa poche."), L("Valurn", "Vous me donnez du temps sans garantir qu’il me rendra innocent. C’est correctement inconfortable."), P("Vous survivrez ?"), L("Valurn", "Je suis démoniaque. Nous survivons très bien à l’inconfort et très mal à l’honnêteté. Revenez tout de même.")], { trust: 8, affection: 3 }),
-  ], ["knows_valurn_artifact_search"]),
-  S("valurn", 80, "secret-valurn-choice", "La décision monstrueuse", [
-    N("Valurn dépose sur la table une copie de l’inscription que Bellirith n’a jamais vue. Aucun feu ne l’accompagne. Même son verre demeure intact."),
-    L("Valurn", "J’ai trouvé l’artefact."),
-    N("Il vous laisse le temps de comprendre que cette phrase détruit la version précédente."),
-    L("Valurn", "Son pouvoir n’avait jamais existé. Une légende répétée par assez de désespérés pour devenir un marché. Il ne pouvait rien sceller, rien purifier, rien rendre à Bellirith."),
-    P("Alors vous saviez que la stase céderait."),
-    L("Valurn", "Oui. Et je savais ce qui arriverait ensuite : elle mourrait sur ce plan, sa part mortelle serait purgée, son essence retournerait dans les Calciterres."),
-    N("Ses doigts s’appuient sur l’inscription jusqu’à blanchir."),
-    L("Valurn", "Je me suis convaincu qu’elle souffrirait moins ainsi. Plus d’espoir impossible, plus de guerre contre sa propre nature, plus de remords humains."),
-    P("Vous avez décidé de ne pas revenir."),
-    L("Valurn", "Je n’ai pas été retardé. Je ne me suis pas perdu. Je n’ai pas manqué de courage au dernier moment."),
-    N("Il lève enfin les yeux. Aucun sourire ne vient absorber le choc."),
-    L("Valurn", "J’ai choisi que la partie d’elle qui voulait vivre devait mourir. Puis j’ai appelé cette décision de l’amour assez longtemps pour parvenir à dormir."),
-  ], [
-    Q("sva80-l", "Refuser que l’amour employé pour expliquer son choix devienne une absolution.", "lucidite", [P("Vous avez décidé à sa place que sa part humaine devait mourir."), L("Valurn", "Oui."), P("Vous l’aimiez peut-être. Cela rend la trahison plus compréhensible, pas plus juste."), N("Valurn acquiesce une fois. Sa main quitte l’inscription, laissant quatre marques sur le papier."), L("Valurn", "J’attendais une phrase plus douce."), P("Pourquoi me le dire à moi si vous vouliez être rassuré ?"), L("Valurn", "Parce que je savais que vous ne le feriez pas."), N("Il inspire comme pour ajouter une pirouette. Aucun mot ne vient protéger la phrase suivante."), L("Valurn", "Je peux enfin prononcer la faute sans l’habiller en sacrifice. Je lui ai volé sa dernière décision parce que je me croyais assez intelligent pour choisir sa souffrance."), P("Bellirith décidera ce qu’elle fait de cette vérité."), L("Valurn", "Cette fois, oui. Même si sa décision est de me haïr jusqu’à la fin de tout ce qui brûle.")], { trust: 10, affection: -2 }),
-    Q("sva80-s", "Lui demander ce qu’il compte faire d’une vérité qui appartient aussi à Bellirith.", "sangFroid", [P("Maintenant que je sais, qu’est-ce que vous allez faire ?"), L("Valurn", "Trouver une plaisanterie assez bonne pour fuir cette pièce."), N("Vous ne souriez pas. Il n’essaie pas une seconde fois."), L("Valurn", "Je lui dirai si elle accepte de m’entendre. Pas au détour d’une dispute, pas pour obtenir son pardon avant une bataille. Entièrement."), P("Et si elle refuse ?"), L("Valurn", "Alors je respecterai enfin un choix de sa part, même celui qui me condamne au silence."), N("Il replie la copie et ne la reprend pas."), P("Vous la laissez ici ?"), L("Valurn", "La vérité ne peut plus rester seulement dans ma poche. Gardez-la jusqu’à ce que Bellirith décide si elle veut la voir."), P("Cela ne vous absout pas."), L("Valurn", "Non. Mais peut-être que supporter sa haine avec toutes ses raisons vaut mieux que d’être pardonné par une histoire fausse.")], { trust: 9, affection: 1 }),
-  ], ["knows_valurn_true_abandonment"], { requiresKnowledge: ["knows_bellirith_stasis"] }),
+  ...VALURN_BELLIRITH_CONFIDENCES,
 
   ...NAIAH_CONFIDENCES,
   S("lineva", 20, "secret-lineva-scars", "La cicatrice du tonneau", [
@@ -463,65 +436,7 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("ssa80-l", "Refuser de faire porter à Hylee une hypothèse qu’elle n’a pas demandé à connaître.", "lucidite", [P("Je ne vais pas lui apporter une théorie sur son origine simplement parce que votre regard a changé."), L("Saidin", "Même si elle vous supplie de lui expliquer ce que vous avez vu ?"), P("Je décrirai les faits. Pas une identité que je ne peux pas prouver."), N("Saidin observe Hylee ramasser son bâton. Elle raconte déjà à Remerii que la cible s’est déplacée par hostilité personnelle."), L("Saidin", "Une réponse peut devenir une cage avant même d’être vraie."), P("Elle décidera quelles questions elle veut poser."), L("Saidin", "Et lesquelles elle préfère laisser vivre."), N("Le vent soulève brièvement les cheveux de Saidin. Sous sa forme humaine, son ombre paraît trop large, puis redevient ordinaire."), L("Saidin", "C’est la seule décision juste aujourd’hui."), P("Et demain ?"), L("Saidin", "Demain ne vous est promis ni comme réponse, ni comme excuse.")], { trust: 9, affection: 3 }),
   ], ["knows_saidin_silver_eyes"]),
 
-  S("bellirith", 20, "secret-bellirith-family", "Le portrait brûlé sur les bords", [
-    N("Bellirith tient un vieux portrait dont le centre a été soigneusement brûlé. À gauche, Valurn lève déjà les yeux au ciel ; à droite, Bellirith sourit avec une perfection qui n’atteint pas son regard."),
-    P("Qui se trouvait au milieu ?"),
-    L("Bellirith", "Bhaal. Père, tyran, architecte familial et raison pour laquelle je sais manier un couteau à papier avec une précision exquise."),
-    N("Elle passe un ongle sur le vide noirci. Son aura caresse votre poignet par habitude, puis se retire lorsqu’elle s’en aperçoit."),
-    L("Bellirith", "Même père démoniaque, mères différentes. Valurn a appris à fuir les chaînes. Moi, à sourire jusqu’à ce que personne ne voie qu’elles existaient."),
-    P("Le portrait montre le sourire."),
-    L("Bellirith", "Il fallait bien offrir au peintre quelque chose de convenable. Les bleus étaient hors cadre."),
-    N("Sa voix demeure légère ; sa prise sur le papier, non."),
-    L("Bellirith", "Nous avons hérité du même homme et fabriqué deux défenses incompatibles. Valurn disparaissait. Je donnais à la cage l’impression qu’elle m’appartenait."),
-  ], [
-    Q("sbe20-a", "Découper définitivement Bhaal hors du cadre.", "audace", [P("Le feu a laissé trop de place. Donne-moi le couteau."), L("Bellirith", "Direct·e, armé·e et prêt·e à mutiler mon père. Continue, tu vas me séduire."), N("Elle vous confie le couteau à papier. Vous découpez proprement le centre brûlé ; le portrait devient deux images séparées."), L("Bellirith", "Voilà. Bhaal a enfin la place exacte qu’il mérite."), P("Le vide ?"), L("Bellirith", "Non. La poubelle."), N("Elle y laisse tomber le morceau central et conserve les deux côtés du cadre."), P("Pourquoi garder Valurn ?"), L("Bellirith", "Parce que je refuse que mon père décide rétroactivement de tout ce qui a compté."), N("Elle range la moitié de Valurn derrière la sienne, pas détruite, pas exposée."), L("Bellirith", "Et parce que la haine exige des archives impeccables.", "smirk")], { affection: 5, trust: 2 }),
-    Q("sbe20-l", "Lui demander ce que le portrait échoue à montrer d’elle et de Valurn.", "lucidite", [P("Qu’est-ce que le peintre n’a pas vu ?"), L("Bellirith", "Que Valurn me pinçait la hanche pour faire rater mon sourire."), P("Cela semble visible."), L("Bellirith", "Le peintre croyait que je frémissais de respect filial. Un homme très naïf."), N("Elle retourne le portrait. Au dos, deux colonnes recensent les commentaires les plus cruels entendus pendant la séance, chacune marquée d’initiales."), L("Bellirith", "Nous savions nous faire rire. Vraiment rire — pas le son que je fabrique quand un homme veut se croire irrésistible."), P("Et c’est ce qui manque le plus ?"), N("Bellirith garde le regard sur les annotations."), L("Bellirith", "Cette information est plus indécente que tout ce que je porte. Ne prends pas cet air victorieux."), P("Je ne savais pas que j’avais un air."), L("Bellirith", "Tout le monde en a un lorsqu’il découvre que j’ai possédé de la tendresse avant lui.")], { trust: 6, affection: 2 }),
-  ], ["knows_bellirith_bhaal_family"]),
-  S("bellirith", 40, "secret-bellirith-human", "Trois lignes de peau", [
-    N("Devant un miroir, Bellirith retire volontairement son aura. La chaleur qui remplissait la pièce disparaît ; son reflet cesse d’anticiper les désirs de la personne qui le regarde."),
-    L("Bellirith", "Décevant, n’est-ce pas ? Pas de parfum, pas de promesse dans le regard, même mes cheveux doivent maintenant compter sur la gravité."),
-    P("Tu sembles soulagée."),
-    N("Elle pose trois lignes de craie sur son poignet : envie, faim, choix."),
-    L("Bellirith", "Je n’ai jamais voulu être une succube. La faim, le vice, le désir qui parle parfois une seconde avant moi… j’ai passé ma vie à les prendre pour une contamination."),
-    P("Et les trois lignes ?"),
-    L("Bellirith", "J’essayais de savoir laquelle avait commencé. J’effaçais la mauvaise, je recommençais, puis je détestais mon corps d’avoir répondu trop vite."),
-    N("Elle frotte les marques. La craie part ; sa peau reste."),
-    L("Bellirith", "Je voulais devenir entièrement humaine. Pas plus pure, ne m’insulte pas avec ce mot. Simplement entière selon mes propres termes."),
-  ], [
-    Q("sbe40-s", "Laisser ce désir exister sans lui enseigner quelle nature elle devrait accepter.", "sangFroid", [P("Je ne vais pas te dire que tu devais simplement apprendre à aimer ta nature."), L("Bellirith", "Dommage. J’avais préparé une réponse extraordinairement obscène."), P("Tu pourras la garder pour quelqu’un de plus condescendant."), N("Elle observe son reflet ordinaire, cherchant l’endroit où vous ajouterez malgré tout une morale."), L("Bellirith", "Les gens adorent transformer la souffrance en leçon d’acceptation. Cela leur permet d’aimer la blessure puisqu’elle m’aurait rendue plus intéressante."), P("Tu avais le droit de vouloir changer."), N("Bellirith remet un peu d’aura dans la pièce, juste assez pour réchauffer l’air, puis l’éteint de nouveau. Cette fois, le geste ressemble à un choix."), L("Bellirith", "Et j’ai le droit de ne pas savoir encore ce que je veux garder."), P("Oui."), L("Bellirith", "Cette réponse était presque trop simple. Approche, que je lui trouve un défaut.")], { trust: 8, affection: 2 }),
-    Q("sbe40-l", "Lui demander ce que le mot « humaine » représentait réellement pour elle.", "lucidite", [P("Quand tu dis “humaine”, qu’est-ce que tu voulais obtenir ?"), L("Bellirith", "Une peau moins spectaculaire aurait été pratique. Les cornes compliquent certains chapeaux."), P("Bellirith."), N("Elle sourit, attend que la plaisanterie cesse de suffire, puis regarde les trois traces effacées sur son poignet."), L("Bellirith", "Pouvoir désirer sans me demander si le désir avait parlé avant moi."), P("Distinguer ta voix de ta nature."), L("Bellirith", "Choisir une personne, une nuit, un refus, sans entendre Bhaal ou mon sang commenter la décision."), N("Elle reprend votre main et dessine sur votre paume les trois lignes de craie."), L("Bellirith", "Je croyais qu’humaine signifiait silencieuse à l’intérieur."), P("Et maintenant ?"), L("Bellirith", "Maintenant je soupçonne que les humains sont eux aussi un vacarme. Mais au moins, ils ont parlé avant moi.")], { trust: 7, affection: 3 }),
-  ], ["knows_bellirith_human_past"]),
-  S("bellirith", 60, "secret-bellirith-stasis", "La pierre qui devait s’ouvrir", [
-    N("Une pierre de stase fendue repose entre les mains de Bellirith. Elle ne l’ouvre pas pour produire un effet ; elle la tient comme on tient une porte qui a déjà refusé de rester fermée."),
-    L("Bellirith", "Les Sylviniens nous poursuivaient. Valurn avait une pierre capable de me soustraire temporairement à leur perception."),
-    P("Il t’y a cachée."),
-    L("Bellirith", "Après m’avoir juré qu’il reviendrait avec l’artefact. Je connaissais ses mensonges, ses fuites, la façon dont sa voix montait lorsqu’il improvisait. Cette fois, je l’ai cru."),
-    N("Elle presse le pouce sur la fissure. Un battement sourd résonne, trop lent pour appartenir au présent."),
-    L("Bellirith", "Dans la stase, je ne pouvais ni bouger ni compter normalement. Je mesurais le temps à la promesse : il arrive, il arrive, il arrive."),
-    P("Et la pierre a cédé."),
-    L("Bellirith", "Le temps est revenu d’un seul coup. Le froid, la douleur, les voix au-dehors."),
-    N("Elle pose la pierre entre vous sans la lâcher complètement."),
-    L("Bellirith", "Valurn, lui, n’était pas là."),
-  ], [
-    Q("sbe60-s", "Refuser de rendre belle l’attente imposée par la stase.", "sangFroid", [P("Attendre ne prouve rien sur la force de ton amour. Tu ne pouvais pas sortir."), L("Bellirith", "Les chansons préfèrent la fidèle enfermée qui tient grâce à sa promesse."), P("La pierre tenait. Toi, tu subissais."), N("Ses doigts quittent enfin la fissure. Une marque blanche demeure sur son pouce."), L("Bellirith", "Ce n’était pas un sanctuaire. Pas une parenthèse romantique. Une prison alimentée par la voix de quelqu’un que j’aimais."), P("Tu n’as pas à la rendre noble pour que ce qui t’est arrivé compte."), N("Elle retourne la pierre face contre table."), L("Bellirith", "Bien. Alors ne la nomme jamais “preuve d’amour” devant moi."), P("Jamais."), L("Bellirith", "Et ne tente pas de la détruire. Je déciderai moi-même du jour où elle cessera d’exister.")], { trust: 9, affection: 2 }),
-    Q("sbe60-l", "Lui demander ce qu’elle croyait encore dans la toute dernière minute.", "lucidite", [P("Juste avant l’ouverture, qu’est-ce que tu pensais ?"), L("Bellirith", "Que la pierre avait un défaut. Que j’étais sortie trop tôt."), N("Son ongle suit la fissure jusqu’au point de rupture."), L("Bellirith", "Puis j’ai pensé qu’il avait une minute de retard."), P("Après tout ce temps ?"), L("Bellirith", "Le temps n’existait plus correctement. Une minute pouvait encore sauver toute l’histoire."), N("Elle ferme les yeux, sans retirer sa main lorsque la vôtre s’approche. Vous vous arrêtez avant le contact."), L("Bellirith", "Je déteste cette version de moi. Celle qui a donné encore une minute à sa promesse alors que le monde revenait déjà me prendre."), P("Elle n’avait aucune information que tu possèdes aujourd’hui."), L("Bellirith", "Je sais."), N("Elle ouvre les yeux et pose elle-même sa main sur la vôtre."), L("Bellirith", "C’est pour cela que je la déteste moins lorsque tu la regardes sans pitié.")], { trust: 8, affection: 3 }),
-  ], ["knows_bellirith_stasis"]),
-  S("bellirith", 80, "secret-bellirith-death", "Ce qui resta d’elle", [
-    N("Bellirith ferme les rideaux, verrouille la porte puis l’ouvre de nouveau. Elle choisit finalement de la laisser entrebâillée. Son aura s’éteint entièrement ; rien dans la pièce ne transforme la suite en spectacle."),
-    L("Bellirith", "Je vais dire les faits une fois. Ne me demande pas les détails que je choisis de laisser dehors."),
-    P("D’accord."),
-    N("Elle reste debout, assez près de la sortie pour pouvoir partir avant vous."),
-    L("Bellirith", "Après l’effondrement de la stase, les Sylviniens m’ont capturée. Ils m’ont torturée. Ils ont utilisé mon corps contre moi. Puis ils m’ont tuée."),
-    N("Elle laisse le silence suivre sans le remplir d’une image supplémentaire."),
-    L("Bellirith", "Lorsque mon essence est retournée dans les Calciterres, ma part mortelle avait disparu. Plus de faim humaine, plus de chaleur humaine, plus de rêve de devenir ce que j’étais."),
-    P("Mais ta haine de Valurn est restée."),
-    L("Bellirith", "Oui. Elle a traversé la mort avec moi."),
-    N("Bellirith regarde ses mains comme si elles appartenaient à deux histoires incompatibles."),
-    L("Bellirith", "Parfois, je crois qu’elle est le dernier fragment de la femme humaine que j’étais. Puis j’ai peur que la laisser partir signifie la tuer une seconde fois."),
-  ], [
-    Q("sbe80-s", "Laisser Bellirith choisir le silence, la distance et le prochain geste.", "sangFroid", [N("Vous ne bougez pas. Vous ne cherchez ni ses yeux, ni sa main, ni une phrase capable de rendre les faits supportables."), L("Bellirith", "Tu peux respirer."), P("Je sais."), N("La pièce demeure silencieuse. Après un long moment, Bellirith s’assied sur le sol, dos au mur, et désigne l’espace à côté d’elle."), L("Bellirith", "Ici. Pas plus près."), N("Vous prenez la place indiquée. La porte reste ouverte dans votre champ de vision à tous les deux."), L("Bellirith", "Je n’ai pas survécu sur le plan mortel. Je déteste quand les gens utilisent ce mot pour rendre l’histoire plus inspirante."), P("Alors je ne l’utiliserai pas."), N("Sa main se pose entre vous, paume vers le haut. Vous attendez encore jusqu’à ce qu’elle prenne la vôtre."), L("Bellirith", "Merci de ne pas avoir fait de ma mort une scène dont tu serais le héros.")], { trust: 11, affection: 3 }),
-    Q("sbe80-l", "Reconnaître sa haine comme un héritage sans lui ordonner de la conserver ni de la guérir.", "lucidite", [P("Ta haine a porté quelque chose de toi jusqu’ici. Cela ne veut pas dire qu’elle doit porter tout ce que tu deviendras."), L("Bellirith", "Et si la femme humaine disparaît lorsque je cesse de haïr ?"), P("Je ne peux pas te promettre le contraire."), N("Bellirith serre les dents. La réponse est moins confortable que celle qu’elle espérait, donc plus crédible."), P("Mais ce que tu choisis maintenant vient aussi d’elle. Cette porte ouverte. Les limites que tu poses. Le fait de raconter sans laisser les autres prendre les détails."), N("Elle regarde la porte, puis sa main qui n’a touché personne sans demander."), L("Bellirith", "Tu transformes mes règles en preuves d’humanité."), P("Non. En preuves que ta haine n’est pas tout ce qui est resté."), N("Son aura revient par une pulsation discrète, sans chercher à vous atteindre."), L("Bellirith", "Elle m’a portée. Je ne vais pas la remercier. Mais elle ne doit pas devenir tout ce que je suis encore."), P("La suite t’appartient."), L("Bellirith", "Oui. Pour une fois, entièrement.")], { trust: 10, affection: 4 }),
-  ], ["knows_bellirith_mortal_death"]),
+  ...BELLIRITH_CONFIDENCES,
 
   S("amanea", 20, "secret-amanea-childhood", "Deux sœurs dans un vitrail", [
     N("Amanea dépoussière un fragment de vitrail récupéré dans une chapelle impériale. Deux enfants courent sous un soleil immense ; l’une a été repeinte en sainte, l’autre presque entièrement grattée."),
@@ -814,9 +729,9 @@ export const LETTERS: LetterTemplate[] = [
     ],
   },
   {
-    id: "letter-valurn-truth", character: "valurn", subject: "Aucune formulation avantageuse", delivery: "Le pli arrive par messager ordinaire, détail inhabituel chez Valurn.", minDay: 20, minStage: 4, requiresKnowledge: ["knows_valurn_true_abandonment"],
-    body: ["Je cherche depuis deux jours une manière de présenter ma décision concernant Bellirith qui me rende intelligent, tragique ou pardonnable.", "Il n’en existe aucune. C’est probablement la première phrase honnête de cette lettre."], signature: "Valurn",
-    requiresFlags: ["fracture-valurn-bellirith-truth"],
+    id: "letter-valurn-truth", character: "valurn", subject: "Aucune formulation avantageuse", delivery: "Le pli arrive par messager ordinaire, détail inhabituel chez Valurn.", minDay: 20, minStage: 4, requiresKnowledge: ["knows_valurn_did_not_return"],
+    body: ["Je cherche depuis deux jours une manière de raconter la nuit où je ne suis pas revenu auprès de Bellirith qui me rende intelligent, tragique ou pardonnable.", "Il n’en existe aucune. C’est probablement la première phrase honnête de cette lettre."], signature: "Valurn",
+    requiresFlags: ["valurn-accountability"],
     replies: [{ id: "valurn-no-absolution", label: "L’honnêteté n’annule pas la faute. Elle permet seulement d’en faire autre chose maintenant.", response: "Il répond : « Une perspective atrocement adulte. Je vais tenter de la supporter. »", effects: { trust: 5 } }],
   },
 
@@ -867,19 +782,7 @@ export const LETTERS: LetterTemplate[] = [
     replies: [{ id: "saidin-open", label: "Je garderai les pièces sans les présenter comme une conclusion.", response: "Le sablier joint remonte une seule fois, puis se comporte comme un objet parfaitement ordinaire.", effects: { trust: 5, confluence: 2 } }],
   },
 
-  {
-    id: "letter-bellirith-three-lines", character: "bellirith", subject: "Trois lignes, aucun charme", delivery: "Le parfum de la lettre est élégant mais strictement non magique.", minDay: 9, minStage: 1,
-    body: ["Je pourrais écrire que ta compagnie m’a manqué.", "Je pourrais transformer cette phrase en attaque psychologique assez raffinée pour te faire venir sans l’avoir demandé.", "Ta compagnie m’a manqué. Voilà. Cette version est atrocement vulnérable."], signature: "Bellirith",
-    replies: [
-      { id: "bellirith-honest", label: "La tienne aussi. Aucune stratégie nécessaire.", response: "Elle répond : « Ton efficacité manque de cruauté. Je m’y habitue dangereusement. »", effects: { affection: 4, trust: 3 } },
-      { id: "bellirith-tease", label: "Souligner qu’elle a tout de même réussi à faire de trois lignes une attaque.", response: "Un baiser dessiné apparaît au bas de la page, suivi de : « Je conserve des standards. »", effects: { affection: 4, desire: 2 } },
-    ],
-  },
-  {
-    id: "letter-bellirith-silence", character: "bellirith", subject: "Pas de scène", delivery: "L’enveloppe est dépourvue de parfum, de sceau et même de couleur.", minDay: 20, minStage: 4, requiresKnowledge: ["knows_bellirith_mortal_death"],
-    body: ["Merci de ne pas avoir demandé les détails qui auraient satisfait la curiosité au lieu de m’aider.", "Je ne suis ni plus séduisante ni plus profonde à cause de ce qu’ils m’ont fait. Je suis simplement encore ici."], signature: "Bellirith",
-    replies: [{ id: "bellirith-here", label: "Je te connais aussi dans tout ce qui existe autour de cette blessure.", response: "La réponse arrive sans formule : « Alors reviens me voir vivre. »", effects: { trust: 6, affection: 2 } }],
-  },
+  ...BELLIRITH_LETTERS,
 
   {
     id: "letter-amanea-note", character: "amanea", subject: "Note administrative n° 47", delivery: "Le sceau de la Reine Noire accompagne un document d’une sécheresse remarquable.", minDay: 10, minStage: 1,
@@ -1039,21 +942,7 @@ export const INVITATIONS: InvitationTemplate[] = [
       Q("iso-a", "Lui demander quelle plaisanterie il avait préparée pour l’étoile.", "audace", [L("Saidin", "J’allais lui reprocher son retard. Deux siècles, selon mes calculs."), P("Vous pourriez lui écrire."), L("Saidin", "La réponse arriverait dans quatre cents ans. J’ai connu des correspondances moins efficaces."), N("Votre rire se mêle au dernier éclat de l’étoile. Saidin sourit après sa disparition, comme si votre réaction constituait la lumière suivante.")], { affection: 5, trust: 3 }),
     ],
   },
-  {
-    id: "invite-bellirith-mask", character: "bellirith", title: "Une soirée sans aura", message: "Bellirith réserve une alcôve et promet de n’utiliser aucun charme. Elle ajoute que la difficulté la divertit.", location: "akuhn", spot: "akuhn-music-room", period: "soirée", minDay: 12, minStage: 2, expiresAfter: 5,
-    declineText: "Bellirith accepte le refus et annule l’alcôve. Sa réponse demeure piquante, jamais punitive.",
-    intro: [
-      N("Bellirith a retiré bijoux et enchantements. Sa robe reste provocante, mais rien dans l’air ne pousse votre regard à s’y attarder. Elle paraît plus nerveuse que lors d’un duel."),
-      L("Bellirith", "Je t’ai invité·e sans moyen de rendre ta venue inévitable. J’ignorais que l’attente pouvait être aussi indécente."),
-      P("Tu pourrais te rhabiller si cela t’aidait."),
-      L("Bellirith", "Je suis vulnérable, pas malade. Cette robe me plaît, tes yeux aussi, et je tiens à découvrir lequel des deux travaille sans magie.", "seductive"),
-    ],
-    choices: [
-      Q("ibm-s", "Lui rappeler que vous pouvez encore repartir, puis choisir de rester.", "sangFroid", [P("La porte reste ouverte. Je peux partir ; toi aussi."), N("Bellirith jette un regard vers la sortie, puis vers vous. Son sourire s’efface avant de revenir, plus petit."), L("Bellirith", "Voilà donc pourquoi ce oui vaut davantage : la porte n’a jamais disparu."), N("Elle ferme la distance d’un pas, mais garde ses mains derrière le dos."), L("Bellirith", "Je vais te séduire très lentement. Ce soir, même mon impatience devra demander la permission.")], { trust: 7, affection: 3 }),
-      Q("ibm-a", "Lui demander une danse sans miroir ni spectateur.", "audace", [L("Bellirith", "Une scène dont personne ne témoignera ? Tu deviens dangereusement intéressant·e."), N("Elle vous offre sa main. Sans aura, sa paume est légèrement moite ; elle le remarque et tente de la retirer."), P("Je n’ai pas demandé une performance parfaite."), L("Bellirith", "Non. Tu as demandé mon corps assez près du tien pour sentir quand il ment mal."), N("Elle reprend votre main et mène la première mesure avec un sourire qui, cette fois, tremble un peu.")], { affection: 6, trust: 3, desire: 2 }),
-      Q("ibm-l", "Lui demander ce qui l’effraie réellement dans votre liberté de refuser.", "lucidite", [N("Bellirith ouvre la bouche avec une plaisanterie déjà prête, puis la ravale."), L("Bellirith", "Que tu partes et que je découvre que mon aura était la partie la plus aimable de moi."), P("Et si je reste ?"), L("Bellirith", "Je trouverai une autre peur. Mais celle-ci aura perdu ce soir."), N("Elle vient s’asseoir près de vous, sans poser encore la main sur votre cuisse. Cette retenue lui coûte davantage que n’importe quel numéro de séduction.")], { trust: 7, affection: 2 }),
-    ],
-  },
+  ...BELLIRITH_INVITATIONS,
   {
     id: "invite-amanea-terrace", character: "amanea", title: "Une audience sans siège", message: "Amanea vous demande de la rejoindre sur la terrasse après le Conseil. Le billet ne porte pas le mot ‘ordre’.", location: "akuhn", spot: "akuhn-terrace", period: "soirée", minDay: 13, minStage: 2, expiresAfter: 5,
     declineText: "Amanea accuse réception de votre refus. Elle ne le traite ni comme une offense ni comme une dette future.",
@@ -1149,9 +1038,7 @@ export const RUMORS: RumorTemplate[] = [
   { id: "rumor-akuhn-amanea-keepsake", location: "akuhn", spots: ["akuhn-archives", "akuhn-music-room"], source: "Servante du palais", text: "La Reine Noire garde un coffret qu’elle ne tourne jamais vers elle. J’ignore ce qu’il contient ; je sais seulement qu’elle refuse qu’on le jette.", minDay: 15, truth: "vraie", leadKnowledge: "heard_rumor_amanea_keepsake" },
   { id: "rumor-akuhn-naiah-father", location: "akuhn", spots: ["akuhn-gates", "akuhn-palace-exterior"], source: "Vendeur de talismans", text: "Le père de Naïah serait un dieu, un démon ou une tempête. La version change selon le prix du talisman vendu avec l’histoire.", minDay: 12, truth: "fausse" },
 
-  { id: "rumor-tzekarun-artifact", location: "tzekarun", spots: ["tzekarun-archive", "tzekarun-workshop"], source: "Ingénieure tzekarii", text: "Les plans d’un artefact capable de rendre un démon humain circulent depuis des siècles. Chaque copie omet curieusement le mécanisme qui produirait cet effet.", minDay: 14, truth: "vraie", leadKnowledge: "heard_rumor_false_artifact" },
   { id: "rumor-tzekarun-saidin", location: "tzekarun", spots: ["tzekarun-workshop"], source: "Horloger", text: "Saidin a réparé un mécanisme avant qu’il tombe en panne, puis s’est excusé auprès de lui pour l’avoir privé de surprise.", minDay: 13, truth: "déformée" },
-  { id: "rumor-tzekarun-bellirith", location: "tzekarun", spots: ["tzekarun-gates", "tzekarun-archive"], source: "Caravanière", text: "Une démone recherche les archives d’une pierre de stase. Elle paie bien et ne charme personne, ce qui rend les archivistes encore plus nerveux.", minDay: 16, truth: "vraie", leadKnowledge: "heard_rumor_stasis" },
   { id: "rumor-tzekarun-seventh-gear", location: "tzekarun", spots: ["tzekarun-workshop"], source: "Apprenti mécanicien", text: "Le septième engrenage de la grande horloge n’existe que les jours pairs. Nous sommes un jour impair, donc vous ne pouvez pas vérifier.", minDay: 12, truth: "fausse" },
 ];
 
@@ -1230,14 +1117,6 @@ export const SPONTANEOUS_EVENTS: SpontaneousEvent[] = [
     ],
   },
   {
-    id: "world-bellirith-valurn-truth", title: "La version qu’elle ignorait", location: "akuhn", spots: ["akuhn-archives"], characters: ["bellirith", "valurn"], minDay: 24, minStages: { bellirith: 4, valurn: 4 }, oneTime: true, requiresKnowledge: ["knows_valurn_true_abandonment", "knows_bellirith_mortal_death"], requiresFlags: ["valurn-accountability"], excludesFlags: ["fracture-valurn-bellirith-truth"],
-    intro: [N("Bellirith tient la copie de l’inscription de l’artefact. Valurn ne tente ni plaisanterie ni défense."), L("Bellirith", "Tu l’avais trouvé."), L("Valurn", "Oui."), L("Bellirith", "Et tu as décidé que ma mort était une solution."), L("Valurn", "Oui."), N("Le mot ne demande ni pardon ni compréhension. Il laisse enfin la faute entière dans la pièce.")],
-    choices: [
-      Q("wbvt-s", "Rester disponible sans empêcher Bellirith de partir ni protéger Valurn de sa réaction.", "sangFroid", [L("Bellirith", "Je ne te pardonne pas."), L("Valurn", "Je sais."), N("Bellirith quitte les archives. Vous ne la suivez que lorsqu’elle vous le demande d’un signe.")], { trust: 3, relationshipEffects: { bellirith: { trust: 5 }, valurn: { trust: 3 } }, flags: ["fracture-valurn-bellirith-truth"] }),
-      Q("wbvt-l", "Dire clairement que sa logique lui a retiré tout choix.", "lucidite", [P("Tu as appelé cela réduire sa souffrance. Tu as surtout décidé quelle part d’elle méritait de survivre."), L("Valurn", "Oui."), L("Bellirith", "Garde cette phrase. Moi, je dois décider ce que je fais de lui.")], { trust: 3, relationshipEffects: { bellirith: { trust: 4 }, valurn: { trust: 4 } }, flags: ["fracture-valurn-bellirith-truth"] }),
-    ],
-  },
-  {
     id: "world-lineva-draven-truth", title: "La nouvelle au bout du quai", location: "forthaven", spots: ["forthaven-harbor", "forthaven-memorial"], characters: ["lineva", "draven"], minDay: 22, minStages: { lineva: 5, draven: 4 }, oneTime: true, requiresKnowledge: ["knows_lineva_mother_dead", "knows_draven_fear_return"], requiresFlags: ["main-story-act-1-complete"], excludesFlags: ["lineva-mother-truth-resolved"],
     intro: [N("Draven parle du repas qu’il partagera avec sa femme. Lineva serre dans sa main la lettre toujours non cachetée."), L("Draven", "Lineva ?"), L("Lineva", "Il faut que je te parle de maman."), N("Elle vous regarde une seule fois. Le choix de votre place dans cette vérité reste ouvert.")],
     choices: [
@@ -1290,8 +1169,6 @@ export const RUMOR_KNOWLEDGE: KnowledgeEntry[] = [
   { id: "heard_rumor_allenna_medicine", title: "La commandante soigneuse", summary: "Les soldats d’Akuhn’Nabad savent qu’Allenna maîtrise autant les soins de campagne que les armes.", people: ["allenna"] },
   { id: "heard_rumor_allenna_naiah", title: "Deux sœurs ennemies", summary: "À Akuhn’Nabad, personne n’ignore la haine entre Allenna et Naïah. Son origine exacte demeure discutée.", people: ["allenna", "naiah"] },
   { id: "heard_rumor_amanea_keepsake", title: "Le coffret de la Reine Noire", summary: "Amanea conserve un coffret qu’elle refuse de regarder ou de faire jeter.", people: ["amanea", "naiah"] },
-  { id: "heard_rumor_false_artifact", title: "Les plans sans mécanisme", summary: "Les archives tzekarii suggèrent que l’artefact censé rendre un démon humain n’a jamais eu de fonctionnement réel.", people: ["valurn", "bellirith"] },
-  { id: "heard_rumor_stasis", title: "Une pierre recherchée", summary: "Bellirith consulte discrètement les archives relatives à une ancienne pierre de stase.", people: ["bellirith", "valurn"] },
 ];
 
 export const ALL_KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [...KNOWLEDGE_ENTRIES, ...RUMOR_KNOWLEDGE];
