@@ -34,7 +34,7 @@ export function HNDossier({ progress, game, onScene, onSearch }: {
       title: HN_TITLES[progress.stage], objective: HN_OBJECTIVES[progress.stage],
       action: !searchActive ? <button className="primary-action" onClick={() => onScene(progress.stage)}>{hn.checkpoint ? "Reprendre la conversation" : "Vivre cette étape"}</button> : undefined,
     } : !allDone ? {
-      label: "Rendez-vous ouverts", title: "Trois rendez-vous, dans l’ordre de votre choix", objective: HN_OBJECTIVES[5], action: dateActions,
+      label: "Rendez-vous ouverts", title: "Le lac, la clairière ou votre logis", objective: HN_OBJECTIVES[5], action: dateActions,
     } : undefined}
     completed={allDone ? { title: "Les trois rendez-vous ont eu lieu", description: "Hylee et Naïah se retrouvent désormais de leur propre initiative. Chaque rendez-vous reste rejouable, sans rien changer à la chronique.", status: dateActions } : undefined}
     mechanic={progress.stage >= 4 ? {

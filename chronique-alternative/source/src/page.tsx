@@ -1286,7 +1286,13 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
   });
   const beforeHN = previous.crossQuestSeries[HN_KEY], afterHN = next.crossQuestSeries[HN_KEY];
   if (!beforeHN && afterHN) livingWorldChanges.push({ kind: "story", title: "Une nouvelle série croisée est disponible", detail: "Hylee & Naïah · Ça me rappelle Hylee" });
-  if (beforeHN && afterHN && beforeHN.stage !== afterHN.stage) livingWorldChanges.push({ kind: "story", title: afterHN.stage === 8 ? "Hylee & Naïah · La prochaine sortie est déjà prévue" : "Hylee & Naïah · La suite vous attend", detail: HN_TITLES[afterHN.stage] || "Série accomplie" });
+  if (beforeHN && afterHN && beforeHN.stage !== afterHN.stage) {
+    // Au-delà de l’étape 5, les rendez-vous sont autonomes : on annonce ceux qui restent, sans ordre.
+    const remainingDates = afterHN.stage >= 5 ? HN_DATE_IDS.filter((id) => !afterHN.hn?.choices[id]).map((id) => HN_TITLES[5 + HN_DATE_IDS.indexOf(id)]) : [];
+    livingWorldChanges.push({ kind: "story",
+      title: afterHN.stage === 8 ? "Hylee & Naïah · Les trois rendez-vous ont eu lieu" : afterHN.stage > 5 ? "Hylee & Naïah · D’autres rendez-vous restent ouverts" : afterHN.stage === 5 ? "Hylee & Naïah · Trois rendez-vous s’ouvrent" : "Hylee & Naïah · La suite vous attend",
+      detail: afterHN.stage >= 5 ? (remainingDates.join(" · ") || "Série accomplie") : HN_TITLES[afterHN.stage] || "Série accomplie" });
+  }
   const beforeHR = previous.crossQuestSeries[HR_KEY], afterHR = next.crossQuestSeries[HR_KEY];
   if (!beforeHR && afterHR) livingWorldChanges.push({ kind: "story", title: "Une nouvelle série croisée est disponible", detail: "Hylee & Remerii · Après les Serres" });
   if (beforeHR && afterHR && beforeHR.stage !== afterHR.stage && afterHR.stage < 7) livingWorldChanges.push({ kind: "story", title: afterHR.stage === 6 ? "Une opération est prête aux Serres Rocheuses" : "Hylee et Remerii · La suite vous attend", detail: HR_TITLES[afterHR.stage] });
