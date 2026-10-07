@@ -43,6 +43,10 @@ const DUO_NAMES: Record<string, string> = {
   "group-date-hylee-remerii-wind": "hylee_remerii",
   "group-date-hylee-remerii-home": "hylee_remerii",
   "group-date-hylee-naiah": "hylee_naiah",
+  // Rendez-vous autonomes Hylee / Naïah : mêmes CG de duo, aucun nouvel asset.
+  "group-date-hylee-naiah-place": "hylee_naiah",
+  "group-date-hylee-naiah-one": "hylee_naiah",
+  "group-date-hylee-naiah-home": "hylee_naiah",
   "group-date-naiah-bellirith": "naiah_bellirith",
 };
 
