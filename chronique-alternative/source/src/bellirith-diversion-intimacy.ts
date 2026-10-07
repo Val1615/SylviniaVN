@@ -1,6 +1,22 @@
 import type { DialogueLine } from "./game-data";
-import type { IntimacyMode, PlayerSex } from "./date-scenes";
+import type { PlayerSex } from "./date-scenes";
 import type { IntimacyRoute } from "./intimacy-routes";
+import {
+  BELLIRITH_INTIMACY_MINIMUM_SEQUENCES_VALUE,
+  MODES,
+  SEXES,
+  renderLines,
+  type AuthoredRoute,
+  type BellirithIntimacyContext,
+  type BellirithIntimacyKind,
+} from "./bellirith-intimacy-kit";
+import { APPROACHES, ENDINGS, OPENINGS } from "./bellirith-intimacy-frames";
+import { PRICE_OF_AID_ROUTE } from "./bellirith-intimacy-price-of-aid";
+import { RETURN_AKUHN_ROUTE } from "./bellirith-intimacy-return-akuhn";
+import { BEFORE_LIGHT_ROUTE } from "./bellirith-intimacy-before-light";
+import { COALITION_ROUTE } from "./bellirith-intimacy-coalition";
+import { FREE_FAMILIAR_ROUTE, FREE_FIRST_ROUTE } from "./bellirith-intimacy-free";
+import { DUEL_STEAL_ROUTE, DUEL_TURN_ROUTE } from "./bellirith-intimacy-duel";
 
 /*
  * Intimités manuelles de Bellirith (refonte Acte I).
@@ -13,38 +29,13 @@ import type { IntimacyRoute } from "./intimacy-routes";
  *  C. rendez-vous de fin d’Acte I : un duel, initiative partagée,
  *     `{player}` a choisi « maintenant ».
  *
- * Aucune scène n’est générée : chaque séquence est écrite à la main. Les
- * seules opérations sont des sélections (mode d’intimité, corps choisi,
- * historique par flags).
+ * Aucune scène n’est générée : chaque séquence est écrite à la main
+ * (fichiers bellirith-intimacy-*.ts). Les seules opérations sont des
+ * sélections (mode d’intimité, corps choisi, historique par flags).
  */
 
-export type BellirithIntimacyContext =
-  | "bellirith-diversion-price-of-aid"
-  | "bellirith-diversion-return-akuhn"
-  | "bellirith-diversion-before-light"
-  | "bellirith-diversion-coalition"
-  | "bellirith-free"
-  | "date-bellirith-final";
-export type BellirithIntimacyKind = "diversion" | "free" | "duel";
+export type { BellirithIntimacyContext, BellirithIntimacyKind } from "./bellirith-intimacy-kit";
 export type BellirithApproach = { id: string; text: string; lines: DialogueLine[] };
-
-type Speaker = "Bellirith" | "{player}";
-type SexTriplet = readonly [femme: string, homme: string, intersexe: string];
-type RawLine =
-  | string
-  | readonly [speaker: Speaker, text: string, mood?: string]
-  | { x: SexTriplet; speaker?: Speaker; mood?: string };
-type Chapter = { all: RawLine[] } | Record<IntimacyMode, RawLine[]>;
-type AuthoredRoute = {
-  id: string;
-  context: BellirithIntimacyContext;
-  text: string;
-  detail: string;
-  /** Routes réservées à un historique précis (familière / inventive…). */
-  requiresFlags?: string[];
-  excludesFlags?: string[];
-  chapters: Chapter[];
-};
 
 export const BELLIRITH_INTIMACY_CONTEXTS: BellirithIntimacyContext[] = [
   "bellirith-diversion-price-of-aid",
@@ -55,36 +46,19 @@ export const BELLIRITH_INTIMACY_CONTEXTS: BellirithIntimacyContext[] = [
   "date-bellirith-final",
 ];
 export const BELLIRITH_FREE_SOURCES = ["bellirith-free", "bellirith-free-confidence", "date-bellirith-music", "date-bellirith-market"];
-const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
-export const BELLIRITH_INTIMACY_MINIMUM_SEQUENCES = 12;
-export const BELLIRITH_INTIMACY_MINIMUM_WORDS: Record<IntimacyMode, number> = { explicite: 1000, suggestif: 450, tendre: 250, ellipse: 150 };
+export const BELLIRITH_INTIMACY_MINIMUM_SEQUENCES = BELLIRITH_INTIMACY_MINIMUM_SEQUENCES_VALUE;
+export { BELLIRITH_INTIMACY_MINIMUM_WORDS } from "./bellirith-intimacy-kit";
 
-const A = (...all: RawLine[]): Chapter => ({ all });
-const M = (tendre: RawLine[], suggestif: RawLine[], explicite: RawLine[], ellipse: RawLine[]): Chapter => ({ tendre, suggestif, explicite, ellipse });
-const X = (femme: string, homme: string, intersexe: string): RawLine => ({ x: [femme, homme, intersexe] });
-const XB = (femme: string, homme: string, intersexe: string, mood?: string): RawLine => ({ x: [femme, homme, intersexe], speaker: "Bellirith", mood });
-const B = (text: string, mood?: string): RawLine => ["Bellirith", text, mood] as const;
-const P = (text: string): RawLine => ["{player}", text] as const;
-
-function lines(raw: RawLine[], sex: PlayerSex): DialogueLine[] {
-  return raw.map((entry) => {
-    if (typeof entry === "string") return { speaker: "Narration", text: entry };
-    if ("x" in entry) {
-      const index = SEXES.indexOf(sex);
-      return { speaker: entry.speaker || "Narration", text: entry.x[index], ...(entry.mood ? { mood: entry.mood } : {}) };
-    }
-    return { speaker: entry[0], text: entry[1], ...(entry[2] ? { mood: entry[2] } : {}) };
-  });
-}
-
-// ─── Contenu ────────────────────────────────────────────────────────────
-// (rempli plus bas : ouvertures, approches, routes, fins)
-
-const ROUTES: AuthoredRoute[] = [];
-const OPENINGS: Record<BellirithIntimacyContext, (flags: string[], source?: string) => RawLine[]> = {} as Record<BellirithIntimacyContext, (flags: string[], source?: string) => RawLine[]>;
-const ENDINGS: Record<BellirithIntimacyContext, (flags: string[], source?: string) => RawLine[]> = {} as Record<BellirithIntimacyContext, (flags: string[], source?: string) => RawLine[]>;
-const APPROACHES: Record<BellirithIntimacyKind, (flags: string[]) => { id: string; text: string; lines: RawLine[] }[]> = {} as Record<BellirithIntimacyKind, (flags: string[]) => { id: string; text: string; lines: RawLine[] }[]>;
+const ROUTES: AuthoredRoute[] = [
+  PRICE_OF_AID_ROUTE,
+  RETURN_AKUHN_ROUTE,
+  BEFORE_LIGHT_ROUTE,
+  COALITION_ROUTE,
+  FREE_FAMILIAR_ROUTE,
+  FREE_FIRST_ROUTE,
+  DUEL_STEAL_ROUTE,
+  DUEL_TURN_ROUTE,
+];
 export const BELLIRITH_INTIMACY_TITLES: Record<BellirithIntimacyContext, string> = {
   "bellirith-diversion-price-of-aid": "Le salon des miroirs",
   "bellirith-diversion-return-akuhn": "Les bains au-dessus de la salle de musique",
@@ -100,7 +74,7 @@ export const BELLIRITH_INTIMACY_BACKGROUNDS: Record<BellirithIntimacyContext, st
   "bellirith-diversion-before-light": "/assets/backgrounds/terrace.webp",
   "bellirith-diversion-coalition": "/assets/backgrounds/ballroom.webp",
   "bellirith-free": "/assets/backgrounds/bedroom.webp",
-  "date-bellirith-final": "/assets/backgrounds/ballroom.webp",
+  "date-bellirith-final": "/assets/backgrounds/music_room.webp",
 };
 /** Intimités Bellirith hors rendez-vous planifié, relisibles depuis les souvenirs. */
 export const BELLIRITH_REPLAYABLE_INTIMACIES = [
@@ -141,15 +115,15 @@ export function bellirithIntimacyKind(context: BellirithIntimacyContext): Bellir
 }
 
 export function bellirithIntimacyOpening(context: BellirithIntimacyContext, flags: string[], sex: PlayerSex, source?: string): DialogueLine[] {
-  return lines(OPENINGS[context]?.(flags, source) || [], sex);
+  return renderLines(OPENINGS[context]?.(flags, source) || [], sex, flags);
 }
 
 export function bellirithIntimacyEnding(context: BellirithIntimacyContext, flags: string[], sex: PlayerSex, source?: string): DialogueLine[] {
-  return lines(ENDINGS[context]?.(flags, source) || [], sex);
+  return renderLines(ENDINGS[context]?.(flags, source) || [], sex, flags);
 }
 
 export function bellirithIntimacyApproaches(context: BellirithIntimacyContext, flags: string[], sex: PlayerSex): BellirithApproach[] {
-  return (APPROACHES[bellirithIntimacyKind(context)]?.(flags) || []).map((entry) => ({ id: entry.id, text: entry.text, lines: lines(entry.lines, sex) }));
+  return (APPROACHES[bellirithIntimacyKind(context)]?.(flags) || []).map((entry) => ({ id: entry.id, text: entry.text, lines: renderLines(entry.lines, sex, flags) }));
 }
 
 function routeMatches(route: AuthoredRoute, flags: string[]) {
@@ -157,19 +131,32 @@ function routeMatches(route: AuthoredRoute, flags: string[]) {
     && !(route.excludesFlags || []).some((flag) => flags.includes(flag));
 }
 
-function buildRoute(route: AuthoredRoute, sex: PlayerSex): IntimacyRoute {
-  const chapters = Object.fromEntries(MODES.map((mode) => [mode, route.chapters.map((chapter) => lines("all" in chapter ? chapter.all : chapter[mode], sex))])) as Record<IntimacyMode, DialogueLine[][]>;
-  return { id: route.id, text: route.text, detail: route.detail, chapters };
+function buildRoute(route: AuthoredRoute, sex: PlayerSex, flags: string[]): IntimacyRoute {
+  const chapters = Object.fromEntries(MODES.map((mode) => [mode, route.chapters.map((chapter) => renderLines("all" in chapter ? chapter.all : chapter[mode], sex, flags))])) as IntimacyRoute["chapters"];
+  return { id: route.id, text: route.text, detail: route.detail, chapters, ...(route.visual ? { visual: route.visual } : {}) };
 }
 
 export function bellirithIntimacyRoutes(context: BellirithIntimacyContext, sex: PlayerSex, flags: string[]): IntimacyRoute[] {
   const candidates = ROUTES.filter((route) => route.context === context);
   const matching = candidates.filter((route) => routeMatches(route, flags));
-  return (matching.length ? matching : candidates).map((route) => buildRoute(route, sex));
+  return (matching.length ? matching : candidates).map((route) => buildRoute(route, sex, flags));
 }
 
-export function allBellirithIntimacyRoutes(): { context: BellirithIntimacyContext; id: string; sex: PlayerSex; route: IntimacyRoute }[] {
-  return ROUTES.flatMap((route) => SEXES.map((sex) => ({ context: route.context, id: route.id, sex, route: buildRoute(route, sex) })));
-}
+/** Pour les validateurs : chaque route, chaque corps, et les deux états d’historique les plus contrastés. */
+export const BELLIRITH_VALIDATION_HISTORIES: { label: string; flags: string[] }[] = [
+  { label: "premier contact", flags: [] },
+  { label: "déjà amants, favori", flags: ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"] },
+  { label: "refus répétés", flags: ["bellirith-has-resisted", "bellirith-trend:resisted"] },
+];
 
-export const __bellirithIntimacyAuthoring = { ROUTES, OPENINGS, ENDINGS, APPROACHES, A, M, X, XB, B, P };
+export function allBellirithIntimacyRoutes(): { context: BellirithIntimacyContext; id: string; sex: PlayerSex; history: string; requiresFlags: string[]; excludesFlags: string[]; route: IntimacyRoute }[] {
+  return ROUTES.flatMap((route) => SEXES.flatMap((sex) => BELLIRITH_VALIDATION_HISTORIES.map((history) => ({
+    context: route.context,
+    id: route.id,
+    sex,
+    history: history.label,
+    requiresFlags: route.requiresFlags || [],
+    excludesFlags: route.excludesFlags || [],
+    route: buildRoute(route, sex, history.flags),
+  }))));
+}
