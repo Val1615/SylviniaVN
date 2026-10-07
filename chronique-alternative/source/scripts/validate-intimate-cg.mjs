@@ -35,13 +35,16 @@ const server = await createServer({ root: sourceRoot, appType: "custom", logLeve
 try {
   const cg = await server.ssrLoadModule("/src/intimate-cg.ts");
   assert.equal(Object.keys(cg.SOLO_INTIMATE_CG).length, 12, "douze couples de CG solo requis");
-  assert.equal(Object.keys(cg.DUO_INTIMATE_CG).length, 13, "treize contextes de CG duo requis");
+  assert.equal(Object.keys(cg.DUO_INTIMATE_CG).length, 16, "seize contextes de CG duo requis (dont les trois rendez-vous Hylee/Naïah)");
+  for (const id of ["group-date-hylee-naiah-place", "group-date-hylee-naiah-one", "group-date-hylee-naiah-home"]) {
+    assert.deepEqual(cg.DUO_INTIMATE_CG[id], cg.DUO_INTIMATE_CG["group-date-hylee-naiah"], `${id}: seules les CG Hylee/Naïah existantes peuvent être réutilisées`);
+  }
 
   const assets = [
     ...Object.values(cg.SOLO_INTIMATE_CG),
     ...Object.values(cg.DUO_INTIMATE_CG),
   ].flatMap((entry) => [entry.reveal, entry.postOrgasm]);
-  assert.equal(assets.length, 50, "cinquante références de CG requises");
+  assert.equal(assets.length, 56, "cinquante-six références de CG requises");
   assert.equal(new Set(assets).size, 40, "les nouveaux rendez-vous doivent réutiliser uniquement les deux récompenses duo autorisées");
   for (const asset of new Set(assets)) {
     const relativeAsset = asset.replace(/^\/?assets\//, "assets/");
@@ -87,6 +90,11 @@ try {
   assert.equal(manualGroup(5).useIntimateSprites, true, "trio manuel : sprites absents après la CG");
   assert.equal(manualGroup(10).useIntimateSprites, true, "trio manuel : sprites perdus avant l’après-scène");
   assert.equal(manualGroup(11).cg?.phase, "post-orgasm", "trio manuel : post-orgasm seulement après le seuil déclaré");
+  const hnGroup = (chapter) => cg.groupIntimateVisualState({ pairId: "group-date-hylee-naiah-home", mode: "explicite", step: "direction-lines", chapter, revealChapter: 5, postOrgasmChapter: 11 });
+  assert.equal(hnGroup(4).cg, undefined, "Hylee/Naïah : reveal trop précoce");
+  assert.equal(hnGroup(5).cg?.phase, "reveal", "Hylee/Naïah : reveal au chapitre déclaré");
+  assert.equal(hnGroup(8).useIntimateSprites, true, "Hylee/Naïah : sprites intimes entre les CG");
+  assert.equal(hnGroup(11).cg?.phase, "post-orgasm", "Hylee/Naïah : post-orgasm au seuil déclaré");
 
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`intimacy-sprite/, "solo : la CG doit remplacer le sprite");
   assert.match(pageSource, /intimateCg \? <IntimateCg cg=\{intimateCg\} \/> : <div className=\{`group-intimacy-sprites/, "duo : la CG doit remplacer tous les sprites");
