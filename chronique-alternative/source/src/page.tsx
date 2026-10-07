@@ -51,6 +51,7 @@ import {
   bellirithAcceptedCount,
   bellirithDiversionForChoice,
   bellirithFilStage,
+  bellirithThreadSummary,
   bellirithFlagsWithTrend,
   bellirithIntrusionAfter,
   bellirithIntrusionById,
@@ -1238,6 +1239,8 @@ function characterDescriptor(character: CharacterData) {
 }
 
 function relationshipNarrativeProgress(game: GameState, characterId: string) {
+  // Bellirith n’a pas de route classique en Acte I : son fil = 4 intrusions + chapitre IX.
+  if (characterId === "bellirith") return { scenes: [] as RouteScene[], total: 5, completed: bellirithFilStage(game) };
   const scenes = ROUTE_SCENES.filter((scene) => scene.character === characterId).sort((left, right) => left.stage - right.stage);
   const historyCount = scenes.filter((scene) => game.history.includes(scene.id)).length;
   const relationStage = game.relationships[characterId]?.stage || 0;
@@ -1328,7 +1331,9 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
       relationChanges.push({
         kind: "relation",
         title: `Fil de ${character.name} · ${progress.completed}/${progress.total}`,
-        detail: nextVariant
+        detail: character.id === "bellirith"
+          ? bellirithThreadSummary(next).title
+          : nextVariant
           ? confidenceObjective || `Prochaine scène · ${nextVariant.title}`
           : "Toutes les scènes narratives sont accomplies.",
       });
@@ -5357,7 +5362,8 @@ function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, o
       {threads.map(({ character, relation, progress, scene, unlocked, needed, confidenceObjective, target, confidences }) => {
         const scenePlace = scene ? spotById(ROUTE_SPOTS[scene.id]) : undefined;
         const periods = scene ? ROUTE_PERIODS[scene.id]?.map((id) => PERIODS.find((entry) => entry.id === id)?.label).filter(Boolean).join(" / ") : "";
-        const objective = !unlocked
+        const belThread = character.id === "bellirith" && unlocked ? bellirithThreadSummary(game) : undefined;
+        const objective = belThread ? belThread.objective : !unlocked
           ? character.id === "tia" && game.day >= character.unlockDay ? "Approfondissez d’abord votre compréhension d’Amanea : Tia demeure encore une institution, pas une relation personnelle." : `Ce fil deviendra accessible au jour ${character.unlockDay}.`
           : !scene
             ? "Toutes les scènes narratives de ce personnage ont été accomplies. Les moments libres et rendez-vous restent disponibles."
@@ -5368,13 +5374,13 @@ function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, o
               : needed > 0
                 ? `Renforcez encore ce lien de ${needed} point${needed > 1 ? "s" : ""}, puis rejoignez ${scenePlace?.name || "le lieu indiqué"}.`
                 : `Rejoignez ${scenePlace?.name || "le lieu indiqué"}${periods ? ` · ${periods}` : ""}.`;
-        const status = !unlocked ? character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial" : `Jour ${character.unlockDay}` : !scene ? "Accompli" : confidenceObjective ? "Confidence" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
-        return <article className={`quest-card relation-thread-card ${!unlocked ? "locked" : ""} ${!scene ? "complete" : ""}`} key={character.id}>
+        const status = belThread ? (belThread.done ? "Accompli" : `${belThread.completed} / ${belThread.total}`) : !unlocked ? character.id === "tia" && game.day >= character.unlockDay ? "Accès impérial" : `Jour ${character.unlockDay}` : !scene ? "Accompli" : confidenceObjective ? "Confidence" : game.day < scene.dayMin ? `Jour ${scene.dayMin}` : needed ? `Lien +${needed}` : "Disponible";
+        return <article className={`quest-card relation-thread-card ${!unlocked ? "locked" : ""} ${(belThread ? belThread.done : !scene) ? "complete" : ""}`} key={character.id}>
           <img src={character.portrait} alt="" />
           <div>
             <div className="relation-thread-heading"><span style={{ color: character.color }}>{character.name}</span><small>Scènes narratives · {progress.completed} / {progress.total}{confidences ? ` · ${confidences} confidence${confidences > 1 ? "s" : ""} découverte${confidences > 1 ? "s" : ""}` : ""}</small></div>
             <div className="relation-thread-progress"><i style={{ width: `${progress.total ? (progress.completed / progress.total) * 100 : 0}%`, background: character.color }} /></div>
-            <h3>{scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
+            <h3>{belThread ? belThread.title : scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
             <p><b>Objectif :</b> {objective}</p>
             {unlocked && scene && !confidenceObjective && !needed && target && <button onClick={() => onWaitForRoute(scene.id)}>Attendre et rejoindre · {waitDurationLabel(game, target)}</button>}
           </div>
@@ -7306,7 +7312,7 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
         <li className={needed ? "" : "ok"}>Lien {bond} / {threshold}{needed ? ` · encore ${needed}` : ""}</li>
         {game.day < nextScene.dayMin ? <li>À partir du jour {nextScene.dayMin}</li> : <li className="ok">Jour atteint</li>}
         {objective ? <li>{objective}</li> : <li className={routeSpot && schedule.spot === routeSpot.id ? "ok" : ""}>{routeSpot?.name || "Lieu indiqué"}{routePeriods ? ` · ${routePeriods}` : ""}</li>}
-      </ul></div> : <div className="prochain max"><span className="surtitre">Fil narratif accompli</span><p>Les {progress.total} scènes de lien sont vécues. Les moments libres et rendez-vous restent disponibles.</p></div>}
+      </ul></div> : character.id === "bellirith" ? (() => { const thread = bellirithThreadSummary(game); return <div className={`prochain ${thread.done ? "max" : ""}`}><span className="surtitre">Interférences · {thread.completed} / {thread.total} · {thread.title}</span><p>{thread.objective}</p></div>; })() : <div className="prochain max"><span className="surtitre">Fil narratif accompli</span><p>Les {progress.total} scènes de lien sont vécues. Les moments libres et rendez-vous restent disponibles.</p></div>}
       <blockquote className="citation">{character.tagline}</blockquote>
       <div className="fiche-infos">
         <div><span className="surtitre">Présence actuelle</span><p className="texte">{schedule.traveling ? `Escale · ${scheduleSpot?.name || ""}` : `${scheduleLocation?.name || ""} · ${scheduleSpot?.shortName || ""}`} — {schedule.action}</p></div>

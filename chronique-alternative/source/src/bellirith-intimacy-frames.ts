@@ -232,7 +232,8 @@ export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
   ],
   "date-bellirith-final": () => [
     "Quand vous quittez la salle de musique, l’aube n’est pas encore levée sur Akuhn’Nabad. Elle ne vous raccompagne pas. Elle reste assise au piano, nue sous un châle, et joue quelque chose de lent avec une seule main.",
-    B("{player}. La prochaine fois, je ne te laisserai pas l’égalité.", "seductive"),
+    B("{player}. Au début, je me disais : je peux te faire céder. Ce soir, j’ai compris que tu pouvais me tenir tête.", "thoughtful"),
+    B("Alors voyons lequel de nous deux fera craquer l’autre. Et la prochaine fois, je ne te laisserai pas l’égalité.", "seductive"),
     P("La prochaine fois, je ne te la proposerai pas."),
     "Elle rit, et le piano rit avec elle. Quelque chose vient de commencer, qui ne ressemble ni à une conquête ni à une romance. Un jeu à deux, dont aucun des deux ne connaît encore les règles — et qu’aucun des deux n’a l’intention de perdre.",
   ],
