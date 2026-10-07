@@ -40,6 +40,13 @@ export type ChoiceData = {
   requiresRelationship?: { character: string; stage?: number; trust?: number; affection?: number; desire?: number }[];
   requiresKnowledge?: string[];
   dateOutcome?: "great" | "good" | "awkward";
+  /** Suite immédiate jouée après la réponse (ex. tentative de détournement de Bellirith). */
+  followUp?: { intro: DialogueLine[]; choices: ChoiceData[] }[];
+  /** Ouvre une intimité Bellirith hors rendez-vous à la fermeture de la scène (choix déjà accepté par le joueur). */
+  launchesIntimacy?: string;
+  /** Choix visible seulement selon l’historique (moments libres). */
+  requiresFlags?: string[];
+  excludesFlags?: string[];
 };
 
 export type RouteScene = {

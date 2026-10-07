@@ -29,6 +29,8 @@ export type CampaignScene = {
   requiresKnowledge?: string[];
   intro: DialogueLine[];
   variants?: CampaignVariant[];
+  /** Lignes communes jouées après les variantes (convergence de plusieurs historiques). */
+  afterVariants?: DialogueLine[];
   outro?: DialogueLine[];
   choices: ChoiceData[];
 };
@@ -1126,27 +1128,13 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
       N("La coalition n'a pas de salle commune. Les plans voyagent sous double sceau. Allenna commandera les forces d'Akuhn’Nabad depuis l'est, Draven tiendra l'ouest, et aucun soldat ne franchira la ligne centrale sans signal."),
       L("Iriana", "{player} circulera entre les postes avec les copies vérifiées. Si les communications divergent, nous revenons aux originaux."),
       L("Tia", "Vous lui confiez une liberté considérable."),
-      L("Iriana", "Je lui confie une tâche qu'il a déjà accomplie sous davantage de contraintes."),
+      L("Iriana", "Je lui confie une tâche déjà accomplie sous davantage de contraintes."),
       N("Iriana ne cherche pas votre réaction après cette phrase. Elle vous consulte sur la position du fragment et modifie le plan lorsque vous signalez une résonance instable."),
       L("Valurn", "Le portail possède trois ancrages démoniaques. J'en neutralise un, Allenna le second. Le troisième devra être brisé physiquement."),
       L("Tia", "Par Draven."),
-      L("Valurn", "Ou par votre sens de l'humour, si vous acceptez enfin de le sortir de sa stase."),
+      L("Valurn", "Ou par votre sens de l'humour, si vous acceptez enfin de le sortir des archives."),
       L("Tia", "Draven."),
       L("Valurn", "Draven, donc."),
-      N("La porte s'ouvre sans annonce. Bellirith entre comme si l'absence d'invitation était un détail de décoration."),
-      L("Bellirith", "Vous travaillez encore ?"),
-      L("Valurn", "Certains ont des occupations."),
-      N("Bellirith s'approche d'Iriana, un peu trop près. Son regard glisse sur la carte puis revient au contrôle parfait de son visage."),
-      L("Bellirith", "Je vois ça."),
-      L("Iriana", "Si vous avez une information, donnez-la."),
-      L("Bellirith", "Et si j'étais simplement venue profiter de votre compagnie ?"),
-      L("Iriana", "Ce serait inquiétant."),
-      L("Bellirith", "Voilà pourquoi je vous apprécie. Vous rendez même le rejet séduisant."),
-      N("Valurn ferme les yeux."),
-      L("Valurn", "Bellirith."),
-      N("Elle se tourne immédiatement vers lui. Sa satisfaction n'a rien à voir avec Alamma."),
-      L("Bellirith", "Cette voix-là. Intéressant."),
-      N("Elle n'apporte aucune preuve, aucune clé et aucune solution. Elle vient de découvrir que le calme de Valurn se fissure à l'idée de la savoir près du portail."),
     ],
     variants: [
       { requiresFlags: ["amanea-letter-to-tia"], lines: [
@@ -1159,6 +1147,61 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Iriana", "Si nous refusons toute coordination, nous fabriquons l'incident qu'Alamma attend."),
         L("Tia", "Alors coordonnez les horaires. Je ne reconnais pas leur commandement."),
       ] },
+      // Bellirith · le chapitre IX réagit à tout l’historique des intrusions.
+      { excludesFlags: ["bellirith-trend:ceded", "bellirith-trend:resisted", "bellirith-trend:mixed"], lines: [
+        N("La porte s'ouvre sans annonce. Bellirith entre comme si l'absence d'invitation était un détail de décoration."),
+        L("Bellirith", "Vous travaillez encore ?", "smirk"),
+        L("Valurn", "Certains ont des occupations."),
+        N("Bellirith s'approche d'Iriana, un peu trop près. Son regard glisse sur la carte puis revient au contrôle parfait de son visage."),
+        L("Bellirith", "Et si j'étais simplement venue profiter de votre compagnie ?", "seductive"),
+        L("Iriana", "Ce serait inquiétant."),
+        L("Bellirith", "Voilà pourquoi je vous apprécie. Vous rendez même le rejet séduisant.", "teasing"),
+        N("Puis ses yeux tombent sur vous, et s'y arrêtent avec une gourmandise qu'elle ne prend pas la peine de cacher."),
+        L("Bellirith", "Et voilà donc la curiosité de mon frère. On m'avait dit « étrange ». On avait oublié « appétissant·e ».", "seductive"),
+      ] },
+      { requiresFlags: ["bellirith-trend:ceded", "bellirith-favorite"], lines: [
+        N("La porte s'ouvre sans annonce. Bellirith n'entre pas : elle revient, avec la démarche de quelqu'un qui retrouve une pièce où elle a laissé un vêtement."),
+        L("Bellirith", "Bonsoir, mon favori.", "seductive"),
+        N("Elle le dit à voix haute, devant Tia, devant Iriana, devant la carte de l'Empire. Elle passe derrière vous et pose deux doigts exactement à l'endroit de votre nuque où elle sait que votre souffle se coince."),
+        L("Tia", "Son favori ?"),
+        L("Valurn", "Elle en a eu quatre cents. Le dernier a fini par élever des chèvres dans les Calciterres pour retrouver le calme.", "amused"),
+        L("Bellirith", "Trois cent quatre-vingt-dix. Et les chèvres l'adoraient.", "smirk"),
+        L("Valurn", "Je vous avais pourtant prévenu·e. Elle vous a eu combien de fois, déjà ? Non, ne répondez pas : elle le fera à votre place, avec des détails.", "amused"),
+        N("Iriana ne dit rien. Elle déplace simplement votre copie du protocole de quelques pouces vers vous, comme pour rappeler sur quelle table elle se trouve."),
+      ] },
+      { requiresFlags: ["bellirith-trend:ceded"], excludesFlags: ["bellirith-favorite"], lines: [
+        N("La porte s'ouvre sans annonce. Bellirith entre très sûre d'elle, et vient droit sur vous comme on rejoint une place déjà chauffée."),
+        L("Bellirith", "Tu as encore ce pli entre les sourcils quand tu réfléchis. Je sais comment le défaire. Tu le sais aussi.", "teasing"),
+        L("Iriana", "Ce n'est donc pas la première fois.", "calm"),
+        L("Bellirith", "Chérie, vous compteriez beaucoup mieux que moi. J'ai toujours été distraite pendant.", "smirk"),
+        L("Valurn", "Prévisible. Pardon, {player}, je parlais de vous.", "amused"),
+      ] },
+      { requiresFlags: ["bellirith-trend:resisted"], lines: [
+        N("La porte s'ouvre. Bellirith entre — et ne regarde pas Valurn."),
+        N("Valurn s'en aperçoit avant vous. Il suit des yeux sa sœur qui traverse la salle sans un regard pour lui, chose qui, de mémoire, ne s'est jamais produite. Son sourire se fige à moitié."),
+        L("Valurn", "Tiens. Je ne suis plus le spectacle.", "surprised"),
+        L("Bellirith", "Ne sois pas jaloux, mon frère. Tu as eu des siècles.", "cold"),
+        N("Elle s'arrête devant vous. Elle ne vous touche pas. Elle vous regarde avec une attention si précise qu'elle en devient presque inconfortable, comme si elle avait passé des nuits entières à reconstituer vos refus un par un."),
+        L("Bellirith", "Tu m'as dit non. Plusieurs fois. Avec les yeux, un peu plus souvent. Je suis venue voir si tu oserais le faire devant témoins.", "thoughtful"),
+        L("Iriana", "Si vous avez une information, donnez-la."),
+        L("Bellirith", "J'en ai une : votre agent est la seule personne de cette pièce que je n'arrive pas à faire tomber. C'est une information militaire de premier ordre.", "smirk"),
+      ] },
+      { requiresFlags: ["bellirith-trend:mixed"], lines: [
+        N("La porte s'ouvre. Bellirith entre, jette un regard à Valurn par habitude, puis à vous — et s'arrête une demi-seconde sur le seuil. Chez elle, une demi-seconde d'hésitation ressemble à un séisme."),
+        L("Bellirith", "Je ne sais plus du tout ce que tu vas faire. Une fois tu m'as suivie, une fois tu m'as laissée seule avec mon parfum. Ça m'agace prodigieusement.", "thoughtful"),
+        L("Valurn", "Elle hésite. Notez la date, Votre Majesté. C'est historique.", "amused"),
+        L("Tia", "Je note surtout qu'elle se trouve dans ma salle du Conseil sans invitation."),
+        L("Bellirith", "Une invitation, c'est une permission. Je préfère les défis.", "teasing"),
+      ] },
+    ],
+    afterVariants: [
+      N("Bellirith s'appuie sur la carte, juste au-dessus du marqueur du portail, et tend vers vous une main ouverte."),
+      L("Bellirith", "Viens. Ils n'ont pas besoin de toi pour colorier des flèches. Ce soir, je t'offre mieux qu'un protocole.", "seductive"),
+      N("Valurn ferme les yeux."),
+      L("Valurn", "Bellirith."),
+      N("Elle se tourne immédiatement vers lui. Il n'a pas employé sa voix de salon ; il a employé une voix qu'elle reconnaît, et sa satisfaction n'a rien à voir avec Alamma."),
+      L("Bellirith", "Cette voix-là. Intéressant.", "smirk"),
+      N("Elle n'apporte aucune preuve, aucune clé et aucune solution. Elle vient de découvrir que le calme de Valurn se fissure à l'idée de la savoir près du portail — et elle attend, la main tendue, de voir de quel côté de la table vous allez rester."),
     ],
     choices: [
       Q("coalition-protocol", "Créer un protocole que chaque camp peut vérifier", "lucidite", "Trois signaux identiques, confirmés séparément. Aucun ordre transmis oralement ne déplace une unité. Alamma ne pourra pas fabriquer une voix de plus.", [
@@ -1167,22 +1210,29 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Iriana", "Et par ceux d'Allenna. Une confirmation unique ne vaut rien."),
         L("Valurn", "Je propose un quatrième signal pour annoncer que Bellirith s'ennuie."),
         L("Bellirith", "Inutile. Tout le monde le sent déjà."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-verification"], trust: 4, relationshipEffects: { tia: { trust: 3 }, valurn: { trust: 3 }, bellirith: { affection: 2 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-verification", "bellirith-coalition:resisted"], trust: 4, relationshipEffects: { tia: { trust: 3 }, valurn: { trust: 3 }, bellirith: { affection: 1, desire: 4 } } }),
       Q("coalition-friction", "Prévoir les désaccords au lieu d'exiger l'unité", "sangFroid", "Désignons maintenant qui tranche chaque type de conflit. La coopération survivra mieux à sa première dispute si elle ne dépend pas de la bonne volonté.", [
         N("Tia approuve d'un mouvement presque imperceptible. Iriana vous laisse répartir les cas militaires, magiques et civils avant de corriger deux chevauchements."),
         L("Valurn", "Une alliance fondée sur la certitude qu'elle va se disputer. Enfin une institution honnête."),
         L("Bellirith", "Tu as toujours préféré les relations qui annoncent leurs défauts."),
         N("Valurn ne répond pas. Elle a obtenu son second silence et décide que la soirée n'est pas perdue."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-conflict-rules"], trust: 3, relationshipEffects: { tia: { trust: 4 }, valurn: { trust: 2 }, bellirith: { desire: 2 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-conflict-rules", "bellirith-coalition:resisted"], trust: 3, relationshipEffects: { tia: { trust: 4 }, valurn: { trust: 2 }, bellirith: { desire: 5 } } }),
       Q("coalition-bellirith", "Refuser de laisser Bellirith détourner la préparation", "audace", "Tu as trouvé ce que tu cherchais chez Valurn. Maintenant, soit tu restes sans saboter le plan, soit tu sors.", [
-        N("Bellirith vous regarde comme si vous veniez enfin d'entrer dans la pièce."),
+        N("Bellirith vous regarde avec un intérêt soudain et aigu, comme si la soirée venait enfin de commencer."),
         L("Bellirith", "Une limite en public. Tu espères me vexer ou m'intéresser ?"),
         P("Je veux terminer cette carte."),
         N("Elle sourit, puis s'assoit loin de Valurn."),
         L("Bellirith", "Alors termine. Je serai parfaitement sage pendant au moins trois minutes."),
         L("Iriana", "Deux suffiront."),
         N("Bellirith rit. Le travail reprend sans qu'elle ait pris le volant de l'enquête."),
-      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-bellirith-boundary"], affection: 2, trust: 2, desire: 2, relationshipEffects: { iriana: { affection: 2, trust: 2 }, valurn: { trust: 4 }, tia: { trust: 1 } } }),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-bellirith-boundary", "bellirith-coalition:resisted"], affection: 2, trust: 2, relationshipEffects: { iriana: { affection: 2, trust: 2 }, valurn: { trust: 4 }, tia: { trust: 1 }, bellirith: { affection: 1, desire: 6 } } }),
+      Q("coalition-follow-bellirith", "Laisser la carte et suivre Bellirith", "audace", "Le protocole peut s'écrire sans moi pendant une heure.", [
+        L("Bellirith", "Une heure. Tu es adorable quand tu crois que c'est toi qui fixes la durée.", "seductive"),
+        L("Iriana", "Le protocole partira à l'aube, avec ou sans votre regard. Je le préférais avec."),
+        L("Valurn", "Pas ce soir, Bellirith. Pas avec ce portail.", "cold"),
+        L("Bellirith", "Surtout ce soir, mon frère. Les veilles de bataille sont les seules nuits honnêtes.", "smirk"),
+        N("Tia ne lève pas les yeux de la carte. Elle remplace simplement votre nom par celui d'un officier sur le relevé des courriers. La plume ne tremble pas, et c'est pire que si elle tremblait."),
+      ], { flags: ["story-coalition-ready", "story-bellirith-met", "coalition-bellirith-followed", "bellirith-coalition:accepted"], trust: -5, relationshipEffects: { tia: { trust: -2 }, valurn: { trust: -2 }, bellirith: { affection: 3 } } }),
     ],
     outro: [
       N("À l'aube, les ordres sont partis séparément. Hylee et Remerii n'ont pas été appelées : leur magie humaine n'est ni une ressource impériale ni un secret que vous avez le droit de sacrifier à la commodité."),
@@ -1422,6 +1472,7 @@ export function campaignSceneDialogue(scene: CampaignScene, game: CampaignState)
   return [
     ...scene.intro,
     ...(scene.variants || []).filter((variant) => variantMatches(variant, game)).flatMap((variant) => variant.lines),
+    ...(scene.afterVariants || []),
   ];
 }
 

@@ -42,6 +42,32 @@ import { INTIMACY_PROFILES, directionChapters, intimacyDirections, intimacyEndin
 import { linevaDateApproaches, linevaDateIntimacyPhase } from "./lineva-date-intimacy";
 import { allennaDateApproaches, allennaDateIntimacyPhase } from "./allenna-date-intimacy";
 import { hyleeDateApproaches, hyleeDateIntimacyEnding, hyleeDateIntimacyOpening, hyleeDateIntimacyPhase, hyleeDateIntimacyRoutes, hyleeIntimacyContext } from "./hylee-date-intimacy";
+import {
+  BELLIRITH_COALITION_CEDED_FLAG,
+  BELLIRITH_FAVORITE_FLAG,
+  BELLIRITH_INTRUSIONS,
+  BELLIRITH_MIGRATION_MARKER,
+  BELLIRITH_SLEPT_FLAG,
+  bellirithAcceptedCount,
+  bellirithDiversionForChoice,
+  bellirithFilStage,
+  bellirithFlagsWithTrend,
+  bellirithIntrusionAfter,
+  bellirithIntrusionById,
+  bellirithIntrusionFlag,
+  bellirithPendingLive,
+  markMissedBellirithIntrusions,
+  bellirithIntrusionResolved,
+  bellirithIntrusionScene,
+  bellirithResolutionFlags,
+  isBellirithCedeChoice,
+  migrateBellirithFlags,
+  nextBellirithCatchup,
+  type BellirithIntrusionId,
+  type BellirithIntrusionMode,
+} from "./bellirith-intrusions";
+import { bellirithDateIntro, bellirithDateResultAction, bellirithDateResultText } from "./bellirith-dates";
+import { BELLIRITH_DEV_INTIMACIES, BELLIRITH_INTIMACY_BACKGROUNDS, BELLIRITH_INTIMACY_TITLES, BELLIRITH_REPLAYABLE_INTIMACIES, bellirithIntimacyApproaches, bellirithIntimacyContext, bellirithIntimacyEnding, bellirithIntimacyKind, bellirithIntimacyOpening, bellirithIntimacyRoutes, bellirithRouteNote } from "./bellirith-diversion-intimacy";
 import { remeriiDateApproaches, remeriiDateIntimacyEnding, remeriiDateIntimacyOpening, remeriiDateIntimacyPhase, remeriiDateIntimacyRoutes, remeriiIntimacyContext } from "./remerii-date-intimacy";
 import { linevaRelationBeat } from "./lineva-relation-beats";
 import { allennaRelationBeat } from "./allenna-relation-beats";
@@ -255,13 +281,18 @@ type ReceivedLetter = {
 type ReceivedInvitation = {
   id: string;
   receivedDay: number;
-  expiresDay: number;
+  /** Absent pour une invitation persistante : elle n’expire jamais. */
+  expiresDay?: number;
+  /** Invitation persistante (rattrapage Bellirith) : ni expiration, ni refus, ni coût tant qu’elle n’est pas jouée. */
+  persistent?: boolean;
   status: "pending" | "accepted" | "declined" | "expired";
   reoffers?: number;
 };
 
+const PERSISTENT_INVITATION_LABEL = "Invitation persistante · disponible lorsque vous le souhaitez.";
+
 type GameState = {
-  version: 17;
+  version: 18;
   player: Player;
   day: number;
   period: number;
@@ -308,8 +339,10 @@ type SceneView = {
   character?: string;
   intro: DialogueLine[];
   choices?: ChoiceData[];
-  kind: "intro" | "story" | "route" | "ambient" | "social" | "date" | "group-date" | "cross-quest" | "home" | "secret" | "world" | "invitation";
+  kind: "intro" | "story" | "route" | "ambient" | "social" | "date" | "group-date" | "cross-quest" | "home" | "secret" | "world" | "invitation" | "bellirith";
   route?: RouteScene;
+  bellirithIntrusionId?: BellirithIntrusionId;
+  bellirithMode?: BellirithIntrusionMode;
   ambientId?: string;
   socialId?: string;
   date?: DateScene;
@@ -420,7 +453,11 @@ type GroupIntimacyModalState = Extract<NonNullable<ModalState>, { kind: "group-i
 type DevIntimacyTarget =
   | { kind: "date"; dateId: string }
   | { kind: "home"; character: string }
-  | { kind: "group"; groupDateId: string };
+  | { kind: "group"; groupDateId: string }
+  | { kind: "bellirith-intrusion"; id: BellirithIntrusionId; mode: BellirithIntrusionMode }
+  | { kind: "bellirith-intimacy"; dateId: string }
+  | { kind: "bellirith-confidence"; secretId: string }
+  | { kind: "bellirith-date"; dateId: string };
 
 type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home" | "letter" | "invitation" | "rumor" | "knowledge";
 
@@ -530,7 +567,7 @@ function playerStats(player: Player): Record<StatKey, number> {
 
 function createGame(player: Player): GameState {
   return {
-    version: 17,
+    version: 18,
     player,
     day: 1,
     period: 0,
@@ -541,7 +578,7 @@ function createGame(player: Player): GameState {
     inventory: { tartelette: 1, the: 1 },
     coins: 32,
     confluence: 8,
-    flags: [],
+    flags: [BELLIRITH_MIGRATION_MARKER],
     journal: ["Un portail défectueux vous a abandonné·e dans une réalité qui n'est pas la vôtre.", "Saidin vous a trouvé·e sur la route, sans prétendre connaître votre origine.", `Écho résiduel : ${player.origin} · Vocation choisie : ${player.vocation}.`],
     codex: ["La Confluence"],
     visitedLocations: ["echo-clearing"],
@@ -594,6 +631,9 @@ function hydrateGame(raw: unknown): GameState | null {
     knows_naiah_tartlets: "knows_naiah_hylee_nights",
     knows_hylee_tartlets: "knows_hylee_naiah_nights",
     heard_rumor_naiah_tartlets: "heard_rumor_naiah_guardian",
+    // Refonte Bellirith : la pierre de stase n’est pas canon (spec §32/§55).
+    knows_valurn_artifact_search: "knows_valurn_old_promise",
+    knows_valurn_true_abandonment: "knows_valurn_did_not_return",
   };
   const secretAliases: Record<string, string> = {
     "secret-naiah-tartlets": "secret-naiah-hylee-nights",
@@ -601,6 +641,7 @@ function hydrateGame(raw: unknown): GameState | null {
   };
   const migrateKnowledgeId = (id: string) => knowledgeAliases[id] || id;
   const migrateSecretId = (id: string) => secretAliases[id] || id;
+  const obsoleteBellirithRoute = (id: string) => /^bellirith-[0-4]$/.test(id);
   const migrateRumorId = (id: string) => id === "rumor-forbidden-tartlets" ? "rumor-forbidden-guardian" : id;
   const legacyTimeline = savedVersion < 8;
   const resetCharacters = new Set(["iriana", "valurn", "bellirith", "amanea", "draven"]);
@@ -627,7 +668,7 @@ function hydrateGame(raw: unknown): GameState | null {
     ...(savedVersion < 14 ? ["story-saidin-met", "story-phoenix-token", "story-route-algratal"] : []),
     ...(preserveCompletedCampaign ? ["main-story-act-1-complete", "amanea-letter-to-tia", "story-rocky-portal-open", "story-empire-obscurci-rupture"] : []),
   ]);
-  const migratedRouteHistory = (value.history || []).filter((id) => !obsoleteRoute(id) && !(savedVersion < 14 && previousCampaignIds.has(id)));
+  const migratedRouteHistory = (value.history || []).filter((id) => !obsoleteRoute(id) && !obsoleteBellirithRoute(id) && !(savedVersion < 14 && previousCampaignIds.has(id)));
   const migratedHistory = unique([
     ...migratedRouteHistory,
     ...(preserveCompletedCampaign ? CAMPAIGN_SCENES.map((scene) => scene.id) : []),
@@ -665,10 +706,10 @@ function hydrateGame(raw: unknown): GameState | null {
   const normalizeHROpen = normalizedHR?.stage >= 7
     && normalizedHR.hr?.branch === "double"
     && normalizedHR.hr.configuration === "accepted";
-  return {
+  const hydrated: GameState = {
     ...fresh,
     ...value,
-    version: 17,
+    version: 18,
     player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
     location,
     spot,
@@ -709,13 +750,16 @@ function hydrateGame(raw: unknown): GameState | null {
       read: Boolean(entry.read),
       replyId: entry.id === "letter-naiah-margin" && entry.replyId === "naiah-food" ? "naiah-verso" : entry.replyId,
     })),
-    invitations: (value.invitations || []).filter((entry) => INVITATIONS.some((invitation) => invitation.id === entry.id)).map((entry) => ({
-      id: entry.id,
-      receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
-      expiresDay: Math.max(1, Number(entry.expiresDay) || 1),
-      status: ["pending", "accepted", "declined", "expired"].includes(entry.status) ? entry.status : "expired",
-      reoffers: Math.max(0, Number(entry.reoffers) || 0),
-    })) as ReceivedInvitation[],
+    invitations: (value.invitations || []).filter((entry) => INVITATIONS.some((invitation) => invitation.id === entry.id)).map((entry) => {
+      const persistent = Boolean(entry.persistent || INVITATIONS.find((invitation) => invitation.id === entry.id)?.persistent);
+      return {
+        id: entry.id,
+        receivedDay: Math.max(1, Number(entry.receivedDay) || 1),
+        ...(persistent ? { persistent: true } : { expiresDay: Math.max(1, Number(entry.expiresDay) || 1) }),
+        status: ["pending", "accepted", "declined", "expired"].includes(entry.status) ? entry.status : persistent ? "pending" : "expired",
+        reoffers: Math.max(0, Number(entry.reoffers) || 0),
+      };
+    }) as ReceivedInvitation[],
     rumors: (value.rumors || []).map((entry) => ({ ...entry, id: migrateRumorId(entry.id) })).filter((entry) => RUMORS.some((rumor) => rumor.id === entry.id)).map((entry) => ({ id: entry.id, heardDay: Math.max(1, Number(entry.heardDay) || 1) })),
     worldEventHistory: unique((value.worldEventHistory || []).filter((id) => SPONTANEOUS_EVENTS.some((entry) => entry.id === id))),
     livingWorldTick: typeof value.livingWorldTick === "string" ? value.livingWorldTick : "",
@@ -735,6 +779,42 @@ function hydrateGame(raw: unknown): GameState | null {
       residentMomentHistory: value.housing?.residentMomentHistory || {},
       sharedMomentHistory: value.housing?.sharedMomentHistory || [],
     },
+  };
+  return migrateBellirithSave(hydrated);
+}
+
+/**
+ * Migration de la refonte Bellirith (marqueur `bellirith-refactor-v1-migrated`).
+ * Toute intrusion dont le jalon de campagne est déjà joué mais qui n’a pas
+ * été résolue devient « manquée » et rejoint la file de rattrapage : aucune
+ * pénalité rétroactive, aucune expiration, une seule invitation à la fois.
+ */
+function migrateBellirithSave(game: GameState): GameState {
+  const flags = migrateBellirithFlags({ flags: game.flags, history: game.history });
+  const relation = game.relationships.bellirith;
+  const migrated: GameState = {
+    ...game,
+    flags,
+    relationships: relation ? { ...game.relationships, bellirith: { ...relation, stage: Math.max(relation.stage, bellirithFilStage({ flags, history: game.history })) } } : game.relationships,
+  };
+  return withBellirithCatchupQueue(migrated);
+}
+
+/** Place au plus une invitation de rattrapage Bellirith en attente (file ordonnée). */
+function withBellirithCatchupQueue(input: GameState): GameState {
+  const flags = markMissedBellirithIntrusions(input);
+  const game = flags === input.flags ? input : { ...input, flags };
+  const next = nextBellirithCatchup(game);
+  if (!next) return game;
+  const template = INVITATIONS.find((entry) => entry.id === next.catchupInvitationId);
+  if (!template) return game;
+  const existing = game.invitations.find((entry) => entry.id === template.id);
+  if (existing && existing.status === "accepted") return game;
+  const invitation: ReceivedInvitation = { id: template.id, receivedDay: game.day, persistent: true, status: "pending", reoffers: 0 };
+  return {
+    ...game,
+    invitations: existing ? game.invitations.map((entry) => entry.id === template.id ? invitation : entry) : [...game.invitations, invitation],
+    journal: [...game.journal, `Invitation persistante · ${template.title}`],
   };
 }
 
@@ -878,7 +958,9 @@ const CHARACTER_INTRODUCTIONS: Record<string, { history?: string; flag?: string 
   allenna: { history: "campaign-akuhn-gates" },
   amanea: { history: "campaign-amanea-audience" },
   tia: { history: "campaign-before-light" },
-  bellirith: { history: "campaign-coalition-preparation" },
+  // Refonte : Bellirith entre dans la chronique dès l’intrusion 01 ; le
+  // chapitre IX reste une seconde porte pour les sauvegardes anciennes.
+  bellirith: { history: "campaign-coalition-preparation", flag: "bellirith-intrusion:01:seen" },
 };
 
 function characterUnlocked(game: GameState, character: CharacterData) {
@@ -907,6 +989,18 @@ function locationUnlocked(game: GameState, locationId: string) {
 function secretConversationReady(secret: SecretConversation, game: GameState, requirePlace = true) {
   const relation = game.relationships[secret.character];
   if (!relation || !relation.met || game.secretHistory.includes(secret.id)) return false;
+  // Bellirith : exception au système standard. Plus elle désire {player},
+  // plus elle utilise un morceau d’elle-même comme levier (spec §28).
+  if (secret.minDesire !== undefined) {
+    if (!game.settings.unlockAll && relation.desire < secret.minDesire) return false;
+    const earlier = SECRET_CONVERSATIONS.filter((entry) => entry.character === secret.character && entry.tier < secret.tier);
+    if (!game.settings.unlockAll && earlier.some((entry) => !game.secretHistory.includes(entry.id))) return false;
+    if (!game.settings.unlockAll && game.day < (secret.minDay || 1)) return false;
+    if (!game.settings.unlockAll && !hasKnowledge(game, secret.requiresKnowledge)) return false;
+    if (requirePlace && secret.locations?.length && !secret.locations.includes(game.location)) return false;
+    if (requirePlace && secret.spots?.length && !secret.spots.includes(game.spot)) return false;
+    return true;
+  }
   // Chaque couche de passé répond à une scène réellement vécue : une forte
   // relation obtenue par cadeaux ou moments libres ne peut plus sauter le
   // premier chapitre de la route ni révéler plusieurs niveaux à l’avance.
@@ -993,6 +1087,10 @@ function invitationReady(invitation: InvitationTemplate, game: GameState) {
     && game.day >= invitation.minDay
     && relation.stage >= invitation.minStage
     && hasKnowledge(game, invitation.requiresKnowledge)
+    && !invitation.persistent
+    && !invitation.catchup
+    && !invitation.requiresFlags?.some((flag) => !game.flags.includes(flag))
+    && !invitation.excludesFlags?.some((flag) => game.flags.includes(flag))
     && !game.invitations.some((entry) => entry.id === invitation.id));
 }
 
@@ -1000,24 +1098,26 @@ function evolveLivingWorld(game: GameState): GameState {
   const tick = `${game.day}:${game.period}`;
   if (game.livingWorldTick === tick) return game;
   const invitations = game.invitations.map((entry) => {
-    if (entry.status !== "pending" || game.day <= entry.expiresDay) return entry;
+    if (entry.status !== "pending" || entry.persistent || entry.expiresDay === undefined || game.day <= entry.expiresDay) return entry;
     return { ...entry, status: "expired" as const };
   });
-  const base = { ...game, invitations, livingWorldTick: tick };
+  // La file de rattrapage Bellirith est indépendante du rythme des courriers :
+  // elle ne consomme pas l’écart de livraison et n’en bloque aucune.
+  const base = withBellirithCatchupQueue({ ...game, invitations, livingWorldTick: tick });
 
   const deliveries = [
     ...base.letters.map((entry) => ({ day: entry.receivedDay, kind: "letter" as const })),
-    ...base.invitations.map((entry) => ({ day: entry.receivedDay, kind: "invitation" as const })),
+    ...base.invitations.filter((entry) => !entry.persistent).map((entry) => ({ day: entry.receivedDay, kind: "invitation" as const })),
   ].sort((left, right) => right.day - left.day);
   const previousDelivery = deliveries[0];
   const deliveryAllowed = !previousDelivery || base.day - previousDelivery.day >= LIVING_WORLD_DELIVERY_GAP;
   if (!deliveryAllowed) return base;
 
   const unreadLetters = base.letters.filter((entry) => !entry.read).length;
-  const hasPendingInvitation = base.invitations.some((entry) => entry.status === "pending");
+  const hasPendingInvitation = base.invitations.some((entry) => entry.status === "pending" && !entry.persistent);
   const letter = unreadLetters < MAX_UNREAD_LETTERS ? LETTERS.find((entry) => letterReady(entry, base)) : undefined;
   const expiredInvitation = !hasPendingInvitation
-    ? base.invitations.find((entry) => entry.status === "expired" && base.day >= entry.expiresDay + INVITATION_REOFFER_DELAY)
+    ? base.invitations.find((entry) => entry.status === "expired" && !entry.persistent && entry.expiresDay !== undefined && base.day >= entry.expiresDay + INVITATION_REOFFER_DELAY)
     : undefined;
   const freshInvitation = !hasPendingInvitation && !expiredInvitation
     ? INVITATIONS.find((entry) => invitationReady(entry, base))
@@ -1043,11 +1143,11 @@ function evolveLivingWorld(game: GameState): GameState {
       ? base.invitations.map((entry) => entry.id === invitation.id ? {
         ...entry,
         receivedDay: base.day,
-        expiresDay: base.day + invitation.expiresAfter,
+        expiresDay: base.day + (invitation.expiresAfter ?? 1),
         status: "pending" as const,
         reoffers: (entry.reoffers || 0) + 1,
       } : entry)
-      : [...base.invitations, { id: invitation.id, receivedDay: base.day, expiresDay: base.day + invitation.expiresAfter, status: "pending" as const, reoffers: 0 }]
+      : [...base.invitations, { id: invitation.id, receivedDay: base.day, expiresDay: base.day + (invitation.expiresAfter ?? 1), status: "pending" as const, reoffers: 0 }]
     : base.invitations;
   return {
     ...base,
@@ -1305,7 +1405,7 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
   const newInvitations = next.invitations.filter((entry) => !previous.invitations.some((before) => before.id === entry.id));
   newInvitations.forEach((entry) => {
     const invitation = INVITATIONS.find((candidate) => candidate.id === entry.id);
-    livingWorldChanges.push({ kind: "invitation", title: invitation?.message || "Quelqu’un souhaite vous voir.", detail: invitation ? `Réponse possible jusqu’au jour ${entry.expiresDay}.` : "Consultez le Journal." });
+    livingWorldChanges.push({ kind: "invitation", title: invitation?.message || "Quelqu’un souhaite vous voir.", detail: entry.persistent ? PERSISTENT_INVITATION_LABEL : invitation ? `Réponse possible jusqu’au jour ${entry.expiresDay}.` : "Consultez le Journal." });
   });
   const renewedInvitations = next.invitations.filter((entry) => entry.status === "pending" && previous.invitations.some((before) => before.id === entry.id && before.status === "expired"));
   renewedInvitations.forEach((entry) => {
@@ -2744,7 +2844,8 @@ export default function Home() {
   function acceptInvitation(invitation: InvitationTemplate) {
     if (!game) return;
     const received = game.invitations.find((entry) => entry.id === invitation.id);
-    if (!received || received.status !== "pending" || game.day > received.expiresDay) return;
+    if (!received || received.status !== "pending" || (!received.persistent && received.expiresDay !== undefined && game.day > received.expiresDay)) return;
+    if (invitation.catchup) { startBellirithIntrusion(invitation.catchup as BellirithIntrusionId, "catchup"); return; }
     const character = CHARACTERS.find((entry) => entry.id === invitation.character);
     const period = PERIODS.findIndex((entry) => entry.id === invitation.period);
     const scene: SceneView = {
@@ -2776,7 +2877,7 @@ export default function Home() {
   function declineInvitation(invitation: InvitationTemplate) {
     if (!game) return;
     const received = game.invitations.find((entry) => entry.id === invitation.id);
-    if (!received || received.status !== "pending") return;
+    if (!received || received.status !== "pending" || received.persistent) return;
     if (invitation.declineEffects) applyEffects(invitation.character, invitation.declineEffects);
     updateGame((current) => ({
       ...current,
@@ -2888,10 +2989,18 @@ export default function Home() {
         campaign.cast.forEach((characterId) => {
           if (relationships[characterId]) relationships[characterId] = { ...relationships[characterId], met: true };
         });
+        // Interférence Bellirith : l’intrusion liée à ce jalon démarre en direct
+        // dès la fermeture de la scène. Le flag `live-started` empêche toute
+        // seconde occurrence et bascule en rattrapage si la partie est rechargée.
+        const liveIntrusion = bellirithIntrusionAfter(campaign.id, current);
+        const campaignFlags = unique([...current.flags, campaign.id, ...(firstRouteFlag ? [firstRouteFlag] : []), ...(campaign.id === "campaign-imperial-audience" && !current.flags.some((flag) => flag.startsWith("hylee-itinerary-start:")) ? [`hylee-itinerary-start:${current.day}`] : []), ...(liveIntrusion ? [bellirithIntrusionFlag(liveIntrusion.id, "live-started")] : [])]);
+        const coalitionFlags = campaign.id === "campaign-coalition-preparation"
+          ? bellirithFlagsWithTrend(unique([...campaignFlags, ...(choice.id === "coalition-follow-bellirith" && bellirithAcceptedCount({ flags: campaignFlags, history: current.history }) >= 2 ? [BELLIRITH_FAVORITE_FLAG] : [])]))
+          : campaignFlags;
         return {
           ...current,
           relationships,
-          flags: unique([...current.flags, campaign.id, ...(firstRouteFlag ? [firstRouteFlag] : []), ...(campaign.id === "campaign-imperial-audience" && !current.flags.some((flag) => flag.startsWith("hylee-itinerary-start:")) ? [`hylee-itinerary-start:${current.day}`] : [])]),
+          flags: coalitionFlags,
           history: unique([...current.history, campaign.id]),
           sceneMemories: { ...current.sceneMemories, [campaign.id]: campaign.spot },
           journal: [...current.journal, `Acte I · Chapitre ${campaign.chapter} · ${campaign.title}`],
@@ -2969,6 +3078,25 @@ export default function Home() {
         journal: [...current.journal, `Invitation honorée · ${invitation.title}`],
       }));
     }
+    if (!dialogue.replay && dialogue.scene.kind === "bellirith" && dialogue.scene.bellirithIntrusionId) {
+      const intrusionId = dialogue.scene.bellirithIntrusionId;
+      const mode = dialogue.scene.bellirithMode || "live";
+      const intrusion = bellirithIntrusionById(intrusionId);
+      if (intrusion) updateGame((current) => {
+        if (current.flags.includes(bellirithIntrusionFlag(intrusionId, "live")) || current.flags.includes(bellirithIntrusionFlag(intrusionId, "catchup"))) return current;
+        const flags = bellirithResolutionFlags(current.flags, intrusionId, choice, mode);
+        const relation = current.relationships.bellirith;
+        return {
+          ...current,
+          flags,
+          relationships: { ...current.relationships, bellirith: { ...relation, met: true, stage: Math.max(relation.stage, bellirithFilStage({ flags, history: current.history })) } },
+          sceneMemories: { ...current.sceneMemories, [`bellirith-intrusion-${intrusionId}`]: intrusion.spot },
+          invitations: mode === "catchup" ? current.invitations.map((entry) => entry.id === intrusion.catchupInvitationId ? { ...entry, status: "accepted" as const } : entry) : current.invitations,
+          codex: unique([...current.codex, "Bellirith"]),
+          journal: [...current.journal, `Interférence · Bellirith · ${intrusion.title}${mode === "catchup" ? " · rattrapée" : ""}`],
+        };
+      });
+    }
     if (!dialogue.replay && dialogue.scene.kind === "cross-quest" && dialogue.scene.crossQuestStage !== undefined) {
       const stage = dialogue.scene.crossQuestStage;
       updateGame((current) => {
@@ -3004,6 +3132,7 @@ export default function Home() {
         journal: [...current.journal, `Rendez-vous à trois · ${groupDate.title} avec ${names}`],
       }));
     }
+    if (choice.followUp?.length && !isRelationChoice) dialogue.scene = { ...dialogue.scene, beats: choice.followUp };
     if (dialogue.scene.hnScene && dialogue.scene.groupDate) {
       const updated = hnDateScene(dialogue.scene.id, game.crossQuestSeries[HN_KEY].hn!, [...(dialogue.datePicks || []), choice.id], game);
       if (updated) dialogue.scene = { ...dialogue.scene, beats: updated.beats };
@@ -3011,9 +3140,12 @@ export default function Home() {
     const opening = choiceOpeningLine(choice);
     const injectedEnding = injectedChoiceAftermath(choice, dialogue.scene.character || dialogue.scene.cast[0]);
     const endingCampaign = dialogue.scene.campaignSceneId ? campaignSceneById(dialogue.scene.campaignSceneId) : undefined;
-    const campaignEnding = endingCampaign ? campaignSceneOutro(endingCampaign) : [];
+    // Suivre Bellirith au chapitre IX : la conclusion d’Iriana arrive à l’aube,
+    // dans la fin de la diversion, et non pendant qu’on quitte la pièce.
+    const followsBellirith = choice.id === "coalition-follow-bellirith";
+    const campaignEnding = endingCampaign && !followsBellirith ? campaignSceneOutro(endingCampaign) : [];
     const continuesToRelationBeat = !isRelationChoice && hasRelationBeat && routeChoiceCompletes(choice.id) && !injectedEnding.length;
-    const authoredEnding = dialogue.scene.hnScene || dialogue.scene.hrScene || continuesToRelationBeat || authoredDateContinues
+    const authoredEnding = dialogue.scene.hnScene || dialogue.scene.hrScene || continuesToRelationBeat || authoredDateContinues || followsBellirith || dialogue.scene.kind === "bellirith"
       ? []
       : injectedEnding.length
       ? injectedEnding
@@ -3097,6 +3229,35 @@ export default function Home() {
       setDialogue({ scene, lines: expandedLines(scene, game, scene.intro, "intro"), lineIndex: 0, phase: "intro" });
       return; // Une conversation continue, sans voyage ni avancement d'heure.
     }
+    if (!dialogue.replay && dialogue.scene.kind === "story" && dialogue.scene.campaignSceneId && dialogue.chosen && game) {
+      if (dialogue.chosen.id === "coalition-follow-bellirith") {
+        setDialogue(null);
+        openBellirithIntimacy("bellirith-diversion-coalition");
+        return;
+      }
+      const pending = bellirithPendingLive(dialogue.scene.campaignSceneId, game);
+      if (pending) {
+        setDialogue(null);
+        startBellirithIntrusion(pending.id, "live");
+        return; // L’intrusion suit immédiatement la scène ; l’heure avancera à sa fermeture.
+      }
+    }
+    if (!dialogue.replay && dialogue.chosen?.launchesIntimacy && bellirithIntimacyContext(dialogue.chosen.launchesIntimacy)) {
+      // Le joueur vient explicitement d’accepter la proposition de Bellirith.
+      const dateId = dialogue.chosen.launchesIntimacy;
+      setDialogue(null);
+      openBellirithIntimacy(dateId);
+      return;
+    }
+    if (dialogue.scene.kind === "bellirith") {
+      const chosen = dialogue.chosen;
+      const diversion = chosen && isBellirithCedeChoice(chosen) ? bellirithDiversionForChoice(chosen.id) : undefined;
+      setDialogue(null);
+      if (dialogue.replay) return;
+      if (diversion) openBellirithIntimacy(diversion);
+      else advancePeriod();
+      return;
+    }
     if (dialogue.scene.kind === "intro" && !dialogue.replay) {
       updateGame((current) => ({
         ...current,
@@ -3119,7 +3280,7 @@ export default function Home() {
     const groupDate = dialogue.scene.groupDate;
     const dateCanBecomeIntimate = Boolean(date
       && dialogue.chosen
-      && (["lineva", "allenna"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)
+      && (["lineva", "allenna", "bellirith"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)
         ? true
         : game!.settings.unlockAll || (dialogue.chosen.dateOutcome === "great"
           && game!.relationships[date.character].stage >= 4
@@ -3885,10 +4046,10 @@ export default function Home() {
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
-  function startDate(dateId: string) {
+  function startDate(dateId: string, force = false) {
     if (!game) return;
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date || !publicDateUnlocked(game, date)) return;
+    if (!date || (!force && !publicDateUnlocked(game, date))) return;
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
     const scheduledDay = game.day + 1;
     const nextGame: GameState = {
@@ -3907,7 +4068,7 @@ export default function Home() {
       mood: date.mood || character.defaultMood,
       character: date.character,
       cast: [date.character],
-      intro: date.intro,
+      intro: bellirithDateIntro(date, nextGame),
       choices: date.choices,
       kind: "date",
       date,
@@ -3916,7 +4077,28 @@ export default function Home() {
     setSelectedLocation(date.location);
     setSelectedSpot(date.spot);
     setModal(null);
-    setDialogue({ scene, lines: expandedLines(scene, nextGame, date.intro, "intro"), lineIndex: 0, phase: "intro" });
+    setDialogue({ scene, lines: expandedLines(scene, nextGame, scene.intro, "intro"), lineIndex: 0, phase: "intro" });
+  }
+
+  function startSecretConversation(secretId: string, force = false) {
+    if (!game) return;
+    const secret = SECRET_CONVERSATIONS.find((entry) => entry.id === secretId);
+    const character = CHARACTERS.find((entry) => entry.id === secret?.character);
+    if (!secret || !character || (!force && !secretConversationReady(secret, game))) return;
+    const scene: SceneView = {
+      id: secret.id,
+      title: secret.title,
+      background: spotById(game.spot)?.background || backgroundUrl("streets"),
+      mood: character.defaultMood,
+      character: character.id,
+      cast: [character.id],
+      intro: secret.intro,
+      choices: secret.choices,
+      kind: "secret",
+      secretId: secret.id,
+    };
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, game, secret.intro, "intro"), lineIndex: 0, phase: "intro" });
   }
 
   function startGroupDate(groupDateId: string) {
@@ -3964,15 +4146,17 @@ export default function Home() {
 
   function startDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    const refactoredDate = Boolean(date && (["lineva", "allenna"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)));
-    const desireReady = !refactoredDate || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
+    const refactoredDate = Boolean(date && (["lineva", "allenna", "bellirith"].includes(date.character) || AUTHORED_DATE_CHARACTERS.has(date.character)));
+    // Bellirith : sa jauge de désir est inversée (céder la fait baisser) ;
+    // elle ne conditionne donc jamais la suite d’un rendez-vous choisi.
+    const desireReady = !refactoredDate || date?.character === "bellirith" || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
     if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
   function finishDateEnding(dateId: string, friendlyForThisDate: boolean) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!game || !date || (!["lineva", "allenna"].includes(date.character) && !AUTHORED_DATE_CHARACTERS.has(date.character)) || !game.dateHistory.includes(date.id)) return;
+    if (!game || !date || (!["lineva", "allenna", "bellirith"].includes(date.character) && !AUTHORED_DATE_CHARACTERS.has(date.character)) || !game.dateHistory.includes(date.id)) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     if (friendlyForThisDate) {
       updateGame((current) => ({
@@ -4028,6 +4212,57 @@ export default function Home() {
     }
   }
 
+  function startBellirithIntrusion(id: BellirithIntrusionId, mode: BellirithIntrusionMode, replay = false) {
+    if (!game) return;
+    const built = bellirithIntrusionScene(id, game, mode);
+    if (!built) return;
+    const intrusion = built.intrusion;
+    const scene: SceneView = {
+      id: `bellirith-intrusion-${id}`,
+      title: built.title,
+      background: intrusion.background,
+      mood: "seductive",
+      character: "bellirith",
+      cast: built.cast,
+      intro: built.intro,
+      choices: built.choices,
+      kind: "bellirith",
+      bellirithIntrusionId: id,
+      bellirithMode: mode,
+    };
+    const placed: GameState = replay ? game : { ...game, location: intrusion.location, spot: intrusion.spot };
+    if (!replay) {
+      updateGame((current) => ({
+        ...current,
+        location: intrusion.location,
+        spot: intrusion.spot,
+        ...placeDiscovery(current, intrusion.location, intrusion.spot),
+      }));
+      setSelectedLocation(intrusion.location);
+      setSelectedSpot(intrusion.spot);
+    }
+    setModal(null);
+    setDialogue({ scene, lines: expandedLines(scene, placed, built.intro, "intro", intrusion.spot), lineIndex: 0, phase: "intro", ...(replay ? { replay: true } : {}) });
+  }
+
+  function replayBellirithIntrusion(id: string) {
+    if (!game) return;
+    const intrusion = bellirithIntrusionById(id);
+    if (!intrusion || !bellirithIntrusionResolved(game, intrusion.id)) return;
+    startBellirithIntrusion(intrusion.id, game.flags.includes(bellirithIntrusionFlag(intrusion.id, "catchup")) ? "catchup" : "live", true);
+  }
+
+  function openBellirithIntimacy(dateId: string, replay = false) {
+    const context = bellirithIntimacyContext(dateId);
+    if (!context) return;
+    setModal({ kind: "intimacy", character: "bellirith", dateId, background: BELLIRITH_INTIMACY_BACKGROUNDS[context], ...(replay ? { replay: true } : {}) });
+  }
+
+  function replayBellirithIntimacy(dateId: string) {
+    if (!game?.flags.includes(`date-intimate:${dateId}`)) return;
+    openBellirithIntimacy(dateId, true);
+  }
+
   function closeIntimacy(completed: boolean, memory?: string) {
     if (!modal || modal.kind !== "intimacy") return;
     if (completed && !modal.replay) {
@@ -4040,11 +4275,15 @@ export default function Home() {
           ...(modal.home ? [`home-intimate:${modal.character}`] : []),
           ...(modal.character === "remerii" ? ["remerii-intimacy-lived"] : []),
           ...(modal.character === "lineva" ? ["lineva-tutoiement"] : []),
+          ...(modal.character === "bellirith" && bellirithIntimacyContext(modal.dateId) ? [BELLIRITH_SLEPT_FLAG, `bellirith-intimate:${bellirithIntimacyContext(modal.dateId)}`] : []),
         ]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
       }));
     }
-    const noTime = Boolean(modal.replay || modal.dateId);
+    // Les diversions et heures volées de Bellirith ne sont pas des rendez-vous
+    // planifiés : elles consomment la période en cours (jamais en relecture).
+    const bellirithUnplanned = modal.character === "bellirith" && Boolean(modal.dateId && !DATE_SCENES.some((entry) => entry.id === modal.dateId));
+    const noTime = Boolean(modal.replay || (modal.dateId && !bellirithUnplanned));
     setModal(null);
     if (!noTime) advancePeriod();
   }
@@ -4079,6 +4318,12 @@ export default function Home() {
     if (!game?.settings.developer) return;
     setDialogue(null);
     setV2Dialog(null);
+    // Raccourcis Bellirith : intrusions et confidences sont jouées pour de vrai
+    // (effets appliqués) ; les intimités s’ouvrent en souvenir, sans mutation.
+    if (target.kind === "bellirith-intrusion") { startBellirithIntrusion(target.id, target.mode); return; }
+    if (target.kind === "bellirith-intimacy") { openBellirithIntimacy(target.dateId, true); return; }
+    if (target.kind === "bellirith-confidence") { startSecretConversation(target.secretId, true); return; }
+    if (target.kind === "bellirith-date") { startDate(target.dateId, true); return; }
     if (target.kind === "date") {
       const date = DATE_SCENES.find((entry) => entry.id === target.dateId);
       if (!date) return;
@@ -4303,8 +4548,9 @@ export default function Home() {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date) return;
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
-    const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || character.defaultMood, character: date.character, cast: [date.character], intro: date.intro, choices: date.choices, kind: "date", date };
-    setDialogue({ scene, lines: expandedLines(scene, game, date.intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
+    const intro = bellirithDateIntro(date, game);
+    const scene: SceneView = { id: date.id, title: date.title, background: spotById(date.spot)?.background || backgroundUrl("streets"), mood: date.mood || character.defaultMood, character: date.character, cast: [date.character], intro, choices: date.choices, kind: "date", date };
+    setDialogue({ scene, lines: expandedLines(scene, game, intro, "intro", date.spot), lineIndex: 0, phase: "intro", replay: true });
   }
 
   function replayGroupDate(groupDateId: string) {
@@ -4508,7 +4754,7 @@ export default function Home() {
   };
   const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
   const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
-  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} />;
+  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
   const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), onDevOpenIntimacy: openDevIntimacy, slotVersion };
   const rank = rankQueue[0];
   const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
@@ -4728,7 +4974,7 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
   const stableMoods = dialogue.scene.cast.includes("hylee") ? dialogueSpriteMoods(dialogue) : undefined;
-  const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
+  const sceneLabel = dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "bellirith" ? (dialogue.scene.bellirithMode === "catchup" ? "Interférence · Bellirith · rattrapage" : "Interférence · Bellirith") : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   // Historique (backlog) : chaque réplique affichée et chaque choix pris pendant la scène, dans l’ordre.
   const [backlog, setBacklog] = useState<V2BacklogEntry[]>([]);
   const [backlogOpen, setBacklogOpen] = useState(false);
@@ -4912,7 +5158,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation }: { onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
+function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
   const [chosenSection, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const section = forcedSection ?? chosenSection;
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
@@ -5065,7 +5311,7 @@ function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, o
           <div className="journal-section-title"><div><h2>Le monde vous écrit</h2><p>Les initiatives sont espacées. Une invitation simplement manquée reviendra plus tard, sans sanction automatique.</p></div><strong>{pendingMessages} en attente</strong></div>
           <div className="living-journal-grid">
             <article className="living-journal-panel"><header><span>✉</span><div><h3>Correspondances</h3><small>{letters.length + crossLetters.length} reçue{letters.length + crossLetters.length > 1 ? "s" : ""}</small></div></header><div className="living-journal-list">{letters.length + crossLetters.length ? <>{[...crossLetters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadCrossLetter(letter.id)}><span>{!received.read ? "Nouveau · Quête croisée" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>)}{[...letters].reverse().map(({ received, letter }) => <button className={!received.read ? "unread" : ""} key={letter.id} onClick={() => onReadLetter(letter.id)}><span>{!received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`}</span><strong>{letter.subject}</strong><small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small></button>)}</> : <p>Aucune lettre reçue pour l’instant.</p>}</div></article>
-            <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? `${received.reoffers ? "Renouvelée · " : ""}Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : `Manquée · reviendra après J${received.expiresDay + INVITATION_REOFFER_DELAY}`}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
+            <article className="living-journal-panel"><header><span>◈</span><div><h3>Invitations</h3><small>Les personnages peuvent prendre l’initiative</small></div></header><div className="living-journal-list">{invitations.length ? [...invitations].reverse().map(({ received, invitation }) => <button className={received.status === "pending" ? "unread" : ""} key={invitation.id} onClick={() => onOpenInvitation(invitation.id)}><span>{received.status === "pending" ? received.persistent ? "Persistante · quand vous voulez" : `${received.reoffers ? "Renouvelée · " : ""}Expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : `Manquée · reviendra après J${(received.expiresDay || 0) + INVITATION_REOFFER_DELAY}`}</span><strong>{invitation.title}</strong><small>{CHARACTERS.find((entry) => entry.id === invitation.character)?.name} · {spotById(invitation.spot)?.name}</small></button>) : <p>Aucune invitation ne vous attend.</p>}</div></article>
           </div>
         </>}
         {section === "discoveries" && <>
@@ -5122,6 +5368,8 @@ function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, o
         {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
+        {BELLIRITH_INTRUSIONS.filter((intrusion) => bellirithIntrusionResolved(game, intrusion.id)).map((intrusion) => <button key={`bellirith-intrusion-${intrusion.id}`} onClick={() => onReplayBellirith?.("intrusion", intrusion.id)}><span style={{ color: CHARACTERS.find((character) => character.id === "bellirith")?.color }}>✧ Interférence · Bellirith</span><strong>{intrusion.title}</strong><small>Revoir sans gain, sans pénalité ni avancée du temps</small></button>)}
+        {BELLIRITH_REPLAYABLE_INTIMACIES.filter((dateId) => game.flags.includes(`date-intimate:${dateId}`)).map((dateId) => <button key={`bellirith-intimacy-${dateId}`} onClick={() => onReplayBellirith?.("intimacy", dateId)}><span>🔥 Souvenir intime · Bellirith</span><strong>{BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(dateId)!]}</strong><small>Revoir la scène selon le corps et le niveau d’intimité choisis</small></button>)}
         {homeTrioIntimateMemory > 0 && <button onClick={() => onReplayGroupDateIntimacy("group-date-allenna-lineva-home")}><span>🔥 Souvenir au logis · Allenna & Lineva</span><strong>Rien au programme</strong><small>Revoir les trois routes propres au logis</small></button>}
         {!game.history.length && !socialMemories.length && !secretMemories.length && !worldMemories.length && !dateMemories.length && !groupDateMemories.length && <p>Aucune scène majeure n’est encore mémorisée.</p>}
       </div>
@@ -5434,6 +5682,25 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       journal: [...current.journal, `Outil développeur · Hylee & Naïah : les trois rendez-vous sont ouverts (mère : ${outcome}).`],
     };
   });
+  const applyBellirithPreset = (preset: "ceded" | "resisted" | "mixed" | "reset") => updateGame((current) => {
+    const cleaned = current.flags.filter((flag) => !/^bellirith-(intrusion|trend|coalition|favorite|has-slept|first-look)/.test(flag));
+    const presetFlags = preset === "reset" ? [] : [
+      "bellirith-intrusion:01:seen", "bellirith-intrusion:01:live", "story-bellirith-met",
+      ...(preset === "ceded" ? ["bellirith-intrusion:02:accepted", "bellirith-intrusion:03:accepted", "bellirith-intrusion:04:accepted", BELLIRITH_FAVORITE_FLAG, BELLIRITH_SLEPT_FLAG]
+        : preset === "resisted" ? ["bellirith-intrusion:02:resisted", "bellirith-intrusion:03:resisted", "bellirith-intrusion:04:resisted"]
+          : ["bellirith-intrusion:02:accepted", "bellirith-intrusion:03:resisted", "bellirith-intrusion:04:resisted", BELLIRITH_SLEPT_FLAG]),
+      "bellirith-intrusion:02:live", "bellirith-intrusion:03:live", "bellirith-intrusion:04:live",
+    ];
+    const flags = bellirithFlagsWithTrend(unique([...cleaned, ...presetFlags]));
+    const relation = current.relationships.bellirith;
+    const desire = preset === "ceded" ? 8 : preset === "resisted" ? 34 : preset === "mixed" ? 22 : relation.desire;
+    return {
+      ...current,
+      flags,
+      relationships: { ...current.relationships, bellirith: { ...relation, met: preset !== "reset" || relation.met, desire, stage: Math.max(relation.stage, bellirithFilStage({ flags, history: current.history })) } },
+      journal: [...current.journal, `Outil développeur · Bellirith : historique « ${preset} » appliqué.`],
+    };
+  });
   const installTestHome = () => updateGame((current) => {
     if (current.housing.propertyId) return current;
     const property = HOUSING_PROPERTIES[0];
@@ -5480,6 +5747,31 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => openHNDates("killed")}>Mère tuée</button>
       <button type="button" onClick={() => openHNDates("memory-erased")}>Mémoire effacée</button>
       <button type="button" onClick={() => openHNDates("vegetative")}>État végétatif</button>
+    </div>
+
+    <h3>Bellirith · interférences</h3>
+    <p className="dev-help">Intrusions et confidences sont jouées pour de vrai (effets, flags, file de rattrapage). Les intimités s’ouvrent en souvenir, sans mutation. « Historique » prépare un état céder / résister / mixte pour tester le chapitre IX et le rendez-vous final.</p>
+    <div className="dev-row">
+      {BELLIRITH_INTRUSIONS.map((intrusion) => <Fragment key={intrusion.id}>
+        <button type="button" disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-intrusion", id: intrusion.id, mode: "live" })}>I{intrusion.id} · direct</button>
+        <button type="button" disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-intrusion", id: intrusion.id, mode: "catchup" })}>I{intrusion.id} · rattrapage</button>
+      </Fragment>)}
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Historique :</span>
+      <button type="button" onClick={() => applyBellirithPreset("ceded")}>A beaucoup cédé</button>
+      <button type="button" onClick={() => applyBellirithPreset("resisted")}>A toujours résisté</button>
+      <button type="button" onClick={() => applyBellirithPreset("mixed")}>Mixte</button>
+      <button type="button" onClick={() => applyBellirithPreset("reset")}>Effacer</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Intimités :</span>
+      {BELLIRITH_DEV_INTIMACIES.map((entry) => <button type="button" key={entry.dateId} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-intimacy", dateId: entry.dateId })}>{entry.label}</button>)}
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Confidences &amp; rendez-vous :</span>
+      {SECRET_CONVERSATIONS.filter((secret) => secret.character === "bellirith").map((secret) => <button type="button" key={secret.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-confidence", secretId: secret.id })}>{secret.tier} · {secret.title}</button>)}
+      {DATE_SCENES.filter((date) => date.character === "bellirith").map((date) => <button type="button" key={date.id} disabled={!onOpenIntimacy} onClick={() => onOpenIntimacy?.({ kind: "bellirith-date", dateId: date.id })}>{date.title}</button>)}
     </div>
 
     <h3>Accès direct aux scènes intimes</h3>
@@ -5564,10 +5856,16 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const naiahContext = character.id === "naiah" && game.player.sex !== "intersexe"
     ? naiahProximityContext(modal.dateId, Boolean(modal.home))
     : undefined;
-  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
+  // Bellirith : diversions, heures volées et duel de fin d’Acte I sont écrits
+  // à la main pour les trois configurations corporelles.
+  const bellirithContext = character.id === "bellirith" && !modal.home ? bellirithIntimacyContext(modal.dateId) : undefined;
+  const [bellirithFlags] = useState(() => game.flags);
+  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
-  const [lines, setLines] = useState<DialogueLine[]>(() => hyleeContext
+  const [lines, setLines] = useState<DialogueLine[]>(() => bellirithContext
+    ? bellirithIntimacyOpening(bellirithContext, bellirithFlags, game.player.sex, modal.dateId)
+    : hyleeContext
     ? hyleeDateIntimacyOpening(hyleeContext)
     : remeriiContext
       ? remeriiDateIntimacyOpening(remeriiContext)
@@ -5583,8 +5881,10 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices(hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
-  const [directionChoices] = useState(() => shuffledChoices(hyleeContext
+  const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [directionChoices] = useState(() => shuffledChoices(bellirithContext
+    ? bellirithIntimacyRoutes(bellirithContext, game.player.sex, bellirithFlags)
+    : hyleeContext
     ? hyleeDateIntimacyRoutes(hyleeContext, game.player.sex)
     : remeriiContext
       ? remeriiDateIntimacyRoutes(remeriiContext, game.player.sex, game.knowledge.includes("knows_remerii_curse"))
@@ -5607,7 +5907,9 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   }
 
   function endingLines() {
-    return hyleeContext
+    return bellirithContext
+      ? bellirithIntimacyEnding(bellirithContext, bellirithFlags, game.player.sex, modal.dateId)
+      : hyleeContext
       ? hyleeDateIntimacyEnding(hyleeContext)
       : remeriiContext
         ? remeriiDateIntimacyEnding(remeriiContext)
@@ -5649,7 +5951,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
     setDirection(choice);
-    const chapters = (hyleeContext || remeriiContext || naiahContext || modal.home) && "chapters" in choice
+    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || modal.home) && "chapters" in choice
       ? choice.chapters[game.player.intimacy]
       : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
@@ -5666,7 +5968,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   const isChoice = step === "approach-choice" || step === "attunement-choice" || step === "direction-choice";
   const isDone = step === "done";
-  const intimacyTitle = `${character.name} · ${modal.home ? homeProperty?.name || "Chez vous" : date?.title || "Derrière la dernière porte"}`;
+  const intimacyTitle = `${character.name} · ${modal.home ? homeProperty?.name || "Chez vous" : date?.title || (bellirithContext ? BELLIRITH_INTIMACY_TITLES[bellirithContext] : undefined) || "Derrière la dernière porte"}`;
   const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice } = useIntimacyBacklog(`${character.id}:${modal.dateId || "home"}:${modal.replay ? "r" : "l"}`, currentLine, isChoice, game.player, [character.id]);
   const speakerColor = character.color;
   const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");
@@ -5695,7 +5997,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
   return <section className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
-    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
+    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
@@ -5705,7 +6007,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     </button>}
     {step === "approach-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">Comment entrer dans ce moment ?</p>{approachChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseApproach(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester simplement ensemble et terminer la soirée ici</span></button></div>}
     {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}</div>}
-    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">{naiahContext ? "Trois façons de prolonger ce moment. Chacune transforme un élément concret du rendez-vous en une progression faite de jeu, de baisers et de confiance." : `Trois routes écrites pour ${character.name} et pour le corps que vous avez choisi. Chacune se développe en au moins huit séquences détaillées${modal.home ? ", entièrement propres au logement" : ""}.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Pas ce soir · rester ensemble et terminer la scène sans fermer les rendez-vous suivants</span></button></div>}
+    {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Bellirith a déjà décidé de la suite." : approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">{bellirithContext ? bellirithRouteNote(bellirithContext, directionChoices.length) : naiahContext ? "Trois façons de prolonger ce moment. Chacune transforme un élément concret du rendez-vous en une progression faite de jeu, de baisers et de confiance." : `Trois routes écrites pour ${character.name} et pour le corps que vous avez choisi. Chacune se développe en au moins huit séquences détaillées${modal.home ? ", entièrement propres au logement" : ""}.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Pas ce soir · rester ensemble et terminer la scène sans fermer les rendez-vous suivants</span></button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button type="button" className="btn principal primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
     {backlogOpen && <V2IntimacyBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
@@ -6158,11 +6460,14 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const received = game.invitations.find((entry) => entry.id === modal.invitationId);
     if (!invitation || !received) return null;
     const character = CHARACTERS.find((entry) => entry.id === invitation.character);
-    const pending = received.status === "pending" && game.day <= received.expiresDay;
-    const status = pending ? `${received.reoffers ? "Invitation renouvelée · " : ""}Réponse possible jusqu’au jour ${received.expiresDay}` : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : `Invitation manquée · elle pourra revenir après le jour ${received.expiresDay + INVITATION_REOFFER_DELAY}`;
+    const persistent = Boolean(received.persistent || invitation.persistent);
+    const pending = received.status === "pending" && (persistent || received.expiresDay === undefined || game.day <= received.expiresDay);
+    const status = pending
+      ? persistent ? PERSISTENT_INVITATION_LABEL : `${received.reoffers ? "Invitation renouvelée · " : ""}Réponse possible jusqu’au jour ${received.expiresDay}`
+      : received.status === "accepted" ? "Invitation déjà honorée" : received.status === "declined" ? "Invitation refusée" : `Invitation manquée · elle pourra revenir après le jour ${(received.expiresDay || game.day) + INVITATION_REOFFER_DELAY}`;
     const spot = spotById(invitation.spot);
     return <V2Fenetre surtitre={`Initiative de ${character?.name || ""}`} titre={invitation.title} classe="large v2-invitation" style={{ "--c": character?.color } as React.CSSProperties} onClose={onClose}
-      pied={pending ? <><button type="button" className="btn text-button" onClick={onClose}>Décider plus tard</button><button type="button" className="btn secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button type="button" className="btn principal primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button></> : <button type="button" className="btn secondary-action" onClick={onClose}>Refermer</button>}>
+      pied={pending ? persistent ? <><button type="button" className="btn text-button" onClick={onClose}>Décider plus tard</button><button type="button" className="btn principal primary-action" onClick={() => acceptInvitation(invitation)}>Jouer cette intervention</button></> : <><button type="button" className="btn text-button" onClick={onClose}>Décider plus tard</button><button type="button" className="btn secondary-action" onClick={() => declineInvitation(invitation)}>Refuser</button><button type="button" className="btn principal primary-action" onClick={() => acceptInvitation(invitation)}>Accepter et s’y rendre</button></> : <button type="button" className="btn secondary-action" onClick={onClose}>Refermer</button>}>
       <div className="fen-vn">
         {character && <V2PortraitCarte character={character} />}
         <div className="fen-vn-texte">
@@ -6305,9 +6610,12 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
     const naiah = character.id === "naiah";
     const naiahIntersex = naiah && game.player.sex === "intersexe";
-    const refactored = ["lineva", "allenna"].includes(character.id) || AUTHORED_DATE_CHARACTERS.has(character.id);
-    const desireReady = !refactored || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
-    const closeText = naiahIntersex
+    const refactored = ["lineva", "allenna", "bellirith"].includes(character.id) || AUTHORED_DATE_CHARACTERS.has(character.id);
+    const bellirith = character.id === "bellirith";
+    const desireReady = !refactored || bellirith || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
+    const closeText = bellirith
+      ? bellirithDateResultText(date.id, game)
+      : naiahIntersex
       ? "Le rendez-vous reste accompli et rejouable. Cette continuation n’est pas encore écrite pour la configuration choisie ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
       : desireReady
       ? naiah
@@ -6315,7 +6623,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
         : `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
       : `Après « ${date.title} », la proximité demeure douce, mais la tension physique ne demande pas encore à être prolongée. La soirée peut s'achever naturellement, sans fermer les suivantes.`;
     return <V2Resultat background={spotById(date.spot)?.background} characters={[character]} surtitre="La soirée refuse de finir" titre={`${character.name} reste près de vous`} texte={closeText}>
-      {desireReady && !naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startDateIntimacy(date.id)}>{naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button type="button" className="btn secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}
+      {desireReady && !naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startDateIntimacy(date.id)}>{bellirith ? bellirithDateResultAction(date.id) : naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button type="button" className="btn secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}
     </V2Resultat>;  }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
@@ -7087,7 +7395,7 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
   const mails: Mail[] = [
     ...crossLetters.map(({ received, letter }) => ({ key: `c-${letter.id}`, kind: "cross" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau · Quête croisée" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: (letter as { body?: string[] }).body, signature: (letter as { signature?: string }).signature })),
     ...letters.map(({ received, letter }) => ({ key: `l-${letter.id}`, kind: "letter" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: letter.body, signature: letter.signature })),
-    ...invitations.map(({ received, invitation }) => ({ key: `i-${invitation.id}`, kind: "invitation" as const, id: invitation.id, subject: invitation.title, character: CHARACTERS.find((entry) => entry.id === invitation.character), day: received.receivedDay ?? 0, unread: received.status === "pending", status: received.status === "pending" ? `Invitation · expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Manquée · reviendra" })),
+    ...invitations.map(({ received, invitation }) => ({ key: `i-${invitation.id}`, kind: "invitation" as const, id: invitation.id, subject: invitation.title, character: CHARACTERS.find((entry) => entry.id === invitation.character), day: received.receivedDay ?? 0, unread: received.status === "pending", status: received.status === "pending" ? received.persistent ? "Invitation persistante · disponible lorsque vous le souhaitez" : `Invitation · expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Manquée · reviendra" })),
   ].sort((a, b) => b.day - a.day);
   const [mailKey, setMailKey] = useState<string | undefined>(undefined);
   const mail = mails.find((entry) => entry.key === mailKey);

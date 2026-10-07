@@ -1,7 +1,7 @@
 import type { DialogueLine } from "./game-data";
 import { resolveSpriteMood } from "./sprite-system";
 
-export type NarrativeKind = "intro" | "story" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation";
+export type NarrativeKind = "intro" | "story" | "route" | "ambient" | "social" | "date" | "home" | "secret" | "world" | "invitation" | "bellirith";
 
 export type NarrativeContext = {
   sceneId: string;

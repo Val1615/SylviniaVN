@@ -15,6 +15,8 @@ export type SecretConversation = {
   spots?: string[];
   minDay?: number;
   minTrust?: number;
+  /** Bellirith : la jauge de déblocage principale est le DÉSIR (spec §28). */
+  minDesire?: number;
   requiresKnowledge?: string[];
   intro: DialogueLine[];
   choices: ChoiceData[];
@@ -61,8 +63,15 @@ export type InvitationTemplate = {
   period: PeriodKey;
   minDay: number;
   minStage: number;
-  expiresAfter: number;
+  /** Durée de validité en jours. Absente uniquement pour une invitation persistante. */
+  expiresAfter?: number;
+  /** Invitation persistante : n’expire jamais, ne peut pas être refusée, ne coûte rien tant qu’elle n’est pas jouée. */
+  persistent?: boolean;
+  /** Identifiant de l’intrusion Bellirith rejouée en mode rattrapage. */
+  catchup?: "01" | "02" | "03" | "04";
   requiresKnowledge?: string[];
+  requiresFlags?: string[];
+  excludesFlags?: string[];
   declineText: string;
   declineEffects?: Effects;
   intro: DialogueLine[];
