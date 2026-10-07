@@ -45,7 +45,7 @@ export const BELLIRITH_INTIMACY_CONTEXTS: BellirithIntimacyContext[] = [
   "bellirith-free",
   "date-bellirith-final",
 ];
-export const BELLIRITH_FREE_SOURCES = ["bellirith-free", "bellirith-free-confidence", "date-bellirith-music", "date-bellirith-market"];
+export const BELLIRITH_FREE_SOURCES = ["bellirith-free", "bellirith-free-confidence", "bellirith-home", "date-bellirith-music", "date-bellirith-market"];
 export const BELLIRITH_INTIMACY_MINIMUM_SEQUENCES = BELLIRITH_INTIMACY_MINIMUM_SEQUENCES_VALUE;
 export { BELLIRITH_INTIMACY_MINIMUM_WORDS } from "./bellirith-intimacy-kit";
 

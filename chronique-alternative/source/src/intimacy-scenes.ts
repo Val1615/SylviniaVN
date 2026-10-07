@@ -249,6 +249,8 @@ export const INTIMACY_PROFILES: Record<string, IntimacyProfile> = {
     afterglow: [N("Le matin arrive sans effet spectaculaire. Saidin le regarde éclairer votre visage comme si le soleil venait d’inventer cette couleur."), C("Saidin", "Je pourrais vous dire ce que cette nuit changera. Je préfère vous demander ce que nous voulons faire aujourd’hui.", "surprised")],
   },
 
+  // OBSOLÈTE (refonte Bellirith v1) : profil générique « séduire sans magie », plus atteignable —
+  // toutes les intimités de Bellirith passent par bellirith-diversion-intimacy.ts. Conservé pour les validateurs de catalogue.
   bellirith: {
     opening: [C("Bellirith", "Le charme est éteint. Je n’ai donc plus d’excuse si tu me trouves encore séduisante."), N("Elle retire son dernier bijou enchanté. Son sourire demeure, mais ses mains n’ont plus cette immobilité parfaite qui faisait de chaque geste une mise en scène.")],
     approaches: [

@@ -22,7 +22,7 @@ import {
   type RouteScene,
   type StatKey,
 } from "./game-data";
-import { AMBIENT_LINES, type AmbientDialogue } from "./ambient-dialogues";
+import { AMBIENT_LINES, ambientAvailableForFlags, ambientPromptFor, choiceAvailableForFlags, type AmbientDialogue } from "./ambient-dialogues";
 import {
   ALL_KNOWLEDGE_ENTRIES,
   INVITATIONS,
@@ -1620,8 +1620,9 @@ function chooseAmbientDialogue(
   spot: string,
   period: string,
   history: string[],
+  flags: string[] = [],
 ) {
-  const atStage = deck.filter((entry) => stage >= (entry.minStage ?? 0) && stage <= (entry.maxStage ?? 5));
+  const atStage = deck.filter((entry) => stage >= (entry.minStage ?? 0) && stage <= (entry.maxStage ?? 5) && ambientAvailableForFlags(entry, flags));
   const atLocation = atStage.filter((entry) => !entry.locations || entry.locations.includes(location));
   const atPeriod = atLocation.filter((entry) => !entry.periods || entry.periods.includes(period as (typeof PERIODS)[number]["id"]));
   const contextual = atPeriod.length ? atPeriod : atLocation.filter((entry) => !entry.periods);
@@ -1839,7 +1840,7 @@ function relationBeatFor(sceneId: string, game: GameState) {
 }
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
-  const base = dialogue.scene.choices || [];
+  const base = (dialogue.scene.choices || []).filter((choice) => choiceAvailableForFlags(choice, game.flags));
   if (dialogue.scene.beats && dialogue.phase === "relation-choices") return dialogue.scene.beats[dialogue.dateRound ?? 0]?.choices || [];
   if (dialogue.phase === "relation-choices" && dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character)) {
     const beat = authoredDateBeat(dialogue.scene.id, dialogue.dateRound ?? 0, dialogue.datePicks);
@@ -2491,13 +2492,14 @@ export default function Home() {
       game.spot,
       PERIODS[game.period].id,
       ambientHistory,
+      game.flags,
     );
     if (!ambient) {
       const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
       setModal({ kind: "notice", title: `${character.name} est occupé·e`, text: `${character.name} ${place.action}. Revenez à une autre période : ses conversations suivent maintenant son activité et ce sous-lieu.` });
       return;
     }
-    const ambientIntro = ambientPromptLines(ambient.prompt, character.name);
+    const ambientIntro = ambientPromptLines(ambientPromptFor(ambient, game.flags), character.name);
     const scene: SceneView = {
       id: ambient.id,
       title: ambient.title,
@@ -4275,7 +4277,7 @@ export default function Home() {
           ...(modal.home ? [`home-intimate:${modal.character}`] : []),
           ...(modal.character === "remerii" ? ["remerii-intimacy-lived"] : []),
           ...(modal.character === "lineva" ? ["lineva-tutoiement"] : []),
-          ...(modal.character === "bellirith" && bellirithIntimacyContext(modal.dateId) ? [BELLIRITH_SLEPT_FLAG, `bellirith-intimate:${bellirithIntimacyContext(modal.dateId)}`] : []),
+          ...(modal.character === "bellirith" && (modal.home || bellirithIntimacyContext(modal.dateId)) ? [BELLIRITH_SLEPT_FLAG, `bellirith-intimate:${modal.home ? "bellirith-free" : bellirithIntimacyContext(modal.dateId)}`] : []),
         ]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
       }));
@@ -5858,13 +5860,15 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     : undefined;
   // Bellirith : diversions, heures volées et duel de fin d’Acte I sont écrits
   // à la main pour les trois configurations corporelles.
-  const bellirithContext = character.id === "bellirith" && !modal.home ? bellirithIntimacyContext(modal.dateId) : undefined;
+  // Au logis, Bellirith passe aussi par une heure volée écrite à la main (source « bellirith-home »).
+  const bellirithSource = character.id === "bellirith" && modal.home ? "bellirith-home" : modal.dateId;
+  const bellirithContext = character.id === "bellirith" ? bellirithIntimacyContext(modal.home ? "bellirith-free" : modal.dateId) : undefined;
   const [bellirithFlags] = useState(() => game.flags);
   const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => bellirithContext
-    ? bellirithIntimacyOpening(bellirithContext, bellirithFlags, game.player.sex, modal.dateId)
+    ? bellirithIntimacyOpening(bellirithContext, bellirithFlags, game.player.sex, bellirithSource)
     : hyleeContext
     ? hyleeDateIntimacyOpening(hyleeContext)
     : remeriiContext
@@ -5908,7 +5912,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   function endingLines() {
     return bellirithContext
-      ? bellirithIntimacyEnding(bellirithContext, bellirithFlags, game.player.sex, modal.dateId)
+      ? bellirithIntimacyEnding(bellirithContext, bellirithFlags, game.player.sex, bellirithSource)
       : hyleeContext
       ? hyleeDateIntimacyEnding(hyleeContext)
       : remeriiContext

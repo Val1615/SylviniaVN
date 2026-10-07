@@ -42,6 +42,10 @@ export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
     B("Ne fais pas cette tête. Les protocoles adorent qu’on les abandonne. Ça leur donne une raison d’exister.", "teasing"),
   ],
   "bellirith-free": (flags, source) => {
+    if (source === "bellirith-home") return [
+      "Chez vous, elle a déjà trouvé le meilleur fauteuil, la meilleure bouteille et l’endroit exact où la lumière de la lampe la rend injustement belle. Elle n’a rien demandé. Elle a seulement attendu que vous fermiez la porte.",
+      W(SLEPT, [B("Ta maison, ton lit, tes draps. Mes règles. Tu as dit oui en me donnant la clé, tu sais ?", "seductive")], [B("Ta maison. Tu m’as ouvert ta porte et tu me regardes comme si tu te demandais encore pourquoi. Laisse-moi te montrer pourquoi.", "seductive")]),
+    ];
     if (source === "bellirith-free-confidence") return [
       "La phrase qu’elle allait peut-être dire reste suspendue quelque part derrière vous. Vous l’avez laissée là. Elle le sait, et son sourire a quelque chose de soulagé qu’elle déguise aussitôt en triomphe.",
       B("Tu as choisi. Tu voulais une vérité, je t’offre mieux. Tu ne le regretteras pas — ou si, mais délicieusement.", "seductive"),
@@ -217,7 +221,10 @@ export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
     "Personne n’attendait plus rien de cette nuit. Vous redescendez du toit au petit matin, avec du jasmin dans les cheveux et une rue de Saëlis éteinte dans la mémoire.",
   ],
   "bellirith-diversion-coalition": () => irianaDawn,
-  "bellirith-free": (flags, source) => source === "bellirith-free-confidence" ? [
+  "bellirith-free": (flags, source) => source === "bellirith-home" ? [
+    "Elle ne repart pas. Elle s’installe dans vos draps comme dans un territoire conquis, vole l’oreiller le plus frais et vous tourne le dos pour mieux vous obliger à venir la chercher.",
+    B("Je reste jusqu’au matin. Ce n’est pas une question. Si tu veux me mettre dehors, il faudra me porter, et je pèse très lourd quand je boude.", "teasing"),
+  ] : source === "bellirith-free-confidence" ? [
     "Plus tard, en repassant la soirée dans votre tête, vous retrouvez l’endroit exact où la conversation a bifurqué. La phrase qu’elle n’a pas dite est toujours là, quelque part, intacte. Elle l’a gardée.",
     "Vous ne savez pas si vous la lui redemanderez. Vous savez qu’elle s’attend à ce que vous ne le fassiez pas.",
   ] : [
