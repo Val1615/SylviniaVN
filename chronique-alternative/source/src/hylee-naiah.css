@@ -26,3 +26,7 @@
 @media(max-height:540px){.hn-search-heading>div:first-child>p:not(.eyebrow){display:none}.hn-search-heading{padding:.4rem .7rem}.hn-search h2{font-size:1.35em}.hn-search-footer{max-height:32%;padding:.4rem .7rem}.hn-search-message img{display:none}.hn-search-meters span{padding:.25rem}.hn-search-meters b{margin-top:0}}
 @media(prefers-reduced-motion:reduce){.hn-search *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .reduced-motion .hn-search *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+/* Trois rendez-vous autonomes : boutons empilés, lisibles en 830×525. */
+.hn-dossier .hn-date-choices{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.hn-dossier .hn-date-choices button{margin-top:0;text-align:left;white-space:normal}
+.hn-dossier .hn-date-choices button small{opacity:.78;font-size:.78em}

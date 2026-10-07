@@ -77,6 +77,19 @@ const GROUP_CONTEXTS = {
     hylee: ["soft", "teasing", "shy", "tender", "seductive", "teasing", "tender", "soft"],
     naiah: ["smirk", "teasing", "laugh", "inviting", "soft", "teasing", "stern", "soft"],
   },
+  // Quinze étapes : défi, renversement, révélation, jeu, culmination, revanche.
+  "group-date-hylee-naiah-place": {
+    hylee: ["teasing", "annoyed", "teasing", "seductive", "teasing", "shy", "seductive", "annoyed", "teasing", "seductive", "tender", "seductive", "annoyed", "teasing", "soft"],
+    naiah: ["smirk", "teasing", "stern", "laugh", "laugh", "smirk", "teasing", "inviting", "laugh", "teasing", "smirk", "inviting", "laugh", "smirk", "soft"],
+  },
+  "group-date-hylee-naiah-one": {
+    hylee: ["annoyed", "teasing", "teasing", "seductive", "annoyed", "shy", "teasing", "seductive", "teasing", "seductive", "tender", "seductive", "teasing", "soft", "soft"],
+    naiah: ["inviting", "smirk", "teasing", "stern", "laugh", "inviting", "teasing", "smirk", "laugh", "inviting", "smirk", "teasing", "laugh", "smirk", "soft"],
+  },
+  "group-date-hylee-naiah-home": {
+    hylee: ["teasing", "seductive", "annoyed", "teasing", "teasing", "shy", "seductive", "teasing", "annoyed", "seductive", "tender", "seductive", "teasing", "soft", "soft"],
+    naiah: ["smirk", "inviting", "teasing", "stern", "laugh", "smirk", "teasing", "inviting", "laugh", "smirk", "teasing", "inviting", "laugh", "smirk", "soft"],
+  },
   "group-date-naiah-bellirith": {
     naiah: ["soft", "smirk", "teasing", "stern", "inviting", "laugh", "teasing", "soft"],
   },

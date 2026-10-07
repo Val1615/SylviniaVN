@@ -16,6 +16,13 @@ import {
   isHyleeRemeriiManualContext,
 } from "./hylee-remerii-group-intimacy";
 import { NAIAH_GROUP_CONTEXT_IDS, NAIAH_GROUP_GAMES, NAIAH_GROUP_ROUTES, isNaiahGroupProximity } from "./naiah-group-proximity";
+import {
+  HYLEE_NAIAH_INTIMACY_CONTEXT_IDS,
+  HYLEE_NAIAH_INTIMACY_GAMES,
+  HYLEE_NAIAH_MANUAL_ROUTES,
+  isHyleeNaiahManualContext,
+  validateHyleeNaiahIntimacy,
+} from "./hylee-naiah-group-intimacy";
 
 export type GroupDateScene = {
   authoredBeats?: boolean; intimacyDisabled?: boolean; legacyOnly?: boolean; home?: boolean; afterDates?: string[]; music?: string;
@@ -201,7 +208,7 @@ export const GROUP_DATES: GroupDateScene[] = [
     intimacySetting: { opening: ["Iriana ferme la porte elle-même. Valurn verse trois verres d’eau plutôt qu’un nouveau vin, puis détache lentement le premier fermoir de sa tenue sans quitter l’Impératrice des yeux.", "Iriana abandonne son titre avec son diadème et vous attire tous deux contre elle. Valurn plaisante encore, mais sa voix baisse lorsque ses doigts découvrent la femme que le protocole lui interdisait jusque-là de regarder ainsi."], closing: ["Iriana rouvre la porte sans remettre immédiatement son titre. Valurn lui offre une révérence volontairement imparfaite ; elle lui répond de même, puis garde votre main jusqu’au bout du couloir."] },
   },
   {
-    id: "group-date-hylee-naiah",
+    id: "group-date-hylee-naiah", legacyOnly: true,
     characters: ["hylee", "naiah"],
     title: "La vérité sous trois reflets",
     type: "Promenade dans les brumes",
@@ -419,6 +426,7 @@ const LEGACY_GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
 export const GROUP_INTIMACY_GAMES: Record<string, IntimacyGame> = {
   ...LEGACY_GROUP_INTIMACY_GAMES,
   ...NAIAH_GROUP_GAMES,
+  ...HYLEE_NAIAH_INTIMACY_GAMES,
 };
 
 export function groupIntimacyGameResult(pairId: string, score: number): DialogueLine[] {
@@ -748,6 +756,7 @@ export const GROUP_INTIMACY_ROUTES_BY_SEX: Record<string, Record<PlayerSex, Grou
   ...LINEVA_ALLENNA_MANUAL_ROUTES,
   ...HYLEE_REMERII_MANUAL_ROUTES,
   ...NAIAH_GROUP_ROUTES,
+  ...HYLEE_NAIAH_MANUAL_ROUTES,
 };
 
 export function isManualLinevaAllennaIntimacy(id: string): boolean {
@@ -758,10 +767,11 @@ export const MANUAL_GROUP_CONTEXT_IDS = [
   ...LINEVA_ALLENNA_MANUAL_CONTEXT_IDS,
   ...HYLEE_REMERII_MANUAL_CONTEXT_IDS,
   ...NAIAH_GROUP_CONTEXT_IDS,
+  ...HYLEE_NAIAH_INTIMACY_CONTEXT_IDS,
 ] as const;
 
 export function isManualGroupIntimacy(id: string): boolean {
-  return isManualLinevaAllennaIntimacy(id) || isHyleeRemeriiManualContext(id) || isNaiahGroupProximity(id);
+  return isManualLinevaAllennaIntimacy(id) || isHyleeRemeriiManualContext(id) || isNaiahGroupProximity(id) || isHyleeNaiahManualContext(id);
 }
 
 export function groupIntimacyRoutes(pairId: string, sex: PlayerSex): GroupIntimacyRoute[] {
@@ -813,7 +823,8 @@ export function validateGroupIntimacyCatalog(): { pairs: number; combinations: n
           const minimum = entry.manual
             ? mode === "explicite" ? 400 : 150
             : mode === "explicite" ? 320 : 200;
-          if (sequence.length < 8 || sequence.some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: huit séquences minimum requises`);
+          const minimumSequences = isHyleeNaiahManualContext(pairId) ? 12 : 8;
+          if (sequence.length < minimumSequences || sequence.some((chapter) => chapter.length === 0)) throw new Error(`${entry.id}/${mode}: ${minimumSequences} séquences minimum requises`);
           if (words < minimum) throw new Error(`${entry.id}/${mode}: ${words} mots, minimum ${minimum}`);
           chapters += sequence.length;
         });
@@ -825,6 +836,7 @@ export function validateGroupIntimacyCatalog(): { pairs: number; combinations: n
     if (!game || game.beats.length !== 4 || game.beats.some((beat) => beat.options.length !== 3)) throw new Error(`${pairId}: mini-jeu incomplet`);
   });
   if (new Set(labels).size !== labels.length) throw new Error("Chaque route à trois doit avoir un libellé unique par duo et par sexe");
+  validateHyleeNaiahIntimacy();
   if (GROUP_DATES.filter(date => !date.intimacyDisabled).length + HOME_GROUP_INTIMACY_DATES.length !== Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length) throw new Error("Chaque contexte intime doit avoir un rendez-vous public ou au logis");
   return { pairs: Object.keys(GROUP_INTIMACY_ROUTES_BY_SEX).length, combinations, routes, chapters, dates: GROUP_DATES.filter(date => !date.intimacyDisabled).length, games: Object.keys(GROUP_INTIMACY_GAMES).length };
 }

@@ -4,16 +4,22 @@ import type { HRBeat } from "./hylee-remerii-cross-quest";
 import { createHyleeSearch, validHyleeSearch, type HyleeSearchState, type MotherOutcome } from "./hylee-search";
 
 export const HN_KEY = "hylee-naiah";
-export const HN_TITLES = ["Ça me rappelle Hylee", "Quelques minutes", "Trop vouloir refaire comme avant", "Près de l’Auberge", "Retrouver Hylee", "Un endroit à moi", "Une seule chose", "La prochaine fois"];
+export const HN_TITLES = ["Ça me rappelle Hylee", "Quelques minutes", "Trop vouloir refaire comme avant", "Près de l’Auberge", "Retrouver Hylee", "Un endroit à moi", "Une seule chose", "Ce soir, c’est toi"];
+/** Les trois rendez-vous autonomes (identifiants dupliqués ici pour éviter un import circulaire avec hylee-naiah-dates). */
+export const HN_DATE_KEYS = ["group-date-hylee-naiah-place", "group-date-hylee-naiah-one", "group-date-hylee-naiah-home"] as const;
+export function hnDatesDone(choices: Record<string, string[]>) {
+  const [place, one, home] = HN_DATE_KEYS.map((id) => Boolean(choices[id]));
+  return { hyleeDateDone: place, naiahDateDone: one, homeDateDone: home, completed: place && one && home };
+}
 export const HN_OBJECTIVES = [
   "Naïah vous a demandé de la rejoindre à la lisière. Écoutez ce qu’elle souhaite proposer à Hylee.",
   "Rejoignez Hylee et Naïah à la Clairière des Échos pour une première halte ensemble.",
   "Naïah a préparé une promenade dans sa clairière. Retrouvez-les et laissez leur rencontre suivre son cours.",
   "Accompagnez Hylee et Naïah sur l’ancien chemin près de l’Auberge du Forestier.",
   "Hylee a fui après la confrontation. Recoupez un refuge, un trajet et les traces du froid, puis retrouvez-la sans la brusquer.",
-  "Hylee vous invite toutes les deux au petit lac de Mir’Aldas. Suivez son initiative.",
+  "Trois rendez-vous indépendants, dans l’ordre de votre choix : le petit lac d’Hylee, l’activité unique de Naïah et une soirée dans votre logis.",
   "Naïah propose une seule activité à la Clairière des Échos. Rejoignez-la avec Hylee.",
-  "Invitez Hylee et Naïah dans votre logis et choisissez votre soirée. Leur amitié peut continuer sans attendre cette invitation.",
+  "Invitez Hylee et Naïah dans votre logis et menez la soirée. Ce rendez-vous ne dépend pas des deux autres.",
 ];
 export const HN_MOTHER_FLAGS = ["cross-hn-mother-killed", "cross-hn-mother-memory-erased", "cross-hn-mother-vegetative"];
 export type HNState = {
@@ -63,8 +69,7 @@ export function hydrateHN(progress: CrossQuestProgress, flags: string[] = []): C
   return { ...progress, id: HN_KEY, stage, letters: [], startedDay: Math.max(1, Number(progress.startedDay) || 1), stageStartedDay: Math.max(1, Number(progress.stageStartedDay) || 1), hn: {
     choices, checkpoint, motherOutcome: outcome,
     search: search || (stage === 4 && outcome ? createHyleeSearch(outcome, progress.startedDay) : undefined),
-    firstAttemptDone: stage >= 2, secondAttemptDone: stage >= 3, hyleeDateDone: stage >= 6,
-    naiahDateDone: stage >= 7, homeDateDone: stage >= 8, completed: stage >= 8,
+    firstAttemptDone: stage >= 2, secondAttemptDone: stage >= 3, ...hnDatesDone(choices),
   } };
 }
 /** Une seule issue canonique : choisir une branche retire les deux autres flags. */
@@ -77,8 +82,7 @@ export function finishHNScene(progress: CrossQuestProgress, sceneId: string, pic
   const stage = Math.min(8, progress.stage + 1);
   return { ...progress, stage, stageStartedDay: day, hn: {
     ...hn, choices: { ...hn.choices, [sceneId]: picks }, checkpoint: undefined,
-    firstAttemptDone: stage >= 2, secondAttemptDone: stage >= 3, hyleeDateDone: stage >= 6,
-    naiahDateDone: stage >= 7, homeDateDone: stage >= 8, completed: stage >= 8,
+    firstAttemptDone: stage >= 2, secondAttemptDone: stage >= 3, ...hnDatesDone({ ...hn.choices, [sceneId]: picks }),
   } };
 }
 const S = (stage: number, location: string, spot: string, intro: DialogueLine[], choices: ChoiceData[], beats: HRBeat[] = [], cast = ["hylee", "naiah"]): HNScene => ({

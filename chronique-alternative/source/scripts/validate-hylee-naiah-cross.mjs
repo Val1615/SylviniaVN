@@ -7,7 +7,7 @@ import { createServer } from "vite";
 // Le moteur réel est exercé avec des cellules de hooks ; aucun double de quête.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const hookId = "\0hn-test-hooks";
-const actions = ["game", "dialogue", "modal", "setGame", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHNScene", "startHNDate", "startHyleeSearch", "setHyleeSearchState", "startGroupDate", "replayGroupDate", "startHRScene", "startAnchorOperation", "setAnchorState", "startAlphaHunt", "setAlphaHuntState", "updateGame"];
+const actions = ["game", "dialogue", "modal", "setGame", "setModal", "advanceDialogue", "selectChoice", "closeDialogue", "startHNScene", "startHNDate", "startHyleeSearch", "setHyleeSearchState", "startGroupDate", "replayGroupDate", "startGroupDateIntimacy", "finishTrioEnding", "closeGroupIntimacy", "startHRScene", "startAnchorOperation", "setAnchorState", "startAlphaHunt", "setAlphaHuntState", "updateGame"];
 const server = await createServer({ root, appType: "custom", logLevel: "silent", server: { middlewareMode: true }, plugins: [{
   name: "hn-engine-test", enforce: "pre",
   resolveId(id) { if (id === "hn-test-hooks") return hookId; },
@@ -190,7 +190,71 @@ try {
     const protectedGame = JSON.stringify(api.game); act("startGroupDate", id); finish();
     assert.equal(JSON.stringify(api.game), protectedGame, "relecture avance le temps réel");
   }
+  // Trois rendez-vous autonomes : n’importe quel ordre, sans prérequis croisé.
+  const TRANSITIONS = { [dates.HN_DATE_IDS[0]]: "cross-hn-lake-gage", [dates.HN_DATE_IDS[1]]: "cross-hn-one-thread", [dates.HN_DATE_IDS[2]]: "cross-hn-home-lead" };
+  const property = housing.HOUSING_PROPERTIES.find(p => p.location === "algratal");
+  const freshDates = (desire = 0) => {
+    const g = structuredClone(completedSaves[0]), p = g.crossQuestSeries[hn.HN_KEY];
+    p.stage = 5; p.hn.completed = p.hn.hyleeDateDone = p.hn.naiahDateDone = p.hn.homeDateDone = false; p.hn.checkpoint = undefined;
+    for (const id of dates.HN_DATE_IDS) delete p.hn.choices[id];
+    g.groupDateHistory = g.groupDateHistory.filter(d => !dates.HN_DATE_IDS.includes(d));
+    g.flags = g.flags.filter(f => !/^cross-hn-(?:hylee|naiah|home)-date-complete$|^cross-hn-(?:world-friendship|series-complete)$|^group-date-intimate:/.test(f));
+    g.housing.propertyId = property.id;
+    for (const id of ["hylee", "naiah"]) g.relationships[id] = { ...g.relationships[id], desire };
+    return g;
+  };
+  init(freshDates());
+  const order = [dates.HN_DATE_IDS[2], dates.HN_DATE_IDS[1], dates.HN_DATE_IDS[0]];
+  for (const [index, id] of order.entries()) {
+    const date = group.GROUP_DATES.find(d => d.id === id);
+    assert.ok(page.groupDateUnlocked(api.game, date), `${id}: verrouillé hors ordre`);
+    assert.equal(dates.hnDateReason(id, api.game), undefined, `${id}: un autre rendez-vous est encore exigé`);
+    assert.equal(date.intimacyDisabled, undefined); assert.equal(date.intimacyMinDesire, 25);
+    const seen = [];
+    act("startGroupDate", id); finish(choices => { seen.push(...choices.map(c => c.id)); return choices[0]; }, true);
+    assert.ok(!seen.includes(TRANSITIONS[id]), `${id}: bascule intime proposée sans désir`);
+    assert.ok(!seen.some(c => /tender|close$/.test(c)), `${id}: ancienne proximité tendre encore proposée`);
+    assert.equal(api.modal, null, `${id}: continuation intime ouverte sans désir`);
+    assert.equal(progress().stage, 6 + index);
+  }
+  assert.ok(progress().hn.completed);
+  for (const flag of ["cross-hn-series-complete", "cross-hn-home-date-complete", "cross-hn-hylee-date-complete", "cross-hn-naiah-date-complete", "cross-hn-world-friendship"]) assert.ok(api.game.flags.includes(flag), `${flag} absent après un ordre libre`);
+  init(freshDates()); act("startGroupDate", dates.HN_DATE_IDS[2]); finish();
+  assert.ok(api.game.flags.includes("cross-hn-home-date-complete"));
+  assert.ok(!api.game.flags.includes("cross-hn-hylee-date-complete") && !api.game.flags.includes("cross-hn-world-friendship"), "le logis valide un autre rendez-vous");
+  const homeText = JSON.stringify(dates.hnDateScene(dates.HN_DATE_IDS[2], progress().hn, ["cross-hn-home-cook"], api.game));
+  assert.doesNotMatch(homeText, /perles qui restent|petit lien au poignet|au lac après-demain|prochain jeu du lac/u, "le logis cite encore un autre rendez-vous");
+  // Un seul désir suffisant ne suffit pas.
+  const half = freshDates(); half.relationships.hylee.desire = 40; half.relationships.naiah.desire = 24;
+  init(half); { const seen = []; act("startGroupDate", dates.HN_DATE_IDS[0]); finish(choices => { seen.push(...choices.map(c => c.id)); return choices[0]; }); assert.ok(!seen.includes(TRANSITIONS[dates.HN_DATE_IDS[0]]), "bascule ouverte avec un seul désir"); }
+  // Désir ≥ 25 pour les deux : bascule proposée, refus gratuit, continuation manuelle, relecture sans drapeau.
+  for (const id of dates.HN_DATE_IDS) {
+    init(freshDates(25));
+    act("startGroupDate", id);
+    finish(choices => choices.find(c => c.id === TRANSITIONS[id]) || choices[0]);
+    assert.ok(progress().hn.choices[id].includes(TRANSITIONS[id]), `${id}: bascule intime absente à désir 25`);
+    assert.equal(api.modal?.kind, "group-date-result", `${id}: proposition de continuation absente`);
+    const declined = JSON.stringify({ r: api.game.relationships, f: api.game.flags.filter(f => !f.startsWith("group-date-intimate")) });
+    act("finishTrioEnding", id, false);
+    assert.equal(JSON.stringify({ r: api.game.relationships, f: api.game.flags.filter(f => !f.startsWith("group-date-intimate")) }), declined, `${id}: refuser coûte quelque chose`);
+    act("startGroupDateIntimacy", id);
+    assert.equal(api.modal?.kind, "group-intimacy", `${id}: continuation manuelle non ouverte`);
+    assert.ok(group.isManualGroupIntimacy(id));
+    act("closeGroupIntimacy", true, "test");
+    assert.ok(api.game.flags.includes(`group-date-intimate:${id}`));
+    const protectedGame = JSON.stringify(api.game);
+    act("startGroupDate", id); finish(choices => choices.find(c => c.id === TRANSITIONS[id]) || choices[0]);
+    assert.equal(api.modal?.kind, "group-date-result"); assert.equal(api.modal.replay, true, `${id}: relecture sans drapeau de souvenir`);
+    act("startGroupDateIntimacy", id, true); assert.equal(api.modal?.kind, "group-intimacy"); assert.equal(api.modal.replay, true);
+    act("closeGroupIntimacy", true, "replay");
+    assert.equal(JSON.stringify(api.game), protectedGame, `${id}: relecture intime modifie la partie`);
+  }
+  assert.doesNotMatch(JSON.stringify(api.game.flags), /romance|triad|trio-love/iu, "un drapeau de romance à trois a été écrit");
   const { renderToStaticMarkup } = await import("react-dom/server"), { createElement } = await import("react");
+  const openDates = freshDates(); openDates.crossQuestSeries[hn.HN_KEY].hn.choices[dates.HN_DATE_IDS[1]] = ["cross-hn-one-walk"];
+  const datesDossier = renderToStaticMarkup(createElement(ui.HNDossier, { progress: openDates.crossQuestSeries[hn.HN_KEY], game: openDates, onScene() {}, onSearch() {} }));
+  for (const title of hn.HN_TITLES.slice(5)) assert.ok(datesDossier.includes(title.replace(/’/g, "’")), `dossier : « ${title} » absent`);
+  assert.match(datesDossier, /dans l’ordre de votre choix/u); assert.match(datesDossier, /Revivre « Une seule chose »/u);
   const partialGame = structuredClone(completedSaves[1]); partialGame.crossQuestSeries[hn.HN_KEY].stage = 4;
   const dossier = renderToStaticMarkup(createElement(ui.HNDossier, { progress: partialGame.crossQuestSeries[hn.HN_KEY], game: partialGame, onScene() {}, onSearch() {} }));
   assert.match(dossier, /Hylee &amp; Naïah/); assert.match(dossier, /Retrouver Hylee/);
@@ -208,5 +272,5 @@ try {
     playing.crossQuestSeries[hn.HN_KEY].hn.search = search.createHyleeSearch("memory-erased", 0);
     await writeFile(resolve(process.env.HN_FIXTURES, "search.json"), JSON.stringify(playing));
   }
-  console.log("[Hylee / Naïah] 3 issues mère · 4 scénarios · 8 étapes · 3 activités au logis · reprise et relecture protégées validées.");
+  console.log("[Hylee / Naïah] 3 issues mère · 4 scénarios · 8 étapes · 3 rendez-vous autonomes (ordre libre) · bascule intime à désir 25 · 3 activités au logis · reprise et relecture protégées validées.");
 } finally { await server.close(); }
