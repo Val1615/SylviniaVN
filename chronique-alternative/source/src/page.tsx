@@ -2992,6 +2992,11 @@ export default function Home() {
         const coalitionFlags = campaign.id === "campaign-coalition-preparation"
           ? bellirithFlagsWithTrend(unique([...campaignFlags, ...(choice.id === "coalition-follow-bellirith" && bellirithAcceptedCount({ flags: campaignFlags, history: current.history }) >= 2 ? [BELLIRITH_FAVORITE_FLAG] : [])]))
           : campaignFlags;
+        // Le fil Bellirith avance aussi avec le chapitre IX (étape 5 = rendez-vous ouverts).
+        if (relationships.bellirith) {
+          const filStage = bellirithFilStage({ flags: coalitionFlags, history: [...current.history, campaign.id] });
+          relationships.bellirith = { ...relationships.bellirith, stage: Math.max(relationships.bellirith.stage, filStage) };
+        }
         return {
           ...current,
           relationships,
