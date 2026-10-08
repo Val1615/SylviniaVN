@@ -29,7 +29,15 @@ const S = (id: string, title: string, prompt: string, choices: ChoiceData[], opt
 });
 const V = (prompt: string, requiresFlags?: string[], excludesFlags?: string[]) => ({ prompt, requiresFlags, excludesFlags });
 
-export const BELLIRITH_FREE_PROPOSAL = "bellirith-free";
+/*
+ * Chaque proposition libre ouvre sa propre heure volée (bellirith-heure-*.ts).
+ * L’ancien identifiant générique « bellirith-free » n’est plus émis.
+ */
+export const BELLIRITH_FREE_PROPOSALS = {
+  ennui: "bellirith-free-ennui",
+  matin: "bellirith-free-matin",
+  couloir: "bellirith-free-couloir",
+} as const;
 
 export const BELLIRITH_AMBIENT_LINES: AmbientDialogue[] = [
   S("bellirith-ecoute", "Ce que chacun veut vraiment", "Bellirith s’est installée derrière un pilier, une coupe à la main, et écoute sans vergogne trois courtisans qui parlent d’un mariage. « Le premier veut la dot. La deuxième veut le marié. Le troisième veut la deuxième. Aucun des trois ne le dira avant l’hiver. Parie contre moi, si tu l’oses. »", [
@@ -100,7 +108,7 @@ export const BELLIRITH_AMBIENT_LINES: AmbientDialogue[] = [
   S("bellirith-ennui", "Elle s’ennuie", "Bellirith est allongée en travers d’une banquette, les pieds sur l’accoudoir, une main sur les yeux. « Je m’ennuie. Je m’ennuie à un point où je pourrais devenir vertueuse. Trouve-moi quelque chose d’indécent, d’absurde ou de spectaculaire. Tu as dix secondes. »", [
     Q("bel-ennui-a", "Lui proposer de voler le dessert du banquet officiel.", "audace", [N("Une demi-heure plus tard, vous êtes tous les deux cachés sous l’escalier des cuisines avec un gâteau de trois étages qui ne vous appartient pas, et deux cuillères."), B("C’est absurde, c’est spectaculaire, c’est légèrement indécent. Tu as coché les trois cases avec un gâteau.", "teasing"), B("On ne le finira jamais. On va essayer quand même.", "seductive")], { affection: 5 }),
     Q("bel-ennui-l", "Lui proposer de deviner, ensemble, qui s’ennuie autant qu’elle dans la salle.", "lucidite", [N("Vous vous installez sur la banquette et vous dressez la liste. Le garde de la porte. La comtesse qui compte les chandelles. Le serviteur qui essuie la même coupe depuis dix minutes."), B("Le serviteur, c’est un espion. Il essuie la même coupe parce qu’il écoute la table d’à côté.", "thoughtful"), P("Tu ne t’ennuies plus."), B("Non. Tu as transformé une salle mortelle en devinette. C’est presque de la sorcellerie.", "smirk")], { trust: 3, affection: 2 }),
-    Q("bel-ennui-p", "« Ou bien on s’ennuie à deux, ailleurs. »", "audace", [B("Ailleurs.", "seductive"), N("Elle soulève la main de ses yeux et vous regarde par en dessous, très lentement."), B("Tu sais exactement ce que tu viens de dire, n’est-ce pas ? Très bien. Viens. Si tu changes d’avis en chemin, je te le reprocherai pendant un siècle, mais je te laisserai partir.", "smirk")], { affection: 2, desire: 1 }, { requiresFlags: [SLEPT], launchesIntimacy: BELLIRITH_FREE_PROPOSAL }),
+    Q("bel-ennui-p", "« Ou bien on s’ennuie à deux, ailleurs. »", "audace", [B("Ailleurs.", "seductive"), N("Elle soulève la main de ses yeux et vous regarde par en dessous, très lentement."), B("Tu sais exactement ce que tu viens de dire, n’est-ce pas ? Très bien. Viens. Si tu changes d’avis en chemin, je te le reprocherai pendant un siècle, mais je te laisserai partir.", "smirk")], { affection: 2, desire: 1 }, { requiresFlags: [SLEPT], launchesIntimacy: BELLIRITH_FREE_PROPOSALS.ennui }),
     Q("bel-ennui-s", "Ne rien proposer et vous allonger sur la banquette d’en face.", "sangFroid", [N("Vous vous allongez à votre tour, les pieds sur l’accoudoir, une main sur les yeux. Elle vous regarde faire, outrée."), B("Tu m’imites.", "angry"), P("Je m’ennuie avec toi. C’est mieux que de s’ennuyer seule."), N("Il se passe un long moment. Puis elle rit, sous sa main, sans pouvoir s’arrêter."), B("C’est la chose la plus stupide que j’aie faite cette année. Ne bouge pas.", "teasing")], { affection: 3, trust: 2 }, { excludesFlags: [SLEPT] }),
   ], { minStage: 2, mood: "teasing" }),
 
@@ -129,13 +137,13 @@ export const BELLIRITH_AMBIENT_LINES: AmbientDialogue[] = [
   ], { periods: ["apres-midi", "matin"], mood: "teasing" }),
 
   S("bellirith-matin", "Le matin d’après", "Bellirith est encore dans vos draps, ou vous dans les siens ; la question reste ouverte. Elle trace du doigt une ligne sur votre épaule, paresseusement. « Je connais un endroit, juste là, qui te fait retenir ton souffle. Je le sais depuis la dernière fois. Je voulais vérifier qu’il n’avait pas bougé. »", [
-    Q("bel-matin-p", "« Vérifie encore. »", "audace", [B("Encore. Avant même le petit déjeuner.", "seductive"), N("Elle se redresse sur un coude, ravie, et sa main descend d’un cran."), B("Je te préviens : ce matin, c’est moi qui choisis le rythme. Tu pourras protester. Je t’écouterai peut-être.", "teasing")], { affection: 3, desire: 1 }, { launchesIntimacy: BELLIRITH_FREE_PROPOSAL }),
+    Q("bel-matin-p", "« Vérifie encore. »", "audace", [B("Encore. Avant même le petit déjeuner.", "seductive"), N("Elle se redresse sur un coude, ravie, et sa main descend d’un cran."), B("Je te préviens : ce matin, c’est moi qui choisis le rythme. Tu pourras protester. Je t’écouterai peut-être.", "teasing")], { affection: 3, desire: 1 }, { launchesIntimacy: BELLIRITH_FREE_PROPOSALS.matin }),
     Q("bel-matin-l", "Lui rendre la pareille : vous aussi, vous connaissez un endroit.", "lucidite", [N("Vous effleurez du bout des doigts le creux sous son oreille. Elle se fige, un quart de seconde."), B("…Ça ne compte pas. Tu as eu de la chance.", "angry"), P("Deux fois, maintenant."), B("Je vais devoir trouver un endroit plus difficile. Je vais chercher longtemps.", "smirk")], { trust: 3, desire: 3 }),
     Q("bel-matin-s", "Vous lever : vous avez à faire.", "sangFroid", [P("Pas ce matin. On m’attend."), B("On t’attend. Toujours quelqu’un qui t’attend.", "cold"), N("Elle se laisse retomber dans les oreillers, les bras en croix, avec une indignation qui n’est qu’à moitié jouée."), B("Va. Mais je garde le côté chaud du lit, et je ne te rendrai pas ta chemise.", "teasing")], { trust: 2, desire: 3 }),
   ], { requiresFlags: [SLEPT], periods: ["matin"], mood: "seductive" }),
 
   S("bellirith-proposition", "La proposition du couloir", "Bellirith vous arrête dans un couloir désert, une main posée à plat sur le mur à côté de votre tête. « Je vais être directe, pour une fois. J’ai envie de toi. Maintenant, pas ce soir. Il y a une porte à dix pas qui ferme à clé. Tu peux dire oui, tu peux dire non, et tu peux dire non d’une façon qui me donnera envie de recommencer demain. »", [
-    Q("bel-prop-p", "Dire oui.", "audace", [P("Oui."), N("Elle répète le mot, comme on goûte un vin, puis vous prend la main sans hâte et compte les dix pas à voix basse."), B("Je savais que tu dirais oui. Non, c’est faux. J’espérais.", "teasing")], { affection: 3, desire: 1 }, { launchesIntimacy: BELLIRITH_FREE_PROPOSAL }),
+    Q("bel-prop-p", "Dire oui.", "audace", [P("Oui."), N("Elle répète le mot, comme on goûte un vin, puis vous prend la main sans hâte et compte les dix pas à voix basse."), B("Je savais que tu dirais oui. Non, c’est faux. J’espérais.", "teasing")], { affection: 3, desire: 1 }, { launchesIntimacy: BELLIRITH_FREE_PROPOSALS.couloir }),
     Q("bel-prop-a", "Dire non, en la provoquant.", "audace", [P("Non. Mais tu peux me redemander demain, avec une meilleure porte."), B("Une meilleure porte.", "angry"), P("Celle-ci grince."), N("Elle retire sa main du mur. Elle recule. Elle vous regarde comme on regarde une citadelle qu’on vient de décider d’assiéger personnellement."), B("Demain. Une porte qui ne grince pas. Tu viens de signer quelque chose, et tu ne sais même pas quoi.", "seductive")], { affection: 1, desire: 7 }),
     Q("bel-prop-s", "Dire non, calmement.", "sangFroid", [P("Non. Pas maintenant."), B("Pas maintenant, ou pas avec moi ?", "cold"), P("Pas maintenant."), N("Elle hoche la tête, une seule fois, et vous laisse passer. Elle ne vous suit pas. Mais quand vous vous retournez au bout du couloir, elle est toujours là, à vous regarder partir avec une sorte d’intérêt professionnel."), B("Pas maintenant. Je note l’heure.", "thoughtful")], { trust: 3, desire: 5 }),
   ], { minStage: 3, mood: "seductive", promptVariants: [

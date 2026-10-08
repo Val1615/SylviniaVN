@@ -14,6 +14,14 @@ export type BellirithIntimacyContext =
   | "bellirith-diversion-before-light"
   | "bellirith-diversion-coalition"
   | "bellirith-free"
+  | "date-bellirith-music"
+  | "date-bellirith-market"
+  | "bellirith-home"
+  | "bellirith-free-confidence"
+  | "bellirith-free-ennui"
+  | "bellirith-free-matin"
+  | "bellirith-free-couloir"
+  | "bellirith-free-faveur"
   | "date-bellirith-final";
 export type BellirithIntimacyKind = "diversion" | "free" | "duel";
 
@@ -38,6 +46,21 @@ export type AuthoredRoute = {
 };
 export type AuthoredApproach = { id: string; text: string; lines: RawLine[] };
 export type FlagText = (flags: string[], source?: string) => RawLine[];
+/**
+ * Heure volée : une scène intime propre à une seule source (rendez-vous,
+ * logis, confidence détournée, moment libre, invitation). Ouverture,
+ * approches, route et fin sont écrites pour cette situation et nulle autre.
+ */
+export type HeureVolee = {
+  context: BellirithIntimacyContext;
+  title: string;
+  devLabel: string;
+  background: string;
+  opening: FlagText;
+  approaches: (flags: string[]) => AuthoredApproach[];
+  ending: FlagText;
+  route: AuthoredRoute;
+};
 
 export const BELLIRITH_INTIMACY_MINIMUM_SEQUENCES_VALUE = 12;
 export const BELLIRITH_INTIMACY_MINIMUM_WORDS: Record<IntimacyMode, number> = { explicite: 1000, suggestif: 450, tendre: 250, ellipse: 150 };

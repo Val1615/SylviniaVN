@@ -9,7 +9,8 @@ import { B, P, S, W, FAVORITE, RESISTED, SLEPT, TREND_RESISTED, type AuthoredApp
 
 const live = (id: string, flags: string[]) => flags.includes(`bellirith-intrusion:${id}:live`) && !flags.includes(`bellirith-intrusion:${id}:catchup`);
 
-export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
+/** Les heures volées portent leurs propres cadres (bellirith-heure-*.ts). */
+export const OPENINGS: Partial<Record<BellirithIntimacyContext, FlagText>> = {
   "bellirith-diversion-price-of-aid": (flags) => [
     ...(live("02", flags) ? [
       "Derrière vous, la porte du Conseil se referme sur la voix d’Iriana qui annonce, très calmement, qu’elle relira seule. Draven ne dit rien. Le silence de Draven est plus lourd que la voix d’Iriana.",
@@ -41,18 +42,8 @@ export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
     "Bellirith descend le grand escalier devant vous, une main glissant sur la rampe de marbre, comme une reine qui rentre d’un bal qu’elle a gâché exprès.",
     B("Ne fais pas cette tête. Les protocoles adorent qu’on les abandonne. Ça leur donne une raison d’exister.", "teasing"),
   ],
-  "bellirith-free": (flags, source) => {
-    if (source === "bellirith-home") return [
-      "Chez vous, elle a déjà trouvé le meilleur fauteuil, la meilleure bouteille et l’endroit exact où la lumière de la lampe la rend injustement belle. Elle n’a rien demandé. Elle a seulement attendu que vous fermiez la porte.",
-      W(SLEPT, [B("Ta maison, ton lit, tes draps. Mes règles. Tu as dit oui en me donnant la clé, tu sais ?", "seductive")], [B("Ta maison. Tu m’as ouvert ta porte et tu me regardes comme si tu te demandais encore pourquoi. Laisse-moi te montrer pourquoi.", "seductive")]),
-    ];
-    if (source === "bellirith-free-confidence") return [
-      "La phrase qu’elle allait peut-être dire reste suspendue quelque part derrière vous. Vous l’avez laissée là. Elle le sait, et son sourire a quelque chose de soulagé qu’elle déguise aussitôt en triomphe.",
-      B("Tu as choisi. Tu voulais une vérité, je t’offre mieux. Tu ne le regretteras pas. Ou si, mais délicieusement.", "seductive"),
-    ];
-    if (source === "date-bellirith-music" || source === "date-bellirith-market") return [
-      "La soirée aurait pu s’arrêter là. Elle ne s’arrête pas. Bellirith vous a pris le poignet, deux doigts posés sur le pouls, et elle vous emmène sans vous demander votre avis ; sauf qu’elle vous l’a demandé, une seconde plus tôt, et que vous avez dit oui.",
-    ];
+  // Contexte hérité uniquement : les sources connues ont chacune leur heure volée.
+  "bellirith-free": (flags) => {
     return [
       W(SLEPT, [
         "Elle vous attendait. Elle ne le dira pas. Mais la porte de sa chambre est entrouverte, il y a deux verres sur la table et l’un d’eux est déjà servi.",
@@ -190,7 +181,7 @@ const irianaDawn: RawLine[] = [
   "Elle ne vous reproche rien de plus. Elle a seulement remplacé votre nom par celui d’un officier sur le relevé des courriers, et elle ne l’a pas encore rayé.",
 ];
 
-export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
+export const ENDINGS: Partial<Record<BellirithIntimacyContext, FlagText>> = {
   "bellirith-diversion-price-of-aid": (flags) => live("02", flags) ? [
     "Quand vous regagnez votre chambre, la septième cloche est passée depuis longtemps. Sous votre porte, quelqu’un a glissé la lettre de mission, relue, annotée de la main d’Iriana. Trois phrases ont été corrigées. Dans la marge de la troisième, elle a écrit : « Vous l’auriez vu avant moi. »",
     "À l’aube, Draven est à l’écurie nord. Il vous tend les rênes sans un mot, et ne vous regarde qu’une fois en selle.",
@@ -221,13 +212,7 @@ export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
     "Personne n’attendait plus rien de cette nuit. Vous redescendez du toit au petit matin, avec du jasmin dans les cheveux et une rue de Saëlis éteinte dans la mémoire.",
   ],
   "bellirith-diversion-coalition": () => irianaDawn,
-  "bellirith-free": (flags, source) => source === "bellirith-home" ? [
-    "Elle ne repart pas. Elle s’installe dans vos draps comme dans un territoire conquis, vole l’oreiller le plus frais et vous tourne le dos pour mieux vous obliger à venir la chercher.",
-    B("Je reste jusqu’au matin. C’est décidé. Si tu veux me mettre dehors, il faudra me porter, et je pèse très lourd quand je boude.", "teasing"),
-  ] : source === "bellirith-free-confidence" ? [
-    "Plus tard, en repassant la soirée dans votre tête, vous retrouvez l’endroit exact où la conversation a bifurqué. La phrase qu’elle n’a pas dite est toujours là, quelque part, intacte. Elle l’a gardée.",
-    "Vous ne savez pas si vous la lui redemanderez. Vous savez qu’elle s’attend à ce que vous ne le fassiez pas.",
-  ] : [
+  "bellirith-free": () => [
     "Vous quittez ses appartements sans que personne vous ait attendu nulle part. C’est une sensation étrange, après tant de diversions : une nuit avec Bellirith qui n’a rien coûté à personne, sauf, peut-être, à elle.",
   ],
   "date-bellirith-final": () => [

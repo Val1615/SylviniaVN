@@ -481,7 +481,7 @@ export const BELLIRITH_INVITATIONS: InvitationTemplate[] = [
         L("{player}", "Et si on sautait directement à la partie où quelqu’un doit quelque chose à l’autre ?"),
         N("Bellirith pose sa coupe. Les dix-sept diplomates cessent d’exister pour elle."),
         L("Bellirith", "Tu viens de choisir. Toi. C’est d’une impolitesse délicieuse. Viens.", "seductive"),
-      ], { affection: 3 }, { launchesIntimacy: "bellirith-free" }),
+      ], { affection: 3 }, { launchesIntimacy: "bellirith-free-faveur" }),
     ],
   },
   catchupInvitation("01", "Une sœur dans l’embrasure", "Un billet sans signature, parfumé de miel brûlé et de jasmin : « Mon frère a une nouvelle curiosité et il a oublié de me la présenter. Salle du Conseil, quand il te plaira. Je suis patiente. C’est faux, mais l’effort est sincère. »", "algratal", "algratal-palace-council", "soirée"),
