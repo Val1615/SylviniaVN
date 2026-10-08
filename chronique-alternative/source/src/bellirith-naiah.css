@@ -1,0 +1,88 @@
+/* Bellirith & Naïah · Les Trois Réponses et scènes de la série. Aucun mouvement décoratif : la manche hors échelle se lit par la coupure. */
+.bn-game-backdrop{position:fixed;inset:0;z-index:180;display:grid;place-items:center;padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));background:rgba(4,3,8,.88)}
+.bn-game{--bn-accent:#d9475f;--bn-ink:#f3e9e1;--bn-soft:#b9a9a3;position:relative;display:flex;flex-direction:column;gap:.5rem;width:min(1240px,100%);height:calc(100dvh - 12px);max-height:940px;overflow:hidden;padding:.7rem .9rem;background:radial-gradient(circle at 50% 35%,#2a1420 0,#120a12 55%,#08060b 100%);border:1px solid #8c4a5a;border-radius:12px;color:var(--bn-ink);font-size:calc(1rem * var(--tr,1));box-shadow:0 20px 80px #000;isolation:isolate}
+.bn-game button{font:inherit;color:inherit;min-height:2.2rem;border:1px solid #6d4b55;border-radius:6px;background:#22141c;padding:.4rem .7rem;line-height:1.25;cursor:pointer;white-space:normal}
+.bn-game button:hover{border-color:#e7a0ae}
+.bn-game button:focus-visible{outline:3px solid #ffd7a8;outline-offset:2px}
+.bn-game .primary-action{background:#6d2235;border-color:#f0a3b2;color:#fff2f0}
+.bn-game .eyebrow{margin:0;font-size:.72em;letter-spacing:.14em;text-transform:uppercase;color:#e7a0ae}
+.bn-game-head{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem}
+.bn-game-title{flex:1 1 14rem;min-width:0}
+.bn-game-title h2{margin:.1rem 0 0;font-size:1.35em;line-height:1.1}
+.bn-round-dots{display:flex;gap:.3rem;margin:0;padding:0;list-style:none}
+.bn-round-dots li{display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;border:1px solid #6d4b55;font-size:.8em;color:var(--bn-soft)}
+.bn-round-dots li.current{border-color:#ffd7a8;color:#fff;box-shadow:0 0 0 2px rgba(255,215,168,.25)}
+.bn-round-dots li.done.naiah{background:#2c5b55;border-color:#9fd3c7;color:#fff}
+.bn-round-dots li.done.bellirith{background:#6d2235;border-color:#f0a3b2;color:#fff}
+.bn-round-dots li.done.egalite{background:#3c3346;color:#fff}
+.bn-round-dots li.done.suspendue{background:#0d1418;border-color:#7fb6c9;color:#bfe3ef}
+.bn-score{display:flex;gap:.8rem;font-size:.92em}
+.bn-score b{font-size:1.15em;color:#ffd7a8}
+.bn-head-buttons{display:flex;gap:.4rem;flex-wrap:wrap}
+.bn-game-stage{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(16rem,1.25fr) minmax(0,1fr);align-items:end;gap:.6rem}
+.bn-game-sprite{margin:0;height:100%;min-height:0;display:flex;align-items:flex-end;justify-content:center}
+.bn-game-sprite img{max-height:100%;max-width:100%;object-fit:contain;object-position:bottom;filter:brightness(.78) saturate(.9)}
+.bn-game-sprite.active img{filter:none}
+.bn-game-card{align-self:center;display:flex;flex-direction:column;gap:.45rem;padding:.8rem 1rem;background:rgba(18,9,15,.88);border:1px solid #8c4a5a;border-radius:10px;min-width:0}
+.bn-card-label{margin:0;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;font-size:.78em;letter-spacing:.1em;text-transform:uppercase;color:#e7a0ae}
+.bn-tutorial-badge{letter-spacing:0;text-transform:none;background:#2c5b55;border-radius:999px;padding:.1rem .5rem;color:#eafff9}
+.bn-statement{margin:0;font-size:1.15em;line-height:1.3;font-style:italic}
+.bn-reading{margin:0;color:var(--bn-soft);font-size:.92em;line-height:1.35}
+.bn-expected{padding:.4rem .6rem;border-left:3px solid var(--bn-accent);background:rgba(217,71,95,.12);font-size:.92em}
+.bn-tutorial-hint{margin:0;padding:.4rem .6rem;border:1px dashed #9fd3c7;border-radius:6px;color:#dff7f1;font-size:.9em}
+.bn-signal{display:flex;flex-direction:column;gap:.2rem;padding:.55rem .7rem;border:1px solid #7fb6c9;background:#0b1216;color:#d7eef6}
+.bn-signal b{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.2em;font-size:1em}
+.bn-signal small{color:#9fc4d2;font-size:.85em}
+.bn-cycle{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem 1.1rem;margin:0;padding:0;list-style:none;font-size:.8em;color:var(--bn-soft)}
+.bn-cycle b{color:var(--bn-ink);font-weight:600}
+.bn-game-foot{flex:0 0 auto;display:flex;flex-direction:column;gap:.45rem}
+.bn-line{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;width:100%;text-align:left;background:rgba(12,7,11,.94)!important;border-color:#8c4a5a!important;padding:.6rem .9rem!important}
+.bn-line .speaker{font-weight:700;color:#ffd7a8;min-height:1em}
+.bn-line.bellirith .speaker{color:#f0a3b2}.bn-line.naiah .speaker{color:#9fd3c7}
+.bn-line.narration p{font-style:italic;color:#e7dcd6}
+.bn-line p{margin:0;line-height:1.4}
+.bn-line small{color:var(--bn-soft);font-size:.75em}
+.bn-moves{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+.bn-move{display:grid!important;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:.55rem;align-items:center;text-align:left;padding:.55rem .7rem!important}
+.bn-move i{grid-row:1/3;font-style:normal;font-size:1.5em}
+.bn-move strong{font-size:1em}
+.bn-move small{color:var(--bn-soft);font-size:.8em;line-height:1.25}
+.bn-move.assumer{border-color:#b98a4b}.bn-move.simuler{border-color:#c06b84}.bn-move.retourner{border-color:#5f9f95}
+.bn-result{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;padding:.55rem .8rem;border:1px solid #6d4b55;border-radius:8px;background:rgba(18,9,15,.92)}
+.bn-result>div:first-child{display:flex;flex-direction:column;gap:.15rem;min-width:0;flex:1 1 16rem}
+.bn-result small{color:var(--bn-soft);font-size:.85em}
+.bn-result.naiah{border-color:#9fd3c7}.bn-result.bellirith{border-color:#f0a3b2}.bn-result.suspendue{border-color:#7fb6c9;background:#0b1216}
+.bn-result-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.bn-rules{position:absolute;inset:auto .9rem .9rem auto;width:min(30rem,calc(100% - 1.8rem));max-height:calc(100% - 1.8rem);overflow:auto;padding:.9rem 1rem;background:#140b11;border:1px solid #f0a3b2;border-radius:10px;z-index:2;box-shadow:0 10px 40px #000}
+.bn-rules h3{margin:0 0 .4rem}.bn-rules p,.bn-rules li{font-size:.9em;line-height:1.4}
+/* Manche hors échelle : désaturation, plus de sourire, plus de mouvement. */
+.bn-game.bn-anomaly{background:#07090c;border-color:#7fb6c9}
+.bn-game.bn-anomaly .bn-game-sprite img{filter:grayscale(.85) brightness(.75)}
+.bn-game.bn-anomaly .bn-game-sprite.active img{filter:grayscale(.6)}
+.bn-game.bn-anomaly .bn-game-card{border-color:#7fb6c9;background:#0a0f13}
+.bn-game.bn-anomaly .bn-cycle{opacity:.35}
+.bn-game.bn-anomaly *{animation:none!important;transition:none!important}
+/* Forme empruntée au rendez-vous final : froide, sans halo. */
+.scene-sprite.bn-form-sprite{filter:saturate(.75) brightness(.95)}
+.scene-sprite.bn-form-sprite.inactive{filter:saturate(.5) brightness(.7)}
+/* Dossier */
+.bn-dossier-actions{display:flex;flex-wrap:wrap;gap:.4rem}
+/* Petits écrans et hauteurs réduites (830×525) */
+@media (max-height:620px){
+  .bn-game{gap:.3rem;padding:.4rem .6rem;font-size:calc(.86rem * var(--tr,1))}
+  .bn-game-title h2{font-size:1.1em}
+  .bn-round-dots li{width:1.45rem;height:1.45rem}
+  .bn-game button{min-height:1.9rem;padding:.25rem .5rem}
+  .bn-game-card{padding:.45rem .65rem;gap:.3rem}
+  .bn-statement{font-size:1.02em}
+  .bn-move small{display:none}
+  .bn-cycle{font-size:.72em}
+  .bn-line{padding:.4rem .7rem!important}
+}
+@media (max-width:760px){
+  .bn-game-stage{grid-template-columns:minmax(0,.7fr) minmax(0,1.6fr) minmax(0,.7fr)}
+  .bn-moves{grid-template-columns:1fr}
+  .bn-move small{display:none}
+}
+@media (prefers-reduced-motion:reduce){.bn-game *,.bn-game-backdrop{transition:none!important;animation:none!important}}
+.reduced-motion .bn-game *{transition:none!important;animation:none!important}

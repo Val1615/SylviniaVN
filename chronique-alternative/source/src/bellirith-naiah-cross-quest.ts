@@ -116,14 +116,17 @@ export function hydrateBN(progress: CrossQuestProgress): CrossQuestProgress {
     && Number.isInteger(source.checkpoint.round) && source.checkpoint.round >= -1
     && Array.isArray(source.checkpoint.picks) && source.checkpoint.picks.every((pick) => typeof pick === "string") ? source.checkpoint : undefined;
   const minigame = hydrateBNGame(source.minigame);
-  const stage = Math.max(0, Math.min(BN_STAGE_TOTAL, Math.trunc(Number(progress.stage) || 0)));
   const bool = (value: unknown) => value === true;
+  const rawStage = Math.max(0, Math.min(BN_STAGE_TOTAL, Math.trunc(Number(progress.stage) || 0)));
   const first = STATUS.has(source.firstIntimacy as BNIntimacyStatus) ? source.firstIntimacy : statusFromPicks(choices["cross-bn-02"], BN_FIRST_ACCEPT, BN_FIRST_LATER, BN_FIRST_DECLINE);
   const limit = STATUS.has(source.limitIntimacy as BNIntimacyStatus) ? source.limitIntimacy : statusFromPicks(choices["cross-bn-04"], BN_LIMIT_ACCEPT, BN_LIMIT_LATER, BN_LIMIT_DECLINE);
   const simulationSource = source.simulationIntimacy === "accepted" || source.simulationIntimacy === "declined" ? source.simulationIntimacy : statusFromPicks(choices["cross-bn-05"], BN_SIMULATION_ACCEPT, undefined, BN_SIMULATION_DECLINE);
   const simulation = simulationSource === "deferred" ? undefined : simulationSource;
   const finalPick = choices[BN_FINAL_ID]?.find((pick) => FINAL_CHOICE_BY_ID[pick]);
-  const finalDateDone = Boolean(choices[BN_FINAL_ID]);
+  // Le marquage développeur explicite conserve `finalDateDone` sans inventer de choix final.
+  const finalDateDone = Boolean(choices[BN_FINAL_ID]) || (bool(source.finalDateDone) && rawStage >= BN_STAGE_TOTAL);
+  // Jamais d’achèvement implicite : sans rendez-vous final vécu, la série reste à l’étape finale.
+  const stage = rawStage >= BN_STAGE_TOTAL && !finalDateDone ? BN_FINAL_STAGE : rawStage;
   return {
     ...progress, id: BN_KEY, stage, letters: [],
     startedDay: Math.max(1, Number(progress.startedDay) || 1), stageStartedDay: Math.max(1, Number(progress.stageStartedDay) || 1),
