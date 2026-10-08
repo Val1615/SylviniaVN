@@ -73,7 +73,7 @@ function anomaly(ctx: BNSceneContext): BNSceneData {
         B("Tu as la peau froide.", "thoughtful"),
         Y("Et toi, tu as la main lourde. Tu cherches un endroit précis ?", "smirk"),
       ], { relationshipEffects: { naiah: { affection: 1 } }, desire: 1 }),
-      C("cross-bn-01-watch", "Rester assis et observer ce que Bellirith cherche.", "lucidite", [
+      C("cross-bn-01-watch", "Rester à votre place et observer ce que Bellirith cherche.", "lucidite", [
         T("De votre table, la scène se lit comme un tour de prestidigitation dont on connaîtrait déjà le truc."),
         T("Bellirith essaie d’abord la proximité : elle s’assoit sur le coin de la table de Naïah. Naïah lui tend sa chope sans un mot. Elle essaie ensuite le regard, long, appuyé, celui qui fait rougir les gardes impériaux. Naïah le lui rend, avec la même durée exactement, et compte à voix basse."),
         T("Enfin, Bellirith effleure du bout de l’ongle la nuque de Naïah, sous les cheveux. Naïah frissonne, rit, et lui demande si c’est un sort qu’on apprend en Enfer ou si elle l’a inventé seule."),
@@ -500,7 +500,7 @@ function somethingElse(ctx: BNSceneContext): BNSceneData {
           B("La voir perdre pied. Une seule fois, pour de vrai. Je l’ai cherché partout dans son corps, je le trouve ailleurs. C’est vexant et c’est magnifique.", "seductive"),
           T("Le soir même, un mot arrive pour vous, dans l’écriture penchée de Naïah. « Elle veut une revanche. Clairière, demain soir. Viens. Je compte la massacrer. »"),
         ], { desire: 1 }),
-        C("cross-bn-06-stay", "Ne rien dire et rester assis avec elle un moment.", "resonance", [
+        C("cross-bn-06-stay", "Ne rien dire et rester un moment sur la pierre, près d’elle.", "resonance", [
           T("Vous restez. Bellirith remet les jetons dans leur bourse un à un, sauf le dernier, qu’elle garde dans sa main."),
           B("Tu ne me fais pas la leçon. J’apprécie. Je ne l’aurais pas écoutée, mais j’apprécie.", "thoughtful"),
           T("Le soir même, un mot arrive pour vous, dans l’écriture penchée de Naïah. « Elle veut une revanche. Clairière, demain soir. Viens. Je compte la massacrer. »"),
