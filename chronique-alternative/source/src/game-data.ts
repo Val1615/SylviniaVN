@@ -15,6 +15,8 @@ export type DialogueLine = {
   intimateMood?: string;
   /** Independent expressions for every visible partner in a group intimacy. */
   intimateMoods?: Partial<Record<string, string>>;
+  /** Switch the scene soundtrack when this authored line begins (rare, deliberate cues). */
+  music?: string;
 };
 export type Effects = {
   stats?: Partial<Record<StatKey, number>>;
