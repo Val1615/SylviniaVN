@@ -27,9 +27,15 @@ const OLD_AXIS = /sans aura|sans magie|séduire sans|sans charme|neutralis|deven
 const THERAPY = /thérap|guérison|guérir|patiente|soigner sa blessure|travail sur (?:elle|soi)/iu;
 const words = (lines) => lines.flat().reduce((sum, line) => sum + line.text.trim().split(/\s+/u).filter(Boolean).length, 0);
 const text = (value) => JSON.stringify(value);
+const strings = (value, out = []) => {
+  if (typeof value === "string") out.push(value);
+  else if (Array.isArray(value)) value.forEach((entry) => strings(entry, out));
+  else if (value && typeof value === "object") Object.values(value).forEach((entry) => strings(entry, out));
+  return out;
+};
 
 try {
-  const [intr, intimacy, living, ambientMod, belAmbient, reactions, campaign, heritage, dates, belDates, housing, housingData, page] = await Promise.all([
+  const [intr, intimacy, living, ambientMod, belAmbient, reactions, campaign, heritage, dates, belDates, housing, housingData, page, hnIntimacy] = await Promise.all([
     server.ssrLoadModule("/src/bellirith-intrusions.ts"),
     server.ssrLoadModule("/src/bellirith-diversion-intimacy.ts"),
     server.ssrLoadModule("/src/bellirith-living-world.ts"),
@@ -43,6 +49,7 @@ try {
     server.ssrLoadModule("/src/housing-scenes.ts"),
     server.ssrLoadModule("/src/housing-data.ts"),
     server.ssrLoadModule("/src/page.tsx"),
+    server.ssrLoadModule("/src/hylee-naiah-group-intimacy.ts"),
   ]);
   const pageSource = await read("src/page.tsx");
   const counts = {};
@@ -173,6 +180,115 @@ try {
     }
   }
 
+  /* ── 6 bis. Heures volées : une scène propre à chaque source, aucune phrase recyclée ── */
+  const heures = intimacy.BELLIRITH_HEURES_VOLEES;
+  const DATE_FLAG_SETS = [[], ["bellirith-salon:audace"], ["bellirith-salon:lucidite"], ["bellirith-salon:resonance"], ["bellirith-marche:lucidite"], ["bellirith-marche:audace"], ["bellirith-marche:brioche"]];
+  const HEURE_HISTORIES = intimacy.BELLIRITH_VALIDATION_HISTORIES.flatMap((history) => DATE_FLAG_SETS.map((extra) => ({ label: `${history.label}${extra.length ? ` + ${extra.join(",")}` : ""}`, flags: [...history.flags, ...extra] })));
+  const HEURE_MAX_EXPLICIT = 1600;
+  assert.equal(heures.length, 8, "huit heures volées (salon, auberge, logis, confidence, trois propositions, pari des diplomates)");
+  assert.equal(new Set(heures.map((heure) => heure.context)).size, heures.length, "un contexte par heure volée");
+  assert.equal(new Set(heures.map((heure) => heure.route.id)).size, heures.length, "une route par heure volée");
+  const allTitles = Object.values(intimacy.BELLIRITH_INTIMACY_TITLES);
+  assert.equal(new Set(allTitles).size, allTitles.length, "titres de scènes intimes Bellirith uniques");
+  const residentTitles = new Set(text(housing.RESIDENT_MOMENTS.bellirith).match(/"title":"[^"]+"/gu) || []);
+  for (const heure of heures) {
+    assert.ok(!residentTitles.has(`"title":"${heure.title}"`), `${heure.context} : titre déjà utilisé par un moment du logis`);
+    assert.equal(intimacy.bellirithIntimacyContext(heure.context), heure.context, `${heure.context} : la source ouvre sa propre scène`);
+    assert.equal(intimacy.bellirithIntimacyKind(heure.context), "free", `${heure.context} : heure volée`);
+    assert.ok(intimacy.BELLIRITH_DEV_INTIMACIES.some((entry) => entry.dateId === heure.context), `${heure.context} : entrée du panneau de développement`);
+    assert.equal(intimacy.BELLIRITH_INTIMACY_TITLES[heure.context], heure.title, `${heure.context} : titre propre`);
+    assert.ok(heure.route.chapters.length >= intimacy.BELLIRITH_INTIMACY_MINIMUM_SEQUENCES, `${heure.context} : au moins 12 séquences`);
+    assert.ok(heure.route.visual && heure.route.visual.revealChapter < heure.route.visual.postOrgasmChapter && heure.route.visual.postOrgasmChapter < heure.route.chapters.length, `${heure.context} : progression CG`);
+    for (const sex of ["femme", "homme", "intersexe"]) {
+      for (const history of HEURE_HISTORIES) {
+        const routesHere = intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags);
+        assert.deepEqual(routesHere.map((route) => route.id), [heure.route.id], `${heure.context}/${sex}/${history.label} : seule sa propre route est proposée`);
+        assert.ok(intimacy.bellirithIntimacyApproaches(heure.context, history.flags, sex).length >= 2, `${heure.context} : deux approches`);
+        for (const mode of ["tendre", "suggestif", "explicite", "ellipse"]) {
+          const total = words(routesHere[0].chapters[mode]);
+          assert.ok(total >= intimacy.BELLIRITH_INTIMACY_MINIMUM_WORDS[mode], `${heure.context}/${mode}/${sex}/${history.label} : ${total} mots (minimum ${intimacy.BELLIRITH_INTIMACY_MINIMUM_WORDS[mode]})`);
+          if (mode === "explicite") assert.ok(total <= HEURE_MAX_EXPLICIT, `${heure.context}/explicite/${sex} : ${total} mots (maximum ${HEURE_MAX_EXPLICIT})`);
+          assert.doesNotMatch(text(routesHere[0].chapters[mode]), BANNED, `${heure.context}/${mode}/${sex} : vocabulaire cru`);
+          assert.doesNotMatch(text(routesHere[0].chapters[mode]), THERAPY, `${heure.context}/${mode} : registre thérapeutique`);
+        }
+      }
+    }
+    const explicitFirst = text(intimacy.bellirithIntimacyRoutes(heure.context, "femme", [])[0].chapters.explicite) + text(intimacy.bellirithIntimacyOpening(heure.context, [], "femme")) + text(intimacy.bellirithIntimacyEnding(heure.context, [], "femme"));
+    const explicitSlept = text(intimacy.bellirithIntimacyRoutes(heure.context, "femme", ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"])[0].chapters.explicite) + text(intimacy.bellirithIntimacyOpening(heure.context, ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"], "femme")) + text(intimacy.bellirithIntimacyEnding(heure.context, ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"], "femme"));
+    assert.notEqual(explicitFirst, explicitSlept, `${heure.context} : l’historique (première fois / déjà amants) change la scène`);
+    const bySex = ["femme", "homme", "intersexe"].map((sex) => text(intimacy.bellirithIntimacyRoutes(heure.context, sex, [])[0].chapters.explicite));
+    assert.equal(new Set(bySex).size, 3, `${heure.context} : variantes concrètes femme / homme / intersexe`);
+  }
+  // Les sources ne recyclent plus les anciennes routes génériques.
+  for (const legacy of ["bellirith-free-first", "bellirith-free-familiar"]) {
+    for (const heure of heures) assert.ok(!intimacy.bellirithIntimacyRoutes(heure.context, "femme", []).some((route) => route.id === legacy), `${heure.context} : recycle ${legacy}`);
+  }
+  // Chaque proposition (moment libre, confidence, invitation) mène à un contexte distinct, jamais au contexte hérité.
+  const launchers = [];
+  const collectLaunchers = (value, owner) => {
+    if (Array.isArray(value)) value.forEach((entry) => collectLaunchers(entry, owner));
+    else if (value && typeof value === "object") {
+      if (typeof value.launchesIntimacy === "string") launchers.push({ owner, id: value.id, context: value.launchesIntimacy });
+      for (const [key, entry] of Object.entries(value)) if (key !== "launchesIntimacy") collectLaunchers(entry, value.title && value.id ? value.id : owner);
+    }
+  };
+  collectLaunchers(belAmbient.BELLIRITH_AMBIENT_LINES, "moments");
+  collectLaunchers([living.BELLIRITH_CONFIDENCES, living.BELLIRITH_INVITATIONS], "monde");
+  collectLaunchers(heritage.INVITATIONS.filter((entry) => entry.character === "bellirith"), "invitations");
+  collectLaunchers(heritage.SECRET_CONVERSATIONS.filter((entry) => entry.character === "bellirith"), "confidences");
+  assert.ok(launchers.length >= 5, `propositions trouvées : ${launchers.length}`);
+  for (const launcher of launchers) {
+    assert.notEqual(launcher.context, "bellirith-free", `${launcher.id} : mène encore au contexte générique`);
+    assert.ok(heures.some((heure) => heure.context === launcher.context), `${launcher.id} : ${launcher.context} n’est pas une heure volée`);
+  }
+  const ownersByContext = new Map();
+  for (const launcher of launchers) ownersByContext.set(launcher.context, new Set([...(ownersByContext.get(launcher.context) || []), launcher.context === "bellirith-free-confidence" ? "confidence-detournee" : launcher.owner]));
+  for (const [context, owners] of ownersByContext) assert.equal(owners.size, 1, `${context} : partagé par plusieurs sources (${[...owners].join(", ")})`);
+  for (const proposalContext of ["bellirith-free-ennui", "bellirith-free-matin", "bellirith-free-couloir", "bellirith-free-faveur", "bellirith-free-confidence"]) assert.ok(ownersByContext.has(proposalContext), `${proposalContext} : aucune source ne l’ouvre`);
+  counts.heures = heures.length;
+  counts.heureWords = Object.fromEntries(heures.map((heure) => [heure.context, Object.fromEntries(["tendre", "suggestif", "explicite", "ellipse"].map((mode) => {
+    const list = ["femme", "homme", "intersexe"].flatMap((sex) => HEURE_HISTORIES.map((history) => words(intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags)[0].chapters[mode])));
+    return [mode, { min: Math.min(...list), avg: Math.round(list.reduce((a, b) => a + b, 0) / list.length), max: Math.max(...list) }];
+  }))]));
+
+  // Unicité : aucune phrase normalisée de 8 mots ou plus ne se retrouve dans deux routes ou contextes différents.
+  const normalizeSentence = (sentence) => sentence.toLocaleLowerCase("fr").replace(/\{player\}/gu, "player").replace(/[’']/gu, "'").replace(/[«»"“”().,;:!?…·]/gu, " ").replace(/\s+/gu, " ").trim();
+  const sentencesOf = (value) => strings(value).flatMap((entry) => entry.split(/(?<=[.!?…])\s+|[«»]/u)).map(normalizeSentence).filter((sentence) => sentence.split(" ").filter(Boolean).length >= 8);
+  const owners = new Map();
+  const own = (owner, value, bellirith = true) => {
+    for (const sentence of new Set(sentencesOf(value))) {
+      const entry = owners.get(sentence) || { owners: new Set(), bellirith: false };
+      entry.owners.add(owner);
+      entry.bellirith ||= bellirith;
+      owners.set(sentence, entry);
+    }
+  };
+  const UNIQUE_HISTORIES = HEURE_HISTORIES;
+  for (const route of routes) own(`route:${route.id}`, route.route.chapters);
+  for (const heure of heures) {
+    for (const sex of ["femme", "homme", "intersexe"]) for (const history of UNIQUE_HISTORIES) {
+      own(`route:${heure.route.id}`, intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags)[0].chapters);
+      own(`route:${heure.route.id}`, [intimacy.bellirithIntimacyOpening(heure.context, history.flags, sex), intimacy.bellirithIntimacyEnding(heure.context, history.flags, sex), intimacy.bellirithIntimacyApproaches(heure.context, history.flags, sex)]);
+    }
+  }
+  for (const context of intimacy.BELLIRITH_INTIMACY_CONTEXTS.filter((entry) => !heures.some((heure) => heure.context === entry))) {
+    for (const sex of ["femme", "homme", "intersexe"]) for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
+      own(`cadre:${context}`, [intimacy.bellirithIntimacyOpening(context, history.flags, sex), intimacy.bellirithIntimacyEnding(context, history.flags, sex)]);
+      own(`approches:${intimacy.bellirithIntimacyKind(context)}`, intimacy.bellirithIntimacyApproaches(context, history.flags, sex));
+    }
+  }
+  let hnRoutes = 0;
+  for (const [contextId, bySexRoutes] of Object.entries(hnIntimacy.HYLEE_NAIAH_MANUAL_ROUTES)) {
+    for (const list of Object.values(bySexRoutes)) for (const route of list) {
+      hnRoutes += 1;
+      own(`hylee-naiah:${contextId}:${route.id}`, ["tendre", "suggestif", "explicite", "ellipse"].map((mode) => hnIntimacy.hyleeNaiahRouteChapters(route, contextId, mode)), false);
+    }
+  }
+  const duplicates = [...owners.entries()].filter(([, entry]) => entry.bellirith && entry.owners.size > 1);
+  assert.equal(duplicates.length, 0, `phrases recyclées entre routes : ${duplicates.slice(0, 12).map(([sentence, entry]) => `« ${sentence.slice(0, 160)} » (${[...entry.owners].join(" + ")})`).join(" | ")}`);
+  counts.uniqueSentences = [...owners.values()].filter((entry) => entry.bellirith).length;
+  counts.hnRoutes = hnRoutes;
+
   /* ── 7. Rendez-vous final : historique accepter / refuser ── */
   const finalDate = dates.DATE_SCENES.find((date) => date.id === intr.BELLIRITH_FINAL_DATE_ID);
   assert.ok(finalDate, "rendez-vous de fin d’Acte I présent");
@@ -267,12 +383,6 @@ try {
   /* ── 14. Style : ni tiret cadratin, ni formule « ce n’est pas X, c’est Y » ── */
   const STYLE_DASH = /[—–]/u;
   const STYLE_CONTRAST = /n[’']est pas[^!?«»"]{0,80}[,;.:]\s*c[’']est\b|n[’']était pas[^!?«»"]{0,80}[,;.:]\s*c[’']était\b/iu;
-  const strings = (value, out = []) => {
-    if (typeof value === "string") out.push(value);
-    else if (Array.isArray(value)) value.forEach((entry) => strings(entry, out));
-    else if (value && typeof value === "object") Object.values(value).forEach((entry) => strings(entry, out));
-    return out;
-  };
   const styleCorpus = [];
   const addStyle = (label, value) => strings(value).forEach((entry) => styleCorpus.push([label, entry]));
   addStyle("intrusions", intr.allBellirithIntrusionVariants().map((entry) => entry.scene));
@@ -313,7 +423,7 @@ try {
   assert.equal(dashHits.length, 0, `tiret cadratin dans le texte de Bellirith : ${dashHits.slice(0, 3).map(([label, entry]) => `${label} « ${entry.slice(0, 80)} »`).join(" | ")}`);
   const contrastHits = styleCorpus.filter(([, entry]) => STYLE_CONTRAST.test(entry));
   assert.equal(contrastHits.length, 0, `formule « ce n’est pas X, c’est Y » : ${contrastHits.slice(0, 3).map(([label, entry]) => `${label} « ${entry.slice(0, 80)} »`).join(" | ")}`);
-  const sourceFiles = ["bellirith-ambient", "bellirith-dates", "bellirith-diversion-intimacy", "bellirith-intimacy-before-light", "bellirith-intimacy-coalition", "bellirith-intimacy-duel", "bellirith-intimacy-frames", "bellirith-intimacy-free", "bellirith-intimacy-kit", "bellirith-intimacy-price-of-aid", "bellirith-intimacy-return-akuhn", "bellirith-intrusions", "bellirith-living-world", "bellirith-reactions"];
+  const sourceFiles = ["bellirith-ambient", "bellirith-dates", "bellirith-diversion-intimacy", "bellirith-heure-salon", "bellirith-heure-auberge", "bellirith-heure-logis", "bellirith-heure-confidence", "bellirith-heure-ennui", "bellirith-heure-matin", "bellirith-heure-couloir", "bellirith-heure-faveur", "bellirith-intimacy-before-light", "bellirith-intimacy-coalition", "bellirith-intimacy-duel", "bellirith-intimacy-frames", "bellirith-intimacy-free", "bellirith-intimacy-kit", "bellirith-intimacy-price-of-aid", "bellirith-intimacy-return-akuhn", "bellirith-intrusions", "bellirith-living-world", "bellirith-reactions"];
   for (const name of sourceFiles) {
     const code = (await read(`src/${name}.ts`)).replace(/\/\*[\s\S]*?\*\//gu, "").replace(/^\s*\/\/.*$/gmu, "");
     assert.doesNotMatch(code, STYLE_DASH, `${name}.ts : tiret cadratin dans une chaîne`);
@@ -323,6 +433,8 @@ try {
 
   console.log(`Bellirith validée · ${counts.intrusionVariants} variantes d’intrusion · ${counts.intimacyRoutes} routes intimes · ${counts.confidences} confidences · ${counts.letters} courriers · ${counts.freeMoments} moments libres (${counts.freeProposals} propositions) · style vérifié sur ${counts.styleStrings} chaînes`);
   console.log(`Mots par mode (min/moy/max) : ${Object.entries(counts.intimacyWords).map(([mode, s]) => `${mode} ${s.min}/${s.avg}/${s.max}`).join(" · ")}`);
+  console.log(`Heures volées : ${counts.heures} scènes propres · unicité vérifiée sur ${counts.uniqueSentences} phrases Bellirith (≥ 8 mots), contre ${counts.hnRoutes} routes Hylee/Naïah`);
+  for (const [context, modes] of Object.entries(counts.heureWords)) console.log(`  ${context} « ${intimacy.BELLIRITH_INTIMACY_TITLES[context]} » : ${Object.entries(modes).map(([mode, s]) => `${mode} ${s.min}/${s.avg}/${s.max}`).join(" · ")}`);
 } finally {
   await server.close();
 }

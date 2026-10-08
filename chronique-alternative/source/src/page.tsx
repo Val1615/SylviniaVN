@@ -4282,9 +4282,11 @@ export default function Home() {
           ...current.flags,
           ...(modal.dateId ? [`date-intimate:${modal.dateId}`] : []),
           ...(modal.home ? [`home-intimate:${modal.character}`] : []),
+          // L’heure volée du logis se relit ensuite depuis la galerie, comme les autres heures volées de Bellirith.
+          ...(modal.home && modal.character === "bellirith" ? ["date-intimate:bellirith-home"] : []),
           ...(modal.character === "remerii" ? ["remerii-intimacy-lived"] : []),
           ...(modal.character === "lineva" ? ["lineva-tutoiement"] : []),
-          ...(modal.character === "bellirith" && (modal.home || bellirithIntimacyContext(modal.dateId)) ? [BELLIRITH_SLEPT_FLAG, `bellirith-intimate:${modal.home ? "bellirith-free" : bellirithIntimacyContext(modal.dateId)}`] : []),
+          ...(modal.character === "bellirith" && (modal.home || bellirithIntimacyContext(modal.dateId)) ? [BELLIRITH_SLEPT_FLAG, `bellirith-intimate:${modal.home ? "bellirith-home" : bellirithIntimacyContext(modal.dateId)}`] : []),
         ]),
         sceneMemories: memory ? { ...current.sceneMemories, [memoryKey]: memory } : current.sceneMemories,
       }));
@@ -4357,7 +4359,7 @@ export default function Home() {
     if (target.kind === "bellirith-confidence") { startSecretConversation(target.secretId, true); return; }
     if (target.kind === "bellirith-date") { startDate(target.dateId, true); return; }
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
-    if (target.kind === "bellirith-home") { setModal({ kind: "intimacy", character: "bellirith", home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-free"], replay: true }); return; }
+    if (target.kind === "bellirith-home") { setModal({ kind: "intimacy", character: "bellirith", home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-home"], replay: true }); return; }
     if (target.kind === "date") {
       const date = DATE_SCENES.find((entry) => entry.id === target.dateId);
       if (!date) return;
@@ -5400,7 +5402,7 @@ function JournalView({ embedded = false, forcedSection, onHNScene, onHNSearch, o
         {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
         {crossSceneMemories.map((stage) => <button key={`cross-${stage}`} onClick={() => onStartCrossQuest(stage, true)}><span>⇄ Quête croisée · Lineva & Allenna</span><strong>{crossSceneForStage(stage)?.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
-        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
+        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{(date.character === "bellirith" && bellirithIntimacyContext(date.id) ? BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(date.id)!] : undefined) || date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : date.character === "bellirith" && bellirithIntimacyContext(date.id) ? `Après « ${date.title} » · revoir la scène selon le corps et le niveau d’intimité choisis` : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
         {BELLIRITH_INTRUSIONS.filter((intrusion) => bellirithIntrusionResolved(game, intrusion.id)).map((intrusion) => <button key={`bellirith-intrusion-${intrusion.id}`} onClick={() => onReplayBellirith?.("intrusion", intrusion.id)}><span style={{ color: CHARACTERS.find((character) => character.id === "bellirith")?.color }}>✧ Interférence · Bellirith</span><strong>{intrusion.title}</strong><small>Revoir sans gain, sans pénalité ni avancée du temps</small></button>)}
@@ -5904,7 +5906,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   // à la main pour les trois configurations corporelles.
   // Au logis, Bellirith passe aussi par une heure volée écrite à la main (source « bellirith-home »).
   const bellirithSource = character.id === "bellirith" && modal.home ? "bellirith-home" : modal.dateId;
-  const bellirithContext = character.id === "bellirith" ? bellirithIntimacyContext(modal.home ? "bellirith-free" : modal.dateId) : undefined;
+  const bellirithContext = character.id === "bellirith" ? bellirithIntimacyContext(modal.home ? "bellirith-home" : modal.dateId) : undefined;
   const [bellirithFlags] = useState(() => game.flags);
   const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
@@ -6014,7 +6016,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   const isChoice = step === "approach-choice" || step === "attunement-choice" || step === "direction-choice";
   const isDone = step === "done";
-  const intimacyTitle = `${character.name} · ${modal.home ? homeProperty?.name || "Chez vous" : date?.title || (bellirithContext ? BELLIRITH_INTIMACY_TITLES[bellirithContext] : undefined) || "Derrière la dernière porte"}`;
+  const intimacyTitle = `${character.name} · ${(bellirithContext ? BELLIRITH_INTIMACY_TITLES[bellirithContext] : undefined) || (modal.home ? homeProperty?.name || "Chez vous" : date?.title) || "Derrière la dernière porte"}`;
   const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice } = useIntimacyBacklog(`${character.id}:${modal.dateId || "home"}:${modal.replay ? "r" : "l"}`, currentLine, isChoice, game.player, [character.id]);
   const speakerColor = character.color;
   const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");

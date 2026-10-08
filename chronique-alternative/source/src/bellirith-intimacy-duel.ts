@@ -249,6 +249,21 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
   ],
 };
 
+/* Épilogue propre à « Retourner l’initiative » : aucune phrase partagée avec la route du vol. */
+const DUEL_TURN_CLOSING_A = A(
+  "Vous finissez assis par terre, adossés au pied du piano, sa jambe en travers des vôtres et un châle tiré à moitié sur vos deux corps. Elle compte vos doigts un par un, comme on compte des points.",
+  B("Tu te rends compte de ce que tu viens de me faire ?", "thoughtful"),
+  P("Je crois que j’ai gagné une manche. Ou deux."),
+  B("Trois. Je compte toujours les points de l’adversaire, c’est une manie. Ce soir, ta colonne déborde de la page.", "thoughtful"),
+);
+const DUEL_TURN_CLOSING_B = A(
+  "Elle tourne la tête vers vous et vous détaille comme on relit une lettre dont on avait mal compris la fin.",
+  B("Je voulais apprendre ce que tu désirais. J’ai appris ce que tu savais faire de moi. C’est bien plus inquiétant.", "thoughtful"),
+  P("Inquiétant pour qui ?"),
+  B("Pour nous deux. Un adversaire à ma taille, ça se paie. J’ignore encore en quelle monnaie.", "seductive"),
+  W(FAVORITE, [B("Favori ne suffit plus. Il me faudra un titre neuf, et je suis très lente à baptiser les choses. Reste dans les parages.", "smirk")], [B("Il me faudra un mot pour ce que tu es. Je suis très lente à baptiser les choses. Reste dans les parages.", "smirk")]),
+);
+
 export const DUEL_TURN_ROUTE: AuthoredRoute = {
   id: "bellirith-duel-turn",
   context: "date-bellirith-final",
@@ -456,8 +471,8 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         "Vous basculez ensemble. Le piano plaque un accord parfaitement juste.",
       ],
     ),
-    DUEL_CLOSING_A,
-    DUEL_CLOSING_B,
+    DUEL_TURN_CLOSING_A,
+    DUEL_TURN_CLOSING_B,
     A(
       W(RESISTED, [
         B("Toutes ces fois où tu m’as dit non. Je croyais que tu me refusais. Tu m’étudiais. C’est insupportable. C’est merveilleux.", "thoughtful"),
