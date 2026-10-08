@@ -71,7 +71,7 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
         y("Il était si joli. Il fallait bien que quelqu’un le garde.", "laugh"),
       ],
       [
-        "Vous restez tous les trois au milieu des coussins, les bougies presque mortes. Naïah compte les bâtons dans la cire avec une satisfaction de comptable.",
+        "Personne ne bouge plus au milieu des coussins, les bougies presque mortes. Naïah compte les bâtons dans la cire avec une satisfaction de comptable.",
         y("Quatre à zéro.", "smirk"),
         b("Tu as compté mon plaisir comme une défaite.", "thoughtful"),
         y("Je l’ai compté comme une preuve. Il y a au moins une personne ici qui ne triche jamais.", "smirk"),
@@ -128,7 +128,7 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
         y("Il était si joli. Il fallait bien que quelqu’un le garde au chaud.", "laugh"),
       ],
       [
-        "Vous restez emmêlés tous les trois dans le velours, les bougies presque mortes. Naïah tend le bras pour compter les bâtons dans la cire.",
+        "Les trois corps restent mêlés dans le velours, les bougies presque mortes. Naïah tend le bras pour compter les bâtons dans la cire.",
         y("Quatre à zéro.", "smirk"),
         b("Tu comptes mon plaisir comme une défaite.", "thoughtful"),
         y("Je le compte comme une preuve. Il y a au moins une personne ici qui ne triche jamais.", "smirk"),
@@ -212,7 +212,7 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
         y("Il était si joli. Il fallait bien que quelqu’un le garde au chaud.", "laugh"),
       ],
       [
-        "Vous restez emmêlés tous les trois dans le velours rouge, collés de sueur et de cire. Les bougies sont presque mortes. Naïah tend le bras pour compter les bâtons gravés, du bout de l’ongle.",
+        "Les trois corps restent mêlés dans le velours rouge, avec de la sueur et de la cire partout. Les bougies sont presque mortes. Naïah tend le bras pour compter les bâtons gravés, du bout de l’ongle.",
         y("Quatre à zéro.", "smirk"),
         b("Tu comptes mon plaisir comme une défaite.", "thoughtful"),
         y("Je le compte comme une preuve. Il y a au moins une personne ici qui ne triche jamais.", "smirk"),

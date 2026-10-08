@@ -24,7 +24,7 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
   chapters: {
     tendre: [
       [
-        "Bellirith les fait asseoir toutes les deux sur la coque retournée, côte à côte. Elle reste debout entre leurs genoux, et c’est elle, pour une fois, qui est en contrebas.",
+        "Bellirith vous fait asseoir sur la coque retournée, Naïah et vous, côte à côte. Elle reste debout entre vos genoux et les siens, et c’est elle, pour une fois, qui est en contrebas.",
         b("Regardez-moi. C’est tout ce que je demande pour l’instant.", "seductive"),
         y("Pour l’instant. J’ai entendu le pour l’instant.", "smirk"),
       ],
@@ -75,7 +75,7 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
     ],
     suggestif: [
       [
-        "Bellirith les fait asseoir toutes les deux sur la coque retournée, côte à côte, et reste debout entre leurs genoux, en contrebas pour une fois.",
+        "Bellirith vous fait asseoir sur la coque retournée, Naïah et vous, côte à côte, et reste debout entre vos genoux et les siens, en contrebas pour une fois.",
         b("Regardez-moi. C’est tout ce que je demande pour l’instant.", "seductive"),
         y("Pour l’instant. J’ai bien entendu le pour l’instant.", "smirk"),
       ],
@@ -126,7 +126,7 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
     ],
     explicite: [
       [
-        "Bellirith les fait asseoir toutes les deux sur la coque retournée, côte à côte, et reste debout entre leurs genoux, en contrebas pour une fois. Ses mains remontent le long de leurs cuisses, par-dessus le tissu, sans aller plus haut que le genou.",
+        "Bellirith vous fait asseoir sur la coque retournée, Naïah et vous, côte à côte, et reste debout entre vos genoux et les siens, en contrebas pour une fois. Ses mains remontent le long de vos cuisses et de celles de Naïah, par-dessus le tissu, sans aller plus haut que le genou.",
         b("Regardez-moi. C’est tout ce que je demande pour l’instant.", "seductive"),
         y("Pour l’instant. J’ai bien entendu le pour l’instant.", "smirk"),
       ],
@@ -185,8 +185,8 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
         "Elle bascule, longuement, la gorge offerte, et tout son corps se serre en vagues désordonnées.",
         X(
           "Ses frissons contre vos doigts vous emportent à votre tour. Vous jouissez contre elle, le front dans ses cheveux.",
-          "Ses contractions autour de vous vous emportent à votre tour. Vous jouissez en elle, le front dans ses cheveux.",
-          "Ses contractions autour de votre vigueur vous emportent à votre tour, et votre chaleur frissonne en écho. Vous jouissez en elle, le front dans ses cheveux.",
+          "Elle se resserre sur vous par vagues, et la vague suivante est la vôtre. Vous jouissez en elle, le front dans ses cheveux.",
+          "Elle se resserre sur votre vigueur par vagues, la vague suivante est la vôtre, et votre chaleur répond aussitôt. Vous jouissez en elle, le front dans ses cheveux.",
         ),
         "Naïah reste penchée au-dessus d’elle tout du long, attentive à chaque détail. Puis elle se laisse aller en arrière sur le sable et rejoue le moment, plus long que la dernière fois, avec des embellissements qu’elle vient d’inventer, un cri plus aigu, un tremblement plus long.",
         b("Trois. Et tu en rajoutes.", "angry"),
