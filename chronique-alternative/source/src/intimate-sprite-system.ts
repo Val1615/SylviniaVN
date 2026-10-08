@@ -11,15 +11,19 @@ export const INTIMATE_SPRITE_MOODS = {
   allenna: ["seductive", "angry", "shy", "soft", "troubled", "stern"],
   lineva: ["teasing", "passionate", "pouting", "smirk", "annoyed", "soft"],
   naiah: ["laugh", "soft", "teasing", "stern", "inviting", "smirk"],
+  // Six PNG livrés pour Bellirith, copiés à l’octet près et seulement renommés.
+  bellirith: ["teasing", "haughty", "inviting", "hungry", "sultry", "smug"],
 } as const;
 
 export type IntimateSpriteCharacter = keyof typeof INTIMATE_SPRITE_MOODS;
-export const INTIMATE_SPRITE_FALLBACKS: Record<IntimateSpriteCharacter, "soft"> = {
+export const INTIMATE_SPRITE_FALLBACKS: Record<IntimateSpriteCharacter, string> = {
   hylee: "soft",
   remerii: "soft",
   allenna: "soft",
   lineva: "soft",
   naiah: "soft",
+  // Bellirith n’a pas d’expression « soft » : sa pose la plus posée sert de repli.
+  bellirith: "haughty",
 };
 
 const INTIMATE_SPRITE_EXTENSIONS: Record<IntimateSpriteCharacter, "webp" | "png"> = {
@@ -30,6 +34,7 @@ const INTIMATE_SPRITE_EXTENSIONS: Record<IntimateSpriteCharacter, "webp" | "png"
   // Les six fichiers Naïah sont volontairement conservés tels que livrés.
   // Leurs noms stables permettent de remplacer les placeholders sans toucher au code.
   naiah: "png",
+  bellirith: "png",
 };
 
 const SOLO_PHASE_TRACKS: Record<IntimateSpriteCharacter, readonly string[]> = {
@@ -38,6 +43,33 @@ const SOLO_PHASE_TRACKS: Record<IntimateSpriteCharacter, readonly string[]> = {
   allenna: ["soft", "shy", "shy", "troubled", "soft", "seductive", "stern", "seductive", "shy", "soft"],
   lineva: ["soft", "pouting", "smirk", "soft", "teasing", "passionate", "annoyed", "passionate", "soft", "soft"],
   naiah: ["soft", "smirk", "teasing", "laugh", "soft", "inviting", "stern", "teasing", "smirk", "soft"],
+  bellirith: ["haughty", "teasing", "sultry", "inviting", "teasing", "hungry", "smug", "hungry", "sultry", "smug"],
+};
+
+/**
+ * Bellirith : une piste par route, écrite d’après le contenu de chaque séquence
+ * (défi, revanche, aveu, rire). Seules les séquences entre le dévoilement et la
+ * CG finale affichent réellement ces sprites, et uniquement en mode explicite.
+ */
+const SOLO_ROUTE_TRACKS: Partial<Record<IntimateSpriteCharacter, Record<string, readonly string[]>>> = {
+  bellirith: {
+    "bellirith-mirrors": ["sultry", "teasing", "haughty", "inviting", "haughty", "smug", "teasing", "haughty", "sultry", "inviting", "hungry", "sultry", "smug"],
+    "bellirith-baths": ["haughty", "teasing", "inviting", "teasing", "sultry", "inviting", "smug", "inviting", "haughty", "hungry", "sultry", "smug"],
+    "bellirith-saelis": ["inviting", "smug", "sultry", "inviting", "inviting", "teasing", "smug", "haughty", "hungry", "sultry", "sultry", "smug", "teasing"],
+    "bellirith-eve": ["teasing", "inviting", "sultry", "inviting", "haughty", "sultry", "hungry", "inviting", "sultry", "sultry", "haughty", "smug"],
+    "bellirith-free-familiar": ["teasing", "sultry", "inviting", "haughty", "hungry", "teasing", "smug", "haughty", "sultry", "sultry", "smug", "teasing"],
+    "bellirith-free-first": ["sultry", "hungry", "hungry", "inviting", "teasing", "haughty", "sultry", "smug", "hungry", "sultry", "teasing", "sultry"],
+    "bellirith-duel-steal": ["haughty", "teasing", "inviting", "hungry", "haughty", "teasing", "smug", "hungry", "inviting", "sultry", "smug", "sultry", "haughty"],
+    "bellirith-duel-turn": ["haughty", "sultry", "teasing", "inviting", "sultry", "smug", "hungry", "teasing", "inviting", "sultry", "smug", "haughty", "sultry"],
+    "bellirith-heure-salon": ["haughty", "teasing", "sultry", "teasing", "inviting", "hungry", "smug", "sultry", "inviting", "sultry", "smug", "teasing", "sultry"],
+    "bellirith-heure-auberge": ["haughty", "teasing", "teasing", "sultry", "inviting", "teasing", "sultry", "hungry", "haughty", "smug", "sultry", "sultry", "smug"],
+    "bellirith-heure-logis": ["teasing", "haughty", "inviting", "teasing", "inviting", "smug", "sultry", "hungry", "haughty", "inviting", "sultry", "sultry", "teasing"],
+    "bellirith-heure-confidence": ["sultry", "teasing", "hungry", "haughty", "inviting", "sultry", "hungry", "haughty", "sultry", "inviting", "inviting", "haughty", "sultry"],
+    "bellirith-heure-ennui": ["haughty", "teasing", "sultry", "teasing", "inviting", "haughty", "teasing", "hungry", "smug", "inviting", "sultry", "smug", "teasing"],
+    "bellirith-heure-matin": ["sultry", "haughty", "teasing", "haughty", "inviting", "teasing", "smug", "sultry", "smug", "inviting", "sultry", "teasing", "smug"],
+    "bellirith-heure-couloir": ["sultry", "teasing", "hungry", "teasing", "inviting", "teasing", "hungry", "sultry", "inviting", "hungry", "sultry", "smug", "haughty"],
+    "bellirith-heure-faveur": ["haughty", "teasing", "sultry", "haughty", "inviting", "smug", "sultry", "teasing", "haughty", "hungry", "sultry", "smug", "teasing"],
+  },
 };
 
 const SOLO_ROUTE_ACCENTS: Record<IntimateSpriteCharacter, readonly [needle: string, mood: string][]> = {
@@ -46,6 +78,7 @@ const SOLO_ROUTE_ACCENTS: Record<IntimateSpriteCharacter, readonly [needle: stri
   allenna: [["defi", "stern"], ["tendre", "soft"], ["passion", "seductive"], ["discipline", "stern"]],
   lineva: [["joueuse", "teasing"], ["tendre", "soft"], ["passionnee", "passionate"], ["commandement", "annoyed"]],
   naiah: [["jeu", "teasing"], ["illusion", "smirk"], ["rire", "laugh"], ["confiance", "soft"]],
+  bellirith: [],
 };
 
 const GROUP_CONTEXTS = {
@@ -90,8 +123,13 @@ const GROUP_CONTEXTS = {
     hylee: ["teasing", "seductive", "annoyed", "teasing", "teasing", "shy", "seductive", "teasing", "annoyed", "seductive", "tender", "seductive", "teasing", "soft", "soft"],
     naiah: ["smirk", "inviting", "teasing", "stern", "laugh", "smirk", "teasing", "inviting", "laugh", "smirk", "teasing", "inviting", "laugh", "smirk", "soft"],
   },
+  // Valurn n’a pas de sprites intimes : seule Bellirith change de canal, comme Naïah ci-dessous avant ce lot.
+  "group-date-valurn-bellirith": {
+    bellirith: ["teasing", "haughty", "smug", "inviting", "hungry", "sultry", "sultry", "smug"],
+  },
   "group-date-naiah-bellirith": {
     naiah: ["soft", "smirk", "teasing", "stern", "inviting", "laugh", "teasing", "soft"],
+    bellirith: ["teasing", "smug", "haughty", "inviting", "sultry", "hungry", "smug", "sultry"],
   },
 } as const;
 
@@ -121,11 +159,18 @@ export function intimateSpriteFallbackPath(characterId: string): string {
   return intimateSpritePath(characterId, hasIntimateSprites(characterId) ? INTIMATE_SPRITE_FALLBACKS[characterId] : "soft");
 }
 
+/** Piste solo dédiée à une route (validateurs, outils de développement). */
+export function soloRouteTrack(characterId: string, routeId: string): readonly string[] | undefined {
+  return hasIntimateSprites(characterId) ? SOLO_ROUTE_TRACKS[characterId]?.[routeId] : undefined;
+}
+
 export function isIntimateGroupContext(contextId: string): contextId is IntimateGroupContext {
   return contextId in GROUP_CONTEXTS;
 }
 
 function phaseMood(characterId: IntimateSpriteCharacter, routeId: string, chapterIndex: number, lineIndex: number) {
+  const routeTrack = SOLO_ROUTE_TRACKS[characterId]?.[routeId];
+  if (routeTrack?.length) return resolveIntimateSpriteMood(characterId, routeTrack[Math.min(chapterIndex, routeTrack.length - 1)]);
   const track = SOLO_PHASE_TRACKS[characterId];
   const base = track[Math.min(chapterIndex, track.length - 1)] || INTIMATE_SPRITE_FALLBACKS[characterId];
   const accent = SOLO_ROUTE_ACCENTS[characterId].find(([needle]) => normalized(routeId).includes(needle))?.[1];
@@ -162,7 +207,7 @@ export function withSoloIntimateEnding(
 function groupMood(contextId: IntimateGroupContext, characterId: string, chapterIndex: number) {
   const context = GROUP_CONTEXTS[contextId] as Partial<Record<IntimateSpriteCharacter, readonly string[]>>;
   const track = hasIntimateSprites(characterId) ? context[characterId] : undefined;
-  if (!track?.length) return "soft";
+  if (!track?.length) return hasIntimateSprites(characterId) ? INTIMATE_SPRITE_FALLBACKS[characterId] : "soft";
   return resolveIntimateSpriteMood(characterId, track[Math.min(chapterIndex, track.length - 1)]);
 }
 

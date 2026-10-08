@@ -7,7 +7,8 @@ import { createServer } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const src = (relative) => path.join(root, "source", "src", relative);
-const extensions = { naiah: "png" };
+const extensions = { naiah: "png", bellirith: "png" };
+const fallbacks = { bellirith: "haughty" };
 const asset = (character, mood) => path.join(root, "assets", "sprites-intimate", character, `${mood}.${extensions[character] || "webp"}`);
 
 const moods = {
@@ -16,6 +17,7 @@ const moods = {
   allenna: ["seductive", "angry", "shy", "soft", "troubled", "stern"],
   lineva: ["teasing", "passionate", "pouting", "smirk", "annoyed", "soft"],
   naiah: ["laugh", "soft", "teasing", "stern", "inviting", "smirk"],
+  bellirith: ["teasing", "haughty", "inviting", "hungry", "sultry", "smug"],
 };
 
 function webpDeclaresAlpha(buffer) {
@@ -38,20 +40,25 @@ function webpDeclaresAlpha(buffer) {
 let exactAlphaChecks = 0;
 let totalBytes = 0;
 for (const [character, expressions] of Object.entries(moods)) {
-  assert(expressions.includes("soft"), `${character}: fallback soft absent`);
+  assert(expressions.includes(fallbacks[character] || "soft"), `${character}: fallback ${fallbacks[character] || "soft"} absent`);
   for (const expression of expressions) {
     const file = asset(character, expression);
     assert(existsSync(file), `asset intime introuvable: ${character}/${expression}.${extensions[character] || "webp"}`);
     const buffer = readFileSync(file);
     totalBytes += buffer.length;
     assert(buffer.length > 25_000, `${character}/${expression}: asset anormalement petit`);
-    if (character !== "naiah") assert(webpDeclaresAlpha(buffer), `${character}/${expression}: WebP sans canal alpha déclaré`);
+    if (character !== "naiah" && character !== "bellirith") assert(webpDeclaresAlpha(buffer), `${character}/${expression}: WebP sans canal alpha déclaré`);
 
     const identified = spawnSync("identify", ["-format", "%[channels]|%[opaque]", file], { encoding: "utf8" });
     assert.equal(identified.status, 0, `${character}/${expression}: image placeholder illisible`);
     if (identified.status === 0) {
       const [channels, opaque] = identified.stdout.trim().split("|");
-      if (character !== "naiah") {
+      if (character === "bellirith") {
+        // PNG livrés tels quels : on vérifie seulement que la transparence est bien là.
+        assert(channels.includes("a"), `${character}/${expression}: canal alpha non décodé`);
+        assert.equal(opaque.toLocaleLowerCase(), "false", `${character}/${expression}: alpha présent mais aucun pixel transparent`);
+        exactAlphaChecks += 1;
+      } else if (character !== "naiah") {
         assert(channels.includes("a"), `${character}/${expression}: canal alpha non décodé`);
         assert.equal(opaque.toLocaleLowerCase(), "false", `${character}/${expression}: alpha présent mais aucun pixel transparent`);
         exactAlphaChecks += 1;
@@ -214,7 +221,37 @@ try {
   }
   assert.equal(new Set(revealSignatures.map((entry) => entry.split("\n").slice(1).join("\n"))).size, revealSignatures.length, "des dévoilements de trio ont été copiés-collés");
 
-  for (const character of Object.keys(moods)) {
+  // Bellirith : toutes ses intimités passent par ses routes dédiées (le catalogue
+  // générique n’est conservé que pour les validateurs de catalogue). Chaque route
+  // dédiée publie sa progression visuelle et une piste d’expressions propre.
+  const bellirithRoutes = await server.ssrLoadModule("/src/bellirith-diversion-intimacy.ts");
+  const spriteSystem = await server.ssrLoadModule("/src/intimate-sprite-system.ts");
+  let bellirithTracks = 0;
+  for (const entry of bellirithRoutes.allBellirithIntimacyRoutes()) {
+    const route = entry.route;
+    assert(route.visual, `${route.id}: progression visuelle Bellirith absente`);
+    const track = spriteSystem.soloRouteTrack("bellirith", route.id);
+    assert(track && track.length >= route.chapters.explicite.length, `${route.id}: piste d’expressions Bellirith absente ou trop courte`);
+    assert(new Set(track.slice(route.visual.revealChapter + 1, route.visual.postOrgasmChapter)).size >= 3, `${route.id}: expressions Bellirith trop uniformes`);
+    for (const mood of track) assert(moods.bellirith.includes(mood), `${route.id}: expression inconnue ${mood}`);
+    const moodsApplied = spriteSystem.withSoloIntimateMoods(route.chapters.explicite, "bellirith", route.id);
+    assert(moodsApplied.every((chapter, index) => chapter.every((line) => line.intimateMood === track[index])), `${route.id}: piste non appliquée`);
+    const visualBefore = cg.soloIntimateVisualState({ character: "bellirith", mode: "explicite", surface: "route", step: "direction-lines", chapter: route.visual.revealChapter - 1, revealChapter: route.visual.revealChapter, postOrgasmChapter: route.visual.postOrgasmChapter });
+    assert.equal(visualBefore.useIntimateSprites, false, `${route.id}: sprite nu avant le dévoilement`);
+    const visualAfter = cg.soloIntimateVisualState({ character: "bellirith", mode: "explicite", surface: "route", step: "direction-lines", chapter: route.visual.revealChapter + 1, revealChapter: route.visual.revealChapter, postOrgasmChapter: route.visual.postOrgasmChapter });
+    assert.equal(visualAfter.useIntimateSprites, true, `${route.id}: sprites nus absents après le dévoilement`);
+    const visualSoft = cg.soloIntimateVisualState({ character: "bellirith", mode: "suggestif", surface: "route", step: "direction-lines", chapter: route.visual.revealChapter + 1, revealChapter: route.visual.revealChapter, postOrgasmChapter: route.visual.postOrgasmChapter });
+    assert.equal(visualSoft.useIntimateSprites, false, `${route.id}: sprite nu hors du mode explicite`);
+    bellirithTracks += 1;
+  }
+  assert(bellirithTracks >= 16, "routes Bellirith non couvertes par les sprites intimes");
+  for (const context of ["group-date-naiah-bellirith", "group-date-valurn-bellirith"]) {
+    const sample = [[{ speaker: "Narration", text: "x" }]];
+    const applied = spriteSystem.withGroupIntimateMoods(sample, context, context === "group-date-naiah-bellirith" ? ["naiah", "bellirith"] : ["valurn", "bellirith"]);
+    assert(moods.bellirith.includes(applied[0][0].intimateMoods?.bellirith), `${context}: piste Bellirith absente`);
+  }
+
+  for (const character of Object.keys(moods).filter((id) => id !== "bellirith")) {
     for (const route of individual.intimacyRoutes(character, "intersexe")) {
       assert(route.visual, `${route.id}: progression visuelle solo absente`);
       const text = route.chapters.explicite[route.visual.revealChapter]?.map((line) => line.text).join(" ") || "";
@@ -230,4 +267,4 @@ try {
   await server.close();
 }
 
-console.log(`Sprites intimes validés: 30 assets dont 6 placeholders Naïah inchangés, 18 CG, ${exactAlphaChecks || 24} contrôles alpha, transitions CG → sprites solo et trio.`);
+console.log(`Sprites intimes validés: 36 assets dont 6 placeholders Naïah et 6 PNG Bellirith inchangés, 18 CG, ${exactAlphaChecks || 24} contrôles alpha, transitions CG → sprites solo et trio.`);
