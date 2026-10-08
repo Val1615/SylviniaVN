@@ -37,7 +37,7 @@ export const BELLIRITH_KNOWLEDGE: KnowledgeEntry[] = [
   { id: "knows_bellirith_bhaal_family", title: "Le même père", summary: "Bellirith et Valurn partagent Bhaal pour père. Leur famille démoniaque n’a jamais rien eu de sain ni de simple.", people: ["bellirith", "valurn"] },
   { id: "knows_bellirith_valurn_personal", title: "Plus qu’une rivalité", summary: "Entre Bellirith et Valurn, la rivalité publique recouvre quelque chose de bien plus personnel que ce qu’ils laissent voir.", people: ["bellirith", "valurn"] },
   { id: "knows_bellirith_before_hate", title: "Avant la haine", summary: "Bellirith et Valurn ont été très proches, y compris charnellement. Elle connaît certaines de ses faiblesses depuis très longtemps.", people: ["bellirith", "valurn"] },
-  { id: "knows_bellirith_provocations_real", title: "Pas du théâtre", summary: "Certaines provocations de Bellirith envers Valurn ne sont pas un spectacle : elle vise des endroits qu’elle connaît pour les avoir aimés.", people: ["bellirith", "valurn"] },
+  { id: "knows_bellirith_provocations_real", title: "Des coups qui portent", summary: "Certaines provocations de Bellirith envers Valurn visent juste : elle frappe des endroits qu’elle connaît pour les avoir aimés.", people: ["bellirith", "valurn"] },
   { id: "knows_bellirith_saelis", title: "Saëlis", summary: "À Saëlis, Bellirith règne par le désir. Elle y prend un plaisir réel et tient le désir pour une force politique autant que personnelle.", people: ["bellirith"] },
   { id: "knows_bellirith_valurn_fear", title: "La seule humiliation qui compte", summary: "Bellirith redoute de voir Valurn regagner de l’influence. Une humiliation venue de lui la touche bien plus qu’elle ne le voudrait.", people: ["bellirith", "valurn"] },
   { id: "knows_bellirith_promise", title: "Une promesse", summary: "Il y a eu, un jour, une promesse entre Valurn et Bellirith. Elle refuse d’en dire davantage.", people: ["bellirith", "valurn"] },
@@ -46,7 +46,7 @@ export const BELLIRITH_KNOWLEDGE: KnowledgeEntry[] = [
 
 /** Connaissances Valurn de remplacement : faits du Tome II uniquement. */
 export const VALURN_BELLIRITH_KNOWLEDGE: KnowledgeEntry[] = [
-  { id: "knows_valurn_old_promise", title: "La protection confiée", summary: "Valurn confia autrefois à Bellirith une protection — un talisman, « une jolie pierre enfermée dans du métal » — et lui demanda de rester cachée pendant qu’il partait.", people: ["valurn", "bellirith"] },
+  { id: "knows_valurn_old_promise", title: "La protection confiée", summary: "Valurn confia autrefois à Bellirith une protection, un talisman qu’il appelait « une jolie pierre enfermée dans du métal », et lui demanda de rester cachée pendant qu’il partait.", people: ["valurn", "bellirith"] },
   { id: "knows_valurn_did_not_return", title: "Je pensais pouvoir revenir", summary: "Des soldats de l’Empire sont venus. Valurn n’est pas revenu à temps. « Je pensais pouvoir revenir » : il n’en dit pas davantage.", people: ["valurn", "bellirith"] },
 ];
 
@@ -127,10 +127,10 @@ const beforeHate: SecretConversation = {
     C("sbb40-push", "Lui faire remarquer qu’elle parle de lui au présent pour ses faiblesses, et au passé pour tout le reste.", "lucidite", [
       P("Ses faiblesses, tu les dis au présent. Il ne dort jamais du côté de la porte. Mais tout le reste, tu le dis au passé."),
       N("Bellirith pose son verre. Lentement. Elle ne vous a pas quitté·e des yeux."),
-      B("Tu sais ce qui est terrifiant chez toi ? Ce n’est pas que tu refuses. C’est que tu écoutes.", "cold"),
-      B("D’accord. Quand je le provoque devant Iriana, quand je lui vole son vin, quand je lui rappelle à voix haute la façon dont il gémissait… ce n’est pas toujours du théâtre. Parfois je vise un endroit précis, que j’ai connu tendre. Je sais qu’il saigne encore là. Je vérifie.", "away"),
+      B("Tu sais ce qui est terrifiant chez toi ? Tu écoutes. N’importe qui sait refuser.", "cold"),
+      B("D’accord. Quand je le provoque devant Iriana, quand je lui vole son vin, quand je lui rappelle à voix haute la façon dont il gémissait… parfois, je vise un endroit précis, que j’ai connu tendre. Je sais qu’il saigne encore là. Je vérifie.", "away"),
       P("Pour lui faire mal ?"),
-      B("Pour savoir s’il saigne encore. Ce n’est pas la même chose. Ne me demande pas laquelle des deux réponses me ferait plaisir.", "thoughtful"),
+      B("Pour savoir s’il saigne encore. La différence compte. Ne me demande pas laquelle des deux réponses me ferait plaisir.", "thoughtful"),
     ], { trust: 4, desire: 4, knowledge: ["knows_bellirith_provocations_real"] }, { requires: { stat: "lucidite", value: BELLIRITH_PUSH_LUCIDITY[40] } }),
     C("sbb40-near", "Revenir sur ce « il y a eu » qui lui a fait serrer le verre.", "audace", [
       P("« Il y a eu une époque. » Tu as serré ton verre en le disant."),
@@ -150,7 +150,7 @@ const beforeHate: SecretConversation = {
           P("C’est très tentant. Mais je préfère entendre la fin de ta phrase."),
           N("Bellirith se fige. Personne, visiblement, ne lui a jamais préféré une phrase. Elle cherche une réplique, n’en trouve aucune, et c’est peut-être la première fois que vous la voyez démunie."),
           B("Tu es insupportable.", "cold"),
-          B("Il y a eu une époque où je lui confiais tout, et il me confiait tout, et nous étions si bien emmêlés qu’on ne savait plus où finissait l’un. Quand je le provoque aujourd’hui, je vise ces endroits-là. Ce n’est pas du théâtre. C’est de la mémoire.", "away"),
+          B("Il y a eu une époque où je lui confiais tout, et il me confiait tout, et nous étions si bien emmêlés qu’on ne savait plus où finissait l’un. Quand je le provoque aujourd’hui, je vise ces endroits-là. J’y mets toute ma mémoire.", "away"),
           N("Elle ne descend pas de vos genoux. Elle reste là, très droite, à vous regarder comme une énigme qu’elle n’a pas commandée."),
           B("Je te désirais déjà. Maintenant, tu m’agaces. C’est beaucoup plus dangereux pour toi.", "thoughtful"),
         ], { trust: 4, desire: 5, knowledge: ["knows_bellirith_provocations_real"] }),
@@ -172,7 +172,7 @@ const saelis: SecretConversation = {
     P("Et tu règnes sur tout ça."),
     B("Je règne parce que je sais ce que chacun veut avant qu’il ose le savoir. Le désir est la seule force politique honnête, chéri·e. L’or ment, la peur s’use, la loyauté se vend. Le désir, lui, revient toujours frapper à la même porte.", "smirk"),
     B("Et j’aime ça. Ne crois pas une seconde que je joue un rôle. Être Bellirith est la chose la plus délicieuse qui me soit arrivée.", "teasing"),
-    N("Elle fait tourner la ville dans sa paume. Une tour, au centre, reste éteinte. Elle la cache du pouce sans y penser — ou en y pensant beaucoup."),
+    N("Elle fait tourner la ville dans sa paume. Une tour, au centre, reste éteinte. Elle la cache du pouce sans y penser. Ou en y pensant beaucoup."),
     B("Valurn trouve Saëlis vulgaire. Valurn trouve vulgaire tout ce qui fonctionne sans lui.", "cold"),
   ],
   choices: [
@@ -191,8 +191,8 @@ const saelis: SecretConversation = {
       N("Elle referme la main. Ses ongles marquent sa paume."),
       B("Voilà. Tu sais que j’ai peur de mon frère. Profite, chéri·e. Ça n’arrivera plus.", "thoughtful"),
     ], { trust: 4, desire: 5, knowledge: ["knows_bellirith_valurn_fear"] }, { requires: { stat: "lucidite", value: BELLIRITH_PUSH_LUCIDITY[60] } }),
-    C("sbs60-near", "Lui dire qu’elle a dit « vulgaire » deux fois, et que c’était le mot de Valurn, pas le sien.", "audace", [
-      P("Tu as dit « vulgaire » deux fois. Ce n’est pas ton mot. C’est le sien."),
+    C("sbs60-near", "Lui dire qu’elle a dit « vulgaire » deux fois, et que ce mot appartient à Valurn.", "audace", [
+      P("Tu as dit « vulgaire » deux fois. C’est son mot à lui."),
       N("Bellirith éteint Saëlis d’un claquement de doigts et vous pousse en arrière, une main à plat sur votre poitrine, jusqu’à ce que votre dos rencontre le mur."),
       B("Tu sais ce qui est vulgaire ? Parler de mon frère quand je suis à un souffle de ta bouche.", "seductive"),
       N("Son aura vous enveloppe, chaude, précise, cherchant ce qui en vous a déjà envie et le trouvant sans effort. Elle glisse une jambe entre les vôtres et vous embrasse au bord des lèvres, sans les prendre, juste assez pour que tout le reste devienne flou."),
@@ -257,7 +257,7 @@ const gap: SecretConversation = {
       P("Tu mens."),
       B("Oui.", "away"),
       N("Elle reprend la bague. Ses doigts tremblent, très légèrement, et elle déteste visiblement que vous l’ayez vu."),
-      B("Entre ce que nous étions et ce que nous sommes, il y a un trou. Je ne te dirai pas ce qu’il y a dedans. Pas parce que tu ne le mérites pas. Parce que si je le dis à voix haute, il deviendra vrai une seconde fois.", "thoughtful"),
+      B("Entre ce que nous étions et ce que nous sommes, il y a un trou. Je ne te dirai pas ce qu’il y a dedans. Tu le mériterais peut-être. Mais si je le dis à voix haute, il deviendra vrai une seconde fois.", "thoughtful"),
     ], { trust: 5, desire: 4, knowledge: ["knows_bellirith_missing_piece"] }, { requires: { stat: "lucidite", value: BELLIRITH_PUSH_LUCIDITY[80] } }),
   ],
   reveals: ["knows_bellirith_promise"],
@@ -317,7 +317,7 @@ const valurnReturn: SecretConversation = {
     P("Et Bellirith ? Qu’est-ce qu’elle dit ?"),
     V("Qu’en réalité, j’espérais seulement pouvoir supporter de ne pas le faire.", "cold"),
     N("Il sourit, enfin. C’est le sourire le plus laid que vous lui ayez jamais vu, parce qu’il ne cherche à séduire personne."),
-    V("Je ne vous dirai pas ce qui s’est passé ensuite. Ce n’est pas mon histoire à raconter. C’est la sienne, et elle a payé assez cher pour avoir le droit de la garder.", "away"),
+    V("Je ne vous dirai pas ce qui s’est passé ensuite. Cette histoire appartient à ma sœur, et elle a payé assez cher pour avoir le droit de la garder.", "away"),
   ],
   choices: [
     C("svr80-l", "Refuser de lui offrir une absolution, sans le condamner à sa place.", "lucidite", [
@@ -348,14 +348,14 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     minDay: 1, minStage: 1, requiresFlags: ["bellirith-has-resisted"],
     body: [
       "Je viens de passer une heure à dresser la liste de tout ce que tu m’as préféré·e jusqu’ici. Une lettre. Un capitaine qui sent le cheval. Une carte avec des flèches. Une impératrice qui relit des virgules.",
-      "J’ai d’abord trouvé ça vexant. Puis amusant. Puis — et c’est là que tu deviens un problème — intéressant.",
+      "J’ai d’abord trouvé ça vexant. Puis amusant. Puis, et c’est là que tu deviens un problème, intéressant.",
       "Personne ne me dit non avec cette tête-là. Tu avais envie. Je l’ai senti. Tu es parti·e quand même. Je veux comprendre comment on fabrique quelqu’un comme toi, et je compte bien démonter le mécanisme pièce par pièce.",
-      "Ne te réjouis pas trop vite : je ne suis pas blessée. Je suis motivée. C’est bien pire.",
+      "Ne te réjouis pas trop vite : ça me motive. C’est bien pire qu’une blessure.",
     ],
-    signature: "B. — qui vient de trouver un nouveau passe-temps",
+    signature: "B., qui vient de trouver un nouveau passe-temps",
     replies: [
       { id: "bel-pref-tease", label: "Répondre que la carte avait de très jolies flèches.", response: "La réponse arrive le soir même : « Je vais faire dessiner des flèches sur ma robe. On verra bien laquelle tu suis. »", effects: { desire: 3, affection: 1 } },
-      { id: "bel-pref-honest", label: "Avouer que ce n’était pas facile de partir.", response: "« Je sais. C’est exactement pour ça que je vais recommencer. Prépare-toi à des refus beaucoup plus difficiles. »", effects: { desire: 4 } },
+      { id: "bel-pref-honest", label: "Avouer que partir vous a coûté.", response: "« Je sais. C’est exactement pour ça que je vais recommencer. Prépare-toi à des refus beaucoup plus difficiles. »", effects: { desire: 4 } },
     ],
   },
   {
@@ -364,7 +364,7 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     minDay: 1, minStage: 1, requiresFlags: ["bellirith-has-slept", "bellirith-favorite"],
     body: [
       "Mon favori,",
-      "Oui, j’ai écrit le mot. Non, ce n’est pas une déclaration. J’ai eu trois cent quatre-vingt-dix favoris, tu es simplement le plus récent, et pour l’instant le plus amusant.",
+      "Oui, j’ai écrit le mot. N’en fais pas une déclaration. J’ai eu trois cent quatre-vingt-dix favoris, tu es simplement le plus récent, et pour l’instant le plus amusant.",
       "Je sais maintenant exactement à quel moment ton souffle se coince, de quel côté tu tournes la tête quand tu ne veux pas qu’on te voie céder, et ce qui se passe quand je te parle très bas juste avant. Je compte m’en servir. Souvent. Aux pires moments.",
       "Garde ce billet. Relis-le pendant les conseils de guerre. Essaie de rester concentré·e.",
     ],
@@ -396,7 +396,7 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
       "Correction à notre dernière conversation : j’ai dit que Valurn et moi étions « tout ce que l’autre avait ». C’était faux. Nous avions aussi un chat. Il s’appelait Dette. Il a vécu quarante ans et il préférait Valurn, le traître.",
       "Voilà. Tu as un détail supplémentaire minuscule et parfaitement inutile. Je te l’offre pour te punir : tu écoutes beaucoup trop bien, et j’ai besoin que tu saches que je l’ai remarqué.",
     ],
-    signature: "B. — qui n’aime pas qu’on l’écoute à ce point",
+    signature: "B., qui n’aime pas qu’on l’écoute à ce point",
     replies: [
       { id: "bel-corr-cat", label: "Demander des nouvelles du descendant de Dette.", response: "« Il n’y a pas de descendant. Il y a une statue de Dette dans ma salle du trône à Saëlis. Valurn ne le sait pas. Tu es la deuxième personne au monde à l’apprendre. »", effects: { trust: 3, desire: 2 } },
       { id: "bel-corr-listen", label: "Répondre que vous continuerez à écouter.", response: "« Je m’en doutais. C’est absolument insupportable. Continue. »", effects: { desire: 3, trust: 1 } },
@@ -408,12 +408,12 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     minDay: 1, minStage: 1, requiresFlags: ["campaign-coalition-preparation", "bellirith-trend:resisted"],
     body: [
       "Je t’ai proposé mon lit, mes bains, une victoire, une information, une ville entière dans le creux de ma main. Tu as dit non à tout, avec cet air d’en avoir terriblement envie qui me rend folle.",
-      "Alors j’arrête. Pas de jouer : de choisir le moment. La prochaine fois, ce sera toi qui viendras. Tu choisiras le soir. Tu choisiras « maintenant ». Et je verrai enfin ce que tu vaux quand tu ne fuis plus.",
+      "Alors j’arrête de choisir le moment. Je continue de jouer, évidemment. La prochaine fois, ce sera toi qui viendras. Tu choisiras le soir. Tu choisiras « maintenant ». Et je verrai enfin ce que tu vaux quand tu ne fuis plus.",
       "Je t’attendrai. Ne fais pas de bruit, je ne veux pas avoir l’air d’attendre.",
     ],
     signature: "Bellirith",
     replies: [
-      { id: "bel-end-res-come", label: "Répondre : « Bientôt. »", response: "« Bientôt n’est pas un jour, c’est une torture. Merci. »", effects: { desire: 3, affection: 2 } },
+      { id: "bel-end-res-come", label: "Répondre : « Bientôt. »", response: "« Bientôt. Quelle torture élégante. Merci. »", effects: { desire: 3, affection: 2 } },
       { id: "bel-end-res-tease", label: "Répondre que vous la ferez peut-être attendre encore un peu.", response: "« Tu es cruel·le. Je t’adore. Je te déteste. Les deux m’allaient très bien avant toi. »", effects: { desire: 4 } },
     ],
   },
@@ -423,9 +423,9 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     minDay: 1, minStage: 1, requiresFlags: ["campaign-coalition-preparation", "bellirith-trend:ceded"],
     body: [
       "Jusqu’ici, je suis venue te chercher, et tu m’as suivie. Chaque fois. C’était charmant. C’était facile.",
-      "La prochaine fois, je ne viendrai pas. Viens, toi. Choisis le soir. Je veux savoir ce que tu fais quand ce n’est pas moi qui tire sur la laisse.",
+      "La prochaine fois, je ne viendrai pas. Viens, toi. Choisis le soir. Je veux savoir ce que tu fais quand c’est toi qui tiens la laisse.",
     ],
-    signature: "B. — qui croit déjà connaître la réponse",
+    signature: "B., qui croit déjà connaître la réponse",
     replies: [
       { id: "bel-end-ced-surprise", label: "Répondre : « Tu vas être surprise. »", response: "« J’en doute. Mais j’adore qu’on essaie. »", effects: { desire: 4, affection: 1 } },
       { id: "bel-end-ced-soon", label: "Répondre que vous viendrez.", response: "« Évidemment. »", effects: { affection: 3 } },
@@ -469,7 +469,7 @@ export const BELLIRITH_INVITATIONS: InvitationTemplate[] = [
         N("Vous vous asseyez près d’elle, carnet en main. Pendant deux heures, vous la regardez travailler : un regard, une phrase, un silence placé au bon endroit, et des secrets qui tombent comme des fruits mûrs."),
         L("Bellirith", "Quatorze. Tu as contesté deux fois. Les deux fois, tu avais raison. C’est très mauvais pour mon humeur et très bon pour mon intérêt.", "thoughtful"),
         L("{player}", "Tu as utilisé ton aura sur le quinzième."),
-        L("Bellirith", "Évidemment. Je suis une démone du Désir, pas une nonne. Le pari ne disait pas « sans être moi ».", "amused"),
+        L("Bellirith", "Évidemment. Je suis une démone du Désir. Le pari ne disait pas « sans être moi ».", "amused"),
       ], { affection: 3, desire: 3 }),
       C("ibm-rival", "Jouer contre elle, et faire avouer un désir à quelqu’un avant elle.", "audace", [
         N("Vous traversez la salle jusqu’à l’ambassadrice la plus raide, et vous lui demandez simplement ce qu’elle ferait si personne ne la regardait. Elle rougit. Elle répond. Bellirith, de l’autre côté de la salle, en lâche sa coupe."),
@@ -485,9 +485,9 @@ export const BELLIRITH_INVITATIONS: InvitationTemplate[] = [
     ],
   },
   catchupInvitation("01", "Une sœur dans l’embrasure", "Un billet sans signature, parfumé de miel brûlé et de jasmin : « Mon frère a une nouvelle curiosité et il a oublié de me la présenter. Salle du Conseil, quand il te plaira. Je suis patiente. C’est faux, mais l’effort est sincère. »", "algratal", "algratal-palace-council", "soirée"),
-  catchupInvitation("02", "La lettre peut attendre", "« Tu m’as manqué une première fois. Je t’offre une seconde chance de m’éviter. Salle du Conseil, quand tu veux. » — B.", "algratal", "algratal-palace-council", "apres-midi"),
-  catchupInvitation("03", "Le courrier de minuit", "« Akuhn’Nabad, la salle de guerre. Tu y as oublié quelque chose : moi. Je t’attends, sans date limite. Je déteste ça. » — B.", "akuhn", "akuhn-war-room", "soirée"),
-  catchupInvitation("04", "Ce que la Lumière ne célèbre pas", "« La victoire a eu lieu sans moi. Viens corriger ça, quand tu voudras. Salle d’audience. » — B.", "algratal", "algratal-palace-audience", "matin"),
+  catchupInvitation("02", "La lettre peut attendre", "« Tu m’as manqué une première fois. Je t’offre une seconde chance de m’éviter. Salle du Conseil, quand tu veux. » Signé : B.", "algratal", "algratal-palace-council", "apres-midi"),
+  catchupInvitation("03", "Le courrier de minuit", "« Akuhn’Nabad, la salle de guerre. Tu y as oublié quelque chose : moi. Je t’attends, sans date limite. Je déteste ça. » Signé : B.", "akuhn", "akuhn-war-room", "soirée"),
+  catchupInvitation("04", "Ce que la Lumière ne célèbre pas", "« La victoire a eu lieu sans moi. Viens corriger ça, quand tu voudras. Salle d’audience. » Signé : B.", "algratal", "algratal-palace-audience", "matin"),
 ];
 
 function catchupInvitation(id: "01" | "02" | "03" | "04", title: string, message: string, location: string, spot: string, period: InvitationTemplate["period"]): InvitationTemplate {

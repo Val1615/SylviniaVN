@@ -264,7 +264,64 @@ try {
   const fiche = gameData.CHARACTERS.find((character) => character.id === "bellirith");
   assert.doesNotMatch(text(fiche), /Accords secrets avec Naïah|sans aura/iu, "fiche et itinéraire refondus");
 
-  console.log(`Bellirith validée · ${counts.intrusionVariants} variantes d’intrusion · ${counts.intimacyRoutes} routes intimes · ${counts.confidences} confidences · ${counts.letters} courriers · ${counts.freeMoments} moments libres (${counts.freeProposals} propositions)`);
+  /* ── 14. Style : ni tiret cadratin, ni formule « ce n’est pas X, c’est Y » ── */
+  const STYLE_DASH = /[—–]/u;
+  const STYLE_CONTRAST = /n[’']est pas[^!?«»"]{0,80}[,;.:]\s*c[’']est\b|n[’']était pas[^!?«»"]{0,80}[,;.:]\s*c[’']était\b/iu;
+  const strings = (value, out = []) => {
+    if (typeof value === "string") out.push(value);
+    else if (Array.isArray(value)) value.forEach((entry) => strings(entry, out));
+    else if (value && typeof value === "object") Object.values(value).forEach((entry) => strings(entry, out));
+    return out;
+  };
+  const styleCorpus = [];
+  const addStyle = (label, value) => strings(value).forEach((entry) => styleCorpus.push([label, entry]));
+  addStyle("intrusions", intr.allBellirithIntrusionVariants().map((entry) => entry.scene));
+  addStyle("intimités", routes.map((entry) => entry.route));
+  for (const context of intimacy.BELLIRITH_INTIMACY_CONTEXTS) {
+    for (const sex of ["femme", "homme", "intersexe"]) {
+      for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
+        for (const source of [undefined, ...intimacy.BELLIRITH_FREE_SOURCES]) {
+          addStyle(`${context}/ouverture`, intimacy.bellirithIntimacyOpening(context, history.flags, sex, source));
+          addStyle(`${context}/fin`, intimacy.bellirithIntimacyEnding(context, history.flags, sex, source));
+        }
+        addStyle(`${context}/approches`, intimacy.bellirithIntimacyApproaches(context, history.flags, sex));
+      }
+    }
+  }
+  for (const date of belDatesList) {
+    addStyle(date.id, date);
+    for (const flags of histories) {
+      addStyle(`${date.id}/prélude`, belDates.bellirithDateIntro(date, { flags, history: [] }));
+      addStyle(`${date.id}/issue`, belDates.bellirithDateResultText(date.id, { flags, history: [] }));
+    }
+  }
+  addStyle("confidences", confidences);
+  addStyle("monde vivant", [living.BELLIRITH_CONFIDENCES, living.VALURN_BELLIRITH_CONFIDENCES, living.BELLIRITH_LETTERS, living.BELLIRITH_INVITATIONS, living.BELLIRITH_KNOWLEDGE, living.VALURN_BELLIRITH_KNOWLEDGE]);
+  addStyle("courriers", heritage.LETTERS.filter((letter) => letter.character === "bellirith"));
+  addStyle("invitations", heritage.INVITATIONS.filter((entry) => entry.character === "bellirith"));
+  addStyle("moments libres", [bank, reactions.VALURN_BELLIRITH_REACTIONS, reactions.IRIANA_BELLIRITH_REACTIONS]);
+  addStyle("logis", [housing.HOME_DATE_PROFILES.bellirith, housing.RESIDENT_MOMENTS.bellirith, [...housingData.STORY_KEEPSAKES, ...housingData.HOME_DATE_GIFTS].filter((item) => item.character === "bellirith")]);
+  const housingSource = await read("src/housing-scenes.ts");
+  addStyle("logis (commentaires)", housingSource.match(/^ {2}bellirith: (?:\[[\s\S]*?^ {2}\],|"[^\n]*",)$/gmu) || []);
+  addStyle("fiche", [fiche, gameData.INTIMACY_TEXT.bellirith]);
+  for (const flags of histories) addStyle("fil", intr.bellirithThreadSummary({ flags, history: [], dateHistory: [] }));
+  for (const scene of campaign.CAMPAIGN_SCENES) {
+    addStyle(`${scene.id}/Bellirith`, strings(scene).filter((entry) => /Bellirith/u.test(entry)));
+  }
+  assert.ok(styleCorpus.length > 1000, `corpus de style trop petit (${styleCorpus.length})`);
+  const dashHits = styleCorpus.filter(([, entry]) => STYLE_DASH.test(entry));
+  assert.equal(dashHits.length, 0, `tiret cadratin dans le texte de Bellirith : ${dashHits.slice(0, 3).map(([label, entry]) => `${label} « ${entry.slice(0, 80)} »`).join(" | ")}`);
+  const contrastHits = styleCorpus.filter(([, entry]) => STYLE_CONTRAST.test(entry));
+  assert.equal(contrastHits.length, 0, `formule « ce n’est pas X, c’est Y » : ${contrastHits.slice(0, 3).map(([label, entry]) => `${label} « ${entry.slice(0, 80)} »`).join(" | ")}`);
+  const sourceFiles = ["bellirith-ambient", "bellirith-dates", "bellirith-diversion-intimacy", "bellirith-intimacy-before-light", "bellirith-intimacy-coalition", "bellirith-intimacy-duel", "bellirith-intimacy-frames", "bellirith-intimacy-free", "bellirith-intimacy-kit", "bellirith-intimacy-price-of-aid", "bellirith-intimacy-return-akuhn", "bellirith-intrusions", "bellirith-living-world", "bellirith-reactions"];
+  for (const name of sourceFiles) {
+    const code = (await read(`src/${name}.ts`)).replace(/\/\*[\s\S]*?\*\//gu, "").replace(/^\s*\/\/.*$/gmu, "");
+    assert.doesNotMatch(code, STYLE_DASH, `${name}.ts : tiret cadratin dans une chaîne`);
+    assert.doesNotMatch(code, STYLE_CONTRAST, `${name}.ts : formule « ce n’est pas X, c’est Y »`);
+  }
+  counts.styleStrings = styleCorpus.length;
+
+  console.log(`Bellirith validée · ${counts.intrusionVariants} variantes d’intrusion · ${counts.intimacyRoutes} routes intimes · ${counts.confidences} confidences · ${counts.letters} courriers · ${counts.freeMoments} moments libres (${counts.freeProposals} propositions) · style vérifié sur ${counts.styleStrings} chaînes`);
   console.log(`Mots par mode (min/moy/max) : ${Object.entries(counts.intimacyWords).map(([mode, s]) => `${mode} ${s.min}/${s.avg}/${s.max}`).join(" · ")}`);
 } finally {
   await server.close();

@@ -14,7 +14,7 @@ export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
     ...(live("02", flags) ? [
       "Derrière vous, la porte du Conseil se referme sur la voix d’Iriana qui annonce, très calmement, qu’elle relira seule. Draven ne dit rien. Le silence de Draven est plus lourd que la voix d’Iriana.",
     ] : [
-      "Personne ne vous attend ce soir. Pas de cloche, pas d’écurie, pas de lettre à relire. C’est peut-être pour ça que suivre Bellirith ressemble moins à une fuite qu’à une curiosité.",
+      "Personne ne vous attend ce soir. Pas de cloche, pas d’écurie, pas de lettre à relire. C’est peut-être pour ça que suivre Bellirith a surtout le goût de la curiosité.",
     ]),
     "Bellirith marche devant vous dans les couloirs du palais, sans se retourner. Elle sait que vous suivez. Elle compte vos pas, peut-être : vous la voyez sourire chaque fois que vous accélérez.",
     B("Ne regarde pas en arrière. Ça porte malheur, et surtout ça me vexe.", "teasing"),
@@ -48,10 +48,10 @@ export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
     ];
     if (source === "bellirith-free-confidence") return [
       "La phrase qu’elle allait peut-être dire reste suspendue quelque part derrière vous. Vous l’avez laissée là. Elle le sait, et son sourire a quelque chose de soulagé qu’elle déguise aussitôt en triomphe.",
-      B("Tu as choisi. Tu voulais une vérité, je t’offre mieux. Tu ne le regretteras pas — ou si, mais délicieusement.", "seductive"),
+      B("Tu as choisi. Tu voulais une vérité, je t’offre mieux. Tu ne le regretteras pas. Ou si, mais délicieusement.", "seductive"),
     ];
     if (source === "date-bellirith-music" || source === "date-bellirith-market") return [
-      "La soirée aurait pu s’arrêter là. Elle ne s’arrête pas. Bellirith vous a pris le poignet, deux doigts posés sur le pouls, et elle vous emmène sans vous demander votre avis — sauf qu’elle vous l’a demandé, une seconde plus tôt, et que vous avez dit oui.",
+      "La soirée aurait pu s’arrêter là. Elle ne s’arrête pas. Bellirith vous a pris le poignet, deux doigts posés sur le pouls, et elle vous emmène sans vous demander votre avis ; sauf qu’elle vous l’a demandé, une seconde plus tôt, et que vous avez dit oui.",
     ];
     return [
       W(SLEPT, [
@@ -59,7 +59,7 @@ export const OPENINGS: Record<BellirithIntimacyContext, FlagText> = {
       ], [
         "Elle vous attendait. Elle ne le dira pas. Mais elle reste sur le seuil de sa chambre un moment de trop, comme quelqu’un qui vérifie qu’une chose est vraiment arrivée.",
       ]),
-      W(TREND_RESISTED, [B("Pas de mission sacrifiée, pas de capitaine abandonné. Tu viens parce que tu veux venir. Tu sais ce que ça me fait, ça ?", "thoughtful")], [B("Une heure volée à personne. C’est presque trop honnête pour moi.", "smirk")]),
+      W(TREND_RESISTED, [B("Aucune mission sacrifiée, aucun capitaine abandonné : tu viens parce que tu en as envie. Tu sais ce que ça me fait, ça ?", "thoughtful")], [B("Une heure volée à personne. C’est presque trop honnête pour moi.", "smirk")]),
     ];
   },
   "date-bellirith-final": (flags) => [
@@ -210,20 +210,20 @@ export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
     ]),
     ...(flags.includes("bellirith-tip-tia-bargain") ? [
       "Au moment où vous quittez ses appartements, elle vous rattrape par la manche et vous glisse à l’oreille le prix convenu.",
-      B("Tia déteste qu’on lui présente les preuves dans l’ordre. Commence par la plus laide. Elle respecte ceux qui ne la ménagent pas. Voilà. J’honore toujours mes marchés — surtout ceux que j’ai gagnés.", "seductive"),
+      B("Tia déteste qu’on lui présente les preuves dans l’ordre. Commence par la plus laide. Elle respecte ceux qui ne la ménagent pas. Voilà. J’honore toujours mes marchés, surtout ceux que j’ai gagnés.", "seductive"),
     ] : []),
   ],
   "bellirith-diversion-before-light": (flags) => live("04", flags) ? [
-    "La troisième cloche est passée depuis des heures quand vous redescendez. Le cabinet de coordination est fermé ; la table a été complète sans vous. Elle a été seulement un peu moins juste — Iriana l’a écrit en marge du compte rendu, sans votre nom, mais vous le reconnaissez.",
+    "La troisième cloche est passée depuis des heures quand vous redescendez. Le cabinet de coordination est fermé ; la table a été complète sans vous. Elle a été seulement un peu moins juste ; Iriana l’a écrit en marge du compte rendu, sans votre nom, mais vous le reconnaissez.",
     "Draven a écrit ses quarante lettres seul. Vous le trouvez endormi sur la dernière, la plume encore à la main. Vous ne le réveillez pas. Vous pliez seulement la lettre, et vous restez un moment.",
-    "Ce n’était pas une faute. C’était une nuit très belle prise à un très mauvais moment. Vous le savez. Bellirith le savait avant vous — c’est précisément pour ça qu’elle l’avait choisi.",
+    "Vous avez pris une nuit très belle à un très mauvais moment, voilà tout. Vous le savez. Bellirith le savait avant vous, et c’est précisément pour ça qu’elle avait choisi ce moment-là.",
   ] : [
     "Personne n’attendait plus rien de cette nuit. Vous redescendez du toit au petit matin, avec du jasmin dans les cheveux et une rue de Saëlis éteinte dans la mémoire.",
   ],
   "bellirith-diversion-coalition": () => irianaDawn,
   "bellirith-free": (flags, source) => source === "bellirith-home" ? [
     "Elle ne repart pas. Elle s’installe dans vos draps comme dans un territoire conquis, vole l’oreiller le plus frais et vous tourne le dos pour mieux vous obliger à venir la chercher.",
-    B("Je reste jusqu’au matin. Ce n’est pas une question. Si tu veux me mettre dehors, il faudra me porter, et je pèse très lourd quand je boude.", "teasing"),
+    B("Je reste jusqu’au matin. C’est décidé. Si tu veux me mettre dehors, il faudra me porter, et je pèse très lourd quand je boude.", "teasing"),
   ] : source === "bellirith-free-confidence" ? [
     "Plus tard, en repassant la soirée dans votre tête, vous retrouvez l’endroit exact où la conversation a bifurqué. La phrase qu’elle n’a pas dite est toujours là, quelque part, intacte. Elle l’a gardée.",
     "Vous ne savez pas si vous la lui redemanderez. Vous savez qu’elle s’attend à ce que vous ne le fassiez pas.",
@@ -235,6 +235,6 @@ export const ENDINGS: Record<BellirithIntimacyContext, FlagText> = {
     B("{player}. Au début, je me disais : je peux te faire céder. Ce soir, j’ai compris que tu pouvais me tenir tête.", "thoughtful"),
     B("Alors voyons lequel de nous deux fera craquer l’autre. Et la prochaine fois, je ne te laisserai pas l’égalité.", "seductive"),
     P("La prochaine fois, je ne te la proposerai pas."),
-    "Elle rit, et le piano rit avec elle. Quelque chose vient de commencer, qui ne ressemble ni à une conquête ni à une romance. Un jeu à deux, dont aucun des deux ne connaît encore les règles — et qu’aucun des deux n’a l’intention de perdre.",
+    "Elle rit, et le piano rit avec elle. Quelque chose vient de commencer : un jeu à deux, dont aucun ne connaît encore les règles, et qu’aucun n’a l’intention de perdre.",
   ],
 };

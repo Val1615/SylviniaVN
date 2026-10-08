@@ -1177,7 +1177,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Valurn", "Prévisible. Pardon, {player}, je parlais de vous.", "amused"),
       ] },
       { requiresFlags: ["bellirith-trend:resisted"], lines: [
-        N("La porte s'ouvre. Bellirith entre — et ne regarde pas Valurn."),
+        N("La porte s'ouvre. Bellirith entre et ne regarde pas Valurn."),
         N("Valurn s'en aperçoit avant vous. Il suit des yeux sa sœur qui traverse la salle sans un regard pour lui, chose qui, de mémoire, ne s'est jamais produite. Son sourire se fige à moitié."),
         L("Valurn", "Tiens. Je ne suis plus le spectacle.", "surprised"),
         L("Bellirith", "Ne sois pas jaloux, mon frère. Tu as eu des siècles.", "cold"),
@@ -1187,7 +1187,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
         L("Bellirith", "J'en ai une : votre agent est la seule personne de cette pièce que je n'arrive pas à faire tomber. C'est une information militaire de premier ordre.", "smirk"),
       ] },
       { requiresFlags: ["bellirith-trend:mixed"], lines: [
-        N("La porte s'ouvre. Bellirith entre, jette un regard à Valurn par habitude, puis à vous — et s'arrête une demi-seconde sur le seuil. Chez elle, une demi-seconde d'hésitation ressemble à un séisme."),
+        N("La porte s'ouvre. Bellirith entre, jette un regard à Valurn par habitude, puis à vous, et s'arrête une demi-seconde sur le seuil. Chez elle, une demi-seconde d'hésitation ressemble à un séisme."),
         L("Bellirith", "Je ne sais plus du tout ce que tu vas faire. Une fois tu m'as suivie, une fois tu m'as laissée seule avec mon parfum. Ça m'agace prodigieusement.", "thoughtful"),
         L("Valurn", "Elle hésite. Notez la date, Votre Majesté. C'est historique.", "amused"),
         L("Tia", "Je note surtout qu'elle se trouve dans ma salle du Conseil sans invitation."),
@@ -1201,7 +1201,7 @@ export const CAMPAIGN_SCENES: CampaignScene[] = [
       L("Valurn", "Bellirith."),
       N("Elle se tourne immédiatement vers lui. Il n'a pas employé sa voix de salon ; il a employé une voix qu'elle reconnaît, et sa satisfaction n'a rien à voir avec Alamma."),
       L("Bellirith", "Cette voix-là. Intéressant.", "smirk"),
-      N("Elle n'apporte aucune preuve, aucune clé et aucune solution. Elle vient de découvrir que le calme de Valurn se fissure à l'idée de la savoir près du portail — et elle attend, la main tendue, de voir de quel côté de la table vous allez rester."),
+      N("Elle n'apporte aucune preuve, aucune clé et aucune solution. Elle vient de découvrir que le calme de Valurn se fissure à l'idée de la savoir près du portail, et elle attend, la main tendue, de voir de quel côté de la table vous allez rester."),
     ],
     choices: [
       Q("coalition-protocol", "Créer un protocole que chaque camp peut vérifier", "lucidite", "Trois signaux identiques, confirmés séparément. Aucun ordre transmis oralement ne déplace une unité. Alamma ne pourra pas fabriquer une voix de plus.", [

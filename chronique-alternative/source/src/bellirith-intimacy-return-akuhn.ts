@@ -44,7 +44,7 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         "Elle vous retire vos vêtements de voyage pièce par pièce, et chacun lui arrache un petit commentaire : la poussière de la route, la boue d’Akuhn’Nabad sur vos bottes, un fil décousu au col.",
         W(SLEPT, [
           B("Je connais déjà ce bouton. Il résiste toujours un peu. Comme toi, avant de céder d’un coup.", "teasing"),
-          "Elle ne cherche pas. Elle sait déjà où poser les doigts pour que vous frissonniez — sous la dernière côte, au creux du genou, au bas du dos — et elle le fait en vous regardant, pour bien vous montrer qu’elle n’a rien oublié.",
+          "Elle ne cherche pas. Elle sait déjà où poser les doigts pour que vous frissonniez : sous la dernière côte, au creux du genou, au bas du dos. Elle le fait en vous regardant, pour bien vous montrer qu’elle n’a rien oublié.",
         ], [
           B("Tu portes beaucoup trop de choses pour quelqu’un qui va devoir s’en passer.", "teasing"),
           "Elle cherche, et elle ne s’en cache pas : une paume sur votre côté, un pouce dans le creux de votre hanche, un souffle sur votre épaule. À chaque essai, elle observe votre visage, comme une joueuse qui teste la valeur d’une carte.",
@@ -151,7 +151,7 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         "Elle s’agenouille dans l’eau entre vos jambes, et ses baisers remontent lentement depuis vos genoux. À chaque baiser, une note.",
         X(
           "Quand sa bouche arrive enfin sur votre chaleur, le piano plaque un accord entier. Sa langue vous ouvre, trouve votre perle de plaisir et s’y installe avec une patience terrible, tandis que deux de ses doigts glissent en vous et se recourbent juste assez pour que la mélodie, en dessous, perde complètement le fil.",
-          "Quand sa bouche se referme enfin sur votre virilité, le piano plaque un accord entier. Elle vous prend lentement, profondément, sa main serrée à la base, et règle le mouvement de sa tête sur la mélodie en dessous — ou la mélodie sur elle, vous ne savez plus.",
+          "Quand sa bouche se referme enfin sur votre virilité, le piano plaque un accord entier. Elle vous prend lentement, profondément, sa main serrée à la base, et règle le mouvement de sa tête sur la mélodie en dessous, ou la mélodie sur elle, vous ne savez plus.",
           "Quand sa bouche se referme enfin sur votre vigueur, le piano plaque un accord entier. Deux de ses doigts trouvent votre chaleur au même moment et s’y glissent, et elle fait travailler sa bouche et sa main sur deux mesures différentes, si bien que la mélodie, en dessous, se met à jouer deux airs à la fois.",
         ),
         "Vous vous entendez devenir une musique de plus en plus pressée. Elle rit, la bouche pleine de vous, et le rire vibre jusque dans vos reins.",
@@ -224,7 +224,7 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         "L’eau clapote contre le cuivre. Le piano, en dessous, s’est mis à jouer une valse beaucoup trop lente pour être dansée.",
       ],
       [
-        "Elle reprend la mesure — une valse très lente. Vous n’avez pas le droit d’accélérer.",
+        "Elle reprend la mesure : une valse très lente. Vous n’avez pas le droit d’accélérer.",
       ],
     ),
     M(
@@ -233,12 +233,12 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         "La vapeur, autour de vous, devient entièrement rose.",
       ],
       [
-        "Elle accélère enfin — pas parce que vous le demandez, mais parce qu’elle le décide. Elle vous tient par la nuque pour que vous la regardiez, et vous la regardez : les lèvres entrouvertes, les yeux mi-clos, l’expression concentrée de quelqu’un qui mène une manœuvre délicate jusqu’à son terme.",
+        "Elle accélère enfin, au moment qu’elle a choisi. Elle vous tient par la nuque pour que vous la regardiez, et vous la regardez : les lèvres entrouvertes, les yeux mi-clos, l’expression concentrée de quelqu’un qui mène une manœuvre délicate jusqu’à son terme.",
         "Elle atteint son plaisir sans quitter votre regard, et la vapeur, autour de vous, devient entièrement rose. Le vôtre suit, rappelé par le sien.",
         B("Voilà. Maintenant, tu peux.", "seductive"),
       ],
       [
-        "Elle accélère enfin — pas parce que vous le demandez, mais parce qu’elle le décide. Elle vous tient par la nuque pour que vous la regardiez, et vous la regardez : les lèvres entrouvertes, les yeux mi-clos, l’expression concentrée de quelqu’un qui mène une manœuvre délicate jusqu’à son terme.",
+        "Elle accélère enfin, au moment qu’elle a choisi. Elle vous tient par la nuque pour que vous la regardiez, et vous la regardez : les lèvres entrouvertes, les yeux mi-clos, l’expression concentrée de quelqu’un qui mène une manœuvre délicate jusqu’à son terme.",
         X(
           "Ses doigts ne quittent pas votre perle de plaisir, ses hanches ne quittent pas les vôtres. Elle jouit la première, longuement, en se resserrant contre votre cuisse, et le plaisir vous reprend dans la foulée, appelé par le sien.",
           "Elle se soulève et retombe sur vous, de plus en plus fort, l’eau débordant du bassin à chaque mouvement. Elle jouit la première, longuement, en se resserrant autour de votre virilité, et vous la suivez aussitôt, emporté au fond d’elle.",

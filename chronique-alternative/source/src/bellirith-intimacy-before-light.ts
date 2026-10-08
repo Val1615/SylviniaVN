@@ -16,7 +16,7 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
       "L’escalier de service débouche sur une terrasse oubliée, tout en haut du palais, entre deux coupoles. Du jasmin a envahi la balustrade. En bas, très loin, Al’Gratal dort sous ses lanternes blanches, propre et silencieuse comme un registre bien tenu.",
       "Bellirith s’avance jusqu’au milieu des dalles, se retourne vers vous et ouvre la main.",
       "La nuit se déchire. Autour de vous, au-dessus de vous, sous vos pieds, une autre ville se lève : des toits qui battent lentement comme des cœurs, des enseignes de néon rose et pourpre, des ruelles où l’on rit trop fort, une musique qui sort de partout à la fois. La terrasse est devenue le toit d’une tour, au milieu de Saëlis.",
-      B("Bienvenue chez moi. Enfin — une copie. L’original sent plus fort et on y perd plus souvent ses vêtements.", "smirk"),
+      B("Bienvenue chez moi. Enfin, une copie. L’original sent plus fort et on y perd plus souvent ses vêtements.", "smirk"),
       W(TREND_RESISTED, [
         B("Tu voulais choisir la rue. Choisis. Je te préviens : je les ai toutes dessinées, et toutes finissent sur ce toit.", "teasing"),
         P("Celle-là. Celle qui monte."),
@@ -79,7 +79,7 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         B("Voilà. Maintenant, tu es habillé·e pour Saëlis.", "teasing"),
       ],
       [
-        "Elle laisse tomber sa robe sous les néons et vous habille « pour Saëlis » — c’est-à-dire plus du tout.",
+        "Elle laisse tomber sa robe sous les néons et vous habille « pour Saëlis », c’est-à-dire plus du tout.",
       ],
     ),
     M(
@@ -213,7 +213,7 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         "Les néons recommencent à battre, plus fort qu’avant, toutes les rues sauf une.",
       ],
       [
-        "Elle reprend le commandement avec une ardeur de revanche. Les néons recommencent à battre — toutes les rues sauf une.",
+        "Elle reprend le commandement avec une ardeur de revanche. Les néons recommencent à battre dans toutes les rues sauf une.",
       ],
     ),
     M(

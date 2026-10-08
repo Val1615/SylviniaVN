@@ -67,7 +67,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         "Elle recule jusqu’au divan et ne quitte pas vos yeux. Sa robe pourpre tient par un seul ruban, et elle le tire comme on ouvre un rideau de théâtre.",
         "La soie glisse le long de ses épaules, de ses hanches, et tombe à ses pieds sans un bruit. Dans les miroirs, la scène se répète douze fois, sous douze angles différents, et chacun est plus injuste que le précédent.",
         B("Respire, {player}. Je préfère que tu restes conscient·e pour la suite.", "teasing"),
-        "Le parfum monte d’un ton. Ce n’est pas un sort qui vous saisit ; c’est une envie que vous aviez déjà et qu’elle souffle comme une braise, jusqu’à ce qu’elle vous chauffe le visage.",
+        "Le parfum monte d’un ton. Il réveille une envie que vous aviez déjà, et elle souffle dessus comme sur une braise, jusqu’à ce qu’elle vous chauffe le visage.",
       ],
       [
         "Elle recule jusqu’au divan et ne quitte pas vos yeux. Sa robe pourpre tient par un seul ruban, et elle le tire comme on ouvre un rideau de théâtre.",
@@ -121,7 +121,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         "Son aura se resserre autour de vous comme une étoffe chaude. Elle ne fabrique rien ; elle trouve votre envie, déjà trop grande, et la fait tourner dans la lumière, la rend plus nette, plus lourde, presque insupportable.",
         "Puis elle s’arrête. Tout s’arrête : ses mains, le parfum, la chaleur. Vous restez suspendu·e au bord de quelque chose, haletant·e, et elle vous regarde dans le miroir avec une immense satisfaction.",
         P("Tu es cruelle."),
-        B("Je suis précise. Ce n’est pas pareil, même si l’effet est le même.", "smirk"),
+        B("Je suis précise. J’y tiens, même si l’effet est le même.", "smirk"),
       ],
       [
         "Elle se penche à votre oreille et sa voix descend d’une octave.",
@@ -134,7 +134,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         ),
         "Tout s’arrête : ses mains, le parfum, la chaleur. Vous restez suspendu·e au bord, haletant·e, les doigts crispés sur le cadre doré, et elle vous regarde dans le miroir avec une immense satisfaction.",
         P("Tu es cruelle."),
-        B("Je suis précise. Ce n’est pas pareil, même si l’effet est le même.", "smirk"),
+        B("Je suis précise. J’y tiens, même si l’effet est le même.", "smirk"),
       ],
       [
         "Son aura s’ouvre. Elle vous mène jusqu’au bord, puis s’arrête net, très contente d’elle.",
@@ -151,7 +151,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         B("À quoi penserait Iriana, si elle te voyait ?", "teasing"),
         P("Qu’elle avait raison de se méfier de toi."),
         B("Elle a toujours raison. C’est son défaut le plus attachant.", "smirk"),
-        "Elle vous allonge sur le divan et descend le long de votre corps, sans se presser, avec la bouche cette fois. Dans les miroirs du plafond — car il y en a aussi au plafond, évidemment — vous voyez ses cheveux se répandre sur votre ventre.",
+        "Elle vous allonge sur le divan et descend le long de votre corps, sans se presser, avec la bouche cette fois. Il y a des miroirs jusqu’au plafond, évidemment, et vous y voyez ses cheveux se répandre sur votre ventre.",
         "Ce qu’elle fait ensuite vous arrache un son que vous ne vous connaissiez pas. Elle relève la tête juste assez pour vous sourire.",
         B("Encore un. Je les collectionne.", "seductive"),
       ],
@@ -159,7 +159,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         B("À quoi penserait Iriana, si elle te voyait ?", "teasing"),
         P("Qu’elle avait raison de se méfier de toi."),
         B("Elle a toujours raison. C’est son défaut le plus attachant.", "smirk"),
-        "Elle vous allonge sur le divan et descend le long de votre corps avec la bouche. Dans les miroirs du plafond — car il y en a aussi au plafond, évidemment — vous voyez ses cheveux se répandre sur votre ventre, puis plus bas.",
+        "Elle vous allonge sur le divan et descend le long de votre corps avec la bouche. Il y a des miroirs jusqu’au plafond, évidemment, et vous y voyez ses cheveux se répandre sur votre ventre, puis plus bas.",
         X(
           "Elle écarte vos cuisses de ses deux mains et pose sa bouche sur votre chaleur. Sa langue trouve votre perle de plaisir sans la chercher, l’enveloppe, la quitte, revient. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle remonte embrasser l’intérieur de votre cuisse.",
           "Elle prend votre virilité dans sa bouche, lentement, centimètre par centimètre, en vous regardant faire dans le miroir. Sa langue s’enroule au sommet, ses lèvres descendent, remontent. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle vous relâche pour embrasser l’intérieur de votre cuisse.",
@@ -180,14 +180,14 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         B("Voilà. C’était si difficile ?", "seductive"),
       ],
       [
-        "Vous prononcez son nom. Ce n’est pas une protestation. Elle s’arrête, la tête levée, attentive, comme si elle avait attendu ce moment depuis trois jours.",
+        "Vous prononcez son nom, sans la moindre protestation dans la voix. Elle s’arrête, la tête levée, attentive, comme si elle avait attendu ce moment depuis trois jours.",
         B("Demande mieux.", "teasing"),
         P("Bellirith… s’il te plaît."),
         B("Tu ne sais même pas ce que tu demandes. C’est ça que je préfère.", "seductive"),
         "Elle reprend. Plus lentement d’abord, pour que vous compreniez qu’elle a entendu, puis exactement comme il faut.",
       ],
       [
-        "Vous prononcez son nom. Ce n’est pas une protestation. Elle s’arrête, la tête levée, la bouche luisante, attentive, comme si elle avait attendu ce moment depuis trois jours.",
+        "Vous prononcez son nom, sans la moindre protestation dans la voix. Elle s’arrête, la tête levée, la bouche luisante, attentive, comme si elle avait attendu ce moment depuis trois jours.",
         B("Demande mieux.", "teasing"),
         P("Bellirith… s’il te plaît."),
         B("Tu ne sais même pas ce que tu demandes. C’est ça que je préfère.", "seductive"),
@@ -227,14 +227,14 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         "Elle vous laisse la découvrir à votre tour, un peu, et ses soupirs ne sont plus tout à fait une mise en scène.",
       ],
       [
-        "Vous retirez enfin vos mains du cadre. Elle hausse un sourcil, ouvre la bouche pour vous le reprocher — et vous l’embrassez avant qu’elle ait trouvé la phrase.",
+        "Vous retirez enfin vos mains du cadre. Elle hausse un sourcil, ouvre la bouche pour vous le reprocher, et vous l’embrassez avant qu’elle ait trouvé la phrase.",
         B("Tricheur·se.", "angry"),
         P("Tu m’as dit que je toucherais quand tu l’aurais décidé. Tu viens de le décider. Je l’ai vu dans le miroir."),
         "Elle rit malgré elle, et ce rire-là n’est pas élégant. Elle vous laisse la renverser sur le divan, vous laisse descendre le long de sa gorge, de ses seins, de son ventre. Une manche. Elle vous accorde une manche.",
         B("Profite. Ça ne se reproduira pas.", "seductive"),
       ],
       [
-        "Vous retirez enfin vos mains du cadre. Elle hausse un sourcil, ouvre la bouche pour vous le reprocher — et vous l’embrassez avant qu’elle ait trouvé la phrase.",
+        "Vous retirez enfin vos mains du cadre. Elle hausse un sourcil, ouvre la bouche pour vous le reprocher, et vous l’embrassez avant qu’elle ait trouvé la phrase.",
         B("Tricheur·se.", "angry"),
         P("Tu m’as dit que je toucherais quand tu l’aurais décidé. Tu viens de le décider. Je l’ai vu dans le miroir."),
         "Elle rit malgré elle, et ce rire-là n’est pas élégant. Elle vous laisse la renverser sur le divan, vous laisse prendre un sein dans votre bouche, puis l’autre, sentir ses pointes durcir sous votre langue. Votre main descend sur son ventre et trouve sa chaleur, brûlante, déjà prête.",
@@ -254,7 +254,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
       [
         "Elle reprend la main, bien sûr. D’une pression sur votre épaule, elle vous rallonge sous elle et s’installe à califourchon sur vous, et c’est elle, de nouveau, qui donne le rythme.",
         B("Regarde-moi. Pas les miroirs. Moi.", "seductive"),
-        "Elle bouge lentement, puis moins lentement. Son aura se répand dans toute la pièce, et vous sentez son désir à elle pour la première fois : pas un instrument, pas une arme, quelque chose de brûlant qui lui échappe un peu.",
+        "Elle bouge lentement, puis moins lentement. Son aura se répand dans toute la pièce, et vous sentez son désir à elle pour la première fois, brûlant, et qui lui échappe un peu.",
         "Elle atteint son plaisir avec un rire étouffé, la tête renversée, et les douze miroirs se voilent de rose pendant une seconde, comme une respiration.",
       ],
       [
@@ -265,7 +265,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
           "Elle prend votre vigueur d’une main, la guide en elle et descend lentement, jusqu’au bout. De l’autre main, elle revient chercher votre chaleur, comme pour ne rien laisser de vous inoccupé, et commence à onduler sur deux rythmes qui finissent par n’en faire qu’un.",
         ),
         B("Regarde-moi. Pas les miroirs. Moi.", "seductive"),
-        "Elle bouge lentement, puis moins lentement. Son aura se répand dans toute la pièce, et vous sentez son désir à elle pour la première fois : pas un instrument, pas une arme, quelque chose de brûlant qui lui échappe un peu.",
+        "Elle bouge lentement, puis moins lentement. Son aura se répand dans toute la pièce, et vous sentez son désir à elle pour la première fois, brûlant, et qui lui échappe un peu.",
         "Elle jouit avec un rire étouffé, la tête renversée, son corps se resserrant autour du vôtre, et les douze miroirs se voilent de rose pendant une seconde, comme une respiration. Le plaisir vous reprend avec elle, plus lent, plus profond, comme si elle l’avait décidé pour vous deux.",
       ],
       [

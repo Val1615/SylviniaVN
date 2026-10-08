@@ -171,8 +171,8 @@ export const DATE_SCENES: DateScene[] = [
       line("Narration", "Le salon de musique d’Al’Gratal n’a jamais été aussi plein à une heure aussi indécente. Des courtisans en habit de soirée, deux magistrats qui font semblant d’être là par hasard, une poétesse ivre et, au centre, perchée sur le couvercle du piano comme sur un trône, Bellirith."),
       line("Bellirith", "Mesdames, messieurs, et toi. Le jeu est simple. Chacun son tour, on fait désirer quelque chose à la salle. Une chanson, un scandale, un dessert, un baiser. La salle vote en applaudissant.", "teasing"),
       line("Bellirith", "Je joue la première, parce que c’est ma soirée, et je joue contre toi, parce que c’est la seule raison pour laquelle j’ai organisé cette soirée.", "seductive"),
-      line("Narration", "Elle claque des doigts. Un serviteur apporte un plateau de fraises qui n’ont rien de spécial. Elle en prend une, la regarde, la porte à ses lèvres sans la mordre — et toute la salle, d’un seul mouvement, a faim. Une marquise se met à pleurer de convoitise. Les applaudissements sont immédiats."),
-      line("Bellirith", "Une fraise. Une seule. Sans même l’aura — enfin, presque sans. À toi.", "smirk"),
+      line("Narration", "Elle claque des doigts. Un serviteur apporte un plateau de fraises qui n’ont rien de spécial. Elle en prend une, la regarde, la porte à ses lèvres sans la mordre, et toute la salle, d’un seul mouvement, a faim. Une marquise se met à pleurer de convoitise. Les applaudissements sont immédiats."),
+      line("Bellirith", "Une fraise. Une seule. Sans même l’aura. Enfin, presque sans. À toi.", "smirk"),
     ],
     choices: [
       dateChoice("dbm-a", "Lui rendre la pareille : faire désirer à la salle… qu’elle perde", "audace", [
@@ -182,11 +182,11 @@ export const DATE_SCENES: DateScene[] = [
         line("Narration", "La salle explose. On applaudit, on tape du pied, la poétesse hurle quelque chose sur la chute des empires. Bellirith, sur son piano, ne bouge pas. Elle vous regarde comme on regarde un adversaire qui vient de jouer une carte qu’on n’avait pas vue."),
         line("Bellirith", "Tu viens de faire désirer ma défaite à mes propres invités. Dans mon propre jeu. Je suis furieuse. Je n’ai jamais été aussi contente de ma vie.", "seductive"),
       ], "great", { affection: 6, trust: 3, desire: 7 }),
-      dateChoice("dbm-l", "Ne pas jouer pour la salle : lui demander ce qu’elle désire, elle, ce soir", "lucidite", [
+      dateChoice("dbm-l", "Oublier la salle et lui demander ce qu’elle désire, elle, ce soir", "lucidite", [
         line("{player}", "Je passe mon tour. Mais j’ai une question pour l’hôtesse : toi, qu’est-ce que tu désires ce soir ?"),
         line("Narration", "Les rires s’éteignent, un par un. Personne ne pose de question à Bellirith. On lui répond, on lui cède, on lui résiste ; on ne lui demande pas."),
         line("Bellirith", "Moi ? Mais je désire tout, mon cœur. C’est mon métier.", "smirk"),
-        line("{player}", "Ce n’est pas une réponse. C’est une enseigne."),
+        line("{player}", "Tu me tends une enseigne en guise de réponse."),
         line("Narration", "Bellirith descend du piano. Elle s’approche de vous à travers la foule qui s’écarte, et elle vous dit, très bas, pour vous seul·e : « Que tu restes après les autres. » Puis elle se retourne vers la salle, et sa voix redevient une voix de scène."),
         line("Bellirith", "Le jeu est terminé ! Tout le monde dehors ! J’ai gagné, évidemment.", "teasing"),
       ], "great", { affection: 5, trust: 5, desire: 6 }),
@@ -203,9 +203,9 @@ export const DATE_SCENES: DateScene[] = [
     id: "date-bellirith-market", character: "bellirith", title: "Le prix d’une envie", type: "Pari au marché", description: "Bellirith parie qu’elle peut obtenir de n’importe quel marchand l’objet qu’il refuse de vendre, rien qu’en nommant ce qu’il désire. Vous choisissez les cibles.", location: "algratal", spot: "algratal-market", period: "matin", unlockStage: 5, minAffection: 3, minTrust: 1, mood: "smirk",
     intro: [
       line("Narration", "Le Grand Marché d’Al’Gratal s’éveille à peine. Bellirith porte une robe de jour d’un rose parfaitement inapproprié pour l’heure, et un panier vide qu’elle balance au bout de son bras comme une provocation."),
-      line("Bellirith", "Un pari. Tu choisis un marchand. Je nomme ce qu’il désire vraiment — pas ce qu’il croit désirer, ce qu’il désire —, et il me donne l’objet qu’il refuse de vendre. Pas d’aura. Juste la phrase.", "teasing"),
+      line("Bellirith", "Un pari. Tu choisis un marchand. Je nomme ce qu’il désire vraiment, et il me donne l’objet qu’il refuse de vendre. Pas d’aura. Juste la phrase.", "teasing"),
       line("Narration", "Vous désignez un vieil horloger qui garde sous verre une montre qu’il refuse de céder depuis trente ans. Bellirith s’approche, se penche, et lui murmure quelque chose. Le vieil homme pâlit, puis rougit, puis ouvre la vitrine et lui tend la montre, les mains tremblantes."),
-      line("Bellirith", "Il voulait qu’on lui dise que sa femme ne lui en veut plus. Elle est morte il y a trente ans. La montre était à elle. Je lui ai dit la phrase. Elle était vraie, d’ailleurs — les morts ont autre chose à faire que de nous en vouloir.", "thoughtful"),
+      line("Bellirith", "Il voulait qu’on lui dise que sa femme ne lui en veut plus. Elle est morte il y a trente ans. La montre était à elle. Je lui ai dit la phrase. Elle était vraie, d’ailleurs : les morts ont autre chose à faire que de nous en vouloir.", "thoughtful"),
       line("Narration", "Elle pose la montre dans son panier, sans triomphe particulier. Puis elle se retourne vers vous."),
       line("Bellirith", "À ton tour d’être ma cible. Je vais nommer ce que tu désires vraiment. Et tu vas me donner ce que tu refuses de me vendre.", "seductive"),
     ],
@@ -236,7 +236,7 @@ export const DATE_SCENES: DateScene[] = [
     intimacySetting: { replaceProfile: true, opening: ["Une auberge derrière le marché, une chambre louée pour une heure par une femme en robe rose qui a payé avec une montre ancienne."], closing: ["Vous rendez la montre à l’horloger en repartant. Il vous regarde passer avec Bellirith et sourit, comme quelqu’un qui sait exactement ce qu’on désire."] },
   },
   {
-    id: "date-bellirith-final", character: "bellirith", title: "Coup pour coup", type: "Duel au salon nocturne", description: "La fin de l’Acte approche. Pour la première fois, c’est vous qui proposez la soirée — et vous qui choisirez le moment.", location: "akuhn", spot: "akuhn-music-room", period: "soirée", unlockStage: 5, minAffection: 5, minTrust: 2, mood: "seductive",
+    id: "date-bellirith-final", character: "bellirith", title: "Coup pour coup", type: "Duel au salon nocturne", description: "La fin de l’Acte approche. Pour la première fois, c’est vous qui proposez la soirée, et vous qui choisirez le moment.", location: "akuhn", spot: "akuhn-music-room", period: "soirée", unlockStage: 5, minAffection: 5, minTrust: 2, mood: "seductive",
     intro: [
       line("Narration", "Cette fois, c’est vous qui avez envoyé le billet. Trois mots, sans formule : « Ce soir. Salon nocturne. » Vous avez attendu toute la journée une réponse moqueuse. Il n’y en a pas eu."),
       line("Narration", "Quand vous entrez dans le salon nocturne d’Akuhn’Nabad, elle est déjà là, assise au piano noir, entre les bougies et les feux verts. Elle ne joue pas. Elle a posé sur le couvercle un jeu de cartes, deux verres, et rien d’autre."),
@@ -259,7 +259,7 @@ export const DATE_SCENES: DateScene[] = [
         line("Narration", "Vous vous asseyez à côté d’elle sur le banc et posez les mains sur les touches graves. Elle prend les aiguës. La valse commence, et la bataille aussi : elle accélère, vous ralentissez ; elle ralentit, vous relancez."),
         line("Bellirith", "Tu vas casser ma valse.", "teasing"),
         line("{player}", "Tu vas casser mon tempo."),
-        line("Narration", "Au bout de trois minutes, la valse est devenue autre chose — une musique qui n’existait pas, faite de deux volontés qui refusent de céder et finissent par s’accorder sans que l’une ait gagné. La dernière note tombe en même temps sous vos deux mains."),
+        line("Narration", "Au bout de trois minutes, la valse est devenue autre chose : une musique qui n’existait pas, faite de deux volontés qui refusent de céder et finissent par s’accorder sans que l’une ait gagné. La dernière note tombe en même temps sous vos deux mains."),
         line("Bellirith", "Égalité. Je déteste les égalités. Rejoue.", "smirk"),
       ], "great", { affection: 7, trust: 3, desire: 6 }),
       dateChoice("dbf-words", "Une joute de répliques : le premier qui rougit a perdu", "resonance", [

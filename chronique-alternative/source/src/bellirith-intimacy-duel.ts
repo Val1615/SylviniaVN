@@ -7,13 +7,13 @@ import { A, B, M, P, W, X, SLEPT, FAVORITE, RESISTED, type AuthoredRoute } from 
  * {player} exploite une réaction, elle reprend l’ascendant, l’équilibre bouge.
  */
 const DUEL_CLOSING_A = A(
-  "Plus tard — beaucoup plus tard — vous êtes étendu·e sur le tapis de la salle de musique, la tête sur son ventre, et elle joue distraitement avec vos cheveux. Le piano, au-dessus de vous, s’est tu de lui-même, comme un témoin discret qui sort de la pièce.",
+  "Plus tard, beaucoup plus tard, vous êtes étendu·e sur le tapis de la salle de musique, la tête sur son ventre, et elle joue distraitement avec vos cheveux. Le piano, au-dessus de vous, s’est tu de lui-même, comme un témoin discret qui sort de la pièce.",
   B("Tu sais ce que tu as fait, ce soir ?", "thoughtful"),
   P("J’ai l’impression d’avoir perdu plusieurs fois."),
   B("Tu as perdu. Tu as gagné. Tu as reperdu. Tu m’as rendu chaque coup. Personne ne me rend les coups, {player}. Ils encaissent, ou ils s’enfuient.", "thoughtful"),
 );
 const DUEL_CLOSING_B = A(
-  "Elle se redresse sur un coude et vous regarde avec une attention nouvelle — pas celle qu’elle accorde à une proie, pas celle qu’elle accorde à un favori. Celle qu’on réserve à un adversaire dont on vient de découvrir la force.",
+  "Elle se redresse sur un coude et vous regarde avec une attention nouvelle, celle qu’on réserve à un adversaire dont on vient de découvrir la force.",
   B("Je croyais que je cherchais à savoir ce que tu désirais vraiment. Je crois que je viens de trouver quelque chose de beaucoup plus dangereux.", "thoughtful"),
   P("Quoi ?"),
   B("Un partenaire de jeu. Quelqu’un qui peut me rendre coup pour coup. Tu n’as aucune idée de ce que ça va nous coûter, à tous les deux.", "seductive"),
@@ -24,7 +24,7 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
   id: "bellirith-duel-steal",
   context: "date-bellirith-final",
   text: "Lui voler le premier coup",
-  detail: "Vous avez dit « maintenant ». Alors c’est vous qui ouvrez la partie — et vous verrez combien de temps elle vous laisse l’avantage.",
+  detail: "Vous avez dit « maintenant ». Alors c’est vous qui ouvrez la partie. Vous verrez bien combien de temps elle vous laisse l’avantage.",
   visual: { revealChapter: 2, postOrgasmChapter: 11 },
   chapters: [
     A(
@@ -39,16 +39,16 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
     M(
       [
         "Vous défaites sa robe vous-même. Elle vous laisse faire, mais elle compte chaque agrafe à voix haute, pour vous rappeler qu’elle voit tout.",
-        B("Sept. Tu en as oublié une. Non — tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
+        B("Sept. Tu en as oublié une. Non, tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
       ],
       [
         "Vous défaites sa robe vous-même, agrafe après agrafe, en la faisant tourner lentement devant le grand miroir du salon. Elle vous laisse faire, mais elle compte chaque agrafe à voix haute, pour vous rappeler qu’elle voit tout.",
-        B("Cinq. Six. Sept. Tu en as oublié une. Non — tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
+        B("Cinq. Six. Sept. Tu en as oublié une. Non, tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
         "Vous embrassez sa nuque au lieu de défaire la dernière. Elle frissonne, et dans le miroir, vous la voyez s’en rendre compte et le détester.",
       ],
       [
         "Vous défaites sa robe vous-même, agrafe après agrafe, en la faisant tourner lentement devant le grand miroir du salon. Elle vous laisse faire, mais elle compte chaque agrafe à voix haute, pour vous rappeler qu’elle voit tout.",
-        B("Cinq. Six. Sept. Tu en as oublié une. Non — tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
+        B("Cinq. Six. Sept. Tu en as oublié une. Non, tu l’as gardée pour la fin. Tiens donc.", "thoughtful"),
         "Vous embrassez sa nuque au lieu de défaire la dernière, vos mains glissant sous le tissu ouvert pour prendre ses seins, en éprouver le poids, rouler leurs pointes entre vos doigts. Elle frissonne, et dans le miroir, vous la voyez s’en rendre compte et le détester.",
       ],
       [
@@ -105,14 +105,14 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
       ],
       [
         "Vous fermez les yeux. Vous respirez lentement, une fois, deux fois, en cherchant l’endroit précis où son pouvoir appuie. Vous laissez son aura passer à travers vous sans la retenir, comme un vent qu’on ne combat pas.",
-        "Votre désir reste là — entier, brûlant — mais c’est de nouveau le vôtre. Quand vous rouvrez les yeux, vous êtes calme, et elle vous regarde, stupéfaite.",
+        "Votre désir reste là, entier, brûlant, et il vous appartient de nouveau. Quand vous rouvrez les yeux, vous êtes calme, et elle vous regarde, stupéfaite.",
         B("Comment tu as fait ça ?", "thoughtful"),
         P("Tu souffles. Je respire. On peut le faire à deux."),
         B("…C’est la chose la plus insolente qu’on m’ait jamais dite au lit.", "angry"),
       ],
       [
         "Vous fermez les yeux. Vous respirez lentement, une fois, deux fois, en cherchant l’endroit précis où son pouvoir appuie. Vous laissez son aura passer à travers vous sans la retenir, comme un vent qu’on ne combat pas.",
-        "Votre désir reste là — entier, brûlant, dressé contre sa main — mais c’est de nouveau le vôtre. Quand vous rouvrez les yeux, vous êtes calme, et elle vous regarde, stupéfaite.",
+        "Votre désir reste là, entier, brûlant, dressé contre sa main, et il vous appartient de nouveau. Quand vous rouvrez les yeux, vous êtes calme, et elle vous regarde, stupéfaite.",
         B("Comment tu as fait ça ?", "thoughtful"),
         P("Tu souffles. Je respire. On peut le faire à deux."),
         B("…C’est la chose la plus insolente qu’on m’ait jamais dite au lit.", "angry"),
@@ -135,9 +135,9 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         "Elle improvise aussitôt, et c’est magnifique. Les bougies s’éteignent d’un coup. La pièce se peuple d’illusions : des reflets d’elle dans tous les coins, des murmures à vos deux oreilles en même temps, des caresses qui semblent venir de trois mains à la fois.",
         B("Respire, maintenant. Voyons ça. Tu sais lequel de mes reflets te touche vraiment ?", "teasing"),
         X(
-          "Une bouche se pose sur votre sein, une autre sur votre ventre, des doigts glissent dans votre chaleur, une langue effleure votre perle de plaisir — et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
-          "Une bouche se pose sur votre gorge, une autre sur votre ventre, une main se referme autour de votre virilité, une langue en effleure le sommet — et vous ne savez plus lesquelles sont réelles. Vous perdez pied, délicieusement, et elle rit dans le noir.",
-          "Une bouche se pose sur votre gorge, une main se referme sur votre vigueur, des doigts glissent dans votre chaleur, une langue effleure les deux tour à tour — et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
+          "Une bouche se pose sur votre sein, une autre sur votre ventre, des doigts glissent dans votre chaleur, une langue effleure votre perle de plaisir, et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
+          "Une bouche se pose sur votre gorge, une autre sur votre ventre, une main se referme autour de votre virilité, une langue en effleure le sommet, et vous ne savez plus lesquelles sont réelles. Vous perdez pied, délicieusement, et elle rit dans le noir.",
+          "Une bouche se pose sur votre gorge, une main se referme sur votre vigueur, des doigts glissent dans votre chaleur, une langue effleure les deux tour à tour, et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
         ),
       ],
       [
@@ -146,13 +146,13 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
     ),
     M(
       [
-        "Vous cessez de chercher la vraie. Vous tendez la main au hasard vers le reflet qui rit le plus fort — et c’est elle. Elle seule rit en vrai.",
+        "Vous cessez de chercher la vraie. Vous tendez la main au hasard vers le reflet qui rit le plus fort : c’est elle. Elle seule rit en vrai.",
         P("Trouvée."),
         B("Comment… ?", "angry"),
         P("Les reflets sourient. Toi, tu ris."),
       ],
       [
-        "Vous cessez de chercher la vraie. Vous écoutez. Tous les reflets sourient, tous murmurent, mais un seul rit — un vrai rire, bas, qui lui échappe chaque fois qu’elle vous voit perdre pied. Vous tendez la main vers ce rire-là.",
+        "Vous cessez de chercher la vraie. Vous écoutez. Tous les reflets sourient, tous murmurent, mais un seul rit vraiment, d’un rire bas qui lui échappe chaque fois qu’elle vous voit perdre pied. Vous tendez la main vers ce rire-là.",
         "Votre main se referme sur un poignet bien réel. Toutes les illusions s’éteignent d’un coup.",
         P("Trouvée."),
         B("Comment… ?", "angry"),
@@ -160,7 +160,7 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         "Elle vous dévisage dans la pénombre, et pour la première fois de la soirée, elle n’a aucune réplique.",
       ],
       [
-        "Vous cessez de chercher la vraie. Vous écoutez. Tous les reflets sourient, tous murmurent, mais un seul rit — un vrai rire, bas, qui lui échappe chaque fois qu’elle vous voit perdre pied. Vous tendez la main vers ce rire-là.",
+        "Vous cessez de chercher la vraie. Vous écoutez. Tous les reflets sourient, tous murmurent, mais un seul rit vraiment, d’un rire bas qui lui échappe chaque fois qu’elle vous voit perdre pied. Vous tendez la main vers ce rire-là.",
         "Votre main se referme sur un poignet bien réel. Toutes les illusions s’éteignent d’un coup.",
         P("Trouvée."),
         B("Comment… ?", "angry"),
@@ -176,7 +176,7 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         "Vous la caressez, et elle perd le contrôle pour de bon. Son plaisir monte vite, trop vite pour elle ; elle s’accroche à vos épaules et bascule en jurant dans une langue que vous ne connaissez pas.",
       ],
       [
-        "Vous la caressez, et vous exploitez chaque réaction qu’elle ne parvient pas à cacher — la nuque, le creux de la hanche, ce point au bas du dos qui la fait cambrer. Elle essaie de reprendre la main. Vous revenez à la nuque. Elle oublie.",
+        "Vous la caressez, et vous exploitez chaque réaction qu’elle ne parvient pas à cacher : la nuque, le creux de la hanche, ce point au bas du dos qui la fait cambrer. Elle essaie de reprendre la main. Vous revenez à la nuque. Elle oublie.",
         "Son plaisir monte vite, trop vite pour elle ; elle s’accroche à vos épaules et bascule en jurant dans une langue que vous ne connaissez pas, quelque chose de très ancien et de très grossier.",
         B("Un partout. Ne prends pas cet air content de toi.", "angry"),
       ],
@@ -193,12 +193,12 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
       [
         "Elle reprend l’ascendant d’un coup de reins et vous renverse sous elle, les yeux brillants.",
         B("Deux à un. Pour moi. Bientôt.", "seductive"),
-        "Elle vous mène où elle veut, et vous la laissez faire — parce que c’est un plaisir, maintenant, de la regarder gagner une manche.",
+        "Elle vous mène où elle veut, et vous la laissez faire, parce que c’est un plaisir, maintenant, de la regarder gagner une manche.",
       ],
       [
         "Elle n’a pas fini de reprendre son souffle qu’elle reprend l’ascendant. D’un coup de reins, elle vous renverse sous elle, vous coince les poignets, et ses yeux brillent d’une joie féroce.",
         B("Deux à un. Pour moi. Bientôt. Tu vas voir.", "seductive"),
-        "Elle vous mène là où elle veut, avec toute son expertise, toute sa cruauté joyeuse, et vous la laissez faire — parce que c’est un plaisir, maintenant, de la regarder gagner une manche en sachant que vous pourriez gagner la suivante.",
+        "Elle vous mène là où elle veut, avec toute son expertise, toute sa cruauté joyeuse, et vous la laissez faire, parce que c’est un plaisir, maintenant, de la regarder gagner une manche en sachant que vous pourriez gagner la suivante.",
       ],
       [
         "Elle n’a pas fini de reprendre son souffle qu’elle reprend l’ascendant. D’un coup de reins, elle vous renverse sous elle, vous coince les poignets, et ses yeux brillent d’une joie féroce.",
@@ -208,7 +208,7 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
           "Elle descend sur vous d’un seul mouvement et vous mène avec toute son expertise : lentement, puis brusquement, puis lentement encore, en se resserrant autour de vous chaque fois que vous croyez deviner le rythme.",
           "Elle descend sur votre vigueur d’un seul mouvement, glisse deux doigts dans votre chaleur, et vous mène avec toute son expertise : lentement, puis brusquement, ses deux rythmes refusant obstinément de se mettre d’accord.",
         ),
-        "Vous la laissez faire — parce que c’est un plaisir, maintenant, de la regarder gagner une manche en sachant que vous pourriez gagner la suivante.",
+        "Vous la laissez faire, parce que c’est un plaisir, maintenant, de la regarder gagner une manche en sachant que vous pourriez gagner la suivante.",
       ],
       [
         "Elle reprend l’ascendant et vous renverse, les yeux brillants. « Deux à un. Bientôt. »",
@@ -219,14 +219,14 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         "Elle vous amène au bord. Vous l’y amenez avec vous. Vous basculez ensemble, sans savoir qui a gagné, et elle rit, la joue contre la vôtre.",
       ],
       [
-        "Elle vous amène au bord. Au dernier moment, vous libérez une main et la posez sur sa nuque — juste posée, sans appuyer. Elle sent la menace et éclate de rire.",
+        "Elle vous amène au bord. Au dernier moment, vous libérez une main et la posez sur sa nuque, juste posée, sans appuyer. Elle sent la menace et éclate de rire.",
         B("Tu n’oserais pas.", "teasing"),
         P("Égalité ?"),
         B("…Égalité.", "seductive"),
         "Vous basculez ensemble, sans plus savoir qui mène, et le plaisir vous emporte tous les deux en même temps, pour de bon, cette fois.",
       ],
       [
-        "Elle vous amène au bord. Au dernier moment, vous libérez une main et la posez sur sa nuque — juste posée, sans appuyer. Elle sent la menace et éclate de rire.",
+        "Elle vous amène au bord. Au dernier moment, vous libérez une main et la posez sur sa nuque, juste posée, sans appuyer. Elle sent la menace et éclate de rire.",
         B("Tu n’oserais pas.", "teasing"),
         P("Égalité ?"),
         B("…Égalité.", "seductive"),
@@ -253,21 +253,21 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
   id: "bellirith-duel-turn",
   context: "date-bellirith-final",
   text: "La laisser ouvrir, pour mieux la retourner",
-  detail: "Vous connaissez son jeu. Laissez-la mener comme elle aime — et attendez le moment précis où elle croit avoir gagné.",
+  detail: "Vous connaissez son jeu. Laissez-la mener comme elle aime, et attendez le moment précis où elle croit avoir gagné.",
   visual: { revealChapter: 3, postOrgasmChapter: 11 },
   chapters: [
     A(
       "Vous ne bougez pas. Vous vous asseyez sur le divan de velours, les coudes sur les genoux, et vous la regardez.",
       P("Vas-y. Ouvre la partie."),
       B("Tu me laisses le premier coup ?", "thoughtful"),
-      P("Tu le prends toujours. Ce soir, je te le donne. Ce n’est pas pareil."),
+      P("Tu le prends toujours. Ce soir, je te le donne. Ça change tout."),
       "Bellirith pèse la phrase comme on soupèse une pièce pour vérifier qu’elle n’est pas fausse.",
       B("Tu viens de dire « maintenant », et maintenant tu me rends la main. Tu prépares quelque chose.", "smirk"),
       P("Évidemment."),
       B("Bien. J’adore qu’on prépare quelque chose contre moi. C’est la seule forme de respect qui me fasse de l’effet.", "seductive"),
     ),
     A(
-      "Elle commence comme elle sait commencer. Le piano se met à jouer tout seul, une valse lente. Les bougies baissent. Le parfum monte — miel brûlé, jasmin, cette note sombre que vous savez désormais reconnaître.",
+      "Elle commence comme elle sait commencer. Le piano se met à jouer tout seul, une valse lente. Les bougies baissent. Le parfum monte : miel brûlé, jasmin, cette note sombre que vous savez désormais reconnaître.",
       W(SLEPT, [
         B("Je connais tes faiblesses par cœur, tu sais. Côté gauche. La nuque. Le moment où ta respiration s’arrête. Tu crois vraiment pouvoir préparer quelque chose ?", "teasing"),
       ], [
@@ -329,7 +329,7 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
       [
         "Elle vous mène jusqu’au bord avec ses mains, son aura, sa voix, exactement comme elle sait le faire. Elle ralentit au bon moment, accélère au bon moment, et vous la laissez faire sans un mot.",
         B("Alors ? Où est ta surprise ? Je commence à croire que tu bluffais.", "teasing"),
-        "Elle s’approche pour vous embrasser, sûre d’elle, et c’est là — exactement là — que vous la voyez : la seconde où elle cesse de regarder votre visage pour fermer les yeux.",
+        "Elle s’approche pour vous embrasser, sûre d’elle, et c’est là, exactement là, que vous la voyez : la seconde où elle cesse de regarder votre visage pour fermer les yeux.",
       ],
       [
         X(
@@ -338,7 +338,7 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
           "Elle vous mène jusqu’au bord, une main sur votre vigueur, l’autre dans votre chaleur, son aura gonflant chaque caresse. Elle ralentit au bon moment, accélère au bon moment, et vous la laissez faire sans un mot.",
         ),
         B("Alors ? Où est ta surprise ? Je commence à croire que tu bluffais.", "teasing"),
-        "Elle s’approche pour vous embrasser, sûre d’elle, et c’est là — exactement là — que vous la voyez : la seconde où elle cesse de regarder votre visage pour fermer les yeux.",
+        "Elle s’approche pour vous embrasser, sûre d’elle, et c’est là, exactement là, que vous la voyez : la seconde où elle cesse de regarder votre visage pour fermer les yeux.",
       ],
       [
         "Elle vous mène au bord, comme d’habitude. Puis, en vous embrassant, elle ferme les yeux. C’est le moment que vous attendiez.",
@@ -377,13 +377,13 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         B("Ça, c’est de la triche.", "angry"),
       ],
       [
-        "Elle improvise. Son aura monte d’un coup, comme une vague qui doit vous renverser — et vous l’accueillez au lieu de la combattre. Vous respirez avec elle. Puis vous posez les lèvres au bas de sa nuque, juste à la naissance des cheveux.",
+        "Elle improvise. Son aura monte d’un coup, comme une vague qui doit vous renverser, et vous l’accueillez au lieu de la combattre. Vous respirez avec elle. Puis vous posez les lèvres au bas de sa nuque, juste à la naissance des cheveux.",
         "L’aura retombe d’un coup, comme un soufflé qu’on aurait sorti trop tôt du four. Bellirith pousse un cri d’indignation.",
         B("Ça, c’est de la triche. Tu n’as pas le droit de te servir de ça.", "angry"),
         P("Tu m’as appris à me servir de tout."),
       ],
       [
-        "Elle improvise. Son aura monte d’un coup, comme une vague qui doit vous renverser — et vous l’accueillez au lieu de la combattre. Vous respirez avec elle. Puis vous posez les lèvres au bas de sa nuque, juste à la naissance des cheveux, pendant que votre main descend sur sa chaleur.",
+        "Elle improvise. Son aura monte d’un coup, comme une vague qui doit vous renverser, et vous l’accueillez au lieu de la combattre. Vous respirez avec elle. Puis vous posez les lèvres au bas de sa nuque, juste à la naissance des cheveux, pendant que votre main descend sur sa chaleur.",
         "L’aura retombe d’un coup, comme un soufflé qu’on aurait sorti trop tôt du four. Bellirith pousse un cri d’indignation qui se transforme en gémissement quand vos doigts trouvent sa perle de plaisir.",
         B("Ça, c’est de la triche. Tu n’as pas le droit de te servir de ça.", "angry"),
         P("Tu m’as appris à me servir de tout."),
@@ -400,13 +400,13 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         "Vous exploitez l’avantage sans aucune pitié, avec toute la patience qu’elle vous a enseignée. Vous la menez au bord et vous vous arrêtez. Vous recommencez. Vous vous arrêtez encore.",
         B("Je te déteste. Je te déteste tellement.", "angry"),
         P("Demande mieux."),
-        "Elle reconnaît ses propres mots. Elle éclate d’un rire étranglé, furieux — et le demande mieux. Vous la laissez basculer, et elle jouit en vous serrant si fort que vous en garderez les marques.",
+        "Elle reconnaît ses propres mots. Elle éclate d’un rire étranglé, furieux, et le demande mieux. Vous la laissez basculer, et elle jouit en vous serrant si fort que vous en garderez les marques.",
       ],
       [
         "Vous exploitez l’avantage sans aucune pitié, avec toute la patience qu’elle vous a enseignée. Vos doigts en elle, votre bouche sur sa perle de plaisir, vous la menez au bord et vous vous arrêtez. Vous recommencez. Vous vous arrêtez encore.",
         B("Je te déteste. Je te déteste tellement.", "angry"),
         P("Demande mieux."),
-        "Elle reconnaît ses propres mots. Elle éclate d’un rire étranglé, furieux — et le demande mieux. Vous la laissez basculer, et elle jouit contre votre bouche en se resserrant autour de vos doigts, les ongles plantés dans vos épaules si fort que vous en garderez les marques.",
+        "Elle reconnaît ses propres mots. Elle éclate d’un rire étranglé, furieux, et le demande mieux. Vous la laissez basculer, et elle jouit contre votre bouche en se resserrant autour de vos doigts, les ongles plantés dans vos épaules si fort que vous en garderez les marques.",
       ],
       [
         "Vous la menez au bord et vous arrêtez. « Demande mieux. » Elle reconnaît ses mots, rit, furieuse, et le demande mieux.",
@@ -464,7 +464,7 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
       ], [
         B("Toutes ces fois où tu m’as suivie. Je croyais que tu cédais. Tu m’étudiais. C’est insupportable. C’est merveilleux.", "thoughtful"),
       ]),
-      "Elle se laisse retomber contre vous et ferme les yeux — exprès, cette fois, en vous regardant les fermer.",
+      "Elle se laisse retomber contre vous et ferme les yeux, exprès cette fois, en vous regardant les fermer.",
     ),
   ],
 };

@@ -353,7 +353,7 @@ function intrusion01(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
     B("Tu as ta mâchoire des mauvaises nouvelles. Quelque chose de démoniaque t’a souri aujourd’hui ?", "smirk"),
     V("Rien qui te concerne.", "annoyed"),
     B("Tout ce qui te fait serrer les dents me concerne. C’est l’un de mes rares engagements familiaux.", "teasing"),
-    N("Alors seulement elle vous remarque. Pas d’un coup : son regard glisse sur vous, revient, se pose. Elle redresse la tête avec l’intérêt d’une joueuse qui découvre une carte qu’elle n’a pas vue distribuer."),
+    N("Alors seulement elle vous remarque. Lentement : son regard glisse sur vous, revient, se pose. Elle redresse la tête avec l’intérêt d’une joueuse qui découvre une carte qu’elle n’a pas vue distribuer."),
     B("Et ça ? Tu collectionnes les curiosités, maintenant ?", "thoughtful"),
     N("Elle s’approche. Son aura vous touche avant ses mots : pas une contrainte, une question. Elle cherche ce qui, chez vous, a déjà envie de quelque chose, et souffle dessus pour voir si la braise prend."),
     B("Tu ne sens ni la cour, ni la route. Tu sens… une porte mal fermée. Et ton cœur bat très poliment pour quelqu’un que je viens de frôler.", "seductive"),
@@ -364,11 +364,11 @@ function intrusion01(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
     B("Oh. Tu l’as dit trop vite.", "teasing"),
   ] : [
     N("Le Conseil est vide à cette heure. Les flambeaux ont été réduits de moitié et la grande carte de l’Empire dort sous un drap. Une seule silhouette occupe le fauteuil d’Iriana, les jambes croisées sur le bras du siège."),
-    B("Te voilà. On m’a raconté que mon frère avait reçu ici, un soir, une curiosité tombée d’un portail. On ne me l’a pas présentée. Je suis vexée — modérément, mais avec style.", "smirk"),
+    B("Te voilà. On m’a raconté que mon frère avait reçu ici, un soir, une curiosité tombée d’un portail. On ne me l’a pas présentée. Je suis vexée. Modérément, mais avec style.", "smirk"),
     ...(c.coalitionDone ? [B("Ne me dis pas que nous nous sommes déjà vus au-dessus d’une carte. Ça ne compte pas : Valurn était dans la pièce, et quand Valurn est dans une pièce, je regarde Valurn.", "teasing")] : []),
     N("Elle se lève. Le parfum la précède : miel brûlé, jasmin, et cette chaleur de pièce où l’on vient d’éteindre trop de bougies à la fois."),
-    B("Bellirith. Sœur de Valurn — la plus intéressante des deux, demande à n’importe qui sauf à lui.", "seductive"),
-    N("Son aura vous effleure. Ce n’est pas un ordre ; c’est une main qui tâte une serrure. Elle cherche ce qui, chez vous, a déjà envie de quelque chose, et souffle dessus pour voir si la braise prend."),
+    B("Bellirith. Sœur de Valurn, la plus intéressante des deux ; demande à n’importe qui sauf à lui.", "seductive"),
+    N("Son aura vous effleure comme une main qui tâte une serrure. Elle cherche ce qui, chez vous, a déjà envie de quelque chose, et souffle dessus pour voir si la braise prend."),
     B("Tu ne sens ni la cour, ni la route. Tu sens une porte mal fermée. Et tu me regardes comme si tu cherchais où j’ai caché le piège.", "thoughtful"),
     B("Il n’y en a pas. Ce soir, je veux seulement savoir ce que mon frère a vu en toi pour te protéger aussi vite.", "teasing"),
   ];
@@ -378,7 +378,7 @@ function intrusion01(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
     N("Le parfum reste après elle. Iriana attend qu’il se dissipe avant de reprendre la parole, ce qui prend plus longtemps qu’elle ne le voudrait."),
     I("Bellirith. Sœur de Valurn par leur père. Une complication que je n’ai pas le pouvoir d’interdire."),
     V("Et que personne n’a jamais eu le pouvoir d’ennuyer très longtemps.", "neutral"),
-    I("Elle vous a repéré·e. Ce n’est pas un compliment. C’est une information."),
+    I("Elle vous a repéré·e. Prenez note, et méfiez-vous."),
   ] : [
     B("Bien. Tu peux partir, maintenant. Ou rester et me laisser deviner ce que tu fais de tes soirées. Les deux m’apprendront quelque chose.", "seductive"),
     N("Elle se rassoit dans le fauteuil d’Iriana comme si elle l’avait gagné aux dés. Quand vous quittez la salle, vous avez la désagréable certitude d’avoir été lu, plié et rangé dans une poche."),
@@ -448,7 +448,7 @@ function intrusion02(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
     B("Septième cloche, l’écurie nord. Tout le monde te donne des heures. Comme c’est austère.", "smirk"),
   ] : [
     N("Une femme est assise sur le rebord d’une haute fenêtre, une jambe repliée, l’autre balançant dans le vide au-dessus des jardins. Un parfum de miel brûlé occupe déjà la moitié de la salle."),
-    B("Bellirith. La sœur de Valurn. Ne fais pas cette tête, ce n’est pas contagieux — enfin, pas toujours.", "smirk"),
+    B("Bellirith. La sœur de Valurn. Ne fais pas cette tête, ce n’est pas contagieux. Enfin, pas toujours.", "smirk"),
     B("Septième cloche, l’écurie nord. Tout le monde te donne des heures. Comme c’est austère.", "teasing"),
   ];
   const intro: DialogueLine[] = c.live ? [
@@ -473,7 +473,7 @@ function intrusion02(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
     B("J’ai horreur des propositions qui refroidissent. Alors je réchauffe celle-ci.", "seductive"),
     N("Elle descend de la table. Ses pas ne font aucun bruit sur le marbre, mais vous les sentez quand même, un par un, comme on sent une main qui hésite au-dessus d’une nuque."),
     B("Aujourd’hui, personne ne t’attend. Pas de cloche, pas d’écurie, pas de capitaine qui compte jusqu’à dix. Ça rend la question délicieusement honnête.", "thoughtful"),
-    B("Tu as envie de moi — je le sens, ne prends pas cet air vexé. Qu’est-ce que tu comptes en faire ?", "seductive"),
+    B("Tu as envie de moi, je le sens ; ne prends pas cet air vexé. Qu’est-ce que tu comptes en faire ?", "seductive"),
     N("Son aura ne fabrique rien : elle trouve l’envie qui est déjà là et souffle dessus. C’est à vous de décider si vous laissez la braise prendre."),
   ];
   const seeds: ChoiceSeed[] = [
@@ -483,13 +483,13 @@ function intrusion02(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
       stat: "audace",
       response: [
         B("Enfin quelqu’un qui sait reconnaître une priorité.", "seductive"),
-        N("Elle prend votre poignet, pas votre main, deux doigts posés sur le pouls comme pour en vérifier la cadence. Elle sourit quand elle la trouve."),
+        N("Elle vous prend par le poignet, deux doigts posés sur le pouls comme pour en vérifier la cadence. Elle sourit quand elle la trouve."),
         B("Ne t’inquiète pas. Je te rendrai entier. Peut-être un peu moins ponctuel.", "teasing"),
       ],
       liveAftermath: [
         I("Le cabinet sera ouvert. Je relirai seule.", "stern"),
         N("Elle ne hausse pas la voix. Elle range seulement la lettre dans un dossier plus épais que nécessaire."),
-        I("Ce n’est pas la première lettre que je relis seule. C’est la première que je relis seule alors que quelqu’un avait promis d’être là.", "calm"),
+        I("J’ai relu beaucoup de lettres seule. Pour celle-ci, quelqu’un avait promis d’être là.", "calm"),
         D("L’écurie nord. À l’aube. Je ne compterai pas jusqu’à dix.", "gruff"),
       ],
       effects: { affection: 3, trust: 1, flags: [flag("02", "accepted")], relationshipEffects: { iriana: { trust: -3 }, draven: { trust: -2 } } },
@@ -518,7 +518,7 @@ function intrusion02(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
         B("Répète la première moitié.", "thoughtful"),
         P("J’en ai envie."),
         B("Et tu pars quand même.", "cold"),
-        N("Elle laisse retomber sa main. Ce n’est pas de la vexation. C’est l’expression d’une joueuse qui vient de voir son adversaire jouer une carte qui n’existait pas dans le paquet."),
+        N("Elle laisse retomber sa main avec l’expression d’une joueuse qui vient de voir son adversaire jouer une carte qui n’existait pas dans le paquet."),
         B("On me dit non parce qu’on a peur, ou oui parce qu’on n’a pas assez peur. Toi, tu me dis oui et non dans la même phrase, sans trembler. C’est obscène.", "smirk"),
         B("Va. Je vais y penser toute la nuit, et je compte bien te le faire payer.", "seductive"),
       ],
@@ -557,7 +557,7 @@ function intrusion02(c: Ctx): { intro: DialogueLine[]; choices: ChoiceData[] } {
         N("Bellirith regarde Draven, puis vous, puis Draven encore, comme si elle essayait de comprendre une langue qu’elle n’a jamais eu besoin d’apprendre."),
         B("Je ne sais pas si je suis vexée ou fascinée. Les deux, probablement. Je déteste les deux.", "smirk"),
       ] : [
-        P("Ce soir, quelqu’un compte sur moi. Ce n’est pas toi."),
+        P("Ce soir, quelqu’un d’autre compte sur moi."),
         B("Tu me préfères quelqu’un d’absent de cette pièce. Il faut un talent particulier pour ça.", "cold"),
         P("Ou une promesse."),
         B("Une promesse. Les gens les plus intéressants sont toujours encombrés de promesses. Je vais finir par vouloir savoir lesquelles.", "smirk"),
@@ -579,7 +579,7 @@ function bellirithHistoryOpening(c: Ctx, where: "akuhn" | "algratal"): DialogueL
   ];
   if (c.trend === "ceded" && c.favorite) return [
     B(where === "akuhn" ? "Mon favori traverse ma ville sans venir m’embrasser. Je devrais être offensée. Je suis surtout affamée." : "Mon favori. Debout dans la lumière comme une offrande qu’on a oublié de déballer.", "seductive"),
-    N("Elle dit « mon favori » sans tendresse et sans gêne, comme on désigne la meilleure place d’un théâtre. Ce n’est pas une déclaration. C’est un droit de propriété qu’elle s’amuse à faire valoir, en sachant parfaitement qu’il n’existe pas."),
+    N("Elle dit « mon favori » sans tendresse et sans gêne, comme on désigne la meilleure place d’un théâtre. Elle s’amuse à faire valoir un droit de propriété, en sachant parfaitement qu’il n’existe pas."),
   ];
   if (c.trend === "ceded" || (c.slept && c.trend !== "resisted")) return [
     B("Tu as encore un peu de mon parfum dans le col, tu sais. Ou c’est moi qui ai envie de le croire.", "teasing"),
@@ -603,15 +603,15 @@ function intrusion03(c: Ctx, letterSent: boolean): { intro: DialogueLine[]; choi
   const intro: DialogueLine[] = c.live ? [
     N("Allenna est partie organiser l’escorte. La salle de guerre ne garde plus qu’une lampe, la carte de la forêt et Draven, qui a glissé les preuves d’Alamma dans sa sacoche comme on couche un enfant dangereux."),
     D(letterSent ? "La lettre d’Amanea dort avec les preuves. Si je la perds, je crois que deux reines viendront me tuer en même temps." : "Pas de lettre. Les preuves parleront seules. J’espère qu’elles ont une meilleure voix que moi devant Tia.", "gruff"),
-    D("On part à la première relève. Deux cavaliers d’Allenna jusqu’à la lisière, ensuite Naïah nous laissera passer — ou elle nous perdra pour s’amuser. Dormez, si vous savez encore comment on fait.", "neutral"),
+    D("On part à la première relève. Deux cavaliers d’Allenna jusqu’à la lisière, ensuite Naïah nous laissera passer, ou elle nous perdra pour s’amuser. Dormez, si vous savez encore comment on fait.", "neutral"),
     N("Une porte s’ouvre au fond de la salle, celle qui donne sur l’escalier de la cour basse. Bellirith descend les marches comme on descend dans un bain chaud : sans se presser, en laissant la chaleur monter d’abord."),
     ...bellirithHistoryOpening(c, "akuhn"),
     D(c.liveAccepted > 0 ? "Encore elle." : "Vous la connaissez ?", "stern"),
     B("Nous nous connaissons, capitaine. Vous, vous me découvrirez peut-être un jour, si vous êtes très sage et très malchanceux.", "smirk"),
     N("Elle s’assied sur le bord de la table de guerre, à cheval sur la ligne qui sépare les forces d’Akuhn’Nabad de celles de l’Empire, et y reste avec une satisfaction évidente."),
     ...(c.trend === "resisted"
-      ? [B("Voilà ma proposition. Je sais quelque chose sur ta journée de demain devant Tia. Je te le donne contre une heure — une seule — dans les bains au-dessus de la salle de musique. Pas mon lit : mes bains. Je suis devenue très précise, à force de t’entendre dire non.", "teasing")]
-      : [B("Ma chambre est au-dessus de la salle de musique. Il y a un bain qui ne refroidit jamais, des draps que personne n’a jamais réussi à froisser correctement, et moi. Les preuves peuvent dormir dans la sacoche du capitaine. Toi, tu peux dormir ailleurs — ou ne pas dormir.", "seductive")]),
+      ? [B("Voilà ma proposition. Je sais quelque chose sur ta journée de demain devant Tia. Je te le donne contre une heure, une seule, dans les bains au-dessus de la salle de musique. Mes bains. Mon lit attendra. Je suis devenue très précise, à force de t’entendre dire non.", "teasing")]
+      : [B("Ma chambre est au-dessus de la salle de musique. Il y a un bain qui ne refroidit jamais, des draps que personne n’a jamais réussi à froisser correctement, et moi. Les preuves peuvent dormir dans la sacoche du capitaine. Toi, tu peux dormir ailleurs. Ou ne pas dormir.", "seductive")]),
     N("Son aura se lève comme de la vapeur. Elle ne vous prend rien ; elle vous rappelle seulement à quel point vous êtes fatigué·e, à quel point l’eau chaude existe, et à quel point sa bouche est près."),
   ] : [
     N("La salle de guerre d’Akuhn’Nabad est déserte à cette heure. La carte de la forêt n’a pas bougé depuis la nuit où vous y avez rapporté les preuves d’Alamma. Une seule lampe brûle, posée par quelqu’un qui savait que vous viendriez."),
@@ -677,11 +677,11 @@ function intrusion03(c: Ctx, letterSent: boolean): { intro: DialogueLine[]; choi
         B("Tia déteste qu’on lui présente les preuves dans l’ordre. Commence par la plus laide. Elle respecte ceux qui ne la ménagent pas.", "seductive"),
         B("Voilà. Je t’ai donné quelque chose pour rien. Je ne fais jamais ça. Je vais devoir te détester un peu.", "cold"),
       ] : [
-        N("Vous lui prenez le menton et l’embrassez. Elle vous laisse faire — mieux : elle vous répond, et pendant quelques secondes c’est elle qui mène, une main dans vos cheveux, le parfum montant autour de vous comme de la vapeur."),
+        N("Vous lui prenez le menton et l’embrassez. Elle vous laisse faire ; mieux, elle vous répond, et pendant quelques secondes c’est elle qui mène, une main dans vos cheveux, le parfum montant autour de vous comme de la vapeur."),
         N("Puis vous reculez. Vous retournez vers la carte. Vous déplacez un pion de deux cases vers la lisière."),
         B("Tu… viens de m’embrasser comme une promesse, et tu fais de la logistique.", "angry"),
         P("Bonne nuit, Bellirith."),
-        B("Ce n’est pas une bonne nuit. C’est une déclaration de guerre. J’accepte.", "seductive"),
+        B("Voilà une déclaration de guerre déguisée en bonne nuit. J’accepte.", "seductive"),
       ],
       liveAftermath: [
         D("J’ignore ce qui vient de se passer. Je refuse qu’on me l’explique.", "surprised"),
@@ -700,7 +700,7 @@ function intrusion03(c: Ctx, letterSent: boolean): { intro: DialogueLine[]; choi
         B("Il a de la chance. Il ne le sait pas. C’est exactement le genre de chose qui me donne envie de gagner.", "thoughtful"),
       ] : [
         P("Cette nuit est promise à quelqu’un d’autre."),
-        B("Qui ? Non — ne me le dis pas. J’aime l’idée d’un rival sans visage. Je vais lui en dessiner un, et je vais le battre.", "smirk"),
+        B("Qui ? Non, ne me le dis pas. J’aime l’idée d’un rival sans visage. Je vais lui en dessiner un, et je vais le battre.", "smirk"),
       ],
       liveAftermath: [
         N("Draven pousse vers vous une chope de bière tiède, sans un mot. C’est probablement la chose la plus affectueuse qu’il ait faite depuis Forthaven."),
@@ -730,7 +730,7 @@ function intrusion04(c: Ctx, irianaClose: boolean): { intro: DialogueLine[]; cho
     ] : []),
     B("La Lumière ne fête jamais rien. Elle approuve. Elle signe. Elle rationne. Moi, je fête.", "seductive"),
     ...(c.trend === "resisted" ? [
-      B("Et pour toi, j’ai fait un effort. Pas de lit, pas de bain, pas de supplication — tu y résistes trop bien, c’en est vexant. Je te propose Saëlis.", "thoughtful"),
+      B("Et pour toi, j’ai fait un effort. Pas de lit, pas de bain, pas de supplication : tu y résistes trop bien, c’en est vexant. Je te propose Saëlis.", "thoughtful"),
       N("Elle ouvre la main. Au creux de sa paume tourne une minuscule ville de néons roses et pourpres, des toits qui battent comme des cœurs, des rues où l’on rit trop fort. Une illusion, tenue pour vous seul·e."),
       B("Une heure dans ma ville. Une heure où personne ne te demande rien d’utile.", "seductive"),
     ] : [
@@ -806,7 +806,7 @@ function intrusion04(c: Ctx, irianaClose: boolean): { intro: DialogueLine[]; cho
       response: [
         B("Pas maintenant. Tu sais que c’est la phrase la plus excitante de toute ta langue ?", "teasing"),
         B("Pas « non ». Pas « jamais ». « Pas maintenant. » Tu viens de me donner un calendrier.", "seductive"),
-        N("Elle referme la main, et la petite ville s’éteint — ou la promesse de terrasse retombe comme un drap. Elle n’a pas l’air vaincue. Elle a l’air de quelqu’un qui vient de noter une date."),
+        N("Elle referme la main, et la petite ville s’éteint, ou la promesse de terrasse retombe comme un drap. Elle n’a pas l’air vaincue. Elle a l’air de quelqu’un qui vient de noter une date."),
       ],
       liveAftermath: [
         N("Iriana a entendu. Elle ne commente pas. Elle vous fait seulement signe de la suivre vers le cabinet, un pas devant vous, comme on montre un chemin."),
@@ -838,7 +838,7 @@ function intrusion04(c: Ctx, irianaClose: boolean): { intro: DialogueLine[]; cho
       response: c.live ? [
         P("Iriana a besoin de quelqu’un qui a vu les deux camps. J’y vais."),
         B("Iriana. Évidemment. La seule femme de l’Empire capable de rendre un emploi du temps plus désirable que moi.", "cold"),
-        N("Elle laisse passer un silence, et ce silence n’est pas tout à fait un jeu."),
+        N("Elle laisse passer un silence, et ce silence-là sonne presque sincère."),
         B("Je finirai par comprendre ce que tu lui trouves. Ce jour-là, fais attention à toi.", "thoughtful"),
       ] : [
         P("Cette victoire, je l’ai partagée avec d’autres. Je la fête avec eux."),
@@ -896,8 +896,8 @@ export function bellirithThreadSummary(state: BellirithState & { dateHistory?: s
   const missed = BELLIRITH_INTRUSIONS.find((intrusion) => bellirithIntrusionMissed(state, intrusion.id));
   if (missed) return { completed, total: 5, done: false, title: `Interférence en attente · ${missed.title}`, objective: "Bellirith vous a laissé une invitation persistante dans le Registre. Elle n’expire jamais et ne coûte rien à vos compagnons." };
   const upcoming = BELLIRITH_INTRUSIONS.find((intrusion) => !bellirithIntrusionResolved(state, intrusion.id));
-  if (upcoming) return { completed, total: 5, done: false, title: "Prochaine · à son heure", objective: "Poursuivez la campagne principale. Elle se manifestera au pire moment possible — c’est-à-dire au sien." };
+  if (upcoming) return { completed, total: 5, done: false, title: "Prochaine · à son heure", objective: "Poursuivez la campagne principale. Elle se manifestera au pire moment possible, c’est-à-dire au sien." };
   if (!state.history.includes("campaign-coalition-preparation")) return { completed, total: 5, done: false, title: "Chapitre IX · la soirée de la coalition", objective: "Le conseil d’Al’Gratal approche. Bellirith y sera, et elle se souvient de chacune de vos réponses." };
   if (!(state.dateHistory || []).includes(BELLIRITH_FINAL_DATE_ID)) return { completed, total: 5, done: false, title: "Rendez-vous final · Coup pour coup", objective: "Pour une fois, c’est à vous de l’inviter. Ses rendez-vous sont ouverts dans le planificateur ; le dernier mot vous appartient." };
-  return { completed, total: 5, done: true, title: "Fil de l’Acte I accompli", objective: "Bellirith n’est pas résolue : elle est installée. Vous pouvez lui tenir tête — reste à savoir lequel de vous deux fera craquer l’autre." };
+  return { completed, total: 5, done: true, title: "Fil de l’Acte I accompli", objective: "Bellirith s’est installée dans votre vie et n’a aucune intention d’en sortir. Vous pouvez lui tenir tête ; reste à savoir lequel de vous deux fera craquer l’autre." };
 }

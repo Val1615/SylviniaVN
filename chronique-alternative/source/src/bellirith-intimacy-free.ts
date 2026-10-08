@@ -18,7 +18,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
       "Elle ne vous fait pas visiter. Elle ne met pas en scène. Elle pousse la porte de sa chambre du bout du pied, jette ses gants sur un fauteuil, ses boucles d’oreilles dans une coupe, et s’étire comme quelqu’un qui rentre enfin chez soi.",
       "C’est peut-être ça, le plus troublant : elle ne vous traite plus comme une conquête à éblouir. Elle vous traite comme quelqu’un qui connaît déjà le chemin.",
       B("Ferme derrière toi. Tu sais où est le verrou. Tu l’as cherché la dernière fois avec une maladresse adorable.", "teasing"),
-      W(FAVORITE, [B("Mon favori. Dans ma chambre. Sans qu’aucune mission soit sacrifiée. J’en suis presque déçue.", "smirk")], [B("Pas de diversion, ce soir. Pas de capitaine qui attend, pas d’Impératrice qui relit. Juste toi qui reviens. C’est presque indécent de simplicité.", "smirk")]),
+      W(FAVORITE, [B("Mon favori. Dans ma chambre. Sans qu’aucune mission soit sacrifiée. J’en suis presque déçue.", "smirk")], [B("Ce soir, tu reviens sans prétexte, sans capitaine qui attend ni Impératrice qui relit. C’est presque indécent de simplicité.", "smirk")]),
     ),
     M(
       [
@@ -36,7 +36,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         B("Côté gauche. Toujours côté gauche. Tu ne peux pas t’en empêcher, hein ?", "teasing"),
         "Votre tête bascule du côté gauche, et elle rit contre votre bouche. Vos vêtements commencent à tomber, sans cérémonie, au fil des pas qui vous rapprochent du lit.",
         X(
-          "Elle prend vos seins dans ses paumes au passage, les soupèse comme on retrouve un objet aimé, et pince doucement leurs pointes exactement comme la dernière fois — exactement comme il faut.",
+          "Elle prend vos seins dans ses paumes au passage, les soupèse comme on retrouve un objet aimé, et pince doucement leurs pointes exactement comme la dernière fois, exactement comme il faut.",
           "Elle glisse une main dans votre pantalon déjà ouvert et vous trouve dur, évidemment. Elle ne commente pas. Elle se contente de serrer une fois, comme on salue une vieille connaissance.",
           "Elle glisse une main dans votre pantalon déjà ouvert, trouve votre vigueur dressée, puis descend plus bas jusqu’à votre chaleur, comme pour vérifier que tout est bien à sa place. Elle ne commente pas. Elle salue les deux d’une pression.",
         ),
@@ -48,17 +48,17 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
     M(
       [
         "Elle se déshabille sans spectacle, ce qui chez elle est déjà un spectacle. Elle s’allonge en travers du lit et vous attend.",
-        B("Viens. Je ne vais pas te supplier, mais je vais commencer à m’ennuyer.", "seductive"),
+        B("Viens. Sinon je vais commencer à m’ennuyer.", "seductive"),
       ],
       [
         "Elle se déshabille sans spectacle, ce qui chez elle est déjà un spectacle : la robe dégrafée d’une main pendant qu’elle vous regarde, le reste abandonné par terre comme si ça n’avait aucune importance. Elle s’allonge en travers du lit, appuyée sur un coude.",
-        B("Viens. Je ne vais pas te supplier, mais je vais commencer à m’ennuyer, et tu sais ce que je fais quand je m’ennuie.", "seductive"),
+        B("Viens. Sinon je vais commencer à m’ennuyer, et tu sais ce que je fais quand je m’ennuie.", "seductive"),
         P("Tu fais des bêtises."),
         B("Je fais des chefs-d’œuvre. Les gens appellent ça des bêtises parce qu’ils sont jaloux.", "smirk"),
       ],
       [
         "Elle se déshabille sans spectacle, ce qui chez elle est déjà un spectacle : la robe dégrafée d’une main pendant qu’elle vous regarde, le reste abandonné par terre comme si ça n’avait aucune importance. Nue, elle s’allonge en travers du lit, appuyée sur un coude, une jambe repliée, offerte et parfaitement maîtresse d’elle-même.",
-        B("Viens. Je ne vais pas te supplier, mais je vais commencer à m’ennuyer, et tu sais ce que je fais quand je m’ennuie.", "seductive"),
+        B("Viens. Sinon je vais commencer à m’ennuyer, et tu sais ce que je fais quand je m’ennuie.", "seductive"),
         P("Tu fais des bêtises."),
         B("Je fais des chefs-d’œuvre. Les gens appellent ça des bêtises parce qu’ils sont jaloux.", "smirk"),
       ],
@@ -135,14 +135,14 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
       [
         "Profitant d’un instant où elle reprend son souffle, vous la renversez à votre tour. Elle se laisse faire avec un soupir théâtral, les bras en croix.",
         B("Une manche. Une seule. Ensuite, tu me rends le commandement.", "teasing"),
-        "Vous ne répondez pas. Vous l’embrassez au bas de la nuque, juste à la naissance des cheveux — cet endroit que vous aviez trouvé une fois par hasard et qu’elle avait aussitôt prétendu ne pas exister.",
+        "Vous ne répondez pas. Vous l’embrassez au bas de la nuque, juste à la naissance des cheveux, cet endroit que vous aviez trouvé une fois par hasard et qu’elle avait aussitôt prétendu ne pas exister.",
         "Elle se tait d’un coup. Tout son corps se tend sous vous, puis se relâche, et elle laisse échapper un son qui n’a absolument rien de composé.",
         B("Ça. Je t’interdis de te souvenir de ça.", "angry"),
       ],
       [
         "Profitant d’un instant où elle reprend son souffle, vous la renversez à votre tour. Elle se laisse faire avec un soupir théâtral, les bras en croix.",
         B("Une manche. Une seule. Ensuite, tu me rends le commandement.", "teasing"),
-        "Vous ne répondez pas. Vous l’embrassez au bas de la nuque, juste à la naissance des cheveux — cet endroit que vous aviez trouvé une fois par hasard et qu’elle avait aussitôt prétendu ne pas exister.",
+        "Vous ne répondez pas. Vous l’embrassez au bas de la nuque, juste à la naissance des cheveux, cet endroit que vous aviez trouvé une fois par hasard et qu’elle avait aussitôt prétendu ne pas exister.",
         "Elle se tait d’un coup. Tout son corps se tend sous vous, puis se relâche, et elle laisse échapper un son qui n’a absolument rien de composé. Votre main descend sur son ventre, trouve sa chaleur, brûlante et déjà humide.",
         B("Ça. Je t’interdis de te souvenir de ça.", "angry"),
         P("Trop tard."),
@@ -206,9 +206,9 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
       [
         "Elle mène jusqu’au bout, et vous vous laissez mener, cette fois, parce que vous savez désormais qu’elle peut perdre et que c’est elle qui choisit de gagner.",
         X(
-          "Vous jouissez contre elle, vos deux chaleurs pressées l’une contre l’autre, et elle vous suit une seconde plus tard — une seconde exprès, pour pouvoir vous regarder.",
-          "Vous jouissez en elle, les mains crispées sur ses hanches, et elle vous suit une seconde plus tard — une seconde exprès, pour pouvoir vous regarder.",
-          "Vous jouissez en elle, votre chaleur pulsant autour de ses doigts au même moment, et elle vous suit une seconde plus tard — une seconde exprès, pour pouvoir vous regarder.",
+          "Vous jouissez contre elle, vos deux chaleurs pressées l’une contre l’autre, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
+          "Vous jouissez en elle, les mains crispées sur ses hanches, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
+          "Vous jouissez en elle, votre chaleur pulsant autour de ses doigts au même moment, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
         ),
         B("Voilà ce que je voulais voir. Toujours le même visage. Je ne m’en lasse pas. C’est très inquiétant.", "thoughtful"),
       ],
@@ -232,7 +232,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
       "Elle se redresse, s’étire, et vous jette votre chemise à la figure.",
     ),
     A(
-      B("Rhabille-toi. Pas parce que je te chasse. Parce que je vais avoir envie de recommencer, et que tu as sûrement quelque part un monde à sauver.", "teasing"),
+      B("Rhabille-toi. Je vais avoir envie de recommencer, et tu as sûrement quelque part un monde à sauver.", "teasing"),
       P("Il peut attendre."),
       B("Ne dis pas ça. Je risquerais de te croire, et ce serait la fin de tout ce que j’aime chez toi.", "thoughtful"),
     ),
@@ -243,12 +243,12 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
   id: "bellirith-free-first",
   context: "bellirith-free",
   text: "Enfin",
-  detail: "Elle vous a proposé son lit trop souvent pour faire semblant d’être calme. C’est elle qui mène — mais elle a faim, et ça se voit.",
+  detail: "Elle vous a proposé son lit trop souvent pour faire semblant d’être calme. C’est elle qui mène, et elle a faim ; ça se voit.",
   excludesFlags: [SLEPT],
   visual: { revealChapter: 3, postOrgasmChapter: 10 },
   chapters: [
     A(
-      "Elle referme la porte de sa chambre et reste un moment adossée contre le bois, à vous regarder, sans rien dire. Ce n’est pas sa façon habituelle d’entrer en scène. Elle a l’air de quelqu’un qui vérifie qu’une chose est vraiment arrivée.",
+      "Elle referme la porte de sa chambre et reste un moment adossée contre le bois, à vous regarder, sans rien dire. D’habitude, elle soigne davantage ses entrées. Elle a l’air de quelqu’un qui vérifie qu’une chose est vraiment arrivée.",
       B("Tu es là.", "thoughtful"),
       P("Tu as l’air surprise."),
       W(TREND_RESISTED, [
@@ -263,7 +263,7 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
       B("Dis-le. Je veux l’entendre une fois sans que je l’aie provoqué.", "seductive"),
       P("J’ai envie de toi."),
       B("Encore.", "thoughtful"),
-      P("J’ai envie de toi, Bellirith. Ce soir. Pas parce que tu as soufflé dessus."),
+      P("J’ai envie de toi, Bellirith. Ce soir, et sans que tu aies soufflé dessus."),
       "Elle ferme les yeux une seconde. Quand elle les rouvre, son parfum a envahi la pièce d’un coup, comme une bouteille qu’on aurait brisée.",
     ),
     M(
@@ -271,20 +271,20 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         "Elle vous embrasse comme on se jette à l’eau. Il n’y a plus rien de calculé dans ce baiser-là, ou si peu.",
         B("Tu m’as fait attendre.", "angry"),
         P("Tu aimes attendre."),
-        B("J’aime faire attendre. Ce n’est pas du tout pareil.", "smirk"),
+        B("J’aime faire attendre. Nuance.", "smirk"),
       ],
       [
         "Elle vous embrasse comme on se jette à l’eau. Il n’y a plus rien de calculé dans ce baiser-là, ou si peu : ses mains dans vos cheveux, son corps plaqué contre le vôtre, sa bouche qui prend et ne demande pas.",
         B("Tu m’as fait attendre.", "angry"),
         P("Tu aimes attendre."),
-        B("J’aime faire attendre. Ce n’est pas du tout pareil. Tu vas comprendre la différence très, très précisément.", "smirk"),
+        B("J’aime faire attendre. Nuance. Tu vas comprendre la différence très, très précisément.", "smirk"),
         "Elle défait vos vêtements avec une impatience qu’elle ne prend même pas la peine de cacher, et en arrache un bouton au passage.",
       ],
       [
         "Elle vous embrasse comme on se jette à l’eau. Il n’y a plus rien de calculé dans ce baiser-là, ou si peu : ses mains dans vos cheveux, son corps plaqué contre le vôtre, sa bouche qui prend et ne demande pas.",
         B("Tu m’as fait attendre.", "angry"),
         P("Tu aimes attendre."),
-        B("J’aime faire attendre. Ce n’est pas du tout pareil. Tu vas comprendre la différence très, très précisément.", "smirk"),
+        B("J’aime faire attendre. Nuance. Tu vas comprendre la différence très, très précisément.", "smirk"),
         "Elle défait vos vêtements avec une impatience qu’elle ne prend même pas la peine de cacher, et en arrache un bouton au passage.",
         X(
           "Quand vous êtes nue, elle recule d’un demi-pas pour vous regarder, et son regard s’attarde sur vos seins, votre ventre, vos cuisses, avec une avidité presque douloureuse.",
@@ -303,12 +303,12 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         B("Regarde vite. Je n’ai pas l’intention de rester debout.", "seductive"),
       ],
       [
-        "Sa robe tombe. Elle ne fait pas de théâtre, cette fois — elle n’a pas la patience — et pourtant elle reste immobile une seconde, nue devant vous, pour vous laisser regarder.",
+        "Sa robe tombe. Elle ne fait pas de théâtre, cette fois, elle n’a pas la patience. Pourtant, elle reste immobile une seconde, nue devant vous, pour vous laisser regarder.",
         B("Regarde vite. Je n’ai pas l’intention de rester debout.", "seductive"),
         "Elle vous pousse sur le lit et tombe sur vous.",
       ],
       [
-        "Sa robe tombe. Elle ne fait pas de théâtre, cette fois — elle n’a pas la patience — et pourtant elle reste immobile une seconde, nue devant vous, pour vous laisser regarder : la peau couleur de braise, les seins lourds aux pointes déjà dures, les hanches pleines, le désir qui se voit.",
+        "Sa robe tombe. Elle ne fait pas de théâtre, cette fois, elle n’a pas la patience. Pourtant, elle reste immobile une seconde, nue devant vous, pour vous laisser regarder : la peau couleur de braise, les seins lourds aux pointes déjà dures, les hanches pleines, le désir qui se voit.",
         B("Regarde vite. Je n’ai pas l’intention de rester debout.", "seductive"),
         "Elle vous pousse sur le lit et tombe sur vous.",
       ],
@@ -376,8 +376,8 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         "Elle ne perd pas le fil. Elle le resserre. Le plaisir vous emporte entre ses mains, et elle vous regarde partir avec une expression que vous ne lui connaissiez pas.",
       ],
       [
-        "Elle ne perd pas le fil. Elle le resserre. Elle vous mène jusqu’au bord sans les ralentissements cruels des autres fois — pas ce soir, elle a trop envie de voir — et vous laisse basculer en vous tenant le visage d’une main.",
-        "Elle vous regarde partir avec une expression que vous ne lui connaissiez pas. Pas de triomphe. Une sorte d’émerveillement agacé.",
+        "Elle ne perd pas le fil. Elle le resserre. Elle vous mène jusqu’au bord sans les ralentissements cruels des autres fois, car ce soir elle a trop envie de voir, et vous laisse basculer en vous tenant le visage d’une main.",
+        "Elle vous regarde partir avec une expression que vous ne lui connaissiez pas, une sorte d’émerveillement agacé.",
         B("Voilà. Voilà ce que tu me refusais.", "thoughtful"),
       ],
       [
@@ -387,7 +387,7 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
           "Elle descend sur vous et vous prend dans sa bouche, profondément, et cette fois elle ne vous fait pas attendre. Vous jouissez en lui tenant les cheveux, et elle vous regarde partir, les yeux levés vers vous.",
           "Elle descend sur vous, prend votre vigueur dans sa bouche, garde ses doigts dans votre chaleur, et cette fois elle ne vous fait pas attendre. Vous jouissez des deux côtés à la fois, et elle vous regarde partir, les yeux levés vers vous.",
         ),
-        "Pas de triomphe dans son regard. Une sorte d’émerveillement agacé.",
+        "Son regard trahit une sorte d’émerveillement agacé.",
         B("Voilà. Voilà ce que tu me refusais.", "thoughtful"),
       ],
       [
@@ -424,23 +424,23 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
     ),
     M(
       [
-        "Elle reprend le dessus — elle reprend toujours le dessus — et vous attire en elle, contre elle, sans plus de jeu. Elle atteint son plaisir en criant votre nom, et c’est la première fois que vous l’entendez le dire ainsi.",
+        "Elle reprend le dessus, comme toujours, et vous attire en elle, contre elle, sans plus de jeu. Elle atteint son plaisir en criant votre nom, et c’est la première fois que vous l’entendez le dire ainsi.",
       ],
       [
-        "Elle reprend le dessus — elle reprend toujours le dessus — d’un mouvement de hanches qui vous fait rouler sur le dos. Elle s’installe sur vous, et il n’y a plus de jeu, plus de commentaire, plus de manche à compter.",
-        "Elle atteint son plaisir en criant votre nom. C’est la première fois que vous l’entendez le dire comme ça : pas une provocation, pas un titre, juste votre nom. Le vôtre suit, emporté par le sien.",
+        "Elle reprend le dessus, comme toujours, d’un mouvement de hanches qui vous fait rouler sur le dos. Elle s’installe sur vous, et il n’y a plus de jeu, plus de commentaire, plus de manche à compter.",
+        "Elle atteint son plaisir en criant votre nom. C’est la première fois que vous l’entendez le dire aussi simplement, sans provocation ni titre. Le vôtre suit, emporté par le sien.",
       ],
       [
-        "Elle reprend le dessus — elle reprend toujours le dessus — d’un mouvement de hanches qui vous fait rouler sur le dos. Elle s’installe sur vous, et il n’y a plus de jeu, plus de commentaire, plus de manche à compter.",
+        "Elle reprend le dessus, comme toujours, d’un mouvement de hanches qui vous fait rouler sur le dos. Elle s’installe sur vous, et il n’y a plus de jeu, plus de commentaire, plus de manche à compter.",
         X(
           "Elle presse sa chaleur contre la vôtre, entrelace ses jambes aux vôtres, et se balance contre vous de plus en plus fort, vos deux perles de plaisir se cherchant à chaque mouvement.",
           "Elle vous guide en elle et descend d’un seul mouvement, jusqu’au bout, avec un gémissement qu’elle ne retient pas. Puis elle bouge sur vous, de plus en plus fort, ses mains posées sur votre poitrine.",
           "Elle vous guide en elle et descend d’un seul mouvement, jusqu’au bout, sa main glissant sous elle jusqu’à votre chaleur. Puis elle bouge sur vous, de plus en plus fort, ses doigts suivant le même rythme.",
         ),
-        "Elle jouit en criant votre nom. C’est la première fois que vous l’entendez le dire comme ça : pas une provocation, pas un titre, juste votre nom. Le vôtre suit, emporté par le sien.",
+        "Elle jouit en criant votre nom. C’est la première fois que vous l’entendez le dire aussi simplement, sans provocation ni titre. Le vôtre suit, emporté par le sien.",
       ],
       [
-        "Elle reprend le dessus, sans plus de jeu. Elle atteint son plaisir en criant votre nom — juste votre nom.",
+        "Elle reprend le dessus, sans plus de jeu. Elle atteint son plaisir en criant votre nom, juste votre nom.",
       ],
     ),
     A(

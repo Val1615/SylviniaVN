@@ -186,7 +186,7 @@ export const COALITION_ROUTE: AuthoredRoute = {
         "Vous libérez une main, la posez sur sa hanche, et suivez son rythme au lieu de le subir. Elle vous regarde, surprise, puis vous laisse faire. Elle atteint son plaisir dans un souffle, et un lustre entier s’embrase au-dessus de vous.",
       ],
       [
-        "Vous libérez une main — elle vous laisse faire, ou elle n’a pas remarqué — et la posez sur sa hanche. Vous ne cherchez pas à mener. Vous suivez son rythme au lieu de le subir, et vous l’accompagnez juste un peu plus loin à chaque mouvement.",
+        "Vous libérez une main et la posez sur sa hanche ; elle vous laisse faire, ou elle n’a pas remarqué. Vous ne cherchez pas à mener. Vous suivez son rythme au lieu de le subir, et vous l’accompagnez juste un peu plus loin à chaque mouvement.",
         "Elle vous regarde, surprise. Elle ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
         "Elle atteint son plaisir dans un souffle qui ressemble à un aveu, et au-dessus de vous un lustre entier s’embrase, toutes ses bougies montant d’un coup jusqu’au plafond.",
         B("…Tu viens de faire quelque chose.", "thoughtful"),
@@ -194,7 +194,7 @@ export const COALITION_ROUTE: AuthoredRoute = {
         B("Personne ne suit aussi bien. C’est suspect.", "smirk"),
       ],
       [
-        "Vous libérez une main — elle vous laisse faire, ou elle n’a pas remarqué — et la posez sur sa hanche. Vous ne cherchez pas à mener. Vous suivez son rythme au lieu de le subir, et vous l’accompagnez juste un peu plus loin à chaque mouvement.",
+        "Vous libérez une main et la posez sur sa hanche ; elle vous laisse faire, ou elle n’a pas remarqué. Vous ne cherchez pas à mener. Vous suivez son rythme au lieu de le subir, et vous l’accompagnez juste un peu plus loin à chaque mouvement.",
         X(
           "Votre main glisse de sa hanche jusqu’à sa perle de plaisir, et vous la caressez exactement au rythme de son bassin, sans rien imposer, en suivant. Elle vous regarde, surprise, ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
           "Votre main glisse de sa hanche jusqu’à sa perle de plaisir pendant qu’elle se soulève et retombe sur vous, et vous la caressez exactement à son rythme, sans rien imposer. Elle vous regarde, surprise, ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
@@ -216,7 +216,7 @@ export const COALITION_ROUTE: AuthoredRoute = {
       B("Moi, je dirai que je me suis ennuyée ce soir. Personne ne me croira. C’est l’avantage d’avoir une réputation.", "smirk"),
     ),
     A(
-      "Elle se lève, renfile sa robe, puis — chose inattendue — ramasse votre chemise et vous la boutonne elle-même, du premier au dernier bouton, avec une précision de valet.",
+      "Elle se lève, renfile sa robe, puis, chose inattendue, ramasse votre chemise et vous la boutonne elle-même, du premier au dernier bouton, avec une précision de valet.",
       B("Le protocole est parti. Sans ton regard. Iriana va te le faire payer avec une politesse terrifiante.", "teasing"),
       W(SLEPT, [
         B("Tu te souviens de la première fois ? Tu tremblais un peu. Ce soir, tu as suivi mon rythme comme si tu l’avais appris par cœur. Je ne sais pas encore si je dois m’en réjouir.", "thoughtful"),

@@ -50,7 +50,7 @@ const BELLIRITH_DATE_PRELUDES: Record<string, (game: DateState) => DialogueLine[
 };
 
 export function bellirithDateResultText(dateId: string, game: DateState) {
-  if (dateId === "date-bellirith-final") return "Elle ne propose rien. Pour la première fois, Bellirith attend — appuyée contre le piano, les bras croisés, un sourire d’adversaire aux lèvres. Le moment vous appartient : vous pouvez dire « maintenant », ou la laisser sur cette égalité jusqu’à un autre soir.";
+  if (dateId === "date-bellirith-final") return "Elle ne propose rien. Pour la première fois, Bellirith attend, appuyée contre le piano, les bras croisés, un sourire d’adversaire aux lèvres. Le moment vous appartient : vous pouvez dire « maintenant », ou la laisser sur cette égalité jusqu’à un autre soir.";
   if (slept(game)) return "Bellirith pose deux doigts sur votre pouls et sourit en trouvant la cadence qu’elle connaît. « Une heure volée ? » Elle vous laisse répondre. Elle a déjà l’air de savoir.";
   if (resisted(game)) return "Bellirith reste près de vous, à la distance exacte d’une invitation qu’elle ne formulera pas deux fois. « Je te propose la suite. Tu peux encore dire non. Tu es très doué·e pour ça. »";
   return "Bellirith reste près de vous et vous propose la suite d’un seul regard. Vous pouvez la suivre, ou garder cette soirée telle qu’elle est.";
