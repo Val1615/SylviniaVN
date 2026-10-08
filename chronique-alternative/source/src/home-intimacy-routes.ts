@@ -511,6 +511,8 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
     },
   ],
 
+  // OBSOLÈTE (refonte Bellirith v1) : profil générique « séduire sans magie », plus atteignable —
+  // toutes les intimités de Bellirith passent par bellirith-diversion-intimacy.ts. Conservé pour les validateurs de catalogue.
   bellirith: [
     {
       id: "miroir-honnete",
@@ -848,6 +850,8 @@ export const HOME_INTIMACY_APPROACHES: Record<string, IntimacyChoice[]> = {
     { id: "home-saidin-blind", text: "Bander les yeux de Saidin pour que vos mains deviennent son seul avenir.", lines: [N("La prescience se tait derrière le foulard."), C("Saidin", "Le présent a votre chaleur. Guidez-moi.", "mysterious")] },
     { id: "home-saidin-loop", text: "Créer une boucle de trois secondes et en changer chaque répétition.", lines: [N("Le même baiser recommence, mais votre main trouve chaque fois un nouvel endroit."), C("Saidin", "Nous venons d’apprendre à une boucle à désobéir.", "soft")] },
   ],
+  // OBSOLÈTE (refonte Bellirith v1) : profil générique « séduire sans magie », plus atteignable —
+  // toutes les intimités de Bellirith passent par bellirith-diversion-intimacy.ts. Conservé pour les validateurs de catalogue.
   bellirith: [
     { id: "home-bellirith-mirror", text: "L’asseoir devant son miroir honnête et lui montrer ce que vous regardez vraiment.", lines: [C("Bellirith", "Aucun charme ne corrige ce reflet."), P("Je ne veux rien corriger."), N("Votre main se pose sur sa nuque nue dans le miroir.")] },
     { id: "home-bellirith-scent", text: "Choisir trois parfums et les suivre sur sa peau sans utiliser son aura.", lines: [N("Cendre, rose et épices attendent sur la table."), C("Bellirith", "Suis la bonne senteur. Je promets d’être la destination.", "seductive")] },
@@ -883,6 +887,8 @@ const HOME_CHARACTER_OPENING: Record<string, DialogueLine[]> = {
   naiah: [C("Naïah", "Je pourrais changer tout le décor. Je préfère découvrir ce que le vrai sait faire.", "smirk")],
   lineva: [C("Lineva", "La relève tient jusqu’à l’aube. Ne me laissez pas gaspiller cette victoire.", "determined")],
   saidin: [C("Saidin", "Je n’ai regardé aucun futur au-delà de cette porte. La pièce me paraît immense.", "mysterious")],
+  // OBSOLÈTE (refonte Bellirith v1) : profil générique « séduire sans magie », plus atteignable —
+  // toutes les intimités de Bellirith passent par bellirith-diversion-intimacy.ts. Conservé pour les validateurs de catalogue.
   bellirith: [C("Bellirith", "J’ai laissé mon aura dehors. Si tu me désires ici, je saurai enfin que c’est moi.", "seductive")],
   amanea: [C("Amanea", "Aucun garde, aucun trône, aucun sujet. Une soirée rare mérite une franchise rare.", "neutral")],
   tia: [C("Tia", "J’ai laissé mes sceaux dans l’entrée. S’ils parlent avant moi, retournez-les face contre la console.", "troubled")],
@@ -898,6 +904,8 @@ const HOME_CHARACTER_ENDING: Record<string, DialogueLine[]> = {
   naiah: [C("Naïah", "J’aime cette maison : elle survit même lorsque je cesse de l’inventer.", "soft")],
   lineva: [C("Lineva", "Je repars au commandement. Mais cette adresse appartient désormais à ma carte du retour.", "soft")],
   saidin: [C("Saidin", "Je connais moins bien demain qu’hier. C’est une conséquence délicieuse.", "soft")],
+  // OBSOLÈTE (refonte Bellirith v1) : profil générique « séduire sans magie », plus atteignable —
+  // toutes les intimités de Bellirith passent par bellirith-diversion-intimacy.ts. Conservé pour les validateurs de catalogue.
   bellirith: [C("Bellirith", "Garde le miroir tourné vers le lit. J’ai l’intention de lui donner d’autres vérités.", "soft")],
   amanea: [C("Amanea", "À l’extérieur, je reprendrai ma couronne. Ici, je laisse une promesse de retour.", "soft")],
   tia: [C("Tia", "Le petit sceau peut rester ici. Je préfère qu’une prochaine invitation connaisse déjà l’adresse.", "troubled")],

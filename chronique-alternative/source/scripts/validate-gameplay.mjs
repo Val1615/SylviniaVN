@@ -31,8 +31,11 @@ try {
   ]);
 
   assert.equal(gameData.CHARACTERS.length, 12, "le casting complet doit contenir douze personnages");
-  assert.equal(gameData.ROUTE_SCENES.length, 60, "chaque personnage doit conserver cinq scènes majeures");
-  assert.equal(new Set(gameData.ROUTE_SCENES.map((scene) => scene.id)).size, 60, "les identifiants de route doivent être uniques");
+  // Refonte Bellirith (spec §3) : Bellirith n’a plus de route personnelle classique en Acte I ;
+  // son fil passe par les intrusions. Les onze autres personnages gardent cinq scènes majeures.
+  assert.equal(gameData.ROUTE_SCENES.length, 55, "chaque personnage hors Bellirith doit conserver cinq scènes majeures");
+  assert.equal(gameData.ROUTE_SCENES.filter((scene) => scene.character === "bellirith").length, 0, "Bellirith ne doit plus avoir de route de guérison en Acte I");
+  assert.equal(new Set(gameData.ROUTE_SCENES.map((scene) => scene.id)).size, 55, "les identifiants de route doivent être uniques");
 
   function schedule(character, day, flags) {
     const itinerary = character.itinerary;

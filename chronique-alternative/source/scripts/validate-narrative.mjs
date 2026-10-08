@@ -32,10 +32,12 @@ try {
     for (const knowledge of secret.reveals) secretsByReveal.set(knowledge, secret);
   }
 
-  assert.equal(game.ROUTE_SCENES.length, castIds.length * 5, "cinq scènes majeures sont requises pour chaque personnage");
+  // Refonte Bellirith (spec §3) : aucune route classique en Acte I, son fil passe par les intrusions.
+  const routedCastIds = castIds.filter((id) => id !== "bellirith");
+  assert.equal(game.ROUTE_SCENES.length, routedCastIds.length * 5, "cinq scènes majeures sont requises pour chaque personnage (hors Bellirith)");
   assert.deepEqual(contextual.validateContextualRouteChoices(routeIds), { routes: 60, contextualChoices: 60 });
 
-  for (const characterId of castIds) {
+  for (const characterId of routedCastIds) {
     const routes = game.ROUTE_SCENES.filter((scene) => scene.character === characterId).sort((left, right) => left.stage - right.stage);
     assert.deepEqual(routes.map((scene) => scene.stage), [0, 1, 2, 3, 4], `${characterId}: ordre des cinq scènes majeures incomplet`);
     assert.equal(game.ROUTE_KNOWLEDGE_ORDER[characterId]?.length, 4, `${characterId}: quatre transitions par confidence sont requises`);
@@ -115,15 +117,12 @@ try {
   }
   requireRouteFlags("iriana-4", ["iriana-private-choice"]);
   requireRouteFlags("amanea-4", ["amanea-pact-boundary"]);
-  requireRouteFlags("bellirith-4", ["bellirith-memory-space", "fracture-valurn-bellirith-distance-set"]);
-  requireRouteFlags("valurn-4", ["valurn-accountability", "fracture-valurn-bellirith-distance-set"]);
+  requireRouteFlags("valurn-4", ["valurn-accountability"]);
   requireRouteFlags("lineva-4", ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"]);
   requireRouteFlags("draven-4", ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"]);
 
   const eventById = new Map(heritage.SPONTANEOUS_EVENTS.map((event) => [event.id, event]));
-  const valurnTruth = eventById.get("world-bellirith-valurn-truth");
-  assert.ok(valurnTruth.requiresKnowledge.includes("knows_bellirith_mortal_death") && valurnTruth.requiresKnowledge.includes("knows_valurn_true_abandonment"), "la confrontation Valurn/Bellirith doit attendre les deux versions");
-  assert.ok(valurnTruth.requiresFlags.includes("valurn-accountability"), "Valurn doit préparer une transmission sans imposer son remords à Bellirith");
+  // Refonte Bellirith : la confrontation « world-bellirith-valurn-truth » reposait sur le faux canon de la stase ; retirée.
   const linevaTruth = eventById.get("world-lineva-draven-truth");
   assert.ok(linevaTruth.requiresKnowledge.includes("knows_lineva_mother_dead") && linevaTruth.requiresKnowledge.includes("knows_draven_fear_return"), "l’annonce à Draven doit attendre les deux points de vue");
 
@@ -140,14 +139,12 @@ try {
   const mandatorySocialIds = new Set([
     "medig-window",
     "amanea-family-truth",
-    "bellirith-after-memory",
     "iriana-after-mother",
     "valurn-after-truth",
     "amanea-after-pact",
     "lineva-draven-after-truth",
-    "valurn-bellirith-after-truth",
   ]);
-  const mandatoryEventIds = new Set(["world-bellirith-valurn-truth", "world-lineva-draven-truth"]);
+  const mandatoryEventIds = new Set(["world-lineva-draven-truth"]);
   const stages = Object.fromEntries(castIds.map((id) => [id, 0]));
   const history = new Set();
   const flags = new Set();

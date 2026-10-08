@@ -1,6 +1,8 @@
 import { HYLEE_AMBIENT_LINES } from "./hylee-ambient";
 import { NAIAH_AMBIENT_LINES } from "./naiah-ambient";
 import { REMERII_AMBIENT_LINES } from "./remerii-ambient";
+import { BELLIRITH_AMBIENT_LINES } from "./bellirith-ambient";
+import { IRIANA_BELLIRITH_REACTIONS, VALURN_BELLIRITH_REACTIONS } from "./bellirith-reactions";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 
 export type AmbientDialogue = {
@@ -13,7 +15,27 @@ export type AmbientDialogue = {
   locations?: string[];
   periods?: PeriodKey[];
   mood?: string;
+  /** Moment visible seulement selon l’historique (flags). */
+  requiresFlags?: string[];
+  excludesFlags?: string[];
+  /** Ouvertures alternatives selon l’historique ; la première qui correspond remplace `prompt`. */
+  promptVariants?: { prompt: string; requiresFlags?: string[]; excludesFlags?: string[] }[];
 };
+
+const flagsMatch = (flags: string[], requiresFlags?: string[], excludesFlags?: string[]) =>
+  !requiresFlags?.some((flag) => !flags.includes(flag)) && !excludesFlags?.some((flag) => flags.includes(flag));
+
+export function ambientAvailableForFlags(entry: AmbientDialogue, flags: string[]) {
+  return flagsMatch(flags, entry.requiresFlags, entry.excludesFlags);
+}
+
+export function ambientPromptFor(entry: AmbientDialogue, flags: string[]) {
+  return entry.promptVariants?.find((variant) => flagsMatch(flags, variant.requiresFlags, variant.excludesFlags))?.prompt || entry.prompt;
+}
+
+export function choiceAvailableForFlags(choice: ChoiceData, flags: string[]) {
+  return flagsMatch(flags, choice.requiresFlags, choice.excludesFlags);
+}
 
 const line = (speaker: string, text: string): DialogueLine => ({ speaker, text });
 const reply = (speaker: string, text: string | DialogueLine[]): DialogueLine[] =>
@@ -48,7 +70,6 @@ const V = (id: string, text: string, stat: StatKey, response: string | DialogueL
 const N = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Naïah", id, text, stat, response, effects);
 const L = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Lineva", id, text, stat, response, effects);
 const S = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Saidin", id, text, stat, response, effects);
-const B = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Bellirith", id, text, stat, response, effects);
 const A = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Amanea", id, text, stat, response, effects);
 const D = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Draven", id, text, stat, response, effects);
 const T = (id: string, text: string, stat: StatKey, response: string | DialogueLine[], effects: Effects) => pick("Tia", id, text, stat, response, effects);
@@ -155,6 +176,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       I("iri-detail-l", "Demander lequel lui donne envie de sourire avant de répondre.", "lucidite", "Le bleu. Vous avez encore déplacé la question du convenable vers le désiré. Je choisis le bleu.", { trust: 3, affection: 1 }),
       I("iri-detail-s", "Lui proposer d’en porter un aujourd’hui et l’autre demain.", "sangFroid", "Aucun verdict définitif. Voilà une souplesse que le conseil jugerait révolutionnaire.", { trust: 3 }),
     ], { mood: "smirk" }),
+    ...IRIANA_BELLIRITH_REACTIONS,
   ],
 
   valurn: [
@@ -233,6 +255,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       V("val-tes-l", "Repérer le pot de miel prévu comme antidote derrière son coude.", "lucidite", [line("Narration", "Vous lui tendez le miel. Il en avale une cuillerée sans abandonner sa pose funèbre."), line("Valurn", "Vous venez de sauver ma vie en ruinant une excellente sortie dramatique."), line("{player}", "Vous aviez préparé l’antidote."), line("Valurn", "L’humour noir n’interdit pas la logistique. Il la rend seulement plus élégante.")], { trust: 4, affection: 1 }),
       V("val-tes-s", "Lui laisser le temps de récupérer sans rire de la panique sous la plaisanterie.", "sangFroid", [line("Narration", "Vous poussez l’eau et attendez. Valurn garde les yeux baissés jusqu’à ce que sa respiration redevienne régulière."), line("Valurn", "Merci de ne pas avoir confondu mon numéro avec l’absence de peur."), line("Narration", "Il déchire la serviette, puis en garde un coin."), line("Valurn", "Je lègue tout de même cette pâtisserie à mon père. On ne sait jamais.")], { trust: 5 }),
     ], { mood: "amused" }),
+    ...VALURN_BELLIRITH_REACTIONS,
   ],
 
   naiah: NAIAH_AMBIENT_LINES,
@@ -393,83 +416,8 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     ], { periods: ["aube", "matin"], mood: "neutral" }),
   ],
 
-  bellirith: [
-    scene("bellirith-coupe", "La coupe vérifiable", "Bellirith lève une coupe. « Je n’ai rien ajouté à ton verre. Tu peux me croire, vérifier ou choisir autre chose. »", [
-      B("bel-coupe-r", "Vérifier la boisson avant de trinquer.", "resonance", "La confiance qui accepte la vérification est la seule qui m’intéresse.", { trust: 3 }),
-      B("bel-coupe-s", "Choisir vous-même une bouteille encore scellée.", "sangFroid", "Prudent·e sans transformer ma présence en accusation. Élégant.", { trust: 2, affection: 1 }),
-      B("bel-coupe-a", "Prendre sa propre coupe. « Je préfère partager ton risque. »", "audace", "Mon verre était parfaitement sûr. Mais ton geste mérite qu’on le célèbre.", { affection: 2, desire: 1 }),
-    ], { mood: "seductive" }),
-    scene("bellirith-compliment", "Un compliment exact", "Bellirith croise les bras. « Exercice difficile : fais-moi un compliment qui ne concerne ni mon corps, ni mon pouvoir, ni le danger que je représente. »", [
-      B("bel-compl-l", "« Tu sais reformuler une limite sans retirer le désir. »", "lucidite", "Précis, observé, et terriblement intime. Tu gagnes.", { trust: 3, affection: 2 }),
-      B("bel-compl-s", "Prendre le temps de chercher au lieu de flatter.", "sangFroid", "Tu refuses de remplir le silence avec quelque chose de faux. C’est déjà un compliment.", { trust: 4 }),
-      B("bel-compl-a", "« Ton rire, quand tu oublies de séduire. »", "audace", "Je vais devoir surveiller ce rire. Ou te donner davantage d’occasions de l’entendre.", { affection: 4 }),
-    ], { minStage: 0, mood: "smirk" }),
-    scene("bellirith-parfum", "Le parfum inoffensif", "Bellirith vous tend un flacon. « Aucun enchantement. Seulement de la cendre, du velours et une quantité indécente d’orgueil. Tu peux vérifier. »", [
-      B("bel-parfum-r", "Examiner chaque trace arcanique avant de le sentir.", "resonance", "Rien. Cette absence de magie me rend presque nerveuse. Ta confiance, elle, sera donc réellement gagnée.", { trust: 4 }),
-      B("bel-parfum-l", "Lui demander pourquoi elle tient à vous offrir quelque chose de neutre.", "lucidite", "Parce que je veux parfois te plaire sans pouvoir accuser mes sortilèges du résultat.", { trust: 3, affection: 2 }),
-      B("bel-parfum-a", "Lui demander de le porter pour vérifier son effet sur vous.", "audace", "Expérience rigoureusement scientifique, bien sûr. Approche.", { affection: 3, desire: 2 }),
-    ], { minStage: 0, mood: "seductive" }),
-    scene("bellirith-danse", "La distance d’une danse", "Bellirith tend la main sans avancer. « C’est toi qui choisiras la distance. Je préviens seulement : je danse très bien à toutes. »", [
-      B("bel-danse-s", "Commencer loin et réduire l’espace seulement quand vous le souhaitez.", "sangFroid", "Tu ne confonds pas lenteur et hésitation. J’aime cette assurance.", { trust: 3, desire: 1 }),
-      B("bel-danse-a", "L’attirer immédiatement contre vous.", "audace", [line("Narration", "Bellirith heurte votre poitrine avec un rire bas, puis retient ses hanches juste avant de suivre l’élan."), line("Bellirith", "Cette proximité me plaît. La suivante, cependant, restera une question — même si mon corps formule des arguments scandaleusement convaincants.")], { affection: 3, desire: 3 }),
-      B("bel-danse-l", "Lui demander quelle distance elle désire, elle.", "lucidite", "Voilà une question que peu pensent à poser à celle qui semble toujours mener. Plus près, s’il te plaît.", { trust: 4, affection: 2 }),
-    ], { minStage: 1, periods: ["soirée"], mood: "teasing" }),
-    scene("bellirith-roman", "Le pire roman de séduction", "Bellirith referme un roman avec indignation. « Le héros ignore trois refus, poursuit l’héroïne jusque chez elle et le récit appelle cela de la passion. Même moi, je trouve sa technique embarrassante. »", [
-      B("bel-roman-l", "Distinguer le fantasme de poursuite du comportement acceptable dans leur monde.", "lucidite", "Exactement. On peut jouer avec une fiction sans la transformer en permission générale. Le livre aurait gagné à le savoir.", { trust: 4 }),
-      B("bel-roman-a", "Lire la scène en remplaçant le héros par une oie très insistante.", "audace", "L’héroïne repousse donc l’oie pour la troisième fois… Voilà, le caractère grotesque devient enfin évident. Continue.", { affection: 4 }),
-      B("bel-roman-s", "Lui demander quel récit de désir elle aurait aimé lire.", "sangFroid", "Un récit où l’on peut vouloir très fort sans que l’autre cesse d’exister. Ambitieux, apparemment.", { trust: 4, affection: 1 }),
-    ], { minStage: 0, mood: "smirk" }),
-    scene("bellirith-gants", "Le choix d’une main", "Bellirith pose une paire de gants noirs entre vous. « Ils neutralisent presque entièrement mon aura. Avec eux, un contact ne dira rien que nous n’ayons décidé avant. Sans eux, il faudra davantage d’attention. Quelle version préfères-tu aujourd’hui ? »", [
-      B("bel-gants-s", "Choisir les gants et lui laisser décider si elle veut ensuite vous toucher.", "sangFroid", "De la clarté sans froideur. Je les mets… et je voudrais tout de même ta main, si l’offre tient toujours.", { trust: 5, affection: 1 }),
-      B("bel-gants-l", "Lui demander laquelle des deux versions la met, elle, le plus à l’aise.", "lucidite", "Les gants, aujourd’hui. Merci de te souvenir que la démone peut aussi avoir besoin d’une limite.", { trust: 5 }),
-      B("bel-gants-a", "Choisir sans gants, avec un mot d’arrêt convenu avant le contact.", "audace", "Audacieux·se et préparé·e. Dis le mot une fois pour que nous sachions tous deux qu’il t’appartient.", { trust: 4, desire: 2 }),
-    ], { minStage: 0, mood: "seductive" }),
-    scene("bellirith-jeu", "Une défaite très personnelle", "Bellirith fixe un plateau de jeu comme s’il l’avait trahie. « Je perds. Sans charme, sans lecture de pensée et contre un jeu destiné aux enfants de huit ans. Tu comprendras que ma réputation exige ton silence. »", [
-      B("bel-jeu-a", "Célébrer votre victoire avec une révérence insupportable.", "audace", "Profite de cet instant. À la revanche, je serai impitoyable et toujours parfaitement honnête — ce qui est très frustrant.", { affection: 4 }),
-      B("bel-jeu-l", "Repérer qu’elle sacrifie ses meilleures pièces pour construire des figures jolies.", "lucidite", "Je n’essaie donc pas vraiment de gagner… Quelle découverte nuisible à mon indignation. Cette étoile était splendide, admettez-le.", { trust: 3, affection: 1 }),
-      B("bel-jeu-s", "Proposer une revanche sans lui offrir la victoire.", "sangFroid", "Tu respectes davantage mon désir de jouer que mon besoin de sauver la face. Distribue les pièces.", { trust: 4 }),
-    ], { minStage: 0, mood: "teasing" }),
-    scene("bellirith-miroir", "Le miroir trop flatteur", "Le miroir enchanté devant Bellirith affine chacun de ses traits jusqu’à produire une beauté presque irréelle. Elle grimace. « Il me montre ce que la personne qui l’a ensorcelé pensait devoir désirer. J’ai rarement vu un compliment aussi insultant. »", [
-      B("bel-miroir-r", "Désactiver seulement l’enchantement, sans altérer le reflet ordinaire.", "resonance", "Voilà. Mon visage, avec ses choix, sa fatigue et aucune correction anonyme. Beaucoup mieux.", { trust: 4 }),
-      B("bel-miroir-l", "Demander ce qu’elle-même aime voir lorsqu’elle se regarde.", "lucidite", "Mes yeux quand je viens de rire. Ils cessent alors de surveiller l’effet qu’ils produisent. Fais-moi rire et vérifions.", { trust: 3, affection: 2 }),
-      B("bel-miroir-a", "Vous placer devant le miroir pour subir son mauvais goût à sa place.", "audace", "Il vient de te donner des pommettes héroïques et des cheveux impossibles. Je retire tout ce que j’ai dit : cet objet est hilarant.", { affection: 4 }),
-    ], { minStage: 0, mood: "thoughtful" }),
-    scene("bellirith-vetements", "Sans costume de démone", "Bellirith porte une chemise simple et paraît presque contrariée d’être à l’aise. « Pas de bijoux, pas de cuir, pas de mise en scène. J’ai l’impression d’être venue sans armure. »", [
-      B("bel-tenue-l", "Ne pas transformer sa simplicité en nouveau fantasme.", "lucidite", "Merci. Tu me regardes sans prétendre que la vulnérabilité me rend plus belle pour ton usage.", { trust: 5 }),
-      B("bel-tenue-s", "Lui proposer de repartir si elle ne veut plus être vue ainsi.", "sangFroid", "Et perdre l’occasion de découvrir si je peux rester ? Non. Assieds-toi près de moi.", { trust: 4, affection: 1 }),
-      B("bel-tenue-a", "« L’armure était superbe. La femme dedans m’intéresse davantage. »", "audace", "Une phrase dangereusement réussie. Tu as le droit d’en être fier·e.", { affection: 4, desire: 1 }),
-    ], { minStage: 2, mood: "thoughtful" }),
-    scene("bellirith-silence", "Quand le charme se tait", "Bellirith cherche une plaisanterie, puis renonce. « Je ne sais pas toujours quoi offrir quand je ne séduis pas. Le silence me donne l’impression de devenir remplaçable. »", [
-      B("bel-silence-s", "Partager le silence sans détourner votre attention.", "sangFroid", "Tu restes vraiment. Sans spectacle, sans récompense. C’est presque insupportablement doux.", { trust: 5, affection: 2 }),
-      B("bel-silence-l", "« Ta valeur ne se mesure pas à ce que tu provoques chez moi. »", "lucidite", "Je voudrais croire cette phrase sans la transformer en nouvelle victoire. Répète-la plus tard.", { trust: 5 }),
-      B("bel-silence-a", "« Tu pourrais m’offrir une opinion terriblement impopulaire. »", "audace", "Très bien : les roses sont surestimées et Valurn triche mal. Tu es toujours là ? Excellent.", { affection: 4 }),
-    ], { minStage: 2, mood: "cold" }),
-    scene("bellirith-jalousie", "Le désir n’est pas un classement", "Bellirith observe la salle avec un calme trop étudié. « Je sais attirer tous les regards. Je ne sais pas quoi faire lorsque le tien se pose ailleurs et que je n’ai pas le droit de le rappeler par magie. »", [
-      B("bel-jal-l", "« Tu peux demander mon attention sans réclamer sa propriété. »", "lucidite", "Regarde-moi, alors. Pas parce que je l’ordonne. Parce que je te le demande.", { trust: 5, affection: 2 }),
-      B("bel-jal-s", "Reconnaître sa peur sans promettre de ne plus regarder personne.", "sangFroid", "Une réponse honnête qui ne m’achète pas avec une fausse exclusivité. Je vais apprendre à la supporter.", { trust: 5 }),
-      B("bel-jal-a", "« Pour l’instant, tu as réussi à le récupérer sans aucun sort. »", "audace", "Et j’en suis ridiculement fière. Viens plus près avant que je ne gâche ce progrès.", { affection: 4, desire: 3 }),
-    ], { minStage: 3, mood: "thoughtful" }),
-    scene("bellirith-matin", "La demande du matin", "Bellirith reste au bord du lit, dos tourné. « Je pourrais inventer une raison brillante de prolonger cette matinée. La vérité est moins élégante : je voudrais que tu restes. »", [
-      B("bel-matin-s", "« Je reste. Et tu pourras me le redemander demain. »", "sangFroid", "Pas d’emprise, pas d’éternité forcée. Seulement une réponse renouvelable. Oui.", { trust: 5, affection: 3 }),
-      B("bel-matin-l", "Lui demander ce que “rester” signifie pour elle aujourd’hui.", "lucidite", "Du thé, ton épaule, et aucune obligation de rendre le moment spectaculaire.", { trust: 5, affection: 2 }),
-      B("bel-matin-a", "La ramener doucement contre vous. « Demande acceptée. »", "audace", "Clair, enthousiaste et toujours révocable. Tu apprends très vite.", { affection: 5, desire: 3 }),
-    ], { minStage: 4, periods: ["aube", "matin"], mood: "seductive" }),
-    scene("bellirith-question", "Cinq minutes de séduction", "Bellirith lève un doigt avant d’approcher. « Question préalable : as-tu envie que je te séduise pendant cinq minutes, que je te parle franchement, ou que je te laisse tranquille ? Les trois réponses sont intéressantes. »", [
-      B("bel-question-s", "Choisir une conversation franche, sans jeu de charme.", "sangFroid", "Alors je rangerai les effets de voix. Franchement : ta présence me plaît, et je n’ai pas besoin de te désorienter pour que ce soit vrai.", { trust: 4 }),
-      B("bel-question-l", "Lui demander ce qu’elle désire, elle, avant de répondre.", "lucidite", "Être choisie après avoir rendu le refus facile. Voilà pourquoi la question comptait davantage que ma performance.", { trust: 3, affection: 1 }),
-      B("bel-question-a", "Accepter les cinq minutes et déclencher vous-même le chronomètre.", "audace", "Une limite mesurable et un public volontaire. Quelle délicieuse pression. Regarde-moi bien.", { affection: 3, desire: 1 }),
-    ], { mood: "seductive" }),
-    scene("bellirith-mauvaise-blague", "Une blague sans enchantement", "Bellirith retient un sourire. « J’ai préparé une plaisanterie sans charme magique, sans double sens et sans menace voilée. Elle est donc probablement très mauvaise. Souhaites-tu tout de même l’entendre ? »", [
-      B("bel-blague-s", "Dire oui sans exiger qu’elle soit brillante.", "sangFroid", "Merci. J’ignorais que l’absence d’attente pouvait être aussi accueillante. La blague concerne un démon et une facture de blanchisserie…", { trust: 3 }),
-      B("bel-blague-l", "Lui demander pourquoi elle tient à la raconter sans aucun pouvoir.", "lucidite", "Parce que si tu ris, je veux savoir que c’est moi — pas mon aura, pas ton vertige. Voilà qui rend la chute soudain terrifiante.", { trust: 4 }),
-      B("bel-blague-a", "Proposer une compétition de plaisanteries réellement médiocres.", "audace", "Tu transformes ma vulnérabilité en duel. Parfait. La personne qui fait rire l’autre en dernier gagne le droit de recommencer demain.", { affection: 3 }),
-    ], { mood: "smirk" }),
-    scene("bellirith-couture", "L’aiguille et le décolleté", "La couture de la robe de Bellirith a cédé sous le bras. Elle tient l’ouverture d’une main et l’aiguille de l’autre. « Je pourrais prétendre que cette tenue cherche à t’offrir une vue plus généreuse. La vérité humiliante est que je ne sais pas faire un point droit. »", [
-      B("bel-cou-a", "Proposer de retirer toute la robe pour simplifier la réparation.", "audace", [line("Bellirith", "Solution techniquement irréprochable et scandaleusement intéressée."), line("Narration", "Elle approche assez près pour laisser son souffle toucher votre bouche, puis vous plante l’aiguille dans la manche — pas dans la peau."), line("Bellirith", "Mais si tu veux me déshabiller, tu formuleras une seconde proposition après avoir sauvé la première.")], { affection: 4, desire: 3 }),
-      B("bel-cou-l", "Retourner la robe pour lui montrer le point depuis l’intérieur.", "lucidite", [line("Bellirith", "Tu regardes la construction plutôt que l’ouverture. Quelle déception raffinée."), line("Narration", "Elle suit vos gestes, tire trop fort, recommence et finit par obtenir une ligne presque régulière."), line("Bellirith", "Ne souris pas. Je viens d’acquérir une compétence domestique et je me sens dangereusement fréquentable.")], { trust: 4, affection: 1 }),
-      B("bel-cou-s", "Tenir le tissu sans regarder ailleurs avec une pudeur théâtrale.", "sangFroid", [line("Bellirith", "Tu peux regarder. Ma peau n’est pas devenue interdite parce que j’ai besoin d’aide."), line("Narration", "Vous soutenez le tissu pendant qu’elle coud. Aucun de vous ne transforme la proximité en promesse."), line("Bellirith", "Voilà. Désirée sans être saisie, aidée sans être infantilisée. Cette couture est hideuse et la scène presque parfaite.")], { trust: 5, affection: 2 }),
-    ], { minStage: 1, mood: "seductive" }),
-  ],
+  bellirith: BELLIRITH_AMBIENT_LINES,
+
   amanea: [
     scene("amanea-piano", "Une note qui ne commande rien", "Amanea retire ses gants devant le piano. « Quand une reine joue, la cour cherche un ordre entre les notes. J’aimerais achever une mélodie qui ne serve ni traité, ni victoire, ni menace. »", [
       A("ama-piano-a", "Inventer une mélodie volontairement inutile.", "audace", [line("Amanea", "Elle ne célèbre aucune victoire, ne réclame aucune fidélité et contient une erreur atroce à la quatrième mesure."), line("{player}", "Vous l’aimez donc."), line("Amanea", "Profondément. Recommence.")], { affection: 4 }),

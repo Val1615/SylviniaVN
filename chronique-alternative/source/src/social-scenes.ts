@@ -200,18 +200,6 @@ export const SOCIAL_SCENES: SocialScene[] = [
   // Elles ne réparent pas automatiquement les liens : elles montrent ce que
   // les personnages font, concrètement, une fois la vérité prononcée.
   {
-    id: "bellirith-after-memory", title: "Les rideaux rouverts", characters: ["bellirith"], triggerCharacters: ["bellirith"], requiredPresent: ["bellirith"], locations: ["akuhn"], sublocations: ["akuhn-music-room"], minStages: { bellirith: 4 }, requiresKnowledge: ["knows_bellirith_mortal_death"], excludesFlags: ["bellirith-memory-space"], oneTime: true, priority: 125, mood: "calm",
-    prompt: [
-      line("Narration", "Lors de votre visite suivante, Bellirith a rouvert les rideaux de la salle de musique. Elle classe des partitions, jette deux flacons de parfum éventés et vous indique une pile sans vous demander de commenter son silence."),
-      line("Bellirith", "Ce que je t’ai raconté n’était ni une invitation à me trouver fragile, ni un prélude destiné à rendre notre prochaine proximité plus intense."),
-      line("Bellirith", "Je veux reprendre possession de cette pièce avec des gestes qui ne doivent rien à ma mort. Aide-moi à choisir ce qui reste. Le reste de mon histoire attendra que je décide de le reprendre."),
-    ],
-    choices: [
-      choice("bam-s", "Classer les partitions en suivant ses indications, sans rouvrir la confidence.", "sangFroid", [line("Narration", "Vous travaillez jusqu’à ce que le piano redevienne un instrument plutôt qu’un témoin."), line("Bellirith", "Merci de ne pas avoir transformé mon silence en question. Cette soirée m’appartient de nouveau.")], { trust: 8, affection: 2, flags: ["bellirith-memory-space"] }),
-      choice("bam-l", "Lui demander quelle musique elle veut entendre dans une pièce redevenue sienne.", "lucidite", [line("Bellirith", "Quelque chose de mauvais, de dansant et parfaitement dépourvu de valeur symbolique."), line("Narration", "Vous trouvez une partition assez légère pour lui arracher un rire qui n’explique rien et n’en a pas besoin.")], { trust: 6, affection: 5, flags: ["bellirith-memory-space"] }),
-    ],
-  },
-  {
     id: "iriana-after-mother", title: "Ce que la confidence ne doit pas", characters: ["iriana"], triggerCharacters: ["iriana"], requiredPresent: ["iriana"], locations: ["algratal"], sublocations: ["algratal-music-room"], minStages: { iriana: 4 }, requiresKnowledge: ["knows_iriana_mother_death"], excludesFlags: ["iriana-private-choice"], oneTime: true, priority: 128, mood: "troubled",
     prompt: [
       line("Narration", "Lors de votre rencontre suivante, Iriana laisse le piano fermé. Elle a préparé deux sièges face à face, sans bureau ni couronne entre eux."),
@@ -224,15 +212,15 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "valurn-after-truth", title: "Un récit sans acquittement", characters: ["valurn"], triggerCharacters: ["valurn"], requiredPresent: ["valurn"], locations: ["algratal"], sublocations: ["algratal-market"], minStages: { valurn: 4 }, requiresKnowledge: ["knows_valurn_true_abandonment"], excludesFlags: ["valurn-accountability"], oneTime: true, priority: 128, mood: "away",
+    id: "valurn-after-truth", title: "Un récit sans acquittement", characters: ["valurn"], triggerCharacters: ["valurn"], requiredPresent: ["valurn"], locations: ["algratal"], sublocations: ["algratal-market"], minStages: { valurn: 4 }, requiresKnowledge: ["knows_valurn_did_not_return"], excludesFlags: ["valurn-accountability"], oneTime: true, priority: 128, mood: "away",
     prompt: [
-      line("Narration", "Valurn vous attend devant le Croissant sans jeton ni sourire préparé. Sur la table, il a consigné la découverte de l’artefact, la date de son choix et l’endroit où Bellirith aurait dû être libérée."),
+      line("Narration", "Valurn vous attend devant le Croissant sans jeton ni sourire préparé. Sur la table, il a consigné ce dont il se souvient de cette nuit-là : l’heure de son départ, le talisman laissé entre les mains de Bellirith, l’heure à laquelle il aurait dû revenir."),
       line("Valurn", "Je vous ai dit la vérité parce que continuer à la cacher devenait insupportable. Ce soulagement ne réduit pas ce que j’ai fait ; il risque seulement de me donner l’illusion d’avoir payé en l’avouant."),
       line("Valurn", "Bellirith a le droit de connaître ce document et celui de ne jamais le lire. Je ne vais pas déposer ma confession à ses pieds pour lui imposer ensuite de gérer mon remords."),
     ],
     choices: [
       choice("vat-s", "Confier le document à une dépositaire neutre qui signalera seulement son existence à Bellirith.", "sangFroid", [line("{player}", "Elle choisira si elle veut le recevoir. Aucun refus ne vous sera rapporté comme une invitation à insister."), line("Valurn", "Je n’aurai donc ni audience, ni verdict, ni moyen de transformer son silence en scène sur ma souffrance."), line("Narration", "Il scelle le document et inscrit cette limite au-dessus de sa propre signature.")], { trust: 9, flags: ["valurn-accountability"] }),
-      choice("vat-l", "Retirer du récit toutes les phrases qui tentent encore d’expliquer Bellirith à sa place.", "lucidite", [line("Narration", "Vous barrez : « elle aurait moins souffert », « sa part humaine était condamnée », « je croyais la sauver ». Les faits demeurent ; la justification qu’elle n’a jamais consentie à entendre disparaît."), line("Valurn", "Il ne reste rien qui me rende raisonnable."), line("{player}", "Il reste ce que vous avez choisi. C’est ce qu’elle a le droit de savoir."), line("Valurn", "Alors gardons cette version.")], { trust: 8, confluence: 2, flags: ["valurn-accountability"] }),
+      choice("vat-l", "Retirer du récit toutes les phrases qui tentent encore d’expliquer Bellirith à sa place.", "lucidite", [line("Narration", "Vous barrez : « je n’avais pas le choix », « elle aurait dû me suivre », « je croyais la protéger ». Les faits demeurent ; la justification qu’elle n’a jamais consentie à entendre disparaît."), line("Valurn", "Il ne reste rien qui me rende raisonnable."), line("{player}", "Il reste ce que vous avez choisi. C’est ce qu’elle a le droit de savoir."), line("Valurn", "Alors gardons cette version.")], { trust: 8, confluence: 2, flags: ["valurn-accountability"] }),
     ],
   },
   {
@@ -258,20 +246,6 @@ export const SOCIAL_SCENES: SocialScene[] = [
     choices: [
       choice("ldat-s", "Préparer le repas et laisser la chaise exactement où Lineva l’a gardée.", "sangFroid", [line("Narration", "Vous posez deux assiettes et du pain. Draven ne raconte pas la campagne ; Lineva ne rédige aucun rapport."), line("Draven", "Nous pourrons déplacer la chaise un autre jour."), line("Lineva", "Ou ne pas la déplacer. Ce sera encore notre décision.")], { trust: 6, flags: ["lineva-draven-grief-shared"], relationshipEffects: { lineva: { trust: 6, affection: 2 }, draven: { trust: 6, affection: 2 } } }),
       choice("ldat-l", "Leur demander quel souvenir de cette place n’appartient ni à la guerre ni à sa mort.", "lucidite", [line("Draven", "Elle trichait aux cartes en profitant de la lumière derrière elle."), line("Lineva", "Et toi, tu faisais semblant de ne rien voir jusqu’à la dernière manche."), line("Narration", "Le rire ne remplace pas le deuil. Il rend seulement à la femme absente une vie plus vaste que sa dernière journée.")], { affection: 5, trust: 4, flags: ["lineva-draven-grief-shared"], relationshipEffects: { lineva: { affection: 5, trust: 4 }, draven: { affection: 4, trust: 4 } } }),
-    ],
-  },
-  {
-    id: "valurn-bellirith-after-truth", title: "La distance nommée", characters: ["valurn", "bellirith"], requiredPresent: ["valurn", "bellirith"], locations: ["akuhn"], sublocations: ["akuhn-music-room"], minStages: { valurn: 4, bellirith: 4 }, requiresFlags: ["fracture-valurn-bellirith-truth"], excludesFlags: ["fracture-valurn-bellirith-distance-set"], oneTime: true, priority: 120, mood: "stern",
-    prompt: [
-      line("Narration", "Bellirith joue au piano lorsque Valurn s’arrête sur le seuil. Il ne franchit pas la porte. Elle ne cesse pas de jouer pour lui épargner l’attente."),
-      line("Valurn", "Je peux partir."),
-      line("Bellirith", "Tu pouvais revenir. Tu as décidé à ma place. Ne transforme pas maintenant chaque seconde en demande d’instructions destinée à te rendre innocent."),
-      line("Valurn", "Alors je reste sur le seuil jusqu’à ce que tu aies terminé le morceau. Rien de plus."),
-      line("Bellirith", "Rien de plus. Et ce n’est pas un pardon."),
-    ],
-    choices: [
-      choice("vbat-s", "Vous asseoir loin du seuil et laisser à Bellirith la fin du morceau.", "sangFroid", [line("Narration", "Aucun mot ne vient remplir les mesures. Valurn repart après la dernière note, sans demander si sa retenue a compté."), line("Bellirith", "Il a enfin accompli exactement ce qui était demandé sans le convertir en sacrifice héroïque. Je déteste que cela mérite d’être remarqué.")], { trust: 6, flags: ["fracture-valurn-bellirith-distance-set"], relationshipEffects: { bellirith: { trust: 6 }, valurn: { trust: 4 } } }),
-      choice("vbat-l", "Rappeler à Valurn que respecter cette distance ne crée aucune dette envers lui.", "lucidite", [line("Valurn", "Je sais. Ce sera peut-être la première chose correcte que je ferai sans en attendre le résultat."), line("Bellirith", "Ne promet rien. Pars quand le morceau s’achève."), line("Narration", "Il acquiesce. La limite demeure entière, sans réconciliation ajoutée par-dessus.")], { trust: 5, flags: ["fracture-valurn-bellirith-distance-set"], relationshipEffects: { bellirith: { trust: 6 }, valurn: { trust: 5 } } }),
     ],
   },
 
@@ -323,8 +297,8 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "shared-valurn-bellirith", title: "Une histoire à deux bords", characters: ["valurn", "bellirith"], locations: ["akuhn", "algratal"], sublocations: ["akuhn-music-room", "algratal-palace-council"], minStages: { valurn: 2, bellirith: 2 }, requiresKnowledge: ["knows_valurn_bellirith_past", "knows_bellirith_human_past"], excludesFlags: ["fracture-valurn-bellirith-truth"], oneTime: false, mood: "charming",
-    prompt: [line("Bellirith", "Mon frère affirme qu’il ne regrette rien. C’est pratique : il n’a ainsi jamais besoin de présenter d’excuses."), line("Valurn", "Ma sœur appelle ‘conversation’ tout échange dont elle connaît déjà le verdict."), line("Bellirith", "Le verdict tient en trois mots : il n’est pas revenu."), line("Valurn", "Et l’histoire commence avant ces trois mots."), line("Narration", "Ils connaissent les mêmes lieux, la même pierre de stase et la même promesse. Tout le reste se heurte entre deux versions qu’aucun trait d’esprit ne parvient à réunir.")],
+    id: "shared-valurn-bellirith", title: "Une histoire à deux bords", characters: ["valurn", "bellirith"], locations: ["akuhn", "algratal"], sublocations: ["akuhn-music-room", "algratal-palace-council"], minStages: { valurn: 2, bellirith: 2 }, requiresKnowledge: ["knows_valurn_bellirith_past", "knows_bellirith_bhaal_family"], oneTime: false, mood: "charming",
+    prompt: [line("Bellirith", "Mon frère affirme qu’il ne regrette rien. C’est pratique : il n’a ainsi jamais besoin de présenter d’excuses."), line("Valurn", "Ma sœur appelle ‘conversation’ tout échange dont elle connaît déjà le verdict."), line("Bellirith", "Le verdict tient en trois mots : il n’est pas revenu."), line("Valurn", "Et l’histoire commence avant ces trois mots."), line("Narration", "Ils connaissent les mêmes lieux, les mêmes vieux jeux et, visiblement, la même promesse. Tout le reste se heurte entre deux versions qu’aucun trait d’esprit ne parvient à réunir.")],
     choices: [
       choice("svb-price", "Refuser de devenir l’arbitre de leur vieille rivalité.", "sangFroid", [line("Bellirith", "Sage. Il triche."), line("Valurn", "Elle change les règles après avoir gagné."), line("Narration", "Pour une fois, ils vous laissent hors du duel.")], { trust: 3, relationshipEffects: { bellirith: { trust: 3 } } }),
       choice("svb-truth", "Leur demander où leurs deux récits cessent de décrire la même nuit.", "lucidite", [line("Bellirith", "Lorsqu’il a promis de revenir."), line("Valurn", "Avant."), line("Narration", "Valurn refuse d’expliquer ce seul mot. Bellirith, elle, cesse de sourire : la divergence vient d’être nommée sans être encore révélée.")], { trust: 3, relationshipEffects: { bellirith: { trust: 4, affection: 1 } } }),
