@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Lecture des scènes CA : fondu bas des sprites, Retour et Historique.
+   Inspiré du Mode Histoire (voile bas du #gameCard, barre #trailerVNControls,
+   fenêtre #trailerHistoryModal). Chargée en dernier ; aucun PNG n’est modifié,
+   le fondu est un simple masque CSS.
+   ========================================================================== */
+
+/* 1. Fondu bas des sprites.
+   Le Mode Histoire assombrit le bas de la scène (.58 au pied, .32 à 19 %, 0 à 45 %).
+   Ici on reprend la même rampe en opacité (.42 → .68 → 1), exprimée en hauteur
+   d’écran depuis le pied du cadre des sprites (12 vh au-dessus du bas, derrière
+   la boîte de dialogue) : le bas du personnage se dissout juste au-dessus de la
+   boîte au lieu d’être tranché, sans assombrir l’art. */
+:root {
+  --ca-fondu-sprite: linear-gradient(0deg, transparent 0, rgba(0, 0, 0, .14) 2vh, rgba(0, 0, 0, .42) 7vh, rgba(0, 0, 0, .68) 13vh, #000 26vh);
+}
+/* Scènes de dialogue, sorties à plusieurs, quêtes croisées : le cadre .scene-cast coupe les sprites, on masque le cadre. */
+.scene-cast,
+/* Sprite isolé (hors cadre) : masque sur l’image elle-même. */
+.dialogue-overlay > .scene-sprite,
+.v2-scene > .scene-sprite,
+/* Scènes intimes (solo, à trois, Bellirith & Naïah). */
+.intimacy-sprite img,
+.group-intimacy-sprite img,
+/* Mini-jeu Bellirith & Naïah. */
+.bn-game-sprite img {
+  -webkit-mask-image: var(--ca-fondu-sprite);
+  mask-image: var(--ca-fondu-sprite);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* 2. Barre de lecture : pastilles discrètes et translucides (style Mode Histoire). */
+.scene-lecture { display: inline-flex; align-items: center; gap: calc(.3rem * var(--k, 1)); margin-right: calc(.2rem * var(--k, 1)); }
+.scene-lecture-btn {
+  display: inline-flex; align-items: center; gap: calc(.35rem * var(--k, 1));
+  min-height: calc(30px * var(--echelle, 1));
+  padding: calc(.3rem * var(--k, 1)) calc(.75rem * var(--k, 1));
+  border: 0; border-radius: 999px;
+  background: rgba(4, 6, 12, .34);
+  color: rgba(244, 235, 215, .72);
+  text-shadow: 0 2px 9px #000;
+  font: 700 calc(.78rem * var(--tr, 1))/1.1 var(--v2-serif, Georgia, serif);
+  letter-spacing: .04em;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  transition: color .2s, background .2s, opacity .2s;
+}
+.scene-lecture-btn span { font-size: 1.05em; line-height: 1; }
+.scene-lecture-btn kbd { padding: 0 .3em; border: 1px solid rgba(244, 235, 215, .28); border-radius: 4px; background: none; color: inherit; font: 600 .72em var(--v2-sans, sans-serif); opacity: .75; }
+.scene-lecture-btn:hover:not(:disabled), .scene-lecture-btn:focus-visible { outline: none; color: #ffe1a0; background: rgba(92, 68, 28, .5); }
+.scene-lecture-btn:active:not(:disabled) { color: #9feeff; background: rgba(80, 170, 220, .2); }
+.scene-lecture-btn:disabled { opacity: .38; cursor: default; }
+.v2-scene-intime .scene-lecture-btn:hover:not(:disabled), .v2-scene-intime .scene-lecture-btn:focus-visible { color: #ffc0d0; background: rgba(120, 30, 56, .45); }
+/* Les outils du haut restent alignés sur la barre. */
+.v2-scene .scene-outils { align-items: center; }
+
+/* 3. Historique : panneau translucide ancré à droite, l’illustration reste visible à gauche. */
+.v2-scene .scene-backlog {
+  place-items: stretch end;
+  padding: max(calc(.6rem * var(--k, 1)), env(safe-area-inset-top)) max(calc(.8rem * var(--k, 1)), env(safe-area-inset-right)) calc(.8rem * var(--k, 1));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, .38));
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.v2-scene .backlog-boite {
+  width: min(calc(520px * var(--echelle, 1)), 92vw);
+  max-height: none; height: 100%;
+  border: 1px solid rgba(232, 201, 130, .48); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(12, 14, 22, .74), rgba(5, 7, 13, .80));
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .45);
+  clip-path: none; overflow: hidden;
+}
+.v2-scene .backlog-boite > header { padding: calc(.7rem * var(--k, 1)) calc(1rem * var(--k, 1)) calc(.55rem * var(--k, 1)); }
+.v2-scene .backlog-boite .surtitre { color: #9feeff; font: 700 calc(.72rem * var(--tr, 1)) var(--v2-sans, sans-serif); letter-spacing: .14em; text-transform: uppercase; }
+.v2-scene .backlog-boite h3 { color: #f1db9b; font-size: calc(1.1rem * var(--tr, 1)); }
+.v2-scene .backlog-boite .dlg-x { min-height: calc(32px * var(--echelle, 1)); border: 0; border-radius: 999px; background: rgba(4, 6, 12, .34); color: rgba(244, 235, 215, .8); }
+.v2-scene .backlog-liste { padding: calc(.7rem * var(--k, 1)) calc(1rem * var(--k, 1)) calc(.9rem * var(--k, 1)); }
+.v2-scene .backlog-ligne { background: rgba(255, 255, 255, .03); }
+.v2-scene .backlog-ligne p { color: rgba(255, 250, 238, .88); font-size: calc(.98rem * var(--tr, 1)); }
+.v2-scene-intime .backlog-boite { border-color: rgba(231, 101, 136, .5); background: linear-gradient(180deg, rgba(26, 10, 18, .74), rgba(10, 6, 12, .80)); }
+.v2-scene-intime .backlog-boite .surtitre { color: #ff9fbb; }
+.v2-scene-intime .backlog-boite h3 { color: #ffc0d0; }
+
+@media (max-width: 760px) {
+  .scene-lecture-btn { padding: calc(.3rem * var(--k, 1)) calc(.55rem * var(--k, 1)); }
+  .scene-lecture-btn kbd { display: none; }
+  .v2-scene .scene-backlog { place-items: stretch; }
+  .v2-scene .backlog-boite { width: auto; }
+}
+@media (max-height: 600px) and (orientation: landscape) {
+  .scene-lecture-btn { min-height: calc(26px * var(--echelle, 1)); padding: calc(.22rem * var(--k, 1)) calc(.6rem * var(--k, 1)); }
+  .scene-lecture-btn kbd { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-lecture-btn { transition: none; }
+}
