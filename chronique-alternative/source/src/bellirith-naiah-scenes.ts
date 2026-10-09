@@ -72,7 +72,7 @@ function anomaly(ctx: BNSceneContext): BNSceneData {
         T("Bellirith pose deux doigts sur le poignet de Naïah, juste là où le pouls se laisse prendre. Naïah baisse les yeux sur la main, puis les relève, ravie, comme si on venait de lui offrir un jeu de cartes neuf."),
         B("Tu as la peau froide.", "thoughtful"),
         Y("Et toi, tu as la main lourde. Tu cherches un endroit précis ?", "smirk"),
-      ], { relationshipEffects: { naiah: { affection: 1 } }, desire: 1 }),
+      ], { relationshipEffects: { naiah: { affection: 1 } } }),
       C("cross-bn-01-watch", "Rester à votre place et observer ce que Bellirith cherche.", "lucidite", [
         T("De votre table, la scène se lit comme un tour de prestidigitation dont on connaîtrait déjà le truc."),
         T("Bellirith essaie d’abord la proximité : elle s’assoit sur le coin de la table de Naïah. Naïah lui tend sa chope sans un mot. Elle essaie ensuite le regard, long, appuyé, celui qui fait rougir les gardes impériaux. Naïah le lui rend, avec la même durée exactement, et compte à voix basse."),
@@ -117,7 +117,7 @@ function anomaly(ctx: BNSceneContext): BNSceneData {
           Y("Mes bottes valent plus que toi. Mais d’accord. Si elle trouve, je te les donne. Si elle ne trouve pas, tu les cires pendant un mois.", "laugh"),
           B("Personne ne parie sur moi sans me demander mon avis.", "angry"),
           Y("Si. Nous deux. À l’instant.", "laugh"),
-        ], { desire: 1, relationshipEffects: { naiah: { affection: 1 } } }),
+        ], { relationshipEffects: { naiah: { affection: 1 } } }),
         C("cross-bn-01-leave", "Laisser Bellirith sortir la première et voir si Naïah la suit des yeux.", "resonance", [
           T("Bellirith quitte l’auberge sans saluer. Naïah la suit des yeux jusqu’à la porte, puis vous regarde, très contente d’elle."),
           Y("Elle reviendra. Les gens qui fouillent reviennent toujours vérifier la poche.", "smirk"),
@@ -180,7 +180,7 @@ function simulates(ctx: BNSceneContext): BNSceneData {
         Y("Et c’était une très belle contrefaçon. Tu l’as dit toi-même.", "smirk"),
         B("Je n’ai rien dit de tel.", "angry"),
         Y("Tes sourcils l’ont dit. Ils sont très bavards, tes sourcils.", "laugh"),
-      ], { affection: 1, relationshipEffects: { naiah: { affection: 1 } } }),
+      ], { affection: 1, desire: 2, relationshipEffects: { naiah: { affection: 1 } } }),
     ],
     beats: [{
       cast: DUO,
@@ -203,14 +203,14 @@ function simulates(ctx: BNSceneContext): BNSceneData {
           Y("Bien. Tu seras mon public.", "smirk"),
           B("Tu seras mon témoin. Elle se trompe, comme d’habitude.", "seductive"),
           T("Naïah souffle la moitié des bougies d’un geste. Bellirith rallume l’autre moitié d’un regard. Il reste juste assez de lumière pour que personne ne puisse prétendre ne pas avoir vu."),
-        ], { desire: 1, relationshipEffects: { naiah: { affection: 1 } } }, { launchesIntimacy: "bn-first" }),
+        ], { relationshipEffects: { naiah: { affection: 1 } } }, { launchesIntimacy: "bn-first" }),
         C(BN_FIRST_LATER, "Proposer de garder cette nuit pour plus tard.", "sangFroid", [
           P("Pas ce soir. Mais je ne dis pas non."),
           B("Je déteste attendre. C’est précisément ce qui rend l’attente si délicieuse quand c’est moi qui la fixe.", "teasing"),
           Y("Moi, je ne déteste rien. Je patiente et je m’entraîne.", "smirk"),
           T("Naïah ajoute un second bâton dans la cire, à côté du premier, puis le barre aussitôt."),
           Y("Celui-là ne compte pas encore. Il attend ta réponse.", "laugh"),
-        ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+        ], { trust: 1, desire: 2, relationshipEffects: { naiah: { trust: 1 } } }),
         C(BN_FIRST_DECLINE, "Refuser d’en faire partie, sans retirer votre amitié à aucune des deux.", "resonance", [
           P("Je ne veux pas en faire partie. Jouez sans moi, si vous jouez."),
           B("Dommage. Mon enquête continue, avec ou sans ton regard.", "teasing"),
@@ -218,7 +218,7 @@ function simulates(ctx: BNSceneContext): BNSceneData {
           P("J’applaudirai le reste."),
           Y("Le reste sera très bien aussi. Je n’ai pas besoin d’une chambre pour gagner.", "laugh"),
           T("Bellirith range le vin. Naïah garde les bougies. Le jeu, lui, ne s’éteint pas."),
-        ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+        ], { trust: 1, desire: 1, relationshipEffects: { naiah: { trust: 1 } } }),
       ],
     }],
   };
@@ -256,18 +256,18 @@ function threeAnswers(ctx: BNSceneContext): BNSceneData {
         P("Je compte. Personne ne touche aux jetons sauf moi."),
         B("Un arbitrage en règle. Comme c’est austère.", "teasing"),
         Y("Comme c’est rassurant. Tu triches mieux quand personne ne regarde.", "smirk"),
-      ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+      ], { trust: 1, desire: 2, relationshipEffects: { naiah: { trust: 1 } } }),
       C("cross-bn-03-coach", "Glisser à Naïah que Bellirith annonce toujours la vérité de ce qu’elle lit.", "resonance", [
         P("Elle ne ment jamais sur ce qu’elle lit. Sers-t’en."),
         Y("Je sais. C’est sa plus grande faiblesse. Elle est trop fière pour bluffer.", "laugh"),
         B("Je suis trop douée pour avoir besoin de bluffer. Nuance.", "smirk"),
-      ], { relationshipEffects: { naiah: { affection: 1 } } }),
+      ], { desire: 1, relationshipEffects: { naiah: { affection: 1 } } }),
       C("cross-bn-03-tease", "Demander à Bellirith ce qu’elle mise, puisqu’elle aime tant les enjeux.", "audace", [
         P("Et tu mises quoi, toi ?"),
         B("Ma patience. C’est ce que j’ai de plus rare.", "seductive"),
         Y("Moi je mise un baiser simulé, à livrer quand je veux.", "smirk"),
         B("Garde-le. J’ai déjà une collection.", "cold"),
-      ], { desire: 1 }),
+      ], { desire: 2 }),
     ],
     beats: [],
   };
@@ -313,12 +313,12 @@ function howFar(ctx: BNSceneContext): BNSceneData {
         B("Il sert toujours avec moi. On ne me dit jamais non deux fois, parce que je l’entends la première.", "cold"),
         Y("Le mien, ce sera « brume ». Si je le dis, tu t’arrêtes, même au milieu d’une phrase.", "neutral"),
         B("Même au milieu d’une très belle phrase. Promis.", "seductive"),
-      ], { trust: 1, relationshipEffects: { naiah: { trust: 2 } } }),
+      ], { trust: 1, desire: 2, relationshipEffects: { naiah: { trust: 2 } } }),
       C("cross-bn-04-push", "Pousser Bellirith à poser la question franchement, sans détour.", "audace", [
         P("Demande-lui clairement. Tu sais faire."),
         B("Je sais tout faire. Je préfère d’ordinaire qu’on me supplie.", "smirk"),
         Y("Elle ne demande jamais. Elle annonce. C’est pour ça qu’on la déteste et qu’on reste.", "laugh"),
-      ], { desire: 1, relationshipEffects: { naiah: { affection: 1 } } }),
+      ], { desire: 2, relationshipEffects: { naiah: { affection: 1 } } }),
     ],
     beats: [{
       intro: [
@@ -337,19 +337,19 @@ function howFar(ctx: BNSceneContext): BNSceneData {
           P("Je viens."),
           Y("Bien. Plus il y a de public, plus le jeu est drôle.", "smirk"),
           T("Bellirith tend une main à chacune et à chacun. Naïah prend la sienne la première."),
-        ], { desire: 1, relationshipEffects: { naiah: { affection: 1 } } }, { launchesIntimacy: "bn-limit" }),
+        ], { relationshipEffects: { naiah: { affection: 1 } } }, { launchesIntimacy: "bn-limit" }),
         C(BN_LIMIT_LATER, "Leur proposer de reprendre ce jeu une autre nuit.", "sangFroid", [
           P("Une autre nuit. Je veux y être, mais pas ce soir."),
           B("Une autre nuit, donc. Je la note sur ma liste des choses qui me sont dues.", "teasing"),
           Y("Elle a une liste. Évidemment qu’elle a une liste.", "laugh"),
-        ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+        ], { trust: 1, desire: 2, relationshipEffects: { naiah: { trust: 1 } } }),
         C(BN_LIMIT_DECLINE, "Leur dire que vous préférez rester en dehors.", "resonance", [
           P("Je préfère rester en dehors de ça. Je vous laisse votre jeu."),
           B("Comme tu voudras. La question reste posée, avec ou sans témoin.", "thoughtful"),
           Y("Et la réponse viendra quand même. Je ne joue pas pour qu’on me regarde.", "smirk"),
           B("Si. Un peu.", "smirk"),
           Y("Un peu.", "laugh"),
-        ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+        ], { trust: 1, desire: 1, relationshipEffects: { naiah: { trust: 1 } } }),
       ],
     }],
   };
@@ -409,12 +409,12 @@ function evenThere(ctx: BNSceneContext): BNSceneData {
         P("Je reste."),
         Y("Merci.", "neutral"),
         T("Naïah ne sourit pas en le disant. Elle commence à défaire le premier lacet de sa robe, lentement, et Bellirith la regarde faire comme on regarde une carte qu’on vient de retourner."),
-      ], { desire: 1, relationshipEffects: { naiah: { affection: 1, trust: 1 } } }, { launchesIntimacy: "bn-simulation" }),
+      ], { relationshipEffects: { naiah: { affection: 1, trust: 1 } } }, { launchesIntimacy: "bn-simulation" }),
       C(BN_SIMULATION_DECLINE, "Les laisser seules et attendre dehors.", "sangFroid", [
         P("Je vous laisse. Je serai dans le couloir."),
         Y("D’accord. Ne t’endors pas trop vite. La fin sera bruyante.", "smirk"),
         ...SIMULATION_OUTSIDE,
-      ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+      ], { trust: 1, desire: 1, relationshipEffects: { naiah: { trust: 1 } } }),
     ],
     beats: [],
   };
@@ -470,7 +470,7 @@ function somethingElse(ctx: BNSceneContext): BNSceneData {
         B("Je suis toujours douce quand je cherche. C’est quand je trouve que je deviens dangereuse.", "cold"),
         Y("Tu ne trouveras rien. Je suis une porte, tu te souviens ?", "smirk"),
         B("Les portes ont des serrures, ma belle. C’est même à ça qu’on les reconnaît.", "thoughtful"),
-      ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+      ], { trust: 1, desire: 1, relationshipEffects: { naiah: { trust: 1 } } }),
     ],
     beats: [{
       intro: [
@@ -494,7 +494,7 @@ function somethingElse(ctx: BNSceneContext): BNSceneData {
           P("Celle-là pourrait te mordre."),
           B("Tout ce qui vaut la peine mord. Je préviendrai Naïah. Pas de ce que je ferai, seulement que je viendrai. Elle choisira de m’ouvrir ou non.", "thoughtful"),
           T("Le soir même, un mot arrive pour vous, dans l’écriture penchée de Naïah. « Elle veut une revanche. Clairière, demain soir. Viens. Je compte la massacrer. »"),
-        ], { trust: 1 }),
+        ], { trust: 1, desire: 2 }),
         C("cross-bn-06-ask", "Demander si elle sait ce qu’elle cherche à obtenir.", "lucidite", [
           P("Et toi, tu veux quoi, au bout de ça ?"),
           B("La voir perdre pied. Une seule fois, pour de vrai. Je l’ai cherché partout dans son corps, je le trouve ailleurs. C’est vexant et c’est magnifique.", "seductive"),

@@ -241,9 +241,9 @@ export function finishBNIntimacy(progress: CrossQuestProgress, id: BNIntimacyId,
 
 /** Effets d’une intimité vécue jusqu’au bout (désir de Bellirith ; affection et confiance pour Naïah, jamais de désir). */
 export const BN_INTIMACY_EFFECTS: Record<BNIntimacyId, { bellirith: { affection?: number; trust?: number; desire?: number }; naiah: { affection?: number; trust?: number } }> = {
-  "bn-first": { bellirith: { affection: 1, desire: 2 }, naiah: { affection: 2 } },
-  "bn-limit": { bellirith: { affection: 1, trust: 1, desire: 2 }, naiah: { affection: 2, trust: 1 } },
-  "bn-simulation": { bellirith: { trust: 1, desire: 3 }, naiah: { affection: 3, trust: 2 } },
+  "bn-first": { bellirith: { affection: 1 }, naiah: { affection: 2 } },
+  "bn-limit": { bellirith: { affection: 1, trust: 1, desire: 1 }, naiah: { affection: 2, trust: 1 } },
+  "bn-simulation": { bellirith: { trust: 1, desire: 1 }, naiah: { affection: 3, trust: 2 } },
 };
 
 /** Flags d’interaction avec les autres systèmes, dérivés de l’état. */

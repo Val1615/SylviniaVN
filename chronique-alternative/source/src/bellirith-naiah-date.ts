@@ -235,7 +235,7 @@ const POST_MOMENTS: Record<BNPostMomentId, BNSceneData> = {
         T("La partie dure longtemps. Bellirith ne lit plus seulement ce que Naïah veut cacher ; elle lit aussi ce qu’elle a envie de montrer, et la laisse le montrer."),
         Y("Tu me laisses gagner.", "angry"),
         B("Je te laisse jouer jusqu’au bout. Ça me coûte bien davantage qu’une manche.", "seductive"),
-      ], { trust: 1, relationshipEffects: { naiah: { trust: 1 } } }),
+      ], { trust: 1, desire: 1, relationshipEffects: { naiah: { trust: 1 } } }),
       C("cross-bn-after-tokens-thank", "Remercier Bellirith d’un regard pour sa retenue.", "resonance", [
         T("Bellirith reçoit le regard et le renvoie aussitôt, comme une balle qu’on n’a pas envie de garder."),
         B("Ne me remercie pas. Ça me donne l’air gentille, et je ne sais pas quoi faire de cet air-là.", "cold"),
