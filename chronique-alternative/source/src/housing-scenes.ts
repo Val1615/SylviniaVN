@@ -168,7 +168,7 @@ export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
     tones: {
       amical: { label: "Partenaires de jeu", detail: "Jouer franchement, pour le plaisir de la partie, sans autre enjeu que la revanche.", effects: { affection: 7, trust: 9 }, lines: [P("Ce soir, on joue. Juste on joue. Le perdant fait la vaisselle."), C("Bellirith", "La vaisselle. Tu mises la vaisselle contre une démone du Désir. Je ne sais pas si c’est de l’inconscience ou du génie.", "smirk")] },
       amoureux: { label: "Coup pour coup", detail: "Faire de la partie une conversation où chacun apprend l’autre en jouant.", effects: { affection: 9, trust: 8, desire: 4 }, lines: [P("Chaque main gagnée donne droit à une question. Une vraie."), C("Bellirith", "Une question. Tu sais que je mens très bien ? Alors je vais devoir gagner toutes les mains.", "teasing")] },
-      desir: { label: "Mise indécente", detail: "Laisser chaque main faire monter les enchères, et voir qui tiendra le plus longtemps.", effects: { affection: 6, trust: 6, desire: 11 }, lines: [P("Chaque main perdue coûte un gage. C’est le gagnant qui choisit."), C("Bellirith", "Tu viens de choisir la version la plus dangereuse du jeu. Distribue. Lentement.", "seductive")] },
+      desir: { label: "Mise indécente", detail: "Laisser chaque main faire monter les enchères, et voir qui tiendra le plus longtemps.", effects: { affection: 6, trust: 6, desire: 7 }, lines: [P("Chaque main perdue coûte un gage. C’est le gagnant qui choisit."), C("Bellirith", "Tu viens de choisir la version la plus dangereuse du jeu. Distribue. Lentement.", "seductive")] },
     },
     rounds: [
       { prompt: "Bellirith distribue, et triche dès la première carte.", detail: "Elle ne s’en cache même pas ; elle attend de voir ce que vous allez faire.", options: [O("let", "La laisser tricher, et noter où elle cache ses cartes", 2, N("Vous perdez la première main. Vous gagnez la deuxième avec la carte qu’elle avait glissée sous sa jarretière."), C("Bellirith", "Quand… ? Non. Ne me dis pas. Je veux le découvrir seule.", "angry")), O("call", "Dénoncer la triche tout de suite", 1, C("Bellirith", "Évidemment que je triche. C’est ma maison. Ah non, c’est la tienne. Bon, je triche quand même.", "smirk")), O("ignore", "Faire semblant de ne rien voir", 0, C("Bellirith", "Tu ne vois rien ? C’est soit très poli, soit très ennuyeux. Je penche pour la deuxième.", "cold"))] },
@@ -597,9 +597,21 @@ const RESIDENT_REPLIES: Record<string, Array<[ResidentReply, ResidentReply, Resi
   ],
 };
 
+/*
+ * Désir de Bellirith dans les moments résidents : il naît quand on lui tient tête
+ * (interroger ses invités, refuser son pari, la démasquer, réécrire ses règles),
+ * jamais quand on obéit à son jeu ou qu’on se contente de la border.
+ * Triplets [audace, lucidité, sang-froid] ; les autres personnages gardent [2, 0, 0].
+ */
+const RESIDENT_MOMENT_DESIRE: Record<string, [number, number, number][]> = {
+  bellirith: [[2, 2, 1], [0, 1, 2], [2, 2, 0], [2, 2, 0]],
+};
+
 const moment = (character: string, index: number, title: string, prompt: string, playerChoices: [string, string, string]): HomeMoment => {
   const replies = RESIDENT_REPLIES[character]?.[index];
   if (!replies) throw new Error(`Réponses de moment résident manquantes : ${character}-${index}`);
+  const [desireA, desireL, desireS] = RESIDENT_MOMENT_DESIRE[character]?.[index] ?? [2, 0, 0];
+  const withDesire = (effects: Effects, desire: number): Effects => desire ? { ...effects, desire } : effects;
   const answer = (choiceIndex: number): DialogueLine[] => [
     P(playerChoices[choiceIndex]),
     N(replies[choiceIndex].beat),
@@ -611,9 +623,9 @@ const moment = (character: string, index: number, title: string, prompt: string,
     characters: [character],
     intro: [N(prompt)],
     choices: [
-      Q(`home-${character}-${index}-a`, playerChoices[0], "audace", answer(0), { stats: { audace: 1 }, affection: 4, desire: 2 }),
-      Q(`home-${character}-${index}-l`, playerChoices[1], "lucidite", answer(1), { stats: { lucidite: 1 }, trust: 5, affection: 2 }),
-      Q(`home-${character}-${index}-s`, playerChoices[2], "sangFroid", answer(2), { stats: { sangFroid: 1 }, trust: 4, affection: 3 }),
+      Q(`home-${character}-${index}-a`, playerChoices[0], "audace", answer(0), withDesire({ stats: { audace: 1 }, affection: 4 }, desireA)),
+      Q(`home-${character}-${index}-l`, playerChoices[1], "lucidite", answer(1), withDesire({ stats: { lucidite: 1 }, trust: 5, affection: 2 }, desireL)),
+      Q(`home-${character}-${index}-s`, playerChoices[2], "sangFroid", answer(2), withDesire({ stats: { sangFroid: 1 }, trust: 4, affection: 3 }, desireS)),
     ],
   };
 };

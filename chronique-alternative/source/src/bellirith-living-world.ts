@@ -77,7 +77,7 @@ const father: SecretConversation = {
       P("Tu as choisi ce que tu voulais me donner. C’est déjà beaucoup pour une démone qui distribue très peu."),
       N("Bellirith vous regarde une seconde de trop. Puis elle reprend la pose, la hanche contre la pierre, la voix plus basse."),
       B("Prudent·e. C’est presque pire que tes refus. Je vais devoir trouver autre chose pour te faire tomber.", "teasing"),
-    ], { affection: 3, desire: 2 }),
+    ], { affection: 3 }),
     C("sbf20-push-word", "Relever le « nous » qu’elle a ravalé avant de dire « mon frère et moi ».", "lucidite", [
       P("Tu as commencé à dire « nous ». Puis tu as dit « mon frère et moi », comme on recule d’un pas."),
       N("Le jeton s’arrête net entre ses doigts."),
@@ -123,7 +123,7 @@ const beforeHate: SecretConversation = {
       B("Tu ne demandes pas pourquoi c’est fini ?", "surprised"),
       P("Tu me le dirais ?"),
       B("Non. Mais j’aurais aimé que tu essaies, pour avoir le plaisir de refuser.", "teasing"),
-    ], { affection: 3, desire: 2 }),
+    ], { affection: 3 }),
     C("sbb40-push", "Lui faire remarquer qu’elle parle de lui au présent pour ses faiblesses, et au passé pour tout le reste.", "lucidite", [
       P("Ses faiblesses, tu les dis au présent. Il ne dort jamais du côté de la porte. Mais tout le reste, tu le dis au passé."),
       N("Bellirith pose son verre. Lentement. Elle ne vous a pas quitté·e des yeux."),
@@ -182,7 +182,7 @@ const saelis: SecretConversation = {
       B("La rue des Paris Perdus. On y joue sa nuit aux dés. Les perdants paient en baisers, les gagnants aussi, c’est ce qui rend le jeu si populaire.", "amused"),
       P("Elle te ressemble."),
       B("Tout Saëlis me ressemble. C’est le principe d’une capitale.", "smirk"),
-    ], { affection: 3, desire: 2 }),
+    ], { affection: 3 }),
     C("sbs60-push", "Lui demander pourquoi la tour du centre reste éteinte, et pourquoi elle l’a cachée en prononçant le nom de Valurn.", "lucidite", [
       P("La tour du milieu est éteinte. Tu l’as cachée avec ton pouce au moment exact où tu as dit son nom."),
       N("La ville s’éteint d’un coup dans sa main. Il ne reste que sa paume nue et le parfum, plus amer."),
@@ -239,7 +239,7 @@ const gap: SecretConversation = {
       B("Je mens souvent.", "smirk"),
       P("Pas ce soir."),
       N("Bellirith rit, un petit rire presque normal. Puis elle tend le pied et le pose contre votre genou, comme une signature au bas d’un contrat qu’elle n’a pas lu."),
-    ], { affection: 3, trust: 2, desire: 2 }),
+    ], { affection: 3, trust: 2 }),
     C("sbg80-push-valurn", "Lui dire que Valurn vous a parlé d’un talisman, et d’une promesse de protection.", "lucidite", [
       P("Valurn m’a parlé d’une protection. D’un talisman. Il m’a dit qu’il pensait pouvoir revenir."),
       N("Bellirith ne bouge pas. Puis elle descend de la fenêtre, très lentement, et vient se planter devant vous."),
@@ -355,7 +355,7 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     signature: "B., qui vient de trouver un nouveau passe-temps",
     replies: [
       { id: "bel-pref-tease", label: "Répondre que la carte avait de très jolies flèches.", response: "La réponse arrive le soir même : « Je vais faire dessiner des flèches sur ma robe. On verra bien laquelle tu suis. »", effects: { desire: 3, affection: 1 } },
-      { id: "bel-pref-honest", label: "Avouer que partir vous a coûté.", response: "« Je sais. C’est exactement pour ça que je vais recommencer. Prépare-toi à des refus beaucoup plus difficiles. »", effects: { desire: 4 } },
+      { id: "bel-pref-honest", label: "Avouer que partir vous a coûté.", response: "« Je sais. C’est exactement pour ça que je vais recommencer. Prépare-toi à des refus beaucoup plus difficiles. »", effects: {  } },
     ],
   },
   {
@@ -370,8 +370,8 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     ],
     signature: "B.",
     replies: [
-      { id: "bel-fav-counter", label: "Répondre que vous aussi, vous avez pris des notes.", response: "« Des notes ? Sur moi ? Voilà qui est beaucoup trop ambitieux pour une seule nuit. Viens me montrer tes brouillons. »", effects: { affection: 3, desire: 1 } },
-      { id: "bel-fav-dry", label: "Rappeler que vous avez des conseils de guerre à tenir.", response: "« Je sais. C’est précisément le principe. »", effects: { affection: 2 } },
+      { id: "bel-fav-counter", label: "Répondre que vous aussi, vous avez pris des notes.", response: "« Des notes ? Sur moi ? Voilà qui est beaucoup trop ambitieux pour une seule nuit. Viens me montrer tes brouillons. »", effects: { affection: 3, desire: 2 } },
+      { id: "bel-fav-dry", label: "Rappeler que vous avez des conseils de guerre à tenir.", response: "« Je sais. C’est précisément le principe. »", effects: { affection: 2, desire: 2 } },
     ],
   },
   {
@@ -398,8 +398,8 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     ],
     signature: "B., qui n’aime pas qu’on l’écoute à ce point",
     replies: [
-      { id: "bel-corr-cat", label: "Demander des nouvelles du descendant de Dette.", response: "« Il n’y a pas de descendant. Il y a une statue de Dette dans ma salle du trône à Saëlis. Valurn ne le sait pas. Tu es la deuxième personne au monde à l’apprendre. »", effects: { trust: 3, desire: 2 } },
-      { id: "bel-corr-listen", label: "Répondre que vous continuerez à écouter.", response: "« Je m’en doutais. C’est absolument insupportable. Continue. »", effects: { desire: 3, trust: 1 } },
+      { id: "bel-corr-cat", label: "Demander des nouvelles du descendant de Dette.", response: "« Il n’y a pas de descendant. Il y a une statue de Dette dans ma salle du trône à Saëlis. Valurn ne le sait pas. Tu es la deuxième personne au monde à l’apprendre. »", effects: { trust: 3 } },
+      { id: "bel-corr-listen", label: "Répondre que vous continuerez à écouter.", response: "« Je m’en doutais. C’est absolument insupportable. Continue. »", effects: { desire: 1, trust: 1 } },
     ],
   },
   {
@@ -413,7 +413,7 @@ export const BELLIRITH_LETTERS: LetterTemplate[] = [
     ],
     signature: "Bellirith",
     replies: [
-      { id: "bel-end-res-come", label: "Répondre : « Bientôt. »", response: "« Bientôt. Quelle torture élégante. Merci. »", effects: { desire: 3, affection: 2 } },
+      { id: "bel-end-res-come", label: "Répondre : « Bientôt. »", response: "« Bientôt. Quelle torture élégante. Merci. »", effects: { desire: 1, affection: 2 } },
       { id: "bel-end-res-tease", label: "Répondre que vous la ferez peut-être attendre encore un peu.", response: "« Tu es cruel·le. Je t’adore. Je te déteste. Les deux m’allaient très bien avant toi. »", effects: { desire: 4 } },
     ],
   },

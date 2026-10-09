@@ -7,7 +7,9 @@ import { createServer } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => readFile(path.join(root, file), "utf8");
-const [page, main, css] = await Promise.all([read("src/page.tsx"), read("src/main.tsx"), read("src/ui/v2/v2-fenetres.css")]);
+const [pageSource, controls, main, css] = await Promise.all([read("src/page.tsx"), read("src/scene-controls.tsx"), read("src/main.tsx"), read("src/ui/v2/v2-fenetres.css")]);
+// Historique et barre de lecture partagés : scene-controls.tsx (voir validate-scene-lecture.mjs).
+const page = `${pageSource}\n${controls}`;
 
 // 1. Fenêtres : nouveaux composants présents, anciens gabarits retirés.
 for (const comp of ["V2Fenetre", "V2Portrait", "V2Cadeau", "V2CadeauReaction", "V2Lettre", "V2Resultat", "V2JeuResultat", "V2BilanJour"]) {
@@ -63,7 +65,7 @@ try {
 assert.match(page, /function V2PortraitFiche\b/, "La fiche doit utiliser le portrait illustré.");
 assert.match(page, /function V2PortraitCarte\b/, "Dossier/invitation doivent utiliser le portrait illustré.");
 assert.match(page, /v2-scene-intime/, "Les scènes intimes doivent porter le thème rose.");
-assert.match(page, /function useIntimacyBacklog\b/, "Les scènes intimes doivent partager l’historique V2.");
+assert.match(page, /function useSceneBacklog\b/, "Les scènes (dialogue et intimes) doivent partager l’historique V2.");
 assert.match(css, /\.v2-scene-intime/, "Le thème rose/cramoisi doit être défini en CSS.");
 assert.match(css, /fiche-portrait/, "Les masques de portrait fiche doivent exister.");
 console.log("V2.5 fenêtres, scènes, portraits et intimité rose : OK");

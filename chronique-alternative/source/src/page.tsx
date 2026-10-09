@@ -22,6 +22,7 @@ import {
   type RouteScene,
   type StatKey,
 } from "./game-data";
+import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
 import { AMBIENT_LINES, ambientAvailableForFlags, ambientPromptFor, choiceAvailableForFlags, type AmbientDialogue } from "./ambient-dialogues";
 import {
   ALL_KNOWLEDGE_ENTRIES,
@@ -378,7 +379,14 @@ type DialogueState = {
   spriteMoods?: Record<string, string>;
   replay?: boolean;
   replayNextCrossStage?: number;
+  /** Instantanés visuels pour le bouton Retour. Vidés à chaque choix : revenir ne traverse jamais un effet. */
+  past?: DialogueState[];
 };
+
+/** Empile l’état courant avant une avancée simple (aucun effet n’est appliqué dans advanceDialogue). */
+function withDialoguePast(previous: DialogueState, next: DialogueState): DialogueState {
+  return { ...next, past: [...(previous.past || []).slice(-399), { ...previous, past: undefined }] };
+}
 
 type JobPhase = "briefing" | "memorize" | "play" | "perfect" | "success" | "failure";
 
@@ -3052,30 +3060,30 @@ export default function Home() {
     if (dialogue.lineIndex < dialogue.lines.length - 1) {
       const nextLine = dialogue.lines[dialogue.lineIndex + 1];
       const sceneWithLine = nextLine.cast || nextLine.music ? { ...dialogue.scene, ...(nextLine.cast ? { cast: nextLine.cast } : {}), ...(nextLine.music ? { music: nextLine.music } : {}) } : dialogue.scene;
-      setDialogue({ ...dialogue, scene: sceneWithLine, spriteMoods: dialogueSpriteMoods(dialogue), lineIndex: dialogue.lineIndex + 1 });
+      setDialogue(withDialoguePast(dialogue, { ...dialogue, scene: sceneWithLine, spriteMoods: dialogueSpriteMoods(dialogue), lineIndex: dialogue.lineIndex + 1 }));
       return;
     }
     if (dialogue.phase === "intro" && dialogue.scene.choices?.length) {
-      setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "choices" });
+      setDialogue(withDialoguePast(dialogue, { ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "choices" }));
       return;
     }
     if (dialogue.scene.beats && ["response", "relation-response"].includes(dialogue.phase)) {
       const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
       const beat = dialogue.scene.beats[nextRound];
-      if (beat) { setDialogue({ ...dialogue, scene: beat.cast ? { ...dialogue.scene, cast: beat.cast } : dialogue.scene, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" }); return; }
+      if (beat) { setDialogue(withDialoguePast(dialogue, { ...dialogue, scene: beat.cast ? { ...dialogue.scene, cast: beat.cast } : dialogue.scene, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" })); return; }
     }
     if (dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character) && ["response", "relation-response"].includes(dialogue.phase)) {
       const nextRound = dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1;
       const beat = authoredDateBeat(dialogue.scene.id, nextRound, dialogue.datePicks);
       if (beat) {
-        setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" });
+        setDialogue(withDialoguePast(dialogue, { ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), dateRound: nextRound, lines: expandedLines(dialogue.scene, game!, beat.intro, "response"), lineIndex: 0, phase: "relation-intro" }));
         return;
       }
     }
     if (dialogue.phase === "response" && dialogue.scene.route && dialogue.chosen && routeChoiceCompletes(dialogue.chosen.id)) {
       const beat = relationBeatFor(dialogue.scene.route.id, game!);
       if (beat) {
-        setDialogue({
+        setDialogue(withDialoguePast(dialogue, {
           ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
           scene: { ...dialogue.scene, cast: "cast" in beat && beat.cast ? beat.cast : dialogue.scene.cast },
           primaryChoice: dialogue.chosen,
@@ -3083,15 +3091,22 @@ export default function Home() {
           lines: expandedLines(dialogue.scene, game!, beat.intro, "response"),
           lineIndex: 0,
           phase: "relation-intro",
-        });
+        }));
         return;
       }
     }
     if (dialogue.phase === "relation-intro") {
-      setDialogue({ ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "relation-choices" });
+      setDialogue(withDialoguePast(dialogue, { ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue), phase: "relation-choices" }));
       return;
     }
     closeDialogue();
+  }
+
+  /** Retour : ré-affiche l’instantané précédent. Aucun effet n’est rejoué ni annulé, la pile ne traverse jamais un choix. */
+  function stepBackDialogue() {
+    if (!dialogue?.past?.length) return;
+    const previous = dialogue.past[dialogue.past.length - 1];
+    setDialogue({ ...previous, past: dialogue.past.slice(0, -1) });
   }
 
   function selectChoice(choice: ChoiceData) {
@@ -3336,6 +3351,8 @@ export default function Home() {
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
+      // Le choix vient d’appliquer ses effets : la pile Retour repart de zéro.
+      past: undefined,
     });
   }
 
@@ -5064,7 +5081,7 @@ export default function Home() {
         {v2Dialog?.kind === "display" && <V2Dialog key="display" surtitre="Vitrine personnelle" titre={`Emplacement ${v2Dialog.slot + 1}`} classe="etroit" onClose={closeV2}><div className="dons"><button type="button" className="choix-don" onClick={() => { setDisplayedItem(v2Dialog.slot, ""); closeV2(); }}><span className="od-ico petit"><i>◇</i></span><span><b>Ne rien exposer</b><small>Libérer cet emplacement</small></span></button>{DISPLAY_ITEMS.filter((item) => (game.inventory[item.id] || 0) > 0).map((item) => <button type="button" key={item.id} className={`choix-don ${game.housing.displayed[v2Dialog.slot] === item.id ? "aime" : ""}`} onClick={() => { setDisplayedItem(v2Dialog.slot, item.id); closeV2(); }}><span className="od-ico petit"><i>{item.icon}</i></span><span><b>{item.name}</b><small>{item.description}</small></span><span className="cd-n">×{game.inventory[item.id]}</span></button>)}</div></V2Dialog>}
       </div>
 
-      {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
+      {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onBack={stepBackDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
       {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
       {modal?.kind === "hylee-search" && hyleeSearchModalState && <HyleeSearchModal state={hyleeSearchModalState} replay={modal.replay} onChange={setHyleeSearchState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHNScene(4)} />}
       {modal?.kind === "bn-minigame" && bnMinigameModalState && <BNMinigameModal state={bnMinigameModalState} replay={modal.replay} dev={modal.dev} format={(text) => replacePlayer(text, game.player)} onChange={setBNMinigameState} onClose={() => { setBNDuck(false); setModal(null); }} onFinish={finishBNMinigame} onAnomaly={setBNDuck} />}
@@ -5198,7 +5215,7 @@ function dialogueSpriteMoods(dialogue: DialogueState): Record<string, string> {
 
 const BN_FORM_MOODS = new Set(["neutral", "thinking", "sad", "smile", "away"]);
 
-function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dialogue: DialogueState; game: GameState; onAdvance: () => void; onChoice: (choice: ChoiceData) => void; onClose: () => void }) {
+function DialogueOverlay({ dialogue, game, onAdvance, onBack, onChoice, onClose }: { dialogue: DialogueState; game: GameState; onAdvance: () => void; onBack: () => void; onChoice: (choice: ChoiceData) => void; onClose: () => void }) {
   const currentLine = dialogue.lines[dialogue.lineIndex];
   const choosing = dialogue.phase === "choices" || dialogue.phase === "relation-choices";
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
@@ -5206,36 +5223,18 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
   const stableMoods = dialogue.scene.cast.includes("hylee") ? dialogueSpriteMoods(dialogue) : undefined;
   const sceneLabel = dialogue.scene.bnScene ? "Quêtes croisées · Bellirith & Naïah" : dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "bellirith" ? (dialogue.scene.bellirithMode === "catchup" ? "Interférence · Bellirith · rattrapage" : "Interférence · Bellirith") : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   // Historique (backlog) : chaque réplique affichée et chaque choix pris pendant la scène, dans l’ordre.
-  const [backlog, setBacklog] = useState<V2BacklogEntry[]>([]);
-  const [backlogOpen, setBacklogOpen] = useState(false);
-  const backlogRef = useRef<HTMLDivElement>(null);
-  const lastLogged = useRef("");
-  useEffect(() => { setBacklog([]); lastLogged.current = ""; }, [dialogue.scene.id]);
-  useEffect(() => {
-    if (choosing || !currentLine) return;
-    const key = `${dialogue.scene.id}|${dialogue.phase}|${dialogue.lineIndex}|${currentLine.speaker}|${currentLine.text}`;
-    if (lastLogged.current === key) return;
-    lastLogged.current = key;
-    const speakerId = speakerCharacterIds(currentLine.speaker, dialogue.scene.cast)[0];
-    setBacklog((entries) => [...entries, { speaker: replacePlayer(currentLine.speaker, game.player), text: replacePlayer(currentLine.text, game.player), color: CHARACTERS.find((entry) => entry.id === speakerId)?.color, narration: currentLine.speaker === "Narration" }]);
-  }, [choosing, currentLine, dialogue.scene.id, dialogue.phase, dialogue.lineIndex, dialogue.scene.cast, game.player]);
-  const choose = (choice: ChoiceData) => { setBacklog((entries) => [...entries, { speaker: "Votre choix", text: choice.text, choice: true }]); onChoice(choice); };
-  useEffect(() => {
-    if (!backlogOpen) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape" || event.key.toLowerCase() === "h") { event.preventDefault(); event.stopPropagation(); setBacklogOpen(false); } };
-    window.addEventListener("keydown", onKey, true);
-    requestAnimationFrame(() => { const list = backlogRef.current; if (list) list.scrollTop = list.scrollHeight; });
-    return () => window.removeEventListener("keydown", onKey, true);
-  }, [backlogOpen]);
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => { if (!backlogOpen && event.key.toLowerCase() === "h" && !(event.target as HTMLElement)?.closest?.("input, textarea")) { event.preventDefault(); setBacklogOpen(true); } };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [backlogOpen]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const lineKey = `${dialogue.scene.id}|${dialogue.phase}|${dialogue.dateRound ?? -1}|${dialogue.lineIndex}|${currentLine?.speaker}|${currentLine?.text}`;
+  const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice, rewind } = useSceneBacklog(dialogue.scene.id, lineKey, currentLine, !choosing, (text) => replacePlayer(text, game.player), dialogue.scene.cast);
+  const choose = (choice: ChoiceData) => { logChoice(choice.text); onChoice(choice); };
+  const canBack = Boolean(dialogue.past?.length);
+  // Depuis une réplique, la réplique quittée sort de l’historique ; depuis les choix, rien n’avait été inscrit.
+  const back = () => { if (!canBack) return; if (!choosing) rewind(lineKey); onBack(); };
+  useSceneShortcuts(sectionRef, { backlogOpen, openBacklog: () => setBacklogOpen(true), canBack, onBack: back });
   const speakerId = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast)[0] : undefined;
   const speakerColor = CHARACTERS.find((entry) => entry.id === speakerId)?.color;
-  return <section className="dialogue-overlay v2-scene" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
-    <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button>{(dialogue.scene.kind === "intro" || dialogue.replay) && <button type="button" className="scene-outil passer" onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div></div>
+  return <section ref={sectionRef} className="dialogue-overlay v2-scene" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.15), rgba(5,6,12,.72)), url(${backgroundUrl(dialogue.scene.background)})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+    <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{dialogue.replay ? "Souvenir · aucun gain" : sceneLabel}</p><h2>{dialogue.scene.title}</h2></div><div className="scene-outils"><SceneControls canBack={canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} />{(dialogue.scene.kind === "intro" || dialogue.replay) && <button type="button" className="scene-outil passer" onClick={onClose}>{dialogue.replay ? "Quitter le souvenir" : "Passer le prologue"}</button>}</div></div>
     <div className={`scene-cast cast-${dialogue.scene.cast.length}`}>{dialogue.scene.cast.map((id, index) => {
       if (id === BN_FORM) {
         // Forme empruntée par Bellirith au rendez-vous final : sprite d’Amanea, identité de Bellirith (aucune entrée Amanea dans la distribution).
@@ -5263,15 +5262,10 @@ function DialogueOverlay({ dialogue, game, onAdvance, onChoice, onClose }: { dia
       const statLabel = STAT_LABELS[choice.stat] || "Choix";
       return <button key={choice.id} className="v2-choix-carte" style={{ "--i": choiceIndex } as React.CSSProperties} disabled={locked} onClick={() => choose(choice)}><i className="choix-num">{ROMAINS[choiceIndex + 1] || choiceIndex + 1}</i><span className={`stat-icon ${choice.stat || "neutral"}`}>{statLabel.charAt(0)}</span><div><strong>{choice.text}</strong>{dialogue.replay ? <small className="replay-note">Souvenir : aucun gain, aucun temps consommé</small> : (game.settings.showImpact || game.settings.developer) && <small>{impactText(choice)}</small>}{locked && <em>{statLocked ? `Nécessite ${STAT_LABELS[choice.requires!.stat]} ${choice.requires!.value}` : knowledgeLocked ? "Cette réponse exige une information que vous n’avez pas encore découverte" : "Nécessite des liens plus avancés avec les personnes concernées"}</em>}</div></button>;
     })}</div>}
-    {backlogOpen && <div className="scene-backlog" role="dialog" aria-modal="true" aria-label="Historique de la scène" onClick={(event) => { if (event.target === event.currentTarget) setBacklogOpen(false); }}>
-      <div className="backlog-boite"><header><div><span className="surtitre">Historique</span><h3>{dialogue.scene.title}</h3></div><button type="button" className="dlg-x" data-close aria-label="Fermer l’historique" onClick={() => setBacklogOpen(false)}><span>✕</span><kbd>Échap</kbd></button></header>
-        <div className="backlog-liste" ref={backlogRef}>{backlog.map((entry, index) => <div key={index} className={`backlog-ligne ${entry.narration ? "narration" : ""} ${entry.choice ? "choix" : ""}`} style={{ "--c": entry.color || "var(--or)" } as React.CSSProperties}>{!entry.narration && <b>{entry.choice ? "➤ Votre choix" : entry.speaker}</b>}<p>{entry.text}</p></div>)}</div>
-      </div>
-    </div>}
+    {backlogOpen && <SceneBacklog title={dialogue.scene.title} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
 }
 
-type V2BacklogEntry = { speaker: string; text: string; color?: string; narration?: boolean; choice?: boolean };
 
 function SectionTabs<T extends string>({ label, active, items, onChange }: { label: string; active: T; items: { id: T; icon: string; label: string; count?: number | string; hint?: string }[]; onChange: (id: T) => void }) {
   return <nav className="section-tabs" role="tablist" aria-label={label}>
@@ -6078,44 +6072,8 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
 type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
 
 
-/* Historique partagé des scènes intimes (UI V2 rose — contenu inchangé). */
-function useIntimacyBacklog(resetKey: string, currentLine: DialogueLine | undefined, isChoice: boolean, player: Player, cast: string[]) {
-  const [backlog, setBacklog] = useState<V2BacklogEntry[]>([]);
-  const [backlogOpen, setBacklogOpen] = useState(false);
-  const backlogRef = useRef<HTMLDivElement>(null);
-  const lastLogged = useRef("");
-  useEffect(() => { setBacklog([]); lastLogged.current = ""; }, [resetKey]);
-  useEffect(() => {
-    if (isChoice || !currentLine) return;
-    const key = `${resetKey}|${currentLine.speaker}|${currentLine.text}`;
-    if (lastLogged.current === key) return;
-    lastLogged.current = key;
-    const speakerId = speakerCharacterIds(currentLine.speaker, cast)[0];
-    setBacklog((entries) => [...entries, { speaker: replacePlayer(currentLine.speaker, player), text: replacePlayer(currentLine.text, player), color: CHARACTERS.find((entry) => entry.id === speakerId)?.color, narration: currentLine.speaker === "Narration" }]);
-  }, [isChoice, currentLine, resetKey, player, cast]);
-  useEffect(() => {
-    if (!backlogOpen) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape" || event.key.toLowerCase() === "h") { event.preventDefault(); event.stopPropagation(); setBacklogOpen(false); } };
-    window.addEventListener("keydown", onKey, true);
-    requestAnimationFrame(() => { const list = backlogRef.current; if (list) list.scrollTop = list.scrollHeight; });
-    return () => window.removeEventListener("keydown", onKey, true);
-  }, [backlogOpen]);
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => { if (!backlogOpen && event.key.toLowerCase() === "h" && !(event.target as HTMLElement)?.closest?.("input, textarea")) { event.preventDefault(); setBacklogOpen(true); } };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [backlogOpen]);
-  const logChoice = (text: string) => setBacklog((entries) => [...entries, { speaker: "Votre choix", text, choice: true }]);
-  return { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice };
-}
-
-function V2IntimacyBacklog({ title, backlog, backlogRef, onClose }: { title: string; backlog: V2BacklogEntry[]; backlogRef: React.RefObject<HTMLDivElement | null>; onClose: () => void }) {
-  return <div className="scene-backlog" role="dialog" aria-modal="true" aria-label="Historique de la scène" onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    <div className="backlog-boite"><header><div><span className="surtitre">Historique</span><h3>{title}</h3></div><button type="button" className="dlg-x" data-close aria-label="Fermer l’historique" onClick={onClose}><span>✕</span><kbd>Échap</kbd></button></header>
-      <div className="backlog-liste" ref={backlogRef as React.RefObject<HTMLDivElement>}>{backlog.map((entry, index) => <div key={index} className={`backlog-ligne ${entry.narration ? "narration" : ""} ${entry.choice ? "choix" : ""}`} style={{ "--c": entry.color || "var(--or)" } as React.CSSProperties}>{!entry.narration && <b>{entry.choice ? "➤ Votre choix" : entry.speaker}</b>}<p>{entry.text}</p></div>)}</div>
-    </div>
-  </div>;
-}
+/* Historique et Retour des scènes intimes : voir scene-controls.tsx (pile vidée à chaque choix). */
+type IntimacyRollback<S> = { step: S; lines: DialogueLine[]; lineIndex: number; directionChapter: number; attunementBeat: number };
 
 function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: IntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
   const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
@@ -6180,6 +6138,9 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
   const intimateMood = currentLine?.intimateMood || "soft";
+  // Retour : instantanés de lecture seulement ; vidés à chaque choix (le score et la route restent acquis).
+  const rollback = useRollback<IntimacyRollback<IntimacyStep>>();
+  const sectionRef = useRef<HTMLElement>(null);
 
   function beginSegment(nextStep: IntimacyStep, nextLines: DialogueLine[]) {
     setStep(nextStep);
@@ -6202,6 +6163,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   }
 
   function advance() {
+    if (step === "done") return;
+    rollback.record({ step, lines, lineIndex, directionChapter, attunementBeat });
     if (lineIndex < lines.length - 1) {
       setLineIndex((index) => index + 1);
       return;
@@ -6226,11 +6189,13 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   }
 
   function chooseApproach(choice: IntimacyChoice) {
+    rollback.clear();
     setApproach(choice);
     beginSegment("approach-lines", choice.lines);
   }
 
   function chooseDirection(choice: IntimacyDirectionChoice) {
+    rollback.clear();
     setDirection(choice);
     const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || modal.home) && "chapters" in choice
       ? choice.chapters[game.player.intimacy]
@@ -6243,6 +6208,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   }
 
   function chooseAttunement(option: IntimacyGameOption) {
+    rollback.clear();
     setAttunementScore((score) => score + option.score);
     beginSegment("attunement-lines", option.lines);
   }
@@ -6250,7 +6216,19 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const isChoice = step === "approach-choice" || step === "attunement-choice" || step === "direction-choice";
   const isDone = step === "done";
   const intimacyTitle = `${character.name} · ${(bellirithContext ? BELLIRITH_INTIMACY_TITLES[bellirithContext] : undefined) || (modal.home ? homeProperty?.name || "Chez vous" : date?.title) || "Derrière la dernière porte"}`;
-  const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice } = useIntimacyBacklog(`${character.id}:${modal.dateId || "home"}:${modal.replay ? "r" : "l"}`, currentLine, isChoice, game.player, [character.id]);
+  const lineKey = `${step}|${directionChapter}|${attunementBeat}|${lineIndex}|${currentLine?.speaker}|${currentLine?.text}`;
+  const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice, rewind } = useSceneBacklog(`${character.id}:${modal.dateId || "home"}:${modal.replay ? "r" : "l"}`, lineKey, currentLine, !isChoice && !isDone, (text) => replacePlayer(text, game.player), [character.id]);
+  function back() {
+    const previous = rollback.pop();
+    if (!previous) return;
+    if (!isChoice && !isDone) rewind(lineKey);
+    setStep(previous.step);
+    setLines(previous.lines);
+    setLineIndex(previous.lineIndex);
+    setDirectionChapter(previous.directionChapter);
+    setAttunementBeat(previous.attunementBeat);
+  }
+  useSceneShortcuts(sectionRef, { backlogOpen, openBacklog: () => setBacklogOpen(true), canBack: rollback.canBack, onBack: back });
   const speakerColor = character.color;
   const background = backgroundUrl(modal.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
@@ -6277,8 +6255,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const intimateCg = intimateVisual.cg;
   const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
-  return <section className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
-    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
+  return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
@@ -6290,7 +6268,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     {step === "attunement-choice" && intimacyGame && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Moment partagé · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${character.id}:${modal.dateId || "route"}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}</div>}
     {step === "direction-choice" && <div className="choice-box intimacy-choices"><p className="choice-question">{bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Bellirith a déjà décidé de la suite." : approach ? `Après « ${approach.text.toLocaleLowerCase("fr")} »…` : "Comment poursuivre ?"}</p><small className="intimacy-route-note">{bellirithContext ? bellirithRouteNote(bellirithContext, directionChoices.length) : naiahContext ? "Trois façons de prolonger ce moment. Chacune transforme un élément concret du rendez-vous en une progression faite de jeu, de baisers et de confiance." : `Trois routes écrites pour ${character.name} et pour le corps que vous avez choisi. Chacune se développe en au moins huit séquences détaillées${modal.home ? ", entièrement propres au logement" : ""}.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong>{"detail" in choice && choice.detail && <small>{choice.detail}</small>}</div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Pas ce soir · rester ensemble et terminer la scène sans fermer les rendez-vous suivants</span></button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "La nuit se poursuit"}</p><h3>{direction ? direction.text : "Un moment partagé"}</h3><p>{modal.replay ? "Vous pouvez quitter ce souvenir sans modifier la chronique." : "La manière dont vous avez joué, répondu et pris l’initiative appartient désormais à votre histoire commune."}</p><button type="button" className="btn principal primary-action" onClick={() => onFinish(`${approach?.id || "approach"}|accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
-    {backlogOpen && <V2IntimacyBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
+    {backlogOpen && <SceneBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
 }
 
@@ -6321,6 +6299,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
   const firstIntimateMood = currentLine?.intimateMoods?.[first.id] || "soft";
   const secondIntimateMood = currentLine?.intimateMoods?.[second.id] || "soft";
+  const rollback = useRollback<IntimacyRollback<GroupIntimacyStep>>();
+  const sectionRef = useRef<HTMLElement>(null);
 
   function beginSegment(nextStep: GroupIntimacyStep, nextLines: DialogueLine[]) {
     setStep(nextStep);
@@ -6329,6 +6309,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   }
 
   function advance() {
+    if (step === "done") return;
+    rollback.record({ step, lines, lineIndex, directionChapter, attunementBeat });
     if (lineIndex < lines.length - 1) {
       setLineIndex((index) => index + 1);
       return;
@@ -6351,11 +6333,13 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   }
 
   function chooseAttunement(option: IntimacyGameOption) {
+    rollback.clear();
     setAttunementScore((score) => score + option.score);
     beginSegment("attunement-lines", option.lines);
   }
 
   function chooseDirection(choice: GroupIntimacyRoute) {
+    rollback.clear();
     setDirection(choice);
     const linevaAddress = game.flags.includes("lineva-tutoiement")
       ? choice.linevaAddress?.familiar
@@ -6375,7 +6359,19 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const isChoice = step === "attunement-choice" || step === "direction-choice";
   const isDone = step === "done";
   const intimacyTitle = `${first.name} & ${second.name} · ${date.title}`;
-  const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice } = useIntimacyBacklog(`${date.id}:${modal.replay ? "r" : "l"}`, currentLine, isChoice, game.player, [first.id, second.id]);
+  const lineKey = `${step}|${directionChapter}|${attunementBeat}|${lineIndex}|${currentLine?.speaker}|${currentLine?.text}`;
+  const { backlog, backlogOpen, setBacklogOpen, backlogRef, logChoice, rewind } = useSceneBacklog(`${date.id}:${modal.replay ? "r" : "l"}`, lineKey, currentLine, !isChoice && !isDone, (text) => replacePlayer(text, game.player), [first.id, second.id]);
+  function back() {
+    const previous = rollback.pop();
+    if (!previous) return;
+    if (!isChoice && !isDone) rewind(lineKey);
+    setStep(previous.step);
+    setLines(previous.lines);
+    setLineIndex(previous.lineIndex);
+    setDirectionChapter(previous.directionChapter);
+    setAttunementBeat(previous.attunementBeat);
+  }
+  useSceneShortcuts(sectionRef, { backlogOpen, openBacklog: () => setBacklogOpen(true), canBack: rollback.canBack, onBack: back });
   const speakerColor = (firstSpeaking ? first.color : secondSpeaking ? second.color : undefined) || first.color;
   const background = backgroundUrl(modal.background || spotById(date.spot)?.background || "/assets/backgrounds/bedroom.webp");
   const modeLabel = game.player.intimacy === "ellipse" ? "Fondu au noir" : game.player.intimacy === "explicite" ? "Explicite · sans coupure" : game.player.intimacy;
@@ -6392,8 +6388,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const useSecondIntimateSprite = isIntimateGroupContext(date.id) && hasIntimateSprites(second.id) && intimateVisual.useIntimateSprites;
   const useIntimateSprites = useFirstIntimateSprite || useSecondIntimateSprite;
 
-  return <section className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
-    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><button type="button" className="scene-outil" data-act="backlog" disabled={!backlog.length} aria-label="Historique des répliques" onClick={() => setBacklogOpen(true)}><span aria-hidden="true">☰</span><b>Historique</b><kbd>H</kbd></button><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
+  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+    <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
       <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} alt="" /></div>
       <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useSecondIntimateSprite ? "intimate" : "standard"} src={useSecondIntimateSprite ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useSecondIntimateSprite ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} alt="" /></div>
@@ -6407,7 +6403,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester simplement proches et terminer la soirée ici</span></button></div>}
     {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{hnManual ? `Trois façons de jouer la revanche avec ${first.name} et ${second.name} : chaque route a sa règle, ses alliances et sa chute.` : naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester enlacé·es et clore la scène ici</span></button></div>}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button type="button" className="btn principal primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
-    {backlogOpen && <V2IntimacyBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
+    {backlogOpen && <SceneBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
 }
 

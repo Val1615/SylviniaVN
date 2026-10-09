@@ -15,6 +15,7 @@ import {
   type BNGameState, type BNMove,
 } from "./bellirith-naiah-minigame";
 import { BN_INTIMACY_SCENES, bnRenderChapters, bnRenderOpening, bnVisualState } from "./bellirith-naiah-intimacy";
+import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
 
 /* ------------------------------------------------------------------------ */
 /* Dossier du Journal                                                        */
@@ -261,8 +262,22 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
   if (line?.speaker === "Bellirith" && line.mood) lastMoods.current.bellirith = line.mood;
   if (line?.speaker === "Naïah" && line.mood) lastMoods.current.naiah = line.mood;
   const intimateMood = (who: "bellirith" | "naiah") => (step === "done" ? chapters.at(-1)?.[0] : line)?.intimateMoods?.[who];
+  // Retour et Historique : la scène n’a aucun choix, ses effets ne s’appliquent qu’à « Continuer la chronique ».
+  const sectionRef = useRef<HTMLElement>(null);
+  const rollback = useRollback<{ step: "opening" | "chapters" | "done"; chapter: number; lineIndex: number }>();
+  const lineKey = `${step}|${chapter}|${lineIndex}|${line?.speaker}|${line?.text}`;
+  const { backlog, backlogOpen, setBacklogOpen, backlogRef, rewind } = useSceneBacklog(`${id}:${mode}:${replay ? "r" : "l"}`, lineKey, line, step !== "done", format, ["bellirith", "naiah"]);
+  function back() {
+    const previous = rollback.pop();
+    if (!previous) return;
+    if (step !== "done") rewind(lineKey);
+    setStep(previous.step); setChapter(previous.chapter); setLineIndex(previous.lineIndex);
+  }
+  useSceneShortcuts(sectionRef, { backlogOpen, openBacklog: () => setBacklogOpen(true), canBack: rollback.canBack, onBack: back });
 
   function advance() {
+    if (step === "done") return;
+    rollback.record({ step, chapter, lineIndex });
     if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
     if (step === "opening") { setStep("chapters"); setChapter(0); setLineIndex(0); return; }
     if (step === "chapters" && chapter < chapters.length - 1) { setChapter(chapter + 1); setLineIndex(0); return; }
@@ -277,10 +292,10 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
     </div>;
   };
   const sequenceLabel = step === "chapters" ? `Séquence ${chapter + 1} / ${chapters.length} · ` : step === "opening" ? "Prélude · " : "";
-  return <section className={`interactive-intimacy group-interactive-intimacy bn-intimacy v2-scene v2-scene-intime ${visual.cg ? `has-intimacy-cg cg-${visual.cg.phase}` : ""}`} data-bn-intimacy={id} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
+  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy bn-intimacy v2-scene v2-scene-intime ${visual.cg ? `has-intimacy-cg cg-${visual.cg.phase}` : ""}`} data-bn-intimacy={id} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top">
       <div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir intime · aucun gain" : `Bellirith & Naïah · ${MODE_LABELS[mode]}`}</p><h2>Bellirith & Naïah · {scene.title}</h2></div>
-      <div className="scene-outils"><button type="button" className="scene-outil passer" onClick={() => step === "done" ? onFinish() : onStop(step === "opening" ? -1 : chapter)}>{replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
+      <div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={() => step === "done" ? onFinish() : onStop(step === "opening" ? -1 : chapter)}>{replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
     </div>
     {visual.cg
       ? <div className={`intimacy-cg intimacy-cg-${visual.cg.phase}`} data-intimacy-cg={visual.cg.phase} style={{ "--intimacy-cg": `url(/assets/intimacy-cg/${visual.cg.src}.jpg)` } as CSSProperties}><img src={`/assets/intimacy-cg/${visual.cg.src}.jpg`} alt="Illustration intime de la scène" /></div>
@@ -292,6 +307,7 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
       <small>{sequenceLabel}{lineIndex + 1} / {lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
     </button>}
     {step === "done" && <div className="intimacy-complete"><p className="eyebrow">{replay ? "Fin du souvenir" : "La nuit s’achève"}</p><h3>{scene.title}</h3><p>{replay ? "Ce souvenir peut être quitté sans modifier la chronique." : scene.detail}</p><button type="button" className="btn principal primary-action" onClick={onFinish}>{replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
+    {backlogOpen && <SceneBacklog title={`Bellirith & Naïah · ${scene.title}`} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
 }
 

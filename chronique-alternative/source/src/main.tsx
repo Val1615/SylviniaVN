@@ -7,6 +7,7 @@ import "./ui/v2/v2-integration.css";
 import "./ui/v2/v2-fenetres.css";
 import "./hylee-naiah.css";
 import "./bellirith-naiah.css";
+import "./ui/v2/v2-lecture.css";
 
 const root = document.getElementById("root");
 
