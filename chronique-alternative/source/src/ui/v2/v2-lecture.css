@@ -32,6 +32,27 @@
   mask-repeat: no-repeat;
 }
 
+/* 1 bis. Le haut des sprites n’est jamais coupé.
+   Un masque CSS ne peint que dans la boîte de l’élément masqué, comme overflow: hidden.
+   Le cadre .scene-cast s’arrêtait à 4 vh du haut : avec le curseur « Taille des
+   personnages » (jusqu’à 130 %) ou l’effet de prise de parole, le sprite dépassait
+   ce cadre et sa chevelure était tranchée net. Le cadre monte donc bien au-dessus
+   de l’écran ; les sprites restent ancrés en bas (align-items: flex-end) et le
+   fondu, mesuré depuis le bas, ne change pas. */
+.scene-cast { top: -60vh; }
+/* Le curseur de taille reste libre ailleurs (Lieu, Fiche) ; en scène il plafonne à
+   112 % : au-delà, même avec l’effet de prise de parole (×1,035, −1,2 vh), le haut
+   de l’image (80 vh, pied à 5 vh du bas) sortirait de l’écran. */
+.v2-scene .scene-cast .scene-sprite { scale: min(var(--sprite, 1), 1.12); }
+/* Sprites intimes masqués sur l’image : une marge transparente autour de l’image
+   laisse respirer l’ombre portée (drop-shadow), qui n’est plus rognée en rectangle. */
+.intimacy-sprite img,
+.group-intimacy-sprite img {
+  box-sizing: content-box;
+  padding: 48px 48px 0;
+  margin: -48px -48px 0;
+}
+
 /* 2. Barre de lecture : pastilles discrètes et translucides (style Mode Histoire). */
 .scene-lecture { display: inline-flex; align-items: center; gap: calc(.3rem * var(--k, 1)); margin-right: calc(.2rem * var(--k, 1)); }
 .scene-lecture-btn {

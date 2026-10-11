@@ -63,6 +63,12 @@ assert.ok(main.indexOf("v2-lecture.css") > main.indexOf("bellirith-naiah.css"), 
 for (const selector of [".scene-cast", ".intimacy-sprite img", ".group-intimacy-sprite img", ".bn-game-sprite img"]) assert.ok(css.includes(selector), `Fondu attendu sur ${selector}.`);
 assert.match(css, /mask-image: var\(--ca-fondu-sprite\)/, "Le fondu doit être un masque CSS.");
 assert.match(css, /--ca-fondu-sprite: linear-gradient\(0deg, transparent 0,/, "Le masque part du bas transparent.");
+// Le masque peint seulement dans la boîte masquée : le cadre doit monter au-dessus de l’écran,
+// et la taille des sprites en scène reste plafonnée pour que le haut de l’image ne sorte jamais.
+assert.match(css, /\.scene-cast \{ top: -60vh; \}/, "Le cadre des sprites doit dépasser le haut de l’écran : sinon le haut des sprites est tranché.");
+assert.match(css, /\.v2-scene \.scene-cast \.scene-sprite \{ scale: min\(var\(--sprite, 1\), 1\.12\); \}/, "La taille des sprites en scène doit rester plafonnée à 112 %.");
+{ const h = 80, foot = 12 - 7, lift = 1.2, grow = 1.035, cap = 1.12; assert.ok(100 - foot - h * grow * cap + lift >= 0, "Au plafond, le haut d’un sprite doit rester dans l’écran."); }
+assert.match(css, /padding: 48px 48px 0;\s*margin: -48px -48px 0;/, "Les sprites intimes masqués doivent garder une marge pour leur ombre portée.");
 
 // 6. Comportement : la pile de dialogue restaure exactement l’état affiché et n’emporte jamais d’effet.
 const server = await createServer({
