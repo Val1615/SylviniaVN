@@ -40,10 +40,8 @@
    de l’écran ; les sprites restent ancrés en bas (align-items: flex-end) et le
    fondu, mesuré depuis le bas, ne change pas. */
 .scene-cast { top: -60vh; }
-/* Le curseur de taille reste libre ailleurs (Lieu, Fiche) ; en scène il plafonne à
-   112 % : au-delà, même avec l’effet de prise de parole (×1,035, −1,2 vh), le haut
-   de l’image (80 vh, pied à 5 vh du bas) sortirait de l’écran. */
-.v2-scene .scene-cast .scene-sprite { scale: min(var(--sprite, 1), 1.12); }
+/* Le curseur « Taille des personnages » reste libre jusqu’à 130 % : au-delà de
+   112 % le haut d’un sprite peut sortir de l’écran, mais jamais être tranché par le cadre. */
 /* Sprites intimes masqués sur l’image : une marge transparente autour de l’image
    laisse respirer l’ombre portée (drop-shadow), qui n’est plus rognée en rectangle. */
 .intimacy-sprite img,

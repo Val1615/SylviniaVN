@@ -8,7 +8,7 @@ import { createServer } from "vite";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => readFile(path.join(root, file), "utf8");
-const [page, bn, controls, main, css] = await Promise.all([read("src/page.tsx"), read("src/bellirith-naiah-ui.tsx"), read("src/scene-controls.tsx"), read("src/main.tsx"), read("src/ui/v2/v2-lecture.css")]);
+const [page, bn, controls, main, css, fx] = await Promise.all([read("src/page.tsx"), read("src/bellirith-naiah-ui.tsx"), read("src/scene-controls.tsx"), read("src/main.tsx"), read("src/ui/v2/v2-lecture.css"), read("src/ui/v2/fx.ts")]);
 
 /** Corps d’une fonction déclarée `function name(` (accolades équilibrées). */
 function body(source, name) {
@@ -64,10 +64,21 @@ for (const selector of [".scene-cast", ".intimacy-sprite img", ".group-intimacy-
 assert.match(css, /mask-image: var\(--ca-fondu-sprite\)/, "Le fondu doit être un masque CSS.");
 assert.match(css, /--ca-fondu-sprite: linear-gradient\(0deg, transparent 0,/, "Le masque part du bas transparent.");
 // Le masque peint seulement dans la boîte masquée : le cadre doit monter au-dessus de l’écran,
-// et la taille des sprites en scène reste plafonnée pour que le haut de l’image ne sorte jamais.
+// assez haut pour qu’aucun sprite ne soit tranché, même au réglage maximal du curseur.
 assert.match(css, /\.scene-cast \{ top: -60vh; \}/, "Le cadre des sprites doit dépasser le haut de l’écran : sinon le haut des sprites est tranché.");
-assert.match(css, /\.v2-scene \.scene-cast \.scene-sprite \{ scale: min\(var\(--sprite, 1\), 1\.12\); \}/, "La taille des sprites en scène doit rester plafonnée à 112 %.");
-{ const h = 80, foot = 12 - 7, lift = 1.2, grow = 1.035, cap = 1.12; assert.ok(100 - foot - h * grow * cap + lift >= 0, "Au plafond, le haut d’un sprite doit rester dans l’écran."); }
+assert.doesNotMatch(css, /scale: min\(var\(--sprite/, "La taille choisie par le joueur ne doit pas être plafonnée en scène.");
+{
+  // Géométrie (en vh) au réglage maximal du curseur : le haut du sprite doit rester sous le haut du cadre.
+  const frameTop = -60, frameBottom = 100 - 12, foot = 7, lift = 1.2, grow = 1.035;
+  const maxSprite = Number(/sprite: \{[^}]*max: (\d+)/.exec(fx)?.[1]) / 100;
+  assert.equal(maxSprite, 1.3, "Le curseur de taille des personnages doit aller jusqu’à 130 %.");
+  for (const [label, height] of [["distribution 1-2", 80], ["distribution 3", 73]]) {
+    const spriteTop = frameBottom + foot - height * grow * maxSprite - lift;
+    assert.ok(spriteTop > frameTop, `${label} : à 130 %, le haut du sprite (${spriteTop.toFixed(1)} vh) doit rester dans le cadre (${frameTop} vh).`);
+  }
+  // Format étroit (≤ 760 px) : sprites à 67 vh / 57 vh, pied à 18 - 3 vh du bas.
+  for (const height of [67, 57]) assert.ok(100 - 18 + 3 - height * grow * maxSprite - lift > frameTop, "Format étroit : aucun tranchage par le cadre à 130 %.");
+}
 assert.match(css, /padding: 48px 48px 0;\s*margin: -48px -48px 0;/, "Les sprites intimes masqués doivent garder une marge pour leur ombre portée.");
 
 // 6. Comportement : la pile de dialogue restaure exactement l’état affiché et n’emporte jamais d’effet.
