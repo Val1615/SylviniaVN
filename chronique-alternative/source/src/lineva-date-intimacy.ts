@@ -227,7 +227,7 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     reveal: {
       tendre: ["Lineva vous attire contre elle au pied de la table. Les cartes collent aux draps et à vos peaux ; elle en retire une de votre épaule avant de vous embrasser avec une douceur qui ne respecte plus aucune règle."],
       suggestif: ["Nue parmi les cartes, Lineva s’assied sur vos cuisses et glisse le roi entre vos corps avant de le laisser tomber. Ses hanches reprennent le rythme de la danse tandis que ses mains ouvrent l’espace dont vous avez besoin."],
-      explicite: ["Lineva s’allonge nue sur les draps, une jambe repliée et l’autre ouverte contre la table. Les cartes encadrent son ventre et le pli luisant de ses cuisses ; elle récupère le roi près de sa cuisse, vous le tend comme une invitation dérisoire puis guide votre bouche et vos doigts jusqu’au contact qu’elle réclame.", ["Lineva", "Vous avez gagné la position. Faites-en quelque chose avant que je change les règles.", "smirk"]],
+      explicite: ["Lineva s’allonge nue sur les draps, une jambe repliée et l’autre ouverte contre la table. Les cartes encadrent ses hanches et le pli luisant de ses cuisses ; elle récupère le roi près de sa cuisse, vous le tend comme une invitation dérisoire puis guide votre bouche et vos doigts jusqu’au contact qu’elle réclame.", ["Lineva", "Vous avez gagné la position. Faites-en quelque chose avant que je change les règles.", "smirk"]],
       ellipse: ["Lineva jette le paquet en l’air. Les cartes retombent autour de vos vêtements tandis qu’elle vous entraîne hors du champ du récit."],
     },
     afterClimax: [
