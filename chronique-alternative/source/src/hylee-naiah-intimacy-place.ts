@@ -234,7 +234,7 @@ const H1: HNSeed = {
     X(
       S(N("Contre le tronc du saule, Hylee se cambre sous vos doigts glissés dans sa chaleur ; Naïah imite votre geste, une ombre douce prolonge le vôtre, et Hylee jouit entre vous deux, le givre fleurissant sur l’écorce. Naïah ne vous laisse pas le temps de triompher : sa paume revient appuyer là où elle sait désormais, et votre plaisir déborde à son tour.")),
       S(N("Hylee vous allonge sur la couverture et vous prend en elle, à califourchon, pendant qu’une ombre de Naïah lui tient les poignets au-dessus de la tête et que ses doigts trouvent sa perle de plaisir. Hylee jouit en jurant ; vous allez la suivre quand une ombre vous retient au bord, juste assez longtemps pour vous faire supplier, avant de vous laisser basculer.")),
-      S(N("Hylee vous allonge et prend votre vigueur entre ses lèvres, tandis que Naïah glisse une ombre dans votre chaleur, à contretemps. Le désaccord vous emporte des deux côtés à la fois. Puis, contre le saule, vos doigts et l’ombre de Naïah s’accordent pour Hylee, qui jouit entre vous, le givre éclatant sur l’écorce.")),
+      S(N("Hylee vous allonge et vous prend entre ses lèvres, tandis que Naïah glisse une ombre en vous, à contretemps. Le désaccord vous emporte des deux côtés à la fois. Puis, contre le saule, vos doigts et l’ombre de Naïah s’accordent pour Hylee, qui jouit entre vous, le givre éclatant sur l’écorce.")),
     ),
     S(
       N("Le silence revient par morceaux : le clapotis du bassin, un oiseau qui se rendort, trois souffles qui n’arrivent pas à se caler. Hylee garde une main sur votre cuisse et l’autre crispée dans l’herbe, comme pour vérifier que le sol tient encore."),
@@ -622,13 +622,13 @@ const h3 = {
   ),
   ex11: X(
     S(
-      N("Hylee profite du désordre pour vous rejoindre. Elle s’allonge sur vous, cuisse contre cuisse, vos chaleurs l’une contre l’autre, et ondule lentement pendant que vos doigts trouvent sa perle de plaisir. L’ombre de Naïah, toujours en elle, reprend son rythme. Hylee perd le compte, la piste, le barème."),
+      N("Hylee profite du désordre pour vous rejoindre. Elle s’allonge sur vous, cuisse contre cuisse, vos chaleurs l’une contre l’autre, et ondule lentement pendant que vos doigts trouvent son bouton. L’ombre de Naïah, toujours en elle, reprend son rythme. Hylee perd le compte, la piste, le barème."),
       N("Elle jouit en criant un nom. Pas le vôtre. Pas le sien."),
       H("Naïah… !", "surprised"),
       A("Elle a dit mon nom. C’est moi qui touche tout le tas, alors. Par symétrie."),
     ),
     S(
-      N("Hylee profite du désordre pour reprendre la main. Elle vous enjambe et vous prend en elle, lente, pendant que l’ombre de Naïah se pose sur sa perle de plaisir et y reprend son rythme patient. Hylee perd le compte, la piste, le barème. Le givre court de ses genoux sur la dalle."),
+      N("Hylee profite du désordre pour reprendre la main. Elle vous enjambe et vous prend en elle, lente, pendant que l’ombre de Naïah se pose sur elle, juste au-dessus de vous, et y reprend son rythme patient. Hylee perd le compte, la piste, le barème. Le givre court de ses genoux sur la dalle."),
       N("Elle jouit en criant un nom. Pas le vôtre. Pas le sien."),
       H("Naïah… !", "surprised"),
       A("Elle a dit mon nom. C’est moi qui touche tout le tas, alors. Par symétrie."),

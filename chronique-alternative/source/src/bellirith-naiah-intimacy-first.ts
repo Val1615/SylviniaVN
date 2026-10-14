@@ -192,7 +192,7 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
       [
         "Naïah se décale et vous laisse la place, puis vient tenir les poignets de Bellirith au-dessus de sa tête, sans serrer, avec une douceur moqueuse.",
         X(
-          "Vous vous allongez sur la démone et pressez votre sexe contre le sien. Vos intimités glissent l’une sur l’autre, de plus en plus vite, et Bellirith ondule sous vous en cherchant l’appui de votre perle de plaisir contre la sienne.",
+          "Vous vous allongez sur la démone et pressez votre sexe contre le sien. Vos intimités glissent l’une sur l’autre, de plus en plus vite, et Bellirith ondule sous vous en cherchant le point exact où vos deux boutons se heurtent.",
           "Vous vous glissez entre ses cuisses et entrez en elle lentement. Elle vous accueille d’un seul souffle, serrée et brûlante autour de vous, et ses talons se croisent dans votre dos pour vous garder au fond.",
           "Vous vous glissez entre ses cuisses et entrez en elle lentement, vos replis frottant contre les siens à chaque mouvement. Elle vous accueille d’un seul souffle, serrée autour de votre vigueur, et ses talons se croisent dans votre dos.",
         ),

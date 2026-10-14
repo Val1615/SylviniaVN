@@ -21,32 +21,32 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       guided: scene(
         "Hylee vous invite à vous asseoir contre la tête du lit, puis vient s’agenouiller entre vos cuisses. Sa bouche suit la fraîcheur laissée par ses doigts jusqu’à votre intimité humide ; sa langue dessine de petits cercles autour de votre perle de plaisir tandis qu’elle glisse deux doigts en vous à la cadence que vos hanches réclament. Elle change ensuite l’angle en relevant doucement votre bassin sur ses avant-bras.",
         C("Hylee", "Je sens exactement où le froid te fait frissonner… Dis-moi si tu veux que je garde cette ligne ou que je descende plus profondément.", "determined"),
-        "Votre réponse la fait sourire contre vos lèvres de velours. Hylee conserve simultanément la pression de sa langue et le mouvement recourbé de ses doigts jusqu’à ce que votre orgasme fasse courir une dentelle de givre sur le bois du lit ; elle reste là, émerveillée plutôt que triomphante, le temps que vos jambes cessent de trembler.",
+        "Votre réponse la fait sourire contre votre sexe. Hylee conserve simultanément la pression de sa langue et le mouvement recourbé de ses doigts jusqu’à ce que votre orgasme fasse courir une dentelle de givre sur le bois du lit ; elle reste là, émerveillée plutôt que triomphante, le temps que vos jambes cessent de trembler.",
       ),
       offered: scene(
-        "Vous allongez Hylee en travers du lit et vous placez à genoux près de son visage, assez proche pour qu’elle puisse vous toucher pendant que votre bouche descend sur elle. Vos doigts écartent ses lèvres de velours et votre langue trouve son point de feu ; lorsque son bassin se soulève, vous glissez une main sous ses reins afin de soutenir le mouvement sans l’empêcher.",
+        "Vous allongez Hylee en travers du lit et vous placez à genoux près de son visage, assez proche pour qu’elle puisse vous toucher pendant que votre bouche descend sur elle. Vos doigts l’ouvrent et votre langue trouve son bouton ; lorsque son bassin se soulève, vous glissez une main sous ses reins afin de soutenir le mouvement sans l’empêcher.",
         P("Ne retiens pas le givre. Je veux voir exactement ce que mon geste provoque."),
         "Hylee laisse enfin sa magie répondre librement. Des flocons minuscules naissent sur votre dos pendant qu’elle guide votre bouche d’une main et caresse votre intimité de l’autre ; son plaisir devient un échange continu, puis son orgasme la cambre sous vous dans un éclat de neige qui fond aussitôt sur vos deux peaux rapprochées.",
       ),
       mutual: scene(
-        "Vous vous tournez sur le côté et entrelacez vos jambes dans une position en ciseaux. Hylee ajuste elle-même votre hanche jusqu’à ce que vos lèvres de velours se pressent l’une contre l’autre ; le frottement commence lentement, accompagné par ses doigts frais sur votre point de feu, puis vos bassins trouvent une diagonale plus ferme où chaque mouvement stimule vos deux corps à la fois.",
+        "Vous vous tournez sur le côté et entrelacez vos jambes dans une position en ciseaux. Hylee ajuste elle-même votre hanche jusqu’à ce que vos lèvres de velours se pressent l’une contre l’autre ; le frottement commence lentement, accompagné par ses doigts frais tout en haut de votre sexe, puis vos bassins trouvent une diagonale plus ferme où chaque mouvement stimule vos deux corps à la fois.",
         C("Hylee", "Ne choisis pas laquelle de nous mène. Reste juste là… et recommence ce mouvement avec moi.", "teasing"),
-        "Elle rit une fois, puis son souffle se brise lorsque vous resserrez vos cuisses. Le givre indique le trajet exact de vos glissements et vous permet de reprendre la même pression après chaque ralentissement ; Hylee jouit la première, garde pourtant sa jambe contre la vôtre et accompagne votre propre orgasme en caressant la perle de plaisir qu’elle sent pulser contre elle.",
+        "Elle rit une fois, puis son souffle se brise lorsque vous resserrez vos cuisses. Le givre indique le trajet exact de vos glissements et vous permet de reprendre la même pression après chaque ralentissement ; Hylee jouit la première, garde pourtant sa jambe contre la vôtre et accompagne votre propre orgasme en caressant le petit bouton qu’elle sent pulser contre elle.",
       ),
     },
     homme: {
       guided: scene(
-        "Hylee s’agenouille devant vous et referme ses doigts frais autour de votre sexe dressé. Elle réchauffe d’abord sa bouche contre votre ventre, puis accueille votre membre viril entre ses lèvres en gardant une main à sa base ; la différence de température rend chaque passage distinct, surtout lorsqu’elle creuse les joues et vous laisse guider la profondeur par une main posée dans ses cheveux.",
+        "Hylee s’agenouille devant vous et referme ses doigts frais autour de votre sexe dressé. Elle réchauffe d’abord sa bouche contre votre ventre, puis vous accueille entre ses lèvres en gardant une main à votre base ; la différence de température rend chaque passage distinct, surtout lorsqu’elle creuse les joues et vous laisse guider la profondeur par une main posée dans ses cheveux.",
         C("Hylee", "Je ne veux pas deviner quand tu vas céder. Regarde-moi et dis-le… j’ai envie de te voir me faire confiance jusqu’au bout.", "soft"),
         "Lorsque vous l’avertissez, Hylee ne change plus rien. Sa langue reste appliquée sous l’extrémité sensible, sa main poursuit le même rythme et vos hanches avancent seulement autant qu’elle les accueille ; votre orgasme la surprend malgré sa concentration, faisant éclater autour de ses épaules un halo de cristaux qu’elle contemple avec un rire essoufflé.",
       ),
       offered: scene(
-        "Vous installez Hylee sur le côté, une jambe relevée contre votre hanche, et caressez longtemps son intimité humide avant de guider votre sexe dressé contre elle. Elle vous accueille par pressions progressives, son dos collé à votre poitrine ; votre main demeure sur sa perle de plaisir pendant que vos mouvements courts font glisser votre membre en elle sans jamais perdre la proximité de l’étreinte.",
+        "Vous installez Hylee sur le côté, une jambe relevée contre votre hanche, et caressez longtemps son intimité humide avant de vous presser, tendu, contre elle. Elle vous accueille par pressions progressives, son dos collé à votre poitrine ; votre main demeure sur sa perle de plaisir pendant que vos mouvements courts vous font glisser en elle sans jamais perdre la proximité de l’étreinte.",
         P("Tu règles la profondeur avec ta jambe. Si tu la resserres, je m’arrête ; si tu me ramènes contre toi, je continue."),
-        "Hylee teste la règle, puis vous attire plus fermement. Le givre couvre votre avant-bras à mesure que la double stimulation la traverse ; elle prononce votre prénom avant de jouir, serre votre membre au rythme de ses contractions et reste lovée contre vous lorsque vous atteignez à votre tour le point où toute retenue se défait.",
+        "Hylee teste la règle, puis vous attire plus fermement. Le givre couvre votre avant-bras à mesure que la double stimulation la traverse ; elle prononce votre prénom avant de jouir, vous serre au rythme de ses contractions et reste lovée contre vous lorsque vous atteignez à votre tour le point où toute retenue se défait.",
       ),
       mutual: scene(
-        "Hylee vient s’asseoir sur vos cuisses, face à vous, et guide elle-même votre membre viril vers son écrin de chair. Elle descend lentement jusqu’à vous accueillir entièrement, les bras autour de votre nuque ; plutôt que de rebondir, elle fait rouler son bassin en cercles serrés qui maintiennent votre sexe au plus profond tout en frottant son point de feu contre votre pubis.",
+        "Hylee vient s’asseoir sur vos cuisses, face à vous, et vous guide elle-même jusqu’à elle. Elle descend lentement jusqu’à vous accueillir entièrement, les bras autour de votre nuque ; plutôt que de rebondir, elle fait rouler son bassin en cercles serrés qui vous gardent au plus profond tout en frottant son point de feu contre votre pubis.",
         C("Hylee", "J’avais imaginé quelque chose de beaucoup plus maladroit… mais comme ça, je peux te regarder quand je décide d’aller plus vite.", "teasing"),
         "Vous soutenez ses hanches sans les conduire. Hylee accélère par vagues, s’immobilise pour savourer les pulsations puis recommence avec une assurance croissante ; son orgasme fait blanchir ses cils de givre et le resserrement de son intimité vous entraîne peu après, vos fronts demeurant joints jusqu’à ce que la neige cesse de tomber.",
       ),
@@ -63,7 +63,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Sa franchise transforme la position en audace partagée. Vous suivez ses indications, variez la profondeur sans perdre le contact extérieur et sentez le givre se former autour de vos genoux lorsqu’elle approche de l’orgasme ; Hylee vient contre vous dans une succession de contractions, puis se retourne aussitôt pour embrasser le corps qui vient de l’écouter.",
       ),
       mutual: scene(
-        "Vous vous installez tête-bêche, Hylee couchée sur le côté afin que chacun puisse atteindre l’autre sans supporter tout son poids. Elle suit de la bouche le point de feu que vous lui avez désigné pendant que vous stimulez son intimité humide ; à votre demande, l’un des contacts devient une pénétration douce tandis que l’autre demeure un frottement continu entre vos bassins rapprochés.",
+        "Vous vous installez tête-bêche, Hylee couchée sur le côté afin que chacun puisse atteindre l’autre sans supporter tout son poids. Elle suit de la bouche l’endroit que vous lui avez désigné pendant que vous la caressez, mouillée sous vos doigts ; à votre demande, l’un des contacts devient une pénétration douce tandis que l’autre demeure un frottement continu entre vos bassins rapprochés.",
         P("On ne cherche pas la symétrie. On garde ce qui fait trembler chacun de nous, même si nos gestes ne se ressemblent pas."),
         "Hylee approuve contre votre peau et abandonne son idée de reproduire exactement votre plaisir. Vos rythmes deviennent différents mais reliés par les mains posées sur vos hanches ; elle jouit dans votre bouche, reprend ensuite le geste précis que vous aviez choisi et vous accompagne jusqu’à un orgasme marqué par une unique étoile de givre entre vos deux corps.",
       ),
@@ -73,7 +73,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
   remerii: {
     femme: {
       guided: scene(
-        "Remerii vous fait asseoir sur le bord d’un bureau plutôt que sur le lit, vos jambes reposant sur ses épaules. Elle écarte délicatement vos lèvres de velours et applique sa langue sur votre perle de plaisir avec une précision presque savante ; lorsqu’un doigt glisse en vous, elle recourbe lentement le mouvement et utilise sa seconde main pour maintenir une pression extérieure parfaitement coordonnée.",
+        "Remerii vous fait asseoir sur le bord d’un bureau plutôt que sur le lit, vos jambes reposant sur ses épaules. Elle écarte délicatement vos lèvres de velours et applique sa langue sur votre bouton avec une précision presque savante ; lorsqu’un doigt glisse en vous, elle recourbe lentement le mouvement et utilise sa seconde main pour maintenir une pression extérieure parfaitement coordonnée.",
         C("Remerii", "Je pourrais annoncer chaque variation. Je préfère que votre corps me réponde… et que votre voix confirme laquelle mérite de durer.", "calm"),
         "Votre demande de fermeté trouble sa méthode. Remerii cesse de compter, vous attire au bord du meuble et garde sa bouche au même endroit pendant que ses doigts accélèrent ; l’Arcane pulse dans les lampes au moment où vous jouissez, et sa satisfaction prend la forme d’un sourire désordonné qu’aucune conclusion académique ne vient corriger.",
       ),
@@ -85,7 +85,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       mutual: scene(
         "Remerii propose d’abord une position tête-bêche soigneusement alignée. Vous la dérangez en la faisant pivoter jusqu’à ce que vos corps forment une courbe imparfaite : sa bouche atteint votre intimité, la vôtre la sienne, et vos doigts trouvent chacun un angle différent. À mi-chemin, elle abandonne cette symétrie et vient entrelacer ses jambes aux vôtres pour un frottement en ciseaux plus spontané.",
         C("Remerii", "La seconde configuration est objectivement moins stable… et subjectivement beaucoup trop convaincante pour être abandonnée.", "smirk"),
-        "Vous riez contre sa gorge avant de reprendre. Remerii serre votre hanche, fait rouler son bassin contre vos lèvres de velours et laisse ses doigts entre vous maintenir les deux points de feu dans la pression ; son premier orgasme désordonne entièrement les draps, le vôtre efface la dernière tentative de compter lequel a commencé.",
+        "Vous riez contre sa gorge avant de reprendre. Remerii serre votre hanche, fait rouler son bassin contre le vôtre et laisse ses doigts entre vous maintenir vos deux plaisirs dans la pression ; son premier orgasme désordonne entièrement les draps, le vôtre efface la dernière tentative de compter lequel a commencé.",
       ),
     },
     homme: {
@@ -100,7 +100,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Remerii répond d’abord par une phrase complète, puis par un ordre bref. Vous augmentez la cadence en gardant votre main entre vos bassins ; son orgasme rompt sa diction et resserre son écrin de chair autour de vous. Elle vous regarde céder peu après, les doigts dans votre nuque, fière d’avoir demandé exactement ce qu’elle voulait plutôt que de l’avoir déduit.",
       ),
       mutual: scene(
-        "Remerii s’installe au-dessus de vous, tournée vers vos pieds, et guide votre sexe dressé en elle avant de se pencher pour refermer sa main autour de sa base. Cette chevauchée inversée lui permet de choisir la profondeur tandis que vous caressez sa perle de plaisir par derrière ; après plusieurs mouvements, elle se retourne sans vous quitter et reprend face à vous, plus lente mais beaucoup plus intime.",
+        "Remerii s’installe au-dessus de vous, tournée vers vos pieds, et guide votre sexe dressé en elle avant de se pencher pour refermer sa main autour de sa base. Cette chevauchée inversée lui permet de choisir la profondeur tandis que vous la caressez en passant la main sous sa hanche ; après plusieurs mouvements, elle se retourne sans vous quitter et reprend face à vous, plus lente mais beaucoup plus intime.",
         C("Remerii", "Deux positions, deux réponses différentes… Non. Ne souriez pas. Je ne mène aucune étude ; je veux seulement sentir laquelle nous fait perdre pied ensemble.", "smirk"),
         "Vous l’attirez contre votre poitrine et accompagnez ses mouvements de bassin. La précision cède à des reprises irrégulières, interrompues par des baisers et relancées quand elle réclame plus profond ; Remerii jouit en vous gardant entièrement en elle, et ses contractions vous conduisent au même abandon sans que l’un de vous puisse encore appeler cela une expérience.",
       ),
@@ -119,7 +119,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       mutual: scene(
         "Vous transformez ses deux signes méthodiques en un jeu de positions : côte à côte pour les caresses, tête-bêche pour les bouches, puis face à face lorsque l’un de vous souhaite donner ou recevoir une pénétration. Remerii annonce chaque transition mais jamais son résultat ; vos corps déterminent l’angle, vos voix la profondeur, et vos mains demeurent libres de modifier la scène.",
         C("Remerii", "Je connais la structure. Je ne connais ni votre prochaine demande ni la mienne… C’est précisément ce qui me trouble autant."),
-        "Elle choisit finalement de recevoir pendant que vous gardez votre propre point de feu contre sa cuisse. Le mouvement devient double, asymétrique et parfaitement lisible ; Remerii jouit dans votre cou, reprend ensuite la caresse que vous aviez réclamée et vous mène jusqu’à l’orgasme sans chercher à rendre vos deux expériences identiques.",
+        "Elle choisit finalement de recevoir pendant que vous vous frottez contre sa cuisse. Le mouvement devient double, asymétrique et parfaitement lisible ; Remerii jouit dans votre cou, reprend ensuite la caresse que vous aviez réclamée et vous mène jusqu’à l’orgasme sans chercher à rendre vos deux expériences identiques.",
       ),
     },
   },
@@ -132,14 +132,14 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous lui demandez de vous attirer au bord du velours. Iriana obéit sans ironie, soutient vos hanches et approfondit le mouvement de ses doigts jusqu’à ce que vos cuisses se referment autour de ses épaules ; votre orgasme lui arrache un sourire fier et privé, puis elle embrasse l’intérieur de votre genou comme si elle scellait un secret plutôt qu’un décret.",
       ),
       offered: scene(
-        "Vous placez Iriana à genoux devant le dossier de la banquette, une jambe légèrement écartée afin de garder son équilibre. Votre main suit son ventre jusqu’à son intimité humide par l’arrière tandis que votre bouche embrasse sa nuque ; deux doigts glissent en elle et votre paume presse sa perle de plaisir à chaque mouvement remontant.",
+        "Vous placez Iriana à genoux devant le dossier de la banquette, une jambe légèrement écartée afin de garder son équilibre. Votre main suit son ventre jusqu’entre ses cuisses par l’arrière tandis que votre bouche embrasse sa nuque ; deux doigts glissent en elle et votre paume presse son bouton à chaque mouvement remontant.",
         P("Tu n’as rien à représenter. Si tu veux te cambrer, demander plus fort ou perdre toute dignité impériale, cette pièce n’en fera pas un événement politique."),
         "Iriana rit, puis sa réaction devient beaucoup moins contrôlée. Elle pousse ses hanches contre votre main, prononce des demandes sans sujet ni formule et jouit en serrant le velours entre ses doigts ; lorsque ses jambes faiblissent, vous la retenez contre vous et elle accepte ce soutien sans chercher à transformer l’abandon en faiblesse.",
       ),
       mutual: scene(
         "Iriana s’assied à califourchon sur votre cuisse et vous attire sur la sienne, créant une position où vos deux points de feu frottent alternativement contre la peau tendue de l’autre. Vos mains passent sous les robes ouvertes, puis vos jambes s’entrelacent plus bas dans un ciseau lent ; chaque changement ressemble à un pas de danse que celle qui le reçoit peut interrompre d’une pression sur l’épaule.",
         C("Iriana", "Cette fois, personne ne conduit toute la valse. Prenez ce mouvement… je reprendrai le suivant lorsque vous me l’aurez rendu.", "smirk"),
-        "Vous alternez ainsi les cercles de bassin et les frottements plus fermes. Iriana perd la mesure lorsqu’elle jouit contre votre cuisse, mais garde deux doigts sur votre perle de plaisir et vous entraîne dans le pas suivant ; votre propre orgasme survient sous sa main tremblante, face à une femme ravie de n’avoir rien maîtrisé seule.",
+        "Vous alternez ainsi les cercles de bassin et les frottements plus fermes. Iriana perd la mesure lorsqu’elle jouit contre votre cuisse, mais garde deux doigts sur vous, tout en haut, et vous entraîne dans le pas suivant ; votre propre orgasme survient sous sa main tremblante, face à une femme ravie de n’avoir rien maîtrisé seule.",
       ),
     },
     homme: {
@@ -151,10 +151,10 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       offered: scene(
         "Vous faites tourner Iriana dos à vous devant les rideaux, puis lui demandez de choisir elle-même l’inclinaison. Elle se penche sur la table basse et guide votre membre viril vers son intimité humide ; vous entrez lentement, une main sur sa hanche et l’autre entre ses cuisses, où vos doigts entretiennent le point de feu que la pénétration seule ne remplace pas.",
         P("Garde tes yeux sur moi. Je ne veux pas la posture de l’Impératrice ; je veux celle dans laquelle Iriana peut vraiment céder."),
-        "Elle se redresse alors contre votre poitrine, modifiant l’angle sans rompre l’union de vos corps. Ses ordres deviennent des demandes haletantes, vos mouvements plus profonds et votre main plus précise ; Iriana jouit en gardant votre sexe en elle, puis vous ramène d’un mouvement de bassin jusqu’à ce que votre plaisir vous fasse oublier toute révérence.",
+        "Elle se redresse alors contre votre poitrine, modifiant l’angle sans rompre l’union de vos corps. Ses ordres deviennent des demandes haletantes, vos mouvements plus profonds et votre main plus précise ; Iriana jouit en vous gardant en elle, puis vous ramène d’un mouvement de bassin jusqu’à ce que votre plaisir vous fasse oublier toute révérence.",
       ),
       mutual: scene(
-        "Iriana vous pousse sur le tapis épais plutôt que vers le lit et vient vous chevaucher, d’abord face à vous. Elle descend sur votre sexe dressé avec une lenteur souveraine, puis se penche pour vous embrasser tandis que vos doigts caressent sa perle de plaisir ; à mi-course, vous la faites rouler sous vous après sa demande et reprenez le même angle dans une position où vos regards restent liés.",
+        "Iriana vous pousse sur le tapis épais plutôt que vers le lit et vient vous chevaucher, d’abord face à vous. Elle s’abaisse sur vous avec une lenteur souveraine, puis se penche pour vous embrasser tandis que vos doigts caressent sa perle de plaisir ; à mi-course, vous la faites rouler sous vous après sa demande et reprenez le même angle dans une position où vos regards restent liés.",
         C("Iriana", "J’ai choisi de mener. Maintenant je choisis de vous laisser me renverser… Ne faites pas de cette nuance une victoire, faites-en un plaisir."),
         "Vous suivez sa cadence plutôt que de l’imposer. Chaque inversion ajoute une intensité différente : elle contrôle la profondeur au-dessus, vous maintenez le frottement lorsqu’elle est dessous ; son orgasme vous serre au plus près et le vôtre suit pendant qu’elle garde votre visage entre ses mains, débarrassée de toute peur d’avoir cédé du pouvoir.",
       ),
@@ -245,7 +245,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Son sourire se fissure en un gémissement. Naïah serre le bord du rocher, guide votre tête et laisse la brume révéler chaque pulsation de plaisir au lieu de la masquer ; lorsqu’elle jouit, l’illusion du plafond éclate comme du verre lumineux et elle reste offerte à votre regard, bouleversée que la réalité ait suffi.",
       ),
       mutual: scene(
-        "Naïah dessine un cercle de lumière autour du drap, puis entrelace ses jambes aux vôtres dans un ciseau vertical : l’une appuyée sur un coude, l’autre légèrement au-dessus. Vos lèvres de velours se frottent selon un angle visible dans l’unique reflet ; vos doigts changent de point de feu à chaque mouvement, non pour multiplier les sensations, mais pour garder vos deux plaisirs lisibles.",
+        "Naïah dessine un cercle de lumière autour du drap, puis entrelace ses jambes aux vôtres dans un ciseau vertical : l’une appuyée sur un coude, l’autre légèrement au-dessus. Vos sexes se frottent selon un angle visible dans l’unique reflet ; vos doigts passent de l’une à l’autre à chaque mouvement, non pour multiplier les sensations, mais pour garder vos deux plaisirs lisibles.",
         C("Naïah", "Regarde le reflet si tu veux la position. Pour tout le reste, regarde-moi. Je refuse qu’une image jouisse à ma place."),
         "Vous maintenez son regard et augmentez la pression de vos bassins. Naïah ralentit volontairement quand la brume devient trop brillante, reprend lorsqu’elle vous entend la demander et atteint l’orgasme dans un frisson réel qui vous entraîne presque aussitôt ; le cercle reste intact, témoin discret de deux corps qui n’ont eu besoin d’aucun double.",
       ),
@@ -262,7 +262,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Naïah fait disparaître même les étoiles. Vous la pénétrez par mouvements fermes, une main sous son ventre pour maintenir le plaisir extérieur ; son reflet montre le moment précis où son masque cède, puis son orgasme resserre son intimité autour de vous et vous conduit à votre propre perte de contrôle sous un ciel redevenu entièrement noir.",
       ),
       mutual: scene(
-        "Naïah vous attire assis contre elle, dos à l’arbre, et vient vous chevaucher en vous faisant face. Elle guide votre membre viril dans son écrin de chair, puis crée au-dessus de vos épaules une pluie qui tombe vers le ciel ; ses cercles de bassin restent pourtant simples, profonds, et vos doigts sur sa perle de plaisir constituent la seule magie qu’elle réclame.",
+        "Naïah vous attire assis contre elle, dos à l’arbre, et vient vous chevaucher en vous faisant face. Elle guide votre membre viril dans son écrin de chair, puis crée au-dessus de vos épaules une pluie qui tombe vers le ciel ; ses cercles de bassin restent pourtant simples, profonds, et vos doigts sur son bouton constituent la seule magie qu’elle réclame.",
         C("Naïah", "Le décor peut mentir autant qu’il veut. Mes hanches, elles, vont te dire exactement quand je veux plus profond."),
         "Vous suivez cette vérité physique. Elle accélère, s’arrête pour vous laisser reprendre son souffle contre sa bouche puis vous attire plus loin en elle ; Naïah jouit dans vos bras au moment où la pluie disparaît, et la chaleur de ses contractions vous fait céder sans que le moindre effet magique n’ait touché votre plaisir.",
       ),
@@ -281,7 +281,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
       mutual: scene(
         "Vous utilisez le reflet comme une carte mobile : l’un de vous indique une position, l’autre choisit le geste réel qui l’habitera. Une étreinte assise devient un frottement de bassins ; un retournement sur le côté ouvre la possibilité d’une pénétration donnée ou reçue ; enfin vos bouches échangent les places sans chercher à rendre vos anatomies symétriques.",
         C("Naïah", "C’est mieux qu’un double. Tu me surprends sans disparaître, et je peux te répondre sans inventer ce que tu devrais ressentir."),
-        "La scène avance comme un jeu dont chaque règle protège l’imprévu. Naïah jouit dans une configuration qu’elle avait proposée mais que votre corps a transformée ; elle reprend ensuite votre choix préféré, maintient la pression au point de feu que vous avez nommé et vous accompagne jusqu’à un orgasme que le reflet laisse volontairement sans image parfaite.",
+        "La scène avance comme un jeu dont chaque règle protège l’imprévu. Naïah jouit dans une configuration qu’elle avait proposée mais que votre corps a transformée ; elle reprend ensuite votre choix préféré, maintient la pression à l’endroit que vous avez nommé et vous accompagne jusqu’à un orgasme que le reflet laisse volontairement sans image parfaite.",
       ),
     },
   },
@@ -299,7 +299,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Lineva ferme les yeux et formule la demande. Vous augmentez la profondeur sans changer la pression de votre langue ; son corps puissant se tend, sa voix se brise et son orgasme lui fait enfin lâcher le mur pour saisir vos épaules. Elle reste assise, jambes tremblantes, presque amusée qu’une position si stable l’ait rendue incapable de se lever.",
       ),
       mutual: scene(
-        "Vous vous placez face à face sur le côté, une cuisse de Lineva entre les vôtres et la vôtre contre son intimité. Vos bassins glissent en sens opposés, chaque femme frottant sa perle de plaisir contre la jambe de l’autre ; vos doigts ajoutent une pénétration alternée qui ne demande jamais à Lineva de porter votre poids ni à vous de soutenir le sien.",
+        "Vous vous placez face à face sur le côté, une cuisse de Lineva entre les vôtres et la vôtre contre son intimité. Vos bassins glissent en sens opposés, chaque femme se frottant, mouillée, contre la jambe de l’autre ; vos doigts ajoutent une pénétration alternée qui ne demande jamais à Lineva de porter votre poids ni à vous de soutenir le sien.",
         C("Lineva", "Une relève sans poste fixe. Quand votre jambe fatigue, je prends l’angle ; quand la mienne tremble, vous le reprenez. Ça, je sais le partager."),
         "L’alternance devient plus rapide mais reste lisible. Lineva jouit en serrant votre cuisse, garde ensuite deux doigts au creux de vos lèvres de velours et ajuste sa force à votre demande ; votre propre orgasme arrive sous sa main, dans une position où aucune des deux n’a dû protéger l’autre en silence.",
       ),
@@ -316,9 +316,9 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Lineva teste votre promesse puis l’utilise pleinement. Elle règle la profondeur en avançant ou reculant, demande une cadence plus ferme et finit par se cambrer contre votre poitrine ; son orgasme contracte tout son corps autour de vous, et vous cédez peu après lorsque sa main se referme sur la vôtre plutôt que sur une arme absente.",
       ),
       mutual: scene(
-        "Lineva vous renverse sur le lit avec un rire, vient vous chevaucher et guide votre membre viril dans son écrin de chair. Elle commence en position haute, utilisant la force de ses cuisses pour contrôler chaque descente ; lorsque la fatigue effleure son ancienne blessure, vous roulez ensemble sur le côté et poursuivez dans une étreinte où vos jambes assurent le mouvement à parts égales.",
+        "Lineva vous renverse sur le lit avec un rire, vient vous chevaucher et vous guide en elle d’un seul mouvement. Elle commence en position haute, utilisant la force de ses cuisses pour contrôler chaque descente ; lorsque la fatigue effleure son ancienne blessure, vous roulez ensemble sur le côté et poursuivez dans une étreinte où vos jambes assurent le mouvement à parts égales.",
         C("Lineva", "Je cède la position, pas le plaisir. Restez contre moi et gardez exactement cet angle."),
-        "La seconde posture ralentit sans diminuer l’intensité. Votre main entretient sa perle de plaisir, la sienne guide vos hanches et ses contractions annoncent l’orgasme avant sa voix ; Lineva continue pourtant le mouvement latéral jusqu’à vous faire jouir en elle, fière d’avoir choisi la relève plutôt que d’avoir caché sa fatigue.",
+        "La seconde posture ralentit sans diminuer l’intensité. Votre main l’attise du bout des doigts, la sienne guide vos hanches et ses contractions annoncent l’orgasme avant sa voix ; Lineva continue pourtant le mouvement latéral jusqu’à vous faire jouir en elle, fière d’avoir choisi la relève plutôt que d’avoir caché sa fatigue.",
       ),
     },
     intersexe: {
@@ -353,7 +353,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Saidin obéit avec une difficulté délicieuse. Il formule une première demande, la remplace par une autre et finit par saisir les draps lorsque votre bouche suit exactement son désir changeant ; son orgasme interrompt une phrase qu’aucune vision ne termine pour lui, et son étonnement nu demeure plus longtemps que les pulsations sous votre langue.",
       ),
       mutual: scene(
-        "Saidin s’allonge sur le côté et vous attire dos contre son torse. Son membre viril glisse entre vos cuisses, frottant vos lèvres de velours avant que vous ne le guidiez dans votre intimité humide ; la pénétration reste lente, presque immobile, tandis que ses doigts dessinent sur votre perle de plaisir un rythme que vous modifiez à intervalles imprévisibles.",
+        "Saidin s’allonge sur le côté et vous attire dos contre son torse. Il glisse entre vos cuisses, se frotte longuement à vous, d’avant en arrière, avant que vous ne le guidiez en vous ; la pénétration reste lente, presque immobile, tandis que ses doigts dessinent sur vous un rythme que vous modifiez à intervalles imprévisibles.",
         C("Saidin", "Chaque fois que je crois reconnaître la suite, vous inventez un présent différent. Continuez… mais ne me dites pas encore lequel de nous cédera."),
         "Vous changez effectivement la cadence avant chaque certitude. Saidin répond par une profondeur nouvelle, puis revient au mouvement court qui vous fait trembler ; votre orgasme le surprend en pleine inspiration, resserrant votre écrin de chair autour de lui, et le sien suit dans une étreinte où aucune seconde n’a été vécue en avance.",
       ),
@@ -365,7 +365,7 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Votre demande libère vos hanches. Saidin accompagne plusieurs poussées sans perdre le contrôle de la profondeur, reprend ensuite sa propre cadence et maintient sa langue contre l’extrémité sensible lorsque vous l’avertissez ; votre orgasme efface toute autre temporalité, et il reçoit les dernières pulsations avec l’expression émerveillée d’un homme qui vient de vivre une surprise entière.",
       ),
       offered: scene(
-        "Vous allongez Saidin sur le côté, une jambe ramenée vers sa poitrine, et préparez son intimité avec des caresses longues avant de présenter votre membre viril. Il guide lui-même l’entrée et vous accueille par étapes ; vos torses restent collés, de sorte que chaque pénétration profonde s’accompagne d’un baiser qui l’empêche de s’observer depuis une autre possibilité.",
+        "Vous allongez Saidin sur le côté, une jambe ramenée vers sa poitrine, et le préparez avec des caresses longues avant de vous présenter contre lui. Il guide lui-même l’entrée et vous accueille par étapes ; vos torses restent collés, de sorte que chaque pénétration profonde s’accompagne d’un baiser qui l’empêche de s’observer depuis une autre possibilité.",
         P("Reste dans ce corps-ci. Pas celui qui pourrait regretter, pas celui qui aurait choisi autrement. Celui qui me ramène contre lui maintenant."),
         "Saidin vous serre plus fort et demande une cadence qu’il ne peut pas garantir aimer dans une minute. Vous la lui donnez au présent, ajustez l’angle lorsqu’il le formule et sentez son orgasme se déployer sans avertissement prophétique ; son membre pulse entre vos corps pendant que vous ralentissez, et il rit doucement d’avoir été pris de court par lui-même.",
       ),
@@ -407,24 +407,24 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Bellirith essaie de répondre avec insolence, mais votre bouche maintient son point de feu et ses mots se brisent. Elle guide vos doigts plus profondément, abandonne toute posture et jouit en serrant vos épaules entre ses cuisses ; lorsque son regard revient au miroir, elle découvre une femme essoufflée que votre désir rend plus belle précisément parce qu’elle n’a pas eu le temps de la composer.",
       ),
       mutual: scene(
-        "Vous transformez le duel en une série de renversements désirés : Bellirith au-dessus pour frotter son intimité contre votre cuisse, vous au-dessus pour maintenir votre perle de plaisir contre la sienne, puis toutes deux sur le côté dans un ciseau serré. Aucun charme ne décide de l’angle ; vos mains sur les hanches de l’autre règlent la pression réelle.",
+        "Vous transformez le duel en une série de renversements désirés : Bellirith au-dessus pour frotter son intimité contre votre cuisse, vous au-dessus pour presser votre bouton contre le sien, puis toutes deux sur le côté dans un ciseau serré. Aucun charme ne décide de l’angle ; vos mains sur les hanches de l’autre règlent la pression réelle.",
         C("Bellirith", "Je ne sais plus si je préfère te faire céder ou sentir mon propre masque tomber. Ne choisis pas : reprends cette position et oblige-moi à perdre les deux fois."),
         "Vous reprenez le ciseau avec une fermeté nouvelle. Bellirith jouit d’abord, visage nu contre votre épaule, mais garde ses doigts entre vos bassins et transforme sa défaite en attention ; votre orgasme suit sous son geste tremblant, laissant le miroir refléter deux corps sans vainqueur et sans image corrigée.",
       ),
     },
     homme: {
       guided: scene(
-        "Bellirith vous fait asseoir devant elle et retire son dernier bijou avant de toucher votre sexe dressé. Sa main lubrifiée établit un rythme lent, puis sa bouche prend l’extrémité sensible et descend progressivement le long de votre membre viril ; elle garde les yeux levés, non pour jouer une pose, mais pour vérifier que votre plaisir reste dirigé vers elle plutôt que vers son ancienne magie.",
+        "Bellirith vous fait asseoir devant elle et retire son dernier bijou avant de toucher votre sexe dressé. Sa main lubrifiée établit un rythme lent, puis sa bouche prend l’extrémité sensible et descend progressivement le long de votre hampe ; elle garde les yeux levés, non pour jouer une pose, mais pour vérifier que votre plaisir reste dirigé vers elle plutôt que vers son ancienne magie.",
         C("Bellirith", "Dis-moi que c’est ma bouche. Pas mon charme, pas ton imagination. Moi — et ce que je suis en train de te faire."),
         "Votre réponse la trouble davantage que le geste. Bellirith vous accueille plus profondément après votre demande, accompagne les mouvements de vos hanches et maintient sa langue à l’endroit qui vous fait perdre la voix ; votre orgasme lui arrache un soupir soulagé, comme si chaque pulsation prouvait qu’elle suffit enfin sans enchantement.",
       ),
       offered: scene(
-        "Vous couchez Bellirith sur le ventre devant le miroir obscurci et relevez doucement ses hanches. Votre membre viril glisse d’abord le long de son intimité humide pendant que vos doigts caressent sa perle de plaisir ; elle recule ensuite vers vous, vous accueillant dans son écrin de chair, et choisit elle-même l’inclinaison qui rend chaque pénétration plus profonde.",
+        "Vous couchez Bellirith sur le ventre devant le miroir obscurci et relevez doucement ses hanches. Vous glissez d’abord le long de ses replis humides pendant que vos doigts caressent sa perle de plaisir ; elle recule ensuite vers vous, vous accueillant dans son écrin de chair, et choisit elle-même l’inclinaison qui rend chaque pénétration plus profonde.",
         P("Pas de scène parfaite. Fais-moi entendre ce qui te plaît vraiment, même si ce son ne ressemble à rien de séduisant."),
         "Bellirith proteste par habitude, puis un mouvement précis lui retire toute réplique. Vous gardez cette cadence, votre main entre ses cuisses et votre corps contre son dos ; elle jouit dans un cri sans contrôle, serre votre sexe en elle et vous fait céder peu après en refusant de cacher une seule de ses réactions au miroir devenu inutile.",
       ),
       mutual: scene(
-        "Bellirith vous pousse sur le dos et vient vous chevaucher à l’envers, offrant d’abord son dos plutôt que son visage étudié. Elle guide votre membre viril dans son intimité, règle la profondeur par ses cuisses et caresse elle-même sa perle de plaisir ; vous la faites ensuite pivoter face à vous, toujours unis, afin que la seconde moitié du duel se joue sans qu’elle puisse fuir votre regard.",
+        "Bellirith vous pousse sur le dos et vient vous chevaucher à l’envers, offrant d’abord son dos plutôt que son visage étudié. Elle vous guide en elle, règle la profondeur par ses cuisses et se caresse elle-même du bout des doigts ; vous la faites ensuite pivoter face à vous, toujours unis, afin que la seconde moitié du duel se joue sans qu’elle puisse fuir votre regard.",
         C("Bellirith", "Tu as retourné la seule position où je pouvais encore prétendre ne rien ressentir. C’est déloyal… Continue."),
         "Elle reprend ses mouvements plus lentement, poitrine contre la vôtre. Chaque montée de plaisir efface une part de son sourire de scène ; son orgasme la suspend autour de vous, et vos mains sur ses hanches prolongent la chevauchée jusqu’à votre propre jouissance, reçue par une Bellirith trop sincère pour compter les points.",
       ),
@@ -456,29 +456,29 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous augmentez vous-même la pression de sa main. Amanea suit l’indication sans vous immobiliser, approfondit ses doigts et garde sa bouche inébranlable lorsque l’orgasme approche ; votre plaisir vous fait tirer sur sa cape, et la Reine Noire reste à genoux jusqu’à la dernière contraction, le visage adouci d’avoir reçu une confiance plutôt qu’une soumission.",
       ),
       offered: scene(
-        "Vous faites asseoir Amanea sur son propre siège privé, jambes ouvertes et couronne abandonnée sur la table. Vous vous agenouillez entre ses cuisses, embrassez les muscles de son ventre puis suivez ses lèvres de velours jusqu’au point de feu ; vos doigts pénètrent son intimité pendant que votre bouche transforme chaque ordre naissant en une demande qu’elle choisit réellement de formuler.",
+        "Vous faites asseoir Amanea sur son propre siège privé, jambes ouvertes et couronne abandonnée sur la table. Vous vous agenouillez entre ses cuisses, embrassez les muscles de son ventre puis descendez la goûter jusqu’au petit sommet tendu ; vos doigts pénètrent son intimité pendant que votre bouche transforme chaque ordre naissant en une demande qu’elle choisit réellement de formuler.",
         P("Tu n’as pas besoin de commander pour être entendue. Dis seulement ce qu’Amanea veut que je fasse maintenant."),
         "Elle demande plus profond d’une voix qui ne s’adresse à aucun royaume. Vous maintenez votre langue et recourbez vos doigts selon son mouvement de bassin ; Amanea jouit en agrippant les accoudoirs, toute sa puissance réduite à une réaction libre, puis vous attire sur ses genoux pour que sa gratitude ne ressemble jamais à celle d’une souveraine récompensant un service.",
       ),
       mutual: scene(
-        "Amanea vous allonge sous sa cape et vient entrelacer ses jambes aux vôtres. Vos lèvres de velours se rejoignent dans un ciseau lent, vos bassins poussant l’un contre l’autre avec une force que vous augmentez ensemble ; elle place sa main entre vous pour stimuler vos deux points de feu à tour de rôle, puis vous lui prenez le poignet afin de reprendre la conduite sans rompre le frottement.",
+        "Amanea vous allonge sous sa cape et vient entrelacer ses jambes aux vôtres. Vos lèvres de velours se rejoignent dans un ciseau lent, vos bassins poussant l’un contre l’autre avec une force que vous augmentez ensemble ; elle place sa main entre vous pour vous caresser l’une et l’autre à tour de rôle, puis vous lui prenez le poignet afin de reprendre la conduite sans rompre le frottement.",
         C("Amanea", "Prends ma force si elle t’aide. Refuse-la si elle t’écrase. Mais ne me laisse pas régner ici alors que je veux seulement te rejoindre."),
-        "Vous renversez la position lorsque ses cuisses vous attirent plus près, et Amanea accueille ce changement avec un rictus de plaisir. Elle jouit sous votre bassin, garde pourtant ses doigts sur votre perle de plaisir et vous aide à poursuivre jusqu’à votre propre orgasme ; aucune des deux n’a cédé le terrain, parce que la proximité n’en avait jamais fait un champ de bataille.",
+        "Vous renversez la position lorsque ses cuisses vous attirent plus près, et Amanea accueille ce changement avec un rictus de plaisir. Elle jouit sous votre bassin, garde pourtant ses doigts sur vous et vous aide à poursuivre jusqu’à votre propre orgasme ; aucune des deux n’a cédé le terrain, parce que la proximité n’en avait jamais fait un champ de bataille.",
       ),
     },
     homme: {
       guided: scene(
         "Amanea vous fait asseoir sur le bord de son lit et s’agenouille entre vos jambes, geste qu’aucun sujet ne verrait sans y chercher un symbole. Elle prend votre sexe dressé dans sa main, le suit de la langue puis l’accueille dans sa bouche ; sa paume puissante soutient votre bassin sans le retenir et sa profondeur augmente seulement lorsque vous la demandez.",
         C("Amanea", "Ne transforme pas mon genou à terre en victoire. Il n’y a ici qu’une femme qui a choisi ta jouissance et attend que tu lui confies le rythme."),
-        "Vous lui donnez ce rythme avec une franchise égale à la sienne. Amanea accompagne vos mouvements, reprend la conduite quand votre souffle se brise et maintient votre membre entre ses lèvres jusqu’à l’orgasme ; elle reçoit votre abandon sans détourner les yeux, puis se relève pour vous embrasser comme une partenaire, jamais comme une reine qui aurait accordé une faveur.",
+        "Vous lui donnez ce rythme avec une franchise égale à la sienne. Amanea accompagne vos mouvements, reprend la conduite quand votre souffle se brise et vous garde entre ses lèvres jusqu’à l’orgasme ; elle reçoit votre abandon sans détourner les yeux, puis se relève pour vous embrasser comme une partenaire, jamais comme une reine qui aurait accordé une faveur.",
       ),
       offered: scene(
-        "Vous placez Amanea sur le dos au centre de sa cape déployée et relevez ses jambes contre votre torse. Votre membre viril glisse sur son intimité humide tandis que votre pouce stimule sa perle de plaisir ; lorsqu’elle vous ramène contre elle, vous entrez dans son écrin de chair par mouvements lents, la profondeur contrôlée par ses mains fortes sur vos hanches.",
+        "Vous placez Amanea sur le dos au centre de sa cape déployée et relevez ses jambes contre votre torse. Vous glissez sur elle, mouillée, tandis que votre pouce agace son bouton ; lorsqu’elle vous ramène contre elle, vous entrez dans son écrin de chair par mouvements lents, la profondeur contrôlée par ses mains fortes sur vos hanches.",
         P("Tu peux me retenir plus près, pas me posséder. Je peux te pénétrer plus profondément, pas te conquérir. On garde cette différence jusqu’au bout."),
-        "Amanea approuve et utilise sa force pour choisir chaque rencontre de vos bassins. Vous accélérez lorsqu’elle le réclame, gardez le contact extérieur et sentez son orgasme contracter son intimité autour de votre membre ; elle vous maintient en elle assez longtemps pour que votre propre plaisir éclate, non comme une prise de pouvoir, mais comme une confiance tenue à deux.",
+        "Amanea approuve et utilise sa force pour choisir chaque rencontre de vos bassins. Vous accélérez lorsqu’elle le réclame, gardez le contact extérieur et sentez son orgasme se refermer sur vous ; elle vous maintient en elle assez longtemps pour que votre propre plaisir éclate, non comme une prise de pouvoir, mais comme une confiance tenue à deux.",
       ),
       mutual: scene(
-        "Amanea vient vous chevaucher face à face, ses genoux de part et d’autre de vos hanches. Elle guide votre membre viril en elle et descend d’un mouvement puissant, puis s’immobilise pour vous laisser décider si la profondeur convient ; vous la renversez ensuite sous vous après sa demande, gardant une main unie à la sienne au-dessus de la cape.",
+        "Amanea vient vous chevaucher face à face, ses genoux de part et d’autre de vos hanches. Elle vous guide en elle et descend d’un mouvement puissant, puis s’immobilise pour vous laisser décider si la profondeur convient ; vous la renversez ensuite sous vous après sa demande, gardant une main unie à la sienne au-dessus de la cape.",
         C("Amanea", "Je veux conduire la première moitié et te confier la seconde. Pas pour équilibrer une dette : parce que ces deux désirs sont également miens."),
         "La chevauchée fait trembler le siège abandonné ; la position renversée ralentit vos corps sans diminuer leur force. Amanea jouit lorsqu’elle vous attire au plus profond, puis vos mouvements reprennent sous son regard ouvert jusqu’à votre orgasme ; la main qu’elle garde dans la vôtre empêche chaque changement de devenir une lutte pour la hauteur.",
       ),
@@ -582,14 +582,14 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
       "Votre paume rejoint sa nuque et Allenna suit le mouvement choisi, main et bouche accordées jusque dans les variations les plus courtes. Lorsque vous annoncez l’orgasme, elle ne ralentit pas trop tôt : sa langue reste sous votre pointe sensible, ses doigts fermes à la base et vos hanches libres d’avancer seulement autant qu’elle les reçoit. Elle vous garde ensuite contre elle, partenaire plutôt que soigneuse.",
     ),
     offered: scene(
-      "Vous préparez longuement Allenna avec la bouche et les doigts avant de vous placer entre ses cuisses. Une jambe repose sur votre hanche pour régler l’angle ; votre membre brûlant entre par étapes dans son écrin, tandis que votre main conserve la stimulation extérieure qu’elle a désignée. Vous marquez une pause chaque fois que son ancienne blessure réclame un autre appui.",
+      "Vous préparez longuement Allenna avec la bouche et les doigts avant de vous placer entre ses cuisses. Une jambe repose sur votre hanche pour régler l’angle ; vous entrez en elle par étapes, tandis que votre main conserve la stimulation extérieure qu’elle a désignée. Vous marquez une pause chaque fois que son ancienne blessure réclame un autre appui.",
       P("Dans cette position protégée, ta force peut demander plus de profondeur. Elle ne t’oblige jamais à supporter ce qui ne te plaît plus."),
       "Allenna vous attire plus près et réclame un rythme stable. Vous gardez les mouvements longs mais mesurés, la caresse exacte sur sa source du plaisir et le contact de vos fronts. Son orgasme vous serre contre elle ; vous restez immobile pendant les contractions, puis reprenez uniquement lorsqu’elle vous le demande et atteignez votre propre abandon dans une position qu’aucun de vous n’a dû endurer.",
     ),
     mutual: scene(
       "Allenna vient vous chevaucher face à face et guide votre longueur tendue dans sa chaleur, descendant jusqu’à la profondeur choisie. Ses rotations maintiennent le contact extérieur pendant qu’elle conduit la première reprise. Sur le mot convenu, vous roulez ensemble sur le côté : le changement protège ses appuis et vous permet de mener sans que la transition ressemble à une prise de pouvoir.",
       C("Allenna", "Dans cette relève face à face, je conduis tant que mon corps le réclame. Tu prendras la suite parce que je te la confie, pas parce que je cède.", "smirk"),
-      "Elle jouit sous sa propre cadence, garde votre membre en elle pendant le reflux puis vous offre le changement d’angle qui intensifie votre sensation. Vous reprenez par mouvements courts, une main liée à la sienne, jusqu’à votre orgasme. Allenna soutient vos hanches au lieu de les contraindre ; aucun vainqueur ne reste sur les draps, seulement deux personnes capables de porter et d’être portées.",
+      "Elle jouit sous sa propre cadence, vous garde en elle pendant le reflux puis vous offre le changement d’angle qui intensifie votre sensation. Vous reprenez par mouvements courts, une main liée à la sienne, jusqu’à votre orgasme. Allenna soutient vos hanches au lieu de les contraindre ; aucun vainqueur ne reste sur les draps, seulement deux personnes capables de porter et d’être portées.",
     ),
   },
   intersexe: {

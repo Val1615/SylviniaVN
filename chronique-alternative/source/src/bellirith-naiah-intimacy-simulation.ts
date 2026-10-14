@@ -224,7 +224,7 @@ export const BN_SIMULATION_INTIMACY: BNIntimacyScene = {
         "Naïah hausse les sourcils et referme les doigts dessus, curieuse, comme on soupèse un objet rare, avec la mine de quelqu’un qui prend des notes pour plus tard.",
       ],
       [
-        "Naïah se soulève, guide la vigueur de Bellirith d’une main et descend sur elle très lentement. Bellirith entre en elle pouce après pouce, sans forcer, les mains posées à plat sur ses hanches, prête à tout arrêter au premier mot.",
+        "Naïah se soulève, guide d’une main ce que Bellirith s’est façonné et descend sur elle très lentement. Bellirith entre en elle pouce après pouce, sans forcer, les mains posées à plat sur ses hanches, prête à tout arrêter au premier mot.",
         "Le mot ne vient pas. Les yeux de Naïah s’agrandissent. Sa bouche s’ouvre sur un son que vous ne lui avez jamais entendu. Sa main, toujours prise dans la vôtre, vous écrase les doigts.",
         "Vous retenez votre propre souffle. Vous croyez assister à quelque chose qui n’était jamais arrivé à personne dans cette chambre, ni ailleurs.",
       ],
@@ -247,7 +247,7 @@ export const BN_SIMULATION_INTIMACY: BNIntimacyScene = {
         "Puis tout retombe. Naïah s’effondre sur le côté, les yeux mi-clos, rouge jusqu’aux épaules. Vous ne savez pas quoi penser. Vous pensez, très fort, que quelque chose vient d’arriver.",
       ],
       [
-        "Bellirith ne bouge pas. Elle reste longtemps à fixer Naïah, immobile, la respiration encore désordonnée. La vigueur qu’elle s’était donnée se dissout, et son corps redevient le sien. Puis elle se redresse d’un bloc, tous ses cheveux dans la figure.",
+        "Bellirith ne bouge pas. Elle reste longtemps à fixer Naïah, immobile, la respiration encore désordonnée. Ce qu’elle s’était façonné pour la nuit se dissout, et son corps redevient le sien. Puis elle se redresse d’un bloc, tous ses cheveux dans la figure.",
         b("Mais tu ne ressens toujours rien !", "angry"),
         b("Tu rayonnes, tu triomphes, tu respires plus fort que moi ! Et le seul feu que je cherchais, toujours éteint !", "angry"),
       ],

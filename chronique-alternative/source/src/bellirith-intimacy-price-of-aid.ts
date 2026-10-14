@@ -161,7 +161,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         B("Elle a toujours raison. C’est son défaut le plus attachant.", "smirk"),
         "Elle vous allonge sur le divan et descend le long de votre corps avec la bouche. Il y a des miroirs jusqu’au plafond, évidemment, et vous y voyez ses cheveux se répandre sur vos hanches, puis plus bas.",
         X(
-          "Elle écarte vos cuisses de ses deux mains et pose sa bouche sur vous. Sa langue trouve votre perle de plaisir sans la chercher, l’enveloppe, la quitte, revient. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle remonte embrasser l’intérieur de votre cuisse.",
+          "Elle écarte vos cuisses de ses deux mains et pose sa bouche sur vous. Sa langue vous trouve sans chercher, s’enroule, se retire, revient. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle remonte embrasser l’intérieur de votre cuisse.",
           "Elle prend votre virilité dans sa bouche, lentement, centimètre par centimètre, en vous regardant faire dans le miroir. Sa langue s’enroule au sommet, ses lèvres descendent, remontent. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle vous relâche pour embrasser l’intérieur de votre cuisse.",
           "Elle vous prend dans sa bouche, lentement, pendant que deux de ses doigts reviennent en vous, en mesure. Sa langue et sa main se répondent. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle vous relâche pour embrasser l’intérieur de votre cuisse.",
         ),
@@ -260,7 +260,7 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
       [
         "Elle reprend la main, bien sûr. D’une pression sur votre épaule, elle vous rallonge sous elle et s’installe à califourchon sur vos hanches.",
         X(
-          "Elle s’ajuste contre vous, sexe contre sexe, et commence à bouger en longs mouvements glissés. Vos deux perles de plaisir se trouvent, se perdent, se retrouvent ; elle guide votre main entre vous pour que vos doigts fassent le reste.",
+          "Elle s’ajuste contre vous, sexe contre sexe, et commence à bouger en longs mouvements glissés. Vos deux sexes se trouvent, se perdent, se retrouvent ; elle guide votre main entre vous pour que vos doigts fassent le reste.",
           "Elle prend votre virilité d’une main, la guide en elle et descend lentement, jusqu’au bout, avec un long soupir appliqué. Puis elle ne bouge plus. Elle attend que vous la suppliiez du regard, et seulement alors elle commence à onduler.",
           "Elle vous prend d’une main, vous guide en elle et descend lentement, jusqu’au bout. De l’autre main, elle revient chercher la fente sous votre sexe, comme pour ne rien laisser de vous inoccupé, et commence à onduler sur deux rythmes qui finissent par n’en faire qu’un.",
         ),

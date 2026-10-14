@@ -193,7 +193,7 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Elle suit votre torse et votre ventre de ses mains, s'attardant là où vos muscles se tendent. Sa bouche revient à la vôtre chaque fois que votre respiration la renseigne."],
         ["Remerii descend sur votre poitrine, votre ventre puis la naissance de votre désir. Elle le prend dans sa paume et découvre le rythme qui fait avancer vos hanches."],
-        ["Remerii s'agenouille entre vos jambes et referme sa main autour de votre désir dressé. Sa langue en suit lentement la pointe avant que sa bouche vous accueille davantage ; ses doigts accompagnent chaque mouvement, et son regard levé guette le moment où votre assurance commence à céder.", ["Remerii", "Vous étiez plus éloquent pendant le dîner.", "smirk"]],
+        ["Remerii s'agenouille entre vos jambes et referme sa main autour de vous, déjà dur. Sa langue en suit lentement la pointe avant que sa bouche vous accueille davantage ; ses doigts accompagnent chaque mouvement, et son regard levé guette le moment où votre assurance commence à céder.", ["Remerii", "Vous étiez plus éloquent pendant le dîner.", "smirk"]],
         ["Elle s'agenouille devant vous, sa bouche et sa main trouvant une réponse que vos phrases ne donnent plus. La lumière des lanternes reste seule visible pendant que la chronique s'écarte."],
       ),
       K(
@@ -210,7 +210,7 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Elle vous accueille lentement, garde vos fronts joints et fait rouler son bassin jusqu'à ce que le plaisir vous gagne tous deux. Vous ralentissez ensemble, sans chercher qui a cédé le premier."],
         ["Remerii descend sur vous par étapes, puis choisit une cadence qui presse son point sensible contre votre bassin. Sa jouissance rompt son jeu ; vos mains la soutiennent jusqu'à votre propre abandon."],
-        ["Remerii guide votre désir à son entrée puis vous accueille entièrement, assise face à vous. Elle roule des hanches, ralentit pour vous faire attendre et repart plus ferme lorsque votre main trouve son point sensible. Elle jouit autour de vous, garde ses mouvements courts et serrés, puis vous regarde céder en elle.", ["Remerii", "Vous pouvez compter cette manche. J'ai déjà choisi la revanche.", "smirk"]],
+        ["Remerii vous guide en elle et vous accueille entièrement, assise face à vous. Elle roule des hanches, ralentit pour vous faire attendre et repart plus ferme lorsque votre main trouve son point sensible. Elle jouit autour de vous, garde ses mouvements courts et serrés, puis vous regarde céder en elle.", ["Remerii", "Vous pouvez compter cette manche. J'ai déjà choisi la revanche.", "smirk"]],
         ["Elle vous attire avec elle sur les coussins, et la couverture soustrait à la chronique la fin de votre jeu. Quand elle retombe, Remerii repose encore sur vous, sourire défait contre votre cou."],
       ),
       A("Remerii reste assise contre votre hanche, nue et parfaitement peu pressée de retrouver sa contenance. Du bout du pied, elle rapproche pourtant un gant de l'autre.", ["Remerii", "Certaines habitudes survivent à tout. C'est presque décevant.", "smirk"]),
@@ -226,7 +226,7 @@ const SCENES: AuthoredScene[] = [
       A("Nue dans la lumière dorée, Remerii ne cherche ni pose ni couverture. Elle laisse vos yeux parcourir la cicatrice, sa poitrine, son ventre et ses jambes, puis découvre votre corps d'homme avec une attention qui vous fait vous redresser vers elle."),
       V(
         ["Elle suit votre torse du bout des doigts et embrasse les endroits où votre respiration change. Son autre main demeure sur votre hanche, présence constante plutôt que direction."],
-        ["Sa bouche descend sur votre ventre. Remerii prend votre désir dans sa main, le caresse lentement et observe votre visage avant de varier la pression."],
+        ["Sa bouche descend sur votre ventre. Remerii vous prend dans sa main, vous caresse lentement et observe votre visage avant de varier la pression."],
         ["Remerii s'agenouille et entoure votre désir dressé d'une paume chaude. Sa langue frôle la pointe, puis sa bouche vous accueille sans hâte. Elle garde une main à votre base et règle la profondeur sur votre bassin, attentive au moindre recul comme à chaque avancée.", ["Remerii", "Dites-moi seulement si vous voulez que je continue ainsi.", "calm"]],
         ["Elle descend devant vous et vous laisse guider sa proximité d'une main posée sur son épaule. La lumière suffit encore à montrer son choix ; le récit se retire avant d'en détailler la suite."],
       ),
@@ -240,7 +240,7 @@ const SCENES: AuthoredScene[] = [
         ["Vous embrassez Remerii entre les cuisses et goûtez sa chaleur. Sa main vous indique le point sensible, puis vos doigts entrent lentement en elle. Vous conservez le même mouvement jusqu'à ce que son bassin ne puisse plus rester immobile sous votre bouche.", ["Remerii", "Oui… gardez cette lenteur. Elle ne manque de rien.", "calm"]],
         ["Vous vous penchez entre ses jambes tandis qu'elle vous indique le geste d'une main. Le reste demeure derrière la couverture, rythmé seulement par des souffles qui n'ont plus besoin de phrases."],
       ),
-      A("Remerii vous attire au-dessus d'elle puis préfère finalement vous faire rouler sur le côté. Une jambe autour de votre hanche, elle guide votre désir contre sa chaleur et prend le temps de vous regarder avant de vous accueillir."),
+      A("Remerii vous attire au-dessus d'elle puis préfère finalement vous faire rouler sur le côté. Une jambe autour de votre hanche, elle vous guide contre elle et prend le temps de vous regarder avant de vous accueillir."),
       V(
         ["Vous vous unissez lentement, sans quitter l'étreinte. Le plaisir vient dans des mouvements courts et patients ; Remerii atteint le sien sous votre main avant de vous accompagner jusqu'au vôtre."],
         ["Elle vous accueille et garde une cadence souple, une main sur votre nuque. Ses cuisses se resserrent lorsqu'elle jouit ; vous restez contre elle jusqu'à ce que votre propre plaisir vous traverse."],
@@ -260,7 +260,7 @@ const SCENES: AuthoredScene[] = [
       A("Nue devant vous, Remerii écarte vos genoux et vient s'y placer. Elle vous laisse voir son corps entier dans la lumière mouvante, puis ouvre elle-même le dernier vêtement qui dissimule encore votre désir.", ["Remerii", "Très bien. Ne me faites plus attendre.", "strict"]),
       V(
         ["Ses mains parcourent votre torse et votre ventre avec une chaleur urgente. Elle revient souvent à votre bouche, comme si aucun autre contact ne suffisait seul."],
-        ["Remerii descend sur vous, referme sa main autour de votre désir et le caresse jusqu'à vous faire avancer contre sa paume. Sa bouche suit bientôt le même chemin."],
+        ["Remerii descend sur vous, referme sa main à votre base et vous caresse jusqu'à vous faire avancer contre sa paume. Sa bouche suit bientôt le même chemin."],
         ["Remerii prend votre désir dressé dans sa bouche avec une franchise qui vous coupe le souffle. Une main serre votre hanche, l'autre accompagne sa bouche ; lorsqu'elle vous autorise à bouger, elle accueille vos avancées jusqu'à la profondeur qu'elle choisit et reprend aussitôt plus vite.", ["Remerii", "Oui. Maintenant, cessez de ménager mon impatience.", "strict"]],
         ["Elle s'agenouille entre vos jambes et vous attire à elle. La chronique abandonne aux lanternes le mouvement précis de sa bouche et de vos mains."],
       ),
@@ -274,11 +274,11 @@ const SCENES: AuthoredScene[] = [
         ["Vous ouvrez ses cuisses et goûtez sa chaleur avec la même urgence. Votre langue insiste sur son point sensible pendant que deux doigts entrent en elle ; Remerii relève les hanches, vous saisit par les cheveux et perd toute phrase complète sous la cadence qu'elle a demandée.", ["Remerii", "Encore… exactement là.", "strict"]],
         ["Vous descendez entre ses jambes et Remerii vous guide sans détour. La lumière baisse sur son choix franc et sur votre réponse tout aussi immédiate."],
       ),
-      A("Elle vous tire ensuite au-dessus d'elle et guide votre désir contre son entrée. Après quelques mouvements, Remerii vous fait rouler pour venir vous chevaucher, préférant choisir elle-même la profondeur et la vitesse.", "Ses cheveux se défont complètement lorsqu'elle se penche pour vous embrasser."),
+      A("Elle vous tire ensuite au-dessus d'elle et vous guide jusqu'à elle. Après quelques mouvements, Remerii vous fait rouler pour venir vous chevaucher, préférant choisir elle-même la profondeur et la vitesse.", "Ses cheveux se défont complètement lorsqu'elle se penche pour vous embrasser."),
       V(
         ["Remerii vous accueille et mène une cadence franche, ralentie seulement pour vous garder près d'elle. Sa jouissance arrive sous votre main ; la vôtre la suit alors qu'elle continue de vous entourer."],
         ["Elle chevauche votre désir, son point sensible pressé sous vos doigts. Son plaisir rompt le rythme, puis elle repart plus vite jusqu'à vous faire céder en elle."],
-        ["Remerii s'abaisse sur votre désir jusqu'à vous accueillir entièrement, puis roule des hanches avec une impatience assumée. Votre pouce entretient son point sensible ; elle jouit autour de vous, repart presque aussitôt dans des mouvements plus courts et vous entraîne jusqu'au moment où votre plaisir se répand profondément en elle.", ["Remerii", "Oui. Ne retenez plus rien.", "strict"]],
+        ["Remerii s'abaisse sur vous jusqu'à vous accueillir entièrement, puis roule des hanches avec une impatience assumée. Votre pouce entretient son point sensible ; elle jouit autour de vous, repart presque aussitôt dans des mouvements plus courts et vous entraîne jusqu'au moment où votre plaisir se répand profondément en elle.", ["Remerii", "Oui. Ne retenez plus rien.", "strict"]],
         ["Elle vous chevauche sous la couverture, décidée à ne plus différer une seule envie. Lorsque le récit revient, Remerii demeure au-dessus de vous, haletante et encore parcourue de frissons."],
       ),
       A("Remerii repose sur votre poitrine sans chercher tout de suite une phrase digne. Sa main suit les battements rapides sous votre peau et un sourire satisfait apparaît enfin.", ["Remerii", "Je me souviens parfaitement de moi. J'avais simplement oublié que je pouvais vouloir aussi vite.", "calm"]),
@@ -430,7 +430,7 @@ const SCENES: AuthoredScene[] = [
       A("Remerii se découvre entièrement et demeure nue devant votre regard. Elle suit ensuite votre torse, votre ventre et votre désir d'une paume ouverte, attentive à ce qui change en vous sans réduire votre corps à cette seule réaction."),
       V(
         ["Ses lèvres parcourent votre cou et votre poitrine. Remerii laisse ses mains apprendre vos épaules, votre taille et vos hanches avant de chercher une proximité plus intime."],
-        ["Elle embrasse votre ventre et referme doucement sa main autour de votre désir. Ses doigts varient la pression tandis que son regard demeure sur votre visage."],
+        ["Elle embrasse votre ventre et referme doucement sa main autour de vous. Ses doigts varient la pression tandis que son regard demeure sur votre visage."],
         ["Remerii entoure votre désir dressé d'une main chaude, puis le prend dans sa bouche avec lenteur. Elle garde ses doigts à la base, accueille chaque mouvement sans hâter le suivant et vous laisse régler la profondeur par une main posée sur son épaule.", ["Remerii", "Je préfère vous sentir répondre que vous entendre prétendre aller bien.", "calm"]],
         ["Elle descend devant vous et suit vos réactions avec une attention silencieuse. Le bord de la couverture remonte, laissant hors champ le mouvement que votre main accompagne."],
       ),
@@ -444,7 +444,7 @@ const SCENES: AuthoredScene[] = [
         ["Vous goûtez sa chaleur entre les cuisses et trouvez sous votre langue le point qui resserre ses jambes. Deux doigts entrent en elle ; Remerii les reçoit, ajuste leur courbe d'un mouvement de bassin et vous demande de conserver exactement cette profondeur.", ["Remerii", "Oui. Ne cherchez rien d'autre. Restez ici.", "calm"]],
         ["Vous descendez entre ses cuisses tandis que sa main vous indique le chemin. La couverture se referme et le récit laisse à ses souffles la précision de la suite."],
       ),
-      A("Remerii vous ramène ensuite au-dessus d'elle et guide votre désir contre sa chaleur. Elle vous accueille lentement, une jambe autour de votre hanche, puis vous fait rouler sur le côté pour garder vos visages proches et vos corps entièrement soutenus."),
+      A("Remerii vous ramène ensuite au-dessus d'elle et vous pose contre son sexe, mouillé. Elle vous accueille lentement, une jambe autour de votre hanche, puis vous fait rouler sur le côté pour garder vos visages proches et vos corps entièrement soutenus."),
       V(
         ["Vos mouvements restent lents et profonds. Remerii atteint le plaisir sous votre main, vous garde contre elle et accompagne ensuite votre propre abandon sans rompre le baiser."],
         ["Elle bouge autour de vous avec une cadence souple, son point sensible sous vos doigts. Sa jouissance resserre l'étreinte ; quelques mouvements encore vous conduisent au même relâchement."],
@@ -464,8 +464,8 @@ const SCENES: AuthoredScene[] = [
       A("Nue au-dessus de vous, Remerii laisse l'air frais parcourir son dos et votre regard suivre sa poitrine jusqu'à ses hanches. Elle ouvre elle-même votre dernier vêtement et prend votre désir dans sa main sans baisser les yeux.", ["Remerii", "Ne confondez pas vitesse et absence d'attention. Je vous écoute parfaitement.", "strict"]),
       V(
         ["Elle parcourt votre torse et votre ventre de baisers rapides, puis revient à votre bouche dès que vous prononcez son prénom."],
-        ["Remerii referme sa main autour de votre désir et le caresse plus fermement à mesure que vos hanches répondent. Sa bouche suit bientôt sa paume."],
-        ["Remerii prend votre désir dressé en main, en goûte la pointe puis vous accueille dans sa bouche avec une impatience maîtrisée. Elle garde une paume à votre base et l'autre sur votre hanche, vous autorisant à avancer jusqu'à la profondeur qu'elle choisit avant de reprendre elle-même une cadence vive.", ["Remerii", "Oui. Comme cela. Ne ralentissez que si je vous le demande.", "strict"]],
+        ["Remerii referme sa main autour de vous et vous caresse plus fermement à mesure que vos hanches répondent. Sa bouche suit bientôt sa paume."],
+        ["Remerii vous prend en main, goûte votre pointe puis vous accueille dans sa bouche avec une impatience maîtrisée. Elle garde une paume à votre base et l'autre sur votre hanche, vous autorisant à avancer jusqu'à la profondeur qu'elle choisit avant de reprendre elle-même une cadence vive.", ["Remerii", "Oui. Comme cela. Ne ralentissez que si je vous le demande.", "strict"]],
         ["Elle descend sur vous et sa main vous montre clairement le mouvement qu'elle désire. Le récit recule devant l'empressement de sa bouche et la réponse de vos hanches."],
       ),
       K(
@@ -482,7 +482,7 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Elle vous chevauche dans une cadence pleine mais attentive, vos mains sur ses hanches. Son plaisir vient sous votre pouce ; elle se penche pour vous embrasser et vous accompagne peu après jusqu'au vôtre."],
         ["Remerii roule des hanches autour de vous, son point sensible sous vos doigts. Elle jouit sans ralentir longtemps et reprend jusqu'à ce que votre propre plaisir rompe votre souffle."],
-        ["Remerii vous chevauche avec des mouvements profonds, les mains appuyées sur votre poitrine. Votre pouce travaille son point sensible ; sa jouissance serre votre désir en elle, la fait ralentir une seconde, puis elle repart plus vite et vous garde au fond d'elle lorsque votre plaisir se libère.", ["Remerii", "Oui… restez en moi. Voilà.", "strict"]],
+        ["Remerii vous chevauche avec des mouvements profonds, les mains appuyées sur votre poitrine. Votre pouce travaille son point sensible ; sa jouissance vous serre en elle, la fait ralentir une seconde, puis elle repart plus vite et vous garde au fond d'elle lorsque votre plaisir se libère.", ["Remerii", "Oui… restez en moi. Voilà.", "strict"]],
         ["Elle vous accueille sous le pan de couverture et prend elle-même la cadence. Lorsque le récit revient, Remerii est toujours sur vous, front posé contre le vôtre."],
       ),
       A("Remerii se laisse glisser contre votre poitrine, encore parcourue de petits frissons. Sa main reste sur votre ventre et elle rit doucement en apercevant la lunette couverte.", ["Remerii", "Notre soirée était consacrée à l'observation. Je ne considère pas le programme trahi.", "smirk"]),
@@ -648,7 +648,7 @@ const SCENES: AuthoredScene[] = [
         ["Vous goûtez sa chaleur ouverte, votre langue attentive au point qui fait monter son bassin. Deux doigts glissent en elle et suivent la cadence qu'elle vous indique d'une pression de la main ; Remerii cesse de parler lorsque vous la trouvez, puis revient à votre prénom.", ["Remerii", "Oui… gardez cela. Seulement cela.", "calm"]],
         ["Vous la rejoignez entre les cuisses sous votre couverture. Remerii vous guide sans expliquer, et le récit laisse ses souffles répondre à votre bouche."],
       ),
-      A("Elle vous attire ensuite au-dessus d'elle, guide votre désir contre sa chaleur puis vous accueille lentement. Après quelques mouvements, Remerii vous fait rouler sur le côté, préférant garder vos visages proches et votre poids partagé par le lit."),
+      A("Elle vous attire ensuite au-dessus d'elle, vous guide d'une main puis vous accueille lentement. Après quelques mouvements, Remerii vous fait rouler sur le côté, préférant garder vos visages proches et votre poids partagé par le lit."),
       V(
         ["Votre union conserve une cadence douce et profonde. Remerii atteint la jouissance sous votre main, reste autour de vous et vous accompagne jusqu'à votre propre plaisir dans le même baiser."],
         ["Elle bouge lentement autour de vous tandis que vos doigts entretiennent son point sensible. Son plaisir serre l'étreinte ; plusieurs mouvements encore vous conduisent au vôtre."],

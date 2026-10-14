@@ -14,7 +14,7 @@ export const INTIMATE_FILE_PATTERN = /(intim|heure-|explicit|date|bellirith-naia
 export const EXTRA_FILES = ["intimacy-prose.ts", "intimacy-games.ts"];
 // Fichiers ou blocs exclus : la refonte Valurn suit son propre chantier.
 export const EXCLUDED_FILES = [/valurn/i];
-export const EXCLUDED_BLOCK_LABELS = [/^valurn$/i];
+export const EXCLUDED_BLOCK_LABELS = [/valurn/i];
 
 export const CHARACTERS = ["hylee", "remerii", "naiah", "allenna", "lineva", "bellirith", "iriana", "saidin", "amanea", "tia", "draven", "valurn"];
 
@@ -39,15 +39,29 @@ export const TERMS = [
   ["bas-ventre", /\bbas-ventre\b/giu],
   ["ventre (possessif)", new RegExp(`\\b${P} ventre\\b`, "giu")],
   ["entrée (humide)", new RegExp(`\\b${P} entrée\\b|\\bentrée humide\\b`, "giu")],
-  ["désir (anatomique)", /\b(?:son|votre|leur) désir (?:dressé|tendu|durci|gonflé|humide|brûlant contre)\b/giu],
+  ["désir (anatomique)", /\b(?:(?:autour|le long|au bout|à la base) de|contre|sur|entoure|entourent|caresse|caressent|prend|prennent|reprend|accueille|accueillent|guide|libère|empoigne|serre|frotte) (?:votre|son|leur|ton) désir\b|\b(?:votre|son|leur) désir (?:dressé|tendu|durci|gonflé)\b/giu],
   ["érection / dressé", /\b(?:érection|dressée?s?)\b/giu],
   ["longueur", /\b(?:la|sa|votre) longueur\b/giu],
   ["centre / cœur intime", new RegExp(`\\b${P} (?:centre|cœur intime|point sensible)\\b`, "giu")],
   ["source / sève / hampe", new RegExp(`\\b${P} (?:source|sève|hampe)\\b`, "giu")],
 ];
 
+// Formules figées : une seule occurrence par scène, pour qu'aucune ne
+// devienne un tic d'écriture d'une route à l'autre.
+export const FIXED_FORMULAS = [
+  ["« perle de plaisir »", /\bperles? de plaisir\b/giu],
+  ["« membre viril »", /\bmembres? virils?\b/giu],
+  ["« écrin »", /\bécrins?\b/giu],
+  ["« lèvres de velours »", /\blèvres de velours\b/giu],
+  ["« point de feu »", /\bpoints? de feu\b/giu],
+  ["« intimité humide »", /\bintimités? humides?\b/giu],
+  ["« virilité »", /\bvirilités?\b/giu],
+  ["« vigueur »", /\bvigueur\b/giu],
+];
+export const MAX_FIXED_PER_SCENE = 1;
+
 // Mots crus ou cliniques interdits dans la prose intime.
-export const BANNED = /\b(?:pénis|penis|vagin|vagins|vulve|vulves|clitoris|testicules?|scrotum|anus|chatte|bite|bites|couilles?|phallus|verge|gland(?! du coussin)|érection)\b/giu;
+export const BANNED = /\b(?:pénis|penis|vagin|vagins|vulve|vulves|clitoris|testicules?|scrotum|anus|chatte|bite|bites|couilles?|phallus|verge|gland(?! du coussin)|érection|masturb\p{L}*|suce|sucent|sucez|sucer|suçant)\b/giu;
 
 export const MAX_PER_SCENE = 2;
 // Taille minimale d'un bloc pour constituer une « scène » (caractères de prose).
@@ -145,7 +159,7 @@ export function analyseFile(file) {
       if (!isProse(node.text)) return r;
       r.len = node.text.length;
       const line = lineOf(node.start);
-      for (const [label, re, accept] of TERMS) {
+      for (const [label, re, accept] of [...TERMS, ...FIXED_FORMULAS]) {
         re.lastIndex = 0; let m;
         while ((m = re.exec(node.text))) {
           if (accept && !accept(m, node.text.slice(0, m.index))) continue;

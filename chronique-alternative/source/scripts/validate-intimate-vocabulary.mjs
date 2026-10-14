@@ -1,13 +1,14 @@
 // Validateur : variété du vocabulaire intime et absence de termes crus ou cliniques.
 // Usage : node scripts/validate-intimate-vocabulary.mjs [--report]
-import { analyseAll, MAX_PER_SCENE, listFiles } from "./intimate-vocabulary-lib.mjs";
+import { analyseAll, MAX_PER_SCENE, MAX_FIXED_PER_SCENE, FIXED_FORMULAS, listFiles } from "./intimate-vocabulary-lib.mjs";
 
 const { scenes, banned } = analyseAll();
 const report = process.argv.includes("--report");
 const json = process.argv.includes("--json");
 const errors = [];
+const fixed = new Set(FIXED_FORMULAS.map(([l]) => l));
 for (const s of scenes) for (const [label, n] of s.counts) {
-  if (n > MAX_PER_SCENE) errors.push(`${s.file}:${s.line} [${s.name}] « ${label} » ×${n} (lignes ${[...new Set(s.hits.filter((h) => h.label === label).map((h) => h.line))].join(", ")})`);
+  if (n > (fixed.has(label) ? MAX_FIXED_PER_SCENE : MAX_PER_SCENE)) errors.push(`${s.file}:${s.line} [${s.name}] « ${label} » ×${n} (lignes ${[...new Set(s.hits.filter((h) => h.label === label).map((h) => h.line))].join(", ")})`);
 }
 for (const b of banned) errors.push(`${b.file}:${b.line} terme interdit « ${b.word} »`);
 
@@ -28,4 +29,4 @@ if (report || json) {
   console.log("");
 }
 if (errors.length) { console.error(`Vocabulaire intime : ${errors.length} problème(s)`); errors.forEach((e) => console.error("  " + e)); process.exit(1); }
-console.log(`Vocabulaire intime OK : ${scenes.length} scènes, aucun euphémisme répété plus de ${MAX_PER_SCENE} fois par scène, aucun terme cru ou clinique.`);
+console.log(`Vocabulaire intime OK : ${scenes.length} scènes, aucun euphémisme répété plus de ${MAX_PER_SCENE} fois par scène, aucune formule figée plus de ${MAX_FIXED_PER_SCENE} fois, aucun terme cru ou clinique.`);

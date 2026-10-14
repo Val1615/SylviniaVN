@@ -128,7 +128,7 @@ const SCENES: AuthoredScene[] = [
       A("Hylee se redresse nue, les cheveux défaits sur ses seins. Votre regard la fait rougir ; elle pose les mains sur ses hanches et reste offerte au lieu de ramener la couverture.", "Lorsqu'elle vous dénude à votre tour, son attention descend franchement sur votre désir déjà visible. Elle relève les yeux avec une curiosité qui n'a rien d'innocent.", ["Hylee", "Je peux avoir des idées et poser des questions en même temps. Prépare-toi.", "determined"]),
       V(
         ["Elle caresse votre torse et vos hanches, attentive aux muscles qui se tendent sous sa paume. Son baiser suit chaque endroit qu'elle vient d'apprendre."],
-        ["Hylee referme la main sur votre désir tendu à travers le dernier tissu, observe votre souffle changer et recommence avec une lente fierté."],
+        ["Hylee referme la main sur vous à travers le dernier tissu, observe votre souffle changer et recommence avec une lente fierté."],
         ["Elle vous libère du dernier tissu et referme ses doigts autour de vous. Son pouce glisse sur l'extrémité humide ; Hylee essaie deux pressions, garde celle qui vous fait fermer les yeux et sourit comme après une sculpture enfin stable.", ["Hylee", "Celle-là. Je garde ce mouvement.", "teasing"]],
         ["Hylee descend en semant des baisers et vous découvre sous la couverture. Elle demande ce que vous aimez, puis le récit s'écarte pendant que ses mains apprennent votre réponse."],
       ),
