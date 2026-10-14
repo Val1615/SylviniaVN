@@ -79,7 +79,7 @@ async function validatePortrait(path, label) {
 // Refonte Valurn (Acte I) : confidences 4 majeures + 4 secondaires remplacent les 2 anciennes et
 // les 2 confidences Valurn de la refonte Bellirith (+4) ; +14 connaissances ; courriers L1 à L6,
 // variante L4, trois réactifs et trois tiers remplacent les 2 anciens (+11) ; 3 invitations remplacent 1 (+2).
-const expected = { characters: 12, secrets: 56, knowledge: 86, letters: 44, invitations: 19, rumors: 22, spontaneousEvents: 18 };
+const expected = { characters: 12, secrets: 56, knowledge: 90, letters: 44, invitations: 19, rumors: 22, spontaneousEvents: 18 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }

@@ -1,0 +1,12 @@
+/* Bellirith & Valurn · « Je n’ai jamais ». Aucune jauge : un compteur discret et trois verres. */
+.bv-never{--bn-accent:#c9a46b;background:radial-gradient(circle at 50% 30%,#2a1d14 0,#120c0a 55%,#08060b 100%);border-color:#8a6a45}
+.bv-round{font-size:.85em;color:#cdb79a;letter-spacing:.08em}
+.bv-glasses{display:flex;flex-wrap:wrap;gap:.4rem .9rem;margin:0;padding:0;list-style:none;font-size:.9em}
+.bv-glasses li{display:flex;align-items:center;gap:.3rem;color:#cdb79a}
+.bv-glasses li i{font-style:normal;font-size:1.2em}
+.bv-glasses li.drank{color:#ffd7a8;font-weight:600}
+.bv-options,.bv-answers{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.4rem}
+.bv-options .bn-move{text-align:left;font-style:italic}
+.bv-answers .bn-reading{grid-column:1/-1}
+.bv-wait{margin:.3rem 0 0;font-size:.9em;color:#cdb79a}
+@media (max-height:560px){.bv-never .bn-game-sprite{display:none}.bv-never .bn-game-stage{grid-template-columns:1fr}.bv-options{grid-template-columns:repeat(2,minmax(0,1fr))}}

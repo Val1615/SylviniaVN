@@ -15,6 +15,8 @@ export const EXTRA_FILES = ["intimacy-prose.ts", "intimacy-games.ts"];
 // Fichiers ou blocs exclus : la refonte Valurn suit son propre chantier.
 export const EXCLUDED_FILES = [/valurn/i];
 export const EXCLUDED_BLOCK_LABELS = [/valurn/i];
+// La quête croisée Bellirith / Valurn est soumise au validateur (exception à l’exclusion ci-dessus).
+export const FORCED_FILES = [/^bellirith-valurn-intimacy/];
 
 export const CHARACTERS = ["hylee", "remerii", "naiah", "allenna", "lineva", "bellirith", "iriana", "saidin", "amanea", "tia", "draven", "valurn"];
 
@@ -70,7 +72,7 @@ export const SCENE_MIN_CHARS = 1500;
 export function listFiles() {
   return readdirSync(SRC)
     .filter((f) => f.endsWith(".ts") && (INTIMATE_FILE_PATTERN.test(f) || EXTRA_FILES.includes(f)))
-    .filter((f) => !EXCLUDED_FILES.some((r) => r.test(f)))
+    .filter((f) => FORCED_FILES.some((r) => r.test(f)) || !EXCLUDED_FILES.some((r) => r.test(f)))
     .sort();
 }
 

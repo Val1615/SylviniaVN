@@ -161,6 +161,10 @@ import { BN_FORM, BN_FORM_SPRITE } from "./bellirith-naiah-kit";
 import { BN_ANOMALY_ROUND, BN_GAME_RELATION_BONUS, bnGameAtRound, bnGameResult, createBNGame, type BNGameState } from "./bellirith-naiah-minigame";
 import { BN_INTIMACY_SCENES } from "./bellirith-naiah-intimacy";
 import { BNDossier, BNMinigameModal, BNIntimacyModal, BNDevBlock } from "./bellirith-naiah-ui";
+import { BV_KEY, BV_DATE_ID, BV_STAGE_TOTAL, BV_TITLES, BV_INTIMACY_EFFECTS, BV_ALL_FLAG_PREFIXES, BV_MAIN_SCENES, bvUnlocked, bvUnlockChecks, createBVProgress, hydrateBV, bvAvailableScenes, finishBVScene, bvSaveNever, bvCompleteNever, finishBVIntimacy, bvPendingIntimacy, bvFlags, bvScene, type BVIntimacyId } from "./bellirith-valurn-cross-quest";
+import { createBVNever, bvSeedFor, bvNeverStyleFlags, bvComputeStyle, type BVNeverState, type BVTruthCtx } from "./bellirith-valurn-never-game";
+import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
+import { BVDossier, BVNeverModal, BVIntimacyModal, BVDevBlock } from "./bellirith-valurn-ui";
 import { createHyleeSearch, type HyleeSearchState, type MotherOutcome } from "./hylee-search";
 import {
   DISPLAY_ITEMS,
@@ -345,6 +349,8 @@ type SceneView = {
   hnScene?: boolean;
   /** Quête croisée Bellirith / Naïah : effets et étapes gérés par bellirith-naiah-cross-quest.ts. */
   bnScene?: boolean;
+  /** Quête croisée Bellirith / Valurn (bellirith-valurn-cross-quest.ts). */
+  bvScene?: boolean;
   hrScene?: boolean;
   beats?: HRBeat[];
   music?: string;
@@ -467,6 +473,8 @@ type ModalState =
   | { kind: "bn-minigame"; replay?: boolean; dev?: boolean; state?: BNGameState }
   | { kind: "valurn-market"; replay?: boolean; state?: ValurnMarketState }
   | { kind: "bn-intimacy"; id: BNIntimacyId; replay?: boolean; mode?: Intimacy }
+  | { kind: "bv-never"; replay?: boolean; state?: BVNeverState }
+  | { kind: "bv-intimacy"; id: BVIntimacyId; replay?: boolean; mode?: Intimacy }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
   | { kind: "ritual" }
@@ -489,7 +497,10 @@ type DevIntimacyTarget =
   | { kind: "bn-scene"; stage: number }
   | { kind: "bn-minigame"; round: number }
   | { kind: "bn-intimacy"; id: BNIntimacyId; mode: Intimacy }
-  | { kind: "bn-moment"; id: string };
+  | { kind: "bn-moment"; id: string }
+  | { kind: "bv-scene"; sceneId: string }
+  | { kind: "bv-never" }
+  | { kind: "bv-intimacy"; id: BVIntimacyId; mode: Intimacy };
 
 type NotificationKind = "unlock" | "item" | "relation" | "story" | "codex" | "home" | "letter" | "invitation" | "rumor" | "knowledge";
 
@@ -728,7 +739,7 @@ function hydrateGame(raw: unknown): GameState | null {
   const normalizedCrossQuestSeries = Object.fromEntries(Object.entries(value.crossQuestSeries || {}).map(([id, progress]) => [id, id === HR_KEY ? hydrateHR(progress, {
     flags: migratedFlags,
     groupDateHistory: value.groupDateHistory || [],
-  }) : id === HN_KEY ? hydrateHN(progress, migratedFlags) : id === BN_KEY ? hydrateBN(progress) : {
+  }) : id === HN_KEY ? hydrateHN(progress, migratedFlags) : id === BN_KEY ? hydrateBN(progress) : id === BV_KEY ? hydrateBV(progress) : {
     ...progress,
     id,
     stage: Math.max(0, Math.min(8, Number(progress.stage) || 0)),
@@ -1223,6 +1234,7 @@ function evolveLivingWorld(game: GameState): GameState {
 function evolveCrossQuests(game: GameState): GameState {
   if (!game.crossQuestSeries[HN_KEY] && hnUnlocked(game)) game = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [HN_KEY]: createHNProgress(game.day) }, journal: [...game.journal, "Quêtes croisées · Hylee & Naïah · Ça me rappelle Hylee"] };
   if (!game.crossQuestSeries[BN_KEY] && bnUnlocked(game)) game = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [BN_KEY]: createBNProgress(game.day) }, journal: [...game.journal, "Quêtes croisées · Bellirith & Naïah · L’anomalie"] };
+  if (!game.crossQuestSeries[BV_KEY] && bvUnlocked(game)) game = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [BV_KEY]: createBVProgress(game.day) }, journal: [...game.journal, "Quêtes croisées · Bellirith & Valurn · Les comptes de famille"] };
   if (!game.crossQuestSeries[HR_KEY] && hrUnlocked(game)) game = { ...game, crossQuestSeries: { ...game.crossQuestSeries, [HR_KEY]: createHRProgress(game.day) }, journal: [...game.journal, "Quêtes croisées · Hylee & Remerii · Après les Serres"] };
   let progress = game.crossQuestSeries.linevaAllenna;
   if (!progress && linevaAllennaSeriesUnlocked({ ...game, unlockAll: game.settings.unlockAll })) {
@@ -1465,6 +1477,9 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
   if (beforeBN && afterBN && beforeBN.stage !== afterBN.stage) livingWorldChanges.push({ kind: "story",
     title: afterBN.stage >= BN_STAGE_TOTAL ? "Bellirith & Naïah · La série est accomplie" : afterBN.stage === BN_FINAL_STAGE ? "Bellirith & Naïah · Une revanche est réclamée" : "Bellirith & Naïah · La suite vous attend",
     detail: BN_TITLES[afterBN.stage] || "Série accomplie" });
+  const beforeBV = previous.crossQuestSeries[BV_KEY], afterBV = next.crossQuestSeries[BV_KEY];
+  if (!beforeBV && afterBV) livingWorldChanges.push({ kind: "story", title: "Une nouvelle série croisée est disponible", detail: "Bellirith & Valurn · Les comptes de famille" });
+  if (beforeBV && afterBV && beforeBV.stage !== afterBV.stage) livingWorldChanges.push({ kind: "story", title: afterBV.stage >= BV_STAGE_TOTAL ? "Bellirith & Valurn · La série est accomplie" : "Bellirith & Valurn · La suite vous attend", detail: BV_TITLES[afterBV.stage] || "Retombées" });
   const beforeHR = previous.crossQuestSeries[HR_KEY], afterHR = next.crossQuestSeries[HR_KEY];
   if (!beforeHR && afterHR) livingWorldChanges.push({ kind: "story", title: "Une nouvelle série croisée est disponible", detail: "Hylee & Remerii · Après les Serres" });
   if (beforeHR && afterHR && beforeHR.stage !== afterHR.stage && afterHR.stage < 7) livingWorldChanges.push({ kind: "story", title: afterHR.stage === 6 ? "Une opération est prête aux Serres Rocheuses" : "Hylee et Remerii · La suite vous attend", detail: HR_TITLES[afterHR.stage] });
@@ -2932,6 +2947,125 @@ export default function Home() {
     advancePeriod();
   }
 
+  /* ---------------------------- Bellirith / Valurn ---------------------------- */
+
+  function bvSceneView(data: NonNullable<ReturnType<typeof bvScene>>): SceneView {
+    return { ...data, kind: "cross-quest", bvScene: true, mood: data.character === "valurn" ? "charming" : "teasing", background: spotById(data.spot)?.background || backgroundUrl("forbidden_forest") };
+  }
+
+  function openBVDialogue(scene: SceneView, nextGame: GameState, replay = false) {
+    const cp = !replay && nextGame.crossQuestSeries[BV_KEY]?.bv?.checkpoint;
+    const resume = cp && cp.sceneId === scene.id ? cp : undefined;
+    const beat = resume && resume.round >= 0 ? scene.beats?.[resume.round] : undefined;
+    const chosen = resume ? (beat?.choices || scene.choices)?.find(c => c.id === resume.picks.at(-1)) : undefined;
+    const cast = chosen ? beat?.responseCast || beat?.cast : beat?.cast;
+    setModal(null);
+    setDialogue({ scene: cast ? { ...scene, cast } : scene, lines: expandedLines(scene, nextGame, chosen ? chosen.response : scene.intro, chosen ? "response" : "intro"), lineIndex: 0,
+      phase: chosen ? resume!.round >= 0 ? "relation-response" : "response" : "intro", chosen, dateRound: resume?.round, datePicks: resume?.picks || [], replay });
+  }
+
+  /** Scènes de la série Bellirith / Valurn. `dev` ouvre en souvenir, sans écrire dans la sauvegarde. */
+  function startBVScene(sceneId: string, replay = false, dev = false) {
+    if (!game) return;
+    const p = game.crossQuestSeries[BV_KEY];
+    if (!dev) {
+      if (!p?.bv) return;
+      if (replay ? !p.bv.choices[sceneId] : !bvAvailableScenes(p, game.day).scenes.includes(sceneId)) return;
+    }
+    const data = bvScene(sceneId, game, p); if (!data) return;
+    let nextGame = game;
+    if (!replay && !dev && p?.bv) {
+      const checkpoint = p.bv.checkpoint?.sceneId === data.id ? p.bv.checkpoint : { sceneId: data.id, round: -1, picks: [] };
+      nextGame = { ...game, location: data.location, spot: data.spot, ...placeDiscovery(game, data.location, data.spot),
+        crossQuestSeries: { ...game.crossQuestSeries, [BV_KEY]: { ...p, bv: { ...p.bv, checkpoint } } } };
+      setGame(evolveLivingWorld(evolveCrossQuests(nextGame))); setSelectedLocation(data.location); setSelectedSpot(data.spot);
+    }
+    openBVDialogue(bvSceneView(data), nextGame, replay || dev);
+  }
+
+  function bvTruthCtx(): BVTruthCtx {
+    return { flags: game?.flags || [], knowledge: game?.knowledge || [], relationships: game?.relationships || {}, dateHistory: game?.dateHistory || [], groupDateHistory: game?.groupDateHistory || [] };
+  }
+
+  /** « Je n’ai jamais » : sauvegarde après chaque intervention ; la rejouabilité travaille sur un état local. */
+  function startBVNever(replay = false) {
+    if (!game) return;
+    if (replay) { setDialogue(null); setModal({ kind: "bv-never", replay: true, state: createBVNever(bvSeedFor(game.day + 7, game.flags)) }); return; }
+    const p = game.crossQuestSeries[BV_KEY];
+    if (!p?.bv || !bvAvailableScenes(p, game.day).never) return;
+    if (!p.bv.never) updateGame(current => {
+      const q = current.crossQuestSeries[BV_KEY]; if (!q?.bv || q.bv.never) return current;
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: bvSaveNever(q, createBVNever(bvSeedFor(current.day, current.flags))) } };
+    });
+    setDialogue(null);
+    setModal({ kind: "bv-never" });
+  }
+
+  function setBVNeverState(state: BVNeverState) {
+    if (modal?.kind !== "bv-never") return;
+    if (modal.replay) { setModal({ ...modal, state }); return; }
+    updateGame(current => {
+      const q = current.crossQuestSeries[BV_KEY]; if (!q?.bv || q.bv.never?.completed) return current;
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: bvSaveNever(q, state) } };
+    });
+  }
+
+  function finishBVNever(state: BVNeverState) {
+    if (modal?.kind !== "bv-never") return;
+    setModal(null);
+    if (modal.replay || !state.completed) return;
+    const p = game?.crossQuestSeries[BV_KEY];
+    if (!p?.bv || p.bv.never?.completed) return;
+    const styled = { ...state, style: state.style || bvComputeStyle(state) };
+    const apply = (current: GameState): GameState => {
+      const q = current.crossQuestSeries[BV_KEY]; if (!q?.bv || q.bv.never?.completed) return current;
+      const progress = bvCompleteNever(q, styled);
+      return { ...current,
+        flags: unique([...current.flags, ...bvNeverStyleFlags(styled), ...bvFlags(progress)]),
+        knowledge: unique([...current.knowledge, ...styled.truths]),
+        groupDateHistory: unique([...current.groupDateHistory, BV_DATE_ID]),
+        crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: progress },
+        journal: [...current.journal, `Quêtes croisées · Bellirith & Valurn · Je n’ai jamais · ${styled.round} tours`] };
+    };
+    updateGame(apply);
+    // La transition est écrite : la scène d’après enchaîne aussitôt, avec l’état de fin de partie.
+    if (!game) return;
+    const nextGame = apply(game);
+    const data = bvScene("cross-bv-04", nextGame, nextGame.crossQuestSeries[BV_KEY]);
+    if (data) openBVDialogue(bvSceneView(data), nextGame, false);
+  }
+
+  function startBVIntimacy(replay = false, id?: BVIntimacyId, mode?: Intimacy) {
+    if (!game) return;
+    const bv = game.crossQuestSeries[BV_KEY]?.bv;
+    const target = id || bv?.intimacy;
+    if (!target) return;
+    if (!mode && (replay ? bv?.intimacyStatus !== "lived" : bvPendingIntimacy(game.crossQuestSeries[BV_KEY]) !== target)) return;
+    setDialogue(null);
+    setModal({ kind: "bv-intimacy", id: target, replay: replay || Boolean(mode), ...(mode ? { mode } : {}) });
+  }
+
+  function closeBVIntimacy(completed: boolean) {
+    if (modal?.kind !== "bv-intimacy" || !game) return;
+    const { id, replay } = modal;
+    setModal(null);
+    if (replay) return;
+    const p = game.crossQuestSeries[BV_KEY];
+    if (!p?.bv || p.bv.intimacyStatus) return;
+    if (completed) {
+      const effects = BV_INTIMACY_EFFECTS[id];
+      if (effects.bellirith) applyEffects("bellirith", { ...effects.bellirith, ...(effects.valurn ? { relationshipEffects: { valurn: effects.valurn } } : {}) });
+      else if (effects.valurn) applyEffects("valurn", effects.valurn);
+    }
+    updateGame(current => {
+      const q = current.crossQuestSeries[BV_KEY]; if (!q?.bv) return current;
+      const progress = finishBVIntimacy(q, completed);
+      return { ...current, flags: unique([...current.flags, ...bvFlags(progress)]), crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: progress },
+        journal: completed ? [...current.journal, `Quêtes croisées · Bellirith & Valurn · ${bvIntimacyScene(id.slice(3) as "a" | "b" | "c", current.player.sex).title}`] : current.journal };
+    });
+    advancePeriod();
+  }
+
   function openHRDialogue(scene: SceneView, nextGame: GameState, replay = false) {
     const cp = !replay && nextGame.crossQuestSeries[HR_KEY]?.hr?.checkpoint;
     const resume = cp && cp.sceneId === scene.id ? cp : undefined;
@@ -3206,7 +3340,10 @@ export default function Home() {
     const bnCheckpoint = game.crossQuestSeries[BN_KEY]?.bn?.checkpoint;
     const bnAlreadyPicked = dialogue.scene.bnScene && (game.crossQuestSeries[BN_KEY]?.bn?.choices[dialogue.scene.id]
       || bnCheckpoint?.sceneId === dialogue.scene.id && bnCheckpoint.picks.includes(choice.id));
-    if (!dialogue.replay && !hnAlreadyPicked && !bnAlreadyPicked && !(dialogue.scene.hrScene && game.crossQuestSeries[HR_KEY]?.hr?.choices[dialogue.scene.id])) applyEffects(dialogue.scene.character, choice.effects, route);
+    const bvCheckpoint = game.crossQuestSeries[BV_KEY]?.bv?.checkpoint;
+    const bvAlreadyPicked = dialogue.scene.bvScene && (game.crossQuestSeries[BV_KEY]?.bv?.choices[dialogue.scene.id]
+      || bvCheckpoint?.sceneId === dialogue.scene.id && bvCheckpoint.picks.includes(choice.id));
+    if (!dialogue.replay && !hnAlreadyPicked && !bnAlreadyPicked && !bvAlreadyPicked && !(dialogue.scene.hrScene && game.crossQuestSeries[HR_KEY]?.hr?.choices[dialogue.scene.id])) applyEffects(dialogue.scene.character, choice.effects, route);
     if (dialogue.scene.hnScene && !dialogue.replay) updateGame(current => {
       const p = current.crossQuestSeries[HN_KEY]; if (!p?.hn) return current;
       const outcome = motherOutcomeFromChoice(choice.id) || p.hn.motherOutcome;
@@ -3217,6 +3354,10 @@ export default function Home() {
     if (dialogue.scene.bnScene && !dialogue.replay) updateGame(current => {
       const p = current.crossQuestSeries[BN_KEY]; if (!p?.bn) return current;
       return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BN_KEY]: { ...p, bn: { ...p.bn, checkpoint: { sceneId: dialogue.scene.id, round: isRelationChoice ? dialogue.dateRound ?? 0 : -1, picks: [...(dialogue.datePicks || []), choice.id] } } } } };
+    });
+    if (dialogue.scene.bvScene && !dialogue.replay) updateGame(current => {
+      const p = current.crossQuestSeries[BV_KEY]; if (!p?.bv) return current;
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: { ...p, bv: { ...p.bv, checkpoint: { sceneId: dialogue.scene.id, round: isRelationChoice ? dialogue.dateRound ?? 0 : -1, picks: [...(dialogue.datePicks || []), choice.id] } } } } };
     });
     if (dialogue.scene.hrScene && !dialogue.replay) updateGame(current => {
       const p = current.crossQuestSeries[HR_KEY]; if (!p?.hr) return current;
@@ -3412,7 +3553,7 @@ export default function Home() {
     const followsBellirith = choice.id === "coalition-follow-bellirith";
     const campaignEnding = endingCampaign && !followsBellirith ? campaignSceneOutro(endingCampaign) : [];
     const continuesToRelationBeat = !isRelationChoice && hasRelationBeat && routeChoiceCompletes(choice.id) && !injectedEnding.length;
-    const authoredEnding = dialogue.scene.hnScene || dialogue.scene.hrScene || dialogue.scene.bnScene || continuesToRelationBeat || authoredDateContinues || followsBellirith || dialogue.scene.kind === "bellirith"
+    const authoredEnding = dialogue.scene.hnScene || dialogue.scene.hrScene || dialogue.scene.bnScene || dialogue.scene.bvScene || continuesToRelationBeat || authoredDateContinues || followsBellirith || dialogue.scene.kind === "bellirith"
       ? []
       : injectedEnding.length
       ? injectedEnding
@@ -3426,7 +3567,7 @@ export default function Home() {
       ...dialogue, spriteMoods: dialogueSpriteMoods(dialogue),
       scene: isRelationChoice && dialogue.scene.beats?.[dialogue.dateRound ?? 0]?.responseCast ? { ...dialogue.scene, cast: dialogue.scene.beats[dialogue.dateRound ?? 0].responseCast } : dialogue.scene,
       chosen: choice,
-      datePicks: dialogue.scene.hnScene || dialogue.scene.hrScene || dialogue.scene.bnScene || dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
+      datePicks: dialogue.scene.hnScene || dialogue.scene.hrScene || dialogue.scene.bnScene || dialogue.scene.bvScene || dialogue.scene.date && AUTHORED_DATE_CHARACTERS.has(dialogue.scene.date.character) ? [...(dialogue.datePicks || []), choice.id] : dialogue.datePicks,
       lines: expandedLines(dialogue.scene, game, response, "response"),
       lineIndex: 0,
       phase: isRelationChoice ? "relation-response" : "response",
@@ -3487,6 +3628,29 @@ export default function Home() {
       const launch = dialogue.chosen.launchesIntimacy;
       if (launch === "bn-first" || launch === "bn-limit" || launch === "bn-simulation") { setDialogue(null); setModal({ kind: "bn-intimacy", id: launch }); return; }
       if (sceneId === BN_SCENE_IDS[BN_MINIGAME_STAGE]) { setDialogue(null); setModal({ kind: "bn-minigame" }); return; }
+    }
+    if (dialogue.scene.bvScene && !dialogue.replay) {
+      if (!dialogue.chosen || dialogue.lineIndex < dialogue.lines.length - 1 || !["response", "relation-response"].includes(dialogue.phase)
+        || dialogue.scene.beats?.[dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1]) return;
+      const sceneId = dialogue.scene.id, title = dialogue.scene.title;
+      const picks = dialogue.datePicks?.length ? dialogue.datePicks : [dialogue.chosen.id];
+      updateGame(current => {
+        const p = current.crossQuestSeries[BV_KEY]; if (!p?.bv) return current;
+        const firstTime = !p.bv.choices[sceneId];
+        const progress = finishBVScene(p, sceneId, picks, current.day);
+        return { ...current, flags: unique([...current.flags, ...bvFlags(progress)]), crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: progress },
+          sceneMemories: { ...current.sceneMemories, [sceneId]: current.spot },
+          journal: firstTime ? [...current.journal, `Quêtes croisées · Bellirith & Valurn · ${title}`] : current.journal };
+      });
+      const launch = dialogue.chosen.launchesIntimacy;
+      if (launch === "bv-a" || launch === "bv-b" || launch === "bv-c") { setDialogue(null); setModal({ kind: "bv-intimacy", id: launch }); return; }
+      if (sceneId === "cross-bv-03") {
+        updateGame(current => {
+          const q = current.crossQuestSeries[BV_KEY]; if (!q?.bv || q.bv.never || !bvAvailableScenes(q, current.day).never) return current;
+          return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: bvSaveNever(q, createBVNever(bvSeedFor(current.day, current.flags))) } };
+        });
+        setDialogue(null); setModal({ kind: "bv-never" }); return;
+      }
     }
     if (dialogue.scene.hrScene && !dialogue.replay) {
       if (!dialogue.chosen || dialogue.lineIndex < dialogue.lines.length - 1 || !["response", "relation-response"].includes(dialogue.phase) || dialogue.scene.beats?.[dialogue.phase === "response" ? 0 : (dialogue.dateRound ?? 0) + 1]) return;
@@ -4640,6 +4804,9 @@ export default function Home() {
     if (target.kind === "bn-minigame") { startBNMinigame(true, target.round); return; }
     if (target.kind === "bn-intimacy") { startBNIntimacy(target.id, true, target.mode); return; }
     if (target.kind === "bn-moment") { setModal(null); startBNMoment(target.id, true); return; }
+    if (target.kind === "bv-scene") { setModal(null); startBVScene(target.sceneId, true, true); return; }
+    if (target.kind === "bv-never") { startBVNever(true); return; }
+    if (target.kind === "bv-intimacy") { startBVIntimacy(true, target.id, target.mode); return; }
     if (target.kind === "bellirith-intrusion") { startBellirithIntrusion(target.id, target.mode); return; }
     if (target.kind === "bellirith-intimacy") { openBellirithIntimacy(target.dateId, true); return; }
     if (target.kind === "bellirith-confidence") { startSecretConversation(target.secretId, true); return; }
@@ -5044,7 +5211,7 @@ export default function Home() {
     .slice(0, 4);
   const spontaneousEvent = availableSpontaneousEvent(game);
   const localRumor = availableRumor(game);
-  const soundtrack = modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
+  const soundtrack = modal?.kind === "bv-never" ? "marble-moon" : modal?.kind === "bv-intimacy" ? bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).music : modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
     ? "alpha-chases"
     : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
@@ -5054,10 +5221,13 @@ export default function Home() {
   const bnMinigameModalState = modal?.kind === "bn-minigame"
     ? modal.replay ? modal.state : game.crossQuestSeries[BN_KEY]?.bn?.minigame
     : undefined;
+  const bvNeverModalState = modal?.kind === "bv-never"
+    ? modal.replay ? modal.state : game.crossQuestSeries[BV_KEY]?.bv?.never
+    : undefined;
   const hyleeSearchModalState = modal?.kind === "hylee-search"
     ? modal.replay ? modal.state : game.crossQuestSeries[HN_KEY]?.hn?.search
     : undefined;
-  const sceneActive = Boolean(dialogue || modal?.kind === "valurn-market" || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy");
+  const sceneActive = Boolean(dialogue || modal?.kind === "valurn-market" || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy" || modal?.kind === "bv-never" || modal?.kind === "bv-intimacy");
   const pendingMail = game.letters.filter((entry) => !entry.read).length + (game.crossQuestSeries.linevaAllenna?.letters.filter((entry) => !entry.read).length || 0) + game.invitations.filter((entry) => entry.status === "pending").length;
   const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail };
   const unread = v2Log.filter((entry) => !entry.read).length;
@@ -5079,7 +5249,7 @@ export default function Home() {
   };
   const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
   const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
-  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onValurnMarket={startValurnMarket} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
+  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onValurnMarket={startValurnMarket} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onBVScene={startBVScene} onBVNever={startBVNever} onBVIntimacy={(replay) => startBVIntimacy(replay)} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
   const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), onDevOpenIntimacy: openDevIntimacy, slotVersion };
   const rank = rankQueue[0];
   const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
@@ -5173,7 +5343,11 @@ export default function Home() {
       {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
         background={backgroundUrl(spotById(BN_INTIMACY_SCENES[modal.id].background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBNIntimacy(false)} onFinish={() => closeBNIntimacy(true)} />}
-      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && modal.kind !== "valurn-market" && <GameModal
+      {modal?.kind === "bv-never" && bvNeverModalState && <BVNeverModal key={modal.replay ? "bv-r" : "bv-l"} state={bvNeverModalState} ctx={bvTruthCtx()} replay={modal.replay} format={(text) => replacePlayer(text, game.player)} onChange={setBVNeverState} onClose={() => setModal(null)} onFinish={finishBVNever} />}
+      {modal?.kind === "bv-intimacy" && <BVIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
+        background={backgroundUrl(spotById(bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
+        onStop={() => closeBVIntimacy(false)} onFinish={() => closeBVIntimacy(true)} />}
+      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && modal.kind !== "bv-never" && modal.kind !== "bv-intimacy" && modal.kind !== "valurn-market" && <GameModal
         modal={modal}
         game={game}
         onClose={() => setModal(null)}
@@ -5306,7 +5480,7 @@ function DialogueOverlay({ dialogue, game, onAdvance, onBack, onChoice, onClose 
   const activeIds = currentLine ? speakerCharacterIds(currentLine.speaker, dialogue.scene.cast) : [];
   const availableChoices = choicesForDialogue(dialogue, game);
   const stableMoods = dialogue.scene.cast.includes("hylee") ? dialogueSpriteMoods(dialogue) : undefined;
-  const sceneLabel = dialogue.scene.bnScene ? "Quêtes croisées · Bellirith & Naïah" : dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "bellirith" ? (dialogue.scene.bellirithMode === "catchup" ? "Interférence · Bellirith · rattrapage" : "Interférence · Bellirith") : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
+  const sceneLabel = dialogue.scene.bnScene ? "Quêtes croisées · Bellirith & Naïah" : dialogue.scene.bvScene ? "Quêtes croisées · Bellirith & Valurn" : dialogue.scene.kind === "story" ? "Histoire principale" : dialogue.scene.kind === "route" ? "Scène de relation" : dialogue.scene.kind === "intro" ? "Prologue" : dialogue.scene.kind === "social" ? "Liens croisés" : dialogue.scene.kind === "date" ? "Rendez-vous" : dialogue.scene.kind === "secret" ? "Confidence personnelle" : dialogue.scene.kind === "world" ? "Événement spontané" : dialogue.scene.kind === "invitation" ? "Invitation" : dialogue.scene.kind === "bellirith" ? (dialogue.scene.bellirithMode === "catchup" ? "Interférence · Bellirith · rattrapage" : "Interférence · Bellirith") : dialogue.scene.kind === "home" ? "Moment au logis" : "Moment libre";
   // Historique (backlog) : chaque réplique affichée et chaque choix pris pendant la scène, dans l’ordre.
   const sectionRef = useRef<HTMLElement>(null);
   const lineKey = `${dialogue.scene.id}|${dialogue.phase}|${dialogue.dateRound ?? -1}|${dialogue.lineIndex}|${currentLine?.speaker}|${currentLine?.text}`;
@@ -5473,7 +5647,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onValurnMarket?: (replay?: boolean) => void; onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
+function JournalView({ embedded = false, forcedSection, onValurnMarket, onBVScene, onBVNever, onBVIntimacy, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onBVScene?: (sceneId: string, replay?: boolean) => void; onBVNever?: (replay?: boolean) => void; onBVIntimacy?: (replay?: boolean) => void; onValurnMarket?: (replay?: boolean) => void; onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
   const [chosenSection, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const section = forcedSection ?? chosenSection;
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
@@ -5484,6 +5658,7 @@ function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScen
   const groupDateMemories = unique(game.groupDateHistory).map((id) => GROUP_DATES.find((date) => date.id === id)).filter((date): date is GroupDateScene => Boolean(date));
   const hnProgress = game.crossQuestSeries[HN_KEY];
   const bnProgress = game.crossQuestSeries[BN_KEY];
+  const bvProgress = game.crossQuestSeries[BV_KEY];
   const hrProgress = game.crossQuestSeries[HR_KEY];
   const crossProgress = game.crossQuestSeries.linevaAllenna;
   const crossLetters = (crossProgress?.letters || []).map((received) => ({ received, letter: LINEVA_ALLENNA_LETTERS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: NonNullable<typeof crossProgress>["letters"][number]; letter: CrossLetter } => Boolean(entry.letter));
@@ -5581,13 +5756,14 @@ function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScen
     {!embedded && <><header className="content-header"><div><p className="eyebrow">Mémoire de l’entre-mondes</p><h1>Journal de la Confluence</h1><p>Chaque registre possède désormais sa propre vue. Une relecture n’altère jamais la sauvegarde.</p></div><span>Jour {game.day}</span></header>
     <SectionTabs label="Registres du Journal" active={section} onChange={setSection} items={[
       { id: "campaign", icon: "◆", label: "Campagne", count: `${mainProgress}/${MAIN_STORY.length}`, hint: "Objectifs et chapitres" },
-      ...(crossProgress || hrProgress || hnProgress || bnProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${(crossProgress ? completedCrossMilestones(crossProgress.stage) : 0) + (hrProgress?.stage || 0) + (hnProgress?.stage || 0) + (bnProgress?.stage || 0)}/${7 * (Number(Boolean(crossProgress)) + Number(Boolean(hrProgress)) + Number(Boolean(bnProgress))) + 8 * Number(Boolean(hnProgress))}`, hint: "Vos histoires croisées" }] : []),
+      ...(crossProgress || hrProgress || hnProgress || bnProgress || bvProgress ? [{ id: "crossed" as const, icon: "⇄", label: "Quêtes croisées", count: `${(crossProgress ? completedCrossMilestones(crossProgress.stage) : 0) + (hrProgress?.stage || 0) + (hnProgress?.stage || 0) + (bnProgress?.stage || 0)}/${7 * (Number(Boolean(crossProgress)) + Number(Boolean(hrProgress)) + Number(Boolean(bnProgress))) + 8 * Number(Boolean(hnProgress))}`, hint: "Vos histoires croisées" }] : []),
       { id: "relations", icon: "♡", label: "Relations", count: `${completedRelationScenes}/${totalRelationScenes}`, hint: "Fils narratifs" },
       { id: "messages", icon: "✉", label: "Courrier", count: pendingMessages, hint: "Lettres et invitations" },
       { id: "discoveries", icon: "◌", label: "Découvertes", count: rumors.length + knowledge.length, hint: "Rumeurs et savoirs" },
       { id: "memories", icon: "◇", label: "Souvenirs", count: memoryCount, hint: "Relecture protégée" },
     ]} /></>}
     <div className={`journal-layout ${section === "campaign" ? "" : "single"}`}><div className="quest-column">
+      {section === "crossed" && bvProgress?.bv && onBVScene && onBVNever && onBVIntimacy && <BVDossier progress={bvProgress} day={game.day} onScene={onBVScene} onNever={onBVNever} onIntimacy={onBVIntimacy} />}
       {section === "crossed" && bnProgress?.bn && onBNScene && onBNMinigame && onBNIntimacy && onBNMoment && <BNDossier progress={bnProgress} onScene={onBNScene} onMinigame={onBNMinigame} onIntimacy={onBNIntimacy} onMoment={onBNMoment} />}
       {section === "crossed" && hnProgress?.hn && <HNDossier progress={hnProgress} game={game} onScene={onHNScene} onSearch={onHNSearch} />}
       {section === "crossed" && hrProgress && <HRDossier progress={hrProgress} day={game.day} onScene={onHRScene} onOperation={onOperation} onLetter={onHRLetter} />}
@@ -5959,6 +6135,25 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
     openIntimacy: (id: BNIntimacyId, mode: Intimacy) => onOpenIntimacy?.({ kind: "bn-intimacy", id, mode }),
     openMoment: (id: string) => onOpenIntimacy?.({ kind: "bn-moment", id }),
   };
+  const bvDevActions = {
+    start: () => updateGame((current) => current.crossQuestSeries[BV_KEY] ? current : { ...current,
+      crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: createBVProgress(current.day) },
+      journal: [...current.journal, "Outil développeur · Bellirith & Valurn : série démarrée."] }),
+    setStage: (stage: number) => updateGame((current) => {
+      const existing = current.crossQuestSeries[BV_KEY] || createBVProgress(current.day);
+      const target = Math.max(0, Math.min(BV_STAGE_TOTAL, stage));
+      return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BV_KEY]: { ...existing, stage: target, stageStartedDay: current.day, bv: { ...(existing.bv || { choices: {} }), checkpoint: undefined } } },
+        journal: [...current.journal, `Outil développeur · Bellirith & Valurn : étape ${target}.`] };
+    }),
+    clear: () => updateGame((current) => {
+      const { [BV_KEY]: _removed, ...rest } = current.crossQuestSeries;
+      return { ...current, crossQuestSeries: rest, flags: current.flags.filter((flag) => !BV_ALL_FLAG_PREFIXES.some((prefix) => flag.startsWith(prefix))),
+        journal: [...current.journal, "Outil développeur · Bellirith & Valurn : série effacée."] };
+    }),
+    openScene: (sceneId: string) => onOpenIntimacy?.({ kind: "bv-scene", sceneId }),
+    openNever: () => onOpenIntimacy?.({ kind: "bv-never" }),
+    openIntimacy: (id: BVIntimacyId, mode: Intimacy) => onOpenIntimacy?.({ kind: "bv-intimacy", id, mode }),
+  };
   const [soloSelection, setSoloSelection] = useState("");
   const [groupSelection, setGroupSelection] = useState("");
   const characterName = (id: string) => CHARACTERS.find((entry) => entry.id === id)?.name || id;
@@ -6182,6 +6377,7 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
     </div>
 
     <BNDevBlock progress={game.crossQuestSeries[BN_KEY]} unlockChecks={bnUnlockChecks(game)} actions={bnDevActions} />
+    <BVDevBlock progress={game.crossQuestSeries[BV_KEY]} unlockChecks={bvUnlockChecks(game)} sceneIds={BV_MAIN_SCENES} actions={bvDevActions} />
     <h3>Accès direct aux scènes intimes</h3>
     <p className="dev-help">Ces lancements sautent le rendez-vous et ouvrent directement sa continuation intime en mode souvenir : aucun gain, aucun temps consommé et aucune mutation de la sauvegarde.</p>
     <div className="dev-preview-grid">
@@ -7829,7 +8025,7 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
     ["decouvertes", "Découvertes", "◌"],
     ["relations", "Relations", "♡"],
     ["souvenirs", "Souvenirs", "◇"],
-    ...(crossProgress || hrProgress || hnProgress || bnProgress ? [["croisees", "Croisées", "⇄"] as [V2JournalTab, string, string]] : []),
+    ...(crossProgress || hrProgress || hnProgress || bnProgress || game.crossQuestSeries[BV_KEY] ? [["croisees", "Croisées", "⇄"] as [V2JournalTab, string, string]] : []),
   ];
   let gauche: React.ReactNode = null;
   let droite: React.ReactNode = null;

@@ -12,6 +12,7 @@ import {
   VALURN_BELLIRITH_KNOWLEDGE,
 } from "./bellirith-living-world";
 import { VALURN_CONFIDENCES, VALURN_INVITATIONS, VALURN_KNOWLEDGE, VALURN_LETTERS } from "./valurn-living-world";
+import { BV_KNOWLEDGE } from "./bellirith-valurn-knowledge";
 
 export type SecretTier = 20 | 40 | 60 | 80;
 
@@ -157,6 +158,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_valurn_bellirith_past", title: "Avant la haine", summary: "Valurn et Bellirith furent autrefois très proches. Leur lien de demi-frère et demi-sœur était aussi intime que difficile à nommer.", people: ["valurn", "bellirith"] },
   // Refonte Bellirith : pierre de stase et artefact retirés (spec §32).
   ...VALURN_BELLIRITH_KNOWLEDGE,
+  ...BV_KNOWLEDGE,
   ...VALURN_KNOWLEDGE,
 
   ...NAIAH_KNOWLEDGE,
