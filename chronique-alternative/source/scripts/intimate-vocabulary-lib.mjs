@@ -31,7 +31,9 @@ export const TERMS = [
   ["chaleur (possessif)", new RegExp(`\\b${P} chaleur\\b`, "giu")],
   ["humidité / moiteur", /\b(?:humidit[ée]|moiteur)\b/giu],
   ["fleur (possessif)", new RegExp(`\\b${P} fleur\\b`, "giu")],
-  ["bouton", /\bbouton(?: de plaisir)?\b(?! de (?:col|manchette|veste|chemise|rose))/giu],
+  ["bouton", /\bbouton(?: de plaisir)?\b(?! de (?:col|manchette|veste|chemise|rose))(?! qu’elle a arraché)/giu, (m, ctx) => !/\b(?:un|du)\s+$/i.test(ctx)],
+  ["fente", /\bfente\b/giu],
+  ["replis / pli humide", /\b(?:replis|pli (?:humide|mouillé|luisant))\b/giu],
   ["entre ses/vos cuisses", /\bentre (?:ses|vos|leurs|mes|tes|les) cuisses\b/giu],
   ["entre ses/vos jambes", /\bentre (?:ses|vos|leurs|mes|tes|les) jambes\b/giu],
   ["bas-ventre", /\bbas-ventre\b/giu],
@@ -41,7 +43,6 @@ export const TERMS = [
   ["érection / dressé", /\b(?:érection|dressée?s?)\b/giu],
   ["longueur", /\b(?:la|sa|votre) longueur\b/giu],
   ["centre / cœur intime", new RegExp(`\\b${P} (?:centre|cœur intime|point sensible)\\b`, "giu")],
-  ["plis / replis / lèvres intimes", /\b(?:replis|plis intimes|lèvres intimes)\b/giu],
   ["source / sève / hampe", new RegExp(`\\b${P} (?:source|sève|hampe)\\b`, "giu")],
 ];
 

@@ -38,7 +38,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         X(
           "Elle prend vos seins dans ses paumes au passage, les soupèse comme on retrouve un objet aimé, et pince doucement leurs pointes exactement comme la dernière fois, exactement comme il faut.",
           "Elle glisse une main dans votre pantalon déjà ouvert et vous trouve dur, évidemment. Elle ne commente pas. Elle se contente de serrer une fois, comme on salue une vieille connaissance.",
-          "Elle glisse une main dans votre pantalon déjà ouvert, trouve votre vigueur dressée, puis descend plus bas jusqu’à votre chaleur, comme pour vérifier que tout est bien à sa place. Elle ne commente pas. Elle salue les deux d’une pression.",
+          "Elle glisse une main dans votre pantalon déjà ouvert, vous trouve dur, puis descend plus bas jusqu’à la fente moite en dessous, comme pour vérifier que tout est bien à sa place. Elle ne commente pas. Elle salue les deux d’une pression.",
         ),
       ],
       [
@@ -85,9 +85,9 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         B("Je vais te rappeler tout ce que je sais. Dans l’ordre. Et tu vas me dire si j’ai oublié quelque chose.", "teasing"),
         "Elle commence par la nuque, descend, coche chaque endroit d’un baiser, d’un coup de dent, d’une caresse plus appuyée. Elle a raison partout. C’est exaspérant.",
         X(
-          "Quand elle arrive entre vos cuisses, elle souffle sur votre chaleur, puis y pose la langue, à plat, une seule fois, de bas en haut, jusqu’à votre perle de plaisir. Exactement comme la première fois. Votre corps se souvient avant vous.",
+          "Quand elle arrive entre vos cuisses, elle souffle sur vous, puis y pose la langue, à plat, une seule fois, de bas en haut, jusqu’au sommet. Exactement comme la première fois. Votre corps se souvient avant vous.",
           "Quand elle arrive à votre ventre, elle prend votre virilité dans sa main et embrasse le sommet, une seule fois, avec une lenteur affectueuse. Exactement comme la première fois. Votre corps se souvient avant vous.",
-          "Quand elle arrive à votre ventre, elle embrasse le sommet de votre vigueur, puis descend jusqu’à votre chaleur et y pose la langue, une seule fois. Exactement comme la première fois. Votre corps se souvient avant vous, des deux côtés.",
+          "Quand elle arrive à votre ventre, elle embrasse votre pointe tendue, puis descend plus bas encore et y pose la langue, une seule fois. Exactement comme la première fois. Votre corps se souvient avant vous, des deux côtés.",
         ),
         P("Tu as oublié quelque chose."),
         B("Impossible.", "cold"),
@@ -119,7 +119,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         X(
           "Pour se venger, elle revient entre vos cuisses et n’en bouge plus. Sa langue sur votre perle de plaisir, deux doigts recourbés en vous, elle vous fait payer chaque seconde de recherche inutile.",
           "Pour se venger, elle vous prend dans sa bouche et n’en bouge plus. Elle vous fait payer chaque seconde de recherche inutile, profondément, lentement, la main serrée à la base.",
-          "Pour se venger, elle prend votre vigueur dans sa bouche et glisse deux doigts dans votre chaleur, et n’en bouge plus. Elle vous fait payer chaque seconde de recherche inutile, des deux côtés à la fois.",
+          "Pour se venger, elle vous prend dans sa bouche, enfonce deux doigts plus bas, en vous, et n’en bouge plus. Elle vous fait payer chaque seconde de recherche inutile, des deux côtés à la fois.",
         ),
       ],
       [
@@ -143,7 +143,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         "Profitant d’un instant où elle reprend son souffle, vous la renversez à votre tour. Elle se laisse faire avec un soupir théâtral, les bras en croix.",
         B("Une manche. Une seule. Ensuite, tu me rends le commandement.", "teasing"),
         "Vous ne répondez pas. Vous l’embrassez au bas de la nuque, juste à la naissance des cheveux, cet endroit que vous aviez trouvé une fois par hasard et qu’elle avait aussitôt prétendu ne pas exister.",
-        "Elle se tait d’un coup. Tout son corps se tend sous vous, puis se relâche, et elle laisse échapper un son qui n’a absolument rien de composé. Votre main descend sur son ventre, trouve sa chaleur, brûlante et déjà humide.",
+        "Elle se tait d’un coup. Tout son corps se tend sous vous, puis se relâche, et elle laisse échapper un son qui n’a absolument rien de composé. Votre main descend sur son ventre, la trouve brûlante et déjà humide.",
         B("Ça. Je t’interdis de te souvenir de ça.", "angry"),
         P("Trop tard."),
       ],
@@ -162,7 +162,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         B("Je hais ça. Recommence.", "seductive"),
       ],
       [
-        "Vous gardez les lèvres sur sa nuque, et vos doigts glissent dans sa chaleur, l’un puis l’autre, pendant que votre pouce trouve sa perle de plaisir. Elle essaie de reprendre l’avantage deux fois. Deux fois, vous revenez à la nuque, et deux fois elle oublie ce qu’elle voulait faire.",
+        "Vous gardez les lèvres sur sa nuque, et vos doigts glissent en elle, l’un puis l’autre, pendant que votre pouce trouve le point dur qui la fait gémir. Elle essaie de reprendre l’avantage deux fois. Deux fois, vous revenez à la nuque, et deux fois elle oublie ce qu’elle voulait faire.",
         "Elle jouit avec un rire furieux et ravi à la fois, se resserrant autour de vos doigts, le plaisir la traversant si vite qu’elle n’a pas le temps de le mettre en scène.",
         B("Je hais ça. Recommence.", "seductive"),
       ],
@@ -183,9 +183,9 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
       [
         "Mais elle a dit une manche, et c’est elle qui compte. D’un coup de reins, elle vous renverse et s’installe sur vous.",
         X(
-          "Elle entrelace ses jambes aux vôtres, sa chaleur pressée contre la vôtre, et vous emmène avec elle dans un balancement long et appuyé, ses doigts revenant de temps en temps entre vous pour relancer ce qui risquerait de ralentir.",
+          "Elle entrelace ses jambes aux vôtres, son sexe pressé contre le vôtre, et vous emmène avec elle dans un balancement long et appuyé, ses doigts revenant de temps en temps entre vous pour relancer ce qui risquerait de ralentir.",
           "Elle vous guide en elle et descend jusqu’au bout, d’une seule traite, avec un soupir de satisfaction profonde. Puis elle bouge sur vous comme pour vous prouver qu’une défaite, chez elle, se rembourse au centuple.",
-          "Elle vous guide en elle et descend jusqu’au bout, d’une seule traite, pendant que sa main se glisse sous elle, jusqu’à votre chaleur. Puis elle bouge sur vous comme pour vous prouver qu’une défaite, chez elle, se rembourse au centuple, des deux côtés.",
+          "Elle vous guide en elle et descend jusqu’au bout, d’une seule traite, pendant que sa main se glisse sous elle, jusqu’à la fente cachée sous votre sexe. Puis elle bouge sur vous comme pour vous prouver qu’une défaite, chez elle, se rembourse au centuple, des deux côtés.",
         ),
         B("Tu as gagné une manche. Je gagne la partie. C’est la règle.", "smirk"),
         P("Tu viens de l’inventer."),
@@ -208,7 +208,7 @@ export const FREE_FAMILIAR_ROUTE: AuthoredRoute = {
         X(
           "Vous jouissez contre elle, vos deux chaleurs pressées l’une contre l’autre, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
           "Vous jouissez en elle, les mains crispées sur ses hanches, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
-          "Vous jouissez en elle, votre chaleur pulsant autour de ses doigts au même moment, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
+          "Vous jouissez en elle, serré·e par saccades autour de ses doigts au même moment, et elle vous suit une seconde plus tard ; une seconde exprès, pour pouvoir vous regarder.",
         ),
         B("Voilà ce que je voulais voir. Toujours le même visage. Je ne m’en lasse pas. C’est très inquiétant.", "thoughtful"),
       ],
@@ -289,7 +289,7 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         X(
           "Quand vous êtes nue, elle recule d’un demi-pas pour vous regarder, et son regard s’attarde sur vos seins, votre ventre, vos cuisses, avec une avidité presque douloureuse.",
           "Quand vous êtes nu, elle recule d’un demi-pas pour vous regarder, et son regard descend jusqu’à votre virilité dressée avec une avidité presque douloureuse.",
-          "Quand vous êtes nu·e, elle recule d’un demi-pas pour vous regarder, et son regard descend sur votre vigueur dressée, puis sur votre chaleur, avec une avidité presque douloureuse.",
+          "Quand vous êtes nu·e, elle recule d’un demi-pas pour vous regarder, et son regard descend sur votre sexe dressé, puis sur ce qu’il cache en dessous, avec une avidité presque douloureuse.",
         ),
         B("J’ai imaginé ça. Plusieurs fois. Je m’étais trompée sur deux détails.", "thoughtful"),
       ],
@@ -333,9 +333,9 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         P("Je ne vais pas changer d’avis."),
         B("Je sais. C’est pour moi que je me dépêche. Et maintenant, c’est pour moi que je ralentis.", "thoughtful"),
         X(
-          "Ses mains commencent leur inventaire. Elle prend vos seins, les embrasse, mordille leurs pointes jusqu’à vous faire cambrer. Elle descend, découvre votre chaleur du bout des doigts, l’ouvre, explore, trouve votre perle de plaisir et l’observe réagir sous son pouce avec une concentration de joaillière.",
+          "Ses mains commencent leur inventaire. Elle prend vos seins, les embrasse, mordille leurs pointes jusqu’à vous faire cambrer. Elle descend, vous découvre du bout des doigts, vous ouvre, explore, trouve votre bouton et l’observe réagir sous son pouce avec une concentration de joaillière.",
           "Ses mains commencent leur inventaire. Elle parcourt votre torse, mordille vos côtes, descend sur votre ventre, et découvre votre virilité du bout des doigts : la racine, la longueur, le sommet, chaque endroit où une pression vous fait tressaillir. Elle l’observe réagir avec une concentration de joaillière.",
-          "Ses mains commencent leur inventaire. Elle parcourt votre torse, descend sur votre ventre, et découvre votre vigueur du bout des doigts, puis votre chaleur juste en dessous. Elle teste les deux, l’une après l’autre, puis ensemble, avec une concentration de joaillière qui vient de recevoir une pierre rare.",
+          "Ses mains commencent leur inventaire. Elle parcourt votre torse, descend sur votre ventre, et vous découvre du bout des doigts, la part dressée puis l’autre, juste en dessous. Elle teste les deux, l’une après l’autre, puis ensemble, avec une concentration de joaillière qui vient de recevoir une pierre rare.",
         ),
         "Pour la première fois, elle découvre tout, et elle ne fait aucun effort pour cacher le plaisir que lui donne chaque découverte.",
       ],
@@ -358,9 +358,9 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
       [
         "Elle remonte vers votre visage sans retirer ses mains, et vous dit, très bas, tout ce qu’elle a appris en si peu de temps. Chaque phrase est accompagnée d’une démonstration.",
         X(
-          "Ses doigts glissent en vous pendant qu’elle parle, son pouce dessine des cercles sur votre perle de plaisir, lents, réguliers, et elle commente chacun de vos soupirs comme une découverte.",
+          "Ses doigts glissent en vous pendant qu’elle parle, son pouce dessine des cercles tout en haut, lents, réguliers, et elle commente chacun de vos soupirs comme une découverte.",
           "Sa main vous parcourt pendant qu’elle parle, lente, serrée, et elle commente chacun de vos soupirs comme une découverte.",
-          "Ses deux mains vous parcourent pendant qu’elle parle, l’une sur votre vigueur, l’autre dans votre chaleur, et elle commente chacun de vos soupirs comme une découverte.",
+          "Ses deux mains vous parcourent pendant qu’elle parle, l’une qui vous branle sans hâte, l’autre glissée en vous, et elle commente chacun de vos soupirs comme une découverte.",
         ),
         B("Tu as la même tête que quand tu me dis non. Exactement la même. Ce petit pli au coin de la bouche. C’est fascinant.", "thoughtful"),
         P("Peut-être que je te dis non pour la même raison."),
@@ -383,9 +383,9 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
       [
         "Elle ne perd pas le fil. Elle le resserre.",
         X(
-          "Elle descend entre vos cuisses, remplace son pouce par sa langue sur votre perle de plaisir, et cette fois elle ne vous fait pas attendre. Vous jouissez contre sa bouche en lui tenant les cheveux, et elle vous regarde partir, les yeux levés vers vous.",
+          "Elle descend entre vos cuisses, remplace son pouce par sa langue, et cette fois elle ne vous fait pas attendre. Vous jouissez contre sa bouche en lui tenant les cheveux, et elle vous regarde partir, les yeux levés vers vous.",
           "Elle descend sur vous et vous prend dans sa bouche, profondément, et cette fois elle ne vous fait pas attendre. Vous jouissez en lui tenant les cheveux, et elle vous regarde partir, les yeux levés vers vous.",
-          "Elle descend sur vous, prend votre vigueur dans sa bouche, garde ses doigts dans votre chaleur, et cette fois elle ne vous fait pas attendre. Vous jouissez des deux côtés à la fois, et elle vous regarde partir, les yeux levés vers vous.",
+          "Elle descend sur vous, vous prend dans sa bouche, garde ses doigts en vous, et cette fois elle ne vous fait pas attendre. Vous jouissez des deux côtés à la fois, et elle vous regarde partir, les yeux levés vers vous.",
         ),
         "Son regard trahit une sorte d’émerveillement agacé.",
         B("Voilà. Voilà ce que tu me refusais.", "thoughtful"),
@@ -410,7 +410,7 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
         P("Tu m’as appris."),
       ],
       [
-        "Vous la tirez contre vous, vous la renversez, et c’est vous, cette fois, qui la faites attendre. Une caresse, puis rien. Un baiser au creux du ventre, puis rien. Votre souffle sur sa chaleur, tout près, et vous vous arrêtez.",
+        "Vous la tirez contre vous, vous la renversez, et c’est vous, cette fois, qui la faites attendre. Une caresse, puis rien. Un baiser au creux du ventre, puis rien. Votre souffle sur sa toison, tout près, et vous vous arrêtez.",
         B("Tu n’oserais pas.", "angry"),
         P("Pas encore."),
         "Elle reconnaît la phrase. Elle reconnaît la voix. Elle éclate de rire, furieuse, la tête renversée dans les oreillers, ses hanches se soulevant vers vous malgré elle.",
@@ -433,9 +433,9 @@ export const FREE_FIRST_ROUTE: AuthoredRoute = {
       [
         "Elle reprend le dessus, comme toujours, d’un mouvement de hanches qui vous fait rouler sur le dos. Elle s’installe sur vous, et il n’y a plus de jeu, plus de commentaire, plus de manche à compter.",
         X(
-          "Elle presse sa chaleur contre la vôtre, entrelace ses jambes aux vôtres, et se balance contre vous de plus en plus fort, vos deux perles de plaisir se cherchant à chaque mouvement.",
+          "Elle se presse contre vous, entrelace ses jambes aux vôtres, et se balance de plus en plus fort, vos deux boutons se cherchant à chaque mouvement.",
           "Elle vous guide en elle et descend d’un seul mouvement, jusqu’au bout, avec un gémissement qu’elle ne retient pas. Puis elle bouge sur vous, de plus en plus fort, ses mains posées sur votre poitrine.",
-          "Elle vous guide en elle et descend d’un seul mouvement, jusqu’au bout, sa main glissant sous elle jusqu’à votre chaleur. Puis elle bouge sur vous, de plus en plus fort, ses doigts suivant le même rythme.",
+          "Elle vous guide en elle et descend d’un seul mouvement, jusqu’au bout, sa main glissant sous elle jusqu’à votre fente. Puis elle bouge sur vous, de plus en plus fort, ses doigts suivant le même rythme.",
         ),
         "Elle jouit en criant votre nom. C’est la première fois que vous l’entendez le dire aussi simplement, sans provocation ni titre. Le vôtre suit, emporté par le sien.",
       ],

@@ -146,9 +146,9 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
       [
         "Sans quitter Naïah des yeux, Bellirith vous attire contre elle. Ses lèvres descendent dans votre cou, ses dents s’y posent, sa main se glisse sous votre chemise et remonte en lisant votre peau comme une page.",
         X(
-          "Elle presse sa cuisse entre les vôtres et sent votre chaleur s’éveiller à travers le tissu. Elle sourit contre votre gorge.",
+          "Elle presse sa cuisse entre les vôtres et vous sent répondre à travers le tissu. Elle sourit contre votre gorge.",
           "Elle presse sa cuisse contre votre bassin et sent votre virilité se dresser à travers le tissu. Elle sourit contre votre gorge.",
-          "Elle presse sa cuisse contre votre bassin et sent votre vigueur se tendre, votre chaleur s’éveiller, à travers le tissu. Elle sourit contre votre gorge.",
+          "Elle presse sa cuisse contre votre bassin et vous sent durcir et mouiller à la fois, à travers le tissu. Elle sourit contre votre gorge.",
         ),
         b("Écoute bien, Naïah. Le cœur qui s’emballe, la peau qui se tend, le corps qui monte sans qu’on le lui demande. Voilà un original.", "seductive"),
         y("Fascinant. On peut le faire recommencer ?", "smirk"),
@@ -165,7 +165,7 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
         X(
           "Elles se tournent ensemble vers vous. Quatre mains se disputent vos boutons, et quand vous êtes nue entre elles, Bellirith pose la paume à plat sur votre ventre, juste au-dessus de votre chaleur, pour sentir ce qui s’y prépare.",
           "Elles se tournent ensemble vers vous. Quatre mains se disputent vos boutons, et quand vous êtes nu entre elles, Bellirith referme les doigts autour de votre virilité dressée, sans bouger, juste pour la sentir battre.",
-          "Elles se tournent ensemble vers vous. Quatre mains se disputent vos boutons, et quand vous êtes nu·e entre elles, Bellirith pose la main sur votre vigueur et le pouce contre votre chaleur, sans bouger, juste pour sentir les deux répondre.",
+          "Elles se tournent ensemble vers vous. Quatre mains se disputent vos boutons, et quand vous êtes nu·e entre elles, Bellirith pose la main sur votre sexe et le pouce juste dessous, sans bouger, juste pour sentir les deux répondre.",
         ),
       ],
       [
@@ -176,14 +176,14 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
         b("Protestation rejetée. Je l’inscris en marge.", "teasing"),
       ],
       [
-        "Bellirith descend le long du ventre de Naïah, écarte ses genoux d’une main tranquille et pose la bouche sur sa chaleur. Elle s’y attarde avec une science consommée, la langue lente puis plus vive, cherchant la perle de plaisir et la cajolant par petits cercles têtus.",
+        "Bellirith descend le long du ventre de Naïah, écarte ses genoux d’une main tranquille et pose la bouche sur elle, très doucement. Elle s’y attarde avec une science consommée, la langue lente puis plus vive, cherchant la perle de plaisir et la cajolant par petits cercles têtus.",
         "Naïah se cambre au bon moment, gémit au bon moment, plante ses doigts dans le velours au bon moment. Ses cuisses tremblent même, juste ce qu’il faut. La partition est irréprochable.",
         b("Trois.", "cold"),
         y("Continue. Je veux voir combien de temps tu tiens avant de bouder.", "smirk"),
         "Bellirith continue, par orgueil. Naïah la laisse faire, par curiosité, et lui caresse les cheveux comme on félicite une élève acharnée.",
       ],
       [
-        "Naïah finit par se redresser, renverse Bellirith sur le dos et l’enjambe. Elle l’étudie à son tour, la tête penchée, comme un mécanisme. Une caresse sur les seins, une autre sur l’intérieur des cuisses, puis deux doigts qui glissent dans sa chaleur trempée et cherchent, avec méthode, l’endroit qui la fait répondre.",
+        "Naïah finit par se redresser, renverse Bellirith sur le dos et l’enjambe. Elle l’étudie à son tour, la tête penchée, comme un mécanisme. Une caresse sur les seins, une autre sur l’intérieur des cuisses, puis deux doigts qui glissent en elle, trempée, et cherchent, avec méthode, l’endroit qui la fait répondre.",
         "Elle le trouve. Bellirith lâche un souffle qu’elle n’avait pas prévu et ses hanches viennent d’elles-mêmes au-devant de la main.",
         y("Un pour moi. Le vrai. Tu l’as entendu, toi aussi ?", "smirk"),
         p("Tout le monde l’a entendu."),
@@ -192,9 +192,9 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
       [
         "Naïah se décale et vous laisse la place, puis vient tenir les poignets de Bellirith au-dessus de sa tête, sans serrer, avec une douceur moqueuse.",
         X(
-          "Vous vous allongez sur la démone et pressez votre chaleur contre la sienne. Vos intimités glissent l’une sur l’autre, de plus en plus vite, et Bellirith ondule sous vous en cherchant l’appui de votre perle de plaisir contre la sienne.",
-          "Vous vous glissez entre ses cuisses et entrez en elle lentement. Elle vous accueille d’un seul souffle, serrée et brûlante autour de votre vigueur, et ses talons se croisent dans votre dos pour vous garder au fond.",
-          "Vous vous glissez entre ses cuisses et entrez en elle lentement, votre chaleur pressée contre la sienne à chaque mouvement. Elle vous accueille d’un seul souffle, serrée autour de votre vigueur, et ses talons se croisent dans votre dos.",
+          "Vous vous allongez sur la démone et pressez votre sexe contre le sien. Vos intimités glissent l’une sur l’autre, de plus en plus vite, et Bellirith ondule sous vous en cherchant l’appui de votre perle de plaisir contre la sienne.",
+          "Vous vous glissez entre ses cuisses et entrez en elle lentement. Elle vous accueille d’un seul souffle, serrée et brûlante autour de vous, et ses talons se croisent dans votre dos pour vous garder au fond.",
+          "Vous vous glissez entre ses cuisses et entrez en elle lentement, vos replis frottant contre les siens à chaque mouvement. Elle vous accueille d’un seul souffle, serrée autour de votre vigueur, et ses talons se croisent dans votre dos.",
         ),
         b("Vous êtes deux à tricher, maintenant.", "seductive"),
         p("Moi, je ne triche pas."),
@@ -203,9 +203,9 @@ export const BN_FIRST_INTIMACY: BNIntimacyScene = {
       [
         "Elle bascule, vraiment, la gorge offerte, les poignets tendus dans la prise de Naïah, et tout son corps se serre en vagues longues et désordonnées.",
         X(
-          "Ses frissons contre votre chaleur vous emportent à votre tour. Vous jouissez contre elle, le front dans son épaule.",
+          "Ses frissons vous emportent à votre tour. Vous jouissez contre elle, le front dans son épaule.",
           "Ses contractions autour de vous vous emportent à votre tour. Vous jouissez en elle, le front dans son épaule.",
-          "Ses contractions autour de votre vigueur vous emportent à votre tour, et votre chaleur frissonne en écho. Vous jouissez en elle, le front dans son épaule.",
+          "Ses contractions vous emportent à votre tour, et votre fente frissonne en écho. Vous jouissez en elle, le front dans son épaule.",
         ),
         "Naïah n’a pas cligné des yeux une seule fois. Puis elle se laisse retomber sur le dos à côté de vous et rejoue toute la scène, la cambrure, le cri étouffé, les poignets tendus, le tremblement final, avec une exactitude effrontée.",
         b("Quatre. Et celui-là, tu me l’as volé sur la figure.", "angry"),

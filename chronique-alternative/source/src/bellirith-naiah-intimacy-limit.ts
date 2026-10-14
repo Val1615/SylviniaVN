@@ -139,9 +139,9 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
       [
         "Le baiser qu’elle vous donne ensuite descend dans votre cou, ses dents s’y posent, sa main se glisse sous votre chemise.",
         X(
-          "Elle presse la paume entre vos cuisses et sent votre chaleur s’éveiller sous ses doigts. Elle le fait entendre à voix haute, exprès.",
+          "Elle presse la paume entre vos cuisses et vous sent mouiller sous ses doigts. Elle le fait entendre à voix haute, exprès.",
           "Elle referme les doigts sur votre virilité à travers le tissu et la sent se dresser dans sa main. Elle le fait entendre à voix haute, exprès.",
-          "Elle pose la paume entre vos cuisses et sent votre vigueur se tendre, votre chaleur s’éveiller, sous ses doigts. Elle le fait entendre à voix haute, exprès.",
+          "Elle pose la paume entre vos cuisses et vous sent durcir puis mouiller juste dessous, sous ses doigts. Elle le fait entendre à voix haute, exprès.",
         ),
         b("Voilà. Garde ça en tête, Naïah. Tu vas en avoir besoin toute la nuit.", "seductive"),
         "Naïah se penche pour mieux voir, sérieuse comme une élève au premier rang.",
@@ -152,7 +152,7 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
         X(
           "Puis c’est à vous. Quand vous êtes nue entre elles, le vent froid durcit votre peau et la main de Bellirith vient se poser à plat sur votre ventre, juste au-dessus de votre chaleur.",
           "Puis c’est à vous. Quand vous êtes nu entre elles, le vent froid durcit votre peau et la main de Bellirith se referme autour de votre virilité dressée, sans bouger.",
-          "Puis c’est à vous. Quand vous êtes nu·e entre elles, le vent froid durcit votre peau et la main de Bellirith se pose sur votre vigueur, le pouce contre votre chaleur, sans bouger.",
+          "Puis c’est à vous. Quand vous êtes nu·e entre elles, le vent froid durcit votre peau et la main de Bellirith se pose sur votre sexe, le pouce glissé plus bas, sans bouger.",
         ),
         y("Je note que tu frissonnes, Bellirith. Ça, personne ne l’a commandé.", "smirk"),
         b("C’est le vent. Ne commence pas à t’attribuer mon temps.", "teasing"),
@@ -173,9 +173,9 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
       [
         "Vous vous glissez derrière Bellirith et l’enveloppez de vos bras pendant que Naïah s’occupe d’elle de face.",
         X(
-          "Vous pressez votre chaleur contre ses reins et glissez une main entre ses cuisses pour rejoindre celle de Naïah. Vos doigts et les siens se croisent en elle, et la démone se tend entre vous deux.",
+          "Vous pressez votre ventre mouillé contre ses reins et glissez une main entre ses cuisses pour rejoindre celle de Naïah. Vos doigts et les siens se croisent en elle, et la démone se tend entre vous deux.",
           "Vous pressez votre virilité dressée contre ses reins pendant que Naïah la prend de face. Bellirith tend la main en arrière, vous guide, et vous entrez en elle par-derrière, lentement, pendant que les doigts de Naïah continuent leur travail.",
-          "Vous pressez votre vigueur contre ses reins pendant que Naïah la prend de face. Bellirith tend la main en arrière, vous guide, et vous entrez en elle par-derrière, votre chaleur pressée contre la sienne, pendant que les doigts de Naïah continuent.",
+          "Vous vous pressez, raide, contre ses reins pendant que Naïah la prend de face. Bellirith tend la main en arrière, vous guide, et vous entrez en elle par-derrière, vos replis serrés contre sa peau, pendant que les doigts de Naïah continuent.",
         ),
         "Prise entre vous deux, elle perd le fil. Son dos se tend contre votre poitrine, ses hanches cherchent des deux côtés, et elle cesse de sourire.",
         p("Tu as oublié de compter."),
@@ -186,7 +186,7 @@ export const BN_LIMIT_INTIMACY: BNIntimacyScene = {
         X(
           "Ses frissons contre vos doigts vous emportent à votre tour. Vous jouissez contre elle, le front dans ses cheveux.",
           "Elle se resserre sur vous par vagues, et la vague suivante est la vôtre. Vous jouissez en elle, le front dans ses cheveux.",
-          "Elle se resserre sur votre vigueur par vagues, la vague suivante est la vôtre, et votre chaleur répond aussitôt. Vous jouissez en elle, le front dans ses cheveux.",
+          "Elle se resserre sur vous par vagues, la vague suivante est la vôtre, et votre fente répond aussitôt. Vous jouissez en elle, le front dans ses cheveux.",
         ),
         "Naïah reste penchée au-dessus d’elle tout du long, attentive à chaque détail. Puis elle se laisse aller en arrière sur le sable et rejoue le moment, plus long que la dernière fois, avec des embellissements qu’elle vient d’inventer, un cri plus aigu, un tremblement plus long.",
         b("Trois. Et tu en rajoutes.", "angry"),

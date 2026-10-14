@@ -185,7 +185,7 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Elle se presse contre vous, son intimité contre la vôtre, et commence à onduler. Vos chaleurs glissent l’une sur l’autre, de plus en plus vite, ses doigts glissés entre vous pour accentuer chaque frottement.",
             "Elle descend sur vous d’un seul mouvement lent, jusqu’au bout, et commence à onduler, les mains crispées sur le dossier sculpté derrière votre tête.",
-            "Elle descend sur votre vigueur d’un seul mouvement lent, jusqu’au bout, et commence à onduler, une main glissée en arrière pour caresser votre chaleur au même rythme.",
+            "Elle s’empale sur vous d’un seul mouvement lent, jusqu’au bout, et commence à onduler, une main glissée en arrière pour vous caresser aussi, plus bas, au même rythme.",
           ),
           "Le vieux bois craque sous votre poids à chaque mouvement, pendant que la fausse averse ralentit et que les derniers pois roulent comme des gouttes sur un toit.",
         ],
@@ -204,7 +204,7 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle jouit contre vous en tremblant, et son plaisir déclenche le vôtre une seconde plus tard.",
             "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle se resserre autour de vous en criant, et vous vous répandez en elle dans la seconde.",
-            "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle se resserre autour de votre vigueur en criant, et vous jouissez dans la seconde, des deux côtés, sous ses doigts.",
+            "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle se resserre autour de vous en criant, et vous jouissez dans la seconde, des deux côtés, sous ses doigts.",
           ),
         ],
         ["Une corde tirée par hasard : de la neige de papier tombe des cintres au moment où vous jouissez."],

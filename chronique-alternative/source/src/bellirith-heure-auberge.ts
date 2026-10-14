@@ -124,7 +124,7 @@ export const HEURE_AUBERGE: HeureVolee = {
           B("Tout le marché va savoir. Tant mieux. Ça me fera de la publicité.", "teasing"),
         ],
         [
-          "La robe tombe à ses pieds. Elle se retourne lentement dans le rectangle de soleil et se laisse regarder sans rien arranger, sans aura pour flatter la courbe d’une hanche. Elle a une petite cicatrice pâle sur l’épaule que vous n’aviez jamais vue, et la lumière crue dore chaque détail de son corps, ses seins, son ventre, la toison sombre entre ses cuisses.",
+          "La robe tombe à ses pieds. Elle se retourne lentement dans le rectangle de soleil et se laisse regarder sans rien arranger, sans aura pour flatter la courbe d’une hanche. Elle a une petite cicatrice pâle sur l’épaule que vous n’aviez jamais vue, et la lumière crue dore chaque détail de son corps, ses seins, son ventre, la toison sombre au creux de ses jambes.",
           "Puis elle vous attrape par la ceinture, vous débarrasse du reste de vos vêtements avec une impatience de marchande pressée, et vous fait tomber sur le lit étroit, qui grince comme une charrette mal graissée. En bas, quelqu’un éclate de rire.",
           B("Tout le marché va savoir. Tant mieux. Ça me fera de la publicité.", "teasing"),
         ],
@@ -147,7 +147,7 @@ export const HEURE_AUBERGE: HeureVolee = {
           "Quand la poissonnière crie un nouveau prix, Bellirith étouffe un rire dans l’oreiller, puis un gémissement qu’elle n’arrive pas à transformer en rire.",
         ],
         [
-          "Elle s’allonge sur le dos, attrape votre poignet et le guide elle-même entre ses cuisses. Elle est déjà humide. Vous la caressez lentement, du bout des doigts d’abord, puis en glissant deux doigts en elle pendant que votre pouce tourne autour de sa perle, et vous cherchez ce qui la fait taire.",
+          "Elle s’allonge sur le dos, attrape votre poignet et le guide elle-même là où elle le veut. Elle est déjà humide. Vous la caressez lentement, du bout des doigts d’abord, puis en glissant deux doigts en elle pendant que votre pouce tourne autour de sa perle, et vous cherchez ce qui la fait taire.",
           "Elle tient parole : plus de phrases, plus de commentaires, seulement des soupirs de plus en plus courts, puis des sons bas et rauques que la rumeur du marché recouvre à peine. Ses hanches viennent à la rencontre de votre main.",
           "Quand la poissonnière crie un nouveau prix, Bellirith mord l’oreiller pour étouffer un gémissement, et jouit brusquement contre vos doigts, les cuisses serrées sur votre poignet, en vous fusillant du regard parce que vous l’avez entendue.",
         ],
@@ -166,9 +166,9 @@ export const HEURE_AUBERGE: HeureVolee = {
           "Elle reprend son souffle, les yeux fermés, puis vous renverse sur le dos d’un coup de hanche. Elle a une revanche à prendre et toute la lumière du matin pour le faire.",
           "Elle descend le long de votre corps en mordillant votre peau, sans hâte, en suivant de l’ongle le trajet du soleil sur votre ventre.",
           X(
-            "Elle s’installe entre vos cuisses, les écarte de ses paumes et vous embrasse là où vous êtes le plus chaud·e. Sa langue s’enroule autour de votre perle de plaisir, ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
-            "Elle s’installe entre vos cuisses, prend votre virilité dans sa main et la caresse de toute sa longueur avant de la prendre entre ses lèvres. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
-            "Elle s’installe entre vos cuisses, prend votre vigueur entre ses lèvres et pose deux doigts à l’entrée de votre chaleur, sans y entrer. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
+            "Elle s’agenouille devant vous, vous ouvre de ses paumes et vous embrasse là où vous êtes le plus chaud·e. Sa langue s’enroule autour du point qui vous fait tressaillir, ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
+            "Elle s’agenouille devant vous, vous prend dans sa main, vous caresse de la base jusqu’à la pointe puis referme ses lèvres sur vous. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
+            "Elle s’agenouille devant vous, vous prend entre ses lèvres et pose deux doigts à l’entrée de votre chaleur, sans y entrer. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
           ),
           B("Tu m’as entendue. Maintenant, c’est mon tour d’écouter. Plus fort.", "seductive"),
         ],
@@ -177,7 +177,7 @@ export const HEURE_AUBERGE: HeureVolee = {
       A(
         W(AUD, ["Sur la table de chevet, l’aiguille de la montre passe le troisième quart avec son petit claquement sec."], ["Au loin, la cloche sonne le troisième quart."]),
         P("Toi, tu désires que je te demande de rester après l’heure."),
-        "Bellirith s’immobilise, la joue contre votre ventre. Elle ne répond rien du tout, et ses doigts cessent de dessiner sur votre hanche.",
+        "Bellirith s’immobilise, la joue posée sous votre nombril. Elle ne répond rien du tout, et ses doigts cessent de dessiner sur votre hanche.",
         B("Joue. Il reste un quart.", "cold"),
       ),
       M(
