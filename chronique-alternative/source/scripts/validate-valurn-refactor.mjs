@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
@@ -8,7 +10,7 @@ import { execSync } from "node:child_process";
 /*
  * Refonte Valurn · Acte I. Contrats de la consigne §14 (tests 1 à 28 et 12 bis)
  * exécutés sur le vrai moteur (hooks React remplacés), plus les contrôles
- * éditoriaux : secret de continuité, tirets, formule « ce n'est pas X, c'est Y »,
+ * éditoriaux : vocabulaire réservé (empreintes), tirets, formule « ce n'est pas X, c'est Y »,
  * vocabulaire cru, plafond d'euphémismes, structure.
  */
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -209,13 +211,29 @@ try {
     assert.ok(!h.secretHistory.includes("secret-valurn-protection"));
     playQuest(h, "valurn-q1");
   });
-  const SECRET = /talisman|t[ée]l[ée]port|transfert|artefact|abandon|soldats|humanit[ée]|ne pas l'activer|choisi de ne pas|promesse/iu;
-  check("12 bis", "Secret de continuité : aucune révélation, proche regretté anonyme", () => {
+  // Vocabulaire réservé : seules des empreintes SHA-256 tronquées sont versionnées.
+  const normWord = (t) => t.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/’/g, "'");
+  const digest = (t) => createHash("sha256").update(t).digest("hex").slice(0, 16);
+  const tokens = (t) => normWord(t).match(/[\p{L}']+/gu) || [];
+  const RESERVED_STEMS = [[8, "a0f9ef9e841e1acf"], [8, "e99f7ff1ebb40a91"], [9, "4e50e2eec1db1cf2"], [8, "4edfbd28d0483e70"], [7, "df864c0596aa1a43"], [7, "361d14f2293e538d"], [8, "d98b2796c258b4ad"], [8, "f60be5c7e2a38443"]];
+  const RESERVED_PHRASES = [[3, "51f2e50a03a27ab5"], [4, "12747c41fc24948b"], [6, "9cbe174e73402f86"], [8, "18be65273e86cc58"], [9, "9ce19226a4e5d10a"]];
+  const reservedHit = (text, { stems = true, phrases = RESERVED_PHRASES } = {}) => {
+    const words = tokens(text);
+    for (let i = 0; i < words.length; i++) {
+      if (stems) for (const [n, h] of RESERVED_STEMS) if (words[i].length >= n && digest(words[i].slice(0, n)) === h) return `${words.slice(Math.max(0, i - 6), i).join(" ")} [mot réservé]`;
+      for (const [n, h] of phrases) if (i + n <= words.length && digest(words.slice(i, i + n).join(" ")) === h) return `${words.slice(Math.max(0, i - 6), i).join(" ")} [formule réservée]`;
+    }
+    return null;
+  };
+  check("12 bis", "Vocabulaire réservé absent du corpus Valurn et de la documentation ; proche regretté anonyme", () => {
     const valurnText = corpus([quests.VALURN_QUESTS, quests.VALURN_RELATION_BEATS, living.VALURN_CONFIDENCES, living.VALURN_LETTERS, living.VALURN_INVITATIONS, living.VALURN_KNOWLEDGE, dates.VALURN_DATES, dates.VALURN_DATE_BEATS, homeDate.VALURN_HOME_BRANCHES, intimacy.valurnIntimacyCorpus(), ambient.VALURN_AMBIENT_LINES]);
-    const hit = valurnText.match(SECRET); assert.equal(hit, null, `fuite : ${hit?.[0]} :: ${hit ? valurnText.slice(hit.index-80, hit.index+40) : ""}`);
+    const hit = reservedHit(valurnText); assert.equal(hit, null, `corpus : ${hit}`);
+    for (const doc of ["VALURN_SOURCE_REGISTER.md", "VALURN_CURRENT_AUDIT.md", "VALURN_INTEGRATION.md", "VALURN_TESTS.md", "VALURN_STAGING.md"]) {
+      const docHit = reservedHit(readFileSync(resolve(root, "docs", doc), "utf8"), { stems: false }); assert.equal(docHit, null, `${doc} : ${docHit}`);
+    }
     const c60 = corpus(living.VALURN_CONFIDENCES.find((c) => c.id === "secret-valurn-regret"));
     for (const word of ["Bellirith", "sœur", "elle ", " il l", "femme", "homme", "frère"]) assert.equal(c60.includes(word), false, `confidence 60 : ${word}`);
-    for (const entry of bellLiving.VALURN_BELLIRITH_KNOWLEDGE) assert.doesNotMatch(entry.summary, SECRET);
+    for (const entry of bellLiving.VALURN_BELLIRITH_KNOWLEDGE) assert.equal(reservedHit(entry.summary), null, entry.id);
     assert.equal(bellLiving.VALURN_BELLIRITH_CONFIDENCES.length, 0);
     assert.equal(social.SOCIAL_SCENES.some((s) => s.id === "valurn-after-truth"), false);
     assert.doesNotMatch(corpus(social.SOCIAL_SCENES.find((s) => s.id === "shared-valurn-bellirith")), /promesse|pas revenu|revenir/iu);
@@ -247,9 +265,14 @@ try {
     assert.ok(deck.some((m) => m.promptVariants?.length));
     for (const m of deck) assert.ok(world.AMBIENT_SPOT_HINTS[m.id] || !m.requiresFlags, `${m.id}: lieu repérable`);
   });
-  check(17, "Rendez-vous publics dans n'importe quel ordre ; logis indépendant", () => {
+  check(17, "Rendez-vous et logis fermés avant la fin de la série (valurn-q7), puis libres dans n'importe quel ordre", () => {
     const g = structuredClone(completed); g.relationships.valurn.stage = 5;
     for (const d of dates.VALURN_DATES) assert.equal(page.publicDateUnlocked(g, d), true, d.id);
+    const before = structuredClone(g); before.history = before.history.filter((id) => id !== "valurn-q7"); before.flags = before.flags.filter((f) => f !== "valurn-q7-done");
+    before.settings = { ...before.settings, unlockAll: false };
+    for (const d of dates.VALURN_DATES) assert.equal(page.publicDateUnlocked(before, d), false, `${d.id} avant Q7`);
+    before.housing = { ...before.housing, propertyId: before.housing.propertyId || "x" };
+    assert.equal(page.homeDateUnlocked(before, "valurn"), false, "logis avant Q7");
     assert.ok(!dates.VALURN_DATES.some((d) => JSON.stringify(d).includes("date-valurn-river") && d.id === "date-valurn-forestier"));
   });
   check(18, "Trois branches distinctes par rendez-vous, trois fins hors intimité", () => {
@@ -276,10 +299,11 @@ try {
       assert.notDeepEqual(r.chapters.explicite, r.chapters.ellipse);
     }
   });
-  check(20, "Variations homme / femme / intersexe réelles", () => {
+  check(20, "Variations femme / homme réelles ; aucune route intersexe", () => {
     for (const ctx of intimacy.VALURN_INTIMACY_CONTEXTS) {
-      const [f, h, i] = ["femme", "homme", "intersexe"].map((sex) => JSON.stringify(intimacy.valurnIntimacyRoutes(ctx, sex)[0].chapters.explicite));
-      assert.notEqual(f, h); assert.notEqual(h, i); assert.notEqual(f, i);
+      const [f, h] = ["femme", "homme"].map((sex) => JSON.stringify(intimacy.valurnIntimacyRoutes(ctx, sex)[0].chapters.explicite));
+      assert.notEqual(f, h);
+      assert.equal(intimacy.valurnIntimacyRoutes(ctx, "intersexe").length, 0, `${ctx}: intersexe`);
     }
   });
   check(21, "Visuels : jalons CG publiés (révélation, après) ; aucun asset ajouté", () => {
@@ -315,7 +339,8 @@ try {
     assert.equal(h.relationships.valurn.stage, 5, "stade conservé");
     assert.equal(page.sceneFor("valurn", h.relationships.valurn.stage, h.history)?.id, "valurn-q1");
     assert.equal(h.version, 18);
-    for (const d of dates.VALURN_DATES) assert.equal(page.publicDateUnlocked(h, d), true);
+    // Les rendez-vous suivent la nouvelle série : une ancienne sauvegarde les rouvre après valurn-q7.
+    for (const d of dates.VALURN_DATES) assert.equal(page.publicDateUnlocked({ ...h, settings: { ...h.settings, unlockAll: false } }, d), false);
   });
   check(26, "Aucun choix Résonance ne fait de magie au joueur", () => {
     const text = corpus([quests.VALURN_QUESTS, quests.VALURN_RELATION_BEATS, dates.VALURN_DATES, dates.VALURN_DATE_BEATS, ambientAll.AMBIENT_LINES.valurn, living.VALURN_CONFIDENCES]);
@@ -340,7 +365,7 @@ try {
   check("E3", "Aucun vocabulaire cru ou clinique", () => { for (const [f, src] of Object.entries(sources)) { const m = strings(src).join("\n").match(CRUDE); assert.equal(m, null, `${f}: ${m?.[0]}`); } });
   const EUPHEMISMS = { vague: /vague/giu, frisson: /frisson|frém/giu, chavir: /chavir/giu, bascul: /bascul/giu, submerg: /submerg/giu, abandon: /abandonn?e/giu, intime: /au plus (?:intime|profond)/giu, cambr: /cambr/giu, envahi: /envah/giu };
   check("E4", "Plafond d'euphémismes : aucune image répétée plus de deux fois par scène et par mode", () => {
-    for (const ctx of intimacy.VALURN_INTIMACY_CONTEXTS) for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const ctx of intimacy.VALURN_INTIMACY_CONTEXTS) for (const sex of ["femme", "homme"]) {
       const route = intimacy.valurnIntimacyRoutes(ctx, sex)[0];
       for (const mode of ["tendre", "suggestif", "explicite", "ellipse"]) {
         const text = route.chapters[mode].flat().map((l) => l.text).join(" ");
@@ -357,11 +382,11 @@ try {
   check("E6", "Structure : 7 quêtes, 8 confidences, ≥ 6 lettres + 2 tierces, 3 invitations, 9 continuités de 12 séquences", () => {
     assert.equal(quests.VALURN_QUESTS.length, 7);
     assert.ok(living.VALURN_LETTERS.filter((l) => l.character && l.character !== "valurn" || /tiers|third/i.test(l.id) || ["letter-valurn-hesse", "letter-valurn-odile", "letter-valurn-corvin"].includes(l.id)).length >= 2);
-    assert.deepEqual(intimacy.validateValurnDateIntimacy(), { contexts: 9, routes: 27, chapters: 12 });
+    assert.deepEqual(intimacy.validateValurnDateIntimacy(), { contexts: 9, routes: 18, chapters: 12 });
   });
-  check("E7", "Bundle publié : aucun mot du secret dans les textes Valurn", async () => {});
+  check("E7", "Bundle publié : aucune formule réservée", async () => {});
   const bundle = await readFile(resolve(root, "..", "build", "chronique.js"), "utf8");
-  for (const phrase of ["jolie pierre enfermée dans du métal", "le talisman laissé entre les mains de Bellirith", "D’un talisman. Il m’a dit qu’il pensait pouvoir revenir"]) assert.equal(bundle.includes(phrase), false, `bundle : ${phrase}`);
+  { const hit = reservedHit(bundle, { stems: false, phrases: RESERVED_PHRASES.slice(2) }); assert.equal(hit, null, `bundle : ${hit}`); }
 
   // Comptage des mots par mode pour le rapport.
   const words = (t) => (t.match(/[\p{L}’'-]+/gu) || []).length;

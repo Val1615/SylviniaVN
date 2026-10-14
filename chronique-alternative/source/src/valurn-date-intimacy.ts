@@ -18,7 +18,7 @@ export type ValurnIntimacyPhase = "approach" | "consent" | "undressing" | "revea
 export type ValurnDateApproach = { id: string; text: string; lines: DialogueLine[] };
 
 type RawLine = string | readonly [speaker: "Valurn" | "{player}", text: string, mood?: string];
-type SexKey = PlayerSex;
+type SexKey = Exclude<PlayerSex, "intersexe">;
 type Chapter =
   | { all: RawLine[] }
   | { modes: Record<IntimacyMode, RawLine[]> }
@@ -27,13 +27,13 @@ type Scene = { context: ValurnIntimacyContext; text: string; detail: string; ope
 
 export const VALURN_INTIMACY_PHASES: ValurnIntimacyPhase[] = ["approach", "consent", "undressing", "reveal", "partner-discovery", "valurn-discovery", "preliminaries", "intensification", "climax", "afterglow", "words", "ending"];
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: SexKey[] = ["femme", "homme", "intersexe"];
+const SEXES: SexKey[] = ["femme", "homme"];
 export const VALURN_INTIMACY_CONTEXTS: ValurnIntimacyContext[] = ["forestier-tournoi", "forestier-imposture", "forestier-fond", "river-imprevus", "river-etoiles", "river-braise", "home-cabinet", "home-reception", "home-cartes"];
 
 const A = (...all: RawLine[]): Chapter => ({ all });
 const M = (tendre: RawLine[], suggestif: RawLine[], explicite: RawLine[], ellipse: RawLine[]): Chapter => ({ modes: { tendre, suggestif, explicite, ellipse } });
-const S = (femme: [RawLine[], RawLine[]], homme: [RawLine[], RawLine[]], intersexe: [RawLine[], RawLine[]], ellipse: RawLine[]): Chapter => ({
-  bySex: { femme: { soft: femme[0], explicit: femme[1] }, homme: { soft: homme[0], explicit: homme[1] }, intersexe: { soft: intersexe[0], explicit: intersexe[1] } }, ellipse,
+const S = (femme: [RawLine[], RawLine[]], homme: [RawLine[], RawLine[]], ellipse: RawLine[]): Chapter => ({
+  bySex: { femme: { soft: femme[0], explicit: femme[1] }, homme: { soft: homme[0], explicit: homme[1] } }, ellipse,
 });
 const lines = (raw: RawLine[]): DialogueLine[] => raw.map((entry) => typeof entry === "string" ? { speaker: "Narration", text: entry } : { speaker: entry[0], text: entry[1], mood: entry[2] });
 
@@ -58,7 +58,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous l'attirez sur vous. Il vient doucement, en appui sur ses bras, et vos corps trouvent leur rythme sans hâte."], ["Il entre en vous lentement, le front contre le vôtre, et s'arrête pour vérifier votre regard avant de reprendre. La chaleur de sa peau se répand dans la vôtre à chaque mouvement, et vous sentez votre plaisir monter sous ses hanches patientes."]],
         [["Vous le renversez sur le lit étroit. Il se laisse faire, surpris, puis heureux de l'être."], ["Sa main vous enveloppe, chaude, d'abord hésitante, puis sûre, réglée sur votre souffle. Quand vous vous unissez enfin, il garde les yeux ouverts, attentif à chaque frisson qu'il provoque."]],
-        [["Il vous demande à voix basse ce que vous aimez. Vous lui montrez. Il écoute avec la concentration d'un homme qui apprend une langue précieuse."], ["Il découvre votre corps sans hésitation ni curiosité déplacée, guidé par vos mains, attentif à chaque endroit où vous l'invitez. Son plaisir à vous faire plaisir est visible, simple, entier, et le vôtre grandit sous ses caresses précises."]],
         ["La lumière de la cour s'éteint. Ce qui suit appartient au lit étroit, aux draps rêches et à la chaleur qu'il laisse sur votre peau."],
       ),
       M(
@@ -93,7 +92,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous l'accueillez contre vous et vos corps s'accordent, lentement, sans un mot."], ["Il vient en vous, très lentement, et vous sentez la chaleur singulière de son corps vous gagner tout entière. Vous le serrez entre vos jambes ; il suit votre cadence, sans jamais chercher à imposer la sienne."]],
         [["Il vous attire au-dessus de lui et vous laisse mener. Vous découvrez qu'il aime être guidé."], ["Vous l'enveloppez de la main puis de votre corps, à votre rythme. Il cède, les doigts accrochés aux draps, et sa voix se brise sur votre nom, le vrai."]],
-        [["Vous lui apprenez votre corps, il l'apprend vite, et vous vous retrouvez à rire de sa concentration solennelle."], ["Il suit vos indications avec soin, sans rien présumer, sans jamais s'étonner, et caresse votre corps tel qu'il est, avec une ferveur qui vous fait cambrer les reins. Quand vous l'attirez en vous ou contre vous, il demande d'un regard, puis obéit."]],
         ["La bougie fond. Quelque part, dans cette chambre, Orbe meurt définitivement, et Valurn reste."],
       ),
       M(
@@ -128,7 +126,6 @@ const SCENES: Scene[] = [
       S(
         [["Il vient contre vous, lentement, et vous vous trouvez sans effort, comme une conversation reprise au bon endroit."], ["Il entre en vous avec une lenteur infinie, les yeux dans les vôtres. Vous sentez sa chaleur au plus profond, et il ne bouge que lorsque vous l'y invitez, d'une pression des hanches."]],
         [["Vous vous allongez l'un contre l'autre, et le désir se fait simple, réciproque, sans manœuvre."], ["Vous l'accueillez au creux de votre paume, puis plus intimement, à votre rythme. Il se cambre sous vous, la main sur votre nuque, et murmure votre nom comme une réponse à sa propre question."]],
-        [["Il vous laisse guider chacun de ses gestes, sans supposer, et vous le guidez avec plaisir."], ["Il vous touche exactement comme vous le lui montrez, avec une attention qui ne se lasse pas, et votre corps tout entier répond. Vous l'attirez contre vous, en vous ou entre vos cuisses, selon votre envie, et il suit, docile et ardent."]],
         ["Ce qui se dit ensuite, sans mots, reste dans la chambre."],
       ),
       M(
@@ -163,7 +160,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous l'attirez sur vous, sous la couverture lourde, et vous vous trouvez dans une étreinte maladroite et tendre."], ["Il glisse en vous avec lenteur, sa chaleur contre votre froid, et le contraste vous arrache un soupir. Vous l'enserrez de vos jambes et il se meut au rythme de la pluie, sans jamais presser."]],
         [["Vous vous retrouvez l'un contre l'autre, sous la bâche trop basse, et vous inventez une manière de vous aimer qui ne la renverse pas."], ["Sa main vous enveloppe, puis votre corps l'accueille, ou le sien vous reçoit, selon le jeu. Il suit votre souffle, attentif, et chaque mouvement vous rapproche de la chaleur du feu."]],
-        [["Il vous laisse lui montrer, sous la couverture, ce que vous aimez, et il s'y emploie avec une application touchante."], ["Il suit vos mains, découvre votre corps sans détour ni surprise, comme on découvre un chemin qu'on vous a confié, et vous caresse jusqu'à vous faire trembler. Vous l'attirez contre vous ; il vient, docile et ardent."]],
         ["La pluie redouble. Le feu tient. Vous aussi."],
       ),
       M(
@@ -198,7 +194,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous vous unissez sous le ciel, lentement, comme un dernier marché conclu sans prix."], ["Il entre en vous en douceur, en vous regardant, et le ciel tourne au-dessus de vous à chacun de ses mouvements lents. Vous sentez sa chaleur vous envahir et vous l'enlacez pour la garder."]],
         [["Vous l'attirez contre vous et le désir s'échange de l'un à l'autre, sans comptabilité."], ["Il vous accueille et vous l'accueillez tour à tour, entre ses mains puis en vous ou en lui, selon votre envie. Il suit votre élan, généreux, les doigts mêlés aux vôtres, et oublie de compter."]],
-        [["Il vous demande comment vous aimez qu'on vous touche. Vous lui montrez. Il apprend, sérieux comme un élève."], ["Il caresse votre corps tel que vous le lui confiez, sans rien attendre d'autre que votre plaisir, et votre plaisir vient vite sous ses doigts attentifs. Vous l'attirez ensuite, et il vous rejoint comme vous le voulez."]],
         ["Ce marché-là ne s'écrit pas. Il se conclut à la lumière des étoiles, et c'est tout."],
       ),
       M(
@@ -233,7 +228,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous vous unissez près de la braise, sans hâte, en vous regardant tout le long."], ["Il vient en vous presque immobile, le front contre le vôtre, et ne bouge que pour suivre votre souffle. La chaleur de son corps et celle de la braise se mêlent jusqu'à ce que vous ne sachiez plus laquelle vous traverse."]],
         [["Vous vous enlacez et le désir circule entre vous comme la chaleur du feu."], ["Vous l'accueillez avec lenteur, de la main puis de tout le corps, et il vous rend chaque geste avec une douceur appliquée. Ses yeux restent dans les vôtres jusqu'au bout."]],
-        [["Il vous laisse guider chaque geste, sans rien supposer, et vous le guidez avec confiance."], ["Il caresse votre corps exactement comme vous le souhaitez, attentif, sans hâte ni question déplacée, et le plaisir monte sous ses doigts comme la flamme sous le souffle. Vous l'attirez enfin à vous, et il obéit."]],
         ["Le reste se passe près de la braise, et la braise ne dit rien."],
       ),
       M(
@@ -268,7 +262,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous l'accueillez dans votre lit et vos corps se trouvent, comme une pièce qu'on range enfin au bon endroit."], ["Il entre en vous lentement, les yeux dans les vôtres, et chaque mouvement est une question à laquelle votre corps répond oui. Sa chaleur vous envahit, et vous le gardez en vous en l'enserrant."]],
         [["Vous l'attirez contre vous et le désir devient simple, chez vous, entre vos draps."], ["Votre main l'enveloppe, puis vos corps s'unissent, à votre rythme. Il suit chaque élan, les doigts dans vos cheveux, et murmure des choses qui ne sont pas des inventaires."]],
-        [["Il vous laisse lui montrer votre corps, et il l'apprend avec une tendresse appliquée."], ["Il caresse votre corps tel qu'il est, sans détour, guidé par vos mains, et le plaisir vient vite sous sa patience. Vous l'attirez ensuite en vous ou contre vous, et il vient comme vous le désirez."]],
         ["Ce qui suit reste entre vos murs."],
       ),
       M(
@@ -303,7 +296,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous vous unissez lentement, et c'est la plus belle danse de la soirée."], ["Il entre en vous avec douceur, et votre corps l'accueille au rythme d'une valse lente. Sa chaleur se répand en vous, et vous l'enlacez pour ne pas perdre la mesure."]],
         [["Vous vous enlacez et le désir prend le relais de la danse."], ["Vous l'enveloppez de votre main, puis de votre corps, ou c'est lui qui vous reçoit, selon la figure. Il suit chaque pas, la respiration de plus en plus courte."]],
-        [["Il vous laisse mener la danse jusqu'au bout, et vous la menez."], ["Il vous touche exactement comme vous le guidez, sans hésitation et sans question, et le plaisir monte sous ses mains comme une musique. Vous l'attirez enfin contre vous, en vous, et il vient."]],
         ["La dernière danse appartient aux danseurs."],
       ),
       M(
@@ -338,7 +330,6 @@ const SCENES: Scene[] = [
       S(
         [["Vous vous unissez face à face, en vous regardant, sans rien cacher."], ["Il entre en vous lentement, les yeux ouverts, et vous ne détournez pas les vôtres. Chaque mouvement est visible, voulu, partagé, et le plaisir monte sans masque."]],
         [["Vous vous enlacez et le désir se joue cartes ouvertes."], ["Vous l'accueillez de la main puis de tout votre corps, ou il vous reçoit, comme vous le choisissez. Il suit chaque élan, et rien n'est feint."]],
-        [["Il suit chacun de vos gestes, et vous les lui montrez tous."], ["Il caresse votre corps exactement comme vous le lui montrez, sans surprise et sans gêne, et votre plaisir grandit sous ses mains franches. Vous l'attirez à vous, et il vient comme vous le voulez."]],
         ["La partie se termine sans gagnant, et c'est très bien ainsi."],
       ),
       M(
@@ -359,7 +350,7 @@ function chapterLines(chapter: Chapter, mode: IntimacyMode, sex: SexKey): Dialog
   if ("all" in chapter) return lines(chapter.all);
   if ("modes" in chapter) return lines(chapter.modes[mode]);
   if (mode === "ellipse") return lines(chapter.ellipse);
-  const entry = chapter.bySex[sex];
+  const entry = chapter.bySex[sex as SexKey];
   return lines(mode === "explicite" ? entry.explicit : entry.soft);
 }
 
@@ -382,7 +373,7 @@ export function valurnIntimacyApproaches(context?: ValurnIntimacyContext): Valur
   return context ? sceneFor(context).approaches.map(([id, text, raw]) => ({ id, text, lines: lines(raw) })) : undefined;
 }
 export function valurnIntimacyRoutes(context: ValurnIntimacyContext | undefined, sex: PlayerSex): IntimacyRoute[] {
-  if (!context) return [];
+  if (!context || sex === "intersexe") return [];
   const scene = sceneFor(context);
   const chapters = Object.fromEntries(MODES.map((mode) => [mode, scene.chapters.map((chapter) => chapterLines(chapter, mode, sex))])) as Record<IntimacyMode, DialogueLine[][]>;
   return [{ id: `valurn-${context}-${sex}`, text: scene.text, detail: scene.detail, chapters, visual: { revealChapter: 3, postOrgasmChapter: 9 } }];

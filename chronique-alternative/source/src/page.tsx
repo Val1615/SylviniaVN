@@ -1266,6 +1266,8 @@ function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
 function publicDateUnlocked(game: GameState, date: DateScene): boolean {
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[date.character];
+  // Valurn : les rendez-vous ne s'ouvrent qu'à la fin de la série de quêtes.
+  if (date.character === "valurn" && !game.history.includes("valurn-q7")) return false;
   return relation.stage >= date.unlockStage
     && relation.affection >= date.minAffection
     && relation.trust >= date.minTrust;
@@ -1275,6 +1277,7 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
   if (!game.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return false;
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[characterId];
+  if (characterId === "valurn" && !game.history.includes("valurn-q7")) return false;
   const requiredStage = 5;
   return relation.stage >= requiredStage && relation.affection >= 22 && relation.trust >= 22;
 }
@@ -4326,7 +4329,7 @@ export default function Home() {
       if (relation.stage < 5 || relation.affection < 34 || relation.trust < 32 || relation.desire < 24
         || lastDate !== `${characterId}:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
     }
-    if (characterId === "naiah" && game.player.sex === "intersexe") return;
+    if (["naiah", "valurn"].includes(characterId) && game.player.sex === "intersexe") return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -4434,7 +4437,7 @@ export default function Home() {
     // Bellirith : sa jauge de désir est inversée (céder la fait baisser) ;
     // elle ne conditionne donc jamais la suite d’un rendez-vous choisi.
     const desireReady = !refactoredDate || date?.character === "bellirith" || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
-    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
+    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date) || (["naiah", "valurn"].includes(date.character) && game.player.sex === "intersexe")) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
@@ -4589,7 +4592,7 @@ export default function Home() {
 
   function replayDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date || !game?.flags.includes(`date-intimate:${date.id}`) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
+    if (!date || !game?.flags.includes(`date-intimate:${date.id}`) || (["naiah", "valurn"].includes(date.character) && game.player.sex === "intersexe")) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background, replay: true });
   }
 
@@ -5694,7 +5697,7 @@ function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScen
         {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
         {crossSceneMemories.map((stage) => <button key={`cross-${stage}`} onClick={() => onStartCrossQuest(stage, true)}><span>⇄ Quête croisée · Lineva & Allenna</span><strong>{crossSceneForStage(stage)?.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
-        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{(date.character === "bellirith" && bellirithIntimacyContext(date.id) ? BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(date.id)!] : undefined) || date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : date.character === "bellirith" && bellirithIntimacyContext(date.id) ? `Après « ${date.title} » · revoir la scène selon le corps et le niveau d’intimité choisis` : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
+        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = ["naiah", "valurn"].includes(date.character) && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{(date.character === "bellirith" && bellirithIntimacyContext(date.id) ? BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(date.id)!] : undefined) || date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : date.character === "bellirith" && bellirithIntimacyContext(date.id) ? `Après « ${date.title} » · revoir la scène selon le corps et le niveau d’intimité choisis` : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
         {BELLIRITH_INTRUSIONS.filter((intrusion) => bellirithIntrusionResolved(game, intrusion.id)).map((intrusion) => <button key={`bellirith-intrusion-${intrusion.id}`} onClick={() => onReplayBellirith?.("intrusion", intrusion.id)}><span style={{ color: CHARACTERS.find((character) => character.id === "bellirith")?.color }}>✧ Interférence · Bellirith</span><strong>{intrusion.title}</strong><small>Revoir sans gain, sans pénalité ni avancée du temps</small></button>)}
@@ -5959,7 +5962,7 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
     if (character === "hylee") return game.player.sex !== "intersexe" && Boolean(hyleeIntimacyContext(dateId, home));
     if (character === "remerii") return game.player.sex !== "intersexe" && Boolean(remeriiIntimacyContext(dateId, home));
     if (character === "naiah") return game.player.sex !== "intersexe" && Boolean(naiahProximityContext(dateId, home));
-    if (character === "valurn" && valurnIntimacyContext(dateId, home, game.flags)) return true;
+    if (character === "valurn") return game.player.sex !== "intersexe" && Boolean(valurnIntimacyContext(dateId, home, game.flags));
     return home
       ? homeIntimacyRoutes(character, game.player.sex).length > 0
       : intimacyDirections(character, game.player.sex, dateId).length > 0;
@@ -6126,6 +6129,16 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5"]), flags: unique([...current.flags.filter((flag) => flag !== "valurn-market-done"), "valurn-q5-approach:audace"]), valurnMarket: undefined }))}>Marché en attente</button>
     </div>
     <div className="dev-row">
+      <span className="dev-help">Fin de série (ouvre les rendez-vous) :</span>
+      <button type="button" onClick={() => updateGame((current) => {
+        const quests = ["valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5", "valurn-q6", "valurn-q7"];
+        const market = current.flags.some((flag) => flag.startsWith("valurn-market-result:")) ? [] : ["valurn-market-result:partial", "valurn-q5-approach:lucidite"];
+        return { ...current, history: unique([...current.history, "campaign-imperial-audience", ...quests]), flags: unique([...current.flags, ...quests.map((id) => `${id}-done`), "valurn-market-done", ...market]), valurnMarket: undefined,
+          relationships: { ...current.relationships, valurn: { ...current.relationships.valurn, met: true, stage: Math.max(current.relationships.valurn.stage, 5) } },
+          journal: [...current.journal, "Outil développeur · Valurn : série des sept quêtes achevée."] };
+      })}>Série achevée</button>
+    </div>
+    <div className="dev-row">
       <span className="dev-help">Branches de rendez-vous :</span>
       {[["date-valurn-forestier", "tournoi"], ["date-valurn-forestier", "imposture"], ["date-valurn-forestier", "fond"], ["date-valurn-river", "imprevus"], ["date-valurn-river", "etoiles"], ["date-valurn-river", "braise"], ["home", "cabinet"], ["home", "reception"], ["home", "cartes"]].map(([dateId, branch]) => <button type="button" key={`${dateId}-${branch}`} onClick={() => updateGame((current) => ({ ...current, flags: unique([...current.flags.filter((flag) => !flag.startsWith(`valurn-date-branch:${dateId}:`)), `valurn-date-branch:${dateId}:${branch}`]) }))}>{dateId === "home" ? "Logis" : dateId.endsWith("forestier") ? "Forestier" : "Fleuve"} · {branch}</button>)}
     </div>
@@ -6211,8 +6224,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const naiahContext = character.id === "naiah" && game.player.sex !== "intersexe"
     ? naiahProximityContext(modal.dateId, Boolean(modal.home))
     : undefined;
-  // Valurn : une continuité écrite par branche de rendez-vous, pour les trois configurations corporelles.
-  const [valurnContext] = useState(() => character.id === "valurn" ? valurnIntimacyContext(modal.dateId, Boolean(modal.home), game.flags) : undefined);
+  // Valurn : une continuité écrite par branche de rendez-vous, parcours femme et homme uniquement.
+  const [valurnContext] = useState(() => character.id === "valurn" && game.player.sex !== "intersexe" ? valurnIntimacyContext(modal.dateId, Boolean(modal.home), game.flags) : undefined);
   // Bellirith : diversions, heures volées et duel de fin d’Acte I sont écrits
   // à la main pour les trois configurations corporelles.
   // Au logis, Bellirith passe aussi par une heure volée écrite à la main (source « bellirith-home »).
@@ -7006,7 +7019,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const property = propertyById(game.housing.propertyId)!;
     const naiah = character.id === "naiah";
-    const naiahIntersex = naiah && game.player.sex === "intersexe";
+    const naiahIntersex = (naiah || character.id === "valurn") && game.player.sex === "intersexe";
     const copy = naiahIntersex
       ? "Cette continuation n’est pas encore écrite pour la configuration choisie. Le rendez-vous reste accompli et rejouable ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
       : naiah
@@ -7019,7 +7032,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
     const naiah = character.id === "naiah";
-    const naiahIntersex = naiah && game.player.sex === "intersexe";
+    const naiahIntersex = (naiah || character.id === "valurn") && game.player.sex === "intersexe";
     const refactored = (["lineva", "allenna"].includes(character.id) || character.id === "bellirith") || AUTHORED_DATE_CHARACTERS.has(character.id);
     const bellirith = character.id === "bellirith";
     const desireReady = !refactored || bellirith || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);

@@ -86,7 +86,7 @@ Validateur : `npm run test:bellirith-desire` (`scripts/validate-bellirith-desire
 | Confidences | secret-bellirith-saelis | sbs60-near | Lui dire qu’elle a dit « vulgaire » deux fois, et que ce mot appartient à Valurn. | tenir tête | 1 | 1 |
 | Confidences | secret-bellirith-saelis | sbs60-return | Rester contre le mur, et répéter doucement : « C’était son mot. » | tenir tête | 6 | 6 |
 | Confidences | secret-bellirith-gap | sbg80-accept | Accepter la limite, et rester simplement près d’elle à la fenêtre. | céder | 2 | **0** |
-| Confidences | secret-bellirith-gap | sbg80-push-valurn | Lui dire que Valurn vous a parlé d’un talisman, et d’une promesse de protection. | tenir tête | 4 | 4 |
+| Confidences | secret-bellirith-gap | sbg80-push-valurn | Lui dire que Valurn parle d’elle avec trop de précautions pour quelqu’un qui prétend la détester. | tenir tête | 4 | 4 |
 | Confidences | secret-bellirith-gap | sbg80-push-ring | Lui demander pourquoi elle a caché cette bague dès qu’elle a parlé de promesse. | tenir tête | 4 | 4 |
 | Lettres | letter-bellirith-preferred | bel-pref-tease | Répondre que la carte avait de très jolies flèches. | tenir tête | 3 | 3 |
 | Lettres | letter-bellirith-preferred | bel-pref-honest | Avouer que partir vous a coûté. | céder | 4 | **0** |

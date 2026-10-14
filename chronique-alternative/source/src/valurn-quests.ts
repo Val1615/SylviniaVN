@@ -6,7 +6,7 @@ import type { ChoiceData, DialogueLine, Effects, RouteScene, StatKey } from "./g
  * Créations CA : réseau d'informateurs, Odile Varrasque, Corvin Lisse,
  * maison Halbrecht, Dame Ysolde Vayre, Bram, Maître Péronne, Hesse.
  * Voir docs/VALURN_SOURCE_REGISTER.md. Aucun lieu verrouillé : tout se joue
- * à Al'Gratal. Le secret de continuité Bellirith n'est jamais évoqué.
+ * à Al'Gratal.
  */
 
 const N = (text: string): DialogueLine => ({ speaker: "Narration", text });

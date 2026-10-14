@@ -10,7 +10,6 @@ Statuts employés :
 - **Bible** : règle ou fiche de la Bible maîtresse.
 - **CA existant** : contenu déjà présent dans la Chronique Alternative.
 - **invention CA** : création de cette refonte, à ne jamais présenter comme canon des tomes.
-- **clarification canonique directe de l'auteur — 2026-10-14** : précision fournie par l'auteur dans la consigne V1.3 (§0.3 bis). Réservée, jamais diffusée en jeu.
 
 | affirmation | source | chapitre | ancrage | statut | emploi | risque |
 |---|---|---|---|---|---|---|
@@ -38,11 +37,10 @@ Statuts employés :
 | Iriana → Valurn : outil dangereux, fascination, méfiance ; Valurn → Iriana : envie de la faire sortir de son rôle | Bible §49 | l. 1595 à 1610 | fiche | Bible | confidence 40, moment 17 | ne pas en faire un triangle |
 | Valurn → Bellirith : désir ancien, rancune, culpabilité, respect dangereux | Bible §52 | l. 1632 à 1645 | fiche | Bible | Q6 facultatif, moment 18 inchangé | la culpabilité reste non nommée |
 | CA : Iriana ne forme jamais l'équipe du T1 ; Valurn poursuit ses propres intérêts | Bible §12 | l. 591 | divergence | Bible | justification du fil autonome | aucun |
-| Intersexe : choix non tranché | Bible §100.1 | | question ouverte | Bible | intimités Valurn : variantes intersexe rédigées (anatomie non détaillée, mêmes jalons) | décision utilisateur souhaitée : confirmer ou retirer |
+| Intersexe : choix non tranché | Bible §100.1 | | question ouverte | Bible | intimités Valurn : parcours femme et homme seulement ; configuration intersexe sans continuation intime (précédent Naïah) | décision utilisateur du 2026-10-14 |
 | Audience « Audience sans témoin » : Valurn reconnaît « la grammaire, pas la phrase » du fragment | CA `campaign-imperial-audience` | III | campaign-scenes.ts l. 168 à 237 | CA existant | Q1 s'en souvient (flags `audience-methodical/independent/saidin-question`) | aucune seconde présentation |
 | Intrusion Bellirith 01 après l'audience | CA `bellirith-intrusion:01:seen` | III | bellirith-intrusions | CA existant | Q1 et Q6 : variante si vue | jamais convoquée sinon |
 | Accords libres Iriana / Valurn | CA `iv-open-truth`, `iv-boundaries`, `shared-iriana-valurn` | | social-scenes.ts | CA existant | confidence 40 et dates s'y réfèrent sans les modifier | aucun |
-| Artefact fonctionnel mais limité ; talisman de transfert fonctionnel ; mensonge de camouflage ; décision de ne pas l'activer | consigne V1.3 §0.3 bis | | dossier d'auteur | clarification canonique directe de l'auteur — 2026-10-14 | **aucun emploi en jeu** ; secret de continuité réservé à la future quête croisée | validateur `validate-valurn-refactor.mjs` (contrat 12 bis) |
 | Réseau d'informateurs, signe de transmission, faux renseignements | consigne §5 | | | invention CA | Q1 à Q7 | jamais attribué à Alamma, Bhaal ou Amanea |
 | Odile Varrasque, relieuse et courrière du Croissant, ancienne débitrice | | | | invention CA | Q4, Q7, L-tiers, moments 14 et 19 | identifiée comme invention |
 | Corvin Lisse, commis de la maison Halbrecht, revendeur (le « Gris de Sel ») | | | | invention CA | Q3 à Q7 | identifié comme invention |
