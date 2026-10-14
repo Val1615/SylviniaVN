@@ -15,6 +15,7 @@ import {
   type BNGameState, type BNMove,
 } from "./bellirith-naiah-minigame";
 import { BN_INTIMACY_SCENES, bnRenderChapters, bnRenderOpening, bnVisualState } from "./bellirith-naiah-intimacy";
+import { ROMAINS } from "./ui/v2/common";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
 
 /* ------------------------------------------------------------------------ */
@@ -97,13 +98,9 @@ function useFocusTrap() {
   return ref;
 }
 
-function lineSpeakerClass(line?: DialogueLine) {
-  if (!line) return "";
-  return line.speaker === "Narration" ? "narration" : line.speaker === "Bellirith" ? "bellirith" : line.speaker === "Naïah" ? "naiah" : "player";
-}
 
-export function BNMinigameModal({ state, replay = false, dev = false, format, onChange, onClose, onFinish, onAnomaly }: {
-  state: BNGameState; replay?: boolean; dev?: boolean; format: Format;
+export function BNMinigameModal({ state, replay = false, dev = false, background = "/assets/backgrounds/ballroom.webp", format, onChange, onClose, onFinish, onAnomaly }: {
+  state: BNGameState; replay?: boolean; dev?: boolean; background?: string; format: Format;
   onChange: (state: BNGameState) => void; onClose: () => void; onFinish: (state: BNGameState) => void;
   /** Coupe partiellement la musique pendant la manche hors échelle. */
   onAnomaly?: (active: boolean) => void;
@@ -135,7 +132,8 @@ export function BNMinigameModal({ state, replay = false, dev = false, format, on
     if (anomaly) return id === "bellirith" ? "cold" : "neutral";
     return id === "bellirith" ? "teasing" : "smirk";
   };
-  const speaking = (id: "bellirith" | "naiah") => Boolean(line && (id === "bellirith" ? line.speaker === "Bellirith" : line.speaker === "Naïah"));
+  // Sans réplique en cours (choix, résultat), les deux joueuses restent pleinement visibles autour de la table.
+  const speaking = (id: "bellirith" | "naiah") => !line || (id === "bellirith" ? line.speaker === "Bellirith" : line.speaker === "Naïah");
 
   function choose(move: BNMove) {
     if (pick || closing) return;
@@ -160,80 +158,77 @@ export function BNMinigameModal({ state, replay = false, dev = false, format, on
   const outcome = pick ? bnOutcome(state.round, pick) : undefined;
   const closingDone = closing && closingIndex >= closingLines.length - 1;
 
-  return <div className="bn-game-backdrop" role="presentation">
-    <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className={`bn-game ${anomaly ? "bn-anomaly" : ""} ${closing ? "bn-closing" : ""}`} role="dialog" aria-modal="true" aria-labelledby="bn-game-title" data-bn-round={closing ? "fin" : state.round}>
-      <header className="bn-game-head">
-        <div className="bn-game-title">
-          <p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Naïah"}</p>
-          <h2 id="bn-game-title">Les Trois Réponses</h2>
-        </div>
-        <ol className="bn-round-dots" aria-label={`Manche ${Math.min(state.round + 1, BN_ROUND_COUNT)} sur ${BN_ROUND_COUNT}`}>
-          {BN_ROUNDS.map((entry, index) => {
-            const result = state.picks[index] ? bnOutcome(index, state.picks[index]) : undefined;
-            return <li key={entry.id} className={`${index === state.round ? "current" : ""} ${result ? `done ${result}` : ""}`} title={result ? BN_OUTCOME_LABELS[result] : `Manche ${index + 1}`}>{entry.anomaly && result ? "?" : index + 1}</li>;
-          })}
-        </ol>
-        <div className="bn-score" aria-live="polite"><span>Naïah <b>{state.score}</b></span><span>Bellirith <b>{state.bellirithScore}</b></span></div>
-        <div className="bn-head-buttons">
-          <button type="button" aria-expanded={rulesOpen} onClick={() => setRulesOpen(!rulesOpen)}>Règles</button>
-          <button type="button" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button>
-        </div>
-      </header>
+  const counter = intro >= 0 ? `Règles · ${intro + 1} / ${BN_GAME_INTRO.length}` : closing ? `${closingIndex + 1} / ${closingLines.length}` : `${lineIndex + 1} / ${answerLines.length}`;
 
-      <div className="bn-game-stage">
-        <figure className={`bn-game-sprite bellirith ${speaking("bellirith") ? "active" : "quiet"}`}><img src={spritePath("bellirith", speakerMood("bellirith"), "teasing")} alt="Bellirith" /></figure>
-        <div className="bn-game-card">
-          {closing ? <>
-            <p className="bn-card-label">Fin de partie</p>
-            <p className="bn-statement">{result === "naiah" ? "Naïah l’emporte" : result === "bellirith" ? "Bellirith l’emporte" : "Match nul"}</p>
-            <p className="bn-reading">Naïah {state.score} · Bellirith {state.bellirithScore}. Le score ne ferme aucune porte : il colore seulement la suite.</p>
-          </> : <>
-            <p className="bn-card-label">{round.tutorial ? "Manche d’essai" : anomaly ? "Dernière question" : `Manche ${state.round + 1}`}{round.tutorial && <span className="bn-tutorial-badge">{BN_MOVE_INFO.simuler.icon} {BN_MOVE_INFO.simuler.label} a l’avantage</span>}</p>
-            <p className="bn-statement">« {format(round.statement)} »</p>
-            <p className="bn-reading">{format(round.reading)}</p>
-            {anomaly
-              ? <div className="bn-signal" role="status"><b>{BN_ANOMALY_LABEL}</b><small>{BN_ANOMALY_DETAIL}</small></div>
-              : <div className="bn-expected">Bellirith s’attend à : <b>{BN_MOVE_INFO[round.expected!].icon} {BN_MOVE_INFO[round.expected!].label}</b></div>}
-            {round.tutorial && !pick && <p className="bn-tutorial-hint">{BN_TUTORIAL_HINT}</p>}
-          </>}
-        </div>
-        <figure className={`bn-game-sprite naiah ${speaking("naiah") ? "active" : "quiet"}`}><img src={spritePath("naiah", speakerMood("naiah"), "smirk")} alt="Naïah" /></figure>
+  return <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className={`dialogue-overlay v2-scene bn-minigame ${anomaly ? "bn-anomaly" : ""} ${closing ? "bn-closing" : ""}`} role="dialog" aria-modal="true" aria-labelledby="bn-game-title" data-bn-round={closing ? "fin" : state.round}
+    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.14), rgba(5,6,12,.66)), url(${background})` }}>
+    <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Naïah"}</p><h2 id="bn-game-title">Les Trois Réponses</h2></div>
+      <div className="scene-outils">
+        <button type="button" className="scene-outil" aria-expanded={rulesOpen} onClick={() => setRulesOpen(!rulesOpen)}>Règles</button>
+        <button type="button" className="scene-outil passer" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button>
+      </div></div>
+    <div className="scene-cast cast-2">
+      <img className={`scene-sprite speaker-0 ${speaking("bellirith") ? "active" : "inactive"}`} src={spritePath("bellirith", speakerMood("bellirith"), "teasing")} alt="Bellirith" />
+      <img className={`scene-sprite speaker-1 ${speaking("naiah") ? "active" : "inactive"}`} src={spritePath("naiah", speakerMood("naiah"), "smirk")} alt="Naïah" />
+    </div>
+    <div className="dialogue-gradient" />
+
+    <aside className="mg-panel bn-panel" aria-live="polite">
+      <div className="mg-hud">
+          <ol className="bn-round-dots" aria-label={`Manche ${Math.min(state.round + 1, BN_ROUND_COUNT)} sur ${BN_ROUND_COUNT}`}>
+            {BN_ROUNDS.map((entry, index) => {
+              const result = state.picks[index] ? bnOutcome(index, state.picks[index]) : undefined;
+              return <li key={entry.id} className={`${index === state.round ? "current" : ""} ${result ? `done ${result}` : ""}`} title={result ? BN_OUTCOME_LABELS[result] : `Manche ${index + 1}`}>{entry.anomaly && result ? "?" : index + 1}</li>;
+            })}
+          </ol>
+          <span className="bn-score" aria-live="polite"><span>Naïah <b>{state.score}</b></span><span>Bellirith <b>{state.bellirithScore}</b></span></span>
       </div>
+      {closing ? <>
+        <p className="mg-label">Fin de partie</p>
+        <p className="mg-claim">{result === "naiah" ? "Naïah l’emporte" : result === "bellirith" ? "Bellirith l’emporte" : "Match nul"}</p>
+        <p className="mg-note">Naïah {state.score} · Bellirith {state.bellirithScore}. Le score ne ferme aucune porte : il colore seulement la suite.</p>
+      </> : <>
+        <p className="mg-label">{round.tutorial ? "Manche d’essai" : anomaly ? "Dernière question" : `Manche ${state.round + 1}`}{round.tutorial && <span className="bn-tutorial-badge">{BN_MOVE_INFO.simuler.icon} {BN_MOVE_INFO.simuler.label} a l’avantage</span>}</p>
+        <p className="mg-claim">« {format(round.statement)} »</p>
+        {!line && <p className="mg-note">{format(round.reading)}</p>}
+        {anomaly
+          ? <div className="bn-signal" role="status"><b>{BN_ANOMALY_LABEL}</b><small>{BN_ANOMALY_DETAIL}</small></div>
+          : <p className="bn-expected">Bellirith s’attend à : <b>{BN_MOVE_INFO[round.expected!].icon} {BN_MOVE_INFO[round.expected!].label}</b></p>}
+        {round.tutorial && !pick && <p className="bn-tutorial-hint">{BN_TUTORIAL_HINT}</p>}
+        <ol className="bn-cycle" aria-label="Cycle des réponses">
+          {BN_CYCLE.map(([winner, loser]) => <li key={winner}><b>{BN_MOVE_INFO[winner].icon} {BN_MOVE_INFO[winner].label}</b> bat {BN_MOVE_INFO[loser].icon} {BN_MOVE_INFO[loser].label}</li>)}
+        </ol>
+      </>}
+    </aside>
 
-      <ol className="bn-cycle" aria-label="Cycle des réponses">
-        {BN_CYCLE.map(([winner, loser]) => <li key={winner}><b>{BN_MOVE_INFO[winner].icon} {BN_MOVE_INFO[winner].label}</b> bat {BN_MOVE_INFO[loser].icon} {BN_MOVE_INFO[loser].label}</li>)}
-      </ol>
+    {line && <button type="button" className={`dialogue-box bn-advance ${line.speaker === "Narration" ? "narration" : ""}`} onClick={advanceLine}>
+      <span className="speaker">{format(line.speaker)}</span><p key={counter}>{format(line.text)}</p><small>{counter}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
+    </button>}
+    {!line && !pick && !closing && <div className="choice-box bn-choices" role="group" aria-label="Comment Naïah joue-t-elle la manche ?">
+      <p className="choice-question">Comment Naïah joue-t-elle la manche ?</p>
+      {BN_MOVES.map((move, index) => <button key={move} type="button" className={`v2-choix-carte bn-carte ${move}`} style={{ "--i": index } as CSSProperties} onClick={() => choose(move)}>
+        <i className="choix-num">{ROMAINS[index + 1]}</i><div><strong><span aria-hidden="true">{BN_MOVE_INFO[move].icon}</span> {BN_MOVE_INFO[move].label}</strong><small>{BN_MOVE_INFO[move].detail}</small></div>
+      </button>)}
+    </div>}
+    {!line && pick && !closing && <div className={`choice-box bn-issue ${outcome}`}>
+      <p className="choice-question">{BN_OUTCOME_LABELS[outcome!]}</p>
+      <small className="bn-result-detail">{bnOutcomeExplanation(state.round, pick)}</small>
+      <button type="button" className="v2-choix-carte" style={{ "--i": 0 } as CSSProperties} onClick={next}><i className="choix-num">I</i><div><strong>{state.round === BN_ROUND_COUNT - 1 ? "Conclure la partie" : "Manche suivante"}</strong></div></button>
+      {dev && <button type="button" className="v2-choix-carte" style={{ "--i": 1 } as CSSProperties} onClick={() => onChange(bnGameAtRound(state.round))}><i className="choix-num">II</i><div><strong>Rejouer cette manche</strong></div></button>}
+    </div>}
+    {closingDone && <div className="choice-box bn-issue fin">
+      <p className="choice-question">{replay ? "Fin du souvenir" : "La partie est conclue"}</p>
+      <button type="button" className="v2-choix-carte" style={{ "--i": 0 } as CSSProperties} onClick={finish}><i className="choix-num">I</i><div><strong>{replay ? "Quitter le souvenir" : "Continuer la chronique"}</strong><small>{replay ? "Aucun score, aucun gain : la chronique reste inchangée." : "Le résultat colore la suite et accorde un petit bonus de relation."}</small></div></button>
+    </div>}
 
-      <footer className="bn-game-foot">
-        {line ? <button type="button" className={`bn-line ${lineSpeakerClass(line)}`} onClick={advanceLine}>
-          <span className="speaker">{format(line.speaker === "Narration" ? "" : line.speaker)}</span>
-          <p>{format(line.text)}</p>
-          <small>{intro >= 0 ? `Règles · ${intro + 1} / ${BN_GAME_INTRO.length}` : closing ? `${closingIndex + 1} / ${closingLines.length}` : `${lineIndex + 1} / ${answerLines.length}`} · Cliquer pour continuer</small>
-        </button> : null}
-        {!line && !pick && !closing && <div className="bn-moves" role="group" aria-label="Comment Naïah joue-t-elle la manche ?">
-          {BN_MOVES.map((move) => <button key={move} type="button" className={`bn-move ${move}`} onClick={() => choose(move)}>
-            <i aria-hidden="true">{BN_MOVE_INFO[move].icon}</i><strong>{BN_MOVE_INFO[move].label}</strong><small>{BN_MOVE_INFO[move].detail}</small>
-          </button>)}
-        </div>}
-        {!line && pick && !closing && <div className={`bn-result ${outcome}`}>
-          <div><b>{BN_OUTCOME_LABELS[outcome!]}</b><small>{bnOutcomeExplanation(state.round, pick)}</small></div>
-          <div className="bn-result-actions">
-            {dev && <button type="button" onClick={() => onChange(bnGameAtRound(state.round))}>Rejouer cette manche</button>}
-            <button type="button" className="primary-action" onClick={next}>{state.round === BN_ROUND_COUNT - 1 ? "Conclure la partie" : "Manche suivante"}</button>
-          </div>
-        </div>}
-        {closingDone && <div className="bn-result fin"><div><b>{replay ? "Fin du souvenir" : "La partie est conclue"}</b><small>{replay ? "Aucun score, aucun gain : la chronique reste inchangée." : "Le résultat colore la suite et accorde un petit bonus de relation."}</small></div><div className="bn-result-actions"><button type="button" className="primary-action" onClick={finish}>{replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div></div>}
-      </footer>
-
-      {rulesOpen && <div className="bn-rules" role="dialog" aria-label="Règles des Trois Réponses">
-        <h3>Règles</h3>
-        <p>Bellirith énonce une affirmation sur Naïah et annonce la réponse qu’elle lit. Vous choisissez comment Naïah joue la manche.</p>
-        <ul>{BN_MOVES.map((move) => <li key={move}><b>{BN_MOVE_INFO[move].icon} {BN_MOVE_INFO[move].label}</b> · {BN_MOVE_INFO[move].detail}</li>)}</ul>
-        <p>Jouer la réponse annoncée donne une égalité. Jouer celle qui la bat donne la manche à Naïah. Jouer celle qu’elle bat donne la manche à Bellirith. La partie se poursuit quoi qu’il arrive.</p>
-        <button type="button" onClick={() => setRulesOpen(false)}>Fermer</button>
-      </div>}
-    </section>
-  </div>;
+    {rulesOpen && <div className="mg-panel bn-rules" role="dialog" aria-label="Règles des Trois Réponses">
+      <h3>Règles</h3>
+      <p>Bellirith énonce une affirmation sur Naïah et annonce la réponse qu’elle lit. Vous choisissez comment Naïah joue la manche.</p>
+      <ul>{BN_MOVES.map((move) => <li key={move}><b>{BN_MOVE_INFO[move].icon} {BN_MOVE_INFO[move].label}</b> · {BN_MOVE_INFO[move].detail}</li>)}</ul>
+      <p>Jouer la réponse annoncée donne une égalité. Jouer celle qui la bat donne la manche à Naïah. Jouer celle qu’elle bat donne la manche à Bellirith. La partie se poursuit quoi qu’il arrive.</p>
+      <button type="button" className="scene-outil" onClick={() => setRulesOpen(false)}>Fermer</button>
+    </div>}
+  </section>;
 }
 
 /* ------------------------------------------------------------------------ */

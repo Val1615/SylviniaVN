@@ -1,0 +1,88 @@
+/* Mini-jeux mis en scène comme les scènes V2 (Les Trois Réponses, La partie truquée).
+   Décor plein écran, sprites, plaques dorées, boîte de dialogue et cartes de choix communes ;
+   les informations de jeu tiennent dans des panneaux translucides qui laissent voir l’art. */
+
+/* Panneau d’information commun */
+.mg-panel { position: absolute; z-index: 4; padding: .55rem 1rem .6rem; color: var(--texte, #efe6d6);
+  background: linear-gradient(170deg, rgba(22, 20, 38, .55), rgba(8, 8, 16, .62)); backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(216, 189, 120, .55); border-bottom: 1px solid rgba(216, 189, 120, .18);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); animation: boite-in .35s var(--ease, ease) both; }
+.mg-label { margin: 0; font: 700 .72em/1.2 var(--display, serif); letter-spacing: .18em; text-transform: uppercase; color: var(--or, #d8bd78); }
+.mg-claim { margin: .25rem 0 .35rem; font: italic 1.02em/1.35 var(--v2-serif, serif); color: #fff6dc; text-shadow: 0 2px 10px #000; }
+.mg-note { margin: .2rem 0 0; font: .88em/1.35 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.bn-minigame .scene-outils, .vm-game .scene-outils { align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+
+/* ── Les Trois Réponses (Bellirith & Naïah) ───────────────────────── */
+.bn-minigame .bn-panel { left: 50%; top: calc(4.6rem * var(--k, 1)); transform: translateX(-50%); width: min(34rem, calc(100% - 2rem)); text-align: center; pointer-events: none; }
+.bn-minigame .bn-round-dots { gap: .25rem; padding: .2rem .45rem; border-radius: 999px; background: rgba(10, 9, 18, .42); backdrop-filter: blur(4px); }
+.bn-minigame .bn-round-dots li { width: 1.5rem; height: 1.5rem; font: 700 .72em var(--display, serif); background: rgba(10, 9, 18, .5); }
+.bn-minigame .bn-score { display: inline-flex; gap: .7rem; align-items: center; min-height: calc(30px * var(--echelle, 1)); padding: 0 .8rem; border-radius: 999px; background: rgba(10, 9, 18, .42); backdrop-filter: blur(4px); color: var(--or-pale, #f1dcaa); font: 600 .78em/1 var(--display, serif); letter-spacing: .1em; text-transform: uppercase; }
+.bn-minigame .bn-expected { display: inline-block; margin: .1rem 0 .3rem; padding: .2rem .7rem; border: 0; border-left: 3px solid var(--rose, #e76588); background: rgba(10, 9, 18, .45); font: .86em/1.3 var(--v2-serif, serif); }
+.bn-minigame .bn-tutorial-hint { margin: .2rem auto .3rem; max-width: 28rem; font: .84em/1.35 var(--v2-serif, serif); background: rgba(20, 40, 38, .45); }
+.bn-minigame .bn-tutorial-badge { margin-left: .5rem; font-size: .95em; }
+.bn-minigame .bn-signal { margin: .2rem auto .3rem; max-width: 28rem; background: rgba(6, 16, 20, .6); }
+.bn-minigame .bn-cycle { justify-content: center; gap: .1rem .9rem; margin-top: .25rem; font-size: .74em; color: var(--texte-2, #cfc3b0); }
+.bn-minigame .bn-cycle b { color: #fff6dc; }
+.bn-minigame .bn-issue .bn-result-detail { margin: -.2rem 0 .2rem; font: italic .9em/1.35 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.bn-minigame .bn-issue.naiah .choice-question { color: #9fd3c7; }
+.bn-minigame .bn-issue.bellirith .choice-question { color: #f0a3b2; }
+.bn-minigame .bn-carte strong span { margin-right: .35rem; }
+.bn-minigame .bn-rules { left: 50%; top: 50%; right: auto; bottom: auto; transform: translate(-50%, -50%); width: min(30rem, calc(100% - 2rem)); max-height: 80dvh; overflow: auto; z-index: 30; border: 0; border-radius: 0; background: linear-gradient(170deg, rgba(22, 20, 38, .9), rgba(8, 8, 16, .94)); }
+.bn-minigame.bn-anomaly .bn-panel { border-top-color: #7fb6c9; }
+
+/* ── La partie truquée (Valurn, registre du salon) ─────────────────── */
+.vm-game .scene-cast.cast-1 { justify-content: flex-end; padding-right: 3vw; }
+.vm-game .vm-meters { display: flex; flex-wrap: wrap; gap: .25rem; }
+.vm-game .vm-meters span { display: inline-flex; align-items: center; gap: .3rem; min-height: calc(28px * var(--echelle, 1)); padding: 0 .65rem; border-radius: 999px; background: rgba(10, 9, 18, .45); backdrop-filter: blur(4px); color: var(--texte-2, #cfc3b0); font: 600 .72em/1 var(--display, serif); letter-spacing: .08em; text-transform: uppercase; }
+.vm-game .vm-meters b { color: var(--or-pale, #f1dcaa); font-size: 1.1em; }
+.vm-board { position: absolute; z-index: 4; left: max(1rem, 2vw); top: calc(4.8rem * var(--k, 1)); bottom: 1rem; width: min(64rem, 70vw); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: .7rem; }
+.vm-board .mg-panel { position: relative; min-height: 0; overflow-y: auto; overscroll-behavior: contain; animation: boite-in .35s var(--ease, ease) both; }
+.vm-rule { margin: .2rem 0 .45rem; font: .8em/1.35 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.vm-offers { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+.vm-offers .v2-choix-carte { width: 100%; min-height: 0; padding-block: .35rem; text-align: left; color: var(--texte, #efe6d6); background: rgba(10, 9, 18, .5); }
+.vm-offers .v2-choix-carte strong { display: block; font: 600 .92em/1.3 var(--v2-serif, serif); }
+.vm-offers .vm-tag { display: block; margin-top: .1rem; font: italic .78em var(--v2-serif, serif); color: var(--or, #d8bd78); }
+.vm-offers .vm-offer.sel { border-color: var(--or-vif, #f3d48a); box-shadow: 0 0 16px rgba(216, 189, 120, .35); }
+.vm-offers .vm-offer.bought::before { background: #6bc28c; width: 6px; }
+.vm-offers .vm-offer.discarded { opacity: .55; }
+.vm-offers .vm-offer.discarded strong { text-decoration: line-through; }
+.vm-detail .mg-claim { font-size: 1em; }
+.vm-detail dl { display: grid; grid-template-columns: auto 1fr; gap: .12rem .7rem; margin: 0; font: .84em/1.3 var(--v2-serif, serif); }
+.vm-detail dt { color: var(--or, #d8bd78); }
+.vm-detail dd { margin: 0; }
+.vm-note { margin: .4rem 0 0; font: .84em/1.35 var(--v2-serif, serif); color: #f6e6cf; }
+.vm-actions, .vm-submit { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+.vm-game .mg-panel .scene-outil { display: inline-flex; align-items: center; min-height: calc(34px * var(--echelle, 1)); padding: .25rem .8rem; transform: skewX(-12deg); border: 1px solid var(--ligne-forte, rgba(216, 189, 120, .5)); background: rgba(8, 8, 16, .7); color: var(--or-pale, #f1dcaa); font: 700 .74em/1.1 var(--display, serif); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.vm-game .mg-panel .scene-outil:hover:not(:disabled), .vm-game .mg-panel .scene-outil:focus-visible { outline: none; color: #1a1206; background: linear-gradient(90deg, #fff1c9, #d9b56a); }
+.vm-game .mg-panel .scene-outil:disabled { opacity: .4; cursor: not-allowed; }
+.vm-game .mg-panel .scene-outil.primary { color: #1a1206; background: linear-gradient(90deg, #fff1c9, #d9b56a); }
+.vm-protect { margin: .5rem 0 0; padding: .3rem .6rem .4rem; display: flex; flex-wrap: wrap; gap: .2rem .9rem; border: 1px solid rgba(216, 189, 120, .25); font: .82em/1.3 var(--v2-serif, serif); }
+.vm-protect legend { padding: 0 .3rem; font: 700 .9em var(--display, serif); letter-spacing: .08em; color: var(--or, #d8bd78); }
+.vm-protect label { display: flex; gap: .3rem; align-items: center; }
+.vm-verdict { margin-top: .5rem; padding: .4rem .7rem; border-left: 3px solid var(--or, #d8bd78); background: rgba(10, 9, 18, .5); font: .84em/1.35 var(--v2-serif, serif); }
+.vm-verdict.clean { border-left-color: #6bc28c; } .vm-verdict.failed { border-left-color: #e76588; }
+.vm-verdict p { margin: .2rem 0 0; }
+.vm-hint { color: #ffd7a8; }
+.vm-result-panel { left: 50%; top: calc(4.6rem * var(--k, 1)); transform: translateX(-50%); width: min(30rem, calc(100% - 2rem)); text-align: center; pointer-events: none; }
+.vm-end .choice-question b { color: var(--or, #d8bd78); }
+.vm-reactions { display: grid; gap: calc(.55rem * var(--k, 1)); }
+
+@media (max-height: 600px) {
+  .bn-minigame .bn-panel, .vm-result-panel { top: calc(3.4rem * var(--k, 1)); padding: .35rem .8rem .4rem; }
+  .bn-minigame .mg-claim { font-size: .95em; margin: .1rem 0 .2rem; }
+  .bn-minigame .bn-cycle, .bn-minigame .bn-tutorial-hint { display: none; }
+  .bn-minigame .bn-choices, .vm-reactions { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: .6rem; }
+  .bn-minigame .bn-choices { display: grid; }
+  .bn-minigame .bn-choices .choice-question { grid-column: 1 / -1; }
+  .vm-board { top: calc(3.6rem * var(--k, 1)); bottom: .6rem; width: min(64rem, 78vw); gap: .5rem; }
+  .vm-rule { display: none; }
+}
+@media (max-width: 760px), (orientation: portrait) {
+  .vm-board { left: 1rem; right: 1rem; width: auto; bottom: 34dvh; grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1.2fr); }
+}
+@media (prefers-reduced-motion: reduce) { .mg-panel, .vm-board .mg-panel { animation: none; } }
+/* Compteurs déplacés dans les panneaux : la barre de titre garde la même place que dans les scènes. */
+.mg-hud { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .3rem .6rem; margin-bottom: .35rem; }
+.bn-minigame .bn-panel .mg-hud { pointer-events: auto; }
+.vm-registre .vm-meters { justify-content: flex-start; margin: .3rem 0 .2rem; }
+.vm-result-panel .mg-note b { color: var(--or, #d8bd78); }
