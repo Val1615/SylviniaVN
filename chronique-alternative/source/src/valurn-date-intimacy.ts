@@ -64,7 +64,7 @@ const SCENES: Scene[] = [
       M(
         ["Le plaisir vient sans bruit, en vagues lentes. Il vous serre contre lui comme si la chambre allait s'envoler."],
         ["Vous basculez avant lui. Il vous suit de près, le visage dans votre cou, avec un son étouffé qu'il ne fait jamais en public."],
-        ["La jouissance vous prend en un long frisson, les doigts dans ses cheveux. Il s'abandonne peu après, sans retenue, le souffle cassé, et reste longtemps tremblant contre vous."],
+        ["La jouissance vous prend en un long frisson, les doigts dans ses cheveux. Il se laisse aller peu après, sans retenue, le souffle cassé, et reste longtemps tremblant contre vous."],
         ["En bas, Gorn termine sa chanson. Ici, plus rien n'a besoin d'être compté."],
       ),
       A("Il ne bouge pas. Sa chaleur sèche la sueur sur vos bras. Vous sentez son cœur se calmer contre votre épaule, lentement, comme une salle d'auberge qui se vide."),
@@ -168,7 +168,7 @@ const SCENES: Scene[] = [
       ),
       M(
         ["Le plaisir vous emporte doucement, au son de la pluie, comme une vague qui ne fait pas de bruit."],
-        ["Vous vous abandonnez avant lui, la bouche contre son épaule. Il suit, le front dans votre cou, avec un rire étranglé."],
+        ["Le plaisir vous emporte avant lui, la bouche contre son épaule. Il suit, le front dans votre cou, avec un rire étranglé."],
         ["Vous jouissez en le serrant de toutes vos forces ; il vous rejoint dans un frisson long, puis s'effondre contre vous, essoufflé, heureux, trempé."],
         ["À l'aube, la loutre est revenue, assise sur la bâche."],
       ),
@@ -204,7 +204,7 @@ const SCENES: Scene[] = [
       M(
         ["Le plaisir monte comme une étoile qui file, bref et brillant."],
         ["Vous basculez avant lui, le visage tourné vers le ciel. Il vous rejoint dans un souffle qui ressemble à votre prénom."],
-        ["La jouissance vous saisit en un long frémissement ; il s'y abandonne à son tour, tendu puis libéré, et vous tient contre lui comme la seule marchandise qu'il voudra jamais garder."],
+        ["La jouissance vous saisit en un long frémissement ; il la rejoint à son tour, tendu puis libéré, et vous tient contre lui comme la seule marchandise qu'il voudra jamais garder."],
         ["Le feu s'éteint. Le ciel reste."],
       ),
       A("Vous restez allongés à compter les étoiles. Il se trompe exprès, vous le corrigez, il se trompe encore."),
@@ -238,7 +238,7 @@ const SCENES: Scene[] = [
       ),
       M(
         ["Le plaisir vient doucement, sans éclat, comme une braise qui se ranime sous un souffle."],
-        ["Vous vous abandonnez contre lui ; il vous suit, la tête basculée en arrière, les yeux fermés pour une fois."],
+        ["Le plaisir vous emporte contre lui ; il vous suit, la tête basculée en arrière, les yeux fermés pour une fois."],
         ["La jouissance vous parcourt longuement ; il s'y laisse aller avec vous, sans retenue, le visage contre votre épaule, et reste immobile longtemps après."],
         ["Plus tard, la braise est presque éteinte. Vous la regardez ensemble."],
       ),
@@ -344,7 +344,7 @@ const SCENES: Scene[] = [
       M(
         ["Le plaisir vous gagne en même temps, comme une égalité."],
         ["Vous basculez avant lui, il vous suit aussitôt, et vous riez ensemble de l'égalité presque parfaite."],
-        ["La jouissance vous prend, et il la partage, le corps tendu puis abandonné contre le vôtre, sans rien retenir, sans rien jouer."],
+        ["La jouissance vous prend, et il la partage, le corps tendu puis relâché contre le vôtre, sans rien retenir, sans rien jouer."],
         ["Égalité. Personne ne compte les points."],
       ),
       A("Vous restez enlacés, les mains nouées. Les cartes, dans la pièce voisine, attendent face visible."),

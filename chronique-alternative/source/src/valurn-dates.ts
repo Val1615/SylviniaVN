@@ -122,7 +122,7 @@ const FORESTIER: Record<string, ValurnDateBeat[]> = {
     ]),
     B([N("Un client, un vrai marchand de verre, commence à poser des questions techniques à Messire Orbe. Valurn n'a aucune idée de ce qu'est un verre biconvexe."), V("Le verre biconvexe… est une question philosophique.", "surprised")], [
       Q("dvfi-1a", "Le sauver en inventant une explication délirante.", "audace", [P("Biconvexe, c'est quand le verre a deux opinions."), N("Le marchand vous regarde longtemps. Puis il note. Il a l'air convaincu. Valurn a les larmes aux yeux.")], { affection: 3 }),
-      Q("dvfi-1b", "Le laisser se débattre seul, pour voir.", "sangFroid", [N("Valurn s'enfonce, superbement, dans une théorie des lentilles qui finit sur la tristesse des miroirs. Le marchand lui achète une consultation."), V("Vous m'avez abandonné et j'ai gagné de l'argent. Je ne sais pas quoi en conclure.", "amused")], { trust: 2, coins: 2 }),
+      Q("dvfi-1b", "Le laisser se débattre seul, pour voir.", "sangFroid", [N("Valurn s'enfonce, superbement, dans une théorie des lentilles qui finit sur la tristesse des miroirs. Le marchand lui achète une consultation."), V("Vous m'avez laissé seul face à lui et j'ai gagné de l'argent. Je ne sais pas quoi en conclure.", "amused")], { trust: 2, coins: 2 }),
     ]),
     B([N("L'imposture dérape : le marchand veut passer commande. Cinquante paires. Avec acompte. Il sort sa bourse."), V("Bon. Nous avons un problème de réussite.", "neutral")], [
       Q("dvfi-2a", "Interrompre le jeu et avouer la vérité au marchand.", "sangFroid", [P("Monsieur, nous jouions. Il n'y a pas de lunettes. Pardon."), N("Le marchand rougit, puis rit, puis paie une tournée pour sauver la face. Valurn vous regarde avec une sorte de respect inquiet."), V("Vous savez arrêter un jeu. Moi, jamais. C'est une compétence que je n'ai pas.", "neutral")], { trust: 4 }),
@@ -169,7 +169,7 @@ const RIVER: Record<string, ValurnDateBeat[]> = {
     ]),
     B([N("Le vent tourne. La pluie arrive par le fleuve, en rideau, sans prévenir. Le feu tremble."), V("Le feu. Mon feu. Que j'ai fait sans pacte. Il va mourir sous mes yeux.", "surprised")], [
       Q("dvri-1a", "Tendre la couverture au-dessus du feu à deux.", "sangFroid", [N("Vous tenez chacun un coin, bras levés, sous l'averse. Le feu survit. Vous, beaucoup moins. Valurn ruisselle et rit."), V("Je suis trempé et je n'ai jamais été aussi fier d'un feu.", "amused")], { affection: 3, trust: 1 }),
-      Q("dvri-1b", "Courir chercher une bâche sous les charrettes voisines.", "audace", [N("Un charretier endormi vous prête une bâche contre la promesse d'un bout de tarte. Valurn plante deux bâtons et tend la toile avec un savoir-faire inattendu."), V("J'ai dormi dehors plus souvent que je ne le dis.", "neutral")], { trust: 2, affection: 2 }),
+      Q("dvri-1b", "Courir chercher une bâche sous les charrettes voisines.", "audace", [N("Un charretier endormi vous prête une bâche contre un bout de tarte, payable plus tard. Valurn plante deux bâtons et tend la toile avec un savoir-faire inattendu."), V("J'ai dormi dehors plus souvent que je ne le dis.", "neutral")], { trust: 2, affection: 2 }),
     ]),
     B([N("La pluie cesse. Tout est mouillé, sauf le feu et un coin de couverture. Valurn frotte ses bottes, mécontent."), V("Je suis un démonologue respecté. Je viens d'être battu par une loutre et un nuage.")], [
       Q("dvri-2a", "Lui proposer de faire sécher ses bottes près du feu, et ses chaussettes, et sa dignité.", "audace", [N("Il retire ses bottes avec une solennité de cour. Ses chaussettes ont des trous."), V("Vous n'avez rien vu. Je l'exige.", "annoyed")], { affection: 3, desire: 1 }),
@@ -213,7 +213,7 @@ const RIVER: Record<string, ValurnDateBeat[]> = {
     ]),
     B([N("Il raconte une ville lointaine où les ponts se paient en chansons, et les deux fois où il a dû chanter pour rentrer. Il imite le péager. Il est très drôle, et il le sait."), V("Et vous ? Vous avez voyagé ? Avant ? Je ne demande pas d'où. Seulement si vous avez vu des ponts.")], [
       Q("dvrb-1a", "Lui avouer que vous ne vous en souvenez pas, mais que vous avez l'impression d'en avoir vu beaucoup.", "sangFroid", [V("Alors vous êtes comme moi devant votre fragment : la grammaire, pas la phrase. C'est une bonne compagnie, l'incertitude, quand on la partage.", "neutral")], { trust: 4 }),
-      Q("dvrb-1b", "Inventer un pont absurde pour le faire rire.", "audace", [P("Un pont qui ne laisse passer que les gens tristes."), V("On y ferait la queue. J'en connais trois qui y vivraient.", "amused")], { affection: 3 }),
+      Q("dvrb-1b", "Inventer un pont absurde pour le faire rire.", "audace", [P("Un pont qui ne laisse passer que les gens tristes."), V("On s'y bousculerait. J'en connais trois qui y vivraient.", "amused")], { affection: 3 }),
     ]),
     B([N("Un hibou traverse. Le fleuve fait un bruit de conversation lointaine. Valurn se tait longtemps, ce qui ne lui arrive presque jamais."), V("C'est étrange. D'habitude, le silence me démange. Ici, il est à sa place.")], [
       Q("dvrb-2a", "Ne pas répondre, et rester dans ce silence avec lui.", "sangFroid", [N("Vous ne dites rien. Il ne dit rien. Le feu parle pour vous deux, en craquant."), V("Merci de ne pas avoir rempli.", "neutral")], { trust: 4 }),

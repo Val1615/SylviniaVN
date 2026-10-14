@@ -97,7 +97,7 @@ export const VALURN_CONFIDENCES: SecretConversation[] = [
     Q("sva60-silence", "Respecter son silence.", "sangFroid", [
       N("Vous ne demandez rien. Il hoche la tête, une fois."),
       V("Bien. Vous êtes la première personne qui ne m'a pas demandé qui."),
-      N("Il reprend un ton plus léger au bout d'un moment, parle de la pluie, des gouttières d'Al'Gratal, du prix du sel. Le reste reste où il l'a laissé."),
+      N("Il reprend un ton plus léger au bout d'un moment, parle de la pluie, des gouttières d'Al'Gratal, du prix du sel. Le reste demeure là où il est resté, sans un mot de plus."),
     ], { trust: 7 }),
     Q("sva60-mirror", "Lui opposer une décision qu'il a prise à votre place pendant l'enquête.", "lucidite", [
       P("Au salon, vous avez décidé que je jouerais sans savoir. Ça ressemble à ça ?"),
@@ -231,7 +231,7 @@ export const VALURN_LETTERS: LetterTemplate[] = [
   },
   {
     id: "letter-valurn-debt", character: "valurn", subject: "Dette inexistante", delivery: "Une carte vierge, retrouvée dans votre poche. Valurn a toujours eu les doigts plus agiles que les gens qu'il croise.", minDay: 5, minStage: 0, requiresFlags: [done(4)],
-    body: ["Vous m'avez aidé chez Odile. J'aurais pu vous envoyer une pièce, une promesse ou un contrat tordu.", "Je vous envoie une carte vierge. Écrivez ce que vous voulez dessus, ou rien. Si vous ne répondez pas, je survivrai avec une élégance offensante."],
+    body: ["Vous m'avez aidé chez Odile. J'aurais pu vous envoyer une pièce, un serment ou un contrat tordu.", "Je vous envoie une carte vierge. Écrivez ce que vous voulez dessus, ou rien. Si vous ne répondez pas, je survivrai avec une élégance offensante."],
     signature: "Valurn",
     replies: [
       { id: "valurn-free", label: "Garder la carte vierge, sans rien y écrire.", response: "Une seconde carte arrive : « Vous gardez le vide. Première règle respectée. Inquiétant. »", effects: { trust: 3, affection: 2 } },
