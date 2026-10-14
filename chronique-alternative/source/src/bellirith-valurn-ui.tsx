@@ -7,7 +7,7 @@ import { spritePath } from "./sprite-system";
 import { intimateSpritePath } from "./intimate-sprite-system";
 import { BV_OBJECTIVES, BV_STAGE_TOTAL, BV_TITLES, BV_SCENE_TITLES, BV_DATE_STAGE, bvAvailableScenes, type BVIntimacyId } from "./bellirith-valurn-cross-quest";
 import {
-  bvActorAt, bvAnswer, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
+  BV_IVRESSE_MAX, bvActorAt, bvAnswer, bvDrinksAt, bvIvresse, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
   type BVActor, type BVAnswer, type BVNeverState, type BVTruthCtx,
 } from "./bellirith-valurn-never-game";
 import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
@@ -79,6 +79,7 @@ export function BVDossier({ progress, day, onScene, onNever, onIntimacy }: {
 /* ------------------------------------------------------------------------ */
 
 const NAMES: Record<BVActor, string> = { bellirith: "Bellirith", valurn: "Valurn", player: "Vous" };
+const IVRESSE_LABELS = { sobre: "Sobre", gris: "Gris", ivre: "Ivre" } as const;
 const ANSWERS: { id: BVAnswer; label: string; detail: string }[] = [
   { id: "acknowledge", label: "Reconnaître", detail: "Vous buvez." },
   { id: "deny", label: "Nier", detail: "Votre verre reste posé." },
@@ -138,6 +139,8 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
   const showGlasses = Boolean(view) && !awaitingHere && lineIndex >= 0;
   const finished = state.completed && !view;
   const shownLine = transition && !view ? transition : line;
+  // Jauge d’ivresse : les verres comptent dès qu’ils sont levés à l’écran, pas avant.
+  const gauge = bvDrinksAt(state, view ? (showGlasses ? seen : seen - 1) : state.log.length - 1);
 
   const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : view && lineIndex < 0 && view.record.speaker !== "player" ? view.record.speaker : !view && !finished && actor !== "player" ? actor : undefined;
   const sprite = (who: "bellirith" | "valurn", index: number) => <img key={who} className={`scene-sprite speaker-${index} ${speaking === who ? "active" : "inactive"}`} src={spritePath(who, lastMood.current[who] || (who === "bellirith" ? "teasing" : "charming"), who === "bellirith" ? "teasing" : "charming")} alt={NAMES[who]} />;
@@ -153,6 +156,17 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
     <div className="dialogue-gradient" />
 
     <aside className={`bv-table ${view ? "claim" : finished ? "fin" : "turn"}`} aria-live="polite">
+      <ul className="bv-ivresse" aria-label="Ivresse">
+        {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => {
+          const count = gauge[who];
+          const level = bvIvresse(count);
+          return <li key={who} className={`ivresse-${level}`} data-ivresse={level}>
+            <span className="bv-ivresse-nom">{NAMES[who]}</span>
+            <span className="bv-ivresse-jauge" role="meter" aria-valuemin={0} aria-valuemax={BV_IVRESSE_MAX} aria-valuenow={Math.min(count, BV_IVRESSE_MAX)} aria-label={`Ivresse de ${NAMES[who]} : ${IVRESSE_LABELS[level]}`}><i style={{ width: `${Math.min(100, (count / BV_IVRESSE_MAX) * 100)}%` }} /></span>
+            <small>{IVRESSE_LABELS[level]}</small>
+          </li>;
+        })}
+      </ul>
       {view ? <>
         <p className="bv-table-label">{view.record.speaker === "player" ? "Votre affirmation" : `${NAMES[view.record.speaker]} prend la parole`}</p>
         <p className="bv-table-claim">« {format(view.declaration.text)} »</p>

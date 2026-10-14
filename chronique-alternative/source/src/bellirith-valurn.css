@@ -29,3 +29,15 @@
   .bv-never .choice-box.bv-options .v2-choix-carte { min-height: 0; padding-block: .35rem; }
 }
 @media (prefers-reduced-motion: reduce) { .bv-table, .bv-glasses li i { animation: none; transition: none; } }
+
+/* Jauges d’ivresse : trois fines barres en tête du panneau, qui se remplissent à chaque verre levé. */
+.bv-ivresse { display: flex; justify-content: center; flex-wrap: wrap; gap: .2rem 1rem; margin: 0 0 .35rem; padding: 0 0 .3rem; list-style: none; border-bottom: 1px solid rgba(216, 189, 120, .18); }
+.bv-ivresse li { display: inline-flex; align-items: center; gap: .35rem; font: 600 .68em/1 var(--display, serif); letter-spacing: .1em; text-transform: uppercase; color: var(--texte-2, #cfc3b0); }
+.bv-ivresse small { font: italic 1.05em var(--v2-serif, serif); letter-spacing: 0; text-transform: none; opacity: .85; }
+.bv-ivresse-jauge { position: relative; width: 4.2rem; height: .32rem; border-radius: 999px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.bv-ivresse-jauge i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #d8bd78, #e76588); transition: width .5s var(--ease, ease); }
+.bv-ivresse li.ivresse-gris small { color: #f1dcaa; }
+.bv-ivresse li.ivresse-ivre small { color: #ff9fb6; }
+.bv-ivresse li.ivresse-ivre .bv-ivresse-jauge i { box-shadow: 0 0 8px rgba(231, 101, 136, .7); }
+@media (max-height: 600px) { .bv-ivresse { margin-bottom: .2rem; padding-bottom: .2rem; } .bv-ivresse-jauge { width: 3rem; } }
+@media (prefers-reduced-motion: reduce) { .bv-ivresse-jauge i { transition: none; } }
