@@ -33,8 +33,9 @@
     "test:v25": "node scripts/validate-v25-fenetres.mjs",
     "test:hn-cross": "node scripts/validate-hylee-naiah-cross.mjs",
     "test:bn-cross": "node scripts/validate-bellirith-naiah-cross.mjs",
-    "test:intimate-vocabulary && npm run test:valurn": "node scripts/validate-intimate-vocabulary.mjs",
-    "audit:intimate-vocabulary": "node scripts/validate-intimate-vocabulary.mjs --report"
+    "test:intimate-vocabulary": "node scripts/validate-intimate-vocabulary.mjs",
+    "audit:intimate-vocabulary": "node scripts/validate-intimate-vocabulary.mjs --report",
+    "test:valurn": "node scripts/validate-valurn-refactor.mjs"
   },
   "dependencies": {
     "react": "19.2.6",
