@@ -2,6 +2,7 @@ import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
 import { HYLEE_HOME_DATE } from "./hylee-home-date.ts";
 import { REMERII_HOME_DATE, REMERII_RESIDENT_MOMENTS } from "./remerii-home-date";
 import { NAIAH_HOME_DATE } from "./naiah-home-date";
+import { VALURN_HOME_BRANCHES, VALURN_HOME_OWN_ITEM_COMMENT } from "./valurn-home-date";
 import type { DisplayItem, HousingProperty } from "./housing-data";
 
 export type HomeDateTone = "amical" | "amoureux" | "desir";
@@ -32,6 +33,17 @@ export type HomeDateProfile = {
   ownItemComment: string;
   otherItemComment: string;
   tones: Record<HomeDateTone, { label: string; detail: string; effects: Effects; lines: DialogueLine[] }>;
+  rounds: HomeGameRound[];
+  results: { close: DialogueLine[]; warm: DialogueLine[]; perfect: DialogueLine[] };
+  /** Soirée à branches : choisie après le ton, chaque branche remplace manches et résultats. */
+  branches?: HomeDateBranch[];
+};
+
+export type HomeDateBranch = {
+  id: string;
+  label: string;
+  detail: string;
+  lines: DialogueLine[];
   rounds: HomeGameRound[];
   results: { close: DialogueLine[]; warm: DialogueLine[]; perfect: DialogueLine[] };
 };
@@ -106,7 +118,7 @@ export const HOME_DATE_PROFILES: Record<string, HomeDateProfile> = {
     arrival: [N("Valurn apporte un jeu de cartes neuves. Une seule est blanche, pliée en deux, et il la pose près de vos objets exposés."), C("Valurn", "J’offre une carte sans valeur. Vous remarquerez l’effort considérable nécessaire pour ne pas lui ajouter une dette.", "charming")],
     cityComments: cities("Valurn", "Une adresse à Al’Gratal vous donne trois voisins espions et cinq occasions de les inviter à boire. Excellent placement.", "Forthaven respecte les portes solides et les départs rapides. Deux qualités que j’ai longtemps confondues avec un foyer.", "Les mages de Mir’Aldas prétendront que votre serrure est conceptuellement imparfaite. Ne leur donnez pas de double.", "Akuhn’Nabad connaît mon nom de famille. J’apprécie énormément que cette porte, elle, ne me demande aucune filiation."),
     tierComments: tier("Valurn", ["Une pièce, une sortie, aucune cache secrète visible. J’aurais pu vivre ici avant d’apprendre de mauvaises habitudes.", "Assez confortable pour rester, assez simple pour partir sans escorte. Séduisant.", "Vous avez manifestement réussi des paris dont vous ne m’avez pas parlé.", "Je pourrais organiser ici une négociation internationale ou une soirée parfaitement indécente. La polyvalence est remarquable.", "Cette demeure possède assez de portes pour mes vieux réflexes. Je vais essayer de n’en surveiller qu’une." ]),
-    ownItemComment: "Mon jeton. Vous l’avez exposé au lieu de l’encaisser. Cette décision est financièrement absurde et personnellement redoutable.", otherItemComment: "Chaque objet révèle une personne qui a accepté de vous laisser une trace. Votre collection ressemble moins à un trésor qu’à une liste d’issues devenues des retours.",
+    ownItemComment: VALURN_HOME_OWN_ITEM_COMMENT, branches: VALURN_HOME_BRANCHES, otherItemComment: "Chaque objet révèle une personne qui a accepté de vous laisser une trace. Votre collection ressemble moins à un trésor qu’à une liste d’issues devenues des retours.",
     tones: {
       amical: { label: "Cartes sur table", detail: "Faire de la soirée une complicité sans attente romantique.", effects: { affection: 6, trust: 9 }, lines: [P("Pas de séduction obligatoire. J’ai surtout envie que vous restiez jouer."), C("Valurn", "Une invitation sans arrière-pensée. Je vais devoir improviser une personnalité entière.", "amused")] },
       amoureux: { label: "Une raison de revenir", detail: "Lui montrer que votre porte peut devenir un retour plutôt qu’une sortie.", effects: { affection: 9, trust: 7, desire: 4 }, lines: [P("Je veux que vous sachiez où revenir, même quand vous n’avez rien à miser."), C("Valurn", "Vous rendez le mot ‘adresse’ dangereusement émouvant.", "away")] },

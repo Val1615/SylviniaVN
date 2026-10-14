@@ -850,6 +850,12 @@ function jobAccess(game: GameState, job: JobData) {
   return { unlocked: value >= job.requirement.bond, value, target: job.requirement.bond, characterName };
 }
 
+/** Une nouvelle branche de rendez-vous Valurn remplace la précédente du même rendez-vous. */
+function withoutReplacedBranchFlags(flags: string[], incoming: string[]) {
+  const prefixes = incoming.filter((flag) => flag.startsWith("valurn-date-branch:")).map((flag) => flag.slice(0, flag.lastIndexOf(":") + 1));
+  return prefixes.length ? flags.filter((flag) => !prefixes.some((prefix) => flag.startsWith(prefix))) : flags;
+}
+
 function replacePlayer(text: string, player: Player) {
   return text.replaceAll("{player}", player.name);
 }
@@ -2406,7 +2412,7 @@ export default function Home() {
         inventory,
         confluence: clamp(current.confluence + (effects.confluence || 0)),
         coins: Math.max(0, current.coins + (effects.coins || 0)),
-        flags: unique(withoutObsoletePermanentFriendshipFlags([...current.flags, ...(effects.flags || [])])),
+        flags: unique(withoutObsoletePermanentFriendshipFlags([...withoutReplacedBranchFlags(current.flags, effects.flags || []), ...(effects.flags || [])])),
         knowledge: unique([...current.knowledge, ...(effects.knowledge || [])]),
         history: completedScene ? unique([...current.history, completedScene.id]) : current.history,
         journal: completedScene ? [...current.journal, `${character?.name || "Rencontre"} · ${completedScene.title}`] : current.journal,
@@ -4146,7 +4152,7 @@ export default function Home() {
     if (homePairDateUnlocked(game, pair)) setModal({ kind: "home-pair-date", pairId });
   }
 
-  function finishHomeDate(characterId: string, tone: HomeDateTone, score: number) {
+  function finishHomeDate(characterId: string, tone: HomeDateTone, score: number, branch?: string) {
     if (!game) return;
     const profile = HOME_DATE_PROFILES[characterId];
     const property = propertyById(game.housing.propertyId);
@@ -4177,6 +4183,7 @@ export default function Home() {
           homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${DEDICATED_HOME_DATE_CHARACTERS.has(characterId) ? current.day : current.day + 1}`].slice(-96),
           homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
         },
+        flags: branch ? unique([...current.flags.filter((flag) => !flag.startsWith(`${characterId}-date-branch:home:`)), `${characterId}-date-branch:home:${branch}`]) : current.flags,
         journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
       };
     });
@@ -6581,13 +6588,14 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
   </section></div></div>;
 }
 
-function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number) => void; onClose: () => void }) {
+function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number, branch?: string) => void; onClose: () => void }) {
   const profile = HOME_DATE_PROFILES[characterId];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
   const property = propertyById(game.housing.propertyId);
   const items = game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item));
   const opening = profile && property ? homeDateOpening(profile, property, items) : [];
-  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "game" | "answer" | "result">("opening");
+  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "branch" | "branch-lines" | "game" | "answer" | "result">("opening");
+  const [branchId, setBranchId] = useState<string | undefined>(undefined);
   const [lineIndex, setLineIndex] = useState(0);
   const [tone, setTone] = useState<HomeDateTone>("amical");
   const [round, setRound] = useState(0);
@@ -6595,7 +6603,10 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
   const [answerLines, setAnswerLines] = useState<DialogueLine[]>([]);
   const [resultLines, setResultLines] = useState<DialogueLine[]>([]);
   if (!profile || !property || !character) return null;
-  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? profile.tones[tone].lines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
+  const activeBranch = profile.branches?.find((entry) => entry.id === branchId);
+  const rounds = activeBranch?.rounds || profile.rounds;
+  const results = activeBranch?.results || profile.results;
+  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? profile.tones[tone].lines[lineIndex] : phase === "branch-lines" ? activeBranch?.lines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
   const shownText = displayedLine ? replacePlayer(displayedLine.text, game.player) : "";
   const shownSpeaker = displayedLine?.speaker === "{player}" ? game.player.name : displayedLine?.speaker;
   const characterSpeaking = displayedLine ? speakerCharacterIds(displayedLine.speaker, [character.id]).includes(character.id) : true;
@@ -6603,21 +6614,23 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     ? (displayedLine.mood || moodForCharacter(character.id, `home-date-${character.id}-${phase}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
   const nextLine = () => {
-    const lines = phase === "opening" ? opening : phase === "tone-lines" ? profile.tones[tone].lines : phase === "answer" ? answerLines : resultLines;
+    const lines = phase === "opening" ? opening : phase === "tone-lines" ? profile.tones[tone].lines : phase === "branch-lines" ? (activeBranch?.lines || []) : phase === "answer" ? answerLines : resultLines;
     if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
     setLineIndex(0);
     if (phase === "opening") setPhase("tone");
-    else if (phase === "tone-lines") setPhase("game");
+    else if (phase === "tone-lines") setPhase(profile.branches?.length ? "branch" : "game");
+    else if (phase === "branch-lines") setPhase("game");
     else if (phase === "answer") {
-      if (round + 1 < profile.rounds.length) { setRound(round + 1); setPhase("game"); }
+      if (round + 1 < rounds.length) { setRound(round + 1); setPhase("game"); }
       else {
-        const bucket = score >= 5 ? profile.results.perfect : score >= 3 ? profile.results.warm : profile.results.close;
+        const bucket = score >= 5 ? results.perfect : score >= 3 ? results.warm : results.close;
         setResultLines(bucket);
         setPhase("result");
       }
-    } else onFinish(characterId, tone, score);
+    } else onFinish(characterId, tone, score, branchId);
   };
   const chooseTone = (nextTone: HomeDateTone) => { setTone(nextTone); setLineIndex(0); setPhase("tone-lines"); };
+  const chooseBranch = (id: string) => { setBranchId(id); setLineIndex(0); setPhase("branch-lines"); };
   const chooseAnswer = (option: HomeDateProfile["rounds"][number]["options"][number]) => {
     const nextScore = score + option.score;
     setScore(nextScore);
@@ -6629,9 +6642,10 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     <div className="scene-top home-date-scene-top"><div><p className="eyebrow">Rendez-vous dans votre logis · {property.name}</p><h2>{profile.title}</h2><p>{profile.description}</p></div><button onClick={onClose}>Quitter le rendez-vous</button></div>
     <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>
     <div className="dialogue-gradient" />
-    {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
+    {(phase === "opening" || phase === "tone-lines" || phase === "branch-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
     {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => <button key={id} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{option.detail}</small></div></button>)}</div>}
-    {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{profile.rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : profile.rounds[round].detail}</small></div><p className="choice-question">{profile.rounds[round].prompt}</p>{profile.rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
+    {phase === "branch" && profile.branches && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Choisir la soirée</p><p className="choice-question">Quel jeu proposer ce soir ?</p></div>{profile.branches.map((entry, index) => <button key={entry.id} onClick={() => chooseBranch(entry.id)}><span className="home-choice-number">{index + 1}</span><div><strong>{entry.label}</strong><small>{entry.detail}</small></div></button>)}</div>}
+    {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : rounds[round].detail}</small></div><p className="choice-question">{rounds[round].prompt}</p>{rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
   </section>;
 }
 
