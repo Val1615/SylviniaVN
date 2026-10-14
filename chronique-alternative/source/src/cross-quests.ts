@@ -34,6 +34,7 @@ export type CrossQuestProgress = {
   hn?: import("./hylee-naiah-cross-quest").HNState;
   bn?: import("./bellirith-naiah-cross-quest").BNState;
   hr?: import("./hylee-remerii-cross-quest").HRState;
+  bv?: import("./bellirith-valurn-cross-quest").BVState;
   id: string;
   stage: number;
   startedDay: number;

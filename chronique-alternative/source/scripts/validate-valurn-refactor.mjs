@@ -320,10 +320,10 @@ try {
     }
   });
   check(23, "Mécaniques de Bellirith intactes (tendance céder/résister, intrusions)", () => {
-    const diff = execSync("git diff --name-only origin/main -- src/bellirith-*.ts src/bellirith-*.tsx", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean);
+    const diff = execSync("git diff --name-only --diff-filter=M origin/main -- src/bellirith-*.ts src/bellirith-*.tsx", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean);
     // Hors bellirith-living-world.ts, seules les variantes du corps retiré peuvent avoir changé :
     // aucune ligne de la mécanique céder / résister ou des intrusions n'est modifiée.
-    const mechanics = execSync("git diff -U0 origin/main -- src/bellirith-*.ts src/bellirith-*.tsx ':!src/bellirith-living-world.ts'", { cwd: root, encoding: "utf8" })
+    const mechanics = execSync("git diff -U0 --diff-filter=M origin/main -- src/bellirith-*.ts src/bellirith-*.tsx ':!src/bellirith-living-world.ts'", { cwd: root, encoding: "utf8" })
       .split("\n").filter((l) => /^[+-](?![+-])/.test(l) && /TREND_|RESISTED|CEDED|SLEPT|intrusion|bellirith-trend|has-resisted/iu.test(l));
     assert.deepEqual(mechanics, [], `mécanique Bellirith modifiée : ${mechanics.join(" | ")}`);
     for (const [f, src] of Object.entries(sources)) assert.equal(/bellirith-trend|bellirith-has-resisted/.test(src), false, f);
