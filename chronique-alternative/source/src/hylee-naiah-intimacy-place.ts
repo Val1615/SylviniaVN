@@ -58,13 +58,6 @@ const h1 = {
       A("Intéressant. Il retient son souffle avant. Pas pendant.", "thinking"),
       N("Chemises, ceinture, bottes : tout finit dans l’herbe. Vos peaux nues se rencontrent au-dessus de la sienne."),
     ),
-    S(
-      N("Vous ne lâchez pas le ruban. Vous l’enroulez autour de votre poignet et attirez Hylee contre vous, par-dessus Naïah, pour l’embrasser. Elle glisse une cuisse entre les vôtres et sourit contre votre bouche : vous vous tendez contre sa peau au moment même où, plus bas, vos replis répondent à la pression de son genou."),
-      H("Deux réponses pour une seule question. Tu es injouable.", "teasing"),
-      N("Sous vous deux, Naïah ne bouge plus. Les poignets liés contre la poitrine, elle observe avec une attention de cartographe."),
-      A("Les deux ensemble, ou l’un après l’autre ? Il faudra vérifier.", "thinking"),
-      N("Les vêtements rejoignent l’herbe. Vos peaux nues se rencontrent au-dessus de la sienne."),
-    ),
   ),
   ex7: X(
     S(
@@ -81,12 +74,6 @@ const h1 = {
       H("Tu avais prévu pour quelqu’un d’autre.", "teasing"),
       N("Trois secondes de vexation théâtrale, puis elle observe : la main d’Hylee qui vous enserre franchement, votre ventre qui se creuse quand la prise se resserre."),
     ),
-    S(
-      N("Votre main tenait le ruban ; elle tient désormais la hanche d’Hylee. L’ombre retourne à sa maîtresse. Naïah se libère en roulant, s’agenouille près de vous et commence avec méthode : une main ferme autour de votre vigueur, rien de plus. Vous soupirez, sans plus. Elle change : deux doigts plus bas, en cercles. Un frisson, pas davantage."),
-      A("Ce n’est pas possible. Chacun des deux devrait marcher.", "angry"),
-      H("Tu comptes les points au lieu de regarder.", "teasing"),
-      N("Trois secondes de vexation. Puis elle regarde vraiment : votre bassin qui cherche quelque chose entre ses deux tentatives, comme un mot qu’on n’arrive pas à finir."),
-    ),
   ),
   ex8: X(
     S(
@@ -100,12 +87,6 @@ const h1 = {
       A("Oh. Il faut tenir, et s’arrêter juste avant. C’est très méchant. J’adore.", "laugh"),
       H("Bravo. Tu viens de lui donner une arme.", "surprised"),
       N("Naïah range sa découverte et se tourne vers Hylee, qu’elle connaît depuis l’enfance. Une ombre glisse sur sa cuisse nue, s’arrête au creux de sa hanche, cet endroit qui la fait sursauter depuis toujours, puis remonte vers son sexe au moment exact où elle ouvre la bouche pour protester."),
-    ),
-    S(
-      N("Elle recommence avec les deux à la fois, et surtout avec deux rythmes différents : lent et serré sur votre sexe, plus vif et plus léger juste dessous, où une ombre fraîche se glisse à peine. Le contraste vous arrache un gémissement si net qu’Hylee relève la tête."),
-      A("Oh. Pas ensemble. En désaccord. C’est le désaccord qui marche.", "laugh"),
-      H("Elle a trouvé. On est perdus.", "surprised"),
-      N("Naïah range la découverte et se tourne vers Hylee, qu’elle connaît depuis l’enfance. Une ombre se pose au creux de sa hanche, cet endroit qui la fait sursauter depuis toujours, puis remonte entre ses cuisses pendant qu’elle proteste encore."),
     ),
   ),
   ex9: S(
@@ -128,12 +109,6 @@ const h1 = {
       N("Une ombre douce et froide s’enroule autour de ses poignets et les tire au-dessus de sa tête. Hylee proteste pour la forme et ne se dégage pas. Naïah, agenouillée derrière elle, pose le menton sur son épaule et laisse descendre deux doigts jusqu’à la perle de plaisir que vos mouvements font rouler sous sa main."),
       A("Tu bouges plus vite quand je fais ça. Tu le savais ?", "smirk"),
     ),
-    S(
-      N("Hylee décide qu’elle a assez subi. Elle vous allonge sur la couverture, descend le long de votre corps et vous prend entre ses lèvres, en vous regardant par en dessous comme on regarde un adversaire qui va perdre."),
-      H("À mon tour de marquer.", "determined"),
-      N("Naïah ne laisse pas passer l’occasion. Assise contre votre épaule, elle fait glisser une ombre en vous et règle son rythme à contretemps de la bouche d’Hylee, comme elle vient de l’apprendre. Ses yeux vont de votre visage à celui d’Hylee, ravis."),
-      A("Hylee, ralentis. Non, plus. Voilà. Moi, je vais vite.", "smirk"),
-    ),
   ),
   ex11: X(
     S(
@@ -146,12 +121,6 @@ const h1 = {
       N("Hylee le savait. Elle déteste qu’on le dise. Elle accélère quand même, cambrée entre l’ombre qui tient ses bras et vos mains sur ses hanches, et le givre court de ses talons jusque dans l’herbe. Naïah suit son rythme, le devance d’un souffle, puis le casse exprès."),
       H("Arrête de… non, continue…", "surprised"),
       N("Hylee jouit sur vous en criant le nom de Naïah comme une insulte, le corps tendu, les cuisses serrées contre vos flancs, de longues vagues qui manquent vous emporter avec elle. Manquent seulement."),
-    ),
-    S(
-      N("Le désaccord vous emporte. Hylee lente, Naïah vive, et vous entre les deux, incapable de suivre l’une ou l’autre. Votre plaisir éclate des deux côtés à la fois, dans la bouche d’Hylee et autour de l’ombre, une vague double qui vous laisse le dos cambré contre la couverture et la main crispée dans les cheveux de Naïah."),
-      A("Je le savais. Enfin, je le sais maintenant.", "laugh"),
-      P("Tu triches avec des notes."),
-      A("Les notes sont légales."),
     ),
   ),
   ex12: X(
@@ -168,11 +137,6 @@ const h1 = {
       P("Naïah. Lâche ça."),
       A("Demande plutôt à Hylee de bouger."),
       N("Hylee bouge. Une fois, deux fois, lentement, cruelle à son tour. L’ombre se dissout à la troisième, et votre plaisir éclate en elle avec une force qui vous arrache un cri contre son épaule."),
-    ),
-    S(
-      N("Hylee essuie sa bouche du revers de la main, l’air victorieux. Elle ne voit pas venir la suite. Vous la retournez dos contre le tronc du saule, glissez vos doigts sur elle, là où elle est gonflée et glissante, et Naïah vient prolonger votre geste : un doigt d’ombre se glisse en elle pendant que vous continuez dehors."),
-      A("Pour elle, pas en désaccord. Ensemble.", "thinking"),
-      N("Hylee se cambre contre l’écorce et jouit entre vous deux, un gémissement rauque étouffé contre votre épaule, le givre éclatant sur le tronc en fleurs blanches. Elle tient encore votre poignet quand les derniers frissons passent."),
     ),
   ),
   ex13: S(
@@ -196,7 +160,6 @@ const H1: HNSeed = {
   labels: {
     femme: "Retourner ses ombres — piéger Naïah avec Hylee, puis subir sa revanche contre le saule",
     homme: "Retourner ses ombres — lier Naïah avec sa propre magie, puis payer sa vengeance au bord",
-    intersexe: "Retourner ses ombres — capturer Naïah, puis la laisser découvrir vos deux rythmes",
   },
   detail: "Hylee repère la racine du sort et l’ombre se retourne contre sa créatrice : chatouilles, peau contre peau, fou rire. Puis Naïah se venge avec ce qu’elle sait d’Hylee et ce qu’elle apprend de vous en direct.",
   climax: { tendre: 10, suggestif: 8, explicite: 11, ellipse: 7 },
@@ -219,12 +182,10 @@ const H1: HNSeed = {
     X(
       S(N("Vous attirez Hylee par-dessus Naïah pour l’embrasser. Sa main glisse sous votre tunique et trouve votre sein ; les vêtements tombent un à un dans l’herbe. Naïah, toujours liée, observe chaque frisson avec une attention de savante."), A("Elle commence toujours par là.", "thinking")),
       S(N("Vous attirez Hylee par-dessus Naïah pour l’embrasser. Elle glisse une cuisse entre les vôtres et sourit en sentant votre désir se tendre contre elle ; les vêtements tombent un à un dans l’herbe. Naïah, toujours liée, note chaque réaction."), A("Il retient son souffle avant. Intéressant.", "thinking")),
-      S(N("Vous attirez Hylee par-dessus Naïah pour l’embrasser. Sa cuisse entre les vôtres éveille d’un même geste votre vigueur et la chaleur plus bas ; les vêtements tombent dans l’herbe. Naïah, toujours liée, observe avec une attention de cartographe."), A("Les deux ensemble ? Il faudra vérifier.", "thinking")),
     ),
     X(
       S(N("Le ruban vous échappe et revient à sa maîtresse. Libre, Naïah essaie sur vous le petit cercle qu’Hylee aime tant : il vous fait rire. Vexée trois secondes, elle observe, puis appuie franchement sa paume sous votre nombril. Votre souffle se brise."), A("Elle, on la frôle. Toi, on appuie. Noté.", "laugh")),
       S(N("Le ruban vous échappe et revient à sa maîtresse. Libre, Naïah promène sur votre désir un filament d’ombre si léger qu’il vous fait éclater de rire. Vexée trois secondes, elle observe la main d’Hylee, puis resserre la sienne, lente, et s’arrête juste au bord. Vous jurez."), A("Tenir, et s’arrêter avant. Noté.", "laugh")),
-      S(N("Le ruban vous échappe et revient à sa maîtresse. Naïah essaie une caresse, puis l’autre : chacune, seule, vous laisse presque de marbre. Vexée, elle observe, puis les mêle à deux rythmes contraires. Votre gémissement la ravit."), A("C’est le désaccord qui marche. Noté.", "laugh")),
     ),
     S(
       N("Elle se tourne vers Hylee, qu’elle connaît depuis toujours, et pose une ombre au creux de sa hanche, là où elle sursaute depuis l’enfance. Hylee proteste ; vous en profitez pour souffler dans la nuque de Naïah. Ses épaules remontent et ses ombres fondent comme de l’encre dans l’eau."),
@@ -234,7 +195,6 @@ const H1: HNSeed = {
     X(
       S(N("Contre le tronc du saule, Hylee se cambre sous vos doigts glissés dans sa chaleur ; Naïah imite votre geste, une ombre douce prolonge le vôtre, et Hylee jouit entre vous deux, le givre fleurissant sur l’écorce. Naïah ne vous laisse pas le temps de triompher : sa paume revient appuyer là où elle sait désormais, et votre plaisir déborde à son tour.")),
       S(N("Hylee vous allonge sur la couverture et vous prend en elle, à califourchon, pendant qu’une ombre de Naïah lui tient les poignets au-dessus de la tête et que ses doigts trouvent sa perle de plaisir. Hylee jouit en jurant ; vous allez la suivre quand une ombre vous retient au bord, juste assez longtemps pour vous faire supplier, avant de vous laisser basculer.")),
-      S(N("Hylee vous allonge et vous prend entre ses lèvres, tandis que Naïah glisse une ombre en vous, à contretemps. Le désaccord vous emporte des deux côtés à la fois. Puis, contre le saule, vos doigts et l’ombre de Naïah s’accordent pour Hylee, qui jouit entre vous, le givre éclatant sur l’écorce.")),
     ),
     S(
       N("Le silence revient par morceaux : le clapotis du bassin, un oiseau qui se rendort, trois souffles qui n’arrivent pas à se caler. Hylee garde une main sur votre cuisse et l’autre crispée dans l’herbe, comme pour vérifier que le sol tient encore."),
@@ -252,7 +212,6 @@ const H1: HNSeed = {
     X(
       S(N("Vous embrassez Hylee par-dessus Naïah. Vos tuniques glissent dans l’herbe ; ses mains découvrent votre dos, votre poitrine, sans hâte, avec la même assurance que sur sa piste."), A("Elle commence toujours par les épaules.", "thinking")),
       S(N("Vous embrassez Hylee par-dessus Naïah. Vos chemises glissent dans l’herbe ; elle se presse contre vous, sourit en sentant votre désir et le laisse là, entre vous, comme un point qu’elle compte marquer plus tard."), A("Il oublie de respirer. C’est noté.", "thinking")),
-      S(N("Vous embrassez Hylee par-dessus Naïah. Vos vêtements glissent dans l’herbe ; elle se presse contre vous et sourit de sentir votre corps lui répondre à plusieurs endroits à la fois."), A("Tout répond, chez toi. C’est presque injuste.", "thinking")),
     ),
     S(N("Le ruban, que vous avez cessé de tenir, revient à Naïah. Libre, elle essaie sur vous la caresse en petit cercle qu’Hylee aime : vous éclatez de rire. Vexée trois secondes, elle observe, puis pose sa paume à plat sur votre ventre. Cette fois, vous soupirez."), A("Il faut appuyer. Je le savais. Je viens de le savoir.", "laugh")),
     S(N("Elle se tourne vers Hylee et pose une ombre fraîche au creux de sa hanche, l’endroit qui la fait sursauter depuis toujours. Hylee sursaute, évidemment, et la traite de sorcière."), H("Tu n’avais pas le droit de t’en souvenir.", "surprised")),
@@ -270,7 +229,6 @@ const H1: HNSeed = {
     X(
       S(N("Vous embrassez Hylee par-dessus Naïah. Les tuniques tombent ; Naïah, liée, regarde les mains d’Hylee chercher votre poitrine.")),
       S(N("Vous embrassez Hylee par-dessus Naïah. Les chemises tombent ; Naïah, liée, remarque votre désir avant même qu’Hylee le sente.")),
-      S(N("Vous embrassez Hylee par-dessus Naïah. Les vêtements tombent ; Naïah, liée, remarque que votre corps répond de deux façons à la fois.")),
     ),
     S(N("Le ruban revient à sa maîtresse. Naïah essaie sur vous un geste qui vous fait rire, s’en vexe trois secondes, puis trouve celui qui vous coupe le souffle."), A("Noté.", "laugh")),
     S(N("La scène bascule ici. Le saule, l’herbe tiède et le bassin gardent pour eux ce qui suit : les ombres qui changent de cible, le givre sur l’écorce, les rires qui deviennent des souffles.")),
@@ -328,12 +286,6 @@ const h2 = {
       N("Vous défaites la ceinture d’Hylee pendant que Naïah tire sa chemise au-dessus de sa tête. Hylee vous insulte, soulève les hanches pour vous aider, puis s’arrête net quand votre propre chemise tombe et que votre virilité dressée ne laisse plus aucun doute sur votre état."),
       H("Tu changes de camp, mais ton corps, lui, sait très bien pour qui il est là.", "teasing"),
     ),
-    S(
-      N("Vous changez de camp sans remords. Naïah vous accueille d’un sourire de générale et vous agenouille à côté d’Hylee, prisonnière dans l’herbe, les joues rouges de colère et d’autre chose."),
-      A("Elle déteste qu’on commence par la hanche. Elle déteste encore plus qu’on ait raison."),
-      N("Vous défaites la ceinture d’Hylee pendant que Naïah tire sa chemise au-dessus de sa tête. Hylee vous insulte avec application, puis se tait quand vos propres vêtements tombent et que son regard descend, s’attarde sur votre sexe dressé, puis plus bas, sur l’ombre plus douce de vos replis."),
-      H("Les deux. Évidemment. Même ton corps joue double.", "teasing"),
-    ),
   ),
   ex7: S(
     N("Naïah vous prend la main comme on guide une apprentie au tracé d’un sort et la pose au creux de la hanche d’Hylee. Hylee sursaute, jure, et se cambre malgré elle."),
@@ -359,14 +311,6 @@ const h2 = {
       H("Évidemment. Tu crois que je vais t’aider à me battre ?", "teasing"),
       N("Naïah se tait et regarde la main d’Hylee qui vous prend, lente, avec une pression qui vous arrache un grognement. Elle corrige l’anneau d’ombre : plus lent, plus serré. Votre ventre se creuse. Elle hoche la tête, satisfaite."),
     ),
-    S(
-      N("Hylee, haletante, attrape le poignet de Naïah et l’attire contre elle. Elle chuchote quelque chose à son oreille. Naïah écarquille les yeux, puis sourit d’une façon qui ne vous plaît pas du tout."),
-      A("Changement d’alliance. C’est toi la cible, maintenant."),
-      N("Une ombre libère les chevilles d’Hylee et vient vous coucher sur le dos. Naïah se penche sur vous et, suivant le conseil d’Hylee, n’accorde son attention qu’à la part de vous qui se dresse, en ignorant l’autre. Le résultat est poli, sans plus. Vous haussez un sourcil."),
-      A("Elle m’a menti.", "angry"),
-      H("À moitié. C’est plus crédible à moitié.", "teasing"),
-      N("Naïah regarde Hylee glisser deux doigts en vous, presque par défi, et votre bassin se soulever d’un coup. Elle comprend. Son ombre rejoint les doigts d’Hylee pendant que sa main reprend votre vigueur, et cette fois vous ne riez plus."),
-    ),
   ),
   ex9: S(
     N("Le chaos devient une guerre de positions dans l’herbe. Vous tentez une dernière diversion : au lieu de chatouiller Naïah, vous la prenez simplement dans vos bras, peau contre peau, sans la moindre ruse. Elle se raidit, attend le piège, ne le trouve pas, et ses ombres s’effilochent dans son dos, ne sachant plus quoi faire."),
@@ -388,12 +332,6 @@ const h2 = {
       N("Naïah s’agenouille derrière elle, pose le menton sur son épaule et glisse une main sur son ventre, puis plus bas, jusqu’au bouton qu’elle effleure à peine. Hylee frémit autour de vous. Naïah recommence pour voir, puis vous sourit par-dessus l’épaule de sa victime."),
       A("Quand je fais ça, elle te serre. Tu sens ?", "smirk"),
     ),
-    S(
-      N("Hylee, les chevilles enfin libres, se venge tout de suite. Elle vous renverse dans l’herbe trempée, s’installe sur vous et vous prend en elle d’un seul mouvement, puis glisse une main derrière elle, sous votre sexe, comme pour vérifier qu’aucune partie de vous n’échappe à la punition."),
-      H("Traître, hein ? Je punis tout ce qui t’appartient.", "determined"),
-      N("Naïah, allongée contre votre flanc, observe la main d’Hylee, puis la remplace par une ombre fraîche qui se glisse en vous pendant qu’Hylee bouge. Elle règle son rythme à l’inverse, toujours à contretemps."),
-      A("Hylee monte, l’ombre descend. Voilà.", "smirk"),
-    ),
   ),
   ex11: X(
     S(
@@ -405,12 +343,6 @@ const h2 = {
       N("Hylee décide qu’elle a assez attendu. Elle bouge, longue et lente, puis plus vite, pendant que les doigts de Naïah suivent son rythme, posés juste au-dessus de vous deux. Le givre court sur vos épaules, là où ses mains s’agrippent. Elle jouit la première, en criant un juron qui finit en éclat de rire, les cuisses tremblantes contre vos flancs."),
       A("Je savais qu’elle jurerait. Je ne savais pas lequel."),
       N("Vous la suivez à peine une seconde plus tard, plaqué dans l’herbe trempée, votre plaisir jaillissant en elle pendant qu’elle vous mord l’épaule pour étouffer son propre rire."),
-    ),
-    S(
-      N("Le contretemps vous emporte. Hylee monte, l’ombre descend, et votre plaisir éclate des deux côtés en même temps : en elle, et autour de l’ombre qui ne s’arrête qu’au tout dernier frisson. Vous criez quelque chose qui ressemble au nom de Naïah et à celui d’Hylee mal mélangés."),
-      H("C’était mon nom. Il y avait plus de lettres de mon nom.", "teasing"),
-      A("C’était surtout le mien."),
-      N("Hylee jouit à son tour, quelques secondes plus tard, vos doigts et les siens sur sa perle de plaisir, la tête renversée en arrière, le givre éclatant dans l’herbe autour de vous."),
     ),
   ),
   ex12: S(
@@ -444,7 +376,6 @@ const H2: HNSeed = {
   labels: {
     femme: "Deux contre une, puis plus personne — trahir Hylee pour Naïah, puis trahir Naïah pour Hylee",
     homme: "Deux contre une, puis plus personne — changer de camp au mauvais moment et en payer le prix",
-    intersexe: "Deux contre une, puis plus personne — jouer les deux camps comme votre corps joue les deux rythmes",
   },
   detail: "Hylee vous recrute contre Naïah, Naïah vous recrute contre Hylee, puis les alliances basculent à chaque souffle. Une bataille au bord du bassin où personne ne sait plus qui gagne.",
   climax: { tendre: 9, suggestif: 9, explicite: 10, ellipse: 8 },
@@ -459,7 +390,6 @@ const H2: HNSeed = {
     X(
       S(N("Vous passez dans le camp de Naïah. Ensemble, vous déshabillez Hylee qui vous insulte en soulevant les hanches pour vous aider ; votre tunique rejoint la sienne dans l’herbe."), A("Elle déteste qu’on commence par la hanche.")),
       S(N("Vous passez dans le camp de Naïah. Ensemble, vous déshabillez Hylee qui vous insulte en vous aidant ; quand votre chemise tombe, elle remarque votre désir et retrouve son sourire."), H("Ton corps sait pour qui il est là.", "teasing")),
-      S(N("Vous passez dans le camp de Naïah. Ensemble, vous déshabillez Hylee qui vous insulte avec application, puis se tait en découvrant votre corps qui répond de deux façons."), H("Même ton corps joue double.", "teasing")),
     ),
     S(N("Naïah guide votre main au creux de la hanche d’Hylee, puis plus bas. Votre bouche suit le chemin. Hylee renverse la tête dans l’herbe ; son juron se brise en gémissement."), A("Tu vois ? Elle ne se défend plus.")),
     S(N("Hylee chuchote à l’oreille de Naïah, qui se retourne contre vous. Le conseil était faux : sa première caresse vous fait rire. Vexée, elle regarde comment Hylee s’y prend, corrige, et cette fois vous coupe le souffle."), A("Elle m’a menti !", "angry"), H("Évidemment.", "teasing")),
@@ -467,7 +397,6 @@ const H2: HNSeed = {
     X(
       S(N("Hylee se venge avec des doigts glacés qui vous font crier, pendant qu’une ombre de Naïah trace des cercles sur votre perle de plaisir. Votre plaisir éclate dans l’herbe trempée ; vos doigts et l’ombre de Naïah emportent Hylee juste après.")),
       S(N("Hylee se venge en vous chevauchant, immobile tout au fond, pendant que Naïah, derrière elle, effleure sa perle de plaisir. Hylee jouit en jurant et en riant ; vous la suivez une seconde plus tard.")),
-      S(N("Hylee vous chevauche pendant qu’une ombre de Naïah se glisse dans votre chaleur à contretemps. Votre plaisir éclate des deux côtés ; Hylee jouit à son tour sous vos doigts, le givre éclatant dans l’herbe.")),
     ),
     h2.ex12, h2.ex13,
     S(N("Le soleil a glissé derrière les arbres. Hylee s’étire, chemise ouverte. Dans votre poche, une petite ombre roulée en boule fait semblant de dormir."), A("Revanche. Demain. Mêmes équipes."), H("Il n’y a jamais eu d’équipes.", "teasing")),
@@ -481,7 +410,6 @@ const H2: HNSeed = {
     X(
       S(N("Vous déshabillez Hylee à deux, lentement. Elle proteste, puis se laisse faire ; vos tuniques rejoignent l’herbe, vos peaux se trouvent sous le saule.")),
       S(N("Vous déshabillez Hylee à deux, lentement. Elle proteste, puis sourit en sentant votre désir contre sa cuisse quand vous vous allongez près d’elle.")),
-      S(N("Vous déshabillez Hylee à deux, lentement. Elle proteste, puis découvre votre corps avec une curiosité qu’elle ne cherche même plus à cacher.")),
     ),
     S(N("Naïah vous apprend Hylee : le creux de la hanche, la nuque, la façon dont elle retient son souffle avant de céder. Vos baisers suivent ses indications ; Hylee cesse de protester."), H("Tu lui révèles tout. Je te déteste.", "soft")),
     S(N("Hylee souffle un faux conseil à Naïah, qui l’essaie sur vous : vous riez. Vexée trois secondes, elle observe, puis trouve seule la caresse juste."), A("Elle m’a menti.", "angry")),
@@ -499,7 +427,6 @@ const H2: HNSeed = {
     X(
       S(N("Hylee, déshabillée par vous deux, jure qu’elle retient chaque seconde.")),
       S(N("Hylee, déshabillée par vous deux, remarque votre désir et retrouve son sourire.")),
-      S(N("Hylee, déshabillée par vous deux, découvre votre corps et déclare qu’il joue double.")),
     ),
     S(N("Naïah vous apprend où toucher Hylee. Puis Hylee lui souffle un faux conseil, et c’est vous qui riez."), A("Elle m’a menti !", "angry")),
     S(N("Une étreinte sans ruse désarme Naïah. Plus personne ne sait dans quel camp il est.")),
@@ -562,12 +489,6 @@ const h3 = {
       H("Deux.", "teasing"),
       A("Elle triche. Elle sait ce que tu aimes. Moi, pas encore."),
     ),
-    S(
-      N("Les vêtements tombent par paliers, comme des mises. Votre tunique contre deux disques, la ceinture d’Hylee contre un juron, la manche restante de Naïah contre rien du tout, parce qu’elle veut voir ce que vous allez faire."),
-      N("Hylee vous allonge sur la glace couverte de sa chemise, referme une main sur votre sexe et glisse l’autre plus bas, contre vos replis, sans y entrer. Juste pour peser. Vous gémissez. Elle compte."),
-      H("Deux. Et je n’ai même pas commencé.", "teasing"),
-      A("Elle triche. Elle a deux mains et tu as deux réponses. Moi, je n’ai pas encore la carte."),
-    ),
   ),
   ex7: X(
     S(
@@ -582,12 +503,6 @@ const h3 = {
       H("Un rire. Un disque pour moi.", "teasing"),
       N("Naïah, vexée trois secondes, se tait. Elle ne regarde plus la main d’Hylee ; elle regarde votre ventre, votre gorge, ce qui bouge chez vous et quand."),
     ),
-    S(
-      N("Naïah décide de rattraper son retard. Elle s’allonge contre votre flanc, observe les mains d’Hylee et copie la plus visible : une caresse le long de votre vigueur, au même rythme. Rien de plus qu’un soupir poli. Pire : quand elle insiste, vous riez."),
-      A("Pourquoi ça marche quand c’est elle ?", "angry"),
-      H("Parce que je ne fais pas qu’une chose. Un disque pour moi.", "teasing"),
-      N("Naïah, vexée trois secondes, se tait. Elle regarde l’autre main d’Hylee, celle qui pèse plus bas sans bouger, et comprend que tout se joue là."),
-    ),
   ),
   ex8: X(
     S(
@@ -598,11 +513,6 @@ const h3 = {
     S(
       N("Elle recommence, mais sans copier. Pendant qu’Hylee vous tient, l’ombre de Naïah se glisse sous vous, au creux des reins, et y appuie au moment exact où la main d’Hylee remonte. Votre gémissement est long, sans équivoque."),
       A("Je ne suis pas elle. Il fallait faire autre chose, pas mieux."),
-      H("Deux disques. Pour elle. Je déteste ce barème.", "angry"),
-    ),
-    S(
-      N("Elle recommence, mais sans copier. Elle laisse la main d’Hylee où elle est et glisse une ombre en vous, juste sous la paume immobile, en la faisant bouger quand Hylee s’arrête. Votre gémissement est long, sans équivoque."),
-      A("Elle joue la mélodie. Moi, l’accompagnement. Ça s’appelle de l’harmonie."),
       H("Deux disques. Pour elle. Je déteste ce barème.", "angry"),
     ),
   ),
@@ -633,12 +543,6 @@ const h3 = {
       H("Naïah… !", "surprised"),
       A("Elle a dit mon nom. C’est moi qui touche tout le tas, alors. Par symétrie."),
     ),
-    S(
-      N("Hylee profite du désordre pour reprendre la main. Elle vous enjambe et vous prend en elle, lente, pendant que l’ombre de Naïah vous quitte pour se glisser en elle et que vos doigts trouvent son bouton. Hylee perd le compte, la piste, le barème. Le givre court de ses genoux sur la dalle."),
-      N("Elle jouit en criant un nom. Pas le vôtre. Pas le sien."),
-      H("Naïah… !", "surprised"),
-      A("Elle a dit mon nom. C’est moi qui touche tout le tas, alors. Par symétrie."),
-    ),
   ),
   ex12: X(
     S(
@@ -649,12 +553,6 @@ const h3 = {
     ),
     S(
       N("Personne n’a le temps de contester. Hylee recommence à bouger sur vous, l’ombre de Naïah appuie de nouveau au creux de vos reins, et votre plaisir éclate en elle, si fort que la dalle craque sous vous trois."),
-      N("La glace cède. Vous glissez tous les trois dans l’eau peu profonde du bord, emmêlés, en criant, puis en riant, le bassin tiède sur vos peaux brûlantes."),
-      P("Hylee…"),
-      H("Tout le tas. Merci.", "teasing"),
-    ),
-    S(
-      N("Personne n’a le temps de contester. Hylee recommence à bouger sur vous, l’ombre de Naïah revient en vous et joue l’accompagnement, et votre plaisir éclate des deux côtés à la fois, si fort que la dalle craque sous vous trois."),
       N("La glace cède. Vous glissez tous les trois dans l’eau peu profonde du bord, emmêlés, en criant, puis en riant, le bassin tiède sur vos peaux brûlantes."),
       P("Hylee…"),
       H("Tout le tas. Merci.", "teasing"),
@@ -680,7 +578,6 @@ const H3: HNSeed = {
   labels: {
     femme: "Chacun son score — compter les rires et les soupirs sur une dalle de glace",
     homme: "Chacun son score — jouer contre le barème d’Hylee sans dire son nom",
-    intersexe: "Chacun son score — laisser Naïah lire vos deux réponses avant de marquer",
   },
   detail: "Hylee gèle une dalle sur l’eau et fixe un barème : rire, gémissement, juron, nom. Vous ajoutez une règle contre les ombres de Naïah. La comptabilité devient une guerre ouverte jusqu’à ce que la glace cède.",
   climax: { tendre: 9, suggestif: 9, explicite: 11, ellipse: 8 },
@@ -695,19 +592,16 @@ const H3: HNSeed = {
     X(
       S(N("Les vêtements tombent comme des mises. Sur la glace couverte d’une chemise, la bouche d’Hylee trouve votre sein ; vous gémissez, elle compte."), H("Deux.", "teasing")),
       S(N("Les vêtements tombent comme des mises. Sur la glace couverte d’une chemise, la main d’Hylee se referme sur votre désir ; vous gémissez, elle compte."), H("Deux.", "teasing")),
-      S(N("Les vêtements tombent comme des mises. Les deux mains d’Hylee jouent sur vos deux foyers ; vous gémissez, elle compte."), H("Deux. Et je n’ai pas commencé.", "teasing")),
     ),
     X(
       S(N("Naïah copie Hylee : rien, sinon un rire. Vexée, elle observe, puis invente autre chose, au creux de votre cou, une ligne lente au lieu d’un cercle. Votre gémissement la fait sourire."), A("Je ne suis pas elle. Il fallait faire autre chose.")),
       S(N("Naïah copie la cadence d’Hylee avec une ombre : la fraîcheur vous fait rire. Vexée, elle observe, puis appuie au creux de vos reins au bon moment. Votre gémissement la fait sourire."), A("Je ne suis pas elle. Il fallait faire autre chose.")),
-      S(N("Naïah copie la main la plus visible d’Hylee : un soupir poli, puis un rire. Vexée, elle regarde l’autre main, immobile plus bas, et joue l’accompagnement. Votre gémissement la fait sourire."), A("Elle joue la mélodie. Moi, l’accompagnement.")),
     ),
     S(N("Naïah se tourne vers Hylee : le creux de la hanche, le sursaut attendu, puis une ombre patiente sur sa perle de plaisir. Hylee tient deux secondes avant de lâcher un juron magnifique."), A("Trois disques.")),
     S(N("Vous attrapez une ombre distraite et la faites courir sous les côtes de Naïah, qui se plie de rire."), H("Règle de {player}. Elle rend tout.", "teasing"), A("C’est de l’acharnement juridique !", "laugh")),
     X(
       S(N("Hylee jouit contre vous en criant le nom de Naïah ; puis la paume de Naïah et la bouche d’Hylee vous emportent à votre tour, si fort que la dalle cède. Vous glissez tous les trois dans l’eau tiède en riant.")),
       S(N("Hylee vous chevauche et jouit en criant le nom de Naïah ; vous la suivez quelques souffles plus tard, si fort que la dalle cède. Vous glissez tous les trois dans l’eau tiède en riant.")),
-      S(N("Hylee vous chevauche et jouit en criant le nom de Naïah ; l’ombre et ses hanches vous emportent des deux côtés à la fois, si fort que la dalle cède. Vous glissez tous les trois dans l’eau tiède.")),
     ),
     h3.ex13, h3.ex14,
   ],
@@ -720,7 +614,6 @@ const H3: HNSeed = {
     X(
       S(N("Les vêtements tombent comme des mises. Hylee vous allonge sur la glace couverte de sa chemise et embrasse votre poitrine, sans hâte, en guettant chaque soupir pour le compter.")),
       S(N("Les vêtements tombent comme des mises. Hylee vous allonge sur la glace couverte de sa chemise et se presse contre vous, attentive au moindre souffle qu’elle pourrait compter.")),
-      S(N("Les vêtements tombent comme des mises. Hylee vous allonge sur la glace couverte de sa chemise et découvre votre corps à deux mains, en guettant ce qu’il lui répond.")),
     ),
     S(N("Naïah copie Hylee et vous fait rire. Vexée trois secondes, elle observe, puis invente sa propre caresse, au creux de votre cou. Cette fois, vous soupirez."), A("Je ne suis pas elle. Il fallait faire autre chose.")),
     S(N("Elle se tourne vers Hylee et pose une ombre au creux de sa hanche. Le sursaut est immédiat, le juron aussi."), A("Trois disques.")),
@@ -738,7 +631,6 @@ const H3: HNSeed = {
     X(
       S(N("Les vêtements tombent comme des mises ; la bouche d’Hylee sur votre poitrine vous arrache un premier soupir.")),
       S(N("Les vêtements tombent comme des mises ; la main d’Hylee vous arrache un premier soupir.")),
-      S(N("Les vêtements tombent comme des mises ; les deux mains d’Hylee vous arrachent un premier soupir.")),
     ),
     S(N("Naïah copie, échoue, se vexe, observe, et trouve autre chose."), A("Je ne suis pas elle.")),
     S(N("Le juron d’Hylee fait taire les grenouilles. Trois disques.")),

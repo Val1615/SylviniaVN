@@ -49,7 +49,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Quand vous êtes nue contre la colonne, le marbre froid dans le dos et sa bouche chaude sur votre sein, elle glisse un genou entre vos cuisses et appuie, juste assez pour que votre chaleur vienne la chercher.",
           "Quand vous êtes nu contre la colonne, le marbre froid dans le dos et sa bouche chaude sur votre gorge, elle presse sa cuisse contre votre virilité dressée et appuie, juste assez pour vous arracher un grognement.",
-          "Quand vous êtes nu·e contre la colonne, le marbre froid dans le dos et sa bouche chaude sur votre gorge, elle glisse sa cuisse entre les vôtres et appuie, contre tout ce que vous avez de sensible à la fois, juste assez pour vous arracher un son.",
         ),
       ],
       [
@@ -102,7 +101,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Elle se penche, et ses seins frôlent les vôtres, pointe contre pointe, pendant que ses doigts descendent tracer un cercle très lent autour de votre perle de plaisir, sans jamais la toucher tout à fait.",
           "Elle se penche, ses seins frôlant votre poitrine, et son sexe vient se poser sur le vôtre sans le prendre, glissant d’avant en arrière, humide et brûlante, juste pour vous montrer ce que vous n’aurez pas encore.",
-          "Elle se penche, ses seins frôlant votre poitrine, et son sexe vient glisser le long du vôtre, dressé, sans le prendre, tandis que sa main descend plus bas tracer un cercle lent autour de votre fente, sans y entrer.",
         ),
       ],
       [
@@ -127,7 +125,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Ses doigts sont enfin en vous, deux, puis trois, et son pouce reste posé tout en haut, sans bouger. C’est son aura qui fait le reste : chaque battement de votre cœur se répercute sous son pouce comme une caresse que personne ne donne.",
           "Sa main enserre enfin votre virilité, immobile. C’est son aura qui fait le reste : chaque battement de votre cœur se répercute dans sa paume comme une caresse que personne ne donne, et elle sourit en sentant votre vigueur tressaillir toute seule.",
-          "Une de ses mains vous enserre, l’autre est entrée en vous juste dessous, et aucune ne bouge. C’est son aura qui fait le reste : chaque battement de votre cœur se répercute aux deux endroits comme une caresse que personne ne donne.",
         ),
         B("Dis-moi ce que tu as laissé là-haut pour moi.", "thoughtful"),
         P("Une carte. Une plume. Une chaise vide."),
@@ -150,7 +147,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Sa bouche remplace son pouce, ses doigts se remettent à bouger en vous, et cette fois elle ne ralentit plus. Vous jouissez sous les lustres roses, les talons enfoncés dans le divan, en criant quelque chose qui pourrait être son nom.",
           "Sa bouche prend le relais de sa main et descend sur votre virilité jusqu’au bout, et cette fois elle ne ralentit plus. Vous jouissez sous les lustres roses, une main crispée sur le bord du divan, en criant quelque chose qui pourrait être son nom.",
-          "Sa bouche vous prend pendant que ses doigts se remettent à bouger en vous, et cette fois elle ne ralentit plus. Vous jouissez des deux côtés à la fois sous les lustres roses, en criant quelque chose qui pourrait être son nom.",
         ),
         "L’orchestre invisible, quelque part, laisse tomber son archet.",
       ],
@@ -174,7 +170,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Elle s’installe sur votre cuisse, mouillée contre votre peau, et se frotte contre vous en longs mouvements appliqués, le bassin roulant, jusqu’à ce que votre propre plaisir, à peine retombé, recommence à monter contre sa cuisse à elle.",
           "Elle vous reprend en main, vous ranime en quelques caresses expertes, et descend sur votre virilité avec une lenteur provocante. Puis elle bouge sur vous avec la patience de quelqu’un qui a tout son temps et qui tient à le faire savoir à la bataille de demain.",
-          "Elle vous ranime en quelques caresses expertes et vous reprend en elle avec une lenteur provocante, ses doigts revenant fouiller vos replis encore sensibles. Puis elle bouge sur vous avec la patience de quelqu’un qui a tout son temps et qui tient à le faire savoir à la bataille de demain.",
         ),
       ],
       [
@@ -198,7 +193,6 @@ export const COALITION_ROUTE: AuthoredRoute = {
         X(
           "Votre main glisse de sa hanche jusqu’à son bouton gonflé, et vous la caressez exactement au rythme de son bassin, sans rien imposer, en suivant. Elle vous regarde, surprise, ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
           "Votre pouce quitte sa hanche pour le haut de son sexe pendant qu’elle se soulève et retombe sur vous, et vous la caressez exactement à son rythme, sans rien imposer. Elle vous regarde, surprise, ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
-          "Votre main quitte sa hanche pour la toucher là où elle brûle pendant qu’elle se soulève et retombe sur vous, et vous la caressez exactement à son rythme, sans rien imposer. Elle vous regarde, surprise, ouvre la bouche pour reprendre l’avantage, puis ne dit rien.",
         ),
         "Elle jouit dans un souffle qui ressemble à un aveu, se resserrant contre vous, et vous l’accompagnez de l’autre côté. Au-dessus de vous, un lustre entier s’embrase, toutes ses bougies montant d’un coup jusqu’au plafond.",
         B("…Tu viens de faire quelque chose.", "thoughtful"),

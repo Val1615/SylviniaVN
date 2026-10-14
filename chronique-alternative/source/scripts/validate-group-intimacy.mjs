@@ -52,7 +52,7 @@ const hrContextIds = [
   "group-date-hylee-remerii-wind",
   "group-date-hylee-remerii-home",
 ];
-const sexes = ["femme", "homme", "intersexe"];
+const sexes = ["femme", "homme"];
 const modes = ["tendre", "suggestif", "explicite", "ellipse"];
 const informalLineva = /(?<![\p{L}\p{M}])(?:tu|te|toi|ton|ta|tes)(?![\p{L}\p{M}])|(?<![\p{L}\p{M}])t[’']/iu;
 const contraceptiveLanguage = /\b(?:préservatifs?|contracepti\w*|prophylacti\w*|se protéger avant|protection intime|protection contre une grossesse)\b/iu;
@@ -66,11 +66,11 @@ try {
 
   const report = catalog.validateGroupIntimacyCatalog();
   assert.equal(report.pairs, 16);
-  assert.equal(report.combinations, 48);
-  assert.equal(report.routes, 144);
+  assert.equal(report.combinations, 32); // femme et homme seulement
+  assert.equal(report.routes, 96);
   assert.equal(report.dates, 15);
   assert.equal(report.games, 16);
-  assert.ok(report.chapters >= 5160, `minimum 5160 séquences, ${report.chapters} obtenues`);
+  assert.ok(report.chapters >= 3440, `minimum 3440 séquences (femme et homme), ${report.chapters} obtenues`);
   assert.doesNotMatch(groupSource, /sequence\.length\s*!==\s*8/u, "huit doit rester un minimum, jamais un maximum");
   assert.match(groupSource, /isHyleeNaiahManualContext\(pairId\) \? 12 : 8/u, "le minimum de huit séquences (douze pour Hylee/Naïah) doit être validé");
   assert.match(groupSource, /sequence\.length\s*<\s*minimumSequences/u, "le minimum de séquences doit être un plancher");
@@ -115,7 +115,7 @@ try {
 
   const manualRoutes = contextIds.flatMap((contextId) => sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
   const requiredWomanManScenes = contextIds.flatMap((contextId) => ["femme", "homme"].flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
-  assert.equal(manualRoutes.length, 27, "18 scènes femme/homme et 9 variantes intersexes statiques requises");
+  assert.equal(manualRoutes.length, 18, "18 scènes femme/homme requises");
   assert.equal(requiredWomanManScenes.length, 18, "les dix-huit scènes demandées doivent exister");
   assert.ok(manualRoutes.every((route) => route.manual === true), "chaque route Lineva/Allenna doit être marquée comme littérature manuelle");
 
@@ -215,7 +215,7 @@ try {
   assert.doesNotMatch(homeSource, /\b(?:mission|rapport|protocole|paramètres?|stratégie|commandement|entraînement|exercice|amarres?|manœuvres?|poste de garde|relève de la garde)\b/iu, "le logis reprend un vocabulaire professionnel ou militaire");
 
   const hrRoutes = hrContextIds.flatMap((contextId) => sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
-  assert.equal(hrRoutes.length, 27, "les trois rendez-vous Hylee/Remerii doivent fournir trois routes pour chacun des trois corps");
+  assert.equal(hrRoutes.length, 18, "les trois rendez-vous Hylee/Remerii doivent fournir trois routes pour chacun des deux corps");
   assert.ok(hrRoutes.every((route) => route.manual === true), "chaque route Hylee/Remerii doit être manuelle");
   for (const contextId of hrContextIds) {
     const context = catalog.groupIntimacyContextById(contextId);
@@ -251,9 +251,7 @@ try {
     for (let index = 0; index < 3; index += 1) {
       const woman = catalog.groupIntimacyRoutes(contextId, "femme")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
       const man = catalog.groupIntimacyRoutes(contextId, "homme")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
-      const intersex = catalog.groupIntimacyRoutes(contextId, "intersexe")[index].chapters.explicite.flat().map((line) => line.text).join("\n");
       assert.notEqual(woman, man, `${contextId}/${index}: variantes femme/homme clonées`);
-      assert.notEqual(woman, intersex, `${contextId}/${index}: variante intersexe clonée`);
     }
   }
   const hrContextVocabulary = {
@@ -271,15 +269,15 @@ try {
   const generatedHrRegistry = groupSource.slice(groupSource.indexOf("const PAIR_ROUTE_DATA"), groupSource.indexOf("function buildGroupRoute"));
   assert.doesNotMatch(generatedHrRegistry, /group-date-hylee-remerii-(?:free-day|wind|home)/u, "les nouveaux rendez-vous Hylee/Remerii figurent encore dans le générateur ancien");
 
-  // Hylee / Naïah : trois rendez-vous autonomes, 27 routes manuelles, 12+ séquences.
+  // Hylee / Naïah : trois rendez-vous autonomes, 18 routes manuelles, 12+ séquences.
   const hnCatalog = await server.ssrLoadModule("/src/hylee-naiah-group-intimacy.ts");
   const hnReport = hnCatalog.validateHyleeNaiahIntimacy();
-  assert.equal(hnReport.routes, 27, "Hylee/Naïah : 27 routes attendues (3 contextes × 3 branches × 3 corps)");
+  assert.equal(hnReport.routes, 18, "Hylee/Naïah : 18 routes attendues (3 contextes × 3 branches × 2 corps)");
   assert.ok(hnReport.explicitWords.min >= 1000, `Hylee/Naïah : scène explicite trop courte (${hnReport.explicitWords.min} mots)`);
   const legacyHN = catalog.GROUP_DATES.find((date) => date.id === "group-date-hylee-naiah");
   assert.ok(!legacyHN || legacyHN.legacyOnly === true, "l’ancien rendez-vous Hylee/Naïah doit rester en compatibilité seulement");
   const hnRoutes = hnContextIds.flatMap((contextId) => sexes.flatMap((sex) => catalog.groupIntimacyRoutes(contextId, sex)));
-  assert.equal(hnRoutes.length, 27);
+  assert.equal(hnRoutes.length, 18);
   assert.ok(hnRoutes.every((route) => route.manual === true && route.progression), "chaque route Hylee/Naïah doit être manuelle et porter sa progression");
   const hnBannedAnatomy = /\b(?:chatte|bite|pénis|vagins?|anus|testicules?|clitoris|vulves?)\b/iu;
   for (const contextId of hnContextIds) {
@@ -303,9 +301,8 @@ try {
       }
     }
     for (let index = 0; index < 3; index += 1) {
-      const [woman, man, intersex] = sexes.map((sex) => catalog.groupIntimacyRoutes(contextId, sex)[index].chapters.explicite.flat().map((line) => line.text).join("\n"));
+      const [woman, man] = sexes.map((sex) => catalog.groupIntimacyRoutes(contextId, sex)[index].chapters.explicite.flat().map((line) => line.text).join("\n"));
       assert.notEqual(woman, man, `${contextId}/${index}: variantes femme/homme clonées`);
-      assert.notEqual(woman, intersex, `${contextId}/${index}: variante intersexe clonée`);
     }
   }
   const hnSignatures = hnRoutes.map((route) => route.chapters.explicite.flat().map((line) => `${line.speaker}:${line.text}`).join("\n"));
@@ -321,7 +318,7 @@ try {
   const groupClose = pageSource.slice(pageSource.indexOf("function closeGroupIntimacy"), pageSource.indexOf("function replayDateIntimacy"));
   assert.match(groupClose, /completed && !modal\.replay/u, "une relecture ne doit écrire aucun drapeau");
 
-  console.log(`[Intimité de groupe] Lineva/Allenna préservées · Hylee/Remerii : 27 routes · Hylee/Naïah : ${hnReport.routes} routes, ${hnReport.sequences} séquences, explicite ${hnReport.explicitWords.min}–${hnReport.explicitWords.max} mots · ${report.chapters} séquences cataloguées.`);
+  console.log(`[Intimité de groupe] Lineva/Allenna préservées · Hylee/Remerii : 18 routes · Hylee/Naïah : ${hnReport.routes} routes, ${hnReport.sequences} séquences, explicite ${hnReport.explicitWords.min}–${hnReport.explicitWords.max} mots · ${report.chapters} séquences cataloguées.`);
 } finally {
   await server.close();
 }

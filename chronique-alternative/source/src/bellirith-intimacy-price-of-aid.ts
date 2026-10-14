@@ -49,7 +49,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Quand vous êtes nue devant elle et devant ses douze reflets, elle recule d’un pas pour mieux voir. Ses yeux s’attardent sur vos seins, sur le pli de votre aine, sur la manière dont vos cuisses se serrent malgré vous.",
           "Quand vous êtes nu devant elle et devant ses douze reflets, elle recule d’un pas pour mieux voir. Ses yeux descendent sans pudeur jusqu’à votre virilité déjà à demi dressée, et elle hausse un sourcil ravi.",
-          "Quand vous êtes nu·e devant elle et devant ses douze reflets, elle recule d’un pas pour mieux voir. Son regard s’arrête sur votre sexe à demi dressé, puis sur le pli humide juste en dessous, et elle a l’air d’une joueuse qui découvre qu’on lui a donné deux cartes maîtresses au lieu d’une.",
         ),
         B("Regarde-toi. Non, pas moi. Toi. Tu as l’air de quelqu’un qui a très envie de désobéir.", "seductive"),
       ],
@@ -101,7 +100,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Sa main descend et se pose sur vous, à plat, sans bouger. Juste le poids. Vous sentez votre propre pouls battre contre sa paume, et elle le sent aussi. Puis un doigt trouve votre perle de plaisir et l’effleure une fois, une seule, avant de repartir vers votre genou.",
           "Sa main descend sous votre nombril et se referme autour de votre virilité, sans bouger. Juste le poids, la chaleur, la promesse. Vous vous durcissez entièrement contre sa paume, et elle le sent, et elle le dit. Puis elle desserre les doigts et repart vers votre genou.",
-          "Sa main descend sous votre nombril, se referme une seconde autour de vous, puis glisse plus bas, sur la fente cachée, comme pour vérifier les deux réponses. Elle ne bouge pas. Elle écoute votre pouls battre à deux endroits à la fois, puis repart vers votre genou avec un petit rire satisfait.",
         ),
         B("Pas encore. Tu n’as pas assez attendu pour moi.", "teasing"),
       ],
@@ -130,7 +128,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Ses doigts reviennent, glissent en vous, trempés, remontent tout en haut et y tracent des cercles lents, parfaitement réguliers. Vos hanches se soulèvent d’elles-mêmes. Elle les accompagne d’abord, puis ralentit au moment exact où vous alliez basculer.",
           "Sa main se referme de nouveau sur votre virilité dressée et la parcourt de la racine au sommet, lentement, avec une pression qui change à chaque passage, comme si elle accordait un instrument. Vos hanches poussent d’elles-mêmes. Elle les accompagne, puis ralentit au moment exact où vous alliez basculer.",
-          "Une de ses mains vous empoigne, l’autre glisse plus bas, là où vous êtes devenu·e humide, et elle les fait travailler sur deux rythmes différents qui ne se rejoignent jamais tout à fait. Vos hanches ne savent plus quoi suivre. Elle ralentit les deux en même temps, au moment exact où vous alliez basculer.",
         ),
         "Tout s’arrête : ses mains, le parfum, la chaleur. Vous restez suspendu·e au bord, haletant·e, les doigts crispés sur le cadre doré, et elle vous regarde dans le miroir avec une immense satisfaction.",
         P("Tu es cruelle."),
@@ -163,7 +160,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Elle écarte vos cuisses de ses deux mains et pose sa bouche sur vous. Sa langue vous trouve sans chercher, s’enroule, se retire, revient. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle remonte embrasser l’intérieur de votre cuisse.",
           "Elle prend votre virilité dans sa bouche, lentement, centimètre par centimètre, en vous regardant faire dans le miroir. Sa langue s’enroule au sommet, ses lèvres descendent, remontent. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle vous relâche pour embrasser l’intérieur de votre cuisse.",
-          "Elle vous prend dans sa bouche, lentement, pendant que deux de ses doigts reviennent en vous, en mesure. Sa langue et sa main se répondent. Elle prend son temps comme d’autres prennent possession d’un territoire, et chaque fois que vous approchez du sommet, elle vous relâche pour embrasser l’intérieur de votre cuisse.",
         ),
         "Ce qu’elle fait vous arrache un son que vous ne vous connaissiez pas. Elle relève la tête juste assez pour vous sourire.",
         B("Encore un. Je les collectionne.", "seductive"),
@@ -211,7 +207,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Le plaisir vous emporte d’un coup. Vous vous resserrez en vagues autour de rien, vos cuisses se referment sur ses épaules, et elle ne vous lâche pas : sa langue reste sur vous jusqu’au bout, jusqu’à ce que la dernière secousse vous laisse sans force.",
           "Le plaisir vous emporte d’un coup. Vous jouissez dans sa bouche, les doigts perdus dans ses cheveux, et elle ne vous lâche pas : elle vous garde jusqu’au bout, jusqu’à ce que la dernière secousse vous laisse sans force contre les coussins.",
-          "Le plaisir vous emporte d’un coup, des deux côtés à la fois. Vous vous libérez contre sa langue tandis que vos chairs se resserrent autour de ses doigts, et elle ne vous lâche pas : elle vous garde jusqu’au bout, jusqu’à ce que la dernière secousse vous laisse sans force.",
         ),
         "Les miroirs tremblent, ou c’est vous. Elle remonte se coucher contre votre flanc, essuie sa lèvre du pouce, et regarde votre visage dans le miroir avec une attention presque studieuse.",
         B("Voilà ce que tu fais quand tu n’as plus de mots. Je voulais le savoir depuis la salle d’audience.", "thoughtful"),
@@ -262,7 +257,6 @@ export const PRICE_OF_AID_ROUTE: AuthoredRoute = {
         X(
           "Elle s’ajuste contre vous, sexe contre sexe, et commence à bouger en longs mouvements glissés. Vos deux sexes se trouvent, se perdent, se retrouvent ; elle guide votre main entre vous pour que vos doigts fassent le reste.",
           "Elle prend votre virilité d’une main, la guide en elle et descend lentement, jusqu’au bout, avec un long soupir appliqué. Puis elle ne bouge plus. Elle attend que vous la suppliiez du regard, et seulement alors elle commence à onduler.",
-          "Elle vous prend d’une main, vous guide en elle et descend lentement, jusqu’au bout. De l’autre main, elle revient chercher la fente sous votre sexe, comme pour ne rien laisser de vous inoccupé, et commence à onduler sur deux rythmes qui finissent par n’en faire qu’un.",
         ),
         B("Regarde-moi. Pas les miroirs. Moi.", "seductive"),
         "Elle bouge lentement, puis moins lentement. Son aura se répand dans toute la pièce, et vous sentez son désir à elle pour la première fois, brûlant, et qui lui échappe un peu.",

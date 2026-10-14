@@ -92,7 +92,6 @@ export const HEURE_AUBERGE: HeureVolee = {
           X(
             "Elle défait votre chemise et la laisse glisser de vos épaules. Le soleil tombe sur vos seins nus ; elle les regarde dans cette lumière franche avec une attention presque grave, puis les prend dans ses paumes chaudes.",
             "Elle défait votre chemise, la laisse glisser de vos épaules, puis pose la main sur votre pantalon, à l’endroit où votre désir se dresse déjà, et le serre à travers le tissu sans vous quitter des yeux.",
-            "Elle défait votre chemise, puis pose la main sur votre pantalon et vous découvre dur sous ses doigts. Elle descend un peu plus bas, jusqu’à la chaleur qui l’attend aussi, et hausse un sourcil ravi.",
           ),
           W(SLEPT, [B("Tu m’as déjà vue nue sous toutes les lumières de la nuit. Le jour, c’est autre chose, hein ?", "smirk")], [B("Tu ne m’as jamais vue sous aucune lumière. Commence par la plus cruelle.", "smirk")]),
         ],
@@ -168,7 +167,6 @@ export const HEURE_AUBERGE: HeureVolee = {
           X(
             "Elle s’agenouille devant vous, vous ouvre de ses paumes et vous embrasse là où vous êtes le plus chaud·e. Sa langue s’enroule autour du point qui vous fait tressaillir, ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
             "Elle s’agenouille devant vous, vous prend dans sa main, vous caresse de la base jusqu’à la pointe puis referme ses lèvres sur vous. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
-            "Elle s’agenouille devant vous, vous prend entre ses lèvres et pose deux doigts à l’entrée de votre chaleur, sans y entrer. Elle ralentit dès que vous gémissez, reprend dès que vous vous taisez, jusqu’à ce que vous compreniez son jeu.",
           ),
           B("Tu m’as entendue. Maintenant, c’est mon tour d’écouter. Plus fort.", "seductive"),
         ],
@@ -193,7 +191,6 @@ export const HEURE_AUBERGE: HeureVolee = {
           X(
             "Elle colle sa chaleur contre la vôtre et se met à onduler, lentement, vos deux intimités glissant l’une contre l’autre, sa main entre vous pour vous ouvrir et vous presser à la fois. Elle vous regarde fondre et ne détourne pas les yeux.",
             "Elle vous prend dans sa main, vous guide et s’abaisse sur vous jusqu’au bout, avec un long soupir. Elle reste un instant immobile, bien droite, à vous regarder fondre, puis commence à monter et descendre sur votre virilité.",
-            "Elle guide votre vigueur en elle et s’abaisse jusqu’au bout, puis glisse une main entre vous pour caresser votre chaleur au même rythme. Elle vous regarde fondre des deux côtés et ne détourne pas les yeux.",
           ),
           "Le lit se met à cogner contre le mur. Au bout d’un moment, le voisin cogne en retour. Bellirith répond de trois coups de poing contre la cloison sans cesser de bouger, et vous riez tous les deux contre la bouche de l’autre.",
         ],
@@ -211,7 +208,6 @@ export const HEURE_AUBERGE: HeureVolee = {
           X(
             "Ses doigts trouvent votre perle au troisième coup et vous jouissez en vous arquant contre elle. Elle vous suit au quatrième, frottée contre vous, la bouche ouverte sans un son.",
             "Vous jouissez en elle au troisième coup, les mains serrées sur ses hanches. Elle vous suit au quatrième, contractée autour de vous, la bouche ouverte sans un son.",
-            "Au troisième coup, vous jouissez en elle pendant que ses doigts vous font basculer de l’autre côté aussi. Elle vous suit au quatrième, contractée autour de vous, la bouche ouverte sans un son.",
           ),
         ],
         ["L’heure sonne. Vous basculez au troisième coup, elle au quatrième."],

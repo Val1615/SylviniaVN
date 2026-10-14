@@ -74,7 +74,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Quand vous êtes nue sous le ciel de sa ville, elle recule pour vous contempler. Les néons font briller la pointe de vos seins, l’arrondi de vos hanches, l’ombre humide entre vos cuisses. Elle fait claquer sa langue, ravie.",
           "Quand vous êtes nu sous le ciel de sa ville, elle recule pour vous contempler. Les néons dessinent votre torse, votre ventre, votre virilité tendue vers elle sans aucune retenue. Elle fait claquer sa langue, ravie.",
-          "Quand vous êtes nu·e sous le ciel de sa ville, elle recule pour vous contempler. Les néons dessinent votre ventre, votre sexe tendu vers elle, et le pli mouillé que la lumière rose fait luire juste en dessous. Elle fait claquer sa langue, ravie.",
         ),
         B("Voilà. Maintenant, tu es habillé·e pour Saëlis.", "teasing"),
       ],
@@ -101,7 +100,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Elle s’attarde sur vos seins jusqu’à ce que leurs pointes durcissent sous sa langue, puis descend, embrasse la crête de vos hanches, et souffle sur votre toison sans la toucher. Toute une avenue de lanternes s’embrase d’un coup.",
           "Elle s’attarde sur votre torse, mordille la ligne de vos côtes, puis descend, embrasse la crête de vos hanches, et souffle sur vous, tendu à en avoir mal, sans vous toucher. Toute une avenue de lanternes s’embrase d’un coup.",
-          "Elle s’attarde sur votre poitrine, mordille la ligne de vos côtes, puis descend, mord la crête d’une hanche, et souffle sur vous, d’abord en haut puis juste en dessous, sans rien toucher. Deux avenues de lanternes s’embrasent d’un coup.",
         ),
         B("Je vais remplir ce ciel. Et ensuite, je vais allumer la ville entière.", "seductive"),
       ],
@@ -125,7 +123,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Sa bouche se pose enfin sur vous, là où vous l’attendiez. Sa langue vous parcourt de bas en haut, s’enroule autour de votre perle de plaisir, la quitte pour l’intérieur de vos cuisses, revient. Ses doigts vous ouvrent, glissent en vous, cherchent et trouvent ce point qui vous fait cambrer les reins. Elle s’arrête au bord, chaque fois, et vous montre le ciel.",
           "Sa bouche se referme enfin sur votre virilité. Elle vous prend profondément, remonte, joue de la langue autour du sommet, redescend. Sa main serre la base au rythme exact qui vous fait perdre le souffle. Elle s’arrête au bord, chaque fois, et vous montre le ciel.",
-          "Sa bouche se referme enfin sur votre hampe pendant que ses doigts trouvent, plus bas, l’entrée mouillée et s’y glissent. Elle alterne : la bouche, puis les doigts, puis les deux ensemble, sans jamais vous laisser deviner l’ordre. Elle s’arrête au bord, chaque fois, et vous montre le ciel.",
         ),
         B("Regarde ce que tu as fait. Tout ça pour une armée que tu n’as même pas fêtée.", "teasing"),
         P("Je la fête maintenant."),
@@ -148,7 +145,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Quand elle vous laisse enfin basculer, vous jouissez contre sa bouche, serrée par saccades autour de ses doigts, vos talons enfoncés dans les coussins. Toute la ville s’embrase : des feux d’artifice roses éclatent au-dessus des toits, les enseignes explosent en pluie de lumière.",
           "Quand elle vous laisse enfin basculer, vous jouissez dans sa bouche, une main crispée dans ses cheveux, et elle vous garde jusqu’à la dernière secousse. Toute la ville s’embrase : des feux d’artifice roses éclatent au-dessus des toits, les enseignes explosent en pluie de lumière.",
-          "Quand elle vous laisse enfin basculer, le plaisir éclate des deux côtés à la fois, dans sa bouche et autour de ses doigts. Toute la ville s’embrase deux fois : des feux d’artifice roses, puis pourpres, au-dessus de tous les toits.",
         ),
         "Quelque part dans une ruelle, une foule invisible applaudit.",
         B("Voilà une victoire correctement célébrée. Saëlis te remercie. Moi aussi, un peu.", "seductive"),
@@ -205,7 +201,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Elle presse son sexe contre le vôtre et se met à onduler, vite, fièrement, vos deux boutons gonflés se heurtant à chaque mouvement. Elle saisit votre main et la plaque sur son sein, l’autre sur sa hanche, pour que vous suiviez sa danse sans jamais la mener.",
           "Elle vous guide en elle d’une seule poussée, jusqu’au bout, et se met à danser sur vous, vite, fièrement, comme sur ce pont où les amants finissent leurs querelles. Elle saisit vos mains et les plaque sur ses seins pour que vous la suiviez sans jamais la mener.",
-          "Elle vous guide en elle d’une seule poussée et se met à danser sur vous, vite, fièrement, pendant que sa main revient chercher la fente cachée sous votre sexe, comme pour vous rappeler que rien de vous ne lui échappe. Vous suivez sa danse sans jamais la mener.",
         ),
         B("Oublie ce que tu as vu.", "seductive"),
         P("Non."),
@@ -229,7 +224,6 @@ export const BEFORE_LIGHT_ROUTE: AuthoredRoute = {
         X(
           "Elle jouit avec un cri qui fait vibrer toute la ville, ses hanches serrées contre les vôtres, ses doigts noués aux vôtres sur son sein. Le plaisir vous reprend avec elle, plus doux, plus lent, comme une marée qui remonte.",
           "Elle jouit avec un cri qui fait vibrer toute la ville, se resserrant autour de vous en longues vagues qui vous emportent à votre tour. Vous vous répandez en elle pendant que les couleurs virent au pourpre profond.",
-          "Elle jouit avec un cri qui fait vibrer toute la ville, se resserrant autour de vous pendant que ses doigts vous poussent de l’autre côté. Le plaisir vous reprend des deux côtés à la fois, plus doux, plus lent, comme une marée qui remonte.",
         ),
         "Les couleurs virent au pourpre profond, les toits cessent de battre, et pendant un long moment Saëlis tout entière semble retenir son souffle avec elle.",
         B("Tu vois ? Elle tient. Ma ville tient toujours.", "thoughtful"),

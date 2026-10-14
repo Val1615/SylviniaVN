@@ -37,7 +37,7 @@ Statuts employés :
 | Iriana → Valurn : outil dangereux, fascination, méfiance ; Valurn → Iriana : envie de la faire sortir de son rôle | Bible §49 | l. 1595 à 1610 | fiche | Bible | confidence 40, moment 17 | ne pas en faire un triangle |
 | Valurn → Bellirith : désir ancien, rancune, culpabilité, respect dangereux | Bible §52 | l. 1632 à 1645 | fiche | Bible | Q6 facultatif, moment 18 inchangé | la culpabilité reste non nommée |
 | CA : Iriana ne forme jamais l'équipe du T1 ; Valurn poursuit ses propres intérêts | Bible §12 | l. 591 | divergence | Bible | justification du fil autonome | aucun |
-| Intersexe : choix non tranché | Bible §100.1 | | question ouverte | Bible | intimités Valurn : parcours femme et homme seulement ; configuration intersexe sans continuation intime (précédent Naïah) | décision utilisateur du 2026-10-14 |
+| Corps du joueur | Bible §100.1 | | décision | Bible | catégorie intersexe retirée de toute la CA (création, options, intimités) ; anciennes sauvegardes migrées en « homme » | décision utilisateur du 2026-10-14 |
 | Audience « Audience sans témoin » : Valurn reconnaît « la grammaire, pas la phrase » du fragment | CA `campaign-imperial-audience` | III | campaign-scenes.ts l. 168 à 237 | CA existant | Q1 s'en souvient (flags `audience-methodical/independent/saidin-question`) | aucune seconde présentation |
 | Intrusion Bellirith 01 après l'audience | CA `bellirith-intrusion:01:seen` | III | bellirith-intrusions | CA existant | Q1 et Q6 : variante si vue | jamais convoquée sinon |
 | Accords libres Iriana / Valurn | CA `iv-open-truth`, `iv-boundaries`, `shared-iriana-valurn` | | social-scenes.ts | CA existant | confidence 40 et dates s'y réfèrent sans les modifier | aucun |

@@ -299,11 +299,10 @@ try {
       assert.notDeepEqual(r.chapters.explicite, r.chapters.ellipse);
     }
   });
-  check(20, "Variations femme / homme réelles ; aucune route intersexe", () => {
+  check(20, "Variations femme / homme réelles", () => {
     for (const ctx of intimacy.VALURN_INTIMACY_CONTEXTS) {
       const [f, h] = ["femme", "homme"].map((sex) => JSON.stringify(intimacy.valurnIntimacyRoutes(ctx, sex)[0].chapters.explicite));
       assert.notEqual(f, h);
-      assert.equal(intimacy.valurnIntimacyRoutes(ctx, "intersexe").length, 0, `${ctx}: intersexe`);
     }
   });
   check(21, "Visuels : jalons CG publiés (révélation, après) ; aucun asset ajouté", () => {
@@ -322,7 +321,11 @@ try {
   });
   check(23, "Mécaniques de Bellirith intactes (tendance céder/résister, intrusions)", () => {
     const diff = execSync("git diff --name-only origin/main -- src/bellirith-*.ts src/bellirith-*.tsx", { cwd: root, encoding: "utf8" }).trim().split("\n").filter(Boolean);
-    assert.ok(diff.every((f) => f.endsWith("bellirith-living-world.ts")), `fichiers Bellirith touchés : ${diff.join(", ")}`);
+    // Hors bellirith-living-world.ts, seules les variantes du corps retiré peuvent avoir changé :
+    // aucune ligne de la mécanique céder / résister ou des intrusions n'est modifiée.
+    const mechanics = execSync("git diff -U0 origin/main -- src/bellirith-*.ts src/bellirith-*.tsx ':!src/bellirith-living-world.ts'", { cwd: root, encoding: "utf8" })
+      .split("\n").filter((l) => /^[+-](?![+-])/.test(l) && /TREND_|RESISTED|CEDED|SLEPT|intrusion|bellirith-trend|has-resisted/iu.test(l));
+    assert.deepEqual(mechanics, [], `mécanique Bellirith modifiée : ${mechanics.join(" | ")}`);
     for (const [f, src] of Object.entries(sources)) assert.equal(/bellirith-trend|bellirith-has-resisted/.test(src), false, f);
   });
   check(24, "group-date-valurn-bellirith et group-date-iriana-valurn présents", () => {

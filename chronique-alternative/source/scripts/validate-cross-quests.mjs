@@ -67,7 +67,7 @@ try {
     assert.doesNotMatch(intimateText, contraceptiveLanguage);
   }
   for (const pairId of ["group-date-allenna-lineva-training", "group-date-allenna-lineva-basin", "group-date-allenna-lineva-home"]) {
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       const rendered = JSON.stringify(group.groupIntimacyRoutes(pairId, sex));
       assert.doesNotMatch(rendered, contraceptiveLanguage);
       if (pairId !== "group-date-allenna-lineva-training") assert.doesNotMatch(rendered, /distanceent|habitudeent|d’une chiquenaude/);

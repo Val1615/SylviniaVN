@@ -18,7 +18,7 @@ export type ValurnIntimacyPhase = "approach" | "consent" | "undressing" | "revea
 export type ValurnDateApproach = { id: string; text: string; lines: DialogueLine[] };
 
 type RawLine = string | readonly [speaker: "Valurn" | "{player}", text: string, mood?: string];
-type SexKey = Exclude<PlayerSex, "intersexe">;
+type SexKey = PlayerSex;
 type Chapter =
   | { all: RawLine[] }
   | { modes: Record<IntimacyMode, RawLine[]> }
@@ -373,7 +373,7 @@ export function valurnIntimacyApproaches(context?: ValurnIntimacyContext): Valur
   return context ? sceneFor(context).approaches.map(([id, text, raw]) => ({ id, text, lines: lines(raw) })) : undefined;
 }
 export function valurnIntimacyRoutes(context: ValurnIntimacyContext | undefined, sex: PlayerSex): IntimacyRoute[] {
-  if (!context || sex === "intersexe") return [];
+  if (!context) return [];
   const scene = sceneFor(context);
   const chapters = Object.fromEntries(MODES.map((mode) => [mode, scene.chapters.map((chapter) => chapterLines(chapter, mode, sex))])) as Record<IntimacyMode, DialogueLine[][]>;
   return [{ id: `valurn-${context}-${sex}`, text: scene.text, detail: scene.detail, chapters, visual: { revealChapter: 3, postOrgasmChapter: 9 } }];

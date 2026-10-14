@@ -12,7 +12,7 @@ import type { GroupIntimacyRoute } from "./group-dates";
  */
 export type HNMotherOutcome = "killed" | "memory-erased" | "vegetative";
 export type HNSeq = DialogueLine[];
-export type HNSexSeq = { femme: HNSeq; homme: HNSeq; intersexe: HNSeq };
+export type HNSexSeq = { femme: HNSeq; homme: HNSeq;};
 export type HNSlot = HNSeq | HNSexSeq;
 
 export const N = (text: string): DialogueLine => ({ speaker: "Narration", text });
@@ -20,7 +20,7 @@ export const H = (text: string, mood = "teasing"): DialogueLine => ({ speaker: "
 export const A = (text: string, mood = "smirk"): DialogueLine => ({ speaker: "Naïah", text, mood });
 export const P = (text: string): DialogueLine => ({ speaker: "{player}", text });
 export const S = (...lines: DialogueLine[]): HNSeq => lines;
-export const X = (femme: HNSeq, homme: HNSeq, intersexe: HNSeq): HNSexSeq => ({ femme, homme, intersexe });
+export const X = (femme: HNSeq, homme: HNSeq): HNSexSeq => ({ femme, homme });
 
 export type HNBranch = "H1" | "H2" | "H3" | "N1" | "N2" | "N3" | "L1" | "L2" | "L3";
 
@@ -48,7 +48,7 @@ export type HNRoute = GroupIntimacyRoute & {
 };
 
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+const SEXES: PlayerSex[] = ["femme", "homme"];
 
 function isSexSeq(slot: HNSlot): slot is HNSexSeq {
   return !Array.isArray(slot);

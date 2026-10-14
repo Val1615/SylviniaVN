@@ -179,8 +179,8 @@ try {
   const dedicatedCatalogs = [
     { character: "hylee", module: hyleeDates, route: "hyleeDateIntimacyRoutes", phase: "hyleeDateIntimacyPhase", contexts: ["date-hylee-glade", "date-hylee-lake", "home-hylee"], sexes: ["femme", "homme"] },
     { character: "remerii", module: remeriiDates, route: "remeriiDateIntimacyRoutes", phase: "remeriiDateIntimacyPhase", contexts: ["date-remerii-lanterns", "date-remerii-observatory", "home-remerii"], sexes: ["femme", "homme"] },
-    { character: "lineva", module: linevaDates, route: "linevaDateIntimacyRoutes", phase: "linevaDateIntimacyPhase", contexts: ["date-lineva-ramparts", "date-lineva-quarters"], sexes: ["femme", "homme", "intersexe"] },
-    { character: "allenna", module: allennaDates, route: "allennaDateIntimacyRoutes", phase: "allennaDateIntimacyPhase", contexts: ["date-allenna-field", "date-allenna-terrace"], sexes: ["femme", "homme", "intersexe"] },
+    { character: "lineva", module: linevaDates, route: "linevaDateIntimacyRoutes", phase: "linevaDateIntimacyPhase", contexts: ["date-lineva-ramparts", "date-lineva-quarters"], sexes: ["femme", "homme"] },
+    { character: "allenna", module: allennaDates, route: "allennaDateIntimacyRoutes", phase: "allennaDateIntimacyPhase", contexts: ["date-allenna-field", "date-allenna-terrace"], sexes: ["femme", "homme"] },
   ];
   for (const catalog of dedicatedCatalogs) {
     const revealChapter = Array.from({ length: 12 }, (_, chapter) => chapter).find((chapter) => catalog.module[catalog.phase](chapter) === "naked-reveal");
@@ -195,7 +195,7 @@ try {
 
   const revealSignatures = [];
   for (const context of trioContexts) {
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       for (const route of groups.groupIntimacyRoutes(context, sex)) {
         assert(route.progression, `${route.id}: progression visuelle absente`);
         const { revealChapter, postOrgasmChapter } = route.progression;
@@ -252,12 +252,12 @@ try {
   }
 
   for (const character of Object.keys(moods).filter((id) => id !== "bellirith")) {
-    for (const route of individual.intimacyRoutes(character, "intersexe")) {
+    for (const route of individual.intimacyRoutes(character, "homme")) {
       assert(route.visual, `${route.id}: progression visuelle solo absente`);
       const text = route.chapters.explicite[route.visual.revealChapter]?.map((line) => line.text).join(" ") || "";
       assert.match(text, undressing, `${route.id}: dévoilement solo non écrit`);
     }
-    for (const route of home.homeIntimacyRoutes(character, "intersexe")) {
+    for (const route of home.homeIntimacyRoutes(character, "homme")) {
       assert(route.visual, `${route.id}: progression visuelle au logis absente`);
       const text = route.chapters.explicite[route.visual.revealChapter]?.map((line) => line.text).join(" ") || "";
       assert.match(text, undressing, `${route.id}: dévoilement au logis non écrit`);

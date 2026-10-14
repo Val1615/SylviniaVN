@@ -77,7 +77,7 @@ export function listFiles() {
 // Appels et clés dont les branches sont des variantes exclusives (le joueur
 // n'en lit qu'une) : configuration du corps, mode d'affichage, drapeau, choix.
 export const ALT_CALLEES = new Set(["X", "XP", "XB", "M", "V", "W", "K", "sexLines", "sexText"]);
-export const ALT_KEYS = new Set(["femme", "homme", "intersexe", "tendre", "suggestif", "explicite", "ellipse", "explicit", "suggestive", "guided", "offered", "mutual", "known", "unknown", ...CHARACTERS]);
+export const ALT_KEYS = new Set(["femme", "homme", "tendre", "suggestif", "explicite", "ellipse", "explicit", "suggestive", "guided", "offered", "mutual", "known", "unknown", ...CHARACTERS]);
 const CHOICE_CALLEES = new Set(["O", "Q"]);
 
 // Petit lecteur : construit l'arbre des blocs ({ [ () et y range les chaînes.

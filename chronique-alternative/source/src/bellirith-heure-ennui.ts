@@ -96,7 +96,6 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Elle voit votre silhouette lever les bras pour faire glisser votre chemise, le profil de vos seins se découper, la ligne de vos hanches quand le reste tombe à vos pieds.",
             "Elle voit votre silhouette lever les bras pour faire glisser votre chemise, puis le profil net de votre désir dressé quand le reste tombe à vos pieds.",
-            "Elle voit votre silhouette lever les bras pour faire glisser votre chemise, l’arrondi de votre poitrine, puis le profil de votre désir dressé quand le reste tombe à vos pieds.",
           ),
           "De l’autre côté, elle ne bâille plus du tout. Elle a avancé jusqu’à toucher la gaze du bout des doigts.",
         ],
@@ -150,7 +149,6 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Elle s’allonge sur vous, glisse deux doigts en vous et presse son pouce sur votre perle, sans hâte, en descendant ensuite vous goûter. Chaque fois que vous approchez du bord, elle s’arrête et remonte vous regarder, ravie.",
             "Elle s’allonge entre vos jambes et vous prend dans sa bouche, profondément, puis vous relâche et vous caresse d’une main lente. Chaque fois que vous approchez du bord, elle s’arrête et remonte vous regarder, ravie.",
-            "Elle s’allonge entre vos jambes, prend votre vigueur dans sa bouche et caresse votre chaleur du bout des doigts, sans hâte. Chaque fois que vous approchez du bord, elle s’arrête et remonte vous regarder, ravie.",
           ),
           B("Toi non plus, tu ne t’ennuies pas, on dirait.", "seductive"),
         ],
@@ -185,7 +183,6 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Elle se presse contre vous, son intimité contre la vôtre, et commence à onduler. Vos chaleurs glissent l’une sur l’autre, de plus en plus vite, ses doigts glissés entre vous pour accentuer chaque frottement.",
             "Elle descend sur vous d’un seul mouvement lent, jusqu’au bout, et commence à onduler, les mains crispées sur le dossier sculpté derrière votre tête.",
-            "Elle s’empale sur vous d’un seul mouvement lent, jusqu’au bout, et commence à onduler, une main glissée en arrière pour vous caresser aussi, plus bas, au même rythme.",
           ),
           "Le vieux bois craque sous votre poids à chaque mouvement, pendant que la fausse averse ralentit et que les derniers pois roulent comme des gouttes sur un toit.",
         ],
@@ -204,7 +201,6 @@ export const HEURE_ENNUI: HeureVolee = {
           X(
             "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle jouit contre vous en tremblant, et son plaisir déclenche le vôtre une seconde plus tard.",
             "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle se resserre autour de vous en criant, et vous vous répandez en elle dans la seconde.",
-            "Une neige de papier blanc se met à tomber sur vous deux, lente, silencieuse, au moment exact où elle se resserre autour de vous en criant, et vous jouissez dans la seconde, des deux côtés, sous ses doigts.",
           ),
         ],
         ["Une corde tirée par hasard : de la neige de papier tombe des cintres au moment où vous jouissez."],

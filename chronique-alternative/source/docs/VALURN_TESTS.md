@@ -10,7 +10,7 @@ Contrats : 1 à 27 de la consigne §14 et 12 bis, plus E1 à E7 (35 au total). L
 | 14 | lettres prêtes après le fil, lecture persistante, aucune exigée par une quête |
 | 16 | ≥ 20 moments, variantes, lieux repérables |
 | 18 | 3 branches × ≥ 5 temps, fins propres ; logis 3 × 3 |
-| 19 à 21 | 4 modes × 12 séquences, variantes femme et homme distinctes, aucune route intersexe, jalons CG 3 et 9 |
+| 19 à 21 | 4 modes × 12 séquences, variantes femme et homme distinctes, jalons CG 3 et 9 |
 | 22, 23 | scènes Iriana/Valurn et statut platonique ; fichiers Bellirith intacts hors `bellirith-living-world.ts` |
 | 25 | migration d'une sauvegarde ancienne |
 | E1 à E5 | tirets, « ce n'est pas X, c'est Y », vocabulaire cru, plafond d'euphémismes (≤ 2 par scène et par mode), motifs surexploités |

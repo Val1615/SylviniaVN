@@ -19,7 +19,7 @@ La série est accessible depuis **Journal → Croisées** après l’Acte I et l
 
 - Chaque rendez-vous propose, **uniquement si Hylee ET Naïah ont un désir ≥ 25**, un dernier choix de bascule (`dateOutcome: "great"`) : au lac, Hylee relance une manche à gages ; dans la clairière, Naïah « oublie » de ranger le dernier fil ; au logis, le joueur annonce une dernière partie à ses règles. Refuser (« Pas ce soir » / « Rester complices ce soir ») ne coûte rien.
 - Les contextes `group-date-hylee-naiah-place`, `-one` et `-home` passent par `isManualGroupIntimacy` (`hylee-naiah-group-intimacy.ts`). L’ancien `group-date-hylee-naiah` n’est conservé qu’en compatibilité (`legacyOnly`).
-- Écriture manuelle : `hylee-naiah-intimacy-place.ts` (H1–H3), `hylee-naiah-intimacy-one.ts` (N1–N3), `hylee-naiah-intimacy-home.ts` (L1–L3), soit 27 routes (9 branches × femme / homme / intersexe) × 4 modes, 12 séquences minimum par mode, 1000+ mots en explicite.
+- Écriture manuelle : `hylee-naiah-intimacy-place.ts` (H1–H3), `hylee-naiah-intimacy-one.ts` (N1–N3), `hylee-naiah-intimacy-home.ts` (L1–L3), soit 18 routes (9 branches × femme / homme) × 4 modes, 12 séquences minimum par mode, 1000+ mots en explicite.
 - Un mini-jeu par rendez-vous (4 manches × 3 options, sans morale) ; l’issue discordante mène à une bataille (eau, fils, coussins) et la scène continue.
 - Le sort de la mère ajoute une trace légère dans un chapitre de chaque route (`HYLEE_NAIAH_MOTHER_TRACES`).
 - CG et sprites intimes : uniquement les ressources existantes `hylee_naiah_reveal` / `hylee_naiah_post_orgasm` et les humeurs intimes déjà dessinées. Aucun drapeau de romance à trois ; une relecture n’écrit aucun drapeau.

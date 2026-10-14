@@ -51,23 +51,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous soutenez ses hanches sans les conduire. Hylee accélère par vagues, s’immobilise pour savourer les pulsations puis recommence avec une assurance croissante ; son orgasme fait blanchir ses cils de givre et le resserrement de son intimité vous entraîne peu après, vos fronts demeurant joints jusqu’à ce que la neige cesse de tomber.",
       ),
     },
-    intersexe: {
-      guided: scene(
-        "Hylee vous demande de lui montrer le point exact où son froid doit commencer. Vous placez sa main, choisissez la bouche plutôt que le seul contact extérieur et précisez si vous souhaitez accueillir ses doigts ; elle s’installe entre vos jambes, alterne chaleur de sa langue et fraîcheur de ses phalanges, puis relève votre bassin afin que le geste choisi atteigne votre intimité selon l’angle que vous lui indiquez.",
-        C("Hylee", "Ton corps n’est pas une énigme à résoudre. C’est une carte que tu me confies… et je veux suivre seulement les chemins que tu traces.", "soft"),
-        "Elle reprend chacun de vos mots dans un souffle avant d’augmenter la cadence. Lorsque vous réclamez davantage, Hylee combine le frottement sur votre point de feu et la pénétration désirée sans supposer lequel doit vous conduire à l’orgasme ; c’est votre main sur sa nuque qui choisit le dernier rythme, et son émerveillement accompagne chaque contraction jusqu’au calme.",
-      ),
-      offered: scene(
-        "Vous placez Hylee à quatre pattes sur les couvertures, puis lui demandez de choisir entre votre bouche, vos doigts ou une pénétration adaptée à ce qu’elle désire recevoir. Elle choisit d’abord vos caresses sur ses lèvres de velours, puis recule volontairement vers l’intimité que vous lui offrez ; une main sous son ventre maintient sa perle de plaisir dans le même mouvement que vos avancées lentes.",
-        C("Hylee", "Je te dirai exactement ce qui entre, ce qui reste dehors et quand changer. Toi… promets-moi seulement de ne pas devenir prudent·e au point de ne plus me désirer."),
-        "Sa franchise transforme la position en audace partagée. Vous suivez ses indications, variez la profondeur sans perdre le contact extérieur et sentez le givre se former autour de vos genoux lorsqu’elle approche de l’orgasme ; Hylee vient contre vous dans une succession de contractions, puis se retourne aussitôt pour embrasser le corps qui vient de l’écouter.",
-      ),
-      mutual: scene(
-        "Vous vous installez tête-bêche, Hylee couchée sur le côté afin que chacun puisse atteindre l’autre sans supporter tout son poids. Elle suit de la bouche l’endroit que vous lui avez désigné pendant que vous la caressez, mouillée sous vos doigts ; à votre demande, l’un des contacts devient une pénétration douce tandis que l’autre demeure un frottement continu entre vos bassins rapprochés.",
-        P("On ne cherche pas la symétrie. On garde ce qui fait trembler chacun de nous, même si nos gestes ne se ressemblent pas."),
-        "Hylee approuve contre votre peau et abandonne son idée de reproduire exactement votre plaisir. Vos rythmes deviennent différents mais reliés par les mains posées sur vos hanches ; elle jouit dans votre bouche, reprend ensuite le geste précis que vous aviez choisi et vous accompagne jusqu’à un orgasme marqué par une unique étoile de givre entre vos deux corps.",
-      ),
-    },
   },
 
   remerii: {
@@ -103,23 +86,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Remerii s’installe au-dessus de vous, tournée vers vos pieds, et guide votre sexe dressé en elle avant de se pencher pour refermer sa main autour de sa base. Cette chevauchée inversée lui permet de choisir la profondeur tandis que vous la caressez en passant la main sous sa hanche ; après plusieurs mouvements, elle se retourne sans vous quitter et reprend face à vous, plus lente mais beaucoup plus intime.",
         C("Remerii", "Deux positions, deux réponses différentes… Non. Ne souriez pas. Je ne mène aucune étude ; je veux seulement sentir laquelle nous fait perdre pied ensemble.", "smirk"),
         "Vous l’attirez contre votre poitrine et accompagnez ses mouvements de bassin. La précision cède à des reprises irrégulières, interrompues par des baisers et relancées quand elle réclame plus profond ; Remerii jouit en vous gardant entièrement en elle, et ses contractions vous conduisent au même abandon sans que l’un de vous puisse encore appeler cela une expérience.",
-      ),
-    },
-    intersexe: {
-      guided: scene(
-        "Remerii vous propose trois gestes distincts et vous laisse en éliminer deux avant de commencer. Vous choisissez une stimulation orale associée à une pénétration reçue ; elle vous place sur le côté, soutient votre cuisse et suit votre point de feu avec sa langue pendant que sa main avance dans votre intimité selon une profondeur que vous réglez d’un mouvement de bassin.",
-        C("Remerii", "Votre choix n’est pas une donnée fixe. Vous pouvez le modifier au milieu de la scène, même si votre corps semblait apprécier la première réponse."),
-        "Vous changez effectivement de demande lorsque l’intensité monte. Remerii retire ses doigts, remplace la profondeur par un frottement plus serré et accueille votre nouvelle position sans surprise visible ; votre orgasme survient sous cette combinaison corrigée au présent, et la mage laisse sa fierté porter sur votre confiance plutôt que sur l’exactitude de sa première hypothèse.",
-      ),
-      offered: scene(
-        "Vous demandez à Remerii de poser elle-même votre main ou votre intimité contre l’endroit qu’elle souhaite sentir. Elle choisit le fauteuil bas, s’assied face à vous puis vous guide dans un mouvement où votre corps peut la pénétrer ou se frotter contre ses lèvres de velours selon ce que vous avez défini ensemble ; vos doigts maintiennent sa perle de plaisir dans la même trajectoire circulaire.",
-        P("Aujourd’hui, c’est ton désir qui choisit comment mon corps te rejoint. Pas un schéma, pas une catégorie."),
-        "Cette liberté la désarme davantage que l’absence de méthode. Remerii vous attire par la taille, précise l’angle d’une voix de plus en plus brève et finit par conduire elle-même vos mouvements ; lorsqu’elle jouit, elle garde le contact choisi entre vos bassins et vous demande de poursuivre assez longtemps pour que votre propre plaisir trouve une conclusion différente mais tout aussi entière.",
-      ),
-      mutual: scene(
-        "Vous transformez ses deux signes méthodiques en un jeu de positions : côte à côte pour les caresses, tête-bêche pour les bouches, puis face à face lorsque l’un de vous souhaite donner ou recevoir une pénétration. Remerii annonce chaque transition mais jamais son résultat ; vos corps déterminent l’angle, vos voix la profondeur, et vos mains demeurent libres de modifier la scène.",
-        C("Remerii", "Je connais la structure. Je ne connais ni votre prochaine demande ni la mienne… C’est précisément ce qui me trouble autant."),
-        "Elle choisit finalement de recevoir pendant que vous vous frottez contre sa cuisse. Le mouvement devient double, asymétrique et parfaitement lisible ; Remerii jouit dans votre cou, reprend ensuite la caresse que vous aviez réclamée et vous mène jusqu’à l’orgasme sans chercher à rendre vos deux expériences identiques.",
       ),
     },
   },
@@ -159,23 +125,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous suivez sa cadence plutôt que de l’imposer. Chaque inversion ajoute une intensité différente : elle contrôle la profondeur au-dessus, vous maintenez le frottement lorsqu’elle est dessous ; son orgasme vous serre au plus près et le vôtre suit pendant qu’elle garde votre visage entre ses mains, débarrassée de toute peur d’avoir cédé du pouvoir.",
       ),
     },
-    intersexe: {
-      guided: scene(
-        "Iriana vous demande de choisir une place qui ne ressemble ni à un trône ni à une reddition. Vous vous allongez sur le tapis et lui indiquez le point de feu, le pli secret ou l’intimité que vous souhaitez lui confier ; elle alterne bouche et doigts, puis adopte la pénétration reçue ou le frottement extérieur que votre corps réclame sans jamais convertir votre choix en règle définitive.",
-        C("Iriana", "Je ne parlerai pas au nom de votre corps. Mais je peux lui offrir toute mon attention, si vous continuez à me dire où la poser."),
-        "Votre demande change lorsque ses bijoux frôlent votre peau. Iriana les retire, ajuste la position et recommence exactement au nouvel endroit, plus audacieuse parce que la correction vient de vous ; votre orgasme la trouve penchée sur vous, sa main gardant la profondeur choisie et son visage ouvertement bouleversé par la confiance qu’aucune audience n’aurait pu exiger.",
-      ),
-      offered: scene(
-        "Vous asseyez Iriana sur la table de conseil vidée de ses dossiers et lui demandez quelle forme de contact elle souhaite recevoir de votre corps. Elle guide votre bassin entre ses cuisses, choisit un frottement prolongé avant une éventuelle pénétration et place elle-même votre main sur sa perle de plaisir ; la scène avance selon ses mots, pas selon ce que votre apparence pourrait laisser supposer.",
-        P("Aucun protocole ne dira comment je dois te donner du plaisir. Tu choisis le geste ; je choisis de l’accomplir avec toi."),
-        "Iriana vous attire plus près et formule une progression d’une franchise presque provocante. Vous suivez l’angle demandé, gardez vos doigts entre vos bassins et sentez sa maîtrise se dissoudre sans que sa capacité de choisir disparaisse ; elle jouit contre vous, puis prolonge le même contact jusqu’à ce que votre plaisir réponde au sien par une voie différente.",
-      ),
-      mutual: scene(
-        "Vous commencez face à face sur la banquette, chacun une jambe autour de l’autre. Iriana propose que la personne au-dessus choisisse le prochain geste : bouche, frottement en ciseaux, pénétration donnée ou reçue. Vous échangez deux fois la hauteur, de sorte que chaque corps puisse conduire une position et abandonner la suivante sans rester enfermé dans un rôle.",
-        C("Iriana", "Voilà une règle que j’accepte : l’initiative circule, mais personne ne doit rendre ce qu’il a reçu pour mériter la suite."),
-        "Vous gardez cette asymétrie volontaire. Iriana atteint l’orgasme dans la position qu’elle avait choisie, puis revient entre vos cuisses avec une attention entièrement différente ; elle écoute votre nouvelle demande et vous conduit au plaisir sans reproduire son propre chemin, heureuse que l’égalité n’ait pas exigé deux corps identiques.",
-      ),
-    },
   },
 
   valurn: {
@@ -211,23 +160,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous commencez à genoux, face à face, vos sexes dressés réunis dans la même main lubrifiée. Valurn impose un rythme, vous le renversez contre les draps et reprenez la prise ; après ce frottement partagé, celui qui souhaite recevoir se place sur le côté et guide l’autre en lui, la position permettant de changer les rôles sans transformer la réciprocité en obligation.",
         C("Valurn", "Le pari est simple : le premier qui dissimule ce qu’il veut perd. Je vous préviens, je viens déjà de renoncer à gagner."),
         "Vos demandes restent franches et vos positions différentes. Une pénétration lente conduit Valurn au bord, puis sa main reprend vos deux membres lorsqu’il préfère vous accompagner autrement ; vous jouissez à quelques secondes d’écart, chacun gardant le rythme de l’autre jusqu’au bout plutôt que de poursuivre une simultanéité spectaculaire.",
-      ),
-    },
-    intersexe: {
-      guided: scene(
-        "Valurn vous demande de choisir entre sa bouche, sa main ou une pénétration reçue avant de retirer le moindre vêtement. Vous combinez les deux premières options et vous installez debout contre le montant du lit ; il s’agenouille, suit de la langue le point de feu que vous lui montrez et utilise ses doigts uniquement dans l’intimité dont vous avez nommé l’accès et la profondeur.",
-        C("Valurn", "Pour une fois, je ne veux pas découvrir votre secret. Je veux que vous me le racontiez pendant que je vous donne une excellente raison de perdre vos mots."),
-        "Il conserve la position, mais modifie entièrement son allure selon vos indications. Votre main guide sa nuque, votre bassin choisit l’angle et son ironie disparaît à mesure que votre plaisir devient plus intense ; l’orgasme vous traverse contre le bois, accompagné par la satisfaction presque tendre d’un homme qui n’a eu besoin de voler aucune information.",
-      ),
-      offered: scene(
-        "Vous faites asseoir Valurn sur une chaise et lui demandez ce qu’il souhaite que votre corps lui donne sans supposer votre rôle. Il choisit d’abord votre main et votre bouche sur son membre viril, puis vous propose un contact entre vos bassins où vous pourrez décider de pénétrer, d’être pénétré·e ou de garder un frottement extérieur ; chaque possibilité reste ouverte jusqu’à votre réponse présente.",
-        P("Tu peux provoquer autant que tu veux, mais le geste ne changera qu’après une demande vraie."),
-        "Valurn découvre qu’une demande directe peut être plus audacieuse qu’une mise en scène. Il formule celle qui correspond à vos deux envies, vous guide dans une position assise parfaitement adaptée et perd peu à peu son sourire sous la profondeur ou la pression choisie ; son orgasme arrive lorsqu’il avoue ne plus vouloir négocier la cadence que vous partagez.",
-      ),
-      mutual: scene(
-        "Vous transformez le pari en trois manches physiques : une bouche offerte, un bassin qui reçoit, puis une position choisie ensemble sans obligation de symétrie. Valurn tire une carte pour désigner qui formule le premier désir, mais la déchire lorsqu’elle ne correspond plus à vos corps ; vous vous installez alors en diagonale, mains et hanches libres de guider l’intensité réelle.",
-        C("Valurn", "La chance vient de perdre toute compétence. Heureusement, vos indications sont beaucoup plus intéressantes que mes cartes."),
-        "Le contact devient tantôt frottement, tantôt pénétration donnée ou reçue selon vos mots. Valurn répond à votre plaisir par une caresse différente plutôt que par une imitation ; il jouit dans la configuration qu’il a enfin osé demander, puis vous conduit au vôtre avec une attention si dépourvue de masque qu’elle ressemble à sa plus belle prise de risque.",
       ),
     },
   },
@@ -267,23 +199,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Vous suivez cette vérité physique. Elle accélère, s’arrête pour vous laisser reprendre son souffle contre sa bouche puis vous attire plus loin en elle ; Naïah jouit dans vos bras au moment où la pluie disparaît, et la chaleur de ses contractions vous fait céder sans que le moindre effet magique n’ait touché votre plaisir.",
       ),
     },
-    intersexe: {
-      guided: scene(
-        "Naïah fait apparaître trois symboles au-dessus de sa main : bouche, frottement, pénétration. Vous en touchez deux et elle dissipe le troisième sans poser de question ; allongé·e sous elle, vous guidez ses lèvres vers votre point de feu, puis choisissez si ses doigts ou son bassin doivent prolonger la sensation dans l’intimité que vous lui avez confiée.",
-        C("Naïah", "Les symboles ne décident rien. Ils m’empêchent seulement de préférer une jolie histoire aux réactions bien réelles de ton corps."),
-        "Vous changez l’ordre au milieu du jeu. Naïah modifie aussitôt sa position, garde le reflet assez clair pour que vous suiviez ses mains et laisse votre corps réel choisir la progression ; votre orgasme colore la brume d’une nuance qu’elle avoue ne jamais avoir su inventer, précisément parce qu’elle vient de vous.",
-      ),
-      offered: scene(
-        "Vous demandez à Naïah de supprimer la silhouette qu’elle avait dessinée pour votre corps. Elle s’allonge ensuite sur le côté et vous montre ce qu’elle veut recevoir : votre bouche sur ses lèvres de velours, puis un contact de bassin capable de devenir frottement ou pénétration selon la forme et le désir que vous nommez. L’unique illusion restante souligne les frissons réels sans inventer les gestes.",
-        P("Tu n’as pas besoin de m’imaginer pour me désirer. Regarde ce que je te donne réellement et dis-moi comment le prendre."),
-        "Naïah répond sans théâtre. Elle choisit l’angle, vous attire dans le contact adapté et garde votre main sur sa perle de plaisir pendant que son bassin approfondit la rencontre ; son orgasme fait disparaître la dernière ligne lumineuse, laissant son corps tremblant contre le vôtre et son sourire entièrement incapable de prétendre qu’elle avait prévu cette intensité.",
-      ),
-      mutual: scene(
-        "Vous utilisez le reflet comme une carte mobile : l’un de vous indique une position, l’autre choisit le geste réel qui l’habitera. Une étreinte assise devient un frottement de bassins ; un retournement sur le côté ouvre la possibilité d’une pénétration donnée ou reçue ; enfin vos bouches échangent les places sans chercher à rendre vos anatomies symétriques.",
-        C("Naïah", "C’est mieux qu’un double. Tu me surprends sans disparaître, et je peux te répondre sans inventer ce que tu devrais ressentir."),
-        "La scène avance comme un jeu dont chaque règle protège l’imprévu. Naïah jouit dans une configuration qu’elle avait proposée mais que votre corps a transformée ; elle reprend ensuite votre choix préféré, maintient la pression à l’endroit que vous avez nommé et vous accompagne jusqu’à un orgasme que le reflet laisse volontairement sans image parfaite.",
-      ),
-    },
   },
 
   lineva: {
@@ -319,23 +234,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Lineva vous renverse sur le lit avec un rire, vient vous chevaucher et vous guide en elle d’un seul mouvement. Elle commence en position haute, utilisant la force de ses cuisses pour contrôler chaque descente ; lorsque la fatigue effleure son ancienne blessure, vous roulez ensemble sur le côté et poursuivez dans une étreinte où vos jambes assurent le mouvement à parts égales.",
         C("Lineva", "Je cède la position, pas le plaisir. Restez contre moi et gardez exactement cet angle."),
         "La seconde posture ralentit sans diminuer l’intensité. Votre main l’attise du bout des doigts, la sienne guide vos hanches et ses contractions annoncent l’orgasme avant sa voix ; Lineva continue pourtant le mouvement latéral jusqu’à vous faire jouir en elle, fière d’avoir choisi la relève plutôt que d’avoir caché sa fatigue.",
-      ),
-    },
-    intersexe: {
-      guided: scene(
-        "Lineva vous propose une position où tout votre dos repose sur elle, vos jambes ouvertes entre les siennes. Vous guidez ses mains vers le point de feu et l’intimité que vous voulez stimuler ; elle utilise sa force pour maintenir un frottement précis, ajoute une pénétration digitale ou corporelle seulement à votre demande et vous laisse régler la profondeur en saisissant ses avant-bras.",
-        C("Lineva", "Je vous tiens parce que vous me l’avez demandé. Le moment où cette prise cesse d’aider, dites-le-moi et mes bras deviennent simplement une étreinte."),
-        "Vous vous abandonnez à ce soutien sans perdre la conduite. Lineva adapte chaque mouvement à vos indications, ralentit lorsqu’une zone devient trop sensible et reprend ailleurs avec la même assurance ; votre orgasme vous soulève contre sa poitrine, mais ses bras restent souples, transformant la puissance de la commandante en un refuge entièrement choisi.",
-      ),
-      offered: scene(
-        "Vous demandez à Lineva de choisir la posture la plus confortable plutôt que la plus impressionnante. Elle s’allonge sur le ventre avec une hanche relevée et vous montre le contact désiré : bouche d’abord, puis frottement ou pénétration selon ce que vos deux corps peuvent donner sans douleur. Vous gardez une main sur ses cicatrices et l’autre au point de plaisir qu’elle nomme.",
-        P("Je ne veux pas vaincre votre résistance. Je veux la position dans laquelle vous n’avez plus besoin d’en avoir."),
-        "Lineva expire comme après une longue garde et vous guide avec une franchise débarrassée d’héroïsme. Le mouvement choisi devient plus profond, sa jambe s’ouvre davantage et son plaisir monte sans qu’elle ait à tenir une posture pour vous ; son orgasme la fait trembler sous votre paume, puis elle se retourne pour vérifier aussitôt ce que votre propre corps souhaite recevoir.",
-      ),
-      mutual: scene(
-        "Vous organisez une relève en trois positions : assis face à face pour nommer les gestes, sur le côté pour le frottement et la pénétration éventuelle, puis l’un derrière l’autre pour que la personne fatiguée puisse être soutenue. Lineva refuse que votre sexe détermine qui porte ou reçoit ; chaque transition dépend seulement de la demande formulée à cet instant.",
-        C("Lineva", "On ne change pas parce qu’un rôle l’exige. On change quand un corps le demande, et l’autre répond s’il en a envie."),
-        "Cette logique rend la scène fluide plutôt que militaire. Vous donnez à Lineva un orgasme dans la position où elle peut relâcher tout son poids, puis elle vous ramène contre elle et reprend le geste précis qui vous avait fait hésiter de plaisir ; votre conclusion arrive sous une force adaptée, jamais identique à celle qu’elle avait reçue.",
       ),
     },
   },
@@ -375,23 +273,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Votre réponse redessine la scène une dernière fois. Les gestes restent différents, les plaisirs reliés par la main qui stimule celui qui donne autant que celui qui reçoit ; Saidin jouit dans une exclamation dépourvue de métaphore, puis garde la cadence nécessaire pour vous conduire au même abandon sans consulter l’ordre que le temps aurait choisi.",
       ),
     },
-    intersexe: {
-      guided: scene(
-        "Saidin ferme sa montre et vous demande de poser sa main sur le premier endroit que vous voulez éveiller. Vous choisissez un point de feu, puis précisez si la bouche, les doigts ou une pénétration reçue doivent suivre ; il exécute une seule demande à la fois, change de position à chaque nouvelle indication et refuse de conserver une version future de votre corps comme modèle.",
-        C("Saidin", "Je ne sais pas encore comment vous jouirez. Pour la première fois, cette ignorance ne m’effraie pas : elle me permet de vous écouter au lieu de vous reconnaître."),
-        "Vous lui révélez la progression au fur et à mesure. Saidin adapte la profondeur, remplace un contact devenu trop intense et revient à une caresse extérieure que vous aviez d’abord écartée ; votre orgasme naît précisément de cette histoire révisée en direct, et il garde contre lui le corps qui vient de contredire toutes les versions possibles.",
-      ),
-      offered: scene(
-        "Vous demandez à Saidin de choisir un désir qu’il n’a jamais vérifié dans l’avenir. Il vous guide vers une position assise, vos bassins face à face, et nomme le contact qu’il souhaite recevoir : bouche d’abord, puis frottement ou pénétration selon ce que votre corps peut lui offrir. Vous suivez sa parole présente sans chercher à lui assurer le résultat qu’il aurait pu voir ailleurs.",
-        P("Je ne te promets pas la scène parfaite. Je te promets que chaque geste sera vraiment le nôtre, même s’il change en chemin."),
-        "Saidin accepte l’imperfection comme une forme d’intimité. Il ajuste lui-même votre angle, demande une variation imprévue et atteint l’orgasme dans une position qu’aucune prophétie ne lui avait recommandée ; avant même de reprendre son souffle, il vous demande ce que votre propre plaisir réclame, prêt à découvrir une seconde route sans connaître son terme.",
-      ),
-      mutual: scene(
-        "Vous laissez trois sabliers couchés désigner non une durée, mais trois changements de posture : enlacés pour le frottement, tête-bêche pour les bouches, puis sur le côté pour une pénétration donnée ou reçue si elle est désirée. Saidin ne relève aucun sablier ; vos corps passent d’une configuration à l’autre uniquement lorsque l’un de vous pose la question au présent.",
-        C("Saidin", "Nous n’obéissons même plus à l’ordre que nous avions choisi. C’est peut-être la première chronologie qui me semble entièrement libre."),
-        "Vous abandonnez le troisième changement prévu au profit d’un geste inattendu. Saidin jouit sous une combinaison de pression et de profondeur qu’il n’avait pas anticipée, puis vous accompagne dans une posture différente, ajustée à vos propres mots ; vos deux conclusions deviennent irréductibles l’une à l’autre et pourtant réunies dans la même nuit.",
-      ),
-    },
   },
 
   bellirith: {
@@ -429,23 +310,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Elle reprend ses mouvements plus lentement, poitrine contre la vôtre. Chaque montée de plaisir efface une part de son sourire de scène ; son orgasme la suspend autour de vous, et vos mains sur ses hanches prolongent la chevauchée jusqu’à votre propre jouissance, reçue par une Bellirith trop sincère pour compter les points.",
       ),
     },
-    intersexe: {
-      guided: scene(
-        "Bellirith éteint tous ses charmes puis vous demande de composer vous-même la posture qu’elle devra suivre. Vous placez son visage, sa main et son bassin selon les contacts désirés : langue sur le point de feu, doigts dans l’intimité choisie ou frottement contre son corps. Elle reproduit votre carte sans ajouter une seule suggestion magique et vous laisse modifier chaque détail pendant l’action.",
-        C("Bellirith", "Je suis habituée à donner aux autres ce qu’ils croient vouloir. Avec toi, je dois attendre que le désir me soit réellement confié… C’est bien plus troublant."),
-        "Vous changez l’ordre des gestes pour éprouver sa présence plutôt que sa technique. Bellirith suit, perd son masque lorsque votre plaisir s’intensifie et vous mène à l’orgasme par une combinaison que vous avez construite ensemble ; elle reste ensuite immobile, fière que le corps tremblant sous elle n’ait répondu à aucune illusion.",
-      ),
-      offered: scene(
-        "Vous retirez le miroir et demandez à Bellirith quel contact elle souhaite recevoir de votre corps réel. Elle choisit une position debout contre la coiffeuse, vos bassins rapprochés, puis précise si elle veut une pénétration, un frottement entre vos intimités ou votre bouche avant toute autre chose. Vous suivez son choix sans lui offrir de rôle flatteur où se cacher.",
-        P("Je ne veux pas que tu adaptes ton désir à ce que tu imagines de moi. Dis-moi ce que tu veux, puis laisse mon corps répondre comme il est."),
-        "Bellirith formule une demande d’abord élégante, puis beaucoup plus franche. Vous adoptez l’angle qu’elle indique, maintenez la pression au point exact et regardez ses réactions devenir désordonnées ; son orgasme survient sans lumière avantageuse, et elle vous attire aussitôt contre elle pour demander quel plaisir différent votre propre intimité souhaite recevoir.",
-      ),
-      mutual: scene(
-        "Vous convenez d’un duel sans imitation : chacun choisira une position que l’autre n’aurait pas devinée. Bellirith commence assise, vous guidant contre elle dans un frottement ou une pénétration adapté ; vous répondez en la renversant sur le côté et en redistribuant bouche, mains et bassins selon votre propre désir. Chaque surprise est annoncée avant d’être accomplie.",
-        C("Bellirith", "Tu me prives de mon meilleur talent : anticiper ce que l’on attend de moi. Je découvre que céder à l’inconnu peut être une séduction beaucoup plus dangereuse."),
-        "Les deux configurations ne se ressemblent pas et personne ne cherche à les départager. Bellirith jouit dans celle que vous avez inventée, incapable d’en revendiquer la mise en scène ; elle reprend ensuite sa proposition en l’adaptant à votre plaisir et vous accompagne jusqu’à un orgasme aussi personnel que le sien.",
-      ),
-    },
   },
 
   amanea: {
@@ -481,23 +345,6 @@ export const INDIVIDUAL_EXPLICIT_SCENES: AdvancedSceneCatalog = {
         "Amanea vient vous chevaucher face à face, ses genoux de part et d’autre de vos hanches. Elle vous guide en elle et descend d’un mouvement puissant, puis s’immobilise pour vous laisser décider si la profondeur convient ; vous la renversez ensuite sous vous après sa demande, gardant une main unie à la sienne au-dessus de la cape.",
         C("Amanea", "Je veux conduire la première moitié et te confier la seconde. Pas pour équilibrer une dette : parce que ces deux désirs sont également miens."),
         "La chevauchée fait trembler le siège abandonné ; la position renversée ralentit vos corps sans diminuer leur force. Amanea jouit lorsqu’elle vous attire au plus profond, puis vos mouvements reprennent sous son regard ouvert jusqu’à votre orgasme ; la main qu’elle garde dans la vôtre empêche chaque changement de devenir une lutte pour la hauteur.",
-      ),
-    },
-    intersexe: {
-      guided: scene(
-        "Amanea ouvre sa cape sous vous et demande quel usage de sa force servira réellement votre plaisir. Vous choisissez d’être soutenu·e au-dessus de sa bouche, puis nommez le point de feu et l’intimité qu’elle peut atteindre avec ses doigts ou son propre corps. Elle maintient votre poids sans jamais décider de la profondeur, chaque avancée restant guidée par vos cuisses et votre voix.",
-        C("Amanea", "Je peux te porter. Je ne porterai pas ta parole à ta place. Montre-moi ce que ton corps veut recevoir et je resterai assez forte pour l’écouter."),
-        "La position vous permet de conduire tout en vous abandonnant. Amanea adapte sa bouche, remplace un geste lorsqu’il devient trop intense et retrouve la pression exacte que vous réclamez ; votre orgasme vous fait trembler au-dessus d’elle, soutenu·e mais jamais captif·ve, et son regard affirme que cette distinction compte davantage que toute puissance démontrée.",
-      ),
-      offered: scene(
-        "Vous éloignez la couronne et demandez à Amanea quelle rencontre elle souhaite avec votre corps, sans lui proposer un rôle par défaut. Elle choisit une position à genoux face à vous, où votre bouche, vos mains puis votre bassin peuvent lui offrir un frottement ou une pénétration selon l’intimité que vous définissez ; ses paumes restent ouvertes sur vos hanches plutôt que refermées.",
-        P("Tu peux réclamer toute l’intensité que tu veux. Elle viendra de mon propre désir, pas de ton rang ni de la forme que tu imagines pour moi."),
-        "Amanea formule son désir avec une sobriété presque solennelle, puis son corps le rend beaucoup moins mesuré. Vous suivez l’angle choisi, gardez une caresse extérieure pendant le mouvement et sentez son orgasme rompre sa posture royale ; elle reste contre vous, souffle court, avant de demander comment employer sa propre force pour rendre votre plaisir aussi singulier.",
-      ),
-      mutual: scene(
-        "Vous posez cape et couronne au sol pour en faire deux espaces égaux. Sur le premier, Amanea choisit de recevoir le contact adapté à son désir ; sur le second, vous choisissez frottement, bouche ou pénétration sans devoir reproduire ce qu’elle a aimé. La transition s’effectue à quatre pattes puis face à face, selon les corps plutôt que selon une hiérarchie.",
-        C("Amanea", "L’égalité ne consiste pas à répéter le même geste. Elle consiste à donner à chacun la liberté d’exiger une vérité différente."),
-        "Vous lui donnez raison par vos mouvements. Amanea jouit sous une profondeur et une cadence qu’elle a définies, puis vous rejoint dans la posture que vous avez choisie et adapte entièrement ses mains et son bassin ; votre orgasme conclut une scène où aucun corps n’a servi de mesure à l’autre, mais où les deux désirs ont reçu la même force.",
       ),
     },
   },
@@ -538,23 +385,6 @@ INDIVIDUAL_EXPLICIT_SCENES.tia = {
       "Vous gardez une main sur sa source du plaisir et l’autre mêlée à la sienne. Tia atteint l’orgasme sous la profondeur qu’elle réclame, puis utilise encore ses hanches pour soutenir votre rythme plutôt que pour l’accélérer sans réponse. Votre plaisir suit dans la même étreinte ; elle ne compte ni ordre ni vainqueur, seulement deux corps restés libres jusque dans l’instant où ils ont cédé.",
     ),
   },
-  intersexe: {
-    guided: scene(
-      "Tia vous demande de définir la configuration au lieu de choisir pour vous. Vous placez sa bouche sur votre pointe de feu et guidez ses doigts vers l’intimité que vous souhaitez voir caressée, avec ou sans profondeur. Elle maintient votre bassin sur un coussin, assez fermement pour vous soutenir et jamais assez pour vous empêcher de modifier l’angle ou de retirer sa main.",
-      C("Tia", "Pour ce corps que vous seul·e pouvez nommer, je ne déduirai rien. Indiquez la prochaine sensation et je la servirai sans doctrine.", "troubled"),
-      "Vous réclamez une combinaison plus intense ; Tia accorde alors sa langue, ses doigts et la chaleur de sa paume selon vos mots exacts. Elle ralentit lorsque votre souffle se suspend, reprend lorsque vos hanches reviennent vers elle et conserve ensuite la même pression jusqu’à votre orgasme. Le plaisir traverse une anatomie reconnue sans être classée, et son regard demeure attentif à vous plutôt qu’à une catégorie.",
-    ),
-    offered: scene(
-      "Vous demandez à Tia quelle rencontre elle souhaite recevoir et ce que votre corps peut offrir sans imitation. Elle choisit de s’agenouiller face à vous, guide votre main contre sa rose entrouverte puis définit si le mouvement suivant sera oral, manuel, un frottement ou une pénétration adaptée. Ses demandes restent précises, mais aucune ne prétend déterminer votre rôle par votre anatomie.",
-      P("Pour cette configuration choisie, je peux te donner toute l’intensité demandée sans devenir un corps que je ne suis pas."),
-      "Tia acquiesce et vous guide vers l’angle qui rassemble le mieux vos sensations. Vous gardez une caresse extérieure pendant chaque mouvement, ralentissez sur son signal puis retrouvez la cadence qu’elle réclame. Son orgasme rompt sa posture officielle sans effacer sa puissance ; elle demeure contre vous, souffle court, et demande ensuite comment rendre à votre propre corps un plaisir aussi singulier.",
-    ),
-    mutual: scene(
-      "Vous tracez deux espaces dans les draps, non pour séparer les corps mais pour garantir deux désirs complets. Dans le premier, Tia reçoit la bouche, les mains, le frottement ou la pénétration qu’elle choisit ; dans le second, vous définissez une stimulation différente, sans devoir reproduire son plaisir. Le passage de l’un à l’autre se fait sur un signe librement révisable.",
-      C("Tia", "Dans ce relais adapté, l’égalité ne réclame aucune ressemblance. Elle exige seulement que chaque vérité corporelle reçoive la même attention.", "smirk"),
-      "Vous lui donnez raison par les gestes. Tia jouit sous une cadence qu’elle a elle-même formulée, puis vient vers votre anatomie avec des mains, une bouche et un bassin entièrement réaccordés. Votre orgasme n’imite pas le sien et n’en devient pas moins partagé ; vous terminez enlacé·es, certains que la circulation de l’initiative n’a assigné aucun rôle permanent.",
-    ),
-  },
 };
 
 INDIVIDUAL_EXPLICIT_SCENES.allenna = {
@@ -592,23 +422,6 @@ INDIVIDUAL_EXPLICIT_SCENES.allenna = {
       "Elle jouit sous sa propre cadence, vous garde en elle pendant le reflux puis vous offre le changement d’angle qui intensifie votre sensation. Vous reprenez par mouvements courts, une main liée à la sienne, jusqu’à votre orgasme. Allenna soutient vos hanches au lieu de les contraindre ; aucun vainqueur ne reste sur les draps, seulement deux personnes capables de porter et d’être portées.",
     ),
   },
-  intersexe: {
-    guided: scene(
-      "Allenna vous demande de placer ses mains sur les zones que vous souhaitez voir stimulées et de nommer toute profondeur possible. Elle soutient votre cuisse, pose sa bouche sur le point de feu désigné puis associe ses doigts ou son bassin uniquement selon vos indications. La précision de la commandante devient une cartographie choisie de votre plaisir, jamais une hypothèse anatomique.",
-      C("Allenna", "Pour cette carte corporelle, je ne complète aucun blanc. Montre-moi le trajet réel et je le suivrai aussi longtemps qu’il te plaît.", "smirk"),
-      "Vous modifiez une première combinaison, en refusez une seconde et réclamez la troisième plus fermement. Allenna s’adapte sans traiter ces changements comme des erreurs ; elle coordonne bouche, mains et appuis jusqu’à ce que votre orgasme fasse céder son propre contrôle. Son sourire reconnaît une réussite qui appartient à votre langage singulier plutôt qu’à sa connaissance générale des corps.",
-    ),
-    offered: scene(
-      "Vous demandez à Allenna ce qu’elle veut recevoir et ce que votre corps souhaite donner. Elle choisit une posture à genoux où votre bouche, vos mains, votre bassin ou une pénétration adaptée peuvent se relayer sans rôle fixé. Sa paume reste sur votre hanche comme un point de communication, jamais comme une prise destinée à décider du mouvement suivant.",
-      P("Dans cette relève choisie, je ne reproduirai pas un scénario prévu. Dis ce qui sert ton plaisir et demande-moi ce que mon corps peut réellement offrir."),
-      "Allenna formule des besoins concrets : pression, angle, durée. Vous les suivez tout en gardant votre propre limite visible ; la stimulation extérieure accompagne chaque reprise jusqu’à son orgasme. Elle ne transforme pas le plaisir reçu en dette et vous demande ensuite quelle configuration vous permettrait de recevoir à votre tour, prête à réapprendre entièrement la scène plutôt qu’à la refléter.",
-    ),
-    mutual: scene(
-      "Vous organisez la scène comme une relève, sans imposer que les deux tours emploient le même geste. Allenna reçoit d’abord la bouche, les mains, le frottement ou la pénétration qu’elle définit ; vous recevez ensuite une combinaison différente adaptée à votre anatomie. Le changement survient avant toute fatigue, dans une étreinte qui garde les deux désirs présents.",
-      C("Allenna", "Dans ce relais sans symétrie, l’équité signifie que personne ne doit s’épuiser ni disparaître pour que l’autre soit satisfait·e.", "smirk"),
-      "Son orgasme arrive sous la cadence demandée ; Allenna prononce ensuite la relève et vient vers votre corps avec une attention entièrement renouvelée. Votre propre plaisir monte sous des gestes qui ne copient pas les siens et n’en sont pas moins intenses. Lorsque vous cédez, elle maintient le soutien choisi jusqu’au bout, puis vos deux souffles redescendent ensemble sans score ni objectif suivant.",
-    ),
-  },
 };
 
 INDIVIDUAL_EXPLICIT_SCENES.draven = {
@@ -644,23 +457,6 @@ INDIVIDUAL_EXPLICIT_SCENES.draven = {
       "Après vous être préparés et avoir choisi qui reçoit d’abord, vous vous allongez sur le côté, assez proches pour rester enlacés. La tige dressée qui entre avance par pressions lentes dans l’intimité accueillante ; la personne qui reçoit garde une main sur le bassin de l’autre, règle la profondeur et demande chaque accélération sans transformer la réciprocité en obligation.",
       C("Draven", "Nous pouvons changer de rôle, de rythme ou d’avis. La seule manœuvre interdite consiste à se taire pour paraître solide.", "gruff"),
       "Vous gardez la première configuration jusqu’au plaisir de la personne qui reçoit, puis inversez seulement après une nouvelle demande explicite. Draven utilise sa force pour soutenir l’angle et non pour l’imposer ; le second orgasme arrive sous une cadence entièrement renégociée, vos mains encore jointes entre vos deux corps.",
-    ),
-  },
-  intersexe: {
-    guided: scene(
-      "Draven vous demande de placer sa bouche et ses mains exactement où vous souhaitez les sentir. Vous choisissez le point incandescent, le contact extérieur et la profondeur éventuelle ; il soutient votre cuisse, associe langue et doigts selon vos indications puis ajuste l’angle sans supposer quelle sensation devrait compter davantage pour votre anatomie.",
-      C("Draven", "Je ne navigue pas avec une carte inventée. Donnez-moi la vôtre, corrigez-moi, et je suivrai le trajet réel.", "approving"),
-      "Vous refusez une première combinaison, en réclamez une seconde et resserrez votre main sur sa nuque lorsque la troisième devient juste. Draven la conserve avec une patience brûlante jusqu’à votre orgasme ; il accompagne chaque contraction sans renommer votre corps ni transformer vos changements en erreurs.",
-    ),
-    offered: scene(
-      "Vous demandez à Draven quel plaisir il souhaite recevoir de votre corps réel. Il choisit d’abord votre main sur sa virilité tendue, puis votre bouche et enfin un frottement ou une pénétration adaptée que vous définissez ensemble ; sa paume reste ouverte contre votre hanche comme signal de cadence, jamais comme prise de commandement.",
-      P("Je ne reproduis aucun rôle prévu. Dis ce que tu veux de moi maintenant, puis demande ce que je veux offrir."),
-      "Draven formule des besoins concrets et vous les suivez sans nier les vôtres. La stimulation garde la pression qu’il réclame jusqu’à son orgasme, puis il demeure immobile contre vous et demande comment rendre à votre propre corps un plaisir distinct, prêt à réapprendre entièrement les gestes au lieu de les refléter.",
-    ),
-    mutual: scene(
-      "Vous organisez deux reprises différentes. Dans la première, Draven reçoit la bouche, les mains, le frottement ou la pénétration qu’il choisit ; dans la seconde, vous définissez une combinaison adaptée à votre anatomie sans devoir imiter son plaisir. Le changement se fait avant toute fatigue, sur un signal que chacun peut réviser.",
-      C("Draven", "Même intensité ne signifie pas même manœuvre. Chacun reçoit ce qu’il demande, et personne ne disparaît dans la méthode de l’autre.", "gruff"),
-      "Son plaisir arrive sous le rythme défini, puis Draven vient vers votre corps avec une attention entièrement renouvelée. Vos zones sensibles, vos limites et votre profondeur deviennent la nouvelle carte ; lorsque vous jouissez, il maintient exactement le soutien choisi avant que vos deux souffles ne redescendent sans score ni rôle permanent.",
     ),
   },
 };

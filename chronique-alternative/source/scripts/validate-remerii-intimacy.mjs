@@ -88,10 +88,6 @@ try {
   assert.match(dateSource, /date-remerii-lanterns[\s\S]*?background:\s*"\/assets\/backgrounds\/miraldas_observatory\.webp"/u);
   assert.doesNotMatch(dateSource.match(/date-remerii-lanterns[\s\S]*?\n\s*\},\n\s*\{/u)?.[0] || "", /miraldas_quarters/iu);
 
-  // L'option intersexe garde le catalogue antérieur : cette refonte ne fixe
-  // pas silencieusement une anatomie encore en arbitrage.
-  for (const context of contexts) assert.equal(intimacy.remeriiDateIntimacyRoutes(context, "intersexe").length, 0);
-  assert.match(pageSource, /character\.id === "remerii" && game\.player\.sex !== "intersexe"/u);
   assert.match(pageSource, /remeriiContext[\s\S]*?remeriiDateIntimacyRoutes\(remeriiContext/u);
   assert.match(pageSource, /const dedicatedIntimacy = Boolean\(hyleeContext \|\| remeriiContext/u);
   assert.match(pageSource, /useIntimateSprite = hasIntimateSprites\(character\.id\) && intimateVisual\.useIntimateSprites/u);

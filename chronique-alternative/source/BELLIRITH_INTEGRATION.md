@@ -26,7 +26,7 @@ Bellirith n’est plus une romance de « guérison sans aura » : c’est une d�
 
 ## Intimités manuelles (§13–§16, §25)
 
-Seize routes : 4 diversions, 8 heures volées (une par source), 2 duels de fin d’Acte I, plus les 2 anciennes routes génériques gardées en secours. Elles vivent dans `bellirith-intimacy-*.ts` et `bellirith-heure-*.ts`, assemblées par `bellirith-diversion-intimacy.ts` / `bellirith-intimacy-frames.ts` (ouvertures, approches, fins selon l’historique et la source). Chaque route existe en femme / homme / intersexe × tendre / suggestif / explicite / ellipse, 12 séquences minimum.
+Seize routes : 4 diversions, 8 heures volées (une par source), 2 duels de fin d’Acte I, plus les 2 anciennes routes génériques gardées en secours. Elles vivent dans `bellirith-intimacy-*.ts` et `bellirith-heure-*.ts`, assemblées par `bellirith-diversion-intimacy.ts` / `bellirith-intimacy-frames.ts` (ouvertures, approches, fins selon l’historique et la source). Chaque route existe en femme / homme × tendre / suggestif / explicite / ellipse, 12 séquences minimum.
 
 Mots par mode, toutes routes (min / moy / max) : tendre 463 / 606 / 995 · suggestif 680 / 891 / 1366 · explicite 1002 / 1165 / 1829 · ellipse 344 / 461 / 678.
 
@@ -94,7 +94,7 @@ npm run build
 
 `scripts/validate-bellirith-refactor.mjs` vérifie : jalons et absence de double direct ; file et persistance du rattrapage ; aucune pénalité de compagnon en rattrapage ; règles de Désir (résister ≥ 4, céder ≤ 1) ; refus jamais suivis d’intimité ; tendance, favori, flags ; migration v18 idempotente sans pénalité rétroactive ; 12 séquences et minimums de mots pour chaque route / mode / sexe / historique ; vocabulaire interdit ; Naïah jamais locutrice ni cible ; duel final qui lit l’historique ; rendez-vous fermés à l’étape 4, ouverts à 5 ; confidences par le Désir ; faux canon absent ; courriers ; invitation renommée ; banque de moments libres et réactions ; logis débarrassé de l’ancien axe ; protections de relecture ; fiche nettoyée ; style (ni tiret cadratin ni demi-cadratin, ni formule « ce n’est pas X, c’est Y »).
 
-Heures volées : huit contextes distincts, chacun ne propose que sa propre route ; minimums par route, par mode, par sexe et par historique (y compris les flags des rendez-vous), explicite plafonné à 1600 mots ; variantes femme / homme / intersexe réellement différentes ; historique qui change la scène ; titres uniques ; une entrée de panneau par heure ; aucune proposition ne mène au contexte hérité et deux sources ne partagent jamais un contexte.
+Heures volées : huit contextes distincts, chacun ne propose que sa propre route ; minimums par route, par mode, par sexe et par historique (y compris les flags des rendez-vous), explicite plafonné à 1600 mots ; variantes femme / homme réellement différentes ; historique qui change la scène ; titres uniques ; une entrée de panneau par heure ; aucune proposition ne mène au contexte hérité et deux sources ne partagent jamais un contexte.
 
 **Unicité** : toute phrase normalisée de 8 mots ou plus d’une route intime Bellirith (routes, ouvertures, approches, fins) doit appartenir à une seule route ou un seul cadre, comparée à toutes les autres routes Bellirith et aux 27 routes Hylee / Naïah. Le contrôle a révélé un épilogue commun aux deux routes du duel final : la route « Retourner l’initiative » a désormais le sien.
 

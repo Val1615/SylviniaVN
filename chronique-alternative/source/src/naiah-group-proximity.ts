@@ -15,7 +15,7 @@ type Blueprint = {
 };
 
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+const SEXES: PlayerSex[] = ["femme", "homme"];
 const L = (...chapter: RawLine[]): RawLine[] => chapter;
 const lines = (chapter: RawLine[]): DialogueLine[] => chapter.map((entry) => typeof entry === "string"
   ? { speaker: "Narration", text: entry }
@@ -30,7 +30,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Suivre le fil d’Hylee sans laisser Naïah écrire l’arrivée",
       homme: "Confier le chemin à Hylee et les fausses pistes à Naïah",
-      intersexe: "Tenir le troisième bout d’un fil qui refuse tout rôle prévu",
     },
     detail: "Hylee conduit une traversée de givre, Naïah dérègle le paysage et vos trois décisions transforment l’épreuve en confiance tactile.",
     chapters: [
@@ -49,7 +48,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Traquer avec Hylee le dernier double insolent de Naïah",
       homme: "Laisser une fausse Naïah vous défier pendant qu’Hylee marque le vrai chemin",
-      intersexe: "Démasquer ensemble la copie qui voudrait distribuer vos places",
     },
     detail: "Une chasse aux doubles où Hylee et Naïah se choisissent aussi l’une l’autre, tandis que vous refusez le rôle d’arbitre permanent.",
     chapters: [
@@ -68,7 +66,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Construire un refuge que ni le givre ni la brume ne peuvent posséder",
       homme: "Inventer avec elles une cachette qui exige trois mauvaises idées",
-      intersexe: "Faire d’un abri mouvant une place sans centre ni rôle fixe",
     },
     detail: "Les trois personnes bâtissent un abri absurde, y déposent chacune une vérité et découvrent une manière très concrète de rester proches.",
     chapters: [
@@ -87,7 +84,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Plaider devant le tribunal absurde des masques de Bellirith",
       homme: "Défendre deux accusées qui ont déjà soudoyé tous les témoins",
-      intersexe: "Refuser le verdict et faire comparaître vos trois façades",
     },
     detail: "Naïah transforme les fragments en juges, Bellirith retourne l’interrogatoire et le trio apprend à montrer un visage imparfait sans en faire un aveu forcé.",
     chapters: [
@@ -106,7 +102,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Lancer un concours d’imitation que Bellirith refuse de perdre élégamment",
       homme: "Juger les caricatures jusqu’à devenir la troisième cible",
-      intersexe: "Faire tourner les imitations sans laisser un visage devenir un rôle",
     },
     detail: "Bellirith imite Naïah, Naïah imite Bellirith et votre propre caricature oblige le trio à choisir ce qu’il souhaite réellement conserver.",
     chapters: [
@@ -125,7 +120,6 @@ const BLUEPRINTS: Blueprint[] = [
     labels: {
       femme: "Bâtir une ville de poche où chaque porte possède trois clés",
       homme: "Partager les quartiers d’un royaume qui tient dans vos paumes",
-      intersexe: "Inventer une cité miniature où aucune place n’est assignée d’avance",
     },
     detail: "Une miniature de lumière devient le terrain d’une proximité domestique, malicieuse et réellement partagée entre Naïah, Bellirith et vous.",
     chapters: [

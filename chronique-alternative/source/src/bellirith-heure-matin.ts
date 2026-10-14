@@ -72,7 +72,6 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Elle s’attarde sur vos seins, fait rouler leurs pointes entre ses lèvres l’une après l’autre, puis reprend sa tournée comme si de rien n’était, le long de vos hanches.",
             "Elle s’attarde sur votre torse, mordille un téton, puis descend jusqu’à votre aine et souffle sur votre désir déjà dressé sans le toucher, avant de reprendre sa tournée le long de vos hanches.",
-            "Elle s’attarde sur votre poitrine, fait rouler une pointe entre ses lèvres, puis descend jusqu’à votre aine et souffle sur votre vigueur sans la toucher, avant de reprendre sa tournée le long de vos hanches.",
           ),
           "Chaque fois que vous frissonnez, elle hoche la tête avec un sérieux absurde, comme une notaire qui vérifie un acte. Vous sentez son sourire contre votre ventre.",
         ],
@@ -122,7 +121,6 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Sa main descend entre vos cuisses et vous caresse avec une lenteur exaspérante, un doigt glissant le long de votre intimité sans jamais appuyer sur votre perle. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
             "Sa main se referme sur votre virilité et vous caresse avec une lenteur exaspérante, du bas jusqu’au sommet, un seul passage à la fois. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
-            "Sa main se referme sur votre sexe dressé pendant que deux doigts de l’autre vous effleurent juste dessous, avec une lenteur exaspérante, un seul passage à la fois. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
           ),
           "Quand vous vous calmez, elle reprend exactement là où elle s’était interrompue, sans un millimètre d’écart.",
           B("Le rythme, c’est moi. Tu te souviens ?", "seductive"),
@@ -186,7 +184,6 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Vous glissez une cuisse entre les siennes et votre main descend sur son intimité pendant que la sienne trouve la vôtre, en arrière. Vous vous caressez ainsi l’une l’autre, lovées, presque sans bouger.",
             "Elle soulève un peu la jambe et vous guide en elle, par-derrière, d’un mouvement paresseux. Vous bougez à peine, lovés l’un contre l’autre, en longues poussées lentes.",
-            "Elle soulève un peu la jambe et vous guide en elle, par-derrière, d’un mouvement paresseux, puis passe une main en arrière pour trouver aussi votre fente mouillée. Vous bougez à peine, lovés l’un contre l’autre.",
           ),
           "Une paresse délicieuse, comme on se rendort. Dans le couloir, le thé refroidit.",
         ],
@@ -204,7 +201,6 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Elle jouit la première, de nouveau, sous vos doigts, et c’est sa main crispée sur vous qui vous emporte ensuite, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
             "Elle se resserre autour de vous en gémissant, et vous jouissez en elle à votre tour, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
-            "Elle se resserre autour de vous en gémissant, ses doigts toujours en vous, et vous jouissez à votre tour, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
           ),
         ],
         ["Le plaisir monte lentement, puis vous emporte longtemps."],

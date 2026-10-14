@@ -212,7 +212,7 @@ const STATED_ORIENTATION = /asexu|aromanti|sans désir sexuel|n[’']éprouve (?
 /** Naïah ne doit jamais être pénétrée ni ciblée génitalement. */
 const NAIAH_TARGETED = /(?:en|dans) Naïah|(?:chaleur|perle de plaisir|sexe|intimité|entrejambe|cuisses?) (?:de|à) Naïah|Naïah (?:jouit|gémit de plaisir)/iu;
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+const SEXES: PlayerSex[] = ["femme", "homme"];
 
 export function hyleeNaiahWordCount(chapters: DialogueLine[][]): number {
   return chapters.flat().reduce((total, line) => total + line.text.trim().split(/\s+/u).filter(Boolean).length, 0);

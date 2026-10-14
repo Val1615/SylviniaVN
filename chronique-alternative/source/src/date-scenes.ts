@@ -5,7 +5,7 @@ import { NAIAH_DATES } from "./naiah-dates";
 import { VALURN_DATES } from "./valurn-dates";
 
 export type DateOutcome = "great" | "good" | "awkward";
-export type PlayerSex = "femme" | "homme" | "intersexe";
+export type PlayerSex = "femme" | "homme";
 export type IntimacyMode = "tendre" | "suggestif" | "explicite" | "ellipse";
 
 export type DateScene = {
