@@ -117,7 +117,7 @@ try {
   }
   requireRouteFlags("iriana-4", ["iriana-private-choice"]);
   requireRouteFlags("amanea-4", ["amanea-pact-boundary"]);
-  requireRouteFlags("valurn-4", ["valurn-accountability"]);
+  requireRouteFlags("valurn-q6", ["valurn-market-done"]);
   requireRouteFlags("lineva-4", ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"]);
   requireRouteFlags("draven-4", ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"]);
 
@@ -140,7 +140,6 @@ try {
     "medig-window",
     "amanea-family-truth",
     "iriana-after-mother",
-    "valurn-after-truth",
     "amanea-after-pact",
     "lineva-draven-after-truth",
   ]);

@@ -2,6 +2,7 @@ import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./ga
 import { HYLEE_DATES } from "./hylee-dates.ts";
 import { REMERII_DATES } from "./remerii-dates";
 import { NAIAH_DATES } from "./naiah-dates";
+import { VALURN_DATES } from "./valurn-dates";
 
 export type DateOutcome = "great" | "good" | "awkward";
 export type PlayerSex = "femme" | "homme" | "intersexe";
@@ -74,26 +75,8 @@ export const DATE_SCENES: DateScene[] = [
     ],
     intimacySetting: { opening: ["Lorsque la valse s’achève, Iriana ne remet pas la couronne. Elle vous conduit derrière les lourds rideaux où les alcôves accueillaient autrefois les négociations secrètes.", "Cette fois, aucun traité ne se conclut. Le velours étouffe vos voix tandis qu’Iriana formule ses envies sans pluriel de majesté et écoute les vôtres avec la même attention."], closing: ["Vous regagnez le parquet avant l’aube. Iriana remet sa couronne, puis vous accorde une dernière danse lente dont aucun invité ne connaîtra jamais les pas."] },
   },
-  {
-    id: "date-valurn-forestier", character: "valurn", title: "Le pari qui ne rapporte rien", type: "Jeux et confidences", description: "Partager une table, quelques cartes et la possibilité rare que Valurn reste sans enjeu caché.", location: "forestier", spot: "forestier-inn", period: "soirée", unlockStage: 5, minAffection: 25, minTrust: 25, mood: "charming",
-    intro: [line("Narration", "Valurn a réservé la table la plus proche de la porte et placé entre vous un jeu dont il a retiré toutes les cartes marquées."), line("Valurn", "Règle unique : la personne qui gagne pose une question. La personne qui perd peut refuser d’y répondre. Oui, ce jeu est économiquement désastreux."), line("Narration", "Il perd la première manche avec un naturel beaucoup trop parfait, puis admet avoir hésité à tricher."), line("Valurn", "À vous. Une question, une plaisanterie ou la destruction complète de mes règles ?")],
-    choices: [
-      dateChoice("dvf-l", "Lui demander pourquoi il a choisi cette auberge plutôt qu’un palais.", "lucidite", [line("Valurn", "Parce qu’ici, partir n’impressionne personne. Rester non plus. Je voulais découvrir lequel des deux je choisirais près de vous."), line("Narration", "Il ne regarde plus la porte pendant les trois manches suivantes.")], "great", { affection: 7, trust: 10, desire: 3 }),
-      dateChoice("dvf-a", "Mélanger toutes les cartes et transformer le jeu en vérités absurdes.", "audace", [line("Valurn", "Je dois donc avouer un crime culinaire, un désir inavouable et mon opinion sur les chapeaux impériaux ? Vous êtes impitoyable."), line("Narration", "Les aveux deviennent plus tendres à mesure que le vin baisse dans les verres.")], "great", { affection: 10, trust: 5, desire: 5 }),
-      dateChoice("dvf-s", "Refuser le jeu et proposer de parler sans gagner le droit de le faire.", "sangFroid", [line("Valurn", "Aucune mise, aucune victoire… vous retirez mes défenses avec une brutalité très polie."), line("Narration", "La conversation devient honnête, quoique Valurn conserve encore une plaisanterie prête à couvrir chaque silence.")], "good", { affection: 5, trust: 8, desire: 2 }),
-    ],
-    intimacySetting: { opening: ["Valurn dépose la clé de la chambre au milieu du dernier pli, face contre table, comme une mise qu’il refuse cette fois de reprendre. Vous montez sans annoncer lequel de vous a gagné.", "À l’intérieur, ses armes et ses sceaux rejoignent le rebord de la fenêtre. Débarrassé de ses tours, Valurn paraît moins assuré et infiniment plus proche."], closing: ["Au matin, Valurn prétend avoir perdu le pari qui consistait à partir avant l’aube. La clé demeure dans votre main et son sourire, sans pacte ni clause, admet qu’il espérait cette défaite."] },
-  },
-  {
-    id: "date-valurn-river", character: "valurn", title: "Un feu sans pacte", type: "Halte sous les étoiles", description: "Allumer un feu ordinaire au bord du Fleuve bleu et passer une nuit sans contrat ni destination urgente.", location: "river-halt", spot: "river-halt", period: "soirée", unlockStage: 5, minAffection: 28, minTrust: 28, mood: "away",
-    intro: [line("Narration", "Valurn s’obstine à allumer le feu avec du silex. Trois flammes de pacte parfaitement efficaces dansent au bout de ses doigts, volontairement ignorées."), line("Valurn", "Je souhaite prouver que je peux produire de la chaleur sans engager mon âme, mon sang ou les droits d’exploitation d’un futur enfant."), line("Narration", "Le feu prend enfin. Il vous tend sa couverture sans demander ce que ce geste lui rapportera."), line("Valurn", "Racontez-moi quelque chose de votre présent. Votre passé est absent et mon avenir trop bruyant ; il nous reste cette rive.")],
-    choices: [
-      dateChoice("dvr-s", "Partager la couverture et décrire simplement ce que vous ressentez ici.", "sangFroid", [line("Valurn", "Une réponse qui ne réclame ni origine ni destination. Je comprends pourquoi elle semble plus chaude que mon feu."), line("Narration", "Il s’adosse contre vous, d’abord prêt à bouger, puis réellement installé.")], "great", { affection: 8, trust: 9, desire: 4 }),
-      dateChoice("dvr-r", "Écouter les résidus de pactes dans ses mains sans chercher à les retirer.", "resonance", [line("Valurn", "Vous sentez les chaînes et vous ne tirez pas dessus. Merci de ne pas appeler délivrance une douleur supplémentaire."), line("Narration", "Il vous laisse prendre sa main, paume contre paume, jusqu’à ce que les flammes sombres s’apaisent.")], "great", { affection: 7, trust: 10, desire: 3, confluence: 2 }),
-      dateChoice("dvr-a", "Jeter ses cartes de voyage en l’air et choisir l’étape de demain au hasard.", "audace", [line("Valurn", "Une navigation irresponsable, imprévisible et peut-être merveilleuse. Vous savez véritablement parler à mon cœur."), line("Narration", "Il rit et vous embrasse avant que la carte retombe, mais l’incertitude le rend encore un peu nerveux.")], "good", { affection: 8, trust: 4, desire: 5 }),
-    ],
-    intimacySetting: { opening: ["Valurn étend une seconde couverture derrière le paravent improvisé du camp. Le fleuve masque vos voix, le feu ordinaire réchauffe vos vêtements abandonnés sans aucune intervention du Chaos.", "Il s’allonge près de vous, contemple les étoiles une dernière seconde et admet d’un sourire nerveux qu’aucune d’elles ne lui a préparé la suite."], closing: ["Vous vous rhabillez devant les braises. Valurn rallume le feu d’un simple souffle, fier de cette magie minuscule, puis choisit avec vous la route du lendemain sans tirer aucune carte."] },
-  },
+  // Valurn · refonte Acte I (valurn-dates.ts).
+  ...VALURN_DATES,
   {
     id: "date-lineva-ramparts", character: "lineva", title: "Forthaven à elle", type: "Quais, ragoût et vieux fanal", description: "Suivre Lineva dans les endroits du port qu’elle choisit lorsqu’aucune ronde ne fixe le trajet.", location: "forthaven", spot: "forthaven-harbor", period: "soirée", unlockStage: 5, minAffection: 34, minTrust: 36, minDesire: 22, mood: "smirk",
     intro: [

@@ -47,3 +47,8 @@
   .vm-scene{grid-template-columns:1fr}
   .vm-sprite{max-height:34vh}
 }
+
+.valurn-journal-entry { margin-top: .6rem; }
+.valurn-journal-entry dl { display: grid; grid-template-columns: max-content 1fr; gap: .2rem .7rem; margin: 0 0 .5rem; font-size: .88em; }
+.valurn-journal-entry dt { font-weight: 700; opacity: .8; }
+.valurn-journal-entry dd { margin: 0; }

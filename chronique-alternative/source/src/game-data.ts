@@ -1,6 +1,7 @@
 import { HYLEE_ROUTES } from "./hylee-relation.ts";
 import { NAIAH_ROUTES } from "./naiah-relation.ts";
 import { REMERII_ROUTES } from "./remerii-relation.ts";
+import { VALURN_QUESTS } from "./valurn-quests";
 
 export type StatKey = "audace" | "lucidite" | "sangFroid" | "resonance";
 export type PeriodKey = "aube" | "matin" | "apres-midi" | "soirée";
@@ -275,22 +276,20 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: "valurn", name: "Valurn", role: "Demi-démon et démonologue", ageNote: "Adulte", portrait: "/assets/portraits/valurn.jpg", color: "#ff725d", unlockDay: 3, defaultMood: "charming",
     tagline: "Il parie sur tout, surtout lorsqu’avouer qu’il tient à quelqu’un serait plus dangereux.",
-    bio: "Séduisant, sarcastique et dangereux, Valurn connaît les pactes mieux que quiconque. Il aide Iriana à chercher une faille dans le contrat d’Alamma ; leur union reste libre, mais la liberté ne les protège ni de l’attachement ni des interventions de Bellirith.",
+    bio: "Séduisant, sarcastique et dangereux, Valurn connaît les pactes mieux que quiconque et tient à Al’Gratal un réseau d’informateurs qui le surnomme le Grand Parieur. Il aide Iriana à chercher une faille dans le contrat d’Alamma ; leur union reste libre, mais la liberté ne les protège ni de l’attachement ni des interventions de Bellirith.",
     wound: "La certitude que tout lien finira tôt ou tard par se transformer en chaîne.",
     appreciates: "Les esprits vifs, les paris honnêtes et les personnes capables de voir sa peur sans l’utiliser.",
     giftLikes: ["vin", "jeton", "grimoire"],
     itinerary: [
-      { days: 4, location: "algratal", note: "Renseignements de cour et paris avec Iriana" },
+      { days: 9, location: "algratal", note: "Réseau d'informateurs, marché du matin et audiences du soir" },
       { days: 2, travelTo: "forbidden", note: "Passage vers la Forêt Interdite" },
-      { days: 3, location: "forbidden", note: "Négociation risquée avec Naïah" },
-      { days: 2, travelTo: "akuhn", note: "Traversée des brumes vers Akuhn’Nabad" },
-      { days: 4, location: "akuhn", note: "Enquête démonologique et visite à Bellirith" },
+      { days: 2, location: "forbidden", note: "Une affaire de démonologie qu'il ne détaille pas" },
+      { days: 2, travelTo: "algratal", note: "Retour vers la cour" },
+      { days: 9, location: "algratal", note: "Correspondances, dettes à recouvrer et paris de cour" },
+      { days: 3, travelTo: "akuhn", note: "Traversée des brumes vers Akuhn'Nabad" },
+      { days: 4, location: "akuhn", note: "Archives démonologiques" },
       { days: 3, travelTo: "algratal", note: "Retour par les routes impériales" },
-      { days: 4, location: "algratal", note: "Renseignements partagés avec Iriana" },
-      { days: 3, travelTo: "akuhn", note: "Nouvelle mission obscurcie" },
-      { days: 4, location: "akuhn", note: "Pactes, archives et retrouvailles familiales" },
-      { days: 3, travelTo: "algratal", note: "Retour vers la cour" },
-      { days: 6, location: "algratal", note: "Jeux politiques et temps libre avec Iriana" },
+      { days: 4, location: "algratal", note: "Temps libre, cartes et courrier du Croissant" },
     ],
   },
   {
@@ -577,80 +576,8 @@ export const ROUTE_SCENES: RouteScene[] = [
     choice("t4-a", "Lui demander un oui personnel, puis l’embrasser sans attendre une permission de l’Empire.", "audace", [line("{player}", "Tia — pas l’Impératrice — est-ce que vous voulez m’embrasser ?"), line("Narration", "Son regard se durcit par réflexe devant la séparation, puis elle choisit de ne pas corriger vos mots."), line("Tia", "Oui."), line("{player}", "C’est tout ?"), line("Tia", "Vous exigez une proclamation ?"), line("{player}", "Seulement la certitude que ce oui vient de vous."), line("Tia", "Alors écoutez mieux : oui, je vous désire. Oui, je veux que vous restiez. Et oui, votre impertinence continuera de m’exaspérer demain."), line("Narration", "Son premier baiser reste mesuré. Le second ne représente ni la Lumière ni l’Empire ; il porte toute la volonté qu’elle n’a confiée à personne."), line("Tia", "N’interprétez pas mon absence de regret comme une promesse d’accessibilité permanente."), line("{player}", "Je n’aurais pas osé."), line("Tia", "Mensonge. Mais pas assez grave pour interrompre la soirée.")], { stats: { audace: 1 }, affection: 13, trust: 9, desire: 12, confluence: 8, flags: ["story-tia-personal"] }),
   ], true),
 
-  // VALURN
-  routeScene("valurn", 0, 3, "La première mise", "algratal", "market", "amused", [
-    line("Narration", "Devant l’enseigne du Croissant, Valurn fait tourner un jeton sur ses phalanges. Il vous suit des yeux depuis trois étals et vient de payer une pomme avec une pièce qui était encore dans la bourse d’un marchand une seconde plus tôt."),
-    line("{player}", "Vous venez de le voler."),
-    line("Valurn", "Terme très accusateur. Je préfère “corriger une circulation monétaire paresseuse”."),
-    line("Narration", "Il rend la pièce au marchand sans regarder, puis lance le jeton dans votre direction."),
-    line("Valurn", "Je parie trois pièces que vous allez prétendre ne pas me connaître. Cinq que quelqu’un vous a déjà conseillé de ne jamais parier avec moi."),
-    line("{player}", "Et si je pars ?"),
-    line("Valurn", "Je gagne la preuve que vous êtes raisonnable. Tragique pour vous, excellent pour mes statistiques."),
-    line("Narration", "Son sourire vous invite à faire exactement l’inverse."),
-    line("Valurn", "Alors ? Faites-moi perdre avec panache ou gagner agréablement.")
-  ], [
-    choice("v0-a", "Prendre le jeton au vol. « Je parie que vous aviez prévu les trois réponses. »", "audace", [line("Valurn", "Trois ? Vous me flattez. J’en avais prévu sept, dont une gifle et une demande en mariage particulièrement confuse."), line("{player}", "Laquelle espériez-vous ?"), line("Valurn", "La gifle. Le mariage exige trop de témoins."), line("Narration", "Il tente de reprendre le jeton ; vous refermez les doigts avant lui."), line("Valurn", "Ah. Vol manifeste."), line("{player}", "Correction d’une circulation monétaire paresseuse."), line("Narration", "Son rire attire le regard du marchand. Valurn vous laisse le jeton et glisse trois pièces dans votre autre main."), line("Valurn", "Gardez-les. J’investis dans la récidive.")], { stats: { audace: 1 }, affection: 5, desire: 3, trust: 2, coins: 3, confluence: 2, items: { "keepsake-valurn": 1 } }),
-    choice("v0-l", "« Vous ne cherchez pas à gagner. Vous vérifiez qui m’a déjà parlé de vous. »", "lucidite", [line("Narration", "Le jeton cesse de tourner. Le sourire de Valurn demeure, mais ses yeux viennent de quitter le jeu."), line("Valurn", "Et qu’avez-vous appris pendant cette brillante autopsie de mon entrée en scène ?"), line("{player}", "Que le marchand vous connaît, que vous avez rendu sa pièce et que vous avez regardé derrière moi avant chaque plaisanterie."), line("Valurn", "Voilà qui devient embarrassant. Je comptais passer pour un charmant criminel, pas pour un charmant criminel prudent."), line("{player}", "Qui craignez-vous ?"), line("Valurn", "Les personnes capables de répondre sérieusement à cette question."), line("Narration", "Il remet le jeton en mouvement, mais se place désormais de façon à vous faire partager la vue sur la rue."), line("Valurn", "Marchez. Si l’on nous suit, je vous offrirai une seconde énigme inutile.")], { stats: { lucidite: 1 }, trust: 6, affection: 3, confluence: 2 }),
-    choice("v0-s", "Refuser la mise, mais accepter la conversation.", "sangFroid", [line("Narration", "Vous lui rendez le jeton sans vous éloigner."), line("Valurn", "Vous refusez le jeu sans refuser le joueur. C’est presque obscène de nuance."), line("{player}", "Je préfère connaître les règles avant de miser."), line("Valurn", "Moi aussi. C’est pour cela que je les écris en très petits caractères."), line("{player}", "Et la conversation ?"), line("Valurn", "Gratuite jusqu’à la troisième question. Ensuite, votre âme, votre premier enfant ou une pâtisserie décente. Je ne suis pas difficile."), line("Narration", "Vous choisissez la pâtisserie. Il accepte avec une gravité de notaire, puis vous conduit vers l’étal le plus cher du marché."), line("Valurn", "Voyez ? Vous avez tout de même perdu de l’argent. Mon honneur est sauf.")], { stats: { sangFroid: 1 }, trust: 5, affection: 3, confluence: 2 }),
-  ]),
-  routeScene("valurn", 1, 7, "Une flamme qui n’obéit pas", "forbidden", "camp", "annoyed", [
-    line("Narration", "Au camp, une flamme noire danse dans la paume de Valurn. Chaque fois qu’il serre les doigts, elle gagne une nouvelle langue et met le feu à un brin d’herbe différent."),
-    line("Valurn", "Le Chaos adore qu’on lui ordonne de se calmer. Il prend cela pour une critique artistique."),
-    line("Narration", "Il écrase une braise sous sa botte. Une seconde apparaît sur son épaule ; il la chasse d’une gifle et jure dans une langue qui fait frissonner les tentes."),
-    line("{player}", "Vous avez besoin d’aide ?"),
-    line("Valurn", "Non. J’ai besoin d’un public qui sache courir et d’un testament correctement ponctué."),
-    line("Narration", "La flamme remonte brusquement jusqu’à son poignet. Son sourire reste, mais la douleur lui coupe le souffle."),
-    line("Valurn", "Éloignez-vous. À moins d’avoir développé une passion soudaine pour les brûlures démoniaques — auquel cas je peux recommander des méthodes plus agréables.")
-  ], [
-    choice("v1-r", "Accorder votre souffle aux pulsations de la flamme sans la toucher.", "resonance", [line("Narration", "Vous vous placez hors de portée et accordez votre respiration aux pulsations du feu. La flamme se penche vers vous comme si elle cherchait une porte."), line("Valurn", "Ne l’encouragez pas. Elle a déjà l’ego de mon père et davantage de couleurs."), line("{player}", "Elle suit votre colère."), line("Valurn", "Calomnie. Je ne suis jamais en colère ; je suis sarcastique avec une température élevée."), line("Narration", "Vous ralentissez. La flamme hésite, imite votre souffle, puis se tasse dans sa paume."), line("Valurn", "Vous venez de séduire un fragment de Chaos sous mes yeux. Je devrais être jaloux."), line("{player}", "Il a surtout besoin qu’on l’écoute."), line("Valurn", "Pire. Vous lui trouvez une profondeur. Il ne me parlera plus que de vous.")], { stats: { resonance: 1 }, trust: 6, affection: 5, desire: 3, confluence: 5 }, { stat: "resonance", value: 6 }),
-    choice("v1-s", "Rester à portée de voix, hors du cercle de danger.", "sangFroid", [line("{player}", "Je ne m’approche pas. Je ne pars pas non plus."), line("Valurn", "Quel compromis atrocement raisonnable."), line("Narration", "Il rit, puis la flamme remonte jusqu’à son coude. Cette fois, aucune plaisanterie ne vient."), line("{player}", "Dites-moi ce qu’elle fait."), line("Valurn", "Elle cherche une sortie. Si je lui en donne une, la moitié du camp prend feu. Si je la retiens, elle choisit mes nerfs."), line("{player}", "Alors j’écoute pendant que vous la retenez."), line("Narration", "Valurn serre les dents. Vous lui parlez du marché, de la pomme volée, du marchand qui l’avait vu dès le début. Lorsque la flamme s’éteint, il reste assis dans l’herbe, épuisé."), line("Valurn", "Vous êtes resté·e sans vous jeter dans l’incendie. Les héros devraient étudier cette technique révolutionnaire.")], { stats: { sangFroid: 1 }, trust: 8, affection: 3, confluence: 3 }),
-    choice("v1-a", "« J’ai connu des invitations plus élégantes, mais soit. »", "audace", [line("Valurn", "Vous êtes soit très courageux·se, soit terriblement mal conseillé·e."), line("{player}", "Les deux ne s’excluent pas."), line("Narration", "Vous franchissez le premier cercle de braises. Valurn referme les doigts sur la flamme et vous tend son autre main."), line("Valurn", "Si je vous brûle, criez. Cela m’évitera de confondre le romantisme et l’odeur de chair rôtie."), line("{player}", "Charmant."), line("Valurn", "Je traverse une crise. Mes meilleures répliques sont indisponibles."), line("Narration", "Votre main se referme sur la sienne. Il utilise votre appui pour redresser son poignet, détourne le feu vers le ciel et l’y laisse mourir en pluie noire."), line("Valurn", "Vous pouvez désormais raconter que vous m’avez sauvé. J’exigerai seulement d’être plus beau dans la version officielle.")], { stats: { audace: 1 }, trust: 4, affection: 6, desire: 5, confluence: 3 }),
-  ]),
-  routeScene("valurn", 2, 11, "Le nom de son père", "akuhn", "deep_archives", "away", [
-    line("Narration", "Un ancien registre démoniaque classe Valurn entre trois forteresses et un cheptel d’âmes sous la rubrique “possessions de Bhaal”. Il lit la ligne deux fois, puis referme le livre assez fort pour fendre la reliure."),
-    line("Valurn", "Voilà qui règle une vieille question. Je vaux moins qu’une forteresse, davantage que six cents âmes et exactement autant qu’un puits de lave médiocre."),
-    line("{player}", "Valurn…"),
-    line("Valurn", "Ne prenez pas cette voix. Elle annonce toujours une vérité bienveillante et je suis allergique aux deux."),
-    line("Narration", "Il essaie de faire tourner son jeton. Celui-ci lui échappe et roule sous la table."),
-    line("Valurn", "Mon père confond le sang avec un titre de propriété. Le monde mortel a au moins la décence d’ajouter des formulaires et des taxes à l’insulte."),
-    line("Narration", "Il ne se baisse pas pour ramasser le jeton."),
-    line("Valurn", "Et ne me dites pas que je ne suis pas comme lui. Vous ignorez encore ce que j’ai fait lorsque j’ai cru agir pour le bien de quelqu’un.")
-  ], [
-    choice("v2-l", "« Je ne sais pas si vous lui ressemblez. Je vois ce que vous choisissez quand il n’est pas là. »", "lucidite", [line("Narration", "Valurn reste immobile, privé de l’absolution qu’il était prêt à lacérer."), line("Valurn", "C’est beaucoup plus difficile à rejeter qu’un compliment naïf. Vous pourriez avoir la courtoisie d’être simpliste."), line("{player}", "Vous avez rendu la pièce au marchand."), line("Valurn", "Preuve accablante de vertu."), line("{player}", "Vous avez aussi demandé au camp de s’éloigner avant de vous protéger vous-même."), line("Narration", "Il détourne les yeux, puis se baisse enfin pour récupérer le jeton."), line("Valurn", "Vous collectionnez mes bonnes actions afin de me faire chanter avec une image décente de moi-même ?"), line("{player}", "Je collectionne les faits."), line("Valurn", "Iriana déteint sur vous. C’est inquiétant… et, pour une fois, utile.")], { stats: { lucidite: 1 }, trust: 10, affection: 4, confluence: 3 }),
-    choice("v2-s", "Ne pas le contredire ; lui demander ce qu’il craint d’avoir choisi.", "sangFroid", [line("Narration", "Vous ne lui offrez ni innocence ni condamnation. Valurn attend visiblement l’une des deux et s’agace de leur absence."), line("{player}", "Qu’avez-vous peur d’avoir choisi ?"), line("Valurn", "Vous avez une manière odieuse de laisser les portes ouvertes."), line("{player}", "Vous pouvez ne pas répondre."), line("Valurn", "C’est précisément le problème. J’en ai envie."), line("Narration", "Il ouvre de nouveau le registre, tourne plusieurs pages et s’arrête sur le sceau de Bellirith sans le nommer."), line("Valurn", "J’ai déjà appelé protection une décision prise à la place de quelqu’un. J’ignore encore si la différence avec Bhaal se trouve dans l’intention… ou seulement dans le vocabulaire."), line("Narration", "Il referme doucement le livre cette fois et reste auprès de vous, sans plaisanter pendant presque une minute.")], { stats: { sangFroid: 1 }, trust: 9, affection: 5, desire: 2, confluence: 3 }),
-    choice("v2-a", "« Parfait. Montrez-moi qui vous êtes au lieu de citer Bhaal. »", "audace", [line("Narration", "La colère dans ses yeux change de direction."), line("Valurn", "Vous aimez vivre dangereusement."), line("{player}", "J’aime surtout quand vous cessez de lui prêter votre bouche."), line("Valurn", "Ma bouche est pourtant l’un de mes meilleurs arguments."), line("Narration", "La plaisanterie claque, vive et défensive. Vous la laissez mourir."), line("Valurn", "Très bien. Moi : j’ai peur de posséder ce que j’aime. Moi : j’ai déjà fui avant de vérifier si l’absence serait plus cruelle. Moi : j’ai encore envie de rester ici malgré votre insolence."), line("{player}", "C’est un début."), line("Valurn", "Ne devenez pas gourmand·e. Je viens d’offrir trois vérités et une bouche de qualité supérieure.")], { stats: { audace: 1 }, trust: 6, affection: 7, desire: 4, confluence: 3 }),
-  ]),
-  routeScene("valurn", 3, 16, "Le grand parieur perd une mise", "algratal", "terrace", "surprised", [
-    line("Narration", "Valurn dépose deux coupes et le jeton de votre première rencontre sur la balustrade. Le vent renverse une coupe ; il la rattrape trop tard et regarde le vin tomber sur les jardins."),
-    line("Valurn", "Un présage d’une subtilité remarquable."),
-    line("{player}", "Vous avez simplement mal posé la coupe."),
-    line("Valurn", "N’anéantissez pas toute poésie. J’avais besoin d’un responsable cosmique."),
-    line("Narration", "Il se sert dans la coupe restante, boit, puis vous la tend. Pour la première fois, le jeton hésite entre ses doigts."),
-    line("Valurn", "J’ai parié que je pouvais traverser cette Confluence sans m’attacher à ce qu’elle contient. Très bon pari : séduisant, imprudent, fondé sur une connaissance déplorable de moi-même."),
-    line("{player}", "Et vous avez perdu ?"),
-    line("Valurn", "Abominablement."),
-    line("Narration", "Son sourire revient, mais il ne suffit plus à cacher l’enjeu."),
-    line("Valurn", "Je déteste perdre. Plus encore lorsque le gain vous regarde comme si vous pouviez partir.")
-  ], [
-    choice("v3-a", "Retourner le jeton. « Double ou rien : dites-moi ce que vous voulez. »", "audace", [line("Narration", "Le jeton tourne sur la pierre. Valurn le regarde comme s’il pouvait encore lui fournir une échappatoire brillante."), line("Valurn", "Vous."), line("Narration", "Le mot tombe avant son sourire."), line("Valurn", "Voilà. C’est prononcé. Le monde n’a pas explosé ; mes ancêtres doivent manquer de concentration."), line("{player}", "Seulement moi ?"), line("Valurn", "Vous, une nuit très longue, du vin meilleur que celui-ci et la certitude scandaleuse que demain ne sera pas une facture."), line("Narration", "Vous arrêtez le jeton sous un doigt. Valurn pose le sien sur le vôtre."), line("Valurn", "À vous de miser. Je viens, fait rarissime, de montrer mes cartes avant la fin.")], { stats: { audace: 1 }, affection: 8, trust: 6, desire: 7, confluence: 5 }),
-    choice("v3-l", "« Vous pourriez cesser de traiter l’attachement comme un contrat piégé. »", "lucidite", [line("Valurn", "Et risquer de découvrir qu’il peut être gratuit ? Vous avez des idées d’une violence remarquable."), line("{player}", "Ou réciproque."), line("Valurn", "Pire encore. Il faudrait alors admettre que je n’ai pas tout obtenu par talent."), line("Narration", "Il fait sauter le jeton, le manque et le rattrape de justesse contre votre poitrine."), line("Valurn", "Disons que ce geste était calculé."), line("{player}", "Naturellement."), line("Narration", "Il glisse le jeton dans votre paume et referme vos doigts dessus."), line("Valurn", "Gardez-le. Pas comme dette. Comme preuve matérielle que je peux abandonner quelque chose sans disparaître avec.")], { stats: { lucidite: 1 }, affection: 7, trust: 8, desire: 4, confluence: 5 }),
-    choice("v3-s", "Lui laisser la possibilité de reprendre sa mise sans humiliation.", "sangFroid", [line("Narration", "Vous faites glisser le jeton vers lui sans le pousser jusqu’à sa main."), line("{player}", "Vous pouvez le reprendre. Et vous pouvez partir sans transformer cette soirée en défaite."), line("Valurn", "Vous me laissez une sortie."), line("{player}", "Je préfère que vous restiez parce que la sortie existe."), line("Narration", "Valurn regarde le jeton, puis la porte de la terrasse. Il prend finalement la coupe vide et s’installe sur la balustrade."), line("Valurn", "C’est une manipulation très sournoise."), line("{player}", "Laquelle ?"), line("Valurn", "Vous rendez la fuite remarquablement peu séduisante."), line("Narration", "Il reste. Le jeton aussi, exactement à mi-chemin entre vous.")], { stats: { sangFroid: 1 }, affection: 6, trust: 10, desire: 4, confluence: 5 }, { stat: "sangFroid", value: 8 }),
-  ]),
-  routeScene("valurn", 4, 22, "Un pacte sans chaîne", "algratal", "bedroom", "charming", [
-    line("Narration", "Une flamme rouge dessine un cercle sur le sol de la chambre. Valurn l’observe, hausse les sourcils comme si le rituel s’était invité seul, puis l’efface du talon."),
-    line("Valurn", "Non. Trop dramatique, même pour moi."),
-    line("{player}", "C’était quoi ?"),
-    line("Valurn", "Une vieille manière démoniaque de promettre fidélité, possession mutuelle et plusieurs siècles de querelles successorales. La troisième partie est la plus sensuelle."),
-    line("Narration", "Il ouvre les mains : aucun sceau, aucune flamme, aucun fil magique ne demeure entre vous."),
-    line("Valurn", "Pas de dette. Pas de chaîne. Pas même une promesse éternelle — j’ai une réputation de lâche charmant à protéger."),
-    line("Narration", "Son sourire se fait plus lent. Sous la plaisanterie, sa respiration a changé."),
-    line("Valurn", "Seulement ce soir. Demain si nous le voulons encore. Et, si tout se passe très mal, une histoire scandaleuse à raconter séparément."),
-    line("Valurn", "Est-ce assez réel pour vous ?")
-  ], [
-    choice("v4-s", "« Oui. Et demain devra rester aussi libre que ce soir. »", "sangFroid", [line("Valurn", "Vous avez réussi à rendre l’absence de contrat terriblement solennelle."), line("{player}", "Vous pouvez encore plaisanter et dire non."), line("Valurn", "Je peux faire les deux dans la même phrase. C’est l’un de mes talents les mieux rémunérés."), line("Narration", "Il approche une main de votre taille, s’arrête avant le contact et attend. Lorsque vous réduisez vous-même la distance, son sourire perd enfin sa fonction de bouclier."), line("Valurn", "Oui."), line("{player}", "Vous répondez à quelle question ?"), line("Valurn", "À celle que vous venez de poser sans parler. Ne m’obligez pas à devenir sentimental, je serais insupportable."), line("Narration", "Il vous embrasse avec une prudence que, cette fois, il ne tente pas de tourner en dérision.")], { stats: { sangFroid: 1 }, affection: 10, trust: 11, desire: 8, confluence: 6 }),
-    choice("v4-a", "Jeter le jeton de votre première rencontre sur le lit. « Mise acceptée. »", "audace", [line("Narration", "Le jeton rebondit sur la couverture et roule jusqu’au bord. Valurn le suit des yeux, scandalisé."), line("Valurn", "Sur le lit ? Cette monnaie a une réputation irréprochable."), line("{player}", "Elle fréquente pourtant de mauvaises personnes."), line("Valurn", "Je savais que cet investissement finirait par payer."), line("Narration", "Il vous rejoint avant que le jeton tombe, le rattrape d’une main et vous embrasse dans le même mouvement."), line("Narration", "Puis il recule juste assez pour entendre votre réponse, la pièce serrée entre deux doigts près de votre cœur."), line("Valurn", "Toujours accepté ?"), line("{player}", "Toujours."), line("Valurn", "Parfait. Les intérêts seront indécents.")], { stats: { audace: 1 }, affection: 10, trust: 8, desire: 11, confluence: 6 }),
-    choice("v4-l", "Lui demander de laisser ses flammes et ses pouvoirs entièrement hors de cette nuit.", "lucidite", [line("Valurn", "Aucun sort, aucune influence, aucun cercle qui déciderait à notre place. Seulement moi."), line("Narration", "Il se penche près de votre oreille."), line("Valurn", "Ce qui reste un risque considérable, mais d’une nature beaucoup plus agréable."), line("{player}", "Et si votre magie réagit ?"), line("Valurn", "Je m’arrête. Nous en rions lorsque personne ne brûle. Nous appelons un guérisseur si mon charme personnel échoue à tout réparer."), line("Narration", "La réponse est précise sous son insolence. Vous acquiescez ; il éteint jusqu’à la dernière braise dans ses yeux avant de vous toucher."), line("Valurn", "Voilà. Désarmé, ou presque. Ne prenez pas goût au spectacle.")], { stats: { lucidite: 1 }, affection: 9, trust: 12, desire: 8, confluence: 6 }, { stat: "lucidite", value: 8 }),
-  ], true),
+  // VALURN · Acte I refondu (valurn-quests.ts).
+  ...VALURN_QUESTS,
 
   // NAÏAH
   ...NAIAH_ROUTES,
@@ -1096,7 +1023,7 @@ export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
   hylee: [],
   remerii: [],
   iriana: ["knows_iriana_mother_tenderness", "knows_iriana_tia_control", "knows_iriana_alamma_abuse", "knows_iriana_mother_death"],
-  valurn: ["knows_valurn_bhaal_childhood", "knows_valurn_bellirith_past", "knows_valurn_old_promise", "knows_valurn_did_not_return"],
+  valurn: [],
   naiah: [],
   lineva: ["knows_lineva_scars", "knows_lineva_draven_childhood", "knows_lineva_forthaven_burden", "knows_lineva_mother_dead"],
   saidin: ["knows_saidin_remerii_childhood", "knows_saidin_time_philosophy", "knows_saidin_fear_for_remerii", "knows_saidin_silver_eyes"],
@@ -1108,7 +1035,7 @@ export const ROUTE_KNOWLEDGE_ORDER: Record<string, readonly string[]> = {
 };
 
 export function routeKnowledgeRequirements(scene: Pick<RouteScene, "character" | "stage">): string[] {
-  if (["lineva", "allenna", "hylee", "remerii", "naiah"].includes(scene.character)) return [];
+  if (["lineva", "allenna", "hylee", "remerii", "naiah", "valurn"].includes(scene.character)) return [];
   if (scene.stage <= 0) return [];
   const knowledge = ROUTE_KNOWLEDGE_ORDER[scene.character]?.[scene.stage - 1];
   return knowledge ? [knowledge] : [];
@@ -1118,7 +1045,7 @@ export const ROUTE_FLAG_REQUIREMENTS: Record<string, readonly string[]> = {
   "amanea-3": ["story-shadow-channel"],
   "iriana-3": ["story-shadow-channel"],
   "iriana-4": ["iriana-private-choice"],
-  "valurn-4": ["valurn-accountability"],
+  "valurn-q6": ["valurn-market-done"],
   "amanea-4": ["amanea-pact-boundary"],
   "draven-4": ["lineva-mother-truth-resolved", "lineva-draven-grief-shared"],
 };
@@ -1139,6 +1066,13 @@ export const ROUTE_HISTORY_REQUIREMENTS: Record<string, readonly string[]> = {
   "remerii-3": ["remerii-2"],
   "remerii-4": ["remerii-3"],
   "hylee-0": ["campaign-imperial-audience"],
+  "valurn-q1": ["campaign-imperial-audience"],
+  "valurn-q2": ["valurn-q1"],
+  "valurn-q3": ["valurn-q2"],
+  "valurn-q4": ["valurn-q3"],
+  "valurn-q5": ["valurn-q4"],
+  "valurn-q6": ["valurn-q5"],
+  "valurn-q7": ["valurn-q6"],
   "hylee-1": ["hylee-0"],
   "hylee-2": ["hylee-1"],
   "hylee-3": ["hylee-2"],
@@ -1163,6 +1097,7 @@ export const ROUTE_STORY_REQUIREMENTS: Record<string, number> = {
   "remerii-3": 4,
   "remerii-4": 4,
   "hylee-0": 3,
+  "valurn-q1": 3,
   "hylee-1": 3,
   "hylee-2": 4,
   "hylee-3": 4,

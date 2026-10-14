@@ -332,6 +332,10 @@ export function routineFor(characterId: string, location: string, period: Period
   if (location === "forbidden" && characterId === "hylee") {
     return moment("forbidden-sanctuary", "passe cette rare visite auprès de Naïah");
   }
+  // Valurn passe un après-midi sur deux au comptoir de courrier du Croissant (quêtes 4 et 7).
+  if (characterId === "valurn" && location === "algratal" && period === "apres-midi" && cycleDay % 2 === 0) {
+    return moment("algratal-streets", "passe au comptoir de courrier du Croissant");
+  }
   if (characterId === "lineva" && location === "forthaven" && period === "apres-midi" && cycleDay % 3 === 0) {
     return moment("forthaven-memorial", "se recueille au mémorial sans abandonner la ville à sa vigilance");
   }
@@ -408,11 +412,13 @@ export const ROUTE_SPOTS: Record<string, string> = {
   "tia-2": "algratal-palace-audience",
   "tia-3": "algratal-ballroom",
   "tia-4": "algratal-palace-quarters",
-  "valurn-0": "algratal-market",
-  "valurn-1": "forbidden-crossroads",
-  "valurn-2": "akuhn-archives",
-  "valurn-3": "algratal-palace-audience",
-  "valurn-4": "algratal-palace-quarters",
+  "valurn-q1": "algratal-market",
+  "valurn-q2": "algratal-palace-audience",
+  "valurn-q3": "algratal-market",
+  "valurn-q4": "algratal-streets",
+  "valurn-q5": "algratal-market",
+  "valurn-q6": "algratal-palace-audience",
+  "valurn-q7": "algratal-streets",
   "naiah-0": "forbidden-sanctuary",
   "naiah-1": "forbidden-crossroads",
   "naiah-2": "forbidden-threshold",
@@ -467,11 +473,13 @@ export const ROUTE_PERIODS: Record<string, PeriodKey[]> = {
   "tia-2": ["soirée"],
   "tia-3": ["soirée"],
   "tia-4": ["soirée"],
-  "valurn-0": ["matin"],
-  "valurn-1": ["matin"],
-  "valurn-2": ["matin"],
-  "valurn-3": ["soirée"],
-  "valurn-4": ["aube"],
+  "valurn-q1": ["matin"],
+  "valurn-q2": ["soirée"],
+  "valurn-q3": ["matin"],
+  "valurn-q4": ["apres-midi"],
+  "valurn-q5": ["matin"],
+  "valurn-q6": ["soirée"],
+  "valurn-q7": ["apres-midi"],
   "naiah-0": ["soirée"],
   "naiah-1": ["matin"],
   "naiah-2": ["apres-midi"],
@@ -556,6 +564,14 @@ export const AMBIENT_SPOT_HINTS: Record<string, string[]> = {
   "valurn-sortie": ["algratal-market", "akuhn-music-room", "forestier-inn"],
   "valurn-matin": ["algratal-market", "akuhn-music-room"],
   "valurn-bottes": ["algratal-palace-quarters"],
+  "valurn-proces-patisserie": ["algratal-market"],
+  "valurn-jeu-inconnu": ["forestier-inn"],
+  "valurn-trois-pieces": ["algratal-market"],
+  "valurn-chancelier": ["algratal-palace-audience", "algratal-palace-council"],
+  "valurn-thazran-message": ["algratal-market", "algratal-streets", "algratal-palace-quarters"],
+  "valurn-deux-signatures": ["algratal-palace-council", "algratal-palace-audience"],
+  "valurn-lettre-absente": ["algratal-streets"],
+  "valurn-compte-rendu": ["algratal-market"],
   "naiah-illusions": ["forbidden-sanctuary", "forbidden-crossroads"],
   "naiah-baies": ["forbidden-sanctuary", "forbidden-crossroads"],
   "naiah-noms": ["forbidden-sanctuary", "forbidden-crossroads", "forbidden-ruins"],

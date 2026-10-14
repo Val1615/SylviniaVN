@@ -33,9 +33,11 @@ try {
   assert.equal(gameData.CHARACTERS.length, 12, "le casting complet doit contenir douze personnages");
   // Refonte Bellirith (spec §3) : Bellirith n’a plus de route personnelle classique en Acte I ;
   // son fil passe par les intrusions. Les onze autres personnages gardent cinq scènes majeures.
-  assert.equal(gameData.ROUTE_SCENES.length, 55, "chaque personnage hors Bellirith doit conserver cinq scènes majeures");
+  // Refonte Valurn (Acte I) : sept quêtes personnelles remplacent ses cinq scènes (+2).
+  assert.equal(gameData.ROUTE_SCENES.length, 57, "chaque personnage hors Bellirith et Valurn conserve cinq scènes majeures ; Valurn en a sept");
+  assert.equal(gameData.ROUTE_SCENES.filter((scene) => scene.character === "valurn").length, 7, "Valurn : sept quêtes");
   assert.equal(gameData.ROUTE_SCENES.filter((scene) => scene.character === "bellirith").length, 0, "Bellirith ne doit plus avoir de route de guérison en Acte I");
-  assert.equal(new Set(gameData.ROUTE_SCENES.map((scene) => scene.id)).size, 55, "les identifiants de route doivent être uniques");
+  assert.equal(new Set(gameData.ROUTE_SCENES.map((scene) => scene.id)).size, 57, "les identifiants de route doivent être uniques");
 
   function schedule(character, day, flags) {
     const itinerary = character.itinerary;

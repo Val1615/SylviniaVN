@@ -212,18 +212,6 @@ export const SOCIAL_SCENES: SocialScene[] = [
     ],
   },
   {
-    id: "valurn-after-truth", title: "Un récit sans acquittement", characters: ["valurn"], triggerCharacters: ["valurn"], requiredPresent: ["valurn"], locations: ["algratal"], sublocations: ["algratal-market"], minStages: { valurn: 4 }, requiresKnowledge: ["knows_valurn_did_not_return"], excludesFlags: ["valurn-accountability"], oneTime: true, priority: 128, mood: "away",
-    prompt: [
-      line("Narration", "Valurn vous attend devant le Croissant sans jeton ni sourire préparé. Sur la table, il a consigné ce dont il se souvient de cette nuit-là : l’heure de son départ, le talisman laissé entre les mains de Bellirith, l’heure à laquelle il aurait dû revenir."),
-      line("Valurn", "Je vous ai dit la vérité parce que continuer à la cacher devenait insupportable. Ce soulagement ne réduit pas ce que j’ai fait ; il risque seulement de me donner l’illusion d’avoir payé en l’avouant."),
-      line("Valurn", "Bellirith a le droit de connaître ce document et celui de ne jamais le lire. Je ne vais pas déposer ma confession à ses pieds pour lui imposer ensuite de gérer mon remords."),
-    ],
-    choices: [
-      choice("vat-s", "Confier le document à une dépositaire neutre qui signalera seulement son existence à Bellirith.", "sangFroid", [line("{player}", "Elle choisira si elle veut le recevoir. Aucun refus ne vous sera rapporté comme une invitation à insister."), line("Valurn", "Je n’aurai donc ni audience, ni verdict, ni moyen de transformer son silence en scène sur ma souffrance."), line("Narration", "Il scelle le document et inscrit cette limite au-dessus de sa propre signature.")], { trust: 9, flags: ["valurn-accountability"] }),
-      choice("vat-l", "Retirer du récit toutes les phrases qui tentent encore d’expliquer Bellirith à sa place.", "lucidite", [line("Narration", "Vous barrez : « je n’avais pas le choix », « elle aurait dû me suivre », « je croyais la protéger ». Les faits demeurent ; la justification qu’elle n’a jamais consentie à entendre disparaît."), line("Valurn", "Il ne reste rien qui me rende raisonnable."), line("{player}", "Il reste ce que vous avez choisi. C’est ce qu’elle a le droit de savoir."), line("Valurn", "Alors gardons cette version.")], { trust: 8, confluence: 2, flags: ["valurn-accountability"] }),
-    ],
-  },
-  {
     id: "amanea-after-pact", title: "La limite après le secret", characters: ["amanea"], triggerCharacters: ["amanea"], requiredPresent: ["amanea"], locations: ["akuhn"], sublocations: ["akuhn-terrace"], minStages: { amanea: 4 }, requiresKnowledge: ["knows_amanea_naiah_pact"], excludesFlags: ["amanea-pact-boundary"], oneTime: true, priority: 128, mood: "sad",
     prompt: [
       line("Narration", "Sur la terrasse, Amanea a fait fermer les portes avant votre arrivée. Elle ne cherche pourtant ni refuge dans votre proximité ni pardon dans votre regard."),
@@ -298,11 +286,11 @@ export const SOCIAL_SCENES: SocialScene[] = [
   },
   {
     id: "shared-valurn-bellirith", title: "Une histoire à deux bords", characters: ["valurn", "bellirith"], locations: ["akuhn", "algratal"], sublocations: ["akuhn-music-room", "algratal-palace-council"], minStages: { valurn: 2, bellirith: 2 }, requiresKnowledge: ["knows_valurn_bellirith_past", "knows_bellirith_bhaal_family"], oneTime: false, mood: "charming",
-    prompt: [line("Bellirith", "Mon frère affirme qu’il ne regrette rien. C’est pratique : il n’a ainsi jamais besoin de présenter d’excuses."), line("Valurn", "Ma sœur appelle ‘conversation’ tout échange dont elle connaît déjà le verdict."), line("Bellirith", "Le verdict tient en trois mots : il n’est pas revenu."), line("Valurn", "Et l’histoire commence avant ces trois mots."), line("Narration", "Ils connaissent les mêmes lieux, les mêmes vieux jeux et, visiblement, la même promesse. Tout le reste se heurte entre deux versions qu’aucun trait d’esprit ne parvient à réunir.")],
+    prompt: [line("Bellirith", "Mon frère affirme qu’il ne regrette rien. C’est pratique : il n’a ainsi jamais besoin de présenter d’excuses."), line("Valurn", "Ma sœur appelle ‘conversation’ tout échange dont elle connaît déjà le verdict."), line("Bellirith", "Le verdict tient en un mot : tricheur."), line("Valurn", "Et l’histoire commence bien avant ce mot."), line("Narration", "Ils connaissent les mêmes lieux, les mêmes vieux jeux et, visiblement, les mêmes rancunes. Tout le reste se heurte entre deux versions qu’aucun trait d’esprit ne parvient à réunir.")],
     choices: [
       choice("svb-price", "Refuser de devenir l’arbitre de leur vieille rivalité.", "sangFroid", [line("Bellirith", "Sage. Il triche."), line("Valurn", "Elle change les règles après avoir gagné."), line("Narration", "Pour une fois, ils vous laissent hors du duel.")], { trust: 3, relationshipEffects: { bellirith: { trust: 3 } } }),
-      choice("svb-truth", "Leur demander où leurs deux récits cessent de décrire la même nuit.", "lucidite", [line("Bellirith", "Lorsqu’il a promis de revenir."), line("Valurn", "Avant."), line("Narration", "Valurn refuse d’expliquer ce seul mot. Bellirith, elle, cesse de sourire : la divergence vient d’être nommée sans être encore révélée.")], { trust: 3, relationshipEffects: { bellirith: { trust: 4, affection: 1 } } }),
-      choice("svb-toast", "Interrompre la joute avant qu’une plaisanterie ne remplace de nouveau la question.", "audace", [line("{player}", "Vous connaissez tous les deux la fin que Bellirith a vécue. Vous ne connaissez manifestement pas le même début."), line("Bellirith", "Enfin une personne qui refuse d’applaudir notre numéro."), line("Valurn", "Et qui vient de rendre le prochain acte beaucoup plus difficile à éviter.")], { affection: 3, relationshipEffects: { bellirith: { affection: 3 } } }),
+      choice("svb-truth", "Leur demander où leurs deux récits cessent de décrire la même nuit.", "lucidite", [line("Bellirith", "Au moment où il a cessé d’être drôle."), line("Valurn", "Avant."), line("Narration", "Valurn refuse d’expliquer ce seul mot. Bellirith, elle, cesse de sourire : la divergence vient d’être nommée sans être encore révélée.")], { trust: 3, relationshipEffects: { bellirith: { trust: 4, affection: 1 } } }),
+      choice("svb-toast", "Interrompre la joute avant qu’une plaisanterie ne remplace de nouveau la question.", "audace", [line("{player}", "Vous racontez tous les deux la même fin. Vous ne racontez manifestement pas le même début."), line("Bellirith", "Enfin une personne qui refuse d’applaudir notre numéro."), line("Valurn", "Et qui vient de rendre le prochain acte beaucoup plus difficile à éviter.")], { affection: 3, relationshipEffects: { bellirith: { affection: 3 } } }),
     ],
   },
   {

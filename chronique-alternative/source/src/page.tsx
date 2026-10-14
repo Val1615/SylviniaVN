@@ -77,6 +77,11 @@ import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
 import { hyleeDateBeat } from "./hylee-dates";
 import { remeriiRouteVariant } from "./remerii-relation";
 import { remeriiDateBeat, migrateRemeriiDateId } from "./remerii-dates";
+import { VALURN_LEGACY_ROUTE_IDS, valurnJournalEntry, valurnQuestStage, valurnRelationBeat, valurnRouteVariant } from "./valurn-quests";
+import { valurnDateBeat } from "./valurn-dates";
+import { valurnIntimacyApproaches, valurnIntimacyContext, valurnIntimacyEnding, valurnIntimacyOpening, valurnIntimacyRoutes } from "./valurn-date-intimacy";
+import { createValurnMarket, validateValurnMarket, type ValurnMarketState } from "./valurn-market";
+import { ValurnMarketModal } from "./valurn-market-ui";
 import { naiahDateBeat } from "./naiah-dates";
 import { naiahProximityApproaches, naiahProximityContext, naiahProximityEnding, naiahProximityOpening, naiahProximityPhase, naiahProximityRoutes } from "./naiah-date-intimacy";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
@@ -300,6 +305,8 @@ const PERSISTENT_INVITATION_LABEL = "Invitation persistante · disponible lorsqu
 
 type GameState = {
   version: 18;
+  /** Quête 5 de Valurn : marché en cours ou terminé (facultatif, compatible v18). */
+  valurnMarket?: ValurnMarketState;
   player: Player;
   day: number;
   period: number;
@@ -458,6 +465,7 @@ type ModalState =
   | { kind: "anchor-operation"; replay?: boolean; state?: AnchorState }
   | { kind: "hylee-search"; replay?: boolean; state?: HyleeSearchState }
   | { kind: "bn-minigame"; replay?: boolean; dev?: boolean; state?: BNGameState }
+  | { kind: "valurn-market"; replay?: boolean; state?: ValurnMarketState }
   | { kind: "bn-intimacy"; id: BNIntimacyId; replay?: boolean; mode?: Intimacy }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
@@ -523,11 +531,11 @@ const STAT_LABELS: Record<StatKey, string> = {
   resonance: "Résonance",
 };
 
-const AUTHORED_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
+const AUTHORED_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah", "valurn"]);
 const DEDICATED_HOME_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
 
 const STAGE_LABELS = ["Inconnu·e", "Première impression", "Complicité", "Confidence", "Attirance", "Lien accompli"];
-const BOND_THRESHOLDS = [0, 5, 14, 26, 40];
+const BOND_THRESHOLDS = [0, 5, 14, 26, 40, 48, 56];
 const SAVE_KEY = "sylvinia-liens-autosave";
 const DEFAULT_PLAYER: Player = {
   name: "",
@@ -731,6 +739,7 @@ function hydrateGame(raw: unknown): GameState | null {
     && normalizedHR.hr?.branch === "double"
     && normalizedHR.hr.configuration === "accepted";
   const hydrated: GameState = {
+    valurnMarket: validateValurnMarket(value.valurnMarket) ? value.valurnMarket : undefined,
     ...fresh,
     ...value,
     version: 18,
@@ -804,7 +813,7 @@ function hydrateGame(raw: unknown): GameState | null {
       sharedMomentHistory: value.housing?.sharedMomentHistory || [],
     },
   };
-  return migrateBellirithSave(hydrated);
+  return migrateValurnSave(migrateBellirithSave(hydrated));
 }
 
 /**
@@ -813,6 +822,27 @@ function hydrateGame(raw: unknown): GameState | null {
  * été résolue devient « manquée » et rejoint la file de rattrapage : aucune
  * pénalité rétroactive, aucune expiration, une seule invitation à la fois.
  */
+/**
+ * Valurn · refonte Acte I. Les anciennes scènes valurn-0..4 deviennent des
+ * souvenirs (drapeaux) ; elles ne complètent jamais les nouvelles quêtes.
+ * Le stade relationnel est conservé pour ne verrouiller ni rendez-vous ni
+ * scènes partagées déjà accessibles.
+ */
+function migrateValurnSave(game: GameState): GameState {
+  if (game.flags.includes("valurn-refonte-v1")) return game;
+  const legacy = VALURN_LEGACY_ROUTE_IDS.filter((id) => game.history.includes(id));
+  return {
+    ...game,
+    history: game.history.filter((id) => !(VALURN_LEGACY_ROUTE_IDS as readonly string[]).includes(id)),
+    flags: unique([
+      ...game.flags.filter((flag) => flag !== "valurn-accountability"),
+      ...legacy.map((id) => `valurn-legacy-scene:${id.slice(-1)}`),
+      ...(legacy.length ? ["valurn-legacy-arc"] : []),
+      "valurn-refonte-v1",
+    ]),
+  };
+}
+
 function migrateBellirithSave(game: GameState): GameState {
   const flags = migrateBellirithFlags({ flags: game.flags, history: game.history });
   const relation = game.relationships.bellirith;
@@ -929,7 +959,6 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
   if (!missingFlags.length) return undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
   if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
-  if (scene.id === "valurn-4") return "Valurn doit d’abord assumer son récit sans transformer l’aveu en acquittement. Retrouvez-le au Grand Marché d’Al’Gratal.";
   if (scene.id === "amanea-4") return "Amanea doit d’abord poser avec vous les limites qu’impose le secret de Naïah. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
   if (scene.id === "draven-4") {
     if (!game.flags.includes("lineva-mother-truth-resolved")) return "Lineva doit encore décider comment annoncer à Draven la mort de sa mère. Retrouvez-les sur les quais de Forthaven.";
@@ -1275,7 +1304,7 @@ function relationshipNarrativeProgress(game: GameState, characterId: string) {
   return {
     scenes,
     total: scenes.length,
-    completed: Math.min(scenes.length, Math.max(historyCount, relationStage)),
+    completed: Math.min(scenes.length, characterId === "valurn" ? historyCount : Math.max(historyCount, relationStage)),
   };
 }
 
@@ -1353,7 +1382,7 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     if (!before || !after) return;
     if (after.stage > before.stage) {
       const progress = relationshipNarrativeProgress(next, character.id);
-      const nextScene = sceneFor(character.id, after.stage);
+      const nextScene = sceneFor(character.id, after.stage, next.history);
       const nextVariant = nextScene ? relationRouteVariant(nextScene, next).route : undefined;
       const confidenceObjective = nextVariant ? routeNarrativeObjective(nextVariant, next) : undefined;
       relationChanges.push({
@@ -1649,7 +1678,9 @@ function waitDurationLabel(game: GameState, target: { day: number; period: numbe
   return `${days} jour${days > 1 ? "s" : ""}`;
 }
 
-function sceneFor(characterId: string, stage: number) {
+/** Valurn : la quête courante se lit dans l’historique, la relation garde son stade (sauvegardes v18). */
+function sceneFor(characterId: string, stage: number, history?: readonly string[]) {
+  if (characterId === "valurn" && history) stage = valurnQuestStage(history);
   return ROUTE_SCENES.find((scene) => scene.character === characterId && scene.stage === stage);
 }
 
@@ -1863,6 +1894,7 @@ function flagsSharedByEveryChoice(choices: ChoiceData[]) {
 
 function relationRouteVariant(route: RouteScene, game: GameState) {
   let playable = remeriiRouteVariant(hyleeRouteVariant(route, game.knowledge, game.flags), game.knowledge, game.flags);
+  if (route.character === "valurn") playable = valurnRouteVariant(playable, game.flags, game.relationships.valurn);
   if (route.id === "remerii-0" && !game.flags.some(flag => flag.startsWith("hylee-return-choice:"))) {
     // Rattrapage d'une sauvegarde antérieure, sans inventer un second retour.
     playable = { ...playable, intro: [{ speaker: "Narration", text: "Ce souvenir reprend juste après votre retour auprès d’Hylee, dans les rues d’Al’Gratal. Remerii avait encore une question avant votre promenade à la fontaine." }, ...playable.intro] };
@@ -1871,12 +1903,12 @@ function relationRouteVariant(route: RouteScene, game: GameState) {
 }
 
 function authoredDateBeat(sceneId: string, round: number, picks?: string[]) {
-  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round) || naiahDateBeat(sceneId, round);
+  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round) || naiahDateBeat(sceneId, round) || valurnDateBeat(sceneId, round, picks);
 }
 
 function relationBeatFor(sceneId: string, game: GameState) {
   if (sceneId === "allenna-4") return undefined;
-  return hyleeRelationBeat(sceneId, game.flags) || linevaRelationBeat(sceneId) || allennaRelationBeat(sceneId);
+  return hyleeRelationBeat(sceneId, game.flags) || linevaRelationBeat(sceneId) || allennaRelationBeat(sceneId) || valurnRelationBeat(sceneId);
 }
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
@@ -2386,7 +2418,7 @@ export default function Home() {
         relation.trust = clamp(relation.trust + (effects.trust || 0));
         relation.desire = clamp(relation.desire + (effects.desire || 0));
         relation.met = true;
-        if (completedScene) relation.stage = Math.max(relation.stage, completedScene.stage + 1);
+        if (completedScene) relation.stage = Math.max(relation.stage, Math.min(5, completedScene.stage + 1));
         relationships[characterId] = relation;
       }
       for (const [otherId, changes] of Object.entries(effects.relationshipEffects || {})) {
@@ -2456,7 +2488,7 @@ export default function Home() {
         return;
       }
     }
-    const route = sceneFor(characterId, relation.stage);
+    const route = sceneFor(characterId, relation.stage, game.history);
     const ready = routeAvailableAtPlace(route, game);
     const queuedSocial = chooseSocialScene(characterId, game);
     if (queuedSocial?.oneTime) {
@@ -2799,6 +2831,39 @@ export default function Home() {
       return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BN_KEY]: { ...q, bn: { ...q.bn, minigame: createBNGame() } } } };
     });
     setModal({ kind: "bn-minigame" });
+  }
+
+  /** Valurn · quête 5 : le registre du salon de Halbrecht. Reprise possible depuis le journal, rejouable sans effet. */
+  function startValurnMarket(replay = false, force = false) {
+    if (!game) return;
+    const approach = (game.flags.find((flag) => flag.startsWith("valurn-q5-approach:"))?.split(":")[1] || "lucidite") as ValurnMarketState["approach"];
+    if (replay) { setDialogue(null); setModal({ kind: "valurn-market", replay: true, state: createValurnMarket(approach) }); return; }
+    if (game.flags.includes("valurn-market-done") || (!force && !game.history.includes("valurn-q5"))) return;
+    updateGame((current) => current.valurnMarket && current.valurnMarket.phase !== "done" ? current : { ...current, valurnMarket: createValurnMarket(approach) });
+    setModal({ kind: "valurn-market" });
+  }
+
+  function setValurnMarketState(state: ValurnMarketState) {
+    if (modal?.kind !== "valurn-market") return;
+    if (modal.replay) { setModal({ ...modal, state }); return; }
+    updateGame((current) => current.flags.includes("valurn-market-done") ? current : { ...current, valurnMarket: state });
+  }
+
+  function finishValurnMarket(state: ValurnMarketState) {
+    if (modal?.kind !== "valurn-market") return;
+    setModal(null);
+    if (modal.replay || state.phase !== "done" || !state.result) return;
+    if (game?.flags.includes("valurn-market-done")) return;
+    const seeded = state.boughtEver.some((id) => ["bram", "sel"].includes(id));
+    applyEffects("valurn", { trust: state.result === "clean" ? 6 : state.result === "partial" ? 4 : 2, affection: state.reaction === "admired" ? 4 : 2 });
+    updateGame((current) => ({
+      ...current,
+      valurnMarket: state,
+      flags: unique([...current.flags, "valurn-market-done", `valurn-market-result:${state.result}`, ...(state.reaction ? [`valurn-market-reaction:${state.reaction}`] : []), ...(seeded ? ["valurn-market-seeded-bought"] : [])]),
+      knowledge: unique([...current.knowledge, "knows_valurn_seeded_leads"]),
+      journal: [...current.journal, `Valurn · La partie truquée · registre conclu (${state.result === "clean" ? "offre propre" : state.result === "partial" ? "offre partielle" : "offre coûteuse"}).`],
+    }));
+    advancePeriod();
   }
 
   function setBNMinigameState(state: BNGameState) {
@@ -3516,6 +3581,11 @@ export default function Home() {
           && relation.desire + (changes.desire || 0) >= (groupDate.intimacyMinDesire ?? groupDate.minDesire)
         );
       })));
+    if (!replay && dialogue.scene.route?.id === "valurn-q5" && dialogue.chosen && !game!.flags.includes("valurn-market-done")) {
+      setDialogue(null);
+      startValurnMarket(false, true);
+      return;
+    }
     setDialogue(null);
     if ((!replay || hnGroupDate) && groupDateCanBecomeIntimate && groupDate) {
       setModal({ kind: "group-date-result", groupDateId: groupDate.id, ...(replay ? { replay: true } : {}) });
@@ -4980,7 +5050,7 @@ export default function Home() {
   const hyleeSearchModalState = modal?.kind === "hylee-search"
     ? modal.replay ? modal.state : game.crossQuestSeries[HN_KEY]?.hn?.search
     : undefined;
-  const sceneActive = Boolean(dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy");
+  const sceneActive = Boolean(dialogue || modal?.kind === "valurn-market" || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy");
   const pendingMail = game.letters.filter((entry) => !entry.read).length + (game.crossQuestSeries.linevaAllenna?.letters.filter((entry) => !entry.read).length || 0) + game.invitations.filter((entry) => entry.status === "pending").length;
   const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail };
   const unread = v2Log.filter((entry) => !entry.read).length;
@@ -5002,7 +5072,7 @@ export default function Home() {
   };
   const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
   const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
-  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
+  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onValurnMarket={startValurnMarket} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
   const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), onDevOpenIntimacy: openDevIntimacy, slotVersion };
   const rank = rankQueue[0];
   const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
@@ -5091,11 +5161,12 @@ export default function Home() {
       {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onBack={stepBackDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
       {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
       {modal?.kind === "hylee-search" && hyleeSearchModalState && <HyleeSearchModal state={hyleeSearchModalState} replay={modal.replay} onChange={setHyleeSearchState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHNScene(4)} />}
+      {modal?.kind === "valurn-market" && (modal.replay ? modal.state : game.valurnMarket) && <ValurnMarketModal state={(modal.replay ? modal.state : game.valurnMarket)!} replay={modal.replay} format={(text) => replacePlayer(text, game.player)} onChange={setValurnMarketState} onClose={() => setModal(null)} onFinish={finishValurnMarket} />}
       {modal?.kind === "bn-minigame" && bnMinigameModalState && <BNMinigameModal state={bnMinigameModalState} replay={modal.replay} dev={modal.dev} format={(text) => replacePlayer(text, game.player)} onChange={setBNMinigameState} onClose={() => { setBNDuck(false); setModal(null); }} onFinish={finishBNMinigame} onAnomaly={setBNDuck} />}
       {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
         background={backgroundUrl(spotById(BN_INTIMACY_SCENES[modal.id].background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBNIntimacy(false)} onFinish={() => closeBNIntimacy(true)} />}
-      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && <GameModal
+      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && modal.kind !== "valurn-market" && <GameModal
         modal={modal}
         game={game}
         onClose={() => setModal(null)}
@@ -5335,7 +5406,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
   const selectedSchedule = selectedCharacter ? characterPlace(selectedCharacter, game.day, game.period, game.flags, game.housing) : undefined;
   const selectedLocationData = LOCATIONS.find((entry) => entry.id === selectedSchedule?.location);
   const selectedSpotData = selectedSchedule ? spotById(selectedSchedule.spot) : undefined;
-  const selectedRawNext = selectedCharacter && selectedRelation ? sceneFor(selectedCharacter.id, selectedRelation.stage) : undefined;
+  const selectedRawNext = selectedCharacter && selectedRelation ? sceneFor(selectedCharacter.id, selectedRelation.stage, game.history) : undefined;
   const selectedNext = selectedRawNext ? relationRouteVariant(selectedRawNext, game).route : undefined;
   const selectedNeeded = selectedNext && selectedRelation ? Math.max(0, BOND_THRESHOLDS[selectedNext.stage] - selectedRelation.affection - selectedRelation.trust) : 0;
   const selectedObjective = selectedNext ? routeNarrativeObjective(selectedNext, game) : undefined;
@@ -5395,7 +5466,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
+function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onValurnMarket?: (replay?: boolean) => void; onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
   const [chosenSection, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const section = forcedSection ?? chosenSection;
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
@@ -5430,7 +5501,7 @@ function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame,
   const threads = CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => {
     const relation = game.relationships[character.id];
     const progress = relationshipNarrativeProgress(game, character.id);
-    const scene = sceneFor(character.id, relation.stage);
+    const scene = sceneFor(character.id, relation.stage, game.history);
     const unlocked = characterUnlocked(game, character);
     const needed = scene ? Math.max(0, BOND_THRESHOLDS[scene.stage] - relation.affection - relation.trust) : 0;
     const confidenceObjective = scene ? routeNarrativeObjective(scene, game) : undefined;
@@ -5588,6 +5659,24 @@ function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame,
             <h3>{belThread ? belThread.title : scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
             <p><b>Objectif :</b> {objective}</p>
             {unlocked && scene && !confidenceObjective && !needed && target && <button onClick={() => onWaitForRoute(scene.id)}>Attendre et rejoindre · {waitDurationLabel(game, target)}</button>}
+            {character.id === "valurn" && unlocked && (() => {
+              const entry = valurnJournalEntry(game.history, game.flags);
+              if (!entry) return null;
+              const pending = game.history.includes("valurn-q5") && !game.flags.includes("valurn-market-done");
+              return <div className="valurn-journal-entry">
+                <dl>
+                  <dt>Dossier</dt><dd>{entry.title}</dd>
+                  <dt>Problème</dt><dd>{entry.problem}</dd>
+                  <dt>Objectif</dt><dd>{entry.objective}</dd>
+                  <dt>Lieu</dt><dd>{entry.place}</dd>
+                  <dt>Indice</dt><dd>{entry.clue}</dd>
+                  <dt>Conséquence</dt><dd>{entry.consequence}</dd>
+                  <dt>Ensuite</dt><dd>{entry.next}</dd>
+                </dl>
+                {pending && onValurnMarket && <button onClick={() => onValurnMarket(false)}>Reprendre le registre du salon</button>}
+                {game.flags.includes("valurn-market-done") && onValurnMarket && <button onClick={() => onValurnMarket(true)}>Rejouer la partie truquée (sans effet)</button>}
+              </div>;
+            })()}
           </div>
           <b>{status}</b>
         </article>;
@@ -5870,6 +5959,7 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
     if (character === "hylee") return game.player.sex !== "intersexe" && Boolean(hyleeIntimacyContext(dateId, home));
     if (character === "remerii") return game.player.sex !== "intersexe" && Boolean(remeriiIntimacyContext(dateId, home));
     if (character === "naiah") return game.player.sex !== "intersexe" && Boolean(naiahProximityContext(dateId, home));
+    if (character === "valurn" && valurnIntimacyContext(dateId, home, game.flags)) return true;
     return home
       ? homeIntimacyRoutes(character, game.player.sex).length > 0
       : intimacyDirections(character, game.player.sex, dateId).length > 0;
@@ -6019,6 +6109,27 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => openHNDates("vegetative")}>État végétatif</button>
     </div>
 
+    <h3>Valurn · Les trois mensonges du grand parieur</h3>
+    <p className="dev-help">Prépare un état de série (historique et drapeaux minimaux). Le stade relationnel n’est jamais abaissé. Les branches de rendez-vous fixent la continuité intime proposée.</p>
+    <div className="dev-row">
+      <span className="dev-help">Placer avant la quête :</span>
+      {[1, 2, 3, 4, 5, 6, 7].map((quest) => <button type="button" key={quest} onClick={() => updateGame((current) => {
+        const done = ["valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5", "valurn-q6", "valurn-q7"].slice(0, quest - 1);
+        const history = [...current.history.filter((id) => !id.startsWith("valurn-q")), ...done];
+        const flags = current.flags.filter((flag) => !/^valurn-(q\d-done|market-done|market-result:|q5-approach:|outcome:)/.test(flag));
+        const doneFlags = done.map((id) => `${id}-done`);
+        const market = quest >= 6 ? ["valurn-market-done", "valurn-market-result:partial", "valurn-q5-approach:lucidite"] : [];
+        return { ...current, history: unique([...history, "campaign-imperial-audience"]), flags: unique([...flags, ...doneFlags, ...market]), valurnMarket: quest >= 6 ? current.valurnMarket : undefined,
+          relationships: { ...current.relationships, valurn: { ...current.relationships.valurn, met: true, stage: Math.max(current.relationships.valurn.stage, Math.min(5, quest - 1)) } },
+          journal: [...current.journal, `Outil développeur · Valurn : placé avant la quête ${quest}.`] };
+      })}>Q{quest}</button>)}
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5"]), flags: unique([...current.flags.filter((flag) => flag !== "valurn-market-done"), "valurn-q5-approach:audace"]), valurnMarket: undefined }))}>Marché en attente</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Branches de rendez-vous :</span>
+      {[["date-valurn-forestier", "tournoi"], ["date-valurn-forestier", "imposture"], ["date-valurn-forestier", "fond"], ["date-valurn-river", "imprevus"], ["date-valurn-river", "etoiles"], ["date-valurn-river", "braise"], ["home", "cabinet"], ["home", "reception"], ["home", "cartes"]].map(([dateId, branch]) => <button type="button" key={`${dateId}-${branch}`} onClick={() => updateGame((current) => ({ ...current, flags: unique([...current.flags.filter((flag) => !flag.startsWith(`valurn-date-branch:${dateId}:`)), `valurn-date-branch:${dateId}:${branch}`]) }))}>{dateId === "home" ? "Logis" : dateId.endsWith("forestier") ? "Forestier" : "Fleuve"} · {branch}</button>)}
+    </div>
+
     <h3>Bellirith · interférences</h3>
     <p className="dev-help">Intrusions et confidences sont jouées pour de vrai (effets, flags, file de rattrapage). Les intimités s’ouvrent en souvenir, sans mutation. « Historique » prépare un état céder / résister / mixte pour tester le chapitre IX et le rendez-vous final.</p>
     <div className="dev-row">
@@ -6100,13 +6211,15 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const naiahContext = character.id === "naiah" && game.player.sex !== "intersexe"
     ? naiahProximityContext(modal.dateId, Boolean(modal.home))
     : undefined;
+  // Valurn : une continuité écrite par branche de rendez-vous, pour les trois configurations corporelles.
+  const [valurnContext] = useState(() => character.id === "valurn" ? valurnIntimacyContext(modal.dateId, Boolean(modal.home), game.flags) : undefined);
   // Bellirith : diversions, heures volées et duel de fin d’Acte I sont écrits
   // à la main pour les trois configurations corporelles.
   // Au logis, Bellirith passe aussi par une heure volée écrite à la main (source « bellirith-home »).
   const bellirithSource = character.id === "bellirith" && modal.home ? "bellirith-home" : modal.dateId;
   const bellirithContext = character.id === "bellirith" ? bellirithIntimacyContext(modal.home ? "bellirith-home" : modal.dateId) : undefined;
   const [bellirithFlags] = useState(() => game.flags);
-  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
+  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || valurnContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => bellirithContext
@@ -6117,6 +6230,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? remeriiDateIntimacyOpening(remeriiContext)
       : naiahContext
         ? naiahProximityOpening(naiahContext)
+      : valurnContext
+        ? valurnIntimacyOpening(valurnContext)
       : homeProperty
         ? homeIntimacyOpening(character.id, homeProperty, homeItems)
         : intimacyOpening(character.id, date));
@@ -6127,7 +6242,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || valurnIntimacyApproaches(valurnContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const [directionChoices] = useState(() => shuffledChoices(bellirithContext
     ? bellirithIntimacyRoutes(bellirithContext, game.player.sex, bellirithFlags)
     : hyleeContext
@@ -6136,6 +6251,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? remeriiDateIntimacyRoutes(remeriiContext, game.player.sex, game.knowledge.includes("knows_remerii_curse"))
       : naiahContext
         ? naiahProximityRoutes(naiahContext, game.player.sex)
+      : valurnContext
+        ? valurnIntimacyRoutes(valurnContext, game.player.sex)
       : modal.home
         ? homeIntimacyRoutes(character.id, game.player.sex)
         : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
@@ -6164,6 +6281,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
         ? remeriiDateIntimacyEnding(remeriiContext)
         : naiahContext
           ? naiahProximityEnding(naiahContext)
+        : valurnContext
+          ? valurnIntimacyEnding(valurnContext)
         : homeProperty
           ? homeIntimacyEnding(character.id, homeProperty)
           : intimacyEnding(character.id, date);
@@ -6204,7 +6323,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   function chooseDirection(choice: IntimacyDirectionChoice) {
     rollback.clear();
     setDirection(choice);
-    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || modal.home) && "chapters" in choice
+    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || valurnContext || modal.home) && "chapters" in choice
       ? choice.chapters[game.player.intimacy]
       : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
@@ -7097,7 +7216,7 @@ function v2RarityLabel(price: number) { return price >= 14 ? "Rare" : price >= 1
 /** Libellés réels d’interaction d’une présence (même logique que l’ancien panneau Présences). */
 function presenceInteraction(game: GameState, character: CharacterData) {
   const relation = game.relationships[character.id];
-  const rawNextScene = sceneFor(character.id, relation.stage);
+  const rawNextScene = sceneFor(character.id, relation.stage, game.history);
   const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
   const special = routeAvailableAtPlace(nextScene, game);
@@ -7524,7 +7643,7 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
   const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
   const scheduleLocation = LOCATIONS.find((entry) => entry.id === schedule.location);
   const scheduleSpot = spotById(schedule.spot);
-  const rawNext = sceneFor(character.id, relation.stage);
+  const rawNext = sceneFor(character.id, relation.stage, game.history);
   const nextScene = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
   const bond = relation.affection + relation.trust;
   const threshold = nextScene ? BOND_THRESHOLDS[nextScene.stage] : 0;

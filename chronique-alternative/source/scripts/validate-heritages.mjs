@@ -76,7 +76,10 @@ async function validatePortrait(path, label) {
 // Refonte Bellirith : +4 connaissances nettes (faux canon de la stase retiré, nouvelles
 // lectures de Bellirith/Valurn), courriers dynamiques (+5), quatre invitations persistantes
 // de rattrapage (+4), deux rumeurs et un événement sur la « vérité de la stase » retirés.
-const expected = { characters: 12, secrets: 52, knowledge: 72, letters: 33, invitations: 17, rumors: 22, spontaneousEvents: 18 };
+// Refonte Valurn (Acte I) : confidences 4 majeures + 4 secondaires remplacent les 2 anciennes et
+// les 2 confidences Valurn de la refonte Bellirith (+4) ; +14 connaissances ; courriers L1 à L6,
+// variante L4, trois réactifs et trois tiers remplacent les 2 anciens (+11) ; 3 invitations remplacent 1 (+2).
+const expected = { characters: 12, secrets: 56, knowledge: 86, letters: 44, invitations: 19, rumors: 22, spontaneousEvents: 18 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);
 }

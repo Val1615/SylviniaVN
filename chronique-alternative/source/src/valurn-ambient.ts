@@ -1,0 +1,65 @@
+import type { ChoiceData, DialogueLine, Effects, StatKey } from "./game-data";
+import type { AmbientDialogue } from "./ambient-dialogues";
+
+/** Valurn · moments libres nouveaux (catalogue §7, nº 12 à 20 sauf 18, partagé avec Bellirith). */
+const V = (text: string, mood = "charming"): DialogueLine => ({ speaker: "Valurn", text, mood });
+const N = (text: string): DialogueLine => ({ speaker: "Narration", text });
+const P = (text: string): DialogueLine => ({ speaker: "{player}", text });
+const T = (speaker: string, text: string, mood?: string): DialogueLine => ({ speaker, text, mood });
+const Q = (id: string, text: string, stat: StatKey, response: DialogueLine[], effects: Effects, extra: Partial<ChoiceData> = {}): ChoiceData => ({ id, text, stat, response, effects, ...extra });
+const S = (id: string, title: string, prompt: string, choices: ChoiceData[], options: Omit<AmbientDialogue, "id" | "title" | "prompt" | "choices"> = {}): AmbientDialogue => ({ id, title, prompt, choices, mood: "charming", ...options });
+
+export const VALURN_AMBIENT_LINES: AmbientDialogue[] = [
+  S("valurn-proces-patisserie", "Le procès d'une pâtisserie", "Au Grand Marché, un pâtissier affiche « tarte divine » sur son ardoise. Valurn a réuni six badauds, un tabouret pour juge et la tarte sur une assiette, au banc des accusés. « Accusée, vous prétendez à la divinité. Je suis expert en la matière. Défendez-vous. »", [
+    Q("vproc-avocat", "Vous proposer comme avocat de la défense.", "audace", [P("La défense appelle un témoin : le premier morceau."), N("Vous goûtez. Les badauds attendent. Vous déclarez la tarte « honnêtement très bonne, divine non, mais personne ne l'est »."), V("La défense plaide la modestie. Le tribunal est ému. Acquittée, avec obligation de changer d'ardoise.", "amused"), T("Pâtissier", "Je garde l'ardoise. Mais j'en vends trois de plus.")], { affection: 3 }),
+    Q("vproc-juge", "Prendre la place du juge et le condamner, lui, pour outrage au commerce.", "lucidite", [P("Le tribunal condamne l'accusateur à acheter la tarte entière."), V("Je fais appel !", "annoyed"), N("Il paie. Les badauds applaudissent. Il distribue les parts à tout le monde, y compris au pâtissier, avec une dignité outrée.")], { trust: 2, affection: 1 }),
+    Q("vproc-public", "Rester dans le public et compter les acheteurs que le procès attire.", "sangFroid", [N("Onze clients en un quart d'heure. Le pâtissier, débordé, glisse une part gratuite dans la main de Valurn."), V("Vous voyez ? Un procès public, c'est de la réclame qui se donne des airs de justice.", "neutral")], { trust: 3 }),
+  ], { mood: "amused" }),
+  S("valurn-jeu-inconnu", "Le duel du jeu inconnu", "Au Forestier, deux bouviers jouent à un jeu de baguettes dont personne n'a jamais écrit les règles. Valurn a demandé à jouer. Il en est à sa troisième défaite et soutient qu'on change les règles derrière son dos.", [
+    Q("vjeu-apprendre", "Demander aux bouviers de vous expliquer les règles, à vous, pas à lui.", "lucidite", [N("Ils vous expliquent en deux minutes. C'est simple. Vous gagnez la manche suivante contre Valurn."), V("Trahison. Vous avez obtenu les règles. Je n'avais jamais pensé à demander.", "annoyed"), T("Bouvier", "Il ne demande jamais. Il préfère deviner. Il devine mal.")], { trust: 3 }),
+    Q("vjeu-equipe", "Jouer en équipe avec lui, contre les bouviers.", "audace", [N("Vous perdez à deux. Encore. Les bouviers paient la tournée par pitié."), V("Défaite partagée, défaite à moitié. C'est mathématique.", "amused")], { affection: 3 }),
+    Q("vjeu-revanche", "Lui promettre une revanche quand il aura appris les règles.", "sangFroid", [V("Apprendre les règles ? Ça enlèverait tout le charme.", "charming"), N("Il demande pourtant, à voix basse, au plus vieux bouvier, pendant que vous faites semblant de ne pas entendre.")], { trust: 2, affection: 1, flags: ["valurn-jeu-revanche"] }),
+  ], { minStage: 1, mood: "annoyed" }),
+  S("valurn-trois-pieces", "Une dette de trois pièces", "Au marché, une vieille marchande de lacets interpelle Valurn : « Saël ! Tes trois pièces. Ça fait deux hivers. » Il fouille ses poches, toutes ses poches, avec une gêne sincère.", [
+    Q("vpieces-payer", "Payer les trois pièces à sa place, sans rien dire.", "sangFroid", [N("Vous posez trois pièces sur l'étal. La marchande les compte et vous regarde avec intérêt."), T("Marchande", "Il a une famille terrible, celui-là. Mais il m'a porté mes caisses tout un hiver sans rien demander. Je lui fais crédit pour ça."), V("Elle ment. Je les ai portées une fois. Deux. Ne l'écoutez pas.", "away")], { trust: 3, coins: -3 }),
+    Q("vpieces-negocier", "Négocier pour lui : trois pièces contre une matinée de caisses portées.", "audace", [V("Vous me vendez comme main-d'œuvre ? À une marchande de lacets ?", "surprised"), T("Marchande", "Marché conclu. Demain, l'aube."), N("Le lendemain, vous le trouvez à l'aube, des caisses plein les bras, sifflotant.")], { affection: 3 }),
+    Q("vpieces-attendre", "Le laisser fouiller ses poches jusqu'au bout.", "lucidite", [N("Il trouve deux pièces, un bouton et un billet plié. Il donne les deux pièces, et le bouton en garantie."), T("Marchande", "Encore un bouton. J'en ai une boîte, de tes boutons.")], { trust: 2 }),
+  ], {
+    promptVariants: [
+      { prompt: "La marchande de lacets interpelle Valurn : « Saël ! On dit que tu as fermé une fuite au Croissant. Tu me dois toujours trois pièces, mais je te fais une remise pour bonne conduite. » Il a l'air presque gêné d'être félicité.", requiresFlags: ["valurn-q7-done"] },
+      { prompt: "La marchande de lacets interpelle Valurn : « Saël ! On dit que tu tiens un comptoir de courrier à l'œil, maintenant. Mes trois pièces, tu les tiens à l'œil aussi ? » Il fouille ses poches avec une gêne sincère.", requiresFlags: ["valurn-q4-done"] },
+    ],
+  }),
+  S("valurn-chancelier", "Les corrections du chancelier", "Dans l'antichambre de l'audience, Maître Péronne, maître des cérémonies, reprend Valurn à voix haute sur la manière correcte de saluer une baronne. Valurn écoute, docile, puis répète la formule avec une seule syllabe de travers, à chaque fois une différente.", [
+    Q("vchanc-soutenir", "Corriger Maître Péronne, poliment, sur un point de protocole.", "lucidite", [P("Pardon, maître, mais la troisième formule ne s'emploie qu'après midi."), T("Maître Péronne", "Je… C'est exact.", "surprised"), N("Le maître se retire. Valurn vous regarde avec une admiration non dissimulée."), V("Vous avez lu le protocole. Personne ne lit le protocole. Même pas lui.", "amused")], { trust: 3 }),
+    Q("vchanc-jeu", "Entrer dans son jeu et vous tromper vous aussi, sur une autre syllabe.", "audace", [N("Le maître passe de l'un à l'autre, au bord de l'apoplexie. Valurn garde un sérieux de statue."), V("Vous voyez ? À deux, on devient une épidémie. Il va devoir écrire un mémoire.", "charming")], { affection: 3 }),
+    Q("vchanc-pourquoi", "Lui demander plus tard pourquoi il fait ça.", "sangFroid", [V("Parce qu'il me corrige depuis trois ans. Si je saluais parfaitement, il trouverait autre chose. Là, il sait où regarder. C'est un service que je lui rends.", "neutral")], { trust: 3, affection: 1 }),
+  ], { minStage: 1 }),
+  S("valurn-thazran-message", "Un message de Thazran", "Valurn lit un billet en grimaçant. « Thazran. Il répond à ma dernière lettre. Écoutez : “Le fils de Bhaal me fait l'honneur de me demander une faveur. Bhaal sait-il que son fils mendie chez les Calciterres ?” Il croit que mon père est une insulte. C'est une adresse. »", [
+    Q("vthaz-repondre", "L'aider à répondre avec la même insolence.", "audace", [P("Écrivez : “Bhaal ne sait rien de moi. C'est notre seul point commun.”"), V("C'est méchant. C'est élégant. Je le signe avant de changer d'avis.", "charming"), N("Il plie le billet avec soin et vous regarde comme un associé.")], { affection: 3 }),
+    Q("vthaz-ignorer", "Lui conseiller de ne répondre que sur le fond, la faveur.", "lucidite", [V("Ignorer la provocation. Il va détester ça. C'est encore mieux que l'insulte.", "amused"), N("Il écrit trois lignes sèches et efficaces. Thazran répondra en quatre pages.")], { trust: 3 }),
+    Q("vthaz-question", "Lui demander si ça le blesse encore.", "sangFroid", [V("Non. Oui. Ça dépend de qui le dit. Thazran, non. Il se trompe de cible depuis des années.", "neutral"), N("Il glisse le billet dans sa poche intérieure, sans le froisser.")], { trust: 4 }),
+  ], { requiresFlags: ["valurn-q3-done"], mood: "annoyed" }),
+  S("valurn-deux-signatures", "Une princesse et deux signatures", "Dans un couloir du palais, Iriana et Valurn se disputent un document. Elle veut deux signatures. Il en veut une seule. Ni l'un ni l'autre ne baisse la voix, ni ne sourit.", [
+    Q("vsign-ecouter", "Écouter les deux arguments avant de dire un mot.", "lucidite", [T("Iriana", "Deux signatures, c'est la preuve. Une seule, c'est un risque.", "stern"), V("Deux signatures, c'est deux noms à faire tomber. Une seule, c'est moi qui prends.", "neutral"), N("Ils ont tous les deux raison. Ils le savent. Ils continuent quand même, par principe.")], { trust: 3 }),
+    Q("vsign-trancher", "Proposer une signature et un témoin hors registre.", "audace", [T("Iriana", "Acceptable.", "stern"), V("Acceptable. Je déteste qu'elle dise acceptable. Ça veut dire qu'on a gagné tous les deux.", "annoyed")], { affection: 2, trust: 1 }),
+    Q("vsign-partir", "Les laisser régler ça seuls.", "sangFroid", [N("Vous partez. Derrière vous, la dispute continue, puis s'arrête net. Un rire, celui d'Iriana, que vous n'aviez jamais entendu dans un couloir.")], { trust: 2 }),
+  ], { minStage: 1, requiresFlags: ["campaign-imperial-audience"], mood: "neutral" }),
+  S("valurn-lettre-absente", "La lettre qui ne vient plus", "Au comptoir de courrier du Croissant, Valurn attend une réponse qui ne vient pas. Il a posé trois fois la même question au commis.", [
+    Q("vabs-qui", "Lui demander de qui il attend une lettre.", "lucidite", [V("D'une source qui écrivait chaque semaine. Elle a cessé après l'affaire du Croissant. Je ne sais pas si elle a peur, si elle est fâchée, ou si je l'ai rendue inutile.", "neutral")], { trust: 3 }),
+    Q("vabs-ecrire", "Lui proposer d'écrire en premier, sans rien demander.", "sangFroid", [V("Écrire sans demander. Sans offrir. Juste pour dire que je suis là ?", "neutral"), N("Il écrit deux lignes. Il les relit cinq fois. Il les envoie.")], { trust: 4 }),
+    Q("vabs-distraire", "L'emmener boire ailleurs pour qu'il cesse de harceler le commis.", "audace", [T("Commis", "Merci. Vraiment."), V("Il exagère. Je ne l'ai interrogé que quatre fois.", "annoyed")], { affection: 3 }),
+  ], {
+    requiresFlags: ["valurn-q7-done"], mood: "neutral",
+    promptVariants: [
+      { prompt: "Au comptoir du Croissant, Valurn attend une réponse qui ne vient plus. Depuis que l'accord a été conclu, la maison Halbrecht ne lui écrit plus rien, et ses anciens informateurs non plus. « Un accord, c'est un silence qu'on achète. Je ne savais pas qu'il durait aussi longtemps. »", requiresFlags: ["valurn-outcome:accord"] },
+      { prompt: "Au comptoir du Croissant, Valurn attend une réponse qui ne vient plus. Depuis la révélation publique, deux de ses sources ont cessé d'écrire. « J'ai dit la vérité devant tout le monde. Les gens qui vivent de mes secrets ont pris ça comme une rupture de contrat. »", requiresFlags: ["valurn-outcome:revelation"] },
+      { prompt: "Au comptoir du Croissant, Valurn attend une réponse qui ne vient plus. Depuis la contremarche, Corvin Lisse ne répond plus. « Je l'ai eu à son propre jeu. Il ne me le pardonnera pas. Ce qui m'étonne, c'est que ça me manque. »", requiresFlags: ["valurn-outcome:contremarche"] },
+    ],
+  }),
+  S("valurn-compte-rendu", "Le compte rendu truqué", "À une table du Grand Marché, Valurn raconte à trois marchands la partie du salon de Halbrecht. Dans sa version, il a tout prévu, tout deviné, et vous n'étiez qu'un témoin admiratif.", [
+    Q("vcr-corriger", "Corriger publiquement un détail, avec un sourire.", "audace", [P("Si je me souviens bien, vous avez acheté une fausse piste à prix d'or."), N("Les marchands éclatent de rire. Valurn pose la main sur son cœur."), V("Calomnie. J'ai acheté une fausse piste pour tester le marché. Le marché a perdu.", "amused")], { affection: 3 }),
+    Q("vcr-laisser", "Le laisser raconter, et lui faire un clin d'œil à la fin.", "sangFroid", [N("Il finit son récit triomphal. Votre clin d'œil le fait trébucher sur le dernier mot."), V("Vous ne direz rien ? Merci. Je vous dois la vérité, en privé. Elle est beaucoup moins flatteuse.", "neutral")], { trust: 3 }),
+    Q("vcr-surenchere", "Surenchérir et lui attribuer des exploits encore plus absurdes.", "lucidite", [P("Et il a deviné la clause cachée les yeux fermés, en dansant."), V("C'est exact. En dansant. Je danse très bien sous la pression.", "charming"), N("Les marchands ne croient plus rien. C'est peut-être le but.")], { affection: 2, trust: 1 }),
+  ], { requiresFlags: ["valurn-market-done"], mood: "amused" }),
+];

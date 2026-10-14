@@ -31,7 +31,7 @@ export const VALURN_DATES: DateScene[] = [
   {
     id: "date-valurn-forestier", character: "valurn", title: "Le pari qui ne rapporte rien", type: "Auberge, jeux et habitués",
     description: "Une table réservée au Forestier, des habitués qui reconnaissent Valurn et un défi qu'il ne peut pas ignorer.",
-    location: "forestier", spot: "forestier-inn", period: "soirée", unlockStage: 3, minAffection: 22, minTrust: 22, minDesire: 20, mood: "charming",
+    location: "forestier", spot: "forestier-inn", period: "soirée", unlockStage: 5, minAffection: 22, minTrust: 22, minDesire: 20, mood: "charming",
     intro: [
       N("La grande salle du Forestier sent la bière tiède et le pain grillé. Valurn a réservé une table près de la cheminée et s'est fait servir avant votre arrivée, ce qui ne l'empêche pas de faire signe pour une seconde tournée."),
       V("Je vous préviens : on me connaît, ici. Pas en bien. J'ai gagné un tonneau l'an dernier et je ne l'ai jamais réclamé, ce qui a rendu tout le monde nerveux."),
@@ -62,7 +62,7 @@ export const VALURN_DATES: DateScene[] = [
   {
     id: "date-valurn-river", character: "valurn", title: "Un feu sans pacte", type: "Halte au bord du fleuve",
     description: "Une nuit à la Halte du Fleuve bleu, au retour d'une course de Valurn, avec un feu au silex et aucune urgence.",
-    location: "river-halt", spot: "river-halt", period: "soirée", unlockStage: 3, minAffection: 24, minTrust: 24, minDesire: 20, mood: "neutral",
+    location: "river-halt", spot: "river-halt", period: "soirée", unlockStage: 5, minAffection: 24, minTrust: 24, minDesire: 20, mood: "neutral",
     intro: [
       N("Valurn revient d'une course pour un correspondant de la route impériale. Il a proposé de faire halte ici plutôt que de rentrer de nuit. La rive est large, l'eau sombre, et quelques charrettes dorment plus loin sous des bâches."),
       V("J'ai apporté de quoi manger, un silex et une couverture. Pas de flamme de pacte ce soir. Je veux savoir si je sais encore faire du feu comme tout le monde."),

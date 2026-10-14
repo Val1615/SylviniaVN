@@ -264,7 +264,7 @@ try {
   assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée dans les rendez-vous");
 
   const pageSource = await read("src/page.tsx");
-  assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
+  assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"(?:, "valurn")?\]\)/u);
   assert.match(pageSource, /DEDICATED_HOME_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
   assert.match(pageSource, /Souvenir intime/u);
   assert.match(pageSource, /game\.player\.sex === "intersexe"/u, "le blocage intersexe doit être expliqué avant l'ouverture d'une continuation");

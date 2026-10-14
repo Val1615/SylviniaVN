@@ -11,6 +11,7 @@ import {
   VALURN_BELLIRITH_CONFIDENCES,
   VALURN_BELLIRITH_KNOWLEDGE,
 } from "./bellirith-living-world";
+import { VALURN_CONFIDENCES, VALURN_INVITATIONS, VALURN_KNOWLEDGE, VALURN_LETTERS } from "./valurn-living-world";
 
 export type SecretTier = 20 | 40 | 60 | 80;
 
@@ -156,6 +157,7 @@ export const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { id: "knows_valurn_bellirith_past", title: "Avant la haine", summary: "Valurn et Bellirith furent autrefois très proches. Leur lien de demi-frère et demi-sœur était aussi intime que difficile à nommer.", people: ["valurn", "bellirith"] },
   // Refonte Bellirith : pierre de stase et artefact retirés (spec §32).
   ...VALURN_BELLIRITH_KNOWLEDGE,
+  ...VALURN_KNOWLEDGE,
 
   ...NAIAH_KNOWLEDGE,
 
@@ -278,35 +280,8 @@ export const SECRET_CONVERSATIONS: SecretConversation[] = [
     Q("sie80-s", "Prononcer simplement son nom dans la galerie avec elle.", "sangFroid", [P("Elowan."), N("Le prénom traverse l’alcôve et s’y pose sans titre, sans accusation, sans devoir de réponse."), L("Iriana", "Oui."), N("Elle ferme les yeux. Le passage d’une patrouille vous oblige au silence ; lorsqu’il s’éloigne, elle ne vérifie plus le couloir."), L("Iriana", "Voilà. Il a existé ailleurs que dans ma mémoire."), P("Elowan."), L("Iriana", "N’en abusez pas. Une fois suffisait."), P("Vous venez de sourire."), L("Iriana", "Je peux encore vous faire affecter aux archives fiscales."), N("Son épaule rejoint néanmoins la vôtre contre la pierre."), L("Iriana", "Merci. Pas d’avoir trouvé une réponse — d’avoir laissé son nom rester seulement un nom.", "sad")], { trust: 10, affection: 3 }),
   ], ["knows_iriana_elowan"], { requiresKnowledge: ["knows_iriana_mother_death"] }),
 
-  S("valurn", 20, "secret-valurn-bhaal", "Les règles de Bhaal", [
-    N("Valurn distribue les cartes, puis retire une à une toutes celles qui portent le sceau de Bhaal. Il les pose face contre table, comme si même le dessin pouvait tricher."),
-    P("Mauvaises cartes ?"),
-    L("Valurn", "Excellentes cartes. Elles permettent à mon père de gagner depuis les Calciterres, ce qui est une forme de contrôle parental excessivement durable."),
-    N("Il retourne le roi marqué. La figure tient une chaîne dans une main et un contrat dans l’autre."),
-    L("Valurn", "Bhaal appelait “famille” tout ce qu’il pensait posséder. Enfant, j’ai appris qu’une règle ne s’appliquait jamais à celui qui l’avait écrite, surtout lorsqu’il était plus grand, plus démoniaque et très susceptible."),
-    P("Et vous avez appris les contrats auprès de lui."),
-    L("Valurn", "Les meilleures armes se trouvent souvent dans la main de la personne qui vous menace. J’ai conservé son talent pour les clauses et son goût du spectacle."),
-    N("Il fait disparaître le roi dans une flamme rouge, puis vous tend le paquet amputé."),
-    L("Valurn", "J’essaie encore de ne pas conserver sa manière d’aimer. Celle qui transforme chaque cadeau en laisse et chaque protection en propriété."),
-  ], [
-    Q("sva20-a", "Inventer une règle qui s’applique d’abord à la personne qui la propose.", "audace", [P("Nouvelle règle : toute contrainte s’applique d’abord à celui qui l’impose."), L("Valurn", "Révolutionnaire. Bhaal aurait brûlé la table, le règlement et probablement le législateur."), P("Vous acceptez ?"), N("Valurn considère ses cartes, puis dépose volontairement son meilleur atout face visible."), L("Valurn", "J’exige que personne ne cache sa carte maîtresse pendant cette manche. Voilà la mienne."), P("C’est terriblement imprudent."), L("Valurn", "Je pensais que le courage moral serait plus séduisant."), N("Vous révélez à votre tour une carte médiocre. Il l’examine avec une gravité offensante."), L("Valurn", "Vous auriez pu mentir. Je suis presque touché."), P("Presque ?"), L("Valurn", "Je garde toujours une clause de sortie. Mauvaise habitude familiale."), N("Il repousse définitivement les cartes de Bhaal hors du jeu."), L("Valurn", "Adoptons la règle. Au moins jusqu’à ce que je perde.")], { affection: 5, trust: 3 }),
-    Q("sva20-l", "Lui demander quel geste présent lui prouve qu’il n’obéit plus à cette autorité.", "lucidite", [P("Qu’est-ce qui vous prouve aujourd’hui que Bhaal ne décide plus de votre manière d’aimer ?"), L("Valurn", "La modestie voudrait que je réponde : mon charme désintéressé."), P("Et l’honnêteté ?"), N("Il fait sauter une carte entre ses doigts. Le mouvement rate ; la carte tombe sous la table."), L("Valurn", "Rester ici après avoir montré une faiblesse, au lieu de vous séduire assez vite pour que vous oubliiez l’avoir vue."), P("Vous êtes encore en train d’essayer."), L("Valurn", "Oui, mais avec une transparence remarquable."), N("Il récupère la carte et la pose devant vous. C’est le roi de Bhaal, intact malgré la flamme."), L("Valurn", "Et vous laisser décider ce que vous faites de ce que je vous confie. Mon père aurait appelé cela perdre un levier."), P("Vous appelez cela comment ?"), L("Valurn", "Une insubordination. Peut-être de la confiance si personne ne nous entend devenir sérieux.")], { trust: 6, affection: 2 }),
-  ], ["knows_valurn_bhaal_childhood"]),
-  S("valurn", 40, "secret-valurn-bellirith", "Avant que la haine gagne", [
-    N("Au dos d’une carte, deux écritures se répondent. La première promet une récompense obscène au perdant ; la seconde corrige la grammaire et double la récompense. Valurn ne retourne pas la carte tout de suite."),
-    P("Bellirith ?"),
-    L("Valurn", "Elle reconnaîtrait son style à l’élégance de la menace. Et le mien à l’excellente correction grammaticale."),
-    N("Son sourire apparaît à l’heure, mais ne reste pas pour la suite."),
-    L("Valurn", "Nous partagions Bhaal, pas nos mères. Demi-frère et demi-sœur, alliés, complices… parfois le seul refuge de l’autre dans une famille qui facturait chaque faiblesse."),
-    L("Valurn", "Nous étions trop proches pour qu’un mot simple suffise et trop fiers pour en inventer un meilleur. Elle connaissait la moitié de mes mensonges avant que je les prononce."),
-    P("Et maintenant ?"),
-    L("Valurn", "Maintenant, elle connaît la manière exacte de les utiliser pour me faire saigner. Cela exige encore une forme d’attention."),
-    N("Il vous tend enfin la carte. Sur le devant, Bellirith a dessiné des cornes ridicules au roi."),
-    L("Valurn", "Sa haine n’a pas inventé ce qui l’a précédée. C’est précisément pour cela qu’elle sait où frapper."),
-  ], [
-    Q("sva40-s", "Ne pas enfermer leur ancien lien dans une catégorie plus confortable.", "sangFroid", [P("Vous n’êtes pas obligé de me donner un mot plus propre."), L("Valurn", "Quel dommage. J’en avais plusieurs d’une saleté remarquable."), P("Je parle sérieusement."), N("Il replie la carte entre ses doigts, sans la cacher."), L("Valurn", "Je sais. Les gens bien intentionnés aiment classer ce qu’ils comprennent mal. Famille ici, désir là, dépendance dans une boîte honteuse, affection dans une boîte respectable."), P("Et vous ?"), L("Valurn", "Je garde la vérité moins confortable : nous nous sommes aimés, mal parfois, profondément toujours. Puis je lui ai fait une promesse que je n’ai pas tenue à temps."), N("Il replace la carte dans le paquet, à l’écart de celles de Bhaal."), L("Valurn", "Merci de ne pas rendre notre passé plus convenable pour supporter notre présent.")], { trust: 8, affection: 2 }),
-    Q("sva40-l", "Lui demander ce qui comptait le plus pour Bellirith avant leur rupture.", "lucidite", [P("Qu’est-ce qui comptait pour elle avant que la haine prenne toute la place ?"), L("Valurn", "Choisir."), P("Choisir quoi ?"), L("Valurn", "Tout. Ses jeux, ses amants, ses règles, la couleur exacte de ses scandales. Bhaal décidait de tout dans cette famille ; elle s’est juré que personne ne déciderait jamais plus rien à sa place."), N("Il retourne la carte et suit du pouce l’écriture de Bellirith."), L("Valurn", "Et un jour, elle m’a laissé décider d’une chose. Une seule. Elle m’a cru."), P("Et ?"), L("Valurn", "Et vous connaissez assez Bellirith pour savoir comment se termine une phrase qui commence par « elle m’a cru »."), N("La plaisanterie écrite entre eux se termine par un petit cœur barré trois fois."), L("Valurn", "Ne lui demandez pas la suite pour me faire plaisir. Je n’ai pas le droit de lui faire raconter cette histoire.")], { trust: 7, affection: 3 }),
-  ], ["knows_valurn_bellirith_past"]),
+  // Valurn · refonte Acte I (valurn-living-world.ts).
+  ...VALURN_CONFIDENCES,
   ...VALURN_BELLIRITH_CONFIDENCES,
 
   ...NAIAH_CONFIDENCES,
@@ -720,20 +695,8 @@ export const LETTERS: LetterTemplate[] = [
     replies: [{ id: "iriana-memory", label: "Ce souvenir restera le vôtre, même lorsqu’il n’est plus solitaire.", response: "Elle ne répond pas davantage. Le lendemain, le ruban de sa mère apparaît dans la galerie, librement exposé.", effects: { trust: 5, affection: 2 } }],
   },
 
-  {
-    id: "letter-valurn-debt", character: "valurn", subject: "Dette inexistante", delivery: "Une carte vierge apparaît dans votre poche sans intervention magique détectable — probablement.", minDay: 5, minStage: 1,
-    body: ["Vous m’avez aidé hier. J’aurais pu vous envoyer une pièce, un pacte ou une promesse douteuse.", "Je choisis une invitation sans dette : si vous venez, j’en serai ravi. Si vous ne venez pas, je survivrai avec une élégance offensante."], signature: "Valurn",
-    replies: [
-      { id: "valurn-free", label: "Accepter l’absence de dette et garder la carte.", response: "Une seconde carte apparaît : « Première règle respectée. Inquiétant. »", effects: { trust: 3, affection: 3 } },
-      { id: "valurn-bluff", label: "Écrire une fausse clause au dos pour le provoquer.", response: "Valurn renvoie la carte barrée de rouge et signe : « Très mauvais contrat. Excellente conversation. »", effects: { affection: 4, desire: 1 } },
-    ],
-  },
-  {
-    id: "letter-valurn-truth", character: "valurn", subject: "Aucune formulation avantageuse", delivery: "Le pli arrive par messager ordinaire, détail inhabituel chez Valurn.", minDay: 20, minStage: 4, requiresKnowledge: ["knows_valurn_did_not_return"],
-    body: ["Je cherche depuis deux jours une manière de raconter la nuit où je ne suis pas revenu auprès de Bellirith qui me rende intelligent, tragique ou pardonnable.", "Il n’en existe aucune. C’est probablement la première phrase honnête de cette lettre."], signature: "Valurn",
-    requiresFlags: ["valurn-accountability"],
-    replies: [{ id: "valurn-no-absolution", label: "L’honnêteté n’annule pas la faute. Elle permet seulement d’en faire autre chose maintenant.", response: "Il répond : « Une perspective atrocement adulte. Je vais tenter de la supporter. »", effects: { trust: 5 } }],
-  },
+  ...VALURN_LETTERS,
+
 
   {
     id: "letter-naiah-margin", character: "naiah", subject: "Le bord est plus intéressant", delivery: "Le message couvre les marges, le pli et une partie de la ficelle. Le centre reste vide.", minDay: 6, minStage: 1,
@@ -877,21 +840,7 @@ export const INVITATIONS: InvitationTemplate[] = [
       Q("iic-l", "Lui demander lequel des fauteuils elle avait d’abord choisi pour vous.", "lucidite", [N("Son regard glisse vers celui placé face au sien, puis vers un autre presque collé au piano."), L("Iriana", "Le premier permettait de vous observer. Le second de vous éviter. Celui-ci m’oblige à faire les deux imparfaitement."), P("Et c’est celui que vous avez gardé."), L("Iriana", "Ne prenez pas cet aveu pour une victoire. Prenez-le pour une information que je n’aurais pas donnée hier.")], { trust: 6, affection: 3 }),
     ],
   },
-  {
-    id: "invite-valurn-market", character: "valurn", title: "Un pari sans mise", message: "Valurn vous cherche au Grand Marché pour départager deux objets absolument inutiles.", location: "algratal", spot: "algratal-market", period: "matin", minDay: 6, minStage: 1, expiresAfter: 5,
-    declineText: "Valurn achète les deux objets et vous accuse par lettre d’avoir rendu le choix impossible.",
-    intro: [
-      N("Valurn tient une cuillère qui prédit la pluie et une clochette qui refuse de sonner. Le marchand les observe comme s’il regrettait déjà d’avoir commencé cette négociation."),
-      L("Valurn", "Aucune conséquence politique, aucun pacte héréditaire et, selon cet homme, aucune possibilité de remboursement. Je manque d’entraînement. Sauvez-moi."),
-      L("Marchand", "La cuillère ne prédit la pluie que lorsqu’elle est mouillée."),
-      L("Valurn", "Vous voyez ? Une prophétie exacte, inutile et commercialement malhonnête. Saidin sera jaloux.", "charming"),
-    ],
-    choices: [
-      Q("ivm-a", "Choisir la clochette et inventer la fonction qu’elle refuse d’avouer.", "audace", [P("Détecteur de conversations ennuyeuses."), N("Vous agitez la clochette près du marchand. Elle reste muette."), L("Valurn", "Son silence actuel est donc un compliment, ou la preuve que l’objet partage votre cruauté."), N("Il l’achète et vous la tend."), L("Valurn", "Gardez-la. Si elle sonne près de moi, j’aurai enfin une critique impossible à contester.")], { affection: 6, trust: 2 }),
-      Q("ivm-l", "Négocier un troisième objet avec le marchand.", "lucidite", [N("Après dix minutes d’arguments volontairement excessifs, le marchand sort un dé à sept faces de sous son comptoir."), L("Valurn", "La seule décision raisonnable était manifestement d’ajouter une règle absurde."), P("On pourrait le lancer pour choisir entre les trois."), L("Valurn", "Et que faisons-nous s’il tombe sur huit ?"), N("Le dé roule. Il s’immobilise sur un symbole qui ne figurait sur aucune face une seconde plus tôt."), L("Valurn", "Parfait. Nous achetons le marchand.")], { trust: 5, affection: 3 }),
-      Q("ivm-s", "Refuser de choisir à sa place et lui demander lequel il regretterait de laisser.", "sangFroid", [L("Valurn", "Une question sincère au milieu d’une escroquerie décorative. Vous êtes d’une vulgarité morale fascinante."), N("Il repose la cuillère, garde la clochette puis revient prendre la cuillère à son tour."), P("Vous avez choisi les deux."), L("Valurn", "J’ai surtout découvert que je regrettais les séparations arbitraires. Ne cherchez pas de métaphore familiale avant le déjeuner.")], { trust: 6, affection: 2 }),
-    ],
-  },
+  ...VALURN_INVITATIONS,
   {
     id: "invite-naiah-branches", character: "naiah", title: "Le sentier qui se mord la queue", message: "Une branche frappe trois fois à votre fenêtre. Un ruban violet annonce : « Mon chemin tourne en rond. Viens rire avant qu'il ne devienne vexant. »", location: "forbidden", spot: "forbidden-crossroads", period: "soirée", minDay: 7, minStage: 1, expiresAfter: 5,
     declineText: "Le lendemain, la branche rapporte un dessin du sentier réparé et cette précision : « Il a survécu sans toi. Mon sens dramatique aussi. »",
