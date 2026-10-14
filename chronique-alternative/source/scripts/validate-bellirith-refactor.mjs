@@ -169,7 +169,7 @@ try {
   counts.intimacyRoutes = new Set(routes.map((entry) => entry.id)).size;
   counts.intimacyWords = Object.fromEntries(Object.entries(stats).map(([mode, list]) => [mode, { min: Math.min(...list), avg: Math.round(list.reduce((a, b) => a + b, 0) / list.length), max: Math.max(...list) }]));
   for (const context of intimacy.BELLIRITH_INTIMACY_CONTEXTS) {
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
         assert.ok(intimacy.bellirithIntimacyRoutes(context, sex, history.flags).length >= 1, `${context}/${sex}/${history.label} : aucune route`);
         assert.ok(intimacy.bellirithIntimacyOpening(context, history.flags, sex).length >= 1, `${context} : ouverture manquante`);
@@ -199,7 +199,7 @@ try {
     assert.equal(intimacy.BELLIRITH_INTIMACY_TITLES[heure.context], heure.title, `${heure.context} : titre propre`);
     assert.ok(heure.route.chapters.length >= intimacy.BELLIRITH_INTIMACY_MINIMUM_SEQUENCES, `${heure.context} : au moins 12 séquences`);
     assert.ok(heure.route.visual && heure.route.visual.revealChapter < heure.route.visual.postOrgasmChapter && heure.route.visual.postOrgasmChapter < heure.route.chapters.length, `${heure.context} : progression CG`);
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       for (const history of HEURE_HISTORIES) {
         const routesHere = intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags);
         assert.deepEqual(routesHere.map((route) => route.id), [heure.route.id], `${heure.context}/${sex}/${history.label} : seule sa propre route est proposée`);
@@ -216,8 +216,8 @@ try {
     const explicitFirst = text(intimacy.bellirithIntimacyRoutes(heure.context, "femme", [])[0].chapters.explicite) + text(intimacy.bellirithIntimacyOpening(heure.context, [], "femme")) + text(intimacy.bellirithIntimacyEnding(heure.context, [], "femme"));
     const explicitSlept = text(intimacy.bellirithIntimacyRoutes(heure.context, "femme", ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"])[0].chapters.explicite) + text(intimacy.bellirithIntimacyOpening(heure.context, ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"], "femme")) + text(intimacy.bellirithIntimacyEnding(heure.context, ["bellirith-has-slept", "bellirith-favorite", "bellirith-trend:ceded"], "femme"));
     assert.notEqual(explicitFirst, explicitSlept, `${heure.context} : l’historique (première fois / déjà amants) change la scène`);
-    const bySex = ["femme", "homme", "intersexe"].map((sex) => text(intimacy.bellirithIntimacyRoutes(heure.context, sex, [])[0].chapters.explicite));
-    assert.equal(new Set(bySex).size, 3, `${heure.context} : variantes concrètes femme / homme / intersexe`);
+    const bySex = ["femme", "homme"].map((sex) => text(intimacy.bellirithIntimacyRoutes(heure.context, sex, [])[0].chapters.explicite));
+    assert.equal(new Set(bySex).size, 2, `${heure.context} : variantes concrètes femme / homme`);
   }
   // Les sources ne recyclent plus les anciennes routes génériques.
   for (const legacy of ["bellirith-free-first", "bellirith-free-familiar"]) {
@@ -247,7 +247,7 @@ try {
   for (const proposalContext of ["bellirith-free-ennui", "bellirith-free-matin", "bellirith-free-couloir", "bellirith-free-faveur", "bellirith-free-confidence"]) assert.ok(ownersByContext.has(proposalContext), `${proposalContext} : aucune source ne l’ouvre`);
   counts.heures = heures.length;
   counts.heureWords = Object.fromEntries(heures.map((heure) => [heure.context, Object.fromEntries(["tendre", "suggestif", "explicite", "ellipse"].map((mode) => {
-    const list = ["femme", "homme", "intersexe"].flatMap((sex) => HEURE_HISTORIES.map((history) => words(intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags)[0].chapters[mode])));
+    const list = ["femme", "homme"].flatMap((sex) => HEURE_HISTORIES.map((history) => words(intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags)[0].chapters[mode])));
     return [mode, { min: Math.min(...list), avg: Math.round(list.reduce((a, b) => a + b, 0) / list.length), max: Math.max(...list) }];
   }))]));
 
@@ -266,13 +266,13 @@ try {
   const UNIQUE_HISTORIES = HEURE_HISTORIES;
   for (const route of routes) own(`route:${route.id}`, route.route.chapters);
   for (const heure of heures) {
-    for (const sex of ["femme", "homme", "intersexe"]) for (const history of UNIQUE_HISTORIES) {
+    for (const sex of ["femme", "homme"]) for (const history of UNIQUE_HISTORIES) {
       own(`route:${heure.route.id}`, intimacy.bellirithIntimacyRoutes(heure.context, sex, history.flags)[0].chapters);
       own(`route:${heure.route.id}`, [intimacy.bellirithIntimacyOpening(heure.context, history.flags, sex), intimacy.bellirithIntimacyEnding(heure.context, history.flags, sex), intimacy.bellirithIntimacyApproaches(heure.context, history.flags, sex)]);
     }
   }
   for (const context of intimacy.BELLIRITH_INTIMACY_CONTEXTS.filter((entry) => !heures.some((heure) => heure.context === entry))) {
-    for (const sex of ["femme", "homme", "intersexe"]) for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
+    for (const sex of ["femme", "homme"]) for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
       own(`cadre:${context}`, [intimacy.bellirithIntimacyOpening(context, history.flags, sex), intimacy.bellirithIntimacyEnding(context, history.flags, sex)]);
       own(`approches:${intimacy.bellirithIntimacyKind(context)}`, intimacy.bellirithIntimacyApproaches(context, history.flags, sex));
     }
@@ -388,7 +388,7 @@ try {
   addStyle("intrusions", intr.allBellirithIntrusionVariants().map((entry) => entry.scene));
   addStyle("intimités", routes.map((entry) => entry.route));
   for (const context of intimacy.BELLIRITH_INTIMACY_CONTEXTS) {
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       for (const history of intimacy.BELLIRITH_VALIDATION_HISTORIES) {
         for (const source of [undefined, ...intimacy.BELLIRITH_FREE_SOURCES]) {
           addStyle(`${context}/ouverture`, intimacy.bellirithIntimacyOpening(context, history.flags, sex, source));

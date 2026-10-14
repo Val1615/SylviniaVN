@@ -765,7 +765,7 @@ export function hyleeDateIntimacyOpening(context: HyleeIntimacyContext): Dialogu
 export function hyleeDateIntimacyEnding(context: HyleeIntimacyContext): DialogueLine[] { return HYLEE_INTIMACY_ENDINGS[context]; }
 
 export function hyleeDateIntimacyRoutes(context: HyleeIntimacyContext | undefined, sex: PlayerSex): IntimacyRoute[] {
-  if (!context || sex === "intersexe") return [];
+  if (!context) return [];
   return SCENES.filter((scene) => scene.context === context && scene.sex === sex).map(routeFromScene);
 }
 
@@ -787,6 +787,5 @@ export function validateHyleeDateIntimacy() {
       });
     });
   }
-  if (hyleeDateIntimacyRoutes("home-hylee", "intersexe").length !== 0) throw new Error("Le canon intersexe ne doit pas être fixé par la refonte Hylee");
   return { contexts: CONTEXTS.length, combinations, routes, chapters };
 }

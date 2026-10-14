@@ -57,8 +57,8 @@ try {
   assert.match(pageSource, />Pas ce soir</);
   assert.match(pageSource, />Rester proches amicalement</);
 
-  assert.deepEqual(intimacy.validateAllennaDateIntimacy(), { dates: 2, combinations: 6, routes: 18, chapters: 720 });
-  for (const date of allennaDates) for (const sex of ["femme", "homme", "intersexe"]) {
+  assert.deepEqual(intimacy.validateAllennaDateIntimacy(), { dates: 2, combinations: 4, routes: 12, chapters: 480 });
+  for (const date of allennaDates) for (const sex of ["femme", "homme"]) {
     const entries = intimacy.allennaDateIntimacyRoutes(date.id, sex);
     assert.equal(entries.length, 3);
     for (const entry of entries) for (const mode of ["tendre", "suggestif", "explicite", "ellipse"]) {
@@ -69,7 +69,7 @@ try {
   }
 
   assert.equal(housing.HOME_DATE_PROFILES.allenna.title, "La bataille qui tient sur une table");
-  for (const sex of ["femme", "homme", "intersexe"]) {
+  for (const sex of ["femme", "homme"]) {
     const entries = home.homeIntimacyRoutes("allenna", sex);
     assert.equal(entries.length, 3);
     entries.forEach((entry) => Object.values(entry.chapters).forEach((chapters) => assert.ok(chapters.length >= 8)));

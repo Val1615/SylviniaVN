@@ -57,19 +57,6 @@ export const ROUTE_CONTEXTUAL_CHOICES: Record<string, ContextualRouteChoices> = 
     C("Choisir une place personnelle et fidèle, mais explicitement non romantique.", "Votre place demeure. Elle sera nommée avec exactitude, et je ne tenterai pas d’en modifier les termes par usure.", "lucidite"),
   ),
 
-  "valurn-0": R(C("Accepter sa mise sans demander ce qu’il considère déjà comme gagné.", "Voilà comment commencent les mauvais pactes : un sourire, une main tendue et personne qui ne lit la condition cachée.", "audace")),
-  "valurn-1": R(C("Lui ordonner d’éteindre sa flamme avant qu’elle révèle ce qu’il ne contrôle pas.", "Vous venez de traiter ma peur comme un incendie gênant. Elle ne s’éteint pas parce que votre scène serait plus confortable sans elle.", "sangFroid")),
-  "valurn-2": R(C("Lui assurer qu’il ne pourra jamais ressembler à Bhaal.", "Vous ne connaissez pas encore le choix que j’ai fait pour Bellirith. Gardez vos absolutions jusqu’à ce qu’elles aient rencontré les faits.", "lucidite")),
-  "valurn-3": R(
-    C("Ramasser le jeton et déclarer que son attachement vous appartient désormais.", "Félicitations : vous avez transformé mon aveu en acte de propriété avant même que le jeton cesse de tourner.", "audace"),
-    C("Lui rendre le jeton et dire que vous ne voulez pas miser davantage ce soir.", "Une sortie offerte sans humiliation. C’est terriblement peu spectaculaire et, je l’admets, assez difficile à mépriser.", "sangFroid"),
-    C("Lui dire que vous voulez rester son ami sans devenir une nouvelle mise romantique.", "Ami, donc. Une partie où personne ne gagne l’autre. Mon père détesterait le concept ; je vais essayer de l’apprécier.", "lucidite"),
-  ),
-  "valurn-4": R(
-    C("Lui demander un sceau discret afin d’être certain·e qu’il restera demain.", "Vous voulez garantir ma liberté par une chaîne plus élégante. Le cercle est effacé précisément parce que demain doit rester un choix.", "resonance"),
-    C("Lui dire que vous le désirez, mais que ce soir s’arrêtera avant le lit.", "Le désir sans exécution obligatoire : voilà une clause que même moi je peux signer sans encre. Je reste si vous voulez encore ma compagnie.", "sangFroid"),
-    C("Lui proposer une alliance profonde et amicale, sans pacte amoureux.", "Aucune conquête, aucune dette, aucun lit promis. Vous rendez l’amitié presque scandaleuse ; j’accepte.", "lucidite"),
-  ),
 
   "naiah-0": R(C("Emporter la balise grise comme trophée sans lui demander à quoi elle sert.", "Repose-la. Tu viens de prendre la pièce qui indique à la brume où ne pas avaler les voyageurs. Mes jeux ont des pièges ; mes protections, elles, ont un travail.", "audace")),
   "naiah-1": R(C("Lui demander de s’écarter et tenter de réaccorder vous-même les trois protections.", "Non. Tes mains peuvent tenir mes repères ; elles ne connaissent ni la forêt ni ce que ce nœud renvoie. M’aider ne signifie pas devenir mage à ma place.", "audace")),

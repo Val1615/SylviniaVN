@@ -15,8 +15,8 @@ import type { IntimacyMode, PlayerSex } from "./date-scenes";
 
 export type BNSpeaker = "B" | "Y" | "P";
 export type BNLine = string | readonly [speaker: BNSpeaker, text: string, mood?: string];
-/** Variante selon le corps du protagoniste : femme, homme, intersexe. */
-export type BNSexVariant = { readonly sx: readonly [femme: BNLine, homme: BNLine, intersexe: BNLine] };
+/** Variante selon le corps du protagoniste : femme, homme. */
+export type BNSexVariant = { readonly sx: readonly [femme: BNLine, homme: BNLine] };
 export type BNRaw = BNLine | BNSexVariant;
 export type BNChapter = readonly BNRaw[];
 
@@ -40,13 +40,13 @@ export type BNIntimacyScene = {
   explicitMoods: { bellirith: readonly string[]; naiah: readonly string[] };
 };
 
-export const X = (femme: BNLine, homme: BNLine, intersexe: BNLine): BNSexVariant => ({ sx: [femme, homme, intersexe] });
+export const X = (femme: BNLine, homme: BNLine): BNSexVariant => ({ sx: [femme, homme] });
 export const b = (text: string, mood = "teasing"): BNLine => ["B", text, mood] as const;
 export const y = (text: string, mood = "smirk"): BNLine => ["Y", text, mood] as const;
 export const p = (text: string): BNLine => ["P", text] as const;
 
 const SPEAKERS: Record<BNSpeaker, string> = { B: "Bellirith", Y: "Naïah", P: "{player}" };
-const SEX_INDEX: Record<PlayerSex, 0 | 1 | 2> = { femme: 0, homme: 1, intersexe: 2 };
+const SEX_INDEX: Record<PlayerSex, 0 | 1> = { femme: 0, homme: 1 };
 
 function isVariant(raw: BNRaw): raw is BNSexVariant {
   return typeof raw === "object" && !Array.isArray(raw) && "sx" in raw;
@@ -74,7 +74,7 @@ export function bnRenderOpening(scene: BNIntimacyScene, sex: PlayerSex): Dialogu
 
 /** Toutes les lignes possibles d’une scène (validateurs). */
 export function bnAllLines(scene: BNIntimacyScene): DialogueLine[] {
-  const sexes: PlayerSex[] = ["femme", "homme", "intersexe"];
+  const sexes: PlayerSex[] = ["femme", "homme"];
   const modes: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
   return sexes.flatMap((sex) => [...bnRenderOpening(scene, sex), ...modes.flatMap((mode) => bnRenderChapters(scene, mode, sex).flat())]);
 }

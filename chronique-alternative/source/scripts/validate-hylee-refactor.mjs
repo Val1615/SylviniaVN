@@ -264,6 +264,11 @@ try {
     game.relationships[date.character] = { ...game.relationships[date.character], met: true, stage: 4, affection: 100, trust: 100, desire: 0 };
     assert.equal(page.publicDateUnlocked(game, date), false, date.id);
     game.relationships[date.character].stage = 5;
+    // Valurn : le fil relationnel s'achève avec sa septième quête.
+    if (date.character === "valurn") {
+      assert.equal(page.publicDateUnlocked({ ...game, relationships: { ...game.relationships, valurn: { ...game.relationships.valurn, affection: 100, trust: 100 } } }, date), false, `${date.id} avant valurn-q7`);
+      game.history = [...game.history, "valurn-q7"];
+    }
     game.relationships[date.character].affection = date.minAffection;
     game.relationships[date.character].trust = date.minTrust;
     assert.equal(page.publicDateUnlocked(game, date), true, date.id);

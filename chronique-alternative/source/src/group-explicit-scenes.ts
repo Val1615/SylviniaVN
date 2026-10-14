@@ -22,14 +22,12 @@ type HeritageExplicitPair = {
 
 const bodyFocus = (sex: PlayerSex): string => {
   if (sex === "femme") return "votre intimité humide, la perle sensible entre vos lèvres de velours et le rythme précis de vos hanches";
-  if (sex === "homme") return "votre membre dressé, son extrémité sensible et la cadence que votre bassin choisit de soutenir";
-  return "les zones de plaisir que vous nommez vous-même, sans qu’aucun geste soit déduit de votre apparence";
+  return "votre membre dressé, son extrémité sensible et la cadence que votre bassin choisit de soutenir";
 };
 
 const sexCue = (sex: PlayerSex): string => {
   if (sex === "femme") return "vos cuisses qui s’ouvrent et se referment autour de la caresse";
-  if (sex === "homme") return "votre désir tendu qui réagit sous leurs bouches et leurs mains";
-  return "vos indications qui redessinent librement bouche, mains, frottement ou pénétration";
+  return "votre désir tendu qui réagit sous leurs bouches et leurs mains";
 };
 
 function heritageExplicitPair(config: HeritageExplicitPair): Record<PlayerSex, Record<AdvancedGroupRole, AdvancedGroupRawLine[]>> {
@@ -58,7 +56,6 @@ function heritageExplicitPair(config: HeritageExplicitPair): Record<PlayerSex, R
   return {
     femme: { first: make("femme", "first"), second: make("femme", "second"), shared: make("femme", "shared") },
     homme: { first: make("homme", "first"), second: make("homme", "second"), shared: make("homme", "shared") },
-    intersexe: { first: make("intersexe", "first"), second: make("intersexe", "second"), shared: make("intersexe", "shared") },
   };
 }
 
@@ -105,26 +102,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         "Les deux configurations possèdent des rythmes entièrement différents : Hylee vive et joueuse, Remerii profonde et méthodique jusqu’à ce que son plaisir la désordonne. Vous jouissez pendant la seconde chevauchée, mais Hylee garde sa bouche sur la mage et Remerii ses doigts sur vous, prolongeant le cercle jusqu’à ce que les trois corps aient réellement terminé.",
       ),
     },
-    intersexe: {
-      first: scene(
-        "Hylee vous demande de choisir deux symboles gravés dans la glace : bouche, frottement ou pénétration. Elle suit les deux que vous désignez pendant que Remerii s’installe contre son dos et stimule Hylee d’une main ; l’autre main de la mage reste sur votre hanche, prête à modifier la position afin que votre intimité réelle — et non une supposition — organise la profondeur et l’angle.",
-        C("Hylee", "Je commence avec ce que tu viens de choisir. Si ton corps change d’avis, le symbole fond et on en dessine un autre.", "soft"),
-        C("Remerii", "Et je suivrai Hylee sans faire de votre réponse une donnée définitive. Trois corps, trois corrections toujours possibles."),
-        "Vous faites effectivement fondre un symbole au milieu de la scène. Hylee adapte sa bouche et son bassin, Remerii change la pression qu’elle lui donne et vos plaisirs retrouvent une circulation nouvelle ; votre orgasme arrive sous une configuration qui n’existait pas au début, puis vous guidez toutes deux vers Remerii afin que la mage reçoive à son tour deux gestes choisis au présent.",
-      ),
-      second: scene(
-        "Remerii vous installe sur le côté et vous demande de guider sa bouche, ses doigts ou son bassin vers ce que vous souhaitez recevoir. Hylee s’allonge face à vous, une main sur votre point de feu et l’autre dans l’intimité de Remerii ; chaque mouvement de la mage sur votre corps est troublé par la cryomancienne, qui remplace l’ancienne relation de leçon par un désir formulé sans détour.",
-        C("Remerii", "Votre anatomie ne décide d’aucun rôle. Votre main indique mon geste ; la voix d’Hylee indique le sien. Je n’ai besoin de rien déduire."),
-        C("Hylee", "Moi, je déduis seulement qu’elle va bientôt oublier de parler. Tu veux m’aider à vérifier ?", "teasing"),
-        "Vous augmentez ensemble la pression sur Remerii jusqu’à lui arracher un oui brisé, tandis qu’elle maintient sur vous la stimulation que vous avez choisie. La mage jouit sans retirer sa main ni sa bouche ; elle revient ensuite à votre rythme et Hylee se place contre votre autre flanc, de sorte que votre orgasme reste reçu par deux partenaires actives et non par une observatrice et une exécutante.",
-      ),
-      shared: scene(
-        "Vous dessinez avec la lanterne trois zones mobiles : recevoir, donner, changer. Chaque personne y entre avec le geste adapté à son corps — ciseau, frottement, bouche ou pénétration désirée — puis en sort lorsqu’un nouvel élan la tire ailleurs. Hylee garde les transitions visibles dans le givre ; Remerii veille à ce qu’aucune configuration ne devienne une obligation de symétrie.",
-        P("Nos gestes n’ont pas besoin de se ressembler. Ce qui doit être égal, c’est la liberté de demander une position entièrement différente."),
-        C("Remerii", "Alors aucune répétition obligatoire. Hylee reçoit selon son corps, vous selon le vôtre, et je formulerai le mien sans les prendre pour modèle."),
-        "Les trois scènes physiques s’enchaînent sans se copier. Hylee jouit dans un frottement de givre, Remerii dans la pénétration ou la pression qu’elle a choisie, puis elles adaptent ensemble bouche et mains à votre désir singulier ; le dernier éclat de la lanterne marque trois plaisirs distincts, reliés par le regard et non par une anatomie supposée commune.",
-      ),
-    },
   },
 
   "group-date-valurn-bellirith": {
@@ -166,26 +143,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         P("Elle choisit le corps qu’elle reçoit et le moment où elle change. Celui qui attend ne disparaît pas : il s’occupe d’elle et de l’autre."),
         C("Bellirith", "Enfin une compétition où ma décision ne devient pas le trophée. Valurn, garde ta main. Toi… entre maintenant."),
         "La rotation suit sa voix. Bellirith jouit pendant le second contact, mais ses mains restent sur les deux hommes ; Valurn et vous poursuivez ensuite dans une position latérale choisie entre vous, tandis qu’elle distribue bouche et doigts avec une expérience réelle. Les trois conclusions ont ainsi des formes différentes et aucun classement possible.",
-      ),
-    },
-    intersexe: {
-      first: scene(
-        "Valurn vous demande de désigner le contact qu’il doit mener pendant que Bellirith le distrait. Vous choisissez sa bouche sur votre point de feu et précisez la pénétration ou le frottement que votre intimité accepte ; Bellirith se place contre son dos, stimule son membre viril et garde une main sur vous, afin que la provocation traverse les trois corps plutôt que de viser une performance isolée.",
-        C("Valurn", "Je connais cent manières de feindre l’assurance. Celle-ci n’en fait pas partie : dites-moi simplement si ma bouche reste au bon endroit."),
-        C("Bellirith", "Il devient presque séduisant lorsqu’il cesse de se croire mystérieux. Ne le rassure pas trop vite."),
-        "Vous répondez par une indication précise et modifiez la position lorsque votre corps le demande. Valurn s’adapte sans détour, Bellirith accélère sur lui et votre orgasme fait perdre leurs deux masques en même temps ; vous reprenez ensuite le jeu sur Bellirith selon le contact qu’elle formule, Valurn continuant à vous toucher pour que personne ne quitte le cercle après avoir joui.",
-      ),
-      second: scene(
-        "Bellirith vous installe face au miroir neutre et demande comment son corps doit rencontrer le vôtre : langue, main, frottement ou pénétration. Valurn vient derrière elle et suit ses réactions réelles pendant qu’elle accomplit votre choix ; chaque fois qu’il la pousse vers le plaisir, Bellirith doit vous demander si elle conserve encore la pression exacte plutôt que de sauver sa pose.",
-        C("Bellirith", "Je peux être troublée et rester attentive. Ne laisse surtout pas son sourire te convaincre que l’un exclut l’autre."),
-        C("Valurn", "Je souris seulement parce qu’elle vient de vous demander la même chose deux fois. Voilà une sincérité historiquement rare."),
-        "Vous confirmez, puis exigez un changement propre à votre corps. Bellirith l’adopte sans charme, Valurn l’accompagne d’une caresse sur elle et la chaîne de réactions vous conduit tous trois vers des plaisirs distincts ; son orgasme se reflète sans retouche, le vôtre sans catégorie imposée, celui de Valurn dans la main que vous avez choisie de lui offrir.",
-      ),
-      shared: scene(
-        "Vous tracez trois marques sur la table : donner, recevoir, surprendre. Chacun y choisit une posture adaptée — Bellirith peut accueillir une pénétration ou un frottement, Valurn recevoir une bouche ou un corps, vous définir entièrement votre propre intimité. La personne hors de la marque centrale doit garder une main sur les deux autres, ce qui transforme leur rivalité en relais physique.",
-        P("Aucun de vous ne gagne en devinant mon corps. Vous gagnez seulement le droit de continuer en écoutant sa prochaine demande."),
-        C("Valurn", "Enfin une règle qui rend la triche inutile. Bellirith, je te laisse la première surprise — uniquement parce que je prépare mieux."),
-        "Les surprises restent toutes différentes : Bellirith choisit une position sans charme, Valurn une pénétration ou un frottement sans pari, vous une configuration qu’aucun des deux n’avait anticipée. Les orgasmes interrompent la compétition à trois moments distincts, mais chacun continue d’employer bouche, mains ou paroles jusqu’à ce que le dernier corps ait réellement terminé.",
       ),
     },
   },
@@ -231,26 +188,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         "Iriana jouit pendant la seconde pénétration, mais retient vos deux mains contre elle jusqu’à ce que ses contractions ralentissent. Vous et Valurn poursuivez ensuite côte à côte, bouche et doigts distribués selon vos demandes, tandis qu’elle veille à ce que chacun atteigne son orgasme dans une posture différente et également choisie.",
       ),
     },
-    intersexe: {
-      first: scene(
-        "Iriana vous demande de formuler la manière exacte dont elle doit mener : bouche sur le point de feu, doigts dans l’intimité choisie, frottement ou pénétration adaptée. Valurn se place derrière elle et attend sa propre invitation avant de la toucher ; lorsqu’il commence, Iriana conserve votre rythme malgré les réactions qui traversent son corps et vous laisse corriger toute hypothèse au milieu de la scène.",
-        C("Iriana", "Votre corps n’est pas un article de protocole. Vous rédigez chaque demande au présent ; je ne conserverai que celle que vous confirmez encore."),
-        C("Valurn", "Et je découvre avec émotion qu’une règle peut devenir séduisante lorsqu’elle interdit précisément de deviner."),
-        "Vous changez de contact et Iriana s’adapte sans défendre le premier choix. Valurn lui donne du plaisir tandis qu’elle vous conduit vers le vôtre, puis vous choisissez une position où vos mains rejoignent les siennes sur lui ; les trois orgasmes empruntent des voies différentes, et les corps redessinent naturellement la suite au gré de leurs frissons.",
-      ),
-      second: scene(
-        "Valurn s’installe devant vous et vous demande quel rôle son corps doit prendre sans se fier au vôtre. Vous choisissez un échange de bouche et de mains avant une éventuelle pénétration donnée ou reçue ; Iriana vient à son côté, touche simultanément son membre viril et le point de feu que vous lui désignez, faisant de sa précision un lien entre vous plutôt qu’une autorité centrale.",
-        C("Valurn", "Je renonce à deviner. Dites-moi ce que vous voulez me donner, puis ce que vous voulez que je demande en retour."),
-        C("Iriana", "Et laissez chaque réponse pouvoir différer. L’égalité de cette soirée ne réclame aucune symétrie anatomique."),
-        "Vous composez une position entièrement propre à vos deux corps, Iriana maintenant le contact qui empêche l’un de disparaître pendant que l’autre reçoit. Valurn jouit sous un geste qu’il a nommé sans feinte ; il reprend ensuite une caresse différente sur vous, guidé par votre voix, tandis qu’Iriana reçoit votre main libre et atteint une conclusion qui n’imite aucune des deux premières.",
-      ),
-      shared: scene(
-        "Vous déposez trois cartes vierges sur le drap et y inscrivez chacun un désir corporel, sans nom de rôle. Iriana choisit une position où elle peut recevoir selon sa propre anatomie, Valurn une autre où il peut donner ou accueillir, et vous une troisième qui définit bouche, frottement ou pénétration sans supposition. Les cartes tournent, mais leur contenu ne doit jamais être reproduit à l’identique.",
-        P("Nous partageons l’initiative, pas une obligation de copier le geste précédent. Chaque corps obtient sa propre scène au centre des deux autres."),
-        C("Valurn", "Trois règles différentes et aucune faille à exploiter. Je suis presque offensé… et tout à fait convaincu."),
-        "Les configurations se succèdent comme trois aveux. Iriana perd son contrôle selon le désir qu’elle a écrit, Valurn son masque selon le sien, puis ils adaptent ensemble leurs mains, leurs bouches et leurs bassins à votre carte ; aucun orgasme ne survient dans la même pose, et personne ne doit payer son plaisir en reproduisant celui de l’autre.",
-      ),
-    },
   },
 
   "group-date-hylee-naiah": {
@@ -292,26 +229,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         P("Une seule transition magique : le décor tourne, pas nos corps. Nous annonçons nous-mêmes chaque entrée, chaque retrait et chaque reprise."),
         C("Naïah", "Je peux accepter une règle aussi peu spectaculaire… surtout si Hylee garde exactement sa langue là où elle est."),
         "Les deux pénétrations possèdent des rythmes différents, celui d’Hylee curieux et progressif, celui de Naïah joueur puis soudain sincère. Vous jouissez pendant la seconde chevauchée ; Hylee et vous maintenez le plaisir de Naïah jusqu’au bout, puis celle-ci utilise sa bouche réelle pour accompagner le dernier frisson de la cryomancienne.",
-      ),
-    },
-    intersexe: {
-      first: scene(
-        "Hylee dessine sur votre peau trois traces de givre correspondant aux contacts que vous acceptez. Elle suit la première avec sa bouche, la deuxième avec ses doigts et attend votre demande avant de transformer la troisième en frottement ou pénétration ; Naïah touche Hylee et garde un reflet parfaitement fidèle pour que vous puissiez vérifier chaque main sans qu’aucun double intervienne.",
-        C("Hylee", "Si une trace ne convient plus, tu la fais fondre. Je n’essaierai pas de sauver le dessin au détriment de ton plaisir.", "soft"),
-        C("Naïah", "Et moi je garde l’image honnête, même quand vos deux visages deviennent beaucoup plus intéressants que mon décor."),
-        "Vous effacez une trace et en déplacez une autre. Hylee adapte ses gestes, Naïah maintient sur elle une pression qui ne perturbe jamais votre nouvelle demande et votre orgasme survient dans une configuration entièrement redessinée ; vous faites ensuite pivoter le reflet vers Naïah, afin que l’illusionniste reçoive deux attentions aussi réelles que celle qu’elle vient d’observer.",
-      ),
-      second: scene(
-        "Naïah vous présente trois reflets correspondant non à des corps, mais à des postures : assis pour le frottement, allongé pour la bouche, latéral pour une pénétration éventuelle. Vous choisissez la position et définissez vous-même le contact ; Hylee s’unit au dos de Naïah, stimulant son intimité tout en gardant sa main froide sur votre point de feu.",
-        C("Naïah", "L’image propose une géométrie, jamais une anatomie. Le geste réel viendra seulement de ce que tu nous dis maintenant."),
-        C("Hylee", "Et si la géométrie devient inconfortable, on casse le reflet avant que tu aies besoin de te justifier.", "determined"),
-        "La posture choisie évolue sans magie lorsque votre désir change. Naïah vous donne du plaisir avec le contact précis que vous avez nommé, Hylee la conduit à l’orgasme et garde simultanément une caresse sur vous ; après votre propre conclusion, vous fermez le triangle autour d’Hylee pour lui rendre une scène construite selon ses mots plutôt que selon le reflet précédent.",
-      ),
-      shared: scene(
-        "Le ruban réel relie vos poignets pendant que trois configurations apparaissent dans la brume : frottement partagé, pénétration donnée ou reçue, échange de bouches. Chacun choisit une image différente et la transforme selon son corps ; Hylee refroidit seulement les points de contact demandés, Naïah éclaire seulement les gestes confirmés, et vous imposez qu’aucune posture ne serve de modèle à la suivante.",
-        P("Trois images, trois désirs distincts. Nous ne rejouons pas le plaisir de la personne précédente : nous construisons celui qui correspond à la suivante."),
-        C("Hylee", "Alors ma neige n’indique pas un chemin unique. Elle garde seulement la trace de ce que chacune a choisi."),
-        "Naïah jouit dans une position sans double, Hylee dans un contact où le givre reste extérieur, puis elles réunissent leurs mains et leurs bouches autour de votre choix particulier. Les trois orgasmes laissent des traces différentes dans la brume, et le ruban prouve que la continuité venait du lien plutôt que de gestes répétés.",
       ),
     },
   },
@@ -357,26 +274,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         "Remerii avait réclamé une profondeur lente ; Iriana choisit des mouvements plus courts et un frottement extérieur plus ferme. Vous jouissez pendant la seconde configuration, mais les deux femmes maintiennent leur propre plaisir par bouche et mains ; la partition se termine sur trois conclusions distinctes, aucune réduite à l’accompagnement d’une autre.",
       ),
     },
-    intersexe: {
-      first: scene(
-        "Remerii vous présente trois notes correspondant à la bouche, au frottement et à la pénétration éventuelle. Vous composez vous-même leur ordre selon votre corps ; Iriana s’installe derrière la mage et lui donne du plaisir sans perturber votre première demande, puis modifie sa caresse lorsque vous annoncez une nouvelle mesure plutôt que de supposer que votre anatomie impose la suivante.",
-        C("Remerii", "Votre partition peut changer à chaque reprise. Je lirai seulement la note que vous me désignez maintenant."),
-        C("Iriana", "Et je veillerai à ce que sa précision reste une écoute, jamais une raison de défendre une interprétation devenue fausse."),
-        "Vous changez deux fois la structure. Remerii adapte bouche, doigts et bassin tandis qu’Iriana maintient sur elle une attention qui rend son propre plaisir visible ; votre orgasme naît de la troisième version, puis vous retournez la partition afin que la mage formule une scène entièrement différente pour elle-même, reçue par deux partenaires et non reproduite à partir de votre corps.",
-      ),
-      second: scene(
-        "Iriana retire les mentions de rôle d’une partition et vous demande d’écrire seulement ce que vous voulez recevoir. Elle place ses mains, sa bouche ou son bassin selon vos mots ; Remerii la touche simultanément et compte uniquement les demandes clairement renouvelées, pas les mouvements de votre corps qu’elle pourrait être tentée d’interpréter comme une continuité automatique.",
-        C("Iriana", "Je peux conduire un geste et céder sous un autre. Aucun de ces états ne décidera de celui qui suit."),
-        C("Remerii", "La mesure appartient à la voix qui la formule. Je resterai partenaire, même lorsque mon attention se trouble."),
-        "Votre position évolue selon votre désir singulier et Iriana conserve le contact malgré l’orgasme que Remerii lui donne. Elle reprend ensuite votre rythme jusqu’au bout ; vous vous placez enfin toutes trois face à face pour que la mage reçoive bouche, doigts ou pénétration selon sa propre demande, concluant un contrepoint où aucune anatomie n’a servi de règle universelle.",
-      ),
-      shared: scene(
-        "Trois feuilles blanches reçoivent trois configurations différentes. Remerii choisit une géométrie précise mais un geste libre, Iriana une posture sans préséance, vous une rencontre adaptée à votre intimité. Chaque personne occupe tour à tour le centre tandis que les deux autres ajustent bouche, mains, frottement ou pénétration à sa demande, sans jamais reprendre la scène précédente.",
-        P("Le contrepoint ne vaut que si chaque voix reste reconnaissable. Trois corps, trois plaisirs, aucune copie paresseuse sous prétexte d’égalité."),
-        C("Iriana", "Alors nous conserverons la même attention, jamais la même forme par obligation."),
-        "La première conclusion naît d’une cadence précise, la deuxième d’une improvisation audacieuse, la troisième d’une posture que vous redéfinissez en cours de route. Remerii et Iriana continuent chacune à toucher les deux autres après avoir joui ; le silence final n’uniformise rien, il laisse simplement coexister les trois expériences entières.",
-      ),
-    },
   },
 
   "group-date-naiah-bellirith": {
@@ -419,26 +316,6 @@ export const GROUP_EXPLICIT_SCENES: GroupSceneCatalog = {
         C("Naïah", "Je garde ses réactions honnêtes."),
         C("Bellirith", "Et moi, je garde son décor incapable de mentir. Pour une fois, nos talents servent la même chose."),
         "Naïah avait choisi des mouvements rapides et joueurs ; Bellirith ralentit pour soutenir votre regard jusqu’à ce que sa pose se dissolve. Vous jouissez sous la seconde chevauchée, mais les deux femmes poursuivent leurs mains et leurs bouches l’une sur l’autre, chacune atteignant un plaisir qui porte la signature de sa propre vulnérabilité.",
-      ),
-    },
-    intersexe: {
-      first: scene(
-        "Naïah fait apparaître des symboles de posture sans leur associer aucune anatomie. Vous choisissez celui qui permet à sa bouche, ses doigts ou son bassin de rencontrer votre point de feu selon vos mots ; Bellirith touche simultanément Naïah sans charme et garde une main sur vous, vérifiant que l’illusionniste ne remplace jamais votre demande par une version plus spectaculaire.",
-        C("Naïah", "Je dessine seulement l’espace. C’est toi qui décides ce que nos corps y font vraiment."),
-        C("Bellirith", "Et moi je m’assure qu’elle ne confonde pas beauté et vérité. Pour l’instant, ton plaisir lui donne une leçon remarquable."),
-        "Vous modifiez le contact et Naïah dissipe aussitôt l’ancien symbole. Bellirith adapte sa pression sur elle, votre orgasme arrive dans une configuration redessinée, puis vous prenez toutes deux la séductrice entre vos mains ; elle choisit un geste sans miroir ni modèle, et sa conclusion ne ressemble ni à la vôtre ni à celle de Naïah.",
-      ),
-      second: scene(
-        "Bellirith vous invite à composer la position devant un miroir dépourvu de charme. Vous guidez sa bouche, sa main ou son bassin selon votre intimité et nommez l’éventuelle pénétration ou le frottement désiré ; Naïah reste derrière elle, touche son corps réel et maintient la brume assez claire pour que chaque changement demeure attribuable à la personne qui l’accomplit.",
-        C("Bellirith", "Je ne t’offrirai pas le geste que ton apparence semble appeler. Je veux celui que ta voix me confie, même s’il ruine toute mon élégante préparation."),
-        C("Naïah", "Elle vient de préférer une vérité à sa mise en scène. Profite : c’est plus rare qu’une éclipse violette."),
-        "Bellirith suit votre demande jusqu’à votre orgasme, son propre masque tombant sous les mains de Naïah. Vous échangez ensuite les hauteurs, mais pas les gestes : la séductrice formule un désir entièrement différent, reçu par vous deux, puis Naïah choisit une troisième configuration sans double qui donne à chacune une conclusion physique unique.",
-      ),
-      shared: scene(
-        "Vous placez trois fragments de masque au sol et associez chacun à une configuration choisie par la personne concernée. Naïah demande un contact sans illusion, Bellirith une posture sans angle flatteur, vous bouche, frottement ou pénétration selon votre corps réel. Les deux partenaires hors du fragment central doivent rester engagées avec la personne au centre et entre elles.",
-        P("Nous ne cherchons pas trois versions d’une même scène. Nous cherchons trois vérités physiques que les deux autres peuvent accompagner sans les réécrire."),
-        C("Bellirith", "Alors mon désir n’aura pas à ressembler au tien pour mériter la même attention. Voilà une règle dangereusement séduisante."),
-        "Chaque fragment produit une posture, une réaction et un orgasme distincts. La brume de Naïah ne cache rien, le talent de Bellirith n’embellit rien, et votre propre choix n’est jamais traduit par leur anatomie ; lorsque le dernier masque se brise, trois corps différents restent reliés par des mains qui ont appris à ne pas répéter paresseusement le geste précédent.",
       ),
     },
   },

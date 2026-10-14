@@ -207,7 +207,6 @@ export const BN_SIMULATION_INTIMACY: BNIntimacyScene = {
         X(
           "Vous venez. Vous vous agenouillez derrière elle sur le lit, et elle recule contre vous sans interrompre ce qu’elle fait. Votre main glisse entre ses cuisses et trouve sa chaleur trempée. Vos doigts entrent en elle au rythme de sa langue sur Naïah.",
           "Vous venez. Vous vous agenouillez derrière elle sur le lit, et elle recule contre vous sans interrompre ce qu’elle fait, frottant ses reins contre votre virilité dressée jusqu’à vous guider en elle d’une main tendue en arrière.",
-          "Vous venez. Vous vous agenouillez derrière elle sur le lit, et elle recule contre vous sans interrompre ce qu’elle fait, frottant ses reins contre vous jusqu’à vous guider en elle, votre fente pressée contre sa peau.",
         ),
         "Naïah attrape votre main libre par-dessus le corps de Bellirith et entrelace ses doigts aux vôtres. Elle serre fort.",
       ],
@@ -233,7 +232,6 @@ export const BN_SIMULATION_INTIMACY: BNIntimacyScene = {
         X(
           "Elle vous a gardée contre elle. Sa main libre est entre vos cuisses, ses doigts en vous, et elle vous caresse au même rythme que ses coups de reins, sans vous laisser une seconde de répit.",
           "Elle vous a gardé contre elle. Sa main libre s’est refermée sur votre virilité et vous caresse au même rythme que ses coups de reins, serrée, impitoyable.",
-          "Elle vous a gardé·e contre elle. Sa main libre va de votre sexe à la fente cachée dessous, au même rythme que ses coups de reins, sans vous laisser une seconde de répit.",
         ),
         "Les chandelles rouges crépitent toutes en même temps, et vous ne savez plus très bien qui les attise.",
       ],
@@ -242,7 +240,6 @@ export const BN_SIMULATION_INTIMACY: BNIntimacyScene = {
         X(
           "La démone la suit dans un souffle rauque, se répand en elle, et ses doigts recourbés en vous vous emportent dans la même vague.",
           "La démone la suit dans un souffle rauque, se répand en elle, et sa main serrée sur vous vous emporte dans la même vague.",
-          "La démone la suit dans un souffle rauque, se répand en elle, et ses doigts, sur vous et en vous, vous emportent dans la même vague.",
         ),
         "Puis tout retombe. Naïah s’effondre sur le côté, les yeux mi-clos, rouge jusqu’aux épaules. Vous ne savez pas quoi penser. Vous pensez, très fort, que quelque chose vient d’arriver.",
       ],

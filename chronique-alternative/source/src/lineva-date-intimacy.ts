@@ -61,7 +61,7 @@ type SexBeat = {
 };
 
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+const SEXES: PlayerSex[] = ["femme", "homme"];
 
 const lines = (raw: RawLine[], context: string): DialogueLine[] => raw.map((entry) => {
   const speaker = typeof entry === "string" ? "Narration" : entry[0];
@@ -79,7 +79,6 @@ const HARBOR_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Prolonger le pari du fanal entre deux femmes qui refusent de céder la dernière provocation",
       homme: "Laisser Lineva transformer la réparation en défi physique et sensuel",
-      intersexe: "Faire du vieux fanal un terrain de jeu adapté à vos deux corps",
     },
     detail: "Une intimité physique et joueuse, nourrie par la graisse du mécanisme, les paris du quai et l’humour très concret de Lineva.",
     opening: [
@@ -120,7 +119,6 @@ const HARBOR_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Découvrir lentement la femme sous la chemise de travail, sans faire de ses cicatrices un récit obligé",
       homme: "Laisser Lineva guider une proximité lente où aucun de vos corps ne doit faire ses preuves",
-      intersexe: "Construire une lenteur attentive aux gestes et aux appuis propres à vos deux corps",
     },
     detail: "Une intimité lente et vulnérable par les gestes : peu d’aveux, des pauses choisies, des mains que Lineva replace elle-même.",
     opening: [
@@ -161,7 +159,6 @@ const HARBOR_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Répondre à son désir direct avec toute la force que deux femmes choisissent de partager",
       homme: "Suivre Lineva dans une passion franche, physique et sans détour de commandement",
-      intersexe: "Choisir ensemble les prises, les rythmes et la passion adaptés à vos anatomies",
     },
     detail: "Une intimité directe et passionnée où Lineva nomme ce qu’elle veut, reçoit des réponses nettes et ne confond jamais force avec autorité.",
     opening: [
@@ -205,7 +202,6 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Poursuivre la partie entre deux femmes qui cachent leurs cartes beaucoup moins bien que leur désir",
       homme: "Transformer l’as retrouvé sur votre peau en mise pour une partie plus physique",
-      intersexe: "Inventer un jeu sensuel où chaque règle s’adapte à vos deux corps",
     },
     detail: "Une intimité physique et joueuse qui prolonge les cartes, la danse et le dîner raté sans remettre l’armure dans la chambre.",
     opening: [
@@ -246,7 +242,6 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Laisser la danse ralentir jusqu’à une découverte patiente du corps d’une autre femme",
       homme: "Suivre les gestes silencieux de Lineva sans transformer leur lenteur en fragilité",
-      intersexe: "Trouver ensemble une lenteur où chaque anatomie garde ses propres besoins",
     },
     detail: "Une intimité lente où la vulnérabilité reste dans les pauses, le poids confié et les gestes précis, jamais dans un discours thérapeutique.",
     opening: [
@@ -287,7 +282,6 @@ const QUARTERS_SEEDS: MoodSeed[] = [
     labels: {
       femme: "Faire basculer la danse en désir franc entre deux femmes qui nomment chaque envie",
       homme: "Répondre sans détour à la passion de Lineva et choisir avec elle profondeur et rythme",
-      intersexe: "Transformer la table, le lit et vos appuis en une passion adaptée à vos corps réels",
     },
     detail: "Une intimité directe et passionnée : Lineva demande, provoque, reçoit et reprend l’initiative sans transformer la chambre en champ de bataille.",
     opening: [
@@ -345,15 +339,6 @@ const SEX_BEATS: Record<LinevaMood, Record<PlayerSex, SexBeat>> = {
       explicitClimax: ["Lineva se place au-dessus de vous. Elle vous guide contre elle, mouillée, descend lentement jusqu’à vous accueillir entièrement puis remonte avec un sourire de défi. Vous soutenez ses hanches sans décider de sa cadence. Lorsqu’elle demande plus vite, vous accompagnez ses mouvements et caressez du pouce le haut de son sexe. Elle jouit la première, contractions serrées autour de vous ; son rythme désordonné vous entraîne ensuite jusqu’à l’orgasme, maintenu profondément contre elle."],
       ellipse: ["Lineva transforme le dernier pari en une étreinte plus serrée. Le reste de la partie se joue hors du regard du récit."],
     },
-    intersexe: {
-      tenderDiscovery: ["Lineva découvre votre poitrine, votre ventre et les zones sensibles que vous lui indiquez sans chercher à leur imposer un nom. Elle transforme chaque réponse en nouvelle provocation douce, puis vous laisse inventer la suivante sur son corps."],
-      suggestiveDiscovery: ["Ses mains suivent votre anatomie réelle : l’une soutient votre bassin, l’autre trouve le point externe ou la longueur sensible que vous lui avez montré. Sa bouche remplace ensuite ses doigts à l’endroit précis où votre souffle se brise."],
-      explicitDiscovery: ["Lineva vous demande le geste exact, puis explore votre sexe sans modèle préfabriqué. Sa langue stimule la zone externe la plus sensible pendant que ses doigts caressent votre longueur ou entrent dans l’ouverture que vous lui avez offerte. Elle ajuste pression, profondeur et angle à vos mots, revient aux mouvements qui font contracter votre bassin et sourit chaque fois que votre corps déjoue ses provocations."],
-      tenderClimax: ["Vos anatomies se rejoignent par les surfaces, les appuis et les frottements qui vous conviennent. Le plaisir arrive dans une étreinte où aucune forme n’a été supposée."],
-      suggestiveClimax: ["Vous alternez les gestes indiqués, Lineva contre votre main puis vous contre sa bouche, jusqu’à ce que vos plaisirs se répondent sans exiger le même chemin."],
-      explicitClimax: ["Vous choisissez ensemble frottement, stimulation interne ou pénétration selon vos possibilités et vos envies. Lineva soutient votre bassin pendant que vous gardez une main sur elle, là où elle est la plus sensible ; l’autre guide la profondeur ou la pression sur votre propre corps. Les mouvements deviennent plus rapides à votre demande. Votre orgasme arrive sous le contact qu’elle maintient sans changer d’angle ; vous prolongez aussitôt vos caresses entre ses cuisses jusqu’à ce qu’elle jouisse à son tour, serrée contre votre corps réel."],
-      ellipse: ["Vous échangez les règles, les appuis et les rires jusqu’à ce que le jeu ne puisse plus être raconté sans trahir vos choix précis."],
-    },
   },
   tendre: {
     femme: {
@@ -374,15 +359,6 @@ const SEX_BEATS: Record<LinevaMood, Record<PlayerSex, SexBeat>> = {
       explicitClimax: ["Lineva vous guide jusqu’à elle. Vous pénétrez lentement, vous arrêtez lorsqu’elle vous serre et reprenez seulement quand ses hanches vous rappellent. Une main reste sous son bassin, l’autre la caresse au plus sensible. Son orgasme arrive en vagues qui se resserrent autour de vous ; vous gardez la même profondeur, puis cédez à votre tour sous les mouvements lents qu’elle continue jusqu’au dernier frisson."],
       ellipse: ["La lenteur passe de vos mains à vos hanches. Le récit s’arrête avant de donner à vos corps un rythme qu’ils n’ont pas choisi."],
     },
-    intersexe: {
-      tenderDiscovery: ["Lineva garde une paume sur votre ventre et l’autre sur la zone sensible que vous avez nommée. Elle découvre votre anatomie par les indications et les réactions plutôt que par une attente."],
-      suggestiveDiscovery: ["Ses doigts puis sa bouche rejoignent le point externe, la longueur ou l’ouverture que vous lui offrez. Elle conserve une lenteur régulière et vous laisse déplacer sa main lorsqu’un autre angle devient préférable."],
-      explicitDiscovery: ["Lineva explore votre sexe selon les mots échangés avant le contact. Elle caresse la partie externe ou la longueur sensible, ajoute un doigt dans l’ouverture désirée si vous la lui offrez et maintient une pression lente autour du point qui fait trembler votre ventre. Sa bouche reprend l’endroit le plus réactif ; ses mains soutiennent vos hanches sans enfermer leur mouvement."],
-      tenderClimax: ["La chaleur monte selon un chemin propre à chacun de vos corps. Lineva accompagne votre plaisir, puis vous laisse accompagner le sien avec la même lenteur."],
-      suggestiveClimax: ["Vous échangez les caresses sans chercher une symétrie artificielle. Le plaisir de l’un devient la respiration où l’autre trouve son propre rythme."],
-      explicitClimax: ["Vous choisissez les gestes de pénétration, de frottement ou de stimulation externe qui conviennent à votre anatomie. Lineva maintient exactement le point demandé pendant que vos doigts la caressent et entrent en elle selon ses indications. Votre orgasme arrive d’abord, sans qu’elle retire sa main ni précipite le suivant. Vous revenez entre ses jambes, gardez la lenteur qu’elle réclame et la sentez jouir contre vous en contractions profondes."],
-      ellipse: ["Les gestes deviennent trop précis pour être résumés sans les trahir. Le récit laisse vos deux corps conserver leur propre vocabulaire."],
-    },
   },
   passionnee: {
     femme: {
@@ -402,15 +378,6 @@ const SEX_BEATS: Record<LinevaMood, Record<PlayerSex, SexBeat>> = {
       suggestiveClimax: ["Vous choisissez ensemble un angle direct mais confortable. Lineva reçoit vos mouvements, les accélère de ses hanches et vient au plaisir sous votre main avant de vous entraîner à sa suite."],
       explicitClimax: ["Vous vous guidez contre Lineva, déjà mouillée. Elle ouvre davantage les jambes et vous attire en elle jusqu’à la profondeur demandée. Vos mouvements deviennent francs, soutenus par ses mains sur vos hanches ; votre pouce revient sur elle à chaque poussée. Lineva jouit en vous serrant fortement, son bassin continuant de vous réclamer. Vous maintenez l’angle, accélérez à sa demande puis atteignez l’orgasme profondément en elle, retenu contre son corps jusqu’au dernier spasme."],
       ellipse: ["Lineva choisit l’appui, vous choisissez le rythme suivant, et la passion ferme la porte au récit avant toute conclusion imposée."],
-    },
-    intersexe: {
-      tenderDiscovery: ["Lineva utilise sa force pour vous rapprocher sans décider quel contact votre anatomie doit recevoir. Votre main déplace la sienne ; elle suit aussitôt et transforme l’indication en caresse assurée."],
-      suggestiveDiscovery: ["Sa bouche et ses doigts rejoignent le point externe, la longueur ou l’ouverture indiquée. Elle augmente la pression à vos mots, soutient vos hanches et laisse votre corps définir la vigueur du mouvement."],
-      explicitDiscovery: ["Lineva vous demande un mot bref pour la pression et un autre pour la profondeur, puis prend votre sexe entre sa bouche et ses mains selon sa forme réelle. Elle stimule le point externe ou la longueur sensible, ajoute une pénétration digitale si vous la désirez et maintient vos hanches lorsqu’elles viennent chercher plus. Chaque accélération vient de votre indication ; sa force sert uniquement à garder l’appui qui permet à votre plaisir de monter sans rupture."],
-      tenderClimax: ["Vos corps se serrent selon les contacts qui leur conviennent. La passion ne perd rien en ralentissant et vous conduit chacun vers une détente entière."],
-      suggestiveClimax: ["Vous échangez pression, frottement et profondeur sans attribuer un rôle fixe à votre anatomie. Le plaisir circule jusqu’à vous faire céder l’un après l’autre."],
-      explicitClimax: ["Vous choisissez une combinaison de frottement, pénétration ou stimulation externe adaptée à vos corps. Lineva soutient l’appui et maintient sur votre sexe la pression exacte que vous avez demandée ; votre main la caresse en petits cercles tandis que l’autre entre en elle ou guide le contact de vos bassins. Votre orgasme vous traverse sous sa force attentive. Vous reprenez aussitôt sur elle, augmentez le rythme à sa demande et la faites jouir contre vous sans hiérarchie entre vos plaisirs."],
-      ellipse: ["La passion garde sa franchise tandis que les gestes s’adaptent à chaque appui. Le récit abandonne toute prétention à les prévoir."],
     },
   },
 };

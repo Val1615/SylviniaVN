@@ -26,7 +26,7 @@ export type BellirithIntimacyContext =
 export type BellirithIntimacyKind = "diversion" | "free" | "duel";
 
 type Speaker = "Bellirith" | "{player}" | "Iriana" | "Valurn" | "Draven" | "Tia";
-type SexTriplet = readonly [femme: string, homme: string, intersexe: string];
+type SexTriplet = readonly [femme: string, homme: string];
 export type RawLine =
   | string
   | readonly [speaker: Speaker, text: string, mood?: string]
@@ -64,17 +64,17 @@ export type HeureVolee = {
 
 export const BELLIRITH_INTIMACY_MINIMUM_SEQUENCES_VALUE = 12;
 export const BELLIRITH_INTIMACY_MINIMUM_WORDS: Record<IntimacyMode, number> = { explicite: 1000, suggestif: 450, tendre: 250, ellipse: 150 };
-export const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+export const SEXES: PlayerSex[] = ["femme", "homme"];
 export const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
 
 /** Chapitre commun aux quatre modes (dialogue, décor, suites). */
 export const A = (...all: RawLine[]): Chapter => ({ all });
 /** Chapitre écrit séparément pour chaque mode d’intimité. */
 export const M = (tendre: RawLine[], suggestif: RawLine[], explicite: RawLine[], ellipse: RawLine[]): Chapter => ({ tendre, suggestif, explicite, ellipse });
-/** Narration propre au corps choisi : femme, homme, intersexe. */
-export const X = (femme: string, homme: string, intersexe: string): RawLine => ({ x: [femme, homme, intersexe] });
-export const XB = (femme: string, homme: string, intersexe: string, mood?: string): RawLine => ({ x: [femme, homme, intersexe], speaker: "Bellirith", mood });
-export const XP = (femme: string, homme: string, intersexe: string): RawLine => ({ x: [femme, homme, intersexe], speaker: "{player}" });
+/** Narration propre au corps choisi : femme, homme. */
+export const X = (femme: string, homme: string): RawLine => ({ x: [femme, homme] });
+export const XB = (femme: string, homme: string, mood?: string): RawLine => ({ x: [femme, homme], speaker: "Bellirith", mood });
+export const XP = (femme: string, homme: string): RawLine => ({ x: [femme, homme], speaker: "{player}" });
 export const B = (text: string, mood?: string): RawLine => ["Bellirith", text, mood] as const;
 export const P = (text: string): RawLine => ["{player}", text] as const;
 export const S = (speaker: Speaker, text: string, mood?: string): RawLine => [speaker, text, mood] as const;

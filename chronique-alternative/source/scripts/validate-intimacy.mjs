@@ -36,7 +36,8 @@ try {
 }
 const report = catalog.validateIntimacyRouteCatalog();
 
-const expected = { characters: 11, combinations: 33, routes: 99, chapters: 3168 };
+// Deux corps de joueur (femme, homme) depuis le retrait de la catégorie intersexe.
+const expected = { characters: 11, combinations: 22, routes: 66, chapters: 2112 };
 for (const [key, value] of Object.entries(expected)) {
   if (report[key] !== value) {
     throw new Error(`${key}: ${value} attendu, ${report[key]} obtenu`);

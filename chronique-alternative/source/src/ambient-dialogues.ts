@@ -2,6 +2,7 @@ import { HYLEE_AMBIENT_LINES } from "./hylee-ambient";
 import { NAIAH_AMBIENT_LINES } from "./naiah-ambient";
 import { REMERII_AMBIENT_LINES } from "./remerii-ambient";
 import { BELLIRITH_AMBIENT_LINES } from "./bellirith-ambient";
+import { VALURN_AMBIENT_LINES } from "./valurn-ambient";
 import { IRIANA_BELLIRITH_REACTIONS, VALURN_BELLIRITH_REACTIONS } from "./bellirith-reactions";
 import type { ChoiceData, DialogueLine, Effects, PeriodKey, StatKey } from "./game-data";
 
@@ -183,7 +184,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     scene("valurn-cartes", "La troisième carte", "Valurn pose trois cartes face cachée. « L’une annonce votre avenir, une autre ment, la dernière me coûte cinq pièces si vous la trouvez. »", [
       V("val-carte-l", "Observer le léger recul de sa main devant la troisième carte.", "lucidite", "Je vais devoir apprendre à mentir avec mes doigts.", { trust: 2, coins: 5 }),
       V("val-carte-a", "Retourner les trois cartes d’un geste.", "audace", "Vous avez détruit le jeu. Je vous apprécie davantage à chaque catastrophe.", { affection: 2, desire: 1 }),
-      V("val-carte-r", "Sentir laquelle porte une trace de Chaos.", "resonance", "Techniquement, ce n’était pas interdit. Moralement, je boude.", { trust: 2, affection: 1 }),
+      V("val-carte-r", "Refuser de choisir et lui demander laquelle il aimerait que vous trouviez.", "sangFroid", "Vous retournez la question au croupier. C’est interdit dans toutes les maisons de jeu. Ici, c’est presque touchant.", { trust: 2, affection: 1 }),
     ], { mood: "amused" }),
     scene("valurn-petit-dejeuner", "Une cuisine en cendres", "Une poêle fume devant Valurn. « J’ai vaincu trois démons majeurs et perdu contre un œuf. Je vous interdis de tirer une morale de cette scène. »", [
       V("val-oeuf-a", "Goûter le résultat avec un courage très théâtral.", "audace", "Votre sacrifice sera chanté pendant au moins deux minutes.", { affection: 3 }),
@@ -197,7 +198,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     ], { mood: "charming" }),
     scene("valurn-piece", "La pièce disparue", "Valurn fait disparaître une pièce entre ses doigts. « Les mortels adorent les tours dont ils connaissent le mensonge. Cela les rassure sur les autres. »", [
       V("val-piece-l", "Regarder sa manche plutôt que sa main.", "lucidite", "Vous avez trouvé la pièce et ignoré la distraction. Je vais devoir employer mon sourire la prochaine fois.", { trust: 3 }),
-      V("val-piece-r", "Suivre la minuscule étincelle de Chaos laissée par le tour.", "resonance", "C’est de la triche arcanique. Une discipline que je respecte profondément.", { affection: 2, trust: 1 }),
+      V("val-piece-r", "Lui tendre votre propre main fermée et le défier de deviner ce qu’elle contient.", "audace", "Rien du tout. Vous bluffez avec une main vide. Je respecte profondément cette discipline.", { affection: 2, trust: 1 }),
       V("val-piece-a", "Faire mine de trouver la pièce derrière son oreille.", "audace", "Impertinent·e. Gardez-la. J’exige seulement un meilleur tour au prochain rendez-vous.", { affection: 3, coins: 1 }),
     ], { mood: "amused" }),
     scene("valurn-histoires", "Trois vérités et un mauvais menteur", "Valurn lève trois doigts. « J’ai été fiancé à une reine, banni d’un monastère et adoré comme dieu par un village de pêcheurs. Une seule histoire est vraie. Si vous trouvez laquelle, je réponds à une question honnêtement. »", [
@@ -216,7 +217,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       V("val-fin-s", "Protéger la fin de votre propre livre sans juger sa méthode.", "sangFroid", "Deux lecteurs, deux risques différents. J’accepte cette frontière — même si votre marque-page m’intrigue terriblement.", { trust: 4 }),
     ], { minStage: 1, mood: "charming" }),
     scene("valurn-ombre", "L’ombre en retard", "L’ombre de Valurn accomplit chaque geste une demi-seconde après lui. Il se retourne brusquement ; elle feint l’innocence. « Un résidu de Chaos. Rien de grave. Elle devient seulement insolente quand je suis fatigué. »", [
-      V("val-ombre-r", "Écouter le décalage sans tenter de le refermer de force.", "resonance", "Vous lui laissez retrouver son rythme. Regardez, elle cesse déjà de résister… Elle vous préfère peut-être.", { trust: 3, confluence: 1 }),
+      V("val-ombre-r", "Lui proposer de s’asseoir jusqu’à ce que l’ombre le rattrape.", "sangFroid", "Vous me prescrivez une chaise. Regardez, elle se recolle déjà. Elle était seulement fatiguée de courir derrière moi.", { trust: 3 }),
       V("val-ombre-a", "Saluer poliment l’ombre plutôt que Valurn.", "audace", "Trahison. Après tout ce que mon corps principal a fait pour vous. Elle vient de s’incliner, n’est-ce pas ?", { affection: 4 }),
       V("val-ombre-l", "Comprendre que le phénomène apparaît surtout quand il a trop utilisé ses pactes.", "lucidite", "Une observation exacte que nous allons appeler “curiosité déplacée”. Je prendrai une pause si vous cessez cet air satisfait.", { trust: 4 }),
     ], { minStage: 1, mood: "amused" }),
@@ -224,7 +225,7 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
       V("val-nom-l", "« Garder votre nom ne signifie pas lui rendre ce qu’il prétend posséder. »", "lucidite", "Non. Cela peut signifier que j’ai survécu assez longtemps pour le redéfinir.", { trust: 5 }),
       V("val-nom-s", "Lui laisser le registre sans exiger qu’il tranche aujourd’hui.", "sangFroid", "Vous résistez encore à l’envie de résoudre ce qui me concerne. C’est agaçant. Et reposant.", { trust: 4, affection: 1 }),
       V("val-nom-a", "Écrire à côté : « Mauvais fils, excellent parieur. »", "audace", "Enfin une généalogie honnête. Ajoutez “compagnie remarquable”, puisque vous êtes déjà lancé·e.", { affection: 4 }),
-    ], { minStage: 2, mood: "away" }),
+    ], { minStage: 2, mood: "away", requiresFlags: ["valurn-q3-done"] }),
     scene("valurn-sortie", "Toujours une sortie", "Valurn choisit une table près de la porte. Quand il remarque votre regard, il sourit. « Une vieille habitude. Les lieux sont plus agréables quand ils ne peuvent pas vous retenir. »", [
       V("val-porte-s", "Vous asseoir sans bloquer son chemin.", "sangFroid", "Vous n’avez pas proposé de changer de table. Vous avez simplement laissé la sortie libre. Merci.", { trust: 5 }),
       V("val-porte-l", "« Et pourtant, vous vous êtes placé de mon côté de la table. »", "lucidite", "Voilà le genre de détail que je préférerais que vous cessiez de remarquer. Ne cessez surtout pas.", { trust: 4, affection: 2 }),
@@ -252,9 +253,10 @@ export const AMBIENT_LINES: Record<string, AmbientDialogue[]> = {
     ], { mood: "charming" }),
     scene("valurn-testament", "Le testament sur une serviette", "Valurn mord dans une pâtisserie écarlate, cesse aussitôt de sourire et attrape une serviette. « Je lègue mes dettes à Bhaal, mes chemises à la postérité et cette recette à mes ennemis. Trouvez-vous ma mort suffisamment digne ? »", [
       V("val-tes-a", "Goûter la pâtisserie avant de signer comme témoin.", "audace", [line("Narration", "Le piment vous coupe le souffle. Valurn vous pousse son verre, les yeux brillants de larmes et de rire."), line("Valurn", "Deux morts héroïques pour le prix d’un goûter. Le marchand va augmenter ses tarifs."), line("{player}", "Ajoutez que je réclame votre meilleure chemise."), line("Valurn", "Refusé. Même mourant, je conserve des standards.")], { affection: 4 }),
-      V("val-tes-l", "Repérer le pot de miel prévu comme antidote derrière son coude.", "lucidite", [line("Narration", "Vous lui tendez le miel. Il en avale une cuillerée sans abandonner sa pose funèbre."), line("Valurn", "Vous venez de sauver ma vie en ruinant une excellente sortie dramatique."), line("{player}", "Vous aviez préparé l’antidote."), line("Valurn", "L’humour noir n’interdit pas la logistique. Il la rend seulement plus élégante.")], { trust: 4, affection: 1 }),
+      V("val-tes-l", "Repérer le pot de miel prévu comme antidote derrière son coude.", "lucidite", [line("Narration", "Vous lui tendez le miel. Il en avale une cuillerée sans quitter sa pose funèbre."), line("Valurn", "Vous venez de sauver ma vie en ruinant une excellente sortie dramatique."), line("{player}", "Vous aviez préparé l’antidote."), line("Valurn", "L’humour noir n’interdit pas la logistique. Il la rend seulement plus élégante.")], { trust: 4, affection: 1 }),
       V("val-tes-s", "Lui laisser le temps de récupérer sans rire de la panique sous la plaisanterie.", "sangFroid", [line("Narration", "Vous poussez l’eau et attendez. Valurn garde les yeux baissés jusqu’à ce que sa respiration redevienne régulière."), line("Valurn", "Merci de ne pas avoir confondu mon numéro avec l’absence de peur."), line("Narration", "Il déchire la serviette, puis en garde un coin."), line("Valurn", "Je lègue tout de même cette pâtisserie à mon père. On ne sait jamais.")], { trust: 5 }),
     ], { mood: "amused" }),
+    ...VALURN_AMBIENT_LINES,
     ...VALURN_BELLIRITH_REACTIONS,
   ],
 

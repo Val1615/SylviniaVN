@@ -120,11 +120,11 @@ try {
   assert.match(closeIntimacy, /if \(completed && !modal\.replay\)[\s\S]*"lineva-tutoiement"/, "le tutoiement doit être enregistré uniquement après une scène achevée");
 
   // Intimité — dix phases sémantiques, vouvoyer jusqu’au climax, puis premier tu.
-  assert.deepEqual(intimacy.validateLinevaDateIntimacy(), { dates: 2, combinations: 6, routes: 18, chapters: 720 });
+  assert.deepEqual(intimacy.validateLinevaDateIntimacy(), { dates: 2, combinations: 4, routes: 12, chapters: 480 });
   const requiredPhases = ["approach", "undressing", "naked-reveal", "partner-discovery", "lineva-discovery", "preliminaries", "intensification", "climax", "afterglow", "ending"];
   for (const date of linevaDates) {
     assert.equal(intimacy.linevaDateApproaches(date.id).length, 3);
-    for (const sex of ["femme", "homme", "intersexe"]) {
+    for (const sex of ["femme", "homme"]) {
       const entries = intimacy.linevaDateIntimacyRoutes(date.id, sex);
       assert.equal(entries.length, 3);
       for (const entry of entries) {
@@ -158,7 +158,7 @@ try {
   assert.equal(cg.soloIntimateVisualState({ character: "lineva", mode: "explicite", surface: "route", step: "ending", chapter: 9 }).cg?.phase, "post-orgasm");
 
   // La première intimité peut aussi venir du logis : mêmes règles de registre.
-  for (const sex of ["femme", "homme", "intersexe"]) {
+  for (const sex of ["femme", "homme"]) {
     for (const entry of home.homeIntimacyRoutes("lineva", sex)) {
       for (const mode of ["tendre", "suggestif", "explicite", "ellipse"]) {
         const chapters = entry.chapters[mode];

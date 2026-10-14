@@ -77,6 +77,11 @@ import { hyleeRelationBeat, hyleeRouteVariant } from "./hylee-relation";
 import { hyleeDateBeat } from "./hylee-dates";
 import { remeriiRouteVariant } from "./remerii-relation";
 import { remeriiDateBeat, migrateRemeriiDateId } from "./remerii-dates";
+import { VALURN_LEGACY_ROUTE_IDS, valurnJournalEntry, valurnQuestStage, valurnRelationBeat, valurnRouteVariant } from "./valurn-quests";
+import { valurnDateBeat } from "./valurn-dates";
+import { valurnIntimacyApproaches, valurnIntimacyContext, valurnIntimacyEnding, valurnIntimacyOpening, valurnIntimacyRoutes } from "./valurn-date-intimacy";
+import { createValurnMarket, validateValurnMarket, type ValurnMarketState } from "./valurn-market";
+import { ValurnMarketModal } from "./valurn-market-ui";
 import { naiahDateBeat } from "./naiah-dates";
 import { naiahProximityApproaches, naiahProximityContext, naiahProximityEnding, naiahProximityOpening, naiahProximityPhase, naiahProximityRoutes } from "./naiah-date-intimacy";
 import { HOME_INTIMACY_APPROACHES, homeIntimacyEnding, homeIntimacyOpening, homeIntimacyRoutes } from "./home-intimacy-routes";
@@ -300,6 +305,8 @@ const PERSISTENT_INVITATION_LABEL = "Invitation persistante · disponible lorsqu
 
 type GameState = {
   version: 18;
+  /** Quête 5 de Valurn : marché en cours ou terminé (facultatif, compatible v18). */
+  valurnMarket?: ValurnMarketState;
   player: Player;
   day: number;
   period: number;
@@ -458,6 +465,7 @@ type ModalState =
   | { kind: "anchor-operation"; replay?: boolean; state?: AnchorState }
   | { kind: "hylee-search"; replay?: boolean; state?: HyleeSearchState }
   | { kind: "bn-minigame"; replay?: boolean; dev?: boolean; state?: BNGameState }
+  | { kind: "valurn-market"; replay?: boolean; state?: ValurnMarketState }
   | { kind: "bn-intimacy"; id: BNIntimacyId; replay?: boolean; mode?: Intimacy }
   | { kind: "letter"; letterId: string }
   | { kind: "invitation"; invitationId: string }
@@ -523,17 +531,17 @@ const STAT_LABELS: Record<StatKey, string> = {
   resonance: "Résonance",
 };
 
-const AUTHORED_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
+const AUTHORED_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah", "valurn"]);
 const DEDICATED_HOME_DATE_CHARACTERS = new Set(["hylee", "remerii", "naiah"]);
 
 const STAGE_LABELS = ["Inconnu·e", "Première impression", "Complicité", "Confidence", "Attirance", "Lien accompli"];
-const BOND_THRESHOLDS = [0, 5, 14, 26, 40];
+const BOND_THRESHOLDS = [0, 5, 14, 26, 40, 48, 56];
 const SAVE_KEY = "sylvinia-liens-autosave";
 const DEFAULT_PLAYER: Player = {
   name: "",
   age: 24,
   pronouns: "iel",
-  sex: "intersexe",
+  sex: "homme",
   origin: ECHOES[0][0],
   vocation: VOCATIONS[0][0],
   trait: TRAITS[0][0],
@@ -638,6 +646,11 @@ function originLine(player: Player): DialogueLine {
   return { speaker: "Narration", text: lines[player.origin] || "Votre corps conserve des réflexes dont votre mémoire ne peut plus raconter l’origine." };
 }
 
+/** Ancienne configuration intersexe retirée : la sauvegarde passe en « homme ». */
+export function normalizePlayerSex(sex: unknown): PlayerSex {
+  return sex === "femme" ? "femme" : "homme";
+}
+
 function hydrateGame(raw: unknown): GameState | null {
   if (!raw || typeof raw !== "object") return null;
   const value = raw as Partial<GameState> & { player?: Player };
@@ -731,10 +744,11 @@ function hydrateGame(raw: unknown): GameState | null {
     && normalizedHR.hr?.branch === "double"
     && normalizedHR.hr.configuration === "accepted";
   const hydrated: GameState = {
+    valurnMarket: validateValurnMarket(value.valurnMarket) ? value.valurnMarket : undefined,
     ...fresh,
     ...value,
     version: 18,
-    player: { ...fresh.player, ...value.player, sex: value.player.sex || "intersexe" },
+    player: { ...fresh.player, ...value.player, sex: normalizePlayerSex(value.player.sex) },
     location,
     spot,
     stats: { ...fresh.stats, ...(value.stats || {}) },
@@ -804,7 +818,7 @@ function hydrateGame(raw: unknown): GameState | null {
       sharedMomentHistory: value.housing?.sharedMomentHistory || [],
     },
   };
-  return migrateBellirithSave(hydrated);
+  return migrateValurnSave(migrateBellirithSave(hydrated));
 }
 
 /**
@@ -813,6 +827,27 @@ function hydrateGame(raw: unknown): GameState | null {
  * été résolue devient « manquée » et rejoint la file de rattrapage : aucune
  * pénalité rétroactive, aucune expiration, une seule invitation à la fois.
  */
+/**
+ * Valurn · refonte Acte I. Les anciennes scènes valurn-0..4 deviennent des
+ * souvenirs (drapeaux) ; elles ne complètent jamais les nouvelles quêtes.
+ * Le stade relationnel est conservé pour ne verrouiller ni rendez-vous ni
+ * scènes partagées déjà accessibles.
+ */
+function migrateValurnSave(game: GameState): GameState {
+  if (game.flags.includes("valurn-refonte-v1")) return game;
+  const legacy = VALURN_LEGACY_ROUTE_IDS.filter((id) => game.history.includes(id));
+  return {
+    ...game,
+    history: game.history.filter((id) => !(VALURN_LEGACY_ROUTE_IDS as readonly string[]).includes(id)),
+    flags: unique([
+      ...game.flags.filter((flag) => flag !== "valurn-accountability"),
+      ...legacy.map((id) => `valurn-legacy-scene:${id.slice(-1)}`),
+      ...(legacy.length ? ["valurn-legacy-arc"] : []),
+      "valurn-refonte-v1",
+    ]),
+  };
+}
+
 function migrateBellirithSave(game: GameState): GameState {
   const flags = migrateBellirithFlags({ flags: game.flags, history: game.history });
   const relation = game.relationships.bellirith;
@@ -848,6 +883,12 @@ function jobAccess(game: GameState, job: JobData) {
   const value = relationship.affection + relationship.trust;
   const characterName = CHARACTERS.find((character) => character.id === job.requirement!.character)?.name || job.requirement.character;
   return { unlocked: value >= job.requirement.bond, value, target: job.requirement.bond, characterName };
+}
+
+/** Une nouvelle branche de rendez-vous Valurn remplace la précédente du même rendez-vous. */
+function withoutReplacedBranchFlags(flags: string[], incoming: string[]) {
+  const prefixes = incoming.filter((flag) => flag.startsWith("valurn-date-branch:")).map((flag) => flag.slice(0, flag.lastIndexOf(":") + 1));
+  return prefixes.length ? flags.filter((flag) => !prefixes.some((prefix) => flag.startsWith(prefix))) : flags;
 }
 
 function replacePlayer(text: string, player: Player) {
@@ -923,7 +964,6 @@ function routeNarrativeObjective(scene: RouteScene, game: GameState): string | u
   if (!missingFlags.length) return undefined;
   if (scene.id === "amanea-3" || scene.id === "iriana-3") return "Le canal d’archives entre les deux camps doit d’abord être sécurisé dans le fil principal.";
   if (scene.id === "iriana-4") return "Iriana doit d’abord dissocier sa confidence de toute dette affective. Retrouvez-la au Salon de musique d’Al’Gratal.";
-  if (scene.id === "valurn-4") return "Valurn doit d’abord assumer son récit sans transformer l’aveu en acquittement. Retrouvez-le au Grand Marché d’Al’Gratal.";
   if (scene.id === "amanea-4") return "Amanea doit d’abord poser avec vous les limites qu’impose le secret de Naïah. Retrouvez-la sur la terrasse d’Akuhn’Nabad.";
   if (scene.id === "draven-4") {
     if (!game.flags.includes("lineva-mother-truth-resolved")) return "Lineva doit encore décider comment annoncer à Draven la mort de sa mère. Retrouvez-les sur les quais de Forthaven.";
@@ -1231,6 +1271,8 @@ function groupDateUnlocked(game: GameState, date: GroupDateScene): boolean {
 function publicDateUnlocked(game: GameState, date: DateScene): boolean {
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[date.character];
+  // Valurn : les rendez-vous ne s'ouvrent qu'à la fin de la série de quêtes.
+  if (date.character === "valurn" && !game.history.includes("valurn-q7")) return false;
   return relation.stage >= date.unlockStage
     && relation.affection >= date.minAffection
     && relation.trust >= date.minTrust;
@@ -1240,6 +1282,7 @@ function homeDateUnlocked(game: GameState, characterId: string): boolean {
   if (!game.housing.propertyId || !HOME_DATE_PROFILES[characterId]) return false;
   if (game.settings.unlockAll) return true;
   const relation = game.relationships[characterId];
+  if (characterId === "valurn" && !game.history.includes("valurn-q7")) return false;
   const requiredStage = 5;
   return relation.stage >= requiredStage && relation.affection >= 22 && relation.trust >= 22;
 }
@@ -1269,7 +1312,7 @@ function relationshipNarrativeProgress(game: GameState, characterId: string) {
   return {
     scenes,
     total: scenes.length,
-    completed: Math.min(scenes.length, Math.max(historyCount, relationStage)),
+    completed: Math.min(scenes.length, characterId === "valurn" ? historyCount : Math.max(historyCount, relationStage)),
   };
 }
 
@@ -1347,7 +1390,7 @@ function gameNotifications(previous: GameState, next: GameState): ChronicleNotif
     if (!before || !after) return;
     if (after.stage > before.stage) {
       const progress = relationshipNarrativeProgress(next, character.id);
-      const nextScene = sceneFor(character.id, after.stage);
+      const nextScene = sceneFor(character.id, after.stage, next.history);
       const nextVariant = nextScene ? relationRouteVariant(nextScene, next).route : undefined;
       const confidenceObjective = nextVariant ? routeNarrativeObjective(nextVariant, next) : undefined;
       relationChanges.push({
@@ -1643,7 +1686,9 @@ function waitDurationLabel(game: GameState, target: { day: number; period: numbe
   return `${days} jour${days > 1 ? "s" : ""}`;
 }
 
-function sceneFor(characterId: string, stage: number) {
+/** Valurn : la quête courante se lit dans l’historique, la relation garde son stade (sauvegardes v18). */
+function sceneFor(characterId: string, stage: number, history?: readonly string[]) {
+  if (characterId === "valurn" && history) stage = valurnQuestStage(history);
   return ROUTE_SCENES.find((scene) => scene.character === characterId && scene.stage === stage);
 }
 
@@ -1857,6 +1902,7 @@ function flagsSharedByEveryChoice(choices: ChoiceData[]) {
 
 function relationRouteVariant(route: RouteScene, game: GameState) {
   let playable = remeriiRouteVariant(hyleeRouteVariant(route, game.knowledge, game.flags), game.knowledge, game.flags);
+  if (route.character === "valurn") playable = valurnRouteVariant(playable, game.flags, game.relationships.valurn);
   if (route.id === "remerii-0" && !game.flags.some(flag => flag.startsWith("hylee-return-choice:"))) {
     // Rattrapage d'une sauvegarde antérieure, sans inventer un second retour.
     playable = { ...playable, intro: [{ speaker: "Narration", text: "Ce souvenir reprend juste après votre retour auprès d’Hylee, dans les rues d’Al’Gratal. Remerii avait encore une question avant votre promenade à la fontaine." }, ...playable.intro] };
@@ -1865,12 +1911,12 @@ function relationRouteVariant(route: RouteScene, game: GameState) {
 }
 
 function authoredDateBeat(sceneId: string, round: number, picks?: string[]) {
-  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round) || naiahDateBeat(sceneId, round);
+  return hyleeDateBeat(sceneId, round, picks) || remeriiDateBeat(sceneId, round) || naiahDateBeat(sceneId, round) || valurnDateBeat(sceneId, round, picks);
 }
 
 function relationBeatFor(sceneId: string, game: GameState) {
   if (sceneId === "allenna-4") return undefined;
-  return hyleeRelationBeat(sceneId, game.flags) || linevaRelationBeat(sceneId) || allennaRelationBeat(sceneId);
+  return hyleeRelationBeat(sceneId, game.flags) || linevaRelationBeat(sceneId) || allennaRelationBeat(sceneId) || valurnRelationBeat(sceneId);
 }
 
 function choicesForDialogue(dialogue: DialogueState, game: GameState) {
@@ -2380,7 +2426,7 @@ export default function Home() {
         relation.trust = clamp(relation.trust + (effects.trust || 0));
         relation.desire = clamp(relation.desire + (effects.desire || 0));
         relation.met = true;
-        if (completedScene) relation.stage = Math.max(relation.stage, completedScene.stage + 1);
+        if (completedScene) relation.stage = Math.max(relation.stage, Math.min(5, completedScene.stage + 1));
         relationships[characterId] = relation;
       }
       for (const [otherId, changes] of Object.entries(effects.relationshipEffects || {})) {
@@ -2406,7 +2452,7 @@ export default function Home() {
         inventory,
         confluence: clamp(current.confluence + (effects.confluence || 0)),
         coins: Math.max(0, current.coins + (effects.coins || 0)),
-        flags: unique(withoutObsoletePermanentFriendshipFlags([...current.flags, ...(effects.flags || [])])),
+        flags: unique(withoutObsoletePermanentFriendshipFlags([...withoutReplacedBranchFlags(current.flags, effects.flags || []), ...(effects.flags || [])])),
         knowledge: unique([...current.knowledge, ...(effects.knowledge || [])]),
         history: completedScene ? unique([...current.history, completedScene.id]) : current.history,
         journal: completedScene ? [...current.journal, `${character?.name || "Rencontre"} · ${completedScene.title}`] : current.journal,
@@ -2450,7 +2496,7 @@ export default function Home() {
         return;
       }
     }
-    const route = sceneFor(characterId, relation.stage);
+    const route = sceneFor(characterId, relation.stage, game.history);
     const ready = routeAvailableAtPlace(route, game);
     const queuedSocial = chooseSocialScene(characterId, game);
     if (queuedSocial?.oneTime) {
@@ -2793,6 +2839,39 @@ export default function Home() {
       return { ...current, crossQuestSeries: { ...current.crossQuestSeries, [BN_KEY]: { ...q, bn: { ...q.bn, minigame: createBNGame() } } } };
     });
     setModal({ kind: "bn-minigame" });
+  }
+
+  /** Valurn · quête 5 : le registre du salon de Halbrecht. Reprise possible depuis le journal, rejouable sans effet. */
+  function startValurnMarket(replay = false, force = false) {
+    if (!game) return;
+    const approach = (game.flags.find((flag) => flag.startsWith("valurn-q5-approach:"))?.split(":")[1] || "lucidite") as ValurnMarketState["approach"];
+    if (replay) { setDialogue(null); setModal({ kind: "valurn-market", replay: true, state: createValurnMarket(approach) }); return; }
+    if (game.flags.includes("valurn-market-done") || (!force && !game.history.includes("valurn-q5"))) return;
+    updateGame((current) => current.valurnMarket && current.valurnMarket.phase !== "done" ? current : { ...current, valurnMarket: createValurnMarket(approach) });
+    setModal({ kind: "valurn-market" });
+  }
+
+  function setValurnMarketState(state: ValurnMarketState) {
+    if (modal?.kind !== "valurn-market") return;
+    if (modal.replay) { setModal({ ...modal, state }); return; }
+    updateGame((current) => current.flags.includes("valurn-market-done") ? current : { ...current, valurnMarket: state });
+  }
+
+  function finishValurnMarket(state: ValurnMarketState) {
+    if (modal?.kind !== "valurn-market") return;
+    setModal(null);
+    if (modal.replay || state.phase !== "done" || !state.result) return;
+    if (game?.flags.includes("valurn-market-done")) return;
+    const seeded = state.boughtEver.some((id) => ["bram", "sel"].includes(id));
+    applyEffects("valurn", { trust: state.result === "clean" ? 6 : state.result === "partial" ? 4 : 2, affection: state.reaction === "admired" ? 4 : 2 });
+    updateGame((current) => ({
+      ...current,
+      valurnMarket: state,
+      flags: unique([...current.flags, "valurn-market-done", `valurn-market-result:${state.result}`, ...(state.reaction ? [`valurn-market-reaction:${state.reaction}`] : []), ...(seeded ? ["valurn-market-seeded-bought"] : [])]),
+      knowledge: unique([...current.knowledge, "knows_valurn_seeded_leads"]),
+      journal: [...current.journal, `Valurn · La partie truquée · registre conclu (${state.result === "clean" ? "offre propre" : state.result === "partial" ? "offre partielle" : "offre coûteuse"}).`],
+    }));
+    advancePeriod();
   }
 
   function setBNMinigameState(state: BNGameState) {
@@ -3510,6 +3589,11 @@ export default function Home() {
           && relation.desire + (changes.desire || 0) >= (groupDate.intimacyMinDesire ?? groupDate.minDesire)
         );
       })));
+    if (!replay && dialogue.scene.route?.id === "valurn-q5" && dialogue.chosen && !game!.flags.includes("valurn-market-done")) {
+      setDialogue(null);
+      startValurnMarket(false, true);
+      return;
+    }
     setDialogue(null);
     if ((!replay || hnGroupDate) && groupDateCanBecomeIntimate && groupDate) {
       setModal({ kind: "group-date-result", groupDateId: groupDate.id, ...(replay ? { replay: true } : {}) });
@@ -4146,7 +4230,7 @@ export default function Home() {
     if (homePairDateUnlocked(game, pair)) setModal({ kind: "home-pair-date", pairId });
   }
 
-  function finishHomeDate(characterId: string, tone: HomeDateTone, score: number) {
+  function finishHomeDate(characterId: string, tone: HomeDateTone, score: number, branch?: string) {
     if (!game) return;
     const profile = HOME_DATE_PROFILES[characterId];
     const property = propertyById(game.housing.propertyId);
@@ -4177,6 +4261,7 @@ export default function Home() {
           homeDateHistory: [...current.housing.homeDateHistory, `${characterId}:${tone}@${DEDICATED_HOME_DATE_CHARACTERS.has(characterId) ? current.day : current.day + 1}`].slice(-96),
           homeDateGifts: newGift ? unique([...current.housing.homeDateGifts, characterId]) : current.housing.homeDateGifts,
         },
+        flags: branch ? unique([...current.flags.filter((flag) => !flag.startsWith(`${characterId}-date-branch:home:`)), `${characterId}-date-branch:home:${branch}`]) : current.flags,
         journal: [...current.journal, `Rendez-vous au logis · ${profile.title} avec ${character.name}${newGift ? ` · cadeau reçu : ${displayItemById(profile.gift)?.name}` : ""}.`],
       };
     });
@@ -4249,7 +4334,6 @@ export default function Home() {
       if (relation.stage < 5 || relation.affection < 34 || relation.trust < 32 || relation.desire < 24
         || lastDate !== `${characterId}:desir@${game.day}` || game.location !== property.location || game.spot !== property.spot) return;
     }
-    if (characterId === "naiah" && game.player.sex === "intersexe") return;
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
@@ -4357,7 +4441,7 @@ export default function Home() {
     // Bellirith : sa jauge de désir est inversée (céder la fait baisser) ;
     // elle ne conditionne donc jamais la suite d’un rendez-vous choisi.
     const desireReady = !refactoredDate || date?.character === "bellirith" || Boolean(game?.settings.unlockAll || (game && date && game.relationships[date.character].desire >= (date.minDesire || 22)));
-    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
+    if (!game || !date || !desireReady || !game.dateHistory.includes(date.id) || !publicDateUnlocked(game, date)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background });
   }
 
@@ -4512,7 +4596,7 @@ export default function Home() {
 
   function replayDateIntimacy(dateId: string) {
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
-    if (!date || !game?.flags.includes(`date-intimate:${date.id}`) || (date.character === "naiah" && game.player.sex === "intersexe")) return;
+    if (!date || !game?.flags.includes(`date-intimate:${date.id}`)) return;
     setModal({ kind: "intimacy", character: date.character, dateId: date.id, background: date.intimacySetting.background || spotById(date.spot)?.background, replay: true });
   }
 
@@ -4973,7 +5057,7 @@ export default function Home() {
   const hyleeSearchModalState = modal?.kind === "hylee-search"
     ? modal.replay ? modal.state : game.crossQuestSeries[HN_KEY]?.hn?.search
     : undefined;
-  const sceneActive = Boolean(dialogue || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy");
+  const sceneActive = Boolean(dialogue || modal?.kind === "valurn-market" || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy");
   const pendingMail = game.letters.filter((entry) => !entry.read).length + (game.crossQuestSeries.linevaAllenna?.letters.filter((entry) => !entry.read).length || 0) + game.invitations.filter((entry) => entry.status === "pending").length;
   const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail };
   const unread = v2Log.filter((entry) => !entry.read).length;
@@ -4995,7 +5079,7 @@ export default function Home() {
   };
   const openFiche = (id: string) => { setFicheId(id); setLinksView("fiche"); setTab("relations"); };
   const locateOnMap = (locationId: string, spotId: string) => { setSelectedLocation(locationId); setSelectedSpot(spotId); goTab("map", true); };
-  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
+  const legacyJournal = (section: "crossed" | "relations" | "memories") => <JournalView embedded forcedSection={section} game={game} onValurnMarket={startValurnMarket} onBNScene={startBNScene} onBNMinigame={startBNMinigame} onBNIntimacy={startBNIntimacy} onBNMoment={startBNMoment} onHNScene={startHNScene} onHNSearch={startHyleeSearch} onHRScene={startHRScene} onOperation={startAnchorOperation} onHRLetter={readHRLetter} onStartCampaign={startCampaignScene} onReplayCampaign={replayCampaignScene} onReplayRoute={replayRoute} onReplaySocial={replaySocial} onReplaySecret={replaySecret} onReplayWorldEvent={replayWorldEvent} onReplayDate={replayDate} onReplayDateIntimacy={replayDateIntimacy} onReplayGroupDate={replayGroupDate} onReplayGroupDateIntimacy={replayGroupDateIntimacy} onStartCrossQuest={startCrossQuestScene} onStartAlphaHunt={startAlphaHunt} onReadCrossLetter={readCrossLetter} onWaitForCrossTimeline={waitForCrossTimeline} onWaitForRoute={waitForRoute} onReadLetter={readLetter} onOpenInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onReplayBellirith={(kind, id) => kind === "intrusion" ? replayBellirithIntrusion(id) : replayBellirithIntimacy(id)} />;
   const optionsProps = { game, updateGame, sons, onToggleSons: toggleSons, onSave: (slot: number) => { saveSlot(slot); setSlotVersion((v) => v + 1); }, onLoad: (slot: number) => { closeV2(); loadSlot(slot); }, onExport: exportSave, onImport: importSave, onTitle: () => { closeV2(); setScreen("title"); }, onStory: () => setV2Dialog({ kind: "story" }), onDevOpenIntimacy: openDevIntimacy, slotVersion };
   const rank = rankQueue[0];
   const rankCharacter = rank ? CHARACTERS.find((entry) => entry.id === rank.id) : undefined;
@@ -5084,11 +5168,12 @@ export default function Home() {
       {dialogue && <DialogueOverlay dialogue={dialogue} game={game} onAdvance={advanceDialogue} onBack={stepBackDialogue} onChoice={selectChoice} onClose={() => dialogue.scene.kind === "intro" || dialogue.replay ? closeDialogue(true) : undefined} />}
       {modal?.kind === "anchor-operation" && anchorModalState && <AnchorOperationModal state={anchorModalState} replay={modal.replay} onChange={setAnchorState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHRScene(6)} />}
       {modal?.kind === "hylee-search" && hyleeSearchModalState && <HyleeSearchModal state={hyleeSearchModalState} replay={modal.replay} onChange={setHyleeSearchState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHNScene(4)} />}
+      {modal?.kind === "valurn-market" && (modal.replay ? modal.state : game.valurnMarket) && <ValurnMarketModal state={(modal.replay ? modal.state : game.valurnMarket)!} replay={modal.replay} format={(text) => replacePlayer(text, game.player)} onChange={setValurnMarketState} onClose={() => setModal(null)} onFinish={finishValurnMarket} />}
       {modal?.kind === "bn-minigame" && bnMinigameModalState && <BNMinigameModal state={bnMinigameModalState} replay={modal.replay} dev={modal.dev} format={(text) => replacePlayer(text, game.player)} onChange={setBNMinigameState} onClose={() => { setBNDuck(false); setModal(null); }} onFinish={finishBNMinigame} onAnomaly={setBNDuck} />}
       {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
         background={backgroundUrl(spotById(BN_INTIMACY_SCENES[modal.id].background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBNIntimacy(false)} onFinish={() => closeBNIntimacy(true)} />}
-      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && <GameModal
+      {modal && modal.kind !== "anchor-operation" && modal.kind !== "hylee-search" && modal.kind !== "bn-minigame" && modal.kind !== "bn-intimacy" && modal.kind !== "valurn-market" && <GameModal
         modal={modal}
         game={game}
         onClose={() => setModal(null)}
@@ -5188,7 +5273,7 @@ function CreatorScreen({ player, setPlayer, onBack, onBegin }: { player: Player;
         {step === 0 && <FormSection number="01" title="Identité" detail="Le monde emploiera ces informations dans les dialogues."><div className="form-grid two"><label>Nom ou prénom<input autoFocus value={player.name} maxLength={24} placeholder="Votre nom" onChange={(event) => setPlayer({ ...player, name: event.target.value })} /></label><label>Âge adulte<input type="number" min={18} max={120} value={player.age} onChange={(event) => setPlayer({ ...player, age: Number(event.target.value) })} /></label></div><p className="creator-field-label">Pronoms employés</p><div className="choice-row">{(["elle", "iel", "il"] as Pronouns[]).map((pronouns) => <button key={pronouns} className={player.pronouns === pronouns ? "selected" : ""} onClick={() => setPlayer({ ...player, pronouns })}>{pronouns}</button>)}</div></FormSection>}
         {step === 1 && <FormSection number="02" title="Écho résiduel" detail="Votre mémoire est vide, mais certains réflexes ont traversé le portail avec vous."><div className="card-choices">{ECHOES.map(([name, detail]) => <button key={name} className={player.origin === name ? "selected" : ""} onClick={() => setPlayer({ ...player, origin: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>}
         {step === 2 && <FormSection number="03" title="Vocation & tempérament" detail="La place que vous choisissez de construire à Al’Gratal, et non un passé dont vous vous souviendriez."><div className="form-grid two"><label>Vocation choisie<select value={player.vocation} onChange={(event) => setPlayer({ ...player, vocation: event.target.value })}>{VOCATIONS.map(([name]) => <option key={name}>{name}</option>)}</select></label><label>Facette dominante<select value={player.trait} onChange={(event) => setPlayer({ ...player, trait: event.target.value })}>{TRAITS.map(([name]) => <option key={name}>{name}</option>)}</select></label></div><p className="trait-note">{TRAITS.find(([name]) => name === player.trait)?.[1]}</p><div className="creator-trait-preview">{TRAITS.map(([name, detail]) => <button key={name} type="button" className={player.trait === name ? "selected" : ""} onClick={() => setPlayer({ ...player, trait: name })}><strong>{name}</strong><small>{detail}</small></button>)}</div></FormSection>}
-        {step === 3 && <FormSection number="04" title="Présence & intimité" detail="Le sexe adapte les scènes intimes ; il ne détermine ni vos pronoms ni vos relations."><div className="swatch-grid"><ColorField label="Cheveux" value={player.hair} onChange={(hair) => setPlayer({ ...player, hair })} /><ColorField label="Yeux" value={player.eyes} onChange={(eyes) => setPlayer({ ...player, eyes })} /><ColorField label="Peau" value={player.skin} onChange={(skin) => setPlayer({ ...player, skin })} /></div><p className="creator-field-label">Corps du personnage</p><div className="choice-row sex-choice">{(["femme", "intersexe", "homme"] as PlayerSex[]).map((sex) => <button key={sex} className={player.sex === sex ? "selected" : ""} onClick={() => setPlayer({ ...player, sex })}>{sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe"}</button>)}</div><p className="creator-field-label">Niveau de narration intime</p><div className="intimacy-options">{([["tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]] as [Intimacy, string, string][]).map(([id, title, detail]) => <button key={id} className={player.intimacy === id ? "selected" : ""} onClick={() => id === "explicite" && player.intimacy !== "explicite" ? setExplicitWarning(true) : setPlayer({ ...player, intimacy: id })}><strong>{title}</strong><small>{detail}</small></button>)}</div></FormSection>}
+        {step === 3 && <FormSection number="04" title="Présence & intimité" detail="Le sexe adapte les scènes intimes ; il ne détermine ni vos pronoms ni vos relations."><div className="swatch-grid"><ColorField label="Cheveux" value={player.hair} onChange={(hair) => setPlayer({ ...player, hair })} /><ColorField label="Yeux" value={player.eyes} onChange={(eyes) => setPlayer({ ...player, eyes })} /><ColorField label="Peau" value={player.skin} onChange={(skin) => setPlayer({ ...player, skin })} /></div><p className="creator-field-label">Corps du personnage</p><div className="choice-row sex-choice">{(["femme", "homme"] as PlayerSex[]).map((sex) => <button key={sex} className={player.sex === sex ? "selected" : ""} onClick={() => setPlayer({ ...player, sex })}>{sex === "femme" ? "Femme" : "Homme"}</button>)}</div><p className="creator-field-label">Niveau de narration intime</p><div className="intimacy-options">{([["tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]] as [Intimacy, string, string][]).map(([id, title, detail]) => <button key={id} className={player.intimacy === id ? "selected" : ""} onClick={() => id === "explicite" && player.intimacy !== "explicite" ? setExplicitWarning(true) : setPlayer({ ...player, intimacy: id })}><strong>{title}</strong><small>{detail}</small></button>)}</div></FormSection>}
         <div className="creator-submit"><button className="secondary-action" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))}>Étape précédente</button><div><strong>{step === 3 ? "Votre personnage est-il prêt ?" : `${step + 1} / ${steps.length} · ${steps[step]}`}</strong><small>{step === 3 ? "Une sauvegarde automatique sera créée au début du prologue." : "Vos choix peuvent encore être modifiés."}</small></div>{step < 3 ? <button className="primary-action" disabled={step === 0 && (!player.name.trim() || player.age < 18)} onClick={() => setStep((current) => Math.min(3, current + 1))}>Continuer</button> : <button className="primary-action" disabled={!player.name.trim() || player.age < 18} onClick={onBegin}>Franchir le portail</button>}</div>
       </section>
     </div>
@@ -5328,7 +5413,7 @@ function RelationsView({ game, setModal, setSelectedLocation, setSelectedSpot, s
   const selectedSchedule = selectedCharacter ? characterPlace(selectedCharacter, game.day, game.period, game.flags, game.housing) : undefined;
   const selectedLocationData = LOCATIONS.find((entry) => entry.id === selectedSchedule?.location);
   const selectedSpotData = selectedSchedule ? spotById(selectedSchedule.spot) : undefined;
-  const selectedRawNext = selectedCharacter && selectedRelation ? sceneFor(selectedCharacter.id, selectedRelation.stage) : undefined;
+  const selectedRawNext = selectedCharacter && selectedRelation ? sceneFor(selectedCharacter.id, selectedRelation.stage, game.history) : undefined;
   const selectedNext = selectedRawNext ? relationRouteVariant(selectedRawNext, game).route : undefined;
   const selectedNeeded = selectedNext && selectedRelation ? Math.max(0, BOND_THRESHOLDS[selectedNext.stage] - selectedRelation.affection - selectedRelation.trust) : 0;
   const selectedObjective = selectedNext ? routeNarrativeObjective(selectedNext, game) : undefined;
@@ -5388,7 +5473,7 @@ function NotificationLayer({ notifications }: { notifications: ChronicleNotifica
   </aside>;
 }
 
-function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
+function JournalView({ embedded = false, forcedSection, onValurnMarket, onBNScene, onBNMinigame, onBNIntimacy, onBNMoment, onHNScene, onHNSearch, onHRScene, onOperation, onHRLetter, game, onStartCampaign, onReplayCampaign, onReplayRoute, onReplaySocial, onReplaySecret, onReplayWorldEvent, onReplayDate, onReplayDateIntimacy, onReplayGroupDate, onReplayGroupDateIntimacy, onStartCrossQuest, onStartAlphaHunt, onReadCrossLetter, onWaitForCrossTimeline, onWaitForRoute, onReadLetter, onOpenInvitation, onReplayBellirith }: { onValurnMarket?: (replay?: boolean) => void; onReplayBellirith?: (kind: "intrusion" | "intimacy", id: string) => void; onBNScene?: (stage: number, replay?: boolean) => void; onBNMinigame?: (replay?: boolean) => void; onBNIntimacy?: (id: BNIntimacyId, replay?: boolean) => void; onBNMoment?: (id: string, replay?: boolean) => void; onHNScene: (stage: number, replay?: boolean) => void; onHNSearch: (replay?: boolean) => void; onHRScene: (stage: number, replay?: boolean, recognition?: boolean) => void; onOperation: (replay?: boolean) => void; onHRLetter: (id: string) => void; game: GameState; onStartCampaign: (id: string) => void; onReplayCampaign: (id: string) => void; onReplayRoute: (id: string) => void; onReplaySocial: (id: string) => void; onReplaySecret: (id: string) => void; onReplayWorldEvent: (id: string) => void; onReplayDate: (id: string) => void; onReplayDateIntimacy: (id: string) => void; onReplayGroupDate: (id: string) => void; onReplayGroupDateIntimacy: (id: string) => void; onStartCrossQuest: (stage: number, replay?: boolean) => void; onStartAlphaHunt: (replay?: boolean) => void; onReadCrossLetter: (id: string) => void; onWaitForCrossTimeline: () => void; onWaitForRoute: (id: string) => void; onReadLetter: (id: string) => void; onOpenInvitation: (id: string) => void; embedded?: boolean; forcedSection?: "campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories" }) {
   const [chosenSection, setSection] = useState<"campaign" | "crossed" | "relations" | "messages" | "discoveries" | "memories">("campaign");
   const section = forcedSection ?? chosenSection;
   const campaignMemories = CAMPAIGN_SCENES.filter((scene) => game.history.includes(scene.id));
@@ -5423,7 +5508,7 @@ function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame,
   const threads = CHARACTERS.filter((character) => characterUnlocked(game, character)).map((character) => {
     const relation = game.relationships[character.id];
     const progress = relationshipNarrativeProgress(game, character.id);
-    const scene = sceneFor(character.id, relation.stage);
+    const scene = sceneFor(character.id, relation.stage, game.history);
     const unlocked = characterUnlocked(game, character);
     const needed = scene ? Math.max(0, BOND_THRESHOLDS[scene.stage] - relation.affection - relation.trust) : 0;
     const confidenceObjective = scene ? routeNarrativeObjective(scene, game) : undefined;
@@ -5581,6 +5666,24 @@ function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame,
             <h3>{belThread ? belThread.title : scene ? `Prochaine scène · ${scene.title}` : "Fil narratif accompli"}</h3>
             <p><b>Objectif :</b> {objective}</p>
             {unlocked && scene && !confidenceObjective && !needed && target && <button onClick={() => onWaitForRoute(scene.id)}>Attendre et rejoindre · {waitDurationLabel(game, target)}</button>}
+            {character.id === "valurn" && unlocked && (() => {
+              const entry = valurnJournalEntry(game.history, game.flags);
+              if (!entry) return null;
+              const pending = game.history.includes("valurn-q5") && !game.flags.includes("valurn-market-done");
+              return <div className="valurn-journal-entry">
+                <dl>
+                  <dt>Dossier</dt><dd>{entry.title}</dd>
+                  <dt>Problème</dt><dd>{entry.problem}</dd>
+                  <dt>Objectif</dt><dd>{entry.objective}</dd>
+                  <dt>Lieu</dt><dd>{entry.place}</dd>
+                  <dt>Indice</dt><dd>{entry.clue}</dd>
+                  <dt>Conséquence</dt><dd>{entry.consequence}</dd>
+                  <dt>Ensuite</dt><dd>{entry.next}</dd>
+                </dl>
+                {pending && onValurnMarket && <button onClick={() => onValurnMarket(false)}>Reprendre le registre du salon</button>}
+                {game.flags.includes("valurn-market-done") && onValurnMarket && <button onClick={() => onValurnMarket(true)}>Rejouer la partie truquée (sans effet)</button>}
+              </div>;
+            })()}
           </div>
           <b>{status}</b>
         </article>;
@@ -5598,7 +5701,7 @@ function JournalView({ embedded = false, forcedSection, onBNScene, onBNMinigame,
         {worldMemories.map((event) => <button key={event.id} onClick={() => onReplayWorldEvent(event.id)}><span>◈ Événement spontané · {event.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" & ")}</span><strong>{event.title}</strong><small>Revoir sans modifier le monde</small></button>)}
         {crossSceneMemories.map((stage) => <button key={`cross-${stage}`} onClick={() => onStartCrossQuest(stage, true)}><span>⇄ Quête croisée · Lineva & Allenna</span><strong>{crossSceneForStage(stage)?.title}</strong><small>Revoir sans modifier la chronique</small></button>)}
         {dateMemories.map((date) => <button key={date.id} onClick={() => onReplayDate(date.id)}><span>♡ Rendez-vous · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
-        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { const unavailable = date.character === "naiah" && game.player.sex === "intersexe"; return <button key={`${date.id}-intimacy`} disabled={unavailable} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{(date.character === "bellirith" && bellirithIntimacyContext(date.id) ? BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(date.id)!] : undefined) || date.title}</strong><small>{unavailable ? "Cette variante n’est pas encore écrite pour la configuration choisie" : date.character === "bellirith" && bellirithIntimacyContext(date.id) ? `Après « ${date.title} » · revoir la scène selon le corps et le niveau d’intimité choisis` : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
+        {dateMemories.filter((date) => game.flags.includes(`date-intimate:${date.id}`)).map((date) => { return <button key={`${date.id}-intimacy`} onClick={() => onReplayDateIntimacy(date.id)}><span>🔥 Souvenir intime · {CHARACTERS.find((character) => character.id === date.character)?.name}</span><strong>{(date.character === "bellirith" && bellirithIntimacyContext(date.id) ? BELLIRITH_INTIMACY_TITLES[bellirithIntimacyContext(date.id)!] : undefined) || date.title}</strong><small>{date.character === "bellirith" && bellirithIntimacyContext(date.id) ? `Après « ${date.title} » · revoir la scène selon le corps et le niveau d’intimité choisis` : "Revoir la scène selon le corps et le niveau d’intimité choisis"}</small></button>; })}
         {groupDateMemories.map((date) => <button key={date.id} onClick={() => onReplayGroupDate(date.id)}><span>♡ Rendez-vous à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir sans gain</small></button>)}
         {groupDateMemories.filter((date) => game.flags.includes(`group-date-intimate:${date.id}`)).map((date) => <button key={`${date.id}-intimacy`} onClick={() => onReplayGroupDateIntimacy(date.id)}><span>🔥 Souvenir à trois · {date.characters.map((id) => CHARACTERS.find((character) => character.id === id)?.name).join(" & ")}</span><strong>{date.title}</strong><small>Revoir les trois routes selon votre sexe et le niveau d’intimité actuel</small></button>)}
         {BELLIRITH_INTRUSIONS.filter((intrusion) => bellirithIntrusionResolved(game, intrusion.id)).map((intrusion) => <button key={`bellirith-intrusion-${intrusion.id}`} onClick={() => onReplayBellirith?.("intrusion", intrusion.id)}><span style={{ color: CHARACTERS.find((character) => character.id === "bellirith")?.color }}>✧ Interférence · Bellirith</span><strong>{intrusion.title}</strong><small>Revoir sans gain, sans pénalité ni avancée du temps</small></button>)}
@@ -5695,7 +5798,7 @@ function LegacyOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exp
     }
     updateGame((current) => ({ ...current, player: { ...current.player, intimacy } }));
   };
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><div className="options-header-actions"><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Ce réglage peut être modifié à tout moment et adapte la narration des scènes concernées.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p></footer></div>{explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}</section>;
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><div className="options-header-actions"><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Ce réglage peut être modifié à tout moment et adapte la narration des scènes concernées.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p></footer></div>{explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}</section>;
 }
 
 function DeprecatedOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
@@ -5724,7 +5827,7 @@ function DeprecatedOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot,
         <label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label>
         <Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} />
         <Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} />
-        <div className="option-select-grid"><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label></div>
+        <div className="option-select-grid"><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label></div>
         <p className="hint">Le mode explicite est réservé aux adultes et affiche un avertissement avant son activation.</p>
       </div>}
       {section === "saves" && <div className="option-panel"><div className="option-panel-heading"><div><p className="eyebrow">Progression</p><h2>Sauvegardes manuelles</h2></div><span>Sauvegarde automatique active</span></div><div className="save-slot-list">{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}</div><div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div>}
@@ -5784,7 +5887,7 @@ function OptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSav
 
         {section === "device" && <div className="atlas-option-stack"><div className="atlas-device-preview"><span>▱</span><div><small>Disposition reconnue</small><strong>L’interface tient compte de la largeur, de la hauteur, de l’orientation et du mode tactile.</strong></div></div><div className="atlas-toggle-grid"><Toggle label="Disposition adaptative" detail="Détecte automatiquement téléphone, écran pliable, tablette ou ordinateur." active={game.settings.adaptiveLayout} onClick={() => updateSettings({ adaptiveLayout: !game.settings.adaptiveLayout })} /><Toggle label="Barre d’état du monde" detail="Affiche le jour, la période, les pièces et la Confluence." active={game.settings.statusBar} onClick={() => updateSettings({ statusBar: !game.settings.statusBar })} /></div><label className="select-option"><span>Navigation tactile</span><select value={game.settings.touchNavigation} onChange={(event) => updateSettings({ touchNavigation: event.target.value as TouchNavigation })}><option value="auto">Automatique</option><option value="bottom">Barre inférieure</option><option value="side">Rail latéral</option></select></label><p className="hint">En mode automatique, le portrait utilise une barre inférieure et le paysage compact conserve un rail latéral pour laisser toute la hauteur au jeu.</p></div>}
 
-        {section === "game" && <div className="atlas-option-stack"><div className="atlas-toggle-grid"><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateSettings({ music: !game.settings.music })} /></div><RangeOption label="Volume" value={game.settings.volume} minimum={0} maximum={100} step={4} onChange={(volume) => updateSettings({ volume })} /><div className="option-select-grid"><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="intersexe">Intersexe</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Narration intime</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label></div><p className="hint">Le réglage explicite est réservé aux adultes et demande une confirmation avant son activation.</p></div>}
+        {section === "game" && <div className="atlas-option-stack"><div className="atlas-toggle-grid"><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateSettings({ music: !game.settings.music })} /></div><RangeOption label="Volume" value={game.settings.volume} minimum={0} maximum={100} step={4} onChange={(volume) => updateSettings({ volume })} /><div className="option-select-grid"><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Narration intime</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label></div><p className="hint">Le réglage explicite est réservé aux adultes et demande une confirmation avant son activation.</p></div>}
 
         {section === "chronicle" && <div className="atlas-option-stack"><div className="atlas-save-list">{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}</div><div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="atlas-about"><p className="eyebrow">Continuité du projet</p><h3>Chronique parallèle & crédits</h3><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>.</p><div><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Mode Histoire</a></div></footer></div>}
       </section>
@@ -5860,9 +5963,10 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
   const [groupSelection, setGroupSelection] = useState("");
   const characterName = (id: string) => CHARACTERS.find((entry) => entry.id === id)?.name || id;
   const hasSoloRoute = (character: string, dateId?: string, home = false) => {
-    if (character === "hylee") return game.player.sex !== "intersexe" && Boolean(hyleeIntimacyContext(dateId, home));
-    if (character === "remerii") return game.player.sex !== "intersexe" && Boolean(remeriiIntimacyContext(dateId, home));
-    if (character === "naiah") return game.player.sex !== "intersexe" && Boolean(naiahProximityContext(dateId, home));
+    if (character === "hylee") return Boolean(hyleeIntimacyContext(dateId, home));
+    if (character === "remerii") return Boolean(remeriiIntimacyContext(dateId, home));
+    if (character === "naiah") return Boolean(naiahProximityContext(dateId, home));
+    if (character === "valurn") return Boolean(valurnIntimacyContext(dateId, home, game.flags));
     return home
       ? homeIntimacyRoutes(character, game.player.sex).length > 0
       : intimacyDirections(character, game.player.sex, dateId).length > 0;
@@ -6012,6 +6116,37 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => openHNDates("vegetative")}>État végétatif</button>
     </div>
 
+    <h3>Valurn · Les trois mensonges du grand parieur</h3>
+    <p className="dev-help">Prépare un état de série (historique et drapeaux minimaux). Le stade relationnel n’est jamais abaissé. Les branches de rendez-vous fixent la continuité intime proposée.</p>
+    <div className="dev-row">
+      <span className="dev-help">Placer avant la quête :</span>
+      {[1, 2, 3, 4, 5, 6, 7].map((quest) => <button type="button" key={quest} onClick={() => updateGame((current) => {
+        const done = ["valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5", "valurn-q6", "valurn-q7"].slice(0, quest - 1);
+        const history = [...current.history.filter((id) => !id.startsWith("valurn-q")), ...done];
+        const flags = current.flags.filter((flag) => !/^valurn-(q\d-done|market-done|market-result:|q5-approach:|outcome:)/.test(flag));
+        const doneFlags = done.map((id) => `${id}-done`);
+        const market = quest >= 6 ? ["valurn-market-done", "valurn-market-result:partial", "valurn-q5-approach:lucidite"] : [];
+        return { ...current, history: unique([...history, "campaign-imperial-audience"]), flags: unique([...flags, ...doneFlags, ...market]), valurnMarket: quest >= 6 ? current.valurnMarket : undefined,
+          relationships: { ...current.relationships, valurn: { ...current.relationships.valurn, met: true, stage: Math.max(current.relationships.valurn.stage, Math.min(5, quest - 1)) } },
+          journal: [...current.journal, `Outil développeur · Valurn : placé avant la quête ${quest}.`] };
+      })}>Q{quest}</button>)}
+      <button type="button" onClick={() => updateGame((current) => ({ ...current, history: unique([...current.history, "valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5"]), flags: unique([...current.flags.filter((flag) => flag !== "valurn-market-done"), "valurn-q5-approach:audace"]), valurnMarket: undefined }))}>Marché en attente</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Fin de série (ouvre les rendez-vous) :</span>
+      <button type="button" onClick={() => updateGame((current) => {
+        const quests = ["valurn-q1", "valurn-q2", "valurn-q3", "valurn-q4", "valurn-q5", "valurn-q6", "valurn-q7"];
+        const market = current.flags.some((flag) => flag.startsWith("valurn-market-result:")) ? [] : ["valurn-market-result:partial", "valurn-q5-approach:lucidite"];
+        return { ...current, history: unique([...current.history, "campaign-imperial-audience", ...quests]), flags: unique([...current.flags, ...quests.map((id) => `${id}-done`), "valurn-market-done", ...market]), valurnMarket: undefined,
+          relationships: { ...current.relationships, valurn: { ...current.relationships.valurn, met: true, stage: Math.max(current.relationships.valurn.stage, 5) } },
+          journal: [...current.journal, "Outil développeur · Valurn : série des sept quêtes achevée."] };
+      })}>Série achevée</button>
+    </div>
+    <div className="dev-row">
+      <span className="dev-help">Branches de rendez-vous :</span>
+      {[["date-valurn-forestier", "tournoi"], ["date-valurn-forestier", "imposture"], ["date-valurn-forestier", "fond"], ["date-valurn-river", "imprevus"], ["date-valurn-river", "etoiles"], ["date-valurn-river", "braise"], ["home", "cabinet"], ["home", "reception"], ["home", "cartes"]].map(([dateId, branch]) => <button type="button" key={`${dateId}-${branch}`} onClick={() => updateGame((current) => ({ ...current, flags: unique([...current.flags.filter((flag) => !flag.startsWith(`valurn-date-branch:${dateId}:`)), `valurn-date-branch:${dateId}:${branch}`]) }))}>{dateId === "home" ? "Logis" : dateId.endsWith("forestier") ? "Forestier" : "Fleuve"} · {branch}</button>)}
+    </div>
+
     <h3>Bellirith · interférences</h3>
     <p className="dev-help">Intrusions et confidences sont jouées pour de vrai (effets, flags, file de rattrapage). Les intimités s’ouvrent en souvenir, sans mutation. « Historique » prépare un état céder / résister / mixte pour tester le chapitre IX et le rendez-vous final.</p>
     <div className="dev-row">
@@ -6061,7 +6196,6 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
         <button type="button" disabled={!activeGroupKey || !onOpenIntimacy} onClick={() => launchTarget(groupTargets, activeGroupKey)}>Ouvrir la partie intime</button>
       </label>
     </div>
-    {game.player.sex === "intersexe" && <p className="dev-help">Les scènes dédiées sans variante intersexe validée sont masquées. Le corps peut être changé dans l’onglet Intimité.</p>}
     {!game.housing.propertyId && <p className="dev-help">Installez un logis de test pour faire apparaître les continuations domestiques.</p>}
 
     <h3>Étapes relationnelles</h3>
@@ -6081,25 +6215,24 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const homeProperty = modal.home ? propertyById(game.housing.propertyId) : undefined;
   const homeItems = modal.home ? game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item)) : [];
   const profile = INTIMACY_PROFILES[character.id];
-  // Le traitement intersexe Hylee et Remerii reste volontairement celui déjà
-  // en place : leur canon corporel attend encore une décision de direction.
-  // Les scènes dédiées couvrent intégralement les parcours femme et homme.
-  const hyleeContext = character.id === "hylee" && game.player.sex !== "intersexe"
+  const hyleeContext = character.id === "hylee"
     ? hyleeIntimacyContext(modal.dateId, Boolean(modal.home))
     : undefined;
-  const remeriiContext = character.id === "remerii" && game.player.sex !== "intersexe"
+  const remeriiContext = character.id === "remerii"
     ? remeriiIntimacyContext(modal.dateId, Boolean(modal.home))
     : undefined;
-  const naiahContext = character.id === "naiah" && game.player.sex !== "intersexe"
+  const naiahContext = character.id === "naiah"
     ? naiahProximityContext(modal.dateId, Boolean(modal.home))
     : undefined;
+  // Valurn : une continuité écrite par branche de rendez-vous, parcours femme et homme uniquement.
+  const [valurnContext] = useState(() => character.id === "valurn" ? valurnIntimacyContext(modal.dateId, Boolean(modal.home), game.flags) : undefined);
   // Bellirith : diversions, heures volées et duel de fin d’Acte I sont écrits
   // à la main pour les trois configurations corporelles.
   // Au logis, Bellirith passe aussi par une heure volée écrite à la main (source « bellirith-home »).
   const bellirithSource = character.id === "bellirith" && modal.home ? "bellirith-home" : modal.dateId;
   const bellirithContext = character.id === "bellirith" ? bellirithIntimacyContext(modal.home ? "bellirith-home" : modal.dateId) : undefined;
   const [bellirithFlags] = useState(() => game.flags);
-  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
+  const dedicatedIntimacy = Boolean(hyleeContext || remeriiContext || naiahContext || valurnContext || bellirithContext || (modal.dateId && ["date-lineva-", "date-allenna-"].some((prefix) => modal.dateId!.startsWith(prefix))));
   const intimacyGame = dedicatedIntimacy ? undefined : INTIMACY_GAMES[character.id];
   const [step, setStep] = useState<IntimacyStep>("opening");
   const [lines, setLines] = useState<DialogueLine[]>(() => bellirithContext
@@ -6110,6 +6243,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? remeriiDateIntimacyOpening(remeriiContext)
       : naiahContext
         ? naiahProximityOpening(naiahContext)
+      : valurnContext
+        ? valurnIntimacyOpening(valurnContext)
       : homeProperty
         ? homeIntimacyOpening(character.id, homeProperty, homeItems)
         : intimacyOpening(character.id, date));
@@ -6120,7 +6255,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
-  const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
+  const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || valurnIntimacyApproaches(valurnContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const [directionChoices] = useState(() => shuffledChoices(bellirithContext
     ? bellirithIntimacyRoutes(bellirithContext, game.player.sex, bellirithFlags)
     : hyleeContext
@@ -6129,6 +6264,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
       ? remeriiDateIntimacyRoutes(remeriiContext, game.player.sex, game.knowledge.includes("knows_remerii_curse"))
       : naiahContext
         ? naiahProximityRoutes(naiahContext, game.player.sex)
+      : valurnContext
+        ? valurnIntimacyRoutes(valurnContext, game.player.sex)
       : modal.home
         ? homeIntimacyRoutes(character.id, game.player.sex)
         : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
@@ -6157,6 +6294,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
         ? remeriiDateIntimacyEnding(remeriiContext)
         : naiahContext
           ? naiahProximityEnding(naiahContext)
+        : valurnContext
+          ? valurnIntimacyEnding(valurnContext)
         : homeProperty
           ? homeIntimacyEnding(character.id, homeProperty)
           : intimacyEnding(character.id, date);
@@ -6197,7 +6336,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   function chooseDirection(choice: IntimacyDirectionChoice) {
     rollback.clear();
     setDirection(choice);
-    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || modal.home) && "chapters" in choice
+    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || valurnContext || modal.home) && "chapters" in choice
       ? choice.chapters[game.player.intimacy]
       : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
     const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
@@ -6581,13 +6720,14 @@ function JobGameModal({ job, state, game, onBegin, onMemoryStart, onAction, onFi
   </section></div></div>;
 }
 
-function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number) => void; onClose: () => void }) {
+function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: string; game: GameState; onFinish: (character: string, tone: HomeDateTone, score: number, branch?: string) => void; onClose: () => void }) {
   const profile = HOME_DATE_PROFILES[characterId];
   const character = CHARACTERS.find((entry) => entry.id === characterId);
   const property = propertyById(game.housing.propertyId);
   const items = game.housing.displayed.map((id) => displayItemById(id)).filter((item): item is NonNullable<ReturnType<typeof displayItemById>> => Boolean(item));
   const opening = profile && property ? homeDateOpening(profile, property, items) : [];
-  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "game" | "answer" | "result">("opening");
+  const [phase, setPhase] = useState<"opening" | "tone" | "tone-lines" | "branch" | "branch-lines" | "game" | "answer" | "result">("opening");
+  const [branchId, setBranchId] = useState<string | undefined>(undefined);
   const [lineIndex, setLineIndex] = useState(0);
   const [tone, setTone] = useState<HomeDateTone>("amical");
   const [round, setRound] = useState(0);
@@ -6595,7 +6735,10 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
   const [answerLines, setAnswerLines] = useState<DialogueLine[]>([]);
   const [resultLines, setResultLines] = useState<DialogueLine[]>([]);
   if (!profile || !property || !character) return null;
-  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? profile.tones[tone].lines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
+  const activeBranch = profile.branches?.find((entry) => entry.id === branchId);
+  const rounds = activeBranch?.rounds || profile.rounds;
+  const results = activeBranch?.results || profile.results;
+  const displayedLine = phase === "opening" ? opening[lineIndex] : phase === "tone-lines" ? profile.tones[tone].lines[lineIndex] : phase === "branch-lines" ? activeBranch?.lines[lineIndex] : phase === "answer" ? answerLines[lineIndex] : phase === "result" ? resultLines[lineIndex] : undefined;
   const shownText = displayedLine ? replacePlayer(displayedLine.text, game.player) : "";
   const shownSpeaker = displayedLine?.speaker === "{player}" ? game.player.name : displayedLine?.speaker;
   const characterSpeaking = displayedLine ? speakerCharacterIds(displayedLine.speaker, [character.id]).includes(character.id) : true;
@@ -6603,21 +6746,23 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     ? (displayedLine.mood || moodForCharacter(character.id, `home-date-${character.id}-${phase}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
   const nextLine = () => {
-    const lines = phase === "opening" ? opening : phase === "tone-lines" ? profile.tones[tone].lines : phase === "answer" ? answerLines : resultLines;
+    const lines = phase === "opening" ? opening : phase === "tone-lines" ? profile.tones[tone].lines : phase === "branch-lines" ? (activeBranch?.lines || []) : phase === "answer" ? answerLines : resultLines;
     if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
     setLineIndex(0);
     if (phase === "opening") setPhase("tone");
-    else if (phase === "tone-lines") setPhase("game");
+    else if (phase === "tone-lines") setPhase(profile.branches?.length ? "branch" : "game");
+    else if (phase === "branch-lines") setPhase("game");
     else if (phase === "answer") {
-      if (round + 1 < profile.rounds.length) { setRound(round + 1); setPhase("game"); }
+      if (round + 1 < rounds.length) { setRound(round + 1); setPhase("game"); }
       else {
-        const bucket = score >= 5 ? profile.results.perfect : score >= 3 ? profile.results.warm : profile.results.close;
+        const bucket = score >= 5 ? results.perfect : score >= 3 ? results.warm : results.close;
         setResultLines(bucket);
         setPhase("result");
       }
-    } else onFinish(characterId, tone, score);
+    } else onFinish(characterId, tone, score, branchId);
   };
   const chooseTone = (nextTone: HomeDateTone) => { setTone(nextTone); setLineIndex(0); setPhase("tone-lines"); };
+  const chooseBranch = (id: string) => { setBranchId(id); setLineIndex(0); setPhase("branch-lines"); };
   const chooseAnswer = (option: HomeDateProfile["rounds"][number]["options"][number]) => {
     const nextScore = score + option.score;
     setScore(nextScore);
@@ -6629,9 +6774,10 @@ function HomeDateModal({ characterId, game, onFinish, onClose }: { characterId: 
     <div className="scene-top home-date-scene-top"><div><p className="eyebrow">Rendez-vous dans votre logis · {property.name}</p><h2>{profile.title}</h2><p>{profile.description}</p></div><button onClick={onClose}>Quitter le rendez-vous</button></div>
     <div className="scene-cast cast-1"><img className={`scene-sprite ${characterSpeaking ? "active" : "inactive"}`} src={spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>
     <div className="dialogue-gradient" />
-    {(phase === "opening" || phase === "tone-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
+    {(phase === "opening" || phase === "tone-lines" || phase === "branch-lines" || phase === "answer" || phase === "result") && displayedLine && <button className={`dialogue-box home-date-dialogue-box ${displayedLine.speaker === "Narration" ? "narration" : ""}`} onClick={nextLine}><span className="speaker">{shownSpeaker}</span><p>{shownText}</p><small>{phase === "result" && lineIndex === resultLines.length - 1 ? "Terminer le rendez-vous" : "Continuer"} · Cliquer pour continuer</small></button>}
     {phase === "tone" && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Donner le ton</p><p className="choice-question">Quelle relation souhaitez-vous vivre ce soir ?</p></div>{(Object.entries(profile.tones) as [HomeDateTone, HomeDateProfile["tones"][HomeDateTone]][]).map(([id, option], index) => <button key={id} onClick={() => chooseTone(id)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong><small>{option.detail}</small></div></button>)}</div>}
-    {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{profile.rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : profile.rounds[round].detail}</small></div><p className="choice-question">{profile.rounds[round].prompt}</p>{profile.rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
+    {phase === "branch" && profile.branches && <div className="choice-box home-date-choice-panel"><div className="home-date-choice-heading"><p className="eyebrow">Choisir la soirée</p><p className="choice-question">Quel jeu proposer ce soir ?</p></div>{profile.branches.map((entry, index) => <button key={entry.id} onClick={() => chooseBranch(entry.id)}><span className="home-choice-number">{index + 1}</span><div><strong>{entry.label}</strong><small>{entry.detail}</small></div></button>)}</div>}
+    {phase === "game" && <div className="choice-box home-date-choice-panel home-date-game-panel"><div className="home-date-choice-heading"><p className="eyebrow">Activité unique · manche {round + 1}/{rounds.length}</p><h3>{profile.activityTitle}</h3><small>{round === 0 ? profile.activityInstruction : rounds[round].detail}</small></div><p className="choice-question">{rounds[round].prompt}</p>{rounds[round].options.map((option, index) => <button key={option.id} onClick={() => chooseAnswer(option)}><span className="home-choice-number">{index + 1}</span><div><strong>{option.label}</strong></div></button>)}<small className="home-date-score">Harmonie actuelle : {score} / {profile.rounds.length * 2}</small></div>}
   </section>;
 }
 
@@ -6873,34 +7019,28 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const property = propertyById(game.housing.propertyId)!;
     const naiah = character.id === "naiah";
-    const naiahIntersex = naiah && game.player.sex === "intersexe";
-    const copy = naiahIntersex
-      ? "Cette continuation n’est pas encore écrite pour la configuration choisie. Le rendez-vous reste accompli et rejouable ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
-      : naiah
-        ? "La lanterne est posée, le fauteuil reste déplacé et Naïah a déjà transformé vos habitudes en terrain de jeu. Vous pouvez ouvrir une continuation intime propre à ce logis, selon le niveau de narration choisi."
-        : `Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à ${character.name}, déclinée selon votre corps et votre réglage d’intimité.`;
+    const copy = naiah
+      ? "La lanterne est posée, le fauteuil reste déplacé et Naïah a déjà transformé vos habitudes en terrain de jeu. Vous pouvez ouvrir une continuation intime propre à ce logis, selon le niveau de narration choisi."
+      : `Le jeu est rangé, les trois objets exposés ont retrouvé leur silence et la soirée dispose enfin du temps qu’aucun lieu public ne lui aurait laissé. Ici, vous pouvez explorer une route intime propre à ${character.name}, déclinée selon votre corps et votre réglage d’intimité.`;
     return <V2Resultat background={property.background} characters={[character]} surtitre="Le reste du monde est derrière votre porte" titre={`${character.name} ne semble pas pressé·e de partir`} texte={copy}>
-      {!naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startHomeIntimacy(character.id)}>{naiah ? "Rester proches au logis" : "Prolonger la nuit au logis"}</button>}<button type="button" className="btn secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button>
+      {<button type="button" className="btn principal primary-action" onClick={() => startHomeIntimacy(character.id)}>{naiah ? "Rester proches au logis" : "Prolonger la nuit au logis"}</button>}<button type="button" className="btn secondary-action" onClick={onClose}>Rester enlacé·es, puis terminer ici</button>
     </V2Resultat>;  }
   if (modal.kind === "date-result") {
     const character = CHARACTERS.find((entry) => entry.id === modal.character)!;
     const date = DATE_SCENES.find((entry) => entry.id === modal.dateId)!;
     const naiah = character.id === "naiah";
-    const naiahIntersex = naiah && game.player.sex === "intersexe";
     const refactored = (["lineva", "allenna"].includes(character.id) || character.id === "bellirith") || AUTHORED_DATE_CHARACTERS.has(character.id);
     const bellirith = character.id === "bellirith";
     const desireReady = !refactored || bellirith || game.settings.unlockAll || game.relationships[character.id].desire >= (date.minDesire || 22);
     const closeText = bellirith
       ? bellirithDateResultText(date.id, game)
-      : naiahIntersex
-      ? "Le rendez-vous reste accompli et rejouable. Cette continuation n’est pas encore écrite pour la configuration choisie ; la chronique préfère s’arrêter ici plutôt que d’improviser une variante incomplète."
       : desireReady
       ? naiah
         ? `${character.name} reste près de vous. Le jeu peut devenir franchement sexuel sans cesser d’être le sien : défi, curiosité, magie et fourberie. Vous pouvez le poursuivre ou garder cette suite pour un autre soir.`
         : `${character.name} reste près de vous et attend une réponse franche. Vous pouvez prolonger la nuit, remettre la suite à un autre soir ou garder une proximité amicale pour ce rendez-vous seulement.`
       : `Après « ${date.title} », la proximité demeure douce, mais la tension physique ne demande pas encore à être prolongée. La soirée peut s'achever naturellement, sans fermer les suivantes.`;
     return <V2Resultat background={spotById(date.spot)?.background} characters={[character]} surtitre="La soirée refuse de finir" titre={`${character.name} reste près de vous`} texte={closeText}>
-      {desireReady && !naiahIntersex && <button type="button" className="btn principal primary-action" onClick={() => startDateIntimacy(date.id)}>{bellirith ? bellirithDateResultAction(date.id) : naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button type="button" className="btn secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}
+      {desireReady && <button type="button" className="btn principal primary-action" onClick={() => startDateIntimacy(date.id)}>{bellirith ? bellirithDateResultAction(date.id) : naiah ? "Prolonger la proximité" : `Suivre ${character.name}`}</button>}{refactored && desireReady ? <><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Pas ce soir</button><button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, true)}>Rester proches amicalement</button></> : refactored ? <button type="button" className="btn secondary-action" onClick={() => finishDateEnding(date.id, false)}>Terminer doucement la soirée</button> : <button type="button" className="btn secondary-action" onClick={onClose}>Rentrer ensemble, puis se séparer ici</button>}
     </V2Resultat>;  }
   if (modal.kind === "intimacy") {
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} />;
@@ -7083,7 +7223,7 @@ function v2RarityLabel(price: number) { return price >= 14 ? "Rare" : price >= 1
 /** Libellés réels d’interaction d’une présence (même logique que l’ancien panneau Présences). */
 function presenceInteraction(game: GameState, character: CharacterData) {
   const relation = game.relationships[character.id];
-  const rawNextScene = sceneFor(character.id, relation.stage);
+  const rawNextScene = sceneFor(character.id, relation.stage, game.history);
   const nextScene = rawNextScene ? relationRouteVariant(rawNextScene, game).route : undefined;
   const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
   const special = routeAvailableAtPlace(nextScene, game);
@@ -7171,8 +7311,8 @@ const V2_EYES = ["#62d4c7", "#d8bd78", "#8964c4", "#6fa7e8", "#c0473f", "#6c8a4f
 const V2_SKIN = ["#f3d2b8", "#e2b48f", "#c68e62", "#9a6440", "#6b4128", "#f0c9a8"];
 const V2_INTIMACY: [Intimacy, string, string][] = [["tendre", "Tendre", "Romance, baisers et proximité douce"], ["suggestif", "Suggestif", "Sensuel sans description anatomique"], ["explicite", "Explicite", "Narration adulte détaillée, sans coupure — confirmation requise"], ["ellipse", "Fondu au noir", "Toute intimité reste hors champ"]];
 const V2_PRONOUNS: Pronouns[] = ["elle", "iel", "il"];
-const V2_SEXES: PlayerSex[] = ["femme", "intersexe", "homme"];
-const v2SexLabel = (sex: PlayerSex) => (sex === "femme" ? "Femme" : sex === "homme" ? "Homme" : "Intersexe");
+const V2_SEXES: PlayerSex[] = ["femme", "homme"];
+const v2SexLabel = (sex: PlayerSex) => (sex === "femme" ? "Femme" : "Homme");
 const v2Cap = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
 function V2Selecteur<T extends string>({ values, value, label, onChange }: { values: T[]; value: T; label: (value: T) => string; onChange: (value: T) => void }) {
@@ -7510,7 +7650,7 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
   const schedule = characterPlace(character, game.day, game.period, game.flags, game.housing);
   const scheduleLocation = LOCATIONS.find((entry) => entry.id === schedule.location);
   const scheduleSpot = spotById(schedule.spot);
-  const rawNext = sceneFor(character.id, relation.stage);
+  const rawNext = sceneFor(character.id, relation.stage, game.history);
   const nextScene = rawNext ? relationRouteVariant(rawNext, game).route : undefined;
   const bond = relation.affection + relation.trust;
   const threshold = nextScene ? BOND_THRESHOLDS[nextScene.stage] : 0;

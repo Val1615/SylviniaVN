@@ -80,7 +80,7 @@ export function naiahProximityApproaches(context?: NaiahIntimacyContext): NaiahP
 export function naiahProximityOpening(context: NaiahIntimacyContext): DialogueLine[] { return NAIAH_PROXIMITY_OPENINGS[context]; }
 export function naiahProximityEnding(context: NaiahIntimacyContext): DialogueLine[] { return NAIAH_PROXIMITY_ENDINGS[context]; }
 export function naiahProximityRoutes(context: NaiahIntimacyContext | undefined, sex: PlayerSex): IntimacyRoute[] {
-  if (!context || sex === "intersexe") return [];
+  if (!context) return [];
   return SCENES.filter((scene) => scene.context === context && scene.sex === sex).map(routeFromScene);
 }
 
@@ -104,6 +104,5 @@ export function validateNaiahProximity() {
       });
     });
   }
-  if (naiahProximityRoutes("home-naiah", "intersexe").length) throw new Error("Le canon intersexe ne doit pas être improvisé");
   return { contexts: CONTEXTS.length, combinations, routes, chapters };
 }

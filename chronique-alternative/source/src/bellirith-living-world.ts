@@ -4,10 +4,9 @@ import type { InvitationTemplate, KnowledgeEntry, LetterTemplate, SecretConversa
 /*
  * Refonte Bellirith · monde vivant (confidences, courriers, invitations).
  *
- * Canon : seuls les faits sourcés sont employés (Tome II : talisman, « une
- * jolie pierre enfermée dans du métal », la demande de rester cachée, les
- * soldats de l’Empire, « Je pensais pouvoir revenir » ; Bible : Bhaal père
- * commun, rivalité ancienne et personnelle avec Valurn). La pierre de stase,
+ * Canon : seuls les faits sourcés sont employés (Bible : Bhaal père commun,
+ * rivalité ancienne et personnelle avec Valurn). Les détails du passé commun
+ * relevant de la future quête croisée sont retirés (refonte Valurn, Acte I). La pierre de stase,
  * l’artefact de scellement et leur chronologie sont retirés (spec §32/§55).
  *
  * Confidences : débloquées par le DÉSIR (20/40/60/80, spec §28), en deux
@@ -46,8 +45,9 @@ export const BELLIRITH_KNOWLEDGE: KnowledgeEntry[] = [
 
 /** Connaissances Valurn de remplacement : faits du Tome II uniquement. */
 export const VALURN_BELLIRITH_KNOWLEDGE: KnowledgeEntry[] = [
-  { id: "knows_valurn_old_promise", title: "La protection confiée", summary: "Valurn confia autrefois à Bellirith une protection, un talisman qu’il appelait « une jolie pierre enfermée dans du métal », et lui demanda de rester cachée pendant qu’il partait.", people: ["valurn", "bellirith"] },
-  { id: "knows_valurn_did_not_return", title: "Je pensais pouvoir revenir", summary: "Des soldats de l’Empire sont venus. Valurn n’est pas revenu à temps. « Je pensais pouvoir revenir » : il n’en dit pas davantage.", people: ["valurn", "bellirith"] },
+  // Identifiants conservés pour les anciennes sauvegardes ; résumés neutralisés (refonte Valurn).
+  { id: "knows_valurn_old_promise", title: "Un passé partagé", summary: "Valurn et Bellirith partagent un passé ancien qu'aucun des deux ne raconte. Il ne vous appartient pas de le reconstituer.", people: ["valurn", "bellirith"] },
+  { id: "knows_valurn_did_not_return", title: "Ce qu'il ne raconte pas", summary: "Valurn refuse de parler de ce passé à la place de Bellirith. Il dit seulement que cette histoire est aussi la sienne à elle.", people: ["valurn", "bellirith"] },
 ];
 
 // ─── Confidences Bellirith ────────────────────────────────────────────────
@@ -240,16 +240,16 @@ const gap: SecretConversation = {
       P("Pas ce soir."),
       N("Bellirith rit, un petit rire presque normal. Puis elle tend le pied et le pose contre votre genou, comme une signature au bas d’un contrat qu’elle n’a pas lu."),
     ], { affection: 3, trust: 2 }),
-    C("sbg80-push-valurn", "Lui dire que Valurn vous a parlé d’un talisman, et d’une promesse de protection.", "lucidite", [
-      P("Valurn m’a parlé d’une protection. D’un talisman. Il m’a dit qu’il pensait pouvoir revenir."),
+    C("sbg80-push-valurn", "Lui dire que Valurn parle d’elle avec trop de précautions pour quelqu’un qui prétend la détester.", "lucidite", [
+      P("Valurn parle de toi avec beaucoup trop de précautions pour quelqu’un qui prétend te détester."),
       N("Bellirith ne bouge pas. Puis elle descend de la fenêtre, très lentement, et vient se planter devant vous."),
-      B("Il t’a dit ça. À toi. Il t’a raconté sa version, avec sa voix de remords bien rangée, et tu l’as écouté.", "cold"),
+      B("Il t’a parlé de moi. À toi. Avec sa voix bien rangée, et tu l’as écouté.", "cold"),
       B("Sa version a des trous. La mienne aussi. Entre l’homme qui me tenait la main et celui que je veux voir ramper, il manque quelque chose. Et je ne te le donnerai pas ce soir. Ni à toi, ni à lui, ni à personne.", "away"),
       P("Je ne te le demande pas."),
       B("Si. Tu le demandes avec tes yeux. Et le pire, c’est que j’ai failli répondre.", "thoughtful"),
       N("Elle se détourne. À la porte, elle s’arrête, sans se retourner."),
       B("Reviens demain. Je serai odieuse. Ça nous fera du bien à tous les deux.", "smirk"),
-    ], { trust: 5, desire: 4, knowledge: ["knows_bellirith_missing_piece"] }, { requiresKnowledge: ["knows_valurn_old_promise"] }),
+    ], { trust: 5, desire: 4, knowledge: ["knows_bellirith_missing_piece"] }, { requiresKnowledge: ["knows_valurn_bellirith_past"] }),
     C("sbg80-push-ring", "Lui demander pourquoi elle a caché cette bague dès qu’elle a parlé de promesse.", "lucidite", [
       P("La bague. Tu l’as rangée dès que tu as dit « promesse »."),
       N("Bellirith vous regarde longtemps. Puis elle sort la bague de sa manche et la pose sur le rebord, entre vous deux. Un anneau simple, usé, sans pierre."),
@@ -265,79 +265,10 @@ const gap: SecretConversation = {
 
 export const BELLIRITH_CONFIDENCES: SecretConversation[] = [father, beforeHate, saelis, gap];
 
-// ─── Confidences Valurn réécrites (faits du Tome II uniquement) ─────────────
+// ─── Confidences Valurn ─────────────
 
-const valurnProtection: SecretConversation = {
-  id: "secret-valurn-protection",
-  character: "valurn",
-  tier: 60,
-  title: "Une jolie pierre enfermée dans du métal",
-  intro: [
-    N("Valurn joue avec un petit objet sans valeur, un galet poli serti dans une monture de fer, acheté à un colporteur pour trois sous. Il le fait passer d’un doigt à l’autre sans jamais le regarder."),
-    P("C’est un porte-bonheur ?"),
-    V("C’est une imitation. L’original était plus joli. Une pierre enfermée dans du métal, et assez de mots tendres autour pour qu’on y croie.", "amused"),
-    N("Le galet s’immobilise entre son index et son majeur."),
-    V("Je l’ai donné à Bellirith, autrefois. Une protection. Je lui ai demandé de rester cachée pendant que je partais. Je lui ai dit que ça suffirait.", "away"),
-    P("Ça a suffi ?"),
-    V("Vous êtes délicieusement direct·e quand vous voulez me faire saigner sans en avoir l’air.", "smirk"),
-    N("Il pose l’imitation sur la table, entre vous, comme on dépose une pièce à conviction qu’on n’a pas le courage de commenter."),
-    V("Bellirith pense que je savais que c’était inutile. Je pense que je l’espérais utile. Aucun de nous deux n’a jamais réussi à convaincre l’autre, et la conversation dure depuis assez longtemps pour avoir des petits-enfants.", "thoughtful"),
-  ],
-  choices: [
-    C("svp60-l", "Lui demander pourquoi il fallait qu’elle reste cachée, au lieu de partir avec lui.", "lucidite", [
-      P("Pourquoi ne l’avez-vous pas emmenée ?"),
-      V("Parce que si elle m’avait suivi, nous serions morts tous les deux. C’est ce que je me suis dit. C’est ce que je me dis encore les jours où j’ai besoin de dormir.", "away"),
-      P("Et les autres jours ?"),
-      V("Les autres jours, je me demande si je ne voulais pas surtout qu’elle ne me suive pas.", "thoughtful"),
-      N("Il reprend le galet et le fait disparaître dans sa manche, d’un geste de prestidigitateur qui n’amuse personne."),
-      V("Ne lui répétez jamais cette phrase. Elle l’a déjà dite elle-même, mieux que moi.", "smirk"),
-    ], { trust: 8, affection: 2 }),
-    C("svp60-s", "Ne pas trancher entre les deux versions, et lui laisser l’imitation.", "sangFroid", [
-      N("Vous repoussez le galet vers lui, sans un mot de jugement."),
-      P("Je ne choisirai pas entre votre version et la sienne. Je n’étais pas là."),
-      V("Quelle frustrante neutralité. J’espérais au moins une condamnation, pour me sentir important.", "amused"),
-      P("Vous l’êtes déjà assez à ses yeux."),
-      N("Le sourire de Valurn vacille. Il range l’imitation, puis la ressort, puis vous la tend."),
-      V("Gardez-la. Si un jour Bellirith la voit dans vos mains, regardez bien son visage. Vous apprendrez en une seconde ce que je n’arrive pas à dire en trois siècles.", "thoughtful"),
-    ], { trust: 7, affection: 3 }),
-  ],
-  reveals: ["knows_valurn_old_promise"],
-};
-
-const valurnReturn: SecretConversation = {
-  id: "secret-valurn-return",
-  character: "valurn",
-  tier: 80,
-  title: "Je pensais pouvoir revenir",
-  intro: [
-    N("Valurn ne fait aucun tour de cartes, ce soir. Il n’a même pas de verre. Il regarde ses mains posées à plat sur la table comme deux pièces d’un jeu qu’il ne sait plus jouer."),
-    V("Les soldats sont venus. Ceux de l’Empire. Elle tenait la protection que je lui avais donnée. Je n’étais pas là.", "away"),
-    N("Il ne vous laisse pas le temps de répondre."),
-    V("Je pensais pouvoir revenir. C’est la phrase. Je la répète depuis si longtemps qu’elle a pris la forme exacte de ma bouche.", "thoughtful"),
-    P("Et Bellirith ? Qu’est-ce qu’elle dit ?"),
-    V("Qu’en réalité, j’espérais seulement pouvoir supporter de ne pas le faire.", "cold"),
-    N("Il sourit, enfin. C’est le sourire le plus laid que vous lui ayez jamais vu, parce qu’il ne cherche à séduire personne."),
-    V("Je ne vous dirai pas ce qui s’est passé ensuite. Cette histoire appartient à ma sœur, et elle a payé assez cher pour avoir le droit de la garder.", "away"),
-  ],
-  choices: [
-    C("svr80-l", "Refuser de lui offrir une absolution, sans le condamner à sa place.", "lucidite", [
-      P("Je ne vais pas vous dire que ce n’était pas votre faute."),
-      V("Merci. Les gens qui me le disent me donnent envie de mordre.", "smirk"),
-      P("Ni que c’était entièrement la vôtre. Je n’en sais pas assez. Elle, si."),
-      N("Valurn hoche la tête, une fois, lentement. Il retourne ses mains, paumes vers le haut, vides."),
-      V("C’est la réponse la plus juste qu’on m’ait jamais faite. Elle est insupportable. Restez encore un peu.", "thoughtful"),
-    ], { trust: 10 }),
-    C("svr80-s", "Lui demander s’il compte un jour l’écouter raconter sa version à elle.", "sangFroid", [
-      P("Est-ce que vous la laisserez raconter sa version, un jour ? En entier ?"),
-      V("Si elle le veut. Ce qui suppose qu’elle cesse d’abord de vouloir m’arracher les yeux, ce qui suppose que je cesse de le mériter.", "amused"),
-      N("L’humour retombe aussitôt, faute de combustible."),
-      V("Oui. Si elle le veut, je l’écouterai jusqu’au bout, sans plaisanter. C’est la seule promesse que je me sente encore capable de tenir avec elle.", "away"),
-    ], { trust: 9, affection: 1 }),
-  ],
-  reveals: ["knows_valurn_did_not_return"],
-};
-
-export const VALURN_BELLIRITH_CONFIDENCES: SecretConversation[] = [valurnProtection, valurnReturn];
+/** Confidences Valurn retirées de la refonte Bellirith : elles relèvent de la future quête croisée (refonte Valurn, Acte I). */
+export const VALURN_BELLIRITH_CONFIDENCES: SecretConversation[] = [];
 
 // ─── Courriers ──────────────────────────────────────────────────────────────
 

@@ -24,7 +24,7 @@ export function manualHRRoutes(
   contextId: string,
   seeds: HRManualSeed[],
 ): Record<PlayerSex, GroupIntimacyRoute[]> {
-  return Object.fromEntries((["femme", "homme", "intersexe"] as PlayerSex[]).map((sex) => [
+  return Object.fromEntries((["femme", "homme"] as PlayerSex[]).map((sex) => [
     sex,
     seeds.map((seed) => ({
       id: `${contextId}-${sex}-${seed.slug}`,

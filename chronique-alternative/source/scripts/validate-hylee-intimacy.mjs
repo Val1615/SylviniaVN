@@ -83,12 +83,6 @@ try {
     assert.match(routeText(route), /logis|photophore|salon|chambre|table|canapé/iu, `${route.id}: logis absent`);
   }
 
-  // Le chemin intersexe antérieur reste disponible en repli ; aucun canon
-  // corporel nouveau n'est décidé silencieusement dans ce catalogue.
-  assert.equal(intimacy.hyleeDateIntimacyRoutes("date-hylee-glade", "intersexe").length, 0);
-  assert.equal(intimacy.hyleeDateIntimacyRoutes("date-hylee-lake", "intersexe").length, 0);
-  assert.equal(intimacy.hyleeDateIntimacyRoutes("home-hylee", "intersexe").length, 0);
-  assert.match(pageSource, /character\.id === "hylee" && game\.player\.sex !== "intersexe"/);
   assert.match(pageSource, /hyleeContext\s*\? hyleeDateIntimacyRoutes[\s\S]*remeriiContext[\s\S]*modal\.home\s*\? homeIntimacyRoutes/);
 
   // Les sprites nus ne précèdent jamais la récompense CG : la révélation
@@ -111,7 +105,7 @@ try {
   assert.match(pageSource, /const dedicatedIntimacy = Boolean\(hyleeContext/);
   assert.match(pageSource, /useIntimateSprite = hasIntimateSprites\(character\.id\) && intimateVisual\.useIntimateSprites/);
 
-  console.log("[Hylee intimité] 3 contextes · 18 scènes manuelles · 720 chapitres modaux · clairière et rive conservées · logis dédié · intersexe préservé · CG sémantiques validées.");
+  console.log("[Hylee intimité] 3 contextes · 18 scènes manuelles · 720 chapitres modaux · clairière et rive conservées · logis dédié · CG sémantiques validées.");
 } finally {
   await server.close();
 }

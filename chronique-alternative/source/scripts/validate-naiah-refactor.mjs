@@ -164,6 +164,7 @@ try {
     letters: [{ id: "letter-naiah-margin", receivedDay: 7, read: true, replyId: "naiah-food" }],
   });
   assert.ok(migrated, "la sauvegarde de migration doit être hydratable");
+  assert.equal(migrated.player.sex, "homme", "une ancienne sauvegarde intersexe passe en homme");
   assert.ok(migrated.version >= 17, "la migration Naïah doit produire une sauvegarde au moins en version 17 (18 depuis la refonte Bellirith)");
   assert.ok(migrated.knowledge.includes("knows_naiah_hylee_nights"));
   assert.ok(migrated.knowledge.includes("knows_hylee_naiah_nights"));
@@ -232,7 +233,6 @@ try {
     const man = proximity.naiahProximityRoutes(context, "homme");
     assert.deepEqual(woman.map((entry) => entry.text), man.map((entry) => entry.text), `${context}: femme et homme doivent partager les mêmes trois concepts`);
   }
-  assert.equal(proximity.naiahProximityRoutes("home-naiah", "intersexe").length, 0, "aucun canon corporel intersexe ne doit être improvisé");
 
   const authoredIntimacySource = [
     await read("src/naiah-date-intimacy-forest.ts"),
@@ -253,8 +253,8 @@ try {
   assert.equal(intimateSprites.hasIntimateSprites("naiah"), true, "les placeholders intimes de Naïah doivent être enregistrés");
   assert.ok(intimateSprites.intimateSpritePath("naiah", "laugh").endsWith("assets/sprites-intimate/naiah/laugh.png"));
 
-  assert.deepEqual(groupProximity.validateNaiahGroupProximity(), { contexts: 2, combinations: 6, routes: 18, chapters: 576 });
-  for (const pairId of groupProximity.NAIAH_GROUP_CONTEXT_IDS) for (const sex of ["femme", "homme", "intersexe"]) {
+  assert.deepEqual(groupProximity.validateNaiahGroupProximity(), { contexts: 2, combinations: 4, routes: 12, chapters: 384 });
+  for (const pairId of groupProximity.NAIAH_GROUP_CONTEXT_IDS) for (const sex of ["femme", "homme"]) {
     const entries = groups.groupIntimacyRoutes(pairId, sex);
     assert.equal(entries.length, 3, `${pairId}/${sex}: trois routes de proximité à trois requises`);
     assert.ok(groups.isManualGroupIntimacy(pairId), `${pairId}: le contexte dédié doit contourner le générateur sexuel`);
@@ -264,10 +264,10 @@ try {
   assert.ok(naiahSources.every((source) => !/speaker:\s*["']Amanea["']/.test(source)), "aucune interaction directe Amanea/Naïah ne doit être créée dans les rendez-vous");
 
   const pageSource = await read("src/page.tsx");
-  assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
+  assert.match(pageSource, /AUTHORED_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"(?:, "valurn")?\]\)/u);
   assert.match(pageSource, /DEDICATED_HOME_DATE_CHARACTERS = new Set\(\["hylee", "remerii", "naiah"\]\)/u);
   assert.match(pageSource, /Souvenir intime/u);
-  assert.match(pageSource, /game\.player\.sex === "intersexe"/u, "le blocage intersexe doit être expliqué avant l'ouverture d'une continuation");
+  assert.match(pageSource, /export function normalizePlayerSex/u, "les sauvegardes intersexes anciennes doivent être migrées");
 
   console.log(`[Naïah] 5 quêtes · 4 confidences · 18 moments libres · 2 sorties + 1 logis · 18 continuations sexuelles manuelles non pénétratives · groupes dédiés · migration v17 validés.`);
 } finally {

@@ -12,7 +12,7 @@ export type AllennaDateApproach = { id: string; text: string; lines: DialogueLin
 
 const PHASES: AllennaIntimacyPhase[] = ["approach", "undressing", "naked-reveal", "partner-discovery", "allenna-discovery", "preliminaries", "intensification", "climax", "afterglow", "ending"];
 const MODES: IntimacyMode[] = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES: PlayerSex[] = ["femme", "homme", "intersexe"];
+const SEXES: PlayerSex[] = ["femme", "homme"];
 const DATES: AllennaDateId[] = ["date-allenna-field", "date-allenna-terrace"];
 
 const lines = (raw: RawLine[], context: string): DialogueLine[] => raw.map((entry) => {
@@ -25,17 +25,14 @@ const LABELS: Record<AllennaMood, Record<PlayerSex, string>> = {
   defi: {
     femme: "Prolonger le défi entre deux femmes jusqu'à ce que la gêne devienne un jeu",
     homme: "Répondre à ses provocations et laisser vos deux corps redistribuer l'initiative",
-    intersexe: "Inventer un défi sensuel adapté à vos appuis et à vos anatomies réelles",
   },
   tendre: {
     femme: "Découvrir Allenna avec la lenteur attentive d'une autre femme",
     homme: "Laisser sa gêne devenir tendresse sans lui demander de l'expliquer",
-    intersexe: "Construire une proximité tendre où aucun corps n'est supposé à l'avance",
   },
   passion: {
     femme: "Laisser le désir contenu d'Allenna devenir une passion franche entre deux femmes",
     homme: "Suivre son désir lorsqu'il dépasse enfin la prudence du premier regard",
-    intersexe: "Choisir ensemble les prises et les rythmes d'une passion adaptée à vos corps",
   },
 };
 
@@ -110,12 +107,9 @@ function bodyDiscovery(sex: PlayerSex, mode: IntimacyMode): RawLine[] {
   if (sex === "femme") return mode === "explicite"
     ? ["Allenna embrasse votre poitrine puis descend entre vos cuisses. Ses doigts vous ouvrent avec douceur, vous trouvent déjà mouillée et apprennent le rythme qui vous fait soupirer avant que sa bouche prenne leur place."]
     : ["Allenna suit votre poitrine, votre ventre et vos hanches de ses paumes. Sa cuisse se glisse entre les vôtres ; elle écoute la manière dont votre bassin répond."];
-  if (sex === "homme") return mode === "explicite"
+  return mode === "explicite"
     ? ["Allenna vous libère, vous entoure d'une main encore hésitante puis remonte toute votre hampe du bout de la langue. Elle ajuste pression et cadence à vos réactions, sans prétendre connaître votre plaisir avant de le voir."]
     : ["Allenna découvre votre torse, votre ventre, puis votre désir tendu qui vient buter contre sa paume. Sa gêne cède à une curiosité franche lorsqu'elle vous sent chercher le contact."];
-  return mode === "explicite"
-    ? ["Allenna vous demande le geste exact, puis explore votre sexe intersexe sans modèle préfabriqué : zone externe, longueur sensible ou ouverture offerte. Ses doigts et sa bouche ajustent l'angle à vos mots et à vos réactions réelles."]
-    : ["Allenna suit l'anatomie que vous lui montrez sans lui imposer de nom. Ses mains apprennent vos zones sensibles, vos appuis et les mouvements qui vous rapprochent."];
 }
 
 function climax(sex: PlayerSex, mode: IntimacyMode): RawLine[] {
@@ -124,12 +118,9 @@ function climax(sex: PlayerSex, mode: IntimacyMode): RawLine[] {
   if (sex === "femme") return mode === "explicite"
     ? ["Allenna garde deux doigts en vous tandis que votre main s'attarde sur la petite pointe gonflée qui la fait se cambrer. Vos bassins trouvent une cadence commune ; votre orgasme serre ses doigts, puis vous prolongez les caresses jusqu'à la sentir jouir à son tour contre votre cuisse."]
     : ["Vos cuisses se mêlent et vos mains alternent entre vos sexes. Allenna perd le rythme sous votre paume, le retrouve sur vous et vous conduit au plaisir presque avec elle."];
-  if (sex === "homme") return mode === "explicite"
+  return mode === "explicite"
     ? ["Allenna vous guide contre elle, toute mouillée, puis vous accueille selon l'angle choisi ensemble. Votre pouce reste là où elle est la plus sensible ; elle jouit autour de vous avant que ses mouvements vous entraînent jusqu'à l'orgasme."]
     : ["Allenna vient s'asseoir sur vous et choisit une cadence qui devient plus franche à chaque mouvement. Son plaisir sous votre main précède le vôtre sans interrompre le rythme."];
-  return mode === "explicite"
-    ? ["Vous choisissez pénétration, frottement ou stimulation externe selon votre anatomie. Allenna maintient la pression demandée pendant que vos doigts dessinent sur elle les cercles qu'elle vous a appris ; vos orgasmes arrivent par deux chemins distincts dans la même étreinte."]
-    : ["Les gestes s'adaptent à vos zones sensibles et à ses demandes. Votre plaisir traverse le contact choisi ; Allenna vous laisse revenir à elle jusqu'à jouir sous vos mains."];
 }
 
 function routeChapters(dateId: AllennaDateId, mood: AllennaMood, sex: PlayerSex, mode: IntimacyMode): DialogueLine[][] {

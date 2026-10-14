@@ -126,7 +126,6 @@ export const HEURE_COULOIR: HeureVolee = {
           X(
             "Elle glisse deux doigts en vous et presse sa paume contre votre perle, vite, sans détour, en surveillant la porte par-dessus votre épaule.",
             "Elle libère votre virilité et la caresse vite, d’une main ferme, sans détour, en surveillant la porte par-dessus votre épaule.",
-            "Elle libère votre vigueur et la caresse vite, l’autre main pressée contre votre chaleur, sans détour, en surveillant la porte par-dessus votre épaule.",
           ),
           "Chaque fois qu’un panier grince dans le couloir, sa main ralentit. Chaque fois que le silence revient, elle accélère, et vous devez enfouir le visage dans son cou pour ne pas gémir. Elle vous souffle à l’oreille, sans aucune coquetterie, que vous lui plaisez comme ça, à bout de souffle et sans défense, et qu’elle veut s’en souvenir.",
         ],
@@ -165,7 +164,6 @@ export const HEURE_COULOIR: HeureVolee = {
           X(
             "Vous pressez votre cuisse entre les siennes, votre intimité contre la sienne, et vos doigts se cherchent entre vos deux corps. Vous vous frottez l’une contre l’autre, debout, vite, sans grâce, la bouche de l’une contre l’épaule de l’autre.",
             "Elle vous guide en elle d’une main pressée et vous la prenez debout, vite, sans grâce, à grands coups de reins, la bouche de l’un contre l’épaule de l’autre.",
-            "Elle vous guide en elle d’une main pressée, et vous la prenez debout, vite, sans grâce, pendant que ses doigts reviennent vous fouiller plus bas, la bouche de l’un contre l’épaule de l’autre.",
           ),
           "Le battant tremble légèrement à chaque mouvement. De l’autre côté, la lingère fredonne une chanson à boire, à deux pas.",
           "Bellirith vous regarde droit dans les yeux pendant tout ce temps, la bouche entrouverte, sans aucun artifice, et murmure contre vos lèvres ce qu’elle veut au fur et à mesure : plus fort, plus près, encore, comme on donne des indications à quelqu’un qui conduit dans le noir.",
@@ -184,7 +182,6 @@ export const HEURE_COULOIR: HeureVolee = {
           X(
             "Elle jouit contre vous en tremblant de tout son corps, et vos propres hanches s’affolent contre les siennes jusqu’à ce que la vague vous emporte à votre tour.",
             "Elle se resserre autour de vous en mordant le drap, et vous jouissez en elle dans la seconde, le front contre le bois.",
-            "Elle se resserre sur vous en mordant le drap, ses doigts enfoncés dans votre fente, et vous jouissez dans la seconde des deux côtés à la fois.",
           ),
           "Quand vous relevez la tête, elle a les joues en feu et la trace d’un pli de drap imprimée sur la pommette. Elle rit en silence, le front contre votre épaule, et vous sentez son rire vous secouer tout entier·e.",
         ],

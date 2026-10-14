@@ -28,7 +28,7 @@ const server = await createServer({ root, appType: "custom", logLevel: "silent",
 }] });
 
 const MODES = ["tendre", "suggestif", "explicite", "ellipse"];
-const SEXES = ["femme", "homme", "intersexe"];
+const SEXES = ["femme", "homme"];
 const BANNED = /\b(?:chatte|bite|pénis|penis|vagin|vulve|anus|testicules?|clitoris|verge|phallus|couilles?)\b/iu;
 const STYLE_DASH = /[—–]/u;
 const STYLE_CONTRAST = /n[’']est pas[^!?«»"]{0,80}[,;.:]\s*c[’']est\b|n[’']était pas[^!?«»"]{0,80}[,;.:]\s*c[’']était\b/iu;
@@ -323,7 +323,7 @@ try {
   const runs = [
     { name: "tout accepter", sex: "femme", picks: ["cross-bn-02-accept", "cross-bn-04-accept", "cross-bn-05-accept", "cross-bn-07-intervene"], complete: true },
     { name: "différer puis refuser", sex: "homme", picks: ["cross-bn-02-later", "cross-bn-04-decline", "cross-bn-05-decline", "cross-bn-07-present"], complete: false },
-    { name: "interrompre Q5", sex: "intersexe", picks: ["cross-bn-02-decline", "cross-bn-04-later", "cross-bn-05-accept", "cross-bn-07-naiah"], complete: "interrupt" },
+    { name: "interrompre Q5", sex: "homme", picks: ["cross-bn-02-decline", "cross-bn-04-later", "cross-bn-05-accept", "cross-bn-07-naiah"], complete: "interrupt" },
   ];
   let completedSave;
   for (const run of runs) {

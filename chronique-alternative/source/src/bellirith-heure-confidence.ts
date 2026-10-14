@@ -72,7 +72,6 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Elle vous dénude jusqu’à la taille et prend vos seins à pleines mains, trop fort d’abord, puis plus doucement quand vous retenez son poignet. Elle frotte ses pouces sur leurs pointes jusqu’à vous arracher un soupir.",
             "Elle ouvre votre pantalon et vous empoigne aussitôt, trop vite, comme pour en finir avec les questions. Quand vous retenez son poignet, elle ralentit et vous caresse sur toute votre longueur, les yeux baissés.",
-            "Elle ouvre votre pantalon, saisit votre vigueur et glisse aussitôt l’autre main vers votre chaleur, trop vite, comme pour en finir avec les questions. Quand vous retenez son poignet, elle ralentit, et ses doigts apprennent les deux chemins sans se presser.",
           ),
           "Elle vous mord l’épaule, puis embrasse la marque, puis la mord encore, en surveillant votre visage du coin de l’œil pour vérifier que la question s’en va.",
           "Ses mains tremblent un peu. Vous faites semblant de ne pas le remarquer, et elle fait semblant de ne pas voir que vous faites semblant.",
@@ -135,7 +134,6 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Elle s’allonge entre vos cuisses et vous prend avec la bouche, sans préambule, la langue pressée contre votre perle, deux doigts recourbés en vous. Elle y met tout ce qu’elle sait, et elle en sait beaucoup trop.",
             "Elle s’allonge entre vos cuisses et vous prend dans sa bouche jusqu’au fond, sans préambule, une main serrée à la base. Elle y met tout ce qu’elle sait, et elle en sait beaucoup trop.",
-            "Elle s’allonge entre vos cuisses, vous prend dans sa bouche et enfonce deux doigts en vous, de l’autre côté. Elle y met tout ce qu’elle sait, des deux côtés à la fois, et elle en sait beaucoup trop.",
           ),
           "Au bout d’un moment, vous ne pensez plus à grand-chose. Elle le voit, et son triomphe sent le soulagement.",
         ],
@@ -177,7 +175,6 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Vous vous allongez sur elle, intimité contre intimité, et vous commencez à bouger. Vos chaleurs glissent l’une contre l’autre, lentement, vos doigts entremêlés pour vous ouvrir l’une à l’autre. Elle garde les yeux fermés.",
             "Elle vous guide en elle d’une main et vous attire jusqu’au bout. Vous commencez à bouger, lentement, profondément. Elle garde les yeux fermés.",
-            "Elle vous guide en elle et vous attire jusqu’au bout, puis glisse une main entre vous pour caresser aussi ce qu’elle n’a pas oublié plus bas. Vous commencez à bouger, lentement. Elle garde les yeux fermés.",
           ),
           P("Regarde-moi."),
           "Elle les ouvre. Elle ne dit rien. Elle vous regarde pendant tout le reste, et c’est peut-être la chose la plus difficile qu’elle ait faite de la soirée.",
@@ -197,7 +194,6 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Vous jouissez l’une contre l’autre, presque ensemble, ses doigts serrés sur les vôtres.",
             "Elle se resserre autour de vous et vous jouissez en elle presque au même instant, sa main crispée dans votre nuque.",
-            "Elle se resserre autour de vous, ses doigts toujours pressés sous votre sexe, et vous jouissez des deux côtés presque au même instant qu’elle.",
           ),
           "Elle laisse échapper un son bref, à mi-chemin entre un rire et un sanglot, et l’étouffe aussitôt contre votre épaule. Vous ne lui demandez pas ce que c’était.",
         ],

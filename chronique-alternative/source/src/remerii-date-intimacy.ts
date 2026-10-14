@@ -717,7 +717,7 @@ export function remeriiDateIntimacyOpening(context: RemeriiIntimacyContext): Dia
 export function remeriiDateIntimacyEnding(context: RemeriiIntimacyContext): DialogueLine[] { return REMERII_INTIMACY_ENDINGS[context]; }
 
 export function remeriiDateIntimacyRoutes(context: RemeriiIntimacyContext | undefined, sex: PlayerSex, knowsCurse = false): IntimacyRoute[] {
-  if (!context || sex === "intersexe") return [];
+  if (!context) return [];
   return SCENES.filter((scene) => scene.context === context && scene.sex === sex).map((scene) => routeFromScene(scene, knowsCurse));
 }
 
@@ -739,7 +739,6 @@ export function validateRemeriiDateIntimacy() {
       });
     });
   }
-  if (remeriiDateIntimacyRoutes("home-remerii", "intersexe").length !== 0) throw new Error("Le canon intersexe ne doit pas être fixé par la refonte Remerii");
   return { contexts: CONTEXTS.length, combinations, routes, chapters };
 }
 

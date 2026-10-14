@@ -90,7 +90,6 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         X(
           "Elle grimpe sur vous, et votre chaleur, sous son aura, s’éveille si vite que vous en avez le souffle coupé. Sa main glisse entre vos cuisses, vous trouve déjà prête, et elle sourit.",
           "Elle grimpe sur vous, et votre virilité se dresse sous son aura si vite que vous en avez le souffle coupé. Sa main se referme dessus, et elle sourit.",
-          "Elle grimpe sur vous, et votre corps entier s’éveille sous son aura si vite que vous en avez le souffle coupé. Ses deux mains vérifient, et elle sourit.",
         ),
       ],
       [
@@ -137,7 +136,6 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         X(
           "Une bouche se pose sur votre sein, une autre sur votre ventre, des doigts glissent en vous, une langue effleure votre bouton, et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
           "Une bouche se pose sur votre gorge, une autre sur votre ventre, une main se referme autour de votre virilité, une langue en effleure le sommet, et vous ne savez plus lesquelles sont réelles. Vous perdez pied, délicieusement, et elle rit dans le noir.",
-          "Une bouche se pose sur votre gorge, une main se referme sur votre sexe, des doigts glissent sous lui, une langue passe de l’un à l’autre, et vous ne savez plus lesquels sont réels. Vous perdez pied, délicieusement, et elle rit dans le noir.",
         ),
       ],
       [
@@ -206,7 +204,6 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         X(
           "Elle s’installe sur vous, ventre contre ventre, sexe contre sexe, et vous mène avec toute son expertise : un balancement lent, puis brusque, puis lent encore, ses doigts revenant vous agacer exactement quand vous croyiez qu’elle l’avait oubliée.",
           "Elle descend sur vous d’un seul mouvement et vous mène avec toute son expertise : lentement, puis brusquement, puis lentement encore, en se resserrant autour de vous chaque fois que vous croyez deviner le rythme.",
-          "Elle vous prend en elle d’un seul mouvement, glisse deux doigts dans votre fente, et vous mène avec toute son expertise : lentement, puis brusquement, ses deux rythmes refusant obstinément de se mettre d’accord.",
         ),
         "Vous la laissez faire, parce que c’est un plaisir, maintenant, de la regarder gagner une manche en sachant que vous pourriez gagner la suivante.",
       ],
@@ -233,7 +230,6 @@ export const DUEL_STEAL_ROUTE: AuthoredRoute = {
         X(
           "Vous basculez ensemble, vos deux chaleurs pressées l’une contre l’autre, vos plaisirs se répondant en vagues qui ne savent plus laquelle a commencé.",
           "Vous basculez ensemble ; elle se resserre autour de vous au moment même où vous vous répandez en elle, et vos deux plaisirs se répondent en vagues qui ne savent plus laquelle a commencé.",
-          "Vous basculez ensemble ; elle se resserre sur vous au moment même où vous vous serrez autour de ses doigts, et vos plaisirs se répondent en vagues qui ne savent plus laquelle a commencé.",
         ),
       ],
       [
@@ -350,7 +346,6 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         X(
           "Elle vous mène jusqu’au bord, deux doigts en vous, le pouce là où vous tressaillez, son aura gonflant chaque caresse. Elle ralentit au bon moment, accélère au bon moment, et vous la laissez faire sans un mot.",
           "Elle vous mène jusqu’au bord, sa main serrée sur votre virilité, son aura gonflant chaque caresse. Elle ralentit au bon moment, accélère au bon moment, et vous la laissez faire sans un mot.",
-          "Elle vous mène jusqu’au bord, une main sur votre sexe, l’autre glissée en vous, son aura gonflant chaque caresse. Elle ralentit au bon moment, accélère au bon moment, et vous la laissez faire sans un mot.",
         ),
         B("Alors ? Où est ta surprise ? Je commence à croire que tu bluffais.", "teasing"),
         "Elle s’approche pour vous embrasser, sûre d’elle, et c’est là, exactement là, que vous la voyez : la seconde où elle cesse de regarder votre visage pour fermer les yeux.",
@@ -443,7 +438,6 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         X(
           "Elle se colle à vous, mouillée contre mouillée, et se met à onduler, les yeux grands ouverts, plantés dans les vôtres, ses doigts entre vous pour ne rien laisser au hasard. C’est infiniment plus troublant que tout ce qu’elle a fait jusqu’ici.",
           "Elle vous prend en elle et se met à bouger, les yeux grands ouverts, plantés dans les vôtres. C’est infiniment plus troublant que tout ce qu’elle a fait jusqu’ici.",
-          "Elle vous prend en elle, glisse une main sous votre sexe jusqu’à vos replis, et se met à bouger, les yeux grands ouverts, plantés dans les vôtres. C’est infiniment plus troublant que tout ce qu’elle a fait jusqu’ici.",
         ),
       ],
       [
@@ -463,7 +457,6 @@ export const DUEL_TURN_ROUTE: AuthoredRoute = {
         X(
           "Vous basculez ensemble, vos chaleurs pressées l’une contre l’autre, ses yeux toujours ouverts dans les vôtres.",
           "Vous basculez ensemble ; elle se resserre autour de vous au moment même où vous vous libérez en elle, ses yeux toujours ouverts dans les vôtres.",
-          "Vous basculez ensemble, des deux côtés à la fois, elle serrée autour de votre vigueur et ses doigts serrés en vous, ses yeux toujours ouverts dans les vôtres.",
         ),
         "Le piano, quelque part au-dessus de vous, plaque un dernier accord parfaitement juste.",
       ],
