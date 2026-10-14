@@ -52,7 +52,7 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         X(
           "Quand la dernière pièce tombe, elle recule d’un pas. Son regard descend sur vos seins, que la vapeur fait déjà briller, puis sur votre ventre et sur le triangle sombre entre vos cuisses. Elle hoche la tête, lentement, comme devant un vin qui tient ses promesses.",
           "Quand la dernière pièce tombe, elle recule d’un pas. Son regard descend sur votre torse que la vapeur fait déjà briller, puis sur votre virilité qui se dresse sous ses yeux sans qu’elle ait rien touché. Elle hoche la tête, lentement, comme devant un vin qui tient ses promesses.",
-          "Quand la dernière pièce tombe, elle recule d’un pas. Son regard descend sur votre peau que la vapeur fait déjà briller, sur votre vigueur qui se dresse sans qu’elle ait rien touché, sur la chaleur que vous ne pouvez pas cacher en dessous. Elle hoche la tête, lentement, comme devant un vin qui tient deux promesses à la fois.",
+          "Quand la dernière pièce tombe, elle recule d’un pas. Son regard descend sur votre peau que la vapeur fait déjà briller, sur votre sexe qui se dresse sans qu’elle ait rien touché, sur le pli humide que vous ne pouvez pas cacher en dessous. Elle hoche la tête, lentement, comme devant un vin qui tient deux promesses à la fois.",
         ),
         B("Dans l’eau. Tout de suite. Avant que je change d’avis et que je te prenne sur le carrelage.", "seductive"),
       ],
@@ -96,11 +96,11 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
       ],
       [
         "Elle prend une éponge, un flacon d’huile parfumée, et entreprend de vous laver comme si c’était une cérémonie. La poussière du voyage s’en va ; quelque chose d’autre prend sa place, une sensibilité nouvelle de la peau, comme si l’huile la rendait plus mince.",
-        "L’éponge descend le long de votre dos, contourne votre hanche, remonte sur votre ventre, puis l’éponge disparaît et il ne reste que sa main huilée.",
+        "L’éponge descend le long de votre dos, contourne votre hanche, remonte sur vos côtes, puis l’éponge disparaît et il ne reste que sa main huilée.",
         X(
-          "Sa paume glisse sur vos seins, les soulève, les relâche, s’attarde sur leurs pointes jusqu’à ce qu’elles durcissent sous ses doigts. Puis elle descend sous l’eau, effleure l’intérieur de vos cuisses, frôle votre chaleur une seule fois et repart vers votre genou, comme par distraction.",
+          "Sa paume glisse sur vos seins, les soulève, les relâche, s’attarde sur leurs pointes jusqu’à ce qu’elles durcissent sous ses doigts. Puis elle descend sous l’eau, effleure l’intérieur de vos cuisses, vous frôle une seule fois et repart vers votre genou, comme par distraction.",
           "Sa paume glisse sur votre torse, votre ventre, et descend sous l’eau. Elle effleure votre virilité dressée d’un seul passage de la racine au sommet, presque par distraction, et repart vers votre genou comme si de rien n’était.",
-          "Sa paume glisse sur votre torse, votre ventre, et descend sous l’eau. Elle effleure votre vigueur dressée d’un seul passage, frôle la chaleur juste en dessous, et repart vers votre genou, comme par distraction, mais avec un sourire qui n’a rien de distrait.",
+          "Sa paume glisse sur votre torse, votre nombril, et descend sous l’eau. Elle vous effleure d’un seul passage, de la pointe jusqu’à la fente juste en dessous, et repart vers votre genou, comme par distraction, mais avec un sourire qui n’a rien de distrait.",
         ),
         B("Ton capitaine dort sur sa sacoche, à l’heure qu’il est. Moi, je te lave. Qui a la meilleure nuit, à ton avis ?", "teasing"),
         P("Pas Draven."),
@@ -150,9 +150,9 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
         B("Écoute. C’est toi qui joues. Je l’ai accordé sur ton pouls en montant l’escalier.", "teasing"),
         "Elle s’agenouille dans l’eau entre vos jambes, et ses baisers remontent lentement depuis vos genoux. À chaque baiser, une note.",
         X(
-          "Quand sa bouche arrive enfin sur votre chaleur, le piano plaque un accord entier. Sa langue vous ouvre, trouve votre perle de plaisir et s’y installe avec une patience terrible, tandis que deux de ses doigts glissent en vous et se recourbent juste assez pour que la mélodie, en dessous, perde complètement le fil.",
+          "Quand sa bouche arrive enfin entre vos cuisses, le piano plaque un accord entier. Sa langue vous ouvre, trouve votre bouton et s’y installe avec une patience terrible, tandis que deux de ses doigts glissent en vous et se recourbent juste assez pour que la mélodie, en dessous, perde complètement le fil.",
           "Quand sa bouche se referme enfin sur votre virilité, le piano plaque un accord entier. Elle vous prend lentement, profondément, sa main serrée à la base, et règle le mouvement de sa tête sur la mélodie en dessous, ou la mélodie sur elle, vous ne savez plus.",
-          "Quand sa bouche se referme enfin sur votre vigueur, le piano plaque un accord entier. Deux de ses doigts trouvent votre chaleur au même moment et s’y glissent, et elle fait travailler sa bouche et sa main sur deux mesures différentes, si bien que la mélodie, en dessous, se met à jouer deux airs à la fois.",
+          "Quand sa bouche se referme enfin sur votre vigueur, le piano plaque un accord entier. Deux de ses doigts trouvent votre entrée au même moment et s’y glissent, et elle fait travailler sa bouche et sa main sur deux mesures différentes, si bien que la mélodie, en dessous, se met à jouer deux airs à la fois.",
         ),
         "Vous vous entendez devenir une musique de plus en plus pressée. Elle rit, la bouche pleine de vous, et le rire vibre jusque dans vos reins.",
       ],
@@ -171,9 +171,9 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
       ],
       [
         X(
-          "Le plaisir vous prend d’un seul coup, vos cuisses se refermant autour de sa tête, votre chaleur se contractant autour de ses doigts en longues vagues. En dessous, le piano plaque une fausse note magnifique, retentissante, qui résonne dans toute l’aile du palais.",
+          "Le plaisir vous prend d’un seul coup, vos cuisses se refermant autour de sa tête, vous contractant autour de ses doigts en longues vagues. En dessous, le piano plaque une fausse note magnifique, retentissante, qui résonne dans toute l’aile du palais.",
           "Le plaisir vous prend d’un seul coup ; vous vous répandez dans sa bouche en vous agrippant au rebord de cuivre, et elle vous garde jusqu’au bout. En dessous, le piano plaque une fausse note magnifique, retentissante, qui résonne dans toute l’aile du palais.",
-          "Le plaisir vous prend d’un seul coup, des deux côtés à la fois : votre vigueur se libère dans sa bouche tandis que votre chaleur se resserre autour de ses doigts. En dessous, le piano plaque deux fausses notes en même temps, retentissantes, qui résonnent dans toute l’aile du palais.",
+          "Le plaisir vous prend d’un seul coup, des deux côtés à la fois : vous vous répandez dans sa bouche tandis que vos replis se resserrent autour de ses doigts. En dessous, le piano plaque deux fausses notes en même temps, retentissantes, qui résonnent dans toute l’aile du palais.",
         ),
         "Bellirith éclate de rire, le front contre votre genou, encore essoufflée de vous.",
         B("Quarante ans de dressage, et tu le fais rater en une soirée. Je devrais te faire payer l’accordeur.", "smirk"),
@@ -195,7 +195,7 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
       [
         "Vous glissez de nouveau dans l’eau et l’attirez à vous. Elle pousse une exclamation indignée qui ne trompe personne et vient s’asseoir à califourchon sur vos cuisses, les bras autour de votre cou, ses seins écrasés contre votre poitrine.",
         B("Tu crois que c’est toi qui m’as attirée. C’est mignon. Je te laisse le croire encore une minute.", "teasing"),
-        "Vous l’embrassez. Elle vous rend le baiser en le prenant aussitôt en main, la langue joueuse, les ongles dans votre nuque. Vos mains descendent le long de son dos, sur ses hanches, empoignent ses fesses sous l’eau. Elle ondule contre vous, et vous sentez sa chaleur glisser contre votre ventre, plus brûlante que le bain.",
+        "Vous l’embrassez. Elle vous rend le baiser en le prenant aussitôt en main, la langue joueuse, les ongles dans votre nuque. Vos mains descendent le long de son dos, sur ses hanches, empoignent ses fesses sous l’eau. Elle ondule contre vous, et vous la sentez glisser contre votre peau, plus brûlante que le bain.",
         W(FAVORITE, [B("Mon favori a pris de l’assurance. Ne t’habitue pas.", "smirk")], [B("Tu as des mains audacieuses pour quelqu’un qui tremblait sur le rebord il y a une minute.", "smirk")]),
       ],
       [
@@ -215,9 +215,9 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
       [
         "La minute passe. Elle reprend aussitôt la mesure, et c’est une mesure très lente.",
         X(
-          "Elle s’ajuste sur votre cuisse, sa chaleur contre la vôtre, et glisse une main entre vous pour trouver votre perle de plaisir. Elle se frotte contre vous en grands cercles paresseux que l’eau rend soyeux, et ses doigts suivent le même dessin, exactement, sans jamais se presser.",
+          "Elle s’ajuste sur votre cuisse, sexe contre sexe, et glisse une main entre vous pour trouver le point qui vous fait sursauter. Elle se frotte contre vous en grands cercles paresseux que l’eau rend soyeux, et ses doigts suivent le même dessin, exactement, sans jamais se presser.",
           "Elle se soulève, prend votre virilité dans sa main sous l’eau et descend sur vous avec une lenteur calculée, jusqu’à vous avoir entièrement en elle. Puis elle reste immobile, serrée autour de vous, et vous regarde perdre patience.",
-          "Elle se soulève, prend votre vigueur dans sa main sous l’eau et descend sur vous avec une lenteur calculée, jusqu’à vous avoir entièrement en elle. Puis elle glisse deux doigts sous elle, jusqu’à votre chaleur, pour que vous ne puissiez rien oublier de vous-même pendant qu’elle reste immobile.",
+          "Elle se soulève, vous saisit sous l’eau et descend sur vous avec une lenteur calculée, jusqu’à vous avoir entièrement en elle. Puis elle glisse deux doigts sous elle, jusqu’à ce qui se cache sous votre sexe, pour que vous ne puissiez rien oublier de vous-même pendant qu’elle reste immobile.",
         ),
         "Chaque fois que vous essayez d’accélérer, elle pose un doigt sur vos lèvres.",
         B("Non. Lentement. Je veux que tu t’en souviennes dans la forêt, au milieu des ronces, quand Naïah te fera tourner en rond.", "seductive"),
@@ -240,9 +240,9 @@ export const RETURN_AKUHN_ROUTE: AuthoredRoute = {
       [
         "Elle accélère enfin, au moment qu’elle a choisi. Elle vous tient par la nuque pour que vous la regardiez, et vous la regardez : les lèvres entrouvertes, les yeux mi-clos, l’expression concentrée de quelqu’un qui mène une manœuvre délicate jusqu’à son terme.",
         X(
-          "Ses doigts ne quittent pas votre perle de plaisir, ses hanches ne quittent pas les vôtres. Elle jouit la première, longuement, en se resserrant contre votre cuisse, et le plaisir vous reprend dans la foulée, appelé par le sien.",
+          "Ses doigts ne vous quittent pas, ses hanches ne quittent pas les vôtres. Elle jouit la première, longuement, en se resserrant contre votre cuisse, et le plaisir vous reprend dans la foulée, appelé par le sien.",
           "Elle se soulève et retombe sur vous, de plus en plus fort, l’eau débordant du bassin à chaque mouvement. Elle jouit la première, longuement, en se resserrant autour de votre virilité, et vous la suivez aussitôt, emporté au fond d’elle.",
-          "Elle se soulève et retombe sur votre vigueur, de plus en plus fort, ses doigts toujours dans votre chaleur. Elle jouit la première, longuement, en se resserrant autour de vous, et vous la suivez des deux côtés à la fois, avec un cri qu’elle étouffe d’un baiser.",
+          "Elle se soulève et retombe sur vous, de plus en plus fort, ses doigts toujours enfoncés en vous. Elle jouit la première, longuement, en se resserrant autour de vous, et vous la suivez des deux côtés à la fois, avec un cri qu’elle étouffe d’un baiser.",
         ),
         "La vapeur, autour de vous, devient entièrement rose.",
         B("Voilà. Tu peux respirer, maintenant. Je t’y autorise.", "seductive"),

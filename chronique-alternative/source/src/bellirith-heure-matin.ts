@@ -122,7 +122,7 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Sa main descend entre vos cuisses et vous caresse avec une lenteur exaspérante, un doigt glissant le long de votre intimité sans jamais appuyer sur votre perle. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
             "Sa main se referme sur votre virilité et vous caresse avec une lenteur exaspérante, du bas jusqu’au sommet, un seul passage à la fois. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
-            "Sa main se referme sur votre vigueur pendant que deux doigts de l’autre effleurent votre chaleur, avec une lenteur exaspérante, un seul passage à la fois. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
+            "Sa main se referme sur votre sexe dressé pendant que deux doigts de l’autre vous effleurent juste dessous, avec une lenteur exaspérante, un seul passage à la fois. Chaque fois que votre souffle s’accélère, elle s’arrête et attend.",
           ),
           "Quand vous vous calmez, elle reprend exactement là où elle s’était interrompue, sans un millimètre d’écart.",
           B("Le rythme, c’est moi. Tu te souviens ?", "seductive"),
@@ -169,7 +169,7 @@ export const HEURE_MATIN: HeureVolee = {
         ],
         [
           "Vous suivez la bande de soleil sur son corps et vous l’embrassez partout où la lumière la touche : l’épaule, la pointe d’un sein, la hanche, le genou.",
-          "Puis vous quittez la lumière pour descendre entre ses cuisses. Vous la goûtez à votre tour avec la même lenteur qu’elle vous a imposée, la langue paresseuse sur sa perle, deux doigts en elle qui bougent à peine. Elle rit, d’un rire de matin, la tête renversée dans les oreillers, puis le rire se brise et elle jouit contre votre bouche en vous tenant par les cheveux.",
+          "Puis vous quittez la lumière pour descendre l’embrasser plus bas. Vous la goûtez à votre tour avec la même lenteur qu’elle vous a imposée, la langue paresseuse sur sa perle, deux doigts en elle qui bougent à peine. Elle rit, d’un rire de matin, la tête renversée dans les oreillers, puis le rire se brise et elle jouit contre votre bouche en vous tenant par les cheveux.",
         ],
         ["Vous l’embrassez partout où le soleil la touche, puis plus bas. Elle rit, la tête dans les oreillers."],
       ),
@@ -186,7 +186,7 @@ export const HEURE_MATIN: HeureVolee = {
           X(
             "Vous glissez une cuisse entre les siennes et votre main descend sur son intimité pendant que la sienne trouve la vôtre, en arrière. Vous vous caressez ainsi l’une l’autre, lovées, presque sans bouger.",
             "Elle soulève un peu la jambe et vous guide en elle, par-derrière, d’un mouvement paresseux. Vous bougez à peine, lovés l’un contre l’autre, en longues poussées lentes.",
-            "Elle soulève un peu la jambe et guide votre vigueur en elle, par-derrière, d’un mouvement paresseux, puis passe une main en arrière pour caresser votre chaleur. Vous bougez à peine, lovés l’un contre l’autre.",
+            "Elle soulève un peu la jambe et vous guide en elle, par-derrière, d’un mouvement paresseux, puis passe une main en arrière pour trouver aussi votre fente mouillée. Vous bougez à peine, lovés l’un contre l’autre.",
           ),
           "Une paresse délicieuse, comme on se rendort. Dans le couloir, le thé refroidit.",
         ],
@@ -202,9 +202,9 @@ export const HEURE_MATIN: HeureVolee = {
         [
           "Le plaisir vient tard. Il monte si lentement que vous ne le voyez pas arriver.",
           X(
-            "Elle jouit la première, de nouveau, sous vos doigts, et c’est sa main crispée entre vos cuisses qui vous emporte ensuite, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
+            "Elle jouit la première, de nouveau, sous vos doigts, et c’est sa main crispée sur vous qui vous emporte ensuite, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
             "Elle se resserre autour de vous en gémissant, et vous jouissez en elle à votre tour, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
-            "Elle se resserre autour de votre vigueur en gémissant, ses doigts pressés contre votre chaleur, et vous jouissez à votre tour, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
+            "Elle se resserre autour de vous en gémissant, ses doigts toujours en vous, et vous jouissez à votre tour, longuement, comme une vague qui a pris son temps pour atteindre le rivage.",
           ),
         ],
         ["Le plaisir monte lentement, puis vous emporte longtemps."],

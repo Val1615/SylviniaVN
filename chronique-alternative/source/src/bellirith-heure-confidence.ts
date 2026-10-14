@@ -135,7 +135,7 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Elle s’allonge entre vos cuisses et vous prend avec la bouche, sans préambule, la langue pressée contre votre perle, deux doigts recourbés en vous. Elle y met tout ce qu’elle sait, et elle en sait beaucoup trop.",
             "Elle s’allonge entre vos cuisses et vous prend dans sa bouche jusqu’au fond, sans préambule, une main serrée à la base. Elle y met tout ce qu’elle sait, et elle en sait beaucoup trop.",
-            "Elle s’allonge entre vos cuisses, prend votre vigueur dans sa bouche et enfonce deux doigts dans votre chaleur. Elle y met tout ce qu’elle sait, des deux côtés à la fois, et elle en sait beaucoup trop.",
+            "Elle s’allonge entre vos cuisses, vous prend dans sa bouche et enfonce deux doigts en vous, de l’autre côté. Elle y met tout ce qu’elle sait, des deux côtés à la fois, et elle en sait beaucoup trop.",
           ),
           "Au bout d’un moment, vous ne pensez plus à grand-chose. Elle le voit, et son triomphe sent le soulagement.",
         ],
@@ -177,7 +177,7 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Vous vous allongez sur elle, intimité contre intimité, et vous commencez à bouger. Vos chaleurs glissent l’une contre l’autre, lentement, vos doigts entremêlés pour vous ouvrir l’une à l’autre. Elle garde les yeux fermés.",
             "Elle vous guide en elle d’une main et vous attire jusqu’au bout. Vous commencez à bouger, lentement, profondément. Elle garde les yeux fermés.",
-            "Elle guide votre vigueur en elle et vous attire jusqu’au bout, puis glisse une main entre vous pour caresser votre chaleur. Vous commencez à bouger, lentement. Elle garde les yeux fermés.",
+            "Elle vous guide en elle et vous attire jusqu’au bout, puis glisse une main entre vous pour caresser aussi ce qu’elle n’a pas oublié plus bas. Vous commencez à bouger, lentement. Elle garde les yeux fermés.",
           ),
           P("Regarde-moi."),
           "Elle les ouvre. Elle ne dit rien. Elle vous regarde pendant tout le reste, et c’est peut-être la chose la plus difficile qu’elle ait faite de la soirée.",
@@ -197,7 +197,7 @@ export const HEURE_CONFIDENCE: HeureVolee = {
           X(
             "Vous jouissez l’une contre l’autre, presque ensemble, ses doigts serrés sur les vôtres.",
             "Elle se resserre autour de vous et vous jouissez en elle presque au même instant, sa main crispée dans votre nuque.",
-            "Elle se resserre autour de votre vigueur, ses doigts pressés contre votre chaleur, et vous jouissez des deux côtés presque au même instant qu’elle.",
+            "Elle se resserre autour de vous, ses doigts toujours pressés sous votre sexe, et vous jouissez des deux côtés presque au même instant qu’elle.",
           ),
           "Elle laisse échapper un son bref, à mi-chemin entre un rire et un sanglot, et l’étouffe aussitôt contre votre épaule. Vous ne lui demandez pas ce que c’était.",
         ],

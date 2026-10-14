@@ -67,10 +67,10 @@ const n1b = {
       H("Tu as perdu tout seul. J’adore.", "teasing"),
     ),
     S(
-      N("Plus de vêtements à miser : Naïah change l’enjeu sans demander l’avis de personne. Elle vous allonge contre Hylee, nu·e, et dépose ses perles une à une : une sur chaque sein, une sous le nombril, une en équilibre sur votre vigueur, une dernière plus bas, au seuil de votre chaleur."),
+      N("Plus de vêtements à miser : Naïah change l’enjeu sans demander l’avis de personne. Elle vous allonge contre Hylee, nu·e, et dépose ses perles une à une : une sur chaque sein, une sous le nombril, une en équilibre au sommet de votre sexe, une dernière plus bas, à l’orée de vos replis."),
       A("Nouvelle règle. Chaque perle qui tombe, Hylee décide où va sa bouche. Toi, tu as plus de perles. C’est une question d’équité."),
       H("C’est la première règle intelligente de la journée.", "teasing"),
-      N("La perle posée sur votre vigueur tombe la première, trahie par votre propre désir. Hylee sourit et choisit l’endroit le plus cruel : juste entre les deux."),
+      N("La perle posée en haut tombe la première, trahie par votre propre désir. Hylee sourit et choisit l’endroit le plus cruel : juste entre les deux."),
     ),
   ),
   ex7: X(
@@ -87,10 +87,10 @@ const n1b = {
       N("Vexée trois secondes, Naïah défait son chapelet et regarde. Ce qui vous fait gémir, ce n’est pas la nouveauté : c’est la main d’Hylee qui recommence le même geste, encore et encore, sans jamais changer de rythme."),
     ),
     S(
-      N("Naïah veut sa part de la victoire. Elle fait rouler une perle tiède sur votre vigueur, puis une autre au seuil de votre chaleur, en alternance, très consciencieusement. L’alternance vous fait rire : on dirait qu’elle essaie deux serrures avec la même clé."),
+      N("Naïah veut sa part de la victoire. Elle fait rouler une perle tiède le long de votre sexe, puis une autre juste dessous, en alternance, très consciencieusement. L’alternance vous fait rire : on dirait qu’elle essaie deux serrures avec la même clé."),
       A("Ça devait marcher. Chaque moitié est correcte.", "angry"),
       H("Ce n’est pas des moitiés, Naïah.", "teasing"),
-      N("Vexée trois secondes, Naïah observe. Votre souffle ne se brise que lorsque la bouche d’Hylee reste sur votre vigueur pendant que ses doigts entrent dans votre chaleur : les deux en même temps, sans tour de rôle."),
+      N("Vexée trois secondes, Naïah observe. Votre souffle ne se brise que lorsque la bouche d’Hylee reste sur vous pendant que ses doigts entrent plus bas : les deux en même temps, sans tour de rôle."),
     ),
   ),
   ex8: X(
@@ -107,7 +107,7 @@ const n1b = {
       A("J’ai toujours fini par trouver. C’est toi qui l’as dit."),
     ),
     S(
-      N("Naïah ne cherche plus à alterner. Une ombre s’enroule autour de votre vigueur, une autre se glisse dans votre chaleur, et toutes deux bougent ensemble, dans le même souffle. La perle posée sur votre ventre tressaute à chaque mouvement. Votre gémissement fait tourner la tête à Hylee."),
+      N("Naïah ne cherche plus à alterner. Une ombre s’enroule autour de votre hampe, une autre se glisse dans votre fente, et toutes deux bougent ensemble, dans le même souffle. La perle posée sur votre ventre tressaute à chaque mouvement. Votre gémissement fait tourner la tête à Hylee."),
       A("Pas l’un puis l’autre. Les deux, comme un seul nœud."),
       H("Elle a trouvé.", "surprised"),
       A("J’ai toujours fini par trouver. C’est toi qui l’as dit."),
@@ -127,7 +127,7 @@ const n1c = {
     S(
       N("Naïah, libérée à condition de ne plus rien proposer, propose immédiatement quelque chose. Elle glisse derrière Hylee, l’attire contre sa poitrine et lui écarte doucement les genoux, en vous regardant par-dessus son épaule."),
       A("Elle aime qu’on la frôle. Toi, tu aimes qu’on appuie. Faisons les deux en même temps, pour voir qui craque."),
-      N("Vous vous allongez contre Hylee, votre cuisse entre les siennes, vos chaleurs l’une contre l’autre. Vos doigts trouvent sa perle de plaisir, les siens trouvent la vôtre. Naïah, elle, laisse une ombre se glisser en Hylee, lentement, très lentement, à la manière d’un fil qu’on passe dans le chas d’une aiguille."),
+      N("Vous vous allongez contre Hylee, votre cuisse entre les siennes, vos chaleurs l’une contre l’autre. Vos doigts la trouvent, les siens vous trouvent. Naïah, elle, laisse une ombre se glisser en Hylee, lentement, très lentement, à la manière d’un fil qu’on passe dans le chas d’une aiguille."),
       H("Tu fais exprès d’être lente.", "surprised"),
       A("Je fais tout exprès."),
     ),
@@ -135,7 +135,7 @@ const n1c = {
       N("Naïah, libérée à condition de ne plus rien proposer, propose immédiatement quelque chose. Elle glisse derrière Hylee, l’attire contre sa poitrine et vous la présente comme un trophée de tournoi."),
       A("Elle te veut en elle. Elle ne le dira pas. Je le dis pour elle."),
       H("Je vais le dire moi-même. Viens.", "determined"),
-      N("Vous entrez en Hylee, allongée contre Naïah qui la tient par la taille. Hylee vous enserre de ses jambes. Les doigts de Naïah descendent sur son ventre, trouvent la perle de plaisir et la frôlent à peine, au rythme exact où vous allez et venez, comme si elle tenait les deux bouts du même fil."),
+      N("Vous entrez en Hylee, allongée contre Naïah qui la tient par la taille. Hylee vous enserre de ses jambes. Les doigts de Naïah descendent sur son ventre, trouvent le point le plus tendre et le frôlent à peine, au rythme exact où vous allez et venez, comme si elle tenait les deux bouts du même fil."),
     ),
     S(
       N("Naïah, libérée à condition de ne plus rien proposer, propose immédiatement quelque chose. Elle glisse derrière Hylee, l’attire contre sa poitrine et lui murmure une phrase que vous n’entendez pas. Hylee rougit jusqu’aux oreilles."),
@@ -152,7 +152,7 @@ const n1c = {
       A("Je savais que tu perdais toujours au jeu du silence."),
     ),
     S(
-      N("Hylee craque la première. Évidemment. Vous en elle, les doigts de Naïah sur la perle de plaisir, la comptine que Naïah se met à fredonner juste pour la faire rire au pire moment : Hylee jouit en riant et en jurant à la fois, serrée autour de vous, le corps secoué de longues vagues."),
+      N("Hylee craque la première. Évidemment. Vous en elle, les doigts de Naïah posés là où Hylee frémit, la comptine que Naïah se met à fredonner juste pour la faire rire au pire moment : Hylee jouit en riant et en jurant à la fois, serrée autour de vous, le corps secoué de longues vagues."),
       A("La chanson de la chèvre. Toujours efficace."),
       H("Je te… je vais… tu vas me le payer.", "angry"),
       N("Vous, vous tenez encore. Pas longtemps."),
@@ -177,10 +177,10 @@ const n1c = {
       H("Moi, j’en reviens très bien.", "teasing"),
     ),
     S(
-      N("Naïah, ravie, ramasse la seule perle restée sur votre ventre et la pose sur celui d’Hylee, qui halète encore."),
+      N("Naïah, ravie, ramasse la seule perle restée sur vous et la pose sur celui d’Hylee, qui halète encore."),
       A("Celle-là n’est pas tombée. Ça veut dire que tu peux encore jouer."),
       H("Je ne peux plus rien du tout.", "soft"),
-      N("Vous lui prouvez le contraire. Vos doigts sur sa perle de plaisir, une ombre de Naïah en elle : Hylee jouit une seconde fois, plus doucement, et la perle roule enfin de son ventre dans l’herbe."),
+      N("Vous lui prouvez le contraire. Votre pouce là où elle est la plus tendre, une ombre de Naïah en elle : Hylee jouit une seconde fois, plus doucement, et la perle roule enfin de son ventre dans l’herbe."),
     ),
   ),
   ex13: S(
@@ -325,7 +325,7 @@ const n2b = {
       N("Hylee resserre encore, très légèrement. Vous serrez les dents. Sa ceinture rejoint votre chemise dans l’herbe, et derrière elle le hamac grince d’indignation."),
     ),
     S(
-      N("Hylee laisse Naïah se balancer et se tourne vers vous, un fil d’ombre volé enroulé autour de la main. Elle vous pousse doucement contre le tronc, défait vos vêtements et fait glisser le fil le long de votre vigueur, puis plus bas, jusqu’au seuil de votre chaleur, en un seul trait continu."),
+      N("Hylee laisse Naïah se balancer et se tourne vers vous, un fil d’ombre volé enroulé autour de la main. Elle vous pousse doucement contre le tronc, défait vos vêtements et fait glisser le fil le long de votre sexe, puis plus bas, jusqu’à l’entrée qu’il cache, en un seul trait continu."),
       H("Un seul fil. Deux nœuds possibles. Je n’ai pas encore choisi.", "teasing"),
       A("Ne la laisse pas choisir, elle choisit toujours le plus lent.", "angry"),
       N("Hylee choisit le plus lent. Sa ceinture rejoint vos vêtements dans l’herbe, et derrière elle le hamac grince d’indignation."),
@@ -333,7 +333,7 @@ const n2b = {
   ),
   ex7: X(
     S(
-      N("Naïah, suspendue, libère un doigt des mailles. Un fil d’ombre très fin en sort, traverse l’air et vient se poser sur votre perle de plaisir, tendu comme une corde de harpe, qu’elle pince d’un coup sec. Vous sursautez et éclatez de rire. C’était beaucoup trop net."),
+      N("Naïah, suspendue, libère un doigt des mailles. Un fil d’ombre très fin en sort, traverse l’air et vient se poser sur votre bouton, tendu comme une corde de harpe, qu’elle pince d’un coup sec. Vous sursautez et éclatez de rire. C’était beaucoup trop net."),
       A("Ça devait faire une note. Une très belle note.", "angry"),
       H("Tu as joué de la harpe sur elle. Évidemment qu’elle rit.", "teasing"),
       N("Naïah, vexée trois secondes dans son hamac, regarde le fil d’Hylee qui caresse votre ventre sans jamais se tendre, toujours souple, toujours en mouvement."),
@@ -345,7 +345,7 @@ const n2b = {
       N("Naïah, vexée trois secondes dans son hamac, regarde le fil d’Hylee : il ne vibre pas. Il serre et relâche, au rythme de votre propre souffle."),
     ),
     S(
-      N("Naïah, suspendue, libère un doigt des mailles. Un fil d’ombre en sort et vient se poser au seuil de votre chaleur, puis se met à vibrer, très vite, comme une corde pincée. Le chatouillement est absurde. Vous éclatez de rire, et le fil d’Hylee sur votre vigueur en perd sa cadence."),
+      N("Naïah, suspendue, libère un doigt des mailles. Un fil d’ombre en sort et vient se poser au seuil de votre chaleur, puis se met à vibrer, très vite, comme une corde pincée. Le chatouillement est absurde. Vous éclatez de rire, et le fil d’Hylee sur votre peau en perd sa cadence."),
       A("Ça devait faire une note. Une très belle note.", "angry"),
       H("Tu viens de casser mon rythme. Merci beaucoup.", "angry"),
       N("Naïah, vexée trois secondes dans son hamac, regarde le fil d’Hylee, puis le sien, et comprend que les deux doivent respirer ensemble."),
@@ -387,7 +387,7 @@ const n2c = {
     S(
       N("Dans le cocon, il n’y a plus de place pour la colère. Hylee, plaquée contre vous, ondule des hanches et vous guide en elle d’un mouvement têtu, comme pour reprendre au moins ce terrain-là. Naïah, libre, tourne autour du hamac et pousse la toile du bout du doigt."),
       A("Je donne le rythme. Vous, vous le suivez."),
-      N("Chaque oscillation vous enfonce plus loin en Hylee, puis vous retire, sans que vous puissiez rien y faire. Naïah accélère, ralentit, s’arrête net. Un filament d’ombre se glisse entre les mailles et se pose sur la perle de plaisir d’Hylee, qui jure contre votre bouche."),
+      N("Chaque oscillation vous enfonce plus loin en Hylee, puis vous retire, sans que vous puissiez rien y faire. Naïah accélère, ralentit, s’arrête net. Un filament d’ombre se glisse entre les mailles et se pose tout en haut du sexe d’Hylee, qui jure contre votre bouche."),
       H("Tu ne contrôles pas… ça… Naïah…", "surprised"),
       A("Je contrôle la balançoire. Le reste suit."),
     ),
@@ -412,7 +412,7 @@ const n2c = {
       A("Je l’ai parié dans ma tête. Ça compte."),
     ),
     S(
-      N("Le tissage vous emporte. Hylee qui vous enserre, le fil qui s’enfonce au retour : votre plaisir éclate des deux côtés à la fois, au fond du balancement, et vous arrache un cri qui fait trembler la branche. Hylee jouit sur vous presque au même instant, les doigts de Naïah posés sur sa perle de plaisir entre deux mailles."),
+      N("Le tissage vous emporte. Hylee qui vous enserre, le fil qui s’enfonce au retour : votre plaisir éclate des deux côtés à la fois, au fond du balancement, et vous arrache un cri qui fait trembler la branche. Hylee jouit sur vous presque au même instant, les doigts de Naïah posés sur elle entre deux mailles."),
       A("Chaîne et trame. Une seule pièce de tissu."),
       H("Arrête de faire des métaphores de couture.", "soft"),
     ),
@@ -480,7 +480,7 @@ const N2: HNSeed = {
     S(N("Suspendue dans son hamac, elle rit sous les chatouilles, puis se calme contre la peau d’Hylee qui la rattrape."), A("C’est très bien fait. Je suis furieuse.", "laugh")),
     X(
       S(N("Hylee vous embrasse contre le tronc. Vos vêtements tombent ; un fil volé glisse sur votre peau comme une plume froide.")),
-      S(N("Hylee vous embrasse contre le tronc. Vos vêtements tombent ; un fil volé s’enroule autour de votre désir, lâche, taquin.")),
+      S(N("Hylee vous embrasse contre le tronc. Vos vêtements tombent ; un fil volé s’enroule autour de votre sexe, lâche, taquin.")),
       S(N("Hylee vous embrasse contre le tronc. Vos vêtements tombent ; un fil volé dessine sur vous un seul trait continu.")),
     ),
     S(N("Depuis son hamac, Naïah essaie un fil qui vous fait rire. Elle observe, se tait, puis le rend souple. Cette fois, vous soupirez."), H("Elle apprend même attachée.", "surprised")),
@@ -498,7 +498,7 @@ const N2: HNSeed = {
     S(N("Elle se débat, le tissage se resserre, elle rit sous les chatouilles."), A("Je suis furieuse.", "laugh")),
     X(
       S(N("Contre le tronc, un fil volé glisse sur votre peau nue.")),
-      S(N("Contre le tronc, un fil volé s’enroule autour de votre désir.")),
+      S(N("Contre le tronc, un fil volé vous enlace, à la base.")),
       S(N("Contre le tronc, un fil volé trace un trait entre vos deux foyers.")),
     ),
     S(N("Depuis le hamac : un fil qui fait rire, puis un fil qui fait soupirer."), H("Elle apprend même attachée.", "surprised")),
@@ -568,7 +568,7 @@ const n3b = {
     S(
       N("Elle recule, s’assied sur la roche plate et vous regarde, l’air innocent. Hylee ne la lâche pas des yeux tout en vous attirant contre elle, sa bouche dans votre cou, ses mains qui défont vos vêtements."),
       H("Elle va passer par-derrière. Puis elle va dire « regarde ». Ne regarde pas.", "teasing"),
-      N("Vos vêtements tombent, puis les siens. Une de ses mains se referme sur votre vigueur, l’autre glisse plus bas, dans votre chaleur, et elle les fait bouger en sens contraire, en vous fixant droit dans les yeux."),
+      N("Vos vêtements tombent, puis les siens. Une de ses mains se referme sur votre sexe, l’autre glisse plus bas, dans votre fente, et elle les fait bouger en sens contraire, en vous fixant droit dans les yeux."),
       A("Regarde."),
       H("Ne regarde pas.", "determined"),
     ),
@@ -589,7 +589,7 @@ const n3b = {
       N("Naïah se tait trois secondes, vexée, puis vient s’asseoir tout près, sans ombre cette fois, pour observer la manière."),
     ),
     S(
-      N("Vous ne regardez pas. Une troisième main se pose alors sur votre vigueur, une main d’Hylee, exactement, jusqu’au petit pli de l’index, et reprend le même rythme que la vraie au lieu du rythme contraire. Le doublon vous fait éclater de rire : les deux mains d’Hylee se battent pour la même place."),
+      N("Vous ne regardez pas. Une troisième main se referme alors sur vous, une main d’Hylee, exactement, jusqu’au petit pli de l’index, et reprend le même rythme que la vraie au lieu du rythme contraire. Le doublon vous fait éclater de rire : les deux mains d’Hylee se battent pour la même place."),
       H("Tu copies mes mains, mais pas ce qu’elles font. Elles ne vont jamais dans le même sens.", "teasing"),
       A("J’ai copié ta main au détail près !", "angry"),
       N("Naïah se tait trois secondes, vexée, puis vient s’asseoir tout près, sans ombre cette fois, pour observer le sens."),

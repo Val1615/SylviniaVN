@@ -183,7 +183,7 @@ export const HEURE_FAVEUR: HeureVolee = {
           X(
             "Elle se couche sur vous, son intimité contre la vôtre, et ondule lentement, puis de plus en plus vite. Comme convenu, vous la faites rouler sur le dos à mi-chemin et c’est vous qui menez la fin, vos chaleurs glissant l’une contre l’autre.",
             "Elle descend sur vous et vous chevauche lentement, puis de plus en plus fort. Comme convenu, vous la faites rouler sur le dos à mi-chemin et vous la prenez au-dessus, ses chevilles croisées dans votre dos.",
-            "Elle descend sur votre vigueur, une main pressée sur votre chaleur, et vous chevauche lentement, puis de plus en plus fort. Comme convenu, vous la faites rouler sur le dos à mi-chemin et vous terminez au-dessus, ses chevilles croisées dans votre dos.",
+            "Elle descend sur vous, une main pressée sur vos replis mouillés, et vous chevauche lentement, puis de plus en plus fort. Comme convenu, vous la faites rouler sur le dos à mi-chemin et vous terminez au-dessus, ses chevilles croisées dans votre dos.",
           ),
           "Les armoiries de dix-sept délégations s’impriment dans vos peaux. Une boucle de ceinturon vous mord la hanche, un col de fourrure vous chatouille la nuque, et elle se moque de vous à chaque grimace sans ralentir pour autant, jusqu’à ce que vous la fassiez taire d’un coup de reins plus profond que les autres.",
         ],
@@ -200,7 +200,7 @@ export const HEURE_FAVEUR: HeureVolee = {
           X(
             "Le plaisir vous prend presque en même temps, vos corps frottés l’un contre l’autre jusqu’au bout, juste au moment où, derrière la cloison, le menuet s’achève sur un accord.",
             "Elle se resserre autour de vous et vous jouissez en elle presque en même temps, juste au moment où, derrière la cloison, le menuet s’achève sur un accord.",
-            "Elle se resserre autour de votre vigueur et vous jouissez des deux côtés presque en même temps, juste au moment où, derrière la cloison, le menuet s’achève sur un accord.",
+            "Elle vous serre en elle de tout son poids et vous jouissez des deux côtés presque en même temps, juste au moment où, derrière la cloison, le menuet s’achève sur un accord.",
           ),
           "La salle voisine applaudit. Bellirith, hors d’haleine, incline la tête vers la cloison avec la gravité d’une soliste qui salue.",
         ],

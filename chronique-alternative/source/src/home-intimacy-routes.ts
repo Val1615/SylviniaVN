@@ -339,7 +339,7 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       tender: ["Elle renonce aux images les plus spectaculaires. Une simple nuit étoilée apparaît au plafond tandis qu’elle apprend vos frissons par des caresses patientes et des baisers qui ne cherchent aucun public."],
       suggestive: ["La luciole descend le long de votre ventre et Naïah la suit de la langue. Ses illusions reproduisent autour de vous les poses qu’elle imagine, mais ses mains choisissent la plus intime et la rendent lentement réelle."],
       explicit: sexLines(
-        ["Naïah écarte vos lèvres de velours et fait tourner sa langue autour de votre perle de plaisir, guidée par la luciole posée sur votre ventre. Sur le lit, elle vient ensuite entrelacer ses jambes aux vôtres ; vos bassins se frottent en ciseaux jusqu’à une jouissance que l’illusion répète en pluie d’étoiles.", ["Naïah", "La lumière ment. Ton corps, lui, vient de dire quelque chose de magnifique.", "smirk"]],
+        ["Naïah écarte vos lèvres de velours et fait tourner sa langue autour de votre perle de plaisir, guidée par la luciole posée sous votre nombril. Sur le lit, elle vient ensuite entrelacer ses jambes aux vôtres ; vos bassins se frottent en ciseaux jusqu’à une jouissance que l’illusion répète en pluie d’étoiles.", ["Naïah", "La lumière ment. Ton corps, lui, vient de dire quelque chose de magnifique.", "smirk"]],
         ["Naïah prend votre membre dans sa bouche sous une voûte d’étoiles fausses, puis revient à califourchon sur vos hanches. Elle vous accueille lentement, varie l’angle en se penchant contre votre poitrine et accélère lorsque la luciole se met à tournoyer au-dessus du lit.", ["Naïah", "Regarde-moi, pas le ciel. C’est moi qui veux te faire perdre pied.", "smirk"]],
         ["La luciole éclaire tour à tour les zones que vous lui indiquez. Naïah y répond avec ses lèvres, ses doigts puis la pression de son bassin, changeant de position pour épouser votre anatomie jusqu’à ce que les étoiles illusoires éclatent au rythme de votre plaisir.", ["Naïah", "Une vérité assez forte pour faire tomber tout mon décor.", "soft"]],
       ),
@@ -569,7 +569,7 @@ const HOME_ROUTE_SEEDS: Record<string, HomeRouteSeed[]> = {
       ellipse: ["Le dernier rideau se ferme. Bellirith s’incline devant le public absent, puis vous entraîne derrière lui dans une nuit que personne n’applaudira."],
       reprise: ["Après le premier abandon, vous rouvrez un rideau sur la nuit. Bellirith vient derrière vous et reprend plus lentement, mains jointes aux vôtres contre le tissu, sans défi à gagner."],
       closing: ["À l’aube, elle rouvre les rideaux sans remettre son aura. La ville découvre seulement deux silhouettes paisibles et trop éloignées pour être reconnues.", ["Bellirith", "Qu’ils regardent la fenêtre. Ils ne sauront jamais ce qu’il fallait être pour entrer.", "soft"]],
-      after: sexText("Elle garde ses lèvres contre votre point de feu avant de remonter se blottir.", "Elle dessine sur votre torse la forme du rideau fermé.", "Elle laisse sa main ouverte sous la vôtre, sans rôle à défendre."),
+      after: sexText("Elle garde ses lèvres posées sur vous avant de remonter se blottir.", "Elle dessine sur votre torse la forme du rideau fermé.", "Elle laisse sa main ouverte sous la vôtre, sans rôle à défendre."),
     },
   ],
 

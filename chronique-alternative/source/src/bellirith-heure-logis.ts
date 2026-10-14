@@ -74,7 +74,7 @@ export const HEURE_LOGIS: HeureVolee = {
           X(
             "Elle baisse la tête et prend la pointe d’un de vos seins entre ses lèvres. Vous vous cambrez sur la chaise ; elle vous rappelle à l’ordre d’une main posée sur votre ventre, et continue, plus lentement.",
             "Elle ondule sur vos genoux, juste assez pour sentir votre désir durcir sous elle, et sourit contre votre bouche en vous rappelant que vous n’avez pas le droit de bouger.",
-            "Elle ondule sur vos genoux et sent votre vigueur se dresser contre elle. Elle glisse une main sous votre ceinture, effleure aussi votre chaleur, et sourit en vous rappelant que vous n’avez pas le droit de bouger.",
+            "Elle ondule sur vos genoux et vous sent durcir contre elle. Elle glisse une main sous votre ceinture, effleure aussi l’endroit moite juste en dessous, et sourit en vous rappelant que vous n’avez pas le droit de bouger.",
           ),
         ],
         ["Dame de cœur : vous ne pouvez plus quitter votre chaise. Elle s’assied sur vous."],
@@ -95,7 +95,7 @@ export const HEURE_LOGIS: HeureVolee = {
           X(
             "Elle défait votre ceinture avec les dents, tire le tissu le long de vos cuisses et pose la bouche sur votre chaleur, les mains toujours sagement croisées dans le dos, en vous regardant par en dessous.",
             "Elle défait votre ceinture avec les dents, libère votre virilité d’un coup de menton et la prend entre ses lèvres sans l’aide de ses mains, en vous regardant par en dessous.",
-            "Elle défait votre ceinture avec les dents, prend votre vigueur entre ses lèvres puis descend jusqu’à votre chaleur, alternant de l’une à l’autre sans l’aide de ses mains, en vous regardant par en dessous.",
+            "Elle défait votre ceinture avec les dents, vous prend entre ses lèvres puis descend plus bas encore, alternant de l’un à l’autre sans l’aide de ses mains, en vous regardant par en dessous.",
           ),
         ],
         ["Valet de pique : ses mains restent dans son dos. Elle se débrouille très bien sans."],
@@ -158,7 +158,7 @@ export const HEURE_LOGIS: HeureVolee = {
           X(
             "Elle écarte vos cuisses et vous caresse d’abord du plat de la main, longuement, avant de glisser deux doigts en vous et d’effleurer votre perle de la langue. Elle mène la cadence avec une patience de courtisane qui sait exactement quand le roi va céder.",
             "Elle prend votre virilité à deux mains, la caresse de la base au sommet, puis la conduit entre ses lèvres. Elle mène la cadence avec une patience de courtisane qui sait exactement quand le roi va céder.",
-            "Elle prend votre vigueur dans une main et glisse l’autre entre vos cuisses jusqu’à votre chaleur, puis vous goûte d’un côté pendant que ses doigts vous caressent de l’autre. Elle mène la cadence avec une patience de courtisane qui sait exactement quand le roi va céder.",
+            "Elle vous empoigne d’une main et glisse l’autre plus bas, dans votre moiteur, puis vous goûte d’un côté pendant que ses doigts vous caressent de l’autre. Elle mène la cadence avec une patience de courtisane qui sait exactement quand le roi va céder.",
           ),
         ],
         ["Roi de trèfle : vous voilà assis·e au bord du lit, servi·e à genoux."],
@@ -186,7 +186,7 @@ export const HEURE_LOGIS: HeureVolee = {
           X(
             "Elle frotte son intimité contre la vôtre, d’avant en arrière, avec une lenteur qui vous arrache des plaintes, puis vous faites rouler vos deux corps et c’est vous qui menez, vos chaleurs pressées l’une contre l’autre, vos doigts glissés en elle.",
             "Elle descend sur votre virilité jusqu’au bout et vous chevauche lentement, puis vous la faites rouler sur le dos et c’est vous qui la prenez, profondément, ses talons noués dans le creux de vos reins.",
-            "Elle descend sur votre vigueur jusqu’au bout et vous chevauche lentement en caressant votre chaleur du bout des doigts, puis vous la faites rouler sur le dos et c’est vous qui la prenez, ses talons noués dans le creux de vos reins.",
+            "Elle vous accueille en elle jusqu’au bout et vous chevauche lentement, ses doigts égarés sous votre sexe, puis vous la faites rouler sur le dos et c’est vous qui la prenez, ses talons noués dans le creux de vos reins.",
           ),
           "Elle se laisse faire en riant, et une carte oubliée crisse sous l’oreiller.",
         ],
@@ -204,7 +204,7 @@ export const HEURE_LOGIS: HeureVolee = {
           X(
             "Ses spasmes contre vous vous entraînent à votre tour, et vous jouissez en écrasant votre bouche contre la sienne.",
             "Ses spasmes autour de vous vous entraînent à votre tour, et vous jouissez en elle en écrasant votre bouche contre la sienne.",
-            "Ses spasmes autour de votre vigueur vous entraînent, sa main pressée contre votre chaleur, et vous jouissez des deux côtés en écrasant votre bouche contre la sienne.",
+            "Ses spasmes vous entraînent, sa main pressée tout contre votre fente, et vous jouissez des deux côtés en écrasant votre bouche contre la sienne.",
           ),
         ],
         ["Plus de règles. Vous basculez ensemble dans votre lit défait."],

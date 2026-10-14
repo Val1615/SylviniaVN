@@ -149,7 +149,7 @@ export const HEURE_SALON: HeureVolee = {
           X(
             "Elle écarte vos cuisses au bord du couvercle et pose la bouche sur votre chaleur. Sa langue trouve votre perle de plaisir et la cajole par petits cercles patients, pendant que le piano gronde sous vous à chaque frisson.",
             "Elle s’agenouille sur le banc, prend votre virilité dans sa main et la conduit entre ses lèvres. Elle vous goûte lentement, profondément, et le piano gronde sous vous à chaque frisson.",
-            "Elle s’agenouille sur le banc, prend votre vigueur entre ses lèvres et glisse deux doigts dans votre chaleur. Elle vous goûte des deux côtés à la fois, sans se presser, et le piano gronde sous vous à chaque frisson.",
+            "Elle s’agenouille sur le banc, vous prend entre ses lèvres et glisse deux doigts en vous, plus bas. Elle vous goûte des deux côtés à la fois, sans se presser, et le piano gronde sous vous à chaque frisson.",
           ),
           "Elle s’arrête juste avant que vous ne basculiez, se redresse et s’essuie la bouche du revers du poignet.",
         ],
@@ -194,9 +194,9 @@ export const HEURE_SALON: HeureVolee = {
         [
           "Elle se laisse glisser du couvercle sur vos genoux, face à vous, les jambes de part et d’autre du banc. Ses bras se nouent autour de votre cou et ses lèvres ne quittent plus les vôtres.",
           X(
-            "Elle glisse une main entre vous deux et ses doigts s’enfoncent en vous pendant qu’elle frotte sa chaleur contre la vôtre. Vos deux intimités se cherchent, se trouvent, glissent l’une sur l’autre au rythme qu’elle impose, et le clavier soupire sous ses reins à chaque mouvement.",
+            "Elle glisse une main entre vous deux et ses doigts s’enfoncent en vous pendant qu’elle frotte son sexe contre le vôtre. Vos deux intimités se cherchent, se trouvent, glissent l’une sur l’autre au rythme qu’elle impose, et le clavier soupire sous ses reins à chaque mouvement.",
             "Elle se soulève, vous guide d’une main et descend sur vous d’un seul mouvement, jusqu’au bout. Elle reste immobile un instant, la bouche ouverte contre la vôtre, puis commence à onduler, et le clavier soupire sous ses reins à chaque mouvement.",
-            "Elle se soulève, guide votre vigueur et descend sur vous jusqu’au bout, puis glisse deux doigts dans votre chaleur. Elle vous prend des deux côtés au même rythme, et le clavier soupire sous ses reins à chaque mouvement.",
+            "Elle se soulève, vous tient d’une main et descend sur vous jusqu’au bout, puis l’autre main se faufile sous vous. Elle vous prend des deux côtés au même rythme, et le clavier soupire sous ses reins à chaque mouvement.",
           ),
           B("Égalité. Je déteste l’égalité. Bouge, et fais-moi perdre.", "seductive"),
         ],
@@ -214,7 +214,7 @@ export const HEURE_SALON: HeureVolee = {
           X(
             "Elle bascule la première, frissonnante contre vous, et ses doigts recourbés en vous vous entraînent dans sa chute. Vous jouissez en serrant sa taille de toutes vos forces.",
             "Elle bascule la première, serrée autour de vous, et ses contractions vous entraînent dans sa chute. Vous jouissez en elle en serrant sa taille de toutes vos forces.",
-            "Elle bascule la première, serrée autour de votre vigueur pendant que ses doigts pressent votre chaleur, et vous jouissez des deux côtés à la fois en serrant sa taille de toutes vos forces.",
+            "Elle bascule la première, serrée autour de vous pendant que ses doigts vous fouillent, et vous jouissez des deux côtés à la fois en serrant sa taille de toutes vos forces.",
           ),
           "Sa main, en cherchant un appui, plaque sur le clavier un accord entier, faux et magnifique, qui résonne longtemps dans le salon vide.",
         ],
