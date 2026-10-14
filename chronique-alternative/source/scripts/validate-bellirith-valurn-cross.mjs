@@ -211,9 +211,10 @@ try {
 
   // ---------------------------------------------------------------- Interface
   const fmt = (t) => t.replaceAll("{player}", "Aube");
-  await check("BV67", "Fenêtre de jeu : compteur discret, reprise, aucune jauge", () => {
-    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(1), ctx: ctxs[0], format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
-    assert.ok(m.includes("Tour 1") && m.includes("Reprendre plus tard") && !/jauge|pression|progress/iu.test(m));
+  await check("BV67", "Fenêtre de jeu V2 : décor, sprites, compteur discret, reprise, aucune jauge", () => {
+    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(1), ctx: ctxs[0], background: "/assets/backgrounds/algratal_music_room.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(/Tour (1|I)\b/u.test(m) && m.includes("Reprendre plus tard") && !/jauge|pression|progress/iu.test(m));
+    assert.ok(m.includes("v2-scene") && m.includes("algratal_music_room.webp") && m.includes("scene-cast cast-2") && (m.match(/scene-sprite/gu) || []).length === 2);
   });
   await check("BV68", "Dossier rendu à chaque étape", () => {
     for (let stage = 0; stage <= 6; stage++) renderToStaticMarkup(createElement(ui.BVDossier, { progress: { ...cq.createBVProgress(1), stage }, day: 2, onScene() {}, onNever() {}, onIntimacy() {} }));

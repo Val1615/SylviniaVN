@@ -12,6 +12,7 @@ import {
 } from "./bellirith-valurn-never-game";
 import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
 import { bvIntimateVisible, bvRenderChapters, bvRenderOpening } from "./bellirith-valurn-intimacy-kit";
+import { ROMAINS } from "./ui/v2/common";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
 
 type Format = (text: string) => string;
@@ -96,8 +97,8 @@ function useFocusTrap() {
 
 const lineClass = (line?: DialogueLine) => !line ? "" : line.speaker === "Narration" ? "narration" : line.speaker === "Bellirith" ? "bellirith" : line.speaker === "Valurn" ? "valurn" : "player";
 
-export function BVNeverModal({ state, ctx, replay = false, format, onChange, onClose, onFinish }: {
-  state: BVNeverState; ctx: BVTruthCtx; replay?: boolean; format: Format;
+export function BVNeverModal({ state, ctx, replay = false, background, format, onChange, onClose, onFinish }: {
+  state: BVNeverState; ctx: BVTruthCtx; replay?: boolean; background: string; format: Format;
   onChange: (state: BVNeverState) => void; onClose: () => void; onFinish: (state: BVNeverState) => void;
 }) {
   const dialog = useFocusTrap();
@@ -138,58 +139,52 @@ export function BVNeverModal({ state, ctx, replay = false, format, onChange, onC
   const finished = state.completed && !view;
   const shownLine = transition && !view ? transition : line;
 
-  return <div className="bn-game-backdrop" role="presentation">
-    <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className="bn-game bv-never" role="dialog" aria-modal="true" aria-labelledby="bv-never-title" data-bv-round={state.round}>
-      <header className="bn-game-head">
-        <div className="bn-game-title">
-          <p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Valurn"}</p>
-          <h2 id="bv-never-title">Je n’ai jamais</h2>
-        </div>
-        <span className="bv-round" aria-live="polite">Tour {state.round}</span>
-        <div className="bn-head-buttons"><button type="button" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button></div>
-      </header>
+  const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : view && lineIndex < 0 && view.record.speaker !== "player" ? view.record.speaker : !view && !finished && actor !== "player" ? actor : undefined;
+  const sprite = (who: "bellirith" | "valurn", index: number) => <img key={who} className={`scene-sprite speaker-${index} ${speaking === who ? "active" : "inactive"}`} src={spritePath(who, lastMood.current[who] || (who === "bellirith" ? "teasing" : "charming"), who === "bellirith" ? "teasing" : "charming")} alt={NAMES[who]} />;
+  const box = (speaker: string, text: string, hint: string, kind: string) => <button type="button" className={`dialogue-box bv-advance ${kind}`} onClick={advanceLine}>
+    <span className="speaker">{speaker}</span><p key={`${seen}-${lineIndex}-${transitionRound}`}>{text}</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · {hint}</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
+  </button>;
 
-      <div className="bn-game-stage">
-        <figure className={`bn-game-sprite bellirith ${line?.speaker === "Bellirith" ? "active" : "quiet"}`}><img src={spritePath("bellirith", lastMood.current.bellirith || "teasing", "teasing")} alt="Bellirith" /></figure>
-        <div className="bn-game-card">
-          {view ? <>
-            <p className="bn-card-label">{view.record.speaker === "player" ? "Votre affirmation" : `${NAMES[view.record.speaker]} prend la parole`}</p>
-            <p className="bn-statement">« {format(view.declaration.text)} »</p>
-            <ol className="bv-glasses" aria-label="Qui boit ?">
-              {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => <li key={who} className={showGlasses && drinkers.includes(who) ? "drank" : "full"}><i aria-hidden="true">{showGlasses && drinkers.includes(who) ? "◡" : "▽"}</i>{NAMES[who]}{showGlasses ? drinkers.includes(who) ? " boit" : " ne boit pas" : ""}</li>)}
-            </ol>
-            {showGlasses && view.playerReason && <p className="bn-reading">Vous buvez : {format(view.playerReason)}</p>}
-          </> : finished ? <>
-            <p className="bn-card-label">Fin de la soirée</p>
-            <p className="bn-statement">Les verres sont posés.</p>
-            <p className="bn-reading">{state.round} tours de table. Ce qui a été dit reste dit.</p>
-          </> : <>
-            <p className="bn-card-label">{actor === "player" ? "À vous" : `Au tour de ${NAMES[actor]}`}</p>
-            <p className="bn-reading">{actor === "player" ? "Choisissez une affirmation. Ceux qui l’ont fait boivent ; vous aussi, si c’est vrai pour vous." : "La table attend."}</p>
-          </>}
-        </div>
-        <figure className={`bn-game-sprite valurn ${line?.speaker === "Valurn" ? "active" : "quiet"}`}><img src={spritePath("valurn", lastMood.current.valurn || "charming", "charming")} alt="Valurn" /></figure>
-      </div>
+  return <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className="dialogue-overlay v2-scene bv-never" role="dialog" aria-modal="true" aria-labelledby="bv-never-title" data-bv-round={state.round}
+    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.12), rgba(5,6,12,.62)), url(${background})` }}>
+    <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Valurn"}</p><h2 id="bv-never-title">Je n’ai jamais</h2></div>
+      <div className="scene-outils"><span className="bv-round" aria-live="polite">Tour {ROMAINS[state.round] || state.round}</span><button type="button" className="scene-outil passer" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button></div></div>
+    <div className="scene-cast cast-2">{sprite("bellirith", 0)}{sprite("valurn", 1)}</div>
+    <div className="dialogue-gradient" />
 
-      <footer className="bn-game-foot">
-        {shownLine && (lineIndex >= 0 || transition) && <button type="button" className={`bn-line ${lineClass(shownLine)}`} onClick={advanceLine}>
-          <span className="speaker">{format(shownLine.speaker === "Narration" ? "" : shownLine.speaker)}</span>
-          <p>{format(shownLine.text)}</p>
-          <small>Cliquer pour continuer</small>
-        </button>}
-        {view && lineIndex < 0 && !awaitingHere && <button type="button" className="bn-line narration" onClick={advanceLine}><span className="speaker" /><p>Les verres se lèvent, ou non.</p><small>Cliquer pour voir</small></button>}
-        {awaitingHere && <div className="bv-answers" role="group" aria-label="Votre réponse">
-          <p className="bn-reading">{format(view!.ask || "Reconnaître, nier ou esquiver ?")}</p>
-          {ANSWERS.map((entry) => <button key={entry.id} type="button" className="bn-move" onClick={() => answer(entry.id)}><strong>{entry.label}</strong><small>{entry.detail}</small></button>)}
-        </div>}
-        {!view && !transition && !state.completed && actor !== "player" && <button type="button" className="primary-action" onClick={npc}>{NAMES[actor]} prend la parole</button>}
-        {options.length > 0 && <div className="bv-options" role="group" aria-label="Vos affirmations">
-          {options.map((claim) => <button key={claim.id} type="button" className="bn-move" onClick={() => play(claim.id)}>« {format(claim.text)} »</button>)}
-        </div>}
-        {finished && <div className="bn-result fin"><div><b>{replay ? "Fin du souvenir" : "La soirée s’achève"}</b><small>{replay ? "Aucun effet : la chronique reste inchangée." : "Les verres sont vides. Il reste à savoir comment finit la nuit."}</small></div><div className="bn-result-actions"><button type="button" className="primary-action" onClick={() => onFinish(state)}>{replay ? "Quitter le souvenir" : "Continuer"}</button></div></div>}
-      </footer>
-    </section>
-  </div>;
+    <aside className={`bv-table ${view ? "claim" : finished ? "fin" : "turn"}`} aria-live="polite">
+      {view ? <>
+        <p className="bv-table-label">{view.record.speaker === "player" ? "Votre affirmation" : `${NAMES[view.record.speaker]} prend la parole`}</p>
+        <p className="bv-table-claim">« {format(view.declaration.text)} »</p>
+        <ol className="bv-glasses" aria-label="Qui boit ?">
+          {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => <li key={who} className={showGlasses && drinkers.includes(who) ? "drank" : "full"}><i aria-hidden="true" />{NAMES[who]}<small>{showGlasses ? drinkers.includes(who) ? "boit" : "ne boit pas" : "…"}</small></li>)}
+        </ol>
+        {showGlasses && view.playerReason && <p className="bv-table-note">Vous buvez : {format(view.playerReason)}</p>}
+      </> : finished ? <>
+        <p className="bv-table-label">Fin de la soirée</p>
+        <p className="bv-table-claim">Les verres sont posés.</p>
+        <p className="bv-table-note">{state.round} tours de table. Ce qui a été dit reste dit.</p>
+      </> : <>
+        <p className="bv-table-label">{actor === "player" ? "À vous" : `Au tour de ${NAMES[actor]}`}</p>
+        <p className="bv-table-note">{actor === "player" ? "Choisissez une affirmation. Ceux qui l’ont fait boivent ; vous aussi, si c’est vrai pour vous." : "La table attend."}</p>
+      </>}
+    </aside>
+
+    {shownLine && (lineIndex >= 0 || transition) && !awaitingHere && box(format(shownLine.speaker), format(shownLine.text), "Cliquer pour continuer", lineClass(shownLine) === "narration" ? "narration" : "")}
+    {view && lineIndex < 0 && !awaitingHere && box("Narration", "Les verres se lèvent, ou non.", "Cliquer pour voir", "narration")}
+    {awaitingHere && <div className="choice-box bv-answers" role="group" aria-label="Votre réponse">
+      <p className="choice-question">{format(view!.ask || "Reconnaître, nier ou esquiver ?")}</p>
+      {ANSWERS.map((entry, index) => <button key={entry.id} type="button" className="v2-choix-carte" style={{ "--i": index } as CSSProperties} onClick={() => answer(entry.id)}><i className="choix-num">{ROMAINS[index + 1]}</i><div><strong>{entry.label}</strong><small>{entry.detail}</small></div></button>)}
+    </div>}
+    {!view && !transition && !state.completed && actor !== "player" && <button type="button" className="dialogue-box bv-advance narration" onClick={npc}><span className="speaker">Narration</span><p>{NAMES[actor]} lève son verre et cherche une affirmation.</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · Cliquer pour l’écouter</span></small><i className="dialogue-suite" aria-hidden="true">▼</i></button>}
+    {options.length > 0 && <div className="choice-box bv-options" role="group" aria-label="Vos affirmations">
+      <p className="choice-question">Votre affirmation</p>
+      {options.map((claim, index) => <button key={claim.id} type="button" className="v2-choix-carte" style={{ "--i": index } as CSSProperties} onClick={() => play(claim.id)}><i className="choix-num">{ROMAINS[index + 1]}</i><div><strong>« {format(claim.text)} »</strong></div></button>)}
+    </div>}
+    {finished && <div className="choice-box bv-fin"><p className="choice-question">{replay ? "Fin du souvenir" : "La soirée s’achève"}</p>
+      <button type="button" className="v2-choix-carte" style={{ "--i": 0 } as CSSProperties} onClick={() => onFinish(state)}><i className="choix-num">I</i><div><strong>{replay ? "Quitter le souvenir" : "Continuer"}</strong><small>{replay ? "Aucun effet : la chronique reste inchangée." : "Les verres sont vides. Il reste à savoir comment finit la nuit."}</small></div></button>
+    </div>}
+  </section>;
 }
 
 /* ------------------------------------------------------------------------ */

@@ -5211,7 +5211,7 @@ export default function Home() {
     .slice(0, 4);
   const spontaneousEvent = availableSpontaneousEvent(game);
   const localRumor = availableRumor(game);
-  const soundtrack = modal?.kind === "bv-never" ? "marble-moon" : modal?.kind === "bv-intimacy" ? bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).music : modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
+  const soundtrack = modal?.kind === "bv-never" ? "midnight-waltz" : modal?.kind === "bv-intimacy" ? bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).music : modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
     ? "alpha-chases"
     : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
@@ -5343,7 +5343,7 @@ export default function Home() {
       {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
         background={backgroundUrl(spotById(BN_INTIMACY_SCENES[modal.id].background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBNIntimacy(false)} onFinish={() => closeBNIntimacy(true)} />}
-      {modal?.kind === "bv-never" && bvNeverModalState && <BVNeverModal key={modal.replay ? "bv-r" : "bv-l"} state={bvNeverModalState} ctx={bvTruthCtx()} replay={modal.replay} format={(text) => replacePlayer(text, game.player)} onChange={setBVNeverState} onClose={() => setModal(null)} onFinish={finishBVNever} />}
+      {modal?.kind === "bv-never" && bvNeverModalState && <BVNeverModal key={modal.replay ? "bv-r" : "bv-l"} state={bvNeverModalState} ctx={bvTruthCtx()} replay={modal.replay} background={backgroundUrl(spotById("algratal-music-room")?.background || "algratal_music_room")} format={(text) => replacePlayer(text, game.player)} onChange={setBVNeverState} onClose={() => setModal(null)} onFinish={finishBVNever} />}
       {modal?.kind === "bv-intimacy" && <BVIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
         background={backgroundUrl(spotById(bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBVIntimacy(false)} onFinish={() => closeBVIntimacy(true)} />}
