@@ -60,7 +60,7 @@ const l1b = {
     S(
       N("Vous reprenez la main. Vous vous levez, traversez la pièce et vous asseyez dans le fauteuil de Naïah, le trône encore tiède. Puis vous tendez la main à Hylee. Elle hausse un sourcil, vient quand même, et vous la faites asseoir sur vos genoux, face à vous."),
       P("Naïah, tu voulais être l’imprévu. Regarde."),
-      N("Vous défaites la ceinture d’Hylee et faites glisser sa tunique par-dessus sa tête. Elle arrache vos vêtements en retour, et ses mains descendent sans hésiter : l’une sur votre vigueur, l’autre plus bas, contre votre chaleur, qu’elle presse du plat de la paume."),
+      N("Vous défaites la ceinture d’Hylee et faites glisser sa tunique par-dessus sa tête. Elle arrache vos vêtements en retour, et ses mains descendent sans hésiter : l’une sur votre sexe dressé, l’autre plus bas, contre vos replis, qu’elle presse du plat de la paume."),
       H("Tu crois que tu mènes ? Je te laisse mener. Les deux, même.", "teasing"),
     ),
   ),
@@ -78,7 +78,7 @@ const l1b = {
       N("Naïah se tait trois secondes, vexée, le menton sur le dossier. Elle observe où la main d’Hylee ne va pas : la base, l’intérieur des cuisses, ce qu’elle laisse libre."),
     ),
     S(
-      N("Naïah regarde. Puis elle se glisse derrière le fauteuil, pose les coudes sur le dossier et envoie une ombre se glisser dans votre chaleur, juste sous la paume d’Hylee. Mais la paume d’Hylee presse, et l’ombre, coincée, se tortille comme un poisson. Vous éclatez de rire."),
+      N("Naïah regarde. Puis elle se glisse derrière le fauteuil, pose les coudes sur le dossier et envoie une ombre se glisser en vous, juste sous la paume d’Hylee. Mais la paume d’Hylee presse, et l’ombre, coincée, se tortille comme un poisson. Vous éclatez de rire."),
       A("Pourquoi tu ris ? C’est ton logis, tu devrais être à l’aise !", "angry"),
       H("Tu viens de te glisser sous ma main. Il n’y a pas la place.", "teasing"),
       N("Naïah se tait trois secondes, vexée, le menton sur le dossier, puis regarde où Hylee laisse de l’espace."),
@@ -547,7 +547,7 @@ const l3b = {
       P("Naïah. Cap de choisir où Hylee m’embrasse. Trois endroits."),
       A("Avec joie. Le coude."),
       N("Hylee vous embrasse le coude avec un sérieux de cérémonie. « Le creux du genou. » Hylee obéit, plus lentement. « Le troisième… » Naïah prend son temps, puis sourit : « Tu as deux endroits là-dessous. Elle choisit. Et elle y reste jusqu’à ce que tu demandes grâce. »"),
-      N("Hylee choisit votre vigueur, puis change d’avis, descend jusqu’à votre chaleur, remonte. Elle n’a pas choisi ; elle alterne, en vous regardant par en dessous. Vos mains agrippent le bord de la table."),
+      N("Hylee choisit le haut, puis change d’avis, descend plus bas, remonte. Elle n’a pas choisi ; elle alterne, en vous regardant par en dessous. Vos mains agrippent le bord de la table."),
       H("Je n’arrive pas à choisir. C’est ta faute.", "teasing"),
     ),
   ),
@@ -568,7 +568,7 @@ const l3b = {
     ),
     S(
       A("Surenchère à mon tour. Cap de te faire gémir en trente secondes. Sans Hylee."),
-      N("Elle tente le coup avec ses ombres : une sur votre vigueur, une dans votre chaleur, une troisième sur votre ventre, toutes au même rythme rapide. Le résultat est si confus que vous éclatez de rire."),
+      N("Elle tente le coup avec ses ombres : une enroulée autour de vous, une glissée en vous, une troisième sur votre ventre, toutes au même rythme rapide. Le résultat est si confus que vous éclatez de rire."),
       P("Échec. Et trois ombres. Trois défis pour toi."),
       A("Trois ?! Ta règle est un instrument d’oppression !", "angry"),
       N("Vexée trois secondes, Naïah se tait et regarde Hylee, qui alterne, qui hésite, et dont l’hésitation vous fait plus d’effet que toutes les ombres."),
@@ -577,7 +577,7 @@ const l3b = {
   ex8: X(
     S(
       P("Premier défi pour toi : cap de réussir. Sans une seule ombre."),
-      N("Naïah relève le défi. Ses mains, ses vraies mains, tièdes et un peu maladroites, se posent à plat sur votre ventre et descendent, lentes, une seule chose à la fois. Deux doigts trouvent votre perle de plaisir, s’y posent sans hâte, et restent. Votre gémissement est immédiat, involontaire, et Naïah éclate d’un rire triomphant."),
+      N("Naïah relève le défi. Ses mains, ses vraies mains, tièdes et un peu maladroites, se posent à plat sur votre ventre et descendent, lentes, une seule chose à la fois. Deux doigts trouvent le petit nœud qui vous fait sursauter, s’y posent sans hâte, et restent. Votre gémissement est immédiat, involontaire, et Naïah éclate d’un rire triomphant."),
       A("Sans ombre ! Une chose à la fois ! J’ai compris ! J’ai gagné un défi contre ta règle !"),
       H("Elle va être insupportable pendant une semaine.", "surprised"),
     ),

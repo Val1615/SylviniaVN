@@ -22,7 +22,7 @@ export const CHARACTERS = ["hylee", "remerii", "naiah", "allenna", "lineva", "be
 // Chaque entrée : libellé affiché, expression régulière (insensible à la casse).
 const P = "(?:son|sa|ses|votre|vos|leur|leurs|mon|ma|mes|ton|ta|tes)";
 export const TERMS = [
-  ["perle (de plaisir, sensible…)", new RegExp(`\\bperle(?: de plaisir| sensible)?\\b(?! de (?:sueur|rosée|givre|pluie|lumière|nacre))`, "giu"), (m, ctx) => !/\b(?:une|des|deux|trois|quelques)\s+$/i.test(ctx)],
+  ["perle (de plaisir, sensible…)", /\b(?:perles? (?:de plaisir|sensibles?)|(?:votre|sa|ta|leur|vos|ses) perles?(?! (?:tombe|roule|restante|de (?:sueur|rosée|givre|pluie|verre|nacre))))\b/giu],
   ["virilité", /\bvirilit[ée]s?\b/giu],
   ["vigueur (possessif)", new RegExp(`\\b${P} vigueur\\b`, "giu")],
   ["membre (possessif)", new RegExp(`\\b${P} membre\\b`, "giu")],

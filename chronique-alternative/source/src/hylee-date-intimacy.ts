@@ -110,7 +110,7 @@ const SCENES: AuthoredScene[] = [
       A("Le soleil filtré par les branches fait briller les gouttes de sueur sur sa peau. Hylee vous ramène face à elle, vos jambes entremêlées, et frotte son bassin contre votre cuisse avant de vous offrir la sienne.", "Un seul fin motif de givre apparaît sur la cuillère tombée près du panier. Hylee l'aperçoit, hausse les sourcils et vous embrasse comme si ce détail lui avait donné une nouvelle avance."),
       V(
         ["Vos mains trouvent un rythme commun. Hylee garde son front contre le vôtre et laisse le plaisir monter sans cesser de sourire chaque fois que vos corps se répondent."],
-        ["Vos chaleurs se pressent l'une contre l'autre entre vos cuisses croisées. Hylee change l'angle, reprend votre bouche et accélère lorsqu'elle vous sent trembler."],
+        ["Vos sexes se pressent l'un contre l'autre, jambes croisées. Hylee change l'angle, reprend votre bouche et accélère lorsqu'elle vous sent trembler."],
         ["Hylee maintient vos bassins serrés et trouve contre vous le frottement le plus vif. Sa main ajoute une pression exacte entre vos corps ; le plaisir vous emporte la première, puis vos mouvements désordonnés et vos doigts la font jouir contre votre cuisse.", ["Hylee", "J'avais dit que ça comptait double… je ne sais toujours pas pour quoi.", "teasing"]],
         ["Votre jeu devient plus pressant, puis le récit baisse la lumière sur vos corps enlacés. Quand elle revient, Hylee tremble encore et rit sans réussir à expliquer laquelle de vous a gagné."],
       ),
@@ -127,10 +127,10 @@ const SCENES: AuthoredScene[] = [
       A("Ses doigts ouvrent votre chemise pendant que vous délacez sa robe. Hylee recule juste assez pour faire glisser le tissu de ses épaules, puis vous enlève votre ceinture avec le sérieux exagéré d'une épreuve délicate.", "Votre pantalon résiste à une botte oubliée. Elle éclate de rire, s'agenouille pour vous libérer et profite de sa position pour embrasser votre ventre."),
       A("Hylee se redresse nue, les cheveux défaits sur ses seins. Votre regard la fait rougir ; elle pose les mains sur ses hanches et reste offerte au lieu de ramener la couverture.", "Lorsqu'elle vous dénude à votre tour, son attention descend franchement sur votre désir déjà visible. Elle relève les yeux avec une curiosité qui n'a rien d'innocent.", ["Hylee", "Je peux avoir des idées et poser des questions en même temps. Prépare-toi.", "determined"]),
       V(
-        ["Elle caresse votre torse, votre ventre et vos hanches, attentive aux muscles qui se tendent sous sa paume. Son baiser suit chaque endroit qu'elle vient d'apprendre."],
+        ["Elle caresse votre torse et vos hanches, attentive aux muscles qui se tendent sous sa paume. Son baiser suit chaque endroit qu'elle vient d'apprendre."],
         ["Hylee referme la main sur votre désir tendu à travers le dernier tissu, observe votre souffle changer et recommence avec une lente fierté."],
         ["Elle vous libère du dernier tissu et referme ses doigts autour de vous. Son pouce glisse sur l'extrémité humide ; Hylee essaie deux pressions, garde celle qui vous fait fermer les yeux et sourit comme après une sculpture enfin stable.", ["Hylee", "Celle-là. Je garde ce mouvement.", "teasing"]],
-        ["Hylee descend sur votre ventre et vous découvre sous la couverture. Elle demande ce que vous aimez, puis le récit s'écarte pendant que ses mains apprennent votre réponse."],
+        ["Hylee descend en semant des baisers et vous découvre sous la couverture. Elle demande ce que vous aimez, puis le récit s'écarte pendant que ses mains apprennent votre réponse."],
       ),
       V(
         ["Vous l'allongez sur la couverture et découvrez ses seins, son ventre, ses cuisses. Hylee change la place de votre main chaque fois qu'une autre idée lui plaît davantage."],
@@ -239,7 +239,7 @@ const SCENES: AuthoredScene[] = [
       A("Nue, Hylee ne se détourne pas. Elle pose un genou entre vos jambes et attend que votre regard parcoure ses seins, son ventre, ses hanches et les taches claires de sa peau.", ["Hylee", "Regarde bien. Après, c'est mon tour."], "Elle vous déshabille avec la même attention assumée et accueille votre nudité de femme par un sourire lent."),
       V(
         ["Hylee vous maintient allongée sous elle et découvre vos seins de ses paumes. Elle suit chaque réaction, puis vous demande seulement de la rapprocher quand vous voulez davantage."],
-        ["Sa bouche descend sur vos seins, son ventre pressé entre vos cuisses. Une main se glisse plus bas et commence une caresse dont elle surveille fièrement l'effet."],
+        ["Sa bouche descend sur vos seins, son corps calé entre vos genoux. Une main se glisse plus bas et commence une caresse dont elle surveille fièrement l'effet."],
         ["Hylee écarte vos jambes et laisse deux doigts glisser dans votre humidité. Elle cerne le point qui vous fait frissonner, accélère dès que vos hanches répondent puis plonge un doigt en vous sans interrompre le mouvement de son pouce.", ["Hylee", "Dis mon nom si tu veux plus. Je veux l'entendre.", "determined"]],
         ["Hylee vous couvre de la couverture et prend le temps de découvrir ce qui vous fait l'appeler. Le récit se retire devant son assurance, pas devant une hésitation."],
       ),
@@ -370,7 +370,7 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Vos mouvements vous conduisent ensemble au plaisir. Hylee s'accroche à vous, revient vous embrasser et refuse de déclarer qui a cédé le premier."],
         ["Elle cherche son plaisir contre votre bassin pendant qu'elle monte et descend sur vous. Sa jouissance brise le décompte ; elle poursuit jusqu'à sentir la vôtre répondre sous elle."],
-        ["Hylee vous chevauche, se caresse entre les cuisses et accélère chaque fois que votre souffle se défait. Elle jouit en se contractant autour de vous, puis reprend des mouvements courts jusqu'à votre propre abandon et s'immobilise seulement quand vos mains cessent de trembler."],
+        ["Hylee vous chevauche, se caresse elle-même du bout des doigts et accélère chaque fois que votre souffle se défait. Elle jouit en se contractant autour de vous, puis reprend des mouvements courts jusqu'à votre propre abandon et s'immobilise seulement quand vos mains cessent de trembler."],
         ["Les manteaux cachent le dernier échange de votre défi. Quand la scène revient, Hylee est étendue en travers de vous, trop essoufflée pour inventer un résultat crédible."],
       ),
       A("Hylee lève trois doigts, essaie de compter vos points puis replie la main sur votre poitrine.", ["Hylee", "J'étais devant jusqu'au moment où j'ai complètement oublié le jeu. Ça devrait compter comme une victoire différente.", "teasing"], "Vous l'embrassez pour interrompre la contestation."),
@@ -407,8 +407,8 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Le plaisir vous traverse presque ensemble. Hylee garde ses doigts en mouvement jusqu'à sentir votre corps se détendre, puis vous guide encore sur elle et cède à son tour."],
         ["Vos doigts accélèrent sur les points qu'ils ont appris. Hylee jouit contre votre main, reprend son souffle sans retirer la sienne et vous mène au plaisir en répétant le mouvement qui vous avait trahie."],
-        ["Votre main entre en Hylee pendant que son pouce presse l'endroit qui vous fait perdre le rythme. Elle jouit autour de vos doigts, le visage contre le vôtre ; sa main reprend aussitôt une cadence plus ferme entre vos cuisses jusqu'à ce que le plaisir vous serre contre elle."],
-        ["Les mouvements se poursuivent hors du regard du récit. La lumière revient sur Hylee encore face à vous, une main immobile entre vos cuisses et l'autre serrée dans la vôtre."],
+        ["Votre main entre en Hylee pendant que son pouce presse l'endroit qui vous fait perdre le rythme. Elle jouit autour de vos doigts, le visage contre le vôtre ; sa main reprend aussitôt une cadence plus ferme jusqu'à ce que le plaisir vous serre contre elle."],
+        ["Les mouvements se poursuivent hors du regard du récit. La lumière revient sur Hylee encore face à vous, une main posée sur votre sexe, immobile, et l'autre serrée dans la vôtre."],
       ),
       A("Hylee souffle sur vos doigts comme vous l'aviez fait au début, mais ils sont chauds maintenant. Elle les embrasse un par un, rougit de son propre geste et ne le retire pas.", ["Hylee", "Je pourrais avoir encore un peu peur la prochaine fois. Ça ne m'empêchera pas de savoir où poser mes mains.", "soft"]),
       A("Vous restez couchées pendant que les bottes attendent dans l'herbe. Hylee écoute une goutte tomber du cuir sur une feuille, puis se rapproche pour que le son n'occupe plus tout le silence.", ["Hylee", "Reste jusqu'à ce que le soleil disparaisse derrière les saules. Après, on verra.", "soft"]),
@@ -423,8 +423,8 @@ const SCENES: AuthoredScene[] = [
       A("Vous retirez vos vestes humides. Hylee ouvre votre chemise, s'arrête après deux boutons et reprend en constatant que vous ne bougez pas à sa place.", "Elle vous laisse défaire sa robe, mais retire elle-même le tissu pris sous sa cuisse. Sa main revient aussitôt sur votre ventre nu, plus curieuse que craintive."),
       A("Hylee se tient nue entre vos jambes. Elle rougit lorsque vous regardez son corps entier, puis pose vos paumes sur ses hanches au lieu de se couvrir.", "Elle ouvre votre pantalon et découvre votre désir tendu. Son souffle hésite ; ses doigts, eux, viennent en suivre la forme avec une douceur décidée.", ["Hylee", "Tu me dis si je fais quelque chose que tu n'aimes pas. Pour le reste, laisse-moi essayer.", "determined"]),
       V(
-        ["Elle parcourt votre torse, votre ventre et vos hanches, réchauffant ses mains sur votre peau. Hylee écoute vos réactions et recommence les gestes qui vous rapprochent."],
-        ["Hylee vous prend dans sa paume et vous caresse lentement. Elle observe la tension de votre ventre, puis revient vous embrasser sans retirer sa main."],
+        ["Elle parcourt votre torse et vos hanches, réchauffant ses mains sur votre peau. Hylee écoute vos réactions et recommence les gestes qui vous rapprochent."],
+        ["Hylee vous prend dans sa paume et vous caresse lentement. Elle observe vos abdominaux se tendre, puis revient vous embrasser sans retirer sa main."],
         ["Ses doigts vous entourent et remontent jusqu'à l'extrémité sensible. Hylee y étale l'humidité du pouce, change de pression quand vos hanches répondent et se penche pour la goûter avant de reprendre le mouvement de sa main."],
         ["Hylee vous découvre sous les manteaux, sans supposer ce que vous aimez. Le récit laisse ses questions et vos réponses guider une exploration qui lui appartient pleinement."],
       ),
@@ -645,7 +645,7 @@ const SCENES: AuthoredScene[] = [
       A("Elle retire votre veste et vous demande où la poser. La réponse devient inutile lorsque vous défaites sa robe et que vos deux vêtements tombent ensemble au pied de la chaise.", "Hylee ouvre votre chemise, s'arrête pour caresser votre torse puis reprend les boutons. Vous lui laissez chaque décision ; elle ne vous laisse pas immobile pour autant."),
       A("Nue devant vous, Hylee inspire sous votre regard et pose elle-même vos mains sur ses hanches. Elle regarde votre corps à son tour, retire le dernier tissu et découvre votre désir dressé avec un mélange de gêne et d'envie très lisible.", ["Hylee", "Je peux rougir et avoir envie de te toucher. Les deux sont vrais."], "Sa main descend pour le prouver."),
       V(
-        ["Elle explore votre torse, votre ventre et vos hanches avec une attention douce. Hylee suit les réactions sous sa paume et revient embrasser les endroits qu'elle veut mémoriser."],
+        ["Elle explore votre torse et la crête de vos hanches avec une attention douce. Hylee suit les réactions sous sa paume et revient embrasser les endroits qu'elle veut mémoriser."],
         ["Sa main se referme sur votre désir. Elle vous caresse lentement, sans détourner les yeux lorsque votre souffle change, puis vous demande d'un sourire si elle peut continuer."],
         ["Hylee vous entoure de ses doigts, remonte jusqu'à l'extrémité et y fait glisser son pouce humide. Elle apprend la pression par vos hanches, se penche pour vous prendre dans sa bouche et combine prudemment ses lèvres et sa main.", ["Hylee", "Montre-moi encore. J'ai compris, mais j'aime bien vérifier.", "soft"]],
         ["Hylee se glisse sous la couverture et découvre votre plaisir selon vos indications. Le récit respecte l'intimité du geste tout en laissant son choix et sa curiosité entiers."],
@@ -666,7 +666,7 @@ const SCENES: AuthoredScene[] = [
       V(
         ["Le plaisir la traverse dans vos bras ; elle vous garde près d'elle et poursuit assez longtemps pour sentir votre propre abandon lui répondre."],
         ["Votre main entretient son plaisir pendant que vos bassins bougent ensemble. Hylee jouit contre vous, reprend des mouvements doux et vous conduit au même abandon sans quitter votre regard."],
-        ["Vous glissez en Hylee tandis que vos doigts pressent l'endroit qui la fait céder. Elle jouit en serrant sa jambe autour de vous, puis continue volontairement jusqu'à votre propre déferlement, attentive à chaque contraction de votre ventre et à la chaleur qui vous quitte."],
+        ["Vous glissez en Hylee tandis que vos doigts pressent l'endroit qui la fait céder. Elle jouit en serrant sa jambe autour de vous, puis continue volontairement jusqu'à votre propre déferlement, attentive à chaque contraction qui vous traverse et à la chaleur qui vous quitte."],
         ["La couverture cache la montée finale. Quand le récit revient, Hylee respire contre votre bouche et ses jambes vous gardent encore exactement là où elle vous a choisi."],
       ),
       A("Hylee observe le plafond inconnu, puis se tourne aussitôt vers vous plutôt que de laisser la pièce devenir plus importante que le moment.", ["Hylee", "Je pensais que chez toi, je me sentirais invitée. Là, je me sens restée. Ce n'est pas pareil.", "soft"]),
