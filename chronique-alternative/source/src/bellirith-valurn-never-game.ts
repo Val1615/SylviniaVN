@@ -534,12 +534,14 @@ export function bvRecordView(state: BVNeverState, index: number): BVRecordView |
 export const BV_IVRESSE_GRIS = 9;
 export const BV_IVRESSE_IVRE = 18;
 export const BV_IVRESSE_MAX = 24;
-export function bvIvresse(drinks: number, mode?: BVMode): BVIvresse {
-  const t = bvIvresseSeuils(mode);
+/** Vous buvez bien moins souvent qu’eux : en soirée complète, vos seuils sont plus bas. */
+export const BV_IVRESSE_JOUEUR = { gris: 6, ivre: 12, max: 15 };
+export function bvIvresse(drinks: number, mode?: BVMode, actor?: BVActor): BVIvresse {
+  const t = bvIvresseSeuils(mode, actor);
   return drinks >= t.ivre ? "ivre" : drinks >= t.gris ? "gris" : "sobre";
 }
 /** La version abrégée compte moins de tours : les seuils sont ramenés à proportion (gris 2, ivre 4, jauge 5). */
-export function bvIvresseSeuils(mode?: BVMode) { return mode === "abregee" ? { gris: 2, ivre: 4, max: 5 } : { gris: BV_IVRESSE_GRIS, ivre: BV_IVRESSE_IVRE, max: BV_IVRESSE_MAX }; }
+export function bvIvresseSeuils(mode?: BVMode, actor?: BVActor) { return mode === "abregee" ? { gris: 2, ivre: 4, max: 5 } : actor === "player" ? { ...BV_IVRESSE_JOUEUR } : { gris: BV_IVRESSE_GRIS, ivre: BV_IVRESSE_IVRE, max: BV_IVRESSE_MAX }; }
 
 /** Verres bus par chacun jusqu’à l’intervention `index` incluse. */
 export function bvDrinksAt(state: BVNeverState, index: number): Record<BVActor, number> {
@@ -558,7 +560,7 @@ export function bvPressionLevel(state: BVNeverState, index: number): number {
   const claim = bvFindNpcClaim(record.claimId);
   if (!claim) return 0;
   const after = state.pivotRound !== undefined && record.round > state.pivotRound;
-  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker], state.mode) === "ivre";
+  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker], state.mode, record.speaker) === "ivre";
   const base = 1 + claim.tier + (after || drunk ? 1 : 0);
   // Version abrégée : la dernière question, après les révélations, presse au maximum.
   if (state.mode === "abregee" && state.pivotRound !== undefined && record.round > state.pivotRound + 3) return BV_PRESSION_MAX;
@@ -594,7 +596,7 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
   const none: BVChoiceLines = { before: [], after: [] };
   if (!record) return none;
   const drinks = bvDrinksAt(state, index);
-  const lvl = (actor: BVActor) => bvIvresse(drinks[actor], state.mode);
+  const lvl = (actor: BVActor) => bvIvresse(drinks[actor], state.mode, actor);
   const seed = state.seed, round = record.round;
   const npcs: BVNpc[] = ["bellirith", "valurn"];
   if (record.speaker === "player") {
@@ -680,7 +682,7 @@ function transitionFor(state: BVNeverState, round: number, used: Set<string>): B
   const prevIndex = state.log.map((entry) => entry.round).lastIndexOf(round - 1);
   const prev = state.log.filter((entry) => entry.round === round - 1);
   const drinks = bvDrinksAt(state, prevIndex);
-  const levels = (["bellirith", "valurn", "player"] as BVActor[]).map((actor) => bvIvresse(drinks[actor], state.mode));
+  const levels = (["bellirith", "valurn", "player"] as BVActor[]).map((actor) => bvIvresse(drinks[actor], state.mode, actor));
   // L’ambiance suit votre propre ivresse : la narration est à votre hauteur.
   const tier: BVIvresse = levels[2];
   const after = state.pivotRound !== undefined && state.pivotRound < round;

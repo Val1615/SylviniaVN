@@ -96,6 +96,10 @@ function useFocusTrap() {
   return ref;
 }
 
+/** Carte d’annonce d’une affirmation : temps de tenue, puis envol vers le panneau. */
+export const BV_CARD_HOLD_MS = 1350;
+export const BV_CARD_FLY_MS = 450;
+
 const lineClass = (line?: DialogueLine) => !line ? "" : line.speaker === "Narration" ? "narration" : line.speaker === "Bellirith" ? "bellirith" : line.speaker === "Valurn" ? "valurn" : "player";
 
 export function BVNeverModal({ state, ctx, replay = false, background, format, onChange, onClose, onFinish }: {
@@ -121,11 +125,29 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
 
   useEffect(() => { setLineIndex(0); }, [seen]);
 
+  // Carte d’annonce : chaque nouvelle affirmation s’affiche en grand, tient un instant, puis rejoint le panneau du haut.
+  // À la reprise, seule une affirmation encore en attente de réponse est rejouée (vue présente à l’ouverture).
+  const viewKey = view ? seen : -1;
+  const [card, setCard] = useState<{ key: number; phase: "show" | "fly" } | undefined>(view ? { key: seen, phase: "show" } : undefined);
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
+    setCard(viewKey >= 0 ? { key: viewKey, phase: "show" } : undefined);
+  }, [viewKey]);
+  useEffect(() => {
+    if (!card) return;
+    const timer = window.setTimeout(() => setCard(card.phase === "show" ? { ...card, phase: "fly" } : undefined), card.phase === "show" ? BV_CARD_HOLD_MS : BV_CARD_FLY_MS);
+    return () => window.clearTimeout(timer);
+  }, [card]);
+  const cardOn = Boolean(card && view && card.key === seen);
+  function skipCard() { setCard(card?.phase === "show" ? { ...card, phase: "fly" } : undefined); }
+
   const lastMood = useRef<{ bellirith?: string; valurn?: string }>({});
   if (line?.speaker === "Bellirith" && line.mood) lastMood.current.bellirith = line.mood;
   if (line?.speaker === "Valurn" && line.mood) lastMood.current.valurn = line.mood;
 
   function advanceLine() {
+    if (cardOn) { skipCard(); return; }
     if (!view) { if (transition) setTransitionRound(state.round); return; }
     if (awaitingHere) return;
     if (lineIndex < reading.length - 1) { setLineIndex(lineIndex + 1); return; }
@@ -147,7 +169,6 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
   // Pression : quand Bellirith ou Valurn vous somme de répondre. Intensité 1 à 3 selon l’enjeu et l’ivresse de qui presse.
   const presser = awaitingHere && view && view.record.speaker !== "player" ? view.record.speaker : undefined;
   const pressure = presser ? bvPressionLevel(state, seen) : 0;
-  const seuils = bvIvresseSeuils(state.mode);
   const gauge = bvDrinksAt(state, view ? (showGlasses ? seen : seen - 1) : state.log.length - 1);
 
   const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : !view && !finished && actor !== "player" ? actor : undefined;
@@ -163,12 +184,21 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
     <div className="scene-cast cast-2">{sprite("bellirith", 0)}{sprite("valurn", 1)}</div>
     <div className="dialogue-gradient" />
     {presser && <div className="bv-pression-voile" aria-hidden="true" />}
+    {cardOn && view && <div className={`bv-carte bv-carte-${view.record.speaker} ${card!.phase}`} data-bv-carte={card!.phase} onClick={skipCard} role="presentation">
+      <div className="bv-carte-corps">
+        <p className="bv-carte-tour">Tour {ROMAINS[state.round] || state.round}</p>
+        <p className="bv-carte-qui">{view.record.speaker === "player" ? "Vous" : NAMES[view.record.speaker]}{view.declaration.to && <span> · à {view.declaration.to}</span>}</p>
+        <p className="bv-carte-texte">« {format(view.declaration.text)} »</p>
+        <small>Toucher pour passer</small>
+      </div>
+    </div>}
 
     <aside className={`bv-table ${view ? "claim" : finished ? "fin" : "turn"}`} aria-live="polite">
       <ul className="bv-ivresse" aria-label="Ivresse">
         {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => {
           const count = gauge[who];
-          const level = bvIvresse(count, state.mode);
+          const level = bvIvresse(count, state.mode, who);
+          const seuils = bvIvresseSeuils(state.mode, who);
           return <li key={who} className={`ivresse-${level}`} data-ivresse={level}>
             <span className="bv-ivresse-nom">{NAMES[who]}</span>
             <span className="bv-ivresse-jauge" role="meter" aria-valuemin={0} aria-valuemax={seuils.max} aria-valuenow={Math.min(count, seuils.max)} aria-label={`Ivresse de ${NAMES[who]} : ${IVRESSE_LABELS[level]}`}><i style={{ width: `${Math.min(100, (count / seuils.max) * 100)}%` }} /></span>

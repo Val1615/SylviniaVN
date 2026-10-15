@@ -77,3 +77,25 @@ body.reduit .bv-pression .scene-sprite { transition: none; rotate: none; transla
 /* Destinataire d’une réplique dans le cartouche (« · à Valurn », « · à vous »). */
 .bv-never .speaker .bv-to { font-style: italic; font-weight: 400; opacity: .78; text-transform: none; letter-spacing: 0; font-size: .82em; }
 .bv-never .bv-mode .v2-choix-carte small { opacity: .85; }
+
+/* Carte d’annonce d’une nouvelle affirmation : en grand au centre, puis envol vers le panneau du haut. */
+.bv-carte { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: rgba(6, 5, 14, .46); cursor: pointer; --c: 232, 196, 120; animation: bv-carte-voile .25s ease-out both; }
+.bv-carte-bellirith { --c: 168, 92, 236; }
+.bv-carte-valurn { --c: 214, 34, 62; }
+.bv-carte-corps { width: min(86%, 720px); padding: clamp(14px, 3vh, 30px) clamp(16px, 4vw, 40px); text-align: center; border-radius: 14px; background: linear-gradient(180deg, rgba(18, 14, 30, .9), rgba(10, 8, 18, .86)); border: 2px solid rgba(var(--c), .9); box-shadow: 0 0 0 1px rgba(255, 255, 255, .06), 0 0 42px rgba(var(--c), .45); animation: bv-carte-entree .38s cubic-bezier(.2, .9, .3, 1.2) both; }
+.bv-carte-tour { margin: 0; font-size: clamp(11px, 1.6vh, 14px); letter-spacing: .3em; text-transform: uppercase; opacity: .75; }
+.bv-carte-qui { margin: .3em 0 .5em; font-size: clamp(14px, 2.4vh, 20px); font-weight: 700; color: rgb(var(--c)); letter-spacing: .06em; }
+.bv-carte-qui span { color: #e8e2f2; font-weight: 400; }
+.bv-carte-texte { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(20px, 4.4vh, 40px); line-height: 1.25; color: #fbf6ee; text-shadow: 0 2px 12px rgba(0, 0, 0, .6); }
+.bv-carte-corps small { display: block; margin-top: 1em; font-size: 11px; opacity: .55; }
+.bv-carte.fly { animation: bv-carte-fondu .45s ease-in both; }
+.bv-carte.fly .bv-carte-corps { animation: bv-carte-envol .45s cubic-bezier(.5, 0, .8, .4) both; }
+@keyframes bv-carte-voile { from { opacity: 0; } }
+@keyframes bv-carte-entree { from { opacity: 0; transform: scale(.82); } }
+@keyframes bv-carte-envol { to { opacity: .2; transform: translateY(-36vh) scale(.36); } }
+@keyframes bv-carte-fondu { to { background: rgba(6, 5, 14, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .bv-carte, .bv-carte-corps { animation: bv-carte-voile .3s ease-out both; }
+  .bv-carte.fly, .bv-carte.fly .bv-carte-corps { animation: bv-carte-sortie .45s ease-in both; }
+}
+@keyframes bv-carte-sortie { to { opacity: 0; } }
