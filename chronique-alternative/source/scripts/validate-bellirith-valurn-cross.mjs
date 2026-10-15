@@ -295,7 +295,7 @@ try {
   });
   await check("BV85", "Aucune réplique de table répétée au cours d’une même soirée", () => assert.equal(choiceStats.repeated.length, 0, choiceStats.repeated[0]));
   await check("BV86", "L’ivresse monte avec les verres et relâche les répliques (gris et ivre réellement entendus)", () => {
-    assert.equal(g.bvIvresse(0), "sobre"); assert.equal(g.bvIvresse(g.BV_IVRESSE_GRIS), "gris"); assert.equal(g.bvIvresse(g.BV_IVRESSE_IVRE), "ivre");
+    assert.equal(g.bvIvresse(0), "sobre"); assert.equal(g.bvIvresse(g.BV_IVRESSE_GRIS), "gris"); assert.equal(g.bvIvresse(g.BV_IVRESSE_GRIS - 1), "sobre"); assert.equal(g.bvIvresse(g.BV_IVRESSE_IVRE), "ivre");
     assert.ok(choiceStats.tiers.gris > 200 && choiceStats.tiers.ivre > 100, JSON.stringify(choiceStats.tiers));
     for (const run of runs.slice(0, 30)) { const last = run.s.log.length - 1; assert.deepEqual(g.bvDrinksAt(run.s, last), run.s.drinks); }
   });
@@ -422,6 +422,34 @@ try {
     const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: modeRuns.complete[0], ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
     assert.ok(!/Les verres se lèvent, ou non/u.test(m));
   });
+  await check("BV96", "Soirée complète : ivresse trois fois plus lente (gris à 9 verres, ivre à 18), paliers atteints tard ; version abrégée inchangée", () => {
+    assert.deepEqual(g.bvIvresseSeuils("complete"), { gris: 9, ivre: 18, max: 24 });
+    assert.deepEqual(g.bvIvresseSeuils(undefined), { gris: 9, ivre: 18, max: 24 }, "ancienne partie sans format = seuils de la soirée complète");
+    assert.deepEqual(g.bvIvresseSeuils("abregee"), { gris: 2, ivre: 4, max: 5 });
+    const first = { gris: [], ivre: [] }; let runs = 0, gotGris = 0, gotIvre = 0;
+    for (const s of modeRuns.complete) {
+      runs++; const reached = { gris: false, ivre: false };
+      for (const actor of ["bellirith", "valurn", "player"]) {
+        const seen = {};
+        s.log.forEach((_, i) => { const t = g.bvIvresse(g.bvDrinksAt(s, i)[actor], "complete"); if (t !== "sobre" && seen.gris === undefined) seen.gris = s.log[i].round; if (t === "ivre" && seen.ivre === undefined) seen.ivre = s.log[i].round; });
+        for (const k of ["gris", "ivre"]) if (seen[k] !== undefined) { first[k].push([seen[k], s.round]); reached[k] = true; }
+      }
+      if (reached.gris) gotGris++; if (reached.ivre) gotIvre++;
+    }
+    const pct = (a) => a.map(([r]) => r).sort((x, y) => x - y);
+    const q = (a, p) => a.length ? a[Math.min(a.length - 1, Math.floor(p * a.length))] : "-";
+    const rel = (a) => a.map(([r, n]) => r / n);
+    if (process.env.BV_STATS) {
+      for (const k of ["gris", "ivre"]) { const r = pct(first[k]); const hist = {}; r.forEach((x) => hist[x] = (hist[x] || 0) + 1);
+        console.log(`[stats] ${k}: ${first[k].length} atteintes (convive × soirée) ; tour p10/p50/p90 = ${q(r, .1)}/${q(r, .5)}/${q(r, .9)} ; part de la soirée médiane = ${q(rel(first[k]).sort((x, y) => x - y), .5)} ; histogramme ${JSON.stringify(hist)}`); }
+      for (const actor of ["bellirith", "valurn", "player"]) { const t = { sobre: 0, gris: 0, ivre: 0 }; modeRuns.complete.forEach((x) => t[g.bvIvresse(x.drinks[actor], "complete")]++); const d = modeRuns.complete.map((x) => x.drinks[actor]).sort((a, b) => a - b); console.log(`[stats] fin de soirée ${actor} : ${JSON.stringify(t)} verres p50/max ${d[d.length >> 1]}/${d[d.length - 1]}`); }
+      console.log(`[stats] soirées : ${runs}, avec au moins un gris : ${gotGris}, avec au moins un ivre : ${gotIvre}`);
+    }
+    assert.ok(gotGris / runs > 0.8, `gris trop rare : ${gotGris}/${runs}`);
+    assert.ok(gotIvre > 0, "ivre jamais atteint en soirée complète");
+    const g50 = q(rel(first.gris).sort((x, y) => x - y), .5), i50 = q(rel(first.ivre).sort((x, y) => x - y), .5);
+    assert.ok(g50 >= 0.25, `gris trop tôt (médiane ${g50})`); assert.ok(i50 >= 0.5, `ivre trop tôt (médiane ${i50})`);
+  });
   await check("BV93", "Version abrégée : 8 à 10 tours, tournant des deux côtés, révélations, gris et ivre atteints, pression au cran 4, bascule musicale", () => {
     for (const s of modeRuns.abregee) {
       assert.ok(s.completed && s.round >= 8 && s.round <= 10, `durée ${s.round}`);
@@ -465,8 +493,42 @@ try {
         else assert.ok(info.mood === `${info.after ? "apres" : "avant"}-${info.tier}`, "ambiance sans rapport avec l’ivresse ou le tournant");
       }
     }
-    for (const key of Object.keys(tr.BV_TRANSITION_MOODS)) assert.ok(moods.has(key), `ambiance jamais jouée : ${key}`);
+    // Depuis l’ivresse lente de la soirée complète, être ivre avant le tournant n’arrive plus : « avant-ivre » reste en réserve, et le joueur n’atteint plus « ivre » dans les parties simulées : « apres-ivre » attend un arbitrage.
+    for (const key of Object.keys(tr.BV_TRANSITION_MOODS).filter((k) => k !== "avant-ivre" && k !== "apres-ivre")) assert.ok(moods.has(key), `ambiance jamais jouée : ${key}`);
     for (const key of Object.keys(tr.BV_TRANSITION_LEADS)) assert.ok(leads.has(key), `amorce jamais jouée : ${key}`);
+  });
+  await check("BV95", "Écriture : pas d’ouverture ni de tournure répétée d’une banque à l’autre, réponses propres à chaque question posée", async () => {
+    const tp = await load("/src/bellirith-valurn-never-topics.ts");
+    const texts = []; const walk = (v) => { if (v && typeof v === "object" && "text" in v) texts.push(v.text); else if (typeof v === "string") texts.push(v); else if (v && typeof v === "object") Object.values(v).forEach(walk); };
+    walk(rx); walk(tr); walk(tp);
+    const STOP = new Set("je tu il elle on nous vous ils elles le la les l' un une des de du d' à au aux et ou ne n' pas que qu' qui ce c' ça se s' me m' te t' en y est a ai as plus moins si mais pour par sur dans avec sans mon ma mes ton ta tes son sa ses votre vos notre nos leur leurs".split(" "));
+    const norm = (t) => t.toLowerCase().replace(/[’']/gu, "' ").replace(/[^\p{L}' ]+/gu, " ").split(/\s+/u).filter(Boolean);
+    const openings = new Map(), grams = new Map();
+    for (const t of texts) {
+      const w = norm(t); const o = w.slice(0, 2).join(" "); openings.set(o, (openings.get(o) || 0) + 1);
+      const seen = new Set();
+      for (let i = 0; i + 3 <= w.length; i++) { const g = w.slice(i, i + 3); if (g.every((x) => STOP.has(x))) continue; const k = g.join(" "); if (!seen.has(k)) { seen.add(k); grams.set(k, (grams.get(k) || 0) + 1); } }
+    }
+    const over = (m, max) => [...m].filter(([, n]) => n > max).map(([k, n]) => `« ${k} » × ${n}`);
+    assert.deepEqual(over(openings, 5), [], "ouvertures trop répétées");
+    // Répliques écrites des affirmations : mêmes ouvertures plafonnées (les moments clés restent hors calcul).
+    const authored = []; const take = (v) => { if (v && typeof v === "object" && "text" in v) authored.push(v.text); else if (Array.isArray(v)) v.forEach(take); };
+    for (const x of [...c.BV_NPC_CLAIMS, ...c.BV_NPC_EVENING, ...c.BV_NPC_FALLOUT, ...c.BV_PLAYER_CLAIMS, ...c.BV_PLAYER_FALLOUT]) take([x.lines, x.ifPlayerDrinks || [], x.ifPlayerDry || []]);
+    const aOpen = new Map(); for (const t of authored) { const o = norm(t).slice(0, 2).join(" "); aOpen.set(o, (aOpen.get(o) || 0) + 1); }
+    assert.deepEqual(over(aOpen, 5), [], "ouvertures trop répétées dans les répliques écrites");
+    assert.deepEqual(over(grams, 5), [], "tournures trop répétées");
+    for (const t of texts) assert.ok(!STYLE_DASH.test(t) && !STYLE_CONTRAST.test(t) && !BANNED.test(t), `règle d’écriture : ${t}`);
+    const asked = [...c.BV_NPC_CLAIMS, ...c.BV_NPC_EVENING, ...c.BV_NPC_FALLOUT].filter((x) => x.truth.player === "ask");
+    for (const claim of asked) for (const a of ["acknowledge", "deny", "dodge"]) {
+      const entry = tp.BV_TOPIC_ANSWERS[claim.id]?.[a];
+      assert.ok(entry && entry.say.speaker === "{player}" && entry.drunk.speaker === "{player}", `réponses propres manquantes : ${claim.id} ${a}`);
+      assert.equal(entry.reply.speaker, claim.speaker === "bellirith" ? "Bellirith" : "Valurn", `la réplique doit venir de qui a posé la question : ${claim.id}`);
+      if (claim.speaker === "bellirith") assert.ok(a === "acknowledge" ? entry.reply.mood !== "seductive" : true, `Bellirith ne s’allume pas quand vous cédez : ${claim.id}`);
+    }
+    // Les réponses propres sont bien jouées en partie.
+    let topical = 0;
+    for (const s of modeRuns.complete.slice(0, 80)) s.log.forEach((r, i) => { if (r.answer && tp.BV_TOPIC_ANSWERS[r.claimId]) { const v = g.bvRecordView(s, i); const t = tp.BV_TOPIC_ANSWERS[r.claimId][r.answer]; assert.ok(v.lines.some((l) => l.text === t.reply.text), `réplique de sujet absente ${r.claimId}`); topical++; } });
+    assert.ok(topical > 50, `${topical} réponses de sujet jouées`);
   });
 
   const failed = results.filter((r) => !r[2]);

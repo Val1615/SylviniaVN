@@ -9,15 +9,15 @@ export type BVTransitionLead = "answer-acknowledge" | "answer-deny" | "answer-do
 export const BV_TRANSITION_LEADS: Record<BVTransitionLead, string[]> = {
   "answer-acknowledge": [
     "Votre aveu flotte encore au-dessus de la table quand vous reposez le verre.",
-    "Vous avez reconnu, et la gorgée vous chauffe encore la gorge.",
+    "La gorgée de votre aveu vous chauffe encore la gorge.",
     "Votre franchise a laissé un petit silence étonné derrière elle.",
     "Après votre aveu, plus personne ne vous regarde tout à fait de la même façon.",
     "Le goût de votre aveu reste sur vos lèvres, plus doux que vous ne l’auriez cru.",
-    "Vous avez dit oui, simplement, et la table a dû s’en accommoder.",
+    "Un oui tout simple, et la table a dû s’en accommoder.",
   ],
   "answer-deny": [
     "Votre refus a claqué net, et votre verre est resté plein.",
-    "Vous avez nié avec aplomb ; quelqu’un, en face, n’y croit qu’à moitié.",
+    "Votre démenti avait de l’aplomb ; quelqu’un, en face, n’y croit qu’à moitié.",
     "Votre verre intact trône devant vous comme une pièce à conviction.",
     "Votre non tient encore debout, mais on l’examine sous tous les angles.",
     "Vous gardez le menton haut après votre démenti, et cela se remarque.",
@@ -25,7 +25,7 @@ export const BV_TRANSITION_LEADS: Record<BVTransitionLead, string[]> = {
   ],
   "answer-dodge": [
     "Votre pirouette a fait sourire, sans tromper tout à fait.",
-    "Vous avez esquivé, et la question rôde encore autour de vous.",
+    "La question esquivée rôde encore autour de vous.",
     "Votre réponse oblique a laissé une porte entrouverte que chacun fixe un peu.",
     "Vous avez glissé hors de la question comme on quitte un salon par la porte de service.",
     "L’esquive vous a sauvé le verre, pas la curiosité des autres.",
@@ -48,7 +48,7 @@ export const BV_TRANSITION_LEADS: Record<BVTransitionLead, string[]> = {
   "drank-bellirith": [
     "Bellirith repose son verre vide d’un geste de reine qui ne regrette rien.",
     "Bellirith essuie le bord de son verre du pouce, sans hâte.",
-    "Bellirith a bu, et le fait payer à tout le monde d’un sourire.",
+    "Bellirith a bu, et le fait payer à la table d’un sourire.",
     "Une goutte brille au coin des lèvres de Bellirith ; elle la laisse là, exprès.",
     "Bellirith fait tourner son verre vide entre ses doigts bagués.",
   ],
@@ -60,8 +60,8 @@ export const BV_TRANSITION_LEADS: Record<BVTransitionLead, string[]> = {
     "Valurn passe une main dans ses cheveux après avoir bu, l’air soudain moins tiré à quatre épingles.",
   ],
   "drank-all": [
-    "Trois verres se reposent presque ensemble, et ce petit chœur fait rire tout le monde.",
-    "Vous avez tous bu ; la complicité qui s’installe a quelque chose d’inavouable.",
+    "Trois verres se reposent presque ensemble, et ce petit chœur arrache un rire à la tablée.",
+    "Chacun a bu ; la complicité qui s’installe a quelque chose d’inavouable.",
     "Trois gorgées pour une seule phrase : la table entière se sent prise en faute.",
     "Le même geste, trois fois : vous voilà tous complices, bon gré mal gré.",
   ],

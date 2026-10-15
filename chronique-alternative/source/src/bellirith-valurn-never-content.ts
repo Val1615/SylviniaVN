@@ -178,7 +178,7 @@ const BELLIRITH_ON_VALURN: BVNpcClaim[] = [
     B("Il me regardait de haut. Je ne supporte pas qu’on me regarde de haut quand on mesure un pied.", "angry"),
   ]),
   nb("b-v-0d", "valurn", 0, FP, "Je n’ai jamais fait semblant de comprendre une pièce de théâtre jusqu’au dernier acte.", [true, true, ASK], [
-    N("Bellirith boit. Valurn boit. Ils se regardent, offensés de se trouver dans le même camp."),
+    N("Deux verres se vident, celui de Bellirith puis celui de Valurn. Ils se regardent, offensés de se trouver dans le même camp."),
     V("La tragédie des trois reines. Nous sommes sortis en jurant qu’elle était profonde.", "charming"),
     B("Elle était longue. Profonde, je ne sais pas, j’ai dormi pendant la partie importante.", "smirk"),
   ], { ask: "Avez-vous déjà fait semblant de comprendre une pièce jusqu’au bout ?", ifPlayerDrinks: [B("Toi aussi ! Nous sommes une famille d’imposteurs culturels, maintenant.", "teasing")], ifPlayerDry: [V("Vous avez compris toutes les pièces que vous avez vues. Je vous en veux un peu.", "amused")] }),
@@ -236,7 +236,7 @@ const BELLIRITH_ON_VALURN: BVNpcClaim[] = [
   ]),
   nb("b-v-3d", "valurn", 3, PQ, "Je n’ai jamais cru que l’élégance pouvait remplacer des excuses.", [false, true, false], [
     V("L’élégance accompagne les excuses. Elle les rend supportables. C’est déjà beaucoup.", "neutral"),
-    B("Il boit en faisant la leçon. Toute ma jeunesse tient dans cette image.", "cold"),
+    B("Boire en faisant la leçon. Toute ma jeunesse tient dans cette image.", "cold"),
   ]),
 ];
 
@@ -267,7 +267,7 @@ const BELLIRITH_ON_PLAYER: BVNpcClaim[] = [
     V("Gentiment. Le mot est audacieux.", "amused"),
   ], { requires: prefix("bv-q2-shared-b:"), save: true, why: "Dans la Salle des Élus, vous lui avez refusé votre petit secret.", ifPlayerDrinks: [B("Dans ma propre salle de bal. J’en rêve encore, la nuit, avec une rancune délicieuse.", "seductive")], ifPlayerDry: [B("Tu m’as donné quelque chose, ce jour-là. Je le garde. Je ne te dirai pas où.", "teasing")] }),
   nb("b-p-1c", "player", 1, FP, "Je n’ai jamais serré les dents en perdant aux cartes.", [true, true, (ctx) => BQ.sharedCards(ctx)], [
-    N("Bellirith boit. Valurn aussi, sans même chercher à se défendre."),
+    N("Valurn et Bellirith boivent, sans même chercher à se défendre."),
     V("Toute la famille serre les dents. C’est héréditaire.", "charming"),
   ], { requires: prefix("bv-q2-shared-b:"), save: true, why: "Vous lui avez avoué détester perdre, même contre une chaise.", ifPlayerDrinks: [B("Tu l’avais avoué, je n’ai rien inventé. J’adore les aveux qu’on peut vérifier.", "seductive")] }),
   nb("b-p-1d", "player", 1, ALL, "Je n’ai jamais regardé la bouteille plus souvent que les gens assis autour.", [false, true, ASK], [
@@ -275,7 +275,7 @@ const BELLIRITH_ON_PLAYER: BVNpcClaim[] = [
   ], { ask: "Avez-vous surveillé la bouteille plus que les convives, ce soir ?", ifPlayerDrinks: [B("Honnête. J’aime les honnêtes qui ont soif.", "teasing")], ifPlayerDry: [B("Non, tu nous regardes, nous. Tu es une personne très dangereuse.", "seductive")] }),
 
   nb("b-p-2a", "player", 2, PR, "Je n’ai jamais cédé à une démone qui savait exactement ce que je voulais.", [false, false, (ctx) => BQ.gave(ctx)], [
-    V("Je bois à la santé de toutes les personnes qui viennent de se sentir visées.", "amused"),
+    V("À la santé de toutes les personnes qui viennent de se sentir visées.", "amused"),
   ], { requires: BQ.intrusion, save: true, why: "Lors de ses visites, vous avez cédé à Bellirith.", ifPlayerDrinks: [B("Je m’en souviens. Je m’en souviens très bien. Ne rougis pas, c’était un très bon souvenir.", "seductive")], ifPlayerDry: [B("Jamais ? Non, en effet. Tu as toujours préféré me compliquer la vie. C’est ce que j’aime chez toi.", "seductive")] }),
   nb("b-p-2b", "player", 2, PR, "Je n’ai jamais dit non à une démone et dormi tranquille ensuite.", [false, false, (ctx) => BQ.stood(ctx)], [
     V("Il dort tranquille. Regarde-le, il a l’air reposé. C’est une insulte personnelle.", "amused"),
@@ -285,7 +285,7 @@ const BELLIRITH_ON_PLAYER: BVNpcClaim[] = [
   ], { requires: BQ.q1, save: true, why: "Sous l’auvent d’Ysaure, vous les avez comparés devant Dame Hesterel.", ifPlayerDrinks: [B("Les trois ! Nous avons tous humilié cette famille. Elle s’en remettra, elle a de l’entraînement.", "teasing")], ifPlayerDry: [V("Vous n’avez humilié personne ce jour-là. Nous nous en sommes très bien chargés tout seuls.", "amused")] }),
   nb("b-p-2d", "player", 2, PR, "Je n’ai jamais flirté avec deux personnes assises à la même table.", [true, true, ASK], [
     B("Je bois. Évidemment que je bois. Je bois même pour les tables où je n’étais pas.", "seductive"),
-    V("Je bois parce que ma sœur est là et que l’autre personne aussi.", "charming"),
+    V("Ma sœur est là, et l’autre personne aussi. Il fallait bien boire.", "charming"),
   ], { ask: "Avez-vous déjà flirté avec deux personnes à la même table ?", ifPlayerDrinks: [B("Avec nous ? Ce soir ? Dis-le. Dis-le, que je puisse le lui répéter tous les jours.", "seductive")], ifPlayerDry: [V("Pas encore. La soirée est jeune.", "amused")] }),
 
   nb("b-p-3a", "player", 3, PQ, "Je n’ai jamais passé une nuit avec la femme qui vous parle.", [false, false, (ctx) => BQ.night(ctx)], [
@@ -298,7 +298,7 @@ const BELLIRITH_ON_PLAYER: BVNpcClaim[] = [
     N("Bellirith tend légèrement le poignet. L’ambre gris, cuir chaud et poivre, monte entre les trois verres."),
   ], { requires: BQ.vialHer, save: true, why: "Vous lui avez offert le flacon d’ambre gris d’Ysaure.", ifPlayerDrinks: [B("Et voilà ce que j’en ai fait. Je l’ai porté ce soir. Tu peux en conclure ce que tu veux ; tu en concluras trop, j’espère.", "seductive")] }),
   nb("b-p-3d", "player", 3, PQ, "Je n’ai jamais rencontré quelqu’un que je n’arrivais pas à lire.", [true, true, ASK], [
-    N("Bellirith boit en vous regardant. Valurn boit aussi, en regardant la même chose."),
+    N("Les yeux sur vous, Bellirith boit. Valurn aussi, en regardant la même chose."),
     B("Je ne te lis pas, {player}. Je l’avoue. C’est pour ça que tu es là, et c’est pour ça que je n’arrive pas à m’ennuyer.", "thoughtful"),
   ], { ask: "Avez-vous déjà rencontré quelqu’un que vous n’arriviez pas à lire ?", ifPlayerDrinks: [V("Lequel de nous deux ? Ne répondez pas, je préfère imaginer.", "charming")], ifPlayerDry: [B("Tu nous lis, alors. Tous les deux. C’est très impoli.", "teasing")] }),
 ];
@@ -309,7 +309,7 @@ const BELLIRITH_ON_PLAYER: BVNpcClaim[] = [
 
 const VALURN_ON_BELLIRITH: BVNpcClaim[] = [
   nv("v-b-0a", "bellirith", 0, FP, "Je n’ai jamais chanté faux exprès pour faire fuir un invité.", [true, false, false], [
-    N("Bellirith boit sans la moindre honte et fredonne trois notes atroces pour illustrer."),
+    N("Sans la moindre honte, Bellirith boit et fredonne trois notes atroces pour illustrer."),
     B("Le baron de Selve. Il est resté jusqu’au deuxième couplet. Un héros, à sa façon.", "smirk"),
   ]),
   nv("v-b-0b", "bellirith", 0, FP, "Je n’ai jamais séduit un capitaine de garde pour un laissez-passer et échoué.", [false, false, false], [
@@ -330,7 +330,7 @@ const VALURN_ON_BELLIRITH: BVNpcClaim[] = [
     B("Cette famille a des obsessions malsaines pour les confiseries. Je bois par lassitude.", "smirk"),
   ]),
   nv("v-b-1b", "bellirith", 1, ALL, "Je n’ai jamais fait sécher des fleurs entre les pages d’un livre que je n’ai pas lu.", [true, false, false], [
-    N("Bellirith boit. Lentement. Elle vous regarde par-dessus le verre, comme pour vous interdire de trouver ça charmant."),
+    N("Lentement, Bellirith porte le verre à ses lèvres. Elle vous regarde par-dessus le verre, comme pour vous interdire de trouver ça charmant."),
     B("Les livres étaient ennuyeux. Les fleurs leur donnaient une raison d’exister.", "cold"),
   ]),
   nv("v-b-1c", "bellirith", 1, ALL, "Je n’ai jamais connu tous les couplets d’une chanson que je jure détester.", [true, true, ASK], [
@@ -361,7 +361,7 @@ const VALURN_ON_BELLIRITH: BVNpcClaim[] = [
   ]),
 
   nv("v-b-3a", "bellirith", 3, PQ, "Je n’ai jamais gardé une rancune au chaud parce qu’elle me tenait compagnie.", [true, false, false], [
-    N("Bellirith boit d’un trait. Le cristal tinte contre ses dents."),
+    N("D’un trait, Bellirith vide son verre. Le cristal tinte contre ses dents."),
     B("Elle me tient très bien compagnie. Mieux que toi.", "cold"),
   ]),
   nv("v-b-3b", "bellirith", 3, PQ, "Je n’ai jamais cherché quelqu’un des yeux dans une salle avant de m’asseoir.", [true, true, ASK], [
@@ -369,7 +369,7 @@ const VALURN_ON_BELLIRITH: BVNpcClaim[] = [
   ], { ask: "Avez-vous déjà cherché quelqu’un des yeux avant de vous asseoir ?", ifPlayerDrinks: [B("Qui ? Non. Ne dis rien. Laisse-moi croire que c’était moi.", "seductive")], ifPlayerDry: [V("Vous entrez dans une salle sans chercher personne. Je vous envie.", "neutral")] }),
   nv("v-b-3c", "bellirith", 3, PQ, "Je n’ai jamais menti sur mes goûts pour plaire à quelqu’un que j’aimais.", [true, false, false], [
     B("Les violettes. J’ai prétendu les aimer pendant un an pour quelqu’un qui les adorait. Tu connais la suite : il les mange encore.", "thoughtful"),
-    V("Je ne savais pas.", "surprised"),
+    V("Ça, je l’ignorais.", "surprised"),
     B("Je sais. C’était tout l’intérêt.", "cold"),
   ]),
   nv("v-b-3d", "bellirith", 3, PQ, "Je n’ai jamais refusé une main tendue pour ne pas avoir à la lâcher plus tard.", [true, false, false], [
@@ -384,7 +384,7 @@ const VALURN_ON_BELLIRITH: BVNpcClaim[] = [
 
 const VALURN_ON_PLAYER: BVNpcClaim[] = [
   nv("v-p-0a", "player", 0, FP, "Je n’ai jamais parié sur l’ordre de sortie de courtisans.", [false, true, (ctx) => ctx.flags.includes("bv-q2v:bet")], [
-    V("Je bois par honnêteté. C’est rare, prenez des notes.", "charming"),
+    V("Par honnêteté, cette fois. C’est rare, prenez des notes.", "charming"),
   ], { requires: has("cross-bv-02-v-done"), save: true, why: "Dans la galerie d’audience, vous avez parié contre Valurn sur le garçon au chapeau.", ifPlayerDrinks: [V("Et vous avez gagné. Je n’en dors plus. J’exagère. J’en dors moins.", "amused")] }),
   nv("v-p-0b", "player", 0, FP, "Je n’ai jamais mangé debout au milieu d’un marché.", [true, true, ASK], [
     B("Tout le monde l’a fait. Même l’Impératrice, je l’ai vue, elle avait une brochette.", "teasing"),
@@ -413,10 +413,10 @@ const VALURN_ON_PLAYER: BVNpcClaim[] = [
     V("Je ne bois pas. Je vends des réputations depuis très longtemps ; c’est un métier comme un autre, en plus élégant.", "neutral"),
   ], { requires: prefix("valurn-q2-method:"), save: true, why: "À la réception de Dame Vayre, vous avez refusé de vendre une réputation.", ifPlayerDrinks: [V("Vous l’avez fait devant moi. Ça m’a coûté une soirée et ça m’a appris quelque chose. Je ne sais pas encore quoi.", "away")], ifPlayerDry: [B("Tu l’as vendue, alors. Celle de qui ? Non, laisse, je préfère imaginer pire.", "teasing")] }),
   nv("v-p-2b", "player", 2, PR, "Je n’ai jamais remis à sa place un intermédiaire trop gourmand.", [true, false, (ctx) => VQ.bluff(ctx)], [
-    B("Je bois. J’en remets un à sa place par semaine, c’est mon exercice.", "smirk"),
+    B("Une fois par semaine, je remets quelqu’un à sa place. C’est mon exercice.", "smirk"),
   ], { requires: prefix("valurn-q3-deal:"), save: true, why: "Vous avez corrigé Thazran, qui en est resté vexé.", ifPlayerDrinks: [V("Thazran m’en parle encore. Il vous appelle « la personne ». Avec une majuscule.", "amused")] }),
   nv("v-p-2c", "player", 2, PR, "Je n’ai jamais protégé une source qui m’avait mis en danger.", [false, true, (ctx) => VQ.odileShielded(ctx)], [
-    V("Je bois. Une fois ou deux. Il m’arrive d’être un imbécile utile.", "neutral"),
+    V("Ça m’est arrivé, une fois ou deux. Il m’arrive d’être un imbécile utile.", "neutral"),
   ], { requires: VQ.odileAny, save: true, why: "Au comptoir du Croissant, vous avez protégé Odile.", ifPlayerDrinks: [B("Toi aussi, alors. Les imbéciles utiles se reconnaissent entre eux, paraît-il.", "teasing")] }),
   nv("v-p-2d", "player", 2, PR, "Je n’ai jamais reproché en face à quelqu’un ses fausses pistes.", [true, false, (ctx) => VQ.accused(ctx)], [
     B("Je le fais à chaque phrase qu’il prononce. C’est un sport.", "smirk"),
@@ -450,7 +450,7 @@ export const BV_NPC_EVENING: BVNpcClaim[] = [
     B("Deux fois. Trois, peut-être. J’ai compté chaque flèche, et je les ai toutes gardées.", "seductive"),
   ], { evening: ev.playerHitBellirith(2), why: "Vous avez visé Bellirith plusieurs fois ce soir.", ifPlayerDrinks: [V("Il boit pour s’être acharné sur toi. Je n’ai jamais vu de déclaration plus élégante.", "amused")] }),
   nb("eve-b-2", "valurn", 1, PR, "Je n’ai jamais bu plus que ma sœur à un jeu qu’elle a inventé.", [false, true, false], [
-    V("C’est un jeu truqué par nature. Je le savais en entrant. Je bois avec lucidité.", "neutral"),
+    V("Ce jeu est truqué par nature. Je le savais en entrant. Je bois avec lucidité.", "neutral"),
     B("Il boit avec lucidité. Il dit ça à chaque fois qu’il perd.", "smirk"),
   ], { evening: ev.valurnDrankMost }),
   nb("eve-b-3", "player", 1, PR, "Je n’ai jamais passé la moitié d’une soirée sans boire une seule goutte.", [false, false, (_ctx, s) => s.drinks.player === 0], [
@@ -492,14 +492,14 @@ export const BV_NPC_EVENING: BVNpcClaim[] = [
 
 export const BV_NPC_FALLOUT: BVNpcClaim[] = [
   nb("fall-b-1", "valurn", 0, R, "Je n’ai jamais eu envie de rire avec toi, ce soir.", [true, false, false], [
-    N("Bellirith boit. Le geste a quelque chose d’une reddition, et elle le sait."),
+    N("Le verre de Bellirith se lève, et le geste a quelque chose d’une reddition. Elle le sait."),
     B("Le papillon n’est pas encore entré. Je triche, je bois d’avance.", "thoughtful"),
   ]),
   nb("fall-b-2", "player", 1, R, "Je n’ai jamais trouvé quelqu’un plus intéressant que ma propre colère.", [true, false, false], [
     B("Ce soir, oui. Toi. Ne te vante pas, la concurrence était faible.", "seductive"),
   ]),
   nb("fall-b-3", "valurn", 1, R, "Je n’ai jamais oublié à quoi ressemblait ton rire.", [true, false, false], [
-    V("Je ne bois pas. Moi, je l’avais oublié. Je viens de m’en souvenir.", "away"),
+    V("Mon verre reste où il est. Moi, je l’avais oublié. Je viens de m’en souvenir.", "away"),
   ]),
   nb("fall-b-4", "player", 1, R, "Je n’ai jamais eu envie qu’un inconnu reste jusqu’à la fin.", [true, true, ASK], [
     N("Les deux démons boivent. Ils évitent soigneusement de vous regarder en même temps."),
@@ -511,10 +511,10 @@ export const BV_NPC_FALLOUT: BVNpcClaim[] = [
     N("Personne ne boit. Bellirith regarde la carafe d’eau sur la console comme on regarde une idée qu’on aura plus tard."),
   ]),
   nv("fall-v-1", "bellirith", 0, R, "Je n’ai jamais cessé de compter jusqu’à douze avant de faire une bêtise.", [false, true, false], [
-    V("Je bois. Jusqu’à douze. Toujours. Ça ne m’a jamais empêché d’en faire, seulement de m’en souvenir avec précision.", "neutral"),
+    V("Jusqu’à douze. Toujours. Ça ne m’a jamais empêché d’en faire, seulement de m’en souvenir avec précision.", "neutral"),
   ]),
   nv("fall-v-2", "player", 1, R, "Je n’ai jamais été aussi bien écouté par quelqu’un qui ne me devait rien.", [false, true, false], [
-    V("Je bois à votre santé, du coup. C’est la seule dette que je contracte volontiers.", "charming"),
+    V("À votre santé, du coup. C’est la seule dette que je contracte volontiers.", "charming"),
   ]),
   nv("fall-v-3", "bellirith", 1, R, "Je n’ai jamais trouvé que ma sœur chantait faux.", [false, true, false], [
     V("Je bois parce que je mens. Elle chante juste. Elle chante juste exprès pour qu’on la croie quand elle chante faux.", "away"),
@@ -686,17 +686,17 @@ const sv = (test: (ctx: BVTruthCtx) => boolean) => (ctx: BVTruthCtx) => test(ctx
 const HUMOUR: BVPlayerClaim[] = [
   pc("p-hu-1", "none", "humour", 0, 1, "Je n’ai jamais dansé sur une table.", [true, true, false], [B("Sur une table, sous une table, et une fois sur un lustre. Le lustre s’en souvient mieux que moi.", "teasing"), V("La table était à moi. Je l’ai fait vernir depuis.", "amused")]),
   pc("p-hu-2", "valurn", "humour", 0, 1, "Je n’ai jamais changé trois fois de tenue avant de sortir.", [true, true, false], [V("Trois ? Quel ascète. Je m’arrête généralement à la cinquième, par épuisement des miroirs.", "charming")]),
-  pc("p-hu-3", "bellirith", "humour", 0, 0, "Je n’ai jamais fait semblant de connaître une chanson.", [false, true, false], [V("Je bois. Tout le monde chantait, j’ai fait les lèvres. Personne ne regarde les lèvres d’un homme qui chante faux.", "amused"), B("Moi, je les regardais.", "smirk")]),
+  pc("p-hu-3", "bellirith", "humour", 0, 0, "Je n’ai jamais fait semblant de connaître une chanson.", [false, true, false], [V("Tout le monde chantait, j’ai fait les lèvres. Personne ne regarde les lèvres d’un homme qui chante faux.", "amused"), B("Moi, je les regardais.", "smirk")]),
   pc("p-hu-4", "none", "humour", 0, 1, "Je n’ai jamais mangé le dessert de quelqu’un d’autre en lui laissant croire qu’il l’avait fini.", [true, false, false], [B("Il était distrait. Et la crème était fouettée à la perfection. Je n’ai aucun remords, rien que des souvenirs sucrés.", "seductive")]),
   pc("p-hu-5", "valurn", "humour", 0, 0, "Je n’ai jamais parlé à un miroir pour répéter un compliment.", [false, true, false], [V("Pour vérifier son effet. C’est de la méthode. Le miroir n’a jamais protesté.", "charming"), B("Le miroir n’ose plus.", "teasing")]),
   pc("p-hu-6", "bellirith", "humour", 0, 1, "Je n’ai jamais perdu une chaussure en quittant un bal.", [true, false, false], [B("Une seule ? On voit que tu as quitté des bals ennuyeux. Moi, j’ai perdu les deux, un bracelet et un vicomte.", "teasing")]),
-  pc("p-hu-7", "none", "humour", 1, 0, "Je n’ai jamais menti sur mon âge.", [true, true, false], [N("Les deux verres se lèvent avec un ensemble parfait. Vous n’oserez jamais leur demander de combien.")]),
+  pc("p-hu-7", "none", "humour", 1, 0, "Je n’ai jamais menti sur mon âge.", [true, true, false], [N("Ils lèvent leur verre avec un ensemble parfait. Vous n’oserez jamais leur demander de combien.")]),
   pc("p-hu-8", "valurn", "humour", 0, 1, "Je n’ai jamais confondu deux personnes en les saluant.", [false, true, false], [V("Une comtesse et sa tante. Je les ai complimentées pour la mauvaise robe. Elles ne s’adressent plus la parole, et je n’y suis pour rien.", "amused")]),
   pc("p-hu-9", "bellirith", "humour", 0, 0, "Je n’ai jamais fait rougir un garde en lui demandant l’heure.", [true, false, false], [B("Tous. Ils rougissent tous, à heure fixe, comme une horloge bien réglée.", "seductive")]),
   pc("p-hu-10", "none", "humour", 0, 1, "Je n’ai jamais caché un verre de vin dans un pot de fleurs.", [true, true, false], [V("Les plantes du palais sont très bien nourries. Elles ont toutes un léger accent du Sud.", "amused")]),
   pc("p-hu-11", "valurn", "humour", 0, 0, "Je n’ai jamais joué une partie de cartes en trichant si mal que tout le monde l’a vu.", [true, false, false], [B("Une fois. J’avais six reines. Personne n’a rien dit, j’ai trouvé ça très galant.", "teasing"), V("C’était ma partie. J’ai dit quelque chose. On ne m’a pas cru.", "annoyed")]),
   pc("p-hu-12", "bellirith", "humour", 1, 1, "Je n’ai jamais lancé une rumeur juste pour voir jusqu’où elle irait.", [true, true, false], [B("Jusqu’à Al’Gratal et retour, en trois jours. J’étais très fière d’elle.", "smirk"), V("Elle parlait de moi. J’ai dû l’aider pour qu’elle revienne plus vite.", "charming")]),
-  pc("p-hu-13", "none", "humour", 0, 0, "Je n’ai jamais été mis à la porte d’une boutique.", [false, true, sv(VQ.refusedSale)], [V("Une fois. J’avais simplement demandé ce que coûtait le marchand lui-même.", "amused")], { why: "Vous avez refusé net une vente pendant les affaires de Valurn ; on vous a raccompagné." , save: true }),
+  pc("p-hu-13", "none", "humour", 0, 0, "Je n’ai jamais été mis à la porte d’une boutique.", [false, true, sv(VQ.refusedSale)], [V("Rien qu’une. J’avais simplement demandé ce que coûtait le marchand lui-même.", "amused")], { why: "Vous avez refusé net une vente pendant les affaires de Valurn ; on vous a raccompagné." , save: true }),
   pc("p-hu-14", "valurn", "humour", 1, 0, "Je n’ai jamais été jaloux d’un chat.", [false, true, false], [V("Il dormait sur les genoux d’une personne remarquable, en ne faisant strictement rien. J’étais ulcéré.", "annoyed"), B("Le chat avait meilleur goût que toi.", "teasing")]),
 ];
 
@@ -704,14 +704,14 @@ const RELATIONS: BVPlayerClaim[] = [
   pc("p-re-1", "bellirith", "relations", 1, 0, "Je n’ai jamais oublié le prénom de quelqu’un avec qui j’avais passé la nuit.", [true, false, false], [B("Oublié ? Je ne l’ai jamais demandé. C’est plus honnête, et ça fait gagner du temps le matin.", "seductive")]),
   pc("p-re-2", "valurn", "relations", 1, 0, "Je n’ai jamais écrit une lettre d’amour sans l’envoyer.", [false, true, false], [V("Plusieurs. Elles sont mieux écrites que celles que j’ai envoyées. Les destinataires y ont gagné.", "away")]),
   pc("p-re-3", "none", "relations", 1, 1, "Je n’ai jamais embrassé quelqu’un pour faire enrager une tierce personne.", [true, true, false], [N("Deux verres. Bellirith et Valurn se regardent, et vous comprenez qu’il s’agissait peut-être de la même tierce personne."), B("Ne demande pas, {player}.", "smirk")]),
-  pc("p-re-4", "bellirith", "relations", 2, 0, "Je n’ai jamais été amoureux d’une personne qui ne s’en est jamais doutée.", [false, true, false], [V("Je bois. Elle ne s’en est jamais doutée. C’était très reposant, pour elle.", "away"), B("Tu me caches des choses.", "thoughtful")]),
+  pc("p-re-4", "bellirith", "relations", 2, 0, "Je n’ai jamais été amoureux d’une personne qui ne s’en est jamais doutée.", [false, true, false], [V("Elle ne s’en est jamais doutée. C’était très reposant, pour elle.", "away"), B("Tu me caches des choses.", "thoughtful")]),
   pc("p-re-5", "valurn", "relations", 1, 1, "Je n’ai jamais rompu par écrit.", [true, true, false], [B("Par écrit, par messager, une fois par perroquet. Il répétait mal, ça a duré trois semaines de plus.", "teasing")]),
   pc("p-re-6", "none", "relations", 1, 0, "Je n’ai jamais eu de rendez-vous galant à cette cour.", [true, true, sv(datedAnyone)], [B("Ça dépend de ce qu’on appelle galant. Moi, j’appelle galant tout ce qui finit tard.", "seductive")], { why: "Votre sauvegarde garde la trace d’au moins un rendez-vous.", save: true, ifPlayerDrinks: [V("Il boit. Je ne demanderai pas avec qui. Je le saurai demain matin, comme tout le monde.", "amused")] }),
   pc("p-re-7", "bellirith", "relations", 2, 0, "Je n’ai jamais passé la nuit avec quelqu’un de cette cour.", [true, true, sv(intimateWithAnyone)], [B("De cette cour. Quelle précision charmante. Je bois à la cour tout entière.", "seductive")], { why: "Votre sauvegarde garde la trace d’une nuit partagée.", save: true, ifPlayerDrinks: [V("Je retiens mes questions avec un héroïsme qu’on ne me reconnaîtra jamais.", "charming")] }),
   pc("p-re-8", "valurn", "relations", 1, 0, "Je n’ai jamais pardonné quelqu’un uniquement parce qu’il était beau.", [true, false, false], [B("Uniquement ? C’est la seule raison valable. Les autres raisons sont des excuses pour les laids.", "teasing")]),
   pc("p-re-9", "none", "relations", 0, 0, "Je n’ai jamais présenté un amant à ma famille.", [false, false, false], [B("Ma famille, c’est lui. Et notre père. Je ne présente rien à notre père. Il trouve tout lui-même.", "cold")]),
   pc("p-re-10", "bellirith", "relations", 1, 1, "Je n’ai jamais donné un faux nom pour séduire quelqu’un.", [true, true, false], [V("« Comte d’Orvelle ». Il n’existe pas. Il a pourtant beaucoup de succès.", "charming")]),
-  pc("p-re-11", "valurn", "relations", 2, 0, "Je n’ai jamais eu besoin d’être rassuré au milieu de la nuit.", [false, true, false], [V("Une fois. Par quelqu’un qui m’a dit que le bruit venait du vent. Le bruit venait de moi.", "away")]),
+  pc("p-re-11", "valurn", "relations", 2, 0, "Je n’ai jamais eu besoin d’être rassuré au milieu de la nuit.", [false, true, false], [V("Par quelqu’un qui m’a dit que le bruit venait du vent. Le bruit venait de moi.", "away")]),
   pc("p-re-12", "none", "relations", 1, 0, "Je n’ai jamais été invité deux fois au même rendez-vous à plusieurs.", [false, false, sv((ctx) => ctx.groupDateHistory.length >= 2)], [B("Deux fois. Tu deviens une habitude de cette cour, {player}.", "teasing")], { why: "Votre sauvegarde compte plusieurs rendez-vous à plusieurs.", save: true }),
   pc("p-re-13", "bellirith", "relations", 1, 0, "Je n’ai jamais été le préféré de quelqu’un sans l’avoir cherché.", [false, false, sv(BQ.favorite)], [B("Tu sais pourquoi tu bois, toi. Moi aussi.", "seductive")], { why: "Bellirith a fait de vous son préféré.", save: true, requires: (ctx) => BQ.favorite(ctx) }),
   pc("p-re-14", "valurn", "relations", 0, 1, "Je n’ai jamais confié un secret à quelqu’un que je connaissais depuis moins d’une semaine.", [false, false, sv(prefix("bv-q2-shared-v:"))], [V("Vous l’avez fait. À moi. Je l’ai gardé ; il est encore tiède.", "charming")], { why: "Dans la galerie, vous avez confié une petite chose à Valurn.", save: true }),
@@ -727,11 +727,11 @@ const MARCHES: BVPlayerClaim[] = [
   pc("p-ma-7", "none", "marches", 2, 0, "Je n’ai jamais livré un nom pour finir une affaire.", [true, true, sv(VQ.odileNamed)], [N("Valurn boit le premier. Bellirith suit, un peu plus tard, avec un léger haussement d’épaules.")], { why: "Vous avez livré Odile pendant l’affaire de Valurn.", save: true, ifPlayerDrinks: [V("Vous buvez aussi. Vous avez livré un nom. Nous sommes trois à bien dormir quand même.", "neutral")] }),
   pc("p-ma-8", "valurn", "marches", 0, 1, "Je n’ai jamais gardé une source secrète alors qu’on me la demandait.", [false, true, sv(VQ.sourceKept)], [V("Un marchand ne donne pas ses sources. Il donne des parfums.", "charming")], { why: "Vous avez tu votre source quand Valurn la demandait.", save: true }),
   pc("p-ma-9", "bellirith", "marches", 1, 0, "Je n’ai jamais vendu un objet en mentant sur son histoire.", [true, true, false], [B("Une simple fourchette. Je l’ai vendue comme la fourchette d’une impératrice. Elle l’était presque, elle avait servi.", "teasing")]),
-  pc("p-ma-10", "valurn", "marches", 2, 0, "Je n’ai jamais fait passer un profit avant une personne.", [false, true, false], [V("Je bois. Je n’en suis pas fier. Mais je n’en suis plus aussi fier qu’avant de ne pas être fier.", "away")]),
+  pc("p-ma-10", "valurn", "marches", 2, 0, "Je n’ai jamais fait passer un profit avant une personne.", [false, true, false], [V("Je n’en suis pas fier. Mais je n’en suis plus aussi fier qu’avant de ne pas être fier.", "away")]),
   pc("p-ma-11", "none", "marches", 0, 0, "Je n’ai jamais fait un détour par un marché juste pour sentir les épices.", [true, false, false], [B("Le safran. Le poivre long. Les cardamomes. J’y vais pour qu’on me regarde respirer.", "seductive")]),
   pc("p-ma-12", "valurn", "marches", 1, 0, "Je n’ai jamais accepté d’aide en jurant que c’était la dernière fois.", [false, true, sv(VQ.helpAccepted)], [V("Je jure toujours que c’est la dernière. Le serment fait partie de l’aide.", "charming")], { why: "Vous avez accepté l’aide de Valurn.", save: true }),
   pc("p-ma-13", "bellirith", "marches", 0, 1, "Je n’ai jamais tenu les comptes de quelqu’un d’autre.", [true, false, sv(BQ.q1)], [B("Les comptes de famille, {player}. Tu étais là. Tu as vu qui tenait la plume.", "smirk")], { why: "Au marché, vous vous êtes mêlé des comptes de famille.", save: true }),
-  pc("p-ma-14", "none", "marches", 1, 1, "Je n’ai jamais gagné un pari que j’aurais dû perdre.", [true, true, false], [V("Je bois. C’était un pari contre ma sœur. Elle me l’a fait payer de manière très créative.", "amused")]),
+  pc("p-ma-14", "none", "marches", 1, 1, "Je n’ai jamais gagné un pari que j’aurais dû perdre.", [true, true, false], [V("C’était un pari contre ma sœur. Elle me l’a fait payer de manière très créative.", "amused")]),
 ];
 
 const CONFIANCE: BVPlayerClaim[] = [
@@ -741,11 +741,11 @@ const CONFIANCE: BVPlayerClaim[] = [
   pc("p-co-4", "bellirith", "confiance", 1, 0, "Je n’ai jamais tenu tête à quelqu’un qui avait l’habitude qu’on lui cède.", [false, false, sv(BQ.stood)], [B("Tu l’as fait. À moi. Je m’en souviens comme d’un parfum.", "seductive")], { why: "Vous avez déjà tenu tête à Bellirith.", save: true, ifPlayerDrinks: [V("Il lui a tenu tête. Et il est encore là. Je l’engage comme garde du corps.", "amused")] }),
   pc("p-co-5", "bellirith", "confiance", 1, 0, "Je n’ai jamais cédé à un caprice en sachant que c’en était un.", [true, false, sv(BQ.gave)], [B("Les caprices sont faits pour qu’on y cède. Sinon ce sont des principes.", "smirk")], { why: "Vous avez déjà cédé à Bellirith.", save: true }),
   pc("p-co-6", "valurn", "confiance", 2, 0, "Je n’ai jamais regretté une décision prise à la place de quelqu’un.", [true, true, false], [N("Les deux verres se lèvent. Ils se regardent par-dessus le cristal et ne se disent rien.")], { phases: PR }),
-  pc("p-co-7", "none", "confiance", 1, 0, "Je n’ai jamais dormi d’un sommeil vraiment tranquille dans ce palais.", [false, true, false], [V("Je bois. Le palais respire la nuit. Je l’entends.", "away")]),
+  pc("p-co-7", "none", "confiance", 1, 0, "Je n’ai jamais dormi d’un sommeil vraiment tranquille dans ce palais.", [false, true, false], [V("Le palais respire, la nuit. Je l’entends.", "away")]),
   pc("p-co-8", "bellirith", "confiance", 1, 1, "Je n’ai jamais demandé pardon en premier.", [false, true, false], [B("Lui oui. Il demande pardon en premier pour avoir le dernier mot.", "cold")]),
   pc("p-co-9", "valurn", "confiance", 1, 0, "Je n’ai jamais menti à quelqu’un que j’admirais.", [true, true, false], [V("Surtout à eux. Les autres ne méritent pas l’effort.", "charming")]),
-  pc("p-co-10", "none", "confiance", 0, 0, "Je n’ai jamais tenu une promesse faite sur un coup de tête.", [true, true, false], [B("Une fois. J’ai promis d’apprendre la harpe. J’en joue, maintenant. Très mal, mais j’en joue.", "teasing")]),
-  pc("p-co-11", "valurn", "confiance", 2, 0, "Je n’ai jamais fait confiance à quelqu’un qui m’avait déjà menti.", [true, false, false], [B("Je bois. Une fois. Il le sait.", "cold"), V("Je le sais.", "away")]),
+  pc("p-co-10", "none", "confiance", 0, 0, "Je n’ai jamais tenu une promesse faite sur un coup de tête.", [true, true, false], [B("J’ai promis d’apprendre la harpe, un soir. J’en joue, maintenant. Très mal, mais j’en joue.", "teasing")]),
+  pc("p-co-11", "valurn", "confiance", 2, 0, "Je n’ai jamais fait confiance à quelqu’un qui m’avait déjà menti.", [true, false, false], [B("Une fois. Il le sait.", "cold"), V("Je le sais.", "away")]),
   pc("p-co-12", "none", "confiance", 1, -1, "Je n’ai jamais eu peur de ce que je pourrais devenir.", [true, true, false], [N("Deux verres. Lents, cette fois. Le feu craque, et personne n’en profite pour plaisanter.")], { phases: PR }),
   pc("p-co-13", "valurn", "confiance", 1, 0, "Je n’ai jamais aidé quelqu’un sans qu’il le sache.", [false, true, false], [V("C’est ma forme préférée. On n’a pas besoin de supporter la gratitude.", "charming")]),
   pc("p-co-14", "bellirith", "confiance", 0, 0, "Je n’ai jamais goûté au flacon que quelqu’un m’offrait au marché.", [false, false, sv(any("bv-q1-vial:bellirith", "bv-q1-vial:valurn"))], [B("Tu y as goûté. Il était bon, avoue.", "teasing")], { why: "Au marché, vous avez goûté au flacon tendu.", save: true }),
@@ -777,10 +777,10 @@ const LIBRE: BVPlayerClaim[] = [
   pc("p-li-6", "valurn", "libre", 1, 1, "Je n’ai jamais arrangé une soirée pour avoir l’air d’y arriver par hasard.", [true, true, false], [V("Ce soir, par exemple. Nous sommes tous les deux arrivés par hasard, exactement au même moment.", "amused")]),
   pc("p-li-7", "none", "libre", 0, 0, "Je n’ai jamais accepté une invitation à boire avec deux démons.", [false, false, true], [B("Et le voilà qui boit à sa propre phrase. Je l’adore.", "seductive")], { why: "Vous êtes assis à cette table." }),
   pc("p-li-8", "bellirith", "libre", 0, 1, "Je n’ai jamais été vexé qu’on ne remarque pas mon parfum.", [true, false, false], [B("Ambre, poivre rose, et une note dont je garde le nom. Si tu ne l’as pas remarqué, je bois pour toi.", "seductive")]),
-  pc("p-li-9", "valurn", "libre", 1, 0, "Je n’ai jamais joué à ce jeu en trichant.", [true, true, false], [N("Les deux verres se lèvent, sans honte et sans hésiter."), V("Pas ce soir. Ce soir je n’ai pas besoin de tricher, je perds tout seul.", "amused")]),
+  pc("p-li-9", "valurn", "libre", 1, 0, "Je n’ai jamais joué à ce jeu en trichant.", [true, true, false], [N("Ils lèvent leur verre sans honte et sans hésiter."), V("Pas ce soir. Ce soir je n’ai pas besoin de tricher, je perds tout seul.", "amused")]),
   pc("p-li-10", "none", "libre", 0, -1, "Je n’ai jamais eu envie que la soirée s’arrête.", [false, false, false], [N("Personne ne boit. Bellirith remplit les verres, et le geste suffit comme réponse.")], { phases: PR }),
   pc("p-li-11", "bellirith", "libre", 1, 0, "Je n’ai jamais trouvé quelqu’un plus beau en colère.", [true, true, false], [B("Lui. Il devient élégant quand il est furieux. Il ne le sait pas, et j’y veille.", "teasing")]),
-  pc("p-li-12", "valurn", "libre", 0, 0, "Je n’ai jamais fait semblant d’être ivre pour quitter une table.", [false, true, false], [V("C’est très utile. Et très reposant. Ce soir, je ne fais pas semblant.", "amused")]),
+  pc("p-li-12", "valurn", "libre", 0, 0, "Je n’ai jamais fait semblant d’être ivre pour quitter une table.", [false, true, false], [V("Très utile. Et très reposant. Ce soir, je ne fais pas semblant.", "amused")]),
   pc("p-li-13", "none", "libre", 1, 0, "Je n’ai jamais choisi ma place à table pour être près de quelqu’un.", [true, true, false], [B("Ce soir ? Évidemment. Tu crois que je me suis assise là pour le feu ?", "seductive")]),
   pc("p-li-14", "bellirith", "libre", 0, 1, "Je n’ai jamais tenu un pari jusqu’au bout pour ne pas perdre la face.", [true, false, false], [B("Une nuit entière sur le rebord d’une fontaine. En robe de bal. En hiver. J’ai gagné.", "smirk")]),
 ];

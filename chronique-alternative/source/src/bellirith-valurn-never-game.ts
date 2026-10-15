@@ -1,5 +1,6 @@
 import type { DialogueLine } from "./game-data";
 import type { BVStyle } from "./bellirith-valurn-scenes";
+import { BV_TOPIC_ANSWERS } from "./bellirith-valurn-never-topics";
 import { BV_TRANSITION_LEADS, BV_TRANSITION_MOODS, type BVTransitionLead, type BVTransitionMood } from "./bellirith-valurn-never-transitions";
 import {
   BV_ANSWER_GENERIC, BV_ANSWER_GENERIC_T, BV_ANSWER_REACTIONS, BV_ANSWER_REACTIONS_T, BV_PLAYER_ANSWERS, BV_PLAYER_ANSWERS_T,
@@ -448,13 +449,25 @@ const TARGET_NAME = (target: BVActor | "none") => target === "none" ? "la table"
 const isNarration = (line: DialogueLine) => line.speaker === "Narration";
 const otherOf = (speaker: string) => speaker === "Bellirith" ? "Valurn" : speaker === "Valurn" ? "Bellirith" : undefined;
 
+/** Verdict des verres : formulations variées, choisies par la graine du tour (jamais le même gabarit à la chaîne). */
+const DRINK_LINES = {
+  both: ["Bellirith et Valurn boivent.", "Deux verres se lèvent : Bellirith d’abord, Valurn ensuite.", "Valurn et Bellirith boivent d’un même geste, sans se regarder.", "Bellirith boit la première ; Valurn suit, plus lentement."],
+  bellirith: ["Bellirith boit.", "Bellirith lève son verre sans se faire prier.", "Seule Bellirith boit, avec un haussement d’épaules.", "Bellirith vide une gorgée, les yeux mi-clos."],
+  valurn: ["Valurn boit.", "Valurn boit une gorgée mesurée.", "Valurn porte le verre à ses lèvres, l’air de rien.", "Seul Valurn boit, après un soupir bref."],
+  playerWith: ["Vous buvez aussi.", "Vous levez le vôtre avec eux.", "Votre verre suit le mouvement."],
+  playerAlone: ["Vous buvez, et personne d’autre.", "Votre verre est le seul à se lever.", "Vous buvez sous deux regards attentifs."],
+  playerDry: ["Votre verre reste plein.", "Vous gardez le vôtre posé.", "Vous ne touchez pas au vôtre."],
+  nobody: ["Personne ne boit, vous non plus.", "Aucun des trois verres ne se lève.", "Les trois verres restent sagement posés."],
+};
 function drinkLine(record: BVTurnRecord, authored?: DialogueLine): BVViewLine {
   const d = record.drinkers;
-  const npcs = (["bellirith", "valurn"] as BVNpc[]).filter((who) => d.includes(who)).map((who) => NAMES[who]);
-  const playerPart = d.includes("player") ? (npcs.length ? "Vous buvez aussi." : "Vous êtes seul à boire.") : "Votre verre reste plein.";
+  const pick = (pool: string[], salt: string) => pool[hashKey(record.round, record.claimId.length + record.round, `${record.claimId}:${salt}`) % pool.length];
+  const npcs = (["bellirith", "valurn"] as BVNpc[]).filter((who) => d.includes(who));
+  const playerPart = d.includes("player") ? pick(npcs.length ? DRINK_LINES.playerWith : DRINK_LINES.playerAlone, "p") : pick(DRINK_LINES.playerDry, "p");
   if (authored && !ADDRESSED_TO_PLAYER.test(authored.text)) return { ...authored, step: "verres", text: `${authored.text} ${playerPart}` };
   if (authored) return { ...authored, step: "verres" };
-  const npcPart = npcs.length === 2 ? "Bellirith et Valurn boivent." : npcs.length === 1 ? `${npcs[0]} boit.` : d.includes("player") ? "" : "Personne ne boit.";
+  if (!d.length) return { speaker: "Narration", step: "verres", text: pick(DRINK_LINES.nobody, "n") };
+  const npcPart = npcs.length === 2 ? pick(DRINK_LINES.both, "n") : npcs.length === 1 ? pick(DRINK_LINES[npcs[0]], "n") : "";
   return { speaker: "Narration", step: "verres", text: [npcPart, playerPart].filter(Boolean).join(" ") };
 }
 
@@ -517,9 +530,10 @@ export function bvRecordView(state: BVNeverState, index: number): BVRecordView |
 /* ------------------------------------------------------------------------ */
 
 /** Seuils d’ivresse : gris à partir de 3 verres, ivre à partir de 6. La jauge plafonne à 8. */
-export const BV_IVRESSE_GRIS = 3;
-export const BV_IVRESSE_IVRE = 6;
-export const BV_IVRESSE_MAX = 8;
+// Soirée complète : trois fois plus de verres pour monter d’un palier (gain divisé par 3).
+export const BV_IVRESSE_GRIS = 9;
+export const BV_IVRESSE_IVRE = 18;
+export const BV_IVRESSE_MAX = 24;
 export function bvIvresse(drinks: number, mode?: BVMode): BVIvresse {
   const t = bvIvresseSeuils(mode);
   return drinks >= t.ivre ? "ivre" : drinks >= t.gris ? "gris" : "sobre";
@@ -608,7 +622,8 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
           ...tiered(BV_STATEMENT_GENERIC[npc], BV_STATEMENT_GENERIC_T[npc], level),
         ];
       // Le thème ne passe en premier qu’une fois sur deux, pour que l’issue (boire ou non) reste audible.
-      const ordered = !solemn && hashKey(seed, round, `theme-${npc}`) % 2 ? groups.slice().sort((a, b) => Number(isTheme(a, npc, claim.theme)) - Number(isTheme(b, npc, claim.theme))) : groups;
+      // Le sujet passe d’abord : le verdict des verres est déjà dit juste avant.
+      const ordered = groups;
       const line = draw(ordered, used, seed, round, `react-${npc}`);
       if (line) { after.push(line); break; }
     }
@@ -616,6 +631,13 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
   }
   if (record.answer) {
     const answer = record.answer;
+    const topic = BV_TOPIC_ANSWERS[record.claimId]?.[answer];
+    if (topic) {
+      // Question qui a ses propres réponses : votre phrase parle du sujet (version ivre si vous l’êtes), et la réplique aussi.
+      const mine = lvl("player") === "ivre" ? topic.drunk : topic.say;
+      used.add(mine.text); used.add(topic.reply.text);
+      return { before: [mine], after: [topic.reply] };
+    }
     const say = draw(tiered(BV_PLAYER_ANSWERS[answer], BV_PLAYER_ANSWERS_T[answer], lvl("player")), used, seed, round, `answer-${answer}`);
     const asker = record.speaker as BVNpc;
     const other: BVNpc = asker === "bellirith" ? "valurn" : "bellirith";
@@ -631,9 +653,6 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
     return { before: say ? [say] : [], after };
   }
   return none;
-}
-function isTheme(group: DialogueLine[], npc: BVNpc, theme: BVTheme) {
-  return group === BV_THEME_REACTIONS[npc][theme] || group === BV_THEME_REACTIONS_T[npc][theme].gris || group === BV_THEME_REACTIONS_T[npc][theme].ivre;
 }
 
 /** Répliques de choix de l’intervention `index` : votre phrase, puis les réactions. Aucune réplique déjà entendue ce soir. */
