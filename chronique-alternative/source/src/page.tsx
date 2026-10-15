@@ -243,6 +243,8 @@ import {
   type UiStyle,
 } from "./ui/atlas/atlas-ui";
 import type { AtlasTab } from "./ui/atlas/atlas-shell";
+import { CALENDAR_FESTIVALS, CIVILIZATIONS, CIVILIZATION_ORDER, IMPERIAL_MONTHS, SEASONS, BAL_DES_ELUS_NOTE, ERA_NAME, festivalsInMonth, festivalsOn, formatImperialDate, imperialDate, monthStart, thermalPhase, upcomingFestivals, weekLabel, type CivilizationId } from "./calendar";
+import { WEATHER_TRAVEL_CAP, climateOf, forecast, shelterSpot, weatherAt, weatherTravel } from "./weather";
 import { V2Title } from "./ui/v2/title";
 import { AudioButtons, Kbd, Orn4, ROMAINS, Seau, V2Dialog, moveFocus } from "./ui/v2/common";
 import { DEFAULT_SCALES, ECHELLES, SCALE_KEYS, applyScales, borne, createParticles, installGlobalSfx, playTransition, readScales, reduit, setReducedSetting, setUiPrefs, sfx, storeScales, subscribeUiPrefs, uiPrefs, type FxMode, type ScaleKey, type Scales } from "./ui/v2/fx";
@@ -1641,6 +1643,25 @@ function storyCharacterPlace(characterId: string, day: number, period: number, f
   return undefined;
 }
 
+const weatherProtectedCache = new Map<string, Set<string>>();
+/**
+ * Sous-lieux où une scène attend ce personnage (route, invitation, rendez-vous, événement, jalon d’histoire) :
+ * la météo ne l’en déplace jamais. Les autres présences de routine peuvent se mettre à l’abri.
+ */
+function weatherProtectedSpots(characterId: string) {
+  const cached = weatherProtectedCache.get(characterId);
+  if (cached) return cached;
+  const spots = new Set<string>([
+    ...Object.entries(ROUTE_SPOTS).filter(([routeId]) => routeId.startsWith(`${characterId}-`)).map(([, spot]) => spot),
+    ...INVITATIONS.filter((entry) => entry.character === characterId).map((entry) => entry.spot),
+    ...SPONTANEOUS_EVENTS.filter((entry) => entry.characters.includes(characterId)).flatMap((entry) => entry.spots || []),
+    ...DATE_SCENES.filter((entry) => entry.character === characterId).map((entry) => entry.spot),
+    ...CAMPAIGN_SCENES.filter((entry) => entry.lead === characterId || entry.cast.includes(characterId)).map((entry) => entry.spot),
+  ]);
+  weatherProtectedCache.set(characterId, spots);
+  return spots;
+}
+
 function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = [], housing?: HousingState) {
   const campaignPlace = storyCharacterPlace(character.id, day, period, flags);
   if (campaignPlace) return campaignPlace;
@@ -1665,6 +1686,8 @@ function characterPlace(character: CharacterData, day: number, period: number, f
     const hyleeSchedule = hylee ? characterSchedule(hylee, day, flags) : undefined;
     if (hyleeSchedule?.location === "forbidden") moment = { spot: "forbidden-sanctuary", action: "accueille Hylee et maintient le chemin de la clairière stable" };
   }
+  const shelter = schedule.location && !housing?.residents.includes(character.id) ? shelterSpot(moment.spot, schedule.location, day, weatherProtectedSpots(character.id)) : undefined;
+  if (shelter) moment = { spot: shelter.spot, action: `${moment.action}, à l’abri (${shelter.weather.label.toLowerCase()})` };
   const spot = spotById(moment.spot);
   return {
     ...schedule,
@@ -2261,7 +2284,7 @@ export default function Home() {
     setNotifications((current) => [...current, { ...draft, id }].slice(-4));
     const meta = V2_NOTIF[draft.kind];
     const clock = gameRef.current;
-    setV2Log((current) => [{ id, type: meta.type, icon: meta.icon, label: meta.label, title: draft.title, detail: draft.detail, t: clock ? `Jour ${clock.day} · ${PERIODS[clock.period].label}` : "", read: false }, ...current].slice(0, 80));
+    setV2Log((current) => [{ id, type: meta.type, icon: meta.icon, label: meta.label, title: draft.title, detail: draft.detail, t: clock ? `${formatImperialDate(clock.day, "jour-mois")} · ${PERIODS[clock.period].label}` : "", read: false }, ...current].slice(0, 80));
     sfx("notif");
     const timer = window.setTimeout(() => {
       setNotifications((current) => current.filter((entry) => entry.id !== id));
@@ -3816,7 +3839,11 @@ export default function Home() {
       setDialogue({ scene, lines: expandedLines(scene, game, intro, "intro"), lineIndex: 0, phase: "intro" });
       return;
     }
-    const periods = travelPeriodCost(game.location, locationId, game.player.vocation, LOCATIONS);
+    const baseTravel = travelPeriodCost(game.location, locationId, game.player.vocation, LOCATIONS);
+    // Météo du jour : surcoût plafonné à deux périodes, jamais de route fermée (voir weather.ts).
+    const meteo = weatherTravel(game.location, locationId, game.day, game.player.vocation, game.settings.noTimeCost ? "setting" : undefined);
+    const periods = baseTravel + meteo.surcharge;
+    if (meteo.surcharge && meteo.reason) pushNotification({ kind: "story", title: `${meteo.reason.icon} ${meteo.reason.label} · trajet plus long`, detail: `${LOCATIONS.find((entry) => entry.id === meteo.where)?.name || ""} : +${meteo.surcharge} période${meteo.surcharge > 1 ? "s" : ""}${meteo.scoutHelped ? " (Éclaireur·se : une de moins)" : ""}.` });
     updateGame((current) => {
       const clock = current.settings.noTimeCost ? { day: current.day, period: current.period } : advanceClock(current, periods, PERIODS.length);
       return { ...current, ...clock, location: locationId, spot: spotId, ...placeDiscovery(current, locationId, spotId) };
@@ -5288,9 +5315,10 @@ export default function Home() {
       {commonLayers}
       {game.settings.music && fadingTrack && <audio key={`fade-${fadingTrack}`} ref={fadeRef} src={`/assets/audio/${fadingTrack}.mp3`} autoPlay loop />}
       {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = fadingTrack ? 0 : audioVolume / 100 * (bnDuck ? 0.15 : 1); }} autoPlay loop />}
-      <div className={`v2 v2-root jeu ${V2_PERIOD_CLASSES[game.period] || ""} ${sceneActive ? "scene-active" : ""}`} data-scene={sceneName} inert={sceneActive || undefined}>
+      <div className={`v2 v2-root jeu ${V2_PERIOD_CLASSES[game.period] || ""} ${sceneActive ? "scene-active" : ""} saison-${imperialDate(game.day).season} meteo-${weatherAt(game.day, game.location).overlay}`} data-scene={sceneName} data-saison={imperialDate(game.day).season} data-meteo={weatherAt(game.day, game.location).id} inert={sceneActive || undefined}>
         <V2Fond src={background} flou={v2Tab !== "place"} />
         <div className="eclairage" aria-hidden="true" />
+        <V2Ciel game={game} reduced={game.settings.reducedMotion} />
         <V2Hud game={game} tab={v2Tab} onTab={(next) => goTab(next)} badges={badges} unread={unread} onRegistre={() => setV2Dialog({ kind: "registre" })} onPause={() => setV2Dialog({ kind: "pause" })} music={game.settings.music} onToggleMusic={toggleMusic} soundtrackLabel={soundtrackLabel} />
         <main id="scene" className={`scene scene-${sceneName}`} tabIndex={-1} key={`${v2Tab}-${linksView}`}>
           {v2Tab === "place" && <V2Lieu game={game} location={currentLocation} spot={currentSpot} spots={currentSpots} present={presentCharacters} visible={visibleCharacters} visitors={upcomingVisitors} event={spontaneousEvent} rumor={localRumor}
@@ -5330,7 +5358,7 @@ export default function Home() {
             else if (id === "titre") { closeV2(); void playTransition("encre").then(() => { setDialogue(null); setModal(null); setScreen("title"); }); }
             else setV2Dialog({ kind: "story" });
           }}><i>{icon}</i><span>{label}</span></button></li>)}</ul>
-            <aside className="pause-etat"><div className="pe-img" style={{ backgroundImage: `url(${currentSpot.background})` }} /><b>{game.player.name}</b><small>Jour {game.day} · {period.label} {period.time}</small><small>{currentSpot.name} · {currentLocation.name}</small><div className="pe-l"><span>Pièces</span><b>◈ {game.coins}</b></div><div className="pe-l"><span>Liens</span><b>{CHARACTERS.filter((c) => game.relationships[c.id].met).length} / {CHARACTERS.length}</b></div><div className="pe-l"><span>Chapitre</span><b>{Math.min(storyProgress(game.history, game.flags) + 1, MAIN_STORY.length)} / {MAIN_STORY.length}</b></div></aside></div>
+            <aside className="pause-etat"><div className="pe-img" style={{ backgroundImage: `url(${currentSpot.background})` }} /><b>{game.player.name}</b><small>{formatImperialDate(game.day)} · {period.label} {period.time}</small><small>{currentSpot.name} · {currentLocation.name}</small><div className="pe-l"><span>Pièces</span><b>◈ {game.coins}</b></div><div className="pe-l"><span>Liens</span><b>{CHARACTERS.filter((c) => game.relationships[c.id].met).length} / {CHARACTERS.length}</b></div><div className="pe-l"><span>Chapitre</span><b>{Math.min(storyProgress(game.history, game.flags) + 1, MAIN_STORY.length)} / {MAIN_STORY.length}</b></div></aside></div>
         </V2Dialog>}
         {v2Dialog?.kind === "save" && <V2Dialog key="save" surtitre="Chronique" titre="Sauvegarder" classe="large" onClose={closeV2}><V2SaveSlots game={game} mode="save" onSave={(slot) => { saveSlot(slot); setSlotVersion((v) => v + 1); pushNotification({ kind: "story", title: `Sauvegardé · emplacement ${slot}`, detail: `Jour ${game.day} · ${period.label} · ${currentSpot.name}` }); }} onLoad={() => undefined} version={slotVersion} /></V2Dialog>}
         {v2Dialog?.kind === "plus" && <V2Dialog key="plus" surtitre="Menu" titre="Plus" classe="etroit plus" onClose={closeV2}><div className="plus-grille">{([["jobs", "◈", "Jobs", "Contrats et pièces"], ["inventory", "⌂", "Biens", "Inventaire et logis"], ["codex", "✧", "Codex", "Encyclopédie"], ["options", "⚙", "Options", "Réglages"], ["registre", "✉", "Registre", "Notifications"], ["pause", "▤", "Système", "Sauvegarder, titre"]] as const).map(([id, icon, label, detail]) => <button type="button" key={id} className="plus-tuile" data-plus={id} onClick={() => { if (id === "registre") setV2Dialog({ kind: "registre" }); else if (id === "pause") setV2Dialog({ kind: "pause" }); else { closeV2(); goTab(id, true); } }}><i>{icon}</i><b>{label}</b><small>{detail}</small>{id === "registre" && unread > 0 && <em className="pastille">{unread}</em>}</button>)}</div></V2Dialog>}
@@ -5751,7 +5779,7 @@ function JournalView({ embedded = false, forcedSection, onValurnMarket, onBVScen
       <p>Les vingt-neuf jours de coopération restent consultables sans rejouer artificiellement l’écoulement du temps.</p>
       {crossLetters.map(({ received, letter }) => (
         <button className={received.read ? "" : "unread"} type="button" key={letter.id} onClick={() => onReadCrossLetter(letter.id)}>
-          <span>{received.read ? `Jour ${received.receivedDay}` : "Nouveau"}</span>
+          <span>{received.read ? formatImperialDate(received.receivedDay, "jour-mois") : "Nouveau"}</span>
           <strong>{letter.subject}</strong>
           <small>{CHARACTERS.find((entry) => entry.id === letter.character)?.name} · {letter.delivery}</small>
         </button>
@@ -7082,7 +7110,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     const character = CHARACTERS.find((entry) => entry.id === letter.character);
     const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
     const attachment = letter.attachedItem ? GIFTS.find((entry) => entry.id === letter.attachedItem)?.name || displayItemById(letter.attachedItem)?.name || letter.attachedItem : undefined;
-    return <V2Lettre game={game} character={character} surtitre={`Correspondance · Jour ${received.receivedDay}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature} attachment={attachment}
+    return <V2Lettre game={game} character={character} surtitre={`Correspondance · ${formatImperialDate(received.receivedDay)}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature} attachment={attachment}
       replies={letter.replies?.length && !received.replyId ? letter.replies : undefined} repliesHint="Répondre — ce choix nuance la relation sans transformer la lettre en épreuve." onReply={(replyId) => replyToLetter(letter, replyId)}
       response={selectedReply?.response} onClose={onClose} />;
   }
@@ -7092,7 +7120,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
     if (!letter || !received) return null;
     const character = CHARACTERS.find((entry) => entry.id === letter.character);
     const selectedReply = letter.replies?.find((entry) => entry.id === received.replyId);
-    return <V2Lettre game={game} character={character} surtitre={`Quête croisée · Jour ${received.receivedDay}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature}
+    return <V2Lettre game={game} character={character} surtitre={`Quête croisée · ${formatImperialDate(received.receivedDay)}`} subject={letter.subject} delivery={letter.delivery} body={letter.body} signature={letter.signature}
       replies={letter.replies?.length && !received.replyId ? letter.replies : undefined} repliesHint="Répondre est facultatif : Lineva et Allenna poursuivent leur relation sans attendre votre intervention." onReply={(replyId) => replyToCrossLetter(letter, replyId)}
       response={selectedReply?.response} noReplyHint="Ce courrier n’appelle aucune réponse." onClose={onClose} />;
   }
@@ -7636,13 +7664,48 @@ function V2Creation({ player, setPlayer, onBack, onBegin, music, onToggleMusic, 
   </main>;
 }
 
+/** Date impériale du HUD : jour, mois en -eth, an de l’Ère impériale, saison et temps local. */
+function V2HudDate({ game }: { game: GameState }) {
+  const date = imperialDate(game.day);
+  return <>
+    <div className="hud-jour hud-calendrier" title={`${formatImperialDate(game.day, "long")} · Jour ${game.day} de la chronique · ${weekLabel(game.day)}`}>
+      <small>{date.monthName}</small><b>{date.dayOfMonth}</b><span className="hud-an">{date.year} E.I.</span>
+    </div>
+  </>;
+}
+
+/** Saison, temps local et fête du jour, à droite de la période. */
+function V2HudCiel({ game }: { game: GameState }) {
+  const date = imperialDate(game.day);
+  const weather = weatherAt(game.day, game.location);
+  const fetes = festivalsOn(game.day);
+  const season = SEASONS[date.season];
+  return <div className="hud-ciel" title={`${season.label} · ${weather.label}${fetes.length ? ` · ${fetes.map((fete) => fete.name).join(", ")}` : ""}`}>
+      <span className="hud-saison" data-saison={date.season}><i aria-hidden="true">{season.icon}</i><span className="hud-ciel-txt">{season.label}</span></span>
+      <span className="hud-meteo" data-meteo={weather.id}><i aria-hidden="true">{weather.icon}</i><span className="hud-ciel-txt">{weather.label}</span></span>
+      {fetes.length > 0 && <span className="hud-fete"><i aria-hidden="true">✦</i><span className="hud-ciel-txt">{fetes.length > 1 ? `${fetes.length} fêtes` : fetes[0].name}</span></span>}
+    </div>;
+}
+
+/** Voile de saison et de météo : particules CSS légères, art visible, rien d’interactif. */
+function V2Ciel({ game, reduced }: { game: GameState; reduced: boolean }) {
+  const season = imperialDate(game.day).season;
+  const weather = weatherAt(game.day, game.location);
+  const count = reduced ? 0 : 18;
+  return <div className={`v2-ciel ciel-${season} ciel-${weather.overlay} ${reduced ? "ciel-fixe" : ""}`} aria-hidden="true" data-ciel={`${season}:${weather.id}`}>
+    <span className="ciel-teinte" />
+    {Array.from({ length: count }, (_, index) => <i key={index} style={{ "--k": index } as React.CSSProperties} />)}
+  </div>;
+}
+
 function V2Hud({ game, tab, onTab, badges, unread, onRegistre, onPause, music, onToggleMusic, soundtrackLabel }: { game: GameState; tab: V2Tab; onTab: (tab: V2Tab) => void; badges: Partial<Record<V2Tab, number>>; unread: number; onRegistre: () => void; onPause: () => void; music: boolean; onToggleMusic: () => void; soundtrackLabel: string }) {
   const period = PERIODS[game.period];
   return <header className="hud">
     <div className="hud-date" aria-live="polite">
-      <div className="hud-jour"><small>Jour</small><b>{game.day}</b></div>
+      <V2HudDate game={game} />
       <div className="hud-periode"><span className="hud-per-nom"><i>{period.icon}</i>{period.label}</span><em>{period.time}</em>
         <span className="hud-phases" aria-label={`Période ${game.period + 1} sur ${PERIODS.length}`}>{PERIODS.map((entry, index) => <b key={entry.id} className={index === game.period ? "on" : index < game.period ? "passe" : ""} title={entry.label} />)}</span></div>
+      <V2HudCiel game={game} />
     </div>
     <nav className="hud-onglets" aria-label="Menu du jeu">
       <span className="hud-touche"><Kbd>Q</Kbd></span>
@@ -7780,7 +7843,10 @@ function V2Carte({ game, visible, selectedLocation, selectedSpot, onSelectLocati
   const presentAt = (locationId: string) => visible.filter((who) => characterPlace(who, game.day, game.period, game.flags, game.housing).location === locationId);
   const presentAtSpot = (spotId: string) => visible.filter((who) => characterPlace(who, game.day, game.period, game.flags, game.housing).spot === spotId);
   const here = game.location === location.id && game.spot === spotSel?.id;
-  const travelPeriods = travelPeriodCost(game.location, location.id, game.player.vocation, LOCATIONS);
+  const meteoTrajet = weatherTravel(game.location, location.id, game.day, game.player.vocation, game.settings.noTimeCost ? "setting" : undefined);
+  const travelPeriods = travelPeriodCost(game.location, location.id, game.player.vocation, LOCATIONS) + meteoTrajet.surcharge;
+  const meteoIci = weatherAt(game.day, location.id);
+  const climat = climateOf(location.id);
   useLayoutEffect(() => {
     const run = () => v2DeclutterPins(cadreRef.current);
     const frame = requestAnimationFrame(() => requestAnimationFrame(run));
@@ -7797,7 +7863,7 @@ function V2Carte({ game, visible, selectedLocation, selectedSpot, onSelectLocati
           const isKnown = locationUnlocked(game, entry.id);
           const occupants = isKnown ? presentAt(entry.id) : [];
           return <button type="button" key={entry.id} className={`pin ${entry.id === game.location ? "ici" : ""} ${entry.id === location.id ? "sel" : ""} ${isKnown ? "" : "voile"} ${occupants.length ? "" : "mineur"}`} style={{ left: `${entry.pin[0]}%`, top: `${entry.pin[1]}%` }} data-loc={entry.id} disabled={!isKnown} aria-label={isKnown ? `${entry.name}${occupants.length ? ` · ${occupants.map((who) => who.name).join(", ")}` : ""}` : "Lieu inconnu"} onClick={() => { sfx("survol"); onSelectLocation(entry.id); onSelectSpot(entry.id === game.location ? game.spot : DEFAULT_SPOTS[entry.id]); }}>
-            <i className="pin-los" />{entry.id === game.location && <span className="pin-vous">Vous</span>}<span className="pin-nom">{isKnown ? entry.name : "???"}</span>
+            <i className="pin-los" />{entry.id === game.location && <span className="pin-vous">Vous</span>}<span className="pin-nom">{isKnown ? entry.name : "???"}{isKnown && <span className="pin-meteo" title={weatherAt(game.day, entry.id).label}>{weatherAt(game.day, entry.id).icon}</span>}</span>
             {occupants.length > 0 && <span className="pin-pres">{occupants.slice(0, 3).map((who) => <img key={who.id} src={who.portrait} alt="" />)}</span>}
           </button>;
         })}
@@ -7809,13 +7875,18 @@ function V2Carte({ game, visible, selectedLocation, selectedSpot, onSelectLocati
       <div className="cf-corps">
         <h2 className="titre-jeu">{location.name}</h2>
         <p className="texte">{location.description}</p>
+        <div className="cf-bloc cf-meteo" data-meteo={meteoIci.id}><span className="surtitre">Temps · {climat.label}</span>
+          <p className="cf-meteo-jour"><i aria-hidden="true">{meteoIci.icon}</i><b>{meteoIci.label}</b><small>{meteoIci.detail}</small></p>
+          <ol className="cf-prevision" aria-label="Prévisions">{forecast(game.day + 1, location.id, 3).map((entry) => <li key={entry.day} title={entry.weather.label}><small>{formatImperialDate(entry.day, "jour-mois")}</small><i aria-hidden="true">{entry.weather.icon}</i><span>{entry.weather.label}</span></li>)}</ol>
+          {meteoTrajet.surcharge > 0 && meteoTrajet.reason && <p className="cf-meteo-trajet">{meteoTrajet.reason.icon} +{meteoTrajet.surcharge} période{meteoTrajet.surcharge > 1 ? "s" : ""} de trajet ({meteoTrajet.reason.label.toLowerCase()}{meteoTrajet.where && meteoTrajet.where !== location.id ? ` au départ` : ""}){meteoTrajet.scoutHelped ? " · Éclaireur·se : une période épargnée" : ""}</p>}
+        </div>
         <div className="cf-bloc"><span className="surtitre">Présences</span><div className="cf-pres">{presentAt(location.id).length ? presentAt(location.id).map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}</span></Fragment>) : <span className="discret">Personne de connu</span>}</div></div>
         <details className="cf-dest" open={destOpen} onToggle={(event) => setDestOpen((event.currentTarget as HTMLDetailsElement).open)}><summary><span className="surtitre">Destinations connues · {known.length}</span><i aria-hidden="true">▾</i></summary><ul>{known.map((entry) => <li key={entry.id}><button type="button" className={entry.id === location.id ? "sel" : ""} data-dest={entry.id} onClick={() => { onSelectLocation(entry.id); onSelectSpot(entry.id === game.location ? game.spot : DEFAULT_SPOTS[entry.id]); }}>{entry.id === game.location ? <i className="ici">◆</i> : <i>◇</i>}<span>{entry.name}</span>{presentAt(entry.id).length > 0 && <b>{presentAt(entry.id).length} ♡</b>}</button></li>)}</ul></details>
         <div className="cf-bloc"><span className="surtitre">Lieux · {spots.length}</span><ul className="cf-spots">{spots.map((entry) => { const occupants = presentAtSpot(entry.id); const spotJobs = jobsAtSpot(entry.id); return <li key={entry.id}><button type="button" className={`cf-spot ${entry.id === spotSel?.id ? "sel" : ""}`} aria-pressed={entry.id === spotSel?.id} onClick={() => onSelectSpot(entry.id)}><i>{entry.icon}</i><span>{entry.name}{entry.id === game.spot && location.id === game.location && <em> · vous</em>}</span>{occupants.length > 0 && <b title={occupants.map((who) => who.name).join(", ")}>{occupants.length} ♡</b>}{spotJobs.length > 0 && <b className="cf-job" title={spotJobs.map((job) => job.title).join(", ")}>◈{spotJobs.length}</b>}</button></li>; })}</ul></div>
         {spotSel && <p className="cf-spot-desc discret">{spotSel.description}</p>}
       </div>
       {here ? <button type="button" className="btn principal large" data-act="voyager" onClick={onPlace}>Vous êtes ici · revenir au lieu</button>
-        : spotSel && <button type="button" className="btn principal large" data-act="voyager" onClick={() => onTravel(location.id, spotSel.id)}>{game.location === location.id ? `Se rendre à ${spotSel.shortName}` : `Voyager · ${travelDurationLabel(travelPeriods)}`}{game.location !== location.id && game.player.vocation === SCOUT_VOCATION ? " · éclaireur" : ""} ▸</button>}
+        : spotSel && <button type="button" className="btn principal large" data-act="voyager" onClick={() => onTravel(location.id, spotSel.id)}>{game.location === location.id ? `Se rendre à ${spotSel.shortName}` : `Voyager · ${travelDurationLabel(travelPeriods)}${meteoTrajet.surcharge ? ` · ${meteoTrajet.reason?.icon || ""}` : ""}`}{game.location !== location.id && game.player.vocation === SCOUT_VOCATION ? " · éclaireur" : ""} ▸</button>}
     </aside>
   </div>;
 }
@@ -8004,7 +8075,7 @@ function V2Trio({ game, onView, onStart }: { game: GameState; onView: (view: V2L
   </div>;
 }
 
-type V2JournalTab = "chronique" | "courrier" | "decouvertes" | "relations" | "souvenirs" | "croisees";
+type V2JournalTab = "chronique" | "calendrier" | "courrier" | "decouvertes" | "relations" | "souvenirs" | "croisees";
 type V2JournalProps = {
   game: GameState;
   onStartCampaign: (id: string) => void;
@@ -8017,6 +8088,10 @@ type V2JournalProps = {
 
 function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onInvitation, onLocateSpot, legacy }: V2JournalProps) {
   const [tab, setTab] = useState<V2JournalTab>("chronique");
+  const today = imperialDate(game.day);
+  const [calMonth, setCalMonth] = useState({ year: today.year, month: today.month });
+  const [calCivs, setCalCivs] = useState<CivilizationId[]>(CIVILIZATION_ORDER);
+  const [calFete, setCalFete] = useState<string | undefined>(undefined);
   const discovered = new Set([...game.history, ...game.flags, ...game.flags.filter((flag) => flag.startsWith("social:")).map((flag) => flag.slice(7))]);
   const progress = storyProgress(game.history, game.flags);
   const storyComplete = progress >= MAIN_STORY.length;
@@ -8047,6 +8122,7 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
   };
   const tabs: [V2JournalTab, string, string, number?][] = [
     ["chronique", "Chronique", "▤"],
+    ["calendrier", "Calendrier", "☾"],
     ["courrier", "Courrier", "✉", pending],
     ["decouvertes", "Découvertes", "◌"],
     ["relations", "Relations", "♡"],
@@ -8091,12 +8167,15 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
       <span className="cachet" aria-hidden="true" style={{ "--c": mail.character.color } as React.CSSProperties}>{mail.character.name[0]}</span>
       <div className="reponses"><button type="button" className="reponse" onClick={() => openMail(mail)}><i>✉</i>{mail.kind === "invitation" ? "Ouvrir l’invitation (accepter / décliner)" : "Rouvrir la lettre et ses réponses"}</button></div>
     </article> : <div className="j-vide"><span className="surtitre">Le monde vous écrit</span><h2 className="titre-jeu">{pending ? `${pending} message${pending > 1 ? "s" : ""} en attente` : "Courrier à jour"}</h2><p className="texte">Choisissez une lettre ou une invitation à gauche : elle s’ouvre avec ses réponses possibles. Une invitation manquée reviendra plus tard, sans sanction.</p></div>;
+  } else if (tab === "calendrier") {
+    const cal = v2CalendarPages(game, calMonth, setCalMonth, calCivs, setCalCivs, calFete, setCalFete);
+    leftTitle = cal.leftTitle; gauche = cal.gauche; droite = cal.droite;
   } else if (tab === "decouvertes") {
     leftTitle = "Rumeurs & savoirs";
     gauche = <ul className="j-liste">{rumors.length + knowledge.length ? <>{[...knowledge].reverse().map((entry) => <li key={`k-${entry.id}`}><span className="j-entree"><span className="j-num">◇</span><span><b>{entry.title}</b><small>Recoupé · {entry.people.map((id) => CHARACTERS.find((character) => character.id === id)?.name).filter(Boolean).join(" · ")}</small></span></span></li>)}{[...rumors].reverse().map(({ heard, rumor }) => <li key={`r-${rumor.id}`}><span className="j-entree"><span className="j-num">◌</span><span><b>{rumor.source}</b><small>Jour {heard.heardDay}</small></span></span></li>)}</> : <li className="discret">Rien de consigné pour l’instant.</li>}</ul>;
     droite = <><span className="surtitre">Échos et connaissances</span><h2 className="titre-jeu">Ce qui se murmure</h2>
       {knowledge.length > 0 && <div className="j-savoirs">{[...knowledge].reverse().map((entry) => <div key={entry.id} className="objectif"><span className="surtitre">{entry.title}</span><p>{entry.summary}</p></div>)}</div>}
-      {[...rumors].reverse().map(({ heard, rumor }) => <blockquote className="citation" key={rumor.id}>« {rumor.text} »<cite>{rumor.source} · Jour {heard.heardDay}</cite></blockquote>)}
+      {[...rumors].reverse().map(({ heard, rumor }) => <blockquote className="citation" key={rumor.id}>« {rumor.text} »<cite>{rumor.source} · {formatImperialDate(heard.heardDay, "jour-mois")}</cite></blockquote>)}
       {!rumors.length && !knowledge.length && <p className="texte">Écoutez les rumeurs des lieux (bouton « Rumeur » dans la scène Lieu) et gagnez la confiance des personnages pour remplir ces pages.</p>}
       <p className="discret">Le Journal distingue les paroles entendues des informations réellement recoupées.</p></>;
   }
@@ -8112,6 +8191,67 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
       <Orn4 />
     </div>
   </div>;
+}
+
+/** Onglet Calendrier du Journal : grille du mois (semaines de neuf jours), fêtes filtrées par civilisation. */
+function v2CalendarPages(game: GameState, view: { year: number; month: number }, setView: (view: { year: number; month: number }) => void, civs: CivilizationId[], setCivs: (civs: CivilizationId[]) => void, selected: string | undefined, setSelected: (id: string | undefined) => void) {
+  const today = imperialDate(game.day);
+  const month = IMPERIAL_MONTHS[view.month - 1];
+  const season = SEASONS[month.season];
+  const startDoy = monthStart(view.month);
+  const offset = (startDoy - 1) % 9;
+  const fetes = festivalsInMonth(view.month, civs);
+  const feteOf = (dayOfMonth: number) => fetes.filter((fete) => dayOfMonth >= fete.day && dayOfMonth < fete.day + fete.duration);
+  const shift = (delta: number) => { let m = view.month + delta, y = view.year; if (m < 1) { m = 9; y -= 1; } if (m > 9) { m = 1; y += 1; } setView({ year: y, month: m }); setSelected(undefined); };
+  const toggle = (civ: CivilizationId) => setCivs(civs.includes(civ) ? civs.filter((entry) => entry !== civ) : CIVILIZATION_ORDER.filter((entry) => entry === civ || civs.includes(entry)));
+  const cells: React.ReactNode[] = [];
+  for (let i = 0; i < offset; i++) cells.push(<span key={`v${i}`} className="cal-case vide" aria-hidden="true" />);
+  for (let d = 1; d <= month.days; d++) {
+    const list = feteOf(d);
+    const isToday = view.year === today.year && view.month === today.month && d === today.dayOfMonth;
+    cells.push(<button type="button" key={d} className={`cal-case ${isToday ? "aujourdhui" : ""} ${list.length ? "fete" : ""} ${list.some((fete) => fete.id === selected) ? "sel" : ""}`} data-cal-jour={d}
+      aria-label={`${d} ${month.name}${isToday ? ", aujourd’hui" : ""}${list.length ? ` : ${list.map((fete) => fete.name).join(", ")}` : ""}`} disabled={!list.length && !isToday} onClick={() => list.length && setSelected(list[0].id)}>
+      <b>{d}</b>{list.length > 0 && <span className="cal-points">{list.slice(0, 4).map((fete) => <i key={fete.id} style={{ "--c": CIVILIZATIONS[fete.civilization].color } as React.CSSProperties} />)}</span>}
+    </button>);
+  }
+  const chosen = CALENDAR_FESTIVALS.find((fete) => fete.id === selected);
+  const prochaines = upcomingFestivals(game.day, 5, civs);
+  const phase = thermalPhase(game.day);
+  const gauche = <div className={`calendrier saison-${month.season}`} data-cal-mois={view.month}>
+    <div className="cal-tete">
+      <button type="button" className="rond" aria-label="Mois précédent" onClick={() => shift(-1)}>‹</button>
+      <div><b className="titre-jeu">{month.name}</b><small>{view.year} E.I. · {season.icon} {season.label} · {month.days} jours</small></div>
+      <button type="button" className="rond" aria-label="Mois suivant" onClick={() => shift(1)}>›</button>
+    </div>
+    <div className="cal-filtres" role="group" aria-label="Filtrer par civilisation">
+      {CIVILIZATION_ORDER.map((civ) => <button type="button" key={civ} className={`filtre ${civs.includes(civ) ? "actif" : ""}`} data-civ={civ} aria-pressed={civs.includes(civ)} style={{ "--c": CIVILIZATIONS[civ].color } as React.CSSProperties} onClick={() => toggle(civ)}><i aria-hidden="true" />{CIVILIZATIONS[civ].label}</button>)}
+      <button type="button" className={`filtre ${civs.length === CIVILIZATION_ORDER.length ? "actif" : ""}`} data-civ="toutes" onClick={() => setCivs(civs.length === CIVILIZATION_ORDER.length ? [] : [...CIVILIZATION_ORDER])}>{civs.length === CIVILIZATION_ORDER.length ? "Aucune" : "Toutes"}</button>
+    </div>
+    <div className="cal-grille" role="grid" aria-label={`${month.name} ${view.year}`}>
+      {Array.from({ length: 9 }, (_, index) => <span key={`h${index}`} className="cal-entete" aria-hidden="true">{index + 1}</span>)}
+      {cells}
+    </div>
+    <p className="discret cal-note">Semaine de neuf jours ; leurs noms ne sont pas encore fixés. {view.year === today.year && view.month === today.month ? "" : <button type="button" className="lien" onClick={() => { setView({ year: today.year, month: today.month }); setSelected(undefined); }}>Revenir à aujourd’hui</button>}</p>
+  </div>;
+  const droite = <div className="cal-fiche">
+    <span className="surtitre">Aujourd’hui · {formatImperialDate(game.day, "long")}</span>
+    <h2 className="titre-jeu">{chosen ? chosen.name : `${SEASONS[today.season].label}, ${phase.label.toLowerCase()}`}</h2>
+    {chosen ? <>
+      <p className="cal-fete-meta"><i style={{ "--c": CIVILIZATIONS[chosen.civilization].color } as React.CSSProperties} />{CIVILIZATIONS[chosen.civilization].label} · {chosen.day} {IMPERIAL_MONTHS[chosen.month - 1].name} · {chosen.night ? "une nuit" : `${chosen.duration} jour${chosen.duration > 1 ? "s" : ""}`}</p>
+      <p className="texte">{chosen.description}</p>
+      <p className="discret">{chosen.nature} · {chosen.status}{chosen.selambre ? " · Sélambre, rencontre des lunes d’Argent et de Cuivre" : ""}</p>
+      <button type="button" className="btn" onClick={() => setSelected(undefined)}>Retour au mois</button>
+    </> : <>
+      <p className="texte">{phase.effect}. {weekLabel(game.day)}.</p>
+      <span className="surtitre">Fêtes à venir</span>
+      <ul className="cal-liste">{prochaines.length ? prochaines.map(({ festival, ongoing, inDays }) => <li key={festival.id}><button type="button" data-fete={festival.id} onClick={() => { setView({ year: today.year + (festival.month < today.month || (festival.month === today.month && festival.day + festival.duration <= today.dayOfMonth) ? 1 : 0), month: festival.month }); setSelected(festival.id); }}>
+        <i style={{ "--c": CIVILIZATIONS[festival.civilization].color } as React.CSSProperties} /><b>{festival.name}</b><small>{CIVILIZATIONS[festival.civilization].label} · {festival.day} {IMPERIAL_MONTHS[festival.month - 1].name} · {ongoing ? "en cours" : inDays === 1 ? "demain" : `dans ${inDays} jours`}</small>
+      </button></li>) : <li className="discret">Aucune civilisation sélectionnée.</li>}</ul>
+      <p className="discret">{BAL_DES_ELUS_NOTE}</p>
+    </>}
+    <p className="discret cal-ere">Calendrier de l’{ERA_NAME} · {IMPERIAL_MONTHS.length} mois, 369 jours · Jour {game.day} de la chronique</p>
+  </div>;
+  return { leftTitle: `Calendrier impérial · ${view.year} E.I.`, gauche, droite };
 }
 
 function V2Jobs({ game, onJob }: { game: GameState; onJob: (job: JobData) => void }) {
@@ -8374,7 +8514,7 @@ function V2Toasts({ toasts, onDismiss }: { toasts: V2LogEntry[]; onDismiss: (id:
 
 function V2TimeJump({ day, period, leaving }: { day: number; period: number; leaving: boolean }) {
   const entry = PERIODS[period];
-  return <div className={`saut-temps ${leaving ? "sort" : ""}`}><div className="st-bande" /><div className="st-txt"><small>Jour {day}</small><b>{entry.label}</b><em>{entry.time}</em></div><div className="st-cadran">{PERIODS.map((p, index) => <i key={p.id} className={index === period ? "on" : ""}>{p.icon}</i>)}</div></div>;
+  return <div className={`saut-temps ${leaving ? "sort" : ""}`}><div className="st-bande" /><div className="st-txt"><small>{formatImperialDate(day)}</small><b>{entry.label}</b><em>{entry.time}</em></div><div className="st-cadran">{PERIODS.map((p, index) => <i key={p.id} className={index === period ? "on" : ""}>{p.icon}</i>)}</div></div>;
 }
 
 function V2RankUp({ character, from, to, leaving, onClose }: { character: CharacterData; from: number; to: number; leaving: boolean; onClose: () => void }) {
