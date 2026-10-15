@@ -333,6 +333,34 @@ try {
     for (const run of runs) run.s.log.forEach((r, i) => { if (r.answer) seenLevels.add(g.bvPressionLevel(run.s, i)); });
     assert.deepEqual([...seenLevels].sort(), [1, 2, 3, 4], `crans atteints en partie : ${[...seenLevels].sort()}`);
   });
+  await check("BV90", "Reprendre plus tard : la soirée sauvegardée en cours de partie se recharge à l’identique (tour, verres, ivresse, pression, répliques, question en attente, secrets)", () => {
+    const norm = (v) => { const o = JSON.parse(JSON.stringify(v)); if (o && "round" in o && "log" in o) { o.completed = Boolean(o.completed); o.tutorialSeen = Boolean(o.tutorialSeen); } return o; };
+    const view = (st) => renderToStaticMarkup(createElement(ui.BVNeverModal, { state: st, ctx: ctxs[1], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    let snapshots = 0, awaitingSeen = 0, truthsSeen = 0;
+    for (const seed of [2, 5, 9, 14]) {
+      let s = g.createBVNever(seed); let guard = 0;
+      while (!s.completed && guard++ < 300) {
+        const progress = cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, s);
+        const reloaded = cq.hydrateBV(JSON.parse(JSON.stringify(progress))).bv.never;
+        assert.deepEqual(norm(reloaded), norm(s), `état perdu au tour ${s.round} (graine ${seed})`);
+        const last = s.log.length - 1;
+        if (last >= 0) {
+          assert.deepEqual(g.bvDrinksAt(reloaded, last), g.bvDrinksAt(s, last));
+          assert.equal(g.bvPressionLevel(reloaded, last), g.bvPressionLevel(s, last));
+          assert.deepEqual(norm(g.bvChoiceLines(reloaded, last)), norm(g.bvChoiceLines(s, last)));
+        }
+        assert.equal(view(reloaded), view(s), `affichage différent après rechargement au tour ${s.round}`);
+        snapshots++; if (s.awaiting) awaitingSeen++; if (s.truths.length) truthsSeen++;
+        if (s.awaiting) s = g.bvAnswer(s, ["acknowledge", "deny", "dodge"][s.round % 3]);
+        else if (g.bvActorAt(s) === "player") { const o = g.bvPlayerOptions(s, ctxs[1]); s = g.bvPlayerTurn(s, o[s.round % o.length].id, ctxs[1]); }
+        else s = g.bvNpcTurn(s, ctxs[1]);
+      }
+    }
+    assert.ok(snapshots > 100 && awaitingSeen > 5 && truthsSeen > 5, `couverture insuffisante ${snapshots}/${awaitingSeen}/${truthsSeen}`);
+    let mid = g.createBVNever(4); for (let i = 0; i < 12 && !mid.completed; i++) mid = mid.awaiting ? g.bvAnswer(mid, "deny") : g.bvActorAt(mid) === "player" ? g.bvPlayerTurn(mid, g.bvPlayerOptions(mid, ctxs[0])[0].id, ctxs[0]) : g.bvNpcTurn(mid, ctxs[0]);
+    const dossier = renderToStaticMarkup(createElement(ui.BVDossier, { progress: cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, mid), day: 2, onScene() {}, onNever() {}, onIntimacy() {} }));
+    assert.ok(dossier.includes(`Reprendre la soirée · tour ${mid.round}`) && dossier.includes("soirée conservée"), "le journal n’affiche pas la reprise");
+  });
 
   const failed = results.filter((r) => !r[2]);
   for (const r of failed) console.error(`✗ ${r[0]} ${r[1]} : ${r[3]}`);
