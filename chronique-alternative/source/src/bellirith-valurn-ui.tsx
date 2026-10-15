@@ -7,8 +7,8 @@ import { spritePath } from "./sprite-system";
 import { intimateSpritePath } from "./intimate-sprite-system";
 import { BV_OBJECTIVES, BV_STAGE_TOTAL, BV_TITLES, BV_SCENE_TITLES, BV_DATE_STAGE, bvAvailableScenes, type BVIntimacyId } from "./bellirith-valurn-cross-quest";
 import {
-  BV_IVRESSE_MAX, BV_PRESSION_MAX, bvActorAt, bvPressionLevel, bvAnswer, bvDrinksAt, bvIvresse, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
-  type BVActor, type BVAnswer, type BVNeverState, type BVTruthCtx,
+  BV_NEVER_MODE_LABELS, BV_PRESSION_MAX, bvIvresseSeuils, createBVNever, bvActorAt, bvPressionLevel, bvAnswer, bvDrinksAt, bvIvresse, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
+  type BVActor, type BVAnswer, type BVMode, type BVNeverState, type BVTruthCtx,
 } from "./bellirith-valurn-never-game";
 import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
 import { bvIntimateVisible, bvRenderChapters, bvRenderOpening } from "./bellirith-valurn-intimacy-kit";
@@ -42,7 +42,7 @@ export function BVDossier({ progress, day, onScene, onNever, onIntimacy }: {
   const pendingIntimacy = bv.intimacy && !bv.intimacyStatus;
   const done = Boolean(bv.completed);
   const actions: ReactNode[] = [];
-  if (available.never) actions.push(<button key="never" className="primary-action" onClick={() => onNever(false)}>{never && never.log.length ? `Reprendre la soirée · tour ${never.round}` : "Rejoindre la table"}</button>);
+  if (available.never) actions.push(<button key="never" className="primary-action" onClick={() => onNever(false)}>{never && never.log.length ? `Reprendre la soirée · tour ${never.round} · ${BV_NEVER_MODE_LABELS[never.mode || "complete"]}` : "Rejoindre la table"}</button>);
   for (const id of available.scenes) actions.push(<button key={id} className={actions.length ? "secondary-action" : "primary-action"} onClick={() => onScene(id)}>{bv.checkpoint?.sceneId === id ? "Reprendre" : "Vivre"} · « {BV_SCENE_TITLES[id] || id} »{done ? <small> · facultatif</small> : null}</button>);
   if (pendingIntimacy) actions.push(<button key="intim" className="secondary-action" onClick={() => onIntimacy(false)}>Retrouver la nuit promise · « {BV_INTIMACY_LABELS[bv.intimacy!]} »<small> · facultatif</small></button>);
   const waiting = available.waitTomorrow ? <p className="bv-wait">La soirée est encore trop proche. Les lendemains se vivent le jour suivant.</p> : null;
@@ -64,8 +64,8 @@ export function BVDossier({ progress, day, onScene, onNever, onIntimacy }: {
     mechanic={stage >= BV_DATE_STAGE ? {
       title: "Je n’ai jamais",
       description: "Chacun son tour, Bellirith, Valurn, puis vous : une affirmation, et ceux qui l’ont fait boivent. La partie dure de dix à vingt tours selon votre façon de jouer.",
-      status: <span>{never?.completed ? `Soirée achevée en ${never.round} tours` : never ? `Tour ${never.round} · soirée conservée` : "Soirée pas encore commencée"}</span>,
-      action: never?.completed ? <button className="secondary-action" onClick={() => onNever(true)}>Rejouer la soirée (sans effet)</button> : undefined,
+      status: <span>{never?.completed ? `Soirée achevée en ${never.round} tours · ${BV_NEVER_MODE_LABELS[never.mode || "complete"]}` : never && (never.mode || never.log.length) ? `Tour ${never.round} · soirée conservée · ${BV_NEVER_MODE_LABELS[never.mode || "complete"]}` : "Soirée pas encore commencée"}</span>,
+      action: never?.completed ? <button className="secondary-action" onClick={() => onNever(true)}>Rejouer la soirée (sans effet) · format au choix</button> : undefined,
     } : undefined}
     milestones={[
       ...lived.map((id) => ({ id, title: BV_SCENE_TITLES[id] || id, detail: "Relecture protégée", onReplay: () => onScene(id, true) })),
@@ -96,6 +96,10 @@ function useFocusTrap() {
   return ref;
 }
 
+/** Carte d’annonce d’une affirmation : temps de tenue, puis envol vers le panneau. */
+export const BV_CARD_HOLD_MS = 1350;
+export const BV_CARD_FLY_MS = 450;
+
 const lineClass = (line?: DialogueLine) => !line ? "" : line.speaker === "Narration" ? "narration" : line.speaker === "Bellirith" ? "bellirith" : line.speaker === "Valurn" ? "valurn" : "player";
 
 export function BVNeverModal({ state, ctx, replay = false, background, format, onChange, onClose, onFinish }: {
@@ -106,38 +110,59 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
   // Les interventions déjà lues à l’ouverture ne sont pas rejouées (reprise).
   // Une question encore en attente à la reprise reste affichée, pour qu’on puisse y répondre.
   const [seen, setSeen] = useState(state.awaiting ? Math.max(0, state.log.length - 1) : state.log.length);
-  const [lineIndex, setLineIndex] = useState(-1);
+  const [lineIndex, setLineIndex] = useState(0);
   const [transitionRound, setTransitionRound] = useState(0);
   const view = seen < state.log.length ? bvRecordView(state, seen) : undefined;
   const awaitingHere = Boolean(view && state.awaiting && seen === state.log.length - 1);
-  const reading = view ? [view.declaration, ...(awaitingHere ? [] : view.lines)] : [];
-  const line = lineIndex >= 0 ? reading[lineIndex] : view?.declaration;
+  // Ordre fixe d’un échange : l’affirmation, votre réplique, qui boit, ce qu’on vous répond, puis leurs piques entre eux.
+  const reading: (DialogueLine & { to?: string; step?: string })[] = view ? [view.declaration, ...(awaitingHere ? [] : view.lines)] : [];
+  const line = reading[Math.min(lineIndex, Math.max(0, reading.length - 1))];
+  const revealAt = view ? 1 + view.lines.findIndex((entry) => entry.step === "verres") : 0;
+  const choosingMode = !state.mode && state.log.length === 0 && !state.completed;
   const actor = bvActorAt(state);
-  const transition = !view && !state.completed && state.turn === 0 && transitionRound !== state.round ? bvTransition(state) : undefined;
-  const options = useMemo(() => !view && !transition && actor === "player" && !state.completed ? bvPlayerOptions(state, ctx) : [], [view, transition, actor, state, ctx]);
+  const transition = !choosingMode && !view && !state.completed && state.turn === 0 && transitionRound !== state.round ? bvTransition(state) : undefined;
+  const options = useMemo(() => !choosingMode && !view && !transition && actor === "player" && !state.completed ? bvPlayerOptions(state, ctx) : [], [choosingMode, view, transition, actor, state, ctx]);
 
-  useEffect(() => { setLineIndex(-1); }, [seen]);
+  useEffect(() => { setLineIndex(0); }, [seen]);
+
+  // Carte d’annonce : chaque nouvelle affirmation s’affiche en grand, tient un instant, puis rejoint le panneau du haut.
+  // À la reprise, seule une affirmation encore en attente de réponse est rejouée (vue présente à l’ouverture).
+  const viewKey = view ? seen : -1;
+  const [card, setCard] = useState<{ key: number; phase: "show" | "fly" } | undefined>(view ? { key: seen, phase: "show" } : undefined);
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
+    setCard(viewKey >= 0 ? { key: viewKey, phase: "show" } : undefined);
+  }, [viewKey]);
+  useEffect(() => {
+    if (!card) return;
+    const timer = window.setTimeout(() => setCard(card.phase === "show" ? { ...card, phase: "fly" } : undefined), card.phase === "show" ? BV_CARD_HOLD_MS : BV_CARD_FLY_MS);
+    return () => window.clearTimeout(timer);
+  }, [card]);
+  const cardOn = Boolean(card && view && card.key === seen);
+  function skipCard() { setCard(card?.phase === "show" ? { ...card, phase: "fly" } : undefined); }
 
   const lastMood = useRef<{ bellirith?: string; valurn?: string }>({});
   if (line?.speaker === "Bellirith" && line.mood) lastMood.current.bellirith = line.mood;
   if (line?.speaker === "Valurn" && line.mood) lastMood.current.valurn = line.mood;
 
   function advanceLine() {
+    if (cardOn) { skipCard(); return; }
     if (!view) { if (transition) setTransitionRound(state.round); return; }
     if (awaitingHere) return;
-    const index = lineIndex < 0 ? 0 : lineIndex;
-    if (index < reading.length - 1) { setLineIndex(index + 1); return; }
+    if (lineIndex < reading.length - 1) { setLineIndex(lineIndex + 1); return; }
     setSeen(seen + 1);
   }
   function npc() { onChange(bvNpcTurn(state, ctx)); }
-  function answer(id: BVAnswer) { onChange(bvAnswer(state, id)); setLineIndex(0); }
+  function answer(id: BVAnswer) { onChange(bvAnswer(state, id)); setLineIndex(1); }
+  function chooseMode(mode: BVMode) { onChange({ ...createBVNever(state.seed, mode), tutorialSeen: state.tutorialSeen }); }
   function play(id: string) { onChange(bvPlayerTurn(state, id, ctx)); }
   function keyDown(event: ReactKeyboardEvent) {
     if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); return; }
     if ((event.key === "Enter" || event.key === " ") && (event.target as HTMLElement).tagName !== "BUTTON") { event.preventDefault(); advanceLine(); }
   }
   const drinkers = view?.record.drinkers || [];
-  const showGlasses = Boolean(view) && !awaitingHere && lineIndex >= 0;
+  const showGlasses = Boolean(view) && !awaitingHere && revealAt > 0 && lineIndex >= revealAt;
   const finished = state.completed && !view;
   const shownLine = transition && !view ? transition : line;
   // Jauge d’ivresse : les verres comptent dès qu’ils sont levés à l’écran, pas avant.
@@ -146,34 +171,43 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
   const pressure = presser ? bvPressionLevel(state, seen) : 0;
   const gauge = bvDrinksAt(state, view ? (showGlasses ? seen : seen - 1) : state.log.length - 1);
 
-  const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : view && lineIndex < 0 && view.record.speaker !== "player" ? view.record.speaker : !view && !finished && actor !== "player" ? actor : undefined;
+  const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : !view && !finished && actor !== "player" ? actor : undefined;
   const sprite = (who: "bellirith" | "valurn", index: number) => <img key={who} className={`scene-sprite speaker-${index} ${speaking === who ? "active" : "inactive"}`} src={spritePath(who, lastMood.current[who] || (who === "bellirith" ? "teasing" : "charming"), who === "bellirith" ? "teasing" : "charming")} alt={NAMES[who]} />;
-  const box = (speaker: string, text: string, hint: string, kind: string) => <button type="button" className={`dialogue-box bv-advance ${kind}`} onClick={advanceLine}>
-    <span className="speaker">{speaker}</span><p key={`${seen}-${lineIndex}-${transitionRound}`}>{text}</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · {hint}</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
+  const box = (speaker: string, text: string, hint: string, kind: string, to?: string) => <button type="button" className={`dialogue-box bv-advance ${kind}`} onClick={advanceLine}>
+    <span className="speaker">{speaker}{to && <em className="bv-to"> · à {to}</em>}</span><p key={`${seen}-${lineIndex}-${transitionRound}`}>{text}</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · {hint}</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
   </button>;
 
   return <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className={`dialogue-overlay v2-scene bv-never ${presser ? `bv-pression bv-pression-${presser}` : ""}`} role="dialog" aria-modal="true" aria-labelledby="bv-never-title" data-bv-round={state.round} data-pression={pressure || undefined}
     style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.12), rgba(5,6,12,.62)), url(${background})` } as CSSProperties}>
     <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Valurn"}</p><h2 id="bv-never-title">Je n’ai jamais</h2></div>
-      <div className="scene-outils"><span className="bv-round" aria-live="polite">Tour {ROMAINS[state.round] || state.round}</span><button type="button" className="scene-outil passer" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button></div></div>
+      <div className="scene-outils"><span className="bv-round" aria-live="polite">Tour {ROMAINS[state.round] || state.round}{state.mode === "abregee" ? " · abrégée" : ""}</span><button type="button" className="scene-outil passer" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button></div></div>
     <div className="scene-cast cast-2">{sprite("bellirith", 0)}{sprite("valurn", 1)}</div>
     <div className="dialogue-gradient" />
     {presser && <div className="bv-pression-voile" aria-hidden="true" />}
+    {cardOn && view && <div className={`bv-carte bv-carte-${view.record.speaker} ${card!.phase}`} data-bv-carte={card!.phase} onClick={skipCard} role="presentation">
+      <div className="bv-carte-corps">
+        <p className="bv-carte-tour">Tour {ROMAINS[state.round] || state.round}</p>
+        <p className="bv-carte-qui">{view.record.speaker === "player" ? "Vous" : NAMES[view.record.speaker]}{view.declaration.to && <span> · à {view.declaration.to}</span>}</p>
+        <p className="bv-carte-texte">« {format(view.declaration.text)} »</p>
+        <small>Toucher pour passer</small>
+      </div>
+    </div>}
 
     <aside className={`bv-table ${view ? "claim" : finished ? "fin" : "turn"}`} aria-live="polite">
       <ul className="bv-ivresse" aria-label="Ivresse">
         {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => {
           const count = gauge[who];
-          const level = bvIvresse(count);
+          const level = bvIvresse(count, state.mode, who);
+          const seuils = bvIvresseSeuils(state.mode, who);
           return <li key={who} className={`ivresse-${level}`} data-ivresse={level}>
             <span className="bv-ivresse-nom">{NAMES[who]}</span>
-            <span className="bv-ivresse-jauge" role="meter" aria-valuemin={0} aria-valuemax={BV_IVRESSE_MAX} aria-valuenow={Math.min(count, BV_IVRESSE_MAX)} aria-label={`Ivresse de ${NAMES[who]} : ${IVRESSE_LABELS[level]}`}><i style={{ width: `${Math.min(100, (count / BV_IVRESSE_MAX) * 100)}%` }} /></span>
+            <span className="bv-ivresse-jauge" role="meter" aria-valuemin={0} aria-valuemax={seuils.max} aria-valuenow={Math.min(count, seuils.max)} aria-label={`Ivresse de ${NAMES[who]} : ${IVRESSE_LABELS[level]}`}><i style={{ width: `${Math.min(100, (count / seuils.max) * 100)}%` }} /></span>
             <small>{IVRESSE_LABELS[level]}</small>
           </li>;
         })}
       </ul>
       {view ? <>
-        <p className="bv-table-label">{view.record.speaker === "player" ? "Votre affirmation" : `${NAMES[view.record.speaker]} prend la parole`}</p>
+        <p className="bv-table-label">{view.record.speaker === "player" ? "Votre affirmation" : `${NAMES[view.record.speaker]} prend la parole`}{view.declaration.to && <> · à {view.declaration.to}</>}</p>
         <p className="bv-table-claim">« {format(view.declaration.text)} »</p>
         <ol className="bv-glasses" aria-label="Qui boit ?">
           {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => <li key={who} className={showGlasses && drinkers.includes(who) ? "drank" : "full"}><i aria-hidden="true" />{NAMES[who]}<small>{showGlasses ? drinkers.includes(who) ? "boit" : "ne boit pas" : "…"}</small></li>)}
@@ -190,13 +224,16 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
       </>}
     </aside>
 
-    {shownLine && (lineIndex >= 0 || transition) && !awaitingHere && box(format(shownLine.speaker), format(shownLine.text), "Cliquer pour continuer", lineClass(shownLine) === "narration" ? "narration" : "")}
-    {view && lineIndex < 0 && !awaitingHere && box("Narration", "Les verres se lèvent, ou non.", "Cliquer pour voir", "narration")}
+    {shownLine && !awaitingHere && box(format(shownLine.speaker), format(shownLine.text), "Cliquer pour continuer", lineClass(shownLine) === "narration" ? "narration" : "", (shownLine as { to?: string }).to ? format((shownLine as { to?: string }).to!) : undefined)}
+    {choosingMode && <div className="choice-box bv-mode" role="group" aria-label="Format de la soirée">
+      <p className="choice-question">Combien de temps dure la soirée ?</p>
+      {(["complete", "abregee"] as BVMode[]).map((mode, index) => <button key={mode} type="button" className="v2-choix-carte" style={{ "--i": index } as CSSProperties} onClick={() => chooseMode(mode)}><i className="choix-num">{ROMAINS[index + 1]}</i><div><strong>{BV_NEVER_MODE_LABELS[mode]}</strong><small>{mode === "complete" ? "Dix à vingt tours de table, toutes les affirmations, le temps de tout dire." : "Huit à dix tours : le meilleur de la soirée, le tournant, les révélations, et les verres qui montent plus vite."}</small></div></button>)}
+    </div>}
     {awaitingHere && <div className="choice-box bv-answers" role="group" aria-label="Votre réponse">
       <p className="choice-question">{format(view!.ask || "Reconnaître, nier ou esquiver ?")}</p>
       {ANSWERS.map((entry, index) => <button key={entry.id} type="button" className="v2-choix-carte" style={{ "--i": index } as CSSProperties} onClick={() => answer(entry.id)}><i className="choix-num">{ROMAINS[index + 1]}</i><div><strong>{entry.label}</strong><small>{entry.detail}</small></div></button>)}
     </div>}
-    {!view && !transition && !state.completed && actor !== "player" && <button type="button" className="dialogue-box bv-advance narration" onClick={npc}><span className="speaker">Narration</span><p>{NAMES[actor]} lève son verre et cherche une affirmation.</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · Cliquer pour l’écouter</span></small><i className="dialogue-suite" aria-hidden="true">▼</i></button>}
+    {!choosingMode && !view && !transition && !state.completed && actor !== "player" && <button type="button" className="dialogue-box bv-advance narration" onClick={npc}><span className="speaker">Narration</span><p>{NAMES[actor]} lève son verre et cherche une affirmation.</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · Cliquer pour l’écouter</span></small><i className="dialogue-suite" aria-hidden="true">▼</i></button>}
     {options.length > 0 && <div className="choice-box bv-options" role="group" aria-label="Vos affirmations">
       <p className="choice-question">Votre affirmation</p>
       {options.map((claim, index) => <button key={claim.id} type="button" className="v2-choix-carte" style={{ "--i": index } as CSSProperties} onClick={() => play(claim.id)}><i className="choix-num">{ROMAINS[index + 1]}</i><div><strong>« {format(claim.text)} »</strong></div></button>)}
