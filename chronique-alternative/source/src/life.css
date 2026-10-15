@@ -1,0 +1,110 @@
+/* ---------- Vie quotidienne : humeurs, activités, invitations, lettres, envies (style V2 discret et semi-transparent) ---------- */
+
+/* Pastille d’humeur : petite, translucide, colorée par l’humeur. */
+.humeur-chip { --h: var(--or); display: inline-flex; align-items: center; gap: .3em; margin-left: .45em; padding: .05em .55em .05em .4em; border: 1px solid color-mix(in srgb, var(--h) 45%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--h) 12%, rgba(10, 10, 20, .35)); color: color-mix(in srgb, var(--h) 70%, var(--texte)); font: 600 calc(.6875rem * var(--tr, 1))/1.4 var(--v2-sans); letter-spacing: .03em; text-transform: none; vertical-align: middle; white-space: nowrap; backdrop-filter: blur(2px); }
+.humeur-chip i { font-style: normal; font-size: .95em; opacity: .9; }
+.speaker .humeur-chip { font-size: calc(.625rem * var(--tr, 1)); opacity: .85; }
+.rang-txt .humeur-chip { margin: .3em 0 0; align-self: flex-start; }
+.cf-pres .humeur-chip { margin-left: .35em; padding: 0 .4em; font-size: calc(.625rem * var(--tr, 1)); }
+.pn-txt b .humeur-chip { font-weight: 600; }
+.vie-ligne { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .6rem; margin: 0; }
+.vie-ligne .humeur-chip { margin-left: 0; }
+.vie-ligne small { color: var(--texte-3); font-size: calc(.75rem * var(--tr, 1)); }
+
+/* Présents : goûts à éviter, découverts en offrant. */
+.cad-carte em.evite, .cad-remis em.evite { background: linear-gradient(90deg, rgba(120, 70, 70, .85), rgba(80, 40, 48, .9)); color: #f5d6d0; }
+.cad-remis.deteste { border-color: rgba(200, 120, 110, .45); }
+.cad-gains .conf.perte { background: linear-gradient(90deg, rgba(110, 120, 140, .9), rgba(70, 76, 94, .9)); color: #e7ecf4; box-shadow: none; }
+.cad-gains .stat { background: linear-gradient(90deg, rgba(216, 189, 120, .9), rgba(150, 120, 60, .9)); color: #1a1408; }
+.gouts.evites span { opacity: .8; border-color: rgba(200, 120, 110, .4); }
+
+/* Bannière de rendez-vous au lieu */
+.vie-banniere { --c: var(--or); display: inline-flex; align-items: center; gap: .6rem; margin-top: calc(.6rem * var(--k, 1)); padding: calc(.35rem * var(--k, 1)) calc(.9rem * var(--k, 1)); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); background: color-mix(in srgb, var(--c) 12%, rgba(8, 8, 16, .55)); color: var(--texte); text-align: left; cursor: pointer; transform: skewX(-8deg); backdrop-filter: blur(4px); animation: vie-appel 3s ease-in-out infinite; }
+.vie-banniere > * { transform: skewX(8deg); }
+.vie-banniere i { font-style: normal; color: var(--c); font-size: 1.1em; }
+.vie-banniere small { display: block; color: var(--texte-3); font: 600 calc(.625rem * var(--tr, 1))/1.3 var(--v2-sans); letter-spacing: .12em; text-transform: uppercase; }
+.vie-banniere span { font: 600 calc(.875rem * var(--tr, 1))/1.3 var(--v2-serif); }
+.vie-banniere:hover, .vie-banniere:focus-visible { border-color: var(--c); outline: none; }
+@keyframes vie-appel { 50% { box-shadow: 0 0 18px color-mix(in srgb, var(--c) 35%, transparent); } }
+
+/* Fenêtres de vie : mêmes cadres que les présents, plus légères */
+.v2-vie .fen-vn-texte { gap: calc(.55rem * var(--k, 1)); }
+.v2-vie .texte.replique { font-style: italic; color: var(--or-pale); }
+.vie-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(190px * var(--echelle, 1))), 1fr)); gap: calc(.5rem * var(--k, 1)); }
+.vie-carte { position: relative; display: grid; grid-template-columns: calc(44px * var(--echelle, 1)) minmax(0, 1fr); column-gap: .4rem; align-items: center; padding: calc(.45rem * var(--k, 1)) calc(.6rem * var(--k, 1)) calc(.45rem * var(--k, 1)) calc(.2rem * var(--k, 1)); border: 1px solid var(--ligne); background: rgba(12, 11, 22, .55); color: var(--texte); text-align: left; cursor: pointer; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); backdrop-filter: blur(3px); animation: cad-in .4s calc(var(--i, 0) * 45ms) var(--ease) both; transition: border-color .2s, background .2s, transform .2s var(--ease); }
+.vie-carte .od-ico { grid-row: 1 / span 3; width: calc(30px * var(--echelle, 1)); height: calc(30px * var(--echelle, 1)); margin: calc(6px * var(--echelle, 1)); font-size: calc(1rem * var(--tr, 1)); }
+.vie-carte b { font: 700 calc(.875rem * var(--tr, 1))/1.2 var(--display); color: var(--or-pale); }
+.vie-carte small { color: var(--texte-2); font-size: calc(.75rem * var(--tr, 1)); line-height: 1.3; }
+.vie-carte em { grid-column: 2; justify-self: start; font: 600 calc(.625rem * var(--tr, 1))/1.4 var(--v2-sans); font-style: normal; letter-spacing: .08em; color: #f2a0b8; }
+.vie-carte em.propre { color: var(--or-vif); }
+.vie-carte:hover:not(:disabled), .vie-carte:focus-visible { border-color: var(--ligne-forte); transform: translateY(-2px); outline: none; }
+.vie-carte.on { border-color: var(--c, var(--or)); background: color-mix(in srgb, var(--c, var(--or)) 14%, rgba(12, 11, 22, .6)); }
+.vie-carte.verrou { opacity: .5; cursor: not-allowed; }
+
+.vie-tons { display: flex; flex-wrap: wrap; align-items: stretch; gap: calc(.4rem * var(--k, 1)); }
+.vie-tons > .surtitre { flex-basis: 100%; }
+.vie-ton { flex: 1 1 calc(150px * var(--echelle, 1)); display: grid; gap: .1rem; padding: calc(.35rem * var(--k, 1)) calc(.6rem * var(--k, 1)); border: 1px solid var(--ligne-douce); background: rgba(12, 11, 22, .45); color: var(--texte-2); text-align: left; cursor: pointer; transition: border-color .2s, color .2s; }
+.vie-ton b { font: 700 calc(.8125rem * var(--tr, 1))/1.2 var(--display); color: var(--texte); }
+.vie-ton small { font-size: calc(.6875rem * var(--tr, 1)); line-height: 1.3; }
+.vie-ton.on { border-color: var(--c, var(--or)); color: var(--texte); background: color-mix(in srgb, var(--c, var(--or)) 12%, rgba(12, 11, 22, .5)); }
+
+.vie-options { display: grid; gap: calc(.4rem * var(--k, 1)); }
+.vie-option { display: flex; align-items: center; gap: .7rem; padding: calc(.45rem * var(--k, 1)) calc(.8rem * var(--k, 1)); border: 1px solid var(--ligne); background: rgba(12, 11, 22, .5); color: var(--texte); text-align: left; cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
+.vie-option i { font-style: normal; color: var(--c, var(--or)); font-size: 1.1em; }
+.vie-option b { display: block; font: 700 calc(.875rem * var(--tr, 1))/1.25 var(--display); color: var(--or-pale); }
+.vie-option small { color: var(--texte-3); font-size: calc(.75rem * var(--tr, 1)); }
+.vie-option.principal { border-color: color-mix(in srgb, var(--c, var(--or)) 60%, transparent); }
+.vie-option:hover, .vie-option:focus-visible { border-color: var(--ligne-forte); transform: translateX(3px); outline: none; }
+.vie-rdv-note { display: inline-flex; gap: .5rem; align-items: center; padding: .25rem .8rem; border: 1px solid var(--ligne); color: var(--or-pale); font: 600 calc(.8125rem * var(--tr, 1)) var(--v2-sans); }
+.vie-rdv-note i { font-style: normal; color: var(--c, var(--or)); }
+
+/* Formulaires (invitation, lettre) */
+.vie-form { display: grid; gap: calc(.65rem * var(--k, 1)); }
+.vie-champ { display: grid; gap: .3rem; }
+.vie-champ select { min-height: calc(36px * var(--echelle, 1)); padding: .3rem .6rem; border: 1px solid var(--ligne); background: rgba(10, 10, 20, .7); color: var(--texte); font: 500 calc(.875rem * var(--tr, 1)) var(--v2-sans); }
+.vie-choix { display: flex; flex-wrap: wrap; gap: .35rem; }
+.vie-choix button { display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .7rem; border: 1px solid var(--ligne-douce); background: rgba(12, 11, 22, .45); color: var(--texte-2); font: 600 calc(.75rem * var(--tr, 1)) var(--v2-sans); cursor: pointer; }
+.vie-choix button i { font-style: normal; }
+.vie-choix button.on { border-color: var(--c, var(--or)); color: var(--texte); background: color-mix(in srgb, var(--c, var(--or)) 14%, rgba(12, 11, 22, .5)); }
+.vie-choix button:disabled { opacity: .4; cursor: not-allowed; }
+.vie-indice { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin: 0; color: var(--texte-2); font: 500 calc(.8125rem * var(--tr, 1)) var(--v2-sans); }
+.vie-indice .indice-disponible { color: #9fe0b8; }
+.vie-indice .indice-hesite { color: #f0d08a; }
+.vie-indice .indice-peu { color: #e0a090; }
+.vie-correspondants { display: flex; flex-wrap: wrap; gap: .35rem; }
+.vie-corr { display: inline-flex; align-items: center; gap: .35rem; padding: .15rem .55rem .15rem .2rem; border: 1px solid var(--ligne-douce); background: rgba(12, 11, 22, .45); color: var(--texte-2); font: 600 calc(.75rem * var(--tr, 1)) var(--v2-sans); cursor: pointer; }
+.vie-corr .sceau { width: calc(24px * var(--echelle, 1)); height: calc(24px * var(--echelle, 1)); }
+.vie-corr.on { border-color: var(--c, var(--or)); color: var(--texte); }
+.vie-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(200px * var(--echelle, 1))), 1fr)); gap: .4rem; }
+.vie-theme { display: flex; gap: .55rem; align-items: flex-start; padding: .4rem .65rem; border: 1px solid var(--ligne-douce); background: rgba(12, 11, 22, .45); color: var(--texte); text-align: left; cursor: pointer; }
+.vie-theme i { font-style: normal; color: var(--or); }
+.vie-theme b { display: block; font: 700 calc(.8125rem * var(--tr, 1))/1.2 var(--display); }
+.vie-theme small { color: var(--texte-3); font-size: calc(.6875rem * var(--tr, 1)); line-height: 1.3; }
+.vie-theme.on { border-color: var(--c, var(--or)); background: color-mix(in srgb, var(--c, var(--or)) 12%, rgba(12, 11, 22, .5)); }
+.vie-theme:disabled { opacity: .4; cursor: not-allowed; }
+.vie-apercu { margin: 0; padding: .5rem .9rem; border-left: 2px solid var(--c, var(--or)); background: rgba(255, 255, 255, .03); color: var(--texte-2); font: italic 500 calc(.9375rem * var(--tr, 1))/1.5 var(--v2-serif); }
+
+/* Journal · Envies & aspirations */
+.vie-bascule { display: flex; gap: .3rem; margin-bottom: calc(.5rem * var(--k, 1)); }
+.vie-bascule button { flex: 1; padding: .2rem .5rem; border: 1px solid var(--ligne-douce); background: rgba(12, 11, 22, .35); color: var(--texte-3); font: 600 calc(.6875rem * var(--tr, 1)) var(--v2-sans); letter-spacing: .06em; cursor: pointer; }
+.vie-bascule button.on { border-color: var(--ligne-forte); color: var(--or-pale); background: rgba(216, 189, 120, .08); }
+.vie-envies { display: grid; gap: .35rem; margin: 0 0 .8rem; padding: 0; list-style: none; }
+.vie-envies li { display: flex; align-items: center; gap: .6rem; padding: .3rem .6rem; border: 1px solid var(--ligne-douce); background: rgba(255, 255, 255, .02); }
+.vie-envies li i { font-style: normal; color: var(--or); }
+.vie-envies li b { display: block; font: 600 calc(.875rem * var(--tr, 1))/1.3 var(--v2-serif); color: var(--texte); }
+.vie-envies li small { color: var(--texte-3); font-size: calc(.6875rem * var(--tr, 1)); }
+.vie-envies li.ok { opacity: .65; }
+.vie-envies li.ok i { color: #9fe0b8; }
+.vie-envies .mini { margin-left: auto; padding: .1rem .45rem; border: 1px solid var(--ligne-douce); background: transparent; color: var(--or); cursor: pointer; }
+.vie-titres { display: flex; flex-wrap: wrap; gap: .4rem; }
+.vie-titres span { padding: .1rem .6rem; border: 1px solid var(--ligne); color: var(--or-vif); font: 600 calc(.75rem * var(--tr, 1)) var(--display); }
+
+@media (max-width: 900px), (max-height: 560px) {
+  .vie-grille { grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+  .vie-ton small, .vie-carte small { -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .humeur-chip { font-size: calc(.625rem * var(--tr, 1)); }
+}
+@media (prefers-reduced-motion: reduce) { .vie-banniere { animation: none; } .vie-carte { animation: none; } }
+body.reduit .vie-banniere, body.reduit .vie-carte { animation: none; }
+.v2-vie .cad-gains { gap: .4rem; flex-wrap: wrap; }
+.v2-vie .cad-gains span { font-size: .78rem; padding: .3rem .7rem; white-space: nowrap; min-width: 0; }

@@ -11,6 +11,7 @@ import "./bellirith-valurn.css";
 import "./valurn.css";
 import "./minigame-scene.css";
 import "./calendar.css";
+import "./life.css";
 import "./ui/v2/v2-lecture.css";
 
 const root = document.getElementById("root");

@@ -1,4 +1,5 @@
 import { GIFTS, type CharacterData, type GiftData } from "./game-data";
+import { ASPIRATION_KEEPSAKES } from "./life-wishes";
 
 export type HousingTier = 1 | 2 | 3 | 4 | 5;
 
@@ -132,6 +133,8 @@ export const DISPLAY_ITEMS: DisplayItem[] = [
   ...marketDisplayItems(),
   ...STORY_KEEPSAKES,
   ...HOME_DATE_GIFTS,
+  // Vie quotidienne : souvenirs remis à l’accomplissement d’une aspiration.
+  ...ASPIRATION_KEEPSAKES,
 ];
 
 export const STORY_KEEPSAKE_BY_CHARACTER = Object.fromEntries(STORY_KEEPSAKES.map((item) => [item.character!, item.id]));

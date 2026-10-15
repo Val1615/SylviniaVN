@@ -24,15 +24,19 @@
 
 /* ---------- Voile de saison et météo ---------- */
 .v2-ciel { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
-.v2-ciel .ciel-teinte { position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: .55; }
-.ciel-printemps .ciel-teinte { background: radial-gradient(120% 80% at 70% 0%, rgba(255, 190, 220, .35), transparent 60%); }
+/* Une seule commande d’opacité par saison (--voile-saison). Printemps allégé d’environ deux tiers : le décor reste lisible. */
+.v2-ciel { --voile-saison: .55; }
+.v2-ciel.ciel-printemps { --voile-saison: .2; }
+.v2-ciel .ciel-teinte { position: absolute; inset: 0; mix-blend-mode: soft-light; opacity: var(--voile-saison); }
+.ciel-printemps .ciel-teinte { background: radial-gradient(110% 60% at 70% 0%, rgba(255, 200, 225, .22), transparent 55%); }
 .ciel-ete .ciel-teinte { background: radial-gradient(120% 80% at 50% 0%, rgba(255, 205, 120, .4), transparent 65%); }
 .ciel-automne .ciel-teinte { background: linear-gradient(180deg, rgba(220, 120, 60, .3), transparent 70%); }
 .ciel-hiver .ciel-teinte { background: linear-gradient(180deg, rgba(170, 210, 245, .35), rgba(170, 210, 245, .08)); }
 .v2-ciel i { position: absolute; top: -6%; left: calc(var(--k) * 5.6% + 1%); display: block; opacity: 0; animation-delay: calc(var(--k) * -0.9s); }
 
 /* Particules de saison (temps calme) */
-.ciel-printemps i { width: 9px; height: 6px; border-radius: 60% 0 60% 0; background: rgba(255, 196, 222, .75); animation: ciel-chute 13s linear infinite; }
+.ciel-printemps i { width: 8px; height: 5px; border-radius: 60% 0 60% 0; background: rgba(255, 200, 224, .55); animation: ciel-chute 15s linear infinite; }
+.ciel-printemps i:nth-of-type(2n) { display: none; }
 .ciel-automne i { width: 10px; height: 7px; border-radius: 0 70% 0 70%; background: rgba(214, 120, 52, .7); animation: ciel-chute 11s linear infinite; }
 .ciel-hiver i { width: 4px; height: 4px; border-radius: 50%; background: rgba(240, 248, 255, .7); animation: ciel-flocon 15s linear infinite; }
 .ciel-ete i { width: 3px; height: 3px; border-radius: 50%; top: auto; bottom: 10%; background: rgba(255, 226, 150, .55); box-shadow: 0 0 6px rgba(255, 210, 120, .6); animation: ciel-poussiere 9s ease-in-out infinite; }

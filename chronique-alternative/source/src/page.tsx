@@ -215,6 +215,7 @@ import {
   DEFAULT_SPOTS,
   ROUTE_PERIODS,
   ROUTE_SPOTS,
+  SUBLOCATIONS,
   routineFor,
   spotById,
   spotsForLocation,
@@ -245,6 +246,12 @@ import {
 import type { AtlasTab } from "./ui/atlas/atlas-shell";
 import { CALENDAR_FESTIVALS, CIVILIZATIONS, CIVILIZATION_ORDER, IMPERIAL_MONTHS, SEASONS, BAL_DES_ELUS_NOTE, ERA_NAME, festivalsInMonth, festivalsOn, formatImperialDate, imperialDate, monthStart, thermalPhase, upcomingFestivals, weekLabel, type CivilizationId } from "./calendar";
 import { WEATHER_TRAVEL_CAP, climateOf, forecast, shelterSpot, weatherAt, weatherTravel } from "./weather";
+import { MOODS, moodLabel, moodLine, moodOf, scaleGain, type MoodId } from "./life-moods";
+import { GIFT_ALREADY_TODAY, GIFT_CATEGORY_LABEL, giftOutcome, type GiftCategory } from "./life-gifts";
+import { FAVORITE_ACTIVITY, TONES, activitiesAt, activityById, activityOutcome, type ActivityId, type ToneId } from "./life-activities";
+import { INVITE_EXCUSES, INVITE_EXCUSE_FALLBACK, INVITE_TEXTS, LETTER_REPLIES, LETTER_THEMES, type LetterTheme } from "./life-initiative-texts";
+import { ASPIRATIONS, WISHES } from "./life-wishes";
+import { BAD_WEATHER, INVITE_MAX_AHEAD, INVITE_MAX_PENDING, activityCounted, applyLifeEvent, chooseAspiration, deliverLetterGains, deliveredLetters, emptyLife, expireInvites, giftCounted, honorInvite, inviteAccepted, inviteAt, inviteHint, invitePaused, inviteScore, letterBlocked, letterThemeAvailable, normalizeLife, pendingInvites, pushMoodEvent, recordAcceptance, recordActivity, recordRefusal, replyDayFor, rollWishes, unreadLifeMail, wishLabel, type LifeContext, type LifeEvent, type LifeReward, type LifeState, type PlayerInvite } from "./life-state";
 import { V2Title } from "./ui/v2/title";
 import { AudioButtons, Kbd, Orn4, ROMAINS, Seau, V2Dialog, moveFocus } from "./ui/v2/common";
 import { DEFAULT_SCALES, ECHELLES, SCALE_KEYS, applyScales, borne, createParticles, installGlobalSfx, playTransition, readScales, reduit, setReducedSetting, setUiPrefs, sfx, storeScales, subscribeUiPrefs, uiPrefs, type FxMode, type ScaleKey, type Scales } from "./ui/v2/fx";
@@ -345,6 +352,8 @@ type GameState = {
   jobRuns: Record<string, number>;
   housing: HousingState;
   settings: GameSettings;
+  /** Vie quotidienne (humeurs, cadeaux, activités, invitations, lettres, envies, aspirations). Facultatif, compatible v18. */
+  life?: LifeState;
 };
 
 type SceneView = {
@@ -760,6 +769,7 @@ function hydrateGame(raw: unknown): GameState | null {
     valurnMarket: validateValurnMarket(value.valurnMarket) ? value.valurnMarket : undefined,
     ...fresh,
     ...value,
+    life: value.life ? normalizeLife(value.life, CHARACTERS.map((entry) => entry.id), SUBLOCATIONS.map((entry) => entry.id), LOCATIONS.map((entry) => entry.id), GIFTS.map((entry) => entry.id)) : undefined,
     version: 18,
     player: { ...fresh.player, ...value.player, sex: normalizePlayerSex(value.player.sex) },
     location,
@@ -1662,9 +1672,148 @@ function weatherProtectedSpots(characterId: string) {
   return spots;
 }
 
+/**
+ * Vie quotidienne : invitations acceptées par les personnages, synchronisées à chaque rendu.
+ * Ordre de priorité : scène de campagne, puis rendez-vous du joueur, puis itinéraire habituel (logis, routine, abri).
+ */
+let LIFE_OVERLAY: LifeState | undefined;
+function setLifeOverlay(life: LifeState | undefined) { LIFE_OVERLAY = life; }
+/** Amanea et Naïah ne se trouvent jamais au même endroit (bible) : un rendez-vous qui les réunirait est suspendu. */
+const LIFE_NEVER_TOGETHER: Record<string, string> = { amanea: "naiah", naiah: "amanea" };
+function lifeInviteSuspended(invite: PlayerInvite, flags: string[] = [], housing?: HousingState) {
+  if (storyCharacterPlace(invite.character, invite.day, invite.period, flags)) return true;
+  const other = LIFE_NEVER_TOGETHER[invite.character];
+  const otherCharacter = other ? CHARACTERS.find((entry) => entry.id === other) : undefined;
+  if (!other || !otherCharacter) return false;
+  const otherStory = storyCharacterPlace(other, invite.day, invite.period, flags);
+  const otherInvite = inviteAt(LIFE_OVERLAY, other, invite.day, invite.period);
+  const otherSpot = otherStory?.spot || otherInvite?.spot || baseCharacterPlace(otherCharacter, invite.day, invite.period, flags, housing).spot;
+  return otherSpot === invite.spot;
+}
+
+/* ---------- Vie quotidienne : aides pures (voir life-*.ts). Aucune ne touche au Désir ni à l’étape d’une relation. ---------- */
+const LIFE_NAMES: Record<string, string> = Object.fromEntries(CHARACTERS.map((entry) => [entry.id, entry.name]));
+function lifeOf(game: GameState): LifeState { return game.life || emptyLife(); }
+function lifeContext(game: GameState): LifeContext {
+  const home = propertyById(game.housing.propertyId);
+  return {
+    day: game.day, period: game.period, location: game.location, spot: game.spot, coins: game.coins, homeSpot: home?.spot,
+    locationOpen: (id) => locationUnlocked(game, id),
+    spotLocation: (spotId) => spotById(spotId)?.location,
+    met: (id) => Boolean(game.relationships[id]?.met),
+  };
+}
+/** Humeur du jour : stable sur la journée (lieu du matin, souvenirs des jours précédents). */
+function characterMood(game: GameState, characterId: string): MoodId {
+  const character = CHARACTERS.find((entry) => entry.id === characterId);
+  if (!character) return "sereine";
+  const morning = characterPlace(character, game.day, 0, game.flags, game.housing);
+  return moodOf(characterId, game.day, { locationId: morning.location || "algratal", events: game.life?.moodEvents });
+}
+function lifeScaleEffects(effects: Effects, mood: MoodId): Effects {
+  return { ...effects, ...(effects.affection ? { affection: scaleGain(effects.affection, mood) } : {}), ...(effects.trust ? { trust: scaleGain(effects.trust, mood) } : {}) };
+}
+function lifeAdjustRelation(game: GameState, characterId: string, affection: number, trust: number): GameState {
+  const relation = game.relationships[characterId];
+  if (!relation) return game;
+  return { ...game, relationships: { ...game.relationships, [characterId]: { ...relation, met: true, affection: clamp(relation.affection + affection), trust: clamp(relation.trust + trust) } } };
+}
+function applyLifeReward(game: GameState, reward: LifeReward): GameState {
+  const stats = { ...game.stats };
+  for (const [key, value] of Object.entries(reward.stats)) stats[key as StatKey] += value || 0;
+  const inventory = { ...game.inventory };
+  for (const keepsake of reward.keepsakes) if (!inventory[keepsake]) inventory[keepsake] = 1;
+  return { ...game, stats, coins: game.coins + reward.coins, inventory };
+}
+/** Applique des événements de vie : envies réalisées, jalons d’aspiration et leurs récompenses. */
+function withLifeEvents(game: GameState, events: LifeEvent[]): GameState {
+  let life = lifeOf(game);
+  let next = game;
+  for (const event of events) {
+    const result = applyLifeEvent(life, event, lifeContext({ ...next, life }), LIFE_NAMES, STAT_LABELS);
+    life = result.life;
+    next = applyLifeReward(next, result.reward);
+  }
+  return { ...next, life };
+}
+/** Passage du temps : envies du matin, rendez-vous dépassés, réponses aux lettres. Idempotent pour un même créneau. */
+function lifeTick(game: GameState): GameState {
+  let life = lifeOf(game);
+  life = rollWishes(life, lifeContext(game), CHARACTERS.map((entry) => entry.id));
+  const previousOverlay = LIFE_OVERLAY;
+  LIFE_OVERLAY = life;
+  const expired = expireInvites(life, game.day, game.period, (invite) => lifeInviteSuspended(invite, game.flags, game.housing));
+  LIFE_OVERLAY = previousOverlay;
+  life = expired.life;
+  let next: GameState = { ...game, life };
+  // Rendez-vous manqué par vous : -1 confiance. Empêchement du personnage : excuse écrite et +1 confiance.
+  for (const invite of expired.missed) next = lifeAdjustRelation(next, invite.character, 0, -1);
+  for (const invite of expired.excused) next = lifeAdjustRelation(next, invite.character, 0, 1);
+  const delivered = deliverLetterGains(lifeOf(next), game.day);
+  next = { ...next, life: delivered.life };
+  for (const gain of delivered.gains) next = lifeAdjustRelation(next, gain.character, gain.affection, gain.trust);
+  return withLifeEvents(next, [{ kind: "state" }]);
+}
+/** Notifications de vie déduites de la différence entre deux états (sûr même si une mise à jour est rejouée). */
+function lifeNotifications(previous: GameState, next: GameState): ChronicleNotificationDraft[] {
+  const before = previous.life;
+  const after = next.life;
+  if (!after) return [];
+  const out: ChronicleNotificationDraft[] = [];
+  for (const wish of after.wishes) {
+    if (!wish.done || before?.wishes.some((entry) => entry.id === wish.id && entry.done)) continue;
+    const template = WISHES.find((entry) => entry.id === wish.id);
+    out.push({ kind: "knowledge", title: `Envie réalisée · ${wishLabel(wish, LIFE_NAMES)}`, detail: template ? [template.reward.stat ? `+1 ${STAT_LABELS[template.reward.stat]}` : "", template.reward.coins ? `+${template.reward.coins} pièces` : ""].filter(Boolean).join(" · ") : "" });
+  }
+  for (const aspiration of ASPIRATIONS) {
+    const stepsBefore = before?.aspirations[aspiration.id]?.steps || [];
+    for (const stepId of after.aspirations[aspiration.id]?.steps || []) {
+      if (stepsBefore.includes(stepId)) continue;
+      const step = aspiration.steps.find((entry) => entry.id === stepId);
+      if (step) out.push({ kind: "story", title: `${aspiration.name} · ${step.label}`, detail: [step.reward.stat ? `+1 ${STAT_LABELS[step.reward.stat]}` : "", step.reward.coins ? `+${step.reward.coins} pièces` : ""].filter(Boolean).join(" · ") });
+    }
+    if (after.titles.includes(aspiration.title) && !before?.titles.includes(aspiration.title)) out.push({ kind: "unlock", title: `Aspiration accomplie · ${aspiration.name}`, detail: `Titre « ${aspiration.title} » et un souvenir pour votre vitrine` });
+  }
+  for (const letter of after.letters) {
+    if (!letter.applied || before?.letters.some((entry) => entry.id === letter.id && entry.applied)) continue;
+    out.push({ kind: "letter", title: `Réponse de ${LIFE_NAMES[letter.character] || letter.character}`, detail: `${LETTER_THEMES[letter.theme].label} · à lire dans le courrier` });
+  }
+  for (const note of after.notes) {
+    if (before?.notes.some((entry) => entry.id === note.id)) continue;
+    out.push({ kind: "letter", title: note.kind === "manque" ? `Un mot de ${LIFE_NAMES[note.character]}` : `Une excuse de ${LIFE_NAMES[note.character]}`, detail: note.kind === "manque" ? "Rendez-vous manqué · confiance -1" : "Rendez-vous empêché · confiance +1" });
+  }
+  return out;
+}
+/** Sous-lieux proposables pour une invitation : connus, ouverts, hors logis d’autrui et hors front ; Naïah : Forêt Interdite seulement. */
+function lifeInviteSpots(game: GameState, characterId: string) {
+  const home = propertyById(game.housing.propertyId);
+  return SUBLOCATIONS.filter((spot) => (game.visitedSpots.includes(spot.id) || spot.id === game.spot) && locationUnlocked(game, spot.location) && spot.location !== "rocky-spires"
+    && (!spot.housing || spot.id === home?.spot)
+    && (characterId !== "naiah" || spot.location === "forbidden"));
+}
+/** Facteurs d’acceptation d’une invitation (score caché, indice qualitatif affiché). */
+function lifeInviteFactors(game: GameState, characterId: string, spotId: string, day: number, period: number) {
+  const character = CHARACTERS.find((entry) => entry.id === characterId)!;
+  const spot = spotById(spotId)!;
+  const relation = game.relationships[characterId];
+  const routine = baseCharacterPlace(character, day, period, game.flags, game.housing);
+  const mood = characterMood({ ...game, day }, characterId);
+  const sky = weatherAt(day, spot.location);
+  const factors = { stage: relation?.stage || 0, trust: relation?.trust || 0, mood, sameRegion: routine.location === spot.location, knownRegion: locationUnlocked(game, spot.location), badWeather: BAD_WEATHER.includes(sky.id) };
+  return { factors, score: inviteScore(factors), sky };
+}
+
 function characterPlace(character: CharacterData, day: number, period: number, flags: string[] = [], housing?: HousingState) {
   const campaignPlace = storyCharacterPlace(character.id, day, period, flags);
   if (campaignPlace) return campaignPlace;
+  const invite = inviteAt(LIFE_OVERLAY, character.id, day, period);
+  if (invite && !lifeInviteSuspended(invite, flags, housing)) {
+    return { ...baseCharacterPlace(character, day, period, flags, housing), location: invite.location, spot: invite.spot, action: "vous attend au rendez-vous convenu", traveling: false };
+  }
+  return baseCharacterPlace(character, day, period, flags, housing);
+}
+
+function baseCharacterPlace(character: CharacterData, day: number, period: number, flags: string[] = [], housing?: HousingState) {
   const home = propertyById(housing?.propertyId);
   const residentIndex = housing?.residents.indexOf(character.id) ?? -1;
   const residentHome = home && residentIndex >= 0 && (period === 0 || period === 3 || (day + residentIndex) % 4 === period);
@@ -2133,6 +2282,9 @@ export default function Home() {
   const currentPlaceKey = game ? `${game.location}:${game.spot}` : "";
   /* ---------- Interface V2 : état d’affichage (aucune donnée de jeu propre) ---------- */
   const [v2Dialog, setV2Dialog] = useState<V2DialogState>(null);
+  const [lifeModal, setLifeModal] = useState<LifeModal>(null);
+  const rdvShownRef = useRef<string | null>(null);
+  setLifeOverlay(game?.life);
   const [linksView, setLinksView] = useState<V2LinksView>("liens");
   const [ficheId, setFicheId] = useState("");
   const [v2Log, setV2Log] = useState<V2LogEntry[]>([]);
@@ -2305,8 +2457,24 @@ export default function Home() {
     const previous = previousGameRef.current;
     previousGameRef.current = game;
     if (!previous || previous === game) return;
-    gameNotifications(previous, game).forEach(pushNotification);
+    [...gameNotifications(previous, game), ...lifeNotifications(previous, game)].forEach(pushNotification);
   }, [game, pushNotification, screen]);
+
+  // Rendez-vous convenu : la rencontre s’ouvre d’elle-même en arrivant au bon endroit, une seule fois par rendez-vous.
+  const lifeMeeting = game && screen === "game" ? game.life?.invites.find((entry) => entry.status === "accepted" && entry.day === game.day && entry.period === game.period && entry.spot === game.spot && lifeCharacterHere(entry.character)) : undefined;
+  useEffect(() => {
+    if (!lifeMeeting || dialogue || modal || lifeModal || v2Dialog || rdvShownRef.current === lifeMeeting.id) return;
+    rdvShownRef.current = lifeMeeting.id;
+    setLifeModal({ kind: "rdv", inviteId: lifeMeeting.id });
+  }, [lifeMeeting, dialogue, modal, lifeModal, v2Dialog]);
+
+  // Vie quotidienne : à chaque changement de jour, de période ou de lieu (envies, rendez-vous, réponses aux lettres).
+  const lifeSlot = game && screen === "game" ? `${game.day}:${game.period}:${game.spot}` : "";
+  useEffect(() => {
+    if (!lifeSlot) return;
+    updateGame(lifeTick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lifeSlot]);
 
   useEffect(() => {
     if (!mapDestinationOpen) return;
@@ -3390,7 +3558,12 @@ export default function Home() {
     const bvCheckpoint = game.crossQuestSeries[BV_KEY]?.bv?.checkpoint;
     const bvAlreadyPicked = dialogue.scene.bvScene && (game.crossQuestSeries[BV_KEY]?.bv?.choices[dialogue.scene.id]
       || bvCheckpoint?.sceneId === dialogue.scene.id && bvCheckpoint.picks.includes(choice.id));
-    if (!dialogue.replay && !hnAlreadyPicked && !bnAlreadyPicked && !bvAlreadyPicked && !(dialogue.scene.hrScene && game.crossQuestSeries[HR_KEY]?.hr?.choices[dialogue.scene.id])) applyEffects(dialogue.scene.character, choice.effects, route);
+    if (!dialogue.replay && !hnAlreadyPicked && !bnAlreadyPicked && !bvAlreadyPicked && !(dialogue.scene.hrScene && game.crossQuestSeries[HR_KEY]?.hr?.choices[dialogue.scene.id])) {
+      // Vie quotidienne : l’humeur module les gains positifs des conversations ordinaires (jamais le Désir ni l’étape).
+      const everyday = (dialogue.scene.kind === "ambient" || dialogue.scene.kind === "social") && dialogue.scene.character;
+      applyEffects(dialogue.scene.character, everyday ? lifeScaleEffects(choice.effects, characterMood(game, dialogue.scene.character!)) : choice.effects, route);
+      if (everyday) { const met = dialogue.scene.character!; updateGame((current) => withLifeEvents(current, [{ kind: "meet", character: met }])); }
+    }
     if (dialogue.scene.hnScene && !dialogue.replay) updateGame(current => {
       const p = current.crossQuestSeries[HN_KEY]; if (!p?.hn) return current;
       const outcome = motherOutcomeFromChoice(choice.id) || p.hn.motherOutcome;
@@ -3846,7 +4019,12 @@ export default function Home() {
     if (meteo.surcharge && meteo.reason) pushNotification({ kind: "story", title: `${meteo.reason.icon} ${meteo.reason.label} · trajet plus long`, detail: `${LOCATIONS.find((entry) => entry.id === meteo.where)?.name || ""} : +${meteo.surcharge} période${meteo.surcharge > 1 ? "s" : ""}${meteo.scoutHelped ? " (Éclaireur·se : une de moins)" : ""}.` });
     updateGame((current) => {
       const clock = current.settings.noTimeCost ? { day: current.day, period: current.period } : advanceClock(current, periods, PERIODS.length);
-      return { ...current, ...clock, location: locationId, spot: spotId, ...placeDiscovery(current, locationId, spotId) };
+      const arrived = { ...current, ...clock, location: locationId, spot: spotId, ...placeDiscovery(current, locationId, spotId) };
+      const newSpot = !current.visitedSpots.includes(spotId);
+      return withLifeEvents(arrived, [
+        { kind: "travel", surcharge: meteo.surcharge },
+        { kind: "visit", location: locationId, spot: spotId, period: arrived.period, weather: weatherAt(arrived.day, locationId).id, ...(newSpot ? { newSpot: true } : {}) },
+      ]);
     });
     setPlacePanel(null);
     setTab("place");
@@ -4286,6 +4464,7 @@ export default function Home() {
       confluence: clamp(current.confluence + (jobState.phase === "perfect" ? 2 : succeeded ? 1 : 0)),
       journal: [...current.journal, `Job · ${job.title} · ${jobState.phase === "perfect" ? "travail parfait" : succeeded ? "mission accomplie" : "travail partiel"} · ${pay} pièces`],
     }));
+    if (succeeded) updateGame((current) => withLifeEvents(current, [{ kind: "job" }]));
     setJobState(null);
     setModal(null);
     advancePeriod();
@@ -4295,7 +4474,7 @@ export default function Home() {
     if (!game) return;
     const gift = GIFTS.find((entry) => entry.id === giftId);
     if (!gift || game.coins < gift.price) return;
-    updateGame((current) => ({ ...current, coins: current.coins - gift.price, inventory: { ...current.inventory, [giftId]: (current.inventory[giftId] || 0) + 1 } }));
+    updateGame((current) => withLifeEvents({ ...current, coins: current.coins - gift.price, inventory: { ...current.inventory, [giftId]: (current.inventory[giftId] || 0) + 1 } }, [{ kind: "buy", gift: giftId }]));
   }
 
   function giveGift(characterId: string, giftId: string) {
@@ -4308,29 +4487,167 @@ export default function Home() {
       setModal({ kind: "notice", title: "Impossible de remettre le présent", text: `${character.name} n’est plus dans ce sous-lieu. Retrouvez cette personne exactement au même endroit et à la même période.` });
       return;
     }
-    const liked = character.giftLikes.includes(giftId);
-    // Gains réels affichés par la fenêtre de réaction (mêmes formules que la mise à jour ci-dessous).
+    // Vie quotidienne : catégorie (aimé, neutre, mal choisi), humeur du jour et un seul présent compté par jour et par personne.
+    const mood = characterMood(game, characterId);
+    const counted = !giftCounted(lifeOf(game), characterId, game.day);
+    const outcome = giftOutcome(characterId, giftId, character.giftLikes, mood, game.day, counted);
+    const liked = outcome.category === "aime";
+    // Gains réels affichés par la fenêtre de réaction (mêmes formules que la mise à jour ci-dessous). Le Désir n’est jamais modifié.
     const before = game.relationships[characterId];
-    const reaction: V2GiftReaction = { character: characterId, giftId, liked, affection: clamp(before.affection + (liked ? 6 : 2)) - before.affection, trust: clamp(before.trust + (liked ? 3 : 1)) - before.trust };
+    const reaction: V2GiftReaction = { character: characterId, giftId, liked, affection: clamp(before.affection + outcome.affection) - before.affection, trust: clamp(before.trust + outcome.trust) - before.trust, category: outcome.category, mood, counted };
     updateGame((current) => {
       const relation = { ...current.relationships[characterId] };
       relation.met = true;
       relation.gifts += 1;
-      relation.affection = clamp(relation.affection + (liked ? 6 : 2));
-      relation.trust = clamp(relation.trust + (liked ? 3 : 1));
+      relation.affection = clamp(relation.affection + outcome.affection);
+      relation.trust = clamp(relation.trust + outcome.trust);
       const remaining = Math.max(0, (current.inventory[giftId] || 0) - 1);
       const displayed = remaining > 0
         ? current.housing.displayed
         : current.housing.displayed.map((item) => item === giftId ? null : item);
-      return {
+      let life = lifeOf(current);
+      if (counted) {
+        life = pushMoodEvent({ ...life, giftDay: { ...life.giftDay, [characterId]: current.day } }, characterId, outcome.category === "aime" ? "cadeau-aime" : outcome.category === "deteste" ? "cadeau-deteste" : "cadeau-neutre", current.day);
+      }
+      if (outcome.category === "deteste" && !(life.discovered[characterId] || []).includes(giftId)) life = { ...life, discovered: { ...life.discovered, [characterId]: [...(life.discovered[characterId] || []), giftId] } };
+      const next: GameState = {
         ...current,
         relationships: { ...current.relationships, [characterId]: relation },
         inventory: { ...current.inventory, [giftId]: remaining },
         housing: { ...current.housing, displayed },
         journal: [...current.journal, `Présent offert à ${character.name} : ${gift.name}.`],
+        life,
       };
+      return counted ? withLifeEvents(next, [{ kind: "gift", character: characterId, category: outcome.category }]) : next;
     });
-    setModal({ kind: "notice", title: liked ? "Un présent qui touche juste" : "Une attention remarquée", text: liked ? `${character.name} reconnaît immédiatement l’attention derrière ce choix.` : `${character.name} accepte le présent avec curiosité. L’intention compte, même si l’objet ne lui correspond pas tout à fait.`, consumeTime: true, gift: reaction });
+    const text = [outcome.text, outcome.moodLine, counted ? "" : GIFT_ALREADY_TODAY].filter(Boolean).join("\n");
+    setModal({ kind: "notice", title: GIFT_CATEGORY_LABEL[outcome.category].title, text, gift: reaction });
+  }
+
+  /* ---------- Vie quotidienne : activités partagées, invitations, lettres, envies et aspirations ---------- */
+  function lifeCharacterHere(characterId: string) {
+    if (!game) return false;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    if (!character) return false;
+    const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
+    return place.location === game.location && place.spot === game.spot;
+  }
+
+  function doSharedActivity(characterId: string, activityId: ActivityId, tone: ToneId) {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const activity = activityById(activityId);
+    if (!character || !activity || !lifeCharacterHere(characterId)) { setLifeModal(null); return; }
+    const home = propertyById(game.housing.propertyId);
+    const availability = activitiesAt(characterId, game.spot, game.location, game.day, home?.spot).find((entry) => entry.activity.id === activityId);
+    if (!availability?.available) return;
+    const mood = characterMood(game, characterId);
+    const counted = !activityCounted(lifeOf(game), characterId, game.day);
+    const outcome = activityOutcome(characterId, character.name, activityId, tone, mood, game.day, game.location);
+    const before = game.relationships[characterId];
+    const affection = counted ? clamp(before.affection + outcome.affection) - before.affection : 0;
+    const trust = counted ? clamp(before.trust + outcome.trust) - before.trust : 0;
+    const weather = weatherAt(game.day, game.location).id;
+    const isHome = home?.spot === game.spot;
+    updateGame((current) => {
+      let next = counted ? lifeAdjustRelation(current, characterId, outcome.affection, outcome.trust) : current;
+      if (counted) next = { ...next, stats: { ...next.stats, [outcome.stat]: next.stats[outcome.stat] + 1 } };
+      next = { ...next, life: recordActivity(lifeOf(next), characterId, activityId, current.day), journal: [...next.journal, `${PERIODS[current.period].label} · ${activity.label} avec ${character.name}`] };
+      return withLifeEvents(next, counted ? [{ kind: "activity", character: characterId, activity: activityId, spot: current.spot, home: isHome, weather }] : []);
+    });
+    setLifeModal({ kind: "activite", character: characterId, activity: activityId, tone, affection, trust, counted, lines: outcome.lines, bonusReason: counted ? outcome.bonusReason : undefined, stat: outcome.stat, toneMatch: outcome.toneMatch });
+  }
+
+  function closeLifeActivity() {
+    setLifeModal(null);
+    advancePeriod();
+  }
+
+  function proposeInvite(characterId: string, spotId: string, day: number, period: number) {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const spot = spotById(spotId);
+    if (!character || !spot) return;
+    const life = lifeOf(game);
+    const future = day > game.day || (day === game.day && period > game.period);
+    if (!future || day > game.day + INVITE_MAX_AHEAD || !lifeInviteSpots(game, characterId).some((entry) => entry.id === spotId)) return;
+    if (invitePaused(life, characterId, game.day) || pendingInvites(life, game.day, game.period).some((entry) => entry.character === characterId) || pendingInvites(life, game.day, game.period).length >= INVITE_MAX_PENDING) return;
+    const { factors, score } = lifeInviteFactors(game, characterId, spotId, day, period);
+    const invite: PlayerInvite = { id: `inv-${characterId}-${game.day}-${day}-${period}-${spotId}`, character: characterId, location: spot.location, spot: spotId, day, period, status: "accepted", createdDay: game.day };
+    const accepted = inviteAccepted(characterId, day, period, spotId, score) && !lifeInviteSuspended(invite, game.flags, game.housing);
+    const texts = INVITE_TEXTS[characterId];
+    const text = accepted ? texts.accept : factors.badWeather ? texts.weather : !factors.sameRegion ? texts.far : texts.refuse;
+    updateGame((current) => ({ ...current, life: accepted ? recordAcceptance(lifeOf(current), invite) : recordRefusal(lifeOf(current), characterId, current.day) }));
+    setLifeModal({ kind: "invite-reponse", character: characterId, accepted, text, spot: spotId, day, period });
+  }
+
+  function joinInvite(inviteId: string, choice: "activite" | "parler" | "rendez-vous", dateId?: string) {
+    if (!game) return;
+    const invite = lifeOf(game).invites.find((entry) => entry.id === inviteId);
+    if (!invite || invite.status !== "accepted" || invite.day !== game.day || invite.period !== game.period || invite.spot !== game.spot) { setLifeModal(null); return; }
+    const character = CHARACTERS.find((entry) => entry.id === invite.character);
+    if (!character) return;
+    const mood = characterMood(game, invite.character);
+    const isHome = propertyById(game.housing.propertyId)?.spot === invite.spot;
+    const honor = (current: GameState) => {
+      let next: GameState = { ...current, life: honorInvite(lifeOf(current), inviteId, current.day) };
+      if (choice === "parler") next = lifeAdjustRelation(next, invite.character, scaleGain(2, mood), 0);
+      return withLifeEvents(next, [{ kind: "invite", character: invite.character, location: invite.location, home: isHome }, { kind: "meet", character: invite.character }]);
+    };
+    if (choice === "rendez-vous" && dateId) { setLifeModal(null); startDate(dateId, false, { inPlace: true, prep: honor }); return; }
+    updateGame(honor);
+    if (choice === "activite") { setLifeModal({ kind: "ensemble", character: invite.character }); return; }
+    setLifeModal(null);
+    const gain = clamp(game.relationships[invite.character].affection + scaleGain(2, mood)) - game.relationships[invite.character].affection;
+    setModal({ kind: "notice", title: `Un moment avec ${character.name}`, text: `${moodLine(invite.character, mood) || ""}\nVous prenez le temps de parler, sans autre programme que le plaisir de la rencontre.${gain > 0 ? `\nAffection +${gain}` : ""}`, consumeTime: true });
+  }
+
+  function sendLifeLetter(characterId: string, theme: LetterTheme) {
+    if (!game) return;
+    const character = CHARACTERS.find((entry) => entry.id === characterId);
+    const relation = game.relationships[characterId];
+    if (!character || !relation?.met) return;
+    const life = lifeOf(game);
+    if (letterBlocked(life, characterId, game.day) || !letterThemeAvailable(life, characterId, theme, relation.stage, game.day)) return;
+    const replyDay = replyDayFor(life, characterId, game.day);
+    const high = theme === "confidence" ? relation.stage >= 5 : relation.stage >= 3;
+    let invite: PlayerInvite | undefined;
+    if (theme === "invitation") {
+      // La personne choisit le lieu et le moment : son propre itinéraire, le lendemain de la réponse.
+      const day = replyDay + 1;
+      for (const period of [2, 1, 3]) {
+        const routine = baseCharacterPlace(character, day, period, game.flags, game.housing);
+        const spot = spotById(routine.spot);
+        if (!spot || routine.traveling || !locationUnlocked(game, spot.location) || spot.location === "rocky-spires" || spot.housing) continue;
+        if (characterId === "naiah" && spot.location !== "forbidden") continue;
+        const candidate: PlayerInvite = { id: `inv-${characterId}-${game.day}-${day}-${period}-${spot.id}`, character: characterId, location: spot.location, spot: spot.id, day, period, status: "accepted", createdDay: game.day, viaLetter: true };
+        if (lifeInviteSuspended(candidate, game.flags, game.housing)) continue;
+        const { score } = lifeInviteFactors(game, characterId, spot.id, day, period);
+        const pending = pendingInvites(life, game.day, game.period);
+        if (inviteAccepted(characterId, day, period, spot.id, score + 10) && !invitePaused(life, characterId, game.day) && !pending.some((entry) => entry.character === characterId) && pending.length < INVITE_MAX_PENDING) invite = candidate;
+        break;
+      }
+    }
+    const letter = { id: `vie-${characterId}-${game.day}-${theme}`, character: characterId, theme, day: game.day, replyDay, read: false, high, ...(theme === "invitation" ? { accepted: Boolean(invite) } : {}), ...(invite ? { inviteId: invite.id } : {}) };
+    updateGame((current) => {
+      let next = lifeOf(current);
+      next = { ...next, letters: [...next.letters, letter] };
+      if (invite) next = recordAcceptance(next, invite);
+      return withLifeEvents({ ...current, life: next }, [{ kind: "letter", character: characterId, theme }]);
+    });
+    setLifeModal({ kind: "lettre-envoyee", character: characterId, theme, replyDay });
+  }
+
+  function readLifeMail(kind: "vie" | "note", id: string) {
+    updateGame((current) => {
+      const life = lifeOf(current);
+      if (kind === "vie") return { ...current, life: { ...life, letters: life.letters.map((entry) => entry.id === id ? { ...entry, read: true } : entry) } };
+      return { ...current, life: { ...life, notes: life.notes.map((entry) => entry.id === id ? { ...entry, read: true } : entry) } };
+    });
+  }
+
+  function pickAspiration(id: string | undefined) {
+    updateGame((current) => withLifeEvents({ ...current, life: chooseAspiration(lifeOf(current), id, current.day) }, [{ kind: "state" }]));
   }
 
   function buyProperty(propertyId: string) {
@@ -4552,19 +4869,22 @@ export default function Home() {
     setModal({ kind: "intimacy", character: characterId, background: property.background, home: true });
   }
 
-  function startDate(dateId: string, force = false) {
+  /** `inPlace` (rendez-vous d’une invitation) : la scène se joue ici et maintenant, sans saut au lendemain. */
+  function startDate(dateId: string, force = false, options: { inPlace?: boolean; prep?: (current: GameState) => GameState } = {}) {
     if (!game) return;
     const date = DATE_SCENES.find((entry) => entry.id === dateId);
     if (!date || (!force && !publicDateUnlocked(game, date))) return;
+    if (options.inPlace && date.spot !== game.spot) return;
     const periodIndex = Math.max(0, PERIODS.findIndex((period) => period.id === date.period));
     const scheduledDay = game.day + 1;
-    const nextGame: GameState = {
-      ...game,
+    const base = options.prep ? options.prep(game) : game;
+    const nextGame: GameState = options.inPlace ? base : {
+      ...base,
       day: scheduledDay,
       period: periodIndex,
       location: date.location,
       spot: date.spot,
-      ...placeDiscovery(game, date.location, date.spot),
+      ...placeDiscovery(base, date.location, date.spot),
     };
     const character = CHARACTERS.find((entry) => entry.id === date.character)!;
     const scene: SceneView = {
@@ -5281,7 +5601,7 @@ export default function Home() {
     : undefined;
   const sceneActive = Boolean(dialogue || modal?.kind === "valurn-market" || modal?.kind === "intimacy" || modal?.kind === "group-intimacy" || modal?.kind === "home-date" || modal?.kind === "home-pair-date" || modal?.kind === "alpha-hunt" || modal?.kind === "anchor-operation" || modal?.kind === "hylee-search" || modal?.kind === "bn-minigame" || modal?.kind === "bn-intimacy" || modal?.kind === "bv-never" || modal?.kind === "bv-intimacy");
   const pendingMail = game.letters.filter((entry) => !entry.read).length + (game.crossQuestSeries.linevaAllenna?.letters.filter((entry) => !entry.read).length || 0) + game.invitations.filter((entry) => entry.status === "pending").length;
-  const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail };
+  const badges: Partial<Record<V2Tab, number>> = { journal: pendingMail + unreadLifeMail(game.life, game.day) };
   const unread = v2Log.filter((entry) => !entry.read).length;
   const v2Tab = tab as V2Tab;
   const toggleMusic = () => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }));
@@ -5323,13 +5643,14 @@ export default function Home() {
         <main id="scene" className={`scene scene-${sceneName}`} tabIndex={-1} key={`${v2Tab}-${linksView}`}>
           {v2Tab === "place" && <V2Lieu game={game} location={currentLocation} spot={currentSpot} spots={currentSpots} present={presentCharacters} visible={visibleCharacters} visitors={upcomingVisitors} event={spontaneousEvent} rumor={localRumor}
             onTalk={openCharacterScene} onGift={(id) => setModal({ kind: "gift", character: id })} onDate={(id) => setModal({ kind: "date-planner", character: id })} onFiche={openFiche}
-            onActivity={performActivity} onJob={openJob} onWait={v2Wait} onWaitFor={() => setV2Dialog({ kind: "wait" })} onMap={() => locateOnMap(game.location, game.spot)} onSpot={(spotId) => travel(currentLocation.id, spotId)} onEvent={openSpontaneousEvent} onRumor={hearRumor} />}
+            onActivity={performActivity} onJob={openJob} onWait={v2Wait} onWaitFor={() => setV2Dialog({ kind: "wait" })} onMap={() => locateOnMap(game.location, game.spot)} onSpot={(spotId) => travel(currentLocation.id, spotId)} onEvent={openSpontaneousEvent} onRumor={hearRumor}
+            onEnsemble={(id) => setLifeModal({ kind: "ensemble", character: id })} onInvite={(id) => setLifeModal({ kind: "inviter", character: id })} onJoin={(inviteId) => setLifeModal({ kind: "rdv", inviteId })} />}
           {v2Tab === "map" && <V2Carte game={game} visible={visibleCharacters} selectedLocation={selectedLocation} selectedSpot={selectedSpot} onSelectLocation={setSelectedLocation} onSelectSpot={setSelectedSpot} onTravel={(locationId, spotId) => { void playTransition("encre").then(() => travel(locationId, spotId)); }} onPlace={() => goTab("place")} />}
           {v2Tab === "relations" && linksView === "liens" && <V2Liens game={game} onView={setLinksView} onFiche={openFiche} />}
-          {v2Tab === "relations" && linksView === "fiche" && <V2Fiche game={game} characterId={ficheId} onView={setLinksView} onFiche={setFicheId} onGift={(id) => setModal({ kind: "gift", character: id })} onDate={(id) => setModal({ kind: "date-planner", character: id })} onLocate={locateOnMap} onDossier={(id) => setModal({ kind: "character", character: id })} onWaitRoute={waitForRoute} />}
+          {v2Tab === "relations" && linksView === "fiche" && <V2Fiche game={game} characterId={ficheId} onView={setLinksView} onFiche={setFicheId} onGift={(id) => setModal({ kind: "gift", character: id })} onDate={(id) => setModal({ kind: "date-planner", character: id })} onLocate={locateOnMap} onDossier={(id) => setModal({ kind: "character", character: id })} onWaitRoute={waitForRoute} onLife={setLifeModal} />}
           {v2Tab === "relations" && linksView === "rdv" && <V2Rdv game={game} onView={setLinksView} onDate={(date) => setV2Dialog({ kind: "date", dateId: date.id })} onHome={(id) => setModal({ kind: "date-planner", character: id })} />}
           {v2Tab === "relations" && linksView === "trio" && <V2Trio game={game} onView={setLinksView} onStart={(id) => startGroupDate(id)} />}
-          {v2Tab === "journal" && <V2Journal game={game} onStartCampaign={startCampaignScene} onReadLetter={readLetter} onReadCrossLetter={readCrossLetter} onInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onLocateSpot={(spotId) => { const spot = spotById(spotId); if (spot) locateOnMap(spot.location, spot.id); }} legacy={legacyJournal} />}
+          {v2Tab === "journal" && <V2Journal game={game} onStartCampaign={startCampaignScene} onReadLetter={readLetter} onReadCrossLetter={readCrossLetter} onInvitation={(invitationId) => setModal({ kind: "invitation", invitationId })} onLocateSpot={(spotId) => { const spot = spotById(spotId); if (spot) locateOnMap(spot.location, spot.id); }} legacy={legacyJournal} onLife={{ onAspiration: pickAspiration, onReadLife: readLifeMail, onWrite: (id) => setLifeModal({ kind: "ecrire", character: id }) }} />}
           {v2Tab === "jobs" && <V2Jobs game={game} onJob={(job) => setV2Dialog({ kind: "job", jobId: job.id })} />}
           {v2Tab === "inventory" && <V2Biens game={game} present={presentCharacters} onShop={() => setModal({ kind: "shop" })} onGive={giveGift} onHousing={() => setV2Dialog({ kind: "housing" })} onSell={() => setV2Dialog({ kind: "sell" })} onDisplaySlot={(slot) => setV2Dialog({ kind: "display", slot })} onResidents={() => setV2Dialog({ kind: "residents" })} />}
           {v2Tab === "codex" && <V2Codex game={game} />}
@@ -5348,6 +5669,7 @@ export default function Home() {
         {dayRecap && !timeJump && !showRank && !dialogue && !modal && !v2Dialog && <V2BilanJour key={`${dayRecap.from.day}-${dayRecap.to.day}`} from={dayRecap.from} to={dayRecap.to} onClose={() => setDayRecap(null)} />}
         {showRank && rank && rankCharacter && <V2RankUp character={rankCharacter} from={rank.from} to={rank.to} leaving={rankLeaving} onClose={dismissRank} />}
         {titleDialogs}
+        {lifeModal && !dialogue && <V2VieLayer game={game} modal={lifeModal} onClose={() => setLifeModal(null)} onOpen={setLifeModal} onActivity={doSharedActivity} onActivityClose={closeLifeActivity} onInvite={proposeInvite} onJoin={joinInvite} onWrite={sendLifeLetter} />}
         {v2Dialog?.kind === "pause" && <V2Dialog key="pause" surtitre="Pause" titre="Menu système" classe="pause" onClose={closeV2}>
           <div className="pause-grille"><ul className="pause-menu">{([["reprendre", "▶", "Reprendre"], ["sauver", "▤", "Sauvegarder"], ["charger", "⟲", "Charger"], ["options", "⚙", "Options"], ["registre", "✉", "Registre"], ["titre", "⏻", "Écran titre"], ["histoire", "↩", "Mode Histoire"]] as const).map(([id, icon, label], index) => <li key={id}><button type="button" className={`pause-item ${index === 0 ? "principal" : ""}`} data-p={id} style={{ "--i": index } as React.CSSProperties} onClick={() => {
             if (id === "reprendre") closeV2();
@@ -5566,7 +5888,7 @@ function DialogueOverlay({ dialogue, game, onAdvance, onBack, onChoice, onClose 
     })}</div>
     <div className="dialogue-gradient" />
     {!choosing ? <button className={`dialogue-box ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={onAdvance}>
-      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span><p key={`${dialogue.phase}-${dialogue.lineIndex}`}>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
+      <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}{(dialogue.scene.kind === "ambient" || dialogue.scene.kind === "social") && dialogue.scene.character && currentLine.speaker === LIFE_NAMES[dialogue.scene.character] && !dialogue.replay && <V2Humeur mood={characterMood(game, dialogue.scene.character)} character={dialogue.scene.character} />}</span><p key={`${dialogue.phase}-${dialogue.lineIndex}`}>{replacePlayer(currentLine.text, game.player)}</p><small>{dialogue.lineIndex + 1} / {dialogue.lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
     </button> : <div className="choice-box"><p className="choice-question">{dialogue.scene.date?.character === "hylee" && dialogue.phase === "relation-choices" ? "Que faire ensuite ?" : dialogue.phase === "relation-choices" ? "Que laisser paraître après l’action ?" : "Comment répondre ?"}</p>{availableChoices.map((choice, choiceIndex) => {
       const statLocked = Boolean(choice.requires && game.stats[choice.requires.stat] < choice.requires.value);
       const knowledgeLocked = !hasKnowledge(game, choice.requiresKnowledge);
@@ -7315,7 +7637,7 @@ function GameModal({ modal, game, onClose, onActivityClose, buyGift, giveGift, s
   return null;
 }
 
-type V2GiftReaction = { character: string; giftId: string; liked: boolean; affection: number; trust: number };
+type V2GiftReaction = { character: string; giftId: string; liked: boolean; affection: number; trust: number; category?: GiftCategory; mood?: MoodId; counted?: boolean };
 
 function SimpleModal({ title, text, actionLabel, gift, onClose }: { title: string; text: string; actionLabel?: string; gift?: V2GiftReaction; onClose: () => void }) {
   if (gift) return <V2CadeauReaction title={title} text={text} gift={gift} onClose={onClose} />;
@@ -7378,12 +7700,16 @@ function V2Cadeau({ game, character, present, owned, onGive, onClose }: { game: 
   const [hover, setHover] = useState<string | null>(null);
   const hovered = owned.find((gift) => gift.id === hover);
   const hoveredLiked = Boolean(hovered && character.giftLikes.includes(hovered.id));
+  const avoided = game.life?.discovered[character.id] || [];
+  const mood = present ? characterMood(game, character.id) : undefined;
+  const alreadyToday = Boolean(game.life && giftCounted(game.life, character.id, game.day));
   return <V2Fenetre surtitre="Remettre un présent" titre={`Offrir à ${character.name}`} classe="large v2-cadeau" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose} pied={<button type="button" className="btn secondary-action" onClick={onClose}>Annuler</button>}>
     <div className="fen-vn">
       <V2Portrait character={character} mood={hovered ? (hoveredLiked ? V2_GIFT_MOOD.liked : V2_GIFT_MOOD.other) : undefined} classe={hovered ? (hoveredLiked ? "ravi" : "poli") : ""} />
       <div className="fen-vn-texte">
         <span className={`fen-etat ${present ? "ouvert" : ""}`}>{present ? `Avec vous · ${spotById(game.spot)?.name}` : `${character.name} n’est plus ici`}</span>
-        {present && owned.length ? <div className="cad-grille">{owned.map((gift, index) => { const liked = character.giftLikes.includes(gift.id); return <button type="button" key={gift.id} data-don={gift.id} className={`cad-carte rar-${v2Rarity(gift.price)} ${liked ? "aime" : ""}`} style={{ "--i": index } as React.CSSProperties} onPointerEnter={() => setHover(gift.id)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(gift.id)} onBlur={() => setHover(null)} onClick={() => onGive(character.id, gift.id)}><span className="od-ico"><i>{gift.icon}</i></span><b>{gift.name}</b><small>{gift.description}</small><span className="cd-n">×{game.inventory[gift.id]}</span>{liked && <em>♥ Favori</em>}<span className="cad-rar">{v2RarityLabel(gift.price)}</span></button>; })}</div>
+        {mood && <p className="vie-ligne"><V2Humeur mood={mood} character={character.id} />{alreadyToday ? <small>Un présent a déjà compté aujourd’hui.</small> : <small>{MOODS[mood].hint}</small>}</p>}
+        {present && owned.length ? <div className="cad-grille">{owned.map((gift, index) => { const liked = character.giftLikes.includes(gift.id); return <button type="button" key={gift.id} data-don={gift.id} className={`cad-carte rar-${v2Rarity(gift.price)} ${liked ? "aime" : ""}`} style={{ "--i": index } as React.CSSProperties} onPointerEnter={() => setHover(gift.id)} onPointerLeave={() => setHover(null)} onFocus={() => setHover(gift.id)} onBlur={() => setHover(null)} onClick={() => onGive(character.id, gift.id)}><span className="od-ico"><i>{gift.icon}</i></span><b>{gift.name}</b><small>{gift.description}</small><span className="cd-n">×{game.inventory[gift.id]}</span>{liked && <em>♥ Favori</em>}{!liked && avoided.includes(gift.id) && <em className="evite">✕ À éviter</em>}<span className="cad-rar">{v2RarityLabel(gift.price)}</span></button>; })}</div>
           : <p className="discret">{present ? "Votre inventaire ne contient aucun présent. Achetez-en au marché depuis Biens." : `Rejoignez ${character.name} au même sous-lieu avant de remettre l’objet.`}</p>}
       </div>
     </div>
@@ -7396,12 +7722,13 @@ function V2CadeauReaction({ title, text, gift, onClose }: { title: string; text:
   if (!character || !item) return null;
   return <V2Fenetre surtitre={`Présent remis · ${item.name}`} titre={title} classe="large v2-cadeau v2-reaction" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose} pied={<button type="button" className="btn principal primary-action" onClick={onClose}>Continuer</button>}>
     <div className="fen-vn">
-      <V2Portrait character={character} mood={gift.liked ? V2_GIFT_MOOD.liked : V2_GIFT_MOOD.other} classe={gift.liked ? "ravi" : "poli"} />
+      <V2Portrait character={character} mood={gift.liked ? V2_GIFT_MOOD.liked : gift.category === "deteste" ? "sad" : V2_GIFT_MOOD.other} classe={gift.liked ? "ravi" : "poli"} />
       <div className="fen-vn-texte">
-        <div className={`cad-remis rar-${v2Rarity(item.price)} ${gift.liked ? "aime" : ""}`}><span className="od-ico"><i>{item.icon}</i></span><b>{item.name}</b>{gift.liked && <em>♥ Favori</em>}</div>
+        <div className={`cad-remis rar-${v2Rarity(item.price)} ${gift.liked ? "aime" : ""} ${gift.category === "deteste" ? "deteste" : ""}`}><span className="od-ico"><i>{item.icon}</i></span><b>{item.name}</b>{gift.liked && <em>♥ Favori</em>}{gift.category === "deteste" && <em className="evite">✕ Mal choisi</em>}</div>
+        {gift.mood && <p className="vie-ligne"><V2Humeur mood={gift.mood} character={character.id} /></p>}
         {gift.liked && <span className="cad-coeurs" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((index) => <i key={index} style={{ "--i": index } as React.CSSProperties}>♥</i>)}</span>}
         {text.split(/\n+/).filter(Boolean).map((paragraph, index) => <p key={index} className="texte grand">{paragraph}</p>)}
-        {(gift.affection > 0 || gift.trust > 0) && <div className="cad-gains">{gift.affection > 0 && <span className="aff">♥ Affection +{gift.affection}</span>}{gift.trust > 0 && <span className="conf">✦ Confiance +{gift.trust}</span>}</div>}
+        {(gift.affection > 0 || gift.trust !== 0) && <div className="cad-gains">{gift.affection > 0 && <span className="aff">♥ Affection +{gift.affection}</span>}{gift.trust > 0 && <span className="conf">✦ Confiance +{gift.trust}</span>}{gift.trust < 0 && <span className="conf perte">✦ Confiance {gift.trust}</span>}</div>}
       </div>
     </div>
   </V2Fenetre>;
@@ -7721,6 +8048,239 @@ function V2Hud({ game, tab, onTab, badges, unread, onRegistre, onPause, music, o
   </header>;
 }
 
+/* ---------- Vie quotidienne · fenêtres (style V2, discrètes et semi-transparentes) ---------- */
+type LifeModal =
+  | { kind: "ensemble"; character: string }
+  | { kind: "activite"; character: string; activity: ActivityId; tone: ToneId; affection: number; trust: number; counted: boolean; lines: { speaker: string; text: string }[]; bonusReason?: string; stat: StatKey; toneMatch: boolean }
+  | { kind: "inviter"; character: string }
+  | { kind: "invite-reponse"; character: string; accepted: boolean; text: string; spot: string; day: number; period: number }
+  | { kind: "rdv"; inviteId: string }
+  | { kind: "ecrire"; character?: string }
+  | { kind: "lettre-envoyee"; character: string; theme: LetterTheme; replyDay: number }
+  | null;
+
+function V2Humeur({ mood, character }: { mood: MoodId; character?: string }) {
+  const info = MOODS[mood];
+  return <span className="humeur-chip" data-humeur={mood} style={{ "--h": info.color } as React.CSSProperties} title={info.hint}><i aria-hidden="true">{info.icon}</i>{moodLabel(mood, character)}</span>;
+}
+
+function lifeSlotLabel(day: number, period: number, today: number) {
+  const when = day === today ? "Aujourd’hui" : day === today + 1 ? "Demain" : formatImperialDate(day, "jour-mois");
+  return `${when} · ${PERIODS[period].label}`;
+}
+
+type LifeLayerProps = {
+  game: GameState;
+  modal: NonNullable<LifeModal>;
+  onClose: () => void;
+  onOpen: (modal: LifeModal) => void;
+  onActivity: (character: string, activity: ActivityId, tone: ToneId) => void;
+  onActivityClose: () => void;
+  onInvite: (character: string, spot: string, day: number, period: number) => void;
+  onJoin: (inviteId: string, choice: "activite" | "parler" | "rendez-vous", dateId?: string) => void;
+  onWrite: (character: string, theme: LetterTheme) => void;
+};
+
+function V2VieLayer(props: LifeLayerProps) {
+  const { modal } = props;
+  if (modal.kind === "ensemble") return <V2VieEnsemble {...props} character={modal.character} />;
+  if (modal.kind === "activite") return <V2VieActivite {...props} result={modal} />;
+  if (modal.kind === "inviter") return <V2VieInviter {...props} character={modal.character} />;
+  if (modal.kind === "invite-reponse") return <V2VieInviteReponse {...props} reponse={modal} />;
+  if (modal.kind === "rdv") return <V2VieRdv {...props} inviteId={modal.inviteId} />;
+  if (modal.kind === "ecrire") return <V2VieEcrire {...props} initial={modal.character} />;
+  if (modal.kind === "lettre-envoyee") return <V2VieLettreEnvoyee {...props} sent={modal} />;
+  return null;
+}
+
+function V2VieEnsemble({ game, character: characterId, onClose, onActivity }: LifeLayerProps & { character: string }) {
+  const character = CHARACTERS.find((entry) => entry.id === characterId);
+  const [chosen, setChosen] = useState<ActivityId | undefined>(undefined);
+  const [tone, setTone] = useState<ToneId>("complice");
+  if (!character) return null;
+  const place = characterPlace(character, game.day, game.period, game.flags, game.housing);
+  const here = place.location === game.location && place.spot === game.spot;
+  const home = propertyById(game.housing.propertyId);
+  const options = here ? activitiesAt(characterId, game.spot, game.location, game.day, home?.spot) : [];
+  const mood = characterMood(game, characterId);
+  const already = Boolean(game.life && activityCounted(game.life, characterId, game.day));
+  const relation = game.relationships[characterId];
+  const selected = options.find((entry) => entry.activity.id === chosen && entry.available);
+  return <V2Fenetre surtitre="Activité partagée" titre={`Avec ${character.name}`} classe="large v2-vie v2-vie-ensemble" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}
+    pied={<><button type="button" className="btn secondary-action" onClick={onClose}>Annuler</button>{here && <button type="button" className="btn principal primary-action" data-act="vie-partager" disabled={!selected} onClick={() => selected && onActivity(characterId, selected.activity.id, tone)}>Partager · 1 période</button>}</>}>
+    <div className="fen-vn">
+      <V2Portrait character={character} />
+      <div className="fen-vn-texte">
+        <p className="vie-ligne"><V2Humeur mood={mood} character={characterId} /><small>{already ? `Une activité a déjà compté aujourd’hui avec ${character.name} : ce moment reste agréable, sans gain.` : MOODS[mood].hint}</small></p>
+        {!here ? <p className="discret">Rejoignez {character.name} dans le même sous-lieu pour partager une activité.</p>
+          : !options.length ? <p className="discret">Rien ne se prête à une activité à deux dans ce sous-lieu. Un logis, une auberge, un lac ou une salle d’armes offrent davantage.</p>
+          : <>
+            <div className="vie-grille">{options.map(({ activity, available, reason }, index) => {
+              const favorite = relation.stage >= 2 && (FAVORITE_ACTIVITY[characterId] === activity.id || activity.character === characterId);
+              return <button type="button" key={activity.id} data-vie-activite={activity.id} className={`vie-carte ${chosen === activity.id ? "on" : ""} ${available ? "" : "verrou"}`} disabled={!available} aria-pressed={chosen === activity.id} style={{ "--i": index } as React.CSSProperties} onClick={() => setChosen(activity.id)}>
+                <span className="od-ico"><i>{activity.icon}</i></span><b>{activity.label}</b><small>{available ? activity.detail : reason}</small>{favorite && <em>♥ Lui plaît</em>}{activity.character && <em className="propre">✦ Propre à {character.name}</em>}
+              </button>;
+            })}</div>
+            <div className="vie-tons" role="radiogroup" aria-label="Ton"><span className="surtitre">Ton</span>{(Object.keys(TONES) as ToneId[]).map((id) => <button type="button" key={id} role="radio" aria-checked={tone === id} data-vie-ton={id} className={`vie-ton ${tone === id ? "on" : ""}`} onClick={() => setTone(id)}><b>{TONES[id].label}</b><small>{TONES[id].detail} · +1 {STAT_LABELS[TONES[id].stat]}</small></button>)}</div>
+          </>}
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2VieActivite({ game, result, onActivityClose }: LifeLayerProps & { result: Extract<NonNullable<LifeModal>, { kind: "activite" }> }) {
+  const character = CHARACTERS.find((entry) => entry.id === result.character);
+  const activity = activityById(result.activity);
+  if (!character || !activity) return null;
+  return <V2Fenetre surtitre={`Activité partagée · ${activity.label}`} titre={`Avec ${character.name}`} classe="large v2-vie v2-vie-resultat" style={{ "--c": character.color } as React.CSSProperties} onClose={onActivityClose}
+    pied={<button type="button" className="btn principal primary-action" data-act="vie-continuer" onClick={onActivityClose}>Continuer{game.settings.noTimeCost ? "" : " · la période s’écoule"}</button>}>
+    <div className="fen-vn">
+      <V2Portrait character={character} mood={result.counted ? "happy" : undefined} classe={result.counted ? "ravi" : ""} />
+      <div className="fen-vn-texte">
+        {result.lines.filter((line) => line.text).map((line, index) => <p key={index} className={`texte grand ${line.speaker === "Narration" ? "" : "replique"}`}>{line.text}</p>)}
+        {result.counted ? <div className="cad-gains">{result.affection > 0 && <span className="aff">♥ Affection +{result.affection}</span>}{result.trust > 0 && <span className="conf">✦ Confiance +{result.trust}</span>}<span className="stat">◇ {STAT_LABELS[result.stat]} +1</span></div>
+          : <p className="discret">Une activité a déjà compté aujourd’hui avec {character.name}.</p>}
+        {result.counted && (result.bonusReason || result.toneMatch) && <p className="discret">{[result.bonusReason, result.toneMatch ? "Le ton choisi lui ressemble." : ""].filter(Boolean).join(" · ")}</p>}
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2VieInviter({ game, character: characterId, onClose, onInvite }: LifeLayerProps & { character: string }) {
+  const character = CHARACTERS.find((entry) => entry.id === characterId);
+  const spots = character ? lifeInviteSpots(game, characterId) : [];
+  const firstSlot = game.period < PERIODS.length - 1 ? { day: game.day, period: game.period + 1 } : { day: game.day + 1, period: 1 };
+  const [spotId, setSpotId] = useState<string | undefined>(spots.find((entry) => entry.id === game.spot)?.id || spots[0]?.id);
+  const [day, setDay] = useState(firstSlot.day);
+  const [period, setPeriod] = useState(firstSlot.period);
+  if (!character) return null;
+  const life = lifeOf(game);
+  const relation = game.relationships[characterId];
+  const pending = pendingInvites(life, game.day, game.period);
+  const own = pending.find((entry) => entry.character === characterId);
+  const blocked = !relation.met ? `Faites d’abord connaissance avec ${character.name}.`
+    : characterId === "naiah" && relation.stage < 1 ? "Naïah ne se laisse pas encore inviter."
+    : invitePaused(life, characterId, game.day) ? `${character.name} a décliné plusieurs fois : laissez passer quelques jours avant de proposer de nouveau.`
+    : own ? `Un rendez-vous est déjà prévu avec ${character.name} : ${lifeSlotLabel(own.day, own.period, game.day)}, ${spotById(own.spot)?.shortName || ""}.`
+    : pending.length >= INVITE_MAX_PENDING ? "Trois rendez-vous sont déjà prévus. Honorez-en un avant d’en proposer d’autres."
+    : !spots.length ? "Aucun lieu connu ne convient pour l’instant." : undefined;
+  const valid = day > game.day || (day === game.day && period > game.period);
+  const spot = spotId ? spotById(spotId) : undefined;
+  const hint = spot && valid && !blocked ? inviteHint(lifeInviteFactors(game, characterId, spot.id, day, period).score) : undefined;
+  const sky = spot ? weatherAt(day, spot.location) : undefined;
+  const days = Array.from({ length: INVITE_MAX_AHEAD + 1 }, (_, index) => game.day + index);
+  const byLocation = LOCATIONS.map((location) => ({ location, spots: spots.filter((entry) => entry.location === location.id) })).filter((entry) => entry.spots.length);
+  return <V2Fenetre surtitre="Inviter" titre={`Proposer un moment à ${character.name}`} classe="large v2-vie v2-vie-inviter" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}
+    pied={<><button type="button" className="btn secondary-action" onClick={onClose}>Annuler</button>{!blocked && <button type="button" className="btn principal primary-action" data-act="vie-inviter" disabled={!spot || !valid} onClick={() => spot && onInvite(characterId, spot.id, day, period)}>Envoyer l’invitation</button>}</>}>
+    {blocked ? <p className="texte grand">{blocked}</p> : <div className="vie-form">
+      <label className="vie-champ"><span className="surtitre">Lieu</span><select value={spotId} onChange={(event) => setSpotId(event.target.value)} data-vie-champ="lieu">{byLocation.map(({ location, spots: list }) => <optgroup key={location.id} label={location.name}>{list.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}</optgroup>)}</select></label>
+      <div className="vie-champ"><span className="surtitre">Jour</span><div className="vie-choix">{days.map((entry) => <button type="button" key={entry} className={day === entry ? "on" : ""} aria-pressed={day === entry} onClick={() => setDay(entry)}>{entry === game.day ? "Aujourd’hui" : entry === game.day + 1 ? "Demain" : formatImperialDate(entry, "jour-mois")}</button>)}</div></div>
+      <div className="vie-champ"><span className="surtitre">Moment</span><div className="vie-choix">{PERIODS.map((entry, index) => { const past = day === game.day && index <= game.period; return <button type="button" key={entry.id} disabled={past} className={period === index ? "on" : ""} aria-pressed={period === index} onClick={() => setPeriod(index)}><i>{entry.icon}</i>{entry.label}</button>; })}</div></div>
+      <p className="vie-indice">{sky && <span title={sky.label}>{sky.icon} {sky.label}</span>}{hint ? <span className={`indice-${hint.id}`}>{character.name} {hint.label}</span> : <span>Choisissez un moment à venir.</span>}</p>
+      {characterId === "naiah" && <p className="discret">Naïah ne quitte pas la Forêt Interdite : seuls ses sous-lieux sont proposés.</p>}
+      <p className="discret">Un refus ne coûte rien. Un rendez-vous accepté puis manqué coûte un point de confiance.</p>
+    </div>}
+  </V2Fenetre>;
+}
+
+function V2VieInviteReponse({ game, reponse, onClose }: LifeLayerProps & { reponse: Extract<NonNullable<LifeModal>, { kind: "invite-reponse" }> }) {
+  const character = CHARACTERS.find((entry) => entry.id === reponse.character);
+  if (!character) return null;
+  const spot = spotById(reponse.spot);
+  return <V2Fenetre surtitre={reponse.accepted ? "Invitation acceptée" : "Invitation déclinée"} titre={character.name} classe="large v2-vie" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}
+    pied={<button type="button" className="btn principal primary-action" onClick={onClose}>Continuer</button>}>
+    <div className="fen-vn">
+      <V2Portrait character={character} mood={reponse.accepted ? "happy" : undefined} />
+      <div className="fen-vn-texte">
+        <p className="texte grand replique">{reponse.text}</p>
+        {reponse.accepted && <p className="vie-rdv-note"><i>♡</i>{lifeSlotLabel(reponse.day, reponse.period, game.day)} · {spot?.name}</p>}
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2VieRdv({ game, inviteId, onClose, onJoin }: LifeLayerProps & { inviteId: string }) {
+  const invite = game.life?.invites.find((entry) => entry.id === inviteId);
+  const character = invite ? CHARACTERS.find((entry) => entry.id === invite.character) : undefined;
+  if (!invite || !character) return null;
+  const mood = characterMood(game, character.id);
+  const home = propertyById(game.housing.propertyId);
+  const activities = activitiesAt(character.id, game.spot, game.location, game.day, home?.spot).filter((entry) => entry.available);
+  const dates = DATE_SCENES.filter((date) => date.character === character.id && date.spot === invite.spot && publicDateUnlocked(game, date));
+  return <V2Fenetre surtitre="Rendez-vous" titre={`${character.name} · ${spotById(invite.spot)?.shortName || ""}`} classe="large v2-vie v2-vie-rdv" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}>
+    <div className="fen-vn">
+      <V2Portrait character={character} mood="happy" />
+      <div className="fen-vn-texte">
+        <p className="vie-ligne"><V2Humeur mood={mood} character={character.id} /></p>
+        <p className="texte grand">{INVITE_TEXTS[character.id]?.meet}</p>
+        {moodLine(character.id, mood) && <p className="texte">{moodLine(character.id, mood)}</p>}
+        <div className="vie-options">
+          {dates.map((date) => <button type="button" key={date.id} className="vie-option principal" data-vie-rdv="scene" onClick={() => onJoin(inviteId, "rendez-vous", date.id)}><i>♡</i><span><b>{date.title}</b><small>Scène de rendez-vous, ici et maintenant</small></span></button>)}
+          {activities.length > 0 && <button type="button" className="vie-option" data-vie-rdv="activite" onClick={() => onJoin(inviteId, "activite")}><i>✦</i><span><b>Partager une activité</b><small>{activities.map((entry) => entry.activity.label).join(" · ")}</small></span></button>}
+          <button type="button" className="vie-option" data-vie-rdv="parler" onClick={() => onJoin(inviteId, "parler")}><i>❝</i><span><b>Parler un moment</b><small>Affection +2 selon l’humeur · 1 période</small></span></button>
+        </div>
+      </div>
+    </div>
+  </V2Fenetre>;
+}
+
+function V2VieEcrire({ game, initial, onClose, onWrite }: LifeLayerProps & { initial?: string }) {
+  const correspondents = CHARACTERS.filter((entry) => game.relationships[entry.id]?.met && characterUnlocked(game, entry));
+  const [who, setWho] = useState<string | undefined>(initial && correspondents.some((entry) => entry.id === initial) ? initial : correspondents[0]?.id);
+  const [theme, setTheme] = useState<LetterTheme | undefined>(undefined);
+  const character = correspondents.find((entry) => entry.id === who);
+  const life = lifeOf(game);
+  const relation = character ? game.relationships[character.id] : undefined;
+  const blocked = character ? letterBlocked(life, character.id, game.day) : "Aucun correspondant pour l’instant.";
+  const themes = (Object.keys(LETTER_THEMES) as LetterTheme[]).map((id) => ({ id, ...LETTER_THEMES[id], open: Boolean(character && relation && letterThemeAvailable(life, character.id, id, relation.stage, game.day)) }));
+  const chosen = themes.find((entry) => entry.id === theme && entry.open);
+  return <V2Fenetre surtitre="Correspondance" titre={character ? `Écrire à ${character.name}` : "Écrire"} classe="large v2-vie v2-vie-ecrire" style={character ? { "--c": character.color } as React.CSSProperties : undefined} onClose={onClose}
+    pied={<><button type="button" className="btn secondary-action" onClick={onClose}>Annuler</button>{character && !blocked && <button type="button" className="btn principal primary-action" data-act="vie-envoyer" disabled={!chosen} onClick={() => chosen && onWrite(character.id, chosen.id)}>Confier au coursier</button>}</>}>
+    <div className="vie-form">
+      {correspondents.length > 1 && <div className="vie-correspondants">{correspondents.map((entry) => <button type="button" key={entry.id} className={`vie-corr ${entry.id === who ? "on" : ""}`} aria-pressed={entry.id === who} onClick={() => { setWho(entry.id); setTheme(undefined); }} style={{ "--c": entry.color } as React.CSSProperties}><Seau color={entry.color} portrait={entry.portrait} /><span>{entry.name}</span></button>)}</div>}
+      {blocked ? <p className="texte">{blocked}</p> : <>
+        <div className="vie-themes">{themes.map((entry) => <button type="button" key={entry.id} data-vie-theme={entry.id} className={`vie-theme ${theme === entry.id ? "on" : ""}`} disabled={!entry.open} aria-pressed={theme === entry.id} onClick={() => setTheme(entry.id)}><i>{entry.icon}</i><span><b>{entry.label}</b><small>{entry.detail}</small></span></button>)}</div>
+        {chosen && <blockquote className="vie-apercu">{chosen.preview}</blockquote>}
+        <p className="discret">La réponse arrive par coursier sous un à trois jours. Une lettre en attente par personne, deux envois par jour.</p>
+      </>}
+    </div>
+  </V2Fenetre>;
+}
+
+function V2VieLettreEnvoyee({ game, sent, onClose }: LifeLayerProps & { sent: Extract<NonNullable<LifeModal>, { kind: "lettre-envoyee" }> }) {
+  const character = CHARACTERS.find((entry) => entry.id === sent.character);
+  if (!character) return null;
+  return <V2Fenetre surtitre="Lettre confiée au coursier" titre={`Pour ${character.name}`} classe="etroit v2-vie v2-avis" style={{ "--c": character.color } as React.CSSProperties} onClose={onClose}
+    pied={<button type="button" className="btn principal primary-action" onClick={onClose}>Continuer</button>}>
+    <p className="texte grand">{LETTER_THEMES[sent.theme].icon} {LETTER_THEMES[sent.theme].label}. La réponse est attendue vers le {formatImperialDate(sent.replyDay, "jour-mois")}{sent.replyDay === game.day + 1 ? ", dès demain" : ""}.</p>
+  </V2Fenetre>;
+}
+
+/** Chronique · Envies & aspirations (pages gauche et droite du grimoire). */
+function v2ViePages(game: GameState, onAspiration: (id: string | undefined) => void, onLocateSpot: (spotId: string) => void) {
+  const life = game.life || emptyLife();
+  const active = ASPIRATIONS.find((entry) => entry.id === life.aspiration);
+  const wishes = life.wishes.filter((wish) => wish.expiresDay >= game.day || (wish.done && wish.done >= game.day - 1));
+  const gauche = <ul className="j-liste vie-aspirations">{ASPIRATIONS.map((aspiration) => {
+    const progress = life.aspirations[aspiration.id];
+    const done = life.titles.includes(aspiration.title);
+    const open = !aspiration.needs || aspiration.needs.some((id) => game.relationships[id]?.met);
+    return <li key={aspiration.id}><button type="button" data-aspiration={aspiration.id} className={`j-entree ${aspiration.id === life.aspiration ? "sel encours" : ""} ${done ? "fait" : ""}`} disabled={!open} onClick={() => onAspiration(aspiration.id === life.aspiration ? undefined : aspiration.id)}>
+      <span className="j-num">{done ? "✓" : `${progress?.steps.length || 0}/4`}</span><span><b>{aspiration.name}</b><small>{open ? `${STAT_LABELS[aspiration.stat]} · ${aspiration.id === life.aspiration ? "aspiration suivie" : done ? `Titre « ${aspiration.title} »` : "choisir"}` : `Rencontrez ${aspiration.needs?.map((id) => LIFE_NAMES[id]).join(" ou ")}`}</small></span>
+    </button></li>;
+  })}</ul>;
+  const droite = <>
+    <span className="surtitre">Envies du moment</span><h2 className="titre-jeu">Ce qui vous ferait plaisir</h2>
+    {wishes.length ? <ul className="vie-envies">{wishes.map((wish) => { const template = WISHES.find((entry) => entry.id === wish.id); const days = wish.expiresDay - game.day; return <li key={`${wish.id}-${wish.createdDay}`} className={wish.done ? "ok" : ""}><i>{wish.done ? "✓" : "✧"}</i><span><b>{wishLabel(wish, LIFE_NAMES)}</b><small>{wish.done ? "Réalisée" : days <= 0 ? "Aujourd’hui seulement" : `Encore ${days + 1} jours`}{template ? ` · ${[template.reward.stat ? `+1 ${STAT_LABELS[template.reward.stat]}` : "", template.reward.coins ? `+${template.reward.coins} ◈` : ""].filter(Boolean).join(" · ")}` : ""}</small></span>{template?.condition.type === "visit" && template.condition.spot && !wish.done && <button type="button" className="mini" onClick={() => onLocateSpot(template.condition.type === "visit" ? template.condition.spot! : "")}>⌖</button>}</li>; })}</ul>
+      : <p className="texte">Pas d’envie particulière aujourd’hui. De nouvelles viendront demain matin.</p>}
+    {active ? <div className="objectif vie-asp"><span className="surtitre">Aspiration · {active.name}</span><p>{active.detail}</p>
+      <ul className="j-jalons">{active.steps.map((step) => { const progress = life.aspirations[active.id]; const ok = progress?.steps.includes(step.id); const value = step.state === "home" ? (propertyById(game.housing.propertyId) ? 1 : 0) : step.state === "coins" ? game.coins : step.listKey ? (progress?.lists[step.key] || []).length : progress?.counters[step.key] || 0; return <li key={step.id} className={ok ? "ok" : ""}><i>{ok ? "✓" : "◇"}</i><span><b>{step.label}</b><small>{ok ? "Accompli" : `${Math.min(value, step.target)} / ${step.target}`}</small></span></li>; })}</ul>
+    </div> : <p className="discret">Choisissez une aspiration à gauche : un fil de quatre jalons, récompensé par des pièces, des traits, un titre et un souvenir pour votre vitrine.</p>}
+    {life.titles.length > 0 && <p className="vie-titres">{life.titles.map((title) => <span key={title}>✦ {title}</span>)}</p>}
+  </>;
+  return { gauche, droite };
+}
+
 type V2LieuProps = {
   game: GameState;
   location: (typeof LOCATIONS)[number];
@@ -7743,9 +8303,13 @@ type V2LieuProps = {
   onSpot: (spotId: string) => void;
   onEvent: (event: SpontaneousEvent) => void;
   onRumor: (rumor: RumorTemplate) => void;
+  /** Vie quotidienne : activité partagée, invitation, rendez-vous convenu. */
+  onEnsemble?: (id: string) => void;
+  onInvite?: (id: string) => void;
+  onJoin?: (inviteId: string) => void;
 };
 
-function V2Lieu({ game, location, spot, spots, present, visible, visitors, event, rumor, onTalk, onGift, onDate, onFiche, onActivity, onJob, onWait, onWaitFor, onMap, onSpot, onEvent, onRumor }: V2LieuProps) {
+function V2Lieu({ game, location, spot, spots, present, visible, visitors, event, rumor, onTalk, onGift, onDate, onFiche, onActivity, onJob, onWait, onWaitFor, onMap, onSpot, onEvent, onRumor, onEnsemble, onInvite, onJoin }: V2LieuProps) {
   const [selectedId, setSelectedId] = useState<string | undefined>(present[0]?.id);
   const [expanded, setExpanded] = useState(false);
   useEffect(() => { setExpanded(false); }, [spot.id]);
@@ -7760,12 +8324,18 @@ function V2Lieu({ game, location, spot, spots, present, visible, visitors, event
   ];
   const item = (cmd: Cmd, extra = "", principal = false) => <li key={cmd.key} className={extra}><button type="button" className={`cmd-item ${cmd.locked ? "verrou" : ""}`} data-cmd={cmd.key} data-principal={principal ? "" : undefined} onClick={cmd.onClick}><i className="cmd-ico">{cmd.icon}</i><span className="cmd-lib">{cmd.label}</span>{cmd.sub && <small>{cmd.sub}</small>}<b className="cmd-fl">▸</b></button></li>;
   const otherSpots = spots.filter((entry) => entry.id !== spot.id);
+  const mood = character && info?.relation.met ? characterMood(game, character.id) : undefined;
+  const meeting = game.life?.invites.find((entry) => entry.status === "accepted" && entry.day === game.day && entry.period === game.period && entry.spot === spot.id && present.some((who) => who.id === entry.character));
+  const meetingWith = meeting ? present.find((who) => who.id === meeting.character) : undefined;
+  const home = propertyById(game.housing.propertyId);
+  const canShare = Boolean(character && info?.relation.met && activitiesAt(character.id, spot.id, location.id, game.day, home?.spot).length);
   return <div className="lieu">
     <section className="lieu-plaque">
       <span className="surtitre">{location.subtitle}</span>
       <h1 className="titre-jeu geant">{location.name}</h1>
       <div className="lieu-spot"><i>{spot.icon}</i><span>{spot.name}</span></div>
       <p className="lieu-desc">{spot.description}</p>
+      {meeting && meetingWith && onJoin && <button type="button" className="vie-banniere" data-act="vie-rejoindre" style={{ "--c": meetingWith.color } as React.CSSProperties} onClick={() => onJoin(meeting.id)}><i>♡</i><span><small>Rendez-vous convenu</small>{meetingWith.name} vous attend ici</span></button>}
       {(event || rumor) && <div className="lieu-evts">
         {event && <button type="button" className="evt" data-act="evenement" onClick={() => onEvent(event)}><i>✦</i><span><small>Événement</small>{event.title}</span></button>}
         {rumor && <button type="button" className="evt rumeur" data-act="rumeur" onClick={() => onRumor(rumor)}><i>◌</i><span><small>Rumeur</small>Un écho circule ici</span></button>}
@@ -7779,12 +8349,12 @@ function V2Lieu({ game, location, spot, spots, present, visible, visitors, event
       <div className="halo" />
       <img className="sprite entree respire" src={spritePath(character.id, character.defaultMood, character.defaultMood)} alt={character.name} onError={(e) => { const img = e.currentTarget; if (!img.dataset.fallback) { img.dataset.fallback = "1"; img.src = character.portrait; } }} />
       <figcaption className="plaque-nom"><V2RangLosange stage={info.relation.stage} /><span className="pn-txt"><b>{character.name}</b><small>{character.role} · {STAGE_LABELS[info.relation.stage]}</small></span>{!info.relation.met && <em className="neuf">Nouveau</em>}</figcaption>
-      <p className="bulle">{info.place.action}…</p>
+      <p className="bulle">{mood ? moodLine(character.id, mood) || `${info.place.action}…` : `${info.place.action}…`}</p>
     </figure>}
     <aside className="commandes" aria-label="Actions">
       <div className="pres">
         <span className="surtitre">Présences <b>{present.length}</b></span>
-        {character && info && <div className="pn-mini" style={{ "--c": character.color } as React.CSSProperties}><V2RangLosange stage={info.relation.stage} /><span className="pn-txt"><b>{character.name}</b><small>{character.role} · {STAGE_LABELS[info.relation.stage]}</small><em>{info.place.action}…</em></span></div>}
+        {character && info && <div className="pn-mini" style={{ "--c": character.color } as React.CSSProperties}><V2RangLosange stage={info.relation.stage} /><span className="pn-txt"><b>{character.name}{mood && <V2Humeur mood={mood} character={character.id} />}</b><small>{character.role} · {STAGE_LABELS[info.relation.stage]}</small><em>{info.place.action}…</em></span></div>}
         {present.length > 0 ? <div className="pres-liste">{present.map((entry) => <button type="button" key={entry.id} className={`pres-btn ${entry === character ? "on" : ""}`} style={{ "--c": entry.color } as React.CSSProperties} aria-pressed={entry === character} aria-label={entry.name} onClick={() => { sfx("survol"); setSelectedId(entry.id); }}><img src={entry.portrait} alt="" /><span>{entry.name}</span>{!game.relationships[entry.id].met && <i className="point-neuf" />}</button>)}</div>
           : <p className="pres-vide">Le lieu est calme pour l’instant.</p>}
       </div>
@@ -7792,6 +8362,7 @@ function V2Lieu({ game, location, spot, spots, present, visible, visitors, event
         {character && info && <>
           {item({ key: "parler", icon: "❝", label: `${info.action} · ${character.name}`, sub: info.label, onClick: () => onTalk(character.id) }, info.important ? "cmd-important" : "", true)}
           {item({ key: "offrir", icon: "❖", label: "Offrir un présent", onClick: () => onGift(character.id) })}
+          {canShare && onEnsemble && item({ key: "ensemble", icon: "✦", label: "Activité ensemble", sub: game.settings.noTimeCost ? "Activité partagée" : "Activité partagée · 1 période", onClick: () => onEnsemble(character.id) })}
           {info.hasDatePlanner && item({ key: "rdv", icon: "♡", label: "Proposer un rendez-vous", onClick: () => onDate(character.id) })}
           {item({ key: "fiche", icon: "✦", label: "Fiche de lien", sub: `${STAGE_LABELS[info.relation.stage]} · rang ${info.relation.stage}/5`, onClick: () => onFiche(character.id) })}
         </>}
@@ -7880,7 +8451,7 @@ function V2Carte({ game, visible, selectedLocation, selectedSpot, onSelectLocati
           <ol className="cf-prevision" aria-label="Prévisions">{forecast(game.day + 1, location.id, 3).map((entry) => <li key={entry.day} title={entry.weather.label}><small>{formatImperialDate(entry.day, "jour-mois")}</small><i aria-hidden="true">{entry.weather.icon}</i><span>{entry.weather.label}</span></li>)}</ol>
           {meteoTrajet.surcharge > 0 && meteoTrajet.reason && <p className="cf-meteo-trajet">{meteoTrajet.reason.icon} +{meteoTrajet.surcharge} période{meteoTrajet.surcharge > 1 ? "s" : ""} de trajet ({meteoTrajet.reason.label.toLowerCase()}{meteoTrajet.where && meteoTrajet.where !== location.id ? ` au départ` : ""}){meteoTrajet.scoutHelped ? " · Éclaireur·se : une période épargnée" : ""}</p>}
         </div>
-        <div className="cf-bloc"><span className="surtitre">Présences</span><div className="cf-pres">{presentAt(location.id).length ? presentAt(location.id).map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}</span></Fragment>) : <span className="discret">Personne de connu</span>}</div></div>
+        <div className="cf-bloc"><span className="surtitre">Présences</span><div className="cf-pres">{presentAt(location.id).length ? presentAt(location.id).map((who) => <Fragment key={who.id}><Seau color={who.color} portrait={who.portrait} /><span>{who.name}{game.relationships[who.id]?.met && <V2Humeur mood={characterMood(game, who.id)} character={who.id} />}</span></Fragment>) : <span className="discret">Personne de connu</span>}</div></div>
         <details className="cf-dest" open={destOpen} onToggle={(event) => setDestOpen((event.currentTarget as HTMLDetailsElement).open)}><summary><span className="surtitre">Destinations connues · {known.length}</span><i aria-hidden="true">▾</i></summary><ul>{known.map((entry) => <li key={entry.id}><button type="button" className={entry.id === location.id ? "sel" : ""} data-dest={entry.id} onClick={() => { onSelectLocation(entry.id); onSelectSpot(entry.id === game.location ? game.spot : DEFAULT_SPOTS[entry.id]); }}>{entry.id === game.location ? <i className="ici">◆</i> : <i>◇</i>}<span>{entry.name}</span>{presentAt(entry.id).length > 0 && <b>{presentAt(entry.id).length} ♡</b>}</button></li>)}</ul></details>
         <div className="cf-bloc"><span className="surtitre">Lieux · {spots.length}</span><ul className="cf-spots">{spots.map((entry) => { const occupants = presentAtSpot(entry.id); const spotJobs = jobsAtSpot(entry.id); return <li key={entry.id}><button type="button" className={`cf-spot ${entry.id === spotSel?.id ? "sel" : ""}`} aria-pressed={entry.id === spotSel?.id} onClick={() => onSelectSpot(entry.id)}><i>{entry.icon}</i><span>{entry.name}{entry.id === game.spot && location.id === game.location && <em> · vous</em>}</span>{occupants.length > 0 && <b title={occupants.map((who) => who.name).join(", ")}>{occupants.length} ♡</b>}{spotJobs.length > 0 && <b className="cf-job" title={spotJobs.map((job) => job.title).join(", ")}>◈{spotJobs.length}</b>}</button></li>; })}</ul></div>
         {spotSel && <p className="cf-spot-desc discret">{spotSel.description}</p>}
@@ -7931,7 +8502,7 @@ function V2Liens({ game, onView, onFiche }: { game: GameState; onView: (view: V2
   </div>;
 }
 
-function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate, onDossier, onWaitRoute }: { game: GameState; characterId: string; onView: (view: V2LinksView) => void; onFiche: (id: string) => void; onGift: (id: string) => void; onDate: (id: string) => void; onLocate: (location: string, spot: string) => void; onDossier: (id: string) => void; onWaitRoute: (sceneId: string) => void }) {
+function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate, onDossier, onWaitRoute, onLife }: { game: GameState; characterId: string; onView: (view: V2LinksView) => void; onFiche: (id: string) => void; onGift: (id: string) => void; onDate: (id: string) => void; onLocate: (location: string, spot: string) => void; onDossier: (id: string) => void; onWaitRoute: (sceneId: string) => void; onLife?: (modal: LifeModal) => void }) {
   const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const known = CHARACTERS.filter((character) => characterUnlocked(game, character));
   const character = known.find((entry) => entry.id === characterId) || known[0];
@@ -7957,6 +8528,9 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
   const circ = 2 * Math.PI * 54;
   const tastes = character.giftLikes.map((id) => GIFTS.find((gift) => gift.id === id)).filter((gift): gift is (typeof GIFTS)[number] => Boolean(gift));
   const hasPlanner = DATE_SCENES.some((date) => date.character === character.id) || Boolean(HOME_DATE_PROFILES[character.id]);
+  const mood = relation.met ? characterMood(game, character.id) : undefined;
+  const avoided = (game.life?.discovered[character.id] || []).map((id) => GIFTS.find((gift) => gift.id === id)).filter((gift): gift is (typeof GIFTS)[number] => Boolean(gift));
+  const planned = game.life ? pendingInvites(game.life, game.day, game.period).find((entry) => entry.character === character.id) : undefined;
   // Glisser horizontalement sur le portrait = personnage voisin (le panneau garde son défilement normal).
   const onTouchStart = (event: React.TouchEvent) => { const t = event.touches[0]; swipeRef.current = (event.target as HTMLElement).closest(".fiche-panneau, .fiche-pas") ? null : { x: t.clientX, y: t.clientY }; };
   const onTouchEnd = (event: React.TouchEvent) => { const start = swipeRef.current; swipeRef.current = null; if (!start || known.length < 2) return; const t = event.changedTouches[0]; const dx = t.clientX - start.x; if (Math.abs(dx) > 60 && Math.abs(t.clientY - start.y) < 50) { sfx("survol"); onFiche((dx < 0 ? next : prev).id); } };
@@ -7969,7 +8543,7 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
       <h1 className="titre-jeu geant">{character.name}</h1>
       <div className="rang-bloc">
         <svg className="anneau" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="54" className="a-fond" /><circle cx="64" cy="64" r="54" className="a-val" style={{ "--circ": circ, "--off": circ * (1 - relation.stage / 5) } as React.CSSProperties} />{[0, 1, 2, 3, 4].map((k) => <circle key={k} cx={64 + 54 * Math.sin(((k + 1) / 5) * 2 * Math.PI)} cy={64 - 54 * Math.cos(((k + 1) / 5) * 2 * Math.PI)} r="4" className={`a-cran ${k < relation.stage ? "on" : ""}`} />)}<text x="64" y="76" textAnchor="middle" className="a-num">{ROMAINS[relation.stage]}</text></svg>
-        <div className="rang-txt"><small>Rang de lien</small><b>{STAGE_LABELS[relation.stage]}</b><span className="coeurs">{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= relation.stage ? "on" : ""}>♥</i>)}</span></div>
+        <div className="rang-txt"><small>Rang de lien</small><b>{STAGE_LABELS[relation.stage]}</b>{mood && <V2Humeur mood={mood} character={character.id} />}<span className="coeurs">{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= relation.stage ? "on" : ""}>♥</i>)}</span></div>
       </div>
       <div className="stats"><V2Stat cls="aff" label="Affection" value={relation.affection} /><V2Stat cls="conf" label="Confiance" value={relation.trust} /><V2Stat cls="des" label="Désir" value={relation.desire} /></div>
       {nextScene ? <div className="prochain"><span className="surtitre">Prochaine scène · {nextScene.title}</span><ul>
@@ -7981,10 +8555,15 @@ function V2Fiche({ game, characterId, onView, onFiche, onGift, onDate, onLocate,
       <div className="fiche-infos">
         <div><span className="surtitre">Présence actuelle</span><p className="texte">{schedule.traveling ? `Escale · ${scheduleSpot?.name || ""}` : `${scheduleLocation?.name || ""} · ${scheduleSpot?.shortName || ""}`} — {schedule.action}</p></div>
         <div><span className="surtitre">Présents favoris</span><p className="gouts">{tastes.map((gift) => <span key={gift.id} title={gift.name}><i>{gift.icon}</i>{gift.name.split(" ")[0]}</span>)}</p></div>
+        {avoided.length > 0 && <div><span className="surtitre">À éviter</span><p className="gouts evites">{avoided.map((gift) => <span key={gift.id} title={gift.name}><i>{gift.icon}</i>{gift.name.split(" ")[0]}</span>)}</p></div>}
+        {planned && <div><span className="surtitre">Rendez-vous convenu</span><p className="texte">♡ {lifeSlotLabel(planned.day, planned.period, game.day)} · {spotById(planned.spot)?.name}</p></div>}
       </div>
       <div className="fiche-actions">
         <button type="button" className="btn" data-act="offrir" onClick={() => onGift(character.id)}>❖ Offrir</button>
         {hasPlanner && <button type="button" className="btn" data-act="rdv" onClick={() => onDate(character.id)}>♡ Rendez-vous</button>}
+        {onLife && relation.met && <button type="button" className="btn" data-act="vie-ensemble" onClick={() => onLife({ kind: "ensemble", character: character.id })}>✦ Ensemble</button>}
+        {onLife && relation.met && <button type="button" className="btn" data-act="vie-ouvrir-inviter" onClick={() => onLife({ kind: "inviter", character: character.id })}>✉ Inviter</button>}
+        {onLife && relation.met && <button type="button" className="btn" data-act="vie-ecrire" onClick={() => onLife({ kind: "ecrire", character: character.id })}>✎ Écrire</button>}
         <button type="button" className="btn" data-act="localiser" onClick={() => onLocate(schedule.location, schedule.spot)}>⌖ Localiser</button>
         <button type="button" className="btn" data-act="dossier" onClick={() => onDossier(character.id)}>▤ Dossier complet</button>
         {nextScene && narrativeReady && !needed && routeTarget && <button type="button" className="btn principal" data-act="attendre-route" onClick={() => onWaitRoute(nextScene.id)}>⧗ Attendre · {waitDurationLabel(game, routeTarget)}</button>}
@@ -8084,10 +8663,13 @@ type V2JournalProps = {
   onInvitation: (id: string) => void;
   onLocateSpot: (spotId: string) => void;
   legacy: (section: "crossed" | "relations" | "memories") => React.ReactNode;
+  /** Vie quotidienne : aspirations, lettres écrites par vous et leurs réponses. */
+  onLife?: { onAspiration: (id: string | undefined) => void; onReadLife: (kind: "vie" | "note", id: string) => void; onWrite: (character?: string) => void };
 };
 
-function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onInvitation, onLocateSpot, legacy }: V2JournalProps) {
+function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onInvitation, onLocateSpot, legacy, onLife }: V2JournalProps) {
   const [tab, setTab] = useState<V2JournalTab>("chronique");
+  const [chronVue, setChronVue] = useState<"actes" | "vie">("actes");
   const today = imperialDate(game.day);
   const [calMonth, setCalMonth] = useState({ year: today.year, month: today.month });
   const [calCivs, setCalCivs] = useState<CivilizationId[]>(CIVILIZATION_ORDER);
@@ -8105,12 +8687,25 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
   const invitations = game.invitations.map((received) => ({ received, invitation: INVITATIONS.find((entry) => entry.id === received.id) })).filter((entry): entry is { received: ReceivedInvitation; invitation: InvitationTemplate } => Boolean(entry.invitation));
   const rumors = game.rumors.map((heard) => ({ heard, rumor: RUMORS.find((entry) => entry.id === heard.id) })).filter((entry): entry is { heard: { id: string; heardDay: number }; rumor: RumorTemplate } => Boolean(entry.rumor));
   const knowledge = game.knowledge.map((id) => ALL_KNOWLEDGE_ENTRIES.find((entry) => entry.id === id)).filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
-  const pending = letters.filter(({ received }) => !received.read).length + crossLetters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length;
-  type Mail = { key: string; kind: "letter" | "cross" | "invitation"; id: string; subject: string; character?: CharacterData; day: number; unread: boolean; status: string; body?: string[]; signature?: string };
+  const pending = letters.filter(({ received }) => !received.read).length + crossLetters.filter(({ received }) => !received.read).length + invitations.filter(({ received }) => received.status === "pending").length + unreadLifeMail(game.life, game.day);
+  const life = game.life;
+  const lifeMails = life ? [
+    ...deliveredLetters(life, game.day).map((letter) => {
+      const replies = LETTER_REPLIES[letter.character];
+      const invite = letter.inviteId ? life.invites.find((entry) => entry.id === letter.inviteId) : undefined;
+      const body = letter.theme === "invitation"
+        ? [letter.accepted ? replies?.invitationOui : replies?.invitationNon, invite ? `♡ ${lifeSlotLabel(invite.day, invite.period, game.day)} · ${spotById(invite.spot)?.name || ""}` : ""]
+        : [replies?.[letter.theme][letter.high ? 1 : 0]];
+      return { key: `v-${letter.id}`, kind: "vie" as const, id: letter.id, subject: `Réponse · ${LETTER_THEMES[letter.theme].label}`, character: CHARACTERS.find((entry) => entry.id === letter.character), day: letter.replyDay, unread: !letter.read, status: !letter.read ? "Nouveau · Réponse" : "Réponse lue", body: body.filter((line): line is string => Boolean(line)), signature: replies?.signature };
+    }),
+    ...life.notes.map((note) => ({ key: `n-${note.id}`, kind: "note" as const, id: note.id, subject: note.kind === "manque" ? "Le rendez-vous manqué" : "Un contretemps", character: CHARACTERS.find((entry) => entry.id === note.character), day: note.day, unread: !note.read, status: !note.read ? "Nouveau · Mot" : "Mot lu", body: [note.kind === "manque" ? INVITE_TEXTS[note.character]?.missed || "" : INVITE_EXCUSES[note.character] || INVITE_EXCUSE_FALLBACK], signature: LETTER_REPLIES[note.character]?.signature })),
+  ] : [];
+  type Mail = { key: string; kind: "letter" | "cross" | "invitation" | "vie" | "note"; id: string; subject: string; character?: CharacterData; day: number; unread: boolean; status: string; body?: string[]; signature?: string };
   const mails: Mail[] = [
     ...crossLetters.map(({ received, letter }) => ({ key: `c-${letter.id}`, kind: "cross" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau · Quête croisée" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: (letter as { body?: string[] }).body, signature: (letter as { signature?: string }).signature })),
     ...letters.map(({ received, letter }) => ({ key: `l-${letter.id}`, kind: "letter" as const, id: letter.id, subject: letter.subject, character: CHARACTERS.find((entry) => entry.id === letter.character), day: received.receivedDay, unread: !received.read, status: !received.read ? "Nouveau" : received.replyId ? "Répondu" : `Jour ${received.receivedDay}`, body: letter.body, signature: letter.signature })),
     ...invitations.map(({ received, invitation }) => ({ key: `i-${invitation.id}`, kind: "invitation" as const, id: invitation.id, subject: invitation.title, character: CHARACTERS.find((entry) => entry.id === invitation.character), day: received.receivedDay ?? 0, unread: received.status === "pending", status: received.status === "pending" ? received.persistent ? "Invitation persistante · disponible lorsque vous le souhaitez" : `Invitation · expire J${received.expiresDay}` : received.status === "accepted" ? "Honorée" : received.status === "declined" ? "Refusée" : "Manquée · reviendra" })),
+    ...lifeMails,
   ].sort((a, b) => b.day - a.day);
   const [mailKey, setMailKey] = useState<string | undefined>(undefined);
   const mail = mails.find((entry) => entry.key === mailKey);
@@ -8118,6 +8713,7 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
     setMailKey(entry.key);
     if (entry.kind === "letter") onReadLetter(entry.id);
     else if (entry.kind === "cross") onReadCrossLetter(entry.id);
+    else if (entry.kind === "vie" || entry.kind === "note") onLife?.onReadLife(entry.kind, entry.id);
     else onInvitation(entry.id);
   };
   const tabs: [V2JournalTab, string, string, number?][] = [
@@ -8132,7 +8728,13 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
   let gauche: React.ReactNode = null;
   let droite: React.ReactNode = null;
   let leftTitle = "";
-  if (tab === "chronique") {
+  const chronToggle = onLife ? <div className="vie-bascule" role="tablist" aria-label="Chronique"><button type="button" role="tab" aria-selected={chronVue === "actes"} className={chronVue === "actes" ? "on" : ""} data-chron="actes" onClick={() => setChronVue("actes")}>▤ Actes</button><button type="button" role="tab" aria-selected={chronVue === "vie"} className={chronVue === "vie" ? "on" : ""} data-chron="vie" onClick={() => setChronVue("vie")}>✧ Envies & aspirations</button></div> : null;
+  if (tab === "chronique" && chronVue === "vie" && onLife) {
+    leftTitle = "Aspirations";
+    const pages = v2ViePages(game, onLife.onAspiration, onLocateSpot);
+    gauche = <>{chronToggle}{pages.gauche}</>;
+    droite = pages.droite;
+  } else if (tab === "chronique") {
     leftTitle = "Chapitres de l’Acte I";
     const act = MAIN_STORY[actIndex];
     const done = actIndex < progress;
@@ -8144,7 +8746,7 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
     const nextMilestone = nextId ? storyMilestone(nextId) : undefined;
     const nextCampaign = nextId ? campaignSceneById(nextId) : undefined;
     const illustration = (nextCampaign && spotById(nextCampaign.spot)?.background) || (act.requiredScenes[0] && campaignSceneById(act.requiredScenes[0]) && spotById(campaignSceneById(act.requiredScenes[0])!.spot)?.background) || "/assets/backgrounds/deep_archives.webp";
-    gauche = <ol className="j-liste">{MAIN_STORY.map((entry, index) => { const state = index < progress ? "fait" : !storyComplete && index === progress ? "encours" : "voile"; return <li key={entry.id}><button type="button" className={`j-entree ${state} ${index === actIndex ? "sel" : ""}`} data-chap={index} disabled={state === "voile"} onClick={() => setActIndex(index)}><span className="j-num">{entry.number}</span><span><b>{state === "voile" ? "Chapitre scellé" : entry.title}</b><small>{state === "fait" ? "Accompli" : state === "encours" ? "En cours" : "Pas encore révélé"}</small></span></button></li>; })}</ol>;
+    gauche = <>{chronToggle}<ol className="j-liste">{MAIN_STORY.map((entry, index) => { const state = index < progress ? "fait" : !storyComplete && index === progress ? "encours" : "voile"; return <li key={entry.id}><button type="button" className={`j-entree ${state} ${index === actIndex ? "sel" : ""}`} data-chap={index} disabled={state === "voile"} onClick={() => setActIndex(index)}><span className="j-num">{entry.number}</span><span><b>{state === "voile" ? "Chapitre scellé" : entry.title}</b><small>{state === "fait" ? "Accompli" : state === "encours" ? "En cours" : "Pas encore révélé"}</small></span></button></li>; })}</ol></>;
     droite = <>
       <span className="surtitre">Acte I · Chapitre {act.number}</span><h2 className="titre-jeu">{act.title}</h2>
       <div className="j-illu" style={{ backgroundImage: `url(${illustration})` }} />
@@ -8165,8 +8767,8 @@ function V2Journal({ game, onStartCampaign, onReadLetter, onReadCrossLetter, onI
     droite = mail && mail.character ? <article className="missive"><header><Seau color={mail.character.color} portrait={mail.character.portrait} className="grand" /><div><span className="surtitre">{mail.kind === "invitation" ? "Invitation" : `Jour ${mail.day}`} · de {mail.character.name}</span><h2 className="titre-jeu">{mail.subject}</h2></div></header>
       {mail.body?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}{mail.signature && <p className="signature">{mail.signature}</p>}
       <span className="cachet" aria-hidden="true" style={{ "--c": mail.character.color } as React.CSSProperties}>{mail.character.name[0]}</span>
-      <div className="reponses"><button type="button" className="reponse" onClick={() => openMail(mail)}><i>✉</i>{mail.kind === "invitation" ? "Ouvrir l’invitation (accepter / décliner)" : "Rouvrir la lettre et ses réponses"}</button></div>
-    </article> : <div className="j-vide"><span className="surtitre">Le monde vous écrit</span><h2 className="titre-jeu">{pending ? `${pending} message${pending > 1 ? "s" : ""} en attente` : "Courrier à jour"}</h2><p className="texte">Choisissez une lettre ou une invitation à gauche : elle s’ouvre avec ses réponses possibles. Une invitation manquée reviendra plus tard, sans sanction.</p></div>;
+      <div className="reponses">{mail.kind === "vie" || mail.kind === "note" ? onLife && <button type="button" className="reponse" data-act="vie-repondre" onClick={() => onLife.onWrite(mail.character?.id)}><i>✎</i>Écrire à {mail.character.name}</button> : <button type="button" className="reponse" onClick={() => openMail(mail)}><i>✉</i>{mail.kind === "invitation" ? "Ouvrir l’invitation (accepter / décliner)" : "Rouvrir la lettre et ses réponses"}</button>}</div>
+    </article> : <div className="j-vide"><span className="surtitre">Le monde vous écrit</span><h2 className="titre-jeu">{pending ? `${pending} message${pending > 1 ? "s" : ""} en attente` : "Courrier à jour"}</h2><p className="texte">Choisissez une lettre ou une invitation à gauche : elle s’ouvre avec ses réponses possibles. Une invitation manquée reviendra plus tard, sans sanction.</p>{onLife && <div className="j-actions"><button type="button" className="btn" data-act="vie-ecrire" onClick={() => onLife.onWrite()}>✎ Écrire une lettre</button></div>}</div>;
   } else if (tab === "calendrier") {
     const cal = v2CalendarPages(game, calMonth, setCalMonth, calCivs, setCalCivs, calFete, setCalFete);
     leftTitle = cal.leftTitle; gauche = cal.gauche; droite = cal.droite;
