@@ -304,6 +304,35 @@ try {
     assert.equal((m.match(/role="meter"/gu) || []).length, 3);
     assert.ok(/Ivresse de Bellirith/u.test(m) && /Ivresse de Valurn/u.test(m) && /Ivresse de Vous/u.test(m));
   });
+  await check("BV88", "Pression : vignette, sprite penché et frisson des cartes quand un convive vous somme de répondre, discrets et coupés en mouvement réduit", async () => {
+    let s0 = g.createBVNever(3); let guard = 0;
+    while (!s0.awaiting && !s0.completed && guard++ < 200) s0 = g.bvActorAt(s0) === "player" ? g.bvPlayerTurn(s0, g.bvPlayerOptions(s0, ctxs[0])[0].id, ctxs[0]) : g.bvNpcTurn(s0, ctxs[0]);
+    assert.ok(s0.awaiting, "aucune question en attente simulée");
+    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: s0, ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    const asker = s0.log[s0.log.length - 1].speaker;
+    assert.ok(m.includes(`bv-pression-${asker}`) && m.includes("bv-pression-voile") && /data-pression="[123]"/u.test(m), "effet de pression absent");
+    const calm = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(1), ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(!calm.includes("bv-pression"), "pression affichée hors question");
+    const css = await readFile(resolve(root, "src/bellirith-valurn.css"), "utf8");
+    assert.ok(/\.bv-pression-voile\s*\{[^}]*pointer-events:\s*none/u.test(css) && /transparent var\(--pr-in\)/u.test(css), "la vignette doit laisser le centre libre et ne pas capter les clics");
+    assert.ok(/prefers-reduced-motion[^}]*bv-pression/u.test(css) && /body\.reduit \.bv-pression/u.test(css), "mouvement réduit non respecté");
+    const frames = [...css.matchAll(/@keyframes (bv-pression[\w-]*)\s*\{((?:[^{}]*\{[^}]*\})*)\s*\}/gu)];
+    assert.ok(frames.length >= 2, "keyframes de pression introuvables");
+    for (const [, name, body] of frames) assert.ok(!/(?:width|height|top|left|filter|box-shadow)\s*:/u.test(body), `animation coûteuse : ${name}`);
+  });
+  await check("BV89", "Crans de pression 1 à 4 : chaque cran est nettement plus fort que le précédent", async () => {
+    const css = await readFile(resolve(root, "src/bellirith-valurn.css"), "utf8");
+    const level = (n) => { const m = css.match(new RegExp(`\\.bv-pression\\[data-pression="${n}"\\]\\s*\\{([^}]*)\\}`, "u")); assert.ok(m, `cran ${n} absent`); return Object.fromEntries([...m[1].matchAll(/--pr-(\w+):\s*([\d.]+)/gu)].map(([, k, v]) => [k, Number(v)])); };
+    const tiers = [1, 2, 3, 4].map(level);
+    for (let i = 1; i < 4; i++) {
+      for (const key of ["a", "w", "z", "r", "x", "m"]) assert.ok(tiers[i][key] > tiers[i - 1][key], `--pr-${key} ne monte pas du cran ${i} au cran ${i + 1}`);
+      for (const key of ["in", "t"]) assert.ok(tiers[i][key] < tiers[i - 1][key], `--pr-${key} ne se resserre pas du cran ${i} au cran ${i + 1}`);
+      assert.ok(tiers[i].a - tiers[i - 1].a >= .1 && tiers[i].w - tiers[i - 1].w >= 20, `écart trop faible entre les crans ${i} et ${i + 1}`);
+    }
+    const seenLevels = new Set();
+    for (const run of runs) run.s.log.forEach((r, i) => { if (r.answer) seenLevels.add(g.bvPressionLevel(run.s, i)); });
+    assert.deepEqual([...seenLevels].sort(), [1, 2, 3, 4], `crans atteints en partie : ${[...seenLevels].sort()}`);
+  });
 
   const failed = results.filter((r) => !r[2]);
   for (const r of failed) console.error(`✗ ${r[0]} ${r[1]} : ${r[3]}`);

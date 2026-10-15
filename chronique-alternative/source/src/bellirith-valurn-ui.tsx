@@ -7,7 +7,7 @@ import { spritePath } from "./sprite-system";
 import { intimateSpritePath } from "./intimate-sprite-system";
 import { BV_OBJECTIVES, BV_STAGE_TOTAL, BV_TITLES, BV_SCENE_TITLES, BV_DATE_STAGE, bvAvailableScenes, type BVIntimacyId } from "./bellirith-valurn-cross-quest";
 import {
-  BV_IVRESSE_MAX, bvActorAt, bvAnswer, bvDrinksAt, bvIvresse, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
+  BV_IVRESSE_MAX, BV_PRESSION_MAX, bvActorAt, bvPressionLevel, bvAnswer, bvDrinksAt, bvIvresse, bvNpcTurn, bvPlayerOptions, bvPlayerTurn, bvRecordView, bvTransition,
   type BVActor, type BVAnswer, type BVNeverState, type BVTruthCtx,
 } from "./bellirith-valurn-never-game";
 import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
@@ -104,7 +104,8 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
 }) {
   const dialog = useFocusTrap();
   // Les interventions déjà lues à l’ouverture ne sont pas rejouées (reprise).
-  const [seen, setSeen] = useState(state.log.length);
+  // Une question encore en attente à la reprise reste affichée, pour qu’on puisse y répondre.
+  const [seen, setSeen] = useState(state.awaiting ? Math.max(0, state.log.length - 1) : state.log.length);
   const [lineIndex, setLineIndex] = useState(-1);
   const [transitionRound, setTransitionRound] = useState(0);
   const view = seen < state.log.length ? bvRecordView(state, seen) : undefined;
@@ -140,6 +141,9 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
   const finished = state.completed && !view;
   const shownLine = transition && !view ? transition : line;
   // Jauge d’ivresse : les verres comptent dès qu’ils sont levés à l’écran, pas avant.
+  // Pression : quand Bellirith ou Valurn vous somme de répondre. Intensité 1 à 3 selon l’enjeu et l’ivresse de qui presse.
+  const presser = awaitingHere && view && view.record.speaker !== "player" ? view.record.speaker : undefined;
+  const pressure = presser ? bvPressionLevel(state, seen) : 0;
   const gauge = bvDrinksAt(state, view ? (showGlasses ? seen : seen - 1) : state.log.length - 1);
 
   const speaking = shownLine?.speaker === "Bellirith" ? "bellirith" : shownLine?.speaker === "Valurn" ? "valurn" : view && lineIndex < 0 && view.record.speaker !== "player" ? view.record.speaker : !view && !finished && actor !== "player" ? actor : undefined;
@@ -148,12 +152,13 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
     <span className="speaker">{speaker}</span><p key={`${seen}-${lineIndex}-${transitionRound}`}>{text}</p><small>Tour {ROMAINS[state.round] || state.round}<span className="suite-txt"> · {hint}</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
   </button>;
 
-  return <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className="dialogue-overlay v2-scene bv-never" role="dialog" aria-modal="true" aria-labelledby="bv-never-title" data-bv-round={state.round}
-    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.12), rgba(5,6,12,.62)), url(${background})` }}>
+  return <section ref={dialog} tabIndex={-1} onKeyDown={keyDown} className={`dialogue-overlay v2-scene bv-never ${presser ? `bv-pression bv-pression-${presser}` : ""}`} role="dialog" aria-modal="true" aria-labelledby="bv-never-title" data-bv-round={state.round} data-pression={pressure || undefined}
+    style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.12), rgba(5,6,12,.62)), url(${background})` } as CSSProperties}>
     <div className="scene-top"><div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir · aucun gain" : "Quêtes croisées · Bellirith & Valurn"}</p><h2 id="bv-never-title">Je n’ai jamais</h2></div>
       <div className="scene-outils"><span className="bv-round" aria-live="polite">Tour {ROMAINS[state.round] || state.round}</span><button type="button" className="scene-outil passer" onClick={onClose}>{replay ? "Quitter le souvenir" : "Reprendre plus tard"}</button></div></div>
     <div className="scene-cast cast-2">{sprite("bellirith", 0)}{sprite("valurn", 1)}</div>
     <div className="dialogue-gradient" />
+    {presser && <div className="bv-pression-voile" aria-hidden="true" />}
 
     <aside className={`bv-table ${view ? "claim" : finished ? "fin" : "turn"}`} aria-live="polite">
       <ul className="bv-ivresse" aria-label="Ivresse">
@@ -173,6 +178,7 @@ export function BVNeverModal({ state, ctx, replay = false, background, format, o
         <ol className="bv-glasses" aria-label="Qui boit ?">
           {(["bellirith", "valurn", "player"] as BVActor[]).map((who) => <li key={who} className={showGlasses && drinkers.includes(who) ? "drank" : "full"}><i aria-hidden="true" />{NAMES[who]}<small>{showGlasses ? drinkers.includes(who) ? "boit" : "ne boit pas" : "…"}</small></li>)}
         </ol>
+        {presser && <p className="bv-pression-crans" aria-label={`Pression de ${NAMES[presser]} : ${pressure} sur ${BV_PRESSION_MAX}`}>Pression {Array.from({ length: BV_PRESSION_MAX }, (_, i) => <i key={i} className={i < pressure ? "on" : ""} />)}</p>}
         {showGlasses && view.playerReason && <p className="bv-table-note">Vous buvez : {format(view.playerReason)}</p>}
       </> : finished ? <>
         <p className="bv-table-label">Fin de la soirée</p>

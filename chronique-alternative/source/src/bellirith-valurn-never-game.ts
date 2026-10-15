@@ -466,6 +466,20 @@ export function bvDrinksAt(state: BVNeverState, index: number): Record<BVActor, 
   return drinks;
 }
 
+/** Crans de pression quand un convive vous somme de répondre (1 à 4).
+ * Base : palier de l’affirmation (lui-même tiré de la pression accumulée contre vous, 0 à 3).
+ * +1 si la question vient après la bascule ou si celui qui presse est ivre. Plafond 4. */
+export const BV_PRESSION_MAX = 4;
+export function bvPressionLevel(state: BVNeverState, index: number): number {
+  const record = state.log[index];
+  if (!record || record.speaker === "player") return 0;
+  const claim = bvFindNpcClaim(record.claimId);
+  if (!claim) return 0;
+  const after = state.pivotRound !== undefined && record.round > state.pivotRound;
+  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker]) === "ivre";
+  return Math.min(BV_PRESSION_MAX, 1 + claim.tier + (after || drunk ? 1 : 0));
+}
+
 export type BVChoiceLines = { before: DialogueLine[]; after: DialogueLine[] };
 
 function hashKey(seed: number, round: number, salt: string) {
