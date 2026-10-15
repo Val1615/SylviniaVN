@@ -44,11 +44,10 @@ async def run(pw,w,h,touch):
         else: break
     real=await p.locator(".bv-never").get_attribute("data-pression"); print(tag, "cran réel", real)
     await snap("cran-reel-"+str(real))
-    for n in (1,2,3,4):
-        await p.evaluate("n=>{const s=document.querySelector('.bv-never');s.setAttribute('data-pression',String(n));document.querySelectorAll('.bv-pression-crans i').forEach((e,i)=>e.classList.toggle('on',i<n))}", n)
-        await p.wait_for_timeout(900); await snap(f"cran-{n}")
-    for f in range(10):
-        await p.screenshot(path=f"{OUT}/frames/{tag}-cran4-{f:02d}.png"); await p.wait_for_timeout(110)
+    for who in ("valurn","bellirith"):
+        for n in (1,2,3,4):
+            await p.evaluate("([n,who])=>{const s=document.querySelector('.bv-never');s.classList.remove('bv-pression-valurn','bv-pression-bellirith');s.classList.add('bv-pression-'+who);s.setAttribute('data-pression',String(n));document.querySelectorAll('.bv-pression-crans i').forEach((e,i)=>e.classList.toggle('on',i<n))}", [n,who])
+            await p.wait_for_timeout(900); await snap(f"{who}-cran-{n}")
     await b.close()
 async def main():
     async with async_playwright() as pw:

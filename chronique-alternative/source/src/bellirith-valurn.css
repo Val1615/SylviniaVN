@@ -46,12 +46,12 @@
    chacun nettement plus fort que le précédent : vignette plus opaque et plus large, pouls plus rapide,
    sprite plus penché et plus proche, cartes qui frissonnent plus fort. Le centre de l’image reste libre.
    Animations sur opacity et translate seulement. */
-.bv-pression { --pr-c: 196, 48, 92; --pr-c2: 120, 60, 170; }
-.bv-pression-valurn { --pr-c: 150, 170, 190; --pr-c2: 216, 189, 120; }
-.bv-pression[data-pression="1"] { --pr-a: .22; --pr-w: 34px; --pr-in: 66%; --pr-t: 2.8s; --pr-z: 1.01; --pr-r: .4deg; --pr-x: 4px; --pr-m: .6px; }
-.bv-pression[data-pression="2"] { --pr-a: .36; --pr-w: 56px; --pr-in: 60%; --pr-t: 2.1s; --pr-z: 1.022; --pr-r: .8deg; --pr-x: 8px; --pr-m: 1.2px; }
-.bv-pression[data-pression="3"] { --pr-a: .5; --pr-w: 80px; --pr-in: 54%; --pr-t: 1.5s; --pr-z: 1.036; --pr-r: 1.3deg; --pr-x: 12px; --pr-m: 2px; }
-.bv-pression[data-pression="4"] { --pr-a: .66; --pr-w: 110px; --pr-in: 47%; --pr-t: 1s; --pr-z: 1.05; --pr-r: 1.8deg; --pr-x: 16px; --pr-m: 3px; }
+.bv-pression { --pr-c: 150, 70, 225; --pr-c2: 205, 130, 255; }
+.bv-pression-valurn { --pr-c: 200, 18, 48; --pr-c2: 240, 70, 90; }
+.bv-pression[data-pression="1"] { --pr-a: 0.34; --pr-w: 48px; --pr-in: 66%; --pr-t: 2.8s; --pr-z: 1.01; --pr-r: .4deg; --pr-x: 4px; --pr-m: .6px; }
+.bv-pression[data-pression="2"] { --pr-a: 0.46; --pr-w: 72px; --pr-in: 60%; --pr-t: 2.1s; --pr-z: 1.022; --pr-r: .8deg; --pr-x: 8px; --pr-m: 1.2px; }
+.bv-pression[data-pression="3"] { --pr-a: 0.58; --pr-w: 98px; --pr-in: 54%; --pr-t: 1.5s; --pr-z: 1.036; --pr-r: 1.3deg; --pr-x: 12px; --pr-m: 2px; }
+.bv-pression[data-pression="4"] { --pr-a: 0.72; --pr-w: 128px; --pr-in: 47%; --pr-t: 1s; --pr-z: 1.05; --pr-r: 1.8deg; --pr-x: 16px; --pr-m: 3px; }
 .bv-pression-voile { position: absolute; inset: 0; z-index: 3; pointer-events: none;
   background: radial-gradient(ellipse at 50% 50%, transparent var(--pr-in), rgba(var(--pr-c2), calc(var(--pr-a) * .35)) 80%, rgba(var(--pr-c), var(--pr-a)) 100%);
   box-shadow: inset 0 0 var(--pr-w) rgba(var(--pr-c), var(--pr-a));
