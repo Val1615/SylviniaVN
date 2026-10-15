@@ -19,7 +19,8 @@ for (const legacy of ["gift-modal", "wide-modal", "character-modal", "invitation
   assert.doesNotMatch(page, new RegExp(`className=["{\`][^"\`]*\\b${legacy}\\b`), `L’ancien gabarit .${legacy} ne doit plus être rendu.`);
 }
 assert.match(page, /character\.giftLikes\.includes\(hovered\.id\)/, "L’aperçu de réaction doit suivre la vraie préférence (giftLikes).");
-assert.match(page, /const reaction: V2GiftReaction = \{ character: characterId, giftId, liked, affection: clamp\(before\.affection \+ \(liked \? 6 : 2\)\) - before\.affection/, "La réaction au présent doit recevoir les écarts réellement appliqués.");
+assert.match(page, /const reaction: V2GiftReaction = \{ character: characterId, giftId, liked, affection: clamp\(before\.affection \+ outcome\.affection\) - before\.affection, trust: clamp\(before\.trust \+ outcome\.trust\) - before\.trust/, "La réaction au présent doit recevoir les écarts réellement appliqués.");
+assert.match(page, /relation\.affection = clamp\(relation\.affection \+ outcome\.affection\);\n\s*relation\.trust = clamp\(relation\.trust \+ outcome\.trust\);/, "La mise à jour du présent doit appliquer les mêmes écarts que la réaction.");
 assert.match(page, /data-act="job-accepter"/, "Le lanceur de job doit exposer son bouton d’acceptation.");
 assert.match(page, /data-reponse=\{reply\.id\}/, "Les réponses de lettre doivent être des cartes de choix.");
 // 2. Scènes : historique, choix en cartes, raccourcis.
