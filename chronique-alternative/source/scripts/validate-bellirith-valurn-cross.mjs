@@ -30,6 +30,7 @@ try {
   const sc = await load("/src/bellirith-valurn-scenes.ts");
   const g = await load("/src/bellirith-valurn-never-game.ts");
   const c = await load("/src/bellirith-valurn-never-content.ts");
+  const rx = await load("/src/bellirith-valurn-never-reactions.ts");
   const kit = await load("/src/bellirith-valurn-intimacy-kit.ts");
   const im = await load("/src/bellirith-valurn-intimacy.ts");
   const kn = await load("/src/bellirith-valurn-knowledge.ts");
@@ -192,6 +193,7 @@ try {
   const corpus = [
     ...sceneVariants.flatMap((s) => strings(s)),
     ...strings([c.BV_NPC_CLAIMS, c.BV_NPC_EVENING, c.BV_NPC_FALLOUT, c.BV_PLAYER_CLAIMS, c.BV_PLAYER_FALLOUT, c.BV_SUBJECT_CLAIMS, c.BV_PIVOT_CLAIMS, c.BV_PIVOT_FORCED, c.BV_PIVOT_SILENCE, c.BV_REVEAL_BEATS, c.BV_TRANSITIONS, c.BV_RESULT_RETORTS]),
+    ...strings(Object.fromEntries(Object.entries(rx).filter(([, v]) => typeof v === "object"))),
     ...allIntimacy.flatMap((s) => kit.bvAllIntimacyLines(s).map((l) => l.text)),
   ];
   await check("BV59", "Aucun tiret cadratin ou demi-cadratin", () => { const bad = corpus.filter((t) => STYLE_DASH.test(t)); assert.equal(bad.length, 0, bad[0]); });
@@ -211,9 +213,9 @@ try {
 
   // ---------------------------------------------------------------- Interface
   const fmt = (t) => t.replaceAll("{player}", "Aube");
-  await check("BV67", "Fenêtre de jeu V2 : décor, sprites, compteur discret, reprise, aucune jauge", () => {
+  await check("BV67", "Fenêtre de jeu V2 : décor, sprites, compteur discret, reprise, aucune jauge de pression (seule l’ivresse est montrée)", () => {
     const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(1), ctx: ctxs[0], background: "/assets/backgrounds/algratal_music_room.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
-    assert.ok(/Tour (1|I)\b/u.test(m) && m.includes("Reprendre plus tard") && !/jauge|pression|progress/iu.test(m));
+    assert.ok(/Tour (1|I)\b/u.test(m) && m.includes("Reprendre plus tard") && !/pression|progress/iu.test(m) && !/jauge/iu.test(m.replace(/bv-ivresse-jauge/gu, "")));
     assert.ok(m.includes("v2-scene") && m.includes("algratal_music_room.webp") && m.includes("scene-cast cast-2") && (m.match(/scene-sprite/gu) || []).length === 2);
   });
   await check("BV68", "Dossier rendu à chaque étape", () => {
@@ -246,6 +248,119 @@ try {
   await check("BV78", "L’ancien rendez-vous Valurn / Bellirith existe toujours", () => assert.ok(groups.GROUP_DATES.some((d) => d.id === "group-date-valurn-bellirith") && !groups.GROUP_DATES.some((d) => d.id === cq.BV_DATE_ID)));
   await check("BV79", "Ni stase inventée ni transfert en panne", () => assert.ok(!corpus.some((t) => /\bstase\b|tomb[ée] en panne|n’a pas fonctionné/iu.test(t))));
   await check("BV80", "Valurn a choisi : la décision est nommée comme telle", () => assert.ok(/choisi de ne pas/iu.test(strings(c.BV_REVEAL_BEATS.r6).join(" "))));
+
+  // ---------------------------------------------------------------- Répliques de table et ivresse
+  const RX_BASE = ["BV_PLAYER_LEADS", "BV_PLAYER_LEADS_SOLEMN", "BV_THEME_REACTIONS", "BV_STATEMENT_REACTIONS", "BV_STATEMENT_GENERIC", "BV_STATEMENT_FALLOUT", "BV_STATEMENT_SOLEMN", "BV_PLAYER_ANSWERS", "BV_ANSWER_REACTIONS", "BV_ANSWER_GENERIC"];
+  const rxLines = (value, out = []) => { if (Array.isArray(value)) out.push(...value); else if (value && typeof value === "object") Object.values(value).forEach((v) => rxLines(v, out)); return out; };
+  const rxAll = RX_BASE.flatMap((name) => [...rxLines(rx[name]), ...rxLines(rx[`${name}_T`])]);
+  await check("BV81", "Répliques de table : sans tiret, sans « ce n’est pas X, c’est Y », sans mot cru ni indice du secret", () => {
+    const bad = rxAll.filter((l) => STYLE_DASH.test(l.text) || STYLE_CONTRAST.test(l.text) || BANNED.test(l.text) || /talisman|artefact|humanit|deux objets/iu.test(l.text));
+    assert.equal(bad.length, 0, bad[0]?.text);
+    assert.ok(rxAll.every((l) => ["{player}", "Bellirith", "Valurn"].includes(l.speaker)));
+  });
+  await check("BV82", "Répliques de table toutes uniques, et distinctes du reste du jeu", () => {
+    const texts = rxAll.map((l) => l.text);
+    const dup = texts.find((t, i) => texts.indexOf(t) !== i); assert.ok(!dup, dup);
+    const others = corpus.filter((t) => !texts.includes(t));
+    const clash = texts.find((t) => others.includes(t)); assert.ok(!clash, clash);
+  });
+  await check("BV83", "Chaque banque de réplique a des variantes sobre, gris et ivre", () => {
+    const walk = (baseNode, tierNode, path) => {
+      if (Array.isArray(baseNode)) { assert.ok(baseNode.length >= 1, `${path} sobre vide`); assert.ok(tierNode && tierNode.gris?.length >= 1 && tierNode.ivre?.length >= 1, `${path} sans variante gris/ivre`); return; }
+      for (const [key, value] of Object.entries(baseNode)) walk(value, tierNode?.[key], `${path}.${key}`);
+    };
+    for (const name of RX_BASE) walk(rx[name], rx[`${name}_T`], name);
+    assert.ok(rxAll.length >= 300, `seulement ${rxAll.length} répliques`);
+  });
+  const choiceStats = { choices: 0, missing: [], repeated: [], tiers: { sobre: 0, gris: 0, ivre: 0 } };
+  const tierOf = new Map();
+  for (const name of RX_BASE) { rxLines(rx[name]).forEach((l) => tierOf.set(l.text, "sobre")); const t = rx[`${name}_T`]; const walkT = (n) => { if (n && n.gris && n.ivre && Array.isArray(n.gris)) { n.gris.forEach((l) => tierOf.set(l.text, "gris")); n.ivre.forEach((l) => tierOf.set(l.text, "ivre")); } else if (n && typeof n === "object") Object.values(n).forEach(walkT); }; walkT(t); }
+  for (const run of runs) {
+    const heard = new Set();
+    run.s.log.forEach((record, index) => {
+      if (record.speaker !== "player" && !record.answer) return;
+      choiceStats.choices += 1;
+      const lines = g.bvChoiceLines(run.s, index);
+      if (lines.before.length !== 1 || lines.before[0].speaker !== "{player}" || lines.after.length < 1) choiceStats.missing.push(`${record.claimId}:${record.answer || "affirmation"}`);
+      const view = g.bvRecordView(run.s, index);
+      if (!view || !lines.before.every((l) => view.lines.includes(l)) || !lines.after.every((l) => view.lines.includes(l))) choiceStats.missing.push(`vue ${record.claimId}`);
+      for (const l of [...lines.before, ...lines.after]) { if (heard.has(l.text)) choiceStats.repeated.push(l.text); heard.add(l.text); choiceStats.tiers[tierOf.get(l.text)] += 1; }
+    });
+  }
+  await check("BV84", "Chaque choix (affirmation, reconnaître, nier, esquiver) donne votre réplique et au moins une réaction", () => {
+    assert.ok(choiceStats.choices > 3000, `${choiceStats.choices} choix simulés`);
+    assert.equal(choiceStats.missing.length, 0, choiceStats.missing[0]);
+    const answers = new Set(runs.flatMap((run) => run.s.log.map((r) => r.answer).filter(Boolean)));
+    assert.deepEqual([...answers].sort(), ["acknowledge", "deny", "dodge"]);
+  });
+  await check("BV85", "Aucune réplique de table répétée au cours d’une même soirée", () => assert.equal(choiceStats.repeated.length, 0, choiceStats.repeated[0]));
+  await check("BV86", "L’ivresse monte avec les verres et relâche les répliques (gris et ivre réellement entendus)", () => {
+    assert.equal(g.bvIvresse(0), "sobre"); assert.equal(g.bvIvresse(g.BV_IVRESSE_GRIS), "gris"); assert.equal(g.bvIvresse(g.BV_IVRESSE_IVRE), "ivre");
+    assert.ok(choiceStats.tiers.gris > 200 && choiceStats.tiers.ivre > 100, JSON.stringify(choiceStats.tiers));
+    for (const run of runs.slice(0, 30)) { const last = run.s.log.length - 1; assert.deepEqual(g.bvDrinksAt(run.s, last), run.s.drinks); }
+  });
+  await check("BV87", "Jauges d’ivresse affichées pour les trois convives dans le panneau", () => {
+    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: runs[0].s, ctx: ctxs[0], background: "/assets/backgrounds/algratal_music_room.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.equal((m.match(/role="meter"/gu) || []).length, 3);
+    assert.ok(/Ivresse de Bellirith/u.test(m) && /Ivresse de Valurn/u.test(m) && /Ivresse de Vous/u.test(m));
+  });
+  await check("BV88", "Pression : vignette, sprite penché et frisson des cartes quand un convive vous somme de répondre, discrets et coupés en mouvement réduit", async () => {
+    let s0 = g.createBVNever(3); let guard = 0;
+    while (!s0.awaiting && !s0.completed && guard++ < 200) s0 = g.bvActorAt(s0) === "player" ? g.bvPlayerTurn(s0, g.bvPlayerOptions(s0, ctxs[0])[0].id, ctxs[0]) : g.bvNpcTurn(s0, ctxs[0]);
+    assert.ok(s0.awaiting, "aucune question en attente simulée");
+    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: s0, ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    const asker = s0.log[s0.log.length - 1].speaker;
+    assert.ok(m.includes(`bv-pression-${asker}`) && m.includes("bv-pression-voile") && /data-pression="[123]"/u.test(m), "effet de pression absent");
+    const calm = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(1), ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(!calm.includes("bv-pression"), "pression affichée hors question");
+    const css = await readFile(resolve(root, "src/bellirith-valurn.css"), "utf8");
+    assert.ok(/\.bv-pression-voile\s*\{[^}]*pointer-events:\s*none/u.test(css) && /transparent var\(--pr-in\)/u.test(css), "la vignette doit laisser le centre libre et ne pas capter les clics");
+    assert.ok(/prefers-reduced-motion[^}]*bv-pression/u.test(css) && /body\.reduit \.bv-pression/u.test(css), "mouvement réduit non respecté");
+    const frames = [...css.matchAll(/@keyframes (bv-pression[\w-]*)\s*\{((?:[^{}]*\{[^}]*\})*)\s*\}/gu)];
+    assert.ok(frames.length >= 2, "keyframes de pression introuvables");
+    for (const [, name, body] of frames) assert.ok(!/(?:width|height|top|left|filter|box-shadow)\s*:/u.test(body), `animation coûteuse : ${name}`);
+  });
+  await check("BV89", "Crans de pression 1 à 4 : chaque cran est nettement plus fort que le précédent", async () => {
+    const css = await readFile(resolve(root, "src/bellirith-valurn.css"), "utf8");
+    const level = (n) => { const m = css.match(new RegExp(`\\.bv-pression\\[data-pression="${n}"\\]\\s*\\{([^}]*)\\}`, "u")); assert.ok(m, `cran ${n} absent`); return Object.fromEntries([...m[1].matchAll(/--pr-(\w+):\s*([\d.]+)/gu)].map(([, k, v]) => [k, Number(v)])); };
+    const tiers = [1, 2, 3, 4].map(level);
+    for (let i = 1; i < 4; i++) {
+      for (const key of ["a", "w", "z", "r", "x", "m"]) assert.ok(tiers[i][key] > tiers[i - 1][key], `--pr-${key} ne monte pas du cran ${i} au cran ${i + 1}`);
+      for (const key of ["in", "t"]) assert.ok(tiers[i][key] < tiers[i - 1][key], `--pr-${key} ne se resserre pas du cran ${i} au cran ${i + 1}`);
+      assert.ok(tiers[i].a - tiers[i - 1].a >= .1 && tiers[i].w - tiers[i - 1].w >= 20, `écart trop faible entre les crans ${i} et ${i + 1}`);
+    }
+    const seenLevels = new Set();
+    for (const run of runs) run.s.log.forEach((r, i) => { if (r.answer) seenLevels.add(g.bvPressionLevel(run.s, i)); });
+    assert.deepEqual([...seenLevels].sort(), [1, 2, 3, 4], `crans atteints en partie : ${[...seenLevels].sort()}`);
+  });
+  await check("BV90", "Reprendre plus tard : la soirée sauvegardée en cours de partie se recharge à l’identique (tour, verres, ivresse, pression, répliques, question en attente, secrets)", () => {
+    const norm = (v) => { const o = JSON.parse(JSON.stringify(v)); if (o && "round" in o && "log" in o) { o.completed = Boolean(o.completed); o.tutorialSeen = Boolean(o.tutorialSeen); } return o; };
+    const view = (st) => renderToStaticMarkup(createElement(ui.BVNeverModal, { state: st, ctx: ctxs[1], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    let snapshots = 0, awaitingSeen = 0, truthsSeen = 0;
+    for (const seed of [2, 5, 9, 14]) {
+      let s = g.createBVNever(seed); let guard = 0;
+      while (!s.completed && guard++ < 300) {
+        const progress = cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, s);
+        const reloaded = cq.hydrateBV(JSON.parse(JSON.stringify(progress))).bv.never;
+        assert.deepEqual(norm(reloaded), norm(s), `état perdu au tour ${s.round} (graine ${seed})`);
+        const last = s.log.length - 1;
+        if (last >= 0) {
+          assert.deepEqual(g.bvDrinksAt(reloaded, last), g.bvDrinksAt(s, last));
+          assert.equal(g.bvPressionLevel(reloaded, last), g.bvPressionLevel(s, last));
+          assert.deepEqual(norm(g.bvChoiceLines(reloaded, last)), norm(g.bvChoiceLines(s, last)));
+        }
+        assert.equal(view(reloaded), view(s), `affichage différent après rechargement au tour ${s.round}`);
+        snapshots++; if (s.awaiting) awaitingSeen++; if (s.truths.length) truthsSeen++;
+        if (s.awaiting) s = g.bvAnswer(s, ["acknowledge", "deny", "dodge"][s.round % 3]);
+        else if (g.bvActorAt(s) === "player") { const o = g.bvPlayerOptions(s, ctxs[1]); s = g.bvPlayerTurn(s, o[s.round % o.length].id, ctxs[1]); }
+        else s = g.bvNpcTurn(s, ctxs[1]);
+      }
+    }
+    assert.ok(snapshots > 100 && awaitingSeen > 5 && truthsSeen > 5, `couverture insuffisante ${snapshots}/${awaitingSeen}/${truthsSeen}`);
+    let mid = g.createBVNever(4); for (let i = 0; i < 12 && !mid.completed; i++) mid = mid.awaiting ? g.bvAnswer(mid, "deny") : g.bvActorAt(mid) === "player" ? g.bvPlayerTurn(mid, g.bvPlayerOptions(mid, ctxs[0])[0].id, ctxs[0]) : g.bvNpcTurn(mid, ctxs[0]);
+    const dossier = renderToStaticMarkup(createElement(ui.BVDossier, { progress: cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, mid), day: 2, onScene() {}, onNever() {}, onIntimacy() {} }));
+    assert.ok(dossier.includes(`Reprendre la soirée · tour ${mid.round}`) && dossier.includes("soirée conservée"), "le journal n’affiche pas la reprise");
+  });
 
   const failed = results.filter((r) => !r[2]);
   for (const r of failed) console.error(`✗ ${r[0]} ${r[1]} : ${r[3]}`);

@@ -1,6 +1,12 @@
 import type { DialogueLine } from "./game-data";
 import type { BVStyle } from "./bellirith-valurn-scenes";
 import {
+  BV_ANSWER_GENERIC, BV_ANSWER_GENERIC_T, BV_ANSWER_REACTIONS, BV_ANSWER_REACTIONS_T, BV_PLAYER_ANSWERS, BV_PLAYER_ANSWERS_T,
+  BV_PLAYER_LEADS, BV_PLAYER_LEADS_SOLEMN, BV_PLAYER_LEADS_SOLEMN_T, BV_PLAYER_LEADS_T, BV_STATEMENT_FALLOUT, BV_STATEMENT_FALLOUT_T,
+  BV_STATEMENT_GENERIC, BV_STATEMENT_GENERIC_T, BV_STATEMENT_REACTIONS, BV_STATEMENT_REACTIONS_T, BV_STATEMENT_SOLEMN, BV_STATEMENT_SOLEMN_T,
+  BV_THEME_REACTIONS, BV_THEME_REACTIONS_T, type BVIvresse, type BVTiers,
+} from "./bellirith-valurn-never-reactions";
+import {
   BV_NPC_CLAIMS, BV_NPC_EVENING, BV_NPC_FALLOUT, BV_PIVOT_CLAIMS, BV_PIVOT_FORCED, BV_PIVOT_SILENCE, BV_PLAYER_CLAIMS, BV_PLAYER_FALLOUT, BV_REVEAL_BEATS,
   BV_RESULT_RETORTS, BV_SUBJECT_CLAIMS, BV_TRANSITIONS,
 } from "./bellirith-valurn-never-content";
@@ -421,16 +427,18 @@ export function bvRecordView(state: BVNeverState, index: number): BVRecordView |
   if (record.speaker === "player") {
     const claim = bvFindPlayerClaim(record.claimId);
     if (!claim) return undefined;
-    const lines = [...claim.lines, ...(record.drinkers.includes("player") && claim.ifPlayerDrinks ? claim.ifPlayerDrinks : []), ...retort(state, index, record)];
+    const choice = bvChoiceLines(state, index);
+    const lines = [...choice.before, ...claim.lines, ...(record.drinkers.includes("player") && claim.ifPlayerDrinks ? claim.ifPlayerDrinks : []), ...choice.after, ...retort(state, index, record)];
     return { record, declaration: { speaker: NAMES.player, text: claim.text }, lines, playerReason: record.playerComputed ? claim.why : undefined };
   }
   const claim = bvFindNpcClaim(record.claimId);
   if (!claim) return { record, declaration: { speaker: NAMES[record.speaker], text: "…", mood: "neutral" }, lines: [] };
   const drank = record.drinkers.includes("player");
   const extra = drank ? claim.ifPlayerDrinks || [] : claim.ifPlayerDry || [];
+  const choice = record.answer ? bvChoiceLines(state, index) : { before: [], after: [] };
   return {
     record, declaration: { speaker: NAMES[record.speaker], text: claim.text, mood: claim.mood },
-    lines: [...claim.lines, ...(record.answer || record.playerComputed !== undefined || claim.truth.player !== "ask" ? extra : []), ...retort(state, index, record)],
+    lines: [...choice.before, ...claim.lines, ...(record.answer || record.playerComputed !== undefined || claim.truth.player !== "ask" ? extra : []), ...choice.after, ...retort(state, index, record)],
     playerReason: record.playerComputed ? claim.why : undefined,
     ask: claim.truth.player === "ask" ? claim.ask || "Reconnaître, nier ou esquiver ?" : undefined,
   };
@@ -439,6 +447,129 @@ export function bvRecordView(state: BVNeverState, index: number): BVRecordView |
 function resultKey(drinkers: BVActor[]) {
   const set = new Set(drinkers);
   return (["bellirith", "valurn", "player"] as BVActor[]).filter((actor) => set.has(actor)).map((actor) => actor[0]).join("") || "none";
+}
+
+/* ------------------------------------------------------------------------ */
+/* Ivresse et répliques de choix                                             */
+/* ------------------------------------------------------------------------ */
+
+/** Seuils d’ivresse : gris à partir de 3 verres, ivre à partir de 6. La jauge plafonne à 8. */
+export const BV_IVRESSE_GRIS = 3;
+export const BV_IVRESSE_IVRE = 6;
+export const BV_IVRESSE_MAX = 8;
+export function bvIvresse(drinks: number): BVIvresse { return drinks >= BV_IVRESSE_IVRE ? "ivre" : drinks >= BV_IVRESSE_GRIS ? "gris" : "sobre"; }
+
+/** Verres bus par chacun jusqu’à l’intervention `index` incluse. */
+export function bvDrinksAt(state: BVNeverState, index: number): Record<BVActor, number> {
+  const drinks: Record<BVActor, number> = { bellirith: 0, valurn: 0, player: 0 };
+  for (const entry of state.log.slice(0, index + 1)) for (const actor of entry.drinkers) drinks[actor] += 1;
+  return drinks;
+}
+
+/** Crans de pression quand un convive vous somme de répondre (1 à 4).
+ * Base : palier de l’affirmation (lui-même tiré de la pression accumulée contre vous, 0 à 3).
+ * +1 si la question vient après la bascule ou si celui qui presse est ivre. Plafond 4. */
+export const BV_PRESSION_MAX = 4;
+export function bvPressionLevel(state: BVNeverState, index: number): number {
+  const record = state.log[index];
+  if (!record || record.speaker === "player") return 0;
+  const claim = bvFindNpcClaim(record.claimId);
+  if (!claim) return 0;
+  const after = state.pivotRound !== undefined && record.round > state.pivotRound;
+  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker]) === "ivre";
+  return Math.min(BV_PRESSION_MAX, 1 + claim.tier + (after || drunk ? 1 : 0));
+}
+
+export type BVChoiceLines = { before: DialogueLine[]; after: DialogueLine[] };
+
+function hashKey(seed: number, round: number, salt: string) {
+  let h = 2166136261 ^ seed ^ Math.imul(round, 2654435761);
+  for (let i = 0; i < salt.length; i++) h = Math.imul(h ^ salt.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+/** Groupes ordonnés du plus ivre au plus sobre : la variante d’ivresse passe d’abord, la banque sobre sert de réserve. */
+function tiered(base: DialogueLine[], tiers: BVTiers | undefined, level: BVIvresse): DialogueLine[][] {
+  if (!tiers || level === "sobre") return [base];
+  return level === "ivre" ? [tiers.ivre, tiers.gris, base] : [tiers.gris, base];
+}
+/** Première réplique encore inédite ce soir, dans un ordre mélangé par la graine. Jamais de répétition. */
+function draw(groups: DialogueLine[][], used: Set<string>, seed: number, round: number, salt: string): DialogueLine | undefined {
+  for (const [g, group] of groups.entries()) {
+    const start = group.length ? hashKey(seed, round, `${salt}:${g}`) % group.length : 0;
+    for (let i = 0; i < group.length; i++) {
+      const line = group[(start + i) % group.length];
+      if (!used.has(line.text)) { used.add(line.text); return line; }
+    }
+  }
+  return undefined;
+}
+
+function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): BVChoiceLines {
+  const record = state.log[index];
+  const none: BVChoiceLines = { before: [], after: [] };
+  if (!record) return none;
+  const drinks = bvDrinksAt(state, index);
+  const lvl = (actor: BVActor) => bvIvresse(drinks[actor]);
+  const seed = state.seed, round = record.round;
+  const npcs: BVNpc[] = ["bellirith", "valurn"];
+  if (record.speaker === "player") {
+    const claim = bvFindPlayerClaim(record.claimId);
+    if (!claim) return none;
+    const solemn = record.beat === "r1" || BV_SUBJECT_CLAIMS.includes(claim);
+    const key = claim.target;
+    const lead = solemn
+      ? draw(tiered(BV_PLAYER_LEADS_SOLEMN, BV_PLAYER_LEADS_SOLEMN_T, lvl("player")), used, seed, round, "lead-solemn")
+      : draw([...tiered(BV_PLAYER_LEADS[key], BV_PLAYER_LEADS_T[key], lvl("player")), ...tiered(BV_PLAYER_LEADS.generic, BV_PLAYER_LEADS_T.generic, lvl("player"))], used, seed, round, `lead-${key}`);
+    // La cible réagit toujours ; l’autre convive une fois sur deux (toujours si personne n’est visé).
+    const order: BVNpc[] = key === "valurn" ? ["valurn", "bellirith"] : key === "bellirith" ? ["bellirith", "valurn"] : (hashKey(seed, round, "who") % 2 ? ["valurn", "bellirith"] : ["bellirith", "valurn"]);
+    const after: DialogueLine[] = [];
+    for (const [i, npc] of order.entries()) {
+      if (i === 1 && key !== "none" && hashKey(seed, round, `second-${npc}`) % 2) continue;
+      const level = lvl(npc);
+      const role = key === npc ? "target" : "bystander";
+      const reactionKey = `${role}-${record.drinkers.includes(npc) ? "drank" : "dry"}` as keyof typeof BV_STATEMENT_REACTIONS.bellirith;
+      const groups = solemn
+        ? [...tiered(BV_STATEMENT_SOLEMN[npc], BV_STATEMENT_SOLEMN_T[npc], level), ...tiered(BV_STATEMENT_GENERIC[npc], BV_STATEMENT_GENERIC_T[npc], level)]
+        : [
+          ...(bvPhase(state, round) === "retombee" ? tiered(BV_STATEMENT_FALLOUT[npc], BV_STATEMENT_FALLOUT_T[npc], level) : []),
+          ...(role === "target" || key === "none" ? tiered(BV_THEME_REACTIONS[npc][claim.theme], BV_THEME_REACTIONS_T[npc][claim.theme], level) : []),
+          ...tiered(BV_STATEMENT_REACTIONS[npc][reactionKey], BV_STATEMENT_REACTIONS_T[npc][reactionKey], level),
+          ...tiered(BV_STATEMENT_GENERIC[npc], BV_STATEMENT_GENERIC_T[npc], level),
+        ];
+      // Le thème ne passe en premier qu’une fois sur deux, pour que l’issue (boire ou non) reste audible.
+      const ordered = !solemn && hashKey(seed, round, `theme-${npc}`) % 2 ? groups.slice().sort((a, b) => Number(isTheme(a, npc, claim.theme)) - Number(isTheme(b, npc, claim.theme))) : groups;
+      const line = draw(ordered, used, seed, round, `react-${npc}`);
+      if (line) after.push(line);
+    }
+    return { before: lead ? [lead] : [], after };
+  }
+  if (record.answer) {
+    const answer = record.answer;
+    const say = draw(tiered(BV_PLAYER_ANSWERS[answer], BV_PLAYER_ANSWERS_T[answer], lvl("player")), used, seed, round, `answer-${answer}`);
+    const asker = record.speaker as BVNpc;
+    const other: BVNpc = asker === "bellirith" ? "valurn" : "bellirith";
+    const after: DialogueLine[] = [];
+    for (const npc of [asker, other]) {
+      if (npc === other && hashKey(seed, round, `answer-other-${npc}`) % 5 >= 3) continue;
+      const level = lvl(npc);
+      const role = npc === asker ? "asker" : "other";
+      const line = draw([...tiered(BV_ANSWER_REACTIONS[npc][role][answer], BV_ANSWER_REACTIONS_T[npc][role][answer], level), ...tiered(BV_ANSWER_GENERIC[npc], BV_ANSWER_GENERIC_T[npc], level)], used, seed, round, `answer-${npc}`);
+      if (line) after.push(line);
+    }
+    return { before: say ? [say] : [], after };
+  }
+  return none;
+}
+function isTheme(group: DialogueLine[], npc: BVNpc, theme: BVTheme) {
+  return group === BV_THEME_REACTIONS[npc][theme] || group === BV_THEME_REACTIONS_T[npc][theme].gris || group === BV_THEME_REACTIONS_T[npc][theme].ivre;
+}
+
+/** Répliques de choix de l’intervention `index` : votre phrase, puis les réactions. Aucune réplique déjà entendue ce soir. */
+export function bvChoiceLines(state: BVNeverState, index: number): BVChoiceLines {
+  const used = new Set<string>();
+  let result: BVChoiceLines = { before: [], after: [] };
+  for (let i = 0; i <= index && i < state.log.length; i++) result = choiceLinesFor(state, i, used);
+  return result;
 }
 
 /** Réplique de résultat : seulement quand le résultat surprend (personne, tout le monde, ou l’auteur qui boit). */

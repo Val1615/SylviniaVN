@@ -29,3 +29,47 @@
   .bv-never .choice-box.bv-options .v2-choix-carte { min-height: 0; padding-block: .35rem; }
 }
 @media (prefers-reduced-motion: reduce) { .bv-table, .bv-glasses li i { animation: none; transition: none; } }
+
+/* Jauges d’ivresse : trois fines barres en tête du panneau, qui se remplissent à chaque verre levé. */
+.bv-ivresse { display: flex; justify-content: center; flex-wrap: wrap; gap: .2rem 1rem; margin: 0 0 .35rem; padding: 0 0 .3rem; list-style: none; border-bottom: 1px solid rgba(216, 189, 120, .18); }
+.bv-ivresse li { display: inline-flex; align-items: center; gap: .35rem; font: 600 .68em/1 var(--display, serif); letter-spacing: .1em; text-transform: uppercase; color: var(--texte-2, #cfc3b0); }
+.bv-ivresse small { font: italic 1.05em var(--v2-serif, serif); letter-spacing: 0; text-transform: none; opacity: .85; }
+.bv-ivresse-jauge { position: relative; width: 4.2rem; height: .32rem; border-radius: 999px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.bv-ivresse-jauge i { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, #d8bd78, #e76588); transition: width .5s var(--ease, ease); }
+.bv-ivresse li.ivresse-gris small { color: #f1dcaa; }
+.bv-ivresse li.ivresse-ivre small { color: #ff9fb6; }
+.bv-ivresse li.ivresse-ivre .bv-ivresse-jauge i { box-shadow: 0 0 8px rgba(231, 101, 136, .7); }
+@media (max-height: 600px) { .bv-ivresse { margin-bottom: .2rem; padding-bottom: .2rem; } .bv-ivresse-jauge { width: 3rem; } }
+@media (prefers-reduced-motion: reduce) { .bv-ivresse-jauge i { transition: none; } }
+
+/* Pression : Bellirith ou Valurn vous somme de répondre. Quatre crans (data-pression 1 à 4),
+   chacun nettement plus fort que le précédent : vignette plus opaque et plus large, pouls plus rapide,
+   sprite plus penché et plus proche, cartes qui frissonnent plus fort. Le centre de l’image reste libre.
+   Animations sur opacity et translate seulement. */
+.bv-pression { --pr-c: 150, 70, 225; --pr-c2: 205, 130, 255; }
+.bv-pression-valurn { --pr-c: 200, 18, 48; --pr-c2: 240, 70, 90; }
+.bv-pression[data-pression="1"] { --pr-a: 0.34; --pr-w: 48px; --pr-in: 66%; --pr-t: 2.8s; --pr-z: 1.01; --pr-r: .4deg; --pr-x: 4px; --pr-m: .6px; }
+.bv-pression[data-pression="2"] { --pr-a: 0.46; --pr-w: 72px; --pr-in: 60%; --pr-t: 2.1s; --pr-z: 1.022; --pr-r: .8deg; --pr-x: 8px; --pr-m: 1.2px; }
+.bv-pression[data-pression="3"] { --pr-a: 0.58; --pr-w: 98px; --pr-in: 54%; --pr-t: 1.5s; --pr-z: 1.036; --pr-r: 1.3deg; --pr-x: 12px; --pr-m: 2px; }
+.bv-pression[data-pression="4"] { --pr-a: 0.72; --pr-w: 128px; --pr-in: 47%; --pr-t: 1s; --pr-z: 1.05; --pr-r: 1.8deg; --pr-x: 16px; --pr-m: 3px; }
+.bv-pression-voile { position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent var(--pr-in), rgba(var(--pr-c2), calc(var(--pr-a) * .35)) 80%, rgba(var(--pr-c), var(--pr-a)) 100%);
+  box-shadow: inset 0 0 var(--pr-w) rgba(var(--pr-c), var(--pr-a));
+  animation: bv-pression-pouls var(--pr-t) ease-in-out infinite; will-change: opacity; }
+@keyframes bv-pression-pouls { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.bv-pression .scene-sprite { transition: scale .6s var(--ease, ease), rotate .6s var(--ease, ease), translate .6s var(--ease, ease); }
+.bv-pression-bellirith .scene-sprite.speaker-0 { scale: var(--pr-z); rotate: var(--pr-r); translate: var(--pr-x) 0; transform-origin: 50% 100%; }
+.bv-pression-valurn .scene-sprite.speaker-1 { scale: var(--pr-z); rotate: calc(-1 * var(--pr-r)); translate: calc(-1 * var(--pr-x)) 0; transform-origin: 50% 100%; }
+.bv-pression .bv-answers .v2-choix-carte { animation: bv-pression-frisson calc(var(--pr-t) * 1.3) ease-in-out infinite; animation-delay: calc(var(--i, 0) * .17s); }
+.bv-pression .bv-answers .v2-choix-carte:hover, .bv-pression .bv-answers .v2-choix-carte:focus-visible { animation: none; }
+@keyframes bv-pression-frisson { 0%, 84%, 100% { translate: 0 0; } 88% { translate: var(--pr-m) 0; } 92% { translate: calc(-1 * var(--pr-m)) 0; } 96% { translate: calc(.5 * var(--pr-m)) 0; } }
+.bv-pression .bv-answers .choice-question { text-shadow: 0 0 var(--pr-x) rgba(var(--pr-c), .6); }
+/* Indicateur discret : quatre crans dans le panneau. */
+.bv-pression-crans { display: inline-flex; align-items: center; gap: .3rem; margin-top: .3rem; font: 600 .66em/1 var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: rgb(var(--pr-c)); }
+.bv-pression-crans i { width: .45rem; height: .45rem; transform: rotate(45deg); border: 1px solid rgba(var(--pr-c), .8); }
+.bv-pression-crans i.on { background: rgb(var(--pr-c)); box-shadow: 0 0 6px rgba(var(--pr-c), .8); }
+/* Mouvement réduit (système ou option « Réduire les animations ») : vignette fixe graduée, aucun mouvement. */
+@media (prefers-reduced-motion: reduce) { .bv-pression-voile, .bv-pression .bv-answers .v2-choix-carte { animation: none; } .bv-pression-voile { opacity: .85; } .bv-pression .scene-sprite { transition: none; rotate: none; translate: none; } }
+body.reduit .bv-pression-voile, body.reduit .bv-pression .bv-answers .v2-choix-carte { animation: none !important; }
+body.reduit .bv-pression-voile { opacity: .85; }
+body.reduit .bv-pression .scene-sprite { transition: none; rotate: none; translate: none; }
