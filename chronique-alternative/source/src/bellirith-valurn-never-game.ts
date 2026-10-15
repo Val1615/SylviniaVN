@@ -649,3 +649,10 @@ export function bvHydrateNever(raw: unknown): BVNeverState | undefined {
 
 /** Ordre des savoirs acquis à la table (journal). */
 export const BV_KNOWLEDGE_ORDER = ["bellirith-wanted-humanity", "bv-talisman-transfer", "bv-artifact-actual-effect", "bv-abandon-chosen"] as const;
+
+/** Musique de la soirée : le thème léger jusqu’au tournant, la version tendue à partir du tournant (restaurée depuis la sauvegarde). */
+export const BV_NEVER_CROSSFADE_MS = 2400;
+export const BV_NEVER_MUSIC = { jeu: "bv-never-jeu", tournant: "bv-never-tournant" } as const;
+export function bvNeverMusic(state: Pick<BVNeverState, "pivotRound"> | undefined): string {
+  return state?.pivotRound !== undefined ? BV_NEVER_MUSIC.tournant : BV_NEVER_MUSIC.jeu;
+}

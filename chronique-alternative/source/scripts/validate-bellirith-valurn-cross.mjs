@@ -361,6 +361,33 @@ try {
     const dossier = renderToStaticMarkup(createElement(ui.BVDossier, { progress: cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, mid), day: 2, onScene() {}, onNever() {}, onIntimacy() {} }));
     assert.ok(dossier.includes(`Reprendre la soirée · tour ${mid.round}`) && dossier.includes("soirée conservée"), "le journal n’affiche pas la reprise");
   });
+  await check("BV91", "Musique de la soirée : pistes intactes, thème léger puis version tendue à partir du tournant, restaurée à la reprise", async () => {
+    const { createHash } = await import("node:crypto");
+    const md = await load("/src/music-data.ts");
+    const expected = { "bv-never-jeu": "54ad45b244391923ebf0b43078170dbd459e7e63a50e8862a949882962e48e7b", "bv-never-tournant": "63d485a572b0d507029de7307c4e61976d944ea35487219ff2f0071a8a5912e6" };
+    for (const [id, hash] of Object.entries(expected)) {
+      const bytes = await readFile(resolve(root, "../assets/audio", `${id}.mp3`));
+      assert.equal(createHash("sha256").update(bytes).digest("hex"), hash, `${id}.mp3 modifié`);
+      assert.ok(md.MUSIC_LABELS[id], `libellé manquant pour ${id}`);
+    }
+    assert.equal(g.bvNeverMusic(g.createBVNever(1)), "bv-never-jeu");
+    let pivoted = 0;
+    for (const run of runs.slice(0, 60)) {
+      assert.equal(g.bvNeverMusic(run.s), run.s.pivotRound !== undefined ? "bv-never-tournant" : "bv-never-jeu");
+      let s = g.createBVNever(run.s.seed); let guard = 0;
+      while (!s.completed && guard++ < 300) {
+        const reloaded = cq.hydrateBV(JSON.parse(JSON.stringify(cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, s)))).bv.never;
+        assert.equal(g.bvNeverMusic(reloaded), g.bvNeverMusic(s), "piste différente après reprise");
+        if (s.pivotRound !== undefined) pivoted++;
+        if (s.awaiting) s = g.bvAnswer(s, "dodge"); else if (g.bvActorAt(s) === "player") s = g.bvPlayerTurn(s, g.bvPlayerOptions(s, ctxs[0])[0].id, ctxs[0]); else s = g.bvNpcTurn(s, ctxs[0]);
+        if (guard > 40) break;
+      }
+    }
+    assert.ok(pivoted > 0, "aucun tournant atteint");
+    const page = await readFile(resolve(root, "src/page.tsx"), "utf8");
+    assert.ok(/kind === "bv-never" \? bvNeverMusic\(/u.test(page), "la soirée doit choisir sa piste via bvNeverMusic");
+    assert.ok(/fadingTrack[\s\S]{0,200}<audio[^>]*loop/u.test(page) && /key=\{soundtrack\}[\s\S]{0,400}?autoPlay loop/u.test(page), "fondu enchaîné ou boucle absents");
+  });
 
   const failed = results.filter((r) => !r[2]);
   for (const r of failed) console.error(`✗ ${r[0]} ${r[1]} : ${r[3]}`);
