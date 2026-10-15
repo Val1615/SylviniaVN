@@ -283,8 +283,8 @@ try {
       const lines = g.bvChoiceLines(run.s, index);
       if (lines.before.length !== 1 || lines.before[0].speaker !== "{player}" || lines.after.length < 1) choiceStats.missing.push(`${record.claimId}:${record.answer || "affirmation"}`);
       const view = g.bvRecordView(run.s, index);
-      if (!view || !lines.before.every((l) => view.lines.includes(l)) || !lines.after.every((l) => view.lines.includes(l))) choiceStats.missing.push(`vue ${record.claimId}`);
-      for (const l of [...lines.before, ...lines.after]) { if (heard.has(l.text)) choiceStats.repeated.push(l.text); heard.add(l.text); choiceStats.tiers[tierOf.get(l.text)] += 1; }
+      if (!view || view.lines[0]?.text !== lines.before[0]?.text || !view.lines.some((l) => l.step === "a-vous" || l.step === "entre-eux")) choiceStats.missing.push(`vue ${record.claimId}`);
+      for (const l of [...lines.before, ...lines.after].filter((x) => view?.lines.some((v) => v.text === x.text))) { if (heard.has(l.text)) choiceStats.repeated.push(l.text); heard.add(l.text); choiceStats.tiers[tierOf.get(l.text)] += 1; }
     });
   }
   await check("BV84", "Chaque choix (affirmation, reconnaître, nier, esquiver) donne votre réplique et au moins une réaction", () => {
@@ -387,6 +387,86 @@ try {
     const page = await readFile(resolve(root, "src/page.tsx"), "utf8");
     assert.ok(/kind === "bv-never" \? bvNeverMusic\(/u.test(page), "la soirée doit choisir sa piste via bvNeverMusic");
     assert.ok(/fadingTrack[\s\S]{0,200}<audio[^>]*loop/u.test(page) && /key=\{soundtrack\}[\s\S]{0,400}?autoPlay loop/u.test(page), "fondu enchaîné ou boucle absents");
+  });
+  const tr = await load("/src/bellirith-valurn-never-transitions.ts");
+  const playMode = (seed, ctx, mode, answer) => {
+    let s = g.createBVNever(seed, mode); let guard = 0;
+    while (!s.completed && guard++ < 400) {
+      if (s.awaiting) s = g.bvAnswer(s, answer(s));
+      else if (g.bvActorAt(s) === "player") { const o = g.bvPlayerOptions(s, ctx); s = g.bvPlayerTurn(s, o[(seed + s.round) % o.length].id, ctx); }
+      else s = g.bvNpcTurn(s, ctx);
+    }
+    return s;
+  };
+  const ans = (seed) => (s) => ["acknowledge", "deny", "dodge"][(seed + s.round) % 3];
+  const modeRuns = { complete: [], abregee: [] };
+  for (let seed = 1; seed <= 120; seed++) for (const [i, ctx] of ctxs.entries()) for (const mode of ["complete", "abregee"]) modeRuns[mode].push(playMode(seed * 7 + i, ctx, mode, ans(seed)));
+  await check("BV92", "Ordre de chaque échange : affirmation, votre réplique, verres, réactions à vous, piques entre eux ; au plus trois réactions, sans doublon", () => {
+    let exchanges = 0;
+    for (const s of [...modeRuns.complete, ...modeRuns.abregee]) s.log.forEach((record, index) => {
+      const view = g.bvRecordView(s, index); if (!view) return; exchanges++;
+      const steps = view.lines.map((l) => g.BV_STEPS.indexOf(l.step));
+      assert.ok(steps.every((v, i) => v >= 0 && (i === 0 || v >= steps[i - 1] || record.beat)) && (!record.beat || view.lines[0].step === "verres" || view.lines[1]?.step === "verres"), `ordre cassé ${record.claimId} : ${view.lines.map((l) => l.step)}`);
+      assert.equal(view.lines.filter((l) => l.step === "verres").length, 1, `verdict des verres absent ou doublé ${record.claimId}`);
+      const mine = record.speaker === "player" || record.answer;
+      if (mine && !record.beat) assert.ok(view.lines[0].step === "reponse" && view.lines[0].speaker === "{player}", `votre réplique doit suivre votre choix ${record.claimId}`);
+      if (!record.beat) assert.ok(view.lines.filter((l) => l.step === "a-vous" || l.step === "entre-eux").length <= g.BV_MAX_REACTIONS, `trop de réactions ${record.claimId}`);
+      const texts = view.lines.map((l) => l.text); if (!record.beat) assert.equal(new Set(texts).size, texts.length, `réplique doublée ${record.claimId}`);
+      for (const l of view.lines) {
+        if (l.step === "a-vous") assert.equal(l.to, "vous");
+        if (l.step === "entre-eux") assert.ok(l.to === "Bellirith" || l.to === "Valurn", `destinataire flou ${record.claimId}`);
+      }
+      assert.ok(view.declaration.to, `cible de l’affirmation absente ${record.claimId}`);
+    });
+    assert.ok(exchanges > 10000, `${exchanges} échanges`);
+    const m = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: modeRuns.complete[0], ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(!/Les verres se lèvent, ou non/u.test(m));
+  });
+  await check("BV93", "Version abrégée : 8 à 10 tours, tournant des deux côtés, révélations, gris et ivre atteints, pression au cran 4, bascule musicale", () => {
+    for (const s of modeRuns.abregee) {
+      assert.ok(s.completed && s.round >= 8 && s.round <= 10, `durée ${s.round}`);
+      for (const beat of [...g.BV_REQUIRED_BEATS, "r1b"]) assert.ok(s.beats.includes(beat), `moment clé ${beat} absent (graine ${s.seed})`);
+      assert.ok(Object.values(s.drinks).some((d) => g.bvIvresse(d, "abregee") === "ivre") && Object.values(s.drinks).some((d) => g.bvIvresse(d, "abregee") !== "sobre"), "ivresse insuffisante");
+      assert.ok(s.log.some((r, i) => r.answer && g.bvPressionLevel(s, i) === 4), `cran 4 jamais atteint (graine ${s.seed})`);
+      assert.equal(g.bvNeverMusic(s), "bv-never-tournant");
+      const before = { ...s, pivotRound: undefined }; assert.equal(g.bvNeverMusic(before), "bv-never-jeu");
+    }
+    for (const s of modeRuns.complete) assert.ok(s.completed && s.round >= 10 && s.round <= 20, `complète ${s.round}`);
+    const playerTiers = new Set(modeRuns.abregee.map((s) => g.bvIvresse(s.drinks.player, "abregee")));
+    assert.ok(playerTiers.has("gris") && playerTiers.has("ivre"), "le joueur doit pouvoir atteindre gris et ivre en version abrégée");
+    // Format choisi à l’ouverture, conservé et relu ; ancienne partie sans format = soirée complète.
+    const fresh = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: g.createBVNever(5), ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(fresh.includes("Soirée complète") && fresh.includes("Version abrégée"), "choix du format absent");
+    const old = { ...modeRuns.complete[0], completed: false }; delete old.mode;
+    const reloaded = cq.hydrateBV(JSON.parse(JSON.stringify(cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, { ...old, log: old.log.slice(0, 9), round: 4 })))).bv.never;
+    assert.ok(!reloaded.mode && g.bvBounds(reloaded).max === 20, "ancienne sauvegarde mal relue");
+    const oldView = renderToStaticMarkup(createElement(ui.BVNeverModal, { state: reloaded, ctx: ctxs[0], background: "/x.webp", format: fmt, onChange() {}, onClose() {}, onFinish() {} }));
+    assert.ok(!oldView.includes("Version abrégée"), "une partie entamée ne doit pas redemander le format");
+    const short = cq.hydrateBV(JSON.parse(JSON.stringify(cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, modeRuns.abregee[0])))).bv.never;
+    assert.equal(short.mode, "abregee");
+    const dossier = renderToStaticMarkup(createElement(ui.BVDossier, { progress: cq.bvSaveNever({ ...cq.createBVProgress(1), stage: 3 }, { ...modeRuns.abregee[1], completed: false }), day: 2, onScene() {}, onNever() {}, onIntimacy() {} }));
+    assert.ok(dossier.includes("Version abrégée"), "le Journal doit afficher le format");
+  });
+  await check("BV94", "Transitions entre les tours : une à chaque tour, jamais répétée, toutes les ambiances et amorces entendues, règles d’écriture", () => {
+    const all = [...Object.values(tr.BV_TRANSITION_LEADS).flat(), ...Object.values(tr.BV_TRANSITION_MOODS).flat()];
+    assert.equal(new Set(all).size, all.length, "phrase de transition en double dans la banque");
+    for (const t of all) { assert.ok(!STYLE_DASH.test(t) && !STYLE_CONTRAST.test(t) && !BANNED.test(t), `règle d’écriture : ${t}`); assert.ok((t.match(/[.!?…](?:\s|$)/gu) || []).length <= 2, `trop long : ${t}`); }
+    const moods = new Set(), leads = new Set();
+    for (const s of [...modeRuns.complete, ...modeRuns.abregee]) {
+      const heard = new Set();
+      for (let r = 2; r <= s.round; r++) {
+        const info = g.bvTransitionInfo(s, r);
+        assert.ok(info && info.line.text.length > 20, `transition absente au tour ${r}`);
+        const sentences = info.line.text.split(/(?<=[.!?…])\s+/u);
+        assert.ok(sentences.length >= 1 && sentences.length <= 3, `transition de ${sentences.length} phrases`);
+        for (const p of sentences) { assert.ok(!heard.has(p), `phrase de transition répétée dans la soirée : ${p}`); heard.add(p); }
+        moods.add(info.mood); if (info.lead) leads.add(info.lead);
+        if (s.mode === "abregee") assert.ok(info.mood.startsWith("court-"), "la version abrégée a ses propres ambiances");
+        else assert.ok(info.mood === `${info.after ? "apres" : "avant"}-${info.tier}`, "ambiance sans rapport avec l’ivresse ou le tournant");
+      }
+    }
+    for (const key of Object.keys(tr.BV_TRANSITION_MOODS)) assert.ok(moods.has(key), `ambiance jamais jouée : ${key}`);
+    for (const key of Object.keys(tr.BV_TRANSITION_LEADS)) assert.ok(leads.has(key), `amorce jamais jouée : ${key}`);
   });
 
   const failed = results.filter((r) => !r[2]);

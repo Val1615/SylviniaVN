@@ -73,3 +73,7 @@
 body.reduit .bv-pression-voile, body.reduit .bv-pression .bv-answers .v2-choix-carte { animation: none !important; }
 body.reduit .bv-pression-voile { opacity: .85; }
 body.reduit .bv-pression .scene-sprite { transition: none; rotate: none; translate: none; }
+
+/* Destinataire d’une réplique dans le cartouche (« · à Valurn », « · à vous »). */
+.bv-never .speaker .bv-to { font-style: italic; font-weight: 400; opacity: .78; text-transform: none; letter-spacing: 0; font-size: .82em; }
+.bv-never .bv-mode .v2-choix-carte small { opacity: .85; }

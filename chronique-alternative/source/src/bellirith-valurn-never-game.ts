@@ -1,5 +1,6 @@
 import type { DialogueLine } from "./game-data";
 import type { BVStyle } from "./bellirith-valurn-scenes";
+import { BV_TRANSITION_LEADS, BV_TRANSITION_MOODS, type BVTransitionLead, type BVTransitionMood } from "./bellirith-valurn-never-transitions";
 import {
   BV_ANSWER_GENERIC, BV_ANSWER_GENERIC_T, BV_ANSWER_REACTIONS, BV_ANSWER_REACTIONS_T, BV_PLAYER_ANSWERS, BV_PLAYER_ANSWERS_T,
   BV_PLAYER_LEADS, BV_PLAYER_LEADS_SOLEMN, BV_PLAYER_LEADS_SOLEMN_T, BV_PLAYER_LEADS_T, BV_STATEMENT_FALLOUT, BV_STATEMENT_FALLOUT_T,
@@ -8,7 +9,7 @@ import {
 } from "./bellirith-valurn-never-reactions";
 import {
   BV_NPC_CLAIMS, BV_NPC_EVENING, BV_NPC_FALLOUT, BV_PIVOT_CLAIMS, BV_PIVOT_FORCED, BV_PIVOT_SILENCE, BV_PLAYER_CLAIMS, BV_PLAYER_FALLOUT, BV_REVEAL_BEATS,
-  BV_RESULT_RETORTS, BV_SUBJECT_CLAIMS, BV_TRANSITIONS,
+  BV_SUBJECT_CLAIMS, BV_TRANSITIONS,
 } from "./bellirith-valurn-never-content";
 
 /**
@@ -126,8 +127,17 @@ export type BVNeverState = {
   completed?: boolean;
   style?: BVStyle;
   tutorialSeen?: boolean;
+  /** Format choisi à l’ouverture. Absent : pas encore choisi (ou ancienne sauvegarde en cours, lue comme soirée complète). */
+  mode?: BVMode;
 };
 
+export type BVMode = "complete" | "abregee";
+export const BV_NEVER_MODE_LABELS: Record<BVMode, string> = { complete: "Soirée complète", abregee: "Version abrégée" };
+/** Bornes de durée par format. La version abrégée garde tous les moments clés en 8 à 10 tours. */
+export function bvBounds(state: Pick<BVNeverState, "mode">) { return state.mode === "abregee" ? { min: 8, max: 10, end: 8 } : { min: BV_MIN_ROUNDS, max: BV_MAX_ROUNDS, end: BV_DEFAULT_END }; }
+
+/** Version abrégée : Bellirith force le tournant au tour 4, Valurn répond, révélations aux tours 5 à 7, dernière question au tour 8. */
+export const BV_SHORT_PIVOT = 4;
 export const BV_MIN_ROUNDS = 10;
 export const BV_MAX_ROUNDS = 20;
 export const BV_DEFAULT_END = 14;
@@ -140,8 +150,8 @@ export const BV_REQUIRED_BEATS = ["r1", ...REVEAL_ORDER, "r8"] as const;
 const zero = () => Object.fromEntries(KEYS.map((key) => [key, 0])) as Record<BVPressureKey, number>;
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-export function createBVNever(seed = 1): BVNeverState {
-  return { version: 1, seed: Math.abs(Math.trunc(seed)) || 1, round: 1, turn: 0, targetEnd: BV_DEFAULT_END, beats: [], used: [], log: [], pressure: zero(), attacks: zero(), drinks: { bellirith: 0, valurn: 0, player: 0 }, truths: [] };
+export function createBVNever(seed = 1, mode?: BVMode): BVNeverState {
+  return { version: 1, seed: Math.abs(Math.trunc(seed)) || 1, round: 1, turn: 0, targetEnd: bvBounds({ mode }).end, ...(mode ? { mode } : {}), beats: [], used: [], log: [], pressure: zero(), attacks: zero(), drinks: { bellirith: 0, valurn: 0, player: 0 }, truths: [] };
 }
 
 /** Graine stable : dérivée du jour et de l’historique, jamais de Math.random(). */
@@ -177,6 +187,7 @@ export function bvPhase(state: BVNeverState, round = state.round): BVPhase {
 
 /** Le moment pivot est jouable par le joueur à partir de ce tour. */
 function pivotWindowOpen(state: BVNeverState) {
+  if (state.mode === "abregee") return false;
   return state.pivotRound === undefined && state.round >= Math.max(5, state.targetEnd - 6) && state.round <= state.targetEnd - 4;
 }
 
@@ -185,7 +196,7 @@ export function bvScheduledBeat(state: BVNeverState): BVBeat["id"] | "r8" | unde
   const p = state.pivotRound;
   const actor = bvActorAt(state);
   if (p === undefined) {
-    if (actor === "bellirith" && state.round >= state.targetEnd - 4) return "r1";
+    if (actor === "bellirith" && state.round >= (state.mode === "abregee" ? BV_SHORT_PIVOT : state.targetEnd - 4)) return "r1";
     return undefined;
   }
   const forced = state.log.find((entry) => entry.beat === "r1")?.speaker === "bellirith";
@@ -232,8 +243,9 @@ function advance(state: BVNeverState): BVNeverState {
   if (turn === 0) {
     const done = round - 1;
     const beatsDone = BV_REQUIRED_BEATS.every((beat) => next.beats.includes(beat));
-    if (beatsDone && done >= next.targetEnd && done >= BV_MIN_ROUNDS) next = finish({ ...next, round: done, turn: 2 });
-    else if (done >= BV_MAX_ROUNDS) next = finish({ ...next, round: done, turn: 2 });
+    const { min, max } = bvBounds(next);
+    if (beatsDone && done >= next.targetEnd && done >= min) next = finish({ ...next, round: done, turn: 2 });
+    else if (done >= max) next = finish({ ...next, round: done, turn: 2 });
   }
   return next;
 }
@@ -246,8 +258,9 @@ function finish(state: BVNeverState): BVNeverState {
 function retarget(state: BVNeverState, delta: number): BVNeverState {
   const p = state.pivotRound;
   let end = state.targetEnd + delta;
-  if (p === undefined) end = clamp(end, Math.max(BV_MIN_ROUNDS, state.round + 4), BV_MAX_ROUNDS);
-  else end = clamp(end, Math.max(BV_MIN_ROUNDS, p + 4), Math.min(BV_MAX_ROUNDS, p + 6));
+  const { min, max } = bvBounds(state);
+  if (p === undefined) end = clamp(end, Math.max(min, state.round + 4), max);
+  else end = clamp(end, Math.max(min, p + 4), Math.min(max, p + 6));
   return { ...state, targetEnd: end };
 }
 
@@ -275,6 +288,12 @@ export function bvPlanNpc(state: BVNeverState, ctx: BVTruthCtx): { targets: BVAc
   const weight = (target: BVActor) => 3 + state.pressure[`${speaker}>${target}` as BVPressureKey] * 2 + (phase === "piques" && target === other ? 2 : 0);
   const ordered = [pickWeighted(targets, weight, rnd(state, 1))!, ...targets].filter((t, i, all) => all.indexOf(t) === i);
   const banks = phase === "retombee" ? [BV_NPC_FALLOUT, BV_NPC_EVENING, BV_NPC_CLAIMS] : [BV_NPC_EVENING, BV_NPC_CLAIMS];
+  // Version abrégée : au dernier tour, Bellirith vous pose la question qui reste (aveu volontaire).
+  if (state.mode === "abregee" && state.pivotRound !== undefined && state.round > state.pivotRound + 3 && speaker === "bellirith") {
+    const asks = [...BV_NPC_EVENING, ...BV_NPC_FALLOUT, ...BV_NPC_CLAIMS].filter((claim) => claim.speaker === speaker && claim.target === "player" && claim.truth.player === "ask" && eligible(claim, state, ctx));
+    const best = asks.sort((a, b) => b.tier - a.tier)[0];
+    if (best) return { targets, target: "player", tier: best.tier, claim: best };
+  }
   for (const target of ordered) {
     const tier = tierFor(state, speaker, target);
     for (const bank of banks) {
@@ -408,46 +427,90 @@ export function bvPlayerTurn(state: BVNeverState, claimId: string, ctx: BVTruthC
 
 const NAMES: Record<BVActor, string> = { bellirith: "Bellirith", valurn: "Valurn", player: "{player}" };
 
+/** Étapes d’un échange, toujours dans cet ordre : votre réplique, qui boit, réactions qui vous sont adressées, échanges entre eux, geste final. */
+export const BV_STEPS = ["reponse", "verres", "a-vous", "entre-eux", "geste"] as const;
+export type BVStep = typeof BV_STEPS[number];
+export type BVViewLine = DialogueLine & { step: BVStep; to?: string };
+/** Au plus trois répliques de personnages après le verdict des verres (hors moments clés écrits d’un bloc). */
+export const BV_MAX_REACTIONS = 3;
+
 export type BVRecordView = {
   record: BVTurnRecord;
-  declaration: DialogueLine;
-  lines: DialogueLine[];
+  declaration: DialogueLine & { to?: string };
+  lines: BVViewLine[];
   /** Explication visible quand le moteur fait boire le joueur. */
   playerReason?: string;
   ask?: string;
 };
 
+const ADDRESSED_TO_PLAYER = /\b(?:vous|votre|vos)\b|\{player\}/iu;
+const TARGET_NAME = (target: BVActor | "none") => target === "none" ? "la table" : target === "player" ? "vous" : NAMES[target];
+const isNarration = (line: DialogueLine) => line.speaker === "Narration";
+const otherOf = (speaker: string) => speaker === "Bellirith" ? "Valurn" : speaker === "Valurn" ? "Bellirith" : undefined;
+
+function drinkLine(record: BVTurnRecord, authored?: DialogueLine): BVViewLine {
+  const d = record.drinkers;
+  const npcs = (["bellirith", "valurn"] as BVNpc[]).filter((who) => d.includes(who)).map((who) => NAMES[who]);
+  const playerPart = d.includes("player") ? (npcs.length ? "Vous buvez aussi." : "Vous êtes seul à boire.") : "Votre verre reste plein.";
+  if (authored && !ADDRESSED_TO_PLAYER.test(authored.text)) return { ...authored, step: "verres", text: `${authored.text} ${playerPart}` };
+  if (authored) return { ...authored, step: "verres" };
+  const npcPart = npcs.length === 2 ? "Bellirith et Valurn boivent." : npcs.length === 1 ? `${npcs[0]} boit.` : d.includes("player") ? "" : "Personne ne boit.";
+  return { speaker: "Narration", step: "verres", text: [npcPart, playerPart].filter(Boolean).join(" ") };
+}
+
+/** Assemble un échange ordinaire dans l’ordre fixe. */
+function orderExchange(record: BVTurnRecord, playerLine: DialogueLine | undefined, authored: DialogueLine[], toPlayer: DialogueLine[], playerTo: string): BVViewLine[] {
+  const lines: BVViewLine[] = [];
+  if (playerLine) lines.push({ ...playerLine, step: "reponse", to: playerTo });
+  const lead = authored[0] && isNarration(authored[0]) ? authored[0] : undefined;
+  lines.push(drinkLine(record, lead));
+  const rest = lead ? authored.slice(1) : authored;
+  const said = rest.filter((line) => !isNarration(line));
+  const gesture = rest.filter(isNarration).slice(-1);
+  const mine = [...toPlayer, ...said.filter((line) => ADDRESSED_TO_PLAYER.test(line.text))];
+  const theirs = said.filter((line) => !ADDRESSED_TO_PLAYER.test(line.text));
+  const seen = new Set<string>();
+  let budget = BV_MAX_REACTIONS;
+  for (const line of mine) { if (budget <= 0 || seen.has(line.text)) continue; seen.add(line.text); budget--; lines.push({ ...line, step: "a-vous", to: "vous" }); }
+  for (const line of theirs) { if (budget <= 0 || seen.has(line.text)) continue; seen.add(line.text); budget--; lines.push({ ...line, step: "entre-eux", to: otherOf(line.speaker) }); }
+  for (const line of gesture) lines.push({ ...line, step: "geste" });
+  return lines;
+}
+
 export function bvRecordView(state: BVNeverState, index: number): BVRecordView | undefined {
   const record = state.log[index];
   if (!record) return undefined;
   if (record.beat && record.speaker !== "player") {
+    // Moments clés (tournant, révélations) : texte écrit d’un bloc, gardé intact ; seul le verdict des verres passe en tête.
     const data = record.beat === "r1" ? BV_PIVOT_FORCED : record.beat === "r1b" ? BV_PIVOT_SILENCE : BV_REVEAL_BEATS[record.beat as Exclude<BVBeat["id"], "r1" | "r1b">];
-    return { record, declaration: { speaker: NAMES[record.speaker], text: data.text, mood: data.mood }, lines: data.lines };
+    // Le récit des moments clés reste dans l’ordre écrit (révélations) ; le verdict des verres passe toujours en tête.
+    const lead = data.lines[0] && isNarration(data.lines[0]) ? data.lines[0] : undefined;
+    const rest = (lead ? data.lines.slice(1) : data.lines).map((line): BVViewLine => isNarration(line) ? { ...line, step: "geste" } : ADDRESSED_TO_PLAYER.test(line.text) ? { ...line, step: "a-vous", to: "vous" } : { ...line, step: "entre-eux", to: otherOf(line.speaker) });
+    return { record, declaration: { speaker: NAMES[record.speaker], text: data.text, mood: data.mood, to: TARGET_NAME(record.target) }, lines: [drinkLine(record, lead), ...rest] };
   }
   if (record.speaker === "player") {
     const claim = bvFindPlayerClaim(record.claimId);
     if (!claim) return undefined;
     const choice = bvChoiceLines(state, index);
-    const lines = [...choice.before, ...claim.lines, ...(record.drinkers.includes("player") && claim.ifPlayerDrinks ? claim.ifPlayerDrinks : []), ...choice.after, ...retort(state, index, record)];
-    return { record, declaration: { speaker: NAMES.player, text: claim.text }, lines, playerReason: record.playerComputed ? claim.why : undefined };
+    const toPlayer = record.drinkers.includes("player") && claim.ifPlayerDrinks?.length ? [claim.ifPlayerDrinks[0]] : choice.after.slice(0, 1);
+    const lines = orderExchange(record, choice.before[0], claim.lines, toPlayer, TARGET_NAME(claim.target));
+    return { record, declaration: { speaker: NAMES.player, text: claim.text, to: TARGET_NAME(claim.target) }, lines, playerReason: record.playerComputed ? claim.why : undefined };
   }
   const claim = bvFindNpcClaim(record.claimId);
   if (!claim) return { record, declaration: { speaker: NAMES[record.speaker], text: "…", mood: "neutral" }, lines: [] };
-  const drank = record.drinkers.includes("player");
-  const extra = drank ? claim.ifPlayerDrinks || [] : claim.ifPlayerDry || [];
+  const asked = claim.truth.player === "ask";
   const choice = record.answer ? bvChoiceLines(state, index) : { before: [], after: [] };
+  const extra = record.drinkers.includes("player") ? claim.ifPlayerDrinks || [] : claim.ifPlayerDry || [];
+  const toPlayer = record.answer ? choice.after.slice(0, 1) : asked ? [] : extra.slice(0, 1);
   return {
-    record, declaration: { speaker: NAMES[record.speaker], text: claim.text, mood: claim.mood },
-    lines: [...choice.before, ...claim.lines, ...(record.answer || record.playerComputed !== undefined || claim.truth.player !== "ask" ? extra : []), ...choice.after, ...retort(state, index, record)],
+    record, declaration: { speaker: NAMES[record.speaker], text: claim.text, mood: claim.mood, to: TARGET_NAME(claim.target) },
+    lines: orderExchange(record, choice.before[0], claim.lines, toPlayer, NAMES[record.speaker]),
     playerReason: record.playerComputed ? claim.why : undefined,
-    ask: claim.truth.player === "ask" ? claim.ask || "Reconnaître, nier ou esquiver ?" : undefined,
+    ask: asked ? claim.ask || "Reconnaître, nier ou esquiver ?" : undefined,
   };
 }
 
-function resultKey(drinkers: BVActor[]) {
-  const set = new Set(drinkers);
-  return (["bellirith", "valurn", "player"] as BVActor[]).filter((actor) => set.has(actor)).map((actor) => actor[0]).join("") || "none";
-}
+
 
 /* ------------------------------------------------------------------------ */
 /* Ivresse et répliques de choix                                             */
@@ -457,7 +520,12 @@ function resultKey(drinkers: BVActor[]) {
 export const BV_IVRESSE_GRIS = 3;
 export const BV_IVRESSE_IVRE = 6;
 export const BV_IVRESSE_MAX = 8;
-export function bvIvresse(drinks: number): BVIvresse { return drinks >= BV_IVRESSE_IVRE ? "ivre" : drinks >= BV_IVRESSE_GRIS ? "gris" : "sobre"; }
+export function bvIvresse(drinks: number, mode?: BVMode): BVIvresse {
+  const t = bvIvresseSeuils(mode);
+  return drinks >= t.ivre ? "ivre" : drinks >= t.gris ? "gris" : "sobre";
+}
+/** La version abrégée compte moins de tours : les seuils sont ramenés à proportion (gris 2, ivre 4, jauge 5). */
+export function bvIvresseSeuils(mode?: BVMode) { return mode === "abregee" ? { gris: 2, ivre: 4, max: 5 } : { gris: BV_IVRESSE_GRIS, ivre: BV_IVRESSE_IVRE, max: BV_IVRESSE_MAX }; }
 
 /** Verres bus par chacun jusqu’à l’intervention `index` incluse. */
 export function bvDrinksAt(state: BVNeverState, index: number): Record<BVActor, number> {
@@ -476,8 +544,11 @@ export function bvPressionLevel(state: BVNeverState, index: number): number {
   const claim = bvFindNpcClaim(record.claimId);
   if (!claim) return 0;
   const after = state.pivotRound !== undefined && record.round > state.pivotRound;
-  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker]) === "ivre";
-  return Math.min(BV_PRESSION_MAX, 1 + claim.tier + (after || drunk ? 1 : 0));
+  const drunk = bvIvresse(bvDrinksAt(state, index)[record.speaker], state.mode) === "ivre";
+  const base = 1 + claim.tier + (after || drunk ? 1 : 0);
+  // Version abrégée : la dernière question, après les révélations, presse au maximum.
+  if (state.mode === "abregee" && state.pivotRound !== undefined && record.round > state.pivotRound + 3) return BV_PRESSION_MAX;
+  return Math.min(BV_PRESSION_MAX, base);
 }
 
 export type BVChoiceLines = { before: DialogueLine[]; after: DialogueLine[] };
@@ -509,7 +580,7 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
   const none: BVChoiceLines = { before: [], after: [] };
   if (!record) return none;
   const drinks = bvDrinksAt(state, index);
-  const lvl = (actor: BVActor) => bvIvresse(drinks[actor]);
+  const lvl = (actor: BVActor) => bvIvresse(drinks[actor], state.mode);
   const seed = state.seed, round = record.round;
   const npcs: BVNpc[] = ["bellirith", "valurn"];
   if (record.speaker === "player") {
@@ -539,7 +610,7 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
       // Le thème ne passe en premier qu’une fois sur deux, pour que l’issue (boire ou non) reste audible.
       const ordered = !solemn && hashKey(seed, round, `theme-${npc}`) % 2 ? groups.slice().sort((a, b) => Number(isTheme(a, npc, claim.theme)) - Number(isTheme(b, npc, claim.theme))) : groups;
       const line = draw(ordered, used, seed, round, `react-${npc}`);
-      if (line) after.push(line);
+      if (line) { after.push(line); break; }
     }
     return { before: lead ? [lead] : [], after };
   }
@@ -553,6 +624,7 @@ function choiceLinesFor(state: BVNeverState, index: number, used: Set<string>): 
       if (npc === other && hashKey(seed, round, `answer-other-${npc}`) % 5 >= 3) continue;
       const level = lvl(npc);
       const role = npc === asker ? "asker" : "other";
+      if (after.length) break;
       const line = draw([...tiered(BV_ANSWER_REACTIONS[npc][role][answer], BV_ANSWER_REACTIONS_T[npc][role][answer], level), ...tiered(BV_ANSWER_GENERIC[npc], BV_ANSWER_GENERIC_T[npc], level)], used, seed, round, `answer-${npc}`);
       if (line) after.push(line);
     }
@@ -572,23 +644,50 @@ export function bvChoiceLines(state: BVNeverState, index: number): BVChoiceLines
   return result;
 }
 
-/** Réplique de résultat : seulement quand le résultat surprend (personne, tout le monde, ou l’auteur qui boit). */
-function retort(state: BVNeverState, index: number, record: BVTurnRecord): DialogueLine[] {
-  const unexpected = record.drinkers.length === 0 || record.drinkers.length === 3 || record.drinkers.includes(record.speaker)
-    || (record.target !== "none" && record.drinkers.length > 0 && !record.drinkers.includes(record.target));
-  if (!unexpected || record.beat) return [];
-  const pool = BV_RESULT_RETORTS[resultKey(record.drinkers)] || [];
-  if (!pool.length) return [];
-  const used = state.log.slice(0, index).filter((entry) => resultKey(entry.drinkers) === resultKey(record.drinkers)).length;
-  return [pool[used % pool.length]];
-}
 
-/** Transition d’ambiance au début d’un tour de table (aucun tour consommé). */
-export function bvTransition(state: BVNeverState, round = state.round): DialogueLine | undefined {
+/** Passage entre deux tours : ce qui vient de se passer (réponse, pression, qui a bu), puis l’ambiance
+ * (avant ou après le tournant, ivresse de la table ; version abrégée à part). Aucune phrase répétée dans la soirée. */
+export type BVTransitionInfo = { line: DialogueLine; lead?: BVTransitionLead; mood: BVTransitionMood | BVPhase; tier: BVIvresse; after: boolean };
+export function bvTransitionInfo(state: BVNeverState, round = state.round): BVTransitionInfo | undefined {
   if (round <= 1) return undefined;
-  const phase = bvPhase(state, round);
-  const pool = BV_TRANSITIONS[phase];
-  return pool[(round * 3 + state.seed) % pool.length];
+  const used = new Set<string>();
+  let info: BVTransitionInfo | undefined;
+  for (let r = 2; r <= round; r++) info = transitionFor(state, r, used);
+  return info;
+}
+export function bvTransition(state: BVNeverState, round = state.round): DialogueLine | undefined { return bvTransitionInfo(state, round)?.line; }
+
+function transitionFor(state: BVNeverState, round: number, used: Set<string>): BVTransitionInfo {
+  const prevIndex = state.log.map((entry) => entry.round).lastIndexOf(round - 1);
+  const prev = state.log.filter((entry) => entry.round === round - 1);
+  const drinks = bvDrinksAt(state, prevIndex);
+  const levels = (["bellirith", "valurn", "player"] as BVActor[]).map((actor) => bvIvresse(drinks[actor], state.mode));
+  // L’ambiance suit votre propre ivresse : la narration est à votre hauteur.
+  const tier: BVIvresse = levels[2];
+  const after = state.pivotRound !== undefined && state.pivotRound < round;
+  const answered = [...prev].reverse().find((entry) => entry.answer);
+  const last = prev[prev.length - 1];
+  let lead: BVTransitionLead | undefined;
+  if (answered) lead = bvPressionLevel(state, state.log.indexOf(answered)) >= 3 ? "pression" : `answer-${answered.answer!}` as BVTransitionLead;
+  else if (last) {
+    const d = last.drinkers;
+    lead = d.length === 3 ? "drank-all" : !d.length ? "drank-none" : d.includes("player") ? "drank-player" : d.includes("bellirith") ? "drank-bellirith" : "drank-valurn";
+  }
+  const pick = (pools: string[][], salt: string) => {
+    for (const [i, pool] of pools.entries()) {
+      const start = pool.length ? hashKey(state.seed, round, `${salt}:${i}`) % pool.length : 0;
+      for (let k = 0; k < pool.length; k++) { const text = pool[(start + k) % pool.length]; if (!used.has(text)) { used.add(text); return text; } }
+    }
+    return undefined;
+  };
+  const leadText = lead ? pick([BV_TRANSITION_LEADS[lead], ...Object.values(BV_TRANSITION_LEADS)], "lead") : undefined;
+  const side = after ? "apres" : "avant";
+  const tierMood = `${side}-${tier}` as BVTransitionMood;
+  const moodKey: BVTransitionMood = state.mode === "abregee" ? `court-${side}` as BVTransitionMood : tierMood;
+  const order: BVTransitionMood[] = [moodKey, tierMood, ...(["sobre", "gris", "ivre"] as BVIvresse[]).map((t) => `${side}-${t}` as BVTransitionMood)];
+  const moodText = pick([...order.map((key) => BV_TRANSITION_MOODS[key]), BV_TRANSITIONS[bvPhase(state, round)].map((line) => line.text), ...Object.values(BV_TRANSITIONS).map((pool) => pool.map((line) => line.text))], "mood");
+  const text = [leadText, moodText].filter(Boolean).join(" ");
+  return { line: { speaker: "Narration", text }, lead, mood: moodKey, tier, after };
 }
 
 /* ------------------------------------------------------------------------ */
@@ -627,11 +726,12 @@ export function bvHydrateNever(raw: unknown): BVNeverState | undefined {
   const num = (value: unknown, fallback: number) => Number.isFinite(Number(value)) ? Number(value) : fallback;
   const keyed = (value: unknown) => Object.fromEntries(KEYS.map((key) => [key, Math.max(0, num((value as Record<string, unknown> | undefined)?.[key], 0))])) as Record<BVPressureKey, number>;
   const log = Array.isArray(source.log) ? source.log.filter((entry): entry is BVTurnRecord => Boolean(entry && typeof entry === "object" && typeof (entry as BVTurnRecord).claimId === "string" && ORDER.includes((entry as BVTurnRecord).speaker))) : [];
+  const mode = source.mode === "complete" || source.mode === "abregee" ? { mode: source.mode } : {};
   const state: BVNeverState = {
-    ...base,
-    round: clamp(Math.trunc(num(source.round, 1)), 1, BV_MAX_ROUNDS),
+    ...base, ...mode,
+    round: clamp(Math.trunc(num(source.round, 1)), 1, bvBounds(mode).max),
     turn: ([0, 1, 2].includes(Number(source.turn)) ? Number(source.turn) : 0) as 0 | 1 | 2,
-    targetEnd: clamp(Math.trunc(num(source.targetEnd, BV_DEFAULT_END)), BV_MIN_ROUNDS, BV_MAX_ROUNDS),
+    targetEnd: clamp(Math.trunc(num(source.targetEnd, bvBounds(mode).end)), bvBounds(mode).min, bvBounds(mode).max),
     pivotRound: Number.isInteger(source.pivotRound) ? source.pivotRound : undefined,
     beats: Array.isArray(source.beats) ? source.beats.filter((beat) => typeof beat === "string") : [],
     used: Array.isArray(source.used) ? source.used.filter((id) => typeof id === "string") : [],
