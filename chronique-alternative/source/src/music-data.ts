@@ -107,6 +107,8 @@ export const MUSIC_LABELS: Record<string, string> = {
   "iriana-valurn-confessions": "Un vent de confessions — Iriana et Valurn",
   "valurn-memory": "Mémoire de Valurn",
   "midnight-waltz": "Midnight Waltz",
+  "bv-never-jeu": "Je n’ai jamais (jeu)",
+  "bv-never-tournant": "Je n’ai jamais (jeu final)",
   "dune-relay": "Les Tzekarii",
   intimate: "Une nuit sous tes étoiles — intime",
   "alpha-chases": "Alpha Chases",

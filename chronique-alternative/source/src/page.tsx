@@ -162,7 +162,7 @@ import { BN_ANOMALY_ROUND, BN_GAME_RELATION_BONUS, bnGameAtRound, bnGameResult, 
 import { BN_INTIMACY_SCENES } from "./bellirith-naiah-intimacy";
 import { BNDossier, BNMinigameModal, BNIntimacyModal, BNDevBlock } from "./bellirith-naiah-ui";
 import { BV_KEY, BV_DATE_ID, BV_STAGE_TOTAL, BV_TITLES, BV_INTIMACY_EFFECTS, BV_ALL_FLAG_PREFIXES, BV_MAIN_SCENES, bvUnlocked, bvUnlockChecks, createBVProgress, hydrateBV, bvAvailableScenes, finishBVScene, bvSaveNever, bvCompleteNever, finishBVIntimacy, bvPendingIntimacy, bvFlags, bvScene, type BVIntimacyId } from "./bellirith-valurn-cross-quest";
-import { createBVNever, bvSeedFor, bvNeverStyleFlags, bvComputeStyle, type BVNeverState, type BVTruthCtx } from "./bellirith-valurn-never-game";
+import { createBVNever, bvNeverMusic, BV_NEVER_MUSIC, BV_NEVER_CROSSFADE_MS, bvSeedFor, bvNeverStyleFlags, bvComputeStyle, type BVNeverState, type BVTruthCtx } from "./bellirith-valurn-never-game";
 import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
 import { BVDossier, BVNeverModal, BVIntimacyModal, BVDevBlock } from "./bellirith-valurn-ui";
 import { createHyleeSearch, type HyleeSearchState, type MotherOutcome } from "./hylee-search";
@@ -2094,6 +2094,10 @@ export default function Home() {
   const [jobState, setJobState] = useState<JobState | null>(null);
   const [notifications, setNotifications] = useState<ChronicleNotification[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const fadeRef = useRef<HTMLAudioElement>(null);
+  const lastTrackRef = useRef<string | null>(null);
+  const [fadingTrack, setFadingTrack] = useState<string | null>(null);
+  const [currentSoundtrack, setCurrentSoundtrack] = useState("");
   /** Silence partiel de la manche « SIGNAL HORS ÉCHELLE » (Les Trois Réponses). */
   const [bnDuck, setBNDuck] = useState(false);
   const previousGameRef = useRef<GameState | null>(null);
@@ -2355,6 +2359,26 @@ export default function Home() {
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = audioVolume / 100 * (bnDuck ? 0.15 : 1);
   }, [audioVolume, bnDuck]);
+
+  /** Fondu enchaîné entre deux pistes quand l’une d’elles appartient à « Je n’ai jamais » (entrée dans la soirée, tournant). */
+  useEffect(() => {
+    const previous = lastTrackRef.current; lastTrackRef.current = currentSoundtrack;
+    if (!previous || previous === currentSoundtrack) return;
+    const ours = (id: string) => id === BV_NEVER_MUSIC.jeu || id === BV_NEVER_MUSIC.tournant;
+    if (!ours(previous) && !ours(currentSoundtrack)) return;
+    setFadingTrack(previous);
+  }, [currentSoundtrack]);
+  useEffect(() => {
+    if (!fadingTrack) return;
+    const target = audioVolume / 100 * (bnDuck ? 0.15 : 1), start = performance.now(), length = BV_NEVER_CROSSFADE_MS;
+    const timer = window.setInterval(() => {
+      const t = Math.min(1, (performance.now() - start) / length);
+      if (fadeRef.current) fadeRef.current.volume = target * (1 - t);
+      if (audioRef.current) audioRef.current.volume = target * t;
+      if (t >= 1) { window.clearInterval(timer); setFadingTrack(null); }
+    }, 50);
+    return () => window.clearInterval(timer);
+  }, [fadingTrack]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (modal?.kind !== "bn-minigame") setBNDuck(false);
@@ -5211,9 +5235,10 @@ export default function Home() {
     .slice(0, 4);
   const spontaneousEvent = availableSpontaneousEvent(game);
   const localRumor = availableRumor(game);
-  const soundtrack = modal?.kind === "bv-never" ? "midnight-waltz" : modal?.kind === "bv-intimacy" ? bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).music : modal?.kind === "valurn-market" ? "capital-market" : modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
+  const soundtrack = modal?.kind === "bv-never" ? bvNeverMusic(modal.replay ? modal.state : game.crossQuestSeries[BV_KEY]?.bv?.never) : modal?.kind === "bv-intimacy" ? bvIntimacyScene(modal.id.slice(3) as "a" | "b" | "c", game.player.sex).music : modal?.kind === "valurn-market" ? "capital-market" : modal?.kind === "bn-minigame" ? "infernal-trade" : modal?.kind === "bn-intimacy" ? BN_INTIMACY_SCENES[modal.id].music : modal?.kind === "hylee-search" ? "forbidden" : modal?.kind === "anchor-operation" ? "serres-operation" : dialogue?.scene.music ? dialogue.scene.music : modal?.kind === "alpha-hunt"
     ? "alpha-chases"
     : musicForContext(game.spot, { locationId: game.location, intimacy: modal?.kind === "intimacy" || modal?.kind === "group-intimacy", prologue: dialogue?.scene.kind === "intro" });
+  if (soundtrack !== currentSoundtrack) setCurrentSoundtrack(soundtrack);
   const soundtrackLabel = MUSIC_LABELS[soundtrack] || "Musique de Sylvinia";
   const anchorModalState = modal?.kind === "anchor-operation"
     ? modal.replay ? modal.state : game.crossQuestSeries[HR_KEY]?.hr?.anchor
@@ -5261,7 +5286,8 @@ export default function Home() {
   return (
     <>
       {commonLayers}
-      {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = audioVolume / 100 * (bnDuck ? 0.15 : 1); }} autoPlay loop />}
+      {game.settings.music && fadingTrack && <audio key={`fade-${fadingTrack}`} ref={fadeRef} src={`/assets/audio/${fadingTrack}.mp3`} autoPlay loop />}
+      {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = fadingTrack ? 0 : audioVolume / 100 * (bnDuck ? 0.15 : 1); }} autoPlay loop />}
       <div className={`v2 v2-root jeu ${V2_PERIOD_CLASSES[game.period] || ""} ${sceneActive ? "scene-active" : ""}`} data-scene={sceneName} inert={sceneActive || undefined}>
         <V2Fond src={background} flou={v2Tab !== "place"} />
         <div className="eclairage" aria-hidden="true" />
