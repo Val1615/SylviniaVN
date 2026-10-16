@@ -8,6 +8,7 @@ import "./ui/v2/v2-fenetres.css";
 import "./hylee-naiah.css";
 import "./bellirith-naiah.css";
 import "./bellirith-valurn.css";
+import "./allenna-naiah.css";
 import "./valurn.css";
 import "./minigame-scene.css";
 import "./calendar.css";
