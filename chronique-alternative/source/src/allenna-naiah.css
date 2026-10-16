@@ -1,0 +1,77 @@
+/* Quête croisée Allenna × Naïah : enquête « Les fils sous la cendre », dossier et extensions.
+   Panneaux translucides qui laissent respirer le décor ; aucune image explicite. */
+
+.an-mini { position: fixed; inset: 0; z-index: 60; display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; gap: .45rem; padding: 0 0 .7rem; background-size: cover; background-position: center; outline: none; overflow: hidden; }
+.an-mini .scene-top { position: relative; }
+.an-mini .scene-outils { align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+.an-mini .scene-top { display: flex; flex-wrap: wrap; gap: .4rem; padding-right: .6rem; box-sizing: border-box; max-width: 100%; }
+.an-mini .scene-outils { min-width: 0; flex: 1 1 auto; }
+.an-mini .scene-outil { padding-inline: .7rem; font-size: .82em; }
+.an-ops { display: inline-flex; align-items: center; min-height: calc(28px * var(--echelle, 1)); padding: 0 .7rem; border-radius: 999px; background: rgba(10, 9, 18, .42); backdrop-filter: blur(4px); color: var(--or-pale, #f1dcaa); font: 600 .74em/1 var(--display, serif); letter-spacing: .1em; }
+
+.an-chain { display: flex; justify-content: center; flex-wrap: wrap; gap: .2rem .4rem; margin: 0 auto; padding: 0; list-style: none; }
+.an-chain li { padding: .15rem .6rem; border-radius: 999px; background: rgba(10, 9, 18, .38); color: rgba(239, 230, 214, .55); font: 600 .7em/1.2 var(--display, serif); letter-spacing: .12em; text-transform: uppercase; }
+.an-chain li + li::before { content: "→ "; opacity: .5; }
+.an-chain li.on { color: #f3e4b8; background: rgba(60, 46, 90, .55); box-shadow: 0 0 10px rgba(143, 111, 209, .35); }
+
+.an-tabs { display: none; justify-content: center; gap: .3rem; }
+.an-tabs button { padding: .3rem .9rem; border: 1px solid rgba(216, 189, 120, .35); background: rgba(8, 8, 16, .5); color: var(--texte-2, #cfc3b0); font: 700 .72em var(--display, serif); letter-spacing: .1em; text-transform: uppercase; }
+.an-tabs button.on { color: #fff6dc; border-color: var(--or, #d8bd78); background: rgba(40, 32, 60, .7); }
+
+.an-board { min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; padding: 0 max(1rem, 2vw); overflow: hidden; }
+.an-col { min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: .4rem; padding: .5rem; background: linear-gradient(170deg, rgba(22, 20, 38, .4), rgba(8, 8, 16, .5)); backdrop-filter: blur(5px); border-top: 1px solid rgba(216, 189, 120, .45); }
+.an-col[data-domain="trace"] { border-top-color: rgba(143, 111, 209, .7); }
+.an-col[data-domain="registre"] { border-top-color: rgba(95, 154, 114, .7); }
+.an-col[data-domain="chemin"] { border-top-color: rgba(216, 189, 120, .7); }
+.an-clue { display: grid; gap: .15rem; text-align: left; padding: .45rem .6rem; border: 1px solid rgba(216, 189, 120, .2); background: rgba(8, 8, 16, .45); color: var(--texte, #efe6d6); cursor: pointer; transition: border-color .2s, box-shadow .2s, transform .2s; }
+.an-clue strong { font: 700 .86em/1.2 var(--display, serif); color: #f3e4b8; }
+.an-clue small { font: .8em/1.35 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.an-clue em { justify-self: end; font: italic .72em var(--v2-serif, serif); color: var(--or, #d8bd78); }
+.an-clue.sel { border-color: var(--or-vif, #f3d48a); box-shadow: 0 0 14px rgba(216, 189, 120, .35); transform: translateX(3px); }
+.an-clue.locked { cursor: default; opacity: .35; text-align: center; }
+.an-clue:focus-visible, .an-claim:focus-visible { outline: 2px solid var(--or-vif, #f3d48a); outline-offset: 2px; }
+
+.an-bench.mg-panel { position: relative; margin: 0 max(1rem, 2vw); animation: none; max-height: 38dvh; overflow-y: auto; }
+.an-claims { display: flex; flex-wrap: wrap; gap: .3rem; margin: .35rem 0; }
+.an-claim { padding: .3rem .75rem; border: 1px solid rgba(216, 189, 120, .35); border-radius: 999px; background: rgba(8, 8, 16, .5); color: var(--texte, #efe6d6); font: .82em var(--v2-serif, serif); cursor: pointer; }
+.an-claim.sel { border-color: var(--or-vif, #f3d48a); background: rgba(60, 46, 90, .6); color: #fff6dc; }
+.an-claim.done { border-style: dashed; opacity: .7; }
+.an-propose { margin-top: .2rem; }
+.an-result.confirmed strong { color: #9fd3a7; }
+.an-result.incomplete strong { color: #e8c77a; }
+.an-result.contradicted strong { color: #f0a3b2; }
+.an-hint strong { color: #c6b3f0; }
+.an-summary-grid, .an-piece-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; margin: .4rem 0 .6rem; font: .84em/1.35 var(--v2-serif, serif); }
+.an-summary-grid ul, .an-piece-grid ul { margin: .2rem 0 0; padding-left: 1rem; }
+.an-tuto.mg-panel { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(32rem, calc(100% - 2rem)); max-height: 82dvh; overflow: auto; z-index: 30; background: linear-gradient(170deg, rgba(22, 20, 38, .92), rgba(8, 8, 16, .95)); font: .9em/1.45 var(--v2-serif, serif); }
+
+/* Fold déplié paysage (830×525) et hauteurs courtes : densité accrue. */
+@media (max-height: 600px) {
+  .an-mini { gap: .25rem; padding-bottom: .4rem; }
+  .an-mini .scene-top h2 { font-size: 1.05em; }
+  .an-chain li { font-size: .6em; padding: .1rem .45rem; }
+  .an-clue { padding: .3rem .45rem; }
+  .an-clue small { font-size: .74em; }
+  .an-bench.mg-panel { max-height: 34dvh; padding: .35rem .7rem; }
+}
+/* Portrait (880×1024) et écrans étroits : un domaine à la fois. */
+@media (orientation: portrait), (max-width: 760px) {
+  .an-tabs { display: flex; }
+  .an-board { grid-template-columns: minmax(0, 1fr); }
+  .an-col { display: none; }
+  .an-col.on { display: flex; }
+  .an-summary-grid, .an-piece-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Dossier */
+.an-dossier .an-wait { margin: .4rem 0 0; font: italic .86em/1.4 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.an-piece { margin: .6rem 0; padding: .7rem .9rem; border-left: 3px solid rgba(143, 111, 209, .7); background: rgba(16, 14, 28, .45); }
+.an-piece h4 { margin: .1rem 0 .2rem; font: 700 1em var(--display, serif); color: #f3e4b8; }
+.an-piece-ref { margin: 0; font: italic .8em var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.an-piece blockquote { margin: .4rem 0; font: italic .95em/1.45 var(--v2-serif, serif); }
+.an-piece-rune, .an-piece-recall, .an-bond { font: .84em/1.4 var(--v2-serif, serif); color: var(--texte-2, #cfc3b0); }
+.an-notes { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .45rem; }
+.an-notes li p { margin: .15rem 0 0; font: italic .9em/1.4 var(--v2-serif, serif); }
+
+/* Extensions : deux silhouettes habillées, jamais d’image explicite. */
+.an-intimacy .group-intimacy-sprite img { filter: drop-shadow(0 0 18px rgba(0, 0, 0, .55)); }
