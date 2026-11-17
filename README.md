@@ -11,6 +11,12 @@ Tu incarnes **Hylee** dans un récit où **Remerii** occupe une place centrale. 
 
 Aucune installation n’est requise pour le Mode Histoire. La Chronique Alternative est déjà construite en version statique sous `chronique-alternative/`.
 
+## Sylvinia Studio (éditeur des chapitres)
+
+- **En ligne** : [https://val1615.github.io/SylviniaVN/studio/](https://val1615.github.io/SylviniaVN/studio/)
+- Modifier un chapitre, tester une scène dans le vrai moteur, publier : voir [`studio/LISEZ_MOI_STUDIO.md`](studio/LISEZ_MOI_STUDIO.md). Architecture : [`studio/ARCHITECTURE.md`](studio/ARCHITECTURE.md).
+- Les modifications publiées sont lues par le jeu dans `studio/data/modifications.js` (fichier vide = jeu d'origine).
+
 ## Deux modes
 
 | Mode | Accès | Contenu |
