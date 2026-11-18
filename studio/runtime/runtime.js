@@ -274,7 +274,7 @@
     var card = document.createElement("div");
     card.className = "devToolCard"; card.id = "sylviniaStudioDevLink";
     card.innerHTML = '<strong>Sylvinia Studio</strong><small>Éditeur des chapitres du Mode Histoire.</small>';
-    var a = document.createElement("a"); a.href = "studio/"; a.textContent = "Ouvrir Sylvinia Studio";
+    var a = document.createElement("a"); a.href = "studio/"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Ouvrir Sylvinia Studio";
     a.style.cssText = "color:#e9c985;font-weight:800;text-decoration:underline";
     card.appendChild(a); dock.appendChild(card);
   }
