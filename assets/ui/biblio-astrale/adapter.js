@@ -1089,6 +1089,8 @@ function htmlDev(s) {
         <button class="btn-or petit" data-act="dev-val"><span>Définir</span></button></div></div>
       <div class="dev-card"><div class="dev-head"><b>DEV · Codex complet</b><small>Révèle tout le Codex sans modifier les vrais déblocages</small></div>
         <div class="dev-row"><button class="btn petit ${s.devCodexForceAccess ? "actif" : ""}" data-act="dev-codex"><span>${s.devCodexForceAccess ? "Codex normal" : "Tout révéler"}</span></button></div></div>
+      <div class="dev-card"><div class="dev-head"><b>Sylvinia Studio</b><small>Éditeur des chapitres du Mode Histoire · s'ouvre dans un nouvel onglet, la partie en cours reste ouverte</small></div>
+        <div class="dev-row"><a class="btn-or petit" id="baDevStudio" href="studio/" target="_blank" rel="noopener"><span>Ouvrir Sylvinia Studio</span></a></div></div>
     </div>`;
 }
 function trouverScene(raw) {
