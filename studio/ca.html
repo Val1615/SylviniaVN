@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+<meta name="robots" content="noindex" />
+<title>Sylvinia Studio · Chroniques Alternatives</title>
+<link rel="stylesheet" href="../assets/ui/biblio-astrale/fonts.css" />
+<link rel="stylesheet" href="css/studio.css?v=2" />
+</head>
+<body>
+<div id="app" data-layout="desktop" data-tab="ecriture" data-libview="chapitres" data-space="ca">
+  <header class="topbar">
+    <a class="brand" href="../chronique-alternative/" title="Retour à la Chronique Alternative"><span class="sigil" aria-hidden="true">✦</span><span class="brand-name">Sylvinia Studio</span></a>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="top-actions">
+      <button id="btnUndo" class="icon" title="Annuler (Ctrl+Z)" aria-label="Annuler">↶</button>
+      <button id="btnRedo" class="icon" title="Rétablir (Ctrl+Y)" aria-label="Rétablir">↷</button>
+      <span id="saveState" class="save-state" aria-live="polite">Chargement…</span>
+      <button id="btnVersions" title="Historique des versions">Versions</button>
+      <button id="btnPublish" class="gold" title="Exporter, importer ou publier">Publier</button>
+      <button id="btnHelp" class="icon" title="Aide" aria-label="Aide">?</button>
+    </div>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist">
+    <button data-tab="chapitres" role="tab">Catalogue</button>
+    <button data-tab="ecriture" role="tab">Écriture</button>
+    <button data-tab="branches" role="tab">Contrôles</button>
+    <button data-tab="apercu" role="tab">Aperçu</button>
+    <button id="btnTogglePreview" class="tab-side" title="Afficher ou masquer l'aperçu à côté">Aperçu ◧</button>
+  </nav>
+  <main class="workspace" id="workspace">
+    <section class="pane pane-library" id="paneLibrary" aria-label="Catalogue des contenus"></section>
+    <section class="pane pane-main" id="paneMain">
+      <div class="pane-body" id="paneEcriture" data-pane="ecriture"></div>
+      <div class="pane-body" id="paneBranches" data-pane="branches"></div>
+      <div class="pane-body" id="paneVisuels" data-pane="visuels"></div>
+    </section>
+    <div class="splitter" id="splitter" role="separator" aria-label="Séparation de l'aperçu"></div>
+    <section class="pane pane-preview" id="panePreview" aria-label="Aperçu dans la Chronique Alternative"></section>
+  </main>
+  <div id="loading" class="loading"><div class="loading-card"><span class="sigil big" aria-hidden="true">✦</span><p id="loadingText">Lecture des contenus de la Chronique Alternative…</p><div class="bar"><i></i></div></div></div>
+</div>
+<div id="modal" class="modal hidden"></div>
+<div id="toasts" class="toasts"></div>
+<script type="module" src="js/ca/app.js?v=1"></script>
+</body>
+</html>

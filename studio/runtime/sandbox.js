@@ -17,7 +17,10 @@
   var removed = new Set();
   var cleared = false;
   /* Clés de progression du joueur : jamais lues ni écrites par l'aperçu. */
-  var PLAYER_KEYS = /^(sylvinia_vn_v\d+|sylvinia_vn_intro_v\d+|sylvinia_biblio_astrale_v\d+|sylvinia_legacy_sheet_state|sylvinia_ch14_directors_cut_v\d+)$/;
+  var PLAYER_KEYS = /^(sylvinia_vn_v\d+|sylvinia_vn_intro_v\d+|sylvinia_biblio_astrale_v\d+|sylvinia_legacy_sheet_state|sylvinia_ch14_directors_cut_v\d+|sylvinia-liens-autosave|sylvinia-liens-slot-\d+)$/;
+  /* Chronique Alternative : clé de passage propre, et sauvegarde de test fournie par le Studio (en mémoire seulement). */
+  var IS_CA = /\/chronique-alternative\//.test(window.location.pathname);
+  var HANDOFF_KEY = IS_CA ? "sylvinia_studio_ca_preview_v1" : "sylvinia_studio_preview_v1";
 
   proto.getItem = function getItem(key) {
     if (this !== ls) return real.get.call(this, key);
@@ -46,12 +49,13 @@
 
   /* Lecture directe du passage préparé par le Studio (clé propre au Studio, jamais une sauvegarde). */
   window.__sylviniaStudioReadHandoff = function readHandoff() {
-    try { return JSON.parse(real.get.call(ls, "sylvinia_studio_preview_v1") || "null"); } catch (e) { return null; }
+    try { return JSON.parse(real.get.call(ls, HANDOFF_KEY) || "null"); } catch (e) { return null; }
   };
   window.__sylviniaStudioSandboxKeys = function sandboxKeys() { return Array.from(mem.keys()); };
 
   /* Extraction : aucune musique. Aperçu : son coupé si le Studio le demande. */
   var handoff = mode === "preview" ? window.__sylviniaStudioReadHandoff() : null;
+  if (IS_CA && handoff && typeof handoff.save === "string") mem.set("sylvinia-liens-autosave", handoff.save);
   var mute = mode === "extract" || !!(handoff && handoff.mute);
   if (mute && window.HTMLMediaElement) {
     var mediaProto = HTMLMediaElement.prototype;

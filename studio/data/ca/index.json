@@ -1,0 +1,8308 @@
+{
+ "format": "sylvinia-studio-ca",
+ "version": 1,
+ "modules": [
+  {
+   "key": "advanced-jobs",
+   "label": "Avancés métiers",
+   "group": "Monde et systèmes",
+   "hash": "115e530eedd0b3d3",
+   "scenes": 129,
+   "counts": {
+    "s": 736,
+    "t": 14,
+    "n": 0,
+    "a": 23
+   },
+   "collections": [
+    {
+     "id": "advanced-jobs:a0arpsr7",
+     "path": "TAVERN_MENU",
+     "len": 30
+    },
+    {
+     "id": "advanced-jobs:a04rv8uj",
+     "path": "SERVICE_NAMES",
+     "len": 35
+    },
+    {
+     "id": "advanced-jobs:a03qk0ca",
+     "path": "SUGGESTIONS",
+     "len": 30
+    },
+    {
+     "id": "advanced-jobs:a1wzp5bg",
+     "path": "ROUTINE_HOTSPOTS",
+     "len": 4
+    },
+    {
+     "id": "advanced-jobs:a1wnbuwy",
+     "path": "ANOMALIES",
+     "len": 30
+    },
+    {
+     "id": "advanced-jobs:a0dbeilv",
+     "path": "PETITION_ACTIONS",
+     "len": 4
+    },
+    {
+     "id": "advanced-jobs:a1srhlng",
+     "path": "PETITIONS",
+     "len": 45
+    },
+    {
+     "id": "advanced-jobs:a0r4gjfg",
+     "path": "ASSEMBLY_PARTS",
+     "len": 12
+    },
+    {
+     "id": "advanced-jobs:a18dxxpl",
+     "path": "BLUEPRINTS",
+     "len": 10
+    },
+    {
+     "id": "advanced-jobs:a1j7ubue",
+     "path": "HARVEST_TOOLS",
+     "len": 3
+    },
+    {
+     "id": "advanced-jobs:a0fi0bi5",
+     "path": "GROWTH_STATES",
+     "len": 10
+    },
+    {
+     "id": "advanced-jobs:a1ouf1x7",
+     "path": "MARKET_TACTICS",
+     "len": 4
+    },
+    {
+     "id": "advanced-jobs:a1wlscwv",
+     "path": "MARKET_CASES",
+     "len": 35
+    }
+   ]
+  },
+  {
+   "key": "allenna-date-intimacy",
+   "label": "Allenna · rendez-vous intimité",
+   "group": "Allenna",
+   "hash": "42fedac024ba6573",
+   "scenes": 14,
+   "counts": {
+    "s": 69,
+    "t": 3,
+    "n": 0,
+    "a": 2
+   },
+   "collections": [
+    {
+     "id": "allenna-date-intimacy:a0lgftw5",
+     "path": "DATE_APPROACHES.date-allenna-field",
+     "len": 3
+    },
+    {
+     "id": "allenna-date-intimacy:a009ncbn",
+     "path": "DATE_APPROACHES.date-allenna-terrace",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-cross-quest",
+   "label": "Allenna × Naïah · croisée quête",
+   "group": "Allenna × Naïah",
+   "hash": "aac86a54c6b85765",
+   "scenes": 15,
+   "counts": {
+    "s": 53,
+    "t": 4,
+    "n": 5,
+    "a": 2
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-cross-quest:a0tniarc",
+     "path": "AN_TITLES",
+     "len": 8
+    },
+    {
+     "id": "allenna-naiah-cross-quest:a0d09clb",
+     "path": "AN_OBJECTIVES",
+     "len": 8
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-dates",
+   "label": "Allenna × Naïah · rendez-vous",
+   "group": "Allenna × Naïah",
+   "hash": "fabecb97454942b1",
+   "scenes": 7,
+   "counts": {
+    "s": 321,
+    "t": 2,
+    "n": 64,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "allenna-naiah-intimacy-home",
+   "label": "Allenna × Naïah · intimité logis",
+   "group": "Allenna × Naïah",
+   "hash": "31841a7f3946eb32",
+   "scenes": 21,
+   "counts": {
+    "s": 202,
+    "t": 0,
+    "n": 0,
+    "a": 21
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-intimacy-home:a15tk5k5",
+     "path": "cuisine.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-home:a0wd5lq6",
+     "path": "objets.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-home:a10yz4od",
+     "path": "toit.seqs",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-intimacy-lake",
+   "label": "Allenna × Naïah · intimité lac",
+   "group": "Allenna × Naïah",
+   "hash": "526c984b358b689e",
+   "scenes": 21,
+   "counts": {
+    "s": 203,
+    "t": 0,
+    "n": 0,
+    "a": 21
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-intimacy-lake:a125tfan",
+     "path": "barque.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-lake:a018tsbx",
+     "path": "rive.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-lake:a1hhbbjh",
+     "path": "lucioles.seqs",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-intimacy-relay",
+   "label": "Allenna × Naïah · intimité relais",
+   "group": "Allenna × Naïah",
+   "hash": "aeadf845e1355729",
+   "scenes": 21,
+   "counts": {
+    "s": 196,
+    "t": 0,
+    "n": 0,
+    "a": 21
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-intimacy-relay:a1j3oc3v",
+     "path": "table.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-relay:a0dutdbb",
+     "path": "des.seqs",
+     "len": 12
+    },
+    {
+     "id": "allenna-naiah-intimacy-relay:a1jm9xmk",
+     "path": "pluie.seqs",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-minigame",
+   "label": "Allenna × Naïah · mini-jeu",
+   "group": "Allenna × Naïah",
+   "hash": "2ba7f59163800124",
+   "scenes": 29,
+   "counts": {
+    "s": 81,
+    "t": 3,
+    "n": 0,
+    "a": 8
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-minigame:a1xth4bv",
+     "path": "AN_CLUES",
+     "len": 14
+    },
+    {
+     "id": "allenna-naiah-minigame:a1nnicmq",
+     "path": "AN_CLAIMS",
+     "len": 10
+    }
+   ]
+  },
+  {
+   "key": "allenna-naiah-scenes",
+   "label": "Allenna × Naïah · scènes",
+   "group": "Allenna × Naïah",
+   "hash": "a6a7d6b177a839de",
+   "scenes": 4,
+   "counts": {
+    "s": 205,
+    "t": 0,
+    "n": 43,
+    "a": 22
+   },
+   "collections": []
+  },
+  {
+   "key": "allenna-naiah-scenes-b",
+   "label": "Allenna × Naïah · scènes b",
+   "group": "Allenna × Naïah",
+   "hash": "12ff9b6a0f3249b8",
+   "scenes": 6,
+   "counts": {
+    "s": 172,
+    "t": 0,
+    "n": 46,
+    "a": 33
+   },
+   "collections": [
+    {
+     "id": "allenna-naiah-scenes-b:a1ob8t3e",
+     "path": "AN_BORDEREAU.established",
+     "len": 2
+    },
+    {
+     "id": "allenna-naiah-scenes-b:a181doij",
+     "path": "AN_BORDEREAU.probable",
+     "len": 2
+    },
+    {
+     "id": "allenna-naiah-scenes-b:a14wxkeb",
+     "path": "AN_BORDEREAU.unverified",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "allenna-relation-beats",
+   "label": "Allenna · relation battements",
+   "group": "Allenna",
+   "hash": "55f00d9eb1019cae",
+   "scenes": 16,
+   "counts": {
+    "s": 63,
+    "t": 0,
+    "n": 46,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "allenna-relation-beats:a084oc7v",
+     "path": "ALLENNA_RELATION_BEATS.allenna-0.intro",
+     "len": 2
+    },
+    {
+     "id": "allenna-relation-beats:a1wmplzx",
+     "path": "ALLENNA_RELATION_BEATS.allenna-0.choices",
+     "len": 3
+    },
+    {
+     "id": "allenna-relation-beats:a0oya90c",
+     "path": "ALLENNA_RELATION_BEATS.allenna-1.intro",
+     "len": 2
+    },
+    {
+     "id": "allenna-relation-beats:a0myd7ue",
+     "path": "ALLENNA_RELATION_BEATS.allenna-1.choices",
+     "len": 3
+    },
+    {
+     "id": "allenna-relation-beats:a1gt7b1l",
+     "path": "ALLENNA_RELATION_BEATS.allenna-2.intro",
+     "len": 2
+    },
+    {
+     "id": "allenna-relation-beats:a1fa5b2v",
+     "path": "ALLENNA_RELATION_BEATS.allenna-2.choices",
+     "len": 3
+    },
+    {
+     "id": "allenna-relation-beats:a0hmnq3m",
+     "path": "ALLENNA_RELATION_BEATS.allenna-3.intro",
+     "len": 2
+    },
+    {
+     "id": "allenna-relation-beats:a19wqsd4",
+     "path": "ALLENNA_RELATION_BEATS.allenna-3.choices",
+     "len": 3
+    },
+    {
+     "id": "allenna-relation-beats:a0udpblj",
+     "path": "ALLENNA_RELATION_BEATS.allenna-4.intro",
+     "len": 2
+    },
+    {
+     "id": "allenna-relation-beats:a04qvwjl",
+     "path": "ALLENNA_RELATION_BEATS.allenna-4.choices",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "alpha-hunt",
+   "label": "Alpha chasse",
+   "group": "Monde et systèmes",
+   "hash": "8443a4c432c08a28",
+   "scenes": 8,
+   "counts": {
+    "s": 26,
+    "t": 3,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "alpha-hunt:a0ln2dhl",
+     "path": "ALPHA_SECTOR_NAMES",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "ambient-dialogues",
+   "label": "Moments libres dialogues",
+   "group": "Monde et systèmes",
+   "hash": "675189940b22d47c",
+   "scenes": 131,
+   "counts": {
+    "s": 1129,
+    "t": 0,
+    "n": 600,
+    "a": 222
+   },
+   "collections": [
+    {
+     "id": "ambient-dialogues:a177jls7",
+     "path": "AMBIENT_LINES.iriana",
+     "len": 20
+    },
+    {
+     "id": "ambient-dialogues:a09p542h",
+     "path": "AMBIENT_LINES.valurn",
+     "len": 17
+    },
+    {
+     "id": "ambient-dialogues:a065jcmk",
+     "path": "AMBIENT_LINES.lineva",
+     "len": 15
+    },
+    {
+     "id": "ambient-dialogues:a176yvh5",
+     "path": "AMBIENT_LINES.saidin",
+     "len": 15
+    },
+    {
+     "id": "ambient-dialogues:a01ug0gs",
+     "path": "AMBIENT_LINES.amanea",
+     "len": 15
+    },
+    {
+     "id": "ambient-dialogues:a0754pc7",
+     "path": "AMBIENT_LINES.tia",
+     "len": 15
+    },
+    {
+     "id": "ambient-dialogues:a0jyurx4",
+     "path": "AMBIENT_LINES.allenna",
+     "len": 15
+    },
+    {
+     "id": "ambient-dialogues:a09nb4x1",
+     "path": "AMBIENT_LINES.draven",
+     "len": 15
+    }
+   ]
+  },
+  {
+   "key": "anchor-operation",
+   "label": "Ancre opération",
+   "group": "Monde et systèmes",
+   "hash": "aea719dd6917a5b0",
+   "scenes": 5,
+   "counts": {
+    "s": 36,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "anchor-operation:a03f9v69",
+     "path": "ANCHOR_PHASE_DATA",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "bellirith-ambient",
+   "label": "Bellirith · moments libres",
+   "group": "Bellirith",
+   "hash": "7cc60a1d936a431a",
+   "scenes": 20,
+   "counts": {
+    "s": 323,
+    "t": 0,
+    "n": 116,
+    "a": 81
+   },
+   "collections": [
+    {
+     "id": "bellirith-ambient:a1aegldd",
+     "path": "BELLIRITH_AMBIENT_LINES",
+     "len": 19
+    }
+   ]
+  },
+  {
+   "key": "bellirith-dates",
+   "label": "Bellirith · rendez-vous",
+   "group": "Bellirith",
+   "hash": "3b0276ac3a577341",
+   "scenes": 3,
+   "counts": {
+    "s": 15,
+    "t": 0,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-diversion-intimacy",
+   "label": "Bellirith · diversion intimité",
+   "group": "Bellirith",
+   "hash": "9fddb5043d6d6b21",
+   "scenes": 4,
+   "counts": {
+    "s": 18,
+    "t": 5,
+    "n": 0,
+    "a": 2
+   },
+   "collections": [
+    {
+     "id": "bellirith-diversion-intimacy:a0o1qm9x",
+     "path": "BELLIRITH_DEV_INTIMACIES",
+     "len": 6
+    },
+    {
+     "id": "bellirith-diversion-intimacy:a0q94qev",
+     "path": "BELLIRITH_VALIDATION_HISTORIES",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "bellirith-heure-auberge",
+   "label": "Bellirith · heure auberge",
+   "group": "Bellirith",
+   "hash": "4841d53c0d9735d1",
+   "scenes": 4,
+   "counts": {
+    "s": 111,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-confidence",
+   "label": "Bellirith · heure confidence",
+   "group": "Bellirith",
+   "hash": "21e9e3e479d6fdd3",
+   "scenes": 4,
+   "counts": {
+    "s": 103,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-couloir",
+   "label": "Bellirith · heure couloir",
+   "group": "Bellirith",
+   "hash": "bb9df8c66d7de4ef",
+   "scenes": 4,
+   "counts": {
+    "s": 96,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-ennui",
+   "label": "Bellirith · heure ennui",
+   "group": "Bellirith",
+   "hash": "c709b8ab55abc52a",
+   "scenes": 4,
+   "counts": {
+    "s": 106,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-faveur",
+   "label": "Bellirith · heure faveur",
+   "group": "Bellirith",
+   "hash": "bd61a5dd86af9305",
+   "scenes": 4,
+   "counts": {
+    "s": 113,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-logis",
+   "label": "Bellirith · heure logis",
+   "group": "Bellirith",
+   "hash": "2cb608d821338c72",
+   "scenes": 4,
+   "counts": {
+    "s": 104,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-matin",
+   "label": "Bellirith · heure matin",
+   "group": "Bellirith",
+   "hash": "4825def83b9fd980",
+   "scenes": 4,
+   "counts": {
+    "s": 108,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-heure-salon",
+   "label": "Bellirith · heure salon",
+   "group": "Bellirith",
+   "hash": "27e4511147c1a70b",
+   "scenes": 4,
+   "counts": {
+    "s": 115,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-before-light",
+   "label": "Bellirith · intimité before light",
+   "group": "Bellirith",
+   "hash": "392cb27eb4256894",
+   "scenes": 1,
+   "counts": {
+    "s": 134,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-coalition",
+   "label": "Bellirith · intimité coalition",
+   "group": "Bellirith",
+   "hash": "61a00912693cb1d2",
+   "scenes": 1,
+   "counts": {
+    "s": 108,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-duel",
+   "label": "Bellirith · intimité duel",
+   "group": "Bellirith",
+   "hash": "9decbe92ffc0d16e",
+   "scenes": 6,
+   "counts": {
+    "s": 236,
+    "t": 0,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-frames",
+   "label": "Bellirith · intimité cadres",
+   "group": "Bellirith",
+   "hash": "3b40bf3dd11e0e68",
+   "scenes": 12,
+   "counts": {
+    "s": 106,
+    "t": 0,
+    "n": 0,
+    "a": 9
+   },
+   "collections": [
+    {
+     "id": "bellirith-intimacy-frames:a0fiw3ln",
+     "path": "irianaDawn",
+     "len": 7
+    }
+   ]
+  },
+  {
+   "key": "bellirith-intimacy-free",
+   "label": "Bellirith · intimité libre",
+   "group": "Bellirith",
+   "hash": "86b6dd3174db1e24",
+   "scenes": 2,
+   "counts": {
+    "s": 228,
+    "t": 0,
+    "n": 0,
+    "a": 2
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-price-of-aid",
+   "label": "Bellirith · intimité price of aid",
+   "group": "Bellirith",
+   "hash": "db9511c1f19b01c6",
+   "scenes": 1,
+   "counts": {
+    "s": 155,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intimacy-return-akuhn",
+   "label": "Bellirith · intimité return akuhn",
+   "group": "Bellirith",
+   "hash": "96b189ac0a0c7f9e",
+   "scenes": 1,
+   "counts": {
+    "s": 133,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-intrusions",
+   "label": "Bellirith · intrusions",
+   "group": "Bellirith",
+   "hash": "e9fff68437e12f0e",
+   "scenes": 33,
+   "counts": {
+    "s": 285,
+    "t": 3,
+    "n": 55,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "bellirith-intrusions:a1uzp3jl",
+     "path": "BELLIRITH_INTRUSIONS",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "bellirith-living-world",
+   "label": "Bellirith · monde vivant",
+   "group": "Bellirith",
+   "hash": "f9d29a0ef1013fea",
+   "scenes": 27,
+   "counts": {
+    "s": 252,
+    "t": 0,
+    "n": 69,
+    "a": 49
+   },
+   "collections": [
+    {
+     "id": "bellirith-living-world:a12erxz9",
+     "path": "BELLIRITH_KNOWLEDGE",
+     "len": 8
+    },
+    {
+     "id": "bellirith-living-world:a0wwt2ja",
+     "path": "VALURN_BELLIRITH_KNOWLEDGE",
+     "len": 2
+    },
+    {
+     "id": "bellirith-living-world:a1licj1c",
+     "path": "BELLIRITH_LETTERS",
+     "len": 7
+    },
+    {
+     "id": "bellirith-living-world:a1c60tch",
+     "path": "BELLIRITH_INVITATIONS",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "bellirith-naiah-cross-quest",
+   "label": "Bellirith × Naïah · croisée quête",
+   "group": "Bellirith × Naïah",
+   "hash": "df4d8087681c4747",
+   "scenes": 10,
+   "counts": {
+    "s": 33,
+    "t": 0,
+    "n": 11,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "bellirith-naiah-cross-quest:a0f9inpm",
+     "path": "BN_OBJECTIVES",
+     "len": 7
+    }
+   ]
+  },
+  {
+   "key": "bellirith-naiah-date",
+   "label": "Bellirith × Naïah · rendez-vous",
+   "group": "Bellirith × Naïah",
+   "hash": "854bc55568aac511",
+   "scenes": 10,
+   "counts": {
+    "s": 164,
+    "t": 0,
+    "n": 21,
+    "a": 18
+   },
+   "collections": [
+    {
+     "id": "bellirith-naiah-date:a0oe3o4l",
+     "path": "INTERVENE",
+     "len": 24
+    },
+    {
+     "id": "bellirith-naiah-date:a0fblido",
+     "path": "PRESENT",
+     "len": 27
+    },
+    {
+     "id": "bellirith-naiah-date:a0xaoqf8",
+     "path": "NAIAH_DECIDES",
+     "len": 24
+    }
+   ]
+  },
+  {
+   "key": "bellirith-naiah-intimacy-first",
+   "label": "Bellirith × Naïah · intimité première",
+   "group": "Bellirith × Naïah",
+   "hash": "d8f86d6917eb2f6a",
+   "scenes": 1,
+   "counts": {
+    "s": 136,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-naiah-intimacy-limit",
+   "label": "Bellirith × Naïah · intimité limite",
+   "group": "Bellirith × Naïah",
+   "hash": "7841550318c1248b",
+   "scenes": 1,
+   "counts": {
+    "s": 118,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-naiah-intimacy-simulation",
+   "label": "Bellirith × Naïah · intimité simulation",
+   "group": "Bellirith × Naïah",
+   "hash": "f76f8ef9cda135ba",
+   "scenes": 1,
+   "counts": {
+    "s": 156,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-naiah-minigame",
+   "label": "Bellirith × Naïah · mini-jeu",
+   "group": "Bellirith × Naïah",
+   "hash": "336ceef446ad0725",
+   "scenes": 17,
+   "counts": {
+    "s": 97,
+    "t": 3,
+    "n": 6,
+    "a": 24
+   },
+   "collections": [
+    {
+     "id": "bellirith-naiah-minigame:a0yjz62z",
+     "path": "BN_ROUNDS",
+     "len": 6
+    },
+    {
+     "id": "bellirith-naiah-minigame:a1df0uuw",
+     "path": "BN_ANOMALY_AFTERMATH",
+     "len": 4
+    },
+    {
+     "id": "bellirith-naiah-minigame:a1jhj4v5",
+     "path": "BN_CLOSINGS.naiah",
+     "len": 7
+    },
+    {
+     "id": "bellirith-naiah-minigame:a1a3xuqp",
+     "path": "BN_CLOSINGS.bellirith",
+     "len": 7
+    },
+    {
+     "id": "bellirith-naiah-minigame:a06e4kdj",
+     "path": "BN_CLOSINGS.egalite",
+     "len": 6
+    },
+    {
+     "id": "bellirith-naiah-minigame:a10ga7q9",
+     "path": "BN_GAME_INTRO",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "bellirith-naiah-scenes",
+   "label": "Bellirith × Naïah · scènes",
+   "group": "Bellirith × Naïah",
+   "hash": "3b72faf39aeab3fe",
+   "scenes": 7,
+   "counts": {
+    "s": 311,
+    "t": 0,
+    "n": 59,
+    "a": 32
+   },
+   "collections": [
+    {
+     "id": "bellirith-naiah-scenes:a091rgna",
+     "path": "SIMULATION_OUTSIDE",
+     "len": 15
+    }
+   ]
+  },
+  {
+   "key": "bellirith-reactions",
+   "label": "Bellirith · réactions",
+   "group": "Bellirith",
+   "hash": "35e7271c6483e0f6",
+   "scenes": 9,
+   "counts": {
+    "s": 87,
+    "t": 0,
+    "n": 28,
+    "a": 30
+   },
+   "collections": [
+    {
+     "id": "bellirith-reactions:a1v4x46q",
+     "path": "VALURN_BELLIRITH_REACTIONS",
+     "len": 4
+    },
+    {
+     "id": "bellirith-reactions:a0q12nao",
+     "path": "IRIANA_BELLIRITH_REACTIONS",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-cross-quest",
+   "label": "Bellirith × Valurn · croisée quête",
+   "group": "Bellirith × Valurn",
+   "hash": "9802826ea0c416f6",
+   "scenes": 9,
+   "counts": {
+    "s": 30,
+    "t": 3,
+    "n": 12,
+    "a": 2
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-cross-quest:a1uuhsk5",
+     "path": "BV_TITLES",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-cross-quest:a071ddxu",
+     "path": "BV_OBJECTIVES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-intimacy-a",
+   "label": "Bellirith × Valurn · intimité a",
+   "group": "Bellirith × Valurn",
+   "hash": "ae811a198a34c845",
+   "scenes": 3,
+   "counts": {
+    "s": 195,
+    "t": 1,
+    "n": 0,
+    "a": 2
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-valurn-intimacy-b",
+   "label": "Bellirith × Valurn · intimité b",
+   "group": "Bellirith × Valurn",
+   "hash": "cda3b941a1aaaf2a",
+   "scenes": 3,
+   "counts": {
+    "s": 182,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-intimacy-b:a0xhftzi",
+     "path": "OPENING_B",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-intimacy-c",
+   "label": "Bellirith × Valurn · intimité c",
+   "group": "Bellirith × Valurn",
+   "hash": "21dcf2f18eab6c9a",
+   "scenes": 4,
+   "counts": {
+    "s": 183,
+    "t": 0,
+    "n": 0,
+    "a": 4
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-intimacy-c:a0xrffoh",
+     "path": "OPENING_C",
+     "len": 7
+    },
+    {
+     "id": "bellirith-valurn-intimacy-c:a0etgbti",
+     "path": "C_POSITIONS_SHARED_TAIL",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-kit",
+   "label": "Bellirith × Valurn · outils",
+   "group": "Bellirith × Valurn",
+   "hash": "1eee6d7337c857ec",
+   "scenes": 1,
+   "counts": {
+    "s": 0,
+    "t": 0,
+    "n": 1,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-valurn-knowledge",
+   "label": "Bellirith × Valurn · savoirs",
+   "group": "Bellirith × Valurn",
+   "hash": "ab82393a9505f6af",
+   "scenes": 5,
+   "counts": {
+    "s": 8,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-knowledge:a1cmlpjq",
+     "path": "BV_KNOWLEDGE",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-never-content",
+   "label": "Bellirith × Valurn · Je n’ai jamais contenu",
+   "group": "Bellirith × Valurn",
+   "hash": "f518a687dc189a2a",
+   "scenes": 216,
+   "counts": {
+    "s": 699,
+    "t": 0,
+    "n": 0,
+    "a": 300
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-never-content:a1ef4vr6",
+     "path": "BV_TRANSITIONS.facade",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-content:a066ngn9",
+     "path": "BV_TRANSITIONS.piques",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1ta57fa",
+     "path": "BV_TRANSITIONS.revelations",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1274ds1",
+     "path": "BV_TRANSITIONS.retombee",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0c7dqbl",
+     "path": "BV_RESULT_RETORTS.none",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1pwzp1j",
+     "path": "BV_RESULT_RETORTS.b",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1kd7n63",
+     "path": "BV_RESULT_RETORTS.v",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1m159bx",
+     "path": "BV_RESULT_RETORTS.p",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0gb92zn",
+     "path": "BV_RESULT_RETORTS.bv",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0hz6p5h",
+     "path": "BV_RESULT_RETORTS.bp",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0k55twh",
+     "path": "BV_RESULT_RETORTS.vp",
+     "len": 2
+    },
+    {
+     "id": "bellirith-valurn-never-content:a18e30mh",
+     "path": "BV_RESULT_RETORTS.bvp",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1lgdqb9",
+     "path": "BELLIRITH_ON_VALURN",
+     "len": 16
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1kb1a9y",
+     "path": "BELLIRITH_ON_PLAYER",
+     "len": 16
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1513win",
+     "path": "VALURN_ON_BELLIRITH",
+     "len": 16
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0o7yfyj",
+     "path": "VALURN_ON_PLAYER",
+     "len": 16
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1r9nr26",
+     "path": "BV_NPC_EVENING",
+     "len": 12
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1k39pit",
+     "path": "BV_NPC_FALLOUT",
+     "len": 12
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1u7xibc",
+     "path": "PIVOT_AFTERMATH",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-content:a130zc3q",
+     "path": "BV_PIVOT_CLAIMS",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1tye2nx",
+     "path": "HUMOUR",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0ridgfq",
+     "path": "RELATIONS",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1uuf5ec",
+     "path": "MARCHES",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1ogtob1",
+     "path": "CONFIANCE",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0mcfamy",
+     "path": "SURPRISE",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1w3oar1",
+     "path": "LIBRE",
+     "len": 14
+    },
+    {
+     "id": "bellirith-valurn-never-content:a0hsleyv",
+     "path": "BV_PLAYER_FALLOUT",
+     "len": 8
+    },
+    {
+     "id": "bellirith-valurn-never-content:a1nndaxu",
+     "path": "BV_SUBJECT_CLAIMS",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-never-game",
+   "label": "Bellirith × Valurn · Je n’ai jamais jeu",
+   "group": "Bellirith × Valurn",
+   "hash": "26b690e908e65e2f",
+   "scenes": 7,
+   "counts": {
+    "s": 28,
+    "t": 4,
+    "n": 0,
+    "a": 7
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-never-game:a13da7lm",
+     "path": "DRINK_LINES.both",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-game:a0v3vou2",
+     "path": "DRINK_LINES.bellirith",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-game:a0i6mzxj",
+     "path": "DRINK_LINES.valurn",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-game:a0x5fxn4",
+     "path": "DRINK_LINES.playerWith",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-game:a02m00fz",
+     "path": "DRINK_LINES.playerAlone",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-game:a1q9xyxd",
+     "path": "DRINK_LINES.playerDry",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-game:a0hu1mra",
+     "path": "DRINK_LINES.nobody",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-never-reactions",
+   "label": "Bellirith × Valurn · Je n’ai jamais réactions",
+   "group": "Bellirith × Valurn",
+   "hash": "bef97d4d302052ae",
+   "scenes": 20,
+   "counts": {
+    "s": 449,
+    "t": 0,
+    "n": 0,
+    "a": 48
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-never-reactions:a1w481fk",
+     "path": "BV_PLAYER_LEADS.bellirith",
+     "len": 12
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1ucogrx",
+     "path": "BV_PLAYER_LEADS.valurn",
+     "len": 12
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0ococw1",
+     "path": "BV_PLAYER_LEADS.none",
+     "len": 12
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a14ggom8",
+     "path": "BV_PLAYER_LEADS.generic",
+     "len": 10
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0rrxoem",
+     "path": "BV_PLAYER_LEADS_SOLEMN",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1phapuf",
+     "path": "BV_THEME_REACTIONS.bellirith.humour",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1wenx64",
+     "path": "BV_THEME_REACTIONS.bellirith.relations",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0w389gu",
+     "path": "BV_THEME_REACTIONS.bellirith.marches",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1vosb97",
+     "path": "BV_THEME_REACTIONS.bellirith.confiance",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0qiez7o",
+     "path": "BV_THEME_REACTIONS.bellirith.surprise",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1h07j5v",
+     "path": "BV_THEME_REACTIONS.bellirith.libre",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1c2eq62",
+     "path": "BV_THEME_REACTIONS.valurn.humour",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1nqw35f",
+     "path": "BV_THEME_REACTIONS.valurn.relations",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a158tjal",
+     "path": "BV_THEME_REACTIONS.valurn.marches",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1anlbbw",
+     "path": "BV_THEME_REACTIONS.valurn.confiance",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1wnlhfh",
+     "path": "BV_THEME_REACTIONS.valurn.surprise",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a14cm9n8",
+     "path": "BV_THEME_REACTIONS.valurn.libre",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1okio1d",
+     "path": "BV_STATEMENT_REACTIONS.bellirith.target-drank",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0e4w6zq",
+     "path": "BV_STATEMENT_REACTIONS.bellirith.target-dry",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1j1w68m",
+     "path": "BV_STATEMENT_REACTIONS.bellirith.bystander-drank",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1vwp02t",
+     "path": "BV_STATEMENT_REACTIONS.bellirith.bystander-dry",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1bksdas",
+     "path": "BV_STATEMENT_REACTIONS.valurn.target-drank",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1xf0w7f",
+     "path": "BV_STATEMENT_REACTIONS.valurn.target-dry",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0bwh4w5",
+     "path": "BV_STATEMENT_REACTIONS.valurn.bystander-drank",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0zfmy76",
+     "path": "BV_STATEMENT_REACTIONS.valurn.bystander-dry",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1ku7zyi",
+     "path": "BV_STATEMENT_GENERIC.bellirith",
+     "len": 8
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0929gtz",
+     "path": "BV_STATEMENT_GENERIC.valurn",
+     "len": 8
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a16bybbo",
+     "path": "BV_STATEMENT_FALLOUT.bellirith",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a07xheux",
+     "path": "BV_STATEMENT_FALLOUT.valurn",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0yxiik9",
+     "path": "BV_STATEMENT_SOLEMN.bellirith",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0tzca0e",
+     "path": "BV_STATEMENT_SOLEMN.valurn",
+     "len": 3
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1447g11",
+     "path": "BV_PLAYER_ANSWERS.acknowledge",
+     "len": 15
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0j0gdch",
+     "path": "BV_PLAYER_ANSWERS.deny",
+     "len": 15
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0zn8t82",
+     "path": "BV_PLAYER_ANSWERS.dodge",
+     "len": 15
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0txhot6",
+     "path": "BV_ANSWER_REACTIONS.bellirith.asker.acknowledge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1bnpxvs",
+     "path": "BV_ANSWER_REACTIONS.bellirith.asker.deny",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0ne9r1p",
+     "path": "BV_ANSWER_REACTIONS.bellirith.asker.dodge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0wk2l8u",
+     "path": "BV_ANSWER_REACTIONS.bellirith.other.acknowledge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0szpigs",
+     "path": "BV_ANSWER_REACTIONS.bellirith.other.deny",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0exvl0p",
+     "path": "BV_ANSWER_REACTIONS.bellirith.other.dodge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0ey92fz",
+     "path": "BV_ANSWER_REACTIONS.valurn.asker.acknowledge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1v1tgsj",
+     "path": "BV_ANSWER_REACTIONS.valurn.asker.deny",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1w2i16c",
+     "path": "BV_ANSWER_REACTIONS.valurn.asker.dodge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1lhvyin",
+     "path": "BV_ANSWER_REACTIONS.valurn.other.acknowledge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0bc62sj",
+     "path": "BV_ANSWER_REACTIONS.valurn.other.deny",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0ydm1qs",
+     "path": "BV_ANSWER_REACTIONS.valurn.other.dodge",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a1wee8u1",
+     "path": "BV_ANSWER_GENERIC.bellirith",
+     "len": 10
+    },
+    {
+     "id": "bellirith-valurn-never-reactions:a0j3fzvy",
+     "path": "BV_ANSWER_GENERIC.valurn",
+     "len": 10
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-never-topics",
+   "label": "Bellirith × Valurn · Je n’ai jamais sujets",
+   "group": "Bellirith × Valurn",
+   "hash": "f9623deb839f97da",
+   "scenes": 1,
+   "counts": {
+    "s": 153,
+    "t": 0,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "bellirith-valurn-never-transitions",
+   "label": "Bellirith × Valurn · Je n’ai jamais transitions",
+   "group": "Bellirith × Valurn",
+   "hash": "7b7fd21a30c68abe",
+   "scenes": 2,
+   "counts": {
+    "s": 88,
+    "t": 0,
+    "n": 0,
+    "a": 17
+   },
+   "collections": [
+    {
+     "id": "bellirith-valurn-never-transitions:a01l31u6",
+     "path": "BV_TRANSITION_LEADS.answer-acknowledge",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a0984mnw",
+     "path": "BV_TRANSITION_LEADS.answer-deny",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a04nppux",
+     "path": "BV_TRANSITION_LEADS.answer-dodge",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a16nr65m",
+     "path": "BV_TRANSITION_LEADS.pression",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a1e3h7zt",
+     "path": "BV_TRANSITION_LEADS.drank-player",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a0hn2e2t",
+     "path": "BV_TRANSITION_LEADS.drank-bellirith",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a10r85pu",
+     "path": "BV_TRANSITION_LEADS.drank-valurn",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a1fz5vsv",
+     "path": "BV_TRANSITION_LEADS.drank-all",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a18eo8s6",
+     "path": "BV_TRANSITION_LEADS.drank-none",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a19yyb7c",
+     "path": "BV_TRANSITION_MOODS.avant-sobre",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a0baz9ry",
+     "path": "BV_TRANSITION_MOODS.avant-gris",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a1cy4t3l",
+     "path": "BV_TRANSITION_MOODS.avant-ivre",
+     "len": 6
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a004ouqt",
+     "path": "BV_TRANSITION_MOODS.apres-sobre",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a0xrq74x",
+     "path": "BV_TRANSITION_MOODS.apres-gris",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a1m2z5he",
+     "path": "BV_TRANSITION_MOODS.apres-ivre",
+     "len": 5
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a05d2e4q",
+     "path": "BV_TRANSITION_MOODS.court-avant",
+     "len": 4
+    },
+    {
+     "id": "bellirith-valurn-never-transitions:a1xmqnjb",
+     "path": "BV_TRANSITION_MOODS.court-apres",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "bellirith-valurn-scenes",
+   "label": "Bellirith × Valurn · scènes",
+   "group": "Bellirith × Valurn",
+   "hash": "96983bf2c001a189",
+   "scenes": 17,
+   "counts": {
+    "s": 439,
+    "t": 0,
+    "n": 111,
+    "a": 57
+   },
+   "collections": []
+  },
+  {
+   "key": "calendar",
+   "label": "Calendrier",
+   "group": "Monde et systèmes",
+   "hash": "48b87375397e895f",
+   "scenes": 34,
+   "counts": {
+    "s": 85,
+    "t": 2,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "calendar:a1w52x0m",
+     "path": "IMPERIAL_MONTHS",
+     "len": 9
+    },
+    {
+     "id": "calendar:a05d8z6x",
+     "path": "THERMAL_PHASES",
+     "len": 5
+    },
+    {
+     "id": "calendar:a0wth2ft",
+     "path": "CALENDAR_FESTIVALS",
+     "len": 16
+    }
+   ]
+  },
+  {
+   "key": "campaign-scenes",
+   "label": "Campagne scènes",
+   "group": "Monde et systèmes",
+   "hash": "b3674e0576bde901",
+   "scenes": 16,
+   "counts": {
+    "s": 968,
+    "t": 0,
+    "n": 243,
+    "a": 109
+   },
+   "collections": [
+    {
+     "id": "campaign-scenes:a0m58rel",
+     "path": "CAMPAIGN_SCENES",
+     "len": 15
+    }
+   ]
+  },
+  {
+   "key": "cross-quests",
+   "label": "Croisée quêtes",
+   "group": "Monde et systèmes",
+   "hash": "933ed738c13d5de0",
+   "scenes": 24,
+   "counts": {
+    "s": 226,
+    "t": 0,
+    "n": 51,
+    "a": 55
+   },
+   "collections": [
+    {
+     "id": "cross-quests:a19uncju",
+     "path": "LINEVA_ALLENNA_MILESTONES",
+     "len": 8
+    },
+    {
+     "id": "cross-quests:a19pkfgq",
+     "path": "LINEVA_ALLENNA_LETTERS",
+     "len": 13
+    },
+    {
+     "id": "cross-quests:a1uuxhpc",
+     "path": "LINEVA_ALLENNA_SCENES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "date-scenes",
+   "label": "Rendez-vous scènes",
+   "group": "Monde et systèmes",
+   "hash": "dafd77a85e0593fb",
+   "scenes": 18,
+   "counts": {
+    "s": 431,
+    "t": 0,
+    "n": 210,
+    "a": 120
+   },
+   "collections": [
+    {
+     "id": "date-scenes:a1olrzvn",
+     "path": "DATE_SCENES",
+     "len": 21
+    }
+   ]
+  },
+  {
+   "key": "game-data",
+   "label": "Jeu données",
+   "group": "Monde et systèmes",
+   "hash": "048c69c0d0d4c53c",
+   "scenes": 157,
+   "counts": {
+    "s": 1824,
+    "t": 0,
+    "n": 455,
+    "a": 164
+   },
+   "collections": [
+    {
+     "id": "game-data:a1dvou45",
+     "path": "PERIODS",
+     "len": 4
+    },
+    {
+     "id": "game-data:a1aulkkv",
+     "path": "LOCATIONS",
+     "len": 12
+    },
+    {
+     "id": "game-data:a1n2lq55",
+     "path": "CHARACTERS",
+     "len": 12
+    },
+    {
+     "id": "game-data:a0vslx9w",
+     "path": "GIFTS",
+     "len": 16
+    },
+    {
+     "id": "game-data:a1kfi9c6",
+     "path": "ROUTE_SCENES",
+     "len": 39
+    },
+    {
+     "id": "game-data:a1hqzl0a",
+     "path": "INTRO_SCENE",
+     "len": 20
+    },
+    {
+     "id": "game-data:a0wqrmcu",
+     "path": "INTRO_CHOICES",
+     "len": 4
+    },
+    {
+     "id": "game-data:a1ww48xg",
+     "path": "INTIMACY_TEXT.hylee.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a1oeh3z1",
+     "path": "INTIMACY_TEXT.hylee.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0qxhcpn",
+     "path": "INTIMACY_TEXT.hylee.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a04lk4ry",
+     "path": "INTIMACY_TEXT.hylee.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0ghnc9i",
+     "path": "INTIMACY_TEXT.remerii.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a10vf70f",
+     "path": "INTIMACY_TEXT.remerii.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0hprtol",
+     "path": "INTIMACY_TEXT.remerii.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a0clukns",
+     "path": "INTIMACY_TEXT.remerii.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a1kt7957",
+     "path": "INTIMACY_TEXT.iriana.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a08f0ilc",
+     "path": "INTIMACY_TEXT.iriana.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a09g7foe",
+     "path": "INTIMACY_TEXT.iriana.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a0x60mqb",
+     "path": "INTIMACY_TEXT.iriana.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a16vwgwt",
+     "path": "INTIMACY_TEXT.valurn.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0652h8a",
+     "path": "INTIMACY_TEXT.valurn.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0olftrs",
+     "path": "INTIMACY_TEXT.valurn.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a1hvjrqd",
+     "path": "INTIMACY_TEXT.valurn.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a16jdi7m",
+     "path": "INTIMACY_TEXT.naiah.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0ox149n",
+     "path": "INTIMACY_TEXT.naiah.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a1w3j6cx",
+     "path": "INTIMACY_TEXT.naiah.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a1y3v40k",
+     "path": "INTIMACY_TEXT.naiah.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0nhfbbq",
+     "path": "INTIMACY_TEXT.lineva.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a124pbwf",
+     "path": "INTIMACY_TEXT.lineva.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0skjakl",
+     "path": "INTIMACY_TEXT.lineva.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a02ax8ig",
+     "path": "INTIMACY_TEXT.lineva.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0v3fy3h",
+     "path": "INTIMACY_TEXT.saidin.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a1qs673u",
+     "path": "INTIMACY_TEXT.saidin.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0b4ygjc",
+     "path": "INTIMACY_TEXT.saidin.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a1e0esx1",
+     "path": "INTIMACY_TEXT.saidin.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0dq1xee",
+     "path": "INTIMACY_TEXT.bellirith.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0ytyzzz",
+     "path": "INTIMACY_TEXT.bellirith.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a0fobmo5",
+     "path": "INTIMACY_TEXT.bellirith.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a1xpi2zc",
+     "path": "INTIMACY_TEXT.bellirith.ellipse",
+     "len": 1
+    },
+    {
+     "id": "game-data:a0wfef32",
+     "path": "INTIMACY_TEXT.amanea.tendre",
+     "len": 1
+    },
+    {
+     "id": "game-data:a140jarb",
+     "path": "INTIMACY_TEXT.amanea.suggestif",
+     "len": 2
+    },
+    {
+     "id": "game-data:a1mr2365",
+     "path": "INTIMACY_TEXT.amanea.explicite",
+     "len": 3
+    },
+    {
+     "id": "game-data:a0a3048g",
+     "path": "INTIMACY_TEXT.amanea.ellipse",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "gameplay-rules",
+   "label": "Gameplay règles",
+   "group": "Monde et systèmes",
+   "hash": "68c408c1e6b43951",
+   "scenes": 2,
+   "counts": {
+    "s": 1,
+    "t": 1,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "group-dates",
+   "label": "Groupe rendez-vous",
+   "group": "Monde et systèmes",
+   "hash": "229594c8877135d6",
+   "scenes": 163,
+   "counts": {
+    "s": 1008,
+    "t": 14,
+    "n": 208,
+    "a": 318
+   },
+   "collections": [
+    {
+     "id": "group-dates:a058k9ky",
+     "path": "GROUP_DATES",
+     "len": 11
+    },
+    {
+     "id": "group-dates:a1fc2w1q",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-remerii.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a06s0jta",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-remerii.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a16szm8v",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-remerii.results.searching",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a1juft40",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-remerii.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a05nllyv",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-valurn-bellirith.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a1lb4wbn",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-valurn-bellirith.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a0rmrrg2",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-valurn-bellirith.results.searching",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a1tsfipv",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-valurn-bellirith.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a09pjb2s",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-iriana-valurn.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a0soc148",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-iriana-valurn.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a0l1ygj5",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-iriana-valurn.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a14h7l0m",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-iriana-valurn.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a1cn6a6q",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-naiah.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a19skjt6",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-naiah.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1b6iaoj",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-naiah.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1hvw4q4",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-hylee-naiah.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a11oil95",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-remerii-iriana.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a0gedhch",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-remerii-iriana.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1di0zrk",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-remerii-iriana.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0lwbqzp",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-remerii-iriana.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a15lyd5w",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-naiah-bellirith.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a0ytk7so",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-naiah-bellirith.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1g4sso1",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-naiah-bellirith.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1kkzr12",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-naiah-bellirith.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a0d9fcfv",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-tia-remerii.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a06oarb3",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-tia-remerii.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a0on2oxi",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-tia-remerii.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0oo8d7z",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-tia-remerii.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a18blcm9",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-training.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a1c0sjah",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-training.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "group-dates:a1ohboco",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-training.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1ca8zsd",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-training.results.discordant",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0xgbivu",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-basin.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a1tq7caq",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-basin.results.attuned",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a05mc8ej",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-basin.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1d7t5bo",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-basin.results.discordant",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1am4914",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-home.beats",
+     "len": 4
+    },
+    {
+     "id": "group-dates:a0x9e0dw",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-home.results.attuned",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1445nxh",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-home.results.searching",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1dixdpu",
+     "path": "LEGACY_GROUP_INTIMACY_GAMES.group-date-allenna-lineva-home.results.discordant",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1bhfe0r",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1xjggw7",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1spzomu",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1jolmat",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1wtiz09",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0a2zaeo",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a094m6o8",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1g7mej6",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1croyca",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0w2vlzg",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1rorup2",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0uql4t0",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0rf2958",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1d7cqzu",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a15t6zjl",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1dp70hr",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a04a198j",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0j8glcz",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0rimaaj",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1xu92w7",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1tph7ti",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ezdxmq",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-remerii.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a17jxg80",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1d5ylra",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1jcvvkf",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1j900s0",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a04wmck6",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0xqsg7z",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a14ha6lt",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a04qzdmn",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1kljr7n",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0fml21v",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a05vx2p1",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1jqjzfn",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a182axgn",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1g0cjtz",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a04o7blu",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1h2rss0",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0v1zxoo",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0dbkc0m",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0xffohc",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1itd0ba",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1yot97j",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ooircv",
+     "path": "PAIR_ROUTE_DATA.group-date-valurn-bellirith.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1m1fs41",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0030e8d",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0o61hwk",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0non0u3",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a17olhon",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a12v2hti",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0isqk2e",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0kn15lw",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1wzl2ho",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0e4wyd6",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a12xj8c4",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0fwccke",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1cc1fqe",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1ntsrqw",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0rbgv0n",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a13vrcqx",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1p8cxl9",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a19smi9d",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1okevqt",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0m1c2sp",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a174mz5s",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a16jazb8",
+     "path": "PAIR_ROUTE_DATA.group-date-iriana-valurn.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a04fzpnf",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a05g74yv",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a01bf9w6",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0wouav9",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a05byo49",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0m71174",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1aek97s",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0i67sdu",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0fxka2i",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1futmgc",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1943edi",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0jouk1g",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a17i638s",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a118m93e",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0iysg5t",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1d7h09r",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0o7pwkj",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ge5xc3",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ff1rln",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1erxozr",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a19yep4m",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1ni89nm",
+     "path": "PAIR_ROUTE_DATA.group-date-hylee-naiah.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a04hmyp6",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a066nmyo",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a092ulsh",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1pspfgq",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a10if55s",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1afbpgx",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1qsf41n",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a19vxtt9",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0b2eeo1",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1axbzh1",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0zbo453",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0cttlzt",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0o3en19",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0t15a0x",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1g24hfw",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0rgx6za",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1wi0elq",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1um4sf4",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0zw1h9y",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1af7y90",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a07rf51x",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0lc34tp",
+     "path": "PAIR_ROUTE_DATA.group-date-remerii-iriana.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1op8xk1",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0lwxqm5",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ja8np0",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1vli7bf",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a140o0s7",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1ucdcna",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a12gm9d2",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0c1cb4k",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0brh1n0",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a19t4yui",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1j86ask",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1mzd0ku",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0xy1912",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0wopnd4",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0d7647r",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1su38u1",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1fjar7h",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1seszfl",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a12bk8jp",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0ir8x21",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a17bpssw",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a05n4uus",
+     "path": "PAIR_ROUTE_DATA.group-date-naiah-bellirith.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a0awbk5e",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.deepening.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1b0fmuw",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.deepening.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0gyl2zd",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.deepening.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1pmfyo2",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.escalation.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1w1udx4",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.escalation.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a11zzu1l",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.escalation.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0vdh0eb",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.first.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1agspw5",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.first.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1nsu49l",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.first.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1y7c365",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.first.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a07lcupr",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.second.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1hlm84h",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.second.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1i51h1x",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.second.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a19sf0hl",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.second.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a09q3f9g",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.shared.tender",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1vxsbgu",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.shared.suggestive",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0sqzb12",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.shared.explicitFlavor",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0o784x4",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.continuations.shared.ellipse",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0est3jy",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.aftercare.first",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1xwaoa4",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.aftercare.second",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a1skjw4t",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.aftercare.shared",
+     "len": 1
+    },
+    {
+     "id": "group-dates:a0pxvj91",
+     "path": "PAIR_ROUTE_DATA.group-date-tia-remerii.routes",
+     "len": 3
+    },
+    {
+     "id": "group-dates:a1a37pbv",
+     "path": "HOME_GROUP_INTIMACY_DATES",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "group-explicit-scenes",
+   "label": "Groupe explicites scènes",
+   "group": "Monde et systèmes",
+   "hash": "e374ff7ab98dc49f",
+   "scenes": 5,
+   "counts": {
+    "s": 154,
+    "t": 13,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "heritages-data",
+   "label": "Héritages données",
+   "group": "Monde et systèmes",
+   "hash": "5819b808c82ec90c",
+   "scenes": 177,
+   "counts": {
+    "s": 1731,
+    "t": 9,
+    "n": 419,
+    "a": 210
+   },
+   "collections": [
+    {
+     "id": "heritages-data:a1atb7qc",
+     "path": "KNOWLEDGE_ENTRIES",
+     "len": 43
+    },
+    {
+     "id": "heritages-data:a1f4n0ku",
+     "path": "SECRET_CONVERSATIONS",
+     "len": 35
+    },
+    {
+     "id": "heritages-data:a1ypiife",
+     "path": "LETTERS",
+     "len": 22
+    },
+    {
+     "id": "heritages-data:a1oei053",
+     "path": "INVITATIONS",
+     "len": 12
+    },
+    {
+     "id": "heritages-data:a1649jgn",
+     "path": "RUMORS",
+     "len": 22
+    },
+    {
+     "id": "heritages-data:a146xdme",
+     "path": "SPONTANEOUS_EVENTS",
+     "len": 16
+    },
+    {
+     "id": "heritages-data:a0kks0uh",
+     "path": "RUMOR_KNOWLEDGE",
+     "len": 10
+    }
+   ]
+  },
+  {
+   "key": "home-intimacy-routes",
+   "label": "Logis intimité routes",
+   "group": "Monde et systèmes",
+   "hash": "5cc62bbdca70cfaf",
+   "scenes": 79,
+   "counts": {
+    "s": 838,
+    "t": 7,
+    "n": 0,
+    "a": 294
+   },
+   "collections": [
+    {
+     "id": "home-intimacy-routes:a1rrg7q4",
+     "path": "HOME_ROUTE_SEEDS.hylee",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1fpem3y",
+     "path": "HOME_ROUTE_SEEDS.remerii",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1av47rp",
+     "path": "HOME_ROUTE_SEEDS.iriana",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0cj100r",
+     "path": "HOME_ROUTE_SEEDS.valurn",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0tdjhn2",
+     "path": "HOME_ROUTE_SEEDS.naiah",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0ntfn1e",
+     "path": "HOME_ROUTE_SEEDS.lineva",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1qtalcf",
+     "path": "HOME_ROUTE_SEEDS.saidin",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0v1uqsm",
+     "path": "HOME_ROUTE_SEEDS.bellirith",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0xeqqra",
+     "path": "HOME_ROUTE_SEEDS.amanea",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0fwltex",
+     "path": "HOME_ROUTE_SEEDS.tia",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0bjxypm",
+     "path": "HOME_ROUTE_SEEDS.allenna",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1n29ynj",
+     "path": "HOME_ROUTE_SEEDS.draven",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1hszsb7",
+     "path": "HOME_INTIMACY_APPROACHES.hylee",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a19fupy1",
+     "path": "HOME_INTIMACY_APPROACHES.remerii",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1sh1qv8",
+     "path": "HOME_INTIMACY_APPROACHES.iriana",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a17zltoq",
+     "path": "HOME_INTIMACY_APPROACHES.valurn",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1rpvpqd",
+     "path": "HOME_INTIMACY_APPROACHES.naiah",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0vp0wt7",
+     "path": "HOME_INTIMACY_APPROACHES.lineva",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1utszq2",
+     "path": "HOME_INTIMACY_APPROACHES.saidin",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1h50z7h",
+     "path": "HOME_INTIMACY_APPROACHES.bellirith",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1o1fqb3",
+     "path": "HOME_INTIMACY_APPROACHES.amanea",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0mr4o1y",
+     "path": "HOME_INTIMACY_APPROACHES.tia",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0daifyx",
+     "path": "HOME_INTIMACY_APPROACHES.allenna",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a0cian9y",
+     "path": "HOME_INTIMACY_APPROACHES.draven",
+     "len": 3
+    },
+    {
+     "id": "home-intimacy-routes:a1vj9eac",
+     "path": "HOME_CHARACTER_OPENING.hylee",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1ecme06",
+     "path": "HOME_CHARACTER_OPENING.remerii",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0gnkjr1",
+     "path": "HOME_CHARACTER_OPENING.iriana",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0qzxi5v",
+     "path": "HOME_CHARACTER_OPENING.valurn",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a065r3uu",
+     "path": "HOME_CHARACTER_OPENING.naiah",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a12224fe",
+     "path": "HOME_CHARACTER_OPENING.lineva",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1q6jno7",
+     "path": "HOME_CHARACTER_OPENING.saidin",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0uh2kbi",
+     "path": "HOME_CHARACTER_OPENING.bellirith",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0cwy1ym",
+     "path": "HOME_CHARACTER_OPENING.amanea",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a01yxtcx",
+     "path": "HOME_CHARACTER_OPENING.tia",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a16xt3oi",
+     "path": "HOME_CHARACTER_OPENING.allenna",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a17bazvb",
+     "path": "HOME_CHARACTER_OPENING.draven",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0zyhe09",
+     "path": "HOME_CHARACTER_ENDING.hylee",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0cr7bkv",
+     "path": "HOME_CHARACTER_ENDING.remerii",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a02qi69y",
+     "path": "HOME_CHARACTER_ENDING.iriana",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1rtm9l4",
+     "path": "HOME_CHARACTER_ENDING.valurn",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0ud1nkv",
+     "path": "HOME_CHARACTER_ENDING.naiah",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1dg6tet",
+     "path": "HOME_CHARACTER_ENDING.lineva",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1nc8yfo",
+     "path": "HOME_CHARACTER_ENDING.saidin",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0o39u83",
+     "path": "HOME_CHARACTER_ENDING.bellirith",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a08drs4l",
+     "path": "HOME_CHARACTER_ENDING.amanea",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a0soi8ho",
+     "path": "HOME_CHARACTER_ENDING.tia",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a1t1pwv3",
+     "path": "HOME_CHARACTER_ENDING.allenna",
+     "len": 1
+    },
+    {
+     "id": "home-intimacy-routes:a03dn3h8",
+     "path": "HOME_CHARACTER_ENDING.draven",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "housing-data",
+   "label": "Logement données",
+   "group": "Monde et systèmes",
+   "hash": "e2d79930822ac3d3",
+   "scenes": 29,
+   "counts": {
+    "s": 92,
+    "t": 0,
+    "n": 1,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "housing-data:a14wzqxs",
+     "path": "HOUSING_PROPERTIES",
+     "len": 20
+    },
+    {
+     "id": "housing-data:a1fieo5f",
+     "path": "STORY_KEEPSAKES",
+     "len": 12
+    },
+    {
+     "id": "housing-data:a0dj0lcn",
+     "path": "HOME_DATE_GIFTS",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "housing-scenes",
+   "label": "Logement scènes",
+   "group": "Monde et systèmes",
+   "hash": "09b6a3788bbf8842",
+   "scenes": 23,
+   "counts": {
+    "s": 1332,
+    "t": 39,
+    "n": 101,
+    "a": 133
+   },
+   "collections": [
+    {
+     "id": "housing-scenes:a0e9q0xf",
+     "path": "HOME_DATE_PROFILES.iriana.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0uyn6f9",
+     "path": "HOME_DATE_PROFILES.iriana.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1ouqpcw",
+     "path": "HOME_DATE_PROFILES.iriana.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1d6xehv",
+     "path": "HOME_DATE_PROFILES.iriana.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0a3iyyn",
+     "path": "HOME_DATE_PROFILES.iriana.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a0e7wmj6",
+     "path": "HOME_DATE_PROFILES.iriana.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a034vl3n",
+     "path": "HOME_DATE_PROFILES.iriana.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0w6l35f",
+     "path": "HOME_DATE_PROFILES.iriana.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0ran76h",
+     "path": "HOME_DATE_PROFILES.valurn.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1f440jv",
+     "path": "HOME_DATE_PROFILES.valurn.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0mqms36",
+     "path": "HOME_DATE_PROFILES.valurn.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0iyux5t",
+     "path": "HOME_DATE_PROFILES.valurn.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1iyaxkt",
+     "path": "HOME_DATE_PROFILES.valurn.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a1delwuw",
+     "path": "HOME_DATE_PROFILES.valurn.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0r8wyll",
+     "path": "HOME_DATE_PROFILES.valurn.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1nixk75",
+     "path": "HOME_DATE_PROFILES.valurn.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0bagje4",
+     "path": "HOME_DATE_PROFILES.lineva.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a16kfqt8",
+     "path": "HOME_DATE_PROFILES.lineva.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a01u6x55",
+     "path": "HOME_DATE_PROFILES.lineva.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0gowy3g",
+     "path": "HOME_DATE_PROFILES.lineva.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1hjj2ei",
+     "path": "HOME_DATE_PROFILES.lineva.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a0zo0vk9",
+     "path": "HOME_DATE_PROFILES.lineva.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1w8lyc6",
+     "path": "HOME_DATE_PROFILES.lineva.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0sslewk",
+     "path": "HOME_DATE_PROFILES.lineva.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1x46xvt",
+     "path": "HOME_DATE_PROFILES.saidin.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0iwf0nv",
+     "path": "HOME_DATE_PROFILES.saidin.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a16fkp8i",
+     "path": "HOME_DATE_PROFILES.saidin.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0f6ssnl",
+     "path": "HOME_DATE_PROFILES.saidin.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0dp2n9p",
+     "path": "HOME_DATE_PROFILES.saidin.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a0s1fsiw",
+     "path": "HOME_DATE_PROFILES.saidin.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1phyv3t",
+     "path": "HOME_DATE_PROFILES.saidin.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0r94uvl",
+     "path": "HOME_DATE_PROFILES.saidin.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a02nrq0u",
+     "path": "HOME_DATE_PROFILES.bellirith.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0zacuva",
+     "path": "HOME_DATE_PROFILES.bellirith.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a17p5bc7",
+     "path": "HOME_DATE_PROFILES.bellirith.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1gauyhq",
+     "path": "HOME_DATE_PROFILES.bellirith.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1509l9o",
+     "path": "HOME_DATE_PROFILES.bellirith.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a0ear2sb",
+     "path": "HOME_DATE_PROFILES.bellirith.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0p3uh00",
+     "path": "HOME_DATE_PROFILES.bellirith.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a14e6jye",
+     "path": "HOME_DATE_PROFILES.bellirith.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1hqh1rc",
+     "path": "HOME_DATE_PROFILES.amanea.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1dv5lqw",
+     "path": "HOME_DATE_PROFILES.amanea.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0etm32l",
+     "path": "HOME_DATE_PROFILES.amanea.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1mp1p28",
+     "path": "HOME_DATE_PROFILES.amanea.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0k5d5bi",
+     "path": "HOME_DATE_PROFILES.amanea.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a1q7h8ol",
+     "path": "HOME_DATE_PROFILES.amanea.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1sbbkn6",
+     "path": "HOME_DATE_PROFILES.amanea.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a17bllg8",
+     "path": "HOME_DATE_PROFILES.amanea.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1uq6wvm",
+     "path": "HOME_DATE_PROFILES.allenna.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a18x49nu",
+     "path": "HOME_DATE_PROFILES.allenna.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1lgt30j",
+     "path": "HOME_DATE_PROFILES.allenna.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0flu4xm",
+     "path": "HOME_DATE_PROFILES.allenna.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0qve74o",
+     "path": "HOME_DATE_PROFILES.allenna.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a0j2nqof",
+     "path": "HOME_DATE_PROFILES.allenna.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0609l3o",
+     "path": "HOME_DATE_PROFILES.allenna.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0uhqsle",
+     "path": "HOME_DATE_PROFILES.allenna.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0agjvel",
+     "path": "HOME_DATE_PROFILES.tia.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a132gysv",
+     "path": "HOME_DATE_PROFILES.tia.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0b7yjri",
+     "path": "HOME_DATE_PROFILES.tia.tones.amoureux.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1o2j8jh",
+     "path": "HOME_DATE_PROFILES.tia.tones.desir.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0suu4gp",
+     "path": "HOME_DATE_PROFILES.tia.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a1e70v2k",
+     "path": "HOME_DATE_PROFILES.tia.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a0efg8dp",
+     "path": "HOME_DATE_PROFILES.tia.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1v62x1p",
+     "path": "HOME_DATE_PROFILES.tia.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0hj53n1",
+     "path": "HOME_DATE_PROFILES.draven.arrival",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a0iyekxr",
+     "path": "HOME_DATE_PROFILES.draven.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1qwey1q",
+     "path": "HOME_DATE_PROFILES.draven.tones.amoureux.lines",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a1dh5ze5",
+     "path": "HOME_DATE_PROFILES.draven.tones.desir.lines",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a11eq6nd",
+     "path": "HOME_DATE_PROFILES.draven.rounds",
+     "len": 3
+    },
+    {
+     "id": "housing-scenes:a1e7xg2k",
+     "path": "HOME_DATE_PROFILES.draven.results.close",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a1j6szi5",
+     "path": "HOME_DATE_PROFILES.draven.results.warm",
+     "len": 1
+    },
+    {
+     "id": "housing-scenes:a05pfb6l",
+     "path": "HOME_DATE_PROFILES.draven.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "housing-scenes:a1g6t6iq",
+     "path": "RESIDENT_MOMENTS.hylee",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a00vyu47",
+     "path": "RESIDENT_MOMENTS.iriana",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a1bqqg5l",
+     "path": "RESIDENT_MOMENTS.valurn",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a0lctspc",
+     "path": "RESIDENT_MOMENTS.naiah",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a1dd190c",
+     "path": "RESIDENT_MOMENTS.lineva",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a043ym2x",
+     "path": "RESIDENT_MOMENTS.saidin",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a04ot4ro",
+     "path": "RESIDENT_MOMENTS.bellirith",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a00bqlkc",
+     "path": "RESIDENT_MOMENTS.amanea",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a14m9ma0",
+     "path": "RESIDENT_MOMENTS.allenna",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a0cv6ijb",
+     "path": "RESIDENT_MOMENTS.tia",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a0s30red",
+     "path": "RESIDENT_MOMENTS.draven",
+     "len": 4
+    },
+    {
+     "id": "housing-scenes:a1v6324j",
+     "path": "SHARED_RESIDENT_MOMENTS",
+     "len": 8
+    },
+    {
+     "id": "housing-scenes:a1ccrybd",
+     "path": "HOME_PAIR_DATES",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "hylee-ambient",
+   "label": "Hylee · moments libres",
+   "group": "Hylee",
+   "hash": "a753a26fcc6df94e",
+   "scenes": 21,
+   "counts": {
+    "s": 283,
+    "t": 0,
+    "n": 102,
+    "a": 81
+   },
+   "collections": [
+    {
+     "id": "hylee-ambient:a1q03a7j",
+     "path": "HYLEE_AMBIENT_LINES",
+     "len": 20
+    }
+   ]
+  },
+  {
+   "key": "hylee-confidences",
+   "label": "Hylee · confidences",
+   "group": "Hylee",
+   "hash": "e31e3a01918ab40d",
+   "scenes": 15,
+   "counts": {
+    "s": 192,
+    "t": 0,
+    "n": 34,
+    "a": 28
+   },
+   "collections": [
+    {
+     "id": "hylee-confidences:a0cbi55f",
+     "path": "HYLEE_KNOWLEDGE",
+     "len": 7
+    },
+    {
+     "id": "hylee-confidences:a00vgq7i",
+     "path": "HYLEE_CONFIDENCES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "hylee-date-intimacy",
+   "label": "Hylee · rendez-vous intimité",
+   "group": "Hylee",
+   "hash": "72346ecfddae1a16",
+   "scenes": 32,
+   "counts": {
+    "s": 688,
+    "t": 3,
+    "n": 0,
+    "a": 22
+   },
+   "collections": [
+    {
+     "id": "hylee-date-intimacy:a1xe0xqk",
+     "path": "HYLEE_INTIMACY_APPROACHES.date-hylee-glade",
+     "len": 3
+    },
+    {
+     "id": "hylee-date-intimacy:a0tyhuy4",
+     "path": "HYLEE_INTIMACY_APPROACHES.date-hylee-lake",
+     "len": 3
+    },
+    {
+     "id": "hylee-date-intimacy:a0mvd4mj",
+     "path": "HYLEE_INTIMACY_APPROACHES.home-hylee",
+     "len": 3
+    },
+    {
+     "id": "hylee-date-intimacy:a0015v1c",
+     "path": "SCENES",
+     "len": 18
+    }
+   ]
+  },
+  {
+   "key": "hylee-dates",
+   "label": "Hylee · rendez-vous",
+   "group": "Hylee",
+   "hash": "76f9a7ff3a0bef47",
+   "scenes": 20,
+   "counts": {
+    "s": 136,
+    "t": 0,
+    "n": 48,
+    "a": 29
+   },
+   "collections": [
+    {
+     "id": "hylee-dates:a1iwy2g6",
+     "path": "HYLEE_DATES",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "hylee-home-date",
+   "label": "Hylee · logis rendez-vous",
+   "group": "Hylee",
+   "hash": "6ae2b69e14222a3b",
+   "scenes": 10,
+   "counts": {
+    "s": 82,
+    "t": 0,
+    "n": 8,
+    "a": 9
+   },
+   "collections": [
+    {
+     "id": "hylee-home-date:a0jyoeqw",
+     "path": "HYLEE_HOME_DATE.arrival",
+     "len": 12
+    },
+    {
+     "id": "hylee-home-date:a0pj2mqd",
+     "path": "HYLEE_HOME_DATE.tierComments",
+     "len": 5
+    },
+    {
+     "id": "hylee-home-date:a1tk707s",
+     "path": "HYLEE_HOME_DATE.tones.amical.lines",
+     "len": 3
+    },
+    {
+     "id": "hylee-home-date:a0ne1h1p",
+     "path": "HYLEE_HOME_DATE.tones.amoureux.lines",
+     "len": 3
+    },
+    {
+     "id": "hylee-home-date:a1bpvhk0",
+     "path": "HYLEE_HOME_DATE.tones.desir.lines",
+     "len": 3
+    },
+    {
+     "id": "hylee-home-date:a1m82yzy",
+     "path": "HYLEE_HOME_DATE.rounds",
+     "len": 3
+    },
+    {
+     "id": "hylee-home-date:a070ojw5",
+     "path": "HYLEE_HOME_DATE.results.close",
+     "len": 2
+    },
+    {
+     "id": "hylee-home-date:a0bqp2v6",
+     "path": "HYLEE_HOME_DATE.results.warm",
+     "len": 2
+    },
+    {
+     "id": "hylee-home-date:a1q108k8",
+     "path": "HYLEE_HOME_DATE.results.perfect",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-naiah-cross-quest",
+   "label": "Hylee × Naïah · croisée quête",
+   "group": "Hylee × Naïah",
+   "hash": "6bda067e07116e1f",
+   "scenes": 41,
+   "counts": {
+    "s": 382,
+    "t": 0,
+    "n": 4,
+    "a": 35
+   },
+   "collections": [
+    {
+     "id": "hylee-naiah-cross-quest:a1ych123",
+     "path": "HN_TITLES",
+     "len": 8
+    },
+    {
+     "id": "hylee-naiah-cross-quest:a1sokr44",
+     "path": "HN_OBJECTIVES",
+     "len": 8
+    }
+   ]
+  },
+  {
+   "key": "hylee-naiah-dates",
+   "label": "Hylee × Naïah · rendez-vous",
+   "group": "Hylee × Naïah",
+   "hash": "338a12e702d97f12",
+   "scenes": 48,
+   "counts": {
+    "s": 355,
+    "t": 0,
+    "n": 6,
+    "a": 39
+   },
+   "collections": []
+  },
+  {
+   "key": "hylee-naiah-group-intimacy",
+   "label": "Hylee × Naïah · groupe intimité",
+   "group": "Hylee × Naïah",
+   "hash": "fb771b4cd63b922d",
+   "scenes": 39,
+   "counts": {
+    "s": 194,
+    "t": 20,
+    "n": 0,
+    "a": 21
+   },
+   "collections": [
+    {
+     "id": "hylee-naiah-group-intimacy:a0h69ur8",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-place.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0umpfig",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-place.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0ciude9",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-place.results.searching",
+     "len": 2
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0a4zd1i",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-place.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a08zyh03",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-one.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a087u2br",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-one.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0avyl7i",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-one.results.searching",
+     "len": 1
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0jncejr",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-one.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a1x2lncg",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-home.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a13tls7w",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-home.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a1bzmurx",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-home.results.searching",
+     "len": 1
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0nam3vu",
+     "path": "HYLEE_NAIAH_INTIMACY_GAMES.group-date-hylee-naiah-home.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a04b68ns",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-place.killed",
+     "len": 4
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a082shrr",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-place.memory-erased",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a11k4xr5",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-place.vegetative",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a11xe87t",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-one.killed",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a1trzngk",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-one.memory-erased",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a0uij4a0",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-one.vegetative",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a1i0g9rc",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-home.killed",
+     "len": 3
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a1plkjdz",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-home.memory-erased",
+     "len": 4
+    },
+    {
+     "id": "hylee-naiah-group-intimacy:a186a7w1",
+     "path": "HYLEE_NAIAH_MOTHER_TRACES.group-date-hylee-naiah-home.vegetative",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-naiah-intimacy-home",
+   "label": "Hylee × Naïah · intimité logis",
+   "group": "Hylee × Naïah",
+   "hash": "8bd082cb0ad5ff25",
+   "scenes": 12,
+   "counts": {
+    "s": 424,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "hylee-naiah-intimacy-home:a0nkbfny",
+     "path": "L1.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-home:a0t3yl1f",
+     "path": "L2.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-home:a1vziqyg",
+     "path": "L3.ellipse",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "hylee-naiah-intimacy-one",
+   "label": "Hylee × Naïah · intimité première",
+   "group": "Hylee × Naïah",
+   "hash": "a68c296c777e399d",
+   "scenes": 12,
+   "counts": {
+    "s": 457,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "hylee-naiah-intimacy-one:a043x5ww",
+     "path": "N1.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-one:a1gicpxd",
+     "path": "N2.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-one:a1kxkv52",
+     "path": "N3.ellipse",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "hylee-naiah-intimacy-place",
+   "label": "Hylee × Naïah · intimité lieu",
+   "group": "Hylee × Naïah",
+   "hash": "845f1a7bf89f4770",
+   "scenes": 6,
+   "counts": {
+    "s": 442,
+    "t": 0,
+    "n": 0,
+    "a": 5
+   },
+   "collections": [
+    {
+     "id": "hylee-naiah-intimacy-place:a13n3u62",
+     "path": "H1.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-place:a073sm4n",
+     "path": "H2.tendre",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-place:a0e1w3en",
+     "path": "H2.ellipse",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-place:a0t0u3nm",
+     "path": "H3.tendre",
+     "len": 12
+    },
+    {
+     "id": "hylee-naiah-intimacy-place:a0a9fkp0",
+     "path": "H3.ellipse",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "hylee-relation",
+   "label": "Hylee · relation",
+   "group": "Hylee",
+   "hash": "e26a82600591d8a2",
+   "scenes": 28,
+   "counts": {
+    "s": 276,
+    "t": 0,
+    "n": 51,
+    "a": 26
+   },
+   "collections": [
+    {
+     "id": "hylee-relation:a0d06mn3",
+     "path": "HYLEE_ROUTES",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-ambient",
+   "label": "Hylee × Remerii · moments libres",
+   "group": "Hylee × Remerii",
+   "hash": "a5110f2bccd603ba",
+   "scenes": 4,
+   "counts": {
+    "s": 50,
+    "t": 0,
+    "n": 8,
+    "a": 13
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-ambient:a0my7488",
+     "path": "HR_AMBIENT_SCENES",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-cross-quest",
+   "label": "Hylee × Remerii · croisée quête",
+   "group": "Hylee × Remerii",
+   "hash": "0834e57af58a06bf",
+   "scenes": 27,
+   "counts": {
+    "s": 406,
+    "t": 0,
+    "n": 93,
+    "a": 68
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-cross-quest:a1dr6wqn",
+     "path": "HR_TITLES",
+     "len": 7
+    },
+    {
+     "id": "hylee-remerii-cross-quest:a04hy28w",
+     "path": "HR_OBJECTIVES",
+     "len": 7
+    },
+    {
+     "id": "hylee-remerii-cross-quest:a0q2pcll",
+     "path": "HR_LETTERS",
+     "len": 4
+    },
+    {
+     "id": "hylee-remerii-cross-quest:a1s1rt41",
+     "path": "HR_SCENES",
+     "len": 6
+    },
+    {
+     "id": "hylee-remerii-cross-quest:a0b1059p",
+     "path": "DOUBLE_BEAT.intro",
+     "len": 15
+    },
+    {
+     "id": "hylee-remerii-cross-quest:a1neqpsz",
+     "path": "DOUBLE_BEAT.choices",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-dates",
+   "label": "Hylee × Remerii · rendez-vous",
+   "group": "Hylee × Remerii",
+   "hash": "69e5bd91c2eb346c",
+   "scenes": 28,
+   "counts": {
+    "s": 244,
+    "t": 0,
+    "n": 67,
+    "a": 28
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-dates:a0ywqnc5",
+     "path": "HR_DATES",
+     "len": 3
+    },
+    {
+     "id": "hylee-remerii-dates:a0jipm60",
+     "path": "HR_DATE_BEATS.",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-dates:a0jipm60.1",
+     "path": "HR_DATE_BEATS.",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-dates:a0jipm60.2",
+     "path": "HR_DATE_BEATS.",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-free-day-intimacy",
+   "label": "Hylee × Remerii · libre jour intimité",
+   "group": "Hylee × Remerii",
+   "hash": "8b2a45fc5bfdeeb2",
+   "scenes": 1,
+   "counts": {
+    "s": 199,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-free-day-intimacy:a0gv50y5",
+     "path": "seeds",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-group-intimacy",
+   "label": "Hylee × Remerii · groupe intimité",
+   "group": "Hylee × Remerii",
+   "hash": "afc9ddd846ec2b85",
+   "scenes": 37,
+   "counts": {
+    "s": 134,
+    "t": 0,
+    "n": 0,
+    "a": 12
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-group-intimacy:a07cs60q",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-free-day.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a1vouyle",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-free-day.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a0as62i3",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-free-day.results.searching",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a05s15jo",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-free-day.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a13ksmgl",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-wind.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a169gnsl",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-wind.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a1dbvp7g",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-wind.results.searching",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a0jrz3gp",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-wind.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a0erkhx0",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-home.beats",
+     "len": 4
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a0ku8m4o",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-home.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a11r0gb5",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-home.results.searching",
+     "len": 2
+    },
+    {
+     "id": "hylee-remerii-group-intimacy:a1eft8g6",
+     "path": "HYLEE_REMERII_INTIMACY_GAMES.group-date-hylee-remerii-home.results.discordant",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-home-intimacy",
+   "label": "Hylee × Remerii · logis intimité",
+   "group": "Hylee × Remerii",
+   "hash": "62f94016ecfcbc26",
+   "scenes": 1,
+   "counts": {
+    "s": 213,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-home-intimacy:a0gv50y5",
+     "path": "seeds",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-remerii-wind-intimacy",
+   "label": "Hylee × Remerii · vent intimité",
+   "group": "Hylee × Remerii",
+   "hash": "8adf248dc0de496c",
+   "scenes": 1,
+   "counts": {
+    "s": 214,
+    "t": 0,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "hylee-remerii-wind-intimacy:a0gv50y5",
+     "path": "seeds",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "hylee-search",
+   "label": "Hylee · recherche",
+   "group": "Hylee",
+   "hash": "06e646ad0f48cb47",
+   "scenes": 18,
+   "counts": {
+    "s": 65,
+    "t": 6,
+    "n": 1,
+    "a": 9
+   },
+   "collections": [
+    {
+     "id": "hylee-search:a1d5qpca",
+     "path": "SEARCH_CATEGORIES",
+     "len": 3
+    },
+    {
+     "id": "hylee-search:a0974f3d",
+     "path": "SEARCH_SCENARIOS",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "individual-explicit-scenes",
+   "label": "Individuelles explicites scènes",
+   "group": "Monde et systèmes",
+   "hash": "41e9e43206f5d19e",
+   "scenes": 3,
+   "counts": {
+    "s": 217,
+    "t": 1,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "intimacy-games",
+   "label": "Intimité jeux",
+   "group": "Monde et systèmes",
+   "hash": "3ddba28a0b883c1d",
+   "scenes": 37,
+   "counts": {
+    "s": 505,
+    "t": 0,
+    "n": 0,
+    "a": 48
+   },
+   "collections": [
+    {
+     "id": "intimacy-games:a06fo84x",
+     "path": "INTIMACY_GAMES.hylee.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a1g0zlfd",
+     "path": "INTIMACY_GAMES.hylee.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1mxozzs",
+     "path": "INTIMACY_GAMES.hylee.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a06otp0d",
+     "path": "INTIMACY_GAMES.hylee.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0d4waef",
+     "path": "INTIMACY_GAMES.remerii.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a0wv0lxv",
+     "path": "INTIMACY_GAMES.remerii.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0wgx3pe",
+     "path": "INTIMACY_GAMES.remerii.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0s61nyr",
+     "path": "INTIMACY_GAMES.remerii.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0qwftv8",
+     "path": "INTIMACY_GAMES.iriana.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a1vv6fns",
+     "path": "INTIMACY_GAMES.iriana.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0904a4x",
+     "path": "INTIMACY_GAMES.iriana.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0c55z2e",
+     "path": "INTIMACY_GAMES.iriana.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1y8d5qa",
+     "path": "INTIMACY_GAMES.valurn.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a09xn8oq",
+     "path": "INTIMACY_GAMES.valurn.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0xvc2cj",
+     "path": "INTIMACY_GAMES.valurn.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0nxc2gs",
+     "path": "INTIMACY_GAMES.valurn.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0jograb",
+     "path": "INTIMACY_GAMES.naiah.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a1m3g4nr",
+     "path": "INTIMACY_GAMES.naiah.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0g2hk7i",
+     "path": "INTIMACY_GAMES.naiah.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a09o47dj",
+     "path": "INTIMACY_GAMES.naiah.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1ove3xj",
+     "path": "INTIMACY_GAMES.lineva.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a06ungpf",
+     "path": "INTIMACY_GAMES.lineva.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0q2rupu",
+     "path": "INTIMACY_GAMES.lineva.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1ao0fkj",
+     "path": "INTIMACY_GAMES.lineva.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0xx56pu",
+     "path": "INTIMACY_GAMES.saidin.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a0iavdmi",
+     "path": "INTIMACY_GAMES.saidin.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a09z4mhv",
+     "path": "INTIMACY_GAMES.saidin.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1ild2t8",
+     "path": "INTIMACY_GAMES.saidin.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a09sxkkf",
+     "path": "INTIMACY_GAMES.bellirith.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a1xhh3kr",
+     "path": "INTIMACY_GAMES.bellirith.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1yzkbyi",
+     "path": "INTIMACY_GAMES.bellirith.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0ha85t7",
+     "path": "INTIMACY_GAMES.bellirith.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0o5rol3",
+     "path": "INTIMACY_GAMES.amanea.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a0tq79ib",
+     "path": "INTIMACY_GAMES.amanea.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0apfgmq",
+     "path": "INTIMACY_GAMES.amanea.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0wjqwub",
+     "path": "INTIMACY_GAMES.amanea.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1i4aqtw",
+     "path": "INTIMACY_GAMES.tia.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a1ii9ctk",
+     "path": "INTIMACY_GAMES.tia.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0oa2do1",
+     "path": "INTIMACY_GAMES.tia.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0q6ii7a",
+     "path": "INTIMACY_GAMES.tia.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0dbxo6j",
+     "path": "INTIMACY_GAMES.allenna.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a0l7shgv",
+     "path": "INTIMACY_GAMES.allenna.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a17ruw7a",
+     "path": "INTIMACY_GAMES.allenna.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0vwep6n",
+     "path": "INTIMACY_GAMES.allenna.results.discordant",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1sbt4l2",
+     "path": "INTIMACY_GAMES.draven.beats",
+     "len": 4
+    },
+    {
+     "id": "intimacy-games:a0c17tw6",
+     "path": "INTIMACY_GAMES.draven.results.attuned",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a1px7ip3",
+     "path": "INTIMACY_GAMES.draven.results.searching",
+     "len": 2
+    },
+    {
+     "id": "intimacy-games:a0zfkau0",
+     "path": "INTIMACY_GAMES.draven.results.discordant",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "intimacy-prose",
+   "label": "Intimité prose",
+   "group": "Monde et systèmes",
+   "hash": "cd91a7d336fe7773",
+   "scenes": 1,
+   "counts": {
+    "s": 55,
+    "t": 0,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "intimacy-routes",
+   "label": "Intimité routes",
+   "group": "Monde et systèmes",
+   "hash": "ff5154e3403a1acf",
+   "scenes": 44,
+   "counts": {
+    "s": 947,
+    "t": 11,
+    "n": 0,
+    "a": 63
+   },
+   "collections": [
+    {
+     "id": "intimacy-routes:a1amstrm",
+     "path": "ROUTE_SEEDS.hylee",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a12wkpbg",
+     "path": "ROUTE_SEEDS.remerii",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a05xhlon",
+     "path": "ROUTE_SEEDS.iriana",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a17g75y1",
+     "path": "ROUTE_SEEDS.valurn",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a1bamc80",
+     "path": "ROUTE_SEEDS.naiah",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a13wlei4",
+     "path": "ROUTE_SEEDS.lineva",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a05wwvdl",
+     "path": "ROUTE_SEEDS.saidin",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a1l0d31w",
+     "path": "ROUTE_SEEDS.bellirith",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a0zli2cc",
+     "path": "ROUTE_SEEDS.amanea",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a1vozxon",
+     "path": "ROUTE_SEEDS.tia",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a1iybavs",
+     "path": "ROUTE_SEEDS.allenna",
+     "len": 3
+    },
+    {
+     "id": "intimacy-routes:a17ed6sl",
+     "path": "ROUTE_SEEDS.draven",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "intimacy-scenes",
+   "label": "Intimité scènes",
+   "group": "Monde et systèmes",
+   "hash": "ec40b3ce877c4b0c",
+   "scenes": 63,
+   "counts": {
+    "s": 391,
+    "t": 4,
+    "n": 0,
+    "a": 80
+   },
+   "collections": [
+    {
+     "id": "intimacy-scenes:a0s7j0kp",
+     "path": "INTIMACY_PROFILES.hylee.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0gtnqgb",
+     "path": "INTIMACY_PROFILES.hylee.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1vxthn1",
+     "path": "INTIMACY_PROFILES.hylee.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1o3vi5i",
+     "path": "INTIMACY_PROFILES.hylee.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1wesvqb",
+     "path": "INTIMACY_PROFILES.remerii.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0ybn8td",
+     "path": "INTIMACY_PROFILES.remerii.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a17102of",
+     "path": "INTIMACY_PROFILES.remerii.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0z8vz58",
+     "path": "INTIMACY_PROFILES.remerii.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0agk2qu",
+     "path": "INTIMACY_PROFILES.iriana.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0unuqtu",
+     "path": "INTIMACY_PROFILES.iriana.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a033lbh8",
+     "path": "INTIMACY_PROFILES.iriana.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1h32oa1",
+     "path": "INTIMACY_PROFILES.iriana.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a13w9nhk",
+     "path": "INTIMACY_PROFILES.valurn.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1dzt2w0",
+     "path": "INTIMACY_PROFILES.valurn.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1ylffse",
+     "path": "INTIMACY_PROFILES.valurn.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1fwjsbj",
+     "path": "INTIMACY_PROFILES.valurn.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1bie86n",
+     "path": "INTIMACY_PROFILES.naiah.opening",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0u08nvx",
+     "path": "INTIMACY_PROFILES.naiah.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a160qtbc",
+     "path": "INTIMACY_PROFILES.naiah.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1jvnpoh",
+     "path": "INTIMACY_PROFILES.lineva.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a06ecpar",
+     "path": "INTIMACY_PROFILES.lineva.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1pof9xx",
+     "path": "INTIMACY_PROFILES.lineva.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0k8a4ce",
+     "path": "INTIMACY_PROFILES.lineva.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1j1enag",
+     "path": "INTIMACY_PROFILES.saidin.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a14ampls",
+     "path": "INTIMACY_PROFILES.saidin.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0vj55ny",
+     "path": "INTIMACY_PROFILES.saidin.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0t6n0bj",
+     "path": "INTIMACY_PROFILES.saidin.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0yu008f",
+     "path": "INTIMACY_PROFILES.bellirith.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0ldmpm5",
+     "path": "INTIMACY_PROFILES.bellirith.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0fcjz7n",
+     "path": "INTIMACY_PROFILES.bellirith.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a045fpd4",
+     "path": "INTIMACY_PROFILES.bellirith.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1njxx7h",
+     "path": "INTIMACY_PROFILES.amanea.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1so77hr",
+     "path": "INTIMACY_PROFILES.amanea.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a131n2jt",
+     "path": "INTIMACY_PROFILES.amanea.directions",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a093u9qi",
+     "path": "INTIMACY_PROFILES.amanea.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1xjry1g",
+     "path": "INTIMACY_PROFILES.tia.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a10vf49o",
+     "path": "INTIMACY_PROFILES.tia.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a1om3nfv",
+     "path": "INTIMACY_PROFILES.tia.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1p2fpdf",
+     "path": "INTIMACY_PROFILES.allenna.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a00fco1d",
+     "path": "INTIMACY_PROFILES.allenna.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0z2bofw",
+     "path": "INTIMACY_PROFILES.allenna.afterglow",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a1x98ddg",
+     "path": "INTIMACY_PROFILES.draven.opening",
+     "len": 2
+    },
+    {
+     "id": "intimacy-scenes:a0qavrek",
+     "path": "INTIMACY_PROFILES.draven.approaches",
+     "len": 3
+    },
+    {
+     "id": "intimacy-scenes:a0l9zyff",
+     "path": "INTIMACY_PROFILES.draven.afterglow",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "jobs-data",
+   "label": "Métiers données",
+   "group": "Monde et systèmes",
+   "hash": "d5fce399c507f0be",
+   "scenes": 167,
+   "counts": {
+    "s": 691,
+    "t": 4,
+    "n": 2,
+    "a": 35
+   },
+   "collections": [
+    {
+     "id": "jobs-data:a1lltigt",
+     "path": "JOBS",
+     "len": 14
+    },
+    {
+     "id": "jobs-data:a1qgu8h1",
+     "path": "SERVICE_PRIMARY",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a058jwf9",
+     "path": "SERVICE_SECONDARY",
+     "len": 9
+    },
+    {
+     "id": "jobs-data:a18h36c0",
+     "path": "EXTRA_JOB_ROUNDS.forestier-service",
+     "len": 6
+    },
+    {
+     "id": "jobs-data:a11aia2f",
+     "path": "EXTRA_JOB_ROUNDS.forestier-rooms",
+     "len": 5
+    },
+    {
+     "id": "jobs-data:a1mq1ixi",
+     "path": "EXTRA_JOB_ROUNDS.algratal-merchant",
+     "len": 5
+    },
+    {
+     "id": "jobs-data:a1288vct",
+     "path": "EXTRA_JOB_ROUNDS.algratal-petitions",
+     "len": 3
+    },
+    {
+     "id": "jobs-data:a0nrvgxb",
+     "path": "EXTRA_JOB_ROUNDS.miraldas-manuscript",
+     "len": 5
+    },
+    {
+     "id": "jobs-data:a10nix5h",
+     "path": "EXTRA_JOB_ROUNDS.forbidden-herbs",
+     "len": 5
+    },
+    {
+     "id": "jobs-data:a0icje4x",
+     "path": "EXTRA_JOB_ROUNDS.forthaven-map",
+     "len": 4
+    },
+    {
+     "id": "jobs-data:a17ozuyt",
+     "path": "EXTRA_JOB_ROUNDS.tzekarun-mechanism",
+     "len": 5
+    },
+    {
+     "id": "jobs-data:a1fuwuks",
+     "path": "SIGNAL_OPTIONS",
+     "len": 3
+    },
+    {
+     "id": "jobs-data:a0l04a0y",
+     "path": "PROCEDURAL_JOB_ROUNDS.miraldas-manuscript",
+     "len": 18
+    },
+    {
+     "id": "jobs-data:a0bix84c",
+     "path": "JOB_SESSION_LABELS.forestier-service",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a032go1v",
+     "path": "JOB_SESSION_LABELS.forestier-rooms",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a18rwqxe",
+     "path": "JOB_SESSION_LABELS.algratal-merchant",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0vhj4i1",
+     "path": "JOB_SESSION_LABELS.algratal-petitions",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0d2lj1l",
+     "path": "JOB_SESSION_LABELS.algratal-catacombs",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0k3g9n1",
+     "path": "JOB_SESSION_LABELS.miraldas-calibration",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a1hkfb7n",
+     "path": "JOB_SESSION_LABELS.miraldas-manuscript",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a08rnee1",
+     "path": "JOB_SESSION_LABELS.forbidden-herbs",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0cb7n3j",
+     "path": "JOB_SESSION_LABELS.forthaven-defense",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a04yd379",
+     "path": "JOB_SESSION_LABELS.forthaven-map",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0re0hfz",
+     "path": "JOB_SESSION_LABELS.akuhn-seals",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a1pw7fq3",
+     "path": "JOB_SESSION_LABELS.akuhn-crystal-route",
+     "len": 8
+    },
+    {
+     "id": "jobs-data:a0qrduzd",
+     "path": "JOB_SESSION_LABELS.tzekarun-mechanism",
+     "len": 8
+    }
+   ]
+  },
+  {
+   "key": "life-activities",
+   "label": "Vie quotidienne · activités",
+   "group": "Vie quotidienne",
+   "hash": "48d9af59195571e8",
+   "scenes": 17,
+   "counts": {
+    "s": 165,
+    "t": 1,
+    "n": 0,
+    "a": 13
+   },
+   "collections": [
+    {
+     "id": "life-activities:a1dxwvyc",
+     "path": "SHARED_ACTIVITIES",
+     "len": 12
+    }
+   ]
+  },
+  {
+   "key": "life-gifts",
+   "label": "Vie quotidienne · cadeaux",
+   "group": "Vie quotidienne",
+   "hash": "213ca7f46047f2b7",
+   "scenes": 7,
+   "counts": {
+    "s": 148,
+    "t": 0,
+    "n": 7,
+    "a": 12
+   },
+   "collections": [
+    {
+     "id": "life-gifts:a14cdtie",
+     "path": "GIFT_NEUTRAL_LINES.hylee",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0wu1fr4",
+     "path": "GIFT_NEUTRAL_LINES.remerii",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0wk2hv7",
+     "path": "GIFT_NEUTRAL_LINES.iriana",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0feuqx7",
+     "path": "GIFT_NEUTRAL_LINES.tia",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a1358gml",
+     "path": "GIFT_NEUTRAL_LINES.valurn",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a15us504",
+     "path": "GIFT_NEUTRAL_LINES.naiah",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0vrtopc",
+     "path": "GIFT_NEUTRAL_LINES.lineva",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a1n2zq9p",
+     "path": "GIFT_NEUTRAL_LINES.saidin",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0z72kqo",
+     "path": "GIFT_NEUTRAL_LINES.bellirith",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a0wlscm0",
+     "path": "GIFT_NEUTRAL_LINES.amanea",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a14fiwi4",
+     "path": "GIFT_NEUTRAL_LINES.allenna",
+     "len": 3
+    },
+    {
+     "id": "life-gifts:a17vimo9",
+     "path": "GIFT_NEUTRAL_LINES.draven",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "life-initiative-texts",
+   "label": "Vie quotidienne · initiatives textes",
+   "group": "Vie quotidienne",
+   "hash": "e3f64be464a877ec",
+   "scenes": 5,
+   "counts": {
+    "s": 217,
+    "t": 0,
+    "n": 1,
+    "a": 48
+   },
+   "collections": [
+    {
+     "id": "life-initiative-texts:a115hiit",
+     "path": "LETTER_REPLIES.hylee.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1je6mby",
+     "path": "LETTER_REPLIES.hylee.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0gr8hm2",
+     "path": "LETTER_REPLIES.hylee.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a02bqf83",
+     "path": "LETTER_REPLIES.hylee.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a04wu61j",
+     "path": "LETTER_REPLIES.remerii.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0vjym5s",
+     "path": "LETTER_REPLIES.remerii.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1vtrftk",
+     "path": "LETTER_REPLIES.remerii.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0zdbbwx",
+     "path": "LETTER_REPLIES.remerii.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a18m7fvi",
+     "path": "LETTER_REPLIES.iriana.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1nrrfhd",
+     "path": "LETTER_REPLIES.iriana.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0z1xd63",
+     "path": "LETTER_REPLIES.iriana.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a05dzb26",
+     "path": "LETTER_REPLIES.iriana.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1kltrck",
+     "path": "LETTER_REPLIES.tia.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0j65b0n",
+     "path": "LETTER_REPLIES.tia.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1hwnxr1",
+     "path": "LETTER_REPLIES.tia.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0rce7j4",
+     "path": "LETTER_REPLIES.tia.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a095z6c0",
+     "path": "LETTER_REPLIES.valurn.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1w6miqb",
+     "path": "LETTER_REPLIES.valurn.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0mpwrqh",
+     "path": "LETTER_REPLIES.valurn.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0b17vng",
+     "path": "LETTER_REPLIES.valurn.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a06vx82j",
+     "path": "LETTER_REPLIES.naiah.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0ztijpg",
+     "path": "LETTER_REPLIES.naiah.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1epc5sc",
+     "path": "LETTER_REPLIES.naiah.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0gf9505",
+     "path": "LETTER_REPLIES.naiah.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1v5x6t9",
+     "path": "LETTER_REPLIES.lineva.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a15gnc9y",
+     "path": "LETTER_REPLIES.lineva.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1wc7oqq",
+     "path": "LETTER_REPLIES.lineva.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0yzb7x7",
+     "path": "LETTER_REPLIES.lineva.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0bi2atc",
+     "path": "LETTER_REPLIES.saidin.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1xrvz43",
+     "path": "LETTER_REPLIES.saidin.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a17vecqh",
+     "path": "LETTER_REPLIES.saidin.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0fwuu0c",
+     "path": "LETTER_REPLIES.saidin.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a19kcw6b",
+     "path": "LETTER_REPLIES.bellirith.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1icjk0c",
+     "path": "LETTER_REPLIES.bellirith.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1o2v2d0",
+     "path": "LETTER_REPLIES.bellirith.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0sch625",
+     "path": "LETTER_REPLIES.bellirith.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1mg7hmx",
+     "path": "LETTER_REPLIES.amanea.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0jxsjia",
+     "path": "LETTER_REPLIES.amanea.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a17jnp66",
+     "path": "LETTER_REPLIES.amanea.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a014pn5j",
+     "path": "LETTER_REPLIES.amanea.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0vs3edz",
+     "path": "LETTER_REPLIES.allenna.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0p4nigg",
+     "path": "LETTER_REPLIES.allenna.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1rifhw8",
+     "path": "LETTER_REPLIES.allenna.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a12mmvf5",
+     "path": "LETTER_REPLIES.allenna.confidence",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0xgys9w",
+     "path": "LETTER_REPLIES.draven.merci",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a1s2eeyf",
+     "path": "LETTER_REPLIES.draven.nouvelles",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0i7i5t9",
+     "path": "LETTER_REPLIES.draven.excuse",
+     "len": 2
+    },
+    {
+     "id": "life-initiative-texts:a0vqt8ls",
+     "path": "LETTER_REPLIES.draven.confidence",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "life-moods",
+   "label": "Vie quotidienne · humeurs",
+   "group": "Vie quotidienne",
+   "hash": "0214cb94f04515d6",
+   "scenes": 9,
+   "counts": {
+    "s": 78,
+    "t": 2,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "life-state",
+   "label": "Vie quotidienne · état",
+   "group": "Vie quotidienne",
+   "hash": "3dd1336cdc917f2a",
+   "scenes": 10,
+   "counts": {
+    "s": 5,
+    "t": 10,
+    "n": 11,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "life-wishes",
+   "label": "Vie quotidienne · envies",
+   "group": "Vie quotidienne",
+   "hash": "315886af045e29fd",
+   "scenes": 50,
+   "counts": {
+    "s": 96,
+    "t": 0,
+    "n": 32,
+    "a": 10
+   },
+   "collections": [
+    {
+     "id": "life-wishes:a1w069ri",
+     "path": "WISHES",
+     "len": 33
+    },
+    {
+     "id": "life-wishes:a0mzcalu",
+     "path": "ASPIRATIONS",
+     "len": 7
+    },
+    {
+     "id": "life-wishes:a0wb8sak",
+     "path": "ASPIRATION_KEEPSAKES",
+     "len": 7
+    }
+   ]
+  },
+  {
+   "key": "lineva-allenna-basin-intimacy",
+   "label": "Lineva × Allenna · bassin intimité",
+   "group": "Lineva × Allenna",
+   "hash": "e3182ee1af5b2e35",
+   "scenes": 8,
+   "counts": {
+    "s": 341,
+    "t": 0,
+    "n": 0,
+    "a": 14
+   },
+   "collections": [
+    {
+     "id": "lineva-allenna-basin-intimacy:a115hhgj",
+     "path": "BASIN_FEMME",
+     "len": 3
+    },
+    {
+     "id": "lineva-allenna-basin-intimacy:a1slhjgf",
+     "path": "BASIN_HOMME",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "lineva-allenna-home-intimacy",
+   "label": "Lineva × Allenna · logis intimité",
+   "group": "Lineva × Allenna",
+   "hash": "e8cfe3391ff8752d",
+   "scenes": 8,
+   "counts": {
+    "s": 342,
+    "t": 0,
+    "n": 0,
+    "a": 14
+   },
+   "collections": [
+    {
+     "id": "lineva-allenna-home-intimacy:a13xw83f",
+     "path": "HOME_FEMME",
+     "len": 3
+    },
+    {
+     "id": "lineva-allenna-home-intimacy:a1y0xtvb",
+     "path": "HOME_HOMME",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "lineva-allenna-training-intimacy",
+   "label": "Lineva × Allenna · entraînement intimité",
+   "group": "Lineva × Allenna",
+   "hash": "63b46128d21ba358",
+   "scenes": 8,
+   "counts": {
+    "s": 374,
+    "t": 0,
+    "n": 0,
+    "a": 14
+   },
+   "collections": [
+    {
+     "id": "lineva-allenna-training-intimacy:a1f6xvxy",
+     "path": "TRAINING_FEMME",
+     "len": 3
+    },
+    {
+     "id": "lineva-allenna-training-intimacy:a1y7yx9y",
+     "path": "TRAINING_HOMME",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "lineva-date-intimacy",
+   "label": "Lineva · rendez-vous intimité",
+   "group": "Lineva",
+   "hash": "ebfa2e6b84656523",
+   "scenes": 17,
+   "counts": {
+    "s": 209,
+    "t": 6,
+    "n": 0,
+    "a": 61
+   },
+   "collections": [
+    {
+     "id": "lineva-date-intimacy:a0p5qxqm",
+     "path": "HARBOR_SEEDS",
+     "len": 3
+    },
+    {
+     "id": "lineva-date-intimacy:a02jw229",
+     "path": "QUARTERS_SEEDS",
+     "len": 3
+    },
+    {
+     "id": "lineva-date-intimacy:a1e0agbx",
+     "path": "SEX_BEATS.joueuse.femme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a13ksh5v",
+     "path": "SEX_BEATS.joueuse.femme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1ls0mlf",
+     "path": "SEX_BEATS.joueuse.femme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0w4olud",
+     "path": "SEX_BEATS.joueuse.femme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a08xan07",
+     "path": "SEX_BEATS.joueuse.femme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0t15th3",
+     "path": "SEX_BEATS.joueuse.femme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0wzgp73",
+     "path": "SEX_BEATS.joueuse.femme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0en51r5",
+     "path": "SEX_BEATS.joueuse.homme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1gpvjtj",
+     "path": "SEX_BEATS.joueuse.homme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a194z9if",
+     "path": "SEX_BEATS.joueuse.homme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1nocqw1",
+     "path": "SEX_BEATS.joueuse.homme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1r60x8j",
+     "path": "SEX_BEATS.joueuse.homme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0881f0z",
+     "path": "SEX_BEATS.joueuse.homme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a02s0hx7",
+     "path": "SEX_BEATS.joueuse.homme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0223xpr",
+     "path": "SEX_BEATS.tendre.femme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1l39ovd",
+     "path": "SEX_BEATS.tendre.femme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a010vz09",
+     "path": "SEX_BEATS.tendre.femme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a098b47v",
+     "path": "SEX_BEATS.tendre.femme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1gens5l",
+     "path": "SEX_BEATS.tendre.femme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0fk8r89",
+     "path": "SEX_BEATS.tendre.femme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1lv34d5",
+     "path": "SEX_BEATS.tendre.femme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0a5n4m3",
+     "path": "SEX_BEATS.tendre.homme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1vbva2d",
+     "path": "SEX_BEATS.tendre.homme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0ebxdjp",
+     "path": "SEX_BEATS.tendre.homme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a073nahb",
+     "path": "SEX_BEATS.tendre.homme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a06sde7x",
+     "path": "SEX_BEATS.tendre.homme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0l02vod",
+     "path": "SEX_BEATS.tendre.homme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1qcnr0d",
+     "path": "SEX_BEATS.tendre.homme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a03dcu8o",
+     "path": "SEX_BEATS.passionnee.femme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a10ibgh2",
+     "path": "SEX_BEATS.passionnee.femme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a13d9mma",
+     "path": "SEX_BEATS.passionnee.femme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0hap1za",
+     "path": "SEX_BEATS.passionnee.femme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1fu9ggw",
+     "path": "SEX_BEATS.passionnee.femme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a09oc7ys",
+     "path": "SEX_BEATS.passionnee.femme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1g57npu",
+     "path": "SEX_BEATS.passionnee.femme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a177ob1s",
+     "path": "SEX_BEATS.passionnee.homme.tenderDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0cbivni",
+     "path": "SEX_BEATS.passionnee.homme.suggestiveDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a094987e",
+     "path": "SEX_BEATS.passionnee.homme.explicitDiscovery",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a00g8fmm",
+     "path": "SEX_BEATS.passionnee.homme.tenderClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a0cwb6ew",
+     "path": "SEX_BEATS.passionnee.homme.suggestiveClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a01ywefw",
+     "path": "SEX_BEATS.passionnee.homme.explicitClimax",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a1jd3by2",
+     "path": "SEX_BEATS.passionnee.homme.ellipse",
+     "len": 1
+    },
+    {
+     "id": "lineva-date-intimacy:a189q26l",
+     "path": "DATE_APPROACHES.date-lineva-ramparts",
+     "len": 3
+    },
+    {
+     "id": "lineva-date-intimacy:a1kmjl5e",
+     "path": "DATE_APPROACHES.date-lineva-quarters",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "lineva-relation-beats",
+   "label": "Lineva · relation battements",
+   "group": "Lineva",
+   "hash": "b71f5f31f18604c2",
+   "scenes": 16,
+   "counts": {
+    "s": 71,
+    "t": 0,
+    "n": 46,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "lineva-relation-beats:a1t90pvv",
+     "path": "LINEVA_RELATION_BEATS.lineva-0.intro",
+     "len": 2
+    },
+    {
+     "id": "lineva-relation-beats:a17z14z1",
+     "path": "LINEVA_RELATION_BEATS.lineva-0.choices",
+     "len": 3
+    },
+    {
+     "id": "lineva-relation-beats:a0gxaioc",
+     "path": "LINEVA_RELATION_BEATS.lineva-1.intro",
+     "len": 2
+    },
+    {
+     "id": "lineva-relation-beats:a1otihom",
+     "path": "LINEVA_RELATION_BEATS.lineva-1.choices",
+     "len": 3
+    },
+    {
+     "id": "lineva-relation-beats:a19khd5l",
+     "path": "LINEVA_RELATION_BEATS.lineva-2.intro",
+     "len": 2
+    },
+    {
+     "id": "lineva-relation-beats:a1en6tnr",
+     "path": "LINEVA_RELATION_BEATS.lineva-2.choices",
+     "len": 3
+    },
+    {
+     "id": "lineva-relation-beats:a1e7u7f6",
+     "path": "LINEVA_RELATION_BEATS.lineva-3.intro",
+     "len": 2
+    },
+    {
+     "id": "lineva-relation-beats:a0rxd4ko",
+     "path": "LINEVA_RELATION_BEATS.lineva-3.choices",
+     "len": 3
+    },
+    {
+     "id": "lineva-relation-beats:a01zll2f",
+     "path": "LINEVA_RELATION_BEATS.lineva-4.intro",
+     "len": 2
+    },
+    {
+     "id": "lineva-relation-beats:a14vr2kx",
+     "path": "LINEVA_RELATION_BEATS.lineva-4.choices",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "naiah-ambient",
+   "label": "Naïah · moments libres",
+   "group": "Naïah",
+   "hash": "6e4a0f7b0ddfa906",
+   "scenes": 19,
+   "counts": {
+    "s": 342,
+    "t": 0,
+    "n": 96,
+    "a": 73
+   },
+   "collections": [
+    {
+     "id": "naiah-ambient:a15ns99d",
+     "path": "NAIAH_AMBIENT_LINES",
+     "len": 18
+    }
+   ]
+  },
+  {
+   "key": "naiah-confidences",
+   "label": "Naïah · confidences",
+   "group": "Naïah",
+   "hash": "f0d9071008dd058c",
+   "scenes": 10,
+   "counts": {
+    "s": 169,
+    "t": 0,
+    "n": 24,
+    "a": 22
+   },
+   "collections": [
+    {
+     "id": "naiah-confidences:a05orw8l",
+     "path": "NAIAH_KNOWLEDGE",
+     "len": 4
+    },
+    {
+     "id": "naiah-confidences:a0r66ugw",
+     "path": "NAIAH_CONFIDENCES",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "naiah-date-intimacy",
+   "label": "Naïah · rendez-vous intimité",
+   "group": "Naïah",
+   "hash": "27ce0d3100abdc44",
+   "scenes": 13,
+   "counts": {
+    "s": 50,
+    "t": 4,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "naiah-date-intimacy:a1ar1cvm",
+     "path": "NAIAH_PROXIMITY_APPROACHES.date-naiah-sanctuary",
+     "len": 3
+    },
+    {
+     "id": "naiah-date-intimacy:a0crapid",
+     "path": "NAIAH_PROXIMITY_APPROACHES.date-naiah-akuhn",
+     "len": 3
+    },
+    {
+     "id": "naiah-date-intimacy:a04rr2n6",
+     "path": "NAIAH_PROXIMITY_APPROACHES.home-naiah",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "naiah-date-intimacy-edge",
+   "label": "Naïah · rendez-vous intimité lisière",
+   "group": "Naïah",
+   "hash": "ba08f37a8499c85a",
+   "scenes": 7,
+   "counts": {
+    "s": 275,
+    "t": 0,
+    "n": 0,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "naiah-date-intimacy-edge:a1lr91n3",
+     "path": "NAIAH_EDGE_INTIMACY_SCENES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "naiah-date-intimacy-forest",
+   "label": "Naïah · rendez-vous intimité forêt",
+   "group": "Naïah",
+   "hash": "8e37c02bd7bb6b11",
+   "scenes": 7,
+   "counts": {
+    "s": 271,
+    "t": 0,
+    "n": 0,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "naiah-date-intimacy-forest:a0a3len3",
+     "path": "NAIAH_FOREST_INTIMACY_SCENES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "naiah-date-intimacy-home",
+   "label": "Naïah · rendez-vous intimité logis",
+   "group": "Naïah",
+   "hash": "48dac32cd964240f",
+   "scenes": 7,
+   "counts": {
+    "s": 279,
+    "t": 0,
+    "n": 0,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "naiah-date-intimacy-home:a12n57e9",
+     "path": "NAIAH_HOME_INTIMACY_SCENES",
+     "len": 6
+    }
+   ]
+  },
+  {
+   "key": "naiah-dates",
+   "label": "Naïah · rendez-vous",
+   "group": "Naïah",
+   "hash": "1e51124b74677d14",
+   "scenes": 23,
+   "counts": {
+    "s": 194,
+    "t": 0,
+    "n": 66,
+    "a": 35
+   },
+   "collections": [
+    {
+     "id": "naiah-dates:a0qsimo0",
+     "path": "NAIAH_DATES",
+     "len": 2
+    },
+    {
+     "id": "naiah-dates:a052h6p1",
+     "path": "APPEARANCE_BEATS",
+     "len": 3
+    },
+    {
+     "id": "naiah-dates:a0x1w18o",
+     "path": "KINGDOM_BEATS",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "naiah-group-proximity",
+   "label": "Naïah · groupe proximité",
+   "group": "Naïah",
+   "hash": "77946e5e92efd4bb",
+   "scenes": 33,
+   "counts": {
+    "s": 153,
+    "t": 2,
+    "n": 0,
+    "a": 15
+   },
+   "collections": [
+    {
+     "id": "naiah-group-proximity:a18dxxpl",
+     "path": "BLUEPRINTS",
+     "len": 6
+    },
+    {
+     "id": "naiah-group-proximity:a0aop99n",
+     "path": "NAIAH_GROUP_GAMES.group-date-hylee-naiah.beats",
+     "len": 4
+    },
+    {
+     "id": "naiah-group-proximity:a0lvzjsf",
+     "path": "NAIAH_GROUP_GAMES.group-date-hylee-naiah.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "naiah-group-proximity:a0r84dfq",
+     "path": "NAIAH_GROUP_GAMES.group-date-hylee-naiah.results.searching",
+     "len": 1
+    },
+    {
+     "id": "naiah-group-proximity:a04cjren",
+     "path": "NAIAH_GROUP_GAMES.group-date-hylee-naiah.results.discordant",
+     "len": 1
+    },
+    {
+     "id": "naiah-group-proximity:a0hxcglx",
+     "path": "NAIAH_GROUP_GAMES.group-date-naiah-bellirith.beats",
+     "len": 4
+    },
+    {
+     "id": "naiah-group-proximity:a0b8dz6d",
+     "path": "NAIAH_GROUP_GAMES.group-date-naiah-bellirith.results.attuned",
+     "len": 3
+    },
+    {
+     "id": "naiah-group-proximity:a06qo9j0",
+     "path": "NAIAH_GROUP_GAMES.group-date-naiah-bellirith.results.searching",
+     "len": 1
+    },
+    {
+     "id": "naiah-group-proximity:a197m8q1",
+     "path": "NAIAH_GROUP_GAMES.group-date-naiah-bellirith.results.discordant",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "naiah-home-date",
+   "label": "Naïah · logis rendez-vous",
+   "group": "Naïah",
+   "hash": "7b69d6293a9114a4",
+   "scenes": 9,
+   "counts": {
+    "s": 76,
+    "t": 0,
+    "n": 8,
+    "a": 9
+   },
+   "collections": [
+    {
+     "id": "naiah-home-date:a1c9k46u",
+     "path": "NAIAH_HOME_DATE.arrival",
+     "len": 7
+    },
+    {
+     "id": "naiah-home-date:a0nnz06v",
+     "path": "NAIAH_HOME_DATE.tierComments",
+     "len": 5
+    },
+    {
+     "id": "naiah-home-date:a1qblw1a",
+     "path": "NAIAH_HOME_DATE.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "naiah-home-date:a1utvwvj",
+     "path": "NAIAH_HOME_DATE.tones.amoureux.lines",
+     "len": 3
+    },
+    {
+     "id": "naiah-home-date:a1hh8l86",
+     "path": "NAIAH_HOME_DATE.tones.desir.lines",
+     "len": 3
+    },
+    {
+     "id": "naiah-home-date:a0ud97x0",
+     "path": "NAIAH_HOME_DATE.rounds",
+     "len": 3
+    },
+    {
+     "id": "naiah-home-date:a14mhl8z",
+     "path": "NAIAH_HOME_DATE.results.close",
+     "len": 2
+    },
+    {
+     "id": "naiah-home-date:a1fguga0",
+     "path": "NAIAH_HOME_DATE.results.warm",
+     "len": 2
+    },
+    {
+     "id": "naiah-home-date:a1xsbihq",
+     "path": "NAIAH_HOME_DATE.results.perfect",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "naiah-relation",
+   "label": "Naïah · relation",
+   "group": "Naïah",
+   "hash": "eed1ccd5b177515c",
+   "scenes": 17,
+   "counts": {
+    "s": 235,
+    "t": 0,
+    "n": 50,
+    "a": 17
+   },
+   "collections": [
+    {
+     "id": "naiah-relation:a0k21hst",
+     "path": "NAIAH_ROUTES",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "narrative-system",
+   "label": "Narration system",
+   "group": "Monde et systèmes",
+   "hash": "32cecff0e159b063",
+   "scenes": 1,
+   "counts": {
+    "s": 180,
+    "t": 0,
+    "n": 0,
+    "a": 48
+   },
+   "collections": [
+    {
+     "id": "narrative-system:a0gzq4uz",
+     "path": "VOICES.hylee.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0kvdnrh",
+     "path": "VOICES.hylee.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0d3bh3b",
+     "path": "VOICES.hylee.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a14slpid",
+     "path": "VOICES.hylee.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0nkfmgx",
+     "path": "VOICES.remerii.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0bhp9wz",
+     "path": "VOICES.remerii.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a11f8zah",
+     "path": "VOICES.remerii.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0v3om07",
+     "path": "VOICES.remerii.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0i9u562",
+     "path": "VOICES.iriana.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a00uz3ny",
+     "path": "VOICES.iriana.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a17t1cmg",
+     "path": "VOICES.iriana.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0w26ci0",
+     "path": "VOICES.iriana.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0yewp58",
+     "path": "VOICES.tia.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1vzjhk0",
+     "path": "VOICES.tia.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1rkoydy",
+     "path": "VOICES.tia.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0e625xa",
+     "path": "VOICES.tia.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a1yyza3c",
+     "path": "VOICES.valurn.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0be7498",
+     "path": "VOICES.valurn.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0qt8f6i",
+     "path": "VOICES.valurn.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1bmwvk2",
+     "path": "VOICES.valurn.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0lpr0cl",
+     "path": "VOICES.naiah.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1un52pj",
+     "path": "VOICES.naiah.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0s2sd79",
+     "path": "VOICES.naiah.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0wjmk5f",
+     "path": "VOICES.naiah.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a006fwoj",
+     "path": "VOICES.lineva.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1ki0rv9",
+     "path": "VOICES.lineva.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1yogekv",
+     "path": "VOICES.lineva.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a17c67zx",
+     "path": "VOICES.lineva.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0ojja6g",
+     "path": "VOICES.saidin.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1go5bgc",
+     "path": "VOICES.saidin.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a01kkpuy",
+     "path": "VOICES.saidin.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a14zwceq",
+     "path": "VOICES.saidin.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a0tmggth",
+     "path": "VOICES.bellirith.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1c33jfb",
+     "path": "VOICES.bellirith.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a05pmqd1",
+     "path": "VOICES.bellirith.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1tx9pnn",
+     "path": "VOICES.bellirith.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a1yu6p7r",
+     "path": "VOICES.amanea.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1vt8e95",
+     "path": "VOICES.amanea.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1qll4ln",
+     "path": "VOICES.amanea.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1uxxxzt",
+     "path": "VOICES.amanea.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a04geuqp",
+     "path": "VOICES.allenna.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1gmnxcj",
+     "path": "VOICES.allenna.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0xpxyh5",
+     "path": "VOICES.allenna.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0iu9iiv",
+     "path": "VOICES.allenna.closures",
+     "len": 3
+    },
+    {
+     "id": "narrative-system:a005e76k",
+     "path": "VOICES.draven.gestures",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a1dsduwg",
+     "path": "VOICES.draven.invitations",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a0be1gw6",
+     "path": "VOICES.draven.reflections",
+     "len": 4
+    },
+    {
+     "id": "narrative-system:a12qpzxq",
+     "path": "VOICES.draven.closures",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "remerii-ambient",
+   "label": "Remerii · moments libres",
+   "group": "Remerii",
+   "hash": "49c2c9a5f0c96859",
+   "scenes": 16,
+   "counts": {
+    "s": 152,
+    "t": 0,
+    "n": 57,
+    "a": 46
+   },
+   "collections": [
+    {
+     "id": "remerii-ambient:a1u203b5",
+     "path": "REMERII_AMBIENT_LINES",
+     "len": 15
+    }
+   ]
+  },
+  {
+   "key": "remerii-confidences",
+   "label": "Remerii · confidences",
+   "group": "Remerii",
+   "hash": "9f1687efaa5d6033",
+   "scenes": 13,
+   "counts": {
+    "s": 135,
+    "t": 0,
+    "n": 26,
+    "a": 22
+   },
+   "collections": [
+    {
+     "id": "remerii-confidences:a0s4ux91",
+     "path": "REMERII_KNOWLEDGE",
+     "len": 5
+    },
+    {
+     "id": "remerii-confidences:a1drqv8g",
+     "path": "REMERII_CONFIDENCES",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "remerii-date-intimacy",
+   "label": "Remerii · rendez-vous intimité",
+   "group": "Remerii",
+   "hash": "5cff5cb9a812f211",
+   "scenes": 32,
+   "counts": {
+    "s": 651,
+    "t": 3,
+    "n": 0,
+    "a": 22
+   },
+   "collections": [
+    {
+     "id": "remerii-date-intimacy:a08r7pe2",
+     "path": "REMERII_INTIMACY_APPROACHES.date-remerii-lanterns",
+     "len": 3
+    },
+    {
+     "id": "remerii-date-intimacy:a0w973d9",
+     "path": "REMERII_INTIMACY_APPROACHES.date-remerii-observatory",
+     "len": 3
+    },
+    {
+     "id": "remerii-date-intimacy:a105iepj",
+     "path": "REMERII_INTIMACY_APPROACHES.home-remerii",
+     "len": 3
+    },
+    {
+     "id": "remerii-date-intimacy:a0015v1c",
+     "path": "SCENES",
+     "len": 18
+    }
+   ]
+  },
+  {
+   "key": "remerii-dates",
+   "label": "Remerii · rendez-vous",
+   "group": "Remerii",
+   "hash": "5de32bee252883d1",
+   "scenes": 15,
+   "counts": {
+    "s": 104,
+    "t": 0,
+    "n": 40,
+    "a": 25
+   },
+   "collections": [
+    {
+     "id": "remerii-dates:a1e63acg",
+     "path": "REMERII_DATES",
+     "len": 2
+    },
+    {
+     "id": "remerii-dates:a0zpwymt",
+     "path": "LANTERN_BEATS",
+     "len": 2
+    },
+    {
+     "id": "remerii-dates:a1ljrj2r",
+     "path": "STAR_BEATS",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "remerii-home-date",
+   "label": "Remerii · logis rendez-vous",
+   "group": "Remerii",
+   "hash": "68250606a785f092",
+   "scenes": 15,
+   "counts": {
+    "s": 125,
+    "t": 0,
+    "n": 29,
+    "a": 30
+   },
+   "collections": [
+    {
+     "id": "remerii-home-date:a05keg46",
+     "path": "REMERII_HOME_DATE.arrival",
+     "len": 5
+    },
+    {
+     "id": "remerii-home-date:a1rof3rr",
+     "path": "REMERII_HOME_DATE.tierComments",
+     "len": 5
+    },
+    {
+     "id": "remerii-home-date:a17tg37y",
+     "path": "REMERII_HOME_DATE.tones.amical.lines",
+     "len": 2
+    },
+    {
+     "id": "remerii-home-date:a08x86mn",
+     "path": "REMERII_HOME_DATE.tones.amoureux.lines",
+     "len": 3
+    },
+    {
+     "id": "remerii-home-date:a08uwzbq",
+     "path": "REMERII_HOME_DATE.tones.desir.lines",
+     "len": 4
+    },
+    {
+     "id": "remerii-home-date:a1mb9ius",
+     "path": "REMERII_HOME_DATE.rounds",
+     "len": 3
+    },
+    {
+     "id": "remerii-home-date:a0od3kj7",
+     "path": "REMERII_HOME_DATE.results.close",
+     "len": 2
+    },
+    {
+     "id": "remerii-home-date:a0wmrxag",
+     "path": "REMERII_HOME_DATE.results.warm",
+     "len": 2
+    },
+    {
+     "id": "remerii-home-date:a0ovca4e",
+     "path": "REMERII_HOME_DATE.results.perfect",
+     "len": 2
+    },
+    {
+     "id": "remerii-home-date:a19spyhh",
+     "path": "REMERII_RESIDENT_MOMENTS",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "remerii-living-world",
+   "label": "Remerii · monde vivant",
+   "group": "Remerii",
+   "hash": "d50e02b9c33bc664",
+   "scenes": 13,
+   "counts": {
+    "s": 118,
+    "t": 0,
+    "n": 55,
+    "a": 33
+   },
+   "collections": [
+    {
+     "id": "remerii-living-world:a14z5ngw",
+     "path": "REMERII_LETTERS",
+     "len": 5
+    },
+    {
+     "id": "remerii-living-world:a1l7e5c1",
+     "path": "REMERII_INVITATIONS",
+     "len": 2
+    },
+    {
+     "id": "remerii-living-world:a1p7ovd7",
+     "path": "REMERII_WORLD_EVENTS",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "remerii-relation",
+   "label": "Remerii · relation",
+   "group": "Remerii",
+   "hash": "efe1bcd54bc17278",
+   "scenes": 20,
+   "counts": {
+    "s": 214,
+    "t": 0,
+    "n": 37,
+    "a": 19
+   },
+   "collections": [
+    {
+     "id": "remerii-relation:a1y587wd",
+     "path": "REMERII_ROUTES",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "route-contextual-choices",
+   "label": "Route contextuels choix",
+   "group": "Monde et systèmes",
+   "hash": "5e26e5503fc87c78",
+   "scenes": 2,
+   "counts": {
+    "s": 112,
+    "t": 1,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "scene-closures",
+   "label": "Scène clôtures",
+   "group": "Monde et systèmes",
+   "hash": "1d06a60f77f5653e",
+   "scenes": 1,
+   "counts": {
+    "s": 414,
+    "t": 0,
+    "n": 0,
+    "a": 196
+   },
+   "collections": [
+    {
+     "id": "scene-closures:a0gbkunt",
+     "path": "SCENE_CLOSURES.iriana-invitations",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1b7gg3a",
+     "path": "SCENE_CLOSURES.iriana-echecs",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1od7lff",
+     "path": "SCENE_CLOSURES.iriana-dessert",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1c24sav",
+     "path": "SCENE_CLOSURES.iriana-incognito",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a189atdn",
+     "path": "SCENE_CLOSURES.iriana-rumeur",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a17zyd01",
+     "path": "SCENE_CLOSURES.iriana-table",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1ozpu9m",
+     "path": "SCENE_CLOSURES.iriana-course",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1oktez5",
+     "path": "SCENE_CLOSURES.iriana-marche",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0mbooq5",
+     "path": "SCENE_CLOSURES.iriana-lettre",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1d8k48r",
+     "path": "SCENE_CLOSURES.iriana-jardin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0xhxvub",
+     "path": "SCENE_CLOSURES.iriana-demande",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a17ylncm",
+     "path": "SCENE_CLOSURES.iriana-couronne",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0hu01gp",
+     "path": "SCENE_CLOSURES.iriana-convoi",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ue6hee",
+     "path": "SCENE_CLOSURES.iriana-front",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0p56xst",
+     "path": "SCENE_CLOSURES.iriana-forthaven-briefing",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0r3eqmo",
+     "path": "SCENE_CLOSURES.iriana-akuhn",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a14b2v1a",
+     "path": "SCENE_CLOSURES.iriana-prenom",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0b15oia",
+     "path": "SCENE_CLOSURES.iriana-sceau",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a19vze72",
+     "path": "SCENE_CLOSURES.iriana-detail",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0zhto8j",
+     "path": "SCENE_CLOSURES.valurn-cartes",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1uvmlr0",
+     "path": "SCENE_CLOSURES.valurn-petit-dejeuner",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a06uo01w",
+     "path": "SCENE_CLOSURES.valurn-contrat",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a14pyo3t",
+     "path": "SCENE_CLOSURES.valurn-piece",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1mgspxp",
+     "path": "SCENE_CLOSURES.valurn-histoires",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a14313od",
+     "path": "SCENE_CLOSURES.valurn-fleur",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1e4u3ke",
+     "path": "SCENE_CLOSURES.valurn-fin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a088uhpc",
+     "path": "SCENE_CLOSURES.valurn-ombre",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a005rvap",
+     "path": "SCENE_CLOSURES.valurn-nom",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0swv0uz",
+     "path": "SCENE_CLOSURES.valurn-sortie",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a02mrnor",
+     "path": "SCENE_CLOSURES.valurn-jalousie",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0zeij5e",
+     "path": "SCENE_CLOSURES.valurn-bottes",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0i04pnm",
+     "path": "SCENE_CLOSURES.valurn-matin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0gr7d8h",
+     "path": "SCENE_CLOSURES.valurn-sans-dette",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1a29l3s",
+     "path": "SCENE_CLOSURES.naiah-illusions",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a09etrjo",
+     "path": "SCENE_CLOSURES.naiah-baies",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0xc6swb",
+     "path": "SCENE_CLOSURES.naiah-noms",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0quzbrt",
+     "path": "SCENE_CLOSURES.naiah-ennui",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1q83zli",
+     "path": "SCENE_CLOSURES.naiah-oiseau",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1gs8qys",
+     "path": "SCENE_CLOSURES.naiah-tasse",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a07m1qqz",
+     "path": "SCENE_CLOSURES.naiah-permission",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0z30baq",
+     "path": "SCENE_CLOSURES.naiah-chemin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0lxr39t",
+     "path": "SCENE_CLOSURES.naiah-excuse",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0qo7lld",
+     "path": "SCENE_CLOSURES.naiah-couronne",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1rmylcu",
+     "path": "SCENE_CLOSURES.naiah-jalousie",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1kmb1jl",
+     "path": "SCENE_CLOSURES.naiah-matin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a08zbavt",
+     "path": "SCENE_CLOSURES.naiah-route",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a05r0xxj",
+     "path": "SCENE_CLOSURES.naiah-court",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0sdh31l",
+     "path": "SCENE_CLOSURES.naiah-lignage",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a08ix0hb",
+     "path": "SCENE_CLOSURES.naiah-caillou",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0zjwvcw",
+     "path": "SCENE_CLOSURES.naiah-permission-simple",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1bgxdhe",
+     "path": "SCENE_CLOSURES.naiah-bruit",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0mgp3ht",
+     "path": "SCENE_CLOSURES.lineva-promenade",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1he81qh",
+     "path": "SCENE_CLOSURES.lineva-noeud",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0x4oh5t",
+     "path": "SCENE_CLOSURES.lineva-repas",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ucexsy",
+     "path": "SCENE_CLOSURES.lineva-chanson",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ipt9wb",
+     "path": "SCENE_CLOSURES.lineva-carte",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a02f6fc6",
+     "path": "SCENE_CLOSURES.lineva-des",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0dihcr1",
+     "path": "SCENE_CLOSURES.lineva-courrier",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04kxcm3",
+     "path": "SCENE_CLOSURES.lineva-manteau",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0id3r8c",
+     "path": "SCENE_CLOSURES.lineva-memorial",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0a2gtes",
+     "path": "SCENE_CLOSURES.lineva-boussole",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1f4qfdx",
+     "path": "SCENE_CLOSURES.lineva-deleguer",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1m1hwog",
+     "path": "SCENE_CLOSURES.lineva-paix",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1vfj757",
+     "path": "SCENE_CLOSURES.lineva-reveil",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0eph6nl",
+     "path": "SCENE_CLOSURES.lineva-inventaire",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1rs49h9",
+     "path": "SCENE_CLOSURES.lineva-releve",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ga54u7",
+     "path": "SCENE_CLOSURES.saidin-horloge",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a17g0zvh",
+     "path": "SCENE_CLOSURES.saidin-fruit",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a06w38hr",
+     "path": "SCENE_CLOSURES.saidin-pari",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1lq6xgg",
+     "path": "SCENE_CLOSURES.saidin-plaisanterie",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1i9gew6",
+     "path": "SCENE_CLOSURES.saidin-encre",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0n1hpf8",
+     "path": "SCENE_CLOSURES.saidin-prenom",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1phayfj",
+     "path": "SCENE_CLOSURES.saidin-chat",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ythlfx",
+     "path": "SCENE_CLOSURES.saidin-meteo",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1a3a3dn",
+     "path": "SCENE_CLOSURES.saidin-ville",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a01e1wus",
+     "path": "SCENE_CLOSURES.saidin-cadeau",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1oc0js8",
+     "path": "SCENE_CLOSURES.saidin-heure",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0tvtfas",
+     "path": "SCENE_CLOSURES.saidin-reveil",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0zq3zie",
+     "path": "SCENE_CLOSURES.saidin-aube",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0t7moec",
+     "path": "SCENE_CLOSURES.saidin-maintenant",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0um2koi",
+     "path": "SCENE_CLOSURES.bellirith-coupe",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0v5e86g",
+     "path": "SCENE_CLOSURES.bellirith-compliment",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0dsk7ut",
+     "path": "SCENE_CLOSURES.bellirith-parfum",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a10vujsb",
+     "path": "SCENE_CLOSURES.bellirith-danse",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a035gi3d",
+     "path": "SCENE_CLOSURES.bellirith-roman",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0kqpotf",
+     "path": "SCENE_CLOSURES.bellirith-gants",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a00tucbs",
+     "path": "SCENE_CLOSURES.bellirith-jeu",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1w9v51i",
+     "path": "SCENE_CLOSURES.bellirith-miroir",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0fl4db3",
+     "path": "SCENE_CLOSURES.bellirith-vetements",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1wxkkjr",
+     "path": "SCENE_CLOSURES.bellirith-silence",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1gmjmce",
+     "path": "SCENE_CLOSURES.bellirith-jalousie",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0d8u9xt",
+     "path": "SCENE_CLOSURES.bellirith-matin",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0r3zkfc",
+     "path": "SCENE_CLOSURES.bellirith-question",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a16yd4wu",
+     "path": "SCENE_CLOSURES.bellirith-mauvaise-blague",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1km0m0b",
+     "path": "SCENE_CLOSURES.amanea-piano",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1x8hslo",
+     "path": "SCENE_CLOSURES.amanea-trone",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1wtlckr",
+     "path": "SCENE_CLOSURES.amanea-allenna",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0lkswd4",
+     "path": "SCENE_CLOSURES.amanea-tia",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1veibmz",
+     "path": "SCENE_CLOSURES.amanea-naiah",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1b50461",
+     "path": "SCENE_CLOSURES.amanea-calciterres",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0psf8l9",
+     "path": "SCENE_CLOSURES.amanea-silence",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0mlkje9",
+     "path": "SCENE_CLOSURES.amanea-ordinaire",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a19pgec7",
+     "path": "SCENE_CLOSURES.amanea-corps",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0xwdld7",
+     "path": "SCENE_CLOSURES.draven-des",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04nejfq",
+     "path": "SCENE_CLOSURES.draven-carte",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1k2q5nz",
+     "path": "SCENE_CLOSURES.draven-chant",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0dx0gzq",
+     "path": "SCENE_CLOSURES.draven-vent",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0dh47am",
+     "path": "SCENE_CLOSURES.draven-lineva",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a168h60h",
+     "path": "SCENE_CLOSURES.draven-relève",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1p69x1g",
+     "path": "SCENE_CLOSURES.draven-café",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1bmntov",
+     "path": "SCENE_CLOSURES.draven-départ",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a14dseal",
+     "path": "SCENE_CLOSURES.iriana-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a143sslm",
+     "path": "SCENE_CLOSURES.iriana-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a13tt6wn",
+     "path": "SCENE_CLOSURES.iriana-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a13jtl7o",
+     "path": "SCENE_CLOSURES.iriana-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a139tzip",
+     "path": "SCENE_CLOSURES.iriana-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a03wbe8c",
+     "path": "SCENE_CLOSURES.naiah-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a046azxb",
+     "path": "SCENE_CLOSURES.naiah-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04galma",
+     "path": "SCENE_CLOSURES.naiah-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04qa7b9",
+     "path": "SCENE_CLOSURES.naiah-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a02sczgg",
+     "path": "SCENE_CLOSURES.naiah-4",
+     "len": 4
+    },
+    {
+     "id": "scene-closures:a0l3vtre",
+     "path": "SCENE_CLOSURES.lineva-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ldvfgd",
+     "path": "SCENE_CLOSURES.lineva-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0kjwmdg",
+     "path": "SCENE_CLOSURES.lineva-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ktw82f",
+     "path": "SCENE_CLOSURES.lineva-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0jzxezi",
+     "path": "SCENE_CLOSURES.lineva-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0n6upub",
+     "path": "SCENE_CLOSURES.saidin-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0mwv45c",
+     "path": "SCENE_CLOSURES.saidin-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0nqtx89",
+     "path": "SCENE_CLOSURES.saidin-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ngubja",
+     "path": "SCENE_CLOSURES.saidin-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0oat4m7",
+     "path": "SCENE_CLOSURES.saidin-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1rpw8mm",
+     "path": "SCENE_CLOSURES.amanea-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1rzvubl",
+     "path": "SCENE_CLOSURES.amanea-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1r5x18o",
+     "path": "SCENE_CLOSURES.amanea-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1rfwmxn",
+     "path": "SCENE_CLOSURES.amanea-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1stunei",
+     "path": "SCENE_CLOSURES.amanea-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a041ewrb",
+     "path": "SCENE_CLOSURES.draven-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a03rfb2c",
+     "path": "SCENE_CLOSURES.draven-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04le459",
+     "path": "SCENE_CLOSURES.draven-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04beiga",
+     "path": "SCENE_CLOSURES.draven-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a02xghzf",
+     "path": "SCENE_CLOSURES.draven-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a10v11dj",
+     "path": "SCENE_CLOSURES.tia-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a10l1fok",
+     "path": "SCENE_CLOSURES.tia-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a11f08rh",
+     "path": "SCENE_CLOSURES.tia-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1150n2i",
+     "path": "SCENE_CLOSURES.tia-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0zr2mln",
+     "path": "SCENE_CLOSURES.tia-4",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1ce9208",
+     "path": "SCENE_CLOSURES.allenna-0",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1co8np7",
+     "path": "SCENE_CLOSURES.allenna-1",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1cy89e6",
+     "path": "SCENE_CLOSURES.allenna-2",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1d87v35",
+     "path": "SCENE_CLOSURES.allenna-3",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a004z6he",
+     "path": "SCENE_CLOSURES.amanea-family-truth",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1d3lkh5",
+     "path": "SCENE_CLOSURES.draven-lineva-letter",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1w84isx",
+     "path": "SCENE_CLOSURES.medig-window",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a109f8ak",
+     "path": "SCENE_CLOSURES.hr-hylee-truth",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0lzo30y",
+     "path": "SCENE_CLOSURES.hr-remerii-truth",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0w7kx67",
+     "path": "SCENE_CLOSURES.hr-secret-hylee",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1iloas5",
+     "path": "SCENE_CLOSURES.hr-secret-remerii",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a04az0ok",
+     "path": "SCENE_CLOSURES.hr-honest-hylee",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1eqdo1y",
+     "path": "SCENE_CLOSURES.hr-honest-remerii",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0gx2vta",
+     "path": "SCENE_CLOSURES.hr-triad-morning",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0yia7ne",
+     "path": "SCENE_CLOSURES.iv-open-truth",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a179altk",
+     "path": "SCENE_CLOSURES.iv-boundaries",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1huzj42",
+     "path": "SCENE_CLOSURES.bellirith-after-memory",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0w42sa1",
+     "path": "SCENE_CLOSURES.iriana-after-mother",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1fe1bzl",
+     "path": "SCENE_CLOSURES.valurn-after-truth",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1kzgshn",
+     "path": "SCENE_CLOSURES.amanea-after-pact",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1kiggrv",
+     "path": "SCENE_CLOSURES.lineva-draven-after-truth",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a03m4o69",
+     "path": "SCENE_CLOSURES.valurn-bellirith-after-truth",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1jwvjj8",
+     "path": "SCENE_CLOSURES.campaign-archives-channel",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1y02z6r",
+     "path": "SCENE_CLOSURES.campaign-forged-proof",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a06fobfk",
+     "path": "SCENE_CLOSURES.campaign-convergence-council",
+     "len": 4
+    },
+    {
+     "id": "scene-closures:a1lj2crm",
+     "path": "SCENE_CLOSURES.campaign-convergence-operation",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a017r1dx",
+     "path": "SCENE_CLOSURES.campaign-epilogue",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1aqzkre",
+     "path": "SCENE_CLOSURES.shared-hylee-remerii-atelier",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0gmv499",
+     "path": "SCENE_CLOSURES.shared-hylee-naiah-visit",
+     "len": 4
+    },
+    {
+     "id": "scene-closures:a06xckh2",
+     "path": "SCENE_CLOSURES.shared-remerii-saidin",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0lbvfe8",
+     "path": "SCENE_CLOSURES.shared-iriana-lineva",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a087mw66",
+     "path": "SCENE_CLOSURES.shared-valurn-naiah",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0sm2xpy",
+     "path": "SCENE_CLOSURES.shared-valurn-bellirith",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1aatvnx",
+     "path": "SCENE_CLOSURES.shared-iriana-valurn",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a0j4wlz1",
+     "path": "SCENE_CLOSURES.shared-bellirith-naiah",
+     "len": 3
+    },
+    {
+     "id": "scene-closures:a1wdvbwm",
+     "path": "SCENE_CLOSURES.date-iriana-market",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0ws3z1c",
+     "path": "SCENE_CLOSURES.date-iriana-ballroom",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0lcl92j",
+     "path": "SCENE_CLOSURES.date-valurn-forestier",
+     "len": 1
+    },
+    {
+     "id": "scene-closures:a1au7mti",
+     "path": "SCENE_CLOSURES.date-valurn-river",
+     "len": 1
+    },
+    {
+     "id": "scene-closures:a0142os7",
+     "path": "SCENE_CLOSURES.date-naiah-sanctuary",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0msjtmo",
+     "path": "SCENE_CLOSURES.date-naiah-akuhn",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1utio89",
+     "path": "SCENE_CLOSURES.date-lineva-ramparts",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1tbtic6",
+     "path": "SCENE_CLOSURES.date-lineva-quarters",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a06ybeoc",
+     "path": "SCENE_CLOSURES.date-saidin-observatory",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0uowbnh",
+     "path": "SCENE_CLOSURES.date-saidin-workshop",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0g0zm6m",
+     "path": "SCENE_CLOSURES.date-bellirith-music",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a0nxipmf",
+     "path": "SCENE_CLOSURES.date-bellirith-market",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a1mf05bt",
+     "path": "SCENE_CLOSURES.date-bellirith-final",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a13ll834",
+     "path": "SCENE_CLOSURES.date-amanea-piano",
+     "len": 2
+    },
+    {
+     "id": "scene-closures:a15j29df",
+     "path": "SCENE_CLOSURES.date-amanea-terrace",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "social-scenes",
+   "label": "Sociales scènes",
+   "group": "Monde et systèmes",
+   "hash": "ab575128f7fcd662",
+   "scenes": 24,
+   "counts": {
+    "s": 378,
+    "t": 0,
+    "n": 189,
+    "a": 115
+   },
+   "collections": [
+    {
+     "id": "social-scenes:a17ux6xe",
+     "path": "SOCIAL_SCENES",
+     "len": 24
+    }
+   ]
+  },
+  {
+   "key": "story-data",
+   "label": "Récit données",
+   "group": "Monde et systèmes",
+   "hash": "e1dff50c15406679",
+   "scenes": 14,
+   "counts": {
+    "s": 37,
+    "t": 0,
+    "n": 0,
+    "a": 2
+   },
+   "collections": [
+    {
+     "id": "story-data:a1i4xqci",
+     "path": "MAIN_STORY",
+     "len": 10
+    },
+    {
+     "id": "story-data:a09hprkm",
+     "path": "SUPPORTING_FIGURES",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "valurn-ambient",
+   "label": "Valurn · moments libres",
+   "group": "Valurn",
+   "hash": "a627f9435c9be800",
+   "scenes": 9,
+   "counts": {
+    "s": 102,
+    "t": 0,
+    "n": 33,
+    "a": 35
+   },
+   "collections": [
+    {
+     "id": "valurn-ambient:a1mba5r8",
+     "path": "VALURN_AMBIENT_LINES",
+     "len": 8
+    }
+   ]
+  },
+  {
+   "key": "valurn-date-intimacy",
+   "label": "Valurn · rendez-vous intimité",
+   "group": "Valurn",
+   "hash": "c83aeb9363b41091",
+   "scenes": 2,
+   "counts": {
+    "s": 329,
+    "t": 4,
+    "n": 0,
+    "a": 1
+   },
+   "collections": [
+    {
+     "id": "valurn-date-intimacy:a0015v1c",
+     "path": "SCENES",
+     "len": 9
+    }
+   ]
+  },
+  {
+   "key": "valurn-dates",
+   "label": "Valurn · rendez-vous",
+   "group": "Valurn",
+   "hash": "59902224143a4cf7",
+   "scenes": 66,
+   "counts": {
+    "s": 273,
+    "t": 1,
+    "n": 99,
+    "a": 77
+   },
+   "collections": [
+    {
+     "id": "valurn-dates:a1ntrlx1",
+     "path": "VALURN_DATES",
+     "len": 2
+    },
+    {
+     "id": "valurn-dates:a0kzrf9i",
+     "path": "FORESTIER.tournoi",
+     "len": 5
+    },
+    {
+     "id": "valurn-dates:a1mgczno",
+     "path": "FORESTIER.imposture",
+     "len": 5
+    },
+    {
+     "id": "valurn-dates:a0ar09sj",
+     "path": "FORESTIER.fond",
+     "len": 5
+    },
+    {
+     "id": "valurn-dates:a0o813eu",
+     "path": "RIVER.imprevus",
+     "len": 5
+    },
+    {
+     "id": "valurn-dates:a1nlvj3c",
+     "path": "RIVER.etoiles",
+     "len": 5
+    },
+    {
+     "id": "valurn-dates:a0i5p8d7",
+     "path": "RIVER.braise",
+     "len": 5
+    }
+   ]
+  },
+  {
+   "key": "valurn-home-date",
+   "label": "Valurn · logis rendez-vous",
+   "group": "Valurn",
+   "hash": "8c21e7b7fa4d31d1",
+   "scenes": 6,
+   "counts": {
+    "s": 107,
+    "t": 0,
+    "n": 0,
+    "a": 16
+   },
+   "collections": [
+    {
+     "id": "valurn-home-date:a1yxjlfg",
+     "path": "VALURN_HOME_BRANCHES",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "valurn-living-world",
+   "label": "Valurn · monde vivant",
+   "group": "Valurn",
+   "hash": "d6e48faeaef346cd",
+   "scenes": 56,
+   "counts": {
+    "s": 316,
+    "t": 0,
+    "n": 119,
+    "a": 67
+   },
+   "collections": [
+    {
+     "id": "valurn-living-world:a1116f5w",
+     "path": "VALURN_KNOWLEDGE",
+     "len": 14
+    },
+    {
+     "id": "valurn-living-world:a18ojd0h",
+     "path": "VALURN_CONFIDENCES",
+     "len": 8
+    },
+    {
+     "id": "valurn-living-world:a0fs4xuh",
+     "path": "VALURN_LETTERS",
+     "len": 13
+    },
+    {
+     "id": "valurn-living-world:a030j2b0",
+     "path": "VALURN_INVITATIONS",
+     "len": 3
+    }
+   ]
+  },
+  {
+   "key": "valurn-market",
+   "label": "Valurn · marché",
+   "group": "Valurn",
+   "hash": "a64ca53c87a2b28d",
+   "scenes": 17,
+   "counts": {
+    "s": 81,
+    "t": 1,
+    "n": 0,
+    "a": 6
+   },
+   "collections": [
+    {
+     "id": "valurn-market:a1y8ozrx",
+     "path": "MARKET_OFFERS",
+     "len": 7
+    },
+    {
+     "id": "valurn-market:a1vavhh6",
+     "path": "MARKET_REACTIONS",
+     "len": 4
+    }
+   ]
+  },
+  {
+   "key": "valurn-quests",
+   "label": "Valurn · quêtes",
+   "group": "Valurn",
+   "hash": "0a0cdab704d250eb",
+   "scenes": 52,
+   "counts": {
+    "s": 408,
+    "t": 0,
+    "n": 77,
+    "a": 56
+   },
+   "collections": [
+    {
+     "id": "valurn-quests:a19n6jmb",
+     "path": "VALURN_QUESTS",
+     "len": 7
+    },
+    {
+     "id": "valurn-quests:a1co90n7",
+     "path": "VALURN_RELATION_BEATS.valurn-q1.intro",
+     "len": 3
+    },
+    {
+     "id": "valurn-quests:a1wkcux6",
+     "path": "VALURN_RELATION_BEATS.valurn-q2.intro",
+     "len": 3
+    },
+    {
+     "id": "valurn-quests:a1kv078x",
+     "path": "VALURN_RELATION_BEATS.valurn-q3.intro",
+     "len": 3
+    },
+    {
+     "id": "valurn-quests:a0769bo0",
+     "path": "VALURN_RELATION_BEATS.valurn-q4.intro",
+     "len": 4
+    },
+    {
+     "id": "valurn-quests:a1pv92wm",
+     "path": "VALURN_RELATION_BEATS.valurn-q6.intro",
+     "len": 3
+    },
+    {
+     "id": "valurn-quests:a03y1ob1",
+     "path": "VALURN_RELATION_BEATS.valurn-q7.intro",
+     "len": 2
+    },
+    {
+     "id": "valurn-quests:a119fq4e",
+     "path": "STANDING_COMMENT.amant",
+     "len": 1
+    },
+    {
+     "id": "valurn-quests:a06uirvl",
+     "path": "STANDING_COMMENT.rival",
+     "len": 1
+    },
+    {
+     "id": "valurn-quests:a0iqvf36",
+     "path": "STANDING_COMMENT.partenaire",
+     "len": 1
+    },
+    {
+     "id": "valurn-quests:a0mtijf0",
+     "path": "STANDING_COMMENT.ami",
+     "len": 1
+    },
+    {
+     "id": "valurn-quests:a18w3oi8",
+     "path": "STANDING_COMMENT.distant",
+     "len": 1
+    }
+   ]
+  },
+  {
+   "key": "weather",
+   "label": "Météo",
+   "group": "Monde et systèmes",
+   "hash": "6450c69fdcc67825",
+   "scenes": 24,
+   "counts": {
+    "s": 39,
+    "t": 1,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "world-data",
+   "label": "Monde données",
+   "group": "Monde et systèmes",
+   "hash": "c5236264a61bdfd6",
+   "scenes": 95,
+   "counts": {
+    "s": 262,
+    "t": 0,
+    "n": 0,
+    "a": 30
+   },
+   "collections": [
+    {
+     "id": "world-data:a1m9ojen",
+     "path": "SUBLOCATIONS",
+     "len": 45
+    },
+    {
+     "id": "world-data:a1rye4u9",
+     "path": "ROUTINES.hylee.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1egszr8",
+     "path": "ROUTINES.hylee.forestier",
+     "len": 4
+    },
+    {
+     "id": "world-data:a14oj9im",
+     "path": "ROUTINES.hylee.miraldas",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0c14vc6",
+     "path": "ROUTINES.hylee.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a07js7pr",
+     "path": "ROUTINES.remerii.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1g0dq82",
+     "path": "ROUTINES.remerii.forestier",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1b0vb3o",
+     "path": "ROUTINES.remerii.miraldas",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1qxi4cg",
+     "path": "ROUTINES.iriana.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0rsgf4v",
+     "path": "ROUTINES.iriana.forthaven",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1scao7x",
+     "path": "ROUTINES.iriana.akuhn",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0qtqho2",
+     "path": "ROUTINES.valurn.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a03scz3z",
+     "path": "ROUTINES.valurn.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0fjr1cb",
+     "path": "ROUTINES.valurn.akuhn",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1ihbook",
+     "path": "ROUTINES.naiah.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a092sw4s",
+     "path": "ROUTINES.lineva.forthaven",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1we7gn1",
+     "path": "ROUTINES.lineva.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0wbgtrd",
+     "path": "ROUTINES.saidin.miraldas",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0euc7vi",
+     "path": "ROUTINES.saidin.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0zikj1s",
+     "path": "ROUTINES.saidin.tzekarun",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1eqolas",
+     "path": "ROUTINES.bellirith.akuhn",
+     "len": 4
+    },
+    {
+     "id": "world-data:a055mkbs",
+     "path": "ROUTINES.bellirith.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1eykbqz",
+     "path": "ROUTINES.bellirith.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a12yhd2q",
+     "path": "ROUTINES.amanea.akuhn",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1izkosy",
+     "path": "ROUTINES.amanea.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0hnr4ra",
+     "path": "ROUTINES.tia.algratal",
+     "len": 4
+    },
+    {
+     "id": "world-data:a059qduo",
+     "path": "ROUTINES.allenna.akuhn",
+     "len": 4
+    },
+    {
+     "id": "world-data:a1rxecqc",
+     "path": "ROUTINES.allenna.forbidden",
+     "len": 4
+    },
+    {
+     "id": "world-data:a07y65ot",
+     "path": "ROUTINES.draven.forthaven",
+     "len": 4
+    },
+    {
+     "id": "world-data:a0l9edna",
+     "path": "ROUTINES.draven.algratal",
+     "len": 4
+    }
+   ]
+  }
+ ]
+}
