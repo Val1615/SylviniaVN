@@ -37,6 +37,9 @@ function chaptersView() {
   renderList();
   return h("div", { class: "lib" },
     h("div", { class: "lib-head" },
+      h("div", { class: "seg mode-switch", role: "tablist", "aria-label": "Espace du Studio" },
+        h("button", { class: "on", "aria-selected": "true" }, "Mode Histoire"),
+        h("button", { onclick: () => { window.location.href = "ca.html"; } }, "Chroniques Alternatives")),
       h("div", { class: "row" }, h("h2", null, "Chapitres"), h("span", { class: "muted small" }, `${Mo.chapters().length} chapitres du Mode Histoire`)),
       h("div", { class: "row" }, search, status),
       h("div", { class: "row" }, h("button", { class: "small", onclick: newChapter }, "+ Nouveau chapitre"))),

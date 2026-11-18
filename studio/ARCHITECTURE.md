@@ -30,8 +30,34 @@ Les chapitres restent dans `index.html`. Le Studio n'en convertit aucun : il sup
 
 ## Limites connues de cette première version
 
-- Les temps libres (`fusion/story-*.js`), la Chronique Alternative et les textes calculés par fonction sont lisibles et préservés mais pas encore modifiables.
+- Les temps libres (`fusion/story-*.js`) et les textes calculés par fonction sont lisibles et préservés mais pas encore modifiables. La Chronique Alternative a son propre espace (voir plus bas).
 - Position des personnages : uniquement les emplacements du moteur (gauche, centre, droite, arrière plan) ; pas de coordonnées libres, pour ne pas déformer les sprites ni contourner la mise en page de la Bibliothèque astrale.
 - Les duels et QTE sont des blocs conservés tels quels ; seul le rythme des décors en cycle (`bgCycleMs`) est réglable.
 - Le titre des chapitres d'origine vient du moteur ; seuls les chapitres créés dans le Studio se renomment.
 - Une réplique sans lien entrant peut être lancée par le code (début de chapitre, sortie de duel) : le Studio la signale sans la considérer comme une erreur.
+
+## Espace Chroniques Alternatives
+
+La Chronique Alternative (CA) est une application React construite par Vite (`chronique-alternative/source`). Ses contenus sont des modules TypeScript (146 fichiers `src/*.ts`). Le Studio ne réécrit ni ces fichiers ni le moteur : il superpose des différences, comme pour le Mode Histoire, avec des données et des sauvegardes séparées.
+
+| Fichier | Rôle |
+|---|---|
+| `chronique-alternative/source/scripts/studio-ca-strings.mjs` | Module Vite `sylvinia-studio-ca`. À la construction, lit chaque module de contenu avec le compilateur TypeScript et entoure, sans rien changer d'autre : les textes en prose (`__caT`), les textes à parties calculées (`__caTag`, repères `{1}`, `{2}`), les seuils et effets (`__caN` : `affection`, `trust`, `desire`, `confluence`, `coins`, statistiques, `minX`, `maxX`, `unlockStage`, `requires.value`, y compris passés en argument comme `secret(id, titre, palier, minTrust, ...)`) et les listes de contenu (`__caArr`). Les identifiants, drapeaux, clés, comparaisons et textes servant de clé ailleurs dans le code ne sont jamais touchés. |
+| `studio/data/ca/*.json` | Catalogue produit à chaque construction : pour chaque module, ses scènes, ses textes, ses nombres et ses listes, avec un identifiant stable (`module:sHASH`, `module:nHASH`, `module:aHASH`). |
+| `studio/data/modifications-ca.js` | **La source commune de la CA.** `entries` (identifiant vers texte ou nombre) et `lists` (éléments ajoutés et éléments masqués par liste). Vide par défaut. Lu par `chronique-alternative/index.html` avant le jeu. |
+| `studio/runtime/ca-boot.js` | En aperçu, remplace le fichier publié par le brouillon, ouvre la partie de test, entoure d'or les textes modifiés affichés et le signale au Studio. En extraction, renvoie au Studio le contenu réel des listes (pour copier un élément existant). |
+| `studio/runtime/sandbox.js` | Même bac à sable que pour le Mode Histoire, étendu aux clés de sauvegarde de la CA (`sylvinia-liens-autosave`, emplacements, préférences). La partie de test vit en mémoire. |
+| `studio/ca.html`, `studio/js/ca/*` | L'éditeur CA : catalogue en 18 catégories, écriture, contrôles, aperçu, versions et publication. |
+
+Fonctionnement : si un identifiant figure dans `entries`, le jeu affiche la valeur publiée ; sinon le texte d'origine. Les ajouts sont insérés dans la liste réelle que le jeu parcourt (moments, confidences, connaissances, activités, rendez-vous, scènes croisées, lettres, choix, répliques), donc ils obéissent aux mêmes conditions que le contenu d'origine. Les éléments de premier niveau d'une collection ne se masquent pas (le code peut les chercher par identifiant) ; seuls les éléments de listes internes (répliques, choix) peuvent être masqués.
+
+Un identifiant de texte dépend du texte d'origine : si le code source change ce texte, l'ancienne modification devient orpheline. Le Studio la signale dans Contrôles et le jeu l'ignore sans erreur.
+
+Retour arrière : remettre `modifications-ca.js` dans son état vide (`"entries": {}` et `"lists": {}`).
+
+Limites :
+- Le code d'interface de `page.tsx` (libellés du lieu, menus) et les machines à états écrites en dur (étapes de quêtes croisées avec points de contrôle codés) ne sont pas modifiables ; leurs textes de contenu, seuils et effets le sont quand ils viennent des modules.
+- Modules exclus : `chatgpt-auth`, `sprite-system`, `intimate-sprite-system`, `music-data`, `intimate-cg` (techniques).
+- Une valeur calculée par une fonction dans un élément copié n'est pas reprise dans la copie (le Studio le signale).
+- Le fichier publié est mis en cache par le navigateur quelques minutes après un déploiement.
+- Le paquet du jeu passe de 5,15 Mo à 6,68 Mo (1,57 à 1,99 Mo compressé) à cause des enveloppes.

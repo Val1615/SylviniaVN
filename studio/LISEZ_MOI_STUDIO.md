@@ -45,3 +45,31 @@ La publication est bloquée seulement si une erreur casserait le jeu (destinatio
 - Annuler une publication : remettre l'ancien `modifications.js` (historique GitHub), ou vider le fichier (`"nodes": {}` et `"chapters": {}`) pour retrouver exactement le jeu d'origine.
 - Les scènes d'origine dans `index.html` ne sont jamais modifiées par le Studio.
 - Ne supprimez pas du fichier une réplique ajoutée déjà publiée : un joueur arrêté dessus serait renvoyé au début. Retirez la plutôt dans le Studio.
+
+# Espace Chroniques Alternatives
+
+Ouvrir : bouton « Chroniques Alternatives » en haut de la liste des chapitres du Studio, ou `studio/ca.html`, ou dans la Chronique Alternative : Options, Session, mode développeur actif, « Ouvrir Sylvinia Studio » (nouvel onglet). Les données, brouillons, versions et sauvegardes de la CA restent séparés de ceux du Mode Histoire.
+
+## 1. Trouver un contenu
+Le Catalogue range les 134 modules réels en 18 catégories (temps libres, confidences, fils personnels, relations, quêtes, quêtes croisées, rendez-vous, scènes domestiques, scènes intimes, rencontres, activités, événements du monde, lettres, lieux, événements spéciaux, calendrier, objets). Filtres par personnage et par état (modifié, publié). « Rechercher dans tous les textes » cherche une phrase dans toute la CA et ouvre directement la scène.
+
+## 2. Modifier
+Dans une scène : chaque réplique, titre, ouverture, réponse ou description a sa zone de texte, avec le locuteur. « Texte d'origine » et « Rétablir l'original » sous chaque texte modifié. Les repères `{1}`, `{2}` remplacent des parties calculées par le jeu : gardez les. Les seuils (confiance minimale, stade, désir...) et les effets (affection, confiance, statistiques...) sont des cases numériques. Annuler et rétablir : flèches en haut, ou Ctrl+Z et Ctrl+Y.
+
+## 3. Créer
+Chaque liste réelle a un bouton « + Ajouter » ; chaque module avec une collection a « + Créer ». Le Studio copie un élément existant choisi par vous (même structure, mêmes conditions, nouvel identifiant), puis vous réécrivez tout : textes, seuils, lieux, connaissance révélée, choix. Exemples testés : une réponse ajoutée à un moment de Naïah, une confidence d'Hylee avec un seuil de confiance et une nouvelle connaissance, une étape de Remerii à deux choix, une scène croisée Allenna et Lineva, un rendez-vous, une activité quotidienne jouable dans le jeu. « Masquer... » retire un élément d'une liste interne sans le supprimer. Rien n'est inventé à votre place : aucun texte n'est généré.
+
+## 4. Contrôles
+Erreurs bloquantes (identifiant en double, valeur invalide), avertissements (texte orphelin après une modification du code, référence vers un contenu créé supprimé, règles des personnages), liste des modifications non publiées avec « Annuler », et recherche de références (identifiant, drapeau, liste).
+
+## 5. Tester
+« Tester dans le jeu » lance la vraie Chronique Alternative avec votre brouillon, dans un état de test isolé : nouvelle partie, copie de votre partie (lue seulement) ou sauvegarde importée, avec jour, relations (affection, confiance, désir, stade), drapeaux, mode développeur et déverrouillage réglables. Les textes modifiés affichés sont entourés d'or et marqués « vu dans l'aperçu » dans l'éditeur. Vos vraies sauvegardes ne sont jamais lues ni écrites par l'aperçu. Il n'y a pas de saut direct vers une scène : placez la partie de test au bon jour, au bon lieu et avec les bonnes relations, puis jouez jusqu'à la scène.
+
+## 6. Enregistrer
+Enregistrement automatique sur l'appareil, version automatique toutes les 5 minutes de travail, « Versions » pour créer, lister et restaurer.
+
+## 7. Publier
+« Publier » : 1) « Exporter pour le jeu » produit `modifications-ca.js`, à déposer dans `studio/data/` du dépôt ; 2) sauvegarde complète et import (fusion ou remplacement) ; 3) « Publier sur une branche de travail » crée une demande de fusion GitHub qui ne change que `studio/data/modifications-ca.js`. Si la version en ligne a changé depuis votre brouillon, le Studio vous propose de l'intégrer avant de publier. Le jeton GitHub n'est jamais écrit dans le code ; il reste dans le navigateur seulement si vous cochez « Mémoriser ». Rien n'est fusionné automatiquement.
+
+## 8. Revenir en arrière
+Remettre `studio/data/modifications-ca.js` dans son état vide rend la Chronique Alternative d'origine. Vos sauvegardes de joueur ne sont jamais modifiées.

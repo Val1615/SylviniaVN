@@ -45,23 +45,25 @@ export async function put(key, value) {
 }
 export async function addVersion(v) {
   const db = await open();
-  if (!db) { const list = await listVersions(); v.id = (list[0] ? list[0].id : 0) + 1; list.unshift(v); localStorage.setItem(LS + "versions", JSON.stringify(list.slice(0, 40))); return v.id; }
+  if (!db) { const list = await listVersions("*"); v.id = (list[0] ? list[0].id : 0) + 1; list.unshift(v); localStorage.setItem(LS + "versions", JSON.stringify(list.slice(0, 40))); return v.id; }
   return tx("versions", "readwrite", (s) => s.add(v));
 }
-export async function listVersions() {
+/* Les versions du Mode Histoire et de la Chronique Alternative restent séparées (champ kind). */
+export async function listVersions(kind = "histoire") {
   const db = await open();
-  if (!db) { try { return JSON.parse(localStorage.getItem(LS + "versions") || "[]"); } catch { return []; } }
-  const all = await tx("versions", "readonly", (s) => s.getAll());
-  return (all || []).sort((a, b) => b.id - a.id);
+  let all;
+  if (!db) { try { all = JSON.parse(localStorage.getItem(LS + "versions") || "[]"); } catch { all = []; } }
+  else all = await tx("versions", "readonly", (s) => s.getAll());
+  return (all || []).filter((v) => kind === "*" || (v.kind || "histoire") === kind).sort((a, b) => b.id - a.id);
 }
 export async function getVersion(id) {
   const db = await open();
-  if (!db) return (await listVersions()).find((v) => v.id === id) || null;
+  if (!db) return (await listVersions("*")).find((v) => v.id === id) || null;
   return tx("versions", "readonly", (s) => s.get(id));
 }
-export async function pruneVersions(keepAuto = 80) {
+export async function pruneVersions(keepAuto = 80, kind = "histoire") {
   const db = await open(); if (!db) return;
-  const list = await listVersions();
+  const list = await listVersions(kind);
   const autos = list.filter((v) => v.auto);
   const drop = autos.slice(keepAuto);
   if (!drop.length) return;

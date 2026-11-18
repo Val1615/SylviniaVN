@@ -6865,6 +6865,12 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button>
     </div>
 
+    <h3>Sylvinia Studio</h3>
+    <div className="dev-row">
+      <span className="dev-help">Éditeur des contenus de la Chronique Alternative. S’ouvre dans un nouvel onglet, la partie en cours reste ouverte.</span>
+      <a className="secondary-action" id="caDevStudio" href="../studio/ca.html" target="_blank" rel="noopener" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>Ouvrir Sylvinia Studio</a>
+    </div>
+
     <h3>Temps et ressources</h3>
     <div className="dev-row">
       <label>Jour<input type="number" min={1} value={game.day} onChange={(event) => updateGame((current) => ({ ...current, day: Math.max(1, Number(event.target.value) || 1) }))} /></label>
