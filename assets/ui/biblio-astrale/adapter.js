@@ -479,6 +479,10 @@ function ecranChapitres(_, q) {
   if (q.get("livre") && CHAP[q.get("livre")]) ouvrirLivre(q.get("livre"), q.get("etat") || "anim");
 }
 let livreT = [];
+function lectureEnCours(k) {
+  const id = ST().scene;
+  return aSauvegarde() && k === CH_OF(id) && !S_()[id]?.chapterEnd;
+}
 function lockHint(k) { return { ch2: "Termine le Chapitre I pour ouvrir la route d’Al’Gratal.", ch3: "Termine le Chapitre II pour ouvrir les préparatifs.", ch4: "Termine le Chapitre III pour ouvrir la croisée des récits.", ch5: "Termine au moins une route du Chapitre IV pour ouvrir Mir’Aldas.", ch6: "Termine le Chapitre V pour ouvrir cette parenthèse.", ch7: "Termine le Chapitre VI pour ouvrir la route de Naïah." }[k] || "Ce volume se révélera à mesure que l’histoire avance."; }
 function ouvrirLivre(k, etat = "anim") {
   const c = CHAP[k]; const ok = unlockedCh().includes(k); const P = progChap(k);
@@ -487,7 +491,7 @@ function ouvrirLivre(k, etat = "anim") {
   const reduit = PB.classList.contains("reduit");
   livreT.forEach(clearTimeout); livreT = [];
   const ligne = (t, v, pc) => `<div class="l3-l"><dt>${t}</dt><dd>${v}</dd>${pc != null ? `<span class="l3-barre"><em style="width:${pc}%"></em></span>` : ""}</div>`;
-  const enCours = aSauvegarde() && k === CH_OF(ST().scene);
+  const enCours = lectureEnCours(k);
   const act = !ok ? "" : `<button class="btn-or" data-act="lire" data-ch="${k}"><span>${enCours ? "Reprendre la lecture" : "Lire"}</span></button>`;
   $("#couche").className = "ouverte livre-c"; $("#couche").innerHTML = `<div class="voile-c livre-voile" data-act="fermer-livre"></div>
     <div class="l3-scene"><div class="livre3d ${ok ? "" : "scelle"}" data-etat="dos" style="--dc:${coul}" role="dialog" aria-modal="true" aria-label="${esc(c.label)} — ${esc(c.title)}">
@@ -518,7 +522,7 @@ function ouvrirLivre(k, etat = "anim") {
 }
 actions["ouvrir-livre"] = () => { const L = $(".livre3d"); if (L && !L.classList.contains("scelle") && L.dataset.etat !== "ouvert") { livreT.forEach(clearTimeout); L.classList.remove("sans-anim"); L.dataset.etat = "ouvert"; son("page"); } };
 actions["fermer-livre"] = () => { livreT.forEach(clearTimeout); const c = $("#couche"); if (PB.classList.contains("reduit")) return fermerCouche(); c.classList.add("sort"); setTimeout(fermerCouche, 320); };
-actions.lire = (b) => { const k = b.dataset.ch; const enCours = aSauvegarde() && k === CH_OF(ST().scene);
+actions.lire = (b) => { const k = b.dataset.ch; const enCours = lectureEnCours(k);
   carteLancer = enCours ? () => reprendre() : () => { const f = fn("launchChapterSelect"); pilote = true; try { if (f) f(k); } finally { pilote = false; } }; aller(`#/carte/${k}`); };
 
 /* ---------- 7. Carte titre de chapitre (transition) ---------- */
@@ -541,7 +545,19 @@ function pagesDe(txt) {
   const paras = String(txt || "").split(/\n\s*\n/).map((t) => t.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean);
   const out = []; let cur = "";
   const lim = (innerHeight < 620 || innerWidth < 560) ? 210 : 300;
-  paras.forEach((p) => { if (cur && (cur + " " + p).length > lim) { out.push(cur); cur = p; } else cur = cur ? cur + "\n" + p : p; });
+  // Une réplique courte occupe quand même une ligne entière (plus l’interligne) : au moins 1/5 de la page.
+  const cout = (p) => Math.max(p.length, lim / 5);
+  // Un paragraphe trop long pour la boîte est coupé entre deux phrases (la suite reste dans le même paragraphe).
+  const morceaux = [];
+  paras.forEach((p) => {
+    if (p.length <= lim * 2) { morceaux.push({ t: p, suite: false }); return; }
+    const blocs = []; let bloc = "";
+    p.split(/(?<=[.!?…»])\s+(?=[A-ZÀ-ÖØ-Þ«])/).forEach((ph) => { if (bloc && (bloc + " " + ph).length > lim * 2) { blocs.push(bloc); bloc = ph; } else bloc = bloc ? bloc + " " + ph : ph; });
+    if (bloc) blocs.push(bloc);
+    blocs.forEach((t, i) => morceaux.push({ t, suite: i > 0 }));
+  });
+  let poids = 0;
+  morceaux.forEach(({ t, suite }) => { const c = cout(t); if (cur && poids + c > lim) { out.push(cur); cur = t; poids = c; } else { cur = cur ? cur + (suite ? " " : "\n") + t : t; poids += c; } });
   if (cur) out.push(cur); return out.length ? out : [""];
 }
 const brut = (html) => String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li|h\d)>/gi, "\n\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "’").replace(/\n{3,}/g, "\n\n").trim();
@@ -705,6 +721,7 @@ function majJeu(force) {
   }
   const hudEl = $(".combat-hud"); if (hudEl) { hudEl.hidden = !M.hud; hudEl.innerHTML = M.hud; }
   $(".jeu")?.classList.toggle("combat", M.combat);
+  window.playStorySceneCamera?.($(".jeu-bg"), M.id, s.camera);
   majSprites(M.chars, M.speaker); majLieu(); afficherPage(!!J.chrono);
   jouerMusique(pisteEcran());
 }

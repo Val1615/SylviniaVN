@@ -3206,7 +3206,7 @@ body:not(.experimentalUI) .syl-notify-layer .syl-toast{
           </div>
         </div>
 
-        <div class="menuUpdateBubble">Mise à jour · v0.150 · Prérequis stratégiques calibrés</div>
+        <div id="versionLabel" class="menuUpdateBubble">Mise à jour · v0.150 · Prérequis stratégiques calibrés</div>
       </section>
     </div>
   </main>
@@ -14002,6 +14002,8 @@ function ensureProgressDefaults(){
   if(!Array.isArray(state.journalFragments)) state.journalFragments=[];
   if(typeof state.devJournalForceAccess!=='boolean') state.devJournalForceAccess=false;
   if(!state.devMode) state.devJournalForceAccess=false;
+  // Les chapitres charges en fin de page completent encore les registres.
+  if(document.readyState==='loading') return;
   state.inventory=[...new Set(state.inventory.filter(k=>PROGRESSION_ITEMS[k]))];
   state.memories=[...new Set(state.memories.filter(k=>PROGRESSION_MEMORIES[k]))];
   state.journalFragments=[...new Set(state.journalFragments.filter(k=>JOURNAL_FRAGMENTS[k]))];
@@ -54237,7 +54239,8 @@ Le choix d’attendre devient, lui aussi, une manière d’agir.`,
   }
 })();
 </script>
-<script src="assets/ui/biblio-astrale/adapter.js?v=48"></script>
+<script src="fusion/story-finale-s01.js?v=6"></script>
+<script src="assets/ui/biblio-astrale/adapter.js?v=50"></script>
 <script src="assets/js/chapter14-silhouettes.js?v=2"></script>
 <!-- Sylvinia Studio : modifications publiées depuis l'éditeur (studio/). Fichier vide = jeu d'origine. -->
 <script src="studio/runtime/schema.js?v=1"></script>

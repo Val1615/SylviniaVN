@@ -1,4 +1,4 @@
-# Les Chroniques de Sylvinia — Visual Novel · v0.412
+# Les Chroniques de Sylvinia — Visual Novel · v0.417
 
 **Sylvinia VN** (Tome 1) — visual novel HTML/JS en **bêta**, basé sur l’univers de Sylvinia imaginé, supervisé et validé par **le Chroniqueur Vagabond**.
 
@@ -43,7 +43,7 @@ Couverture documentée dans `FUSION_ARCHITECTURE.md` :
 
 Les périodes libres réutilisent décors et sprites du VN ; l’interface reste en plein écran (HUD narratif en bas, tiroir latéral pour lieux / relations / journal). Les sprites du Dating Sim restent réservés à la Chronique Alternative.
 
-Le build actuel (`index.html`) intègre le récit jusqu’au **Chapitre XV · L’heure du départ**, avec branches (notamment Valurn / Draven, Iriana / Groupe) et contenus associés (Codex, musiques, images clés, duels / QTE selon les chapitres).
+Le Mode Histoire atteint le **Chapitre XVI · L’assaut des morts-vivants**. Le premier lot du final reprend à la fin du Chapitre XV, dans la Forêt Interdite, et se termine à la lisière d’Akuhn’Nabad. [Fiche de livraison S01](docs/production/finale-s01.md).
 
 ## Chronique Alternative (aperçu)
 
@@ -117,7 +117,7 @@ Le build adapte les chemins d’assets pour un serveur local ou GitHub Pages (`/
 
 ## Statut
 
-- **Version affichée / derniers correctifs dans `index.html`** : **v0.412** (Chapitre XV · visuels recalés).
+- **Version affichée / derniers correctifs dans `index.html`** : **v0.417** (Chapitre XVI · L’assaut des morts-vivants).
 - **État** : bêta publique via GitHub Pages (`main` → `/`).
 - Le titre historique du README (`v0.91`) et le fichier `SylviniaVN_v0219.html` ne reflètent plus le build courant.
 
