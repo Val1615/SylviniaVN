@@ -12,7 +12,7 @@ Le lot commence sur le cri de Draven, au bout du chemin où s’achève le chapi
 | [Bible maîtresse](../../Ressource%20lore/BIBLE_MAITRESSE_SYLVINIA_VN_CHRONIQUES_ALTERNATIVES_V1_1.docx) | § 3.1 sur les connaissances des personnages, § 7.3 sur la Forêt Interdite, § 10.15 sur les voix et motivations. |
 | [Fiches visuelles](../../Ressource%20lore/Charactersheet/) et [images du XV](../../assets/images/keyscenes/chapter15/) | Draven et Iriana gardent leurs traits, leurs accessoires et leurs couleurs. Les troncs noirs, la boue et la brume du XV se prolongent dans l’embuscade. |
 
-Le VN reprend intégralement les 288 paragraphes du chapitre 20 compris entre « Le premier cri brise le silence » et « Un dernier rassemblement s’impose. ». La lecture conserve les mots, les répliques et l’ordre du manuscrit. Le découpage en scènes et les tirets du dialogue adaptent la mise en page au jeu. Le secours au fantassin et les réactions d’Hylee au moment de reprendre pied ajoutent des passages jouables entre les paragraphes du roman. Cette règle de transcription intégrale s’applique aux prochains lots.
+Le VN reprend intégralement les 288 paragraphes du chapitre 20 compris entre « Le premier cri brise le silence » et « Un dernier rassemblement s’impose. ». La lecture conserve les mots, les répliques et l’ordre du manuscrit. Le découpage en scènes et les guillemets des répliques, comme dans les chapitres XIII à XV, adaptent la mise en page au jeu. Le secours au fantassin et les réactions d’Hylee au moment de reprendre pied ajoutent des passages jouables entre les paragraphes du roman. Cette règle de transcription intégrale s’applique aux prochains lots.
 
 ## Montage et visuels
 

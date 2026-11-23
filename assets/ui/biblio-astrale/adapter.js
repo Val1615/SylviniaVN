@@ -545,7 +545,19 @@ function pagesDe(txt) {
   const paras = String(txt || "").split(/\n\s*\n/).map((t) => t.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean);
   const out = []; let cur = "";
   const lim = (innerHeight < 620 || innerWidth < 560) ? 210 : 300;
-  paras.forEach((p) => { if (cur && (cur + " " + p).length > lim) { out.push(cur); cur = p; } else cur = cur ? cur + "\n" + p : p; });
+  // Une réplique courte occupe quand même une ligne entière (plus l’interligne) : au moins 1/5 de la page.
+  const cout = (p) => Math.max(p.length, lim / 5);
+  // Un paragraphe trop long pour la boîte est coupé entre deux phrases (la suite reste dans le même paragraphe).
+  const morceaux = [];
+  paras.forEach((p) => {
+    if (p.length <= lim * 2) { morceaux.push({ t: p, suite: false }); return; }
+    const blocs = []; let bloc = "";
+    p.split(/(?<=[.!?…»])\s+(?=[A-ZÀ-ÖØ-Þ«])/).forEach((ph) => { if (bloc && (bloc + " " + ph).length > lim * 2) { blocs.push(bloc); bloc = ph; } else bloc = bloc ? bloc + " " + ph : ph; });
+    if (bloc) blocs.push(bloc);
+    blocs.forEach((t, i) => morceaux.push({ t, suite: i > 0 }));
+  });
+  let poids = 0;
+  morceaux.forEach(({ t, suite }) => { const c = cout(t); if (cur && poids + c > lim) { out.push(cur); cur = t; poids = c; } else { cur = cur ? cur + (suite ? " " : "\n") + t : t; poids += c; } });
   if (cur) out.push(cur); return out.length ? out : [""];
 }
 const brut = (html) => String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li|h\d)>/gi, "\n\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "’").replace(/\n{3,}/g, "\n\n").trim();

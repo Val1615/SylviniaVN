@@ -49,7 +49,7 @@ Il tranche encore.
 
 Encore.
 
-Ses mouvements sont précis, bruts, sans fioriture, une danse mortelle. L’étalage d’une vie martiale dans l’armée de Forthaven
+Ses mouvements sont précis, bruts, sans fioriture, une danse mortelle. L’étalage d’une vie martiale dans l’armée de Forthaven.
 
 Ses bottes glissent dans la boue, son corps tourne, frappe, abat chaque ennemi qui se jette sur lui.
 
@@ -69,7 +69,7 @@ Les morts frappent la paroi, leurs poings éclatent en morceaux sous l’impact.
 
 Elle tend la main, une dague de givre se formant au creux de sa paume.
 
-Elle la lance. Puis en génère d’autre, propageant un déluge de javelot glacée sur ses cibles, tels des lames qui s’abattent dans la chair putréfiée`,
+Elle la lance. Puis en génère d’autres, propageant un déluge de javelots glacés sur ses cibles, tels des lames qui s’abattent dans la chair putréfiée.`,
       'c16_choix_assaut', [hylee, remerii]),
 
     c16_choix_assaut: {
@@ -109,7 +109,7 @@ Hylee n’a pas le temps de réagir. Sans savoir d’où elle vient, Naïah surg
 
 Naïah penche la tête, un sourire moqueur.
 
-Naïah – Vous êtes déjà morts. Contentez-vous de rester en place.
+« Vous êtes déjà morts. Contentez-vous de rester en place. »
 
 Elle referme sa main.
 
@@ -125,7 +125,7 @@ Des éclats d’os et de chair calcinée voltent dans l’air.
 
 Il rit.
 
-Valurn – Et moi qui pensais que ce serait une mission ennuyeuse.
+« Et moi qui pensais que ce serait une mission ennuyeuse. »
 
 Son sourire s’élargit, ses yeux rouges brûlent d’un éclat malveillant.`,
       'c16_ligne_imperiale', [valurn]),
@@ -163,11 +163,11 @@ Ses yeux analytiques balayent le champ de bataille.
 
 Il lit leurs mouvements, étudie leur nature.
 
-Mais il ne parle pas, demeurant silencieux `,
+Mais il ne parle pas, demeurant silencieux.`,
       'c16_le_pacte'),
 
     c16_le_pacte: scene('Où est Iriana ?', forest, battleMusic, 'Narrateur',
-      `Valurn fini par froncer les sourcils.
+      `Valurn finit par froncer les sourcils.
 
 Quelque chose cloche.
 
@@ -183,7 +183,7 @@ Mais…
 
 Iriana manque à l’appel.
 
-Son absence le frappe comme un coup de poing. Il la cherche balayant le champ de bataille de son regard ardent…
+Son absence le frappe comme un coup de poing. Il la cherche, balayant le champ de bataille de son regard ardent…
 
 Puis il les voit.
 
@@ -205,7 +205,7 @@ Il repousse, esquive, explose les cadavres sur son passage. Son feu crépite ent
     c16_decharge: scene('La gerbe de flammes', forest, battleMusic, 'Narrateur',
       `Un bruit sourd résonne dans la forêt. Une détonation. Un rugissement infernal.
 
-Les ténèbres s’illuminent d’une lumière incandescente, voyant une gerbe de flammes s’élèver, projetant des ombres déformées sur les troncs millénaires putréfier.
+Les ténèbres s’illuminent d’une lumière incandescente, voyant une gerbe de flammes s’élever, projetant des ombres déformées sur les troncs millénaires putréfiés.
 
 L’air se gorge d’un souffle brûlant, une onde de choc balayant le champ de bataille.`,
       'c16_premier_eclair'),
@@ -213,7 +213,7 @@ L’air se gorge d’un souffle brûlant, une onde de choc balayant le champ de 
     c16_premier_eclair: scene('Puis vient la foudre', forest, battleMusic, 'Narrateur',
       `Puis vient la foudre. Un arc électrique déchire l’atmosphère, un éclat aveuglant frappant le sol avec une force colossale. Le tonnerre éclate. L’impact souffle tout sur son passage.
 
-Les morts sont pulvérisés, projetés en arrière comme des pantins désarticulés, les arcs se répondant d’un non mort à un autre.
+Les morts sont pulvérisés, projetés en arrière comme des pantins désarticulés, les arcs se répondant d’un non-mort à un autre.
 
 Leurs chairs brûlent, leurs os se craquèlent sous la décharge.`,
       'c16_foudre'),
@@ -255,7 +255,7 @@ Au final, elle est loin d’être en danger.
 
 Non, le danger c’est elle.
 
-Après un carnage bref et assumé, où les effroyable pouvoir d’Iriana se sont illustrés dans une déferlement ardemment électrique, un étrange silence s’installe.`,
+Après un carnage bref et assumé, où les effroyables pouvoirs d’Iriana se sont illustrés dans un déferlement ardemment électrique, un étrange silence s’installe.`,
       'c16_bataille_fin'),
 
     c16_bataille_fin: scene('La bataille est terminée', aftermath, aftermathMusic, 'Narrateur',
@@ -297,11 +297,11 @@ Et maintenant elle est incapable de bouger, incapable de respirer, incapable de 
 
 Le froid explose autour d’elle, un souffle hivernal jaillissant de son être en une onde de givre impitoyable, figeant le sol sous ses pieds, mordant l’air de mille éclats de glace. Son pouvoir ne répond plus à la raison, il s’abandonne au désespoir, à la peur, à cette vague déferlante de panique qui la consume, et elle ne sent plus rien d’autre que le froid s’accrocher à sa peau, dévorer tout ce qui l’entoure, le transformer en un hiver stérile et sans fin.
 
-Sa vue se brouille, le monde se distord, son corps est là, mais son esprit est piégé ailleurs, prisonnier du champ de bataille, des cadavres qui la fixent encore, de ces horreurs qu’elle ne pourra jamais oublier. Elle les sent, elle les voit. Ils rampent a ses pieds, l’agrippe.`,
+Sa vue se brouille, le monde se distord, son corps est là, mais son esprit est piégé ailleurs, prisonnier du champ de bataille, des cadavres qui la fixent encore, de ces horreurs qu’elle ne pourra jamais oublier. Elle les sent, elle les voit. Ils rampent à ses pieds, l’agrippent.`,
       'c16_remerii_retour', [hyleeShaken]),
 
     c16_remerii_retour: scene('Hylee, regarde-moi', aftermath, aftermathMusic, 'Narrateur',
-      `— Hylee !
+      `« Hylee ! »
 
 Une voix perce la tempête.
 
@@ -309,15 +309,15 @@ Un murmure dans le vacarme, mais elle ne l’entend pas.
 
 Les morts sont trop nombreux, trop proches, ils murmurent, hurlent, se décomposent sous ses yeux, elle sent leurs mains sur elle, elle sent leurs souffles putrides, elle va être emportée, elle va sombrer avec eux, elle va…
 
-— Hylee, regarde-moi !
+« Hylee, regarde-moi ! »
 
 Quelque chose la secoue, du chaud contre le froid, une brûlure qui tranche dans le gel qui l’étreint, un contact réel dans la marée spectrale de son esprit.`,
       'c16_remerii_contact', [hyleeShaken, remerii]),
 
     c16_remerii_contact: scene('Regarde-moi', aftermath, aftermathMusic, 'Narrateur',
-      `Des doigts attrapent son visage, fermes mais délicats, une pression qui refuse de la laisser se noyer. La jeune femme panique, elle sent l’emprise de la mort l’emporter. Elle tremble, de toute son être. Ces choses… elles l’entraînent avec elle.
+      `Des doigts attrapent son visage, fermes mais délicats, une pression qui refuse de la laisser se noyer. La jeune femme panique, elle sent l’emprise de la mort l’emporter. Elle tremble, de tout son être. Ces choses… elles l’entraînent avec elle.
 
-— C’est moi, Hylee, je suis là. Je suis là avec toi.
+« C’est moi, Hylee, je suis là. Je suis là avec toi. »
 
 Non… cette voix… c’est Remerii.
 
@@ -325,17 +325,17 @@ Son visage se dessine à travers la brume, flou, vacillant, mais là.
 
 Sa voix est un fil ténu, une corde tendue au bord du gouffre.
 
-— Tu es là. Avec moi. C’est fini, ils ne sont plus là.
+« Tu es là. Avec moi. C’est fini, ils ne sont plus là. »
 
 Non… ce n’est pas fini.
 
 Hylee tremble, son souffle s’accélère encore, chaque inspiration lui fait mal, elle est trop glacée, elle ne sent plus ses membres, elle n’arrive plus à respirer, elle ne sait même plus si elle respire encore. Si elle sait co…
 
-— Inspire… expire… Reste avec moi. Compte dans ta tête… inspire profondément… 1…2…3… expire.
+« Inspire… expire… Reste avec moi. Compte dans ta tête… inspire profondément… 1…2…3… expire. »
 
 Remerii approche un peu plus, son front presque contre le sien, ses mains toujours sur son visage.
 
-— Tu es là, avec moi. Sens-moi. Sens ma chaleur.
+« Tu es là, avec moi. Sens-moi. Sens ma chaleur. »
 
 Hylee ne sent que le froid, son propre froid, celui qu’elle répand, celui qu’elle ne peut plus contenir.`,
       'c16_le_collier', [hyleeShaken, remerii]),
@@ -343,15 +343,15 @@ Hylee ne sent que le froid, son propre froid, celui qu’elle répand, celui qu�
     c16_le_collier: scene('Deux battements', aftermath, aftermathMusic, 'Narrateur',
       `Remerii prend alors sa main, doucement, fermement, et la guide contre sa poitrine, la force à sentir le battement de son cœur.
 
-— Tu le sens ?
+« Tu le sens ? »
 
-Deux pressions, régulière.
+Deux pressions, régulières.
 
-— Je suis là.
+« Je suis là. »
 
 Elles se suivent. Elles sont fortes.
 
-— Tu es là.
+« Tu es là. »
 
 Le rythme est lent, régulier, ancré dans le réel.
 
@@ -367,11 +367,11 @@ Le pendentif d’étoile.
 
 Le seul objet qui a toujours été là, depuis le début.
 
-Le seul qui lui appartient vraiment, qui n’a jamais changé, qui n’a jamais failli. Remerii la toujours connue avec celui-ci. Elle ne la jamais quittée.
+Le seul qui lui appartient vraiment, qui n’a jamais changé, qui n’a jamais failli. Remerii l’a toujours connue avec celui-ci. Elle ne l’a jamais quittée.
 
 Remerii presse doucement ses doigts contre le bijou.
 
-— Regarde-le. Sens-le.
+« Regarde-le. Sens-le. »
 
 Le contact est froid, figé, mais réel.
 
@@ -403,11 +403,11 @@ Elle se rattache.`,
       'c16_mir', [hyleeShaken, remerii]),
 
     c16_mir: scene('Sous le dôme de Mir', aftermath, aftermathMusic, 'Narrateur',
-      `— Ensemble. Nous sommes ensemble.
+      `« Ensemble. Nous sommes ensemble. »
 
 Remerii murmure, sa voix douce, forte, inébranlable.
 
-— Souffle… inspire, expire… sent l’air remplir tes poumons. Imagine-toi, loin d’ici… à Mir. Toute les deux, sous les étoiles, sur ce banc. Sent le parfum des fleurs, de l’encens, la brise fraîche. Les lumières de la cité, le ciel pourpre, illuminé par le dôme qui te protège… qui nous protège. Elle caresse le dos de l’apprentie, la prenant dans ses bras, encaissent le froid, la glace. Il fait bon, la nuit est calme, les oiseaux chantent, l’odeur des pâtisseries… Le goût de cette tartelette que tu as tant appréciée.
+« Souffle… inspire, expire… sens l’air remplir tes poumons. Imagine-toi, loin d’ici… à Mir. Toutes les deux, sous les étoiles, sur ce banc. Sens le parfum des fleurs, de l’encens, la brise fraîche. Les lumières de la cité, le ciel pourpre, illuminé par le dôme qui te protège… qui nous protège. » Elle caresse le dos de l’apprentie, la prenant dans ses bras, encaissant le froid, la glace. « Il fait bon, la nuit est calme, les oiseaux chantent, l’odeur des pâtisseries… Le goût de cette tartelette que tu as tant appréciée. »
 
 Elle réagit. Un tremblement, un spasme, une inspiration hachée.
 
@@ -435,7 +435,7 @@ Elle respire.`,
 
 Et puis, d’autres voix.
 
-— Hylee… qu’est-ce qui s’est passé ?
+« Hylee… qu’est-ce qui s’est passé ? »
 
 Hylee tressaille en entendant Naïah, reconnaissant immédiatement son ton, ce mélange d’inquiétude et de fébrilité contenue qui ne lui ressemble pas.
 
@@ -443,7 +443,7 @@ L’enfant de l’ombre s’approche rapidement, son regard pourpre balayant la 
 
 Naïah s’accroupit d’un geste souple, frôlant à peine le sol en prenant appui sur ses genoux, ses bras hésitants tendus vers Hylee, comme si elle voulait la prendre dans ses bras mais qu’elle craignait de la briser en le faisant.
 
-— Hylee, hey, ça va ?
+« Hylee, hey, ça va ? »
 
 Son ton est doux, mais teinté d’une alarme qu’elle peine à masquer.
 
@@ -455,7 +455,7 @@ Et ça l’énerve.
 
 Elle a déjà vu des combattants s’effondrer après une bataille, et ça a toujours été très drôle à voir… mais Hylee ? Ce type d’endroit n’est clairement pas sa place. Ce n’est pas une guerrière… ce n’est qu’une apprentie.
 
-— Il fallait bien que ça arrive, commente une autre voix, calme, distante.
+« Il fallait bien que ça arrive », commente une autre voix, calme, distante.
 
 Saidin.
 
@@ -463,7 +463,7 @@ L’archimage s’est arrêté à quelques mètres, les mains derrière le dos, 
 
 Naïah se retourne vivement vers lui, ses pupilles lançant presque des éclats d’ombre.
 
-— Tais-toi au lieu de dire des évidence… gronde-t-elle.
+« Tais-toi au lieu de dire des évidences… » gronde-t-elle.
 
 Saidin hausse légèrement un sourcil, mais ne répond pas, laissant son silence parler à sa place.
 
@@ -471,13 +471,13 @@ Il ne s’approche pas, ne fait aucun geste pour interférer, comme s’il savai
 
 Et pourtant, dans son regard, quelque chose…
 
-Un intérêt, pas simplement scientifique comme a son habitude, non… il a un fond protecteur.
+Un intérêt, pas simplement scientifique comme à son habitude, non… il a un fond protecteur.
 
 Il observe, analyse, mais ne juge pas.
 
 Hylee a failli mourir… physiquement, mais aussi psychologiquement.
 
-Elle n’a pas été blessée, elle n’a pas reçu un coup d’épée, et pourtant… Elle saigne autrement. C’est un traumatisme.  Un de ces maux invisibles qui s’ancrent dans l’âme et ne disparaissent jamais vraiment.`,
+Elle n’a pas été blessée, elle n’a pas reçu un coup d’épée, et pourtant… Elle saigne autrement. C’est un traumatisme. Un de ces maux invisibles qui s’ancrent dans l’âme et ne disparaissent jamais vraiment.`,
       'c16_iriana_hylee', [hyleeShaken, naiah]),
 
     c16_iriana_hylee: scene('Le regard d’Iriana', aftermath, aftermathMusic, 'Narrateur',
@@ -497,7 +497,7 @@ Elle n’a jamais rien vu de tout cela.
 
 Et pourtant… elle est ici. Elle a été envoyée ici. Elle a été plongée dans l’enfer de la guerre par sa faute.
 
-Iriana sent un poids écrasant se loger dans sa poitrine. C’est elle qui l’a conduite ici. Elle a instrumentalisé ces gens. Elle les a envoyés dans un conflit qui les dépasse, convaincue qu’ils pouvaient y survivre… auquel cas, ils sont sacrifiables… c’est des humains
+Iriana sent un poids écrasant se loger dans sa poitrine. C’est elle qui l’a conduite ici. Elle a instrumentalisé ces gens. Elle les a envoyés dans un conflit qui les dépasse, convaincue qu’ils pouvaient y survivre… auquel cas, ils sont sacrifiables… c’est des humains.
 
 Mais du coup… en quoi elle est différente de Tia ?
 
@@ -553,7 +553,7 @@ Finalement, il parle. D’une voix qui veut être ferme, digne, militaire… mai
       'c16_le_boulanger', [iriana, draven]),
 
     c16_le_boulanger: scene('Le boulanger', aftermath, aftermathMusic, 'Narrateur',
-      `Draven – C’était mon beau-frère.
+      `« C’était mon beau-frère. »
 
 Ses mots sont simples, dénués d’emphase, mais ils résonnent dans l’air comme une sentence, un constat brut, sans détour, sans artifice.
 
@@ -561,25 +561,25 @@ Iriana sent un poids écraser sa poitrine. Elle baisse brièvement les yeux sur 
 
 Elle relève les yeux vers Draven, cherchant quoi dire, quelque chose qui puisse apaiser l’inévitable douleur de cette perte.
 
-Iriana – Je suis désolée.
+« Je suis désolée. »
 
 Les mots lui semblent fades, inutiles face à l’immensité du chagrin qu’elle devine derrière le masque impassible du général. Mais c’est tout ce qu’elle peut offrir.
 
-Iriana – Il est tombé en héros, comme le grand soldat qu’il était.
+« Il est tombé en héros, comme le grand soldat qu’il était. »
 
 Draven laisse échapper un soupir, secouant légèrement la tête, un rire amer lui échappant dans un souffle.
 
-Draven – Il n’était même pas écuyer.
+« Il n’était même pas écuyer. »
 
 Il marque une pause, puis ses doigts frôlent la plaque du mort, l’arrachant doucement de son cou avant de la faire tourner entre ses doigts.
 
-Draven – C’était un boulanger.
+« C’était un boulanger. »
 
 Le silence s’étire, lourd, pesant, suffocant.
 
 Iriana sent un frisson lui parcourir l’échine.
 
-Draven – Un foutu boulanger qu’on a arraché à ses fourneaux pour l’envoyer mourir ici, sur une terre qui n’a jamais été la sienne.
+« Un foutu boulanger qu’on a arraché à ses fourneaux pour l’envoyer mourir ici, sur une terre qui n’a jamais été la sienne. »
 
 Son ton est calme, presque factuel, mais il y a quelque chose de brisé dans ces mots, quelque chose de plus fort qu’une simple colère. C’est une lassitude, une rage contenue, une détresse qui ne trouve pas d’échappatoire.`,
       'c16_la_requisition', [iriana, draven]),
@@ -595,7 +595,7 @@ C’est sa ville, son peuple, ceux qu’il a laissés derrière, ceux qu’il a 
 
 Ils n’avaient plus personne à envoyer. Les soldats n’étaient plus assez, alors ils ont mobilisé des civils.
 
-Les artisans, les marchands, les forgerons Des hommes qui n’étaient pas faits pour la guerre, mais qu’ils ont sacrifiés malgré tout. Des citoyens usant de leurs courages pour défendre leur contrée.
+Les artisans, les marchands, les forgerons. Des hommes qui n’étaient pas faits pour la guerre, mais qu’ils ont sacrifiés malgré tout. Des citoyens usant de leur courage pour défendre leur contrée.
 
 Iriana sent sa gorge se nouer.
 
@@ -609,7 +609,7 @@ Mais ce qu’elle a pris…
 
 C’étaient des fils, des frères, des maris.
 
-Des hommes et femmes qui n’auraient jamais dû être là, mais qui sont quand même venu dans l’espoir de sauver leur chez eux.
+Des hommes et femmes qui n’auraient jamais dû être là, mais qui sont quand même venus dans l’espoir de sauver leur chez eux.
 
 Draven referme lentement les doigts sur la plaque de son beau-frère, l’attache à sa ceinture avec les autres, puis se redresse.
 
@@ -631,11 +631,11 @@ Elle laisse l’amiral à son deuil, retournant voir ses troupes silencieusement
 
 Un sourire de pur amusement. Il tourne les yeux vers Iriana, la saluant d’une révérence respectueuse et volontairement appuyée.
 
-Valurn – Je crois que ça faisait longtemps que je ne t’avais pas vue te déchaîner comme ça.
+« Je crois que ça faisait longtemps que je ne t’avais pas vue te déchaîner comme ça. »
 
 Il croise les bras, la fixant avec un intérêt renouvelé.
 
-Valurn – Une vraie tempête. On devrait peut-être te lâcher plus souvent dans ce genre de bordel.
+« Une vraie tempête. On devrait peut-être te lâcher plus souvent dans ce genre de bordel. »
 
 Iriana ne répond pas tout de suite. Elle n’a pas spécialement la tête à ça.
 
@@ -661,19 +661,19 @@ Elle hoche simplement la tête, autant pour elle-même que pour l’impératrice
     c16_ellion: scene('Le silence d’Iriana', aftermath, aftermathMusic, 'Narrateur',
       `Mais à peine a-t-elle fait un pas qu’une autre voix s’élève, tranchante, accusatrice.
 
-— Excellence.
+« Excellence. »
 
 Ellion Valendil s’avance vers elle, le port altier, les traits fermés, un éclat de défi dans ses yeux perçants. Les soldats derrière lui murmurent, certains encore sous le choc, d’autres toujours prêts à obéir, mais tous attentifs à ce qui va suivre.
 
-— Une route censée être sûre, un itinéraire soi-disant inconnu des Obscurcis, et pourtant nous avons perdu des hommes, non pas contre eux, mais contre une menace que personne n’avait anticipée. Pourquoi ?
+« Une route censée être sûre, un itinéraire soi-disant inconnu des Obscurcis, et pourtant nous avons perdu des hommes, non pas contre eux, mais contre une menace que personne n’avait anticipée. Pourquoi ? »
 
 Iriana serre les dents, son regard croise celui du général, mais avant qu’elle ne puisse répondre, une voix bien trop familière s’interpose.
 
-— Oh, allons, Général, murmure Valurn d’un ton traînant, s’approchant nonchalamment. Vous pensez vraiment qu’un autre passage aurait été plus sûr ? Peut-être préféreriez-vous être parmi eux, en train de vous décomposer sous cette charmante mousse corrosive ? La forêt dévore tout… dans presque toute sa superficie…
+« Oh, allons, Général », murmure Valurn d’un ton traînant, s’approchant nonchalamment. « Vous pensez vraiment qu’un autre passage aurait été plus sûr ? Peut-être préféreriez-vous être parmi eux, en train de vous décomposer sous cette charmante mousse corrosive ? La forêt dévore tout… dans presque toute sa superficie… »
 
 Un sourire sardonique flotte sur ses lèvres, mais son regard, lui, brille d’une lueur acérée, une intelligence perfide qui ne laisse rien au hasard.
 
-— Nous avons choisi la meilleure option. Une mauvaise option, certes, mais reste la meilleure. Estimez-vous heureux d’avoir une guide vous orientant au mieux pour éviter de finir comme Eux. Et puis… C’est ainsi que fonctionne la guerre, non ?
+« Nous avons choisi la meilleure option. Une mauvaise option, certes, mais reste la meilleure. Estimez-vous heureux d’avoir une guide vous orientant au mieux pour éviter de finir comme Eux. Et puis… C’est ainsi que fonctionne la guerre, non ? »
 
 Ellion fronce les sourcils, son dédain pour le demi-démon évident, mais il ne réplique pas immédiatement. Il sait que Valurn a raison, du moins en partie, et il n’aime pas ça.
 
@@ -681,7 +681,7 @@ Iriana, elle, ne dit rien. Elle est lasse. Elle pourrait justifier son choix, te
 
 Finalement, Ellion se détourne, adressant un simple signe à ses troupes.
 
-— Nous avançons.`,
+« Nous avançons. »`,
       'c16_la_marche', [iriana, valurn]),
 
     c16_la_marche: scene('Vers Akuhn’Nabad', forest, aftermathMusic, 'Narrateur',
@@ -693,7 +693,7 @@ Hylee n’est plus la même. Sa démarche est hésitante, elle garde le regard b
 
 Remerii, elle, est silencieuse. Habituellement plus enjouée, plus vive, elle n’a pas lâché Hylee depuis l’incident, et son regard se durcit chaque fois qu’elle repense à ce qui s’est passé.
 
-Draven est un homme terni par cette bataille . Il ne parle pas. Il marche d’un pas rigide, les yeux fixés sur l’horizon, mais dans sa main, il serre toujours les plaques militaires des morts qu’il a ramassées. Il ne les a pas rangées, il ne les a pas laissées derrière lui. Chaque plaque est une perte, une vie arrachée, une dette qu’il ne pourra jamais rembourser.
+Draven est un homme terni par cette bataille. Il ne parle pas. Il marche d’un pas rigide, les yeux fixés sur l’horizon, mais dans sa main, il serre toujours les plaques militaires des morts qu’il a ramassées. Il ne les a pas rangées, il ne les a pas laissées derrière lui. Chaque plaque est une perte, une vie arrachée, une dette qu’il ne pourra jamais rembourser.
 
 Saidin, lui, reste égal à lui-même, indéchiffrable, mais son regard trahit une concentration inhabituelle. Il réfléchit, analyse, décrypte ce qui vient de se passer. Il a vu des batailles, il a vu des morts, mais il n’a jamais vu un tel fléau. Quelque chose ne tourne pas rond.
 
@@ -723,7 +723,7 @@ Quelque chose cloche.`,
     c16_akuhn_decouverte: scene('Akuhn’Nabad', forest, aftermathMusic, 'Narrateur',
       `Et alors qu’ils émergent d’une trouée dans la forêt, la silhouette spectrale d’Akuhn’Nabad se dévoile au loin.
 
-La cité Obscurcis s’étire dans le brouillard épais, ses structures sombres à peine discernables, comme un mirage déchirant le paysage désolé. L’air est lourd d’une magie ancienne, saturé d’un pouvoir qui ne demande qu’à être libéré. Les ténèbres à l’horizons ne parviennent pas à dissimuler la grandeur de la cité ennemie. Sa hauteur, sa taille, son architecture… la menace est là, à quelques pas.
+La cité Obscurcis s’étire dans le brouillard épais, ses structures sombres à peine discernables, comme un mirage déchirant le paysage désolé. L’air est lourd d’une magie ancienne, saturé d’un pouvoir qui ne demande qu’à être libéré. Les ténèbres à l’horizon ne parviennent pas à dissimuler la grandeur de la cité ennemie. Sa hauteur, sa taille, son architecture… la menace est là, à quelques pas.
 
 Les troupes s’arrêtent.
 
