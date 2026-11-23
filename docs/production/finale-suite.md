@@ -84,6 +84,6 @@ Les huit fichiers fournis par l’auteur (quatre décors 1024×576 et quatre fic
 | Parcours de toutes les branches depuis une sauvegarde v82 sur `c16_s01_fin` | 75 parcours (aucun déblocage, Draven, Iriana, les deux, mode dev × 15 politiques de choix). Aucune impasse : 177 scènes et tous les choix visités, chaque parcours affiche les 1365 paragraphes et revient au menu. |
 | Liens, décors, musiques, sprites | Toutes les cibles existent. Aucun 404 sur les ressources des nouvelles scènes. |
 | Console | Aucune nouvelle erreur. Seules restent les erreurs connues : `C13G_SCENES`, le 404 déjà présent. |
-| Pagination 830×525, 1024×880, 880×1024 | Toutes les pages des 177 scènes, détail dans `compare/finale/pagination.json`. Les textes des scènes de choix sont courts pour rester visibles au-dessus des boutons. |
+| Pagination 830×525, 1024×880, 880×1024 | 884, 723 et 716 pages parcourues sur les 177 scènes : aucun débordement. Sur les 19 scènes de choix à 830×525, le texte (une ou deux lignes) reste entier au-dessus des boutons, contrôlé à l’œil et en mesurant le dernier paragraphe (`choiceshots.py`). |
 | `studio-overrides`, `studio-ca` | ok |
 | `story-world.test.cjs` | 4 !== 3, échec déjà présent sur `main` |
