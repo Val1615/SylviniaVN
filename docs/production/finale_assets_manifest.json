@@ -1,0 +1,269 @@
+{
+ "version": "v0.418",
+ "regle": "Aucune image clé ni musique générée pour ce lot. Les décors, sprites et musiques ci-dessous sont des fichiers déjà présents dans le dépôt, réutilisés tels quels. Les fichiers fournis par l’auteur doivent être copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche.",
+ "fichiers_fournis_par_l_auteur": {
+  "statut": "ABSENTS du poste de production au moment du lot : aucun fichier dont le nom ou le sha256 commence par ces préfixes n’a été trouvé dans les pièces jointes. Rien n’a été copié ; les emplacements sont prêts.",
+  "fichiers": [
+   {
+    "sha256_prefixe": "5aa71404",
+    "description": "Plaine infernale, portail rouge (1024x576)",
+    "nom_prevu": "assets/images/backgrounds/finale/bg_porte_noire_plaine.png",
+    "constante": "BG_PORTE (fusion/story-finale-s02.js et s06.js)",
+    "scenes": "c17_portail → c17_brasier, c18_trop_tard → c18_saut",
+    "remplace_provisoirement": "c4v_portal_temple"
+   },
+   {
+    "sha256_prefixe": "54da09d3",
+    "description": "Même plaine figée par le blizzard (1024x576)",
+    "nom_prevu": "assets/images/backgrounds/finale/bg_porte_noire_blizzard.png",
+    "constante": "BG_GIVRE (s06)",
+    "scenes": "c18_gardien → c18_faille (jamais avant le blizzard de Remerii)",
+    "remplace_provisoirement": "bg_frost"
+   },
+   {
+    "sha256_prefixe": "7f8e1c88",
+    "description": "Ravin ou cité en ruine, cascades, racines violettes (Akuhn’Nabad probable, à confirmer à l’œil)",
+    "nom_prevu": "assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png",
+    "constante": "BG_AKUHN (s02)",
+    "scenes": "c17_rassemblement → c17_regard_remerii",
+    "remplace_provisoirement": "c4v_akuhn_citadel"
+   },
+   {
+    "sha256_prefixe": "7c5748b5",
+    "description": "Champ de bataille dévasté, bannières pourpres",
+    "nom_prevu": "assets/images/backgrounds/finale/bg_champ_bataille.png",
+    "constante": "BG_CHAMP (s02, s06, s09)",
+    "scenes": "c17_choc → c17_signal, c18_carrefour, c19_allenna → c19_fin",
+    "remplace_provisoirement": "c16_bg_apres_assaut"
+   },
+   {
+    "sha256_prefixe": "ef997d97",
+    "description": "Fiche personnage : Hylee, forme finale transformée",
+    "nom_prevu": "assets/images/characters/finale/fiche_hylee_finale.png",
+    "constante": "BG_FICHE_HYLEE (s06), affichage contenu (comme les plans S01)",
+    "scenes": "c18_reflet ; Codex, groupe « Fiches du final »",
+    "remplace_provisoirement": "c2_algratal_panorama_cg"
+   },
+   {
+    "sha256_prefixe": "866ebe90",
+    "description": "Fiche personnage : Alamma",
+    "nom_prevu": "assets/images/characters/finale/fiche_alamma.png",
+    "scenes": "Codex, débloquée à c18_alamma"
+   },
+   {
+    "sha256_prefixe": "aa12d364",
+    "description": "Fiche personnage : Bhaal",
+    "nom_prevu": "assets/images/characters/finale/fiche_bhaal.png",
+    "scenes": "Codex, débloquée à c18_bhaal"
+   },
+   {
+    "sha256_prefixe": "b0cd3607",
+    "description": "Fiche personnage : Amanea, forme finale",
+    "nom_prevu": "assets/images/characters/finale/fiche_amanea_forme_finale.png",
+    "scenes": "Codex, débloquée à c17_metamorphose"
+   }
+  ]
+ },
+ "decors_reutilises": {
+  "c4v_akuhn_citadel": "BG_AKUHN · rassemblement devant Akuhn’Nabad",
+  "c7_bg_foret_racines": "BG_FOREST · marche vers le portail",
+  "c4v_portal_temple": "BG_PORTE · Porte Noire, duel, tragédie, deuil, Bhaal, Iriana",
+  "c16_bg_apres_assaut": "BG_CHAMP · mêlée, champ après la bataille, carrefour, Allenna",
+  "c16_bg_lisiere_assaut": "BG_CREVASSE · Draven (crevasse et grotte)",
+  "bg_frost": "BG_GIVRE · blizzard de Remerii (première neige du final)",
+  "bg_clearing_decor": "BG_SOURCE · souvenir de la leçon d’Arcane",
+  "c2_algratal_panorama_cg": "BG_ALGRATAL · retour à Al’Gratal (et provisoirement c18_reflet)",
+  "iriana_throneroom": "BG_TRONE · Épilogue, salle du trône",
+  "c13g_bg_chambre": "BG_CHAMBRE · Épilogue, chevet de Remerii"
+ },
+ "musiques_reutilisees": {
+  "music_tension": "rassemblement, plan, carrefour",
+  "music_c10_horreur": "marche, moisson des âmes, relevés, ouverture du portail",
+  "music_c10_group_portal": "la Porte Noire",
+  "music_c13i_amanea_reine_noire": "Amanea au portail, Allenna (Épilogue)",
+  "music_c3_combat_ombres": "mêlée",
+  "music_duel": "duel Valurn contre Amanea",
+  "music_c10_amanea": "tragédie de la figure de Tia",
+  "music_draven_storm / music_draven_bond": "Draven, appel de Lineva",
+  "music_c11_complainte(_instru)": "deuils",
+  "music_c10_culte": "Bhaal",
+  "music_iriana": "Iriana contre Alamma",
+  "music_c8_valurn_pacte": "pacte de Valurn",
+  "music_x12i_glace_brisee": "blizzard de Remerii",
+  "music_c6_nuit_etoiles": "souvenir de la leçon d’Arcane",
+  "music_algratal": "retour à Al’Gratal",
+  "music_c14_council_v0340": "salle du trône",
+  "music_c13g_une_nuit_soft": "chevet",
+  "music_end": "fin du Tome I"
+ },
+ "images_cles_prevues_cahier": [
+  {
+   "code": "BG-01",
+   "objet": "Porte Noire, plan maître large",
+   "scene": "c17_portail"
+  },
+  {
+   "code": "BG-02",
+   "objet": "Porte, plan rapproché de combat",
+   "scene": "c17_valurn_surgit → c17_brise"
+  },
+  {
+   "code": "BG-03",
+   "objet": "Porte, contrechamp",
+   "scene": "c18_alamma"
+  },
+  {
+   "code": "BG-04",
+   "objet": "Champ de bataille sans porte",
+   "scene": "c17_choc"
+  },
+  {
+   "code": "BG-05",
+   "objet": "Trouée entre les lignes",
+   "scene": "c17_fuyards"
+  },
+  {
+   "code": "BG-06",
+   "objet": "Crevasse et entrée de grotte",
+   "scene": "c18_draven_seul"
+  },
+  {
+   "code": "BG-07",
+   "objet": "Intérieur de la grotte, effondrement",
+   "scene": "c18_temporise, c18_effondrement"
+  },
+  {
+   "code": "BG-08",
+   "objet": "Clairière Iriana / Alamma",
+   "scene": "c18_tu_es_trop_jeune"
+  },
+  {
+   "code": "BG-09",
+   "objet": "Champ sous blizzard",
+   "scene": "c18_gardien → c18_faille"
+  },
+  {
+   "code": "BG-10",
+   "objet": "Après-combat, épilogue",
+   "scene": "c19_allenna"
+  },
+  {
+   "code": "CG-02",
+   "objet": "Porte Noire et deux armées",
+   "scene": "c17_assaut"
+  },
+  {
+   "code": "CG-03",
+   "objet": "Lignes du champ de bataille",
+   "scene": "c17_tempete"
+  },
+  {
+   "code": "CG-04",
+   "objet": "Transformation d’Amanea",
+   "scene": "c17_metamorphose"
+  },
+  {
+   "code": "CG-05",
+   "objet": "Valurn et Amanea, premier choc",
+   "scene": "c17_mur_de_feu"
+  },
+  {
+   "code": "CG-06",
+   "objet": "Amanea révèle sa vraie puissance",
+   "scene": "c17_revelation"
+  },
+  {
+   "code": "CG-07",
+   "objet": "Valurn au sol, Amanea triomphante",
+   "scene": "c17_brise"
+  },
+  {
+   "code": "CG-08",
+   "objet": "Figure de Tia, Amanea, Naïah",
+   "scene": "c17_gorge, c17_illusion"
+  },
+  {
+   "code": "CG-09",
+   "objet": "Draven face à la horde, effondrement",
+   "scene": "c18_effondrement"
+  },
+  {
+   "code": "CG-10",
+   "objet": "Remerii découvre Draven",
+   "scene": "c18_remerii_draven"
+  },
+  {
+   "code": "CG-11",
+   "objet": "Iriana dominée, éveil du pouvoir transmis",
+   "scene": "c18_a_genoux"
+  },
+  {
+   "code": "CG-12",
+   "objet": "Iriana prend le dessus",
+   "scene": "c18_chute_alamma"
+  },
+  {
+   "code": "CG-13",
+   "objet": "Apparition de Bhaal",
+   "scene": "c18_bhaal"
+  },
+  {
+   "code": "CG-14",
+   "objet": "Blizzard, Hylee canalise, dragon de glace",
+   "scene": "c18_conduit, c18_dragon"
+  },
+  {
+   "code": "CG-15",
+   "objet": "Remerii après la bataille, Hylee métamorphosée",
+   "scene": "c18_reflet"
+  }
+ ],
+ "musiques_dediees_prevues": [
+  {
+   "code": "MU-01",
+   "objet": "Thème de la Porte Noire",
+   "scenes": "c17_portail → c17_feu"
+  },
+  {
+   "code": "MU-02",
+   "objet": "Duel Valurn / Amanea (deux phases, bascule à c17_revelation)",
+   "scenes": "c17_duel_intro → c17_brise"
+  },
+  {
+   "code": "MU-03",
+   "objet": "Tragédie de la figure de Tia",
+   "scenes": "c17_trois → c17_brasier"
+  },
+  {
+   "code": "MU-04",
+   "objet": "Dernier combat de Draven",
+   "scenes": "c18_draven_seul → c18_remerii_draven"
+  },
+  {
+   "code": "MU-05",
+   "objet": "Bhaal",
+   "scenes": "c18_bhaal → c18_iriana_part"
+  },
+  {
+   "code": "MU-06",
+   "objet": "Blizzard interdit et dragon de glace",
+   "scenes": "c18_gardien → c18_dragon"
+  },
+  {
+   "code": "MU-07",
+   "objet": "Métamorphose d’Hylee / retour à Al’Gratal",
+   "scenes": "c18_faille → c18_ne_me_laisse_pas"
+  },
+  {
+   "code": "MU-08",
+   "objet": "Épilogue, deuil et serment d’Allenna",
+   "scenes": "c19_trone → c19_serment"
+  }
+ ],
+ "sprites_manquants": {
+  "hylee_finale_*": "assets/sprites/hylee_finale_*.png · Hylee dans sa forme entièrement transformée. D’ici là, aucune silhouette d’Hylee après la canalisation (dès c18_remerii_tombe).",
+  "amanea_finale_*": "Amanea transformée : aucune silhouette pendant et après c17_metamorphose.",
+  "tia_*": "Pas de Tia adulte : la figure de Tia n’a pas de silhouette ; Naïah apparaît seulement à la révélation (c17_illusion).",
+  "alamma_* / bhaal_* / allenna_* / ellion_* / demendras_*": "Pas de sprite : scènes en narration sur le décor."
+ }
+}
