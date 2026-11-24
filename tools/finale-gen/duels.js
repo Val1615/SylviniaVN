@@ -444,12 +444,14 @@
       const delta = v[g.k] - (opts.static ? v[g.k] : from);
       const low = g.bad === 'up' ? (g.k !== 'amanea' && v[g.k] >= 8) : g.bad === 'down' && v[g.k] <= 2;
       const flip = !opts.static && id === 'c17_revelation' && (g.k === 'amanea' || g.k === 'power');
-      return `<div class="combatBox fd-${g.k}${reveal ? ' fdReveal' : ''}${low ? ' fdLow' : ''}${flip ? ' fdFlip' : ''}"><div class="combatTop"><span><i class="fdWho">${d.whoOf ? d.whoOf(g, phase) : g.who}</i>${g.name}</span><b>${v[g.k]}/10${delta && !reveal ? `<span class="fdDelta${delta < 0 ? ' neg' : ''}">${delta > 0 ? '+' : ''}${delta}</span>` : ''}</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${from * 10}%;background:${g.fill};${g.glow ? `box-shadow:0 0 12px ${g.glow};` : ''}${opts.static ? 'animation:none;' : ''}"></div></div></div>`;
+      return `<div class="combatBox fd-${g.k}${reveal ? ' fdReveal' : ''}${low ? ' fdLow' : ''}${flip ? ' fdFlip' : ''}" title="${g.who} · ${g.name}"><div class="combatTop"><span><i class="fdWho">${d.whoOf ? d.whoOf(g, phase) : g.who}</i><span class="fdNom">${compactName(g)}</span></span><b>${v[g.k]}<small>/10</small>${delta && !reveal ? `<span class="fdDelta${delta < 0 ? ' neg' : ''}">${delta > 0 ? '+' : ''}${delta}</span>` : ''}</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${from * 10}%;background:${g.fill};${g.glow ? `box-shadow:0 0 12px ${g.glow};` : ''}${opts.static ? 'animation:none;' : ''}"></div></div></div>`;
     }).join('');
     const meta = d.meta(v, step);
     const mood = moodOf(sc, id); const it = intensity();
     const qte = opts.qte ? `<div class="fdQte${opts.qte.left < 2.2 ? ' fdQteLast' : ''}" data-duel="${sc.fduel}"><span class="fdQteLab">⚡ ${opts.qte.label}</span><span class="fdQteTrack"><i style="width:${opts.qte.pct}%"></i></span><b id="fdQteTimer">${opts.qte.left.toFixed(1)} s</b></div>` : '';
-    return { html: `<style>${CSS}${GUIDE_CSS}</style><div class="combatHud fdHud" data-duel="${sc.fduel}" data-mood="${mood}" data-int="${it}"${corrupt ? ' data-emprise="1"' : ''}${phase ? ` data-phase="${phase}"` : ''}${opts.qte ? ' data-qte="1"' : ''} style="--fd-n:${shown.length}">${boxes}</div>${tac ? tacHtml(tac, it) : ''}${panel}${guideHtml(sc, id)}<div class="combatMeta fdMeta${opts.qte ? ' fdQteOn' : ''}" data-int="${it}"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]} <button type="button" class="fdFxBtn" data-fdfx="1"${it === 'reduit' ? ' disabled title="Animations réduites (réglage du système ou de la Bibliothèque)"' : ' title="Flashs, secousses et tremblements : intenses ou doux"'}>✦ ${fxLabel()}</button></span></div>${qte}`, v, prev };
+    const hudBar = `<div class="combatHud fdHud" data-duel="${sc.fduel}" data-mood="${mood}" data-int="${it}"${corrupt ? ' data-emprise="1"' : ''}${phase ? ` data-phase="${phase}"` : ''}${opts.qte ? ' data-qte="1"' : ''} style="--fd-n:${shown.length}">${boxes}</div>`;
+    const plus = `${panel}<div class="combatMeta fdMeta${opts.qte ? ' fdQteOn' : ''}" data-int="${it}"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]} <button type="button" class="fdFxBtn" data-fdfx="1"${it === 'reduit' ? ' disabled title="Animations réduites (réglage du système ou de la Bibliothèque)"' : ' title="Flashs, secousses et tremblements : intenses ou doux"'}>✦ ${fxLabel()}</button></span></div>`;
+    return { html: wrapHud(sc.fduel, hudBar, `${tac ? tacHtml(tac, it) : ''}${guideHtml(sc, id)}`, plus, qte, !!panel), v, prev };
   };
 
   // ───── QTE ─────
@@ -963,6 +965,8 @@
     return null;
   };
   const shortName = (g) => g.name.split(' · ')[0].replace(/ \(.*\)$/, '');
+  // Nom compact pour la barre : « Pression de Bhaal » devient « Pression » (le porteur est déjà affiché devant).
+  const compactName = (g) => { const n = shortName(g); const c = n.replace(/ (?:de (?:la |l’|l')?|d’|d')[^ ]+$/i, ''); return c || n; };
   const consequences = (sc) => {
     const d = DUELS[sc.fduel]; const step = sc.fstep || 0; if (!step && sc.fprev == null) return '';
     const v = calc(sc.fduel, step); const p = calc(sc.fduel, sc.fprev != null ? sc.fprev : step - 1);
@@ -973,18 +977,39 @@
     if (v.temps != null && p.temps != null && v.temps !== p.temps) out.push(`<span class="fdCq bon">Temps volé <b>+${v.temps - p.temps} s</b></span>`);
     return out.join('');
   };
-  const rulesBtn = '<button type="button" class="fdRulesBtn" data-fdrules="1" title="Objectif et règles du duel" aria-label="Règles du duel">? Règles</button>';
+  const rulesBtn = '<button type="button" class="fdRulesBtn" data-fdrules="1" title="Objectif et règles du duel" aria-label="Règles du duel">?</button>';
+  // ───── HUD discret (v0.426) : barre fine en haut (jauges + ? + ▾), consigne sur une ligne, détails repliables ─────
+  const MOREKEY = 'sylvinia_fd_hud_details';
+  const detailsOuverts = () => { try { return localStorage.getItem(MOREKEY) === '1'; } catch { return false; } };
+  const moreBtn = (open, has) => `<button type="button" class="fdMoreBtn" data-fdmore="1" aria-expanded="${open}" title="${open ? 'Replier les détails' : 'Déplier les détails' + (has ? ' (carte, liens, seuils)' : ' (seuils, effets)')}" aria-label="Détails du duel">${open ? '▴' : '▾'}</button>`;
+  const wrapHud = (duel, bar, ligne, plus, qte, hasPanel, pause) => {
+    const open = detailsOuverts();
+    return `<style>${CSS}${GUIDE_CSS}${BAR_CSS}</style><div class="fdWrap${open ? ' fdOuvert' : ''}${pause ? ' fdWrapPause' : ''}${qte ? ' fdAvecQte' : ''}" data-duel="${duel}"><div class="fdBarre">${bar}<span class="fdBtns">${rulesBtn}${plus ? moreBtn(open, hasPanel) : ''}</span></div>${qte || ''}<div class="fdLigne">${ligne}</div>${plus ? `<div class="fdPlus">${plus}</div>` : ''}</div>`;
+  };
+  document.addEventListener('click', (e) => {
+    const path = e.composedPath ? e.composedPath() : [e.target];
+    const b = path.find((n) => n && n.dataset && n.dataset.fdmore); if (!b) return;
+    const w = path.find((n) => n && n.classList && n.classList.contains('fdWrap')); if (!w || !w.querySelector('.fdPlus')) return;
+    e.stopPropagation(); e.preventDefault();
+    const open = !detailsOuverts();
+    try { localStorage.setItem(MOREKEY, open ? '1' : '0'); } catch {}
+    const R = window.BibliothequeAstrale && BibliothequeAstrale.racine;
+    [document, R].forEach((root) => root && root.querySelectorAll && root.querySelectorAll('.fdWrap').forEach((x) => {
+      x.classList.toggle('fdOuvert', open);
+      x.querySelectorAll('.fdMoreBtn').forEach((m) => { m.textContent = open ? '▴' : '▾'; m.setAttribute('aria-expanded', String(open)); });
+    }));
+  }, true);
   const guideHtml = (sc, id) => {
-    if (sc.fgameover) return `<div class="fdGuide fdGuideGo"><span class="fdTurn"><b>Défaite</b>${RULES[sc.fduel] ? RULES[sc.fduel].lose : ''}</span>${rulesBtn}</div>`;
+    if (sc.fgameover) return `<div class="fdGuide fdGuideGo" data-fdmore="1"><span class="fdTurn"><b>Défaite</b>${RULES[sc.fduel] ? RULES[sc.fduel].lose : ''}</span></div>`;
     const t = TURN[id]; const cq = t ? '' : consequences(sc);
     const r = RULES[sc.fduel];
     const body = t ? `<b>Ce tour</b>${t}` : cq ? `<b>Conséquences</b>${cq}` : `<b>Objectif</b>${r ? r.obj : ''}`;
-    return `<div class="fdGuide"><span class="fdTurn">${body}</span>${rulesBtn}</div>`;
+    return `<div class="fdGuide" data-fdmore="1" title="Toucher pour déplier les détails"><span class="fdTurn">${body}</span></div>`;
   };
   const pauseHtml = (d, step) => {
     const D = DUELS[d]; const v = calc(d, step);
-    const boxes = D.gauges.filter((g) => g.from == null || step >= g.from).map((g) => `<div class="combatBox fd-${g.k}"><div class="combatTop"><span>${D.whoOf ? D.whoOf(g, 1) : g.who} · ${shortName(g)}</span><b>${v[g.k]}/10</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${v[g.k] * 10}%;background:${g.fill}"></div></div></div>`).join('');
-    return `<style>${CSS}${GUIDE_CSS}</style><div class="combatHud fdHud fdPause" data-duel="${d}" style="--fd-n:${D.gauges.filter((g) => g.from == null || step >= g.from).length}">${boxes}</div><div class="fdGuide fdGuidePause"><span class="fdTurn"><b>Duel en suspens</b>${D.title} reprend après ce passage.</span>${rulesBtn}</div>`;
+    const boxes = D.gauges.filter((g) => g.from == null || step >= g.from).map((g) => `<div class="combatBox fd-${g.k}" title="${g.who} · ${g.name}"><div class="combatTop"><span><i class="fdWho">${D.whoOf ? D.whoOf(g, 1) : g.who}</i><span class="fdNom">${compactName(g)}</span></span><b>${v[g.k]}<small>/10</small></b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${v[g.k] * 10}%;background:${g.fill}"></div></div></div>`).join('');
+    return wrapHud(d, `<div class="combatHud fdHud fdPause" data-duel="${d}" style="--fd-n:${D.gauges.filter((g) => g.from == null || step >= g.from).length}">${boxes}</div>`, `<div class="fdGuide fdGuidePause"><span class="fdTurn"><b>Duel en suspens</b>${D.title} reprend après ce passage.</span></div>`, '', '', false, true);
   };
   const GUIDE_CSS = `.fdGuide{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;padding:5px 6px 5px 10px;border-radius:9px;background:rgba(6,8,18,.42);border:1px solid rgba(255,230,170,.16);font-size:12.5px;line-height:1.3}
 .fdGuide .fdTurn{min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px}
@@ -995,6 +1020,40 @@
 .fdRulesBtn{flex:none;cursor:pointer;font:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;color:#ffe7b0;background:rgba(255,215,140,.12);border:1px solid rgba(255,215,140,.38);border-radius:999px;padding:3px 10px;pointer-events:auto}
 .fdRulesBtn:hover,.fdRulesBtn:focus-visible{background:rgba(255,215,140,.24);outline:none}
 .fdPause{gap:8px!important}.fdPause .combatBox{padding:3px 8px 4px!important;background:rgba(6,8,18,.3)!important}.fdPause .combatTop{font-size:9.5px!important}.fdPause .combatTrack{height:5px!important;margin-top:2px!important}.fdPause .combatFill{animation:none!important}`;
+  // Barre discrète (v0.426) : une rangée de jauges fines, les boutons ? et ▾, la consigne sur une ligne ; le reste est replié.
+  const BAR_CSS = `.fdWrap{display:flex;flex-direction:column;gap:3px;min-width:0;font-size:12px}
+.fdBarre{display:flex;align-items:center;gap:10px;min-width:0}
+.fdWrap .fdBarre .fdHud{flex:1 1 auto;min-width:0;gap:14px!important;margin:0!important}
+.fdWrap .fdBarre .fdHud .combatBox{background:none!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.fdWrap .fdBarre .fdHud .combatTop{display:flex;align-items:baseline;justify-content:space-between;gap:6px;font-size:10.5px!important;letter-spacing:.07em!important;line-height:1.1;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,0,0,.9);font-family:inherit!important;font-style:normal!important}
+.fdWrap .fdBarre .fdHud .combatTop>span:first-child{min-width:0;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
+.fdWrap .fdBarre .fdHud .fdWho{display:inline!important;font-size:8.5px;letter-spacing:.14em;opacity:.6;margin:0 5px 0 0}
+.fdWrap .fdBarre .fdHud .combatTop b{font-size:12px;white-space:nowrap;color:#fff3cf}
+.fdWrap .fdBarre .fdHud .combatTop b small{font-size:8.5px;opacity:.55;margin-left:1px;font-weight:600}
+.fdWrap .fdBarre .fdHud .combatTrack{height:4px!important;margin-top:3px!important;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.fdWrap .fdHud .fdWho s{display:none}
+.fdBtns{flex:none;display:flex;gap:5px;align-items:center}
+.fdWrap .fdRulesBtn,.fdMoreBtn{flex:none;width:24px;height:24px;padding:0!important;display:grid;place-items:center;border-radius:50%;font-family:inherit;font-weight:700;font-size:12px;line-height:1;letter-spacing:0!important;cursor:pointer;color:#ffe7b0;background:rgba(255,215,140,.10);border:1px solid rgba(255,215,140,.34);pointer-events:auto}
+.fdMoreBtn:hover,.fdMoreBtn:focus-visible{background:rgba(255,215,140,.24);outline:none}
+.fdLigne{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fdWrap .fdTac{margin:0;font-size:10.5px;gap:7px}
+.fdWrap .fdTac .fdPhase{font-size:8.5px;padding:1px 6px}
+.fdWrap .fdGuide{display:block;margin:0;padding:0;background:none;border:0;border-radius:0;font-size:11.5px;line-height:1.3;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+.fdWrap .fdGuide .fdTurn{display:block}
+.fdWrap .fdGuide .fdTurn>b{display:inline;margin-right:7px;font-size:9px;letter-spacing:.16em}
+.fdWrap .fdGuide .fdCq{margin-right:8px}
+.fdWrap:not(.fdOuvert) .fdGuide .fdTurn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fdWrap:not(.fdOuvert) .fdOrder{display:none}
+.fdPlus{display:none}
+.fdWrap.fdOuvert .fdPlus{display:block;margin-top:3px;padding-top:5px;border-top:1px solid rgba(255,230,170,.14)}
+.fdWrap .fdPlus>*:first-child{margin-top:0!important}
+.fdWrap .fdQte{margin:2px 0 0;padding:3px 9px;gap:8px}
+.fdWrap .fdQte .fdQteLab{font-size:10.5px}
+.fdWrap .fdQte .fdQteTrack{height:5px}
+.fdWrapPause{opacity:.82}
+.fdWrapPause .fdGuide{cursor:default}
+@media (max-height:600px){.fdWrap.fdAvecQte:not(.fdOuvert) .fdLigne{display:none}}
+@media (max-width:900px) and (max-height:600px){.fdWrap .fdBarre .fdHud{gap:10px!important}.fdWrap .fdBarre .fdHud .combatTop{font-size:9.5px!important}.fdWrap .fdGuide{font-size:10.5px}.fdWrap .fdRulesBtn,.fdMoreBtn{width:22px;height:22px;font-size:11px}}`;
   // Panneau d’intro (règles) : bandeau incliné, objectif, règles en quatre lignes, condition de défaite.
   const PANEL_CSS = `.fdRegles{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:4%;background:radial-gradient(ellipse at 50% 45%,rgba(4,6,14,.35),rgba(2,3,8,.72));pointer-events:auto}
 .fdRegles.on{display:flex;animation:fdRgIn .35s ease both}

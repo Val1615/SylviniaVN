@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.425 · Images clés S08 et S09';
+  if (update) update.textContent = 'Mise à jour · v0.426 · Interface de combat discrète';
 
   window.SylviniaFinaleCinema = {
     src: SRC,
