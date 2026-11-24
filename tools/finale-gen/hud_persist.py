@@ -30,7 +30,9 @@ def page(b, flags, scene):
     c.add_init_script("if(!sessionStorage.getItem('e2e')){sessionStorage.setItem('e2e','1');localStorage.setItem('sylvinia_ui_biblio_v1', JSON.stringify({skin:'biblio',sons:false}));localStorage.setItem('sylvinia_vn_v82', %s);}" % json.dumps(json.dumps(save)))
     pg = c.new_page(); pg.goto(URL); pg.wait_for_function("window.BibliothequeAstrale && window.SylviniaFinaleDuels"); pg.wait_for_timeout(2000)
     pg.evaluate("load()"); pg.wait_for_timeout(300)
-    pg.evaluate("(sid)=>{ state.scene=sid; state.history=[]; setScreen('game'); render(); BibliothequeAstrale.aller('#/jeu'); }", scene)
+    # Entrée dans le duel par go() depuis un écran du roman, comme en jeu (le panneau de règles s'ouvre alors à coup sûr).
+    pg.evaluate("()=>{ state.scene='c17_marche'; state.history=[]; setScreen('game'); render(); BibliothequeAstrale.aller('#/jeu'); }"); pg.wait_for_timeout(1200)
+    pg.evaluate("(sid)=>go(sid)", scene); pg.wait_for_timeout(200)
     return c, pg
 STEP = r"""()=>{ const R=BibliothequeAstrale.racine;
   if(document.querySelector('#combatTransition.active')) return 'veil';
@@ -46,7 +48,7 @@ with sync_playwright() as p:
         if ONLY and d not in ONLY.split(','): continue
         flags = dict(BASE)
         if d == 's04': flags.update({})
-        c, pg = page(b, flags, start); pg.evaluate(PROBE)
+        c, pg = page(b, flags, start); pg.evaluate(PROBE); pg.wait_for_timeout(2400)  # laisser le panneau de règles s'ouvrir (1,15 s après une intro), comme un joueur qui lit
         seen = []; n = 0
         while n < 500:
             n += 1
