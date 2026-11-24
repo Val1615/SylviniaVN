@@ -12,17 +12,17 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 
 | Lot | Contenu | Chapitre VN | § roman | Paragraphes | Scènes roman | Scènes interactives ajoutées |
 |---|---|---|---|---|---|---|
-| S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 69 | 6 |
-| S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 45 | 0 |
+| S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 68 | 6 |
+| S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 41 | 0 |
 | S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 27 | 18 |
-| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 37 | 3 |
+| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 36 | 3 |
 | S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 24 | 8 |
 | S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 13 | 0 |
 | S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 43 | 7 |
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 24 | 5 |
 | S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 11 | 3 |
 
-Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 343 scènes.
+Total : 287 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 337 scènes.
 
 ## Scène par scène
 
@@ -36,8 +36,7 @@ Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_voix` | Les voix | 9737–9741 | 3 |
 | `c17_voix_2` | Les voix | 9743–9745 | 2 |
 | `c17_portail` | La Porte Noire | 9747–9751 | 3 |
-| `c17_portail_2` | La Porte Noire | 9753–9759 | 4 |
-| `c17_portail_3` | La Porte Noire | 9760–9762 | 3 |
+| `c17_portail_2` | La Porte Noire | 9753–9762 | 7 |
 | `c17_amanea_vue` | Amanea | 9764–9767 | 4 |
 | `c17_amanea_vue_2` | Amanea | 9769 | 1 |
 | `c17_amanea_vue_3` | Amanea | 9770–9771 | 2 |
@@ -112,8 +111,7 @@ Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_metamorphose` | La métamorphose | 10169–10171 | 2 |
 | `c17_metamorphose_2` | La métamorphose | 10173 | 1 |
 | `c17_metamorphose_3` | La métamorphose | 10175–10177 | 2 |
-| `c17_metamorphose_4` | La métamorphose | 10179–10185 | 4 |
-| `c17_metamorphose_5` | La métamorphose | 10187 | 1 |
+| `c17_metamorphose_4` | La métamorphose | 10179–10187 | 5 |
 | `c17_va` | Va. | 10189 | 1 |
 | `c17_va_2` | Va. | 10191–10197 | 4 |
 | `c17_va_3` | Va. | 10199–10216 | 10 |
@@ -136,12 +134,9 @@ Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_releves_3` | Les morts se relèvent | 10394–10400 | 4 |
 | `c17_releves_4` | Les morts se relèvent | 10402–10418 | 11 |
 | `c17_lutte` | La lutte contre le portail | 10420–10422 | 2 |
-| `c17_lutte_2` | La lutte contre le portail | 10424–10429 | 4 |
-| `c17_lutte_3` | La lutte contre le portail | 10430–10440 | 6 |
-| `c17_lutte_4` | La lutte contre le portail | 10441–10445 | 4 |
-| `c17_lutte_5` | La lutte contre le portail | 10447–10455 | 6 |
-| `c17_lutte_6` | La lutte contre le portail | 10456–10460 | 4 |
-| `c17_lutte_7` | La lutte contre le portail | 10462–10470 | 6 |
+| `c17_lutte_2` | La lutte contre le portail | 10424–10440 | 10 |
+| `c17_lutte_3` | La lutte contre le portail | 10441–10455 | 10 |
+| `c17_lutte_4` | La lutte contre le portail | 10456–10470 | 10 |
 | `c17_valurn_surgit` | Un ultime obstacle | 10472–10478 | 4 |
 | `c17_valurn_surgit_2` | Un ultime obstacle | 10479–10484 | 4 |
 | `c17_valurn_surgit_3` | Un ultime obstacle | 10486–10498 | 10 |
@@ -198,8 +193,7 @@ Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_gorge_7` | Pourquoi… ? | 10735–10739 | 4 |
 | `c17_gorge_8` | Pourquoi… ? | 10741–10745 | 3 |
 | `c17_dernier_souffle` | Dernier souffle | 10747–10749 | 3 |
-| `c17_dernier_souffle_2` | Dernier souffle | 10751–10755 | 4 |
-| `c17_dernier_souffle_3` | Dernier souffle | 10757 | 1 |
+| `c17_dernier_souffle_2` | Dernier souffle | 10751–10757 | 5 |
 | `c17_naiah_revelee` | L’illusion se dissipe | 10758–10761 | 3 |
 | `c17_regard_satisfait` | Un regard satisfait | 10764 | 1 |
 | `c17_regard_satisfait_2` | Un regard satisfait | 10766 | 1 |

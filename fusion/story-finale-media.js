@@ -32,7 +32,8 @@
   // ce qui leur donne la même emprise à l’écran que les autres sprites d’Hylee. Tia et Allenna (CA) ont le cadrage
   // des sprites du Mode Histoire et restent à 1 (stern.png, en 900×1200, a le même ratio que les autres : même rendu).
   const SCALE = `
-    .char.finale-k, .sprite.finale-k { transform-origin: 50% 100%; scale: var(--finale-k, 1); }
+    /* --parle-k : avancée du locuteur (interface Bibliothèque), multipliée par l’échelle propre au sprite. */
+    .char.finale-k, .sprite.finale-k { transform-origin: 50% 100%; scale: calc(var(--finale-k, 1) * var(--parle-k, 1)); }
     .finale-k.hylee { --finale-k: 1.08; }
   `;
   const style = document.createElement('style');

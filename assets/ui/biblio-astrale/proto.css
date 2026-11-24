@@ -378,10 +378,12 @@ kbd{font:700 calc(11 * var(--t)) var(--sans);border:1px solid rgba(243,228,181,.
 @keyframes bgIn{from{transform:scale(1.04);filter:brightness(.6)}}
 .jeu-voile{position:absolute;inset:0;background:linear-gradient(0deg,rgba(5,5,14,.78),rgba(5,5,14,.2) 38%,transparent 55%),linear-gradient(180deg,rgba(5,5,14,.55),transparent 18%)}
 .pbody.intime .jeu-voile{background:linear-gradient(0deg,rgba(26,6,22,.78),rgba(26,6,22,.2) 38%,transparent 55%),linear-gradient(180deg,rgba(20,5,20,.55),transparent 18%),radial-gradient(80% 60% at 50% 30%,rgba(231,101,136,.12),transparent 70%)}
-.sprites{position:absolute;inset:0;pointer-events:none}
-.sprite{position:absolute;bottom:0;height:calc(96% * var(--sprite));max-width:60%;object-fit:contain;object-position:bottom;filter:brightness(.7) saturate(.85) drop-shadow(0 0 20px rgba(0,0,0,.5));transition:filter .4s,transform .4s;animation:spriteIn .7s var(--ease) both}
+.sprites{position:absolute;inset:0;pointer-events:none;z-index:0;isolation:isolate}
+.sprite{position:absolute;bottom:0;height:calc(96% * var(--sprite));max-width:60%;object-fit:contain;object-position:bottom;filter:brightness(.8) saturate(.9) drop-shadow(0 0 20px rgba(0,0,0,.5));transform-origin:50% 100%;scale:var(--parle-k,1);z-index:1;transition:filter .45s,transform .4s,scale .45s var(--ease),opacity .45s;animation:spriteIn .7s var(--ease) both}
 .sprite.left{left:8%}.sprite.right{right:8%}.sprite.center{left:50%;transform:translateX(-50%)}
-.sprite.parle{filter:brightness(1.03) drop-shadow(0 0 calc(24 * var(--ub)) rgba(255,217,160,.35))}
+.sprite.parle{filter:brightness(1.06) saturate(1.02) drop-shadow(0 0 calc(24 * var(--ub)) rgba(255,217,160,.38));--parle-k:1.07;z-index:3}
+/* Réplique : le locuteur s’avance, les autres reculent dans la pénombre (sans disparaître). */
+.sprites.dialogue .sprite:not(.parle){filter:brightness(.5) saturate(.7) blur(.4px) drop-shadow(0 0 16px rgba(0,0,0,.55));--parle-k:.95;z-index:1}
 .pbody.intime .sprite.parle{filter:brightness(1.03) drop-shadow(0 0 calc(24 * var(--ub)) rgba(255,160,190,.45))}
 @keyframes spriteIn{from{opacity:0;translate:0 3%}}
 .jeu-lieu{position:absolute;top:var(--pad);left:var(--pad);max-width:calc(100% - 2 * var(--pad) - var(--hudw) - 20px);display:flex;align-items:center;gap:calc(14 * var(--c));padding:calc(8 * var(--c)) calc(26 * var(--c)) calc(8 * var(--c)) calc(8 * var(--c));background:linear-gradient(90deg,rgba(10,10,26,.86),rgba(10,10,26,.5) 80%,transparent);box-shadow:inset 0 1px 0 var(--ligne),inset 0 -1px 0 var(--ligne);pointer-events:none}

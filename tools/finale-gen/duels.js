@@ -449,7 +449,7 @@
     const meta = d.meta(v, step);
     const mood = moodOf(sc, id); const it = intensity();
     const qte = opts.qte ? `<div class="fdQte${opts.qte.left < 2.2 ? ' fdQteLast' : ''}" data-duel="${sc.fduel}"><span class="fdQteLab">⚡ ${opts.qte.label}</span><span class="fdQteTrack"><i style="width:${opts.qte.pct}%"></i></span><b id="fdQteTimer">${opts.qte.left.toFixed(1)} s</b></div>` : '';
-    return { html: `<style>${CSS}</style><div class="combatHud fdHud" data-duel="${sc.fduel}" data-mood="${mood}" data-int="${it}"${corrupt ? ' data-emprise="1"' : ''}${phase ? ` data-phase="${phase}"` : ''}${opts.qte ? ' data-qte="1"' : ''} style="--fd-n:${shown.length}">${boxes}</div>${tac ? tacHtml(tac, it) : ''}${panel}<div class="combatMeta fdMeta${opts.qte ? ' fdQteOn' : ''}" data-int="${it}"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]} <button type="button" class="fdFxBtn" data-fdfx="1"${it === 'reduit' ? ' disabled title="Animations réduites (réglage du système ou de la Bibliothèque)"' : ' title="Flashs, secousses et tremblements : intenses ou doux"'}>✦ ${fxLabel()}</button></span></div>${qte}`, v, prev };
+    return { html: `<style>${CSS}${GUIDE_CSS}</style><div class="combatHud fdHud" data-duel="${sc.fduel}" data-mood="${mood}" data-int="${it}"${corrupt ? ' data-emprise="1"' : ''}${phase ? ` data-phase="${phase}"` : ''}${opts.qte ? ' data-qte="1"' : ''} style="--fd-n:${shown.length}">${boxes}</div>${tac ? tacHtml(tac, it) : ''}${panel}${guideHtml(sc, id)}<div class="combatMeta fdMeta${opts.qte ? ' fdQteOn' : ''}" data-int="${it}"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]} <button type="button" class="fdFxBtn" data-fdfx="1"${it === 'reduit' ? ' disabled title="Animations réduites (réglage du système ou de la Bibliothèque)"' : ' title="Flashs, secousses et tremblements : intenses ou doux"'}>✦ ${fxLabel()}</button></span></div>${qte}`, v, prev };
   };
 
   // ───── QTE ─────
@@ -464,6 +464,7 @@
       try { if (BA.racine.querySelector('#couche.ouverte')) return true; } catch {}
     }
     if (document.querySelector('#combatTransition.active')) return true;
+    if (reglesOuvertes()) return true; // panneau de règles ouvert : le chrono attend
     return false;
   };
   const expire = () => {
@@ -834,11 +835,245 @@
     partKey = ''; syncFx();
   }, true);
 
+  // ───── Lisibilité (v0.424) : règles avant chaque duel, consigne de tour, coût des choix, conséquences, HUD tenu ─────
+  // Les duels alternent écrans de combat et passages du roman. Avant v0.424, ces passages (sans fduel) faisaient
+  // retomber le moteur en mode lecture : #stage perdait combatMode, l’interface masquait le HUD, puis le réaffichait
+  // au tour suivant. Les passages situés entre deux écrans d’un même duel sont désormais des « interludes » :
+  // le HUD reste affiché, en version compacte (duel en suspens), jusqu’à la fin du duel.
+  const RULES = {
+    s04: { obj: 'Tenir face à Amanea et lui voler du temps pour le portail.',
+      rules: [['◎', 'Avant chaque échange, lis son <b>Intention</b> (bande du haut) et frappe là où elle ne regarde pas.'],
+        ['⚔', 'Lecture juste : sa <b>Garde</b> perd 2. Échange : 1 de chaque côté. Mauvaise lecture : la <b>Posture</b> de Valurn perd 4.'],
+        ['◐', 'Phase I : rompre sa Garde à <b>6 ou moins</b>. Phase II : elle devient illisible, il faut durer et gagner du <b>Temps volé</b>.'],
+        ['⚡', 'Le dernier coup est un <b>réflexe chronométré</b> : choisis avant la fin de la barre.']],
+      lose: 'Garde non rompue, Posture à 0 ou réflexe manqué : Game Over, le duel reprend à son début.' },
+    s06: { obj: 'Survivre, puis attirer la horde dans la grotte.',
+      rules: [['▦', 'Le plan montre Draven (<b>D</b>) et la horde (<b>✠</b>) qui avance case par case, de Dehors à la Grotte.'],
+        ['⚖', 'Chaque posture coûte de l’<b>Endurance</b> et laisse monter la <b>Pression de la horde</b> : le coût est écrit sous chaque choix.'],
+        ['⚠', 'Une <b>veine</b> fend le plafond de la grotte. Reculer tôt permet de la repérer.'],
+        ['⚡', 'Le pivot est un <b>réflexe chronométré</b> : frappe la voûte avant la fin de la barre.']],
+      lose: 'Horde à 10 ou voûte manquée : Game Over, retour à la crevasse.' },
+    s07: { obj: 'Défaire le sceau d’Alamma, survivre à son emprise, puis la retourner.',
+      rules: [['◆', 'Le sceau s’écrit en quatre runes : ◆ Arcane, ◐ Ombre, ✶ Chaos, ✕ Mort. Leur couleur montre qui les tient.'],
+        ['♥', 'L’<b>Arcane</b> d’Iriana est sa vie : à 0, elle est brisée. L’<b>Emprise</b> d’Alamma doit retomber.'],
+        ['◌', 'Sous l’emprise, l’interface lui est retournée. Un fil d’Arcane peut rester caché.'],
+        ['⚡', 'Le flux de Valurn est un <b>réflexe chronométré</b>. Ensuite, chaque combinaison coûte du <b>Chaos filtré</b>.']],
+      lose: 'Arcane à 0 ou flux mal stabilisé : Game Over, retour à la signature d’Alamma.' },
+    s08: { obj: 'Repousser Bhaal à deux, sans laisser le blizzard céder.',
+      rules: [['❄', 'Remerii tient la <b>tempête</b>, Hylee canalise l’<b>Arcane</b>. Les rôles s’échangent au fil du combat.'],
+        ['♥', 'Le <b>Blizzard</b> est la vie du duo. La <b>Pression de Bhaal</b> doit tomber à 0.'],
+        ['∞', 'Le <b>Lien</b> élargit la fenêtre de synchronisation (main tendue, adieu confiant, lien de 8 ou plus).'],
+        ['⚡', 'La synchronisation est un <b>réflexe chronométré</b>. Le dragon de glace coûte du <b>Flux d’Arcane</b>.']],
+      lose: 'Blizzard à 0, Bhaal qui passe ou synchronisation ratée : Game Over, retour au Gardien de Givre.' },
+  };
+  const FIRST = { s04: 'c17_duel_intro', s06: 'c18_dp_crevasse', s07: 'c18_ip_maitrise', s08: 'c18_bh_blizzard' };
+  const TURN = {
+    c17_duel_intro: 'Observe son Intention avant chaque échange.',
+    c17_m1_lecture: 'Elle guette les bords du brasier. Frappe là où elle ne regarde pas.', c17_m1: 'Elle guette les bords du brasier. Frappe là où elle ne regarde pas.',
+    c17_m2_lecture: 'Elle va frapper le sol, pas Valurn.', c17_m2: 'Elle va frapper le sol, pas Valurn. Ne reste pas à portée de l’onde.',
+    c17_m3_lecture: 'Flanc gauche couvert, garde haute ouverte.', c17_m3: 'Flanc gauche couvert, garde haute ouverte. Sa Garde doit finir à 6 ou moins.',
+    c17_revelation: 'Elle devient illisible. Désormais, il faut durer, pas gagner.',
+    c17_m4_lecture: 'Ses coups ne se lisent plus. Gagne du temps sans t’exposer.', c17_m4: 'Ses coups ne se lisent plus. Gagne du temps sans t’exposer.',
+    c17_m5_lecture: 'Elle veut en finir et rejoindre le portail.', c17_m5: 'Elle veut rejoindre le portail. Garde-la ici, encore une minute.',
+    c17_qte: 'Réflexe : esquive avant la fin de la barre.',
+    c18_dp_crevasse: 'Choisis où tenir. Le coût de chaque posture est écrit sous le choix.',
+    c18_dp_grotte: 'Rejoins la grotte. Combattre use Draven, courir laisse la horde déferler.',
+    c18_dp_voute: 'Réflexe : frappe la voûte avant la fin de la barre.',
+    c18_ip_maitrise: 'Signature : Arcane inversé. Défais le sceau avant qu’il ne se referme.',
+    c18_ip_domination: 'Rien à briser. Protège ce qui reste de ton Arcane.',
+    c18_ip_flux: 'Réflexe : ouvre l’Arcane au flux avant la fin de la barre.',
+    c18_ip_renversement: 'Combine les runes. Chaque recette coûte du Chaos filtré.',
+    c18_bh_blizzard: 'Remerii est seule. Engage le Gardien sans épuiser le Blizzard.',
+    c18_bh_sync: 'Réflexe : accorde Hylee au souffle de Remerii avant la fin de la barre.',
+    c18_bh_dragon: 'Le dragon coûte du Flux d’Arcane. Repousse Bhaal ou ménage Remerii.',
+  };
+  // Ce que fait chaque choix (clé : flag:valeur). S04 garde sa lecture (nature du geste, pas son issue) ;
+  // S06, S07 et S08 affichent leur coût, comme sur une carte tactique.
+  const NOTE = {
+    's04M1:good': 'Plonger au centre des flammes', 's04M1:mid': 'Attaque à distance, sans s’engager', 's04M1:bad': 'Contourner par un bord',
+    's04M2:good': 'Quitter le sol avant l’onde', 's04M2:mid': 'Reculer d’un pas', 's04M2:bad': 'Tenir sur place et encaisser',
+    's04M3:good': 'Viser la garde haute', 's04M3:parade': 'Parer, puis contre-attaquer', 's04M3:bad': 'Sphère à bout portant',
+    's04M4:good': 'Reculer lentement, sans s’exposer', 's04M4:mid': 'Déplacer le combat', 's04M4:bad': 'Parade frontale, comme avant',
+    's04M5:good': 'La retenir par la parole', 's04M5:mid': 'Frapper le premier', 's04M5:bad': 'Se fondre dans les cendres',
+    's04Qte:ok': 'Avant la fin de la barre',
+    's06Posture:tenir': 'Endurance −2, horde +1', 's06Posture:reculer': 'Endurance −1, horde +2, repère la veine', 's06Posture:charger': 'Endurance −6, tout ou rien',
+    's06Plan:combattre': 'Endurance −3, horde +1', 's06Plan:courir': 'Endurance −1, horde +3', 's06Voute:ok': 'Avant la fin de la barre',
+    's07Maitrise:lire': 'Contre-glyphe : emprise −2', 's07Maitrise:frapper': 'Emprise −1, Arcane −1', 's07Maitrise:attendre': 'Emprise +2, Arcane −2',
+    's07Garde:esprit': 'Cacher un fil : Arcane +1', 's07Garde:regard': 'Tenir tête, sans riposte', 's07Garde:lacher': 'Arcane −2',
+    's07Flux:accord': 'Avant la fin de la barre',
+    's07Renversement:retenir': 'Coût 1 : emprise −4', 's07Renversement:mort': 'Coût 2 : emprise −5', 's07Renversement:tresse': 'Coût 3 : emprise −6', 's07Renversement:question': 'Sans coût : emprise −2',
+    's08Gardien:rempart': 'Pression −1, Blizzard −2', 's08Gardien:assaut': 'Pression −2, Blizzard −3', 's08Gardien:tout': 'Pression −4, Blizzard −7',
+    's08Sync:ok': 'Avant la fin de la barre',
+    's08Dragon:portail': 'Pression −4, Blizzard −3, Flux −5', 's08Dragon:gorge': 'Pression −3, Blizzard −2, Flux −4', 's08Dragon:tenir': 'Blizzard +1, Flux −2',
+  };
+  const noteOf = (c) => { if (!c || !c.flags || c.note) return null; for (const [k, v] of Object.entries(c.flags)) { const n = NOTE[k + ':' + v]; if (n) return n; } return null; };
+  const decorate = (list) => (Array.isArray(list) ? list.map((c) => { const n = noteOf(c); if (n) c.note = n; return c; }) : list);
+  let decorated = false;
+  const decorateAll = () => {
+    if (decorated || typeof S === 'undefined') return; decorated = true;
+    Object.values(S).forEach((sc) => {
+      if (!sc || !sc.fduel || !DUELS[sc.fduel]) return;
+      const dsc = Object.getOwnPropertyDescriptor(sc, 'choices');
+      if (dsc && dsc.get) Object.defineProperty(sc, 'choices', { enumerable: true, configurable: true, get() { return decorate(dsc.get.call(sc)); } });
+      else if (Array.isArray(sc.choices)) decorate(sc.choices);
+    });
+  };
+  // Interludes : passages du roman entre deux écrans d’un même duel (calculés une fois sur le graphe des scènes).
+  let INTER = null;
+  const edges = (sc) => {
+    const out = [];
+    try { const n = sc.next; if (n) out.push(typeof n === 'function' ? n() : n); } catch {}
+    let ch = []; try { ch = (typeof sc.choices === 'function' ? sc.choices() : sc.choices) || []; } catch {}
+    ch.forEach((c) => c && c.next && out.push(c.next));
+    if (sc.fqte && sc.fqte.fail) out.push(sc.fqte.fail);
+    return out.filter((x) => typeof x === 'string' && S[x]);
+  };
+  const interludes = () => {
+    if (INTER || typeof S === 'undefined') return INTER || {};
+    INTER = {};
+    Object.entries(S).forEach(([id0, s0]) => {
+      if (!s0 || !s0.fduel || !DUELS[s0.fduel] || s0.fgameover) return;
+      const d = s0.fduel; const step = s0.fstep || 0;
+      // depuis chaque écran du duel, suivre les passages hors duel jusqu’au prochain écran du même duel
+      const stack = edges(s0).map((x) => [x, [x]]); const seen = new Set();
+      while (stack.length) {
+        const [x, path] = stack.pop(); if (seen.has(x) || path.length > 40) continue; seen.add(x);
+        const sx = S[x]; if (!sx) continue;
+        if (sx.fduel === d && !sx.fgameover) { path.slice(0, -1).forEach((p) => { if (!S[p].fduel) INTER[p] = { d, step: Math.max(step, (INTER[p] && INTER[p].d === d && INTER[p].step) || 0) }; }); continue; }
+        if (sx.fduel || sx.chapterEnd) continue;
+        edges(sx).forEach((y) => stack.push([y, [...path, y]]));
+      }
+    });
+    return INTER;
+  };
+  // Suite dynamique : une branche « next » calculée (withNext) n’est connue qu’au moment où on la prend.
+  // Un passage atteint depuis un écran du duel (ou un interlude) et qui mène à un autre écran du même duel en est un.
+  const interludeOf = (id, prevId) => {
+    const I = interludes(); if (I[id]) return I[id];
+    const ps = S[prevId]; const from = ps && ps.fduel && !ps.fgameover ? { d: ps.fduel, step: ps.fstep || 0 } : I[prevId];
+    if (!from || !S[id] || S[id].fduel || S[id].chapterEnd) return null;
+    const stack = [[id, 0]]; const seen = new Set();
+    while (stack.length) {
+      const [x, n] = stack.pop(); if (seen.has(x) || n > 40) continue; seen.add(x);
+      const sx = S[x]; if (!sx) continue;
+      if (x !== id && sx.fduel === from.d && !sx.fgameover) { I[id] = { d: from.d, step: from.step }; return I[id]; }
+      if (x !== id && (sx.fduel || sx.chapterEnd)) continue;
+      edges(sx).forEach((y) => stack.push([y, n + 1]));
+    }
+    return null;
+  };
+  const shortName = (g) => g.name.split(' · ')[0].replace(/ \(.*\)$/, '');
+  const consequences = (sc) => {
+    const d = DUELS[sc.fduel]; const step = sc.fstep || 0; if (!step && sc.fprev == null) return '';
+    const v = calc(sc.fduel, step); const p = calc(sc.fduel, sc.fprev != null ? sc.fprev : step - 1);
+    const out = d.gauges.filter((g) => (g.from == null || step >= g.from) && v[g.k] !== p[g.k]).map((g) => {
+      const dv = v[g.k] - p[g.k]; const good = g.bad === 'up' ? dv < 0 : g.bad === 'down' ? dv > 0 : null;
+      return `<span class="fdCq ${good === true ? 'bon' : good === false ? 'mal' : ''}">${g.who} · ${shortName(g)} <b>${dv > 0 ? '+' : '−'}${Math.abs(dv)}</b></span>`;
+    });
+    if (v.temps != null && p.temps != null && v.temps !== p.temps) out.push(`<span class="fdCq bon">Temps volé <b>+${v.temps - p.temps} s</b></span>`);
+    return out.join('');
+  };
+  const rulesBtn = '<button type="button" class="fdRulesBtn" data-fdrules="1" title="Objectif et règles du duel" aria-label="Règles du duel">? Règles</button>';
+  const guideHtml = (sc, id) => {
+    if (sc.fgameover) return `<div class="fdGuide fdGuideGo"><span class="fdTurn"><b>Défaite</b>${RULES[sc.fduel] ? RULES[sc.fduel].lose : ''}</span>${rulesBtn}</div>`;
+    const t = TURN[id]; const cq = t ? '' : consequences(sc);
+    const r = RULES[sc.fduel];
+    const body = t ? `<b>Ce tour</b>${t}` : cq ? `<b>Conséquences</b>${cq}` : `<b>Objectif</b>${r ? r.obj : ''}`;
+    return `<div class="fdGuide"><span class="fdTurn">${body}</span>${rulesBtn}</div>`;
+  };
+  const pauseHtml = (d, step) => {
+    const D = DUELS[d]; const v = calc(d, step);
+    const boxes = D.gauges.filter((g) => g.from == null || step >= g.from).map((g) => `<div class="combatBox fd-${g.k}"><div class="combatTop"><span>${D.whoOf ? D.whoOf(g, 1) : g.who} · ${shortName(g)}</span><b>${v[g.k]}/10</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${v[g.k] * 10}%;background:${g.fill}"></div></div></div>`).join('');
+    return `<style>${CSS}${GUIDE_CSS}</style><div class="combatHud fdHud fdPause" data-duel="${d}" style="--fd-n:${D.gauges.filter((g) => g.from == null || step >= g.from).length}">${boxes}</div><div class="fdGuide fdGuidePause"><span class="fdTurn"><b>Duel en suspens</b>${D.title} reprend après ce passage.</span>${rulesBtn}</div>`;
+  };
+  const GUIDE_CSS = `.fdGuide{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;padding:5px 6px 5px 10px;border-radius:9px;background:rgba(6,8,18,.42);border:1px solid rgba(255,230,170,.16);font-size:12.5px;line-height:1.3}
+.fdGuide .fdTurn{min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 8px}
+.fdGuide .fdTurn>b{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#ffd98a;white-space:nowrap}
+.fdGuideGo .fdTurn>b{color:#ff9a9a}
+.fdGuidePause{opacity:.86}
+.fdCq{white-space:nowrap;opacity:.95}.fdCq b{font-variant-numeric:tabular-nums}.fdCq.bon b{color:#9fe3a8}.fdCq.mal b{color:#ff8f8f}
+.fdRulesBtn{flex:none;cursor:pointer;font:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;color:#ffe7b0;background:rgba(255,215,140,.12);border:1px solid rgba(255,215,140,.38);border-radius:999px;padding:3px 10px;pointer-events:auto}
+.fdRulesBtn:hover,.fdRulesBtn:focus-visible{background:rgba(255,215,140,.24);outline:none}
+.fdPause{gap:8px!important}.fdPause .combatBox{padding:3px 8px 4px!important;background:rgba(6,8,18,.3)!important}.fdPause .combatTop{font-size:9.5px!important}.fdPause .combatTrack{height:5px!important;margin-top:2px!important}.fdPause .combatFill{animation:none!important}`;
+  // Panneau d’intro (règles) : bandeau incliné, objectif, règles en quatre lignes, condition de défaite.
+  const PANEL_CSS = `.fdRegles{position:absolute;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:4%;background:radial-gradient(ellipse at 50% 45%,rgba(4,6,14,.35),rgba(2,3,8,.72));pointer-events:auto}
+.fdRegles.on{display:flex;animation:fdRgIn .35s ease both}
+.fdRgCard{position:relative;width:min(620px,94%);max-height:92%;overflow:auto;padding:0 0 14px;background:rgba(10,12,24,.82);border:1px solid rgba(255,225,160,.28);border-radius:4px;box-shadow:0 18px 60px rgba(0,0,0,.6);backdrop-filter:blur(6px);color:#f3ead6;font-family:inherit;clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+.fdRgBand{position:relative;margin:0 0 10px;padding:12px 22px 10px 26px;background:linear-gradient(100deg,var(--fd-acc,#b8322e) 0 72%,transparent 72.2%);clip-path:polygon(0 0,100% 0,96% 100%,0 100%)}
+.fdRgBand small{display:block;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.fdRgBand b{display:block;font-size:21px;letter-spacing:.04em;line-height:1.15;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.fdRgObj{margin:4px 22px 8px;padding:8px 12px;border-left:3px solid var(--fd-acc,#b8322e);background:rgba(255,255,255,.05);font-size:15px;line-height:1.35}
+.fdRgObj i{display:block;font-style:normal;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#ffd98a;margin-bottom:2px}
+.fdRgList{list-style:none;margin:0 22px;padding:0;display:grid;gap:6px}
+.fdRgList li{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start;font-size:13.5px;line-height:1.35}
+.fdRgList li span{display:grid;place-items:center;width:24px;height:24px;border-radius:3px;background:rgba(255,215,140,.12);border:1px solid rgba(255,215,140,.3);color:#ffd98a;font-size:13px;transform:skewX(-8deg)}
+.fdRgList b{color:#fff3cf}
+.fdRgLose{margin:10px 22px 0;font-size:12.5px;color:#ffb0a8}
+.fdRgLose i{font-style:normal;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:10px;margin-right:6px}
+.fdRgGo{display:block;margin:12px 22px 0 auto;cursor:pointer;font:inherit;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:13px;color:#1a0d06;background:linear-gradient(90deg,#ffd98a,#ffb25a);border:0;padding:8px 22px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.fdRgGo:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.fdRegles[data-duel=s04]{--fd-acc:#8f2a8c}.fdRegles[data-duel=s06]{--fd-acc:#9a6a1c}.fdRegles[data-duel=s07]{--fd-acc:#3b4fa8}.fdRegles[data-duel=s08]{--fd-acc:#3d86b0}
+@media (max-height:600px){.fdRgBand b{font-size:17px}.fdRgObj{font-size:13px;margin:2px 18px 6px}.fdRgList{margin:0 18px;gap:4px}.fdRgList li{font-size:12px}.fdRgLose{margin:6px 18px 0;font-size:11.5px}.fdRgGo{margin-top:8px;padding:6px 18px}}
+@media (prefers-reduced-motion:reduce){.fdRegles.on{animation:none}}
+@keyframes fdRgIn{from{opacity:0}}`;
+  const panelHost = () => fxHost();
+  const reglesOuvertes = () => { const R = window.BibliothequeAstrale && BibliothequeAstrale.racine; return !!((R && R.querySelector && R.querySelector('.fdRegles.on')) || document.querySelector('#stage .fdRegles.on')); };
+  const fermerRegles = () => {
+    const R = window.BibliothequeAstrale && BibliothequeAstrale.racine;
+    [document, R].forEach((root) => root && root.querySelectorAll && root.querySelectorAll('.fdRegles.on').forEach((x) => { x.classList.remove('on'); }));
+  };
+  const ouvrirRegles = (d, debut, essai = 0) => {
+    const r = RULES[d]; const D = DUELS[d];
+    // Interface Bibliothèque en cours de montage (chargement d’une sauvegarde) : attendre son écran de jeu.
+    if (document.body.classList.contains('ui-biblio') && !jeu() && essai < 20) { setTimeout(() => ouvrirRegles(d, debut, essai + 1), 200); return; }
+    const h = panelHost(); if (!r || !D || !h) return;
+    injectRules(h);
+    let el = h.querySelector(':scope > .fdRegles');
+    if (!el) {
+      el = document.createElement('div'); el.className = 'fdRegles'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+      el.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === el || (e.target.closest && e.target.closest('[data-fdgo]'))) fermerRegles(); });
+      h.appendChild(el);
+    }
+    el.dataset.duel = d;
+    el.innerHTML = `<div class="fdRgCard"><div class="fdRgBand"><small>${debut ? 'Duel · règles' : 'Rappel des règles'}</small><b>${D.title}</b></div>
+      <p class="fdRgObj"><i>Objectif</i>${r.obj}</p><ul class="fdRgList">${r.rules.map(([ic, t]) => `<li><span aria-hidden="true">${ic}</span><p style="margin:0">${t}</p></li>`).join('')}</ul>
+      <p class="fdRgLose"><i>Défaite</i>${r.lose}</p><button type="button" class="fdRgGo" data-fdgo="1">${debut ? 'Commencer ▸' : 'Reprendre ▸'}</button></div>`;
+    el.classList.add('on');
+    setTimeout(() => { try { el.querySelector('[data-fdgo]').focus({ preventScroll: true }); } catch {} }, 60);
+  };
+  const injectRules = (h) => {
+    const root = h.getRootNode ? h.getRootNode() : document; const host = root === document ? document.head : root;
+    if (host.querySelector && host.querySelector('style[data-fd-regles]')) return;
+    const st = document.createElement('style'); st.dataset.fdRegles = '1'; st.textContent = PANEL_CSS; host.appendChild(st);
+  };
+  document.addEventListener('click', (e) => {
+    const path = e.composedPath ? e.composedPath() : [e.target];
+    const b = path.find((n) => n && n.dataset && n.dataset.fdrules); if (!b) return;
+    e.stopPropagation(); e.preventDefault();
+    const sc = typeof S !== 'undefined' && S[state.scene]; const it = sc && !sc.fduel ? interludes()[state.scene] : null;
+    const d = (sc && sc.fduel) || (it && it.d); if (d) ouvrirRegles(d, false);
+  }, true);
+  document.addEventListener('keydown', (e) => {
+    if (!reglesOuvertes()) return;
+    if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); fermerRegles(); }
+    else if (!['Tab'].includes(e.key)) e.stopImmediatePropagation();
+  }, true);
+  let reglesVues = '';
+
   const apply = () => {
     const id = state && state.scene; const sc = typeof S !== 'undefined' && S[id]; const stage = document.getElementById('stage');
     if (!stage) return;
     if (!qte || qte.id !== id) stopQte();
-    if (!sc || !sc.fduel || !DUELS[sc.fduel]) { stage.classList.remove('fdActive'); lastScene = id; last = { key: '', vals: null }; leaveFx(); return; }
+    decorateAll();
+    if (!sc || !sc.fduel || !DUELS[sc.fduel]) {
+      stage.classList.remove('fdActive'); last = { key: '', vals: null }; leaveFx();
+      const it = sc && interludeOf(id, lastScene);
+      stage.classList.toggle('fdInterlude', !!it);
+      if (it) { const st = document.getElementById('stats'); if (st) st.innerHTML = pauseHtml(it.d, it.step); }
+      if (!it) fermerRegles();
+      lastScene = id; return;
+    }
+    stage.classList.remove('fdInterlude');
     injectShadow();
     const d = DUELS[sc.fduel];
     stage.classList.add('combatMode', 'fdActive');
@@ -849,6 +1084,12 @@
     const st = document.getElementById('stats'); if (st) st.innerHTML = html;
     if (entering) {
       if (sc.fintro) transition({ title: d.title, mini: d.mini, sub: sc.sub });
+      // Règles avant chaque duel (pas à la reprise après un Game Over : le bouton « ? Règles » reste là).
+      const retry = S[lastScene] && S[lastScene].fgameover && S[lastScene].fduel === sc.fduel;
+      if (id === FIRST[sc.fduel] && !retry && reglesVues !== id + '|' + lastScene) {
+        reglesVues = id + '|' + lastScene; const dd = sc.fduel;
+        setTimeout(() => { if (state.scene === id) ouvrirRegles(dd, true); }, sc.fintro ? 1150 : 250);
+      }
       const moved = (g, dir) => (dir === 'down' ? v[g.k] < prev[g.k] : v[g.k] > prev[g.k]);
       const hurt = d.gauges.some((g) => g.bad && moved(g, g.bad));
       const good = d.gauges.some((g) => g.bad && moved(g, g.bad === 'down' ? 'up' : 'down'));

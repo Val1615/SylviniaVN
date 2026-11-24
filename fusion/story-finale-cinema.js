@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.423 · Cinématique de la métamorphose';
+  if (update) update.textContent = 'Mise à jour · v0.424 · VN et combats plus lisibles';
 
   window.SylviniaFinaleCinema = {
     src: SRC,

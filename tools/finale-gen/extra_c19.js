@@ -66,13 +66,17 @@ ${hand}`;
 Points de vue vécus : ${seen.join(', ')}.
 
 L’histoire continue dans le Tome II.`;
-        }, 'c19_fin'),
+        }, 'c19_fin', [hyleeF('calme', 'left'), allenna('neutral', 'right')]),
     c19_fin: {
-      ...scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur', `Fin du Tome I.`),
+      ...scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur', `Fin du Tome I.`, null, [hyleeF('calme', 'center')]),
       chapterEnd: true,
       choices: [{ label: 'Retour au menu', next: 'menu', flags: { tome1Complete: true } }],
     },
   });
+  // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
+  Object.entries({
+    c19_promesse: [['« Tu as dit que tu reviendrais', 'Hylee'], ['« Je n’ai pas eu le temps', 'Hylee'], ['« Reviens », souffle Hylee', 'Hylee']],
+  }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
 /*@ALIASES@*/
 
   // La scène « Au chevet » s’intercale entre Saidin et Allenna.
@@ -132,5 +136,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.422 · Images clés S05 à S07';
+  if (update) update.textContent = 'Mise à jour · v0.424 · VN et combats plus lisibles';
 })();
