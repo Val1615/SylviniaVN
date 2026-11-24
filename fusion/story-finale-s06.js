@@ -1089,32 +1089,36 @@ Tia repousse un démon d’un coup de pied, enchaîne avec un arc lumineux qui t
 
 Elle fixe Saidin.
 
-« Tu pourrais ouvrir un portail vers Al’Gratal ? »
-
-Le vieux mage hésite une seconde, ses doigts crispés sur son bâton. Un portail de cette envergure, avec l’influence chaotique qui l’entoure, nécessitera un temps précieux.
+« Tu pourrais ouvrir un portail vers Al’Gratal ? »`,
+      "c18_fuir_2", [tia('stern', 'left'), saidin, remerii]), voices: [["« Debout. »", "Tia"], ["« Par tous les dieux… » souffle Remerii,", "Remerii"], ["« Nous devons fuir. »", "Saidin"], ["« Si on fuit, la forêt entière tombera s", "Tia"], ["« Alors il faut qu’on parte avant qu’ils", "Remerii"], ["« Tu pourrais ouvrir un portail vers Al’", "Remerii"]] },
+    c18_fuir_2: { ...scene("Nous devons fuir", "c18_cg_s08_05_saidin_prepare_l_evacuation", M_HORREUR, 'Narrateur',
+      `Le vieux mage hésite une seconde, ses doigts crispés sur son bâton. Un portail de cette envergure, avec l’influence chaotique qui l’entoure, nécessitera un temps précieux.
 
 « Je vais avoir besoin de plusieurs minutes. »
 
 « Alors on va te les offrir », murmure Tia, faisant tournoyer son arme en foudroyant les démons du regard.`,
-      "c18_bhaal", [tia('stern', 'left'), saidin, remerii]), voices: [["« Debout. »", "Tia"], ["« Par tous les dieux… » souffle Remerii,", "Remerii"], ["« Nous devons fuir. »", "Saidin"], ["« Si on fuit, la forêt entière tombera s", "Tia"], ["« Alors il faut qu’on parte avant qu’ils", "Remerii"], ["« Tu pourrais ouvrir un portail vers Al’", "Remerii"], ["« Je vais avoir besoin de plusieurs minu", "Saidin"], ["« Alors on va te les offrir », murmure T", "Tia"]] },
-    c18_bhaal: { ...scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
+      "c18_bhaal", []), hideChars: true, camera: "lateral", voices: [["« Je vais avoir besoin de plusieurs minu", "Saidin"], ["« Alors on va te les offrir », murmure T", "Tia"]] },
+    c18_bhaal: scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
       `Un second frisson secoue la forêt. Les arbres gémissent sous une pression invisible.
 
 Quelque chose de plus grand, de plus puissant, approche.
 
-L’air devient glacial et brûlant à la fois, une anomalie qui tord l’espace comme un tissu malmené. Une silhouette massive se dessine dans le tourbillon d’énergie du portail.
-
-D’abord une main, colossale, couverte de veines brûlantes et d’un cuir noir écarlate craquelé. Puis un bras, orné de chaînes brisées qui cliquettent comme des râles d’âmes tourmentées.
-
-Enfin, le voici, le démon supérieur franchit la brèche.
+L’air devient glacial et brûlant à la fois, une anomalie qui tord l’espace comme un tissu malmené. Une silhouette massive se dessine dans le tourbillon d’énergie du portail.`,
+      "c18_bhaal_2", [tia('stern', 'left'), saidin, remerii]),
+    c18_bhaal_2: { ...scene("Bhaal", "c18_cg_s08_01_la_main_dans_la_breche", M_BHAAL, 'Narrateur',
+      `D’abord une main, colossale, couverte de veines brûlantes et d’un cuir noir écarlate craquelé. Puis un bras, orné de chaînes brisées qui cliquettent comme des râles d’âmes tourmentées.`,
+      "c18_bhaal_3", []), hideChars: true, camera: "approche" },
+    c18_bhaal_3: { ...scene("Bhaal", "c18_cg_s08_02_bhaal_franchit_la_porte", M_BHAAL, 'Narrateur',
+      `Enfin, le voici, le démon supérieur franchit la brèche.
 
 Il se redresse, ses cornes effilées se frayant un chemin entre les branches hautes. Sa peau est striée de marques anciennes, des cicatrices creusées par des siècles de guerre. Ses yeux… des gouffres de braises, brûlant d’une lueur malsaine et infinie. Son sourire carnassier appelle à lui seul à la démence. Les pas de la bête font vibrer le sol sur plusieurs kilomètres. Il se dresse droit, son regard bestial affiche satisfaction.
 
 Il observe la forêt.
 
-Puis il rit.
-
-Un son profond, vibrant, qui fait trembler la terre sous leurs pieds.
+Puis il rit.`,
+      "c18_bhaal_4", []), hideChars: true, camera: "recul" },
+    c18_bhaal_4: { ...scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
+      `Un son profond, vibrant, qui fait trembler la terre sous leurs pieds.
 
 « Enfin… »
 
@@ -1124,18 +1128,20 @@ Il déploie ses ailes déchirées, leur envergure occultant la lumière tremblan
 
 Il est géant, haut de plusieurs dizaine de mètres. Un titan du chaos à la peau de pierre.`,
       "c18_remerii_avance", [tia('stern', 'left'), saidin, remerii]), voices: [["« Enfin… »", "Bhaal"], ["« Le temps de la conquête est venu. Trem", "Bhaal"]] },
-    c18_remerii_avance: { ...scene("Elle avance", BG_PORTE, M_BHAAL, 'Narrateur',
-      `Tia serre son épée jusqu’à en blanchir les phalanges. Elle sait qu’ils ne peuvent pas le combattre.
-
-Mais Remerii ne recule pas…
+    c18_remerii_avance: scene("Elle avance", BG_PORTE, M_BHAAL, 'Narrateur',
+      `Tia serre son épée jusqu’à en blanchir les phalanges. Elle sait qu’ils ne peuvent pas le combattre.`,
+      "c18_remerii_avance_2", [tia('stern', 'left'), remeriiStrict]),
+    c18_remerii_avance_2: { ...scene("Elle avance", "c18_cg_s08_03_remerii_avance", M_BHAAL, 'Narrateur',
+      `Mais Remerii ne recule pas…
 
 Non…
 
 Elle avance.
 
-Le givre se répand sous ses pas, gelant l’herbe morte, cristallisant la brume qui flotte encore entre les arbres.
-
-« Reculez… dit-elle, sans élever la voix. Je vais m’en occuper. Regroupez tout le monde… et évacuez dès que possible. »
+Le givre se répand sous ses pas, gelant l’herbe morte, cristallisant la brume qui flotte encore entre les arbres.`,
+      "c18_remerii_avance_3", []), hideChars: true, camera: "approche" },
+    c18_remerii_avance_3: { ...scene("Elle avance", BG_PORTE, M_BHAAL, 'Narrateur',
+      `« Reculez… dit-elle, sans élever la voix. Je vais m’en occuper. Regroupez tout le monde… et évacuez dès que possible. »
 
 L’impératrice la regarde, ne cachant pas un certain scepticisme.
 
@@ -1163,18 +1169,20 @@ Une tempête glacée se lève autour d’elle.
 
 « Mais tu ne vas pas apprécier. »`,
       "c18_premier_choc", [tia('stern', 'left'), remeriiStrict]), voices: [["« Reculez… dit-elle, sans élever la voix", "Remerii"], ["« Ne dis pas de bêtises. Il va t’écraser", "Tia"], ["« Je sais. Mais je peux le retenir. »", "Remerii"], ["« Prenez soin de ma Hylee… »", "Remerii"], ["« Pensez-vous pouvoir me retenir, insect", "Bhaal"], ["« Non seulement je vais le faire… »", "Remerii"], ["« Mais tu ne vas pas apprécier. »", "Remerii"]] },
-    c18_premier_choc: { ...scene("Les crocs du Chaos", BG_PORTE, M_BHAAL, 'Narrateur',
-      `Elle tend les bras.
-
-Une déflagration de givre explose dans la clairière, recouvrant les racines et les troncs d’une carapace cristalline, formant un cône glacée en direction du démon. Celui-ci ne se protège même pas. Il rit.
+    c18_premier_choc: scene("Les crocs du Chaos", BG_PORTE, M_BHAAL, 'Narrateur',
+      `Elle tend les bras.`,
+      "c18_premier_choc_2", [tia('stern', 'left'), saidin, remeriiStrict]),
+    c18_premier_choc_2: { ...scene("Les crocs du Chaos", "c18_cg_s08_04_le_premier_givre", M_BHAAL, 'Narrateur',
+      `Une déflagration de givre explose dans la clairière, recouvrant les racines et les troncs d’une carapace cristalline, formant un cône glacée en direction du démon. Celui-ci ne se protège même pas. Il rit.
 
 Puis charge.
 
 Un choc titanesque ébranle la forêt lorsque les crocs du Chaos rencontrent le froid absolu de Remerii. Elle hurle brièvement en se tournant vers son mentor.
 
-« Saidin ! Ramenez les nôtres chez eux ! »
-
-Dans l’ombre, Saidin continue son incantation. Les flux magiques s’assemblent autour de lui, un cercle d’énergie runique s’élargissant peu à peu sur le sol.
+« Saidin ! Ramenez les nôtres chez eux ! »`,
+      "c18_premier_choc_3", []), hideChars: true, camera: "impact", voices: [["« Saidin ! Ramenez les nôtres chez eux !", "Remerii"]] },
+    c18_premier_choc_3: { ...scene("Les crocs du Chaos", BG_PORTE, M_BHAAL, 'Narrateur',
+      `Dans l’ombre, Saidin continue son incantation. Les flux magiques s’assemblent autour de lui, un cercle d’énergie runique s’élargissant peu à peu sur le sol.
 
 « Dépêche-toi, vieil homme », crache Tia, repoussant un démon qui s’est trop approché.
 
@@ -1183,7 +1191,7 @@ Dans l’ombre, Saidin continue son incantation. Les flux magiques s’assemblen
 Autour d’eux, les soldats se regroupent, luttant pour gagner du temps.
 
 Le sort de Saidin déchire l’espace-temps. La terre, la végétation, la poussière, une pesanteur s’installe peu à peu.`,
-      "c18_iriana_part", [tia('stern', 'left'), saidin, remeriiStrict]), voices: [["« Saidin ! Ramenez les nôtres chez eux !", "Remerii"], ["« Dépêche-toi, vieil homme », crache Tia", "Tia"], ["« Je fais ce que je peux ! » grogne-t-il", "Saidin"]] },
+      "c18_iriana_part", [tia('stern', 'left'), saidin, remeriiStrict]), voices: [["« Dépêche-toi, vieil homme », crache Tia", "Tia"], ["« Je fais ce que je peux ! » grogne-t-il", "Saidin"]] },
     c18_iriana_part: { ...scene("Où est Iriana ?!", BG_PORTE, M_BHAAL, 'Narrateur',
       `Et au milieu de ce chaos…
 
@@ -1210,26 +1218,29 @@ Le démon se dresse devant elle, immense, écrasant tout autour de lui de sa sim
 
 Elle sait qu’elle ne peut pas le vaincre.
 
-Mais elle doit le retenir.
-
-Les runes sur ses mains s’illuminent d’un éclat glacé alors qu’elle invoque un sort interdit.
+Mais elle doit le retenir.`,
+      "c18_gardien_2", [remeriiStrict]),
+    c18_gardien_2: { ...scene("Un Blizzard", "c18_cg_s08_06_les_runes_du_blizzard", M_BLIZZARD, 'Narrateur',
+      `Les runes sur ses mains s’illuminent d’un éclat glacé alors qu’elle invoque un sort interdit.
 
 Un Blizzard.
 
 Mais pas n’importe quel Blizzard.
 
-Un appel à quelque chose de plus grand. Quelque chose que peu osent invoquer.
-
-Au départ, ce n’est qu’un frisson dans l’air.
+Un appel à quelque chose de plus grand. Quelque chose que peu osent invoquer.`,
+      "c18_gardien_3", []), hideChars: true, camera: "approche" },
+    c18_gardien_3: scene("Un Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+      `Au départ, ce n’est qu’un frisson dans l’air.
 
 Une brume blanche glisse sur le sol, effleurant les racines comme une caresse funèbre. Puis, le froid s’intensifie. La température plonge, l’humidité gèle instantanément, et la terre craque sous l’assaut d’un hiver qui n’appartient pas à ce monde. Le vent se lève, d’abord un murmure, puis un hurlement glacial.
 
 Et enfin, les ombres bougent.
 
-À l’intérieur du Blizzard, quelque chose s’éveille. Une silhouette immense, drapée dans la tempête, avance lentement à travers le voile blanc. Une chose grande, vivante, se forme et nait de la glace.
-
-Un Gardien de Givre.`,
-      "c18_bh_blizzard", [remeriiStrict]),
+À l’intérieur du Blizzard, quelque chose s’éveille. Une silhouette immense, drapée dans la tempête, avance lentement à travers le voile blanc. Une chose grande, vivante, se forme et nait de la glace.`,
+      "c18_gardien_4", [remeriiStrict]),
+    c18_gardien_4: { ...scene("Un Blizzard", "c18_cg_s08_07_le_gardien_de_givre", M_BLIZZARD, 'Narrateur',
+      `Un Gardien de Givre.`,
+      "c18_bh_blizzard", []), hideChars: true, camera: "recul" },
     c18_sceau: { ...scene("Le sceau", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Bhaal fronce les sourcils.
 
@@ -1247,44 +1258,49 @@ Elle tremble, non pas de peur, mais de douleur.
 
 Sous sa poitrine, au niveau de son cœur, une cicatrice ancienne s’illumine sous la magie de l’archimage. Une marque scellée depuis longtemps.
 
-Elle se réveille, elle lui arrache un cri silencieux.
-
-La douleur est brutale. Un poignard invisible qui se plante encore et encore dans la même plaie. Elle étouffe un râle, sa main tremblante pressant sa poitrine, alors que le sort menace de lui échapper.
+Elle se réveille, elle lui arrache un cri silencieux.`,
+      "c18_sceau_2", [remeriiSad]), voices: [["« Alors tu oses réveiller ça ? »", "Bhaal"], ["« Tu es plus téméraire que je ne le pens", "Bhaal"]] },
+    c18_sceau_2: { ...scene("Le sceau", "c18_cg_s08_08_le_sceau", M_BLIZZARD, 'Narrateur',
+      `La douleur est brutale. Un poignard invisible qui se plante encore et encore dans la même plaie. Elle étouffe un râle, sa main tremblante pressant sa poitrine, alors que le sort menace de lui échapper.
 
 Son souffle se fait court, son corps refuse d’obéir, l’entrave.
 
 Cette marque… Ce n’est pas juste une cicatrice comme elle l’a décrit à Hylee… C’est un sceau, un fléau, une malédiction. Une magie faite pour brider sa puissance, ou la briser en cas de dépassement.
 
-Si elle continue… Elle va en mourir.
-
-Le Blizzard se resserre autour d’elle, fouettant sa peau, gelant son sang dans ses veines.
+Si elle continue… Elle va en mourir.`,
+      "c18_sceau_3", []), hideChars: true, camera: "approche" },
+    c18_sceau_3: { ...scene("Le sceau", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+      `Le Blizzard se resserre autour d’elle, fouettant sa peau, gelant son sang dans ses veines.
 
 Bhaal rit dans la tempête.
 
 « Tu as été optimiste, mortelle. »
 
 Il fait un pas en avant, son ombre absorbant la neige, sa présence dévoyant le froid lui-même. Il affronte le sort de face, comme pour la défier dans un duel perdu d’avance`,
-      "c18_medig", [remeriiSad]), voices: [["« Alors tu oses réveiller ça ? »", "Bhaal"], ["« Tu es plus téméraire que je ne le pens", "Bhaal"], ["« Tu as été optimiste, mortelle. »", "Bhaal"]] },
+      "c18_medig", [remeriiSad]), voices: [["« Tu as été optimiste, mortelle. »", "Bhaal"]] },
     c18_medig: scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Mais un élément détourne son attention.
 
 Un battement d’ailes dans la nuit. Un cri strident traverse la tempête.
 
-Elle lève les yeux. Une chouette ? Blanche comme la neige, pure au milieu des ombres.
+Elle lève les yeux. Une chouette ? Blanche comme la neige, pure au milieu des ombres.`,
+      "c18_medig_2", [hylee, remeriiSad]),
+    c18_medig_2: { ...scene("Medig", "c18_cg_s08_09_medig_survole_bhaal", M_BLIZZARD, 'Narrateur',
+      `Elle plane au-dessus du champ de bataille, passant au-dessus de Bhaal, glissant entre les vents contraires, intacte, intouchable.
 
-Elle plane au-dessus du champ de bataille, passant au-dessus de Bhaal, glissant entre les vents contraires, intacte, intouchable.
-
-Remerii la reconnaît immédiatement. Medig, la chouette d’Hylee. Son regard traverse la tempête, et à cet instant, un souffle chaud parcourt le cœur glacé de Remerii. Un souffle rassuré… mais aussi inquiétant. Elle devine autre chose… elle n’est pas seule… alors qu’elle le devrait.
-
-Elle la sent, sans même la voir. Hylee. Elle est ici, juste derrière elle. Concentrée. L’apprentie ne souhaite pas distraire l’Archimage. Et en même temps, elle est entièrement axée sur quelque chose.
+Remerii la reconnaît immédiatement. Medig, la chouette d’Hylee. Son regard traverse la tempête, et à cet instant, un souffle chaud parcourt le cœur glacé de Remerii. Un souffle rassuré… mais aussi inquiétant. Elle devine autre chose… elle n’est pas seule… alors qu’elle le devrait.`,
+      "c18_medig_3", []), hideChars: true, camera: "recul" },
+    c18_medig_3: { ...scene("Medig", "c18_cg_s08_10_hylee_derriere_remerii", M_BLIZZARD, 'Narrateur',
+      `Elle la sent, sans même la voir. Hylee. Elle est ici, juste derrière elle. Concentrée. L’apprentie ne souhaite pas distraire l’Archimage. Et en même temps, elle est entièrement axée sur quelque chose.
 
 Les rafales de glace hurlent, la tempête gronde, mais Hylee avance, lentement, au fur et à mesure qu’elle incante quelque chose.
 
 Son corps tremble, non pas sous le froid, mais sous l’adrénaline. Ses bottes écrasent la neige fraîchement invoquée, ses pas sont incertains, mais elle ne recule pas.
 
-Elle voit Remerii, affaiblie, vacillante, mais toujours debout. Son blizzard est déchaîné, un torrent de puissance incontrôlable qui menace de la dévorer vivante.
-
-Et en face d’elle…
+Elle voit Remerii, affaiblie, vacillante, mais toujours debout. Son blizzard est déchaîné, un torrent de puissance incontrôlable qui menace de la dévorer vivante.`,
+      "c18_medig_4", []), hideChars: true, camera: "approche" },
+    c18_medig_4: { ...scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+      `Et en face d’elle…
 
 Le monstre.
 
@@ -1294,10 +1310,9 @@ Mais Hylee ne regarde que Remerii.
 
 Sa mentor.
 
-Son amour.`,
-      "c18_medig_2", [hylee, remeriiSad]),
-    c18_medig_2: { ...scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
-      `Sa chouette l’a menée jusqu’ici, la guidant à travers les ténèbres et la peur. La forçant a avancer au-delà de barrière mentale. Elle ne pouvait pas laisser Remerii partir seule… elle savait qu’elle aurait besoin d’elle, comme ce fut et sera toujours son cas.
+Son amour.
+
+Sa chouette l’a menée jusqu’ici, la guidant à travers les ténèbres et la peur. La forçant a avancer au-delà de barrière mentale. Elle ne pouvait pas laisser Remerii partir seule… elle savait qu’elle aurait besoin d’elle, comme ce fut et sera toujours son cas.
 
 …
 
@@ -1328,16 +1343,17 @@ Un souvenir.
 
 Un vieux souvenir.`,
       "c18_source", [hylee, remeriiSurprised]),
-    c18_source: { ...scene("La source", BG_SOURCE, M_SOURCE, 'Narrateur',
+    c18_source: { ...scene("La source", "c18_cg_s08_11_le_souvenir_de_la_source", M_SOURCE, 'Narrateur',
       `Hylee se rappelle. Une nuit calme, il y a longtemps.
 
 Elle est assise près d’une source, une étendue d’eau cristalline où les étoiles semblent danser à la surface.
 
 Remerii est à côté d’elle, les bras croisés, un sourire léger, mais sévère sur les lèvres.
 
-« Ressentir l’Arcane n’est pas la même chose que la voir », lui dit-elle.
-
-Hylee, jeune et impatiente, fronce les sourcils.
+« Ressentir l’Arcane n’est pas la même chose que la voir », lui dit-elle.`,
+      "c18_source_2", []), hideChars: true, camera: "recul", voices: [["« Ressentir l’Arcane n’est pas la même c", "Remerii"]] },
+    c18_source_2: { ...scene("La source", BG_SOURCE, M_SOURCE, 'Narrateur',
+      `Hylee, jeune et impatiente, fronce les sourcils.
 
 « Je ne comprends pas. Je sens… des vibrations, oui. Mais je n’arrive pas à les attraper. »
 
@@ -1347,20 +1363,22 @@ Remerii hausse un sourcil.
 
 L’archimage tend la main.
 
-Et dans l’eau…
-
-Une nébuleuse naît. Un filament d’arcane pur s’élève, flottant comme un courant de lumière. Une traînée d’étoiles liquides, une essence pure et brute, ondulant entre leurs paumes.
+Et dans l’eau…`,
+      "c18_source_3", [hyleeYoung, remeriiSoft]), voices: [["« Je ne comprends pas. Je sens… des vibr", "Hylee"], ["« C’est parce que tu essaies de l’attrap", "Remerii"]] },
+    c18_source_3: { ...scene("La source", "c18_cg_s08_12_la_nebuleuse", M_SOURCE, 'Narrateur',
+      `Une nébuleuse naît. Un filament d’arcane pur s’élève, flottant comme un courant de lumière. Une traînée d’étoiles liquides, une essence pure et brute, ondulant entre leurs paumes.
 
 Hylee ouvre grand les yeux.
 
 « C’est magnifique… »
 
-« Oui. Si chaque force était une couleur… l’arcane serait son prisme. Mais au-delà de sa beauté, il est aussi dangereux », murmure Remerii.
-
-Elle laisse le filament onduler entre ses doigts, comme un papillon posé sur le bord du réel.
+« Oui. Si chaque force était une couleur… l’arcane serait son prisme. Mais au-delà de sa beauté, il est aussi dangereux », murmure Remerii.`,
+      "c18_source_4", []), hideChars: true, camera: "approche", voices: [["« C’est magnifique… »", "Hylee"], ["« Oui. Si chaque force était une couleur", "Remerii"]] },
+    c18_source_4: { ...scene("La source", BG_SOURCE, M_SOURCE, 'Narrateur',
+      `Elle laisse le filament onduler entre ses doigts, comme un papillon posé sur le bord du réel.
 
 « L’arcane est une nébuleuse. Belle. Sauvage. Brûlante… et surtout volatile. »`,
-      "c18_nebuleuse", [hyleeYoung, remeriiSoft]), voices: [["« Ressentir l’Arcane n’est pas la même c", "Remerii"], ["« Je ne comprends pas. Je sens… des vibr", "Hylee"], ["« C’est parce que tu essaies de l’attrap", "Remerii"], ["« C’est magnifique… »", "Hylee"], ["« Oui. Si chaque force était une couleur", "Remerii"], ["« L’arcane est une nébuleuse. Belle. Sau", "Remerii"]] },
+      "c18_nebuleuse", [hyleeYoung, remeriiSoft]), voices: [["« L’arcane est une nébuleuse. Belle. Sau", "Remerii"]] },
     c18_nebuleuse: { ...scene("Laisse-la venir à toi", BG_SOURCE, M_SOURCE, 'Narrateur',
       `Elle regarde Hylee dans les yeux.
 
@@ -1380,24 +1398,26 @@ Elle saisit la main de son apprentie et l’entraîne dans le cours d’eau, gli
 
 Elle ne tire pas.
 
-Elle ne force pas.
-
-Et la nébuleuse se pose d’elle-même au creux de sa paume.
+Elle ne force pas.`,
+      "c18_nebuleuse_2", [hyleeYoung, remeriiSoft]), voices: [["« Si tu tends la main sans précaution, e", "Remerii"], ["« Alors… Comment dois-je faire ? »", "Hylee"], ["« Tu dois l’approcher comme une étoile m", "Remerii"], ["« Observe-la. Laisse-la venir à toi. »", "Remerii"]] },
+    c18_nebuleuse_2: { ...scene("Laisse-la venir à toi", "c18_cg_s08_13_la_paume_d_hylee", M_SOURCE, 'Narrateur',
+      `Et la nébuleuse se pose d’elle-même au creux de sa paume.
 
 Un frisson parcourt Hylee.
 
 « Tu ressens ça ? »
 
-Elle hoche la tête.
-
-Remerii referme doucement les doigts de l’adolescente avec sa main
+Elle hoche la tête.`,
+      "c18_nebuleuse_3", []), hideChars: true, camera: "approche", voices: [["« Tu ressens ça ? »", "Remerii"]] },
+    c18_nebuleuse_3: { ...scene("Laisse-la venir à toi", BG_SOURCE, M_SOURCE, 'Narrateur',
+      `Remerii referme doucement les doigts de l’adolescente avec sa main
 
 « Voilà. Maintenant, tu as une partie de l’Arcane en toi. »
 
 Mais Hylee sait que si elle avait refermé sa main trop vite…
 
 Elle aurait soit été brûlée, soit simplement fait chou blanc.`,
-      "c18_choix_arcane", [hyleeYoung, remeriiSoft]), voices: [["« Si tu tends la main sans précaution, e", "Remerii"], ["« Alors… Comment dois-je faire ? »", "Hylee"], ["« Tu dois l’approcher comme une étoile m", "Remerii"], ["« Observe-la. Laisse-la venir à toi. »", "Remerii"], ["« Tu ressens ça ? »", "Remerii"], ["« Voilà. Maintenant, tu as une partie de", "Remerii"]] },
+      "c18_choix_arcane", [hyleeYoung, remeriiSoft]), voices: [["« Voilà. Maintenant, tu as une partie de", "Remerii"]] },
     c18_conduit: scene("Elle devient un conduit", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Elle ouvre les yeux.
 
@@ -1415,26 +1435,29 @@ Si elle se concentre vraiment, si elle se laisse porter par le flot de la magie�
 
 Elle le perçoit.
 
-Pas dans la violence de la tempête, pas dans le rugissement du vent…
-
-Mais dans l’espace entre chaque flocon.
+Pas dans la violence de la tempête, pas dans le rugissement du vent…`,
+      "c18_conduit_2", [hylee]),
+    c18_conduit_2: { ...scene("Elle devient un conduit", "c18_cg_s08_14_entre_les_flocons", M_BLIZZARD, 'Narrateur',
+      `Mais dans l’espace entre chaque flocon.
 
 Un filet subtil, une rivière invisible, serpentant entre les courants glacés, liant chaque bourrasque, chaque cristal de givre en un flux d’énergie pure.
 
 Le Blizzard n’est pas le sort.
 
-C’est le contenant, comme chaque élément autour d’elle.
-
-Et au cœur de cette tempête… l’Arcane danse. Hylee tend la main, elle ne force pas.
+C’est le contenant, comme chaque élément autour d’elle.`,
+      "c18_conduit_3", []), hideChars: true, camera: "lateral" },
+    c18_conduit_3: scene("Elle devient un conduit", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+      `Et au cœur de cette tempête… l’Arcane danse. Hylee tend la main, elle ne force pas.
 
 Elle laisse ses doigts effleurer le courant magique, comme une rivière de lumière bleutée. Elle s’en empare doucement, sans briser l’équilibre.
 
-L’énergie se déverse en elle, coulant comme un ruisseau glacé, imprégnant sa peau, sa chair, ses muscles.
-
-Elle devient un conduit.
+L’énergie se déverse en elle, coulant comme un ruisseau glacé, imprégnant sa peau, sa chair, ses muscles.`,
+      "c18_conduit_4", [hylee]),
+    c18_conduit_4: { ...scene("Elle devient un conduit", "c18_cg_s08_15_hylee_devient_un_conduit", M_BLIZZARD, 'Narrateur',
+      `Elle devient un conduit.
 
 Et elle transmet tout à Remerii.`,
-      "c18_dragon", [hylee]),
+      "c18_dragon", []), hideChars: true, camera: "lateral" },
     c18_dragon: { ...scene("Le Déchaînement du Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `La neige explose autour d’elles.
 
@@ -1456,85 +1479,98 @@ La jeune mage ne dit rien.
 
 Elle offre son pouvoir.
 
-Et Remerii comprend.
+Et Remerii comprend.`,
+      "c18_dragon_2", [remeriiStrict]), voices: [["« Hylee… ? »", "Remerii"]] },
+    c18_dragon_2: { ...scene("Le Déchaînement du Blizzard", "c18_cg_s08_16_remerii_relache_tout", M_BLIZZARD, 'Narrateur',
+      `Elle prend une grande inspiration et relâche tout.
 
-Elle prend une grande inspiration et relâche tout.
+La tempête s’intensifie, les bourrasques s’élèvent, et au cœur du blizzard, une forme titanesque émerge.`,
+      "c18_dragon_3", []), hideChars: true, camera: "approche" },
+    c18_dragon_3: { ...scene("Le Déchaînement du Blizzard", "c18_cg_s08_17_deux_yeux_dans_la_neige", M_BLIZZARD, 'Narrateur',
+      `D’abord, deux yeux bleus luminescents, brillants comme des perles glacées.
 
-La tempête s’intensifie, les bourrasques s’élèvent, et au cœur du blizzard, une forme titanesque émerge.
-
-D’abord, deux yeux bleus luminescents, brillants comme des perles glacées.
-
-Puis un corps immense, écailleux et translucide, sculpté par la tempête elle-même.
-
-Un dragon.
+Puis un corps immense, écailleux et translucide, sculpté par la tempête elle-même.`,
+      "c18_dragon_4", []), hideChars: true, camera: "approche" },
+    c18_dragon_4: { ...scene("Le Déchaînement du Blizzard", "c18_cg_s08_18_le_dragon_prend_forme", M_BLIZZARD, 'Narrateur',
+      `Un dragon.
 
 Né du vent, forgé dans la glace pure, aussi grand que le démon lui-même.
 
 Il lève la tête, et dans un rugissement assourdissant, il se jette sur Bhaal.
 
-Le démon suprême n’a pas le temps de réagir.
-
-Le dragon fond sur lui, ses serres massives lacérant son armure chitineuse, ses crocs s’enfonçant dans la chair démoniaque.
+Le démon suprême n’a pas le temps de réagir.`,
+      "c18_dragon_5", []), hideChars: true, camera: "recul" },
+    c18_dragon_5: { ...scene("Le Déchaînement du Blizzard", "c18_cg_s08_19_le_choc_des_colosses", M_BLIZZARD, 'Narrateur',
+      `Le dragon fond sur lui, ses serres massives lacérant son armure chitineuse, ses crocs s’enfonçant dans la chair démoniaque.
 
 Le Seigneur du Chaos pousse un grondement furieux, repoussant la créature à mains nues, ses flammes infernales consumant le givre.
 
 Le dragon recule, mais revient à la charge, claquant sa queue avec la puissance d’une avalanche. Les ombres et la glace s’affrontent violemment, la forêt entière tremble sous le choc des deux colosses. Un grondement sourd monte derrière elles, une vibration lourde qui résonne à travers le sol, puis, d’un coup, l’air se comprime brutalement, aspiré en un battement sec, une implosion étouffée qui laisse derrière elle un silence anormal, une absence oppressante qu’elles ne perçoivent qu’à moitié, trop absorbées par la furie glaciale qui les consume.`,
-      "c18_bh_dragon", [remeriiStrict]), voices: [["« Hylee… ? »", "Remerii"]] },
-    c18_valurn_renvoi: { ...scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
-      `Remerii vacille, sentant la magie lui aspirer toute son énergie.
-
-Hylee lui attrape le bras, la soutenant malgré le froid mordant.
+      "c18_bh_dragon", []), hideChars: true, camera: "impact" },
+    c18_valurn_renvoi: scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
+      `Remerii vacille, sentant la magie lui aspirer toute son énergie.`,
+      "c18_valurn_renvoi_2", [hylee, valurnAnnoyed]),
+    c18_valurn_renvoi_2: { ...scene("Son propre fils", "c18_cg_s08_20_hylee_soutient_remerii", M_BHAAL, 'Narrateur',
+      `Hylee lui attrape le bras, la soutenant malgré le froid mordant.
 
 « Tiens bon ! hurle-t-elle. On y est presque ! »
 
-Mais Bhaal ne recule pas.
-
-Il plante ses griffes dans la gorge du dragon et le force à plier, écrasant la glace sous sa poigne infernale.
+Mais Bhaal ne recule pas.`,
+      "c18_valurn_renvoi_3", []), hideChars: true, camera: "approche", voices: [["« Tiens bon ! hurle-t-elle. On y est pre", "Hylee"]] },
+    c18_valurn_renvoi_3: { ...scene("Son propre fils", "c18_cg_s08_21_bhaal_force_le_dragon_a_plier", M_BHAAL, 'Narrateur',
+      `Il plante ses griffes dans la gorge du dragon et le force à plier, écrasant la glace sous sa poigne infernale.
 
 Le dragon lutte, mais la domination du démon est trop grande. Bhaal rit, repoussant la créature vers le sol, s’apprêtant à l’anéantir.
 
-Puis…
+Puis…`,
+      "c18_valurn_renvoi_4", []), hideChars: true, camera: "impact" },
+    c18_valurn_renvoi_4: { ...scene("Son propre fils", "c18_cg_s08_22_la_lumiere_rouge_sang", M_BHAAL, 'Narrateur',
+      `Une explosion. Une lumière rouge sang déchire le champ de bataille. Une vague d’énergie déferle sur Bhaal, le frappant en plein dos, faisant vaciller le titan infernal. Un hurlement de douleur et de rage secoue l’air.
 
-Une explosion. Une lumière rouge sang déchire le champ de bataille. Une vague d’énergie déferle sur Bhaal, le frappant en plein dos, faisant vaciller le titan infernal. Un hurlement de douleur et de rage secoue l’air.
-
-Bhaal se retourne violemment.
-
-Et il voit son propre fils. Valurn se tient là, le souffle court, le regard noir, son corps parcouru de veines incandescentes.
+Bhaal se retourne violemment.`,
+      "c18_valurn_renvoi_5", []), hideChars: true, camera: "impact" },
+    c18_valurn_renvoi_5: { ...scene("Son propre fils", "c18_cg_s08_23_valurn_face_a_son_pere", M_BHAAL, 'Narrateur',
+      `Et il voit son propre fils. Valurn se tient là, le souffle court, le regard noir, son corps parcouru de veines incandescentes.
 
 Dans sa main, il canalise ce qu’il reste du pouvoir volé à Amanea.
 
 Ce n’est plus un don du Chaos.
 
-C’est une force libérée.
+C’est une force libérée.`,
+      "c18_valurn_renvoi_6", []), hideChars: true, camera: "approche" },
+    c18_valurn_renvoi_6: { ...scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
+      `« Toi », gronde Bhaal.
 
-« Toi », gronde Bhaal.
-
-Valurn ne répond pas.
-
-Il frappe de nouveau.
+Valurn ne répond pas.`,
+      "c18_valurn_renvoi_7", [hylee, valurnAnnoyed]), voices: [["« Toi », gronde Bhaal.", "Bhaal"]] },
+    c18_valurn_renvoi_7: { ...scene("Son propre fils", "c18_cg_s08_24_la_seconde_onde", M_BHAAL, 'Narrateur',
+      `Il frappe de nouveau.
 
 Une onde de choc infernale s’écrase sur le Seigneur Démoniaque, faisant plier ses genoux, ébranlant même le portail démoniaque derrière lui.
 
 Bhaal tremble.
 
-Puis, lentement…
+Puis, lentement…`,
+      "c18_valurn_renvoi_8", []), hideChars: true, camera: "impact" },
+    c18_valurn_renvoi_8: scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
+      `Il recule. La force combinée du dragon de Remerii et du pouvoir de Valurn brise l’équilibre.
 
-Il recule. La force combinée du dragon de Remerii et du pouvoir de Valurn brise l’équilibre.
-
-Bhaal recule encore, ses crocs dévoilés dans une grimace furieuse, ses yeux incandescents brûlant de colère pure.
-
-Mais le portail le happe.
+Bhaal recule encore, ses crocs dévoilés dans une grimace furieuse, ses yeux incandescents brûlant de colère pure.`,
+      "c18_valurn_renvoi_9", [hylee, valurnAnnoyed]),
+    c18_valurn_renvoi_9: { ...scene("Son propre fils", "c18_cg_s08_25_la_porte_happe_bhaal", M_BHAAL, 'Narrateur',
+      `Mais le portail le happe.
 
 Les ombres s’enroulent autour de ses membres, les flammes démoniaques le happent en arrière.
 
 « Misérable vermi… »
 
-Il est interrompu, disparaissant dans le portail, qui réagit au retour du démon suprême. Mais dans la désolation laissée au cœur de la forêt interdite… Sa voix persiste en un écho d’apocalypse, un grondement qui promet un retour funeste… en un dernier rugissement de haine…
-
-« Ce n’est que le début… »
+Il est interrompu, disparaissant dans le portail, qui réagit au retour du démon suprême. Mais dans la désolation laissée au cœur de la forêt interdite… Sa voix persiste en un écho d’apocalypse, un grondement qui promet un retour funeste… en un dernier rugissement de haine…`,
+      "c18_valurn_renvoi_10", []), hideChars: true, camera: "recul", voices: [["« Misérable vermi… »", "Bhaal"]] },
+    c18_valurn_renvoi_10: { ...scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
+      `« Ce n’est que le début… »
 
 L’onde de choc de sa chute secoue l’air, le portail tressaille, vacille, affaibli mais toujours debout.`,
-      "c18_bh_fin", [hylee, valurnAnnoyed]), voices: [["« Tiens bon ! hurle-t-elle. On y est pre", "Hylee"], ["« Toi », gronde Bhaal.", "Bhaal"], ["« Misérable vermi… »", "Bhaal"], ["« Ce n’est que le début… »", "Bhaal"]] },
+      "c18_bh_fin", [hylee, valurnAnnoyed]), voices: [["« Ce n’est que le début… »", "Bhaal"]] },
     c18_remerii_tombe: { ...scene("Un silence brisé", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `La tempête retombe. Le silence s’abat sur la clairière.
 
@@ -1548,17 +1584,19 @@ Sa cicatrice la brûle, sa magie est drainée, son corps refuse de suivre. Elle 
 
 La neige se teinte d’ombres sous son poids.
 
-« Remerii ! »
-
-Hylee la rattrape de justesse, ses bras tremblent, mais elle ne la lâche pas.
+« Remerii ! »`,
+      "c18_remerii_tombe_2", [hyleeF('pleurs', 'center')]), voices: [["« Remerii ! »", "Hylee"]] },
+    c18_remerii_tombe_2: { ...scene("Un silence brisé", "c18_cg_s08_26_hylee_rattrape_remerii", M_PLAINTE_I, 'Narrateur',
+      `Hylee la rattrape de justesse, ses bras tremblent, mais elle ne la lâche pas.
 
 Elle la serre contre elle, sa peau blanche contrastant avec la pâleur livide de l’archimage. Remerii ouvre la bouche, mais aucun son n’en sort. Hylee cherche un signe de vie.
 
 Rien.
 
-Un vide effrayant.
-
-« Non… Non, non, non… »
+Un vide effrayant.`,
+      "c18_remerii_tombe_3", []), hideChars: true, camera: "approche" },
+    c18_remerii_tombe_3: { ...scene("Un silence brisé", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+      `« Non… Non, non, non… »
 
 Elle pose une main sur sa poitrine, espérant sentir un battement de cœur.
 
@@ -1571,7 +1609,7 @@ Sa voix tremble.
 « Je vais te sortir de là. »
 
 Mais elles sont seules. Les autres sont partis. Le blizzard les a isolées du monde extérieur, ne remarquant pas qu’elles ont fini seules, pas seulement ce combat, mais aussi cette guerre.`,
-      "c18_seules", [hyleeF('pleurs', 'center')]), voices: [["« Remerii ! »", "Hylee"], ["« Non… Non, non, non… »", "Hylee"], ["« Tiens bon… ! »", "Hylee"], ["« Je vais te sortir de là. »", "Hylee"]] },
+      "c18_seules", [hyleeF('pleurs', 'center')]), voices: [["« Non… Non, non, non… »", "Hylee"], ["« Tiens bon… ! »", "Hylee"], ["« Je vais te sortir de là. »", "Hylee"]] },
     c18_seules: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Tia, les Sylviniens, les soldats… Ils ont fui.
 
@@ -1587,17 +1625,16 @@ Hylee les voit. Mais elle est seule. Son corps est brisé, Sa magie est instable
 
 Elle ne sait pas si Remerii est encore en vie, mais elle ne veut pas la laisser là… quitte à traîner son corps jusqu’à Al’Gratal.
 
-Le vent s’est calmé, mais le froid est toujours là, un froid qui s’insinue dans les os, un froid qui ne vient pas seulement de la neige et du blizzard qui s’efface lentement. Hylee serre Remerii contre elle, ses bras tremblants sous l’effort, non pas à cause de la fatigue, mais à cause de cette peur sourde qui lui tord les entrailles, cette panique qui monte lentement alors qu’elle ne sent toujours pas la respiration de son mentor, de son amour, alors qu’elle attend un signe, n’importe quoi, une pression des doigts, un frisson, un gémissement, mais rien ne vient.`,
+Le vent s’est calmé, mais le froid est toujours là, un froid qui s’insinue dans les os, un froid qui ne vient pas seulement de la neige et du blizzard qui s’efface lentement. Hylee serre Remerii contre elle, ses bras tremblants sous l’effort, non pas à cause de la fatigue, mais à cause de cette peur sourde qui lui tord les entrailles, cette panique qui monte lentement alors qu’elle ne sent toujours pas la respiration de son mentor, de son amour, alors qu’elle attend un signe, n’importe quoi, une pression des doigts, un frisson, un gémissement, mais rien ne vient.
+
+Autour d’elle, la bataille est finie, le silence règne. Un silence pesant, lugubre, comme si le monde retenait son souffle après l’affrontement titanesque qui vient d’avoir lieu. Le portail n’est pas complètement refermé, il est là, vacillant, déchirant encore la réalité de son aura sombre, vomissant des relents d’énergie démoniaque et, au loin, elle entend encore le murmure de créatures rôdant à la lisière, attendant, observant, prêtes à fondre sur elle au moindre signe de faiblesse.`,
       "c18_seules_2", [hyleeF('triste', 'center')]),
-    c18_seules_2: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
-      `Autour d’elle, la bataille est finie, le silence règne. Un silence pesant, lugubre, comme si le monde retenait son souffle après l’affrontement titanesque qui vient d’avoir lieu. Le portail n’est pas complètement refermé, il est là, vacillant, déchirant encore la réalité de son aura sombre, vomissant des relents d’énergie démoniaque et, au loin, elle entend encore le murmure de créatures rôdant à la lisière, attendant, observant, prêtes à fondre sur elle au moindre signe de faiblesse.`,
-      "c18_seules_3", [hyleeF('triste', 'center')]),
-    c18_seules_3: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+    c18_seules_2: { ...scene("Seules", "c18_cg_s08_27_un_battement_presque_absent", M_PLAINTE_I, 'Narrateur',
       `Mais Hylee ne pense pas à ça. Son regard est fixé sur Remerii, sur son visage livide, sur cette respiration qu’elle cherche désespérément à percevoir, sur ce corps qui semble s’alourdir entre ses bras, comme si la vie l’abandonnait peu à peu. Elle secoue doucement la femme qu’elle tient, ses doigts crispés sur sa tunique gelée, sa voix brisée par l’angoisse alors qu’elle murmure son nom, encore et encore, un appel étouffé, une prière à peine soufflée dans l’air glacé. Elle voudrait croire que Remerii dort simplement, qu’elle s’est juste évanouie sous l’effort, mais au fond d’elle, une peur insidieuse lui murmure autre chose, une vérité qu’elle refuse d’entendre. Son cœur bat trop fort, résonne dans sa tête comme un tambour funèbre, chaque seconde qui passe sans réponse est une aiguille qui s’enfonce un peu plus profondément dans sa poitrine. Elle presse son oreille contre le torse de Remerii, cherchant ce battement de cœur, ce rythme qui lui prouverait qu’elle est encore là, mais c’est si faible, si ténu, qu’elle doute de l’avoir réellement perçu. Ses yeux brûlent, sa gorge se serre, elle voudrait hurler, elle voudrait la secouer, elle voudrait la ramener, la forcer à ouvrir les yeux, à lui parler, à lui dire quelque chose, n’importe quoi, mais elle n’ose pas, de peur que tout cela ne soit qu’une illusion, de peur que si elle la lâche ne serait-ce qu’un instant, Remerii disparaisse pour de bon.`,
-      "c18_seules_4", [hyleeF('triste', 'center')]),
-    c18_seules_4: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+      "c18_seules_3", []), hideChars: true, camera: "approche" },
+    c18_seules_3: { ...scene("Seules", "c18_cg_s08_27_un_battement_presque_absent", M_PLAINTE_I, 'Narrateur',
       `Autour d’elles, le monde a changé. La tempête est retombée, la neige qui recouvre le sol est marquée par les cicatrices du combat, des cratères où le feu et la glace se sont affrontés, des ombres de silhouettes figées dans la glace, des éclats de magie encore flottants dans l’air, vestiges d’un affrontement que personne ne pourra jamais vraiment comprendre. Mais tout cela n’a plus d’importance. Il n’y a plus que Remerii et elle. Plus que ce corps contre le sien, cette chaleur qui s’amenuise, cette présence qui semble s’effilocher à chaque seconde. Hylee tremble, pas de froid, pas de peur pour elle-même, mais de cette terreur intime, viscérale, qui lui souffle que Remerii est en train de la quitter, qu’elle s’accroche à un fantôme, qu’elle est d’ores et déjà trop loin pour être sauvée.`,
-      "c18_refus", [hyleeF('triste', 'center')]),
+      "c18_refus", []), hideChars: true },
     c18_refus: scene("Elle refuse", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Non.
 
@@ -1625,29 +1662,33 @@ Hylee lève lentement la tête, ses yeux épuisés cherchant la source de ce son
 
 La chouette blanche tournoie au-dessus d’elles, planant sans bruit dans l’air glacé, comme une sentinelle veillant sur elles depuis l’autre monde. Elle est intacte, immaculée, insensible au chaos, glissant dans les courants éthérés comme si elle appartenait à quelque chose de plus grand, de plus ancien.
 
-Medig…
-
-Puis, sans prévenir, elle plonge.
+Medig…`,
+      "c18_faille_2", [hyleeF('calme', 'center')]),
+    c18_faille_2: { ...scene("La faille de Medig", "c18_cg_s08_28_medig_plonge", M_PLAINTE_I, 'Narrateur',
+      `Puis, sans prévenir, elle plonge.
 
 Hylee sursaute, son cœur manque un battement. Medig fond droit sur elles, une comète de plumes blanches, un éclat d’astre dans la nuit déchirée. Mais elle ne s’arrête pas.
 
 Juste avant d’atteindre le sol, son corps frôle l’air comme une lame d’argent, et alors… L’espace se brise.
 
-Un craquement sec retentit, comme du verre fissuré sous une pression trop forte.
+Un craquement sec retentit, comme du verre fissuré sous une pression trop forte.`,
+      "c18_faille_3", []), hideChars: true, camera: "recul" },
+    c18_faille_3: scene("La faille de Medig", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+      `Devant Hylee, une déchirure s’ouvre, un trou béant dans la réalité, une brèche entre ici et ailleurs. Medig disparaît à l’intérieur sans un bruit.
 
-Devant Hylee, une déchirure s’ouvre, un trou béant dans la réalité, une brèche entre ici et ailleurs. Medig disparaît à l’intérieur sans un bruit.
-
-Hylee sent son souffle se bloquer, ses yeux s’écarquillent, un espoir fou s’empare d’elle.
-
-De l’autre côté de la faille…
+Hylee sent son souffle se bloquer, ses yeux s’écarquillent, un espoir fou s’empare d’elle.`,
+      "c18_faille_4", [hyleeF('calme', 'center')]),
+    c18_faille_4: { ...scene("La faille de Medig", "c18_cg_s08_29_une_issue_vers_algratal", M_PLAINTE_I, 'Narrateur',
+      `De l’autre côté de la faille…
 
 Al’Gratal.
 
 La cité impériale se dresse au loin, ses murailles d’un blanc nacré, ses tours effilées s’élevant sous un ciel dégagé, baignées de la lueur protectrice des runes sylviniennes. C’est une échappatoire. Un passage. Une issue.
 
-C’est un miracle.
-
-Hylee sent une vague d’émotion l’envahir, un mélange de soulagement, d’incrédulité et d’urgence brûlante. Ses yeux s’emplissent d’eau, mais elle ne cède pas. Elle serre Remerii contre elle, ancrant son regard dans celui de son amour inconsciente.
+C’est un miracle.`,
+      "c18_faille_5", []), hideChars: true, camera: "recul" },
+    c18_faille_5: scene("La faille de Medig", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+      `Hylee sent une vague d’émotion l’envahir, un mélange de soulagement, d’incrédulité et d’urgence brûlante. Ses yeux s’emplissent d’eau, mais elle ne cède pas. Elle serre Remerii contre elle, ancrant son regard dans celui de son amour inconsciente.
 
 Elle n’a pas perdu.
 
@@ -1657,35 +1698,36 @@ Un dernier regard vers les ténèbres qui s’amassent derrière elle, les murmu
 
 Elle se redresse, vacillante mais résolue, puis, avec ce qui lui reste de force, elle franchit la faille.`,
       "c18_algratal", [hyleeF('calme', 'center')]),
-    c18_algratal: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
+    c18_algratal: { ...scene("Al’Gratal", "c18_cg_s08_30_le_retour_a_algratal", M_ALGRATAL, 'Narrateur',
       `À l’arrivée… le blizzard l’a suivie. Le sol est glacé sous ses genoux, mais Hylee ne le sent pas, son corps tout entier est engourdi, vidé, tremblant sous l’effort et la peur, une peur qui ne la quitte plus depuis qu’elle a franchi cette faille, depuis qu’elle a posé le pied sur la terre d’Al’Gratal, depuis qu’elle a compris qu’elle était enfin hors de danger et pourtant si loin de l’être. Elle tient toujours Remerii contre elle, ses bras crispés autour de son corps inerte, sa poitrine se soulève par saccades sous une respiration hachurée, trop rapide, trop paniquée, incapable de reprendre un rythme normal alors qu’elle attend un signe, un souffle, un frisson, n’importe quoi pour lui prouver que tout cela n’a pas été vain, que tout ce qu’elle a traversé, tout ce qu’elle a donné, tout ce qu’elle a perdu, n’a pas servi à rien. Mais il n’y a rien. Pas un battement, pas un murmure, pas une pression de doigts sur sa peau. Il y a juste ce corps contre le sien, encore chaud, mais déjà trop froid, encore là, mais déjà absent, un poids qui lui semble insupportable et en même temps qu’elle ne veut pas lâcher, qu’elle ne lâchera pas, jamais, peu importe ce que les autres diront, peu importe ce que la raison lui hurle.`,
-      "c18_algratal_2", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
-    c18_algratal_2: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
+      "c18_algratal_2", []), hideChars: true, camera: "recul" },
+    c18_algratal_2: { ...scene("Al’Gratal", "c18_cg_s08_30_le_retour_a_algratal", M_ALGRATAL, 'Narrateur',
       `Autour d’elle, il y a des voix, des mouvements précipités, l’écho des Sylviniens qui s’affairent, qui réalisent qu’elle est revenue, mais elle n’entend rien d’autre que le martèlement de son propre cœur, le bourdonnement sourd de la magie qui circule encore en elle, ce vestige de l’Arcane qui n’a pas disparu, qui la ronge lentement, l’épuise, la change, la prive du moindre répit. Elle est là, à genoux dans la neige souillée, immobile, le souffle court, incapable de penser, incapable de parler, incapable même de pleurer tant la peur lui noue la gorge, et pourtant, elle sent les larmes brûler sous ses paupières, prêtes à déborder à tout moment, prêtes à tout consumer dans leur chute.`,
-      "c18_algratal_3", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
-    c18_algratal_3: { ...scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
-      `Des bruits de pas résonnent tout près, des bruits rapides, nerveux, des coups secs contre le sol de pierre, un rythme saccadé, impatient, agacé, et elle tourne enfin la tête, presque mécaniquement, ses yeux encore flous par l’épuisement trouvant la silhouette familière de Tia Farae. L’Impératrice est là, le dos droit, le visage fermé, son pied frappant le sol dans une cadence nerveuse, non pas d’impatience, mais d’inquiétude, non pas pour elle, Hylee en est certaine, mais pour une autre, une autre qui aurait dû être là, une autre qui n’est pas revenue, une absence qui pèse bien plus lourd que toutes les blessures, que toutes les pertes. Son regard se tourne vers Saidin, l’homme n’a pas besoin de parler, il se contente d’un léger mouvement de tête, d’un simple geste, infime, mais qui résonne comme une sentence.
+      "c18_algratal_3", []), hideChars: true },
+    c18_algratal_3: { ...scene("Al’Gratal", "c18_cg_s08_30_le_retour_a_algratal", M_ALGRATAL, 'Narrateur',
+      `Des bruits de pas résonnent tout près, des bruits rapides, nerveux, des coups secs contre le sol de pierre, un rythme saccadé, impatient, agacé, et elle tourne enfin la tête, presque mécaniquement, ses yeux encore flous par l’épuisement trouvant la silhouette familière de Tia Farae. L’Impératrice est là, le dos droit, le visage fermé, son pied frappant le sol dans une cadence nerveuse, non pas d’impatience, mais d’inquiétude, non pas pour elle, Hylee en est certaine, mais pour une autre, une autre qui aurait dû être là, une autre qui n’est pas revenue, une absence qui pèse bien plus lourd que toutes les blessures, que toutes les pertes. Son regard se tourne vers Saidin, l’homme n’a pas besoin de parler, il se contente d’un léger mouvement de tête, d’un simple geste, infime, mais qui résonne comme une sentence.`,
+      "c18_algratal_4", []), hideChars: true },
+    c18_algratal_4: { ...scene("Al’Gratal", "c18_cg_s08_31_aucune_trace_d_iriana", M_ALGRATAL, 'Narrateur',
+      `« Il ne restait qu’elles… Aucune trace d’Iriana. »
 
-« Il ne restait qu’elles… Aucune trace d’Iriana. »`,
-      "c18_algratal_4", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]), voices: [["« Il ne restait qu’elles… Aucune trace d", "Saidin"]] },
-    c18_algratal_4: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
-      `La phrase tombe, brutale, irrévocable, comme une lame sur une corde trop tendue, et Hylee voit le visage de Tia se figer, non pas sous le choc, mais sous le poids d’une certitude qu’elle refusait sans doute d’admettre jusque-là. L’air autour d’elles semble se figer un instant, un silence plus lourd que tout s’installe, un silence où chaque respiration devient un fardeau, où chaque battement de cœur est une douleur. Mais l’Impératrice ne cède pas, elle ne flanche pas, elle reste droite, impassible, mais Hylee sait, elle sait ce que signifie ce silence, elle sait ce que signifie cette immobilité parfaite, elle sait que, sous la surface, tout vacille, tout s’effondre, tout hurle en elle.
+La phrase tombe, brutale, irrévocable, comme une lame sur une corde trop tendue, et Hylee voit le visage de Tia se figer, non pas sous le choc, mais sous le poids d’une certitude qu’elle refusait sans doute d’admettre jusque-là. L’air autour d’elles semble se figer un instant, un silence plus lourd que tout s’installe, un silence où chaque respiration devient un fardeau, où chaque battement de cœur est une douleur. Mais l’Impératrice ne cède pas, elle ne flanche pas, elle reste droite, impassible, mais Hylee sait, elle sait ce que signifie ce silence, elle sait ce que signifie cette immobilité parfaite, elle sait que, sous la surface, tout vacille, tout s’effondre, tout hurle en elle.
 
 Saidin ne dit rien de plus, il attend, il la laisse réagir, il respecte cette seconde de silence, ce moment où l’on comprend que l’on a perdu quelque chose d’irremplaçable, et puis il détourne enfin le regard, quittant l’Impératrice pour reporter son attention sur Hylee. C’est là qu’il la voit, vraiment, qu’il la scrute, qu’il analyse ce qu’elle est devenue, et Hylee sait qu’elle a changé, elle n’a pas besoin de miroir, elle n’a pas besoin qu’on le lui dise. Son corps tremble encore sous les résidus de l’Arcane, mais ce n’est plus la même chose, ce n’est plus une surcharge temporaire, ce n’est plus un pouvoir qu’elle peut simplement rejeter, c’est en elle, c’est gravé dans sa chair, dans son sang, dans son être.`,
-      "c18_reflet", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
-    c18_reflet: scene("Deux saphirs", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
+      "c18_reflet", []), hideChars: true, camera: "approche", voices: [["« Il ne restait qu’elles… Aucune trace d", "Saidin"]] },
+    c18_reflet: { ...scene("Deux saphirs", "c18_cg_s08_32_le_blanc_spectral", M_ALGRATAL, 'Narrateur',
       `Elle baisse lentement les yeux sur ses mains, et ce qu’elle voit la pétrifie.
 
 Sa peau n’est plus la même. Les marques du vitiligo qui parcouraient autrefois son corps, qui faisaient partie d’elle, qui la définissaient, ont disparu. Il n’y a plus de contraste, plus de tâches, plus d’ombres, il n’y a que cette teinte uniforme, un blanc spectral, une pâleur irréelle qui s’étend de ses doigts à ses bras, qui recouvre son cou, son visage, une couleur trop pure, trop éclatante, comme si elle avait été vidée de toute pigmentation, comme si elle n’appartenait plus à ce monde. Elle sent son souffle se couper, un vertige la prend, elle effleure sa peau comme pour s’assurer qu’elle est bien réelle, mais elle ne reconnaît plus son propre corps.
 
-Ses cheveux aussi ont changé. Ils n’ont plus rien de leur flamboyance passée, plus rien de cet orange vibrant qui les rendait si reconnaissables, plus rien de ces mèches blanches éparses qui formaient une partie de son identité. Ils sont d’un blanc absolu, lumineux sous la lumière tamisée, flottant autour de son visage comme une cascade de neige pure. Et ses yeux…
-
-Elle les sent brûler, non pas de douleur, mais d’une lumière étrange, d’un éclat qu’elle ne comprend pas encore. Elle lève la tête, croise son reflet dans une plaque de glace non loin, et ce qu’elle voit lui arrache un frisson.
+Ses cheveux aussi ont changé. Ils n’ont plus rien de leur flamboyance passée, plus rien de cet orange vibrant qui les rendait si reconnaissables, plus rien de ces mèches blanches éparses qui formaient une partie de son identité. Ils sont d’un blanc absolu, lumineux sous la lumière tamisée, flottant autour de son visage comme une cascade de neige pure. Et ses yeux…`,
+      "c18_reflet_2", []), hideChars: true, camera: "approche" },
+    c18_reflet_2: { ...scene("Deux saphirs", "c18_cg_s08_33_le_reflet_d_hylee", M_ALGRATAL, 'Narrateur',
+      `Elle les sent brûler, non pas de douleur, mais d’une lumière étrange, d’un éclat qu’elle ne comprend pas encore. Elle lève la tête, croise son reflet dans une plaque de glace non loin, et ce qu’elle voit lui arrache un frisson.
 
 Deux saphirs luisants, deux abysses d’énergie pure, un regard qui n’est plus tout à fait le sien.
 
 Elle ne sait plus qui elle est.`,
-      "c18_ne_me_laisse_pas", [hyleeF('magie', 'center')]),
+      "c18_ne_me_laisse_pas", []), hideChars: true, camera: "approche" },
     c18_ne_me_laisse_pas: { ...scene("Ne me laisse pas", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Elle voudrait hurler, pleurer, nier cette réalité, mais elle ne peut pas, pas maintenant, pas alors que Remerii est là, dans ses bras, inconsciente, peut-être déjà morte, peut-être déjà trop loin pour être sauvée. Ses mains tremblantes se referment sur le tissu glacé de sa tunique, elle la serre contre elle, enfouissant son visage contre son épaule, retenant un sanglot qui menace d’éclater à tout moment.
 
@@ -1699,21 +1741,22 @@ Elle n’entend même plus ce qui l’entoure, elle ne voit plus rien d’autre 
 
 Puis une voix, grave, assurée, celle de Saidin.
 
-Un ordre.
-
-« De l’aide ! »
+Un ordre.`,
+      "c18_ne_me_laisse_pas_2", [hyleeF('pleurs'), ['saidin', 'saidin_mysterious', 'right']]), voices: [["« S’il te plaît… »", "Hylee"], ["« Ne me laisse pas… »", "Hylee"]] },
+    c18_ne_me_laisse_pas_2: { ...scene("Ne me laisse pas", "c18_cg_s08_34_saidin_appelle_a_l_aide", M_ALGRATAL, 'Narrateur',
+      `« De l’aide ! »
 
 Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il s’attendait à ce que cela arrive, comme s’il avait toujours su que toucher à l’Arcane la changerait à jamais. Mais il ne s’attarde pas sur elle, il ne pose pas de questions, son regard est tourné vers Remerii, vers cette femme qui peut, peut-être, être sauvée… ou peut-être pas.`,
-      "c18_fin", [hyleeF('pleurs'), ['saidin', 'saidin_mysterious', 'right']]), voices: [["« S’il te plaît… »", "Hylee"], ["« Ne me laisse pas… »", "Hylee"], ["« De l’aide ! »", "Saidin"]] },
+      "c18_fin", []), hideChars: true, camera: "approche", voices: [["« De l’aide ! »", "Saidin"]] },
   });
   // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
   Object.entries({
     c18_reponse_hylee: [['« Je ne te laisse pas seule', 'Hylee']],
   }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
   // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
-  Object.entries({}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
+  Object.entries({"c18_seules_4": "c18_seules_3"}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 
-  // Plans clés S06 (branche Draven) et S07 (branche Iriana), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  // Plans clés S06 (branche Draven), S07 (branche Iriana) et S08 (chemin Remerii), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
   const SHOTS = [
     ["c18_cg_s06_01_le_front_avance", "assets/images/keyscenes/chapter18-s06/s06_01_le_front_avance.webp", "Le front avance", "Plan d’ensemble de la ravine. L’armée poursuit sa marche sur la crête. Draven se retrouve isolé près du versant de la grotte."],
     ["c18_cg_s06_02_la_crevasse", "assets/images/keyscenes/chapter18-s06/s06_02_la_crevasse.webp", "La crevasse", "Plan large parmi les armures des morts. Draven tient son épée basse. La grotte est à sa droite dans le champ."],
@@ -1758,6 +1801,40 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
     ["c18_cg_s07_22_l_hesitation", "assets/images/keyscenes/chapter18-s07/s07_22_l_hesitation.webp", "L’hésitation", "Profil serré et souffle court."],
     ["c18_cg_s07_23_le_saut", "assets/images/keyscenes/chapter18-s07/s07_23_le_saut.webp", "Le saut", "Plan large depuis le bas de l’arche, où la trajectoire entre dans l’ouverture et le décor commence à se déformer."],
     ["c18_cg_s07_24_la_foret_sans_iriana", "assets/images/keyscenes/chapter18-s07/s07_24_la_foret_sans_iriana.webp", "La forêt sans Iriana", "La Porte reste ouverte."],
+    ["c18_cg_s08_01_la_main_dans_la_breche", "assets/images/keyscenes/chapter18-s08/s08_01_la_main_dans_la_breche.webp", "La main dans la brèche", "Une main colossale franchit la Porte. Le plan tient avant de montrer la silhouette entière."],
+    ["c18_cg_s08_02_bhaal_franchit_la_porte", "assets/images/keyscenes/chapter18-s08/s08_02_bhaal_franchit_la_porte.webp", "Bhaal franchit la Porte", "Plan large de Bhaal entier. Le paysage et les troncs donnent son échelle."],
+    ["c18_cg_s08_03_remerii_avance", "assets/images/keyscenes/chapter18-s08/s08_03_remerii_avance.webp", "Remerii avance", "Remerii avance à hauteur humaine. La Porte reste en profondeur."],
+    ["c18_cg_s08_04_le_premier_givre", "assets/images/keyscenes/chapter18-s08/s08_04_le_premier_givre.webp", "Le premier givre", "Le givre se propage à ras du sol. Le rouge de la Porte reste visible."],
+    ["c18_cg_s08_05_saidin_prepare_l_evacuation", "assets/images/keyscenes/chapter18-s08/s08_05_saidin_prepare_l_evacuation.webp", "Saidin prépare l’évacuation", "Près des racines, Saidin agrandit le cercle d’évacuation. Tia surveille le flanc."],
+    ["c18_cg_s08_06_les_runes_du_blizzard", "assets/images/keyscenes/chapter18-s08/s08_06_les_runes_du_blizzard.webp", "Les runes du blizzard", "Raccord sur les mains de Remerii. La neige s’épaissit quand le sort interdit prend."],
+    ["c18_cg_s08_07_le_gardien_de_givre", "assets/images/keyscenes/chapter18-s08/s08_07_le_gardien_de_givre.webp", "Le Gardien de Givre", "Une masse glaciaire se détache du voile blanc. C’est aussi le décor du duel c18_bh_blizzard."],
+    ["c18_cg_s08_08_le_sceau", "assets/images/keyscenes/chapter18-s08/s08_08_le_sceau.webp", "Le sceau", "Resserrement sur le visage et la main de Remerii quand le sceau se réveille."],
+    ["c18_cg_s08_09_medig_survole_bhaal", "assets/images/keyscenes/chapter18-s08/s08_09_medig_survole_bhaal.webp", "Medig survole Bhaal", "Une coupe vers le ciel fait passer Medig au-dessus de Bhaal."],
+    ["c18_cg_s08_10_hylee_derriere_remerii", "assets/images/keyscenes/chapter18-s08/s08_10_hylee_derriere_remerii.webp", "Hylee derrière Remerii", "Contrechamp depuis Remerii. Hylee arrive par l’arrière, encore apprentie."],
+    ["c18_cg_s08_11_le_souvenir_de_la_source", "assets/images/keyscenes/chapter18-s08/s08_11_le_souvenir_de_la_source.webp", "Le souvenir de la source", "Fondu vers la nuit près de la source. La leçon peut se poser."],
+    ["c18_cg_s08_12_la_nebuleuse", "assets/images/keyscenes/chapter18-s08/s08_12_la_nebuleuse.webp", "La nébuleuse", "Le filament étoilé s’élève de l’eau entre les deux femmes."],
+    ["c18_cg_s08_13_la_paume_d_hylee", "assets/images/keyscenes/chapter18-s08/s08_13_la_paume_d_hylee.webp", "La paume d’Hylee", "Raccord sur la paume ouverte d’Hylee. L’Arcane s’y pose."],
+    ["c18_cg_s08_14_entre_les_flocons", "assets/images/keyscenes/chapter18-s08/s08_14_entre_les_flocons.webp", "Entre les flocons", "Le même geste, dans la neige. Hylee reconnaît le courant."],
+    ["c18_cg_s08_15_hylee_devient_un_conduit", "assets/images/keyscenes/chapter18-s08/s08_15_hylee_devient_un_conduit.webp", "Hylee devient un conduit", "Hylee conduit l’énergie vers Remerii. Le mouvement se lit de l’une vers l’autre."],
+    ["c18_cg_s08_16_remerii_relache_tout", "assets/images/keyscenes/chapter18-s08/s08_16_remerii_relache_tout.webp", "Remerii relâche tout", "Remerii relâche l’Arcane. La neige masque encore la forme qui vient."],
+    ["c18_cg_s08_17_deux_yeux_dans_la_neige", "assets/images/keyscenes/chapter18-s08/s08_17_deux_yeux_dans_la_neige.webp", "Deux yeux dans la neige", "Deux yeux émergent de la tempête avant que la silhouette soit lisible."],
+    ["c18_cg_s08_18_le_dragon_prend_forme", "assets/images/keyscenes/chapter18-s08/s08_18_le_dragon_prend_forme.webp", "Le dragon prend forme", "Révélation du dragon de glace en plan large, face à Bhaal."],
+    ["c18_cg_s08_19_le_choc_des_colosses", "assets/images/keyscenes/chapter18-s08/s08_19_le_choc_des_colosses.webp", "Le choc des colosses", "Coupe sur le choc des deux silhouettes. C’est aussi le décor du duel c18_bh_dragon."],
+    ["c18_cg_s08_20_hylee_soutient_remerii", "assets/images/keyscenes/chapter18-s08/s08_20_hylee_soutient_remerii.webp", "Hylee soutient Remerii", "À hauteur d’épaule, Hylee retient Remerii et transfère son poids."],
+    ["c18_cg_s08_21_bhaal_force_le_dragon_a_plier", "assets/images/keyscenes/chapter18-s08/s08_21_bhaal_force_le_dragon_a_plier.webp", "Bhaal force le dragon à plier", "Bhaal entame la glace à la gorge du dragon, au moment où celui-ci plie."],
+    ["c18_cg_s08_22_la_lumiere_rouge_sang", "assets/images/keyscenes/chapter18-s08/s08_22_la_lumiere_rouge_sang.webp", "La lumière rouge sang", "Une lueur rouge traverse la neige avant que la source soit identifiable."],
+    ["c18_cg_s08_23_valurn_face_a_son_pere", "assets/images/keyscenes/chapter18-s08/s08_23_valurn_face_a_son_pere.webp", "Valurn face à son père", "Découverte de Valurn. Le champ tient sur la reconnaissance entre père et fils."],
+    ["c18_cg_s08_24_la_seconde_onde", "assets/images/keyscenes/chapter18-s08/s08_24_la_seconde_onde.webp", "La seconde onde", "Valurn frappe de nouveau. La poussée se combine à celle du dragon."],
+    ["c18_cg_s08_25_la_porte_happe_bhaal", "assets/images/keyscenes/chapter18-s08/s08_25_la_porte_happe_bhaal.webp", "La Porte happe Bhaal", "Bhaal est repoussé dans la Porte rouge. C’est aussi le décor de c18_bh_fin."],
+    ["c18_cg_s08_26_hylee_rattrape_remerii", "assets/images/keyscenes/chapter18-s08/s08_26_hylee_rattrape_remerii.webp", "Hylee rattrape Remerii", "Retour à l’échelle humaine. Hylee, déjà en forme finale, rattrape Remerii au moment où elle tombe."],
+    ["c18_cg_s08_27_un_battement_presque_absent", "assets/images/keyscenes/chapter18-s08/s08_27_un_battement_presque_absent.webp", "Un battement presque absent", "Très serré. Hylee approche l’oreille de la poitrine de Remerii et guette le battement."],
+    ["c18_cg_s08_28_medig_plonge", "assets/images/keyscenes/chapter18-s08/s08_28_medig_plonge.webp", "Medig plonge", "Medig descend à travers la neige, juste avant le craquement de la faille."],
+    ["c18_cg_s08_29_une_issue_vers_algratal", "assets/images/keyscenes/chapter18-s08/s08_29_une_issue_vers_algratal.webp", "Une issue vers Al’Gratal", "La faille argentée s’ouvre sur les tours pâles d’Al’Gratal."],
+    ["c18_cg_s08_30_le_retour_a_algratal", "assets/images/keyscenes/chapter18-s08/s08_30_le_retour_a_algratal.webp", "Le retour à Al’Gratal", "À l’arrivée, un reste du blizzard suit Hylee sur le marbre, Remerii inconsciente dans ses bras."],
+    ["c18_cg_s08_31_aucune_trace_d_iriana", "assets/images/keyscenes/chapter18-s08/s08_31_aucune_trace_d_iriana.webp", "Aucune trace d’Iriana", "Coupe sur Tia quand Saidin lui apprend l’absence d’Iriana."],
+    ["c18_cg_s08_32_le_blanc_spectral", "assets/images/keyscenes/chapter18-s08/s08_32_le_blanc_spectral.webp", "Le blanc spectral", "Insert sur les mains uniformément blanches d’Hylee."],
+    ["c18_cg_s08_33_le_reflet_d_hylee", "assets/images/keyscenes/chapter18-s08/s08_33_le_reflet_d_hylee.webp", "Le reflet d’Hylee", "Dans la glace, Hylee voit ses traits, ses cheveux blancs et ses yeux saphir."],
+    ["c18_cg_s08_34_saidin_appelle_a_l_aide", "assets/images/keyscenes/chapter18-s08/s08_34_saidin_appelle_a_l_aide.webp", "Saidin appelle à l’aide", "Saidin appelle à l’aide. Hylee tient encore Remerii contre elle."],
     ["c18_cg_s06_08_dans_la_grotte", "assets/images/keyscenes/chapter18-s06/s06_08_dans_la_grotte.webp", "Dans la grotte", "Plan de course de trois quarts dos, du rouge extérieur à l’obscurité. La poursuite continue dans sa trace, hors champ."],
     ["c18_cg_s06_10_regagner_le_seuil", "assets/images/keyscenes/chapter18-s06/s06_10_regagner_le_seuil.webp", "Regagner le seuil", "Contrechamp depuis l’extérieur. Draven revient à la lumière, avec les morts encore derrière lui dans la grotte."],
   ];
@@ -1765,8 +1842,15 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
   const DUEL_SHOTS = [
     ["c18_dp_grotte_r", "c18_cg_s06_08_dans_la_grotte", "lateral"],
     ["c18_dp_voute", "c18_cg_s06_10_regagner_le_seuil", "approche"],
+    ["c18_bh_blizzard", "c18_cg_s08_07_le_gardien_de_givre", "recul"],
+    ["c18_bh_blizzard_r", "c18_cg_s08_07_le_gardien_de_givre", "recul"],
+    ["c18_bh_sync", "c18_cg_s08_15_hylee_devient_un_conduit", "lateral"],
+    ["c18_bh_sync_r", "c18_cg_s08_15_hylee_devient_un_conduit", "lateral"],
+    ["c18_bh_dragon", "c18_cg_s08_19_le_choc_des_colosses", "impact"],
+    ["c18_bh_dragon_r", "c18_cg_s08_19_le_choc_des_colosses", "impact"],
+    ["c18_bh_fin", "c18_cg_s08_25_la_porte_happe_bhaal", "recul"],
   ];
-  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma']];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };

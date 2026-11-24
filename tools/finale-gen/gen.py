@@ -17,8 +17,11 @@ coverage = []   # (scene id, [§])
 from shots import SHOTS, SPAN, DUEL_SHOTS
 SHOT_AT = {}    # § -> [(clé, mouvement)]
 def shot_key(path):
-    # chapter17-s0x → c17_cg_*, chapter18-s0x → c18_cg_*
-    return ('c18_cg_' if path.startswith('chapter18') else 'c17_cg_') + os.path.splitext(os.path.basename(path))[0]
+    # chapter17-s0x → c17_cg_*, chapter18-s0x → c18_cg_*, chapter19-s0x → c19_cg_*
+    if path.startswith('chapter19'): prefix = 'c19_cg_'
+    elif path.startswith('chapter18'): prefix = 'c18_cg_'
+    else: prefix = 'c17_cg_'
+    return prefix + os.path.splitext(os.path.basename(path))[0]
 for path, p, cam, _t, _d in SHOTS:
     assert p in N.P and p not in N.HEADINGS, path
     assert p not in SHOT_AT, f'deux plans sur le § {p}'
@@ -103,11 +106,13 @@ def emit(prefix):
         if parts and parts[-1][0]: last_shot = parts[-1][0][0][0]
     return ''.join(out)
 
-CHAPTER_OF = {'c17_': 'chapter17', 'c18_': 'chapter18'}
+CHAPTER_OF = {'c17_': 'chapter17', 'c18_': 'chapter18', 'c19_': 'chapter19'}
 def shots_js(prefix):
     rows = []
+    seen = set()
     for path, p, cam, title, desc in SHOTS + [(d[0], d[1], d[2], d[3], d[4]) for d in DUEL_SHOTS]:
-        if not path.startswith(CHAPTER_OF.get(prefix, '-')): continue
+        if path in seen or not path.startswith(CHAPTER_OF.get(prefix, '-')): continue
+        seen.add(path)
         rows.append(f"    [{json.dumps(shot_key(path))}, {json.dumps('assets/images/keyscenes/' + path)}, {json.dumps(title, ensure_ascii=False)}, {json.dumps(desc, ensure_ascii=False)}],\n")
     return ''.join(rows)
 
@@ -131,8 +136,9 @@ for prefix, name, extra in FILES:
     src = src.replace('/*@SCENES@*/\n', gen).replace('/*@ALIASES@*/\n', aliases_js(prefix))
     if '/*@SHOTS@*/' in src: src = src.replace('/*@SHOTS@*/\n', shots_js(prefix))
     if '/*@DUEL_SHOTS@*/' in src:
-        src = src.replace('/*@DUEL_SHOTS@*/\n', ''.join(f"    [{json.dumps(sid)}, {json.dumps(shot_key(path))}, {json.dumps(cam)}],\n" for path, sid, cam, _t, _d in DUEL_SHOTS))
-        used_shots.update(shot_key(d[0]) for d in DUEL_SHOTS)
+        rows = [(path, sid, cam, _t, _d) for path, sid, cam, _t, _d in DUEL_SHOTS if sid.startswith(prefix)]
+        src = src.replace('/*@DUEL_SHOTS@*/\n', ''.join(f"    [{json.dumps(sid)}, {json.dumps(shot_key(path))}, {json.dumps(cam)}],\n" for path, sid, cam, _t, _d in rows))
+        used_shots.update(shot_key(d[0]) for d in rows)
     open(os.path.join(OUT, name), 'w', encoding='utf-8').write(src)
     print(name, len(gen), 'octets de scènes générées')
 

@@ -17,12 +17,12 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 | S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 27 | 18 |
 | S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 36 | 3 |
 | S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 24 | 8 |
-| S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 13 | 0 |
+| S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 21 | 0 |
 | S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 43 | 7 |
-| S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 24 | 5 |
-| S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 11 | 3 |
+| S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 59 | 5 |
+| S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 37 | 3 |
 
-Total : 287 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 337 scènes.
+Total : 356 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 406 scènes.
 
 ## Scène par scène
 
@@ -275,46 +275,115 @@ Total : 287 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c18_saut` | Elle plonge | 11400–11406 | 4 |
 | `c18_saut_2` | Elle plonge | 11408 | 1 |
 | `c18_ouverture` | Le portail s’ouvre | 11046–11066 | 11 |
-| `c18_fuir` | Nous devons fuir | 11068–11095 | 14 |
-| `c18_bhaal` | Bhaal | 11098–11117 | 11 |
-| `c18_remerii_avance` | Elle avance | 11119–11145 | 15 |
-| `c18_premier_choc` | Les crocs du Chaos | 11147–11163 | 10 |
+| `c18_fuir` | Nous devons fuir | 11068–11088 | 11 |
+| `c18_fuir_2` | Nous devons fuir | 11091–11095 | 3 |
+| `c18_bhaal` | Bhaal | 11098–11102 | 3 |
+| `c18_bhaal_2` | Bhaal | 11104 | 1 |
+| `c18_bhaal_3` | Bhaal | 11106–11111 | 4 |
+| `c18_bhaal_4` | Bhaal | 11113–11117 | 3 |
+| `c18_remerii_avance` | Elle avance | 11119 | 1 |
+| `c18_remerii_avance_2` | Elle avance | 11121–11125 | 4 |
+| `c18_remerii_avance_3` | Elle avance | 11127–11145 | 10 |
+| `c18_premier_choc` | Les crocs du Chaos | 11147 | 1 |
+| `c18_premier_choc_2` | Les crocs du Chaos | 11148–11153 | 4 |
+| `c18_premier_choc_3` | Les crocs du Chaos | 11155–11163 | 5 |
 | `c18_iriana_part` | Où est Iriana ?! | 11165–11179 | 9 |
-| `c18_gardien` | Un Blizzard | 11411–11430 | 13 |
-| `c18_sceau` | Le sceau | 11432–11455 | 15 |
-| `c18_medig` | Medig | 11457–11483 | 15 |
-| `c18_medig_2` | Medig | 11485–11498 | 10 |
+| `c18_gardien` | Un Blizzard | 11411–11416 | 4 |
+| `c18_gardien_2` | Un Blizzard | 11417–11423 | 4 |
+| `c18_gardien_3` | Un Blizzard | 11425–11428 | 4 |
+| `c18_gardien_4` | Un Blizzard | 11430 | 1 |
+| `c18_sceau` | Le sceau | 11432–11441 | 7 |
+| `c18_sceau_2` | Le sceau | 11442–11448 | 4 |
+| `c18_sceau_3` | Le sceau | 11450–11455 | 4 |
+| `c18_medig` | Medig | 11457–11461 | 3 |
+| `c18_medig_2` | Medig | 11462–11464 | 2 |
+| `c18_medig_3` | Medig | 11466–11471 | 4 |
+| `c18_medig_4` | Medig | 11473–11498 | 16 |
 | `c18_souvenir_lien` | Un vieux souvenir | 11500–11502 | 3 |
-| `c18_source` | La source | 11504–11533 | 16 |
-| `c18_nebuleuse` | Laisse-la venir à toi | 11535–11566 | 18 |
-| `c18_conduit` | Elle devient un conduit | 11568–11595 | 18 |
-| `c18_dragon` | Le Déchaînement du Blizzard | 11599–11640 | 22 |
-| `c18_valurn_renvoi` | Son propre fils | 11642–11687 | 27 |
-| `c18_remerii_tombe` | Un silence brisé | 11689–11712 | 16 |
-| `c18_seules` | Seules | 11714–11725 | 8 |
-| `c18_seules_2` | Seules | 11726 | 1 |
-| `c18_seules_3` | Seules | 11728 | 1 |
-| `c18_seules_4` | Seules | 11730 | 1 |
+| `c18_source` | La source | 11504–11509 | 4 |
+| `c18_source_2` | La source | 11511–11520 | 6 |
+| `c18_source_3` | La source | 11522–11528 | 4 |
+| `c18_source_4` | La source | 11531–11533 | 2 |
+| `c18_nebuleuse` | Laisse-la venir à toi | 11535–11552 | 10 |
+| `c18_nebuleuse_2` | Laisse-la venir à toi | 11553–11559 | 4 |
+| `c18_nebuleuse_3` | Laisse-la venir à toi | 11561–11566 | 4 |
+| `c18_conduit` | Elle devient un conduit | 11568–11580 | 9 |
+| `c18_conduit_2` | Elle devient un conduit | 11581–11586 | 4 |
+| `c18_conduit_3` | Elle devient un conduit | 11588–11591 | 3 |
+| `c18_conduit_4` | Elle devient un conduit | 11593–11595 | 2 |
+| `c18_dragon` | Le Déchaînement du Blizzard | 11599–11619 | 11 |
+| `c18_dragon_2` | Le Déchaînement du Blizzard | 11621–11623 | 2 |
+| `c18_dragon_3` | Le Déchaînement du Blizzard | 11625–11627 | 2 |
+| `c18_dragon_4` | Le Déchaînement du Blizzard | 11629–11635 | 4 |
+| `c18_dragon_5` | Le Déchaînement du Blizzard | 11637–11640 | 3 |
+| `c18_valurn_renvoi` | Son propre fils | 11642 | 1 |
+| `c18_valurn_renvoi_2` | Son propre fils | 11644–11648 | 3 |
+| `c18_valurn_renvoi_3` | Son propre fils | 11649–11652 | 3 |
+| `c18_valurn_renvoi_4` | Son propre fils | 11654–11655 | 2 |
+| `c18_valurn_renvoi_5` | Son propre fils | 11657–11662 | 4 |
+| `c18_valurn_renvoi_6` | Son propre fils | 11664–11666 | 2 |
+| `c18_valurn_renvoi_7` | Son propre fils | 11667–11672 | 4 |
+| `c18_valurn_renvoi_8` | Son propre fils | 11674–11676 | 2 |
+| `c18_valurn_renvoi_9` | Son propre fils | 11678–11683 | 4 |
+| `c18_valurn_renvoi_10` | Son propre fils | 11685–11687 | 2 |
+| `c18_remerii_tombe` | Un silence brisé | 11689–11698 | 7 |
+| `c18_remerii_tombe_2` | Un silence brisé | 11700–11703 | 4 |
+| `c18_remerii_tombe_3` | Un silence brisé | 11705–11712 | 5 |
+| `c18_seules` | Seules | 11714–11726 | 9 |
+| `c18_seules_2` | Seules | 11728 | 1 |
+| `c18_seules_3` | Seules | 11730 | 1 |
 | `c18_refus` | Elle refuse | 11732–11742 | 6 |
 | `c18_refus_2` | Elle refuse | 11744–11746 | 2 |
-| `c18_faille` | La faille de Medig | 11748–11781 | 20 |
+| `c18_faille` | La faille de Medig | 11748–11756 | 5 |
+| `c18_faille_2` | La faille de Medig | 11758–11762 | 4 |
+| `c18_faille_3` | La faille de Medig | 11763–11764 | 2 |
+| `c18_faille_4` | La faille de Medig | 11766–11772 | 4 |
+| `c18_faille_5` | La faille de Medig | 11774–11781 | 5 |
 | `c18_algratal` | Al’Gratal | 11783 | 1 |
 | `c18_algratal_2` | Al’Gratal | 11785 | 1 |
-| `c18_algratal_3` | Al’Gratal | 11787–11789 | 2 |
-| `c18_algratal_4` | Al’Gratal | 11791–11793 | 2 |
-| `c18_reflet` | Deux saphirs | 11795–11805 | 6 |
-| `c18_ne_me_laisse_pas` | Ne me laisse pas | 11807–11823 | 9 |
-| `c19_trone` | Al’Gratal · Le Poids du Deuil | 11847–11870 | 13 |
-| `c19_pertes` | L’Empire ne pleure pas | 11872–11918 | 27 |
-| `c19_chambre` | Hylee · Le Murmure du Cœur Endormi | 11924–11963 | 23 |
-| `c19_saidin` | Alors trouve un moyen | 11965–11990 | 16 |
-| `c19_saidin_2` | Alors trouve un moyen | 11991–12018 | 18 |
-| `c19_saidin_3` | Alors trouve un moyen | 12020–12022 | 3 |
-| `c19_allenna` | Allenna · Sur les traces d’un régicide | 12026–12034 | 9 |
-| `c19_allenna_2` | Allenna · Sur les traces d’un régicide | 12035–12046 | 12 |
-| `c19_allenna_3` | Allenna · Sur les traces d’un régicide | 12047–12050 | 4 |
-| `c19_serment` | Mère… nous rentrons | 12052–12078 | 22 |
-| `c19_serment_2` | Mère… nous rentrons | 12079–12094 | 14 |
+| `c18_algratal_3` | Al’Gratal | 11787 | 1 |
+| `c18_algratal_4` | Al’Gratal | 11789–11793 | 3 |
+| `c18_reflet` | Deux saphirs | 11795–11799 | 3 |
+| `c18_reflet_2` | Deux saphirs | 11801–11805 | 3 |
+| `c18_ne_me_laisse_pas` | Ne me laisse pas | 11807–11819 | 7 |
+| `c18_ne_me_laisse_pas_2` | Ne me laisse pas | 11821–11823 | 2 |
+| `c19_trone` | Al’Gratal · Le Poids du Deuil | 11847 | 1 |
+| `c19_trone_2` | Al’Gratal · Le Poids du Deuil | 11849–11855 | 4 |
+| `c19_trone_3` | Al’Gratal · Le Poids du Deuil | 11857–11863 | 4 |
+| `c19_trone_4` | Al’Gratal · Le Poids du Deuil | 11865–11870 | 4 |
+| `c19_pertes` | L’Empire ne pleure pas | 11872–11881 | 6 |
+| `c19_pertes_2` | L’Empire ne pleure pas | 11883–11888 | 4 |
+| `c19_pertes_3` | L’Empire ne pleure pas | 11890–11892 | 2 |
+| `c19_pertes_4` | L’Empire ne pleure pas | 11894–11900 | 4 |
+| `c19_pertes_5` | L’Empire ne pleure pas | 11901–11909 | 6 |
+| `c19_pertes_6` | L’Empire ne pleure pas | 11911–11916 | 4 |
+| `c19_pertes_7` | L’Empire ne pleure pas | 11918 | 1 |
+| `c19_chambre` | Hylee · Le Murmure du Cœur Endormi | 11924–11926 | 2 |
+| `c19_chambre_2` | Hylee · Le Murmure du Cœur Endormi | 11928–11930 | 2 |
+| `c19_chambre_3` | Hylee · Le Murmure du Cœur Endormi | 11932–11938 | 4 |
+| `c19_chambre_4` | Hylee · Le Murmure du Cœur Endormi | 11940–11946 | 4 |
+| `c19_chambre_5` | Hylee · Le Murmure du Cœur Endormi | 11948–11963 | 11 |
+| `c19_saidin` | Alors trouve un moyen | 11965 | 1 |
+| `c19_saidin_2` | Alors trouve un moyen | 11967–11972 | 4 |
+| `c19_saidin_3` | Alors trouve un moyen | 11973–11993 | 13 |
+| `c19_saidin_4` | Alors trouve un moyen | 11994–11999 | 4 |
+| `c19_saidin_5` | Alors trouve un moyen | 12001–12016 | 11 |
+| `c19_saidin_6` | Alors trouve un moyen | 12018–12020 | 2 |
+| `c19_saidin_7` | Alors trouve un moyen | 12021–12022 | 2 |
+| `c19_allenna` | Allenna · Sur les traces d’un régicide | 12026–12029 | 4 |
+| `c19_allenna_2` | Allenna · Sur les traces d’un régicide | 12030 | 1 |
+| `c19_allenna_3` | Allenna · Sur les traces d’un régicide | 12031 | 1 |
+| `c19_allenna_4` | Allenna · Sur les traces d’un régicide | 12032–12035 | 4 |
+| `c19_allenna_5` | Allenna · Sur les traces d’un régicide | 12036–12041 | 6 |
+| `c19_allenna_6` | Allenna · Sur les traces d’un régicide | 12042 | 1 |
+| `c19_allenna_7` | Allenna · Sur les traces d’un régicide | 12043–12046 | 4 |
+| `c19_allenna_8` | Allenna · Sur les traces d’un régicide | 12047–12050 | 4 |
+| `c19_serment` | Mère… nous rentrons | 12052–12075 | 19 |
+| `c19_serment_2` | Mère… nous rentrons | 12076–12079 | 4 |
+| `c19_serment_3` | Mère… nous rentrons | 12081–12082 | 2 |
+| `c19_serment_4` | Mère… nous rentrons | 12084–12087 | 4 |
+| `c19_serment_5` | Mère… nous rentrons | 12088–12093 | 6 |
+| `c19_serment_6` | Mère… nous rentrons | 12094 | 1 |
 
 ## Corrections apportées au texte
 

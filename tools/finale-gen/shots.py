@@ -1,4 +1,4 @@
-# Plans clés du final (Chapitre XVII : S02 à S05 ; Chapitre XVIII : S06, S07), livrés par l’auteur et copiés à l’identique.
+# Plans clés du final (Chapitre XVII : S02 à S05 ; Chapitre XVIII : S06 à S08 ; Épilogue : S09), livrés par l’auteur et copiés à l’identique.
 # (fichier, § du roman où le plan apparaît, mouvement de caméra, titre du codex, description)
 # Un plan reste affiché jusqu’au plan suivant, au plus SPAN paragraphes, puis la scène revient au décor et aux silhouettes.
 # Un paragraphe porte au plus un plan.
@@ -149,9 +149,80 @@ SHOTS += [
     ("chapter18-s07/s07_24_la_foret_sans_iriana.webp", 11408, "recul", "La forêt sans Iriana", "La Porte reste ouverte."),
 ]
 
+
+# Plans clés S08 (chemin Remerii, Chapitre XVIII) et S09 (Épilogue), lot 3 livré par l’auteur, copiés à l’identique.
+# Placés selon la structure du VN : S08 après c18_ouverture, forme finale d’Hylee à partir de c18_remerii_tombe, S09 = c19_*.
+# s08_05 (cercle d’évacuation de Saidin) est placé à c18_fuir, avant Bhaal, et non au § 11155 du livre (c18_premier_choc).
+SHOTS += [
+    ("chapter18-s08/s08_01_la_main_dans_la_breche.webp", 11104, "approche", "La main dans la brèche", "Une main colossale franchit la Porte. Le plan tient avant de montrer la silhouette entière."),
+    ("chapter18-s08/s08_02_bhaal_franchit_la_porte.webp", 11106, "recul", "Bhaal franchit la Porte", "Plan large de Bhaal entier. Le paysage et les troncs donnent son échelle."),
+    ("chapter18-s08/s08_03_remerii_avance.webp", 11121, "approche", "Remerii avance", "Remerii avance à hauteur humaine. La Porte reste en profondeur."),
+    ("chapter18-s08/s08_04_le_premier_givre.webp", 11148, "impact", "Le premier givre", "Le givre se propage à ras du sol. Le rouge de la Porte reste visible."),
+    ("chapter18-s08/s08_05_saidin_prepare_l_evacuation.webp", 11091, "lateral", "Saidin prépare l’évacuation", "Près des racines, Saidin agrandit le cercle d’évacuation. Tia surveille le flanc."),
+    ("chapter18-s08/s08_06_les_runes_du_blizzard.webp", 11417, "approche", "Les runes du blizzard", "Raccord sur les mains de Remerii. La neige s’épaissit quand le sort interdit prend."),
+    ("chapter18-s08/s08_07_le_gardien_de_givre.webp", 11430, "recul", "Le Gardien de Givre", "Une masse glaciaire se détache du voile blanc. C’est aussi le décor du duel c18_bh_blizzard."),
+    ("chapter18-s08/s08_08_le_sceau.webp", 11442, "approche", "Le sceau", "Resserrement sur le visage et la main de Remerii quand le sceau se réveille."),
+    ("chapter18-s08/s08_09_medig_survole_bhaal.webp", 11462, "recul", "Medig survole Bhaal", "Une coupe vers le ciel fait passer Medig au-dessus de Bhaal."),
+    ("chapter18-s08/s08_10_hylee_derriere_remerii.webp", 11466, "approche", "Hylee derrière Remerii", "Contrechamp depuis Remerii. Hylee arrive par l’arrière, encore apprentie."),
+    ("chapter18-s08/s08_11_le_souvenir_de_la_source.webp", 11504, "recul", "Le souvenir de la source", "Fondu vers la nuit près de la source. La leçon peut se poser."),
+    ("chapter18-s08/s08_12_la_nebuleuse.webp", 11522, "approche", "La nébuleuse", "Le filament étoilé s’élève de l’eau entre les deux femmes."),
+    ("chapter18-s08/s08_13_la_paume_d_hylee.webp", 11553, "approche", "La paume d’Hylee", "Raccord sur la paume ouverte d’Hylee. L’Arcane s’y pose."),
+    ("chapter18-s08/s08_14_entre_les_flocons.webp", 11581, "lateral", "Entre les flocons", "Le même geste, dans la neige. Hylee reconnaît le courant."),
+    ("chapter18-s08/s08_15_hylee_devient_un_conduit.webp", 11593, "lateral", "Hylee devient un conduit", "Hylee conduit l’énergie vers Remerii. Le mouvement se lit de l’une vers l’autre."),
+    ("chapter18-s08/s08_16_remerii_relache_tout.webp", 11621, "approche", "Remerii relâche tout", "Remerii relâche l’Arcane. La neige masque encore la forme qui vient."),
+    ("chapter18-s08/s08_17_deux_yeux_dans_la_neige.webp", 11625, "approche", "Deux yeux dans la neige", "Deux yeux émergent de la tempête avant que la silhouette soit lisible."),
+    ("chapter18-s08/s08_18_le_dragon_prend_forme.webp", 11629, "recul", "Le dragon prend forme", "Révélation du dragon de glace en plan large, face à Bhaal."),
+    ("chapter18-s08/s08_19_le_choc_des_colosses.webp", 11637, "impact", "Le choc des colosses", "Coupe sur le choc des deux silhouettes. C’est aussi le décor du duel c18_bh_dragon."),
+    ("chapter18-s08/s08_20_hylee_soutient_remerii.webp", 11644, "approche", "Hylee soutient Remerii", "À hauteur d’épaule, Hylee retient Remerii et transfère son poids."),
+    ("chapter18-s08/s08_21_bhaal_force_le_dragon_a_plier.webp", 11649, "impact", "Bhaal force le dragon à plier", "Bhaal entame la glace à la gorge du dragon, au moment où celui-ci plie."),
+    ("chapter18-s08/s08_22_la_lumiere_rouge_sang.webp", 11654, "impact", "La lumière rouge sang", "Une lueur rouge traverse la neige avant que la source soit identifiable."),
+    ("chapter18-s08/s08_23_valurn_face_a_son_pere.webp", 11657, "approche", "Valurn face à son père", "Découverte de Valurn. Le champ tient sur la reconnaissance entre père et fils."),
+    ("chapter18-s08/s08_24_la_seconde_onde.webp", 11667, "impact", "La seconde onde", "Valurn frappe de nouveau. La poussée se combine à celle du dragon."),
+    ("chapter18-s08/s08_25_la_porte_happe_bhaal.webp", 11678, "recul", "La Porte happe Bhaal", "Bhaal est repoussé dans la Porte rouge. C’est aussi le décor de c18_bh_fin."),
+    ("chapter18-s08/s08_26_hylee_rattrape_remerii.webp", 11700, "approche", "Hylee rattrape Remerii", "Retour à l’échelle humaine. Hylee, déjà en forme finale, rattrape Remerii au moment où elle tombe."),
+    ("chapter18-s08/s08_27_un_battement_presque_absent.webp", 11728, "approche", "Un battement presque absent", "Très serré. Hylee approche l’oreille de la poitrine de Remerii et guette le battement."),
+    ("chapter18-s08/s08_28_medig_plonge.webp", 11758, "recul", "Medig plonge", "Medig descend à travers la neige, juste avant le craquement de la faille."),
+    ("chapter18-s08/s08_29_une_issue_vers_algratal.webp", 11766, "recul", "Une issue vers Al’Gratal", "La faille argentée s’ouvre sur les tours pâles d’Al’Gratal."),
+    ("chapter18-s08/s08_30_le_retour_a_algratal.webp", 11783, "recul", "Le retour à Al’Gratal", "À l’arrivée, un reste du blizzard suit Hylee sur le marbre, Remerii inconsciente dans ses bras."),
+    ("chapter18-s08/s08_31_aucune_trace_d_iriana.webp", 11789, "approche", "Aucune trace d’Iriana", "Coupe sur Tia quand Saidin lui apprend l’absence d’Iriana."),
+    ("chapter18-s08/s08_32_le_blanc_spectral.webp", 11795, "approche", "Le blanc spectral", "Insert sur les mains uniformément blanches d’Hylee."),
+    ("chapter18-s08/s08_33_le_reflet_d_hylee.webp", 11801, "approche", "Le reflet d’Hylee", "Dans la glace, Hylee voit ses traits, ses cheveux blancs et ses yeux saphir."),
+    ("chapter18-s08/s08_34_saidin_appelle_a_l_aide.webp", 11821, "approche", "Saidin appelle à l’aide", "Saidin appelle à l’aide. Hylee tient encore Remerii contre elle."),
+    ("chapter19-s09/s09_01_algratal_sous_le_ciel_voile.webp", 11847, "recul", "Al’Gratal sous le ciel voilé", "Plan large sur la salle vide et Tia à la grande baie."),
+    ("chapter19-s09/s09_02_les_pertes_confirmees.webp", 11849, "approche", "Les pertes confirmées", "Ellion s’incline avec les rapports. Tia regarde la ville."),
+    ("chapter19-s09/s09_03_draven_et_forthaven.webp", 11857, "approche", "Draven et Forthaven", "Insert sur le parchemin pendant le rapport sur Draven et ses soldats."),
+    ("chapter19-s09/s09_04_son_etat.webp", 11883, "approche", "Son état", "Champ serré sur l’hésitation d’Ellion."),
+    ("chapter19-s09/s09_05_les_disparus.webp", 11894, "approche", "Les disparus", "Gros plan sur la main de Tia qui se serre sur le rebord."),
+    ("chapter19-s09/s09_06_l_empire_ne_pleure_pas.webp", 11911, "approche", "L’Empire ne pleure pas", "Profil de Tia sur sa réplique, pendant le départ d’Ellion."),
+    ("chapter19-s09/s09_07_la_chambre_des_chandelles.webp", 11924, "recul", "La chambre des chandelles", "La géographie de la chambre et la veille d’Hylee."),
+    ("chapter19-s09/s09_08_les_doigts_glaces.webp", 11928, "approche", "Les doigts glacés", "Insert sur les deux mains et la couverture."),
+    ("chapter19-s09/s09_09_les_corps_sur_le_champ.webp", 11932, "recul", "Les corps sur le champ", "Le souvenir redouté d’Hylee, pendant le passage sur Forthaven."),
+    ("chapter19-s09/s09_10_remerii_face_a_bhaal.webp", 11940, "recul", "Remerii face à Bhaal", "Rappel de la taille de Bhaal et du sort interdit."),
+    ("chapter19-s09/s09_11_saidin_sur_le_seuil.webp", 11967, "lateral", "Saidin sur le seuil", "Retour au chevet. Saidin apparaît par la gauche."),
+    ("chapter19-s09/s09_12_elle_est_encore_la.webp", 11994, "approche", "Elle est encore là", "Plan rapproché d’Hylee lorsqu’elle relève les yeux."),
+    ("chapter19-s09/s09_13_trouve_un_moyen.webp", 12018, "approche", "Trouve un moyen", "Contrechamp sur Saidin. La phrase retombe avant son départ."),
+    ("chapter19-s09/s09_14_elle_attend.webp", 12021, "approche", "Elle attend", "Le chevet après le départ de Saidin. C’est aussi le décor de c19_promesse."),
+    ("chapter19-s09/s09_15_la_foret_morte.webp", 12026, "recul", "La forêt morte", "Allenna avance seule dans les cendres de la Forêt Interdite."),
+    ("chapter19-s09/s09_16_la_porte_pulse_encore.webp", 12031, "approche", "La Porte pulse encore", "Regard d’Allenna vers la Porte diminuée, même œil rouge que le lot 1, à peine allumé."),
+    ("chapter19-s09/s09_17_elle_la_voit.webp", 12032, "approche", "Elle la voit", "Amanea apparaît. Allenna s’arrête avant de s’approcher."),
+    ("chapter19-s09/s09_18_allenna_tombe_a_genoux.webp", 12042, "approche", "Allenna tombe à genoux", "Allenna s’agenouille. Sa main approche du bras d’Amanea."),
+    ("chapter19-s09/s09_19_les_craquelures_noires.webp", 12043, "approche", "Les craquelures noires", "Insert sur les fissures éteintes. Le récit décrit les blessures."),
+    ("chapter19-s09/s09_20_son_regard_change.webp", 12076, "approche", "Son regard change", "Plan rapproché sur la bascule d’Allenna."),
+    ("chapter19-s09/s09_21_le_dernier_hommage.webp", 12084, "approche", "Le dernier hommage", "Allenna soulève Amanea et la serre contre elle."),
+    ("chapter19-s09/s09_22_mere_nous_rentrons.webp", 12094, "recul", "Mère, nous rentrons", "Dernier plan du tome, sur la phrase et son silence."),
+]
+
 # Plans portés par une scène de duel écrite pour le jeu (le texte du roman qu’ils illustrent y est résumé).
 # (fichier, scène, mouvement de caméra, titre du codex, description)
 DUEL_SHOTS = [
     ("chapter18-s06/s06_08_dans_la_grotte.webp", "c18_dp_grotte_r", "lateral", "Dans la grotte", "Plan de course de trois quarts dos, du rouge extérieur à l’obscurité. La poursuite continue dans sa trace, hors champ."),
     ("chapter18-s06/s06_10_regagner_le_seuil.webp", "c18_dp_voute", "approche", "Regagner le seuil", "Contrechamp depuis l’extérieur. Draven revient à la lumière, avec les morts encore derrière lui dans la grotte."),
+    ("chapter18-s08/s08_07_le_gardien_de_givre.webp", "c18_bh_blizzard", "recul", "Le Gardien de Givre", "Une masse glaciaire se détache du voile blanc."),
+    ("chapter18-s08/s08_07_le_gardien_de_givre.webp", "c18_bh_blizzard_r", "recul", "Le Gardien de Givre", "Une masse glaciaire se détache du voile blanc."),
+    ("chapter18-s08/s08_15_hylee_devient_un_conduit.webp", "c18_bh_sync", "lateral", "Hylee devient un conduit", "Hylee conduit l’énergie vers Remerii."),
+    ("chapter18-s08/s08_15_hylee_devient_un_conduit.webp", "c18_bh_sync_r", "lateral", "Hylee devient un conduit", "Hylee conduit l’énergie vers Remerii."),
+    ("chapter18-s08/s08_19_le_choc_des_colosses.webp", "c18_bh_dragon", "impact", "Le choc des colosses", "Coupe sur le choc des deux silhouettes."),
+    ("chapter18-s08/s08_19_le_choc_des_colosses.webp", "c18_bh_dragon_r", "impact", "Le choc des colosses", "Coupe sur le choc des deux silhouettes."),
+    ("chapter18-s08/s08_25_la_porte_happe_bhaal.webp", "c18_bh_fin", "recul", "La Porte happe Bhaal", "Bhaal est repoussé dans la Porte rouge."),
+    ("chapter19-s09/s09_14_elle_attend.webp", "c19_promesse", "approche", "Elle attend", "Le chevet après le départ de Saidin, pendant la promesse d’Hylee."),
 ]

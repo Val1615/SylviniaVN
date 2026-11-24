@@ -86,6 +86,27 @@ L’histoire continue dans le Tome II.`;
     if (S[id]) S[id].next = 'c19_promesse';
   }
 
+
+  // Plans clés S09 (Épilogue), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  const SHOTS = [
+/*@SHOTS@*/
+  ];
+  const DUEL_SHOTS = [
+/*@DUEL_SHOTS@*/
+  ];
+  for (const [key, path, name, body] of SHOTS) {
+    A[key] = path;
+    CODEX_IMAGES[key] = { title: 'Épilogue · ' + name, body, src: path };
+    CODEX_IMAGE_ORDER.push(key);
+    window.SylviniaStoryCamera?.illustrate(key);
+  }
+  for (const [sid, key, camera] of DUEL_SHOTS) if (S[sid]) Object.assign(S[sid], { bg: key, hideChars: true, camera });
+  CODEX_IMAGE_GROUPS.push({
+    id: 'chapter19',
+    title: chapter,
+    sections: [{ title: 'Le poids du deuil', keys: SHOTS.map(([k]) => k) }],
+  });
+
   const previousGo = go;
   go = window.go = function (next) {
     if (next === 'c19_bilan' || next === 'c19_fin') state.flags = { ...state.flags, tome1Complete: true };
@@ -136,5 +157,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.424 · VN et combats plus lisibles';
+  if (update) update.textContent = 'Mise à jour · v0.425 · Images clés S08 et S09';
 })();
