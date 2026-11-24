@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "47";
+const VER = "48";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -660,7 +660,9 @@ function lireMoteur() {
     const label = lab || (ch && ch.label) || "";
     return { b, ch, label, note, eff: eff || {}, verrou: b.disabled || b.classList.contains("lockedChoice") || b.classList.contains("locked"), req: ch && ch.requires };
   });
-  const hud = combat ? (document.getElementById("stats")?.innerHTML || "") : "";
+  // Duel en suspens (interlude du roman entre deux tours d’un duel du final) : le HUD reste affiché, en compact.
+  const interlude = !combat && !!(stage && stage.classList.contains("fdInterlude"));
+  const hud = combat || interlude ? (document.getElementById("stats")?.innerHTML || "") : "";
   return { id, s, bg: bgm ? bgm[1] : (A_()[s.bg] || ""), zoom: !!(bgEl && bgEl.classList.contains("zoom")), video: vid ? (vid.currentSrc || vid.getAttribute("src") || vid.querySelector("source")?.getAttribute("src") || "") : "", chars, speaker, text, choix, cont, combat, hud,
     title: document.getElementById("sceneTitle")?.textContent || s.title || "", sub: document.getElementById("sceneSub")?.textContent || s.sub || "" };
 }
@@ -682,7 +684,7 @@ function majJeu(force) {
     J.M = M; // boutons du moteur frais (le moteur peut re-rendre #choices sans changer les libellés)
     const hudEl = $(".combat-hud"); if (hudEl && hudEl.innerHTML !== M.hud) { hudEl.hidden = !M.hud; hudEl.innerHTML = M.hud; }
     if (M.combat && J.plein && J.pages.join("\n") !== M.text) { J.pages = [M.text]; const el = $(".dlg-texte"); if (el) el.innerHTML = M.text.split("\n").map((l) => `<span class="para">${esc(l)}</span>`).join(""); }
-    majSprites(M.chars, M.speaker); majDevScene(); return;
+    majSprites(M.chars, J.parleur || M.speaker); majDevScene(); return;
   }
   const memeFond = J && $(".jeu") && J.M.bg === M.bg && J.M.video === M.video;
   // combat : une seule page défilante (pas de pagination qui coupe la consigne d’un tour chronométré)
@@ -746,20 +748,39 @@ function majDevScene() {
   badge.dataset.sceneCode = id;
   badge.innerHTML = `DEV · <b>${esc(id)}</b>`;
 }
+const cleNom = (x) => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[\s·,(]+/)[0];
 function majSprites(chars, parleur) {
   const box = $(".sprites"); if (!box) return;
   const html = chars.map((c) => `<img class="sprite ${esc(c.cls)}" src="${esc(c.src)}" alt="">`).join("");
   if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
-  const parle = String(parleur || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[\s·,]+/)[0];
-  $$(".sprite", box).forEach((im) => im.classList.toggle("parle", !!parle && im.classList.contains(parle)));
+  // Le locuteur s’avance (échelle, lumière, premier plan) ; les autres reculent dans la pénombre.
+  const parle = cleNom(parleur);
+  let un = false;
+  $$(".sprite", box).forEach((im) => { const on = !!parle && im.classList.contains(parle); im.classList.toggle("parle", on); un = un || on; });
+  box.classList.toggle("dialogue", un);
+}
+// Répliques de la page affichée (scènes générées du final : s.voices = [début de réplique, locuteur]).
+function voixPage(M, txt) {
+  const v = (M.s && M.s.voices) || []; if (!v.length || !txt) return [];
+  const t = normTxt(txt);
+  return v.filter(([deb]) => { const d = normTxt(deb).slice(0, 30); return d && t.includes(d); }).map((x) => x[1]);
+}
+// Locuteur de la page : celui de la scène, sinon la dernière réplique de la page (de préférence un personnage visible).
+function parleurPage(M, txt) {
+  if (M.speaker && !/^Narrat/i.test(M.speaker)) return M.speaker;
+  const voix = voixPage(M, txt); if (!voix.length) return "";
+  const vus = new Set(M.chars.flatMap((c) => c.cls.split(/\s+/)));
+  return [...voix].reverse().find((n) => vus.has(cleNom(n))) || voix[voix.length - 1];
 }
 function afficherPage(direct) {
   clearInterval(typeT); clearTimeout(autoT);
   if (!J || !$(".dlg")) return;
   const { M, pages, p } = J; const txt = pages[p];
-  const narr = !M.speaker || /^Narrat/i.test(M.speaker);
+  const qui = parleurPage(M, txt) || M.speaker;
+  J.parleur = qui; majSprites(M.chars, qui);
+  const narr = !qui || /^Narrat/i.test(qui);
   $(".plaque-nom").classList.toggle("narr", narr);
-  $(".plaque-nom .nom").textContent = narr ? "Narration" : M.speaker;
+  $(".plaque-nom .nom").textContent = narr ? "Narration" : qui;
   $(".plaque-nom .didasc").textContent = M.sub || "";
   const ch = CHAP[CH_OF(J.id)] || { label: "" };
   $(".dlg-cote").textContent = `${(ch.key === "intro" ? "✦" : (ch.label || "").replace("Chapitre ", ""))} · ${J.id.replace(/^c\d+[a-z]?_/, "").replace(/^intro_/, "").replace(/_/g, " ")}`;
@@ -770,7 +791,7 @@ function afficherPage(direct) {
   const el = $(".dlg-texte"); const lignes = txt.split("\n");
   const html = lignes.map((l) => `<span class="para">${esc(l)}</span>`).join("");
   const last = G.journal[G.journal.length - 1];
-  if (!last || last.id !== J.id || last.p !== p) { G.journal.push({ id: J.id, p, sp: narr ? "Narration" : M.speaker, t: txt }); if (G.journal.length > 160) G.journal.shift(); sauver(); }
+  if (!last || last.id !== J.id || last.p !== p) { G.journal.push({ id: J.id, p, sp: narr ? "Narration" : qui, t: txt }); if (G.journal.length > 160) G.journal.shift(); sauver(); }
   const fini = () => { J.plein = true; el.innerHTML = html; $(".dlg").classList.add("plein"); if (p === pages.length - 1 && J.M.choix.length) montrerChoix(); else if (J.auto) autoT = setTimeout(avancer, G.reg.auto * 1000); };
   $(".dlg").classList.remove("plein"); J.plein = false;
   if (direct || PB.classList.contains("reduit") || G.reg.vitesse >= 100) return fini();

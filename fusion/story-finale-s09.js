@@ -33,7 +33,7 @@
   const flags = () => state.flags || {};
 
   Object.assign(S, {
-    c19_trone: scene("Al’Gratal · Le Poids du Deuil", BG_TRONE, M_CONSEIL, 'Narrateur',
+    c19_trone: { ...scene("Al’Gratal · Le Poids du Deuil", BG_TRONE, M_CONSEIL, 'Narrateur',
       `Dans la salle du trône d’Al’Gratal, le silence est plus lourd que jamais. Il n’y a plus de murmures d’ambassadeurs, plus de généraux échafaudant des plans, plus de conseils stratégiques bruissant de discussions feutrées. Il n’y a que Tia Farae, debout devant la grande baie vitrée, regardant son royaume s’étendre sous un ciel voilé, une lumière grise baignant une capitale qui a perdu trop de ses enfants. L’Empire tient encore debout, mais il a vacillé.
 
 Derrière elle, Ellion Valendil approche à pas mesurés, une liasse de parchemins dans les mains. Le Haut-Général des armées, toujours droit, toujours austère, mais portant sur son visage les marques des jours sombres qu’ils viennent de traverser. Il s’arrête à quelques pas d’elle, s’incline brièvement, avant de commencer.
@@ -59,8 +59,8 @@ Et Draven est mort en combattant.
 Un guerrier, jusqu’au bout.
 
 Ellion poursuit.`,
-      "c19_pertes", [tia('stern')]),
-    c19_pertes: scene("L’Empire ne pleure pas", BG_TRONE, M_CONSEIL, 'Narrateur',
+      "c19_pertes", [tia('stern')]), voices: [["« Les pertes ont été confirmées. »", "Ellion"], ["« Les noms. »", "Tia"], ["« Amiral Régent Draven. Mort avec l’inté", "Ellion"]] },
+    c19_pertes: { ...scene("L’Empire ne pleure pas", BG_TRONE, M_CONSEIL, 'Narrateur',
       `« Les détachements Sylviniens envoyés en éclaireurs pour constater l’activité de la Porte Noire… Aucune unité n’a survécu. Ça confirme nos craintes. »
 
 L’Empire a perdu plus que des soldats.
@@ -114,7 +114,7 @@ Elle a déjà décidé.
 Il incline la tête, referme les parchemins avec la même précision clinique, et se retire sans un mot de plus. Il sait ce qui vient.
 
 L’Empire va se préparer à la guerre.`,
-      "c19_chambre", [tia('neutral')]),
+      "c19_chambre", [tia('neutral')]), voices: [["« Les détachements Sylviniens envoyés en", "Ellion"], ["« Remerii. »", "Ellion"], ["« Son état ? »", "Tia"], ["« Cliniquement morte. Mais l’apprentie h", "Ellion"], ["« Iriana. »", "Ellion"], ["« Disparue. Comme Alamma. Comme Naïah. »", "Ellion"], ["« L’Empire ne pleure pas. »", "Tia"]] },
     c19_chambre: scene("Hylee · Le Murmure du Cœur Endormi", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `La lumière tamisée des chandelles danse sur les murs de la chambre silencieuse, projetant des ombres mouvantes sur les draps immaculés où repose Remerii, immobile, figée dans un sommeil qui n’a rien de naturel. L’odeur des herbes médicinales brûlées emplit l’air, un parfum de cendres et de menthe, d’illusion et de résignation.
 
@@ -162,7 +162,7 @@ N’importe quoi.
 
 Mais rien ne vient.`,
       "c19_saidin", [hyleeF('triste', 'center')]),
-    c19_saidin: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
+    c19_saidin: { ...scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Rien, sauf Saidin.
 
 L’homme pénètre dans la chambre sans bruit, ses pas feutrés trahissant une fatigue qu’il cache mal. Son visage est marqué, plus que d’ordinaire, ses traits tirés, son regard sombre, comme si les siècles qu’il porte en lui s’étaient alourdis en quelques jours.
@@ -194,8 +194,8 @@ Elle n’a même pas remarqué la nuit tomber.
 Sa voix est rauque, abîmée par le silence, par l’épuisement. Saidin hoche la tête, son regard toujours fixé sur le corps immobile. Il aurait voulu dire quelque chose de plus. Mais il ne sait pas quoi.
 
 Parce que lui aussi, il a perdu quelque chose. Remerii n’était pas simplement une élève.`,
-      "c19_saidin_2", [hyleeF('serieuse'), saidinDown]),
-    c19_saidin_2: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
+      "c19_saidin_2", [hyleeF('serieuse'), saidinDown]), voices: [["« Tu es là depuis combien de temps ? »", "Saidin"], ["« Assez longtemps. »", "Hylee"]] },
+    c19_saidin_2: { ...scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Il l’avait formée, guidée, observée grandir dans les méandres des Arcanes, partagé avec elle des connaissances qu’il n’aurait confiées à personne d’autre. Il avait vu en elle une promesse, une lumière rare dans un Empire où la magie était une arme et non un savoir.
 
 Et aujourd’hui, cette lumière était éteinte. Mais Hylee, elle, refusait de l’accepter.
@@ -231,7 +231,7 @@ Sa voix ne tremble pas.
 Saidin l’observe longtemps. Puis, dans un murmure à peine audible, il lâche, presque pour lui-même :
 
 « Alors trouve un moyen de la ramener. »`,
-      "c19_saidin_3", [hyleeF('serieuse'), saidinDown]),
+      "c19_saidin_3", [hyleeF('serieuse'), saidinDown]), voices: [["« Ils ont tort. »", "Hylee"], ["« Elle est encore là. »", "Hylee"], ["« Elle se bat encore. »", "Hylee"], ["« Alors trouve un moyen de la ramener. »", "Saidin"]] },
     c19_saidin_3: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Et sans un mot de plus, il s’éloigne, laissant derrière lui un silence chargé de sens. À d’autres, son départ aurait pu sembler froid, presque résigné, mais pour Hylee, ses paroles résonnent comme un présage. Il ne lui demande pas de convaincre, ni de justifier son instinct… il lui confie un devoir. Comme s’il savait, au-delà des doutes et des lois de ce monde, qu’elle seule détient la clé du réveil de Remerii.
 
@@ -292,7 +292,7 @@ Son abdomen est ouvert, déchiré par un coup porté avec une précision effraya
 
 Elle a été transpercée jusqu’au cœur.`,
       "c19_serment", [allenna('troubled')]),
-    c19_serment: scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
+    c19_serment: { ...scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
       `Une mort brutale….
 
 Une mort faite pour être irréversible.
@@ -336,8 +336,8 @@ Son regard change.
 Son souffle se stabilise.
 
 L’Empire a tout pris.`,
-      "c19_serment_2", [allenna('sad')]),
-    c19_serment_2: scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
+      "c19_serment_2", [allenna('sad')]), voices: [["« Je… je… »", "Allenna"]] },
+    c19_serment_2: { ...scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
       `Ils ont gagné une bataille qu’ils ne méritaient pas. Ils s’en sont pris à un être qui ne souhaitait que vivre, et protéger des personnes qui ne le méritaient pas…
 
 Mais ils paieront.
@@ -365,7 +365,7 @@ Alors, elle murmure.
 Sa voix est posée, douce, presque tendre, dénuée de rage mais imprégnée d’une rancune que rien ne pourra dissiper.
 
 « Mère… nous rentrons. »`,
-      "c19_bilan", [allenna('sad')]),
+      "c19_bilan", [allenna('sad')]), voices: [["« Mère… nous rentrons. »", "Allenna"]] },
 
     // Variante issue des choix « Je reviendrai » (S02) et « Dans la tempête » (S08).
     c19_promesse: scene('Au chevet', BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
@@ -398,13 +398,17 @@ ${hand}`;
 Points de vue vécus : ${seen.join(', ')}.
 
 L’histoire continue dans le Tome II.`;
-        }, 'c19_fin'),
+        }, 'c19_fin', [hyleeF('calme', 'left'), allenna('neutral', 'right')]),
     c19_fin: {
-      ...scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur', `Fin du Tome I.`),
+      ...scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur', `Fin du Tome I.`, null, [hyleeF('calme', 'center')]),
       chapterEnd: true,
       choices: [{ label: 'Retour au menu', next: 'menu', flags: { tome1Complete: true } }],
     },
   });
+  // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
+  Object.entries({
+    c19_promesse: [['« Tu as dit que tu reviendrais', 'Hylee'], ['« Je n’ai pas eu le temps', 'Hylee'], ['« Reviens », souffle Hylee', 'Hylee']],
+  }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
   // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
   Object.entries({}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 
@@ -465,5 +469,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.422 · Images clés S05 à S07';
+  if (update) update.textContent = 'Mise à jour · v0.424 · VN et combats plus lisibles';
 })();

@@ -95,8 +95,10 @@
     Object.defineProperty(o, 'next', { enumerable: true, configurable: true, get: () => test() || ok });
     return o;
   };
+  // Game Over : la silhouette de celui ou celle qui tombe reste à l’écran (pas de décor nu).
+  const GO_CHARS = { s06: [dravenSoot], s07: [irianaTroubled], s08: [hylee, remeriiSad] };
   const gameOver = (id, step, sub, bg, text) => ({
-    ...scene(sub, bg, M_PLAINTE_I, 'Narrateur', text, null, []), title: 'Game Over', fduel: id, fstep: step, fgameover: true, pov: 'gameover',
+    ...scene(sub, bg, M_PLAINTE_I, 'Narrateur', text, null, GO_CHARS[id] || []), title: 'Game Over', fduel: id, fstep: step, fgameover: true, pov: 'gameover',
     choices: [
       { label: 'Réessayer le duel', next: START[id], flags: RESET[id], skipHistory: true },
       { label: 'Retour au menu', next: 'menu' },
@@ -105,8 +107,9 @@
   const pick = (key, texts) => () => texts[flags()[key]] || Object.values(texts)[0];
 
   // Fin d’une perspective facultative : carton temporel, retour automatique vers S08.
-  const branchEnd = (sub, text) => {
-    const o = scene(sub, BG_PORTE, M_TENSION, 'Narrateur', text, null, []);
+  const branchEnd = (sub, text, chars = [], bg = BG_PORTE) => {
+    const o = scene(sub, bg, M_TENSION, 'Narrateur', text, null, chars);
+    if (bg !== BG_PORTE) o.hideChars = true;
     Object.defineProperty(o, 'choices', {
       enumerable: true, configurable: true,
       get: () => flags().finaleReplay
@@ -115,6 +118,9 @@
     });
     return o;
   };
+
+  // Carrefour : les deux regards possibles sur la nuit (Draven, Iriana) plutôt qu’un champ de bataille vide.
+  const CARREFOUR_CHARS = [['draven', 'draven_gruff', 'left'], ['iriana', 'iriana_troubled_alone', 'right']];
 
   Object.assign(S, {
     c18_carrefour_intro: scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur',
@@ -125,16 +131,16 @@
           return `Chapitre XVIII · Début de la fin
 
 La Reine Noire est tombée. Le portail brûle encore. Sur le champ de bataille, plusieurs destins se jouent au même instant, à quelques lieues les uns des autres.${extra}`;
-        }, 'c18_carrefour'),
+        }, 'c18_carrefour', CARREFOUR_CHARS),
     c18_carrefour: {
-      ...scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur', `Quel regard porter sur cette nuit ?`),
+      ...scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur', `Quel regard porter sur cette nuit ?`, null, CARREFOUR_CHARS),
       choices: carrefourChoices(),
     },
     c18_s08_intro: scene('Au même moment', BG_PORTE, M_TENSION, 'Narrateur',
       `Au même moment, face au portail…
 
 La Reine Noire gît sur la terre brûlée. Autour du portail, ceux qui restent reprennent leur souffle sans savoir que la nuit n’a pas fini de réclamer son dû.`,
-      'c18_ouverture'),
+      'c18_ouverture', [irianaTroubled, tia('sad')]),
 
     // ───── S06 · Draven (facultatif) ─────
     c18_dp_intro: scene('Pendant ce temps', BG_CREVASSE, M_DRAVEN, 'Narrateur',
@@ -225,10 +231,10 @@ La horde passe, et la grotte reste debout.`),
         }[flags().s06LinevaWords] || '';
         return `Les plaques dans une main. Le médaillon dans l’autre. Entre les deux, toute une vie qu’il a tenue jusqu’au bout.${words ? '\n\n' + words : ''}`;
       },
-      'c18_s06_fin'),
+      'c18_s06_fin', [dravenSoot]),
     c18_s06_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule.`),
+Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule.`, [remeriiSad]),
 
     // ───── S07 · Iriana (facultatif) ─────
     c18_ip_intro: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
@@ -318,7 +324,7 @@ Quand le fragment de Valurn arrive enfin, il ne trouve plus personne pour l’ac
 Alamma la regarde tomber sans un mot. Puis il se retourne vers le portail.`),
     c18_s07_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Ce qu’Iriana laisse derrière elle continue sans elle. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+Ce qu’Iriana laisse derrière elle continue sans elle. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`, [], 'c18_cg_s07_24_la_foret_sans_iriana'),
 
     // ───── S08 · Remerii, Hylee, Bhaal (obligatoire) ─────
     c18_bh_blizzard: {
@@ -408,7 +414,7 @@ Hylee rouvre la main, haletante. La leçon de Remerii est encore là, au creux d
       null, [remeriiStrict]), 'c18_valurn_renvoi', () => { const v = calc('s08', 4); return v.blizzard <= 0 ? 'c18_bh_gameover_blizzard' : v.pression > 5 ? 'c18_bh_gameover_bhaal' : null; }),
     c18_bh_fin: duelScene('s08', 5, 'Final · Bhaal repoussé', BG_GIVRE, M_BHAAL,
       `La pression de Bhaal retombe à rien. Le démon suprême est repoussé, mais le portail tient encore, affaibli, ouvert sur ce qui attend de l’autre côté.`,
-      'c18_remerii_tombe'),
+      'c18_remerii_tombe', [hylee, remeriiStrict]),
     c18_bh_gameover_blizzard: gameOver('s08', 4, 'Le blizzard cède', BG_GIVRE,
       `Le sceau se réveille avant la fin. La tempête se brise sur Remerii elle-même, le Gardien s’effondre en poussière de givre, et Bhaal enjambe ce qui reste du blizzard.
 
@@ -424,7 +430,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
 
     c18_fin: {
       ...scene('Fin du Chapitre XVIII', BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
-        `Fin du Chapitre XVIII · Début de la fin.`),
+        `Fin du Chapitre XVIII · Début de la fin.`, null, [hyleeF('calme', 'center')]),
       chapterEnd: true,
       get choices() {
         return flags().finaleReplay
@@ -435,6 +441,10 @@ Bhaal franchit la tempête morte et passe le portail.`),
 
 /*@SCENES@*/
   });
+  // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
+  Object.entries({
+    c18_reponse_hylee: [['« Je ne te laisse pas seule', 'Hylee']],
+  }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
 /*@ALIASES@*/
 
   // Plans clés S06 (branche Draven) et S07 (branche Iriana), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.

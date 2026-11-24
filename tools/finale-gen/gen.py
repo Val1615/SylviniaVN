@@ -3,6 +3,7 @@ import json, sys, os
 sys.path.insert(0, os.path.dirname(__file__))
 import novel as N
 from beats import B
+from voices import V as VOICES
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', '..', 'fusion')
@@ -36,30 +37,48 @@ def chunk(ids_texts):
         else: parts.append(cur)
     return parts
 
-def segments(ids_texts):
+def segments(ids_texts, hold=False, carry=None):
     # Découpe un passage en segments : décor + silhouettes, ou plan clé (CG) tenu jusqu’au plan suivant, au plus SPAN §.
+    # hold (scène sans silhouette disponible) : le plan reste affiché jusqu’au plan suivant, sans limite, et les §
+    # qui précèdent le premier plan gardent le dernier plan de la scène précédente (carry) plutôt qu’un décor nu.
     segs = []
     for it in ids_texts:
         i = it[0]
         if i in SHOT_AT:
             segs.append({'shots': SHOT_AT[i], 'items': [it]})
             used_shots.update(k for k, _ in SHOT_AT[i])
-        elif segs and segs[-1]['shots'] and len(segs[-1]['items']) < SPAN:
+        elif segs and segs[-1]['shots'] and (hold or len(segs[-1]['items']) < SPAN):
             segs[-1]['items'].append(it)
         elif segs and not segs[-1]['shots']:
             segs[-1]['items'].append(it)
+        elif not segs and hold and carry:
+            segs.append({'shots': [(carry, None)], 'items': [it]})
         else:
             segs.append({'shots': None, 'items': [it]})
     return segs
 
+def voices_js(part):
+    # Répliques de l’écran : [début du paragraphe, locuteur]. L’interface s’en sert, page par page, pour mettre en
+    # avant la silhouette de celui ou celle qui parle et afficher son nom sur la plaque.
+    rows = []
+    for i, t in part:
+        if i not in VOICES: continue
+        lines = [l.strip() for l in t.split('\n') if l.strip()]
+        for n, l in enumerate(lines):
+            if n == 0 or l.startswith('«'): rows.append([l[:40], VOICES[i]])
+    return f", voices: {json.dumps(rows, ensure_ascii=False)}" if rows else ''
+
 def emit(prefix):
     beats = [b for b in B if b['id'].startswith(prefix)]
     out = []
+    last_shot = None
     for k, b in enumerate(beats):
         ids = [i for i in N.ids_between(b['a'], b['b']) if i not in N.HEADINGS]
         ids_texts = [(i, N.para(i)) for i in ids]
+        hold = b['chars'] == 'HOLD'
+        assert b['chars'] != '[]', f"{b['id']} : écran sans silhouette ni plan clé"
         parts = []   # (shots, items)
-        for seg in segments(ids_texts):
+        for seg in segments(ids_texts, hold, last_shot):
             parts += [(seg['shots'], p) for p in chunk(seg['items'])]
         nxt_final = b['next'] or (beats[k + 1]['id'] if k + 1 < len(beats) else None)
         for j, (shots, part) in enumerate(parts):
@@ -68,15 +87,20 @@ def emit(prefix):
             text = '\n\n'.join(t for _, t in part)
             coverage.append((sid, [i for i, _ in part]))
             sub = json.dumps(b['sub'], ensure_ascii=False)
+            vjs = voices_js(part)
             if not shots:
-                out.append(f"    {sid}: scene({sub}, {b['bg']}, {b['music']}, 'Narrateur',\n      {js_tpl(text)},\n      {json.dumps(nxt)}, {b['chars']}),\n")
+                assert not hold, f"{b['id']} : plan clé à tenir introuvable"
+                body = f"scene({sub}, {b['bg']}, {b['music']}, 'Narrateur',\n      {js_tpl(text)},\n      {json.dumps(nxt)}, {b['chars']})"
+                out.append(f"    {sid}: {{ ...{body}{vjs} }},\n" if vjs else f"    {sid}: {body},\n")
                 continue
             # Plan clé : l’illustration remplace le décor, les silhouettes s’effacent (moteur : décor /keyscenes/).
             # Les écrans suivants d’un même plan gardent le cadrage sans relancer le mouvement.
             key, cam = shots[0]
-            extra = {'camera': cam} if part[0][0] in SHOT_AT else {}
+            last_shot = key
+            extra = {'camera': cam} if (cam and part[0][0] in SHOT_AT) else {}
             cam_js = f", camera: {json.dumps(extra['camera'])}" if extra else ''
-            out.append(f"    {sid}: {{ ...scene({sub}, {json.dumps(key)}, {b['music']}, 'Narrateur',\n      {js_tpl(text)},\n      {json.dumps(nxt)}, []), hideChars: true{cam_js} }},\n")
+            out.append(f"    {sid}: {{ ...scene({sub}, {json.dumps(key)}, {b['music']}, 'Narrateur',\n      {js_tpl(text)},\n      {json.dumps(nxt)}, []), hideChars: true{cam_js}{vjs} }},\n")
+        if parts and parts[-1][0]: last_shot = parts[-1][0][0][0]
     return ''.join(out)
 
 CHAPTER_OF = {'c17_': 'chapter17', 'c18_': 'chapter18'}
@@ -88,11 +112,13 @@ def shots_js(prefix):
     return ''.join(rows)
 
 LEGACY = json.load(open(os.path.join(HERE, 'legacy_coverage.json')))
+# Découpage v0.423 (avant les plans tenus) : les sauvegardes faites sur un écran disparu retombent sur son premier §.
+LEGACY += json.load(open(os.path.join(HERE, 'legacy_coverage_v0423.json')))
 def aliases_js(prefix):
     # Anciennes scènes (sauvegardes faites avant le découpage en plans) : elles pointent vers l’écran qui porte leur premier §.
     new_ids = {sid for sid, _ in coverage}
     where = {i: sid for sid, ids in coverage for i in ids}
-    pairs = {sid: where[ids[0]] for sid, ids in LEGACY if sid.startswith(prefix) and sid not in new_ids}
+    pairs = {sid: where[ids[0]] for sid, ids in LEGACY if sid.startswith(prefix) and sid not in new_ids and ids}
     return '  // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).\n  Object.entries(' + json.dumps(pairs) + ').forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });\n'
 
 FILES = [('c17_', 'story-finale-s02.js', 'extra_c17.js'), ('c18_', 'story-finale-s06.js', 'extra_c18.js'), ('c19_', 'story-finale-s09.js', 'extra_c19.js')]

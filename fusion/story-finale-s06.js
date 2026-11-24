@@ -95,8 +95,10 @@
     Object.defineProperty(o, 'next', { enumerable: true, configurable: true, get: () => test() || ok });
     return o;
   };
+  // Game Over : la silhouette de celui ou celle qui tombe reste à l’écran (pas de décor nu).
+  const GO_CHARS = { s06: [dravenSoot], s07: [irianaTroubled], s08: [hylee, remeriiSad] };
   const gameOver = (id, step, sub, bg, text) => ({
-    ...scene(sub, bg, M_PLAINTE_I, 'Narrateur', text, null, []), title: 'Game Over', fduel: id, fstep: step, fgameover: true, pov: 'gameover',
+    ...scene(sub, bg, M_PLAINTE_I, 'Narrateur', text, null, GO_CHARS[id] || []), title: 'Game Over', fduel: id, fstep: step, fgameover: true, pov: 'gameover',
     choices: [
       { label: 'Réessayer le duel', next: START[id], flags: RESET[id], skipHistory: true },
       { label: 'Retour au menu', next: 'menu' },
@@ -105,8 +107,9 @@
   const pick = (key, texts) => () => texts[flags()[key]] || Object.values(texts)[0];
 
   // Fin d’une perspective facultative : carton temporel, retour automatique vers S08.
-  const branchEnd = (sub, text) => {
-    const o = scene(sub, BG_PORTE, M_TENSION, 'Narrateur', text, null, []);
+  const branchEnd = (sub, text, chars = [], bg = BG_PORTE) => {
+    const o = scene(sub, bg, M_TENSION, 'Narrateur', text, null, chars);
+    if (bg !== BG_PORTE) o.hideChars = true;
     Object.defineProperty(o, 'choices', {
       enumerable: true, configurable: true,
       get: () => flags().finaleReplay
@@ -115,6 +118,9 @@
     });
     return o;
   };
+
+  // Carrefour : les deux regards possibles sur la nuit (Draven, Iriana) plutôt qu’un champ de bataille vide.
+  const CARREFOUR_CHARS = [['draven', 'draven_gruff', 'left'], ['iriana', 'iriana_troubled_alone', 'right']];
 
   Object.assign(S, {
     c18_carrefour_intro: scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur',
@@ -125,16 +131,16 @@
           return `Chapitre XVIII · Début de la fin
 
 La Reine Noire est tombée. Le portail brûle encore. Sur le champ de bataille, plusieurs destins se jouent au même instant, à quelques lieues les uns des autres.${extra}`;
-        }, 'c18_carrefour'),
+        }, 'c18_carrefour', CARREFOUR_CHARS),
     c18_carrefour: {
-      ...scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur', `Quel regard porter sur cette nuit ?`),
+      ...scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur', `Quel regard porter sur cette nuit ?`, null, CARREFOUR_CHARS),
       choices: carrefourChoices(),
     },
     c18_s08_intro: scene('Au même moment', BG_PORTE, M_TENSION, 'Narrateur',
       `Au même moment, face au portail…
 
 La Reine Noire gît sur la terre brûlée. Autour du portail, ceux qui restent reprennent leur souffle sans savoir que la nuit n’a pas fini de réclamer son dû.`,
-      'c18_ouverture'),
+      'c18_ouverture', [irianaTroubled, tia('sad')]),
 
     // ───── S06 · Draven (facultatif) ─────
     c18_dp_intro: scene('Pendant ce temps', BG_CREVASSE, M_DRAVEN, 'Narrateur',
@@ -225,10 +231,10 @@ La horde passe, et la grotte reste debout.`),
         }[flags().s06LinevaWords] || '';
         return `Les plaques dans une main. Le médaillon dans l’autre. Entre les deux, toute une vie qu’il a tenue jusqu’au bout.${words ? '\n\n' + words : ''}`;
       },
-      'c18_s06_fin'),
+      'c18_s06_fin', [dravenSoot]),
     c18_s06_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule.`),
+Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule.`, [remeriiSad]),
 
     // ───── S07 · Iriana (facultatif) ─────
     c18_ip_intro: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
@@ -318,7 +324,7 @@ Quand le fragment de Valurn arrive enfin, il ne trouve plus personne pour l’ac
 Alamma la regarde tomber sans un mot. Puis il se retourne vers le portail.`),
     c18_s07_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Ce qu’Iriana laisse derrière elle continue sans elle. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+Ce qu’Iriana laisse derrière elle continue sans elle. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`, [], 'c18_cg_s07_24_la_foret_sans_iriana'),
 
     // ───── S08 · Remerii, Hylee, Bhaal (obligatoire) ─────
     c18_bh_blizzard: {
@@ -408,7 +414,7 @@ Hylee rouvre la main, haletante. La leçon de Remerii est encore là, au creux d
       null, [remeriiStrict]), 'c18_valurn_renvoi', () => { const v = calc('s08', 4); return v.blizzard <= 0 ? 'c18_bh_gameover_blizzard' : v.pression > 5 ? 'c18_bh_gameover_bhaal' : null; }),
     c18_bh_fin: duelScene('s08', 5, 'Final · Bhaal repoussé', BG_GIVRE, M_BHAAL,
       `La pression de Bhaal retombe à rien. Le démon suprême est repoussé, mais le portail tient encore, affaibli, ouvert sur ce qui attend de l’autre côté.`,
-      'c18_remerii_tombe'),
+      'c18_remerii_tombe', [hylee, remeriiStrict]),
     c18_bh_gameover_blizzard: gameOver('s08', 4, 'Le blizzard cède', BG_GIVRE,
       `Le sceau se réveille avant la fin. La tempête se brise sur Remerii elle-même, le Gardien s’effondre en poussière de givre, et Bhaal enjambe ce qui reste du blizzard.
 
@@ -424,7 +430,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
 
     c18_fin: {
       ...scene('Fin du Chapitre XVIII', BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
-        `Fin du Chapitre XVIII · Début de la fin.`),
+        `Fin du Chapitre XVIII · Début de la fin.`, null, [hyleeF('calme', 'center')]),
       chapterEnd: true,
       get choices() {
         return flags().finaleReplay
@@ -458,7 +464,7 @@ Il n’a même pas réalisé qu’il était encore actif. Et une voix résonne.
 « Père ? »
 
 Son cœur manque un battement.`,
-      "c18_pere_3", []), hideChars: true, camera: "approche" },
+      "c18_pere_3", []), hideChars: true, camera: "approche", voices: [["« Père ? »", "Lineva"]] },
     c18_pere_3: scene("Père ?", BG_CREVASSE, M_LINEVA, 'Narrateur',
       `Lineva.
 
@@ -468,7 +474,7 @@ Il reste figé une seconde, pris au dépourvu. Elle essaie de le contacter. Seul
       `« Je rentre bientôt… »
 
 Sa voix est rauque, brisée. Il sait qu’il ment. Mais il veut qu’elle l’entende.`,
-      "c18_je_rentre_2", []), hideChars: true, camera: "approche" },
+      "c18_je_rentre_2", []), hideChars: true, camera: "approche", voices: [["« Je rentre bientôt… »", "Draven"]] },
     c18_je_rentre_2: { ...scene("Je rentre bientôt", "c18_cg_s06_05_epee_relevee", M_LINEVA, 'Narrateur',
       `Qu’elle y croie. Puis il relève son épée, une nouvelle flamme brûlant en lui. Dans ce calvaire infini… il prend conscience que sa fille est toujours en vie. Cela lui suffit, maintenant, son combat l’attend.`,
       "c18_dp_echo", []), hideChars: true, camera: "approche" },
@@ -531,7 +537,7 @@ Son visage est calme. Ses yeux, à demi-ouverts, fixent un point invisible.
 
 Il a l’air d’attendre.`,
       "c18_remerii_draven_4", []), hideChars: true, camera: "approche" },
-    c18_remerii_draven_4: scene("Il a l’air d’attendre", BG_CREVASSE, M_PLAINTE_I, 'Narrateur',
+    c18_remerii_draven_4: { ...scene("Il a l’air d’attendre", BG_CREVASSE, M_PLAINTE_I, 'Narrateur',
       `Elle s’approche lentement.
 
 « Draven… ? »
@@ -539,7 +545,7 @@ Il a l’air d’attendre.`,
 Aucune réponse.
 
 Ses lèvres sont entrouvertes, comme s’il avait voulu dire quelque chose… et qu’il s’était arrêté en plein souffle.`,
-      "c18_remerii_draven_5", [remeriiSad]),
+      "c18_remerii_draven_5", [remeriiSad]), voices: [["« Draven… ? »", "Remerii"]] },
     c18_remerii_draven_5: { ...scene("Il a l’air d’attendre", "c18_cg_s06_17_la_main_sur_l_epaule", M_PLAINTE_I, 'Narrateur',
       `Elle s’agenouille devant lui, pose une main tremblante sur son épaule. Son corps est froid.
 
@@ -580,7 +586,7 @@ Et derrière elle, le portail brûle.
 
 Des langues de flammes cramoisies serpentent le long des runes démoniaques gravées dans la pierre. Un brasier infernal, une blessure béante dans le tissu même de leur monde. Iriana s’en approche, le cœur serré. Le portail s’active lentement. Ce n’est plus une simple construction de pierre et d’énergie. C’est une entité en soi. Il aspire, avale, réclame. Il est affamé de chaos.`,
       "c18_soeur_en_deuil", [irianaTroubled, tia('troubled')]),
-    c18_soeur_en_deuil: scene("Une sœur en deuil", BG_PORTE, M_PLAINTE_I, 'Narrateur',
+    c18_soeur_en_deuil: { ...scene("Une sœur en deuil", BG_PORTE, M_PLAINTE_I, 'Narrateur',
       `Iriana ne regarde pas Tia immédiatement. Elle n’ose pas.
 
 Elle attend une réaction. Une explosion de colère, un jugement froid, une sentence prononcée d’un ton impérial. Mais rien ne vient.
@@ -614,8 +620,8 @@ Sa voix est basse, rauque. Fatiguée.
 Son regard doré se voile d’un éclat que Iriana ne lui connaissait pas.
 
 « Mais je crois qu’au fond… elle voulait simplement être libre. »`,
-      "c18_journal", [irianaSad, tia('sad')]),
-    c18_journal: scene("Elle a essayé", BG_PORTE, M_PLAINTE_I, 'Narrateur',
+      "c18_journal", [irianaSad, tia('sad')]), voices: [["« J’aurais peut-être dû l’écouter. »", "Tia"], ["« Grand-mère ? »", "Iriana"], ["« Elle n’a jamais été comme moi. »", "Tia"], ["« Elle a toujours été… autre. Trop fragi", "Tia"], ["« Mais je crois qu’au fond… elle voulait", "Tia"]] },
+    c18_journal: { ...scene("Elle a essayé", BG_PORTE, M_PLAINTE_I, 'Narrateur',
       `Iriana se mord la lèvre.
 
 « Elle a essayé. »
@@ -657,7 +663,7 @@ Ses doigts glissent sur les cheveux blancs d’Amanea, écartant doucement quelq
 Elle inspire profondément, sa poitrine se soulevant dans un effort visible.
 
 « Et par ma faute… elle ne connaîtra jamais le repos qu’elle devrait avoir… »`,
-      "c18_regret", [irianaSad, tia('sad')]),
+      "c18_regret", [irianaSad, tia('sad')]), voices: [["« Elle a essayé. »", "Iriana"], ["« J’ai vu ce qu’elle était vraiment. »", "Iriana"], ["« J’ai trouvé son journal, ses souvenirs", "Iriana"], ["« Elle s’est toujours battue pour ce qu’", "Iriana"], ["« Je savais ce qui l’attendait. »", "Tia"], ["« Qu’est-ce que tu veux dire ? »", "Iriana"], ["« Elle est ma sœur. »", "Tia"], ["« Et par ma faute… elle ne connaîtra jam", "Tia"]] },
     c18_regret: scene("Du regret", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Iriana sent son cœur se serrer.
 
@@ -691,8 +697,8 @@ Elle se souvient d’Amanea, enfant, qui la dépassait toujours d’un pas lorsq
 Elle rouvre les yeux. Amanea n’est plus.
 
 Le conflit s’est terminé d’une seule lame, une lame qui n’a pas seulement transpercé le cœur d’une sœur… mais des deux jumelles. Iriana observe Tia, incapable de détourner le regard. Elle n’a jamais vu son impassible tante ainsi. Si immobile, si fragile. Tia respire lentement, son visage de marbre figé dans un calme trompeur, mais tout son être semble secoué d’une tempête intérieure. Alors, elle bouge enfin.`,
-      "c18_etreinte", []),
-    c18_etreinte: scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
+      "c18_etreinte", [irianaSad, tia('sad')]),
+    c18_etreinte: { ...scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Elle avance doucement contre sa jumelle. Ses gestes sont lents, mesurés, comme si elle craignait qu’Amanea ne disparaisse en poussière à la moindre pression. Ses bras se tendent, et enfin… elle la prend dans ses bras.
 
 Iriana écarquille les yeux.
@@ -722,7 +728,7 @@ Tia verse quelques larmes, discrètes et rares…
 pourtant, c’est bien plus qu’elle n’en a jamais laissé paraître.
 
 Des larmes amères, des larmes de peines, des larmes de regrets`,
-      "c18_etreinte_2", [irianaSad, tia('sad')]),
+      "c18_etreinte_2", [irianaSad, tia('sad')]), voices: [["« Oui… j’aurais dû t’écouter. »", "Tia"]] },
     c18_etreinte_2: scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Mais à présent, il est trop tard. La lueur d'Amanea s'est éteinte à jamais, et aucun mot, aucun geste, ne pourra jamais recoudre les liens brisés par l'éternité impitoyable de la mort.
 
@@ -748,7 +754,7 @@ Debout devant la faille béante, il contemple l’abîme. Un monde où les morte
 
 Ses vêtements nobles d’antan sont à moitié rongés par la magie du Chaos, son manteau effiloché traînant dans la boue sombre. Il ne vacille pas. Il se tient droit, tel un souverain devant son trône d’ombres.`,
       "c18_alamma_3", []), hideChars: true, camera: "recul" },
-    c18_alamma_3: scene("Confrontation au Portail", BG_PORTE, M_IRIANA, 'Narrateur',
+    c18_alamma_3: { ...scene("Confrontation au Portail", BG_PORTE, M_IRIANA, 'Narrateur',
       `À ses pieds, les démons s’inclinent. Ils ne le menacent pas. Ils le reconnaissent. Ils le servent.
 
 Iriana serre les poings.
@@ -762,7 +768,7 @@ Il lève légèrement la tête, scrutant toujours l’intérieur du portail, com
 Puis, d’une voix étrangement calme, il parle :
 
 « Non, ma fille. Ce monde est déjà condamné. Je ne fais qu’accepter l’inévitable. »`,
-      "c18_tu_es_trop_jeune", [irianaStern]),
+      "c18_tu_es_trop_jeune", [irianaStern]), voices: [["« Tu es devenu l’un des leurs. »", "Iriana"], ["« Non, ma fille. Ce monde est déjà conda", "Alamma"]] },
     c18_tu_es_trop_jeune: scene("Un gouffre", BG_PORTE, M_IRIANA, 'Narrateur',
       `Iriana sent un frisson glacial lui courir le long de l’échine.`,
       "c18_tu_es_trop_jeune_2", [irianaStern]),
@@ -775,7 +781,7 @@ Toujours aussi perçant, toujours aussi froid. Pourtant, dans la lumière trembl
 
 Un gouffre.`,
       "c18_tu_es_trop_jeune_3", []), hideChars: true, camera: "approche" },
-    c18_tu_es_trop_jeune_3: scene("Un gouffre", BG_PORTE, M_IRIANA, 'Narrateur',
+    c18_tu_es_trop_jeune_3: { ...scene("Un gouffre", BG_PORTE, M_IRIANA, 'Narrateur',
       `Une profondeur infinie.
 
 « Tu m’as condamnée et as trahi ton propre peuple ! crache-t-elle. Tu es allé trop loin… Est-ce par couardise, ou juste par ignorance ? »
@@ -789,13 +795,13 @@ Puis un sourire se dessine sur les lèvres d’Alamma.
 Sa voix est douce, moralisatrice mais aussi presque… compatissante.
 
 « Tu es trop jeune pour comprendre. Quel dommage. »`,
-      "c18_tu_es_trop_jeune_4", [irianaStern]),
+      "c18_tu_es_trop_jeune_4", [irianaStern]), voices: [["« Tu m’as condamnée et as trahi ton prop", "Iriana"], ["« Non, Iriana. »", "Alamma"], ["« Tu es trop jeune pour comprendre. Quel", "Alamma"]] },
     c18_tu_es_trop_jeune_4: { ...scene("Un gouffre", "c18_cg_s07_04_la_main_d_alamma", M_IRIANA, 'Narrateur',
       `Il tend lentement la main.`,
       "c18_ip_maitrise", []), hideChars: true, camera: "approche" },
     c18_pacte_valurn: scene("Le pacte", BG_CHAMP, M_VALURN, 'Narrateur',
       `Pendant ce temps, à plusieurs lieues de là.`,
-      "c18_pacte_valurn_2", [valurnAway]),
+      "c18_pacte_valurn_2", [irianaStern, valurnAway]),
     c18_pacte_valurn_2: { ...scene("Le pacte", "c18_cg_s07_05_l_appel_du_pacte", M_VALURN, 'Narrateur',
       `Valurn s’arrête net.
 
@@ -811,7 +817,7 @@ Le pacte. Iriana est en danger.`,
 Mais il n’y arrive pas.
 
 Il ferme les yeux. Il voit Amanea. Son dernier regard, son pouvoir arraché, sa magie pure déchirée sous ses doigts.`,
-      "c18_pacte_valurn_4", [valurnAway]),
+      "c18_pacte_valurn_4", [irianaStern, valurnAway]),
     c18_pacte_valurn_4: { ...scene("Le pacte", "c18_cg_s07_06_les_mains_noircies", M_VALURN, 'Narrateur',
       `Il regarde ses propres mains, encore noircies par l’énergie qu’il a volée.
 
@@ -821,7 +827,7 @@ Ce pouvoir, aucun autre mortel ne peut le manipuler… au risque de finir comme 
 
 Mais… s’il en donne une partie ?`,
       "c18_pacte_valurn_5", []), hideChars: true, camera: "approche" },
-    c18_pacte_valurn_5: scene("Le pacte", BG_CHAMP, M_VALURN, 'Narrateur',
+    c18_pacte_valurn_5: { ...scene("Le pacte", BG_CHAMP, M_VALURN, 'Narrateur',
       `Juste assez.
 
 Juste assez pour qu’Iriana puisse survivre.
@@ -829,7 +835,7 @@ Juste assez pour qu’Iriana puisse survivre.
 Un sourire amer étire ses lèvres.
 
 « Ça, tu ne l’avais pas vu venir, père. »`,
-      "c18_pacte_valurn_6", [valurnAway]),
+      "c18_pacte_valurn_6", [irianaStern, valurnAway]), voices: [["« Ça, tu ne l’avais pas vu venir, père. ", "Iriana"]] },
     c18_pacte_valurn_6: { ...scene("Le pacte", "c18_cg_s07_07_une_breche_minuscule", M_VALURN, 'Narrateur',
       `Il tend la main, une petite brèche démoniaque se formant vers le néant. De cette manière, il laisse une fraction du pouvoir couler à travers l’espace.
 
@@ -847,7 +853,7 @@ L’air se fissure autour d’elle, l’étrange étreinte d’Alamma étouffe s
 Juste une pitié glaciale.
 
 « Tout ceci est inévitable, Iriana. Je t’offre une dernière opportunité. »`,
-      "c18_a_genoux_2", []), hideChars: true, camera: "approche" },
+      "c18_a_genoux_2", []), hideChars: true, camera: "approche", voices: [["« Tout ceci est inévitable, Iriana. Je t", "Alamma"]] },
     c18_a_genoux_2: scene("Une dernière opportunité", BG_PORTE, M_IRIANA, 'Narrateur',
       `Il tend la main vers elle, prêt à lui offrir un choix empoisonné.
 
@@ -862,13 +868,13 @@ Valurn.`,
     c18_a_genoux_3: { ...scene("Une dernière opportunité", "c18_cg_s07_09_un_fragment_dans_la_terre", M_IRIANA, 'Narrateur',
       `L’énergie qu’il a prise à Amanea, cette puissance arrachée aux ténèbres elles-mêmes, coule en elle, pas en totalité, pas assez pour la consumer, juste un fragment, un éclat ardent qui pulse dans son corps comme un second souffle. Ses doigts se crispent contre la terre froide, ses muscles retrouvent leur tension, son dos se redresse lentement. L’air autour d’elle crépite, un halo sombre l’enveloppe brièvement avant de s’adoucir, de se modeler à son essence propre, de se fondre en elle comme si elle lui avait toujours appartenu.`,
       "c18_ip_flux", []), hideChars: true, camera: "approche" },
-    c18_peu_importe: scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
+    c18_peu_importe: { ...scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
       `Alamma, jusque-là impassible, fronce légèrement les sourcils. Il a perçu ce changement, il l’a senti dans l’air, ce frémissement d’énergie qui n’était pas là l’instant d’avant. Il l’observe, mesurant, analysant, cherchant à comprendre ce qui vient de se produire.
 
 « Comment est-ce que tu… Peu importe. »
 
 Sa voix est calme, détachée, mais il y a une nuance dans son ton, une infime vibration qui trahit un soupçon d’incertitude.`,
-      "c18_peu_importe_2", [irianaStern]),
+      "c18_peu_importe_2", [irianaStern]), voices: [["« Comment est-ce que tu… Peu importe. »", "Alamma"]] },
     c18_peu_importe_2: { ...scene("Peu importe", "c18_cg_s07_10_iriana_se_redresse", M_IRIANA, 'Narrateur',
       `Iriana lève lentement la tête.
 
@@ -878,9 +884,9 @@ Elle se redresse complètement, ses jambes tremblent encore, mais elle tient deb
 
 Elle le regarde droit dans les yeux. C’est elle qui écrase.`,
       "c18_peu_importe_3", []), hideChars: true, camera: "approche" },
-    c18_peu_importe_3: scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
+    c18_peu_importe_3: { ...scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
       `« Oui. Peu importe. »`,
-      "c18_attaque", [irianaStern]),
+      "c18_attaque", [irianaStern]), voices: [["« Oui. Peu importe. »", "Iriana"]] },
     c18_attaque: scene("Elle attaque", BG_PORTE, M_IRIANA, 'Narrateur',
       `Elle attaque.
 
@@ -911,10 +917,10 @@ Il la jauge un instant, puis parle, doucement.
 « Tu as progressé. Je ne pensais pas que tu… userais d’une telle magie. »
 
 Iriana resserre sa prise, sent la magie bouillonner en elle, mais elle sait qu’elle ne doit pas se laisser emporter.`,
-      "c18_attaque_6", []), hideChars: true, camera: "impact" },
-    c18_attaque_6: scene("Elle attaque", BG_PORTE, M_IRIANA, 'Narrateur',
+      "c18_attaque_6", []), hideChars: true, camera: "impact", voices: [["« Tu as progressé. Je ne pensais pas que", "Alamma"]] },
+    c18_attaque_6: { ...scene("Elle attaque", BG_PORTE, M_IRIANA, 'Narrateur',
       `« Et toi, tu es moins invincible que je ne le pensais. »`,
-      "c18_trois_forces", [irianaStern]),
+      "c18_trois_forces", [irianaStern]), voices: [["« Et toi, tu es moins invincible que je ", "Iriana"]] },
     c18_trois_forces: scene("Ombre, Chaos, Mort", BG_PORTE, M_IRIANA, 'Narrateur',
       `Alamma penche légèrement la tête. Il l’observe.
 
@@ -974,7 +980,7 @@ Son corps se fond dans le vortex démoniaque, une ombre avalée par la faille b�
 Iriana sent son souffle exploser.
 
 « NON ! »`,
-      "c18_chute_alamma_5", []), hideChars: true, camera: "approche" },
+      "c18_chute_alamma_5", []), hideChars: true, camera: "approche", voices: [["« NON ! »", "Iriana"]] },
     c18_chute_alamma_5: { ...scene("NON !", "c18_cg_s07_20_le_cri_d_iriana", M_IRIANA, 'Narrateur',
       `Sa voix se brise, un cri féroce, un hurlement chargé de rage et de frustration, une clameur qui résonne même après sa disparition.
 
@@ -1055,8 +1061,8 @@ Elles ne sont pas humaines. Elles ne sont pas animales. Elles sont quelque chose
 Les premiers démons émergent. Leurs corps se fondent avec les ténèbres, leurs silhouettes ondulent comme si elles n’étaient pas totalement solides. Leurs yeux, en revanche, sont bien réels : rouge, fendus, affamés.
 
 Tia dégaine son épée dans un éclair de lumière blanche. L’acier sacré pulse d’une lueur fébrile, vacillante face à la noirceur abyssale qui suinte du portail.`,
-      "c18_fuir", []),
-    c18_fuir: scene("Nous devons fuir", BG_PORTE, M_HORREUR, 'Narrateur',
+      "c18_fuir", [irianaStern, tia('stern')]),
+    c18_fuir: { ...scene("Nous devons fuir", BG_PORTE, M_HORREUR, 'Narrateur',
       `« Debout. »
 
 Sa voix est tranchante, impérieuse.
@@ -1090,8 +1096,8 @@ Le vieux mage hésite une seconde, ses doigts crispés sur son bâton. Un portai
 « Je vais avoir besoin de plusieurs minutes. »
 
 « Alors on va te les offrir », murmure Tia, faisant tournoyer son arme en foudroyant les démons du regard.`,
-      "c18_bhaal", [tia('stern', 'left'), saidin, remerii]),
-    c18_bhaal: scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
+      "c18_bhaal", [tia('stern', 'left'), saidin, remerii]), voices: [["« Debout. »", "Tia"], ["« Par tous les dieux… » souffle Remerii,", "Remerii"], ["« Nous devons fuir. »", "Saidin"], ["« Si on fuit, la forêt entière tombera s", "Tia"], ["« Alors il faut qu’on parte avant qu’ils", "Remerii"], ["« Tu pourrais ouvrir un portail vers Al’", "Remerii"], ["« Je vais avoir besoin de plusieurs minu", "Saidin"], ["« Alors on va te les offrir », murmure T", "Tia"]] },
+    c18_bhaal: { ...scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
       `Un second frisson secoue la forêt. Les arbres gémissent sous une pression invisible.
 
 Quelque chose de plus grand, de plus puissant, approche.
@@ -1117,8 +1123,8 @@ Il déploie ses ailes déchirées, leur envergure occultant la lumière tremblan
 « Le temps de la conquête est venu. Tremblez sous le fléau de votre nouveau seigneur, Bhaal ! »
 
 Il est géant, haut de plusieurs dizaine de mètres. Un titan du chaos à la peau de pierre.`,
-      "c18_remerii_avance", []),
-    c18_remerii_avance: scene("Elle avance", BG_PORTE, M_BHAAL, 'Narrateur',
+      "c18_remerii_avance", [tia('stern', 'left'), saidin, remerii]), voices: [["« Enfin… »", "Bhaal"], ["« Le temps de la conquête est venu. Trem", "Bhaal"]] },
+    c18_remerii_avance: { ...scene("Elle avance", BG_PORTE, M_BHAAL, 'Narrateur',
       `Tia serre son épée jusqu’à en blanchir les phalanges. Elle sait qu’ils ne peuvent pas le combattre.
 
 Mais Remerii ne recule pas…
@@ -1156,8 +1162,8 @@ Remerii ne cligne même pas des yeux.
 Une tempête glacée se lève autour d’elle.
 
 « Mais tu ne vas pas apprécier. »`,
-      "c18_premier_choc", [remeriiStrict]),
-    c18_premier_choc: scene("Les crocs du Chaos", BG_PORTE, M_BHAAL, 'Narrateur',
+      "c18_premier_choc", [tia('stern', 'left'), remeriiStrict]), voices: [["« Reculez… dit-elle, sans élever la voix", "Remerii"], ["« Ne dis pas de bêtises. Il va t’écraser", "Tia"], ["« Je sais. Mais je peux le retenir. »", "Remerii"], ["« Prenez soin de ma Hylee… »", "Remerii"], ["« Pensez-vous pouvoir me retenir, insect", "Bhaal"], ["« Non seulement je vais le faire… »", "Remerii"], ["« Mais tu ne vas pas apprécier. »", "Remerii"]] },
+    c18_premier_choc: { ...scene("Les crocs du Chaos", BG_PORTE, M_BHAAL, 'Narrateur',
       `Elle tend les bras.
 
 Une déflagration de givre explose dans la clairière, recouvrant les racines et les troncs d’une carapace cristalline, formant un cône glacée en direction du démon. Celui-ci ne se protège même pas. Il rit.
@@ -1177,8 +1183,8 @@ Dans l’ombre, Saidin continue son incantation. Les flux magiques s’assemblen
 Autour d’eux, les soldats se regroupent, luttant pour gagner du temps.
 
 Le sort de Saidin déchire l’espace-temps. La terre, la végétation, la poussière, une pesanteur s’installe peu à peu.`,
-      "c18_iriana_part", [remeriiStrict, saidin]),
-    c18_iriana_part: scene("Où est Iriana ?!", BG_PORTE, M_BHAAL, 'Narrateur',
+      "c18_iriana_part", [tia('stern', 'left'), saidin, remeriiStrict]), voices: [["« Saidin ! Ramenez les nôtres chez eux !", "Remerii"], ["« Dépêche-toi, vieil homme », crache Tia", "Tia"], ["« Je fais ce que je peux ! » grogne-t-il", "Saidin"]] },
+    c18_iriana_part: { ...scene("Où est Iriana ?!", BG_PORTE, M_BHAAL, 'Narrateur',
       `Et au milieu de ce chaos…
 
 Iriana disparaît.
@@ -1196,7 +1202,7 @@ Seule.
 Avançant droit vers la porte démoniaque. Tia crie son nom. Mais Iriana ne se retourne pas.
 
 Elle disparaît de la forêt sans un mot.`,
-      "c18_gardien", [tia('troubled', 'center')]),
+      "c18_gardien", [tia('troubled', 'center')]), voices: [["« Où est Iriana ?! »", "Tia"]] },
     c18_gardien: scene("Un Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Pendant ce temps, face au portail, Remerii est toujours contre Bhaal, seule.
 
@@ -1224,7 +1230,7 @@ Et enfin, les ombres bougent.
 
 Un Gardien de Givre.`,
       "c18_bh_blizzard", [remeriiStrict]),
-    c18_sceau: scene("Le sceau", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+    c18_sceau: { ...scene("Le sceau", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Bhaal fronce les sourcils.
 
 Puis, pour la première fois, il se redresse entièrement, comme s’il évaluait enfin la menace devant lui.
@@ -1258,7 +1264,7 @@ Bhaal rit dans la tempête.
 « Tu as été optimiste, mortelle. »
 
 Il fait un pas en avant, son ombre absorbant la neige, sa présence dévoyant le froid lui-même. Il affronte le sort de face, comme pour la défier dans un duel perdu d’avance`,
-      "c18_medig", [remeriiSad]),
+      "c18_medig", [remeriiSad]), voices: [["« Alors tu oses réveiller ça ? »", "Bhaal"], ["« Tu es plus téméraire que je ne le pens", "Bhaal"], ["« Tu as été optimiste, mortelle. »", "Bhaal"]] },
     c18_medig: scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Mais un élément détourne son attention.
 
@@ -1290,7 +1296,7 @@ Sa mentor.
 
 Son amour.`,
       "c18_medig_2", [hylee, remeriiSad]),
-    c18_medig_2: scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+    c18_medig_2: { ...scene("Medig", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Sa chouette l’a menée jusqu’ici, la guidant à travers les ténèbres et la peur. La forçant a avancer au-delà de barrière mentale. Elle ne pouvait pas laisser Remerii partir seule… elle savait qu’elle aurait besoin d’elle, comme ce fut et sera toujours son cas.
 
 …
@@ -1314,7 +1320,7 @@ Elle ne devrait pas être là. Elle devrait être en train de fuir avec les Sylv
 Elle n’a pas sa place dans cette bataille. Et pourtant… c’est précisément là qu’elle fait erreur.
 
 Hylee ne tremble pas, mais est concentrée. Elle prend une grande inspiration.`,
-      "c18_choix_hylee", [hylee, remeriiSad]),
+      "c18_choix_hylee", [hylee, remeriiSad]), voices: [["« Hylee ?! »", "Remerii"], ["« Qu’est-ce que tu fais ici ?! »", "Remerii"]] },
     c18_souvenir_lien: scene("Un vieux souvenir", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Remerii lit quelque chose dans son regard, mais aussi dans leur lien jusque-là mis en sommeil.
 
@@ -1322,7 +1328,7 @@ Un souvenir.
 
 Un vieux souvenir.`,
       "c18_source", [hylee, remeriiSurprised]),
-    c18_source: scene("La source", BG_SOURCE, M_SOURCE, 'Narrateur',
+    c18_source: { ...scene("La source", BG_SOURCE, M_SOURCE, 'Narrateur',
       `Hylee se rappelle. Une nuit calme, il y a longtemps.
 
 Elle est assise près d’une source, une étendue d’eau cristalline où les étoiles semblent danser à la surface.
@@ -1354,8 +1360,8 @@ Hylee ouvre grand les yeux.
 Elle laisse le filament onduler entre ses doigts, comme un papillon posé sur le bord du réel.
 
 « L’arcane est une nébuleuse. Belle. Sauvage. Brûlante… et surtout volatile. »`,
-      "c18_nebuleuse", [hyleeYoung, remeriiSoft]),
-    c18_nebuleuse: scene("Laisse-la venir à toi", BG_SOURCE, M_SOURCE, 'Narrateur',
+      "c18_nebuleuse", [hyleeYoung, remeriiSoft]), voices: [["« Ressentir l’Arcane n’est pas la même c", "Remerii"], ["« Je ne comprends pas. Je sens… des vibr", "Hylee"], ["« C’est parce que tu essaies de l’attrap", "Remerii"], ["« C’est magnifique… »", "Hylee"], ["« Oui. Si chaque force était une couleur", "Remerii"], ["« L’arcane est une nébuleuse. Belle. Sau", "Remerii"]] },
+    c18_nebuleuse: { ...scene("Laisse-la venir à toi", BG_SOURCE, M_SOURCE, 'Narrateur',
       `Elle regarde Hylee dans les yeux.
 
 « Si tu tends la main sans précaution, elle te dévorera. »
@@ -1391,7 +1397,7 @@ Remerii referme doucement les doigts de l’adolescente avec sa main
 Mais Hylee sait que si elle avait refermé sa main trop vite…
 
 Elle aurait soit été brûlée, soit simplement fait chou blanc.`,
-      "c18_choix_arcane", [hyleeYoung, remeriiSoft]),
+      "c18_choix_arcane", [hyleeYoung, remeriiSoft]), voices: [["« Si tu tends la main sans précaution, e", "Remerii"], ["« Alors… Comment dois-je faire ? »", "Hylee"], ["« Tu dois l’approcher comme une étoile m", "Remerii"], ["« Observe-la. Laisse-la venir à toi. »", "Remerii"], ["« Tu ressens ça ? »", "Remerii"], ["« Voilà. Maintenant, tu as une partie de", "Remerii"]] },
     c18_conduit: scene("Elle devient un conduit", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Elle ouvre les yeux.
 
@@ -1429,7 +1435,7 @@ Elle devient un conduit.
 
 Et elle transmet tout à Remerii.`,
       "c18_dragon", [hylee]),
-    c18_dragon: scene("Le Déchaînement du Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
+    c18_dragon: { ...scene("Le Déchaînement du Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `La neige explose autour d’elles.
 
 Remerii halète, son corps meurtri toujours en proie à la marque qui la déchire de l’intérieur. Elle sent la magie lui échapper, son invocation faiblir sous la douleur.
@@ -1473,8 +1479,8 @@ Le dragon fond sur lui, ses serres massives lacérant son armure chitineuse, ses
 Le Seigneur du Chaos pousse un grondement furieux, repoussant la créature à mains nues, ses flammes infernales consumant le givre.
 
 Le dragon recule, mais revient à la charge, claquant sa queue avec la puissance d’une avalanche. Les ombres et la glace s’affrontent violemment, la forêt entière tremble sous le choc des deux colosses. Un grondement sourd monte derrière elles, une vibration lourde qui résonne à travers le sol, puis, d’un coup, l’air se comprime brutalement, aspiré en un battement sec, une implosion étouffée qui laisse derrière elle un silence anormal, une absence oppressante qu’elles ne perçoivent qu’à moitié, trop absorbées par la furie glaciale qui les consume.`,
-      "c18_bh_dragon", [remeriiStrict]),
-    c18_valurn_renvoi: scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
+      "c18_bh_dragon", [remeriiStrict]), voices: [["« Hylee… ? »", "Remerii"]] },
+    c18_valurn_renvoi: { ...scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
       `Remerii vacille, sentant la magie lui aspirer toute son énergie.
 
 Hylee lui attrape le bras, la soutenant malgré le froid mordant.
@@ -1528,8 +1534,8 @@ Il est interrompu, disparaissant dans le portail, qui réagit au retour du démo
 « Ce n’est que le début… »
 
 L’onde de choc de sa chute secoue l’air, le portail tressaille, vacille, affaibli mais toujours debout.`,
-      "c18_bh_fin", [valurnAnnoyed]),
-    c18_remerii_tombe: scene("Un silence brisé", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
+      "c18_bh_fin", [hylee, valurnAnnoyed]), voices: [["« Tiens bon ! hurle-t-elle. On y est pre", "Hylee"], ["« Toi », gronde Bhaal.", "Bhaal"], ["« Misérable vermi… »", "Bhaal"], ["« Ce n’est que le début… »", "Bhaal"]] },
+    c18_remerii_tombe: { ...scene("Un silence brisé", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `La tempête retombe. Le silence s’abat sur la clairière.
 
 Mais ce n’est pas un silence de victoire. C’est un silence brisé.
@@ -1565,7 +1571,7 @@ Sa voix tremble.
 « Je vais te sortir de là. »
 
 Mais elles sont seules. Les autres sont partis. Le blizzard les a isolées du monde extérieur, ne remarquant pas qu’elles ont fini seules, pas seulement ce combat, mais aussi cette guerre.`,
-      "c18_seules", [hyleeF('pleurs', 'center')]),
+      "c18_seules", [hyleeF('pleurs', 'center')]), voices: [["« Remerii ! »", "Hylee"], ["« Non… Non, non, non… »", "Hylee"], ["« Tiens bon… ! »", "Hylee"], ["« Je vais te sortir de là. »", "Hylee"]] },
     c18_seules: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Tia, les Sylviniens, les soldats… Ils ont fui.
 
@@ -1657,11 +1663,11 @@ Elle se redresse, vacillante mais résolue, puis, avec ce qui lui reste de force
     c18_algratal_2: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Autour d’elle, il y a des voix, des mouvements précipités, l’écho des Sylviniens qui s’affairent, qui réalisent qu’elle est revenue, mais elle n’entend rien d’autre que le martèlement de son propre cœur, le bourdonnement sourd de la magie qui circule encore en elle, ce vestige de l’Arcane qui n’a pas disparu, qui la ronge lentement, l’épuise, la change, la prive du moindre répit. Elle est là, à genoux dans la neige souillée, immobile, le souffle court, incapable de penser, incapable de parler, incapable même de pleurer tant la peur lui noue la gorge, et pourtant, elle sent les larmes brûler sous ses paupières, prêtes à déborder à tout moment, prêtes à tout consumer dans leur chute.`,
       "c18_algratal_3", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
-    c18_algratal_3: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
+    c18_algratal_3: { ...scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Des bruits de pas résonnent tout près, des bruits rapides, nerveux, des coups secs contre le sol de pierre, un rythme saccadé, impatient, agacé, et elle tourne enfin la tête, presque mécaniquement, ses yeux encore flous par l’épuisement trouvant la silhouette familière de Tia Farae. L’Impératrice est là, le dos droit, le visage fermé, son pied frappant le sol dans une cadence nerveuse, non pas d’impatience, mais d’inquiétude, non pas pour elle, Hylee en est certaine, mais pour une autre, une autre qui aurait dû être là, une autre qui n’est pas revenue, une absence qui pèse bien plus lourd que toutes les blessures, que toutes les pertes. Son regard se tourne vers Saidin, l’homme n’a pas besoin de parler, il se contente d’un léger mouvement de tête, d’un simple geste, infime, mais qui résonne comme une sentence.
 
 « Il ne restait qu’elles… Aucune trace d’Iriana. »`,
-      "c18_algratal_4", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
+      "c18_algratal_4", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]), voices: [["« Il ne restait qu’elles… Aucune trace d", "Saidin"]] },
     c18_algratal_4: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `La phrase tombe, brutale, irrévocable, comme une lame sur une corde trop tendue, et Hylee voit le visage de Tia se figer, non pas sous le choc, mais sous le poids d’une certitude qu’elle refusait sans doute d’admettre jusque-là. L’air autour d’elles semble se figer un instant, un silence plus lourd que tout s’installe, un silence où chaque respiration devient un fardeau, où chaque battement de cœur est une douleur. Mais l’Impératrice ne cède pas, elle ne flanche pas, elle reste droite, impassible, mais Hylee sait, elle sait ce que signifie ce silence, elle sait ce que signifie cette immobilité parfaite, elle sait que, sous la surface, tout vacille, tout s’effondre, tout hurle en elle.
 
@@ -1680,7 +1686,7 @@ Deux saphirs luisants, deux abysses d’énergie pure, un regard qui n’est plu
 
 Elle ne sait plus qui elle est.`,
       "c18_ne_me_laisse_pas", [hyleeF('magie', 'center')]),
-    c18_ne_me_laisse_pas: scene("Ne me laisse pas", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
+    c18_ne_me_laisse_pas: { ...scene("Ne me laisse pas", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Elle voudrait hurler, pleurer, nier cette réalité, mais elle ne peut pas, pas maintenant, pas alors que Remerii est là, dans ses bras, inconsciente, peut-être déjà morte, peut-être déjà trop loin pour être sauvée. Ses mains tremblantes se referment sur le tissu glacé de sa tunique, elle la serre contre elle, enfouissant son visage contre son épaule, retenant un sanglot qui menace d’éclater à tout moment.
 
 « S’il te plaît… »
@@ -1698,8 +1704,12 @@ Un ordre.
 « De l’aide ! »
 
 Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il s’attendait à ce que cela arrive, comme s’il avait toujours su que toucher à l’Arcane la changerait à jamais. Mais il ne s’attarde pas sur elle, il ne pose pas de questions, son regard est tourné vers Remerii, vers cette femme qui peut, peut-être, être sauvée… ou peut-être pas.`,
-      "c18_fin", [hyleeF('pleurs'), ['saidin', 'saidin_mysterious', 'right']]),
+      "c18_fin", [hyleeF('pleurs'), ['saidin', 'saidin_mysterious', 'right']]), voices: [["« S’il te plaît… »", "Hylee"], ["« Ne me laisse pas… »", "Hylee"], ["« De l’aide ! »", "Saidin"]] },
   });
+  // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
+  Object.entries({
+    c18_reponse_hylee: [['« Je ne te laisse pas seule', 'Hylee']],
+  }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
   // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
   Object.entries({}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 

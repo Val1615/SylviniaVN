@@ -1,5 +1,25 @@
 # Journal · Final du Tome I
 
+## v0.424 (branche `feat/finale-vn-combats-clairs`)
+
+VN
+- Cause du locuteur jamais mis en avant : tous les écrans générés du final portaient le locuteur « Narrateur » (les répliques sont dans le texte du roman), donc l’interface ne trouvait aucune silhouette à éclairer ; et même dans les anciens chapitres, `.sprite.parle` ne changeait que la luminosité.
+- Nouveau `tools/finale-gen/voices.py` : locuteur de chacune des 149 répliques du roman. Les écrans générés portent `voices` (début de réplique, locuteur) ; l’interface choisit, page par page, la dernière réplique d’un personnage visible, affiche son nom sur la plaque et met sa silhouette en avant. Écrans écrits à la main : table `voices` dans `extra_c17/18/19.js`.
+- Le locuteur s’avance (échelle 1,07, lumière, premier plan) ; les autres reculent (0,95, pénombre). L’échelle propre des sprites (`finale-k`) est conservée (multiplication). Valable dans tout le Mode Histoire.
+- Écrans sans silhouette ni image clé : 51 → 0. Scènes du roman complétées avec des sprites existants (Tia et Allenna en CA png, Hylee forme finale seulement à partir de `c18_remerii_tombe`), plans clés tenus plus longtemps (`HOLD` : jusqu’au plan suivant, et reprise du dernier plan de la scène précédente), cartons de fin et Game Over habillés.
+- Personnages ajoutés là où ils parlent : Tia (`c17_fuyards`, `c18_remerii_avance`, `c18_premier_choc`), Allenna (`c17_fermer`, `c17_double_jeu`), Iriana (`c18_pacte_valurn`), Hylee (`c18_valurn_renvoi`).
+- Sans sprite (plans clés uniquement) : Amanea transformée, Alamma, Bhaal, Démendras, Ellion ; Lineva reste une voix hors champ (parchemin).
+- Les anciens identifiants d’écran v0.423 restent valides (alias vers le premier paragraphe).
+
+Combats
+- Cause du HUD qui disparaît : les duels alternent écrans de combat et passages du roman. Sur ces passages (sans `fduel`), le moteur quittait `combatMode` et l’interface masquait le HUD, puis le réaffichait au tour suivant (11 coupures sur les 4 duels, jusqu’à 18 s). Ces passages sont maintenant des interludes : HUD compact « Duel en suspens », toujours visible jusqu’à la fin du duel.
+- Panneau de règles avant chaque duel (objectif, 4 règles, défaite), style bandeau incliné, rappelable par « ? Règles » dans le HUD ; il met le chrono des QTE en pause. Pas de réaffichage automatique à la reprise après un Game Over.
+- Consigne de tour (« Ce tour »), conséquences du tour précédent (« Conséquences », jauge par jauge), et sous chaque choix ce qu’il fait (S04 : nature du geste ; S06, S07, S08 : coût).
+- Ambiances propres à chaque duel inchangées. Game Over, reprise au début du duel, branches, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+
+Tests : `vn_audit.py` (fond nu, locuteur), `test_locuteur.py` (mise en avant page par page), `hud_persist.py` (HUD tenu sur tout le duel, règles, consigne).
+- Bulle de mise à jour : « v0.424 · VN et combats plus lisibles ».
+
 ## v0.423 (branche `feat/cinematique-metamorphose`)
 
 - Cinématique de la métamorphose d’Amanea, fichier fourni par l’auteur, copié à l’identique dans `assets/video/finale/amanea_metamorphose.mp4` (sha256 `8f154599d9cc31911eeb3dbb172484cd7f7d0b2a26b389ac951596fd5359379a`, 852×480, 1 min 07, h264+aac).

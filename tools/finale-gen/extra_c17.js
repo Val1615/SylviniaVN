@@ -51,6 +51,8 @@
   const naiahCold = ['naiah', 'naiah_neutral', 'center'];
   // Tia adulte : sprites de la Chronique Alternative (fichiers CA référencés tels quels).
   const tia = (e, pos = 'right') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
+  // Allenna : sprites de la Chronique Alternative (fichiers CA référencés tels quels, enregistrés par story-finale-media.js).
+  const allenna = (e, pos = 'center') => ['allenna', 'finale_allenna_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -69,7 +71,7 @@
     return o;
   };
   const gameOver = (sub, text, step) => ({
-    ...scene(sub, BG_PORTE, M_TRAGEDIE, 'Narrateur', text, null, []), title: 'Game Over', fduel: 's04', fstep: step, fgameover: true, pov: 'gameover',
+    ...scene(sub, BG_PORTE, M_TRAGEDIE, 'Narrateur', text, null, [valurnAnnoyed]), title: 'Game Over', fduel: 's04', fstep: step, fgameover: true, pov: 'gameover',
     choices: [
       { label: 'Réessayer le duel', next: 'c17_duel_intro', flags: RESET_S04, skipHistory: true },
       { label: 'Retour au menu', next: 'menu' },
@@ -272,11 +274,13 @@ Sans ce temps volé, rien de ce qui suit n’aura lieu.`, 6),
 
 ${line}`;
       },
-      'c17_trois'),
+      'c17_trois', [valurnAnnoyed]),
 
     c17_fin: {
-      ...scene('Fin du Chapitre XVII', BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      // Carton de fin : le dernier plan du chapitre reste à l’écran plutôt qu’un décor nu.
+      ...scene('Fin du Chapitre XVII', 'c17_cg_s05_22_les_silhouettes_s_eloignent', M_FINAL_AMANEA, 'Narrateur',
         `Fin du Chapitre XVII · La Porte Noire.`),
+      hideChars: true,
       chapterEnd: true,
       choices: [
         { label: 'Continuer', next: 'c18_carrefour_intro' },
@@ -285,6 +289,13 @@ ${line}`;
     },
   });
 
+  // Répliques des écrans écrits à la main : l’interface met en avant la silhouette du locuteur.
+  Object.entries({
+    c17_regard_remerii: [['« Tu restes derrière moi', 'Remerii']],
+    c17_adieu_peur: [['« Remerii… »', 'Hylee']],
+    c17_m5_r: [['« Encore une minute, très chère', 'Valurn']],
+    c17_qte_ok: [['« Tu vois ? Même toi, tu saignes', 'Valurn']],
+  }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
 /*@ALIASES@*/
 
   // Plans clés S02 à S05 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
