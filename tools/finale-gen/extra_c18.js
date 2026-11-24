@@ -228,7 +228,7 @@ La horde passe, et la grotte reste debout.`),
       'c18_s06_fin'),
     c18_s06_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Remerii n’a pas encore trouvé Draven. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule.`),
 
     // ───── S07 · Iriana (facultatif) ─────
     c18_ip_intro: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
@@ -436,6 +436,28 @@ Bhaal franchit la tempête morte et passe le portail.`),
 /*@SCENES@*/
   });
 /*@ALIASES@*/
+
+  // Plans clés S06 (branche Draven) et S07 (branche Iriana), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  const SHOTS = [
+/*@SHOTS@*/
+  ];
+  // Plans portés par une scène de duel : l’illustration remplace le décor, la silhouette s’efface.
+  const DUEL_SHOTS = [
+/*@DUEL_SHOTS@*/
+  ];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma']];
+  for (const [key, path, name, body] of SHOTS) {
+    A[key] = path;
+    CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };
+    CODEX_IMAGE_ORDER.push(key);
+    window.SylviniaStoryCamera?.illustrate(key);
+  }
+  for (const [sid, key, camera] of DUEL_SHOTS) if (S[sid]) Object.assign(S[sid], { bg: key, hideChars: true, camera });
+  CODEX_IMAGE_GROUPS.push({
+    id: 'chapter18',
+    title: chapter,
+    sections: SECTIONS.map(([p, t]) => ({ title: t, keys: SHOTS.filter(([k]) => k.startsWith('c18_cg_' + p)).map(([k]) => k) })),
+  });
 
   const ENTER_FLAGS = {
     c18_s06_fin: { c18PlayedDraven: true, s06DravenComplete: true },

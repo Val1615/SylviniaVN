@@ -1,6 +1,6 @@
 {
- "version": "v0.420",
- "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées.",
+ "version": "v0.422",
+ "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées. Seule exception, validée par l’auteur : s06_17 et s06_20 (lot 2), retouchés localement pour remettre les plaques dans la main de Draven.",
  "fichiers_fournis_par_l_auteur": {
   "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
   "decors_affiches_en_jeu": [
@@ -1047,5 +1047,707 @@
    "cle_A": "music_finale_ensemble",
    "scenes": "Combat contre Bhaal : c18_bhaal → c18_iriana_part, c18_gardien → c18_dragon, duel c18_bh_* et c18_valurn_renvoi. Le souvenir de la leçon d’Arcane (c18_source, c18_nebuleuse) garde music_c6_nuit_etoiles."
   }
- ]
+ ],
+ "images_cles_lot2": {
+  "statut": "Intégrées le 24/11/2026 (v0.422) : 67 plans sur 67 livrés (S05 : 22, S06 : 21, S07 : 24). Dossiers renommés chapter16-s05/06/07 → chapter17-s05, chapter18-s06, chapter18-s07. 65 copies strictes (sha256 identique à l’archive) ; s06_17 et s06_20 remplacés par les retouches validées par l’auteur. Aucune image générée par nous n’est intégrée.",
+  "placement": "Selon la structure du VN et non le découpage du livre : S05 dans le tronc du Chapitre XVII (c17_trois → c17_brasier), S06 dans la branche Draven (c18_draven_seul → c18_remerii_draven, puis c18_dp_adieu), S07 dans la branche Iriana (c18_alamma → c18_saut). L’aiguillage « À quelques lieux de là » du découpage S06 est ignoré : Draven → S08, Iriana → S08.",
+  "source": "tools/finale-gen/shots.py (SHOTS et DUEL_SHOTS)",
+  "fichiers": [
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_01_trois_silhouettes.webp",
+    "sha256": "51d8326b3bec2f2481324c3039e8441cea1f5a18dbce79cff653d5a0dfdfadf0",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_01_trois_silhouettes",
+    "scene": "c17_trois_2",
+    "paragraphe": 10606,
+    "camera": "recul",
+    "titre_codex": "Trois silhouettes"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_02_valurn_a_genoux.webp",
+    "sha256": "c87a65bff2df2c10932f30f65593c46314e9c0a6424720a4156bd573f010b9ec",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_02_valurn_a_genoux",
+    "scene": "c17_trois_3",
+    "paragraphe": 10610,
+    "camera": "approche",
+    "titre_codex": "Valurn à genoux"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_03_amanea_vacille.webp",
+    "sha256": "2c2033277e02842639ab4ae486418f6951f2c6e5a6eebe81d3192dbc2faa9290",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_03_amanea_vacille",
+    "scene": "c17_trois_4",
+    "paragraphe": 10612,
+    "camera": "approche",
+    "titre_codex": "Amanea vacille"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_04_le_jugement.webp",
+    "sha256": "1ada29ce53f1a9703a72b476d204463e0b6cdc81eda5375aa49756171dd8cdde",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_04_le_jugement",
+    "scene": "c17_supplique",
+    "paragraphe": 10628,
+    "camera": "approche",
+    "titre_codex": "Le jugement"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_05_main_tendue.webp",
+    "sha256": "91565d4a7b147c6ec8f0e737a29c0538f784cd5846ec075f2cb0c836e24e0297",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_05_main_tendue",
+    "scene": "c17_supplique_3",
+    "paragraphe": 10644,
+    "camera": "lateral",
+    "titre_codex": "La main tendue"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_06_ensemble.webp",
+    "sha256": "7010ea4054537c3cb2ac8ba538418293505cbf7973ac988025aa31da5c3f6843",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_06_ensemble",
+    "scene": "c17_supplique_5",
+    "paragraphe": 10654,
+    "camera": "approche",
+    "titre_codex": "Ensemble"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_07_le_silence.webp",
+    "sha256": "cb4bfc81d1d0f921215e2ca0384bcb729fae720a7e77eaaecb7307f2c91ae6e6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_07_le_silence",
+    "scene": "c17_supplique_7",
+    "paragraphe": 10664,
+    "camera": "approche",
+    "titre_codex": "Le silence de Tia"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_08_l_acier.webp",
+    "sha256": "16daa88653439bb6611d14db8229d9689bc2875fa9b19025253e4d08317b9fc2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_08_l_acier",
+    "scene": "c17_supplique_9",
+    "paragraphe": 10673,
+    "camera": "impact",
+    "titre_codex": "L’acier"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_09_la_sideration.webp",
+    "sha256": "c1813be143a78a98289b31162a898965b0620385cdf91e3082e56efaa6b738dc",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_09_la_sideration",
+    "scene": "c17_lame_2",
+    "paragraphe": 10678,
+    "camera": "approche",
+    "titre_codex": "La sidération"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_10_je_vois.webp",
+    "sha256": "6071b071f539314644763442230dfe6c753ef80337fec7a5d3c6bf640a9c2fc3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_10_je_vois",
+    "scene": "c17_lame_4",
+    "paragraphe": 10696,
+    "camera": "approche",
+    "titre_codex": "Je vois…"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_11_le_rire.webp",
+    "sha256": "543d947145517b794d01a8e1d3e80e40c2a02efd0e6b36812f0a7ac91c8b298e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_11_le_rire",
+    "scene": "c17_crissement",
+    "paragraphe": 10703,
+    "camera": "lateral",
+    "titre_codex": "Le rire de Valurn"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_12_le_crissement.webp",
+    "sha256": "021824207fd7d39125e071b4a34c64affc00d88b76e6dceca68db21523810482",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_12_le_crissement",
+    "scene": "c17_crissement_2",
+    "paragraphe": 10705,
+    "camera": "lateral",
+    "titre_codex": "Le crissement"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_13_la_derniere_lueur.webp",
+    "sha256": "bea28af6a33aded5cdbcbbf345db3adf5301aeb52803c6d037f1aa448f955a93",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_13_la_derniere_lueur",
+    "scene": "c17_gorge_2",
+    "paragraphe": 10715,
+    "camera": "approche",
+    "titre_codex": "La dernière lueur"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_14_le_souffle_coupe.webp",
+    "sha256": "5470ef8560b269f463a9056ba12d3a487f95288fcd5d86318434809730ea0fbb",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_14_le_souffle_coupe",
+    "scene": "c17_gorge_3",
+    "paragraphe": 10719,
+    "camera": "impact",
+    "titre_codex": "Le souffle coupé"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_15_pourquoi.webp",
+    "sha256": "bca204cb9481723bad2fa168918daf6c7901a4476ec787903e30946faf384ae8",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_15_pourquoi",
+    "scene": "c17_gorge_5",
+    "paragraphe": 10728,
+    "camera": "approche",
+    "titre_codex": "Pourquoi… ?"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_16_le_dernier_coup.webp",
+    "sha256": "22b4009187f0ca1c397660616a475e5a16f52da05696b67eb976cd97f72da42e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_16_le_dernier_coup",
+    "scene": "c17_gorge_7",
+    "paragraphe": 10735,
+    "camera": "lateral",
+    "titre_codex": "Le dernier coup",
+    "a_trancher": "Original ChatGPT intégré tel quel (plan « à trancher » au tri, l’auteur a demandé de garder le lot ChatGPT)."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_17_illusion.webp",
+    "sha256": "a9f178ba5ab2bd640d8ab0cab4248c328527ce9eb76479988ef23d114c281d9c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_17_illusion",
+    "scene": "c17_dernier_souffle_2",
+    "paragraphe": 10751,
+    "camera": "approche",
+    "titre_codex": "L’illusion se dissipe"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_18_naiah.webp",
+    "sha256": "d0d62baa07019976245b769548b7321c8397ed50db23840c8505d55e9f44b402",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_18_naiah",
+    "scene": "c17_naiah_revelee",
+    "paragraphe": 10758,
+    "camera": "approche",
+    "titre_codex": "Naïah"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_19_le_drainage.webp",
+    "sha256": "8a92a3b5b5ea0c9787b731e9e99438af61fc6407b3d4cb49ad211a8f6b8a18ee",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_19_le_drainage",
+    "scene": "c17_regard_satisfait",
+    "paragraphe": 10764,
+    "camera": "approche",
+    "titre_codex": "Le drainage"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_20_le_regard_de_naiah.webp",
+    "sha256": "75c8ec2f7227a9594d60aa3cc63d6261b971b95dac1d0c5bcf4644aa28d6c24c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_20_le_regard_de_naiah",
+    "scene": "c17_regard_satisfait_2",
+    "paragraphe": 10766,
+    "camera": "approche",
+    "titre_codex": "Le regard de Naïah"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_21_la_terre.webp",
+    "sha256": "60ea23cc76756b59c748f57eaf595944c29945fee061952ae84bca130130f26e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_21_la_terre",
+    "scene": "c17_regard_satisfait_3",
+    "paragraphe": 10768,
+    "camera": "approche",
+    "titre_codex": "La terre"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s05/s05_22_les_silhouettes_s_eloignent.webp",
+    "sha256": "a497ae1b87b4868ac33dbbb0944acc0ff1cc9c955aa19e7d13671e3d58a452cd",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s05_22_les_silhouettes_s_eloignent",
+    "scene": "c17_regard_satisfait_4",
+    "paragraphe": 10774,
+    "camera": "recul",
+    "titre_codex": "Les silhouettes s’éloignent"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_01_le_front_avance.webp",
+    "sha256": "e602e0f18382f1acfdac7e56e65ae3e20ef669f586f80c8d23d687037371b5f0",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_01_le_front_avance",
+    "scene": "c18_draven_seul",
+    "paragraphe": 10801,
+    "camera": "recul",
+    "titre_codex": "Le front avance"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_02_la_crevasse.webp",
+    "sha256": "29213ec1e6001b14b9e388f0b377a7dec39964f2bb579225a6bd9d0e3df9b965",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_02_la_crevasse",
+    "scene": "c18_draven_seul_2",
+    "paragraphe": 10809,
+    "camera": "recul",
+    "titre_codex": "La crevasse"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_03_le_parchemin.webp",
+    "sha256": "9fe0fa59efacd6eaefd5585b51ff0fb03b294b92bb43b77204d84e07311bcea3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_03_le_parchemin",
+    "scene": "c18_pere_2",
+    "paragraphe": 10815,
+    "camera": "approche",
+    "titre_codex": "Le parchemin"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_04_je_rentre_bientot.webp",
+    "sha256": "372ded93f65390332b388d2180d9948162864ec2d12afe4735a02d25d6b77433",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_04_je_rentre_bientot",
+    "scene": "c18_je_rentre",
+    "paragraphe": 10827,
+    "camera": "approche",
+    "titre_codex": "Je rentre bientôt"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_05_epee_relevee.webp",
+    "sha256": "6b4c87708dcd6d085cdd437bd8e25645090663d92f99b5d8b4d43f5b10f89752",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_05_epee_relevee",
+    "scene": "c18_je_rentre_2",
+    "paragraphe": 10830,
+    "camera": "approche",
+    "titre_codex": "L’épée relevée"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_06_les_morts_frappent.webp",
+    "sha256": "22692e8e1f92562faffe82f11844b8e47e544a605d3b15cfbde378c8655201bc",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_06_les_morts_frappent",
+    "scene": "c18_grotte",
+    "paragraphe": 10832,
+    "camera": "impact",
+    "titre_codex": "Les morts frappent"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_07_la_paroi.webp",
+    "sha256": "f52a607e045352fe89579bc88ae3fadfc3c5ef9e86afa8a7202347f304a43a67",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_07_la_paroi",
+    "scene": "c18_grotte_3",
+    "paragraphe": 10841,
+    "camera": "approche",
+    "titre_codex": "La paroi"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_09_tenir_encore.webp",
+    "sha256": "6d4f029eb8a3236802a5362e104daec4b9c8b425515c9de4f317d822484ef036",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_09_tenir_encore",
+    "scene": "c18_temporise",
+    "paragraphe": 10843,
+    "camera": "approche",
+    "titre_codex": "Tenir encore"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_11_premier_coup.webp",
+    "sha256": "5b9890a42929c16aafddf7534c3e595d88b2dd0800557a4abe71a3ebb146db3a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_11_premier_coup",
+    "scene": "c18_effondrement",
+    "paragraphe": 10845,
+    "camera": "impact",
+    "titre_codex": "Premier coup"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_12_deuxieme_coup.webp",
+    "sha256": "0f8300bf0f9d90a49c5c8512f8b14ff7519a9f1ac9cc492f0a80e3fa29b2d781",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_12_deuxieme_coup",
+    "scene": "c18_effondrement_2",
+    "paragraphe": 10850,
+    "camera": "approche",
+    "titre_codex": "Deuxième coup"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_13_l_epaule.webp",
+    "sha256": "fac1a36ef03f1dff3f689ade249893a7520a7d1e16499d92aed4995294a6b2af",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_13_l_epaule",
+    "scene": "c18_effondrement_3",
+    "paragraphe": 10852,
+    "camera": "approche",
+    "titre_codex": "L’épaule"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_14_l_effondrement.webp",
+    "sha256": "39ec5c8ad93b1a148aa9e3424eb40c73fc07262b120aba22411b264cda1f95c4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_14_l_effondrement",
+    "scene": "c18_effondrement_4",
+    "paragraphe": 10854,
+    "camera": "impact",
+    "titre_codex": "L’effondrement"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_15_remerii_dans_les_ruines.webp",
+    "sha256": "503609cf999ed45702875ec57f0a1689633dc2237094c2a22cc9d1b6995917c8",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_15_remerii_dans_les_ruines",
+    "scene": "c18_remerii_draven_2",
+    "paragraphe": 10861,
+    "camera": "recul",
+    "titre_codex": "Remerii dans les ruines"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_16_la_decouverte.webp",
+    "sha256": "ac95b15f7c25b56d8e70c18c29bea841492333a0e4540ccf604d13db147424fc",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_16_la_decouverte",
+    "scene": "c18_remerii_draven_3",
+    "paragraphe": 10867,
+    "camera": "approche",
+    "titre_codex": "La découverte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_17_la_main_sur_l_epaule.webp",
+    "sha256": "790d4d670c19cc958fb3a17d4b0aa6ca147eb703b14e9726197aa211048d54b0",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_17_la_main_sur_l_epaule",
+    "scene": "c18_remerii_draven_5",
+    "paragraphe": 10880,
+    "camera": "approche",
+    "titre_codex": "La main sur l’épaule",
+    "retouche": "Retouche validée par l’auteur (plaques remises dans la main droite de Draven, raccord s06_18 et c18_dp_adieu). Original ChatGPT : sha256 29d29c6ebe13cc97e40910238b8d6b939a1418ee7628e8f45fd9e218772d4ef7"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_18_les_plaques.webp",
+    "sha256": "a5e71b5e5b069d83413399c9b5b752bedb83d8d94354e19c4b20f7aa2e2d6a54",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_18_les_plaques",
+    "scene": "c18_remerii_draven_6",
+    "paragraphe": 10884,
+    "camera": "approche",
+    "titre_codex": "Les plaques"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_19_le_medaillon.webp",
+    "sha256": "3a8af93e586bf2009dc5c73af50b33a713690d805ffe941889312ac0e166fb2f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_19_le_medaillon",
+    "scene": "c18_remerii_draven_7",
+    "paragraphe": 10885,
+    "camera": "approche",
+    "titre_codex": "Le médaillon",
+    "a_trancher": "Original ChatGPT intégré tel quel (plan « à trancher » au tri, l’auteur a demandé de garder le lot ChatGPT)."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_20_un_dernier_geste.webp",
+    "sha256": "c4f05d08311d5991aeaec10e098ffd9a3bf01c620011cd943ab6f8b4c2b992e3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_20_un_dernier_geste",
+    "scene": "c18_remerii_draven_8",
+    "paragraphe": 10886,
+    "camera": "approche",
+    "titre_codex": "Un dernier geste",
+    "retouche": "Retouche validée par l’auteur (plaques remises dans la main droite de Draven, raccord s06_18 et c18_dp_adieu). Original ChatGPT : sha256 9271bf258ed1ae0d1601103e595f44a3d3adcc7d22636a67c34c9a3070d2f0c0"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_21_le_silence_qu_il_merite.webp",
+    "sha256": "e3cf8ca74e77697b21681511dab1599bd631a62576b83c0465f11a7bdbac5917",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_21_le_silence_qu_il_merite",
+    "scene": "c18_remerii_draven_9",
+    "paragraphe": 10894,
+    "camera": "recul",
+    "titre_codex": "Le silence qu’il mérite"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_01_sous_la_canopee.webp",
+    "sha256": "85d5d591a8b472163dc23ae30fa90ec0d6e1bb868f65a8452689712fce3caf6e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_01_sous_la_canopee",
+    "scene": "c18_alamma",
+    "paragraphe": 11182,
+    "camera": "approche",
+    "titre_codex": "Sous la canopée",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_02_alamma_devant_la_porte.webp",
+    "sha256": "2e8390de5944b6ea2389ac03df8888b080175042a9cb584600b0a4dfb521e15f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_02_alamma_devant_la_porte",
+    "scene": "c18_alamma_2",
+    "paragraphe": 11187,
+    "camera": "recul",
+    "titre_codex": "Alamma devant la Porte",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_03_le_pere_se_retourne.webp",
+    "sha256": "c7b16803c4d2e2435adf3426da0a1d60c52b2b7e96f569f834aa70ce38924cb7",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_03_le_pere_se_retourne",
+    "scene": "c18_tu_es_trop_jeune_2",
+    "paragraphe": 11211,
+    "camera": "approche",
+    "titre_codex": "Le père se retourne",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_04_la_main_d_alamma.webp",
+    "sha256": "7c24d7a98dbf914d03b57590b3055839c10330ad46e9eaf3b924a464080e5aca",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_04_la_main_d_alamma",
+    "scene": "c18_tu_es_trop_jeune_4",
+    "paragraphe": 11226,
+    "camera": "approche",
+    "titre_codex": "La main d’Alamma",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_05_l_appel_du_pacte.webp",
+    "sha256": "226ad9f7aeb453717aef1e7f9c5f91c3246c2e666a745b6704ea355ef8f1ec0c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_05_l_appel_du_pacte",
+    "scene": "c18_pacte_valurn_2",
+    "paragraphe": 11230,
+    "camera": "approche",
+    "titre_codex": "L’appel du pacte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_06_les_mains_noircies.webp",
+    "sha256": "aa2d854fa6caf8f87a40e97049a035a4db4218d509923afb5988c47b8839f646",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_06_les_mains_noircies",
+    "scene": "c18_pacte_valurn_4",
+    "paragraphe": 11243,
+    "camera": "approche",
+    "titre_codex": "Les mains noircies"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_07_une_breche_minuscule.webp",
+    "sha256": "576f639ba8a3905572204aafc223e7344f2fa8cc120008458ffe063f8a1c548f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_07_une_breche_minuscule",
+    "scene": "c18_pacte_valurn_6",
+    "paragraphe": 11258,
+    "camera": "approche",
+    "titre_codex": "Une brèche minuscule"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_08_iriana_a_genoux.webp",
+    "sha256": "ea26a4f9e10cbde5d2f1cd140d67476d77d98a08d0449f21dd98f4a288a643ef",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_08_iriana_a_genoux",
+    "scene": "c18_a_genoux",
+    "paragraphe": 11264,
+    "camera": "approche",
+    "titre_codex": "Iriana à genoux",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_09_un_fragment_dans_la_terre.webp",
+    "sha256": "705d0d1ff6ee4967061e53d0fd758630cfd6ad51a5e1d6cbcbc0a4a9181312b1",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_09_un_fragment_dans_la_terre",
+    "scene": "c18_a_genoux_3",
+    "paragraphe": 11280,
+    "camera": "approche",
+    "titre_codex": "Un fragment dans la terre",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_10_iriana_se_redresse.webp",
+    "sha256": "e21e61dfca3f18abb2abc34800004f5bbf43ecf3bff4b28ad6fe07f7e441ddd9",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_10_iriana_se_redresse",
+    "scene": "c18_peu_importe_2",
+    "paragraphe": 11286,
+    "camera": "approche",
+    "titre_codex": "Iriana se redresse",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_11_le_premier_recul.webp",
+    "sha256": "6fc19187fb2ad17d9cbe657850ccd8e656d2c7a4b5e46ff7445ba786ea28919f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_11_le_premier_recul",
+    "scene": "c18_attaque_2",
+    "paragraphe": 11298,
+    "camera": "impact",
+    "titre_codex": "Le premier recul",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_12_la_barriere_noire.webp",
+    "sha256": "0b2eac597d0a8d2ee962f40850d476e1d4d175e74284a4c252230feed2facfbb",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_12_la_barriere_noire",
+    "scene": "c18_attaque_3",
+    "paragraphe": 11301,
+    "camera": "impact",
+    "titre_codex": "La barrière noire",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_13_le_faisceau_noir.webp",
+    "sha256": "6f6b4f0bcae6ddcd3965a1491ddf46406eea45efb97bc47e0419e685ad7b67bb",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_13_le_faisceau_noir",
+    "scene": "c18_attaque_4",
+    "paragraphe": 11306,
+    "camera": "approche",
+    "titre_codex": "Le faisceau noir",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_14_a_bout_portant.webp",
+    "sha256": "7422e57612e19dc920e15c62920ef5251668f1307ebcd512b54157458259c6ec",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_14_a_bout_portant",
+    "scene": "c18_attaque_5",
+    "paragraphe": 11309,
+    "camera": "impact",
+    "titre_codex": "À bout portant",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_15_ombre_chaos_mort.webp",
+    "sha256": "3bb1cdd177fd7252fa72caa60adc696883dfde29283fde525cb39391d2e85a76",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_15_ombre_chaos_mort",
+    "scene": "c18_trois_forces_2",
+    "paragraphe": 11327,
+    "camera": "approche",
+    "titre_codex": "Ombre, Chaos, Mort",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_16_les_vrilles.webp",
+    "sha256": "42b96f98c1dfbb6765e79884cc1cac11a77fa2a14ae39e1d32e88832b8440f6b",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_16_les_vrilles",
+    "scene": "c18_trois_forces_3",
+    "paragraphe": 11335,
+    "camera": "impact",
+    "titre_codex": "Les vrilles",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_17_le_mur_d_energie.webp",
+    "sha256": "54a143a76a57deb78fa65b521bdd6caeb10abf15dc5e0df861d68a0ca063a100",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_17_le_mur_d_energie",
+    "scene": "c18_trois_forces_4",
+    "paragraphe": 11343,
+    "camera": "impact",
+    "titre_codex": "Le mur d’énergie",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_18_l_euphorie.webp",
+    "sha256": "8ee73820a1eb55d16ff57226c5f49214ed5d8d5db33f056e3688dc5683ecc1cf",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_18_l_euphorie",
+    "scene": "c18_chute_alamma_2",
+    "paragraphe": 11350,
+    "camera": "approche",
+    "titre_codex": "L’euphorie"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_19_la_chute_en_arriere.webp",
+    "sha256": "fb8aa5c5e09acad0755262697f989ff40750855811615748d7e33106c88eff7d",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_19_la_chute_en_arriere",
+    "scene": "c18_chute_alamma_4",
+    "paragraphe": 11356,
+    "camera": "approche",
+    "titre_codex": "La chute en arrière",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_20_le_cri_d_iriana.webp",
+    "sha256": "857e557809600b0cd4a937ff3f865192971bdecd411b8666e18a7915795faa4c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_20_le_cri_d_iriana",
+    "scene": "c18_chute_alamma_5",
+    "paragraphe": 11364,
+    "camera": "impact",
+    "titre_codex": "Le cri d’Iriana",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_21_victoire_pyrrhique.webp",
+    "sha256": "80bbbbe95d823e386dd6046e8d593c46024468fde9a0f5ebb14c6b07ca9852be",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_21_victoire_pyrrhique",
+    "scene": "c18_chute_alamma_7",
+    "paragraphe": 11374,
+    "camera": "approche",
+    "titre_codex": "Victoire pyrrhique",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_22_l_hesitation.webp",
+    "sha256": "df043ea567972801d60c11d9abc50d366201df8b0a30102ea8bb0b8db552fb20",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_22_l_hesitation",
+    "scene": "c18_avant_le_saut_4",
+    "paragraphe": 11386,
+    "camera": "lateral",
+    "titre_codex": "L’hésitation"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_23_le_saut.webp",
+    "sha256": "7769c27e221f4f11cbb62280ad1ccdfc69d33427825a73ecebc441b6cf4ad762",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_23_le_saut",
+    "scene": "c18_saut",
+    "paragraphe": 11400,
+    "camera": "recul",
+    "titre_codex": "Le saut",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s07/s07_24_la_foret_sans_iriana.webp",
+    "sha256": "3875a6a441ce9ab0288fae855ca955cc3b5b886bdde82b5f2ce0f9dc52234ba4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s07_24_la_foret_sans_iriana",
+    "scene": "c18_saut_2",
+    "paragraphe": 11408,
+    "camera": "recul",
+    "titre_codex": "La forêt sans Iriana",
+    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_08_dans_la_grotte.webp",
+    "sha256": "128de08d2cd881197d890ac42e5295934d800304b62a329f5c758cfe222cab91",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_08_dans_la_grotte",
+    "scene": "c18_dp_grotte_r",
+    "paragraphe": null,
+    "note": "Scène de duel écrite pour le jeu ; le plan y remplace le décor.",
+    "camera": "lateral",
+    "titre_codex": "Dans la grotte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s06/s06_10_regagner_le_seuil.webp",
+    "sha256": "0c228a0c2af939233274b30e8773debc8ae8043f5ee64d9113e6ae76558289df",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s06_10_regagner_le_seuil",
+    "scene": "c18_dp_voute",
+    "paragraphe": null,
+    "note": "Scène de duel écrite pour le jeu ; le plan y remplace le décor.",
+    "camera": "approche",
+    "titre_codex": "Regagner le seuil"
+   }
+  ]
+ }
 }

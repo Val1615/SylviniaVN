@@ -287,11 +287,11 @@ ${line}`;
 
 /*@ALIASES@*/
 
-  // Plans clés S02 à S04 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  // Plans clés S02 à S05 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
   const SHOTS = [
 /*@SHOTS@*/
   ];
-  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea']];
+  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea'], ['s05_', 'La dernière main tendue']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVII · ' + name, body, src: path };

@@ -1,4 +1,4 @@
-# Plans clés du Chapitre XVII (S02 à S04), livrés par l’auteur et copiés à l’identique.
+# Plans clés du final (Chapitre XVII : S02 à S05 ; Chapitre XVIII : S06, S07), livrés par l’auteur et copiés à l’identique.
 # (fichier, § du roman où le plan apparaît, mouvement de caméra, titre du codex, description)
 # Un plan reste affiché jusqu’au plan suivant, au plus SPAN paragraphes, puis la scène revient au décor et aux silhouettes.
 # Un paragraphe porte au plus un plan.
@@ -76,4 +76,82 @@ SHOTS = [
     ("chapter17-s04/s04_17_pilier_noir.webp", 10576, "impact", "Le pilier de pierre noire", "Valurn s’effondre. Sa lame glisse à l’écart."),
     ("chapter17-s04/s04_19_rire_valurn.webp", 10588, "approche", "Le dernier rire", "Le visage de Valurn porte le défi malgré la défaite."),
     ("chapter17-s04/s04_20_le_seuil_s_ouvre.webp", 10595, "recul", "La Porte commence à s’ouvrir", "Le regard revient vers l’arche. Le duel laisse place à la menace qui approche."),
+]
+
+# Plans clés S05 (Chapitre XVII) et S06, S07 (Chapitre XVIII), lot 2 livré par l’auteur, copiés à l’identique
+# (s06_17 et s06_20 : retouches validées par l’auteur, plaques remises dans la main de Draven).
+# Placés selon la structure du VN : S06 dans la branche Draven, S07 dans la branche Iriana.
+SHOTS += [
+    ("chapter17-s05/s05_01_trois_silhouettes.webp", 10606, "recul", "Trois silhouettes", "Dans l’axe de sortie du duel, Valurn est à genoux, Amanea tient encore debout, et une troisième silhouette se détache dans la cendre."),
+    ("chapter17-s05/s05_02_valurn_a_genoux.webp", 10610, "approche", "Valurn à genoux", "Plan moyen à hauteur de Valurn. Épaules basses et visage couvert de suie. Il regarde depuis le sol, dans l’ombre d’un bloc de pierre présent au plan 01."),
+    ("chapter17-s05/s05_03_amanea_vacille.webp", 10612, "approche", "Amanea vacille", "Plan américain de trois quarts. La griffe droite est lourde, les ailes affaissées. Une lueur intermittente dans les fissures traduit l’effort de rester debout."),
+    ("chapter17-s05/s05_04_le_jugement.webp", 10628, "approche", "Le jugement", "Amanea lève les yeux vers la silhouette qu’elle prend pour sa sœur. La lumière du portail souligne ses contours."),
+    ("chapter17-s05/s05_05_main_tendue.webp", 10644, "lateral", "La main tendue", "Plan à deux, de profil. La main gauche d’Amanea s’ouvre à mi-distance entre les visages. La griffe droite reste près du corps. Le portail demeure dans le fond entre les deux silhouettes."),
+    ("chapter17-s05/s05_06_ensemble.webp", 10654, "approche", "Ensemble", "Gros plan sur Amanea à hauteur de regard. Les yeux perdent leur éclat. La main reste en amorce dans l’image."),
+    ("chapter17-s05/s05_07_le_silence.webp", 10664, "approche", "Le silence de Tia", "Contrechamp fixe à la même hauteur. Expression impassible, mains et épée dans des positions lisibles. La lumière d’or conserve sa stabilité jusqu’au geste."),
+    ("chapter17-s05/s05_08_l_acier.webp", 10673, "impact", "L’acier", "Un reflet d’acier traverse l’espace laissé entre les deux silhouettes."),
+    ("chapter17-s05/s05_09_la_sideration.webp", 10678, "approche", "La sidération", "Gros plan sur le regard qui descend, puis revient vers la figure de Tia. Le bord gauche de la silhouette et l’asymétrie de l’armure rendent lisible la perte du bras gauche."),
+    ("chapter17-s05/s05_10_je_vois.webp", 10696, "approche", "Je vois…", "Caméra basse, proche du sol. Amanea cède dans la poussière, sa griffe droite portée vers l’épaule gauche."),
+    ("chapter17-s05/s05_11_le_rire.webp", 10703, "lateral", "Le rire de Valurn", "Gros plan latéral de Valurn allongé, souffle court. Un rictus apparaît sur le visage couvert de suie."),
+    ("chapter17-s05/s05_12_le_crissement.webp", 10705, "lateral", "Le crissement", "Plan rasant derrière la figure de Tia. Le contact de la lame avec la pierre donne la direction de sa marche. Amanea est floue au fond."),
+    ("chapter17-s05/s05_13_la_derniere_lueur.webp", 10715, "approche", "La dernière lueur", "Trois quarts arrière d’Amanea au sol. Le portail occupe le fond, dans la direction de son regard. De faibles fissures vertes se rallument dans son dos et esquissent une montée d’énergie interrompue au plan suivant."),
+    ("chapter17-s05/s05_14_le_souffle_coupe.webp", 10719, "impact", "Le souffle coupé", "Plan moyen latéral. La figure de Tia soulève Amanea d’une main, sa seconde main et l’épée sont masquées par le drapé. La griffe droite d’Amanea rejoint le poignet visible. Une ombre au sol marque la perte d’appui."),
+    ("chapter17-s05/s05_15_pourquoi.webp", 10728, "approche", "Pourquoi… ?", "Gros plan depuis le regard d’Amanea. Les deux iris d’or sont au point. Le cadre reste fixe pendant son « Pourquoi… ? » et le silence qui suit."),
+    ("chapter17-s05/s05_16_le_dernier_coup.webp", 10735, "lateral", "Le dernier coup", "Silhouettes de profil dans le contre-jour, cadrées sur la garde, les épaules et le visage d’Amanea. La brusque immobilité du corps et la coupure du souffle portent l’impact."),
+    ("chapter17-s05/s05_17_illusion.webp", 10751, "approche", "L’illusion se dissipe", "Même axe subjectif que le plan 15. Les contours dorés se défont sous une cape d’ombre mouvante. Le reste du champ perd sa netteté avec la perception d’Amanea."),
+    ("chapter17-s05/s05_18_naiah.webp", 10758, "approche", "Naïah", "Le visage de Naïah, à la place exacte de celui de Tia."),
+    ("chapter17-s05/s05_19_le_drainage.webp", 10764, "approche", "Le drainage", "Caméra à hauteur d’Amanea, tombée au sol. Valurn s’abaisse dans le champ. Les fissures d’Amanea s’éteignent progressivement à mesure que la magie est aspirée. Le portail reste visible et actif à l’arrière-plan."),
+    ("chapter17-s05/s05_20_le_regard_de_naiah.webp", 10766, "approche", "Le regard de Naïah", "Regard depuis le sol. Valurn s’éloigne en périphérie, Naïah suspend son départ et soutient brièvement le regard. Son expression est calme et satisfaite."),
+    ("chapter17-s05/s05_21_la_terre.webp", 10768, "approche", "La terre", "Insert de la griffe droite sur le sol à côté du visage d’Amanea. Les doigts perdent leur prise. Le cadre s’assombrit progressivement par les bords."),
+    ("chapter17-s05/s05_22_les_silhouettes_s_eloignent.webp", 10774, "recul", "Les silhouettes s’éloignent", "Retour à la vision d’Amanea. Naïah s’éloigne dans la profondeur, la voix de Valurn arrive hors champ."),
+    ("chapter18-s06/s06_01_le_front_avance.webp", 10801, "recul", "Le front avance", "Plan d’ensemble de la ravine. L’armée poursuit sa marche sur la crête. Draven se retrouve isolé près du versant de la grotte."),
+    ("chapter18-s06/s06_02_la_crevasse.webp", 10809, "recul", "La crevasse", "Plan large parmi les armures des morts. Draven tient son épée basse. La grotte est à sa droite dans le champ."),
+    ("chapter18-s06/s06_03_le_parchemin.webp", 10815, "approche", "Le parchemin", "Le papier révèle une faible lueur. La voix de Lineva vient du parchemin."),
+    ("chapter18-s06/s06_04_je_rentre_bientot.webp", 10827, "approche", "Je rentre bientôt", "Gros plan sur le visage de Draven pendant qu’il répond."),
+    ("chapter18-s06/s06_05_epee_relevee.webp", 10830, "approche", "L’épée relevée", "Son regard se relève avec l’épée. Le métal reflète le ciel."),
+    ("chapter18-s06/s06_06_les_morts_frappent.webp", 10832, "impact", "Les morts frappent", "Plan latéral sur la première attaque."),
+    ("chapter18-s06/s06_07_la_paroi.webp", 10841, "approche", "La paroi", "Regard de Draven vers la veine de pierre claire qui surplombe l’ouverture. Les silhouettes en amorce restent menaçantes."),
+    ("chapter18-s06/s06_09_tenir_encore.webp", 10843, "approche", "Tenir encore", "La masse des morts se rassemble dans le passage."),
+    ("chapter18-s06/s06_11_premier_coup.webp", 10845, "impact", "Premier coup", "L’épée touche la pierre."),
+    ("chapter18-s06/s06_12_deuxieme_coup.webp", 10850, "approche", "Deuxième coup", "Draven s’abaisse davantage. La poussière se détache de la paroi et le mort projeté sort du champ."),
+    ("chapter18-s06/s06_13_l_epaule.webp", 10852, "approche", "L’épaule", "Le poids retombe sur son bras blessé. Son autre main tient toujours l’épée."),
+    ("chapter18-s06/s06_14_l_effondrement.webp", 10854, "impact", "L’effondrement", "Le pan rocheux et le nuage de poussière engloutissent l’entrée de la grotte."),
+    ("chapter18-s06/s06_15_remerii_dans_les_ruines.webp", 10861, "recul", "Remerii dans les ruines", "Transition vers la même ravine, la lumière étouffée par la poussière. Remerii avance seule."),
+    ("chapter18-s06/s06_16_la_decouverte.webp", 10867, "approche", "La découverte", "Draven est assis contre une dalle, le dos appuyé et l’épée entre les jambes. Remerii s’approche."),
+    ("chapter18-s06/s06_17_la_main_sur_l_epaule.webp", 10880, "approche", "La main sur l’épaule", "Elle s’agenouille. Le calme du corps soutient le passage où elle comprend qu’il est mort d’épuisement."),
+    ("chapter18-s06/s06_18_les_plaques.webp", 10884, "approche", "Les plaques", "La main droite de Draven garde les plaques d’identification de ses compagnons."),
+    ("chapter18-s06/s06_19_le_medaillon.webp", 10885, "approche", "Le médaillon", "Insert sur deux portraits gravés, celui d’une femme plus âgée et celui de la jeune Lineva. Le parchemin désormais éteint reste dans la main gauche de Draven."),
+    ("chapter18-s06/s06_20_un_dernier_geste.webp", 10886, "approche", "Un dernier geste", "Remerii ferme les yeux et prend doucement sa main."),
+    ("chapter18-s06/s06_21_le_silence_qu_il_merite.webp", 10894, "recul", "Le silence qu’il mérite", "Plan large immobile. Elle se repose près de lui et la dernière phrase se termine sur ce cadre."),
+    ("chapter18-s07/s07_01_sous_la_canopee.webp", 11182, "approche", "Sous la canopée", "Iriana avance seule sous les racines. Le rouge de la Porte affleure entre les troncs."),
+    ("chapter18-s07/s07_02_alamma_devant_la_porte.webp", 11187, "recul", "Alamma devant la Porte", "Plan d’ensemble depuis l’épaule d’Iriana. Alamma contemple l’abîme et deux démons mineurs s’inclinent à ses pieds."),
+    ("chapter18-s07/s07_03_le_pere_se_retourne.webp", 11211, "approche", "Le père se retourne", "Contrechamp serré sur les yeux d’Alamma et le velours rongé."),
+    ("chapter18-s07/s07_04_la_main_d_alamma.webp", 11226, "approche", "La main d’Alamma", "Face-à-face. Sa main s’ouvre dans le vide entre eux. Iriana reste debout, les poings serrés."),
+    ("chapter18-s07/s07_05_l_appel_du_pacte.webp", 11230, "approche", "L’appel du pacte", "Coupe à plusieurs lieues de là. Valurn s’arrête sur la crête, saisi par le pacte."),
+    ("chapter18-s07/s07_06_les_mains_noircies.webp", 11243, "approche", "Les mains noircies", "Insert sur les mains de Valurn. Les traces ténues de la puissance d’Amanea reprennent la teinte du drainage de S05."),
+    ("chapter18-s07/s07_07_une_breche_minuscule.webp", 11258, "approche", "Une brèche minuscule", "La fente projetée est minuscule. Un seul filet traverse le vide."),
+    ("chapter18-s07/s07_08_iriana_a_genoux.webp", 11264, "approche", "Iriana à genoux", "Retour à la Porte. Le poids de l’emprise se lit dans sa posture, avec la main d’Alamma à distance."),
+    ("chapter18-s07/s07_09_un_fragment_dans_la_terre.webp", 11280, "approche", "Un fragment dans la terre", "Gros plan sur les doigts qui se crispent. Une trace discrète d’ambre répond au fil de Valurn."),
+    ("chapter18-s07/s07_10_iriana_se_redresse.webp", 11286, "approche", "Iriana se redresse", "Les yeux d’Iriana se lèvent."),
+    ("chapter18-s07/s07_11_le_premier_recul.webp", 11298, "impact", "Le premier recul", "Iriana attaque. L’arc sombre force Alamma à reculer pour la première fois."),
+    ("chapter18-s07/s07_12_la_barriere_noire.webp", 11301, "impact", "La barrière noire", "Vue derrière Alamma. Les éclairs se brisent sur sa barrière et soulèvent cendres et poussière."),
+    ("chapter18-s07/s07_13_le_faisceau_noir.webp", 11306, "approche", "Le faisceau noir", "Pivot d’Iriana dans les cendres. Le trait sombre passe juste à côté et roussit le haut de la manche."),
+    ("chapter18-s07/s07_14_a_bout_portant.webp", 11309, "impact", "À bout portant", "Les regards se croisent, une onde compacte déséquilibre Alamma."),
+    ("chapter18-s07/s07_15_ombre_chaos_mort.webp", 11327, "approche", "Ombre, Chaos, Mort", "Gros plan sur Iriana. Les trois forces se lisent comme un même courant instable autour d’elle."),
+    ("chapter18-s07/s07_16_les_vrilles.webp", 11335, "impact", "Les vrilles", "Des vrilles noires jaillissent entre eux. Alamma cède le passage d’un pas arrière."),
+    ("chapter18-s07/s07_17_le_mur_d_energie.webp", 11343, "impact", "Le mur d’énergie", "Un trait pâle se brise sur la garde d’Alamma. Le sol se soulève et le recul se poursuit vers le seuil."),
+    ("chapter18-s07/s07_18_l_euphorie.webp", 11350, "approche", "L’euphorie", "Très gros plan. Un sourire à peine esquissé révèle ce qu’Iriana éprouve en prenant l’avantage."),
+    ("chapter18-s07/s07_19_la_chute_en_arriere.webp", 11356, "approche", "La chute en arrière", "Alamma croise le regard d’Iriana et se laisse tomber dans le vortex. Sa silhouette s’efface sur les lignes suivantes."),
+    ("chapter18-s07/s07_20_le_cri_d_iriana.webp", 11364, "impact", "Le cri d’Iriana", "Coupe sur Iriana et son cri, avec la Porte vide au fond du champ."),
+    ("chapter18-s07/s07_21_victoire_pyrrhique.webp", 11374, "approche", "Victoire pyrrhique", "Silhouette d’Iriana seule devant la Porte."),
+    ("chapter18-s07/s07_22_l_hesitation.webp", 11386, "lateral", "L’hésitation", "Profil serré et souffle court."),
+    ("chapter18-s07/s07_23_le_saut.webp", 11400, "recul", "Le saut", "Plan large depuis le bas de l’arche, où la trajectoire entre dans l’ouverture et le décor commence à se déformer."),
+    ("chapter18-s07/s07_24_la_foret_sans_iriana.webp", 11408, "recul", "La forêt sans Iriana", "La Porte reste ouverte."),
+]
+
+# Plans portés par une scène de duel écrite pour le jeu (le texte du roman qu’ils illustrent y est résumé).
+# (fichier, scène, mouvement de caméra, titre du codex, description)
+DUEL_SHOTS = [
+    ("chapter18-s06/s06_08_dans_la_grotte.webp", "c18_dp_grotte_r", "lateral", "Dans la grotte", "Plan de course de trois quarts dos, du rouge extérieur à l’obscurité. La poursuite continue dans sa trace, hors champ."),
+    ("chapter18-s06/s06_10_regagner_le_seuil.webp", "c18_dp_voute", "approche", "Regagner le seuil", "Contrechamp depuis l’extérieur. Draven revient à la lumière, avec les morts encore derrière lui dans la grotte."),
 ]

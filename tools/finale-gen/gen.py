@@ -13,10 +13,11 @@ def js_tpl(t):
 
 
 coverage = []   # (scene id, [§])
-from shots import SHOTS, SPAN
+from shots import SHOTS, SPAN, DUEL_SHOTS
 SHOT_AT = {}    # § -> [(clé, mouvement)]
 def shot_key(path):
-    return 'c17_cg_' + os.path.splitext(os.path.basename(path))[0]
+    # chapter17-s0x → c17_cg_*, chapter18-s0x → c18_cg_*
+    return ('c18_cg_' if path.startswith('chapter18') else 'c17_cg_') + os.path.splitext(os.path.basename(path))[0]
 for path, p, cam, _t, _d in SHOTS:
     assert p in N.P and p not in N.HEADINGS, path
     assert p not in SHOT_AT, f'deux plans sur le § {p}'
@@ -78,9 +79,11 @@ def emit(prefix):
             out.append(f"    {sid}: {{ ...scene({sub}, {json.dumps(key)}, {b['music']}, 'Narrateur',\n      {js_tpl(text)},\n      {json.dumps(nxt)}, []), hideChars: true{cam_js} }},\n")
     return ''.join(out)
 
-def shots_js():
+CHAPTER_OF = {'c17_': 'chapter17', 'c18_': 'chapter18'}
+def shots_js(prefix):
     rows = []
-    for path, p, cam, title, desc in SHOTS:
+    for path, p, cam, title, desc in SHOTS + [(d[0], d[1], d[2], d[3], d[4]) for d in DUEL_SHOTS]:
+        if not path.startswith(CHAPTER_OF.get(prefix, '-')): continue
         rows.append(f"    [{json.dumps(shot_key(path))}, {json.dumps('assets/images/keyscenes/' + path)}, {json.dumps(title, ensure_ascii=False)}, {json.dumps(desc, ensure_ascii=False)}],\n")
     return ''.join(rows)
 
@@ -100,7 +103,10 @@ for prefix, name, extra in FILES:
     gen = emit(prefix)
     assert '/*@SCENES@*/' in src and '/*@ALIASES@*/' in src
     src = src.replace('/*@SCENES@*/\n', gen).replace('/*@ALIASES@*/\n', aliases_js(prefix))
-    if '/*@SHOTS@*/' in src: src = src.replace('/*@SHOTS@*/\n', shots_js())
+    if '/*@SHOTS@*/' in src: src = src.replace('/*@SHOTS@*/\n', shots_js(prefix))
+    if '/*@DUEL_SHOTS@*/' in src:
+        src = src.replace('/*@DUEL_SHOTS@*/\n', ''.join(f"    [{json.dumps(sid)}, {json.dumps(shot_key(path))}, {json.dumps(cam)}],\n" for path, sid, cam, _t, _d in DUEL_SHOTS))
+        used_shots.update(shot_key(d[0]) for d in DUEL_SHOTS)
     open(os.path.join(OUT, name), 'w', encoding='utf-8').write(src)
     print(name, len(gen), 'octets de scènes générées')
 
@@ -110,5 +116,5 @@ expected = [i for i in sorted(N.P) if i not in N.HEADINGS]
 miss = sorted(set(expected) - set(allp)); dup = len(allp) - len(set(allp))
 print('paragraphes attendus', len(expected), 'couverts', len(set(allp)), 'manquants', len(miss), 'doublons', dup, 'scènes', len(coverage))
 assert not miss and not dup
-assert used_shots == {shot_key(p) for p, *_ in SHOTS}, 'plan non placé'
+assert used_shots == {shot_key(p) for p, *_ in SHOTS} | {shot_key(d[0]) for d in DUEL_SHOTS}, 'plan non placé'
 print('plans clés placés', len(used_shots))
