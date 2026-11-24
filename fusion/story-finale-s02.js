@@ -1369,8 +1369,8 @@ Son souffle se coupe, ses muscles se crispent. Elle ne peut même pas crier. Ell
 Elle sent son propre sang couler.
 
 Puis elle se relâche. Elle ne perçoit rien. Tout s’efface.`,
-      "c17_illusion", []),
-    c17_illusion: scene("L’illusion se dissipe", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      "c17_dernier_souffle", []),
+    c17_dernier_souffle: scene("Dernier souffle", BG_PORTE, M_TRAGEDIE, 'Narrateur',
       `Les sons.
 
 Les couleurs.
@@ -1385,9 +1385,10 @@ Ce ne sont pas ses mains.
 
 Ce n’est pas elle.
 
-C’est… une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.
-
-Naïah. Sa fille. Son propre sang.
+C’est… une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.`,
+      "c17_naiah_revelee", []),
+    c17_naiah_revelee: scene("L’illusion se dissipe", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      `Naïah. Sa fille. Son propre sang.
 
 C’est elle qui l’a exécutée. Froidement. Sans trembler. Sans un mot. Sans un frisson.
 

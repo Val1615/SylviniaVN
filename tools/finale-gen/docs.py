@@ -26,7 +26,7 @@ for lot, name, ch, a, b, extra in LOTS:
     ps = [i for i in expected if a <= i <= b]
     sc = sorted({where[i] for i in ps}, key=lambda s: [c[0] for c in cov].index(s))
     L.append(f'| {lot} | {name} | {ch} | {a}–{b} | {len(ps)} | {len(sc)} | {extra} |')
-L += ['', f'Total : {len(cov)} scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 177 scènes.', '',
+L += ['', f'Total : {len(cov)} scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit {len(cov) + 50} scènes.', '',
       '## Scène par scène', '', '| Scène | Titre | § repris | Nombre |', '|---|---|---|---|']
 subs = {}
 for b in B: subs[b['id']] = b['sub']

@@ -57,7 +57,8 @@ beat('c17_supplique', 'Tia… écoute-moi…', 'BG_PORTE', 'M_TRAGEDIE', '[]', 1
 beat('c17_lame', 'Une Farae ne pardonne jamais', 'BG_PORTE', 'M_TRAGEDIE', '[]', 10675, 10700)
 beat('c17_crissement', 'L’acier sur la pierre', 'BG_PORTE', 'M_TRAGEDIE', '[]', 10703, 10711)
 beat('c17_gorge', 'Pourquoi… ?', 'BG_PORTE', 'M_TRAGEDIE', '[]', 10713, 10745)
-beat('c17_illusion', 'L’illusion se dissipe', 'BG_PORTE', 'M_TRAGEDIE', '[naiahCold]', 10747, 10761)
+beat('c17_dernier_souffle', 'Dernier souffle', 'BG_PORTE', 'M_TRAGEDIE', '[]', 10747, 10757)
+beat('c17_naiah_revelee', 'L’illusion se dissipe', 'BG_PORTE', 'M_TRAGEDIE', '[naiahCold]', 10758, 10761)
 beat('c17_regard_satisfait', 'Un regard satisfait', 'BG_PORTE', 'M_TRAGEDIE', '[naiahCold]', 10764, 10774)
 beat('c17_brasier', 'Sa place', 'BG_PORTE', 'M_TRAGEDIE', '[]', 10776, 10783, 'c17_fin')
 

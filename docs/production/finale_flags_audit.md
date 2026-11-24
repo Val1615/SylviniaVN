@@ -44,7 +44,7 @@ Tous les flags vivent dans `state.flags` et sont enregistrés dans la sauvegarde
 
 ## Garanties vérifiées
 
-- Aucune impasse : 75 parcours automatiques (5 combinaisons de déblocage × 15 politiques de choix) atteignent `c19_fin`, puis le menu. Les 177 scènes et les 41 options de choix (19 scènes de choix) ont toutes été visitées.
+- Aucune impasse : 75 parcours automatiques (5 combinaisons de déblocage × 15 politiques de choix) atteignent `c19_fin`, puis le menu. Les 178 scènes et les 41 options de choix (19 scènes de choix) ont toutes été visitées.
 - Sans déblocage, le carrefour n’affiche que « Poursuivre : Remerii / Hylee ».
 - Un seul point de vue optionnel par partie ; l’autre se rejoue depuis la carte « Chapitre XVIII » du menu des chapitres.
 - Les flags de choix ne conditionnent jamais le texte du roman : seules les scènes ajoutées varient.

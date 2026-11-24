@@ -6,13 +6,15 @@
 
 **Cahier de production** (pages 321 à 325 de l’édition imprimée) : la scène montre une Tia distincte.
 
-**Choix retenu : la VN suit le manuscrit du dépôt**, en accord avec la suite du texte. Tia et Iriana arrivent « trop tard » (§ 10897), la culpabilité de Tia s’explique, Allenna croit qu’une lame sylvinienne a tué sa mère (Épilogue) et Ellion porte Naïah disparue. Si l’auteur préfère la version imprimée, seules les scènes `c17_trois` à `c17_regard_satisfait` sont à reprendre. Le reste du final n’en dépend pas.
+**Choix retenu et validé par l’auteur (24 novembre 2026) : la VN suit le manuscrit du dépôt.** Dans ses mots : « Dans l’histoire, on a l’illusion de suivre Tia. Et on découvre en même temps qu’Amanea, à la toute fin, que c’était Naïah. » Le joueur suit donc l’illusion de Tia jusqu’au bout et découvre Naïah au même instant qu’Amanea. C’est cohérent avec la suite du texte : Tia et Iriana arrivent « trop tard » (§ 10897), la culpabilité de Tia s’explique, Allenna croit qu’une lame sylvinienne a tué sa mère (Épilogue) et Ellion porte Naïah disparue.
 
 Mise en scène :
 
-- aucune silhouette pendant la supplique et le meurtre, faute de sprite de Tia adulte ;
-- la silhouette de Naïah (`naiah_neutral`) apparaît seulement à `c17_illusion`, au moment où le texte la nomme ;
-- l’image clé CG-08 est prévue sur `c17_gorge` et `c17_illusion`.
+- de `c17_trois` à `c17_dernier_souffle`, rien ne trahit Naïah : aucune silhouette (il n’existe pas non plus de sprite de Tia adulte), et ni les sous-titres (« Trois silhouettes », « Tia… écoute-moi… », « Une Farae ne pardonne jamais », « L’acier sur la pierre », « Pourquoi… ? », « Dernier souffle »), ni les identifiants de scène affichés sur la tranche de la boîte de dialogue ne la nomment ou ne parlent d’illusion ;
+- la révélation est découpée en deux scènes :
+  - `c17_dernier_souffle` (§ 10747–10757, « Les sons. » jusqu’à « …qu’elle a protégé sans qu’elle ne le sache. ») : pas de silhouette, sous-titre « Dernier souffle » ;
+  - `c17_naiah_revelee` (§ 10758–10761, « Naïah. Sa fille. Son propre sang. » jusqu’à « Sans un regret. ») : sous-titre « L’illusion se dissipe », la silhouette de Naïah (`naiah_neutral`) apparaît à l’instant exact où le texte la nomme ;
+- l’image clé CG-08 est prévue sur `c17_gorge` (Tia apparente) puis `c17_naiah_revelee` (révélation).
 
 ## 2. Hylee transformée
 

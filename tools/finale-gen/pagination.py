@@ -1,11 +1,11 @@
-import asyncio, json, sys
+import asyncio, json, sys, os
 from playwright.async_api import async_playwright
 OUT="/workspace/vn-redesign/compare/finale/"
 MEAS="""()=>{const R=BibliothequeAstrale.racine; const t=R.querySelector('.dlg-texte'); const ps=[...t.querySelectorAll('.para')]; const last=ps[ps.length-1]; const fol=R.querySelector('.folio'); const box=t.parentElement.getBoundingClientRect();
  return {overflow: last? Math.round(last.getBoundingClientRect().bottom - Math.min(fol?fol.getBoundingClientRect().top:1e9, box.bottom)):0, sh:t.scrollHeight, ch:t.clientHeight}}"""
-SHOTS={"830x525":["c17_rassemblement","c17_choix_adieu","c17_m1","c17_revelation","c17_illusion","c18_carrefour","c18_dp_lineva","c18_ip_flux","c18_choix_arcane","c18_reflet","c19_promesse","c19_fin"],
-       "1024x880":["c17_m4","c18_carrefour","c18_dragon","c19_fin"],
-       "880x1024":["c17_m5","c18_choix_hylee","c19_serment"]}
+SHOTS={"830x525":["c17_rassemblement","c17_choix_adieu","c17_m1","c17_revelation","c17_dernier_souffle","c17_naiah_revelee","c18_carrefour","c18_dp_lineva","c18_ip_flux","c18_choix_arcane","c18_reflet","c19_promesse","c19_fin"],
+       "1024x880":["c17_dernier_souffle","c17_naiah_revelee","c17_m4","c18_carrefour","c18_dragon","c19_fin"],
+       "880x1024":["c17_dernier_souffle","c17_naiah_revelee","c17_m5","c18_choix_hylee","c19_serment"]}
 async def main():
   res={}
   async with async_playwright() as pw:
@@ -22,6 +22,8 @@ async def main():
       await p.wait_for_function("window.BibliothequeAstrale", timeout=120000); await p.wait_for_timeout(2500)
       await p.evaluate("()=>{load();}")
       ids=await p.evaluate("Object.keys(S).filter(k=>/^c1[789]_/.test(k))")
+      import os
+      if os.environ.get('ONLY'): ids=[i for i in ids if i in os.environ['ONLY'].split(',')]
       worst=[]; pages_total=0
       for sid in ids:
         await p.evaluate("""(sid)=>{state.scene=sid; state.history=[]; setScreen('game'); render(); BibliothequeAstrale.aller('#/jeu');}""", sid)
@@ -35,14 +37,20 @@ async def main():
           m=await p.evaluate(MEAS)
           if m["overflow"]>2 or m["sh"]>m["ch"]+2: worst.append([sid,k,m["overflow"],m["sh"],m["ch"]])
         if sid in SHOTS[key]:
-          # dernière page + choix visibles
-          await p.wait_for_timeout(1800)
-          nch=await p.evaluate("()=>BibliothequeAstrale.racine.querySelectorAll('.choix button, .choix [data-choix], .choix li').length")
+          # capture : on recharge la scène et on avance page par page sans dépasser la dernière
+          await p.evaluate("""(sid)=>{state.scene=sid; state.history=[]; setScreen('game'); render(); BibliothequeAstrale.aller('#/jeu');}""", sid)
+          await p.wait_for_timeout(500)
+          for _ in range(20):
+            st=await p.evaluate("BibliothequeAstrale.etat().J")
+            if st["p"]>=st["pages"]-1: break
+            if not st["plein"]: await p.evaluate("BibliothequeAstrale.racine.querySelector('.jeu').click()"); await p.wait_for_timeout(200)
+            await p.evaluate("BibliothequeAstrale.racine.querySelector('.jeu').click()"); await p.wait_for_timeout(250)
+          await p.wait_for_timeout(2500)
+          assert await p.evaluate("state.scene")==sid
           await p.screenshot(path=OUT+f"{key}_{sid}.png")
-          worst.append(["shot",sid,"choix visibles",nch]) if False else None
       res[key]={"scenes":len(ids),"pages":pages_total,"debordements":worst,"erreurs":errs}
       await c.close()
     await b.close()
-  json.dump(res,open(OUT+"pagination.json","w"),ensure_ascii=False,indent=1)
+  json.dump(res,open(OUT+os.environ.get("PAG_OUT","pagination.json"),"w"),ensure_ascii=False,indent=1)
   print(json.dumps(res,ensure_ascii=False,indent=1))
 asyncio.run(main())

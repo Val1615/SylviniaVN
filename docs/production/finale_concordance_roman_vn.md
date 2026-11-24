@@ -15,14 +15,14 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 | S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 27 | 6 |
 | S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 16 | 0 |
 | S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 7 | 18 |
-| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 8 | 3 |
+| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 9 | 3 |
 | S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 8 | 8 |
 | S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 13 | 0 |
 | S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 13 | 7 |
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 24 | 5 |
 | S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 11 | 3 |
 
-Total : 127 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 177 scènes.
+Total : 128 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 178 scènes.
 
 ## Scène par scène
 
@@ -83,7 +83,8 @@ Total : 127 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_lame` | Une Farae ne pardonne jamais | 10675–10700 | 17 |
 | `c17_crissement` | L’acier sur la pierre | 10703–10711 | 5 |
 | `c17_gorge` | Pourquoi… ? | 10713–10745 | 20 |
-| `c17_illusion` | L’illusion se dissipe | 10747–10761 | 11 |
+| `c17_dernier_souffle` | Dernier souffle | 10747–10757 | 8 |
+| `c17_naiah_revelee` | L’illusion se dissipe | 10758–10761 | 3 |
 | `c17_regard_satisfait` | Un regard satisfait | 10764–10774 | 6 |
 | `c17_brasier` | Sa place | 10776–10783 | 6 |
 | `c18_draven_seul` | Oublié | 10801–10811 | 6 |

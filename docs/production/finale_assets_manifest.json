@@ -180,7 +180,7 @@
   {
    "code": "CG-08",
    "objet": "Figure de Tia, Amanea, Naïah",
-   "scene": "c17_gorge, c17_illusion"
+   "scene": "c17_gorge (illusion de Tia), c17_naiah_revelee (révélation)"
   },
   {
    "code": "CG-09",
@@ -263,7 +263,7 @@
  "sprites_manquants": {
   "hylee_finale_*": "assets/sprites/hylee_finale_*.png · Hylee dans sa forme entièrement transformée. D’ici là, aucune silhouette d’Hylee après la canalisation (dès c18_remerii_tombe).",
   "amanea_finale_*": "Amanea transformée : aucune silhouette pendant et après c17_metamorphose.",
-  "tia_*": "Pas de Tia adulte : la figure de Tia n’a pas de silhouette ; Naïah apparaît seulement à la révélation (c17_illusion).",
+  "tia_*": "Pas de Tia adulte : la figure de Tia n’a pas de silhouette ; Naïah apparaît seulement à la révélation (c17_naiah_revelee).",
   "alamma_* / bhaal_* / allenna_* / ellion_* / demendras_*": "Pas de sprite : scènes en narration sur le décor."
  }
 }

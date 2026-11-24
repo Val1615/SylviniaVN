@@ -17,14 +17,14 @@ La concordance complète, scène par scène, est dans [finale_concordance_roman_
 | S02 | Bataille de la Porte Noire | XVII · La Porte Noire | 33 | ch. 20, § 9682–10126 |
 | S03 | Transformation d’Amanea | XVII | 16 | ch. 20, § 10128–10470 |
 | S04 | Valurn contre Amanea, duel jouable | XVII | 25 | ch. 20, § 10472–10599 |
-| S05 | La figure de Tia, Amanea et Naïah, puis carrefour | XVII et XVIII | 11 | ch. 20, § 10601–10783 |
+| S05 | La figure de Tia, Amanea et Naïah, puis carrefour | XVII et XVIII | 12 | ch. 20, § 10601–10783 |
 | S06 | Draven, point de vue optionnel | XVIII · Début de la fin | 16 | ch. 21, § 10796–10894 |
 | S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | XVIII | 13 | ch. 21, § 10896–11179 |
 | S07 | Iriana, point de vue optionnel | XVIII | 20 | ch. 21, § 11180–11408 |
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | XVIII | 29 | ch. 21, § 11411–11823 |
 | S09 | Épilogue du Tome I | Épilogue | 14 | Épilogue, § 11843–12094 |
 
-Total : 177 scènes, dont 127 portent le texte du roman et 50 sont écrites pour le jeu.
+Total : 178 scènes, dont 128 portent le texte du roman et 50 sont écrites pour le jeu.
 
 | Fichier | Contenu |
 |---|---|
@@ -66,7 +66,7 @@ La jauge **Vitalité d’Amanea** (10 points) baisse de 2 pour une bonne lecture
 
 Voir [finale_divergences.md](finale_divergences.md). En résumé :
 
-- **Scène 5 :** la VN suit le manuscrit du dépôt. Naïah tue Amanea sous les traits de Tia, puis l’illusion se dissipe. Le cahier montre une Tia distincte. Aucune silhouette n’apparaît pendant la scène, et celle de Naïah n’apparaît qu’à la révélation.
+- **Scène 5 (validée par l’auteur) :** le joueur suit l’illusion de Tia et découvre Naïah en même temps qu’Amanea. Aucune silhouette ni aucun titre ne la trahit avant `c17_naiah_revelee`, où sa silhouette apparaît avec son nom.
 - **Hylee transformée :** aucune silhouette après la canalisation, tant que le sprite de sa forme finale n’existe pas.
 - **Naïah :** aucune scène ajoutée ne lui prête de désir, et rien ne nomme son orientation.
 
@@ -81,9 +81,9 @@ Les huit fichiers fournis par l’auteur (quatre décors 1024×576 et quatre fic
 | Contrôle | Résultat |
 |---|---|
 | Couverture roman → scènes (générateur) | 1365 / 1365 paragraphes, 0 doublon |
-| Parcours de toutes les branches depuis une sauvegarde v82 sur `c16_s01_fin` | 75 parcours (aucun déblocage, Draven, Iriana, les deux, mode dev × 15 politiques de choix). Aucune impasse : 177 scènes et tous les choix visités, chaque parcours affiche les 1365 paragraphes et revient au menu. |
+| Parcours de toutes les branches depuis une sauvegarde v82 sur `c16_s01_fin` | 75 parcours (aucun déblocage, Draven, Iriana, les deux, mode dev × 15 politiques de choix). Aucune impasse : 178 scènes et tous les choix visités, chaque parcours affiche les 1365 paragraphes et revient au menu. |
 | Liens, décors, musiques, sprites | Toutes les cibles existent. Aucun 404 sur les ressources des nouvelles scènes. |
 | Console | Aucune nouvelle erreur. Seules restent les erreurs connues : `C13G_SCENES`, le 404 déjà présent. |
-| Pagination 830×525, 1024×880, 880×1024 | 884, 723 et 716 pages parcourues sur les 177 scènes : aucun débordement. Sur les 19 scènes de choix à 830×525, le texte (une ou deux lignes) reste entier au-dessus des boutons, contrôlé à l’œil et en mesurant le dernier paragraphe (`choiceshots.py`). |
+| Pagination 830×525, 1024×880, 880×1024 | 884, 723 et 716 pages parcourues sur les 177 scènes de la première version, puis les scènes de la révélation (`c17_gorge`, `c17_dernier_souffle`, `c17_naiah_revelee`, `c17_regard_satisfait`) revérifiées après le découpage : aucun débordement. Sur les 19 scènes de choix à 830×525, le texte (une ou deux lignes) reste entier au-dessus des boutons, contrôlé à l’œil et en mesurant le dernier paragraphe (`choiceshots.py`). |
 | `studio-overrides`, `studio-ca` | ok |
 | `story-world.test.cjs` | 4 !== 3, échec déjà présent sur `main` |
