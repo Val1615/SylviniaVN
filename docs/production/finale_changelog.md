@@ -1,5 +1,15 @@
 # Journal · Final du Tome I
 
+## v0.423 (branche `feat/cinematique-metamorphose`)
+
+- Cinématique de la métamorphose d’Amanea, fichier fourni par l’auteur, copié à l’identique dans `assets/video/finale/amanea_metamorphose.mp4` (sha256 `8f154599d9cc31911eeb3dbb172484cd7f7d0b2a26b389ac951596fd5359379a`, 852×480, 1 min 07, h264+aac).
+- Lecture plein écran au début du beat `c17_metamorphose`, avec bouton « Passer » discret. Le texte de la scène reprend juste après (passer, fin de la vidéo, ou erreur de lecture).
+- Musique du jeu fondue puis coupée le temps de la vidéo (la bande-son est dans le fichier) ; elle reprend ensuite (à ce moment du récit : `music_c10_horreur` ; « Amanea, Final destination » commence plus tard, à la bascule du duel).
+- Une seule lecture par passage : un `render()` sur la même scène ne la relance pas ; y revenir (relecture du Chapitre XVII, ou nouvel arrivage sur le beat) la rejoue. API `SylviniaFinaleCinema.replay()` pour un rejeu manuel.
+- Autoplay bloqué (mobile) : écran « Toucher pour lancer », le bouton « Passer » reste disponible. Formats Fold (830×525, 1024×880, 880×1024) en letterbox, sans recadrage (`object-fit: contain`). `prefers-reduced-motion` et « Effets : doux » n’empêchent pas la lecture.
+- Nouveau fichier `fusion/story-finale-cinema.js`. Sauvegardes `sylvinia_vn_v82`, Game Over, duels, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.423 · Cinématique de la métamorphose ».
+
 ## v0.422 (branche `assets/finale-lot2`)
 
 - Images clés du lot 2 livrées par l’auteur : 67 plans (S05 : 22, S06 : 21, S07 : 24), dans `assets/images/keyscenes/chapter17-s05/`, `chapter18-s06/`, `chapter18-s07/` (dossiers `chapter16-s0x` de l’archive renommés). Copie à l’identique (sha256 vérifié), sauf s06_17 et s06_20 : retouches validées par l’auteur (les plaques sont dans la main droite de Draven, raccord avec s06_18 et `c18_dp_adieu`).
