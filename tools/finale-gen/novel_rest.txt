@@ -1,0 +1,1373 @@
+9682||Tia se place devant ses hommes, droite, impassible, son armure dorée luisant faiblement sous la lumière tamisée du ciel couvert. Ellion, Draven, Valurn, Saidin, Naïah, Iriana, Hylee, Remerii, tous se rassemblent autour d’elle.
+9684||À quelques pas derrière l’Impératrice, une silhouette se détache. Elle se manifeste dans une absence à peine remarquée…
+9686||Démendras, le conseiller masqué.
+9688||Son manteau blanc flotte légèrement au gré du vent, ses lunettes disent tout autant qu’elles cachent, et son masque rend son expression aussi insondable que son esprit.
+9690||Tia prend la parole d’un ton qui ne laisse place à aucune hésitation.
+9692|D|Nous avons atteint notre destination.
+9694||Les murmures s’éteignent.
+9696|D|Notre objectif est clair.
+9698||Démendras avance légèrement, son ton froid et méthodique.
+9700|D|Le portail démoniaque doit être notre priorité.
+9702||Le silence se fait plus dense.
+9704|D|Nous savons qu’il est en construction. Nous savons que son ouverture serait une catastrophe. Nous savons aussi qu’il est protégé.
+9706||Il désigne du doigt une zone sur la carte déployée devant eux.
+9708|D|Il est ici, à quelques kilomètres à l’ouest d’Akuhn’Nabad.
+9710||Tia hoche la tête, son regard tranchant balayant les visages de ses officiers.
+9712|D|L’Empire ne peut tolérer la moindre faille dans cette mission.
+9714||Ses yeux se posent un instant sur Iriana, puis sur Valurn, puis reviennent vers Ellion et Draven.
+9716|D|Nous nous dirigeons vers le portail immédiatement. Akuhn’Nabad attendra.
+9718||Un murmure d’approbation parcourt les rangs.
+9720|D|Nous lançons l’assaut dès notre arrivée. Pas de négociations, pas de diplomatie.
+9722||Sa voix est tranchante, définitive.
+9724|D|Nous frappons vite. Nous frappons fort.
+9726||Tous acquiescent.
+9728||Le plan est scellé.
+9729||Le portail doit tomber avant qu’il ne soit trop tard.
+9731||La marche reprend ainsi, silencieuse, pesante, une dernière ligne droite vers l’objectif, et pourtant, chaque pas semble plus difficile que le précédent. D’abord imperceptible, un frisson sourd traverse l’assemblée, un malaise indéfini qui s’insinue dans les esprits, comme une menace invisible qui les étreint lentement. Les plus sensibles sont les premiers à le percevoir, les mages, les prêtres, ceux dont l’âme a été façonnée par la lumière et la magie, et qui sentent à cet instant précis une anomalie indescriptible, un poison invisible qui se diffuse dans l’air et s’infiltre dans leur être, un vertige subtil qui leur noue la gorge, qui leur donne la nausée, une sensation de malaise si viscérale qu’ils vacillent un instant avant de se redresser, crispés, pâles, le regard fuyant et la respiration plus lourde.
+9733||Puis, ce sont les autres qui le ressentent, les soldats, les vétérans, les guerriers qui ont traversé d’innombrables batailles et qui, pourtant, pour la première fois, se sentent vulnérables sans raison apparente, leurs mains crispées sur le manche de leurs armes, leur souffle s’accélérant sans qu’ils ne comprennent pourquoi, leurs cœurs battant plus fort, plus vite, comme si un instinct primal leur hurlait de faire demi-tour, de fuir avant qu’il ne soit trop tard. Un sergent, robuste et endurci par les années, secoue la tête, tente de balayer ce sentiment absurde d’un geste rageur, mais il sent ses doigts trembler, une sueur froide glisser le long de sa colonne vertébrale, un écho au fond de son crâne qui murmure, qui griffe, qui s’étire dans son esprit et insuffle une certitude absolue : quelque chose de monstrueux est là, proche, si proche qu’il en suffoque.
+9735||D’autres vacillent, échangent des regards inquiets, leurs pas se font plus lourds, comme si l’air lui-même était devenu plus dense, comme si chaque pas les traînait plus profondément dans un gouffre sans fond, un piège invisible tissé par une présence qu’ils ne voient pas mais qui les observe déjà, qui les effleure, qui s’immisce dans leurs âmes avec une lenteur insidieuse. Certains tentent de chasser cette impression, ils serrent les dents, s’accrochent à la discipline, aux ordres, à la foi, mais dans les rangs, il y en a toujours dont la volonté est plus faible, dont la résistance s’effrite plus vite sous l’influence de ce qui se tapit au loin, et eux, ils commencent à entendre des choses.
+9737||Un murmure.
+9739||Un écho distordu.
+9741||Une voix familière qui leur chuchote à l’oreille, qui souffle leur prénom comme un murmure d’outre-tombe, une voix qui leur rappelle quelqu’un, un frère d’armes tombé au combat, une mère disparue, un ami perdu, et cette voix les appelle, les supplie, les envoûte, leur promet qu’ils n’ont pas à marcher plus loin, qu’ils n’ont pas à se battre, que tout cela est vain, que leurs dieux les ont abandonnés, que leurs chefs les trahissent, que le monde lui-même les a déjà condamnés.
+9743||Les plus faibles chancellent, un soldat trébuche, son camarade le rattrape de justesse mais croise son regard, et il y voit une panique froide, une terreur qu’il ne peut pas comprendre, une peur animale qui grandit sans raison, une crainte qu’il commence lui-même à ressentir à mesure que les ombres grandissent autour d’eux, que l’air devient plus épais, plus oppressant, comme si la lumière même du ciel peinait à atteindre cette terre souillée.
+9745||Le portail est proche.
+9747||Ils arrivent enfin. Au sommet d’une crête escarpée, à l’orée d’un terrain en pente qui plonge vers la plaine en contrebas, et là, sous leurs yeux, le portail. Immense, titanesque, une arche de pierre noire s’élevant à plusieurs dizaines de mètres du sol, imposante, menaçante, un monument profane dont la seule présence semble tordre l’air autour de lui, déformant légèrement la réalité, créant des frémissements invisibles qui pulsent dans l’atmosphère, une pression sourde qui s’accentue à mesure qu’ils le contemplent, un frisson de malaise collectif traversant les rangs impériaux.
+9749||Le portail n’est pas encore actif, mais il est déjà bien trop avancé. Chaque centimètre de sa structure est parcouru de runes démoniaques, des symboles ardents traçant des spirales infernales dans la pierre, pulsant d’une lueur rouge sang, une lueur qui semble respirer, battre, vivre, comme une créature en gestation attendant son heure pour naître dans une explosion de malheur.
+9751||Mais ce n’est pas seulement le portail qui attire leur attention. C’est ce qui l’entoure.
+9753||Des camps. Des dizaines. Des étendards obscurcis flottant dans l’air stagnant, des fortifications rudimentaires mais efficaces, des barricades, des lignes de défense clairement établies. Des sentinelles perchées sur des tours d’observation fixant déjà la crête où se trouvent les Sylviniens, leurs yeux brillant d’une étrange lueur dans l’ombre de leurs capuches.
+9755||Et surtout, une armée.
+9757||Une marée d’Obscurcis, des soldats de l’ombre rassemblés en silence, alignés au pied du portail comme une vague de ténèbres prête à se briser sur l’Empire. Des guerriers vêtus de noir et de pourpre, leurs armures tissées de sortilèges, leurs armes imprégnées d’énergies interdites, certains levitant légèrement au-dessus du sol, d’autres agenouillés, murmurant des incantations dans une langue perdue, leurs voix tissant un chant sourd qui vibre dans l’air et s’infiltre jusque dans les os des impériaux.
+9759||Ils attendent.
+9760||Ils savent.
+9761||Ils ont vu venir l’Empire.
+9762||Ils sont prêts.
+9764||Le silence est pesant.
+9765||Tia observe la masse des Obscurcis qui se dresse face à elle. Ils sont nombreux. Trop nombreux. Mais son armée l’est davantage. L’Empire Sylvinien a toujours su imposer sa supériorité par le nombre, par l’organisation, par la discipline. Pourtant, cette fois-ci, quelque chose cloche. Une impression qui lui tord l’estomac.
+9766||Elle la cherche.
+9767||Amanea.
+9769||Face au portail démoniaque, la sœur déchue se tient droite, pas forcement grande, mais imposante, entourée de ses généraux. À ses côtés, Alamma, son propre fils. Son enfant. L’héritier de son trône, celui qu’elle pensait avoir perdu à jamais. Il se tient là, fier et digne, du côté des parias, auprès de sa tante. Elle ne voulait pas encaisser la nouvelle… avant de le voir de ses propres yeux.
+9770||Un frisson glacé parcourt l’échine de Tia. Elle serre les poings, sa mâchoire se contracte sous l’émotion. Colère, frustration… et peut-être une pointe de douleur.
+9771||Elle observe Amanea. La reine renégate n’a pas encore levé les yeux vers elle. Elle est en pleine conversation avec une autre Obscurcie, une femme dont la posture et l’attitude trahissent son rang. Une subordonnée, mais une subordonnée de poids.
+9772||Tia n’est pas la seule à la remarquer.
+9773||Naïah, plus en retrait, fixe intensément la silhouette.
+9774||Une femme aux longs cheveux blancs argentés, à l’aura puissante, indomptable. Elle dégage une force brute, une prestance semblable, à moindre mesure, avec celle d’Amanea elle-même. Quelqu’un d’important, de dangereux.
+9775||Naïah la dévisage, ses traits se durcissent. Ce n’est pas de la peur. Pas de la colère non plus.
+9776||C’est de la rancœur.
+9777||Une jalousie sourde et amère, qui lui noue le ventre.
+9778||Naïah la connaît visiblement, et personnellement. Elle détourne légèrement le regard, mais cette sensation d’infériorité la hante. Qui est cette femme ? Pourquoi une telle réaction ? Iriana l’observe en fond, remarquant pleinement son attitude.
+9779||De son côté, Remerii perçoit l’agitation grandissante chez les Sylviniens. Elle sent leur tension, leur fébrilité, mais ne comprend pas immédiatement pourquoi.
+9780||Jusqu’à ce qu’elle réalise.
+9781||Elle, humaine, ne voit qu’une masse lointaine. Mais les Sylviniens, eux, distinguent clairement leurs ennemis. Leurs visions est plus précise, plus perçant… mais… Les Obscurcis aussi.
+9782||Remerii se tend. Elle se rapproche d’Iriana et murmure :
+9783||— Ils savent qu’on est là, n’est-ce pas ?
+9784||Iriana ne répond pas immédiatement. Son regard est fixé maintenant sur Amanea, sur la foule d’Obscurcis en contrebas, et surtout sur Alamma.
+9785||— Oui, souffle-t-elle enfin.
+9786||Si l’Empire s’organise pour l’assaut…
+9787||Les Obscurcis en font de même.
+9789||L’instant se suspend.
+9791||La subordonnée d’Amanea s’éloigne, disparaissant dans la masse d’Obscurcis en contrebas. Un mouvement presque imperceptible, mais qui ne trompe pas les plus attentifs. Elle n’a pas fui. Elle s’est simplement éclipsée, comme une ombre se fondant dans la nuit.
+9793||Mais c’est alors que l’attention des Sylviniens se fige sur une seule et unique chose.
+9795||Amanea.
+9797||Son regard s’élève vers eux.
+9798||Deux flammes ardentes, brûlant de cette lueur verte spectrale qui ne l’a plus quittée depuis sa chute.
+9799||Elle les voit. Elle les attend. Elle ne cherche ni à fuir ni à négocier.
+9801||Elle se tourne lentement vers le portail démoniaque, son expression impassible, souveraine. Puis, sans un mot, son corps s’élève lentement dans les airs.
+9803||Un battement de cœur plus tard, elle flotte à mi-hauteur du portail.
+9805||Sa silhouette se découpe sur l’immense structure de pierre noire, imposante, terrifiante. Son manteau d’ombre se déploie autour d’elle comme un voile spectral, flottant au rythme des vents occultes qui grondent tout autour.
+9807||Et puis… Elle lève la main.
+9808||D’un geste lent, presque solennel, sa paume s’ouvre face au portail… il réagit.
+9809||Les runes maudites s’illuminent à chacune de ses extrémités. Un rouge sanglant, pulsant comme un cœur s’éveillant après un long sommeil.
+9811||Le sol tremble.
+9813||L’air lui-même vibre sous l’énergie brute qui s’échappe des glyphes infernaux. Une onde de choc traverse le champ de bataille, se propageant dans les rangs Sylviniens comme une caresse glaciale et oppressante.
+9815||C’est alors que le centre du portail s’embrase. Une flamme ardente, tourbillonnante, jaillit en son cœur, d’un rouge profond, incandescent.
+9816||L’ouverture a commencé, mais Amanea ne s’arrête pas là.
+9817||Une seconde plus tard, un rayon vert brûlant jaillit de sa main, un torrent d’énergie pure, dévorante, filant droit vers le centre du portail. Un mélange d’énergie du Chaos, de la Mort et de l’Ombre étonnement parfaitement maniée et fusionné en un amalgame des ténèbres.
+9819||Le feu infernal réagit aussitôt.
+9821||Il se nourrit de cette magie corruptrice, se dilate, se tord, grandit. Tia voit tout, elle comprend immédiatement, et un frisson lui parcours la colonne.
+9822||Le portail va s’ouvrir. Ils n’ont plus de temps. Dans un éclair, son regard se durcit, dégainant sa lame purificatrice et la lèvant haut dans les airs.
+9824||Son éclat doré transperce le ciel assombri, illuminant un instant les visages des Sylviniens derrière elle.
+9826||Elle ne crie pas.
+9827||Elle ne prononce aucun ordre.
+9828||Mais l’assaut est donné
+9830||Les Sylviniens rugissent à l’unisson, une marée dorée déferlant vers les ténèbres, des centaines de voix s’élevant en un cri de guerre qui fait trembler la terre elle-même. La lumière de Tia Farae brille en eux, les consumant, les transcendante. Chaque soldat, chaque chevalier, chaque mage et prêtre voit ses yeux s’embraser d’un feu sacré, un jaune ardent, purificateur, qui perce les ombres et repousse les ténèbres. Ils sont ses lames. Ils sont ses flammes. Ils sont la volonté de leur impératrice.
+9832||Face à eux, les Obscurcis ne reculent pas. Ils savent que la guerre est inévitable. Eux aussi avancent, méthodiques, disciplinés, portés par la détermination de leur Reine Noire. Amanea est là. Ils sont ses ombres. Ils sont son essence. Ils sont la résistance face à l’oppresseur.
+9834||Deux marées, deux forces, la lumière et l’ombre, avançant inexorablement l’une vers l’autre. Un fracas d’armures, des incantations criées à pleins poumons, des runes s’illuminant sur les épées et les lances, des sceaux invoqués en urgence, des éclairs de lumière et de ténèbres commençant déjà à s’entrelacer dans les airs.
+9836||Le choc est imminent.
+9838||Remerii se retourne une dernière fois, son regard se posant sur Hylee.
+9840||La jeune fille est pétrifiée.
+9842||Son souffle est court, ses doigts tremblent sur son bâton, incapable de prononcer la moindre incantation. Ce n’est plus un simple combat. C’est une guerre. Autour d’elle, la marée Sylvinienne s’élance, hurlante, impitoyable, et Hylee reste là, figée, incapable de bouger, de respirer.
+9843||Elle ne peut pas.
+9845||Son corps refuse. Ses jambes refusent. Son cœur refuse.
+9847||Elle n’est pas prête, son traumatisme la ronge, et ne fait que se préserver avec le conflit environnant.
+9848||Remerii veut l’aider, veut lui dire quelque chose, mais avant qu’elle ne puisse réagir, une silhouette s’avance doucement.
+9850||Saidin.
+9852||Il marche calmement à travers le chaos naissant, comme si la tempête ne l’atteignait pas. Son regard se pose sur Remerii, puis sur Hylee, et un léger sourire traverse son visage. Il incline la tête légèrement, avant de poser une main réconfortante sur l’épaule de Remerii.
+9854|D|Vas-y. Elle sera en sécurité.
+9856||Remerii hésite. Ses yeux oscillent entre son apprentie et son mentor, entre la bataille et son cœur, entre le devoir et l’amour.
+9858|D|Mais…
+9860||Saidin la coupe d’un simple regard, paisible, assuré, inébranlable.
+9862|D|Ce combat est important, tu le sais. Fais ce que tu dois faire.
+9864||Il n’ajoute rien de plus, il n’a pas besoin. Remerii comprend.
+9866||Elle inspire profondément, ferme les yeux un instant, puis se penche sur Hylee. Une dernière fois.
+9868|D|Je reviendrai.
+9870||Ses lèvres trouvent celles d’Hylee, un baiser volé au tumulte, un serment silencieux échangé sous le ciel déchiré. Elle lui caresse sa joue, dans une promesse muette.
+9871||Puis elle s’élance.
+9872||Elle rejoint la bataille, sans se retourner, laissant Hylee seule.
+9874||Non…
+9876||Saidin est là.
+9877||Il se place devant elle, légèrement en retrait, comme un gardien invisible, comme un rempart indestructible. Puis, sa main se lève. Une lumière argentée jaillit autour de lui.
+9878||Le monde change.
+9879||Le temps lui-même semble se plier sous l’invocation. Une sphère d’énergie se déploie, couvrant Hylee, couvrant les soigneurs et les prêtres Sylviniens restés à l’arrière, couvrant même les bannières impériales flottant dans le vent.
+9881||Un bouclier intemporel.
+9883||Un dôme d’argent, brillant d’une lueur irréelle, hors du temps, hors des lois du monde. Il ne tremble pas. Il ne vacille pas. Il existe. Simplement.
+9885||Les Sylviniens chargent.
+9887||Les Obscurcis avancent.
+9889||Le combat explose.
+9891||Un fracas assourdissant, un cataclysme de chair, d’acier et de magie. L’onde de choc de l’affrontement traverse la plaine en contrebas du portail démoniaque. Les Sylviniens s’abattent sur les Obscurcis comme une tempête dorée, illuminant la nuit d’éclats tranchants, d’incantations incandescentes, de prières transformées en lames de lumière.
+9892||Les Obscurcis ripostent avec une discipline macabre, un ballet d’ombres et de mort, tissant la nécromancie en vagues pernicieuses, appelant les âmes déchues à s’élever une dernière fois pour faucher les vivants.
+9894||Magie contre magie.
+9896||Acier contre acier.
+9898||Corps contre corps.
+9900||Les projectiles enchantés lacèrent l’air, les éclairs fendent le ciel, la terre se fissure sous les impacts des sortilèges les plus dévastateurs. Un océan de chaos où chaque camp cherche à dominer l’autre, où la clarté et l’obscurité s’enlacent dans une valse mortelle.
+9902||Les vies s’effacent en un instant.
+9904||Un Sylvinien s’effondre, son torse transpercé par une lance nécrotique, son cri étouffé par le souffle glacé de la mort.
+9906||Un Obscurcis est consumé par une colonne de lumière, son corps se désintégrant sous la fureur purificatrice.
+9908||Partout, l’odeur du sang, du fer et de la chair calcinée se mêle à l’essence des arcanes déchaînées.
+9910||Et au cœur du carnage, deux figures se dressent.
+9912||Iriana et Remerii.
+9914||Leurs silhouettes dominent le champ de bataille.
+9915||La princesse Sylvinienne et une archimage Humaine, unies dans une danse meurtrière d’éléments et de puissance brute.
+9917||Iriana invoque les Arcanes dans leur forme la plus pure. Elle canalise l’énergie brute du cosmos, ses mains traçant dans l’air des cercles parfaits, des glyphes pulsant d’une lumière azur. Les forces élémentaires répondent à son appel. Des torrents d’énergies tournoient autour d’elle, ses sorts explosant avec une précision chirurgicale, fauchant les rangs ennemis en une tempête de destruction.
+9919||Remerii n’est pas en reste.
+9921||La Cryomancienne se joint à elle, tissant la glace comme une seconde peau. Ses mains libèrent des rafales tranchantes, projetant des pics gelés qui transpercent les Obscurcis avant de les figer dans une prison de cristal impénétrable. Elle crée des murs de givre pour protéger les siens, bloque les offensives adverses par des boucliers d’une pureté glaciale, transformant la terre en un terrain mortel pour quiconque ose l’approcher. Le sol se glace, la forêt arbore une atmosphère hivernale.
+9923||Les deux mages fusionnent leurs pouvoirs.
+9925||Iriana invoque une spirale arcanique, un vortex d’énergie pure, et Remerii, dans un geste fluide, l’enveloppe d’un souffle glacé.
+9927||Un ouragan de givre et d’arcane déferle sur les Obscurcis, projetant un maelström de destruction, broyant chair et os dans une explosion iridescente.
+9929||Les corps gelés éclatent sous la puissance du sort.
+9930||Leurs cris sont étouffés par la glace qui scelle leur fin.
+9932||Elles sont inarrêtables.
+9933||Elles sont la tempête.
+9937||Dans l’enfer du champ de bataille, non loin, au milieu des hurlements et des éclats de magie, c’est  deux autre silhouettes qui se détachent.
+9939||Valurn et Draven.
+9941||L’un déchaîne les flammes du Chaos, l’autre consume sa rage dans le fracas du métal.
+9942||Ils n’ont rien en commun. Et pourtant, sur ce champ de mort, ils avancent ensemble.
+9944||Valurn se délecte du carnage. Il est un danseur dans ce théâtre infernal, un marionnettiste du brasier. Ses mains dessinent des arcs de feu dans l’air, chaque mouvement déclenche une explosion de flammes corrompues qui consument tout sur leur passage. Des soldats hurlent en s’embrasant, leurs âmes arrachées par la magie impie du demi-démon.
+9946||Ses yeux rouges, brûlants de malice, suivent le massacre avec une satisfaction évidente.
+9948|D|Tant d’efforts pour survivre, et pourtant, ils tombent comme des fétus de paille… fascinant.
+9950||Il esquive une lame d’un pas fluide, laisse une traînée de feu derrière lui, puis riposte avec une paume incandescente sur le torse de son adversaire. Le guerrier Obscurcis s’enflamme instantanément, son hurlement se perd dans la bataille.
+9952||Valurn n’a pas besoin de regarder en arrière. Il sait déjà que Draven est là, que son épée frappe dans la même cadence que ses flammes, que leurs mouvements s’accordent dans une danse mortelle.
+9954||Et Draven…
+9956||Il ne pense pas, Il agit.
+9958||Son épée fend la chair et l’ombre avec une force implacable. Chaque coup est un hurlement silencieux, une vengeance muette. Il ne tue pas seulement ses ennemis. Il massacre ses regrets, abat ses remords, frappe dans chaque visage l’image de ses hommes tombés.
+9960||Mais il n’est pas idiot.
+9962||Il sent la présence de Valurn à ses côtés. Il sait qu’ils se battent ensemble, que leur rivalité naturelle les pousse à toujours frapper plus fort, à ne pas être surpassés par l’autre.
+9964||Un Obscurcis charge sur lui, brandissant une lame recouverte de runes nécrotiques. Draven esquive de justesse, mais avant qu’il ne puisse contre-attaquer, une boule de feu fuse et réduit son assaillant en un tas de chair calcinée.
+9966||Il n’a pas besoin de se retourner pour savoir qui est l’auteur de cette intervention.
+9968|D|Tu commences à te reposer sur moi, Amiral ? lance Valurn avec un sourire narquois.
+9970||Draven ne prend même pas la peine de répondre. Il pivote sur lui-même, frappe de son épée chauffée à blanc un adversaire qui tentait de le surprendre.
+9972||Valurn rit.
+9974|D|Allons, allons, où est ton sens du spectacle ?
+9976||Draven gronde entre ses dents.
+9978|D|Je n’ai pas besoin de spectacle. Je veux juste les voir crever.
+9980||Le demi-démon penche la tête en le regardant d’une intonation maligne.
+9982|D|Charmant. Mais tu pourrais au moins reconnaître que sans moi, cette danse serait bien moins belle.
+9985||Draven frappe plus fort, comme pour lui prouver le contraire. Son épée fend l’air et arrache un bras à son adversaire, avant de remonter en un coup brutal qui décapite net le suivant.
+9987||Leurs styles sont opposés.
+9988||Draven est brut, bestial, un torrent de violence pure mêlée a une connaissance martiale et guerrière mûrie.
+9989||Valurn est fluide, raffiné, un serpent insaisissable qui danse avec les flammes.
+9991||Mais il y a une synchronicité étrange entre eux. Un équilibre tacite dans leur rivalité.
+9993|D|Tu devrais me remercier, Draven. Grâce à moi, tu as meilleure allure.
+9995||Le regard de Draven, sombre et furieux, se pose sur lui.
+9997|D|Tais-toi et brûle ce qui doit l’être.
+9999||Le regard du démoniste s’assombri, s’embrase.
+10001|D|Oh, avec grand plaisir.
+10004||Valurn lève la main, et l’enfer répond.
+10006||Le sol se fissure sous eux, des flammes s’élèvent, et les Obscurcis qui tentaient de les encercler sont consumés avant même d’avoir pu lever leurs armes.
+10008||Draven, toujours au cœur du brasier, avance. Son épée s’embrase sous la magie du Chaos, rougit par la température infernale.
+10010||Son regard est fixé sur l’ennemi.
+10011||Il ne s’arrêtera que lorsque plus rien ne bougera autour de lui.
+10014||Plus loin,
+10015||La bataille fait rage.
+10017||Les Sylviniens se regroupent, formant un front organisé au cœur du carnage. Les pertes sont lourdes, les corps jonchent le sol, mais l’Empire garde l’avantage. Leur supériorité numérique leur permet de dominer les Obscurcis… pour l’instant.
+10019||À l’écart du combat principal, un détachement d’Obscurcis tente de fuir.
+10020||Tia, postée en hauteur, observe la scène. Son regard acéré perçoit immédiatement l’évasion et, sans hésiter, elle désigne Iriana.
+10022|D|Va les chercher.
+10024||Iriana acquiesce sans un mot et s’élance, accompagnée de Remerii et de plusieurs soldats. Le groupe se lance dans une traque rapide, implacable.
+10026||Ils avancent à travers le champ de bataille, dépassent les cendres fumantes laissées par la magie, slaloment entre les cadavres et les ruines de la forêt noire. L’odeur de la mort et de la cendre leur colle à la peau, le sol est souillé par le sang et la corruption.
+10028||Puis, enfin, ils les trouvent.
+10030||Mais un détail vient percuter Iriana… ce ne sont pas juste des soldats, juste des fanatiques du Chaos.
+10031||Ce sont aussi des civils.
+10033||Des femmes, des enfants, des vieillards, un groupe en fuite escorté par une poignée de soldats Obscurcis.
+10035||Iriana s’arrête net, sa respiration haletante. Elle ne comprend pas. Que font ils ici ?
+10037||Son regard balaie la scène, essayant d’assimiler ce qu’elle voit. Ce ne sont pas des traîtres en fuite, ni des guerriers cherchant à se regrouper. Ce sont des innocents, des familles tentant d’échapper au massacre.
+10039||Mais ce qui frappe Iriana plus que tout, c’est leur meneuse.
+10041||Elle est là.
+10043||Postée en première ligne, une main posée sur le pommeau de son épée, un visage grave, mais sans la moindre agressivité.
+10045||Une femme, jeune.
+10046||Trop jeune pour son statut.
+10048||Elle a certes quelques années de plus qu’Iriana, mais pas de beaucoup. Son visage porte une pureté troublante, une douceur presque inconcevable au milieu du chaos.
+10050||Et pourtant, malgré cette douceur, il y a autre chose. Un poids. Une cicatrice invisible.
+10051||Les épreuves ont gravé leur marque sur elle. Iriana la fixe, son cœur battant plus vite sans qu’elle ne comprenne pourquoi.
+10053||Puis, elle la reconnaît.
+10054||Cette longue chevelure blanche argentée, ces yeux emplis d’une candeur insoupçonnée sous l’armure et la stature guerrière…
+10056||Ce n’est pas qu’une commandante Obscurcis.
+10057||C’est elle.
+10059||La gamine de la vision.
+10060||Celle qui était au côté de la reine… cette sombre soirée. Où Al’Gratal brûlait, où Amanea était à deux pas de la mort. Dans cette ruelle obscurcie par les cendres.
+10062||Les souvenirs affluent dans son esprit en un instant. Elle revoit la vision, le moment où cette jeune fille s’est mise aux coté d’Amanea, où elle l’a arrachée à la mort, où elle a fait tout ce qu’elle pouvait pour la maintenir dans ce monde…
+10064||Un souffle lui échappe, un murmure à peine audible.
+10066|D|Allenna…
+10068||Elle l’a dit sans même y penser.
+10069||Son corps reste en posture défensive, mais son esprit, lui, vacille.
+10071||Mais… Une détonation secoue l’air.
+10073||Une explosion brutale, soudaine, vient briser la tension du moment. Une onde de choc soulève la poussière et projette des débris brûlants dans les airs.
+10075||Puis viennent les hurlements. Déchirants. Horribles.
+10076||Au loin, l’avancée des Sylviniens devient implacable. Les Obscurcis, acculés, sont en train de plier.
+10078||Iriana se retourne, le regard écarquillé. Le carnage est en cours. La commandante en fait de même, silencieusement, observant les siens chuter sous l’assaut.
+10080||Les corps tombent sous les lames purificatrices, fauchés sans distinction, sans pitié. Les Obscurcis, pourtant des vétérans, ne tiennent plus la ligne. Ils ne battent pas en retraite, ils n’ont pas le temps… ils sont broyés.
+10082||Et en dernière ligne, Alamma hurle.
+10084|D|AMANEA !
+10086||Sa voix tonitruante résonne sur le champ de bataille, un appel désespéré, un cri d’alarme.
+10087||Là-haut, au-dessus du portail infernal, la Reine Noire est en suspens, toujours en train d’incanter.
+10089||Mais le cri d’Alamma la perturbe.
+10090||Son regard brûlant, concentré sur le rituel, sombre une fraction de seconde dans l’hésitation.
+10091||Elle tourne légèrement la tête.
+10093||Et elle voit.
+10095||Ses troupes écrasées.
+10097||Ses hommes tombant sous la lumière impitoyable des Sylviniens.
+10099||Le massacre.
+10101||Son regard suit la marée ennemie, cherchant l’origine de la boucherie, et elle la trouve.
+10103||Tia.
+10104||Son ombre dans la lumière, son éclat impérial dans le carnage.
+10106||Son épée divine brille d’une lueur surnaturelle, chaque coup illuminant la bataille d’un éclat d’or. Elle danse au milieu des corps, décapitant, transperçant, tranchant la chair corrompue des siens sans même un battement de cils. Dans sa justice divine, elle prend, sans discernement.
+10108||Leurs yeux se croisent, et quelque chose change.
+10109||Dans les yeux ardents d’Amanea, un feu nouveau s’embrase.
+10110||Une rage, froide et glaciale. Une haine ancienne et inaltérable.
+10112||Mais elle ne bouge pas, elle ne peut pas.
+10114||Son plan réclame toute sa concentration. Son bras levé tremble sous l’effort, son énergie alimentant les flammes démoniaques qui s’éveillent autour du passage maudit.
+10116||Mais… elle s’éloigne. Elle s’écarte du portail, pour s’approche du champ de bataille.
+10117||Peu à peu, elle avance.
+10119||Toujours la main tendue vers le portail, toujours son pouvoir maintenant l’incantation…
+10121||Mais elle s’approche.
+10122||Sa présence pèse. L’air devient lourd. Le sol se fissure sous la pression de son aura.
+10124||Amanea est en train de partager son attention.
+10126||Le portail… et le massacre. Elle ne compte pas laisser les choses continuer ainsi.
+10128||Amanea observe le carnage. Ses hommes tombent un à un, ses généraux reculent sous la pression Sylvinienne, le portail tremble sous l’effort qu’elle lui impose. Tout s’effrite. Son peuple est en train de mourir, sacrifié sur l’autel de l’aveuglement Sylvinien. Son regard enflammé se pose sur eux, impitoyable. Tia les mène, l’épée au clair, la lumière de l’Empire irradiant chaque soldat sous son commandement. La fureur monte en elle, une rage contenue depuis trop longtemps. Elle serre le poing, son autre main toujours tendue vers le portail. Elle sait ce qu’il faut faire. Elle n’a pas le choix. Son bras libre se lève lentement, paume ouverte, doigts écartés, une lueur verdâtre jaillit de ses veines, ses craquelures luminescentes s’intensifient. Le silence s’abat brutalement. Une onde glaciale traverse le champ de bataille. Les Sylviniens s’arrêtent. Même la lumière de Tia semble vaciller.
+10130||Puis vient le premier cri. Un hurlement d’agonie qui déchire l’air. Un soldat Obscurcis s’effondre, ses yeux se révulsent, sa bouche s’ouvre en un râle muet, son corps se contracte, se tord. Puis un deuxième. Un troisième. Toute une ligne de soldats s’écroule simultanément. Leur peau se flétrit en quelques instants, leurs corps se rétractent comme si quelque chose les aspirait de l’intérieur. Leurs âmes sont arrachées, projetées en un torrent d’énergie verdâtre qui fuse vers elle, puis vers le portail.
+10132||Mais ça ne s’arrête pas.
+10134||Les rangs Sylviniens sont frappés eux aussi. Des chevaliers s’effondrent, la lumière de leur armure se ternit, leur force de vie s’évapore en un instant. Un prêtre tente d’ériger une barrière, mais elle explose en poussière avant même d’être formée. Une capitaine Sylvinienne hurle un ordre, sa voix s’étrangle alors qu’elle tombe à genoux, ses muscles se crispant sous une souffrance invisible. Elle lève la main vers son empereur… puis s’écroule, les yeux vides.
+10136||Partout, ils tombent.
+10138||Les mages, les archers, les lanciers, tous ceux trop proches du périmètre d’absorption sont fauchés sans discrimination. Les âmes arrachées créent un véritable vortex spectral, un maelström d’essences hurlantes qui vient nourrir la Reine Noire. Le rayon qu’elle génère contre le portail galvanise feu sanglant qui s’y propage s’élève, il s’intensifie, danse comme une entité avide d’un appétit insatiable.
+10140||Amanea ne cille pas. Elle ne montre ni pitié, ni regret. Ses yeux flamboyants contemplent le massacre qu’elle orchestre sans la moindre hésitation. Son regard rencontre celui de Tia, encore en hauteur, figée par la vision cauchemardesque. Pour la première fois depuis longtemps, l’Impératrice Sylvinienne marque un temps d’arrêt.
+10142||Les soldats restants sont pétrifiés par la peur. Certains tentent de reculer, mais leurs jambes tremblent, leurs forces les abandonnent. Ils savent. Si elle voulait, elle pourrait tous les consumer en un instant. Leur fierté, leur foi, leur cause… rien de tout cela ne compte face à l’abîme impie qu’incarne Amanea en cet instant.
+10144||L’air devient irrespirable, chargé d’une odeur de soufre et de chair consumée. Les flammes du portail ne sont plus rouges, elles virent au noir, à un violet impossible à définir, brûlant sans chaleur, avalant la lumière même. Le portail tremble, son seuil distordu comme s’il s’apprêtait à déchirer la réalité elle-même.
+10146||Amanea abaisse enfin sa main. L’énergie absorbée se coupe brusquement. Les corps s’effondrent en un bruit mat, les quelques survivants suffoquent sous l’effroi. Le silence tombe de nouveau.
+10148||Puis elle parle.
+10149||Sa voix traverse la distance, résonne sur le champ de bataille comme un glas funèbre, d’un ton inhumain
+10151|D|Vous n’auriez pas dû venir ici.
+10153||Un murmure de panique se répand parmi les Sylviniens. Certains hésitent, doutent. Ils ne sont pas face à une bataille… mais face à une force qu’ils ne peuvent pas comprendre.
+10155||Et là, seulement là, Amanea esquisse un sourire.
+10156||Un sourire sans joie. Un sourire de résignation. Une décision est prise.
+10158||« Sacrifiable… vous êtes tous sacrifiable ! »
+10160||Sa voix claque dans l’air, déformée par la puissance qui pulse à travers son être. Le drain d’âmes reprend, il ne faiblit pas, il s’accélère. Une brume verte tapisse le champ de bataille, s’insinuant dans chaque crevasse, chaque recoin, aspirant l’essence vitale des vivants comme des mourants. Les âmes hurlent en silence, arrachées avec une brutalité indescriptible, leurs filaments translucides tordus dans des spasmes d’agonie alors qu’ils rejoignent le vortex infernal.
+10162||Amanea ne vacille pas.
+10163||Elle consomme tout.
+10165||Obscurcis comme Sylviniens, peu importe. Son regard ne fait aucune distinction. Il n’y a plus d’alliés, plus d’ennemis. Seulement elle.
+10167||Et alors, son corps change…
+10169||Les craquelures sur sa peau se fissurent davantage, leurs lueurs verdâtres s’intensifient, entrecoupées d’éclats rougeoyants comme une lave sous pression. Son souffle est court, ses mains tremblent, mais ce n’est pas la fatigue. C’est l’excès d’énergie.
+10171||Son torse se cambre sous l’impact d’un battement sourd. Un battement qui n’a rien d’humain. Son cœur semble prêt à exploser, envoyant des ondes de lumière corrompue à travers sa chair, déformant sa silhouette sous la puissance démesurée.
+10173||Ses doigts s’allongent, ses ongles deviennent des serres tranchantes. Ses jambes se plient différemment, ses pieds disparaissent… remplacés par des sabots cloutés. Une onde de choc pulvérise le sol autour d’elle, fissurant la pierre, projetant poussière et débris en tous sens.
+10175||Des ailes surgissent.
+10177||Elles s’étendent dans un claquement sinistre, déployant leur envergure colossale. Noires, membraneuses, parcourues d’éclairs verts et pourpres, elles tremblent sous la charge d’énergie maléfique.
+10179||Sa chevelure s’élève autour d’elle, flottant comme des serpents d’ombres, et enfin… ses cornes grandissent.
+10181||Des cornes de bouc, imposantes, tordues vers l’arrière, encadrant son visage dont les traits s’affinent en une beauté cruelle. Son regard, jadis flamme vive, est un brasier inextinguible, un gouffre incandescent où danse le feu des enfers.
+10183||Et pourtant, elle ne hurle pas.
+10185||Elle rit.
+10187||Un rire glacial, inhumain. Un rire qui broie l’espoir et impose une certaine folie
+10189||Dans cet atmosphère de chaos, les cris, les flammes, les ombres dévorantes, tout se mélange en une scène apocalyptique. Le ciel lui-même semble s’ouvrir, les nuages s’écartent dans une spirale infernale où les lueurs écarlates du portail se reflètent sur la canopée en cendres de la Forêt Interdite.
+10191||Draven et Valurn, couverts de suie et de sang, lèvent la tête.
+10193||Ils voient l’horreur personnifiée.
+10195||Amanea, ou ce qu’elle est devenue, se tient là, dans toute sa monstruosité. La fin d’une ère incarnée dans un seul corps.
+10197||Draven serre la mâchoire.
+10199||Il sait. Il sait que c’est terminé. Que plus rien ne peut arrêter ce qui se prépare.
+10201||Mais il refuse de rester là, spectateur d’un monde qui s’effondre.
+10203|D|Va.
+10205||Valurn tourne la tête, surpris.
+10207|D|Les Obscurcis sont finis ici. Ils ne sont plus assez nombreux pour nécessité nos deux présence. Ce combat n’a plus de sens. Je vais terminer ce qui a été commencé.
+10209||Son ton est ferme. Un ordre.
+10210||Valurn plisse les yeux. Il hésite un instant. Puis un sourire en coin tire ses lèvres.
+10212|D|Ne meurs pas, vieillard.
+10214||Draven hoche la tête.
+10216||Pas un mot de plus. Juste ce regard complice, ce dernier échange silencieux entre deux guerriers que tout opposait, sauf l’essentiel.
+10218||Puis, Valurn disparaît.
+10220||Son corps s’efface dans les cendres, son aura ardente se fondant dans la tourmente environnante.
+10221||Draven est seul. Face à lui, une poignée de soldats. Ses hommes sont tombés. Il ne reste plus qu’un dernier carré.
+10223||Ils sont là, immobiles. Pas d’ordre, pas de ralliement. Juste des regards vides, fixant l’horreur au loin, incapables de trouver un sens à ce qui est en train de se produire.
+10225||Le ciel saigne.
+10226||Le portail claque, surcharge d’énergie maléfique.
+10227||Les flammes de la forêt hurlent, embrassant l’horizon dans une éruption de cendres et de braises.
+10229||Ces terres s’apparente plus à un enfer que les Calciterres eux-mêmes. L’Amiral lève son épée, regardant son reflet dans l’acier de sa lame. Il lit sa fatigue… cette guerre doit prendre fin. Il doit retourner à Forthaven… pour enterrer ses morts, pour sa femme, pour sa fille.
+10231||Iriana au loin, fixe la scène avec horreur. Elle voit les Sylviniens, ses propres compatriotes, tenter l’impossible. Mais il n’y a plus de guerre entre eux et les Obscurcis. Il n’y a plus que la guerre contre Amanea. Un monstre. Une abomination de chair et de magie, déformée par l’énergie impie qui pulse en elle. Chaque cri arraché au champ de bataille vient nourrir sa puissance, chaque âme aspirée renforce sa métamorphose.
+10233||Elle est implacable.
+10235||Désormais, elle ne ressemble plus à rien de Sylvinien. Ses jambes ont disparu, laissant place à des membres tordus, trop longs, aux articulations inversées. Son dos est un foyer d’énergie, une colonne de lumière vert infernal jaillit de son échine, crépitant d’une puissance qui dépasse l’entendement. Son bras droit, autrefois majestueux et agile, est une masse difforme, une fusion entre os, chair et ténèbres, prolongée par des serres démoniaques.
+10237||Les Sylviniens tombent sous son courroux. Les prêtres, les mages, les chevaliers, aucun ne peut tenir. À chaque coup porté, à chaque âme arrachée, Amanea grandit, gagne en force.
+10239||Elle n’est plus Amanea.
+10240||Elle est l’avatar d’un pouvoir ancien, un gouffre sans fond qui dévore tout. Pourtant, malgré cette furie dévastatrice, elle ne perd pas de vue le portail.
+10241||Le rayon ne sort plus de sa paume. Non. Il sort de son dos.
+10242||Comme si cette chose qu’elle est devenue n’existait plus que pour ça. Ouvrir le passage. Déchirer la réalité. Appeler ce qui se cache derrière.
+10244||Iriana sent son sang se figer dans ses veines. Elle comprend l’ampleur du désastre. La femme qu’elle a connu n’est plus. Elle ne sera plus jamais.
+10246||Elle murmure, incapable de s’en empêcher, ses pensées lui échappant dans un souffle horrifié.
+10248|D|Pourquoi…
+10250||Ses yeux restent fixés sur l’apocalypse en marche.
+10252|D|Pourquoi fait-elle ça… Pourquoi se donner tant de mal… Pourquoi vouer notre monde à la destruction ? Pouvoir ouvrir le passage a un fléau inéluctable.
+10254||À côté d’elle, Allenna tourne brusquement la tête.
+10255||L’Obscurcis la fixe, fronçant légèrement les sourcils, ses traits marqués par l’incompréhension, l’intrigue.
+10257||Et, la question, sa voix tranchant l’air saturé d’énergie sombre.
+10259|D|L’ouvrir ?
+10262||Iriana sent son cœur manquer un battement. La confusion se mêle à l’horreur alors qu’Allenna la fixe, imperturbable, une lueur glaciale dans les yeux.
+10264|D|Tu n’as rien compris, Sylvinienne.
+10266||La voix d’Allenna est tranchante, inflexible. Elle n’a pas le temps pour les doutes d’Iriana, pas le temps pour les hésitations. Le combat fait rage. Amanea grandit en puissance, son corps se brise, se reconstruit, se tord sous l’afflux d’énergie. Mais ce qu’Allenna dit ensuite anéantit les certitudes d’Iriana.
+10268|D|Elle ne cherche pas à ouvrir ce portail. Elle cherche à le fermer.
+10270||Le sang d’Iriana se glace, dans un choc violent, comme si on venait de lui donner un coup dans la poitrinaire. Ses pensées s’entrechoquent, le puzzle s’effondre et se recompose dans une nouvelle perspective.
+10272|D|Impossible… murmure-t-elle.
+10274||Elle veut rejeter cette idée, refuser d’y croire. C’est absurde. C’est impensable.
+10275||Remerii, restée en retrait, fixe l’Obscurcis avec un mélange d’incrédulité et de mépris.
+10277|D|Elle a massacré les siens. Elle a arraché des âmes, elle s’est transformée en monstre !
+10279||Allenna ne cille pas.
+10281|D|Des traîtres.
+10283||Le mot claque dans l’air comme un couperet.
+10285|D|Ceux qui ont voulu ouvrir le portail. Ceux qui ont juré allégeance au Chaos, qui ont corrompu notre peuple, ceux qui ont condamné les Obscurcis à un destin pire que la mort.
+10287||Iriana n’arrive plus à respirer.
+10289|D|Non… ce n’est pas…
+10291||Mais ça fait sens. Elle revoit les pièces du puzzle sous un autre angle.
+10293||La commandante continue, sans forcément justifier les actes de sa reine.
+10294|D|Amanea a joué sur deux tableaux. Elle a fait croire à ses fidèles qu’elle soutenait l’ouverture du portail. Elle leur a laissé penser qu’elle les guidait vers cette abomination. Mais dans l’ombre, elle fomentait sa propre rébellion. Allenna marque un temps d’arret, observant Amanea au loin. Elle attendait le bon moment. Elle a laissé les traîtres avancer, les a poussés à se dévoiler, à croire en leur victoire.
+10296||Et au dernier instant, elle les a trahis. La princesse voit tout à coup clair dans le cheminement.
+10298|D|Le groupe que j’extrais, continue Allenna en désignant les civils derrière elle, ce sont les loyalistes. Ceux qui ont œuvré en secret pour ralentir l’ouverture du portail.
+10300||Iriana sent son corps se raidir, son souffle court.
+10302|D|Elle savait qu’elle ne pourrait pas empêcher le portail de s’ouvrir… les démons ont leurs point d’ancrage… et l’utilisent pour l’ouvrir de leurs côtés, poursuit Allenna, mais elle pouvait le surcharger.
+10304||La vérité tombe comme un couperet.
+10305||Amanea ne nourrit pas le portail.
+10307||Elle l’étouffe.
+10308||Elle l’inonde d’une énergie colossale, le suralimente au-delà de ses limites.
+10309||Elle veut le faire imploser.
+10310||Et elle est prête à sacrifier tout ce qu’il faut pour y arriver.
+10312||L'estomac d’Iriana se noue, son regard revient vers le champ de bataille.
+10314||Elle revoit les âmes arrachées, le massacre insensé, l’horreur inexplicable.
+10315||Tout devient limpide, sans forcément l’expliquer.
+10317||Amanea tue les traîtres pour annihiler leur œuvre. Elle s’acharne sur le portail pour le faire s’effondrer. Elle se détruit elle-même pour stopper l’inévitable.
+10319||Et les Sylviniens…
+10320||Les Sylviniens sont en train de tuer la seule personne qui essayait de les sauver.
+10322||Iriana ouvre la bouche, cherche ses mots. Mais il est déjà trop tard.
+10323||Le temps semble suspendu. Un vent glacial balaie la zone, soulevant poussière et cendres alors qu’un silence étrange s’installe.
+10325||Iriana et Allenna se dévisagent.
+10327||Un regard chargé de mille pensées, un regard où tout se joue, où l’hésitation lutte contre la certitude.
+10329||Les cris du champ de bataille s’éloignent.
+10331||Iriana voit les visages des Obscurcis loyalistes.
+10332||Des visages jeunes, abîmés par la guerre, certains effrayés, d’autres résolus. Des civils. Des survivants. Des âmes condamnées par une guerre qui n’aurait jamais dû exister.
+10334||Remerii attend.
+10335||Aux aguets, ses yeux fixent Iriana, la glace recouvrant ses mains, prête à frapper.
+10336||Les quelques Sylviniens autour d’elle se tiennent sur le qui-vive, crispés, nerfs tendus.
+10338||Ils n’attendent qu’un mot.
+10339||Un signal.
+10340||Un ordre.
+10342||Iriana prend une inspiration, son regard revient vers Allenna.
+10343||Cette femme qui, quelques instants plus tôt, était une ennemie.
+10344||Cette femme qui portait les couleurs des Obscurcis.
+10345||Cette femme qu’elle a vue, dans un souvenir brisé du passé, sauver Amanea.
+10347||Son cœur battait à tout rompre. Elle n’est pas mauvaise, et ce qu’elle entreprend aujourd’hui le prouve encore.
+10349||Son choix est prit. Elle relève doucement le menton, son regard se durcit.
+10350||Puis, dans un mouvement à peine perceptible, elle incline légèrement la tête.
+10352||Un signal.
+10353||Un ordre muet.
+10354||Allenna comprend immédiatement.
+10356||Elle n’hésite pas,  attrapant l’un des plus jeunes, lui murmure quelques mots à l’oreille, puis fait un geste vif de la main.
+10357||Les Obscurcis loyalistes se regroupent en silence. Ils savent qu’ils n’ont qu’une seule chance.
+10359||Remerii serre la mâchoire.
+10361||Elle ne dit rien.
+10362||Elle ne proteste pas.
+10363||Mais son regard hurle l’incompréhension.
+10365||La princesse ne lui laisse pas le temps de parler. D’un pas déterminé, elle se détourne, le regard déjà fixé sur l’horizon. Ils ont une nouvelle mission.
+10367||Ils doivent atteindre Tia,  l’avertir, et enfin lui faire entendre raison.
+10369||Si elle peut encore être sauvée.
+10370||Si le pire peut encore être évité.
+10373||Le chaos s’intensifie, l’horreur atteint son paroxysme.
+10374||Amanea, démiurge impie du carnage, ne s’arrête plus. Son corps brisé, brûlant d’énergie infernale, se tord sous la puissance qu’elle invoque. Chaque craquelure qui fissure sa peau irradie un feu vert et rouge, chaque pulsation de son être propage la corruption qui suinte autour d’elle.
+10376||Les Sylviniens avancent.
+10378||Ils sont nombreux, inarrêtables, animés par la lumière de leur impératrice qui brille à travers leurs armures. Leurs épées levées, leurs prières hurlées dans le tumulte, ils s’élancent vers l’abomination qui souille le champ de bataille. Les prêtres essaient activement de protéger les survivants. La reine noire ne se laisse pas vaincre. Elle combat chaque Sylviniens trop proche d’elle, tranchant la chair à main nue. Ses membres déformés par la corruption forment des serres mortellement coupantes. Elle les manies avec une agilité féline, taillant les armures de l’empire avec une aisance sans pareille, malgré une fatigue de plus en plus marquée.
+10380||Mais Amanea ne faiblit pas.
+10381||Une dernière incantation, un dernier sacrifice.
+10382||Elle lève ses mains griffues, son corps irradiant une lueur macabre. Le sol tremble. Un souffle glacé parcourt le champ de bataille, s’immisce dans chaque fissure, chaque crevasse, chaque plaie béante.
+10384||Et alors, l’impensable se produit.
+10386||Une brume noire, dense et viciée, s’élève du sol.
+10388||Elle s’étire, rampe, se tord comme une entité vivante, s’insinuant entre les cadavres qui jonchent le sol, se faufilant dans les chairs en décomposition, s’infiltrant dans les orbites vides, se mêlant aux os brisés et aux viscères éventrées.
+10390||Un râle sourd envahit l’air.
+10392||Un frisson parcourt les survivants.
+10394||Et puis, ce sont les morts qui se relèvent.
+10396||Un à un.
+10398||Lentement.
+10400||Dans une démarche disloquée, avec des mouvements grotesques et brisés, comme des marionnettes dont les fils auraient été ravivés par une force impie.
+10402||Mais ce ne sont pas seulement des cadavres ranimés.
+10404||Non.
+10406||Ce ne sont pas juste des corps réanimés par nécromancie.
+10408||Ce sont des créatures transformées, perverties, des monstres qui n’ont plus rien d’humain, ni de Sylvinien, ni même d’Obscurcis.
+10410||Leurs chairs se tordent, fusionnent avec l’essence putride de la brume, leurs silhouettes se déforment, leurs visages ne sont plus que des gueules béantes, leurs yeux des puits noirs sans fond, suintant une lueur malsaine.
+10412||Ils sont affamés.
+10413||Affamés de chair, de sang, de vie.
+10415||Les Sylviniens reculent, pétrifiés. Même les plus braves. Même ceux qui n’ont jamais tremblé devant un démon.
+10416||Ce ne sont plus des soldats. Ce sont des cauchemars incarnés.
+10417||Et au-dessus d’eux, Amanea, le visage déformé par la haine et la douleur, contemple son œuvre infernale.
+10418||Son combat atteint son paroxysme, un affrontement titanesque entre sa volonté et l’abîme qui réclame son dû.
+10420||Son corps n’est plus qu’un champ de bataille à lui seul, un brasier incandescent de puissance trop grande, trop brute, une force qui la consume autant qu’elle consume le monde autour d’elle. Le portail ne cède pas. Il résiste. Il ne ploie pas sous l’assaut, il le confronte.
+10422||D’abord, ce n’était qu’une lutte. Elle canalisait, elle maîtrisait, elle dirigeait l’afflux d’énergie, mais quelque chose a basculé.
+10424||L’échange s’est inversé.
+10426||Le portail n’est plus qu’un gouffre béant, un monstre silencieux qui, dans son absence de conscience, dans son absence de volonté propre, déchire Amanea de l’intérieur.
+10428||Elle s’entête, elle s’accroche.
+10429||Elle n’a pas peur de la douleur.
+10430||Elle n’a pas peur des sacrifices.
+10432||Mais ce n’est plus seulement son corps qui paye.
+10434||C’est son esprit.
+10436||Un vertige monstrueux la traverse, une dissonance, une fracture, un éclatement invisible. Ses pensées s’égarent. Sa propre perception devient un labyrinthe.
+10438||Tout devient indistinct.
+10440||Elle entend des voix qui n’existent pas. Des murmures, des cris, des souvenirs qui ne sont pas les siens.
+10441||Elle voit son reflet… mais ce n’est plus elle.
+10442||Elle voit l’ombre d’une Amanea qui n’a jamais existé.
+10444||Une Amanea faible, humiliée, déchirée, effacée, insignifiante.
+10445||Elle cligne des yeux. Elle est encore là, elle est encore elle-même, Mais pour combien de temps ?
+10447||Le portail ne se contente plus d’absorber sa force vitale.
+10449||Il l’arrache. Il la broie. Il l’annihile.
+10451||Et pourtant, elle se tient encore. Son dos se voûte sous la pression, son corps tremble, son souffle est une tempête rauque et déchirée.
+10452||Les flammes courent sous sa peau, ses veines s’ouvrent sous la puissance qui s’échappe en gerbes écarlates.
+10454||Mais elle n’abandonne pas. Elle ne veut pas. Elle ne peut pas. Son rayon s’intensifie, sa haine se fait incandescente.
+10455||Elle brise le ciel de ses hurlements, déchire la terre sous son pouvoir, fait plier l’horreur qui se dresse devant elle. Puis… le portail vacille.
+10456||Un premier éclat de pierre se brise.
+10457||Puis un autre.
+10458||Puis encore un autre.
+10460||Elle sent sa victoire se profiler à l’horizon, mais à quel prix ?
+10462||Son âme se disloque. Sa conscience s’efface.
+10464||Elle n’est plus qu’une entité enragée, une force qui combat l’inévitable, qui lutte contre un gouffre qui la dévore, mais elle ne s’arrêtera pas.
+10466||Elle est Amanea.
+10467||Elle est la Reine Noire.
+10468||Elle est celle qui combat les ténèbres…
+10470||Elle est seule, mais inéluctable.
+10472||Mais soudainement, le rayon d’énergie infernale qui jaillissait de son dos s’éteint brutalement. L’interruption est presque brutale, comme si une chaîne s’était brisée, comme si le fil ténu qui retenait encore Amanea entre l’ordre et le chaos venait de céder.
+10474||Le portail frémit.
+10476||Privé du flot d’énergie qui l’étouffait, il se stabilise, des lignes de runes ardentes pulsent à nouveau, réclamant leur dû.
+10478||Mais Amanea n’a plus le luxe d’y penser.
+10479||Un nouvel ennemi se dresse devant elle.
+10480||Il est là, détendu, presque nonchalant, mais elle sait.
+10482||Elle le voit.
+10484||Elle sent la menace, une présence aussi brûlante que glaciale, aussi ironique que cruelle.
+10486||Valurn.
+10488||Un ultime assaillant.
+10489||Un ultime obstacle.
+10491||Sa peau, marquée de fissures infernales, tremble. Son regard s’embrase d’un vert incandescent, ses crocs se serrent, elle analyse, elle juge, elle décide. Elle doit l’éliminer.
+10492||Vite.
+10493||Elle n’a plus de temps.
+10494||Mais ses yeux se plissent, intrigués.
+10496||Quelque chose ne colle pas.
+10497||Quelque chose chez lui lui semble… familier.
+10498||Alors, dans un souffle rauque, elle murmure, presque méprisante :
+10500|D|Toi ? Tu es son fils ?
+10502||Elle voit ses traits, elle voit ses yeux, elle voit dans sa chair l’héritage qu’il porte. Et Valurn, fidèle à lui-même, ne se trouble pas.
+10503||Il sourit.
+10505||Un sourire arrogant, un sourire moqueur, un sourire cynique.
+10507||Il s’amuse.
+10508||Il s’incline légèrement, avec une grâce parfaitement feinte, et répond d’une voix sucrée de sarcasme :
+10510|D|Bien vu, très chère.
+10512||Puis, il relève les yeux, et cette fois, il n’y a plus de jeu.
+10513||Ses pupilles s’embrasent, rouge sang, rouge carnage, rouge damnation.
+10515|D|Et tu es la dernière barrière à son plan.
+10517||Un claquement de doigts.
+10518||Une explosion de flammes noires jaillit de ses paumes. Les ténèbres s’éveillent et ne laisse place à aucun moment de répit
+10519||Le Chaos danse. Il est là pour l’arrêter. Et Amanea, face au danger incarné, cesse de se contenir. Son corps cède à l’impulsion meurtrière.
+10520||Il faut le tuer.
+10521||Vite.
+10522||Le portail ne lui laisse pas le temps
+10525||Les flammes noires de Valurn explosent dans l’air, traçant une arcane de pure destruction à travers le champ de bataille ravagé. Amanea se projette en arrière, son corps meurtri réagissant à peine à la douleur. Son regard flamboyant est rivé sur lui, et son expression trahit une fatigue surnaturelle, un épuisement plus spirituel que physique. Pourtant, son instinct lui hurle de se battre.
+10527||Un mur de feu s’élève entre eux.
+10529||Valurn le traverse, sa silhouette s’effaçant dans les cendres, réapparaissant sur le flanc d’Amanea avec une vélocité presque surnaturelle. Sa lame s’abat.
+10531||Un choc.
+10533||Une onde de choc démoniaque fait trembler la terre sous leurs pieds, repoussant les morts et les vivants encore debout.
+10535||Amanea pare du revers de sa griffe monstrueuse, projetant Valurn à plusieurs mètres d’un simple revers. Mais il ne chute pas, il tourne sur lui-même, se rétablit dans un éclat de flammes du Chaos, et riposte avec une sphère entropique qui file vers elle comme une comète hurlante.
+10537||Impact.
+10538||Le sol se désintègre.
+10539||La pierre se fracture, la terre se corrompt, la Forêt Interdite hurle.
+10540||Mais quand la fumée se dissipe, Amanea est toujours debout, immobile, intacte.
+10541||Elle le fixe.
+10543|D|Tu sais.
+10545||Une simple phrase, une accusation.
+10546||Valurn rit.
+10548|D|Évidemment que je sais.
+10550||Leurs corps s’élancent de concert.
+10551||Une succession de coups brutaux, de projectiles maudits, de vortex d’ombres et de flammes. Le ciel se déforme sous leur rage.
+10553||Le chaos de leur duel dépasse la compréhension des soldats alentours. Les Sylviniens et les Obscurcis cessent leur lutte, stupéfaits, effrayés, fascinés par le ballet infernal qui se joue devant eux.
+10555|D|Alors pourquoi ?! rugit Amanea en abattant son poing dans une onde d’énergie qui pulvérise le sol autour d’eux.
+10557||Valurn esquive de justesse, rebondit sur l’air même, et s’élance vers elle, sa lame crépitant de flammes infernales.
+10559|D|C’est parce que je sais que je suis là pour t’arrêter !
+10561||Un coup.
+10562||Deux coups.
+10563||Trois.
+10565||Ils échangent leurs assauts dans une cadence effrénée, brutale, destructrice.
+10566||Valurn frappe avec la ruse d’un démon, Amanea riposte avec la force d’une reine damnée.
+10567||Mais peu à peu, il cède du terrain. L’issue devient évidente, Amanea est plus forte, trop puissante, écrasante, même pour lui.
+10569||Valurn résiste, encaisse, prolonge l’affrontement, non pas par folie, mais par nécessité.
+10570||Il doit la retarder. La reine noire le comprend, devinant la supercherie.
+10571||Alors, elle le brise…
+10573||D’un seul coup.
+10575||Une frappe abyssale, un assaut foudroyant, une force pure et primale qui transperce ses défenses.
+10576||Valurn est propulsé en arrière, violemment, son corps s’écrase contre un pilier de pierre noire.
+10578||Il crache du sang.
+10580||Il est vaincu.
+10582||Amanea avance vers lui, son corps palpitant d’énergie démoniaque, son aura écrasant tout sur son passage.
+10584||Elle le soulève d’une main griffue, le maintenant à hauteur de son regard embrasé.
+10586|D|Je devrais t’anéantir.
+10588||Valurn, malgré la douleur, rit.
+10590||Un rire déformé, tremblant, mais authentique.
+10591||Puis, il murmure, doucement, presque satisfait :
+10593|D|Alors fais-le… et regarde le monde s’effondrer.
+10595||Le portail gronde derrière eux.
+10596||Il est en train de s’ouvrir.
+10597||….
+10598||…
+10599||.
+10601||Le chaos s’efface. La défaite est proche.
+10602||Les bruits de guerre se meurent, s’étouffent dans une brume lourde, pesante, chargée de cendres et de sang. Il n’y a plus de clameur, plus de hurlements, plus de rage guerrière.
+10604||Il n’y a plus qu’eux.
+10606||Trois silhouettes.
+10608||Trois destins qui se croisent sur les ruines d’un champ de bataille dont ils sont les seuls témoins.
+10610||Valurn, à genoux, défait, essoufflé, le corps marqué par le combat. Ses flammes se sont éteintes, son arrogance n’est plus qu’un voile amer sur son visage couvert de suie.
+10612||Amanea, debout, tremblante, le souffle court, son corps brisé par l’effort, son âme saignée par le portail qui lui vole son essence. Son corps subit le contrecoup… un mortel ne peut encaisser autant d’energie. Elle titube, l’ombre d’elle-même, son regard incandescent vacillant sous la fatigue.
+10614||Et enfin, la troisième silhouette.
+10615||Elle est là, immobile, imposante, impitoyable.
+10616||Son entrée est silencieuse, et pourtant, elle écrase tout de sa présence.
+10618||Elle ne s’annonce pas.
+10620||Elle n’a pas besoin de le faire.
+10622||Elle est le jugement incarné.
+10624||Elle est la sentence.
+10626||…. Tia
+10628||Sa silhouette auréolée de lumière se découpe dans l’obscurité environnante, un phare au milieu des ombres, une présence qui impose, qui domine, qui consume tout espoir. Son regard d’or se pose sur sa sœur, et Amanea frissonne. Elle la sent. Elle sait.
+10630||C’est fini.
+10632||Le combat est terminé.
+10633||Il n’y a plus d’armée.
+10634||Il n’y a plus de soldats.
+10635||Il n’y a plus que Tia, Amanea et Valurn.
+10637||Un silence mortel s’installe, où seul résonne le vent charriant les cendres d’un monde en train de basculer.
+10639||Amanea serre les dents.
+10641||Elle refuse de tomber. Elle refuse de plier, mais elle n’a plus d’options.
+10642||Elle est à bout. Combattu depuis des heures.. seule. Manipuler des forces que même des dieux n’auraient pu encaisser. Non… cette guerre doit cesser… au moins pour cette fois.
+10644||Dans un dernier espoir, dans un dernier acte de foi, elle tend une main tremblante.
+10646|D|Tia… écoute-moi…
+10648||Sa voix est brisée, presque inaudible.
+10650||Elle n’a plus de fierté.
+10651||Elle n’a plus d’orgueil.
+10652||Elle n’a plus que la vérité.
+10654|D|On doit fermer ce portail… ensemble.
+10656||Son regard, jadis brûlant de défiance, est désespéré. Ses yeux embrasés ne sont plus que deux orbites sans magies et sans vie.
+10658|D|Ta lumière est la seule chose qui manque… Tu peux le bannir définitivement.
+10660||Un instant suspendu.
+10661||Un battement de cœur.
+10662||Un souffle.
+10664||Tia ne dit rien. Son regard demeure impassible. Elle la jauge,  l’évalue, la pèse, la juge
+10666||Puis, elle bouge.
+10668||Amanea croit voir un éclair d’hésitation.
+10670||Peut-être que cette fois…
+10671||Peut-être que pour une fois… leurs différents seront mis de côté…
+10673||Peut-être qu’elles pourraient y arriver ens… L’acier siffle dans l’air.
+10675||Un coup net.
+10676||Une douleur atroce, immédiate, brutale. Amanea ne comprend pas.
+10677||Elle baisse les yeux, rétablissant sa vision dans des braises ardentes.
+10678||Son bras tendu n’est plus là.
+10680||Tranché net.
+10682||Le sang noir gicle. Le monde devient flou.
+10684||Elle vacille.
+10685||Elle chancelle.
+10686||Elle fixe sa sœur, les yeux écarquillés, sidérée.
+10688||Tia ne montre aucune émotion.
+10690||Aucune hésitation.
+10691||Aucune humanité.
+10693||Amanea tremble. Sa gorge s’assèche. Elle essaie de parler, elle essaie de comprendre. Mais rien ne vient. Elle chute, se tenant le vide laissé par le membre manquant. Son corps s’effondre, incapable de soutenir ce qu’elle vient d’endurer. Son regard, jadis empli de feu et d’orgueil, n’exprime plus qu’une chose : l’incompréhension.
+10694||Un rictus amer tord ses lèvres alors qu’elle tombe dans la poussière.
+10696|D|Je vois… murmure-t-elle, dans un souffle mourant.
+10698||Elle avait osé espérer, mais avait oublié…
+10700||Une Farae ne pardonne jamais.
+10703||Un ricanement résonne dans les cendres. Bas. Moqueur. Tordu par l’ironie du moment. Valurn, allongé sur le sol, brisé par le combat, mais toujours vivant, sourit malgré tout. Il saigne, son corps marqué par les affrontements, et pourtant, il rit. Parce qu’il a gagné.
+10705||Tia, elle, ne rit pas. Elle avance lentement, laissant traîner son épée derrière elle, l’acier raclant contre la pierre et les cadavres épars, produisant un crissement sinistre. Un bruit atroce. Comme une provocation. Comme une attente. Comme si elle voulait que cet instant s’éternise. Elle tourne autour d’Amanea, un prédateur observant une proie mourante, savourant l’inévitable. Elle n’a pas besoin de se presser.
+10707||Et Amanea, au sol, tremble. Pas de peur. Pas de douleur. Mais de consternation. Son regard brûlant, si vibrant quelques instants plus tôt, est éteint par la sidération. Elle a combattu, elle a résisté, elle a sacrifié tout ce qu’elle était pour empêcher le pire. Son propre corps est à l’agonie. Son sang coule, ses muscles sont meurtris, ses os ont cédé sous la pression infernale. Et pourtant, ce n’est pas cela qui la brise. La fatigue… se combat, pas celui survenue ce jour, mais celui perdurant depuis des siècles… elle est fatiguée de le mener.
+10709||L’impératrice avance encore, lentement, savourant chacun de ses pas. Son expression est indéchiffrable. Ni joie, ni colère. Juste une détermination inébranlable. Son armure resplendit dans la lumière qu’elle incarne, alors que la silhouette d’Amanea, elle, se dissout dans l’obscurité.
+10711||…. Une dernière fois, la Reine Noire ferme les yeux. Une ultime tentative. Un dernier effort. Un dernier espoir.
+10713||Le portail doit être fermé.
+10715||Son dos s’illumine de nouveau. Elle rassemble le peu de force qu’il lui reste pour maîtriser son pouvoir… et le déchaîner contre la porte noire. Son corps hurle, ses nerfs s’arrachent sous la pression. Mais elle s’en moque. Elle s’abandonne à cette dernière flamme. Un ultime rayon s’apprête à jaillir.
+10717||Mais elle n’en a pas le temps.
+10719||Une pression soudaine sur sa gorge. Un étouffement brutal. Son souffle se brise d’un coup. Ses paupières se rouvrent dans un sursaut de panique. Tia l’a saisie à la gorge.
+10721||D’une seule main.
+10723||Comme si elle ne pesait rien.
+10725||Les pieds d’Amanea battent dans le vide, cherchant désespérément un appui qui n’existe plus. L’air lui manque. La douleur est atroce. Elle lutte, agrippe le poignet de sa sœur, tente de desserrer l’étreinte. En vain.
+10727||Tia la regarde. Silencieusement. Elle se penche légèrement, et leurs regards se croisent.
+10728||Deux iris d’or. Froides. Indifférentes.
+10729||Il n’y a pas de haine. Seulement du vide. Amanea tente de parler, mais sa voix n’est qu’un souffle mourant.
+10730||Un murmure à peine audible.
+10732|D|Pourquoi… ?
+10734||Un silence absolu. Glacial. Tia ne répond pas, elle agit.
+10735||Sa lame lui perfore l’abdomen par le bas.
+10737||Une douleur foudroyante.
+10738||Brûlante.
+10739||Remontant a l’intérieur de la femme jusqu’à transpercer son cœur.
+10741||Son souffle se coupe, ses muscles se crispent. Elle ne peut même pas crier. Elle sent la lame s’enfoncer profondément, percer les chairs, broyer l’os, traverser jusqu’à ressortir dans le haut de son dos.
+10743||Elle sent son propre sang couler.
+10745||Puis lle se relâche. Elle ne perçoit rien. Tout s’efface.
+10747||Les sons.
+10748||Les couleurs.
+10749||Le monde devient flou.
+10751||Mais pourtant… Dans son dernier souffle, elle comprend. Elle voit, sous une cape d’ombre mouvante, l’illusion qui se dissipe.
+10753||Ce ne sont pas les yeux de Tia.
+10754||Ce ne sont pas ses mains.
+10755||Ce n’est pas elle.
+10757||C’est... Une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.
+10758||Naïah, Sa fille, Son propre sang.
+10759||C’est elle qui l’a exécutée. Froidement. Sans trembler. Sans un mot. Sans un frisson.
+10761||Sans un regret.
+10764||Son corps s’effondre, abandonné par la force qui l’animait, son âme s’échappant en lambeaux comme une brume mourante. La douleur s’efface, remplacée par une étrange légèreté, comme si son être se dissolvait dans l’air même. Elle entend encore les cris de la bataille, distants, irréels, un écho de violence qui ne la concerne plus. Son regard s’accroche aux silhouettes qui s’éloignent, floues, vacillantes dans sa vision déclinante. Valurn. Il se met à hauteur de la reine. Toute ses forces la quitte… il draine tout ce qui lui reste. La magie qui l’a surcharge se retire en quelques instants. Il se relève, satisfait, et se retire telle une silhouette fantomatique et rieuse, une ombre démoniaque qui a eu son dû et qui ne daigne même pas lui accorder un dernier regard. Naïah. Sa fille. Sa propre chair. Elle ne fuit pas. Elle s’arrête un instant, son corps parfaitement immobile, comme savourant cet instant. Ses yeux rencontrent ceux d’Amanea. Aucune pitié. Aucun regret. Juste un calme absolu. Un regard rempli d’accomplissement. Un regard satisfait.
+10766||Amanea veut parler, veut comprendre, veut hurler. Pourquoi ? Mais aucun son ne sort. Sa gorge est sèche, son souffle n’est plus qu’un râle. Ses doigts griffent la terre sans force, essayant de s’accrocher à une réalité qui lui échappe.
+10768||Le monde rétrécit, se referme sur elle.
+10770||Son corps ne lui appartient plus. Tout devient silence.
+10772||Les ténèbres dévorent sa vision, mordant les bords de son champ de perception comme une marée inévitable, incontournable.
+10774||Naïah tourne les talons. Elle ne se retourne pas. Elle ne regarde même pas sa propre mère mourir. Seul Valurn casse le silence en s’adressant a elle, dans un ricanement narquois. « Tu vois… je t’avais dit que je te l’offrirais »...
+10776||Amanea sent la vie lui être arrachée, chaque battement de son cœur blessé arrache un adieu forcé, un glas funèbre sonnant son dernier souffle.
+10778||Le sol semble l’engloutir.
+10779||Sa conscience s’efface.
+10780||L’ombre l’absorbe… les ténèbres sont là… il la dévore…
+10781||Mais c’est le chaos qui s’empare d’elle.
+10783||Sa place… est de brûler en enfer.
+10796||Chapitre 21
+10797||Début de la Fin
+10801||La bataille fait rage. Le front avance, repoussant les derniers Obscurcis. Les Sylviniens progressent, inexorables. Mais dans le chaos du combat, certains sont restés en arrière. Oubliés.
+10803||Draven est l’un d’eux.
+10805||Il ne sait plus exactement depuis combien de temps il s’est retrouvé isolé. Les combats, le tumulte, les cris… tout est allé trop vite. Il se souvient du moment de victoire. D’accomplissement quand il a vaincu le dernier Obscurcis… mais il fut ramené à la réalité quand les premiers morts se sont relevés. Il était entouré de cadavre…
+10807||Maintenant, il est seul, entouré de mort ne demeurant pas dans le trépas.
+10809||Il se tient debout dans une crevasse rocheuse, encerclé. Les morts avancent, un torrent d’ombres et de chair putréfiée, des créatures qui n’auraient jamais dû marcher à nouveau. Il les regarde, le regard dur, impassible. Ils sont trop nombreux.
+10811||Il respire profondément.
+10813||Ses muscles le brûlent. Son bras tremble sous le poids de son épée. Il est fatigué. Epuisé. Mais il n’a pas le droit de tomber. Il est acculé. Sa seule issu est temporaire… s’enfoncer dans la grotte derrière lui, et gagner quelques minutes de plus… mais un bruit parasite grésille soudainement.
+10815||Il baisse les yeux. Son parchemin de communication.
+10817||Il n’a même pas réalisé qu’il était encore actif. Et une voix résonne.
+10819|D|Père ?
+10821||Son cœur manque un battement.
+10823||Lineva.
+10825||Il reste figé une seconde, pris au dépourvu. Elle essaie de le contacter. Seul quelques mots échappe a son souffle.
+10827|D|Je rentre bientôt…
+10829||Sa voix est rauque, brisée. Il sait qu’il ment. Mais il veut qu’elle l’entende.
+10830||Qu’elle y croie. Puis il relève son épée, une nouvelle flamme brûlant en lui. Dans ce calvaire infini… il prend conscience que sa fille est toujours en vie. Cela lui suffit, maintenant, son combat l’attend.
+10832||Mais ce sont les morts qui frappent les premiers.
+10834||Il évite. Il contre. Il frappe.
+10835||Son épée fend l’air, tranchant la gorge d’une créature qui n’a plus d’humain que l’ombre de son armure. Il pivote, esquive un coup, enfonce sa lame dans un torse décomposé. Mais ils sont des dizaines.
+10837||Il frappe encore. Encore.
+10839||Mais chaque mouvement lui arrache un peu plus de force. Il sent ses muscles hurler. Son souffle est court, son corps à bout. Il va mourir ici.
+10841||Alors il observe autour de lui. Des roches, une paroi instable… la grotte… S’il la fait s’effondrer, il peut les enterrer sous des tonnes de pierres.
+10843||Il n’hésite donc pas. Il court de toute ses forces dans les entrailles de la montagne, suivi de prêt par les cadavres animés. Il temporise à l’intérieur, affrontent une marée noire et en proie à la décomposition. Ses coups se font lourds, las, mais détermination. Il doit tenir, ne serait-ce qu’un peu plus longtemps. Il les laisse s’accumuler, encore et encore, combattant le fléau autant qu’il ne peut. Sa lame tranche la chair, sa garde fracasse les os, et son armure absorbe les chocs… puis c’est le moment. Il s’ouvre un passage, traversant la foule, emportant avec lui un maximum de non mort. L'amiral parvient, dans un sursaut de rage et dans une volonté de réussite, à regagner l’entrer de la grotte.
+10845||Maintenant ! Il frappe le sol, une première fois.
+10846||Les roches tremblent.
+10848||Un cadavre lui bondit dessus. Il l’attrape, l’envoie valser d’un coup d’épaule.
+10850||Il frappe une deuxième fois. Un grondement sourd.
+10852||Un autre mort surgit. Il bloque avec son bras. Un craquement retentit. Son épaule. La douleur est atroce, mais il tient bon.
+10854||Un dernier coup. La roche cède, la grotte s’effondre, la montagne s’affaisse dans une réaction en chaîne monumentale…
+10856||Puis…
+10857||Le silence.
+10859||La bataille a continué sans lui. Le front a avancé, laissant derrière lui un champ de ruines.
+10861||Remerii marche seule. Séparée d’Iriana a l’initiative de la princesse afin de chercher des survivants. Mais à mesure qu’elle s’éloigne des autres, une sensation lourde l’envahit. Une pression sourde dans sa poitrine. Un mauvais pressentiment.
+10863||Puis, elle le voit.
+10865||Là, au milieu des gravats.
+10866||Draven.
+10867||Son dos est appuyé contre une roche, son épée fichée dans le sol entre ses jambes.
+10869||Il ne bouge pas.
+10871||Son visage est calme. Ses yeux, à demi-ouverts, fixent un point invisible.
+10872||Il a l’air d’attendre.
+10873||Elle s’approche lentement.
+10875|D|Draven… ?
+10877||Aucune réponse.
+10878||Ses lèvres sont entrouvertes, comme s’il avait voulu dire quelque chose… et qu’il s’était arrêté en plein souffle.
+10880||Elle s’agenouille devant lui, pose une main tremblante sur son épaule. Son corps est froid.
+10882||Elle baisse les yeux… et comprend.
+10883||Il n’a aucune blessure mortelle. Pas de sang. Pas de coup fatal. Il est juste… fatigué. Draven n’est pas tombé sous les coups. Il est mort d’épuisement.
+10884||La fatigue, les combats, la perte des siens… il est simplement parti après avoir accompli son maximum. Elle l’observe de haut en bas… mais un détail attire son attention. Dans chaque main, l’Amiral renferme ce qui lui est le plus cher. A droite, toutes les plaques qu’il a ramassées. L’identification des siens tombés au combat, mais ce qui fait saccader le souffle de Remerii est le médaillon qu’il tient dans son autre main.
+10885||Elle le prend, l’ouvre, et y découvre deux personnes gravées respectivement de chaque côté. L’une est assez âgé, comme Draven, sans doute sa femme. La deuxième elle est beaucoup plus jeune, à peine plus vieille que Remerii. La ressemblance entre les deux est frappante, deux brunes, au visage dur, mais bon. Elles sont heureuses, et sourient. Dans cette même main se trouve le parchemin de communication, désactivé.  L’Archimage lève les yeux et détaille le visage de l’homme. Il s’est éteint en paix…
+10886||Elle ferme lentement les yeux. Et, sans un mot, elle lui prend doucement la main.
+10888||Le vent souffle autour d’eux.
+10890||Un dernier adieu.
+10892||Remerii se repose à ses côtés,
+10894||et lui accorde le silence qu’il mérite…
+10896||À quelques lieux de là,
+10897||Le silence règne lorsque Iriana et Tia atteignent les lieux. Trop tard.
+10899||L’air est épais, chargé de cendres et de l’odeur entêtante du soufre. La terre est ravagée par le combat qui s’est déroulé ici, creusée de sillons noirs où le feu magique a laissé sa marque. Mais tout cela n’a plus d’importance.
+10901||Au centre du chaos, Amanea gît.
+10903||Son corps, déformé par la puissance démoniaque qu’elle avait invoquée, n’est plus que l’ombre d’elle-même. Sa peau fissurée, marquée de cicatrice, dont ses craquelures habituellement embrasées sont maintenant éteintes, dénuée de magie, dénuée de vie. Elle est glacée, pacifiée. Ses traits sont figés dans une expression indéchiffrable, entre la douleur et une étrange forme de d’incompréhension. Ses ailes, jadis majestueuses, sont brisées, repliées sur elles-mêmes dans une posture morbide.
+10905||Et derrière elle, le portail brûle.
+10907||Des langues de flammes cramoisies serpentent le long des runes démoniaques gravées dans la pierre. Un brasier infernal, une blessure béante dans le tissu même de leur monde. Iriana s’en approche, le cœur serré. Le portail s’active lentement. Ce n’est plus une simple construction de pierre et d’énergie. C’est une entité en soi. Il aspire, avale, réclame. Il est affamé de chaos.
+10909||Iriana ne regarde pas Tia immédiatement. Elle n’ose pas.
+10911||Elle attend une réaction. Une explosion de colère, un jugement froid, une sentence prononcée d’un ton impérial. Mais rien ne vient.
+10912||Lorsque finalement elle tourne la tête, elle ne voit pas l’impératrice Sylvinienne toute-puissante qu’elle a toujours connue. Elle voit une sœur en deuil.
+10914||Tia s’est figée, debout face au cadavre de sa jumelle, les lèvres entrouvertes, les yeux éteints. Puis, lentement, elle s’agenouille. Ce n’était pas prévu.
+10916||Iriana l’observe, troublée. Elle n’a jamais vu Tia ainsi. Tia, la dure, l’implacable, la souveraine de Sylvinia, celle qui n’accorde ni pardon ni pitié.
+10917||Mais en cet instant, elle n’est rien de tout cela.
+10919||Ses mains gantées de cuir effleurent la peau grise et craquelée d’Amanea, là où la lame a frappé. Elle n’exprime pas sa douleur par des mots, pas par des pleurs. Elle reste immobile, simplement là, face à cette sœur qu’elle a tant combattue. Ses yeux se chargent de tout.
+10921||Puis, dans un souffle presque brisé, elle murmure :
+10923|D|J’aurais peut-être dû l’écouter.
+10925||Iriana tressaille.
+10927|D|Grand-mère ?
+10929||L’impératrice ne répond pas tout de suite. Son regard reste fixé sur le cadavre d’Amanea, comme si elle cherchait quelque chose. Une vérité qu’elle a ignorée trop longtemps. Un détail qu’elle aurait dû voir.
+10931|D|Elle n’a jamais été comme moi.
+10933||Sa voix est basse, rauque. Fatiguée.
+10935|D|Elle a toujours été… autre. Trop fragile, trop fougueuse. Trop instable. Trop passionnée. C’est ce que je me répétais, encore et encore. J’ai cru qu’elle était une menace, une faiblesse à contrôler, à écarter, comme notre mère me l’a toujours répétée.
+10937||Son regard doré se voile d’un éclat que Iriana ne lui connaissait pas.
+10939|D|Mais je crois qu’au fond… elle voulait simplement être libre.
+10941||Iriana se mord la lèvre.
+10943|D|Elle a essayé.
+10945||Elle s’agenouille à son tour, posant une main hésitante sur le bras d’Amanea. La peau est froide, presque statufiée. Elle ferme les yeux un instant. L’Impératrice sort de sa poche une pièce de piano abîmée.
+10946||Le bois ancien, marqué par le temps, repose dans la paume ouverte de la Reine noire. Iriana la regarde, avec un sourire douloureux.
+10948|D|J’ai vu ce qu’elle était vraiment.
+10950||Tia tourne lentement la tête vers elle, un pli de doute entre ses sourcils.
+10951||Iriana continue, le regard baissé.
+10953|D|J’ai trouvé son journal, ses souvenirs. J’ai vu ce qu’elle voulait. Ce qu’elle craignait. Elle n’était pas un monstre. Elle cherchait… l’approbation.
+10955||Elle relève la tête, plongeant son regard dans celui de sa tante.
+10957|D|Elle s’est toujours battue pour ce qu’elle croyait juste. Peut-être même plus que nous tous.
+10959||Tia ne nie pas. Elle ne peut pas.
+10961||Elle baisse les yeux, posant son front contre son poing fermé. Un geste si humain, si vulnérable, qu’Iriana peine à croire ce qu’elle voit.
+10963|D|Je savais ce qui l’attendait.
+10965||Sa voix est à peine un souffle.
+10966||Iriana fronce les sourcils.
+10968|D|Qu’est-ce que tu veux dire ?
+10970||Tia ne répond pas tout de suite.
+10972||Ses doigts glissent sur les cheveux blancs d’Amanea, écartant doucement quelques mèches tombées sur son visage figé.
+10974|D|Elle est ma sœur.
+10976||Elle inspire profondément, sa poitrine se soulevant dans un effort visible.
+10978|D|Et par ma faute… elle ne connaîtra jamais le repos qu’elle devrait avoir…
+10980||Iriana sent son cœur se serrer.
+10981||Elle comprend.
+10983||Tia savait.
+10985||Elle savait ce qui arriverait à Amanea si la bataille d’aujourd’hui était menée à son terme. Elle connaissait leurs destins.
+10987||Et malgré tout… elle les a conduites à ce moment.
+10988||La culpabilité est écrasante.
+10990||Un silence tendu plane entre elles, uniquement troublé par le portail qui brûle, dévore et attend.
+10992||Iriana n’a pas les mots.
+10994||Elle n’a plus de colère, plus d’amertume. Seulement une immense tristesse. Pour la première fois, elle voit quelque chose de différent dans les yeux de Tia. Quelque chose de plus fragile, de plus humain.
+10996||Du regret.
+10998||Le silence pèse, lourd comme une chape de plomb. Tout autour d’elles semble s’éloigner, comme si le monde entier s’était replié sur cet instant figé dans le temps. Le portail gronde derrière elles, affamé, insatiable, mais ni Iriana ni Tia n’y prêtent attention. Elles ne voient que le corps inerte d’Amanea, étendu devant elles, une ombre déchue aux ailes brisées, une reine tombée dont le destin tragique semble enfin scellé. Tia ne dit rien. Elle reste figée, droite, imposante, mais ce n’est qu’une façade. L’impératrice n’est plus une impératrice en cet instant. Elle est simplement une sœur, une jumelle privée de son autre moitié, une guerrière qui a remporté une bataille qu’elle n’a jamais voulu vraiment gagner. Elle se sent vide. Elle a perdu une, si ce n’est son objectif… sa raison de vivre.
+11000||Ses doigts effleurent une fois de plus la peau d’Amanea, froide, dure comme la pierre, marquée par les ravages de la corruption. Autrefois, cette chair avait été la même que la sienne. Autrefois, ces traits avaient été identique aux siens. Amanea et elle étaient nées ensemble, avaient grandi ensemble, avaient marché dans les mêmes couloirs, appris sous le même toit. Elles avaient partagé leurs premiers rires, leurs premiers chagrins, leurs premiers espoirs… et leurs premières rancœurs.
+11002||Tia ferme les yeux. Elle se souvient.
+11004||Elle se souvient d’Amanea, enfant, qui la dépassait toujours d’un pas lorsqu’elles couraient dans les jardins d’Al’Gratal. Elle se souvient des nuits passées sous les constellations, allongées sur l’herbe humide, se racontant des histoires inventées, rêvant du monde qu’elles bâtiraient ensemble. Elles s’étaient jurées de ne jamais se séparer. Elle se souvient du regard enflammé de sa sœur lorsqu’elle lui parlait de ses idéaux, de son ambition, de cette passion dévorante qui la consumait. Elle se rappelle comment sa jumelle aspirait à la surpasser, non par rivalité, mais par le simple désir de lire la fierté dans son regard. Elle se souvient du moment où leurs chemins avaient commencé à diverger, où les premiers désaccords avaient laissé place aux premiers affrontements. Elle se souvient des disputes, des cris, des accusations. De ce jour fatidique où elles n’avaient plus été des sœurs, mais des ennemies.
+11006||Elle rouvre les yeux. Amanea n’est plus.
+11008||Le conflit s’est terminé d’une seule lame, une lame qui n’a pas seulement transpercé le cœur d’une sœur… mais des deux jumelles. Iriana observe Tia, incapable de détourner le regard. Elle n’a jamais vu son impassible tante ainsi. Si immobile, si fragile. Tia respire lentement, son visage de marbre figé dans un calme trompeur, mais tout son être semble secoué d’une tempête intérieure. Alors, elle bouge enfin.
+11010||Elle avance doucement contre sa jumelle. Ses gestes sont lents, mesurés, comme si elle craignait qu’Amanea ne disparaisse en poussière à la moindre pression. Ses bras se tendent, et enfin… elle la prend dans ses bras.
+11012||Iriana écarquille les yeux.
+11014||Elle n’aurait jamais cru voir cela.
+11016||L’impératrice Sylvinienne, inflexible, intouchable, divine, tenant le corps sans vie de sa sœur ennemie, contre qui elle a mené une guerre presque millénaire.
+11018|D|Oui… j’aurais dû t’écouter.
+11020||Le murmure est à peine audible, mais il résonne comme un cri dans l’âme d’Iriana.
+11022||Tia presse son front contre la chevelure d’Amanea, fermant les yeux. Elle inspire profondément, mais son souffle tremble. Elle la berce doucement. Un geste intime, un geste qui n’a rien à voir avec la souveraine de Sylvinia. Ce n’est pas une impératrice qui pleure une ennemie. C’est une sœur qui pleure la moitié d’elle-même.
+11024||Iriana sent quelque chose changer en elle.
+11026||Elle a toujours considéré Tia comme une force inébranlable, une femme sans faiblesse, mais elle s’est trompée. Tia n’a jamais été inébranlable, elle s’est simplement forcée à l’être.
+11028||L’espace d’un instant, elle semble si humaine.
+11030||Leurs regards se croisent, et Iriana la voit.
+11032||C’est subtil, mais bien là
+11034||Tia verse quelques larmes, discrètes et rares…
+11035||pourtant, c’est bien plus qu’elle n’en a jamais laissé paraître.
+11036||Des larmes amères, des larmes de peines, des larmes de regrets
+11038|I|Mais à présent, il est trop tard. La lueur d'Amanea s'est éteinte à jamais, et aucun mot, aucun geste, ne pourra jamais recoudre les liens brisés par l'éternité impitoyable de la mort.
+11040||Tia relâche un soupir tremblant, serrant un peu plus sa sœur contre elle. Elle n’a plus d’armure, plus de masque. Elle n’a que ce chagrin qu’elle n’avait jamais laissé éclater.
+11042||Et pour la première fois, Iriana ne sait pas qui de sa tante ou d’elle-même souffre le plus.
+11044||Elle ne peut qu’observer le point final d’une histoire autrefois tissée d’espoir et de promesses silencieuses, d’une fraternité brisée, un lien déchiré par des années de conflits, de malentendus et d’orgueil, et dont il ne reste plus aujourd’hui  que le silence pesant de la mort pour conclusion…
+11046||La nuit s’accroche aux cimes des arbres tordus, étouffant la lumière des étoiles sous un voile d’encre. Le vent, chargé d’une moiteur funèbre, chuchote entre les feuillages morts, faisant frémir les branches squelettiques. L’air est épais, imprégné d’une odeur de terre humide et de cendres refroidies, une odeur de fin de monde mêlée a celle de la guerre.
+11048||Mais soudainement, le silence est brisé.
+11050||Un frisson parcourt le sol, une onde invisible qui fait trembler les racines et fait tressaillir les feuilles desséchées. L’instant suivant, un bruit sec, comme un verre qui éclate, résonne au cœur de la clairière.
+11052||Le portail s’ouvre.
+11054||Une faille béante se déchire dans l’espace, s’embrasant dans sa structure de pierre noire. L’ouverture pulse d’une lumière cramoisie, projetant d’étranges ombres mouvantes sur les troncs noueux. La réalité elle-même semble se tordre autour de la faille, comme incapable de supporter la souillure qui s’en échappe.
+11056||La brume qui stagnait entre les racines se retire en vagues, fuyant la brèche comme une chose consciente. Une force invisible aspire l’air, créant un sifflement lugubre, un appel aux créatures d’outre-monde.
+11058||Tia et Iriana se tiennent là, figées. Leur deuil s’effondre, emporté par cette horreur vivante qui s’étend devant elles.
+11060||Un hurlement inhumain s’élève des profondeurs du portail. Un son caverneux et déchirant, comme si mille âmes enchaînées hurlaient leur damnation dans un écho infini. Puis, des ombres rampent hors de la faille.
+11062||Elles ne sont pas humaines. Elles ne sont pas animales. Elles sont quelque chose d’autre.
+11064||Les premiers démons émergent. Leurs corps se fondent avec les ténèbres, leurs silhouettes ondulent comme si elles n’étaient pas totalement solides. Leurs yeux, en revanche, sont bien réels : rouge, fendus, affamés.
+11066||Tia dégaine son épée dans un éclair de lumière blanche. L’acier sacré pulse d’une lueur fébrile, vacillante face à la noirceur abyssale qui suinte du portail.
+11068|D|Debout. Sa voix est tranchante, impérieuse.
+11070||Mais Iriana ne bouge pas. Ses yeux restent fixés sur la brèche, comme attirés par une force invisible.
+11072||Des ombres plus massives émergent du portail. Des créatures aux membres tordus, aux mâchoires trop larges, aux corps parcourus de vrilles chitineuses. Elles avancent lentement, leurs griffes raclant le sol, creusant la terre meuble sous leur poids.
+11074||Puis les pas précipités de Saidin et Remerii résonnent dans l’obscurité.
+11076||Ils arrivent trop tard.
+11078|D|Par tous les dieux… souffle Remerii, son regard bleu glacé foudroyant la scène devant elle.
+11080||Saidin serre son bâton, analysant les flux de magie qui s’entrechoquent autour du portail. Ses sourcils se froncent. Il sait ce que cela signifie.
+11082|D|Nous devons fuir.
+11084||Tia repousse un démon d’un coup de pied, enchaîne avec un arc lumineux qui tranche l’air et consume la chair noire de la créature.
+11086|D|Si on fuit, la forêt entière tombera sous leur contrôle. Il ne s’arrêteront pas, ils viendront jusqu’à Al’Gratal.
+11088|D|Alors il faut qu’on parte avant qu’ils ne déferlent sur nous. Sauvez ce qui peut l’être encore. Tranche Remerii. Elle fixe Saidin. Tu pourrais ouvrir un portail vers Al’Gratal ?
+11091||Le vieux mage hésite une seconde, ses doigts crispés sur son bâton. Un portail de cette envergure, avec l’influence chaotique qui l’entoure, nécessitera un temps précieux.
+11093|D|Je vais avoir besoin de plusieurs minutes.
+11095|D|Alors on va te les offrir. Murmure Tia, faisant tournoyer son arme en foudroyant les démons du regard.
+11098||Un second frisson secoue la forêt. Les arbres gémissent sous une pression invisible.
+11100||Quelque chose de plus grand, de plus puissant, approche.
+11102||L’air devient glacial et brûlant à la fois, une anomalie qui tord l’espace comme un tissu malmené. Une silhouette massive se dessine dans le tourbillon d’énergie du portail.
+11104||D’abord une main, colossale, couverte de veines brûlantes et d’un cuir noir écarlate craquelé. Puis un bras, orné de chaînes brisées qui cliquettent comme des râles d’âmes tourmentées.
+11106||Enfin, le voici, le démon supérieur franchit la brèche.
+11108||Il se redresse, ses cornes effilées se frayant un chemin entre les branches hautes. Sa peau est striée de marques anciennes, des cicatrices creusées par des siècles de guerre. Ses yeux… des gouffres de braises, brûlant d’une lueur malsaine et infinie. Son sourire carnassier appelle à lui seul à la démenc. Les pas de la bête fait vibrer le sol sur plusieurs kilomètres. Il se dresse droit, son regard bestial affiche satisfaction.
+11110||Il observe la forêt.
+11111||Puis il rit.
+11113||Un son profond, vibrant, qui fait trembler la terre sous leurs pieds.
+11115|D|Enfin… Il déploie ses ailes déchirées, leur envergure occultant la lumière tremblante de la lune. Le temps de la conquête est venu. Trembler sous le fléau de votre nouveau seigneur, Bhaal !
+11117||Il est géant, haut de plusieurs dizaine de mètres. Un titan du chaos à la peau de pierre.
+11119||Tia serre son épée jusqu’à en blanchir les phalanges. Elle sait qu’ils ne peuvent pas le combattre.
+11121||Mais Remerii ne recule pas…
+11122||Non…
+11123||Elle avance.
+11125||Le givre se répand sous ses pas, gelant l’herbe morte, cristallisant la brume qui flotte encore entre les arbres.
+11127|D|Reculez… Dit-elle, sans élever la voix. Je vais m'en occuper. Regroupez tout les mondes… et évacuer dés que possible.
+11129||L’impératrice la regarde, ne cachant pas un certain scepticisme.
+11131|D|Ne dit pas de bêtises. Il va t’écraser.
+11133||Remerii, sentant une certaine rage germer en elle, avance encore.
+11135|D|Je sais. Mais je peux le retenir. La température continue de chuter, elle accorde un dernier regard de ses yeux cristallins à l’impératrice. Prenez soin de ma Hylee…
+11137||Tia hoche la tête, criant au ralliement tandis que les troupes se rassemblent.
+11139||Bhaal la fixe, un amusement sinistre tordant son expression infernale.
+11141|D|Pensez-vous pouvoir me retenir, insecte ?
+11143||Remerii ne cligne même pas des yeux.
+11145|D|Non seulement je vais le faire.... Une tempête glacée se lève autour d’elle. Mais tu ne vas pas apprécier.
+11147||Elle tend les bras.
+11148||Une déflagration de givre explose dans la clairière, recouvrant les racines et les troncs d’une carapace cristalline, formant un cône glacée en direction du démon. Celui-ci ne se protège même pas. Il rit.
+11149||Puis charge.
+11151||Un choc titanesque ébranle la forêt lorsque les crocs du Chaos rencontrent le froid absolu de Remerii. Elle hurle brièvement en se tournant vers son mentor.
+11153|D|Saidin ! Ramenez les nôtres chez eux !
+11155||Dans l’ombre, Saidin continue son incantation. Les flux magiques s’assemblent autour de lui, un cercle d’énergie runique s’élargissant peu à peu sur le sol.
+11157|D|Dépêche-toi, vieil homme. Crache Tia, repoussant un démon qui s’est trop approché.
+11159|D|Je fais ce que je peux ! grogne-t-il, le front trempé de sueur.
+11162||Autour d’eux, les soldats se regroupent, luttant pour gagner du temps.
+11163||Le sort de Saidin déchire l’espace-temps. La terre, la végétation, la poussière, une pesanteur s’installe peu à peu.
+11165||Et au milieu de ce chaos…
+11166||Iriana disparaît.
+11167||Tia tourne brusquement la tête, une sensation de vide lui tord le ventre.
+11169|D|Où est Iriana ?!
+11171||Son regard balaie la clairière rongée par les ombres.
+11173||Puis elle la voit.
+11175||Seule.
+11177||Avançant droit vers la porte démoniaque. Tia crie son nom. Mais Iriana ne se retourne pas.
+11179||Elle disparait de la forêt sans un mot.
+11180||Confrontation au Portail
+11182||La forêt est silencieuse, trop silencieuse. Iriana avance, seule, sous la canopée tordue où les ombres semblent s’animer sous la pulsation du portail démoniaque. L’air est saturé d’une énergie poisseuse, presque vivante, qui s’infiltre dans sa peau, cherchant à déformer sa chair, sa volonté, son âme.
+11184||Le portail gronde.
+11186||Sa lumière cramoisie et noire déchire la nuit, projetant des éclairs de magie corrompue qui s’échappent par à-coups, comme les battements d’un cœur monstrueux.
+11187||Et il est là.
+11189||Alamma.
+11191||Debout devant la faille béante, il contemple l’abîme. On monde où les mortels ne sont pas invités… mais que certains ne peuvent éviter.
+11193||Ses vêtements nobles d’antan sont à moitié rongés par la magie du Chaos, son manteau effiloché traînant dans la boue sombre. Il ne vacille pas. Il se tient droit, tel un souverain devant son trône d’ombres.
+11195||À ses pieds, les démons s’inclinent. Ils ne le menacent pas. Ils le reconnaissent. Ils le servent.
+11197||Iriana serre les poings.
+11199|D|Tu es devenu l’un des leurs.
+11201||Alamma ne répond pas immédiatement.
+11203||Il lève légèrement la tête, scrutant toujours l’intérieur du portail, comme un homme sur le point de plonger dans un océan sans fond.
+11205||Puis, d’une voix étrangement calme, il parle :
+11207|D|Non, ma fille. Ce monde est déjà condamné. Je ne fais qu’accepter l’inévitable.
+11209||Iriana sent un frisson glacial lui courir le long de l’échine.
+11211||Puis, enfin, son père se retourne vers elle.
+11213||Son regard n’a pas changé.
+11214||Toujours aussi perçant, toujours aussi froid. Pourtant, dans la lumière tremblotante du portail, quelque chose d’autre s’y tapit.
+11216||Un gouffre.
+11217||Une profondeur infinie.
+11219|D|Tu m’as condamné et as trahi ton propre peuple ! crache-t-elle. Tu es allé trop loin… Êtes-ce par couardise, ou juste par ignorance ?
+11221||Un silence.
+11222||Puis un sourire se dessine sur les lèvres d’Alamma.
+11224|D|Non, Iriana. Sa voix est douce, moralisatrice mais aussi presque… compatissante. Tu es trop jeune pour comprendre. Quel dommage.
+11226||Il tend lentement la main.
+11228|I|Pendant ce temps, à plusieurs lieues de là.
+11230||Valurn s’arrête net.
+11231||Quelque chose le frappe de plein fouet.
+11233||Une décharge violente à l’intérieur de son être, comme un appel dans la nuit.
+11235||Le pacte. Iriana est en danger.
+11237||Un instant, il lutte. Il doit se contenter d’attendre. Il doit nourrir le portail. Offrir la victoire au Chaos.
+11239||Mais il n’y arrive pas.
+11241||Il ferme les yeux. Il voit Amanea. Son dernier regard, son pouvoir arraché, sa magie pure déchirée sous ses doigts.
+11243||Il regarde ses propres mains, encore noircies par l’énergie qu’il a volée.
+11245||Et il sait.
+11247||Ce pouvoir, aucun autre mortel ne peut le manipuler… au risque de finir comme la Reine noire.
+11249||Mais… s’il en donne une partie ?
+11251||Juste assez.
+11252||Juste assez pour qu’Iriana puisse survivre.
+11254||Un sourire amer étire ses lèvres.
+11256|D|Ça, tu ne l’avais pas vu venir, père.
+11258||Il tend la main, une petite brèche démoniaque se formant vers le néant. De cette manière, il laisse une fraction du pouvoir couler à travers l’espace.
+11259||De cette manière… il filtre le flux.
+11260||De cette manière… il l’aide, sans éveiller les soupçon…
+11262||Son énergie par, doucement, vers elle.
+11264||Iriana tombe à genoux.
+11265||L’air se fissure autour d’elle, l’étrange étreinte d’Alamma étouffe sa magie, sa force, sa volonté. Son père la domine désormais, et dans ses yeux, il n’y a aucune haine.
+11266||Juste une pitié glaciale.
+11268|D|Tout ceci est inévitable, Iriana. Je t’offre une dernière opportunité.
+11270||Il tend la main vers elle, prêt à lui offrir un choix empoisonné.
+11272||Iriana est toujours au sol, ses mains serrant la terre flétrie. Son souffle est saccadé, brûlant sa gorge à chaque inspiration douloureuse. Elle sent encore l’emprise invisible d’Alamma sur elle, cette étreinte intangible qui broyait sa volonté, qui la clouait au sol, qui l’empêchait de lutter. Il l’a dominée, il l’a écrasée, comme il l’a toujours fait, avec ce détachement froid, cette patience implacable, comme si sa victoire n’était qu’une évidence, un fil du destin déjà tissé depuis longtemps.
+11274||Et pourtant, quelque chose change.
+11276||Un frisson parcourt sa peau, un frisson brûlant, une chaleur insidieuse qui s’enroule autour de ses os, qui s’immisce dans ses veines comme une flamme invisible. Une force étrangère, volée, transmise. Elle la reconnaît immédiatement.
+11278||Valurn.
+11280||L’énergie qu’il a prise à Amanea, cette puissance arrachée aux ténèbres elles-mêmes, coule en elle, pas en totalité, pas assez pour la consumer, juste un fragment, un éclat ardent qui pulse dans son corps comme un second souffle. Ses doigts se crispent contre la terre froide, ses muscles retrouvent leur tension, son dos se redresse lentement. L’air autour d’elle crépite, un halo sombre l’enveloppe brièvement avant de s’adoucir, de se modeler à son essence propre, de se fondre en elle comme si elle lui avait toujours appartenu.
+11282||Alamma, jusque-là impassible, fronce légèrement les sourcils. Il a perçu ce changement, il l’a senti dans l’air, ce frémissement d’énergie qui n’était pas là l’instant d’avant. Il l’observe, mesurant, analysant, cherchant à comprendre ce qui vient de se produire.
+11284|D|Comment est-ce que tu…. Peu importe. Sa voix est calme, détachée, mais il y a une nuance dans son ton, une infime vibration qui trahit un soupçon d’incertitude.
+11286||Iriana lève lentement la tête.
+11287||Ses yeux brillent d’un éclat nouveau, un mélange de sa propre essence et de celle insufflée par Valurn. Elle ressent encore la douleur, le poids du combat, mais elle n’est plus écrasée.
+11289||Elle se redresse complètement, ses jambes tremblent encore, mais elle tient debout.
+11291||Elle le regarde droit dans les yeux. C’est elle qui écrase.
+11293|D|Oui. Peu importe.
+11295||Elle attaque.
+11296||Son corps est une ombre mouvante, fendant l’air avec une vitesse nouvelle, renforcée par la magie volée. Elle ne lui laisse pas le temps de réagir.
+11298||Sa main s’élève, un éclat d’énergie surgit de ses paumes, un arc de force sombre qui fend l’espace entre eux et s’écrase contre Alamma.
+11300||Il recule d’un pas, surpris. Il bloque l’impact d’un mouvement fluide, mais il a reculé. Un sourire se dessine sur les lèvres d’Iriana.
+11301||Elle frappe à nouveau, une volée d’éclairs violacés fendant l’air, des lames de magie lacérant le sol, traçant un chemin de destruction vers lui. Alamma lève la main, une barrière noire se dresse, déviant une partie de l’assaut, mais l’énergie explose tout autour de lui, soulevant un mur de poussière et de cendres.
+11303||L’onde de choc fait trembler l’air.
+11304||Iriana n’attend pas. Elle fonce dans la fumée, ses yeux perçant les ténèbres, anticipant sa riposte, la sentant venir avant même qu’elle n’émerge.
+11306||Et elle a raison. Un faisceau d’énergie noire jaillit du brouillard, visant sa poitrine.
+11307||Elle tourne sur elle-même, esquivant de justesse, le projectile frôle son épaule, brûle le tissu de sa tenue, laissant une marque fumante sur sa peau.
+11309||Mais elle ne s’arrête pas. Elle continue d’avancer, atteignant Alamma. Leur regard se croise à bout portant… puis elle frappe. Un coup chargé de magie, une onde brute qui s’écrase contre son torse, le propulsant en arrière. Alamma trébuche. Il se rétablit en un instant, son expression toujours neutre, mais ses yeux… Ses yeux sont différents.
+11310||Il la jauge un instant, puis parle, doucement.
+11312|D|Tu as progressé. Je ne pensais pas que tu… userai d’une telle magie.
+11314||Iriana resserre sa prise, sent la magie bouillonner en elle, mais elle sait qu’elle ne doit pas se laisser emporter.
+11316|D|Et toi, tu es moins invincible que je ne le pensais.
+11318||Alamma penche légèrement la tête. Il l’observe.
+11319||Iriana sent la magie vibrer en elle, trop brutale, trop crue, trop instable. Ce n’est pas l’Arcane pure qu’elle connaît, ce n’est pas cette énergie structurée et ordonnée qu’elle a appris à maîtriser depuis l’enfance. Non, c’est autre chose. Quelque chose de plus profond, plus viscéral, une force qui ronge autant qu’elle exalte, qui brûle et glace en même temps, un amalgame chaotique qui semble chercher à s’imposer en elle autant qu’à la renforcer.
+11321||Ombre.
+11323||Chaos.
+11325||Mort.
+11327||Trois énergies incompatibles, fusionnées en une tempête incontrôlable, un ouragan noir rugissant sous sa peau. Chaque coup qu’elle porte, chaque onde qu’elle projette résonne avec ces trois forces conjuguées, un enchevêtrement d’éléments qui s’entrechoquent, s’entrelacent, se nourrissent les uns des autres. Elle ne sait pas comment elle fait pour les canaliser sans être déchirée, elle ne sait même pas si elle les canalise réellement.
+11329||Mais elle a l’avantage.
+11331||Alamma, pour la première fois, est acculé.
+11333||Elle voit son expression se figer, son calme naturel craqueler légèrement sous la pression de ses assauts. Son père n’est pas dépassé, pas encore, mais il n’a plus le contrôle. Elle le force à se replier.
+11335||Et ça, elle le sent. Alors elle pousse encore. Un geste sec de la main, une explosion d’ombres jaillit du sol, des vrilles noires s’élancent vers Alamma, cherchant à l’enserrer, à l’immobiliser, à le ramener à elle.
+11337||Mais il évite.
+11339||Son corps se dérobe avec une aisance maîtrisée, un déplacement fluide, un pas en arrière calculé, mais elle voit dans son regard qu’il mesure enfin le danger.
+11341||Elle attaque à nouveau, un trait fulgurant de magie mortifère, une énergie glaciale qui fend l’air comme une dague, se dirigeant droit vers lui.
+11343||Il lève un mur d’énergie, le projectile explose contre, dégageant une onde de choc qui fait trembler le sol.
+11345||Il recule encore. Et elle comprend.
+11347||Il perd du terrain.
+11349||Il ne voulait pas que ça se passe ainsi. Il s’attendait à l’écraser, à lui imposer sa vérité comme il l’a toujours fait. Mais cette fois, c’est elle qui le force à plier. Cette fois, c’est lui qui est sur la défensive.
+11350||Elle voit la tension dans ses épaules, la crispation légère de sa mâchoire. Elle sent qu’elle est en train de le repousser là où il ne veut pas être. Elle gagne. Un frisson la traverse, non pas de peur, mais d’euphorie.
+11351||Et à cet instant… elle comprend pourquoi ces forces sont si dangereuses. Elle veut plus. Elle veut lui arracher ce qu’il sait, elle veut comprendre pourquoi il a fait ça, elle veut le faire payer. Elle veut le voir souffrir, elle veut le détruire.
+11352||Elle exulte dans cette domination, dans cette revanche, et ça… c’est le Chaos qui murmure en elle.
+11353||Elle ne peut pas le laisser fuir. Pas maintenant.
+11354||Alors elle frappe à nouveau… Mais Alamma a déjà fait son choix.
+11356||Son regard croise le sien une dernière fois, et ce qu’elle y lit lui arrache un grondement. Il a décidé. Son expression redevient lisse, paisible, presque détachée. Il accepte la situation. Et sans un mot, il tombe en arrière…
+11358||Son corps se fond dans le vortex démoniaque, une ombre avalée par la faille béante, une silhouette s’effaçant dans un monde qui n’est pas le leur.
+11360||Iriana sent son souffle exploser.
+11362|D|NON !
+11364||Sa voix se brise, un cri féroce, un hurlement chargé de rage et de frustration, une clameur qui résonne même après sa disparition.
+11366||Elle se précipite en avant, mais trop tard.
+11368||Il lui échappe… encore… il s’était prévu une porte de sortie, ou peut-être avait-il déjà anticipé ce saut… peu importe.
+11370||Elle reste là, figée, le souffle erratique, les poings tremblants, la magie vibrant encore dans son corps sans trouver de cible.
+11372||Elle ne sait même pas quoi faire de cette victoire. Parce qu’elle n’en est pas une.
+11373||Parce que le combat est fini, mais elle ne se sent pas triomphante.
+11374||… une victoire pyrrhique.
+11376||Le silence s’étire, pesant, oppressant, un gouffre insondable où seule la vibration du portail continue de pulser dans l’air comme un cœur arraché à son corps. Iriana ne bouge pas, figée dans cette seconde qui semble s’étirer à l’infini, incapable de détourner son regard de l’endroit où Alamma a disparu. Tout est allé trop vite, trop brutalement, trop irrévocablement. Il lui a échappé, une fois de plus, avec cette même aisance calculée, cette même froideur qui le rend insaisissable, ce détachement absolu qui la hante depuis toujours. Il s’est retiré au moment où il a compris que la situation ne lui convenait plus, où la maîtrise des événements lui échappait, mais il n’a pas perdu. Il ne perd jamais vraiment, il recule, il s’efface, il observe, il attend. Et cette fois encore, il l’a laissée en arrière, seule avec ses doutes, seule avec ce poids qui l’écrase, cette sensation abominable que, malgré sa puissance, elle n’a rien accompli.
+11378||Elle voudrait s’accrocher à l’idée que c’est une victoire, qu’elle l’a forcé à fuir, qu’elle a imposé sa force face à la sienne, qu’elle l’a surpassé là où il ne l’attendait pas, mais c’est un mensonge, un simulacre fragile qui ne résiste pas à l’évidence qui pulse en elle avec une clarté insoutenable. Il est parti, et avec lui, il a emporté la seule réponse qui compte vraiment. Il est la clé, la seule monnaie d’échange pour briser ce maudit pacte, le seul à avoir les réponses dont elle a besoin pour ne pas sombrer dans le destin qu’il lui a imposé sans qu’elle ait eu le moindre choix. Tant qu’il est là, quelque part, tant qu’il existe encore dans ce monde ou un autre, son destin n’est pas scellé. Mais si elle le laisse partir maintenant, s’il disparaît de sa portée, alors tout sera terminé. Elle n’aura plus aucune chance de se sauver.
+11380||Un frisson lui parcourt l’échine, un mélange de terreur et de certitude, une prise de conscience brutale qui lui tord les entrailles. Son temps est compté. Chaque seconde qu’elle passe ici est une seconde perdue, une seconde qui la rapproche du moment où le pacte prendra effet, où l’engagement fait en son nom se refermera sur elle comme un piège implacable. Il n’y aura pas d’échappatoire, pas de miracle, pas de solution tardive. C’est maintenant ou jamais. Elle doit choisir.
+11382||Ses mains tremblent alors qu’elle les serre si fort qu’elle sent ses ongles s’enfoncer dans sa paume. Elle respire trop vite, trop fort, l’air lui brûle la gorge, son corps entier refuse d’obéir, tiraillé entre la peur et l’urgence, entre le besoin de reculer et celui de sauter, d’agir avant qu’il ne soit trop tard. Ses pensées sont un chaos indistinct, un tourbillon de doutes et d’instincts contraires, une bataille silencieuse qui hurle en elle, qui la cloue sur place, lui laissant cette fraction de seconde où tout peut encore basculer.
+11384||Elle sait ce qu’elle doit faire.
+11386||Mais elle hésite.
+11388||Une seule impulsion la sépare de l’irréversible. Un seul pas, et elle sera hors de tout contrôle, hors de tout retour, hors de toute certitude. Si elle saute, elle ignore où elle atterrira, si elle survivra, si elle pourra un jour revenir. Ce portail ne mène pas simplement ailleurs, il mène dans une dimension qui n’a rien d’humain, un royaume de ténèbres où le temps et l’espace ne sont plus des concepts fixes, où l’existence elle-même est une anomalie. Elle n’a aucune idée de ce qu’elle trouvera de l’autre côté. Peut-être Alamma, peut-être rien, peut-être une damnation pire encore que celle qui l’attend déjà.
+11390||Mais elle n’a pas le luxe de la prudence.
+11392||Si elle attend plus longtemps, il sera trop tard.
+11394||Son regard se lève vers la faille démoniaque, ses contours distordus par l’énergie brutale qui pulse encore, une invitation morbide, un gouffre prêt à l’engloutir. Son cœur bat à s’en rompre, une rage sourde lui monte à la gorge, un mélange de frustration et d’urgence, une fureur pure contre elle-même, contre son hésitation, contre cette malédiction qui l’enchaîne.
+11396||Il ne l’emportera pas encore une fois.
+11398||Il ne décidera plus à sa place.
+11400||Sans plus réfléchir, sans laisser la peur gagner, sans attendre une seconde de plus, elle court, elle bondit, elle plonge.
+11402||L’espace se tord autour d’elle, l’air devient liquide, le temps éclate.
+11404||Une déchirure.
+11406||Un cri muet.
+11408||Puis Iriana disparaît… tout ce qu’elle est, en ce lieu, sur ces terres, pour ce royaume, pour son peuple, pour Sylvinia… tout s’efface. Il ne reste plus qu’un échos… qui ne tard de pas à s’évaporer dans la brume de la forêt.
+11411|I|Pendant ce temps, face à portail, Remerii est toujours contre Bhaal, seule.
+11413||Le démon se dresse devant elle, immense, écrasant tout autour de lui de sa simple présence. L’ombre des Calciterres danse sur sa peau noire et craquelée, et l’air autour de lui semble plier sous une force invisible.
+11415||Elle sait qu’elle ne peut pas le vaincre.
+11416||Mais elle doit le retenir.
+11417||Les runes sur ses mains s’illuminent d’un éclat glacé alors qu’elle invoque un sort interdit.
+11419||Un Blizzard.
+11421||Mais pas n’importe quel Blizzard.
+11423||Un appel à quelque chose de plus grand. Quelque chose que peu osent invoquer.
+11425||Au départ, ce n’est qu’un frisson dans l’air.
+11426||Une brume blanche glisse sur le sol, caressant les racines comme une caresse funèbre. Puis, le froid s’intensifie. La température plonge, l’humidité gèle instantanément, et la terre craque sous l’assaut d’un hiver qui n’appartient pas à ce monde. Le vent se lève, d’abord un murmure, puis un hurlement glacial.
+11427||Et enfin, les ombres bougent.
+11428||À l’intérieur du Blizzard, quelque chose s’éveille. Une silhouette immense, drapée dans la tempête, avance lentement à travers le voile blanc. Une chose grande, vivante, se forme et nait de la glace.
+11430||Un Gardien de Givre.
+11432||Bhaal fronce les sourcils.
+11433||Puis, pour la première fois, il se redresse entièrement, comme s’il évaluait enfin la menace devant lui.
+11435|D|Alors tu oses réveiller ça ? Son sourire s’élargit, révélant des crocs plus anciens que l’histoire elle-même. Tu es plus téméraire que je ne le pensais, sorcière.
+11437||Remerii ne répond pas.
+11438||Elle tremble, non pas de peur, mais de douleur.
+11439||Sous sa poitrine, au niveau de son cœur, une cicatrice ancienne s’illumine sous la magie de l’archimage. Une marque scellée depuis longtemps.
+11441||Elle se réveille, elle lui arrache un cri silencieux.
+11442||La douleur est brutale. Un poignard invisible qui se plante encore et encore dans la même plaie. Elle étouffe un râle, sa main tremblante pressant sa poitrine, alors que le sort menace de lui échapper.
+11444||Son souffle se fait court, son corps refuse d’obéir, l’entrave.
+11446||Cette marque… Ce n’est pas juste une cicatrice comme elle l’a décrit à Hylee…  C’est un sceau, un fléau, une malédiction. Une magie faite pour brider sa puissance, ou la briser en cas de dépassement.
+11448||Si elle continue… Elle va en mourir.
+11450||Le Blizzard se resserre autour d’elle, fouettant sa peau, gelant son sang dans ses veines.
+11451||Bhaal rit dans la tempête.
+11453|D|Tu as été optimiste, mortelle.
+11455||Il fait un pas en avant, son ombre absorbant la neige, sa présence dévoyant le froid lui-même. Il affronte le sort de face, comme pour la défier dans un duel perdu d’avance
+11457||Mais un élément détourne son attention.
+11459||Un battement d’ailes dans la nuit. Un cri strident traverse la tempête.
+11461||Elle lève les yeux. Une chouette ? Blanche comme la neige, pure au milieu des ombres.
+11462||Elle plane au-dessus du champ de bataille, passant au-dessus de Bhaal, glissant entre les vents contraires, intacte, intouchable.
+11464||Remerii la reconnaît immédiatement. Medig, la chouette d’Hylee. Son regard traverse la tempête, et à cet instant, un souffle chaud parcourt le cœur glacé de Remerii. Un souffle rassuré… mais aussi inquiétant. Elle devine autre chose… elle n’est pas seule… alors qu’elle le devrait.
+11466||Elle la sent, sans même la voir. Hylee. Elle est ici, juste derrière elle. Concentrée. L’apprentie ne souhaite pas distraire l’Archimage. Et en même temps, elle est entièrement axée sur quelque chose.
+11468||Les rafales de glace hurlent, la tempête gronde, mais Hylee avance, lentement, au fur et à mesure qu’elle incante quelque chose.
+11469||Son corps tremble, non pas sous le froid, mais sous l’adrénaline. Ses bottes écrasent la neige fraîchement invoquée, ses pas sont incertains, mais elle ne recule pas.
+11471||Elle voit Remerii, affaiblie, vacillante, mais toujours debout. Son blizzard est déchaîné, un torrent de puissance incontrôlable qui menace de la dévorer vivante.
+11473||Et en face d’elle…
+11475||Le monstre.
+11477||Bhaal est une montagne d’ombres mouvantes, son rire fait vibrer l’air, ses flammes rongent la tempête, défiant l’arcane elle-même.
+11479||Mais Hylee ne regarde que Remerii.
+11481||Sa mentor.
+11483||Son amour.
+11485||Sa chouette l’a menée jusqu’ici, la guidant à travers les ténèbres et la peur. La forçant a avancer au-delà de barrière mentale. Elle ne pouvait pas laisser Remerii partir seule… elle savait qu’elle aurait besoin d’elle, comme ce fut et sera toujours son cas.
+11486||…
+11487||…..
+11488||…….
+11490|I|Elle entre elle aussi en guerre.
+11492||Remerii la voit enfin de ses yeux. Son regard s’écarquille.
+11494|D|Hylee ?! Sa voix est rauque, brisée. Qu’est-ce que tu fais ici ?!
+11496||Elle ne devrait pas être là. Elle devrait être en train de fuir avec les Sylviniens.
+11497||Elle n’a pas sa place dans cette bataille. Et pourtant… c’est précisément là qu’elle fait erreur.
+11498||Hylee ne tremble pas, mais est concentrée. Elle prend une grande inspiration.
+11500||Remerii lit quelque chose dans son regard, mais aussi dans leur lien jusque là mit en sommeil.
+11501||Un souvenir.
+11502||Un vieux souvenir.
+11504||Hylee se rappelle. Une nuit calme, il y a longtemps.
+11506||Elle est assise près d’une source, une étendue d’eau cristalline où les étoiles semblent danser à la surface.
+11507||Remerii est à côté d’elle, les bras croisés, un sourire léger, mais sévère sur les lèvres.
+11509|D|Ressentir l’Arcane n’est pas la même chose que la voir. Lui dit-elle.
+11511||Hylee, jeune et impatiente, fronce les sourcils.
+11513|D|Je ne comprends pas. Je sens… des vibrations, oui. Mais je n’arrive pas à les attraper.
+11515||Remerii hausse un sourcil.
+11517|D|C’est parce que tu essaies de l’attraper comme si c’était quelque chose de tangible.
+11519||L’archimage tend la main.
+11520||Et dans l’eau…
+11522||Une nébuleuse naît. Un filament d’arcane pur s’élève, flottant comme un courant de lumière. Une traînée d’étoiles liquides, une essence pure et brute, ondulant entre leurs paumes.
+11524||Hylee ouvre grand les yeux.
+11526|D|C’est magnifique…
+11528|D|Oui. Si chaque force était une couleur… l’arcane serait sont prisme. Mais au-delà de sa beauté, il est aussi dangereux. Murmure Remerii.
+11531||Elle laisse le filament onduler entre ses doigts, comme un papillon posé sur le bord du réel.
+11533|D|L’arcane est une nébuleuse. Belle. Sauvage. Brûlante… et surtout volatile.
+11535||Elle regarde Hylee dans les yeux.
+11537|D|Si tu tends la main sans précaution, elle te dévorera.
+11539||Hylee avale sa salive.
+11541|D|Alors… Comment dois-je faire ?
+11543||Remerii esquisse un sourire.
+11545|D|Tu dois l’approcher comme une étoile mourante approche son dernier éclat.
+11547||Elle saisi la main de son apprentie et l’entraîne dans le cours d’eau, glissant lentement ses doigts sous le filament, sans l’attraper de force.
+11549|D|Observe-la. Laisse-la venir à toi.
+11551||Elle ne tire pas.
+11552||Elle ne force pas.
+11553||Et la nébuleuse se pose d’elle-même au creux de sa paume.
+11555||Un frisson parcourt Hylee.
+11557|D|Tu ressens ça ?
+11559||Elle hoche la tête.
+11561||Remerii referme doucement les doigts de l’adolescente avec sa main
+11563|D|Voilà. Maintenant, tu as une partie de l’Arcane en toi.
+11565||Mais Hylee sait que si elle avait refermé sa main trop vite…
+11566||Elle aurait soit été brûlée, soit fait simplement choux blancs
+11568||Elle ouvre les yeux.
+11569||La tempête hurle autour d’elles. Le blizzard menace de consumer Remerii.
+11571||Mais Hylee se souvient. Elle voit l’arcane autour d’elle comme une nébuleuse.
+11572||Et cette fois, elle sait comment la toucher. Elle tend la main. Les flocons virevoltent, attirés par son aura. La tempête la frôle, mais ne la blesse pas. Elle la comprend.
+11573||Le vent hurle tout autour d’elle, fouettant son visage, balayant la neige en tourbillons effrénés. Le blizzard est une tempête chaotique, une furie glaciale qui semble vouloir tout dévorer.
+11575||Mais elle sait que ce n’est qu’une illusion.
+11577||Si elle se concentre vraiment, si elle se laisse porter par le flot de la magie…
+11579||Elle le perçoit.
+11580||Pas dans la violence de la tempête, pas dans le rugissement du vent…
+11581||Mais dans l’espace entre chaque flocon.
+11583||Un filet subtil, une rivière invisible, serpentant entre les courants glacés, liant chaque bourrasque, chaque cristal de givre en un flux d’énergie pure.
+11585||Le Blizzard n’est pas le sort.
+11586||C’est le contenant, comme chaque élément autour d’elle.
+11588||Et au cœur de cette tempête… l’Arcane danse. Hylee tend la main, elle ne force pas.
+11589||Elle laisse ses doigts effleurer le courant magique, comme une rivière de lumière bleutée. Elle s’en empare doucement, sans briser l’équilibre.
+11591||L’énergie se déverse en elle, coulant comme un ruisseau glacé, imprégnant sa peau, sa chair, ses muscles.
+11593||Elle devient un conduit.
+11595||Et elle transmet tout à Remerii.
+11597||Le Déchaînement du Blizzard – L’Apparition du Dragon
+11599||La neige explose autour d’elles.
+11601||Remerii halète, son corps meurtri toujours en proie à la marque qui la déchire de l’intérieur. Elle sent la magie lui échapper, son invocation faiblir sous la douleur.
+11603||Mais alors…
+11605||Elle sent un choc.
+11607||Un torrent d’arcane, brut et limpide, fusionne avec son propre pouvoir.
+11609||Ses yeux s’ouvrent d’un coup.
+11611||Elle voit Hylee à ses côtés, baignée d’une lumière bleutée, la main tendue vers elle, le regard brûlant d’une détermination nouvelle.
+11613|D|Hylee… ?
+11615||La jeune mage ne dit rien.
+11617||Elle offre son pouvoir.
+11619||Et Remerii comprend.
+11621||Elle prend une grande inspiration et relâche tout.
+11623||La tempête s’intensifie, les bourrasques s’élèvent, et au cœur du blizzard, une forme titanesque émerge.
+11625||D’abord, deux yeux bleus luminescents, brillants comme des perles glacées.
+11627||Puis un corps immense, écailleux et translucide, sculpté par la tempête elle-même.
+11629||Un dragon.
+11631||Né du vent, forgé dans la glace pure, aussi grand que le démon lui-même.
+11633||Il lève la tête, et dans un rugissement assourdissant, il se jette sur Bhaal.
+11635||Le démon suprême n’a pas le temps de réagir.
+11637||Le dragon fond sur lui, ses serres massives lacérant son armure chitineuse, ses crocs s’enfonçant dans la chair démoniaque.
+11638||Le Seigneur du Chaos pousse un grondement furieux, repoussant la créature à mains nues, ses flammes infernales consumant le givre.
+11640||Le dragon recule, mais revient à la charge, claquant sa queue avec la puissance d’une avalanche. Les ombres et la glace s’affrontent violemment, la forêt entière tremble sous le choc des deux colosses. Un grondement sourd monte derrière elles, une vibration lourde qui résonne à travers le sol, puis, d’un coup, l’air se comprime brutalement, aspiré en un battement sec, une implosion étouffée qui laisse derrière elle un silence anormal, une absence oppressante qu’elles ne perçoivent qu’à moitié, trop absorbées par la furie glaciale qui les consume
+11642||Remerii vacille, sentant la magie lui aspirer toute son énergie.
+11644||Hylee lui attrape le bras, la soutenant malgré le froid mordant.
+11646|D|Tiens bon ! hurle-t-elle. On y est presque !
+11648||Mais Bhaal ne recule pas.
+11649||Il plante ses griffes dans la gorge du dragon et le force à plier, écrasant la glace sous sa poigne infernale.
+11650||Le dragon lutte, mais la domination du démon est trop grande. Bhaal rit, repoussant la créature vers le sol, s’apprêtant à l’anéantir.
+11652||Puis…
+11654||Une explosion. Une lumière rouge sang déchire le champ de bataille. Une vague d’énergie déferle sur Bhaal, le frappant en plein dos, faisant vaciller le titan infernal. Un hurlement de douleur et de rage secoue l’air.
+11655||Bhaal se retourne violemment.
+11657||Et il voit son propre fils. Valurn se tient là, le souffle court, le regard noir, son corps parcouru de veines incandescentes.
+11658||Dans sa main, il canalise ce qu’il reste du pouvoir volé à Amanea.
+11660||Ce n’est plus un don du Chaos.
+11662||C’est une force libérée.
+11664|D|Toi. Gronde Bhaal.
+11666||Valurn ne répond pas.
+11667||Il frappe de nouveau.
+11668||Une onde de choc infernale s’écrase sur le Seigneur Démoniaque, faisant plier ses genoux, ébranlant même le portail démoniaque derrière lui.
+11670||Bhaal tremble.
+11672||Puis, lentement…
+11674||Il recule. La force combinée du dragon de Remerii et du pouvoir de Valurn brise l’équilibre.
+11676||Bhaal recule encore, ses crocs dévoilés dans une grimace furieuse, ses yeux incandescents brûlant de colère pure.
+11678||Mais le portail le happe.
+11679||Les ombres s’enroulent autour de ses membres, les flammes démoniaques le happent en arrière.
+11681|D|Misérable vermi…
+11683||Il est interrompu, disparaissant dans le portail sur réagissant au retour du démon suprême. Mais dans la désolation laissée au cœur de la forêt interdite… Sa voix persiste en un écho d’apocalypse, un grondement qui promet un retour funeste… en un dernier rugissement de haine…
+11685|D|Ce n’est que le début…
+11687||L’onde de choc de sa chute secoue l’air, le portail tressaille, vacille, affaibli mais toujours debout.
+11689||La tempête retombe. Le silence s’abat sur la clairière.
+11690||Mais ce n’est pas un silence de victoire. C’est un silence brisé.
+11692||Remerii s’écroule, elle vacille.
+11693||Son souffle est rauque, brisé, ses yeux luttent pour rester ouverts. L’adrénaline s’efface au profit de la douleur qui jaillit avec une brutalité insoutenable.
+11694||Sa cicatrice la brûle, sa magie est drainée, son corps refuse de suivre. Elle ne sent plus le froid, elle ne sent plus rien. Son regard trouble cherche Hylee, mais ses jambes lâchent, Elle tombe sur le coté en perdant l’equilibre, ses yeux se révulsant.
+11696||La neige se teinte d’ombres sous son poids.
+11698|D|Remerii !
+11700||Hylee la rattrape de justesse, ses bras tremblent, mais elle ne la lâche pas.
+11701||Elle la serre contre elle, sa peau blanche contrastant avec la pâleur livide de l’archimage. Remerii ouvre la bouche, mais aucun son n’en sort. Hylee cherche un signe de vie.
+11702||Rien.
+11703||Un vide effrayant.
+11705|D|Non… Non, non, non…
+11707||Elle pose une main sur sa poitrine, espérant sentir un battement de cœur.
+11708||Faible. Trop faible.
+11710|D|Tiens bon… ! Sa voix tremble. Je vais te sortir de là.
+11712||Mais elles sont seules. Les autres sont partis. Le blizzard les a isolées du monde extérieur, ne remarquant pas qu’elles ont fini seule, pas seulement ce combat, mais aussi cette guerre.
+11714||Tia, les Sylviniens, les soldats… Ils ont fui.
+11716||Ils n’ont pas pu attendre Hylee et Remerii.
+11718||Seul le portail du chaos demeure… diminué, mais toujours présent. Il n’est pas complètement refermé, mais pas complètement ouvert.
+11720||Des démons continuent d’en sortir, ramassant les miettes de la défaite de leur Seigneur.
+11721||Leurs silhouettes serpentent dans la brume, leurs yeux luisent dans l’ombre, leurs murmures s’enroulent autour d’elle.
+11723||Hylee les voit. Mais elle est seule. Son corps est brisé, Sa magie est instable.
+11724||Elle ne sait pas si Remerii est encore en vie, mais elle ne veut pas la laisser là… quitte à traîner son corps jusqu’à Al’gratal.
+11725||Le vent s’est calmé, mais le froid est toujours là, un froid qui s’insinue dans les os, un froid qui ne vient pas seulement de la neige et du blizzard qui s’efface lentement. Hylee serre Remerii contre elle, ses bras tremblants sous l’effort, non pas à cause de la fatigue, mais à cause de cette peur sourde qui lui tord les entrailles, cette panique qui monte lentement alors qu’elle ne sent toujours pas la respiration de son mentor, de son amour, alors qu’elle attend un signe, n’importe quoi, une pression des doigts, un frisson, un gémissement, mais rien ne vient.
+11726||Autour d’elle, la bataille est finie, le silence règne. Un silence pesant, lugubre, comme si le monde retenait son souffle après l’affrontement titanesque qui vient d’avoir lieu. Le portail n’est pas complètement refermé, il est là, vacillant, déchirant encore la réalité de son aura sombre, vomissant des relents d’énergie démoniaque et, au loin, elle entend encore le murmure de créatures rôdant à la lisière, attendant, observant, prêtes à fondre sur elle au moindre signe de faiblesse.
+11728||Mais Hylee ne pense pas à ça. Son regard est fixé sur Remerii, sur son visage livide, sur cette respiration qu’elle cherche désespérément à percevoir, sur ce corps qui semble s’alourdir entre ses bras, comme si la vie l’abandonnait peu à peu. Elle secoue doucement la femme qu’elle tient, ses doigts crispés sur sa tunique gelée, sa voix brisée par l’angoisse alors qu’elle murmure son nom, encore et encore, un appel étouffé, une prière à peine soufflée dans l’air glacé. Elle voudrait croire que Remerii dort simplement, qu’elle s’est juste évanouie sous l’effort, mais au fond d’elle, une peur insidieuse lui murmure autre chose, une vérité qu’elle refuse d’entendre. Son cœur bat trop fort, résonne dans sa tête comme un tambour funèbre, chaque seconde qui passe sans réponse est une aiguille qui s’enfonce un peu plus profondément dans sa poitrine. Elle presse son oreille contre le torse de Remerii, cherchant ce battement de cœur, ce rythme qui lui prouverait qu’elle est encore là, mais c’est si faible, si ténu, qu’elle doute de l’avoir réellement perçu. Ses yeux brûlent, sa gorge se serre, elle voudrait hurler, elle voudrait la secouer, elle voudrait la ramener, la forcer à ouvrir les yeux, à lui parler, à lui dire quelque chose, n’importe quoi, mais elle n’ose pas, de peur que tout cela ne soit qu’une illusion, de peur que si elle la lâche ne serait-ce qu’un instant, Remerii disparaisse pour de bon.
+11730||Autour d’elles, le monde a changé. La tempête est retombée, la neige qui recouvre le sol est marquée par les cicatrices du combat, des cratères où le feu et la glace se sont affrontés, des ombres de silhouettes figées dans la glace, des éclats de magie encore flottants dans l’air, vestiges d’un affrontement que personne ne pourra jamais vraiment comprendre. Mais tout cela n’a plus d’importance. Il n’y a plus que Remerii et elle. Plus que ce corps contre le sien, cette chaleur qui s’amenuise, cette présence qui semble s’effilocher à chaque seconde. Hylee tremble, pas de froid, pas de peur pour elle-même, mais de cette terreur intime, viscérale, qui lui souffle que Remerii est en train de la quitter, qu’elle s’accroche à un fantôme, qu’elle est d’ors et déjà trop loin pour être sauvée.
+11732||Non.
+11734||Elle refuse.
+11736||Elle ne la laissera pas partir.
+11738||Hylee inspire profondément, force son esprit à se concentrer, à refuser cette réalité. Elle a encore de la magie en elle, son corps est brisé, marqué par l’Arcane, mais elle respire encore, elle est encore debout. Elle peut encore faire quelque chose. Elle pose sa main sur la poitrine de Remerii, ferme les yeux, essaie de sentir l’énergie qui circule encore, essaie d’y insuffler un peu de la sienne, de raviver la flamme vacillante avant qu’elle ne s’éteigne complètement. Mais la magie ne répond pas comme elle le voudrait. Elle vacille, instable, incertaine, imprégnée de quelque chose qu’elle ne contrôle plus totalement, quelque chose qui fait d’elle une étrangère à son propre corps. Elle ne sait plus si elle puise dans l’Arcane ou si l’Arcane la consume. Mais elle s’en moque. Tout ce qui compte, c’est Remerii. Tout ce qui compte, c’est la garder avec elle, ici, maintenant, jusqu’à ce que quelqu’un vienne, jusqu’à ce qu’elle trouve un moyen, jusqu’à ce que cette maudite situation change.
+11740||Mais elle est seule.
+11742||Seule, avec cette femme dans ses bras, seule, face à un portail toujours ouvert, seule, avec la peur de voir son monde s’effondrer définitivement. Et pourtant, elle ne la lâche pas. Elle ne la lâchera jamais.
+11744||Le silence s’étire, pesant, étouffant, brisé seulement par le souffle court et irrégulier d’Hylee. Ses bras engourdis continuent de serrer Remerii, mais elle sent son corps devenir de plus en plus froid, comme si la chaleur même de son être était aspirée ailleurs. La neige crisse sous ses genoux, le portail derrière elle pulse faiblement, envoyant encore des vagues d’ombres et d’énergie malfaisante, et les silhouettes démoniaques rôdent toujours, immobiles, tapies dans l’ombre comme des charognards attendant la fin d’une bête blessée.
+11746||Hylee n’a plus de force. Elle sent la magie en elle, trop présente, trop brutale, brûlante et froide à la fois, une puissance qui ne lui appartient pas totalement et qui gronde dans son sang comme une tempête prête à l’engloutir. Mais qu’importe. Elle ne bougera pas. Elle ne laissera pas Remerii là. Elle préférerait mourir avec elle que l’abandonner dans cette plaine enneigée, seule, face aux ténèbres.
+11748||Puis, un mouvement dans le ciel.
+11750||Un battement d’ailes.
+11752||Hylee lève lentement la tête, ses yeux épuisés cherchant la source de ce son.
+11754||La chouette blanche tournoie au-dessus d’elles, planant sans bruit dans l’air glacé, comme une sentinelle veillant sur elles depuis l’autre monde. Elle est intacte, immaculée, insensible au chaos, glissant dans les courants éthérés comme si elle appartenait à quelque chose de plus grand, de plus ancien.
+11756||Medig…
+11758||Puis, sans prévenir, elle plonge.
+11759||Hylee sursaute, son cœur manque un battement. Medig fond droit sur elles, une comète de plumes blanches, un éclat d’astre dans la nuit déchirée. Mais elle ne s’arrête pas.
+11760||Juste avant d’atteindre le sol, son corps frôle l’air comme une lame d’argent, et alors… L’espace se brise.
+11762||Un craquement sec retentit, comme du verre fissuré sous une pression trop forte.
+11763||Devant Hylee, une déchirure s’ouvre, un trou béant dans la réalité, une brèche entre ici et ailleurs. Medig disparaît à l’intérieur sans un bruit.
+11764||Hylee sent son souffle se bloquer, ses yeux s’écarquillent, un espoir fou s’empare d’elle.
+11766||De l’autre côté de la faille…
+11768||Al’Gratal.
+11770||La cité impériale se dresse au loin, ses murailles d’un blanc nacré, ses tours effilées s’élevant sous un ciel dégagé, baignées de la lueur protectrice des runes sylviniennes. C’est une échappatoire. Un passage. Une issue.
+11772||C’est un miracle.
+11774||Hylee sent une vague d’émotion l’envahir, un mélange de soulagement, d’incrédulité et d’urgence brûlante. Ses yeux s’emplissent d’eau, mais elle ne cède pas. Elle serre Remerii contre elle, ancrant son regard dans celui de son amour inconsciente.
+11776||Elle n’a pas perdu.
+11778||Elle ne la laissera pas mourir ici.
+11780||Un dernier regard vers les ténèbres qui s’amassent derrière elle, les murmures démoniaques devenant plus pressants, plus menaçants, et Hylee prend sa décision.
+11781||Elle se redresse, vacillante mais résolue, puis, avec ce qui lui reste de force, elle franchit la faille.
+11783||À l’arrive… le blizzard la suivie. Le sol est glacé sous ses genoux, mais Hylee ne le sent pas, son corps tout entier est engourdi, vidé, tremblant sous l’effort et la peur, une peur qui ne la quitte plus depuis qu’elle a franchi cette faille, depuis qu’elle a posé le pied sur la terre d’Al’Gratal, depuis qu’elle a compris qu’elle était enfin hors de danger et pourtant si loin de l’être. Elle tient toujours Remerii contre elle, ses bras crispés autour de son corps inerte, sa poitrine se soulève par saccades sous une respiration hachurée, trop rapide, trop paniquée, incapable de reprendre un rythme normal alors qu’elle attend un signe, un souffle, un frisson, n’importe quoi pour lui prouver que tout cela n’a pas été vain, que tout ce qu’elle a traversé, tout ce qu’elle a donné, tout ce qu’elle a perdu, n’a pas servi à rien. Mais il n’y a rien. Pas un battement, pas un murmure, pas une pression de doigts sur sa peau. Il y a juste ce corps contre le sien, encore chaud, mais déjà trop froid, encore là, mais déjà absent, un poids qui lui semble insupportable et en même temps qu’elle ne veut pas lâcher, qu’elle ne lâchera pas, jamais, peu importe ce que les autres diront, peu importe ce que la raison lui hurle.
+11785||Autour d’elle, il y a des voix, des mouvements précipités, l’écho des Sylviniens qui s’affairent, qui réalisent qu’elle est revenue, mais elle n’entend rien d’autre que le martèlement de son propre cœur, le bourdonnement sourd de la magie qui circule encore en elle, ce vestige de l’Arcane qui n’a pas disparu, qui la ronge lentement, l’épuise, la change, la prive du moindre répit. Elle est là, à genoux dans la neige souillée, immobile, le souffle court, incapable de penser, incapable de parler, incapable même de pleurer tant la peur lui noue la gorge, et pourtant, elle sent les larmes brûler sous ses paupières, prêtes à déborder à tout moment, prêtes à tout consumer dans leur chute.
+11787||Des bruits de pas résonnent tout près, des bruits rapides, nerveux, des coups secs contre le sol de pierre, un rythme saccadé, impatient, agacé, et elle tourne enfin la tête, presque mécaniquement, ses yeux encore flous par l’épuisement trouvant la silhouette familière de Tia Farae. L’Impératrice est là, le dos droit, le visage fermé, son pied frappant le sol dans une cadence nerveuse, non pas d’impatience, mais d’inquiétude, non pas pour elle, Hylee en est certaine, mais pour une autre, une autre qui aurait dû être là, une autre qui n’est pas revenue, une absence qui pèse bien plus lourd que toutes les blessures, que toutes les pertes. Son regard se tourne vers Saidin, l’homme n’a pas besoin de parler, il se contente d’un léger mouvement de tête, d’un simple geste, infime, mais qui résonne comme une sentence.
+11789|D|Il ne restait qu’elles… Aucune trace d’Iriana.
+11791||La phrase tombe, brutale, irrévocable, comme une lame sur une corde trop tendue, et Hylee voit le visage de Tia se figer, non pas sous le choc, mais sous le poids d’une certitude qu’elle refusait sans doute d’admettre jusque-là. L’air autour d’elles semble se figer un instant, un silence plus lourd que tout s’installe, un silence où chaque respiration devient un fardeau, où chaque battement de cœur est une douleur. Mais l’Impératrice ne cède pas, elle ne flanche pas, elle reste droite, impassible, mais Hylee sait, elle sait ce que signifie ce silence, elle sait ce que signifie cette immobilité parfaite, elle sait que, sous la surface, tout vacille, tout s’effondre, tout hurle en elle.
+11793||Saidin ne dit rien de plus, il attend, il la laisse réagir, il respecte cette seconde de silence, ce moment où l’on comprend que l’on a perdu quelque chose d’irremplaçable, et puis il détourne enfin le regard, quittant l’Impératrice pour reporter son attention sur Hylee. C’est là qu’il la voit, vraiment, qu’il la scrute, qu’il analyse ce qu’elle est devenue, et Hylee sait qu’elle a changé, elle n’a pas besoin de miroir, elle n’a pas besoin qu’on le lui dise. Son corps tremble encore sous les résidus de l’Arcane, mais ce n’est plus la même chose, ce n’est plus une surcharge temporaire, ce n’est plus un pouvoir qu’elle peut simplement rejeter, c’est en elle, c’est gravé dans sa chair, dans son sang, dans son être.
+11795||Elle baisse lentement les yeux sur ses mains, et ce qu’elle voit la pétrifie.
+11797||Sa peau n’est plus la même. Les marques du vitiligo qui parcouraient autrefois son corps, qui faisaient partie d’elle, qui la définissaient, ont disparu. Il n’y a plus de contraste, plus de tâches, plus d’ombres, il n’y a que cette teinte uniforme, un blanc spectral, une pâleur irréelle qui s’étend de ses doigts à ses bras, qui recouvre son cou, son visage, une couleur trop pure, trop éclatante, comme si elle avait été vidée de toute pigmentation, comme si elle n’appartenait plus à ce monde. Elle sent son souffle se couper, un vertige la prend, elle effleure sa peau comme pour s’assurer qu’elle est bien réelle, mais elle ne reconnaît plus son propre corps.
+11799||Ses cheveux aussi ont changé. Ils n’ont plus rien de leur flamboyance passée, plus rien de cet orange vibrant qui les rendait si reconnaissables, plus rien de ces mèches blanches éparses qui formaient une partie de son identité. Ils sont d’un blanc absolu, lumineux sous la lumière tamisée, flottant autour de son visage comme une cascade de neige pure. Et ses yeux…
+11801||Elle les sent brûler, non pas de douleur, mais d’une lumière étrange, d’un éclat qu’elle ne comprend pas encore. Elle lève la tête, croise son reflet dans une plaque de glace non loin, et ce qu’elle voit lui arrache un frisson.
+11803||Deux saphirs luisants, deux abysses d’énergie pure, un regard qui n’est plus tout à fait le sien.
+11805||Elle ne sait plus qui elle est.
+11807||Elle voudrait hurler, pleurer, nier cette réalité, mais elle ne peut pas, pas maintenant, pas alors que Remerii est là, dans ses bras, inconsciente, peut-être déjà morte, peut-être déjà trop loin pour être sauvée. Ses mains tremblantes se referment sur le tissu glacé de sa tunique, elle la serre contre elle, enfouissant son visage contre son épaule, retenant un sanglot qui menace d’éclater à tout moment.
+11809|D|S’il te plaît…
+11811||Sa voix est brisée, rauque, à peine un souffle dans l’air glacé.
+11813|D|Ne me laisse pas…
+11815||Elle n’entend même plus ce qui l’entoure, elle ne voit plus rien d’autre que ce corps inerte contre le sien, elle n’a plus de force, plus de volonté, juste cette peur abominable, cette certitude qu’elle est en train de la perdre.
+11817||Puis une voix, grave, assurée, celle de Saidin.
+11819||Un ordre.
+11821|D|De l’aide !
+11823||Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il s’attendait à ce que cela arrive, comme s’il avait toujours su que toucher à l’Arcane la changerait à jamais. Mais il ne s’attarde pas sur elle, il ne pose pas de questions, son regard est tournée vers Remerii, vers cette femme qui peut, peut-être, être sauvée… ou peut-être pas.
+11843||Épilogue
+11845|I|Al’Gratal – Le Poids du Deuil
+11847||Dans la salle du trône d’Al’Gratal, le silence est plus lourd que jamais. Il n’y a plus de murmures d’ambassadeurs, plus de généraux échafaudant des plans, plus de conseils stratégiques bruissant de discussions feutrées. Il n’y a que Tia Farae, debout devant la grande baie vitrée, regardant son royaume s’étendre sous un ciel voilé, une lumière grise baignant une capitale qui a perdu trop de ses enfants. L’Empire tient encore debout, mais il a vacillé.
+11849||Derrière elle, Ellion Valendil approche à pas mesurés, une liasse de parchemins dans les mains. Le Haut-Général des armées, toujours droit, toujours austère, mais portant sur son visage les marques des jours sombres qu’ils viennent de traverser. Il s’arrête à quelques pas d’elle, s’incline brièvement, avant de commencer.
+11851|D|Les pertes ont été confirmées.
+11853||Tia ne se retourne pas.
+11855|D|Les noms.
+11857||Ellion détache le premier sceau, déroule le parchemin avec une précision militaire.
+11859|D|Amiral Régent Draven. Mort avec l’intégralité de ses soldats de Forthaven.
+11861||Un silence. Ellion ne lève pas les yeux.
+11863||Il détestait Draven.
+11865||Il détestait ces soldats humains, qu’il considérait comme inférieurs, trop fragiles pour être de véritables combattants. Il méprisait leur présence sous la bannière impériale. Mais il n’est pas aveugle à leur sacrifice. Il sait reconnaître une mort digne.
+11867||Et Draven est mort en combattant.
+11868||Un guerrier, jusqu’au bout.
+11870||Ellion poursuit.
+11872|D|Les détachements Sylviniens envoyés en éclairage pour constater l’activité de la Porte Noire... Aucune unité n’a survécu. Ça confirme nos craintes.
+11874||L’Empire a perdu plus que des soldats.
+11875||Il a perdu des vétérans. Des siècles de traditions militaires, anéantis en quelques jours. Mais ce détachement précis affirme une chose. La guerre contre le Chaos ne fait que commencer. Ellion poursuit.
+11877|D|Remerii.
+11879||Tia cligne lentement des paupières.
+11881|D|Son état ?
+11883||Ellion hésite une fraction de seconde.
+11885|D|Cliniquement morte. Mais l’apprentie humaine va bien… même si son état est curieux.
+11887||Pas une réaction. Pas une crispation.
+11888||Il continue.
+11890|D|Iriana.
+11892||Un silence plus long.
+11894|D|Disparue. Comme Alamma. Comme Naïah.
+11897||L’air semble se figer.
+11898||Tia n’a plus de famille.
+11900||Sa sœur, morte.
+11901||Son fils, sa petite fille, sa nièce…
+11902||Autant de personnes sans aucune connaissance de leurs sorts.
+11904||Ellion serre discrètement les dents. Il déteste la faiblesse, il méprise ceux qui plient sous le poids du destin. Mais il sait que ce qu’elle encaisse n’a rien d’humainement supportable.
+11906||Mais elle ne flanche pas.
+11907||Elle reste droite, regardant son Empire mourant, ses mains serrées sur le rebord de la baie vitrée.
+11909||Puis, enfin, elle parle.
+11911|D|L’Empire ne pleure pas.
+11913||Ellion inspire lentement.
+11914||Elle a déjà décidé.
+11916||Il incline la tête, referme les parchemins avec la même précision clinique, et se retire sans un mot de plus. Il sait ce qui vient.
+11918||L’Empire va se préparer à la guerre.
+11922|I|Hylee – Le Murmure du Cœur Endormi
+11924||La lumière tamisée des chandelles danse sur les murs de la chambre silencieuse, projetant des ombres mouvantes sur les draps immaculés où repose Remerii, immobile, figée dans un sommeil qui n’a rien de naturel. L’odeur des herbes médicinales brûlées emplit l’air, un parfum de cendres et de menthe, d’illusion et de résignation.
+11926||Hylee n’a pas bougé depuis des heures, des jours.
+11928||Elle est là, assise au bord du lit, sa main tremblante serrée autour des doigts glacés de Remerii, sa peau encore trop froide pour une vivante, mais pas assez pour une morte. Ses yeux sont gonflés par la fatigue, par les larmes qu’elle n’a pas versées, par les cauchemars qu’elle refuse de laisser venir.
+11930||Parce qu’elle sait que si elle ferme les yeux, elle la verra.
+11932||Elle verra les corps sur le champ de bataille.
+11934||Elle verra les flammes dévorer les cieux, la terre se fendre sous la colère des dieux, le portail vomir des monstres que l’Empire ne pourra jamais contenir.
+11936||Elle verra les Sylviniens et les Obscurcis, se déchirant, se confrontant et se tuant froidement.
+11938||Elle verra, les soldats de Forthaven massacrés, se relever de leurs trépas pour se nourrir des vivants. Du sang… partout. Des bêtes sanguinaires.
+11940||Et elle verra Remerii, seule face à Bhaal, hurlant un sort interdit en sachant ce que cela lui coûterait.
+11942||Elle n’a pas oublié.
+11944||Elle n’oubliera jamais.
+11946||Elle a bravé la guerre, bravé sa propre peur, plongé ses mains dans les forces de l’Arcane au-delà de toute prudence, non pas pour vaincre, mais pour la sauver.
+11948||Et pourtant, elle est là, à genoux, impuissante. Ça n’a pas suffit…
+11950||Elle pourrait pleurer.
+11951||Elle pourrait hurler.
+11953||Mais elle ne le fait pas.
+11955||Elle attend.
+11956||Elle attend quelque chose.
+11958||Un frisson.
+11959||Un mouvement.
+11960||Un souffle.
+11962||N’importe quoi.
+11963||Mais rien ne vient.
+11965||Rien, sauf Saidin.
+11967||L’homme pénètre dans la chambre sans bruit, ses pas feutrés trahissant une fatigue qu’il cache mal. Son visage est marqué, plus que d’ordinaire, ses traits tirés, son regard sombre, comme si les siècles qu’il porte en lui s’étaient alourdis en quelques jours.
+11969||Il s’arrête à quelques pas du lit, les bras croisés sous sa cape poussiéreuse, observant sans un mot.
+11971||Hylee n’a pas besoin de le regarder pour savoir ce qu’il pense.
+11972||Elle sait qu’il ne croit pas ce que disent les médecins.
+11973||Il n’est pas aussi catégorique qu’eux.
+11975||Il a vu trop de choses, il sait que le monde ne suit pas toujours les règles que l’on pense immuables.
+11976||Mais il sait aussi ce qu’est la mort. Et Remerii ne devrait pas être différente des autres.
+11978||Après un moment, il soupire, ferme brièvement les yeux, avant de parler d’une voix plus lasse que d’ordinaire.
+11980|D|Tu es là depuis combien de temps ?
+11982||Hylee ne répond pas immédiatement.
+11983||Elle ne compte plus les heures.
+11984||Elle n’a même pas remarqué la nuit tomber.
+11986|D|Assez longtemps.
+11988||Sa voix est rauque, abîmée par le silence, par l’épuisement. Saidin hoche la tête, son regard toujours fixé sur le corps immobile. Il aurait voulu dire quelque chose de plus. Mais il ne sait pas quoi.
+11990||Parce que lui aussi, il a perdu quelque chose. Remerii n’était pas simplement une élève.
+11991||Il l’avait formée, guidée, observée grandir dans les méandres des Arcanes, partagé avec elle des connaissances qu’il n’aurait confiées à personne d’autre. Il avait vu en elle une promesse, une lumière rare dans un Empire où la magie était une arme et non un savoir.
+11993||Et aujourd’hui, cette lumière était éteinte. Mais Hylee, elle, refusait de l’accepter.
+11994||Soudain, elle relève la tête, son regard brillant d’une intensité étrange, presque fiévreuse.
+11996|D|Ils ont tort.
+11998||Saidin hausse un sourcil.
+11999||Hylee serre la main de Remerii plus fort, son propre corps tremblant sous la tension.
+12001|D|Elle est encore là.
+12003||Sa voix est un murmure, mais elle résonne dans la pièce comme un serment.
+12004||Saidin ne répond pas immédiatement. Il l’observe, cherche dans son regard ce qu’elle voit, ce qu’elle ressent, ce qui la pousse à tenir aussi fermement cette main glacée alors que tout le monde lui dit d’arrêter.
+12005||Hylee n’a pas besoin de le convaincre.
+12006||Elle le sait.
+12007||Elle le sent.
+12009||C’est plus qu’une intuition, c’est une certitude.
+12011||Une extension d’elle-même, comme si le lien qu’elles avaient tissé était plus fort que le silence qui les sépare maintenant.
+12013|D|Elle se bat encore.
+12015||Sa voix ne tremble pas.
+12016||Saidin l’observe longtemps. Puis, dans un murmure à peine audible, il lâche, presque pour lui-même :
+12018|D|Alors trouve un moyen de la ramener.
+12020||Et sans un mot de plus, il s’éloigne, laissant derrière lui un silence chargé de sens. À d’autres, son départ aurait pu sembler froid, presque résigné, mais pour Hylee, ses paroles résonnent comme un présage. Il ne lui demande pas de convaincre, ni de justifier son instinct… il lui confie un devoir. Comme s’il savait, au-delà des doutes et des lois de ce monde, qu’elle seule détient la clé du réveil de Remerii.
+12021||Hylee reste seule, ses doigts toujours refermés sur cette main trop froide.
+12022||Elle attend.
+12024|I|Allenna – Sur les traces d’un régicide.
+12026||La Forêt Interdite n’est plus qu’un fantôme, un murmure éteint dans le vent glacé qui s’effiloche entre les ruines. Ses arbres, jadis immenses, se dressent comme des ossements décharnés, leur écorce noircie par le feu, leur sève coagulée en veinules de cendres. Plus rien ne vit ici, sinon l’écho du passé, figé dans le silence d’un territoire sans âmes.
+12027||Allenna marche à pas lents, le cœur lourd d’une attente qu’elle redoute. Chaque pas est une prière inachevée, une supplique muette au destin pour qu’il la trompe encore un peu, pour qu’il repousse l’inévitable, qu’il laisse subsister un dernier mensonge auquel elle pourrait s’accrocher. Mais la terre la trahit, trop marquée par le carnage, trop souillée par l’empreinte de ceux qui sont tombés ici. L’air lui-même refuse l’illusion. Il est trop lourd, trop figé, comme si ce lieu ne respirait plus.
+12028||Alors elle comprend.
+12029||Elle est arrivée trop tard.
+12030||Le monde s’effondre en silence, se brise en mille éclats que rien ne viendra recoller.
+12031||Son regard s’attarde sur l’onde spectral du portail qui pulse encore en fond, un cœur impur battant au rythme du néant. Il n’a pas disparu, il ronronne, insatiable, comme si le monde lui appartenait déjà. Comme si la victoire lui avait toujours été acquise.
+12032||Puis, elle la voit.
+12033||Et tout le reste cesse d’exister.
+12034||Amanea.
+12035||Son corps gît parmi les vestiges du dernier combat, figé dans une posture trop calme pour être naturelle. Un linceul de poussière s’est posé sur elle, comme une caresse d’adieu déposée par le vent. Elle semble avoir été abandonnée ici, livrée aux cendres et aux ombres, comme un secret oublié.
+12036||Allenna s’arrête net.
+12037||Un instant, elle ne bouge plus, retenue par une force invisible, l’angoisse figée au creux de sa poitrine.
+12038||Elle hésite.
+12039||Comme si s’approcher trop vite risquait d’achever ce qui a déjà été détruit.
+12040||Comme si, en avançant, elle allait réveiller la douleur qu’elle tente encore de contenir.
+12041||Elle aurait voulu crier, déchirer l’air de sa colère, pleurer le nom d’Amanea comme une plainte funèbre. Mais le son reste bloqué, écrasé sous le poids du vide, noyé dans cette absence qui lui coupe le souffle.
+12042||Alors, elle tombe à genoux.
+12043||Ses doigts tremblants effleurent la peau d’Amanea, parcourent les craquelures noires qui zèbrent encore son corps, ces marques autrefois pleines de force, désormais réduites à de simples cicatrices fossilisées. La magie qui coulait en elle, qui lui donnait cette aura indomptable, a disparu.
+12044||On l’a vidée.
+12045||Chaque goutte de puissance a été arrachée, siphonnée, consumée.
+12046||Il ne reste rien.
+12047||Mon son calvaires ne s’est pas seulement limité à cela. Son bras gauche a été tranché net, la coupure parfaitement droite, sans doute l’œuvre d’une lame sylvinienne portée par un coup fatal et implacable. L’amputation n’a rien de naturel. Ce n’est pas une blessure de guerre laissée au hasard d’un champ de bataille. C’est un châtiment. Une exécution.
+12048||Et pire encore…
+12049||Son abdomen est ouvert, déchiré par un coup porté avec une précision effrayante. La blessure n’a pas traversé son ventre au hasard.
+12050||Elle a été transpercée jusqu’au cœur.
+12052||Une mort brutale….
+12054||Une mort faite pour être irréversible.
+12056||L’Empire ne voulait pas seulement la tuer. Ils voulaient être sûrs qu’elle ne se relèverait jamais, de la manière la plus chirurgicale possible.
+12057||Le temps a figé le dernier frisson de douleur sur son visage, le dernier sursaut d’une vie éteinte par la mauvaise main.
+12059||Elle n’a pas connu une fin digne.
+12061||Elle a été anéantie, souillée, sanctifiée.
+12062||Un goût amer emplit sa gorge. Le dégoût la ronge, mêlée a de la culpabilité. Ça n’aurait pas dû arriver.
+12063||Elle voudrait changer le passé, revenir en arrière, intercepter le cours du destin avant qu’il ne l’arrache à elle, mais elle est impuissante.
+12064||Elle est arrivée trop tard.
+12065||Un souffle tremblant s’échappe de ses lèvres, un murmure brisé, un nom perdu dans le vent.
+12066|D|Je… je…
+12068||Je suis désolée. C’est ce qu’elle aurait souhaitée lui dire. C’est ce que son cœur lui hurle. Ses mains s’attardent sur ce corps qui fut un repère, une étoile, une force inébranlable.
+12069||Elle ne peut pas détourner les yeux.
+12070||C’est une blessure qui ne guérira jamais.
+12071||La détresse devient un gouffre, un abîme noir où la tristesse se transforme en quelque chose de plus froid, de plus acéré.
+12072||La douleur, elle peut la supporter.
+12073||Mais la culpabilité ?
+12074||Le sentiment d’impuissance est insupportable.
+12075||Pire encore… un désir de justice jaillit du plus profond d’elle.
+12076||Son regard change.
+12077||Son souffle se stabilise.
+12078||L’Empire a tout pris.
+12079||Ils ont gagné une bataille qu’ils ne méritaient pas. Ils s’en sont prit un être qui ne souhaitait que vivre, et protéger des personnes qui ne le méritait pas…
+12081||Mais ils paieront.
+12082||Oui… il paieront
+12084||Ses bras glissent sous le corps sans vie d’Amanea, et avec une lenteur infinie, elle la soulève. Pas comme un fardeau. Pas comme un cadavre.
+12085||Mais comme un dernier hommage.
+12086||Un dernier serment fait à celle qui a tant donné. Elle la serre contre elle, avec cette douceur qu’elle ne s’est jamais autorisée à avoir. Puis elle se lève. Son regard se pose une dernière fois sur le champ de ruines.
+12087||Un cimetière.
+12088||Un massacre.
+12089||Un crime qui ne restera pas impuni.
+12090||Les Sylviniens croient avoir éteint la révolte.
+12091||Ils ignorent que certains feux ne s’éteignent jamais.
+12092||Alors, elle murmure.
+12093||Sa voix est posée, douce, presque tendre, dénuée de rage mais imprégnée d’une rancune que rien ne pourra dissiper.
+12094||— Mère… nous rentrons.

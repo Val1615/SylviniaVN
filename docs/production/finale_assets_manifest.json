@@ -1,0 +1,281 @@
+{
+ "version": "v0.418",
+ "regle": "Aucune image clé ni musique générée pour ce lot. Les décors, sprites et musiques ci-dessous sont des fichiers déjà présents dans le dépôt, réutilisés tels quels. Les fichiers fournis par l’auteur doivent être copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche.",
+ "fichiers_fournis_par_l_auteur": {
+  "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
+  "decors_affiches_en_jeu": [
+   {
+    "fichier": "assets/images/backgrounds/finale/bg_porte_noire_plaine.png",
+    "sha256": "9b02c4d401297155951d03a8d7d197d9a756baba829311b6781e88964e86d62a",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "finale_bg_porte_noire_plaine",
+    "description": "Plaine infernale, Porte Noire (portail rouge), sans neige",
+    "constante": "BG_PORTE (fusion/story-finale-s02.js, s06.js)",
+    "scenes": "c17_portail → c17_fin (Porte, duel, tragédie), c18_ip_* (Iriana), c18_trop_tard → c18_saut (deuil, Bhaal, Alamma) ; image de la carte de chapitre XVII",
+    "remplace": "c4v_portal_temple"
+   },
+   {
+    "fichier": "assets/images/backgrounds/finale/bg_porte_noire_blizzard.png",
+    "sha256": "276526139aa86b19dec1de2b6633f1eccf6164d3edb5ccd21c62530842f3d85e",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "finale_bg_porte_noire_blizzard",
+    "description": "Même plaine figée par le blizzard",
+    "constante": "BG_GIVRE (s06)",
+    "scenes": "c18_choix_hylee → c18_arcane_brule, c18_gardien → c18_faille (jamais avant le blizzard de Remerii) ; image de la carte de chapitre XVIII",
+    "remplace": "bg_frost"
+   },
+   {
+    "fichier": "assets/images/backgrounds/finale/bg_champ_bataille.png",
+    "sha256": "6ad1dfb080e6111301e9da5463dc42299f7102bff3d9c06228374163e5b6fcf9",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "finale_bg_champ_bataille",
+    "description": "Champ de bataille dévasté, bannières pourpres, armes à terre",
+    "constante": "BG_CHAMP (s02, s06, s09)",
+    "scenes": "c17_choc → c17_releves_2 (mêlée), c18_carrefour_intro, c18_carrefour, c18_pacte_valurn, c19_allenna → c19_fin (Épilogue)",
+    "remplace": "c16_bg_apres_assaut"
+   },
+   {
+    "fichier": "assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png",
+    "sha256": "66630d63d977d098f78fbbc2616a7823157085af06239ca896b5c954fc7bd8bf",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "finale_bg_akuhn_nabad_ravin",
+    "description": "Ravin aux parois instables, cascades, arches en ruine, racines violettes",
+    "constante": "BG_CREVASSE (s06)",
+    "scenes": "c18_dp_* (point de vue Draven), c18_draven_seul → c18_remerii_draven_2 (crevasse, grotte, effondrement)",
+    "remplace": "c16_bg_lisiere_assaut"
+   }
+  ],
+  "fiches_reference_design": {
+   "statut": "RÉFÉRENCE DE DESIGN UNIQUEMENT, NON AFFICHÉES EN JEU (consigne de l’auteur : « Les fiches sont à titre indicatif »). Aucune scène, ni le Codex, ni une galerie ne les charge ; elles ne sont pas déclarées dans le registre A.",
+   "dossier": "Ressource lore/Charactersheet/finale/ (à côté des autres fiches de référence du dépôt)",
+   "fichiers": [
+    {
+     "fichier": "Ressource lore/Charactersheet/finale/fiche_hylee_finale.png",
+     "sha256": "bc3c9033f3e92ec6e61f73cb87e389f03c44ee72263e07a4f26414fb4fd41ae1",
+     "dimensions": "1199x1312 PNG",
+     "objet": "Hylee, forme finale (apprentie archimage)",
+     "usage": "guide pour de futurs sprites ou images clés"
+    },
+    {
+     "fichier": "Ressource lore/Charactersheet/finale/fiche_alamma.png",
+     "sha256": "aa60182e56c7af64d3f3a16cad2bd7261964a04c25bb463b17b395f44c8db718",
+     "dimensions": "1122x1402 PNG",
+     "objet": "Alamma, patriarche sylvinien",
+     "usage": "guide pour de futurs sprites ou images clés"
+    },
+    {
+     "fichier": "Ressource lore/Charactersheet/finale/fiche_bhaal.png",
+     "sha256": "f04bc590b76ed43e9271c0be9b7fb98e88ff8e88e5fed499b9a49b6df5f8a100",
+     "dimensions": "1122x1402 PNG",
+     "objet": "Bhaal, seigneur infernal primordial",
+     "usage": "guide pour de futurs sprites ou images clés"
+    },
+    {
+     "fichier": "Ressource lore/Charactersheet/finale/fiche_amanea_forme_finale.png",
+     "sha256": "2a4913371e89eb6a32dde52fccac9be50b62932aa2e49492da079a77d69004fe",
+     "dimensions": "1199x1312 PNG",
+     "objet": "Amanea, forme finale",
+     "usage": "guide pour de futurs sprites ou images clés"
+    }
+   ]
+  }
+ },
+ "decors_reutilises": {
+  "c4v_akuhn_citadel": "BG_AKUHN · rassemblement devant Akuhn’Nabad",
+  "c7_bg_foret_racines": "BG_FOREST · marche vers le portail",
+  "bg_clearing_decor": "BG_SOURCE · souvenir de la leçon d’Arcane",
+  "iriana_throneroom": "BG_TRONE · Épilogue, salle du trône",
+  "c13g_bg_chambre": "BG_CHAMBRE · Épilogue, chevet de Remerii",
+  "bg_algratal_portes": "BG_ALGRATAL · arrivée à Al’Gratal : c18_algratal, c18_reflet (« Deux saphirs »), c18_ne_me_laisse_pas, c18_fin. Remplace c2_algratal_panorama_cg, où l’on voit de dos une Hylee aux cheveux roux, incompatible avec sa forme transformée."
+ },
+ "musiques_reutilisees": {
+  "music_tension": "rassemblement, plan, carrefour",
+  "music_c10_horreur": "marche, moisson des âmes, relevés, ouverture du portail",
+  "music_c10_group_portal": "la Porte Noire",
+  "music_c13i_amanea_reine_noire": "Amanea au portail, Allenna (Épilogue)",
+  "music_c3_combat_ombres": "mêlée",
+  "music_duel": "duel Valurn contre Amanea",
+  "music_c10_amanea": "tragédie de la figure de Tia",
+  "music_draven_storm / music_draven_bond": "Draven, appel de Lineva",
+  "music_c11_complainte(_instru)": "deuils",
+  "music_c10_culte": "Bhaal",
+  "music_iriana": "Iriana contre Alamma",
+  "music_c8_valurn_pacte": "pacte de Valurn",
+  "music_x12i_glace_brisee": "blizzard de Remerii",
+  "music_c6_nuit_etoiles": "souvenir de la leçon d’Arcane",
+  "music_algratal": "retour à Al’Gratal",
+  "music_c14_council_v0340": "salle du trône",
+  "music_c13g_une_nuit_soft": "chevet",
+  "music_end": "fin du Tome I"
+ },
+ "images_cles_prevues_cahier": [
+  {
+   "code": "BG-01",
+   "objet": "Porte Noire, plan maître large",
+   "scene": "c17_portail"
+  },
+  {
+   "code": "BG-02",
+   "objet": "Porte, plan rapproché de combat",
+   "scene": "c17_valurn_surgit → c17_brise"
+  },
+  {
+   "code": "BG-03",
+   "objet": "Porte, contrechamp",
+   "scene": "c18_alamma"
+  },
+  {
+   "code": "BG-04",
+   "objet": "Champ de bataille sans porte",
+   "scene": "c17_choc"
+  },
+  {
+   "code": "BG-05",
+   "objet": "Trouée entre les lignes",
+   "scene": "c17_fuyards"
+  },
+  {
+   "code": "BG-06",
+   "objet": "Crevasse et entrée de grotte",
+   "scene": "c18_draven_seul"
+  },
+  {
+   "code": "BG-07",
+   "objet": "Intérieur de la grotte, effondrement",
+   "scene": "c18_temporise, c18_effondrement"
+  },
+  {
+   "code": "BG-08",
+   "objet": "Clairière Iriana / Alamma",
+   "scene": "c18_tu_es_trop_jeune"
+  },
+  {
+   "code": "BG-09",
+   "objet": "Champ sous blizzard",
+   "scene": "c18_gardien → c18_faille"
+  },
+  {
+   "code": "BG-10",
+   "objet": "Après-combat, épilogue",
+   "scene": "c19_allenna"
+  },
+  {
+   "code": "CG-02",
+   "objet": "Porte Noire et deux armées",
+   "scene": "c17_assaut"
+  },
+  {
+   "code": "CG-03",
+   "objet": "Lignes du champ de bataille",
+   "scene": "c17_tempete"
+  },
+  {
+   "code": "CG-04",
+   "objet": "Transformation d’Amanea",
+   "scene": "c17_metamorphose"
+  },
+  {
+   "code": "CG-05",
+   "objet": "Valurn et Amanea, premier choc",
+   "scene": "c17_mur_de_feu"
+  },
+  {
+   "code": "CG-06",
+   "objet": "Amanea révèle sa vraie puissance",
+   "scene": "c17_revelation"
+  },
+  {
+   "code": "CG-07",
+   "objet": "Valurn au sol, Amanea triomphante",
+   "scene": "c17_brise"
+  },
+  {
+   "code": "CG-08",
+   "objet": "Figure de Tia, Amanea, Naïah",
+   "scene": "c17_gorge (illusion de Tia), c17_naiah_revelee (révélation)"
+  },
+  {
+   "code": "CG-09",
+   "objet": "Draven face à la horde, effondrement",
+   "scene": "c18_effondrement"
+  },
+  {
+   "code": "CG-10",
+   "objet": "Remerii découvre Draven",
+   "scene": "c18_remerii_draven"
+  },
+  {
+   "code": "CG-11",
+   "objet": "Iriana dominée, éveil du pouvoir transmis",
+   "scene": "c18_a_genoux"
+  },
+  {
+   "code": "CG-12",
+   "objet": "Iriana prend le dessus",
+   "scene": "c18_chute_alamma"
+  },
+  {
+   "code": "CG-13",
+   "objet": "Apparition de Bhaal",
+   "scene": "c18_bhaal"
+  },
+  {
+   "code": "CG-14",
+   "objet": "Blizzard, Hylee canalise, dragon de glace",
+   "scene": "c18_conduit, c18_dragon"
+  },
+  {
+   "code": "CG-15",
+   "objet": "Remerii après la bataille, Hylee métamorphosée",
+   "scene": "c18_reflet"
+  }
+ ],
+ "musiques_dediees_prevues": [
+  {
+   "code": "MU-01",
+   "objet": "Thème de la Porte Noire",
+   "scenes": "c17_portail → c17_feu"
+  },
+  {
+   "code": "MU-02",
+   "objet": "Duel Valurn / Amanea (deux phases, bascule à c17_revelation)",
+   "scenes": "c17_duel_intro → c17_brise"
+  },
+  {
+   "code": "MU-03",
+   "objet": "Tragédie de la figure de Tia",
+   "scenes": "c17_trois → c17_brasier"
+  },
+  {
+   "code": "MU-04",
+   "objet": "Dernier combat de Draven",
+   "scenes": "c18_draven_seul → c18_remerii_draven"
+  },
+  {
+   "code": "MU-05",
+   "objet": "Bhaal",
+   "scenes": "c18_bhaal → c18_iriana_part"
+  },
+  {
+   "code": "MU-06",
+   "objet": "Blizzard interdit et dragon de glace",
+   "scenes": "c18_gardien → c18_dragon"
+  },
+  {
+   "code": "MU-07",
+   "objet": "Métamorphose d’Hylee / retour à Al’Gratal",
+   "scenes": "c18_faille → c18_ne_me_laisse_pas"
+  },
+  {
+   "code": "MU-08",
+   "objet": "Épilogue, deuil et serment d’Allenna",
+   "scenes": "c19_trone → c19_serment"
+  }
+ ],
+ "sprites_manquants": {
+  "hylee_finale_*": "assets/sprites/hylee_finale_*.png · Hylee dans sa forme entièrement transformée (la fiche Ressource lore/Charactersheet/finale/fiche_hylee_finale.png sert de référence, elle n’est pas affichée). D’ici là, aucune silhouette d’Hylee après la canalisation (dès c18_remerii_tombe).",
+  "amanea_finale_*": "Amanea transformée : aucune silhouette pendant et après c17_metamorphose (référence : fiche_amanea_forme_finale.png, non affichée).",
+  "tia_*": "Pas de Tia adulte : la figure de Tia n’a pas de silhouette ; Naïah apparaît seulement à la révélation (c17_naiah_revelee).",
+  "alamma_* / bhaal_* / allenna_* / ellion_* / demendras_*": "Pas de sprite : scènes en narration sur le décor."
+ }
+}
