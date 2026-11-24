@@ -5,7 +5,7 @@
 - Mise en scène épique des quatre duels du final, entièrement dans `tools/finale-gen/duels.js` (copié vers `fusion/story-finale-duels.js` v2). Chaque scène de duel reçoit une humeur :
   - **Urgence** : bords de l’écran qui battent comme un pouls (plus vite si une jauge est critique, encore plus pendant un QTE), HUD qui tressaille, braises / éclats / neige rapides, flash coloré et son d’impact quand une jauge chute, compte à rebours qui rougit et cliquette dans les 3 dernières secondes.
   - **Désespoir** : décor et sprites désaturés, vignettage sombre dont la lueur faiblit lentement, HUD fissuré et pâli, jauges qui se vident lentement, cendres / poussière / neige lentes, double battement de cœur sourd, musique en retrait (62 %).
-  - **Bascule épique** : coupure noire, éclair aux couleurs du duel, bandeau de titre d’attaque incliné (Cinzel, filets or), montée de la musique ; le QTE éventuel attend la fin du bandeau.
+  - **Bascule épique** : coupure noire, éclair aux couleurs du duel, titre d’attaque propre à chaque duel (bandeau incliné pour S04, bloc de pierre pour S06, sceau d’encre pour S07, bandeau de glace pour S08), montée de la musique ; le QTE éventuel attend la fin du bandeau.
   - Game Over : l’interface se retire (HUD gris et effacé), décor presque monochrome. Fin du combat contre Bhaal : apaisement (neige lente, HUD qui s’efface).
 - Thèmes : flammes noires et violet (Amanea), roche et poussière (Draven), arcane bleu et chaos pourpre (Iriana / Alamma), blizzard et glace (Bhaal).
 - Bascules : « Puissance révélée » (c17_revelation), « Une minute volée » (c17_qte_ok), « Effondrement » (c18_dp_voute_r), « Chaos filtré » (c18_ip_flux), « Renversement » (c18_ip_renversement_r), « Synchronisation » (c18_bh_sync), « Dragon de glace » (c18_bh_dragon).
@@ -20,6 +20,11 @@
   - Tampons de résultat après chaque manche (« Lecture juste », « Lu par elle », « Garde rompue », « Temps volé +2 s », « Une minute »…).
   - Ressource réelle : chaque seconde gagnée en phase II élargit de 300 ms la fenêtre de la riposte finale (QTE `c17_qte`).
 - Sources d’inspiration et emprunts : voir `docs/production/finale_duels_inspirations.md`.
+- **Chaque duel a sa propre boucle** (rien de répété d’un combat à l’autre) :
+  - S04 garde intentions, ruban de tours, tampons et trois phases.
+  - S06 Draven : plan de terrain (Dehors · Crevasse · Couloir · Grotte), horde case par case, « Tenir · vague N/5 », veine de la voûte repérée en reculant ; dalles de pierre, tambour lent, bascule « pierre ».
+  - S07 Iriana : sceau de runes (Arcane, Ombre, Chaos, Mort) à défaire puis à combiner ; recettes du Renversement qui dépensent le Chaos filtré (Enserrer 1, Trait 2, Tresse 3) ; HUD inversé sous l’emprise ; encre, carillons, bascule en sceau.
+  - S08 Remerii et Hylee : tandem à rôles alternés, lien qui s’allume, terrain qui change avec le blizzard, fenêtre de synchronisation détaillée (main brûlée : −0,6 s), dragon de glace qui coûte l’Arcane d’Hylee ; verre de givre, souffle, bascule de glace.
 - Bulle de mise à jour : « v0.421 · Duels épiques ».
 
 ## v0.420 (branche `feat/finale-mise-en-scene`)
