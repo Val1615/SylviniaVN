@@ -228,7 +228,7 @@ La horde passe, et la grotte reste debout.`),
       'c18_s06_fin'),
     c18_s06_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-Remerii n’a pas encore trouvé Draven. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+Remerii a laissé Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
 
     // ───── S07 · Iriana (facultatif) ─────
     c18_ip_intro: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
