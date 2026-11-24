@@ -1,5 +1,16 @@
 # Journal · Final du Tome I
 
+## v0.426 (branche `feat/hud-combat-discret`)
+
+- Retour de l’auteur : le cartouche de duel masquait l’image clé (capture Fold, `c18_bh_dragon`). Le HUD des 4 duels (S04, S06, S07, S08) devient une barre fine et semi-transparente, collée sous l’en-tête et arrêtée avant les onglets.
+- Barre : une rangée de jauges fines (porteur, nom court, valeur), boutons « ? » (règles, met le chrono en pause) et « ▾ » (détails). Le nom complet de chaque jauge reste en infobulle.
+- Consigne « Ce tour », intention (S04) et conséquences : une seule ligne sous la barre. Toucher la ligne ou « ▾ » déplie la carte S06, les runes S07, le tandem S08, les seuils et le réglage des effets. L’état replié/déplié est mémorisé (`sylvinia_fd_hud_details`).
+- QTE : barre du chrono compacte dans le HUD ; sur écran bas (≤ 600 px), la consigne redondante se masque pendant le réflexe.
+- Interfaces épurée et cinématique : la barre suit (tout en haut en cinématique). Interface classique : même barre compacte.
+- Persistance v0.424 conservée (HUD tenu pendant les interludes « Duel en suspens »), panneau de règles à l’entrée de chaque duel inchangé.
+- Nouveau test `tools/finale-gen/hud_discret.py` (géométrie aux 3 formats Fold, ▾, ?, modes, règles à l’entrée). `duels_e2e.py` lit aussi les infobulles des jauges.
+- Bulle de mise à jour : « v0.426 · Interface de combat discrète ».
+
 ## v0.425 (branche `feat/finale-lot3-s08-s09`)
 
 - Images clés du lot 3 livrées par l’auteur : 56 plans (S08 : 34, S09 : 22), dans `assets/images/keyscenes/chapter18-s08/` et `chapter19-s09/` (dossiers `chapter16-s08/s09` de l’archive renommés). Copie à l’identique (sha256 vérifié). Les 16 PNG joints, variantes des mêmes plans, ne sont pas intégrés.

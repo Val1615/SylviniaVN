@@ -12,9 +12,14 @@ a.btn,a.btn-or{text-decoration:none;display:inline-flex}
 /* Combat : chaque choix affiche ce qu’il fait (coût, nature du geste), sur une ligne discrète. */
 .jeu.combat .choix .ch-t em{display:block;margin-top:1px;font:italic 500 max(11px,calc(14 * var(--t)))/1.2 var(--serif);color:#f1dcae;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Duel en suspens : passage du roman au milieu d’un duel, HUD compact et discret (il ne disparaît plus). */
-.jeu:not(.combat) .combat-hud{width:min(calc(640 * var(--c)),86%);padding:calc(6 * var(--c)) calc(14 * var(--c));opacity:.86}
-.jeu:not(.combat) .combat-hud .fdGuide{margin-top:calc(4 * var(--c))}
+.jeu:not(.combat) .combat-hud{opacity:.86}
+/* v0.426 · HUD de duel discret : barre fine collée sous l’en-tête, verre très léger, l’image clé reste visible. */
+.jeu .combat-hud.verre{top:calc(var(--pad) + 46px);left:var(--pad);right:calc(var(--pad) + var(--hudw,200px) + 12px);transform:none;margin:0 auto;width:min(calc(1150 * var(--c)),calc(100% - 2 * var(--pad) - var(--hudw,200px) - 12px));padding:calc(6 * var(--c)) calc(14 * var(--c)) calc(7 * var(--c));background:linear-gradient(180deg,rgba(8,9,24,.58),rgba(8,9,24,.34));backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border:0;border-bottom:1px solid rgba(216,189,120,.30);border-radius:0 0 calc(12 * var(--c)) calc(12 * var(--c));box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.ui-cine .jeu .combat-hud.verre{top:var(--pad);left:calc(var(--pad) + 56px)}
+
+
 .combat-hud .combatHud{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(14 * var(--c))}
+.combat-hud .fdWrap .combatTop{font-family:var(--display)}
 .combat-hud .combatTop{display:flex;justify-content:space-between;letter-spacing:.12em;text-transform:uppercase;font-size:calc(12 * var(--t));color:var(--or-pale)}
 .combat-hud .combatTrack{height:calc(8 * var(--c));min-height:4px;margin-top:calc(4 * var(--c));background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 1px var(--ligne);transform:skewX(-14deg)}
 .combat-hud .combatFill{height:100%;background:linear-gradient(90deg,#9adfff,var(--glace))}

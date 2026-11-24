@@ -32,7 +32,7 @@ def reveal(pg, n=6):
 def ui(pg):
     return pg.evaluate("""()=>{const R=BibliothequeAstrale.racine; const hud=R.querySelector('.combat-hud'); const ch=R.querySelector('.choix');
       const q=R.querySelector('.choix .question'); const jeu=R.querySelector('.jeu');
-      return {scene:state.scene, hud: hud? hud.textContent.replace(/\\s+/g,' ').trim():'', hudVisible: !!hud && hud.getBoundingClientRect().height>10,
+      return {scene:state.scene, hud: hud? (hud.textContent+' '+[...hud.querySelectorAll('.combatBox[title]')].map(x=>x.title).join(' ')).replace(/\\s+/g,' ').trim():'', /* v0.426 : barre compacte, nom complet des jauges dans l’infobulle */ hudVisible: !!hud && hud.getBoundingClientRect().height>10,
         choix: ch && !ch.hidden ? [...ch.querySelectorAll('.ch')].map(x=>x.textContent.replace(/\\s+/g,' ').trim()) : [],
         header: q? q.textContent.trim():'', combat: document.getElementById('stage').classList.contains('combatMode'),
         qteTimer: !!(hud && hud.querySelector('#fdQteTimer')), overflow: (()=>{const c=R.querySelector('.choix'); if(!c||c.hidden) return 0; const r=c.getBoundingClientRect(); return Math.round(Math.max(0, r.bottom-innerHeight));})()}}""")
