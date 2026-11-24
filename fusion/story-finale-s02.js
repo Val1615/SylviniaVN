@@ -51,32 +51,25 @@
   });
   const flags = () => state.flags || {};
 
-  // Duel S04 : jauges affichées dans le texte des scènes de choix.
-  const duel = () => {
-    const f = flags();
-    let vit = 10;
-    for (const k of ['s04M1', 's04M2', 's04M3']) vit -= f[k] === 'good' ? 2 : f[k] === 'mid' ? 1 : 0;
-    let temps = 0;
-    for (const k of ['s04M4', 's04M5']) temps += f[k] === 'good' ? 2 : f[k] === 'mid' ? 1 : 0;
-    return { vit, temps };
+  // Duel S04 : jauges et QTE gérés par fusion/story-finale-duels.js (calculés depuis les flags s04M1…s04Qte).
+  const calc = (step) => window.SylviniaFinaleDuels ? window.SylviniaFinaleDuels.calc('s04', step) : { valurn: 10, amanea: 10, power: 0, temps: 0 };
+  const RESET_S04 = { s04M1: null, s04M2: null, s04M3: null, s04M4: null, s04M5: null, s04Qte: null };
+  const ds = (sub, text, next, chars, step, extra = {}) => ({
+    ...scene(sub, BG_PORTE, M_DUEL, 'Narrateur', text, next, chars), fduel: 's04', fstep: step, pov: 'valurn', ...extra,
+  });
+  const dsNext = (sub, text, step, chars, ok, test) => {
+    const o = ds(sub, text, null, chars, step);
+    Object.defineProperty(o, 'next', { enumerable: true, configurable: true, get: () => test(calc(step)) || ok });
+    return o;
   };
-  const bar = (n, max = 10) => '▰'.repeat(Math.max(0, n)) + '▱'.repeat(Math.max(0, max - n));
-  const gauges = (power) => {
-    const { vit, temps } = duel();
-    const lines = [`Vitalité d’Amanea  ${bar(vit)}  ${vit}/10`];
-    if (power !== undefined) {
-      lines.push(`Puissance révélée  ${bar(power)}  ${power}/10`);
-      lines.push(`Temps gagné  ${bar(temps, 4)}  ${temps}`);
-    }
-    return lines.join('\n\n');
-  };
-  const compact = (power) => {
-    const { vit, temps } = duel();
-    return power === undefined
-      ? `Vitalité d’Amanea  ${bar(vit)}  ${vit}/10`
-      : `Puissance ${power}/10 · Temps gagné ${temps}`;
-  };
-  window.SylviniaFinale = Object.assign(window.SylviniaFinale || {}, { duel, bar });
+  const gameOver = (sub, text, step) => ({
+    ...scene(sub, BG_PORTE, M_TRAGEDIE, 'Narrateur', text, null, []), title: 'Game Over', fduel: 's04', fstep: step, fgameover: true, pov: 'gameover',
+    choices: [
+      { label: 'Réessayer le duel', next: 'c17_duel_intro', flags: RESET_S04, skipHistory: true },
+      { label: 'Retour au menu', next: 'menu' },
+    ],
+  });
+  window.SylviniaFinale = Object.assign(window.SylviniaFinale || {}, { s04: calc });
 
   const outcome = (key, texts) => () => texts[flags()[key]] || texts.good;
 
@@ -1473,175 +1466,144 @@ Hylee hoche la tête. Elle ne sait pas encore à quel point cette promesse va pe
 Le nom se perd dans le tumulte. Hylee la regarde partir sans elle, ce nom qu’elle n’a pas crié à temps au bord des lèvres, et la peur qui lui serre la gorge prend la forme exacte d’un regret.`,
       'c17_bouclier', [hyleeShaken, saidin]),
 
-    // S04 · Duel : Valurn contre Amanea. Le joueur lit les gestes d’Amanea ; la défaite reste obligatoire.
-    c17_duel_intro: scene('Duel · Valurn contre la Reine Noire', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
+    // S04 · Duel : Valurn contre Amanea. Phase A (3 manches), Phase B (2 manches + QTE). Défaite canonique, Game Over si Valurn tombe trop tôt.
+    c17_duel_intro: ds('Duel · Valurn contre la Reine Noire',
+      `Valurn se place entre la Reine Noire et le portail. Les flammes noires lui montent le long des bras.
 
-Valurn se place entre la Reine Noire et le portail. Avant chaque échange, le récit décrit le geste d’Amanea : c’est lui qu’il faut lire. Une bonne lecture entame sa vitalité. Plus tard, elle fera gagner du temps.`,
-      'c17_mur_de_feu', [valurn]),
+Avant chaque échange, le geste d’Amanea se dessine : c’est lui qu’il faut lire. Une bonne lecture entame sa garde. Une mauvaise se paie en posture.`,
+      'c17_mur_de_feu', [valurn], 0, { fintro: true }),
 
-    c17_m1_lecture: scene('Manche I · Le mur de feu', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
-
-Le mur de feu crépite entre eux. Amanea ne regarde pas les flammes. Ses yeux glissent d’un bord à l’autre du brasier, guettant l’endroit par lequel il va le contourner.`,
-      'c17_m1', [valurn]),
+    c17_m1_lecture: ds('Manche I · Le mur de feu',
+      `Le mur de feu crépite entre eux. Amanea ne regarde pas les flammes. Ses yeux glissent d’un bord à l’autre du brasier, guettant l’endroit par lequel il va le contourner.`,
+      'c17_m1', [valurn], 0),
     c17_m1: {
-      ...scene('Manche I · Le mur de feu', BG_PORTE, M_DUEL, 'Narrateur',
-        () => `${compact()}
-
-Elle guette les bords du brasier.`,
-        null, [valurn]),
+      ...ds('Manche I · Le mur de feu', `Elle guette les bords du brasier.`, null, [valurn], 0),
       choices: [
-        { label: 'Traverser le mur en son centre', next: 'c17_m1_r', flags: { s04M1: 'good' } },
+        { label: 'Traverser le mur en son centre', next: 'c17_m1_r', flags: { s04M1: 'good' }, best: true },
         { label: 'Lancer une sphère à travers les flammes', next: 'c17_m1_r', flags: { s04M1: 'mid' } },
         { label: 'Le contourner par la gauche', next: 'c17_m1_r', flags: { s04M1: 'bad' } },
       ],
     },
-    c17_m1_r: scene('Manche I · Le mur de feu', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
+    c17_m1_r: dsNext('Manche I · Le mur de feu',
+      outcome('s04M1', {
+        good: 'Valurn plonge là où elle ne regarde pas. Les flammes noires le couvrent une fraction de seconde, assez pour que la griffe d’Amanea arrive trop tard. Sa lame mord la garde de la reine.',
+        mid: 'La sphère traverse le brasier et éclate contre son épaule. Elle encaisse sans un cri. Le mur, lui, ne cache plus rien.',
+        bad: 'Elle l’attendait sur le bord. La griffe lui ouvre le flanc avant qu’il ne change d’angle. Il se jette dans les flammes, une seconde trop tard pour la surprendre.',
+      }), 1, [valurn], 'c17_tu_sais', (v) => (v.valurn <= 0 ? 'c17_gameover_a' : null)),
 
-${outcome('s04M1', {
-  good: 'Valurn plonge là où elle ne regarde pas. Les flammes noires le couvrent une fraction de seconde, assez pour que la griffe d’Amanea arrive trop tard.',
-  mid: 'La sphère traverse le brasier et éclate contre son épaule. Elle encaisse sans un cri. Le mur, lui, ne cache plus rien.',
-  bad: 'Elle l’attendait sur le bord. La griffe fend l’air à un doigt de sa gorge. Valurn rompt, change d’angle et se jette dans les flammes, une seconde trop tard pour la surprendre.',
-})()}`,
-      'c17_tu_sais', [valurn]),
-
-    c17_m2_lecture: scene('Manche II · L’onde', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
-
-Le poing d’Amanea descend. L’énergie s’y concentre, le sol se creuse déjà sous elle. Le coup ne vise pas Valurn : il vise la terre sur laquelle il se tient.`,
-      'c17_m2', [valurnAmused]),
+    c17_m2_lecture: ds('Manche II · L’onde',
+      `Le poing d’Amanea descend. L’énergie s’y concentre, le sol se creuse déjà sous elle. Le coup ne vise pas Valurn : il vise la terre sur laquelle il se tient.`,
+      'c17_m2', [valurnAmused], 1),
     c17_m2: {
-      ...scene('Manche II · L’onde', BG_PORTE, M_DUEL, 'Narrateur',
-        () => `${compact()}
-
-Le coup vise le sol, pas lui.`,
-        null, [valurnAmused]),
+      ...ds('Manche II · L’onde', `Le coup vise le sol, pas lui.`, null, [valurnAmused], 1),
       choices: [
-        { label: 'Bondir hors du sol', next: 'c17_m2_r', flags: { s04M2: 'good' } },
+        { label: 'Bondir hors du sol', next: 'c17_m2_r', flags: { s04M2: 'good' }, best: true },
         { label: 'Rompre d’un pas', next: 'c17_m2_r', flags: { s04M2: 'mid' } },
-        { label: 'Dresser une parade de flammes noires', next: 'c17_m2_r', flags: { s04M2: 'bad' } },
+        { label: 'Encaisser sur place', next: 'c17_m2_r', flags: { s04M2: 'bad' } },
       ],
     },
-    c17_m2_r: scene('Manche II · L’onde', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
+    c17_m2_r: dsNext('Manche II · L’onde',
+      outcome('s04M2', {
+        good: 'Il quitte le sol avant que l’onde ne parte. Elle passe sous lui, et d’en haut, il voit la faille dans sa garde, là où le revers de sa griffe a laissé son flanc ouvert. Il y plante sa lame en retombant.',
+        mid: 'Un pas ne suffit pas tout à fait. L’onde lui fauche une jambe ; il roule dans les cendres, mais sa lame a trouvé le bras d’Amanea au passage.',
+        bad: 'L’onde le soulève comme une feuille et le jette contre la roche. Il se relève en crachant de la cendre. Elle n’a pas eu besoin de bouger.',
+      }), 2, [valurnAmused], 'c17_pourquoi', (v) => (v.valurn <= 0 ? 'c17_gameover_a' : null)),
 
-${outcome('s04M2', {
-  good: 'Il quitte le sol avant que l’onde ne parte. Elle passe sous lui, et d’en haut, il voit la faille dans sa garde, là où le revers de sa griffe a laissé son flanc ouvert.',
-  mid: 'Un pas ne suffit pas tout à fait. L’onde lui fauche une jambe ; il roule dans les cendres, mais sa lame a trouvé le bras d’Amanea au passage.',
-  bad: 'La parade tient un battement de cœur. Puis l’onde la traverse comme une vitre et le soulève. Il en profite, à moitié sonné, pour se laisser porter.',
-})()}`,
-      'c17_pourquoi', [valurnAmused]),
-
-    c17_m3_lecture: scene('Manche III · La garde', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
-
-Entre deux échanges, Amanea ramène toujours son bras difforme contre son flanc gauche, celui que la lame a mordu. Sa garde haute, elle, reste ouverte.`,
-      'c17_m3', [valurnAnnoyed]),
+    c17_m3_lecture: ds('Manche III · La garde',
+      `Entre deux échanges, Amanea ramène toujours son bras difforme contre son flanc gauche, celui que la lame a mordu. Sa garde haute, elle, reste ouverte. Et son revers arrive toujours du même côté.`,
+      'c17_m3', [valurnAnnoyed], 2),
     c17_m3: {
-      ...scene('Manche III · La garde', BG_PORTE, M_DUEL, 'Narrateur',
-        () => `${compact()}
-
-Son flanc est couvert. Sa garde haute, non.`,
-        null, [valurnAnnoyed]),
+      ...ds('Manche III · La garde', `Son flanc est couvert. Sa garde haute, non.`, null, [valurnAnnoyed], 2),
       choices: [
-        { label: 'Frapper la garde haute laissée ouverte', next: 'c17_m3_r', flags: { s04M3: 'good' } },
-        { label: 'Feinter sur le flanc gauche', next: 'c17_m3_r', flags: { s04M3: 'mid' } },
+        { label: 'Frapper la garde haute laissée ouverte', next: 'c17_m3_r', flags: { s04M3: 'good' }, best: true },
+        { label: 'Parer le revers de flammes noires et riposter', next: 'c17_m3_r', flags: { s04M3: 'parade' } },
         { label: 'Lancer une sphère entropique à bout portant', next: 'c17_m3_r', flags: { s04M3: 'bad' } },
       ],
     },
-    c17_m3_r: scene('Manche III · La garde', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges()}
+    c17_m3_r: dsNext('Manche III · La garde',
+      outcome('s04M3', {
+        good: 'La lame passe au-dessus du bras levé et ouvre une entaille sous la clavicule de la reine. Le sang noir fume dans l’air brûlant.',
+        parade: 'Le revers arrive là où il l’attendait. La parade de flammes noires l’encaisse de plein fouet et tient. Il glisse dessous et frappe : la reine recule d’un pas.',
+        bad: 'La sphère éclate contre sa paume ouverte. Amanea referme les doigts sur l’entropie comme sur une braise, et la lui renvoie en pleine poitrine.',
+      }), 3, [valurnAnnoyed], 'c17_revelation', (v) => (v.valurn <= 0 || v.amanea > 6 ? 'c17_gameover_a' : null)),
 
-${outcome('s04M3', {
-  good: 'La lame passe au-dessus du bras levé et ouvre une entaille sous la clavicule de la reine. Le sang noir fume dans l’air brûlant.',
-  mid: 'Elle couvre le flanc par réflexe. Le vrai coup arrive ailleurs, moins profond qu’il ne l’espérait, mais il arrive.',
-  bad: 'La sphère éclate contre sa paume ouverte. Amanea referme les doigts sur l’entropie comme sur une braise, et la regarde s’éteindre.',
-})()}`,
-      'c17_revelation', [valurnAnnoyed]),
-
-    c17_revelation: scene('Une seconde jauge', BG_PORTE, M_DUEL, 'Narrateur',
+    c17_revelation: ds('Une seconde jauge',
       () => {
-        const { vit } = duel();
-        const lead = vit <= 4
+        const { amanea } = calc(3);
+        const lead = amanea <= 4
           ? 'Valurn la tient au seuil qu’il visait. Pour la première fois depuis le début du duel, la Reine Noire recule.'
-          : vit < 10 ? 'Valurn l’a touchée, pas assez pour la faire plier. Elle ne recule pas.'
-          : 'Pas une entaille. Amanea n’a pas reculé d’un pouce.';
-        return `${gauges()}
+          : 'Valurn l’a amenée au seuil. Sa garde se fendille. Elle ne recule pas encore.';
+        return `${lead}
 
-${lead}
+Puis, à côté de sa vitalité, une seconde jauge s’éveille : Puissance révélée. Elle est vide. Elle se remplit d’un coup.
 
-Puis, sous la première, une seconde jauge s’éveille, vide.
-
-Puissance révélée  ${bar(0)}  0/10
-
-Elle se remplit d’un coup.
-
-${gauges(6)}
-
-Tout ce qu’Amanea a retenu jusque-là se déverse dans ses gestes. Ce qu’il a pris pour sa force n’était que sa retenue.`;
+Ce qu’il a pris pour sa force n’était que sa retenue.`;
       },
-      'c17_cede', [valurnAnnoyed]),
+      'c17_cede', [valurnAnnoyed], 4, { freveal: 'power', fprev: 3 }),
 
-    c17_m4_lecture: scene('Manche IV · Retarder', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges(6)}
-
-Ses coups n’ont plus besoin d’être lus : ils sont trop lourds pour être parés. Chaque fois que Valurn tient sa position, la griffe l’en arrache. Chaque fois qu’il cède, elle doit le suivre.`,
-      'c17_m4', [valurnAnnoyed]),
+    c17_m4_lecture: ds('Manche IV · Retarder',
+      `Ses coups n’ont plus besoin d’être lus : ils sont trop lourds pour être parés. Chaque fois que Valurn tient sa position, la griffe l’en arrache. Chaque fois qu’il cède, elle doit le suivre.`,
+      'c17_m4', [valurnAnnoyed], 4),
     c17_m4: {
-      ...scene('Manche IV · Retarder', BG_PORTE, M_DUEL, 'Narrateur',
-        () => `${compact(6)}
-
-Chaque pas qu’il cède, elle doit le suivre.`,
-        null, [valurnAnnoyed]),
+      ...ds('Manche IV · Retarder', `Chaque pas qu’il cède, elle doit le suivre.`, null, [valurnAnnoyed], 4),
       choices: [
-        { label: 'Céder du terrain pas à pas', next: 'c17_m4_r', flags: { s04M4: 'good' } },
+        { label: 'Céder du terrain pas à pas', next: 'c17_m4_r', flags: { s04M4: 'good' }, best: true },
         { label: 'L’attirer loin du portail', next: 'c17_m4_r', flags: { s04M4: 'mid' } },
-        { label: 'Lui faire face et parer', next: 'c17_m4_r', flags: { s04M4: 'bad' } },
+        { label: 'Parer de flammes noires, comme tout à l’heure', next: 'c17_m4_r', flags: { s04M4: 'bad' } },
       ],
     },
-    c17_m4_r: scene('Manche IV · Retarder', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges(8)}
+    c17_m4_r: dsNext('Manche IV · Retarder',
+      outcome('s04M4', {
+        good: 'Il recule, encore, toujours d’un pas de moins qu’elle n’avance. Chaque pas lui coûte une seconde. Chaque seconde est pour lui.',
+        mid: 'Il l’entraîne de quelques foulées vers les ruines. Elle le suit, puis s’arrête net et regarde le portail. Elle a compris la moitié du piège.',
+        bad: 'La parade qui l’avait sauvé tout à l’heure se brise net. La griffe lui ouvre l’épaule. Il se relève, mais il a perdu ce que la manche aurait dû lui rapporter.',
+      }), 5, [valurnAnnoyed], 'c17_m5_lecture', (v) => (v.valurn <= 0 ? 'c17_gameover_b' : null)),
 
-${outcome('s04M4', {
-  good: 'Il recule, encore, toujours d’un pas de moins qu’elle n’avance. Chaque pas lui coûte une seconde. Chaque seconde est pour lui.',
-  mid: 'Il l’entraîne de quelques foulées vers les ruines. Elle le suit, puis s’arrête net et regarde le portail. Elle a compris la moitié du piège.',
-  bad: 'La parade qui l’avait sauvé tout à l’heure se brise net. La griffe lui ouvre l’épaule. Il se relève, mais il a perdu ce que la manche aurait dû lui rapporter.',
-})()}`,
-      'c17_m5_lecture', [valurnAnnoyed]),
-
-    c17_m5_lecture: scene('Manche V · Encore une minute', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges(8)}
-
-Amanea ne frappe plus pour le blesser. Elle frappe pour en finir. Ses yeux ne quittent plus le portail que pour revenir sur lui, et chaque fois, la colère y gagne sur la lucidité.`,
-      'c17_m5', [valurnAnnoyed]),
+    c17_m5_lecture: ds('Manche V · Encore une minute',
+      `Amanea ne frappe plus pour le blesser. Elle frappe pour en finir. Ses yeux ne quittent plus le portail que pour revenir sur lui, et chaque fois, la colère y gagne sur la lucidité.`,
+      'c17_m5', [valurnAnnoyed], 5),
     c17_m5: {
-      ...scene('Manche V · Encore une minute', BG_PORTE, M_DUEL, 'Narrateur',
-        () => `${compact(8)}
-
-Elle frappe pour en finir.`,
-        null, [valurnAnnoyed]),
+      ...ds('Manche V · Encore une minute', `Elle frappe pour en finir.`, null, [valurnAnnoyed], 5),
       choices: [
-        { label: 'La provoquer pour l’attirer encore', next: 'c17_m5_r', flags: { s04M5: 'good' } },
+        { label: 'La provoquer pour l’attirer encore', next: 'c17_m5_r', flags: { s04M5: 'good' }, best: true },
         { label: 'Riposter avant qu’elle ne frappe', next: 'c17_m5_r', flags: { s04M5: 'mid' } },
         { label: 'Disparaître dans les cendres', next: 'c17_m5_r', flags: { s04M5: 'bad' } },
       ],
     },
-    c17_m5_r: scene('Manche V · Encore une minute', BG_PORTE, M_DUEL, 'Narrateur',
-      () => `${gauges(10)}
+    c17_m5_r: dsNext('Manche V · Encore une minute',
+      outcome('s04M5', {
+        good: '« Encore une minute, très chère. Rien qu’une. »\n\nLe sourire de Valurn la mord plus sûrement que sa lame. Elle perd un battement à vouloir l’effacer.',
+        mid: 'Sa lame mord la jointure du bras difforme. Le sang noir gicle. Pour la première fois, Amanea gronde de douleur.',
+        bad: 'Il se fond dans les cendres. Elle ne le cherche même pas. Elle frappe l’endroit où il va réapparaître.',
+      }), 6, [valurnAnnoyed], 'c17_qte', (v) => (v.valurn <= 0 ? 'c17_gameover_b' : null)),
 
-${outcome('s04M5', {
-  good: '« Encore une minute, très chère. Rien qu’une. »\n\nLe sourire de Valurn la mord plus sûrement que sa lame. Elle perd un battement à vouloir l’effacer.',
-  mid: 'Sa lame mord la jointure du bras difforme. Le sang noir gicle. Pour la première fois, Amanea gronde de douleur, et pour la dernière fois, il l’a touchée.',
-  bad: 'Il se fond dans les cendres. Elle ne le cherche même pas. Elle frappe l’endroit où il va réapparaître.',
-})()}`,
-      'c17_brise', [valurnAnnoyed]),
+    c17_qte: {
+      ...ds('Pivot · Le dernier coup',
+        `Amanea arme le coup qui doit en finir. La griffe descend vers sa gorge, plus vite que tout ce qu’il a vu cette nuit.`,
+        null, [valurnAnnoyed], 6),
+      fqte: { label: 'Esquive · riposte', ms: () => 4200 + calc(6).valurn * 250, fail: 'c17_gameover_b' },
+      choices: [{ label: '⚡ Esquiver et riposter', next: 'c17_qte_ok', flags: { s04Qte: 'ok' }, best: true }],
+    },
+    c17_qte_ok: ds('Pivot · Le dernier coup',
+      `Il glisse sous la griffe d’un cheveu. Sa lame mord le poignet difforme ; Amanea recule d’un pas, un seul.
+
+« Tu vois ? Même toi, tu saignes. »
+
+Il a tenu. Assez longtemps pour ce qu’il attendait du portail.`,
+      'c17_brise', [valurnAmused], 7),
+
+    c17_gameover_a: gameOver('Valurn succombe',
+      `Valurn n’a pas su la forcer à se révéler. La griffe d’Amanea le cloue contre la pierre noire bien avant que la reine n’ait eu besoin de puiser au fond d’elle-même.
+Valurn succombe avant de forcer Amanea à se révéler.`, 3),
+    c17_gameover_b: gameOver('La griffe arrive trop tôt',
+      `Il voit le coup trop tard. La griffe traverse sa garde, puis sa poitrine. Il n’a pas tenu la minute qu’il lui fallait : Amanea se détourne de lui avant même qu’il ne touche le sol, et marche vers le portail.
+
+Sans ce temps volé, rien de ce qui suit n’aura lieu.`, 6),
 
     c17_duel_bilan: scene('Le temps volé', BG_PORTE, M_TRAGEDIE, 'Narrateur',
       () => {
-        const { temps } = duel();
-        const line = temps >= 3
+        const { temps } = calc(7);
+        const line = temps >= 6
           ? 'Valurn lui a volé de longues secondes. Assez, peut-être, pour ce qu’il attend du portail.'
           : 'Valurn n’a gagné que peu de temps. Le portail, pourtant, n’en demandait pas davantage.';
         return `Le duel est perdu. Il devait l’être.
@@ -1727,5 +1689,5 @@ ${line}`;
     String(id).startsWith('c17_') ? chapter : previousLabel(id);
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.418 · La Porte Noire';
+  if (update) update.textContent = 'Mise à jour · v0.419 · La Porte Noire';
 })();

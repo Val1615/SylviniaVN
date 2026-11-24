@@ -40,6 +40,8 @@ def emit(prefix):
     return ''.join(out)
 
 FILES = [('c17_', 'story-finale-s02.js', 'extra_c17.js'), ('c18_', 'story-finale-s06.js', 'extra_c18.js'), ('c19_', 'story-finale-s09.js', 'extra_c19.js')]
+import shutil
+shutil.copyfile(os.path.join(HERE, 'duels.js'), os.path.join(OUT, 'story-finale-duels.js'))
 for prefix, name, extra in FILES:
     src = open(os.path.join(HERE, extra), encoding='utf-8').read()
     gen = emit(prefix)

@@ -17,18 +17,25 @@ Tous les flags vivent dans `state.flags` et sont enregistrés dans la sauvegarde
 |---|---|---|---|
 | `s02Regard` | `demendras`, `remerii` | `c17_choix_regard` | Variante immédiate. |
 | `s02Adieu` | `confiance`, `peur` | `c17_choix_adieu` | `c18_reponse_hylee`, `c19_promesse`. |
-| `s04M1`…`s04M5` | `good`, `mid`, `bad` | Manches du duel `c17_m1`…`c17_m5` | Jauges (`Vitalité d’Amanea`, `Puissance révélée`, `Temps gagné`), issues `c17_mN_r`, `c17_revelation`, `c17_duel_bilan`. La défaite reste obligatoire. |
-| `finalePerspective` | `remerii`, `draven`, `iriana` | `c18_carrefour` | Insertion des scènes de point de vue (`go` redirigé). |
+| `s04M1`…`s04M5`, `s04Qte` | `good`, `mid`, `bad` (+ `parade` en M3), `ok` | Manches `c17_m1`…`c17_m5`, QTE `c17_qte` | Jauges du duel S04, issues `c17_mN_r`, Game Over `c17_gameover_a/b`, `c17_duel_bilan`. Remis à zéro par « Réessayer le duel ». |
+| `finalePerspective` | `remerii`, `draven`, `iriana` | `c18_carrefour` | En-têtes et cartons. |
 | `finaleSeenDraven`, `finaleSeenIriana` | `true` | `c18_carrefour` | `c19_bilan` (points de vue vécus). |
-| `s06Posture` | `tenir`, `reculer` | `c18_dp_crevasse` | `c18_dp_crevasse_r`, `c18_dp_grotte_r`. |
-| `s06LinevaWords` | `promesse`, `mere`, `fierte` | `c18_dp_lineva` | `c18_dp_echo`, `c18_dp_adieu`. La réplique du roman « Je rentre bientôt… » est toujours dite. |
-| `s06Plan` | `courir`, `combattre` | `c18_dp_grotte` | `c18_dp_grotte_r`. |
-| `s07Maitrise` | `lire`, `frapper` | `c18_ip_maitrise` | `c18_ip_maitrise_r`. |
-| `s07Flux` | `accord`, `force` | `c18_ip_flux` | `c18_ip_flux_r`, `c18_ip_renversement_r`. |
-| `s07Renversement` | `retenir`, `question` | `c18_ip_renversement` | `c18_ip_renversement_r`. |
-| `s08Reponse` | `seule`, `main` | `c18_choix_hylee` | `c18_reponse_hylee`, `c19_promesse`. |
+| `c18PlayedDraven`, `c18PlayedIriana`, `c18PlayedRemerii` | `true` | `c18_s06_fin`, `c18_s07_fin`, `c18_fin` | Mention « (déjà jouée) » au carrefour. Conservés après une relecture. |
+| `finaleReplay` | `{scene, flags}` | Carte « Chapitre XVIII » d’une partie terminée | Copie de la vraie partie, restaurée à la fin de la relecture ; supprimée ensuite. |
+| `s06Posture` | `tenir`, `reculer`, `charger` | `c18_dp_crevasse` | Jauges S06, `c18_dp_crevasse_r`, `c18_dp_grotte_r`, durée du QTE. |
+| `s06LinevaWords` | `promesse`, `mere`, `fierte` | `c18_dp_lineva` | `c18_dp_echo`, `c18_dp_adieu`, +1 endurance. |
+| `s06Plan` | `combattre`, `courir` | `c18_dp_grotte` | `c18_dp_grotte_r`, Game Over horde. |
+| `s06Voute` | `ok` | QTE `c18_dp_voute` | Effondrement réussi. |
+| `s07Maitrise` | `lire`, `frapper`, `attendre` | `c18_ip_maitrise` | Jauges S07, `c18_ip_maitrise_r`. |
+| `s07Garde` | `esprit`, `regard`, `lacher` | `c18_ip_domination` | Game Over `c18_ip_gameover_brisee`, durée du QTE, option « Tresser les trois forces ». |
+| `s07Flux` | `accord` | QTE `c18_ip_flux` | `c18_ip_flux_r`. |
+| `s07Renversement` | `retenir`, `mort`, `question`, `tresse` | `c18_ip_renversement` | `c18_ip_renversement_r`. |
+| `s08Gardien` | `rempart`, `assaut`, `tout` | `c18_bh_blizzard` | Jauges S08, Game Over blizzard. |
+| `s08Reponse` | `seule`, `main` | `c18_choix_hylee` | `c18_reponse_hylee`, `c18_bh_sync_r`, durée du QTE, `c19_promesse`. |
 | `s08Brulure` | `true` | `c18_choix_arcane` (« L’attraper au vol ») | Boucle sans blocage : retour au choix. |
-| `s08Arcane` | `accueillie` | `c18_choix_arcane` (« La laisser venir ») | Suite canonique. |
+| `s08Arcane` | `accueillie` | `c18_choix_arcane` (« La laisser venir ») | Suite canonique vers le QTE. |
+| `s08Sync` | `ok` | QTE `c18_bh_sync` | Flux d’Arcane. |
+| `s08Dragon` | `portail`, `gorge`, `tenir` | `c18_bh_dragon` | Game Over Bhaal / blizzard, `c18_bh_dragon_r`. |
 
 ## Flags de progression
 
@@ -38,13 +45,15 @@ Tous les flags vivent dans `state.flags` et sont enregistrés dans la sauvegarde
 | `s03TransformationComplete` | `c17_valurn_surgit` |
 | `s04DuelComplete` | `c17_trois` |
 | `s05TragedieComplete`, `chapter17Complete` | `c17_fin` (débloque la carte « Chapitre XVIII ») |
-| `s06DravenComplete`, `s07IrianaComplete` | `c18_gardien` (passage du tronc commun) |
+| `s06DravenComplete` | `c18_s06_fin` (fin de la branche Draven) |
+| `s07IrianaComplete` | `c18_s07_fin` (fin de la branche Iriana) |
 | `s08BlizzardComplete`, `chapter18Complete` | `c18_fin` (débloque la carte « Épilogue ») |
 | `tome1Complete` | `c19_bilan` |
 
-## Garanties vérifiées
+## Garanties vérifiées (v0.419)
 
-- Aucune impasse : 75 parcours automatiques (5 combinaisons de déblocage × 15 politiques de choix) atteignent `c19_fin`, puis le menu. Les 178 scènes et les 41 options de choix (19 scènes de choix) ont toutes été visitées.
-- Sans déblocage, le carrefour n’affiche que « Poursuivre : Remerii / Hylee ».
-- Un seul point de vue optionnel par partie ; l’autre se rejoue depuis la carte « Chapitre XVIII » du menu des chapitres.
+- `tools/finale-gen/traverse.py` : 154 parcours (5 profils × routes du carrefour × 14 politiques de choix, QTE réussis ou expirés au hasard) atteignent tous `c19_fin` puis le menu. 263 Game Over provoqués, tous repris sur la scène de départ du duel avec jauges remises à zéro et flags antérieurs intacts. Toutes les scènes du final sont visitées.
+- Profils : sans déblocage, seule l’option S08 ; Draven seul : S06 ou S08, jamais S07 ; Iriana seule : S07 ou S08, jamais S06 ; les deux / dev : S06, S07, S08, et S06 → S08 sans S07, S07 → S08 sans S06.
+- Union des textes lus sur l’ensemble des parcours : 1 365 paragraphes sur 1 365.
+- `tools/finale-gen/duels_e2e.py` : QTE en temps réel, Game Over et reprise dans l’interface, sauvegarde/rechargement en plein duel aux trois formats, pause des QTE hors de l’écran de jeu, relecture sans corruption de la vraie partie.
 - Les flags de choix ne conditionnent jamais le texte du roman : seules les scènes ajoutées varient.

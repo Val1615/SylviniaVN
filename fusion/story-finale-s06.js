@@ -66,18 +66,56 @@
       s.flags.c13iPromisedNotToForget || s.flags.c13iTruthWithoutDefense)));
   window.SylviniaFinale = Object.assign(window.SylviniaFinale || {}, { dravenUnlocked, irianaUnlocked });
 
+  const played = (k) => (flags()[k] ? ' (déjà jouée)' : '');
   const carrefourChoices = () => {
-    const list = [{ label: 'Poursuivre : Remerii / Hylee', next: 'c18_draven_seul', flags: { finalePerspective: 'remerii' } }];
-    if (dravenUnlocked(state)) list.push({ label: 'Point de vue : Draven', next: 'c18_dp_intro', flags: { finalePerspective: 'draven', finaleSeenDraven: true } });
-    if (irianaUnlocked(state)) list.push({ label: 'Point de vue : Iriana', next: 'c18_ip_intro', flags: { finalePerspective: 'iriana', finaleSeenIriana: true } });
+    const list = [{ label: 'Poursuivre : Remerii / Hylee' + played('c18PlayedRemerii'), next: 'c18_s08_intro', flags: { finalePerspective: 'remerii' } }];
+    if (dravenUnlocked(state)) list.push({ label: 'Point de vue : Draven' + played('c18PlayedDraven'), next: 'c18_dp_intro', flags: { finalePerspective: 'draven', finaleSeenDraven: true } });
+    if (irianaUnlocked(state)) list.push({ label: 'Point de vue : Iriana' + played('c18PlayedIriana'), next: 'c18_ip_intro', flags: { finalePerspective: 'iriana', finaleSeenIriana: true } });
     return list;
+  };
+
+  // Duels S06, S07, S08 : jauges et QTE gérés par fusion/story-finale-duels.js.
+  const calc = (id, step) => window.SylviniaFinaleDuels ? window.SylviniaFinaleDuels.calc(id, step) : {};
+  const RESET = {
+    s06: { s06Posture: null, s06LinevaWords: null, s06Plan: null, s06Voute: null },
+    s07: { s07Maitrise: null, s07Garde: null, s07Flux: null, s07Renversement: null },
+    s08: { s08Gardien: null, s08Reponse: null, s08Brulure: null, s08Arcane: null, s08Sync: null, s08Dragon: null },
+  };
+  const START = { s06: 'c18_dp_crevasse', s07: 'c18_ip_maitrise', s08: 'c18_bh_blizzard' };
+  const POV = { s06: 'draven', s07: 'iriana', s08: 'remerii' };
+  const duelScene = (id, step, sub, bg, music, text, next, chars, extra = {}) => ({
+    ...scene(sub, bg, music, 'Narrateur', text, next, chars), fduel: id, fstep: step, pov: POV[id], ...extra,
+  });
+  const withNext = (o, ok, test) => {
+    Object.defineProperty(o, 'next', { enumerable: true, configurable: true, get: () => test() || ok });
+    return o;
+  };
+  const gameOver = (id, step, sub, bg, text) => ({
+    ...scene(sub, bg, M_PLAINTE_I, 'Narrateur', text, null, []), title: 'Game Over', fduel: id, fstep: step, fgameover: true, pov: 'gameover',
+    choices: [
+      { label: 'Réessayer le duel', next: START[id], flags: RESET[id], skipHistory: true },
+      { label: 'Retour au menu', next: 'menu' },
+    ],
+  });
+  const pick = (key, texts) => () => texts[flags()[key]] || Object.values(texts)[0];
+
+  // Fin d’une perspective facultative : carton temporel, retour automatique vers S08.
+  const branchEnd = (sub, text) => {
+    const o = scene(sub, BG_PORTE, M_TENSION, 'Narrateur', text, null, []);
+    Object.defineProperty(o, 'choices', {
+      enumerable: true, configurable: true,
+      get: () => flags().finaleReplay
+        ? [{ label: 'Poursuivre : Remerii / Hylee', next: 'c18_ouverture' }, { label: 'Terminer la relecture', next: '__finale_replay_end' }]
+        : [{ label: 'Poursuivre : Remerii / Hylee', next: 'c18_ouverture' }],
+    });
+    return o;
   };
 
   Object.assign(S, {
     c18_carrefour_intro: scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur',
         () => {
           const extra = dravenUnlocked(state) || irianaUnlocked(state)
-            ? '\n\nLes liens tissés en chemin ouvrent un autre regard sur cette nuit. Le récit reste le même ; un seul point de vue peut l’accompagner, l’autre pourra être revécu depuis le menu des chapitres.'
+            ? '\n\nLes liens tissés en chemin ouvrent d’autres regards sur cette nuit. Un seul point de vue facultatif peut être suivi avant de rejoindre Remerii et Hylee ; l’autre pourra être revécu depuis le menu des chapitres.'
             : '';
           return `Chapitre XVIII · Début de la fin
 
@@ -87,29 +125,40 @@ La Reine Noire est tombée. Le portail brûle encore. Sur le champ de bataille, 
       ...scene('Carrefour', BG_CHAMP, M_TENSION, 'Narrateur', `Quel regard porter sur cette nuit ?`),
       choices: carrefourChoices(),
     },
+    c18_s08_intro: scene('Au même moment', BG_PORTE, M_TENSION, 'Narrateur',
+      `Au même moment, face au portail…
 
-    // ───── Point de vue : Draven (S06) ─────
-    c18_dp_intro: scene('Point de vue · Draven', BG_CREVASSE, M_DRAVEN, 'Narrateur',
-      `Pendant ce temps, loin du portail, l’Amiral de Forthaven se bat encore. Cette nuit, c’est à travers ses yeux qu’elle se vit, et ce sont ses gestes qui la décident.`,
+La Reine Noire gît sur la terre brûlée. Autour du portail, ceux qui restent reprennent leur souffle sans savoir que la nuit n’a pas fini de réclamer son dû.`,
+      'c18_ouverture'),
+
+    // ───── S06 · Draven (facultatif) ─────
+    c18_dp_intro: scene('Pendant ce temps', BG_CREVASSE, M_DRAVEN, 'Narrateur',
+      `Pendant ce temps, dans la crevasse…
+
+Loin du portail, l’Amiral de Forthaven se bat encore. Cette nuit, c’est à travers ses yeux qu’elle se vit, et ce sont ses gestes qui la décident.`,
       'c18_draven_seul', [dravenSoot]),
     c18_dp_crevasse: {
-      ...scene('Point de vue · Draven', BG_CREVASSE, M_DRAVEN, 'Narrateur',
-        `Deux parois, une entrée, une grotte dans son dos.`,
-        null, [dravenSoot]),
+      ...duelScene('s06', 0, 'Survie · La crevasse', BG_CREVASSE, M_DRAVEN,
+        `Deux parois, une entrée, une grotte dans son dos. Les morts avancent en rangs serrés : ici, ils ne passent qu’à trois de front.`,
+        null, [dravenSoot], { fintro: true }),
       choices: [
-        { label: 'Tenir l’entrée de la crevasse', next: 'c18_dp_crevasse_r', flags: { s06Posture: 'tenir' } },
+        { label: 'Tenir l’entrée de la crevasse', next: 'c18_dp_crevasse_r', flags: { s06Posture: 'tenir' }, best: true },
         { label: 'Reculer pas à pas vers la grotte', next: 'c18_dp_crevasse_r', flags: { s06Posture: 'reculer' } },
+        { label: 'Charger le premier rang', next: 'c18_dp_crevasse_r', flags: { s06Posture: 'charger' } },
       ],
     },
-    c18_dp_crevasse_r: scene('Point de vue · Draven', BG_CREVASSE, M_DRAVEN, 'Narrateur',
-      () => flags().s06Posture === 'reculer'
-        ? `Les morts ne tiennent aucun compte de la fatigue ; lui, si. Il cède du terrain, un pas par mort tombé. La paroi se rapproche dans son dos, froide, et il sent dans la roche une veine fendue qui court jusqu’au plafond de la grotte. Il s’en souviendra.`
-        : `Les morts ne tiennent aucun compte de la fatigue ; lui, si. Il plante ses bottes dans la caillasse. Ici, ils ne passent qu’à trois de front. Il en abat trois. Puis trois autres. Il sait déjà que l’arithmétique ne sera pas de son côté.`,
+    c18_dp_crevasse_r: duelScene('s06', 1, 'Survie · La crevasse', BG_CREVASSE, M_DRAVEN,
+      pick('s06Posture', {
+        tenir: 'Il plante ses bottes dans la caillasse. Trois morts : il en abat trois. Puis trois autres. L’entrée tient, mais chaque parade lui coûte un peu plus que la précédente.',
+        reculer: 'Il cède du terrain, un pas par mort tombé. La paroi se rapproche dans son dos, froide, et il sent dans la roche une veine fendue qui court jusqu’au plafond de la grotte. Il s’en souviendra. Derrière les premiers, les autres s’engouffrent.',
+        charger: 'Il fond sur le premier rang avant qu’il ne se forme. Le choc renverse quatre cadavres et lui arrache un cri de l’épaule. La horde recule d’un pas. Lui y laisse des forces qu’il n’a plus.',
+      }),
       'c18_pere', [dravenSoot]),
     c18_dp_lineva: {
       ...scene('Point de vue · Draven', BG_CREVASSE, M_LINEVA, 'Narrateur',
         `La voix grésille encore. Il a une seconde. Une seule.`,
         null, [dravenLineva]),
+      pov: 'draven',
       choices: [
         { label: 'Lui promettre ce qu’elle veut entendre', next: 'c18_je_rentre', flags: { s06LinevaWords: 'promesse' } },
         { label: 'Lui confier sa mère', next: 'c18_je_rentre', flags: { s06LinevaWords: 'mere' } },
@@ -131,90 +180,164 @@ Le grésillement avale la fin du nom. Il espère qu’elle l’a entendu.`,
       })[flags().s06LinevaWords] || `Il ne dit rien de plus. Une promesse, une seule, c’est déjà plus qu’il n’en peut tenir.`,
       'c18_grotte', [dravenLineva]),
     c18_dp_grotte: {
-      ...scene('Point de vue · Draven', BG_CREVASSE, M_DRAVEN, 'Narrateur',
-        `Plus de place pour reculer. Reste à choisir comment entrer dans la grotte.`,
-        null, [dravenAngry]),
+      ...duelScene('s06', 3, 'Survie · L’usure', BG_CREVASSE, M_DRAVEN,
+        `Chaque parade coûte désormais ce qu’un assaut coûtait tout à l’heure. Plus de place pour reculer. Reste à choisir comment entrer dans la grotte.`,
+        null, [dravenAngry], { fprev: 1 }),
       choices: [
+        { label: 'Reculer en combattant', next: 'c18_dp_grotte_r', flags: { s06Plan: 'combattre' }, best: true },
         { label: 'Courir sans se retourner', next: 'c18_dp_grotte_r', flags: { s06Plan: 'courir' } },
-        { label: 'Reculer en combattant', next: 'c18_dp_grotte_r', flags: { s06Plan: 'combattre' } },
       ],
     },
-    c18_dp_grotte_r: scene('Point de vue · Draven', BG_CREVASSE, M_DRAVEN, 'Narrateur',
-      () => (flags().s06Posture === 'reculer' ? 'Au-dessus de l’entrée, la veine fendue est là, exactement où il l’avait sentie. ' : '') + (flags().s06Plan === 'combattre'
-        ? `Il entre à reculons, la lame devant lui. Chaque mort qui franchit le seuil en entraîne trois autres derrière lui. C’est exactement ce qu’il veut.`
-        : `Il ne compte plus. Il court, l’épaule en avant, et les morts s’engouffrent derrière lui comme l’eau dans une écluse.`),
-      'c18_temporise', [dravenAngry]),
+    c18_dp_grotte_r: withNext(duelScene('s06', 4, 'Survie · L’usure', BG_CREVASSE, M_DRAVEN,
+      () => (flags().s06Posture === 'reculer' ? 'Au-dessus de l’entrée, la veine fendue est là, exactement où il l’avait sentie. ' : '') + (flags().s06Plan === 'courir'
+        ? 'Il ne compte plus. Il court, l’épaule en avant, et les morts s’engouffrent derrière lui comme l’eau dans une écluse.'
+        : 'Il entre à reculons, la lame devant lui. Chaque mort qui franchit le seuil en entraîne trois autres derrière lui. C’est exactement ce qu’il veut, et il les fait payer, un par un.'),
+      null, [dravenAngry]), 'c18_temporise', () => { const v = calc('s06', 4); return v.horde >= 10 || v.endurance <= 0 ? 'c18_dp_gameover_horde' : null; }),
+    c18_dp_voute: {
+      ...duelScene('s06', 4, 'Pivot · La voûte', BG_CREVASSE, M_DRAVEN,
+        `Il a regagné l’entrée. Derrière lui, la grotte grouille. Au-dessus, la roche n’attend qu’un coup juste.`,
+        null, [dravenAngry]),
+      fqte: { label: 'Frapper la voûte', ms: () => 3500 + calc('s06', 4).endurance * 300 + (flags().s06Posture === 'reculer' ? 1200 : 0), fail: 'c18_dp_gameover_voute' },
+      choices: [{ label: '⚡ Frapper la paroi au point de rupture', next: 'c18_dp_voute_r', flags: { s06Voute: 'ok' }, best: true }],
+    },
+    c18_dp_voute_r: duelScene('s06', 5, 'Pivot · La voûte', BG_CREVASSE, M_DRAVEN,
+      `Sa lame trouve la faille. La roche répond par un gémissement profond, quelque part au-dessus de sa tête. Il sait où frapper, à présent. Il ne lui reste qu’à frapper assez fort.`,
+      'c18_effondrement', [dravenAngry]),
+    c18_dp_gameover_horde: gameOver('s06', 4, 'La horde passe', BG_CREVASSE,
+      `La horde le submerge avant qu’il n’atteigne la grotte. Il frappe encore, puis il ne frappe plus. Les morts passent la crevasse et se déversent vers l’arrière du front, là où personne ne les attend.
+
+La manœuvre de la grotte n’aura jamais lieu.`),
+    c18_dp_gameover_voute: gameOver('s06', 4, 'La voûte tient', BG_CREVASSE,
+      `Le coup glisse sur la roche. La voûte tremble, gronde… et tient. Les morts referment le cercle avant qu’il ne puisse frapper de nouveau.
+
+La horde passe, et la grotte reste debout.`),
     c18_dp_adieu: scene('Point de vue · Draven', BG_CREVASSE, M_PLAINTE_I, 'Narrateur',
       () => {
         const words = {
-          promesse: 'Ses derniers mots à Lineva étaient une promesse. Il l’a laissée à d’autres le soin de la tenir.',
+          promesse: 'Ses derniers mots à Lineva étaient une promesse. Il a laissé à d’autres le soin de la tenir.',
           mere: 'Ses derniers mots à Lineva lui confiaient sa mère. Ce soir, à Forthaven, deux femmes attendent le même homme.',
           fierte: 'Ses derniers mots à Lineva disaient sa fierté. C’est la seule chose qu’il n’ait jamais eu de mal à lui donner.',
         }[flags().s06LinevaWords] || '';
-        return `Les plaques dans une main. Le médaillon dans l’autre. Entre les deux, toute une vie qu’il a tenue jusqu’au bout.${words ? '\n\n' + words : ''}
-
-Le récit reprend auprès de ceux qui restent.`;
+        return `Les plaques dans une main. Le médaillon dans l’autre. Entre les deux, toute une vie qu’il a tenue jusqu’au bout.${words ? '\n\n' + words : ''}`;
       },
-      'c18_trop_tard'),
+      'c18_s06_fin'),
+    c18_s06_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
 
-    // ───── Point de vue : Iriana (S07) ─────
-    c18_ip_intro: scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-      `La nuit d’Iriana commence au pied du corps d’Amanea et se poursuit là où personne ne pourra la suivre. Ce qu’ont vécu Draven, Tia et Remerii reste le même. Au portail, ce sont ses gestes à elle qui décident.`,
-      'c18_draven_seul', [irianaStern]),
+Remerii n’a pas encore trouvé Draven. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+
+    // ───── S07 · Iriana (facultatif) ─────
+    c18_ip_intro: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
+      `Pendant ce temps, près du corps d’Amanea…
+
+Iriana et Tia ont couru jusqu’au bout de la nuit. Cette nuit, c’est à travers les yeux d’Iriana qu’elle se vit, et ce sont ses gestes qui la décident.`,
+      'c18_trop_tard', [irianaStern]),
+    c18_ip_portail: scene('Pendant ce temps', BG_PORTE, M_IRIANA, 'Narrateur',
+      `Plus tard, le portail s’ouvre. Dans le chaos qui suit, quand chacun cherche à fuir ou à se battre, Iriana s’éloigne seule, sans un mot.
+
+Elle sait qui l’attend devant la faille.`,
+      'c18_alamma', [irianaStern]),
     c18_ip_maitrise: {
-      ...scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-        `L’air se resserre autour d’Iriana. Ce sort porte la signature de son père.`,
-        null, [irianaStern]),
+      ...duelScene('s07', 0, 'Duel · La signature d’Alamma', BG_PORTE, M_IRIANA,
+        `L’air se resserre autour d’Iriana. Ce sort porte la signature de son père : elle l’a vu se tisser cent fois dans les livres de son enfance.`,
+        null, [irianaStern], { fintro: true }),
       choices: [
-        { label: 'Défaire le sort avant qu’il ne se referme', next: 'c18_ip_maitrise_r', flags: { s07Maitrise: 'lire' } },
+        { label: 'Défaire le sort avant qu’il ne se referme', next: 'c18_ip_maitrise_r', flags: { s07Maitrise: 'lire' }, best: true },
         { label: 'Frapper la première', next: 'c18_ip_maitrise_r', flags: { s07Maitrise: 'frapper' } },
+        { label: 'Attendre qu’il frappe le premier', next: 'c18_ip_maitrise_r', flags: { s07Maitrise: 'attendre' } },
       ],
     },
-    c18_ip_maitrise_r: scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-      () => `${flags().s07Maitrise === 'frapper'
-        ? 'Elle l’a vu dans les livres de son enfance. Un trait d’Arcane pure jaillit de sa paume. Alamma le dévie d’un revers, mais il a dû le dévier. Iriana gagne un pas, puis un autre.'
-        : 'Elle l’a vu dans les livres de son enfance. Ses doigts tracent le contre-glyphe à l’envers, comme il le lui avait appris sans le savoir. L’étreinte se dénoue. Alamma hausse un sourcil : sa fille vient de le surprendre.'}
-
-Le deuxième sort, elle le brise encore. Le troisième ne lui laisse rien à briser. Il tombe sur elle de tout son poids, et l’Arcane d’Iriana se tait.`,
-      'c18_pacte_valurn', [irianaStern]),
-    c18_ip_flux: {
-      ...scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-        `Le fragment est en elle, sombre et lourd. Qu’en fait-elle ?`,
+    c18_ip_maitrise_r: duelScene('s07', 1, 'Duel · La signature d’Alamma', BG_PORTE, M_IRIANA,
+      pick('s07Maitrise', {
+        lire: 'Ses doigts tracent le contre-glyphe à l’envers, comme il le lui avait appris sans le savoir. L’étreinte se dénoue. Alamma hausse un sourcil : sa fille vient de le surprendre, et son emprise a reculé.',
+        frapper: 'Un trait d’Arcane pure jaillit de sa paume. Alamma le dévie d’un revers, mais il a dû le dévier. Iriana gagne un pas, puis un autre.',
+        attendre: 'Elle attend. Il ne frappe pas : il serre. Le sort se referme sur elle avant qu’elle ne comprenne qu’il était déjà lancé.',
+      }),
+      'c18_ip_domination', [irianaStern]),
+    c18_ip_domination: {
+      ...duelScene('s07', 2, 'Duel · Domination', BG_PORTE, M_IRIANA,
+        `Le troisième sort ne lui laisse rien à briser. Il tombe sur elle de tout son poids ; l’air se fissure autour d’elle. Son père n’a même pas levé la voix. Il lui reste un fil.`,
         null, [irianaTroubled]),
       choices: [
-        { label: 'Le laisser se modeler à l’Arcane', next: 'c18_ip_flux_r', flags: { s07Flux: 'accord' } },
-        { label: 'S’en emparer de force', next: 'c18_ip_flux_r', flags: { s07Flux: 'force' } },
+        { label: 'Garder un fil d’Arcane au fond de soi', next: 'c18_ip_domination_r', flags: { s07Garde: 'esprit' }, best: true },
+        { label: 'Soutenir son regard', next: 'c18_ip_domination_r', flags: { s07Garde: 'regard' } },
+        { label: 'Lâcher prise pour reprendre souffle', next: 'c18_ip_domination_r', flags: { s07Garde: 'lacher' } },
       ],
     },
-    c18_ip_flux_r: scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-      () => flags().s07Flux === 'force'
-        ? `Elle referme son esprit dessus comme une main sur une lame. Le pouvoir répond, brutal, et lui laisse au creux des paumes une brûlure qui ne s’effacera pas avant longtemps.`
-        : `Elle ne saisit rien. Elle laisse la chose trouver sa place, comme une eau trouve sa pente. Le halo sombre s’adoucit. La douleur reste, mais elle a une forme.`,
+    c18_ip_domination_r: withNext(duelScene('s07', 3, 'Duel · Domination', BG_PORTE, M_IRIANA,
+      pick('s07Garde', {
+        esprit: 'Elle replie ce qui lui reste d’Arcane au creux de sa poitrine, minuscule, têtu. Il peut l’écraser. Il ne peut pas le trouver.',
+        regard: 'Elle lève les yeux vers lui. Elle ne gagnera pas ce duel-là, pas maintenant, mais elle ne lui donnera pas la satisfaction de baisser la tête.',
+        lacher: 'Elle relâche tout pour reprendre son souffle. C’est l’ouverture qu’il attendait : l’emprise s’engouffre dans le vide qu’elle a laissé.',
+      }),
+      null, [irianaTroubled]), 'c18_pacte_valurn', () => (calc('s07', 3).arcane <= 0 ? 'c18_ip_gameover_brisee' : null)),
+    c18_ip_flux: {
+      ...duelScene('s07', 4, 'Pivot · Le flux de Valurn', BG_PORTE, M_IRIANA,
+        `Le fragment de Valurn coule en elle : Ombre, Chaos, Mort. Il faut l’accueillir sans le saisir, avant qu’il ne la déchire.`,
+        null, [irianaTroubled], { freveal: 'chaos', fprev: 3 }),
+      fqte: { label: 'Stabiliser le flux', ms: () => 4500 + calc('s07', 3).arcane * 400 + (flags().s07Garde === 'esprit' ? 1000 : 0), fail: 'c18_ip_gameover_chaos' },
+      choices: [{ label: '⚡ Ouvrir l’Arcane au flux', next: 'c18_ip_flux_r', flags: { s07Flux: 'accord' }, best: true }],
+    },
+    c18_ip_flux_r: duelScene('s07', 5, 'Pivot · Le flux de Valurn', BG_PORTE, M_IRIANA,
+      `Elle ne saisit rien. Elle laisse la chose trouver sa place, comme une eau trouve sa pente. Le halo sombre s’adoucit et se modèle à son Arcane. La douleur reste, mais elle a une forme. L’emprise de son père vient de se fendre.`,
       'c18_peu_importe', [irianaTroubled]),
     c18_ip_renversement: {
-      ...scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-        `Il recule vers la faille. Encore un pas, et il sera hors d’atteinte.`,
+      ...duelScene('s07', 6, 'Duel · Renversement', BG_PORTE, M_IRIANA,
+        `Il recule vers la faille. Ombre, Chaos et Mort répondent à sa main. Encore un pas, et il sera hors d’atteinte.`,
         null, [irianaStern]),
+      get choices() {
+        const list = [
+          { label: 'L’enserrer d’ombres', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'retenir' }, best: true },
+          { label: 'Un trait de magie mortifère', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'mort' } },
+          { label: 'Exiger une réponse', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'question' } },
+        ];
+        if (flags().s07Garde === 'esprit') list.unshift({ label: 'Tresser les trois forces autour de son Arcane', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'tresse' } });
+        return list;
+      },
+    },
+    c18_ip_renversement_r: duelScene('s07', 7, 'Duel · Renversement', BG_PORTE, M_IRIANA,
+      () => `${({
+        question: '« Le pacte ! crie-t-elle. Dis-moi comment le briser ! »\n\nAlamma la regarde, et pour la première fois, il hésite. Il ne répond pas.',
+        mort: 'Le trait mortifère part plus vite que sa pensée. Alamma l’arrête d’un mur d’énergie, mais le mur se fend, et lui avec, d’un pouce.',
+        tresse: 'Elle tresse les trois forces autour du fil d’Arcane qu’elle a gardé. Pour la première fois, elles lui obéissent ensemble. Alamma recule sous le choc, et son emprise se brise net.',
+      })[flags().s07Renversement] || 'Les vrilles noires jaillissent, plus vite que tout à l’heure. Elles se referment sur son poignet, sur sa cheville. Pendant une seconde, Iriana tient son père.'}
+
+Le Chaos murmure plus fort, à présent. Il lui souffle de serrer. De détruire.`,
+      'c18_chute_alamma', [irianaStern]),
+    c18_ip_gameover_brisee: gameOver('s07', 3, 'Le fil se rompt', BG_PORTE,
+      `Le fil se rompt. L’Arcane d’Iriana s’éteint sous l’emprise de son père, et avec elle, ce qu’elle était. Alamma la relève avec douceur, comme on relève une chose qui vous appartient.
+
+Quand le fragment de Valurn arrive enfin, il ne trouve plus personne pour l’accueillir.`),
+    c18_ip_gameover_chaos: gameOver('s07', 4, 'Consumée', BG_PORTE,
+      `Elle referme son esprit sur le flux, trop tard, trop fort. Ombre, Chaos et Mort s’engouffrent dans chaque faille de son Arcane et la consument de l’intérieur.
+
+Alamma la regarde tomber sans un mot. Puis il se retourne vers le portail.`),
+    c18_s07_fin: branchEnd('Pendant ce temps', `Pendant ce temps, face au portail…
+
+Ce qu’Iriana laisse derrière elle continue sans elle. Là-bas, la nuit bascule, et le récit rejoint ceux qui s’y tiennent encore.`),
+
+    // ───── S08 · Remerii, Hylee, Bhaal (obligatoire) ─────
+    c18_bh_blizzard: {
+      ...duelScene('s08', 0, 'Final · Le Gardien de Givre', BG_GIVRE, M_BLIZZARD,
+        `Le Gardien de Givre attend sa volonté. Chaque rafale qu’elle lui donne, la cicatrice sous son cœur la lui fera payer.`,
+        null, [remeriiStrict], { fintro: true }),
       choices: [
-        { label: 'L’enserrer d’ombres', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'retenir' } },
-        { label: 'Exiger une réponse', next: 'c18_ip_renversement_r', flags: { s07Renversement: 'question' } },
+        { label: 'Dresser le Gardien en rempart', next: 'c18_bh_blizzard_r', flags: { s08Gardien: 'rempart' }, best: true },
+        { label: 'Lancer le Gardien droit sur Bhaal', next: 'c18_bh_blizzard_r', flags: { s08Gardien: 'assaut' } },
+        { label: 'Tout jeter dans la tempête', next: 'c18_bh_blizzard_r', flags: { s08Gardien: 'tout' } },
       ],
     },
-    c18_ip_renversement_r: scene('Point de vue · Iriana', BG_PORTE, M_IRIANA, 'Narrateur',
-      () => `${flags().s07Renversement === 'question'
-        ? '« Le pacte ! crie-t-elle. Dis-moi comment le briser ! »\n\nAlamma la regarde, et pour la première fois, il hésite. Il ne répond pas.'
-        : 'Les vrilles noires jaillissent, plus vite que tout à l’heure. Elles se referment sur son poignet, sur sa cheville. Pendant une seconde, Iriana tient son père.'}
-
-${flags().s07Flux === 'force'
-        ? 'Le Chaos murmure plus fort, à présent. Il lui souffle de serrer. De détruire.'
-        : 'L’Arcane tient le reste en bride. Pour l’instant.'}`,
-      'c18_chute_alamma', [irianaStern]),
-
-    // ───── S08 · Tronc commun : Remerii, Hylee, Bhaal ─────
+    c18_bh_blizzard_r: withNext(duelScene('s08', 1, 'Final · Le Gardien de Givre', BG_GIVRE, M_BLIZZARD,
+      pick('s08Gardien', {
+        rempart: 'Le Gardien se dresse entre elle et le démon, un mur de glace vivante. Bhaal le frappe, et le mur tient. Il ne recule pas, mais il ne passe pas.',
+        assaut: 'Le Gardien s’élance. Ses poings de givre heurtent Bhaal en pleine poitrine et le font plier d’un genou. Remerii, elle, sent le prix monter dans sa poitrine.',
+        tout: 'Elle jette tout dans la tempête. Le Gardien rugit, Bhaal recule sous l’assaut, et quelque chose cède sous les côtes de Remerii, quelque chose qui n’aurait jamais dû céder.',
+      }),
+      null, [remeriiStrict]), 'c18_sceau', () => (calc('s08', 2).blizzard <= 0 ? 'c18_bh_gameover_blizzard' : null)),
     c18_choix_hylee: {
       ...scene('Dans la tempête', BG_GIVRE, M_BLIZZARD, 'Narrateur',
         `Le vent arrache les mots d’Hylee avant qu’elle ne les forme. Lesquels garder ?`,
         null, [hylee, remeriiSad]),
+      pov: 'hylee',
       choices: [
         { label: '« Je ne te laisse pas seule. »', next: 'c18_reponse_hylee', flags: { s08Reponse: 'seule' } },
         { label: 'Tendre la main, sans un mot', next: 'c18_reponse_hylee', flags: { s08Reponse: 'main' } },
@@ -234,9 +357,10 @@ Les mots sont minuscules dans la tempête. Remerii les entend quand même.`),
       ...scene('L’Arcane', BG_GIVRE, M_BLIZZARD, 'Narrateur',
         () => `${flags().s08Brulure ? 'Ses doigts brûlent encore. ' : ''}L’Arcane gronde de partout. Hylee tend la main.`,
         null, [hylee]),
+      pov: 'hylee',
       choices: [
         { label: 'L’attraper au vol', next: 'c18_arcane_brule', flags: { s08Brulure: true } },
-        { label: 'La laisser venir', next: 'c18_conduit', flags: { s08Arcane: 'accueillie' } },
+        { label: 'La laisser venir', next: 'c18_bh_sync', flags: { s08Arcane: 'accueillie' }, best: true },
       ],
     },
     c18_arcane_brule: scene('Trop vite', BG_GIVRE, M_BLIZZARD, 'Narrateur',
@@ -246,15 +370,62 @@ Si tu refermes la main trop vite, elle te brûlera.
 
 Hylee rouvre la main, haletante. La leçon de Remerii est encore là, au creux de sa paume.`,
       'c18_choix_arcane', [hylee]),
+    c18_bh_sync: {
+      ...duelScene('s08', 2, 'Pivot · Synchronisation', BG_GIVRE, M_BLIZZARD,
+        `Le blizzard hurle. Entre chaque flocon, l’Arcane danse. Il faut s’accorder au souffle de Remerii, ni trop tôt ni trop tard.`,
+        null, [hylee, remeriiSad], { freveal: 'flux', fprev: 2, pov: 'hylee' }),
+      fqte: {
+        label: 'Synchronisation',
+        ms: () => { const f = flags(); return 5000 + (f.s08Reponse ? 800 : 0) + (f.s02Adieu === 'confiance' ? 800 : 0) + (((state.stats || {}).lien || 0) >= 8 ? 800 : 0); },
+        fail: 'c18_bh_gameover_sync',
+      },
+      choices: [{ label: '⚡ S’accorder au souffle de Remerii', next: 'c18_bh_sync_r', flags: { s08Sync: 'ok' }, best: true }],
+    },
+    c18_bh_sync_r: duelScene('s08', 3, 'Pivot · Synchronisation', BG_GIVRE, M_BLIZZARD,
+      () => `${flags().s08Reponse === 'main' ? 'Sa main est toujours tendue. ' : flags().s08Reponse === 'seule' ? 'Je ne te laisse pas seule. ' : ''}Le courant passe d’elle à Remerii sans un heurt. Pour la première fois de la nuit, le blizzard reprend des forces au lieu d’en prendre.`,
+      'c18_conduit', [hylee, remeriiSurprised], { pov: 'hylee' }),
+    c18_bh_dragon: {
+      ...duelScene('s08', 3, 'Final · Le dragon de glace', BG_GIVRE, M_BLIZZARD,
+        `Le dragon et le démon s’affrontent. Remerii vacille ; Hylee la tient. Où porter le dernier assaut ?`,
+        null, [remeriiStrict], { fprev: 3 }),
+      choices: [
+        { label: 'Repousser Bhaal vers le portail', next: 'c18_bh_dragon_r', flags: { s08Dragon: 'portail' }, best: true },
+        { label: 'Viser la gorge du démon', next: 'c18_bh_dragon_r', flags: { s08Dragon: 'gorge' } },
+        { label: 'Ménager Remerii, tenir la ligne', next: 'c18_bh_dragon_r', flags: { s08Dragon: 'tenir' } },
+      ],
+    },
+    c18_bh_dragon_r: withNext(duelScene('s08', 4, 'Final · Le dragon de glace', BG_GIVRE, M_BLIZZARD,
+      pick('s08Dragon', {
+        portail: 'Le dragon charge et pousse, et Bhaal recule d’un pas vers la faille, puis d’un autre. Remerii paie chaque pas d’un souffle qu’elle n’a plus.',
+        gorge: 'Le dragon plonge sur la gorge du démon et y plante ses crocs. Bhaal rugit, plie, mais ses griffes trouvent la gorge du dragon en retour.',
+        tenir: 'Hylee resserre sa prise. Le courant ralentit, s’apaise ; le dragon tient la ligne sans s’épuiser. Bhaal ne recule pas, mais il n’avance plus.',
+      }),
+      null, [remeriiStrict]), 'c18_valurn_renvoi', () => { const v = calc('s08', 4); return v.blizzard <= 0 ? 'c18_bh_gameover_blizzard' : v.pression > 5 ? 'c18_bh_gameover_bhaal' : null; }),
+    c18_bh_fin: duelScene('s08', 5, 'Final · Bhaal repoussé', BG_GIVRE, M_BHAAL,
+      `La pression de Bhaal retombe à rien. Le démon suprême est repoussé, mais le portail tient encore, affaibli, ouvert sur ce qui attend de l’autre côté.`,
+      'c18_remerii_tombe'),
+    c18_bh_gameover_blizzard: gameOver('s08', 4, 'Le blizzard cède', BG_GIVRE,
+      `Le sceau se réveille avant la fin. La tempête se brise sur Remerii elle-même, le Gardien s’effondre en poussière de givre, et Bhaal enjambe ce qui reste du blizzard.
+
+Il passe le portail dans l’autre sens. Plus rien ne le retient.`),
+    c18_bh_gameover_bhaal: gameOver('s08', 4, 'Bhaal passe', BG_GIVRE,
+      `Le dragon tient la ligne, mais la ligne ne suffit plus. Bhaal pèse de tout son poids contre la tempête, pas après pas, jusqu’à ce que le blizzard s’ouvre devant lui comme une porte.
+
+Il franchit le portail. Derrière lui, l’Ombre se déverse sur Medig.`),
+    c18_bh_gameover_sync: gameOver('s08', 2, 'Le courant se rompt', BG_GIVRE,
+      `Hylee referme la main trop tôt. L’Arcane lui file entre les doigts, le courant se rompt, et le blizzard de Remerii s’éteint d’un coup.
+
+Bhaal franchit la tempête morte et passe le portail.`),
 
     c18_fin: {
       ...scene('Fin du Chapitre XVIII', BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
         `Fin du Chapitre XVIII · Début de la fin.`),
       chapterEnd: true,
-      choices: [
-        { label: 'Continuer', next: 'c19_trone' },
-        { label: 'Retour au menu', next: 'menu' },
-      ],
+      get choices() {
+        return flags().finaleReplay
+          ? [{ label: 'Terminer la relecture', next: '__finale_replay_end' }, { label: 'Continuer', next: 'c19_trone' }]
+          : [{ label: 'Continuer', next: 'c19_trone' }, { label: 'Retour au menu', next: 'menu' }];
+      },
     },
 
     c18_draven_seul: scene("Oublié", BG_CREVASSE, M_DRAVEN, 'Narrateur',
@@ -269,7 +440,7 @@ Maintenant, il est seul, entouré de morts ne demeurant pas dans le trépas.
 Il se tient debout dans une crevasse rocheuse, encerclé. Les morts avancent, un torrent d’ombres et de chair putréfiée, des créatures qui n’auraient jamais dû marcher à nouveau. Il les regarde, le regard dur, impassible. Ils sont trop nombreux.
 
 Il respire profondément.`,
-      "c18_pere", [dravenSoot]),
+      "c18_dp_crevasse", [dravenSoot]),
     c18_pere: scene("Père ?", BG_CREVASSE, M_LINEVA, 'Narrateur',
       `Ses muscles le brûlent. Son bras tremble sous le poids de son épée. Il est fatigué. Epuisé. Mais il n’a pas le droit de tomber. Il est acculé. Sa seule issue est temporaire… s’enfoncer dans la grotte derrière lui, et gagner quelques minutes de plus… mais un bruit parasite grésille soudainement.
 
@@ -284,14 +455,14 @@ Son cœur manque un battement.
 Lineva.
 
 Il reste figé une seconde, pris au dépourvu. Elle essaie de le contacter. Seuls quelques mots échappent à son souffle.`,
-      "c18_je_rentre", [dravenSoot]),
+      "c18_dp_lineva", [dravenSoot]),
     c18_je_rentre: scene("Je rentre bientôt", BG_CREVASSE, M_LINEVA, 'Narrateur',
       `« Je rentre bientôt… »
 
 Sa voix est rauque, brisée. Il sait qu’il ment. Mais il veut qu’elle l’entende.
 
 Qu’elle y croie. Puis il relève son épée, une nouvelle flamme brûlant en lui. Dans ce calvaire infini… il prend conscience que sa fille est toujours en vie. Cela lui suffit, maintenant, son combat l’attend.`,
-      "c18_grotte", [dravenSoot]),
+      "c18_dp_echo", [dravenSoot]),
     c18_grotte: scene("La grotte", BG_CREVASSE, M_DRAVEN, 'Narrateur',
       `Mais ce sont les morts qui frappent les premiers.
 
@@ -304,10 +475,10 @@ Il frappe encore. Encore.
 Mais chaque mouvement lui arrache un peu plus de force. Il sent ses muscles hurler. Son souffle est court, son corps à bout. Il va mourir ici.
 
 Alors il observe autour de lui. Des roches, une paroi instable… la grotte… S’il la fait s’effondrer, il peut les enterrer sous des tonnes de pierres.`,
-      "c18_temporise", [dravenAngry]),
+      "c18_dp_grotte", [dravenAngry]),
     c18_temporise: scene("Dans les entrailles de la montagne", BG_CREVASSE, M_DRAVEN, 'Narrateur',
       `Il n’hésite donc pas. Il court de toutes ses forces dans les entrailles de la montagne, suivi de près par les cadavres animés. Il temporise à l’intérieur, affrontant une marée noire et en proie à la décomposition. Ses coups se font lourds, las, mais déterminés. Il doit tenir, ne serait-ce qu’un peu plus longtemps. Il les laisse s’accumuler, encore et encore, combattant le fléau autant qu’il ne peut. Sa lame tranche la chair, sa garde fracasse les os, et son armure absorbe les chocs… puis c’est le moment. Il s’ouvre un passage, traversant la foule, emportant avec lui un maximum de non-morts. L'amiral parvient, dans un sursaut de rage et dans une volonté de réussite, à regagner l’entrée de la grotte.`,
-      "c18_effondrement", [dravenAngry]),
+      "c18_dp_voute", [dravenAngry]),
     c18_effondrement: scene("Maintenant !", BG_CREVASSE, M_DRAVEN, 'Narrateur',
       `Maintenant ! Il frappe le sol, une première fois.
 
@@ -372,7 +543,7 @@ Un dernier adieu.
 Remerii se repose à ses côtés,
 
 et lui accorde le silence qu’il mérite…`,
-      "c18_trop_tard", [remeriiSad]),
+      "c18_dp_adieu", [remeriiSad]),
     c18_trop_tard: scene("Trop tard", BG_PORTE, M_PLAINTE_I, 'Narrateur',
       `À quelques lieues de là,
 
@@ -539,7 +710,278 @@ Tia relâche un soupir tremblant, serrant un peu plus sa sœur contre elle. Elle
 Et pour la première fois, Iriana ne sait pas qui de sa tante ou d’elle-même souffre le plus.
 
 Elle ne peut qu’observer le point final d’une histoire autrefois tissée d’espoir et de promesses silencieuses, d’une fraternité brisée, un lien déchiré par des années de conflits, de malentendus et d’orgueil, et dont il ne reste plus aujourd’hui que le silence pesant de la mort pour conclusion…`,
-      "c18_ouverture", [irianaSad]),
+      "c18_ip_portail", [irianaSad]),
+    c18_alamma: scene("Confrontation au Portail", BG_PORTE, M_IRIANA, 'Narrateur',
+      `La forêt est silencieuse, trop silencieuse. Iriana avance, seule, sous la canopée tordue où les ombres semblent s’animer sous la pulsation du portail démoniaque. L’air est saturé d’une énergie poisseuse, presque vivante, qui s’infiltre dans sa peau, cherchant à déformer sa chair, sa volonté, son âme.
+
+Le portail gronde.
+
+Sa lumière cramoisie et noire déchire la nuit, projetant des éclairs de magie corrompue qui s’échappent par à-coups, comme les battements d’un cœur monstrueux.
+
+Et il est là.
+
+Alamma.
+
+Debout devant la faille béante, il contemple l’abîme. Un monde où les mortels ne sont pas invités… mais que certains ne peuvent éviter.
+
+Ses vêtements nobles d’antan sont à moitié rongés par la magie du Chaos, son manteau effiloché traînant dans la boue sombre. Il ne vacille pas. Il se tient droit, tel un souverain devant son trône d’ombres.
+
+À ses pieds, les démons s’inclinent. Ils ne le menacent pas. Ils le reconnaissent. Ils le servent.
+
+Iriana serre les poings.
+
+« Tu es devenu l’un des leurs. »
+
+Alamma ne répond pas immédiatement.
+
+Il lève légèrement la tête, scrutant toujours l’intérieur du portail, comme un homme sur le point de plonger dans un océan sans fond.
+
+Puis, d’une voix étrangement calme, il parle :
+
+« Non, ma fille. Ce monde est déjà condamné. Je ne fais qu’accepter l’inévitable. »`,
+      "c18_tu_es_trop_jeune", [irianaStern]),
+    c18_tu_es_trop_jeune: scene("Un gouffre", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Iriana sent un frisson glacial lui courir le long de l’échine.
+
+Puis, enfin, son père se retourne vers elle.
+
+Son regard n’a pas changé.
+
+Toujours aussi perçant, toujours aussi froid. Pourtant, dans la lumière tremblotante du portail, quelque chose d’autre s’y tapit.
+
+Un gouffre.
+
+Une profondeur infinie.
+
+« Tu m’as condamnée et as trahi ton propre peuple ! crache-t-elle. Tu es allé trop loin… Est-ce par couardise, ou juste par ignorance ? »
+
+Un silence.
+
+Puis un sourire se dessine sur les lèvres d’Alamma.
+
+« Non, Iriana. »
+
+Sa voix est douce, moralisatrice mais aussi presque… compatissante.
+
+« Tu es trop jeune pour comprendre. Quel dommage. »
+
+Il tend lentement la main.`,
+      "c18_ip_maitrise", [irianaStern]),
+    c18_pacte_valurn: scene("Le pacte", BG_CHAMP, M_VALURN, 'Narrateur',
+      `Pendant ce temps, à plusieurs lieues de là.
+
+Valurn s’arrête net.
+
+Quelque chose le frappe de plein fouet.
+
+Une décharge violente à l’intérieur de son être, comme un appel dans la nuit.
+
+Le pacte. Iriana est en danger.
+
+Un instant, il lutte. Il doit se contenter d’attendre. Il doit nourrir le portail. Offrir la victoire au Chaos.
+
+Mais il n’y arrive pas.
+
+Il ferme les yeux. Il voit Amanea. Son dernier regard, son pouvoir arraché, sa magie pure déchirée sous ses doigts.
+
+Il regarde ses propres mains, encore noircies par l’énergie qu’il a volée.
+
+Et il sait.
+
+Ce pouvoir, aucun autre mortel ne peut le manipuler… au risque de finir comme la Reine noire.
+
+Mais… s’il en donne une partie ?
+
+Juste assez.
+
+Juste assez pour qu’Iriana puisse survivre.
+
+Un sourire amer étire ses lèvres.
+
+« Ça, tu ne l’avais pas vu venir, père. »
+
+Il tend la main, une petite brèche démoniaque se formant vers le néant. De cette manière, il laisse une fraction du pouvoir couler à travers l’espace.
+
+De cette manière… il filtre le flux.
+
+De cette manière… il l’aide, sans éveiller les soupçons…
+
+Son énergie part, doucement, vers elle.`,
+      "c18_a_genoux", [valurnAway]),
+    c18_a_genoux: scene("Une dernière opportunité", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Iriana tombe à genoux.
+
+L’air se fissure autour d’elle, l’étrange étreinte d’Alamma étouffe sa magie, sa force, sa volonté. Son père la domine désormais, et dans ses yeux, il n’y a aucune haine.
+
+Juste une pitié glaciale.
+
+« Tout ceci est inévitable, Iriana. Je t’offre une dernière opportunité. »
+
+Il tend la main vers elle, prêt à lui offrir un choix empoisonné.
+
+Iriana est toujours au sol, ses mains serrant la terre flétrie. Son souffle est saccadé, brûlant sa gorge à chaque inspiration douloureuse. Elle sent encore l’emprise invisible d’Alamma sur elle, cette étreinte intangible qui broyait sa volonté, qui la clouait au sol, qui l’empêchait de lutter. Il l’a dominée, il l’a écrasée, comme il l’a toujours fait, avec ce détachement froid, cette patience implacable, comme si sa victoire n’était qu’une évidence, un fil du destin déjà tissé depuis longtemps.
+
+Et pourtant, quelque chose change.
+
+Un frisson parcourt sa peau, un frisson brûlant, une chaleur insidieuse qui s’enroule autour de ses os, qui s’immisce dans ses veines comme une flamme invisible. Une force étrangère, volée, transmise. Elle la reconnaît immédiatement.
+
+Valurn.
+
+L’énergie qu’il a prise à Amanea, cette puissance arrachée aux ténèbres elles-mêmes, coule en elle, pas en totalité, pas assez pour la consumer, juste un fragment, un éclat ardent qui pulse dans son corps comme un second souffle. Ses doigts se crispent contre la terre froide, ses muscles retrouvent leur tension, son dos se redresse lentement. L’air autour d’elle crépite, un halo sombre l’enveloppe brièvement avant de s’adoucir, de se modeler à son essence propre, de se fondre en elle comme si elle lui avait toujours appartenu.`,
+      "c18_ip_flux", [irianaTroubled]),
+    c18_peu_importe: scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Alamma, jusque-là impassible, fronce légèrement les sourcils. Il a perçu ce changement, il l’a senti dans l’air, ce frémissement d’énergie qui n’était pas là l’instant d’avant. Il l’observe, mesurant, analysant, cherchant à comprendre ce qui vient de se produire.
+
+« Comment est-ce que tu… Peu importe. »
+
+Sa voix est calme, détachée, mais il y a une nuance dans son ton, une infime vibration qui trahit un soupçon d’incertitude.
+
+Iriana lève lentement la tête.
+
+Ses yeux brillent d’un éclat nouveau, un mélange de sa propre essence et de celle insufflée par Valurn. Elle ressent encore la douleur, le poids du combat, mais elle n’est plus écrasée.
+
+Elle se redresse complètement, ses jambes tremblent encore, mais elle tient debout.
+
+Elle le regarde droit dans les yeux. C’est elle qui écrase.
+
+« Oui. Peu importe. »`,
+      "c18_attaque", [irianaStern]),
+    c18_attaque: scene("Elle attaque", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Elle attaque.
+
+Son corps est une ombre mouvante, fendant l’air avec une vitesse nouvelle, renforcée par la magie volée. Elle ne lui laisse pas le temps de réagir.
+
+Sa main s’élève, un éclat d’énergie surgit de ses paumes, un arc de force sombre qui fend l’espace entre eux et s’écrase contre Alamma.
+
+Il recule d’un pas, surpris. Il bloque l’impact d’un mouvement fluide, mais il a reculé. Un sourire se dessine sur les lèvres d’Iriana.
+
+Elle frappe à nouveau, une volée d’éclairs violacés fendant l’air, des lames de magie lacérant le sol, traçant un chemin de destruction vers lui. Alamma lève la main, une barrière noire se dresse, déviant une partie de l’assaut, mais l’énergie explose tout autour de lui, soulevant un mur de poussière et de cendres.
+
+L’onde de choc fait trembler l’air.
+
+Iriana n’attend pas. Elle fonce dans la fumée, ses yeux perçant les ténèbres, anticipant sa riposte, la sentant venir avant même qu’elle n’émerge.
+
+Et elle a raison. Un faisceau d’énergie noire jaillit du brouillard, visant sa poitrine.
+
+Elle tourne sur elle-même, esquivant de justesse, le projectile frôle son épaule, brûle le tissu de sa tenue, laissant une marque fumante sur sa peau.
+
+Mais elle ne s’arrête pas. Elle continue d’avancer, atteignant Alamma. Leur regard se croise à bout portant… puis elle frappe. Un coup chargé de magie, une onde brute qui s’écrase contre son torse, le propulsant en arrière. Alamma trébuche. Il se rétablit en un instant, son expression toujours neutre, mais ses yeux… Ses yeux sont différents.
+
+Il la jauge un instant, puis parle, doucement.
+
+« Tu as progressé. Je ne pensais pas que tu… userais d’une telle magie. »
+
+Iriana resserre sa prise, sent la magie bouillonner en elle, mais elle sait qu’elle ne doit pas se laisser emporter.
+
+« Et toi, tu es moins invincible que je ne le pensais. »`,
+      "c18_trois_forces", [irianaStern]),
+    c18_trois_forces: scene("Ombre, Chaos, Mort", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Alamma penche légèrement la tête. Il l’observe.
+
+Iriana sent la magie vibrer en elle, trop brutale, trop crue, trop instable. Ce n’est pas l’Arcane pure qu’elle connaît, ce n’est pas cette énergie structurée et ordonnée qu’elle a appris à maîtriser depuis l’enfance. Non, c’est autre chose. Quelque chose de plus profond, plus viscéral, une force qui ronge autant qu’elle exalte, qui brûle et glace en même temps, un amalgame chaotique qui semble chercher à s’imposer en elle autant qu’à la renforcer.
+
+Ombre.
+
+Chaos.
+
+Mort.
+
+Trois énergies incompatibles, fusionnées en une tempête incontrôlable, un ouragan noir rugissant sous sa peau. Chaque coup qu’elle porte, chaque onde qu’elle projette résonne avec ces trois forces conjuguées, un enchevêtrement d’éléments qui s’entrechoquent, s’entrelacent, se nourrissent les uns des autres. Elle ne sait pas comment elle fait pour les canaliser sans être déchirée, elle ne sait même pas si elle les canalise réellement.
+
+Mais elle a l’avantage.
+
+Alamma, pour la première fois, est acculé.
+
+Elle voit son expression se figer, son calme naturel craqueler légèrement sous la pression de ses assauts. Son père n’est pas dépassé, pas encore, mais il n’a plus le contrôle. Elle le force à se replier.
+
+Et ça, elle le sent. Alors elle pousse encore. Un geste sec de la main, une explosion d’ombres jaillit du sol, des vrilles noires s’élancent vers Alamma, cherchant à l’enserrer, à l’immobiliser, à le ramener à elle.
+
+Mais il évite.
+
+Son corps se dérobe avec une aisance maîtrisée, un déplacement fluide, un pas en arrière calculé, mais elle voit dans son regard qu’il mesure enfin le danger.
+
+Elle attaque à nouveau, un trait fulgurant de magie mortifère, une énergie glaciale qui fend l’air comme une dague, se dirigeant droit vers lui.
+
+Il lève un mur d’énergie, le projectile explose contre, dégageant une onde de choc qui fait trembler le sol.
+
+Il recule encore. Et elle comprend.`,
+      "c18_ip_renversement", [irianaStern]),
+    c18_chute_alamma: scene("NON !", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Il perd du terrain.
+
+Il ne voulait pas que ça se passe ainsi. Il s’attendait à l’écraser, à lui imposer sa vérité comme il l’a toujours fait. Mais cette fois, c’est elle qui le force à plier. Cette fois, c’est lui qui est sur la défensive.
+
+Elle voit la tension dans ses épaules, la crispation légère de sa mâchoire. Elle sent qu’elle est en train de le repousser là où il ne veut pas être. Elle gagne. Un frisson la traverse, non pas de peur, mais d’euphorie.
+
+Et à cet instant… elle comprend pourquoi ces forces sont si dangereuses. Elle veut plus. Elle veut lui arracher ce qu’il sait, elle veut comprendre pourquoi il a fait ça, elle veut le faire payer. Elle veut le voir souffrir, elle veut le détruire.
+
+Elle exulte dans cette domination, dans cette revanche, et ça… c’est le Chaos qui murmure en elle.
+
+Elle ne peut pas le laisser fuir. Pas maintenant.
+
+Alors elle frappe à nouveau… Mais Alamma a déjà fait son choix.
+
+Son regard croise le sien une dernière fois, et ce qu’elle y lit lui arrache un grondement. Il a décidé. Son expression redevient lisse, paisible, presque détachée. Il accepte la situation. Et sans un mot, il tombe en arrière…
+
+Son corps se fond dans le vortex démoniaque, une ombre avalée par la faille béante, une silhouette s’effaçant dans un monde qui n’est pas le leur.
+
+Iriana sent son souffle exploser.
+
+« NON ! »
+
+Sa voix se brise, un cri féroce, un hurlement chargé de rage et de frustration, une clameur qui résonne même après sa disparition.
+
+Elle se précipite en avant, mais trop tard.
+
+Il lui échappe… encore… il s’était prévu une porte de sortie, ou peut-être avait-il déjà anticipé ce saut… peu importe.
+
+Elle reste là, figée, le souffle erratique, les poings tremblants, la magie vibrant encore dans son corps sans trouver de cible.
+
+Elle ne sait même pas quoi faire de cette victoire. Parce qu’elle n’en est pas une.
+
+Parce que le combat est fini, mais elle ne se sent pas triomphante.
+
+… une victoire pyrrhique.`,
+      "c18_avant_le_saut", [irianaStern]),
+    c18_avant_le_saut: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Le silence s’étire, pesant, oppressant, un gouffre insondable où seule la vibration du portail continue de pulser dans l’air comme un cœur arraché à son corps. Iriana ne bouge pas, figée dans cette seconde qui semble s’étirer à l’infini, incapable de détourner son regard de l’endroit où Alamma a disparu. Tout est allé trop vite, trop brutalement, trop irrévocablement. Il lui a échappé, une fois de plus, avec cette même aisance calculée, cette même froideur qui le rend insaisissable, ce détachement absolu qui la hante depuis toujours. Il s’est retiré au moment où il a compris que la situation ne lui convenait plus, où la maîtrise des événements lui échappait, mais il n’a pas perdu. Il ne perd jamais vraiment, il recule, il s’efface, il observe, il attend. Et cette fois encore, il l’a laissée en arrière, seule avec ses doutes, seule avec ce poids qui l’écrase, cette sensation abominable que, malgré sa puissance, elle n’a rien accompli.`,
+      "c18_avant_le_saut_2", [irianaTroubled]),
+    c18_avant_le_saut_2: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Elle voudrait s’accrocher à l’idée que c’est une victoire, qu’elle l’a forcé à fuir, qu’elle a imposé sa force face à la sienne, qu’elle l’a surpassé là où il ne l’attendait pas, mais c’est un mensonge, un simulacre fragile qui ne résiste pas à l’évidence qui pulse en elle avec une clarté insoutenable. Il est parti, et avec lui, il a emporté la seule réponse qui compte vraiment. Il est la clé, la seule monnaie d’échange pour briser ce maudit pacte, le seul à avoir les réponses dont elle a besoin pour ne pas sombrer dans le destin qu’il lui a imposé sans qu’elle ait eu le moindre choix. Tant qu’il est là, quelque part, tant qu’il existe encore dans ce monde ou un autre, son destin n’est pas scellé. Mais si elle le laisse partir maintenant, s’il disparaît de sa portée, alors tout sera terminé. Elle n’aura plus aucune chance de se sauver.
+
+Un frisson lui parcourt l’échine, un mélange de terreur et de certitude, une prise de conscience brutale qui lui tord les entrailles. Son temps est compté. Chaque seconde qu’elle passe ici est une seconde perdue, une seconde qui la rapproche du moment où le pacte prendra effet, où l’engagement fait en son nom se refermera sur elle comme un piège implacable. Il n’y aura pas d’échappatoire, pas de miracle, pas de solution tardive. C’est maintenant ou jamais. Elle doit choisir.`,
+      "c18_avant_le_saut_3", [irianaTroubled]),
+    c18_avant_le_saut_3: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Ses mains tremblent alors qu’elle les serre si fort qu’elle sent ses ongles s’enfoncer dans sa paume. Elle respire trop vite, trop fort, l’air lui brûle la gorge, son corps entier refuse d’obéir, tiraillé entre la peur et l’urgence, entre le besoin de reculer et celui de sauter, d’agir avant qu’il ne soit trop tard. Ses pensées sont un chaos indistinct, un tourbillon de doutes et d’instincts contraires, une bataille silencieuse qui hurle en elle, qui la cloue sur place, lui laissant cette fraction de seconde où tout peut encore basculer.
+
+Elle sait ce qu’elle doit faire.
+
+Mais elle hésite.
+
+Une seule impulsion la sépare de l’irréversible. Un seul pas, et elle sera hors de tout contrôle, hors de tout retour, hors de toute certitude. Si elle saute, elle ignore où elle atterrira, si elle survivra, si elle pourra un jour revenir. Ce portail ne mène pas simplement ailleurs, il mène dans une dimension qui n’a rien d’humain, un royaume de ténèbres où le temps et l’espace ne sont plus des concepts fixes, où l’existence elle-même est une anomalie. Elle n’a aucune idée de ce qu’elle trouvera de l’autre côté. Peut-être Alamma, peut-être rien, peut-être une damnation pire encore que celle qui l’attend déjà.
+
+Mais elle n’a pas le luxe de la prudence.
+
+Si elle attend plus longtemps, il sera trop tard.`,
+      "c18_avant_le_saut_4", [irianaTroubled]),
+    c18_avant_le_saut_4: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Son regard se lève vers la faille démoniaque, ses contours distordus par l’énergie brutale qui pulse encore, une invitation morbide, un gouffre prêt à l’engloutir. Son cœur bat à s’en rompre, une rage sourde lui monte à la gorge, un mélange de frustration et d’urgence, une fureur pure contre elle-même, contre son hésitation, contre cette malédiction qui l’enchaîne.
+
+Il ne l’emportera pas encore une fois.
+
+Il ne décidera plus à sa place.`,
+      "c18_saut", [irianaTroubled]),
+    c18_saut: scene("Elle plonge", BG_PORTE, M_IRIANA, 'Narrateur',
+      `Sans plus réfléchir, sans laisser la peur gagner, sans attendre une seconde de plus, elle court, elle bondit, elle plonge.
+
+L’espace se tord autour d’elle, l’air devient liquide, le temps éclate.
+
+Une déchirure.
+
+Un cri muet.
+
+Puis Iriana disparaît… tout ce qu’elle est, en ce lieu, sur ces terres, pour ce royaume, pour son peuple, pour Sylvinia… tout s’efface. Il ne reste plus qu’un écho… qui ne tarde pas à s’évaporer dans la brume de la forêt.`,
+      "c18_s07_fin", []),
     c18_ouverture: scene("Le portail s’ouvre", BG_PORTE, M_HORREUR, 'Narrateur',
       `La nuit s’accroche aux cimes des arbres tordus, étouffant la lumière des étoiles sous un voile d’encre. Le vent, chargé d’une moiteur funèbre, chuchote entre les feuillages morts, faisant frémir les branches squelettiques. L’air est épais, imprégné d’une odeur de terre humide et de cendres refroidies, une odeur de fin de monde mêlée à celle de la guerre.
 
@@ -703,277 +1145,6 @@ Seule.
 Avançant droit vers la porte démoniaque. Tia crie son nom. Mais Iriana ne se retourne pas.
 
 Elle disparaît de la forêt sans un mot.`,
-      "c18_alamma", []),
-    c18_alamma: scene("Confrontation au Portail", BG_PORTE, M_IRIANA, 'Narrateur',
-      `La forêt est silencieuse, trop silencieuse. Iriana avance, seule, sous la canopée tordue où les ombres semblent s’animer sous la pulsation du portail démoniaque. L’air est saturé d’une énergie poisseuse, presque vivante, qui s’infiltre dans sa peau, cherchant à déformer sa chair, sa volonté, son âme.
-
-Le portail gronde.
-
-Sa lumière cramoisie et noire déchire la nuit, projetant des éclairs de magie corrompue qui s’échappent par à-coups, comme les battements d’un cœur monstrueux.
-
-Et il est là.
-
-Alamma.
-
-Debout devant la faille béante, il contemple l’abîme. Un monde où les mortels ne sont pas invités… mais que certains ne peuvent éviter.
-
-Ses vêtements nobles d’antan sont à moitié rongés par la magie du Chaos, son manteau effiloché traînant dans la boue sombre. Il ne vacille pas. Il se tient droit, tel un souverain devant son trône d’ombres.
-
-À ses pieds, les démons s’inclinent. Ils ne le menacent pas. Ils le reconnaissent. Ils le servent.
-
-Iriana serre les poings.
-
-« Tu es devenu l’un des leurs. »
-
-Alamma ne répond pas immédiatement.
-
-Il lève légèrement la tête, scrutant toujours l’intérieur du portail, comme un homme sur le point de plonger dans un océan sans fond.
-
-Puis, d’une voix étrangement calme, il parle :
-
-« Non, ma fille. Ce monde est déjà condamné. Je ne fais qu’accepter l’inévitable. »`,
-      "c18_tu_es_trop_jeune", [irianaStern]),
-    c18_tu_es_trop_jeune: scene("Un gouffre", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Iriana sent un frisson glacial lui courir le long de l’échine.
-
-Puis, enfin, son père se retourne vers elle.
-
-Son regard n’a pas changé.
-
-Toujours aussi perçant, toujours aussi froid. Pourtant, dans la lumière tremblotante du portail, quelque chose d’autre s’y tapit.
-
-Un gouffre.
-
-Une profondeur infinie.
-
-« Tu m’as condamnée et as trahi ton propre peuple ! crache-t-elle. Tu es allé trop loin… Est-ce par couardise, ou juste par ignorance ? »
-
-Un silence.
-
-Puis un sourire se dessine sur les lèvres d’Alamma.
-
-« Non, Iriana. »
-
-Sa voix est douce, moralisatrice mais aussi presque… compatissante.
-
-« Tu es trop jeune pour comprendre. Quel dommage. »
-
-Il tend lentement la main.`,
-      "c18_pacte_valurn", [irianaStern]),
-    c18_pacte_valurn: scene("Le pacte", BG_CHAMP, M_VALURN, 'Narrateur',
-      `Pendant ce temps, à plusieurs lieues de là.
-
-Valurn s’arrête net.
-
-Quelque chose le frappe de plein fouet.
-
-Une décharge violente à l’intérieur de son être, comme un appel dans la nuit.
-
-Le pacte. Iriana est en danger.
-
-Un instant, il lutte. Il doit se contenter d’attendre. Il doit nourrir le portail. Offrir la victoire au Chaos.
-
-Mais il n’y arrive pas.
-
-Il ferme les yeux. Il voit Amanea. Son dernier regard, son pouvoir arraché, sa magie pure déchirée sous ses doigts.
-
-Il regarde ses propres mains, encore noircies par l’énergie qu’il a volée.
-
-Et il sait.
-
-Ce pouvoir, aucun autre mortel ne peut le manipuler… au risque de finir comme la Reine noire.
-
-Mais… s’il en donne une partie ?
-
-Juste assez.
-
-Juste assez pour qu’Iriana puisse survivre.
-
-Un sourire amer étire ses lèvres.
-
-« Ça, tu ne l’avais pas vu venir, père. »
-
-Il tend la main, une petite brèche démoniaque se formant vers le néant. De cette manière, il laisse une fraction du pouvoir couler à travers l’espace.
-
-De cette manière… il filtre le flux.
-
-De cette manière… il l’aide, sans éveiller les soupçons…
-
-Son énergie part, doucement, vers elle.`,
-      "c18_a_genoux", [valurnAway]),
-    c18_a_genoux: scene("Une dernière opportunité", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Iriana tombe à genoux.
-
-L’air se fissure autour d’elle, l’étrange étreinte d’Alamma étouffe sa magie, sa force, sa volonté. Son père la domine désormais, et dans ses yeux, il n’y a aucune haine.
-
-Juste une pitié glaciale.
-
-« Tout ceci est inévitable, Iriana. Je t’offre une dernière opportunité. »
-
-Il tend la main vers elle, prêt à lui offrir un choix empoisonné.
-
-Iriana est toujours au sol, ses mains serrant la terre flétrie. Son souffle est saccadé, brûlant sa gorge à chaque inspiration douloureuse. Elle sent encore l’emprise invisible d’Alamma sur elle, cette étreinte intangible qui broyait sa volonté, qui la clouait au sol, qui l’empêchait de lutter. Il l’a dominée, il l’a écrasée, comme il l’a toujours fait, avec ce détachement froid, cette patience implacable, comme si sa victoire n’était qu’une évidence, un fil du destin déjà tissé depuis longtemps.
-
-Et pourtant, quelque chose change.
-
-Un frisson parcourt sa peau, un frisson brûlant, une chaleur insidieuse qui s’enroule autour de ses os, qui s’immisce dans ses veines comme une flamme invisible. Une force étrangère, volée, transmise. Elle la reconnaît immédiatement.
-
-Valurn.
-
-L’énergie qu’il a prise à Amanea, cette puissance arrachée aux ténèbres elles-mêmes, coule en elle, pas en totalité, pas assez pour la consumer, juste un fragment, un éclat ardent qui pulse dans son corps comme un second souffle. Ses doigts se crispent contre la terre froide, ses muscles retrouvent leur tension, son dos se redresse lentement. L’air autour d’elle crépite, un halo sombre l’enveloppe brièvement avant de s’adoucir, de se modeler à son essence propre, de se fondre en elle comme si elle lui avait toujours appartenu.`,
-      "c18_peu_importe", [irianaTroubled]),
-    c18_peu_importe: scene("Peu importe", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Alamma, jusque-là impassible, fronce légèrement les sourcils. Il a perçu ce changement, il l’a senti dans l’air, ce frémissement d’énergie qui n’était pas là l’instant d’avant. Il l’observe, mesurant, analysant, cherchant à comprendre ce qui vient de se produire.
-
-« Comment est-ce que tu… Peu importe. »
-
-Sa voix est calme, détachée, mais il y a une nuance dans son ton, une infime vibration qui trahit un soupçon d’incertitude.
-
-Iriana lève lentement la tête.
-
-Ses yeux brillent d’un éclat nouveau, un mélange de sa propre essence et de celle insufflée par Valurn. Elle ressent encore la douleur, le poids du combat, mais elle n’est plus écrasée.
-
-Elle se redresse complètement, ses jambes tremblent encore, mais elle tient debout.
-
-Elle le regarde droit dans les yeux. C’est elle qui écrase.
-
-« Oui. Peu importe. »`,
-      "c18_attaque", [irianaStern]),
-    c18_attaque: scene("Elle attaque", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Elle attaque.
-
-Son corps est une ombre mouvante, fendant l’air avec une vitesse nouvelle, renforcée par la magie volée. Elle ne lui laisse pas le temps de réagir.
-
-Sa main s’élève, un éclat d’énergie surgit de ses paumes, un arc de force sombre qui fend l’espace entre eux et s’écrase contre Alamma.
-
-Il recule d’un pas, surpris. Il bloque l’impact d’un mouvement fluide, mais il a reculé. Un sourire se dessine sur les lèvres d’Iriana.
-
-Elle frappe à nouveau, une volée d’éclairs violacés fendant l’air, des lames de magie lacérant le sol, traçant un chemin de destruction vers lui. Alamma lève la main, une barrière noire se dresse, déviant une partie de l’assaut, mais l’énergie explose tout autour de lui, soulevant un mur de poussière et de cendres.
-
-L’onde de choc fait trembler l’air.
-
-Iriana n’attend pas. Elle fonce dans la fumée, ses yeux perçant les ténèbres, anticipant sa riposte, la sentant venir avant même qu’elle n’émerge.
-
-Et elle a raison. Un faisceau d’énergie noire jaillit du brouillard, visant sa poitrine.
-
-Elle tourne sur elle-même, esquivant de justesse, le projectile frôle son épaule, brûle le tissu de sa tenue, laissant une marque fumante sur sa peau.
-
-Mais elle ne s’arrête pas. Elle continue d’avancer, atteignant Alamma. Leur regard se croise à bout portant… puis elle frappe. Un coup chargé de magie, une onde brute qui s’écrase contre son torse, le propulsant en arrière. Alamma trébuche. Il se rétablit en un instant, son expression toujours neutre, mais ses yeux… Ses yeux sont différents.
-
-Il la jauge un instant, puis parle, doucement.
-
-« Tu as progressé. Je ne pensais pas que tu… userais d’une telle magie. »
-
-Iriana resserre sa prise, sent la magie bouillonner en elle, mais elle sait qu’elle ne doit pas se laisser emporter.
-
-« Et toi, tu es moins invincible que je ne le pensais. »`,
-      "c18_trois_forces", [irianaStern]),
-    c18_trois_forces: scene("Ombre, Chaos, Mort", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Alamma penche légèrement la tête. Il l’observe.
-
-Iriana sent la magie vibrer en elle, trop brutale, trop crue, trop instable. Ce n’est pas l’Arcane pure qu’elle connaît, ce n’est pas cette énergie structurée et ordonnée qu’elle a appris à maîtriser depuis l’enfance. Non, c’est autre chose. Quelque chose de plus profond, plus viscéral, une force qui ronge autant qu’elle exalte, qui brûle et glace en même temps, un amalgame chaotique qui semble chercher à s’imposer en elle autant qu’à la renforcer.
-
-Ombre.
-
-Chaos.
-
-Mort.
-
-Trois énergies incompatibles, fusionnées en une tempête incontrôlable, un ouragan noir rugissant sous sa peau. Chaque coup qu’elle porte, chaque onde qu’elle projette résonne avec ces trois forces conjuguées, un enchevêtrement d’éléments qui s’entrechoquent, s’entrelacent, se nourrissent les uns des autres. Elle ne sait pas comment elle fait pour les canaliser sans être déchirée, elle ne sait même pas si elle les canalise réellement.
-
-Mais elle a l’avantage.
-
-Alamma, pour la première fois, est acculé.
-
-Elle voit son expression se figer, son calme naturel craqueler légèrement sous la pression de ses assauts. Son père n’est pas dépassé, pas encore, mais il n’a plus le contrôle. Elle le force à se replier.
-
-Et ça, elle le sent. Alors elle pousse encore. Un geste sec de la main, une explosion d’ombres jaillit du sol, des vrilles noires s’élancent vers Alamma, cherchant à l’enserrer, à l’immobiliser, à le ramener à elle.
-
-Mais il évite.
-
-Son corps se dérobe avec une aisance maîtrisée, un déplacement fluide, un pas en arrière calculé, mais elle voit dans son regard qu’il mesure enfin le danger.
-
-Elle attaque à nouveau, un trait fulgurant de magie mortifère, une énergie glaciale qui fend l’air comme une dague, se dirigeant droit vers lui.
-
-Il lève un mur d’énergie, le projectile explose contre, dégageant une onde de choc qui fait trembler le sol.
-
-Il recule encore. Et elle comprend.`,
-      "c18_chute_alamma", [irianaStern]),
-    c18_chute_alamma: scene("NON !", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Il perd du terrain.
-
-Il ne voulait pas que ça se passe ainsi. Il s’attendait à l’écraser, à lui imposer sa vérité comme il l’a toujours fait. Mais cette fois, c’est elle qui le force à plier. Cette fois, c’est lui qui est sur la défensive.
-
-Elle voit la tension dans ses épaules, la crispation légère de sa mâchoire. Elle sent qu’elle est en train de le repousser là où il ne veut pas être. Elle gagne. Un frisson la traverse, non pas de peur, mais d’euphorie.
-
-Et à cet instant… elle comprend pourquoi ces forces sont si dangereuses. Elle veut plus. Elle veut lui arracher ce qu’il sait, elle veut comprendre pourquoi il a fait ça, elle veut le faire payer. Elle veut le voir souffrir, elle veut le détruire.
-
-Elle exulte dans cette domination, dans cette revanche, et ça… c’est le Chaos qui murmure en elle.
-
-Elle ne peut pas le laisser fuir. Pas maintenant.
-
-Alors elle frappe à nouveau… Mais Alamma a déjà fait son choix.
-
-Son regard croise le sien une dernière fois, et ce qu’elle y lit lui arrache un grondement. Il a décidé. Son expression redevient lisse, paisible, presque détachée. Il accepte la situation. Et sans un mot, il tombe en arrière…
-
-Son corps se fond dans le vortex démoniaque, une ombre avalée par la faille béante, une silhouette s’effaçant dans un monde qui n’est pas le leur.
-
-Iriana sent son souffle exploser.
-
-« NON ! »
-
-Sa voix se brise, un cri féroce, un hurlement chargé de rage et de frustration, une clameur qui résonne même après sa disparition.
-
-Elle se précipite en avant, mais trop tard.
-
-Il lui échappe… encore… il s’était prévu une porte de sortie, ou peut-être avait-il déjà anticipé ce saut… peu importe.
-
-Elle reste là, figée, le souffle erratique, les poings tremblants, la magie vibrant encore dans son corps sans trouver de cible.
-
-Elle ne sait même pas quoi faire de cette victoire. Parce qu’elle n’en est pas une.
-
-Parce que le combat est fini, mais elle ne se sent pas triomphante.
-
-… une victoire pyrrhique.`,
-      "c18_avant_le_saut", [irianaStern]),
-    c18_avant_le_saut: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Le silence s’étire, pesant, oppressant, un gouffre insondable où seule la vibration du portail continue de pulser dans l’air comme un cœur arraché à son corps. Iriana ne bouge pas, figée dans cette seconde qui semble s’étirer à l’infini, incapable de détourner son regard de l’endroit où Alamma a disparu. Tout est allé trop vite, trop brutalement, trop irrévocablement. Il lui a échappé, une fois de plus, avec cette même aisance calculée, cette même froideur qui le rend insaisissable, ce détachement absolu qui la hante depuis toujours. Il s’est retiré au moment où il a compris que la situation ne lui convenait plus, où la maîtrise des événements lui échappait, mais il n’a pas perdu. Il ne perd jamais vraiment, il recule, il s’efface, il observe, il attend. Et cette fois encore, il l’a laissée en arrière, seule avec ses doutes, seule avec ce poids qui l’écrase, cette sensation abominable que, malgré sa puissance, elle n’a rien accompli.`,
-      "c18_avant_le_saut_2", [irianaTroubled]),
-    c18_avant_le_saut_2: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Elle voudrait s’accrocher à l’idée que c’est une victoire, qu’elle l’a forcé à fuir, qu’elle a imposé sa force face à la sienne, qu’elle l’a surpassé là où il ne l’attendait pas, mais c’est un mensonge, un simulacre fragile qui ne résiste pas à l’évidence qui pulse en elle avec une clarté insoutenable. Il est parti, et avec lui, il a emporté la seule réponse qui compte vraiment. Il est la clé, la seule monnaie d’échange pour briser ce maudit pacte, le seul à avoir les réponses dont elle a besoin pour ne pas sombrer dans le destin qu’il lui a imposé sans qu’elle ait eu le moindre choix. Tant qu’il est là, quelque part, tant qu’il existe encore dans ce monde ou un autre, son destin n’est pas scellé. Mais si elle le laisse partir maintenant, s’il disparaît de sa portée, alors tout sera terminé. Elle n’aura plus aucune chance de se sauver.
-
-Un frisson lui parcourt l’échine, un mélange de terreur et de certitude, une prise de conscience brutale qui lui tord les entrailles. Son temps est compté. Chaque seconde qu’elle passe ici est une seconde perdue, une seconde qui la rapproche du moment où le pacte prendra effet, où l’engagement fait en son nom se refermera sur elle comme un piège implacable. Il n’y aura pas d’échappatoire, pas de miracle, pas de solution tardive. C’est maintenant ou jamais. Elle doit choisir.`,
-      "c18_avant_le_saut_3", [irianaTroubled]),
-    c18_avant_le_saut_3: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Ses mains tremblent alors qu’elle les serre si fort qu’elle sent ses ongles s’enfoncer dans sa paume. Elle respire trop vite, trop fort, l’air lui brûle la gorge, son corps entier refuse d’obéir, tiraillé entre la peur et l’urgence, entre le besoin de reculer et celui de sauter, d’agir avant qu’il ne soit trop tard. Ses pensées sont un chaos indistinct, un tourbillon de doutes et d’instincts contraires, une bataille silencieuse qui hurle en elle, qui la cloue sur place, lui laissant cette fraction de seconde où tout peut encore basculer.
-
-Elle sait ce qu’elle doit faire.
-
-Mais elle hésite.
-
-Une seule impulsion la sépare de l’irréversible. Un seul pas, et elle sera hors de tout contrôle, hors de tout retour, hors de toute certitude. Si elle saute, elle ignore où elle atterrira, si elle survivra, si elle pourra un jour revenir. Ce portail ne mène pas simplement ailleurs, il mène dans une dimension qui n’a rien d’humain, un royaume de ténèbres où le temps et l’espace ne sont plus des concepts fixes, où l’existence elle-même est une anomalie. Elle n’a aucune idée de ce qu’elle trouvera de l’autre côté. Peut-être Alamma, peut-être rien, peut-être une damnation pire encore que celle qui l’attend déjà.
-
-Mais elle n’a pas le luxe de la prudence.
-
-Si elle attend plus longtemps, il sera trop tard.`,
-      "c18_avant_le_saut_4", [irianaTroubled]),
-    c18_avant_le_saut_4: scene("Elle doit choisir", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Son regard se lève vers la faille démoniaque, ses contours distordus par l’énergie brutale qui pulse encore, une invitation morbide, un gouffre prêt à l’engloutir. Son cœur bat à s’en rompre, une rage sourde lui monte à la gorge, un mélange de frustration et d’urgence, une fureur pure contre elle-même, contre son hésitation, contre cette malédiction qui l’enchaîne.
-
-Il ne l’emportera pas encore une fois.
-
-Il ne décidera plus à sa place.`,
-      "c18_saut", [irianaTroubled]),
-    c18_saut: scene("Elle plonge", BG_PORTE, M_IRIANA, 'Narrateur',
-      `Sans plus réfléchir, sans laisser la peur gagner, sans attendre une seconde de plus, elle court, elle bondit, elle plonge.
-
-L’espace se tord autour d’elle, l’air devient liquide, le temps éclate.
-
-Une déchirure.
-
-Un cri muet.
-
-Puis Iriana disparaît… tout ce qu’elle est, en ce lieu, sur ces terres, pour ce royaume, pour son peuple, pour Sylvinia… tout s’efface. Il ne reste plus qu’un écho… qui ne tarde pas à s’évaporer dans la brume de la forêt.`,
       "c18_gardien", []),
     c18_gardien: scene("Un Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Pendant ce temps, face au portail, Remerii est toujours contre Bhaal, seule.
@@ -1001,7 +1172,7 @@ Et enfin, les ombres bougent.
 À l’intérieur du Blizzard, quelque chose s’éveille. Une silhouette immense, drapée dans la tempête, avance lentement à travers le voile blanc. Une chose grande, vivante, se forme et nait de la glace.
 
 Un Gardien de Givre.`,
-      "c18_sceau", [remeriiStrict]),
+      "c18_bh_blizzard", [remeriiStrict]),
     c18_sceau: scene("Le sceau", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Bhaal fronce les sourcils.
 
@@ -1251,7 +1422,7 @@ Le dragon fond sur lui, ses serres massives lacérant son armure chitineuse, ses
 Le Seigneur du Chaos pousse un grondement furieux, repoussant la créature à mains nues, ses flammes infernales consumant le givre.
 
 Le dragon recule, mais revient à la charge, claquant sa queue avec la puissance d’une avalanche. Les ombres et la glace s’affrontent violemment, la forêt entière tremble sous le choc des deux colosses. Un grondement sourd monte derrière elles, une vibration lourde qui résonne à travers le sol, puis, d’un coup, l’air se comprime brutalement, aspiré en un battement sec, une implosion étouffée qui laisse derrière elle un silence anormal, une absence oppressante qu’elles ne perçoivent qu’à moitié, trop absorbées par la furie glaciale qui les consume.`,
-      "c18_valurn_renvoi", [remeriiStrict]),
+      "c18_bh_dragon", [remeriiStrict]),
     c18_valurn_renvoi: scene("Son propre fils", BG_GIVRE, M_BHAAL, 'Narrateur',
       `Remerii vacille, sentant la magie lui aspirer toute son énergie.
 
@@ -1306,7 +1477,7 @@ Il est interrompu, disparaissant dans le portail, qui réagit au retour du démo
 « Ce n’est que le début… »
 
 L’onde de choc de sa chute secoue l’air, le portail tressaille, vacille, affaibli mais toujours debout.`,
-      "c18_remerii_tombe", [valurnAnnoyed]),
+      "c18_bh_fin", [valurnAnnoyed]),
     c18_remerii_tombe: scene("Un silence brisé", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `La tempête retombe. Le silence s’abat sur la clairière.
 
@@ -1479,34 +1650,46 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
       "c18_fin", []),
   });
 
-  // Insertion des scènes de point de vue dans le récit commun (le texte du roman reste identique pour tous).
-  const INSERTS = [
-    ['draven', 'c18_pere', 'c18_dp_crevasse', ['c18_dp_crevasse', 'c18_dp_crevasse_r']],
-    ['draven', 'c18_je_rentre', 'c18_dp_lineva', ['c18_dp_lineva']],
-    ['draven', 'c18_grotte', 'c18_dp_echo', ['c18_dp_echo']],
-    ['draven', 'c18_temporise', 'c18_dp_grotte', ['c18_dp_grotte', 'c18_dp_grotte_r']],
-    ['draven', 'c18_trop_tard', 'c18_dp_adieu', ['c18_dp_adieu']],
-    ['iriana', 'c18_pacte_valurn', 'c18_ip_maitrise', ['c18_ip_maitrise', 'c18_ip_maitrise_r']],
-    ['iriana', 'c18_peu_importe', 'c18_ip_flux', ['c18_ip_flux', 'c18_ip_flux_r']],
-    ['iriana', 'c18_chute_alamma', 'c18_ip_renversement', ['c18_ip_renversement', 'c18_ip_renversement_r']],
-  ];
   const ENTER_FLAGS = {
-    c18_gardien: { s06DravenComplete: true, s07IrianaComplete: true },
-    c18_fin: { s08BlizzardComplete: true, chapter18Complete: true },
+    c18_s06_fin: { c18PlayedDraven: true, s06DravenComplete: true },
+    c18_s07_fin: { c18PlayedIriana: true, s07IrianaComplete: true },
+    c18_fin: { c18PlayedRemerii: true, s08BlizzardComplete: true, chapter18Complete: true },
   };
+  const REPLAY_RESTORE = ['c18_s06_fin', 'c18_s07_fin', 'c18_fin'];
   const refreshCarrefour = () => { S.c18_carrefour.choices = carrefourChoices(); };
+
+  // Relecture depuis le menu des chapitres : les choix rejoués ne remplacent pas ceux de la vraie partie.
+  const restoreReplay = (extra) => {
+    const snap = flags().finaleReplay; if (!snap) return;
+    state.flags = { ...snap.flags, ...extra, finaleReplay: snap };
+  };
 
   const previousGo = go;
   go = window.go = function (next) {
     const args = Array.from(arguments);
-    if (next === 'c18_carrefour') refreshCarrefour();
-    for (const [who, target, insert, own] of INSERTS) {
-      if (next === target && perspective() === who && !own.includes(state.scene)) {
-        args[0] = insert;
-        break;
+    if (next === '__finale_replay_end') {
+      const snap = flags().finaleReplay;
+      if (snap) {
+        const keep = { c18PlayedDraven: flags().c18PlayedDraven, c18PlayedIriana: flags().c18PlayedIriana, c18PlayedRemerii: flags().c18PlayedRemerii };
+        state.flags = { ...snap.flags, ...Object.fromEntries(Object.entries(keep).filter(([, v]) => v)) };
+        delete state.flags.finaleReplay;
+        state.scene = snap.scene || 'c19_fin';
+        state.history = [];
       }
+      save();
+      setScreen('title');
+      return;
     }
-    if (ENTER_FLAGS[args[0]]) state.flags = { ...state.flags, ...ENTER_FLAGS[args[0]] };
+    if (next === 'c18_carrefour') refreshCarrefour();
+    if (ENTER_FLAGS[next]) {
+      if (flags().finaleReplay && REPLAY_RESTORE.includes(next)) restoreReplay(ENTER_FLAGS[next]);
+      else state.flags = { ...state.flags, ...ENTER_FLAGS[next] };
+    }
+    if (next === 'c19_trone' && flags().finaleReplay) {
+      const f = flags(); const snap = f.finaleReplay;
+      const keep = Object.fromEntries(['c18PlayedDraven', 'c18PlayedIriana', 'c18PlayedRemerii'].filter((k) => f[k]).map((k) => [k, true]));
+      state.flags = { ...snap.flags, ...keep };
+    }
     return previousGo.apply(this, args);
   };
   const previousRender = render;
@@ -1540,11 +1723,20 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
     const saved = readMainSave();
     if (!available(saved || state)) return;
     if (saved) load();
-    if (String(state.scene).startsWith('c18_') && !['c18_fin', 'c18_carrefour', 'c18_carrefour_intro'].includes(state.scene)) {
+    const inProgress = String(state.scene).startsWith('c18_') && !['c18_fin', 'c18_carrefour', 'c18_carrefour_intro'].includes(state.scene);
+    if (inProgress && !(flags().chapter18Complete && !flags().finaleReplay)) {
       setScreen('game');
       return render();
     }
     state.history = [];
+    if (flags().chapter18Complete) {
+      // Relecture : on revient au carrefour, déblocages conservés, la vraie progression est mise de côté.
+      const snapFlags = { ...state.flags }; delete snapFlags.finaleReplay;
+      const prior = flags().finaleReplay;
+      state.flags = { ...state.flags, finaleReplay: prior || { scene: state.scene, flags: snapFlags } };
+      setScreen('game');
+      return go('c18_carrefour', { skipHistory: true });
+    }
     return go(start, { skipHistory: true });
   };
 
