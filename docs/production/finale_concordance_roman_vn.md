@@ -12,9 +12,9 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 
 | Lot | Contenu | Chapitre VN | § roman | Paragraphes | Scènes roman | Scènes interactives ajoutées |
 |---|---|---|---|---|---|---|
-| S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 27 | 6 |
-| S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 16 | 0 |
-| S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 7 | 18 |
+| S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 69 | 6 |
+| S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 45 | 0 |
+| S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 27 | 18 |
 | S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 9 | 3 |
 | S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 8 | 8 |
 | S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 13 | 0 |
@@ -22,62 +22,153 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 24 | 5 |
 | S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 11 | 3 |
 
-Total : 128 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 178 scènes.
+Total : 219 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 269 scènes.
 
 ## Scène par scène
 
 | Scène | Titre | § repris | Nombre |
 |---|---|---|---|
-| `c17_rassemblement` | Le dernier rassemblement | 9682–9696 | 8 |
+| `c17_rassemblement` | Le dernier rassemblement | 9682–9688 | 4 |
+| `c17_rassemblement_2` | Le dernier rassemblement | 9690–9696 | 4 |
 | `c17_plan` | Le plan de Démendras | 9698–9729 | 17 |
 | `c17_marche` | Le malaise | 9731 | 1 |
-| `c17_marche_2` | Le malaise | 9733 | 1 |
-| `c17_marche_3` | Le malaise | 9735 | 1 |
-| `c17_voix` | Les voix | 9737–9745 | 5 |
-| `c17_portail` | La Porte Noire | 9747–9755 | 5 |
-| `c17_portail_2` | La Porte Noire | 9757–9762 | 5 |
-| `c17_amanea_vue` | Amanea | 9764–9771 | 7 |
-| `c17_naiah_regard` | La femme aux cheveux d’argent | 9772–9778 | 7 |
-| `c17_ils_savent` | Ils savent | 9779–9787 | 9 |
-| `c17_rituel` | L’instant suspendu | 9789–9809 | 13 |
-| `c17_feu` | Le cœur du portail | 9811–9828 | 12 |
-| `c17_assaut` | Deux marées | 9830–9836 | 4 |
-| `c17_hylee_figee` | Pétrifiée | 9838–9848 | 7 |
-| `c17_saidin` | Saidin | 9850–9864 | 8 |
-| `c17_je_reviendrai` | Je reviendrai | 9866–9874 | 6 |
-| `c17_bouclier` | Le bouclier intemporel | 9876–9883 | 6 |
-| `c17_choc` | Le combat explose | 9885–9908 | 13 |
-| `c17_tempete` | Elles sont la tempête | 9910–9933 | 14 |
-| `c17_duo` | Valurn et Draven | 9937–9956 | 11 |
-| `c17_duo_2` | Valurn et Draven | 9958–9966 | 5 |
+| `c17_marche_2` | Le malaise | 9733–9735 | 2 |
+| `c17_voix` | Les voix | 9737–9741 | 3 |
+| `c17_voix_2` | Les voix | 9743–9745 | 2 |
+| `c17_portail` | La Porte Noire | 9747–9751 | 3 |
+| `c17_portail_2` | La Porte Noire | 9753–9759 | 4 |
+| `c17_portail_3` | La Porte Noire | 9760–9762 | 3 |
+| `c17_amanea_vue` | Amanea | 9764–9767 | 4 |
+| `c17_amanea_vue_2` | Amanea | 9769 | 1 |
+| `c17_amanea_vue_3` | Amanea | 9770–9771 | 2 |
+| `c17_naiah_regard` | La femme aux cheveux d’argent | 9772 | 1 |
+| `c17_naiah_regard_2` | La femme aux cheveux d’argent | 9773–9776 | 4 |
+| `c17_naiah_regard_3` | La femme aux cheveux d’argent | 9777–9778 | 2 |
+| `c17_ils_savent` | Ils savent | 9779–9781 | 3 |
+| `c17_ils_savent_2` | Ils savent | 9782–9785 | 4 |
+| `c17_ils_savent_3` | Ils savent | 9786–9787 | 2 |
+| `c17_rituel` | L’instant suspendu | 9789 | 1 |
+| `c17_rituel_2` | L’instant suspendu | 9791–9795 | 3 |
+| `c17_rituel_3` | L’instant suspendu | 9797–9801 | 4 |
+| `c17_rituel_4` | L’instant suspendu | 9803–9808 | 4 |
+| `c17_rituel_5` | L’instant suspendu | 9809 | 1 |
+| `c17_feu` | Le cœur du portail | 9811–9813 | 2 |
+| `c17_feu_2` | Le cœur du portail | 9815–9816 | 2 |
+| `c17_feu_3` | Le cœur du portail | 9817–9821 | 3 |
+| `c17_feu_4` | Le cœur du portail | 9822–9827 | 4 |
+| `c17_feu_5` | Le cœur du portail | 9828 | 1 |
+| `c17_assaut` | Deux marées | 9830–9832 | 2 |
+| `c17_assaut_2` | Deux marées | 9834–9836 | 2 |
+| `c17_hylee_figee` | Pétrifiée | 9838 | 1 |
+| `c17_hylee_figee_2` | Pétrifiée | 9840–9845 | 4 |
+| `c17_hylee_figee_3` | Pétrifiée | 9847–9848 | 2 |
+| `c17_saidin` | Saidin | 9850 | 1 |
+| `c17_saidin_2` | Saidin | 9852–9858 | 4 |
+| `c17_saidin_3` | Saidin | 9860–9864 | 3 |
+| `c17_je_reviendrai` | Je reviendrai | 9866–9868 | 2 |
+| `c17_je_reviendrai_2` | Je reviendrai | 9870–9874 | 4 |
+| `c17_bouclier` | Le bouclier intemporel | 9876–9878 | 3 |
+| `c17_bouclier_2` | Le bouclier intemporel | 9879–9883 | 3 |
+| `c17_choc` | Le combat explose | 9885–9887 | 2 |
+| `c17_choc_2` | Le combat explose | 9889–9894 | 4 |
+| `c17_choc_3` | Le combat explose | 9896–9908 | 7 |
+| `c17_tempete` | Elles sont la tempête | 9910–9915 | 4 |
+| `c17_tempete_2` | Elles sont la tempête | 9917–9921 | 3 |
+| `c17_tempete_3` | Elles sont la tempête | 9923–9929 | 4 |
+| `c17_tempete_4` | Elles sont la tempête | 9930–9933 | 3 |
+| `c17_duo` | Valurn et Draven | 9937 | 1 |
+| `c17_duo_2` | Valurn et Draven | 9939–9944 | 4 |
+| `c17_duo_3` | Valurn et Draven | 9946–9966 | 11 |
 | `c17_joute` | Où est ton sens du spectacle ? | 9968–10011 | 23 |
-| `c17_fuyards` | Plus loin | 10014–10033 | 12 |
-| `c17_allenna` | La gamine de la vision | 10035–10069 | 21 |
-| `c17_cri_alamma` | Le cri d’Alamma | 10071–10099 | 17 |
-| `c17_regard_tia` | Leurs yeux se croisent | 10101–10126 | 16 |
-| `c17_moisson` | La moisson des âmes | 10128–10136 | 5 |
-| `c17_vortex` | Vous n’auriez pas dû venir ici | 10138–10144 | 4 |
-| `c17_vortex_2` | Vous n’auriez pas dû venir ici | 10146–10156 | 7 |
-| `c17_sacrifiable` | Sacrifiables | 10158–10167 | 6 |
-| `c17_metamorphose` | La métamorphose | 10169–10187 | 10 |
-| `c17_va` | Va. | 10189–10216 | 15 |
-| `c17_dernier_carre` | Le dernier carré | 10218–10229 | 8 |
-| `c17_abomination` | Pourquoi… | 10231–10252 | 13 |
-| `c17_fermer` | L’ouvrir ? | 10254–10291 | 20 |
+| `c17_fuyards` | Plus loin | 10014–10019 | 4 |
+| `c17_fuyards_2` | Plus loin | 10020–10026 | 4 |
+| `c17_fuyards_3` | Plus loin | 10028–10030 | 2 |
+| `c17_fuyards_4` | Plus loin | 10031–10033 | 2 |
+| `c17_allenna` | La gamine de la vision | 10035–10051 | 10 |
+| `c17_allenna_2` | La gamine de la vision | 10053–10057 | 4 |
+| `c17_allenna_3` | La gamine de la vision | 10059–10060 | 2 |
+| `c17_allenna_4` | La gamine de la vision | 10062–10068 | 4 |
+| `c17_allenna_5` | La gamine de la vision | 10069 | 1 |
+| `c17_cri_alamma` | Le cri d’Alamma | 10071–10082 | 7 |
+| `c17_cri_alamma_2` | Le cri d’Alamma | 10084–10089 | 4 |
+| `c17_cri_alamma_3` | Le cri d’Alamma | 10090 | 1 |
+| `c17_cri_alamma_4` | Le cri d’Alamma | 10091–10097 | 4 |
+| `c17_cri_alamma_5` | Le cri d’Alamma | 10099 | 1 |
+| `c17_regard_tia` | Leurs yeux se croisent | 10101–10116 | 10 |
+| `c17_regard_tia_2` | Leurs yeux se croisent | 10117–10122 | 4 |
+| `c17_regard_tia_3` | Leurs yeux se croisent | 10124–10126 | 2 |
+| `c17_moisson` | La moisson des âmes | 10128 | 1 |
+| `c17_moisson_2` | La moisson des âmes | 10130–10132 | 2 |
+| `c17_moisson_3` | La moisson des âmes | 10134 | 1 |
+| `c17_moisson_4` | La moisson des âmes | 10136 | 1 |
+| `c17_vortex` | Vous n’auriez pas dû venir ici | 10138 | 1 |
+| `c17_vortex_2` | Vous n’auriez pas dû venir ici | 10140–10142 | 2 |
+| `c17_vortex_3` | Vous n’auriez pas dû venir ici | 10144–10146 | 2 |
+| `c17_vortex_4` | Vous n’auriez pas dû venir ici | 10148–10153 | 4 |
+| `c17_vortex_5` | Vous n’auriez pas dû venir ici | 10155–10156 | 2 |
+| `c17_sacrifiable` | Sacrifiables | 10158 | 1 |
+| `c17_sacrifiable_2` | Sacrifiables | 10160–10165 | 4 |
+| `c17_sacrifiable_3` | Sacrifiables | 10167 | 1 |
+| `c17_metamorphose` | La métamorphose | 10169–10171 | 2 |
+| `c17_metamorphose_2` | La métamorphose | 10173 | 1 |
+| `c17_metamorphose_3` | La métamorphose | 10175–10177 | 2 |
+| `c17_metamorphose_4` | La métamorphose | 10179–10185 | 4 |
+| `c17_metamorphose_5` | La métamorphose | 10187 | 1 |
+| `c17_va` | Va. | 10189 | 1 |
+| `c17_va_2` | Va. | 10191–10197 | 4 |
+| `c17_va_3` | Va. | 10199–10216 | 10 |
+| `c17_dernier_carre` | Le dernier carré | 10218–10227 | 7 |
+| `c17_dernier_carre_2` | Le dernier carré | 10229 | 1 |
+| `c17_abomination` | Pourquoi… | 10231–10240 | 6 |
+| `c17_abomination_2` | Pourquoi… | 10241–10246 | 4 |
+| `c17_abomination_3` | Pourquoi… | 10248–10252 | 3 |
+| `c17_fermer` | L’ouvrir ? | 10254–10266 | 7 |
+| `c17_fermer_2` | L’ouvrir ? | 10268–10274 | 4 |
+| `c17_fermer_3` | L’ouvrir ? | 10275–10291 | 9 |
 | `c17_double_jeu` | Deux tableaux | 10293–10320 | 18 |
-| `c17_signal` | Un ordre muet | 10322–10353 | 22 |
+| `c17_signal` | Un ordre muet | 10322–10332 | 7 |
+| `c17_signal_2` | Un ordre muet | 10334–10338 | 4 |
+| `c17_signal_3` | Un ordre muet | 10339–10349 | 8 |
+| `c17_signal_4` | Un ordre muet | 10350–10353 | 3 |
 | `c17_loyalistes` | Une nouvelle mission | 10354–10370 | 11 |
-| `c17_releves` | Les morts se relèvent | 10373–10386 | 9 |
-| `c17_releves_2` | Les morts se relèvent | 10388–10418 | 18 |
-| `c17_lutte` | La lutte contre le portail | 10420–10449 | 18 |
-| `c17_lutte_2` | La lutte contre le portail | 10451–10470 | 14 |
-| `c17_valurn_surgit` | Un ultime obstacle | 10472–10498 | 18 |
-| `c17_son_fils` | Tu es son fils ? | 10500–10522 | 16 |
-| `c17_mur_de_feu` | Le mur de feu | 10525–10527 | 2 |
-| `c17_tu_sais` | Tu sais. | 10529–10555 | 17 |
-| `c17_pourquoi` | Alors pourquoi ?! | 10557–10566 | 7 |
-| `c17_cede` | Il cède du terrain | 10567–10570 | 3 |
-| `c17_brise` | Elle le brise | 10571–10599 | 18 |
+| `c17_releves` | Les morts se relèvent | 10373–10384 | 8 |
+| `c17_releves_2` | Les morts se relèvent | 10386–10392 | 4 |
+| `c17_releves_3` | Les morts se relèvent | 10394–10400 | 4 |
+| `c17_releves_4` | Les morts se relèvent | 10402–10418 | 11 |
+| `c17_lutte` | La lutte contre le portail | 10420–10422 | 2 |
+| `c17_lutte_2` | La lutte contre le portail | 10424–10429 | 4 |
+| `c17_lutte_3` | La lutte contre le portail | 10430–10440 | 6 |
+| `c17_lutte_4` | La lutte contre le portail | 10441–10445 | 4 |
+| `c17_lutte_5` | La lutte contre le portail | 10447–10455 | 6 |
+| `c17_lutte_6` | La lutte contre le portail | 10456–10460 | 4 |
+| `c17_lutte_7` | La lutte contre le portail | 10462–10470 | 6 |
+| `c17_valurn_surgit` | Un ultime obstacle | 10472–10478 | 4 |
+| `c17_valurn_surgit_2` | Un ultime obstacle | 10479–10484 | 4 |
+| `c17_valurn_surgit_3` | Un ultime obstacle | 10486–10498 | 10 |
+| `c17_son_fils` | Tu es son fils ? | 10500–10505 | 4 |
+| `c17_son_fils_2` | Tu es son fils ? | 10507 | 1 |
+| `c17_son_fils_3` | Tu es son fils ? | 10508–10512 | 3 |
+| `c17_son_fils_4` | Tu es son fils ? | 10513–10517 | 3 |
+| `c17_son_fils_5` | Tu es son fils ? | 10518–10521 | 4 |
+| `c17_son_fils_6` | Tu es son fils ? | 10522 | 1 |
+| `c17_mur_de_feu` | Le mur de feu | 10525 | 1 |
+| `c17_mur_de_feu_2` | Le mur de feu | 10527 | 1 |
+| `c17_tu_sais` | Tu sais. | 10529–10533 | 3 |
+| `c17_tu_sais_2` | Tu sais. | 10535–10537 | 2 |
+| `c17_tu_sais_3` | Tu sais. | 10538–10539 | 2 |
+| `c17_tu_sais_4` | Tu sais. | 10540–10543 | 3 |
+| `c17_tu_sais_5` | Tu sais. | 10545–10550 | 4 |
+| `c17_tu_sais_6` | Tu sais. | 10551–10555 | 3 |
+| `c17_pourquoi` | Alors pourquoi ?! | 10557–10562 | 4 |
+| `c17_pourquoi_2` | Alors pourquoi ?! | 10563–10566 | 3 |
+| `c17_cede` | Il cède du terrain | 10567 | 1 |
+| `c17_cede_2` | Il cède du terrain | 10569–10570 | 2 |
+| `c17_brise` | Elle le brise | 10571–10575 | 3 |
+| `c17_brise_2` | Elle le brise | 10576–10582 | 4 |
+| `c17_brise_3` | Elle le brise | 10584–10586 | 2 |
+| `c17_brise_4` | Elle le brise | 10588–10593 | 4 |
+| `c17_brise_5` | Elle le brise | 10595–10598 | 4 |
+| `c17_brise_6` | Elle le brise | 10599 | 1 |
 | `c17_trois` | Trois silhouettes | 10601–10626 | 15 |
 | `c17_supplique` | Tia… écoute-moi… | 10628–10673 | 28 |
 | `c17_lame` | Une Farae ne pardonne jamais | 10675–10700 | 17 |

@@ -25,6 +25,10 @@
   const M_COMBAT = 'music_c3_combat_ombres';
   const M_DUEL = 'music_duel';
   const M_TRAGEDIE = 'music_c10_amanea';
+  // « Amanea, Final destination » (OST fournie par l’auteur, copiée à l’identique) : de la bascule du duel
+  // (Puissance révélée, c17_revelation) jusqu’à la fin du Chapitre XVII. Le Game Over garde M_TRAGEDIE.
+  // Fichier et codex : fusion/story-finale-media.js.
+  const M_FINAL_AMANEA = 'music_finale_amanea';
 
   const hyleeShaken = ['hylee', 'hylee2_sad', 'left'];
   const hylee = ['hylee', 'hylee2_determined', 'left'];
@@ -45,6 +49,8 @@
   const amaneaTerrifying = ['amanea', 'amanea_terrifying', 'right'];
   const naiahHard = ['naiah', 'naiah_menacing', 'right'];
   const naiahCold = ['naiah', 'naiah_neutral', 'center'];
+  // Tia adulte : sprites de la Chronique Alternative (fichiers CA référencés tels quels).
+  const tia = (e, pos = 'right') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -55,7 +61,7 @@
   const calc = (step) => window.SylviniaFinaleDuels ? window.SylviniaFinaleDuels.calc('s04', step) : { valurn: 10, amanea: 10, power: 0, temps: 0 };
   const RESET_S04 = { s04M1: null, s04M2: null, s04M3: null, s04M4: null, s04M5: null, s04Qte: null };
   const ds = (sub, text, next, chars, step, extra = {}) => ({
-    ...scene(sub, BG_PORTE, M_DUEL, 'Narrateur', text, next, chars), fduel: 's04', fstep: step, pov: 'valurn', ...extra,
+    ...scene(sub, BG_PORTE, step >= 4 ? M_FINAL_AMANEA : M_DUEL, 'Narrateur', text, next, chars), fduel: 's04', fstep: step, pov: 'valurn', ...extra,
   });
   const dsNext = (sub, text, step, chars, ok, test) => {
     const o = ds(sub, text, null, chars, step);
@@ -248,13 +254,14 @@ Il a tenu. Assez longtemps pour ce qu’il attendait du portail.`,
 
     c17_gameover_a: gameOver('Valurn succombe',
       `Valurn n’a pas su la forcer à se révéler. La griffe d’Amanea le cloue contre la pierre noire bien avant que la reine n’ait eu besoin de puiser au fond d’elle-même.
+
 Valurn succombe avant de forcer Amanea à se révéler.`, 3),
     c17_gameover_b: gameOver('La griffe arrive trop tôt',
       `Il voit le coup trop tard. La griffe traverse sa garde, puis sa poitrine. Il n’a pas tenu la minute qu’il lui fallait : Amanea se détourne de lui avant même qu’il ne touche le sol, et marche vers le portail.
 
 Sans ce temps volé, rien de ce qui suit n’aura lieu.`, 6),
 
-    c17_duel_bilan: scene('Le temps volé', BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_duel_bilan: scene('Le temps volé', BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       () => {
         const { temps } = calc(7);
         const line = temps >= 6
@@ -267,7 +274,7 @@ ${line}`;
       'c17_trois'),
 
     c17_fin: {
-      ...scene('Fin du Chapitre XVII', BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      ...scene('Fin du Chapitre XVII', BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
         `Fin du Chapitre XVII · La Porte Noire.`),
       chapterEnd: true,
       choices: [
@@ -275,6 +282,25 @@ ${line}`;
         { label: 'Retour au menu', next: 'menu' },
       ],
     },
+  });
+
+/*@ALIASES@*/
+
+  // Plans clés S02 à S04 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  const SHOTS = [
+/*@SHOTS@*/
+  ];
+  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea']];
+  for (const [key, path, name, body] of SHOTS) {
+    A[key] = path;
+    CODEX_IMAGES[key] = { title: 'Chapitre XVII · ' + name, body, src: path };
+    CODEX_IMAGE_ORDER.push(key);
+    window.SylviniaStoryCamera?.illustrate(key);
+  }
+  CODEX_IMAGE_GROUPS.push({
+    id: 'chapter17',
+    title: chapter,
+    sections: SECTIONS.map(([p, t]) => ({ title: t, keys: SHOTS.filter(([k]) => k.startsWith('c17_cg_' + p)).map(([k]) => k) })),
   });
 
   // Fin du lot S01 : la suite s’ouvre.
@@ -306,7 +332,7 @@ ${line}`;
     label: 'Chapitre XVII',
     title,
     subtitle: 'Akuhn’Nabad',
-    image: A[BG_PORTE],
+    image: A.c17_cg_s02_05_porte_maitre || A[BG_PORTE],
     tags: ['Porte Noire', 'Amanea'],
     body: 'L’armée atteint le portail d’Akuhn’Nabad. Amanea s’y tient, et Valurn s’interpose.',
     action: 'Ouvrir le Chapitre XVII',
@@ -343,5 +369,5 @@ ${line}`;
     String(id).startsWith('c17_') ? chapter : previousLabel(id);
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.419 · La Porte Noire';
+  if (update) update.textContent = 'Mise à jour · v0.420 · La Porte Noire';
 })();

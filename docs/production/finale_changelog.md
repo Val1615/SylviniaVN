@@ -1,5 +1,15 @@
 # Journal · Final du Tome I
 
+## v0.420 (branche `feat/finale-mise-en-scene`)
+
+- Mise en scène du Chapitre XVII : 72 plans clés fournis par l’auteur (S02 à S04), copiés à l’identique dans `assets/images/keyscenes/chapter17-s02/03/04/`, branchés au paragraphe qu’ils illustrent, avec mouvement de caméra, cadrage portrait et entrée au Codex. Huit plans livrés restent écartés (s02_02, s02_24, s04_06, s04_11, s04_12, s04_14, s04_16, s04_18).
+- Hylee dans sa forme finale : cinq sprites (`assets/sprites/hylee_finale_*.png`) à partir de `c18_remerii_tombe`, Épilogue compris.
+- Tia adulte et Allenna : sprites de la Chronique Alternative, référencés tels quels.
+- Musiques dédiées : « Amanea, Final destination » (bascule du duel S04 → fin du Chapitre XVII) et « Ensemble » (combat contre Bhaal), copiées à l’identique dans `assets/audio/finale/`.
+- Nouveau fichier `fusion/story-finale-media.js` (musiques, sprites, échelle) ; `story-finale-s01.js` expose le cadrage des plans clés aux chapitres suivants.
+- Correctif : ligne vide rétablie avant « Valurn succombe avant de forcer Amanea à se révéler. » (`c17_gameover_a`).
+- Bulle de mise à jour : « v0.420 · Mise en scène du final ».
+
 ## v0.419 (branche `feat/finale-duels-branches`)
 
 - Mise en conformité avec le cahier de production : le carrefour du Chapitre XVIII ouvre trois branches séparées (S06 Draven, S07 Iriana, S08 Remerii / Hylee / Bhaal) avec cartons « Pendant ce temps… » / « Au même moment… ». S06 et S07 reviennent directement à S08.

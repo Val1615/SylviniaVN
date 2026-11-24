@@ -909,6 +909,8 @@ Un dernier rassemblement s’impose.`,
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const portrait = window.matchMedia('(max-aspect-ratio: 1/1)');
   const illustratedBackgrounds = new Set(visuals.map(([key]) => key));
+  // Les plans clés des chapitres suivants s’y inscrivent (même cadrage portrait, mêmes mouvements).
+  window.SylviniaStoryCamera = { illustrate: (key) => illustratedBackgrounds.add(key) };
   const activeShots = new WeakMap();
   const framing = document.createElement('style');
   framing.textContent = `

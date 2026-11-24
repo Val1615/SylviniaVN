@@ -2,8 +2,10 @@
 
 - `novel_rest.txt` : paragraphes 9682 à 12094 du DOCX `Ressource lore/Chroniques de Sylvinia Tome 1.docx`, au format `index|style|texte` (style `D` = réplique, `I` = italique).
 - `novel.py` : chargement, corrections ciblées (`FIX`), répliques réécrites en guillemets avec incise (`OVR`), typographie (espaces insécables).
+- `shots.py` : les 72 plans clés du Chapitre XVII (fichier, paragraphe, mouvement de caméra, titre et texte du Codex). `gen.py` coupe les écrans à chaque plan et le tient au plus `SPAN` paragraphes. `legacy_coverage.json` garde le découpage v0.419 pour rediriger les anciennes sauvegardes.
 - `beats.py` : découpage du roman en scènes (décor, musique, silhouettes, paragraphes, suite).
 - `extra_c17.js`, `extra_c18.js`, `extra_c19.js` : scènes écrites pour le jeu (choix, duel, points de vue, routage, cartes de chapitre). Le marqueur `/*@SCENES@*/` reçoit les scènes du roman.
+- `fusion/story-finale-media.js` (écrit à la main, hors générateur) : musiques dédiées, sprites Hylee forme finale, Tia et Allenna (CA), classe d’échelle `finale-k`.
 - `duels.js` : moteur des duels S04, S06, S07, S08 (jauges calculées depuis les flags, voile de combat, QTE, Game Over, en-tête de choix). Copié tel quel vers `fusion/story-finale-duels.js`.
 - `gen.py` : écrit `fusion/story-finale-s02.js`, `s06.js`, `s09.js`, `story-finale-duels.js` et échoue s’il manque ou si se répète un paragraphe.
 - `docs.py` : régénère `docs/production/finale_concordance_roman_vn.md`.

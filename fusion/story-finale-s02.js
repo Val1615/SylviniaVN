@@ -25,6 +25,10 @@
   const M_COMBAT = 'music_c3_combat_ombres';
   const M_DUEL = 'music_duel';
   const M_TRAGEDIE = 'music_c10_amanea';
+  // « Amanea, Final destination » (OST fournie par l’auteur, copiée à l’identique) : de la bascule du duel
+  // (Puissance révélée, c17_revelation) jusqu’à la fin du Chapitre XVII. Le Game Over garde M_TRAGEDIE.
+  // Fichier et codex : fusion/story-finale-media.js.
+  const M_FINAL_AMANEA = 'music_finale_amanea';
 
   const hyleeShaken = ['hylee', 'hylee2_sad', 'left'];
   const hylee = ['hylee', 'hylee2_determined', 'left'];
@@ -45,6 +49,8 @@
   const amaneaTerrifying = ['amanea', 'amanea_terrifying', 'right'];
   const naiahHard = ['naiah', 'naiah_menacing', 'right'];
   const naiahCold = ['naiah', 'naiah_neutral', 'center'];
+  // Tia adulte : sprites de la Chronique Alternative (fichiers CA référencés tels quels).
+  const tia = (e, pos = 'right') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -55,7 +61,7 @@
   const calc = (step) => window.SylviniaFinaleDuels ? window.SylviniaFinaleDuels.calc('s04', step) : { valurn: 10, amanea: 10, power: 0, temps: 0 };
   const RESET_S04 = { s04M1: null, s04M2: null, s04M3: null, s04M4: null, s04M5: null, s04Qte: null };
   const ds = (sub, text, next, chars, step, extra = {}) => ({
-    ...scene(sub, BG_PORTE, M_DUEL, 'Narrateur', text, next, chars), fduel: 's04', fstep: step, pov: 'valurn', ...extra,
+    ...scene(sub, BG_PORTE, step >= 4 ? M_FINAL_AMANEA : M_DUEL, 'Narrateur', text, next, chars), fduel: 's04', fstep: step, pov: 'valurn', ...extra,
   });
   const dsNext = (sub, text, step, chars, ok, test) => {
     const o = ds(sub, text, null, chars, step);
@@ -74,23 +80,24 @@
   const outcome = (key, texts) => () => texts[flags()[key]] || texts.good;
 
   Object.assign(S, {
-    c17_rassemblement: scene("Le dernier rassemblement", BG_AKUHN, M_TENSION, 'Narrateur',
+    c17_rassemblement: { ...scene("Le dernier rassemblement", "c17_cg_s02_01_rassemblement", M_TENSION, 'Narrateur',
       `Tia se place devant ses hommes, droite, impassible, son armure dorée luisant faiblement sous la lumière tamisée du ciel couvert. Ellion, Draven, Valurn, Saidin, Naïah, Iriana, Hylee, Remerii, tous se rassemblent autour d’elle.
 
 À quelques pas derrière l’Impératrice, une silhouette se détache. Elle se manifeste dans une absence à peine remarquée…
 
 Démendras, le conseiller masqué.
 
-Son manteau blanc flotte légèrement au gré du vent, ses lunettes disent tout autant qu’elles cachent, et son masque rend son expression aussi insondable que son esprit.
-
-Tia prend la parole d’un ton qui ne laisse place à aucune hésitation.
+Son manteau blanc flotte légèrement au gré du vent, ses lunettes disent tout autant qu’elles cachent, et son masque rend son expression aussi insondable que son esprit.`,
+      "c17_rassemblement_2", []), hideChars: true, camera: "recul" },
+    c17_rassemblement_2: scene("Le dernier rassemblement", BG_AKUHN, M_TENSION, 'Narrateur',
+      `Tia prend la parole d’un ton qui ne laisse place à aucune hésitation.
 
 « Nous avons atteint notre destination. »
 
 Les murmures s’éteignent.
 
 « Notre objectif est clair. »`,
-      "c17_plan", []),
+      "c17_plan", [tia('stern', 'center')]),
     c17_plan: scene("Le plan de Démendras", BG_AKUHN, M_TENSION, 'Narrateur',
       `Démendras avance légèrement, son ton froid et méthodique.
 
@@ -125,44 +132,45 @@ Tous acquiescent.
 Le plan est scellé.
 
 Le portail doit tomber avant qu’il ne soit trop tard.`,
-      "c17_choix_regard", []),
+      "c17_choix_regard", [tia('stern', 'center')]),
     c17_marche: scene("Le malaise", BG_FOREST, M_HORREUR, 'Narrateur',
       `La marche reprend ainsi, silencieuse, pesante, une dernière ligne droite vers l’objectif, et pourtant, chaque pas semble plus difficile que le précédent. D’abord imperceptible, un frisson sourd traverse l’assemblée, un malaise indéfini qui s’insinue dans les esprits, comme une menace invisible qui les étreint lentement. Les plus sensibles sont les premiers à le percevoir, les mages, les prêtres, ceux dont l’âme a été façonnée par la lumière et la magie, et qui sentent à cet instant précis une anomalie indescriptible, un poison invisible qui se diffuse dans l’air et s’infiltre dans leur être, un vertige subtil qui leur noue la gorge, qui leur donne la nausée, une sensation de malaise si viscérale qu’ils vacillent un instant avant de se redresser, crispés, pâles, le regard fuyant et la respiration plus lourde.`,
       "c17_marche_2", []),
-    c17_marche_2: scene("Le malaise", BG_FOREST, M_HORREUR, 'Narrateur',
-      `Puis, ce sont les autres qui le ressentent, les soldats, les vétérans, les guerriers qui ont traversé d’innombrables batailles et qui, pourtant, pour la première fois, se sentent vulnérables sans raison apparente, leurs mains crispées sur le manche de leurs armes, leur souffle s’accélérant sans qu’ils ne comprennent pourquoi, leurs cœurs battant plus fort, plus vite, comme si un instinct primal leur hurlait de faire demi-tour, de fuir avant qu’il ne soit trop tard. Un sergent, robuste et endurci par les années, secoue la tête, tente de balayer ce sentiment absurde d’un geste rageur, mais il sent ses doigts trembler, une sueur froide glisser le long de sa colonne vertébrale, un écho au fond de son crâne qui murmure, qui griffe, qui s’étire dans son esprit et insuffle une certitude absolue : quelque chose de monstrueux est là, proche, si proche qu’il en suffoque.`,
-      "c17_marche_3", []),
-    c17_marche_3: scene("Le malaise", BG_FOREST, M_HORREUR, 'Narrateur',
-      `D’autres vacillent, échangent des regards inquiets, leurs pas se font plus lourds, comme si l’air lui-même était devenu plus dense, comme si chaque pas les traînait plus profondément dans un gouffre sans fond, un piège invisible tissé par une présence qu’ils ne voient pas mais qui les observe déjà, qui les effleure, qui s’immisce dans leurs âmes avec une lenteur insidieuse. Certains tentent de chasser cette impression, ils serrent les dents, s’accrochent à la discipline, aux ordres, à la foi, mais dans les rangs, il y en a toujours dont la volonté est plus faible, dont la résistance s’effrite plus vite sous l’influence de ce qui se tapit au loin, et eux, ils commencent à entendre des choses.`,
-      "c17_voix", []),
+    c17_marche_2: { ...scene("Le malaise", "c17_cg_s02_03_marche_malaise", M_HORREUR, 'Narrateur',
+      `Puis, ce sont les autres qui le ressentent, les soldats, les vétérans, les guerriers qui ont traversé d’innombrables batailles et qui, pourtant, pour la première fois, se sentent vulnérables sans raison apparente, leurs mains crispées sur le manche de leurs armes, leur souffle s’accélérant sans qu’ils ne comprennent pourquoi, leurs cœurs battant plus fort, plus vite, comme si un instinct primal leur hurlait de faire demi-tour, de fuir avant qu’il ne soit trop tard. Un sergent, robuste et endurci par les années, secoue la tête, tente de balayer ce sentiment absurde d’un geste rageur, mais il sent ses doigts trembler, une sueur froide glisser le long de sa colonne vertébrale, un écho au fond de son crâne qui murmure, qui griffe, qui s’étire dans son esprit et insuffle une certitude absolue : quelque chose de monstrueux est là, proche, si proche qu’il en suffoque.
+
+D’autres vacillent, échangent des regards inquiets, leurs pas se font plus lourds, comme si l’air lui-même était devenu plus dense, comme si chaque pas les traînait plus profondément dans un gouffre sans fond, un piège invisible tissé par une présence qu’ils ne voient pas mais qui les observe déjà, qui les effleure, qui s’immisce dans leurs âmes avec une lenteur insidieuse. Certains tentent de chasser cette impression, ils serrent les dents, s’accrochent à la discipline, aux ordres, à la foi, mais dans les rangs, il y en a toujours dont la volonté est plus faible, dont la résistance s’effrite plus vite sous l’influence de ce qui se tapit au loin, et eux, ils commencent à entendre des choses.`,
+      "c17_voix", []), hideChars: true, camera: "lateral" },
     c17_voix: scene("Les voix", BG_FOREST, M_HORREUR, 'Narrateur',
       `Un murmure.
 
 Un écho distordu.
 
-Une voix familière qui leur chuchote à l’oreille, qui souffle leur prénom comme un murmure d’outre-tombe, une voix qui leur rappelle quelqu’un, un frère d’armes tombé au combat, une mère disparue, un ami perdu, et cette voix les appelle, les supplie, les envoûte, leur promet qu’ils n’ont pas à marcher plus loin, qu’ils n’ont pas à se battre, que tout cela est vain, que leurs dieux les ont abandonnés, que leurs chefs les trahissent, que le monde lui-même les a déjà condamnés.
-
-Les plus faibles chancellent, un soldat trébuche, son camarade le rattrape de justesse mais croise son regard, et il y voit une panique froide, une terreur qu’il ne peut pas comprendre, une peur animale qui grandit sans raison, une crainte qu’il commence lui-même à ressentir à mesure que les ombres grandissent autour d’eux, que l’air devient plus épais, plus oppressant, comme si la lumière même du ciel peinait à atteindre cette terre souillée.
+Une voix familière qui leur chuchote à l’oreille, qui souffle leur prénom comme un murmure d’outre-tombe, une voix qui leur rappelle quelqu’un, un frère d’armes tombé au combat, une mère disparue, un ami perdu, et cette voix les appelle, les supplie, les envoûte, leur promet qu’ils n’ont pas à marcher plus loin, qu’ils n’ont pas à se battre, que tout cela est vain, que leurs dieux les ont abandonnés, que leurs chefs les trahissent, que le monde lui-même les a déjà condamnés.`,
+      "c17_voix_2", []),
+    c17_voix_2: { ...scene("Les voix", "c17_cg_s02_04_soldat_rattrape", M_HORREUR, 'Narrateur',
+      `Les plus faibles chancellent, un soldat trébuche, son camarade le rattrape de justesse mais croise son regard, et il y voit une panique froide, une terreur qu’il ne peut pas comprendre, une peur animale qui grandit sans raison, une crainte qu’il commence lui-même à ressentir à mesure que les ombres grandissent autour d’eux, que l’air devient plus épais, plus oppressant, comme si la lumière même du ciel peinait à atteindre cette terre souillée.
 
 Le portail est proche.`,
-      "c17_portail", []),
-    c17_portail: scene("La Porte Noire", BG_PORTE, M_PORTAIL, 'Narrateur',
+      "c17_portail", []), hideChars: true, camera: "impact" },
+    c17_portail: { ...scene("La Porte Noire", "c17_cg_s02_05_porte_maitre", M_PORTAIL, 'Narrateur',
       `Ils arrivent enfin. Au sommet d’une crête escarpée, à l’orée d’un terrain en pente qui plonge vers la plaine en contrebas, et là, sous leurs yeux, le portail. Immense, titanesque, une arche de pierre noire s’élevant à plusieurs dizaines de mètres du sol, imposante, menaçante, un monument profane dont la seule présence semble tordre l’air autour de lui, déformant légèrement la réalité, créant des frémissements invisibles qui pulsent dans l’atmosphère, une pression sourde qui s’accentue à mesure qu’ils le contemplent, un frisson de malaise collectif traversant les rangs impériaux.
 
 Le portail n’est pas encore actif, mais il est déjà bien trop avancé. Chaque centimètre de sa structure est parcouru de runes démoniaques, des symboles ardents traçant des spirales infernales dans la pierre, pulsant d’une lueur rouge sang, une lueur qui semble respirer, battre, vivre, comme une créature en gestation attendant son heure pour naître dans une explosion de malheur.
 
-Mais ce n’est pas seulement le portail qui attire leur attention. C’est ce qui l’entoure.
+Mais ce n’est pas seulement le portail qui attire leur attention. C’est ce qui l’entoure.`,
+      "c17_portail_2", []), hideChars: true, camera: "recul" },
+    c17_portail_2: { ...scene("La Porte Noire", "c17_cg_s02_06_camps_obscurcis", M_PORTAIL, 'Narrateur',
+      `Des camps. Des dizaines. Des étendards obscurcis flottant dans l’air stagnant, des fortifications rudimentaires mais efficaces, des barricades, des lignes de défense clairement établies. Des sentinelles perchées sur des tours d’observation fixant déjà la crête où se trouvent les Sylviniens, leurs yeux brillant d’une étrange lueur dans l’ombre de leurs capuches.
 
-Des camps. Des dizaines. Des étendards obscurcis flottant dans l’air stagnant, des fortifications rudimentaires mais efficaces, des barricades, des lignes de défense clairement établies. Des sentinelles perchées sur des tours d’observation fixant déjà la crête où se trouvent les Sylviniens, leurs yeux brillant d’une étrange lueur dans l’ombre de leurs capuches.
+Et surtout, une armée.
 
-Et surtout, une armée.`,
-      "c17_portail_2", []),
-    c17_portail_2: scene("La Porte Noire", BG_PORTE, M_PORTAIL, 'Narrateur',
-      `Une marée d’Obscurcis, des soldats de l’ombre rassemblés en silence, alignés au pied du portail comme une vague de ténèbres prête à se briser sur l’Empire. Des guerriers vêtus de noir et de pourpre, leurs armures tissées de sortilèges, leurs armes imprégnées d’énergies interdites, certains levitant légèrement au-dessus du sol, d’autres agenouillés, murmurant des incantations dans une langue perdue, leurs voix tissant un chant sourd qui vibre dans l’air et s’infiltre jusque dans les os des impériaux.
+Une marée d’Obscurcis, des soldats de l’ombre rassemblés en silence, alignés au pied du portail comme une vague de ténèbres prête à se briser sur l’Empire. Des guerriers vêtus de noir et de pourpre, leurs armures tissées de sortilèges, leurs armes imprégnées d’énergies interdites, certains levitant légèrement au-dessus du sol, d’autres agenouillés, murmurant des incantations dans une langue perdue, leurs voix tissant un chant sourd qui vibre dans l’air et s’infiltre jusque dans les os des impériaux.
 
-Ils attendent.
-
-Ils savent.
+Ils attendent.`,
+      "c17_portail_3", []), hideChars: true, camera: "lateral" },
+    c17_portail_3: scene("La Porte Noire", BG_PORTE, M_PORTAIL, 'Narrateur',
+      `Ils savent.
 
 Ils ont vu venir l’Empire.
 
@@ -175,26 +183,30 @@ Tia observe la masse des Obscurcis qui se dresse face à elle. Ils sont nombreux
 
 Elle la cherche.
 
-Amanea.
-
-Face au portail démoniaque, la sœur déchue se tient droite, pas forcément grande, mais imposante, entourée de ses généraux. À ses côtés, Alamma, son propre fils. Son enfant. L’héritier de son trône, celui qu’elle pensait avoir perdu à jamais. Il se tient là, fier et digne, du côté des parias, auprès de sa tante. Elle ne voulait pas encaisser la nouvelle… avant de le voir de ses propres yeux.
-
-Un frisson glacé parcourt l’échine de Tia. Elle serre les poings, sa mâchoire se contracte sous l’émotion. Colère, frustration… et peut-être une pointe de douleur.
+Amanea.`,
+      "c17_amanea_vue_2", [amanea]),
+    c17_amanea_vue_2: { ...scene("Amanea", "c17_cg_s02_07_tia_alamma", M_AMANEA, 'Narrateur',
+      `Face au portail démoniaque, la sœur déchue se tient droite, pas forcément grande, mais imposante, entourée de ses généraux. À ses côtés, Alamma, son propre fils. Son enfant. L’héritier de son trône, celui qu’elle pensait avoir perdu à jamais. Il se tient là, fier et digne, du côté des parias, auprès de sa tante. Elle ne voulait pas encaisser la nouvelle… avant de le voir de ses propres yeux.`,
+      "c17_amanea_vue_3", []), hideChars: true, camera: "approche" },
+    c17_amanea_vue_3: { ...scene("Amanea", "c17_cg_s02_08_tia_reconnait", M_AMANEA, 'Narrateur',
+      `Un frisson glacé parcourt l’échine de Tia. Elle serre les poings, sa mâchoire se contracte sous l’émotion. Colère, frustration… et peut-être une pointe de douleur.
 
 Elle observe Amanea. La reine renégate n’a pas encore levé les yeux vers elle. Elle est en pleine conversation avec une autre Obscurcie, une femme dont la posture et l’attitude trahissent son rang. Une subordonnée, mais une subordonnée de poids.`,
-      "c17_naiah_regard", [amanea]),
+      "c17_naiah_regard", []), hideChars: true, camera: "approche" },
     c17_naiah_regard: scene("La femme aux cheveux d’argent", BG_PORTE, M_AMANEA, 'Narrateur',
-      `Tia n’est pas la seule à la remarquer.
-
-Naïah, plus en retrait, fixe intensément la silhouette.
+      `Tia n’est pas la seule à la remarquer.`,
+      "c17_naiah_regard_2", [naiahHard, iriana]),
+    c17_naiah_regard_2: { ...scene("La femme aux cheveux d’argent", "c17_cg_s02_09_naiah_rancoeur", M_AMANEA, 'Narrateur',
+      `Naïah, plus en retrait, fixe intensément la silhouette.
 
 Une femme aux longs cheveux blancs argentés, à l’aura puissante, indomptable. Elle dégage une force brute, une prestance semblable, dans une moindre mesure, à celle d’Amanea elle-même. Quelqu’un d’important, de dangereux.
 
 Naïah la dévisage, ses traits se durcissent. Ce n’est pas de la peur. Pas de la colère non plus.
 
-C’est de la rancœur.
-
-Une jalousie sourde et amère, qui lui noue le ventre.
+C’est de la rancœur.`,
+      "c17_naiah_regard_3", []), hideChars: true, camera: "approche" },
+    c17_naiah_regard_3: scene("La femme aux cheveux d’argent", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Une jalousie sourde et amère, qui lui noue le ventre.
 
 Naïah la connaît visiblement, et personnellement. Elle détourne légèrement le regard, mais cette sensation d’infériorité la hante. Qui est cette femme ? Pourquoi une telle réaction ? Iriana l’observe en fond, remarquant pleinement son attitude.`,
       "c17_ils_savent", [naiahHard, iriana]),
@@ -203,108 +215,123 @@ Naïah la connaît visiblement, et personnellement. Elle détourne légèrement 
 
 Jusqu’à ce qu’elle réalise.
 
-Elle, humaine, ne voit qu’une masse lointaine. Mais les Sylviniens, eux, distinguent clairement leurs ennemis. Leur vision est plus précise, plus perçante… mais… les Obscurcis aussi.
-
-Remerii se tend. Elle se rapproche d’Iriana et murmure :
+Elle, humaine, ne voit qu’une masse lointaine. Mais les Sylviniens, eux, distinguent clairement leurs ennemis. Leur vision est plus précise, plus perçante… mais… les Obscurcis aussi.`,
+      "c17_ils_savent_2", [iriana, remerii]),
+    c17_ils_savent_2: { ...scene("Ils savent", "c17_cg_s02_10_remerii_iriana", M_AMANEA, 'Narrateur',
+      `Remerii se tend. Elle se rapproche d’Iriana et murmure :
 
 « Ils savent qu’on est là, n’est-ce pas ? »
 
 Iriana ne répond pas immédiatement. Son regard est fixé maintenant sur Amanea, sur la foule d’Obscurcis en contrebas, et surtout sur Alamma.
 
-« Oui », souffle-t-elle enfin.
-
-Si l’Empire s’organise pour l’assaut…
+« Oui », souffle-t-elle enfin.`,
+      "c17_ils_savent_3", []), hideChars: true, camera: "approche" },
+    c17_ils_savent_3: scene("Ils savent", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Si l’Empire s’organise pour l’assaut…
 
 Les Obscurcis en font de même.`,
       "c17_rituel", [iriana, remerii]),
     c17_rituel: scene("L’instant suspendu", BG_PORTE, M_AMANEA, 'Narrateur',
-      `L’instant se suspend.
-
-La subordonnée d’Amanea s’éloigne, disparaissant dans la masse d’Obscurcis en contrebas. Un mouvement presque imperceptible, mais qui ne trompe pas les plus attentifs. Elle n’a pas fui. Elle s’est simplement éclipsée, comme une ombre se fondant dans la nuit.
+      `L’instant se suspend.`,
+      "c17_rituel_2", [amanea]),
+    c17_rituel_2: { ...scene("L’instant suspendu", "c17_cg_s02_11_allenna_s_eclipse", M_AMANEA, 'Narrateur',
+      `La subordonnée d’Amanea s’éloigne, disparaissant dans la masse d’Obscurcis en contrebas. Un mouvement presque imperceptible, mais qui ne trompe pas les plus attentifs. Elle n’a pas fui. Elle s’est simplement éclipsée, comme une ombre se fondant dans la nuit.
 
 Mais c’est alors que l’attention des Sylviniens se fige sur une seule et unique chose.
 
-Amanea.
-
-Son regard s’élève vers eux.
+Amanea.`,
+      "c17_rituel_3", []), hideChars: true, camera: "lateral" },
+    c17_rituel_3: { ...scene("L’instant suspendu", "c17_cg_s02_12_amanea_regard", M_AMANEA, 'Narrateur',
+      `Son regard s’élève vers eux.
 
 Deux flammes ardentes, brûlant de cette lueur verte spectrale qui ne l’a plus quittée depuis sa chute.
 
 Elle les voit. Elle les attend. Elle ne cherche ni à fuir ni à négocier.
 
-Elle se tourne lentement vers le portail démoniaque, son expression impassible, souveraine. Puis, sans un mot, son corps s’élève lentement dans les airs.
-
-Un battement de cœur plus tard, elle flotte à mi-hauteur du portail.
+Elle se tourne lentement vers le portail démoniaque, son expression impassible, souveraine. Puis, sans un mot, son corps s’élève lentement dans les airs.`,
+      "c17_rituel_4", []), hideChars: true, camera: "approche" },
+    c17_rituel_4: { ...scene("L’instant suspendu", "c17_cg_s02_13_amanea_levitation", M_AMANEA, 'Narrateur',
+      `Un battement de cœur plus tard, elle flotte à mi-hauteur du portail.
 
 Sa silhouette se découpe sur l’immense structure de pierre noire, imposante, terrifiante. Son manteau d’ombre se déploie autour d’elle comme un voile spectral, flottant au rythme des vents occultes qui grondent tout autour.
 
 Et puis… Elle lève la main.
 
-D’un geste lent, presque solennel, sa paume s’ouvre face au portail… il réagit.
-
-Les runes maudites s’illuminent à chacune de ses extrémités. Un rouge sanglant, pulsant comme un cœur s’éveillant après un long sommeil.`,
+D’un geste lent, presque solennel, sa paume s’ouvre face au portail… il réagit.`,
+      "c17_rituel_5", []), hideChars: true, camera: "recul" },
+    c17_rituel_5: scene("L’instant suspendu", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Les runes maudites s’illuminent à chacune de ses extrémités. Un rouge sanglant, pulsant comme un cœur s’éveillant après un long sommeil.`,
       "c17_feu", [amanea]),
     c17_feu: scene("Le cœur du portail", BG_PORTE, M_PORTAIL, 'Narrateur',
       `Le sol tremble.
 
-L’air lui-même vibre sous l’énergie brute qui s’échappe des glyphes infernaux. Une onde de choc traverse le champ de bataille, se propageant dans les rangs Sylviniens comme une caresse glaciale et oppressante.
+L’air lui-même vibre sous l’énergie brute qui s’échappe des glyphes infernaux. Une onde de choc traverse le champ de bataille, se propageant dans les rangs Sylviniens comme une caresse glaciale et oppressante.`,
+      "c17_feu_2", []),
+    c17_feu_2: { ...scene("Le cœur du portail", "c17_cg_s02_14_porte_feu", M_PORTAIL, 'Narrateur',
+      `C’est alors que le centre du portail s’embrase. Une flamme ardente, tourbillonnante, jaillit en son cœur, d’un rouge profond, incandescent.
 
-C’est alors que le centre du portail s’embrase. Une flamme ardente, tourbillonnante, jaillit en son cœur, d’un rouge profond, incandescent.
-
-L’ouverture a commencé, mais Amanea ne s’arrête pas là.
-
-Une seconde plus tard, un rayon vert brûlant jaillit de sa main, un torrent d’énergie pure, dévorante, filant droit vers le centre du portail. Un mélange d’énergie du Chaos, de la Mort et de l’Ombre étonnamment bien maniées et fusionnées en un amalgame des ténèbres.
+L’ouverture a commencé, mais Amanea ne s’arrête pas là.`,
+      "c17_feu_3", []), hideChars: true, camera: "impact" },
+    c17_feu_3: { ...scene("Le cœur du portail", "c17_cg_s02_15_amanea_rayon", M_PORTAIL, 'Narrateur',
+      `Une seconde plus tard, un rayon vert brûlant jaillit de sa main, un torrent d’énergie pure, dévorante, filant droit vers le centre du portail. Un mélange d’énergie du Chaos, de la Mort et de l’Ombre étonnamment bien maniées et fusionnées en un amalgame des ténèbres.
 
 Le feu infernal réagit aussitôt.
 
-Il se nourrit de cette magie corruptrice, se dilate, se tord, grandit. Tia voit tout, elle comprend immédiatement, et un frisson lui parcourt la colonne.
-
-Le portail va s’ouvrir. Ils n’ont plus de temps. Dans un éclair, son regard se durcit ; elle dégaine sa lame purificatrice et la lève haut dans les airs.
+Il se nourrit de cette magie corruptrice, se dilate, se tord, grandit. Tia voit tout, elle comprend immédiatement, et un frisson lui parcourt la colonne.`,
+      "c17_feu_4", []), hideChars: true, camera: "impact" },
+    c17_feu_4: { ...scene("Le cœur du portail", "c17_cg_s02_16_tia_signal", M_PORTAIL, 'Narrateur',
+      `Le portail va s’ouvrir. Ils n’ont plus de temps. Dans un éclair, son regard se durcit ; elle dégaine sa lame purificatrice et la lève haut dans les airs.
 
 Son éclat doré transperce le ciel assombri, illuminant un instant les visages des Sylviniens derrière elle.
 
 Elle ne crie pas.
 
-Elle ne prononce aucun ordre.
-
-Mais l’assaut est donné.`,
+Elle ne prononce aucun ordre.`,
+      "c17_feu_5", []), hideChars: true, camera: "approche" },
+    c17_feu_5: scene("Le cœur du portail", BG_PORTE, M_PORTAIL, 'Narrateur',
+      `Mais l’assaut est donné.`,
       "c17_assaut", []),
     c17_assaut: scene("Deux marées", BG_PORTE, M_COMBAT, 'Narrateur',
       `Les Sylviniens rugissent à l’unisson, une marée dorée déferlant vers les ténèbres, des centaines de voix s’élevant en un cri de guerre qui fait trembler la terre elle-même. La lumière de Tia Farae brille en eux, les consumant, les transcendant. Chaque soldat, chaque chevalier, chaque mage et prêtre voit ses yeux s’embraser d’un feu sacré, un jaune ardent, purificateur, qui perce les ombres et repousse les ténèbres. Ils sont ses lames. Ils sont ses flammes. Ils sont la volonté de leur impératrice.
 
-Face à eux, les Obscurcis ne reculent pas. Ils savent que la guerre est inévitable. Eux aussi avancent, méthodiques, disciplinés, portés par la détermination de leur Reine Noire. Amanea est là. Ils sont ses ombres. Ils sont son essence. Ils sont la résistance face à l’oppresseur.
-
-Deux marées, deux forces, la lumière et l’ombre, avançant inexorablement l’une vers l’autre. Un fracas d’armures, des incantations criées à pleins poumons, des runes s’illuminant sur les épées et les lances, des sceaux invoqués en urgence, des éclairs de lumière et de ténèbres commençant déjà à s’entrelacer dans les airs.
+Face à eux, les Obscurcis ne reculent pas. Ils savent que la guerre est inévitable. Eux aussi avancent, méthodiques, disciplinés, portés par la détermination de leur Reine Noire. Amanea est là. Ils sont ses ombres. Ils sont son essence. Ils sont la résistance face à l’oppresseur.`,
+      "c17_assaut_2", []),
+    c17_assaut_2: { ...scene("Deux marées", "c17_cg_s02_17_charge", M_COMBAT, 'Narrateur',
+      `Deux marées, deux forces, la lumière et l’ombre, avançant inexorablement l’une vers l’autre. Un fracas d’armures, des incantations criées à pleins poumons, des runes s’illuminant sur les épées et les lances, des sceaux invoqués en urgence, des éclairs de lumière et de ténèbres commençant déjà à s’entrelacer dans les airs.
 
 Le choc est imminent.`,
-      "c17_hylee_figee", []),
+      "c17_hylee_figee", []), hideChars: true, camera: "lateral" },
     c17_hylee_figee: scene("Pétrifiée", BG_PORTE, M_COMBAT, 'Narrateur',
-      `Remerii se retourne une dernière fois, son regard se posant sur Hylee.
-
-La jeune fille est pétrifiée.
+      `Remerii se retourne une dernière fois, son regard se posant sur Hylee.`,
+      "c17_hylee_figee_2", [hyleeShaken, remerii]),
+    c17_hylee_figee_2: { ...scene("Pétrifiée", "c17_cg_s02_18_hylee_figee", M_COMBAT, 'Narrateur',
+      `La jeune fille est pétrifiée.
 
 Son souffle est court, ses doigts tremblent sur son bâton, incapable de prononcer la moindre incantation. Ce n’est plus un simple combat. C’est une guerre. Autour d’elle, la marée Sylvinienne s’élance, hurlante, impitoyable, et Hylee reste là, figée, incapable de bouger, de respirer.
 
 Elle ne peut pas.
 
-Son corps refuse. Ses jambes refusent. Son cœur refuse.
-
-Elle n’est pas prête, son traumatisme la ronge, et ne fait que se préserver avec le conflit environnant.
+Son corps refuse. Ses jambes refusent. Son cœur refuse.`,
+      "c17_hylee_figee_3", []), hideChars: true, camera: "approche" },
+    c17_hylee_figee_3: scene("Pétrifiée", BG_PORTE, M_COMBAT, 'Narrateur',
+      `Elle n’est pas prête, son traumatisme la ronge, et ne fait que se préserver avec le conflit environnant.
 
 Remerii veut l’aider, veut lui dire quelque chose, mais avant qu’elle ne puisse réagir, une silhouette s’avance doucement.`,
       "c17_saidin", [hyleeShaken, remerii]),
     c17_saidin: scene("Saidin", BG_PORTE, M_COMBAT, 'Narrateur',
-      `Saidin.
-
-Il marche calmement à travers le chaos naissant, comme si la tempête ne l’atteignait pas. Son regard se pose sur Remerii, puis sur Hylee, et un léger sourire traverse son visage. Il incline la tête légèrement, avant de poser une main réconfortante sur l’épaule de Remerii.
+      `Saidin.`,
+      "c17_saidin_2", [hyleeShaken, saidin, remeriiSad]),
+    c17_saidin_2: { ...scene("Saidin", "c17_cg_s02_19_saidin_releve", M_COMBAT, 'Narrateur',
+      `Il marche calmement à travers le chaos naissant, comme si la tempête ne l’atteignait pas. Son regard se pose sur Remerii, puis sur Hylee, et un léger sourire traverse son visage. Il incline la tête légèrement, avant de poser une main réconfortante sur l’épaule de Remerii.
 
 « Vas-y. Elle sera en sécurité. »
 
 Remerii hésite. Ses yeux oscillent entre son apprentie et son mentor, entre la bataille et son cœur, entre le devoir et l’amour.
 
-« Mais… »
-
-Saidin la coupe d’un simple regard, paisible, assuré, inébranlable.
+« Mais… »`,
+      "c17_saidin_3", []), hideChars: true, camera: "approche" },
+    c17_saidin_3: scene("Saidin", BG_PORTE, M_COMBAT, 'Narrateur',
+      `Saidin la coupe d’un simple regard, paisible, assuré, inébranlable.
 
 « Ce combat est important, tu le sais. Fais ce que tu dois faire. »
 
@@ -313,43 +340,47 @@ Il n’ajoute rien de plus, il n’a pas besoin. Remerii comprend.`,
     c17_je_reviendrai: scene("Je reviendrai", BG_PORTE, M_COMBAT, 'Narrateur',
       `Elle inspire profondément, ferme les yeux un instant, puis se penche sur Hylee. Une dernière fois.
 
-« Je reviendrai. »
-
-Ses lèvres trouvent celles d’Hylee, un baiser volé au tumulte, un serment silencieux échangé sous le ciel déchiré. Elle lui caresse sa joue, dans une promesse muette.
+« Je reviendrai. »`,
+      "c17_je_reviendrai_2", [hyleeShaken, remeriiSoft]),
+    c17_je_reviendrai_2: { ...scene("Je reviendrai", "c17_cg_s02_20_baiser_remerii", M_COMBAT, 'Narrateur',
+      `Ses lèvres trouvent celles d’Hylee, un baiser volé au tumulte, un serment silencieux échangé sous le ciel déchiré. Elle lui caresse sa joue, dans une promesse muette.
 
 Puis elle s’élance.
 
 Elle rejoint la bataille, sans se retourner, laissant Hylee seule.
 
 Non…`,
-      "c17_choix_adieu", [hyleeShaken, remeriiSoft]),
+      "c17_choix_adieu", []), hideChars: true, camera: "approche" },
     c17_bouclier: scene("Le bouclier intemporel", BG_PORTE, M_COMBAT, 'Narrateur',
       `Saidin est là.
 
 Il se place devant elle, légèrement en retrait, comme un gardien invisible, comme un rempart indestructible. Puis, sa main se lève. Une lumière argentée jaillit autour de lui.
 
-Le monde change.
-
-Le temps lui-même semble se plier sous l’invocation. Une sphère d’énergie se déploie, couvrant Hylee, couvrant les soigneurs et les prêtres Sylviniens restés à l’arrière, couvrant même les bannières impériales flottant dans le vent.
+Le monde change.`,
+      "c17_bouclier_2", [hyleeShaken, saidin]),
+    c17_bouclier_2: { ...scene("Le bouclier intemporel", "c17_cg_s02_21_dome_saidin", M_COMBAT, 'Narrateur',
+      `Le temps lui-même semble se plier sous l’invocation. Une sphère d’énergie se déploie, couvrant Hylee, couvrant les soigneurs et les prêtres Sylviniens restés à l’arrière, couvrant même les bannières impériales flottant dans le vent.
 
 Un bouclier intemporel.
 
 Un dôme d’argent, brillant d’une lueur irréelle, hors du temps, hors des lois du monde. Il ne tremble pas. Il ne vacille pas. Il existe. Simplement.`,
-      "c17_choc", [hyleeShaken, saidin]),
+      "c17_choc", []), hideChars: true, camera: "recul" },
     c17_choc: scene("Le combat explose", BG_CHAMP, M_COMBAT, 'Narrateur',
       `Les Sylviniens chargent.
 
-Les Obscurcis avancent.
-
-Le combat explose.
+Les Obscurcis avancent.`,
+      "c17_choc_2", []),
+    c17_choc_2: { ...scene("Le combat explose", "c17_cg_s02_22_premier_choc", M_COMBAT, 'Narrateur',
+      `Le combat explose.
 
 Un fracas assourdissant, un cataclysme de chair, d’acier et de magie. L’onde de choc de l’affrontement traverse la plaine en contrebas du portail démoniaque. Les Sylviniens s’abattent sur les Obscurcis comme une tempête dorée, illuminant la nuit d’éclats tranchants, d’incantations incandescentes, de prières transformées en lames de lumière.
 
 Les Obscurcis ripostent avec une discipline macabre, un ballet d’ombres et de mort, tissant la nécromancie en vagues pernicieuses, appelant les âmes déchues à s’élever une dernière fois pour faucher les vivants.
 
-Magie contre magie.
-
-Acier contre acier.
+Magie contre magie.`,
+      "c17_choc_3", []), hideChars: true, camera: "impact" },
+    c17_choc_3: scene("Le combat explose", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Acier contre acier.
 
 Corps contre corps.
 
@@ -370,40 +401,45 @@ Iriana et Remerii.
 
 Leurs silhouettes dominent le champ de bataille.
 
-La princesse Sylvinienne et une archimage Humaine, unies dans une danse meurtrière d’éléments et de puissance brute.
-
-Iriana invoque les Arcanes dans leur forme la plus pure. Elle canalise l’énergie brute du cosmos, ses mains traçant dans l’air des cercles parfaits, des glyphes pulsant d’une lumière azur. Les forces élémentaires répondent à son appel. Des torrents d’énergies tournoient autour d’elle, ses sorts explosant avec une précision chirurgicale, fauchant les rangs ennemis en une tempête de destruction.
+La princesse Sylvinienne et une archimage Humaine, unies dans une danse meurtrière d’éléments et de puissance brute.`,
+      "c17_tempete_2", [iriana, remerii]),
+    c17_tempete_2: { ...scene("Elles sont la tempête", "c17_cg_s02_23_iriana_glyphes", M_COMBAT, 'Narrateur',
+      `Iriana invoque les Arcanes dans leur forme la plus pure. Elle canalise l’énergie brute du cosmos, ses mains traçant dans l’air des cercles parfaits, des glyphes pulsant d’une lumière azur. Les forces élémentaires répondent à son appel. Des torrents d’énergies tournoient autour d’elle, ses sorts explosant avec une précision chirurgicale, fauchant les rangs ennemis en une tempête de destruction.
 
 Remerii n’est pas en reste.
 
-La Cryomancienne se joint à elle, tissant la glace comme une seconde peau. Ses mains libèrent des rafales tranchantes, projetant des pics gelés qui transpercent les Obscurcis avant de les figer dans une prison de cristal impénétrable. Elle crée des murs de givre pour protéger les siens, bloque les offensives adverses par des boucliers d’une pureté glaciale, transformant la terre en un terrain mortel pour quiconque ose l’approcher. Le sol se glace, la forêt arbore une atmosphère hivernale.
-
-Les deux mages fusionnent leurs pouvoirs.
+La Cryomancienne se joint à elle, tissant la glace comme une seconde peau. Ses mains libèrent des rafales tranchantes, projetant des pics gelés qui transpercent les Obscurcis avant de les figer dans une prison de cristal impénétrable. Elle crée des murs de givre pour protéger les siens, bloque les offensives adverses par des boucliers d’une pureté glaciale, transformant la terre en un terrain mortel pour quiconque ose l’approcher. Le sol se glace, la forêt arbore une atmosphère hivernale.`,
+      "c17_tempete_3", []), hideChars: true, camera: "approche" },
+    c17_tempete_3: { ...scene("Elles sont la tempête", "c17_cg_s02_25_tempete_combinee", M_COMBAT, 'Narrateur',
+      `Les deux mages fusionnent leurs pouvoirs.
 
 Iriana invoque une spirale arcanique, un vortex d’énergie pure, et Remerii, dans un geste fluide, l’enveloppe d’un souffle glacé.
 
 Un ouragan de givre et d’arcane déferle sur les Obscurcis, projetant un maelström de destruction, broyant chair et os dans une explosion iridescente.
 
-Les corps gelés éclatent sous la puissance du sort.
-
-Leurs cris sont étouffés par la glace qui scelle leur fin.
+Les corps gelés éclatent sous la puissance du sort.`,
+      "c17_tempete_4", []), hideChars: true, camera: "impact" },
+    c17_tempete_4: scene("Elles sont la tempête", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Leurs cris sont étouffés par la glace qui scelle leur fin.
 
 Elles sont inarrêtables.
 
 Elles sont la tempête.`,
       "c17_duo", [iriana, remerii]),
     c17_duo: scene("Valurn et Draven", BG_CHAMP, M_COMBAT, 'Narrateur',
-      `Dans l’enfer du champ de bataille, non loin, au milieu des hurlements et des éclats de magie, ce sont deux autres silhouettes qui se détachent.
-
-Valurn et Draven.
+      `Dans l’enfer du champ de bataille, non loin, au milieu des hurlements et des éclats de magie, ce sont deux autres silhouettes qui se détachent.`,
+      "c17_duo_2", [valurnAmused, draven]),
+    c17_duo_2: { ...scene("Valurn et Draven", "c17_cg_s02_26_valurn_draven", M_COMBAT, 'Narrateur',
+      `Valurn et Draven.
 
 L’un déchaîne les flammes du Chaos, l’autre consume sa rage dans le fracas du métal.
 
 Ils n’ont rien en commun. Et pourtant, sur ce champ de mort, ils avancent ensemble.
 
-Valurn se délecte du carnage. Il est un danseur dans ce théâtre infernal, un marionnettiste du brasier. Ses mains dessinent des arcs de feu dans l’air, chaque mouvement déclenche une explosion de flammes corrompues qui consument tout sur leur passage. Des soldats hurlent en s’embrasant, leurs âmes arrachées par la magie impie du demi-démon.
-
-Ses yeux rouges, brûlants de malice, suivent le massacre avec une satisfaction évidente.
+Valurn se délecte du carnage. Il est un danseur dans ce théâtre infernal, un marionnettiste du brasier. Ses mains dessinent des arcs de feu dans l’air, chaque mouvement déclenche une explosion de flammes corrompues qui consument tout sur leur passage. Des soldats hurlent en s’embrasant, leurs âmes arrachées par la magie impie du demi-démon.`,
+      "c17_duo_3", []), hideChars: true, camera: "lateral" },
+    c17_duo_3: scene("Valurn et Draven", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Ses yeux rouges, brûlants de malice, suivent le massacre avec une satisfaction évidente.
 
 « Tant d’efforts pour survivre, et pourtant, ils tombent comme des fétus de paille… fascinant. »
 
@@ -413,10 +449,9 @@ Valurn n’a pas besoin de regarder en arrière. Il sait déjà que Draven est l
 
 Et Draven…
 
-Il ne pense pas, il agit.`,
-      "c17_duo_2", [valurnAmused, draven]),
-    c17_duo_2: scene("Valurn et Draven", BG_CHAMP, M_COMBAT, 'Narrateur',
-      `Son épée fend la chair et l’ombre avec une force implacable. Chaque coup est un hurlement silencieux, une vengeance muette. Il ne tue pas seulement ses ennemis. Il massacre ses regrets, abat ses remords, frappe dans chaque visage l’image de ses hommes tombés.
+Il ne pense pas, il agit.
+
+Son épée fend la chair et l’ombre avec une force implacable. Chaque coup est un hurlement silencieux, une vengeance muette. Il ne tue pas seulement ses ennemis. Il massacre ses regrets, abat ses remords, frappe dans chaque visage l’image de ses hommes tombés.
 
 Mais il n’est pas idiot.
 
@@ -480,24 +515,27 @@ La bataille fait rage.
 
 Les Sylviniens se regroupent, formant un front organisé au cœur du carnage. Les pertes sont lourdes, les corps jonchent le sol, mais l’Empire garde l’avantage. Leur supériorité numérique leur permet de dominer les Obscurcis… pour l’instant.
 
-À l’écart du combat principal, un détachement d’Obscurcis tente de fuir.
-
-Tia, postée en hauteur, observe la scène. Son regard acéré perçoit immédiatement l’évasion et, sans hésiter, elle désigne Iriana.
+À l’écart du combat principal, un détachement d’Obscurcis tente de fuir.`,
+      "c17_fuyards_2", [iriana, remerii]),
+    c17_fuyards_2: { ...scene("Plus loin", "c17_cg_s02_27_tia_poursuite", M_COMBAT, 'Narrateur',
+      `Tia, postée en hauteur, observe la scène. Son regard acéré perçoit immédiatement l’évasion et, sans hésiter, elle désigne Iriana.
 
 « Va les chercher. »
 
 Iriana acquiesce sans un mot et s’élance, accompagnée de Remerii et de plusieurs soldats. Le groupe se lance dans une traque rapide, implacable.
 
-Ils avancent à travers le champ de bataille, dépassent les cendres fumantes laissées par la magie, slaloment entre les cadavres et les ruines de la forêt noire. L’odeur de la mort et de la cendre leur colle à la peau, le sol est souillé par le sang et la corruption.
+Ils avancent à travers le champ de bataille, dépassent les cendres fumantes laissées par la magie, slaloment entre les cadavres et les ruines de la forêt noire. L’odeur de la mort et de la cendre leur colle à la peau, le sol est souillé par le sang et la corruption.`,
+      "c17_fuyards_3", []), hideChars: true, camera: "recul" },
+    c17_fuyards_3: scene("Plus loin", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Puis, enfin, ils les trouvent.
 
-Puis, enfin, ils les trouvent.
-
-Mais un détail vient percuter Iriana… ce ne sont pas juste des soldats, juste des fanatiques du Chaos.
-
-Ce sont aussi des civils.
+Mais un détail vient percuter Iriana… ce ne sont pas juste des soldats, juste des fanatiques du Chaos.`,
+      "c17_fuyards_4", [iriana, remerii]),
+    c17_fuyards_4: { ...scene("Plus loin", "c17_cg_s02_28_civils_allenna", M_COMBAT, 'Narrateur',
+      `Ce sont aussi des civils.
 
 Des femmes, des enfants, des vieillards, un groupe en fuite escorté par une poignée de soldats Obscurcis.`,
-      "c17_allenna", [iriana, remerii]),
+      "c17_allenna", []), hideChars: true, camera: "lateral" },
     c17_allenna: scene("La gamine de la vision", BG_CHAMP, M_TENSION, 'Narrateur',
       `Iriana s’arrête net, sa respiration haletante. Elle ne comprend pas. Que font-ils ici ?
 
@@ -517,29 +555,33 @@ Elle a certes quelques années de plus qu’Iriana, mais pas de beaucoup. Son vi
 
 Et pourtant, malgré cette douceur, il y a autre chose. Un poids. Une cicatrice invisible.
 
-Les épreuves ont gravé leur marque sur elle. Iriana la fixe, son cœur battant plus vite sans qu’elle ne comprenne pourquoi.
-
-Puis, elle la reconnaît.
+Les épreuves ont gravé leur marque sur elle. Iriana la fixe, son cœur battant plus vite sans qu’elle ne comprenne pourquoi.`,
+      "c17_allenna_2", [irianaTroubled]),
+    c17_allenna_2: { ...scene("La gamine de la vision", "c17_cg_s02_29_allenna_reconnue", M_TENSION, 'Narrateur',
+      `Puis, elle la reconnaît.
 
 Cette longue chevelure blanche argentée, ces yeux emplis d’une candeur insoupçonnée sous l’armure et la stature guerrière…
 
 Ce n’est pas qu’une commandante Obscurcis.
 
-C’est elle.
+C’est elle.`,
+      "c17_allenna_3", []), hideChars: true, camera: "approche" },
+    c17_allenna_3: scene("La gamine de la vision", BG_CHAMP, M_TENSION, 'Narrateur',
+      `La gamine de la vision.
 
-La gamine de la vision.
-
-Celle qui était au côté de la reine… cette sombre soirée. Où Al’Gratal brûlait, où Amanea était à deux pas de la mort. Dans cette ruelle obscurcie par les cendres.
-
-Les souvenirs affluent dans son esprit en un instant. Elle revoit la vision, le moment où cette jeune fille s’est mise aux côtés d’Amanea, où elle l’a arrachée à la mort, où elle a fait tout ce qu’elle pouvait pour la maintenir dans ce monde…
+Celle qui était au côté de la reine… cette sombre soirée. Où Al’Gratal brûlait, où Amanea était à deux pas de la mort. Dans cette ruelle obscurcie par les cendres.`,
+      "c17_allenna_4", [irianaTroubled]),
+    c17_allenna_4: { ...scene("La gamine de la vision", "c17_cg_s02_30_vision_ruelle", M_TENSION, 'Narrateur',
+      `Les souvenirs affluent dans son esprit en un instant. Elle revoit la vision, le moment où cette jeune fille s’est mise aux côtés d’Amanea, où elle l’a arrachée à la mort, où elle a fait tout ce qu’elle pouvait pour la maintenir dans ce monde…
 
 Un souffle lui échappe, un murmure à peine audible.
 
 « Allenna… »
 
-Elle l’a dit sans même y penser.
-
-Son corps reste en posture défensive, mais son esprit, lui, vacille.`,
+Elle l’a dit sans même y penser.`,
+      "c17_allenna_5", []), hideChars: true, camera: "recul" },
+    c17_allenna_5: scene("La gamine de la vision", BG_CHAMP, M_TENSION, 'Narrateur',
+      `Son corps reste en posture défensive, mais son esprit, lui, vacille.`,
       "c17_cri_alamma", [irianaTroubled]),
     c17_cri_alamma: scene("Le cri d’Alamma", BG_CHAMP, M_COMBAT, 'Narrateur',
       `Mais… Une détonation secoue l’air.
@@ -554,27 +596,31 @@ Iriana se retourne, le regard écarquillé. Le carnage est en cours. La commanda
 
 Les corps tombent sous les lames purificatrices, fauchés sans distinction, sans pitié. Les Obscurcis, pourtant des vétérans, ne tiennent plus la ligne. Ils ne battent pas en retraite, ils n’ont pas le temps… ils sont broyés.
 
-Et en dernière ligne, Alamma hurle.
-
-« AMANEA ! »
+Et en dernière ligne, Alamma hurle.`,
+      "c17_cri_alamma_2", []),
+    c17_cri_alamma_2: { ...scene("Le cri d’Alamma", "c17_cg_s02_31_alamma_alerte", M_COMBAT, 'Narrateur',
+      `« AMANEA ! »
 
 Sa voix tonitruante résonne sur le champ de bataille, un appel désespéré, un cri d’alarme.
 
 Là-haut, au-dessus du portail infernal, la Reine Noire est en suspens, toujours en train d’incanter.
 
-Mais le cri d’Alamma la perturbe.
-
-Son regard brûlant, concentré sur le rituel, sombre une fraction de seconde dans l’hésitation.
-
-Elle tourne légèrement la tête.
+Mais le cri d’Alamma la perturbe.`,
+      "c17_cri_alamma_3", []), hideChars: true, camera: "impact" },
+    c17_cri_alamma_3: scene("Le cri d’Alamma", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Son regard brûlant, concentré sur le rituel, sombre une fraction de seconde dans l’hésitation.`,
+      "c17_cri_alamma_4", []),
+    c17_cri_alamma_4: { ...scene("Le cri d’Alamma", "c17_cg_s02_32_amanea_doute", M_COMBAT, 'Narrateur',
+      `Elle tourne légèrement la tête.
 
 Et elle voit.
 
 Ses troupes écrasées.
 
-Ses hommes tombant sous la lumière impitoyable des Sylviniens.
-
-Le massacre.`,
+Ses hommes tombant sous la lumière impitoyable des Sylviniens.`,
+      "c17_cri_alamma_5", []), hideChars: true, camera: "approche" },
+    c17_cri_alamma_5: scene("Le cri d’Alamma", BG_CHAMP, M_COMBAT, 'Narrateur',
+      `Le massacre.`,
       "c17_regard_tia", []),
     c17_regard_tia: scene("Leurs yeux se croisent", BG_PORTE, M_AMANEA, 'Narrateur',
       `Son regard suit la marée ennemie, cherchant l’origine de la boucherie, et elle la trouve.
@@ -595,101 +641,117 @@ Mais elle ne bouge pas, elle ne peut pas.
 
 Son plan réclame toute sa concentration. Son bras levé tremble sous l’effort, son énergie alimentant les flammes démoniaques qui s’éveillent autour du passage maudit.
 
-Mais… elle s’éloigne. Elle s’écarte du portail, pour s’approcher du champ de bataille.
-
-Peu à peu, elle avance.
+Mais… elle s’éloigne. Elle s’écarte du portail, pour s’approcher du champ de bataille.`,
+      "c17_regard_tia_2", [amaneaAngry]),
+    c17_regard_tia_2: { ...scene("Leurs yeux se croisent", "c17_cg_s02_33_amanea_avance", M_AMANEA, 'Narrateur',
+      `Peu à peu, elle avance.
 
 Toujours la main tendue vers le portail, toujours son pouvoir maintenant l’incantation…
 
 Mais elle s’approche.
 
-Sa présence pèse. L’air devient lourd. Le sol se fissure sous la pression de son aura.
-
-Amanea est en train de partager son attention.
+Sa présence pèse. L’air devient lourd. Le sol se fissure sous la pression de son aura.`,
+      "c17_regard_tia_3", []), hideChars: true, camera: "approche" },
+    c17_regard_tia_3: { ...scene("Leurs yeux se croisent", "c17_cg_s03_01_main_libre", M_AMANEA, 'Narrateur',
+      `Amanea est en train de partager son attention.
 
 Le portail… et le massacre. Elle ne compte pas laisser les choses continuer ainsi.`,
-      "c17_moisson", [amaneaAngry]),
-    c17_moisson: scene("La moisson des âmes", BG_PORTE, M_HORREUR, 'Narrateur',
-      `Amanea observe le carnage. Ses hommes tombent un à un, ses généraux reculent sous la pression Sylvinienne, le portail tremble sous l’effort qu’elle lui impose. Tout s’effrite. Son peuple est en train de mourir, sacrifié sur l’autel de l’aveuglement Sylvinien. Son regard enflammé se pose sur eux, impitoyable. Tia les mène, l’épée au clair, la lumière de l’Empire irradiant chaque soldat sous son commandement. La fureur monte en elle, une rage contenue depuis trop longtemps. Elle serre le poing, son autre main toujours tendue vers le portail. Elle sait ce qu’il faut faire. Elle n’a pas le choix. Son bras libre se lève lentement, paume ouverte, doigts écartés, une lueur verdâtre jaillit de ses veines, ses craquelures luminescentes s’intensifient. Le silence s’abat brutalement. Une onde glaciale traverse le champ de bataille. Les Sylviniens s’arrêtent. Même la lumière de Tia semble vaciller.
+      "c17_moisson", []), hideChars: true, camera: "approche" },
+    c17_moisson: { ...scene("La moisson des âmes", "c17_cg_s03_02_sylviniens_se_figent", M_HORREUR, 'Narrateur',
+      `Amanea observe le carnage. Ses hommes tombent un à un, ses généraux reculent sous la pression Sylvinienne, le portail tremble sous l’effort qu’elle lui impose. Tout s’effrite. Son peuple est en train de mourir, sacrifié sur l’autel de l’aveuglement Sylvinien. Son regard enflammé se pose sur eux, impitoyable. Tia les mène, l’épée au clair, la lumière de l’Empire irradiant chaque soldat sous son commandement. La fureur monte en elle, une rage contenue depuis trop longtemps. Elle serre le poing, son autre main toujours tendue vers le portail. Elle sait ce qu’il faut faire. Elle n’a pas le choix. Son bras libre se lève lentement, paume ouverte, doigts écartés, une lueur verdâtre jaillit de ses veines, ses craquelures luminescentes s’intensifient. Le silence s’abat brutalement. Une onde glaciale traverse le champ de bataille. Les Sylviniens s’arrêtent. Même la lumière de Tia semble vaciller.`,
+      "c17_moisson_2", []), hideChars: true, camera: "recul" },
+    c17_moisson_2: { ...scene("La moisson des âmes", "c17_cg_s03_03_premier_cri", M_HORREUR, 'Narrateur',
+      `Puis vient le premier cri. Un hurlement d’agonie qui déchire l’air. Un soldat Obscurcis s’effondre, ses yeux se révulsent, sa bouche s’ouvre en un râle muet, son corps se contracte, se tord. Puis un deuxième. Un troisième. Toute une ligne de soldats s’écroule simultanément. Leur peau se flétrit en quelques instants, leurs corps se rétractent comme si quelque chose les aspirait de l’intérieur. Leurs âmes sont arrachées, projetées en un torrent d’énergie verdâtre qui fuse vers elle, puis vers le portail.
 
-Puis vient le premier cri. Un hurlement d’agonie qui déchire l’air. Un soldat Obscurcis s’effondre, ses yeux se révulsent, sa bouche s’ouvre en un râle muet, son corps se contracte, se tord. Puis un deuxième. Un troisième. Toute une ligne de soldats s’écroule simultanément. Leur peau se flétrit en quelques instants, leurs corps se rétractent comme si quelque chose les aspirait de l’intérieur. Leurs âmes sont arrachées, projetées en un torrent d’énergie verdâtre qui fuse vers elle, puis vers le portail.
-
-Mais ça ne s’arrête pas.
-
-Les rangs Sylviniens sont frappés eux aussi. Des chevaliers s’effondrent, la lumière de leur armure se ternit, leur force de vie s’évapore en un instant. Un prêtre tente d’ériger une barrière, mais elle explose en poussière avant même d’être formée. Une capitaine Sylvinienne hurle un ordre, sa voix s’étrangle alors qu’elle tombe à genoux, ses muscles se crispant sous une souffrance invisible. Elle lève la main vers son impératrice… puis s’écroule, les yeux vides.
-
-Partout, ils tombent.`,
-      "c17_vortex", [amaneaAngry]),
+Mais ça ne s’arrête pas.`,
+      "c17_moisson_3", []), hideChars: true, camera: "impact" },
+    c17_moisson_3: { ...scene("La moisson des âmes", "c17_cg_s03_04_la_lumiere_s_eteint", M_HORREUR, 'Narrateur',
+      `Les rangs Sylviniens sont frappés eux aussi. Des chevaliers s’effondrent, la lumière de leur armure se ternit, leur force de vie s’évapore en un instant. Un prêtre tente d’ériger une barrière, mais elle explose en poussière avant même d’être formée. Une capitaine Sylvinienne hurle un ordre, sa voix s’étrangle alors qu’elle tombe à genoux, ses muscles se crispant sous une souffrance invisible. Elle lève la main vers son impératrice… puis s’écroule, les yeux vides.`,
+      "c17_moisson_4", []), hideChars: true, camera: "impact" },
+    c17_moisson_4: { ...scene("La moisson des âmes", "c17_cg_s03_05_les_deux_rangs", M_HORREUR, 'Narrateur',
+      `Partout, ils tombent.`,
+      "c17_vortex", []), hideChars: true, camera: "lateral" },
     c17_vortex: scene("Vous n’auriez pas dû venir ici", BG_PORTE, M_HORREUR, 'Narrateur',
-      `Les mages, les archers, les lanciers, tous ceux trop proches du périmètre d’absorption sont fauchés sans discrimination. Les âmes arrachées créent un véritable vortex spectral, un maelström d’essences hurlantes qui vient nourrir la Reine Noire. Le rayon qu’elle génère contre le portail galvanise le feu sanglant qui s’y propage ; il s’élève, il s’intensifie, danse comme une entité avide d’un appétit insatiable.
-
-Amanea ne cille pas. Elle ne montre ni pitié, ni regret. Ses yeux flamboyants contemplent le massacre qu’elle orchestre sans la moindre hésitation. Son regard rencontre celui de Tia, encore en hauteur, figée par la vision cauchemardesque. Pour la première fois depuis longtemps, l’Impératrice Sylvinienne marque un temps d’arrêt.
-
-Les soldats restants sont pétrifiés par la peur. Certains tentent de reculer, mais leurs jambes tremblent, leurs forces les abandonnent. Ils savent. Si elle voulait, elle pourrait tous les consumer en un instant. Leur fierté, leur foi, leur cause… rien de tout cela ne compte face à l’abîme impie qu’incarne Amanea en cet instant.
-
-L’air devient irrespirable, chargé d’une odeur de soufre et de chair consumée. Les flammes du portail ne sont plus rouges, elles virent au noir, à un violet impossible à définir, brûlant sans chaleur, avalant la lumière même. Le portail tremble, son seuil distordu comme s’il s’apprêtait à déchirer la réalité elle-même.`,
+      `Les mages, les archers, les lanciers, tous ceux trop proches du périmètre d’absorption sont fauchés sans discrimination. Les âmes arrachées créent un véritable vortex spectral, un maelström d’essences hurlantes qui vient nourrir la Reine Noire. Le rayon qu’elle génère contre le portail galvanise le feu sanglant qui s’y propage ; il s’élève, il s’intensifie, danse comme une entité avide d’un appétit insatiable.`,
       "c17_vortex_2", [amaneaTerrifying]),
-    c17_vortex_2: scene("Vous n’auriez pas dû venir ici", BG_PORTE, M_HORREUR, 'Narrateur',
-      `Amanea abaisse enfin sa main. L’énergie absorbée se coupe brusquement. Les corps s’effondrent en un bruit mat, les quelques survivants suffoquent sous l’effroi. Le silence tombe de nouveau.
+    c17_vortex_2: { ...scene("Vous n’auriez pas dû venir ici", "c17_cg_s03_06_tia_suspendue", M_HORREUR, 'Narrateur',
+      `Amanea ne cille pas. Elle ne montre ni pitié, ni regret. Ses yeux flamboyants contemplent le massacre qu’elle orchestre sans la moindre hésitation. Son regard rencontre celui de Tia, encore en hauteur, figée par la vision cauchemardesque. Pour la première fois depuis longtemps, l’Impératrice Sylvinienne marque un temps d’arrêt.
 
-Puis elle parle.
+Les soldats restants sont pétrifiés par la peur. Certains tentent de reculer, mais leurs jambes tremblent, leurs forces les abandonnent. Ils savent. Si elle voulait, elle pourrait tous les consumer en un instant. Leur fierté, leur foi, leur cause… rien de tout cela ne compte face à l’abîme impie qu’incarne Amanea en cet instant.`,
+      "c17_vortex_3", []), hideChars: true, camera: "approche" },
+    c17_vortex_3: { ...scene("Vous n’auriez pas dû venir ici", "c17_cg_s03_07_seuil_violet", M_HORREUR, 'Narrateur',
+      `L’air devient irrespirable, chargé d’une odeur de soufre et de chair consumée. Les flammes du portail ne sont plus rouges, elles virent au noir, à un violet impossible à définir, brûlant sans chaleur, avalant la lumière même. Le portail tremble, son seuil distordu comme s’il s’apprêtait à déchirer la réalité elle-même.
+
+Amanea abaisse enfin sa main. L’énergie absorbée se coupe brusquement. Les corps s’effondrent en un bruit mat, les quelques survivants suffoquent sous l’effroi. Le silence tombe de nouveau.`,
+      "c17_vortex_4", []), hideChars: true, camera: "recul" },
+    c17_vortex_4: { ...scene("Vous n’auriez pas dû venir ici", "c17_cg_s03_08_la_menace", M_HORREUR, 'Narrateur',
+      `Puis elle parle.
 
 Sa voix traverse la distance, résonne sur le champ de bataille comme un glas funèbre, d’un ton inhumain :
 
 « Vous n’auriez pas dû venir ici. »
 
-Un murmure de panique se répand parmi les Sylviniens. Certains hésitent, doutent. Ils ne sont pas face à une bataille… mais face à une force qu’ils ne peuvent pas comprendre.
-
-Et là, seulement là, Amanea esquisse un sourire.
+Un murmure de panique se répand parmi les Sylviniens. Certains hésitent, doutent. Ils ne sont pas face à une bataille… mais face à une force qu’ils ne peuvent pas comprendre.`,
+      "c17_vortex_5", []), hideChars: true, camera: "approche" },
+    c17_vortex_5: { ...scene("Vous n’auriez pas dû venir ici", "c17_cg_s03_09_sourire_sans_joie", M_HORREUR, 'Narrateur',
+      `Et là, seulement là, Amanea esquisse un sourire.
 
 Un sourire sans joie. Un sourire de résignation. Une décision est prise.`,
-      "c17_sacrifiable", [amaneaTerrifying]),
+      "c17_sacrifiable", []), hideChars: true, camera: "approche" },
     c17_sacrifiable: scene("Sacrifiables", BG_PORTE, M_HORREUR, 'Narrateur',
-      `« Sacrifiable… vous êtes tous sacrifiables ! »
-
-Sa voix claque dans l’air, déformée par la puissance qui pulse à travers son être. Le drain d’âmes reprend, il ne faiblit pas, il s’accélère. Une brume verte tapisse le champ de bataille, s’insinuant dans chaque crevasse, chaque recoin, aspirant l’essence vitale des vivants comme des mourants. Les âmes hurlent en silence, arrachées avec une brutalité indescriptible, leurs filaments translucides tordus dans des spasmes d’agonie alors qu’ils rejoignent le vortex infernal.
+      `« Sacrifiable… vous êtes tous sacrifiables ! »`,
+      "c17_sacrifiable_2", [amaneaTerrifying]),
+    c17_sacrifiable_2: { ...scene("Sacrifiables", "c17_cg_s03_10_brume_verte", M_HORREUR, 'Narrateur',
+      `Sa voix claque dans l’air, déformée par la puissance qui pulse à travers son être. Le drain d’âmes reprend, il ne faiblit pas, il s’accélère. Une brume verte tapisse le champ de bataille, s’insinuant dans chaque crevasse, chaque recoin, aspirant l’essence vitale des vivants comme des mourants. Les âmes hurlent en silence, arrachées avec une brutalité indescriptible, leurs filaments translucides tordus dans des spasmes d’agonie alors qu’ils rejoignent le vortex infernal.
 
 Amanea ne vacille pas.
 
 Elle consomme tout.
 
-Obscurcis comme Sylviniens, peu importe. Son regard ne fait aucune distinction. Il n’y a plus d’alliés, plus d’ennemis. Seulement elle.
-
-Et alors, son corps change…`,
-      "c17_metamorphose", [amaneaTerrifying]),
+Obscurcis comme Sylviniens, peu importe. Son regard ne fait aucune distinction. Il n’y a plus d’alliés, plus d’ennemis. Seulement elle.`,
+      "c17_sacrifiable_3", []), hideChars: true, camera: "lateral" },
+    c17_sacrifiable_3: { ...scene("Sacrifiables", "c17_cg_s03_11_fissures", M_HORREUR, 'Narrateur',
+      `Et alors, son corps change…`,
+      "c17_metamorphose", []), hideChars: true, camera: "approche" },
     c17_metamorphose: scene("La métamorphose", BG_PORTE, M_HORREUR, 'Narrateur',
       `Les craquelures sur sa peau se fissurent davantage, leurs lueurs verdâtres s’intensifient, entrecoupées d’éclats rougeoyants comme une lave sous pression. Son souffle est court, ses mains tremblent, mais ce n’est pas la fatigue. C’est l’excès d’énergie.
 
-Son torse se cambre sous l’impact d’un battement sourd. Un battement qui n’a rien d’humain. Son cœur semble prêt à exploser, envoyant des ondes de lumière corrompue à travers sa chair, déformant sa silhouette sous la puissance démesurée.
+Son torse se cambre sous l’impact d’un battement sourd. Un battement qui n’a rien d’humain. Son cœur semble prêt à exploser, envoyant des ondes de lumière corrompue à travers sa chair, déformant sa silhouette sous la puissance démesurée.`,
+      "c17_metamorphose_2", []),
+    c17_metamorphose_2: { ...scene("La métamorphose", "c17_cg_s03_12_serres_et_sabots", M_HORREUR, 'Narrateur',
+      `Ses doigts s’allongent, ses ongles deviennent des serres tranchantes. Ses jambes se plient différemment, ses pieds disparaissent… remplacés par des sabots cloutés. Une onde de choc pulvérise le sol autour d’elle, fissurant la pierre, projetant poussière et débris en tous sens.`,
+      "c17_metamorphose_3", []), hideChars: true, camera: "approche" },
+    c17_metamorphose_3: { ...scene("La métamorphose", "c17_cg_s03_13_ailes_surgissent", M_HORREUR, 'Narrateur',
+      `Des ailes surgissent.
 
-Ses doigts s’allongent, ses ongles deviennent des serres tranchantes. Ses jambes se plient différemment, ses pieds disparaissent… remplacés par des sabots cloutés. Une onde de choc pulvérise le sol autour d’elle, fissurant la pierre, projetant poussière et débris en tous sens.
-
-Des ailes surgissent.
-
-Elles s’étendent dans un claquement sinistre, déployant leur envergure colossale. Noires, membraneuses, parcourues d’éclairs verts et pourpres, elles tremblent sous la charge d’énergie maléfique.
-
-Sa chevelure s’élève autour d’elle, flottant comme des serpents d’ombres, et enfin… ses cornes grandissent.
+Elles s’étendent dans un claquement sinistre, déployant leur envergure colossale. Noires, membraneuses, parcourues d’éclairs verts et pourpres, elles tremblent sous la charge d’énergie maléfique.`,
+      "c17_metamorphose_4", []), hideChars: true, camera: "impact" },
+    c17_metamorphose_4: { ...scene("La métamorphose", "c17_cg_s03_14_cornes_et_rire", M_HORREUR, 'Narrateur',
+      `Sa chevelure s’élève autour d’elle, flottant comme des serpents d’ombres, et enfin… ses cornes grandissent.
 
 Des cornes de bouc, imposantes, tordues vers l’arrière, encadrant son visage dont les traits s’affinent en une beauté cruelle. Son regard, jadis flamme vive, est un brasier inextinguible, un gouffre incandescent où danse le feu des enfers.
 
 Et pourtant, elle ne hurle pas.
 
-Elle rit.
-
-Un rire glacial, inhumain. Un rire qui broie l’espoir et impose une certaine folie.`,
+Elle rit.`,
+      "c17_metamorphose_5", []), hideChars: true, camera: "approche" },
+    c17_metamorphose_5: scene("La métamorphose", BG_PORTE, M_HORREUR, 'Narrateur',
+      `Un rire glacial, inhumain. Un rire qui broie l’espoir et impose une certaine folie.`,
       "c17_va", []),
     c17_va: scene("Va.", BG_CHAMP, M_HORREUR, 'Narrateur',
-      `Dans cette atmosphère de chaos, les cris, les flammes, les ombres dévorantes, tout se mélange en une scène apocalyptique. Le ciel lui-même semble s’ouvrir, les nuages s’écartent dans une spirale infernale où les lueurs écarlates du portail se reflètent sur la canopée en cendres de la Forêt Interdite.
-
-Draven et Valurn, couverts de suie et de sang, lèvent la tête.
+      `Dans cette atmosphère de chaos, les cris, les flammes, les ombres dévorantes, tout se mélange en une scène apocalyptique. Le ciel lui-même semble s’ouvrir, les nuages s’écartent dans une spirale infernale où les lueurs écarlates du portail se reflètent sur la canopée en cendres de la Forêt Interdite.`,
+      "c17_va_2", [dravenSoot, valurn]),
+    c17_va_2: { ...scene("Va.", "c17_cg_s03_15_draven_valurn", M_HORREUR, 'Narrateur',
+      `Draven et Valurn, couverts de suie et de sang, lèvent la tête.
 
 Ils voient l’horreur personnifiée.
 
 Amanea, ou ce qu’elle est devenue, se tient là, dans toute sa monstruosité. La fin d’une ère incarnée dans un seul corps.
 
-Draven serre la mâchoire.
-
-Il sait. Il sait que c’est terminé. Que plus rien ne peut arrêter ce qui se prépare.
+Draven serre la mâchoire.`,
+      "c17_va_3", []), hideChars: true, camera: "lateral" },
+    c17_va_3: scene("Va.", BG_CHAMP, M_HORREUR, 'Narrateur',
+      `Il sait. Il sait que c’est terminé. Que plus rien ne peut arrêter ce qui se prépare.
 
 Mais il refuse de rester là, spectateur d’un monde qui s’effondre.
 
@@ -722,10 +784,11 @@ Le ciel saigne.
 
 Le portail claque, surcharge d’énergie maléfique.
 
-Les flammes de la forêt hurlent, embrassant l’horizon dans une éruption de cendres et de braises.
-
-Ces terres s’apparentent plus à un enfer que les Calciterres eux-mêmes. L’Amiral lève son épée, regardant son reflet dans l’acier de sa lame. Il lit sa fatigue… cette guerre doit prendre fin. Il doit retourner à Forthaven… pour enterrer ses morts, pour sa femme, pour sa fille.`,
-      "c17_abomination", [dravenSoot]),
+Les flammes de la forêt hurlent, embrassant l’horizon dans une éruption de cendres et de braises.`,
+      "c17_dernier_carre_2", [dravenSoot]),
+    c17_dernier_carre_2: { ...scene("Le dernier carré", "c17_cg_s03_16_reflet_draven", M_HORREUR, 'Narrateur',
+      `Ces terres s’apparentent plus à un enfer que les Calciterres eux-mêmes. L’Amiral lève son épée, regardant son reflet dans l’acier de sa lame. Il lit sa fatigue… cette guerre doit prendre fin. Il doit retourner à Forthaven… pour enterrer ses morts, pour sa femme, pour sa fille.`,
+      "c17_abomination", []), hideChars: true, camera: "impact" },
     c17_abomination: scene("Pourquoi…", BG_CHAMP, M_HORREUR, 'Narrateur',
       `Iriana au loin, fixe la scène avec horreur. Elle voit les Sylviniens, ses propres compatriotes, tenter l’impossible. Mais il n’y a plus de guerre entre eux et les Obscurcis. Il n’y a plus que la guerre contre Amanea. Un monstre. Une abomination de chair et de magie, déformée par l’énergie impie qui pulse en elle. Chaque cri arraché au champ de bataille vient nourrir sa puissance, chaque âme aspirée renforce sa métamorphose.
 
@@ -737,17 +800,19 @@ Les Sylviniens tombent sous son courroux. Les prêtres, les mages, les chevalier
 
 Elle n’est plus Amanea.
 
-Elle est l’avatar d’un pouvoir ancien, un gouffre sans fond qui dévore tout. Pourtant, malgré cette furie dévastatrice, elle ne perd pas de vue le portail.
-
-Le rayon ne sort plus de sa paume. Non. Il sort de son dos.
+Elle est l’avatar d’un pouvoir ancien, un gouffre sans fond qui dévore tout. Pourtant, malgré cette furie dévastatrice, elle ne perd pas de vue le portail.`,
+      "c17_abomination_2", [irianaTroubled]),
+    c17_abomination_2: { ...scene("Pourquoi…", "c17_cg_s03_17_forme_finale", M_HORREUR, 'Narrateur',
+      `Le rayon ne sort plus de sa paume. Non. Il sort de son dos.
 
 Comme si cette chose qu’elle est devenue n’existait plus que pour ça. Ouvrir le passage. Déchirer la réalité. Appeler ce qui se cache derrière.
 
 Iriana sent son sang se figer dans ses veines. Elle comprend l’ampleur du désastre. La femme qu’elle a connue n’est plus. Elle ne sera plus jamais.
 
-Elle murmure, incapable de s’en empêcher, ses pensées lui échappant dans un souffle horrifié.
-
-« Pourquoi… »
+Elle murmure, incapable de s’en empêcher, ses pensées lui échappant dans un souffle horrifié.`,
+      "c17_abomination_3", []), hideChars: true, camera: "recul" },
+    c17_abomination_3: scene("Pourquoi…", BG_CHAMP, M_HORREUR, 'Narrateur',
+      `« Pourquoi… »
 
 Ses yeux restent fixés sur l’apocalypse en marche.
 
@@ -766,17 +831,19 @@ Iriana sent son cœur manquer un battement. La confusion se mêle à l’horreur
 
 « Tu n’as rien compris, Sylvinienne. »
 
-La voix d’Allenna est tranchante, inflexible. Elle n’a pas le temps pour les doutes d’Iriana, pas le temps pour les hésitations. Le combat fait rage. Amanea grandit en puissance, son corps se brise, se reconstruit, se tord sous l’afflux d’énergie. Mais ce qu’Allenna dit ensuite anéantit les certitudes d’Iriana.
-
-« Elle ne cherche pas à ouvrir ce portail. Elle cherche à le fermer. »
+La voix d’Allenna est tranchante, inflexible. Elle n’a pas le temps pour les doutes d’Iriana, pas le temps pour les hésitations. Le combat fait rage. Amanea grandit en puissance, son corps se brise, se reconstruit, se tord sous l’afflux d’énergie. Mais ce qu’Allenna dit ensuite anéantit les certitudes d’Iriana.`,
+      "c17_fermer_2", [irianaTroubled, remerii]),
+    c17_fermer_2: { ...scene("L’ouvrir ?", "c17_cg_s03_18_revelation_allenna", M_TENSION, 'Narrateur',
+      `« Elle ne cherche pas à ouvrir ce portail. Elle cherche à le fermer. »
 
 Le sang d’Iriana se glace, dans un choc violent, comme si on venait de lui donner un coup dans la poitrine. Ses pensées s’entrechoquent, le puzzle s’effondre et se recompose dans une nouvelle perspective.
 
 « Impossible… » murmure-t-elle.
 
-Elle veut rejeter cette idée, refuser d’y croire. C’est absurde. C’est impensable.
-
-Remerii, restée en retrait, fixe l’Obscurcis avec un mélange d’incrédulité et de mépris.
+Elle veut rejeter cette idée, refuser d’y croire. C’est absurde. C’est impensable.`,
+      "c17_fermer_3", []), hideChars: true, camera: "approche" },
+    c17_fermer_3: scene("L’ouvrir ?", BG_CHAMP, M_TENSION, 'Narrateur',
+      `Remerii, restée en retrait, fixe l’Obscurcis avec un mélange d’incrédulité et de mépris.
 
 « Elle a massacré les siens. Elle a arraché des âmes, elle s’est transformée en monstre ! »
 
@@ -848,17 +915,19 @@ Les cris du champ de bataille s’éloignent.
 
 Iriana voit les visages des Obscurcis loyalistes.
 
-Des visages jeunes, abîmés par la guerre, certains effrayés, d’autres résolus. Des civils. Des survivants. Des âmes condamnées par une guerre qui n’aurait jamais dû exister.
-
-Remerii attend.
+Des visages jeunes, abîmés par la guerre, certains effrayés, d’autres résolus. Des civils. Des survivants. Des âmes condamnées par une guerre qui n’aurait jamais dû exister.`,
+      "c17_signal_2", [iriana, remerii]),
+    c17_signal_2: { ...scene("Un ordre muet", "c17_cg_s03_19_remerii_attend", M_TENSION, 'Narrateur',
+      `Remerii attend.
 
 Aux aguets, ses yeux fixent Iriana, la glace recouvrant ses mains, prête à frapper.
 
 Les quelques Sylviniens autour d’elle se tiennent sur le qui-vive, crispés, nerfs tendus.
 
-Ils n’attendent qu’un mot.
-
-Un signal.
+Ils n’attendent qu’un mot.`,
+      "c17_signal_3", []), hideChars: true, camera: "lateral" },
+    c17_signal_3: scene("Un ordre muet", BG_CHAMP, M_TENSION, 'Narrateur',
+      `Un signal.
 
 Un ordre.
 
@@ -872,14 +941,15 @@ Cette femme qu’elle a vue, dans un souvenir brisé du passé, sauver Amanea.
 
 Son cœur bat à tout rompre. Elle n’est pas mauvaise, et ce qu’elle entreprend aujourd’hui le prouve encore.
 
-Son choix est pris. Elle relève doucement le menton, son regard se durcit.
-
-Puis, dans un mouvement à peine perceptible, elle incline légèrement la tête.
+Son choix est pris. Elle relève doucement le menton, son regard se durcit.`,
+      "c17_signal_4", [iriana, remerii]),
+    c17_signal_4: { ...scene("Un ordre muet", "c17_cg_s03_20_ordre_muet", M_TENSION, 'Narrateur',
+      `Puis, dans un mouvement à peine perceptible, elle incline légèrement la tête.
 
 Un signal.
 
 Un ordre muet.`,
-      "c17_loyalistes", [iriana, remerii]),
+      "c17_loyalistes", []), hideChars: true, camera: "approche" },
     c17_loyalistes: scene("Une nouvelle mission", BG_CHAMP, M_TENSION, 'Narrateur',
       `Allenna comprend immédiatement.
 
@@ -918,26 +988,28 @@ Une dernière incantation, un dernier sacrifice.
 
 Elle lève ses mains griffues, son corps irradiant une lueur macabre. Le sol tremble. Un souffle glacé parcourt le champ de bataille, s’immisce dans chaque fissure, chaque crevasse, chaque plaie béante.
 
-Et alors, l’impensable se produit.
-
-Une brume noire, dense et viciée, s’élève du sol.`,
+Et alors, l’impensable se produit.`,
       "c17_releves_2", []),
-    c17_releves_2: scene("Les morts se relèvent", BG_CHAMP, M_HORREUR, 'Narrateur',
-      `Elle s’étire, rampe, se tord comme une entité vivante, s’insinuant entre les cadavres qui jonchent le sol, se faufilant dans les chairs en décomposition, s’infiltrant dans les orbites vides, se mêlant aux os brisés et aux viscères éventrées.
+    c17_releves_2: { ...scene("Les morts se relèvent", "c17_cg_s03_21_brume_noire", M_HORREUR, 'Narrateur',
+      `Une brume noire, dense et viciée, s’élève du sol.
+
+Elle s’étire, rampe, se tord comme une entité vivante, s’insinuant entre les cadavres qui jonchent le sol, se faufilant dans les chairs en décomposition, s’infiltrant dans les orbites vides, se mêlant aux os brisés et aux viscères éventrées.
 
 Un râle sourd envahit l’air.
 
-Un frisson parcourt les survivants.
-
-Et puis, ce sont les morts qui se relèvent.
+Un frisson parcourt les survivants.`,
+      "c17_releves_3", []), hideChars: true, camera: "lateral" },
+    c17_releves_3: { ...scene("Les morts se relèvent", "c17_cg_s03_22_les_morts_se_relevent", M_HORREUR, 'Narrateur',
+      `Et puis, ce sont les morts qui se relèvent.
 
 Un à un.
 
 Lentement.
 
-Dans une démarche disloquée, avec des mouvements grotesques et brisés, comme des marionnettes dont les fils auraient été ravivés par une force impie.
-
-Mais ce ne sont pas seulement des cadavres ranimés.
+Dans une démarche disloquée, avec des mouvements grotesques et brisés, comme des marionnettes dont les fils auraient été ravivés par une force impie.`,
+      "c17_releves_4", []), hideChars: true, camera: "impact" },
+    c17_releves_4: scene("Les morts se relèvent", BG_CHAMP, M_HORREUR, 'Narrateur',
+      `Mais ce ne sont pas seulement des cadavres ranimés.
 
 Non.
 
@@ -962,17 +1034,19 @@ Son combat atteint son paroxysme, un affrontement titanesque entre sa volonté e
     c17_lutte: scene("La lutte contre le portail", BG_PORTE, M_AMANEA, 'Narrateur',
       `Son corps n’est plus qu’un champ de bataille à lui seul, un brasier incandescent de puissance trop grande, trop brute, une force qui la consume autant qu’elle consume le monde autour d’elle. Le portail ne cède pas. Il résiste. Il ne ploie pas sous l’assaut, il le confronte.
 
-D’abord, ce n’était qu’une lutte. Elle canalisait, elle maîtrisait, elle dirigeait l’afflux d’énergie, mais quelque chose a basculé.
-
-L’échange s’est inversé.
+D’abord, ce n’était qu’une lutte. Elle canalisait, elle maîtrisait, elle dirigeait l’afflux d’énergie, mais quelque chose a basculé.`,
+      "c17_lutte_2", []),
+    c17_lutte_2: { ...scene("La lutte contre le portail", "c17_cg_s03_23_portail_resiste", M_AMANEA, 'Narrateur',
+      `L’échange s’est inversé.
 
 Le portail n’est plus qu’un gouffre béant, un monstre silencieux qui, dans son absence de conscience, dans son absence de volonté propre, déchire Amanea de l’intérieur.
 
 Elle s’entête, elle s’accroche.
 
-Elle n’a pas peur de la douleur.
-
-Elle n’a pas peur des sacrifices.
+Elle n’a pas peur de la douleur.`,
+      "c17_lutte_3", []), hideChars: true, camera: "impact" },
+    c17_lutte_3: scene("La lutte contre le portail", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Elle n’a pas peur des sacrifices.
 
 Mais ce n’est plus seulement son corps qui paye.
 
@@ -982,38 +1056,41 @@ Un vertige monstrueux la traverse, une dissonance, une fracture, un éclatement 
 
 Tout devient indistinct.
 
-Elle entend des voix qui n’existent pas. Des murmures, des cris, des souvenirs qui ne sont pas les siens.
-
-Elle voit son reflet… mais ce n’est plus elle.
+Elle entend des voix qui n’existent pas. Des murmures, des cris, des souvenirs qui ne sont pas les siens.`,
+      "c17_lutte_4", []),
+    c17_lutte_4: { ...scene("La lutte contre le portail", "c17_cg_s03_24_reflet_amanea", M_AMANEA, 'Narrateur',
+      `Elle voit son reflet… mais ce n’est plus elle.
 
 Elle voit l’ombre d’une Amanea qui n’a jamais existé.
 
 Une Amanea faible, humiliée, déchirée, effacée, insignifiante.
 
-Elle cligne des yeux. Elle est encore là, elle est encore elle-même. Mais pour combien de temps ?
+Elle cligne des yeux. Elle est encore là, elle est encore elle-même. Mais pour combien de temps ?`,
+      "c17_lutte_5", []), hideChars: true, camera: "approche" },
+    c17_lutte_5: scene("La lutte contre le portail", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Le portail ne se contente plus d’absorber sa force vitale.
 
-Le portail ne se contente plus d’absorber sa force vitale.
+Il l’arrache. Il la broie. Il l’annihile.
 
-Il l’arrache. Il la broie. Il l’annihile.`,
-      "c17_lutte_2", []),
-    c17_lutte_2: scene("La lutte contre le portail", BG_PORTE, M_AMANEA, 'Narrateur',
-      `Et pourtant, elle se tient encore. Son dos se voûte sous la pression, son corps tremble, son souffle est une tempête rauque et déchirée.
+Et pourtant, elle se tient encore. Son dos se voûte sous la pression, son corps tremble, son souffle est une tempête rauque et déchirée.
 
 Les flammes courent sous sa peau, ses veines s’ouvrent sous la puissance qui s’échappe en gerbes écarlates.
 
 Mais elle n’abandonne pas. Elle ne veut pas. Elle ne peut pas. Son rayon s’intensifie, sa haine se fait incandescente.
 
-Elle brise le ciel de ses hurlements, déchire la terre sous son pouvoir, fait plier l’horreur qui se dresse devant elle. Puis… le portail vacille.
-
-Un premier éclat de pierre se brise.
+Elle brise le ciel de ses hurlements, déchire la terre sous son pouvoir, fait plier l’horreur qui se dresse devant elle. Puis… le portail vacille.`,
+      "c17_lutte_6", []),
+    c17_lutte_6: { ...scene("La lutte contre le portail", "c17_cg_s03_25_pierres_se_brise", M_AMANEA, 'Narrateur',
+      `Un premier éclat de pierre se brise.
 
 Puis un autre.
 
 Puis encore un autre.
 
-Elle sent sa victoire se profiler à l’horizon, mais à quel prix ?
-
-Son âme se disloque. Sa conscience s’efface.
+Elle sent sa victoire se profiler à l’horizon, mais à quel prix ?`,
+      "c17_lutte_7", []), hideChars: true, camera: "impact" },
+    c17_lutte_7: scene("La lutte contre le portail", BG_PORTE, M_AMANEA, 'Narrateur',
+      `Son âme se disloque. Sa conscience s’efface.
 
 Elle n’est plus qu’une entité enragée, une force qui combat l’inévitable, qui lutte contre un gouffre qui la dévore, mais elle ne s’arrêtera pas.
 
@@ -1025,24 +1102,26 @@ Elle est celle qui combat les ténèbres…
 
 Elle est seule, mais inéluctable.`,
       "c17_valurn_surgit", []),
-    c17_valurn_surgit: scene("Un ultime obstacle", BG_PORTE, M_DUEL, 'Narrateur',
+    c17_valurn_surgit: { ...scene("Un ultime obstacle", "c17_cg_s03_26_rayon_coupe", M_DUEL, 'Narrateur',
       `Mais soudainement, le rayon d’énergie infernale qui jaillissait de son dos s’éteint brutalement. L’interruption est presque brutale, comme si une chaîne s’était brisée, comme si le fil ténu qui retenait encore Amanea entre l’ordre et le chaos venait de céder.
 
 Le portail frémit.
 
 Privé du flot d’énergie qui l’étouffait, il se stabilise, des lignes de runes ardentes pulsent à nouveau, réclamant leur dû.
 
-Mais Amanea n’a plus le luxe d’y penser.
-
-Un nouvel ennemi se dresse devant elle.
+Mais Amanea n’a plus le luxe d’y penser.`,
+      "c17_valurn_surgit_2", []), hideChars: true, camera: "recul" },
+    c17_valurn_surgit_2: { ...scene("Un ultime obstacle", "c17_cg_s03_27_valurn_raccord", M_DUEL, 'Narrateur',
+      `Un nouvel ennemi se dresse devant elle.
 
 Il est là, détendu, presque nonchalant, mais elle sait.
 
 Elle le voit.
 
-Elle sent la menace, une présence aussi brûlante que glaciale, aussi ironique que cruelle.
-
-Valurn.
+Elle sent la menace, une présence aussi brûlante que glaciale, aussi ironique que cruelle.`,
+      "c17_valurn_surgit_3", []), hideChars: true, camera: "approche" },
+    c17_valurn_surgit_3: scene("Un ultime obstacle", BG_PORTE, M_DUEL, 'Narrateur',
+      `Valurn.
 
 Un ultime assaillant.
 
@@ -1062,139 +1141,157 @@ Quelque chose chez lui lui semble… familier.
 
 Alors, dans un souffle rauque, elle murmure, presque méprisante :`,
       "c17_son_fils", [valurn]),
-    c17_son_fils: scene("Tu es son fils ?", BG_PORTE, M_DUEL, 'Narrateur',
+    c17_son_fils: { ...scene("Tu es son fils ?", "c17_cg_s04_01_heritage", M_DUEL, 'Narrateur',
       `« Toi ? Tu es son fils ? »
 
 Elle voit ses traits, elle voit ses yeux, elle voit dans sa chair l’héritage qu’il porte. Et Valurn, fidèle à lui-même, ne se trouble pas.
 
 Il sourit.
 
-Un sourire arrogant, un sourire moqueur, un sourire cynique.
-
-Il s’amuse.
-
-Il s’incline légèrement, avec une grâce parfaitement feinte, et répond d’une voix sucrée de sarcasme :
+Un sourire arrogant, un sourire moqueur, un sourire cynique.`,
+      "c17_son_fils_2", []), hideChars: true, camera: "approche" },
+    c17_son_fils_2: scene("Tu es son fils ?", BG_PORTE, M_DUEL, 'Narrateur',
+      `Il s’amuse.`,
+      "c17_son_fils_3", [valurnAmused]),
+    c17_son_fils_3: { ...scene("Tu es son fils ?", "c17_cg_s04_02_salut_valurn", M_DUEL, 'Narrateur',
+      `Il s’incline légèrement, avec une grâce parfaitement feinte, et répond d’une voix sucrée de sarcasme :
 
 « Bien vu, très chère. »
 
-Puis, il relève les yeux, et cette fois, il n’y a plus de jeu.
-
-Ses pupilles s’embrasent, rouge sang, rouge carnage, rouge damnation.
+Puis, il relève les yeux, et cette fois, il n’y a plus de jeu.`,
+      "c17_son_fils_4", []), hideChars: true, camera: "approche" },
+    c17_son_fils_4: { ...scene("Tu es son fils ?", "c17_cg_s04_03_yeux_ecarlates", M_DUEL, 'Narrateur',
+      `Ses pupilles s’embrasent, rouge sang, rouge carnage, rouge damnation.
 
 « Et tu es la dernière barrière à son plan. »
 
-Un claquement de doigts.
-
-Une explosion de flammes noires jaillit de ses paumes. Les ténèbres s’éveillent et ne laissent place à aucun moment de répit.
+Un claquement de doigts.`,
+      "c17_son_fils_5", []), hideChars: true, camera: "approche" },
+    c17_son_fils_5: { ...scene("Tu es son fils ?", "c17_cg_s04_04_flammes_noires", M_DUEL, 'Narrateur',
+      `Une explosion de flammes noires jaillit de ses paumes. Les ténèbres s’éveillent et ne laissent place à aucun moment de répit.
 
 Le Chaos danse. Il est là pour l’arrêter. Et Amanea, face au danger incarné, cesse de se contenir. Son corps cède à l’impulsion meurtrière.
 
 Il faut le tuer.
 
-Vite.
-
-Le portail ne lui laisse pas le temps.`,
+Vite.`,
+      "c17_son_fils_6", []), hideChars: true, camera: "impact" },
+    c17_son_fils_6: scene("Tu es son fils ?", BG_PORTE, M_DUEL, 'Narrateur',
+      `Le portail ne lui laisse pas le temps.`,
       "c17_duel_intro", [valurnAmused]),
     c17_mur_de_feu: scene("Le mur de feu", BG_PORTE, M_DUEL, 'Narrateur',
-      `Les flammes noires de Valurn explosent dans l’air, traçant une arcane de pure destruction à travers le champ de bataille ravagé. Amanea se projette en arrière, son corps meurtri réagissant à peine à la douleur. Son regard flamboyant est rivé sur lui, et son expression trahit une fatigue surnaturelle, un épuisement plus spirituel que physique. Pourtant, son instinct lui hurle de se battre.
-
-Un mur de feu s’élève entre eux.`,
-      "c17_m1_lecture", [valurn]),
+      `Les flammes noires de Valurn explosent dans l’air, traçant une arcane de pure destruction à travers le champ de bataille ravagé. Amanea se projette en arrière, son corps meurtri réagissant à peine à la douleur. Son regard flamboyant est rivé sur lui, et son expression trahit une fatigue surnaturelle, un épuisement plus spirituel que physique. Pourtant, son instinct lui hurle de se battre.`,
+      "c17_mur_de_feu_2", [valurn]),
+    c17_mur_de_feu_2: { ...scene("Le mur de feu", "c17_cg_s04_05_mur_de_feu", M_DUEL, 'Narrateur',
+      `Un mur de feu s’élève entre eux.`,
+      "c17_m1_lecture", []), hideChars: true, camera: "impact" },
     c17_tu_sais: scene("Tu sais.", BG_PORTE, M_DUEL, 'Narrateur',
       `Valurn le traverse, sa silhouette s’effaçant dans les cendres, réapparaissant sur le flanc d’Amanea avec une vélocité presque surnaturelle. Sa lame s’abat.
 
 Un choc.
 
-Une onde de choc démoniaque fait trembler la terre sous leurs pieds, repoussant les morts et les vivants encore debout.
+Une onde de choc démoniaque fait trembler la terre sous leurs pieds, repoussant les morts et les vivants encore debout.`,
+      "c17_tu_sais_2", [valurnAmused]),
+    c17_tu_sais_2: { ...scene("Tu sais.", "c17_cg_s04_07_valurn_se_retablit", M_DUEL, 'Narrateur',
+      `Amanea pare du revers de sa griffe monstrueuse, projetant Valurn à plusieurs mètres d’un simple revers. Mais il ne chute pas, il tourne sur lui-même, se rétablit dans un éclat de flammes du Chaos, et riposte avec une sphère entropique qui file vers elle comme une comète hurlante.
 
-Amanea pare du revers de sa griffe monstrueuse, projetant Valurn à plusieurs mètres d’un simple revers. Mais il ne chute pas, il tourne sur lui-même, se rétablit dans un éclat de flammes du Chaos, et riposte avec une sphère entropique qui file vers elle comme une comète hurlante.
+Impact.`,
+      "c17_tu_sais_3", []), hideChars: true, camera: "impact" },
+    c17_tu_sais_3: { ...scene("Tu sais.", "c17_cg_s04_08_impact_entropique", M_DUEL, 'Narrateur',
+      `Le sol se désintègre.
 
-Impact.
-
-Le sol se désintègre.
-
-La pierre se fracture, la terre se corrompt, la Forêt Interdite hurle.
-
-Mais quand la fumée se dissipe, Amanea est toujours debout, immobile, intacte.
+La pierre se fracture, la terre se corrompt, la Forêt Interdite hurle.`,
+      "c17_tu_sais_4", []), hideChars: true, camera: "impact" },
+    c17_tu_sais_4: { ...scene("Tu sais.", "c17_cg_s04_09_amanea_intacte", M_DUEL, 'Narrateur',
+      `Mais quand la fumée se dissipe, Amanea est toujours debout, immobile, intacte.
 
 Elle le fixe.
 
-« Tu sais. »
-
-Une simple phrase, une accusation.
+« Tu sais. »`,
+      "c17_tu_sais_5", []), hideChars: true, camera: "recul" },
+    c17_tu_sais_5: { ...scene("Tu sais.", "c17_cg_s04_10_tu_sais", M_DUEL, 'Narrateur',
+      `Une simple phrase, une accusation.
 
 Valurn rit.
 
 « Évidemment que je sais. »
 
-Leurs corps s’élancent de concert.
-
-Une succession de coups brutaux, de projectiles maudits, de vortex d’ombres et de flammes. Le ciel se déforme sous leur rage.
+Leurs corps s’élancent de concert.`,
+      "c17_tu_sais_6", []), hideChars: true, camera: "approche" },
+    c17_tu_sais_6: scene("Tu sais.", BG_PORTE, M_DUEL, 'Narrateur',
+      `Une succession de coups brutaux, de projectiles maudits, de vortex d’ombres et de flammes. Le ciel se déforme sous leur rage.
 
 Le chaos de leur duel dépasse la compréhension des soldats alentour. Les Sylviniens et les Obscurcis cessent leur lutte, stupéfaits, effrayés, fascinés par le ballet infernal qui se joue devant eux.
 
 « Alors pourquoi ?! » rugit Amanea en abattant son poing dans une onde d’énergie qui pulvérise le sol autour d’eux.`,
       "c17_m2_lecture", [valurnAmused]),
-    c17_pourquoi: scene("Alors pourquoi ?!", BG_PORTE, M_DUEL, 'Narrateur',
+    c17_pourquoi: { ...scene("Alors pourquoi ?!", "c17_cg_s04_13_la_riposte", M_DUEL, 'Narrateur',
       `Valurn esquive de justesse, rebondit sur l’air même, et s’élance vers elle, sa lame crépitant de flammes infernales.
 
 « C’est parce que je sais que je suis là pour t’arrêter ! »
 
 Un coup.
 
-Deux coups.
-
-Trois.
+Deux coups.`,
+      "c17_pourquoi_2", []), hideChars: true, camera: "impact" },
+    c17_pourquoi_2: scene("Alors pourquoi ?!", BG_PORTE, M_DUEL, 'Narrateur',
+      `Trois.
 
 Ils échangent leurs assauts dans une cadence effrénée, brutale, destructrice.
 
 Valurn frappe avec la ruse d’un démon, Amanea riposte avec la force d’une reine damnée.`,
       "c17_m3_lecture", [valurnAnnoyed]),
-    c17_cede: scene("Il cède du terrain", BG_PORTE, M_DUEL, 'Narrateur',
-      `Mais peu à peu, il cède du terrain. L’issue devient évidente, Amanea est plus forte, trop puissante, écrasante, même pour lui.
-
-Valurn résiste, encaisse, prolonge l’affrontement, non pas par folie, mais par nécessité.
+    c17_cede: scene("Il cède du terrain", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Mais peu à peu, il cède du terrain. L’issue devient évidente, Amanea est plus forte, trop puissante, écrasante, même pour lui.`,
+      "c17_cede_2", [valurnAnnoyed]),
+    c17_cede_2: { ...scene("Il cède du terrain", "c17_cg_s04_15_valurn_cede", M_FINAL_AMANEA, 'Narrateur',
+      `Valurn résiste, encaisse, prolonge l’affrontement, non pas par folie, mais par nécessité.
 
 Il doit la retarder. La reine noire le comprend, devinant la supercherie.`,
-      "c17_m4_lecture", [valurnAnnoyed]),
-    c17_brise: scene("Elle le brise", BG_PORTE, M_DUEL, 'Narrateur',
+      "c17_m4_lecture", []), hideChars: true, camera: "lateral" },
+    c17_brise: scene("Elle le brise", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Alors, elle le brise…
 
 D’un seul coup.
 
-Une frappe abyssale, un assaut foudroyant, une force pure et primale qui transperce ses défenses.
-
-Valurn est propulsé en arrière, violemment, son corps s’écrase contre un pilier de pierre noire.
+Une frappe abyssale, un assaut foudroyant, une force pure et primale qui transperce ses défenses.`,
+      "c17_brise_2", []),
+    c17_brise_2: { ...scene("Elle le brise", "c17_cg_s04_17_pilier_noir", M_FINAL_AMANEA, 'Narrateur',
+      `Valurn est propulsé en arrière, violemment, son corps s’écrase contre un pilier de pierre noire.
 
 Il crache du sang.
 
 Il est vaincu.
 
-Amanea avance vers lui, son corps palpitant d’énergie démoniaque, son aura écrasant tout sur son passage.
+Amanea avance vers lui, son corps palpitant d’énergie démoniaque, son aura écrasant tout sur son passage.`,
+      "c17_brise_3", []), hideChars: true, camera: "impact" },
+    c17_brise_3: scene("Elle le brise", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Elle le soulève d’une main griffue, le maintenant à hauteur de son regard embrasé.
 
-Elle le soulève d’une main griffue, le maintenant à hauteur de son regard embrasé.
-
-« Je devrais t’anéantir. »
-
-Valurn, malgré la douleur, rit.
+« Je devrais t’anéantir. »`,
+      "c17_brise_4", []),
+    c17_brise_4: { ...scene("Elle le brise", "c17_cg_s04_19_rire_valurn", M_FINAL_AMANEA, 'Narrateur',
+      `Valurn, malgré la douleur, rit.
 
 Un rire déformé, tremblant, mais authentique.
 
 Puis, il murmure, doucement, presque satisfait :
 
-« Alors fais-le… et regarde le monde s’effondrer. »
-
-Le portail gronde derrière eux.
+« Alors fais-le… et regarde le monde s’effondrer. »`,
+      "c17_brise_5", []), hideChars: true, camera: "approche" },
+    c17_brise_5: { ...scene("Elle le brise", "c17_cg_s04_20_le_seuil_s_ouvre", M_FINAL_AMANEA, 'Narrateur',
+      `Le portail gronde derrière eux.
 
 Il est en train de s’ouvrir.
 
 …
 
-…
-
 …`,
+      "c17_brise_6", []), hideChars: true, camera: "recul" },
+    c17_brise_6: scene("Elle le brise", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `…`,
       "c17_duel_bilan", []),
-    c17_trois: scene("Trois silhouettes", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_trois: scene("Trois silhouettes", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Le chaos s’efface. La défaite est proche.
 
 Les bruits de guerre se meurent, s’étouffent dans une brume lourde, pesante, chargée de cendres et de sang. Il n’y a plus de clameur, plus de hurlements, plus de rage guerrière.
@@ -1225,7 +1322,7 @@ Elle est la sentence.
 
 … Tia.`,
       "c17_supplique", []),
-    c17_supplique: scene("Tia… écoute-moi…", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_supplique: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Sa silhouette auréolée de lumière se découpe dans l’obscurité environnante, un phare au milieu des ombres, une présence qui impose, qui domine, qui consume tout espoir. Son regard d’or se pose sur sa sœur, et Amanea frissonne. Elle la sent. Elle sait.
 
 C’est fini.
@@ -1281,8 +1378,8 @@ Peut-être que cette fois…
 Peut-être que pour une fois… leurs différents seront mis de côté…
 
 Peut-être qu’elles pourraient y arriver ens… L’acier siffle dans l’air.`,
-      "c17_lame", []),
-    c17_lame: scene("Une Farae ne pardonne jamais", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      "c17_lame", [tia('stern')]),
+    c17_lame: scene("Une Farae ne pardonne jamais", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Un coup net.
 
 Une douleur atroce, immédiate, brutale. Amanea ne comprend pas.
@@ -1316,8 +1413,8 @@ Un rictus amer tord ses lèvres alors qu’elle tombe dans la poussière.
 Elle avait osé espérer, mais avait oublié…
 
 Une Farae ne pardonne jamais.`,
-      "c17_crissement", []),
-    c17_crissement: scene("L’acier sur la pierre", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      "c17_crissement", [tia('threatening')]),
+    c17_crissement: scene("L’acier sur la pierre", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Un ricanement résonne dans les cendres. Bas. Moqueur. Tordu par l’ironie du moment. Valurn, allongé sur le sol, brisé par le combat, mais toujours vivant, sourit malgré tout. Il saigne, son corps marqué par les affrontements, et pourtant, il rit. Parce qu’il a gagné.
 
 Tia, elle, ne rit pas. Elle avance lentement, laissant traîner son épée derrière elle, l’acier raclant contre la pierre et les cadavres épars, produisant un crissement sinistre. Un bruit atroce. Comme une provocation. Comme une attente. Comme si elle voulait que cet instant s’éternise. Elle tourne autour d’Amanea, un prédateur observant une proie mourante, savourant l’inévitable. Elle n’a pas besoin de se presser.
@@ -1327,8 +1424,8 @@ Et Amanea, au sol, tremble. Pas de peur. Pas de douleur. Mais de consternation. 
 L’impératrice avance encore, lentement, savourant chacun de ses pas. Son expression est indéchiffrable. Ni joie, ni colère. Juste une détermination inébranlable. Son armure resplendit dans la lumière qu’elle incarne, alors que la silhouette d’Amanea, elle, se dissout dans l’obscurité.
 
 … Une dernière fois, la Reine Noire ferme les yeux. Une ultime tentative. Un dernier effort. Un dernier espoir.`,
-      "c17_gorge", []),
-    c17_gorge: scene("Pourquoi… ?", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      "c17_gorge", [tia('threatening')]),
+    c17_gorge: scene("Pourquoi… ?", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Le portail doit être fermé.
 
 Son dos s’illumine de nouveau. Elle rassemble le peu de force qu’il lui reste pour maîtriser son pouvoir… et le déchaîner contre la porte noire. Son corps hurle, ses nerfs s’arrachent sous la pression. Mais elle s’en moque. Elle s’abandonne à cette dernière flamme. Un ultime rayon s’apprête à jaillir.
@@ -1368,8 +1465,8 @@ Son souffle se coupe, ses muscles se crispent. Elle ne peut même pas crier. Ell
 Elle sent son propre sang couler.
 
 Puis elle se relâche. Elle ne perçoit rien. Tout s’efface.`,
-      "c17_dernier_souffle", []),
-    c17_dernier_souffle: scene("Dernier souffle", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      "c17_dernier_souffle", [tia('neutral')]),
+    c17_dernier_souffle: scene("Dernier souffle", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Les sons.
 
 Les couleurs.
@@ -1386,14 +1483,14 @@ Ce n’est pas elle.
 
 C’est… une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.`,
       "c17_naiah_revelee", []),
-    c17_naiah_revelee: scene("L’illusion se dissipe", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_naiah_revelee: scene("L’illusion se dissipe", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Naïah. Sa fille. Son propre sang.
 
 C’est elle qui l’a exécutée. Froidement. Sans trembler. Sans un mot. Sans un frisson.
 
 Sans un regret.`,
       "c17_regard_satisfait", [naiahCold]),
-    c17_regard_satisfait: scene("Un regard satisfait", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_regard_satisfait: scene("Un regard satisfait", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Son corps s’effondre, abandonné par la force qui l’animait, son âme s’échappant en lambeaux comme une brume mourante. La douleur s’efface, remplacée par une étrange légèreté, comme si son être se dissolvait dans l’air même. Elle entend encore les cris de la bataille, distants, irréels, un écho de violence qui ne la concerne plus. Son regard s’accroche aux silhouettes qui s’éloignent, floues, vacillantes dans sa vision déclinante. Valurn. Il se met à hauteur de la reine. Toutes ses forces la quittent… il draine tout ce qui lui reste. La magie qui la surchargeait se retire en quelques instants. Il se relève, satisfait, et se retire telle une silhouette fantomatique et rieuse, une ombre démoniaque qui a eu son dû et qui ne daigne même pas lui accorder un dernier regard. Naïah. Sa fille. Sa propre chair. Elle ne fuit pas. Elle s’arrête un instant, son corps parfaitement immobile, comme savourant cet instant. Ses yeux rencontrent ceux d’Amanea. Aucune pitié. Aucun regret. Juste un calme absolu. Un regard rempli d’accomplissement. Un regard satisfait.
 
 Amanea veut parler, veut comprendre, veut hurler. Pourquoi ? Mais aucun son ne sort. Sa gorge est sèche, son souffle n’est plus qu’un râle. Ses doigts griffent la terre sans force, essayant de s’accrocher à une réalité qui lui échappe.
@@ -1408,7 +1505,7 @@ Naïah tourne les talons. Elle ne se retourne pas. Elle ne regarde même pas sa 
 
 « Tu vois… je t’avais dit que je te l’offrirais… »`,
       "c17_brasier", [naiahCold]),
-    c17_brasier: scene("Sa place", BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_brasier: scene("Sa place", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Amanea sent la vie lui être arrachée, chaque battement de son cœur blessé arrache un adieu forcé, un glas funèbre sonnant son dernier souffle.
 
 Le sol semble l’engloutir.
@@ -1594,13 +1691,14 @@ Il a tenu. Assez longtemps pour ce qu’il attendait du portail.`,
 
     c17_gameover_a: gameOver('Valurn succombe',
       `Valurn n’a pas su la forcer à se révéler. La griffe d’Amanea le cloue contre la pierre noire bien avant que la reine n’ait eu besoin de puiser au fond d’elle-même.
+
 Valurn succombe avant de forcer Amanea à se révéler.`, 3),
     c17_gameover_b: gameOver('La griffe arrive trop tôt',
       `Il voit le coup trop tard. La griffe traverse sa garde, puis sa poitrine. Il n’a pas tenu la minute qu’il lui fallait : Amanea se détourne de lui avant même qu’il ne touche le sol, et marche vers le portail.
 
 Sans ce temps volé, rien de ce qui suit n’aura lieu.`, 6),
 
-    c17_duel_bilan: scene('Le temps volé', BG_PORTE, M_TRAGEDIE, 'Narrateur',
+    c17_duel_bilan: scene('Le temps volé', BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       () => {
         const { temps } = calc(7);
         const line = temps >= 6
@@ -1613,7 +1711,7 @@ ${line}`;
       'c17_trois'),
 
     c17_fin: {
-      ...scene('Fin du Chapitre XVII', BG_PORTE, M_TRAGEDIE, 'Narrateur',
+      ...scene('Fin du Chapitre XVII', BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
         `Fin du Chapitre XVII · La Porte Noire.`),
       chapterEnd: true,
       choices: [
@@ -1621,6 +1719,97 @@ ${line}`;
         { label: 'Retour au menu', next: 'menu' },
       ],
     },
+  });
+
+  // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
+  Object.entries({"c17_marche_3": "c17_marche_2"}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
+
+  // Plans clés S02 à S04 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  const SHOTS = [
+    ["c17_cg_s02_01_rassemblement", "assets/images/keyscenes/chapter17-s02/s02_01_rassemblement.webp", "Le conseil devant Akuhn’Nabad", "Tia donne les ordres à la lisière, devant la ville encore dans la brume."],
+    ["c17_cg_s02_03_marche_malaise", "assets/images/keyscenes/chapter17-s02/s02_03_marche_malaise.webp", "Le malaise gagne les rangs", "Un visage tendu et la marche qui se poursuit dans la brume."],
+    ["c17_cg_s02_04_soldat_rattrape", "assets/images/keyscenes/chapter17-s02/s02_04_soldat_rattrape.webp", "Le fantassin vacille", "La menace reste invisible. Le soldat perd ses appuis, son camarade le retient."],
+    ["c17_cg_s02_05_porte_maitre", "assets/images/keyscenes/chapter17-s02/s02_05_porte_maitre.webp", "La Porte Noire, dormante", "Depuis la crête impériale, l’arche noire domine la plaine fortifiée."],
+    ["c17_cg_s02_06_camps_obscurcis", "assets/images/keyscenes/chapter17-s02/s02_06_camps_obscurcis.webp", "Les campements en alerte", "Contrechamp depuis les fortifications obscurcies. Les sentinelles regardent la crête."],
+    ["c17_cg_s02_07_tia_alamma", "assets/images/keyscenes/chapter17-s02/s02_07_tia_alamma.webp", "Alamma dans les rangs ennemis", "La vision sylvinienne de Tia distingue Alamma auprès d’Amanea."],
+    ["c17_cg_s02_08_tia_reconnait", "assets/images/keyscenes/chapter17-s02/s02_08_tia_reconnait.webp", "Tia reconnaît son fils", "Réaction retenue, entre colère et douleur."],
+    ["c17_cg_s02_09_naiah_rancoeur", "assets/images/keyscenes/chapter17-s02/s02_09_naiah_rancoeur.webp", "La rancœur de Naïah", "Naïah suit du regard la commandante. Iriana remarque son trouble."],
+    ["c17_cg_s02_10_remerii_iriana", "assets/images/keyscenes/chapter17-s02/s02_10_remerii_iriana.webp", "Ils savent qu’on est là", "Remerii interroge Iriana, qui regarde toujours la plaine."],
+    ["c17_cg_s02_11_allenna_s_eclipse", "assets/images/keyscenes/chapter17-s02/s02_11_allenna_s_eclipse.webp", "La commandante s’éclipse", "On suit la chevelure argentée dans la foule. Son visage reste caché."],
+    ["c17_cg_s02_12_amanea_regard", "assets/images/keyscenes/chapter17-s02/s02_12_amanea_regard.webp", "Amanea lève les yeux", "La Reine Noire prend la mesure de la crête."],
+    ["c17_cg_s02_13_amanea_levitation", "assets/images/keyscenes/chapter17-s02/s02_13_amanea_levitation.webp", "Amanea à mi-hauteur", "Silhouette ailée uniquement par le mouvement du manteau. Personnage à l’échelle de l’arche."],
+    ["c17_cg_s02_14_porte_feu", "assets/images/keyscenes/chapter17-s02/s02_14_porte_feu.webp", "Le feu au cœur de la Porte", "Le rouge naît dans l’ouverture. L’incantation verte n’est pas encore visible."],
+    ["c17_cg_s02_15_amanea_rayon", "assets/images/keyscenes/chapter17-s02/s02_15_amanea_rayon.webp", "Le torrent vert", "Le rayon atteint le foyer rouge dans la même arche."],
+    ["c17_cg_s02_16_tia_signal", "assets/images/keyscenes/chapter17-s02/s02_16_tia_signal.webp", "Le signal de Tia", "Une seule lame physique, levée en silence. Sa lumière atteint les soldats."],
+    ["c17_cg_s02_17_charge", "assets/images/keyscenes/chapter17-s02/s02_17_charge.webp", "Les deux armées en mouvement", "La crête se vide. L’Empire descend et les Obscurcis avancent."],
+    ["c17_cg_s02_18_hylee_figee", "assets/images/keyscenes/chapter17-s02/s02_18_hylee_figee.webp", "Hylee se fige", "Elle refuse malgré elle de suivre la charge. Remerii la voit."],
+    ["c17_cg_s02_19_saidin_releve", "assets/images/keyscenes/chapter17-s02/s02_19_saidin_releve.webp", "La main de Saidin", "Saidin prend le relais auprès d’Hylee au moment où Remerii hésite."],
+    ["c17_cg_s02_20_baiser_remerii", "assets/images/keyscenes/chapter17-s02/s02_20_baiser_remerii.webp", "Le serment de Remerii", "Une promesse avant que Remerii rejoigne le front."],
+    ["c17_cg_s02_21_dome_saidin", "assets/images/keyscenes/chapter17-s02/s02_21_dome_saidin.webp", "Le bouclier intemporel", "Le dôme d’argent couvre Hylee, les soigneurs, les prêtres et l’arrière-garde."],
+    ["c17_cg_s02_22_premier_choc", "assets/images/keyscenes/chapter17-s02/s02_22_premier_choc.webp", "Le premier choc", "Les premières lignes se rencontrent. La levée de poussière sépare les plans."],
+    ["c17_cg_s02_23_iriana_glyphes", "assets/images/keyscenes/chapter17-s02/s02_23_iriana_glyphes.webp", "Les glyphes d’Iriana", "Les cercles azur précèdent la combinaison des deux magies."],
+    ["c17_cg_s02_25_tempete_combinee", "assets/images/keyscenes/chapter17-s02/s02_25_tempete_combinee.webp", "Glace et arcane", "Le vortex azur est enveloppé de givre. Le reste du terrain reste nu."],
+    ["c17_cg_s02_26_valurn_draven", "assets/images/keyscenes/chapter17-s02/s02_26_valurn_draven.webp", "Deux styles dans la mêlée", "Des trajectoires complémentaires, le feu du Chaos et l’arme de l’amiral."],
+    ["c17_cg_s02_27_tia_poursuite", "assets/images/keyscenes/chapter17-s02/s02_27_tia_poursuite.webp", "Va les chercher", "Ordre de poursuivre le groupe qui se retire à l’écart du front."],
+    ["c17_cg_s02_28_civils_allenna", "assets/images/keyscenes/chapter17-s02/s02_28_civils_allenna.webp", "L’escorte des familles", "Iriana découvre les familles derrière les soldats qui les protègent."],
+    ["c17_cg_s02_29_allenna_reconnue", "assets/images/keyscenes/chapter17-s02/s02_29_allenna_reconnue.webp", "Le visage d’Allenna", "Le visage de la commandante révèle son identité à Iriana."],
+    ["c17_cg_s02_30_vision_ruelle", "assets/images/keyscenes/chapter17-s02/s02_30_vision_ruelle.webp", "Le souvenir d’Al’Gratal", "Retour à la ruelle en flammes où Allenna secourt Amanea."],
+    ["c17_cg_s02_31_alamma_alerte", "assets/images/keyscenes/chapter17-s02/s02_31_alamma_alerte.webp", "Le cri d’Alamma", "Alamma appelle la reine depuis la dernière ligne."],
+    ["c17_cg_s02_32_amanea_doute", "assets/images/keyscenes/chapter17-s02/s02_32_amanea_doute.webp", "Amanea détourne le regard", "Elle découvre l’avancée de Tia. Le bras du rituel reste tendu vers la Porte."],
+    ["c17_cg_s02_33_amanea_avance", "assets/images/keyscenes/chapter17-s02/s02_33_amanea_avance.webp", "Le portail et le massacre", "Amanea se rapproche du front tout en maintenant le rayon."],
+    ["c17_cg_s03_01_main_libre", "assets/images/keyscenes/chapter17-s03/s03_01_main_libre.webp", "La main libre", "Le bras déjà tendu maintient le rayon vers la Porte. La main libre commence le drain."],
+    ["c17_cg_s03_02_sylviniens_se_figent", "assets/images/keyscenes/chapter17-s03/s03_02_sylviniens_se_figent.webp", "L’arrêt des rangs", "La marche s’interrompt d’un coup et la lumière impériale vacille."],
+    ["c17_cg_s03_03_premier_cri", "assets/images/keyscenes/chapter17-s03/s03_03_premier_cri.webp", "Le premier cri", "Le premier Obscurci plie devant l’arrachement de son âme."],
+    ["c17_cg_s03_04_la_lumiere_s_eteint", "assets/images/keyscenes/chapter17-s03/s03_04_la_lumiere_s_eteint.webp", "La lumière s’éteint", "Le drain atteint les Sylviniens. L’armure perd son éclat et la protection du prêtre cède."],
+    ["c17_cg_s03_05_les_deux_rangs", "assets/images/keyscenes/chapter17-s03/s03_05_les_deux_rangs.webp", "Les deux rangs", "Les âmes rejoignent Amanea et sa magie se déverse toujours dans la Porte."],
+    ["c17_cg_s03_06_tia_suspendue", "assets/images/keyscenes/chapter17-s03/s03_06_tia_suspendue.webp", "Tia marque un temps d’arrêt", "La réaction de l’impératrice suspend la cadence de la bataille."],
+    ["c17_cg_s03_07_seuil_violet", "assets/images/keyscenes/chapter17-s03/s03_07_seuil_violet.webp", "Le seuil violet", "La Porte prend une couleur noir-violet. Son architecture reste identique."],
+    ["c17_cg_s03_08_la_menace", "assets/images/keyscenes/chapter17-s03/s03_08_la_menace.webp", "Vous n’auriez pas dû venir ici", "Après l’interruption du drain, Amanea s’adresse aux survivants."],
+    ["c17_cg_s03_09_sourire_sans_joie", "assets/images/keyscenes/chapter17-s03/s03_09_sourire_sans_joie.webp", "Un sourire sans joie", "La résignation précède la reprise du drain."],
+    ["c17_cg_s03_10_brume_verte", "assets/images/keyscenes/chapter17-s03/s03_10_brume_verte.webp", "La brume verte", "L’énergie gagne les crevasses et remonte vers la reine."],
+    ["c17_cg_s03_11_fissures", "assets/images/keyscenes/chapter17-s03/s03_11_fissures.webp", "Les premières fissures", "Les craquelures émeraude et rouges gagnent le visage et le torse."],
+    ["c17_cg_s03_12_serres_et_sabots", "assets/images/keyscenes/chapter17-s03/s03_12_serres_et_sabots.webp", "Serres et sabots", "Un plan bas rend lisibles les changements des doigts et des appuis."],
+    ["c17_cg_s03_13_ailes_surgissent", "assets/images/keyscenes/chapter17-s03/s03_13_ailes_surgissent.webp", "Le déploiement des ailes", "La nouvelle envergure se détache dans la cendre."],
+    ["c17_cg_s03_14_cornes_et_rire", "assets/images/keyscenes/chapter17-s03/s03_14_cornes_et_rire.webp", "Les cornes et le rire", "Le cadre revient sur le visage et le rire d’Amanea sous les cornes."],
+    ["c17_cg_s03_15_draven_valurn", "assets/images/keyscenes/chapter17-s03/s03_15_draven_valurn.webp", "Draven et Valurn lèvent les yeux", "Le spectacle est vu depuis le sol par les deux compagnons."],
+    ["c17_cg_s03_16_reflet_draven", "assets/images/keyscenes/chapter17-s03/s03_16_reflet_draven.webp", "Le reflet de l’amiral", "Draven se regarde dans l’acier après le départ de Valurn."],
+    ["c17_cg_s03_17_forme_finale", "assets/images/keyscenes/chapter17-s03/s03_17_forme_finale.webp", "Le rayon dorsal", "Le plan présente la silhouette transformée et la nouvelle origine du rayon."],
+    ["c17_cg_s03_18_revelation_allenna", "assets/images/keyscenes/chapter17-s03/s03_18_revelation_allenna.webp", "La révélation d’Allenna", "Allenna donne le sens du rituel devant Iriana."],
+    ["c17_cg_s03_19_remerii_attend", "assets/images/keyscenes/chapter17-s03/s03_19_remerii_attend.webp", "Remerii attend", "Le givre sur sa main trahit sa tension. Elle attend le signal d’Iriana."],
+    ["c17_cg_s03_20_ordre_muet", "assets/images/keyscenes/chapter17-s03/s03_20_ordre_muet.webp", "L’ordre muet", "Iriana laisse partir les loyalistes et les familles."],
+    ["c17_cg_s03_21_brume_noire", "assets/images/keyscenes/chapter17-s03/s03_21_brume_noire.webp", "La brume noire", "La seconde brume s’insinue dans le terrain."],
+    ["c17_cg_s03_22_les_morts_se_relevent", "assets/images/keyscenes/chapter17-s03/s03_22_les_morts_se_relevent.webp", "Les morts se relèvent", "Des silhouettes d’anciens combattants se redressent au milieu des volutes."],
+    ["c17_cg_s03_23_portail_resiste", "assets/images/keyscenes/chapter17-s03/s03_23_portail_resiste.webp", "Le seuil résiste", "Amanea résiste alors que son flux se retourne contre elle."],
+    ["c17_cg_s03_24_reflet_amanea", "assets/images/keyscenes/chapter17-s03/s03_24_reflet_amanea.webp", "Le reflet d’Amanea", "Le trouble perceptif est traité par le point de vue d’Amanea."],
+    ["c17_cg_s03_25_pierres_se_brise", "assets/images/keyscenes/chapter17-s03/s03_25_pierres_se_brise.webp", "La première pierre", "La pression arrache des fragments sans effacer la silhouette de la Porte."],
+    ["c17_cg_s03_26_rayon_coupe", "assets/images/keyscenes/chapter17-s03/s03_26_rayon_coupe.webp", "Le rayon s’interrompt", "La Porte reste allumée tandis que le lien dorsal disparaît."],
+    ["c17_cg_s03_27_valurn_raccord", "assets/images/keyscenes/chapter17-s03/s03_27_valurn_raccord.webp", "Valurn dans les cendres", "La présence de Valurn ouvre le raccord vers le duel."],
+    ["c17_cg_s04_01_heritage", "assets/images/keyscenes/chapter17-s04/s04_01_heritage.webp", "La reconnaissance", "Amanea reconnaît un héritage chez Valurn. Le raccord reprend leur face-à-face de la S03."],
+    ["c17_cg_s04_02_salut_valurn", "assets/images/keyscenes/chapter17-s04/s04_02_salut_valurn.webp", "Le salut ironique", "L’ironie du salut fait durer un bref instant l’accalmie."],
+    ["c17_cg_s04_03_yeux_ecarlates", "assets/images/keyscenes/chapter17-s04/s04_03_yeux_ecarlates.webp", "Les yeux écarlates", "Le jeu disparaît de son visage avant la déclaration."],
+    ["c17_cg_s04_04_flammes_noires", "assets/images/keyscenes/chapter17-s04/s04_04_flammes_noires.webp", "Les flammes noires", "Le premier départ de feu vient de Valurn."],
+    ["c17_cg_s04_05_mur_de_feu", "assets/images/keyscenes/chapter17-s04/s04_05_mur_de_feu.webp", "Le mur de feu", "Le champ passe en plan large pour situer les deux adversaires avant le choc."],
+    ["c17_cg_s04_07_valurn_se_retablit", "assets/images/keyscenes/chapter17-s04/s04_07_valurn_se_retablit.webp", "La sphère entropique", "Valurn retrouve son axe et lance sa riposte."],
+    ["c17_cg_s04_08_impact_entropique", "assets/images/keyscenes/chapter17-s04/s04_08_impact_entropique.webp", "L’impact entropique", "Un plan bas isole le point où la sphère frappe la pierre."],
+    ["c17_cg_s04_09_amanea_intacte", "assets/images/keyscenes/chapter17-s04/s04_09_amanea_intacte.webp", "Amanea reste debout", "L’onde a brisé le terrain et Amanea tient encore sa position."],
+    ["c17_cg_s04_10_tu_sais", "assets/images/keyscenes/chapter17-s04/s04_10_tu_sais.webp", "Tu sais", "Retour au visage d’Amanea après la dissipation de la fumée."],
+    ["c17_cg_s04_13_la_riposte", "assets/images/keyscenes/chapter17-s04/s04_13_la_riposte.webp", "La riposte de Valurn", "Le mouvement de retour est visible avant l’échange suivant."],
+    ["c17_cg_s04_15_valurn_cede", "assets/images/keyscenes/chapter17-s04/s04_15_valurn_cede.webp", "Gagner du temps", "Il recule encore en garde. Sa volonté de gagner du temps reste lisible."],
+    ["c17_cg_s04_17_pilier_noir", "assets/images/keyscenes/chapter17-s04/s04_17_pilier_noir.webp", "Le pilier de pierre noire", "Valurn s’effondre. Sa lame glisse à l’écart."],
+    ["c17_cg_s04_19_rire_valurn", "assets/images/keyscenes/chapter17-s04/s04_19_rire_valurn.webp", "Le dernier rire", "Le visage de Valurn porte le défi malgré la défaite."],
+    ["c17_cg_s04_20_le_seuil_s_ouvre", "assets/images/keyscenes/chapter17-s04/s04_20_le_seuil_s_ouvre.webp", "La Porte commence à s’ouvrir", "Le regard revient vers l’arche. Le duel laisse place à la menace qui approche."],
+  ];
+  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea']];
+  for (const [key, path, name, body] of SHOTS) {
+    A[key] = path;
+    CODEX_IMAGES[key] = { title: 'Chapitre XVII · ' + name, body, src: path };
+    CODEX_IMAGE_ORDER.push(key);
+    window.SylviniaStoryCamera?.illustrate(key);
+  }
+  CODEX_IMAGE_GROUPS.push({
+    id: 'chapter17',
+    title: chapter,
+    sections: SECTIONS.map(([p, t]) => ({ title: t, keys: SHOTS.filter(([k]) => k.startsWith('c17_cg_' + p)).map(([k]) => k) })),
   });
 
   // Fin du lot S01 : la suite s’ouvre.
@@ -1652,7 +1841,7 @@ ${line}`;
     label: 'Chapitre XVII',
     title,
     subtitle: 'Akuhn’Nabad',
-    image: A[BG_PORTE],
+    image: A.c17_cg_s02_05_porte_maitre || A[BG_PORTE],
     tags: ['Porte Noire', 'Amanea'],
     body: 'L’armée atteint le portail d’Akuhn’Nabad. Amanea s’y tient, et Valurn s’interpose.',
     action: 'Ouvrir le Chapitre XVII',
@@ -1689,5 +1878,5 @@ ${line}`;
     String(id).startsWith('c17_') ? chapter : previousLabel(id);
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.419 · La Porte Noire';
+  if (update) update.textContent = 'Mise à jour · v0.420 · La Porte Noire';
 })();

@@ -27,10 +27,12 @@
   const M_LINEVA = 'music_draven_bond';
   const M_PLAINTE = 'music_c11_complainte';
   const M_PLAINTE_I = 'music_c11_complainte_instru';
-  const M_BHAAL = 'music_c10_culte';
+  // « Ensemble » (OST fournie par l’auteur) : tout le combat contre Bhaal, de son apparition au dragon de glace.
+  // Le souvenir de la leçon d’Arcane garde sa musique (M_SOURCE).
+  const M_BHAAL = 'music_finale_ensemble';
   const M_IRIANA = 'music_iriana';
   const M_VALURN = 'music_c8_valurn_pacte';
-  const M_BLIZZARD = 'music_x12i_glace_brisee';
+  const M_BLIZZARD = M_BHAAL;
   const M_SOURCE = 'music_c6_nuit_etoiles';
   const M_ALGRATAL = 'music_algratal';
 
@@ -51,6 +53,9 @@
   const dravenSoot = ['draven', 'draven_gruff', 'left'];
   const dravenAngry = ['draven', 'draven_angry', 'left'];
   const dravenLineva = ['draven', 'draven_gruff', 'left'];
+  // Tia adulte (Chronique Alternative) et Hylee dans sa forme finale (dès c18_remerii_tombe, jamais avant).
+  const tia = (e, pos = 'right') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
+  const hyleeF = (e, pos = 'left') => ['hylee', 'hylee_finale_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -430,6 +435,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
 
 /*@SCENES@*/
   });
+/*@ALIASES@*/
 
   const ENTER_FLAGS = {
     c18_s06_fin: { c18PlayedDraven: true, s06DravenComplete: true },
