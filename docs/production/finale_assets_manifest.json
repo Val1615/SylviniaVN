@@ -1,5 +1,5 @@
 {
- "version": "v0.422",
+ "version": "v0.425",
  "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées. Seule exception, validée par l’auteur : s06_17 et s06_20 (lot 2), retouchés localement pour remettre les plaques dans la main de Draven.",
  "fichiers_fournis_par_l_auteur": {
   "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
@@ -1747,6 +1747,586 @@
     "note": "Scène de duel écrite pour le jeu ; le plan y remplace le décor.",
     "camera": "approche",
     "titre_codex": "Regagner le seuil"
+   }
+  ]
+ },
+ "images_cles_lot3": {
+  "statut": "Intégrées le 24/11/2026 (v0.425) : 56 plans sur 56 webp livrés (S08 : 34, S09 : 22). Dossiers renommés chapter16-s08/s09 → chapter18-s08, chapter19-s09. Copies strictes (sha256 identique à l’archive). Les 16 PNG joints, variantes des mêmes plans, ne sont pas intégrés. s08_07 (Gardien de Givre) conservé tel quel, à la demande de l’auteur.",
+  "placement": "Selon la structure du VN : S08 sur le chemin Remerii (c18_ouverture et la suite ; s08_05 à c18_fuir, avant Bhaal ; forme finale d’Hylee à partir de c18_remerii_tombe). Duels : s08_07 sur c18_bh_blizzard, s08_15 sur c18_bh_sync, s08_19 sur c18_bh_dragon, s08_25 sur c18_bh_fin. S09 dans l’Épilogue (c19_trone à c19_serment) ; s09_14 illustre aussi c19_promesse.",
+  "source": "tools/finale-gen/shots.py (SHOTS et DUEL_SHOTS)",
+  "fichiers": [
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_01_la_main_dans_la_breche.webp",
+    "sha256": "6f8f2f5b8324a05e8f1dc3dd4fa9707b70a8be52ffa8efbad3a1bcfd04213ab4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_01_la_main_dans_la_breche",
+    "paragraphe": 11104,
+    "camera": "approche",
+    "titre_codex": "La main dans la brèche",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_02_bhaal_franchit_la_porte.webp",
+    "sha256": "23f9be05a6df61d59cec3c6f5d60575f893e6145b1887fa495bc7d802c941fbd",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_02_bhaal_franchit_la_porte",
+    "paragraphe": 11106,
+    "camera": "recul",
+    "titre_codex": "Bhaal franchit la Porte",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_03_remerii_avance.webp",
+    "sha256": "4a8037d7207de9ff1716e78d4ab68ae5b150aad33b7e9aa05eec3377ceed2017",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_03_remerii_avance",
+    "paragraphe": 11121,
+    "camera": "approche",
+    "titre_codex": "Remerii avance",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_04_le_premier_givre.webp",
+    "sha256": "90b01ea300f5fbf4a9e8bf7a50070560f643c6fc65e1d698071702d5586e60c6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_04_le_premier_givre",
+    "paragraphe": 11148,
+    "camera": "impact",
+    "titre_codex": "Le premier givre",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_05_saidin_prepare_l_evacuation.webp",
+    "sha256": "99f262b147fa48e8386040ad18f8e1922d4edb268ff61475cd2dca302210aac3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_05_saidin_prepare_l_evacuation",
+    "paragraphe": 11091,
+    "camera": "lateral",
+    "titre_codex": "Saidin prépare l’évacuation",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_06_les_runes_du_blizzard.webp",
+    "sha256": "2c96093f63fe121245908017d6d85e7a86337d867f14141acac2c6498a4a8ee9",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_06_les_runes_du_blizzard",
+    "paragraphe": 11417,
+    "camera": "approche",
+    "titre_codex": "Les runes du blizzard",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_07_le_gardien_de_givre.webp",
+    "sha256": "ed051da98811ace0e533d1bb7da2e8a9aa045c9ca0ad22f8dfc94affd2ca72f1",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_07_le_gardien_de_givre",
+    "paragraphe": 11430,
+    "camera": "recul",
+    "titre_codex": "Le Gardien de Givre",
+    "duels": [
+     "c18_bh_blizzard",
+     "c18_bh_blizzard_r"
+    ]
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_08_le_sceau.webp",
+    "sha256": "7ec12dbc5c0cbfd8cc05fda6ee8e70acee6947f95f7b628d92008d5b516d4952",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_08_le_sceau",
+    "paragraphe": 11442,
+    "camera": "approche",
+    "titre_codex": "Le sceau",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_09_medig_survole_bhaal.webp",
+    "sha256": "995f2a7bc6e68c78bfbb80bd87e797119e101550e850a3bea1b2f123c135bb4c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_09_medig_survole_bhaal",
+    "paragraphe": 11462,
+    "camera": "recul",
+    "titre_codex": "Medig survole Bhaal",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_10_hylee_derriere_remerii.webp",
+    "sha256": "273ecb9f2716da02a86abb3b9072480405e178c322fd4d5696aa29f7eba0e0bf",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_10_hylee_derriere_remerii",
+    "paragraphe": 11466,
+    "camera": "approche",
+    "titre_codex": "Hylee derrière Remerii",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_11_le_souvenir_de_la_source.webp",
+    "sha256": "3f7b29c9ab3ee7c97c52a668e4ac439e32c4e6c837a40d004454cd719eab863a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_11_le_souvenir_de_la_source",
+    "paragraphe": 11504,
+    "camera": "recul",
+    "titre_codex": "Le souvenir de la source",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_12_la_nebuleuse.webp",
+    "sha256": "248ab47de7c5048bb5475dcae0e7886cea0904632e892a55e54ae4a843a61893",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_12_la_nebuleuse",
+    "paragraphe": 11522,
+    "camera": "approche",
+    "titre_codex": "La nébuleuse",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_13_la_paume_d_hylee.webp",
+    "sha256": "35509c65c4c1a1323cba73341f2b7da8fc8a7da94fc096b9f0b3410e654d3dd7",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_13_la_paume_d_hylee",
+    "paragraphe": 11553,
+    "camera": "approche",
+    "titre_codex": "La paume d’Hylee",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_14_entre_les_flocons.webp",
+    "sha256": "81da367f38df7ad8e22fe53fbde740e9f89f0e143773802d1eae98bd17d747e3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_14_entre_les_flocons",
+    "paragraphe": 11581,
+    "camera": "lateral",
+    "titre_codex": "Entre les flocons",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_15_hylee_devient_un_conduit.webp",
+    "sha256": "b493489eca63e5aaf9d8484803ef14abb6530c0914dac88cafbd758e52440ca6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_15_hylee_devient_un_conduit",
+    "paragraphe": 11593,
+    "camera": "lateral",
+    "titre_codex": "Hylee devient un conduit",
+    "duels": [
+     "c18_bh_sync",
+     "c18_bh_sync_r"
+    ]
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_16_remerii_relache_tout.webp",
+    "sha256": "ad7f7b614aa7806006e96d219f5d4f26032b0a320c2a512de1af85b3141425ba",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_16_remerii_relache_tout",
+    "paragraphe": 11621,
+    "camera": "approche",
+    "titre_codex": "Remerii relâche tout",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_17_deux_yeux_dans_la_neige.webp",
+    "sha256": "af0a3b254ef2eccae3b18bfa7cc1978fa160afab3aa718f481ca9ca39c357863",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_17_deux_yeux_dans_la_neige",
+    "paragraphe": 11625,
+    "camera": "approche",
+    "titre_codex": "Deux yeux dans la neige",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_18_le_dragon_prend_forme.webp",
+    "sha256": "190489fe230129e0ddf38eb908797c2d916ee598ab43fa9ea1b17b46aa2adf41",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_18_le_dragon_prend_forme",
+    "paragraphe": 11629,
+    "camera": "recul",
+    "titre_codex": "Le dragon prend forme",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_19_le_choc_des_colosses.webp",
+    "sha256": "0be959783d6833aff257c35535bb77e4e8c4552a63a30fbe0c55e06de9800ab7",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_19_le_choc_des_colosses",
+    "paragraphe": 11637,
+    "camera": "impact",
+    "titre_codex": "Le choc des colosses",
+    "duels": [
+     "c18_bh_dragon",
+     "c18_bh_dragon_r"
+    ]
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_20_hylee_soutient_remerii.webp",
+    "sha256": "d2ba7d3063e9a14d6e3636076c6045f9646f75c6c1e06a31652095c000cec2e6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_20_hylee_soutient_remerii",
+    "paragraphe": 11644,
+    "camera": "approche",
+    "titre_codex": "Hylee soutient Remerii",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_21_bhaal_force_le_dragon_a_plier.webp",
+    "sha256": "86eda1b8e4d48b7e5e2845474e0197bfba2e00673e15549526411284086f4c15",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_21_bhaal_force_le_dragon_a_plier",
+    "paragraphe": 11649,
+    "camera": "impact",
+    "titre_codex": "Bhaal force le dragon à plier",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_22_la_lumiere_rouge_sang.webp",
+    "sha256": "60d7b0a47b559d8a3a17ed13b0462c5392b88bd5956fb5ee7454b4d54dc51c21",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_22_la_lumiere_rouge_sang",
+    "paragraphe": 11654,
+    "camera": "impact",
+    "titre_codex": "La lumière rouge sang",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_23_valurn_face_a_son_pere.webp",
+    "sha256": "d625854155f77979b6227664be086eb06b586467cad005f4adf919a02e06b290",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_23_valurn_face_a_son_pere",
+    "paragraphe": 11657,
+    "camera": "approche",
+    "titre_codex": "Valurn face à son père",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_24_la_seconde_onde.webp",
+    "sha256": "be61cfbd7b1ecdb288d5238980c0a6528113716b2fb0d4ae2c208576223aede4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_24_la_seconde_onde",
+    "paragraphe": 11667,
+    "camera": "impact",
+    "titre_codex": "La seconde onde",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_25_la_porte_happe_bhaal.webp",
+    "sha256": "7fba43469766cb5de4db5fc715df124bda8179a0c20aa3b23781074c0c971e10",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_25_la_porte_happe_bhaal",
+    "paragraphe": 11678,
+    "camera": "recul",
+    "titre_codex": "La Porte happe Bhaal",
+    "duels": [
+     "c18_bh_fin"
+    ]
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_26_hylee_rattrape_remerii.webp",
+    "sha256": "a2566f3fb41787119c5fde71da66f5c9ebaa466008d73ea13e4031acb2fb6f11",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_26_hylee_rattrape_remerii",
+    "paragraphe": 11700,
+    "camera": "approche",
+    "titre_codex": "Hylee rattrape Remerii",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_27_un_battement_presque_absent.webp",
+    "sha256": "f7368ca130c23c3d2154b61220503c3d6ecc0b5f3fabc80d7bc10c0dbc0db613",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_27_un_battement_presque_absent",
+    "paragraphe": 11728,
+    "camera": "approche",
+    "titre_codex": "Un battement presque absent",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_28_medig_plonge.webp",
+    "sha256": "9ae0ae1a134e2e02096b5459353d8543791d5168a576e1b388c40f38ac9acd6f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_28_medig_plonge",
+    "paragraphe": 11758,
+    "camera": "recul",
+    "titre_codex": "Medig plonge",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_29_une_issue_vers_algratal.webp",
+    "sha256": "8fd85d489a4897346577304dc672d7563af04363a15015adc462abf91abf3a27",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_29_une_issue_vers_algratal",
+    "paragraphe": 11766,
+    "camera": "recul",
+    "titre_codex": "Une issue vers Al’Gratal",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_30_le_retour_a_algratal.webp",
+    "sha256": "34a668e28592b72d11c2030c7b41dd0a7328781f986bcd84df7957398034a4f2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_30_le_retour_a_algratal",
+    "paragraphe": 11783,
+    "camera": "recul",
+    "titre_codex": "Le retour à Al’Gratal",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_31_aucune_trace_d_iriana.webp",
+    "sha256": "b6f9ffbd2d14a08e25787f39fad64c97b35a975d91b646018e21acc8ffaeaf36",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_31_aucune_trace_d_iriana",
+    "paragraphe": 11789,
+    "camera": "approche",
+    "titre_codex": "Aucune trace d’Iriana",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_32_le_blanc_spectral.webp",
+    "sha256": "8d6aaf580ce02a102ce64cc9a8b83e2070371bf808f931bf0421f3978b697e80",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_32_le_blanc_spectral",
+    "paragraphe": 11795,
+    "camera": "approche",
+    "titre_codex": "Le blanc spectral",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_33_le_reflet_d_hylee.webp",
+    "sha256": "4f69c947e5d8ab3a26e3e0add00896b9de06f0f7aa2e08139ec3ce31cd7cdd39",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_33_le_reflet_d_hylee",
+    "paragraphe": 11801,
+    "camera": "approche",
+    "titre_codex": "Le reflet d’Hylee",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-s08/s08_34_saidin_appelle_a_l_aide.webp",
+    "sha256": "e1c27c8c9a330f3533ef62a68510ebf2717de1c4c15e304080576be107800469",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c18_cg_s08_34_saidin_appelle_a_l_aide",
+    "paragraphe": 11821,
+    "camera": "approche",
+    "titre_codex": "Saidin appelle à l’aide",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_01_algratal_sous_le_ciel_voile.webp",
+    "sha256": "0b20d106465765066ffc585f6f40ecc387b388df83af4c98de29c78c8b9da99a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_01_algratal_sous_le_ciel_voile",
+    "paragraphe": 11847,
+    "camera": "recul",
+    "titre_codex": "Al’Gratal sous le ciel voilé",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_02_les_pertes_confirmees.webp",
+    "sha256": "8ff7ef4db0795e6d7c6fd2da9d283db21971208592fa8926470ffa7cbcba9aea",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_02_les_pertes_confirmees",
+    "paragraphe": 11849,
+    "camera": "approche",
+    "titre_codex": "Les pertes confirmées",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_03_draven_et_forthaven.webp",
+    "sha256": "e72051319d04d626a8fcc71e69391a9f95c939b5368e2360945b7ea7e9c23350",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_03_draven_et_forthaven",
+    "paragraphe": 11857,
+    "camera": "approche",
+    "titre_codex": "Draven et Forthaven",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_04_son_etat.webp",
+    "sha256": "82014c421d3dc3a1b760251a3cad622019fbbacfa8573dac875916fd45e6c16e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_04_son_etat",
+    "paragraphe": 11883,
+    "camera": "approche",
+    "titre_codex": "Son état",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_05_les_disparus.webp",
+    "sha256": "913a7fb5f69404d99c1b5a04ac378996579cd92e57dec7306145dc5c61f0de74",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_05_les_disparus",
+    "paragraphe": 11894,
+    "camera": "approche",
+    "titre_codex": "Les disparus",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_06_l_empire_ne_pleure_pas.webp",
+    "sha256": "027ba56b9f1dc4202a6af32ff98e6a6020750a22790b585c35b9a27ea056460e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_06_l_empire_ne_pleure_pas",
+    "paragraphe": 11911,
+    "camera": "approche",
+    "titre_codex": "L’Empire ne pleure pas",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_07_la_chambre_des_chandelles.webp",
+    "sha256": "f783443ad6e948d8d65db2ed5e37aec725460f0169481dfbe867ce9acd5cd6ea",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_07_la_chambre_des_chandelles",
+    "paragraphe": 11924,
+    "camera": "recul",
+    "titre_codex": "La chambre des chandelles",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_08_les_doigts_glaces.webp",
+    "sha256": "539cee7f9e4b449cf6bb7d5375f739729b9ae4589c79dd4f8d4deda3c4de4af2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_08_les_doigts_glaces",
+    "paragraphe": 11928,
+    "camera": "approche",
+    "titre_codex": "Les doigts glacés",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_09_les_corps_sur_le_champ.webp",
+    "sha256": "1686d025c78fcfbe728f9cfc93ac0615eec39486ef5c498b2a09e6d812929a13",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_09_les_corps_sur_le_champ",
+    "paragraphe": 11932,
+    "camera": "recul",
+    "titre_codex": "Les corps sur le champ",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_10_remerii_face_a_bhaal.webp",
+    "sha256": "2329e20db56bb3e18a4ef9a863413bf45aaa2c736a3823e180335c56c8c8f5e2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_10_remerii_face_a_bhaal",
+    "paragraphe": 11940,
+    "camera": "recul",
+    "titre_codex": "Remerii face à Bhaal",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_11_saidin_sur_le_seuil.webp",
+    "sha256": "15bc831888f4344a5954587a6f70ca2920f848f63fe11437e624ab5cd3eedb25",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_11_saidin_sur_le_seuil",
+    "paragraphe": 11967,
+    "camera": "lateral",
+    "titre_codex": "Saidin sur le seuil",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_12_elle_est_encore_la.webp",
+    "sha256": "37ad126ed36485c2c7249240b500946b7824b0b1d97a1269e00acae08a4a35d2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_12_elle_est_encore_la",
+    "paragraphe": 11994,
+    "camera": "approche",
+    "titre_codex": "Elle est encore là",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_13_trouve_un_moyen.webp",
+    "sha256": "5ec02f9c197b36f178f1ff54762f6bfa8d87aa0227874150b9f7f4595d0e8f63",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_13_trouve_un_moyen",
+    "paragraphe": 12018,
+    "camera": "approche",
+    "titre_codex": "Trouve un moyen",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_14_elle_attend.webp",
+    "sha256": "3f51509248f062c922f7d5a963dd8050f7f9c12578343df9ae402c3317db8154",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_14_elle_attend",
+    "paragraphe": 12021,
+    "camera": "approche",
+    "titre_codex": "Elle attend",
+    "duels": [
+     "c19_promesse"
+    ]
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_15_la_foret_morte.webp",
+    "sha256": "c4456a88ae51921f54b55d9f5d2cb79a57e83fbcfd2c14ee0329f4bde6177e27",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_15_la_foret_morte",
+    "paragraphe": 12026,
+    "camera": "recul",
+    "titre_codex": "La forêt morte",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_16_la_porte_pulse_encore.webp",
+    "sha256": "3a9e76d5722897fa55dfe80fb5d1387648cda21e959385879534f5e03435dc32",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_16_la_porte_pulse_encore",
+    "paragraphe": 12031,
+    "camera": "approche",
+    "titre_codex": "La Porte pulse encore",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_17_elle_la_voit.webp",
+    "sha256": "a1150e36ee5b59dbfa9daead335ffa25785177bf8709ac43b3448f0d275edd1d",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_17_elle_la_voit",
+    "paragraphe": 12032,
+    "camera": "approche",
+    "titre_codex": "Elle la voit",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_18_allenna_tombe_a_genoux.webp",
+    "sha256": "d09e0acf58c3eba8f0ff7d24f7300b905fe1be0d6eb807e70258b91c467ea9b2",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_18_allenna_tombe_a_genoux",
+    "paragraphe": 12042,
+    "camera": "approche",
+    "titre_codex": "Allenna tombe à genoux",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_19_les_craquelures_noires.webp",
+    "sha256": "ccbd7a84845bdfef0d237c1f1120da67b87d80f963df9b260522646cc834547e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_19_les_craquelures_noires",
+    "paragraphe": 12043,
+    "camera": "approche",
+    "titre_codex": "Les craquelures noires",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_20_son_regard_change.webp",
+    "sha256": "cbc3cd402e99242b7620af65fc937ca32248c4e1e3a86364033a635cccf61e55",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_20_son_regard_change",
+    "paragraphe": 12076,
+    "camera": "approche",
+    "titre_codex": "Son regard change",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_21_le_dernier_hommage.webp",
+    "sha256": "d356ab4dda1c2ca6e8bc55625fc48b99f72005d00969c183568369c30407a0c7",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_21_le_dernier_hommage",
+    "paragraphe": 12084,
+    "camera": "approche",
+    "titre_codex": "Le dernier hommage",
+    "duels": []
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter19-s09/s09_22_mere_nous_rentrons.webp",
+    "sha256": "d724d1588473bf4071be7c84ca95e8e1f873695aff40b7e0f15dbeeca05df65b",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c19_cg_s09_22_mere_nous_rentrons",
+    "paragraphe": 12094,
+    "camera": "recul",
+    "titre_codex": "Mère, nous rentrons",
+    "duels": []
    }
   ]
  }

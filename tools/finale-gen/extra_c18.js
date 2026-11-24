@@ -447,7 +447,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
   }).forEach(([k, v]) => { if (S[k]) S[k].voices = v; });
 /*@ALIASES@*/
 
-  // Plans clés S06 (branche Draven) et S07 (branche Iriana), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  // Plans clés S06 (branche Draven), S07 (branche Iriana) et S08 (chemin Remerii), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
   const SHOTS = [
 /*@SHOTS@*/
   ];
@@ -455,7 +455,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
   const DUEL_SHOTS = [
 /*@DUEL_SHOTS@*/
   ];
-  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma']];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };

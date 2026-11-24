@@ -1,5 +1,19 @@
 # Journal · Final du Tome I
 
+## v0.425 (branche `feat/finale-lot3-s08-s09`)
+
+- Images clés du lot 3 livrées par l’auteur : 56 plans (S08 : 34, S09 : 22), dans `assets/images/keyscenes/chapter18-s08/` et `chapter19-s09/` (dossiers `chapter16-s08/s09` de l’archive renommés). Copie à l’identique (sha256 vérifié). Les 16 PNG joints, variantes des mêmes plans, ne sont pas intégrés.
+- Placement selon la structure du VN, pas selon le découpage du livre :
+  - S08 sur le chemin Remerii, après le carrefour (`c18_ouverture` et la suite). `s08_05` (cercle d’évacuation de Saidin) est à `c18_fuir`, avant Bhaal, et non au moment plus tardif du manuscrit.
+  - Hylee apparaît en forme finale à partir de `s08_26` / `c18_remerii_tombe`, comme les sprites `hylee_finale_*`.
+  - Le duel du blizzard (`c18_bh_blizzard`) porte `s08_07` (le Gardien, conservé tel quel). Les duels de synchronisation, du dragon et de la fin portent `s08_15`, `s08_19` et `s08_25`.
+  - S09 dans l’Épilogue (`c19_trone` à `c19_serment`). `s09_14` illustre aussi `c19_promesse`.
+- Codex : section « Remerii et Hylee face à Bhaal » ajoutée au Chapitre XVIII, nouveau groupe Épilogue (« Le poids du deuil »). Clés `c18_cg_s08_*` et `c19_cg_s09_*`.
+- La Porte de S08 et S09 est l’œil rouge dans le massif d’épines du lot 1, pas l’arche du lot 2 en S07.
+- Couverture du roman, duels, Game Over, branches, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.425 · Images clés S08 et S09 ».
+
+
 ## v0.424 (branche `feat/finale-vn-combats-clairs`)
 
 VN
