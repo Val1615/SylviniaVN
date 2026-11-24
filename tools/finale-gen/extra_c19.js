@@ -22,6 +22,10 @@
   const M_END = 'music_end';
 
   const saidinDown = ['saidin', 'saidin_downcast', 'right'];
+  // Tia adulte et Allenna : sprites de la Chronique Alternative. Hylee garde sa forme finale.
+  const tia = (e, pos = 'center') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
+  const allenna = (e, pos = 'center') => ['allenna', 'finale_allenna_' + e, pos, 'finale-k'];
+  const hyleeF = (e, pos = 'left') => ['hylee', 'hylee_finale_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -49,7 +53,7 @@ ${vow}
 
 ${hand}`;
       },
-      'c19_allenna'),
+      'c19_allenna', [hyleeF('triste', 'center')]),
 
     c19_bilan: scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur',
         () => {
@@ -69,6 +73,7 @@ L’histoire continue dans le Tome II.`;
       choices: [{ label: 'Retour au menu', next: 'menu', flags: { tome1Complete: true } }],
     },
   });
+/*@ALIASES@*/
 
   // La scène « Au chevet » s’intercale entre Saidin et Allenna.
   if (S.c19_saidin) {
@@ -127,5 +132,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.419 · Fin du Tome I';
+  if (update) update.textContent = 'Mise à jour · v0.420 · Mise en scène du final';
 })();

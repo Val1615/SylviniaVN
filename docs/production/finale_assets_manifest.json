@@ -1,6 +1,6 @@
 {
- "version": "v0.418",
- "regle": "Aucune image clé ni musique générée pour ce lot. Les décors, sprites et musiques ci-dessous sont des fichiers déjà présents dans le dépôt, réutilisés tels quels. Les fichiers fournis par l’auteur doivent être copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche.",
+ "version": "v0.420",
+ "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées.",
  "fichiers_fournis_par_l_auteur": {
   "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
   "decors_affiches_en_jeu": [
@@ -95,13 +95,11 @@
   "music_c13i_amanea_reine_noire": "Amanea au portail, Allenna (Épilogue)",
   "music_c3_combat_ombres": "mêlée",
   "music_duel": "duel Valurn contre Amanea",
-  "music_c10_amanea": "tragédie de la figure de Tia",
+  "music_c10_amanea": "Game Over du duel S04",
   "music_draven_storm / music_draven_bond": "Draven, appel de Lineva",
   "music_c11_complainte(_instru)": "deuils",
-  "music_c10_culte": "Bhaal",
   "music_iriana": "Iriana contre Alamma",
   "music_c8_valurn_pacte": "pacte de Valurn",
-  "music_x12i_glace_brisee": "blizzard de Remerii",
   "music_c6_nuit_etoiles": "souvenir de la leçon d’Arcane",
   "music_algratal": "retour à Al’Gratal",
   "music_c14_council_v0340": "salle du trône",
@@ -273,9 +271,781 @@
   }
  ],
  "sprites_manquants": {
-  "hylee_finale_*": "assets/sprites/hylee_finale_*.png · Hylee dans sa forme entièrement transformée (la fiche Ressource lore/Charactersheet/finale/fiche_hylee_finale.png sert de référence, elle n’est pas affichée). D’ici là, aucune silhouette d’Hylee après la canalisation (dès c18_remerii_tombe).",
   "amanea_finale_*": "Amanea transformée : aucune silhouette pendant et après c17_metamorphose (référence : fiche_amanea_forme_finale.png, non affichée).",
-  "tia_*": "Pas de Tia adulte : la figure de Tia n’a pas de silhouette ; Naïah apparaît seulement à la révélation (c17_naiah_revelee).",
-  "alamma_* / bhaal_* / allenna_* / ellion_* / demendras_*": "Pas de sprite : scènes en narration sur le décor."
- }
+  "tia_*": "Tia adulte : sprites de la Chronique Alternative (voir sprites_ajoutes).",
+  "alamma_* / bhaal_* / allenna_* / ellion_* / demendras_*": "Allenna : sprites CA (voir sprites_ajoutes). Alamma, Bhaal, Ellion, Démendras : pas de sprite, scènes en narration sur le décor."
+ },
+ "images_cles_chapitre_xvii": {
+  "statut": "Intégrées le 24/11/2026 (v0.420) : 72 plans retenus sur 80 livrés (S02 : 31, S03 : 27, S04 : 14). Dossiers renommés chapter16-s0x → chapter17-s0x (le Chapitre XVI garde keyscenes/chapter16/). Écartés à la demande de l’auteur : s02_02 (Démendras hors fiche), s02_24 (uniforme allié gelé), s04_06, s04_11, s04_12, s04_14, s04_16, s04_18 (ancien modèle d’Amanea).",
+  "source": "tools/finale-gen/shots.py",
+  "fichiers": [
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_01_rassemblement.webp",
+    "sha256": "4dab31c4aeda2e4949d52943ef986391fd738e8db4328d595072f5110e6bf4c7",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_01_rassemblement",
+    "scene": "c17_rassemblement",
+    "paragraphe": 9682,
+    "camera": "recul",
+    "titre_codex": "Le conseil devant Akuhn’Nabad"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_03_marche_malaise.webp",
+    "sha256": "ea893764d0b31526d5256aae2c9e07fb05a7c301eb7cdc58f53bd63f78265a6e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_03_marche_malaise",
+    "scene": "c17_marche_2",
+    "paragraphe": 9733,
+    "camera": "lateral",
+    "titre_codex": "Le malaise gagne les rangs"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_04_soldat_rattrape.webp",
+    "sha256": "578865d9c20d69fe61eb294b6e85720103197ed8839e691b67341faa9dd9a717",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_04_soldat_rattrape",
+    "scene": "c17_voix_2",
+    "paragraphe": 9743,
+    "camera": "impact",
+    "titre_codex": "Le fantassin vacille"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_05_porte_maitre.webp",
+    "sha256": "cb61af6a63ba8e208c11075e71e2e8bcf9448d28dea5bbb894bac927daf15180",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_05_porte_maitre",
+    "scene": "c17_portail",
+    "paragraphe": 9747,
+    "camera": "recul",
+    "titre_codex": "La Porte Noire, dormante"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_06_camps_obscurcis.webp",
+    "sha256": "d796b46e53f57d3232643bd810409b43051d0c234e373c4f74ebef0ebc191ef4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_06_camps_obscurcis",
+    "scene": "c17_portail_2",
+    "paragraphe": 9753,
+    "camera": "lateral",
+    "titre_codex": "Les campements en alerte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_07_tia_alamma.webp",
+    "sha256": "493f35c98f8fdd03fec9f31e97d0dbbeedbb4d91370c41590c5abcb151355e0b",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_07_tia_alamma",
+    "scene": "c17_amanea_vue_2",
+    "paragraphe": 9769,
+    "camera": "approche",
+    "titre_codex": "Alamma dans les rangs ennemis"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_08_tia_reconnait.webp",
+    "sha256": "f1bf24a525c5a9225ebf5a39e82fbf9e25ee6942cafb3156c39585b92b925dec",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_08_tia_reconnait",
+    "scene": "c17_amanea_vue_3",
+    "paragraphe": 9770,
+    "camera": "approche",
+    "titre_codex": "Tia reconnaît son fils"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_09_naiah_rancoeur.webp",
+    "sha256": "a587bddfd6e412e77fde19f3b7a895f135d4380c57ea5c27a61350fbff0bae3c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_09_naiah_rancoeur",
+    "scene": "c17_naiah_regard_2",
+    "paragraphe": 9773,
+    "camera": "approche",
+    "titre_codex": "La rancœur de Naïah"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_10_remerii_iriana.webp",
+    "sha256": "118e88fb3ac0dd240954d5ef3a0d79ca720e20bbc5cd927d493be332ac8f66c1",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_10_remerii_iriana",
+    "scene": "c17_ils_savent_2",
+    "paragraphe": 9782,
+    "camera": "approche",
+    "titre_codex": "Ils savent qu’on est là"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_11_allenna_s_eclipse.webp",
+    "sha256": "9b1ed8834f98e7cc2b4d4953984714f9bfb3d663e70bfd7d9b9d49ca5956fe0a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_11_allenna_s_eclipse",
+    "scene": "c17_rituel_2",
+    "paragraphe": 9791,
+    "camera": "lateral",
+    "titre_codex": "La commandante s’éclipse"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_12_amanea_regard.webp",
+    "sha256": "774380e20f90ebd9c9f628a6d02bc6863a7d71434bfe78cce38f98ca797f6997",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_12_amanea_regard",
+    "scene": "c17_rituel_3",
+    "paragraphe": 9797,
+    "camera": "approche",
+    "titre_codex": "Amanea lève les yeux"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_13_amanea_levitation.webp",
+    "sha256": "d85db693ff611d703be56e5eb902838a613f05b25b4136f3b38038846ab7641e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_13_amanea_levitation",
+    "scene": "c17_rituel_4",
+    "paragraphe": 9803,
+    "camera": "recul",
+    "titre_codex": "Amanea à mi-hauteur"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_14_porte_feu.webp",
+    "sha256": "ed5191a88ac5ce29e9614bcd98b861f5a28660483cb13901b67e891e427deece",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_14_porte_feu",
+    "scene": "c17_feu_2",
+    "paragraphe": 9815,
+    "camera": "impact",
+    "titre_codex": "Le feu au cœur de la Porte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_15_amanea_rayon.webp",
+    "sha256": "9772f166956389a02a896c3259006d283a3a1a67d339e478ff04f6c0243a15ee",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_15_amanea_rayon",
+    "scene": "c17_feu_3",
+    "paragraphe": 9817,
+    "camera": "impact",
+    "titre_codex": "Le torrent vert"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_16_tia_signal.webp",
+    "sha256": "0a65c4ef844767776d33657a5f3f758c3773b31353dae35daf306062ad6bdf4e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_16_tia_signal",
+    "scene": "c17_feu_4",
+    "paragraphe": 9822,
+    "camera": "approche",
+    "titre_codex": "Le signal de Tia"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_17_charge.webp",
+    "sha256": "5ed602650c8f8ab0f9a0ebade3b7391905332a052f70f70e5f1e5521cff1a4a6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_17_charge",
+    "scene": "c17_assaut_2",
+    "paragraphe": 9834,
+    "camera": "lateral",
+    "titre_codex": "Les deux armées en mouvement"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_18_hylee_figee.webp",
+    "sha256": "d939e3676e4bf9ad9a79cf535993bf1a04347dbb634c12868f701335012c6850",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_18_hylee_figee",
+    "scene": "c17_hylee_figee_2",
+    "paragraphe": 9840,
+    "camera": "approche",
+    "titre_codex": "Hylee se fige"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_19_saidin_releve.webp",
+    "sha256": "74938fe12b81e69219ada28b926a496ab99cc46758f5130ce0ad8a42462b6a40",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_19_saidin_releve",
+    "scene": "c17_saidin_2",
+    "paragraphe": 9852,
+    "camera": "approche",
+    "titre_codex": "La main de Saidin"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_20_baiser_remerii.webp",
+    "sha256": "33de710d7006aca9f28753a57d16f851a3248318604896c0230970b2f8a3859e",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_20_baiser_remerii",
+    "scene": "c17_je_reviendrai_2",
+    "paragraphe": 9870,
+    "camera": "approche",
+    "titre_codex": "Le serment de Remerii"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_21_dome_saidin.webp",
+    "sha256": "55452d0b5c5f1326f4a076ad9b2984473744d0c50e0cfed5d906a678103038fa",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_21_dome_saidin",
+    "scene": "c17_bouclier_2",
+    "paragraphe": 9879,
+    "camera": "recul",
+    "titre_codex": "Le bouclier intemporel"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_22_premier_choc.webp",
+    "sha256": "a91bed87984b4f9a7dbd650b82baed5a715c84b6c5ac3a30498386c8f475e87b",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_22_premier_choc",
+    "scene": "c17_choc_2",
+    "paragraphe": 9889,
+    "camera": "impact",
+    "titre_codex": "Le premier choc"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_23_iriana_glyphes.webp",
+    "sha256": "5a1062911dbb12ee0e493389d360a27115e799faa6cab5f0baef52e2eedd9ef3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_23_iriana_glyphes",
+    "scene": "c17_tempete_2",
+    "paragraphe": 9917,
+    "camera": "approche",
+    "titre_codex": "Les glyphes d’Iriana"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_25_tempete_combinee.webp",
+    "sha256": "b4120aaf22b9113a50eccacdbb74e3c76c54331205cb8ebaf65576f912442cd8",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_25_tempete_combinee",
+    "scene": "c17_tempete_3",
+    "paragraphe": 9923,
+    "camera": "impact",
+    "titre_codex": "Glace et arcane"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_26_valurn_draven.webp",
+    "sha256": "d9f57e4fdc51af4bff1a74013af1c3112be75fafd95e5751f26ec585ad3b5fe6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_26_valurn_draven",
+    "scene": "c17_duo_2",
+    "paragraphe": 9939,
+    "camera": "lateral",
+    "titre_codex": "Deux styles dans la mêlée"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_27_tia_poursuite.webp",
+    "sha256": "f85d5cb45099a4ae14e912816ed8df652187365ea199da1fdafd7d5d692d34fe",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_27_tia_poursuite",
+    "scene": "c17_fuyards_2",
+    "paragraphe": 10020,
+    "camera": "recul",
+    "titre_codex": "Va les chercher"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_28_civils_allenna.webp",
+    "sha256": "df9a2f0b5cd6c4582f1dfdae300be8d2b64a47b98208484e3bcb7930c6698fdc",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_28_civils_allenna",
+    "scene": "c17_fuyards_4",
+    "paragraphe": 10031,
+    "camera": "lateral",
+    "titre_codex": "L’escorte des familles"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_29_allenna_reconnue.webp",
+    "sha256": "3bbba0601d89e7904d80e370211e7d11cb6e7abe71269fe7f45f8b3f557c9a55",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_29_allenna_reconnue",
+    "scene": "c17_allenna_2",
+    "paragraphe": 10053,
+    "camera": "approche",
+    "titre_codex": "Le visage d’Allenna"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_30_vision_ruelle.webp",
+    "sha256": "73eb0b06f420a3aad95342c77b70839eca817372a6d613d28454439e16a4d21f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_30_vision_ruelle",
+    "scene": "c17_allenna_4",
+    "paragraphe": 10062,
+    "camera": "recul",
+    "titre_codex": "Le souvenir d’Al’Gratal"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_31_alamma_alerte.webp",
+    "sha256": "609298401cb10c6edbcf988aa602d2d322950eafb2984bdd107b9f1d6178afa5",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_31_alamma_alerte",
+    "scene": "c17_cri_alamma_2",
+    "paragraphe": 10084,
+    "camera": "impact",
+    "titre_codex": "Le cri d’Alamma"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_32_amanea_doute.webp",
+    "sha256": "8382c887d357cb9797e3c1b057fbe89d659a88a401b8810e6cdae5ba45b9c5c6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_32_amanea_doute",
+    "scene": "c17_cri_alamma_4",
+    "paragraphe": 10091,
+    "camera": "approche",
+    "titre_codex": "Amanea détourne le regard"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s02/s02_33_amanea_avance.webp",
+    "sha256": "0f2c69d457194f02879f2308a90a80ef4153f1c605cbfb6318ea61ff1fbd2ad3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s02_33_amanea_avance",
+    "scene": "c17_regard_tia_2",
+    "paragraphe": 10117,
+    "camera": "approche",
+    "titre_codex": "Le portail et le massacre"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_01_main_libre.webp",
+    "sha256": "2c51f5e59d0da4e1b83f660c78673bb0195a81a9c95326ea24fb58c1a2f5bacb",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_01_main_libre",
+    "scene": "c17_regard_tia_3",
+    "paragraphe": 10124,
+    "camera": "approche",
+    "titre_codex": "La main libre"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_02_sylviniens_se_figent.webp",
+    "sha256": "c370d5858ea02b8fa5a3aae06691274683876d0a582e6280a7016ee470e50e9a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_02_sylviniens_se_figent",
+    "scene": "c17_moisson",
+    "paragraphe": 10128,
+    "camera": "recul",
+    "titre_codex": "L’arrêt des rangs"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_03_premier_cri.webp",
+    "sha256": "92b76a7f7ace4e9d99bfe6a182f8d108f10be6e8b872ec700e6a99f257c4982f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_03_premier_cri",
+    "scene": "c17_moisson_2",
+    "paragraphe": 10130,
+    "camera": "impact",
+    "titre_codex": "Le premier cri"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_04_la_lumiere_s_eteint.webp",
+    "sha256": "416f42cb62d98f0dbe98a9fcd4e4d14c47c873e5fcc103448be61b52b48a3e19",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_04_la_lumiere_s_eteint",
+    "scene": "c17_moisson_3",
+    "paragraphe": 10134,
+    "camera": "impact",
+    "titre_codex": "La lumière s’éteint"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_05_les_deux_rangs.webp",
+    "sha256": "14a0650fb2be21239a624b17b069ca23110ef7afdfd1fc8eef7a117f120c45fd",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_05_les_deux_rangs",
+    "scene": "c17_moisson_4",
+    "paragraphe": 10136,
+    "camera": "lateral",
+    "titre_codex": "Les deux rangs"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_06_tia_suspendue.webp",
+    "sha256": "24b4ae2353d4356b7b0b0218559a13a59f8354f988ea3f9348a8cc73033fa57f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_06_tia_suspendue",
+    "scene": "c17_vortex_2",
+    "paragraphe": 10140,
+    "camera": "approche",
+    "titre_codex": "Tia marque un temps d’arrêt"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_07_seuil_violet.webp",
+    "sha256": "6e17b1ee40e99393aad566fa61db64d7fce81ae22c8857012c8e73636d18c104",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_07_seuil_violet",
+    "scene": "c17_vortex_3",
+    "paragraphe": 10144,
+    "camera": "recul",
+    "titre_codex": "Le seuil violet"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_08_la_menace.webp",
+    "sha256": "34f6f294eb4d03174e1f2a83d7d04530e25ef61d4495d0feda5edccfdb7dc635",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_08_la_menace",
+    "scene": "c17_vortex_4",
+    "paragraphe": 10148,
+    "camera": "approche",
+    "titre_codex": "Vous n’auriez pas dû venir ici"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_09_sourire_sans_joie.webp",
+    "sha256": "6235da6b9a76e802b56664760c4259904011e028066a7c92f541d55432616ff6",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_09_sourire_sans_joie",
+    "scene": "c17_vortex_5",
+    "paragraphe": 10155,
+    "camera": "approche",
+    "titre_codex": "Un sourire sans joie"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_10_brume_verte.webp",
+    "sha256": "8c0b1a853269af0a6f8175cef9442b4c5025146c5c4e7b6809d59a7f1e708f17",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_10_brume_verte",
+    "scene": "c17_sacrifiable_2",
+    "paragraphe": 10160,
+    "camera": "lateral",
+    "titre_codex": "La brume verte"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_11_fissures.webp",
+    "sha256": "77c717d6c76f79d2b0828485c0e26b7454e72ffb2b1e033456bf14f4e117ecfa",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_11_fissures",
+    "scene": "c17_sacrifiable_3",
+    "paragraphe": 10167,
+    "camera": "approche",
+    "titre_codex": "Les premières fissures"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_12_serres_et_sabots.webp",
+    "sha256": "743ccd8cba06610342987ce7ae02931e462ddf1d22f54411bc190f685b544666",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_12_serres_et_sabots",
+    "scene": "c17_metamorphose_2",
+    "paragraphe": 10173,
+    "camera": "approche",
+    "titre_codex": "Serres et sabots"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_13_ailes_surgissent.webp",
+    "sha256": "6b7a9ee850f9adce52762f11ff7eef263bb71f7ce067e7a8a19567343b87f3be",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_13_ailes_surgissent",
+    "scene": "c17_metamorphose_3",
+    "paragraphe": 10175,
+    "camera": "impact",
+    "titre_codex": "Le déploiement des ailes"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_14_cornes_et_rire.webp",
+    "sha256": "31e2d1888e9559174c2ee848b8a0a70953bfeb594f0d8274b61d46514f51ffca",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_14_cornes_et_rire",
+    "scene": "c17_metamorphose_4",
+    "paragraphe": 10179,
+    "camera": "approche",
+    "titre_codex": "Les cornes et le rire"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_15_draven_valurn.webp",
+    "sha256": "7ca774515c2c3a5e17f312915ee9f0c1ed24eb0a4742ee76efba8445b9046068",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_15_draven_valurn",
+    "scene": "c17_va_2",
+    "paragraphe": 10191,
+    "camera": "lateral",
+    "titre_codex": "Draven et Valurn lèvent les yeux"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_16_reflet_draven.webp",
+    "sha256": "bb815743d03450e037db290d8954d58e8f5625858d91561b52d9f26c9a809888",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_16_reflet_draven",
+    "scene": "c17_dernier_carre_2",
+    "paragraphe": 10229,
+    "camera": "impact",
+    "titre_codex": "Le reflet de l’amiral"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_17_forme_finale.webp",
+    "sha256": "e32e4d681e29958974fed3263eb8f520d380b600f5ec69f507341d95346c36ac",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_17_forme_finale",
+    "scene": "c17_abomination_2",
+    "paragraphe": 10241,
+    "camera": "recul",
+    "titre_codex": "Le rayon dorsal"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_18_revelation_allenna.webp",
+    "sha256": "6979b77ce837ed1f4a2e6599a33b6abc124d8a8836726c1010c21d0bbb91237d",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_18_revelation_allenna",
+    "scene": "c17_fermer_2",
+    "paragraphe": 10268,
+    "camera": "approche",
+    "titre_codex": "La révélation d’Allenna"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_19_remerii_attend.webp",
+    "sha256": "02683bf1d1629b095f6115aba15f081cff3da78cbf787c9491aafb5f84ce123c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_19_remerii_attend",
+    "scene": "c17_signal_2",
+    "paragraphe": 10334,
+    "camera": "lateral",
+    "titre_codex": "Remerii attend"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_20_ordre_muet.webp",
+    "sha256": "5a9be6bcb809bde3754338c33e64de069adb6bfc97393fa4f21de95dbac2dd67",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_20_ordre_muet",
+    "scene": "c17_signal_4",
+    "paragraphe": 10350,
+    "camera": "approche",
+    "titre_codex": "L’ordre muet"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_21_brume_noire.webp",
+    "sha256": "802e8065893cad1cc916e9a400ba6c2282a721893302ce77624cb64ab9ec08fb",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_21_brume_noire",
+    "scene": "c17_releves_2",
+    "paragraphe": 10386,
+    "camera": "lateral",
+    "titre_codex": "La brume noire"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_22_les_morts_se_relevent.webp",
+    "sha256": "838f412baf306c3e1c9b68b94c31400250a9078b00be2b0a93ce7b114c839241",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_22_les_morts_se_relevent",
+    "scene": "c17_releves_3",
+    "paragraphe": 10394,
+    "camera": "impact",
+    "titre_codex": "Les morts se relèvent"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_23_portail_resiste.webp",
+    "sha256": "d809f50213a5e77c980060553332782362ff2a5117d7e49346b82e46db647f61",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_23_portail_resiste",
+    "scene": "c17_lutte_2",
+    "paragraphe": 10424,
+    "camera": "impact",
+    "titre_codex": "Le seuil résiste"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_24_reflet_amanea.webp",
+    "sha256": "bf05953380b691ac35a69c7eedbb39c73aa913121bc8de503e5f13328feefda0",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_24_reflet_amanea",
+    "scene": "c17_lutte_4",
+    "paragraphe": 10441,
+    "camera": "approche",
+    "titre_codex": "Le reflet d’Amanea"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_25_pierres_se_brise.webp",
+    "sha256": "2af43ca497102a5f00e219afa8e8c11bea13a9bcf675440c04474ca834c168f4",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_25_pierres_se_brise",
+    "scene": "c17_lutte_6",
+    "paragraphe": 10456,
+    "camera": "impact",
+    "titre_codex": "La première pierre"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_26_rayon_coupe.webp",
+    "sha256": "bd6c2fd9619cd9c8be223c0cbc899f859c2231bbd9fda8eb80e966b6abd536f3",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_26_rayon_coupe",
+    "scene": "c17_valurn_surgit",
+    "paragraphe": 10472,
+    "camera": "recul",
+    "titre_codex": "Le rayon s’interrompt"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s03/s03_27_valurn_raccord.webp",
+    "sha256": "bd1c9a30cf2b5e1d5bcf0de48d64774494dce917a71eae276daba813ddb20dc9",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s03_27_valurn_raccord",
+    "scene": "c17_valurn_surgit_2",
+    "paragraphe": 10479,
+    "camera": "approche",
+    "titre_codex": "Valurn dans les cendres"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_01_heritage.webp",
+    "sha256": "a6791fe929ffa361ae95d68feecb5e430a205623a14d7c8e440ae88b6ad0be6f",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_01_heritage",
+    "scene": "c17_son_fils",
+    "paragraphe": 10500,
+    "camera": "approche",
+    "titre_codex": "La reconnaissance"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_02_salut_valurn.webp",
+    "sha256": "51fba503f53ba0aee8062505b4a48efae7030b94a56db12c05f5c3c718e8bc7c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_02_salut_valurn",
+    "scene": "c17_son_fils_3",
+    "paragraphe": 10508,
+    "camera": "approche",
+    "titre_codex": "Le salut ironique"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_03_yeux_ecarlates.webp",
+    "sha256": "fab823936fa0767aa14c28afa5289115506d97b8362ddf3c4c85aca2ef595422",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_03_yeux_ecarlates",
+    "scene": "c17_son_fils_4",
+    "paragraphe": 10513,
+    "camera": "approche",
+    "titre_codex": "Les yeux écarlates"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_04_flammes_noires.webp",
+    "sha256": "5a93fb1a592292080bceddfde26538faaea7f73b07e065fe0e018b807c328e3d",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_04_flammes_noires",
+    "scene": "c17_son_fils_5",
+    "paragraphe": 10518,
+    "camera": "impact",
+    "titre_codex": "Les flammes noires"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_05_mur_de_feu.webp",
+    "sha256": "f2cd7e1c07b2bfe0f126a00681f6c71f8b0f156098484ab0684e27cb22c9754a",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_05_mur_de_feu",
+    "scene": "c17_mur_de_feu_2",
+    "paragraphe": 10527,
+    "camera": "impact",
+    "titre_codex": "Le mur de feu"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_07_valurn_se_retablit.webp",
+    "sha256": "17789b24592075254876f3e582c5b06438fd1d58ac929cf11193410f663d3419",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_07_valurn_se_retablit",
+    "scene": "c17_tu_sais_2",
+    "paragraphe": 10535,
+    "camera": "impact",
+    "titre_codex": "La sphère entropique"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_08_impact_entropique.webp",
+    "sha256": "843cfaded8efa294c867329d8a98645af5f90dbc6e10d62452a4fa033cdfb2cc",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_08_impact_entropique",
+    "scene": "c17_tu_sais_3",
+    "paragraphe": 10538,
+    "camera": "impact",
+    "titre_codex": "L’impact entropique"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_09_amanea_intacte.webp",
+    "sha256": "f12010767e376bbd4220cdb58bc03e357a05c0219428ca5f2eef4b44a94aa320",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_09_amanea_intacte",
+    "scene": "c17_tu_sais_4",
+    "paragraphe": 10540,
+    "camera": "recul",
+    "titre_codex": "Amanea reste debout"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_10_tu_sais.webp",
+    "sha256": "35fc247319149ce0077e623cc22187760cf45ffc08709af67b98e4712197772c",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_10_tu_sais",
+    "scene": "c17_tu_sais_5",
+    "paragraphe": 10545,
+    "camera": "approche",
+    "titre_codex": "Tu sais"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_13_la_riposte.webp",
+    "sha256": "01f948cd9c0f4fcdd3a32f4014605d6b8fdb1c96a0d5c926e9c0deb12e9b7164",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_13_la_riposte",
+    "scene": "c17_pourquoi",
+    "paragraphe": 10557,
+    "camera": "impact",
+    "titre_codex": "La riposte de Valurn"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_15_valurn_cede.webp",
+    "sha256": "cb9d31bc39563f8924b88d21e4bcaa19c33de1b21c5af708394c922df38e5a98",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_15_valurn_cede",
+    "scene": "c17_cede_2",
+    "paragraphe": 10569,
+    "camera": "lateral",
+    "titre_codex": "Gagner du temps"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_17_pilier_noir.webp",
+    "sha256": "b75077ee626bf2e853e427112333196b0cbb88ee176a0a9011836a568d52b5e9",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_17_pilier_noir",
+    "scene": "c17_brise_2",
+    "paragraphe": 10576,
+    "camera": "impact",
+    "titre_codex": "Le pilier de pierre noire"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_19_rire_valurn.webp",
+    "sha256": "9978aed1a3d7828101293183f91349fab165624d254d7fff4a56969d6b178e65",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_19_rire_valurn",
+    "scene": "c17_brise_4",
+    "paragraphe": 10588,
+    "camera": "approche",
+    "titre_codex": "Le dernier rire"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter17-s04/s04_20_le_seuil_s_ouvre.webp",
+    "sha256": "cdc4696d9cdd58cee594c28ce340caf68c2f65b76e1d2c3507df89817ef632b8",
+    "dimensions": "1600x900 WebP",
+    "cle_A": "c17_cg_s04_20_le_seuil_s_ouvre",
+    "scene": "c17_brise_5",
+    "paragraphe": 10595,
+    "camera": "recul",
+    "titre_codex": "La Porte commence à s’ouvrir"
+   }
+  ]
+ },
+ "sprites_ajoutes": {
+  "hylee_finale": [
+   {
+    "fichier": "assets/sprites/hylee_finale_calme.png",
+    "sha256": "f8be69a2e4ebb83544de085438925ae5aa4e8725dbff8b14e1da8c5f8702762f",
+    "dimensions": "1086x1448 PNG RGBA"
+   },
+   {
+    "fichier": "assets/sprites/hylee_finale_magie.png",
+    "sha256": "3ad0ae8321028ad07b52ec8ab66b49ec441ca71d079c918658abc399ab302131",
+    "dimensions": "1086x1448 PNG RGBA"
+   },
+   {
+    "fichier": "assets/sprites/hylee_finale_pleurs.png",
+    "sha256": "5bed1a3a1ceb1d9c649cd6c5a0aeea45408d5220c70f1548a178d45e36d165fb",
+    "dimensions": "1086x1448 PNG RGBA"
+   },
+   {
+    "fichier": "assets/sprites/hylee_finale_serieuse.png",
+    "sha256": "6bc96419922b6788f7bbe1cd836001c0ed9bf1159c55c1ee8e3f9e1106a2eea1",
+    "dimensions": "1086x1448 PNG RGBA"
+   },
+   {
+    "fichier": "assets/sprites/hylee_finale_triste.png",
+    "sha256": "52a3a6d3cb7e7f3645d334d10c330ac4ad3fdcc0aec4159280ebf34cc30eff3e",
+    "dimensions": "1086x1448 PNG RGBA"
+   }
+  ],
+  "hylee_finale_scenes": "c18_remerii_tombe → c18_ne_me_laisse_pas, c19_chambre, c19_saidin, c19_promesse. Classe finale-k (échelle 1,08, fusion/story-finale-media.js).",
+  "chronique_alternative": "Tia adulte et Allenna : fichiers CA référencés tels quels (aucune copie), clés A finale_tia_<expression> et finale_allenna_<expression> → chronique-alternative/assets/sprites/{tia,allenna}/<expression>.png. Tia : c17_rassemblement, c17_plan, c17_supplique → c17_gorge, c18_trop_tard → c18_etreinte (sauf souvenirs), c18_fuir, c18_iriana_part, c19_trone, c19_pertes. Allenna : c19_allenna, c19_serment."
+ },
+ "musiques_ajoutees": [
+  {
+   "fichier": "assets/audio/finale/amanea_final_destination.mp3",
+   "sha256": "c2a16877861c07643132c5a20c8e448fd6c027cf119b365abc24afea5ac551a3",
+   "titre": "Amanea, Final destination",
+   "cle_A": "music_finale_amanea",
+   "scenes": "c17_revelation (bascule en phase B du duel) → c17_cede, c17_m4 → c17_brise, c17_duel_bilan, S05 (c17_trois → c17_brasier), c17_fin. Les Game Over gardent music_c10_amanea."
+  },
+  {
+   "fichier": "assets/audio/finale/ensemble.mp3",
+   "sha256": "895667804dea637305bbe75e7cbd806bd41b15021f9b93d0b09e39d8c3648e0f",
+   "titre": "Ensemble",
+   "cle_A": "music_finale_ensemble",
+   "scenes": "Combat contre Bhaal : c18_bhaal → c18_iriana_part, c18_gardien → c18_dragon, duel c18_bh_* et c18_valurn_renvoi. Le souvenir de la leçon d’Arcane (c18_source, c18_nebuleuse) garde music_c6_nuit_etoiles."
+  }
+ ]
 }

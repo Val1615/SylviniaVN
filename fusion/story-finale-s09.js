@@ -22,6 +22,10 @@
   const M_END = 'music_end';
 
   const saidinDown = ['saidin', 'saidin_downcast', 'right'];
+  // Tia adulte et Allenna : sprites de la Chronique Alternative. Hylee garde sa forme finale.
+  const tia = (e, pos = 'center') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
+  const allenna = (e, pos = 'center') => ['allenna', 'finale_allenna_' + e, pos, 'finale-k'];
+  const hyleeF = (e, pos = 'left') => ['hylee', 'hylee_finale_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -55,7 +59,7 @@ Et Draven est mort en combattant.
 Un guerrier, jusqu’au bout.
 
 Ellion poursuit.`,
-      "c19_pertes", []),
+      "c19_pertes", [tia('stern')]),
     c19_pertes: scene("L’Empire ne pleure pas", BG_TRONE, M_CONSEIL, 'Narrateur',
       `« Les détachements Sylviniens envoyés en éclaireurs pour constater l’activité de la Porte Noire… Aucune unité n’a survécu. Ça confirme nos craintes. »
 
@@ -110,7 +114,7 @@ Elle a déjà décidé.
 Il incline la tête, referme les parchemins avec la même précision clinique, et se retire sans un mot de plus. Il sait ce qui vient.
 
 L’Empire va se préparer à la guerre.`,
-      "c19_chambre", []),
+      "c19_chambre", [tia('neutral')]),
     c19_chambre: scene("Hylee · Le Murmure du Cœur Endormi", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `La lumière tamisée des chandelles danse sur les murs de la chambre silencieuse, projetant des ombres mouvantes sur les draps immaculés où repose Remerii, immobile, figée dans un sommeil qui n’a rien de naturel. L’odeur des herbes médicinales brûlées emplit l’air, un parfum de cendres et de menthe, d’illusion et de résignation.
 
@@ -157,7 +161,7 @@ Un souffle.
 N’importe quoi.
 
 Mais rien ne vient.`,
-      "c19_saidin", []),
+      "c19_saidin", [hyleeF('triste', 'center')]),
     c19_saidin: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Rien, sauf Saidin.
 
@@ -190,7 +194,7 @@ Elle n’a même pas remarqué la nuit tomber.
 Sa voix est rauque, abîmée par le silence, par l’épuisement. Saidin hoche la tête, son regard toujours fixé sur le corps immobile. Il aurait voulu dire quelque chose de plus. Mais il ne sait pas quoi.
 
 Parce que lui aussi, il a perdu quelque chose. Remerii n’était pas simplement une élève.`,
-      "c19_saidin_2", [saidinDown]),
+      "c19_saidin_2", [hyleeF('serieuse'), saidinDown]),
     c19_saidin_2: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Il l’avait formée, guidée, observée grandir dans les méandres des Arcanes, partagé avec elle des connaissances qu’il n’aurait confiées à personne d’autre. Il avait vu en elle une promesse, une lumière rare dans un Empire où la magie était une arme et non un savoir.
 
@@ -227,14 +231,14 @@ Sa voix ne tremble pas.
 Saidin l’observe longtemps. Puis, dans un murmure à peine audible, il lâche, presque pour lui-même :
 
 « Alors trouve un moyen de la ramener. »`,
-      "c19_saidin_3", [saidinDown]),
+      "c19_saidin_3", [hyleeF('serieuse'), saidinDown]),
     c19_saidin_3: scene("Alors trouve un moyen", BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
       `Et sans un mot de plus, il s’éloigne, laissant derrière lui un silence chargé de sens. À d’autres, son départ aurait pu sembler froid, presque résigné, mais pour Hylee, ses paroles résonnent comme un présage. Il ne lui demande pas de convaincre, ni de justifier son instinct… il lui confie un devoir. Comme s’il savait, au-delà des doutes et des lois de ce monde, qu’elle seule détient la clé du réveil de Remerii.
 
 Hylee reste seule, ses doigts toujours refermés sur cette main trop froide.
 
 Elle attend.`,
-      "c19_allenna", [saidinDown]),
+      "c19_allenna", [hyleeF('serieuse'), saidinDown]),
     c19_allenna: scene("Allenna · Sur les traces d’un régicide", BG_CHAMP, M_REINE, 'Narrateur',
       `La Forêt Interdite n’est plus qu’un fantôme, un murmure éteint dans le vent glacé qui s’effiloche entre les ruines. Ses arbres, jadis immenses, se dressent comme des ossements décharnés, leur écorce noircie par le feu, leur sève coagulée en veinules de cendres. Plus rien ne vit ici, sinon l’écho du passé, figé dans le silence d’un territoire sans âmes.
 
@@ -253,7 +257,7 @@ Puis, elle la voit.
 Et tout le reste cesse d’exister.
 
 Amanea.`,
-      "c19_allenna_2", []),
+      "c19_allenna_2", [allenna('troubled')]),
     c19_allenna_2: scene("Allenna · Sur les traces d’un régicide", BG_CHAMP, M_REINE, 'Narrateur',
       `Son corps gît parmi les vestiges du dernier combat, figé dans une posture trop calme pour être naturelle. Un linceul de poussière s’est posé sur elle, comme une caresse d’adieu déposée par le vent. Elle semble avoir été abandonnée ici, livrée aux cendres et aux ombres, comme un secret oublié.
 
@@ -278,7 +282,7 @@ On l’a vidée.
 Chaque goutte de puissance a été arrachée, siphonnée, consumée.
 
 Il ne reste rien.`,
-      "c19_allenna_3", []),
+      "c19_allenna_3", [allenna('troubled')]),
     c19_allenna_3: scene("Allenna · Sur les traces d’un régicide", BG_CHAMP, M_REINE, 'Narrateur',
       `Mais son calvaire ne s’est pas limité à cela. Son bras gauche a été tranché net, la coupure parfaitement droite, sans doute l’œuvre d’une lame sylvinienne portée par un coup fatal et implacable. L’amputation n’a rien de naturel. Ce n’est pas une blessure de guerre laissée au hasard d’un champ de bataille. C’est un châtiment. Une exécution.
 
@@ -287,7 +291,7 @@ Et pire encore…
 Son abdomen est ouvert, déchiré par un coup porté avec une précision effrayante. La blessure n’a pas traversé son ventre au hasard.
 
 Elle a été transpercée jusqu’au cœur.`,
-      "c19_serment", []),
+      "c19_serment", [allenna('troubled')]),
     c19_serment: scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
       `Une mort brutale….
 
@@ -332,7 +336,7 @@ Son regard change.
 Son souffle se stabilise.
 
 L’Empire a tout pris.`,
-      "c19_serment_2", []),
+      "c19_serment_2", [allenna('sad')]),
     c19_serment_2: scene("Mère… nous rentrons", BG_CHAMP, M_REINE, 'Narrateur',
       `Ils ont gagné une bataille qu’ils ne méritaient pas. Ils s’en sont pris à un être qui ne souhaitait que vivre, et protéger des personnes qui ne le méritaient pas…
 
@@ -361,7 +365,7 @@ Alors, elle murmure.
 Sa voix est posée, douce, presque tendre, dénuée de rage mais imprégnée d’une rancune que rien ne pourra dissiper.
 
 « Mère… nous rentrons. »`,
-      "c19_bilan", []),
+      "c19_bilan", [allenna('sad')]),
 
     // Variante issue des choix « Je reviendrai » (S02) et « Dans la tempête » (S08).
     c19_promesse: scene('Au chevet', BG_CHAMBRE, M_CHAMBRE, 'Narrateur',
@@ -381,7 +385,7 @@ ${vow}
 
 ${hand}`;
       },
-      'c19_allenna'),
+      'c19_allenna', [hyleeF('triste', 'center')]),
 
     c19_bilan: scene('Fin du Tome I', BG_CHAMP, M_END, 'Narrateur',
         () => {
@@ -401,6 +405,8 @@ L’histoire continue dans le Tome II.`;
       choices: [{ label: 'Retour au menu', next: 'menu', flags: { tome1Complete: true } }],
     },
   });
+  // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
+  Object.entries({}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 
   // La scène « Au chevet » s’intercale entre Saidin et Allenna.
   if (S.c19_saidin) {
@@ -459,5 +465,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.419 · Fin du Tome I';
+  if (update) update.textContent = 'Mise à jour · v0.420 · Mise en scène du final';
 })();

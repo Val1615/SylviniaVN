@@ -10,7 +10,7 @@
 
 Mise en scène :
 
-- de `c17_trois` à `c17_dernier_souffle`, rien ne trahit Naïah : aucune silhouette (il n’existe pas non plus de sprite de Tia adulte), et ni les sous-titres (« Trois silhouettes », « Tia… écoute-moi… », « Une Farae ne pardonne jamais », « L’acier sur la pierre », « Pourquoi… ? », « Dernier souffle »), ni les identifiants de scène affichés sur la tranche de la boîte de dialogue ne la nomment ou ne parlent d’illusion ;
+- de `c17_trois` à `c17_dernier_souffle`, rien ne trahit Naïah : la figure porte les traits de Tia (sprites de Tia adulte repris de la Chronique Alternative depuis la v0.420 : `stern` pour la supplique, `threatening` pour la lame et l’acier, `neutral` pour « Pourquoi… ? » ; `c17_trois` et `c17_dernier_souffle` restent sans silhouette), et ni les sous-titres (« Trois silhouettes », « Tia… écoute-moi… », « Une Farae ne pardonne jamais », « L’acier sur la pierre », « Pourquoi… ? », « Dernier souffle »), ni les identifiants de scène affichés sur la tranche de la boîte de dialogue ne la nomment ou ne parlent d’illusion ;
 - la révélation est découpée en deux scènes :
   - `c17_dernier_souffle` (§ 10747–10757, « Les sons. » jusqu’à « …qu’elle a protégé sans qu’elle ne le sache. ») : pas de silhouette, sous-titre « Dernier souffle » ;
   - `c17_naiah_revelee` (§ 10758–10761, « Naïah. Sa fille. Son propre sang. » jusqu’à « Sans un regret. ») : sous-titre « L’illusion se dissipe », la silhouette de Naïah (`naiah_neutral`) apparaît à l’instant exact où le texte la nomme ;
@@ -18,12 +18,12 @@ Mise en scène :
 
 ## 2. Hylee transformée
 
-À la fin, Hylee apparaît dans sa forme entièrement transformée. Il n’existe pas encore de sprite pour cette forme : le dépôt contient seulement `hylee_*`, `hylee2_*` et « Hylee apprentie mage.png ». Pour ne pas la montrer avec son ancienne apparence :
+À la fin, Hylee apparaît dans sa forme entièrement transformée. Depuis la v0.420, ses cinq sprites fournis par l’auteur (`assets/sprites/hylee_finale_{calme,magie,pleurs,serieuse,triste}.png`, copiés à l’identique) sont branchés :
 
-- les silhouettes habituelles servent jusqu’à la canalisation (`c18_conduit`) ;
-- à partir de `c18_remerii_tombe`, aucune silhouette d’Hylee ne s’affiche (Épilogue compris) ;
-- la révélation `c18_reflet` (« Deux saphirs ») garde un vrai décor de scène : les portes d’Al’Gratal (`bg_algratal_portes`), comme `c18_algratal` et `c18_ne_me_laisse_pas` (« sol de pierre », Sylviniens qui s’affairent). Le panorama `c2_algratal_panorama_cg` a été retiré de ces scènes, car on y voit de dos une Hylee aux cheveux roux. La fiche d’Hylee n’y est jamais affichée ;
-- l’emplacement prévu pour les futurs sprites est `assets/sprites/hylee_finale_*.png`.
+- les silhouettes habituelles (`hylee2_*`, vitiligo et cheveux auburn) servent jusqu’à la canalisation (`c18_conduit`) et pendant tout le combat ;
+- à partir de `c18_remerii_tombe`, et jamais avant, Hylee apparaît sous sa forme finale : `pleurs` (Remerii s’effondre, « Ne me laisse pas »), `triste` (seules, Al’Gratal, le chevet), `serieuse` (le refus, Saidin au chevet), `calme` (la faille de Medig), `magie` (« Deux saphirs », yeux lumineux) ;
+- la révélation `c18_reflet` garde le décor des portes d’Al’Gratal (`bg_algratal_portes`) ; le panorama `c2_algratal_panorama_cg`, où l’on voit une Hylee rousse de dos, reste retiré ;
+- ces bustes montrent un visage plus petit que les sprites `hylee2_*` à hauteur égale : la classe `finale-k` les grandit de 8 % (`fusion/story-finale-media.js`). Aller jusqu’à la même taille de visage couperait le haut de la tête.
 
 ## 3. Naïah
 
@@ -66,6 +66,13 @@ Deux points à valider par l’auteur :
 - L’en-tête des boutons de choix suit le personnage joué : « Le choix de Valurn » (S04), « Le choix de Draven » (S06), « Le choix d’Iriana » (S07), « Le choix de Remerii » (blizzard, dragon) et « Le choix d’Hylee » (réponse, Arcane, synchronisation), « Après la défaite » sur les Game Over. `adapter.js` (v51) appelle le crochet `sylviniaChoiceHeader` ; sans valeur, le libellé historique est conservé, si bien que les chapitres I à XVI ne changent pas. La pagination n’est pas modifiée.
 - Relecture : la carte « Chapitre XVIII » d’une partie terminée ramène au carrefour, déblocages conservés, branches déjà jouées marquées « (déjà jouée) ». La vraie partie est mise de côté (`finaleReplay`) puis restaurée à la fin de la branche (« Terminer la relecture ») : aucun choix rejoué n’écrase la sauvegarde réelle, et aucune stat n’est gagnée.
 - Pour l’interface, l’Épilogue est rangé sous « Chapitre XIX » (`getSceneChapterLabel`). À l’écran, son titre reste « Épilogue · Tome I ».
+
+## 7. Mise en scène du Chapitre XVII (v0.420)
+
+- 72 plans clés livrés par l’auteur (S02 à S04) sont branchés au paragraphe exact qu’ils illustrent (`tools/finale-gen/shots.py`). Un plan remplace le décor et efface les silhouettes ; il reste affiché jusqu’au plan suivant, au plus quatre paragraphes, puis la scène revient à son décor et à ses sprites. Chaque plan a un mouvement de caméra (`recul`, `approche`, `lateral`, `impact`, mêmes mouvements que le Chapitre XVI) et un cadrage complet en portrait (880×1024). Tous entrent dans le Codex (groupe « Chapitre XVII »).
+- Aucun paragraphe du roman n’est retiré : les écrans sont seulement redécoupés aux changements de plan (1 365 § couverts, contrôle de `gen.py`). Une sauvegarde faite sur un ancien identifiant disparu (`c17_marche_3`) est redirigée vers l’écran qui porte son premier paragraphe.
+- Placement à noter : `s03_01` (la main libre) est sur « Amanea est en train de partager son attention » (§ 10124), `s03_02` (les rangs se figent) sur le § 10128, qui contenait les deux repères.
+- Musiques : « Amanea, Final destination » part de la bascule du duel (`c17_revelation`, Puissance révélée) et tient jusqu’à la fin du Chapitre XVII, tragédie comprise ; « Ensemble » couvre tout le combat contre Bhaal, blizzard et dragon compris. Les deux entrent dans le Codex (« Final du Tome I »).
 
 ## Fichiers fournis par l’auteur (24/11/2026)
 

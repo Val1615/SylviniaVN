@@ -27,10 +27,12 @@
   const M_LINEVA = 'music_draven_bond';
   const M_PLAINTE = 'music_c11_complainte';
   const M_PLAINTE_I = 'music_c11_complainte_instru';
-  const M_BHAAL = 'music_c10_culte';
+  // « Ensemble » (OST fournie par l’auteur) : tout le combat contre Bhaal, de son apparition au dragon de glace.
+  // Le souvenir de la leçon d’Arcane garde sa musique (M_SOURCE).
+  const M_BHAAL = 'music_finale_ensemble';
   const M_IRIANA = 'music_iriana';
   const M_VALURN = 'music_c8_valurn_pacte';
-  const M_BLIZZARD = 'music_x12i_glace_brisee';
+  const M_BLIZZARD = M_BHAAL;
   const M_SOURCE = 'music_c6_nuit_etoiles';
   const M_ALGRATAL = 'music_algratal';
 
@@ -51,6 +53,9 @@
   const dravenSoot = ['draven', 'draven_gruff', 'left'];
   const dravenAngry = ['draven', 'draven_angry', 'left'];
   const dravenLineva = ['draven', 'draven_gruff', 'left'];
+  // Tia adulte (Chronique Alternative) et Hylee dans sa forme finale (dès c18_remerii_tombe, jamais avant).
+  const tia = (e, pos = 'right') => ['tia', 'finale_tia_' + e, pos, 'finale-k'];
+  const hyleeF = (e, pos = 'left') => ['hylee', 'hylee_finale_' + e, pos, 'finale-k'];
 
   const scene = (sub, bg, music, speaker, text, next, chars = []) => ({
     title: chapter, sub, bg, music, speaker, text, next, chars,
@@ -558,7 +563,7 @@ Son corps, déformé par la puissance démoniaque qu’elle avait invoquée, n�
 Et derrière elle, le portail brûle.
 
 Des langues de flammes cramoisies serpentent le long des runes démoniaques gravées dans la pierre. Un brasier infernal, une blessure béante dans le tissu même de leur monde. Iriana s’en approche, le cœur serré. Le portail s’active lentement. Ce n’est plus une simple construction de pierre et d’énergie. C’est une entité en soi. Il aspire, avale, réclame. Il est affamé de chaos.`,
-      "c18_soeur_en_deuil", [irianaTroubled]),
+      "c18_soeur_en_deuil", [irianaTroubled, tia('troubled')]),
     c18_soeur_en_deuil: scene("Une sœur en deuil", BG_PORTE, M_PLAINTE_I, 'Narrateur',
       `Iriana ne regarde pas Tia immédiatement. Elle n’ose pas.
 
@@ -593,7 +598,7 @@ Sa voix est basse, rauque. Fatiguée.
 Son regard doré se voile d’un éclat que Iriana ne lui connaissait pas.
 
 « Mais je crois qu’au fond… elle voulait simplement être libre. »`,
-      "c18_journal", [irianaSad]),
+      "c18_journal", [irianaSad, tia('sad')]),
     c18_journal: scene("Elle a essayé", BG_PORTE, M_PLAINTE_I, 'Narrateur',
       `Iriana se mord la lèvre.
 
@@ -636,7 +641,7 @@ Ses doigts glissent sur les cheveux blancs d’Amanea, écartant doucement quelq
 Elle inspire profondément, sa poitrine se soulevant dans un effort visible.
 
 « Et par ma faute… elle ne connaîtra jamais le repos qu’elle devrait avoir… »`,
-      "c18_regret", [irianaSad]),
+      "c18_regret", [irianaSad, tia('sad')]),
     c18_regret: scene("Du regret", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Iriana sent son cœur se serrer.
 
@@ -659,7 +664,7 @@ Elle n’a plus de colère, plus d’amertume. Seulement une immense tristesse. 
 Du regret.
 
 Le silence pèse, lourd comme une chape de plomb. Tout autour d’elles semble s’éloigner, comme si le monde entier s’était replié sur cet instant figé dans le temps. Le portail gronde derrière elles, affamé, insatiable, mais ni Iriana ni Tia n’y prêtent attention. Elles ne voient que le corps inerte d’Amanea, étendu devant elles, une ombre déchue aux ailes brisées, une reine tombée dont le destin tragique semble enfin scellé. Tia ne dit rien. Elle reste figée, droite, imposante, mais ce n’est qu’une façade. L’impératrice n’est plus une impératrice en cet instant. Elle est simplement une sœur, une jumelle privée de son autre moitié, une guerrière qui a remporté une bataille qu’elle n’a jamais voulu vraiment gagner. Elle se sent vide. Elle a perdu une, si ce n’est son objectif… sa raison de vivre.`,
-      "c18_souvenirs", [irianaSad]),
+      "c18_souvenirs", [irianaSad, tia('troubled')]),
     c18_souvenirs: scene("Les jardins d’Al’Gratal", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Ses doigts effleurent une fois de plus la peau d’Amanea, froide, dure comme la pierre, marquée par les ravages de la corruption. Autrefois, cette chair avait été la même que la sienne. Autrefois, ces traits avaient été identiques aux siens. Amanea et elle étaient nées ensemble, avaient grandi ensemble, avaient marché dans les mêmes couloirs, appris sous le même toit. Elles avaient partagé leurs premiers rires, leurs premiers chagrins, leurs premiers espoirs… et leurs premières rancœurs.
 
@@ -701,7 +706,7 @@ Tia verse quelques larmes, discrètes et rares…
 pourtant, c’est bien plus qu’elle n’en a jamais laissé paraître.
 
 Des larmes amères, des larmes de peines, des larmes de regrets`,
-      "c18_etreinte_2", [irianaSad]),
+      "c18_etreinte_2", [irianaSad, tia('sad')]),
     c18_etreinte_2: scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Mais à présent, il est trop tard. La lueur d'Amanea s'est éteinte à jamais, et aucun mot, aucun geste, ne pourra jamais recoudre les liens brisés par l'éternité impitoyable de la mort.
 
@@ -710,7 +715,7 @@ Tia relâche un soupir tremblant, serrant un peu plus sa sœur contre elle. Elle
 Et pour la première fois, Iriana ne sait pas qui de sa tante ou d’elle-même souffre le plus.
 
 Elle ne peut qu’observer le point final d’une histoire autrefois tissée d’espoir et de promesses silencieuses, d’une fraternité brisée, un lien déchiré par des années de conflits, de malentendus et d’orgueil, et dont il ne reste plus aujourd’hui que le silence pesant de la mort pour conclusion…`,
-      "c18_ip_portail", [irianaSad]),
+      "c18_ip_portail", [irianaSad, tia('sad')]),
     c18_alamma: scene("Confrontation au Portail", BG_PORTE, M_IRIANA, 'Narrateur',
       `La forêt est silencieuse, trop silencieuse. Iriana avance, seule, sous la canopée tordue où les ombres semblent s’animer sous la pulsation du portail démoniaque. L’air est saturé d’une énergie poisseuse, presque vivante, qui s’infiltre dans sa peau, cherchant à déformer sa chair, sa volonté, son âme.
 
@@ -1039,7 +1044,7 @@ Le vieux mage hésite une seconde, ses doigts crispés sur son bâton. Un portai
 « Je vais avoir besoin de plusieurs minutes. »
 
 « Alors on va te les offrir », murmure Tia, faisant tournoyer son arme en foudroyant les démons du regard.`,
-      "c18_bhaal", [saidin, remerii]),
+      "c18_bhaal", [tia('stern', 'left'), saidin, remerii]),
     c18_bhaal: scene("Bhaal", BG_PORTE, M_BHAAL, 'Narrateur',
       `Un second frisson secoue la forêt. Les arbres gémissent sous une pression invisible.
 
@@ -1145,7 +1150,7 @@ Seule.
 Avançant droit vers la porte démoniaque. Tia crie son nom. Mais Iriana ne se retourne pas.
 
 Elle disparaît de la forêt sans un mot.`,
-      "c18_gardien", []),
+      "c18_gardien", [tia('troubled', 'center')]),
     c18_gardien: scene("Un Blizzard", BG_GIVRE, M_BLIZZARD, 'Narrateur',
       `Pendant ce temps, face au portail, Remerii est toujours contre Bhaal, seule.
 
@@ -1514,7 +1519,7 @@ Sa voix tremble.
 « Je vais te sortir de là. »
 
 Mais elles sont seules. Les autres sont partis. Le blizzard les a isolées du monde extérieur, ne remarquant pas qu’elles ont fini seules, pas seulement ce combat, mais aussi cette guerre.`,
-      "c18_seules", []),
+      "c18_seules", [hyleeF('pleurs', 'center')]),
     c18_seules: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Tia, les Sylviniens, les soldats… Ils ont fui.
 
@@ -1531,16 +1536,16 @@ Hylee les voit. Mais elle est seule. Son corps est brisé, Sa magie est instable
 Elle ne sait pas si Remerii est encore en vie, mais elle ne veut pas la laisser là… quitte à traîner son corps jusqu’à Al’Gratal.
 
 Le vent s’est calmé, mais le froid est toujours là, un froid qui s’insinue dans les os, un froid qui ne vient pas seulement de la neige et du blizzard qui s’efface lentement. Hylee serre Remerii contre elle, ses bras tremblants sous l’effort, non pas à cause de la fatigue, mais à cause de cette peur sourde qui lui tord les entrailles, cette panique qui monte lentement alors qu’elle ne sent toujours pas la respiration de son mentor, de son amour, alors qu’elle attend un signe, n’importe quoi, une pression des doigts, un frisson, un gémissement, mais rien ne vient.`,
-      "c18_seules_2", []),
+      "c18_seules_2", [hyleeF('triste', 'center')]),
     c18_seules_2: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Autour d’elle, la bataille est finie, le silence règne. Un silence pesant, lugubre, comme si le monde retenait son souffle après l’affrontement titanesque qui vient d’avoir lieu. Le portail n’est pas complètement refermé, il est là, vacillant, déchirant encore la réalité de son aura sombre, vomissant des relents d’énergie démoniaque et, au loin, elle entend encore le murmure de créatures rôdant à la lisière, attendant, observant, prêtes à fondre sur elle au moindre signe de faiblesse.`,
-      "c18_seules_3", []),
+      "c18_seules_3", [hyleeF('triste', 'center')]),
     c18_seules_3: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Mais Hylee ne pense pas à ça. Son regard est fixé sur Remerii, sur son visage livide, sur cette respiration qu’elle cherche désespérément à percevoir, sur ce corps qui semble s’alourdir entre ses bras, comme si la vie l’abandonnait peu à peu. Elle secoue doucement la femme qu’elle tient, ses doigts crispés sur sa tunique gelée, sa voix brisée par l’angoisse alors qu’elle murmure son nom, encore et encore, un appel étouffé, une prière à peine soufflée dans l’air glacé. Elle voudrait croire que Remerii dort simplement, qu’elle s’est juste évanouie sous l’effort, mais au fond d’elle, une peur insidieuse lui murmure autre chose, une vérité qu’elle refuse d’entendre. Son cœur bat trop fort, résonne dans sa tête comme un tambour funèbre, chaque seconde qui passe sans réponse est une aiguille qui s’enfonce un peu plus profondément dans sa poitrine. Elle presse son oreille contre le torse de Remerii, cherchant ce battement de cœur, ce rythme qui lui prouverait qu’elle est encore là, mais c’est si faible, si ténu, qu’elle doute de l’avoir réellement perçu. Ses yeux brûlent, sa gorge se serre, elle voudrait hurler, elle voudrait la secouer, elle voudrait la ramener, la forcer à ouvrir les yeux, à lui parler, à lui dire quelque chose, n’importe quoi, mais elle n’ose pas, de peur que tout cela ne soit qu’une illusion, de peur que si elle la lâche ne serait-ce qu’un instant, Remerii disparaisse pour de bon.`,
-      "c18_seules_4", []),
+      "c18_seules_4", [hyleeF('triste', 'center')]),
     c18_seules_4: scene("Seules", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Autour d’elles, le monde a changé. La tempête est retombée, la neige qui recouvre le sol est marquée par les cicatrices du combat, des cratères où le feu et la glace se sont affrontés, des ombres de silhouettes figées dans la glace, des éclats de magie encore flottants dans l’air, vestiges d’un affrontement que personne ne pourra jamais vraiment comprendre. Mais tout cela n’a plus d’importance. Il n’y a plus que Remerii et elle. Plus que ce corps contre le sien, cette chaleur qui s’amenuise, cette présence qui semble s’effilocher à chaque seconde. Hylee tremble, pas de froid, pas de peur pour elle-même, mais de cette terreur intime, viscérale, qui lui souffle que Remerii est en train de la quitter, qu’elle s’accroche à un fantôme, qu’elle est d’ores et déjà trop loin pour être sauvée.`,
-      "c18_refus", []),
+      "c18_refus", [hyleeF('triste', 'center')]),
     c18_refus: scene("Elle refuse", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Non.
 
@@ -1553,12 +1558,12 @@ Hylee inspire profondément, force son esprit à se concentrer, à refuser cette
 Mais elle est seule.
 
 Seule, avec cette femme dans ses bras, seule, face à un portail toujours ouvert, seule, avec la peur de voir son monde s’effondrer définitivement. Et pourtant, elle ne la lâche pas. Elle ne la lâchera jamais.`,
-      "c18_refus_2", []),
+      "c18_refus_2", [hyleeF('serieuse', 'center')]),
     c18_refus_2: scene("Elle refuse", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Le silence s’étire, pesant, étouffant, brisé seulement par le souffle court et irrégulier d’Hylee. Ses bras engourdis continuent de serrer Remerii, mais elle sent son corps devenir de plus en plus froid, comme si la chaleur même de son être était aspirée ailleurs. La neige crisse sous ses genoux, le portail derrière elle pulse faiblement, envoyant encore des vagues d’ombres et d’énergie malfaisante, et les silhouettes démoniaques rôdent toujours, immobiles, tapies dans l’ombre comme des charognards attendant la fin d’une bête blessée.
 
 Hylee n’a plus de force. Elle sent la magie en elle, trop présente, trop brutale, brûlante et froide à la fois, une puissance qui ne lui appartient pas totalement et qui gronde dans son sang comme une tempête prête à l’engloutir. Mais qu’importe. Elle ne bougera pas. Elle ne laissera pas Remerii là. Elle préférerait mourir avec elle que l’abandonner dans cette plaine enneigée, seule, face aux ténèbres.`,
-      "c18_faille", []),
+      "c18_faille", [hyleeF('serieuse', 'center')]),
     c18_faille: scene("La faille de Medig", BG_GIVRE, M_PLAINTE_I, 'Narrateur',
       `Puis, un mouvement dans le ciel.
 
@@ -1599,23 +1604,23 @@ Elle ne la laissera pas mourir ici.
 Un dernier regard vers les ténèbres qui s’amassent derrière elle, les murmures démoniaques devenant plus pressants, plus menaçants, et Hylee prend sa décision.
 
 Elle se redresse, vacillante mais résolue, puis, avec ce qui lui reste de force, elle franchit la faille.`,
-      "c18_algratal", []),
+      "c18_algratal", [hyleeF('calme', 'center')]),
     c18_algratal: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `À l’arrivée… le blizzard l’a suivie. Le sol est glacé sous ses genoux, mais Hylee ne le sent pas, son corps tout entier est engourdi, vidé, tremblant sous l’effort et la peur, une peur qui ne la quitte plus depuis qu’elle a franchi cette faille, depuis qu’elle a posé le pied sur la terre d’Al’Gratal, depuis qu’elle a compris qu’elle était enfin hors de danger et pourtant si loin de l’être. Elle tient toujours Remerii contre elle, ses bras crispés autour de son corps inerte, sa poitrine se soulève par saccades sous une respiration hachurée, trop rapide, trop paniquée, incapable de reprendre un rythme normal alors qu’elle attend un signe, un souffle, un frisson, n’importe quoi pour lui prouver que tout cela n’a pas été vain, que tout ce qu’elle a traversé, tout ce qu’elle a donné, tout ce qu’elle a perdu, n’a pas servi à rien. Mais il n’y a rien. Pas un battement, pas un murmure, pas une pression de doigts sur sa peau. Il y a juste ce corps contre le sien, encore chaud, mais déjà trop froid, encore là, mais déjà absent, un poids qui lui semble insupportable et en même temps qu’elle ne veut pas lâcher, qu’elle ne lâchera pas, jamais, peu importe ce que les autres diront, peu importe ce que la raison lui hurle.`,
-      "c18_algratal_2", []),
+      "c18_algratal_2", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
     c18_algratal_2: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Autour d’elle, il y a des voix, des mouvements précipités, l’écho des Sylviniens qui s’affairent, qui réalisent qu’elle est revenue, mais elle n’entend rien d’autre que le martèlement de son propre cœur, le bourdonnement sourd de la magie qui circule encore en elle, ce vestige de l’Arcane qui n’a pas disparu, qui la ronge lentement, l’épuise, la change, la prive du moindre répit. Elle est là, à genoux dans la neige souillée, immobile, le souffle court, incapable de penser, incapable de parler, incapable même de pleurer tant la peur lui noue la gorge, et pourtant, elle sent les larmes brûler sous ses paupières, prêtes à déborder à tout moment, prêtes à tout consumer dans leur chute.`,
-      "c18_algratal_3", []),
+      "c18_algratal_3", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
     c18_algratal_3: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Des bruits de pas résonnent tout près, des bruits rapides, nerveux, des coups secs contre le sol de pierre, un rythme saccadé, impatient, agacé, et elle tourne enfin la tête, presque mécaniquement, ses yeux encore flous par l’épuisement trouvant la silhouette familière de Tia Farae. L’Impératrice est là, le dos droit, le visage fermé, son pied frappant le sol dans une cadence nerveuse, non pas d’impatience, mais d’inquiétude, non pas pour elle, Hylee en est certaine, mais pour une autre, une autre qui aurait dû être là, une autre qui n’est pas revenue, une absence qui pèse bien plus lourd que toutes les blessures, que toutes les pertes. Son regard se tourne vers Saidin, l’homme n’a pas besoin de parler, il se contente d’un léger mouvement de tête, d’un simple geste, infime, mais qui résonne comme une sentence.
 
 « Il ne restait qu’elles… Aucune trace d’Iriana. »`,
-      "c18_algratal_4", []),
+      "c18_algratal_4", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
     c18_algratal_4: scene("Al’Gratal", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `La phrase tombe, brutale, irrévocable, comme une lame sur une corde trop tendue, et Hylee voit le visage de Tia se figer, non pas sous le choc, mais sous le poids d’une certitude qu’elle refusait sans doute d’admettre jusque-là. L’air autour d’elles semble se figer un instant, un silence plus lourd que tout s’installe, un silence où chaque respiration devient un fardeau, où chaque battement de cœur est une douleur. Mais l’Impératrice ne cède pas, elle ne flanche pas, elle reste droite, impassible, mais Hylee sait, elle sait ce que signifie ce silence, elle sait ce que signifie cette immobilité parfaite, elle sait que, sous la surface, tout vacille, tout s’effondre, tout hurle en elle.
 
 Saidin ne dit rien de plus, il attend, il la laisse réagir, il respecte cette seconde de silence, ce moment où l’on comprend que l’on a perdu quelque chose d’irremplaçable, et puis il détourne enfin le regard, quittant l’Impératrice pour reporter son attention sur Hylee. C’est là qu’il la voit, vraiment, qu’il la scrute, qu’il analyse ce qu’elle est devenue, et Hylee sait qu’elle a changé, elle n’a pas besoin de miroir, elle n’a pas besoin qu’on le lui dise. Son corps tremble encore sous les résidus de l’Arcane, mais ce n’est plus la même chose, ce n’est plus une surcharge temporaire, ce n’est plus un pouvoir qu’elle peut simplement rejeter, c’est en elle, c’est gravé dans sa chair, dans son sang, dans son être.`,
-      "c18_reflet", []),
+      "c18_reflet", [hyleeF('triste'), ['saidin', 'saidin_mysterious', 'right']]),
     c18_reflet: scene("Deux saphirs", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Elle baisse lentement les yeux sur ses mains, et ce qu’elle voit la pétrifie.
 
@@ -1628,7 +1633,7 @@ Elle les sent brûler, non pas de douleur, mais d’une lumière étrange, d’u
 Deux saphirs luisants, deux abysses d’énergie pure, un regard qui n’est plus tout à fait le sien.
 
 Elle ne sait plus qui elle est.`,
-      "c18_ne_me_laisse_pas", []),
+      "c18_ne_me_laisse_pas", [hyleeF('magie', 'center')]),
     c18_ne_me_laisse_pas: scene("Ne me laisse pas", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Elle voudrait hurler, pleurer, nier cette réalité, mais elle ne peut pas, pas maintenant, pas alors que Remerii est là, dans ses bras, inconsciente, peut-être déjà morte, peut-être déjà trop loin pour être sauvée. Ses mains tremblantes se referment sur le tissu glacé de sa tunique, elle la serre contre elle, enfouissant son visage contre son épaule, retenant un sanglot qui menace d’éclater à tout moment.
 
@@ -1647,8 +1652,10 @@ Un ordre.
 « De l’aide ! »
 
 Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il s’attendait à ce que cela arrive, comme s’il avait toujours su que toucher à l’Arcane la changerait à jamais. Mais il ne s’attarde pas sur elle, il ne pose pas de questions, son regard est tourné vers Remerii, vers cette femme qui peut, peut-être, être sauvée… ou peut-être pas.`,
-      "c18_fin", []),
+      "c18_fin", [hyleeF('pleurs'), ['saidin', 'saidin_mysterious', 'right']]),
   });
+  // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
+  Object.entries({}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 
   const ENTER_FLAGS = {
     c18_s06_fin: { c18PlayedDraven: true, s06DravenComplete: true },
