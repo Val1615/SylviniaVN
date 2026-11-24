@@ -15,14 +15,14 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 | S02 | Bataille de la Porte Noire | Chapitre XVII | 9682–10126 | 254 | 69 | 6 |
 | S03 | Transformation d’Amanea | Chapitre XVII | 10128–10470 | 198 | 45 | 0 |
 | S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 27 | 18 |
-| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 9 | 3 |
-| S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 8 | 8 |
+| S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 37 | 3 |
+| S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 24 | 8 |
 | S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 13 | 0 |
-| S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 13 | 7 |
+| S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 43 | 7 |
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 24 | 5 |
 | S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 11 | 3 |
 
-Total : 219 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 269 scènes.
+Total : 293 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 343 scènes.
 
 ## Scène par scène
 
@@ -169,23 +169,67 @@ Total : 219 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c17_brise_4` | Elle le brise | 10588–10593 | 4 |
 | `c17_brise_5` | Elle le brise | 10595–10598 | 4 |
 | `c17_brise_6` | Elle le brise | 10599 | 1 |
-| `c17_trois` | Trois silhouettes | 10601–10626 | 15 |
-| `c17_supplique` | Tia… écoute-moi… | 10628–10673 | 28 |
-| `c17_lame` | Une Farae ne pardonne jamais | 10675–10700 | 17 |
-| `c17_crissement` | L’acier sur la pierre | 10703–10711 | 5 |
-| `c17_gorge` | Pourquoi… ? | 10713–10745 | 20 |
-| `c17_dernier_souffle` | Dernier souffle | 10747–10757 | 8 |
+| `c17_trois` | Trois silhouettes | 10601–10604 | 3 |
+| `c17_trois_2` | Trois silhouettes | 10606–10608 | 2 |
+| `c17_trois_3` | Trois silhouettes | 10610 | 1 |
+| `c17_trois_4` | Trois silhouettes | 10612–10616 | 4 |
+| `c17_trois_5` | Trois silhouettes | 10618–10626 | 5 |
+| `c17_supplique` | Tia… écoute-moi… | 10628–10633 | 4 |
+| `c17_supplique_2` | Tia… écoute-moi… | 10634–10642 | 6 |
+| `c17_supplique_3` | Tia… écoute-moi… | 10644–10650 | 4 |
+| `c17_supplique_4` | Tia… écoute-moi… | 10651–10652 | 2 |
+| `c17_supplique_5` | Tia… écoute-moi… | 10654–10660 | 4 |
+| `c17_supplique_6` | Tia… écoute-moi… | 10661–10662 | 2 |
+| `c17_supplique_7` | Tia… écoute-moi… | 10664–10670 | 4 |
+| `c17_supplique_8` | Tia… écoute-moi… | 10671 | 1 |
+| `c17_supplique_9` | Tia… écoute-moi… | 10673 | 1 |
+| `c17_lame` | Une Farae ne pardonne jamais | 10675–10677 | 3 |
+| `c17_lame_2` | Une Farae ne pardonne jamais | 10678–10684 | 4 |
+| `c17_lame_3` | Une Farae ne pardonne jamais | 10685–10694 | 7 |
+| `c17_lame_4` | Une Farae ne pardonne jamais | 10696–10700 | 3 |
+| `c17_crissement` | L’acier sur la pierre | 10703 | 1 |
+| `c17_crissement_2` | L’acier sur la pierre | 10705–10711 | 4 |
+| `c17_gorge` | Pourquoi… ? | 10713 | 1 |
+| `c17_gorge_2` | Pourquoi… ? | 10715–10717 | 2 |
+| `c17_gorge_3` | Pourquoi… ? | 10719–10725 | 4 |
+| `c17_gorge_4` | Pourquoi… ? | 10727 | 1 |
+| `c17_gorge_5` | Pourquoi… ? | 10728–10732 | 4 |
+| `c17_gorge_6` | Pourquoi… ? | 10734 | 1 |
+| `c17_gorge_7` | Pourquoi… ? | 10735–10739 | 4 |
+| `c17_gorge_8` | Pourquoi… ? | 10741–10745 | 3 |
+| `c17_dernier_souffle` | Dernier souffle | 10747–10749 | 3 |
+| `c17_dernier_souffle_2` | Dernier souffle | 10751–10755 | 4 |
+| `c17_dernier_souffle_3` | Dernier souffle | 10757 | 1 |
 | `c17_naiah_revelee` | L’illusion se dissipe | 10758–10761 | 3 |
-| `c17_regard_satisfait` | Un regard satisfait | 10764–10774 | 6 |
+| `c17_regard_satisfait` | Un regard satisfait | 10764 | 1 |
+| `c17_regard_satisfait_2` | Un regard satisfait | 10766 | 1 |
+| `c17_regard_satisfait_3` | Un regard satisfait | 10768–10772 | 3 |
+| `c17_regard_satisfait_4` | Un regard satisfait | 10774 | 1 |
 | `c17_brasier` | Sa place | 10776–10783 | 6 |
-| `c18_draven_seul` | Oublié | 10801–10811 | 6 |
-| `c18_pere` | Père ? | 10813–10825 | 7 |
-| `c18_je_rentre` | Je rentre bientôt | 10827–10830 | 3 |
-| `c18_grotte` | La grotte | 10832–10841 | 6 |
+| `c18_draven_seul` | Oublié | 10801–10807 | 4 |
+| `c18_draven_seul_2` | Oublié | 10809–10811 | 2 |
+| `c18_pere` | Père ? | 10813 | 1 |
+| `c18_pere_2` | Père ? | 10815–10821 | 4 |
+| `c18_pere_3` | Père ? | 10823–10825 | 2 |
+| `c18_je_rentre` | Je rentre bientôt | 10827–10829 | 2 |
+| `c18_je_rentre_2` | Je rentre bientôt | 10830 | 1 |
+| `c18_grotte` | La grotte | 10832–10837 | 4 |
+| `c18_grotte_2` | La grotte | 10839 | 1 |
+| `c18_grotte_3` | La grotte | 10841 | 1 |
 | `c18_temporise` | Dans les entrailles de la montagne | 10843 | 1 |
-| `c18_effondrement` | Maintenant ! | 10845–10857 | 8 |
-| `c18_remerii_draven` | Il a l’air d’attendre | 10859–10884 | 17 |
-| `c18_remerii_draven_2` | Il a l’air d’attendre | 10885–10894 | 6 |
+| `c18_effondrement` | Maintenant ! | 10845–10848 | 3 |
+| `c18_effondrement_2` | Maintenant ! | 10850 | 1 |
+| `c18_effondrement_3` | Maintenant ! | 10852 | 1 |
+| `c18_effondrement_4` | Maintenant ! | 10854–10857 | 3 |
+| `c18_remerii_draven` | Il a l’air d’attendre | 10859 | 1 |
+| `c18_remerii_draven_2` | Il a l’air d’attendre | 10861–10866 | 4 |
+| `c18_remerii_draven_3` | Il a l’air d’attendre | 10867–10872 | 4 |
+| `c18_remerii_draven_4` | Il a l’air d’attendre | 10873–10878 | 4 |
+| `c18_remerii_draven_5` | Il a l’air d’attendre | 10880–10883 | 3 |
+| `c18_remerii_draven_6` | Il a l’air d’attendre | 10884 | 1 |
+| `c18_remerii_draven_7` | Il a l’air d’attendre | 10885 | 1 |
+| `c18_remerii_draven_8` | Il a l’air d’attendre | 10886–10892 | 4 |
+| `c18_remerii_draven_9` | Il a l’air d’attendre | 10894 | 1 |
 | `c18_trop_tard` | Trop tard | 10896–10907 | 7 |
 | `c18_soeur_en_deuil` | Une sœur en deuil | 10909–10939 | 17 |
 | `c18_journal` | Elle a essayé | 10941–10978 | 21 |
@@ -193,19 +237,49 @@ Total : 219 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c18_souvenirs` | Les jardins d’Al’Gratal | 11000–11008 | 5 |
 | `c18_etreinte` | J’aurais dû t’écouter | 11010–11036 | 15 |
 | `c18_etreinte_2` | J’aurais dû t’écouter | 11038–11044 | 4 |
-| `c18_alamma` | Confrontation au Portail | 11182–11207 | 14 |
-| `c18_tu_es_trop_jeune` | Un gouffre | 11209–11226 | 11 |
-| `c18_pacte_valurn` | Le pacte | 11228–11262 | 20 |
-| `c18_a_genoux` | Une dernière opportunité | 11264–11280 | 10 |
-| `c18_peu_importe` | Peu importe | 11282–11293 | 7 |
-| `c18_attaque` | Elle attaque | 11295–11316 | 14 |
-| `c18_trois_forces` | Ombre, Chaos, Mort | 11318–11345 | 15 |
-| `c18_chute_alamma` | NON ! | 11347–11374 | 18 |
+| `c18_alamma` | Confrontation au Portail | 11182–11186 | 3 |
+| `c18_alamma_2` | Confrontation au Portail | 11187–11193 | 4 |
+| `c18_alamma_3` | Confrontation au Portail | 11195–11207 | 7 |
+| `c18_tu_es_trop_jeune` | Un gouffre | 11209 | 1 |
+| `c18_tu_es_trop_jeune_2` | Un gouffre | 11211–11216 | 4 |
+| `c18_tu_es_trop_jeune_3` | Un gouffre | 11217–11224 | 5 |
+| `c18_tu_es_trop_jeune_4` | Un gouffre | 11226 | 1 |
+| `c18_pacte_valurn` | Le pacte | 11228 | 1 |
+| `c18_pacte_valurn_2` | Le pacte | 11230–11235 | 4 |
+| `c18_pacte_valurn_3` | Le pacte | 11237–11241 | 3 |
+| `c18_pacte_valurn_4` | Le pacte | 11243–11249 | 4 |
+| `c18_pacte_valurn_5` | Le pacte | 11251–11256 | 4 |
+| `c18_pacte_valurn_6` | Le pacte | 11258–11262 | 4 |
+| `c18_a_genoux` | Une dernière opportunité | 11264–11268 | 4 |
+| `c18_a_genoux_2` | Une dernière opportunité | 11270–11278 | 5 |
+| `c18_a_genoux_3` | Une dernière opportunité | 11280 | 1 |
+| `c18_peu_importe` | Peu importe | 11282–11284 | 2 |
+| `c18_peu_importe_2` | Peu importe | 11286–11291 | 4 |
+| `c18_peu_importe_3` | Peu importe | 11293 | 1 |
+| `c18_attaque` | Elle attaque | 11295–11296 | 2 |
+| `c18_attaque_2` | Elle attaque | 11298–11300 | 2 |
+| `c18_attaque_3` | Elle attaque | 11301–11304 | 3 |
+| `c18_attaque_4` | Elle attaque | 11306–11307 | 2 |
+| `c18_attaque_5` | Elle attaque | 11309–11314 | 4 |
+| `c18_attaque_6` | Elle attaque | 11316 | 1 |
+| `c18_trois_forces` | Ombre, Chaos, Mort | 11318–11325 | 5 |
+| `c18_trois_forces_2` | Ombre, Chaos, Mort | 11327–11333 | 4 |
+| `c18_trois_forces_3` | Ombre, Chaos, Mort | 11335–11341 | 4 |
+| `c18_trois_forces_4` | Ombre, Chaos, Mort | 11343–11345 | 2 |
+| `c18_chute_alamma` | NON ! | 11347–11349 | 2 |
+| `c18_chute_alamma_2` | NON ! | 11350–11353 | 4 |
+| `c18_chute_alamma_3` | NON ! | 11354 | 1 |
+| `c18_chute_alamma_4` | NON ! | 11356–11362 | 4 |
+| `c18_chute_alamma_5` | NON ! | 11364–11370 | 4 |
+| `c18_chute_alamma_6` | NON ! | 11372–11373 | 2 |
+| `c18_chute_alamma_7` | NON ! | 11374 | 1 |
 | `c18_avant_le_saut` | Elle doit choisir | 11376 | 1 |
 | `c18_avant_le_saut_2` | Elle doit choisir | 11378–11380 | 2 |
-| `c18_avant_le_saut_3` | Elle doit choisir | 11382–11392 | 6 |
-| `c18_avant_le_saut_4` | Elle doit choisir | 11394–11398 | 3 |
-| `c18_saut` | Elle plonge | 11400–11408 | 5 |
+| `c18_avant_le_saut_3` | Elle doit choisir | 11382–11384 | 2 |
+| `c18_avant_le_saut_4` | Elle doit choisir | 11386–11392 | 4 |
+| `c18_avant_le_saut_5` | Elle doit choisir | 11394–11398 | 3 |
+| `c18_saut` | Elle plonge | 11400–11406 | 4 |
+| `c18_saut_2` | Elle plonge | 11408 | 1 |
 | `c18_ouverture` | Le portail s’ouvre | 11046–11066 | 11 |
 | `c18_fuir` | Nous devons fuir | 11068–11095 | 14 |
 | `c18_bhaal` | Bhaal | 11098–11117 | 11 |

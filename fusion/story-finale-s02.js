@@ -1296,23 +1296,27 @@ Il est en train de s’ouvrir.
 
 Les bruits de guerre se meurent, s’étouffent dans une brume lourde, pesante, chargée de cendres et de sang. Il n’y a plus de clameur, plus de hurlements, plus de rage guerrière.
 
-Il n’y a plus qu’eux.
+Il n’y a plus qu’eux.`,
+      "c17_trois_2", []),
+    c17_trois_2: { ...scene("Trois silhouettes", "c17_cg_s05_01_trois_silhouettes", M_FINAL_AMANEA, 'Narrateur',
+      `Trois silhouettes.
 
-Trois silhouettes.
-
-Trois destins qui se croisent sur les ruines d’un champ de bataille dont ils sont les seuls témoins.
-
-Valurn, à genoux, défait, essoufflé, le corps marqué par le combat. Ses flammes se sont éteintes, son arrogance n’est plus qu’un voile amer sur son visage couvert de suie.
-
-Amanea, debout, tremblante, le souffle court, son corps brisé par l’effort, son âme saignée par le portail qui lui vole son essence. Son corps subit le contrecoup… un mortel ne peut encaisser autant d’énergie. Elle titube, l’ombre d’elle-même, son regard incandescent vacillant sous la fatigue.
+Trois destins qui se croisent sur les ruines d’un champ de bataille dont ils sont les seuls témoins.`,
+      "c17_trois_3", []), hideChars: true, camera: "recul" },
+    c17_trois_3: { ...scene("Trois silhouettes", "c17_cg_s05_02_valurn_a_genoux", M_FINAL_AMANEA, 'Narrateur',
+      `Valurn, à genoux, défait, essoufflé, le corps marqué par le combat. Ses flammes se sont éteintes, son arrogance n’est plus qu’un voile amer sur son visage couvert de suie.`,
+      "c17_trois_4", []), hideChars: true, camera: "approche" },
+    c17_trois_4: { ...scene("Trois silhouettes", "c17_cg_s05_03_amanea_vacille", M_FINAL_AMANEA, 'Narrateur',
+      `Amanea, debout, tremblante, le souffle court, son corps brisé par l’effort, son âme saignée par le portail qui lui vole son essence. Son corps subit le contrecoup… un mortel ne peut encaisser autant d’énergie. Elle titube, l’ombre d’elle-même, son regard incandescent vacillant sous la fatigue.
 
 Et enfin, la troisième silhouette.
 
 Elle est là, immobile, imposante, impitoyable.
 
-Son entrée est silencieuse, et pourtant, elle écrase tout de sa présence.
-
-Elle ne s’annonce pas.
+Son entrée est silencieuse, et pourtant, elle écrase tout de sa présence.`,
+      "c17_trois_5", []), hideChars: true, camera: "approche" },
+    c17_trois_5: scene("Trois silhouettes", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Elle ne s’annonce pas.
 
 Elle n’a pas besoin de le faire.
 
@@ -1322,16 +1326,17 @@ Elle est la sentence.
 
 … Tia.`,
       "c17_supplique", []),
-    c17_supplique: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+    c17_supplique: { ...scene("Tia… écoute-moi…", "c17_cg_s05_04_le_jugement", M_FINAL_AMANEA, 'Narrateur',
       `Sa silhouette auréolée de lumière se découpe dans l’obscurité environnante, un phare au milieu des ombres, une présence qui impose, qui domine, qui consume tout espoir. Son regard d’or se pose sur sa sœur, et Amanea frissonne. Elle la sent. Elle sait.
 
 C’est fini.
 
 Le combat est terminé.
 
-Il n’y a plus d’armée.
-
-Il n’y a plus de soldats.
+Il n’y a plus d’armée.`,
+      "c17_supplique_2", []), hideChars: true, camera: "approche" },
+    c17_supplique_2: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Il n’y a plus de soldats.
 
 Il n’y a plus que Tia, Amanea et Valurn.
 
@@ -1341,60 +1346,69 @@ Amanea serre les dents.
 
 Elle refuse de tomber. Elle refuse de plier, mais elle n’a plus d’options.
 
-Elle est à bout. Elle a combattu des heures… seule. Elle a manipulé des forces que même des dieux n’auraient pu encaisser. Non… cette guerre doit cesser… au moins pour cette fois.
-
-Dans un dernier espoir, dans un dernier acte de foi, elle tend une main tremblante.
+Elle est à bout. Elle a combattu des heures… seule. Elle a manipulé des forces que même des dieux n’auraient pu encaisser. Non… cette guerre doit cesser… au moins pour cette fois.`,
+      "c17_supplique_3", [tia('stern')]),
+    c17_supplique_3: { ...scene("Tia… écoute-moi…", "c17_cg_s05_05_main_tendue", M_FINAL_AMANEA, 'Narrateur',
+      `Dans un dernier espoir, dans un dernier acte de foi, elle tend une main tremblante.
 
 « Tia… écoute-moi… »
 
 Sa voix est brisée, presque inaudible.
 
-Elle n’a plus de fierté.
+Elle n’a plus de fierté.`,
+      "c17_supplique_4", []), hideChars: true, camera: "lateral" },
+    c17_supplique_4: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Elle n’a plus d’orgueil.
 
-Elle n’a plus d’orgueil.
-
-Elle n’a plus que la vérité.
-
-« On doit fermer ce portail… ensemble. »
+Elle n’a plus que la vérité.`,
+      "c17_supplique_5", [tia('stern')]),
+    c17_supplique_5: { ...scene("Tia… écoute-moi…", "c17_cg_s05_06_ensemble", M_FINAL_AMANEA, 'Narrateur',
+      `« On doit fermer ce portail… ensemble. »
 
 Son regard, jadis brûlant de défiance, est désespéré. Ses yeux embrasés ne sont plus que deux orbites sans magie et sans vie.
 
 « Ta lumière est la seule chose qui manque… Tu peux le bannir définitivement. »
 
-Un instant suspendu.
+Un instant suspendu.`,
+      "c17_supplique_6", []), hideChars: true, camera: "approche" },
+    c17_supplique_6: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Un battement de cœur.
 
-Un battement de cœur.
-
-Un souffle.
-
-Tia ne dit rien. Son regard demeure impassible. Elle la jauge, l’évalue, la pèse, la juge.
+Un souffle.`,
+      "c17_supplique_7", [tia('stern')]),
+    c17_supplique_7: { ...scene("Tia… écoute-moi…", "c17_cg_s05_07_le_silence", M_FINAL_AMANEA, 'Narrateur',
+      `Tia ne dit rien. Son regard demeure impassible. Elle la jauge, l’évalue, la pèse, la juge.
 
 Puis, elle bouge.
 
 Amanea croit voir un éclair d’hésitation.
 
-Peut-être que cette fois…
-
-Peut-être que pour une fois… leurs différents seront mis de côté…
-
-Peut-être qu’elles pourraient y arriver ens… L’acier siffle dans l’air.`,
-      "c17_lame", [tia('stern')]),
+Peut-être que cette fois…`,
+      "c17_supplique_8", []), hideChars: true, camera: "approche" },
+    c17_supplique_8: scene("Tia… écoute-moi…", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Peut-être que pour une fois… leurs différents seront mis de côté…`,
+      "c17_supplique_9", [tia('stern')]),
+    c17_supplique_9: { ...scene("Tia… écoute-moi…", "c17_cg_s05_08_l_acier", M_FINAL_AMANEA, 'Narrateur',
+      `Peut-être qu’elles pourraient y arriver ens… L’acier siffle dans l’air.`,
+      "c17_lame", []), hideChars: true, camera: "impact" },
     c17_lame: scene("Une Farae ne pardonne jamais", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Un coup net.
 
 Une douleur atroce, immédiate, brutale. Amanea ne comprend pas.
 
-Elle baisse les yeux, rétablissant sa vision dans des braises ardentes.
-
-Son bras tendu n’est plus là.
+Elle baisse les yeux, rétablissant sa vision dans des braises ardentes.`,
+      "c17_lame_2", [tia('threatening')]),
+    c17_lame_2: { ...scene("Une Farae ne pardonne jamais", "c17_cg_s05_09_la_sideration", M_FINAL_AMANEA, 'Narrateur',
+      `Son bras tendu n’est plus là.
 
 Tranché net.
 
 Le sang noir gicle. Le monde devient flou.
 
-Elle vacille.
-
-Elle chancelle.
+Elle vacille.`,
+      "c17_lame_3", []), hideChars: true, camera: "approche" },
+    c17_lame_3: scene("Une Farae ne pardonne jamais", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Elle chancelle.
 
 Elle fixe sa sœur, les yeux écarquillés, sidérée.
 
@@ -1406,61 +1420,70 @@ Aucune humanité.
 
 Amanea tremble. Sa gorge s’assèche. Elle essaie de parler, elle essaie de comprendre. Mais rien ne vient. Elle chute, se tenant le vide laissé par le membre manquant. Son corps s’effondre, incapable de soutenir ce qu’elle vient d’endurer. Son regard, jadis empli de feu et d’orgueil, n’exprime plus qu’une chose : l’incompréhension.
 
-Un rictus amer tord ses lèvres alors qu’elle tombe dans la poussière.
-
-« Je vois… » murmure-t-elle, dans un souffle mourant.
+Un rictus amer tord ses lèvres alors qu’elle tombe dans la poussière.`,
+      "c17_lame_4", [tia('threatening')]),
+    c17_lame_4: { ...scene("Une Farae ne pardonne jamais", "c17_cg_s05_10_je_vois", M_FINAL_AMANEA, 'Narrateur',
+      `« Je vois… » murmure-t-elle, dans un souffle mourant.
 
 Elle avait osé espérer, mais avait oublié…
 
 Une Farae ne pardonne jamais.`,
-      "c17_crissement", [tia('threatening')]),
-    c17_crissement: scene("L’acier sur la pierre", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
-      `Un ricanement résonne dans les cendres. Bas. Moqueur. Tordu par l’ironie du moment. Valurn, allongé sur le sol, brisé par le combat, mais toujours vivant, sourit malgré tout. Il saigne, son corps marqué par les affrontements, et pourtant, il rit. Parce qu’il a gagné.
-
-Tia, elle, ne rit pas. Elle avance lentement, laissant traîner son épée derrière elle, l’acier raclant contre la pierre et les cadavres épars, produisant un crissement sinistre. Un bruit atroce. Comme une provocation. Comme une attente. Comme si elle voulait que cet instant s’éternise. Elle tourne autour d’Amanea, un prédateur observant une proie mourante, savourant l’inévitable. Elle n’a pas besoin de se presser.
+      "c17_crissement", []), hideChars: true, camera: "approche" },
+    c17_crissement: { ...scene("L’acier sur la pierre", "c17_cg_s05_11_le_rire", M_FINAL_AMANEA, 'Narrateur',
+      `Un ricanement résonne dans les cendres. Bas. Moqueur. Tordu par l’ironie du moment. Valurn, allongé sur le sol, brisé par le combat, mais toujours vivant, sourit malgré tout. Il saigne, son corps marqué par les affrontements, et pourtant, il rit. Parce qu’il a gagné.`,
+      "c17_crissement_2", []), hideChars: true, camera: "lateral" },
+    c17_crissement_2: { ...scene("L’acier sur la pierre", "c17_cg_s05_12_le_crissement", M_FINAL_AMANEA, 'Narrateur',
+      `Tia, elle, ne rit pas. Elle avance lentement, laissant traîner son épée derrière elle, l’acier raclant contre la pierre et les cadavres épars, produisant un crissement sinistre. Un bruit atroce. Comme une provocation. Comme une attente. Comme si elle voulait que cet instant s’éternise. Elle tourne autour d’Amanea, un prédateur observant une proie mourante, savourant l’inévitable. Elle n’a pas besoin de se presser.
 
 Et Amanea, au sol, tremble. Pas de peur. Pas de douleur. Mais de consternation. Son regard brûlant, si vibrant quelques instants plus tôt, est éteint par la sidération. Elle a combattu, elle a résisté, elle a sacrifié tout ce qu’elle était pour empêcher le pire. Son propre corps est à l’agonie. Son sang coule, ses muscles sont meurtris, ses os ont cédé sous la pression infernale. Et pourtant, ce n’est pas cela qui la brise. La fatigue… se combat. Pas le combat survenu ce jour, mais celui qui perdure depuis des siècles… elle est fatiguée de le mener.
 
 L’impératrice avance encore, lentement, savourant chacun de ses pas. Son expression est indéchiffrable. Ni joie, ni colère. Juste une détermination inébranlable. Son armure resplendit dans la lumière qu’elle incarne, alors que la silhouette d’Amanea, elle, se dissout dans l’obscurité.
 
 … Une dernière fois, la Reine Noire ferme les yeux. Une ultime tentative. Un dernier effort. Un dernier espoir.`,
-      "c17_gorge", [tia('threatening')]),
+      "c17_gorge", []), hideChars: true, camera: "lateral" },
     c17_gorge: scene("Pourquoi… ?", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
-      `Le portail doit être fermé.
+      `Le portail doit être fermé.`,
+      "c17_gorge_2", [tia('neutral')]),
+    c17_gorge_2: { ...scene("Pourquoi… ?", "c17_cg_s05_13_la_derniere_lueur", M_FINAL_AMANEA, 'Narrateur',
+      `Son dos s’illumine de nouveau. Elle rassemble le peu de force qu’il lui reste pour maîtriser son pouvoir… et le déchaîner contre la porte noire. Son corps hurle, ses nerfs s’arrachent sous la pression. Mais elle s’en moque. Elle s’abandonne à cette dernière flamme. Un ultime rayon s’apprête à jaillir.
 
-Son dos s’illumine de nouveau. Elle rassemble le peu de force qu’il lui reste pour maîtriser son pouvoir… et le déchaîner contre la porte noire. Son corps hurle, ses nerfs s’arrachent sous la pression. Mais elle s’en moque. Elle s’abandonne à cette dernière flamme. Un ultime rayon s’apprête à jaillir.
-
-Mais elle n’en a pas le temps.
-
-Une pression soudaine sur sa gorge. Un étouffement brutal. Son souffle se brise d’un coup. Ses paupières se rouvrent dans un sursaut de panique. Tia l’a saisie à la gorge.
+Mais elle n’en a pas le temps.`,
+      "c17_gorge_3", []), hideChars: true, camera: "approche" },
+    c17_gorge_3: { ...scene("Pourquoi… ?", "c17_cg_s05_14_le_souffle_coupe", M_FINAL_AMANEA, 'Narrateur',
+      `Une pression soudaine sur sa gorge. Un étouffement brutal. Son souffle se brise d’un coup. Ses paupières se rouvrent dans un sursaut de panique. Tia l’a saisie à la gorge.
 
 D’une seule main.
 
 Comme si elle ne pesait rien.
 
-Les pieds d’Amanea battent dans le vide, cherchant désespérément un appui qui n’existe plus. L’air lui manque. La douleur est atroce. Elle lutte, agrippe le poignet de sa sœur, tente de desserrer l’étreinte. En vain.
-
-Tia la regarde. Silencieusement. Elle se penche légèrement, et leurs regards se croisent.
-
-Deux iris d’or. Froides. Indifférentes.
+Les pieds d’Amanea battent dans le vide, cherchant désespérément un appui qui n’existe plus. L’air lui manque. La douleur est atroce. Elle lutte, agrippe le poignet de sa sœur, tente de desserrer l’étreinte. En vain.`,
+      "c17_gorge_4", []), hideChars: true, camera: "impact" },
+    c17_gorge_4: scene("Pourquoi… ?", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Tia la regarde. Silencieusement. Elle se penche légèrement, et leurs regards se croisent.`,
+      "c17_gorge_5", [tia('neutral')]),
+    c17_gorge_5: { ...scene("Pourquoi… ?", "c17_cg_s05_15_pourquoi", M_FINAL_AMANEA, 'Narrateur',
+      `Deux iris d’or. Froides. Indifférentes.
 
 Il n’y a pas de haine. Seulement du vide. Amanea tente de parler, mais sa voix n’est qu’un souffle mourant.
 
 Un murmure à peine audible.
 
-« Pourquoi… ? »
-
-Un silence absolu. Glacial. Tia ne répond pas, elle agit.
-
-Sa lame lui perfore l’abdomen par le bas.
+« Pourquoi… ? »`,
+      "c17_gorge_6", []), hideChars: true, camera: "approche" },
+    c17_gorge_6: scene("Pourquoi… ?", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Un silence absolu. Glacial. Tia ne répond pas, elle agit.`,
+      "c17_gorge_7", [tia('neutral')]),
+    c17_gorge_7: { ...scene("Pourquoi… ?", "c17_cg_s05_16_le_dernier_coup", M_FINAL_AMANEA, 'Narrateur',
+      `Sa lame lui perfore l’abdomen par le bas.
 
 Une douleur foudroyante.
 
 Brûlante.
 
-Remontant à l’intérieur de la femme jusqu’à transpercer son cœur.
-
-Son souffle se coupe, ses muscles se crispent. Elle ne peut même pas crier. Elle sent la lame s’enfoncer profondément, percer les chairs, broyer l’os, traverser jusqu’à ressortir dans le haut de son dos.
+Remontant à l’intérieur de la femme jusqu’à transpercer son cœur.`,
+      "c17_gorge_8", []), hideChars: true, camera: "lateral" },
+    c17_gorge_8: scene("Pourquoi… ?", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `Son souffle se coupe, ses muscles se crispent. Elle ne peut même pas crier. Elle sent la lame s’enfoncer profondément, percer les chairs, broyer l’os, traverser jusqu’à ressortir dans le haut de son dos.
 
 Elle sent son propre sang couler.
 
@@ -1471,40 +1494,45 @@ Puis elle se relâche. Elle ne perçoit rien. Tout s’efface.`,
 
 Les couleurs.
 
-Le monde devient flou.
-
-Mais pourtant… Dans son dernier souffle, elle comprend. Elle voit, sous une cape d’ombre mouvante, l’illusion qui se dissipe.
+Le monde devient flou.`,
+      "c17_dernier_souffle_2", []),
+    c17_dernier_souffle_2: { ...scene("Dernier souffle", "c17_cg_s05_17_illusion", M_FINAL_AMANEA, 'Narrateur',
+      `Mais pourtant… Dans son dernier souffle, elle comprend. Elle voit, sous une cape d’ombre mouvante, l’illusion qui se dissipe.
 
 Ce ne sont pas les yeux de Tia.
 
 Ce ne sont pas ses mains.
 
-Ce n’est pas elle.
-
-C’est… une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.`,
+Ce n’est pas elle.`,
+      "c17_dernier_souffle_3", []), hideChars: true, camera: "approche" },
+    c17_dernier_souffle_3: scene("Dernier souffle", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+      `C’est… une silhouette qu’elle reconnaît. Un visage qu’elle a espéré, qu’elle a protégé sans qu’elle ne le sache.`,
       "c17_naiah_revelee", []),
-    c17_naiah_revelee: scene("L’illusion se dissipe", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
+    c17_naiah_revelee: { ...scene("L’illusion se dissipe", "c17_cg_s05_18_naiah", M_FINAL_AMANEA, 'Narrateur',
       `Naïah. Sa fille. Son propre sang.
 
 C’est elle qui l’a exécutée. Froidement. Sans trembler. Sans un mot. Sans un frisson.
 
 Sans un regret.`,
-      "c17_regard_satisfait", [naiahCold]),
-    c17_regard_satisfait: scene("Un regard satisfait", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
-      `Son corps s’effondre, abandonné par la force qui l’animait, son âme s’échappant en lambeaux comme une brume mourante. La douleur s’efface, remplacée par une étrange légèreté, comme si son être se dissolvait dans l’air même. Elle entend encore les cris de la bataille, distants, irréels, un écho de violence qui ne la concerne plus. Son regard s’accroche aux silhouettes qui s’éloignent, floues, vacillantes dans sa vision déclinante. Valurn. Il se met à hauteur de la reine. Toutes ses forces la quittent… il draine tout ce qui lui reste. La magie qui la surchargeait se retire en quelques instants. Il se relève, satisfait, et se retire telle une silhouette fantomatique et rieuse, une ombre démoniaque qui a eu son dû et qui ne daigne même pas lui accorder un dernier regard. Naïah. Sa fille. Sa propre chair. Elle ne fuit pas. Elle s’arrête un instant, son corps parfaitement immobile, comme savourant cet instant. Ses yeux rencontrent ceux d’Amanea. Aucune pitié. Aucun regret. Juste un calme absolu. Un regard rempli d’accomplissement. Un regard satisfait.
-
-Amanea veut parler, veut comprendre, veut hurler. Pourquoi ? Mais aucun son ne sort. Sa gorge est sèche, son souffle n’est plus qu’un râle. Ses doigts griffent la terre sans force, essayant de s’accrocher à une réalité qui lui échappe.
-
-Le monde rétrécit, se referme sur elle.
+      "c17_regard_satisfait", []), hideChars: true, camera: "approche" },
+    c17_regard_satisfait: { ...scene("Un regard satisfait", "c17_cg_s05_19_le_drainage", M_FINAL_AMANEA, 'Narrateur',
+      `Son corps s’effondre, abandonné par la force qui l’animait, son âme s’échappant en lambeaux comme une brume mourante. La douleur s’efface, remplacée par une étrange légèreté, comme si son être se dissolvait dans l’air même. Elle entend encore les cris de la bataille, distants, irréels, un écho de violence qui ne la concerne plus. Son regard s’accroche aux silhouettes qui s’éloignent, floues, vacillantes dans sa vision déclinante. Valurn. Il se met à hauteur de la reine. Toutes ses forces la quittent… il draine tout ce qui lui reste. La magie qui la surchargeait se retire en quelques instants. Il se relève, satisfait, et se retire telle une silhouette fantomatique et rieuse, une ombre démoniaque qui a eu son dû et qui ne daigne même pas lui accorder un dernier regard. Naïah. Sa fille. Sa propre chair. Elle ne fuit pas. Elle s’arrête un instant, son corps parfaitement immobile, comme savourant cet instant. Ses yeux rencontrent ceux d’Amanea. Aucune pitié. Aucun regret. Juste un calme absolu. Un regard rempli d’accomplissement. Un regard satisfait.`,
+      "c17_regard_satisfait_2", []), hideChars: true, camera: "approche" },
+    c17_regard_satisfait_2: { ...scene("Un regard satisfait", "c17_cg_s05_20_le_regard_de_naiah", M_FINAL_AMANEA, 'Narrateur',
+      `Amanea veut parler, veut comprendre, veut hurler. Pourquoi ? Mais aucun son ne sort. Sa gorge est sèche, son souffle n’est plus qu’un râle. Ses doigts griffent la terre sans force, essayant de s’accrocher à une réalité qui lui échappe.`,
+      "c17_regard_satisfait_3", []), hideChars: true, camera: "approche" },
+    c17_regard_satisfait_3: { ...scene("Un regard satisfait", "c17_cg_s05_21_la_terre", M_FINAL_AMANEA, 'Narrateur',
+      `Le monde rétrécit, se referme sur elle.
 
 Son corps ne lui appartient plus. Tout devient silence.
 
-Les ténèbres dévorent sa vision, mordant les bords de son champ de perception comme une marée inévitable, incontournable.
-
-Naïah tourne les talons. Elle ne se retourne pas. Elle ne regarde même pas sa propre mère mourir. Seul Valurn casse le silence en s’adressant à elle, dans un ricanement narquois :
+Les ténèbres dévorent sa vision, mordant les bords de son champ de perception comme une marée inévitable, incontournable.`,
+      "c17_regard_satisfait_4", []), hideChars: true, camera: "approche" },
+    c17_regard_satisfait_4: { ...scene("Un regard satisfait", "c17_cg_s05_22_les_silhouettes_s_eloignent", M_FINAL_AMANEA, 'Narrateur',
+      `Naïah tourne les talons. Elle ne se retourne pas. Elle ne regarde même pas sa propre mère mourir. Seul Valurn casse le silence en s’adressant à elle, dans un ricanement narquois :
 
 « Tu vois… je t’avais dit que je te l’offrirais… »`,
-      "c17_brasier", [naiahCold]),
+      "c17_brasier", []), hideChars: true, camera: "recul" },
     c17_brasier: scene("Sa place", BG_PORTE, M_FINAL_AMANEA, 'Narrateur',
       `Amanea sent la vie lui être arrachée, chaque battement de son cœur blessé arrache un adieu forcé, un glas funèbre sonnant son dernier souffle.
 
@@ -1725,7 +1753,7 @@ ${line}`;
   // Anciens identifiants de scène (sauvegardes antérieures au découpage en plans clés).
   Object.entries({"c17_marche_3": "c17_marche_2"}).forEach(([o, n]) => { if (!S[o] && S[n]) S[o] = S[n]; });
 
-  // Plans clés S02 à S04 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  // Plans clés S02 à S05 (copiés à l’identique, voir tools/finale-gen/shots.py) : décor, codex, cadrage.
   const SHOTS = [
     ["c17_cg_s02_01_rassemblement", "assets/images/keyscenes/chapter17-s02/s02_01_rassemblement.webp", "Le conseil devant Akuhn’Nabad", "Tia donne les ordres à la lisière, devant la ville encore dans la brume."],
     ["c17_cg_s02_03_marche_malaise", "assets/images/keyscenes/chapter17-s02/s02_03_marche_malaise.webp", "Le malaise gagne les rangs", "Un visage tendu et la marche qui se poursuit dans la brume."],
@@ -1799,8 +1827,30 @@ ${line}`;
     ["c17_cg_s04_17_pilier_noir", "assets/images/keyscenes/chapter17-s04/s04_17_pilier_noir.webp", "Le pilier de pierre noire", "Valurn s’effondre. Sa lame glisse à l’écart."],
     ["c17_cg_s04_19_rire_valurn", "assets/images/keyscenes/chapter17-s04/s04_19_rire_valurn.webp", "Le dernier rire", "Le visage de Valurn porte le défi malgré la défaite."],
     ["c17_cg_s04_20_le_seuil_s_ouvre", "assets/images/keyscenes/chapter17-s04/s04_20_le_seuil_s_ouvre.webp", "La Porte commence à s’ouvrir", "Le regard revient vers l’arche. Le duel laisse place à la menace qui approche."],
+    ["c17_cg_s05_01_trois_silhouettes", "assets/images/keyscenes/chapter17-s05/s05_01_trois_silhouettes.webp", "Trois silhouettes", "Dans l’axe de sortie du duel, Valurn est à genoux, Amanea tient encore debout, et une troisième silhouette se détache dans la cendre."],
+    ["c17_cg_s05_02_valurn_a_genoux", "assets/images/keyscenes/chapter17-s05/s05_02_valurn_a_genoux.webp", "Valurn à genoux", "Plan moyen à hauteur de Valurn. Épaules basses et visage couvert de suie. Il regarde depuis le sol, dans l’ombre d’un bloc de pierre présent au plan 01."],
+    ["c17_cg_s05_03_amanea_vacille", "assets/images/keyscenes/chapter17-s05/s05_03_amanea_vacille.webp", "Amanea vacille", "Plan américain de trois quarts. La griffe droite est lourde, les ailes affaissées. Une lueur intermittente dans les fissures traduit l’effort de rester debout."],
+    ["c17_cg_s05_04_le_jugement", "assets/images/keyscenes/chapter17-s05/s05_04_le_jugement.webp", "Le jugement", "Amanea lève les yeux vers la silhouette qu’elle prend pour sa sœur. La lumière du portail souligne ses contours."],
+    ["c17_cg_s05_05_main_tendue", "assets/images/keyscenes/chapter17-s05/s05_05_main_tendue.webp", "La main tendue", "Plan à deux, de profil. La main gauche d’Amanea s’ouvre à mi-distance entre les visages. La griffe droite reste près du corps. Le portail demeure dans le fond entre les deux silhouettes."],
+    ["c17_cg_s05_06_ensemble", "assets/images/keyscenes/chapter17-s05/s05_06_ensemble.webp", "Ensemble", "Gros plan sur Amanea à hauteur de regard. Les yeux perdent leur éclat. La main reste en amorce dans l’image."],
+    ["c17_cg_s05_07_le_silence", "assets/images/keyscenes/chapter17-s05/s05_07_le_silence.webp", "Le silence de Tia", "Contrechamp fixe à la même hauteur. Expression impassible, mains et épée dans des positions lisibles. La lumière d’or conserve sa stabilité jusqu’au geste."],
+    ["c17_cg_s05_08_l_acier", "assets/images/keyscenes/chapter17-s05/s05_08_l_acier.webp", "L’acier", "Un reflet d’acier traverse l’espace laissé entre les deux silhouettes."],
+    ["c17_cg_s05_09_la_sideration", "assets/images/keyscenes/chapter17-s05/s05_09_la_sideration.webp", "La sidération", "Gros plan sur le regard qui descend, puis revient vers la figure de Tia. Le bord gauche de la silhouette et l’asymétrie de l’armure rendent lisible la perte du bras gauche."],
+    ["c17_cg_s05_10_je_vois", "assets/images/keyscenes/chapter17-s05/s05_10_je_vois.webp", "Je vois…", "Caméra basse, proche du sol. Amanea cède dans la poussière, sa griffe droite portée vers l’épaule gauche."],
+    ["c17_cg_s05_11_le_rire", "assets/images/keyscenes/chapter17-s05/s05_11_le_rire.webp", "Le rire de Valurn", "Gros plan latéral de Valurn allongé, souffle court. Un rictus apparaît sur le visage couvert de suie."],
+    ["c17_cg_s05_12_le_crissement", "assets/images/keyscenes/chapter17-s05/s05_12_le_crissement.webp", "Le crissement", "Plan rasant derrière la figure de Tia. Le contact de la lame avec la pierre donne la direction de sa marche. Amanea est floue au fond."],
+    ["c17_cg_s05_13_la_derniere_lueur", "assets/images/keyscenes/chapter17-s05/s05_13_la_derniere_lueur.webp", "La dernière lueur", "Trois quarts arrière d’Amanea au sol. Le portail occupe le fond, dans la direction de son regard. De faibles fissures vertes se rallument dans son dos et esquissent une montée d’énergie interrompue au plan suivant."],
+    ["c17_cg_s05_14_le_souffle_coupe", "assets/images/keyscenes/chapter17-s05/s05_14_le_souffle_coupe.webp", "Le souffle coupé", "Plan moyen latéral. La figure de Tia soulève Amanea d’une main, sa seconde main et l’épée sont masquées par le drapé. La griffe droite d’Amanea rejoint le poignet visible. Une ombre au sol marque la perte d’appui."],
+    ["c17_cg_s05_15_pourquoi", "assets/images/keyscenes/chapter17-s05/s05_15_pourquoi.webp", "Pourquoi… ?", "Gros plan depuis le regard d’Amanea. Les deux iris d’or sont au point. Le cadre reste fixe pendant son « Pourquoi… ? » et le silence qui suit."],
+    ["c17_cg_s05_16_le_dernier_coup", "assets/images/keyscenes/chapter17-s05/s05_16_le_dernier_coup.webp", "Le dernier coup", "Silhouettes de profil dans le contre-jour, cadrées sur la garde, les épaules et le visage d’Amanea. La brusque immobilité du corps et la coupure du souffle portent l’impact."],
+    ["c17_cg_s05_17_illusion", "assets/images/keyscenes/chapter17-s05/s05_17_illusion.webp", "L’illusion se dissipe", "Même axe subjectif que le plan 15. Les contours dorés se défont sous une cape d’ombre mouvante. Le reste du champ perd sa netteté avec la perception d’Amanea."],
+    ["c17_cg_s05_18_naiah", "assets/images/keyscenes/chapter17-s05/s05_18_naiah.webp", "Naïah", "Le visage de Naïah, à la place exacte de celui de Tia."],
+    ["c17_cg_s05_19_le_drainage", "assets/images/keyscenes/chapter17-s05/s05_19_le_drainage.webp", "Le drainage", "Caméra à hauteur d’Amanea, tombée au sol. Valurn s’abaisse dans le champ. Les fissures d’Amanea s’éteignent progressivement à mesure que la magie est aspirée. Le portail reste visible et actif à l’arrière-plan."],
+    ["c17_cg_s05_20_le_regard_de_naiah", "assets/images/keyscenes/chapter17-s05/s05_20_le_regard_de_naiah.webp", "Le regard de Naïah", "Regard depuis le sol. Valurn s’éloigne en périphérie, Naïah suspend son départ et soutient brièvement le regard. Son expression est calme et satisfaite."],
+    ["c17_cg_s05_21_la_terre", "assets/images/keyscenes/chapter17-s05/s05_21_la_terre.webp", "La terre", "Insert de la griffe droite sur le sol à côté du visage d’Amanea. Les doigts perdent leur prise. Le cadre s’assombrit progressivement par les bords."],
+    ["c17_cg_s05_22_les_silhouettes_s_eloignent", "assets/images/keyscenes/chapter17-s05/s05_22_les_silhouettes_s_eloignent.webp", "Les silhouettes s’éloignent", "Retour à la vision d’Amanea. Naïah s’éloigne dans la profondeur, la voix de Valurn arrive hors champ."],
   ];
-  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea']];
+  const SECTIONS = [['s02_', 'La bataille de la Porte Noire'], ['s03_', 'La métamorphose d’Amanea'], ['s04_', 'Valurn contre Amanea'], ['s05_', 'La dernière main tendue']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVII · ' + name, body, src: path };

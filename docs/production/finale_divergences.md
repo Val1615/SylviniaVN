@@ -79,3 +79,7 @@ Deux points à valider par l’auteur :
 - **Quatre décors, affichés en jeu**, copiés à l’identique sous `assets/images/backgrounds/finale/` : la Porte Noire (`BG_PORTE`), la Porte sous le blizzard (`BG_GIVRE`), le champ de bataille (`BG_CHAMP`) et le ravin (`BG_CREVASSE`, crevasse et grotte de Draven). `BG_AKUHN` garde la citadelle `c4v_akuhn_citadel` : le texte du rassemblement décrit la cité vue de loin, que le ravin ne montre pas.
 - **Quatre fiches personnages (Hylee forme finale, Alamma, Bhaal, Amanea forme finale) : référence de design uniquement, non affichées en jeu.** Consigne de l’auteur : « Les fiches sont à titre indicatif ». Elles sont rangées à l’identique dans `Ressource lore/Charactersheet/finale/`, à côté des autres fiches du dépôt. Aucune scène, ni le Codex, ni une galerie ne les charge, et elles ne figurent pas dans le registre d’assets `A`.
 - Détail et sha256 : [finale_assets_manifest.json](finale_assets_manifest.json).
+
+## Porte Noire en S07 (lot 2 d’images clés, v0.422)
+
+De S02 à S05, la Porte est un œil rouge dans un massif d’épines (décor `BG_PORTE` et plans clés des lots 1 et 2). Dans les plans S07 livrés (`chapter18-s07/`), elle devient une arche à côtes dorées dans une forêt calcinée, avec la même fente rouge centrale. Le décor du jeu reste celui des scènes précédentes ; les plans S07 sont intégrés tels quels, à trancher par l’auteur (s07_01 à 04, 08 à 17, 19 à 21, 23 et 24 montrent l’arche).

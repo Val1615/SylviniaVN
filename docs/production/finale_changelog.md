@@ -1,5 +1,19 @@
 # Journal · Final du Tome I
 
+## v0.422 (branche `assets/finale-lot2`)
+
+- Images clés du lot 2 livrées par l’auteur : 67 plans (S05 : 22, S06 : 21, S07 : 24), dans `assets/images/keyscenes/chapter17-s05/`, `chapter18-s06/`, `chapter18-s07/` (dossiers `chapter16-s0x` de l’archive renommés). Copie à l’identique (sha256 vérifié), sauf s06_17 et s06_20 : retouches validées par l’auteur (les plaques sont dans la main droite de Draven, raccord avec s06_18 et `c18_dp_adieu`).
+- Placement selon la structure du VN, pas selon le découpage du livre :
+  - S05 dans le tronc du Chapitre XVII, de `c17_trois` à `c17_brasier`.
+  - S06 dans la branche Draven, de `c18_draven_seul` à `c18_remerii_draven` (Remerii trouve Draven), avant `c18_dp_adieu`. s06_08 (« Dans la grotte ») et s06_10 (« Regagner le seuil ») illustrent les scènes de duel `c18_dp_grotte_r` et `c18_dp_voute`, qui portent ce passage du roman.
+  - S07 dans la branche Iriana, de `c18_alamma` à `c18_saut`. L’aiguillage « À quelques lieux de là » du découpage S06 est ignoré : Draven → S08, Iriana → S08.
+- Un paragraphe porte au plus un plan : s05_20 (regard de Naïah) passe au § 10766 et s05_21 (la terre) au § 10768, le § 10764 portant déjà le drainage.
+- Codex : section « La dernière main tendue » ajoutée au Chapitre XVII, nouveau groupe Chapitre XVIII (« Le dernier adieu à Draven », « Iriana face à Alamma »). Clés `c18_cg_*` pour S06 et S07, clés `c17_cg_*` inchangées.
+- Fin de S06 (`c18_s06_fin`) : « Remerii a laissé Draven à son dernier silence et rejoint les siens », cohérent avec la découverte qui précède.
+- À signaler : s05_16 et s06_19 sont intégrés tels quels (plans « à trancher » au tri) ; en S07, la Porte est une arche à côtes dorées, et non l’œil rouge dans le massif d’épines de S02 à S05.
+- Couverture du roman inchangée : 1365/1365, 293 écrans.
+- Bulle de mise à jour : « v0.422 · Images clés S05 à S07 ».
+
 ## v0.421 (branche `feat/finale-duels-epiques`)
 
 - Mise en scène épique des quatre duels du final, entièrement dans `tools/finale-gen/duels.js` (copié vers `fusion/story-finale-duels.js` v2). Chaque scène de duel reçoit une humeur :

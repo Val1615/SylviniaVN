@@ -437,6 +437,28 @@ Bhaal franchit la tempête morte et passe le portail.`),
   });
 /*@ALIASES@*/
 
+  // Plans clés S06 (branche Draven) et S07 (branche Iriana), copiés à l’identique (voir tools/finale-gen/shots.py) : décor, codex, cadrage.
+  const SHOTS = [
+/*@SHOTS@*/
+  ];
+  // Plans portés par une scène de duel : l’illustration remplace le décor, la silhouette s’efface.
+  const DUEL_SHOTS = [
+/*@DUEL_SHOTS@*/
+  ];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma']];
+  for (const [key, path, name, body] of SHOTS) {
+    A[key] = path;
+    CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };
+    CODEX_IMAGE_ORDER.push(key);
+    window.SylviniaStoryCamera?.illustrate(key);
+  }
+  for (const [sid, key, camera] of DUEL_SHOTS) if (S[sid]) Object.assign(S[sid], { bg: key, hideChars: true, camera });
+  CODEX_IMAGE_GROUPS.push({
+    id: 'chapter18',
+    title: chapter,
+    sections: SECTIONS.map(([p, t]) => ({ title: t, keys: SHOTS.filter(([k]) => k.startsWith('c18_cg_' + p)).map(([k]) => k) })),
+  });
+
   const ENTER_FLAGS = {
     c18_s06_fin: { c18PlayedDraven: true, s06DravenComplete: true },
     c18_s07_fin: { c18PlayedIriana: true, s07IrianaComplete: true },
