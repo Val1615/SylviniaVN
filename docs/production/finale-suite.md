@@ -74,7 +74,10 @@ Voir [finale_divergences.md](finale_divergences.md). En résumé :
 
 Aucune image ni musique n’a été générée. Les décors et les pistes sont ceux du dépôt, réutilisés tels quels. Le détail des emplacements prévus est dans [finale_assets_manifest.json](finale_assets_manifest.json) : images BG-01 à BG-10 et CG-02 à CG-15 du cahier, musiques MU-01 à MU-08.
 
-Les huit fichiers fournis par l’auteur (quatre décors 1024×576 et quatre fiches personnages : Hylee forme finale, Alamma, Bhaal, Amanea forme finale) **n’étaient pas présents sur le poste de production** lors de ce lot. Leurs noms et leurs scènes sont prêts dans le manifeste. Il suffit de copier chaque fichier à l’identique (même sha256) sous le nom prévu, puis de remplacer la constante correspondante (`BG_PORTE`, `BG_GIVRE`, `BG_AKUHN`, `BG_CHAMP`, `BG_FICHE_HYLEE`).
+Les huit fichiers fournis par l’auteur sont intégrés à l’identique (même sha256) :
+
+- les quatre décors sont affichés en jeu depuis `assets/images/backgrounds/finale/` : `BG_PORTE` (Porte Noire), `BG_GIVRE` (blizzard), `BG_CHAMP` (champ de bataille, Épilogue) et `BG_CREVASSE` (ravin de Draven) ;
+- les quatre fiches personnages (Hylee forme finale, Alamma, Bhaal, Amanea forme finale) sont **à titre indicatif** : rangées dans `Ressource lore/Charactersheet/finale/`, elles ne sont affichées nulle part dans le jeu.
 
 ## Vérifications
 

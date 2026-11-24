@@ -10,3 +10,4 @@
 - Bulle de mise à jour : « v0.418 · Fin du Tome I ».
 - Documentation : `finale-suite.md`, `finale_concordance_roman_vn.md`, `finale_flags_audit.md`, `finale_assets_manifest.json`, `finale_divergences.md`.
 - Scène 5 validée par l’auteur : révélation découpée en `c17_dernier_souffle` (sans silhouette) puis `c17_naiah_revelee` (silhouette de Naïah au moment où elle est nommée).
+- Décors fournis par l’auteur branchés à l’identique : Porte Noire (`BG_PORTE`), blizzard (`BG_GIVRE`), champ de bataille (`BG_CHAMP`), ravin de Draven (`BG_CREVASSE`). Fiches personnages rangées en référence dans `Ressource lore/Charactersheet/finale/`, non affichées en jeu. Al’Gratal (dont `c18_reflet`) passe sur `bg_algratal_portes`.

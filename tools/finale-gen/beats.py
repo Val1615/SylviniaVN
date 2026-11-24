@@ -111,7 +111,7 @@ beat('c18_seules', 'Seules', 'BG_GIVRE', 'M_PLAINTE_I', '[]', 11714, 11730)
 beat('c18_refus', 'Elle refuse', 'BG_GIVRE', 'M_PLAINTE_I', '[]', 11732, 11746)
 beat('c18_faille', 'La faille de Medig', 'BG_GIVRE', 'M_PLAINTE_I', '[]', 11748, 11781)
 beat('c18_algratal', 'Al’Gratal', 'BG_ALGRATAL', 'M_ALGRATAL', '[]', 11783, 11793)
-beat('c18_reflet', 'Deux saphirs', 'BG_FICHE_HYLEE', 'M_ALGRATAL', '[]', 11795, 11805)
+beat('c18_reflet', 'Deux saphirs', 'BG_ALGRATAL', 'M_ALGRATAL', '[]', 11795, 11805)
 beat('c18_ne_me_laisse_pas', 'Ne me laisse pas', 'BG_ALGRATAL', 'M_ALGRATAL', '[]', 11807, 11823, 'c18_fin')
 
 # ───────── ÉPILOGUE DU TOME I ─────────

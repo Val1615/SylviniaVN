@@ -8,7 +8,14 @@
 
   const BG_TRONE = 'iriana_throneroom';
   const BG_CHAMBRE = 'c13g_bg_chambre';
-  const BG_CHAMP = 'c16_bg_apres_assaut';
+  // Décors fournis par l’auteur pour le final (copiés à l’identique, voir docs/production/finale_assets_manifest.json).
+  Object.assign(A, {
+    finale_bg_porte_noire_plaine: 'assets/images/backgrounds/finale/bg_porte_noire_plaine.png',
+    finale_bg_porte_noire_blizzard: 'assets/images/backgrounds/finale/bg_porte_noire_blizzard.png',
+    finale_bg_champ_bataille: 'assets/images/backgrounds/finale/bg_champ_bataille.png',
+    finale_bg_akuhn_nabad_ravin: 'assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png',
+  });
+  const BG_CHAMP = 'finale_bg_champ_bataille';
   const M_CONSEIL = 'music_c14_council_v0340';
   const M_CHAMBRE = 'music_c13g_une_nuit_soft';
   const M_REINE = 'music_c13i_amanea_reine_noire';

@@ -6,14 +6,20 @@
   const chapter = 'Chapitre XVIII · ' + title;
   const start = 'c18_carrefour_intro';
 
-  const BG_PORTE = 'c4v_portal_temple';
-  const BG_CHAMP = 'c16_bg_apres_assaut';
-  const BG_CREVASSE = 'c16_bg_lisiere_assaut';
-  const BG_GIVRE = 'bg_frost';
+  // Décors fournis par l’auteur pour le final (copiés à l’identique, voir docs/production/finale_assets_manifest.json).
+  Object.assign(A, {
+    finale_bg_porte_noire_plaine: 'assets/images/backgrounds/finale/bg_porte_noire_plaine.png',
+    finale_bg_porte_noire_blizzard: 'assets/images/backgrounds/finale/bg_porte_noire_blizzard.png',
+    finale_bg_champ_bataille: 'assets/images/backgrounds/finale/bg_champ_bataille.png',
+    finale_bg_akuhn_nabad_ravin: 'assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png',
+  });
+  const BG_PORTE = 'finale_bg_porte_noire_plaine';
+  const BG_CHAMP = 'finale_bg_champ_bataille';
+  const BG_CREVASSE = 'finale_bg_akuhn_nabad_ravin';
+  const BG_GIVRE = 'finale_bg_porte_noire_blizzard';
   const BG_SOURCE = 'bg_clearing_decor';
-  const BG_ALGRATAL = 'c2_algratal_panorama_cg';
-  // Emplacement prévu : fiche « Hylee, forme finale » fournie par l’auteur (non présente sur le poste de production).
-  const BG_FICHE_HYLEE = BG_ALGRATAL;
+  // Arrivée à Al’Gratal (« sol de pierre », Sylviniens qui s’affairent). Pas de panorama avec des silhouettes d’Hylee non transformée.
+  const BG_ALGRATAL = 'bg_algratal_portes';
 
   const M_TENSION = 'music_tension';
   const M_HORREUR = 'music_c10_horreur';

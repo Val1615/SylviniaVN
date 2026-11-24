@@ -6,14 +6,20 @@
   const chapter = 'Chapitre XVIII · ' + title;
   const start = 'c18_carrefour_intro';
 
-  const BG_PORTE = 'c4v_portal_temple';
-  const BG_CHAMP = 'c16_bg_apres_assaut';
-  const BG_CREVASSE = 'c16_bg_lisiere_assaut';
-  const BG_GIVRE = 'bg_frost';
+  // Décors fournis par l’auteur pour le final (copiés à l’identique, voir docs/production/finale_assets_manifest.json).
+  Object.assign(A, {
+    finale_bg_porte_noire_plaine: 'assets/images/backgrounds/finale/bg_porte_noire_plaine.png',
+    finale_bg_porte_noire_blizzard: 'assets/images/backgrounds/finale/bg_porte_noire_blizzard.png',
+    finale_bg_champ_bataille: 'assets/images/backgrounds/finale/bg_champ_bataille.png',
+    finale_bg_akuhn_nabad_ravin: 'assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png',
+  });
+  const BG_PORTE = 'finale_bg_porte_noire_plaine';
+  const BG_CHAMP = 'finale_bg_champ_bataille';
+  const BG_CREVASSE = 'finale_bg_akuhn_nabad_ravin';
+  const BG_GIVRE = 'finale_bg_porte_noire_blizzard';
   const BG_SOURCE = 'bg_clearing_decor';
-  const BG_ALGRATAL = 'c2_algratal_panorama_cg';
-  // Emplacement prévu : fiche « Hylee, forme finale » fournie par l’auteur (non présente sur le poste de production).
-  const BG_FICHE_HYLEE = BG_ALGRATAL;
+  // Arrivée à Al’Gratal (« sol de pierre », Sylviniens qui s’affairent). Pas de panorama avec des silhouettes d’Hylee non transformée.
+  const BG_ALGRATAL = 'bg_algratal_portes';
 
   const M_TENSION = 'music_tension';
   const M_HORREUR = 'music_c10_horreur';
@@ -1439,7 +1445,7 @@ Elle se redresse, vacillante mais résolue, puis, avec ce qui lui reste de force
 
 Saidin ne dit rien de plus, il attend, il la laisse réagir, il respecte cette seconde de silence, ce moment où l’on comprend que l’on a perdu quelque chose d’irremplaçable, et puis il détourne enfin le regard, quittant l’Impératrice pour reporter son attention sur Hylee. C’est là qu’il la voit, vraiment, qu’il la scrute, qu’il analyse ce qu’elle est devenue, et Hylee sait qu’elle a changé, elle n’a pas besoin de miroir, elle n’a pas besoin qu’on le lui dise. Son corps tremble encore sous les résidus de l’Arcane, mais ce n’est plus la même chose, ce n’est plus une surcharge temporaire, ce n’est plus un pouvoir qu’elle peut simplement rejeter, c’est en elle, c’est gravé dans sa chair, dans son sang, dans son être.`,
       "c18_reflet", []),
-    c18_reflet: scene("Deux saphirs", BG_FICHE_HYLEE, M_ALGRATAL, 'Narrateur',
+    c18_reflet: scene("Deux saphirs", BG_ALGRATAL, M_ALGRATAL, 'Narrateur',
       `Elle baisse lentement les yeux sur ses mains, et ce qu’elle voit la pétrifie.
 
 Sa peau n’est plus la même. Les marques du vitiligo qui parcouraient autrefois son corps, qui faisaient partie d’elle, qui la définissaient, ont disparu. Il n’y a plus de contraste, plus de tâches, plus d’ombres, il n’y a que cette teinte uniforme, un blanc spectral, une pâleur irréelle qui s’étend de ses doigts à ses bras, qui recouvre son cou, son visage, une couleur trop pure, trop éclatante, comme si elle avait été vidée de toute pigmentation, comme si elle n’appartenait plus à ce monde. Elle sent son souffle se couper, un vertige la prend, elle effleure sa peau comme pour s’assurer qu’elle est bien réelle, mais elle ne reconnaît plus son propre corps.

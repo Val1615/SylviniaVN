@@ -6,11 +6,17 @@
   const chapter = 'Chapitre XVII · ' + title;
   const start = 'c17_rassemblement';
 
-  // Décors existants réutilisés. Les décors fournis pour le final se brancheront ici (voir docs/production/finale_assets_manifest.json).
+  // Décors fournis par l’auteur pour le final (copiés à l’identique, voir docs/production/finale_assets_manifest.json).
+  Object.assign(A, {
+    finale_bg_porte_noire_plaine: 'assets/images/backgrounds/finale/bg_porte_noire_plaine.png',
+    finale_bg_porte_noire_blizzard: 'assets/images/backgrounds/finale/bg_porte_noire_blizzard.png',
+    finale_bg_champ_bataille: 'assets/images/backgrounds/finale/bg_champ_bataille.png',
+    finale_bg_akuhn_nabad_ravin: 'assets/images/backgrounds/finale/bg_akuhn_nabad_ravin.png',
+  });
   const BG_AKUHN = 'c4v_akuhn_citadel';
   const BG_FOREST = 'c7_bg_foret_racines';
-  const BG_PORTE = 'c4v_portal_temple';
-  const BG_CHAMP = 'c16_bg_apres_assaut';
+  const BG_PORTE = 'finale_bg_porte_noire_plaine';
+  const BG_CHAMP = 'finale_bg_champ_bataille';
 
   const M_TENSION = 'music_tension';
   const M_HORREUR = 'music_c10_horreur';

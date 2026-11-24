@@ -22,7 +22,7 @@ Mise en scène :
 
 - les silhouettes habituelles servent jusqu’à la canalisation (`c18_conduit`) ;
 - à partir de `c18_remerii_tombe`, aucune silhouette d’Hylee ne s’affiche (Épilogue compris) ;
-- la révélation `c18_reflet` (« Deux saphirs ») est prête à afficher la fiche fournie par l’auteur (`BG_FICHE_HYLEE`). En attendant, elle utilise le panorama d’Al’Gratal ;
+- la révélation `c18_reflet` (« Deux saphirs ») garde un vrai décor de scène : les portes d’Al’Gratal (`bg_algratal_portes`), comme `c18_algratal` et `c18_ne_me_laisse_pas` (« sol de pierre », Sylviniens qui s’affairent). Le panorama `c2_algratal_panorama_cg` a été retiré de ces scènes, car on y voit de dos une Hylee aux cheveux roux. La fiche d’Hylee n’y est jamais affichée ;
 - l’emplacement prévu pour les futurs sprites est `assets/sprites/hylee_finale_*.png`.
 
 ## 3. Naïah
@@ -46,3 +46,9 @@ Deux points à valider par l’auteur :
 
 - L’en-tête des boutons de choix affiche « Le choix d’Hylee » même quand le joueur dirige Valurn, Draven ou Iriana. Ce libellé est codé en dur dans `adapter.js`, qui n’a pas été touché pour préserver la pagination v50.
 - Pour l’interface, l’Épilogue est rangé sous « Chapitre XIX » (`getSceneChapterLabel`). À l’écran, son titre reste « Épilogue · Tome I ».
+
+## Fichiers fournis par l’auteur (24/11/2026)
+
+- **Quatre décors, affichés en jeu**, copiés à l’identique sous `assets/images/backgrounds/finale/` : la Porte Noire (`BG_PORTE`), la Porte sous le blizzard (`BG_GIVRE`), le champ de bataille (`BG_CHAMP`) et le ravin (`BG_CREVASSE`, crevasse et grotte de Draven). `BG_AKUHN` garde la citadelle `c4v_akuhn_citadel` : le texte du rassemblement décrit la cité vue de loin, que le ravin ne montre pas.
+- **Quatre fiches personnages (Hylee forme finale, Alamma, Bhaal, Amanea forme finale) : référence de design uniquement, non affichées en jeu.** Consigne de l’auteur : « Les fiches sont à titre indicatif ». Elles sont rangées à l’identique dans `Ressource lore/Charactersheet/finale/`, à côté des autres fiches du dépôt. Aucune scène, ni le Codex, ni une galerie ne les charge, et elles ne figurent pas dans le registre d’assets `A`.
+- Détail et sha256 : [finale_assets_manifest.json](finale_assets_manifest.json).
