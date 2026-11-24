@@ -1,6 +1,7 @@
 import json,sys
 from playwright.sync_api import sync_playwright
-URL="http://localhost:8893/index.html"
+import os
+URL=f"http://localhost:{os.environ.get('PORT','8894')}/index.html"
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path="/usr/bin/google-chrome")
     pg=b.new_page(); errs=[]
@@ -10,9 +11,9 @@ with sync_playwright() as p:
     r=pg.evaluate("""()=>{
       const ids=Object.keys(S).filter(k=>/^c1[789]_/.test(k)); const prob=[];
       for(const id of ids){const s=S[id];
-        const nx=[]; if(s.next) nx.push(s.next); (s.choices||[]).forEach(c=>nx.push(c.next));
+        const nx=[]; if(s.next) nx.push(s.next); (s.choices||[]).forEach(c=>nx.push(c.next)); if(s.fqte) nx.push(s.fqte.fail);
         if(!s.next && !(s.choices||[]).length) prob.push(id+' sans suite');
-        nx.forEach(n=>{ if(n!=='menu' && !S[n]) prob.push(id+' -> '+n+' manquant'); });
+        nx.forEach(n=>{ if(n!=='menu' && !String(n).startsWith('__') && !S[n]) prob.push(id+' -> '+n+' manquant'); });
         if(!A[s.bg]) prob.push(id+' bg '+s.bg); if(s.music && !A[s.music]) prob.push(id+' music '+s.music);
         (s.chars||[]).forEach(c=>{ if(!A[c[1]]) prob.push(id+' sprite '+c[1]); });
         try{ if(typeof s.text==='function') s.text(); }catch(e){prob.push(id+' text '+e)}

@@ -1,6 +1,6 @@
 import asyncio, json, sys, os
 from playwright.async_api import async_playwright
-OUT="/workspace/vn-redesign/compare/finale/"
+OUT=os.environ.get("SHOTS_OUT","/tmp/finale-pag/")
 MEAS="""()=>{const R=BibliothequeAstrale.racine; const t=R.querySelector('.dlg-texte'); const ps=[...t.querySelectorAll('.para')]; const last=ps[ps.length-1]; const fol=R.querySelector('.folio'); const box=t.parentElement.getBoundingClientRect();
  return {overflow: last? Math.round(last.getBoundingClientRect().bottom - Math.min(fol?fol.getBoundingClientRect().top:1e9, box.bottom)):0, sh:t.scrollHeight, ch:t.clientHeight}}"""
 SHOTS={"830x525":["c17_rassemblement","c17_choix_adieu","c17_m1","c17_revelation","c17_dernier_souffle","c17_naiah_revelee","c18_carrefour","c18_dp_lineva","c18_ip_flux","c18_choix_arcane","c18_reflet","c19_promesse","c19_fin"],
@@ -18,17 +18,22 @@ async def main():
       await c.add_init_script("localStorage.setItem('sylvinia_ui_biblio_v1', JSON.stringify({skin:'biblio'}));localStorage.setItem('sylvinia_vn_v82', %s);" % json.dumps(json.dumps(save)))
       p=await c.new_page(); errs=[]
       p.on("pageerror", lambda e: errs.append(str(e)[:200])); p.on("console", lambda m: errs.append(m.text[:120]) if m.type=="error" else None)
-      await p.goto("http://127.0.0.1:8893/index.html?cb=pag", wait_until="domcontentloaded", timeout=120000)
+      await p.goto(f"http://127.0.0.1:{os.environ.get('PORT','8894')}/index.html?cb=pag", wait_until="domcontentloaded", timeout=120000)
       await p.wait_for_function("window.BibliothequeAstrale", timeout=120000); await p.wait_for_timeout(2500)
       await p.evaluate("()=>{load();}")
       ids=await p.evaluate("Object.keys(S).filter(k=>/^c1[789]_/.test(k))")
-      import os
       if os.environ.get('ONLY'): ids=[i for i in ids if i in os.environ['ONLY'].split(',')]
       worst=[]; pages_total=0
       for sid in ids:
         await p.evaluate("""(sid)=>{state.scene=sid; state.history=[]; setScreen('game'); render(); BibliothequeAstrale.aller('#/jeu');}""", sid)
         await p.wait_for_timeout(350)
-        n=(await p.evaluate("BibliothequeAstrale.etat().J"))["pages"]; pages_total+=n
+        J=None
+        for _ in range(20):
+          J=await p.evaluate("BibliothequeAstrale.etat().J")
+          if J: break
+          await p.wait_for_timeout(150)  # voile de combat (#combatTransition) encore actif
+        if not J: worst.append([sid,"sans page"]); continue
+        n=J["pages"]; pages_total+=n
         for k in range(n):
           if k>0: await p.evaluate("BibliothequeAstrale.racine.querySelector('.jeu').click()"); await p.wait_for_timeout(120)
           for _ in range(4):

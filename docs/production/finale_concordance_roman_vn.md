@@ -102,12 +102,6 @@ Total : 128 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c18_souvenirs` | Les jardins d’Al’Gratal | 11000–11008 | 5 |
 | `c18_etreinte` | J’aurais dû t’écouter | 11010–11036 | 15 |
 | `c18_etreinte_2` | J’aurais dû t’écouter | 11038–11044 | 4 |
-| `c18_ouverture` | Le portail s’ouvre | 11046–11066 | 11 |
-| `c18_fuir` | Nous devons fuir | 11068–11095 | 14 |
-| `c18_bhaal` | Bhaal | 11098–11117 | 11 |
-| `c18_remerii_avance` | Elle avance | 11119–11145 | 15 |
-| `c18_premier_choc` | Les crocs du Chaos | 11147–11163 | 10 |
-| `c18_iriana_part` | Où est Iriana ?! | 11165–11179 | 9 |
 | `c18_alamma` | Confrontation au Portail | 11182–11207 | 14 |
 | `c18_tu_es_trop_jeune` | Un gouffre | 11209–11226 | 11 |
 | `c18_pacte_valurn` | Le pacte | 11228–11262 | 20 |
@@ -121,6 +115,12 @@ Total : 128 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c18_avant_le_saut_3` | Elle doit choisir | 11382–11392 | 6 |
 | `c18_avant_le_saut_4` | Elle doit choisir | 11394–11398 | 3 |
 | `c18_saut` | Elle plonge | 11400–11408 | 5 |
+| `c18_ouverture` | Le portail s’ouvre | 11046–11066 | 11 |
+| `c18_fuir` | Nous devons fuir | 11068–11095 | 14 |
+| `c18_bhaal` | Bhaal | 11098–11117 | 11 |
+| `c18_remerii_avance` | Elle avance | 11119–11145 | 15 |
+| `c18_premier_choc` | Les crocs du Chaos | 11147–11163 | 10 |
+| `c18_iriana_part` | Où est Iriana ?! | 11165–11179 | 9 |
 | `c18_gardien` | Un Blizzard | 11411–11430 | 13 |
 | `c18_sceau` | Le sceau | 11432–11455 | 15 |
 | `c18_medig` | Medig | 11457–11483 | 15 |

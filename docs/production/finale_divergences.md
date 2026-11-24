@@ -29,9 +29,28 @@ Mise en scène :
 
 Aucune scène ajoutée ne lui prête de désir, et son orientation n’est jamais nommée. Dans le roman, sa seule présence est le regard qu’elle échange avec Iriana au portail, puis l’illusion.
 
-## 4. Points de vue optionnels
+## 4. Carrefour du Chapitre XVIII : trois branches séparées (v0.419)
 
-Le cahier fait de Draven (S06) et d’Iriana (S07) des branches facultatives. La règle d’or interdit de retirer du texte : le joueur lit donc toujours les passages de Draven et d’Iriana du roman. Le point de vue choisi au carrefour ajoute des scènes jouables dans le passage concerné. Les autres joueurs lisent le même texte sans interaction.
+Conformément au cahier de production, le carrefour ouvre trois vraies branches :
+
+- **S06 · Draven** (facultative, si débloquée) : carton « Pendant ce temps, dans la crevasse… », puis uniquement le texte du roman centré sur Draven (§ 10801–10894) et son duel de survie. Fin : flag `c18PlayedDraven`, carton « Pendant ce temps, face au portail… », retour direct à S08, sans passer par Iriana.
+- **S07 · Iriana** (facultative, si débloquée) : carton « Pendant ce temps, près du corps d’Amanea… », puis le deuil avec Tia (§ 10896–11044), la confrontation avec Alamma, le pacte de Valurn, le duel, le renversement et le saut dans le portail (§ 11182–11408). Aucune scène de Draven. Fin : flag `c18PlayedIriana`, carton, retour direct à S08.
+- **S08 · Remerii, Hylee, Bhaal** (obligatoire) : carton « Au même moment, face au portail… », ouverture du portail et Bhaal (§ 11046–11179), puis le blizzard jusqu’à Al’Gratal (§ 11411–11823), et l’Épilogue.
+
+**Règle d’or.** L’union S01–S05 + S06 + S07 + S08 + S09 couvre les 1 365 paragraphes du roman, sans doublon (contrôle automatique de `gen.py`). Conséquence du découpage voulu par le cahier : un joueur qui n’a débloqué ni Draven ni Iriana ne lit pas les passages S06 et S07 ; un joueur Draven lit S06 mais pas S07, et inversement. Les deux branches se rejouent depuis la carte « Chapitre XVIII » du menu des chapitres, sans toucher à la vraie partie (voir § 6). **Point à valider par l’auteur.**
+
+## 4 bis. Duels et Game Over (v0.419)
+
+Quatre vrais duels réutilisent la grammaire native (classe `combatMode`, voile `#combatTransition`, cartouche de jauges, secousse et son, QTE chronométré) :
+
+| Duel | Jauges | Pivot QTE | Game Over | Reprise |
+|---|---|---|---|---|
+| S04 Valurn / Amanea | Phase A : `Posture · Flammes noires` contre `Vitalité · Garde`. Phase B : jauge nommée `Puissance révélée`, qui part de 0 et se remplit d’un coup (`c17_revelation`) ; la parade des manches I–III est brisée en phase B. | « Esquive · riposte » (`c17_qte`) | Phase A : Valurn s’effondre ou n’amène pas Amanea au seuil (garde ≤ 6) → `c17_gameover_a`. Phase B : Valurn tombe trop tôt ou QTE manqué → `c17_gameover_b`. Sinon défaite canonique, sortie du mode combat, S05 sans combat. | `c17_duel_intro` |
+| S06 Draven | `Endurance de Draven`, `Pression de la horde` | « Frapper la voûte » (`c18_dp_voute`) | Endurance à 0 ou horde à 10 (`c18_dp_gameover_horde`), QTE de l’effondrement manqué (`c18_dp_gameover_voute`). La pause Lineva n’a ni HUD ni chrono. | `c18_dp_crevasse` |
+| S07 Iriana / Alamma | `Arcane d’Iriana`, `Emprise d’Alamma`, puis `Chaos filtré (Ombre · Chaos · Mort)` | « Stabiliser le flux » (`c18_ip_flux`) | Arcane à 0 sous la domination (`c18_ip_gameover_brisee`), flux du Chaos manqué (`c18_ip_gameover_chaos`). | `c18_ip_maitrise` |
+| S08 Remerii + Hylee / Bhaal | `Pression de Bhaal`, `Blizzard · Résistance`, `Flux d’Arcane (Hylee)` | « Synchronisation » (`c18_bh_sync`), durée allongée par `s08Reponse`, `s02Adieu = confiance` et un lien ≥ 8 | Blizzard épuisé (`c18_bh_gameover_blizzard`), synchronisation manquée (`c18_bh_gameover_sync`), Bhaal qui submerge la ligne (`c18_bh_gameover_bhaal`). Victoire : Bhaal repoussé, portail affaibli mais pas refermé. | `c18_bh_blizzard` |
+
+Chaque Game Over propose « Réessayer le duel » et « Retour au menu ». La reprise relance **la scène de départ du duel en cours**, jamais le début du chapitre ni une ancienne sauvegarde : seuls les flags de ce duel sont remis à zéro, tous les choix et flags antérieurs, l’inventaire et les stats sont conservés. Les jauges sont recalculées à partir des flags : une sauvegarde ou un rechargement en plein duel restitue l’état exact. Les QTE se mettent en pause quand le joueur quitte l’écran de jeu (menu, journal, onglet masqué) ; aucun QTE pendant la pause Lineva, S05 ou la transformation de S03.
 
 ## 5. Ajouts écrits pour le jeu
 
@@ -44,7 +63,8 @@ Deux points à valider par l’auteur :
 
 ## 6. Interface
 
-- L’en-tête des boutons de choix affiche « Le choix d’Hylee » même quand le joueur dirige Valurn, Draven ou Iriana. Ce libellé est codé en dur dans `adapter.js`, qui n’a pas été touché pour préserver la pagination v50.
+- L’en-tête des boutons de choix suit le personnage joué : « Le choix de Valurn » (S04), « Le choix de Draven » (S06), « Le choix d’Iriana » (S07), « Le choix de Remerii » (blizzard, dragon) et « Le choix d’Hylee » (réponse, Arcane, synchronisation), « Après la défaite » sur les Game Over. `adapter.js` (v51) appelle le crochet `sylviniaChoiceHeader` ; sans valeur, le libellé historique est conservé, si bien que les chapitres I à XVI ne changent pas. La pagination n’est pas modifiée.
+- Relecture : la carte « Chapitre XVIII » d’une partie terminée ramène au carrefour, déblocages conservés, branches déjà jouées marquées « (déjà jouée) ». La vraie partie est mise de côté (`finaleReplay`) puis restaurée à la fin de la branche (« Terminer la relecture ») : aucun choix rejoué n’écrase la sauvegarde réelle, et aucune stat n’est gagnée.
 - Pour l’interface, l’Épilogue est rangé sous « Chapitre XIX » (`getSceneChapterLabel`). À l’écran, son titre reste « Épilogue · Tome I ».
 
 ## Fichiers fournis par l’auteur (24/11/2026)

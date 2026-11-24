@@ -810,7 +810,7 @@ function allerSceneMoteur(id) { const s = ST(); if (!S_()[id]) return; if (!Arra
 function montrerChoix() {
   const box = $(".choix"); const coul = ["#5a1e2e", "#1b2a5c", "#4a2e1c", "#3a2160", "#15403a"];
   const intime = PB.classList.contains("intime");
-  box.innerHTML = `<p class="question z-lbl"><i aria-hidden="true">${intime ? "♥" : "◆"}</i> ${intime ? "La réponse d’Hylee" : (J.M.combat ? "La riposte d’Hylee" : "Le choix d’Hylee")}</p>` +
+  box.innerHTML = `<p class="question z-lbl"><i aria-hidden="true">${intime ? "♥" : "◆"}</i> ${intime ? "La réponse d’Hylee" : (fn("sylviniaChoiceHeader")?.(J.id) || (J.M.combat ? "La riposte d’Hylee" : "Le choix d’Hylee"))}</p>` +
     J.M.choix.map((c, i) => { const m = c.verrou; const strat = /^Choix stratégique/i.test(brut(c.label)); const lab = brut(c.label).replace(/^Choix stratégique\s*:\s*/i, "");
       const gems = Object.entries(c.eff || {}).filter(([, v]) => v).map(([k, v]) => { const V = VLAB[k] || [k, k, k.slice(0, 2).toUpperCase()]; return `<span class="gem z-lbl" style="--v:var(--v-${k},var(--or))" title="${V[1]} ${v > 0 ? "+" : ""}${v}"><span class="gl">${V[1]}</span><span class="gc">${V[2]}</span> ${v > 0 ? "+" : ""}${v}</span>`; }).join("");
       const req = m && c.req ? Object.entries(c.req).map(([k, v]) => `${(VLAB[k] || [k, k, k])[2]} ${v}`).join(" · ") : "";
