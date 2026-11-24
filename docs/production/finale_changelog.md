@@ -9,7 +9,7 @@
   - S07 dans la branche Iriana, de `c18_alamma` à `c18_saut`. L’aiguillage « À quelques lieux de là » du découpage S06 est ignoré : Draven → S08, Iriana → S08.
 - Un paragraphe porte au plus un plan : s05_20 (regard de Naïah) passe au § 10766 et s05_21 (la terre) au § 10768, le § 10764 portant déjà le drainage.
 - Codex : section « La dernière main tendue » ajoutée au Chapitre XVII, nouveau groupe Chapitre XVIII (« Le dernier adieu à Draven », « Iriana face à Alamma »). Clés `c18_cg_*` pour S06 et S07, clés `c17_cg_*` inchangées.
-- Fin de S06 (`c18_s06_fin`) : « Remerii a laissé Draven à son dernier silence et rejoint les siens », cohérent avec la découverte qui précède.
+- Fin de S06 (`c18_s06_fin`) : « Remerii laisse Draven à son dernier silence et rejoint les siens. Là-bas, la nuit bascule. », cohérent avec la découverte qui précède, et plus court pour tenir sans défilement à 830x525.
 - À signaler : s05_16 et s06_19 sont intégrés tels quels (plans « à trancher » au tri) ; en S07, la Porte est une arche à côtes dorées, et non l’œil rouge dans le massif d’épines de S02 à S05.
 - Couverture du roman inchangée : 1365/1365, 293 écrans.
 - Bulle de mise à jour : « v0.422 · Images clés S05 à S07 ».
