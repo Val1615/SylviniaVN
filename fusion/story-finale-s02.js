@@ -1678,7 +1678,8 @@ Ce qu’il a pris pour sa force n’était que sa retenue.`;
       ...ds('Pivot · Le dernier coup',
         `Amanea arme le coup qui doit en finir. La griffe descend vers sa gorge, plus vite que tout ce qu’il a vu cette nuit.`,
         null, [valurnAnnoyed], 6),
-      fqte: { label: 'Esquive · riposte', ms: () => 4200 + calc(6).valurn * 250, fail: 'c17_gameover_b' },
+      // La fenêtre de riposte s’élargit avec la posture de Valurn et le temps gagné en phase II (300 ms par seconde volée).
+      fqte: { label: 'Esquive · riposte', ms: () => (window.SylviniaFinaleDuels ? window.SylviniaFinaleDuels.DUELS.s04.qteMs(calc(6)) : 4200 + calc(6).valurn * 250), fail: 'c17_gameover_b' },
       choices: [{ label: '⚡ Esquiver et riposter', next: 'c17_qte_ok', flags: { s04Qte: 'ok' }, best: true }],
     },
     c17_qte_ok: ds('Pivot · Le dernier coup',
