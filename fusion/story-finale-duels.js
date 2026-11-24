@@ -1,4 +1,4 @@
-/* Mode Histoire · Final du Tome I · Moteur des duels S04, S06, S07, S08.
+/* Mode Histoire · Final du Tome I · Moteur des duels S04, S06, S07, S08 (v2 : mise en scène épique).
    Réutilise la grammaire native : classe combatMode du #stage, cartouche .combatHud/.combatBox/.combatTrack/.combatFill
    (repris par l’interface Bibliothèque dans .combat-hud), voile #combatTransition, chronomètre « …Timer » pour les QTE.
    Les jauges sont calculées à partir des flags du joueur : une sauvegarde ou un rechargement en plein duel restitue l’état exact. */
@@ -26,6 +26,40 @@
       ],
       meta: (v, step) => [step < 4 ? 'Phase A · égalité trompeuse' : 'Phase B · puissance révélée',
         step < 4 ? `Seuil de rupture : garde ≤ 6` : `Temps gagné : ${v.temps} s`],
+      // Duel « ontologique » : en phase I, Amanea se lit (intention visible, tours alternés) ;
+      // à la révélation, elle devient illisible, joue deux fois, et son nom même vacille dans l’interface.
+      phaseOf: (id, step) => (/^c17_(m5|qte)/.test(id) ? 3 : step >= 4 ? 2 : 1),
+      whoOf: (g, phase) => (phase >= 2 && (g.k === 'amanea' || g.k === 'power') ? '<s>Amanea</s> Reine Noire' : g.who),
+      tactics: (id, v, step) => {
+        const ph = DUELS.s04.phaseOf(id, step);
+        const names = { 1: 'Phase I · Ce qu’il lit', 2: 'Phase II · Ce qu’elle est', 3: 'Phase III · Le temps volé' };
+        const I = {
+          c17_duel_intro: ['◎', 'lire son geste avant chaque échange'],
+          c17_m1_lecture: ['◎', 'elle guette les bords du brasier'], c17_m1: ['◎', 'elle guette les bords du brasier'],
+          c17_m2_lecture: ['▼', 'frapper le sol, pas lui'], c17_m2: ['▼', 'frapper le sol, pas lui'],
+          c17_m3_lecture: ['◐', 'flanc gauche couvert · garde haute ouverte'], c17_m3: ['◐', 'flanc gauche couvert · garde haute ouverte'],
+          c17_revelation: ['✕', 'illisible', 1],
+          c17_m4_lecture: ['✕', 'ses coups ne se lisent plus', 1], c17_m4: ['✕', 'ses coups ne se lisent plus', 1], c17_m4_r: ['✕', 'illisible', 1],
+          c17_m5_lecture: ['⟶', 'le portail · en finir'], c17_m5: ['⟶', 'le portail · en finir'],
+          c17_qte: ['⚡', `la griffe vers la gorge · fenêtre ${(DUELS.s04.qteMs(v) / 1000).toFixed(1)} s`],
+        };
+        const choice = /^c17_m\d$|^c17_qte$/.test(id), lecture = /_lecture$|_intro$|^c17_revelation$/.test(id);
+        const R = ph === 1 ? 'a' : 'r';
+        let order;
+        if (ph === 1) order = choice ? ['v*', 'a', 'v', 'a', 'v'] : ['a*', 'v', 'a', 'v', 'a'];
+        else if (ph === 2) order = choice ? ['v*', 'r', 'r', 'v', 'r'] : ['r*', 'r', 'v', 'r', 'r'];
+        else order = id === 'c17_qte' ? ['v*', 't'] : id === 'c17_qte_ok' ? ['t*'] : choice ? ['v*', 'r', 'r', 'r', 't'] : ['r*', 'r', 'r', 'v', 't'];
+        void lecture; void R;
+        return { phase: ph, name: names[ph], intent: I[id] || null, order };
+      },
+      qteMs: (v) => 4200 + v.valurn * 250 + (v.temps || 0) * 300,
+      stamps: {
+        c17_m1_r: (f) => ({ good: 'Lecture juste', mid: 'Échange', bad: 'Lu par elle' })[f.s04M1],
+        c17_m2_r: (f) => ({ good: 'Lecture juste', mid: 'Échange', bad: 'Lu par elle' })[f.s04M2],
+        c17_m3_r: (f, v) => (v.amanea <= 6 && v.valurn > 0 ? 'Garde rompue' : 'Seuil manqué'),
+        c17_m4_r: (f) => ({ good: 'Temps volé +2 s', mid: 'Piège à moitié', bad: 'Parade brisée' })[f.s04M4],
+        c17_m5_r: (f) => ({ good: 'Une minute', mid: 'Elle saigne', bad: 'Retrouvé' })[f.s04M5],
+      },
     },
     s06: {
       title: 'Draven dans la crevasse', mini: 'Survie', pov: 'draven',
@@ -42,6 +76,37 @@
         { key: 's06Voute', map: { ok: { horde: -10 } } },
       ],
       meta: (v) => [v.horde >= 10 ? 'La horde déborde' : 'Survie sous pression', 'Horde à 10 : submergé'],
+      // Boucle propre à S06 : survie et positionnement. Pas d’intention ni de ruban : un plan de terrain
+      // (Dehors → Crevasse → Couloir → Grotte), la horde qui avance case par case, des vagues à tenir,
+      // et la veine de la voûte qui transforme la retraite en piège.
+      panel: (id, v, step, f) => {
+        const WAVE = { c18_dp_crevasse: 1, c18_dp_crevasse_r: 2, c18_dp_grotte: 3, c18_dp_grotte_r: 4, c18_dp_voute: 5, c18_dp_voute_r: 5 };
+        const wave = WAVE[id] || 1; const P = f.s06Posture, Pl = f.s06Plan;
+        // positions : 0 Dehors · 1 Crevasse · 2 Couloir · 3 Grotte
+        let d = 1, hz = [3, 0, 0, 0];
+        if (id === 'c18_dp_crevasse_r') { if (P === 'reculer') { d = 2; hz = [2, 2, 0, 0]; } else if (P === 'charger') { d = 0; hz = [3, 0, 0, 0]; } else hz = [3, 1, 0, 0]; }
+        else if (id === 'c18_dp_grotte') { d = 2; hz = [2, 2, 1, 0]; }
+        else if (id === 'c18_dp_grotte_r') { d = 3; hz = Pl === 'courir' ? [2, 3, 3, 1] : [1, 2, 2, 2]; }
+        else if (id === 'c18_dp_voute') { d = 2; hz = [1, 1, 0, 4]; }
+        else if (id === 'c18_dp_voute_r') { d = 2; hz = [1, 1, 0, 0]; }
+        const n = Math.max(0, Math.round(v.horde / 2));
+        const scale = (a) => { const t = a.reduce((x, y) => x + y, 0) || 1; return a.map((x) => Math.round(x * Math.max(n, 1) / t)); };
+        const hh = id === 'c18_dp_voute_r' ? hz : scale(hz);
+        const veine = P === 'reculer' || /voute/.test(id);
+        const names = ['Dehors', 'Crevasse', 'Couloir', 'Grotte'];
+        const cells = names.map((nm, i) => {
+          const fall = id === 'c18_dp_voute_r' && i === 3;
+          const marks = fall ? '<i class="ebou">▼▼▼</i>' : '<i class="h">' + '✠'.repeat(Math.min(5, hh[i])) + '</i>';
+          return `<span class="cell${i === d ? ' ici' : ''}${i === 3 && veine ? ' veine' : ''}${fall ? ' chute' : ''}"><em>${nm}${i === 3 && veine ? ' ⚠' : ''}</em>${i === d ? '<b class="dr" title="Draven">D</b>' : ''}${marks}</span>`;
+        }).join('');
+        const pips = [1, 2, 3, 4, 5].map((i) => `<i class="${i < wave ? 'ok' : i === wave ? 'now' : ''}"></i>`).join('');
+        const note = id === 'c18_dp_voute' ? (P === 'reculer' ? 'Veine repérée à la retraite : +1,2 s pour frapper' : 'La veine se cherche à l’aveugle')
+          : id === 'c18_dp_voute_r' ? 'La voûte cède sur les morts'
+          : id === 'c18_dp_grotte' && f.s06LinevaWords ? 'Second souffle : la voix de Lineva (+1 endurance)'
+          : id === 'c18_dp_grotte_r' ? (Pl === 'courir' ? 'Ils déferlent derrière lui' : 'Ils le suivent dans la grotte, rang par rang')
+          : id === 'c18_dp_crevasse' ? 'Ici, ils ne passent qu’à trois de front' : P === 'reculer' ? 'Une veine fendue court au plafond de la grotte' : P === 'charger' ? 'Le premier rang a cédé, lui aussi' : 'L’entrée tient';
+        return `<div class="fdTerrain" data-int="${'{IT}'}"><span class="fdTerrainGrid">${cells}</span><span class="fdWaves"><b>Tenir · vague ${wave}/5</b><span class="pips">${pips}</span></span></div><div class="fdTerrainNote">${note}</div>`;
+      },
     },
     s07: {
       title: 'Iriana contre Alamma', mini: 'Duel arcanique', pov: 'iriana',
@@ -58,9 +123,37 @@
         { auto: { chaos: 6 } },
         { key: 's07Flux', map: { accord: { chaos: -2, arcane: 6, emprise: -3 } } },
         { auto: { emprise: -2 } },
-        { key: 's07Renversement', map: { retenir: { emprise: -4 }, mort: { emprise: -5 }, tresse: { emprise: -6 }, question: { emprise: -2 } } },
+        { key: 's07Renversement', map: { retenir: { emprise: -4, chaos: -1 }, mort: { emprise: -5, chaos: -2 }, tresse: { emprise: -6, chaos: -3 }, question: { emprise: -2 } } },
       ],
       meta: (v, step) => [step < 2 ? 'Maîtrise' : step < 5 ? 'Domination subie' : 'Renversement', 'Arcane à 0 : brisée'],
+      // Boucle propre à S07 : un puzzle de lecture et de combinaison. Le sceau d’Alamma s’écrit en runes
+      // (Arcane, Ombre, Chaos, Mort) ; Iriana doit le défaire, puis combiner ce que le fragment lui donne.
+      // Sous l’emprise, l’interface elle-même lui est retournée.
+      corrupt: (id, f) => /^c18_ip_domination/.test(id) && !(id === 'c18_ip_domination_r' && f.s07Garde === 'esprit'),
+      panel: (id, v, step, f) => {
+        const R = [['arc', '◆', 'Arcane'], ['omb', '◐', 'Ombre'], ['cha', '✶', 'Chaos'], ['mor', '✕', 'Mort']];
+        let st = { arc: 'al' }, title = 'Sceau d’Alamma', txt = '';
+        const M = f.s07Maitrise, G = f.s07Garde, Rv = f.s07Renversement;
+        if (id === 'c18_ip_maitrise') txt = 'Signature : Arcane inversé · le contre-glyphe est dans ses livres d’enfance';
+        else if (id === 'c18_ip_maitrise_r') { st = { arc: M === 'lire' ? 'ir' : M === 'frapper' ? 'mix' : 'al lock' }; txt = M === 'lire' ? 'Contre-glyphe tracé à l’envers : le sceau se dénoue' : M === 'frapper' ? 'Trait d’Arcane pure : dévié, mais il a dû le dévier' : 'Elle a attendu : le sceau était déjà lancé'; }
+        else if (id === 'c18_ip_domination') { st = { arc: 'al lock', omb: 'al', cha: 'al', mor: 'al' }; title = 'Emprise'; txt = 'Rien à briser. Il ne reste qu’un fil.'; }
+        else if (id === 'c18_ip_domination_r') { st = G === 'esprit' ? { arc: 'ir fil', omb: 'al', cha: 'al', mor: 'al' } : { arc: G === 'lacher' ? 'nul' : 'al lock', omb: 'al', cha: 'al', mor: 'al' }; title = G === 'esprit' ? 'Un fil caché' : 'Emprise'; txt = G === 'esprit' ? 'Il peut l’écraser. Il ne peut pas le trouver.' : G === 'regard' ? 'La tête haute, sans rien pour riposter' : 'Le vide qu’elle laisse, il l’emplit'; }
+        else if (id === 'c18_ip_flux') { st = { arc: G === 'esprit' ? 'ir fil' : 'ir', omb: 'vi in', cha: 'vi in', mor: 'vi in' }; title = 'Le fragment de Valurn'; txt = 'L’accueillir sans le saisir'; }
+        else if (id === 'c18_ip_flux_r' || id === 'c18_ip_renversement') { st = { arc: 'ir', omb: 'vi', cha: 'vi', mor: 'vi' }; title = 'Chaos filtré'; txt = id === 'c18_ip_flux_r' ? 'Trois forces qui lui obéissent, pour l’instant' : ''; }
+        else if (id === 'c18_ip_renversement_r') {
+          const use = { retenir: ['omb'], mort: ['mor'], tresse: ['arc', 'omb', 'cha', 'mor'], question: [] }[Rv] || [];
+          st = { arc: 'ir', omb: 'vi', cha: 'vi', mor: 'vi' }; use.forEach((k) => { st[k] += ' use'; });
+          title = Rv === 'tresse' ? 'Tresse : emprise brisée' : Rv === 'question' ? 'Aucune rune : une question' : 'Combinaison';
+          txt = { retenir: 'Ombre : les vrilles le tiennent', mort: 'Mort : le mur se fend d’un pouce', tresse: 'Les trois forces autour du fil', question: 'Pour la première fois, il hésite' }[Rv] || '';
+        }
+        const runes = R.map(([k, g, nm]) => `<span class="rune ${st[k] || 'off'}" title="${nm}"><b>${g}</b><em>${nm}</em></span>`).join('');
+        let recettes = '';
+        if (id === 'c18_ip_renversement') {
+          const L = [['◐', 'Enserrer', 1], ['✕', 'Trait', 2]]; if (G === 'esprit') L.unshift(['◆◐✶✕', 'Tresse', 3]); L.push(['?', 'Question', 0]);
+          recettes = `<span class="recettes">${L.map(([g, nm, c]) => `<i${c > v.chaos ? ' class="cher"' : ''}><b>${g}</b> ${nm} · ${c}</i>`).join('')}</span>`;
+        }
+        return `<div class="fdSceau${/al lock|^al$/.test(st.arc || '') && /domination/.test(id) ? ' pris' : ''}" data-int="${'{IT}'}"><span class="titre">${title}</span><span class="runes">${runes}</span>${recettes}</div>${txt ? `<div class="fdSceauNote">${txt}</div>` : ''}`;
+      },
     },
     s08: {
       title: 'Remerii et Hylee contre Bhaal', mini: 'Final coopératif', pov: 'remerii',
@@ -74,10 +167,30 @@
         { key: 's08Gardien', map: { assaut: { pression: -2, blizzard: -3 }, rempart: { pression: -1, blizzard: -2 }, tout: { pression: -4, blizzard: -7 } } },
         { auto: { blizzard: -2 } },
         { key: 's08Sync', map: { ok: { flux: 10, blizzard: 3, pression: -2 } } },
-        { key: 's08Dragon', map: { gorge: { pression: -3, blizzard: -2 }, portail: { pression: -4, blizzard: -3 }, tenir: { pression: 0, blizzard: 1 } } },
+        { key: 's08Dragon', map: { gorge: { pression: -3, blizzard: -2, flux: -4 }, portail: { pression: -4, blizzard: -3, flux: -5 }, tenir: { pression: 0, blizzard: 1, flux: -2 } } },
         { auto: { pression: -10 } },
       ],
       meta: (v) => [v.pression <= 0 ? 'Bhaal repoussé · portail affaibli' : 'Retenir Bhaal', 'Résistance à 0 : le blizzard cède'],
+      // Boucle propre à S08 : un combat en tandem. Deux colonnes, des rôles qui s’échangent (l’une tient la
+      // tempête, l’autre canalise), un lien nourri par la relation, un terrain que le blizzard transforme,
+      // et des actions combinées dont le coût se paie en Arcane d’Hylee.
+      panel: (id, v, step, f) => {
+        const st = (state && state.stats) || {};
+        const bon = [[f.s08Reponse === 'main' ? 'Main tendue' : f.s08Reponse === 'seule' ? '« Pas seule »' : null, '+0,8 s'], [f.s02Adieu === 'confiance' ? 'Adieu confiant' : null, '+0,8 s'], [(st.lien || 0) >= 8 ? 'Lien ≥ 8' : null, '+0,8 s'], [f.s08Brulure ? 'Main brûlée' : null, '−0,6 s']].filter((x) => x[0]);
+        const lien = bon.filter((x) => x[1][0] === '+').length;
+        const roles = {
+          c18_bh_blizzard: ['Tient la tempête', 'Hors de portée', 'r'], c18_bh_blizzard_r: ['Tient la tempête', 'Accourt', 'r'],
+          c18_bh_sync: ['Donne le souffle', 'Canalise', 'h'], c18_bh_sync_r: ['Accordée', 'Accordée', 'x'],
+          c18_bh_dragon: ['Donne la forme', 'Tient le courant', 'x'], c18_bh_dragon_r: ['Dragon', 'Dragon', 'x'], c18_bh_fin: ['À bout', 'La tient', 'h'],
+        }[id] || ['Tient la tempête', '', 'r'];
+        const terr = v.blizzard >= 8 ? ['Tempête porteuse', 't4'] : v.blizzard >= 5 ? ['Neige battue', 't3'] : v.blizzard >= 2 ? ['Glace fendue', 't2'] : ['Tempête mourante', 't1'];
+        let combo = '';
+        if (id === 'c18_bh_sync') combo = `<span class="combo"><b>❄ Synchronisation</b> fenêtre ${((5000 + 800 * lien - (f.s08Brulure ? 600 : 0)) / 1000).toFixed(1).replace('.', ',')} s${bon.map((x) => ` <i class="${x[1][0] === '+' ? 'bon' : 'mal'}">${x[0]} ${x[1]}</i>`).join('')}</span>`;
+        else if (id === 'c18_bh_dragon') combo = `<span class="combo"><b>❄ Dragon de glace</b> Arcane d’Hylee : <i class="${v.flux < 5 ? 'mal' : 'bon'}">Portail 5</i> <i class="${v.flux < 4 ? 'mal' : 'bon'}">Gorge 4</i> <i class="bon">Ligne 2</i></span>`;
+        else if (id === 'c18_bh_blizzard') combo = `<span class="combo">Seule pour l’instant. Chaque rafale, la cicatrice la fait payer.</span>`;
+        const on = roles[2];
+        return `<div class="fdTandem" data-int="${'{IT}'}"><span class="duo"><span class="pj rem${on === 'r' || on === 'x' ? ' on' : ''}"><b>Remerii</b><em>${roles[0]}</em></span><span class="lien l${on === 'r' ? 0 : Math.min(3, lien + 1)}" title="Lien"><i></i></span><span class="pj hyl${on === 'h' || on === 'x' ? ' on' : ''}${roles[1] === 'Hors de portée' ? ' loin' : ''}"><b>Hylee</b><em>${roles[1]}</em></span></span><span class="terrain ${terr[1]}"><em>Terrain</em>${terr[0]}</span></div>${combo ? `<div class="fdTandemCombo">${combo}</div>` : ''}`;
+      },
     },
   };
 
@@ -122,7 +235,141 @@
 .fdQte b{font-variant-numeric:tabular-nums;color:#fff;min-width:44px;text-align:right}
 @keyframes fdFill{from{width:var(--from)}}
 @keyframes fdPop{0%{opacity:0;transform:scale(.92)}60%{opacity:1;transform:scale(1.04)}100%{transform:none}}
-@media (max-width:900px) and (max-height:600px){.fdHud .combatTop{font-size:9.5px;letter-spacing:.04em}.fdHud .fdWho{display:none}.fdHud .combatBox{padding:4px 7px 5px}.fdMeta{font-size:10.5px!important;margin-top:3px!important}.fdQte{margin-top:4px;padding:3px 8px}}`;
+.fdHud{position:relative}
+.fdHud .combatBox{position:relative;transition:opacity 1.2s ease,filter 1.2s ease}
+.fdHud[data-mood=urgence][data-int=intense]{animation:fdJit 2.6s steps(1) infinite}
+.fdHud[data-mood=urgence][data-qte][data-int=intense]{animation:fdJit .32s steps(1) infinite}
+.fdHud[data-mood=urgence] .fdLow .combatTrack{animation:fdLowBeat .8s ease-in-out infinite}
+.fdHud[data-mood=desespoir] .combatBox{opacity:.8;filter:saturate(.5) brightness(.9)}
+.fdHud[data-mood=desespoir] .combatFill{animation-duration:2.6s;animation-timing-function:cubic-bezier(.5,0,.6,1)}
+.fdHud[data-mood=desespoir] .combatBox::after,.fdHud[data-mood=gameover] .combatBox::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;border-radius:inherit;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M120 0 L112 11 L124 17 L108 28 L114 40 M112 11 L96 9 M124 17 L140 22 L150 19 M108 28 L92 33' fill='none' stroke='%23e8dcc8' stroke-width='.9' stroke-opacity='.75'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.fdHud[data-mood=gameover]{opacity:.5;filter:grayscale(.85);transition:opacity 2s ease,filter 2s ease}
+.fdHud[data-mood=gameover] .combatFill{animation-duration:3s}
+.fdHud[data-mood=apaisement]{opacity:.78;transition:opacity 2s ease}
+.fdFxBtn{font:inherit;font-size:10.5px;letter-spacing:.06em;color:#f3e6c8;background:rgba(6,8,18,.35);border:1px solid rgba(233,201,133,.35);border-radius:999px;padding:1px 8px;cursor:pointer;pointer-events:auto}
+.fdFxBtn:hover,.fdFxBtn:focus-visible{border-color:#e9c985;outline:none}
+.fdFxBtn[disabled]{opacity:.6;cursor:default}
+.fdQte.fdQteLast{border-color:rgba(255,80,80,.9);background:rgba(70,0,10,.55)}
+.fdQte.fdQteLast b{color:#ff8a8a}
+.fdQte.fdQteLast .fdQteTrack i{background:linear-gradient(90deg,#ff1a1a,#ff7a3d)}
+.fdQteOn[data-int=intense] .fdQte.fdQteLast{animation:fdLowBeat .45s ease-in-out infinite}
+.fdTac{display:flex;align-items:center;gap:9px;margin-top:6px;font-size:11.5px;line-height:1.2;min-width:0}
+.fdPhase{font-family:"Cinzel",serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#e9c985;white-space:nowrap;padding:3px 8px;border:1px solid rgba(233,201,133,.5);background:rgba(6,8,18,.4);transform:skewX(-12deg)}
+.fdTac[data-phase="2"] .fdPhase{color:#d9c2ff;border-color:rgba(155,77,255,.7);box-shadow:0 0 10px rgba(110,255,150,.18)}
+.fdTac[data-phase="3"] .fdPhase{color:#ffe3a0;border-color:rgba(255,120,60,.8);background:rgba(60,10,0,.45)}
+.fdIntent{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8dcc8;opacity:.95}
+.fdIntent i{font-style:normal;color:#ff9a6a;margin-right:5px}
+.fdIntent b{font-weight:600;color:#fff8ea}
+.fdIllisible i{color:#8cff9e}
+.fdIllisible b{color:#c9b3ee;letter-spacing:.2em;filter:blur(.5px);text-shadow:2px 0 rgba(120,255,160,.45),-2px 0 rgba(200,60,255,.45)}
+.fdTac[data-int=intense] .fdIllisible b{animation:fdGlitch 1.7s steps(2) infinite}
+.fdOrder{display:flex;gap:3px;flex:none}
+.fdOrder span{width:19px;height:19px;display:grid;place-items:center;font:700 10px/1 "Cinzel",serif;transform:skewX(-12deg);background:rgba(6,8,18,.55);border:1px solid rgba(255,255,255,.22);color:#ddd;opacity:.72}
+.fdOrder .v{border-color:#9b4dff;color:#e3c2ff}
+.fdOrder .a{border-color:#e2384d;color:#ffb3bd}
+.fdOrder .r{border-color:#58e08a;color:#c8ffd8;background:rgba(30,0,40,.7)}
+.fdOrder .t{border-color:#e9c985;color:#ffe3a0;font-size:9px}
+.fdOrder .now{opacity:1;box-shadow:0 0 9px currentColor;transform:skewX(-12deg) scale(1.16)}
+.fdHud .fdWho s{opacity:.5;margin-right:4px;text-decoration-thickness:1px}
+.fdHud[data-phase="2"] .combatBox,.fdHud[data-phase="3"] .combatBox{border-color:rgba(155,77,255,.42);box-shadow:inset 0 0 16px rgba(90,255,150,.07)}
+.fdHud[data-phase="2"] .fd-amanea,.fdHud[data-phase="2"] .fd-power,.fdHud[data-phase="3"] .fd-amanea,.fdHud[data-phase="3"] .fd-power{border-color:rgba(88,224,138,.5);background:rgba(20,0,30,.5)}
+.fdHud[data-phase="3"] .fd-valurn{border-color:rgba(255,120,60,.6)}
+.fdHud[data-phase="2"] .fd-valurn::after,.fdHud[data-phase="3"] .fd-valurn::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.4;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M30 0 L38 14 L26 22 L40 40 M38 14 L56 12' fill='none' stroke='%23d9c2ff' stroke-width='.9'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.fdHud .fdFlip .fdWho{animation:fdFlipName 1.6s ease both .3s}
+@keyframes fdGlitch{0%{transform:translateX(0)}50%{transform:translateX(1px) skewX(-6deg)}}
+@keyframes fdFlipName{0%{opacity:1;filter:none}30%{opacity:0;filter:blur(3px)}55%{opacity:0}100%{opacity:1;filter:none}}
+@keyframes fdJit{0%,88%,100%{transform:none}90%{transform:translate(1.5px,-1px)}93%{transform:translate(-2px,1px)}96%{transform:translate(1px,1px)}}
+@keyframes fdLowBeat{50%{box-shadow:0 0 0 1px #ff5a5a,0 0 16px rgba(255,60,60,.8)}}
+.fdQte[data-duel=s06]{border-radius:2px;background:rgba(40,26,8,.6);border-color:rgba(217,168,58,.6)}.fdQte[data-duel=s06] .fdQteTrack{border-radius:0}.fdQte[data-duel=s06] .fdQteTrack i{background:linear-gradient(90deg,#6b4a12,#e9c35a)}
+.fdQte[data-duel=s07]{border-radius:0;background:rgba(14,6,30,.55);border:0;border-bottom:1px solid rgba(192,32,122,.7)}.fdQte[data-duel=s07] .fdQteLab{font-family:"Cormorant Garamond",serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:14px;color:#ffd0f0}.fdQte[data-duel=s07] .fdQteTrack{height:3px}.fdQte[data-duel=s07] .fdQteTrack i{background:linear-gradient(90deg,#7fb8ff,#c0207a)}
+.fdQte[data-duel=s08]{border-radius:999px;background:rgba(200,235,255,.14);border-color:rgba(168,228,255,.6)}.fdQte[data-duel=s08] .fdQteLab{color:#eaf8ff}.fdQte[data-duel=s08] .fdQteTrack i{background:linear-gradient(90deg,#6fb6ff,#ffffff)}
+.fdQte.fdQteLast[data-duel] .fdQteTrack i{background:linear-gradient(90deg,#ff1a1a,#ff7a3d)}
+/* ── S06 Draven : dalles de pierre, pochoir ocre, endurance en blocs ── */
+.fdHud[data-duel=s06] .combatBox{border-radius:2px;border-color:rgba(217,168,58,.35);background:linear-gradient(180deg,rgba(40,30,18,.55),rgba(14,10,6,.55))}
+.fdHud[data-duel=s06] .combatTop{font-family:"Cinzel",serif;letter-spacing:.14em}
+.fdHud[data-duel=s06] .combatTrack{border-radius:0;height:9px;-webkit-mask:repeating-linear-gradient(90deg,#000 0 calc(10% - 2px),transparent calc(10% - 2px) 10%);mask:repeating-linear-gradient(90deg,#000 0 calc(10% - 2px),transparent calc(10% - 2px) 10%)}
+.fdTerrain{display:flex;align-items:stretch;gap:8px;margin-top:6px;min-width:0}
+.fdTerrainGrid{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;min-width:0}
+.fdTerrainGrid .cell{position:relative;display:flex;align-items:center;gap:4px;min-width:0;padding:3px 6px;background:rgba(30,22,12,.6);border:1px solid rgba(217,168,58,.22);clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%,6% 50%)}
+.fdTerrainGrid .cell em{font:600 9.5px/1 "Cinzel",serif;letter-spacing:.1em;text-transform:uppercase;color:#cdb68a;font-style:normal;white-space:nowrap}
+.fdTerrainGrid .cell i{font-style:normal;color:#9fbf7a;letter-spacing:-1px;font-size:11px;white-space:nowrap;overflow:hidden}
+.fdTerrainGrid .cell.ici{background:rgba(90,60,14,.7);border-color:#d9a83a}
+.fdTerrainGrid .cell .dr{display:grid;place-items:center;width:15px;height:15px;font:700 10px/1 "Cinzel",serif;color:#1a1206;background:#e9c35a;box-shadow:0 0 8px rgba(233,195,90,.7)}
+.fdTerrainGrid .cell.veine{box-shadow:inset 0 0 0 1px rgba(255,150,60,.5)}
+.fdTerrainGrid .cell.veine em{color:#ffb070}
+.fdTerrainGrid .cell.chute{background:rgba(60,40,20,.85)}
+.fdTerrainGrid .cell .ebou{color:#d9a83a!important;letter-spacing:1px!important}
+.fdWaves{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:none}
+.fdWaves b{font:700 10px/1 "Cinzel",serif;letter-spacing:.12em;text-transform:uppercase;color:#e9c35a}
+.fdWaves .pips{display:flex;gap:3px}
+.fdWaves .pips i{width:13px;height:5px;background:rgba(255,255,255,.14)}
+.fdWaves .pips i.ok{background:#b08a3a}
+.fdWaves .pips i.now{background:#ffd27a;box-shadow:0 0 6px #ffb23e}
+.fdTerrain[data-int=intense] .fdWaves .pips i.now{animation:fdTambour 1.6s ease-in-out infinite}
+.fdTerrainNote{margin-top:4px;font:italic 500 12px/1.2 "Cormorant Garamond",serif;color:#e8d6b0;opacity:.92}
+@keyframes fdTambour{0%,100%{opacity:.55}8%{opacity:1}}
+/* ── S07 Iriana : encre et runes, l’emprise retourne l’interface ── */
+.fdHud[data-duel=s07] .combatBox{border-radius:0;border:0;border-bottom:1px solid rgba(127,184,255,.45);background:linear-gradient(180deg,transparent,rgba(10,6,26,.45))}
+.fdHud[data-duel=s07] .combatTop{font-family:"Cormorant Garamond",serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:13px}
+.fdHud[data-duel=s07] .combatTrack{height:3px;border-radius:0}
+.fdHud[data-emprise]{direction:rtl;filter:hue-rotate(150deg) saturate(1.3)}
+.fdHud[data-emprise]>*{direction:ltr}
+.fdHud[data-emprise] .combatBox{border-bottom-color:rgba(255,60,100,.7);background:linear-gradient(0deg,rgba(60,0,20,.5),transparent)}
+.fdHud[data-emprise] .combatBox::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(115deg,transparent 0 14px,rgba(255,40,90,.13) 14px 15px)}
+.fdHud[data-emprise][data-int=intense] .combatTop{animation:fdGlitch 2.3s steps(2) infinite}
+.fdSceau{display:flex;align-items:center;gap:10px;margin-top:6px;min-width:0}
+.fdSceau .titre{font:italic 600 13px/1 "Cormorant Garamond",serif;color:#cfe2ff;white-space:nowrap}
+.fdSceau .runes{display:flex;gap:6px;flex:none}
+.fdSceau .rune{display:flex;align-items:center;gap:4px;padding:2px 7px 2px 3px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(8,6,20,.55);opacity:.45}
+.fdSceau .rune b{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;font:13px/1 serif;color:#ddd;border:1px solid rgba(255,255,255,.25)}
+.fdSceau .rune em{font:500 11px/1 "Cormorant Garamond",serif;font-style:normal;color:#ddd}
+.fdSceau .rune.al{opacity:1;border-color:rgba(255,70,110,.7)}.fdSceau .rune.al b{color:#ff8fa6;border-color:#ff5d84;box-shadow:0 0 8px rgba(255,60,100,.55)}
+.fdSceau .rune.ir{opacity:1;border-color:rgba(127,184,255,.8)}.fdSceau .rune.ir b{color:#e6f0ff;border-color:#7fb8ff;box-shadow:0 0 9px rgba(127,184,255,.7)}
+.fdSceau .rune.mix{opacity:1;border-color:#b58cff}.fdSceau .rune.mix b{color:#e3d5ff;border-color:#b58cff}
+.fdSceau .rune.vi{opacity:1;border-color:rgba(192,32,122,.75)}.fdSceau .rune.vi b{color:#ffd0f0;border-color:#c0207a;box-shadow:0 0 9px rgba(192,32,122,.7)}
+.fdSceau .rune.lock b{background:repeating-linear-gradient(45deg,rgba(255,60,100,.3) 0 2px,transparent 2px 4px)}
+.fdSceau .rune.fil{opacity:.8}.fdSceau .rune.fil b{transform:scale(.7)}
+.fdSceau .rune.nul{opacity:.25;text-decoration:line-through}
+.fdSceau .rune.use{background:rgba(80,20,90,.7);box-shadow:0 0 12px rgba(200,120,255,.45)}
+.fdSceau[data-int=intense] .rune.in b{animation:fdRune 1.8s ease-in-out infinite}
+.fdSceau .recettes{display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+.fdSceau .recettes i{font:italic 500 11.5px/1.2 "Cormorant Garamond",serif;color:#ffd0f0;padding:1px 7px;border:1px dashed rgba(192,32,122,.6)}
+.fdSceau .recettes i b{font-style:normal;color:#fff;margin-right:2px}
+.fdSceau .recettes i.cher{opacity:.4;text-decoration:line-through}
+.fdSceau.pris .titre{color:#ff8fa6}
+.fdSceauNote{margin-top:4px;font:italic 500 12.5px/1.2 "Cormorant Garamond",serif;color:#d9d0ff;opacity:.92}
+@keyframes fdRune{50%{box-shadow:0 0 16px rgba(255,80,200,.95);transform:rotate(30deg)}}
+/* ── S08 Remerii et Hylee : verre de givre, deux colonnes, un lien ── */
+.fdHud[data-duel=s08] .combatBox{border-radius:16px;border-color:rgba(168,228,255,.4);background:linear-gradient(180deg,rgba(220,240,255,.12),rgba(6,16,32,.5));backdrop-filter:blur(3px)}
+.fdHud[data-duel=s08] .combatTrack{border-radius:999px;height:7px}
+.fdHud[data-duel=s08] .combatFill{border-radius:999px}
+.fdTandem{display:flex;align-items:center;gap:10px;margin-top:6px;min-width:0}
+.fdTandem .duo{flex:1;display:flex;align-items:center;gap:6px;min-width:0}
+.fdTandem .pj{display:flex;flex-direction:column;gap:1px;padding:3px 10px;border-radius:12px;border:1px solid rgba(168,228,255,.25);background:rgba(6,16,32,.45);opacity:.55;min-width:0;transition:opacity .6s,box-shadow .6s}
+.fdTandem .pj b{font:600 11px/1 "Cinzel",serif;letter-spacing:.12em;text-transform:uppercase;color:#eaf8ff}
+.fdTandem .pj em{font:italic 500 12px/1.1 "Cormorant Garamond",serif;color:#bfe6ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fdTandem .pj.on{opacity:1;box-shadow:0 0 12px rgba(127,211,255,.45)}
+.fdTandem .pj.rem.on{border-color:#a8e4ff}.fdTandem .pj.hyl.on{border-color:#9fb8ff}
+.fdTandem .pj.loin{filter:blur(.4px)}
+.fdTandem .lien{flex:1;min-width:24px;max-width:120px;height:2px;background:rgba(168,228,255,.15);position:relative}
+.fdTandem .lien i{position:absolute;inset:0;background:linear-gradient(90deg,#a8e4ff,#ffffff,#9fb8ff);transform-origin:left;transform:scaleX(0);transition:transform 1s ease}
+.fdTandem .lien.l1 i{transform:scaleX(.4)}.fdTandem .lien.l2 i{transform:scaleX(.72)}.fdTandem .lien.l3 i{transform:scaleX(1);box-shadow:0 0 8px #bfe9ff}
+.fdTandem[data-int=intense] .lien.l3 i{animation:fdLien 2.4s ease-in-out infinite}
+.fdTandem .terrain{display:flex;flex-direction:column;align-items:flex-end;gap:1px;flex:none;font:italic 600 12px/1 "Cormorant Garamond",serif;color:#eaf8ff}
+.fdTandem .terrain em{font:600 8.5px/1 "Cinzel",serif;letter-spacing:.16em;text-transform:uppercase;font-style:normal;color:#8fc8e8}
+.fdTandem .terrain.t1{color:#ff9e9e}.fdTandem .terrain.t2{color:#cfe3ff}.fdTandem .terrain.t4{color:#ffffff;text-shadow:0 0 8px #a8e4ff}
+.fdTandemCombo{margin-top:4px;font:500 12px/1.25 "Cormorant Garamond",serif;color:#dff4ff}
+.fdTandemCombo b{font:600 10.5px/1 "Cinzel",serif;letter-spacing:.1em;color:#ffffff;margin-right:6px}
+.fdTandemCombo i{font-style:normal;padding:0 6px;margin-left:4px;border-radius:8px;border:1px solid rgba(168,228,255,.35)}
+.fdTandemCombo i.bon{color:#c9f2ff}.fdTandemCombo i.mal{color:#ffb3b3;border-color:rgba(255,120,120,.45)}
+@keyframes fdLien{50%{opacity:.6}}
+@media (max-height:600px){.fdTerrain,.fdSceau,.fdTandem{margin-top:3px;gap:6px}.fdTerrainGrid .cell{padding:2px 5px}.fdTerrainGrid .cell em{font-size:8.5px}.fdTerrainNote,.fdSceauNote,.fdTandemCombo{margin-top:2px;font-size:11px}.fdSceau .rune{padding:1px 5px 1px 2px}.fdSceau .rune b{width:15px;height:15px;font-size:10px}.fdSceau .rune em{font-size:10px}.fdTandem .pj{padding:2px 8px}.fdTandem .pj em{font-size:11px}.fdTandem .pj b{font-size:10px}}
+@media (max-width:860px){.fdSceau .rune em{display:none}.fdSceau .titre{font-size:12px}}
+@media (max-width:560px){.fdWaves b{display:none}.fdTandem .terrain em{display:none}}
+@media (prefers-reduced-motion:reduce){.fdHud,.fdHud *,.fdQte{animation:none!important}}
+@media (max-height:600px){.fdTac{margin-top:3px;font-size:10px;gap:6px}.fdPhase{font-size:8.5px;padding:2px 5px;letter-spacing:.06em}.fdOrder span{width:14px;height:14px;font-size:8px}}
+@media (max-width:560px){.fdOrder{display:none}}
+@media (max-width:900px) and (max-height:600px){.fdFxBtn{font-size:9.5px;padding:0 6px}.fdHud .combatTop{font-size:9.5px;letter-spacing:.04em}.fdHud .fdWho{display:none}.fdHud .combatBox{padding:4px 7px 5px}.fdMeta{font-size:10.5px!important;margin-top:3px!important}.fdQte{margin-top:4px;padding:3px 8px}}`;
   const SHADOW_CSS = `.jeu.fd-shake .jeu-bg{animation:fdShake .45s cubic-bezier(.36,.07,.19,.97)}
 .jeu.fd-flash .jeu-voile{animation:fdFlash .5s ease}
 .jeu.fd-qte .choix .ch{animation:fdPulse 1s ease-in-out infinite;box-shadow:0 0 0 2px rgba(255,190,120,.8),0 0 22px rgba(255,120,40,.55)}
@@ -148,35 +395,61 @@
       if (audio.state === 'suspended') audio.resume().catch(() => {});
       const now = audio.currentTime;
       const tone = (f, t0, dur, typ, vol, f2) => { const o = audio.createOscillator(), g = audio.createGain(); o.type = typ; o.frequency.setValueAtTime(f, now + t0); if (f2) o.frequency.exponentialRampToValueAtTime(f2, now + t0 + dur); g.gain.setValueAtTime(.0001, now + t0); g.gain.exponentialRampToValueAtTime(vol, now + t0 + .01); g.gain.exponentialRampToValueAtTime(.0001, now + t0 + dur); o.connect(g).connect(audio.destination); o.start(now + t0); o.stop(now + t0 + dur + .05); };
+      const noise = (t0, dur, freq, vol) => { const b = audio.createBuffer(1, Math.floor(audio.sampleRate * dur), audio.sampleRate), dd = b.getChannelData(0); for (let i = 0; i < dd.length; i++) dd[i] = (Math.random() * 2 - 1) * (1 - i / dd.length); const s = audio.createBufferSource(); s.buffer = b; const f = audio.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq; const g = audio.createGain(); g.gain.value = vol; s.connect(f).connect(g).connect(audio.destination); s.start(now + t0); };
       if (type === 'hit') { tone(90, 0, .25, 'sawtooth', .09, 45); tone(220, .02, .08, 'square', .04); }
       else if (type === 'ok') { tone(520, 0, .12, 'triangle', .06, 780); tone(780, .1, .2, 'sine', .05, 1040); }
       else if (type === 'tick') tone(880, 0, .04, 'square', .025);
       else if (type === 'start') { tone(110, 0, .6, 'sawtooth', .06, 220); tone(330, .2, .5, 'triangle', .05, 660); }
+      else if (type === 'coeur') { tone(62, 0, .16, 'sine', .16, 44); tone(58, .24, .2, 'sine', .11, 40); }
+      else if (type === 'impact') { noise(0, .22, 900, .08); tone(70, 0, .3, 'sine', .14, 38); }
+      else if (type === 'tambour') { noise(0, .3, 160, .12); tone(55, 0, .45, 'sine', .2, 34); tone(52, .5, .4, 'sine', .12, 34); }
+      else if (type === 'eboulement') { noise(0, 1.6, 220, .16); tone(40, 0, 1.4, 'sawtooth', .08, 24); noise(.5, 1.1, 900, .05); tone(46, .9, .8, 'sine', .14, 28); }
+      else if (type === 'glyphe') { [659, 784, 988].forEach((f, i) => tone(f, i * .09, .7, 'sine', .03)); tone(1318, .3, .9, 'triangle', .018); }
+      else if (type === 'fele') { tone(622, 0, .5, 'sine', .035); tone(659, 0, .5, 'sine', .035); tone(185, .05, .35, 'square', .02, 120); }
+      else if (type === 'sceau') { [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, i * .07, 1.1, 'sine', .028)); tone(98, 0, 1.2, 'triangle', .05, 65); }
+      else if (type === 'souffle') { noise(0, 1.4, 1400, .05); tone(392, .2, 1.1, 'sine', .022); }
+      else if (type === 'givre') { noise(0, .35, 2600, .06); tone(1760, 0, .25, 'triangle', .02, 2400); }
+      else if (type === 'tandem') { noise(0, 1.2, 1800, .05); tone(440, .15, 1.3, 'sine', .035); tone(659, .35, 1.2, 'sine', .03); tone(880, .6, 1.1, 'triangle', .02); }
+      else if (type === 'bascule') { tone(48, 0, 1.1, 'sawtooth', .07, 30); noise(.05, .7, 300, .06); tone(330, .42, .9, 'triangle', .045, 990); tone(495, .55, .8, 'sine', .035, 1320); }
     } catch {}
   };
   const pulse = (cls) => {
+    if (cls === 'fd-shake') hitFx();
+    if (intensity() !== 'intense') return;
     const j = jeu(); const st = document.getElementById('stage');
     if (j) { j.classList.remove(cls); void j.offsetWidth; j.classList.add(cls); setTimeout(() => j.classList.remove(cls), 600); }
     if (st && cls === 'fd-shake') { st.classList.remove('fdShake'); void st.offsetWidth; st.classList.add('fdShake'); setTimeout(() => st.classList.remove('fdShake'), 500); }
   };
 
   // ───── HUD ─────
+  const TOK = { v: ['V', 'Valurn'], a: ['A', 'Amanea'], r: ['R', 'La Reine Noire'], t: ['⌛', 'Le temps volé'] };
+  const tacHtml = (t, it) => {
+    const order = t.order.map((o) => { const k = o[0]; const now = o.endsWith('*'); return `<span class="${k}${now ? ' now' : ''}" title="${TOK[k][1]}">${TOK[k][0]}</span>`; }).join('');
+    const intent = t.intent ? `<span class="fdIntent${t.intent[2] ? ' fdIllisible' : ''}"><i>${t.intent[0]}</i>Intention : <b>${t.intent[1]}</b></span>` : '<span class="fdIntent"></span>';
+    return `<div class="fdTac" data-phase="${t.phase}" data-int="${it}"><span class="fdPhase">${t.name}</span>${intent}<span class="fdOrder" aria-label="Ordre des tours">${order}</span></div>`;
+  };
   let last = { key: '', vals: null };
   const hudHtml = (sc, id, opts = {}) => {
     const d = DUELS[sc.fduel]; const step = sc.fstep || 0; const v = calc(sc.fduel, step);
     const prevStep = sc.fprev != null ? sc.fprev : Math.max(0, step - 1);
     const prev = opts.static ? v : (last.key === id && last.vals ? last.vals : calc(sc.fduel, prevStep));
     const shown = d.gauges.filter((g) => g.from == null || step >= g.from || sc.freveal === g.k);
+    const tac = d.tactics && !sc.fgameover ? d.tactics(id, v, step) : null;
+    const phase = tac ? tac.phase : 0;
+    const corrupt = !sc.fgameover && d.corrupt && d.corrupt(id, flags());
+    const panel = d.panel && !sc.fgameover ? d.panel(id, v, step, flags()).split("{IT}").join(intensity()) : '';
     const boxes = shown.map((g) => {
       const reveal = sc.freveal === g.k && !opts.static;
       const from = reveal ? 0 : (prev[g.k] != null ? prev[g.k] : v[g.k]);
       const delta = v[g.k] - (opts.static ? v[g.k] : from);
       const low = g.bad === 'up' ? (g.k !== 'amanea' && v[g.k] >= 8) : g.bad === 'down' && v[g.k] <= 2;
-      return `<div class="combatBox fd-${g.k}${reveal ? ' fdReveal' : ''}${low ? ' fdLow' : ''}"><div class="combatTop"><span><i class="fdWho">${g.who}</i>${g.name}</span><b>${v[g.k]}/10${delta && !reveal ? `<span class="fdDelta${delta < 0 ? ' neg' : ''}">${delta > 0 ? '+' : ''}${delta}</span>` : ''}</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${from * 10}%;background:${g.fill};${g.glow ? `box-shadow:0 0 12px ${g.glow};` : ''}${opts.static ? 'animation:none;' : ''}"></div></div></div>`;
+      const flip = !opts.static && id === 'c17_revelation' && (g.k === 'amanea' || g.k === 'power');
+      return `<div class="combatBox fd-${g.k}${reveal ? ' fdReveal' : ''}${low ? ' fdLow' : ''}${flip ? ' fdFlip' : ''}"><div class="combatTop"><span><i class="fdWho">${d.whoOf ? d.whoOf(g, phase) : g.who}</i>${g.name}</span><b>${v[g.k]}/10${delta && !reveal ? `<span class="fdDelta${delta < 0 ? ' neg' : ''}">${delta > 0 ? '+' : ''}${delta}</span>` : ''}</b></div><div class="combatTrack"><div class="combatFill" style="width:${v[g.k] * 10}%;--from:${from * 10}%;background:${g.fill};${g.glow ? `box-shadow:0 0 12px ${g.glow};` : ''}${opts.static ? 'animation:none;' : ''}"></div></div></div>`;
     }).join('');
     const meta = d.meta(v, step);
-    const qte = opts.qte ? `<div class="fdQte"><span class="fdQteLab">⚡ ${opts.qte.label}</span><span class="fdQteTrack"><i style="width:${opts.qte.pct}%"></i></span><b id="fdQteTimer">${opts.qte.left.toFixed(1)} s</b></div>` : '';
-    return { html: `<style>${CSS}</style><div class="combatHud fdHud" style="--fd-n:${shown.length}">${boxes}</div><div class="combatMeta fdMeta"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]}</span></div>${qte}`, v, prev };
+    const mood = moodOf(sc, id); const it = intensity();
+    const qte = opts.qte ? `<div class="fdQte${opts.qte.left < 2.2 ? ' fdQteLast' : ''}" data-duel="${sc.fduel}"><span class="fdQteLab">⚡ ${opts.qte.label}</span><span class="fdQteTrack"><i style="width:${opts.qte.pct}%"></i></span><b id="fdQteTimer">${opts.qte.left.toFixed(1)} s</b></div>` : '';
+    return { html: `<style>${CSS}</style><div class="combatHud fdHud" data-duel="${sc.fduel}" data-mood="${mood}" data-int="${it}"${corrupt ? ' data-emprise="1"' : ''}${phase ? ` data-phase="${phase}"` : ''}${opts.qte ? ' data-qte="1"' : ''} style="--fd-n:${shown.length}">${boxes}</div>${tac ? tacHtml(tac, it) : ''}${panel}<div class="combatMeta fdMeta${opts.qte ? ' fdQteOn' : ''}" data-int="${it}"><span>${d.mini} · ${meta[0]}</span><span>${meta[1]} <button type="button" class="fdFxBtn" data-fdfx="1"${it === 'reduit' ? ' disabled title="Animations réduites (réglage du système ou de la Bibliothèque)"' : ' title="Flashs, secousses et tremblements : intenses ou doux"'}>✦ ${fxLabel()}</button></span></div>${qte}`, v, prev };
   };
 
   // ───── QTE ─────
@@ -213,9 +486,13 @@
       if (!qte || state.scene !== id) { stopQte(); return; }
       const now = Date.now(); const dt = now - lastTick; lastTick = now;
       if (paused()) return;
+      if (Date.now() < cutUntil) { qte.delay -= dt; return; } // le bandeau de bascule suspend le chrono (le délai d’armement court en même temps)
       if (qte.delay > 0) { qte.delay -= dt; return; }
+      const before = Math.ceil(qte.left / 1000);
       qte.left -= dt;
       if (qte.left <= 0) { expire(); return; }
+      if (Math.ceil(qte.left / 1000) < before && qte.left < 3500) sfx('tick');
+      const hh = fxHost(); if (hh && !hh.dataset.fdQte && fxState) { hh.dataset.fdQte = '1'; }
       const st = document.getElementById('stats');
       const { html } = hudHtml(sc, id, { static: true, qte: { label: sc.fqte.label, pct: Math.max(0, qte.left / qte.total * 100), left: qte.left / 1000 } });
       if (st) st.innerHTML = html;
@@ -236,26 +513,351 @@
     window.__fdTransitionTimer = setTimeout(() => { overlay.classList.add('hidden'); overlay.classList.remove('active'); }, 1050);
   };
 
+  // ───── Mise en scène épique (v2) : urgence, désespoir, bascules ─────
+  // Chaque scène de duel reçoit une humeur. URGENCE : bords qui battent, HUD qui tremble, braises/éclats, impacts.
+  // DÉSESPOIR : désaturation, lueur qui faiblit, HUD fissuré, jauges qui se vident lentement, cendres/neige, battement sourd, musique en retrait.
+  // BASCULE : coupure noire, éclair, bandeau de titre d’attaque, montée de la musique. Rien d’opaque : tout reste sous le texte et le HUD.
+  const FX = {
+    s04: { theme: 'flammes', base: 'urgence',
+      moods: { c17_m4_lecture: 'desespoir', c17_m4: 'desespoir', c17_m4_r: 'desespoir' },
+      bursts: {
+        c17_revelation: { who: 'Amanea → la Reine Noire', title: 'Puissance révélée', sub: 'Ce qu’il a pris pour sa force n’était que sa retenue', mood: 'urgence' },
+        c17_qte_ok: { who: 'Valurn', title: 'Une minute volée', sub: 'Flammes noires · riposte', mood: 'urgence', court: true },
+      } },
+    s06: { theme: 'roche', base: 'urgence',
+      moods: { c18_dp_grotte: 'desespoir', c18_dp_grotte_r: 'desespoir' },
+      bursts: {
+        c18_dp_voute_r: { who: 'Draven', title: 'Effondrement', sub: 'La voûte cède sur les morts', mood: 'desespoir' },
+      } },
+    s07: { theme: 'arcane', base: 'urgence',
+      moods: { c18_ip_domination: 'desespoir', c18_ip_domination_r: 'desespoir' },
+      bursts: {
+        c18_ip_flux: { who: 'Valurn → Iriana', title: 'Chaos filtré', sub: 'Ombre · Chaos · Mort', mood: 'urgence', court: true },
+        c18_ip_renversement_r: { who: 'Iriana', title: 'Renversement', sub: 'Les vrilles noires se referment', mood: 'urgence', court: true },
+      } },
+    s08: { theme: 'givre', base: 'urgence',
+      moods: { c18_bh_blizzard_r: 'desespoir', c18_bh_fin: 'apaisement' },
+      bursts: {
+        c18_bh_sync: { who: 'Remerii · Hylee', title: 'Synchronisation', sub: 'Le blizzard et l’Arcane ne font qu’un', mood: 'urgence', court: true },
+        c18_bh_dragon: { who: 'Remerii', title: 'Dragon de glace', sub: 'Le blizzard prend forme', mood: 'urgence' },
+      } },
+  };
+  // Chaque duel a sa grammaire : bandeau persona (S04), pierre qui s’écrase (S06), sceau d’encre (S07), givre en tandem (S08).
+  const STYLE = {
+    s04: { cut: 'band', bascule: 'bascule', hurt: 'impact', enter: null },
+    s06: { cut: 'pierre', bascule: 'eboulement', hurt: 'tambour', enter: 'tambour' },
+    s07: { cut: 'glyphe', bascule: 'sceau', hurt: 'fele', enter: 'glyphe' },
+    s08: { cut: 'givre', bascule: 'tandem', hurt: 'givre', enter: 'souffle' },
+  };
+  const THEMES = {
+    flammes: { edge: '150,20,70', glow: '#b46bff', hot: '255,90,40', cold: '170,160,190', dark: '22,6,30' },
+    roche: { edge: '150,60,20', glow: '#d9a83a', hot: '210,160,90', cold: '190,170,140', dark: '24,16,8' },
+    arcane: { edge: '160,20,90', glow: '#8f7dff', hot: '127,184,255', cold: '150,20,60', dark: '10,6,26' },
+    givre: { edge: '60,140,220', glow: '#7fd3ff', hot: '235,248,255', cold: '210,230,245', dark: '6,16,32' },
+  };
+  const moodOf = (sc, id) => {
+    if (sc.fgameover) return 'gameover';
+    const f = FX[sc.fduel]; if (!f) return 'urgence';
+    if (f.bursts[id]) return f.bursts[id].mood;
+    return f.moods[id] || f.base;
+  };
+  const FXKEY = 'sylvinia_fd_fx';
+  const reduced = () => {
+    try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return true; } catch {}
+    try { return !!(window.BibliothequeAstrale && BibliothequeAstrale.reg && BibliothequeAstrale.reg.reduit); } catch { return false; }
+  };
+  const intensity = () => { if (reduced()) return 'reduit'; try { return localStorage.getItem(FXKEY) === 'doux' ? 'doux' : 'intense'; } catch { return 'intense'; } };
+  const fxLabel = () => ({ intense: 'Effets : intenses', doux: 'Effets : doux', reduit: 'Effets : réduits' })[intensity()];
+
+  const FX_CSS = `.fdFx{position:absolute;inset:0;pointer-events:none;overflow:hidden;contain:strict}
+.fdFx canvas{position:absolute;inset:0;width:100%;height:100%}
+.fdFxEdge,.fdFxFlash,.fdFxCut{position:absolute;inset:0}
+.fdFxEdge{opacity:0;transition:opacity 1.2s ease,background 1.2s ease}
+[data-fd-mood=urgence] .fdFxEdge{opacity:.6;background:radial-gradient(ellipse 72% 66% at 50% 45%,transparent 54%,rgba(var(--fd-edge),.62) 84%,rgba(var(--fd-edge),.95) 100%);animation:fdBeat 1.15s ease-in-out infinite}
+[data-fd-mood=urgence][data-fd-crit] .fdFxEdge{animation-duration:.8s}
+[data-fd-mood=urgence][data-fd-qte] .fdFxEdge{animation-duration:.55s;background:radial-gradient(ellipse 78% 72% at 50% 45%,transparent 64%,rgba(220,30,40,.4) 88%,rgba(255,40,40,.78) 100%)}
+[data-fd-mood=desespoir] .fdFxEdge{opacity:.9;background:radial-gradient(ellipse 70% 64% at 50% 42%,transparent 38%,rgba(var(--fd-dark),.62) 78%,rgba(0,0,0,.92) 100%);animation:fdFaiblit 6s ease-in-out infinite alternate}
+[data-fd-mood=gameover] .fdFxEdge{opacity:1;background:radial-gradient(ellipse 66% 58% at 50% 42%,rgba(0,0,0,.08) 30%,rgba(0,0,0,.7) 74%,rgba(0,0,0,.96) 100%)}
+[data-fd-mood=apaisement] .fdFxEdge{opacity:.6;background:radial-gradient(ellipse 75% 70% at 50% 40%,transparent 60%,rgba(var(--fd-edge),.35) 100%)}
+[data-fd-mood=desespoir] .jeu-bg,[data-fd-mood=desespoir]>.bg{filter:saturate(.38) brightness(.78) contrast(1.04);transition:filter 2.4s ease}
+[data-fd-mood=gameover] .jeu-bg,[data-fd-mood=gameover]>.bg{filter:saturate(.12) brightness(.58);transition:filter 3s ease}
+[data-fd-mood=urgence] .jeu-bg,[data-fd-mood=urgence]>.bg{filter:saturate(1.12) contrast(1.05);transition:filter .8s ease}
+[data-fd-mood=apaisement] .jeu-bg,[data-fd-mood=apaisement]>.bg{filter:saturate(.8) brightness(.95);transition:filter 3s ease}
+[data-fd-mood=desespoir] .sprites,[data-fd-mood=gameover] .sprites{filter:saturate(.55) brightness(.86);transition:filter 2.4s ease}
+.fdFxFlash{opacity:0}
+.fdFxFlash.hit{animation:fdHit .42s ease-out}
+.fdFxFlash.cut{animation:fdCutFlash .62s ease-out}
+.fdFxCut{display:flex;align-items:center;justify-content:center;opacity:0}
+.fdFxCut.on{opacity:1}
+.fdCutBand{position:absolute;left:-6%;right:-6%;top:22%;padding:clamp(8px,1.6vh,16px) 12%;transform:skewY(-4deg);display:flex;flex-direction:column;align-items:center;gap:2px;
+ background:linear-gradient(90deg,transparent,rgba(var(--fd-dark),.66) 14%,rgba(var(--fd-dark),.66) 86%,transparent);border-top:1px solid rgba(233,201,133,.75);border-bottom:1px solid rgba(233,201,133,.75);
+ box-shadow:0 0 34px rgba(var(--fd-edge),.45);backdrop-filter:blur(1.5px);animation:fdBandIn 2.2s cubic-bezier(.2,.9,.2,1) both}
+.fdFxCut.court .fdCutBand{animation-duration:1.4s}
+.fdCutBand::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);transform:scaleX(0);animation:fdSlash .5s .12s ease-out both;opacity:.8}
+.fdCutWho{font:600 clamp(10px,1.5vw,14px)/1 "Cinzel",serif;letter-spacing:.32em;text-transform:uppercase;color:#e9c985;font-style:normal;opacity:.95}
+.fdCutTitle{font:700 clamp(26px,5.6vw,64px)/1.05 "Cinzel Decorative","Cinzel",serif;letter-spacing:.06em;text-transform:uppercase;font-style:italic;color:#fff8ea;
+ text-shadow:0 0 18px var(--fd-glow),0 0 2px #000,3px 3px 0 rgba(var(--fd-edge),.85);transform:skewX(-10deg);animation:fdTitleIn 2.2s cubic-bezier(.2,.9,.2,1) both}
+.fdFxCut.court .fdCutTitle{animation-duration:1.4s}
+.fdCutSub{font:italic 500 clamp(13px,1.9vw,19px)/1.2 "Cormorant Garamond",serif;color:#f3e6c8;opacity:.92}
+[data-fd-int=doux] .fdCutBand,[data-fd-int=reduit] .fdCutBand,[data-fd-int=doux] .fdCutTitle,[data-fd-int=reduit] .fdCutTitle{animation-name:fdFadeBand}
+[data-fd-int=reduit] .fdFxEdge{animation:none!important}
+[data-fd-int=reduit] .fdCutBand::before{display:none}
+.fdFxStamp{position:absolute;right:5%;top:clamp(150px,30%,300px);opacity:0}
+.fdFxStamp.on{animation:fdStamp 1.5s cubic-bezier(.2,1.4,.3,1) both}
+.fdFxStamp b{display:block;font:700 italic clamp(18px,3.2vw,34px)/1 "Cinzel Decorative","Cinzel",serif;letter-spacing:.04em;text-transform:uppercase;color:#fff8ea;padding:6px 16px;transform:skewX(-14deg) rotate(-6deg);
+ background:linear-gradient(90deg,rgba(var(--fd-dark),.78),rgba(var(--fd-edge),.62));border-left:3px solid #e9c985;text-shadow:0 0 10px var(--fd-glow),2px 2px 0 #000}
+.fdFxStamp.mal b{border-left-color:#ff4a4a;background:linear-gradient(90deg,rgba(20,0,0,.8),rgba(160,20,30,.6))}
+[data-fd-int=doux] .fdFxStamp.on,[data-fd-int=reduit] .fdFxStamp.on{animation-name:fdFadeBand}
+@keyframes fdStamp{0%{opacity:0;transform:scale(1.8)}12%{opacity:1;transform:scale(.95)}20%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+@media (max-height:600px){.fdFxStamp{top:26%}}
+@keyframes fdBeat{0%,100%{opacity:.38}12%{opacity:.9}24%{opacity:.5}36%{opacity:.78}60%{opacity:.4}}
+@keyframes fdFaiblit{from{opacity:.78}to{opacity:.97}}
+@keyframes fdHit{0%{opacity:1;background:radial-gradient(ellipse at 50% 45%,rgba(var(--fd-hot),.32),rgba(var(--fd-edge),.3) 70%)}100%{opacity:0}}
+@keyframes fdCutFlash{0%{opacity:1;background:rgba(0,0,0,.86)}38%{opacity:1;background:rgba(0,0,0,.86)}48%{opacity:1;background:rgba(var(--fd-hot),.36)}100%{opacity:0;background:rgba(var(--fd-hot),0)}}
+@keyframes fdBandIn{0%,16%{transform:skewY(-4deg) translateX(-110%);opacity:0}30%{transform:skewY(-4deg) translateX(0);opacity:1}82%{transform:skewY(-4deg) translateX(1.5%);opacity:1}100%{transform:skewY(-4deg) translateX(110%);opacity:0}}
+@keyframes fdTitleIn{0%,22%{transform:skewX(-10deg) translateX(-40px);opacity:0}36%{transform:skewX(-10deg) translateX(0);opacity:1}100%{transform:skewX(-10deg) translateX(14px)}}
+@keyframes fdSlash{to{transform:scaleX(1);opacity:0}}
+@keyframes fdFadeBand{0%{opacity:0}18%,80%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.fdFxEdge{animation:none!important}.fdCutBand,.fdCutTitle{animation-name:fdFadeBand!important}.fdCutBand::before{display:none}}
+@media (max-height:600px){.fdCutBand{top:34%;padding-top:4px;padding-bottom:4px}}
+/* S06 · pierre : le titre tombe comme un bloc, pas de biais, une fissure */
+.fdFxCut[data-style=pierre] .fdCutBand{transform:none;left:0;right:0;background:linear-gradient(180deg,rgba(24,16,8,.0),rgba(24,16,8,.78) 20%,rgba(24,16,8,.78) 80%,rgba(24,16,8,0));border-top:2px solid rgba(217,168,58,.6);border-bottom:2px solid rgba(217,168,58,.6);animation:fdPierreIn 2.2s cubic-bezier(.5,0,.3,1) both}
+.fdFxCut[data-style=pierre] .fdCutBand::before{top:auto;bottom:-3px;height:6px;background:none;border-bottom:2px solid rgba(255,200,120,.75);clip-path:polygon(0 0,8% 100%,15% 20%,27% 90%,36% 10%,48% 100%,57% 30%,70% 95%,81% 15%,92% 85%,100% 0,100% 100%,0 100%);transform:none;animation:fdFadeBand 2.2s both}
+.fdFxCut[data-style=pierre] .fdCutTitle{font-style:normal;transform:none;letter-spacing:.18em;color:#f6e2b4;text-shadow:0 3px 0 #3a2508,0 0 16px rgba(217,168,58,.6);animation:fdPierreTitre 2.2s cubic-bezier(.4,0,.2,1.4) both}
+.fdFxCut[data-style=pierre] .fdCutWho{color:#d9a83a}
+@keyframes fdPierreIn{0%,10%{opacity:0;transform:translateY(-30px)}24%{opacity:1;transform:translateY(4px)}30%,85%{opacity:1;transform:none}100%{opacity:0;transform:translateY(10px)}}
+@keyframes fdPierreTitre{0%,14%{opacity:0;transform:translateY(-60px) scale(1.15)}28%{opacity:1;transform:translateY(5px)}34%{transform:none}100%{transform:translateY(2px)}}
+/* S07 · glyphe : pas de bandeau, un sceau d’encre qui tourne derrière le titre */
+.fdFxCut[data-style=glyphe] .fdCutBand{top:38%;transform:none;background:none;border:0;box-shadow:none;backdrop-filter:none;animation:fdFadeBand 2.2s ease both}
+.fdFxCut[data-style=glyphe].court .fdCutBand{animation-duration:1.4s}
+.fdFxCut[data-style=glyphe] .fdCutBand::before{left:50%;top:50%;right:auto;width:min(46vh,46vw);height:min(46vh,46vw);margin:calc(min(46vh,46vw)/-2) 0 0 calc(min(46vh,46vw)/-2);border-radius:50%;background:none;border:1px solid rgba(192,32,122,.75);box-shadow:0 0 30px rgba(192,32,122,.5),inset 0 0 30px rgba(127,184,255,.35);outline:1px dashed rgba(207,226,255,.5);outline-offset:-14px;transform:none;opacity:.85;animation:fdSceauTourne 2.4s ease-out both}
+.fdFxCut[data-style=glyphe] .fdCutTitle{font:italic 600 clamp(30px,6vw,68px)/1.05 "Cormorant Garamond",serif;text-transform:none;letter-spacing:.02em;transform:none;color:#f3eaff;text-shadow:0 0 22px #c0207a,0 0 3px #000;animation:fdEncreTitre 2.2s ease both}
+.fdFxCut[data-style=glyphe].court .fdCutTitle{animation-duration:1.4s}
+.fdFxCut[data-style=glyphe] .fdCutWho{color:#cfe2ff;letter-spacing:.4em}
+@keyframes fdSceauTourne{0%{opacity:0;transform:rotate(-90deg) scale(.6)}30%{opacity:.9}100%{opacity:0;transform:rotate(40deg) scale(1.08)}}
+@keyframes fdEncreTitre{0%{opacity:0;filter:blur(10px);letter-spacing:.3em}30%{opacity:1;filter:none;letter-spacing:.02em}85%{opacity:1}100%{opacity:0}}
+/* S08 · givre : un bandeau de glace droit qui se referme depuis les deux bords */
+.fdFxCut[data-style=givre] .fdCutBand{transform:none;left:0;right:0;background:linear-gradient(90deg,rgba(230,246,255,.0),rgba(210,238,255,.5) 18%,rgba(240,250,255,.62) 50%,rgba(210,238,255,.5) 82%,rgba(230,246,255,0));border-color:rgba(255,255,255,.85);box-shadow:0 0 40px rgba(127,211,255,.55);animation:fdGivreIn 2.2s cubic-bezier(.2,.8,.2,1) both}
+.fdFxCut[data-style=givre].court .fdCutBand{animation-duration:1.4s}
+.fdFxCut[data-style=givre] .fdCutBand::before{background:linear-gradient(90deg,transparent,#fff,transparent);animation:fdSlash .9s .1s ease-out both}
+.fdFxCut[data-style=givre] .fdCutTitle{font-style:normal;transform:none;color:#0b2440;text-shadow:0 0 14px #ffffff,0 0 2px #fff;animation:fdFadeBand 2.2s both}
+.fdFxCut[data-style=givre].court .fdCutTitle{animation-duration:1.4s}
+.fdFxCut[data-style=givre] .fdCutWho{color:#123a66}.fdFxCut[data-style=givre] .fdCutSub{color:#16324f}
+@keyframes fdGivreIn{0%,12%{opacity:0;clip-path:inset(0 50% 0 50%)}32%{opacity:1;clip-path:inset(0 0 0 0)}84%{opacity:1}100%{opacity:0;clip-path:inset(0 0 0 0)}}
+[data-fd-int=doux] .fdFxCut[data-style] .fdCutBand,[data-fd-int=reduit] .fdFxCut[data-style] .fdCutBand,[data-fd-int=doux] .fdFxCut[data-style] .fdCutTitle,[data-fd-int=reduit] .fdFxCut[data-style] .fdCutTitle{animation-name:fdFadeBand!important}
+[data-fd-int=reduit] .fdFxCut[data-style] .fdCutBand::before{display:none}
+/* Rythmes propres : tambour lent (S06), encre qui respire sans battre (S07), souffle long du blizzard (S08) */
+[data-fd-theme=roche][data-fd-mood=urgence]:not([data-fd-qte]) .fdFxEdge{animation:fdTambourEdge 1.6s ease-out infinite}
+[data-fd-theme=arcane][data-fd-mood=urgence]:not([data-fd-qte]) .fdFxEdge{background:radial-gradient(ellipse 74% 68% at 50% 46%,transparent 52%,rgba(40,10,80,.5) 80%,rgba(120,10,70,.8) 100%);animation:fdEncre 5s ease-in-out infinite alternate}
+[data-fd-theme=givre][data-fd-mood=urgence]:not([data-fd-qte]) .fdFxEdge{background:radial-gradient(ellipse 76% 70% at 50% 44%,transparent 56%,rgba(180,225,255,.35) 84%,rgba(235,248,255,.7) 100%);animation:fdSouffle 4.2s ease-in-out infinite}
+@keyframes fdTambourEdge{0%{opacity:.95}10%{opacity:.4}22%{opacity:.75}34%,100%{opacity:.32}}
+@keyframes fdEncre{from{opacity:.45;filter:hue-rotate(0)}to{opacity:.85;filter:hue-rotate(-25deg)}}
+@keyframes fdSouffle{0%,100%{opacity:.3}50%{opacity:.8}}
+@media (prefers-reduced-motion:reduce){.fdFxCut[data-style] .fdCutBand,.fdFxCut[data-style] .fdCutTitle{animation-name:fdFadeBand!important}.fdFxCut[data-style] .fdCutBand::before{display:none}}`;
+
+  const injectFx = (root, holder) => {
+    if (!root || root.querySelector?.('#fdFxCss')) return;
+    const st = document.createElement('style'); st.id = 'fdFxCss'; st.textContent = FX_CSS; (holder || root).appendChild(st);
+  };
+  const biblio = () => document.body.classList.contains('ui-biblio') && !!jeu();
+  const fxHost = () => (biblio() ? jeu() : document.getElementById('stage'));
+  const ensureLayer = (h) => {
+    if (!h) return null;
+    let L = h.querySelector(':scope > .fdFx');
+    if (!L) {
+      L = document.createElement('div'); L.className = 'fdFx'; L.setAttribute('aria-hidden', 'true');
+      L.innerHTML = '<canvas></canvas><div class="fdFxEdge"></div><div class="fdFxFlash"></div><div class="fdFxStamp"></div><div class="fdFxCut"></div>';
+      const sp = h.querySelector(':scope > .sprites');
+      if (sp) sp.after(L); else h.appendChild(L);
+      if (h.id === 'stage' && getComputedStyle(h).position === 'static') h.style.position = 'relative';
+    }
+    return L;
+  };
+  let fxState = null; // { id, duel, mood, theme, crit, qte }
+  const setHostAttrs = (h) => {
+    if (!h || !fxState) return;
+    const t = THEMES[fxState.theme];
+    h.dataset.fdMood = fxState.mood; h.dataset.fdTheme = fxState.theme; h.dataset.fdInt = intensity();
+    if (fxState.crit) h.dataset.fdCrit = '1'; else delete h.dataset.fdCrit;
+    if (qte && qte.id === fxState.id) h.dataset.fdQte = '1'; else delete h.dataset.fdQte;
+    h.style.setProperty('--fd-edge', t.edge); h.style.setProperty('--fd-glow', t.glow); h.style.setProperty('--fd-hot', t.hot); h.style.setProperty('--fd-dark', t.dark);
+  };
+  const clearHost = (h) => {
+    if (!h) return;
+    ['fdMood', 'fdTheme', 'fdInt', 'fdCrit', 'fdQte'].forEach((k) => delete h.dataset[k]);
+    const L = h.querySelector(':scope > .fdFx'); if (L) L.remove();
+  };
+  const syncFx = () => {
+    const R = window.BibliothequeAstrale && BibliothequeAstrale.racine;
+    if (R) injectFx(R); if (!document.getElementById('fdFxCss')) injectFx(document, document.head);
+    const h = fxHost();
+    [jeu(), document.getElementById('stage')].forEach((x) => { if (x && x !== h) clearHost(x); });
+    if (!fxState) { clearHost(h); return null; }
+    const L = ensureLayer(h); setHostAttrs(h); return L;
+  };
+
+  // Particules légères (canvas) : braises, cendres, poussière, éclats d’arcane, neige.
+  let parts = [], raf = 0, cv = null, cx = null, lastT = 0, partKey = '';
+  const spawn = (W, H, init) => {
+    const th = fxState.theme, m = fxState.mood, T = THEMES[th];
+    const r = Math.random;
+    const p = { x: r() * W, y: init ? r() * H : 0, s: 1 + r() * 2.2, a: .25 + r() * .55, ph: r() * 6.28 };
+    const calm = m === 'desespoir' || m === 'gameover' || m === 'apaisement';
+    if (th === 'flammes') {
+      if (calm) { p.vx = (r() - .5) * .25; p.vy = .25 + r() * .35; p.c = T.cold; p.y = init ? p.y : -6; }
+      else { p.vx = (r() - .5) * .6; p.vy = -(.7 + r() * 1.4); p.c = r() < .55 ? T.hot : '180,107,255'; p.y = init ? p.y : H + 6; p.glow = 1; }
+    } else if (th === 'roche') {
+      if (calm) { p.vx = (r() - .3) * .3; p.vy = .08 + r() * .25; p.c = T.cold; p.a *= .6; p.s += 1.5; p.y = init ? p.y : -6; }
+      else { p.vx = (r() - .5) * .5; p.vy = 1.2 + r() * 2.2; p.c = r() < .3 ? '120,95,70' : T.hot; p.y = init ? p.y : -6; }
+    } else if (th === 'arcane') {
+      if (calm) { p.vx = (r() - .5) * .3; p.vy = .2 + r() * .3; p.c = r() < .6 ? '140,15,50' : '60,40,70'; p.y = init ? p.y : -6; p.s += 1; }
+      else { p.vx = (r() - .5) * .9; p.vy = -(.2 + r() * .7); p.c = r() < .5 ? T.hot : '200,120,255'; p.glow = 1; p.y = init ? p.y : H + 6; p.wob = 1; }
+    } else {
+      if (calm) { p.vx = -.2 - r() * .3; p.vy = .45 + r() * .5; p.c = T.cold; p.y = init ? p.y : -6; }
+      else { p.vx = -1.4 - r() * 1.6; p.vy = 2 + r() * 2; p.c = T.hot; p.x = init ? p.x : r() * W * 1.4; p.y = init ? p.y : -6; }
+    }
+    return p;
+  };
+  const countFor = (W, H) => {
+    const it = intensity(); if (it === 'reduit' || !fxState) return 0;
+    const m = fxState.mood; const base = m === 'urgence' ? 46 : m === 'apaisement' ? 22 : 34;
+    const area = Math.max(.5, Math.min(1.3, (W * H) / (1024 * 880)));
+    return Math.round(base * area * (it === 'doux' ? .6 : 1) * (fxState.theme === 'givre' && m === 'urgence' ? 1.6 : 1));
+  };
+  const frame = (t) => {
+    raf = 0;
+    if (!fxState || document.hidden) { if (cx && cv) cx.clearRect(0, 0, cv.width, cv.height); return; }
+    const L = syncFx(); if (!L) return;
+    const c = L.querySelector('canvas');
+    const W = L.clientWidth, H = L.clientHeight;
+    if (!W || !H) { raf = requestAnimationFrame(frame); return; }
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
+    if (c !== cv || c.width !== Math.round(W * dpr)) { cv = c; cx = c.getContext('2d'); c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); parts = []; }
+    const key = fxState.theme + fxState.mood + intensity();
+    const n = countFor(W, H);
+    if (key !== partKey) { partKey = key; parts = []; }
+    while (parts.length < n) parts.push(spawn(W, H, true));
+    if (parts.length > n) parts.length = n;
+    const dt = Math.min(3, lastT ? (t - lastT) / 16.7 : 1); lastT = t;
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
+      p.ph += .03 * dt; p.x += (p.vx + (p.wob ? Math.sin(p.ph) * .6 : 0)) * dt; p.y += p.vy * dt;
+      if (p.y < -10 || p.y > H + 10 || p.x < -20 || p.x > W + 20) { parts[i] = spawn(W, H, false); continue; }
+      const a = p.a * (.75 + .25 * Math.sin(p.ph * 2));
+      cx.fillStyle = `rgba(${p.c},${a.toFixed(3)})`;
+      if (p.glow) { cx.shadowColor = `rgba(${p.c},.9)`; cx.shadowBlur = 6; } else cx.shadowBlur = 0;
+      cx.beginPath(); cx.arc(p.x, p.y, p.s, 0, 6.283); cx.fill();
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  const loop = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
+  // Musique : retrait dans le désespoir, coupure puis montée à la bascule (volume relatif au réglage du joueur).
+  let volRaf = 0, volMult = 1;
+  const baseVol = () => { const v = parseFloat((document.getElementById('volume') || {}).value); return isFinite(v) ? v : .65; };
+  const rampMusic = (to, ms, from) => {
+    const a = document.getElementById('music'); if (!a) return;
+    cancelAnimationFrame(volRaf);
+    const start = performance.now(); const m0 = from != null ? from : volMult;
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / ms); volMult = m0 + (to - m0) * (k * k * (3 - 2 * k));
+      try { a.volume = Math.max(0, Math.min(1, baseVol() * volMult)); } catch {}
+      if (k < 1) volRaf = requestAnimationFrame(step);
+    };
+    volRaf = requestAnimationFrame(step);
+  };
+  const moodVol = (m) => (m === 'desespoir' ? .62 : m === 'gameover' ? .85 : 1);
+
+  // Bascule épique : coupure noire, éclair, bandeau de titre d’attaque.
+  let cutUntil = 0;
+  const burst = (b) => {
+    const L = syncFx(); if (!L) return;
+    const it = intensity();
+    const cut = L.querySelector('.fdFxCut'), fl = L.querySelector('.fdFxFlash');
+    cut.className = 'fdFxCut'; cut.dataset.style = (STYLE[fxState && fxState.duel] || STYLE.s04).cut; cut.innerHTML = `<div class="fdCutBand" role="presentation"><i class="fdCutWho">${b.who}</i><b class="fdCutTitle">${b.title}</b><span class="fdCutSub">${b.sub}</span></div>`;
+    void cut.offsetWidth; cut.classList.add('on'); if (b.court) cut.classList.add('court');
+    if (it === 'intense') { fl.className = 'fdFxFlash'; void fl.offsetWidth; fl.classList.add('cut'); }
+    const dur = b.court ? 1450 : 2250;
+    cutUntil = Date.now() + dur;
+    clearTimeout(burst.t); burst.t = setTimeout(() => { cut.classList.remove('on'); cut.innerHTML = ''; }, dur);
+    sfx((STYLE[fxState && fxState.duel] || STYLE.s04).bascule);
+    rampMusic(.3, 160); setTimeout(() => rampMusic(moodVol(fxState ? fxState.mood : 'urgence') * 1.0, 1500, .3), 420);
+  };
+  const stamp = (txt, bad) => {
+    const L = syncFx(); if (!L) return; const el = L.querySelector('.fdFxStamp'); if (!el) return;
+    el.className = 'fdFxStamp'; el.innerHTML = `<b>${txt}</b>`; void el.offsetWidth; el.classList.add('on'); if (bad) el.classList.add('mal');
+    clearTimeout(stamp.t); stamp.t = setTimeout(() => { el.className = 'fdFxStamp'; el.innerHTML = ''; }, 1600);
+  };
+  const BAD_STAMPS = ['Lu par elle', 'Seuil manqué', 'Parade brisée', 'Retrouvé'];
+  const hitFx = () => {
+    if (intensity() !== 'intense') return;
+    const L = syncFx(); if (!L) return; const fl = L.querySelector('.fdFxFlash');
+    if (fl.classList.contains('cut') && Date.now() < cutUntil) return;
+    fl.className = 'fdFxFlash'; void fl.offsetWidth; fl.classList.add('hit');
+  };
+
+  const setFx = (sc, id, entering, v) => {
+    const f = FX[sc.fduel]; const d = DUELS[sc.fduel];
+    const mood = moodOf(sc, id);
+    const crit = d.gauges.some((g) => g.bad === 'down' ? (g.from == null || (sc.fstep || 0) >= g.from) && v[g.k] <= 2 && g.k !== 'flux' : g.bad === 'up' && g.k !== 'amanea' && v[g.k] >= 8);
+    const prevMood = fxState && fxState.mood;
+    fxState = { id, duel: sc.fduel, mood, theme: f ? f.theme : 'flammes', crit };
+    syncFx(); loop();
+    requestAnimationFrame(syncFx); setTimeout(syncFx, 160); setTimeout(syncFx, 600);
+    if (!entering) return;
+    const b = f && f.bursts[id];
+    if (b) setTimeout(() => burst(b), sc.fintro ? 1100 : 60);
+    const st = d.stamps && d.stamps[id] && d.stamps[id](flags(), v);
+    if (st && !b) setTimeout(() => stamp(st, BAD_STAMPS.includes(st)), 320);
+    else if (mood !== prevMood) rampMusic(moodVol(mood), mood === 'desespoir' ? 2600 : 900);
+    if ((mood === 'desespoir' || mood === 'gameover') && mood !== prevMood) { setTimeout(() => sfx('coeur'), 380); setTimeout(() => sfx('coeur'), 1650); }
+  };
+  const leaveFx = () => {
+    if (!fxState) return;
+    fxState = null; cutUntil = 0; syncFx(); if (volMult !== 1) rampMusic(1, 900);
+  };
+
+  // Bouton « Effets » du HUD (délégué : le HUD est recopié dans l’interface Bibliothèque).
+  document.addEventListener('click', (e) => {
+    const path = e.composedPath ? e.composedPath() : [e.target];
+    const b = path.find((n) => n && n.dataset && n.dataset.fdfx);
+    if (!b) return;
+    e.stopPropagation(); e.preventDefault();
+    if (reduced()) return;
+    try { localStorage.setItem(FXKEY, intensity() === 'intense' ? 'doux' : 'intense'); } catch {}
+    const lab = fxLabel();
+    const R = window.BibliothequeAstrale && BibliothequeAstrale.racine;
+    [document, R].forEach((root) => root && root.querySelectorAll && root.querySelectorAll('[data-fdfx]').forEach((x) => { x.textContent = '✦ ' + lab; }));
+    const st = document.getElementById('stats'); if (st) st.querySelectorAll('.fdHud').forEach((x) => { x.dataset.int = intensity(); });
+    if (R) R.querySelectorAll('.fdHud').forEach((x) => { x.dataset.int = intensity(); });
+    partKey = ''; syncFx();
+  }, true);
+
   const apply = () => {
     const id = state && state.scene; const sc = typeof S !== 'undefined' && S[id]; const stage = document.getElementById('stage');
     if (!stage) return;
     if (!qte || qte.id !== id) stopQte();
-    if (!sc || !sc.fduel || !DUELS[sc.fduel]) { stage.classList.remove('fdActive'); lastScene = id; last = { key: '', vals: null }; return; }
+    if (!sc || !sc.fduel || !DUELS[sc.fduel]) { stage.classList.remove('fdActive'); lastScene = id; last = { key: '', vals: null }; leaveFx(); return; }
     injectShadow();
     const d = DUELS[sc.fduel];
     stage.classList.add('combatMode', 'fdActive');
     const entering = lastScene !== id;
-    const { html, v, prev } = hudHtml(sc, id, { static: !entering });
+    const q0 = !sc.fqte ? undefined : (qte && qte.id === id) ? { label: sc.fqte.label, pct: Math.max(0, qte.left / qte.total * 100), left: Math.max(0, qte.left) / 1000 }
+      : { label: sc.fqte.label, pct: 100, left: durationOf(sc) / 1000 };
+    const { html, v, prev } = hudHtml(sc, id, { static: !entering, qte: q0 });
     const st = document.getElementById('stats'); if (st) st.innerHTML = html;
     if (entering) {
       if (sc.fintro) transition({ title: d.title, mini: d.mini, sub: sc.sub });
       const moved = (g, dir) => (dir === 'down' ? v[g.k] < prev[g.k] : v[g.k] > prev[g.k]);
       const hurt = d.gauges.some((g) => g.bad && moved(g, g.bad));
       const good = d.gauges.some((g) => g.bad && moved(g, g.bad === 'down' ? 'up' : 'down'));
-      if (sc.fgameover || hurt) { setTimeout(() => { sfx('hit'); pulse('fd-shake'); }, 250); }
-      else if (good) setTimeout(() => sfx('ok'), 250);
+      if (sc.fgameover || hurt) { setTimeout(() => { const S2 = STYLE[sc.fduel] || STYLE.s04; sfx(sc.fgameover ? 'hit' : sc.fduel === 's04' ? (moodOf(sc, id) === 'urgence' ? 'impact' : 'hit') : S2.hurt); if (sc.fduel !== 's07') pulse('fd-shake'); else hitFx(); }, 250); }
+      else if (good) setTimeout(() => sfx(sc.fduel === 's07' ? 'glyphe' : 'ok'), 250);
+      else if (STYLE[sc.fduel] && STYLE[sc.fduel].enter && !sc.fqte) setTimeout(() => sfx(sc.fduel === 's07' && d.corrupt && d.corrupt(id, flags()) ? 'fele' : STYLE[sc.fduel].enter), 300);
     }
     last = { key: id, vals: v };
+    setFx(sc, id, entering, v);
     lastScene = id;
     if (sc.fqte) startQte(sc, id);
   };
@@ -267,5 +869,5 @@
     return r;
   };
 
-  window.SylviniaFinaleDuels = { DUELS, calc, expire, qteActive: () => (qte ? { id: qte.id, left: qte.left, total: qte.total } : null), hudHtml, durationOf };
+  window.SylviniaFinaleDuels = { DUELS, calc, expire, qteActive: () => (qte ? { id: qte.id, left: qte.left, total: qte.total } : null), hudHtml, durationOf, FX, moodOf, fx: () => (fxState ? { ...fxState, intensity: intensity(), cut: Date.now() < cutUntil } : null) };
 })();

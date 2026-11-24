@@ -1,5 +1,32 @@
 # Journal · Final du Tome I
 
+## v0.421 (branche `feat/finale-duels-epiques`)
+
+- Mise en scène épique des quatre duels du final, entièrement dans `tools/finale-gen/duels.js` (copié vers `fusion/story-finale-duels.js` v2). Chaque scène de duel reçoit une humeur :
+  - **Urgence** : bords de l’écran qui battent comme un pouls (plus vite si une jauge est critique, encore plus pendant un QTE), HUD qui tressaille, braises / éclats / neige rapides, flash coloré et son d’impact quand une jauge chute, compte à rebours qui rougit et cliquette dans les 3 dernières secondes.
+  - **Désespoir** : décor et sprites désaturés, vignettage sombre dont la lueur faiblit lentement, HUD fissuré et pâli, jauges qui se vident lentement, cendres / poussière / neige lentes, double battement de cœur sourd, musique en retrait (62 %).
+  - **Bascule épique** : coupure noire, éclair aux couleurs du duel, titre d’attaque propre à chaque duel (bandeau incliné pour S04, bloc de pierre pour S06, sceau d’encre pour S07, bandeau de glace pour S08), montée de la musique ; le QTE éventuel attend la fin du bandeau.
+  - Game Over : l’interface se retire (HUD gris et effacé), décor presque monochrome. Fin du combat contre Bhaal : apaisement (neige lente, HUD qui s’efface).
+- Thèmes : flammes noires et violet (Amanea), roche et poussière (Draven), arcane bleu et chaos pourpre (Iriana / Alamma), blizzard et glace (Bhaal).
+- Bascules : « Puissance révélée » (c17_revelation), « Une minute volée » (c17_qte_ok), « Effondrement » (c18_dp_voute_r), « Chaos filtré » (c18_ip_flux), « Renversement » (c18_ip_renversement_r), « Synchronisation » (c18_bh_sync), « Dragon de glace » (c18_bh_dragon).
+- Accessibilité : `prefers-reduced-motion` et le réglage « Animations réduites » de la Bibliothèque coupent particules, secousses, tremblements, flashs et glissements (bandeau en simple fondu). Bouton « ✦ Effets : intenses / doux » dans le HUD (mémorisé dans `sylvinia_fd_fx`) : « doux » retire flashs, secousses et tremblements et allège les particules. Flashs ≤ 36 % d’opacité, jamais plus d’un par seconde.
+- La barre du QTE s’affiche dès l’entrée de la scène (en pause pendant le voile ou le bandeau).
+- Sons : Web Audio synthétisée (impact, battement de cœur, bascule, tic du compte à rebours), coupés si les sons sont désactivés. Aucun nouvel asset.
+- Duel S04 « ontologique » (Valurn contre Amanea) : l’interface raconte ce qu’Amanea est en train de devenir.
+  - Trois phases nommées dans le HUD : « Phase I · Ce qu’il lit » (manches I à III), « Phase II · Ce qu’elle est » (révélation, manche IV), « Phase III · Le temps volé » (manche V et riposte).
+  - Intention d’Amanea affichée avant chaque échange en phase I (« elle guette les bords du brasier », « frapper le sol, pas lui », « flanc gauche couvert · garde haute ouverte »), comme le texte l’annonce (« c’est lui qu’il faut lire »). À la révélation, l’intention devient illisible (texte brouillé), en accord avec « Ses coups n’ont plus besoin d’être lus ».
+  - Ordre des tours : alterné en phase I (V / A), puis la Reine Noire agit deux fois (R R V R R), puis le sablier du temps volé.
+  - Le nom vacille : à partir de la révélation, les jauges d’Amanea portent « ~~Amanea~~ Reine Noire » ; cadre du HUD qui vire au violet et vert, cases de Valurn fissurées.
+  - Tampons de résultat après chaque manche (« Lecture juste », « Lu par elle », « Garde rompue », « Temps volé +2 s », « Une minute »…).
+  - Ressource réelle : chaque seconde gagnée en phase II élargit de 300 ms la fenêtre de la riposte finale (QTE `c17_qte`).
+- Sources d’inspiration et emprunts : voir `docs/production/finale_duels_inspirations.md`.
+- **Chaque duel a sa propre boucle** (rien de répété d’un combat à l’autre) :
+  - S04 garde intentions, ruban de tours, tampons et trois phases.
+  - S06 Draven : plan de terrain (Dehors · Crevasse · Couloir · Grotte), horde case par case, « Tenir · vague N/5 », veine de la voûte repérée en reculant ; dalles de pierre, tambour lent, bascule « pierre ».
+  - S07 Iriana : sceau de runes (Arcane, Ombre, Chaos, Mort) à défaire puis à combiner ; recettes du Renversement qui dépensent le Chaos filtré (Enserrer 1, Trait 2, Tresse 3) ; HUD inversé sous l’emprise ; encre, carillons, bascule en sceau.
+  - S08 Remerii et Hylee : tandem à rôles alternés, lien qui s’allume, terrain qui change avec le blizzard, fenêtre de synchronisation détaillée (main brûlée : −0,6 s), dragon de glace qui coûte l’Arcane d’Hylee ; verre de givre, souffle, bascule de glace.
+- Bulle de mise à jour : « v0.421 · Duels épiques ».
+
 ## v0.420 (branche `feat/finale-mise-en-scene`)
 
 - Mise en scène du Chapitre XVII : 72 plans clés fournis par l’auteur (S02 à S04), copiés à l’identique dans `assets/images/keyscenes/chapter17-s02/03/04/`, branchés au paragraphe qu’ils illustrent, avec mouvement de caméra, cadrage portrait et entrée au Codex. Huit plans livrés restent écartés (s02_02, s02_24, s04_06, s04_11, s04_12, s04_14, s04_16, s04_18).

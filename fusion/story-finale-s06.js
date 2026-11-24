@@ -381,7 +381,7 @@ Hylee rouvre la main, haletante. La leçon de Remerii est encore là, au creux d
         null, [hylee, remeriiSad], { freveal: 'flux', fprev: 2, pov: 'hylee' }),
       fqte: {
         label: 'Synchronisation',
-        ms: () => { const f = flags(); return 5000 + (f.s08Reponse ? 800 : 0) + (f.s02Adieu === 'confiance' ? 800 : 0) + (((state.stats || {}).lien || 0) >= 8 ? 800 : 0); },
+        ms: () => { const f = flags(); return 5000 + (f.s08Reponse ? 800 : 0) + (f.s02Adieu === 'confiance' ? 800 : 0) + (((state.stats || {}).lien || 0) >= 8 ? 800 : 0) - (f.s08Brulure ? 600 : 0); }, // une main refermée trop tôt se paie (cf. panneau tandem)
         fail: 'c18_bh_gameover_sync',
       },
       choices: [{ label: '⚡ S’accorder au souffle de Remerii', next: 'c18_bh_sync_r', flags: { s08Sync: 'ok' }, best: true }],
