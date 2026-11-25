@@ -6830,7 +6830,7 @@
    "key": "rhythm-bubbles",
    "label": "Rhythm bubbles",
    "group": "Monde et systèmes",
-   "hash": "e96a15e6300c2536",
+   "hash": "76f7d425debece76",
    "scenes": 3,
    "counts": {
     "s": 18,
@@ -6839,6 +6839,131 @@
     "a": 0
    },
    "collections": []
+  },
+  {
+   "key": "rhythm-bubbles-allenna",
+   "label": "Allenna · rhythm bubbles",
+   "group": "Allenna",
+   "hash": "62e220a5679120d7",
+   "scenes": 1,
+   "counts": {
+    "s": 40,
+    "t": 0,
+    "n": 0,
+    "a": 16
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-allenna:a09x2hf2",
+     "path": "ALLENNA_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1yrhiyj",
+     "path": "ALLENNA_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1wcb91d",
+     "path": "ALLENNA_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a088pqh3",
+     "path": "ALLENNA_RHYTHM_BUBBLES.voice.frottement",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a0m63kyw",
+     "path": "ALLENNA_RHYTHM_BUBBLES.voice.penetration",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1kvjxm8",
+     "path": "ALLENNA_RHYTHM_BUBBLES.teases",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a18y7c1w",
+     "path": "ALLENNA_RHYTHM_BUBBLES.resisted",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a062nid0",
+     "path": "ALLENNA_RHYTHM_BUBBLES.ceded",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1y0nz85",
+     "path": "ALLENNA_RHYTHM_BUBBLES.bordHeld",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1rdgxsf",
+     "path": "ALLENNA_RHYTHM_BUBBLES.bordBroken",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a02mvoh8",
+     "path": "ALLENNA_RHYTHM_BUBBLES.aura",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1ba8adj",
+     "path": "ALLENNA_RHYTHM_BUBBLES.call",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a114mwff",
+     "path": "ALLENNA_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a1wo5g94",
+     "path": "ALLENNA_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a0xnp503",
+     "path": "ALLENNA_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna:a0ak5slw",
+     "path": "ALLENNA_RHYTHM_BUBBLES.relay",
+     "len": 2
+    }
+   ]
+  },
+  {
+   "key": "rhythm-bubbles-allenna-lineva",
+   "label": "Allenna × Lineva · rhythm bubbles",
+   "group": "Allenna × Lineva",
+   "hash": "c2a9ba7a3bf8af3e",
+   "scenes": 1,
+   "counts": {
+    "s": 10,
+    "t": 0,
+    "n": 0,
+    "a": 3
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-allenna-lineva:a0w96g5x",
+     "path": "ALLENNA_LINEVA_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-allenna-lineva:a1wes9s6",
+     "path": "ALLENNA_LINEVA_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-allenna-lineva:a0ii550d",
+     "path": "ALLENNA_LINEVA_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    }
+   ]
   },
   {
    "key": "rhythm-bubbles-bellirith",
@@ -6927,6 +7052,101 @@
      "id": "rhythm-bubbles-bellirith:a1iheftb",
      "path": "BELLIRITH_RHYTHM_BUBBLES.endings.tatonnement.lines",
      "len": 1
+    }
+   ]
+  },
+  {
+   "key": "rhythm-bubbles-lineva",
+   "label": "Lineva · rhythm bubbles",
+   "group": "Lineva",
+   "hash": "8b4f20f624b1d8f8",
+   "scenes": 1,
+   "counts": {
+    "s": 33,
+    "t": 0,
+    "n": 0,
+    "a": 16
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-lineva:a07iluwm",
+     "path": "LINEVA_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0mc3ub7",
+     "path": "LINEVA_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a14e4xax",
+     "path": "LINEVA_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0eopjnz",
+     "path": "LINEVA_RHYTHM_BUBBLES.voice.frottement",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1j6zu9c",
+     "path": "LINEVA_RHYTHM_BUBBLES.voice.penetration",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a015ptaw",
+     "path": "LINEVA_RHYTHM_BUBBLES.teases",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1q27a3g",
+     "path": "LINEVA_RHYTHM_BUBBLES.resisted",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0p9mido",
+     "path": "LINEVA_RHYTHM_BUBBLES.ceded",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1qbgsa5",
+     "path": "LINEVA_RHYTHM_BUBBLES.bordHeld",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1op41kn",
+     "path": "LINEVA_RHYTHM_BUBBLES.bordBroken",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0006qvo",
+     "path": "LINEVA_RHYTHM_BUBBLES.aura",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1nblkwf",
+     "path": "LINEVA_RHYTHM_BUBBLES.call",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0ygl0oj",
+     "path": "LINEVA_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0gnuzc0",
+     "path": "LINEVA_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a1ii6r4r",
+     "path": "LINEVA_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-lineva:a0wiwvkc",
+     "path": "LINEVA_RHYTHM_BUBBLES.relay",
+     "len": 2
     }
    ]
   },

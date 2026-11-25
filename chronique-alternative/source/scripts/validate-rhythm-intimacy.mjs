@@ -107,7 +107,10 @@ try {
   // Une seule voix pour Hylee : MagicalMysticVA (CC BY 4.0), créditée ici et dans le jeu ; plus aucune des anciennes voix.
   const voiceRows = sources.split("\n").filter((line) => /^\| (souffle|soupir|gemit|halete|apogee)-\d+\.mp3/.test(line));
   assert.ok(voiceRows.length > 0 && voiceRows.every((line) => /MagicalMysticVA/.test(line) && /CC BY 4\.0/.test(line) && /freesound\.org\/people\/magicalmysticva\/sounds\/\d+/.test(line)), "voix : une seule comédienne, CC BY 4.0 sourcée");
-  assert.ok(!/Vidrik|ellenmentor|SuddenDice|khenshom|mariallinas/.test(sources), "anciennes voix retirées des crédits");
+  // Vidrik, ancienne voix de Hylee, n'est admise que dans la section « Voix de Lineva » (lot 5, choix de Valentin), jamais pour Hylee.
+  const withoutLineva = sources.replace(/^## Voix de Lineva[\s\S]*?(?=^## |(?![\s\S]))/m, "");
+  assert.ok(!/Vidrik|ellenmentor|SuddenDice|khenshom|mariallinas/.test(withoutLineva), "anciennes voix retirées des crédits de Hylee");
+  assert.ok(sources.split("\n").filter((line) => line.includes("Vidrik") && line.startsWith("| ")).every((line) => line.startsWith("| lineva/")), "Vidrik : lignes de Lineva seulement");
   const pageSource = await readFile(resolve(projectRoot, "source/src/page.tsx"), "utf8");
   assert.ok(/MagicalMysticVA/.test(pageSource) && /CC BY 4\.0/.test(pageSource), "crédit de la voix dans le jeu");
   const defaults = engine.defaultRhythmPrefs();

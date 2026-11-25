@@ -118,3 +118,54 @@ Limite connue : la palette publiée est courte (environ 26 s au total), d'où qu
 | bellirith/rire-5.mp3 | rire de Bellirith (piège résisté, silence tenu au bord) | « woman having a long sensual laugh » · extrait 3.85-4.25 s | aarrnnoo | https://freesound.org/people/aarrnnoo/sounds/516197/ | CC BY 4.0 |
 | bellirith/rire-6.mp3 | rire de Bellirith (piège résisté, silence tenu au bord) | « woman having a long sensual laugh » · extrait 6.25-7.15 s | aarrnnoo | https://freesound.org/people/aarrnnoo/sounds/516197/ | CC BY 4.0 |
 | bellirith/rire-7.mp3 | rire de Bellirith (piège résisté, silence tenu au bord) | « woman having a long sensual laugh » · extrait 8.20-8.80 s | aarrnnoo | https://freesound.org/people/aarrnnoo/sounds/516197/ | CC BY 4.0 |
+
+## Voix d'Allenna (fiches personnages, lot 4)
+
+Une seule comédienne pour Allenna : **guinefurrie** (Freesound, sons publiés gratuitement sous **CC BY 4.0** ; la page du son 441511 précise qu'aucun crédit n'est exigé, nous créditons quand même). Extraits découpés et retraités avec la même chaîne que les autres voix (scripts/rythme-sons-build.py : passe-haut, petite pièce, niveau ramené à -20 dB RMS). Découpes choisies par analyse d'énergie (ffmpeg), sans aucun outil d'IA. Le son 447841 n'est pas utilisé. Les bruitages non vocaux sont les fichiers CC0 partagés ci-dessus.
+
+Limite connue : palette courte (trois prises, environ 39 s), sans vrai cri ; l'apogée reste retenue. La page Freesound ne documente pas le consentement au-delà de la licence ; voix choisie par Valentin.
+
+| Fichier | Rôle dans le jeu | Son d'origine | Auteur | Source | Licence |
+|---|---|---|---|---|---|
+| allenna/souffle-1.mp3 | souffles d'Allenna (hors combo, jauge basse) | « sexual moaning (female) » · extrait 0.15-1.45 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/souffle-2.mp3 | souffles d'Allenna (hors combo, jauge basse) | « sexual moaning (female) » · extrait 2.50-3.80 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/souffle-3.mp3 | souffles d'Allenna (hors combo, jauge basse) | « sexual moaning (female) » · extrait 4.00-4.95 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/souffle-4.mp3 | souffles d'Allenna (hors combo, jauge basse) | « sexual moaning (female) » · extrait 23.70-24.70 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/soupir-1.mp3 | soupirs d'Allenna (jauge moyenne) | « Double Sigh Female » · extrait 0.45-1.55 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/441511/ | CC BY 4.0 |
+| allenna/soupir-2.mp3 | soupirs d'Allenna (jauge moyenne) | « Double Sigh Female » · extrait 3.75-4.60 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/441511/ | CC BY 4.0 |
+| allenna/soupir-3.mp3 | soupirs d'Allenna (jauge moyenne) | « sexual moaning (female) » · extrait 26.00-27.90 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-1.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 5.00-6.00 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-2.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 6.00-7.10 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-3.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 7.20-8.10 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-4.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 9.15-10.30 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-5.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 11.75-12.90 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-6.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 14.25-15.45 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/gemit-7.mp3 | gémissements d'Allenna aux paliers de combo (1-3 doux, 4-7 plus francs) | « sexual moaning (female) » · extrait 17.00-18.20 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/apogee-1.mp3 | apogée d'Allenna (et ses relais de sommets à trois) | « sexual moaning (female) » · extrait 18.35-21.45 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/apogee-2.mp3 | apogée d'Allenna (et ses relais de sommets à trois) | « sexual moaning (female) » · extrait 20.65-23.45 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439559/ | CC BY 4.0 |
+| allenna/bouche-1.mp3 | sa bouche occupée (geste « sa bouche ») | « oral sex sounds/moaning » · extrait 0.05-1.20 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439560/ | CC BY 4.0 |
+| allenna/bouche-2.mp3 | sa bouche occupée (geste « sa bouche ») | « oral sex sounds/moaning » · extrait 1.60-2.70 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439560/ | CC BY 4.0 |
+| allenna/bouche-3.mp3 | sa bouche occupée (geste « sa bouche ») | « oral sex sounds/moaning » · extrait 3.40-4.70 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439560/ | CC BY 4.0 |
+| allenna/bouche-4.mp3 | sa bouche occupée (geste « sa bouche ») | « oral sex sounds/moaning » · extrait 5.05-5.80 s | guinefurrie | https://freesound.org/people/guinefurrie/sounds/439560/ | CC BY 4.0 |
+
+## Voix de Lineva (fiches personnages, lot 5)
+
+Une seule voix pour Lineva : **Vidrik** (Freesound, « Woman moaning.wav », **CC0**, domaine public, aucun crédit exigé, crédité quand même). Une seule prise de 20 s, enregistrée pour un podcast d'horreur selon sa page, découpée par analyse d'énergie (ffmpeg), sans aucun outil d'IA, puis retraitée avec la même chaîne. Cette voix avait été retirée de Hylee (MagicalMysticVA reste sa seule voix) ; elle revient ici pour Lineva seulement, sur décision de Valentin, et le validateur ne l'accepte que dans cette section.
+
+Limite connue : une seule prise, au timbre tendu ; certains extraits peuvent évoquer l'effort plus que le plaisir. À juger à l'oreille.
+
+| Fichier | Rôle dans le jeu | Son d'origine | Auteur | Source | Licence |
+|---|---|---|---|---|---|
+| lineva/souffle-1.mp3 | souffles de Lineva (hors combo, jauge basse) | « Woman moaning.wav » · extrait 2.95-3.70 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/souffle-2.mp3 | souffles de Lineva (hors combo, jauge basse) | « Woman moaning.wav » · extrait 7.40-8.30 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/souffle-3.mp3 | souffles de Lineva (hors combo, jauge basse) | « Woman moaning.wav » · extrait 19.00-20.10 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/soupir-1.mp3 | soupirs de Lineva (jauge moyenne) | « Woman moaning.wav » · extrait 8.85-10.00 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/soupir-2.mp3 | soupirs de Lineva (jauge moyenne) | « Woman moaning.wav » · extrait 14.00-15.60 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-1.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 0.55-1.25 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-2.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 1.25-2.30 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-3.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 4.40-5.40 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-4.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 5.40-6.40 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-5.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 10.75-11.85 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/gemit-6.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 12.70-13.40 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/apogee-1.mp3 | apogée de Lineva (et ses relais de sommets à trois) | « Woman moaning.wav » · extrait 12.70-15.60 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+| lineva/apogee-2.mp3 | apogée de Lineva (et ses relais de sommets à trois) | « Woman moaning.wav » · extrait 15.60-18.00 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |

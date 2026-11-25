@@ -240,8 +240,8 @@
 .rythme-layer .rythme-auto-badge { top: calc(76px * var(--k, 1) + 2.3rem); }
 
 /* ===== Fiches personnages (lot 0) : couleurs par personnage, pièges, silences, aura, résistance ===== */
-.rythme-layer.perso-bellirith .rythme-jauge b { background: linear-gradient(0deg, rgb(var(--rouge-r)), rgb(var(--rose-r)) 70%, #f1e4ff); }
-.rythme-layer.perso-bellirith .rythme-jauge em.atteint { background: #e7d4ff; box-shadow: 0 0 6px rgb(var(--rose-r)); }
+.rythme-layer.perso .rythme-jauge b { background: linear-gradient(0deg, rgb(var(--rouge-r)), rgb(var(--rose-r)) 70%, #f1e4ff); }
+.rythme-layer.perso .rythme-jauge em.atteint { background: #e7d4ff; box-shadow: 0 0 6px rgb(var(--rose-r)); }
 /* Leurre : un contour pâle, sans cœur ni lueur ; il ne faut pas le toucher. */
 .rythme-note.bait .tete { background: none; border: 2px dashed rgba(235, 225, 245, .55); box-shadow: none; opacity: .62; width: 26px; height: 26px; margin-left: 2px; bottom: -13px; }
 .rythme-note.bait.appel .tete { border-style: solid; border-color: rgba(var(--rose-r), .7); color: rgba(255, 255, 255, .8); }
@@ -255,6 +255,10 @@
 .rythme-layer.silence .rythme-cible { border-color: rgba(230, 220, 245, .35); box-shadow: none; transform: none; }
 .rythme-silence-bandeau { position: absolute; right: calc(100% + 10px); top: 56%; padding: .35em .9em; border-radius: 999px; background: rgba(14, 6, 22, .78); border: 1px solid rgba(var(--rose-r), .5); color: #f3e8ff; font: italic 600 .9rem/1.2 var(--display, serif); white-space: nowrap; pointer-events: none; animation: rythme-bandeau .35s ease-out; }
 .rythme-silence-bandeau.appel { top: 64%; border-color: rgba(255, 215, 160, .6); color: #ffe9cf; }
+/* Ordres de Lineva (vague d'aura nommée) : même place que le silence, teinte du personnage. */
+.rythme-silence-bandeau.ordre { border-color: rgba(var(--rose-r), .85); color: #e6f0ff; box-shadow: 0 0 14px rgba(var(--rose-r), .45); }
+/* Remarque de Lineva quand la lecture automatique a joué. */
+.rythme-bulle-fin.auto { opacity: .9; font-size: .92em; }
 @keyframes rythme-bandeau { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 /* Aura : la vague qu'elle impose, annoncée une mesure plus tôt. */
 .rythme-note.aura .tete { background: radial-gradient(circle at 40% 35%, #fbf3ff, rgba(var(--rose-r), .9) 55%, rgba(var(--rouge-r), .6) 100%); box-shadow: 0 0 18px rgba(var(--rose-r), .95), 0 0 4px #fff; opacity: .95; }

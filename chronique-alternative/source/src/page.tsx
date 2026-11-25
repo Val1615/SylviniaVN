@@ -487,7 +487,7 @@ type ModalState =
   | { kind: "date-result"; character: string; dateId: string }
   | { kind: "group-date-planner" }
   | { kind: "group-date-result"; groupDateId: string; replay?: boolean }
-  | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean }
+  | { kind: "group-intimacy"; groupDateId: string; background?: string; replay?: boolean; rhythm?: boolean; rhythmRoute?: string }
   | { kind: "cross-letter"; letterId: string }
   | { kind: "alpha-hunt"; replay?: boolean; state?: AlphaHuntState }
   | { kind: "anchor-operation"; replay?: boolean; state?: AnchorState }
@@ -508,6 +508,23 @@ type ModalState =
 
 type IntimacyModalState = Extract<NonNullable<ModalState>, { kind: "intimacy" }>;
 type GroupIntimacyModalState = Extract<NonNullable<ModalState>, { kind: "group-intimacy" }>;
+/** Mode développeur : une rangée de boutons par fiche du jeu de rythme. */
+const RHYTHM_DEV_ROWS: [character: string, title: string, level: string][] = [
+  ["bellirith", "Bellirith (lot 1)", "Intense"],
+  ["allenna", "Allenna (lot 4)", "Doux"],
+  ["lineva", "Lineva (lot 5)", "Normal, tempo vif,"],
+  ["allenna-lineva", "Allenna et Lineva, relais de sommets (lot 6)", "Normal"],
+];
+const RHYTHM_DEV_PLACES: Record<string, string> = {
+  "date-allenna-field": "Terrain", "date-allenna-terrace": "Terrasse", "date-lineva-ramparts": "Remparts", "date-lineva-quarters": "Quartiers",
+  "home-allenna": "Logis", "home-lineva": "Logis", "group-date-allenna-lineva-training": "Entraînement", "group-date-allenna-lineva-basin": "Bassin", "group-date-allenna-lineva-home": "Logis",
+};
+function rhythmDevLabel(anchor: { character: string; context: string; routeId: string }) {
+  if (anchor.character === "bellirith") return `${BELLIRITH_DEV_INTIMACIES.find((entry) => entry.dateId === anchor.context)?.label || anchor.context}${anchor.context === "date-bellirith-final" ? ` · ${anchor.routeId === "bellirith-duel-steal" ? "voler" : "retourner"}` : ""}`;
+  const place = RHYTHM_DEV_PLACES[anchor.context] || anchor.context;
+  const rest = anchor.routeId.replace(`${anchor.context}-`, "").replace(/^(homme|femme)-/, "").replace(/-(homme|femme)$/, "").replace(/^home-\w+-(homme|femme)-/, "").replace(/-/g, " ");
+  return `${place} · ${rest}`;
+}
 type DevIntimacyTarget =
   | { kind: "date"; dateId: string }
   | { kind: "home"; character: string }
@@ -5419,8 +5436,21 @@ export default function Home() {
     if (target.kind === "bellirith-date") { startDate(target.dateId, true); return; }
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
     if (target.kind === "rythme-perso") {
-      // Fiches personnages (lot 1, Bellirith) : la scène choisie s'ouvre directement sur le jeu, en souvenir (aucune mutation).
-      if (target.context === "bellirith-home") setModal({ kind: "intimacy", character: target.character, home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-home"], replay: true, rhythm: true, rhythmRoute: target.routeId });
+      // Fiches personnages (lots 1, 4 à 6) : la scène choisie s'ouvre directement sur le jeu, en souvenir (aucune mutation).
+      if (target.character === "allenna-lineva") {
+        const date = groupIntimacyContextById(target.context);
+        if (!date) return;
+        const homeBackground = date.home || date.id.endsWith("-home") ? propertyById(game.housing.propertyId)?.background : undefined;
+        setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true, rhythm: true, rhythmRoute: target.routeId });
+        return;
+      }
+      if (target.context === "home-allenna" || target.context === "home-lineva") {
+        setModal({ kind: "intimacy", character: target.character, home: true, background: propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/bedroom.webp", replay: true, rhythm: true, rhythmRoute: target.routeId });
+        return;
+      }
+      const sceneDate = target.character !== "bellirith" ? DATE_SCENES.find((entry) => entry.id === target.context) : undefined;
+      if (sceneDate) setModal({ kind: "intimacy", character: target.character, dateId: sceneDate.id, background: sceneDate.intimacySetting.background || spotById(sceneDate.spot)?.background, replay: true, rhythm: true, rhythmRoute: target.routeId });
+      else if (target.context === "bellirith-home") setModal({ kind: "intimacy", character: target.character, home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-home"], replay: true, rhythm: true, rhythmRoute: target.routeId });
       else setModal({ kind: "intimacy", character: target.character, dateId: target.context, background: BELLIRITH_INTIMACY_BACKGROUNDS[target.context as keyof typeof BELLIRITH_INTIMACY_BACKGROUNDS], replay: true, rhythm: true, rhythmRoute: target.routeId });
       return;
     }
@@ -5766,7 +5796,7 @@ export default function Home() {
   const titleDialogs = v2Dialog && <div className="v2 v2-calque">
     {v2Dialog.kind === "load" && <V2Dialog key="load" surtitre="Reprendre une chronique" titre="Charger" classe="large" onClose={closeV2}><V2SaveSlots game={game} mode="load" onSave={() => undefined} onLoad={(slot) => { closeV2(); loadSlot(slot); }} onLoadAuto={() => { closeV2(); continueGame(); }} version={slotVersion} /></V2Dialog>}
     {v2Dialog.kind === "options" && <V2Dialog key="options" surtitre="Configuration" titre="Options" classe="large" onClose={closeV2}><V2OptionsBody game={screen === "game" ? game : null} updateGame={screen === "game" ? updateGame : undefined} cats={screen === "game" ? ["affichage", "audio", "acces"] : ["affichage", "audio", "acces", "session"]} sons={sons} onToggleSons={toggleSons} titleMusic={v2Prefs.titleMusic} onToggleTitleMusic={toggleTitleMusic} onSave={saveSlot} onLoad={(slot) => { closeV2(); loadSlot(slot); }} onExport={exportSave} onImport={(event) => { closeV2(); importSave(event); }} onTitle={() => { closeV2(); setScreen("title"); }} onStory={() => setV2Dialog({ kind: "story" })} slotVersion={slotVersion} layout="dialog" /></V2Dialog>}
-    {v2Dialog.kind === "about" && <V2Dialog key="about" surtitre="Chronique Alternative" titre="À propos du Mode libre" classe="etroit" onClose={closeV2} pied={<button type="button" className="btn principal" data-close onClick={closeV2}>Compris</button>}><p className="texte grand">Une chronique parallèle au Visual Novel : vous vivez librement en Sylvinia, choisissez vos lieux, vos journées et les liens que vous tissez.</p><ul className="puces"><li>{CHARACTERS.length} personnages, des rendez-vous seul à seul et à trois</li><li>Campagne de l’Acte I en {MAIN_STORY.length} chapitres, quêtes croisées</li><li>Jobs, logis, présents et correspondance</li><li>Intimité réglable (18+), sauvegarde locale sur cet appareil</li></ul><p className="discret">Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le Visual Novel Sylvinia et Les mondes du Chroniqueur. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités). Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p></V2Dialog>}
+    {v2Dialog.kind === "about" && <V2Dialog key="about" surtitre="Chronique Alternative" titre="À propos du Mode libre" classe="etroit" onClose={closeV2} pied={<button type="button" className="btn principal" data-close onClick={closeV2}>Compris</button>}><p className="texte grand">Une chronique parallèle au Visual Novel : vous vivez librement en Sylvinia, choisissez vos lieux, vos journées et les liens que vous tissez.</p><ul className="puces"><li>{CHARACTERS.length} personnages, des rendez-vous seul à seul et à trois</li><li>Campagne de l’Acte I en {MAIN_STORY.length} chapitres, quêtes croisées</li><li>Jobs, logis, présents et correspondance</li><li>Intimité réglable (18+), sauvegarde locale sur cet appareil</li></ul><p className="discret">Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le Visual Novel Sylvinia et Les mondes du Chroniqueur. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités) ; voix d’Allenna par <a href="https://freesound.org/people/guinefurrie/" target="_blank" rel="noreferrer">guinefurrie</a> (Freesound, CC BY 4.0) ; voix de Lineva par <a href="https://freesound.org/people/Vidrik/" target="_blank" rel="noreferrer">Vidrik</a> (Freesound, CC0), extraits découpés et retraités. Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p></V2Dialog>}
     {v2Dialog.kind === "story" && <V2Dialog key="story" surtitre="Quitter la branche alternative" titre="Retour au Mode Histoire" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Rester</button><button type="button" className="btn principal" data-act="confirmer-histoire" onClick={goStory}>Revenir au Visual Novel ▸</button></>}><p className="texte grand">Le Visual Novel principal va s’ouvrir.</p><p className="discret">{screen === "game" ? "Votre chronique est enregistrée automatiquement : « Continuer » la reprendra exactement ici." : "Vos sauvegardes de la Chronique Alternative restent sur cet appareil."}</p></V2Dialog>}
     {v2Dialog.kind === "new" && <V2Dialog key="new" surtitre="Nouvelle chronique" titre="Recommencer ?" classe="etroit" onClose={closeV2} pied={<><button type="button" className="btn" data-close onClick={closeV2}>Annuler</button><button type="button" className="btn principal" data-act="confirmer-nouvelle" onClick={() => { closeV2(); setScreen("creator"); }}>Créer un personnage ▸</button></>}><p className="texte grand">La sauvegarde automatique {autosave ? `(${autosave.name} · Jour ${autosave.day})` : ""} sera remplacée dès le début du prologue.</p><p className="discret">Les emplacements manuels 1 à 3 sont conservés. Pensez à y sauvegarder la chronique actuelle si vous souhaitez la garder.</p></V2Dialog>}
   </div>;
@@ -6603,7 +6633,7 @@ function LegacyOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exp
     }
     updateGame((current) => ({ ...current, player: { ...current.player, intimacy } }));
   };
-  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><div className="options-header-actions"><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Ce réglage peut être modifié à tout moment et adapte la narration des scènes concernées.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités). Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p></footer></div>{explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}</section>;
+  return <section className="content-view"><header className="content-header"><div><p className="eyebrow">Chronique & accessibilité</p><h1>Options</h1><p>La progression est automatiquement conservée sur cet appareil.</p></div><div className="options-header-actions"><button className="secondary-action" onClick={returnTitle}>Retour au titre</button><a className="return-story-button" href="../index.html">Retour au Mode Histoire</a></div></header><div className="options-layout"><div className="option-panel"><h2>Lecture & ambiance</h2><label className="range-option"><span>Taille du texte <b>{game.settings.fontScale}%</b></span><input type="range" min={90} max={125} step={5} value={game.settings.fontScale} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, fontScale: Number(event.target.value) } }))} /></label><Toggle label="Musique" detail="Thèmes originaux du Visual Novel." active={game.settings.music} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, music: !current.settings.music } }))} /><label className="range-option"><span>Volume <b>{game.settings.volume}%</b></span><input type="range" min={0} max={80} step={4} value={game.settings.volume} onChange={(event) => updateGame((current) => ({ ...current, settings: { ...current.settings, volume: Number(event.target.value) } }))} /></label><Toggle label="Réduire les animations" detail="Désactive les mouvements décoratifs." active={game.settings.reducedMotion} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, reducedMotion: !current.settings.reducedMotion } }))} /><Toggle label="Afficher l’impact des choix" detail="Révèle les gains avant de répondre." active={game.settings.showImpact} onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, showImpact: !current.settings.showImpact } }))} /><label className="select-option"><span>Sexe du personnage</span><select value={game.player.sex} onChange={(event) => updateGame((current) => ({ ...current, player: { ...current.player, sex: event.target.value as PlayerSex } }))}><option value="femme">Femme</option><option value="homme">Homme</option></select></label><label className="select-option"><span>Intimité</span><select value={game.player.intimacy} onChange={(event) => chooseIntimacy(event.target.value as Intimacy)}><option value="tendre">Tendre</option><option value="suggestif">Suggestif</option><option value="explicite">Explicite · sans coupure</option><option value="ellipse">Fondu au noir</option></select></label><p className="hint">Ce réglage peut être modifié à tout moment et adapte la narration des scènes concernées.</p></div><div className="option-panel"><h2>Sauvegardes manuelles</h2>{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}<div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div><DeveloperPanel game={game} updateGame={updateGame} /><footer className="option-panel credits-panel"><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités) ; voix d’Allenna par <a href="https://freesound.org/people/guinefurrie/" target="_blank" rel="noreferrer">guinefurrie</a> (Freesound, CC BY 4.0) ; voix de Lineva par <a href="https://freesound.org/people/Vidrik/" target="_blank" rel="noreferrer">Vidrik</a> (Freesound, CC0), extraits découpés et retraités. Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p></footer></div>{explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}</section>;
 }
 
 function DeprecatedOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot, exportSave, importSave, returnTitle }: { game: GameState; updateGame: (fn: (game: GameState) => GameState) => void; slotInfo: Record<number, string>; saveSlot: (slot: number) => void; loadSlot: (slot: number) => void; exportSave: () => void; importSave: (event: ChangeEvent<HTMLInputElement>) => void; returnTitle: () => void }) {
@@ -6637,7 +6667,7 @@ function DeprecatedOptionsView({ game, updateGame, slotInfo, saveSlot, loadSlot,
       </div>}
       {section === "saves" && <div className="option-panel"><div className="option-panel-heading"><div><p className="eyebrow">Progression</p><h2>Sauvegardes manuelles</h2></div><span>Sauvegarde automatique active</span></div><div className="save-slot-list">{[1, 2, 3].map((slot) => <div className="save-slot" key={slot}><div><strong>Emplacement {slot}</strong><small>{slotInfo[slot] || "Vide"}</small></div><button onClick={() => saveSlot(slot)}>Sauver</button><button disabled={!slotInfo[slot]} onClick={() => loadSlot(slot)}>Charger</button></div>)}</div><div className="save-tools"><button onClick={exportSave}>Exporter en fichier</button><label>Importer un fichier<input type="file" accept="application/json,.json" onChange={importSave} /></label></div></div>}
       {section === "developer" && <DeveloperPanel game={game} updateGame={updateGame} />}
-      {section === "about" && <div className="option-panel credits-panel"><p className="eyebrow">Continuité du projet</p><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités). Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p><div className="about-actions"><button className="secondary-action" onClick={returnTitle}>Revoir l’écran titre</button><a className="return-story-button" href="../index.html">Revenir au Mode Histoire</a></div></div>}
+      {section === "about" && <div className="option-panel credits-panel"><p className="eyebrow">Continuité du projet</p><h2>Chronique parallèle & crédits</h2><p>Univers, personnages et continuité d’après <em>Chroniques de Sylvinia</em>, le <a href="https://github.com/Val1615/SylviniaVN" target="_blank" rel="noreferrer">Visual Novel Sylvinia</a> et <a href="https://github.com/Val1615/Les-mondes-du-Chroniqueur" target="_blank" rel="noreferrer">Les mondes du Chroniqueur</a>. Illustrations, sprites et thèmes musicaux adaptés des ressources autorisées de ces projets.</p><p className="credits-voix">Jeu de rythme intime : voix de Hylee par <a href="https://freesound.org/people/magicalmysticva/" target="_blank" rel="noreferrer">MagicalMysticVA</a> (sons gratuits Freesound, <a href="https://creativecommons.org/licenses/by/4.0/deed.fr" target="_blank" rel="noreferrer">CC BY 4.0</a>, extraits découpés et retraités) ; voix de Bellirith par <a href="https://freesound.org/people/aarrnnoo/" target="_blank" rel="noreferrer">aarrnnoo</a> (Freesound, CC BY 4.0, extraits découpés et retraités) ; voix d’Allenna par <a href="https://freesound.org/people/guinefurrie/" target="_blank" rel="noreferrer">guinefurrie</a> (Freesound, CC BY 4.0) ; voix de Lineva par <a href="https://freesound.org/people/Vidrik/" target="_blank" rel="noreferrer">Vidrik</a> (Freesound, CC0), extraits découpés et retraités. Bruitages CC0 de qubodup, Sheyvan, 45t, Froey_ et Kataoneon. Détail complet dans assets/audio/rythme/SOURCES.md.</p><div className="about-actions"><button className="secondary-action" onClick={returnTitle}>Revoir l’écran titre</button><a className="return-story-button" href="../index.html">Revenir au Mode Histoire</a></div></div>}
     </div>
     {explicitWarning && <ExplicitModeWarning onCancel={() => setExplicitWarning(false)} onConfirm={() => { updateGame((current) => ({ ...current, player: { ...current.player, intimacy: "explicite" } })); setExplicitWarning(false); }} />}
   </section>;
@@ -6942,10 +6972,14 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" id="caDevRythme" disabled={!onOpenIntimacy || (game.player.intimacy !== "explicite" && game.player.intimacy !== "suggestif")} onClick={() => onOpenIntimacy?.({ kind: "hylee-rhythm" })}>Lancer le jeu de rythme</button>
     </div>
 
-    <div className="dev-row">
-      <span className="dev-help">Fiches personnages · Bellirith (lot 1) : {RHYTHM_ANCHORS.length / 2} scènes pour le corps choisi dans la partie ({game.player.sex === "homme" ? "homme" : "femme"}), Intense recommandé. Chaque scène s’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.</span>
-      {RHYTHM_ANCHORS.filter((anchor) => anchor.sex === (game.player.sex === "homme" ? "homme" : "femme")).map((anchor) => <button type="button" key={`${anchor.context}:${anchor.routeId}`} data-rythme-route={anchor.routeId} disabled={!onOpenIntimacy || (game.player.intimacy !== "explicite" && game.player.intimacy !== "suggestif")} onClick={() => onOpenIntimacy?.({ kind: "rythme-perso", character: anchor.character, context: anchor.context, routeId: anchor.routeId })}>{(BELLIRITH_DEV_INTIMACIES.find((entry) => entry.dateId === anchor.context)?.label || anchor.context)}{anchor.context === "date-bellirith-final" ? ` · ${anchor.routeId === "bellirith-duel-steal" ? "voler" : "retourner"}` : ""}</button>)}
-    </div>
+    {RHYTHM_DEV_ROWS.map(([character, title, level]) => {
+      const body = game.player.sex === "homme" ? "homme" : "femme";
+      const anchors = RHYTHM_ANCHORS.filter((anchor) => anchor.character === character && anchor.sex === body);
+      return <div className="dev-row" key={character} data-rythme-perso={character}>
+        <span className="dev-help">Fiches personnages · {title} : {anchors.length} scènes pour le corps choisi dans la partie ({body}), {level} recommandé. Chaque scène s’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.</span>
+        {anchors.map((anchor) => <button type="button" key={`${anchor.context}:${anchor.routeId}`} data-rythme-route={anchor.routeId} disabled={!onOpenIntimacy || (game.player.intimacy !== "explicite" && game.player.intimacy !== "suggestif")} onClick={() => onOpenIntimacy?.({ kind: "rythme-perso", character: anchor.character, context: anchor.context, routeId: anchor.routeId })}>{rhythmDevLabel(anchor)}</button>)}
+      </div>;
+    })}
 
     <h3>Sylvinia Studio</h3>
     <div className="dev-row">
@@ -7125,8 +7159,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
   // Jeu de rythme (prototype) : remplace la séquence « climax » d'une seule route, en Explicite.
   const [rhythmMood, setRhythmMood] = useState("seductive");
   const rhythmScene = hyleeContext ? rhythmSceneFor(direction?.id, game.player.intimacy) : undefined;
-  // Fiches personnages (lot 1 : Bellirith) : le jeu lit les séquences de la route choisie, telles que le joueur les lit.
-  const rhythmAnchor = bellirithContext ? rhythmAnchorFor(character.id, direction?.id, game.player.sex) : undefined;
+  // Fiches personnages (Bellirith, Allenna, Lineva) : le jeu lit les séquences de la route choisie, telles que le joueur les lit.
+  const rhythmAnchor = !hyleeContext ? rhythmAnchorFor(character.id, direction?.id, game.player.sex) : undefined;
   const rhythmKit: RhythmKit | undefined = useMemo(() => (rhythmAnchor && directionSequence.length
     ? buildRhythmKit(rhythmAnchor, directionSequence, direction && "text" in direction ? direction.text : character.name, game.player.intimacy)
     : undefined), [rhythmAnchor, directionSequence, game.player.intimacy]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -7158,11 +7192,12 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
         : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   useLayoutEffect(() => {
     // Accès direct (mode développeur) à une scène des fiches : la route choisie s'ouvre sur le jeu, en souvenir.
-    if (!modal.rhythm || !modal.rhythmRoute || !bellirithContext) return;
+    if (!modal.rhythm || !modal.rhythmRoute || hyleeContext) return;
     const route = directionChoices.find((entry) => entry.id === modal.rhythmRoute);
     const anchor = rhythmAnchorFor(character.id, modal.rhythmRoute, game.player.sex);
-    if (!route || !anchor || !("chapters" in route)) return;
-    const sequence = withSoloIntimateMoods(route.chapters[game.player.intimacy === "suggestif" ? "suggestif" : "explicite"], character.id, route.id);
+    if (!route || !anchor) return;
+    const mode = game.player.intimacy === "suggestif" ? "suggestif" : "explicite";
+    const sequence = withSoloIntimateMoods(directionChaptersFor(route, mode), character.id, route.id);
     setDirection(route);
     setDirectionSequence(sequence);
     setDirectionChapter(anchor.phases[0].chapter - 1);
@@ -7279,7 +7314,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
     }
     if (result.quality === "tatonnement" && !result.auto && !modal.replay && kit.profile.relationPenalty && !rhythmRelationApplied.current) {
       rhythmRelationApplied.current = true;
-      onRelation?.(kit.character, kit.profile.relationPenalty);
+      for (const [id, delta] of Object.entries(kit.profile.relationPenalties || { [kit.character]: kit.profile.relationPenalty })) if (delta) onRelation?.(id, delta);
     }
     const bubble = kit.scene.conclusions[result.quality].lines;
     if (kit.returnChapter < directionSequence.length) {
@@ -7297,12 +7332,16 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
     beginSegment("approach-lines", choice.lines);
   }
 
+  function directionChaptersFor(choice: IntimacyDirectionChoice, mode: Intimacy) {
+    return (bellirithContext || hyleeContext || remeriiContext || naiahContext || valurnContext || modal.home) && "chapters" in choice
+      ? choice.chapters[mode]
+      : directionChapters(character.id, choice.id, mode, game.player.sex, modal.dateId);
+  }
+
   function chooseDirection(choice: IntimacyDirectionChoice) {
     rollback.clear();
     setDirection(choice);
-    const chapters = (bellirithContext || hyleeContext || remeriiContext || naiahContext || valurnContext || modal.home) && "chapters" in choice
-      ? choice.chapters[game.player.intimacy]
-      : directionChapters(character.id, choice.id, game.player.intimacy, game.player.sex, modal.dateId);
+    const chapters = directionChaptersFor(choice, game.player.intimacy);
     const intimateChapters = withSoloIntimateMoods(chapters, character.id, choice.id);
     setDirectionSequence(intimateChapters);
     setDirectionChapter(0);
@@ -7341,10 +7380,11 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
     surface: modal.home ? "home" : "route",
     step: step === "rhythm" ? "direction-lines" : step,
     chapter: step === "rhythm" ? (!rhythmScene && rhythmKit ? rhythmKit.start : RHYTHM_VISUAL_CHAPTER) : directionChapter,
+    // Pendant le jeu d'une fiche, la phase visuelle suit la première séquence jouée (comme le chapitre ci-dessus).
     narrativePhase: character.id === "lineva" && modal.dateId?.startsWith("date-lineva-")
-      ? linevaDateIntimacyPhase(directionChapter)
+      ? linevaDateIntimacyPhase(step === "rhythm" && rhythmKit ? rhythmKit.start : directionChapter)
       : character.id === "allenna" && modal.dateId?.startsWith("date-allenna-")
-        ? allennaDateIntimacyPhase(directionChapter)
+        ? allennaDateIntimacyPhase(step === "rhythm" && rhythmKit ? rhythmKit.start : directionChapter)
         : hyleeContext
           ? hyleeDateIntimacyPhase(step === "rhythm" ? RHYTHM_VISUAL_CHAPTER : directionChapter)
           : remeriiContext
@@ -7382,9 +7422,9 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
   </section>;
 }
 
-type GroupIntimacyStep = "opening" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
+type GroupIntimacyStep = "opening" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "rhythm" | "ending" | "done";
 
-function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { modal: GroupIntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void }) {
+function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelation }: { modal: GroupIntimacyModalState; game: GameState; onFinish: (memory: string) => void; onStop: () => void; onRelation?: (character: string, delta: number) => void }) {
   const date = groupIntimacyContextById(modal.groupDateId)!;
   const first = CHARACTERS.find((entry) => entry.id === date.characters[0])!;
   const second = CHARACTERS.find((entry) => entry.id === date.characters[1])!;
@@ -7401,14 +7441,26 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
   const [directionChoices] = useState(() => shuffledChoices(groupIntimacyRoutes(date.id, game.player.sex), `${date.id}:${game.player.sex}:directions:${game.player.name}`));
+  // Jeu de rythme à trois (lot 6, Allenna et Lineva) : relais de sommets, en Explicite ou Suggestif.
+  const rhythmAnchor = direction ? rhythmAnchorFor("allenna-lineva", direction.id, game.player.sex) : undefined;
+  const rhythmKit: RhythmKit | undefined = useMemo(() => (rhythmAnchor && directionSequence.length
+    ? buildRhythmKit(rhythmAnchor, directionSequence, direction?.text || date.title, game.player.intimacy)
+    : undefined), [rhythmAnchor, directionSequence, game.player.intimacy]); // eslint-disable-line react-hooks/exhaustive-deps
+  const rhythmRelationApplied = useRef(false);
+  const [rhythmMoods, setRhythmMoods] = useState<Record<string, string>>({});
+  const onRhythmMood = (mood: string) => {
+    // L'humeur va au sprite de la personne dont c'est l'expression (une humeur commune va aux deux).
+    const owners = [first.id, second.id].filter((id) => (INTIMATE_SPRITE_MOODS[id as keyof typeof INTIMATE_SPRITE_MOODS] as readonly string[] | undefined)?.includes(mood));
+    if (owners.length) setRhythmMoods((current) => ({ ...current, ...Object.fromEntries(owners.map((id) => [id, mood])) }));
+  };
   const currentLine = lines[lineIndex];
   const speakingIds = currentLine ? speakerCharacterIds(currentLine.speaker, [first.id, second.id]) : [];
   const firstSpeaking = speakingIds.includes(first.id);
   const secondSpeaking = speakingIds.includes(second.id);
   const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
   const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
-  const firstIntimateMood = currentLine?.intimateMoods?.[first.id] || "soft";
-  const secondIntimateMood = currentLine?.intimateMoods?.[second.id] || "soft";
+  const firstIntimateMood = step === "rhythm" ? rhythmMoods[first.id] || "soft" : currentLine?.intimateMoods?.[first.id] || "soft";
+  const secondIntimateMood = step === "rhythm" ? rhythmMoods[second.id] || "soft" : currentLine?.intimateMoods?.[second.id] || "soft";
   const rollback = useRollback<IntimacyRollback<GroupIntimacyStep>>();
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -7435,6 +7487,13 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     else if (step === "direction-lines") {
       if (directionChapter < directionSequence.length - 1) {
         const nextChapter = directionChapter + 1;
+        if (rhythmKit && nextChapter === rhythmKit.start) {
+          rollback.clear();
+          setLines([]);
+          setLineIndex(0);
+          setStep("rhythm");
+          return;
+        }
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
       } else if (manualGroupIntimacy) setStep("done");
@@ -7446,6 +7505,28 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     rollback.clear();
     setAttunementScore((score) => score + option.score);
     beginSegment("attunement-lines", option.lines);
+  }
+
+  /** Sortie du jeu à trois : comme une fiche seule (bulle de fin, reprise du texte), relation par personne. */
+  function leaveKitRhythm(kit: RhythmKit, result?: RhythmResult) {
+    rollback.clear();
+    if (!result) {
+      setDirectionChapter(kit.start);
+      beginSegment("direction-lines", directionSequence[kit.start] || []);
+      return;
+    }
+    if (result.quality === "tatonnement" && !result.auto && !modal.replay && !rhythmRelationApplied.current) {
+      rhythmRelationApplied.current = true;
+      for (const [id, delta] of Object.entries(kit.profile.relationPenalties || {})) if (delta) onRelation?.(id, delta);
+    }
+    const bubble = kit.scene.conclusions[result.quality].lines;
+    if (kit.returnChapter < directionSequence.length) {
+      setDirectionChapter(kit.returnChapter);
+      beginSegment("direction-lines", [...bubble, ...directionSequence[kit.returnChapter]]);
+    } else {
+      setDirectionChapter(directionSequence.length - 1);
+      beginSegment(manualGroupIntimacy ? "direction-lines" : "ending", [...bubble, ...(manualGroupIntimacy ? [] : groupIntimacyEnding(date))]);
+    }
   }
 
   function chooseDirection(choice: GroupIntimacyRoute) {
@@ -7464,7 +7545,20 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     setDirectionSequence(sequence);
     setDirectionChapter(0);
     beginSegment("direction-lines", sequence[0]);
+    return sequence;
   }
+  useLayoutEffect(() => {
+    // Accès direct (mode développeur) : la route choisie s'ouvre sur le jeu à trois, en souvenir.
+    if (!modal.rhythm || !modal.rhythmRoute) return;
+    const route = directionChoices.find((entry) => entry.id === modal.rhythmRoute);
+    const anchor = rhythmAnchorFor("allenna-lineva", modal.rhythmRoute, game.player.sex);
+    if (!route || !anchor) return;
+    chooseDirection(route);
+    const phases = game.player.intimacy === "suggestif" && anchor.suggestif ? anchor.suggestif.phases : anchor.phases;
+    setDirectionChapter(phases[0].chapter - 1);
+    setLines([]);
+    setStep("rhythm");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isChoice = step === "attunement-choice" || step === "direction-choice";
   const isDone = step === "done";
@@ -7488,8 +7582,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const intimateVisual = groupIntimateVisualState({
     pairId: date.id,
     mode: game.player.intimacy,
-    step,
-    chapter: directionChapter,
+    step: step === "rhythm" ? "direction-lines" : step,
+    // Pendant le jeu, l'image suit la première séquence jouée, jamais avant la révélation écrite.
+    chapter: step === "rhythm" && rhythmKit ? Math.max(rhythmKit.start, direction?.progression?.revealChapter ?? 0) : directionChapter,
     revealChapter: direction?.progression?.revealChapter,
     postOrgasmChapter: direction?.progression?.postOrgasmChapter,
   });
@@ -7498,7 +7593,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   const useSecondIntimateSprite = isIntimateGroupContext(date.id) && hasIntimateSprites(second.id) && intimateVisual.useIntimateSprites;
   const useIntimateSprites = useFirstIntimateSprite || useSecondIntimateSprite;
 
-  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""} ${step === "rhythm" && rhythmKit?.scene.suggestive ? "rythme-suggestif" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
       <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} onLoad={useFirstIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
@@ -7512,6 +7607,10 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
     </button>}
     {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester simplement proches et terminer la soirée ici</span></button></div>}
     {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{hnManual ? `Trois façons de jouer la revanche avec ${first.name} et ${second.name} : chaque route a sa règle, ses alliances et sa chute.` : naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester enlacé·es et clore la scène ici</span></button></div>}
+    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${modal.replay ? "souvenir" : "chronique"}`} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} format={(text) => replacePlayer(text, game.player)} onMood={onRhythmMood}
+      relationNote={!modal.replay ? rhythmKit.bubbles.relationNote : undefined}
+      onFinish={(result) => { logChoice(`${rhythmKit.scene.title} · ${rhythmKit.scene.conclusions[result.quality].title} (${Math.round(result.accuracy * 100)} %)`); leaveKitRhythm(rhythmKit, result); }}
+      onSkip={() => leaveKitRhythm(rhythmKit)} onLeave={onStop} />}
     {isDone && <div className="intimacy-complete"><p className="eyebrow">{modal.replay ? "Fin du souvenir" : "Trois places sont restées entières"}</p><h3>{direction?.text || "Un moment partagé"}</h3><p>{modal.replay ? "Ce souvenir peut être quitté sans modifier la chronique." : "Le rendez-vous, le mini-jeu et la route choisie rejoignent les souvenirs communs de ces trois personnes."}</p><button type="button" className="btn principal primary-action" onClick={() => onFinish(`accord-${attunementScore}|${direction?.id || "direction"}`)}>{modal.replay ? "Quitter le souvenir" : "Continuer la chronique"}</button></div>}
     {backlogOpen && <SceneBacklog title={intimacyTitle} backlog={backlog} backlogRef={backlogRef} onClose={() => setBacklogOpen(false)} />}
   </section>;
@@ -8017,7 +8116,7 @@ function GameModal({ onRhythmRelation, modal, game, onClose, onActivityClose, bu
     return <InteractiveIntimacyModal key={`${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onIntimacyClose(true, memory)} onStop={() => onIntimacyClose(false)} onRelation={onRhythmRelation} />;
   }
   if (modal.kind === "group-intimacy") {
-    return <InteractiveGroupIntimacyModal key={`${modal.groupDateId}:${game.player.sex}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onGroupIntimacyClose(true, memory)} onStop={() => onGroupIntimacyClose(false)} />;
+    return <InteractiveGroupIntimacyModal key={`${modal.groupDateId}:${game.player.sex}:${modal.replay ? "replay" : "live"}`} modal={modal} game={game} onFinish={(memory) => onGroupIntimacyClose(true, memory)} onStop={() => onGroupIntimacyClose(false)} onRelation={onRhythmRelation} />;
   }
   if (modal.kind === "ritual") {
     const runes = ["✦", "◇", "◐", "⌁", "✧"];

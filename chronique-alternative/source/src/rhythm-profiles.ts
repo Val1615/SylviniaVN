@@ -21,6 +21,16 @@ export type RhythmVoiceBank = {
   groups: Partial<Record<"souffle" | "soupir" | "gemit" | "halete" | "apogee" | "bouche" | "etouffe" | "langue" | "rire", number>>;
 };
 
+/** Scènes à plusieurs : une voix par personne, désignée dans l'ancrage par sa clé (« @A », « @L »). */
+export type RhythmGroupVoice = {
+  key: string;
+  character: string;
+  bank: RhythmVoiceBank;
+  /** Ordres (vagues d'aura) seulement sur les phases de cette voix ; silence au bord sur sa première phase. */
+  aura?: boolean;
+  bord?: boolean;
+};
+
 export type RhythmProfile = {
   character: string;
   difficulty: RhythmDifficulty;
@@ -34,6 +44,8 @@ export type RhythmProfile = {
     baits?: number;
     /** Vagues d'aura : accélération brève (coups, facteur de tempo) annoncée par une pulsation une mesure avant. */
     aura?: { strokes: number; factor: number };
+    /** Lineva : les vagues d'aura (ses ordres) touchent aussi les phases à motif (mains, bouches, frottement). */
+    auraMotifs?: boolean;
     /** Silences au bord : battements de silence. */
     bord?: { beats: number };
     /** Ruptures écrites : la piste gèle (il ne faut rien toucher). Sinon, simple accalmie. */
@@ -45,6 +57,10 @@ export type RhythmProfile = {
   resistanceWeight: number;
   /** Baisse de relation (affection) sur « tâtonnement », une fois par scène, en Chronique seulement. */
   relationPenalty: number;
+  /** Scènes à plusieurs : baisse par personnage (remplace relationPenalty). */
+  relationPenalties?: Record<string, number>;
+  /** Scènes à plusieurs : banques de voix, la première sert par défaut. */
+  voices?: RhythmGroupVoice[];
   /** Durée maximale d'affichage d'une phrase du texte (ms) : les séquences écrites sont plus longues que les bulles. */
   captionMaxMs: number;
   /** Humeurs du sprite intime par geste. */
@@ -64,12 +80,56 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "teasing", bouche: "hungry", langue: "sultry", frottement: "inviting", penetration: "smug", interlude: "haughty", rire: "smug" },
   },
+  allenna: {
+    character: "allenna",
+    // Doux : elle avance par hésitations et revanches, jamais par pièges.
+    difficulty: "doux",
+    bpm: { main: 58, bouche: 64, langue: 74, frottement: 66, penetration: [52, 70, 90], ramp: [116, 136] },
+    palette: { vive: "96,168,128", profonde: "150,90,50" },
+    voice: { dir: "allenna", groups: { souffle: 4, soupir: 3, gemit: 7, apogee: 2, bouche: 4 } },
+    behaviours: { bord: { beats: 4 } },
+    resistanceWeight: 0,
+    relationPenalty: 0,
+    captionMaxMs: 10000,
+    moods: { main: "shy", bouche: "seductive", langue: "troubled", frottement: "soft", penetration: "seductive", interlude: "soft", rire: "soft" },
+  },
+  lineva: {
+    character: "lineva",
+    // Normal, tempo vif : la capitaine donne des ordres (vagues d'aura annoncées) et ne ralentit jamais.
+    difficulty: "normal",
+    bpm: { main: 70, bouche: 80, langue: 92, frottement: 78, penetration: [70, 94, 118], ramp: [144, 166] },
+    palette: { vive: "60,120,200", profonde: "20,40,80" },
+    voice: { dir: "lineva", groups: { souffle: 3, soupir: 2, gemit: 6, apogee: 2 } },
+    behaviours: { aura: { strokes: 6, factor: 1.2 }, auraMotifs: true },
+    resistanceWeight: 0,
+    relationPenalty: -1,
+    captionMaxMs: 10000,
+    moods: { main: "smirk", bouche: "teasing", langue: "passionate", frottement: "passionate", penetration: "passionate", interlude: "soft", rire: "smirk" },
+  },
+  "allenna-lineva": {
+    character: "allenna-lineva",
+    // À trois : cadence de Lineva adoucie par Allenna, ses ordres sur ses phases, l'hésitation d'Allenna sur la sienne.
+    difficulty: "normal",
+    bpm: { main: 64, bouche: 72, langue: 84, frottement: 72, penetration: [60, 82, 104], ramp: [130, 152] },
+    palette: { vive: "96,168,128", profonde: "20,40,80" },
+    voice: { dir: "allenna", groups: { souffle: 4, soupir: 3, gemit: 7, apogee: 2, bouche: 4 } },
+    voices: [
+      { key: "A", character: "allenna", bank: { dir: "allenna", groups: { souffle: 4, soupir: 3, gemit: 7, apogee: 2, bouche: 4 } }, bord: true },
+      { key: "L", character: "lineva", bank: { dir: "lineva", groups: { souffle: 3, soupir: 2, gemit: 6, apogee: 2 } }, aura: true },
+    ],
+    behaviours: { aura: { strokes: 6, factor: 1.15 }, auraMotifs: true, bord: { beats: 4 } },
+    resistanceWeight: 0,
+    relationPenalty: -1,
+    relationPenalties: { allenna: 0, lineva: -1 },
+    captionMaxMs: 10000,
+    moods: { main: "soft", bouche: "seductive", langue: "passionate", frottement: "soft", penetration: "passionate", interlude: "soft", rire: "soft" },
+  },
 };
 
 /** Barème de relation validé (t232u, t233u), pour les lots à venir. */
 export const RHYTHM_RELATION_PENALTIES: Record<string, number> = { hylee: 0, allenna: 0, naiah: 0, remerii: -1, lineva: -1, valurn: -1, bellirith: -2 };
 
-/** Voix retenues (t224u à t233u), une seule par personnage. Seule la fiche Bellirith est branchée dans ce lot. */
+/** Voix retenues (t224u à t233u), une seule par personnage. Bellirith (lot 1), Allenna, Lineva et leur trio (lots 4 à 6) sont branchés. */
 export const RHYTHM_VOICES: Record<string, string> = {
   hylee: "MagicalMysticVA", bellirith: "aarrnnoo", valurn: "Teebee_Deael", lineva: "Vidrik", naiah: "DarkNightPrincess", remerii: "epanody", allenna: "guinefurrie",
 };
