@@ -245,7 +245,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       const id = `v${section}-${i}`;
       if (hits >= at && !unlockedRef.current.has(id)) {
         unlockedRef.current.add(id);
-        if (!teaseRef.current) voiceRef.current = { id, line: text.voice[i], until: nowMs + 2000 };
+        // Pendant une taquinerie, la réplique attend la fin de la bulle puis s'affiche à son tour.
+        voiceRef.current = { id, line: text.voice[i], until: Math.max(nowMs, teaseRef.current?.until || 0) + 2000 };
         if (text.voice[i].intimateMood) onMood?.(text.voice[i].intimateMood!);
       }
     });
@@ -513,11 +514,14 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const sinceApogee = apogeeRef.current ? (nowMs - apogeeAtRef.current) / 1000 : 99;
   // À l'apogée, l'écran bat une dernière fois de plus en plus lentement, puis s'apaise.
   const apogeePulse = apogeeRef.current && sinceApogee < 4 ? Math.pow(Math.abs(Math.cos(sinceApogee * Math.PI * (1.6 - sinceApogee * 0.25))), 2) * (1 - sinceApogee / 4) : 0;
-  const pulse = Math.max(hitPulse, apogeePulse);
+  // Rester au fond : tant qu'un appui long est tenu, l'interface frémit au tempo, plus fort sur l'appui final qui mène à l'apogée.
+  const held = holdRef.current;
+  const holdPulse = playing && held && !apogeeRef.current ? (held.note.kind === "final" ? 0.45 + 0.4 * clamp01((t - held.note.time) / held.note.duration) : 0.3) * Math.pow(Math.abs(Math.sin(Math.PI * (t - held.note.time) / (held.note.kind === "final" ? held.note.beat * 0.75 : held.note.beat))), 2) : 0;
+  const pulse = Math.max(hitPulse, apogeePulse, holdPulse);
   const halo = (0.25 + 0.75 * ardour) * fx;
   const bat = clamp01((ardour - 0.18) / 0.82) * fx;
-  const vignette = clamp01((ardour - 0.3) / 0.7) * fx;
-  const zoomLevel = prefs.zoom && prefs.effects === "plein" ? clamp01((ardour - 0.4) / 0.6) : 0;
+  const vignette = clamp01((ardour - 0.22) / 0.6) * fx;
+  const zoomLevel = prefs.zoom && prefs.effects === "plein" ? clamp01((ardour - 0.35) / 0.55) : 0;
   const zoom = playing ? zoomLevel * pulse * 0.022 + (apogeeRef.current ? apogeePulse * 0.012 : 0) : 0;
   const tier = ardour >= 0.75 ? 3 : ardour >= 0.5 ? 2 : ardour >= 0.25 ? 1 : 0;
   useEffect(() => {

@@ -121,7 +121,7 @@
 .effets-reduit .rythme-onde { --portee: 1.4; }
 @keyframes rythme-onde { from { opacity: .95; transform: scale(1); } to { opacity: 0; transform: scale(var(--portee)); } }
 /* Vignette rose-rouge sur les bords : absente au début, elle bat de plus en plus fort ; le centre (55 %) reste transparent */
-.rythme-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: calc(var(--vignette, 0) * (.3 + .7 * var(--pulse, 0))); background: radial-gradient(ellipse 72% 68% at 50% 46%, transparent 55%, rgba(var(--rouge-r), .22) 76%, rgba(var(--rose-r), .5) 92%, rgba(255, 170, 190, .62) 100%); mix-blend-mode: screen; }
+.rythme-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: calc(var(--vignette, 0) * (.3 + .7 * var(--pulse, 0))); background: radial-gradient(ellipse 72% 68% at 50% 46%, transparent 55%, rgba(var(--rouge-r), .3) 75%, rgba(var(--rose-r), .6) 91%, rgba(255, 170, 190, .72) 100%); mix-blend-mode: screen; }
 /* Jugements plus marqués avec l'ardeur */
 .rythme-juge { font-size: calc(.9rem * (1 + .45 * var(--ardeur, 0))); }
 .rythme-juge.parfait { text-shadow: 0 0 calc(10px + 14px * var(--ardeur, 0)) #ff6f96, 0 0 2px #fff; }

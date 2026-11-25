@@ -59,19 +59,40 @@ async def main():
     await dev(); await snap("00-dev")
     await p.locator("#caDevRythme").click(); await p.wait_for_timeout(1200)
     report["checks"]["setup"]=await p.locator(".rythme-panneau h3").inner_text()
+    report["checks"]["reglages"]=await p.evaluate("()=>[...document.querySelectorAll('.rythme-panneau label, .rythme-panneau .rythme-choix button')].map(e=>e.innerText.replace(/\\s+/g,' ').trim())")
     await snap("01-reglages")
-    miss=[3,9,17,30,44,61,80,101,122]
+    # Cadence vue par le navigateur : un coup par battement, tempo stable par position, accélération par paliers.
+    report["checks"]["cadence"]=await p.evaluate("""()=>{const n=window.__sylviniaRythme.notes(); const out=[]; for(let s=0;s<4;s++){const own=n.filter(x=>x.section===s&&x.kind!=='slide'); const b=own[1].beat; out.push({position:s, coups:own.length, battement:+b.toFixed(3), cpm:Math.round(60/b), debut:+own[0].time.toFixed(2)});} return {positions:out, total:n.length, fin:+(n.at(-1).time+n.at(-1).duration).toFixed(2), montee:n.filter(x=>x.section===3).slice(-6).map(x=>Math.round(60/x.beat))};}""")
+    starts=[x["debut"] for x in report["checks"]["cadence"]["positions"]]; END=report["checks"]["cadence"]["fin"]
+    notes=await p.evaluate("()=>window.__sylviniaRythme.notes().map(n=>[n.time,n.kind,n.section])")
+    def after_hit(x):
+        # premier coup simple après x : la capture tombe juste après la frappe, au plus fort de la pulsation
+        for tm,k,sec in notes:
+            if tm>=x and k=="tap": return tm+0.06
+        return x
+    miss=[3,9,17,30,44,61,80,98]
     await p.locator(".rythme-actions button:has-text('Commencer')").click()
     await p.evaluate(BOT, {"miss":miss,"touch":TOUCH})
-    await wait_t(-2.5); await snap("02-appel")
-    await wait_t(7.4); await snap("03-section1")
+    await wait_t(-2.2); await snap("02-decompte")
+    levels=[]
+    async def level(tag):
+        st=await p.evaluate("""()=>{const r=window.__sylviniaRythme; const l=document.querySelector('.rythme-layer'); const cs=getComputedStyle(document.querySelector('.rythme-vignette')); return {t:+r.time().toFixed(2), ardeur:+r.ardour().toFixed(2), palier:l.dataset.ardeur, jauge:l.style.getPropertyValue('--jauge'), pulse:+l.style.getPropertyValue('--pulse'), vignette:+(+cs.opacity).toFixed(3), zoom:r.zoom(), sfx:r.sfx(), musique:r.music()};}""")
+        st["tag"]=tag; levels.append(st); return st
+    await wait_t(after_hit(5.0)); await level("debut"); await snap("03-jauge-basse")
     for i in range(80):
         if await p.evaluate("()=>window.__sylviniaRythme.tease()"): break
         await p.wait_for_timeout(100)
     await p.wait_for_timeout(250); await snap("03b-taquinerie")
-    await wait_t(21.5); await snap("04-section2-glisse")
-    await wait_t(30); await snap("05-section2-palier")
-    await wait_t(41); await snap("06-section3")
+    for i in range(80):
+        if await p.evaluate("()=>window.__sylviniaRythme.voice()"): break
+        await p.wait_for_timeout(100)
+    report["checks"]["voix_vue"]=await p.evaluate("()=>window.__sylviniaRythme.voice()")
+    report["checks"]["voix_bulle"]=await p.locator(".rythme-voix").count()
+    await snap("03c-replique")
+    await wait_t(starts[1]-0.2); await snap("04-section2-glisse")
+    await wait_t(after_hit(starts[1]+9)); await level("position2"); await snap("05-jauge-quart")
+    report["checks"]["ligne_cadence"]=await p.evaluate("()=>window.__sylviniaRythme.strokeLine()")
+    await wait_t(after_hit(starts[2]+4)); await level("position3"); await snap("06-jauge-milieu")
     report["checks"]["taquineries_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
     # Pause puis « Reprendre plus tard »
     await p.keyboard.press("Escape"); await p.wait_for_timeout(500)
@@ -93,19 +114,34 @@ async def main():
     await p.locator(".rythme-actions button:has-text('Reprendre à')").click(); await p.wait_for_timeout(300)
     after=await p.evaluate("()=>({t:window.__sylviniaRythme.time(), j:window.__sylviniaRythme.judgements()})")
     report["checks"]["resume_exact"]={"time_saved":round(before["t"],3),"time_resumed":round(after["t"],3),"same_judgements":after["j"]==before["j"]}
-    await p.evaluate(BOT, {"miss":[70,95,118],"touch":TOUCH})
-    await wait_t(58); await snap("09-section3-intense")
-    await wait_t(64); await snap("10-face-a-face")
-    await wait_t(73.2); await snap("11-apogee-tenue")
-    await wait_t(75.95); await p.wait_for_timeout(150)
+    await p.evaluate(BOT, {"miss":[70,90],"touch":TOUCH})
+    await wait_t(after_hit(starts[2]+12)); await level("position3-fin"); await snap("09-jauge-trois-quarts")
+    await wait_t(after_hit(starts[3]+6)); await level("face-a-face"); await snap("10-face-a-face")
+    # Effets réduits : même moment de jeu, réactions atténuées et zoom coupé
+    await p.keyboard.press("Escape"); await p.wait_for_timeout(400)
+    await p.locator(".rythme-choix.petit button:has-text('Effets réduits')").click(); await p.wait_for_timeout(200)
+    await snap("10b-pause-reglages")
+    await p.locator(".rythme-actions button:has-text('Reprendre')").first.click()
+    await p.wait_for_timeout(3300)
+    tnow=await t(); await wait_t(after_hit(tnow+0.3)); await level("effets-reduits"); await snap("10c-effets-reduits")
+    await p.keyboard.press("Escape"); await p.wait_for_timeout(400)
+    await p.locator(".rythme-choix.petit button:has-text('Effets pleins')").click(); await p.wait_for_timeout(200)
+    await p.locator(".rythme-actions button:has-text('Reprendre')").first.click(); await p.wait_for_timeout(3300)
+    final_t=[tm for tm,k,sec in notes if k=="final"][0]
+    await wait_t(after_hit(final_t-1.0)); await level("montee"); await snap("11-montee-finale")
+    await wait_t(final_t+2.2); await level("apogee-tenue"); await snap("11b-apogee-tenue")
+    await wait_t(END+0.02); await p.wait_for_timeout(120)
     report["checks"]["apogee"]=await p.evaluate("()=>({flag:window.__sylviniaRythme.apogee(), classe:document.querySelector('.rythme-layer').classList.contains('apogee'), voile:getComputedStyle(document.querySelector('.rythme-apogee-voile')).opacity})")
+    await level("apogee"); await snap("12-apogee-eclat")
     report["checks"]["taquineries"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
-    await snap("12-apogee-eclat")
+    report["checks"]["sons"]=await p.evaluate("()=>window.__sylviniaRythme.sfx()")
+    report["levels"]=levels
     await p.wait_for_selector(".rythme-panneau.resultat", timeout=15000)
     report["checks"]["result"]=await p.locator(".rythme-panneau.resultat").inner_text()
     await snap("13-bilan")
     await p.locator(".rythme-actions button:has-text('Continuer')").click(); await p.wait_for_timeout(700)
     report["checks"]["conclusion_line"]=await p.locator(".dialogue-box p").first.inner_text()
+    report["checks"]["zoom_nettoye"]=await p.evaluate("()=>document.querySelector('.interactive-intimacy')?.style.getPropertyValue('--rythme-zoom')||''")
     await snap("14-conclusion")
     for i in range(8):
         if await p.locator(".intimacy-cg").count(): break
