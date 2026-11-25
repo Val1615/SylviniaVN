@@ -7056,6 +7056,96 @@
    ]
   },
   {
+   "key": "rhythm-bubbles-hylee",
+   "label": "Hylee · rhythm bubbles",
+   "group": "Hylee",
+   "hash": "ecd625d3ea82ed4a",
+   "scenes": 1,
+   "counts": {
+    "s": 32,
+    "t": 0,
+    "n": 0,
+    "a": 15
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-hylee:a11e9iz8",
+     "path": "HYLEE_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a1v3jg1d",
+     "path": "HYLEE_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a0jv54cj",
+     "path": "HYLEE_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a17nhocp",
+     "path": "HYLEE_RHYTHM_BUBBLES.voice.frottement",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a009ypwe",
+     "path": "HYLEE_RHYTHM_BUBBLES.voice.penetration",
+     "len": 5
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a074jcfe",
+     "path": "HYLEE_RHYTHM_BUBBLES.teases",
+     "len": 5
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a1rxuq2a",
+     "path": "HYLEE_RHYTHM_BUBBLES.resisted",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a0jh10c6",
+     "path": "HYLEE_RHYTHM_BUBBLES.ceded",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a01g6jmb",
+     "path": "HYLEE_RHYTHM_BUBBLES.bordHeld",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a0wmoh55",
+     "path": "HYLEE_RHYTHM_BUBBLES.bordBroken",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a1v8p15u",
+     "path": "HYLEE_RHYTHM_BUBBLES.aura",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a0ldjtp1",
+     "path": "HYLEE_RHYTHM_BUBBLES.call",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a1w3y3j5",
+     "path": "HYLEE_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a056550i",
+     "path": "HYLEE_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-hylee:a1gn299t",
+     "path": "HYLEE_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    }
+   ]
+  },
+  {
    "key": "rhythm-bubbles-lineva",
    "label": "Lineva · rhythm bubbles",
    "group": "Lineva",
