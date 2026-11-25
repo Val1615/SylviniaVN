@@ -130,6 +130,19 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "soft", bouche: "seductive", langue: "passionate", frottement: "soft", penetration: "passionate", interlude: "soft", rire: "soft" },
   },
+  hylee: {
+    character: "hylee",
+    // Doux (référence) : cadences du prototype, sa voix unique (MagicalMysticVA) à la racine du dossier rythme, aucun piège.
+    difficulty: "doux",
+    bpm: { main: 64, bouche: 72, langue: 84, frottement: 70, penetration: [56, 76, 98], ramp: [122, 150] },
+    palette: { vive: "231,101,136", profonde: "200,40,70" },
+    voice: { dir: "", groups: { souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, bouche: 4, etouffe: 5, langue: 4 } },
+    behaviours: {},
+    resistanceWeight: 0,
+    relationPenalty: 0,
+    captionMaxMs: 10000,
+    moods: { main: "teasing", bouche: "seductive", langue: "tender", frottement: "seductive", penetration: "seductive", interlude: "soft", rire: "teasing" },
+  },
   remerii: {
     character: "remerii",
     // Normal, métronomique : elle mesure votre régularité plus que votre perfection, retient sa voix dehors et vous garde au fond.
@@ -148,7 +161,7 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
 /** Barème de relation validé (t232u, t233u), pour les lots à venir. */
 export const RHYTHM_RELATION_PENALTIES: Record<string, number> = { hylee: 0, allenna: 0, naiah: 0, remerii: -1, lineva: -1, valurn: -1, bellirith: -2 };
 
-/** Voix retenues (t224u à t233u), une seule par personnage. Bellirith (lot 1), Allenna, Lineva et leur trio (lots 4 à 6), Remerii (lot 7) sont branchés. */
+/** Voix retenues (t224u à t233u), une seule par personnage. Bellirith (lot 1), Allenna, Lineva et leur trio (lots 4 à 6), Remerii (lot 7), Hylee (lot 8, prototype réaligné) sont branchés. */
 export const RHYTHM_VOICES: Record<string, string> = {
   hylee: "MagicalMysticVA", bellirith: "aarrnnoo", valurn: "Teebee_Deael", lineva: "Vidrik", naiah: "DarkNightPrincess", remerii: "epanody", allenna: "guinefurrie",
 };

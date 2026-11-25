@@ -515,16 +515,18 @@ const RHYTHM_DEV_ROWS: [character: string, title: string, level: string][] = [
   ["lineva", "Lineva (lot 5)", "Normal, tempo vif,"],
   ["allenna-lineva", "Allenna et Lineva, relais de sommets (lot 6)", "Normal"],
   ["remerii", "Remerii (lot 7)", "Normal"],
+  ["hylee", "Hylee (lot 8)", "Doux"],
 ];
 const RHYTHM_DEV_PLACES: Record<string, string> = {
   "date-allenna-field": "Terrain", "date-allenna-terrace": "Terrasse", "date-lineva-ramparts": "Remparts", "date-lineva-quarters": "Quartiers",
   "home-allenna": "Logis", "home-lineva": "Logis", "group-date-allenna-lineva-training": "Entraînement", "group-date-allenna-lineva-basin": "Bassin", "group-date-allenna-lineva-home": "Logis",
   "date-remerii-lanterns": "Lanternes", "date-remerii-observatory": "Observatoire", "home-remerii": "Logis",
+  "date-hylee-glade": "Clairière", "date-hylee-lake": "Lac", "home-hylee": "Logis",
 };
 function rhythmDevLabel(anchor: { character: string; context: string; routeId: string }) {
   if (anchor.character === "bellirith") return `${BELLIRITH_DEV_INTIMACIES.find((entry) => entry.dateId === anchor.context)?.label || anchor.context}${anchor.context === "date-bellirith-final" ? ` · ${anchor.routeId === "bellirith-duel-steal" ? "voler" : "retourner"}` : ""}`;
   const place = RHYTHM_DEV_PLACES[anchor.context] || anchor.context;
-  const rest = anchor.routeId.replace(`${anchor.context}-`, "").replace(/^(homme|femme)-/, "").replace(/-(homme|femme)$/, "").replace(/^home-\w+-(homme|femme)-/, "").replace(/-/g, " ");
+  const rest = anchor.routeId.replace(`${anchor.context}-`, "").replace(/^(homme|femme)-/, "").replace(/-(homme|femme)$/, "").replace(/^home-\w+-(homme|femme)-/, "").replace(/^hylee-\w+-(homme|femme)-/, "").replace(/-/g, " ");
   return `${place} · ${rest}`;
 }
 type DevIntimacyTarget =
@@ -5446,7 +5448,7 @@ export default function Home() {
         setModal({ kind: "group-intimacy", groupDateId: date.id, background: homeBackground || spotById(date.spot)?.background, replay: true, rhythm: true, rhythmRoute: target.routeId });
         return;
       }
-      if (target.context === "home-allenna" || target.context === "home-lineva" || target.context === "home-remerii") {
+      if (target.context === "home-allenna" || target.context === "home-lineva" || target.context === "home-remerii" || target.context === "home-hylee") {
         setModal({ kind: "intimacy", character: target.character, home: true, background: propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/bedroom.webp", replay: true, rhythm: true, rhythmRoute: target.routeId });
         return;
       }
@@ -5457,8 +5459,8 @@ export default function Home() {
       return;
     }
     if (target.kind === "hylee-rhythm") {
-      // Prototype du jeu de rythme : Hylee au logis, mood audacieuse, ouvert directement sur le jeu, en souvenir (aucune mutation).
-      setModal({ kind: "intimacy", character: "hylee", home: true, background: propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/bedroom.webp", replay: true, rhythm: true });
+      // Ancien prototype, réaligné sur le texte (lot 8) : Hylee au logis, mood audacieuse, sur la fiche de Hylee, en souvenir (aucune mutation).
+      setModal({ kind: "intimacy", character: "hylee", home: true, background: propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/bedroom.webp", replay: true, rhythm: true, rhythmRoute: `hylee-home-${game.player.sex === "homme" ? "homme" : "femme"}-audacieuse` });
       return;
     }
     if (target.kind === "bellirith-home") { setModal({ kind: "intimacy", character: "bellirith", home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-home"], replay: true }); return; }
@@ -6970,7 +6972,7 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
 
     <h3>Prototype · jeu de rythme intime</h3>
     <div className="dev-row">
-      <span className="dev-help">{HYLEE_HOME_RHYTHM.title} : Hylee au logis, mood audacieuse, parcours homme. S’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.{game.player.intimacy === "suggestif" ? " Version Suggestif : image voilée, textes adoucis, sons neutres." : game.player.intimacy !== "explicite" ? " Réglez d’abord l’intimité sur Explicite ou Suggestif dans les options." : ""}</span>
+      <span className="dev-help">{HYLEE_HOME_RHYTHM.title} : Hylee au logis, mood audacieuse, réalignée sur son texte (lot 8, même jeu que sa fiche ci-dessous, pour le corps choisi). S’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.{game.player.intimacy === "suggestif" ? " Version Suggestif : image voilée, textes adoucis, sons neutres." : game.player.intimacy !== "explicite" ? " Réglez d’abord l’intimité sur Explicite ou Suggestif dans les options." : ""}</span>
       <button type="button" id="caDevRythme" disabled={!onOpenIntimacy || (game.player.intimacy !== "explicite" && game.player.intimacy !== "suggestif")} onClick={() => onOpenIntimacy?.({ kind: "hylee-rhythm" })}>Lancer le jeu de rythme</button>
     </div>
 
@@ -7160,15 +7162,16 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
   const [attunementScore, setAttunementScore] = useState(0);
   // Jeu de rythme (prototype) : remplace la séquence « climax » d'une seule route, en Explicite.
   const [rhythmMood, setRhythmMood] = useState("seductive");
-  const rhythmScene = hyleeContext ? rhythmSceneFor(direction?.id, game.player.intimacy) : undefined;
+  // Prototype de Hylee réaligné sur son texte (lot 8) : toutes ses scènes passent désormais par les fiches.
+  const rhythmScene = undefined as ReturnType<typeof rhythmSceneFor>;
   // Fiches personnages (Bellirith, Allenna, Lineva) : le jeu lit les séquences de la route choisie, telles que le joueur les lit.
-  const rhythmAnchor = !hyleeContext ? rhythmAnchorFor(character.id, direction?.id, game.player.sex) : undefined;
+  const rhythmAnchor = rhythmAnchorFor(character.id, direction?.id, game.player.sex);
   const rhythmKit: RhythmKit | undefined = useMemo(() => (rhythmAnchor && directionSequence.length
     ? buildRhythmKit(rhythmAnchor, directionSequence, direction && "text" in direction ? direction.text : character.name, game.player.intimacy)
     : undefined), [rhythmAnchor, directionSequence, game.player.intimacy]); // eslint-disable-line react-hooks/exhaustive-deps
   const rhythmRelationApplied = useRef(false);
   useLayoutEffect(() => {
-    if (!modal.rhythm || !hyleeContext) return;
+    if (!modal.rhythm || !hyleeContext || modal.rhythmRoute || !rhythmScene) return;
     const route = hyleeDateIntimacyRoutes(hyleeContext, "homme").find((entry) => entry.id === HYLEE_HOME_RHYTHM.routeId);
     if (!route) return;
     // Explicite ou Suggestif : la suite écrite reprend dans le même réglage que le jeu.
@@ -7194,7 +7197,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
         : intimacyDirections(character.id, game.player.sex, modal.dateId), `${modal.character}:${game.player.sex}:${modal.home ? "home" : modal.dateId || "route"}:directions:${game.player.name}`));
   useLayoutEffect(() => {
     // Accès direct (mode développeur) à une scène des fiches : la route choisie s'ouvre sur le jeu, en souvenir.
-    if (!modal.rhythm || !modal.rhythmRoute || hyleeContext) return;
+    if (!modal.rhythm || !modal.rhythmRoute) return;
     const route = directionChoices.find((entry) => entry.id === modal.rhythmRoute);
     const anchor = rhythmAnchorFor(character.id, modal.rhythmRoute, game.player.sex);
     if (!route || !anchor) return;
@@ -7388,9 +7391,9 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
       : character.id === "allenna" && modal.dateId?.startsWith("date-allenna-")
         ? allennaDateIntimacyPhase(step === "rhythm" && rhythmKit ? rhythmKit.start : directionChapter)
         : hyleeContext
-          ? hyleeDateIntimacyPhase(step === "rhythm" ? RHYTHM_VISUAL_CHAPTER : directionChapter)
+          ? hyleeDateIntimacyPhase(step === "rhythm" ? (rhythmKit ? rhythmKit.start : RHYTHM_VISUAL_CHAPTER) : directionChapter)
           : remeriiContext
-            ? remeriiDateIntimacyPhase(directionChapter)
+            ? remeriiDateIntimacyPhase(step === "rhythm" && rhythmKit ? rhythmKit.start : directionChapter)
             : naiahContext
               ? naiahProximityPhase(directionChapter)
             : undefined,

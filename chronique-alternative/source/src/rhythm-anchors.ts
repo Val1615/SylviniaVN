@@ -32,6 +32,7 @@ import { ALLENNA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna";
 import { LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-lineva";
 import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
 import { REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-remerii";
+import { HYLEE_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee";
 
 export type RhythmPhaseCode = "m" | "M" | "b" | "l" | "f" | "pv" | "pp" | "i";
 export type RhythmPhaseAnchor = { chapter: number; code: RhythmPhaseCode; bord: boolean; relay?: boolean; voice?: string };
@@ -129,6 +130,22 @@ const GROUP_SUGGESTIF = "3m@A 4f@L 5f@A";
  * bouche (femme) ; séquence 4, la cicatrice, rupture écrite (rien à toucher) ; séquence 5, votre bouche et vos doigts ;
  * 6 et 7 selon la position écrite (assise face à vous : elle mène ; couchés sur le côté : au plus profond ; jambes mêlées : frottement).
  */
+/*
+ * Hylee (lot 8), relecture manuelle (PLAN.md, annexe D) : séquences 3 à 7, retour 8. Le prototype (logis, audacieuse,
+ * homme) est réaligné sur son texte : plus de « dos tourné » ni de « renversée », seulement les gestes écrits.
+ */
+type HyleeMoods = Record<"joueuse" | "tendre" | "audacieuse", string>;
+const HYLEE_ROWS: [context: string, place: string, homme: HyleeMoods, femme: HyleeMoods][] = [
+  ["date-hylee-glade", "glade",
+    { joueuse: "3m 4M 5b 6pv 7pv", tendre: "3m 4M 5pp 6pp 7pp", audacieuse: "3m 4l 5pv 6pv 7pv" },
+    { joueuse: "3m 4l 5b 6f 7f", tendre: "3m 4l 5M 6f 7m", audacieuse: "3m 4l 5f 6f 7f" }],
+  ["date-hylee-lake", "lake",
+    { joueuse: "3b 4l 5b 6pv 7pv", tendre: "3m 4M 5pp 6pp 7pp", audacieuse: "3b 4M 5pv 6pv 7pv" },
+    { joueuse: "3m 4l 5b 6f 7f", tendre: "3m 4l 5m 6M 7M", audacieuse: "3m 4l 5f 6f 7f" }],
+  ["home-hylee", "home",
+    { joueuse: "3b 4M 5pv 6pv 7pv", tendre: "3b 4M 5pp 6pp 7pp", audacieuse: "3b 4M 5pv 6pv 7pv" },
+    { joueuse: "3b 4l 5b 6f 7b", tendre: "3m 4M 5m 6f 7m", audacieuse: "3m 4l 5f 6f 7m" }],
+];
 const REMERII_ROWS: Row[] = [
   ["date-remerii-lanterns", "date-remerii-lanterns-complice", "3b 4i 5l 6f 7pv", "3m 4i 5l 6f 7f", 8],
   ["date-remerii-lanterns", "date-remerii-lanterns-attentive", "3b 4i 5l 6f 7pp", "3b 4i 5l 6f 7m", 8],
@@ -176,6 +193,9 @@ export const RHYTHM_ANCHORS: RhythmAnchor[] = [
   ...REMERII_ROWS.flatMap(([context, route, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
     character: "remerii", context, routeId: `${route}-${sex}`, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
   }))),
+  ...HYLEE_ROWS.flatMap(([context, place, homme, femme]) => (["homme", "femme"] as const).flatMap((sex) => (["joueuse", "tendre", "audacieuse"] as const).map((mood): RhythmAnchor => ({
+    character: "hylee", context, routeId: `hylee-${place}-${sex}-${mood}`, sex, phases: parsePhases((sex === "homme" ? homme : femme)[mood]), returnChapter: 8,
+  })))),
 ];
 
 export function rhythmAnchorFor(character: string, routeId: string | undefined, sex: string): RhythmAnchor | undefined {
@@ -237,7 +257,7 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES };
 const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**
