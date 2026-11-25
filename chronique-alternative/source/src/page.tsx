@@ -6920,8 +6920,8 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
 
     <h3>Prototype · jeu de rythme intime</h3>
     <div className="dev-row">
-      <span className="dev-help">{HYLEE_HOME_RHYTHM.title} : Hylee au logis, mood audacieuse, parcours homme. S’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.{game.player.intimacy !== "explicite" ? " Réglez d’abord l’intimité sur Explicite dans les options." : ""}</span>
-      <button type="button" id="caDevRythme" disabled={!onOpenIntimacy || game.player.intimacy !== "explicite"} onClick={() => onOpenIntimacy?.({ kind: "hylee-rhythm" })}>Lancer le jeu de rythme</button>
+      <span className="dev-help">{HYLEE_HOME_RHYTHM.title} : Hylee au logis, mood audacieuse, parcours homme. S’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.{game.player.intimacy === "suggestif" ? " Version Suggestif : image voilée, textes adoucis, sons neutres." : game.player.intimacy !== "explicite" ? " Réglez d’abord l’intimité sur Explicite ou Suggestif dans les options." : ""}</span>
+      <button type="button" id="caDevRythme" disabled={!onOpenIntimacy || (game.player.intimacy !== "explicite" && game.player.intimacy !== "suggestif")} onClick={() => onOpenIntimacy?.({ kind: "hylee-rhythm" })}>Lancer le jeu de rythme</button>
     </div>
 
     <h3>Sylvinia Studio</h3>
@@ -7106,7 +7106,8 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     if (!modal.rhythm || !hyleeContext) return;
     const route = hyleeDateIntimacyRoutes(hyleeContext, "homme").find((entry) => entry.id === HYLEE_HOME_RHYTHM.routeId);
     if (!route) return;
-    const sequence = withSoloIntimateMoods(route.chapters.explicite, character.id, route.id);
+    // Explicite ou Suggestif : la suite écrite reprend dans le même réglage que le jeu.
+    const sequence = withSoloIntimateMoods(route.chapters[game.player.intimacy === "suggestif" ? "suggestif" : "explicite"], character.id, route.id);
     setDirection(route);
     setDirectionSequence(sequence);
     setDirectionChapter(RHYTHM_START_CHAPTER - 1);
@@ -7278,7 +7279,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const intimateCg = intimateVisual.cg;
   const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
-  return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+  return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""} ${step === "rhythm" && rhythmScene?.suggestive ? "rythme-suggestif" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} onLoad={useIntimateSprite ? markIntimateSpriteLoaded : undefined} alt={character.name} /></div>}
     <div className="dialogue-gradient" />

@@ -110,7 +110,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     return base + (performance.now() - perfStart) / 1000;
   }, []);
 
-  const sfx = () => { if (!sfxRef.current) sfxRef.current = new RhythmSfx(); return sfxRef.current; };
+  const suggestive = Boolean(scene.suggestive);
+  const sfx = () => { if (!sfxRef.current) sfxRef.current = new RhythmSfx({ suggestive }); return sfxRef.current; };
   const musicVolume = () => (prefsRef.current.mute.musique ? 0 : clamp01(volume) * prefsRef.current.musicVolume);
   const duck = (on: boolean) => window.dispatchEvent(new CustomEvent(RHYTHM_DUCK_EVENT, { detail: on }));
 
@@ -392,7 +393,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       time: () => (phaseRef.current === "play" ? now() : timeRef.current), notes: () => notesRef.current, judgements: () => [...judgementsRef.current],
       phase: () => phaseRef.current, teases: () => [...teasesRef.current], apogee: () => apogeeRef.current, caption: () => captionRef.current?.line.text || null,
       tease: () => teaseRef.current?.line.text || null, voice: () => voiceRef.current?.line.text || null, strokeLine: () => strokeLineRef.current?.line.text || null,
-      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null, neutral: sfxRef.current?.neutral ?? null, bus: sfxRef.current ? Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, sfxRef.current!.busGain(bus)])) : null }),
+      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null, neutral: sfxRef.current?.neutral ?? null, suggestive: sfxRef.current?.suggestive ?? suggestive, bus: sfxRef.current ? Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, sfxRef.current!.busGain(bus)])) : null }),
       music: () => ({ playing: Boolean(audioRef.current && !audioRef.current.paused), volume: audioRef.current?.volume ?? null, loop: audioRef.current?.loop ?? null }),
       zoom: () => Number(layerRef.current?.parentElement?.style.getPropertyValue("--rythme-zoom") || 0),
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,
@@ -652,12 +653,17 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     <details className="rythme-mixage" data-rythme-mixage="">
       <summary>Mixage audio</summary>
       <div className="rythme-mix-grille">
-        {RHYTHM_BUSES.map((bus) => <div key={bus} className={`rythme-piste-mix ${prefs.mute[bus] ? "muette" : ""}`} data-bus={bus}>
-          <span className="nom" title={mixLabels[bus][1]}>{mixLabels[bus][0]}<small>{mixLabels[bus][1]}</small></span>
-          <input type="range" min={0} max={100} step={5} aria-label={mixLabels[bus][0]} disabled={!prefs.sfx || prefs.mute[bus]} value={Math.round(prefs.mix[bus] * 100)} onChange={(event) => updatePrefs({ mix: { ...prefs.mix, [bus]: Number(event.target.value) / 100 } })} />
-          <b>{prefs.mute[bus] ? "muet" : `${Math.round(prefs.mix[bus] * 100)} %`}</b>
-          {muteButton(bus, mixLabels[bus][0])}
-        </div>)}
+        {RHYTHM_BUSES.map((bus) => {
+          // Suggestif : la voix est coupée d'office et les bruits corporels sont toujours neutres.
+          const locked = suggestive && bus === "voix";
+          const detail = suggestive && bus === "voix" ? "coupée en Suggestif" : (suggestive || prefs.neutral) && bus === "corps" ? "sons neutres" : mixLabels[bus][1];
+          return <div key={bus} className={`rythme-piste-mix ${prefs.mute[bus] || locked ? "muette" : ""} ${locked ? "verrouillee" : ""}`} data-bus={bus}>
+            <span className="nom" title={detail}>{mixLabels[bus][0]}<small>{detail}</small></span>
+            <input type="range" min={0} max={100} step={5} aria-label={mixLabels[bus][0]} disabled={!prefs.sfx || prefs.mute[bus] || locked} value={locked ? 0 : Math.round(prefs.mix[bus] * 100)} onChange={(event) => updatePrefs({ mix: { ...prefs.mix, [bus]: Number(event.target.value) / 100 } })} />
+            <b>{locked ? "coupée" : prefs.mute[bus] ? "muet" : `${Math.round(prefs.mix[bus] * 100)} %`}</b>
+            {locked ? <span className="rythme-muet verrou" title="Coupée en Suggestif" aria-hidden="true">🔒</span> : muteButton(bus, mixLabels[bus][0])}
+          </div>;
+        })}
         <div className={`rythme-piste-mix ${prefs.mute.musique || !music ? "muette" : ""}`} data-bus="musique" title={music ? "" : "Musique coupée dans les options"}>
           <span className="nom">Musique<small>{music ? "fond intime" : "coupée dans les options"}</small></span>
           <input type="range" min={0} max={100} step={5} aria-label="Musique" disabled={!music || prefs.mute.musique} value={Math.round(prefs.musicVolume * 100)} onChange={(event) => updatePrefs({ musicVolume: Number(event.target.value) / 100 })} />
@@ -665,7 +671,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
           {muteButton("musique", "Musique")}
         </div>
       </div>
-      <label className="rythme-case neutre"><input type="checkbox" checked={prefs.neutral} onChange={(event) => updatePrefs({ neutral: event.target.checked })} /> Bruits corporels neutres <small>battement sourd, percussion feutrée, tic, souffle léger</small></label>
+      <label className={`rythme-case neutre ${suggestive ? "verrouillee" : ""}`}><input type="checkbox" checked={suggestive || prefs.neutral} disabled={suggestive} onChange={(event) => updatePrefs({ neutral: event.target.checked })} /> Bruits corporels neutres <small>{suggestive ? "imposés en Suggestif" : "battement sourd, percussion feutrée, tic, souffle léger"}</small></label>
     </details>
   </div>;
   const reglagesEffets = <div className="rythme-reglages effets">
@@ -677,7 +683,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
 
   const comboNow = comboRef.current;
   const comboLevel = rhythmComboLevel(comboNow);
-  return <div ref={layerRef} className={`rythme-layer phase-${phase} geste-${gesture} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""} ${comboLevel ? `en-combo combo-${comboLevel}` : ""} ${comboActive ? `combo-palier palier-${comboEvent!.level}` : ""}`}
+  return <div ref={layerRef} className={`rythme-layer phase-${phase} geste-${gesture} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} ${suggestive ? "suggestif" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""} ${comboLevel ? `en-combo combo-${comboLevel}` : ""} ${comboActive ? `combo-palier palier-${comboEvent!.level}` : ""}`}
     onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
     style={{ "--pulse": pulse.toFixed(3), "--ardeur": ardour.toFixed(3), "--halo": halo.toFixed(3), "--bat": bat.toFixed(3), "--vignette": vignette.toFixed(3), "--combo": comboGlow.toFixed(3), "--combo-battement": comboPulse.toFixed(3), "--jauge": `${gauge}%` } as React.CSSProperties}
     data-rythme-phase={phase} data-ardeur={tier} data-geste={gesture}>
@@ -723,7 +729,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     </>}
 
     {phase === "setup" && <div className="rythme-panneau">
-      <p className="eyebrow">Jeu de rythme · prototype</p>
+      <p className="eyebrow">Jeu de rythme · prototype{suggestive ? " · Suggestif" : ""}</p>
       <h3>{scene.title}</h3>
       <p className="rythme-consigne">{scene.instruction}</p>
       <ul className="rythme-touches"><li>⌨ {scene.controls.keyboard}</li><li>☝ {scene.controls.touch}</li></ul>

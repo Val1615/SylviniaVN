@@ -151,7 +151,12 @@ try {
 
   // Rattachement : une seule route, Explicite uniquement, parcours homme, jamais Naïah ni Bellirith.
   assert.equal(texts.rhythmSceneFor(scene.routeId, "explicite"), scene);
-  for (const mode of ["tendre", "suggestif", "ellipse"]) assert.equal(texts.rhythmSceneFor(scene.routeId, mode), undefined, `${mode} : pas de jeu`);
+  for (const mode of ["tendre", "ellipse"]) assert.equal(texts.rhythmSceneFor(scene.routeId, mode), undefined, `${mode} : pas de jeu`);
+  // v5 · Suggestif : même scène, version adoucie.
+  const soft = texts.HYLEE_HOME_RHYTHM_SUGGESTIF;
+  assert.equal(texts.rhythmSceneFor(scene.routeId, "suggestif"), soft, "suggestif : version adoucie du jeu");
+  assert.ok(soft.suggestive === true && !scene.suggestive && soft.id !== scene.id, "suggestif : drapeau et sauvegarde séparée");
+  assert.equal(texts.rhythmSceneFor("autre-route", "suggestif"), undefined);
   const route = hylee.hyleeDateIntimacyRoutes("home-hylee", "homme").find((r) => r.id === scene.routeId);
   assert.ok(route, "la route Hylee existe");
   assert.equal(hylee.hyleeDateIntimacyPhase(texts.RHYTHM_REPLACED_CHAPTER), "climax", "le jeu remplace la séquence climax");
@@ -184,6 +189,31 @@ try {
   }
   const corpus = [hylee, await server.ssrLoadModule("/src/individual-explicit-scenes.ts")].map((m) => JSON.stringify(m)).join("\n");
   for (const text of all.filter((t) => t.length > 40)) assert.ok(!corpus.includes(text), `texte recyclé : ${text}`);
+  // Textes Suggestif : même structure, mêmes règles, et aucun mot d'anatomie ou d'acte décrit.
+  assert.equal(soft.sections.length, scene.sections.length, "suggestif : autant de phases");
+  const SOFT_BANNED = /\b(langue|lèvres|sexe|seins?|cuisses?|reins|en elle|au fond|enfoui|poussées?|coups? de reins|jouiss\w*|nue?s?|vous accueille|entre ses|bouche|peau claque)\b/i;
+  for (const section of soft.sections) {
+    assert.ok(section.strokes.length >= 6 && section.voice.length >= 4, `suggestif ${section.label} : lignes complètes`);
+    for (const line of section.strokes) assert.ok(line.text.length <= 60, `suggestif : ligne trop longue ${line.text}`);
+    for (const line of section.voice) { assert.equal(line.speaker, "Hylee"); assert.ok(line.text.length <= 40, `suggestif : réplique trop longue ${line.text}`); }
+  }
+  const softAll = [soft.title, soft.instruction, ...soft.sections.flatMap((s) => [s.label, s.cadence, s.intro.text, ...s.tiers.map((l) => l.text), ...s.strokes.map((l) => l.text), ...s.voice.map((l) => l.text)]), ...soft.teases.map((l) => l.text), ...Object.values(soft.conclusions).flatMap((c) => [c.title, ...c.lines.map((l) => l.text)])];
+  assert.equal(new Set(softAll).size, softAll.length, "suggestif : aucun texte répété");
+  for (const text of softAll) {
+    assert.ok(!text.includes("—") && !/ce n['’]est pas[^.]*, c['’]est/i.test(text), `suggestif : style ${text}`);
+    BANNED.lastIndex = 0;
+    assert.ok(!BANNED.test(text) && !SOFT_BANNED.test(text), `suggestif : terme trop explicite « ${text} »`);
+  }
+  const explicitOnly = new Set(all.filter((t) => t.length > 30));
+  // Intros et paliers tous réécrits ; quelques lignes courtes déjà sans détail (regards, givre, taquineries) sont partagées.
+  const softDescriptions = soft.sections.flatMap((s) => [s.intro.text, ...s.tiers.map((l) => l.text)]);
+  assert.ok(softDescriptions.every((t) => !explicitOnly.has(t)), "suggestif : intros et paliers réécrits");
+  assert.ok(["Ses lèvres", "Votre langue"].every((label) => !soft.sections.some((s) => s.label === label)), "suggestif : titres de phase adoucis");
+  for (let c = texts.RHYTHM_START_CHAPTER; c <= texts.RHYTHM_REPLACED_CHAPTER; c++) assert.ok(route.chapters.suggestif[c].length, `séquence écrite Suggestif ${c + 1} lisible`);
+  assert.match(pageSource, /route\.chapters\[game\.player\.intimacy === "suggestif" \? "suggestif" : "explicite"\]/, "accès direct : suite écrite dans le réglage du joueur");
+  assert.match(pageSource, /rhythmScene\?\.suggestive \? "rythme-suggestif"/, "suggestif : classe de voile sur la scène");
+  assert.match(pageSource, /game\.player\.intimacy !== "explicite" && game\.player\.intimacy !== "suggestif"/, "bouton de dév : Explicite ou Suggestif");
+  assert.match(await readFile(resolve(sourceRoot, "src/rhythm-intimacy.css"), "utf8"), /\.rythme-suggestif \.intimacy-sprite img,[^{]*\.intimacy-cg img \{[^}]*blur\(/, "suggestif : sprite et CG floutés");
   for (const section of scene.sections) for (const line of [section.intro, ...section.tiers, ...section.voice]) if (line.intimateMood) assert.ok(["seductive", "teasing", "tender", "soft", "shy", "annoyed"].includes(line.intimateMood), "humeur de sprite intime Hylee existante");
 
   // Accès développeur et intégration à la scène.
@@ -290,6 +320,28 @@ try {
     assert.ok(neutral.played.combo > 0 && neutral.played.apogee > 0, "carillon de combo et apogée");
     var neutralStats = { strokes: neutralStrokes };
   }
+  {
+    const sug = new sfx.RhythmSfx({ suggestive: true });
+    const clock = { currentTime: 0 };
+    Object.assign(sug, { ctx: clock, master: {} });
+    sug.setMix(defaults.mix, defaults.mute, false);
+    assert.ok(sug.neutral && sug.mute.voix, "suggestif : bruits neutres et voix coupée imposés, même si le mixage demande l'inverse");
+    let combo = 0;
+    for (const note of charts.normal) {
+      clock.currentTime = note.time + 10;
+      const gesture = engine.RHYTHM_SECTIONS[note.section].gesture;
+      combo++;
+      if (note.kind === "slide") sug.slide(gesture, note.index % 2 === 0); else sug.stroke(true, 0.9, note.kind === "hold" || note.kind === "final", gesture, note.motion);
+      if (engine.rhythmComboThreshold(combo)) { sug.comboMoan(engine.rhythmComboLevel(combo), 0.9, gesture); sug.comboChime(engine.rhythmComboLevel(combo)); } else sug.breath(0.9, true, gesture);
+    }
+    sug.apogee();
+    const heard = Object.keys(sug.played).filter((g) => sfx.RHYTHM_SFX_BUS[g] === "voix" || sfx.RHYTHM_SFX_BUS[g] === "corps");
+    assert.deepEqual(heard, [], `suggestif : ni voix ni bruit corporel (${heard.join(", ")})`);
+    for (const k of ["battement", "feutre", "tic", "souffle"]) assert.ok(sug.played[`neutre-${k}`] > 0, `suggestif : son neutre ${k}`);
+    assert.ok(sug.played.combo > 0, "suggestif : interface conservée");
+  }
+  assert.match(ui, /new RhythmSfx\(\{ suggestive \}\)/, "suggestif transmis aux bruitages");
+  assert.match(ui, /disabled=\{suggestive\}/, "suggestif : bruits neutres non désactivables");
   assert.match(ui, /data-rythme-mixage/, "menu de mixage");
   assert.match(ui, /setMix\(prefs\.mix, prefs\.mute, prefs\.neutral\)/, "mixage appliqué en direct");
   assert.match(ui, /Bruits corporels neutres/, "option bruits neutres");

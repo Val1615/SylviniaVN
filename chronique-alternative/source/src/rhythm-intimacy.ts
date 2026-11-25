@@ -39,6 +39,8 @@ export type RhythmSceneText = {
   sections: RhythmSectionText[];
   teases: DialogueLine[];
   conclusions: Record<"embrasement" | "accord" | "tatonnement", { title: string; lines: DialogueLine[] }>;
+  /** Version Suggestif : textes adoucis, sprite flouté, voix et bruits corporels remplacés par des sons neutres. */
+  suggestive?: boolean;
 };
 
 const N = (text: string, intimateMood?: string): DialogueLine => ({ speaker: "Narration", text, ...(intimateMood ? { intimateMood } : {}) });
@@ -269,9 +271,244 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
   },
 };
 
-/** Le prototype n'existe que sur une scène : Hylee au logis, parcours homme, mood audacieuse, réglage Explicite. */
+/*
+ * Version Suggestif de la même scène : même cadence, mêmes phases et même jauge, mais des textes sensuels
+ * sans description anatomique (comme les séquences écrites en Suggestif), le sprite flouté, et ni voix
+ * ni bruits corporels : seulement des sons neutres, la musique et l'interface.
+ */
+export const HYLEE_HOME_RHYTHM_SUGGESTIF: RhythmSceneText = {
+  id: "rythme-hylee-logis-audacieuse-suggestif",
+  routeId: HYLEE_HOME_RHYTHM.routeId,
+  title: "Au rythme du givre",
+  suggestive: true,
+  instruction: "Suivez la cadence d'Hylee : un coup à chaque battement, quand la note touche le cercle. Les flèches ˄ ˅ marquent le va-et-vient de ses caresses ; gardez l'appui quand elle vous retient, glissez quand elle change d'élan. Version Suggestif : l'image reste voilée et seuls des sons neutres marquent le rythme.",
+  controls: HYLEE_HOME_RHYTHM.controls,
+  sections: [
+    {
+      label: "Ses mains",
+      cadence: "va-et-vient",
+      intimateMood: "teasing",
+      intro: N("Hylee vous assoit au bord de la table et se glisse tout contre vous. Ses mains descendent sans se presser, puis trouvent une cadence lente qu'elle compte à mi-voix.", "teasing"),
+      tiers: [
+        N("Elle a trouvé d'emblée la mesure qui vous fait retenir votre souffle, et elle la garde, attentive au moindre de vos frissons.", "seductive"),
+        H("Tu vois ? Je n'ai rien à demander. Ton souffle me répond pour toi.", "teasing", "teasing"),
+        N("La caresse prend de l'assurance. Hylee vous guette par en dessous, un sourire en coin, prête à surprendre l'instant où vous céderez.", "seductive"),
+      ],
+      strokes: [
+        N("Ses mains montent, puis redescendent, sans hâte."),
+        N("Elle s'attarde, juste ce qu'il faut."),
+        N("Un souffle amusé contre votre épaule."),
+        N("La caresse s'allonge et s'attarde encore."),
+        N("Vos doigts cherchent le bord de la table."),
+        N("Elle compte tout bas, et vous suivez."),
+      ],
+      voice: [
+        H("Tout doux. Je commence à peine.", "teasing"),
+        H("Regarde comme tu m'obéis bien.", "seductive"),
+        H("Mmh. Encore un peu, rien qu'à moi.", "teasing"),
+        H("Pas si vite. J'ai d'autres idées.", "tender"),
+      ],
+    },
+    {
+      label: "Ses baisers",
+      cadence: "profonde",
+      intimateMood: "seductive",
+      intro: N("Elle se penche, sème des baisers de plus en plus bas, puis disparaît de votre vue avec une lenteur délibérée. Le reste se devine à votre souffle qui se brise.", "seductive"),
+      tiers: [
+        N("Elle alterne des instants vifs et de longues pauses où elle vous tient immobile, juste au bord, jusqu'à vous arracher un frisson.", "seductive"),
+        H("Ne bouge pas. C'est moi qui choisis le tempo, tu te souviens ?", "teasing", "teasing"),
+        N("Vos doigts se perdent dans ses cheveux. Vous la sentez sourire, ravie de voir votre sang-froid s'effriter à chacun de ses retours.", "tender"),
+      ],
+      strokes: [
+        N("Un baiser, plus bas, puis un autre."),
+        N("Elle s'éloigne, revient, recommence."),
+        N("Un regard par en dessous, malicieux."),
+        N("Elle vous garde au bord, sans un geste."),
+        N("Ses cheveux glissent sur vos genoux."),
+        N("Un murmure, et tout votre corps répond."),
+      ],
+      voice: [
+        H("Chut... laisse-toi faire.", "seductive"),
+        H("Tu es adorable quand tu lâches prise.", "teasing"),
+        H("Pas encore. Retiens-toi pour moi.", "seductive"),
+        H("Assez. C'est ton tour.", "teasing"),
+      ],
+    },
+    {
+      label: "À votre tour",
+      cadence: "irrégulière",
+      intimateMood: "tender",
+      intro: N("Hylee prend votre place sur la table et vous attire vers elle, une main dans vos cheveux. Elle vous guide sans un mot, et vous laisse deviner le reste à ses soupirs.", "teasing"),
+      tiers: [
+        N("Vous suivez chacun de ses frémissements. Un effleurement, un autre, puis une caresse plus longue, et elle retient sa respiration.", "tender"),
+        H("Là... ne change rien. Ce petit rythme bancal me rend folle.", "seductive", "teasing"),
+        N("Elle ne donne plus d'ordres, seulement des soupirs. Ses doigts se crispent dans vos cheveux et les frissons la gagnent jusqu'aux épaules.", "soft"),
+      ],
+      strokes: [
+        N("Un effleurement, un autre, puis plus longuement."),
+        N("Elle tressaille et rit tout bas."),
+        N("Sa nuque se renverse en arrière."),
+        N("Vous traînez exprès, elle proteste à peine."),
+        N("Un frisson remonte jusqu'à ses épaules."),
+        N("Ses talons tapotent le rebord de la table."),
+      ],
+      voice: [
+        H("Oh... juste comme ça.", "tender"),
+        H("Surtout, continue.", "seductive"),
+        H("Tu apprends drôlement vite...", "shy"),
+        H("Viens. La chambre. Tout de suite.", "soft"),
+      ],
+    },
+    {
+      label: "Elle mène",
+      cadence: "lente",
+      intimateMood: "seductive",
+      intro: N("Elle vous entraîne jusqu'à la chambre, vous fait basculer sur le lit et prend place sur vous. Le drap retombe sur vos hanches, et Hylee impose une lenteur de provocation.", "seductive"),
+      tiers: [
+        N("Elle ondule à peine, s'arrête, vous regarde attendre. Chaque pause lui arrache un sourire, et à vous un soupir.", "seductive"),
+        H("Comme ça. Ne bouge plus... Voilà. Maintenant, suis-moi.", "teasing", "teasing"),
+        N("Ses hanches roulent en longues vagues sous le drap. Sur le photophore, une dentelle de givre s'étend au même tempo que le vôtre.", "seductive"),
+      ],
+      strokes: [
+        N("Elle ondule, lentement, sous le drap."),
+        N("Un temps immobile, puis la vague reprend."),
+        N("Ses mains s'ouvrent sur votre torse."),
+        N("Encore une fois, sans se presser."),
+        N("Le sommier soupire, à peine."),
+        N("Son souffle s'accroche au vôtre."),
+      ],
+      voice: [
+        H("Doucement, mon cœur...", "seductive"),
+        H("Tu me sens, là ?", "teasing"),
+        H("Reste avec moi.", "seductive"),
+        H("Oui... exactement ainsi.", "tender"),
+      ],
+    },
+    {
+      label: "Dos tourné",
+      cadence: "plus vive",
+      intimateMood: "teasing",
+      intro: N("Sans rompre l'étreinte, Hylee se retourne sur vous. Elle vous offre la courbe de son dos dans la lumière bleue, et le drap glisse un peu plus.", "teasing"),
+      tiers: [
+        N("Vos mains trouvent sa taille. Elle accélère en mesure, et chaque élan fait frémir la ligne de son dos jusqu'à la nuque.", "teasing"),
+        H("Tu vois mieux d'ici ? Moi, je sens tout. C'est injuste, j'adore.", "teasing", "teasing"),
+        N("La cadence devient une danse serrée. Elle se cambre, ralentit quand l'envie l'en prend et rit tout bas quand vous tenez la mesure.", "seductive"),
+      ],
+      strokes: [
+        N("Son dos se cambre à chaque élan."),
+        N("Vos mains guident sa taille."),
+        N("Le rythme se fait plus franc."),
+        N("Elle revient vers vous, toujours plus vite."),
+        N("Sa nuque ploie, ses cheveux glissent."),
+        N("Un frisson court le long de sa colonne."),
+      ],
+      voice: [
+        H("Ah... plus vite.", "teasing"),
+        H("Ne me lâche surtout pas.", "seductive"),
+        H("Là. Encore.", "seductive"),
+        H("Tu vas finir par m'avoir...", "tender"),
+      ],
+    },
+    {
+      label: "Renversée",
+      cadence: "rapide",
+      intimateMood: "tender",
+      intro: N("Hylee bascule sur le côté en vous entraînant. Vous roulez ensemble sous le drap, et c'est elle qui vous attire au-dessus d'elle, ses chevilles croisées dans votre dos.", "tender"),
+      tiers: [
+        N("Vous reprenez la cadence qu'elle vient de vous apprendre. Elle vous serre pour réclamer davantage, et vous accélérez sans rien perdre de l'ampleur.", "tender"),
+        H("Plus près... encore plus près. Et surtout, ne t'arrête pas.", "seductive", "determined"),
+        N("L'élan s'emballe. Hylee s'accroche à vos épaules, le souffle cassé en petits éclats, tandis que des étoiles de givre grimpent le long des montants du lit.", "tender"),
+      ],
+      strokes: [
+        N("Ses chevilles vous retiennent contre elle."),
+        N("Elle se cambre pour aller à votre rencontre."),
+        N("Le rythme ne laisse plus de place aux mots."),
+        N("Ses ongles effleurent vos épaules."),
+        N("La lampe de givre vacille à chaque élan."),
+        N("Chaque élan lui arrache un éclat de rire ou de voix."),
+      ],
+      voice: [
+        H("Oui... oui...", "seductive"),
+        H("Garde-moi contre toi.", "seductive"),
+        H("Ne t'arrête pas maintenant.", "tender"),
+        H("J'y suis presque...", "soft"),
+      ],
+    },
+    {
+      label: "Face à face",
+      cadence: "jusqu'au bout",
+      intimateMood: "soft",
+      intro: N("Elle se redresse d'un élan, vous fait asseoir et s'installe tout contre vous, front contre front. Il ne reste plus un pouce d'air entre vos deux souffles.", "soft"),
+      tiers: [
+        N("Vous bougez ensemble, encore et encore. Elle noue les bras à votre nuque et cale son élan sur le vôtre, battement contre battement.", "soft"),
+        H("Regarde-moi. Je veux voir le moment où ça arrive.", "soft", "soft"),
+        N("La cadence s'emballe. Hylee tremble contre vous, et vous sentez la vague se former dans ses yeux autant que dans chacun de vos gestes.", "seductive"),
+      ],
+      strokes: [
+        N("Front contre front, souffle mêlé."),
+        N("Elle revient contre vous, encore, encore."),
+        N("Ses bras se referment sur votre nuque."),
+        N("Plus rien ne retient l'élan."),
+        N("Elle frémit tout entière."),
+        N("La vague arrive, toute proche."),
+      ],
+      voice: [
+        H("Regarde-moi, s'il te plaît...", "soft"),
+        H("Encore un peu...", "seductive"),
+        H("Ensemble. Maintenant.", "soft"),
+        H("Oh... !", "seductive"),
+      ],
+    },
+  ],
+  teases: [
+    H("Hé. Tu m'as perdue une seconde. Rattrape-moi.", "teasing", "teasing"),
+    H("Je compte pour toi ? Un, deux... voilà, c'est mieux.", "teasing", "teasing"),
+    H("Tu rêvasses ? Je suis juste là, tu sais.", "teasing", "teasing"),
+    H("Raté. Je garde le point, tu me le rendras en baisers.", "teasing", "teasing"),
+    H("Doucement ou plus vite, comme tu veux. Mais choisis.", "annoyed", "teasing"),
+    H("Si tu t'arrêtes maintenant, je te gèle les orteils.", "teasing", "teasing"),
+    H("Je t'ai vu hésiter. C'était mignon. Recommence.", "shy", "teasing"),
+    H("J'avais une longueur d'avance. Rejoins-moi.", "seductive", "teasing"),
+    H("Tu comptes dans ta tête ? Regarde-moi plutôt, je te donne la mesure.", "teasing", "teasing"),
+    H("Oups. On dira que c'était une figure de style.", "shy", "teasing"),
+  ],
+  conclusions: {
+    embrasement: {
+      title: "Embrasement",
+      lines: [
+        N("Au dernier temps, Hylee se fige contre vous, les yeux grands ouverts, et la même vague vous emporte tous les deux sous le drap.", "seductive"),
+        N("Le photophore s'ouvre en une pluie de givre scintillant qui retombe sur vos épaules sans jamais vous refroidir.", "soft"),
+        H("Pas une seule mesure perdue. Je le savais depuis la table.", "teasing", "teasing"),
+      ],
+    },
+    accord: {
+      title: "Accord",
+      lines: [
+        N("La cadence se rompt quand Hylee bascule la première, serrée contre vous. Ses frissons vous rattrapent quelques battements plus tard.", "seductive"),
+        N("Une seule étoile de givre fond lentement sur le verre du photophore.", "soft"),
+        H("Quelques faux pas, et pourtant... On recommence quand tu veux.", "soft", "soft"),
+      ],
+    },
+    tatonnement: {
+      title: "Tâtonnement",
+      lines: [
+        N("Hylee finit par ne plus compter du tout. Elle vous serre, prend l'allure qui lui plaît et vous entraîne jusqu'au bout en riant contre votre épaule.", "tender"),
+        H("On n'était pas toujours d'accord sur le tempo. J'ai adoré quand même.", "teasing", "teasing"),
+      ],
+    },
+  },
+};
+
+/**
+ * Le prototype n'existe que sur une scène : Hylee au logis, parcours homme, mood audacieuse.
+ * Explicite : version complète. Suggestif : version adoucie (textes, image voilée, sons neutres).
+ * Tendre et Fondu au noir : pas de jeu, la scène écrite reste telle quelle.
+ */
 export function rhythmSceneFor(routeId: string | undefined, mode: string): RhythmSceneText | undefined {
-  return mode === "explicite" && routeId === HYLEE_HOME_RHYTHM.routeId ? HYLEE_HOME_RHYTHM : undefined;
+  if (routeId !== HYLEE_HOME_RHYTHM.routeId) return undefined;
+  if (mode === "explicite") return HYLEE_HOME_RHYTHM;
+  if (mode === "suggestif") return HYLEE_HOME_RHYTHM_SUGGESTIF;
+  return undefined;
 }
 
 /** Index de la séquence « climax » des scènes Hylee : la conclusion du jeu la remplace. */

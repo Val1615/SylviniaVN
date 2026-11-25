@@ -42,6 +42,15 @@ export class RhythmSfx {
   mute: Record<RhythmSfxBus, boolean> = { voix: false, corps: false, ambiance: false, interface: false };
   /** Bruits corporels neutres : battement sourd, percussion feutrée, tic rythmique ou souffle léger à la place. */
   neutral = false;
+  /**
+   * Version Suggestif : voix et bruits corporels enregistrés interdits (ni chargés ni joués, quel que soit le
+   * mixage), bruits neutres imposés. Seuls restent l'ambiance, l'interface et les sons neutres synthétisés.
+   */
+  readonly suggestive: boolean;
+  constructor(options: { suggestive?: boolean } = {}) {
+    this.suggestive = Boolean(options.suggestive);
+    if (this.suggestive) { this.neutral = true; this.mute.voix = true; }
+  }
   private buffers = new Map<string, AudioBuffer>();
   private loading: Promise<void> | null = null;
   private lastPick = new Map<Group, number>();
@@ -76,7 +85,8 @@ export class RhythmSfx {
   private load() {
     if (this.loading || !this.ctx) return this.loading;
     const ctx = this.ctx;
-    this.loading = Promise.all(RHYTHM_SFX_FILES.map(async (name) => {
+    const files = this.suggestive ? RHYTHM_SFX_FILES.filter((name) => !["voix", "corps"].includes(RHYTHM_SFX_BUS[name.replace(/-\d+$/, "") as Group])) : RHYTHM_SFX_FILES;
+    this.loading = Promise.all(files.map(async (name) => {
       try {
         const response = await fetch(`/assets/audio/rythme/${name}.mp3`);
         const data = await response.arrayBuffer();
@@ -99,7 +109,8 @@ export class RhythmSfx {
   /** Mixage par famille (0 à 1, bouton muet) et choix des bruits corporels neutres. */
   setMix(mix: Record<RhythmSfxBus, number>, mute: Record<RhythmSfxBus, boolean>, neutral: boolean) {
     this.mix = { ...this.mix, ...mix };
-    this.mute = { ...this.mute, ...mute };
+    this.mute = { ...this.mute, ...mute, ...(this.suggestive ? { voix: true } : {}) };
+    if (this.suggestive) neutral = true;
     if (neutral !== this.neutral) this.stopAll();
     this.neutral = neutral;
     this.applyVolume();
@@ -107,7 +118,7 @@ export class RhythmSfx {
   /** Volume effectif d'une famille (sonde de test). */
   busGain(bus: RhythmSfxBus) { return this.mute[bus] ? 0 : Math.max(0, Math.min(1, this.mix[bus])); }
   private applyVolume() {
-    if (!this.master || !this.ctx) return;
+    if (!this.master?.gain || !this.ctx) return;
     this.master.gain.setTargetAtTime(this.enabled ? this.volume : 0, this.ctx.currentTime, 0.02);
     for (const [bus, node] of this.buses) node.gain.setTargetAtTime(this.busGain(bus), this.ctx.currentTime, 0.02);
   }
@@ -123,6 +134,7 @@ export class RhythmSfx {
 
   private play(name: string, { gain = 1, rate = 1, delay = 0, lowpass }: { gain?: number; rate?: number; delay?: number; lowpass?: number } = {}) {
     const group = name.replace(/-\d+$/, "") as Group;
+    if (this.suggestive && (RHYTHM_SFX_BUS[group] === "voix" || RHYTHM_SFX_BUS[group] === "corps")) { this.played.bloque = (this.played.bloque || 0) + 1; return null; }
     this.played[group] = (this.played[group] || 0) + 1;
     if (!this.enabled || !this.ctx || !this.master) return null;
     const bus = this.buses.get(RHYTHM_SFX_BUS[group]) || this.master;
@@ -284,7 +296,7 @@ export class RhythmSfx {
 
   /** Tenue profonde pendant la fellation : sa voix, bouche occupée, au plus une fois toutes les deux secondes et demie. */
   private mouth(ardour: number) {
-    if (!this.ctx) return false;
+    if (!this.ctx || this.suggestive) return false;
     const now = this.ctx.currentTime;
     if (this.voicing(now) || now - this.lastVoiceAt < 2.5) return false;
     // Bruits neutres : pas de sons de bouche, un gémissement étouffé plus discret à la place.
@@ -311,7 +323,7 @@ export class RhythmSfx {
    * un appui long tenu jusqu'au bout (force) l'appelle plus sûrement, à trois secondes d'écart.
    */
   breath(ardour: number, force = false, gesture: RhythmSfxGesture = "penetration") {
-    if (!this.ctx || gesture === "bouche") return false;
+    if (!this.ctx || gesture === "bouche" || this.suggestive) return false;
     const now = this.ctx.currentTime;
     if (this.voicing(now) || now - this.lastVoiceAt < (force ? 3 : 5)) return false;
     if (!force && Math.random() > 0.18) return false;
@@ -324,7 +336,7 @@ export class RhythmSfx {
    * haletant au troisième et au-delà. Jamais deux à moins de 3,5 secondes.
    */
   comboMoan(level: number, ardour: number, gesture: RhythmSfxGesture = "penetration") {
-    if (!this.ctx) return false;
+    if (!this.ctx || this.suggestive) return false;
     const now = this.ctx.currentTime;
     if (now - this.lastMoanAt < 3.5) return false;
     try { if (this.voicing(now)) this.voiceSource?.stop(); } catch { /* déjà terminé */ }

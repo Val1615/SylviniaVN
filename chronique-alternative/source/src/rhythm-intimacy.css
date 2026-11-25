@@ -223,3 +223,10 @@
   .rythme-piste-mix { min-height: 1.45rem; }
   .rythme-piste-mix .nom small { display: none; }
 }
+
+/* Version Suggestif : sprite (et CG éventuelle) voilés pendant tout le jeu ; la silhouette et ses mouvements restent lisibles. */
+.interactive-intimacy.rythme-suggestif .intimacy-sprite img,
+.interactive-intimacy.rythme-suggestif .intimacy-cg img { filter: blur(14px) saturate(.75) brightness(.9) drop-shadow(0 22px 38px rgba(0,0,0,.6)) !important; }
+.rythme-piste-mix.verrouillee input { opacity: .25; }
+.rythme-muet.verrou { display: inline-flex; align-items: center; justify-content: center; cursor: default; opacity: .7; }
+.rythme-case.neutre.verrouillee { cursor: default; opacity: .85; }
