@@ -129,8 +129,15 @@
 .rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
 /* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
 /* Secousse à chaque coup (réglée par le script, nulle si « Secousses » est décoché) : pleine sur le sprite, plus légère sur la CG et le décor */
-.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)); translate: 0 var(--rythme-secousse-y, 0px); transform-origin: 50% 35%; }
-.rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)); translate: 0 calc(.4 * var(--rythme-secousse-y, 0px)); transform-origin: 50% 55%; }
+.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0) + var(--rythme-etire, 0)); translate: var(--rythme-secousse-x, 0px) var(--rythme-secousse-y, 0px); rotate: var(--rythme-incline, 0deg); transform-origin: 50% 35%; }
+.rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0) + .4 * var(--rythme-etire, 0)); translate: calc(.4 * var(--rythme-secousse-x, 0px)) calc(.4 * var(--rythme-secousse-y, 0px)); rotate: calc(.4 * var(--rythme-incline, 0deg)); transform-origin: 50% 55%; }
+/* Phases préliminaires : l'origine du mouvement suit le geste (étirement depuis le bas, hochement et ondulation depuis les hanches). */
+.rythme-en-cours[data-rythme-geste="main"] .intimacy-sprite img { transform-origin: 50% 100%; }
+.rythme-en-cours[data-rythme-geste="bouche"] .intimacy-sprite img { transform-origin: 50% 88%; }
+.rythme-en-cours[data-rythme-geste="langue"] .intimacy-sprite img { transform-origin: 50% 78%; }
+/* Têtes de note des caresses : sens du va-et-vient. */
+.rythme-note.haut .tete, .rythme-note.bas .tete { font-size: .8em; line-height: 1; display: grid; place-items: center; }
+.rythme-note.bas .tete { opacity: .85; }
 .rythme-en-cours.interactive-intimacy { background-position: center calc(50% + .3 * var(--rythme-secousse-y, 0px)); }
 /* Lignes de cadence : courtes, à gauche du couloir, au-dessus de la cible */
 .rythme-coup { position: absolute; right: 100px; bottom: calc(46px + 6vh); max-width: min(320px, 42vw); text-align: right; font: italic 600 .8rem/1.3 var(--display, serif); color: #ffe3ec; text-shadow: 0 0 10px rgba(var(--rouge-r), .9), 0 1px 3px #000; pointer-events: none; animation: rythme-coup 2.3s ease-out forwards; }

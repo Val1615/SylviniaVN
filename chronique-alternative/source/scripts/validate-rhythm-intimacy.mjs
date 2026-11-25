@@ -23,7 +23,13 @@ try {
   const charts = Object.fromEntries(["doux", "normal", "intense"].map((d) => [d, engine.buildRhythmChart(d)]));
   assert.ok(!("RHYTHM_SONG_START" in engine) && !("RHYTHM_BPM" in engine), "plus aucun calage sur la musique");
   const bpms = engine.RHYTHM_SECTIONS.map((section) => section.bpm);
-  for (let i = 1; i < bpms.length; i++) assert.ok(bpms[i] > bpms[i - 1], `tempo croissant d'une position à l'autre (${bpms.join(" < ")})`);
+  // Sept phases : trois préliminaires (main, bouche, langue), chacune à son tempo, puis les quatre positions qui accélèrent.
+  assert.deepEqual(engine.RHYTHM_SECTIONS.map((s) => s.gesture), ["main", "bouche", "langue", "penetration", "penetration", "penetration", "penetration"], "ordre des phases");
+  const prelim = engine.RHYTHM_SECTIONS.filter((s) => s.gesture !== "penetration");
+  const positions = engine.RHYTHM_SECTIONS.filter((s) => s.gesture === "penetration");
+  for (const group of [prelim, positions]) for (let i = 1; i < group.length; i++) assert.ok(group[i].bpm > group[i - 1].bpm, `tempo croissant (${group.map((g) => g.bpm).join(" < ")})`);
+  assert.ok(prelim.every((s) => s.motif && s.motif.length >= 4), "chaque préliminaire a son motif");
+  assert.ok(new Set(prelim.map((s) => JSON.stringify(s.motif))).size === prelim.length, "un motif propre à chaque préliminaire");
   for (const [difficulty, chart] of Object.entries(charts)) {
     assert.equal(chart.length, charts.normal.length, `${difficulty} : même cadence (un coup par battement), seuls tempo et tolérance changent`);
     assert.ok(chart.length >= 80, `${difficulty} : carte trop courte`);
@@ -33,12 +39,32 @@ try {
       if (note.kind === "hold" || note.kind === "final") assert.ok(note.duration > 0, "appui long sans durée");
       else assert.equal(note.duration, 0);
     });
-    assert.equal(chart.filter((n) => n.kind === "slide").length, 3, `${difficulty} : trois glissés (trois changements de position)`);
+    const transitions = chart.filter((n, i) => n.kind === "slide" && (i === 0 || chart[i - 1].section !== n.section));
+    assert.equal(transitions.length, engine.RHYTHM_SECTIONS.filter((s) => s.slide).length, `${difficulty} : un glissé à chaque changement de geste ou de position`);
+    assert.equal(transitions.length, 6, `${difficulty} : six transitions`);
     assert.equal(chart.filter((n) => n.kind === "final").length, 1, "une seule apogée");
     assert.equal(chart.at(-1).kind, "final", "l'apogée clôt la carte");
     assert.ok(chart.some((n) => n.kind === "hold"), "appuis longs présents");
     engine.RHYTHM_SECTIONS.forEach((section, s) => {
       const own = chart.filter((n) => n.section === s);
+      if (section.motif) {
+        // Préliminaires : le motif se répète à l'identique, tempo stable ; une tenue dure tout son pas.
+        const notes = own.slice(section.slide ? 1 : 0);
+        const beat = notes[0].beat;
+        assert.equal(notes.length, section.strokes, `${difficulty}/${section.id} : nombre de coups`);
+        notes.forEach((note, i) => {
+          const step = section.motif[i % section.motif.length];
+          assert.equal(note.kind, step.kind, `${difficulty}/${section.id} : motif respecté`);
+          assert.equal(note.motion, step.motion, `${difficulty}/${section.id} : sens du geste`);
+          if (step.kind === "hold") assert.ok(Math.abs(note.duration - step.beats * beat) < 1e-9);
+          if (i) assert.ok(Math.abs(note.time - notes[i - 1].time - section.motif[(i - 1) % section.motif.length].beats * beat) < 1e-6, `${difficulty}/${section.id} : coup hors motif`);
+        });
+        if (s) assert.ok(own[0].beat < chart.filter((n) => n.section === s - 1)[0].beat, `${difficulty} : battement plus court d'un préliminaire à l'autre`);
+        const next = chart.find((n) => n.section === s + 1);
+        const last = notes.at(-1);
+        assert.ok(next.time >= last.time + last.duration + 0.2, `${difficulty}/${section.id} : la phase suivante attend la fin du dernier geste`);
+        return;
+      }
       const steady = own.slice(0, section.strokes + (section.slide ? 1 : 0));
       const beat = steady.at(-1).beat;
       for (const note of steady) assert.ok(Math.abs(note.beat - beat) < 1e-9, `${difficulty}/${section.id} : tempo stable`);
@@ -53,8 +79,13 @@ try {
         for (let i = 1; i < ramp.length; i++) assert.ok(ramp[i].beat <= ramp[i - 1].beat + 1e-9, `${difficulty} : la montée finale ne ralentit jamais`);
         assert.ok(ramp[0].beat < beat, "la montée accélère au-delà du tempo de la position");
       }
-      if (s) assert.ok(own[0].beat < chart.filter((n) => n.section === s - 1)[0].beat, `${difficulty} : battement plus court à chaque position`);
+      if (s && engine.RHYTHM_SECTIONS[s - 1].gesture === "penetration") assert.ok(own[0].beat < chart.filter((n) => n.section === s - 1)[0].beat, `${difficulty} : battement plus court à chaque position`);
     });
+    // Cunnilingus : cadence irrégulière mais lisible (au moins deux durées de pas, motif répété).
+    const langue = engine.RHYTHM_SECTIONS.find((x) => x.id === "langue");
+    assert.ok(new Set(langue.motif.map((m) => m.beats)).size >= 3 && langue.motif.some((m) => m.kind === "slide"), "langue : pas irréguliers et glissés");
+    assert.ok(engine.RHYTHM_SECTIONS.find((x) => x.id === "main").motif.filter((m) => m.motion).length >= 6, "main : va-et-vient haut/bas");
+    assert.ok(engine.RHYTHM_SECTIONS.find((x) => x.id === "bouche").motif.filter((m) => m.kind === "hold").length >= 2, "bouche : tenues profondes");
     // Pas de chevauchement entre un appui long et la note suivante.
     chart.forEach((note, i) => { if (note.duration && chart[i + 1]) assert.ok(note.time + note.duration <= chart[i + 1].time + 1e-6, "appui long chevauchant"); });
   }
@@ -98,7 +129,7 @@ try {
   assert.equal(engine.rhythmQuality(charts.normal.map((_, i) => (i % 4 === 0 ? 3 : i % 4 === 1 ? 2 : 1))), "accord");
   assert.equal(engine.rhythmGauge(perfect), 100);
   assert.equal(engine.rhythmGauge(misses), 0, "un raté ne fait jamais monter la jauge");
-  for (let s = 0; s < 4; s++) {
+  for (let s = 0; s < engine.RHYTHM_SECTIONS.length; s++) {
     assert.equal(engine.sectionTiersReached(charts.normal, perfect, s), 3, "trois paliers par section en jeu parfait");
     assert.equal(engine.sectionTiersReached(charts.normal, misses, s), 0, "aucun palier sans justesse");
   }
@@ -106,9 +137,11 @@ try {
   // Sauvegarde « Reprendre plus tard » : aller-retour exact, effacement, rejet d'un état incohérent.
   const memory = new Map();
   const storage = { getItem: (k) => memory.get(k) ?? null, setItem: (k, v) => memory.set(k, v) };
-  const state = { v: 2, scene: scene.id, difficulty: "normal", auto: false, offsetMs: 20, time: 41.631, judgements: charts.normal.map((_, i) => (i < 50 ? 1 : 0)), combo: 12, maxCombo: 30, unlocked: ["intro-0", "s0-t1"], teases: [2], savedAt: 1 };
+  const state = { v: 3, scene: scene.id, difficulty: "normal", auto: false, offsetMs: 20, time: 41.631, judgements: charts.normal.map((_, i) => (i < 50 ? 1 : 0)), combo: 12, maxCombo: 30, unlocked: ["intro-0", "s0-t1"], teases: [2], savedAt: 1 };
   engine.storeRhythmSave(state, "k", storage);
   assert.deepEqual(engine.loadRhythmSave("k", storage), state);
+  engine.storeRhythmSave({ ...state, v: 2 }, "old", storage);
+  assert.equal(engine.loadRhythmSave("old", storage), undefined, "une sauvegarde de l'ancienne partie (quatre positions) repart de zéro");
   engine.storeRhythmSave({ ...state, judgements: [1, 2] }, "bad", storage);
   assert.equal(engine.loadRhythmSave("bad", storage), undefined, "état incompatible avec la carte rejeté");
   engine.storeRhythmSave(undefined, "k", storage);
@@ -124,6 +157,11 @@ try {
   assert.equal(hylee.hyleeDateIntimacyPhase(texts.RHYTHM_REPLACED_CHAPTER), "climax", "le jeu remplace la séquence climax");
   assert.equal(hylee.hyleeDateIntimacyPhase(texts.RHYTHM_REPLACED_CHAPTER - 1), "intensification");
   assert.ok(route.chapters.explicite[texts.RHYTHM_REPLACED_CHAPTER].length, "la version écrite reste lisible (Lire la version écrite)");
+  assert.equal(hylee.hyleeDateIntimacyPhase(texts.RHYTHM_START_CHAPTER), "partner-discovery", "le jeu s'ouvre sur les caresses à la table");
+  for (let c = texts.RHYTHM_START_CHAPTER; c <= texts.RHYTHM_REPLACED_CHAPTER; c++) assert.ok(route.chapters.explicite[c].length, `séquence écrite ${c + 1} lisible`);
+  assert.equal(hylee.hyleeDateIntimacyPhase(texts.RHYTHM_VISUAL_CHAPTER), "intensification", "visuel du jeu : sprites intimes, sans CG");
+  assert.match(pageSource, /nextChapter === RHYTHM_START_CHAPTER/, "le jeu s'ouvre à la première séquence remplacée");
+  assert.match(pageSource, /conclusion \? RHYTHM_REPLACED_CHAPTER : RHYTHM_START_CHAPTER/, "version écrite : toutes les séquences remplacées");
   assert.ok(!/naiah|bellirith/i.test(scene.routeId));
 
   // Textes : quatre positions, trois paliers chacune, trois conclusions, dix taquineries, rien de recyclé.
@@ -179,8 +217,8 @@ try {
 
   // v3 · Voix : hors combo, seulement souffles et soupirs, rares ; gémissements uniquement aux paliers, espacés.
   const sfxSource = await readFile(resolve(sourceRoot, "src/rhythm-intimacy-sfx.ts"), "utf8");
-  const strokeBody = sfxSource.slice(sfxSource.indexOf("  stroke("), sfxSource.indexOf("  private lastVoiceAt"));
-  assert.ok(!/voice|gemit|halete|breath|comboMoan/.test(strokeBody), "un coup ne déclenche plus de voix à lui seul");
+  const strokeBody = sfxSource.slice(sfxSource.indexOf("  stroke("), sfxSource.indexOf("  /** Glissé"));
+  assert.ok(!/speak|gemit|halete|breath|comboMoan/.test(strokeBody), "un coup ne déclenche jamais de gémissement à lui seul (seule une tenue profonde de la bouche fait entendre sa voix étouffée)");
   const breathBody = sfxSource.slice(sfxSource.indexOf("  breath("), sfxSource.indexOf("  comboMoan("));
   assert.ok(!/gemit|halete/.test(breathBody), "hors combo : ni gémissement ni halètement");
   for (const runs of [["parfaite", () => 1], ["avec ratés", (i) => (i % 11 === 10 ? 3 : 1)]]) {
@@ -188,17 +226,23 @@ try {
     const voice = new sfx.RhythmSfx();
     const clock = { currentTime: 0 };
     Object.assign(voice, { ctx: clock, master: {} });
-    let combo = 0; let thresholds = 0; const moanTimes = [];
+    let combo = 0; let thresholds = 0; const moanTimes = []; const mouthTimes = [];
+    const moanCount = () => ["gemit", "halete", "etouffe", "langue"].reduce((sum, g) => sum + (voice.played[g] || 0), 0);
     for (const note of charts.normal) {
       clock.currentTime = note.time + 10;
-      const before = (voice.played.gemit || 0) + (voice.played.halete || 0);
+      const gesture = engine.RHYTHM_SECTIONS[note.section].gesture;
+      const before = moanCount(); const mouthBefore = voice.played.bouche || 0;
       if (judge(note.index) === 3) { combo = 0; voice.miss(); continue; }
       combo++;
-      voice.stroke(true, 0.5);
-      if (engine.rhythmComboThreshold(combo)) { thresholds++; voice.comboMoan(engine.rhythmComboLevel(combo), 0.6); } else voice.breath(0.6);
-      if ((voice.played.gemit || 0) + (voice.played.halete || 0) > before) moanTimes.push(note.time);
+      if (note.kind === "slide") voice.slide(gesture, true); else voice.stroke(true, 0.5, note.kind === "hold" || note.kind === "final", gesture, note.motion);
+      if (engine.rhythmComboThreshold(combo)) { thresholds++; voice.comboMoan(engine.rhythmComboLevel(combo), 0.6, gesture); } else voice.breath(0.6, false, gesture);
+      if (moanCount() > before) moanTimes.push(note.time);
+      if ((voice.played.bouche || 0) > mouthBefore) mouthTimes.push(note.time);
     }
-    const moans = (voice.played.gemit || 0) + (voice.played.halete || 0);
+    const moans = moanCount();
+    for (let i = 1; i < mouthTimes.length; i++) assert.ok(mouthTimes[i] - mouthTimes[i - 1] >= 2.5, `${label} : voix bouche occupée espacée`);
+    for (const group of ["glisse", "succion", "lechage", "baiser", "peau"]) assert.ok(voice.played[group] > 0, `${label} : bruitage ${group} joué dans sa phase`);
+    assert.ok(mouthTimes.length > 0, `${label} : voix bouche occupée sur les tenues profondes`);
     const breaths = (voice.played.souffle || 0) + (voice.played.soupir || 0);
     assert.ok(moans > 0 && moans <= thresholds, `${label} : gémissements seulement aux paliers (${moans} pour ${thresholds} paliers)`);
     for (let i = 1; i < moanTimes.length; i++) assert.ok(moanTimes[i] - moanTimes[i - 1] >= 3.5, `${label} : gémissements espacés`);
@@ -207,7 +251,7 @@ try {
   }
 
   // v3 · Secousse : sens par position, amplitude croissante, plafonnée, réduite ou coupée sur demande.
-  assert.deepEqual(engine.RHYTHM_SECTIONS.map((s) => s.shake), ["vertical", "profondeur", "vertical", "profondeur"], "sens de la secousse par position");
+  assert.deepEqual(positions.map((s) => s.shake), ["vertical", "profondeur", "vertical", "profondeur"], "sens de la secousse par position");
   const plein = { effects: "plein", shake: true };
   const a0 = engine.rhythmShakeAmplitude(0, 0, false, plein), a1 = engine.rhythmShakeAmplitude(0.6, 1, false, plein), a2 = engine.rhythmShakeAmplitude(0.95, 3, false, plein), aTop = engine.rhythmShakeAmplitude(1, 3, true, plein);
   assert.ok(a0 > 0 && a0 < a1 && a1 < a2 && a2 <= aTop, `amplitude croissante (${[a0, a1, a2, aTop].map((v) => v.toFixed(1)).join(" < ")})`);
@@ -218,7 +262,24 @@ try {
   assert.ok(Math.max(...wave) > 0.4 && Math.min(...wave) < -0.1, "poussée puis rebond");
   assert.equal(engine.rhythmShakeWave(engine.RHYTHM_SHAKE_DURATION), 0, "retour au repos");
   assert.ok(defaults.shake === true, "secousses actives par défaut");
-  assert.match(css, /intimacy-sprite img \{[^}]*translate: 0 var\(--rythme-secousse-y/, "secousse appliquée au sprite");
+  assert.match(css, /intimacy-sprite img \{[^}]*translate: var\(--rythme-secousse-x, 0px\) var\(--rythme-secousse-y/, "secousse appliquée au sprite");
+  assert.match(css, /intimacy-sprite img \{[^}]*var\(--rythme-etire, 0\)[^}]*rotate: var\(--rythme-incline/, "étirement et inclinaison appliqués au sprite");
+  for (const g of ["main", "bouche", "langue"]) assert.ok(css.includes(`[data-rythme-geste="${g}"] .intimacy-sprite img`), `origine du geste ${g}`);
+  // Animation propre à chaque geste : visible, distincte de la secousse, bornée, coupée avec les secousses.
+  const motionOf = (gesture, extra = {}) => Array.from({ length: 60 }, (_, i) => engine.rhythmGestureMotion({ gesture, axis: "vertical", amp: 12, sinceHit: i / 100, beat: 0.8, t: 10 + i / 100, motion: "haut", ardour: 0.7, progress: 0.8, ...extra }));
+  const peak = (list, key) => Math.max(...list.map((m) => Math.abs(m[key])));
+  const main = motionOf("main"), bouche = motionOf("bouche"), langue = motionOf("langue"), pen = motionOf("penetration");
+  assert.ok(peak(main, "stretch") > 0.01 && peak(main, "tilt") === 0, "main : étirement vertical en rythme");
+  assert.ok(peak(motionOf("main", { motion: "bas" }), "stretch") < peak(main, "stretch"), "main : retour plus court sur « bas »");
+  assert.ok(peak(motionOf("main", { holdFrac: 0.8 }), "stretch") > 0.01, "main : étirement maintenu pendant une caresse tenue");
+  assert.ok(peak(bouche, "y") > 5 && peak(bouche, "tilt") > 0.5 && peak(bouche, "stretch") === 0, "bouche : hochement et inclinaison");
+  assert.ok(Math.sign(motionOf("bouche", { parity: 1 })[30].tilt) === -Math.sign(bouche[30].tilt), "bouche : inclinaison alternée");
+  assert.ok(peak(langue, "x") > 1 && peak(langue, "tilt") > 0.3, "langue : ondulation");
+  const shiverLow = peak(motionOf("langue", { progress: 0, sinceHit: 99 }), "x"), shiverHigh = peak(motionOf("langue", { progress: 1, sinceHit: 99 }), "x");
+  assert.ok(shiverHigh > shiverLow, "langue : les frissons montent au fil de la phase");
+  assert.ok(peak(pen, "stretch") === 0 && peak(pen, "tilt") === 0 && peak(pen, "y") > 5, "pénétration : secousse seule");
+  for (const list of [main, bouche, langue]) for (const m of list) assert.ok(Math.abs(m.stretch) <= engine.RHYTHM_STRETCH_MAX && Math.abs(m.tilt) <= engine.RHYTHM_TILT_MAX && Math.abs(m.y) <= engine.RHYTHM_SHAKE_MAX, "mouvement borné");
+  for (const g of ["main", "bouche", "langue", "penetration"]) assert.deepEqual(engine.rhythmGestureMotion({ gesture: g, axis: "vertical", amp: 0, sinceHit: 0.1, beat: 0.8, t: 3 }), { y: 0, x: 0, scale: 0, stretch: 0, tilt: 0 }, `${g} : immobile quand les secousses sont coupées`);
   assert.match(css, /intimacy-cg img \{[^}]*calc\(\.4 \* var\(--rythme-secousse-y/, "secousse plus légère sur la CG");
 
   // v3 · Sprite : un échec de chargement ne le masque plus pour de bon.
@@ -228,7 +289,7 @@ try {
   assert.ok((pageSource.match(/onLoad=\{use\w*IntimateSprite \? markIntimateSpriteLoaded/g) || []).length >= 3, "tous les sprites intimes se rétablissent au chargement");
 
   const lengths = Object.fromEntries(Object.keys(charts).map((d) => [d, engine.rhythmChartEnd(d).toFixed(1) + " s"]));
-  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${bpms.join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px.`);
+  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${prelim.map((x) => x.bpm).join(" → ")} (préliminaires) puis ${positions.map((x) => x.bpm).join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px.`);
 } finally {
   await server.close();
 }

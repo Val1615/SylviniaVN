@@ -12,7 +12,11 @@
 
 const GROUPS = {
   peau: 8, humide: 4, souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, draps: 1, rate: 2,
+  // Phases préliminaires : glissements lubrifiés (main), baisers, succion (bouche), léchages (langue),
+  // et la même voix bouche occupée (bouche), étouffée (etouffe) ou sous la langue du joueur (langue).
+  glisse: 6, baiser: 4, succion: 5, lechage: 6, bouche: 4, etouffe: 5, langue: 4,
 } as const;
+export type RhythmSfxGesture = "main" | "bouche" | "langue" | "penetration";
 type Group = keyof typeof GROUPS;
 export const RHYTHM_SFX_FILES = (Object.keys(GROUPS) as Group[]).flatMap((group) => Array.from({ length: GROUPS[group] }, (_, i) => `${group}-${i + 1}`));
 
@@ -104,11 +108,48 @@ export class RhythmSfx {
     return { source, duration: buffer.duration / rate };
   }
 
-  /** Coup réussi : claquement varié, plus appuyé à mesure que l'ardeur monte ; une note humide de temps en temps. */
-  stroke(perfect: boolean, ardour: number, deep = false) {
+  /**
+   * Coup réussi, selon le geste de la phase : glissement humide de la main (et parfois un baiser),
+   * succion de la bouche (sa voix bouche occupée sur une tenue profonde), léchage de la langue,
+   * ou claquement de peau pendant la pénétration.
+   */
+  stroke(perfect: boolean, ardour: number, deep = false, gesture: RhythmSfxGesture = "penetration", motion?: "haut" | "bas") {
+    const base = (perfect ? 1 : 0.82) * rand(0.86, 1.08);
+    if (gesture === "main") {
+      this.play(this.pick("glisse"), { gain: base * (0.5 + 0.35 * ardour) * (motion === "bas" ? 0.8 : 1), rate: rand(0.9, 1.08) });
+      if (deep) this.play(this.pick("humide"), { gain: 0.28 + 0.2 * ardour, rate: rand(0.95, 1.12), delay: 0.04 });
+      else if (Math.random() < 0.12) this.play(this.pick("baiser"), { gain: 0.38, rate: rand(0.95, 1.06), delay: 0.09 });
+      return;
+    }
+    if (gesture === "bouche") {
+      this.play(this.pick("succion"), { gain: base * (0.48 + 0.3 * ardour), rate: rand(0.92, 1.08) });
+      if (deep) this.mouth(ardour);
+      return;
+    }
+    if (gesture === "langue") {
+      this.play(this.pick("lechage", 0, 3), { gain: base * (0.45 + 0.3 * ardour), rate: rand(0.92, 1.1) });
+      if (Math.random() < 0.1) this.play(this.pick("baiser"), { gain: 0.32, rate: rand(0.95, 1.06), delay: 0.12 });
+      return;
+    }
     const gain = (perfect ? 1 : 0.8) * (0.5 + 0.45 * ardour) * rand(0.86, 1.08);
     this.play(this.pick("peau"), { gain, rate: rand(0.9, 1.07) + ardour * 0.05 });
     if (deep || Math.random() < 0.15 + 0.4 * ardour) this.play(this.pick("humide"), { gain: (deep ? 0.55 : 0.32) * (0.6 + 0.4 * ardour), rate: rand(0.88, 1.1), delay: 0.02 });
+  }
+
+  /** Glissé : draps pendant les changements de position, léchage appuyé sous la langue, baiser entre deux préliminaires. */
+  slide(gesture: RhythmSfxGesture = "penetration", transition = true) {
+    if (gesture === "penetration") { this.sheets(); return; }
+    if (gesture === "langue" && !transition) { this.play(this.pick("lechage", 4, 5), { gain: 0.6, rate: rand(0.92, 1.06) }); return; }
+    this.play(this.pick("baiser"), { gain: 0.55, rate: rand(0.95, 1.05) });
+    if (gesture === "bouche") this.play("draps-1", { gain: 0.3, rate: rand(0.95, 1.05), delay: 0.1 });
+  }
+
+  /** Tenue profonde pendant la fellation : sa voix, bouche occupée, au plus une fois toutes les deux secondes et demie. */
+  private mouth(ardour: number) {
+    if (!this.ctx) return false;
+    const now = this.ctx.currentTime;
+    if (this.voicing(now) || now - this.lastVoiceAt < 2.5) return false;
+    return this.speak("bouche", 0.42 + 0.3 * ardour);
   }
 
   private lastVoiceAt = -99;
@@ -129,8 +170,8 @@ export class RhythmSfx {
    * Rare (moins d'une chance sur cinq par coup) et espacé d'au moins cinq secondes ;
    * un appui long tenu jusqu'au bout (force) l'appelle plus sûrement, à trois secondes d'écart.
    */
-  breath(ardour: number, force = false) {
-    if (!this.ctx) return false;
+  breath(ardour: number, force = false, gesture: RhythmSfxGesture = "penetration") {
+    if (!this.ctx || gesture === "bouche") return false;
     const now = this.ctx.currentTime;
     if (this.voicing(now) || now - this.lastVoiceAt < (force ? 3 : 5)) return false;
     if (!force && Math.random() > 0.18) return false;
@@ -142,12 +183,16 @@ export class RhythmSfx {
    * Palier de combo franchi : un gémissement, plus appuyé au deuxième palier,
    * haletant au troisième et au-delà. Jamais deux à moins de 3,5 secondes.
    */
-  comboMoan(level: number, ardour: number) {
+  comboMoan(level: number, ardour: number, gesture: RhythmSfxGesture = "penetration") {
     if (!this.ctx) return false;
     const now = this.ctx.currentTime;
     if (now - this.lastMoanAt < 3.5) return false;
     try { if (this.voicing(now)) this.voiceSource?.stop(); } catch { /* déjà terminé */ }
     this.lastMoanAt = now;
+    // Bouche occupée : gémissement étouffé. Sous la langue : gémissement mêlé au léchage, ou gémissement doux.
+    if (gesture === "bouche") return this.speak("etouffe", Math.min(1, 0.5 + 0.1 * level + 0.25 * ardour));
+    if (gesture === "langue" && Math.random() < 0.5) return this.speak("langue", Math.min(1, 0.55 + 0.1 * level + 0.25 * ardour));
+    if (gesture !== "penetration") return this.speak("gemit", Math.min(1, 0.45 + 0.1 * level + 0.25 * ardour), level <= 1 ? [0, 5] : [3, 8]);
     const group: Group = level >= 3 && Math.random() < 0.5 ? "halete" : "gemit";
     // Gémissements rangés du plus doux au plus intense : doux aux premiers paliers, intenses ensuite.
     const range: [number, number] | undefined = group === "gemit" ? (level <= 1 ? [0, 5] : level === 2 ? [3, 8] : [6, 11]) : undefined;

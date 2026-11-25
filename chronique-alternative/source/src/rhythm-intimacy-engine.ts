@@ -14,6 +14,12 @@
  * exactement sur le battement d'après. Un glissé marque chaque changement de
  * position, puis la dernière position accélère vers l'apogée (appui final).
  * La musique intime reste en fond, à volume réglable, sans aucun calage.
+ *
+ * Avant la pénétration, trois phases préliminaires gardent ce même principe,
+ * chacune avec son geste et sa cadence propres (voir RHYTHM_SECTIONS) : la main
+ * d'Hylee (va-et-vient alternés haut/bas et longues caresses tenues), sa bouche
+ * (coups légers et tenues profondes) puis la langue du joueur (motif irrégulier
+ * mais répété, taps légers et glissés). Combo et jauge sont partagés.
  */
 
 export type RhythmDifficulty = "doux" | "normal" | "intense";
@@ -29,6 +35,8 @@ export type RhythmNote = {
   duration: number;
   kind: RhythmNoteKind;
   direction?: "left" | "right";
+  /** Sens du geste pour les caresses (va-et-vient alternés) : la tête de note l'indique. */
+  motion?: "haut" | "bas";
   section: number;
   /** Intervalle entre deux coups à cet endroit (secondes) : sert aux effets en rythme. */
   beat: number;
@@ -49,18 +57,40 @@ export type RhythmSectionDef = {
   ramp?: { strokes: number; toBpm: number; final: number };
   /** Sens de la secousse à chaque coup : de haut en bas (elle mène, renversée) ou en profondeur (de dos, face à face). */
   shake: RhythmShakeAxis;
+  /** Geste de la phase : il choisit l'animation du sprite et les bruitages. */
+  gesture: RhythmGesture;
+  /**
+   * Motif rejoué en boucle à la place des coups réguliers (phases préliminaires) :
+   * chaque pas dure « beats » battements avant le pas suivant ; une tenue dure tout son pas.
+   */
+  motif?: RhythmMotifStep[];
 };
 export type RhythmShakeAxis = "vertical" | "profondeur";
+export type RhythmGesture = "main" | "bouche" | "langue" | "penetration";
+export type RhythmMotifStep = { kind: "tap" | "hold" | "slide"; beats: number; motion?: "haut" | "bas"; direction?: "left" | "right" };
 
 export const RHYTHM_TRACK = "intimate";
 /** Décompte avant le premier coup, en secondes. */
 export const RHYTHM_LEAD_IN = 3;
 
+const T = (beats = 1, motion?: "haut" | "bas"): RhythmMotifStep => ({ kind: "tap", beats, ...(motion ? { motion } : {}) });
+const HOLD = (beats: number, motion?: "haut" | "bas"): RhythmMotifStep => ({ kind: "hold", beats, ...(motion ? { motion } : {}) });
+const SL = (direction: "left" | "right", beats = 1): RhythmMotifStep => ({ kind: "slide", beats, direction });
+
 export const RHYTHM_SECTIONS: RhythmSectionDef[] = [
-  { id: "lente", bpm: 56, strokes: 14, holds: [5, 11], holdBeats: 2, shake: "vertical" },
-  { id: "dos", bpm: 76, strokes: 20, holds: [9, 16], holdBeats: 2, slide: "right", shake: "profondeur" },
-  { id: "renversee", bpm: 98, strokes: 28, holds: [13, 23], holdBeats: 2, slide: "left", shake: "vertical" },
-  { id: "face", bpm: 122, strokes: 24, holds: [], holdBeats: 2, slide: "right", ramp: { strokes: 12, toBpm: 150, final: 3.2 }, shake: "profondeur" },
+  // Sa main : va-et-vient réguliers, haut puis bas, et une longue caresse tenue à la fin de chaque motif.
+  { id: "main", bpm: 64, strokes: 21, holds: [], holdBeats: 2, shake: "vertical", gesture: "main",
+    motif: [T(1, "haut"), T(1, "bas"), T(1, "haut"), T(1, "bas"), T(1, "haut"), T(1, "bas"), HOLD(2, "haut")] },
+  // Sa bouche : deux coups légers, une tenue profonde, en boucle.
+  { id: "bouche", bpm: 72, strokes: 18, holds: [], holdBeats: 2, slide: "left", shake: "vertical", gesture: "bouche",
+    motif: [T(), T(), HOLD(2), T(), T(), T(), HOLD(2)] },
+  // Votre langue : un motif irrégulier mais toujours le même (court, court, long), avec des glissés de côté.
+  { id: "langue", bpm: 84, strokes: 24, holds: [], holdBeats: 2, slide: "right", shake: "vertical", gesture: "langue",
+    motif: [T(1), T(0.5), T(1.5), SL("left"), T(0.5), T(0.5), SL("right"), T(1.5)] },
+  { id: "lente", bpm: 56, strokes: 14, holds: [5, 11], holdBeats: 2, slide: "left", shake: "vertical", gesture: "penetration" },
+  { id: "dos", bpm: 76, strokes: 20, holds: [9, 16], holdBeats: 2, slide: "right", shake: "profondeur", gesture: "penetration" },
+  { id: "renversee", bpm: 98, strokes: 28, holds: [13, 23], holdBeats: 2, slide: "left", shake: "vertical", gesture: "penetration" },
+  { id: "face", bpm: 122, strokes: 24, holds: [], holdBeats: 2, slide: "right", ramp: { strokes: 12, toBpm: 150, final: 3.2 }, shake: "profondeur", gesture: "penetration" },
 ];
 
 /** Les difficultés jouent la même cadence (un coup par battement) : seuls le tempo et la tolérance changent. */
@@ -82,6 +112,19 @@ export function buildRhythmChart(difficulty: RhythmDifficulty): RhythmNote[] {
       time += beat;
       push({ time, duration: 0, kind: "slide", direction: section.slide, section: sectionIndex, beat });
       time += beat;
+    }
+    if (section.motif) {
+      const motif = section.motif;
+      for (let i = 0; i < section.strokes; i++) {
+        const step = motif[i % motif.length];
+        if (i > 0) time += motif[(i - 1) % motif.length].beats * beat;
+        const extra = { ...(step.motion ? { motion: step.motion } : {}), ...(step.direction ? { direction: step.direction } : {}) };
+        push({ time, duration: step.kind === "hold" ? step.beats * beat : 0, kind: step.kind, section: sectionIndex, beat, ...extra });
+      }
+      // La phase suivante commence après la fin du dernier pas (une tenue est toujours menée à son terme).
+      const last = motif[(section.strokes - 1) % motif.length];
+      time += last.beats * beat;
+      return;
     }
     for (let i = 0; i < section.strokes; i++) {
       if (i > 0 || section.slide) time += i === 0 ? 0 : beat;
@@ -141,7 +184,8 @@ export function judgeOffset(delta: number, difficulty: RhythmDifficulty): Rhythm
 export const JUDGEMENT_POINTS: Record<RhythmJudgement, number> = { 0: 0, 1: 1, 2: 0.6, 3: 0 };
 
 export type RhythmSaveState = {
-  v: 2;
+  /** 3 : partie en sept phases (caresses, bouche, langue, puis les quatre positions). */
+  v: 3;
   scene: string;
   difficulty: RhythmDifficulty;
   auto: boolean;
@@ -222,6 +266,53 @@ export function rhythmShakeWave(s: number): number {
   return Math.sin(2 * Math.PI * s / 0.16) * Math.exp(-s / 0.09);
 }
 
+/*
+ * Animation du sprite propre à chaque geste (aucune image nouvelle : transformations CSS seulement).
+ * - main : léger étirement vertical en rythme, vers le haut sur « haut », petit retour sur « bas »,
+ *   étirement maintenu pendant une caresse tenue ;
+ * - bouche : hochement doux, descente et légère inclinaison alternée, la tête reste basse pendant une tenue ;
+ * - langue : ondulation continue et cambrure à chaque coup, avec des frissons qui montent au fil de la phase ;
+ * - penetration : la secousse (rhythmShakeWave) dans l'axe de la position.
+ * Valeurs : y et x en pixels, stretch et scale en fraction de taille, tilt en degrés. Le plafond
+ * en pixels (limit) et RHYTHM_STRETCH_MAX gardent toujours Hylee dans le cadre.
+ */
+export const RHYTHM_STRETCH_MAX = 0.022;
+export const RHYTHM_TILT_MAX = 2.2;
+export type RhythmMotion = { y: number; x: number; scale: number; stretch: number; tilt: number };
+export function rhythmGestureMotion(input: {
+  gesture: RhythmGesture; axis: RhythmShakeAxis; amp: number; sinceHit: number; beat: number; t: number;
+  motion?: "haut" | "bas"; parity?: number; holdFrac?: number | null; progress?: number; ardour?: number; fx?: number;
+}): RhythmMotion {
+  const { gesture, axis, amp, sinceHit, beat, t } = input;
+  const unit = Math.max(0, Math.min(1, amp / RHYTHM_SHAKE_MAX));
+  const fx = input.fx ?? 1;
+  const span = Math.max(0.2, beat * 0.9);
+  const env = sinceHit >= 0 && sinceHit < span ? Math.sin(Math.PI * sinceHit / span) : 0;
+  const held = input.holdFrac != null && input.holdFrac >= 0;
+  const zero: RhythmMotion = { y: 0, x: 0, scale: 0, stretch: 0, tilt: 0 };
+  if (amp <= 0) return zero;
+  if (gesture === "main") {
+    const k = RHYTHM_STRETCH_MAX * (0.45 + 0.55 * unit);
+    const stretch = held ? k * Math.min(1, 0.4 + input.holdFrac! * 1.2) : k * env * (input.motion === "bas" ? -0.45 : 1);
+    return { ...zero, stretch: Math.max(-RHYTHM_STRETCH_MAX, Math.min(RHYTHM_STRETCH_MAX, stretch)), y: -stretch * 40 };
+  }
+  if (gesture === "bouche") {
+    const sign = (input.parity ?? 0) % 2 ? -1 : 1;
+    if (held) return { ...zero, y: amp * 0.85, tilt: sign * RHYTHM_TILT_MAX * 0.35 * unit * Math.sin(Math.PI * 2 * input.holdFrac!), stretch: -0.006 * unit };
+    return { ...zero, y: amp * 0.8 * env, tilt: sign * RHYTHM_TILT_MAX * 0.7 * (0.4 + 0.6 * unit) * env };
+  }
+  if (gesture === "langue") {
+    const ardour = Math.max(0, Math.min(1, input.ardour ?? unit));
+    const progress = Math.max(0, Math.min(1, input.progress ?? 0));
+    const wave = Math.sin(2 * Math.PI * t / (beat * 2.5));
+    const shiver = (0.4 + 2.2 * progress * (0.4 + 0.6 * ardour)) * fx * Math.sin(2 * Math.PI * 15 * t);
+    return { y: -amp * 0.5 * env, x: 3.5 * fx * wave + shiver, scale: 0, stretch: -0.012 * (0.5 + 0.5 * unit) * env, tilt: (0.6 + 0.9 * ardour) * fx * wave };
+  }
+  const px = amp * rhythmShakeWave(sinceHit);
+  const depth = axis === "profondeur";
+  return { ...zero, y: depth ? px * 0.35 : px, scale: depth ? px * 0.0016 : 0 };
+}
+
 /** Paliers d'une section : un quart, la moitié puis les trois quarts des notes jouées, avec une justesse suffisante. */
 export const RHYTHM_TIER_RULES = [
   { progress: 0.22, accuracy: 0.45 },
@@ -254,7 +345,7 @@ export function loadRhythmSave(scene: string, storage: Pick<Storage, "getItem"> 
   try {
     const all = JSON.parse(storage?.getItem(RHYTHM_STORAGE_KEY) || "{}") as Record<string, RhythmSaveState>;
     const entry = all[scene];
-    if (!entry || entry.v !== 2 || !Array.isArray(entry.judgements)) return undefined;
+    if (!entry || entry.v !== 3 || !Array.isArray(entry.judgements)) return undefined;
     if (entry.judgements.length !== buildRhythmChart(entry.difficulty).length) return undefined;
     return entry;
   } catch { return undefined; }

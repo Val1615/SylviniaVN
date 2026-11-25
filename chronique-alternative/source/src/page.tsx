@@ -260,7 +260,7 @@ import { ASPIRATIONS, WISHES } from "./life-wishes";
 import { BAD_WEATHER, INVITE_MAX_AHEAD, INVITE_MAX_PENDING, activityCounted, applyLifeEvent, chooseAspiration, deliverLetterGains, deliveredLetters, emptyLife, expireInvites, giftCounted, honorInvite, inviteAccepted, inviteAt, inviteHint, invitePaused, inviteScore, letterBlocked, letterThemeAvailable, normalizeLife, pendingInvites, pushMoodEvent, recordAcceptance, recordActivity, recordRefusal, replyDayFor, rollWishes, unreadLifeMail, wishLabel, type LifeContext, type LifeEvent, type LifeReward, type LifeState, type PlayerInvite } from "./life-state";
 import { V2Title } from "./ui/v2/title";
 import { RHYTHM_DUCK_EVENT, RhythmIntimacyGame } from "./rhythm-intimacy-ui";
-import { HYLEE_HOME_RHYTHM, RHYTHM_REPLACED_CHAPTER, rhythmSceneFor } from "./rhythm-intimacy";
+import { HYLEE_HOME_RHYTHM, RHYTHM_REPLACED_CHAPTER, RHYTHM_START_CHAPTER, RHYTHM_VISUAL_CHAPTER, rhythmSceneFor } from "./rhythm-intimacy";
 import "./rhythm-intimacy.css";
 import { AudioButtons, Kbd, Orn4, ROMAINS, Seau, V2Dialog, moveFocus } from "./ui/v2/common";
 import { DEFAULT_SCALES, ECHELLES, SCALE_KEYS, applyScales, borne, createParticles, installGlobalSfx, playTransition, readScales, reduit, setReducedSetting, setUiPrefs, sfx, storeScales, subscribeUiPrefs, uiPrefs, type FxMode, type ScaleKey, type Scales } from "./ui/v2/fx";
@@ -7109,7 +7109,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     const sequence = withSoloIntimateMoods(route.chapters.explicite, character.id, route.id);
     setDirection(route);
     setDirectionSequence(sequence);
-    setDirectionChapter(RHYTHM_REPLACED_CHAPTER - 1);
+    setDirectionChapter(RHYTHM_START_CHAPTER - 1);
     setLines([]);
     setStep("rhythm");
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -7186,7 +7186,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     else if (step === "direction-lines") {
       if (directionChapter < directionSequence.length - 1) {
         const nextChapter = directionChapter + 1;
-        if (rhythmScene && nextChapter === RHYTHM_REPLACED_CHAPTER) {
+        if (rhythmScene && nextChapter === RHYTHM_START_CHAPTER) {
           rollback.clear();
           setLines([]);
           setLineIndex(0);
@@ -7200,11 +7200,15 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     else if (step === "ending") setStep("done");
   }
 
-  /** Sortie du jeu de rythme : variante de conclusion choisie par la justesse, ou la séquence écrite d'origine. */
+  /**
+   * Sortie du jeu de rythme : variante de conclusion choisie par la justesse (elle tient lieu de climax),
+   * ou les séquences écrites d'origine, des caresses sur la table jusqu'au climax.
+   */
   function leaveRhythm(conclusion?: DialogueLine[]) {
     rollback.clear();
-    setDirectionChapter(RHYTHM_REPLACED_CHAPTER);
-    beginSegment("direction-lines", conclusion || directionSequence[RHYTHM_REPLACED_CHAPTER] || []);
+    const chapter = conclusion ? RHYTHM_REPLACED_CHAPTER : RHYTHM_START_CHAPTER;
+    setDirectionChapter(chapter);
+    beginSegment("direction-lines", conclusion || directionSequence[chapter] || []);
   }
 
   function chooseApproach(choice: IntimacyChoice) {
@@ -7256,13 +7260,13 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     mode: game.player.intimacy,
     surface: modal.home ? "home" : "route",
     step: step === "rhythm" ? "direction-lines" : step,
-    chapter: directionChapter,
+    chapter: step === "rhythm" ? RHYTHM_VISUAL_CHAPTER : directionChapter,
     narrativePhase: character.id === "lineva" && modal.dateId?.startsWith("date-lineva-")
       ? linevaDateIntimacyPhase(directionChapter)
       : character.id === "allenna" && modal.dateId?.startsWith("date-allenna-")
         ? allennaDateIntimacyPhase(directionChapter)
         : hyleeContext
-          ? hyleeDateIntimacyPhase(directionChapter)
+          ? hyleeDateIntimacyPhase(step === "rhythm" ? RHYTHM_VISUAL_CHAPTER : directionChapter)
           : remeriiContext
             ? remeriiDateIntimacyPhase(directionChapter)
             : naiahContext

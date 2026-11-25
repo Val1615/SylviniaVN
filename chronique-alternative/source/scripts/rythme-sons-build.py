@@ -30,7 +30,24 @@ for g,lst in VOICE.items():
 add('draps-1',R+'644490_8331855-hq.mp3',0,3.1,'highpass=f=150',0.4)
 add('rate-1',R+'789096_16923931-hq.mp3',1.76,2.30,'lowpass=f=900',0.15)
 add('rate-2',R+'789096_16923931-hq.mp3',5.02,5.50,'lowpass=f=900',0.15)
-exec(open('build_phases.py').read()) if os.path.exists('build_phases.py') else None
+# --- Phases préliminaires (caresses, bouche, langue) : bruitages de studio CC0 et voix MagicalMysticVA (CC BY 4.0).
+P=R+'phases/'
+foley='highpass=f=110,lowpass=f=9000'
+for i,(f,a) in enumerate([('528529',5.80),('528529',12.35),('740836',0.38),('740836',1.02),('740836',2.70),('825806',5.45)]):
+    add(f'glisse-{i+1}',P+f+'.mp3',a,a+0.5,foley+',equalizer=f=900:t=q:w=1:g=2',0.14,True)
+for i,(f,a,b) in enumerate([('179303',0.05,0.70),('166153',0.45,0.90),('344209',0,0.24),('151764',5.55,5.95)]):
+    add(f'baiser-{i+1}',P+f+'.mp3',a,b,foley,0.08,True)
+for i,(f,a,b) in enumerate([('166223',7.74,8.14),('166223',9.85,10.25),('166223',14.70,15.10),('166223',17.67,18.07),('166158',0.0,0.75)]):
+    add(f'succion-{i+1}',P+f+'.mp3',a,b,foley+',equalizer=f=500:t=q:w=1:g=2',0.1,True)
+for i,(f,a,b) in enumerate([('269118',0.38,0.86),('269118',1.08,1.58),('269118',1.78,2.24),('269118',2.36,2.84),('456852',0.82,1.48),('264545',0.0,0.5)]):
+    add(f'lechage-{i+1}',P+f+'.mp3',a,b,foley,0.1,True)
+# Voix de Hylee pendant la fellation (bouche occupée) et sous la langue du joueur : même comédienne, même traitement.
+for i,(a,b) in enumerate([(0.15,1.40),(14.15,15.50),(23.50,24.80),(18.80,19.95)]):
+    add(f'bouche-{i+1}',P+'710983.mp3',a,b,VCHAIN,0.2,True)
+for i,(a,b) in enumerate([(0.18,1.15),(2.40,3.30),(4.70,5.62),(6.90,7.82),(9.75,10.70)]):
+    add(f'etouffe-{i+1}',P+'709457.mp3',a,b,VCHAIN,0.18,True)
+for i,(a,b) in enumerate([(1.95,3.30),(11.25,12.60),(14.50,15.90),(26.05,27.45)]):
+    add(f'langue-{i+1}',P+'725065.mp3',a,b,VCHAIN,0.2,True)
 only=set(sys.argv[1:])
 meta={}
 def vol(path,flt):

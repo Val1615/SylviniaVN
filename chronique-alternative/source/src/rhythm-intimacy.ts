@@ -5,11 +5,13 @@ import type { DialogueLine } from "./game-data";
  *
  * Scène : Hylee, intimité au logis, parcours homme, mood « audacieuse »
  * (route « hylee-home-homme-audacieuse »), réglage Explicite. Le jeu remplace
- * la séquence « climax » écrite : il s'ouvre juste après l'intensification
- * (Hylee vous chevauche dans la chambre, une étoile de givre sur le photophore)
- * et rend la main à l'après-climax, qui affiche la CG post-orgasme.
+ * les séquences 4 à 8 écrites, des caresses sur la table jusqu'au climax : il
+ * s'ouvre quand Hylee vous libère du dernier tissu contre la table et rend la
+ * main à l'après-climax, qui affiche la CG post-orgasme. « Lire la version
+ * écrite » rejoue ces séquences d'origine.
  *
- * Chaque section correspond à une position. Ses trois paliers se débloquent par
+ * Trois phases préliminaires (sa main, ses lèvres, votre langue) précèdent les
+ * quatre positions. Chaque section correspond à un geste ou à une position. Ses trois paliers se débloquent par
  * la justesse du joueur et décrivent l'acte à mesure que la cadence monte. Des
  * lignes courtes suivent les coups eux-mêmes, et les répliques d'Hylee montent
  * en intensité avec la jauge de plaisir.
@@ -46,17 +48,92 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
   id: "rythme-hylee-logis-audacieuse",
   routeId: "hylee-home-homme-audacieuse",
   title: "Au rythme du givre",
-  instruction: "Suivez ses va-et-vient : un coup à chaque battement, quand la note touche le cercle. Gardez l'appui quand elle vous retient au fond, glissez quand elle change de position. La cadence accélère jusqu'au bout.",
+  instruction: "Suivez le geste d'Hylee : un coup à chaque battement, quand la note touche le cercle. Les flèches ˄ ˅ marquent le va-et-vient de sa main ; gardez l'appui quand elle vous retient, glissez quand elle change de geste ou de position. Chaque phase a sa cadence, la dernière accélère jusqu'au bout.",
   controls: {
     keyboard: "Espace, J ou F : toucher et maintenir · ← → : glisser · Échap : pause",
     touch: "Touchez n'importe où : toucher · gardez le doigt : maintenir · balayez : glisser",
   },
   sections: [
     {
+      label: "Sa main",
+      cadence: "va-et-vient",
+      intimateMood: "teasing",
+      intro: N("Hylee vous assoit au bord de la table et se glisse entre vos genoux, le menton levé. Ses doigts se referment sur vous, puis entament un va-et-vient lent qu'elle compte à mi-voix.", "teasing"),
+      tiers: [
+        N("Sa paume monte, redescend, s'attarde tout en haut. Elle a trouvé d'emblée la mesure qui vous fait retenir votre souffle, et elle n'en change plus.", "seductive"),
+        H("Tu vois ? Je n'ai même pas besoin de demander ce qui te plaît. Ta respiration me répond.", "teasing", "teasing"),
+        N("Ses doigts glissent, luisants et chauds, et la caresse prend de l'assurance. À chaque longue remontée, elle vous guette par en dessous pour surprendre le moment où vous céderez.", "seductive"),
+      ],
+      strokes: [
+        N("Sa main monte. Puis redescend, sans hâte."),
+        N("Un tour de poignet, tout en haut."),
+        N("Ses doigts serrent juste ce qu'il faut."),
+        N("Elle souffle sur vous, amusée."),
+        N("La caresse s'allonge, s'attarde."),
+        N("Votre main cherche le bord de la table."),
+      ],
+      voice: [
+        H("Tout doux. Je t'ai à peine effleuré.", "teasing"),
+        H("Regarde comme tu me réponds.", "seductive"),
+        H("Mmh. Encore un peu, rien qu'à moi.", "teasing"),
+        H("Pas encore. J'ai d'autres projets.", "tender"),
+      ],
+    },
+    {
+      label: "Ses lèvres",
+      cadence: "profonde",
+      intimateMood: "seductive",
+      intro: N("Elle se penche plus bas, dépose un baiser là où sa main s'attardait, puis vous accueille entre ses lèvres avec une lenteur délibérée, les yeux toujours levés vers les vôtres.", "seductive"),
+      tiers: [
+        N("Elle alterne de petites pressions rapides et de longues descentes où elle vous garde au chaud, immobile, jusqu'à vous arracher un frisson.", "seductive"),
+        H("Mmh... Ne bouge pas. C'est moi qui choisis le tempo, tu te souviens ?", "teasing", "teasing"),
+        N("Sa langue dessine un cercle au sommet chaque fois qu'elle remonte. Vos doigts se perdent dans ses cheveux, et elle sourit contre vous, ravie de sentir votre maîtrise s'effriter.", "tender"),
+      ],
+      strokes: [
+        N("Ses lèvres glissent, humides et lentes."),
+        N("Elle remonte, vous libère, reprend."),
+        N("Un regard par en dessous, malicieux."),
+        N("Elle vous garde au fond, sans un mouvement."),
+        N("Ses cheveux balaient vos cuisses."),
+        N("Un murmure étouffé vibre contre vous."),
+      ],
+      voice: [
+        H("Mmh...", "seductive"),
+        H("Tu as bon goût, tu sais.", "teasing"),
+        H("Ne me retiens pas... pas encore.", "seductive"),
+        H("Assez. À mon tour.", "teasing"),
+      ],
+    },
+    {
+      label: "Votre langue",
+      cadence: "irrégulière",
+      intimateMood: "tender",
+      intro: N("Hylee se redresse, prend votre place sur la table et ouvre les genoux sans détourner les yeux. Une main dans vos cheveux, elle vous guide vers sa chaleur et vous montre où commencer.", "teasing"),
+      tiers: [
+        N("Vos lèvres trouvent le point qu'elle vous désigne. Un effleurement court, un autre, puis une longue caresse de la langue, et sa cuisse tressaille contre votre joue.", "tender"),
+        H("Là... Non, ne change rien. Ce petit rythme bancal me rend folle.", "seductive", "teasing"),
+        N("Elle ne donne plus d'ordres, seulement des soupirs. Ses hanches viennent à votre rencontre, ses doigts se crispent dans vos cheveux et les frissons remontent de son ventre jusqu'à sa gorge.", "soft"),
+      ],
+      strokes: [
+        N("Un effleurement, un autre, puis une longue caresse."),
+        N("Sa cuisse tremble contre votre joue."),
+        N("Elle se cambre, la nuque renversée."),
+        N("Vos lèvres tracent un cercle lent."),
+        N("Un frisson court jusqu'à ses épaules."),
+        N("Ses talons glissent sur le rebord de la table."),
+      ],
+      voice: [
+        H("Oh... juste là.", "tender"),
+        H("Surtout, ne t'arrête pas.", "seductive"),
+        H("Tu apprends vite...", "shy"),
+        H("Viens. La chambre. Maintenant.", "soft"),
+      ],
+    },
+    {
       label: "Elle mène",
       cadence: "lente",
       intimateMood: "seductive",
-      intro: N("Hylee ralentit exprès. Elle descend sur vous jusqu'au bout, s'arrête là, puis remonte avec une lenteur qui ressemble à une provocation.", "seductive"),
+      intro: N("Elle vous entraîne jusqu'à la chambre, vous renverse sur le lit et s'installe sur vos hanches. D'un seul geste, elle vous guide en elle, puis ralentit exprès : elle descend jusqu'au bout, s'arrête là et remonte avec une lenteur de provocation.", "seductive"),
       tiers: [
         N("Chaque fois que vous restez au fond, elle serre les genoux contre vos flancs et laisse filer un souffle étonné, comme si elle découvrait la profondeur du geste.", "seductive"),
         H("Comme ça. Ne bouge plus... Voilà. Maintenant, tu me suis.", "teasing", "teasing"),
@@ -197,5 +274,12 @@ export function rhythmSceneFor(routeId: string | undefined, mode: string): Rhyth
   return mode === "explicite" && routeId === HYLEE_HOME_RHYTHM.routeId ? HYLEE_HOME_RHYTHM : undefined;
 }
 
-/** Index de la séquence remplacée par le jeu (phase « climax » des scènes Hylee). */
+/** Index de la séquence « climax » des scènes Hylee : la conclusion du jeu la remplace. */
 export const RHYTHM_REPLACED_CHAPTER = 7;
+/**
+ * Première séquence remplacée par le jeu (phase « partner-discovery » : caresses et bouche sur la table).
+ * Le jeu couvre les séquences RHYTHM_START_CHAPTER à RHYTHM_REPLACED_CHAPTER ; la version écrite les rejoue.
+ */
+export const RHYTHM_START_CHAPTER = 3;
+/** Séquence dont le visuel (sprites intimes, sans CG) habille tout le jeu. */
+export const RHYTHM_VISUAL_CHAPTER = RHYTHM_REPLACED_CHAPTER - 1;
