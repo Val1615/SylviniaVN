@@ -135,6 +135,7 @@ import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./na
 import { spritePath } from "./sprite-system";
 import {
   hasIntimateSprites,
+  INTIMATE_SPRITE_MOODS,
   intimateSpriteFallbackPath,
   intimateSpritePath,
   isIntimateGroupContext,
@@ -2251,14 +2252,50 @@ function recoverMissingSprite(event: SyntheticEvent<HTMLImageElement>, portrait:
   image.src = portrait;
 }
 
+/*
+ * Un sprite intime qui échoue à charger (réseau instable, tunnel coupé) montre
+ * la dernière image bien chargée, ou à défaut l'humeur de repli, puis retente
+ * l'image voulue quelques fois. Il n'est masqué qu'en dernier recours, quand
+ * rien n'a jamais pu s'afficher, et réapparaît dès qu'une image se charge.
+ * L'élément <img> est réutilisé d'une humeur à l'autre : aucun échec ancien
+ * ne doit rester collé (c'était la cause du sprite qui disparaissait).
+ */
+const spriteBase = (src: string) => src.split("#")[0].replace(/[?&]r=\d+$/u, "");
 function recoverMissingIntimateSprite(event: SyntheticEvent<HTMLImageElement>, characterId: string) {
   const image = event.currentTarget;
-  if (image.dataset.spriteFallback === "intimate-soft") {
-    image.hidden = true;
+  const data = image.dataset;
+  const failed = spriteBase(image.src);
+  const fallback = spriteBase(new URL(intimateSpriteFallbackPath(characterId), window.location.href).href);
+  const lastGood = data.spriteLastGood;
+  if (failed !== fallback && failed !== lastGood) {
+    // L'image voulue a échoué : on garde quelque chose à l'écran et on la retente.
+    if (data.spriteWanted !== failed) { data.spriteWanted = failed; data.spriteRetry = "0"; }
+    const tries = Number(data.spriteRetry || 0);
+    const shown = lastGood || fallback;
+    data.spriteShown = shown;
+    image.src = shown;
+    if (tries < 4) {
+      data.spriteRetry = String(tries + 1);
+      window.setTimeout(() => {
+        if (!image.isConnected || image.dataset.spriteWanted !== failed || spriteBase(image.src) !== image.dataset.spriteShown) return;
+        image.src = `${failed}${failed.includes("?") ? "&" : "?"}r=${tries + 1}`;
+      }, 900 * (tries + 1));
+    }
     return;
   }
-  image.dataset.spriteFallback = "intimate-soft";
-  image.src = intimateSpriteFallbackPath(characterId);
+  // L'image de secours elle-même a échoué : on essaie l'autre secours, sinon on masque en attendant la prochaine réussite.
+  const other = failed === lastGood ? fallback : lastGood;
+  if (other && other !== failed && data.spriteShown !== other) { data.spriteShown = other; image.src = other; return; }
+  image.hidden = true;
+}
+
+function markIntimateSpriteLoaded(event: SyntheticEvent<HTMLImageElement>) {
+  const image = event.currentTarget;
+  const data = image.dataset;
+  const loaded = spriteBase(image.src);
+  image.hidden = false;
+  data.spriteLastGood = loaded;
+  if (loaded === data.spriteWanted || loaded !== data.spriteShown) { delete data.spriteWanted; delete data.spriteRetry; delete data.spriteShown; }
 }
 
 function routeBackground(scene: RouteScene) {
@@ -7096,6 +7133,14 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
   const intimateMood = step === "rhythm" ? rhythmMood : currentLine?.intimateMood || "soft";
+  // Pendant le jeu de rythme, l'humeur change souvent : toutes les expressions sont chargées d'avance
+  // et gardées en mémoire, pour que chaque changement soit instantané, même sur un réseau lent.
+  const rhythmSpriteCache = useRef<HTMLImageElement[]>([]);
+  useEffect(() => {
+    if (step !== "rhythm" || !hasIntimateSprites(character.id) || rhythmSpriteCache.current.length) return;
+    const moods = INTIMATE_SPRITE_MOODS[character.id as keyof typeof INTIMATE_SPRITE_MOODS] || [];
+    rhythmSpriteCache.current = moods.map((mood) => { const image = new Image(); image.decoding = "async"; image.src = intimateSpritePath(character.id, mood); return image; });
+  }, [step, character.id]);
   // Retour : instantanés de lecture seulement ; vidés à chaque choix (le score et la route restent acquis).
   const rollback = useRollback<IntimacyRollback<IntimacyStep>>();
   const sectionRef = useRef<HTMLElement>(null);
@@ -7231,7 +7276,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
 
   return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
-    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
+    {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} onLoad={useIntimateSprite ? markIntimateSpriteLoaded : undefined} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
     {step === "rhythm" && rhythmScene && <RhythmIntimacyGame scene={rhythmScene} saveKey={`${rhythmScene.id}:${modal.replay ? "souvenir" : "chronique"}`} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} format={(text) => replacePlayer(text, game.player)} onMood={setRhythmMood}
       onFinish={(result) => { logChoice(`${rhythmScene.title} · ${rhythmScene.conclusions[result.quality].title} (${Math.round(result.accuracy * 100)} %)`); leaveRhythm(rhythmScene.conclusions[result.quality].lines); }}
@@ -7368,8 +7413,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop }: { moda
   return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
-      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} alt="" /></div>
-      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useSecondIntimateSprite ? "intimate" : "standard"} src={useSecondIntimateSprite ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useSecondIntimateSprite ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} alt="" /></div>
+      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} onLoad={useFirstIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
+      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useSecondIntimateSprite ? "intimate" : "standard"} src={useSecondIntimateSprite ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useSecondIntimateSprite ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} onLoad={useSecondIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
     </div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
