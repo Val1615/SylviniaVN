@@ -144,6 +144,24 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "teasing", bouche: "smirk", langue: "inviting", frottement: "teasing", penetration: "inviting", interlude: "stern", rire: "laugh" },
   },
+  "hylee-naiah": {
+    character: "hylee-naiah",
+    // À trois (lot 11) : la piste de Hylee (Doux), les fourberies de Naïah (illusions, ombre au bord) ; Hylee gémit, Naïah rit.
+    difficulty: "doux",
+    bpm: { main: 64, bouche: 72, langue: 84, frottement: 72, penetration: [56, 78, 100], ramp: [124, 150] },
+    palette: { vive: "231,101,136", profonde: "40,30,58" },
+    voice: { dir: "", groups: { souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, bouche: 4, etouffe: 5, langue: 4 } },
+    voices: [
+      { key: "H", character: "hylee", bank: { dir: "", groups: { souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, bouche: 4, etouffe: 5, langue: 4 } } },
+      { key: "N", character: "naiah", bank: { dir: "naiah", groups: { souffle: 1, soupir: 1, gemit: 2, apogee: 2, rire: 3 } }, bord: true },
+    ],
+    behaviours: { baits: 8, bord: { beats: 4 } },
+    resistanceWeight: 0,
+    relationPenalty: 0,
+    relationPenalties: { hylee: 0, naiah: 0 },
+    captionMaxMs: 10000,
+    moods: { main: "teasing", bouche: "teasing", langue: "soft", frottement: "teasing", penetration: "soft", interlude: "soft", rire: "teasing" },
+  },
   "hylee-remerii": {
     character: "hylee-remerii",
     // À trois (lot 9) : la douceur de Hylee et la mesure de Remerii ; relais de sommets, aucun piège, sa mesure récompensée.

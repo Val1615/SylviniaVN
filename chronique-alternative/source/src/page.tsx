@@ -518,12 +518,14 @@ const RHYTHM_DEV_ROWS: [character: string, title: string, level: string][] = [
   ["hylee", "Hylee (lot 8)", "Doux"],
   ["hylee-remerii", "Hylee et Remerii, relais de sommets (lot 9)", "Doux"],
   ["naiah", "Naïah, l'apprentissage (lot 10)", "Normal"],
+  ["hylee-naiah", "Hylee et Naïah, fourberies (lot 11)", "Doux"],
 ];
 const RHYTHM_DEV_PLACES: Record<string, string> = {
   "date-allenna-field": "Terrain", "date-allenna-terrace": "Terrasse", "date-lineva-ramparts": "Remparts", "date-lineva-quarters": "Quartiers",
   "home-allenna": "Logis", "home-lineva": "Logis", "group-date-allenna-lineva-training": "Entraînement", "group-date-allenna-lineva-basin": "Bassin", "group-date-allenna-lineva-home": "Logis",
   "date-remerii-lanterns": "Lanternes", "date-remerii-observatory": "Observatoire", "home-remerii": "Logis",
   "date-hylee-glade": "Clairière", "date-hylee-lake": "Lac", "home-hylee": "Logis",
+  "group-date-hylee-naiah-place": "Lac", "group-date-hylee-naiah-one": "Clairière", "group-date-hylee-naiah-home": "Logis",
   "date-naiah-sanctuary": "Sanctuaire", "date-naiah-akuhn": "Akuhn", "home-naiah": "Logis",
   "group-date-hylee-remerii-free-day": "Journée libre", "group-date-hylee-remerii-wind": "Vent", "group-date-hylee-remerii-home": "Logis",
 };
@@ -5445,7 +5447,7 @@ export default function Home() {
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
     if (target.kind === "rythme-perso") {
       // Fiches personnages (lots 1, 4 à 6) : la scène choisie s'ouvre directement sur le jeu, en souvenir (aucune mutation).
-      if (target.character === "allenna-lineva" || target.character === "hylee-remerii") {
+      if (target.character === "allenna-lineva" || target.character === "hylee-remerii" || target.character === "hylee-naiah") {
         const date = groupIntimacyContextById(target.context);
         if (!date) return;
         const homeBackground = date.home || date.id.endsWith("-home") ? propertyById(game.housing.propertyId)?.background : undefined;

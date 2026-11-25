@@ -34,6 +34,7 @@ try {
   const remeriiScenes = await server.ssrLoadModule("/src/remerii-date-intimacy.ts");
   const hyleeScenes = await server.ssrLoadModule("/src/hylee-date-intimacy.ts");
   const naiahScenes = await server.ssrLoadModule("/src/naiah-date-intimacy.ts");
+  const hnScenes = await server.ssrLoadModule("/src/hylee-naiah-group-intimacy.ts");
 
   // Hylee : partition, débuts de phase et fin identiques à origin/main.
   const hash = createHash("sha256").update(JSON.stringify(DIFFICULTIES.map((d) => [engine.buildRhythmChart(d), engine.rhythmChartEnd(d), engine.RHYTHM_SECTIONS.map((_, i) => engine.rhythmSectionStart(i, d))]))).digest("hex").slice(0, 16);
@@ -159,7 +160,7 @@ try {
   assert.match(pageSource, /if \(!rhythmScene && rhythmKit && nextChapter === rhythmKit\.start\)/);
 
   // ---------- Lots 4 à 6 : Allenna, Lineva, Allenna et Lineva ----------
-  const counts = { allenna: 0, lineva: 0, "allenna-lineva": 0, remerii: 0, hylee: 0, "hylee-remerii": 0, naiah: 0 };
+  const counts = { allenna: 0, lineva: 0, "allenna-lineva": 0, remerii: 0, hylee: 0, "hylee-remerii": 0, naiah: 0, "hylee-naiah": 0 };
   const persoSeen = new Set();
   let relays = 0;
   for (const anchor of anchors.RHYTHM_ANCHORS.filter((entry) => entry.character !== "bellirith")) {
@@ -185,6 +186,14 @@ try {
       // Naïah : ses deux rendez-vous et son logis écrits (douze séquences en Explicite, huit en Suggestif).
       route = naiahScenes.naiahProximityRoutes(naiahScenes.naiahProximityContext(anchor.context, anchor.context === "home-naiah"), anchor.sex).find((entry) => entry.id === anchor.routeId);
       chaptersFor = (mode) => route.chapters[mode];
+    } else if (anchor.character === "hylee-naiah") {
+      // Hylee et Naïah : la trace de la mère (trois issues) ajoute des répliques à une séquence ; le jeu se construit sur chacune.
+      route = groups.groupIntimacyRoutes(anchor.context, anchor.sex).find((entry) => entry.id === anchor.routeId);
+      chaptersFor = (mode) => hnScenes.hyleeNaiahRouteChapters(route, anchor.context, mode);
+      for (const outcome of ["killed", "memory-erased", "vegetative"]) for (const mode of ["explicite", "suggestif"]) {
+        assert.ok(anchors.buildRhythmKit(anchor, hnScenes.hyleeNaiahRouteChapters(route, anchor.context, mode, outcome), route.text, mode), `${anchor.routeId} ${mode} : trace de la mère (${outcome})`);
+        kits++;
+      }
     } else if (anchor.character === "allenna-lineva" || anchor.character === "hylee-remerii") {
       route = groups.groupIntimacyRoutes(anchor.context, anchor.sex).find((entry) => entry.id === anchor.routeId);
       chaptersFor = (mode) => route.chapters[mode];
@@ -204,7 +213,9 @@ try {
       assert.equal(returnChapter, nums.at(-1) + 1, `${anchor.routeId} ${mode} : reprise juste après le dernier sommet`);
       if (route.visual && mode === "explicite") assert.ok(nums[0] > route.visual.revealChapter, `${anchor.routeId} : après la révélation`);
       // Hylee et Remerii : l'après-coup écrit se prolonge (chapitre 8 ou 10) ; le dernier sommet joué est celui du joueur.
-      if (route.progression && mode === "explicite") assert.equal(nums.at(-1), anchor.character === "hylee-remerii" ? route.progression.playerClimaxChapter.explicite : route.progression.postOrgasmChapter, `${anchor.routeId} : le dernier sommet est celui de l'écrit`);
+      if (route.progression && mode === "explicite" && anchor.character === "hylee-naiah") assert.ok(nums.at(-1) <= route.progression.playerClimaxChapter.explicite && nums[0] > route.progression.revealChapter, `${anchor.routeId} : entre la révélation et le sommet écrit du joueur`);
+      else if (route.progression && mode === "explicite") assert.equal(nums.at(-1), anchor.character === "hylee-remerii" ? route.progression.playerClimaxChapter.explicite : route.progression.postOrgasmChapter, `${anchor.routeId} : le dernier sommet est celui de l'écrit`);
+      if (route.progression && mode === "suggestif" && anchor.character === "hylee-naiah") assert.equal(nums.at(-1), route.progression.playerClimaxChapter.suggestif, `${anchor.routeId} : Suggestif jusqu'au sommet écrit`);
       const chapters = chaptersFor(mode);
       assert.ok(returnChapter <= chapters.length, `${anchor.routeId} ${mode} : reprise valide`);
       const kit = anchors.buildRhythmKit(anchor, chapters, route.text, mode);
@@ -232,7 +243,7 @@ try {
         const ceded = chart.map((note) => (engine.isRhythmTrap(note) ? 3 : 1));
         assert.deepEqual(engine.rhythmScore(perfect, chart), engine.rhythmScore(ceded, chart), `${kit.scene.id} : pièges hors score`);
         assert.equal(engine.rhythmScore(perfect, chart).total, chart.length - traps.length);
-        if (anchor.character !== "naiah") assert.ok(!chart.some((note) => note.kind === "bait"), `${kit.scene.id} : aucun leurre (Allenna et Lineva n'en tendent pas)`);
+        if (anchor.character !== "naiah" && anchor.character !== "hylee-naiah") assert.ok(!chart.some((note) => note.kind === "bait"), `${kit.scene.id} : aucun leurre (Allenna et Lineva n'en tendent pas)`);
         const duration = engine.rhythmChartEnd(difficulty, kit.sections);
         assert.ok(duration > 15 && duration < 600, `${kit.scene.id} ${difficulty} : durée ${Math.round(duration)} s`);
       }
@@ -252,6 +263,14 @@ try {
         assert.ok(!phases.some((phase) => phase.code === "pv" || phase.code === "pp"), `${kit.scene.id} : jamais de pénétration chez Naïah`);
         if (mode === "explicite") assert.ok(chart.some((note) => note.kind === "bait"), `${kit.scene.id} : ses illusions`);
         assert.ok(!chart.some((note) => note.aura), `${kit.scene.id} : pas d'ordres chez Naïah`);
+      }
+      if (anchor.character === "hylee-naiah") {
+        assert.ok(!chart.some((note) => note.aura), `${kit.scene.id} : pas d'ordres`);
+        kit.sections.forEach((def, i) => {
+          assert.equal(p.voices[def.voice ?? 0].key, phases[i].voice || "H", `${kit.scene.id} : voix de la phase ${i}`);
+          if (def.bord) assert.equal(phases[i].voice, "N", `${kit.scene.id} : l'ombre au bord est celle de Naïah`);
+          if (def.ramp?.relay) assert.equal(phases[i].voice, "H", `${kit.scene.id} : seul le sommet de Hylee fait relais`);
+        });
       }
       if (anchor.character === "hylee-remerii") {
         assert.ok(chart.filter(engine.isRhythmTrap).every((note) => note.edge === "gel"), `${kit.scene.id} : Hylee et Remerii ne tendent aucun piège (seul un regard fige la piste)`);
@@ -274,8 +293,13 @@ try {
       }
     }
   }
-  assert.deepEqual(counts, { allenna: 18, lineva: 18, "allenna-lineva": 18, remerii: 18, hylee: 18, "hylee-remerii": 18, naiah: 18 }, "18 variantes par lot");
-  assert.equal(persoSeen.size, 252, "un identifiant de jeu par scène, corps et mode (lots 4 à 10)");
+  assert.deepEqual(counts, { allenna: 18, lineva: 18, "allenna-lineva": 18, remerii: 18, hylee: 18, "hylee-remerii": 18, naiah: 18, "hylee-naiah": 18 }, "18 variantes par lot");
+  assert.equal(persoSeen.size, 288, "un identifiant de jeu par scène, corps et mode (lots 4 à 11)");
+  // Lot 11 : Hylee et Naïah, Doux, deux voix (Naïah sans gémissement : sa banque de rires), relation 0.
+  const hnp = profiles.rhythmProfileFor("hylee-naiah");
+  assert.equal(hnp.difficulty, "doux"); assert.deepEqual(hnp.relationPenalties, { hylee: 0, naiah: 0 });
+  assert.deepEqual(hnp.voices.map((entry) => [entry.key, entry.character, entry.bank.dir]), [["H", "hylee", ""], ["N", "naiah", "naiah"]]);
+  assert.ok(!(await read("src/rhythm-bubbles-hylee-naiah.ts")).includes("\u2014"), "Hylee et Naïah : pas de tiret cadratin");
   // Lot 10 : Naïah, Normal, violet brumeux, relation 0, sa voix sans gémissement (DarkNightPrincess, CC0).
   const na = profiles.rhythmProfileFor("naiah");
   assert.equal(na.difficulty, "normal"); assert.equal(na.relationPenalty, 0); assert.equal(na.palette.vive, "98,78,130");
@@ -351,7 +375,7 @@ try {
   assert.match(pageSource, /const rhythmGroupKey = date\.characters\.join\("-"\);\n  const rhythmAnchor = direction \? rhythmAnchorFor\(rhythmGroupKey, direction\.id, game\.player\.sex\)/, "trios branchés dans la scène à trois");
   assert.match(pageSource, /onRelation=\{onRhythmRelation\} \/>;\n/, "relation du trio");
 
-  console.log(`Fiches de rythme OK : ${bellirithAnchors.length} variantes de Bellirith, ${counts.allenna} d'Allenna, ${counts.lineva} de Lineva, ${counts["allenna-lineva"]} à trois (${relays} relais de sommets en Normal), ${counts.remerii} de Remerii, ${counts.hylee} de Hylee, ${counts["hylee-remerii"]} de Hylee et Remerii, ${counts.naiah} de Naïah, ${kits} jeux construits, partition de Hylee inchangée (${hash}), pièges hors score, ${voiceFiles.length} extraits aarrnnoo crédités.`);
+  console.log(`Fiches de rythme OK : ${bellirithAnchors.length} variantes de Bellirith, ${counts.allenna} d'Allenna, ${counts.lineva} de Lineva, ${counts["allenna-lineva"]} à trois (${relays} relais de sommets en Normal), ${counts.remerii} de Remerii, ${counts.hylee} de Hylee, ${counts["hylee-remerii"]} de Hylee et Remerii, ${counts.naiah} de Naïah, ${counts["hylee-naiah"]} de Hylee et Naïah, ${kits} jeux construits, partition de Hylee inchangée (${hash}), pièges hors score, ${voiceFiles.length} extraits aarrnnoo crédités.`);
 } finally {
   await server.close();
 }

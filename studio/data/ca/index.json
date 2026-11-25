@@ -7146,6 +7146,41 @@
    ]
   },
   {
+   "key": "rhythm-bubbles-hylee-naiah",
+   "label": "Hylee × Naïah · rhythm bubbles",
+   "group": "Hylee × Naïah",
+   "hash": "91630567a3c4e577",
+   "scenes": 1,
+   "counts": {
+    "s": 13,
+    "t": 0,
+    "n": 0,
+    "a": 4
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-hylee-naiah:a0ueaa9j",
+     "path": "HYLEE_NAIAH_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-naiah:a1bf2uw4",
+     "path": "HYLEE_NAIAH_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-naiah:a1mesvvb",
+     "path": "HYLEE_NAIAH_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-naiah:a0jp75d4",
+     "path": "HYLEE_NAIAH_RHYTHM_BUBBLES.relay",
+     "len": 2
+    }
+   ]
+  },
+  {
    "key": "rhythm-bubbles-hylee-remerii",
    "label": "Hylee × Remerii · rhythm bubbles",
    "group": "Hylee × Remerii",
