@@ -276,37 +276,42 @@ export function rhythmShakeWave(s: number): number {
  * Valeurs : y et x en pixels, stretch et scale en fraction de taille, tilt en degrés. Le plafond
  * en pixels (limit) et RHYTHM_STRETCH_MAX gardent toujours Hylee dans le cadre.
  */
-export const RHYTHM_STRETCH_MAX = 0.022;
-export const RHYTHM_TILT_MAX = 2.2;
+export const RHYTHM_STRETCH_MAX = 0.03;
+export const RHYTHM_TILT_MAX = 2.4;
+/** Hochement (bouche) : descente maximale en pixels, avant plafond à l'écran. */
+export const RHYTHM_NOD_MAX = 12;
 export type RhythmMotion = { y: number; x: number; scale: number; stretch: number; tilt: number };
 export function rhythmGestureMotion(input: {
   gesture: RhythmGesture; axis: RhythmShakeAxis; amp: number; sinceHit: number; beat: number; t: number;
   motion?: "haut" | "bas"; parity?: number; holdFrac?: number | null; progress?: number; ardour?: number; fx?: number;
 }): RhythmMotion {
   const { gesture, axis, amp, sinceHit, beat, t } = input;
-  const unit = Math.max(0, Math.min(1, amp / RHYTHM_SHAKE_MAX));
+  const zero: RhythmMotion = { y: 0, x: 0, scale: 0, stretch: 0, tilt: 0 };
+  if (amp <= 0) return zero;
   const fx = input.fx ?? 1;
+  // Les préliminaires restent lisibles dès le début (au moins 55 % du geste), puis s'amplifient avec l'ardeur et le combo.
+  const level = Math.max(0, Math.min(1, amp / (RHYTHM_SHAKE_MAX * fx)));
+  const strength = fx * (0.55 + 0.45 * level);
   const span = Math.max(0.2, beat * 0.9);
   const env = sinceHit >= 0 && sinceHit < span ? Math.sin(Math.PI * sinceHit / span) : 0;
   const held = input.holdFrac != null && input.holdFrac >= 0;
-  const zero: RhythmMotion = { y: 0, x: 0, scale: 0, stretch: 0, tilt: 0 };
-  if (amp <= 0) return zero;
+  const clampStretch = (v: number) => Math.max(-RHYTHM_STRETCH_MAX, Math.min(RHYTHM_STRETCH_MAX, v));
   if (gesture === "main") {
-    const k = RHYTHM_STRETCH_MAX * (0.45 + 0.55 * unit);
+    const k = RHYTHM_STRETCH_MAX * strength;
     const stretch = held ? k * Math.min(1, 0.4 + input.holdFrac! * 1.2) : k * env * (input.motion === "bas" ? -0.45 : 1);
-    return { ...zero, stretch: Math.max(-RHYTHM_STRETCH_MAX, Math.min(RHYTHM_STRETCH_MAX, stretch)), y: -stretch * 40 };
+    return { ...zero, stretch: clampStretch(stretch) };
   }
   if (gesture === "bouche") {
     const sign = (input.parity ?? 0) % 2 ? -1 : 1;
-    if (held) return { ...zero, y: amp * 0.85, tilt: sign * RHYTHM_TILT_MAX * 0.35 * unit * Math.sin(Math.PI * 2 * input.holdFrac!), stretch: -0.006 * unit };
-    return { ...zero, y: amp * 0.8 * env, tilt: sign * RHYTHM_TILT_MAX * 0.7 * (0.4 + 0.6 * unit) * env };
+    if (held) return { ...zero, y: RHYTHM_NOD_MAX * strength * 0.9, tilt: sign * RHYTHM_TILT_MAX * 0.35 * strength * Math.sin(Math.PI * 2 * input.holdFrac!) };
+    return { ...zero, y: RHYTHM_NOD_MAX * strength * env, tilt: sign * RHYTHM_TILT_MAX * 0.8 * strength * env };
   }
   if (gesture === "langue") {
-    const ardour = Math.max(0, Math.min(1, input.ardour ?? unit));
+    const ardour = Math.max(0, Math.min(1, input.ardour ?? level));
     const progress = Math.max(0, Math.min(1, input.progress ?? 0));
     const wave = Math.sin(2 * Math.PI * t / (beat * 2.5));
     const shiver = (0.4 + 2.2 * progress * (0.4 + 0.6 * ardour)) * fx * Math.sin(2 * Math.PI * 15 * t);
-    return { y: -amp * 0.5 * env, x: 3.5 * fx * wave + shiver, scale: 0, stretch: -0.012 * (0.5 + 0.5 * unit) * env, tilt: (0.6 + 0.9 * ardour) * fx * wave };
+    return { y: -5 * strength * env, x: 4 * fx * wave + shiver, scale: 0, stretch: clampStretch(-0.014 * strength * env), tilt: Math.max(-RHYTHM_TILT_MAX, Math.min(RHYTHM_TILT_MAX, (0.8 + 0.9 * ardour) * fx * wave)) };
   }
   const px = amp * rhythmShakeWave(sinceHit);
   const depth = axis === "profondeur";

@@ -388,6 +388,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,
       combo: () => ({ current: comboRef.current, max: maxComboRef.current, tier: rhythmComboTier(comboRef.current), bonus: bonusRef.current, events: [...comboEventsRef.current] }),
       shake: () => { const style = layerRef.current?.parentElement?.style; return { y: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-y") || "0") || 0, x: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-x") || "0") || 0, s: Number(style?.getPropertyValue("--rythme-secousse-s") || 0), etire: Number(style?.getPropertyValue("--rythme-etire") || 0), incline: Number.parseFloat(style?.getPropertyValue("--rythme-incline") || "0") || 0, geste: layerRef.current?.parentElement?.dataset.rythmeGeste || null, ...shakeRef.current }; },
+      sections: () => RHYTHM_SECTIONS.map((x, i) => ({ id: x.id, gesture: x.gesture, bpm: x.bpm, label: scene.sections[i]?.label })),
       section: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); return { index, id: RHYTHM_SECTIONS[index]?.id, gesture: RHYTHM_SECTIONS[index]?.gesture, label: scene.sections[index]?.label }; },
     };
     (window as unknown as { __sylviniaRythme?: typeof probe }).__sylviniaRythme = probe;

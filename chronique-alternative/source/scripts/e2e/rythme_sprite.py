@@ -44,11 +44,11 @@ async def main():
     await p.locator("#caDevRythme").click(); await p.wait_for_timeout(1500)
     await p.locator(".rythme-actions button:has-text('Commencer')").click()
     samples=[]; shots=0
-    for i in range(400):
+    for i in range(900):
         ph=await p.evaluate("()=>window.__sylviniaRythme?window.__sylviniaRythme.phase():null")
         if ph in ("result",None) and i>10: break
         tt=await p.evaluate("()=>window.__sylviniaRythme?window.__sylviniaRythme.time():0"); outage["on"]=FAIL and 20<=tt<24
-        s=await p.evaluate(PROBE); s["t"]=await p.evaluate("()=>+window.__sylviniaRythme.time().toFixed(2)"); s["phase"]=ph; samples.append(s)
+        s=await p.evaluate(PROBE); s["t"]=await p.evaluate("()=>+window.__sylviniaRythme.time().toFixed(2)"); s["phase"]=ph; s["geste"]=await p.evaluate("()=>window.__sylviniaRythme?.section?.().gesture||null"); samples.append(s)
         if not s["ok"] and shots<3:
             shots+=1; await p.screenshot(path=f"{OUT}/{VP}-sprite-perdu-{shots}.png")
         await p.wait_for_timeout(250)
@@ -59,10 +59,20 @@ async def main():
     for s in samples:
         run=run+1 if not s["ok"] else 0; streak=max(streak,run)
     rep={"viewport":VP,"fail_mode":FAIL,"samples":len(samples),"invisible":len(bad),"plus_longue_absence":streak,"first_bad":bad[:3],"moods":sorted(set(s["src"] for s in samples)),"min_frac":min(s["frac"] for s in samples) if samples else None,"min_op":min(s["op"] for s in samples) if samples else None,"requests":len(requests),"aborted":sum(failed.values()),"fin_partie":fin,"secousse_max_vue":max((abs(float((s["shake"] or "0px").replace("px","") or 0)) for s in samples), default=0),"errors":[e for e in errs if "menu" not in e[1]][:5]}
+    # Chaque phase (main, bouche, langue, pénétration) : sprite visible et animé.
+    par={}
+    for s in samples:
+        g=s.get("geste")
+        if not g or s["phase"]!="play": continue
+        d=par.setdefault(g,{"echantillons":0,"invisibles":0}); d["echantillons"]+=1; d["invisibles"]+=0 if s["ok"] else 1
+    gest=(fin or {}).get("shake",{}).get("gestures",{}) if fin else {}
+    for g,d in par.items(): d["anime"]=gest.get(g,{})
+    rep["par_phase"]=par
     print(json.dumps(rep,ensure_ascii=False,indent=1))
     json.dump({"rapport":rep,"samples":samples},open(f"{OUT}/{VP}-sprite{'-reseau' if FAIL else ''}.json","w"),ensure_ascii=False,indent=1)
     await b.close()
-    ok=(streak<=1 if FAIL else not bad) and len(samples)>200 and bool(fin) and fin["shake"]["peak"]>0
+    phases_ok=all(g in par and par[g]["echantillons"]>10 and (FAIL or par[g]["invisibles"]==0) and par[g]["anime"].get("moving",0)>0 for g in ("main","bouche","langue","penetration"))
+    ok=(streak<=1 if FAIL else not bad) and len(samples)>200 and bool(fin) and fin["shake"]["peak"]>0 and phases_ok
     print("OK" if ok else "ECHEC")
     sys.exit(0 if ok else 1)
 asyncio.run(main())

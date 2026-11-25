@@ -62,8 +62,11 @@ async def main():
     report["checks"]["reglages"]=await p.evaluate("()=>[...document.querySelectorAll('.rythme-panneau label, .rythme-panneau .rythme-choix button')].map(e=>e.innerText.replace(/\\s+/g,' ').trim())")
     await snap("01-reglages")
     # Cadence vue par le navigateur : un coup par battement, tempo stable par position, accélération par paliers.
-    report["checks"]["cadence"]=await p.evaluate("""()=>{const n=window.__sylviniaRythme.notes(); const out=[]; for(let s=0;s<4;s++){const own=n.filter(x=>x.section===s&&x.kind!=='slide'); const b=own[1].beat; out.push({position:s, coups:own.length, battement:+b.toFixed(3), cpm:Math.round(60/b), debut:+own[0].time.toFixed(2)});} return {positions:out, total:n.length, fin:+(n.at(-1).time+n.at(-1).duration).toFixed(2), montee:n.filter(x=>x.section===3).slice(-6).map(x=>Math.round(60/x.beat))};}""")
-    starts=[x["debut"] for x in report["checks"]["cadence"]["positions"]]; END=report["checks"]["cadence"]["fin"]
+    report["checks"]["cadence"]=await p.evaluate("""()=>{const r=window.__sylviniaRythme; const n=r.notes(); const defs=r.sections(); const out=[]; defs.forEach((d,s)=>{const own=n.filter(x=>x.section===s&&x.kind!=='slide'); const b=own[1].beat; out.push({phase:s, id:d.id, geste:d.gesture, titre:d.label, coups:own.length, tenues:own.filter(x=>x.kind==='hold').length, glisses:n.filter(x=>x.section===s&&x.kind==='slide').length, battement:+b.toFixed(3), cpm:Math.round(60/b), debut:+own[0].time.toFixed(2)});}); return {positions:out, total:n.length, fin:+(n.at(-1).time+n.at(-1).duration).toFixed(2), montee:n.filter(x=>x.section===defs.length-1).slice(-6).map(x=>Math.round(60/x.beat))};}""")
+    phases=report["checks"]["cadence"]["positions"]
+    PEN=[x["phase"] for x in phases if x["geste"]=="penetration"]
+    starts_all=[x["debut"] for x in phases]
+    starts=[starts_all[i] for i in PEN]; END=report["checks"]["cadence"]["fin"]
     notes=await p.evaluate("()=>window.__sylviniaRythme.notes().map(n=>[n.time,n.kind,n.section])")
     def after_hit(x):
         # premier coup simple après x : la capture tombe juste après la frappe, au plus fort de la pulsation
@@ -78,7 +81,22 @@ async def main():
     async def level(tag):
         st=await p.evaluate("""()=>{const r=window.__sylviniaRythme; const l=document.querySelector('.rythme-layer'); const cs=getComputedStyle(document.querySelector('.rythme-vignette')); return {t:+r.time().toFixed(2), ardeur:+r.ardour().toFixed(2), palier:l.dataset.ardeur, jauge:l.style.getPropertyValue('--jauge'), pulse:+l.style.getPropertyValue('--pulse'), vignette:+(+cs.opacity).toFixed(3), zoom:r.zoom(), sfx:r.sfx(), musique:r.music(), combo:r.combo(), secousse:r.shake(), sprite:(()=>{const i=document.querySelector('.intimacy-sprite img, .intimacy-cg img'); if(!i) return null; const b=i.getBoundingClientRect(); return {hidden:i.hidden, nw:i.naturalWidth, top:Math.round(b.top), bottom:Math.round(b.bottom), h:Math.round(b.height)};})()};}""")
         st["tag"]=tag; levels.append(st); return st
+    report["checks"]["gestes"]={}
+    async def geste(ph, tag):
+        # Capture au plus fort du geste de la phase : sprite visible, animation distincte de la secousse.
+        best=None
+        for i in range(160):
+            m=await p.evaluate("()=>{const r=window.__sylviniaRythme; const s=r.shake(); return {t:+r.time().toFixed(2), section:r.section(), geste:s.geste, y:s.y, x:s.x, etire:s.etire, incline:s.incline};}")
+            if m["section"]["index"]!=ph["phase"]: await p.wait_for_timeout(40); continue
+            score=abs(m["y"])+abs(m["x"])+abs(m["etire"])*800+abs(m["incline"])*4
+            if not best or score>best["score"]:
+                m["score"]=score; best=m
+                if score>6: break
+            await p.wait_for_timeout(15)
+        st=await level(tag); await snap(tag)
+        report["checks"]["gestes"][ph["id"]]={"mesure":best,"sprite":st["sprite"],"titre_affiche":await p.locator(".rythme-section").first.inner_text(),"cadence_affichee":await p.locator(".rythme-cadence").first.inner_text()}
     await wait_t(after_hit(5.0)); await level("debut"); await snap("03-jauge-basse")
+    await geste(phases[0], "03p-main")
     for i in range(80):
         if await p.evaluate("()=>window.__sylviniaRythme.tease()"): break
         await p.wait_for_timeout(100)
@@ -89,6 +107,10 @@ async def main():
     report["checks"]["voix_vue"]=await p.evaluate("()=>window.__sylviniaRythme.voice()")
     report["checks"]["voix_bulle"]=await p.locator(".rythme-voix").count()
     await snap("03c-replique")
+    for k in (1,2):
+        await wait_t(starts_all[k]-0.2); await snap(f"03t-transition-{phases[k]['id']}")
+        await wait_t(after_hit(starts_all[k]+3)); await geste(phases[k], f"03p-{phases[k]['id']}")
+    await wait_t(starts[0]+3); await geste(phases[PEN[0]], "03p-elle-mene")
     await wait_t(starts[1]-0.2); await snap("04-section2-glisse")
     await wait_t(after_hit(starts[1]+9)); await level("position2"); await snap("05-jauge-quart")
     report["checks"]["ligne_cadence"]=await p.evaluate("()=>window.__sylviniaRythme.strokeLine()")

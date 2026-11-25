@@ -1,4 +1,4 @@
-"""Jeu de rythme : parcours naturel (logis d'Hylee → route audacieuse → le jeu s'ouvre après l'intensification),
+"""Jeu de rythme : parcours naturel (logis d'Hylee → route audacieuse → le jeu s'ouvre aux caresses sur la table, séquence 4),
 mode auto en Doux jusqu'au bilan, « Lire la version écrite », et une autre route qui n'ouvre pas le jeu.
 Usage : CA_BASE=... python3 rythme_parcours.py saves/save-rythme.json <dossier> [1024x880]"""
 import os, sys, asyncio, json
@@ -67,7 +67,7 @@ async def main():
     await p.locator(".rythme-case input").first.check()
     await p.locator(".rythme-actions button:has-text('Commencer')").click()
     await p.wait_for_timeout(30000); await snap("02-auto-milieu")
-    await p.wait_for_selector(".rythme-panneau.resultat", timeout=70000)
+    await p.wait_for_selector(".rythme-panneau.resultat", timeout=170000)
     rep["auto_bilan"]=(await p.locator(".rythme-panneau.resultat").inner_text()).replace("\n"," | ")
     await p.locator(".rythme-actions button:has-text('Continuer')").click(); await p.wait_for_timeout(500)
     rep["auto_conclusion"]=await p.locator(".dialogue-box p").first.inner_text()
