@@ -129,7 +129,7 @@
 .rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
 /* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
 /* Secousse à chaque coup (réglée par le script, nulle si « Secousses » est décoché) : pleine sur le sprite, plus légère sur la CG et le décor */
-.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)); translate: 0 var(--rythme-secousse-y, 0px); transform-origin: 50% 70%; }
+.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)); translate: 0 var(--rythme-secousse-y, 0px); transform-origin: 50% 35%; }
 .rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)); translate: 0 calc(.4 * var(--rythme-secousse-y, 0px)); transform-origin: 50% 55%; }
 .rythme-en-cours.interactive-intimacy { background-position: center calc(50% + .3 * var(--rythme-secousse-y, 0px)); }
 /* Lignes de cadence : courtes, à gauche du couloir, au-dessus de la cible */

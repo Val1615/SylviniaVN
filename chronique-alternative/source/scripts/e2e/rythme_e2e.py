@@ -102,12 +102,19 @@ async def main():
     await level("combo-palier"); await snap("06b-combo-palier")
     # Secousse : capture prise au plus fort de la poussée, sprite visible
     await p.evaluate("""()=>{document.querySelectorAll('.intimacy-cg img, .intimacy-cg, img[data-sprite-channel=intimate]').forEach(i=>{i.style.filter='blur(14px) brightness(.6) saturate(.5)';});}""")
-    shake_seen=None
-    for i in range(300):
-        y=await p.evaluate("()=>window.__sylviniaRythme.shake().y")
-        if abs(y)>=3.5:
-            await p.screenshot(path=f"{OUT}/{VP}-{MODE}-06c-secousse.png"); shake_seen=await p.evaluate("()=>window.__sylviniaRythme.shake()"); break
-        await p.wait_for_timeout(15)
+    # La capture prend quelques dizaines de millisecondes : on garde celle dont la secousse lue juste avant et juste après est la plus forte.
+    shake_seen=None; best=0
+    cdp=await ctx.new_cdp_session(p)
+    import base64
+    for i in range(400):
+        y0=await p.evaluate("()=>window.__sylviniaRythme.shake().y")
+        if abs(y0)<3: await p.wait_for_timeout(8); continue
+        shot=await cdp.send("Page.captureScreenshot",{"format":"png"})
+        y1=await p.evaluate("()=>window.__sylviniaRythme.shake()")
+        score=min(abs(y0),abs(y1["y"]))
+        if score>best:
+            best=score; open(f"{OUT}/{VP}-{MODE}-06c-secousse.png","wb").write(base64.b64decode(shot["data"])); shake_seen={"avant":y0,"apres":y1["y"],"pic":y1["peak"]}
+        if best>=3: break
     report["checks"]["secousse_capture"]=shake_seen
     report["checks"]["combo_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.combo()")
     report["checks"]["taquineries_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
