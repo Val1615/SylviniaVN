@@ -376,12 +376,22 @@ export type RhythmPrefs = {
   effects: RhythmEffects; zoom: boolean; vibration: boolean;
   /** Secousse de l'image à chaque coup (réduite avec les effets réduits). */
   shake: boolean;
+  /** Mixage : volume (0 à 1) et bouton muet de chaque famille de sons, en plus du volume général des bruitages. */
+  mix: Record<RhythmBus, number>;
+  mute: Record<RhythmBus | "musique", boolean>;
+  /** Bruits corporels remplacés par des sons neutres synthétisés (battement sourd, percussion feutrée, tic, souffle). */
+  neutral: boolean;
 };
+/** Familles de sons du mixage : voix de Hylee, bruits corporels, ambiance (draps, baisers), interface (raté, combo). */
+export type RhythmBus = "voix" | "corps" | "ambiance" | "interface";
+export const RHYTHM_BUSES: RhythmBus[] = ["voix", "corps", "ambiance", "interface"];
+export const RHYTHM_MIX_DEFAULT: Record<RhythmBus, number> = { voix: 0.9, corps: 0.85, ambiance: 0.7, interface: 0.8 };
 const clamp01 = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback);
 export function defaultRhythmPrefs(): RhythmPrefs {
   let reduced = false;
   try { reduced = Boolean(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches); } catch { reduced = false; }
-  return { difficulty: "normal", auto: false, offsetMs: 0, musicVolume: 0.35, sfx: true, sfxVolume: 0.85, effects: reduced ? "reduit" : "plein", zoom: !reduced, vibration: true, shake: true };
+  return { difficulty: "normal", auto: false, offsetMs: 0, musicVolume: 0.35, sfx: true, sfxVolume: 0.85, effects: reduced ? "reduit" : "plein", zoom: !reduced, vibration: true, shake: true,
+    mix: { ...RHYTHM_MIX_DEFAULT }, mute: { voix: false, corps: false, ambiance: false, interface: false, musique: false }, neutral: false };
 }
 export function loadRhythmPrefs(): RhythmPrefs {
   const base = defaultRhythmPrefs();
@@ -398,6 +408,9 @@ export function loadRhythmPrefs(): RhythmPrefs {
       zoom: typeof raw.zoom === "boolean" ? raw.zoom : base.zoom,
       vibration: typeof raw.vibration === "boolean" ? raw.vibration : base.vibration,
       shake: typeof raw.shake === "boolean" ? raw.shake : base.shake,
+      mix: Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, clamp01(raw.mix?.[bus], base.mix[bus])])) as Record<RhythmBus, number>,
+      mute: Object.fromEntries([...RHYTHM_BUSES, "musique"].map((bus) => [bus, typeof raw.mute?.[bus] === "boolean" ? raw.mute[bus] : false])) as Record<RhythmBus | "musique", boolean>,
+      neutral: typeof raw.neutral === "boolean" ? raw.neutral : base.neutral,
     };
   } catch { return base; }
 }

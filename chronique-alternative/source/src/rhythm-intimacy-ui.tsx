@@ -7,6 +7,7 @@ import {
   buildRhythmChart, judgeOffset, loadRhythmPrefs, loadRhythmSave, rhythmArdour, rhythmBeatAt, rhythmChartEnd, rhythmComboLevel, rhythmComboThreshold, rhythmComboTier,
   rhythmGauge, rhythmGestureMotion, rhythmQuality, rhythmScore, rhythmShakeAmplitude, rhythmShakeWave,
   rhythmSectionStart, sectionTiersReached, storeRhythmPrefs, storeRhythmSave,
+  RHYTHM_BUSES, type RhythmBus,
   type RhythmDifficulty, type RhythmJudgement, type RhythmNote, type RhythmPrefs, type RhythmQuality, type RhythmSaveState,
 } from "./rhythm-intimacy-engine";
 import { RhythmSfx } from "./rhythm-intimacy-sfx";
@@ -110,7 +111,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   }, []);
 
   const sfx = () => { if (!sfxRef.current) sfxRef.current = new RhythmSfx(); return sfxRef.current; };
-  const musicVolume = () => clamp01(volume) * prefsRef.current.musicVolume;
+  const musicVolume = () => (prefsRef.current.mute.musique ? 0 : clamp01(volume) * prefsRef.current.musicVolume);
   const duck = (on: boolean) => window.dispatchEvent(new CustomEvent(RHYTHM_DUCK_EVENT, { detail: on }));
 
   useEffect(() => () => {
@@ -123,12 +124,19 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     ["--rythme-zoom", "--rythme-secousse-y", "--rythme-secousse-x", "--rythme-secousse-s", "--rythme-etire", "--rythme-incline"].forEach((name) => host?.style.removeProperty(name));
     if (host) delete host.dataset.rythmeGeste;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (audioRef.current) audioRef.current.volume = musicVolume(); }, [volume, prefs.musicVolume]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = musicVolume();
+    // Musique remise en route pendant la partie si on la réactive depuis le mixage.
+    if (phaseRef.current === "play" && music && musicVolume() > 0 && audio.paused) audio.play().catch(() => undefined);
+  }, [volume, prefs.musicVolume, prefs.mute.musique]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { sfxRef.current?.setVolume(prefs.sfxVolume, prefs.sfx); }, [prefs.sfx, prefs.sfxVolume]);
+  useEffect(() => { sfxRef.current?.setMix(prefs.mix, prefs.mute, prefs.neutral); }, [prefs.mix, prefs.mute, prefs.neutral]);
 
   /** Musique intime en fond, en boucle et sans calage : elle habille la scène, la cadence vient des corps. */
   function startMusic() {
-    if (!music || prefsRef.current.musicVolume <= 0) { audioRef.current?.pause(); return; }
+    if (!music || musicVolume() <= 0) { audioRef.current?.pause(); return; }
     let audio = audioRef.current;
     if (!audio) {
       audio = new Audio(`/assets/audio/${RHYTHM_TRACK}.mp3`);
@@ -170,6 +178,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     difficultyRef.current = chosen;
     const engine = sfx();
     engine.setVolume(prefsRef.current.sfxVolume, prefsRef.current.sfx);
+    engine.setMix(prefsRef.current.mix, prefsRef.current.mute, prefsRef.current.neutral);
     engine.unlock();
     notesRef.current = buildRhythmChart(chosen);
     judgementsRef.current = resume ? [...resume.judgements] : notesRef.current.map(() => 0 as RhythmJudgement);
@@ -304,6 +313,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       if (threshold) {
         const level = rhythmComboLevel(combo);
         const moan = Boolean(sfxRef.current?.comboMoan(level, ardour, gesture));
+        sfxRef.current?.comboChime(level);
         comboEventRef.current = { id: rhythmComboTier(combo), at: performance.now(), combo, level, t };
         comboEventsRef.current.push({ combo, level, t: Math.round(t * 100) / 100, moan });
         buzz([18, 70, 26, 70, 34]);
@@ -382,7 +392,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       time: () => (phaseRef.current === "play" ? now() : timeRef.current), notes: () => notesRef.current, judgements: () => [...judgementsRef.current],
       phase: () => phaseRef.current, teases: () => [...teasesRef.current], apogee: () => apogeeRef.current, caption: () => captionRef.current?.line.text || null,
       tease: () => teaseRef.current?.line.text || null, voice: () => voiceRef.current?.line.text || null, strokeLine: () => strokeLineRef.current?.line.text || null,
-      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null }),
+      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null, neutral: sfxRef.current?.neutral ?? null, bus: sfxRef.current ? Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, sfxRef.current!.busGain(bus)])) : null }),
       music: () => ({ playing: Boolean(audioRef.current && !audioRef.current.paused), volume: audioRef.current?.volume ?? null, loop: audioRef.current?.loop ?? null }),
       zoom: () => Number(layerRef.current?.parentElement?.style.getPropertyValue("--rythme-zoom") || 0),
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,
@@ -628,10 +638,35 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const progress = Math.max(0, Math.min(1, t / chartEnd));
   const miss = missRef.current && nowMs - missRef.current.at < 380;
 
+  const mixLabels: Record<RhythmBus, [string, string]> = {
+    voix: ["Voix", "gémissements, souffles, apogée"],
+    corps: ["Corps", "claquements, glissements, succion, léchages"],
+    ambiance: ["Ambiance", "draps, baisers"],
+    interface: ["Interface", "raté, combo"],
+  };
+  const muteButton = (bus: RhythmBus | "musique", label: string) => <button type="button" className={`rythme-muet ${prefs.mute[bus] ? "actif" : ""}`} aria-pressed={prefs.mute[bus]} aria-label={`${prefs.mute[bus] ? "Rétablir" : "Couper"} : ${label}`} title={prefs.mute[bus] ? "Rétablir" : "Couper"}
+    onClick={() => updatePrefs({ mute: { ...prefs.mute, [bus]: !prefs.mute[bus] } })}>{prefs.mute[bus] ? "🔇" : "🔊"}</button>;
   const reglagesAmbiance = <div className="rythme-reglages ambiance">
-    <label className="rythme-curseur" title={music ? "" : "Musique coupée dans les options"}>Musique <input type="range" min={0} max={100} step={5} disabled={!music} value={Math.round(prefs.musicVolume * 100)} onChange={(event) => updatePrefs({ musicVolume: Number(event.target.value) / 100 })} /> <b>{music ? `${Math.round(prefs.musicVolume * 100)} %` : "coupée"}</b></label>
     <label className="rythme-case"><input type="checkbox" checked={prefs.sfx} onChange={(event) => updatePrefs({ sfx: event.target.checked })} /> Bruitages</label>
-    <label className="rythme-curseur">Volume <input type="range" min={0} max={100} step={5} disabled={!prefs.sfx} value={Math.round(prefs.sfxVolume * 100)} onChange={(event) => updatePrefs({ sfxVolume: Number(event.target.value) / 100 })} /> <b>{Math.round(prefs.sfxVolume * 100)} %</b></label>
+    <label className="rythme-curseur">Général <input type="range" min={0} max={100} step={5} disabled={!prefs.sfx} value={Math.round(prefs.sfxVolume * 100)} onChange={(event) => updatePrefs({ sfxVolume: Number(event.target.value) / 100 })} /> <b>{Math.round(prefs.sfxVolume * 100)} %</b></label>
+    <details className="rythme-mixage" data-rythme-mixage="">
+      <summary>Mixage audio</summary>
+      <div className="rythme-mix-grille">
+        {RHYTHM_BUSES.map((bus) => <div key={bus} className={`rythme-piste-mix ${prefs.mute[bus] ? "muette" : ""}`} data-bus={bus}>
+          <span className="nom" title={mixLabels[bus][1]}>{mixLabels[bus][0]}<small>{mixLabels[bus][1]}</small></span>
+          <input type="range" min={0} max={100} step={5} aria-label={mixLabels[bus][0]} disabled={!prefs.sfx || prefs.mute[bus]} value={Math.round(prefs.mix[bus] * 100)} onChange={(event) => updatePrefs({ mix: { ...prefs.mix, [bus]: Number(event.target.value) / 100 } })} />
+          <b>{prefs.mute[bus] ? "muet" : `${Math.round(prefs.mix[bus] * 100)} %`}</b>
+          {muteButton(bus, mixLabels[bus][0])}
+        </div>)}
+        <div className={`rythme-piste-mix ${prefs.mute.musique || !music ? "muette" : ""}`} data-bus="musique" title={music ? "" : "Musique coupée dans les options"}>
+          <span className="nom">Musique<small>{music ? "fond intime" : "coupée dans les options"}</small></span>
+          <input type="range" min={0} max={100} step={5} aria-label="Musique" disabled={!music || prefs.mute.musique} value={Math.round(prefs.musicVolume * 100)} onChange={(event) => updatePrefs({ musicVolume: Number(event.target.value) / 100 })} />
+          <b>{!music ? "coupée" : prefs.mute.musique ? "muet" : `${Math.round(prefs.musicVolume * 100)} %`}</b>
+          {muteButton("musique", "Musique")}
+        </div>
+      </div>
+      <label className="rythme-case neutre"><input type="checkbox" checked={prefs.neutral} onChange={(event) => updatePrefs({ neutral: event.target.checked })} /> Bruits corporels neutres <small>battement sourd, percussion feutrée, tic, souffle léger</small></label>
+    </details>
   </div>;
   const reglagesEffets = <div className="rythme-reglages effets">
     <div className="rythme-choix petit" role="group" aria-label="Effets">{(["plein", "reduit"] as const).map((id) => <button type="button" key={id} className={prefs.effects === id ? "actif" : ""} onClick={() => updatePrefs({ effects: id })}>{id === "plein" ? "Effets pleins" : "Effets réduits"}</button>)}</div>

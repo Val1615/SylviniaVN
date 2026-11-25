@@ -250,6 +250,52 @@ try {
     if (label === "parfaite") var perfectVoices = { moans, breaths, thresholds };
   }
 
+  // v5 · Mixage et bruits corporels neutres : chaque groupe a sa famille, les réglages sont mémorisés,
+  // et en mode neutre aucun bruit corporel enregistré ne joue (sons synthétisés à la place, rythme intact).
+  const busOf = sfx.RHYTHM_SFX_BUS;
+  for (const name of sfx.RHYTHM_SFX_FILES) assert.ok(busOf[name.replace(/-\d+$/, "")], `famille de mixage pour ${name}`);
+  assert.deepEqual([...new Set(Object.values(busOf))].sort(), [...engine.RHYTHM_BUSES].sort(), "familles du mixage");
+  for (const g of ["peau", "humide", "glisse", "succion", "lechage"]) assert.equal(busOf[g], "corps", `${g} : bruit corporel`);
+  for (const g of ["souffle", "soupir", "gemit", "halete", "apogee"]) assert.equal(busOf[g], "voix", `${g} : voix`);
+  assert.ok(defaults.mix && defaults.neutral === false && Object.values(defaults.mute).every((m) => m === false), "mixage par défaut : tout audible, bruits réels");
+  {
+    const store = new Map();
+    globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
+    engine.storeRhythmPrefs({ ...defaults, mix: { ...defaults.mix, voix: 0.4, corps: 0.15 }, mute: { ...defaults.mute, ambiance: true, musique: true }, neutral: true });
+    const back = engine.loadRhythmPrefs();
+    assert.equal(back.mix.voix, 0.4); assert.equal(back.mix.corps, 0.15); assert.equal(back.mute.ambiance, true); assert.equal(back.mute.musique, true); assert.equal(back.neutral, true, "réglages du mixage mémorisés");
+    store.set(engine.RHYTHM_PREFS_KEY, JSON.stringify({ difficulty: "doux", sfxVolume: 0.5 }));
+    const old = engine.loadRhythmPrefs();
+    assert.equal(old.neutral, false); assert.equal(old.mix.voix, defaults.mix.voix); assert.equal(old.difficulty, "doux", "anciens réglages relus sans mixage");
+    delete globalThis.localStorage;
+  }
+  {
+    const neutral = new sfx.RhythmSfx();
+    const clock = { currentTime: 0 };
+    Object.assign(neutral, { ctx: clock, master: {}, neutral: true });
+    let combo = 0;
+    for (const note of charts.normal) {
+      clock.currentTime = note.time + 10;
+      const gesture = engine.RHYTHM_SECTIONS[note.section].gesture;
+      combo++;
+      if (note.kind === "slide") neutral.slide(gesture, note.index % 2 === 0); else neutral.stroke(true, 0.5, note.kind === "hold" || note.kind === "final", gesture, note.motion);
+      if (engine.rhythmComboThreshold(combo)) { neutral.comboMoan(engine.rhythmComboLevel(combo), 0.6, gesture); neutral.comboChime(engine.rhythmComboLevel(combo)); } else neutral.breath(0.6, false, gesture);
+    }
+    neutral.apogee();
+    for (const g of ["peau", "humide", "glisse", "succion", "lechage", "bouche", "langue"]) assert.ok(!neutral.played[g], `bruits neutres : aucun son « ${g} »`);
+    for (const k of ["battement", "feutre", "tic", "souffle"]) assert.ok(neutral.played[`neutre-${k}`] > 0, `bruits neutres : ${k} joué`);
+    const strokes = charts.normal.filter((n) => n.kind !== "slide").length;
+    const neutralStrokes = ["battement", "feutre", "tic", "souffle"].reduce((sum, k) => sum + (neutral.played[`neutre-${k}`] || 0), 0);
+    assert.ok(neutralStrokes >= strokes, `bruits neutres : un son par coup (${neutralStrokes} pour ${strokes})`);
+    assert.ok(neutral.played.combo > 0 && neutral.played.apogee > 0, "carillon de combo et apogée");
+    var neutralStats = { strokes: neutralStrokes };
+  }
+  assert.match(ui, /data-rythme-mixage/, "menu de mixage");
+  assert.match(ui, /setMix\(prefs\.mix, prefs\.mute, prefs\.neutral\)/, "mixage appliqué en direct");
+  assert.match(ui, /Bruits corporels neutres/, "option bruits neutres");
+  assert.ok((ui.match(/\{reglagesAmbiance\}/g) || []).length >= 2, "mixage accessible avant le lancement et en pause");
+  assert.ok(css.includes(".rythme-mixage") && css.includes(".rythme-muet"), "styles du mixage");
+
   // v3 · Secousse : sens par position, amplitude croissante, plafonnée, réduite ou coupée sur demande.
   assert.deepEqual(positions.map((s) => s.shake), ["vertical", "profondeur", "vertical", "profondeur"], "sens de la secousse par position");
   const plein = { effects: "plein", shake: true };
@@ -289,7 +335,7 @@ try {
   assert.ok((pageSource.match(/onLoad=\{use\w*IntimateSprite \? markIntimateSpriteLoaded/g) || []).length >= 3, "tous les sprites intimes se rétablissent au chargement");
 
   const lengths = Object.fromEntries(Object.keys(charts).map((d) => [d, engine.rhythmChartEnd(d).toFixed(1) + " s"]));
-  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${prelim.map((x) => x.bpm).join(" → ")} (préliminaires) puis ${positions.map((x) => x.bpm).join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px.`);
+  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${prelim.map((x) => x.bpm).join(" → ")} (préliminaires) puis ${positions.map((x) => x.bpm).join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px ; mixage 4 familles + musique, bruits neutres ${neutralStats.strokes} sons synthétisés sur une partie, aucun bruit corporel enregistré.`);
 } finally {
   await server.close();
 }
