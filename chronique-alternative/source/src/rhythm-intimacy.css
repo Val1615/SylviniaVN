@@ -1,0 +1,240 @@
+/* Jeu de rythme intime (prototype) : couloir discret en bord d'écran, thème rose-rouge des scènes intimes V2.
+   Rien ne se pose au centre : la CG ou le sprite restent entièrement lisibles. */
+.rythme-layer { position: absolute; inset: 0; z-index: 2; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; --rose-r: 231, 101, 136; --rouge-r: 200, 40, 70; }
+.rythme-layer.phase-setup, .rythme-layer.phase-result { touch-action: auto; }
+
+/* Couloir vertical, bord droit */
+.rythme-couloir { position: absolute; right: max(12px, env(safe-area-inset-right)); top: calc(76px * var(--k, 1)); bottom: 14px; width: 74px; display: flex; flex-direction: column; pointer-events: none; }
+/* en-tête de section : déborde vers la gauche, jamais hors écran */
+.rythme-entete { align-self: flex-end; text-align: right; margin-bottom: 6px; min-height: 2.1rem; max-width: 46vw; position: relative; line-height: 1.1; filter: drop-shadow(0 1px 4px #000); }
+.rythme-section { display: block; position: absolute; right: 0; top: 0; font: 700 .68rem var(--display, serif); letter-spacing: .12em; text-transform: uppercase; color: #ffc0d0; white-space: nowrap; }
+.rythme-cadence { display: block; position: absolute; right: 0; top: 1rem; font-size: .6rem; color: rgba(255, 192, 208, .7); font-style: italic; white-space: nowrap; }
+.rythme-piste { position: relative; flex: 1; margin-left: auto; width: 46px; border-radius: 23px; background: linear-gradient(180deg, rgba(var(--rose-r), 0) 0%, rgba(var(--rose-r), .07) 40%, rgba(var(--rouge-r), .16) 100%); border: 1px solid rgba(var(--rose-r), .22); box-shadow: inset 0 0 14px rgba(var(--rouge-r), .18), 0 0 calc(10px + 14px * var(--pulse, 0)) rgba(var(--rose-r), calc(.12 + .22 * var(--pulse, 0))); overflow: visible; }
+.rythme-progres { position: absolute; left: -5px; bottom: 0; width: 2px; border-radius: 2px; background: linear-gradient(0deg, rgba(var(--rose-r), .8), rgba(255, 220, 230, .4)); opacity: .55; }
+
+/* Notes : la piste a pour origine la cible (bas). bottom = distance avant la frappe. */
+.rythme-note { position: absolute; left: 50%; width: 30px; margin-left: -15px; margin-bottom: 6px; pointer-events: none; }
+.rythme-note .tete { position: absolute; left: 0; bottom: -15px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; font: 700 1.05rem/1 var(--display, serif); font-style: normal; color: #fff; background: radial-gradient(circle at 40% 35%, rgba(255, 235, 242, .85), rgba(var(--rose-r), .65) 55%, rgba(var(--rouge-r), .35) 100%); box-shadow: 0 0 12px rgba(var(--rose-r), .75), inset 0 0 6px rgba(255, 255, 255, .5); opacity: .78; }
+.rythme-note.hold, .rythme-note.final { width: 18px; margin-left: -9px; border-radius: 9px; background: linear-gradient(0deg, rgba(var(--rose-r), .34), rgba(var(--rose-r), .06)); box-shadow: 0 0 8px rgba(var(--rose-r), .2); }
+.rythme-note.hold .tete, .rythme-note.final .tete { left: 50%; margin-left: -15px; }
+.rythme-note.hold .tete { border-radius: 10px; background: radial-gradient(circle at 50% 40%, rgba(255, 235, 242, .85), rgba(var(--rouge-r), .7) 70%); }
+.rythme-note.tenue { background: linear-gradient(0deg, rgba(255, 205, 220, .65), rgba(var(--rose-r), .2)); box-shadow: 0 0 18px rgba(var(--rose-r), .6); }
+.rythme-note.tenue .tete { animation: rythme-tenue .28s ease-in-out infinite alternate; }
+.rythme-note.slide .tete { border-radius: 6px; transform: rotate(45deg); background: linear-gradient(135deg, rgba(255, 214, 160, .85), rgba(255, 120, 150, .6)); box-shadow: 0 0 14px rgba(255, 170, 120, .7); }
+.rythme-note.slide .tete { color: transparent; }
+.rythme-note.slide .tete::after { content: ""; position: absolute; inset: 0; display: grid; place-items: center; transform: rotate(-45deg); }
+.rythme-note.slide.left .tete::after { content: "‹"; color: #fff; font-size: 1.35rem; }
+.rythme-note.slide.right .tete::after { content: "›"; color: #fff; font-size: 1.35rem; }
+.rythme-note.final { width: 22px; margin-left: -11px; background: linear-gradient(0deg, rgba(255, 210, 160, .5), rgba(var(--rose-r), .12)); }
+.rythme-note.final .tete { width: 38px; height: 38px; bottom: -19px; margin-left: -19px; background: radial-gradient(circle, #fff6e8, rgba(255, 170, 150, .8) 50%, rgba(var(--rouge-r), .4)); box-shadow: 0 0 22px rgba(255, 190, 150, .9); }
+@keyframes rythme-tenue { from { transform: scale(1); } to { transform: scale(1.14); } }
+
+.rythme-cible { position: absolute; left: 50%; bottom: 6px; width: 40px; height: 40px; margin: 0 0 -20px -20px; border-radius: 50%; border: 2px solid rgba(255, 210, 222, calc(.45 + .45 * var(--pulse, 0))); box-shadow: 0 0 calc(8px + 16px * var(--pulse, 0)) rgba(var(--rose-r), .7), inset 0 0 10px rgba(var(--rose-r), .4); transform: scale(calc(1 + .1 * var(--pulse, 0))); }
+.rythme-cible i { position: absolute; inset: 8px; border-radius: 50%; background: rgba(var(--rose-r), calc(.12 + .2 * var(--pulse, 0))); }
+
+/* Jauge de plaisir, fine, à gauche de la piste */
+.rythme-jauge { position: absolute; left: 0; bottom: 14px; top: calc(2.2rem + 10px); width: 6px; border-radius: 3px; background: rgba(255, 255, 255, .08); overflow: visible; }
+.rythme-jauge b { position: absolute; left: 0; right: 0; bottom: 0; height: var(--jauge, 0%); border-radius: 3px; background: linear-gradient(0deg, #c82846, #ff8fab 70%, #ffe1ea); box-shadow: 0 0 10px rgba(var(--rose-r), .8); transition: height .25s ease-out; }
+.rythme-jauge span { position: absolute; left: -2px; bottom: -14px; font-size: .55rem; color: rgba(255, 192, 208, .8); }
+.rythme-jauge em { position: absolute; left: -3px; width: 12px; height: 2px; background: rgba(255, 255, 255, .25); }
+.rythme-jauge em:nth-of-type(1) { bottom: 33%; } .rythme-jauge em:nth-of-type(2) { bottom: 58%; } .rythme-jauge em:nth-of-type(3) { bottom: 82%; }
+.rythme-jauge em.atteint { background: #ffd0dc; box-shadow: 0 0 6px #ff8fab; }
+
+.rythme-combo { position: absolute; right: 86px; bottom: 58px; font: 700 .9rem var(--display, serif); color: #ffe1ea; text-shadow: 0 0 10px rgba(var(--rose-r), .9); opacity: .85; }
+.rythme-juge { position: absolute; right: 86px; bottom: 24px; font: 800 .9rem var(--display, serif); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; animation: rythme-juge .7s ease-out forwards; pointer-events: none; }
+.rythme-juge.parfait { color: #fff0f5; text-shadow: 0 0 12px #ff6f96, 0 0 2px #fff; }
+.rythme-juge.bien { color: #ffaac0; text-shadow: 0 0 8px rgba(var(--rose-r), .8); }
+.rythme-juge.rate { color: #b9a8c4; text-shadow: 0 0 6px rgba(0, 0, 0, .8); }
+.rythme-juge.palier { color: #ffe2b8; text-shadow: 0 0 12px rgba(255, 170, 120, .9); bottom: 80px; }
+@keyframes rythme-juge { 0% { opacity: 0; transform: translateX(8px) scale(.8); } 15% { opacity: 1; transform: translateX(0) scale(1.08); } 100% { opacity: 0; transform: translateY(-14px) scale(1); } }
+
+.rythme-pause { pointer-events: auto; position: absolute; right: -2px; top: -2px; width: 26px; height: 26px; transform: translateY(-110%); border-radius: 50%; border: 1px solid rgba(var(--rose-r), .45); background: rgba(20, 8, 14, .55); color: #ffc0d0; font-size: .58rem; cursor: pointer; display: none; }
+
+/* Taquinerie d'Hylee après un raté : petite bulle à gauche du couloir, au-dessus de la cible */
+.rythme-taquine { position: absolute; right: 100px; bottom: 96px; max-width: min(300px, 40vw); padding: .35rem .6rem .4rem; border-radius: 10px 10px 2px 10px; background: rgba(40, 10, 22, .62); border: 1px solid rgba(255, 208, 160, .45); color: #ffe9dc; font-size: .74rem; line-height: 1.35; text-shadow: 0 1px 2px #000; pointer-events: none; animation: rythme-taquine 2.8s ease-out forwards; }
+.rythme-taquine .qui { display: block; font: 700 .58rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ffb88a; }
+@keyframes rythme-taquine { 0% { opacity: 0; transform: translateY(6px) scale(.96); } 10% { opacity: 1; transform: none; } 82% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Légendes : bas gauche, compactes et translucides */
+.rythme-legende { position: absolute; left: max(14px, env(safe-area-inset-left)); bottom: 14px; max-width: min(58%, 560px); padding: .55rem .85rem .6rem; border-left: 2px solid rgba(var(--rose-r), .85); background: linear-gradient(90deg, rgba(30, 8, 18, .72), rgba(30, 8, 18, .38) 75%, transparent); color: #fbeef2; animation: rythme-legende .45s ease-out; pointer-events: none; text-shadow: 0 1px 3px #000; }
+.rythme-legende p { margin: 0; font-size: .86rem; line-height: 1.45; }
+.rythme-legende .qui { display: block; margin-bottom: .15rem; font: 700 .66rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ff9fbb; }
+.rythme-legende.narration p { font-style: italic; }
+.rythme-legende.tease { border-left-color: #ffd0a0; }
+@keyframes rythme-legende { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.rythme-decompte { position: absolute; right: 92px; bottom: 30%; font: 800 1.6rem var(--display, serif); color: #ffe1ea; text-shadow: 0 0 16px rgba(var(--rose-r), .95); animation: rythme-juge .9s ease-out forwards; pointer-events: none; }
+.rythme-auto-badge { position: absolute; right: 96px; top: calc(80px * var(--k, 1)); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: #ffc0d0; opacity: .7; }
+
+/* Apogée : un éclat rose sur les bords seulement, le centre reste transparent */
+.rythme-apogee-voile { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, transparent 48%, rgba(255, 143, 171, .38) 78%, rgba(255, 220, 230, .55) 100%); }
+.rythme-layer.apogee .rythme-apogee-voile { animation: rythme-apogee 1.8s ease-out forwards; }
+@keyframes rythme-apogee { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Panneaux (réglages, pause, bilan) : en bas, compacts */
+.rythme-panneau { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(620px, calc(100% - 28px)); max-height: calc(100% - 100px); overflow-y: auto; box-sizing: border-box; padding: .9rem 1.1rem 1rem; border: 1px solid rgba(var(--rose-r), .45); background: linear-gradient(180deg, rgba(40, 12, 24, .86), rgba(10, 8, 16, .9)); box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 32px rgba(var(--rose-r), .16); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); color: #f6e9ee; pointer-events: auto; }
+.rythme-panneau .eyebrow { margin: 0; color: #ff8fab; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; }
+.rythme-panneau h3 { margin: .15rem 0 .35rem; font: 700 1.2rem var(--display, serif); color: #ffc0d0; }
+.rythme-consigne { margin: 0 0 .4rem; font-size: .82rem; line-height: 1.45; }
+.rythme-touches { margin: 0 0 .55rem; padding: 0; list-style: none; font-size: .7rem; color: rgba(255, 220, 230, .75); }
+.rythme-reglages { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-bottom: .6rem; font-size: .75rem; }
+.rythme-choix { display: inline-flex; border: 1px solid rgba(var(--rose-r), .5); }
+.rythme-choix button { padding: .35rem .7rem; border: 0; background: transparent; color: #ffc0d0; font: 700 .72rem var(--display, serif); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.rythme-choix button.actif { background: linear-gradient(90deg, rgba(200, 40, 70, .9), rgba(231, 101, 136, .85)); color: #fff; }
+.rythme-case, .rythme-decalage { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; }
+.rythme-decalage input { width: 110px; accent-color: #e76588; }
+.rythme-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.rythme-actions .btn { min-height: 38px; padding: .45rem .9rem; border: 1px solid rgba(var(--rose-r), .5); background: rgba(20, 8, 14, .6); color: #ffc0d0; cursor: pointer; font-size: .78rem; }
+.rythme-actions .btn.primary-action { background: linear-gradient(90deg, #c82846, #e76588); color: #fff; border-color: transparent; }
+.rythme-actions .btn.discret { border-style: dashed; opacity: .85; }
+.rythme-bilan { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin: .2rem 0 .7rem; font-size: .78rem; }
+.rythme-bilan b { font: 800 1.05rem var(--display, serif); margin-right: .2rem; }
+.rythme-bilan .parfait b { color: #fff0f5; text-shadow: 0 0 8px #ff6f96; } .rythme-bilan .bien b { color: #ffaac0; } .rythme-bilan .rate b { color: #b9a8c4; }
+
+/* Pendant la partie, la scène cache sa propre boîte de dialogue */
+.v2-scene-intime.rythme-en-cours .dialogue-gradient { opacity: .35; }
+.rythme-layer.phase-play .rythme-pause, .rythme-layer.phase-paused .rythme-pause, .rythme-layer.phase-countdown .rythme-pause { display: block; }
+
+/* Fold plié (830x525) : couloir plus court, légende plus petite */
+@media (max-height: 600px) {
+  .rythme-couloir { top: 66px; width: 66px; }
+  .rythme-legende { max-width: min(54%, 460px); padding: .4rem .7rem .45rem; }
+  .rythme-legende p { font-size: .76rem; line-height: 1.38; }
+  .rythme-panneau { padding: .6rem .85rem .7rem; max-height: calc(100% - 76px); }
+  .rythme-consigne { font-size: .74rem; }
+  .rythme-panneau h3 { font-size: 1rem; }
+}
+@media (max-width: 600px) { .rythme-legende { max-width: calc(100% - 110px); } }
+
+/* ---------- Réactions en rythme (v2) ----------
+   --pulse : battement de chaque coup réussi (0 à 1, retombe avant le suivant)
+   --ardeur : plaisir (suit la jauge, 1 à l'apogée) · --halo, --bat, --vignette : paliers dérivés
+   « Effets réduits » divise ces valeurs côté script et coupe le zoom. Le centre de l'image reste toujours dégagé. */
+.rythme-piste { box-shadow: inset 0 0 calc(14px + 10px * var(--halo, 0)) rgba(var(--rouge-r), calc(.16 + .2 * var(--halo, 0))), 0 0 calc(8px + 30px * var(--halo, 0) * var(--pulse, 0)) rgba(var(--rose-r), calc(.1 + .55 * var(--halo, 0) * var(--pulse, 0))); border-color: rgba(var(--rose-r), calc(.2 + .45 * var(--halo, 0) * var(--pulse, 0))); }
+.rythme-couloir { transform-origin: 100% 100%; transform: scale(calc(1 + .035 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-jauge b { box-shadow: 0 0 calc(8px + 16px * var(--bat, 0) * var(--pulse, 0)) rgba(var(--rose-r), calc(.6 + .4 * var(--bat, 0))); filter: brightness(calc(1 + .5 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-jauge { transform-origin: 50% 100%; transform: scaleX(calc(1 + .9 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-cible { transform: scale(calc(1 + (.08 + .14 * var(--ardeur, 0)) * var(--pulse, 0))); box-shadow: 0 0 calc(8px + 26px * var(--halo, 0) * var(--pulse, 0)) rgba(var(--rose-r), .75), inset 0 0 10px rgba(var(--rose-r), .4); }
+/* Onde qui part de la cible à chaque coup, plus large quand le plaisir monte */
+.rythme-onde { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid rgba(255, 214, 226, .85); pointer-events: none; animation: rythme-onde .55s ease-out forwards; --portee: calc(1.6 + 1.6 * var(--ardeur, 0)); }
+.rythme-onde.parfait { border-color: #fff2f6; box-shadow: 0 0 12px rgba(var(--rose-r), .9); }
+.effets-reduit .rythme-onde { --portee: 1.4; }
+@keyframes rythme-onde { from { opacity: .95; transform: scale(1); } to { opacity: 0; transform: scale(var(--portee)); } }
+/* Vignette rose-rouge sur les bords : absente au début, elle bat de plus en plus fort ; le centre (55 %) reste transparent */
+.rythme-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: calc(var(--vignette, 0) * (.3 + .7 * var(--pulse, 0))); background: radial-gradient(ellipse 72% 68% at 50% 46%, transparent 55%, rgba(var(--rouge-r), .3) 75%, rgba(var(--rose-r), .6) 91%, rgba(255, 170, 190, .72) 100%); mix-blend-mode: screen; }
+/* Jugements plus marqués avec l'ardeur */
+.rythme-juge { font-size: calc(.9rem * (1 + .45 * var(--ardeur, 0))); }
+.rythme-juge.parfait { text-shadow: 0 0 calc(10px + 14px * var(--ardeur, 0)) #ff6f96, 0 0 2px #fff; }
+.ardeur-3 .rythme-juge.parfait { color: #fff; letter-spacing: .14em; }
+.rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
+/* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
+/* Secousse à chaque coup (réglée par le script, nulle si « Secousses » est décoché) : pleine sur le sprite, plus légère sur la CG et le décor */
+.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0) + var(--rythme-etire, 0)); translate: var(--rythme-secousse-x, 0px) var(--rythme-secousse-y, 0px); rotate: var(--rythme-incline, 0deg); transform-origin: 50% 35%; }
+.rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0) + .4 * var(--rythme-etire, 0)); translate: calc(.4 * var(--rythme-secousse-x, 0px)) calc(.4 * var(--rythme-secousse-y, 0px)); rotate: calc(.4 * var(--rythme-incline, 0deg)); transform-origin: 50% 55%; }
+/* Phases préliminaires : l'origine du mouvement suit le geste (étirement ancré près de la tête pour qu'elle ne sorte jamais du cadre, hochement et ondulation depuis les hanches). */
+.rythme-en-cours[data-rythme-geste="main"] .intimacy-sprite img { transform-origin: 50% 12%; }
+.rythme-en-cours[data-rythme-geste="bouche"] .intimacy-sprite img { transform-origin: 50% 88%; }
+.rythme-en-cours[data-rythme-geste="langue"] .intimacy-sprite img { transform-origin: 50% 78%; }
+/* Têtes de note des caresses : sens du va-et-vient. */
+.rythme-note.haut .tete, .rythme-note.bas .tete { font-size: .8em; line-height: 1; display: grid; place-items: center; }
+.rythme-note.bas .tete { opacity: .85; }
+.rythme-en-cours.interactive-intimacy { background-position: center calc(50% + .3 * var(--rythme-secousse-y, 0px)); }
+/* Lignes de cadence : courtes, à gauche du couloir, au-dessus de la cible */
+.rythme-coup { position: absolute; right: 100px; bottom: calc(46px + 6vh); max-width: min(320px, 42vw); text-align: right; font: italic 600 .8rem/1.3 var(--display, serif); color: #ffe3ec; text-shadow: 0 0 10px rgba(var(--rouge-r), .9), 0 1px 3px #000; pointer-events: none; animation: rythme-coup 2.3s ease-out forwards; }
+@keyframes rythme-coup { 0% { opacity: 0; transform: translateX(10px); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-6px); } }
+/* Répliques d'Hylee en rythme : bulle rose, plus vive quand l'ardeur monte */
+.rythme-voix { position: absolute; right: 100px; bottom: calc(96px + 10vh); max-width: min(300px, 40vw); padding: .3rem .6rem .35rem; border-radius: 12px 12px 2px 12px; background: rgba(60, 10, 30, calc(.5 + .2 * var(--ardeur, 0))); border: 1px solid rgba(var(--rose-r), calc(.45 + .4 * var(--ardeur, 0))); box-shadow: 0 0 calc(6px + 16px * var(--ardeur, 0)) rgba(var(--rose-r), .45); color: #fff0f5; font-size: calc(.78rem * (1 + .15 * var(--ardeur, 0))); line-height: 1.3; text-shadow: 0 1px 2px #000; pointer-events: none; animation: rythme-taquine 2s ease-out forwards; }
+.rythme-voix .qui { display: block; font: 700 .56rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ff9fbb; }
+/* Apogée : l'éclat culmine sur les bords, la vignette reste pleine quelques secondes */
+.rythme-layer.apogee .rythme-apogee-voile { animation: rythme-apogee 2.6s ease-out forwards; }
+.rythme-layer.apogee .rythme-piste { box-shadow: 0 0 calc(24px + 30px * var(--pulse, 0)) rgba(255, 200, 215, .85), inset 0 0 24px rgba(var(--rose-r), .6); }
+.effets-reduit.apogee .rythme-apogee-voile { animation-duration: 1.4s; opacity: .5; }
+/* Réglages : curseurs compacts */
+.rythme-curseur { display: inline-flex; align-items: center; gap: .35rem; }
+.rythme-curseur input { width: 96px; accent-color: #e76588; }
+.rythme-curseur input:disabled { opacity: .4; }
+.rythme-reglages.ambiance, .rythme-reglages.effets { margin-top: -.2rem; }
+.rythme-choix.petit button { padding: .28rem .55rem; font-size: .64rem; }
+@media (max-height: 600px) {
+  .rythme-coup { bottom: 52px; font-size: .72rem; }
+  .rythme-voix { bottom: 100px; font-size: .72rem; }
+  .rythme-reglages { gap: .3rem .7rem; margin-bottom: .4rem; font-size: .7rem; }
+  .rythme-touches { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .rythme-onde { animation-duration: .01s; } }
+
+/* ---------- v3 : enchaînements (combo) ---------- */
+/* Compteur discret, qui rosit à partir du premier palier */
+.rythme-combo { transition: color .3s, opacity .3s; opacity: .7; font-size: .82rem; }
+.rythme-combo.niveau-1 { opacity: .85; color: #ffd0de; }
+.rythme-combo.niveau-2 { opacity: .92; color: #ffb3c9; }
+.rythme-combo.niveau-3 { opacity: 1; color: #ff98b6; text-shadow: 0 0 12px rgba(var(--rose-r), 1); }
+.combo-palier .rythme-combo { animation: rythme-combo-compteur .5s ease-out; }
+@keyframes rythme-combo-compteur { 0%, 42% { transform: scale(1); } 20%, 62% { transform: scale(1.35); } 100% { transform: scale(1); } }
+/* Voile rose du palier : il bat deux fois (trois au troisième palier), sur les bords seulement, le centre reste dégagé */
+.rythme-combo-voile { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: var(--combo, 0); background: radial-gradient(ellipse 78% 72% at 50% 46%, transparent 52%, rgba(255, 92, 150, .26) 76%, rgba(255, 120, 175, .55) 92%, rgba(255, 170, 205, .7) 100%); mix-blend-mode: screen; }
+.combo-palier .rythme-combo-voile { opacity: calc(.25 + .75 * var(--combo-battement, 0)); }
+.effets-reduit .rythme-combo-voile, .effets-reduit.combo-palier .rythme-combo-voile { opacity: calc(.35 * var(--combo, 0)); }
+/* Onde du palier : un anneau rose qui part de la cible et s'élargit plus loin que l'onde d'un coup */
+.rythme-onde.combo { border-color: #ff8fb6; border-width: 3px; box-shadow: 0 0 18px rgba(255, 110, 165, .95); animation: rythme-onde-combo .9s ease-out forwards; }
+@keyframes rythme-onde-combo { 0% { opacity: 1; transform: scale(1); } 45% { opacity: .8; transform: scale(3.2); } 100% { opacity: 0; transform: scale(5.2); } }
+.effets-reduit .rythme-onde.combo { animation: rythme-onde .7s ease-out forwards; --portee: 1.8; }
+/* Inscription « COMBO » animée, à gauche du couloir, loin du centre */
+.rythme-combo-eclat { position: absolute; right: 88px; top: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 0; pointer-events: none; font-family: var(--display, serif); color: #fff0f5; text-shadow: 0 0 14px rgba(255, 92, 150, .95), 0 0 2px #fff, 0 2px 4px #000; animation: rythme-combo-eclat 1.5s cubic-bezier(.2, .9, .3, 1) forwards; }
+.rythme-combo-eclat b { font-size: .78rem; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; }
+.rythme-combo-eclat span { font-size: 1.7rem; font-weight: 700; line-height: 1; }
+.rythme-combo-eclat.niveau-2 span { font-size: 1.95rem; color: #ffd6e4; }
+.rythme-combo-eclat.niveau-3 span { font-size: 2.2rem; color: #ffc2d6; }
+@keyframes rythme-combo-eclat {
+  0% { opacity: 0; transform: translateX(14px) scale(.7); }
+  10% { opacity: 1; transform: scale(1.18); }
+  20% { transform: scale(.96); }
+  31% { transform: scale(1.12); }
+  42% { transform: scale(1); }
+  80% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+.effets-reduit .rythme-combo-eclat { animation: rythme-combo-eclat-doux 1.5s ease-out forwards; }
+@keyframes rythme-combo-eclat-doux { 0% { opacity: 0; } 12% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+.combo-palier .rythme-cible { border-color: #ffc1d4; }
+@media (max-height: 600px) { .rythme-combo-eclat { top: 24%; } .rythme-combo-eclat span { font-size: 1.4rem; } .rythme-combo-eclat.niveau-3 span { font-size: 1.7rem; } }
+@media (prefers-reduced-motion: reduce) { .rythme-combo-eclat { animation-name: rythme-combo-eclat-doux; } .rythme-onde.combo { animation-duration: .01s; } }
+
+/* Mixage audio : repli discret sous les bruitages, une piste par famille de sons, bouton muet à droite. */
+.rythme-mixage { flex: 1 1 100%; border: 1px solid rgba(var(--rose-r), .28); background: rgba(20, 8, 16, .45); }
+.rythme-mixage summary { padding: .3rem .6rem; cursor: pointer; color: #ffb3c6; font: 700 .68rem var(--display, serif); letter-spacing: .12em; text-transform: uppercase; list-style: none; }
+.rythme-mixage summary::-webkit-details-marker { display: none; }
+.rythme-mixage summary::after { content: " ▾"; opacity: .7; }
+.rythme-mixage[open] summary::after { content: " ▴"; }
+.rythme-mix-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: .2rem .9rem; padding: .1rem .6rem .35rem; }
+.rythme-piste-mix { display: grid; grid-template-columns: 6.8rem 1fr 2.6rem 1.9rem; align-items: center; gap: .4rem; min-height: 1.7rem; }
+.rythme-piste-mix .nom { display: flex; flex-direction: column; line-height: 1.05; color: #f6e9ee; font-weight: 700; }
+.rythme-piste-mix .nom small { font-weight: 400; font-size: .58rem; color: rgba(246, 233, 238, .55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 9rem; }
+.rythme-piste-mix input { width: 100%; min-width: 60px; accent-color: #e76588; }
+.rythme-piste-mix input:disabled { opacity: .35; }
+.rythme-piste-mix b { font-size: .66rem; text-align: right; color: #ffc0d0; font-weight: 600; }
+.rythme-piste-mix.muette b { color: rgba(255, 192, 208, .5); }
+.rythme-muet { width: 1.8rem; height: 1.6rem; padding: 0; border: 1px solid rgba(var(--rose-r), .45); background: rgba(40, 12, 24, .6); color: #fff; font-size: .78rem; cursor: pointer; }
+.rythme-muet.actif { background: rgba(120, 30, 50, .75); border-color: rgba(255, 143, 171, .8); }
+.rythme-case.neutre { padding: .1rem .6rem .45rem; flex-wrap: wrap; }
+.rythme-case.neutre small { font-size: .6rem; color: rgba(246, 233, 238, .55); }
+@media (max-height: 600px) {
+  .rythme-mix-grille { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0 .7rem; }
+  .rythme-piste-mix { min-height: 1.45rem; }
+  .rythme-piste-mix .nom small { display: none; }
+}
+
+/* Version Suggestif : sprite (et CG éventuelle) voilés pendant tout le jeu ; la silhouette et ses mouvements restent lisibles. */
+.interactive-intimacy.rythme-suggestif .intimacy-sprite img,
+.interactive-intimacy.rythme-suggestif .intimacy-cg img { filter: blur(14px) saturate(.75) brightness(.9) drop-shadow(0 22px 38px rgba(0,0,0,.6)) !important; }
+.rythme-piste-mix.verrouillee input { opacity: .25; }
+.rythme-muet.verrou { display: inline-flex; align-items: center; justify-content: center; cursor: default; opacity: .7; }
+.rythme-case.neutre.verrouillee { cursor: default; opacity: .85; }
+
+/* Bouton pause : descendu à hauteur du titre de phase (il passait sous la barre du haut, « Quitter le souvenir » captait le toucher). */
+.rythme-layer .rythme-pause { transform: none; top: 0; right: -2px; z-index: 2; }
+:is(.rythme-layer.phase-play, .rythme-layer.phase-paused, .rythme-layer.phase-countdown) :is(.rythme-section, .rythme-cadence) { right: 32px; }
+.interactive-intimacy.rythme-en-cours .intimacy-top { pointer-events: none; }
+.interactive-intimacy.rythme-en-cours .intimacy-top button, .interactive-intimacy.rythme-en-cours .intimacy-top a { pointer-events: auto; }
+/* Badge « Lecture auto » sous le titre de phase, qui a glissé à gauche du bouton pause. */
+.rythme-layer .rythme-auto-badge { top: calc(76px * var(--k, 1) + 2.3rem); }
