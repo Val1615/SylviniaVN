@@ -21,6 +21,7 @@ export CA_SHOTS=/tmp/ca-shots   # dossier des captures (créer flow/ dedans)
 | `flow_v25.py` | V2.5 : présent aimé → réaction et gains réels, lettre → réponse, scène → choix en cartes + historique (H, Échap), lanceur de job → partie, attente jusqu’au jour suivant → bilan (toucher : tout afficher puis continuer), sauvegarde/chargement sans bilan parasite — 5 formats |
 | `resp_v25.py` | Chevauchements dans les fenêtres V2.5, la scène, l’historique et le bilan, sur 5 formats + échelles extrêmes (`?texte=140&cases=125&sprite=130`, `?texte=70&cases=70&sprite=70`) |
 | `shots_bn.py` | Bellirith / Naïah : didacticiel, manche normale, manche hors échelle, dossier du Journal, Q5 avec sprite intime, route Bellirith existante, forme du rendez-vous final, bloc développeur (`CA_CHROME=/usr/bin/google-chrome python3 shots_bn.py saves/save-bn.json <dossier> 830x525t,1024x880`) |
+| `rythme_bellirith.py` | Fiches de rythme, Bellirith : bouton développeur d'une scène (`[data-rythme-route=…]`), Intense recommandé, violet, leurre cédé exprès, silence au bord tenu, aura, bilan avec sa bulle, reprise du texte écrit, souvenir sans effet sur la relation (`python3 rythme_bellirith.py saves/save-rythme.json <dossier> 1024x880 [route]`) |
 | `shots_v25.py` | Captures avant/après V2.5 (`python3 shots_v25.py apres <dossier> 830x525t,1920x1080`) |
 
 Le bilan de fin de journée intercepte les clics jusqu’à ce qu’on le touche deux fois : `common.close_modals` appelle `dismiss_bilan` avant de fermer les fenêtres.

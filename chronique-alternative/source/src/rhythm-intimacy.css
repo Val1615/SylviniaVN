@@ -238,3 +238,42 @@
 .interactive-intimacy.rythme-en-cours .intimacy-top button, .interactive-intimacy.rythme-en-cours .intimacy-top a { pointer-events: auto; }
 /* Badge « Lecture auto » sous le titre de phase, qui a glissé à gauche du bouton pause. */
 .rythme-layer .rythme-auto-badge { top: calc(76px * var(--k, 1) + 2.3rem); }
+
+/* ===== Fiches personnages (lot 0) : couleurs par personnage, pièges, silences, aura, résistance ===== */
+.rythme-layer.perso-bellirith .rythme-jauge b { background: linear-gradient(0deg, rgb(var(--rouge-r)), rgb(var(--rose-r)) 70%, #f1e4ff); }
+.rythme-layer.perso-bellirith .rythme-jauge em.atteint { background: #e7d4ff; box-shadow: 0 0 6px rgb(var(--rose-r)); }
+/* Leurre : un contour pâle, sans cœur ni lueur ; il ne faut pas le toucher. */
+.rythme-note.bait .tete { background: none; border: 2px dashed rgba(235, 225, 245, .55); box-shadow: none; opacity: .62; width: 26px; height: 26px; margin-left: 2px; bottom: -13px; }
+.rythme-note.bait.appel .tete { border-style: solid; border-color: rgba(var(--rose-r), .7); color: rgba(255, 255, 255, .8); }
+.rythme-note.cede .tete { border-color: #ff7a8a; opacity: .9; animation: rythme-cede .4s ease-out; }
+@keyframes rythme-cede { 0% { transform: scale(1.35); } 100% { transform: scale(1); } }
+/* Silence (au bord, ou « ne touchez rien ») : une bande sombre qui traverse la cible. */
+.rythme-note.edge { width: 40px; margin-left: -20px; border-radius: 12px; background: repeating-linear-gradient(0deg, rgba(20, 8, 30, .62) 0 6px, rgba(var(--rouge-r), .22) 6px 12px); border: 1px solid rgba(var(--rose-r), .45); box-shadow: 0 0 10px rgba(0, 0, 0, .45); }
+.rythme-note.edge .tete { left: 50%; bottom: auto; top: 50%; width: auto; height: auto; margin: 0; transform: translate(-50%, -50%) rotate(-90deg); background: none; box-shadow: none; font: italic 600 .62rem/1 var(--display, serif); letter-spacing: .06em; white-space: nowrap; color: rgba(240, 228, 255, .85); opacity: 1; }
+.rythme-note.edge.cede { border-color: #ff7a8a; background: repeating-linear-gradient(0deg, rgba(80, 10, 30, .7) 0 6px, rgba(255, 90, 120, .25) 6px 12px); }
+.rythme-layer.silence .rythme-piste { filter: saturate(.55) brightness(.85); }
+.rythme-layer.silence .rythme-cible { border-color: rgba(230, 220, 245, .35); box-shadow: none; transform: none; }
+.rythme-silence-bandeau { position: absolute; right: calc(100% + 10px); top: 56%; padding: .35em .9em; border-radius: 999px; background: rgba(14, 6, 22, .78); border: 1px solid rgba(var(--rose-r), .5); color: #f3e8ff; font: italic 600 .9rem/1.2 var(--display, serif); white-space: nowrap; pointer-events: none; animation: rythme-bandeau .35s ease-out; }
+.rythme-silence-bandeau.appel { top: 64%; border-color: rgba(255, 215, 160, .6); color: #ffe9cf; }
+@keyframes rythme-bandeau { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+/* Aura : la vague qu'elle impose, annoncée une mesure plus tôt. */
+.rythme-note.aura .tete { background: radial-gradient(circle at 40% 35%, #fbf3ff, rgba(var(--rose-r), .9) 55%, rgba(var(--rouge-r), .6) 100%); box-shadow: 0 0 18px rgba(var(--rose-r), .95), 0 0 4px #fff; opacity: .95; }
+.rythme-layer.aura-annonce .rythme-piste { animation: rythme-aura-annonce .6s ease-in-out infinite alternate; }
+.rythme-layer.aura-vague .rythme-piste { box-shadow: inset 0 0 26px rgba(var(--rose-r), .55), 0 0 34px rgba(var(--rose-r), .55); border-color: rgba(var(--rose-r), .8); }
+@keyframes rythme-aura-annonce { from { box-shadow: 0 0 6px rgba(var(--rose-r), .2); } to { box-shadow: 0 0 26px rgba(var(--rose-r), .75); } }
+/* Jauge de résistance, à gauche de la jauge de plaisir. */
+.rythme-resistance { position: absolute; left: 12px; bottom: 14px; top: calc(2.2rem + 10px); width: 4px; border-radius: 2px; background: rgba(255, 255, 255, .07); pointer-events: none; }
+.rythme-resistance b { position: absolute; left: 0; right: 0; bottom: 0; height: var(--resistance, 0%); border-radius: 2px; background: linear-gradient(0deg, rgb(var(--rouge-r)), #efe2ff); box-shadow: 0 0 8px rgba(var(--rose-r), .6); transition: height .3s ease-out; }
+.rythme-resistance span { position: absolute; left: 50%; bottom: -14px; transform: translateX(-50%); font-size: .5rem; color: rgba(236, 222, 255, .7); white-space: nowrap; display: none; }
+/* Fin de scène : la bulle du personnage et la trace sur la relation. */
+.rythme-bulle-fin { margin: .6rem 0 0; padding: .55rem .8rem; border-radius: 14px 14px 14px 4px; background: rgba(var(--rouge-r), .22); border: 1px solid rgba(var(--rose-r), .45); color: #f6eeff; font-style: italic; }
+.rythme-bulle-fin .qui { display: block; font-style: normal; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--rose-r)); margin-bottom: .15rem; }
+.rythme-relation { margin: .45rem 0 0; font-size: .8rem; color: rgba(236, 222, 255, .78); }
+@media (prefers-reduced-motion: reduce) {
+  .rythme-layer.aura-annonce .rythme-piste, .rythme-silence-bandeau, .rythme-note.cede .tete { animation: none; }
+}
+/* Panneaux (réglages, pause, bilan) aux couleurs du personnage ; Hylee garde ses roses. */
+.rythme-layer.perso .rythme-panneau .eyebrow { color: rgb(var(--rose-r)); }
+.rythme-layer.perso .rythme-panneau h3, .rythme-layer.perso .rythme-choix button, .rythme-layer.perso .rythme-actions .btn { color: #eadcff; }
+.rythme-layer.perso .rythme-choix button.actif { background: linear-gradient(90deg, rgba(var(--rouge-r), .95), rgba(var(--rose-r), .9)); color: #fff; }
+.rythme-layer.perso .rythme-actions .btn.primary-action { background: linear-gradient(90deg, rgb(var(--rouge-r)), rgb(var(--rose-r))); color: #fff; }

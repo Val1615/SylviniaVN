@@ -48,6 +48,19 @@ for i,(a,b) in enumerate([(0.18,1.15),(2.40,3.30),(4.70,5.62),(6.90,7.82),(9.75,
     add(f'etouffe-{i+1}',P+'709457.mp3',a,b,VCHAIN,0.18,True)
 for i,(a,b) in enumerate([(1.95,3.30),(11.25,12.60),(14.50,15.90),(26.05,27.45)]):
     add(f'langue-{i+1}',P+'725065.mp3',a,b,VCHAIN,0.2,True)
+# --- Voix de Bellirith (fiches personnages, lot 1) : une seule comédienne, aarrnnoo (CC BY 4.0), même traitement commun.
+# Sortie dans out/bellirith/ (assets/audio/rythme/bellirith). Palette courte : le jeu la fait tourner avec des repères doux.
+AR=lambda i: R+f'aarrnnoo/aarrnnoo-{i}.mp3'
+BELLIRITH={
+ 'souffle':[(516193,0.25,0.95),(516193,1.75,2.25),(516193,7.55,8.30)],
+ 'soupir':[(516193,2.65,3.45),(516196,2.20,3.30)],
+ # gemit 1-2 : doux, 3-5 : intenses (le jeu répartit les paliers sur la taille de la banque)
+ 'gemit':[(516193,2.65,3.45),(516193,3.85,5.10),(516196,1.00,2.40),(516196,0.15,1.25),(516196,0.15,2.35)],
+ 'apogee':[(516196,0.15,3.00),(516193,3.80,5.20)],
+ 'rire':[(516195,0.10,0.60),(516195,1.05,1.55),(516197,0.05,0.45),(516197,2.95,3.35),(516197,3.85,4.25),(516197,6.25,7.15),(516197,8.20,8.80)],
+}
+for g,lst in BELLIRITH.items():
+    for i,(sid,a,b) in enumerate(lst): add(f'bellirith/{g}-{i+1}',AR(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
 only=set(sys.argv[1:])
 meta={}
 def vol(path,flt):
@@ -59,6 +72,7 @@ for name,src,a,b,af,fade,voice in CL:
     tr=[] if a is None else ['-ss',str(a),'-to',str(b)]
     dur=(b-a) if a is not None else 3
     chain=','.join(x for x in [af,f'afade=t=in:d={0.03 if voice else 0.005}',f'afade=t=out:st={max(0,dur-fade):.3f}:d={fade}'] if x)
+    os.makedirs(os.path.dirname(f'out/{name}.wav'),exist_ok=True)
     tmp=f'out/{name}.wav'
     subprocess.run(['ffmpeg','-y','-v','error',*tr,'-i',src,'-ac','1','-ar','44100','-af',chain,tmp],check=True)
     if voice:

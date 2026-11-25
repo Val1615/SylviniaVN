@@ -16,19 +16,29 @@ const GROUPS = {
   // et la même voix bouche occupée (bouche), étouffée (etouffe) ou sous la langue du joueur (langue).
   glisse: 6, baiser: 4, succion: 5, lechage: 6, bouche: 4, etouffe: 5, langue: 4,
 } as const;
-export type RhythmSfxGesture = "main" | "bouche" | "langue" | "penetration";
-type Group = keyof typeof GROUPS;
+export type RhythmSfxGesture = "main" | "bouche" | "langue" | "frottement" | "penetration";
+type Group = keyof typeof GROUPS | "rire";
+/** Groupes de la voix (remplacés par la banque du personnage quand une fiche en fournit une). */
+const VOICE_GROUPS = ["souffle", "soupir", "gemit", "halete", "apogee", "bouche", "etouffe", "langue", "rire"] as const;
+type VoiceGroup = typeof VOICE_GROUPS[number];
+/** Banque de voix d'un personnage (voir rhythm-profiles.ts) : sous-dossier et nombre d'extraits par groupe. */
+export type RhythmSfxVoiceBank = { dir: string; groups: Partial<Record<VoiceGroup, number>> };
+/** Groupe absent d'une banque courte : on se replie sur le plus proche (étouffé = gémissement assourdi). */
+const VOICE_FALLBACK: Record<VoiceGroup, VoiceGroup[]> = {
+  souffle: ["soupir"], soupir: ["souffle"], gemit: ["soupir"], halete: ["gemit"], apogee: ["gemit"],
+  bouche: ["gemit"], etouffe: ["gemit"], langue: ["gemit"], rire: [],
+};
 /** Famille de mixage de chaque groupe (voir RhythmBus dans le moteur). */
 export type RhythmSfxBus = "voix" | "corps" | "ambiance" | "interface";
 export const RHYTHM_SFX_BUS: Record<Group, RhythmSfxBus> = {
-  souffle: "voix", soupir: "voix", gemit: "voix", halete: "voix", apogee: "voix", bouche: "voix", etouffe: "voix", langue: "voix",
+  souffle: "voix", soupir: "voix", gemit: "voix", halete: "voix", apogee: "voix", bouche: "voix", etouffe: "voix", langue: "voix", rire: "voix",
   peau: "corps", humide: "corps", glisse: "corps", succion: "corps", lechage: "corps",
   draps: "ambiance", baiser: "ambiance",
   rate: "interface",
 };
 /** Sons neutres, synthétisés en direct (aucun fichier, aucune licence) : remplacent les bruits corporels. */
 export type RhythmNeutralSound = "battement" | "feutre" | "tic" | "souffle";
-export const RHYTHM_SFX_FILES = (Object.keys(GROUPS) as Group[]).flatMap((group) => Array.from({ length: GROUPS[group] }, (_, i) => `${group}-${i + 1}`));
+export const RHYTHM_SFX_FILES = (Object.keys(GROUPS) as (keyof typeof GROUPS)[]).flatMap((group) => Array.from({ length: GROUPS[group] }, (_, i) => `${group}-${i + 1}`));
 
 type Ctx = AudioContext;
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
@@ -47,8 +57,11 @@ export class RhythmSfx {
    * mixage), bruits neutres imposés. Seuls restent l'ambiance, l'interface et les sons neutres synthétisés.
    */
   readonly suggestive: boolean;
-  constructor(options: { suggestive?: boolean } = {}) {
+  /** Voix d'un autre personnage que Hylee : banque propre, rangée dans son sous-dossier (aucun mélange de voix). */
+  readonly voice?: RhythmSfxVoiceBank;
+  constructor(options: { suggestive?: boolean; voice?: RhythmSfxVoiceBank } = {}) {
     this.suggestive = Boolean(options.suggestive);
+    if (options.voice) this.voice = options.voice;
     if (this.suggestive) { this.neutral = true; this.mute.voix = true; }
   }
   private buffers = new Map<string, AudioBuffer>();
@@ -85,7 +98,8 @@ export class RhythmSfx {
   private load() {
     if (this.loading || !this.ctx) return this.loading;
     const ctx = this.ctx;
-    const files = this.suggestive ? RHYTHM_SFX_FILES.filter((name) => !["voix", "corps"].includes(RHYTHM_SFX_BUS[name.replace(/-\d+$/, "") as Group])) : RHYTHM_SFX_FILES;
+    const all = this.voice ? rhythmSfxFilesFor(this.voice) : RHYTHM_SFX_FILES;
+    const files = this.suggestive ? all.filter((name) => !["voix", "corps"].includes(RHYTHM_SFX_BUS[groupOf(name)])) : all;
     this.loading = Promise.all(files.map(async (name) => {
       try {
         const response = await fetch(`/assets/audio/rythme/${name}.mp3`);
@@ -123,17 +137,38 @@ export class RhythmSfx {
     for (const [bus, node] of this.buses) node.gain.setTargetAtTime(this.busGain(bus), this.ctx.currentTime, 0.02);
   }
 
+  /** Nombre d'extraits d'un groupe (banque du personnage pour la voix). */
+  private count(group: Group) {
+    if (this.voice && (VOICE_GROUPS as readonly string[]).includes(group)) return this.voice.groups[group as VoiceGroup] || 0;
+    return (GROUPS as Record<string, number>)[group] || 0;
+  }
+  /** Groupe de voix réellement joué : celui demandé, ou son repli si la banque du personnage ne l'a pas. */
+  private resolve(group: Group): Group | null {
+    if (this.count(group)) return group;
+    for (const other of VOICE_FALLBACK[group as VoiceGroup] || []) if (this.count(other)) return other;
+    return null;
+  }
+  private fileName(group: Group, index: number) {
+    const dir = this.voice && (VOICE_GROUPS as readonly string[]).includes(group) && this.voice.dir ? `${this.voice.dir}/` : "";
+    return `${dir}${group}-${index + 1}`;
+  }
   /** Tirage sans répétition immédiate ; from/to (bornes incluses, base 0) restreignent à une partie du groupe. */
-  private pick(group: Group, from = 0, to: number = GROUPS[group] - 1) {
+  private pick(group: Group, from = 0, to: number = this.count(group) - 1) {
+    const total = this.count(group);
+    // Banque plus courte que la voix de Hylee (12 gémissements) : la plage demandée est ramenée à la même proportion.
+    if (this.voice && group === "gemit" && total && total !== GROUPS.gemit && (from || to !== total - 1)) {
+      from = Math.min(total - 1, Math.floor(from / GROUPS.gemit * total));
+      to = Math.max(from, Math.min(total - 1, Math.ceil((to + 1) / GROUPS.gemit * total) - 1));
+    }
     const count = to - from + 1;
     let index = from + Math.floor(Math.random() * count);
     if (count > 1 && index === this.lastPick.get(group)) index = from + ((index - from + 1 + Math.floor(Math.random() * (count - 1))) % count);
     this.lastPick.set(group, index);
-    return `${group}-${index + 1}`;
+    return this.fileName(group, index);
   }
 
   private play(name: string, { gain = 1, rate = 1, delay = 0, lowpass }: { gain?: number; rate?: number; delay?: number; lowpass?: number } = {}) {
-    const group = name.replace(/-\d+$/, "") as Group;
+    const group = groupOf(name);
     if (this.suggestive && (RHYTHM_SFX_BUS[group] === "voix" || RHYTHM_SFX_BUS[group] === "corps")) { this.played.bloque = (this.played.bloque || 0) + 1; return null; }
     this.played[group] = (this.played[group] || 0) + 1;
     if (!this.enabled || !this.ctx || !this.master) return null;
@@ -225,7 +260,7 @@ export class RhythmSfx {
     const gain = (perfect ? 1 : 0.82) * (0.6 + 0.35 * ardour) * rand(0.9, 1.05);
     const pitch = (motion === "bas" ? 0.86 : 1) * rand(0.97, 1.03);
     if (gesture === "main") this.synth("souffle", { gain, pitch, long: deep });
-    else if (gesture === "bouche") this.synth("feutre", { gain, pitch, long: deep });
+    else if (gesture === "bouche" || gesture === "frottement") this.synth("feutre", { gain, pitch: gesture === "frottement" ? pitch * 0.8 : pitch, long: deep });
     else if (gesture === "langue") this.synth("tic", { gain, pitch: pitch * (1 + 0.08 * ardour) });
     else this.synth("battement", { gain, pitch: pitch * (1 + 0.06 * ardour), long: deep });
   }
@@ -275,6 +310,12 @@ export class RhythmSfx {
       if (deep) this.mouth(ardour);
       return;
     }
+    if (gesture === "frottement") {
+      // Peau contre peau : glissement plus lent et plus grave que la main, et une note humide de loin en loin.
+      this.play(this.pick("glisse"), { gain: base * (0.42 + 0.35 * ardour), rate: rand(0.78, 0.9) });
+      if (deep || Math.random() < 0.12 + 0.25 * ardour) this.play(this.pick("humide"), { gain: 0.22 + 0.2 * ardour, rate: rand(0.85, 1), delay: 0.05 });
+      return;
+    }
     if (gesture === "langue") {
       this.play(this.pick("lechage", 0, 3), { gain: base * (0.45 + 0.3 * ardour), rate: rand(0.92, 1.1) });
       if (Math.random() < 0.1) this.play(this.pick("baiser"), { gain: 0.32, rate: rand(0.95, 1.06), delay: 0.12 });
@@ -307,11 +348,16 @@ export class RhythmSfx {
   private lastVoiceAt = -99;
   private lastMoanAt = -99;
   private voicing(now: number) { return now < this.voiceUntil; }
-  private speak(group: Group, gain: number, range?: [number, number]) {
+  private speak(asked: Group, gain: number, range?: [number, number]) {
     if (!this.ctx) return false;
     const now = this.ctx.currentTime;
+    const group = this.voice ? this.resolve(asked) : asked;
+    if (!group) return false;
+    // Repli d'une banque courte : un gémissement « bouche occupée » ou « étouffé » est assourdi.
+    const lowpass = group !== asked && (asked === "bouche" || asked === "etouffe") ? 900 : undefined;
+    if (group !== "gemit") range = undefined;
     // Une seule voix : légères variations de hauteur et de volume pour limiter la répétition.
-    const played = this.play(range ? this.pick(group, range[0], range[1]) : this.pick(group), { gain: gain * rand(0.9, 1.05), rate: rand(0.965, 1.035) });
+    const played = this.play(range ? this.pick(group, range[0], range[1]) : this.pick(group), { gain: gain * rand(0.9, 1.05), rate: rand(0.965, 1.035), ...(lowpass ? { lowpass } : {}) });
     this.lastVoiceAt = now;
     if (played) { this.voiceSource = played.source; this.voiceUntil = now + played.duration + 0.4; }
     return true;
@@ -351,6 +397,19 @@ export class RhythmSfx {
     return this.speak(group, Math.min(1, 0.5 + 0.12 * level + 0.25 * ardour), range);
   }
 
+  /**
+   * Rire (fiches dont la banque en a un, Bellirith) : leurre ignoré ou silence tenu. Hors silence tenu, il ne
+   * coupe jamais une autre réplique et reste espacé de quatre secondes ; le silence tenu (récompense) passe
+   * devant et coupe la réplique en cours. Rien en Suggestif.
+   */
+  laugh(ardour: number, reward = false) {
+    if (!this.ctx || this.suggestive || !this.count("rire")) return false;
+    const now = this.ctx.currentTime;
+    if (reward) { try { this.voiceSource?.stop(); } catch { /* déjà terminé */ } }
+    else if (this.voicing(now) || now - this.lastVoiceAt < 4) return false;
+    return this.speak("rire", 0.4 + 0.25 * ardour);
+  }
+
   miss() { this.play(this.pick("rate"), { gain: 0.55, rate: rand(0.85, 0.98), lowpass: 700 }); }
   sheets() { this.play("draps-1", { gain: 0.5, rate: rand(0.95, 1.05) }); }
 
@@ -361,7 +420,8 @@ export class RhythmSfx {
       this.play(this.pick("peau"), { gain: 1, rate: 0.92 });
       this.play(this.pick("humide"), { gain: 0.7, rate: 0.9, delay: 0.03 });
     }
-    const played = this.play(this.pick("apogee"), { gain: 0.95, delay: 0.05 });
+    const apogee = this.voice ? this.resolve("apogee") : "apogee";
+    const played = apogee ? this.play(this.pick(apogee), { gain: 0.95, delay: 0.05 }) : null;
     if (this.ctx && played) this.voiceUntil = this.ctx.currentTime + played.duration + 0.6;
   }
 
@@ -383,4 +443,14 @@ export class RhythmSfx {
     this.buffers.clear();
     this.loading = null;
   }
+}
+
+/** Groupe d'un fichier (« bellirith/gemit-2 » → « gemit »). */
+function groupOf(name: string): Group { return name.replace(/^.*\//, "").replace(/-\d+$/, "") as Group; }
+
+/** Fichiers chargés pour une fiche : bruitages communs (CC0) et banque de voix propre au personnage, sans aucune voix de Hylee. */
+export function rhythmSfxFilesFor(voice: RhythmSfxVoiceBank): string[] {
+  const shared = RHYTHM_SFX_FILES.filter((name) => !(VOICE_GROUPS as readonly string[]).includes(groupOf(name)));
+  const own = (Object.entries(voice.groups) as [VoiceGroup, number][]).flatMap(([group, count]) => Array.from({ length: count }, (_, i) => `${voice.dir ? `${voice.dir}/` : ""}${group}-${i + 1}`));
+  return [...shared, ...own];
 }

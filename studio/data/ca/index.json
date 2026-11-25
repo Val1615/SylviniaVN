@@ -6827,6 +6827,110 @@
    ]
   },
   {
+   "key": "rhythm-bubbles",
+   "label": "Rhythm bubbles",
+   "group": "Monde et systèmes",
+   "hash": "e96a15e6300c2536",
+   "scenes": 3,
+   "counts": {
+    "s": 18,
+    "t": 0,
+    "n": 0,
+    "a": 0
+   },
+   "collections": []
+  },
+  {
+   "key": "rhythm-bubbles-bellirith",
+   "label": "Bellirith · rhythm bubbles",
+   "group": "Bellirith",
+   "hash": "d96e1be8807d85cd",
+   "scenes": 1,
+   "counts": {
+    "s": 45,
+    "t": 0,
+    "n": 0,
+    "a": 15
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-bellirith:a13d5t7m",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a182l6p3",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a1n23got",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0h82ckz",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.voice.frottement",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a08exuf0",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.voice.penetration",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a17ne0bw",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.teases",
+     "len": 6
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0vi0wko",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.resisted",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0fyb7ds",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.ceded",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0h8hilt",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.bordHeld",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0af0ua3",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.bordBroken",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a1xeiyk8",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.aura",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a18sjbfv",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.call",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a08v9hxr",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a0trqhl8",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-bellirith:a1iheftb",
+     "path": "BELLIRITH_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    }
+   ]
+  },
+  {
    "key": "rhythm-intimacy",
    "label": "Rhythm intimité",
    "group": "Monde et systèmes",
