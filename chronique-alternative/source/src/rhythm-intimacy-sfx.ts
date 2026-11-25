@@ -4,8 +4,8 @@
  * Sons libres (CC0, voir assets/audio/rythme/SOURCES.md) joués par Web Audio
  * pour une latence minimale : un claquement de peau à chaque coup réussi, avec
  * de légères variations de hauteur et de volume, une note humide quand on reste
- * au fond, des souffles puis des gémissements qui montent avec la jauge, un son
- * sourd sur un raté, des draps aux changements de position et un éclat final à
+ * au fond, de rares souffles et soupirs hors combo, des gémissements seulement
+ * aux paliers d'enchaînement (voir rhythmComboTier), un son sourd sur un raté, des draps aux changements de position et un éclat final à
  * l'apogée. Module technique (noms de fichiers), exclu de l'enveloppe Studio.
  */
 
@@ -107,20 +107,46 @@ export class RhythmSfx {
     const gain = (perfect ? 1 : 0.8) * (0.5 + 0.45 * ardour) * rand(0.86, 1.08);
     this.play(this.pick("peau"), { gain, rate: rand(0.9, 1.07) + ardour * 0.05 });
     if (deep || Math.random() < 0.15 + 0.4 * ardour) this.play(this.pick("humide"), { gain: (deep ? 0.55 : 0.32) * (0.6 + 0.4 * ardour), rate: rand(0.88, 1.1), delay: 0.02 });
-    this.voice(ardour);
   }
 
-  /** Respiration et voix d'Hylee : souffles au début, soupirs, puis gémissements et halètements quand la jauge est haute. */
-  voice(ardour: number, force = false) {
-    if (!this.ctx) return;
+  private lastVoiceAt = -99;
+  private lastMoanAt = -99;
+  private voicing(now: number) { return now < this.voiceUntil; }
+  private speak(group: Group, gain: number) {
+    if (!this.ctx) return false;
     const now = this.ctx.currentTime;
-    if (!force && (now < this.voiceUntil || Math.random() > 0.3 + 0.55 * ardour)) return;
-    const group: Group = ardour < 0.22 ? "souffle"
-      : ardour < 0.45 ? (Math.random() < 0.55 ? "soupir" : "souffle")
-      : ardour < 0.72 ? (Math.random() < 0.6 ? "gemit" : "soupir")
-      : (Math.random() < 0.55 ? "halete" : "gemit");
-    const played = this.play(this.pick(group), { gain: 0.38 + 0.5 * ardour, rate: rand(0.97, 1.04) });
-    if (played) { this.voiceSource = played.source; this.voiceUntil = now + played.duration + Math.max(0.15, 1.5 - 1.3 * ardour); }
+    const played = this.play(this.pick(group), { gain, rate: rand(0.97, 1.04) });
+    this.lastVoiceAt = now;
+    if (played) { this.voiceSource = played.source; this.voiceUntil = now + played.duration + 0.4; }
+    return true;
+  }
+
+  /**
+   * Hors combo : un souffle ou un soupir de temps en temps, jamais de gémissement.
+   * Rare (moins d'une chance sur cinq par coup) et espacé d'au moins cinq secondes ;
+   * un appui long tenu jusqu'au bout (force) l'appelle plus sûrement, à trois secondes d'écart.
+   */
+  breath(ardour: number, force = false) {
+    if (!this.ctx) return false;
+    const now = this.ctx.currentTime;
+    if (this.voicing(now) || now - this.lastVoiceAt < (force ? 3 : 5)) return false;
+    if (!force && Math.random() > 0.18) return false;
+    const group: Group = ardour >= 0.4 && Math.random() < 0.55 ? "soupir" : "souffle";
+    return this.speak(group, 0.34 + 0.3 * ardour);
+  }
+
+  /**
+   * Palier de combo franchi : un gémissement, plus appuyé au deuxième palier,
+   * haletant au troisième et au-delà. Jamais deux à moins de 3,5 secondes.
+   */
+  comboMoan(level: number, ardour: number) {
+    if (!this.ctx) return false;
+    const now = this.ctx.currentTime;
+    if (now - this.lastMoanAt < 3.5) return false;
+    try { if (this.voicing(now)) this.voiceSource?.stop(); } catch { /* déjà terminé */ }
+    this.lastMoanAt = now;
+    const group: Group = level >= 3 && Math.random() < 0.5 ? "halete" : "gemit";
+    return this.speak(group, Math.min(1, 0.5 + 0.12 * level + 0.25 * ardour));
   }
 
   miss() { this.play(this.pick("rate"), { gain: 0.55, rate: rand(0.85, 0.98), lowpass: 700 }); }
@@ -138,6 +164,8 @@ export class RhythmSfx {
     for (const source of this.live) { try { source.stop(); } catch { /* ignoré */ } }
     this.live.clear();
     this.voiceUntil = 0;
+    this.lastVoiceAt = -99;
+    this.lastMoanAt = -99;
   }
 
   close() {

@@ -128,7 +128,10 @@
 .ardeur-3 .rythme-juge.parfait { color: #fff; letter-spacing: .14em; }
 .rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
 /* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
-.rythme-en-cours .intimacy-cg img, .rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0)); transform-origin: 50% 55%; }
+/* Secousse à chaque coup (réglée par le script, nulle si « Secousses » est décoché) : pleine sur le sprite, plus légère sur la CG et le décor */
+.rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)); translate: 0 var(--rythme-secousse-y, 0px); transform-origin: 50% 70%; }
+.rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)); translate: 0 calc(.4 * var(--rythme-secousse-y, 0px)); transform-origin: 50% 55%; }
+.rythme-en-cours.interactive-intimacy { background-position: center calc(50% + .3 * var(--rythme-secousse-y, 0px)); }
 /* Lignes de cadence : courtes, à gauche du couloir, au-dessus de la cible */
 .rythme-coup { position: absolute; right: 100px; bottom: calc(46px + 6vh); max-width: min(320px, 42vw); text-align: right; font: italic 600 .8rem/1.3 var(--display, serif); color: #ffe3ec; text-shadow: 0 0 10px rgba(var(--rouge-r), .9), 0 1px 3px #000; pointer-events: none; animation: rythme-coup 2.3s ease-out forwards; }
 @keyframes rythme-coup { 0% { opacity: 0; transform: translateX(10px); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-6px); } }
@@ -152,3 +155,40 @@
   .rythme-touches { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .rythme-onde { animation-duration: .01s; } }
+
+/* ---------- v3 : enchaînements (combo) ---------- */
+/* Compteur discret, qui rosit à partir du premier palier */
+.rythme-combo { transition: color .3s, opacity .3s; opacity: .7; font-size: .82rem; }
+.rythme-combo.niveau-1 { opacity: .85; color: #ffd0de; }
+.rythme-combo.niveau-2 { opacity: .92; color: #ffb3c9; }
+.rythme-combo.niveau-3 { opacity: 1; color: #ff98b6; text-shadow: 0 0 12px rgba(var(--rose-r), 1); }
+.combo-palier .rythme-combo { animation: rythme-combo-compteur .5s ease-out; }
+@keyframes rythme-combo-compteur { 0%, 42% { transform: scale(1); } 20%, 62% { transform: scale(1.35); } 100% { transform: scale(1); } }
+/* Voile rose du palier : il bat deux fois (trois au troisième palier), sur les bords seulement, le centre reste dégagé */
+.rythme-combo-voile { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: var(--combo, 0); background: radial-gradient(ellipse 78% 72% at 50% 46%, transparent 52%, rgba(255, 92, 150, .26) 76%, rgba(255, 120, 175, .55) 92%, rgba(255, 170, 205, .7) 100%); mix-blend-mode: screen; }
+.combo-palier .rythme-combo-voile { opacity: calc(.25 + .75 * var(--combo-battement, 0)); }
+.effets-reduit .rythme-combo-voile, .effets-reduit.combo-palier .rythme-combo-voile { opacity: calc(.35 * var(--combo, 0)); }
+/* Onde du palier : un anneau rose qui part de la cible et s'élargit plus loin que l'onde d'un coup */
+.rythme-onde.combo { border-color: #ff8fb6; border-width: 3px; box-shadow: 0 0 18px rgba(255, 110, 165, .95); animation: rythme-onde-combo .9s ease-out forwards; }
+@keyframes rythme-onde-combo { 0% { opacity: 1; transform: scale(1); } 45% { opacity: .8; transform: scale(3.2); } 100% { opacity: 0; transform: scale(5.2); } }
+.effets-reduit .rythme-onde.combo { animation: rythme-onde .7s ease-out forwards; --portee: 1.8; }
+/* Inscription « COMBO » animée, à gauche du couloir, loin du centre */
+.rythme-combo-eclat { position: absolute; right: 88px; top: 30%; display: flex; flex-direction: column; align-items: flex-end; gap: 0; pointer-events: none; font-family: var(--display, serif); color: #fff0f5; text-shadow: 0 0 14px rgba(255, 92, 150, .95), 0 0 2px #fff, 0 2px 4px #000; animation: rythme-combo-eclat 1.5s cubic-bezier(.2, .9, .3, 1) forwards; }
+.rythme-combo-eclat b { font-size: .78rem; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; }
+.rythme-combo-eclat span { font-size: 1.7rem; font-weight: 700; line-height: 1; }
+.rythme-combo-eclat.niveau-2 span { font-size: 1.95rem; color: #ffd6e4; }
+.rythme-combo-eclat.niveau-3 span { font-size: 2.2rem; color: #ffc2d6; }
+@keyframes rythme-combo-eclat {
+  0% { opacity: 0; transform: translateX(14px) scale(.7); }
+  10% { opacity: 1; transform: scale(1.18); }
+  20% { transform: scale(.96); }
+  31% { transform: scale(1.12); }
+  42% { transform: scale(1); }
+  80% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+.effets-reduit .rythme-combo-eclat { animation: rythme-combo-eclat-doux 1.5s ease-out forwards; }
+@keyframes rythme-combo-eclat-doux { 0% { opacity: 0; } 12% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+.combo-palier .rythme-cible { border-color: #ffc1d4; }
+@media (max-height: 600px) { .rythme-combo-eclat { top: 24%; } .rythme-combo-eclat span { font-size: 1.4rem; } .rythme-combo-eclat.niveau-3 span { font-size: 1.7rem; } }
+@media (prefers-reduced-motion: reduce) { .rythme-combo-eclat { animation-name: rythme-combo-eclat-doux; } .rythme-onde.combo { animation-duration: .01s; } }

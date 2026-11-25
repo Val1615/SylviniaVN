@@ -3,7 +3,9 @@ import type { DialogueLine } from "./game-data";
 import type { RhythmSceneText } from "./rhythm-intimacy";
 import {
   RHYTHM_DIFFICULTIES, RHYTHM_LEAD_IN, RHYTHM_SECTIONS, RHYTHM_TRACK,
-  buildRhythmChart, judgeOffset, loadRhythmPrefs, loadRhythmSave, rhythmArdour, rhythmBeatAt, rhythmChartEnd, rhythmGauge, rhythmQuality, rhythmScore,
+  RHYTHM_COMBO_BONUS, RHYTHM_COMBO_BONUS_MAX, RHYTHM_SHAKE_MAX,
+  buildRhythmChart, judgeOffset, loadRhythmPrefs, loadRhythmSave, rhythmArdour, rhythmBeatAt, rhythmChartEnd, rhythmComboLevel, rhythmComboThreshold, rhythmComboTier,
+  rhythmGauge, rhythmQuality, rhythmScore, rhythmShakeAmplitude, rhythmShakeWave,
   rhythmSectionStart, sectionTiersReached, storeRhythmPrefs, storeRhythmSave,
   type RhythmDifficulty, type RhythmJudgement, type RhythmNote, type RhythmPrefs, type RhythmQuality, type RhythmSaveState,
 } from "./rhythm-intimacy-engine";
@@ -69,6 +71,11 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const strokeLineRef = useRef<Bubble | null>(null);
   const comboRef = useRef(0);
   const maxComboRef = useRef(0);
+  /** Bonus de jauge gagné aux paliers d'enchaînement, et dernier palier franchi (pour le battement particulier). */
+  const bonusRef = useRef(0);
+  const comboEventRef = useRef<{ id: number; at: number; combo: number; level: number; t: number } | null>(null);
+  const comboEventsRef = useRef<{ combo: number; level: number; t: number; moan: boolean }[]>([]);
+  const shakeRef = useRef<{ peak: number; peakSprite: number; samples: number }>({ peak: 0, peakSprite: 0, samples: 0 });
   const unlockedRef = useRef<Set<string>>(new Set());
   const teasesRef = useRef<number[]>([]);
   const lastTeaseRef = useRef(-99);
@@ -111,7 +118,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     duck(false);
     audioRef.current?.pause();
     sfxRef.current?.close();
-    layerRef.current?.parentElement?.style.removeProperty("--rythme-zoom");
+    const host = layerRef.current?.parentElement;
+    ["--rythme-zoom", "--rythme-secousse-y", "--rythme-secousse-s"].forEach((name) => host?.style.removeProperty(name));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (audioRef.current) audioRef.current.volume = musicVolume(); }, [volume, prefs.musicVolume]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { sfxRef.current?.setVolume(prefs.sfxVolume, prefs.sfx); }, [prefs.sfx, prefs.sfxVolume]);
@@ -147,7 +155,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function snapshot(): RhythmSaveState {
     return {
       v: 2, scene: scene.id, difficulty: difficultyRef.current, auto: autoRef.current, offsetMs: Math.round(offsetRef.current * 1000),
-      time: timeRef.current, judgements: [...judgementsRef.current], combo: comboRef.current, maxCombo: maxComboRef.current,
+      time: timeRef.current, judgements: [...judgementsRef.current], combo: comboRef.current, maxCombo: maxComboRef.current, bonus: bonusRef.current,
       unlocked: [...unlockedRef.current], teases: [...teasesRef.current], savedAt: Date.now(),
     };
   }
@@ -165,6 +173,9 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     judgementsRef.current = resume ? [...resume.judgements] : notesRef.current.map(() => 0 as RhythmJudgement);
     comboRef.current = resume?.combo || 0;
     maxComboRef.current = resume?.maxCombo || 0;
+    bonusRef.current = resume?.bonus || 0;
+    comboEventRef.current = null;
+    comboEventsRef.current = [];
     unlockedRef.current = new Set(resume?.unlocked || []);
     teasesRef.current = resume?.teases || [];
     captionsRef.current = [];
@@ -256,7 +267,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function flash(kind: Flash["kind"], label: string) { flashRef.current = { id: ++flashSeq.current, kind, label }; }
   function ardourNow() {
     const judgements = judgementsRef.current;
-    return rhythmArdour(rhythmGauge(judgements.length ? judgements : notesRef.current.map(() => 0 as RhythmJudgement)), apogeeRef.current);
+    return rhythmArdour(rhythmGauge(judgements.length ? judgements : notesRef.current.map(() => 0 as RhythmJudgement), bonusRef.current), apogeeRef.current);
   }
   function buzz(pattern: number | number[]) {
     if (!prefsRef.current.vibration) return;
@@ -272,11 +283,25 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     } else {
       comboRef.current++;
       maxComboRef.current = Math.max(maxComboRef.current, comboRef.current);
+      const combo = comboRef.current;
+      const threshold = rhythmComboThreshold(combo);
+      // Palier d'enchaînement : petit bonus de jauge, gémissement d'Hylee et battement particulier de l'interface.
+      if (threshold) bonusRef.current = Math.min(RHYTHM_COMBO_BONUS_MAX, bonusRef.current + RHYTHM_COMBO_BONUS);
       const ardour = ardourNow();
       hitRef.current = { id: flashSeq.current + 1, at: performance.now(), perfect: judgement === 1 };
       if (note.kind === "slide") sfxRef.current?.sheets();
       else sfxRef.current?.stroke(judgement === 1, ardour, note.kind === "hold" || note.kind === "final");
-      buzz(Math.round(8 + 18 * ardour));
+      if (threshold) {
+        const level = rhythmComboLevel(combo);
+        const moan = Boolean(sfxRef.current?.comboMoan(level, ardour));
+        comboEventRef.current = { id: rhythmComboTier(combo), at: performance.now(), combo, level, t };
+        comboEventsRef.current.push({ combo, level, t: Math.round(t * 100) / 100, moan });
+        buzz([18, 70, 26, 70, 34]);
+      } else {
+        // Hors palier : un souffle de loin en loin, jamais de gémissement.
+        sfxRef.current?.breath(ardour);
+        buzz(Math.round(8 + 18 * ardour));
+      }
       cue(note);
     }
     if (judgement) flash(JUDGE_LABEL[judgement as 1 | 2 | 3], JUDGE_TEXT[judgement as 1 | 2 | 3]);
@@ -329,7 +354,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function completeHold(note: RhythmNote) {
     if (note.kind === "final") {
       if (!apogeeRef.current) { apogeeRef.current = true; apogeeAtRef.current = performance.now(); sfxRef.current?.apogee(); buzz([70, 40, 110, 40, 180]); }
-    } else sfxRef.current?.voice(ardourNow(), true);
+    } else sfxRef.current?.breath(ardourNow(), true);
     flash("palier", note.kind === "final" ? "Apogée" : "Tenu");
   }
   function slide(direction: "left" | "right") {
@@ -351,6 +376,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       music: () => ({ playing: Boolean(audioRef.current && !audioRef.current.paused), volume: audioRef.current?.volume ?? null, loop: audioRef.current?.loop ?? null }),
       zoom: () => Number(layerRef.current?.parentElement?.style.getPropertyValue("--rythme-zoom") || 0),
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,
+      combo: () => ({ current: comboRef.current, max: maxComboRef.current, tier: rhythmComboTier(comboRef.current), bonus: bonusRef.current, events: [...comboEventsRef.current] }),
+      shake: () => { const style = layerRef.current?.parentElement?.style; return { y: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-y") || "0") || 0, s: Number(style?.getPropertyValue("--rythme-secousse-s") || 0), ...shakeRef.current }; },
     };
     (window as unknown as { __sylviniaRythme?: typeof probe }).__sylviniaRythme = probe;
     return () => { delete (window as unknown as { __sylviniaRythme?: typeof probe }).__sylviniaRythme; };
@@ -497,7 +524,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const t = timeRef.current;
   const notes = notesRef.current;
   const judgements = judgementsRef.current;
-  const gauge = rhythmGauge(judgements.length ? judgements : notes.map(() => 0 as RhythmJudgement));
+  const gauge = rhythmGauge(judgements.length ? judgements : notes.map(() => 0 as RhythmJudgement), bonusRef.current);
   const sectionIndex = sectionAt(t);
   const sectionText = scene.sections[sectionIndex];
   const tiers = judgements.length ? sectionTiersReached(notes, judgements, sectionIndex) : 0;
@@ -517,16 +544,42 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   // Rester au fond : tant qu'un appui long est tenu, l'interface frémit au tempo, plus fort sur l'appui final qui mène à l'apogée.
   const held = holdRef.current;
   const holdPulse = playing && held && !apogeeRef.current ? (held.note.kind === "final" ? 0.45 + 0.4 * clamp01((t - held.note.time) / held.note.duration) : 0.3) * Math.pow(Math.abs(Math.sin(Math.PI * (t - held.note.time) / (held.note.kind === "final" ? held.note.beat * 0.75 : held.note.beat))), 2) : 0;
-  const pulse = Math.max(hitPulse, apogeePulse, holdPulse);
+  // Palier de combo : un double battement (triple au troisième palier), distinct du battement ordinaire, avec un voile rose.
+  const comboEvent = comboEventRef.current;
+  const sinceCombo = comboEvent && playing ? (nowMs - comboEvent.at) / 1000 : 99;
+  const bump = (x: number) => (x >= 0 && x < 0.17 ? Math.pow(1 - x / 0.17, 1.4) : 0);
+  const comboPulse = sinceCombo < 0.8 ? Math.max(bump(sinceCombo), 0.85 * bump(sinceCombo - 0.21), comboEvent!.level >= 3 ? 0.7 * bump(sinceCombo - 0.42) : 0) : 0;
+  const comboActive = sinceCombo < 1.5;
+  const comboGlow = playing ? Math.max(comboPulse, rhythmComboLevel(comboRef.current) > 0 ? 0.12 + 0.06 * rhythmComboLevel(comboRef.current) : 0) * (prefs.effects === "plein" ? 1 : 0.35) : 0;
+  const pulse = Math.max(hitPulse, apogeePulse, holdPulse, comboPulse);
   const halo = (0.25 + 0.75 * ardour) * fx;
   const bat = clamp01((ardour - 0.18) / 0.82) * fx;
   const vignette = clamp01((ardour - 0.22) / 0.6) * fx;
   const zoomLevel = prefs.zoom && prefs.effects === "plein" ? clamp01((ardour - 0.35) / 0.55) : 0;
   const zoom = playing ? zoomLevel * pulse * 0.022 + (apogeeRef.current ? apogeePulse * 0.012 : 0) : 0;
   const tier = ardour >= 0.75 ? 3 : ardour >= 0.5 ? 2 : ardour >= 0.25 ? 1 : 0;
+  // Secousse à chaque coup réussi, dans le sens du va-et-vient de la position : poussée puis rebond.
+  const shakeAxis = RHYTHM_SECTIONS[sectionIndex]?.shake || "vertical";
+  const shakeAmp = playing && hit ? rhythmShakeAmplitude(ardour, rhythmComboLevel(comboRef.current), apogeeRef.current, prefs) : 0;
+  const shakeOffset = shakeAmp * (rhythmShakeWave(sinceHit) + (apogeeRef.current && sinceApogee < 1.2 ? 0.6 * rhythmShakeWave(sinceApogee % 0.4) : 0));
   useEffect(() => {
     const host = layerRef.current?.parentElement;
-    if (host) host.style.setProperty("--rythme-zoom", zoom.toFixed(4));
+    if (!host) return;
+    host.style.setProperty("--rythme-zoom", zoom.toFixed(4));
+    // Plafond lié à la hauteur de l'écran : sur un petit écran, l'image ne sort jamais du cadre.
+    const limit = Math.min(RHYTHM_SHAKE_MAX, (host.clientHeight || window.innerHeight) * 0.02);
+    const px = Math.max(-limit, Math.min(limit, shakeOffset));
+    const depth = shakeAxis === "profondeur";
+    const y = depth ? px * 0.35 : px;
+    const scale = depth ? px * 0.0016 : 0;
+    host.style.setProperty("--rythme-secousse-y", `${y.toFixed(2)}px`);
+    host.style.setProperty("--rythme-secousse-s", scale.toFixed(4));
+    if (playing) {
+      const sprite = Math.abs(y) + Math.abs(scale) * (host.clientHeight || 0) * 0.5;
+      shakeRef.current.samples++;
+      shakeRef.current.peak = Math.max(shakeRef.current.peak, Math.abs(px));
+      shakeRef.current.peakSprite = Math.max(shakeRef.current.peakSprite, sprite);
+    }
   });
 
   const visible = notes.filter((note) => {
@@ -551,15 +604,19 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const reglagesEffets = <div className="rythme-reglages effets">
     <div className="rythme-choix petit" role="group" aria-label="Effets">{(["plein", "reduit"] as const).map((id) => <button type="button" key={id} className={prefs.effects === id ? "actif" : ""} onClick={() => updatePrefs({ effects: id })}>{id === "plein" ? "Effets pleins" : "Effets réduits"}</button>)}</div>
     <label className="rythme-case"><input type="checkbox" checked={prefs.zoom} disabled={prefs.effects !== "plein"} onChange={(event) => updatePrefs({ zoom: event.target.checked })} /> Image en rythme</label>
+    <label className="rythme-case"><input type="checkbox" checked={prefs.shake} onChange={(event) => updatePrefs({ shake: event.target.checked })} /> Secousses</label>
     <label className="rythme-case"><input type="checkbox" checked={prefs.vibration} onChange={(event) => updatePrefs({ vibration: event.target.checked })} /> Vibration</label>
   </div>;
 
-  return <div ref={layerRef} className={`rythme-layer phase-${phase} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""}`}
+  const comboNow = comboRef.current;
+  const comboLevel = rhythmComboLevel(comboNow);
+  return <div ref={layerRef} className={`rythme-layer phase-${phase} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""} ${comboLevel ? `en-combo combo-${comboLevel}` : ""} ${comboActive ? `combo-palier palier-${comboEvent!.level}` : ""}`}
     onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
-    style={{ "--pulse": pulse.toFixed(3), "--ardeur": ardour.toFixed(3), "--halo": halo.toFixed(3), "--bat": bat.toFixed(3), "--vignette": vignette.toFixed(3), "--jauge": `${gauge}%` } as React.CSSProperties}
+    style={{ "--pulse": pulse.toFixed(3), "--ardeur": ardour.toFixed(3), "--halo": halo.toFixed(3), "--bat": bat.toFixed(3), "--vignette": vignette.toFixed(3), "--combo": comboGlow.toFixed(3), "--combo-battement": comboPulse.toFixed(3), "--jauge": `${gauge}%` } as React.CSSProperties}
     data-rythme-phase={phase} data-ardeur={tier}>
     {(phase === "play" || phase === "countdown" || phase === "paused") && <>
       <div className="rythme-vignette" aria-hidden="true" />
+      <div className="rythme-combo-voile" aria-hidden="true" />
       <div className="rythme-couloir" aria-hidden="true">
         <div className="rythme-entete">
           <span className="rythme-section">{sectionText.label}</span>
@@ -578,10 +635,11 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
               <i className="tete">{note.kind === "slide" ? (note.direction === "left" ? "‹" : "›") : note.kind === "final" ? "✦" : ""}</i>
             </div>;
           })}
-          <div className="rythme-cible"><i />{hit && sinceHit < 0.6 && <b key={hit.id} className={`rythme-onde ${hit.perfect ? "parfait" : ""}`} />}</div>
+          <div className="rythme-cible"><i />{hit && sinceHit < 0.6 && <b key={hit.id} className={`rythme-onde ${hit.perfect ? "parfait" : ""}`} />}{comboActive && comboEvent && <b key={`vague-${comboEvent.id}`} className="rythme-onde combo" />}</div>
         </div>
         <div className="rythme-jauge" title="Plaisir"><b /><span>{Math.round(gauge)}</span>{[1, 2, 3].map((n) => <em key={n} className={n <= tiers ? "atteint" : ""} />)}</div>
-        <div className="rythme-combo">{comboRef.current > 2 ? <>×{comboRef.current}</> : null}</div>
+        <div className={`rythme-combo ${comboLevel ? `niveau-${comboLevel}` : ""}`} data-combo={comboNow}>{comboNow > 2 ? <>×{comboNow}</> : null}</div>
+        {comboActive && comboEvent && <div key={`combo-${comboEvent.id}`} className={`rythme-combo-eclat niveau-${comboEvent.level}`}><b>Combo</b><span>×{comboEvent.combo}</span></div>}
         {flashNow && <div key={flashNow.id} className={`rythme-juge ${flashNow.kind}`}>{flashNow.label}</div>}
         <button type="button" className="rythme-pause" onClick={(event) => { event.stopPropagation(); phase === "paused" ? resumeFromPause() : pause(); }} aria-label="Pause">{phase === "paused" ? "▶" : "❚❚"}</button>
       </div>

@@ -15,7 +15,7 @@ PROBE="""()=>{const sec=document.querySelector('.interactive-intimacy'); const i
  const frac=r.width*r.height? (visW*visH)/(r.width*r.height):0;
  const op=+cs.opacity*+ws.opacity;
  const ok=!target.hidden && cs.display!=='none' && cs.visibility!=='hidden' && op>0.3 && target.naturalWidth>0 && frac>0.85 && r.height>vh*0.25;
- return {ok, kind: img?'sprite':'cg', hidden:target.hidden, op:+op.toFixed(2), frac:+frac.toFixed(2), h:Math.round(r.height), top:Math.round(r.top), bottom:Math.round(r.bottom), complete:target.complete, nw:target.naturalWidth, src:(target.currentSrc||target.src).split('/').slice(-1)[0], fallback:target.dataset.spriteFallback||'', transform:cs.transform, scale:cs.scale, shake:sec?sec.style.getPropertyValue('--rythme-secousse'):''};}"""
+ return {ok, kind: img?'sprite':'cg', hidden:target.hidden, op:+op.toFixed(2), frac:+frac.toFixed(2), h:Math.round(r.height), top:Math.round(r.top), bottom:Math.round(r.bottom), complete:target.complete, nw:target.naturalWidth, src:(target.currentSrc||target.src).split('/').slice(-1)[0], fallback:target.dataset.spriteFallback||'', transform:cs.transform, scale:cs.scale, shake:sec?sec.style.getPropertyValue('--rythme-secousse-y'):''};}"""
 async def main():
   async with async_playwright() as pw:
     b=await pw.chromium.launch(executable_path=os.environ.get("CA_CHROME") or None, args=["--autoplay-policy=no-user-gesture-required"])
@@ -52,16 +52,17 @@ async def main():
         if not s["ok"] and shots<3:
             shots+=1; await p.screenshot(path=f"{OUT}/{VP}-sprite-perdu-{shots}.png")
         await p.wait_for_timeout(250)
+    fin=await p.evaluate("()=>window.__sylviniaRythme?{combo:window.__sylviniaRythme.combo(), shake:window.__sylviniaRythme.shake(), sfx:window.__sylviniaRythme.sfx().played}:null")
     bad=[s for s in samples if not s["ok"]]
     # Plus longue absence consécutive : avec un réseau en panne, un échantillon isolé (le temps de recharger le secours) est toléré.
     streak=run=0
     for s in samples:
         run=run+1 if not s["ok"] else 0; streak=max(streak,run)
-    rep={"viewport":VP,"fail_mode":FAIL,"samples":len(samples),"invisible":len(bad),"plus_longue_absence":streak,"first_bad":bad[:3],"moods":sorted(set(s["src"] for s in samples)),"min_frac":min(s["frac"] for s in samples) if samples else None,"min_op":min(s["op"] for s in samples) if samples else None,"requests":len(requests),"aborted":sum(failed.values()),"errors":[e for e in errs if "menu" not in e[1]][:5]}
+    rep={"viewport":VP,"fail_mode":FAIL,"samples":len(samples),"invisible":len(bad),"plus_longue_absence":streak,"first_bad":bad[:3],"moods":sorted(set(s["src"] for s in samples)),"min_frac":min(s["frac"] for s in samples) if samples else None,"min_op":min(s["op"] for s in samples) if samples else None,"requests":len(requests),"aborted":sum(failed.values()),"fin_partie":fin,"secousse_max_vue":max((abs(float((s["shake"] or "0px").replace("px","") or 0)) for s in samples), default=0),"errors":[e for e in errs if "menu" not in e[1]][:5]}
     print(json.dumps(rep,ensure_ascii=False,indent=1))
     json.dump({"rapport":rep,"samples":samples},open(f"{OUT}/{VP}-sprite{'-reseau' if FAIL else ''}.json","w"),ensure_ascii=False,indent=1)
     await b.close()
-    ok=(streak<=1 if FAIL else not bad) and len(samples)>200
+    ok=(streak<=1 if FAIL else not bad) and len(samples)>200 and bool(fin) and fin["shake"]["peak"]>0
     print("OK" if ok else "ECHEC")
     sys.exit(0 if ok else 1)
 asyncio.run(main())

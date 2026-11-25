@@ -151,8 +151,78 @@ try {
   const counts = Object.fromEntries(Object.entries(charts).map(([d, c]) => [d, c.length]));
   const studio = await readFile(resolve(sourceRoot, "scripts/studio-ca-strings.mjs"), "utf8");
   assert.match(studio, /"rhythm-intimacy-sfx"/, "le module des bruitages reste hors de l'enveloppe Studio");
+  // v3 · Enchaînements : paliers à 8, 16, 24 puis tous les 12 ; un raté brise le combo ; bonus de jauge plafonné.
+  assert.deepEqual([...engine.RHYTHM_COMBO_FIRST], [8, 16, 24], "paliers de combo 8, 16, 24");
+  const crossings = Array.from({ length: 120 }, (_, i) => i + 1).filter((c) => engine.rhythmComboThreshold(c));
+  assert.deepEqual(crossings, [8, 16, 24, 36, 48, 60, 72, 84, 96, 108, 120], "paliers franchis aux bons coups");
+  assert.equal(engine.rhythmComboLevel(7), 0); assert.equal(engine.rhythmComboLevel(8), 1); assert.equal(engine.rhythmComboLevel(16), 2); assert.equal(engine.rhythmComboLevel(60), 3);
+  const flat = charts.normal.map(() => 2);
+  assert.equal(engine.rhythmGauge(flat, 0), engine.rhythmGauge(flat), "sans bonus, jauge inchangée");
+  assert.ok(engine.rhythmGauge(flat, 3) > engine.rhythmGauge(flat), "le combo bonifie la jauge");
+  assert.equal(engine.rhythmGauge(flat, 999) - engine.rhythmGauge(flat), engine.RHYTHM_COMBO_BONUS_MAX, "bonus plafonné");
+  assert.equal(engine.rhythmQuality(flat), engine.rhythmQuality(flat), "la qualité finale ne dépend que des jugements");
+  const ui = await readFile(resolve(sourceRoot, "src/rhythm-intimacy-ui.tsx"), "utf8");
+  assert.match(ui, /if \(judgement === 3\) \{\s*comboRef\.current = 0;/, "un raté brise le combo");
+  assert.match(ui, /downgraded === 3\) \{ comboRef\.current = 0;/, "un appui lâché brise le combo");
+  assert.match(ui, /rythme-combo-eclat/, "inscription COMBO au palier");
+  assert.match(ui, /rythme-onde combo/, "onde rose au palier");
+  assert.match(ui, /rythme-combo-voile/, "voile rose au palier");
+  assert.match(ui, /bonus: bonusRef\.current/, "bonus conservé dans la sauvegarde");
+  const css = await readFile(resolve(sourceRoot, "src/rhythm-intimacy.css"), "utf8");
+  for (const rule of [".rythme-combo-eclat", ".rythme-onde.combo", ".rythme-combo-voile", ".effets-reduit .rythme-combo-eclat"]) assert.ok(css.includes(rule), `style ${rule}`);
+
+  // v3 · Voix : hors combo, seulement souffles et soupirs, rares ; gémissements uniquement aux paliers, espacés.
+  const sfxSource = await readFile(resolve(sourceRoot, "src/rhythm-intimacy-sfx.ts"), "utf8");
+  const strokeBody = sfxSource.slice(sfxSource.indexOf("  stroke("), sfxSource.indexOf("  private lastVoiceAt"));
+  assert.ok(!/voice|gemit|halete|breath|comboMoan/.test(strokeBody), "un coup ne déclenche plus de voix à lui seul");
+  const breathBody = sfxSource.slice(sfxSource.indexOf("  breath("), sfxSource.indexOf("  comboMoan("));
+  assert.ok(!/gemit|halete/.test(breathBody), "hors combo : ni gémissement ni halètement");
+  for (const runs of [["parfaite", () => 1], ["avec ratés", (i) => (i % 11 === 10 ? 3 : 1)]]) {
+    const [label, judge] = runs;
+    const voice = new sfx.RhythmSfx();
+    const clock = { currentTime: 0 };
+    Object.assign(voice, { ctx: clock, master: {} });
+    let combo = 0; let thresholds = 0; const moanTimes = [];
+    for (const note of charts.normal) {
+      clock.currentTime = note.time + 10;
+      const before = (voice.played.gemit || 0) + (voice.played.halete || 0);
+      if (judge(note.index) === 3) { combo = 0; voice.miss(); continue; }
+      combo++;
+      voice.stroke(true, 0.5);
+      if (engine.rhythmComboThreshold(combo)) { thresholds++; voice.comboMoan(engine.rhythmComboLevel(combo), 0.6); } else voice.breath(0.6);
+      if ((voice.played.gemit || 0) + (voice.played.halete || 0) > before) moanTimes.push(note.time);
+    }
+    const moans = (voice.played.gemit || 0) + (voice.played.halete || 0);
+    const breaths = (voice.played.souffle || 0) + (voice.played.soupir || 0);
+    assert.ok(moans > 0 && moans <= thresholds, `${label} : gémissements seulement aux paliers (${moans} pour ${thresholds} paliers)`);
+    for (let i = 1; i < moanTimes.length; i++) assert.ok(moanTimes[i] - moanTimes[i - 1] >= 3.5, `${label} : gémissements espacés`);
+    assert.ok(breaths <= charts.normal.length * 0.2, `${label} : souffles rares hors combo (${breaths})`);
+    if (label === "parfaite") var perfectVoices = { moans, breaths, thresholds };
+  }
+
+  // v3 · Secousse : sens par position, amplitude croissante, plafonnée, réduite ou coupée sur demande.
+  assert.deepEqual(engine.RHYTHM_SECTIONS.map((s) => s.shake), ["vertical", "profondeur", "vertical", "profondeur"], "sens de la secousse par position");
+  const plein = { effects: "plein", shake: true };
+  const a0 = engine.rhythmShakeAmplitude(0, 0, false, plein), a1 = engine.rhythmShakeAmplitude(0.6, 1, false, plein), a2 = engine.rhythmShakeAmplitude(0.95, 3, false, plein), aTop = engine.rhythmShakeAmplitude(1, 3, true, plein);
+  assert.ok(a0 > 0 && a0 < a1 && a1 < a2 && a2 <= aTop, `amplitude croissante (${[a0, a1, a2, aTop].map((v) => v.toFixed(1)).join(" < ")})`);
+  assert.ok(aTop <= engine.RHYTHM_SHAKE_MAX, "amplitude plafonnée");
+  assert.ok(engine.rhythmShakeAmplitude(1, 3, true, { effects: "reduit", shake: true }) <= aTop * 0.31, "réduite en effets réduits");
+  assert.equal(engine.rhythmShakeAmplitude(1, 3, true, { effects: "plein", shake: false }), 0, "désactivable");
+  const wave = Array.from({ length: 40 }, (_, i) => engine.rhythmShakeWave(i / 100));
+  assert.ok(Math.max(...wave) > 0.4 && Math.min(...wave) < -0.1, "poussée puis rebond");
+  assert.equal(engine.rhythmShakeWave(engine.RHYTHM_SHAKE_DURATION), 0, "retour au repos");
+  assert.ok(defaults.shake === true, "secousses actives par défaut");
+  assert.match(css, /intimacy-sprite img \{[^}]*translate: 0 var\(--rythme-secousse-y/, "secousse appliquée au sprite");
+  assert.match(css, /intimacy-cg img \{[^}]*calc\(\.4 \* var\(--rythme-secousse-y/, "secousse plus légère sur la CG");
+
+  // v3 · Sprite : un échec de chargement ne le masque plus pour de bon.
+  const recover = pageSource.slice(pageSource.indexOf("function recoverMissingIntimateSprite"), pageSource.indexOf("function routeBackground("));
+  assert.match(recover, /function markIntimateSpriteLoaded[\s\S]*image\.hidden = false/, "une image chargée réapparaît");
+  assert.match(recover, /spriteLastGood/, "repli sur la dernière image bien chargée");
+  assert.ok((pageSource.match(/onLoad=\{use\w*IntimateSprite \? markIntimateSpriteLoaded/g) || []).length >= 3, "tous les sprites intimes se rétablissent au chargement");
+
   const lengths = Object.fromEntries(Object.keys(charts).map((d) => [d, engine.rhythmChartEnd(d).toFixed(1) + " s"]));
-  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${bpms.join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques.`);
+  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${bpms.join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px.`);
 } finally {
   await server.close();
 }

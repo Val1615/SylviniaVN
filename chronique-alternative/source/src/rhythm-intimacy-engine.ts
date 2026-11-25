@@ -47,17 +47,20 @@ export type RhythmSectionDef = {
   slide?: "left" | "right";
   /** Montée finale : coups supplémentaires dont le tempo grimpe jusqu'à toBpm, puis l'appui de l'apogée. */
   ramp?: { strokes: number; toBpm: number; final: number };
+  /** Sens de la secousse à chaque coup : de haut en bas (elle mène, renversée) ou en profondeur (de dos, face à face). */
+  shake: RhythmShakeAxis;
 };
+export type RhythmShakeAxis = "vertical" | "profondeur";
 
 export const RHYTHM_TRACK = "intimate";
 /** Décompte avant le premier coup, en secondes. */
 export const RHYTHM_LEAD_IN = 3;
 
 export const RHYTHM_SECTIONS: RhythmSectionDef[] = [
-  { id: "lente", bpm: 56, strokes: 14, holds: [5, 11], holdBeats: 2 },
-  { id: "dos", bpm: 76, strokes: 20, holds: [9, 16], holdBeats: 2, slide: "right" },
-  { id: "renversee", bpm: 98, strokes: 28, holds: [13, 23], holdBeats: 2, slide: "left" },
-  { id: "face", bpm: 122, strokes: 24, holds: [], holdBeats: 2, slide: "right", ramp: { strokes: 12, toBpm: 150, final: 3.2 } },
+  { id: "lente", bpm: 56, strokes: 14, holds: [5, 11], holdBeats: 2, shake: "vertical" },
+  { id: "dos", bpm: 76, strokes: 20, holds: [9, 16], holdBeats: 2, slide: "right", shake: "profondeur" },
+  { id: "renversee", bpm: 98, strokes: 28, holds: [13, 23], holdBeats: 2, slide: "left", shake: "vertical" },
+  { id: "face", bpm: 122, strokes: 24, holds: [], holdBeats: 2, slide: "right", ramp: { strokes: 12, toBpm: 150, final: 3.2 }, shake: "profondeur" },
 ];
 
 /** Les difficultés jouent la même cadence (un coup par battement) : seuls le tempo et la tolérance changent. */
@@ -147,6 +150,8 @@ export type RhythmSaveState = {
   judgements: RhythmJudgement[];
   combo: number;
   maxCombo: number;
+  /** Bonus de jauge gagné aux paliers d'enchaînement (absent des sauvegardes plus anciennes). */
+  bonus?: number;
   unlocked: string[];
   teases: number[];
   savedAt: number;
@@ -167,11 +172,54 @@ export function rhythmScore(judgements: RhythmJudgement[]): RhythmScore {
 }
 
 /** Jauge de plaisir (0 à 100) : elle ne fait que monter, un raté ne la vide jamais. */
-export function rhythmGauge(judgements: RhythmJudgement[]): number {
+export function rhythmGauge(judgements: RhythmJudgement[], bonus = 0): number {
   const max = judgements.length || 1;
   let points = 0;
   for (const j of judgements) points += JUDGEMENT_POINTS[j];
-  return Math.min(100, Math.round(points / max * 1000) / 10);
+  const extra = Math.max(0, Math.min(RHYTHM_COMBO_BONUS_MAX, bonus));
+  return Math.min(100, Math.round((points / max * 100 + extra) * 10) / 10);
+}
+
+/*
+ * Enchaînements : chaque coup réussi allonge le combo, un raté le brise.
+ * Paliers à 8, 16 et 24 coups, puis tous les 12. Chaque palier franchi déclenche
+ * un gémissement d'Hylee, un battement particulier de l'interface et un petit
+ * bonus de jauge (plafonné). Hors combo, on n'entend que des souffles.
+ */
+export const RHYTHM_COMBO_FIRST = [8, 16, 24] as const;
+export const RHYTHM_COMBO_STEP = 12;
+export const RHYTHM_COMBO_BONUS = 1.5;
+export const RHYTHM_COMBO_BONUS_MAX = 9;
+/** Nombre de paliers franchis pour un combo donné. */
+export function rhythmComboTier(combo: number): number {
+  const last = RHYTHM_COMBO_FIRST[RHYTHM_COMBO_FIRST.length - 1];
+  let tier = RHYTHM_COMBO_FIRST.filter((n) => combo >= n).length;
+  if (combo >= last) tier += Math.floor((combo - last) / RHYTHM_COMBO_STEP);
+  return tier;
+}
+/** Intensité du combo, de 0 (pas de combo) à 3 (24 coups et plus). */
+export function rhythmComboLevel(combo: number): number { return Math.min(3, rhythmComboTier(combo)); }
+/** Vrai quand ce coup vient de franchir un palier. */
+export function rhythmComboThreshold(combo: number): boolean { return combo > 0 && rhythmComboTier(combo) > rhythmComboTier(combo - 1); }
+
+/*
+ * Secousse à chaque coup réussi : une poussée brève dans le sens du va-et-vient,
+ * puis un rebond qui s'amortit en un tiers de seconde. L'amplitude (en pixels)
+ * monte avec l'ardeur et le combo, plus forte à l'apogée ; réduite au tiers en
+ * « Effets réduits », nulle si l'option est coupée. Le plafond garde toujours
+ * le sprite dans le cadre.
+ */
+export const RHYTHM_SHAKE_MAX = 18;
+export const RHYTHM_SHAKE_DURATION = 0.34;
+export function rhythmShakeAmplitude(ardour: number, comboLevel: number, apogee: boolean, prefs: Pick<RhythmPrefs, "effects" | "shake">): number {
+  if (!prefs.shake) return 0;
+  const raw = (3 + 8.5 * Math.max(0, Math.min(1, ardour)) + 1.8 * Math.max(0, Math.min(3, comboLevel))) * (apogee ? 1.3 : 1);
+  return Math.min(RHYTHM_SHAKE_MAX, raw) * (prefs.effects === "plein" ? 1 : 0.3);
+}
+/** Forme de la secousse, de -1 à 1, s secondes après le coup : poussée, rebond, retour au repos. */
+export function rhythmShakeWave(s: number): number {
+  if (s < 0 || s >= RHYTHM_SHAKE_DURATION) return 0;
+  return Math.sin(2 * Math.PI * s / 0.16) * Math.exp(-s / 0.09);
 }
 
 /** Paliers d'une section : un quart, la moitié puis les trois quarts des notes jouées, avec une justesse suffisante. */
@@ -230,12 +278,14 @@ export type RhythmPrefs = {
   sfx: boolean; sfxVolume: number;
   /** Réactions de l'interface : pleines ou réduites, zoom de l'image en rythme, vibration du téléphone. */
   effects: RhythmEffects; zoom: boolean; vibration: boolean;
+  /** Secousse de l'image à chaque coup (réduite avec les effets réduits). */
+  shake: boolean;
 };
 const clamp01 = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback);
 export function defaultRhythmPrefs(): RhythmPrefs {
   let reduced = false;
   try { reduced = Boolean(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches); } catch { reduced = false; }
-  return { difficulty: "normal", auto: false, offsetMs: 0, musicVolume: 0.35, sfx: true, sfxVolume: 0.85, effects: reduced ? "reduit" : "plein", zoom: !reduced, vibration: true };
+  return { difficulty: "normal", auto: false, offsetMs: 0, musicVolume: 0.35, sfx: true, sfxVolume: 0.85, effects: reduced ? "reduit" : "plein", zoom: !reduced, vibration: true, shake: true };
 }
 export function loadRhythmPrefs(): RhythmPrefs {
   const base = defaultRhythmPrefs();
@@ -251,6 +301,7 @@ export function loadRhythmPrefs(): RhythmPrefs {
       effects: raw.effects === "reduit" || raw.effects === "plein" ? raw.effects : base.effects,
       zoom: typeof raw.zoom === "boolean" ? raw.zoom : base.zoom,
       vibration: typeof raw.vibration === "boolean" ? raw.vibration : base.vibration,
+      shake: typeof raw.shake === "boolean" ? raw.shake : base.shake,
     };
   } catch { return base; }
 }

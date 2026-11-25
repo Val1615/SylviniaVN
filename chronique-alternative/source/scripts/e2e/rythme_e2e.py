@@ -76,7 +76,7 @@ async def main():
     await wait_t(-2.2); await snap("02-decompte")
     levels=[]
     async def level(tag):
-        st=await p.evaluate("""()=>{const r=window.__sylviniaRythme; const l=document.querySelector('.rythme-layer'); const cs=getComputedStyle(document.querySelector('.rythme-vignette')); return {t:+r.time().toFixed(2), ardeur:+r.ardour().toFixed(2), palier:l.dataset.ardeur, jauge:l.style.getPropertyValue('--jauge'), pulse:+l.style.getPropertyValue('--pulse'), vignette:+(+cs.opacity).toFixed(3), zoom:r.zoom(), sfx:r.sfx(), musique:r.music()};}""")
+        st=await p.evaluate("""()=>{const r=window.__sylviniaRythme; const l=document.querySelector('.rythme-layer'); const cs=getComputedStyle(document.querySelector('.rythme-vignette')); return {t:+r.time().toFixed(2), ardeur:+r.ardour().toFixed(2), palier:l.dataset.ardeur, jauge:l.style.getPropertyValue('--jauge'), pulse:+l.style.getPropertyValue('--pulse'), vignette:+(+cs.opacity).toFixed(3), zoom:r.zoom(), sfx:r.sfx(), musique:r.music(), combo:r.combo(), secousse:r.shake(), sprite:(()=>{const i=document.querySelector('.intimacy-sprite img, .intimacy-cg img'); if(!i) return null; const b=i.getBoundingClientRect(); return {hidden:i.hidden, nw:i.naturalWidth, top:Math.round(b.top), bottom:Math.round(b.bottom), h:Math.round(b.height)};})()};}""")
         st["tag"]=tag; levels.append(st); return st
     await wait_t(after_hit(5.0)); await level("debut"); await snap("03-jauge-basse")
     for i in range(80):
@@ -93,6 +93,23 @@ async def main():
     await wait_t(after_hit(starts[1]+9)); await level("position2"); await snap("05-jauge-quart")
     report["checks"]["ligne_cadence"]=await p.evaluate("()=>window.__sylviniaRythme.strokeLine()")
     await wait_t(after_hit(starts[2]+4)); await level("position3"); await snap("06-jauge-milieu")
+    # Palier de combo : battement particulier, voile rose, onde et inscription « COMBO »
+    for i in range(140):
+        if await p.locator(".rythme-layer.combo-palier .rythme-combo-eclat").count(): break
+        await p.wait_for_timeout(100)
+    await p.wait_for_timeout(160)
+    report["checks"]["combo_palier"]=await p.evaluate("()=>{const l=document.querySelector('.rythme-layer'); const e=document.querySelector('.rythme-combo-eclat'); return {classes:l.className, eclat:e?e.innerText.replace(/\\s+/g,' '):null, onde:!!document.querySelector('.rythme-onde.combo'), voile:+getComputedStyle(document.querySelector('.rythme-combo-voile')).opacity, combo:window.__sylviniaRythme.combo()};}")
+    await level("combo-palier"); await snap("06b-combo-palier")
+    # Secousse : capture prise au plus fort de la poussée, sprite visible
+    await p.evaluate("""()=>{document.querySelectorAll('.intimacy-cg img, .intimacy-cg, img[data-sprite-channel=intimate]').forEach(i=>{i.style.filter='blur(14px) brightness(.6) saturate(.5)';});}""")
+    shake_seen=None
+    for i in range(300):
+        y=await p.evaluate("()=>window.__sylviniaRythme.shake().y")
+        if abs(y)>=3.5:
+            await p.screenshot(path=f"{OUT}/{VP}-{MODE}-06c-secousse.png"); shake_seen=await p.evaluate("()=>window.__sylviniaRythme.shake()"); break
+        await p.wait_for_timeout(15)
+    report["checks"]["secousse_capture"]=shake_seen
+    report["checks"]["combo_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.combo()")
     report["checks"]["taquineries_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
     # Pause puis « Reprendre plus tard »
     await p.keyboard.press("Escape"); await p.wait_for_timeout(500)
@@ -135,6 +152,8 @@ async def main():
     await level("apogee"); await snap("12-apogee-eclat")
     report["checks"]["taquineries"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
     report["checks"]["sons"]=await p.evaluate("()=>window.__sylviniaRythme.sfx()")
+    report["checks"]["combo_fin"]=await p.evaluate("()=>window.__sylviniaRythme.combo()")
+    report["checks"]["secousse_fin"]=await p.evaluate("()=>window.__sylviniaRythme.shake()")
     report["levels"]=levels
     await p.wait_for_selector(".rythme-panneau.resultat", timeout=15000)
     report["checks"]["result"]=await p.locator(".rythme-panneau.resultat").inner_text()
