@@ -169,3 +169,30 @@ Limite connue : une seule prise, au timbre tendu ; certains extraits peuvent év
 | lineva/gemit-6.mp3 | gémissements de Lineva aux paliers de combo | « Woman moaning.wav » · extrait 12.70-13.40 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
 | lineva/apogee-1.mp3 | apogée de Lineva (et ses relais de sommets à trois) | « Woman moaning.wav » · extrait 12.70-15.60 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
 | lineva/apogee-2.mp3 | apogée de Lineva (et ses relais de sommets à trois) | « Woman moaning.wav » · extrait 15.60-18.00 s | Vidrik | https://freesound.org/people/Vidrik/sounds/384214/ | CC0 1.0 |
+
+## Voix de Remerii (fiches personnages, lot 7)
+
+Une seule voix pour Remerii : **epanody** (Freesound, pack « orgasm pack », **CC BY 3.0**, crédit « epanody »). Le compte de l'autrice a été supprimé, les sons restent publiés sous le nom deleted_user_1390811 et la licence reste valable. Cinq prises (respiration qui s'accélère, gémissement plus appuyé, « getting closer », deux sommets), découpées par analyse d'énergie (ffmpeg silencedetect), sans aucun outil d'IA, puis retraitées avec la même chaîne. Les prises parlées (86678, 86679, 86681) sont écartées.
+
+Limites connues : prise au casque micro, un léger souffle de fond ressort sur les soupirs (prise d'origine très basse, remontée au niveau commun). En extérieur (lanternes, observatoire), le jeu assourdit volontairement ses gémissements (« voix retenue ») ; au logis, ils sont pleins.
+
+| Fichier | Rôle dans le jeu | Son d'origine | Auteur | Source | Licence |
+|---|---|---|---|---|---|
+| remerii/souffle-1.mp3 | souffles de Remerii (hors combo, jauge basse) | « epanody--faster_breathing.wav » · extrait 1.45-2.75 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86675/ | CC BY 3.0 |
+| remerii/souffle-2.mp3 | souffles de Remerii (hors combo, jauge basse) | « epanody--faster_breathing.wav » · extrait 2.90-4.00 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86675/ | CC BY 3.0 |
+| remerii/souffle-3.mp3 | souffles de Remerii (hors combo, jauge basse) | « epanody--faster_breathing.wav » · extrait 4.25-5.35 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86675/ | CC BY 3.0 |
+| remerii/souffle-4.mp3 | souffles de Remerii (hors combo, jauge basse) | « epanody--faster_breathing.wav » · extrait 10.05-11.20 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86675/ | CC BY 3.0 |
+| remerii/souffle-5.mp3 | souffles de Remerii (hors combo, jauge basse) | « epanody--faster_breathing.wav » · extrait 11.60-12.80 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86675/ | CC BY 3.0 |
+| remerii/soupir-1.mp3 | soupirs de Remerii (jauge moyenne) | « epanody--heavier_moaning.wav » · extrait 1.95-2.85 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86676/ | CC BY 3.0 |
+| remerii/soupir-2.mp3 | soupirs de Remerii (jauge moyenne) | « epanody--heavier_moaning.wav » · extrait 3.75-4.95 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86676/ | CC BY 3.0 |
+| remerii/soupir-3.mp3 | soupirs de Remerii (jauge moyenne) | « epanody--heavier_moaning.wav » · extrait 5.80-7.65 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86676/ | CC BY 3.0 |
+| remerii/gemit-1.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 1.90-2.70 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-2.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 4.05-5.35 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-3.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 6.45-7.80 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-4.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 8.65-10.15 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-5.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 11.10-12.30 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-6.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 12.50-13.80 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-7.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--moaning-gettingcloser.wav » · extrait 14.25-15.50 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86680/ | CC BY 3.0 |
+| remerii/gemit-8.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--orgasm1.wav » · extrait 1.15-3.10 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86682/ | CC BY 3.0 |
+| remerii/apogee-1.mp3 | apogée de Remerii | « epanody--orgasm1.wav » · extrait 0.30-5.50 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86682/ | CC BY 3.0 |
+| remerii/apogee-2.mp3 | apogée de Remerii | « epanody--orgasm_and_breathing.wav » · extrait 0.60-8.30 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86683/ | CC BY 3.0 |

@@ -70,6 +70,9 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   prefsRef.current = prefs;
   const notesRef = useRef<RhythmNote[]>(chartFor(difficulty));
   const judgementsRef = useRef<RhythmJudgement[]>([]);
+  const mesureRef = useRef<{ section: number; offset: number }[]>([]);
+  const mesureDoneRef = useRef(new Set<number>());
+  const mesureCountRef = useRef(0);
   const timeRef = useRef(-RHYTHM_LEAD_IN);
   const clockRef = useRef<{ perfStart: number; base: number }>({ perfStart: 0, base: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -129,7 +132,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
 
   const suggestive = Boolean(scene.suggestive);
   // Fiche personnage : sa banque de voix (une seule voix par personnage) ; Hylee garde la sienne.
-  const sfx = () => { if (!sfxRef.current) sfxRef.current = kit ? new RhythmSfx({ suggestive, voice: kit.profile.voice, ...(kit.profile.voices ? { voices: kit.profile.voices.map((entry) => entry.bank) } : {}) }) : new RhythmSfx({ suggestive }); return sfxRef.current; };
+  const sfx = () => { if (!sfxRef.current) sfxRef.current = kit ? new RhythmSfx({ suggestive, voice: kit.profile.voice, ...(kit.profile.voices ? { voices: kit.profile.voices.map((entry) => entry.bank) } : {}), restrained: Boolean(kit.profile.behaviours.retenue && !kit.anchor.context.startsWith("home-")) }) : new RhythmSfx({ suggestive }); return sfxRef.current; };
   const musicVolume = () => (prefsRef.current.mute.musique ? 0 : clamp01(volume) * prefsRef.current.musicVolume);
   const duck = (on: boolean) => window.dispatchEvent(new CustomEvent(RHYTHM_DUCK_EVENT, { detail: on }));
 
@@ -203,6 +206,9 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     edgeTouchedRef.current = new Set();
     trapFlashRef.current = null;
     auraCuedRef.current = new Set();
+    mesureRef.current = [];
+    mesureDoneRef.current = new Set();
+    mesureCountRef.current = 0;
     judgementsRef.current = resume ? [...resume.judgements] : notesRef.current.map(() => 0 as RhythmJudgement);
     comboRef.current = resume?.combo || 0;
     maxComboRef.current = resume?.maxCombo || 0;
@@ -344,16 +350,40 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       trapBubble(bubbles?.resisted, `resiste-${note.index}`);
     }
   }
+  /**
+   * Remerii, « la mesure » : sur une fenêtre de coups réussis, un écart faible et constant (même en « Bien ») est
+   * noté d'une bulle et d'un petit bonus de jauge, une fois par phase. Hors justesse, hors combo.
+   */
+  function noteMesure(note: RhythmNote, t: number) {
+    const mesure = kit?.profile.behaviours.mesure;
+    if (!mesure || !kit?.bubbles.mesure?.length || note.kind === "slide") return;
+    const list = mesureRef.current;
+    if (list.length && list[list.length - 1].section !== note.section) list.length = 0;
+    list.push({ section: note.section, offset: t - note.time });
+    if (list.length > mesure.window) list.shift();
+    if (list.length < mesure.window || mesureDoneRef.current.has(note.section)) return;
+    const offsets = list.map((entry) => entry.offset);
+    const mean = offsets.reduce((a, b) => a + b, 0) / offsets.length;
+    const spread = Math.sqrt(offsets.reduce((a, b) => a + (b - mean) ** 2, 0) / offsets.length) * 1000;
+    if (spread > mesure.spreadMs) return;
+    mesureDoneRef.current.add(note.section);
+    mesureCountRef.current++;
+    bonusRef.current = Math.min(RHYTHM_COMBO_BONUS_MAX + 2, bonusRef.current + 2);
+    trapBubble(kit.bubbles.mesure, `mesure-${note.section}`);
+    flash("palier", labels.mesure);
+  }
   function record(note: RhythmNote, judgement: RhythmJudgement, t: number) {
     judgementsRef.current[note.index] = judgement;
     if (judgement === 3) {
       comboRef.current = 0;
+      mesureRef.current = [];
       missRef.current = { id: flashSeq.current + 1, at: performance.now() };
       sfxRef.current?.miss();
       tease(t);
     } else {
       comboRef.current++;
       maxComboRef.current = Math.max(maxComboRef.current, comboRef.current);
+      noteMesure(note, t);
       const combo = comboRef.current;
       const threshold = rhythmComboThreshold(combo);
       // Palier d'enchaînement : petit bonus de jauge, gémissement d'Hylee et battement particulier de l'interface.
@@ -480,7 +510,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       time: () => (phaseRef.current === "play" ? now() : timeRef.current), notes: () => notesRef.current, judgements: () => [...judgementsRef.current],
       phase: () => phaseRef.current, teases: () => [...teasesRef.current], apogee: () => apogeeRef.current, caption: () => captionRef.current?.line.text || null,
       tease: () => teaseRef.current?.line.text || null, voice: () => voiceRef.current?.line.text || null, strokeLine: () => strokeLineRef.current?.line.text || null,
-      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null, neutral: sfxRef.current?.neutral ?? null, suggestive: sfxRef.current?.suggestive ?? suggestive, bus: sfxRef.current ? Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, sfxRef.current!.busGain(bus)])) : null }),
+      ardour: () => ardourNow(), sfx: () => ({ loaded: sfxRef.current?.loaded || 0, played: { ...(sfxRef.current?.played || {}) }, enabled: sfxRef.current?.enabled ?? null, neutral: sfxRef.current?.neutral ?? null, suggestive: sfxRef.current?.suggestive ?? suggestive, restrained: sfxRef.current?.restrained ?? null, mesure: mesureCountRef.current, bus: sfxRef.current ? Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, sfxRef.current!.busGain(bus)])) : null }),
       music: () => ({ playing: Boolean(audioRef.current && !audioRef.current.paused), volume: audioRef.current?.volume ?? null, loop: audioRef.current?.loop ?? null }),
       zoom: () => Number(layerRef.current?.parentElement?.style.getPropertyValue("--rythme-zoom") || 0),
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,

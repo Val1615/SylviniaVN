@@ -52,6 +52,12 @@ export type RhythmProfile = {
     gel?: boolean;
     /** Coup pour coup : appel et réponse dans les scènes de duel. */
     appel?: boolean;
+    /** Remerii, « la mesure » : une suite de coups réguliers (écart faible, même en « Bien ») est notée d'une bulle et d'un petit bonus de jauge. */
+    mesure?: { window: number; spreadMs: number };
+    /** Remerii, « voix retenue » : en extérieur (rendez-vous), ses gémissements de paliers sont assourdis ; au logis, pleins. */
+    retenue?: boolean;
+    /** Remerii, « au fond » : tenue finale plus longue (secondes) que les autres fiches (3,2 s). */
+    deepHold?: number;
   };
   /** Poids de la Résistance dans la fin obtenue (0 : la justesse seule). */
   resistanceWeight: number;
@@ -124,12 +130,25 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "soft", bouche: "seductive", langue: "passionate", frottement: "soft", penetration: "passionate", interlude: "soft", rire: "soft" },
   },
+  remerii: {
+    character: "remerii",
+    // Normal, métronomique : elle mesure votre régularité plus que votre perfection, retient sa voix dehors et vous garde au fond.
+    difficulty: "normal",
+    bpm: { main: 66, bouche: 76, langue: 88, frottement: 72, penetration: [62, 82, 104], ramp: [128, 150] },
+    palette: { vive: "58,86,170", profonde: "18,26,64" },
+    voice: { dir: "remerii", groups: { souffle: 5, soupir: 3, gemit: 8, apogee: 2 } },
+    behaviours: { mesure: { window: 8, spreadMs: 30 }, retenue: true, deepHold: 5 },
+    resistanceWeight: 0,
+    relationPenalty: -1,
+    captionMaxMs: 10000,
+    moods: { main: "inviting", bouche: "teasing", langue: "soft", frottement: "smirk", penetration: "inviting", interlude: "soft", rire: "smirk" },
+  },
 };
 
 /** Barème de relation validé (t232u, t233u), pour les lots à venir. */
 export const RHYTHM_RELATION_PENALTIES: Record<string, number> = { hylee: 0, allenna: 0, naiah: 0, remerii: -1, lineva: -1, valurn: -1, bellirith: -2 };
 
-/** Voix retenues (t224u à t233u), une seule par personnage. Bellirith (lot 1), Allenna, Lineva et leur trio (lots 4 à 6) sont branchés. */
+/** Voix retenues (t224u à t233u), une seule par personnage. Bellirith (lot 1), Allenna, Lineva et leur trio (lots 4 à 6), Remerii (lot 7) sont branchés. */
 export const RHYTHM_VOICES: Record<string, string> = {
   hylee: "MagicalMysticVA", bellirith: "aarrnnoo", valurn: "Teebee_Deael", lineva: "Vidrik", naiah: "DarkNightPrincess", remerii: "epanody", allenna: "guinefurrie",
 };

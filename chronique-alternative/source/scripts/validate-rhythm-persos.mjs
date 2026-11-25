@@ -1,5 +1,5 @@
 // Validateur des fiches personnages du jeu de rythme (lot 0 : socle commun ; lot 1 : Bellirith ; lots 4 à 6 :
-// Allenna, Lineva et leur trio avec relais de sommets).
+// Allenna, Lineva et leur trio avec relais de sommets ; lot 7 : Remerii).
 // Vérifie que chaque scène de Bellirith se joue sur son texte écrit sans le réécrire, que la partition de
 // Hylee reste identique, que les pièges ne comptent jamais dans le score, la sauvegarde v4, la voix et ses crédits.
 import assert from "node:assert/strict";
@@ -31,6 +31,7 @@ try {
   const scenes = await server.ssrLoadModule("/src/intimacy-scenes.ts");
   const homes = await server.ssrLoadModule("/src/home-intimacy-routes.ts");
   const groups = await server.ssrLoadModule("/src/group-dates.ts");
+  const remeriiScenes = await server.ssrLoadModule("/src/remerii-date-intimacy.ts");
 
   // Hylee : partition, débuts de phase et fin identiques à origin/main.
   const hash = createHash("sha256").update(JSON.stringify(DIFFICULTIES.map((d) => [engine.buildRhythmChart(d), engine.rhythmChartEnd(d), engine.RHYTHM_SECTIONS.map((_, i) => engine.rhythmSectionStart(i, d))]))).digest("hex").slice(0, 16);
@@ -156,7 +157,7 @@ try {
   assert.match(pageSource, /if \(!rhythmScene && rhythmKit && nextChapter === rhythmKit\.start\)/);
 
   // ---------- Lots 4 à 6 : Allenna, Lineva, Allenna et Lineva ----------
-  const counts = { allenna: 0, lineva: 0, "allenna-lineva": 0 };
+  const counts = { allenna: 0, lineva: 0, "allenna-lineva": 0, remerii: 0 };
   const persoSeen = new Set();
   let relays = 0;
   for (const anchor of anchors.RHYTHM_ANCHORS.filter((entry) => entry.character !== "bellirith")) {
@@ -165,7 +166,16 @@ try {
     assert.ok(p, `${anchor.character} : fiche`);
     let route;
     let chaptersFor;
-    if (anchor.character === "allenna-lineva") {
+    let curseRoute;
+    if (anchor.character === "remerii") {
+      // Remerii : ses propres rendez-vous et son logis écrits (variante « malédiction connue » comprise, mêmes séquences).
+      const home = anchor.context.startsWith("home-");
+      const context = remeriiScenes.remeriiIntimacyContext(home ? undefined : anchor.context, home);
+      route = remeriiScenes.remeriiDateIntimacyRoutes(context, anchor.sex, false).find((entry) => entry.id === anchor.routeId);
+      curseRoute = remeriiScenes.remeriiDateIntimacyRoutes(context, anchor.sex, true).find((entry) => entry.id === anchor.routeId);
+      assert.ok(curseRoute, `${anchor.routeId} : variante malédiction connue`);
+      chaptersFor = (mode) => route.chapters[mode];
+    } else if (anchor.character === "allenna-lineva") {
       route = groups.groupIntimacyRoutes(anchor.context, anchor.sex).find((entry) => entry.id === anchor.routeId);
       chaptersFor = (mode) => route.chapters[mode];
     } else if (anchor.context.startsWith("home-")) {
@@ -188,6 +198,7 @@ try {
       assert.ok(returnChapter <= chapters.length, `${anchor.routeId} ${mode} : reprise valide`);
       const kit = anchors.buildRhythmKit(anchor, chapters, route.text, mode);
       assert.ok(kit, `${anchor.routeId} ${mode} : le jeu se construit`);
+      if (curseRoute) { assert.ok(anchors.buildRhythmKit(anchor, curseRoute.chapters[mode], curseRoute.text, mode), `${anchor.routeId} ${mode} : malédiction connue`); kits++; }
       kits++;
       persoSeen.add(kit.scene.id);
       kit.scene.sections.forEach((section, i) => {
@@ -219,6 +230,11 @@ try {
       if (anchor.character === "allenna") assert.ok(!chart.some((note) => note.aura), `${kit.scene.id} : pas d'ordres chez Allenna`);
       if (anchor.character === "lineva" && !anchor.context.startsWith("home-")) assert.ok(chart.some((note) => note.aura), `${kit.scene.id} : les ordres de Lineva`);
       if (anchor.character === "lineva") assert.ok(!chart.some((note) => note.kind === "edge" && note.edge === "bord"), `${kit.scene.id} : Lineva ne s'arrête pas au bord`);
+      if (anchor.character === "remerii") {
+        assert.ok(chart.filter(engine.isRhythmTrap).every((note) => note.edge === "gel" && kit.scene.sections[note.section].chapter === 4), `${kit.scene.id} : Remerii ne tend aucun piège (elle mesure), seule la cicatrice fige la piste`);
+        assert.equal(kit.sections.at(-1).ramp.final, 5, `${kit.scene.id} : au fond, tenue finale plus longue`);
+        assert.ok(!chart.some((note) => note.aura), `${kit.scene.id} : pas d'ordres chez Remerii`);
+      }
       if (anchor.character === "allenna-lineva") {
         // Voix par phase : celle de la personne écrite dans l'ancrage ; les ordres seulement sur les phases de Lineva.
         kit.sections.forEach((def, i) => {
@@ -231,8 +247,16 @@ try {
       }
     }
   }
-  assert.deepEqual(counts, { allenna: 18, lineva: 18, "allenna-lineva": 18 }, "18 variantes par lot");
-  assert.equal(persoSeen.size, 108, "un identifiant de jeu par scène, corps et mode (lots 4 à 6)");
+  assert.deepEqual(counts, { allenna: 18, lineva: 18, "allenna-lineva": 18, remerii: 18 }, "18 variantes par lot");
+  assert.equal(persoSeen.size, 144, "un identifiant de jeu par scène, corps et mode (lots 4 à 7)");
+  // Lot 7 : Remerii, Normal, bleu nuit, relation -1, la mesure, la voix retenue dehors, au fond.
+  const re = profiles.rhythmProfileFor("remerii");
+  assert.equal(re.difficulty, "normal"); assert.equal(re.relationPenalty, -1); assert.equal(re.palette.vive, "58,86,170");
+  assert.ok(re.behaviours.mesure && re.behaviours.retenue && re.behaviours.deepHold === 5, "Remerii : mesure, voix retenue, au fond");
+  assert.equal(profiles.RHYTHM_VOICES.remerii, "epanody");
+  const reb = (await server.ssrLoadModule("/src/rhythm-bubbles-remerii.ts")).REMERII_RHYTHM_BUBBLES;
+  assert.ok(reb.mesure.length >= 2, "Remerii : bulles de mesure");
+  assert.match(reb.endings.tatonnement.lines[0].text, /insuffisant/i);
   const al = profiles.rhythmProfileFor("allenna");
   const li = profiles.rhythmProfileFor("lineva");
   const trio = profiles.rhythmProfileFor("allenna-lineva");
@@ -249,7 +273,7 @@ try {
   for (const want of ["Plus vite.", "Tenez.", "Maintenant.", "Ne ralentissez pas."]) assert.ok(JSON.stringify(lib).includes(want), `Lineva : « ${want} »`);
   assert.match(lib.autoNote.text, /Pas de démonstration/);
   assert.equal(lib.trapLabels.aura, "Ordre");
-  for (const file of ["src/rhythm-bubbles-allenna.ts", "src/rhythm-bubbles-lineva.ts", "src/rhythm-bubbles-allenna-lineva.ts"]) assert.ok(!(await read(file)).includes("\u2014"), `${file} : pas de tiret cadratin`);
+  for (const file of ["src/rhythm-bubbles-allenna.ts", "src/rhythm-bubbles-lineva.ts", "src/rhythm-bubbles-allenna-lineva.ts", "src/rhythm-bubbles-remerii.ts"]) assert.ok(!(await read(file)).includes("\u2014"), `${file} : pas de tiret cadratin`);
   // Voix : banques propres, fichiers présents, crédités chacun par sa source ; jamais de voix de Hylee.
   for (const [dir, author, licence, total] of [["allenna", "guinefurrie", "CC BY 4\\.0", 20], ["lineva", "Vidrik", "CC0 1\\.0", 13]]) {
     const own = sfx.rhythmSfxFilesFor(profiles.rhythmProfileFor(dir).voice).filter((name) => name.startsWith(`${dir}/`));
@@ -261,10 +285,19 @@ try {
     }
     assert.equal((pageSource.match(new RegExp(`people/${author}/`, "g")) || []).length, 3, `crédits en jeu de ${author}`);
   }
+  {
+    const own = sfx.rhythmSfxFilesFor(re.voice).filter((name) => name.startsWith("remerii/"));
+    assert.equal(own.length, 18, "18 extraits pour remerii");
+    for (const name of own) {
+      assert.ok((await stat(resolve(projectRoot, `assets/audio/rythme/${name}.mp3`))).size > 2000, `${name} : fichier vide`);
+      assert.match(sources, new RegExp(`^\\| ${name.replace("/", "\\/")}\\.mp3 \\|.*\\| epanody \\| https://freesound\\.org/people/deleted_user_1390811/sounds/866\\d\\d/ \\| CC BY 3\\.0 \\|$`, "m"), `${name} : crédit`);
+    }
+    assert.equal((pageSource.match(/voix de Remerii par epanody/g) || []).length, 3, "crédits en jeu d'epanody");
+  }
   assert.match(pageSource, /rhythmAnchorFor\("allenna-lineva", direction\.id, game\.player\.sex\)/, "trio branché dans la scène à trois");
   assert.match(pageSource, /onRelation=\{onRhythmRelation\} \/>;\n/, "relation du trio");
 
-  console.log(`Fiches de rythme OK : ${bellirithAnchors.length} variantes de Bellirith, ${counts.allenna} d'Allenna, ${counts.lineva} de Lineva, ${counts["allenna-lineva"]} à trois (${relays} relais de sommets en Normal), ${kits} jeux construits, partition de Hylee inchangée (${hash}), pièges hors score, ${voiceFiles.length} extraits aarrnnoo crédités.`);
+  console.log(`Fiches de rythme OK : ${bellirithAnchors.length} variantes de Bellirith, ${counts.allenna} d'Allenna, ${counts.lineva} de Lineva, ${counts["allenna-lineva"]} à trois (${relays} relais de sommets en Normal), ${counts.remerii} de Remerii, ${kits} jeux construits, partition de Hylee inchangée (${hash}), pièges hors score, ${voiceFiles.length} extraits aarrnnoo crédités.`);
 } finally {
   await server.close();
 }

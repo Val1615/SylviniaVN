@@ -6830,10 +6830,10 @@
    "key": "rhythm-bubbles",
    "label": "Rhythm bubbles",
    "group": "Monde et systèmes",
-   "hash": "76f7d425debece76",
+   "hash": "af7d1c28c0a0c29c",
    "scenes": 3,
    "counts": {
-    "s": 18,
+    "s": 19,
     "t": 0,
     "n": 0,
     "a": 0
@@ -7147,6 +7147,101 @@
      "id": "rhythm-bubbles-lineva:a0wiwvkc",
      "path": "LINEVA_RHYTHM_BUBBLES.relay",
      "len": 2
+    }
+   ]
+  },
+  {
+   "key": "rhythm-bubbles-remerii",
+   "label": "Remerii · rhythm bubbles",
+   "group": "Remerii",
+   "hash": "db94333945e484d7",
+   "scenes": 1,
+   "counts": {
+    "s": 38,
+    "t": 0,
+    "n": 0,
+    "a": 16
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-remerii:a16lpnqq",
+     "path": "REMERII_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0nxc17b",
+     "path": "REMERII_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a05cxbfx",
+     "path": "REMERII_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1vv4og3",
+     "path": "REMERII_RHYTHM_BUBBLES.voice.frottement",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1e3knos",
+     "path": "REMERII_RHYTHM_BUBBLES.voice.penetration",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0wxdjek",
+     "path": "REMERII_RHYTHM_BUBBLES.teases",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0mbq2vs",
+     "path": "REMERII_RHYTHM_BUBBLES.resisted",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0nvhb8w",
+     "path": "REMERII_RHYTHM_BUBBLES.ceded",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a12gln7l",
+     "path": "REMERII_RHYTHM_BUBBLES.bordHeld",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1ppi1bv",
+     "path": "REMERII_RHYTHM_BUBBLES.bordBroken",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1h72zc8",
+     "path": "REMERII_RHYTHM_BUBBLES.aura",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a01bu6sb",
+     "path": "REMERII_RHYTHM_BUBBLES.call",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0ftoihc",
+     "path": "REMERII_RHYTHM_BUBBLES.mesure",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a0c97g3j",
+     "path": "REMERII_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1yotu1o",
+     "path": "REMERII_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-remerii:a1wvojun",
+     "path": "REMERII_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
     }
    ]
   },

@@ -64,8 +64,11 @@ export class RhythmSfx {
   get voice(): RhythmSfxVoiceBank | undefined { return this.banks[this.active]; }
   /** Voix active (scènes à plusieurs) : la personne qui reçoit le geste ou qui atteint son sommet. */
   setVoice(index: number) { if (index >= 0 && index < this.banks.length) this.active = index; }
-  constructor(options: { suggestive?: boolean; voice?: RhythmSfxVoiceBank; voices?: RhythmSfxVoiceBank[] } = {}) {
+  /** Voix retenue (Remerii en extérieur) : souffles, soupirs et gémissements assourdis et plus bas ; l'apogée reste pleine. */
+  readonly restrained: boolean;
+  constructor(options: { suggestive?: boolean; voice?: RhythmSfxVoiceBank; voices?: RhythmSfxVoiceBank[]; restrained?: boolean } = {}) {
     this.suggestive = Boolean(options.suggestive);
+    this.restrained = Boolean(options.restrained);
     if (options.voices?.length) this.banks.push(...options.voices);
     else if (options.voice) this.banks.push(options.voice);
     if (this.suggestive) { this.neutral = true; this.mute.voix = true; }
@@ -360,7 +363,8 @@ export class RhythmSfx {
     const group = this.voice ? this.resolve(asked) : asked;
     if (!group) return false;
     // Repli d'une banque courte : un gémissement « bouche occupée » ou « étouffé » est assourdi.
-    const lowpass = group !== asked && (asked === "bouche" || asked === "etouffe") ? 900 : undefined;
+    let lowpass = group !== asked && (asked === "bouche" || asked === "etouffe") ? 900 : undefined;
+    if (this.restrained && group !== "apogee" && group !== "rire") { lowpass = Math.min(lowpass ?? 99999, 1700); gain *= 0.72; }
     if (group !== "gemit") range = undefined;
     // Une seule voix : légères variations de hauteur et de volume pour limiter la répétition.
     const played = this.play(range ? this.pick(group, range[0], range[1]) : this.pick(group), { gain: gain * rand(0.9, 1.05), rate: rand(0.965, 1.035), ...(lowpass ? { lowpass } : {}) });
