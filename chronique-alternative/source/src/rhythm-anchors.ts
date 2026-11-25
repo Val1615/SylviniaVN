@@ -32,6 +32,7 @@ import { ALLENNA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna";
 import { LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-lineva";
 import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
 import { HYLEE_REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee-remerii";
+import { NAIAH_RHYTHM_BUBBLES } from "./rhythm-bubbles-naiah";
 import { REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-remerii";
 import { HYLEE_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee";
 
@@ -154,6 +155,34 @@ const HR_ROWS: [routeId: string, phases: string][] = [
   [`${HR}-home-femme-elles-restent`, "4m@R 5m@H! 6b@H 7l@R"],
 ];
 const HR_SUGGESTIF = "3m@H 4f@R 5f@H";
+
+/**
+ * Lot 10 : Naïah (sanctuaire, Akuhn, logis), lus à la main. Jamais de pénétration : elle donne (cuisses, main,
+ * bouche, ombres) et apprend ; le joueur reprend la main sur une séquence (6 ou 7). Exploration (4) au climax du joueur (10), reprise à 11.
+ * Suggestif écrit à part (8 séquences) : de l'essai (3) au terme (6), reprise à 7.
+ */
+const NAIAH_ROWS: [routeId: string, phases: string][] = [
+  ["naiah-forest-homme-ribbon", "4f 5f 6l 7m 8b 9b 10b"],
+  ["naiah-forest-homme-double", "4f 5f 6l 7m 8b 9b 10b"],
+  ["naiah-forest-homme-shadow", "4m 5m 6M 7b 8m 9b 10b"],
+  ["naiah-forest-femme-ribbon", "4f 5m 6l 7b 8b 9b 10b"],
+  ["naiah-forest-femme-double", "4f 5m 6i 7m 8b 9b 10b"],
+  ["naiah-forest-femme-shadow", "4m 5f 6M 7b 8M 9b 10b"],
+  ["naiah-edge-homme-thread", "4f 5f 6M 7b 8b 9b 10b"],
+  ["naiah-edge-homme-city-shadow", "4M 5m 6m 7M 8b 9b 10b"],
+  ["naiah-edge-homme-unplanned", "4f 5f 6l 7m 8b 9b 10b"],
+  ["naiah-edge-femme-thread", "4f 5f 6l 7b 8b 9b 10b"],
+  ["naiah-edge-femme-city-shadow", "4M 5m 6m 7M 8b 9b 10b"],
+  ["naiah-edge-femme-unplanned", "4f 5f 6f 7m 8b 9f 10b"],
+  ["naiah-home-homme-hunt", "4f 5f 6l 7m 8b 9b 10b"],
+  ["naiah-home-homme-shadow-room", "4m 5m 6m 7M 8b 9b 10b"],
+  ["naiah-home-homme-no-tricks", "4f 5f 6l 7m 8b 9b 10b"],
+  ["naiah-home-femme-hunt", "4m 5m 6f 7b 8m 9b 10b"],
+  ["naiah-home-femme-shadow-room", "4m 5m 6m 7M 8b 9b 10b"],
+  ["naiah-home-femme-no-tricks", "4f 5m 6m 7l 8b 9b 10b"],
+];
+const NAIAH_SUGGESTIF = "3m 4m 5b 6b";
+const NAIAH_CONTEXT: Record<string, string> = { forest: "date-naiah-sanctuary", edge: "date-naiah-akuhn", home: "home-naiah" };
 /*
  * Remerii (lot 7), relecture manuelle (PLAN.md, annexe C) : séquence 3, sa bouche (homme) ou ses doigts, parfois sa
  * bouche (femme) ; séquence 4, la cicatrice, rupture écrite (rien à toucher) ; séquence 5, votre bouche et vos doigts ;
@@ -218,6 +247,10 @@ export const RHYTHM_ANCHORS: RhythmAnchor[] = [
   ...GROUP_ROWS.map(([routeId, phases, returnChapter]): RhythmAnchor => ({
     character: "allenna-lineva", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
     phases: parsePhases(phases), returnChapter, suggestif: { phases: parsePhases(GROUP_SUGGESTIF), returnChapter: 6 },
+  })),
+  ...NAIAH_ROWS.map(([routeId, phases]): RhythmAnchor => ({
+    character: "naiah", context: NAIAH_CONTEXT[routeId.split("-")[1]], routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
+    phases: parsePhases(phases), returnChapter: 11, suggestif: { phases: parsePhases(NAIAH_SUGGESTIF), returnChapter: 7 },
   })),
   ...HR_ROWS.map(([routeId, phases]): RhythmAnchor => ({
     character: "hylee-remerii", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
@@ -290,7 +323,7 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES, "hylee-remerii": HYLEE_REMERII_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES, "hylee-remerii": HYLEE_REMERII_RHYTHM_BUBBLES, naiah: NAIAH_RHYTHM_BUBBLES };
 const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**

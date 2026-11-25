@@ -96,6 +96,19 @@ REMERII={
 }
 for g,lst in REMERII.items():
     for i,(sid,a,b) in enumerate(lst): add(f'remerii/{g}-{i+1}',EP(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
+# --- Voix de Naïah (fiches, lot 10) : DarkNightPrincess (CC0), une seule comédienne, rires et étonnements seulement,
+# jamais un gémissement (règle canon : son plaisir est celui de comprendre et de piéger). Même traitement commun.
+DN=lambda i: R+f'darknightprincess/DarkNightPrincess-{i}.mp3'
+NAIAH={
+ 'souffle':[(621773,0.30,0.90)],
+ 'soupir':[(621771,0.12,0.85)],
+ # « gemit » (paliers de combo) : chez elle, un « Ah » et un « Woah » curieux, jamais un gémissement ; « soupir » : son « Oh »
+ 'gemit':[(646618,0.17,0.75),(658568,0.13,1.15)],
+ 'apogee':[(611781,0.20,1.62),(611780,0.15,1.47)],
+ 'rire':[(611781,0.30,1.10),(611780,0.20,0.95),(611781,0.80,1.62)],
+}
+for g,lst in NAIAH.items():
+    for i,(sid,a,b) in enumerate(lst): add(f'naiah/{g}-{i+1}',DN(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.4,True)
 only=set(sys.argv[1:])
 meta={}
 def vol(path,flt):

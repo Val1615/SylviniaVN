@@ -7276,6 +7276,96 @@
    ]
   },
   {
+   "key": "rhythm-bubbles-naiah",
+   "label": "Naïah · rhythm bubbles",
+   "group": "Naïah",
+   "hash": "82719dbe38b5f2d3",
+   "scenes": 1,
+   "counts": {
+    "s": 33,
+    "t": 0,
+    "n": 0,
+    "a": 15
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-naiah:a0dg326q",
+     "path": "NAIAH_RHYTHM_BUBBLES.voice.main",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a1pz2vef",
+     "path": "NAIAH_RHYTHM_BUBBLES.voice.bouche",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a16pz8gd",
+     "path": "NAIAH_RHYTHM_BUBBLES.voice.langue",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0fzxa1v",
+     "path": "NAIAH_RHYTHM_BUBBLES.voice.frottement",
+     "len": 3
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0hedej0",
+     "path": "NAIAH_RHYTHM_BUBBLES.voice.penetration",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0guuk0s",
+     "path": "NAIAH_RHYTHM_BUBBLES.teases",
+     "len": 4
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0zvc7eg",
+     "path": "NAIAH_RHYTHM_BUBBLES.resisted",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a14g4f0w",
+     "path": "NAIAH_RHYTHM_BUBBLES.ceded",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0bkyqxt",
+     "path": "NAIAH_RHYTHM_BUBBLES.bordHeld",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a19gqd7f",
+     "path": "NAIAH_RHYTHM_BUBBLES.bordBroken",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0gmgclk",
+     "path": "NAIAH_RHYTHM_BUBBLES.aura",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0zsdtmj",
+     "path": "NAIAH_RHYTHM_BUBBLES.call",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a1yqvhgf",
+     "path": "NAIAH_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a01s2b7g",
+     "path": "NAIAH_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 1
+    },
+    {
+     "id": "rhythm-bubbles-naiah:a0gj84f3",
+     "path": "NAIAH_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 1
+    }
+   ]
+  },
+  {
    "key": "rhythm-bubbles-remerii",
    "label": "Remerii · rhythm bubbles",
    "group": "Remerii",

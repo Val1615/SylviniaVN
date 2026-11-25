@@ -130,6 +130,20 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "soft", bouche: "seductive", langue: "passionate", frottement: "soft", penetration: "passionate", interlude: "soft", rire: "soft" },
   },
+  naiah: {
+    character: "naiah",
+    // Normal, « l'apprentissage » : la difficulté vient de ses illusions (leurres à ignorer) et de ses ombres qui retiennent au bord,
+    // pas de la vitesse. Jamais de pénétration, jamais un gémissement : des rires et des étonnements (DarkNightPrincess, CC0).
+    difficulty: "normal",
+    bpm: { main: 62, bouche: 70, langue: 82, frottement: 74, penetration: [58, 76, 96], ramp: [124, 146] },
+    palette: { vive: "98,78,130", profonde: "40,30,58" },
+    voice: { dir: "naiah", groups: { souffle: 1, soupir: 1, gemit: 2, apogee: 2, rire: 3 } },
+    behaviours: { baits: 6, bord: { beats: 4 } },
+    resistanceWeight: 0.1,
+    relationPenalty: 0,
+    captionMaxMs: 10000,
+    moods: { main: "teasing", bouche: "smirk", langue: "inviting", frottement: "teasing", penetration: "inviting", interlude: "stern", rire: "laugh" },
+  },
   "hylee-remerii": {
     character: "hylee-remerii",
     // À trois (lot 9) : la douceur de Hylee et la mesure de Remerii ; relais de sommets, aucun piège, sa mesure récompensée.

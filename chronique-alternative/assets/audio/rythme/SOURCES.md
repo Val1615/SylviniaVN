@@ -196,3 +196,19 @@ Limites connues : prise au casque micro, un léger souffle de fond ressort sur l
 | remerii/gemit-8.mp3 | gémissements de Remerii aux paliers de combo (étouffés en extérieur) | « epanody--orgasm1.wav » · extrait 1.15-3.10 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86682/ | CC BY 3.0 |
 | remerii/apogee-1.mp3 | apogée de Remerii | « epanody--orgasm1.wav » · extrait 0.30-5.50 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86682/ | CC BY 3.0 |
 | remerii/apogee-2.mp3 | apogée de Remerii | « epanody--orgasm_and_breathing.wav » · extrait 0.60-8.30 s | epanody | https://freesound.org/people/deleted_user_1390811/sounds/86683/ | CC BY 3.0 |
+
+## Voix de Naïah (fiches personnages, lot 10)
+
+Une seule voix pour Naïah : **DarkNightPrincess** (Freesound, **CC0**, comédienne, crédit de courtoisie « DarkNightPrincess »). Règle canon tenue : rires, souffles et petits sons d'étonnement seulement, jamais un gémissement. Six prises courtes, découpées par analyse d'énergie (silencedetect), même traitement commun que les autres voix. Les deux prises « Woah » publiées (621774 et 658568) étant identiques, une seule sert.
+
+| Fichier | Rôle dans le jeu | Son d'origine | Auteur | Source | Licence |
+|---|---|---|---|---|---|
+| naiah/souffle-1.mp3 | souffles amusés de Naïah | « Female *Sigh* Sound Effect [Voiced By DarkNightPrincess] » · extrait 0.30-0.90 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/621773/ | CC0 |
+| naiah/soupir-1.mp3 | « Oh » d'étonnement de Naïah (jauge moyenne) | « "Oh" Female Voice Sound Effect [Voiced By DarkNightPrincess] » · extrait 0.12-0.85 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/621771/ | CC0 |
+| naiah/gemit-1.mp3 | étonnements de Naïah aux paliers de combo (jamais un gémissement) | « Cute Anime "Ah" Sound Effect » · extrait 0.17-0.75 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/646618/ | CC0 |
+| naiah/gemit-2.mp3 | étonnements de Naïah aux paliers de combo (jamais un gémissement) | « Cute Anime Girl "Woah" Sound Effect » · extrait 0.13-1.15 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/658568/ | CC0 |
+| naiah/apogee-1.mp3 | rire de Naïah au sommet du joueur | « Female Giggle » · extrait 0.20-1.62 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/611781/ | CC0 |
+| naiah/apogee-2.mp3 | rire de Naïah au sommet du joueur | « Cute Anime Giggle Sound Effect » · extrait 0.15-1.47 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/611780/ | CC0 |
+| naiah/rire-1.mp3 | rires de Naïah (leurre ignoré, ombre tenue) | « Female Giggle » · extrait 0.30-1.10 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/611781/ | CC0 |
+| naiah/rire-2.mp3 | rires de Naïah (leurre ignoré, ombre tenue) | « Cute Anime Giggle Sound Effect » · extrait 0.20-0.95 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/611780/ | CC0 |
+| naiah/rire-3.mp3 | rires de Naïah (leurre ignoré, ombre tenue) | « Female Giggle » · extrait 0.80-1.62 s | DarkNightPrincess | https://freesound.org/people/DarkNightPrincess/sounds/611781/ | CC0 |
