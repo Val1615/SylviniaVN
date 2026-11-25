@@ -7,15 +7,17 @@ import {
   buildRhythmChart, judgeOffset, loadRhythmPrefs, loadRhythmSave, rhythmArdour, rhythmBeatAt, rhythmChartEnd, rhythmComboLevel, rhythmComboThreshold, rhythmComboTier,
   rhythmGauge, rhythmGestureMotion, rhythmQuality, rhythmScore, rhythmShakeAmplitude, rhythmShakeWave,
   rhythmSectionStart, sectionTiersReached, storeRhythmPrefs, storeRhythmSave,
-  RHYTHM_BUSES, type RhythmBus,
+  RHYTHM_BUSES, type RhythmBus, isRhythmTrap, rhythmChartSignature, rhythmResistance, type RhythmResistance,
   type RhythmDifficulty, type RhythmJudgement, type RhythmNote, type RhythmPrefs, type RhythmQuality, type RhythmSaveState,
 } from "./rhythm-intimacy-engine";
 import { RhythmSfx } from "./rhythm-intimacy-sfx";
+import type { RhythmKit } from "./rhythm-anchors";
+import { RHYTHM_TRAP_LABELS } from "./rhythm-bubbles";
 
 /** Évènement écouté par la page : coupe la piste d'ambiance pendant que le jeu joue sa propre musique de fond. */
 export const RHYTHM_DUCK_EVENT = "sylvinia:rythme-duck";
 
-export type RhythmResult = { quality: RhythmQuality; perfect: number; good: number; miss: number; accuracy: number; maxCombo: number; auto: boolean };
+export type RhythmResult = { quality: RhythmQuality; perfect: number; good: number; miss: number; accuracy: number; maxCombo: number; auto: boolean; resistance?: RhythmResistance };
 
 type Phase = "setup" | "countdown" | "play" | "paused" | "result";
 type Caption = { id: string; line: DialogueLine; until: number; kind: "intro" | "tier" | "tease" };
@@ -37,8 +39,12 @@ function cuePositions(strokes: number, count: number, shift: number) {
   return Array.from({ length: count }, (_, i) => Math.max(1, Math.round(((i + shift) / count) * strokes)));
 }
 
-export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMood, onFinish, onSkip, onLeave }: {
+export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMood, onFinish, onSkip, onLeave, kit, relationNote }: {
   scene: RhythmSceneText;
+  /** Fiche personnage (lot 0) : partition tirée de la scène écrite, pièges, voix et palette. Absente : prototype de Hylee, inchangé. */
+  kit?: RhythmKit;
+  /** Mention de baisse de relation au bilan (Chronique seulement), si la fin est « tâtonnement ». */
+  relationNote?: string;
   saveKey: string;
   music: boolean;
   volume: number;
@@ -49,17 +55,20 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   onLeave: () => void;
 }) {
   const [prefs, setPrefs] = useState<RhythmPrefs>(loadRhythmPrefs);
-  const [saved, setSaved] = useState<RhythmSaveState | undefined>(() => loadRhythmSave(saveKey));
+  const defs = kit?.sections || RHYTHM_SECTIONS;
+  const chartFor = (level: RhythmDifficulty) => (kit ? buildRhythmChart(level, defs) : buildRhythmChart(level));
+  const [saved, setSaved] = useState<RhythmSaveState | undefined>(() => (kit ? loadRhythmSave(saveKey, undefined, defs) : loadRhythmSave(saveKey)));
   const [phase, setPhase] = useState<Phase>("setup");
   const [, setFrame] = useState(0);
   const [result, setResult] = useState<RhythmResult | null>(null);
 
-  const difficulty: RhythmDifficulty = prefs.difficulty;
+  // Hylee (prototype) garde le choix commun ; chaque fiche a le sien, la difficulté recommandée par défaut.
+  const difficulty: RhythmDifficulty = kit ? (prefs.difficultyBy?.[kit.character] || kit.profile.difficulty) : prefs.difficulty;
   const difficultyRef = useRef(difficulty);
   difficultyRef.current = difficulty;
   const prefsRef = useRef(prefs);
   prefsRef.current = prefs;
-  const notesRef = useRef<RhythmNote[]>(buildRhythmChart(difficulty));
+  const notesRef = useRef<RhythmNote[]>(chartFor(difficulty));
   const judgementsRef = useRef<RhythmJudgement[]>([]);
   const timeRef = useRef(-RHYTHM_LEAD_IN);
   const clockRef = useRef<{ perfStart: number; base: number }>({ perfStart: 0, base: 0 });
@@ -96,13 +105,19 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const countdownRef = useRef<{ start: number; from: number } | null>(null);
   const pointerRef = useRef<{ id: number; x: number; y: number; t: number; slid: boolean } | null>(null);
   const phaseRef = useRef<Phase>("setup");
+  /** Pièges (fiches) : silence en cours rompu, dernière bulle de piège, annonce d'aura déjà faite, phrases du texte déjà montrées. */
+  const edgeTouchedRef = useRef<Set<number>>(new Set());
+  const trapFlashRef = useRef<{ id: number; at: number; kind: "resiste" | "cede" | "bord" } | null>(null);
+  const auraCuedRef = useRef<Set<number>>(new Set());
   phaseRef.current = phase;
   autoRef.current = prefs.auto;
   offsetRef.current = prefs.offsetMs / 1000;
 
-  const chartEnd = useMemo(() => rhythmChartEnd(difficulty), [difficulty]);
+  const chartEnd = useMemo(() => (kit ? rhythmChartEnd(difficulty, defs) : rhythmChartEnd(difficulty)), [difficulty]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updatePrefs = (patch: Partial<RhythmPrefs>) => setPrefs((current) => { const next = { ...current, ...patch }; storeRhythmPrefs(next); return next; });
+  const setDifficulty = (level: RhythmDifficulty) => (kit ? updatePrefs({ difficultyBy: { ...(prefsRef.current.difficultyBy || {}), [kit.character]: level } }) : updatePrefs({ difficulty: level }));
+  const captionMax = kit?.profile.captionMaxMs || 7000;
 
   /* ---------- horloge : celle du navigateur, la cadence ne dépend d'aucune musique ---------- */
   const now = useCallback(() => {
@@ -111,7 +126,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   }, []);
 
   const suggestive = Boolean(scene.suggestive);
-  const sfx = () => { if (!sfxRef.current) sfxRef.current = new RhythmSfx({ suggestive }); return sfxRef.current; };
+  // Fiche personnage : sa banque de voix (une seule voix par personnage) ; Hylee garde la sienne.
+  const sfx = () => { if (!sfxRef.current) sfxRef.current = kit ? new RhythmSfx({ suggestive, voice: kit.profile.voice }) : new RhythmSfx({ suggestive }); return sfxRef.current; };
   const musicVolume = () => (prefsRef.current.mute.musique ? 0 : clamp01(volume) * prefsRef.current.musicVolume);
   const duck = (on: boolean) => window.dispatchEvent(new CustomEvent(RHYTHM_DUCK_EVENT, { detail: on }));
 
@@ -165,7 +181,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   /* ---------- sauvegarde ---------- */
   function snapshot(): RhythmSaveState {
     return {
-      v: 3, scene: scene.id, difficulty: difficultyRef.current, auto: autoRef.current, offsetMs: Math.round(offsetRef.current * 1000),
+      ...(kit ? { v: 4 as const, sig: rhythmChartSignature(notesRef.current) } : { v: 3 as const }), scene: scene.id, difficulty: difficultyRef.current, auto: autoRef.current, offsetMs: Math.round(offsetRef.current * 1000),
       time: timeRef.current, judgements: [...judgementsRef.current], combo: comboRef.current, maxCombo: maxComboRef.current, bonus: bonusRef.current,
       unlocked: [...unlockedRef.current], teases: [...teasesRef.current], savedAt: Date.now(),
     };
@@ -175,13 +191,16 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   /* ---------- démarrage (toujours dans un geste : il débloque le son sur mobile) ---------- */
   function begin(resume?: RhythmSaveState) {
     const chosen = resume?.difficulty || difficulty;
-    if (resume && resume.difficulty !== difficulty) updatePrefs({ difficulty: resume.difficulty });
+    if (resume && resume.difficulty !== difficulty) setDifficulty(resume.difficulty);
     difficultyRef.current = chosen;
     const engine = sfx();
     engine.setVolume(prefsRef.current.sfxVolume, prefsRef.current.sfx);
     engine.setMix(prefsRef.current.mix, prefsRef.current.mute, prefsRef.current.neutral);
     engine.unlock();
-    notesRef.current = buildRhythmChart(chosen);
+    notesRef.current = chartFor(chosen);
+    edgeTouchedRef.current = new Set();
+    trapFlashRef.current = null;
+    auraCuedRef.current = new Set();
     judgementsRef.current = resume ? [...resume.judgements] : notesRef.current.map(() => 0 as RhythmJudgement);
     comboRef.current = resume?.combo || 0;
     maxComboRef.current = resume?.maxCombo || 0;
@@ -230,7 +249,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
 
   function sectionAt(t: number) {
     let section = 0;
-    for (let i = 0; i < RHYTHM_SECTIONS.length; i++) if (t >= rhythmSectionStart(i, difficultyRef.current) - 0.6) section = i;
+    for (let i = 0; i < defs.length; i++) if (t >= (kit ? rhythmSectionStart(i, difficultyRef.current, defs) : rhythmSectionStart(i, difficultyRef.current)) - 0.6) section = i;
     return section;
   }
 
@@ -255,7 +274,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function cue(note: RhythmNote) {
     const section = note.section;
     const text = scene.sections[section];
-    const own = notesRef.current.filter((n) => n.section === section && n.kind !== "slide");
+    const own = notesRef.current.filter((n) => n.section === section && n.kind !== "slide" && !isRhythmTrap(n));
     const hits = own.filter((n) => { const j = judgementsRef.current[n.index]; return j === 1 || j === 2; }).length;
     const strokeAt = cuePositions(own.length, text.strokes.length, 0.35);
     const voiceAt = cuePositions(own.length, text.voice.length, 0.75);
@@ -285,11 +304,43 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function flash(kind: Flash["kind"], label: string) { flashRef.current = { id: ++flashSeq.current, kind, label }; }
   function ardourNow() {
     const judgements = judgementsRef.current;
-    return rhythmArdour(rhythmGauge(judgements.length ? judgements : notesRef.current.map(() => 0 as RhythmJudgement), bonusRef.current), apogeeRef.current);
+    return rhythmArdour(rhythmGauge(judgements.length ? judgements : notesRef.current.map(() => 0 as RhythmJudgement), bonusRef.current, kit ? notesRef.current : undefined), apogeeRef.current);
   }
   function buzz(pattern: number | number[]) {
     if (!prefsRef.current.vibration) return;
     try { navigator.vibrate?.(pattern); } catch { /* vibration indisponible */ }
+  }
+  /** Bulle de piège : réplique du personnage (leurre ignoré ou touché, silence tenu ou rompu). */
+  function trapBubble(pool: DialogueLine[] | undefined, id: string) {
+    if (!pool?.length) return;
+    const line = pool[Math.floor(Math.random() * pool.length)];
+    voiceRef.current = { id, line, until: performance.now() + 2200 };
+    if (line.intimateMood) onMood?.(line.intimateMood);
+  }
+  /** Pièges des fiches : 1 = résisté (rien touché), 3 = cédé. Hors justesse, hors combo, hors jauge. */
+  function recordTrap(note: RhythmNote, judgement: 1 | 3) {
+    if (judgementsRef.current[note.index] !== 0) return;
+    judgementsRef.current[note.index] = judgement;
+    const bubbles = kit?.bubbles;
+    const bord = note.kind === "edge" && note.edge === "bord";
+    trapFlashRef.current = { id: ++flashSeq.current, at: performance.now(), kind: judgement === 3 ? "cede" : bord ? "bord" : "resiste" };
+    if (judgement === 3) {
+      if (note.kind === "edge") edgeTouchedRef.current.add(note.index);
+      // Céder coûte un peu de l'élan gagné : le bonus de jauge redescend, la jauge elle-même ne baisse jamais.
+      bonusRef.current = Math.max(0, bonusRef.current - (bord ? 3 : 1));
+      sfxRef.current?.miss();
+      if (!note.call) trapBubble(bord ? bubbles?.bordBroken : bubbles?.ceded, `cede-${note.index}`);
+      flash("rate", bord ? RHYTHM_TRAP_LABELS.bordBroken : RHYTHM_TRAP_LABELS.ceded);
+    } else if (bord) {
+      bonusRef.current = Math.min(RHYTHM_COMBO_BONUS_MAX + 3, bonusRef.current + 3);
+      sfxRef.current?.laugh(ardourNow(), true);
+      trapBubble(bubbles?.bordHeld, `bord-${note.index}`);
+      flash("palier", RHYTHM_TRAP_LABELS.bordHeld);
+      buzz([30, 60, 30]);
+    } else if (note.kind === "bait" && !note.call && Math.random() < 0.34) {
+      if (Math.random() < 0.5) sfxRef.current?.laugh(ardourNow());
+      trapBubble(bubbles?.resisted, `resiste-${note.index}`);
+    }
   }
   function record(note: RhythmNote, judgement: RhythmJudgement, t: number) {
     judgementsRef.current[note.index] = judgement;
@@ -307,7 +358,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       if (threshold) bonusRef.current = Math.min(RHYTHM_COMBO_BONUS_MAX, bonusRef.current + RHYTHM_COMBO_BONUS);
       const ardour = ardourNow();
       hitRef.current = { id: flashSeq.current + 1, at: performance.now(), perfect: judgement === 1 };
-      const gesture = RHYTHM_SECTIONS[note.section]?.gesture || "penetration";
+      const gesture = defs[note.section]?.gesture || "penetration";
       if (note.kind === "slide") sfxRef.current?.slide(gesture, isTransition(note));
       else sfxRef.current?.stroke(judgement === 1, ardour, note.kind === "hold" || note.kind === "final", gesture, note.motion);
       hitRef.current!.note = note;
@@ -332,7 +383,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     let best: RhythmNote | undefined;
     for (const note of notesRef.current) {
       if (note.time - t > windows.good) break;
-      if (judgementsRef.current[note.index] !== 0 || !accept(note)) continue;
+      if (judgementsRef.current[note.index] !== 0 || isRhythmTrap(note) || !accept(note)) continue;
       if (Math.abs(note.time - t) <= windows.good && (!best || Math.abs(note.time - t) < Math.abs(best.time - t))) best = note;
     }
     return best;
@@ -349,11 +400,37 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       completeHold(current.note);
     }
     const level = difficultyRef.current;
+    if (kit && pressTrap(t)) return;
     const note = candidate(t, (n) => n.kind !== "slide" || level === "doux");
     if (!note) return;
     const judgement = judgeOffset(t - note.time, level) || 2;
     record(note, judgement, t);
     if (note.kind === "hold" || note.kind === "final") holdRef.current = { note, judgement, source };
+  }
+  /**
+   * Appui pendant un silence (bord ou gel) : le silence est rompu. Appui sur un leurre (ou pendant son appel),
+   * quand aucune vraie note n'est plus proche : cédé. Renvoie vrai si l'appui a été pris par un piège.
+   */
+  function pressTrap(t: number) {
+    const windows = RHYTHM_DIFFICULTIES[difficultyRef.current];
+    for (const note of notesRef.current) {
+      if (note.time - t > windows.good) break;
+      if (note.kind === "edge" && judgementsRef.current[note.index] === 0 && t >= note.time - 0.02 && t <= note.time + note.duration - 0.05) {
+        // Dernier battement d'un silence : la note suivante peut déjà se jouer, on ne pénalise pas.
+        const next = notesRef.current.find((n) => n.index > note.index && !isRhythmTrap(n));
+        if (next && Math.abs(next.time - t) <= windows.good) return false;
+        recordTrap(note, 3);
+        return true;
+      }
+    }
+    const real = candidate(t, () => true);
+    let bait: RhythmNote | undefined;
+    for (const note of notesRef.current) {
+      if (note.time - t > windows.good) break;
+      if (note.kind === "bait" && judgementsRef.current[note.index] === 0 && Math.abs(note.time - t) <= windows.good && (!bait || Math.abs(note.time - t) < Math.abs(bait.time - t))) bait = note;
+    }
+    if (bait && (!real || Math.abs(bait.time - t) < Math.abs(real.time - t))) { recordTrap(bait, 3); return true; }
+    return false;
   }
   function release(source?: string) {
     const hold = holdRef.current;
@@ -375,7 +452,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   function completeHold(note: RhythmNote) {
     if (note.kind === "final") {
       if (!apogeeRef.current) { apogeeRef.current = true; apogeeAtRef.current = performance.now(); sfxRef.current?.apogee(); buzz([70, 40, 110, 40, 180]); }
-    } else sfxRef.current?.breath(ardourNow(), true, RHYTHM_SECTIONS[note.section]?.gesture);
+    } else sfxRef.current?.breath(ardourNow(), true, defs[note.section]?.gesture);
     flash("palier", note.kind === "final" ? "Apogée" : "Tenu");
   }
   function slide(direction: "left" | "right") {
@@ -399,8 +476,10 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       prefs: () => ({ ...prefsRef.current }), offset: () => offsetRef.current,
       combo: () => ({ current: comboRef.current, max: maxComboRef.current, tier: rhythmComboTier(comboRef.current), bonus: bonusRef.current, events: [...comboEventsRef.current] }),
       shake: () => { const style = layerRef.current?.parentElement?.style; return { y: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-y") || "0") || 0, x: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-x") || "0") || 0, s: Number(style?.getPropertyValue("--rythme-secousse-s") || 0), etire: Number(style?.getPropertyValue("--rythme-etire") || 0), incline: Number.parseFloat(style?.getPropertyValue("--rythme-incline") || "0") || 0, geste: layerRef.current?.parentElement?.dataset.rythmeGeste || null, ...shakeRef.current }; },
-      sections: () => RHYTHM_SECTIONS.map((x, i) => ({ id: x.id, gesture: x.gesture, bpm: x.bpm, label: scene.sections[i]?.label })),
-      section: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); return { index, id: RHYTHM_SECTIONS[index]?.id, gesture: RHYTHM_SECTIONS[index]?.gesture, label: scene.sections[index]?.label }; },
+      sections: () => defs.map((x, i) => ({ id: x.id, gesture: x.gesture, bpm: x.bpm, label: scene.sections[i]?.label, ...(kit ? { rest: Boolean(x.rest), bord: Boolean(x.bord), aura: Boolean(x.aura), baits: x.baits || 0, appel: Boolean(x.appel), chapter: (scene.sections[i] as { chapter?: number }).chapter } : {}) })),
+      section: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); return { index, id: defs[index]?.id, gesture: defs[index]?.gesture, label: scene.sections[index]?.label }; },
+      kit: () => (kit ? { character: kit.character, routeId: kit.anchor.routeId, sex: kit.anchor.sex, start: kit.start, end: kit.end, returnChapter: kit.returnChapter, difficulty: difficultyRef.current, recommended: kit.profile.difficulty } : null),
+      resistance: () => rhythmResistance(notesRef.current, judgementsRef.current),
     };
     (window as unknown as { __sylviniaRythme?: typeof probe }).__sylviniaRythme = probe;
     return () => { delete (window as unknown as { __sylviniaRythme?: typeof probe }).__sylviniaRythme; };
@@ -458,6 +537,12 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       for (const note of notes) {
         if (note.time > t + 0.02) break;
         if (judgements[note.index] !== 0) continue;
+        if (isRhythmTrap(note)) {
+          // Un leurre laissé passer, un silence tenu jusqu'au bout : résisté (la lecture auto résiste toujours).
+          const over = note.kind === "edge" ? judgedT >= note.time + note.duration : judgedT - note.time > windows.good;
+          if (over) recordTrap(note, 1);
+          continue;
+        }
         if (autoRef.current && note.time <= t) {
           record(note, 1, t);
           if (note.kind === "hold" || note.kind === "final") holdRef.current = { note, judgement: 1 };
@@ -474,12 +559,38 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       const section = sectionAt(t);
       if (t > -RHYTHM_LEAD_IN / 2) {
         const text = scene.sections[section];
+        const kitText = kit ? (text as RhythmKit["scene"]["sections"][number]) : undefined;
+        if (kitText && section !== sectionRef.current) {
+          // Fiches : en changeant de phase, les phrases de la séquence précédente non encore débloquées s'affichent quand même (rien du texte n'est perdu).
+          for (let s = 0; s < section; s++) (scene.sections[s] as RhythmKit["scene"]["sections"][number]).tierLines.forEach((group, g) => group.forEach((line, k) => queue(`s${s}-t${g + 1}-${k}`, line, "tier")));
+        }
         if (!unlockedRef.current.has(`intro-${section}`)) { queue(`intro-${section}`, text.intro, "intro"); onMood?.(text.intimateMood); }
         sectionRef.current = section;
-        const tiers = sectionTiersReached(notes, judgements, section);
-        for (let tier = 1; tier <= tiers; tier++) {
-          const id = `s${section}-t${tier}`;
-          if (!unlockedRef.current.has(id)) { queue(id, text.tiers[tier - 1], "tier"); flash("palier", `Palier ${ROMAN[tier]}`); }
+        if (kitText?.gel) {
+          // Rupture écrite : toute la séquence s'affiche, la piste attend sans rien demander.
+          kitText.tierLines[0].forEach((line, k) => queue(`s${section}-t1-${k}`, line, "tier"));
+        } else if (kitText) {
+          // Dernière phase : ses phrases (le sommet écrit) se débloquent au fil de la phase, quelle que soit la justesse.
+          const own = notes.filter((n) => n.section === section && !isRhythmTrap(n));
+          const reached = own.length ? own.filter((n) => n.time <= t).length / own.length : 0;
+          const tiers = section === defs.length - 1 ? [0.22, 0.5, 0.75].filter((x) => reached >= x).length : sectionTiersReached(notes, judgements, section);
+          for (let tier = 1; tier <= tiers; tier++) {
+            const id = `s${section}-t${tier}`;
+            if (!unlockedRef.current.has(id)) { unlockedRef.current.add(id); kitText.tierLines[tier - 1].forEach((line, k) => queue(`${id}-${k}`, line, "tier")); flash("palier", `Palier ${ROMAN[tier]}`); }
+          }
+        } else {
+          const tiers = sectionTiersReached(notes, judgements, section);
+          for (let tier = 1; tier <= tiers; tier++) {
+            const id = `s${section}-t${tier}`;
+            if (!unlockedRef.current.has(id)) { queue(id, text.tiers[tier - 1], "tier"); flash("palier", `Palier ${ROMAN[tier]}`); }
+          }
+        }
+        // Aura (fiches) : une mesure avant la vague, la piste pulse et elle prévient.
+        if (kit) {
+          const soon = notes.find((n) => n.aura && n.time > t && n.time - t < 4 * n.beat * (defs[n.section]?.aura?.factor || 1));
+          if (soon && !auraCuedRef.current.has(soon.section)) { auraCuedRef.current.add(soon.section); trapBubble(kit.bubbles.aura, `aura-${soon.section}`); }
+          const call = notes.find((n) => n.call && judgements[n.index] === 0 && n.time > t && n.time - t < 1.2);
+          if (call && !auraCuedRef.current.has(-1 - call.section)) { auraCuedRef.current.add(-1 - call.section); trapBubble(kit.bubbles.call, `appel-${call.section}`); }
         }
       }
       // Légende courante et bulles
@@ -491,18 +602,21 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       if ((!current || nowMs >= current.until) && captionsRef.current.length) {
         const next = captionsRef.current.shift()!;
         const words = format(next.line.text).split(/\s+/).length;
-        next.until = nowMs + Math.max(3200, Math.min(7000, words * 260));
+        next.until = nowMs + Math.max(3200, Math.min(captionMax, words * 260));
         captionRef.current = next;
         if (next.line.intimateMood) onMood?.(next.line.intimateMood);
       } else if (current && nowMs >= current.until + 2500) captionRef.current = null;
       // Sauvegarde continue (toutes les deux secondes) : un rechargement reprend au même endroit.
       if (nowMs - lastSaveRef.current > 2000) { lastSaveRef.current = nowMs; persist(); }
-      if (t >= chartEnd + 2.2) {
+      // Fiches : la partie attend que la dernière phrase écrite ait été lue (au plus vingt secondes de plus).
+      const reading = kit && (captionsRef.current.length > 0 || (captionRef.current && nowMs < captionRef.current.until)) && t < chartEnd + 22;
+      if (t >= chartEnd + 2.2 && !reading) {
         cancelAnimationFrame(raf);
         stopClock();
         duck(false);
-        const score = rhythmScore(judgements);
-        const final: RhythmResult = { quality: rhythmQuality(judgements), perfect: score.perfect, good: score.good, miss: score.miss, accuracy: score.accuracy, maxCombo: maxComboRef.current, auto: autoRef.current };
+        const score = kit ? rhythmScore(judgements, notes) : rhythmScore(judgements);
+        const quality = kit ? rhythmQuality(judgements, notes, kit.profile.resistanceWeight) : rhythmQuality(judgements);
+        const final: RhythmResult = { quality, perfect: score.perfect, good: score.good, miss: score.miss, accuracy: score.accuracy, maxCombo: maxComboRef.current, auto: autoRef.current, ...(kit ? { resistance: rhythmResistance(notes, judgements) } : {}) };
         storeRhythmSave(undefined, saveKey);
         setSaved(undefined);
         setResult(final);
@@ -547,7 +661,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const t = timeRef.current;
   const notes = notesRef.current;
   const judgements = judgementsRef.current;
-  const gauge = rhythmGauge(judgements.length ? judgements : notes.map(() => 0 as RhythmJudgement), bonusRef.current);
+  const gauge = rhythmGauge(judgements.length ? judgements : notes.map(() => 0 as RhythmJudgement), bonusRef.current, kit ? notes : undefined);
   const sectionIndex = sectionAt(t);
   const sectionText = scene.sections[sectionIndex];
   const tiers = judgements.length ? sectionTiersReached(notes, judgements, sectionIndex) : 0;
@@ -555,7 +669,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
 
   // Réactions de l'interface : plus le plaisir monte, plus elles battent fort, toujours sur les coups réussis.
   const nowMs = performance.now();
-  const beat = rhythmBeatAt(Math.max(0, t), difficulty);
+  const beat = kit ? rhythmBeatAt(Math.max(0, t), difficulty, defs) : rhythmBeatAt(Math.max(0, t), difficulty);
   const ardour = rhythmArdour(gauge, apogeeRef.current);
   const fx = prefs.effects === "plein" ? 1 : 0.35;
   const hit = hitRef.current;
@@ -583,11 +697,11 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   const tier = ardour >= 0.75 ? 3 : ardour >= 0.5 ? 2 : ardour >= 0.25 ? 1 : 0;
   // Mouvement du sprite propre au geste de la phase : étirement (main), hochement (bouche), ondulation et frissons
   // (langue), secousse dans l'axe de la position (pénétration). Toujours sur les coups réussis, plafonné au cadre.
-  const sectionDef = RHYTHM_SECTIONS[sectionIndex];
+  const sectionDef = defs[sectionIndex];
   const gesture = sectionDef?.gesture || "penetration";
   const shakeAxis = sectionDef?.shake || "vertical";
   const shakeAmp = playing && (hit || gesture === "langue") ? rhythmShakeAmplitude(ardour, rhythmComboLevel(comboRef.current), apogeeRef.current, prefs) : 0;
-  const ownNotes = notes.filter((note) => note.section === sectionIndex);
+  const ownNotes = notes.filter((note) => note.section === sectionIndex && !isRhythmTrap(note));
   const sectionProgress = ownNotes.length ? clamp01((t - ownNotes[0].time) / Math.max(0.1, ownNotes[ownNotes.length - 1].time - ownNotes[0].time)) : 0;
   const motionNow = rhythmGestureMotion({
     gesture, axis: shakeAxis, amp: shakeAmp, sinceHit: hit ? sinceHit : 99, beat, t: Math.max(0, t),
@@ -629,6 +743,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     const j = judgements[note.index];
     const tail = note.time + note.duration;
     if (note.time - t > windows.approach + 0.05) return false;
+    if (isRhythmTrap(note)) return j === 0 ? t - tail < 0.25 : j === 3 && t - tail < 0.3;
     if (j === 0) return t - tail < 0.25;
     return (note.kind === "hold" || note.kind === "final") && holdRef.current?.note.index === note.index;
   });
@@ -683,10 +798,18 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
 
   const comboNow = comboRef.current;
   const comboLevel = rhythmComboLevel(comboNow);
-  return <div ref={layerRef} className={`rythme-layer phase-${phase} geste-${gesture} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} ${suggestive ? "suggestif" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""} ${comboLevel ? `en-combo combo-${comboLevel}` : ""} ${comboActive ? `combo-palier palier-${comboEvent!.level}` : ""}`}
+  // Fiches : vague d'aura (annoncée une mesure avant), silence en cours, appel, jauge de Résistance.
+  const auraSoon = kit && playing ? notes.some((n) => n.aura && n.time > t && n.time - t < 4 * beat) : false;
+  const auraNow = kit && playing ? notes.some((n) => n.aura && Math.abs(n.time - t) < n.beat * 1.5) : false;
+  const edgeNow = kit && playing ? notes.find((n) => n.kind === "edge" && t >= n.time && t <= n.time + n.duration) : undefined;
+  const callNow = kit && playing ? notes.some((n) => n.call && Math.abs(n.time - t) < 0.6) : false;
+  const resistance = kit ? rhythmResistance(notes, judgements) : null;
+  const trapFlash = trapFlashRef.current && nowMs - trapFlashRef.current.at < 650 ? trapFlashRef.current : null;
+  const persoClass = kit ? `perso perso-${kit.character} ${auraSoon ? "aura-annonce" : ""} ${auraNow ? "aura-vague" : ""} ${edgeNow ? `silence silence-${edgeNow.edge}` : ""} ${callNow ? "appel-en-cours" : ""} ${trapFlash ? `piege-${trapFlash.kind}` : ""}` : "";
+  return <div ref={layerRef} className={`rythme-layer phase-${phase} geste-${gesture} ardeur-${tier} ${apogeeRef.current ? "apogee" : ""} ${prefs.auto ? "auto" : ""} ${suggestive ? "suggestif" : ""} effets-${prefs.effects} ${miss ? "rate-recent" : ""} ${comboLevel ? `en-combo combo-${comboLevel}` : ""} ${comboActive ? `combo-palier palier-${comboEvent!.level}` : ""} ${persoClass}`}
     onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}
-    style={{ "--pulse": pulse.toFixed(3), "--ardeur": ardour.toFixed(3), "--halo": halo.toFixed(3), "--bat": bat.toFixed(3), "--vignette": vignette.toFixed(3), "--combo": comboGlow.toFixed(3), "--combo-battement": comboPulse.toFixed(3), "--jauge": `${gauge}%` } as React.CSSProperties}
-    data-rythme-phase={phase} data-ardeur={tier} data-geste={gesture}>
+    style={{ ...(kit ? { "--rose-r": kit.profile.palette.vive, "--rouge-r": kit.profile.palette.profonde } : {}), "--pulse": pulse.toFixed(3), "--ardeur": ardour.toFixed(3), "--halo": halo.toFixed(3), "--bat": bat.toFixed(3), "--vignette": vignette.toFixed(3), "--combo": comboGlow.toFixed(3), "--combo-battement": comboPulse.toFixed(3), "--jauge": `${gauge}%` } as React.CSSProperties}
+    data-rythme-phase={phase} data-ardeur={tier} data-geste={gesture} {...(kit ? { "data-perso": kit.character } : {})}>
     {(phase === "play" || phase === "countdown" || phase === "paused") && <>
       <div className="rythme-vignette" aria-hidden="true" />
       <div className="rythme-combo-voile" aria-hidden="true" />
@@ -703,7 +826,15 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
             const active = holdRef.current?.note.index === note.index;
             const from = active ? 0 : head;
             const to = Math.min(1.05, tailEnd);
-            return <div key={note.index} className={`rythme-note ${note.kind} ${note.direction || ""} ${note.motion || ""} ${active ? "tenue" : ""}`}
+            if (isRhythmTrap(note)) {
+              // Leurre (contour pâle sans cœur, « elle » pendant un appel) ou silence (bande à ne pas toucher).
+              const state = judgements[note.index] === 3 ? "cede" : "";
+              return <div key={note.index} className={`rythme-note ${note.kind} ${note.edge || ""} ${note.call ? "appel" : ""} ${state}`}
+                style={{ bottom: `${Math.max(0, head) * 100}%`, height: note.duration ? `${Math.max(0, Math.min(1.05, tailEnd) - Math.max(0, head)) * 100}%` : undefined } as React.CSSProperties}>
+                <i className="tete">{note.kind === "edge" ? (note.edge === "bord" ? RHYTHM_TRAP_LABELS.bordNote : RHYTHM_TRAP_LABELS.gelNote) : note.call ? "·" : ""}</i>
+              </div>;
+            }
+            return <div key={note.index} className={`rythme-note ${note.kind} ${note.direction || ""} ${note.motion || ""} ${note.aura ? "aura" : ""} ${active ? "tenue" : ""}`}
               style={{ bottom: `${from * 100}%`, height: note.duration ? `${Math.max(0, to - from) * 100}%` : undefined } as React.CSSProperties}>
               <i className="tete">{note.kind === "slide" ? (note.direction === "left" ? "‹" : "›") : note.kind === "final" ? "✦" : note.motion === "haut" ? "˄" : note.motion === "bas" ? "˅" : ""}</i>
             </div>;
@@ -711,6 +842,9 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
           <div className="rythme-cible"><i />{hit && sinceHit < 0.6 && <b key={hit.id} className={`rythme-onde ${hit.perfect ? "parfait" : ""}`} />}{comboActive && comboEvent && <b key={`vague-${comboEvent.id}`} className="rythme-onde combo" />}</div>
         </div>
         <div className="rythme-jauge" title="Plaisir"><b /><span>{Math.round(gauge)}</span>{[1, 2, 3].map((n) => <em key={n} className={n <= tiers ? "atteint" : ""} />)}</div>
+        {resistance && resistance.total > 0 && <div className="rythme-resistance" title={RHYTHM_TRAP_LABELS.resistance} style={{ "--resistance": `${resistance.gauge}%` } as React.CSSProperties}><b /><span>{RHYTHM_TRAP_LABELS.resistance}</span></div>}
+        {edgeNow && <div className={`rythme-silence-bandeau ${edgeNow.edge}`}>{edgeNow.edge === "bord" ? RHYTHM_TRAP_LABELS.bordBanner : RHYTHM_TRAP_LABELS.gel}</div>}
+        {callNow && <div className="rythme-silence-bandeau appel">{RHYTHM_TRAP_LABELS.call}</div>}
         <div className={`rythme-combo ${comboLevel ? `niveau-${comboLevel}` : ""}`} data-combo={comboNow}>{comboNow > 2 ? <>×{comboNow}</> : null}</div>
         {comboActive && comboEvent && <div key={`combo-${comboEvent.id}`} className={`rythme-combo-eclat niveau-${comboEvent.level}`}><b>Combo</b><span>×{comboEvent.combo}</span></div>}
         {flashNow && <div key={flashNow.id} className={`rythme-juge ${flashNow.kind}`}>{flashNow.label}</div>}
@@ -734,7 +868,7 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       <p className="rythme-consigne">{scene.instruction}</p>
       <ul className="rythme-touches"><li>⌨ {scene.controls.keyboard}</li><li>☝ {scene.controls.touch}</li></ul>
       <div className="rythme-reglages">
-        <div className="rythme-choix" role="group" aria-label="Difficulté">{(Object.keys(RHYTHM_DIFFICULTIES) as RhythmDifficulty[]).map((id) => <button type="button" key={id} className={difficulty === id ? "actif" : ""} onClick={() => { updatePrefs({ difficulty: id }); notesRef.current = buildRhythmChart(id); }}>{RHYTHM_DIFFICULTIES[id].label}</button>)}</div>
+        <div className="rythme-choix" role="group" aria-label="Difficulté">{(Object.keys(RHYTHM_DIFFICULTIES) as RhythmDifficulty[]).map((id) => <button type="button" key={id} className={difficulty === id ? "actif" : ""} onClick={() => { setDifficulty(id); notesRef.current = chartFor(id); }}>{RHYTHM_DIFFICULTIES[id].label}{kit && kit.profile.difficulty === id ? <small className="rythme-recommande"> · {RHYTHM_TRAP_LABELS.recommended}</small> : null}</button>)}</div>
         <label className="rythme-case"><input type="checkbox" checked={prefs.auto} onChange={(event) => updatePrefs({ auto: event.target.checked })} /> Mode auto (lire sans jouer)</label>
         <label className="rythme-curseur">Décalage des coups <input type="range" min={-200} max={200} step={10} value={prefs.offsetMs} onChange={(event) => updatePrefs({ offsetMs: Number(event.target.value) })} /> <b>{prefs.offsetMs > 0 ? "+" : ""}{prefs.offsetMs} ms</b></label>
       </div>
@@ -764,7 +898,9 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     {phase === "result" && result && <div className="rythme-panneau resultat">
       <p className="eyebrow">{result.auto ? "Lecture auto" : RHYTHM_DIFFICULTIES[difficulty].label} · {Math.round(result.accuracy * 100)} % de justesse</p>
       <h3>{scene.conclusions[result.quality].title}</h3>
-      <div className="rythme-bilan"><span className="parfait"><b>{result.perfect}</b> Parfait</span><span className="bien"><b>{result.good}</b> Bien</span><span className="rate"><b>{result.miss}</b> Raté</span><span><b>×{result.maxCombo}</b> enchaînement</span></div>
+      <div className="rythme-bilan"><span className="parfait"><b>{result.perfect}</b> Parfait</span><span className="bien"><b>{result.good}</b> Bien</span><span className="rate"><b>{result.miss}</b> Raté</span><span><b>×{result.maxCombo}</b> enchaînement</span>{result.resistance && result.resistance.total > 0 && <span className="resistance"><b>{result.resistance.resisted}/{result.resistance.resisted + result.resistance.ceded}</b> {RHYTHM_TRAP_LABELS.resistance}</span>}</div>
+      {kit && scene.conclusions[result.quality].lines[0] && <p className="rythme-bulle-fin"><span className="qui">{format(scene.conclusions[result.quality].lines[0].speaker)}</span>{format(scene.conclusions[result.quality].lines[0].text)}</p>}
+      {kit && relationNote && result.quality === "tatonnement" && !result.auto && <p className="rythme-relation">{relationNote}</p>}
       <div className="rythme-actions">
         <button type="button" className="btn principal primary-action" onClick={() => onFinish(result)}>Continuer</button>
         <button type="button" className="btn" onClick={() => begin()}>Rejouer</button>

@@ -40,7 +40,7 @@
     "test:bv-cross": "node scripts/validate-bellirith-valurn-cross.mjs",
     "test:calendar": "node scripts/validate-calendar.mjs",
     "test:an-cross": "node scripts/validate-an-cross.mjs",
-    "test:rhythm": "node scripts/validate-rhythm-intimacy.mjs"
+    "test:rhythm": "node scripts/validate-rhythm-intimacy.mjs && node scripts/validate-rhythm-persos.mjs"
   },
   "dependencies": {
     "react": "19.2.6",

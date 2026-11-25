@@ -23,7 +23,12 @@
  */
 
 export type RhythmDifficulty = "doux" | "normal" | "intense";
-export type RhythmNoteKind = "tap" | "hold" | "slide" | "final";
+/**
+ * bait : leurre (à ne pas toucher : l'ignorer, c'est résister) ; edge : silence où il ne faut rien toucher
+ * (« bord » quand elle s'arrête au bord, « gel » pendant une rupture écrite). Ces deux pièges ne comptent
+ * ni dans la justesse ni dans la jauge : ils nourrissent la Résistance (voir rhythmResistance).
+ */
+export type RhythmNoteKind = "tap" | "hold" | "slide" | "final" | "bait" | "edge";
 export type RhythmJudgement = 0 | 1 | 2 | 3; // 0 : à jouer · 1 : Parfait · 2 : Bien · 3 : Raté
 export type RhythmQuality = "embrasement" | "accord" | "tatonnement";
 
@@ -40,6 +45,12 @@ export type RhythmNote = {
   section: number;
   /** Intervalle entre deux coups à cet endroit (secondes) : sert aux effets en rythme. */
   beat: number;
+  /** Vague d'aura : coup joué au tempo accéléré imposé par le personnage. */
+  aura?: boolean;
+  /** Silence (edge) : bord où elle s'arrête, ou gel d'une rupture écrite. */
+  edge?: "bord" | "gel";
+  /** Appel (coup pour coup) : coup joué par elle, à écouter sans toucher, puis rejoué par vous. */
+  call?: boolean;
 };
 
 export type RhythmSectionDef = {
@@ -64,9 +75,19 @@ export type RhythmSectionDef = {
    * chaque pas dure « beats » battements avant le pas suivant ; une tenue dure tout son pas.
    */
   motif?: RhythmMotifStep[];
+  /** Fiches personnages (lot 0) : leurre tous les n coups simples, hors tenues et montée finale. */
+  baits?: number;
+  /** Vague d'aura : à partir du coup « at », « strokes » coups au tempo multiplié par « factor ». */
+  aura?: { at: number; strokes: number; factor: number };
+  /** Silence au bord : après le coup « at », « beats » battements sans aucune note. */
+  bord?: { at: number; beats: number };
+  /** Rupture écrite : la phase n'a aucun coup, seulement un silence de « beats » battements. */
+  rest?: { beats: number };
+  /** Coup pour coup : motifs de quatre coups joués par elle (appel) puis rejoués par vous (réponse). */
+  appel?: number[][];
 };
 export type RhythmShakeAxis = "vertical" | "profondeur";
-export type RhythmGesture = "main" | "bouche" | "langue" | "penetration";
+export type RhythmGesture = "main" | "bouche" | "langue" | "frottement" | "penetration";
 export type RhythmMotifStep = { kind: "tap" | "hold" | "slide"; beats: number; motion?: "haut" | "bas"; direction?: "left" | "right" };
 
 export const RHYTHM_TRACK = "intimate";
@@ -100,18 +121,39 @@ export const RHYTHM_DIFFICULTIES: Record<RhythmDifficulty, { label: string; perf
   intense: { label: "Intense", perfect: 0.048, good: 0.105, approach: 1.15, tempo: 1.12 },
 };
 
-export function buildRhythmChart(difficulty: RhythmDifficulty): RhythmNote[] {
+export function buildRhythmChart(difficulty: RhythmDifficulty, sections: RhythmSectionDef[] = RHYTHM_SECTIONS): RhythmNote[] {
   const factor = RHYTHM_DIFFICULTIES[difficulty].tempo;
   const notes: RhythmNote[] = [];
   let time = 0;
   const push = (note: Omit<RhythmNote, "index">) => { notes.push({ index: notes.length, ...note }); };
-  RHYTHM_SECTIONS.forEach((section, sectionIndex) => {
+  sections.forEach((section, sectionIndex) => {
     const beat = 60 / (section.bpm * factor);
     if (section.slide) {
       // Le dernier coup de la position précédente est suivi de deux battements au nouveau tempo, le glissé tombe sur le premier.
       time += beat;
       push({ time, duration: 0, kind: "slide", direction: section.slide, section: sectionIndex, beat });
       time += beat;
+    }
+    if (section.rest) {
+      // Rupture écrite : rien à frapper, un silence à tenir sans toucher (le texte s'affiche pendant ce temps).
+      push({ time, duration: section.rest.beats * beat, kind: "edge", edge: "gel", section: sectionIndex, beat });
+      time += section.rest.beats * beat;
+      return;
+    }
+    if (section.appel) {
+      // Coup pour coup : elle joue un motif (appel, à écouter), un temps de respiration, puis vous le rejouez (réponse).
+      section.appel.forEach((motif, m) => {
+        if (m > 0) time += beat;
+        for (const role of ["call", "answer"] as const) {
+          motif.forEach((beats, i) => {
+            if (i > 0) time += motif[i - 1] * beat;
+            push(role === "call" ? { time, duration: 0, kind: "bait", call: true, section: sectionIndex, beat } : { time, duration: 0, kind: "tap", section: sectionIndex, beat });
+          });
+          time += motif[motif.length - 1] * beat + (role === "call" ? beat : 0);
+        }
+      });
+      if (!section.ramp) return;
+      time -= beat;
     }
     if (section.motif) {
       const motif = section.motif;
@@ -120,18 +162,36 @@ export function buildRhythmChart(difficulty: RhythmDifficulty): RhythmNote[] {
         if (i > 0) time += motif[(i - 1) % motif.length].beats * beat;
         const extra = { ...(step.motion ? { motion: step.motion } : {}), ...(step.direction ? { direction: step.direction } : {}) };
         push({ time, duration: step.kind === "hold" ? step.beats * beat : 0, kind: step.kind, section: sectionIndex, beat, ...extra });
+        // Leurre : entre deux pas d'au moins un battement, jamais après une tenue ni pendant un glissé.
+        if (section.baits && step.kind === "tap" && step.beats >= 1 && (i + 1) % section.baits === 0 && i < section.strokes - 1) push({ time: time + step.beats * beat / 2, duration: 0, kind: "bait", section: sectionIndex, beat });
+        if (section.bord && i === section.bord.at) {
+          time += step.beats * beat;
+          push({ time, duration: section.bord.beats * beat, kind: "edge", edge: "bord", section: sectionIndex, beat });
+          time += section.bord.beats * beat - motif[i % motif.length].beats * beat;
+        }
       }
       // La phase suivante commence après la fin du dernier pas (une tenue est toujours menée à son terme).
       const last = motif[(section.strokes - 1) % motif.length];
       time += last.beats * beat;
-      return;
+      if (!section.ramp) return;
+      time -= beat;
     }
-    for (let i = 0; i < section.strokes; i++) {
-      if (i > 0 || section.slide) time += i === 0 ? 0 : beat;
+    if (!section.motif && !section.appel) for (let i = 0; i < section.strokes; i++) {
+      const auraOn = section.aura && i >= section.aura.at && i < section.aura.at + section.aura.strokes;
+      const step = auraOn ? beat / section.aura!.factor : beat;
+      if (i > 0 || section.slide) time += i === 0 ? 0 : step;
       if (section.holds.includes(i)) {
         push({ time, duration: beat * section.holdBeats, kind: "hold", section: sectionIndex, beat });
         time += beat * (section.holdBeats - 1);
-      } else push({ time, duration: 0, kind: "tap", section: sectionIndex, beat });
+      } else {
+        push({ time, duration: 0, kind: "tap", section: sectionIndex, beat: step, ...(auraOn ? { aura: true } : {}) });
+        if (section.baits && !auraOn && (i + 1) % section.baits === 0 && i < section.strokes - 1 && !section.holds.includes(i + 1)) push({ time: time + beat / 2, duration: 0, kind: "bait", section: sectionIndex, beat });
+      }
+      if (section.bord && i === section.bord.at) {
+        time += beat;
+        push({ time, duration: section.bord.beats * beat, kind: "edge", edge: "bord", section: sectionIndex, beat });
+        time += section.bord.beats * beat - beat;
+      }
     }
     if (section.ramp) {
       const { strokes, toBpm, final } = section.ramp;
@@ -146,28 +206,47 @@ export function buildRhythmChart(difficulty: RhythmDifficulty): RhythmNote[] {
       push({ time, duration: final, kind: "final", section: sectionIndex, beat: step });
     }
   });
+  // Les leurres s'intercalent entre deux coups : on remet la carte dans l'ordre du temps (tri stable, sans effet sur une carte déjà ordonnée).
+  if (notes.some((note, i) => i > 0 && note.time < notes[i - 1].time)) notes.sort((a, b) => a.time - b.time).forEach((note, i) => { note.index = i; });
   return notes;
 }
 
 const chartCache = new Map<RhythmDifficulty, RhythmNote[]>();
-function cachedChart(difficulty: RhythmDifficulty) {
+const sectionCharts = new WeakMap<RhythmSectionDef[], Map<RhythmDifficulty, RhythmNote[]>>();
+function cachedChart(difficulty: RhythmDifficulty, sections?: RhythmSectionDef[]) {
+  if (sections && sections !== RHYTHM_SECTIONS) {
+    let byLevel = sectionCharts.get(sections);
+    if (!byLevel) { byLevel = new Map(); sectionCharts.set(sections, byLevel); }
+    if (!byLevel.has(difficulty)) byLevel.set(difficulty, buildRhythmChart(difficulty, sections));
+    return byLevel.get(difficulty)!;
+  }
   if (!chartCache.has(difficulty)) chartCache.set(difficulty, buildRhythmChart(difficulty));
   return chartCache.get(difficulty)!;
 }
 
-export function rhythmSectionStart(sectionIndex: number, difficulty: RhythmDifficulty = "normal"): number {
-  const first = cachedChart(difficulty).find((note) => note.section === sectionIndex);
+export function rhythmSectionStart(sectionIndex: number, difficulty: RhythmDifficulty = "normal", sections?: RhythmSectionDef[]): number {
+  const first = cachedChart(difficulty, sections).find((note) => note.section === sectionIndex);
   return first ? first.time : 0;
 }
 
-export function rhythmChartEnd(difficulty: RhythmDifficulty = "normal"): number {
-  const last = cachedChart(difficulty).at(-1)!;
+export function rhythmChartEnd(difficulty: RhythmDifficulty = "normal", sections?: RhythmSectionDef[]): number {
+  const last = cachedChart(difficulty, sections).at(-1)!;
   return last.time + last.duration;
 }
 
+/** Piège (leurre ou silence) : hors justesse et hors jauge, il ne compte que pour la Résistance. */
+export function isRhythmTrap(note: Pick<RhythmNote, "kind">): boolean { return note.kind === "bait" || note.kind === "edge"; }
+
+/** Empreinte d'une partition (sauvegardes v4) : nombre de notes, de pièges et cadence, pour refuser une reprise si l'ancrage a changé. */
+export function rhythmChartSignature(chart: RhythmNote[]): string {
+  const traps = chart.filter(isRhythmTrap).length;
+  const end = chart.length ? chart.at(-1)!.time + chart.at(-1)!.duration : 0;
+  return `${chart.length}:${traps}:${Math.round(end * 100)}`;
+}
+
 /** Tempo courant (battement en secondes) au temps t : sert aux pulsations d'interface et au décompte. */
-export function rhythmBeatAt(t: number, difficulty: RhythmDifficulty = "normal"): number {
-  const chart = cachedChart(difficulty);
+export function rhythmBeatAt(t: number, difficulty: RhythmDifficulty = "normal", sections?: RhythmSectionDef[]): number {
+  const chart = cachedChart(difficulty, sections);
   let beat = chart[0].beat;
   for (const note of chart) { if (note.time > t) break; beat = note.beat; }
   return beat;
@@ -184,8 +263,10 @@ export function judgeOffset(delta: number, difficulty: RhythmDifficulty): Rhythm
 export const JUDGEMENT_POINTS: Record<RhythmJudgement, number> = { 0: 0, 1: 1, 2: 0.6, 3: 0 };
 
 export type RhythmSaveState = {
-  /** 3 : partie en sept phases (caresses, bouche, langue, puis les quatre positions). */
-  v: 3;
+  /** 3 : partie en sept phases du prototype de Hylee. 4 : scènes des fiches personnages, avec l'empreinte de la partition. */
+  v: 3 | 4;
+  /** Empreinte de la partition (v4 seulement, voir rhythmChartSignature). */
+  sig?: string;
   scene: string;
   difficulty: RhythmDifficulty;
   auto: boolean;
@@ -203,8 +284,9 @@ export type RhythmSaveState = {
 
 export type RhythmScore = { perfect: number; good: number; miss: number; total: number; points: number; accuracy: number };
 
-export function rhythmScore(judgements: RhythmJudgement[]): RhythmScore {
+export function rhythmScore(judgements: RhythmJudgement[], notes?: RhythmNote[]): RhythmScore {
   let perfect = 0, good = 0, miss = 0, points = 0;
+  if (notes?.some(isRhythmTrap)) judgements = judgements.filter((_, i) => !notes[i] || !isRhythmTrap(notes[i]));
   for (const j of judgements) {
     if (j === 1) perfect++;
     else if (j === 2) good++;
@@ -216,7 +298,8 @@ export function rhythmScore(judgements: RhythmJudgement[]): RhythmScore {
 }
 
 /** Jauge de plaisir (0 à 100) : elle ne fait que monter, un raté ne la vide jamais. */
-export function rhythmGauge(judgements: RhythmJudgement[], bonus = 0): number {
+export function rhythmGauge(judgements: RhythmJudgement[], bonus = 0, notes?: RhythmNote[]): number {
+  if (notes?.some(isRhythmTrap)) judgements = judgements.filter((_, i) => !notes[i] || !isRhythmTrap(notes[i]));
   const max = judgements.length || 1;
   let points = 0;
   for (const j of judgements) points += JUDGEMENT_POINTS[j];
@@ -326,7 +409,7 @@ export const RHYTHM_TIER_RULES = [
 ];
 
 export function sectionTiersReached(notes: RhythmNote[], judgements: RhythmJudgement[], section: number): number {
-  const own = notes.filter((note) => note.section === section);
+  const own = notes.filter((note) => note.section === section && !isRhythmTrap(note));
   if (!own.length) return 0;
   const judged = own.filter((note) => judgements[note.index] !== 0);
   const progress = judged.length / own.length;
@@ -337,19 +420,50 @@ export function sectionTiersReached(notes: RhythmNote[], judgements: RhythmJudge
   return tiers;
 }
 
-export function rhythmQuality(judgements: RhythmJudgement[]): RhythmQuality {
-  const { accuracy } = rhythmScore(judgements);
+export function rhythmQuality(judgements: RhythmJudgement[], notes?: RhythmNote[], resistanceWeight = 0): RhythmQuality {
+  let { accuracy } = rhythmScore(judgements, notes);
+  // Fiches à pièges (Bellirith) : la Résistance pèse un peu dans la fin obtenue (céder coûte peu de justesse).
+  if (notes && resistanceWeight > 0) {
+    const resistance = rhythmResistance(notes, judgements);
+    if (resistance.total) accuracy = accuracy * (1 - resistanceWeight) + resistanceWeight * resistance.ratio;
+  }
   if (accuracy >= 0.85) return "embrasement";
   if (accuracy >= 0.6) return "accord";
   return "tatonnement";
 }
 
+export type RhythmResistance = { resisted: number; ceded: number; total: number; ratio: number; gauge: number };
+/**
+ * Résistance (fiches à pièges) : chaque leurre ignoré et chaque silence tenu la remplit,
+ * chaque leurre touché ou silence rompu la vide un peu. ratio : part des pièges joués où l'on a résisté.
+ */
+export function rhythmResistance(notes: RhythmNote[], judgements: RhythmJudgement[]): RhythmResistance {
+  let resisted = 0, ceded = 0, score = 0, total = 0;
+  for (const note of notes) {
+    if (!isRhythmTrap(note)) continue;
+    total++;
+    const j = judgements[note.index];
+    const weight = note.kind === "edge" && note.edge === "bord" ? 3 : 1;
+    if (j === 1) { resisted++; score += weight; } else if (j === 3) { ceded++; score -= weight * 0.6; }
+  }
+  const judged = resisted + ceded;
+  const max = notes.reduce((sum, note) => sum + (isRhythmTrap(note) ? (note.kind === "edge" && note.edge === "bord" ? 3 : 1) : 0), 0) || 1;
+  return { resisted, ceded, total, ratio: judged ? resisted / judged : 1, gauge: Math.max(0, Math.min(100, Math.round(score / max * 100))) };
+}
+
 export const RHYTHM_STORAGE_KEY = "sylvinia_ca_rythme_v1";
 
-export function loadRhythmSave(scene: string, storage: Pick<Storage, "getItem"> | undefined = globalThis.localStorage): RhythmSaveState | undefined {
+export function loadRhythmSave(scene: string, storage: Pick<Storage, "getItem"> | undefined = globalThis.localStorage, sections?: RhythmSectionDef[]): RhythmSaveState | undefined {
   try {
     const all = JSON.parse(storage?.getItem(RHYTHM_STORAGE_KEY) || "{}") as Record<string, RhythmSaveState>;
     const entry = all[scene];
+    if (sections && sections !== RHYTHM_SECTIONS) {
+      // Fiches personnages : v4 et même empreinte, sinon la partie repart proprement du début.
+      if (!entry || entry.v !== 4 || !Array.isArray(entry.judgements) || !(entry.difficulty in RHYTHM_DIFFICULTIES)) return undefined;
+      const chart = buildRhythmChart(entry.difficulty, sections);
+      if (entry.judgements.length !== chart.length || entry.sig !== rhythmChartSignature(chart)) return undefined;
+      return entry;
+    }
     if (!entry || entry.v !== 3 || !Array.isArray(entry.judgements)) return undefined;
     if (entry.judgements.length !== buildRhythmChart(entry.difficulty).length) return undefined;
     return entry;
@@ -381,6 +495,8 @@ export type RhythmPrefs = {
   mute: Record<RhythmBus | "musique", boolean>;
   /** Bruits corporels remplacés par des sons neutres synthétisés (battement sourd, percussion feutrée, tic, souffle). */
   neutral: boolean;
+  /** Difficulté choisie pour chaque personnage (fiches) ; absente : la difficulté recommandée du personnage. */
+  difficultyBy?: Record<string, RhythmDifficulty>;
 };
 /** Familles de sons du mixage : voix de Hylee, bruits corporels, ambiance (draps, baisers), interface (raté, combo). */
 export type RhythmBus = "voix" | "corps" | "ambiance" | "interface";
@@ -411,6 +527,9 @@ export function loadRhythmPrefs(): RhythmPrefs {
       mix: Object.fromEntries(RHYTHM_BUSES.map((bus) => [bus, clamp01(raw.mix?.[bus], base.mix[bus])])) as Record<RhythmBus, number>,
       mute: Object.fromEntries([...RHYTHM_BUSES, "musique"].map((bus) => [bus, typeof raw.mute?.[bus] === "boolean" ? raw.mute[bus] : false])) as Record<RhythmBus | "musique", boolean>,
       neutral: typeof raw.neutral === "boolean" ? raw.neutral : base.neutral,
+      ...(raw.difficultyBy && typeof raw.difficultyBy === "object"
+        ? { difficultyBy: Object.fromEntries(Object.entries(raw.difficultyBy).filter(([, d]) => (["doux", "normal", "intense"] as unknown[]).includes(d))) as Record<string, RhythmDifficulty> }
+        : {}),
     };
   } catch { return base; }
 }
