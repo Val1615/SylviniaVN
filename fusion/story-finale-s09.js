@@ -537,5 +537,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.426 · Interface de combat discrète';
+  if (update) update.textContent = 'Mise à jour · v0.427 · Images clés S07';
 })();

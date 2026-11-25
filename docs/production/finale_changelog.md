@@ -1,5 +1,13 @@
 # Journal · Final du Tome I
 
+## v0.427 (branche `assets/finale-s07-maj`)
+
+- Mise à jour des 24 images clés de la S07 (Iriana face à Alamma), livrée par l’auteur pour remplacer les plans intégrés en v0.422. Mêmes noms, mêmes chemins (`assets/images/keyscenes/chapter18-s07/`). Copie à l’identique (sha256 vérifié). Scènes, textes et duels inchangés.
+- Tenues d’Iriana et d’Alamma mieux alignées sur la S02 (blanc, or, émeraude / pourpre et or).
+- La Porte monumentale (œil rouge, anneau d’épines, plus proche de `BG_PORTE` et des lots 1 et 3) revient clairement aux plans 21, 23 et 24, qui cadrent la même clairière. Pendant une grande partie de l’affrontement, elle n’est pas dans le cadre : forêt brumeuse.
+- Couverture du roman, duels, Game Over, branches, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.427 · Images clés S07 ».
+
 ## v0.426 (branche `feat/hud-combat-discret`)
 
 - Retour de l’auteur : le cartouche de duel masquait l’image clé (capture Fold, `c18_bh_dragon`). Le HUD des 4 duels (S04, S06, S07, S08) devient une barre fine et semi-transparente, collée sous l’en-tête et arrêtée avant les onglets.

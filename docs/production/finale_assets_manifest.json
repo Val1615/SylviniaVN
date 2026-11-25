@@ -1,5 +1,5 @@
 {
- "version": "v0.425",
+ "version": "v0.427",
  "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées. Seule exception, validée par l’auteur : s06_17 et s06_20 (lot 2), retouchés localement pour remettre les plaques dans la main de Draven.",
  "fichiers_fournis_par_l_auteur": {
   "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
@@ -1049,7 +1049,7 @@
   }
  ],
  "images_cles_lot2": {
-  "statut": "Intégrées le 24/11/2026 (v0.422) : 67 plans sur 67 livrés (S05 : 22, S06 : 21, S07 : 24). Dossiers renommés chapter16-s05/06/07 → chapter17-s05, chapter18-s06, chapter18-s07. 65 copies strictes (sha256 identique à l’archive) ; s06_17 et s06_20 remplacés par les retouches validées par l’auteur. Aucune image générée par nous n’est intégrée.",
+  "statut": "Intégrées le 24/11/2026 (v0.422) : 67 plans sur 67 livrés (S05 : 22, S06 : 21, S07 : 24). Dossiers renommés chapter16-s05/06/07 → chapter17-s05, chapter18-s06, chapter18-s07. 65 copies strictes (sha256 identique à l’archive) ; s06_17 et s06_20 remplacés par les retouches validées par l’auteur. Mise à jour S07 le 25/11/2026 (v0.427) : les 24 plans de chapter18-s07/ sont remplacés par copie stricte (sha256 identique à l’archive de mise à jour). S05 et S06 inchangés. Aucune image générée par nous n’est intégrée.",
   "placement": "Selon la structure du VN et non le découpage du livre : S05 dans le tronc du Chapitre XVII (c17_trois → c17_brasier), S06 dans la branche Draven (c18_draven_seul → c18_remerii_draven, puis c18_dp_adieu), S07 dans la branche Iriana (c18_alamma → c18_saut). L’aiguillage « À quelques lieux de là » du découpage S06 est ignoré : Draven → S08, Iriana → S08.",
   "source": "tools/finale-gen/shots.py (SHOTS et DUEL_SHOTS)",
   "fichiers": [
@@ -1469,51 +1469,51 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_01_sous_la_canopee.webp",
-    "sha256": "85d5d591a8b472163dc23ae30fa90ec0d6e1bb868f65a8452689712fce3caf6e",
+    "sha256": "db6120241a9b7b3a2542d83c69b0f2eff95ae106af60855531b0ea220c900456",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_01_sous_la_canopee",
     "scene": "c18_alamma",
     "paragraphe": 11182,
     "camera": "approche",
     "titre_codex": "Sous la canopée",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "Lueur cramoisie entre les arbres d’une forêt brumeuse ; la Porte monumentale n’est pas encore cadrée."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_02_alamma_devant_la_porte.webp",
-    "sha256": "2e8390de5944b6ea2389ac03df8888b080175042a9cb584600b0a4dfb521e15f",
+    "sha256": "c68d4e2f99d634a0813055179eee6ea1014307796cde663a5d0415e6e83171f9",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_02_alamma_devant_la_porte",
     "scene": "c18_alamma_2",
     "paragraphe": 11187,
     "camera": "recul",
     "titre_codex": "Alamma devant la Porte",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte apparaît à gauche, en arche de côtes rouges, dans une clairière forestière ; les démons s’inclinent au pied d’Alamma."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_03_le_pere_se_retourne.webp",
-    "sha256": "c7b16803c4d2e2435adf3426da0a1d60c52b2b7e96f569f834aa70ce38924cb7",
+    "sha256": "1f67233f578fefaac9ae3bdcc8c9aed79c502efaccf4c30182c1f8a3426d529b",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_03_le_pere_se_retourne",
     "scene": "c18_tu_es_trop_jeune_2",
     "paragraphe": 11211,
     "camera": "approche",
     "titre_codex": "Le père se retourne",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_04_la_main_d_alamma.webp",
-    "sha256": "7c24d7a98dbf914d03b57590b3055839c10330ad46e9eaf3b924a464080e5aca",
+    "sha256": "7c510c8d7ec9c38b53fa652628fe769025fe0b740f57fca754703cf4ca980085",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_04_la_main_d_alamma",
     "scene": "c18_tu_es_trop_jeune_4",
     "paragraphe": 11226,
     "camera": "approche",
     "titre_codex": "La main d’Alamma",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_05_l_appel_du_pacte.webp",
-    "sha256": "226ad9f7aeb453717aef1e7f9c5f91c3246c2e666a745b6704ea355ef8f1ec0c",
+    "sha256": "a738ff0c6ae5236ef786370f8647f4063bd55a9b18ecb6c065cd377a89d2cca0",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_05_l_appel_du_pacte",
     "scene": "c18_pacte_valurn_2",
@@ -1523,7 +1523,7 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_06_les_mains_noircies.webp",
-    "sha256": "aa2d854fa6caf8f87a40e97049a035a4db4218d509923afb5988c47b8839f646",
+    "sha256": "fb432545f0c44dfcb7a22408364b54c18bdbf40f7917dea045fedc18d327c481",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_06_les_mains_noircies",
     "scene": "c18_pacte_valurn_4",
@@ -1533,7 +1533,7 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_07_une_breche_minuscule.webp",
-    "sha256": "576f639ba8a3905572204aafc223e7344f2fa8cc120008458ffe063f8a1c548f",
+    "sha256": "a83a2b5b71e8349f8ac74b0b31ade4825c5b79539cecb35e92dc174dc5fc7309",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_07_une_breche_minuscule",
     "scene": "c18_pacte_valurn_6",
@@ -1543,117 +1543,117 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_08_iriana_a_genoux.webp",
-    "sha256": "ea26a4f9e10cbde5d2f1cd140d67476d77d98a08d0449f21dd98f4a288a643ef",
+    "sha256": "7c2c8314a499a02eccc674024dad54c072454c8e0ffdb69fa1e18184a1919b89",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_08_iriana_a_genoux",
     "scene": "c18_a_genoux",
     "paragraphe": 11264,
     "camera": "approche",
     "titre_codex": "Iriana à genoux",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_09_un_fragment_dans_la_terre.webp",
-    "sha256": "705d0d1ff6ee4967061e53d0fd758630cfd6ad51a5e1d6cbcbc0a4a9181312b1",
+    "sha256": "f20a3d584004397d3589ee5af65dd2110628844ab09a89d572b066faf7cb7064",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_09_un_fragment_dans_la_terre",
     "scene": "c18_a_genoux_3",
     "paragraphe": 11280,
     "camera": "approche",
     "titre_codex": "Un fragment dans la terre",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_10_iriana_se_redresse.webp",
-    "sha256": "e21e61dfca3f18abb2abc34800004f5bbf43ecf3bff4b28ad6fe07f7e441ddd9",
+    "sha256": "25e799dc498cb4078d11d6f8fd19fc39748c36c2ca3dc8e9eba4b289a90edef2",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_10_iriana_se_redresse",
     "scene": "c18_peu_importe_2",
     "paragraphe": 11286,
     "camera": "approche",
     "titre_codex": "Iriana se redresse",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_11_le_premier_recul.webp",
-    "sha256": "6fc19187fb2ad17d9cbe657850ccd8e656d2c7a4b5e46ff7445ba786ea28919f",
+    "sha256": "8f6118c767b92db5f8d9823ce0f564530fa07af8f90c89774274757153c47942",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_11_le_premier_recul",
     "scene": "c18_attaque_2",
     "paragraphe": 11298,
     "camera": "impact",
     "titre_codex": "Le premier recul",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_12_la_barriere_noire.webp",
-    "sha256": "0b2eac597d0a8d2ee962f40850d476e1d4d175e74284a4c252230feed2facfbb",
+    "sha256": "1d2371279d99865f943ab6250da733c6c0a618d1efcb72f709070ec1afc02c5b",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_12_la_barriere_noire",
     "scene": "c18_attaque_3",
     "paragraphe": 11301,
     "camera": "impact",
     "titre_codex": "La barrière noire",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_13_le_faisceau_noir.webp",
-    "sha256": "6f6b4f0bcae6ddcd3965a1491ddf46406eea45efb97bc47e0419e685ad7b67bb",
+    "sha256": "d995a18831bbc6a737ffbfb69fd10a24fbf554d4ac3e45fec88d11f368c8fc96",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_13_le_faisceau_noir",
     "scene": "c18_attaque_4",
     "paragraphe": 11306,
     "camera": "approche",
     "titre_codex": "Le faisceau noir",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_14_a_bout_portant.webp",
-    "sha256": "7422e57612e19dc920e15c62920ef5251668f1307ebcd512b54157458259c6ec",
+    "sha256": "f5c7c829d435ee6d010614d4c689a0ea7b48a7c86be4a01f7686e2dac66bc28b",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_14_a_bout_portant",
     "scene": "c18_attaque_5",
     "paragraphe": 11309,
     "camera": "impact",
     "titre_codex": "À bout portant",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_15_ombre_chaos_mort.webp",
-    "sha256": "3bb1cdd177fd7252fa72caa60adc696883dfde29283fde525cb39391d2e85a76",
+    "sha256": "89a12130b0bcc3ceeeacccbe901999994e16d82003b473f496d4652437e7f8db",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_15_ombre_chaos_mort",
     "scene": "c18_trois_forces_2",
     "paragraphe": 11327,
     "camera": "approche",
     "titre_codex": "Ombre, Chaos, Mort",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_16_les_vrilles.webp",
-    "sha256": "42b96f98c1dfbb6765e79884cc1cac11a77fa2a14ae39e1d32e88832b8440f6b",
+    "sha256": "be033c60ccd9aca6a83534f0240f83ef036f5a667dd20db78020a9dca14cdf10",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_16_les_vrilles",
     "scene": "c18_trois_forces_3",
     "paragraphe": 11335,
     "camera": "impact",
     "titre_codex": "Les vrilles",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_17_le_mur_d_energie.webp",
-    "sha256": "54a143a76a57deb78fa65b521bdd6caeb10abf15dc5e0df861d68a0ca063a100",
+    "sha256": "3ae0725dca4fb745fed38da131e5cb74b229083ef7c4164a061e9f71acd71c2b",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_17_le_mur_d_energie",
     "scene": "c18_trois_forces_4",
     "paragraphe": 11343,
     "camera": "impact",
     "titre_codex": "Le mur d’énergie",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte n’est pas dans le cadre : forêt brumeuse. Parti pris de la mise à jour du 25/11/2026 (v0.427), validé par l’auteur."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_18_l_euphorie.webp",
-    "sha256": "8ee73820a1eb55d16ff57226c5f49214ed5d8d5db33f056e3688dc5683ecc1cf",
+    "sha256": "d8e0638b855ddc2b349f15f7ade521761b9899bc20c0705c7e7ec382b883c463",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_18_l_euphorie",
     "scene": "c18_chute_alamma_2",
@@ -1663,40 +1663,39 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_19_la_chute_en_arriere.webp",
-    "sha256": "fb8aa5c5e09acad0755262697f989ff40750855811615748d7e33106c88eff7d",
+    "sha256": "8fffdf3bf5b8a74465c53d5f5f835a3b03c5c72416b9e1884353d4b1b532e34f",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_19_la_chute_en_arriere",
     "scene": "c18_chute_alamma_4",
     "paragraphe": 11356,
     "camera": "approche",
     "titre_codex": "La chute en arrière",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "Alamma bascule vers une faille rouge ; le vortex est visible, pas l’anneau d’épines entier."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_20_le_cri_d_iriana.webp",
-    "sha256": "857e557809600b0cd4a937ff3f865192971bdecd411b8666e18a7915795faa4c",
+    "sha256": "2612fcf3163cbff3fcddc2f9f4a1b1fac98416b3bc4a951d9f571787b1c60d6f",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_20_le_cri_d_iriana",
     "scene": "c18_chute_alamma_5",
     "paragraphe": 11364,
     "camera": "impact",
-    "titre_codex": "Le cri d’Iriana",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "titre_codex": "Le cri d’Iriana"
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_21_victoire_pyrrhique.webp",
-    "sha256": "80bbbbe95d823e386dd6046e8d593c46024468fde9a0f5ebb14c6b07ca9852be",
+    "sha256": "47c3ea504e6b85c16b6abac605018f367c0a7f7f883ff2cc97b56bad7c67518c",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_21_victoire_pyrrhique",
     "scene": "c18_chute_alamma_7",
     "paragraphe": 11374,
     "camera": "approche",
     "titre_codex": "Victoire pyrrhique",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte y est l’œil rouge dans l’anneau d’épines, dans une clairière forestière, plus proche du décor BG_PORTE et des lots 1 et 3 que de l’ancienne arche à côtes dorées."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_22_l_hesitation.webp",
-    "sha256": "df043ea567972801d60c11d9abc50d366201df8b0a30102ea8bb0b8db552fb20",
+    "sha256": "7e92959f17f1d63c649b081e7d9f0d242250aeaf0286632efa4a5f55e5cea06f",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_22_l_hesitation",
     "scene": "c18_avant_le_saut_4",
@@ -1706,25 +1705,25 @@
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_23_le_saut.webp",
-    "sha256": "7769c27e221f4f11cbb62280ad1ccdfc69d33427825a73ecebc441b6cf4ad762",
+    "sha256": "65daf65537f87e9d578b41542ad9bfcc7aa51c9fa8bcceb4303a13fa958ca4bd",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_23_le_saut",
     "scene": "c18_saut",
     "paragraphe": 11400,
     "camera": "recul",
     "titre_codex": "Le saut",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte y est l’œil rouge dans l’anneau d’épines, dans une clairière forestière, plus proche du décor BG_PORTE et des lots 1 et 3 que de l’ancienne arche à côtes dorées."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s07/s07_24_la_foret_sans_iriana.webp",
-    "sha256": "3875a6a441ce9ab0288fae855ca955cc3b5b886bdde82b5f2ce0f9dc52234ba4",
+    "sha256": "093bdbc2e4dec8dda1fd6e57865604564d1c203632d44b54272a72ffbdc0a7c8",
     "dimensions": "1600x900 WebP",
     "cle_A": "c18_cg_s07_24_la_foret_sans_iriana",
     "scene": "c18_saut_2",
     "paragraphe": 11408,
     "camera": "recul",
     "titre_codex": "La forêt sans Iriana",
-    "porte": "La Porte y est une arche à côtes dorées (dessin propre au lot S07), et non l’œil rouge dans le massif d’épines de S02 à S05."
+    "porte": "La Porte y est l’œil rouge dans l’anneau d’épines, dans une clairière forestière, plus proche du décor BG_PORTE et des lots 1 et 3 que de l’ancienne arche à côtes dorées."
    },
    {
     "fichier": "assets/images/keyscenes/chapter18-s06/s06_08_dans_la_grotte.webp",
