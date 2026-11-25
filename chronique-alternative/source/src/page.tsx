@@ -516,12 +516,14 @@ const RHYTHM_DEV_ROWS: [character: string, title: string, level: string][] = [
   ["allenna-lineva", "Allenna et Lineva, relais de sommets (lot 6)", "Normal"],
   ["remerii", "Remerii (lot 7)", "Normal"],
   ["hylee", "Hylee (lot 8)", "Doux"],
+  ["hylee-remerii", "Hylee et Remerii, relais de sommets (lot 9)", "Doux"],
 ];
 const RHYTHM_DEV_PLACES: Record<string, string> = {
   "date-allenna-field": "Terrain", "date-allenna-terrace": "Terrasse", "date-lineva-ramparts": "Remparts", "date-lineva-quarters": "Quartiers",
   "home-allenna": "Logis", "home-lineva": "Logis", "group-date-allenna-lineva-training": "Entraînement", "group-date-allenna-lineva-basin": "Bassin", "group-date-allenna-lineva-home": "Logis",
   "date-remerii-lanterns": "Lanternes", "date-remerii-observatory": "Observatoire", "home-remerii": "Logis",
   "date-hylee-glade": "Clairière", "date-hylee-lake": "Lac", "home-hylee": "Logis",
+  "group-date-hylee-remerii-free-day": "Journée libre", "group-date-hylee-remerii-wind": "Vent", "group-date-hylee-remerii-home": "Logis",
 };
 function rhythmDevLabel(anchor: { character: string; context: string; routeId: string }) {
   if (anchor.character === "bellirith") return `${BELLIRITH_DEV_INTIMACIES.find((entry) => entry.dateId === anchor.context)?.label || anchor.context}${anchor.context === "date-bellirith-final" ? ` · ${anchor.routeId === "bellirith-duel-steal" ? "voler" : "retourner"}` : ""}`;
@@ -5441,7 +5443,7 @@ export default function Home() {
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
     if (target.kind === "rythme-perso") {
       // Fiches personnages (lots 1, 4 à 6) : la scène choisie s'ouvre directement sur le jeu, en souvenir (aucune mutation).
-      if (target.character === "allenna-lineva") {
+      if (target.character === "allenna-lineva" || target.character === "hylee-remerii") {
         const date = groupIntimacyContextById(target.context);
         if (!date) return;
         const homeBackground = date.home || date.id.endsWith("-home") ? propertyById(game.housing.propertyId)?.background : undefined;
@@ -7446,8 +7448,9 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelati
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
   const [directionChoices] = useState(() => shuffledChoices(groupIntimacyRoutes(date.id, game.player.sex), `${date.id}:${game.player.sex}:directions:${game.player.name}`));
-  // Jeu de rythme à trois (lot 6, Allenna et Lineva) : relais de sommets, en Explicite ou Suggestif.
-  const rhythmAnchor = direction ? rhythmAnchorFor("allenna-lineva", direction.id, game.player.sex) : undefined;
+  // Jeu de rythme à trois (lot 6 Allenna et Lineva, lot 9 Hylee et Remerii) : relais de sommets, en Explicite ou Suggestif.
+  const rhythmGroupKey = date.characters.join("-");
+  const rhythmAnchor = direction ? rhythmAnchorFor(rhythmGroupKey, direction.id, game.player.sex) : undefined;
   const rhythmKit: RhythmKit | undefined = useMemo(() => (rhythmAnchor && directionSequence.length
     ? buildRhythmKit(rhythmAnchor, directionSequence, direction?.text || date.title, game.player.intimacy)
     : undefined), [rhythmAnchor, directionSequence, game.player.intimacy]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -7556,7 +7559,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelati
     // Accès direct (mode développeur) : la route choisie s'ouvre sur le jeu à trois, en souvenir.
     if (!modal.rhythm || !modal.rhythmRoute) return;
     const route = directionChoices.find((entry) => entry.id === modal.rhythmRoute);
-    const anchor = rhythmAnchorFor("allenna-lineva", modal.rhythmRoute, game.player.sex);
+    const anchor = rhythmAnchorFor(rhythmGroupKey, modal.rhythmRoute, game.player.sex);
     if (!route || !anchor) return;
     chooseDirection(route);
     const phases = game.player.intimacy === "suggestif" && anchor.suggestif ? anchor.suggestif.phases : anchor.phases;
