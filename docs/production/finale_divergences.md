@@ -80,6 +80,8 @@ Deux points à valider par l’auteur :
 - **Quatre fiches personnages (Hylee forme finale, Alamma, Bhaal, Amanea forme finale) : référence de design uniquement, non affichées en jeu.** Consigne de l’auteur : « Les fiches sont à titre indicatif ». Elles sont rangées à l’identique dans `Ressource lore/Charactersheet/finale/`, à côté des autres fiches du dépôt. Aucune scène, ni le Codex, ni une galerie ne les charge, et elles ne figurent pas dans le registre d’assets `A`.
 - Détail et sha256 : [finale_assets_manifest.json](finale_assets_manifest.json).
 
-## Porte Noire en S07 (lot 2 d’images clés, v0.422)
+## Porte Noire en S07 (lot 2 d’images clés, v0.422, mise à jour v0.427)
 
-De S02 à S05, la Porte est un œil rouge dans un massif d’épines (décor `BG_PORTE` et plans clés des lots 1 et 2). Dans les plans S07 livrés (`chapter18-s07/`), elle devient une arche à côtes dorées dans une forêt calcinée, avec la même fente rouge centrale. Le décor du jeu reste celui des scènes précédentes ; les plans S07 sont intégrés tels quels, à trancher par l’auteur (s07_01 à 04, 08 à 17, 19 à 21, 23 et 24 montrent l’arche).
+De S02 à S05, la Porte est un œil rouge dans un massif d’épines (décor `BG_PORTE` et plans clés des lots 1 et 3). Les plans S07 livrés en v0.422 (`chapter18-s07/`) montraient une arche à côtes dorées dans une forêt calcinée, avec la même fente rouge centrale.
+
+Le 25/11/2026 (v0.427), l’auteur a remplacé les 24 plans. La Porte monumentale (œil rouge, anneau d’épines, plus proche de `BG_PORTE` et des lots 1 et 3) revient clairement aux plans 21, 23 et 24, qui cadrent la même clairière. Au plan 02, une arche de côtes rouges reste visible à gauche ; au plan 19, Alamma bascule dans une faille rouge. Pendant une grande partie de l’affrontement (plans 03, 04, 08 à 17 notamment), la Porte n’est pas dans le cadre : forêt brumeuse. Le décor `BG_PORTE` des écrans sans image clé est inchangé. Parti pris validé par l’auteur avec l’intégration des 24 plans.

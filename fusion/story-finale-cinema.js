@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.426 · Interface de combat discrète';
+  if (update) update.textContent = 'Mise à jour · v0.427 · Images clés S07';
 
   window.SylviniaFinaleCinema = {
     src: SRC,
