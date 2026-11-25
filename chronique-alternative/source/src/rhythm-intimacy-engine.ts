@@ -51,6 +51,8 @@ export type RhythmNote = {
   edge?: "bord" | "gel";
   /** Appel (coup pour coup) : coup joué par elle, à écouter sans toucher, puis rejoué par vous. */
   call?: boolean;
+  /** Relais de sommets (scènes à plusieurs) : tenue qui clôt le sommet d'une personne au milieu de la scène. */
+  relay?: boolean;
 };
 
 export type RhythmSectionDef = {
@@ -65,7 +67,7 @@ export type RhythmSectionDef = {
   /** Glissé de changement de position, un battement avant le premier coup. */
   slide?: "left" | "right";
   /** Montée finale : coups supplémentaires dont le tempo grimpe jusqu'à toBpm, puis l'appui de l'apogée. */
-  ramp?: { strokes: number; toBpm: number; final: number };
+  ramp?: { strokes: number; toBpm: number; final: number; relay?: boolean };
   /** Sens de la secousse à chaque coup : de haut en bas (elle mène, renversée) ou en profondeur (de dos, face à face). */
   shake: RhythmShakeAxis;
   /** Geste de la phase : il choisit l'animation du sprite et les bruitages. */
@@ -85,6 +87,8 @@ export type RhythmSectionDef = {
   rest?: { beats: number };
   /** Coup pour coup : motifs de quatre coups joués par elle (appel) puis rejoués par vous (réponse). */
   appel?: number[][];
+  /** Scènes à plusieurs : voix active pendant la phase (index dans la fiche). */
+  voice?: number;
 };
 export type RhythmShakeAxis = "vertical" | "profondeur";
 export type RhythmGesture = "main" | "bouche" | "langue" | "frottement" | "penetration";
@@ -159,11 +163,14 @@ export function buildRhythmChart(difficulty: RhythmDifficulty, sections: RhythmS
       const motif = section.motif;
       for (let i = 0; i < section.strokes; i++) {
         const step = motif[i % motif.length];
-        if (i > 0) time += motif[(i - 1) % motif.length].beats * beat;
-        const extra = { ...(step.motion ? { motion: step.motion } : {}), ...(step.direction ? { direction: step.direction } : {}) };
+        // Ordre (vague d'aura) sur un motif : les pas pressés durent moins longtemps, les tenues gardent leur durée.
+        const auraAt = (n: number) => Boolean(section.aura && n >= section.aura.at && n < section.aura.at + section.aura.strokes);
+        const auraOn = auraAt(i);
+        if (i > 0) { const previous = motif[(i - 1) % motif.length]; time += previous.beats * beat / (auraAt(i - 1) && previous.kind === "tap" ? section.aura!.factor : 1); }
+        const extra = { ...(step.motion ? { motion: step.motion } : {}), ...(step.direction ? { direction: step.direction } : {}), ...(auraOn && step.kind === "tap" ? { aura: true } : {}) };
         push({ time, duration: step.kind === "hold" ? step.beats * beat : 0, kind: step.kind, section: sectionIndex, beat, ...extra });
         // Leurre : entre deux pas d'au moins un battement, jamais après une tenue ni pendant un glissé.
-        if (section.baits && step.kind === "tap" && step.beats >= 1 && (i + 1) % section.baits === 0 && i < section.strokes - 1) push({ time: time + step.beats * beat / 2, duration: 0, kind: "bait", section: sectionIndex, beat });
+        if (section.baits && !auraOn && step.kind === "tap" && step.beats >= 1 && (i + 1) % section.baits === 0 && i < section.strokes - 1) push({ time: time + step.beats * beat / 2, duration: 0, kind: "bait", section: sectionIndex, beat });
         if (section.bord && i === section.bord.at) {
           time += step.beats * beat;
           push({ time, duration: section.bord.beats * beat, kind: "edge", edge: "bord", section: sectionIndex, beat });
@@ -194,7 +201,7 @@ export function buildRhythmChart(difficulty: RhythmDifficulty, sections: RhythmS
       }
     }
     if (section.ramp) {
-      const { strokes, toBpm, final } = section.ramp;
+      const { strokes, toBpm, final, relay } = section.ramp;
       for (let i = 1; i <= strokes; i++) {
         const bpm = section.bpm + (toBpm - section.bpm) * (i / strokes);
         const step = 60 / (bpm * factor);
@@ -203,7 +210,11 @@ export function buildRhythmChart(difficulty: RhythmDifficulty, sections: RhythmS
       }
       const step = 60 / (toBpm * factor);
       time += step;
-      push({ time, duration: final, kind: "final", section: sectionIndex, beat: step });
+      if (relay) {
+        // Relais de sommets : le sommet d'une personne se tient comme un appui long, puis la scène reprend.
+        push({ time, duration: final, kind: "hold", relay: true, section: sectionIndex, beat: step });
+        time += final + step;
+      } else push({ time, duration: final, kind: "final", section: sectionIndex, beat: step });
     }
   });
   // Les leurres s'intercalent entre deux coups : on remet la carte dans l'ordre du temps (tri stable, sans effet sur une carte déjà ordonnée).

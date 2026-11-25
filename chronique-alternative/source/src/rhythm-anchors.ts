@@ -15,7 +15,11 @@
  * b : sa bouche, l : votre bouche, f : frottement, pv : pénétration (axe vertical, elle
  * mène), pp : pénétration (en profondeur), i : rupture écrite (la piste se fige).
  * Suffixe « ^ » : elle s'arrête au bord dans cette séquence (silence à tenir).
- * Relecture manuelle faite au lot 1 (voir PLAN.md, annexe A).
+ * Suffixe « ! » (scènes à plusieurs, après la voix) : relais de sommets, une personne atteint son sommet dans cette
+ * séquence et la scène continue (petite montée, tenue, voix d'apogée de la personne).
+ * Suffixe « @A » ou « @L » (scènes à plusieurs) : voix de la phase, la personne qui reçoit le geste.
+ * Relecture manuelle faite au lot 1 (voir PLAN.md, annexe A), puis aux lots 4 à 6 pour Allenna, Lineva
+ * et leur trio (annexe B).
  */
 import type { DialogueLine } from "./game-data";
 import type { RhythmDifficulty, RhythmGesture, RhythmMotifStep, RhythmSectionDef, RhythmShakeAxis } from "./rhythm-intimacy-engine";
@@ -24,9 +28,12 @@ import { HYLEE_HOME_RHYTHM } from "./rhythm-intimacy";
 import { RHYTHM_PROFILES, type RhythmProfile } from "./rhythm-profiles";
 import { RHYTHM_CADENCE_LABELS, RHYTHM_PHASE_LABELS, type RhythmCharacterBubbles } from "./rhythm-bubbles";
 import { BELLIRITH_RHYTHM_BUBBLES } from "./rhythm-bubbles-bellirith";
+import { ALLENNA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna";
+import { LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-lineva";
+import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
 
 export type RhythmPhaseCode = "m" | "M" | "b" | "l" | "f" | "pv" | "pp" | "i";
-export type RhythmPhaseAnchor = { chapter: number; code: RhythmPhaseCode; bord: boolean };
+export type RhythmPhaseAnchor = { chapter: number; code: RhythmPhaseCode; bord: boolean; relay?: boolean; voice?: string };
 export type RhythmAnchor = {
   character: string;
   /** Contexte de la scène (diversion, heure volée, duel). */
@@ -38,6 +45,8 @@ export type RhythmAnchor = {
   returnChapter: number;
   /** Coup pour coup (duel) : la première phase d'union devient un appel et réponse. */
   appel?: boolean;
+  /** Version Suggestif écrite à part (autre découpage de séquences) : ses propres phases. */
+  suggestif?: { phases: RhythmPhaseAnchor[]; returnChapter: number };
 };
 
 type Row = [context: string, routeId: string, homme: string, femme: string, returnChapter: number];
@@ -59,18 +68,95 @@ const BELLIRITH_ROWS: Row[] = [
   ["date-bellirith-final", "bellirith-duel-turn", "4m^ 5i 6M 7l^ 8pv 9pv", "4m^ 5i 6M 7l^ 8f 9f", 10],
 ];
 
+/*
+ * Allenna (lot 4), relecture manuelle (PLAN.md, annexe B) : les trois humeurs d'un rendez-vous partagent
+ * les mêmes gestes. Séquence 3 : sa bouche, et l'hésitation écrite d'Allenna (silence au bord).
+ * Séquence 4 : vos mains sur ses cicatrices (terrain) ou votre bouche (terrasse). Séquence 7, femme :
+ * ses doigts en vous et votre main sur elle, une seule cadence partagée (frottement).
+ */
+const ALLENNA_DATES: [dateId: string, fourth: string][] = [["date-allenna-field", "M"], ["date-allenna-terrace", "l"]];
+const ALLENNA_MOODS = ["defi", "tendre", "passion"];
+/* Logis d'Allenna : changement de positions (séquence 3) puis le sommet (séquence 4) ; la séquence 5 est une reprise après le sommet. */
+const ALLENNA_HOME: Row[] = [
+  ["home-allenna", "premiere-prise", "3f 4pv", "3f 4b", 5],
+  ["home-allenna", "siege-du-canape", "3f 4pv", "3f 4f", 5],
+  ["home-allenna", "derniere-manche", "3f 4pv", "3f 4b", 5],
+];
+/*
+ * Lineva (lot 5) : séquence 5, une seule réplique d'ordre qui commente le geste de la séquence 4 ; elle
+ * prolonge donc ce geste (ce n'est pas une rupture). Quartiers, humeur passionnée : ses doigts guident les vôtres.
+ */
+const LINEVA_DATES = ["date-lineva-ramparts", "date-lineva-quarters"];
+const LINEVA_MOODS = ["joueuse", "tendre", "passionnee"];
+/* Logis de Lineva : révélation en séquence 3, une seule phase jouée (le sommet, séquence 4). Parties courtes, à juger. */
+const LINEVA_HOME: Row[] = [
+  ["home-lineva", "cle-de-la-releve", "4pv", "4b", 5],
+  ["home-lineva", "noeud-de-port", "4pv", "4b", 5],
+  ["home-lineva", "maree-interieure", "4pv", "4f", 5],
+];
+/*
+ * Allenna et Lineva (lot 6), 18 variantes relues une à une (PLAN.md, annexe B). Les codes suivent ce que
+ * vous faites ou recevez ; la voix suit la personne qui reçoit le geste. « ! » : un sommet au milieu de la
+ * scène (relais), le dernier sommet clôt le jeu. La séquence 10 (le tutoiement de Lineva après votre
+ * plaisir) est une rupture écrite : la piste se fige.
+ * Suggestif : texte propre en 8 séquences, un seul sommet (le vôtre, séquence 5) ; caresses puis sommet.
+ */
+type GroupRow = [routeId: string, phases: string, returnChapter: number];
+const GROUP_ROWS: GroupRow[] = [
+  ["group-date-allenna-lineva-training-homme-revanche", "3b@A 4b@A 5l@L 6l@L! 7pp@A 8pp@A! 9m@L! 10i 11M@L", 12],
+  ["group-date-allenna-lineva-training-homme-douches", "2b@A^ 3b@A 4M@L 5M@L! 6pp@A 7pp@A! 8pp@L 9pp@L! 10i 11l@L", 12],
+  ["group-date-allenna-lineva-training-homme-apres-duel", "4b@L 5b@L! 6pv@A^ 7pv@A 8pv@A! 9pv@A! 10i 11l@L", 12],
+  ["group-date-allenna-lineva-training-femme-revanche", "4b@L 5b@L 6M@A^ 7M@L! 8f@L 9f@L! 10M@A 11M@A", 12],
+  ["group-date-allenna-lineva-training-femme-douches", "3b@A^ 4b@A 5b@A 6M@L 7M@L! 8m@A! 9i 10l@A 11M@A", 12],
+  ["group-date-allenna-lineva-training-femme-apres-duel", "4l@A^ 5M@L 6b@L 7M@L! 8b@A 9b@A! 10i 11l@A", 12],
+  ["group-date-allenna-lineva-basin-homme-jeu-eau", "3m@A^ 4b@A 5b@A 6M@L 7M@L! 8pp@A 9pp@A! 10i 11M@L", 12],
+  ["group-date-allenna-lineva-basin-homme-rebord", "3l@A^ 4l@A 5pp@L 6pp@L! 7pp@A 8pp@A! 9pp@A! 10i 11M@A", 12],
+  ["group-date-allenna-lineva-basin-homme-alcove", "3b@A^ 4b@A 5M@L 6m@L! 7pv@A 8pv@A! 9pv@A! 10i 11M@L", 12],
+  ["group-date-allenna-lineva-basin-femme-jeu-eau", "4b@L 5b@L 6M@A^ 7M@A! 8b@L 9b@L! 10i 11M@L", 12],
+  ["group-date-allenna-lineva-basin-femme-rebord", "3l@A^ 4l@A 5b@A 6M@L! 7M@A 8M@A! 9b@L! 10i 11l@A", 12],
+  ["group-date-allenna-lineva-basin-femme-alcove", "2m@A^ 3m@A 4i 5l@L 6l@L! 7l@A 8l@A! 9m@A! 10i 11M@A", 12],
+  ["group-date-allenna-lineva-home-homme-canape", "3m@A^ 4b@A 5b@A 6M@L! 7pv@A 8pv@A! 9pv@A! 10i 11M@A", 12],
+  ["group-date-allenna-lineva-home-homme-cuisine", "3m@A^ 4M@A 5M@A! 6M@L 7M@L! 8pp@L! 9pp@L! 10i 11M@A", 12],
+  ["group-date-allenna-lineva-home-homme-chambre", "3b@A^ 4b@A 5M@L 6M@L! 7pp@A 8pp@A! 9pp@A! 10i 11l@L", 12],
+  ["group-date-allenna-lineva-home-femme-canape", "4b@L 5M@A! 6M@L 7M@L! 8b@L 9b@L! 10i 11l@A", 12],
+  ["group-date-allenna-lineva-home-femme-cuisine", "4M@A^ 5M@A! 6l@L 7l@L! 8m@A 9m@A! 10i 11M@L", 12],
+  ["group-date-allenna-lineva-home-femme-chambre", "3b@A^ 4b@A 5b@A! 6M@L 7M@L! 8m@A 9m@A! 10i 11M@A", 12],
+];
+const GROUP_SUGGESTIF = "3m@A 4f@L 5f@A";
+
 function parsePhases(spec: string): RhythmPhaseAnchor[] {
   return spec.split(/\s+/).map((token) => {
-    const match = /^(\d+)(pv|pp|m|M|b|l|f|i)(\^?)$/.exec(token);
+    const match = /^(\d+)(pv|pp|m|M|b|l|f|i)(?:@([A-Z]))?([\^!]*)$/.exec(token);
     if (!match) throw new Error(`ancrage illisible : ${token}`);
-    return { chapter: Number(match[1]), code: match[2] as RhythmPhaseCode, bord: match[3] === "^" };
+    return { chapter: Number(match[1]), code: match[2] as RhythmPhaseCode, bord: match[4].includes("^"), ...(match[4].includes("!") ? { relay: true } : {}), ...(match[3] ? { voice: match[3] } : {}) };
   });
 }
+const SEXES = ["homme", "femme"] as const;
 
-export const RHYTHM_ANCHORS: RhythmAnchor[] = BELLIRITH_ROWS.flatMap(([context, routeId, homme, femme, returnChapter]) => (["homme", "femme"] as const).map((sex) => ({
-  character: "bellirith", context, routeId, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
-  ...(context === "date-bellirith-final" ? { appel: true } : {}),
-})));
+export const RHYTHM_ANCHORS: RhythmAnchor[] = [
+  ...BELLIRITH_ROWS.flatMap(([context, routeId, homme, femme, returnChapter]) => SEXES.map((sex) => ({
+    character: "bellirith", context, routeId, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
+    ...(context === "date-bellirith-final" ? { appel: true } : {}),
+  }))),
+  ...ALLENNA_DATES.flatMap(([dateId, fourth]) => ALLENNA_MOODS.flatMap((mood) => SEXES.map((sex): RhythmAnchor => ({
+    character: "allenna", context: dateId, routeId: `${dateId}-${mood}-${sex}`, sex,
+    phases: parsePhases(`3b^ 4${fourth} 5m 6f 7${sex === "homme" ? "pv" : "f"}`), returnChapter: 8,
+  })))),
+  ...ALLENNA_HOME.flatMap(([context, route, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
+    character: "allenna", context, routeId: `home-allenna-${sex}-${route}`, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
+  }))),
+  ...LINEVA_DATES.flatMap((dateId) => LINEVA_MOODS.flatMap((mood) => SEXES.map((sex): RhythmAnchor => {
+    const fourth = dateId === "date-lineva-quarters" && mood === "passionnee" ? "M" : "l";
+    return { character: "lineva", context: dateId, routeId: `${dateId}-${mood}-${sex}`, sex, phases: parsePhases(`3b 4${fourth} 5${fourth} 6M 7${sex === "homme" ? "pv" : "f"}`), returnChapter: 8 };
+  }))),
+  ...LINEVA_HOME.flatMap(([context, route, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
+    character: "lineva", context, routeId: `home-lineva-${sex}-${route}`, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
+  }))),
+  ...GROUP_ROWS.map(([routeId, phases, returnChapter]): RhythmAnchor => ({
+    character: "allenna-lineva", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
+    phases: parsePhases(phases), returnChapter, suggestif: { phases: parsePhases(GROUP_SUGGESTIF), returnChapter: 6 },
+  })),
+];
 
 export function rhythmAnchorFor(character: string, routeId: string | undefined, sex: string): RhythmAnchor | undefined {
   if (!routeId) return undefined;
@@ -117,7 +203,7 @@ export function rhythmReadSeconds(line: DialogueLine, maxMs: number) {
   return Math.max(3200, Math.min(maxMs, words * 260)) / 1000;
 }
 
-export type RhythmSectionTextKit = RhythmSectionText & { tierLines: DialogueLine[][]; gel: boolean; chapter: number };
+export type RhythmSectionTextKit = RhythmSectionText & { tierLines: DialogueLine[][]; gel: boolean; chapter: number; relay?: DialogueLine[] };
 export type RhythmKit = {
   character: string;
   anchor: RhythmAnchor;
@@ -131,7 +217,8 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES };
+const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**
  * Construit le jeu d'une scène à partir de son ancrage et de ses séquences telles que le joueur les lit
@@ -141,6 +228,8 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
   const profile = RHYTHM_PROFILES[anchor.character];
   const bubbles = BUBBLES[anchor.character];
   if (!profile || !bubbles || (mode !== "explicite" && mode !== "suggestif")) return undefined;
+  // Version Suggestif écrite à part : ses propres séquences et son propre point de reprise.
+  if (mode === "suggestif" && anchor.suggestif) anchor = { ...anchor, phases: anchor.suggestif.phases, returnChapter: anchor.suggestif.returnChapter };
   if (anchor.phases.some((phase) => !chapters[phase.chapter]?.length) || anchor.returnChapter > chapters.length) return undefined;
   const pen = anchor.phases.filter((phase) => gestureOf(phase.code) === "penetration");
   const penTempos = (n: number): number[] => {
@@ -165,6 +254,14 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
     const id = `s${phase.chapter}-${phase.code}`;
     const axis: RhythmShakeAxis = phase.code === "pp" ? "profondeur" : "vertical";
     const mood = profile.moods[gesture === "interlude" ? "interlude" : gesture];
+    // Scènes à plusieurs : la voix (et les bulles) de la personne qui reçoit le geste.
+    const voiceIndex = profile.voices ? Math.max(0, profile.voices.findIndex((entry) => entry.key === phase.voice)) : -1;
+    const voiceEntry = voiceIndex >= 0 ? profile.voices![voiceIndex] : undefined;
+    const own = (list: DialogueLine[] | undefined) => {
+      if (!list || !voiceEntry) return list;
+      const mine = list.filter((line) => line.speaker === speakerName(voiceEntry.character));
+      return mine.length ? mine : list;
+    };
     const text: RhythmSectionTextKit = {
       label: phase.code === "M" ? RHYTHM_PHASE_LABELS.mainJoueur : gesture === "interlude" ? RHYTHM_PHASE_LABELS.interlude : gesture === "penetration" ? (axis === "vertical" ? RHYTHM_PHASE_LABELS.penetrationVertical : RHYTHM_PHASE_LABELS.penetrationProfondeur) : RHYTHM_PHASE_LABELS[gesture],
       cadence: "",
@@ -172,7 +269,7 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
       intro: lines[0],
       tiers: [lines[0], lines[0], lines[0]],
       strokes: [],
-      voice: gesture === "interlude" ? [] : bubbles.voice[gesture],
+      voice: gesture === "interlude" ? [] : own(bubbles.voice[gesture])!,
       tierLines: [],
       gel: gesture === "interlude",
       chapter: phase.chapter,
@@ -196,7 +293,8 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
     if (final && gesture !== "penetration") bpm = Math.round(bpm * 1.2);
     const beat = 60 / bpm;
     const beatsNeeded = Math.max(14, Math.ceil(read * 1.25 / beat));
-    const def: RhythmSectionDef = { id, bpm, strokes: 0, holds: [], holdBeats: 2, shake: axis, gesture, ...(sections.length ? { slide } : {}) };
+    const def: RhythmSectionDef = { id, bpm, strokes: 0, holds: [], holdBeats: 2, shake: axis, gesture, ...(sections.length ? { slide } : {}), ...(voiceIndex >= 0 ? { voice: voiceIndex } : {}) };
+    const auraHere = Boolean(profile.behaviours.aura && !final && (!voiceEntry || voiceEntry.aura));
     if (def.slide) slide = slide === "left" ? "right" : "left";
     const useAppel = Boolean(anchor.appel && profile.behaviours.appel && !appelUsed && (gesture === "penetration" || gesture === "frottement") && !final);
     if (useAppel) {
@@ -213,7 +311,7 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
       def.strokes = strokes;
       def.holds = final ? [Math.floor(strokes * 0.5)] : [Math.floor(strokes * 0.4), Math.floor(strokes * 0.8)];
       text.cadence = final ? RHYTHM_CADENCE_LABELS.montee : bpm >= profile.bpm.penetration[2] ? RHYTHM_CADENCE_LABELS.vif : bpm >= profile.bpm.penetration[1] ? RHYTHM_CADENCE_LABELS.moyen : RHYTHM_CADENCE_LABELS.lent;
-      if (profile.behaviours.aura && !final && strokes >= 20) {
+      if (auraHere && strokes >= 20) {
         const at = Math.floor(strokes * 0.5) + 1;
         def.aura = { at, strokes: profile.behaviours.aura.strokes, factor: profile.behaviours.aura.factor };
         def.holds = def.holds.filter((h) => h < at || h >= at + profile.behaviours.aura!.strokes);
@@ -224,6 +322,17 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
       def.motif = motif;
       def.strokes = Math.min(64, Math.max(motif.length * 2, Math.round(beatsNeeded / perStep)));
       text.cadence = final ? RHYTHM_CADENCE_LABELS.montee : bpm >= profile.bpm.langue ? RHYTHM_CADENCE_LABELS.vif : bpm >= profile.bpm.bouche ? RHYTHM_CADENCE_LABELS.moyen : RHYTHM_CADENCE_LABELS.lent;
+      // Ordres de Lineva : la vague d'aura touche aussi les motifs, au début d'un tour de motif, vers le milieu de la phase.
+      if (auraHere && profile.behaviours.auraMotifs && def.strokes >= 12) {
+        const at = Math.max(motif.length, Math.round(def.strokes * 0.45 / motif.length) * motif.length);
+        if (at + profile.behaviours.aura!.strokes < def.strokes - 1) def.aura = { at, strokes: profile.behaviours.aura!.strokes, factor: profile.behaviours.aura!.factor };
+      }
+    }
+    // Relais de sommets : petite montée puis tenue du sommet, la phase suivante reprend aussitôt.
+    if (phase.relay && !final) {
+      def.ramp = { strokes: 6, toBpm: Math.round(bpm * 1.25), final: 2.4, relay: true };
+      text.cadence = RHYTHM_CADENCE_LABELS.montee;
+      text.relay = own(bubbles.relay);
     }
     if (profile.behaviours.baits && !final && !useAppel) def.baits = profile.behaviours.baits;
     if (phase.bord && profile.behaviours.bord && !useAppel) def.bord = { at: bordAt(def), beats: profile.behaviours.bord.beats };
@@ -237,6 +346,7 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
     for (let i = sections.length - 2; i >= 0; i--) {
       const def = sections[i];
       if (def.rest || def.appel || def.ramp) continue;
+      if (profile.voices && !profile.voices[def.voice ?? 0]?.bord) continue;
       def.bord = { at: bordAt(def), beats: profile.behaviours.bord.beats };
       break;
     }

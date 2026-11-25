@@ -29,6 +29,12 @@ export type RhythmCharacterBubbles = {
   endings: Record<"embrasement" | "accord" | "tatonnement", { title: string; lines: DialogueLine[] }>;
   /** Mention affichée au bilan quand la relation baisse (Chronique seulement). */
   relationNote: string;
+  /** Noms de pièges propres au personnage (les ordres de Lineva, par exemple), sinon les noms communs. */
+  trapLabels?: Partial<Record<keyof typeof RHYTHM_TRAP_LABELS, string>>;
+  /** Relais de sommets (scènes à plusieurs) : bulle quand une personne atteint son sommet au milieu de la scène. */
+  relay?: DialogueLine[];
+  /** Remarque affichée au bilan quand la démonstration automatique a joué. */
+  autoNote?: DialogueLine;
 };
 
 /** Noms des phases et des cadences, communs à tous les personnages. */
@@ -66,4 +72,5 @@ export const RHYTHM_TRAP_LABELS = {
   answer: "À vous",
   resistance: "Résistance",
   recommended: "Recommandé",
+  relay: "Sommet",
 };

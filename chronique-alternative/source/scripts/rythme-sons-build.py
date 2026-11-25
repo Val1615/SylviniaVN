@@ -61,6 +61,29 @@ BELLIRITH={
 }
 for g,lst in BELLIRITH.items():
     for i,(sid,a,b) in enumerate(lst): add(f'bellirith/{g}-{i+1}',AR(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
+# --- Voix d'Allenna (fiches, lot 4) : guinefurrie (CC BY 4.0), une seule comédienne, même traitement commun.
+GF=lambda i: R+f'guinefurrie/guinefurrie-{i}.mp3'
+ALLENNA={
+ 'souffle':[(439559,0.15,1.45),(439559,2.50,3.80),(439559,4.00,4.95),(439559,23.70,24.70)],
+ 'soupir':[(441511,0.45,1.55),(441511,3.75,4.60),(439559,26.00,27.90)],
+ # gemit 1-3 : doux, 4-7 : plus francs
+ 'gemit':[(439559,5.00,6.00),(439559,6.00,7.10),(439559,7.20,8.10),(439559,9.15,10.30),(439559,11.75,12.90),(439559,14.25,15.45),(439559,17.00,18.20)],
+ 'apogee':[(439559,18.35,21.45),(439559,20.65,23.45)],
+ # bouche occupée (sa bouche sur le joueur) : la prise « oral sex sounds/moaning »
+ 'bouche':[(439560,0.05,1.20),(439560,1.60,2.70),(439560,3.40,4.70),(439560,5.05,5.80)],
+}
+for g,lst in ALLENNA.items():
+    for i,(sid,a,b) in enumerate(lst): add(f'allenna/{g}-{i+1}',GF(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
+# --- Voix de Lineva (fiches, lot 5) : Vidrik (CC0), une seule prise de 20 s découpée, même traitement commun.
+VK=R+'vidrik/Vidrik-384214.mp3'
+LINEVA={
+ 'souffle':[(2.95,3.70),(7.40,8.30),(19.00,20.10)],
+ 'soupir':[(8.85,10.00),(14.00,15.60)],
+ 'gemit':[(0.55,1.25),(1.25,2.30),(4.40,5.40),(5.40,6.40),(10.75,11.85),(12.70,13.40)],
+ 'apogee':[(12.70,15.60),(15.60,18.00)],
+}
+for g,lst in LINEVA.items():
+    for i,(a,b) in enumerate(lst): add(f'lineva/{g}-{i+1}',VK,a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
 only=set(sys.argv[1:])
 meta={}
 def vol(path,flt):

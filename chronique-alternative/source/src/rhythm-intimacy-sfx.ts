@@ -58,10 +58,16 @@ export class RhythmSfx {
    */
   readonly suggestive: boolean;
   /** Voix d'un autre personnage que Hylee : banque propre, rangée dans son sous-dossier (aucun mélange de voix). */
-  readonly voice?: RhythmSfxVoiceBank;
-  constructor(options: { suggestive?: boolean; voice?: RhythmSfxVoiceBank } = {}) {
+  /** Scènes à plusieurs (Allenna et Lineva) : une banque par personnage, la voix active suit la phase. */
+  private readonly banks: RhythmSfxVoiceBank[] = [];
+  private active = 0;
+  get voice(): RhythmSfxVoiceBank | undefined { return this.banks[this.active]; }
+  /** Voix active (scènes à plusieurs) : la personne qui reçoit le geste ou qui atteint son sommet. */
+  setVoice(index: number) { if (index >= 0 && index < this.banks.length) this.active = index; }
+  constructor(options: { suggestive?: boolean; voice?: RhythmSfxVoiceBank; voices?: RhythmSfxVoiceBank[] } = {}) {
     this.suggestive = Boolean(options.suggestive);
-    if (options.voice) this.voice = options.voice;
+    if (options.voices?.length) this.banks.push(...options.voices);
+    else if (options.voice) this.banks.push(options.voice);
     if (this.suggestive) { this.neutral = true; this.mute.voix = true; }
   }
   private buffers = new Map<string, AudioBuffer>();
@@ -98,7 +104,7 @@ export class RhythmSfx {
   private load() {
     if (this.loading || !this.ctx) return this.loading;
     const ctx = this.ctx;
-    const all = this.voice ? rhythmSfxFilesFor(this.voice) : RHYTHM_SFX_FILES;
+    const all = this.banks.length ? [...new Set(this.banks.flatMap((bank) => rhythmSfxFilesFor(bank)))] : RHYTHM_SFX_FILES;
     const files = this.suggestive ? all.filter((name) => !["voix", "corps"].includes(RHYTHM_SFX_BUS[groupOf(name)])) : all;
     this.loading = Promise.all(files.map(async (name) => {
       try {
@@ -423,6 +429,21 @@ export class RhythmSfx {
     const apogee = this.voice ? this.resolve("apogee") : "apogee";
     const played = apogee ? this.play(this.pick(apogee), { gain: 0.95, delay: 0.05 }) : null;
     if (this.ctx && played) this.voiceUntil = this.ctx.currentTime + played.duration + 0.6;
+  }
+
+  /**
+   * Relais de sommets (scènes à plusieurs) : le sommet d'une personne au milieu de la scène. Sa voix d'apogée
+   * coupe la réplique en cours, sans le grand coup final (la scène continue). Rien en Suggestif ni en bruits neutres.
+   */
+  relay() {
+    if (!this.ctx) return false;
+    try { this.voiceSource?.stop(); } catch { /* déjà terminé */ }
+    this.sheets();
+    if (this.neutral) { this.synth("battement", { gain: 0.7, pitch: 1 }); return true; }
+    const apogee = this.resolve("apogee");
+    const played = apogee ? this.play(this.pick(apogee), { gain: 0.85, delay: 0.05 }) : null;
+    if (played) { this.voiceSource = played.source; this.voiceUntil = this.ctx.currentTime + played.duration + 0.5; this.lastVoiceAt = this.ctx.currentTime; }
+    return Boolean(played);
   }
 
   stopAll() {

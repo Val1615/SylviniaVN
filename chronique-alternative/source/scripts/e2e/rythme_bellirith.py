@@ -1,6 +1,8 @@
 """Fiches personnages, lot 1 (Bellirith) : accès développeur à une scène, difficulté Intense recommandée,
 couleur violette, leurres (un cédé exprès, les autres résistés), silence au bord tenu, aura, bilan avec la bulle
 de fin, reprise du texte écrit juste après le sommet, souvenir sans effet sur la relation.
+Lots 4 à 6 : la même trame sert à Allenna, Lineva et au trio (route en 4e argument) ; captures en plus des
+ordres de Lineva (bandeau « Ordre ») et d'un relais de sommets (bulle de la personne, scène qui continue).
 Usage : CA_BASE=http://127.0.0.1:8941/chronique-alternative/ python3 rythme_bellirith.py saves/save-rythme.json <dossier> 1024x880 [route]
 Les captures floutent la CG et le sprite intime (silhouette lisible, rien d'explicite)."""
 import os, sys, asyncio, json
@@ -44,7 +46,7 @@ async def main():
             if await p.evaluate(js): return True
             await p.wait_for_timeout(100)
         return False
-    relation=lambda: p.evaluate("()=>{const g=JSON.parse(localStorage.getItem('sylvinia-liens-autosave')); return JSON.stringify(g.relationships?.bellirith||null);}")
+    relation=lambda: p.evaluate("()=>{const g=JSON.parse(localStorage.getItem('sylvinia-liens-autosave')); return JSON.stringify(g.relationships||null);}")
     await p.goto(BASE); await p.wait_for_timeout(900); await p.keyboard.press("Enter"); await p.wait_for_timeout(900)
     await p.click(".t-item.principal"); await p.wait_for_timeout(2000); await close_modals(p)
     rel_before=await relation()
@@ -72,7 +74,14 @@ async def main():
     if await wait_js("()=>document.querySelector('.rythme-note.bait')", 60): await p.wait_for_timeout(250); await snap("03-leurre")
     if await wait_js("()=>document.querySelector('.rythme-layer.silence')", 120):
         await p.wait_for_timeout(300); report["checks"]["silence"]=await p.locator(".rythme-silence-bandeau").first.inner_text(); await snap("04-silence")
-    if await wait_js("()=>document.querySelector('.rythme-layer.aura-annonce, .rythme-layer.aura-vague')", 120): await p.wait_for_timeout(200); await snap("05-aura")
+    if await wait_js("()=>document.querySelector('.rythme-layer.aura-annonce, .rythme-layer.aura-vague')", 120):
+        await p.wait_for_timeout(200); report["checks"]["ordre"]=await p.locator(".rythme-silence-bandeau.ordre").count(); await snap("05-aura")
+    relais=await p.evaluate("()=>window.__sylviniaRythme.notes().filter(n=>n.relay).map(n=>n.time+n.duration)")
+    report["checks"]["relais_prevus"]=len(relais)
+    if relais:
+        await wait_js(f"()=>window.__sylviniaRythme.time()>{relais[0]+0.15}", 300); await p.wait_for_timeout(150)
+        report["checks"]["relais_bulle"]=await p.evaluate("()=>[...document.querySelectorAll('.rythme-layer [class*=bulle], .rythme-layer [class*=voix]')].map(e=>e.innerText).join(' | ').slice(0,200)")
+        await snap("05b-relais")
     report["checks"]["resistance_jeu"]=await p.evaluate("()=>window.__sylviniaRythme.resistance()")
     await p.wait_for_selector(".rythme-panneau.resultat", timeout=420000)
     report["checks"]["resultat"]=await p.locator(".rythme-panneau.resultat").inner_text()
