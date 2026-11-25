@@ -34,6 +34,7 @@ import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
 import { HYLEE_REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee-remerii";
 import { NAIAH_RHYTHM_BUBBLES } from "./rhythm-bubbles-naiah";
 import { HYLEE_NAIAH_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee-naiah";
+import { BELLIRITH_NAIAH_RHYTHM_BUBBLES } from "./rhythm-bubbles-bellirith-naiah";
 import { REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-remerii";
 import { HYLEE_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee";
 
@@ -50,6 +51,8 @@ export type RhythmAnchor = {
   returnChapter: number;
   /** Coup pour coup (duel) : la première phase d'union devient un appel et réponse. */
   appel?: boolean;
+  /** Aucun leurre sur toute la scène (Bellirith et Naïah, Q5 : plus de simulation). */
+  noBaits?: boolean;
   /** Version Suggestif écrite à part (autre découpage de séquences) : ses propres phases. */
   suggestif?: { phases: RhythmPhaseAnchor[]; returnChapter: number };
 };
@@ -233,6 +236,18 @@ const HYLEE_ROWS: [context: string, place: string, homme: HyleeMoods, femme: Hyl
     { joueuse: "3b 4M 5pv 6pv 7pv", tendre: "3b 4M 5pp 6pp 7pp", audacieuse: "3b 4M 5pv 6pv 7pv" },
     { joueuse: "3b 4l 5b 6f 7b", tendre: "3m 4M 5m 6f 7m", audacieuse: "3m 4l 5f 6f 7m" }],
 ];
+/*
+ * Bellirith et Naïah (lot 12), quête croisée : B = Bellirith (la piste, Intense, aura), N = Naïah (elle « simule »).
+ * Q2 et Q4 : le joueur ne touche que Bellirith ; les réactions parfaites de Naïah sont des leurres.
+ * Q5 « Même là ? » : plus de simulation (aucun leurre), séquence 7 en interlude (le corps de Bellirith se façonne),
+ * 8 et 9 la pénétration lente telle qu'écrite, 10 le sommet de Naïah, qui rit et ne gémit jamais.
+ * Mêmes découpages en Suggestif (mêmes séquences, texte plus voilé).
+ */
+const BN_ROWS: [id: string, homme: string, femme: string, returnChapter: number][] = [
+  ["bn-first", "4m@N 5b@N 6m@B 7pp@B 8pp@B", "4m@N 5b@N 6m@B 7f@B 8f@B", 9],
+  ["bn-limit", "4b@N 5m@B 6pp@B 7pp@B", "4b@N 5m@B 6M@B 7M@B", 8],
+  ["bn-simulation", "3m@N 4b@N 5f@B 6f@N 7i 8pv@N 9pv@N 10pv@N", "3m@N 4b@N 5f@B 6f@N 7i 8pv@N 9pv@N 10pv@N", 11],
+];
 const REMERII_ROWS: Row[] = [
   ["date-remerii-lanterns", "date-remerii-lanterns-complice", "3b 4i 5l 6f 7pv", "3m 4i 5l 6f 7f", 8],
   ["date-remerii-lanterns", "date-remerii-lanterns-attentive", "3b 4i 5l 6f 7pp", "3b 4i 5l 6f 7m", 8],
@@ -288,6 +303,10 @@ export const RHYTHM_ANCHORS: RhythmAnchor[] = [
       phases: ph, returnChapter: ph.at(-1)!.chapter + 1, suggestif: { phases: parsePhases(`${c - 3}m@N ${c - 2}m@N ${c - 1}m@H ${c}m@H`), returnChapter: c + 1 },
     };
   }),
+  ...BN_ROWS.flatMap(([id, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
+    character: "bellirith-naiah", context: id, routeId: id, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
+    ...(id === "bn-simulation" ? { noBaits: true } : {}),
+  }))),
   ...HR_ROWS.map(([routeId, phases]): RhythmAnchor => ({
     character: "hylee-remerii", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
     phases: parsePhases(phases), returnChapter: 8, suggestif: { phases: parsePhases(HR_SUGGESTIF), returnChapter: 6 },
@@ -359,7 +378,7 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES, "hylee-remerii": HYLEE_REMERII_RHYTHM_BUBBLES, naiah: NAIAH_RHYTHM_BUBBLES, "hylee-naiah": HYLEE_NAIAH_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES, "hylee-remerii": HYLEE_REMERII_RHYTHM_BUBBLES, naiah: NAIAH_RHYTHM_BUBBLES, "hylee-naiah": HYLEE_NAIAH_RHYTHM_BUBBLES, "bellirith-naiah": BELLIRITH_NAIAH_RHYTHM_BUBBLES };
 const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**
@@ -476,7 +495,7 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
       text.cadence = RHYTHM_CADENCE_LABELS.montee;
       text.relay = own(bubbles.relay);
     }
-    if (profile.behaviours.baits && !final && !useAppel) def.baits = profile.behaviours.baits;
+    if (profile.behaviours.baits && !anchor.noBaits && !final && !useAppel) def.baits = profile.behaviours.baits;
     if (phase.bord && profile.behaviours.bord && !useAppel) def.bord = { at: bordAt(def), beats: profile.behaviours.bord.beats };
     // Montée finale : jusqu'au tempo d'apogée du personnage (un peu moins haut quand le sommet n'est pas une pénétration).
     if (final) def.ramp = { strokes: 12, toBpm: gesture === "penetration" ? profile.bpm.ramp[1] : Math.round(profile.bpm.ramp[1] * 0.8), final: profile.behaviours.deepHold ?? 3.2 };

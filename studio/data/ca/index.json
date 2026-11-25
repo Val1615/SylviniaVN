@@ -7056,6 +7056,46 @@
    ]
   },
   {
+   "key": "rhythm-bubbles-bellirith-naiah",
+   "label": "Bellirith × Naïah · rhythm bubbles",
+   "group": "Bellirith × Naïah",
+   "hash": "0e37767267134a3a",
+   "scenes": 1,
+   "counts": {
+    "s": 16,
+    "t": 0,
+    "n": 0,
+    "a": 5
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-bellirith-naiah:a09kh0y6",
+     "path": "BELLIRITH_NAIAH_RHYTHM_BUBBLES.resisted",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith-naiah:a15t47sq",
+     "path": "BELLIRITH_NAIAH_RHYTHM_BUBBLES.ceded",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith-naiah:a1rxbj19",
+     "path": "BELLIRITH_NAIAH_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith-naiah:a0l1ftj2",
+     "path": "BELLIRITH_NAIAH_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-bellirith-naiah:a06vddfp",
+     "path": "BELLIRITH_NAIAH_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 2
+    }
+   ]
+  },
+  {
    "key": "rhythm-bubbles-hylee",
    "label": "Hylee · rhythm bubbles",
    "group": "Hylee",

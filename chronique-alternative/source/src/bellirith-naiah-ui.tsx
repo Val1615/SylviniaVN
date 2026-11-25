@@ -4,7 +4,9 @@ import type { CrossQuestProgress } from "./cross-quests";
 import type { DialogueLine } from "./game-data";
 import type { IntimacyMode, PlayerSex } from "./date-scenes";
 import { spritePath } from "./sprite-system";
-import { intimateSpritePath } from "./intimate-sprite-system";
+import { INTIMATE_SPRITE_MOODS, intimateSpritePath } from "./intimate-sprite-system";
+
+const BN_RHYTHM_SPRITE_MOODS = { bellirith: INTIMATE_SPRITE_MOODS.bellirith, naiah: INTIMATE_SPRITE_MOODS.naiah };
 import {
   BN_FINAL_STAGE, BN_MINIGAME_OBJECTIVE, BN_MINIGAME_STAGE, BN_OBJECTIVES, BN_POST_MOMENT_IDS, BN_STAGE_TOTAL, BN_TITLES,
   bnIntimacyLived, bnMinigamePending, bnPendingIntimacies, bnPostMoment, type BNIntimacyId,
@@ -16,6 +18,8 @@ import {
 } from "./bellirith-naiah-minigame";
 import { BN_INTIMACY_SCENES, bnRenderChapters, bnRenderOpening, bnVisualState } from "./bellirith-naiah-intimacy";
 import { ROMAINS } from "./ui/v2/common";
+import { RhythmIntimacyGame, type RhythmResult } from "./rhythm-intimacy-ui";
+import { buildRhythmKit, rhythmAnchorFor, type RhythmKit } from "./rhythm-anchors";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
 
 /* ------------------------------------------------------------------------ */
@@ -238,8 +242,12 @@ export function BNMinigameModal({ state, replay = false, dev = false, background
 const MODE_LABELS: Record<IntimacyMode, string> = { tendre: "Tendre", suggestif: "Suggestif", explicite: "Explicite · sans coupure", ellipse: "Fondu au noir" };
 const STANDARD_MOOD = { bellirith: "seductive", naiah: "smirk" } as const;
 
-export function BNIntimacyModal({ id, mode, sex, replay = false, background, format, onStop, onFinish }: {
+export function BNIntimacyModal({ id, mode, sex, replay = false, background, format, onStop, onFinish, rhythm = false, music = true, volume = 0.7, onRelation }: {
   id: BNIntimacyId; mode: IntimacyMode; sex: PlayerSex; replay?: boolean; background: string; format: Format;
+  /** Mode développeur : la scène s’ouvre directement sur le jeu de rythme. */
+  rhythm?: boolean; music?: boolean; volume?: number;
+  /** Baisse de relation d’une mauvaise partie (Chronique seulement, une fois). */
+  onRelation?: (characterId: string, delta: number) => void;
   /** Interruption volontaire : la scène s’arrête là, sans conséquence négative. */
   onStop: (chapter: number) => void;
   onFinish: () => void;
@@ -247,19 +255,25 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
   const scene = BN_INTIMACY_SCENES[id];
   const opening = useMemo(() => bnRenderOpening(scene, sex), [scene, sex]);
   const chapters = useMemo(() => bnRenderChapters(scene, mode, sex), [scene, mode, sex]);
-  const [step, setStep] = useState<"opening" | "chapters" | "done">("opening");
-  const [chapter, setChapter] = useState(0);
+  // Jeu de rythme (lot 12) : la piste de Bellirith, Naïah « simule » (leurres, sauf en Q5). Le texte écrit reprend après.
+  const rhythmAnchor = mode === "explicite" || mode === "suggestif" ? rhythmAnchorFor("bellirith-naiah", id, sex) : undefined;
+  const rhythmKit: RhythmKit | undefined = useMemo(() => (rhythmAnchor ? buildRhythmKit(rhythmAnchor, chapters, scene.title, mode) : undefined), [rhythmAnchor, chapters, scene.title, mode]);
+  const rhythmRelationApplied = useRef(false);
+  const [step, setStep] = useState<"opening" | "chapters" | "rhythm" | "done">(rhythm && rhythmKit ? "rhythm" : "opening");
+  const [chapter, setChapter] = useState(rhythm && rhythmKit ? rhythmKit.start : 0);
   const [lineIndex, setLineIndex] = useState(0);
-  const lines = step === "opening" ? opening : step === "chapters" ? chapters[chapter] || [] : [];
+  const [rhythmBubble, setRhythmBubble] = useState<DialogueLine[]>([]);
+  const [rhythmMoods, setRhythmMoods] = useState<{ bellirith?: string; naiah?: string }>({});
+  const lines = step === "opening" ? opening : step === "chapters" ? [...rhythmBubble, ...(chapters[chapter] || [])] : [];
   const line = lines[lineIndex];
-  const visual = bnVisualState(scene, mode, step, chapter);
+  const visual = bnVisualState(scene, mode, step === "rhythm" ? "chapters" : step, chapter);
   const lastMoods = useRef<{ bellirith?: string; naiah?: string }>({});
   if (line?.speaker === "Bellirith" && line.mood) lastMoods.current.bellirith = line.mood;
   if (line?.speaker === "Naïah" && line.mood) lastMoods.current.naiah = line.mood;
-  const intimateMood = (who: "bellirith" | "naiah") => (step === "done" ? chapters.at(-1)?.[0] : line)?.intimateMoods?.[who];
+  const intimateMood = (who: "bellirith" | "naiah") => step === "rhythm" ? rhythmMoods[who] || "soft" : (step === "done" ? chapters.at(-1)?.[0] : line)?.intimateMoods?.[who];
   // Retour et Historique : la scène n’a aucun choix, ses effets ne s’appliquent qu’à « Continuer la chronique ».
   const sectionRef = useRef<HTMLElement>(null);
-  const rollback = useRollback<{ step: "opening" | "chapters" | "done"; chapter: number; lineIndex: number }>();
+  const rollback = useRollback<{ step: "opening" | "chapters" | "rhythm" | "done"; chapter: number; lineIndex: number }>();
   const lineKey = `${step}|${chapter}|${lineIndex}|${line?.speaker}|${line?.text}`;
   const { backlog, backlogOpen, setBacklogOpen, backlogRef, rewind } = useSceneBacklog(`${id}:${mode}:${replay ? "r" : "l"}`, lineKey, line, step !== "done", format, ["bellirith", "naiah"]);
   function back() {
@@ -275,9 +289,31 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
     rollback.record({ step, chapter, lineIndex });
     if (lineIndex < lines.length - 1) { setLineIndex(lineIndex + 1); return; }
     if (step === "opening") { setStep("chapters"); setChapter(0); setLineIndex(0); return; }
-    if (step === "chapters" && chapter < chapters.length - 1) { setChapter(chapter + 1); setLineIndex(0); return; }
+    if (step === "rhythm") return;
+    if (rhythmBubble.length) setRhythmBubble([]);
+    if (step === "chapters" && chapter < chapters.length - 1) {
+      if (rhythmKit && chapter + 1 === rhythmKit.start) { rollback.clear(); setStep("rhythm"); setChapter(rhythmKit.start); setLineIndex(0); return; }
+      setChapter(chapter + 1); setLineIndex(0); return;
+    }
     setStep("done");
   }
+  /** Sortie du jeu : bulle de fin puis reprise du texte écrit ; la relation de Bellirith (-2) seulement en Chronique, une fois. */
+  function leaveRhythm(kit: RhythmKit, result?: RhythmResult) {
+    rollback.clear();
+    setLineIndex(0);
+    if (!result) { setRhythmBubble([]); setStep("chapters"); setChapter(kit.start); return; }
+    if (result.quality === "tatonnement" && !result.auto && !replay && !rhythmRelationApplied.current) {
+      rhythmRelationApplied.current = true;
+      for (const [who, delta] of Object.entries(kit.profile.relationPenalties || {})) if (delta) onRelation?.(who, delta);
+    }
+    setRhythmBubble(kit.scene.conclusions[result.quality].lines);
+    setStep("chapters");
+    setChapter(Math.min(kit.returnChapter, chapters.length - 1));
+  }
+  const onRhythmMood = (mood: string) => {
+    const owners = (["bellirith", "naiah"] as const).filter((who) => (BN_RHYTHM_SPRITE_MOODS[who] as readonly string[]).includes(mood));
+    if (owners.length) setRhythmMoods((current) => ({ ...current, ...Object.fromEntries(owners.map((who) => [who, mood])) }));
+  };
   const sprite = (who: "bellirith" | "naiah") => {
     const speaking = line && (who === "bellirith" ? line.speaker === "Bellirith" : line.speaker === "Naïah");
     const nude = visual.nude;
@@ -287,7 +323,7 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
     </div>;
   };
   const sequenceLabel = step === "chapters" ? `Séquence ${chapter + 1} / ${chapters.length} · ` : step === "opening" ? "Prélude · " : "";
-  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy bn-intimacy v2-scene v2-scene-intime ${visual.cg ? `has-intimacy-cg cg-${visual.cg.phase}` : ""}`} data-bn-intimacy={id} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
+  return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy bn-intimacy v2-scene v2-scene-intime ${visual.cg ? `has-intimacy-cg cg-${visual.cg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""} ${step === "rhythm" && rhythmKit?.scene.suggestive ? "rythme-suggestif" : ""}`} data-bn-intimacy={id} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
     <div className="scene-top intimacy-top">
       <div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir intime · aucun gain" : `Bellirith & Naïah · ${MODE_LABELS[mode]}`}</p><h2>Bellirith & Naïah · {scene.title}</h2></div>
       <div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={() => step === "done" ? onFinish() : onStop(step === "opening" ? -1 : chapter)}>{replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div>
@@ -296,7 +332,10 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
       ? <div className={`intimacy-cg intimacy-cg-${visual.cg.phase}`} data-intimacy-cg={visual.cg.phase} style={{ "--intimacy-cg": `url(/assets/intimacy-cg/${visual.cg.src}.jpg)` } as CSSProperties}><img src={`/assets/intimacy-cg/${visual.cg.src}.jpg`} alt="Illustration intime de la scène" /></div>
       : <div className={`group-intimacy-sprites ${visual.nude ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">{sprite("naiah")}{sprite("bellirith")}</div>}
     <div className="dialogue-gradient" />
-    {step !== "done" && line && <button className={`dialogue-box intimacy-dialogue ${line.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": line.speaker === "Bellirith" ? "#d9475f" : line.speaker === "Naïah" ? "#9fd3c7" : "var(--or)" } as CSSProperties} onClick={advance}>
+    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${replay ? "souvenir" : "chronique"}`} music={music} volume={volume} format={format} onMood={onRhythmMood}
+      relationNote={!replay ? rhythmKit.bubbles.relationNote : undefined}
+      onFinish={(result) => leaveRhythm(rhythmKit, result)} onSkip={() => leaveRhythm(rhythmKit)} onLeave={() => onStop(chapter)} />}
+    {step !== "done" && step !== "rhythm" && line && <button className={`dialogue-box intimacy-dialogue ${line.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": line.speaker === "Bellirith" ? "#d9475f" : line.speaker === "Naïah" ? "#9fd3c7" : "var(--or)" } as CSSProperties} onClick={advance}>
       <span className="speaker">{format(line.speaker)}</span>
       <p key={`${step}-${chapter}-${lineIndex}`}>{format(line.text)}</p>
       <small>{sequenceLabel}{lineIndex + 1} / {lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
