@@ -162,6 +162,24 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "teasing", bouche: "teasing", langue: "soft", frottement: "teasing", penetration: "soft", interlude: "soft", rire: "teasing" },
   },
+  "bellirith-naiah": {
+    character: "bellirith-naiah",
+    // À trois (lot 12) : la piste de Bellirith (Intense, aura sur ses phases), Naïah « simule » (leurres sauf en Q5) ; Naïah rit, jamais un gémissement.
+    difficulty: "intense",
+    bpm: { main: 72, bouche: 84, langue: 96, frottement: 80, penetration: [62, 88, 112], ramp: [136, 162] },
+    palette: { vive: "155,93,229", profonde: "40,30,58" },
+    voice: { dir: "bellirith", groups: { souffle: 3, soupir: 2, gemit: 5, apogee: 2, rire: 7 } },
+    voices: [
+      { key: "B", character: "bellirith", bank: { dir: "bellirith", groups: { souffle: 3, soupir: 2, gemit: 5, apogee: 2, rire: 7 } }, aura: true },
+      { key: "N", character: "naiah", bank: { dir: "naiah", groups: { souffle: 1, soupir: 1, gemit: 2, apogee: 2, rire: 3 } }, bord: true },
+    ],
+    behaviours: { baits: 5, aura: { strokes: 8, factor: 1.15 }, bord: { beats: 4 } },
+    resistanceWeight: 0.1,
+    relationPenalty: -2,
+    relationPenalties: { bellirith: -2, naiah: 0 },
+    captionMaxMs: 10000,
+    moods: { main: "teasing", bouche: "hungry", langue: "sultry", frottement: "inviting", penetration: "smug", interlude: "haughty", rire: "smug" },
+  },
   "hylee-remerii": {
     character: "hylee-remerii",
     // À trois (lot 9) : la douceur de Hylee et la mesure de Remerii ; relais de sommets, aucun piège, sa mesure récompensée.

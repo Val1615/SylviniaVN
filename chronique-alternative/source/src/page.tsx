@@ -494,7 +494,7 @@ type ModalState =
   | { kind: "hylee-search"; replay?: boolean; state?: HyleeSearchState }
   | { kind: "bn-minigame"; replay?: boolean; dev?: boolean; state?: BNGameState }
   | { kind: "valurn-market"; replay?: boolean; state?: ValurnMarketState }
-  | { kind: "bn-intimacy"; id: BNIntimacyId; replay?: boolean; mode?: Intimacy }
+  | { kind: "bn-intimacy"; id: BNIntimacyId; replay?: boolean; mode?: Intimacy; rhythm?: boolean }
   | { kind: "bv-never"; replay?: boolean; state?: BVNeverState }
   | { kind: "bv-intimacy"; id: BVIntimacyId; replay?: boolean; mode?: Intimacy }
   | { kind: "an-mini"; replay?: boolean; dev?: boolean }
@@ -519,6 +519,7 @@ const RHYTHM_DEV_ROWS: [character: string, title: string, level: string][] = [
   ["hylee-remerii", "Hylee et Remerii, relais de sommets (lot 9)", "Doux"],
   ["naiah", "Naïah, l'apprentissage (lot 10)", "Normal"],
   ["hylee-naiah", "Hylee et Naïah, fourberies (lot 11)", "Doux"],
+  ["bellirith-naiah", "Bellirith et Naïah, la simulation (lot 12)", "Intense"],
 ];
 const RHYTHM_DEV_PLACES: Record<string, string> = {
   "date-allenna-field": "Terrain", "date-allenna-terrace": "Terrasse", "date-lineva-ramparts": "Remparts", "date-lineva-quarters": "Quartiers",
@@ -527,11 +528,13 @@ const RHYTHM_DEV_PLACES: Record<string, string> = {
   "date-hylee-glade": "Clairière", "date-hylee-lake": "Lac", "home-hylee": "Logis",
   "group-date-hylee-naiah-place": "Lac", "group-date-hylee-naiah-one": "Clairière", "group-date-hylee-naiah-home": "Logis",
   "date-naiah-sanctuary": "Sanctuaire", "date-naiah-akuhn": "Akuhn", "home-naiah": "Logis",
+  "bn-first": "Q2 · Les coussins volés", "bn-limit": "Q4 · La barque", "bn-simulation": "Q5 · Même là ?",
   "group-date-hylee-remerii-free-day": "Journée libre", "group-date-hylee-remerii-wind": "Vent", "group-date-hylee-remerii-home": "Logis",
 };
 function rhythmDevLabel(anchor: { character: string; context: string; routeId: string }) {
   if (anchor.character === "bellirith") return `${BELLIRITH_DEV_INTIMACIES.find((entry) => entry.dateId === anchor.context)?.label || anchor.context}${anchor.context === "date-bellirith-final" ? ` · ${anchor.routeId === "bellirith-duel-steal" ? "voler" : "retourner"}` : ""}`;
   const place = RHYTHM_DEV_PLACES[anchor.context] || anchor.context;
+  if (anchor.character === "bellirith-naiah") return place;
   const rest = anchor.routeId.replace(`${anchor.context}-`, "").replace(/^(homme|femme)-/, "").replace(/-(homme|femme)$/, "").replace(/^home-\w+-(homme|femme)-/, "").replace(/^hylee-\w+-(homme|femme)-/, "").replace(/-/g, " ");
   return `${place} · ${rest}`;
 }
@@ -5447,6 +5450,11 @@ export default function Home() {
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
     if (target.kind === "rythme-perso") {
       // Fiches personnages (lots 1, 4 à 6) : la scène choisie s'ouvre directement sur le jeu, en souvenir (aucune mutation).
+      if (target.character === "bellirith-naiah") {
+        // Quête croisée Bellirith et Naïah (lot 12) : la nuit choisie s'ouvre sur le jeu, en souvenir, dans le mode d'intimité réglé.
+        setModal({ kind: "bn-intimacy", id: target.routeId as BNIntimacyId, replay: true, mode: game.player.intimacy, rhythm: true });
+        return;
+      }
       if (target.character === "allenna-lineva" || target.character === "hylee-remerii" || target.character === "hylee-naiah") {
         const date = groupIntimacyContextById(target.context);
         if (!date) return;
@@ -6002,7 +6010,8 @@ export default function Home() {
       {modal?.kind === "hylee-search" && hyleeSearchModalState && <HyleeSearchModal state={hyleeSearchModalState} replay={modal.replay} onChange={setHyleeSearchState} onClose={() => setModal(null)} onFinish={() => modal.replay ? setModal(null) : startHNScene(4)} />}
       {modal?.kind === "valurn-market" && (modal.replay ? modal.state : game.valurnMarket) && <ValurnMarketModal state={(modal.replay ? modal.state : game.valurnMarket)!} replay={modal.replay} background={backgroundUrl(spotById("algratal-market")?.background || "market")} format={(text) => replacePlayer(text, game.player)} onChange={setValurnMarketState} onClose={() => setModal(null)} onFinish={finishValurnMarket} />}
       {modal?.kind === "bn-minigame" && bnMinigameModalState && <BNMinigameModal state={bnMinigameModalState} replay={modal.replay} dev={modal.dev} background={backgroundUrl(spotById("algratal-ballroom")?.background || "ballroom")} format={(text) => replacePlayer(text, game.player)} onChange={setBNMinigameState} onClose={() => { setBNDuck(false); setModal(null); }} onFinish={finishBNMinigame} onAnomaly={setBNDuck} />}
-      {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
+      {modal?.kind === "bn-intimacy" && <BNIntimacyModal key={`${modal.id}-${modal.mode || "jeu"}-${modal.replay ? "r" : "l"}${modal.rhythm ? "-rythme" : ""}`} id={modal.id} mode={modal.mode || game.player.intimacy} sex={game.player.sex} replay={modal.replay}
+        rhythm={modal.rhythm} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} onRelation={adjustRhythmRelation}
         background={backgroundUrl(spotById(BN_INTIMACY_SCENES[modal.id].background)?.background || "forbidden_forest")} format={(text) => replacePlayer(text, game.player)}
         onStop={() => closeBNIntimacy(false)} onFinish={() => closeBNIntimacy(true)} />}
       {modal?.kind === "bv-never" && bvNeverModalState && <BVNeverModal key={modal.replay ? "bv-r" : "bv-l"} state={bvNeverModalState} ctx={bvTruthCtx()} replay={modal.replay} background={backgroundUrl(spotById("algratal-music-room")?.background || "algratal_music_room")} format={(text) => replacePlayer(text, game.player)} onChange={setBVNeverState} onClose={() => setModal(null)} onFinish={finishBVNever} />}
