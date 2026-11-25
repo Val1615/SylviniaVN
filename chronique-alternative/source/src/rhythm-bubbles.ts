@@ -35,6 +35,8 @@ export type RhythmCharacterBubbles = {
   relay?: DialogueLine[];
   /** Remarque affichée au bilan quand la démonstration automatique a joué. */
   autoNote?: DialogueLine;
+  /** Remerii, « la mesure » : annotation quand vos coups restent réguliers. */
+  mesure?: DialogueLine[];
 };
 
 /** Noms des phases et des cadences, communs à tous les personnages. */
@@ -73,4 +75,5 @@ export const RHYTHM_TRAP_LABELS = {
   resistance: "Résistance",
   recommended: "Recommandé",
   relay: "Sommet",
+  mesure: "Mesure tenue",
 };

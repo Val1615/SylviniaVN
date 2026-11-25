@@ -84,6 +84,18 @@ LINEVA={
 }
 for g,lst in LINEVA.items():
     for i,(a,b) in enumerate(lst): add(f'lineva/{g}-{i+1}',VK,a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
+# --- Voix de Remerii (fiches, lot 7) : epanody (CC BY 3.0, compte Freesound supprimé, sons toujours publiés), une seule comédienne,
+# découpée par analyse d'énergie (silencedetect), même traitement commun.
+EP=lambda i: R+f'epanody/deleted_user_1390811-{i}.mp3'
+REMERII={
+ 'souffle':[(86675,1.45,2.75),(86675,2.90,4.00),(86675,4.25,5.35),(86675,10.05,11.20),(86675,11.60,12.80)],
+ 'soupir':[(86676,1.95,2.85),(86676,3.75,4.95),(86676,5.80,7.65)],
+ # gemit 1-4 : retenus, 5-8 : « getting closer », plus francs
+ 'gemit':[(86680,1.90,2.70),(86680,4.05,5.35),(86680,6.45,7.80),(86680,8.65,10.15),(86680,11.10,12.30),(86680,12.50,13.80),(86680,14.25,15.50),(86682,1.15,3.10)],
+ 'apogee':[(86682,0.30,5.50),(86683,0.60,8.30)],
+}
+for g,lst in REMERII.items():
+    for i,(sid,a,b) in enumerate(lst): add(f'remerii/{g}-{i+1}',EP(sid),a,b,VCHAIN,0.18 if g!='apogee' else 0.6,True)
 only=set(sys.argv[1:])
 meta={}
 def vol(path,flt):

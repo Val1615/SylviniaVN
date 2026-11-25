@@ -31,6 +31,7 @@ import { BELLIRITH_RHYTHM_BUBBLES } from "./rhythm-bubbles-bellirith";
 import { ALLENNA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna";
 import { LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-lineva";
 import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
+import { REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-remerii";
 
 export type RhythmPhaseCode = "m" | "M" | "b" | "l" | "f" | "pv" | "pp" | "i";
 export type RhythmPhaseAnchor = { chapter: number; code: RhythmPhaseCode; bord: boolean; relay?: boolean; voice?: string };
@@ -123,6 +124,22 @@ const GROUP_ROWS: GroupRow[] = [
   ["group-date-allenna-lineva-home-femme-chambre", "3b@A^ 4b@A 5b@A! 6M@L 7M@L! 8m@A 9m@A! 10i 11M@A", 12],
 ];
 const GROUP_SUGGESTIF = "3m@A 4f@L 5f@A";
+/*
+ * Remerii (lot 7), relecture manuelle (PLAN.md, annexe C) : séquence 3, sa bouche (homme) ou ses doigts, parfois sa
+ * bouche (femme) ; séquence 4, la cicatrice, rupture écrite (rien à toucher) ; séquence 5, votre bouche et vos doigts ;
+ * 6 et 7 selon la position écrite (assise face à vous : elle mène ; couchés sur le côté : au plus profond ; jambes mêlées : frottement).
+ */
+const REMERII_ROWS: Row[] = [
+  ["date-remerii-lanterns", "date-remerii-lanterns-complice", "3b 4i 5l 6f 7pv", "3m 4i 5l 6f 7f", 8],
+  ["date-remerii-lanterns", "date-remerii-lanterns-attentive", "3b 4i 5l 6f 7pp", "3b 4i 5l 6f 7m", 8],
+  ["date-remerii-lanterns", "date-remerii-lanterns-elan", "3b 4i 5l 6pv 7pv", "3b 4i 5l 6f 7f", 8],
+  ["date-remerii-observatory", "date-remerii-observatory-complice", "3b 4i 5l 6f 7pv", "3b 4i 5l 6f 7M", 8],
+  ["date-remerii-observatory", "date-remerii-observatory-attentive", "3b 4i 5l 6pp 7pp", "3m 4i 5l 6f 7m", 8],
+  ["date-remerii-observatory", "date-remerii-observatory-elan", "3b 4i 5l 6pv 7pv", "3b 4i 5l 6f 7f", 8],
+  ["home-remerii", "home-remerii-complice", "3b 4i 5l 6pv 7pv", "3m 4i 5l 6f 7M", 8],
+  ["home-remerii", "home-remerii-attentive", "3b 4i 5l 6pp 7pp", "3m 4i 5l 6f 7m", 8],
+  ["home-remerii", "home-remerii-elan", "3b 4i 5l 6pv 7pv", "3b 4i 5l 6f 7f", 8],
+];
 
 function parsePhases(spec: string): RhythmPhaseAnchor[] {
   return spec.split(/\s+/).map((token) => {
@@ -156,6 +173,9 @@ export const RHYTHM_ANCHORS: RhythmAnchor[] = [
     character: "allenna-lineva", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
     phases: parsePhases(phases), returnChapter, suggestif: { phases: parsePhases(GROUP_SUGGESTIF), returnChapter: 6 },
   })),
+  ...REMERII_ROWS.flatMap(([context, route, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
+    character: "remerii", context, routeId: `${route}-${sex}`, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
+  }))),
 ];
 
 export function rhythmAnchorFor(character: string, routeId: string | undefined, sex: string): RhythmAnchor | undefined {
@@ -217,7 +237,7 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES };
 const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**
@@ -337,7 +357,7 @@ export function buildRhythmKit(anchor: RhythmAnchor, chapters: DialogueLine[][],
     if (profile.behaviours.baits && !final && !useAppel) def.baits = profile.behaviours.baits;
     if (phase.bord && profile.behaviours.bord && !useAppel) def.bord = { at: bordAt(def), beats: profile.behaviours.bord.beats };
     // Montée finale : jusqu'au tempo d'apogée du personnage (un peu moins haut quand le sommet n'est pas une pénétration).
-    if (final) def.ramp = { strokes: 12, toBpm: gesture === "penetration" ? profile.bpm.ramp[1] : Math.round(profile.bpm.ramp[1] * 0.8), final: 3.2 };
+    if (final) def.ramp = { strokes: 12, toBpm: gesture === "penetration" ? profile.bpm.ramp[1] : Math.round(profile.bpm.ramp[1] * 0.8), final: profile.behaviours.deepHold ?? 3.2 };
     sections.push(def);
     texts.push(text);
   });
