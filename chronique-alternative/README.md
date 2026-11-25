@@ -37,16 +37,18 @@ Les scènes intimes domestiques de Lineva, Iriana, Saidin et Amanea nécessitent
 
 Une seule scène pour l'instant : Hylee, intimité au logis, parcours homme, mood « audacieuse », réglage Explicite. Après la séquence d'intensification, le jeu remplace la séquence du climax écrit puis rend la main à l'après-climax (CG post-orgasme).
 
-- carte écrite à la main, mesure par mesure, sur `intimate.mp3` (129,5 BPM), 76 secondes en quatre positions : elle mène (lent), dos tourné, renversée, face à face jusqu'à l'apogée ;
-- trois notes : toucher (coup), appui long (rester au fond, ralentir) et glissé (changement de position) ;
-- justesse Parfait, Bien ou Raté ; la jauge de plaisir ne fait que monter, un raté déclenche une taquinerie d'Hylee ;
-- trois paliers par position débloquent des lignes qui décrivent l'acte, la justesse finale choisit l'une des trois conclusions (Embrasement, Accord, Tâtonnement) ;
-- difficultés Doux, Normal et Intense, mode auto pour lire sans jouer, décalage audio réglable, « Lire la version écrite » pour garder le texte d'origine ;
+- cadence régulière qui suit les va-et-vient, sans aucun calage musical : un coup par battement, tempo stable dans chaque position et accélération par paliers (56, 76, 98 puis 122 coups par minute en Normal), puis une montée finale jusqu'à 150 vers l'apogée ; environ 74 secondes en quatre positions : elle mène (lent et profond), dos tourné, renversée, face à face ;
+- trois notes : toucher (coup), appui long (rester au fond un ou deux battements, sans casser la pulsation) et glissé (changement de position) ;
+- justesse Parfait, Bien ou Raté ; la jauge de plaisir ne fait que monter, un raté déclenche un son sourd et une taquinerie d'Hylee ;
+- bruitages CC0 (`assets/audio/rythme/`, crédits dans `SOURCES.md`) : claquement varié à chaque coup réussi, note humide quand on reste au fond, souffles puis soupirs, gémissements et halètements qui montent avec la jauge, draps aux changements de position, éclat à l'apogée ; volume séparé et interrupteur ;
+- l'interface réagit en rythme et de plus en plus fort avec le plaisir : pulsation discrète au début, puis halo du couloir, jauge et couloir qui battent, vignette rose-rouge sur les bords, léger zoom de l'image sur chaque coup, jugements plus marqués, culmination à l'apogée ; le centre de l'image reste dégagé ; réglages « Effets réduits », « Image en rythme » et « Vibration » ;
+- lignes courtes qui accompagnent les coups et répliques d'Hylee qui montent en intensité, en plus des trois paliers par position ; la justesse finale choisit l'une des trois conclusions (Embrasement, Accord, Tâtonnement) ;
+- difficultés Doux, Normal et Intense (même cadence, tempo et tolérance différents), mode auto pour lire sans jouer, décalage des coups réglable, musique de fond à volume réglable, « Lire la version écrite » pour garder le texte d'origine ;
 - pause (Échap ou bouton), « Reprendre plus tard » et sauvegarde continue dans `sylvinia_ca_rythme_v1`, séparée de la partie ;
 - clavier (Espace, J ou F, flèches) et tactile (toucher, garder le doigt, balayer) ;
 - accès direct : Options, Session, Mode développeur, « Lancer le jeu de rythme ».
 
-Sources : `source/src/rhythm-intimacy.ts` (textes, modifiables depuis le Studio), `rhythm-intimacy-engine.ts` (carte et score), `rhythm-intimacy-ui.tsx`, `rhythm-intimacy.css`. Test : `npm run test:rhythm`, parcours navigateur `scripts/e2e/rythme_e2e.py`.
+Sources : `source/src/rhythm-intimacy.ts` (textes, modifiables depuis le Studio), `rhythm-intimacy-engine.ts` (cadence et score), `rhythm-intimacy-sfx.ts` (bruitages), `rhythm-intimacy-ui.tsx`, `rhythm-intimacy.css`. Test : `npm run test:rhythm`, parcours navigateur `scripts/e2e/rythme_e2e.py`. Les bruitages se refabriquent avec `scripts/rythme-sons-build.py`.
 
 Le retour vers le Mode Histoire est volontairement limité à l’écran titre et aux options afin de ne pas encombrer le mode libre.
 

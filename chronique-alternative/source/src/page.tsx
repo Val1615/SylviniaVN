@@ -2306,7 +2306,7 @@ export default function Home() {
   const [currentSoundtrack, setCurrentSoundtrack] = useState("");
   /** Silence partiel de la manche « SIGNAL HORS ÉCHELLE » (Les Trois Réponses). */
   const [bnDuck, setBNDuck] = useState(false);
-  // Jeu de rythme intime : la piste d'ambiance se tait pendant que le jeu joue sa propre copie calée sur la carte.
+  // Jeu de rythme intime : la piste d'ambiance se tait pendant que le jeu joue sa propre musique de fond (volume réglable, sans calage).
   const [rhythmDuck, setRhythmDuck] = useState(false);
   useEffect(() => {
     const listen = (event: Event) => setRhythmDuck(Boolean((event as CustomEvent<boolean>).detail));

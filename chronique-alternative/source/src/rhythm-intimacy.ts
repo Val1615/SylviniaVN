@@ -10,7 +10,9 @@ import type { DialogueLine } from "./game-data";
  * et rend la main à l'après-climax, qui affiche la CG post-orgasme.
  *
  * Chaque section correspond à une position. Ses trois paliers se débloquent par
- * la justesse du joueur et décrivent l'acte à mesure que la cadence monte.
+ * la justesse du joueur et décrivent l'acte à mesure que la cadence monte. Des
+ * lignes courtes suivent les coups eux-mêmes, et les répliques d'Hylee montent
+ * en intensité avec la jauge de plaisir.
  * Aucune ligne n'est recyclée d'une autre scène.
  */
 
@@ -20,6 +22,10 @@ export type RhythmSectionText = {
   intimateMood: string;
   intro: DialogueLine;
   tiers: [DialogueLine, DialogueLine, DialogueLine];
+  /** Lignes courtes qui accompagnent les coups, dans l'ordre (une toutes les quelques poussées). */
+  strokes: DialogueLine[];
+  /** Répliques brèves d'Hylee, de plus en plus intenses à mesure que la jauge monte. */
+  voice: DialogueLine[];
 };
 
 export type RhythmSceneText = {
@@ -40,7 +46,7 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
   id: "rythme-hylee-logis-audacieuse",
   routeId: "hylee-home-homme-audacieuse",
   title: "Au rythme du givre",
-  instruction: "Hylee donne la cadence. Touchez au passage de chaque note, gardez l'appui sur les notes longues et glissez sur les flèches quand elle change de position. La musique accélère jusqu'au bout.",
+  instruction: "Suivez ses va-et-vient : un coup à chaque battement, quand la note touche le cercle. Gardez l'appui quand elle vous retient au fond, glissez quand elle change de position. La cadence accélère jusqu'au bout.",
   controls: {
     keyboard: "Espace, J ou F : toucher et maintenir · ← → : glisser · Échap : pause",
     touch: "Touchez n'importe où : toucher · gardez le doigt : maintenir · balayez : glisser",
@@ -56,6 +62,20 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
         H("Comme ça. Ne bouge plus... Voilà. Maintenant, tu me suis.", "teasing", "teasing"),
         N("Ses hanches roulent en longues vagues. Sur le photophore, une dentelle de givre s'étend au même tempo que celui que vous lui rendez.", "seductive"),
       ],
+      strokes: [
+        N("Elle descend. Lentement. Jusqu'au bout."),
+        N("Un temps immobile, puis elle remonte."),
+        N("Ses doigts s'ouvrent sur votre torse."),
+        N("Encore une fois, toute la longueur."),
+        N("Le lit grince, à peine."),
+        N("Son souffle s'accroche au vôtre."),
+      ],
+      voice: [
+        H("Doucement...", "seductive"),
+        H("Tu le sens, là ?", "teasing"),
+        H("Mmh. Reste avec moi.", "seductive"),
+        H("Oui... comme ça.", "tender"),
+      ],
     },
     {
       label: "Dos tourné",
@@ -65,7 +85,21 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
       tiers: [
         N("Vos mains trouvent ses hanches. Elle s'abaisse en mesure, plus vite, et chaque reprise fait frémir la ligne de son dos jusqu'à la nuque.", "teasing"),
         H("Tu vois mieux d'ici ? Moi, je sens tout. C'est injuste, et j'adore ça.", "teasing", "teasing"),
-        N("Le va-et-vient devient une danse serrée. Elle se cambre, vous garde enfoui en elle à chaque troisième temps et rit tout bas quand vous tenez la mesure.", "seductive"),
+        N("Le va-et-vient devient une danse serrée. Elle se cambre, vous garde enfoui en elle quand l'envie l'en prend et rit tout bas quand vous tenez la mesure.", "seductive"),
+      ],
+      strokes: [
+        N("Ses reins se creusent à chaque reprise."),
+        N("Vos mains guident ses hanches."),
+        N("La peau claque, plus franche."),
+        N("Elle revient sur vous, chaque fois plus vite."),
+        N("Sa nuque ploie, ses cheveux glissent."),
+        N("Un frisson court le long de son dos."),
+      ],
+      voice: [
+        H("Ah... plus vite.", "teasing"),
+        H("Ne lâche pas mes hanches.", "seductive"),
+        H("Là. Encore là.", "seductive"),
+        H("Tu vas me rendre folle...", "tender"),
       ],
     },
     {
@@ -78,6 +112,20 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
         H("Plus fort... non, plus près. Les deux. Surtout, ne t'arrête pas.", "seductive", "determined"),
         N("Vos coups de reins s'enchaînent, rapides et pleins. Hylee s'accroche à vos épaules, le souffle cassé en petits éclats, pendant que des étoiles de givre grimpent le long des montants du lit.", "tender"),
       ],
+      strokes: [
+        N("Ses talons pressent vos reins."),
+        N("Vous plongez, elle se cambre pour vous accueillir."),
+        N("Le rythme ne laisse plus de place aux mots."),
+        N("Ses ongles marquent vos épaules."),
+        N("La lampe de givre vacille à chaque élan."),
+        N("Chaque poussée lui arrache un éclat de voix."),
+      ],
+      voice: [
+        H("Oui... oui...", "seductive"),
+        H("Plus profond, je t'en prie.", "seductive"),
+        H("Ne t'arrête surtout pas.", "tender"),
+        H("Je... j'y suis presque...", "soft"),
+      ],
     },
     {
       label: "Face à face",
@@ -88,6 +136,20 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
         N("Vous la soulevez puis la laissez retomber, encore et encore. Elle noue les bras à votre nuque et cale son élan sur le vôtre, battement contre battement.", "soft"),
         H("Regarde-moi. Je veux que tu voies quand ça arrive.", "soft", "soft"),
         N("La cadence s'emballe. Hylee tremble contre vous, se resserre à chaque montée, et vous sentez la vague se former au creux de votre union autant qu'au fond de ses yeux.", "seductive"),
+      ],
+      strokes: [
+        N("Front contre front, souffle contre souffle."),
+        N("Elle retombe sur vous, encore, encore."),
+        N("Ses bras se nouent à votre nuque."),
+        N("Plus rien ne retient la cadence."),
+        N("Elle frémit, se referme sur vous."),
+        N("La vague monte, toute proche."),
+      ],
+      voice: [
+        H("Regarde-moi...", "soft"),
+        H("Encore... encore...", "seductive"),
+        H("Avec moi. Maintenant.", "soft"),
+        H("Ah... !", "seductive"),
       ],
     },
   ],
@@ -100,7 +162,7 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
     H("Si tu t'arrêtes maintenant, je te gèle les orteils.", "teasing", "teasing"),
     H("Je t'ai vu hésiter. C'était mignon. Recommence.", "shy", "teasing"),
     H("Mes hanches avaient de l'avance. Rejoins-les.", "seductive", "teasing"),
-    H("Tu écoutes la musique, ou tu me regardes ? Les deux, c'est permis.", "teasing", "teasing"),
+    H("Tu comptes dans ta tête ? Regarde-moi plutôt, je te donne la mesure.", "teasing", "teasing"),
     H("Oups. On dira que c'était une figure de style.", "shy", "teasing"),
   ],
   conclusions: {
@@ -124,7 +186,7 @@ export const HYLEE_HOME_RHYTHM: RhythmSceneText = {
       title: "Tâtonnement",
       lines: [
         N("Hylee finit par cesser de compter. Elle vous serre, prend l'allure qui lui plaît et vous mène jusqu'au bout en riant contre votre bouche, jusqu'à ce que la jouissance vous rattrape tous les deux.", "tender"),
-        H("La musique et toi, vous n'étiez pas toujours d'accord. Moi, j'ai trouvé ça délicieux quand même.", "teasing", "teasing"),
+        H("Tes hanches et les miennes n'étaient pas toujours d'accord. Moi, j'ai trouvé ça délicieux quand même.", "teasing", "teasing"),
       ],
     },
   },

@@ -105,3 +105,50 @@
   .rythme-panneau h3 { font-size: 1rem; }
 }
 @media (max-width: 600px) { .rythme-legende { max-width: calc(100% - 110px); } }
+
+/* ---------- Réactions en rythme (v2) ----------
+   --pulse : battement de chaque coup réussi (0 à 1, retombe avant le suivant)
+   --ardeur : plaisir (suit la jauge, 1 à l'apogée) · --halo, --bat, --vignette : paliers dérivés
+   « Effets réduits » divise ces valeurs côté script et coupe le zoom. Le centre de l'image reste toujours dégagé. */
+.rythme-piste { box-shadow: inset 0 0 calc(14px + 10px * var(--halo, 0)) rgba(var(--rouge-r), calc(.16 + .2 * var(--halo, 0))), 0 0 calc(8px + 30px * var(--halo, 0) * var(--pulse, 0)) rgba(var(--rose-r), calc(.1 + .55 * var(--halo, 0) * var(--pulse, 0))); border-color: rgba(var(--rose-r), calc(.2 + .45 * var(--halo, 0) * var(--pulse, 0))); }
+.rythme-couloir { transform-origin: 100% 100%; transform: scale(calc(1 + .035 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-jauge b { box-shadow: 0 0 calc(8px + 16px * var(--bat, 0) * var(--pulse, 0)) rgba(var(--rose-r), calc(.6 + .4 * var(--bat, 0))); filter: brightness(calc(1 + .5 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-jauge { transform-origin: 50% 100%; transform: scaleX(calc(1 + .9 * var(--bat, 0) * var(--pulse, 0))); }
+.rythme-cible { transform: scale(calc(1 + (.08 + .14 * var(--ardeur, 0)) * var(--pulse, 0))); box-shadow: 0 0 calc(8px + 26px * var(--halo, 0) * var(--pulse, 0)) rgba(var(--rose-r), .75), inset 0 0 10px rgba(var(--rose-r), .4); }
+/* Onde qui part de la cible à chaque coup, plus large quand le plaisir monte */
+.rythme-onde { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid rgba(255, 214, 226, .85); pointer-events: none; animation: rythme-onde .55s ease-out forwards; --portee: calc(1.6 + 1.6 * var(--ardeur, 0)); }
+.rythme-onde.parfait { border-color: #fff2f6; box-shadow: 0 0 12px rgba(var(--rose-r), .9); }
+.effets-reduit .rythme-onde { --portee: 1.4; }
+@keyframes rythme-onde { from { opacity: .95; transform: scale(1); } to { opacity: 0; transform: scale(var(--portee)); } }
+/* Vignette rose-rouge sur les bords : absente au début, elle bat de plus en plus fort ; le centre (55 %) reste transparent */
+.rythme-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: calc(var(--vignette, 0) * (.3 + .7 * var(--pulse, 0))); background: radial-gradient(ellipse 72% 68% at 50% 46%, transparent 55%, rgba(var(--rouge-r), .22) 76%, rgba(var(--rose-r), .5) 92%, rgba(255, 170, 190, .62) 100%); mix-blend-mode: screen; }
+/* Jugements plus marqués avec l'ardeur */
+.rythme-juge { font-size: calc(.9rem * (1 + .45 * var(--ardeur, 0))); }
+.rythme-juge.parfait { text-shadow: 0 0 calc(10px + 14px * var(--ardeur, 0)) #ff6f96, 0 0 2px #fff; }
+.ardeur-3 .rythme-juge.parfait { color: #fff; letter-spacing: .14em; }
+.rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
+/* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
+.rythme-en-cours .intimacy-cg img, .rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0)); transform-origin: 50% 55%; }
+/* Lignes de cadence : courtes, à gauche du couloir, au-dessus de la cible */
+.rythme-coup { position: absolute; right: 100px; bottom: calc(46px + 6vh); max-width: min(320px, 42vw); text-align: right; font: italic 600 .8rem/1.3 var(--display, serif); color: #ffe3ec; text-shadow: 0 0 10px rgba(var(--rouge-r), .9), 0 1px 3px #000; pointer-events: none; animation: rythme-coup 2.3s ease-out forwards; }
+@keyframes rythme-coup { 0% { opacity: 0; transform: translateX(10px); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-6px); } }
+/* Répliques d'Hylee en rythme : bulle rose, plus vive quand l'ardeur monte */
+.rythme-voix { position: absolute; right: 100px; bottom: calc(96px + 10vh); max-width: min(300px, 40vw); padding: .3rem .6rem .35rem; border-radius: 12px 12px 2px 12px; background: rgba(60, 10, 30, calc(.5 + .2 * var(--ardeur, 0))); border: 1px solid rgba(var(--rose-r), calc(.45 + .4 * var(--ardeur, 0))); box-shadow: 0 0 calc(6px + 16px * var(--ardeur, 0)) rgba(var(--rose-r), .45); color: #fff0f5; font-size: calc(.78rem * (1 + .15 * var(--ardeur, 0))); line-height: 1.3; text-shadow: 0 1px 2px #000; pointer-events: none; animation: rythme-taquine 2s ease-out forwards; }
+.rythme-voix .qui { display: block; font: 700 .56rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ff9fbb; }
+/* Apogée : l'éclat culmine sur les bords, la vignette reste pleine quelques secondes */
+.rythme-layer.apogee .rythme-apogee-voile { animation: rythme-apogee 2.6s ease-out forwards; }
+.rythme-layer.apogee .rythme-piste { box-shadow: 0 0 calc(24px + 30px * var(--pulse, 0)) rgba(255, 200, 215, .85), inset 0 0 24px rgba(var(--rose-r), .6); }
+.effets-reduit.apogee .rythme-apogee-voile { animation-duration: 1.4s; opacity: .5; }
+/* Réglages : curseurs compacts */
+.rythme-curseur { display: inline-flex; align-items: center; gap: .35rem; }
+.rythme-curseur input { width: 96px; accent-color: #e76588; }
+.rythme-curseur input:disabled { opacity: .4; }
+.rythme-reglages.ambiance, .rythme-reglages.effets { margin-top: -.2rem; }
+.rythme-choix.petit button { padding: .28rem .55rem; font-size: .64rem; }
+@media (max-height: 600px) {
+  .rythme-coup { bottom: 52px; font-size: .72rem; }
+  .rythme-voix { bottom: 100px; font-size: .72rem; }
+  .rythme-reglages { gap: .3rem .7rem; margin-bottom: .4rem; font-size: .7rem; }
+  .rythme-touches { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .rythme-onde { animation-duration: .01s; } }

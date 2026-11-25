@@ -1,4 +1,4 @@
-// Validateur du jeu de rythme intime (prototype) : carte de temps, calage musical,
+// Validateur du jeu de rythme intime (prototype) : cadence régulière des va-et-vient, bruitages,
 // paliers, sauvegarde « Reprendre plus tard », textes et rattachement à une seule scène.
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
@@ -19,10 +19,13 @@ try {
   const hylee = await server.ssrLoadModule("/src/hylee-date-intimacy.ts");
   const scene = texts.HYLEE_HOME_RHYTHM;
 
-  // Carte : trois difficultés emboîtées, quatre sections, glissés aux changements de position, apogée finale.
+  // Cadence : un coup par battement, tempo stable dans chaque position, accélération par paliers, aucune dépendance à la musique.
   const charts = Object.fromEntries(["doux", "normal", "intense"].map((d) => [d, engine.buildRhythmChart(d)]));
-  assert.ok(charts.doux.length < charts.normal.length && charts.normal.length < charts.intense.length, "difficultés emboîtées");
+  assert.ok(!("RHYTHM_SONG_START" in engine) && !("RHYTHM_BPM" in engine), "plus aucun calage sur la musique");
+  const bpms = engine.RHYTHM_SECTIONS.map((section) => section.bpm);
+  for (let i = 1; i < bpms.length; i++) assert.ok(bpms[i] > bpms[i - 1], `tempo croissant d'une position à l'autre (${bpms.join(" < ")})`);
   for (const [difficulty, chart] of Object.entries(charts)) {
+    assert.equal(chart.length, charts.normal.length, `${difficulty} : même cadence (un coup par battement), seuls tempo et tolérance changent`);
     assert.ok(chart.length >= 80, `${difficulty} : carte trop courte`);
     chart.forEach((note, index) => {
       assert.equal(note.index, index);
@@ -34,21 +37,47 @@ try {
     assert.equal(chart.filter((n) => n.kind === "final").length, 1, "une seule apogée");
     assert.equal(chart.at(-1).kind, "final", "l'apogée clôt la carte");
     assert.ok(chart.some((n) => n.kind === "hold"), "appuis longs présents");
-    // Le tempo monte : densité de notes croissante d'une section à l'autre.
-    const density = engine.RHYTHM_SECTIONS.map((section, i) => chart.filter((n) => n.section === i).length / section.bars.length);
-    for (let i = 1; i < density.length - 1; i++) assert.ok(density[i] > density[i - 1], `${difficulty} : densité croissante (${density.map((d) => d.toFixed(1)).join(" < ")})`);
+    engine.RHYTHM_SECTIONS.forEach((section, s) => {
+      const own = chart.filter((n) => n.section === s);
+      const steady = own.slice(0, section.strokes + (section.slide ? 1 : 0));
+      const beat = steady.at(-1).beat;
+      for (const note of steady) assert.ok(Math.abs(note.beat - beat) < 1e-9, `${difficulty}/${section.id} : tempo stable`);
+      for (let i = 1; i < steady.length; i++) {
+        const previous = steady[i - 1];
+        const expected = previous.kind === "hold" ? section.holdBeats * beat : beat;
+        assert.ok(Math.abs(steady[i].time - previous.time - expected) < 1e-6, `${difficulty}/${section.id} : coup hors battement à ${steady[i].time.toFixed(3)} s`);
+      }
+      if (section.ramp) {
+        const ramp = own.slice(steady.length);
+        assert.equal(ramp.length, section.ramp.strokes + 1, "montée finale complète");
+        for (let i = 1; i < ramp.length; i++) assert.ok(ramp[i].beat <= ramp[i - 1].beat + 1e-9, `${difficulty} : la montée finale ne ralentit jamais`);
+        assert.ok(ramp[0].beat < beat, "la montée accélère au-delà du tempo de la position");
+      }
+      if (s) assert.ok(own[0].beat < chart.filter((n) => n.section === s - 1)[0].beat, `${difficulty} : battement plus court à chaque position`);
+    });
     // Pas de chevauchement entre un appui long et la note suivante.
     chart.forEach((note, i) => { if (note.duration && chart[i + 1]) assert.ok(note.time + note.duration <= chart[i + 1].time + 1e-6, "appui long chevauchant"); });
   }
-  for (const section of engine.RHYTHM_SECTIONS) for (const bar of section.bars) assert.equal(bar.length, 8, `${section.id} : une mesure = huit croches (${bar})`);
+  assert.ok(charts.doux.at(-1).time > charts.normal.at(-1).time && charts.normal.at(-1).time > charts.intense.at(-1).time, "Doux plus lent, Intense plus rapide");
 
-  // Calage : la carte tient dans « intimate.mp3 » (129,5 BPM).
+  // La musique intime existe toujours (fond sonore réglable), les bruitages sont tous présents et sourcés.
   const track = resolve(projectRoot, "assets/audio", `${engine.RHYTHM_TRACK}.mp3`);
   await stat(track);
   let duration = 0;
   try { duration = Number(execFileSync("ffprobe", ["-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", track]).toString().trim()); } catch { duration = 0; }
-  if (duration) assert.ok(engine.RHYTHM_SONG_START + engine.rhythmChartEnd() + 1 < duration, "la carte dépasse la musique");
-  assert.ok(Math.abs(engine.RHYTHM_BEAT - 60 / 129.5) < 1e-9);
+  const sfx = await server.ssrLoadModule("/src/rhythm-intimacy-sfx.ts");
+  const sources = await readFile(resolve(projectRoot, "assets/audio/rythme/SOURCES.md"), "utf8");
+  for (const name of sfx.RHYTHM_SFX_FILES) {
+    const file = resolve(projectRoot, "assets/audio/rythme", `${name}.mp3`);
+    assert.ok((await stat(file)).size > 1000, `bruitage manquant : ${name}`);
+    assert.ok(sources.includes(`${name}.mp3`), `bruitage non crédité dans SOURCES.md : ${name}`);
+  }
+  assert.ok(/CC0/.test(sources) && /freesound\.org/.test(sources), "SOURCES.md : licence et provenance");
+  const defaults = engine.defaultRhythmPrefs();
+  assert.ok(defaults.sfx && defaults.sfxVolume > 0 && defaults.musicVolume < 0.6, "bruitages actifs, musique en retrait par défaut");
+  assert.equal(engine.rhythmArdour(0, false), 0);
+  assert.equal(engine.rhythmArdour(40, true), 1, "l'apogée porte l'interface au maximum");
+  assert.ok(engine.rhythmArdour(60, false) > engine.rhythmArdour(30, false), "l'interface réagit davantage quand le plaisir monte");
 
   // Justesse et paliers.
   assert.equal(engine.judgeOffset(0.01, "normal"), 1);
@@ -71,7 +100,7 @@ try {
   // Sauvegarde « Reprendre plus tard » : aller-retour exact, effacement, rejet d'un état incohérent.
   const memory = new Map();
   const storage = { getItem: (k) => memory.get(k) ?? null, setItem: (k, v) => memory.set(k, v) };
-  const state = { v: 1, scene: scene.id, difficulty: "normal", auto: false, offsetMs: 20, time: 41.631, judgements: charts.normal.map((_, i) => (i < 50 ? 1 : 0)), combo: 12, maxCombo: 30, unlocked: ["intro-0", "s0-t1"], teases: [2], savedAt: 1 };
+  const state = { v: 2, scene: scene.id, difficulty: "normal", auto: false, offsetMs: 20, time: 41.631, judgements: charts.normal.map((_, i) => (i < 50 ? 1 : 0)), combo: 12, maxCombo: 30, unlocked: ["intro-0", "s0-t1"], teases: [2], savedAt: 1 };
   engine.storeRhythmSave(state, "k", storage);
   assert.deepEqual(engine.loadRhythmSave("k", storage), state);
   engine.storeRhythmSave({ ...state, judgements: [1, 2] }, "bad", storage);
@@ -93,7 +122,14 @@ try {
 
   // Textes : quatre positions, trois paliers chacune, trois conclusions, dix taquineries, rien de recyclé.
   assert.equal(scene.sections.length, engine.RHYTHM_SECTIONS.length);
-  const all = [scene.title, scene.instruction, ...scene.sections.flatMap((s) => [s.label, s.cadence, s.intro.text, ...s.tiers.map((l) => l.text)]), ...scene.teases.map((l) => l.text), ...Object.values(scene.conclusions).flatMap((c) => [c.title, ...c.lines.map((l) => l.text)])];
+  for (const section of scene.sections) {
+    assert.ok(section.strokes.length >= 6, `${section.label} : au moins six lignes de cadence`);
+    assert.ok(section.voice.length >= 4, `${section.label} : au moins quatre répliques en rythme`);
+    for (const line of section.strokes) assert.ok(line.text.length <= 60, `ligne de cadence trop longue : ${line.text}`);
+    for (const line of section.voice) { assert.equal(line.speaker, "Hylee"); assert.ok(line.text.length <= 40, `réplique trop longue : ${line.text}`); }
+  }
+  assert.ok(!/musique/i.test(JSON.stringify(scene)), "le texte ne parle plus de musique");
+  const all = [scene.title, scene.instruction, ...scene.sections.flatMap((s) => [s.label, s.cadence, s.intro.text, ...s.tiers.map((l) => l.text), ...s.strokes.map((l) => l.text), ...s.voice.map((l) => l.text)]), ...scene.teases.map((l) => l.text), ...Object.values(scene.conclusions).flatMap((c) => [c.title, ...c.lines.map((l) => l.text)])];
   assert.equal(new Set(all).size, all.length, "aucun texte répété");
   assert.ok(scene.teases.length >= 8);
   for (const text of all) {
@@ -104,7 +140,7 @@ try {
   }
   const corpus = [hylee, await server.ssrLoadModule("/src/individual-explicit-scenes.ts")].map((m) => JSON.stringify(m)).join("\n");
   for (const text of all.filter((t) => t.length > 40)) assert.ok(!corpus.includes(text), `texte recyclé : ${text}`);
-  for (const section of scene.sections) for (const line of [section.intro, ...section.tiers]) assert.ok(["seductive", "teasing", "tender", "soft", "shy", "annoyed"].includes(line.intimateMood), "humeur de sprite intime Hylee existante");
+  for (const section of scene.sections) for (const line of [section.intro, ...section.tiers, ...section.voice]) if (line.intimateMood) assert.ok(["seductive", "teasing", "tender", "soft", "shy", "annoyed"].includes(line.intimateMood), "humeur de sprite intime Hylee existante");
 
   // Accès développeur et intégration à la scène.
   assert.match(pageSource, /kind: "hylee-rhythm"/);
@@ -113,7 +149,10 @@ try {
   assert.match(pageSource, /RHYTHM_DUCK_EVENT/);
 
   const counts = Object.fromEntries(Object.entries(charts).map(([d, c]) => [d, c.length]));
-  console.log(`Jeu de rythme OK : ${JSON.stringify(counts)} notes, ${engine.rhythmChartEnd().toFixed(1)} s de carte calée sur ${engine.RHYTHM_TRACK}.mp3 (${duration ? duration.toFixed(1) + " s" : "durée non lue"}), ${scene.sections.length} positions, ${all.length} textes uniques.`);
+  const studio = await readFile(resolve(sourceRoot, "scripts/studio-ca-strings.mjs"), "utf8");
+  assert.match(studio, /"rhythm-intimacy-sfx"/, "le module des bruitages reste hors de l'enveloppe Studio");
+  const lengths = Object.fromEntries(Object.keys(charts).map((d) => [d, engine.rhythmChartEnd(d).toFixed(1) + " s"]));
+  console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${bpms.join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques.`);
 } finally {
   await server.close();
 }

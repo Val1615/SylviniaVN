@@ -1,19 +1,19 @@
 /*
  * Jeu de rythme intime · moteur (Chronique Alternative, prototype).
  *
- * Module purement technique : carte de temps, fenêtres de justesse, score,
- * paliers et sauvegarde « Reprendre plus tard ». Les textes affichés vivent
- * dans rhythm-intimacy.ts (modifiables depuis le Studio). Ce module est exclu
- * de l'enveloppe Studio (voir SKIP_MODULES) parce que ses chaînes sont des
- * partitions, pas du texte.
+ * Module purement technique : cadence, fenêtres de justesse, score, paliers et
+ * sauvegarde « Reprendre plus tard ». Les textes affichés vivent dans
+ * rhythm-intimacy.ts (modifiables depuis le Studio). Ce module est exclu de
+ * l'enveloppe Studio (voir SKIP_MODULES) parce que ses chaînes sont techniques.
  *
- * Carte écrite à la main, mesure par mesure, sur « intimate.mp3 » :
- * 129,5 BPM, premier temps à 0,019 s. Une mesure = 4 temps = 8 croches.
- *   .  silence            T  coup (toutes difficultés)
- *   t  coup (Normal, Intense)          *  coup (Intense seulement)
- *   H  appui long (début), suivi de « - » pour chaque croche tenue
- *   F  appui long final (l'apogée), suivi de « - »
- *   <  >  glissé (changement de position ou de cadence)
+ * La cadence suit les va-et-vient, pas la musique : un coup par battement, un
+ * tempo stable dans chaque position, puis une accélération par paliers d'une
+ * position à l'autre (lent et profond, plus vif, rapide, jusqu'au bout).
+ * Quelques appuis longs demandent de rester au fond pendant un ou deux
+ * battements, sans jamais casser la pulsation : le coup suivant tombe
+ * exactement sur le battement d'après. Un glissé marque chaque changement de
+ * position, puis la dernière position accélère vers l'apogée (appui final).
+ * La musique intime reste en fond, à volume réglable, sans aucun calage.
  */
 
 export type RhythmDifficulty = "doux" | "normal" | "intense";
@@ -23,96 +23,108 @@ export type RhythmQuality = "embrasement" | "accord" | "tatonnement";
 
 export type RhythmNote = {
   index: number;
-  /** Temps de jeu en secondes (0 = premier temps de la carte). */
+  /** Temps de jeu en secondes (0 = premier coup). */
   time: number;
   /** Durée tenue (appuis longs), en secondes. */
   duration: number;
   kind: RhythmNoteKind;
   direction?: "left" | "right";
   section: number;
+  /** Intervalle entre deux coups à cet endroit (secondes) : sert aux effets en rythme. */
+  beat: number;
 };
 
-export type RhythmSectionDef = { id: string; bars: string[] };
+export type RhythmSectionDef = {
+  id: string;
+  /** Coups par minute dans cette position (Normal). */
+  bpm: number;
+  /** Nombre de battements joués (coups et appuis longs confondus). */
+  strokes: number;
+  /** Battements (index dans la position) où l'on reste au fond, et combien de battements dure l'appui. */
+  holds: number[];
+  holdBeats: number;
+  /** Glissé de changement de position, un battement avant le premier coup. */
+  slide?: "left" | "right";
+  /** Montée finale : coups supplémentaires dont le tempo grimpe jusqu'à toBpm, puis l'appui de l'apogée. */
+  ramp?: { strokes: number; toBpm: number; final: number };
+};
 
-export const RHYTHM_BPM = 129.5;
-export const RHYTHM_BEAT = 60 / RHYTHM_BPM;
 export const RHYTHM_TRACK = "intimate";
-/** Premier temps de la carte dans la musique : temps n° 108 du morceau. */
-export const RHYTHM_SONG_START = 0.0193 + 108 * RHYTHM_BEAT;
-/** Décompte avant la première note (deux mesures de musique). */
-export const RHYTHM_LEAD_IN = 8 * RHYTHM_BEAT;
+/** Décompte avant le premier coup, en secondes. */
+export const RHYTHM_LEAD_IN = 3;
 
 export const RHYTHM_SECTIONS: RhythmSectionDef[] = [
-  { id: "lente", bars: [
-    "T...T...", "H---T...", "T...T...", "H-------", "T...T...",
-    "H---t...", "T...T...", "H-------", "T.t.T...", "H---T...",
-  ] },
-  { id: "dos", bars: [
-    ">...T.T.", "T.T.H---", "T.t.T.t.", "H---T.T.", "T.T.T.t.",
-    "H-------", "T.t.T.t.", "T.T.H---", "T.t.T.t.", "H---T...",
-  ] },
-  { id: "renversee", bars: [
-    "<...T.T.", "T.T.T.t*", "T.T.H---", "T*T*T.T.", "T.T.T.T.", "H---T*T*",
-    "T.T.T.t*", "T*T*H---", "T.T.T*T*", "T*T*T*T*", "H---T...",
-  ] },
-  { id: "face", bars: [
-    ">...T.T.", "T*T*T*T*", "T.T.T*T*", "H---T*T*", "T*T*T*T*",
-    "TtTtTtTt", "T*T*T*T*", "TtTtH---", "F-------", "-------.",
-  ] },
+  { id: "lente", bpm: 56, strokes: 14, holds: [5, 11], holdBeats: 2 },
+  { id: "dos", bpm: 76, strokes: 20, holds: [9, 16], holdBeats: 2, slide: "right" },
+  { id: "renversee", bpm: 98, strokes: 28, holds: [13, 23], holdBeats: 2, slide: "left" },
+  { id: "face", bpm: 122, strokes: 24, holds: [], holdBeats: 2, slide: "right", ramp: { strokes: 12, toBpm: 150, final: 3.2 } },
 ];
 
-export const RHYTHM_DIFFICULTIES: Record<RhythmDifficulty, { label: string; perfect: number; good: number; approach: number }> = {
-  doux: { label: "Doux", perfect: 0.085, good: 0.17, approach: 1.7 },
-  normal: { label: "Normal", perfect: 0.065, good: 0.135, approach: 1.35 },
-  intense: { label: "Intense", perfect: 0.045, good: 0.1, approach: 1.05 },
+/** Les difficultés jouent la même cadence (un coup par battement) : seuls le tempo et la tolérance changent. */
+export const RHYTHM_DIFFICULTIES: Record<RhythmDifficulty, { label: string; perfect: number; good: number; approach: number; tempo: number }> = {
+  doux: { label: "Doux", perfect: 0.085, good: 0.17, approach: 1.9, tempo: 0.85 },
+  normal: { label: "Normal", perfect: 0.065, good: 0.135, approach: 1.5, tempo: 1 },
+  intense: { label: "Intense", perfect: 0.048, good: 0.105, approach: 1.15, tempo: 1.12 },
 };
 
-const STEP = RHYTHM_BEAT / 2;
-
 export function buildRhythmChart(difficulty: RhythmDifficulty): RhythmNote[] {
+  const factor = RHYTHM_DIFFICULTIES[difficulty].tempo;
   const notes: RhythmNote[] = [];
-  let step = 0;
-  let open: RhythmNote | undefined;
+  let time = 0;
+  const push = (note: Omit<RhythmNote, "index">) => { notes.push({ index: notes.length, ...note }); };
   RHYTHM_SECTIONS.forEach((section, sectionIndex) => {
-    for (const bar of section.bars) {
-      for (const char of bar) {
-        const time = step * STEP;
-        if (char === "-") {
-          if (open) open.duration = time + STEP - open.time;
-        } else {
-          open = undefined;
-          const keep = char === "T" || char === "H" || char === "F" || char === "<" || char === ">"
-            || (char === "t" && difficulty !== "doux")
-            || (char === "*" && difficulty === "intense");
-          if (keep) {
-            const note: RhythmNote = {
-              index: notes.length,
-              time,
-              duration: 0,
-              kind: char === "H" ? "hold" : char === "F" ? "final" : char === "<" || char === ">" ? "slide" : "tap",
-              section: sectionIndex,
-            };
-            if (char === "<") note.direction = "left";
-            if (char === ">") note.direction = "right";
-            if (char === "H" || char === "F") { note.duration = STEP; open = note; }
-            notes.push(note);
-          }
-        }
-        step++;
+    const beat = 60 / (section.bpm * factor);
+    if (section.slide) {
+      // Le dernier coup de la position précédente est suivi de deux battements au nouveau tempo, le glissé tombe sur le premier.
+      time += beat;
+      push({ time, duration: 0, kind: "slide", direction: section.slide, section: sectionIndex, beat });
+      time += beat;
+    }
+    for (let i = 0; i < section.strokes; i++) {
+      if (i > 0 || section.slide) time += i === 0 ? 0 : beat;
+      if (section.holds.includes(i)) {
+        push({ time, duration: beat * section.holdBeats, kind: "hold", section: sectionIndex, beat });
+        time += beat * (section.holdBeats - 1);
+      } else push({ time, duration: 0, kind: "tap", section: sectionIndex, beat });
+    }
+    if (section.ramp) {
+      const { strokes, toBpm, final } = section.ramp;
+      for (let i = 1; i <= strokes; i++) {
+        const bpm = section.bpm + (toBpm - section.bpm) * (i / strokes);
+        const step = 60 / (bpm * factor);
+        time += step;
+        push({ time, duration: 0, kind: "tap", section: sectionIndex, beat: step });
       }
+      const step = 60 / (toBpm * factor);
+      time += step;
+      push({ time, duration: final, kind: "final", section: sectionIndex, beat: step });
     }
   });
   return notes;
 }
 
-export function rhythmSectionStart(sectionIndex: number): number {
-  let bars = 0;
-  for (let i = 0; i < sectionIndex; i++) bars += RHYTHM_SECTIONS[i].bars.length;
-  return bars * 8 * STEP;
+const chartCache = new Map<RhythmDifficulty, RhythmNote[]>();
+function cachedChart(difficulty: RhythmDifficulty) {
+  if (!chartCache.has(difficulty)) chartCache.set(difficulty, buildRhythmChart(difficulty));
+  return chartCache.get(difficulty)!;
 }
 
-export function rhythmChartEnd(): number {
-  return RHYTHM_SECTIONS.reduce((total, section) => total + section.bars.length, 0) * 8 * STEP;
+export function rhythmSectionStart(sectionIndex: number, difficulty: RhythmDifficulty = "normal"): number {
+  const first = cachedChart(difficulty).find((note) => note.section === sectionIndex);
+  return first ? first.time : 0;
+}
+
+export function rhythmChartEnd(difficulty: RhythmDifficulty = "normal"): number {
+  const last = cachedChart(difficulty).at(-1)!;
+  return last.time + last.duration;
+}
+
+/** Tempo courant (battement en secondes) au temps t : sert aux pulsations d'interface et au décompte. */
+export function rhythmBeatAt(t: number, difficulty: RhythmDifficulty = "normal"): number {
+  const chart = cachedChart(difficulty);
+  let beat = chart[0].beat;
+  for (const note of chart) { if (note.time > t) break; beat = note.beat; }
+  return beat;
 }
 
 export function judgeOffset(delta: number, difficulty: RhythmDifficulty): RhythmJudgement {
@@ -126,7 +138,7 @@ export function judgeOffset(delta: number, difficulty: RhythmDifficulty): Rhythm
 export const JUDGEMENT_POINTS: Record<RhythmJudgement, number> = { 0: 0, 1: 1, 2: 0.6, 3: 0 };
 
 export type RhythmSaveState = {
-  v: 1;
+  v: 2;
   scene: string;
   difficulty: RhythmDifficulty;
   auto: boolean;
@@ -194,7 +206,7 @@ export function loadRhythmSave(scene: string, storage: Pick<Storage, "getItem"> 
   try {
     const all = JSON.parse(storage?.getItem(RHYTHM_STORAGE_KEY) || "{}") as Record<string, RhythmSaveState>;
     const entry = all[scene];
-    if (!entry || entry.v !== 1 || !Array.isArray(entry.judgements)) return undefined;
+    if (!entry || entry.v !== 2 || !Array.isArray(entry.judgements)) return undefined;
     if (entry.judgements.length !== buildRhythmChart(entry.difficulty).length) return undefined;
     return entry;
   } catch { return undefined; }
@@ -209,17 +221,45 @@ export function storeRhythmSave(state: RhythmSaveState | undefined, scene: strin
 }
 
 export const RHYTHM_PREFS_KEY = "sylvinia_ca_rythme_prefs_v1";
-export type RhythmPrefs = { difficulty: RhythmDifficulty; auto: boolean; offsetMs: number };
+export type RhythmEffects = "plein" | "reduit";
+export type RhythmPrefs = {
+  difficulty: RhythmDifficulty; auto: boolean; offsetMs: number;
+  /** Musique de fond (0 à 1, relatif au volume général). */
+  musicVolume: number;
+  /** Bruitages : interrupteur et volume (0 à 1). */
+  sfx: boolean; sfxVolume: number;
+  /** Réactions de l'interface : pleines ou réduites, zoom de l'image en rythme, vibration du téléphone. */
+  effects: RhythmEffects; zoom: boolean; vibration: boolean;
+};
+const clamp01 = (value: unknown, fallback: number) => (typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback);
+export function defaultRhythmPrefs(): RhythmPrefs {
+  let reduced = false;
+  try { reduced = Boolean(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches); } catch { reduced = false; }
+  return { difficulty: "normal", auto: false, offsetMs: 0, musicVolume: 0.35, sfx: true, sfxVolume: 0.85, effects: reduced ? "reduit" : "plein", zoom: !reduced, vibration: true };
+}
 export function loadRhythmPrefs(): RhythmPrefs {
+  const base = defaultRhythmPrefs();
   try {
     const raw = JSON.parse(globalThis.localStorage?.getItem(RHYTHM_PREFS_KEY) || "{}");
     return {
-      difficulty: (["doux", "normal", "intense"] as const).includes(raw.difficulty) ? raw.difficulty : "normal",
+      difficulty: (["doux", "normal", "intense"] as const).includes(raw.difficulty) ? raw.difficulty : base.difficulty,
       auto: Boolean(raw.auto),
       offsetMs: Number.isFinite(raw.offsetMs) ? Math.max(-200, Math.min(200, raw.offsetMs)) : 0,
+      musicVolume: clamp01(raw.musicVolume, base.musicVolume),
+      sfx: typeof raw.sfx === "boolean" ? raw.sfx : base.sfx,
+      sfxVolume: clamp01(raw.sfxVolume, base.sfxVolume),
+      effects: raw.effects === "reduit" || raw.effects === "plein" ? raw.effects : base.effects,
+      zoom: typeof raw.zoom === "boolean" ? raw.zoom : base.zoom,
+      vibration: typeof raw.vibration === "boolean" ? raw.vibration : base.vibration,
     };
-  } catch { return { difficulty: "normal", auto: false, offsetMs: 0 }; }
+  } catch { return base; }
 }
 export function storeRhythmPrefs(prefs: RhythmPrefs) {
   try { globalThis.localStorage?.setItem(RHYTHM_PREFS_KEY, JSON.stringify(prefs)); } catch { /* ignoré */ }
+}
+
+/** Ardeur de l'interface (0 à 1) : suit la jauge de plaisir, culmine à l'apogée. */
+export function rhythmArdour(gauge: number, apogee: boolean): number {
+  if (apogee) return 1;
+  return Math.max(0, Math.min(1, gauge / 88));
 }
