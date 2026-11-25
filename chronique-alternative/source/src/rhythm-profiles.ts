@@ -130,6 +130,24 @@ export const RHYTHM_PROFILES: Record<string, RhythmProfile> = {
     captionMaxMs: 10000,
     moods: { main: "soft", bouche: "seductive", langue: "passionate", frottement: "soft", penetration: "passionate", interlude: "soft", rire: "soft" },
   },
+  "hylee-remerii": {
+    character: "hylee-remerii",
+    // À trois (lot 9) : la douceur de Hylee et la mesure de Remerii ; relais de sommets, aucun piège, sa mesure récompensée.
+    difficulty: "doux",
+    bpm: { main: 64, bouche: 74, langue: 86, frottement: 72, penetration: [58, 80, 102], ramp: [126, 150] },
+    palette: { vive: "231,101,136", profonde: "18,26,64" },
+    voice: { dir: "", groups: { souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, bouche: 4, etouffe: 5, langue: 4 } },
+    voices: [
+      { key: "H", character: "hylee", bank: { dir: "", groups: { souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, bouche: 4, etouffe: 5, langue: 4 } } },
+      { key: "R", character: "remerii", bank: { dir: "remerii", groups: { souffle: 5, soupir: 3, gemit: 8, apogee: 2 } } },
+    ],
+    behaviours: { mesure: { window: 8, spreadMs: 30 } },
+    resistanceWeight: 0,
+    relationPenalty: -1,
+    relationPenalties: { hylee: 0, remerii: -1 },
+    captionMaxMs: 10000,
+    moods: { main: "teasing", bouche: "teasing", langue: "soft", frottement: "soft", penetration: "soft", interlude: "soft", rire: "teasing" },
+  },
   hylee: {
     character: "hylee",
     // Doux (référence) : cadences du prototype, sa voix unique (MagicalMysticVA) à la racine du dossier rythme, aucun piège.

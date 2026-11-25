@@ -31,6 +31,7 @@ import { BELLIRITH_RHYTHM_BUBBLES } from "./rhythm-bubbles-bellirith";
 import { ALLENNA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna";
 import { LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-lineva";
 import { ALLENNA_LINEVA_RHYTHM_BUBBLES } from "./rhythm-bubbles-allenna-lineva";
+import { HYLEE_REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee-remerii";
 import { REMERII_RHYTHM_BUBBLES } from "./rhythm-bubbles-remerii";
 import { HYLEE_RHYTHM_BUBBLES } from "./rhythm-bubbles-hylee";
 
@@ -125,6 +126,34 @@ const GROUP_ROWS: GroupRow[] = [
   ["group-date-allenna-lineva-home-femme-chambre", "3b@A^ 4b@A 5b@A! 6M@L 7M@L! 8m@A 9m@A! 10i 11M@A", 12],
 ];
 const GROUP_SUGGESTIF = "3m@A 4f@L 5f@A";
+
+/**
+ * Lot 9 : Hylee et Remerii, à trois (journée libre, vent, logis), lus à la main. Voix de la personne
+ * qui reçoit le geste (@H Hylee, @R Remerii) ; relais (!) à la fin de la séquence qui précède
+ * le sommet écrit d'une d'elles. Sommet final au chapitre du sommet du joueur (7), reprise au 8.
+ */
+const HR = "group-date-hylee-remerii";
+const HR_ROWS: [routeId: string, phases: string][] = [
+  [`${HR}-free-day-homme-rire-reste`, "2m@H 3m@H 4m@R! 5m@R 6pp@H! 7pp@H"],
+  [`${HR}-free-day-homme-boite-secrets`, "2b@R 3m@H 4pp@H! 5pp@H 6pp@R! 7pp@R"],
+  [`${HR}-free-day-homme-aucun-itineraire`, "2m@H 3b@H 4pp@R! 5pp@H 6pp@H! 7pp@H"],
+  [`${HR}-free-day-femme-rire-reste`, "2b@H 3l@R 4M@R! 5i 6m@R 7f@H"],
+  [`${HR}-free-day-femme-boite-secrets`, "2m@R 3m@R 4l@H! 5i 6b@H 7b@H"],
+  [`${HR}-free-day-femme-aucun-itineraire`, "2M@H 3b@H 4m@R! 5i 6b@H 7b@H"],
+  [`${HR}-wind-homme-manteau-partage`, "4b@H 5l@R! 6pp@H 7pp@H"],
+  [`${HR}-wind-homme-mesure-derangee`, "4b@R 5M@H! 6pp@R 7pp@R"],
+  [`${HR}-wind-homme-contre-le-vent`, "3m@R 4l@R! 5pp@H 6pp@H! 7pp@H"],
+  [`${HR}-wind-femme-manteau-partage`, "4b@H 5l@R! 6l@H 7b@H"],
+  [`${HR}-wind-femme-mesure-derangee`, "4b@R 5M@H! 6M@R! 7m@H"],
+  [`${HR}-wind-femme-contre-le-vent`, "3M@R 4l@R! 5f@R 6M@H! 7m@R"],
+  [`${HR}-home-homme-canape-trop-petit`, "4b@H 5M@R! 6pp@H! 7pp@H"],
+  [`${HR}-home-homme-lumiere-basse`, "4b@R 5l@R! 6pp@H! 7pp@H"],
+  [`${HR}-home-homme-elles-restent`, "4b@H 5M@H! 6pp@H 7pp@H"],
+  [`${HR}-home-femme-canape-trop-petit`, "4b@H 5M@R! 6b@H 7b@H"],
+  [`${HR}-home-femme-lumiere-basse`, "4b@R 5l@R! 6b@R 7l@H"],
+  [`${HR}-home-femme-elles-restent`, "4m@R 5m@H! 6b@H 7l@R"],
+];
+const HR_SUGGESTIF = "3m@H 4f@R 5f@H";
 /*
  * Remerii (lot 7), relecture manuelle (PLAN.md, annexe C) : séquence 3, sa bouche (homme) ou ses doigts, parfois sa
  * bouche (femme) ; séquence 4, la cicatrice, rupture écrite (rien à toucher) ; séquence 5, votre bouche et vos doigts ;
@@ -189,6 +218,10 @@ export const RHYTHM_ANCHORS: RhythmAnchor[] = [
   ...GROUP_ROWS.map(([routeId, phases, returnChapter]): RhythmAnchor => ({
     character: "allenna-lineva", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
     phases: parsePhases(phases), returnChapter, suggestif: { phases: parsePhases(GROUP_SUGGESTIF), returnChapter: 6 },
+  })),
+  ...HR_ROWS.map(([routeId, phases]): RhythmAnchor => ({
+    character: "hylee-remerii", context: routeId.replace(/-(homme|femme)-.*$/, ""), routeId, sex: routeId.includes("-homme-") ? "homme" : "femme",
+    phases: parsePhases(phases), returnChapter: 8, suggestif: { phases: parsePhases(HR_SUGGESTIF), returnChapter: 6 },
   })),
   ...REMERII_ROWS.flatMap(([context, route, homme, femme, returnChapter]) => SEXES.map((sex): RhythmAnchor => ({
     character: "remerii", context, routeId: `${route}-${sex}`, sex, phases: parsePhases(sex === "homme" ? homme : femme), returnChapter,
@@ -257,7 +290,7 @@ export type RhythmKit = {
   returnChapter: number;
 };
 
-const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES };
+const BUBBLES: Record<string, RhythmCharacterBubbles> = { bellirith: BELLIRITH_RHYTHM_BUBBLES, allenna: ALLENNA_RHYTHM_BUBBLES, lineva: LINEVA_RHYTHM_BUBBLES, "allenna-lineva": ALLENNA_LINEVA_RHYTHM_BUBBLES, remerii: REMERII_RHYTHM_BUBBLES, hylee: HYLEE_RHYTHM_BUBBLES, "hylee-remerii": HYLEE_REMERII_RHYTHM_BUBBLES };
 const speakerName = (character: string) => character.charAt(0).toUpperCase() + character.slice(1);
 
 /**

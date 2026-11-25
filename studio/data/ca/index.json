@@ -7146,6 +7146,41 @@
    ]
   },
   {
+   "key": "rhythm-bubbles-hylee-remerii",
+   "label": "Hylee × Remerii · rhythm bubbles",
+   "group": "Hylee × Remerii",
+   "hash": "255530fe763a1936",
+   "scenes": 1,
+   "counts": {
+    "s": 16,
+    "t": 0,
+    "n": 0,
+    "a": 4
+   },
+   "collections": [
+    {
+     "id": "rhythm-bubbles-hylee-remerii:a0xa44jb",
+     "path": "HYLEE_REMERII_RHYTHM_BUBBLES.endings.embrasement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-remerii:a0gkayck",
+     "path": "HYLEE_REMERII_RHYTHM_BUBBLES.endings.accord.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-remerii:a1pamq53",
+     "path": "HYLEE_REMERII_RHYTHM_BUBBLES.endings.tatonnement.lines",
+     "len": 2
+    },
+    {
+     "id": "rhythm-bubbles-hylee-remerii:a0dbtjzc",
+     "path": "HYLEE_REMERII_RHYTHM_BUBBLES.relay",
+     "len": 4
+    }
+   ]
+  },
+  {
    "key": "rhythm-bubbles-lineva",
    "label": "Lineva · rhythm bubbles",
    "group": "Lineva",
