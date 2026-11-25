@@ -1,0 +1,121 @@
+"""Jeu de rythme intime (prototype) : accès dév, réglages, partie au clavier ou au toucher,
+ratés et taquineries, paliers, pause, « Reprendre plus tard » puis reprise exacte, bilan, conclusion, CG post-orgasme.
+Usage : CA_BASE=http://127.0.0.1:8931/chronique-alternative/ python3 rythme_e2e.py saves/save-rythme.json <dossier> 1024x880 [clavier|toucher]
+Les captures floutent la CG et le sprite intime (silhouette lisible, rien d'explicite)."""
+import os, sys, asyncio, json
+from playwright.async_api import async_playwright
+from common import *
+SAVE=open(sys.argv[1]).read()
+OUT=sys.argv[2]
+VP=sys.argv[3]
+MODE=sys.argv[4] if len(sys.argv)>4 else "clavier"
+W,H=[int(x) for x in VP.rstrip("t").split("x")]; TOUCH=MODE=="toucher"
+os.makedirs(OUT, exist_ok=True)
+report={"viewport":VP,"mode":MODE,"checks":{}}
+BOT="""(opts)=>{ if(window.__rythmeBot) return; const miss=new Set(opts.miss); const done=new Set(); const ups=[]; const touch=opts.touch;
+ const layer=()=>document.querySelector('.rythme-layer');
+ const pe=(type,x,y,id)=>{const l=layer(); if(!l) return; l.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:id,pointerType:'touch',isPrimary:true,clientX:x,clientY:y}));};
+ const kd=(key)=>window.dispatchEvent(new KeyboardEvent('keydown',{key,bubbles:true,cancelable:true}));
+ const ku=(key)=>window.dispatchEvent(new KeyboardEvent('keyup',{key,bubbles:true,cancelable:true}));
+ let pid=10;
+ window.__rythmeBot={stop:false};
+ const loop=()=>{ if(window.__rythmeBot.stop) return; requestAnimationFrame(loop); const r=window.__sylviniaRythme; if(!r||r.phase()!=='play') return; const t=r.time();
+  for(let i=ups.length-1;i>=0;i--){ if(t>=ups[i].at){ ups[i].fn(); ups.splice(i,1);} }
+  for(const n of r.notes()){ if(n.time>t+0.01) break; if(done.has(n.index)) continue; done.add(n.index); if(miss.has(n.index)) continue; if(r.judgements()[n.index]!==0) continue;
+   const cx=innerWidth*0.35, cy=innerHeight*0.5;
+   if(n.kind==='slide'){ const dx=n.direction==='left'?-80:80; if(touch){const id=++pid; pe('pointerdown',cx,cy,id); pe('pointermove',cx+dx/2,cy,id); pe('pointermove',cx+dx,cy,id); pe('pointerup',cx+dx,cy,id);} else { kd(n.direction==='left'?'ArrowLeft':'ArrowRight'); ku(n.direction==='left'?'ArrowLeft':'ArrowRight'); } continue; }
+   // Un humain relâche la note longue précédente avant de frapper la suivante.
+   for(let i=ups.length-1;i>=0;i--){ if(ups[i].hold){ ups[i].fn(); ups.splice(i,1);} }
+   const id=++pid; if(touch) pe('pointerdown',cx,cy,id); else kd(' ');
+   const rel=()=>{ if(touch) pe('pointerup',cx,cy,id); else ku(' '); };
+   if(n.duration>0) ups.push({at:n.time+n.duration+0.02, fn:rel, hold:true}); else ups.push({at:t+0.05, fn:rel});
+  } };
+ requestAnimationFrame(loop); }"""
+async def main():
+  async with async_playwright() as pw:
+    b=await pw.chromium.launch(executable_path=os.environ.get("CA_CHROME") or None, args=["--autoplay-policy=no-user-gesture-required"])
+    ctx=await b.new_context(viewport={"width":W,"height":H},has_touch=TOUCH,is_mobile=TOUCH)
+    await ctx.add_init_script("if(!sessionStorage.getItem('seeded')){localStorage.setItem('sylvinia-liens-autosave',%s);localStorage.removeItem('sylvinia_ca_rythme_v1');localStorage.removeItem('sylvinia_ca_rythme_prefs_v1');sessionStorage.setItem('seeded','1')}"%json.dumps(SAVE))
+    p=await ctx.new_page(); errs=[]; hook(p,errs); p.set_default_timeout(9000)
+    async def snap(n):
+        await p.evaluate("""()=>{document.querySelectorAll('.intimacy-cg img, .intimacy-cg, img[data-sprite-channel=intimate]').forEach(i=>{i.style.filter='blur(14px) brightness(.6) saturate(.5)';});}""")
+        await p.wait_for_timeout(120); path=f"{OUT}/{VP}-{MODE}-{n}.png"; await p.screenshot(path=path); print("capture", path, flush=True)
+    async def dev():
+        for i in range(4):
+            if await p.locator("dialog[open], .modal-backdrop").count()==0: break
+            await p.keyboard.press("Escape"); await p.wait_for_timeout(300)
+        await p.keyboard.press("Escape"); await p.wait_for_timeout(600)
+        await p.locator("dialog[open] button:has-text('Options'), button:has-text('Options')").first.click(); await p.wait_for_timeout(700)
+        await p.locator(".opt-cat:has-text('Session'), [data-otab=session]").first.click(); await p.wait_for_timeout(500)
+        await p.locator("#caDevRythme").scroll_into_view_if_needed(); await p.wait_for_timeout(200)
+    async def t(): return await p.evaluate("()=>window.__sylviniaRythme?window.__sylviniaRythme.time():null")
+    async def wait_t(x, limit=200):
+        for i in range(limit*10):
+            v=await t()
+            if v is not None and v>=x: return v
+            await p.wait_for_timeout(100)
+    await p.goto(BASE); await p.wait_for_timeout(900); await p.keyboard.press("Enter"); await p.wait_for_timeout(900)
+    await p.click(".t-item.principal"); await p.wait_for_timeout(2000); await close_modals(p)
+    await dev(); await snap("00-dev")
+    await p.locator("#caDevRythme").click(); await p.wait_for_timeout(1200)
+    report["checks"]["setup"]=await p.locator(".rythme-panneau h3").inner_text()
+    await snap("01-reglages")
+    miss=[3,9,17,30,44,61,80,101,122]
+    await p.locator(".rythme-actions button:has-text('Commencer')").click()
+    await p.evaluate(BOT, {"miss":miss,"touch":TOUCH})
+    await wait_t(-2.5); await snap("02-appel")
+    await wait_t(7.4); await snap("03-section1")
+    for i in range(80):
+        if await p.evaluate("()=>window.__sylviniaRythme.tease()"): break
+        await p.wait_for_timeout(100)
+    await p.wait_for_timeout(250); await snap("03b-taquinerie")
+    await wait_t(21.5); await snap("04-section2-glisse")
+    await wait_t(30); await snap("05-section2-palier")
+    await wait_t(41); await snap("06-section3")
+    report["checks"]["taquineries_avant_pause"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
+    # Pause puis « Reprendre plus tard »
+    await p.keyboard.press("Escape"); await p.wait_for_timeout(500)
+    report["checks"]["pause_phase"]=await p.evaluate("()=>window.__sylviniaRythme.phase()")
+    await snap("07-pause")
+    before=await p.evaluate("()=>({t:window.__sylviniaRythme.time(), j:window.__sylviniaRythme.judgements()})")
+    await p.locator(".rythme-actions button:has-text('Reprendre plus tard')").click(); await p.wait_for_timeout(900)
+    saved=await p.evaluate("()=>JSON.parse(localStorage.getItem('sylvinia_ca_rythme_v1')||'{}')")
+    entry=list(saved.values())[0] if saved else None
+    report["checks"]["save_after_leave"]={"keys":list(saved.keys()),"time":entry and round(entry["time"],3),"pause_time":round(before["t"],3),"judged":entry and sum(1 for j in entry["judgements"] if j)}
+    report["checks"]["closed"]=await p.locator(".rythme-layer").count()==0
+    # Rechargement complet de la page, puis reprise
+    await p.reload(); await p.wait_for_timeout(900); await p.keyboard.press("Enter"); await p.wait_for_timeout(900)
+    await p.click(".t-item.principal"); await p.wait_for_timeout(2000); await close_modals(p)
+    await dev(); await p.locator("#caDevRythme").click(); await p.wait_for_timeout(1200)
+    resume_label=await p.locator(".rythme-actions button").first.inner_text()
+    report["checks"]["resume_button"]=resume_label
+    await snap("08-reprendre")
+    await p.locator(".rythme-actions button:has-text('Reprendre à')").click(); await p.wait_for_timeout(300)
+    after=await p.evaluate("()=>({t:window.__sylviniaRythme.time(), j:window.__sylviniaRythme.judgements()})")
+    report["checks"]["resume_exact"]={"time_saved":round(before["t"],3),"time_resumed":round(after["t"],3),"same_judgements":after["j"]==before["j"]}
+    await p.evaluate(BOT, {"miss":[70,95,118],"touch":TOUCH})
+    await wait_t(58); await snap("09-section3-intense")
+    await wait_t(64); await snap("10-face-a-face")
+    await wait_t(73.2); await snap("11-apogee-tenue")
+    await wait_t(75.95); await p.wait_for_timeout(150)
+    report["checks"]["apogee"]=await p.evaluate("()=>({flag:window.__sylviniaRythme.apogee(), classe:document.querySelector('.rythme-layer').classList.contains('apogee'), voile:getComputedStyle(document.querySelector('.rythme-apogee-voile')).opacity})")
+    report["checks"]["taquineries"]=await p.evaluate("()=>window.__sylviniaRythme.teases().length")
+    await snap("12-apogee-eclat")
+    await p.wait_for_selector(".rythme-panneau.resultat", timeout=15000)
+    report["checks"]["result"]=await p.locator(".rythme-panneau.resultat").inner_text()
+    await snap("13-bilan")
+    await p.locator(".rythme-actions button:has-text('Continuer')").click(); await p.wait_for_timeout(700)
+    report["checks"]["conclusion_line"]=await p.locator(".dialogue-box p").first.inner_text()
+    await snap("14-conclusion")
+    for i in range(8):
+        if await p.locator(".intimacy-cg").count(): break
+        await p.locator(".dialogue-box").first.click(); await p.wait_for_timeout(450)
+    report["checks"]["post_orgasm_cg"]=await p.evaluate("()=>document.querySelector('.intimacy-cg')?.dataset.intimacyCg||null")
+    await snap("15-apres")
+    report["checks"]["save_cleared"]=await p.evaluate("()=>localStorage.getItem('sylvinia_ca_rythme_v1')")
+    report["checks"]["autosave_untouched_rythme"]=await p.evaluate("()=>!JSON.stringify(JSON.parse(localStorage.getItem('sylvinia-liens-autosave'))).includes('rythme')")
+    report["errors"]=[e for e in errs if "favicon" not in e[1] and "studio" not in e[1]]
+    await b.close()
+  print(json.dumps(report,ensure_ascii=False,indent=1))
+  json.dump(report,open(f"{OUT}/{VP}-{MODE}-rapport.json","w"),ensure_ascii=False,indent=1)
+asyncio.run(main())

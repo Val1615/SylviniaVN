@@ -1,0 +1,107 @@
+/* Jeu de rythme intime (prototype) : couloir discret en bord d'écran, thème rose-rouge des scènes intimes V2.
+   Rien ne se pose au centre : la CG ou le sprite restent entièrement lisibles. */
+.rythme-layer { position: absolute; inset: 0; z-index: 2; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; --rose-r: 231, 101, 136; --rouge-r: 200, 40, 70; }
+.rythme-layer.phase-setup, .rythme-layer.phase-result { touch-action: auto; }
+
+/* Couloir vertical, bord droit */
+.rythme-couloir { position: absolute; right: max(12px, env(safe-area-inset-right)); top: calc(76px * var(--k, 1)); bottom: 14px; width: 74px; display: flex; flex-direction: column; pointer-events: none; }
+/* en-tête de section : déborde vers la gauche, jamais hors écran */
+.rythme-entete { align-self: flex-end; text-align: right; margin-bottom: 6px; min-height: 2.1rem; max-width: 46vw; position: relative; line-height: 1.1; filter: drop-shadow(0 1px 4px #000); }
+.rythme-section { display: block; position: absolute; right: 0; top: 0; font: 700 .68rem var(--display, serif); letter-spacing: .12em; text-transform: uppercase; color: #ffc0d0; white-space: nowrap; }
+.rythme-cadence { display: block; position: absolute; right: 0; top: 1rem; font-size: .6rem; color: rgba(255, 192, 208, .7); font-style: italic; white-space: nowrap; }
+.rythme-piste { position: relative; flex: 1; margin-left: auto; width: 46px; border-radius: 23px; background: linear-gradient(180deg, rgba(var(--rose-r), 0) 0%, rgba(var(--rose-r), .07) 40%, rgba(var(--rouge-r), .16) 100%); border: 1px solid rgba(var(--rose-r), .22); box-shadow: inset 0 0 14px rgba(var(--rouge-r), .18), 0 0 calc(10px + 14px * var(--pulse, 0)) rgba(var(--rose-r), calc(.12 + .22 * var(--pulse, 0))); overflow: visible; }
+.rythme-progres { position: absolute; left: -5px; bottom: 0; width: 2px; border-radius: 2px; background: linear-gradient(0deg, rgba(var(--rose-r), .8), rgba(255, 220, 230, .4)); opacity: .55; }
+
+/* Notes : la piste a pour origine la cible (bas). bottom = distance avant la frappe. */
+.rythme-note { position: absolute; left: 50%; width: 30px; margin-left: -15px; margin-bottom: 6px; pointer-events: none; }
+.rythme-note .tete { position: absolute; left: 0; bottom: -15px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; font: 700 1.05rem/1 var(--display, serif); font-style: normal; color: #fff; background: radial-gradient(circle at 40% 35%, rgba(255, 235, 242, .85), rgba(var(--rose-r), .65) 55%, rgba(var(--rouge-r), .35) 100%); box-shadow: 0 0 12px rgba(var(--rose-r), .75), inset 0 0 6px rgba(255, 255, 255, .5); opacity: .78; }
+.rythme-note.hold, .rythme-note.final { width: 18px; margin-left: -9px; border-radius: 9px; background: linear-gradient(0deg, rgba(var(--rose-r), .34), rgba(var(--rose-r), .06)); box-shadow: 0 0 8px rgba(var(--rose-r), .2); }
+.rythme-note.hold .tete, .rythme-note.final .tete { left: 50%; margin-left: -15px; }
+.rythme-note.hold .tete { border-radius: 10px; background: radial-gradient(circle at 50% 40%, rgba(255, 235, 242, .85), rgba(var(--rouge-r), .7) 70%); }
+.rythme-note.tenue { background: linear-gradient(0deg, rgba(255, 205, 220, .65), rgba(var(--rose-r), .2)); box-shadow: 0 0 18px rgba(var(--rose-r), .6); }
+.rythme-note.tenue .tete { animation: rythme-tenue .28s ease-in-out infinite alternate; }
+.rythme-note.slide .tete { border-radius: 6px; transform: rotate(45deg); background: linear-gradient(135deg, rgba(255, 214, 160, .85), rgba(255, 120, 150, .6)); box-shadow: 0 0 14px rgba(255, 170, 120, .7); }
+.rythme-note.slide .tete { color: transparent; }
+.rythme-note.slide .tete::after { content: ""; position: absolute; inset: 0; display: grid; place-items: center; transform: rotate(-45deg); }
+.rythme-note.slide.left .tete::after { content: "‹"; color: #fff; font-size: 1.35rem; }
+.rythme-note.slide.right .tete::after { content: "›"; color: #fff; font-size: 1.35rem; }
+.rythme-note.final { width: 22px; margin-left: -11px; background: linear-gradient(0deg, rgba(255, 210, 160, .5), rgba(var(--rose-r), .12)); }
+.rythme-note.final .tete { width: 38px; height: 38px; bottom: -19px; margin-left: -19px; background: radial-gradient(circle, #fff6e8, rgba(255, 170, 150, .8) 50%, rgba(var(--rouge-r), .4)); box-shadow: 0 0 22px rgba(255, 190, 150, .9); }
+@keyframes rythme-tenue { from { transform: scale(1); } to { transform: scale(1.14); } }
+
+.rythme-cible { position: absolute; left: 50%; bottom: 6px; width: 40px; height: 40px; margin: 0 0 -20px -20px; border-radius: 50%; border: 2px solid rgba(255, 210, 222, calc(.45 + .45 * var(--pulse, 0))); box-shadow: 0 0 calc(8px + 16px * var(--pulse, 0)) rgba(var(--rose-r), .7), inset 0 0 10px rgba(var(--rose-r), .4); transform: scale(calc(1 + .1 * var(--pulse, 0))); }
+.rythme-cible i { position: absolute; inset: 8px; border-radius: 50%; background: rgba(var(--rose-r), calc(.12 + .2 * var(--pulse, 0))); }
+
+/* Jauge de plaisir, fine, à gauche de la piste */
+.rythme-jauge { position: absolute; left: 0; bottom: 14px; top: calc(2.2rem + 10px); width: 6px; border-radius: 3px; background: rgba(255, 255, 255, .08); overflow: visible; }
+.rythme-jauge b { position: absolute; left: 0; right: 0; bottom: 0; height: var(--jauge, 0%); border-radius: 3px; background: linear-gradient(0deg, #c82846, #ff8fab 70%, #ffe1ea); box-shadow: 0 0 10px rgba(var(--rose-r), .8); transition: height .25s ease-out; }
+.rythme-jauge span { position: absolute; left: -2px; bottom: -14px; font-size: .55rem; color: rgba(255, 192, 208, .8); }
+.rythme-jauge em { position: absolute; left: -3px; width: 12px; height: 2px; background: rgba(255, 255, 255, .25); }
+.rythme-jauge em:nth-of-type(1) { bottom: 33%; } .rythme-jauge em:nth-of-type(2) { bottom: 58%; } .rythme-jauge em:nth-of-type(3) { bottom: 82%; }
+.rythme-jauge em.atteint { background: #ffd0dc; box-shadow: 0 0 6px #ff8fab; }
+
+.rythme-combo { position: absolute; right: 86px; bottom: 58px; font: 700 .9rem var(--display, serif); color: #ffe1ea; text-shadow: 0 0 10px rgba(var(--rose-r), .9); opacity: .85; }
+.rythme-juge { position: absolute; right: 86px; bottom: 24px; font: 800 .9rem var(--display, serif); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; animation: rythme-juge .7s ease-out forwards; pointer-events: none; }
+.rythme-juge.parfait { color: #fff0f5; text-shadow: 0 0 12px #ff6f96, 0 0 2px #fff; }
+.rythme-juge.bien { color: #ffaac0; text-shadow: 0 0 8px rgba(var(--rose-r), .8); }
+.rythme-juge.rate { color: #b9a8c4; text-shadow: 0 0 6px rgba(0, 0, 0, .8); }
+.rythme-juge.palier { color: #ffe2b8; text-shadow: 0 0 12px rgba(255, 170, 120, .9); bottom: 80px; }
+@keyframes rythme-juge { 0% { opacity: 0; transform: translateX(8px) scale(.8); } 15% { opacity: 1; transform: translateX(0) scale(1.08); } 100% { opacity: 0; transform: translateY(-14px) scale(1); } }
+
+.rythme-pause { pointer-events: auto; position: absolute; right: -2px; top: -2px; width: 26px; height: 26px; transform: translateY(-110%); border-radius: 50%; border: 1px solid rgba(var(--rose-r), .45); background: rgba(20, 8, 14, .55); color: #ffc0d0; font-size: .58rem; cursor: pointer; display: none; }
+
+/* Taquinerie d'Hylee après un raté : petite bulle à gauche du couloir, au-dessus de la cible */
+.rythme-taquine { position: absolute; right: 100px; bottom: 96px; max-width: min(300px, 40vw); padding: .35rem .6rem .4rem; border-radius: 10px 10px 2px 10px; background: rgba(40, 10, 22, .62); border: 1px solid rgba(255, 208, 160, .45); color: #ffe9dc; font-size: .74rem; line-height: 1.35; text-shadow: 0 1px 2px #000; pointer-events: none; animation: rythme-taquine 2.8s ease-out forwards; }
+.rythme-taquine .qui { display: block; font: 700 .58rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ffb88a; }
+@keyframes rythme-taquine { 0% { opacity: 0; transform: translateY(6px) scale(.96); } 10% { opacity: 1; transform: none; } 82% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Légendes : bas gauche, compactes et translucides */
+.rythme-legende { position: absolute; left: max(14px, env(safe-area-inset-left)); bottom: 14px; max-width: min(58%, 560px); padding: .55rem .85rem .6rem; border-left: 2px solid rgba(var(--rose-r), .85); background: linear-gradient(90deg, rgba(30, 8, 18, .72), rgba(30, 8, 18, .38) 75%, transparent); color: #fbeef2; animation: rythme-legende .45s ease-out; pointer-events: none; text-shadow: 0 1px 3px #000; }
+.rythme-legende p { margin: 0; font-size: .86rem; line-height: 1.45; }
+.rythme-legende .qui { display: block; margin-bottom: .15rem; font: 700 .66rem var(--display, serif); letter-spacing: .14em; text-transform: uppercase; color: #ff9fbb; }
+.rythme-legende.narration p { font-style: italic; }
+.rythme-legende.tease { border-left-color: #ffd0a0; }
+@keyframes rythme-legende { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.rythme-decompte { position: absolute; right: 92px; bottom: 30%; font: 800 1.6rem var(--display, serif); color: #ffe1ea; text-shadow: 0 0 16px rgba(var(--rose-r), .95); animation: rythme-juge .9s ease-out forwards; pointer-events: none; }
+.rythme-auto-badge { position: absolute; right: 96px; top: calc(80px * var(--k, 1)); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: #ffc0d0; opacity: .7; }
+
+/* Apogée : un éclat rose sur les bords seulement, le centre reste transparent */
+.rythme-apogee-voile { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at center, transparent 48%, rgba(255, 143, 171, .38) 78%, rgba(255, 220, 230, .55) 100%); }
+.rythme-layer.apogee .rythme-apogee-voile { animation: rythme-apogee 1.8s ease-out forwards; }
+@keyframes rythme-apogee { 0% { opacity: 0; } 18% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Panneaux (réglages, pause, bilan) : en bas, compacts */
+.rythme-panneau { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(620px, calc(100% - 28px)); max-height: calc(100% - 100px); overflow-y: auto; box-sizing: border-box; padding: .9rem 1.1rem 1rem; border: 1px solid rgba(var(--rose-r), .45); background: linear-gradient(180deg, rgba(40, 12, 24, .86), rgba(10, 8, 16, .9)); box-shadow: 0 20px 60px rgba(0, 0, 0, .55), 0 0 32px rgba(var(--rose-r), .16); clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px)); color: #f6e9ee; pointer-events: auto; }
+.rythme-panneau .eyebrow { margin: 0; color: #ff8fab; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; }
+.rythme-panneau h3 { margin: .15rem 0 .35rem; font: 700 1.2rem var(--display, serif); color: #ffc0d0; }
+.rythme-consigne { margin: 0 0 .4rem; font-size: .82rem; line-height: 1.45; }
+.rythme-touches { margin: 0 0 .55rem; padding: 0; list-style: none; font-size: .7rem; color: rgba(255, 220, 230, .75); }
+.rythme-reglages { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-bottom: .6rem; font-size: .75rem; }
+.rythme-choix { display: inline-flex; border: 1px solid rgba(var(--rose-r), .5); }
+.rythme-choix button { padding: .35rem .7rem; border: 0; background: transparent; color: #ffc0d0; font: 700 .72rem var(--display, serif); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.rythme-choix button.actif { background: linear-gradient(90deg, rgba(200, 40, 70, .9), rgba(231, 101, 136, .85)); color: #fff; }
+.rythme-case, .rythme-decalage { display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; }
+.rythme-decalage input { width: 110px; accent-color: #e76588; }
+.rythme-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.rythme-actions .btn { min-height: 38px; padding: .45rem .9rem; border: 1px solid rgba(var(--rose-r), .5); background: rgba(20, 8, 14, .6); color: #ffc0d0; cursor: pointer; font-size: .78rem; }
+.rythme-actions .btn.primary-action { background: linear-gradient(90deg, #c82846, #e76588); color: #fff; border-color: transparent; }
+.rythme-actions .btn.discret { border-style: dashed; opacity: .85; }
+.rythme-bilan { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin: .2rem 0 .7rem; font-size: .78rem; }
+.rythme-bilan b { font: 800 1.05rem var(--display, serif); margin-right: .2rem; }
+.rythme-bilan .parfait b { color: #fff0f5; text-shadow: 0 0 8px #ff6f96; } .rythme-bilan .bien b { color: #ffaac0; } .rythme-bilan .rate b { color: #b9a8c4; }
+
+/* Pendant la partie, la scène cache sa propre boîte de dialogue */
+.v2-scene-intime.rythme-en-cours .dialogue-gradient { opacity: .35; }
+.rythme-layer.phase-play .rythme-pause, .rythme-layer.phase-paused .rythme-pause, .rythme-layer.phase-countdown .rythme-pause { display: block; }
+
+/* Fold plié (830x525) : couloir plus court, légende plus petite */
+@media (max-height: 600px) {
+  .rythme-couloir { top: 66px; width: 66px; }
+  .rythme-legende { max-width: min(54%, 460px); padding: .4rem .7rem .45rem; }
+  .rythme-legende p { font-size: .76rem; line-height: 1.38; }
+  .rythme-panneau { padding: .6rem .85rem .7rem; max-height: calc(100% - 76px); }
+  .rythme-consigne { font-size: .74rem; }
+  .rythme-panneau h3 { font-size: 1rem; }
+}
+@media (max-width: 600px) { .rythme-legende { max-width: calc(100% - 110px); } }

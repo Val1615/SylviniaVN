@@ -10,7 +10,7 @@ export const CA_STUDIO_VERSION = 1;
 
 /* Modules purement techniques : jamais enveloppés. */
 export const SKIP_MODULES = new Set([
-  "chatgpt-auth", "sprite-system", "intimate-sprite-system", "music-data", "intimate-cg",
+  "chatgpt-auth", "sprite-system", "intimate-sprite-system", "music-data", "intimate-cg", "rhythm-intimacy-engine",
 ]);
 
 const EFFECT_KEYS = new Set(["affection", "trust", "desire", "confluence", "coins", "audace", "lucidite", "sangFroid", "resonance"]);

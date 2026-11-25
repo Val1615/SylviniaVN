@@ -258,6 +258,9 @@ import { INVITE_EXCUSES, INVITE_EXCUSE_FALLBACK, INVITE_TEXTS, LETTER_REPLIES, L
 import { ASPIRATIONS, WISHES } from "./life-wishes";
 import { BAD_WEATHER, INVITE_MAX_AHEAD, INVITE_MAX_PENDING, activityCounted, applyLifeEvent, chooseAspiration, deliverLetterGains, deliveredLetters, emptyLife, expireInvites, giftCounted, honorInvite, inviteAccepted, inviteAt, inviteHint, invitePaused, inviteScore, letterBlocked, letterThemeAvailable, normalizeLife, pendingInvites, pushMoodEvent, recordAcceptance, recordActivity, recordRefusal, replyDayFor, rollWishes, unreadLifeMail, wishLabel, type LifeContext, type LifeEvent, type LifeReward, type LifeState, type PlayerInvite } from "./life-state";
 import { V2Title } from "./ui/v2/title";
+import { RHYTHM_DUCK_EVENT, RhythmIntimacyGame } from "./rhythm-intimacy-ui";
+import { HYLEE_HOME_RHYTHM, RHYTHM_REPLACED_CHAPTER, rhythmSceneFor } from "./rhythm-intimacy";
+import "./rhythm-intimacy.css";
 import { AudioButtons, Kbd, Orn4, ROMAINS, Seau, V2Dialog, moveFocus } from "./ui/v2/common";
 import { DEFAULT_SCALES, ECHELLES, SCALE_KEYS, applyScales, borne, createParticles, installGlobalSfx, playTransition, readScales, reduit, setReducedSetting, setUiPrefs, sfx, storeScales, subscribeUiPrefs, uiPrefs, type FxMode, type ScaleKey, type Scales } from "./ui/v2/fx";
 
@@ -478,7 +481,7 @@ type ModalState =
   | { kind: "home-pair-date"; pairId: string }
   | { kind: "home-pair-date-result"; pairId: string }
   | { kind: "home-date-result"; character: string; score: number }
-  | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string; home?: boolean }
+  | { kind: "intimacy"; character: string; background?: string; replay?: boolean; dateId?: string; home?: boolean; rhythm?: boolean }
   | { kind: "date-result"; character: string; dateId: string }
   | { kind: "group-date-planner" }
   | { kind: "group-date-result"; groupDateId: string; replay?: boolean }
@@ -513,6 +516,7 @@ type DevIntimacyTarget =
   | { kind: "bellirith-date"; dateId: string }
   | { kind: "bellirith-ambient"; character: string; ambientId: string }
   | { kind: "bellirith-home" }
+  | { kind: "hylee-rhythm" }
   | { kind: "bn-scene"; stage: number }
   | { kind: "bn-minigame"; round: number }
   | { kind: "bn-intimacy"; id: BNIntimacyId; mode: Intimacy }
@@ -2302,6 +2306,13 @@ export default function Home() {
   const [currentSoundtrack, setCurrentSoundtrack] = useState("");
   /** Silence partiel de la manche « SIGNAL HORS ÉCHELLE » (Les Trois Réponses). */
   const [bnDuck, setBNDuck] = useState(false);
+  // Jeu de rythme intime : la piste d'ambiance se tait pendant que le jeu joue sa propre copie calée sur la carte.
+  const [rhythmDuck, setRhythmDuck] = useState(false);
+  useEffect(() => {
+    const listen = (event: Event) => setRhythmDuck(Boolean((event as CustomEvent<boolean>).detail));
+    window.addEventListener(RHYTHM_DUCK_EVENT, listen);
+    return () => window.removeEventListener(RHYTHM_DUCK_EVENT, listen);
+  }, []);
   const previousGameRef = useRef<GameState | null>(null);
   const notificationIdRef = useRef(0);
   const notificationTimersRef = useRef<number[]>([]);
@@ -2578,8 +2589,8 @@ export default function Home() {
   }, [currentPlaceKey, screen, tab]);
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = audioVolume / 100 * (bnDuck ? 0.15 : 1);
-  }, [audioVolume, bnDuck]);
+    if (audioRef.current) audioRef.current.volume = audioVolume / 100 * (bnDuck ? 0.15 : 1) * (rhythmDuck ? 0 : 1);
+  }, [audioVolume, bnDuck, rhythmDuck]);
 
   /** Fondu enchaîné entre deux pistes quand l’une d’elles appartient à « Je n’ai jamais » (entrée dans la soirée, tournant). */
   useEffect(() => {
@@ -5359,6 +5370,11 @@ export default function Home() {
     if (target.kind === "bellirith-confidence") { startSecretConversation(target.secretId, true); return; }
     if (target.kind === "bellirith-date") { startDate(target.dateId, true); return; }
     if (target.kind === "bellirith-ambient") { startAmbientById(target.character, target.ambientId); return; }
+    if (target.kind === "hylee-rhythm") {
+      // Prototype du jeu de rythme : Hylee au logis, mood audacieuse, ouvert directement sur le jeu, en souvenir (aucune mutation).
+      setModal({ kind: "intimacy", character: "hylee", home: true, background: propertyById(game.housing.propertyId)?.background || "/assets/backgrounds/bedroom.webp", replay: true, rhythm: true });
+      return;
+    }
     if (target.kind === "bellirith-home") { setModal({ kind: "intimacy", character: "bellirith", home: true, background: propertyById(game.housing.propertyId)?.background || BELLIRITH_INTIMACY_BACKGROUNDS["bellirith-home"], replay: true }); return; }
     if (target.kind === "date") {
       const date = DATE_SCENES.find((entry) => entry.id === target.dateId);
@@ -5810,7 +5826,7 @@ export default function Home() {
     <>
       {commonLayers}
       {game.settings.music && fadingTrack && <audio key={`fade-${fadingTrack}`} ref={fadeRef} src={`/assets/audio/${fadingTrack}.mp3`} autoPlay loop />}
-      {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = fadingTrack ? 0 : audioVolume / 100 * (bnDuck ? 0.15 : 1); }} autoPlay loop />}
+      {game.settings.music && <audio ref={audioRef} key={soundtrack} src={`/assets/audio/${soundtrack}.mp3`} onLoadedMetadata={(event) => { event.currentTarget.volume = fadingTrack ? 0 : audioVolume / 100 * (bnDuck ? 0.15 : 1) * (rhythmDuck ? 0 : 1); }} autoPlay loop />}
       <div className={`v2 v2-root jeu ${V2_PERIOD_CLASSES[game.period] || ""} ${sceneActive ? "scene-active" : ""} saison-${imperialDate(game.day).season} meteo-${weatherAt(game.day, game.location).overlay}`} data-scene={sceneName} data-saison={imperialDate(game.day).season} data-meteo={weatherAt(game.day, game.location).id} inert={sceneActive || undefined}>
         <V2Fond src={background} flou={v2Tab !== "place"} />
         <div className="eclairage" aria-hidden="true" />
@@ -6865,6 +6881,12 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
       <button type="button" onClick={() => updateGame((current) => ({ ...current, settings: { ...current.settings, developer: false } }))}>Désactiver</button>
     </div>
 
+    <h3>Prototype · jeu de rythme intime</h3>
+    <div className="dev-row">
+      <span className="dev-help">{HYLEE_HOME_RHYTHM.title} : Hylee au logis, mood audacieuse, parcours homme. S’ouvre directement sur le jeu, en souvenir, sans toucher à la sauvegarde.{game.player.intimacy !== "explicite" ? " Réglez d’abord l’intimité sur Explicite dans les options." : ""}</span>
+      <button type="button" id="caDevRythme" disabled={!onOpenIntimacy || game.player.intimacy !== "explicite"} onClick={() => onOpenIntimacy?.({ kind: "hylee-rhythm" })}>Lancer le jeu de rythme</button>
+    </div>
+
     <h3>Sylvinia Studio</h3>
     <div className="dev-row">
       <span className="dev-help">Éditeur des contenus de la Chronique Alternative. S’ouvre dans un nouvel onglet, la partie en cours reste ouverte.</span>
@@ -6988,7 +7010,7 @@ function DeveloperPanel({ game, updateGame, onOpenIntimacy }: DeveloperPanelProp
   </div>;
 }
 
-type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "ending" | "done";
+type IntimacyStep = "opening" | "approach-choice" | "approach-lines" | "attunement-choice" | "attunement-lines" | "attunement-result" | "direction-choice" | "direction-lines" | "rhythm" | "ending" | "done";
 
 
 /* Historique et Retour des scènes intimes : voir scene-controls.tsx (pile vidée à chaque choix). */
@@ -7040,6 +7062,20 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const [directionChapter, setDirectionChapter] = useState(0);
   const [attunementBeat, setAttunementBeat] = useState(0);
   const [attunementScore, setAttunementScore] = useState(0);
+  // Jeu de rythme (prototype) : remplace la séquence « climax » d'une seule route, en Explicite.
+  const [rhythmMood, setRhythmMood] = useState("seductive");
+  const rhythmScene = hyleeContext ? rhythmSceneFor(direction?.id, game.player.intimacy) : undefined;
+  useLayoutEffect(() => {
+    if (!modal.rhythm || !hyleeContext) return;
+    const route = hyleeDateIntimacyRoutes(hyleeContext, "homme").find((entry) => entry.id === HYLEE_HOME_RHYTHM.routeId);
+    if (!route) return;
+    const sequence = withSoloIntimateMoods(route.chapters.explicite, character.id, route.id);
+    setDirection(route);
+    setDirectionSequence(sequence);
+    setDirectionChapter(RHYTHM_REPLACED_CHAPTER - 1);
+    setLines([]);
+    setStep("rhythm");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || valurnIntimacyApproaches(valurnContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const [directionChoices] = useState(() => shuffledChoices(bellirithContext
     ? bellirithIntimacyRoutes(bellirithContext, game.player.sex, bellirithFlags)
@@ -7059,7 +7095,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const spriteMood = characterSpeaking
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
-  const intimateMood = currentLine?.intimateMood || "soft";
+  const intimateMood = step === "rhythm" ? rhythmMood : currentLine?.intimateMood || "soft";
   // Retour : instantanés de lecture seulement ; vidés à chaque choix (le score et la route restent acquis).
   const rollback = useRollback<IntimacyRollback<IntimacyStep>>();
   const sectionRef = useRef<HTMLElement>(null);
@@ -7105,11 +7141,25 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     else if (step === "direction-lines") {
       if (directionChapter < directionSequence.length - 1) {
         const nextChapter = directionChapter + 1;
+        if (rhythmScene && nextChapter === RHYTHM_REPLACED_CHAPTER) {
+          rollback.clear();
+          setLines([]);
+          setLineIndex(0);
+          setStep("rhythm");
+          return;
+        }
         setDirectionChapter(nextChapter);
         beginSegment("direction-lines", directionSequence[nextChapter]);
       } else beginSegment("ending", withSoloIntimateEnding(endingLines(), character.id, direction?.id || modal.dateId || character.id, directionSequence.length));
     }
     else if (step === "ending") setStep("done");
+  }
+
+  /** Sortie du jeu de rythme : variante de conclusion choisie par la justesse, ou la séquence écrite d'origine. */
+  function leaveRhythm(conclusion?: DialogueLine[]) {
+    rollback.clear();
+    setDirectionChapter(RHYTHM_REPLACED_CHAPTER);
+    beginSegment("direction-lines", conclusion || directionSequence[RHYTHM_REPLACED_CHAPTER] || []);
   }
 
   function chooseApproach(choice: IntimacyChoice) {
@@ -7160,7 +7210,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
     character: character.id,
     mode: game.player.intimacy,
     surface: modal.home ? "home" : "route",
-    step,
+    step: step === "rhythm" ? "direction-lines" : step,
     chapter: directionChapter,
     narrativePhase: character.id === "lineva" && modal.dateId?.startsWith("date-lineva-")
       ? linevaDateIntimacyPhase(directionChapter)
@@ -7179,11 +7229,14 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop }: { modal: In
   const intimateCg = intimateVisual.cg;
   const useIntimateSprite = hasIntimateSprites(character.id) && intimateVisual.useIntimateSprites;
 
-  return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
+  return <section ref={sectionRef} className={`interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.18), rgba(5,6,12,.82)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `Souvenir intime · aucun gain` : `${modal.home ? "Intimité au logis" : bellirithContext && bellirithIntimacyKind(bellirithContext) === "diversion" ? "Interférence · Bellirith" : "Scène intime"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`intimacy-sprite ${useIntimateSprite ? "uses-intimate-sprite" : "uses-standard-sprite"} ${characterSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useIntimateSprite ? "intimate" : "standard"} src={useIntimateSprite ? intimateSpritePath(character.id, intimateMood) : spritePath(character.id, spriteMood, character.defaultMood)} onError={(event) => useIntimateSprite ? recoverMissingIntimateSprite(event, character.id) : recoverMissingSprite(event, character.portrait)} alt={character.name} /></div>}
     <div className="dialogue-gradient" />
-    {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
+    {step === "rhythm" && rhythmScene && <RhythmIntimacyGame scene={rhythmScene} saveKey={`${rhythmScene.id}:${modal.replay ? "souvenir" : "chronique"}`} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} format={(text) => replacePlayer(text, game.player)} onMood={setRhythmMood}
+      onFinish={(result) => { logChoice(`${rhythmScene.title} · ${rhythmScene.conclusions[result.quality].title} (${Math.round(result.accuracy * 100)} %)`); leaveRhythm(rhythmScene.conclusions[result.quality].lines); }}
+      onSkip={() => leaveRhythm()} onLeave={onStop} />}
+    {!isChoice && !isDone && step !== "rhythm" && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
       <span className="speaker">{replacePlayer(currentLine.speaker, game.player)}</span>
       <p key={`${step}-${lineIndex}`}>{replacePlayer(currentLine.text, game.player)}</p>
       <small>{step === "direction-lines" && directionSequence.length > 1 ? `Séquence ${directionChapter + 1} / ${directionSequence.length} · ` : ""}{lineIndex + 1} / {lines.length}<span className="suite-txt"> · Cliquer pour continuer</span></small><i className="dialogue-suite" aria-hidden="true">▼</i>
