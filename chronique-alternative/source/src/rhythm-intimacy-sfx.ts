@@ -1,7 +1,8 @@
 /*
  * Jeu de rythme intime · bruitages (prototype).
  *
- * Sons libres (CC0, voir assets/audio/rythme/SOURCES.md) joués par Web Audio
+ * Sons libres (bruitages CC0, voix unique de Hylee par MagicalMysticVA en CC BY 4.0,
+ * voir assets/audio/rythme/SOURCES.md) joués par Web Audio
  * pour une latence minimale : un claquement de peau à chaque coup réussi, avec
  * de légères variations de hauteur et de volume, une note humide quand on reste
  * au fond, de rares souffles et soupirs hors combo, des gémissements seulement
@@ -10,7 +11,7 @@
  */
 
 const GROUPS = {
-  peau: 8, humide: 4, souffle: 4, soupir: 4, gemit: 7, halete: 5, apogee: 2, draps: 1, rate: 2,
+  peau: 8, humide: 4, souffle: 5, soupir: 5, gemit: 12, halete: 6, apogee: 3, draps: 1, rate: 2,
 } as const;
 type Group = keyof typeof GROUPS;
 export const RHYTHM_SFX_FILES = (Object.keys(GROUPS) as Group[]).flatMap((group) => Array.from({ length: GROUPS[group] }, (_, i) => `${group}-${i + 1}`));
@@ -74,10 +75,11 @@ export class RhythmSfx {
     if (this.master && this.ctx) this.master.gain.setTargetAtTime(this.enabled ? this.volume : 0, this.ctx.currentTime, 0.02);
   }
 
-  private pick(group: Group) {
-    const count = GROUPS[group];
-    let index = Math.floor(Math.random() * count);
-    if (count > 1 && index === this.lastPick.get(group)) index = (index + 1 + Math.floor(Math.random() * (count - 1))) % count;
+  /** Tirage sans répétition immédiate ; from/to (bornes incluses, base 0) restreignent à une partie du groupe. */
+  private pick(group: Group, from = 0, to: number = GROUPS[group] - 1) {
+    const count = to - from + 1;
+    let index = from + Math.floor(Math.random() * count);
+    if (count > 1 && index === this.lastPick.get(group)) index = from + ((index - from + 1 + Math.floor(Math.random() * (count - 1))) % count);
     this.lastPick.set(group, index);
     return `${group}-${index + 1}`;
   }
@@ -112,10 +114,11 @@ export class RhythmSfx {
   private lastVoiceAt = -99;
   private lastMoanAt = -99;
   private voicing(now: number) { return now < this.voiceUntil; }
-  private speak(group: Group, gain: number) {
+  private speak(group: Group, gain: number, range?: [number, number]) {
     if (!this.ctx) return false;
     const now = this.ctx.currentTime;
-    const played = this.play(this.pick(group), { gain, rate: rand(0.97, 1.04) });
+    // Une seule voix : légères variations de hauteur et de volume pour limiter la répétition.
+    const played = this.play(range ? this.pick(group, range[0], range[1]) : this.pick(group), { gain: gain * rand(0.9, 1.05), rate: rand(0.965, 1.035) });
     this.lastVoiceAt = now;
     if (played) { this.voiceSource = played.source; this.voiceUntil = now + played.duration + 0.4; }
     return true;
@@ -146,7 +149,9 @@ export class RhythmSfx {
     try { if (this.voicing(now)) this.voiceSource?.stop(); } catch { /* déjà terminé */ }
     this.lastMoanAt = now;
     const group: Group = level >= 3 && Math.random() < 0.5 ? "halete" : "gemit";
-    return this.speak(group, Math.min(1, 0.5 + 0.12 * level + 0.25 * ardour));
+    // Gémissements rangés du plus doux au plus intense : doux aux premiers paliers, intenses ensuite.
+    const range: [number, number] | undefined = group === "gemit" ? (level <= 1 ? [0, 5] : level === 2 ? [3, 8] : [6, 11]) : undefined;
+    return this.speak(group, Math.min(1, 0.5 + 0.12 * level + 0.25 * ardour), range);
   }
 
   miss() { this.play(this.pick("rate"), { gain: 0.55, rate: rand(0.85, 0.98), lowpass: 700 }); }

@@ -73,6 +73,12 @@ try {
     assert.ok(sources.includes(`${name}.mp3`), `bruitage non crédité dans SOURCES.md : ${name}`);
   }
   assert.ok(/CC0/.test(sources) && /freesound\.org/.test(sources), "SOURCES.md : licence et provenance");
+  // Une seule voix pour Hylee : MagicalMysticVA (CC BY 4.0), créditée ici et dans le jeu ; plus aucune des anciennes voix.
+  const voiceRows = sources.split("\n").filter((line) => /^\| (souffle|soupir|gemit|halete|apogee)-\d+\.mp3/.test(line));
+  assert.ok(voiceRows.length > 0 && voiceRows.every((line) => /MagicalMysticVA/.test(line) && /CC BY 4\.0/.test(line) && /freesound\.org\/people\/magicalmysticva\/sounds\/\d+/.test(line)), "voix : une seule comédienne, CC BY 4.0 sourcée");
+  assert.ok(!/Vidrik|ellenmentor|SuddenDice|khenshom|mariallinas/.test(sources), "anciennes voix retirées des crédits");
+  const pageSource = await readFile(resolve(projectRoot, "source/src/page.tsx"), "utf8");
+  assert.ok(/MagicalMysticVA/.test(pageSource) && /CC BY 4\.0/.test(pageSource), "crédit de la voix dans le jeu");
   const defaults = engine.defaultRhythmPrefs();
   assert.ok(defaults.sfx && defaults.sfxVolume > 0 && defaults.musicVolume < 0.6, "bruitages actifs, musique en retrait par défaut");
   assert.equal(engine.rhythmArdour(0, false), 0);
