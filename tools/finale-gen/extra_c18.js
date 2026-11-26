@@ -455,7 +455,7 @@ Bhaal franchit la tempête morte et passe le portail.`),
   const DUEL_SHOTS = [
 /*@DUEL_SHOTS@*/
   ];
-  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['amanea_', 'Tia, Iriana et le deuil d’Amanea'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };

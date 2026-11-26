@@ -571,7 +571,7 @@ Remerii se repose à ses côtés,`,
     c18_remerii_draven_9: { ...scene("Il a l’air d’attendre", "c18_cg_s06_21_le_silence_qu_il_merite", M_PLAINTE_I, 'Narrateur',
       `et lui accorde le silence qu’il mérite…`,
       "c18_dp_adieu", []), hideChars: true, camera: "recul" },
-    c18_trop_tard: scene("Trop tard", BG_PORTE, M_PLAINTE_I, 'Narrateur',
+    c18_trop_tard: { ...scene("Trop tard", "c18_cg_amanea_01_trop_tard", M_PLAINTE_I, 'Narrateur',
       `À quelques lieues de là,
 
 Le silence règne lorsque Iriana et Tia atteignent les lieux. Trop tard.
@@ -585,21 +585,24 @@ Son corps, déformé par la puissance démoniaque qu’elle avait invoquée, n�
 Et derrière elle, le portail brûle.
 
 Des langues de flammes cramoisies serpentent le long des runes démoniaques gravées dans la pierre. Un brasier infernal, une blessure béante dans le tissu même de leur monde. Iriana s’en approche, le cœur serré. Le portail s’active lentement. Ce n’est plus une simple construction de pierre et d’énergie. C’est une entité en soi. Il aspire, avale, réclame. Il est affamé de chaos.`,
-      "c18_soeur_en_deuil", [irianaTroubled, tia('troubled')]),
-    c18_soeur_en_deuil: { ...scene("Une sœur en deuil", BG_PORTE, M_PLAINTE_I, 'Narrateur',
+      "c18_soeur_en_deuil", []), hideChars: true, camera: "recul" },
+    c18_soeur_en_deuil: { ...scene("Une sœur en deuil", "c18_cg_amanea_01_trop_tard", M_PLAINTE_I, 'Narrateur',
       `Iriana ne regarde pas Tia immédiatement. Elle n’ose pas.
 
-Elle attend une réaction. Une explosion de colère, un jugement froid, une sentence prononcée d’un ton impérial. Mais rien ne vient.
-
-Lorsque finalement elle tourne la tête, elle ne voit pas l’impératrice Sylvinienne toute-puissante qu’elle a toujours connue. Elle voit une sœur en deuil.
-
-Tia s’est figée, debout face au cadavre de sa jumelle, les lèvres entrouvertes, les yeux éteints. Puis, lentement, elle s’agenouille. Ce n’était pas prévu.
+Elle attend une réaction. Une explosion de colère, un jugement froid, une sentence prononcée d’un ton impérial. Mais rien ne vient.`,
+      "c18_soeur_en_deuil_2", []), hideChars: true },
+    c18_soeur_en_deuil_2: { ...scene("Une sœur en deuil", "c18_cg_amanea_04_soeur_en_deuil", M_PLAINTE_I, 'Narrateur',
+      `Lorsque finalement elle tourne la tête, elle ne voit pas l’impératrice Sylvinienne toute-puissante qu’elle a toujours connue. Elle voit une sœur en deuil.`,
+      "c18_soeur_en_deuil_3", []), hideChars: true, camera: "approche" },
+    c18_soeur_en_deuil_3: { ...scene("Une sœur en deuil", "c18_cg_amanea_04b_yeux_eteints", M_PLAINTE_I, 'Narrateur',
+      `Tia s’est figée, debout face au cadavre de sa jumelle, les lèvres entrouvertes, les yeux éteints. Puis, lentement, elle s’agenouille. Ce n’était pas prévu.
 
 Iriana l’observe, troublée. Elle n’a jamais vu Tia ainsi. Tia, la dure, l’implacable, la souveraine de Sylvinia, celle qui n’accorde ni pardon ni pitié.
 
-Mais en cet instant, elle n’est rien de tout cela.
-
-Ses mains gantées de cuir effleurent la peau grise et craquelée d’Amanea, là où la lame a frappé. Elle n’exprime pas sa douleur par des mots, pas par des pleurs. Elle reste immobile, simplement là, face à cette sœur qu’elle a tant combattue. Ses yeux se chargent de tout.
+Mais en cet instant, elle n’est rien de tout cela.`,
+      "c18_soeur_en_deuil_4", []), hideChars: true, camera: "approche" },
+    c18_soeur_en_deuil_4: { ...scene("Une sœur en deuil", "c18_cg_amanea_05_la_main_de_tia", M_PLAINTE_I, 'Narrateur',
+      `Ses mains gantées de cuir effleurent la peau grise et craquelée d’Amanea, là où la lame a frappé. Elle n’exprime pas sa douleur par des mots, pas par des pleurs. Elle reste immobile, simplement là, face à cette sœur qu’elle a tant combattue. Ses yeux se chargent de tout.
 
 Puis, dans un souffle presque brisé, elle murmure :
 
@@ -620,13 +623,14 @@ Sa voix est basse, rauque. Fatiguée.
 Son regard doré se voile d’un éclat que Iriana ne lui connaissait pas.
 
 « Mais je crois qu’au fond… elle voulait simplement être libre. »`,
-      "c18_journal", [irianaSad, tia('sad')]), voices: [["« J’aurais peut-être dû l’écouter. »", "Tia"], ["« Grand-mère ? »", "Iriana"], ["« Elle n’a jamais été comme moi. »", "Tia"], ["« Elle a toujours été… autre. Trop fragi", "Tia"], ["« Mais je crois qu’au fond… elle voulait", "Tia"]] },
-    c18_journal: { ...scene("Elle a essayé", BG_PORTE, M_PLAINTE_I, 'Narrateur',
+      "c18_journal", []), hideChars: true, camera: "approche", voices: [["« J’aurais peut-être dû l’écouter. »", "Tia"], ["« Grand-mère ? »", "Iriana"], ["« Elle n’a jamais été comme moi. »", "Tia"], ["« Elle a toujours été… autre. Trop fragi", "Tia"], ["« Mais je crois qu’au fond… elle voulait", "Tia"]] },
+    c18_journal: { ...scene("Elle a essayé", "c18_cg_amanea_05_la_main_de_tia", M_PLAINTE_I, 'Narrateur',
       `Iriana se mord la lèvre.
 
-« Elle a essayé. »
-
-Elle s’agenouille à son tour, posant une main hésitante sur le bras d’Amanea. La peau est froide, presque statufiée. Elle ferme les yeux un instant. L’Impératrice sort de sa poche une pièce de piano abîmée.
+« Elle a essayé. »`,
+      "c18_journal_2", []), hideChars: true, voices: [["« Elle a essayé. »", "Iriana"]] },
+    c18_journal_2: { ...scene("Elle a essayé", "c18_cg_amanea_07_le_bois_du_piano", M_PLAINTE_I, 'Narrateur',
+      `Elle s’agenouille à son tour, posant une main hésitante sur le bras d’Amanea. La peau est froide, presque statufiée. Elle ferme les yeux un instant. L’Impératrice sort de sa poche une pièce de piano abîmée.
 
 Le bois ancien, marqué par le temps, repose dans la paume ouverte de la Reine noire. Iriana la regarde, avec un sourire douloureux.
 
@@ -634,17 +638,19 @@ Le bois ancien, marqué par le temps, repose dans la paume ouverte de la Reine n
 
 Tia tourne lentement la tête vers elle, un pli de doute entre ses sourcils.
 
-Iriana continue, le regard baissé.
-
-« J’ai trouvé son journal, ses souvenirs. J’ai vu ce qu’elle voulait. Ce qu’elle craignait. Elle n’était pas un monstre. Elle cherchait… l’approbation. »
+Iriana continue, le regard baissé.`,
+      "c18_journal_3", []), hideChars: true, camera: "approche", voices: [["« J’ai vu ce qu’elle était vraiment. »", "Iriana"]] },
+    c18_journal_3: { ...scene("Elle a essayé", "c18_cg_amanea_08_le_journal", M_PLAINTE_I, 'Narrateur',
+      `« J’ai trouvé son journal, ses souvenirs. J’ai vu ce qu’elle voulait. Ce qu’elle craignait. Elle n’était pas un monstre. Elle cherchait… l’approbation. »
 
 Elle relève la tête, plongeant son regard dans celui de sa tante.
 
 « Elle s’est toujours battue pour ce qu’elle croyait juste. Peut-être même plus que nous tous. »
 
-Tia ne nie pas. Elle ne peut pas.
-
-Elle baisse les yeux, posant son front contre son poing fermé. Un geste si humain, si vulnérable, qu’Iriana peine à croire ce qu’elle voit.
+Tia ne nie pas. Elle ne peut pas.`,
+      "c18_journal_4", []), hideChars: true, camera: "approche", voices: [["« J’ai trouvé son journal, ses souvenirs", "Iriana"], ["« Elle s’est toujours battue pour ce qu’", "Iriana"]] },
+    c18_journal_4: { ...scene("Elle a essayé", "c18_cg_amanea_09_je_savais", M_PLAINTE_I, 'Narrateur',
+      `Elle baisse les yeux, posant son front contre son poing fermé. Un geste si humain, si vulnérable, qu’Iriana peine à croire ce qu’elle voit.
 
 « Je savais ce qui l’attendait. »
 
@@ -654,16 +660,17 @@ Iriana fronce les sourcils.
 
 « Qu’est-ce que tu veux dire ? »
 
-Tia ne répond pas tout de suite.
-
-Ses doigts glissent sur les cheveux blancs d’Amanea, écartant doucement quelques mèches tombées sur son visage figé.
+Tia ne répond pas tout de suite.`,
+      "c18_journal_5", []), hideChars: true, camera: "approche", voices: [["« Je savais ce qui l’attendait. »", "Tia"], ["« Qu’est-ce que tu veux dire ? »", "Iriana"]] },
+    c18_journal_5: { ...scene("Elle a essayé", "c18_cg_amanea_10_cheveux_blancs", M_PLAINTE_I, 'Narrateur',
+      `Ses doigts glissent sur les cheveux blancs d’Amanea, écartant doucement quelques mèches tombées sur son visage figé.
 
 « Elle est ma sœur. »
 
 Elle inspire profondément, sa poitrine se soulevant dans un effort visible.
 
 « Et par ma faute… elle ne connaîtra jamais le repos qu’elle devrait avoir… »`,
-      "c18_regret", [irianaSad, tia('sad')]), voices: [["« Elle a essayé. »", "Iriana"], ["« J’ai vu ce qu’elle était vraiment. »", "Iriana"], ["« J’ai trouvé son journal, ses souvenirs", "Iriana"], ["« Elle s’est toujours battue pour ce qu’", "Iriana"], ["« Je savais ce qui l’attendait. »", "Tia"], ["« Qu’est-ce que tu veux dire ? »", "Iriana"], ["« Elle est ma sœur. »", "Tia"], ["« Et par ma faute… elle ne connaîtra jam", "Tia"]] },
+      "c18_regret", []), hideChars: true, camera: "approche", voices: [["« Elle est ma sœur. »", "Tia"], ["« Et par ma faute… elle ne connaîtra jam", "Tia"]] },
     c18_regret: scene("Du regret", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Iriana sent son cœur se serrer.
 
@@ -677,28 +684,34 @@ Et malgré tout… elle les a conduites à ce moment.
 
 La culpabilité est écrasante.
 
-Un silence tendu plane entre elles, uniquement troublé par le portail qui brûle, dévore et attend.
-
-Iriana n’a pas les mots.
+Un silence tendu plane entre elles, uniquement troublé par le portail qui brûle, dévore et attend.`,
+      "c18_regret_2", [irianaSad, tia('troubled')]),
+    c18_regret_2: { ...scene("Du regret", "c18_cg_amanea_11_du_regret", M_PLAINTE, 'Narrateur',
+      `Iriana n’a pas les mots.
 
 Elle n’a plus de colère, plus d’amertume. Seulement une immense tristesse. Pour la première fois, elle voit quelque chose de différent dans les yeux de Tia. Quelque chose de plus fragile, de plus humain.
 
 Du regret.
 
 Le silence pèse, lourd comme une chape de plomb. Tout autour d’elles semble s’éloigner, comme si le monde entier s’était replié sur cet instant figé dans le temps. Le portail gronde derrière elles, affamé, insatiable, mais ni Iriana ni Tia n’y prêtent attention. Elles ne voient que le corps inerte d’Amanea, étendu devant elles, une ombre déchue aux ailes brisées, une reine tombée dont le destin tragique semble enfin scellé. Tia ne dit rien. Elle reste figée, droite, imposante, mais ce n’est qu’une façade. L’impératrice n’est plus une impératrice en cet instant. Elle est simplement une sœur, une jumelle privée de son autre moitié, une guerrière qui a remporté une bataille qu’elle n’a jamais voulu vraiment gagner. Elle se sent vide. Elle a perdu une, si ce n’est son objectif… sa raison de vivre.`,
-      "c18_souvenirs", [irianaSad, tia('troubled')]),
+      "c18_souvenirs", []), hideChars: true, camera: "approche" },
     c18_souvenirs: scene("Les jardins d’Al’Gratal", BG_PORTE, M_PLAINTE, 'Narrateur',
       `Ses doigts effleurent une fois de plus la peau d’Amanea, froide, dure comme la pierre, marquée par les ravages de la corruption. Autrefois, cette chair avait été la même que la sienne. Autrefois, ces traits avaient été identiques aux siens. Amanea et elle étaient nées ensemble, avaient grandi ensemble, avaient marché dans les mêmes couloirs, appris sous le même toit. Elles avaient partagé leurs premiers rires, leurs premiers chagrins, leurs premiers espoirs… et leurs premières rancœurs.
 
-Tia ferme les yeux. Elle se souvient.
-
-Elle se souvient d’Amanea, enfant, qui la dépassait toujours d’un pas lorsqu’elles couraient dans les jardins d’Al’Gratal. Elle se souvient des nuits passées sous les constellations, allongées sur l’herbe humide, se racontant des histoires inventées, rêvant du monde qu’elles bâtiraient ensemble. Elles s’étaient jurées de ne jamais se séparer. Elle se souvient du regard enflammé de sa sœur lorsqu’elle lui parlait de ses idéaux, de son ambition, de cette passion dévorante qui la consumait. Elle se rappelle comment sa jumelle aspirait à la surpasser, non par rivalité, mais par le simple désir de lire la fierté dans son regard. Elle se souvient du moment où leurs chemins avaient commencé à diverger, où les premiers désaccords avaient laissé place aux premiers affrontements. Elle se souvient des disputes, des cris, des accusations. De ce jour fatidique où elles n’avaient plus été des sœurs, mais des ennemies.
-
-Elle rouvre les yeux. Amanea n’est plus.
+Tia ferme les yeux. Elle se souvient.`,
+      "c18_souvenirs_2", [irianaSad, tia('sad')]),
+    c18_souvenirs_2: { ...scene("Les jardins d’Al’Gratal", "c18_cg_amanea_11a_jardins_al_gratal", M_PLAINTE, 'Narrateur',
+      `Elle se souvient d’Amanea, enfant, qui la dépassait toujours d’un pas lorsqu’elles couraient dans les jardins d’Al’Gratal.`,
+      "c18_souvenirs_3", []), hideChars: true, camera: "recul" },
+    c18_souvenirs_3: { ...scene("Les jardins d’Al’Gratal", "c18_cg_amanea_11b_sous_les_constellations", M_PLAINTE, 'Narrateur',
+      `Elle se souvient des nuits passées sous les constellations, allongées sur l’herbe humide, se racontant des histoires inventées, rêvant du monde qu’elles bâtiraient ensemble. Elles s’étaient jurées de ne jamais se séparer. Elle se souvient du regard enflammé de sa sœur lorsqu’elle lui parlait de ses idéaux, de son ambition, de cette passion dévorante qui la consumait. Elle se rappelle comment sa jumelle aspirait à la surpasser, non par rivalité, mais par le simple désir de lire la fierté dans son regard. Elle se souvient du moment où leurs chemins avaient commencé à diverger, où les premiers désaccords avaient laissé place aux premiers affrontements. Elle se souvient des disputes, des cris, des accusations. De ce jour fatidique où elles n’avaient plus été des sœurs, mais des ennemies.`,
+      "c18_souvenirs_fin", []), hideChars: true, camera: "recul" },
+    c18_souvenirs_fin: scene("Les jardins d’Al’Gratal", BG_PORTE, M_PLAINTE, 'Narrateur',
+      `Elle rouvre les yeux. Amanea n’est plus.
 
 Le conflit s’est terminé d’une seule lame, une lame qui n’a pas seulement transpercé le cœur d’une sœur… mais des deux jumelles. Iriana observe Tia, incapable de détourner le regard. Elle n’a jamais vu son impassible tante ainsi. Si immobile, si fragile. Tia respire lentement, son visage de marbre figé dans un calme trompeur, mais tout son être semble secoué d’une tempête intérieure. Alors, elle bouge enfin.`,
       "c18_etreinte", [irianaSad, tia('sad')]),
-    c18_etreinte: { ...scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
+    c18_etreinte: { ...scene("J’aurais dû t’écouter", "c18_cg_amanea_13_larmes_de_tia", M_PLAINTE, 'Narrateur',
       `Elle avance doucement contre sa jumelle. Ses gestes sont lents, mesurés, comme si elle craignait qu’Amanea ne disparaisse en poussière à la moindre pression. Ses bras se tendent, et enfin… elle la prend dans ses bras.
 
 Iriana écarquille les yeux.
@@ -728,8 +741,8 @@ Tia verse quelques larmes, discrètes et rares…
 pourtant, c’est bien plus qu’elle n’en a jamais laissé paraître.
 
 Des larmes amères, des larmes de peines, des larmes de regrets`,
-      "c18_etreinte_2", [irianaSad, tia('sad')]), voices: [["« Oui… j’aurais dû t’écouter. »", "Tia"]] },
-    c18_etreinte_2: scene("J’aurais dû t’écouter", BG_PORTE, M_PLAINTE, 'Narrateur',
+      "c18_etreinte_2", []), hideChars: true, camera: "approche", voices: [["« Oui… j’aurais dû t’écouter. »", "Tia"]] },
+    c18_etreinte_2: { ...scene("J’aurais dû t’écouter", "c18_cg_amanea_14_le_silence", M_PLAINTE, 'Narrateur',
       `Mais à présent, il est trop tard. La lueur d'Amanea s'est éteinte à jamais, et aucun mot, aucun geste, ne pourra jamais recoudre les liens brisés par l'éternité impitoyable de la mort.
 
 Tia relâche un soupir tremblant, serrant un peu plus sa sœur contre elle. Elle n’a plus d’armure, plus de masque. Elle n’a que ce chagrin qu’elle n’avait jamais laissé éclater.
@@ -737,7 +750,7 @@ Tia relâche un soupir tremblant, serrant un peu plus sa sœur contre elle. Elle
 Et pour la première fois, Iriana ne sait pas qui de sa tante ou d’elle-même souffre le plus.
 
 Elle ne peut qu’observer le point final d’une histoire autrefois tissée d’espoir et de promesses silencieuses, d’une fraternité brisée, un lien déchiré par des années de conflits, de malentendus et d’orgueil, et dont il ne reste plus aujourd’hui que le silence pesant de la mort pour conclusion…`,
-      "c18_ip_portail", [irianaSad, tia('sad')]),
+      "c18_ip_portail", []), hideChars: true, camera: "recul" },
     c18_alamma: { ...scene("Confrontation au Portail", "c18_cg_s07_01_sous_la_canopee", M_IRIANA, 'Narrateur',
       `La forêt est silencieuse, trop silencieuse. Iriana avance, seule, sous la canopée tordue où les ombres semblent s’animer sous la pulsation du portail démoniaque. L’air est saturé d’une énergie poisseuse, presque vivante, qui s’infiltre dans sa peau, cherchant à déformer sa chair, sa volonté, son âme.
 
@@ -1777,6 +1790,19 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
     ["c18_cg_s06_19_le_medaillon", "assets/images/keyscenes/chapter18-s06/s06_19_le_medaillon.webp", "Le médaillon", "Insert sur deux portraits gravés, celui d’une femme plus âgée et celui de la jeune Lineva. Le parchemin désormais éteint reste dans la main gauche de Draven."],
     ["c18_cg_s06_20_un_dernier_geste", "assets/images/keyscenes/chapter18-s06/s06_20_un_dernier_geste.webp", "Un dernier geste", "Remerii ferme les yeux et prend doucement sa main."],
     ["c18_cg_s06_21_le_silence_qu_il_merite", "assets/images/keyscenes/chapter18-s06/s06_21_le_silence_qu_il_merite.webp", "Le silence qu’il mérite", "Plan large immobile. Elle se repose près de lui et la dernière phrase se termine sur ce cadre."],
+    ["c18_cg_amanea_01_trop_tard", "assets/images/keyscenes/chapter18-amanea/amanea_01_trop_tard.png", "Trop tard", "Plan large : Iriana et Tia de dos, Amanea étendue au loin dans la forêt morte. Couvre aussi Amanea gisante et le portail, en l’absence des plans 02 et 03."],
+    ["c18_cg_amanea_04_soeur_en_deuil", "assets/images/keyscenes/chapter18-amanea/amanea_04_soeur_en_deuil.png", "Une sœur en deuil", "Iriana au premier plan, Tia debout face au cadavre de sa jumelle."],
+    ["c18_cg_amanea_04b_yeux_eteints", "assets/images/keyscenes/chapter18-amanea/amanea_04b_yeux_eteints.png", "Les yeux éteints", "Tia debout, les yeux baissés vers Amanea, juste avant de s’agenouiller."],
+    ["c18_cg_amanea_05_la_main_de_tia", "assets/images/keyscenes/chapter18-amanea/amanea_05_la_main_de_tia.png", "La main de Tia", "Tia agenouillée, la main posée sur le corps d’Amanea. Le plan est tenu jusqu’à la réplique « Elle a essayé. »."],
+    ["c18_cg_amanea_07_le_bois_du_piano", "assets/images/keyscenes/chapter18-amanea/amanea_07_le_bois_du_piano.png", "Le bois du piano", "Main gantée de Tia tenant la pièce de piano abîmée."],
+    ["c18_cg_amanea_08_le_journal", "assets/images/keyscenes/chapter18-amanea/amanea_08_le_journal.png", "Le journal", "Iriana de face, grave, regardant Tia hors champ : « J’ai trouvé son journal, ses souvenirs. »"],
+    ["c18_cg_amanea_09_je_savais", "assets/images/keyscenes/chapter18-amanea/amanea_09_je_savais.png", "Je savais", "Tia, le front contre son poing fermé : « Je savais ce qui l’attendait. »"],
+    ["c18_cg_amanea_10_cheveux_blancs", "assets/images/keyscenes/chapter18-amanea/amanea_10_cheveux_blancs.png", "Les cheveux blancs", "Tia écarte une mèche des cheveux blancs d’Amanea."],
+    ["c18_cg_amanea_11_du_regret", "assets/images/keyscenes/chapter18-amanea/amanea_11_du_regret.png", "Du regret", "Gros plan d’Iriana, tête baissée, dans le silence du regret."],
+    ["c18_cg_amanea_11a_jardins_al_gratal", "assets/images/keyscenes/chapter18-amanea/amanea_11a_jardins_al_gratal.png", "Les jardins d’Al’Gratal", "Souvenir : Tia et Amanea enfants courant dans les jardins d’Al’Gratal."],
+    ["c18_cg_amanea_11b_sous_les_constellations", "assets/images/keyscenes/chapter18-amanea/amanea_11b_sous_les_constellations.png", "Sous les constellations", "Souvenir : les deux fillettes allongées dans l’herbe, sous les étoiles."],
+    ["c18_cg_amanea_13_larmes_de_tia", "assets/images/keyscenes/chapter18-amanea/amanea_13_larmes_de_tia.png", "Les larmes de Tia", "Tia prend Amanea dans ses bras. Le plan couvre l’étreinte, puis les larmes discrètes."],
+    ["c18_cg_amanea_14_le_silence", "assets/images/keyscenes/chapter18-amanea/amanea_14_le_silence.png", "Le silence", "Plan large de clôture : Iriana à l’écart, Tia tient Amanea, la Porte rouge au fond."],
     ["c18_cg_s07_01_sous_la_canopee", "assets/images/keyscenes/chapter18-s07/s07_01_sous_la_canopee.webp", "Sous la canopée", "Iriana avance seule sous les racines. Le rouge de la Porte affleure entre les troncs."],
     ["c18_cg_s07_02_alamma_devant_la_porte", "assets/images/keyscenes/chapter18-s07/s07_02_alamma_devant_la_porte.webp", "Alamma devant la Porte", "Plan d’ensemble depuis l’épaule d’Iriana. Alamma contemple l’abîme et deux démons mineurs s’inclinent à ses pieds."],
     ["c18_cg_s07_03_le_pere_se_retourne", "assets/images/keyscenes/chapter18-s07/s07_03_le_pere_se_retourne.webp", "Le père se retourne", "Contrechamp serré sur les yeux d’Alamma et le velours rongé."],
@@ -1850,7 +1876,7 @@ Il n’a pas réagi à sa transformation, il ne semble pas surpris, comme s’il
     ["c18_bh_dragon_r", "c18_cg_s08_19_le_choc_des_colosses", "impact"],
     ["c18_bh_fin", "c18_cg_s08_25_la_porte_happe_bhaal", "recul"],
   ];
-  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
+  const SECTIONS = [['s06_', 'Le dernier adieu à Draven'], ['amanea_', 'Tia, Iriana et le deuil d’Amanea'], ['s07_', 'Iriana face à Alamma'], ['s08_', 'Remerii et Hylee face à Bhaal']];
   for (const [key, path, name, body] of SHOTS) {
     A[key] = path;
     CODEX_IMAGES[key] = { title: 'Chapitre XVIII · ' + name, body, src: path };

@@ -1,5 +1,5 @@
 {
- "version": "v0.427",
+ "version": "v0.428",
  "regle": "Aucune image générée. Les fichiers fournis par l’auteur sont copiés à l’identique (même sha256) : simple renommage, sans conversion ni retouche. Les fiches personnages restent des références non affichées. Seule exception, validée par l’auteur : s06_17 et s06_20 (lot 2), retouchés localement pour remettre les plaques dans la main de Draven.",
  "fichiers_fournis_par_l_auteur": {
   "statut": "Intégrés le 24/11/2026. Copie stricte (cp), aucune conversion ni retouche : sha256 identique à la source pour les 8 fichiers.",
@@ -2326,6 +2326,143 @@
     "camera": "recul",
     "titre_codex": "Mère, nous rentrons",
     "duels": []
+   }
+  ]
+ },
+ "images_cles_deuil_amanea": {
+  "statut": "Intégrées le 26/11/2026 (v0.428) : 13 plans PNG livrés par l’auteur, copie stricte (sha256 identique aux fichiers fournis). Aucune conversion, aucun redimensionnement. Le plan amanea_04b_yeux_eteints est plus petit que les autres (1445x813, les autres environ 1672x941).",
+  "placement": "Point de vue facultatif d’Iriana au chapitre XVIII, de c18_trop_tard à c18_etreinte_2 (Tia et Iriana découvrent Amanea). Les plans manquants 02, 03, 06 et 12 sont couverts en tenant l’image voisine. Les écrans sans plan clé (ouverture de c18_regret, présent de c18_souvenirs et c18_souvenirs_fin) gardent le décor BG_PORTE et les silhouettes. Les 24 plans S07 (Iriana face à Alamma) et les scènes du pacte sont inchangés.",
+  "source": "tools/finale-gen/shots.py (SHOTS)",
+  "fichiers": [
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_01_trop_tard.png",
+    "sha256": "2bd348105d6cdb4e12746792ff5b966295c916926898a9c373edbb0c81e30267",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_01_trop_tard",
+    "scene": "c18_trop_tard",
+    "paragraphe": 10896,
+    "camera": "recul",
+    "titre_codex": "Trop tard"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_04_soeur_en_deuil.png",
+    "sha256": "a63b03276eca5fb7904c012a249ab12952991f96841c71aa4a9beb275fab891f",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_04_soeur_en_deuil",
+    "scene": "c18_soeur_en_deuil_2",
+    "paragraphe": 10912,
+    "camera": "approche",
+    "titre_codex": "Une sœur en deuil"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_04b_yeux_eteints.png",
+    "sha256": "0197d6c31d3f7e340239256790d8bf984f65b92b82810915bdae3e04b18cf084",
+    "dimensions": "1445x813 PNG",
+    "cle_A": "c18_cg_amanea_04b_yeux_eteints",
+    "scene": "c18_soeur_en_deuil_3",
+    "paragraphe": 10914,
+    "camera": "approche",
+    "titre_codex": "Les yeux éteints"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_05_la_main_de_tia.png",
+    "sha256": "6ebab445bddf169f50596dca572c341ebcb788cc557b7a959bfb1f38d84c5568",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_05_la_main_de_tia",
+    "scene": "c18_soeur_en_deuil_4",
+    "paragraphe": 10919,
+    "camera": "approche",
+    "titre_codex": "La main de Tia"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_07_le_bois_du_piano.png",
+    "sha256": "6c01560b968a9703b079680e69ec41289ffbf4bd60f480e0a53d5af9b5449ca3",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_07_le_bois_du_piano",
+    "scene": "c18_journal_2",
+    "paragraphe": 10945,
+    "camera": "approche",
+    "titre_codex": "Le bois du piano"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_08_le_journal.png",
+    "sha256": "f02f64c22f3d1120b07d41403f2f3c5fdce22cc186203d50a2a81abfe23703f4",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_08_le_journal",
+    "scene": "c18_journal_3",
+    "paragraphe": 10953,
+    "camera": "approche",
+    "titre_codex": "Le journal"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_09_je_savais.png",
+    "sha256": "b2d3d23f40dec2631ff5e03c32ef33e5370e988376fea3890196634a5264a24b",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_09_je_savais",
+    "scene": "c18_journal_4",
+    "paragraphe": 10961,
+    "camera": "approche",
+    "titre_codex": "Je savais"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_10_cheveux_blancs.png",
+    "sha256": "7e149a8e267c9c9157841d97e6c5e728874ab9e3bd781bff81e0d5627ba17e68",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_10_cheveux_blancs",
+    "scene": "c18_journal_5",
+    "paragraphe": 10972,
+    "camera": "approche",
+    "titre_codex": "Les cheveux blancs"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_11_du_regret.png",
+    "sha256": "4a5fe4771621356998786f254dd83d7d5a0ef93df071c7f740381237b35e6ee5",
+    "dimensions": "1671x941 PNG",
+    "cle_A": "c18_cg_amanea_11_du_regret",
+    "scene": "c18_regret_2",
+    "paragraphe": 10992,
+    "camera": "approche",
+    "titre_codex": "Du regret"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_11a_jardins_al_gratal.png",
+    "sha256": "5fd2510093d78369b7c6d74c374bf3c287f25ced7d7b9ba90e7c233c60cb2b7a",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_11a_jardins_al_gratal",
+    "scene": "c18_souvenirs_2",
+    "paragraphe": 11004,
+    "camera": "recul",
+    "titre_codex": "Les jardins d’Al’Gratal"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_11b_sous_les_constellations.png",
+    "sha256": "767fcb0bc1306bf48d111283a182b4f46c0f35c9c9b8317806357dae00501eb9",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_11b_sous_les_constellations",
+    "scene": "c18_souvenirs_3",
+    "paragraphe": 11005,
+    "camera": "recul",
+    "titre_codex": "Sous les constellations"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_13_larmes_de_tia.png",
+    "sha256": "8e49ac5b20a4aa727f8426ed317f49313ae90c5ac6f5c192cf732d5a792f4b97",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_13_larmes_de_tia",
+    "scene": "c18_etreinte",
+    "paragraphe": 11010,
+    "camera": "approche",
+    "titre_codex": "Les larmes de Tia"
+   },
+   {
+    "fichier": "assets/images/keyscenes/chapter18-amanea/amanea_14_le_silence.png",
+    "sha256": "f4f04ea36cb0bc0a93490974ee3d4b1bdc853ed94e942b00fe7f75b6db27d2ea",
+    "dimensions": "1672x941 PNG",
+    "cle_A": "c18_cg_amanea_14_le_silence",
+    "scene": "c18_etreinte_2",
+    "paragraphe": 11038,
+    "camera": "recul",
+    "titre_codex": "Le silence"
    }
   ]
  }

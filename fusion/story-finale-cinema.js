@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.427 · Images clés S07';
+  if (update) update.textContent = 'Mise à jour · v0.428 · Images clés du deuil d’Amanea';
 
   window.SylviniaFinaleCinema = {
     src: SRC,
