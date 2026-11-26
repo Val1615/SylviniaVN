@@ -62,7 +62,8 @@ assert.match(spritePath("tia", "stern", "neutral"), /\/tia\/stern\.png$/u);
 
 const pageSource = await readFile(path.join(sourceDirectory, "page.tsx"), "utf8");
 assert.ok(!pageSource.includes("/assets/sprites/${"), "Les vues doivent utiliser spritePath au lieu de construire une URL non validée.");
-assert.ok(pageSource.includes("speakerCharacterIds(currentLine.speaker, [character.id])"), "Les scènes intimes solo doivent reconnaître les noms courts comme Tia.");
-assert.ok(pageSource.includes("speakerCharacterIds(currentLine.speaker, [first.id, second.id])"), "Les scènes à trois doivent reconnaître chaque intervenant du libellé.");
+assert.ok(pageSource.includes("actingCharacterIds(currentLine, [character.id])"), "Les scènes intimes solo doivent reconnaître le locuteur et l’acteur de la ligne.");
+assert.ok(pageSource.includes("actingCharacterIds(currentLine, [first.id, second.id])"), "Les scènes à trois doivent reconnaître chaque intervenant du libellé, y compris en narration.");
+assert.ok(pageSource.includes("step === \"rhythm\" ? rhythmActors"), "Pendant le jeu à trois, le sprite actif suit la voix de la phase.");
 
 console.log(`[Sprites] ${CHARACTERS.length} personnages · ${checkedResolutions} résolutions · registre, équivalences et chemins réels validés.`);

@@ -129,11 +129,16 @@
 .rythme-layer.rate-recent .rythme-piste { border-color: rgba(185, 168, 196, .55); filter: saturate(.5); }
 /* Image en rythme : un zoom léger, réglé par le script (0 si « Effets réduits » ou « Image en rythme » décoché) */
 /* Secousse à chaque coup (réglée par le script, nulle si « Secousses » est décoché) : pleine sur le sprite, plus légère sur la CG et le décor */
+/* Trio : le même mouvement ne va qu’au sprite de la personne qui reçoit le geste (classe active). */
+.rythme-en-cours .group-intimacy-sprite.active img,
 .rythme-en-cours .intimacy-sprite img { scale: calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + var(--rythme-secousse-s, 0) + var(--rythme-etire, 0)); translate: var(--rythme-secousse-x, 0px) var(--rythme-secousse-y, 0px); rotate: var(--rythme-incline, 0deg); transform-origin: 50% 35%; }
 .rythme-en-cours .intimacy-cg img { scale: calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0)) calc(1 + var(--rythme-zoom, 0) + .4 * var(--rythme-secousse-s, 0) + .4 * var(--rythme-etire, 0)); translate: calc(.4 * var(--rythme-secousse-x, 0px)) calc(.4 * var(--rythme-secousse-y, 0px)); rotate: calc(.4 * var(--rythme-incline, 0deg)); transform-origin: 50% 55%; }
 /* Phases préliminaires : l'origine du mouvement suit le geste (étirement ancré près de la tête pour qu'elle ne sorte jamais du cadre, hochement et ondulation depuis les hanches). */
+.rythme-en-cours[data-rythme-geste="main"] .group-intimacy-sprite.active img,
 .rythme-en-cours[data-rythme-geste="main"] .intimacy-sprite img { transform-origin: 50% 12%; }
+.rythme-en-cours[data-rythme-geste="bouche"] .group-intimacy-sprite.active img,
 .rythme-en-cours[data-rythme-geste="bouche"] .intimacy-sprite img { transform-origin: 50% 88%; }
+.rythme-en-cours[data-rythme-geste="langue"] .group-intimacy-sprite.active img,
 .rythme-en-cours[data-rythme-geste="langue"] .intimacy-sprite img { transform-origin: 50% 78%; }
 /* Têtes de note des caresses : sens du va-et-vient. */
 .rythme-note.haut .tete, .rythme-note.bas .tete { font-size: .8em; line-height: 1; display: grid; place-items: center; }
@@ -226,6 +231,7 @@
 
 /* Version Suggestif : sprite (et CG éventuelle) voilés pendant tout le jeu ; la silhouette et ses mouvements restent lisibles. */
 .interactive-intimacy.rythme-suggestif .intimacy-sprite img,
+.interactive-intimacy.rythme-suggestif .group-intimacy-sprite img,
 .interactive-intimacy.rythme-suggestif .intimacy-cg img { filter: blur(14px) saturate(.75) brightness(.9) drop-shadow(0 22px 38px rgba(0,0,0,.6)) !important; }
 .rythme-piste-mix.verrouillee input { opacity: .25; }
 .rythme-muet.verrou { display: inline-flex; align-items: center; justify-content: center; cursor: default; opacity: .7; }

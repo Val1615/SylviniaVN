@@ -39,7 +39,7 @@ function cuePositions(strokes: number, count: number, shift: number) {
   return Array.from({ length: count }, (_, i) => Math.max(1, Math.round(((i + shift) / count) * strokes)));
 }
 
-export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMood, onFinish, onSkip, onLeave, kit, relationNote }: {
+export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMood, onVoice, onFinish, onSkip, onLeave, kit, relationNote }: {
   scene: RhythmSceneText;
   /** Fiche personnage (lot 0) : partition tirée de la scène écrite, pièges, voix et palette. Absente : prototype de Hylee, inchangé. */
   kit?: RhythmKit;
@@ -50,6 +50,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   volume: number;
   format: (text: string) => string;
   onMood?: (mood: string) => void;
+  /** Scènes à plusieurs : identifiants de la personne qui reçoit le geste de la phase en cours. */
+  onVoice?: (characterIds: string[]) => void;
   onFinish: (result: RhythmResult) => void;
   onSkip: () => void;
   onLeave: () => void;
@@ -144,7 +146,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     sfxRef.current?.close();
     const host = layerRef.current?.parentElement;
     ["--rythme-zoom", "--rythme-secousse-y", "--rythme-secousse-x", "--rythme-secousse-s", "--rythme-etire", "--rythme-incline"].forEach((name) => host?.style.removeProperty(name));
-    if (host) delete host.dataset.rythmeGeste;
+    if (host) { delete host.dataset.rythmeGeste; delete host.dataset.rythmeActeur; }
+    onVoice?.([]);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const audio = audioRef.current;
@@ -517,7 +520,8 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
       combo: () => ({ current: comboRef.current, max: maxComboRef.current, tier: rhythmComboTier(comboRef.current), bonus: bonusRef.current, events: [...comboEventsRef.current] }),
       shake: () => { const style = layerRef.current?.parentElement?.style; return { y: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-y") || "0") || 0, x: Number.parseFloat(style?.getPropertyValue("--rythme-secousse-x") || "0") || 0, s: Number(style?.getPropertyValue("--rythme-secousse-s") || 0), etire: Number(style?.getPropertyValue("--rythme-etire") || 0), incline: Number.parseFloat(style?.getPropertyValue("--rythme-incline") || "0") || 0, geste: layerRef.current?.parentElement?.dataset.rythmeGeste || null, ...shakeRef.current }; },
       sections: () => defs.map((x, i) => ({ id: x.id, gesture: x.gesture, bpm: x.bpm, label: scene.sections[i]?.label, ...(kit ? { rest: Boolean(x.rest), bord: Boolean(x.bord), aura: Boolean(x.aura), baits: x.baits || 0, appel: Boolean(x.appel), chapter: (scene.sections[i] as { chapter?: number }).chapter } : {}) })),
-      section: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); return { index, id: defs[index]?.id, gesture: defs[index]?.gesture, label: scene.sections[index]?.label }; },
+      actors: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); const entry = kit?.profile.voices?.[defs[index]?.voice ?? -1]; return entry ? [entry.character] : []; },
+      section: () => { const index = sectionAt(phaseRef.current === "play" ? now() : timeRef.current); const def = defs[index]; const entry = kit?.profile.voices?.[def?.voice ?? -1]; return { index, id: def?.id, gesture: def?.gesture, label: scene.sections[index]?.label, voice: def?.voice, actors: entry ? [entry.character] : [] }; },
       kit: () => (kit ? { character: kit.character, routeId: kit.anchor.routeId, sex: kit.anchor.sex, start: kit.start, end: kit.end, returnChapter: kit.returnChapter, difficulty: difficultyRef.current, recommended: kit.profile.difficulty } : null),
       resistance: () => rhythmResistance(notesRef.current, judgementsRef.current),
     };
@@ -740,6 +744,13 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
   // (langue), secousse dans l'axe de la position (pénétration). Toujours sur les coups réussis, plafonné au cadre.
   const sectionDef = defs[sectionIndex];
   const gesture = sectionDef?.gesture || "penetration";
+  const voiceIds = (() => {
+    const voices = kit?.profile.voices;
+    const index = sectionDef?.voice;
+    if (!voices || index == null || index < 0 || !voices[index]) return [] as string[];
+    return [voices[index].character];
+  })();
+  const voiceKey = voiceIds.join(" ");
   const shakeAxis = sectionDef?.shake || "vertical";
   const shakeAmp = playing && (hit || gesture === "langue") ? rhythmShakeAmplitude(ardour, rhythmComboLevel(comboRef.current), apogeeRef.current, prefs) : 0;
   const ownNotes = notes.filter((note) => note.section === sectionIndex && !isRhythmTrap(note));
@@ -750,11 +761,14 @@ export function RhythmIntimacyGame({ scene, saveKey, music, volume, format, onMo
     holdFrac: held && held.note.kind === "hold" ? clamp01((t - held.note.time) / held.note.duration) : null,
   });
   const apogeeShake = apogeeRef.current && sinceApogee < 1.2 && shakeAmp ? 0.6 * shakeAmp * rhythmShakeWave(sinceApogee % 0.4) : 0;
+  useEffect(() => { onVoice?.(voiceIds); }, [voiceKey]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const host = layerRef.current?.parentElement;
     if (!host) return;
     host.style.setProperty("--rythme-zoom", zoom.toFixed(4));
     host.dataset.rythmeGeste = gesture;
+    if (voiceIds.length) host.dataset.rythmeActeur = voiceKey;
+    else delete host.dataset.rythmeActeur;
     // Plafond lié à la hauteur de l'écran : sur un petit écran, l'image ne sort jamais du cadre.
     const limit = Math.min(RHYTHM_SHAKE_MAX, (host.clientHeight || window.innerHeight) * 0.02);
     const cap = (v: number) => Math.max(-limit, Math.min(limit, v));

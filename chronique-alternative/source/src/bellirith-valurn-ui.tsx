@@ -14,6 +14,7 @@ import { bvIntimacyScene } from "./bellirith-valurn-intimacy";
 import { bvIntimateVisible, bvRenderChapters, bvRenderOpening } from "./bellirith-valurn-intimacy-kit";
 import { ROMAINS } from "./ui/v2/common";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
+import { actingCharacterIds } from "./narrative-system";
 
 type Format = (text: string) => string;
 
@@ -290,8 +291,8 @@ export function BVIntimacyModal({ id, mode, sex, replay = false, background, for
     // Valurn n’a pas de sprites intimes : en explicite, après le dévoilement, il n’est pas représenté.
     if (who === "valurn" && mode === "explicite" && step === "chapters" && chapter >= scene.revealChapter) return null;
     const src = nude ? intimateSpritePath("bellirith", scene.bellirithMoods[chapter]) : spritePath(who, who === "bellirith" ? "seductive" : "charming", who === "bellirith" ? "seductive" : "charming");
-    const speaking = line?.speaker === (who === "bellirith" ? "Bellirith" : "Valurn");
-    return <div key={who} className={`group-intimacy-sprite ${index === 0 ? "first" : "second"} ${speaking ? "active" : "quiet"}`}><img data-sprite-channel={nude ? "intimate" : "standard"} data-bv-sprite={who} src={src} alt="" /></div>;
+    const speaking = Boolean(line && actingCharacterIds(line, present).includes(who));
+    return <div key={who} className={`group-intimacy-sprite ${index === 0 ? "first" : "second"} ${speaking ? "active" : "quiet"}`} data-character={who}><img data-sprite-channel={nude ? "intimate" : "standard"} data-bv-sprite={who} src={src} alt="" /></div>;
   };
   const sequenceLabel = step === "chapters" ? `Séquence ${chapter + 1} / ${chapters.length} · ` : step === "opening" ? "Prélude · " : "";
   return <section ref={sectionRef} className="interactive-intimacy group-interactive-intimacy bn-intimacy bv-intimacy v2-scene v2-scene-intime" data-bv-intimacy={scene.id} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }}>
