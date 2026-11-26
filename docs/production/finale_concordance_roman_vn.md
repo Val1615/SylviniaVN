@@ -5,8 +5,8 @@ Numérotation : index du paragraphe dans le DOCX (python-docx, paragraphes vides
 
 Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/traverse.py` dans le navigateur) :
 
-- paragraphes attendus : **1365** ; repris : **1365** ; manquants : **0** ; doublons : **0** ; taux de couverture : **100 %** ;
-- chaque parcours joué de `c16_s01_fin` à `c19_fin` (75 parcours, toutes combinaisons de déblocage) affiche les 1365 paragraphes : aucun texte du roman ne dépend d’un choix.
+- paragraphes attendus : **1366** ; repris : **1366** ; manquants : **0** ; doublons : **0** ; taux de couverture : **100 %** ;
+- chaque parcours joué de `c16_s01_fin` à `c19_fin` (75 parcours, toutes combinaisons de déblocage) affiche les 1366 paragraphes : aucun texte du roman ne dépend d’un choix.
 
 ## Par lot
 
@@ -17,12 +17,12 @@ Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/travers
 | S04 | Valurn contre Amanea (duel) | Chapitre XVII | 10472–10599 | 81 | 27 | 18 |
 | S05 | Tia, Amanea, Naïah · carrefour | Chapitre XVII / XVIII | 10601–10783 | 108 | 36 | 3 |
 | S06 | Draven (point de vue optionnel) | Chapitre XVIII | 10796–10894 | 54 | 24 | 8 |
-| S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 150 | 21 | 0 |
+| S06-S07 | Tronc commun : deuil de Tia, ouverture du portail, Bhaal | Chapitre XVIII | 10896–11179 | 151 | 32 | 0 |
 | S07 | Iriana (point de vue optionnel) | Chapitre XVIII | 11180–11408 | 126 | 43 | 7 |
 | S08 | Remerii, Hylee, Bhaal (obligatoire) | Chapitre XVIII | 11411–11823 | 233 | 59 | 5 |
 | S09 | Épilogue du Tome I | Épilogue | 11843–12094 | 161 | 37 | 3 |
 
-Total : 356 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 406 scènes.
+Total : 367 scènes portant le texte du roman, 50 scènes interactives écrites pour le jeu (choix, duel, points de vue, cartes de fin), soit 417 scènes.
 
 ## Scène par scène
 
@@ -225,10 +225,21 @@ Total : 356 scènes portant le texte du roman, 50 scènes interactives écrites 
 | `c18_remerii_draven_8` | Il a l’air d’attendre | 10886–10892 | 4 |
 | `c18_remerii_draven_9` | Il a l’air d’attendre | 10894 | 1 |
 | `c18_trop_tard` | Trop tard | 10896–10907 | 7 |
-| `c18_soeur_en_deuil` | Une sœur en deuil | 10909–10939 | 17 |
-| `c18_journal` | Elle a essayé | 10941–10978 | 21 |
-| `c18_regret` | Du regret | 10980–10998 | 11 |
-| `c18_souvenirs` | Les jardins d’Al’Gratal | 11000–11008 | 5 |
+| `c18_soeur_en_deuil` | Une sœur en deuil | 10909–10911 | 2 |
+| `c18_soeur_en_deuil_2` | Une sœur en deuil | 10912 | 1 |
+| `c18_soeur_en_deuil_3` | Une sœur en deuil | 10914–10917 | 3 |
+| `c18_soeur_en_deuil_4` | Une sœur en deuil | 10919–10939 | 11 |
+| `c18_journal` | Elle a essayé | 10941–10943 | 2 |
+| `c18_journal_2` | Elle a essayé | 10945–10951 | 5 |
+| `c18_journal_3` | Elle a essayé | 10953–10959 | 4 |
+| `c18_journal_4` | Elle a essayé | 10961–10970 | 6 |
+| `c18_journal_5` | Elle a essayé | 10972–10978 | 4 |
+| `c18_regret` | Du regret | 10980–10990 | 7 |
+| `c18_regret_2` | Du regret | 10992–10998 | 4 |
+| `c18_souvenirs` | Les jardins d’Al’Gratal | 11000–11002 | 2 |
+| `c18_souvenirs_2` | Les jardins d’Al’Gratal | 11004 | 1 |
+| `c18_souvenirs_3` | Les jardins d’Al’Gratal | 11005 | 1 |
+| `c18_souvenirs_fin` | Les jardins d’Al’Gratal | 11006–11008 | 2 |
 | `c18_etreinte` | J’aurais dû t’écouter | 11010–11036 | 15 |
 | `c18_etreinte_2` | J’aurais dû t’écouter | 11038–11044 | 4 |
 | `c18_alamma` | Confrontation au Portail | 11182–11186 | 3 |

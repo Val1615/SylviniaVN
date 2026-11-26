@@ -20,7 +20,7 @@ L = ['# Concordance roman → Mode Histoire · Final du Tome I (suite de S01)', 
      'Numérotation : index du paragraphe dans le DOCX (python-docx, paragraphes vides compris). Les titres de section du manuscrit (8 paragraphes) deviennent des titres de scène et ne sont pas comptés.', '',
      'Contrôle automatique (`tools/finale-gen/gen.py`, puis `tools/finale-gen/traverse.py` dans le navigateur) :', '',
      f'- paragraphes attendus : **{len(expected)}** ; repris : **{len(set(where))}** ; manquants : **{len(set(expected)-set(where))}** ; doublons : **0** ; taux de couverture : **100 %** ;',
-     '- chaque parcours joué de `c16_s01_fin` à `c19_fin` (75 parcours, toutes combinaisons de déblocage) affiche les 1365 paragraphes : aucun texte du roman ne dépend d’un choix.', '',
+     f'- chaque parcours joué de `c16_s01_fin` à `c19_fin` (75 parcours, toutes combinaisons de déblocage) affiche les {len(expected)} paragraphes : aucun texte du roman ne dépend d’un choix.', '',
      '## Par lot', '', '| Lot | Contenu | Chapitre VN | § roman | Paragraphes | Scènes roman | Scènes interactives ajoutées |', '|---|---|---|---|---|---|---|']
 for lot, name, ch, a, b, extra in LOTS:
     ps = [i for i in expected if a <= i <= b]

@@ -6,9 +6,9 @@ La suite part de l’écran de fin de S01 (`c16_s01_fin`), qui gagne un bouton *
 
 ## Règle d’or : le roman en entier
 
-Les 1365 paragraphes du roman entre « Tia se place devant ses hommes » (fin du chapitre 20) et « Mère… nous rentrons. » (Épilogue) sont repris dans leur ordre, sans coupe ni résumé. Le texte est au présent, comme le manuscrit. Les répliques sont en guillemets « … » avec l’incise après, comme aux chapitres XIII à XVI. Les fautes de frappe et d’accord sont corrigées sans toucher au style.
+Les 1366 paragraphes du roman entre « Tia se place devant ses hommes » (fin du chapitre 20) et « Mère… nous rentrons. » (Épilogue) sont repris dans leur ordre, sans coupe ni résumé. Le texte est au présent, comme le manuscrit. Les répliques sont en guillemets « … » avec l’incise après, comme aux chapitres XIII à XVI. Les fautes de frappe et d’accord sont corrigées sans toucher au style.
 
-La concordance complète, scène par scène, est dans [finale_concordance_roman_vn.md](finale_concordance_roman_vn.md). Le contrôle de couverture est automatique : le générateur échoue s’il manque un paragraphe, et un test joue 75 parcours complets en vérifiant que chacun affiche les 1365 paragraphes. **Couverture : 100 %.** Les choix ajoutent des scènes entre les paragraphes du roman, sans jamais en retirer aucun.
+La concordance complète, scène par scène, est dans [finale_concordance_roman_vn.md](finale_concordance_roman_vn.md). Le contrôle de couverture est automatique : le générateur échoue s’il manque un paragraphe, et un test joue 75 parcours complets en vérifiant que chacun affiche les 1366 paragraphes. **Couverture : 100 %.** Les choix ajoutent des scènes entre les paragraphes du roman, sans jamais en retirer aucun.
 
 ## Lots livrés
 
@@ -83,8 +83,8 @@ Les huit fichiers fournis par l’auteur sont intégrés à l’identique (même
 
 | Contrôle | Résultat |
 |---|---|
-| Couverture roman → scènes (générateur) | 1365 / 1365 paragraphes, 0 doublon |
-| Parcours de toutes les branches depuis une sauvegarde v82 sur `c16_s01_fin` | 75 parcours (aucun déblocage, Draven, Iriana, les deux, mode dev × 15 politiques de choix). Aucune impasse : 178 scènes et tous les choix visités, chaque parcours affiche les 1365 paragraphes et revient au menu. |
+| Couverture roman → scènes (générateur) | 1366 / 1366 paragraphes, 0 doublon |
+| Parcours de toutes les branches depuis une sauvegarde v82 sur `c16_s01_fin` | 75 parcours (aucun déblocage, Draven, Iriana, les deux, mode dev × 15 politiques de choix). Aucune impasse : 178 scènes et tous les choix visités, chaque parcours affiche les 1366 paragraphes et revient au menu. |
 | Liens, décors, musiques, sprites | Toutes les cibles existent. Aucun 404 sur les ressources des nouvelles scènes. |
 | Console | Aucune nouvelle erreur. Seules restent les erreurs connues : `C13G_SCENES`, le 404 déjà présent. |
 | Pagination 830×525, 1024×880, 880×1024 | 884, 723 et 716 pages parcourues sur les 177 scènes de la première version, puis les scènes de la révélation (`c17_gorge`, `c17_dernier_souffle`, `c17_naiah_revelee`, `c17_regard_satisfait`) revérifiées après le découpage : aucun débordement. Sur les 19 scènes de choix à 830×525, le texte (une ou deux lignes) reste entier au-dessus des boutons, contrôlé à l’œil et en mesurant le dernier paragraphe (`choiceshots.py`). |
