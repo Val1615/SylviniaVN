@@ -21,6 +21,7 @@ import { ROMAINS } from "./ui/v2/common";
 import { RhythmIntimacyGame, type RhythmResult } from "./rhythm-intimacy-ui";
 import { buildRhythmKit, rhythmAnchorFor, type RhythmKit } from "./rhythm-anchors";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
+import { actingCharacterIds } from "./narrative-system";
 
 /* ------------------------------------------------------------------------ */
 /* Dossier du Journal                                                        */
@@ -264,6 +265,7 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
   const [lineIndex, setLineIndex] = useState(0);
   const [rhythmBubble, setRhythmBubble] = useState<DialogueLine[]>([]);
   const [rhythmMoods, setRhythmMoods] = useState<{ bellirith?: string; naiah?: string }>({});
+  const [rhythmActors, setRhythmActors] = useState<string[]>([]);
   const lines = step === "opening" ? opening : step === "chapters" ? [...rhythmBubble, ...(chapters[chapter] || [])] : [];
   const line = lines[lineIndex];
   const visual = bnVisualState(scene, mode, step === "rhythm" ? "chapters" : step, chapter);
@@ -315,10 +317,10 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
     if (owners.length) setRhythmMoods((current) => ({ ...current, ...Object.fromEntries(owners.map((who) => [who, mood])) }));
   };
   const sprite = (who: "bellirith" | "naiah") => {
-    const speaking = line && (who === "bellirith" ? line.speaker === "Bellirith" : line.speaker === "Naïah");
+    const speaking = step === "rhythm" ? rhythmActors.includes(who) : Boolean(line && actingCharacterIds(line, ["bellirith", "naiah"]).includes(who));
     const nude = visual.nude;
     const src = nude ? intimateSpritePath(who, intimateMood(who)) : spritePath(who, lastMoods.current[who] || STANDARD_MOOD[who], STANDARD_MOOD[who]);
-    return <div className={`group-intimacy-sprite ${who === "naiah" ? "first" : "second"} ${speaking ? "active" : "quiet"}`}>
+    return <div className={`group-intimacy-sprite ${who === "naiah" ? "first" : "second"} ${speaking ? "active" : "quiet"}`} data-character={who}>
       <img data-sprite-channel={nude ? "intimate" : "standard"} data-bn-sprite={who} src={src} alt="" />
     </div>;
   };
@@ -332,7 +334,7 @@ export function BNIntimacyModal({ id, mode, sex, replay = false, background, for
       ? <div className={`intimacy-cg intimacy-cg-${visual.cg.phase}`} data-intimacy-cg={visual.cg.phase} style={{ "--intimacy-cg": `url(/assets/intimacy-cg/${visual.cg.src}.jpg)` } as CSSProperties}><img src={`/assets/intimacy-cg/${visual.cg.src}.jpg`} alt="Illustration intime de la scène" /></div>
       : <div className={`group-intimacy-sprites ${visual.nude ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">{sprite("naiah")}{sprite("bellirith")}</div>}
     <div className="dialogue-gradient" />
-    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${replay ? "souvenir" : "chronique"}`} music={music} volume={volume} format={format} onMood={onRhythmMood}
+    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${replay ? "souvenir" : "chronique"}`} music={music} volume={volume} format={format} onMood={onRhythmMood} onVoice={setRhythmActors}
       relationNote={!replay ? rhythmKit.bubbles.relationNote : undefined}
       onFinish={(result) => leaveRhythm(rhythmKit, result)} onSkip={() => leaveRhythm(rhythmKit)} onLeave={() => onStop(chapter)} />}
     {step !== "done" && step !== "rhythm" && line && <button className={`dialogue-box intimacy-dialogue ${line.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": line.speaker === "Bellirith" ? "#d9475f" : line.speaker === "Naïah" ? "#9fd3c7" : "var(--or)" } as CSSProperties} onClick={advance}>

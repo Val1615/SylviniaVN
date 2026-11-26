@@ -16,6 +16,7 @@ import {
 import type { ANExtension, ANExtSeq } from "./allenna-naiah-intimacy-types";
 import { ROMAINS } from "./ui/v2/common";
 import { SceneBacklog, SceneControls, useRollback, useSceneBacklog, useSceneShortcuts } from "./scene-controls";
+import { actingCharacterIds } from "./narrative-system";
 
 type Format = (text: string) => string;
 const PORTRAITS = [{ src: "/assets/portraits/allenna.jpg", alt: "Allenna" }, { src: "/assets/portraits/naiah.jpg", alt: "Naïah" }];
@@ -236,13 +237,14 @@ export function ANExtensionModal({ ext, mode, romance, replay = false, backgroun
   const naiahAway = romance && seq === 8 && lineIndex >= 1;
   const present: ("allenna" | "naiah")[] = naiahAway ? ["allenna"] : ["allenna", "naiah"];
   const speaking = line?.speaker;
+  const actors = line ? actingCharacterIds(line, present) : [];
   const color = speaking === "Allenna" ? "#5f9a72" : speaking === "Naïah" ? "#8f6fd1" : "var(--or)";
   return <section ref={sectionRef} className="interactive-intimacy group-interactive-intimacy an-intimacy v2-scene v2-scene-intime" data-an-ext={ext.id} data-an-seq={seq + 1} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.14), rgba(5,6,12,.78)), url(${ext.background || background})` }}>
     <div className="scene-top intimacy-top">
       <div className="scene-titre"><p className="eyebrow">{replay ? "Souvenir intime · aucun gain" : `Allenna & Naïah · ${AN_MODE_LABELS[mode]}`}</p><h2>{ext.title}</h2></div>
       <div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={() => done ? onFinish(picks) : onStop()}>{replay ? "Quitter le souvenir" : "Arrêter ici"}</button></div>
     </div>
-    <div className="group-intimacy-sprites" aria-hidden="true">{present.map((who, i) => <div key={who} className={`group-intimacy-sprite ${i === 0 ? "first" : "second"} ${speaking === (who === "allenna" ? "Allenna" : "Naïah") ? "active" : "quiet"}`}><img data-sprite-channel="standard" src={spritePath(who, who === "allenna" ? "shy" : "neutral")} alt="" /></div>)}</div>
+    <div className="group-intimacy-sprites" aria-hidden="true">{present.map((who, i) => <div key={who} className={`group-intimacy-sprite ${i === 0 ? "first" : "second"} ${actors.includes(who) ? "active" : "quiet"}`} data-character={who}><img data-sprite-channel="standard" src={spritePath(who, who === "allenna" ? "shy" : "neutral")} alt="" /></div>)}</div>
     <div className="dialogue-gradient" />
     {!done && line && !choosing && <button className={`dialogue-box intimacy-dialogue ${line.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": color } as CSSProperties} onClick={advance}>
       <span className="speaker">{format(line.speaker)}</span>

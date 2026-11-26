@@ -366,6 +366,8 @@ try {
   assert.match(css, /intimacy-sprite img \{[^}]*translate: var\(--rythme-secousse-x, 0px\) var\(--rythme-secousse-y/, "secousse appliquée au sprite");
   assert.match(css, /intimacy-sprite img \{[^}]*var\(--rythme-etire, 0\)[^}]*rotate: var\(--rythme-incline/, "étirement et inclinaison appliqués au sprite");
   for (const g of ["main", "bouche", "langue"]) assert.ok(css.includes(`[data-rythme-geste="${g}"] .intimacy-sprite img`), `origine du geste ${g}`);
+  assert.match(css, /group-intimacy-sprite\.active img,\s*\.rythme-en-cours \.intimacy-sprite img/, "trio : même mouvement que le solo, seulement sur le sprite actif");
+  for (const g of ["main", "bouche", "langue"]) assert.ok(css.includes(`[data-rythme-geste="${g}"] .group-intimacy-sprite.active img`), `origine du geste ${g} aussi sur le sprite actif du trio`);
   // Animation propre à chaque geste : visible, distincte de la secousse, bornée, coupée avec les secousses.
   const motionOf = (gesture, extra = {}) => Array.from({ length: 60 }, (_, i) => engine.rhythmGestureMotion({ gesture, axis: "vertical", amp: 12, sinceHit: i / 100, beat: 0.8, t: 10 + i / 100, motion: "haut", ardour: 0.7, progress: 0.8, ...extra }));
   const peak = (list, key) => Math.max(...list.map((m) => Math.abs(m[key])));
@@ -388,6 +390,22 @@ try {
   assert.match(recover, /function markIntimateSpriteLoaded[\s\S]*image\.hidden = false/, "une image chargée réapparaît");
   assert.match(recover, /spriteLastGood/, "repli sur la dernière image bien chargée");
   assert.ok((pageSource.match(/onLoad=\{use\w*IntimateSprite \? markIntimateSpriteLoaded/g) || []).length >= 3, "tous les sprites intimes se rétablissent au chargement");
+
+  const narrative = await server.ssrLoadModule("/src/narrative-system.ts");
+  const duo = ["hylee"];
+  const trio = ["hylee", "remerii"];
+  const L = (speaker, text) => ({ speaker, text });
+  assert.deepEqual(narrative.actingCharacterIds(L("Hylee", "Viens plus près."), trio), ["hylee"], "locuteur seul");
+  assert.deepEqual(narrative.actingCharacterIds(L("Hylee et Remerii", "Ensemble."), trio), ["hylee", "remerii"], "deux locuteurs dans le libellé");
+  assert.deepEqual(narrative.actingCharacterIds(L("Naiah", "Attends."), ["naiah"]), ["naiah"], "locuteur sans accent");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Hylee pose la main sur vous."), trio), ["hylee"], "acteur en tête de narration");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Puis Remerii accélère sans rien dire."), trio), ["remerii"], "acteur précédé d’un adverbe");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Hylee et Remerii se retrouvent contre vous."), trio), ["hylee", "remerii"], "deux acteurs en tête de narration");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Toutes deux perdent le rythme."), trio), trio, "sujet joint « toutes deux »");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Vous caressez Hylee sans vous presser."), trio), [], "le joueur agit : aucun sprite ne s’élance");
+  assert.deepEqual(narrative.actingCharacterIds(L("Narration", "Le silence retombe."), trio), [], "narration sans acteur");
+  assert.deepEqual(narrative.actingCharacterIds(L("Hylee", "Oui."), duo), ["hylee"], "solo : le locuteur reste l’acteur");
+  assert.ok(pageSource.includes("onVoice={setRhythmActors}"), "le jeu à trois transmet l’acteur de la phase au décor");
 
   const lengths = Object.fromEntries(Object.keys(charts).map((d) => [d, engine.rhythmChartEnd(d).toFixed(1) + " s"]));
   console.log(`Jeu de rythme OK : ${charts.normal.length} coups par partie, tempos ${prelim.map((x) => x.bpm).join(" → ")} (préliminaires) puis ${positions.map((x) => x.bpm).join(" → ")} puis montée à ${engine.RHYTHM_SECTIONS.at(-1).ramp.toBpm} coups/min, durées ${JSON.stringify(lengths)}, ${sfx.RHYTHM_SFX_FILES.length} bruitages sourcés, musique de fond ${duration ? duration.toFixed(0) + " s" : "présente"}, ${all.length} textes uniques ; combo : paliers ${crossings.slice(0, 5).join(", ")}…, partie parfaite ${perfectVoices.moans} gémissements pour ${perfectVoices.thresholds} paliers et ${perfectVoices.breaths} souffles ; secousse ${a0.toFixed(1)} à ${aTop.toFixed(1)} px ; mixage 4 familles + musique, bruits neutres ${neutralStats.strokes} sons synthétisés sur une partie, aucun bruit corporel enregistré.`);

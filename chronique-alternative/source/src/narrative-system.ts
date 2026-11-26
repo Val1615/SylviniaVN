@@ -352,9 +352,42 @@ export const VOICES: Record<string, VoiceTexture> = {
   },
 };
 
+function foldFr(value: string) {
+  return value.toLocaleLowerCase("fr-FR").normalize("NFD").replace(/\p{M}/gu, "");
+}
+
 export function speakerCharacterIds(speaker: string, cast: string[]) {
-  const normalized = speaker.toLocaleLowerCase("fr-FR");
-  return cast.filter((id) => normalized.includes((CHARACTER_NAMES[id] || id).toLocaleLowerCase("fr-FR")));
+  const normalized = foldFr(speaker);
+  return cast.filter((id) => normalized.includes(foldFr(CHARACTER_NAMES[id] || id)));
+}
+
+const JOINT_SUBJECT = /\b(toutes deux|tous les deux|l['’]une et l['’]autre|elles deux)\b/;
+const LEAD_ADVERB = /^(puis|alors|ensuite|enfin|soudain|mais|et)\s+/;
+
+/**
+ * Personnages qui agissent sur une réplique : d’abord le locuteur (un nom, ou deux
+ * noms dans le libellé), sinon, en narration, le sujet en tête de phrase.
+ */
+export function actingCharacterIds(line: { speaker: string; text: string }, cast: string[]): string[] {
+  const fromSpeaker = speakerCharacterIds(line.speaker, cast);
+  if (fromSpeaker.length) return fromSpeaker;
+  const folded = foldFr(line.text || "").replace(/^[«"“'\s]+/, "");
+  if (!folded) return [];
+  const lead = folded.split(/[.!?;:]/, 1)[0].replace(LEAD_ADVERB, "");
+  const entries = [...cast]
+    .map((id) => ({ id, name: foldFr(CHARACTER_NAMES[id] || id) }))
+    .sort((a, b) => b.name.length - a.name.length);
+  const atStart = (rest: string) => entries.find((entry) => rest.startsWith(entry.name) && !/\p{L}/u.test(rest[entry.name.length] || ""));
+  const first = atStart(lead);
+  if (!first) return JOINT_SUBJECT.test(lead.slice(0, 80)) ? [...cast] : [];
+  const ids = [first.id];
+  const after = lead.slice(first.name.length).replace(/^\s*,\s*/, " ").trimStart();
+  const joint = /^(et|puis|comme)\s+/.exec(after);
+  if (joint) {
+    const second = atStart(after.slice(joint[0].length));
+    if (second && second.id !== first.id) ids.push(second.id);
+  }
+  return ids;
 }
 
 export function moodForCharacter(characterId: string, _seed: string, fallback: string) {

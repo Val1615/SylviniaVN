@@ -131,7 +131,7 @@ import {
   type AlphaCell,
   type AlphaHuntState,
 } from "./alpha-hunt";
-import { enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
+import { actingCharacterIds, enrichDialogueLines, moodForCharacter, speakerCharacterIds } from "./narrative-system";
 import { spritePath } from "./sprite-system";
 import {
   hasIntimateSprites,
@@ -7230,7 +7230,7 @@ function InteractiveIntimacyModal({ modal, game, onFinish, onStop, onRelation }:
   }, [step, rhythmKit]); // eslint-disable-line react-hooks/exhaustive-deps
   const [approachChoices] = useState(() => shuffledChoices((bellirithContext ? bellirithIntimacyApproaches(bellirithContext, bellirithFlags, game.player.sex) : undefined) || hyleeDateApproaches(hyleeContext) || remeriiDateApproaches(remeriiContext) || valurnIntimacyApproaches(valurnContext) || naiahProximityApproaches(naiahContext) || (modal.home ? HOME_INTIMACY_APPROACHES[character.id] : linevaDateApproaches(modal.dateId) || allennaDateApproaches(modal.dateId) || profile.approaches), `${modal.character}:${modal.home ? "home" : modal.dateId || "route"}:approaches:${game.player.name}`));
   const currentLine = lines[lineIndex];
-  const characterSpeaking = currentLine ? speakerCharacterIds(currentLine.speaker, [character.id]).includes(character.id) : false;
+  const characterSpeaking = currentLine ? actingCharacterIds(currentLine, [character.id]).includes(character.id) : false;
   const spriteMood = characterSpeaking
     ? (currentLine.mood || moodForCharacter(character.id, `intimacy-${character.id}-${step}-${lineIndex}`, character.defaultMood))
     : character.defaultMood;
@@ -7469,17 +7469,18 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelati
     : undefined), [rhythmAnchor, directionSequence, game.player.intimacy]); // eslint-disable-line react-hooks/exhaustive-deps
   const rhythmRelationApplied = useRef(false);
   const [rhythmMoods, setRhythmMoods] = useState<Record<string, string>>({});
+  const [rhythmActors, setRhythmActors] = useState<string[]>([]);
   const onRhythmMood = (mood: string) => {
     // L'humeur va au sprite de la personne dont c'est l'expression (une humeur commune va aux deux).
     const owners = [first.id, second.id].filter((id) => (INTIMATE_SPRITE_MOODS[id as keyof typeof INTIMATE_SPRITE_MOODS] as readonly string[] | undefined)?.includes(mood));
     if (owners.length) setRhythmMoods((current) => ({ ...current, ...Object.fromEntries(owners.map((id) => [id, mood])) }));
   };
   const currentLine = lines[lineIndex];
-  const speakingIds = currentLine ? speakerCharacterIds(currentLine.speaker, [first.id, second.id]) : [];
+  const speakingIds = step === "rhythm" ? rhythmActors : (currentLine ? actingCharacterIds(currentLine, [first.id, second.id]) : []);
   const firstSpeaking = speakingIds.includes(first.id);
   const secondSpeaking = speakingIds.includes(second.id);
-  const firstMood = firstSpeaking ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
-  const secondMood = secondSpeaking ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
+  const firstMood = firstSpeaking && currentLine ? (currentLine.mood || moodForCharacter(first.id, `${date.id}-${step}-${lineIndex}`, first.defaultMood)) : first.defaultMood;
+  const secondMood = secondSpeaking && currentLine ? (currentLine.mood || moodForCharacter(second.id, `${date.id}-${step}-${lineIndex}`, second.defaultMood)) : second.defaultMood;
   const firstIntimateMood = step === "rhythm" ? rhythmMoods[first.id] || "soft" : currentLine?.intimateMoods?.[first.id] || "soft";
   const secondIntimateMood = step === "rhythm" ? rhythmMoods[second.id] || "soft" : currentLine?.intimateMoods?.[second.id] || "soft";
   const rollback = useRollback<IntimacyRollback<GroupIntimacyStep>>();
@@ -7617,8 +7618,8 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelati
   return <section ref={sectionRef} className={`interactive-intimacy group-interactive-intimacy v2-scene v2-scene-intime ${intimateCg ? `has-intimacy-cg cg-${intimateCg.phase}` : ""} ${step === "rhythm" ? "rythme-en-cours" : ""} ${step === "rhythm" && rhythmKit?.scene.suggestive ? "rythme-suggestif" : ""}`} style={{ backgroundImage: `linear-gradient(180deg, rgba(5,6,12,.16), rgba(5,6,12,.84)), url(${background})` }} onWheel={(event) => { if (event.deltaY < -20 && !backlogOpen && backlog.length > 1) setBacklogOpen(true); }}>
     <div className="scene-top intimacy-top"><div className="scene-titre"><p className="eyebrow">{modal.replay ? `${naiahGroup ? "Souvenir de proximité à trois" : "Souvenir à trois"} · aucun gain` : `${naiahGroup ? "Proximité à trois" : "Scène intime à trois"} · ${modeLabel}`}</p><h2>{intimacyTitle}</h2></div><div className="scene-outils"><SceneControls canBack={rollback.canBack} onBack={back} historyCount={backlog.length} onHistory={() => setBacklogOpen(true)} /><button type="button" className="scene-outil passer" onClick={onStop}>{modal.replay ? "Quitter le souvenir" : "Interrompre ici"}</button></div></div>
     {intimateCg ? <IntimateCg cg={intimateCg} /> : <div className={`group-intimacy-sprites ${useIntimateSprites ? "uses-intimate-sprites" : "uses-standard-sprites"}`} aria-hidden="true">
-      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} onLoad={useFirstIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
-      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`}><img data-sprite-channel={useSecondIntimateSprite ? "intimate" : "standard"} src={useSecondIntimateSprite ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useSecondIntimateSprite ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} onLoad={useSecondIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
+      <div className={`group-intimacy-sprite first ${firstSpeaking ? "active" : "quiet"}`} data-character={first.id}><img data-sprite-channel={useFirstIntimateSprite ? "intimate" : "standard"} src={useFirstIntimateSprite ? intimateSpritePath(first.id, firstIntimateMood) : spritePath(first.id, firstMood, first.defaultMood)} onError={(event) => useFirstIntimateSprite ? recoverMissingIntimateSprite(event, first.id) : recoverMissingSprite(event, first.portrait)} onLoad={useFirstIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
+      <div className={`group-intimacy-sprite second ${secondSpeaking ? "active" : "quiet"}`} data-character={second.id}><img data-sprite-channel={useSecondIntimateSprite ? "intimate" : "standard"} src={useSecondIntimateSprite ? intimateSpritePath(second.id, secondIntimateMood) : spritePath(second.id, secondMood, second.defaultMood)} onError={(event) => useSecondIntimateSprite ? recoverMissingIntimateSprite(event, second.id) : recoverMissingSprite(event, second.portrait)} onLoad={useSecondIntimateSprite ? markIntimateSpriteLoaded : undefined} alt="" /></div>
     </div>}
     <div className="dialogue-gradient" />
     {!isChoice && !isDone && currentLine && <button className={`dialogue-box intimacy-dialogue ${currentLine.speaker === "Narration" ? "narration" : ""}`} style={{ "--c": speakerColor || "var(--or)" } as React.CSSProperties} onClick={advance}>
@@ -7628,7 +7629,7 @@ function InteractiveGroupIntimacyModal({ modal, game, onFinish, onStop, onRelati
     </button>}
     {step === "attunement-choice" && <div className="choice-box intimacy-choices intimacy-game-box"><div className="intimacy-game-heading"><div><span>Harmonie à trois · {attunementBeat + 1} / {intimacyGame.beats.length}</span><h3>{intimacyGame.title}</h3></div><div className="intimacy-game-progress">{intimacyGame.beats.map((_, index) => <i key={index} className={index < attunementBeat ? "done" : index === attunementBeat ? "current" : ""} />)}</div></div>{attunementBeat === 0 && <p className="intimacy-game-instruction">{intimacyGame.instruction}</p>}<p className="choice-question">{intimacyGame.beats[attunementBeat].prompt}</p><small className="intimacy-game-detail">{intimacyGame.beats[attunementBeat].detail}</small>{shuffledChoices(intimacyGame.beats[attunementBeat].options, `${date.id}:beat:${attunementBeat}:${game.player.name}`).map((option, index) => <button key={option.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(option.label); chooseAttunement(option); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{option.label}</strong></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester simplement proches et terminer la soirée ici</span></button></div>}
     {step === "direction-choice" && <div className="choice-box intimacy-choices group-direction-choices"><p className="choice-question">Quelle dynamique donner à la suite ?</p><small className="intimacy-route-note">{hnManual ? `Trois façons de jouer la revanche avec ${first.name} et ${second.name} : chaque route a sa règle, ses alliances et sa chute.` : naiahGroup ? `Trois façons de prolonger ce moment avec ${first.name} et ${second.name}. Le jeu, les baisers et le contact choisi changent avec la route ; la confiance reste votre fil commun.` : `Trois routes uniques pour ${first.name}, ${second.name} et le corps que vous avez choisi. Chacune comporte au moins huit séquences détaillées et maintient les trois personnes actives.`}</small>{directionChoices.map((choice, index) => <button key={choice.id} className="v2-choix-carte" style={{ "--i": index } as React.CSSProperties} onClick={() => { logChoice(choice.text); chooseDirection(choice); }}><i className="choix-num">{ROMAINS[index + 1] || index + 1}</i><div><strong>{choice.text}</strong><small>{choice.detail}</small></div></button>)}<button type="button" className="intimacy-stop-choice v2-choix-carte stop" onClick={onStop}><i className="choix-num">✕</i><span>Rester enlacé·es et clore la scène ici</span></button></div>}
-    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${modal.replay ? "souvenir" : "chronique"}`} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} format={(text) => replacePlayer(text, game.player)} onMood={onRhythmMood}
+    {step === "rhythm" && rhythmKit && <RhythmIntimacyGame kit={rhythmKit} scene={rhythmKit.scene} saveKey={`${rhythmKit.scene.id}:${modal.replay ? "souvenir" : "chronique"}`} music={game.settings.music} volume={(game.settings.volume ?? DEFAULT_SETTINGS.volume) / 100} format={(text) => replacePlayer(text, game.player)} onMood={onRhythmMood} onVoice={setRhythmActors}
       relationNote={!modal.replay ? rhythmKit.bubbles.relationNote : undefined}
       onFinish={(result) => { logChoice(`${rhythmKit.scene.title} · ${rhythmKit.scene.conclusions[result.quality].title} (${Math.round(result.accuracy * 100)} %)`); leaveKitRhythm(rhythmKit, result); }}
       onSkip={() => leaveKitRhythm(rhythmKit)} onLeave={onStop} />}
