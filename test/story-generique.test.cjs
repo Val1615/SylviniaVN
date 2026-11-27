@@ -72,4 +72,40 @@ assert.equal(cap.v, 1); assert.equal(cap.catalog, C.CATALOG_VERSION);
 assert.deepEqual(ids(cap.entries), ids(C.select({ flags: base })));
 assert.ok(!("tome1Complete" in cap.evidence) && cap.evidence.wolfApproach === "still", "preuves strictement nécessaires");
 
+// 10. v2 : la chronique complète, chapitre par chapitre (scènes synthétiques au format du moteur).
+const scenes = {
+  p01: { title: "Le réveil", choices: [{ label: "Se lever", next: "p02" }] },
+  s02: { title: "La rivière", choices: [{ label: "Suivre la rivière", next: "s03" }, { label: "Rester au camp", next: "s03" }] },
+  c2_05: { title: "Le ruisseau", choices: [{ label: "Observer le ruisseau", flags: { streamAngle: "fear" }, next: "c2_06" }, { label: "Autre", flags: { streamAngle: "joy" }, next: "c2_06" }] },
+  c3_20: { title: "La boutique", choices: [{ label: "Choisir la robe bleue", flags: { robeBleueVue: true }, memories: ["remerii_robe_assurance"], next: "c3_21" }, { label: "Partir", next: "c3_21" }] },
+  c3_30: { title: "Ambigu", choices: [{ label: "A", flags: { ambigu: true }, next: "x" }, { label: "B", flags: { ambigu: true }, next: "x" }] },
+  c12g_choice: { title: "Chapitre XII_G · Le bal", choices: [{ label: "Choix stratégique : danser", flags: { c12gDanse: "oui" }, next: "y" }, { label: "Non", next: "y" }] },
+  c17_gameover_a: { title: "Game Over", choices: [{ label: "Réessayer le duel", next: "c17_m1" }, { label: "Retour au menu", next: "menu" }] },
+  c18_bh_dragon: { title: "Le dragon", choices: [{ label: "L’attraper au vol", flags: { s08Dragon: "tenir" }, next: "z" }, { label: "Viser la gorge", flags: { s08Dragon: "gorge" }, next: "z" }] },
+};
+const memoryDefs = { remerii_robe_assurance: { title: "Remerii se souviendra de cette assurance", body: "Hylee a cessé de disparaître.", type: "Remerii" } };
+const ctx = { scenes, memoryDefs, chapters: [], trail: [["s02", "Suivre la rivière"], ["c17_gameover_a", "Réessayer le duel"]], journal: [] };
+const v2 = C.captureV2({ flags: { streamAngle: "fear", robeBleueVue: true, ambigu: true, c12gDanse: "oui", s08Dragon: "tenir", s08BlizzardComplete: true, chapter4DComplete: true }, memories: ["remerii_robe_assurance", "inconnu"] }, ctx, { provenance: "partie" });
+const keys = v2.chapters.map((c) => c.key);
+assert.deepEqual(keys, ["ch1", "ch2", "ch3", "ch12_g", "ch18"], "un chapitre par rubrique, dans l’ordre du livre");
+const all = v2.chapters.flatMap((c) => c.items);
+assert.ok(all.some((i) => i.kind === "choix" && i.label === "Suivre la rivière" && i.how === "parcours"), "choix cliqué (journal de parcours)");
+assert.ok(all.some((i) => i.kind === "choix" && i.label === "Choisir la robe bleue" && i.how === "flag"), "choix reconstitué par un flag à libellé unique");
+assert.ok(all.some((i) => i.kind === "choix" && i.label === "danser"), "préfixe « Choix stratégique » retiré");
+assert.ok(!all.some((i) => i.kind === "choix" && /^(A|B)$/.test(i.label)), "flag ambigu (deux libellés) : rien");
+assert.ok(!all.some((i) => /Réessayer|Retour/.test(i.label || "")), "pas de navigation ni de Game Over");
+assert.ok(all.some((i) => i.kind === "souvenir" && i.id === "c2_ruisseau_fear"), "souvenir illustré du catalogue");
+assert.ok(!all.some((i) => i.kind === "choix" && i.scene === "c2_05"), "le souvenir illustré remplace la ligne de choix de la même scène");
+assert.ok(all.some((i) => i.kind === "souvenir" && i.id === "s08_dragon_tenir"));
+assert.ok(all.some((i) => i.kind === "memoire" && i.title.startsWith("Remerii se souviendra")) && !all.some((i) => i.id === "inconnu"), "souvenirs de Progression connus seulement");
+assert.equal(v2.counts.rubriques, all.length);
+// Pas de plafond : un parcours très riche est retranscrit entièrement.
+const big = {}; const trail = [];
+for (let i = 0; i < 140; i++) { big[`c${2 + (i % 17)}_d${i}`] = { title: "Scène " + i, choices: [{ label: "Choix " + i, next: "n" }, { label: "Autre " + i, next: "n" }] }; trail.push([`c${2 + (i % 17)}_d${i}`, "Choix " + i]); }
+const full = C.captureV2({ flags: many, memories: [] }, { scenes: big, memoryDefs: {}, chapters: [], trail, journal: [] });
+assert.ok(full.counts.rubriques >= 140 + C.selectAll({ flags: many }).filter((x) => !x.common).length, "aucune troncature : " + full.counts.rubriques);
+// Ancienne sauvegarde sans aucune preuve : rien d’inventé.
+assert.deepEqual(C.captureV2({ flags: {}, memories: [] }, { scenes }).chapters, []);
+assert.equal(C.chapterOf("c13i_x"), "ch13_i"); assert.equal(C.chapterOf("x12i_a"), "ch12_i"); assert.equal(C.chapterOf("c4d_07"), "ch4"); assert.equal(C.chapterOf("intro_wake"), "intro"); assert.equal(C.chapterOf("s14_bow"), "ch1");
+
 console.log("story-generique : ok (" + C.ENTRIES.length + " souvenirs au catalogue, " + new Set(C.ENTRIES.map((e) => e.group)).size + " groupes)");

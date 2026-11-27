@@ -1,14 +1,22 @@
 # Générique de fin du Tome I · Catalogue « Votre Chronique »
 
-Document généré depuis `fusion/story-generique-chronique.js` (catalogue v1, 99 souvenirs, 42 groupes exclusifs). Chaque condition a été vérifiée contre l’index : le flag et sa valeur sont posés par un choix de la scène indiquée (audit automatisé : 0 condition sans source). Test : `node test/story-generique.test.cjs`.
+Document généré depuis `fusion/story-generique-chronique.js` (souvenirs illustrés, 99 souvenirs, 42 groupes exclusifs). Chaque condition a été vérifiée contre l’index : le flag et sa valeur sont posés par un choix de la scène indiquée (audit automatisé : 0 condition sans source). Test : `node test/story-generique.test.cjs`.
 
-## Règles de sélection
+## Règles de sélection (catalogue v2, v0.430)
 
-- Preuve uniquement : flags de choix à valeur exacte. Un flag absent n’est jamais lu comme un choix négatif. Les flags « Chapitre terminé » (posés aussi par la sélection de chapitre) et les marqueurs `c18Played*` / `finaleSeen*` ne prouvent rien et sont ignorés.
-- Branches du final : S06 exige `s06DravenComplete`, S07 exige `s07IrianaComplete`, S08 exige `s08BlizzardComplete`. Une branche abandonnée après un Game Over ne produit rien.
-- Un souvenir par groupe (variantes exclusives), quotas par catégorie Les premiers pas 3, Les liens tissés 4, Les épreuves 3, Les destins croisés 3, Les derniers choix 4, plafond 16, cible minimale undefined. Score : priorité, +6 si rare, -8 par personnage principal déjà présent, départage par identifiant (déterministe). Affichage dans l’ordre narratif.
-- Moins de 6 souvenirs prouvés : ajout des souvenirs communs (Porte Noire, blizzard), eux aussi conditionnés. Aucun souvenir : texte neutre, pas de personnalisation.
-- Capture figée à la validation (`go('c19_bilan')`, là où la S09 pose `tome1Complete`) dans `state.tome1Chronicle` (hors flags) + copie `localStorage.sylvinia_vn_chronique_tome1_v1`. Jamais réécrite par une rejouabilité de chapitre, le mode développeur, `finaleReplay`, la CA ou une reprise de duel. Sauvegarde déjà terminée sans capture : capture rétroactive marquée `sauvegarde-anterieure`.
+- La chronique retranscrit tout le parcours prouvé, rangé par chapitre (une rubrique par chapitre vécu, dans l’ordre du livre). Aucun plafond.
+- Sources, de la plus forte à la plus faible :
+  1. souvenirs illustrés du catalogue ci-dessous, tous ceux dont la condition exacte est remplie, un par groupe exclusif ;
+  2. décisions réellement cliquées (journal de parcours `sylvinia_vn_parcours_v1`, écrans à au moins deux choix) ;
+  3. décisions reconstituées : un flag de la sauvegarde que **un seul libellé** de choix du jeu peut poser (index calculé sur `S` au moment de la capture) ;
+  4. journal de lecture de la Bibliothèque Astrale (choix récents), en appoint ;
+  5. souvenirs de Progression (`state.memories`, textes de `PROGRESSION_MEMORIES`), rangés au chapitre du choix qui les accorde.
+- Un souvenir illustré remplace la ligne de choix de la même scène. Une décision par écran.
+- Ne prouvent rien et sont ignorés : flags `…Complete`, `c18Played*`, `finaleSeen*`, manches `s04M*` / `s04Qte`, `tome1Complete`, `finaleReplay`, flags de développement, flags posés par plusieurs libellés différents.
+- Exclus de la transcription : navigation (« Continuer », « Retour au menu », « Réessayer »…), Game Over, écrans « terminé », portes de développement, manches de duel.
+- Branches du final : S06 exige `s06DravenComplete`, S07 `s07IrianaComplete`, S08 `s08BlizzardComplete`.
+- Moins de 6 rubriques prouvées : ajout des souvenirs communs (Porte Noire, blizzard), eux aussi conditionnés. Aucune preuve : texte neutre.
+- Capture v2 figée à `go('c19_bilan')` dans `state.tome1Chronicle` (hors flags) + copie `localStorage.sylvinia_vn_chronique_tome1_v1`, avec chapitres et textes résolus. Jamais réécrite par une rejouabilité de chapitre, le mode développeur, `finaleReplay`, la CA ou une reprise de duel. Chronique v0.429 : mise à niveau à partir de ses preuves (`mise-a-niveau-v0.429`). Partie terminée sans capture : `sauvegarde-anterieure`. Mode développeur : aperçu calculé, non enregistré.
 
 ## Exclusions volontaires
 

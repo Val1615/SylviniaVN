@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.429';
+  const GAME_VERSION = 'v0.430';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -27,13 +27,48 @@
   const reducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  /* ======================= Capture de la chronique ======================= */
-  const readMirror = () => { try { const o = JSON.parse(localStorage.getItem(MIRROR_KEY) || 'null'); return o && o.v === 1 && Array.isArray(o.entries) ? o : null; } catch (_e) { return null; } };
-  const writeMirror = (cap) => { try { localStorage.setItem(MIRROR_KEY, JSON.stringify(cap)); } catch (_e) { /* stockage plein : la copie dans la sauvegarde suffit */ } };
-  const validCapture = (o) => Boolean(o && o.v === 1 && Array.isArray(o.entries));
+  /* ======================= Journal de parcours ======================= */
+  // Chaque décision réellement cliquée (écran à plusieurs choix) est notée à part de la sauvegarde principale,
+  // pour survivre aux reconstructions d’état des lancements de chapitre. Une décision par écran (la dernière).
+  const TRAIL_KEY = 'sylvinia_vn_parcours_v1';
+  const TRAIL_MAX = 900;
+  const readTrail = () => { try { const o = JSON.parse(localStorage.getItem(TRAIL_KEY) || 'null'); return o && Array.isArray(o.list) ? o.list : []; } catch (_e) { return []; } };
+  const writeTrail = (list) => { try { localStorage.setItem(TRAIL_KEY, JSON.stringify({ v: 1, list: list.slice(-TRAIL_MAX) })); } catch (_e) { /* stockage plein : le repli par flags suffit */ } };
+  const clearTrail = () => { try { localStorage.removeItem(TRAIL_KEY); } catch (_e) { /* ignore */ } };
+  const labelText = (c) => { try { const l = typeof c.label === 'function' ? c.label() : c.label; return String(l || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); } catch (_e) { return ''; } };
+  function recordChoice(ch) {
+    const st = game(); if (!st || !ch || P) return;
+    const sid = st.scene;
+    const scene = (typeof S !== 'undefined' && S) ? S[sid] : null;
+    if (!scene || !Array.isArray(scene.choices) || scene.choices.length < 2) return;
+    try { if (typeof choiceAvailable === 'function' && !choiceAvailable(ch)) return; } catch (_e) { /* ignore */ }
+    const label = labelText(ch); if (!label) return;
+    const list = readTrail().filter((t) => t[0] !== sid);
+    list.push([sid, label]);
+    writeTrail(list);
+  }
+  // Journal de lecture de la Bibliothèque Astrale (choix récents) : preuve d’appoint pour les anciennes parties.
+  const readBiblioJournal = () => {
+    try { const g = JSON.parse(localStorage.getItem('sylvinia_biblio_astrale_v2') || '{}'); return (Array.isArray(g.journal) ? g.journal : []).filter((e) => e && e.choix && e.id).map((e) => [String(e.id), String(e.choix)]); } catch (_e) { return []; }
+  };
+  const chronicleContext = () => ({
+    scenes: (typeof S !== 'undefined' && S) || {},
+    memoryDefs: (typeof PROGRESSION_MEMORIES !== 'undefined' && PROGRESSION_MEMORIES) || {},
+    chapters: (typeof CHAPTER_SELECT_DATA !== 'undefined' && CHAPTER_SELECT_DATA) || [],
+    trail: readTrail(),
+    journal: readBiblioJournal(),
+  });
 
-  function makeCapture(provenance) {
-    const cap = C.capture(game() || {}, { game: GAME_VERSION, at: new Date().toISOString(), provenance });
+  /* ======================= Capture de la chronique ======================= */
+  const readMirror = () => { try { const o = JSON.parse(localStorage.getItem(MIRROR_KEY) || 'null'); return o && (o.v === 1 || o.v === 2) ? o : null; } catch (_e) { return null; } };
+  const writeMirror = (cap) => { try { localStorage.setItem(MIRROR_KEY, JSON.stringify(cap)); } catch (_e) { /* stockage plein : la copie dans la sauvegarde suffit */ } };
+  const validCapture = (o) => Boolean(o && o.v === 2 && Array.isArray(o.chapters));
+  const legacyCapture = (o) => Boolean(o && o.v === 1 && Array.isArray(o.entries));
+
+  function makeCapture(provenance, extraEvidence) {
+    const st = game() || {};
+    const source = { flags: { ...(st.flags || {}), ...(extraEvidence || {}) }, memories: st.memories || [] };
+    const cap = C.captureV2(source, chronicleContext(), { game: GAME_VERSION, at: new Date().toISOString(), provenance });
     cap.run = Math.random().toString(36).slice(2, 10);
     return cap;
   }
@@ -43,27 +78,39 @@
     writeMirror(cap);
     try { if (typeof save === 'function') save(); } catch (_e) { /* sauvegarde indisponible */ }
   }
+  const replaying = () => { const st = game(); return Boolean(!st || st.devMode || flags().finaleReplay); };
   // Une vraie partie qui valide le Tome I (entrée dans c19_bilan) écrit sa propre chronique.
   // Jamais en mode développeur ni pendant une relecture : la chronique d’origine reste intacte.
   function recordAtValidation(wasComplete) {
-    const st = game(); if (!st || st.devMode || flags().finaleReplay) return;
+    if (replaying()) return;
     if (!wasComplete) { storeCapture(makeCapture('partie')); return; }
     ensureChronicle();
   }
-  // Partie déjà terminée : on reprend sa chronique ; sinon (sauvegarde antérieure à v0.429), on la reconstitue
-  // à partir des seuls flags de choix présents, marqués comme tels, sans rien inventer.
+  // Partie déjà terminée : on reprend sa chronique. Sinon (sauvegarde antérieure, ou chronique v0.429 plafonnée
+  // à 16 souvenirs), on la reconstitue à partir des preuves présentes, marquées comme telles, sans rien inventer.
   function ensureChronicle() {
     const st = game(); if (!st) return null;
     if (validCapture(st[STATE_KEY])) return st[STATE_KEY];
-    if (st.devMode || flags().finaleReplay) return readMirror();
-    if (!flags().tome1Complete) return readMirror();
     const mirror = readMirror();
-    if (mirror) { st[STATE_KEY] = mirror; try { save(); } catch (_e) { /* ignore */ } return mirror; }
-    const cap = makeCapture('sauvegarde-anterieure');
+    if (replaying() || !flags().tome1Complete) return validCapture(mirror) ? mirror : null;
+    if (validCapture(mirror)) { st[STATE_KEY] = mirror; try { save(); } catch (_e) { /* ignore */ } return mirror; }
+    const legacy = legacyCapture(st[STATE_KEY]) ? st[STATE_KEY] : (legacyCapture(mirror) ? mirror : null);
+    const cap = legacy ? makeCapture('mise-a-niveau-v0.429', legacy.evidence) : makeCapture('sauvegarde-anterieure');
     storeCapture(cap);
     return cap;
   }
-  const currentChronicle = () => { const st = game(); return (st && validCapture(st[STATE_KEY]) && st[STATE_KEY]) || readMirror(); };
+  // Chronique à projeter : la capture figée, sinon (mode développeur, relecture, partie non validée)
+  // un aperçu calculé sur l’état courant, jamais enregistré.
+  function chronicleForCredits() {
+    const cap = ensureChronicle();
+    if (cap) return cap;
+    return makeCapture('apercu');
+  }
+  const currentChronicle = () => {
+    const st = game(); if (st && validCapture(st[STATE_KEY])) return st[STATE_KEY];
+    if (!replaying() && flags().tome1Complete) { try { return ensureChronicle(); } catch (_e) { /* ignore */ } }
+    const m = readMirror(); return validCapture(m) ? m : null;
+  };
 
   /* ======================= Style ======================= */
   const CSS = `
@@ -127,7 +174,7 @@
 .gq-ctrl button,.gq-confirm button{font:600 12px/1 "Cinzel",Georgia,serif;letter-spacing:.1em;color:rgba(243,230,200,.86);background:rgba(8,8,16,.42);border:1px solid rgba(233,201,133,.3);border-radius:999px;padding:8px 14px;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .gq-ctrl button:hover,.gq-ctrl button:focus-visible,.gq-confirm button:hover,.gq-confirm button:focus-visible{border-color:rgba(233,201,133,.75);color:#fff6dc;outline:none}
 .gq-ctrl .dev{border-style:dashed}
-.gq-confirm{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:calc(max(14px,env(safe-area-inset-bottom)) + 44px);display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;background:rgba(8,8,16,.62);border:1px solid rgba(233,201,133,.28);border-radius:14px;font:italic 500 15px/1.2 "Cormorant Garamond",Georgia,serif;color:#efe6cf}
+.gq-confirm{position:absolute;left:max(14px,env(safe-area-inset-left));z-index:3;bottom:calc(max(14px,env(safe-area-inset-bottom)) + 44px);display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;background:rgba(8,8,16,.62);border:1px solid rgba(233,201,133,.28);border-radius:14px;font:italic 500 15px/1.2 "Cormorant Garamond",Georgia,serif;color:#efe6cf}
 .gq-confirm[hidden]{display:none}
 .gq-paused{position:absolute;left:50%;top:max(16px,env(safe-area-inset-top));transform:translateX(-50%);font:600 11px/1 "Cinzel",Georgia,serif;letter-spacing:.3em;color:rgba(233,201,133,.7);opacity:0;transition:opacity .3s}
 #${ROOT_ID}.paused .gq-paused{opacity:1}
@@ -138,6 +185,58 @@
 #${ROOT_ID}.portrait .gq-view{left:0;right:0;width:100%;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 87%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 11%,#000 87%,transparent 100%)}
 #${ROOT_ID}.portrait .gq-strip{max-width:min(36rem,100%);margin:0 auto;padding:0 max(7vw,env(safe-area-inset-left)) 0 max(7vw,env(safe-area-inset-right))}
 #${ROOT_ID}.lite .gq-layer.vis .gq-img{animation:none}
+/* ---- Votre Chronique : rubriques par chapitre ---- */
+.gq-chap{padding-top:2vh}
+.gq-cover{display:block;width:clamp(58px,9vmin,92px);aspect-ratio:2/3;margin:0 auto .9em;border-radius:3px 6px 6px 3px;overflow:hidden;border:1px solid rgba(233,201,133,.45);box-shadow:0 8px 22px rgba(0,0,0,.55),inset 6px 0 0 rgba(0,0,0,.35);opacity:.92}
+.gq-cover img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.85) brightness(.85)}
+.gq-chap-label{display:block;font:600 clamp(11px,1.7vmin,15px)/1 "Cinzel",Georgia,serif;letter-spacing:.38em;text-indent:.38em;text-transform:uppercase;color:rgba(233,201,133,.78)}
+.gq-chap-title{margin:.45em 0 0;font:700 clamp(21px,3.7vmin,38px)/1.15 "Cinzel",Georgia,serif;letter-spacing:.04em;color:#f3dca2}
+.gq-sep.small{width:min(56%,200px);margin:.8em auto 0}
+.gq-choices ul{list-style:none;margin:0 auto;padding:0;max-width:30em}
+.gq-rub{margin:0 0 1.05em}
+.gq-rub.tight{margin-top:-.45em}
+.gq-ctx{display:block;margin-bottom:.22em;font:600 clamp(10px,1.45vmin,13px)/1.3 "Cinzel",Georgia,serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(214,196,160,.66)}
+.gq-said{display:block;font:italic 500 clamp(16px,2.35vmin,22px)/1.38 "Cormorant Garamond",Georgia,serif;color:rgba(246,239,222,.93)}
+.gq-souv .gq-ctx{color:rgba(233,201,133,.82);letter-spacing:.08em;text-transform:none;font:600 italic clamp(14px,2vmin,18px)/1.3 "Cormorant Garamond",Georgia,serif}
+.gq-body{display:block;font:400 clamp(14px,2vmin,18px)/1.42 "Cormorant Garamond",Georgia,serif;color:rgba(226,215,192,.78)}
+/* ---- Transition depuis l’épilogue : voile tombant du haut, deux lignes, lancement ---- */
+#${ROOT_ID}.prelude{background:transparent}
+#${ROOT_ID}.prelude .gq-bg,#${ROOT_ID}.prelude .gq-veil,#${ROOT_ID}.prelude .gq-view,#${ROOT_ID}.prelude .gq-motes{opacity:0}
+.gq-bg,.gq-veil,.gq-view,.gq-motes{transition:opacity 2.4s ease}
+.gq-curtain{position:absolute;left:0;right:0;top:0;height:150%;transform:translate3d(0,-100%,0);background:linear-gradient(180deg,#050407 0%,#050407 66%,rgba(5,4,7,.85) 78%,rgba(5,4,7,0) 100%);pointer-events:none;transition:transform var(--curtain,3s) cubic-bezier(.55,.06,.35,1)}
+#${ROOT_ID}.prelude .gq-curtain.down,#${ROOT_ID} .gq-curtain.down{transform:translate3d(0,0,0)}
+#${ROOT_ID}.played .gq-curtain{opacity:0;transition:opacity 1.2s ease}
+.gq-prelude{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;padding:24px;text-align:center;pointer-events:none}
+.gq-prelude p{margin:0;max-width:26em;font:italic 500 clamp(19px,3.3vmin,32px)/1.4 "Cormorant Garamond",Georgia,serif;color:#f1e4c4;opacity:0;transform:translateY(8px);transition:opacity 1.4s ease,transform 1.8s ease;text-shadow:0 0 18px rgba(0,0,0,.8)}
+.gq-prelude p.in{opacity:1;transform:none}
+.gq-prelude p.out{opacity:0;transform:translateY(-6px)}
+.gq-launch{position:absolute;left:50%;top:50%;width:min(70vmin,560px);height:2px;transform:translate(-50%,-50%) scaleX(0);background:linear-gradient(90deg,rgba(233,201,133,0),#f3d58e 50%,rgba(233,201,133,0));box-shadow:0 0 18px rgba(243,213,142,.7),0 0 46px rgba(243,213,142,.35);opacity:0;pointer-events:none}
+.gq-launch.go{animation:gqLaunch var(--launch,2.2s) cubic-bezier(.3,.7,.2,1) forwards}
+@keyframes gqLaunch{0%{opacity:0;transform:translate(-50%,-50%) scaleX(0)}35%{opacity:1;transform:translate(-50%,-50%) scaleX(1)}70%{opacity:1;transform:translate(-50%,-50%) scaleX(1.05) scaleY(1)}100%{opacity:0;transform:translate(-50%,-50%) scaleX(1.4) scaleY(160)}}
+/* ---- Boutons discrets toujours présents : Accélérer, Passer ---- */
+.gq-quick{position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));display:flex;gap:7px;opacity:.38;transition:opacity .4s ease;z-index:2}
+.gq-quick:hover,.gq-quick:focus-within,#${ROOT_ID}.ctrl .gq-quick{opacity:.92}
+.gq-quick button{font:600 11px/1 "Cinzel",Georgia,serif;letter-spacing:.12em;color:rgba(243,230,200,.9);background:rgba(8,8,16,.34);border:1px solid rgba(233,201,133,.28);border-radius:999px;padding:7px 12px;cursor:pointer;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.gq-quick button.on{border-color:rgba(233,201,133,.8);color:#fff3d0;background:rgba(60,44,18,.42)}
+.gq-quick button:focus-visible{outline:1px solid rgba(233,201,133,.8);outline-offset:2px}
+#${ROOT_ID}.prelude .gq-quick,#${ROOT_ID}.gate .gq-quick,#${ROOT_ID}.gate .gq-ctrl{display:none}
+/* ---- Passerelle de fin ---- */
+.gq-gate{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 1.8s ease}
+#${ROOT_ID}.gate .gq-gate{opacity:1;pointer-events:auto}
+#${ROOT_ID}.gate .gq-view,#${ROOT_ID}.gate .gq-opening{opacity:0;transition:opacity 1.2s ease}
+.gq-gate video,.gq-gate .gq-gate-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.85) brightness(.5)}
+.gq-gate-veil{position:absolute;inset:0;background:radial-gradient(ellipse 60% 42% at 50% 50%,rgba(5,4,8,.62) 0%,rgba(5,4,8,.38) 60%,rgba(5,4,8,0) 100%),radial-gradient(ellipse 90% 75% at 50% 55%,rgba(5,4,8,.15) 0%,rgba(5,4,8,.7) 78%,rgba(5,4,8,.9) 100%)}
+.gq-gate-card{position:relative;max-width:min(92vw,40rem);padding:clamp(18px,4vmin,40px);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.gq-gate-card h2{margin:.25em 0 .35em;font:700 clamp(30px,6.4vmin,64px)/1.05 "Cinzel Decorative","Cinzel",Georgia,serif;background:linear-gradient(180deg,#fff1c9 0%,#e3c07a 55%,#a9853f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.gq-gate-card p{margin:.2em 0;font:italic 500 clamp(16px,2.6vmin,23px)/1.4 "Cormorant Garamond",Georgia,serif;color:rgba(244,236,216,.92)}
+.gq-gate-actions{display:flex;flex-wrap:wrap;gap:clamp(10px,2vmin,18px);justify-content:center;margin-top:clamp(16px,3.6vmin,34px)}
+.gq-gate-actions button{flex:1 1 15rem;max-width:19rem;display:flex;flex-direction:column;gap:.35em;align-items:center;padding:clamp(11px,2vmin,16px) 18px;border-radius:14px;border:1px solid rgba(233,201,133,.38);background:rgba(10,9,18,.5);color:#f6ead0;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);transition:border-color .3s,background .3s,transform .3s}
+.gq-gate-actions button b{font:600 clamp(13px,1.9vmin,16px)/1.2 "Cinzel",Georgia,serif;letter-spacing:.08em}
+.gq-gate-actions button small{font:italic 500 clamp(13px,1.8vmin,15px)/1.3 "Cormorant Garamond",Georgia,serif;color:rgba(226,214,190,.78)}
+.gq-gate-actions button:hover,.gq-gate-actions button:focus-visible{border-color:rgba(233,201,133,.85);background:rgba(40,30,14,.55);transform:translateY(-2px);outline:none}
+.gq-gate-actions button.ca{border-color:rgba(190,150,255,.45)}
+.gq-gate-actions button.ca:hover,.gq-gate-actions button.ca:focus-visible{border-color:rgba(205,175,255,.9);background:rgba(36,20,58,.55)}
+@media (max-height:560px){.gq-gate-card h2{font-size:clamp(26px,7vmin,44px)}.gq-gate-actions{margin-top:12px}}
 @media (prefers-reduced-motion:reduce){#${ROOT_ID} .gq-layer.vis .gq-img{animation:none}#${ROOT_ID} .gq-layer{transition-duration:.8s}}
 `;
   const ORN = (cls) => `<svg class="${cls}" viewBox="0 0 320 18" aria-hidden="true"><path d="M2 9h118M200 9h118" stroke="currentColor" stroke-width=".8" fill="none"/><path d="M128 9c10-8 22-8 32 0c10 8 22 8 32 0M128 9c10 8 22 8 32 0c10-8 22-8 32 0" stroke="currentColor" stroke-width=".9" fill="none"/><path d="M160 3l3 6-3 6-3-6z" fill="currentColor"/><circle cx="120" cy="9" r="1.6" fill="currentColor"/><circle cx="200" cy="9" r="1.6" fill="currentColor"/></svg>`;
@@ -175,6 +274,40 @@
       default: return '';
     }
   };
+  // Une rubrique par chapitre vécu : couverture du volume, souvenirs illustrés, puis décisions et souvenirs du chapitre.
+  const CHOICES_PER_BLOCK = 5;
+  function chapterBlocks(chap) {
+    const out = [];
+    const items = Array.isArray(chap.items) ? chap.items : [];
+    const firstBg = (items.find((x) => x.kind === 'souvenir' && x.backgrounds && x.backgrounds.length) || {}).backgrounds;
+    const chapBg = firstBg ? firstBg[0] : (chap.image ? { src: chap.image, focus: '50% 32%' } : undefined);
+    const cid = 'chap-' + esc(chap.key);
+    out.push(`<section class="gq-block gq-chap" data-id="${cid}" data-chapter="${esc(chap.key)}"${bgAttr(chapBg)} style="--gap:20vh">${chap.image ? `<span class="gq-cover"><img src="${esc(chap.image)}" alt="" loading="lazy" decoding="async"></span>` : ''}<span class="gq-chap-label">${esc(chap.label)}</span><h3 class="gq-chap-title">${esc(chap.title)}</h3>${ORN('gq-sep small')}</section>`);
+    let pending = [];
+    let n = 0;
+    let lastCtx = '';
+    const flush = () => {
+      if (!pending.length) return;
+      n += 1;
+      out.push(`<section class="gq-block gq-choices" data-id="${cid}-c${n}" data-rubrique-count="${pending.length}" style="--gap:${n === 1 ? 5 : 3}vh"><ul>${pending.join('')}</ul></section>`);
+      pending = [];
+    };
+    for (const it of items) {
+      if (it.kind === 'souvenir') {
+        flush(); lastCtx = '';
+        out.push(`<section class="gq-block gq-mem" data-id="mem-${esc(it.id)}"${bgAttr(it.backgrounds)} data-memory="${esc(it.id)}" data-rubrique="souvenir" style="--gap:13vh"><span class="gq-kicker">${esc(it.categoryLabel || '')}</span><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p><i class="gq-dot" aria-hidden="true"></i></section>`);
+      } else if (it.kind === 'choix') {
+        const ctxHtml = it.context && it.context !== lastCtx ? `<span class="gq-ctx">${esc(it.context)}</span>` : '';
+        lastCtx = it.context || lastCtx;
+        pending.push(`<li class="gq-rub gq-choice${ctxHtml ? '' : ' tight'}" data-rubrique="choix" data-scene="${esc(it.scene)}">${ctxHtml}<span class="gq-said">${/[«“"]/.test(it.label) ? esc(it.label) : `« ${esc(it.label)} »`}</span></li>`);
+      } else if (it.kind === 'memoire') {
+        pending.push(`<li class="gq-rub gq-souv" data-rubrique="memoire"><span class="gq-ctx">✧ ${esc(it.title)}</span><span class="gq-body">${esc(it.text)}</span></li>`);
+      }
+      if (pending.length >= CHOICES_PER_BLOCK) flush();
+    }
+    flush();
+    return out;
+  }
   function buildStrip(chronicle, mode) {
     const parts = [];
     const actHead = (a) => `<section class="gq-block gq-act" data-id="${a.id}" data-act="${a.id}"${bgAttr(a.bg)} style="--gap:40vh"><span class="gq-num">${a.numeral}</span><h2>${esc(a.title)}</h2>${ORN('gq-sep')}</section>`;
@@ -183,11 +316,9 @@
       parts.push(actHead(act));
       if (act.personal) {
         parts.push(`<section class="gq-block gq-intro" data-id="chronique-intro" style="--gap:18vh">${act.intro.map((l) => `<p>${esc(l)}</p>`).join('')}</section>`);
-        const entries = (chronicle && chronicle.entries) || [];
-        if (!entries.length) parts.push(`<section class="gq-block gq-mem" data-id="chronique-vide" style="--gap:12vh"><p>${esc(act.empty)}</p></section>`);
-        for (const m of entries) {
-          parts.push(`<section class="gq-block gq-mem" data-id="mem-${esc(m.id)}"${bgAttr(m.backgrounds)} data-memory="${esc(m.id)}" style="--gap:34vh"><span class="gq-kicker">${esc(m.categoryLabel || '')}</span><h3>${esc(m.title)}</h3><p>${esc(m.text)}</p><i class="gq-dot" aria-hidden="true"></i></section>`);
-        }
+        const chapters = (chronicle && Array.isArray(chronicle.chapters)) ? chronicle.chapters : [];
+        if (!chapters.length) parts.push(`<section class="gq-block gq-mem" data-id="chronique-vide" style="--gap:12vh"><p>${esc(act.empty)}</p></section>`);
+        for (const chap of chapters) parts.push(...chapterBlocks(chap));
         parts.push(`<section class="gq-block gq-conclusion" data-id="chronique-fin"${bgAttr(act.outro.bg)} style="--gap:32vh"><p>${esc(act.outro.text)}</p>${ORN('gq-sep')}</section>`);
         continue;
       }
@@ -221,6 +352,7 @@
     }, 40);
   }
 
+  const baseSpeed = (p) => Math.max(22, Math.min(46, p.viewH * 0.044)) * (p.devSpeed || 1) * (p.userSpeed || 1);
   function orientation() { return window.innerHeight > window.innerWidth * 1.02 ? 'portrait' : 'landscape'; }
   function lite() { return reducedMotion() || Math.min(window.innerWidth, window.innerHeight) < 420 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2); }
 
@@ -239,12 +371,16 @@
       <canvas class="gq-motes" aria-hidden="true"></canvas>
       <div class="gq-view" aria-live="off"><div class="gq-strip">${buildStrip(chronicle, mode)}</div></div>
       <div class="gq-opening">${ORN('gq-orn top')}<p class="gq-o1">${esc(op.line1)}</p><h1 class="gq-o2">${esc(op.title)}</h1><p class="gq-o3">${esc(mode === 'chronique' ? 'Ma Chronique' : op.tome)}</p>${ORN('gq-orn')}</div>
+      <div class="gq-curtain" aria-hidden="true"></div>
+      <div class="gq-prelude" aria-live="polite">${(D.prelude && mode === 'generique' ? D.prelude.lines : []).map((l) => `<p>${esc(l)}</p>`).join('')}</div>
+      <div class="gq-launch" aria-hidden="true"></div>
+      <div class="gq-gate" aria-hidden="true"></div>
       <div class="gq-paused">Pause</div>
+      <div class="gq-quick"><button type="button" data-gq="fast" aria-pressed="false" title="Accélérer le défilement">» ×1</button><button type="button" data-gq="skip">${mode === 'chronique' ? 'Fermer' : 'Passer'}</button></div>
       <div class="gq-confirm" hidden><span>${mode === 'chronique' ? 'Refermer votre chronique ?' : 'Passer le générique ?'}</span><button type="button" data-gq="skip-yes">Passer</button><button type="button" data-gq="skip-no">Continuer</button></div>
       <div class="gq-ctrl">
         <button type="button" data-gq="pause">Pause</button>
         ${document.fullscreenEnabled ? '<button type="button" data-gq="fs">Plein écran</button>' : ''}
-        <button type="button" data-gq="skip">${mode === 'chronique' ? 'Fermer' : 'Passer'}</button>
       </div>`;
     document.body.append(root);
     if (game() && game().devMode) {
@@ -259,7 +395,7 @@
     p.root.classList.toggle('portrait', p.orient === 'portrait');
     p.root.classList.toggle('lite', lite());
     p.viewH = p.view.clientHeight || window.innerHeight;
-    p.speed = Math.max(22, Math.min(46, p.viewH * 0.044)) * (p.devSpeed || 1);
+    p.speed = baseSpeed(p);
     p.blocks = [...p.strip.querySelectorAll('.gq-block')].map((el) => ({ el, id: el.dataset.id, top: el.offsetTop, h: el.offsetHeight, bg: el.dataset.bg, focus: el.dataset.focus, final: el.dataset.final === '1' }));
     const fin = p.blocks.find((b) => b.final) || p.blocks[p.blocks.length - 1];
     p.stopAt = fin ? fin.top + fin.h / 2 + p.viewH / 2 : p.viewH;
@@ -363,8 +499,10 @@
     p.last = now;
     const running = !p.paused && !document.hidden;
     if (running) {
-      p.clock += dt;
-      if (p.phase === 'opening') {
+      const k = p.phase === 'strip' ? 1 : (p.userSpeed || 1);
+      p.clock += dt * k;
+      if (p.phase === 'prelude') stepPrelude();
+      else if (p.phase === 'opening') {
         if (p.clock >= p.openEnd) startStrip();
       } else if (p.phase === 'strip') {
         p.offset = Math.min(p.stopAt, p.offset + p.speed * dt);
@@ -384,6 +522,76 @@
     p.opening.classList.add('gone');
     p.phase = 'strip'; p.started = true; p.offset = 0;
     layout(); paintStrip();
+  }
+
+  /* ---- Transition depuis l’épilogue ---- */
+  function stepPrelude() {
+    const p = P; if (!p) return;
+    const pr = D.prelude; const t = p.clock - p.preStart;
+    const C = pr.curtain, l1 = C + 0.3, l2 = l1 + 1.9, outAt = l2 + pr.lineHold + 1.2, launchAt = outAt + 0.9, openAt = launchAt + pr.launch * 0.6;
+    if (!p.covered && t >= C) cover();
+    const lines = p.root.querySelectorAll('.gq-prelude p');
+    if (t >= l1 && lines[0]) lines[0].classList.add('in');
+    if (t >= l2 && lines[1]) lines[1].classList.add('in');
+    if (t >= outAt) lines.forEach((l) => l.classList.add('out'));
+    if (t >= launchAt && !p.launched) { p.launched = true; const el = p.root.querySelector('.gq-launch'); el.style.setProperty('--launch', (pr.launch / (p.userSpeed || 1)) + 's'); el.classList.add('go'); }
+    if (t >= openAt) beginOpening();
+  }
+  // Le voile couvre l’écran : le moteur peut rejoindre le menu (sauvegarde comprise) dessous.
+  function cover() {
+    const p = P; if (!p || p.covered) return;
+    p.covered = true;
+    try { if (p.opts.onCovered) p.opts.onCovered(); } catch (err) { console.error('[Sylvinia] Retour au menu', err); }
+  }
+  function beginOpening() {
+    const p = P; if (!p || p.phase !== 'prelude') return;
+    cover();
+    p.phase = 'opening';
+    p.root.classList.remove('prelude'); p.root.classList.add('played');
+    p.openEnd = p.clock + T.openingIn + T.openingHold;
+    p.opening.classList.add('in');
+    startMusic();
+  }
+  function setFast(on) {
+    const p = P; if (!p) return;
+    p.userSpeed = on ? 3 : 1; p.speed = baseSpeed(p);
+    const b = p.root.querySelector('[data-gq="fast"]');
+    if (b) { b.textContent = on ? '» ×3' : '» ×1'; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  }
+
+  /* ---- Passerelle : menu principal ou Chronique Alternative ---- */
+  function showGate() {
+    const p = P; if (!p) return;
+    cover();
+    askSkip(false);
+    if (p.paused) setPaused(false);
+    p.phase = 'gate'; p.gateShown = true;
+    p.root.classList.remove('prelude'); p.root.classList.add('played');
+    const g = D.passerelle;
+    const gate = p.root.querySelector('.gq-gate');
+    gate.innerHTML = `<img class="gq-gate-poster" src="${esc(g.poster)}" alt=""><video muted loop playsinline preload="auto" poster="${esc(g.poster)}"><source src="${esc(g.video)}" type="video/mp4"></video><div class="gq-gate-veil"></div>
+      <div class="gq-gate-card" role="group" aria-label="Suite de l’aventure"><span class="gq-kicker">${esc(g.kicker)}</span><h2>${esc(g.title)}</h2>${g.lines.map((l) => `<p>${esc(l)}</p>`).join('')}
+        <div class="gq-gate-actions"><button type="button" data-gq="gate-menu"><b>${esc(g.menu.label)}</b><small>${esc(g.menu.sub)}</small></button><button type="button" class="ca" data-gq="gate-ca"><b>${esc(g.ca.label)}</b><small>${esc(g.ca.sub)}</small></button></div></div>`;
+    gate.setAttribute('aria-hidden', 'false');
+    const v = gate.querySelector('video');
+    if (v) { v.muted = true; v.addEventListener('error', () => v.remove(), true); try { const pl = v.play(); if (pl) pl.catch(() => {}); } catch (_e) { /* l’affiche reste */ } }
+    requestAnimationFrame(() => P && P.root.classList.add('gate'));
+    setTimeout(() => { const b = P && P.root.querySelector('[data-gq="gate-menu"]'); if (b) b.focus({ preventScroll: true }); }, 700);
+    if (!p.musicStarted) startMusic();
+  }
+  // La CA garde son accès habituel (sélecteur de mode, toujours ouvert) et sa propre sauvegarde ; l’Histoire est sauvegardée avant.
+  function goAlternative() {
+    const p = P; if (!p || p.closing) return;
+    p.closing = true;
+    p.root.classList.add('out');
+    fadeGain(0, 900);
+    setTimeout(() => {
+      teardown(p, 'chronique-alternative');
+      try { if (typeof save === 'function') save(); } catch (_e) { /* ignore */ }
+      if (typeof openAlternativeChronicleFromModeSelect === 'function') openAlternativeChronicleFromModeSelect();
+      else if (window.SylviniaGameModes && window.SylviniaGameModes.openAlternativeChronicle) window.SylviniaGameModes.openAlternativeChronicle();
+      else window.location.assign('chronique-alternative/?intro=intro');
+    }, 1000);
   }
 
   /* ---- Contrôles discrets ---- */
@@ -414,7 +622,10 @@
     else if (a === 'skip-no') askSkip(false);
     else if (a === 'skip-yes') finish('passe');
     else if (a === 'fs') { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (_e) { /* indisponible */ } }
-    else if (a === 'speed') { P.devSpeed = P.devSpeed === 6 ? 1 : 6; b.textContent = '×' + P.devSpeed; P.speed = Math.max(22, Math.min(46, P.viewH * 0.044)) * P.devSpeed; }
+    else if (a === 'speed') { P.devSpeed = P.devSpeed === 6 ? 1 : 6; b.textContent = '×' + P.devSpeed; P.speed = baseSpeed(P); }
+    else if (a === 'fast') setFast(P.userSpeed !== 3);
+    else if (a === 'gate-menu') finish('menu');
+    else if (a === 'gate-ca') goAlternative();
     else if (a === 'act') jumpTo(b.dataset.act);
   }
   function jumpTo(actId) {
@@ -425,6 +636,7 @@
   }
   function onKey(ev) {
     if (!P) return;
+    if (P.phase === 'gate') { if (ev.key === 'Escape' || ev.key === 'Esc') { ev.preventDefault(); finish('menu'); } ev.stopPropagation(); return; }
     if (ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); ev.stopPropagation(); setPaused(!P.paused); poke(); }
     else if (ev.key === 'Escape' || ev.key === 'Esc') { ev.preventDefault(); ev.stopPropagation(); askSkip(P.confirm.hidden); }
     else { ev.stopPropagation(); }
@@ -441,7 +653,7 @@
       mode, root, chronicle, opts,
       view: root.querySelector('.gq-view'), strip: root.querySelector('.gq-strip'), opening: root.querySelector('.gq-opening'),
       layers: [...root.querySelectorAll('.gq-layer')], canvas: root.querySelector('.gq-motes'), confirm: root.querySelector('.gq-confirm'),
-      orient: orientation(), clock: 0, offset: 0, phase: 'opening', paused: false, started: false, gain: 0, bgIdx: 0, bgToken: 0, bgSince: -99, bgSrc: undefined, blockSince: {}, devSpeed: 1,
+      orient: orientation(), clock: 0, offset: 0, phase: opts.prelude ? 'prelude' : 'opening', preStart: 0, covered: !opts.prelude && !opts.onCovered, paused: false, started: false, gain: 0, bgIdx: 0, bgToken: 0, bgSince: -99, bgSrc: undefined, blockSince: {}, devSpeed: 1, userSpeed: 1,
       prevMusicKey: (musicEl() && musicEl().dataset.currentKey) || '', prevMusicPaused: !musicEl() || musicEl().paused,
     };
     P.openEnd = T.openingIn + T.openingHold + (mode === 'chronique' ? -1.5 : 0);
@@ -455,7 +667,14 @@
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);
-    requestAnimationFrame(() => { root.classList.add('on'); requestAnimationFrame(() => P && P.opening.classList.add('in')); });
+    if (opts.prelude) {
+      root.classList.add('prelude', 'on');
+      root.style.setProperty('--curtain', D.prelude.curtain + 's');
+      requestAnimationFrame(() => requestAnimationFrame(() => P && P.root.querySelector('.gq-curtain').classList.add('down')));
+    } else {
+      root.classList.add('played');
+      requestAnimationFrame(() => { root.classList.add('on'); requestAnimationFrame(() => P && P.opening.classList.add('in')); });
+    }
     // premier fond derrière le titre : celui du premier acte, discret
     const firstAct = D.acts.find((a) => mode !== 'chronique' || a.personal);
     if (firstAct && firstAct.bg) showBg(firstAct.bg.src, firstAct.bg.focus);
@@ -473,19 +692,27 @@
     if (m && m.paused) m.play().catch(() => {});
     fadeGain(1, 2600);
   }
+  function teardown(p, reason) {
+    cancelAnimationFrame(p.raf);
+    document.removeEventListener('keydown', onKey, true);
+    document.removeEventListener('visibilitychange', onVisibility);
+    window.removeEventListener('resize', onResize);
+    window.removeEventListener('orientationchange', onResize);
+    clearTimeout(p.ctrlT); stopFade();
+    const v = p.root.querySelector('.gq-gate video'); if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } }
+    p.root.remove();
+    P = null;
+    try { window.SylviniaGenerique.lastEnd = reason; } catch (_e) { /* ignore */ }
+  }
   function finish(reason) {
     const p = P; if (!p || p.closing) return;
+    // Fin (ou passage) du générique : la passerelle propose le menu ou la suite dans la Chronique Alternative.
+    if (p.mode === 'generique' && D.passerelle && !p.gateShown && (reason === 'fin' || reason === 'passe')) { showGate(); return; }
+    cover();
     p.closing = true;
     p.root.classList.add('out');
     const done = () => {
-      cancelAnimationFrame(p.raf);
-      document.removeEventListener('keydown', onKey, true);
-      document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
-      clearTimeout(p.ctrlT); stopFade();
-      p.root.remove();
-      P = null;
+      teardown(p, reason);
       const m = musicEl();
       if (m) try { m.volume = sliderVolume(); } catch (_e) { /* ignore */ }
       if (p.mode === 'chronique') {
@@ -493,34 +720,36 @@
         if (p.prevMusicKey && p.prevMusicKey !== D.track && typeof playMusic === 'function') { try { playMusic(p.prevMusicKey); } catch (_e) { /* ignore */ } }
         else if (p.prevMusicPaused && m) try { m.pause(); } catch (_e) { /* ignore */ }
       } else {
-        // fin de projection : retour au menu principal, thème du menu conservé sans doublon
+        // retour au menu principal, thème du menu conservé sans doublon
         try { if (typeof setScreen === 'function') setScreen('title'); } catch (_e) { /* ignore */ }
         try { if (document.body.classList.contains('ui-biblio') && window.BibliothequeAstrale) window.BibliothequeAstrale.route('#/titre'); } catch (_e) { /* ignore */ }
+        if (m && wantMusic() && m.paused) m.play().catch(() => {});
       }
-      try { window.SylviniaGenerique.lastEnd = reason; } catch (_e) { /* ignore */ }
     };
-    // fondu de fin de la musique vers le menu : on revient au volume du menu (ou on se tait si la piste ne doit pas jouer)
     const m = musicEl();
     if (p.mode === 'chronique' && m && !m.paused && p.prevMusicKey !== D.track) fadeGain(0, T.outro * 1000 * 0.9);
     setTimeout(done, T.outro * 1000);
   }
 
   /* ---- Déclencheur réel : fin de l’épilogue ---- */
-  function fromEpilogue(prevGo, ctx, args) {
+  function fromEpilogue(prevFn, ctx, args) {
     intercepting = true;
     let chronicle = null;
-    try { chronicle = ensureChronicle(); } catch (err) { console.error('[Sylvinia] Chronique', err); }
-    let opened = false;
-    try { opened = open('generique', chronicle); } catch (err) { console.error('[Sylvinia] Générique', err); }
-    if (!opened) { intercepting = false; return prevGo.apply(ctx, args); }
-    // transition audio douce depuis l’épilogue, puis le moteur rejoint le menu (sauvegarde comprise) sous le voile
-    const m = musicEl();
-    const after = () => {
-      try { prevGo.apply(ctx, args); } catch (err) { console.error('[Sylvinia] Retour au menu', err); }
+    try { chronicle = chronicleForCredits(); } catch (err) { console.error('[Sylvinia] Chronique', err); }
+    const onCovered = () => {
+      try { prevFn.apply(ctx, args); } catch (err) { console.error('[Sylvinia] Retour au menu', err); }
       intercepting = false;
-      startMusic();
+      // le thème du menu attend le titre frontal
+      const m = musicEl();
+      if (P) { stopFade(); P.gain = 0; applyGain(); }
+      if (m && m.dataset.currentKey === D.track && !m.paused) try { m.pause(); } catch (_e) { /* ignore */ }
     };
-    if (m && !m.paused) { P.gain = 1; fadeGain(0, 1300, after); } else setTimeout(after, 300);
+    let opened = false;
+    try { opened = open('generique', chronicle, { prelude: Boolean(D.prelude), onCovered }); } catch (err) { console.error('[Sylvinia] Générique', err); }
+    if (!opened) { intercepting = false; return prevFn.apply(ctx, args); }
+    // la musique de l’épilogue s’éteint pendant que le voile tombe
+    const m = musicEl();
+    if (m && !m.paused) { P.gain = 1; fadeGain(0, (D.prelude ? D.prelude.curtain : 1.3) * 1000); }
     return undefined;
   }
 
@@ -547,6 +776,7 @@
         if (P && P.mode === 'generique') return undefined;
         if (!P && !intercepting) return fromEpilogue(previousChoose, this, arguments);
       }
+      try { recordChoice(ch); } catch (_e) { /* le journal de parcours ne bloque jamais un choix */ }
       return previousChoose.apply(this, arguments);
     };
   }
@@ -568,11 +798,24 @@
     resetProgress = window.resetProgress = function () {
       const before = game();
       const r = previousReset.apply(this, arguments);
-      if (game() !== before) { try { localStorage.removeItem(MIRROR_KEY); } catch (_e) { /* ignore */ } }
+      if (game() !== before) { try { localStorage.removeItem(MIRROR_KEY); } catch (_e) { /* ignore */ } clearTrail(); }
       return r;
     };
     const resetBtn = document.getElementById('resetBtn');
     if (resetBtn && resetBtn.onclick === previousReset) resetBtn.onclick = resetProgress;
+  }
+  // « Nouvelle aventure » : le journal de parcours repart de zéro avec la nouvelle partie.
+  if (typeof newGame === 'function') {
+    const previousNewGame = newGame;
+    newGame = window.newGame = function () {
+      const before = game();
+      const r = previousNewGame.apply(this, arguments);
+      const st = game();
+      if (st !== before && st && st.scene === 'p01' && !Object.keys(st.flags || {}).length) clearTrail();
+      return r;
+    };
+    const startBtn = document.getElementById('startBtn');
+    if (startBtn && startBtn.onclick === previousNewGame) startBtn.onclick = newGame;
   }
 
   /* ---- Ma Chronique : Progression (interface classique) ---- */
@@ -601,7 +844,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique de fin du Tome I';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : votre chronique complète';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,
@@ -611,10 +854,13 @@
     ouvrirChronique: openChronicle,
     // Outils de développement et de recette (aucun effet sur la sauvegarde).
     jouer: (opts = {}) => open(opts.mode || 'generique', opts.chronicle || currentChronicle(), opts) && (startMusic(), true),
-    apercu: (flagsObj) => C.select({ flags: flagsObj || flags() }),
+    apercu: () => makeCapture('apercu'),
+    parcours: () => readTrail(),
     etat: () => P && { mode: P.mode, phase: P.phase, offset: Math.round(P.offset), stopAt: Math.round(P.stopAt), clock: +P.clock.toFixed(2), orient: P.orient, paused: P.paused, bg: P.bgSrc, anchor: anchorNow(), speed: P.speed },
-    vitesse: (n = 1) => { if (P) { P.devSpeed = n; P.speed = Math.max(22, Math.min(46, P.viewH * 0.044)) * n; } },
+    vitesse: (n = 1) => { if (P) { P.devSpeed = n; P.speed = baseSpeed(P); } },
+    accelerer: (on = true) => setFast(on),
     passer: () => finish('passe'),
+    _aller: (off) => { if (P && P.phase === 'strip') { P.offset = Math.max(0, Math.min(P.stopAt, off)); P.bgSince = -99; paintStrip(); syncBg(); } },
     pause: (on = true) => setPaused(on),
   };
 })();
