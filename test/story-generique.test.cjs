@@ -86,10 +86,15 @@ const scenes = {
 const memoryDefs = { remerii_robe_assurance: { title: "Remerii se souviendra de cette assurance", body: "Hylee a cessé de disparaître.", type: "Remerii" } };
 const ctx = { scenes, memoryDefs, chapters: [], trail: [["s02", "Suivre la rivière"], ["c17_gameover_a", "Réessayer le duel"]], journal: [] };
 const v2 = C.captureV2({ flags: { streamAngle: "fear", robeBleueVue: true, ambigu: true, c12gDanse: "oui", s08Dragon: "tenir", s08BlizzardComplete: true, chapter4DComplete: true }, memories: ["remerii_robe_assurance", "inconnu"] }, ctx, { provenance: "partie" });
-const keys = v2.chapters.map((c) => c.key);
-assert.deepEqual(keys, ["ch1", "ch2", "ch3", "ch12_g", "ch18"], "un chapitre par rubrique, dans l’ordre du livre");
+assert.deepEqual(v2.chapters.map((c) => c.key), ["ch1", "ch2", "ch3", "ch12_g", "ch18"], "générique : structure chapitre par chapitre");
+const rep1 = v2.chapters[0].items;
+assert.ok(rep1.length === 1 && rep1[0].label === "Suivre la rivière" && rep1[0].repere, "repère : un chapitre sans choix marquant garde sa première décision prouvée");
+const minor = C.captureV2({ flags: { streamAngle: "fear" }, memories: [] }, { scenes: { ...scenes, c2_99: { title: "Berge", choices: [{ label: "Rester sur la berge", next: "c2_100" }, { label: "Partir", next: "c2_100" }] } }, trail: [["c2_99", "Rester sur la berge"]] });
+assert.ok(!minor.chapters.flatMap((c) => c.items).some((i) => i.label === "Rester sur la berge"), "générique : choix mineur écarté quand le chapitre a déjà un souvenir");
+assert.ok(minor.complet.flatMap((c) => c.items).some((i) => i.label === "Rester sur la berge"), "Ma Chronique : choix mineur gardé");
+assert.deepEqual(v2.complet.map((c) => c.key), ["ch1", "ch2", "ch3", "ch12_g", "ch18"], "Ma Chronique : tout le parcours, dans l’ordre du livre");
+assert.ok(v2.complet.flatMap((c) => c.items).some((i) => i.kind === "choix" && i.label === "Suivre la rivière" && i.how === "parcours"), "Ma Chronique : choix cliqué (journal de parcours)");
 const all = v2.chapters.flatMap((c) => c.items);
-assert.ok(all.some((i) => i.kind === "choix" && i.label === "Suivre la rivière" && i.how === "parcours"), "choix cliqué (journal de parcours)");
 assert.ok(all.some((i) => i.kind === "choix" && i.label === "Choisir la robe bleue" && i.how === "flag"), "choix reconstitué par un flag à libellé unique");
 assert.ok(all.some((i) => i.kind === "choix" && i.label === "danser"), "préfixe « Choix stratégique » retiré");
 assert.ok(!all.some((i) => i.kind === "choix" && /^(A|B)$/.test(i.label)), "flag ambigu (deux libellés) : rien");
@@ -103,7 +108,20 @@ assert.equal(v2.counts.rubriques, all.length);
 const big = {}; const trail = [];
 for (let i = 0; i < 140; i++) { big[`c${2 + (i % 17)}_d${i}`] = { title: "Scène " + i, choices: [{ label: "Choix " + i, next: "n" }, { label: "Autre " + i, next: "n" }] }; trail.push([`c${2 + (i % 17)}_d${i}`, "Choix " + i]); }
 const full = C.captureV2({ flags: many, memories: [] }, { scenes: big, memoryDefs: {}, chapters: [], trail, journal: [] });
-assert.ok(full.counts.rubriques >= 140 + C.selectAll({ flags: many }).filter((x) => !x.common).length, "aucune troncature : " + full.counts.rubriques);
+assert.ok(full.countsComplet.rubriques >= 140 + C.selectAll({ flags: many }).filter((x) => !x.common).length, "aucune troncature : " + full.counts.rubriques);
+// Choix marquants : poids déterministe et plafond par chapitre pour le générique.
+const routeScene = { title: "Croisée", choices: [{ label: "Suivre Draven", flags: { route4DStarted: true }, next: "c4d_01" }, { label: "Suivre Valurn", flags: { route4VStarted: true }, next: "c4v_01" }] };
+assert.ok(C.markWeight("c4_00", routeScene, "Suivre Draven") >= 100, "branche de route");
+assert.equal(C.markWeight("s02", scenes.s02, "Suivre la rivière"), 0, "choix sans flag ni souvenir : mineur");
+assert.ok(C.markWeight("c3_20", scenes.c3_20, "Choisir la robe bleue") > C.markWeight("c3_30", scenes.c3_30, "A"), "souvenir accordé plus lourd qu’un flag simple");
+const heavy = {}; const heavyTrail = []; const heavyFlags = {};
+for (let i = 0; i < 9; i++) { heavy[`c5_h${i}`] = { title: "S" + i, choices: [{ label: "Décision " + i, flags: { ["c5h" + i]: i % 2 ? "x" : true }, next: "n" }, { label: "Non " + i, next: "n" }] }; heavyTrail.push([`c5_h${i}`, "Décision " + i]); }
+const capped = C.captureV2({ flags: heavyFlags, memories: [] }, { scenes: heavy, trail: heavyTrail });
+assert.equal(capped.chapters[0].items.filter((x) => x.kind === "choix").length, C.MAX_DECISIONS_PER_CHAPTER, "plafond par chapitre dans le générique");
+assert.ok(capped.chapters[0].items.every((x) => x.weight === 40), "les plus lourdes d’abord (valeur texte)");
+assert.equal(capped.complet[0].items.length, 9, "Ma Chronique garde tout");
+assert.deepEqual(capped.chapters, C.captureV2({ flags: heavyFlags, memories: [] }, { scenes: heavy, trail: heavyTrail }).chapters, "déterministe");
+
 // Ancienne sauvegarde sans aucune preuve : rien d’inventé.
 assert.deepEqual(C.captureV2({ flags: {}, memories: [] }, { scenes }).chapters, []);
 assert.equal(C.chapterOf("c13i_x"), "ch13_i"); assert.equal(C.chapterOf("x12i_a"), "ch12_i"); assert.equal(C.chapterOf("c4d_07"), "ch4"); assert.equal(C.chapterOf("intro_wake"), "intro"); assert.equal(C.chapterOf("s14_bow"), "ch1");

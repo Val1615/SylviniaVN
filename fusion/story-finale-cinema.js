@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.430 · Générique : votre chronique complète';
+  if (update) update.textContent = 'Mise à jour · v0.431 · Ma Chronique et générique de fin';
 
   window.SylviniaFinaleCinema = {
     src: SRC,

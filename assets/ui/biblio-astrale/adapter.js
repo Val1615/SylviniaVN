@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "50";
+const VER = "51";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -927,6 +927,7 @@ function ouvrirCouche(type, q) {
       <div class="fin-stats">${VALS.map(([k, l]) => `<span class="gem" style="--v:var(--v-${k})">${l} ${s[k] || 0}</span>`).join("")}</div></div>
       <div class="conf-act"><button class="btn" data-go="#/progression" data-retour="#/titre"><span>Voir le registre</span></button><button class="btn" data-go="#/chapitres" data-retour="#/titre"><span>Autres volumes</span></button><button class="btn-or" data-go="#/titre"><span>Écran titre</span></button></div>`, "petite");
   } else if (type === "nemesis") { carnetNemesis(q && q.get ? q.get("f") : null); }
+  else if (type === "chronique") { if (window.SylviniaGenerique?.debloque?.()) maChronique(q && q.get ? q.get("ch") : null); else fermerCouche(); }
   else if (type === "lightbox") { lightbox(q.get("img")); }
 }
 actions.relire = (b) => { fermerCouche(); const id = b.dataset.id, p = +b.dataset.p; allerSceneMoteur(id); if (J && J.id === id) { J.p = Math.min(p, J.pages.length - 1); afficherPage(true); } };
@@ -1044,7 +1045,10 @@ function ecranProgression() {
   const barre = ([k, l]) => { const v = stats[k] || 0, cap = D.caps[k] || 25; return `<div class="valeur" style="--v:var(--v-${k})"><div class="val-tete"><span class="val-gem" aria-hidden="true"></span><b>${l}</b><span class="val-pal">${palier(k, v)}</span><strong>${v}</strong></div><div class="val-piste"><em style="width:${Math.min(100, v / cap * 100)}%"></em><i style="left:${8 / cap * 100}%"></i><i style="left:${16 / cap * 100}%"></i></div></div>`; };
   const fiche = (o, cls) => `<article class="fiche-cat ${cls}"><span class="fc-ico" aria-hidden="true">${esc(o.icon || "✦")}</span><div><small>${esc(o.type || o.chapter || "")}</small><b>${esc(o.title)}</b><p>${esc(brut(o.body || ""))}</p></div></article>`;
   const N = nemesis(); const vide = (t) => `<p class="note-vide">${t}</p>`;
-  const chron = window.SylviniaGenerique?.hasChronicle?.() ? `<button class="compteur z-lbl chronique-btn" data-act="ma-chronique" aria-label="Relire Ma Chronique"><em>Ma Chronique</em></button>` : "";
+  const chronOk = Boolean(window.SylviniaGenerique?.debloque?.());
+  const chron = window.SylviniaGenerique ? (chronOk
+    ? `<button class="compteur z-lbl chronique-btn" data-act="ov" data-ov="chronique" aria-label="Ouvrir Ma Chronique"><b>✦</b><em>Ma Chronique</em></button>`
+    : `<span class="compteur z-lbl chronique-btn verrou" aria-disabled="true" title="Se débloque en terminant le Tome I"><b>🔒&#xFE0E;</b><em>Ma Chronique</em></span>`) : "";
   monter(`<section class="progression">${entete("Carnet d’Hylee · registre du voyage", "Progression", retourVers, `${chron}<button class="compteur z-lbl nemesis-btn" data-act="ov" data-ov="nemesis" aria-label="Ouvrir le Carnet du Némésis"><b>${N.trouves.length}</b> / ${N.ordre.length}<em>Carnet du Némésis</em></button>`)}
     <div class="prog-corps">
       <section class="reg-col verre z-pan" data-orn><h2 class="col-titre">Valeurs d’Hylee</h2>${VALS.slice(0, 4).map(barre).join("")}
@@ -1077,7 +1081,30 @@ function carnetNemesis(sel) {
   fenetre("Le Carnet du Némésis", `Archives incomplètes · ${N.trouves.length} / ${N.ordre.length} fragments`, `<div class="nemesis"><aside class="cx-liste nm-liste"><ul>${liste}</ul></aside><article class="cx-fiche nm-page" data-orn>${page}</article></div>`, "large nemesis-fen");
 }
 actions["nemesis-f"] = (b) => carnetNemesis(b.dataset.f);
-actions["ma-chronique"] = () => { window.SylviniaGenerique?.ouvrirChronique?.(); };
+actions["ma-chronique"] = () => { fermerCouche(); window.SylviniaGenerique?.ouvrirChronique?.(); };
+actions["chronique-ch"] = (b) => maChronique(b.dataset.ch);
+actions["revoir-generique"] = () => { fermerCouche(); window.SylviniaGenerique?.revoir?.(); };
+/* ---------- Ma Chronique : tout le parcours prouvé, chapitre par chapitre (débloquée en finissant le Tome I) ---------- */
+function maChronique(sel) {
+  const R = window.SylviniaGenerique?.registre?.();
+  if (!R) return;
+  const chs = R.chapters || [];
+  const lib = (l) => String(l || "").replace(/_(G|I)\b/g, "");
+  const cur = chs.find((c) => c.key === sel) || chs[0];
+  const nb = (c) => c.items.length;
+  const liste = chs.map((c) => `<li><button class="cx-item ${cur && c.key === cur.key ? "actif" : ""}" data-act="chronique-ch" data-ch="${esc(c.key)}">${esc(lib(c.label))}<small>${esc(c.title)} · ${nb(c)} ${nb(c) > 1 ? "rubriques" : "rubrique"}</small></button></li>`).join("");
+  const ligne = (it) => it.kind === "souvenir"
+    ? `<div class="mc-bloc souvenir"><small class="nm-lab">${esc(it.categoryLabel || "Souvenir")}</small><b class="mc-t">${esc(it.title)}</b><p class="cx-texte">${esc(it.text)}</p></div>`
+    : it.kind === "memoire"
+      ? `<div class="mc-bloc memoire"><small class="nm-lab">✧ ${esc(it.type || "Souvenir")}</small><b class="mc-t">${esc(it.title)}</b><p class="cx-texte">${esc(it.text)}</p></div>`
+      : `<div class="mc-bloc mc-decision">${it.context ? `<small class="nm-lab">${esc(it.context)}</small>` : ""}<p class="cx-texte mc-choix">${/[«“"]/.test(it.label) ? esc(it.label) : `« ${esc(it.label)} »`}</p></div>`;
+  const page = cur
+    ? `<span class="filigrane" aria-hidden="true">Chronique</span><p class="kicker">${esc(lib(cur.label))}</p><h2 class="cx-titre">${esc(cur.title)}</h2><div class="filet-or" aria-hidden="true"></div>${cur.items.map(ligne).join("")}`
+    : `<p class="kicker">Ma Chronique</p><h2 class="cx-titre">Aucune trace lisible</h2><p class="cx-texte">Cette sauvegarde ne garde aucune preuve des choix du voyage.</p>`;
+  const sous = `${R.apercu ? "Aperçu développeur · " : ""}${R.counts.chapitres} chapitres · ${R.counts.rubriques} rubriques`;
+  fenetre("Ma Chronique", sous, `<div class="nemesis chronique-reg"><aside class="cx-liste nm-liste"><ul>${liste}</ul><div class="mc-actions"><button class="btn petit" data-act="ma-chronique">Revoir en projection</button><button class="btn petit" data-act="revoir-generique">Revoir le générique</button></div></aside><article class="cx-fiche nm-page mc-page" data-orn>${page}</article></div>`, "large nemesis-fen chronique-fen");
+  const pg = $("#couche .mc-page"); if (pg) pg.scrollTop = 0;
+}
 
 /* ---------- Réglages ---------- */
 function ecranReglages([onglet = "affichage"]) {
@@ -1087,7 +1114,8 @@ function ecranReglages([onglet = "affichage"]) {
   const inter = (k, t, d, v) => `<label class="reglage bascule"><span class="rg-t"><b>${t}</b><small>${d}</small></span><input type="checkbox" data-reg="${k}" ${(v ?? G.reg[k]) ? "checked" : ""}><span class="interrupteur" aria-hidden="true"></span></label>`;
   const curs = (k, t, d, min, max, pas = 5, suf = " %", v) => `<label class="reglage curseur"><span class="rg-t"><b>${t}</b><small>${d}</small></span><output data-out="${k}">${v ?? G.reg[k]}${suf}</output><input type="range" min="${min}" max="${max}" step="${pas}" value="${v ?? G.reg[k]}" data-reg="${k}" data-suf="${suf}"></label>`;
   const corps = {
-    lecture: curs("vitesse", "Vitesse du texte", "Machine à écrire (100 = instantané)", 10, 100, 5, "") + curs("auto", "Délai de lecture auto", "Secondes entre deux pages", 1, 8, .5, " s") + inter("facile", "Mode facile", "Affiche les effets des choix sur les valeurs") + inter("reduit", "Animations réduites", "Coupe transitions, particules et vidéos"),
+    lecture: (() => { const ok = Boolean(window.SylviniaGenerique?.debloque?.());
+      return `<div class="reglage rg-generique ${ok ? "" : "verrou"}"><span class="rg-t"><b>Générique de fin du Tome I</b><small>${ok ? "Revoir le générique et votre chronique" : "Se débloque en terminant le Tome I"}</small></span>${ok ? `<button class="btn petit" data-act="revoir-generique">Revoir le générique</button>` : `<span class="btn petit verrou" aria-disabled="true">🔒&#xFE0E; Verrouillé</span>`}</div>`; })() + curs("vitesse", "Vitesse du texte", "Machine à écrire (100 = instantané)", 10, 100, 5, "") + curs("auto", "Délai de lecture auto", "Secondes entre deux pages", 1, 8, .5, " s") + inter("facile", "Mode facile", "Affiche les effets des choix sur les valeurs") + inter("reduit", "Animations réduites", "Coupe transitions, particules et vidéos"),
     affichage: `<div class="reglage rg-ui"><span class="rg-t"><b>Interface en jeu</b><small>Complète, épurée ou cinématique (touche H, ou bouton ◐ en scène)</small></span><span class="rg-choix">${UI.map(([k, l]) => `<button class="puce ${G.reg.ui === k ? "actif" : ""}" data-act="ui-set" data-ui="${k}">${l}</button>`).join("")}</span></div><p class="rg-intro">Mêmes 7 curseurs que la Chronique Alternative — appliqués en direct, mémorisés.</p><div class="grille-curseurs">${ECH.map((e) => curs(e[0], e[1], e[2], e[3], e[4])).join("")}</div><button class="btn" data-act="reinit"><span>Réinitialiser à 100 %</span></button>`,
     audio: inter("musique", "Musique", "Thèmes du jeu (menu, scènes)", musiqueOn()) + curs("volume", "Volume de la musique", "", 0, 100, 5, " %", vol) + inter("sons", "Sons d’interface", "Page qui tourne, carillon de choix"),
     systeme: `<div class="reglage rg-ui rg-skin"><span class="rg-t"><b>Apparence</b><small>Bibliothèque astrale ou interface Classique d’origine</small></span><span class="rg-choix"><button class="puce actif" data-act="skin" data-skin="biblio">Bibliothèque</button><button class="puce" data-act="skin" data-skin="classique">Classique</button></span></div>` +

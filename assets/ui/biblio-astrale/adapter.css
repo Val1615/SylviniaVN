@@ -83,3 +83,22 @@ select.rg-in{flex:0 1 calc(200 * var(--c))}
 .ba-dev-scene:hover,.ba-dev-scene:focus-visible{opacity:1;border-color:rgba(255,217,138,.85);background:rgba(8,10,22,.62)}
 .ba-dev-scene[hidden]{display:none!important}
 @media (max-height:560px){.ba-dev-scene{top:6px;left:8px;padding:4px 8px;font-size:10px}.ba-dev-scene b{font-size:11px}}
+/* Ma Chronique (Progression) : tout le parcours, chapitre par chapitre */
+.chronique-btn.verrou{cursor:not-allowed;opacity:.55;filter:saturate(.4)}
+.chronique-btn b{margin-right:calc(6 * var(--c))}
+.chronique-fen .chronique-reg .nm-liste{display:flex;flex-direction:column;overflow:auto}
+.chronique-fen .chronique-reg .nm-liste ul{flex:1;overflow:auto}
+.chronique-fen .mc-actions{display:flex;flex-wrap:wrap;gap:calc(8 * var(--c));padding:calc(12 * var(--c)) calc(10 * var(--c)) 0;border-top:1px solid var(--ligne)}
+.chronique-fen .mc-page{overflow:auto;overscroll-behavior:contain}
+.mc-bloc{position:relative;margin-top:calc(14 * var(--c))}
+.mc-bloc + .mc-bloc{padding-top:calc(12 * var(--c));border-top:1px dashed var(--ligne)}
+.mc-bloc .mc-t{display:block;font:700 calc(20 * var(--t))/1.25 var(--serif);color:var(--or-pale)}
+.mc-bloc.souvenir{padding-left:calc(12 * var(--c));box-shadow:inset 2px 0 0 var(--or-vif)}
+.mc-bloc.memoire{padding-left:calc(12 * var(--c));box-shadow:inset 2px 0 0 #c87a9a}
+.mc-choix{font-style:italic}
+.rg-generique.verrou{opacity:.6}
+.btn.verrou{cursor:not-allowed;opacity:.7}
+@media (max-width:900px) and (orientation:portrait){.chronique-fen .chronique-reg{flex-direction:column}.chronique-fen .chronique-reg .nm-liste{flex:0 0 auto;max-height:32%;box-shadow:inset 0 -1px 0 var(--ligne)}}
+@media (max-height:600px){.chronique-fen .mc-actions{padding-top:6px}.mc-bloc .mc-t{font-size:calc(18 * var(--t))}}
+.mc-bloc .nm-lab,.mc-bloc .cx-texte{display:block;float:none;width:auto;max-width:none;margin:0;text-align:left}
+.mc-bloc .mc-choix{font-size:calc(21 * var(--t))}

@@ -2,9 +2,23 @@
 
 Document généré depuis `fusion/story-generique-chronique.js` (souvenirs illustrés, 99 souvenirs, 42 groupes exclusifs). Chaque condition a été vérifiée contre l’index : le flag et sa valeur sont posés par un choix de la scène indiquée (audit automatisé : 0 condition sans source). Test : `node test/story-generique.test.cjs`.
 
-## Règles de sélection (catalogue v2, v0.430)
+## Règles de sélection (catalogue v2, v0.431)
 
-- La chronique retranscrit tout le parcours prouvé, rangé par chapitre (une rubrique par chapitre vécu, dans l’ordre du livre). Aucun plafond.
+Deux lectures du même parcours prouvé :
+
+- **Ma Chronique** (onglet Progression, `capture.complet`) : tout le parcours prouvé, rangé par chapitre, sans filtre ni plafond.
+- **Générique** (`capture.chapters`, durée visée ≈ 6 min à ×1) : mêmes chapitres, tous les souvenirs illustrés et souvenirs de Progression, mais seulement les **choix marquants**. Poids déterministe d’une décision (`markWeight`) :
+
+  | Trace laissée par le choix | Poids |
+  | --- | --- |
+  | branche de route (mène à un autre volume alors que l’écran se divise, ou flag `…route…` / `…Started`) | +100 |
+  | souvenir de Progression accordé | +40 |
+  | flag narratif à variantes (valeur texte : réponse, posture, regard…) | +30 |
+  | choix du final (chapitres XVII, XVIII, Épilogue) | +20 |
+  | flag narratif simple | +10 |
+
+  Poids nul (aucun flag durable, aucun souvenir) : choix mineur ou cosmétique, écarté. Par chapitre, les `MAX_DECISIONS_PER_CHAPTER` = 3 décisions les plus lourdes (égalité : ordre du livre). **Repère de chapitre** : un chapitre traversé sans choix marquant ni souvenir garde sa première décision prouvée, pour que la structure chapitre par chapitre reste entière ; son en-tête est court (sans vignette). Rien sans preuve : un chapitre sans décision prouvée n’apparaît pas.
+- Chronique v0.430 (sans `complet`) : son parcours entier devient `complet`, le générique est recalculé sur ses preuves figées.
 - Sources, de la plus forte à la plus faible :
   1. souvenirs illustrés du catalogue ci-dessous, tous ceux dont la condition exacte est remplie, un par groupe exclusif ;
   2. décisions réellement cliquées (journal de parcours `sylvinia_vn_parcours_v1`, écrans à au moins deux choix) ;
