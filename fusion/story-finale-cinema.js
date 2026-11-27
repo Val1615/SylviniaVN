@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.428 · Images clés du deuil d’Amanea';
+  if (update) update.textContent = 'Mise à jour · v0.429 · Générique de fin du Tome I';
 
   window.SylviniaFinaleCinema = {
     src: SRC,

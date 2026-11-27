@@ -31,6 +31,7 @@ a.btn,a.btn-or{text-decoration:none;display:inline-flex}
 
 /* Progression : accès au Carnet du Némésis (cote en tête) + listes vides */
 .nemesis-btn{cursor:pointer;margin-left:auto}
+.chronique-btn{cursor:pointer;margin-left:auto}.chronique-btn + .nemesis-btn{margin-left:calc(10 * var(--c))}.chronique-btn:hover{box-shadow:inset 0 0 0 1px var(--or-vif),0 0 calc(18 * var(--c)) rgba(255,217,138,.25)}
 .nemesis-btn:hover{box-shadow:inset 0 0 0 1px var(--or-vif),0 0 calc(18 * var(--c)) rgba(255,217,138,.25)}
 .note-vide{font:italic 500 calc(18 * var(--t))/1.45 var(--serif);color:var(--texte-3);padding:calc(10 * var(--c)) calc(4 * var(--c))}
 

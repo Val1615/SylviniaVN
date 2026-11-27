@@ -1,5 +1,16 @@
 # Journal · Final du Tome I
 
+## v0.429 (branche `feat/generique-fin-tome1`)
+
+- Générique de fin du Mode Histoire, Tome I, selon `docs/production/generique_fin_tome1.md` : titre frontal « Les Chroniques de / SYLVINIA / TOME I », puis quatre actes défilant du bas vers le haut (« Le silence après la tempête », « Votre Chronique », « Derrière les Chroniques », « Un monde qui continue de vivre »), crédits exacts, auteur sous pseudonyme seul.
+- Déclencheur : le choix « menu » de `c19_fin` (fin de l’épilogue). Le générique se joue avant le retour au menu ; Passer (avec confirmation), Pause et Plein écran restent discrets. Fin : retour au titre de la Bibliothèque Astrale.
+- Musique : thème du menu principal (`music_menu`, `assets/audio/menu.mp3`), configurable dans `fusion/story-generique-credits.js`. Respecte les réglages son existants.
+- Deux ambiances : « Panoramas » en paysage, « Au-delà des cendres » en portrait (image cadrée, fond flouté). Rotation sans perte de position ni coupure de musique. Fonds existants uniquement, aucun asset modifié.
+- Votre Chronique : 10 à 16 souvenirs prouvés par des flags de choix exacts (catalogue de 99 souvenirs, `docs/production/generique_chronique_audit.md`). Capture figée à `c19_bilan` dans la sauvegarde (`tome1Chronicle`) avec copie de secours ; jamais réécrite par une rejouabilité, le mode développeur, la CA ou une reprise de duel. Anciennes sauvegardes terminées : capture rétroactive.
+- Progression : bouton « Ma Chronique » (rejoue seulement l’Acte II).
+- Scénario, routes, seuils, déblocages, duels, CA, Studio et sauvegardes `sylvinia_vn_v82` inchangés. Test : `node test/story-generique.test.cjs`.
+- Bulle de mise à jour : « v0.429 · Générique de fin du Tome I ».
+
 ## v0.428 (branche `ch18-amanea-cg`)
 
 - 13 images clés livrées par l’auteur pour le deuil d’Amanea (Tia et Iriana, point de vue Iriana du chapitre XVIII), dans `assets/images/keyscenes/chapter18-amanea/`. Copie à l’identique (sha256 vérifié). Aucune conversion, aucun redimensionnement.
