@@ -1,5 +1,19 @@
 # Journal · Final du Tome I
 
+## v0.431 (branche `feat/generique-choix-marquants`)
+
+Retours de l’auteur sur le générique v0.430 (≈ 11 min à ×1).
+
+- Générique resserré sur les choix marquants, durée mesurée ≈ 5 min 54 s à ×1 (bande 327 s + prélude, ouverture et maintien ≈ 27 s) et ≈ 2 min 16 s à ×3, à 1024x880. Poids déterministe (route +100, souvenir de Progression +40, flag à variantes +30, final +20, flag simple +10), 3 décisions au plus par chapitre, repère de chapitre pour garder la structure entière, tous les souvenirs illustrés conservés. Règle documentée dans `generique_chronique_audit.md`.
+- Espacements et vitesse de défilement ajustés (0,06 hauteur d’écran par seconde) ; chapitres sans souvenir avec un en-tête court.
+- Passerelle : titre « Et maintenant ? » en or plein avec ombre portée et cartouche sombre diffus derrière la carte, lisible sur les flashs de la vidéo sans la masquer.
+- Progression : rubrique « Ma Chronique » à part (fenêtre du registre) qui montre tout le parcours prouvé, chapitre par chapitre : décisions, souvenirs illustrés, souvenirs de Progression. Liste des chapitres à gauche, page défilante à droite, boutons « Revoir en projection » et « Revoir le générique ».
+- Réglages › Lecture : entrée « Générique de fin du Tome I » avec « Revoir le générique » (sans prélude ni passerelle, retour à l’écran d’origine).
+- Ma Chronique et « Revoir le générique » se débloquent en finissant le Tome I (`tome1Complete`). Avant : cadenas, rien de cliquable. Mode développeur : aperçu. Interface classique : bouton « Ma Chronique » seulement une fois débloqué.
+- Chronique v0.430 déjà enregistrée : mise à niveau automatique (registre complet gardé, générique recalculé).
+- Scénario, routes, seuils, déblocages, duels, CA, Studio et sauvegardes `sylvinia_vn_v82` inchangés.
+- Bulle de mise à jour : « v0.431 · Ma Chronique et générique de fin ».
+
 ## v0.430 (branche `fix/generique-passerelle`)
 
 Retours de l’auteur sur le générique v0.429.

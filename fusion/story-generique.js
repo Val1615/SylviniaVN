@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.430';
+  const GAME_VERSION = 'v0.431';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -88,12 +88,25 @@
   }
   // Partie déjà terminée : on reprend sa chronique. Sinon (sauvegarde antérieure, ou chronique v0.429 plafonnée
   // à 16 souvenirs), on la reconstitue à partir des preuves présentes, marquées comme telles, sans rien inventer.
+  // Capture v0.430 (tout le parcours dans le générique) : le parcours complet passe dans « complet »
+  // (Ma Chronique, Progression) et le générique ne garde que les choix marquants, recalculés sur les preuves figées.
+  function upgrade(cap) {
+    if (!validCapture(cap) || Array.isArray(cap.complet)) return cap;
+    const chapters = C.chronicle({ flags: cap.evidence || {}, memories: cap.memories || [] }, chronicleContext());
+    return { ...cap, complet: cap.chapters, countsComplet: cap.counts, chapters,
+      entries: chapters.flatMap((c) => c.items.filter((x) => x.kind === 'souvenir')),
+      counts: { chapitres: chapters.length, rubriques: chapters.reduce((n, c) => n + c.items.length, 0) }, upgraded: GAME_VERSION };
+  }
   function ensureChronicle() {
     const st = game(); if (!st) return null;
-    if (validCapture(st[STATE_KEY])) return st[STATE_KEY];
-    const mirror = readMirror();
+    if (validCapture(st[STATE_KEY])) {
+      const up = upgrade(st[STATE_KEY]);
+      if (up !== st[STATE_KEY] && !replaying()) storeCapture(up);
+      return up;
+    }
+    const mirror = upgrade(readMirror());
     if (replaying() || !flags().tome1Complete) return validCapture(mirror) ? mirror : null;
-    if (validCapture(mirror)) { st[STATE_KEY] = mirror; try { save(); } catch (_e) { /* ignore */ } return mirror; }
+    if (validCapture(mirror)) { storeCapture(mirror); return mirror; }
     const legacy = legacyCapture(st[STATE_KEY]) ? st[STATE_KEY] : (legacyCapture(mirror) ? mirror : null);
     const cap = legacy ? makeCapture('mise-a-niveau-v0.429', legacy.evidence) : makeCapture('sauvegarde-anterieure');
     storeCapture(cap);
@@ -107,10 +120,27 @@
     return makeCapture('apercu');
   }
   const currentChronicle = () => {
-    const st = game(); if (st && validCapture(st[STATE_KEY])) return st[STATE_KEY];
+    const st = game(); if (st && validCapture(st[STATE_KEY]) && Array.isArray(st[STATE_KEY].complet)) return st[STATE_KEY];
     if (!replaying() && flags().tome1Complete) { try { return ensureChronicle(); } catch (_e) { /* ignore */ } }
-    const m = readMirror(); return validCapture(m) ? m : null;
+    if (st && validCapture(st[STATE_KEY])) return upgrade(st[STATE_KEY]);
+    const m = upgrade(readMirror()); return validCapture(m) ? m : null;
   };
+  // Ma Chronique et « Revoir le générique » se débloquent en finissant le Tome I (le mode développeur les ouvre en aperçu).
+  const unlocked = () => { const st = game(); if (!st) return false; if (st.devMode) return true; return Boolean(flags().tome1Complete && currentChronicle()); };
+  function registre() {
+    if (!unlocked()) return null;
+    let cap = currentChronicle(); let apercu = false;
+    if (!cap) { cap = makeCapture('apercu'); apercu = true; }
+    const chapters = Array.isArray(cap.complet) ? cap.complet : C.chronicle({ flags: cap.evidence || {}, memories: cap.memories || [] }, chronicleContext(), { complet: true });
+    return { apercu, provenance: cap.provenance, chapters, counts: { chapitres: chapters.length, rubriques: chapters.reduce((n, c) => n + c.items.length, 0) } };
+  }
+  function replayCredits() {
+    if (!unlocked() || P) return false;
+    const cap = currentChronicle() || makeCapture('apercu');
+    const ok = open('generique', cap, { replay: true });
+    if (ok) startMusic();
+    return ok;
+  }
 
   /* ======================= Style ======================= */
   const CSS = `
@@ -187,6 +217,7 @@
 #${ROOT_ID}.lite .gq-layer.vis .gq-img{animation:none}
 /* ---- Votre Chronique : rubriques par chapitre ---- */
 .gq-chap{padding-top:2vh}
+.gq-chap-court .gq-chap-title{font-size:clamp(18px,3vmin,30px)}
 .gq-cover{display:block;width:clamp(58px,9vmin,92px);aspect-ratio:2/3;margin:0 auto .9em;border-radius:3px 6px 6px 3px;overflow:hidden;border:1px solid rgba(233,201,133,.45);box-shadow:0 8px 22px rgba(0,0,0,.55),inset 6px 0 0 rgba(0,0,0,.35);opacity:.92}
 .gq-cover img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.85) brightness(.85)}
 .gq-chap-label{display:block;font:600 clamp(11px,1.7vmin,15px)/1 "Cinzel",Georgia,serif;letter-spacing:.38em;text-indent:.38em;text-transform:uppercase;color:rgba(233,201,133,.78)}
@@ -227,7 +258,10 @@
 .gq-gate video,.gq-gate .gq-gate-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.85) brightness(.5)}
 .gq-gate-veil{position:absolute;inset:0;background:radial-gradient(ellipse 60% 42% at 50% 50%,rgba(5,4,8,.62) 0%,rgba(5,4,8,.38) 60%,rgba(5,4,8,0) 100%),radial-gradient(ellipse 90% 75% at 50% 55%,rgba(5,4,8,.15) 0%,rgba(5,4,8,.7) 78%,rgba(5,4,8,.9) 100%)}
 .gq-gate-card{position:relative;max-width:min(92vw,40rem);padding:clamp(18px,4vmin,40px);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.85)}
-.gq-gate-card h2{margin:.25em 0 .35em;font:700 clamp(30px,6.4vmin,64px)/1.05 "Cinzel Decorative","Cinzel",Georgia,serif;background:linear-gradient(180deg,#fff1c9 0%,#e3c07a 55%,#a9853f 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.gq-gate-card{isolation:isolate}
+.gq-gate-card::before{content:"";position:absolute;inset:-6% -14% -2%;z-index:-1;background:radial-gradient(closest-side,rgba(6,5,10,.62) 0%,rgba(6,5,10,.42) 55%,rgba(6,5,10,0) 100%);pointer-events:none}
+.gq-gate-card h2{margin:.25em 0 .35em;font:700 clamp(30px,6.4vmin,64px)/1.05 "Cinzel Decorative","Cinzel",Georgia,serif;color:#f7e3a8;text-shadow:0 0 2px rgba(0,0,0,.95),0 2px 6px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.8),0 0 2px rgba(255,236,190,.35)}
+.gq-gate-card .gq-kicker{color:rgba(246,226,170,.95);text-shadow:0 0 6px rgba(0,0,0,.95)}
 .gq-gate-card p{margin:.2em 0;font:italic 500 clamp(16px,2.6vmin,23px)/1.4 "Cormorant Garamond",Georgia,serif;color:rgba(244,236,216,.92)}
 .gq-gate-actions{display:flex;flex-wrap:wrap;gap:clamp(10px,2vmin,18px);justify-content:center;margin-top:clamp(16px,3.6vmin,34px)}
 .gq-gate-actions button{flex:1 1 15rem;max-width:19rem;display:flex;flex-direction:column;gap:.35em;align-items:center;padding:clamp(11px,2vmin,16px) 18px;border-radius:14px;border:1px solid rgba(233,201,133,.38);background:rgba(10,9,18,.5);color:#f6ead0;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);transition:border-color .3s,background .3s,transform .3s}
@@ -282,20 +316,22 @@
     const firstBg = (items.find((x) => x.kind === 'souvenir' && x.backgrounds && x.backgrounds.length) || {}).backgrounds;
     const chapBg = firstBg ? firstBg[0] : (chap.image ? { src: chap.image, focus: '50% 32%' } : undefined);
     const cid = 'chap-' + esc(chap.key);
-    out.push(`<section class="gq-block gq-chap" data-id="${cid}" data-chapter="${esc(chap.key)}"${bgAttr(chapBg)} style="--gap:20vh">${chap.image ? `<span class="gq-cover"><img src="${esc(chap.image)}" alt="" loading="lazy" decoding="async"></span>` : ''}<span class="gq-chap-label">${esc(chap.label)}</span><h3 class="gq-chap-title">${esc(chap.title)}</h3>${ORN('gq-sep small')}</section>`);
+    // Chapitre sans souvenir (seulement son ou ses choix marquants) : en-tête court, sans vignette ; le volume reste en fond.
+    const court = !items.some((x) => x.kind !== 'choix');
+    out.push(`<section class="gq-block gq-chap${court ? ' gq-chap-court' : ''}" data-id="${cid}" data-chapter="${esc(chap.key)}"${bgAttr(chapBg)} style="--gap:${court ? 8 : 11}vh">${chap.image && !court ? `<span class="gq-cover"><img src="${esc(chap.image)}" alt="" loading="lazy" decoding="async"></span>` : ''}<span class="gq-chap-label">${esc(String(chap.label || '').replace(/_(G|I)\b/g, ''))}</span><h3 class="gq-chap-title">${esc(chap.title)}</h3>${ORN('gq-sep small')}</section>`);
     let pending = [];
     let n = 0;
     let lastCtx = '';
     const flush = () => {
       if (!pending.length) return;
       n += 1;
-      out.push(`<section class="gq-block gq-choices" data-id="${cid}-c${n}" data-rubrique-count="${pending.length}" style="--gap:${n === 1 ? 5 : 3}vh"><ul>${pending.join('')}</ul></section>`);
+      out.push(`<section class="gq-block gq-choices" data-id="${cid}-c${n}" data-rubrique-count="${pending.length}" style="--gap:${n === 1 ? 4 : 2.5}vh"><ul>${pending.join('')}</ul></section>`);
       pending = [];
     };
     for (const it of items) {
       if (it.kind === 'souvenir') {
         flush(); lastCtx = '';
-        out.push(`<section class="gq-block gq-mem" data-id="mem-${esc(it.id)}"${bgAttr(it.backgrounds)} data-memory="${esc(it.id)}" data-rubrique="souvenir" style="--gap:13vh"><span class="gq-kicker">${esc(it.categoryLabel || '')}</span><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p><i class="gq-dot" aria-hidden="true"></i></section>`);
+        out.push(`<section class="gq-block gq-mem" data-id="mem-${esc(it.id)}"${bgAttr(it.backgrounds)} data-memory="${esc(it.id)}" data-rubrique="souvenir" style="--gap:8vh"><span class="gq-kicker">${esc(it.categoryLabel || '')}</span><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p><i class="gq-dot" aria-hidden="true"></i></section>`);
       } else if (it.kind === 'choix') {
         const ctxHtml = it.context && it.context !== lastCtx ? `<span class="gq-ctx">${esc(it.context)}</span>` : '';
         lastCtx = it.context || lastCtx;
@@ -310,20 +346,20 @@
   }
   function buildStrip(chronicle, mode) {
     const parts = [];
-    const actHead = (a) => `<section class="gq-block gq-act" data-id="${a.id}" data-act="${a.id}"${bgAttr(a.bg)} style="--gap:40vh"><span class="gq-num">${a.numeral}</span><h2>${esc(a.title)}</h2>${ORN('gq-sep')}</section>`;
+    const actHead = (a) => `<section class="gq-block gq-act" data-id="${a.id}" data-act="${a.id}"${bgAttr(a.bg)} style="--gap:26vh"><span class="gq-num">${a.numeral}</span><h2>${esc(a.title)}</h2>${ORN('gq-sep')}</section>`;
     for (const act of D.acts) {
       if (mode === 'chronique' && !act.personal) continue;
       parts.push(actHead(act));
       if (act.personal) {
-        parts.push(`<section class="gq-block gq-intro" data-id="chronique-intro" style="--gap:18vh">${act.intro.map((l) => `<p>${esc(l)}</p>`).join('')}</section>`);
+        parts.push(`<section class="gq-block gq-intro" data-id="chronique-intro" style="--gap:12vh">${act.intro.map((l) => `<p>${esc(l)}</p>`).join('')}</section>`);
         const chapters = (chronicle && Array.isArray(chronicle.chapters)) ? chronicle.chapters : [];
         if (!chapters.length) parts.push(`<section class="gq-block gq-mem" data-id="chronique-vide" style="--gap:12vh"><p>${esc(act.empty)}</p></section>`);
         for (const chap of chapters) parts.push(...chapterBlocks(chap));
-        parts.push(`<section class="gq-block gq-conclusion" data-id="chronique-fin"${bgAttr(act.outro.bg)} style="--gap:32vh"><p>${esc(act.outro.text)}</p>${ORN('gq-sep')}</section>`);
+        parts.push(`<section class="gq-block gq-conclusion" data-id="chronique-fin"${bgAttr(act.outro.bg)} style="--gap:20vh"><p>${esc(act.outro.text)}</p>${ORN('gq-sep')}</section>`);
         continue;
       }
       for (const b of act.blocks) {
-        parts.push(`<section class="gq-block${b.final ? ' gq-final' : ''}" data-id="${b.id}"${bgAttr(b.bg)}${b.final ? ' data-final="1"' : ''} style="--gap:${b.final ? 36 : 22}vh">${b.items.map(item).join('')}</section>`);
+        parts.push(`<section class="gq-block${b.final ? ' gq-final' : ''}" data-id="${b.id}"${bgAttr(b.bg)}${b.final ? ' data-final="1"' : ''} style="--gap:${b.final ? 24 : 15}vh">${b.items.map(item).join('')}</section>`);
       }
     }
     if (mode === 'chronique') parts.push(`<section class="gq-block gq-final" data-id="chronique-retour" data-final="1" style="--gap:30vh">${ORN('gq-sep')}<span class="gq-suite">Ma Chronique</span></section>`);
@@ -352,7 +388,7 @@
     }, 40);
   }
 
-  const baseSpeed = (p) => Math.max(22, Math.min(46, p.viewH * 0.044)) * (p.devSpeed || 1) * (p.userSpeed || 1);
+  const baseSpeed = (p) => Math.max(24, Math.min(58, p.viewH * 0.06)) * (p.devSpeed || 1) * (p.userSpeed || 1);
   function orientation() { return window.innerHeight > window.innerWidth * 1.02 ? 'portrait' : 'landscape'; }
   function lite() { return reducedMotion() || Math.min(window.innerWidth, window.innerHeight) < 420 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2); }
 
@@ -707,7 +743,7 @@
   function finish(reason) {
     const p = P; if (!p || p.closing) return;
     // Fin (ou passage) du générique : la passerelle propose le menu ou la suite dans la Chronique Alternative.
-    if (p.mode === 'generique' && D.passerelle && !p.gateShown && (reason === 'fin' || reason === 'passe')) { showGate(); return; }
+    if (p.mode === 'generique' && !p.opts.replay && D.passerelle && !p.gateShown && (reason === 'fin' || reason === 'passe')) { showGate(); return; }
     cover();
     p.closing = true;
     p.root.classList.add('out');
@@ -715,7 +751,7 @@
       teardown(p, reason);
       const m = musicEl();
       if (m) try { m.volume = sliderVolume(); } catch (_e) { /* ignore */ }
-      if (p.mode === 'chronique') {
+      if (p.mode === 'chronique' || p.opts.replay) {
         // retour à l’écran d’origine : on rend la piste qui jouait avant
         if (p.prevMusicKey && p.prevMusicKey !== D.track && typeof playMusic === 'function') { try { playMusic(p.prevMusicKey); } catch (_e) { /* ignore */ } }
         else if (p.prevMusicPaused && m) try { m.pause(); } catch (_e) { /* ignore */ }
@@ -727,7 +763,7 @@
       }
     };
     const m = musicEl();
-    if (p.mode === 'chronique' && m && !m.paused && p.prevMusicKey !== D.track) fadeGain(0, T.outro * 1000 * 0.9);
+    if ((p.mode === 'chronique' || p.opts.replay) && m && !m.paused && p.prevMusicKey !== D.track) fadeGain(0, T.outro * 1000 * 0.9);
     setTimeout(done, T.outro * 1000);
   }
 
@@ -820,8 +856,8 @@
 
   /* ---- Ma Chronique : Progression (interface classique) ---- */
   function openChronicle() {
-    const cap = currentChronicle();
-    if (!cap) return false;
+    if (!unlocked()) return false;
+    const cap = currentChronicle() || makeCapture('apercu');
     return open('chronique', cap);
   }
   if (typeof renderProgression === 'function') {
@@ -831,7 +867,7 @@
       try {
         const back = document.getElementById('progressBackBtn');
         let btn = document.getElementById('maChroniqueBtn');
-        if (currentChronicle()) {
+        if (unlocked()) {
           if (!btn && back) {
             btn = document.createElement('button'); btn.id = 'maChroniqueBtn'; btn.type = 'button'; btn.className = 'topBtn backWide'; btn.textContent = 'Ma Chronique';
             btn.addEventListener('click', (ev) => { ev.stopPropagation(); openChronicle(); });
@@ -850,6 +886,9 @@
     version: GAME_VERSION,
     get active() { return Boolean(P); },
     hasChronicle: () => Boolean(currentChronicle()),
+    debloque: () => unlocked(),
+    registre: () => registre(),
+    revoir: () => replayCredits(),
     chronicle: () => currentChronicle(),
     ouvrirChronique: openChronicle,
     // Outils de développement et de recette (aucun effet sur la sauvegarde).

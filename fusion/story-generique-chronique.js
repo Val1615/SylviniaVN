@@ -448,6 +448,38 @@
   };
   const isDecisionScene = (sid, scene) => Boolean(scene && Array.isArray(scene.choices) && scene.choices.length >= 2 && !IGNORED_SCENE.test(sid) && !IGNORED_TITLE.test(resolve(scene.title, scene)));
 
+  /* Choix marquants (v0.431, durée visée ≈ 6 min) : une décision n’entre dans la chronique que si elle a laissé
+     une trace durable. Poids déterministe :
+       branche de route (le choix mène à un autre volume, ou flag de route)  +100
+       souvenir de Progression accordé                                         +40
+       flag narratif à variantes (valeur texte : réponse, posture, regard…)   +30
+       choix du final (chapitres XVII à l’Épilogue)                            +20
+       flag narratif simple (vrai)                                             +10
+     Poids nul (aucun flag durable, aucun souvenir) : choix mineur, écarté. Puis, par chapitre, on garde
+     les MAX_DECISIONS_PER_CHAPTER plus lourdes (égalité : ordre du livre).
+     Repère de chapitre : un chapitre traversé qui n’a ni choix marquant ni souvenir garde sa première décision
+     prouvée (ordre du livre), pour que la structure chapitre par chapitre reste entière. Rien sans preuve :
+     un chapitre sans aucune décision prouvée n’apparaît pas. */
+  const MAX_DECISIONS_PER_CHAPTER = 3;
+  const FINAL_CHAPTERS = new Set(['ch17', 'ch18', 'ch19']);
+  function markWeight(sid, scene, label) {
+    const c = (scene.choices || []).find((x) => x && cleanLabel(resolve(x.label, x)) === label);
+    if (!c) return 0;
+    const flagsSet = isObj(c.flags) ? Object.entries(c.flags).filter(([k, v]) => !IGNORED_FLAG.test(k) && v !== false && v !== null && v !== undefined && v !== '' && v !== 0) : [];
+    const mems = c.memories ? [].concat(c.memories).filter(Boolean) : [];
+    if (!flagsSet.length && !mems.length) return 0;
+    let w = 0;
+    const here = chapterOf(sid);
+    const there = typeof c.next === 'string' ? chapterOf(c.next) : null;
+    const branches = new Set((scene.choices || []).map((x) => (x && typeof x.next === 'string' ? chapterOf(x.next) : null)).filter(Boolean));
+    if ((there && there !== here && branches.size > 1) || flagsSet.some(([k]) => /route|Started$/i.test(k))) w += 100;
+    if (mems.length) w += 40;
+    if (flagsSet.some(([, v]) => typeof v === 'string')) w += 30;
+    if (FINAL_CHAPTERS.has(here)) w += 20;
+    if (flagsSet.length) w += 10;
+    return w;
+  }
+
   // Index des flags posés par un seul libellé de choix du jeu : flag=valeur -> { sid, label }.
   function choiceIndex(scenes) {
     const byPair = new Map();
@@ -510,7 +542,8 @@
      source : { flags, memories }  (état du moteur ou preuve figée)
      ctx    : { scenes (S), memoryDefs (PROGRESSION_MEMORIES), chapters (CHAPTER_SELECT_DATA), trail [[sid, libellé]], journal [[sid, libellé]] }
      Rend : [{ key, label, title, image, items: [souvenir | choix | memoire] }] dans l’ordre du livre. */
-  function chronicle(source, ctx = {}) {
+  function chronicle(source, ctx = {}, opts = {}) {
+    const complet = Boolean(opts.complet); // Ma Chronique (Progression) : toutes les décisions prouvées, sans filtre ni plafond
     const scenes = ctx.scenes || {};
     const order = new Map(Object.keys(scenes).map((k, i) => [k, i]));
     const pos = (sid) => (order.has(sid) ? order.get(sid) : 1e6);
@@ -538,11 +571,12 @@
       if (scene && !isDecisionScene(sid, scene)) return;
       if (!scene && IGNORED_SCENE.test(sid)) return;
       if (coveredScenes.has(sid)) return;
+      const weight = scene ? markWeight(sid, scene, label) : (how === 'flag' ? 10 : 0);
       const key = sid + '|' + label;
       if (seen.has(key)) return;
       if ([...seen].some((s) => s.startsWith(sid + '|'))) return; // une décision par écran (la dernière connue)
       seen.add(key);
-      push(chapterOf(sid), { kind: 'choix', scene: sid, context: sceneContext(scene), label, how, at: pos(sid) });
+      push(chapterOf(sid), { kind: 'choix', scene: sid, context: sceneContext(scene), label, how, at: pos(sid), weight });
     };
     const trail = Array.isArray(ctx.trail) ? ctx.trail : [];
     for (let i = trail.length - 1; i >= 0; i--) { const t = trail[i]; if (Array.isArray(t)) addChoice(t[0], t[1], 'parcours'); }
@@ -566,6 +600,20 @@
       push(chapterOf(sid) || MEMORY_BUCKET.key, { kind: 'memoire', id: k, title: cleanText(d.title), text: cleanText(d.body), type: cleanText(d.type), at: sid ? pos(sid) + 0.5 : 1e6 });
     }
 
+    // Plafond par chapitre des décisions (les souvenirs illustrés et de Progression restent tous).
+    // Choix mineurs (poids nul) écartés, sauf le repère d’un chapitre qui n’aurait sinon plus rien.
+    if (!complet) for (const [k, list] of buckets) {
+      const choices = list.filter((x) => x.kind === 'choix');
+      const marked = choices.filter((x) => x.weight > 0).sort((a, b) => (b.weight - a.weight) || (a.at - b.at));
+      const keep = new Set(marked.slice(0, MAX_DECISIONS_PER_CHAPTER));
+      if (!keep.size && choices.length && !list.some((x) => x.kind !== 'choix')) {
+        const first = choices.slice().sort((a, b) => a.at - b.at)[0];
+        first.repere = true; keep.add(first);
+      }
+      buckets.set(k, list.filter((x) => x.kind !== 'choix' || keep.has(x)));
+      if (!buckets.get(k).length) buckets.delete(k);
+    }
+
     // 7. Partie peu documentée : repères communs confirmés.
     const total = [...buckets.values()].reduce((n, l) => n + l.length, 0);
     if (total < 6) for (const x of curated.filter((y) => y.common)) push(chapterOf(x.scene), { kind: 'souvenir', id: x.id, group: x.group, category: x.category, categoryLabel: CATEGORIES[x.category], title: x.title, text: x.text, backgrounds: x.backgrounds.slice(0, 3), scene: x.scene, at: pos(x.scene), order: x.chapterOrder, common: true });
@@ -584,6 +632,7 @@
     const evidence = evidenceOf(source);
     const memories = [...new Set(Array.isArray(source && source.memories) ? source.memories : [])];
     const chapters = chronicle({ flags: evidence, memories }, ctx);
+    const complet = chronicle({ flags: evidence, memories }, ctx, { complet: true });
     return {
       v: 2,
       catalog: CATALOG_VERSION,
@@ -595,8 +644,10 @@
       chapters,
       entries: chapters.flatMap((c) => c.items.filter((x) => x.kind === 'souvenir')),
       counts: { chapitres: chapters.length, rubriques: chapters.reduce((n, c) => n + c.items.length, 0) },
+      complet,
+      countsComplet: { chapitres: complet.length, rubriques: complet.reduce((n, c) => n + c.items.length, 0) },
     };
   }
 
-  return { CATALOG_VERSION, CATEGORIES, QUOTAS, MAX_ENTRIES, ENTRIES, EVIDENCE_KEYS, IMG, CHAPTERS, normalize, select, selectAll, capture, captureV2, chronicle, chapterOf, choiceIndex, evidenceOf };
+  return { MAX_DECISIONS_PER_CHAPTER, markWeight, CATALOG_VERSION, CATEGORIES, QUOTAS, MAX_ENTRIES, ENTRIES, EVIDENCE_KEYS, IMG, CHAPTERS, normalize, select, selectAll, capture, captureV2, chronicle, chapterOf, choiceIndex, evidenceOf };
 });
