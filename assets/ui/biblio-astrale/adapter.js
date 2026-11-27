@@ -11,7 +11,7 @@
 "use strict";
 if (window.__bibliothequeAstrale) return; window.__bibliothequeAstrale = true;
 const BASE = (document.currentScript && document.currentScript.src || "").replace(/adapter\.js.*$/, "") || "assets/ui/biblio-astrale/";
-const VER = "49";
+const VER = "50";
 const SKIN_KEY = "sylvinia_ui_biblio_v1";
 const KEY = "sylvinia_biblio_astrale_v2";           // réglages d’interface + signets + journal de lecture
 const ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
@@ -1044,7 +1044,8 @@ function ecranProgression() {
   const barre = ([k, l]) => { const v = stats[k] || 0, cap = D.caps[k] || 25; return `<div class="valeur" style="--v:var(--v-${k})"><div class="val-tete"><span class="val-gem" aria-hidden="true"></span><b>${l}</b><span class="val-pal">${palier(k, v)}</span><strong>${v}</strong></div><div class="val-piste"><em style="width:${Math.min(100, v / cap * 100)}%"></em><i style="left:${8 / cap * 100}%"></i><i style="left:${16 / cap * 100}%"></i></div></div>`; };
   const fiche = (o, cls) => `<article class="fiche-cat ${cls}"><span class="fc-ico" aria-hidden="true">${esc(o.icon || "✦")}</span><div><small>${esc(o.type || o.chapter || "")}</small><b>${esc(o.title)}</b><p>${esc(brut(o.body || ""))}</p></div></article>`;
   const N = nemesis(); const vide = (t) => `<p class="note-vide">${t}</p>`;
-  monter(`<section class="progression">${entete("Carnet d’Hylee · registre du voyage", "Progression", retourVers, `<button class="compteur z-lbl nemesis-btn" data-act="ov" data-ov="nemesis" aria-label="Ouvrir le Carnet du Némésis"><b>${N.trouves.length}</b> / ${N.ordre.length}<em>Carnet du Némésis</em></button>`)}
+  const chron = window.SylviniaGenerique?.hasChronicle?.() ? `<button class="compteur z-lbl chronique-btn" data-act="ma-chronique" aria-label="Relire Ma Chronique"><em>Ma Chronique</em></button>` : "";
+  monter(`<section class="progression">${entete("Carnet d’Hylee · registre du voyage", "Progression", retourVers, `${chron}<button class="compteur z-lbl nemesis-btn" data-act="ov" data-ov="nemesis" aria-label="Ouvrir le Carnet du Némésis"><b>${N.trouves.length}</b> / ${N.ordre.length}<em>Carnet du Némésis</em></button>`)}
     <div class="prog-corps">
       <section class="reg-col verre z-pan" data-orn><h2 class="col-titre">Valeurs d’Hylee</h2>${VALS.slice(0, 4).map(barre).join("")}
         <div class="lien-remerii">${barre(VALS[4])}<p class="lr-note">Le regard de Remerii : chaque choix qui la touche s’inscrit ici.</p></div></section>
@@ -1076,6 +1077,7 @@ function carnetNemesis(sel) {
   fenetre("Le Carnet du Némésis", `Archives incomplètes · ${N.trouves.length} / ${N.ordre.length} fragments`, `<div class="nemesis"><aside class="cx-liste nm-liste"><ul>${liste}</ul></aside><article class="cx-fiche nm-page" data-orn>${page}</article></div>`, "large nemesis-fen");
 }
 actions["nemesis-f"] = (b) => carnetNemesis(b.dataset.f);
+actions["ma-chronique"] = () => { window.SylviniaGenerique?.ouvrirChronique?.(); };
 
 /* ---------- Réglages ---------- */
 function ecranReglages([onglet = "affichage"]) {
