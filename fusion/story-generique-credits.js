@@ -27,6 +27,19 @@
     // Réglages de départ, ajustés au rendu réel (voir le compte rendu).
     timing: { openingIn: 2.5, openingHold: 4.5, openingOut: 2.0, crossfade: 2.2, minHold: 3.5, finalHold: 7, outro: 3.2 },
     opening: { line1: 'Les Chroniques de', title: 'Sylvinia', tome: 'Tome I' },
+    // Transition depuis la dernière scène de l’épilogue : voile noir tombant du haut, deux lignes, puis l’ouverture.
+    // Textes originaux de mise en scène (pas des citations du roman).
+    prelude: { lines: ['Ainsi s’achève le Tome I.', 'Les pages se referment, mais votre chronique demeure.'], curtain: 3.0, lineIn: 1.4, lineHold: 2.6, launch: 2.2 },
+    // Passerelle de fin : retour au menu ou suite dans la Chronique Alternative (vidéo du menu de la CA, fichier existant).
+    passerelle: {
+      kicker: 'Fin du Tome I',
+      title: 'Et maintenant ?',
+      lines: ['Le Tome I est refermé.', 'Sylvinia, elle, continue de vivre.'],
+      video: 'chronique-alternative/assets/menu/chroniques-alternatives.mp4',
+      poster: 'assets/ui/biblio-astrale/img/chronique-alternative-poster.jpg',
+      menu: { label: 'Retour au menu principal', sub: 'Revenir à la bibliothèque du Mode Histoire' },
+      ca: { label: 'Poursuivre dans la Chronique Alternative', sub: 'Créer son personnage et vivre librement dans une autre Sylvinia.' },
+    },
     acts: [
       {
         id: 'acte1', numeral: 'I', title: 'Le silence après la tempête', bg: BG.cielVoile,

@@ -5,7 +5,11 @@
    Règle d’or : aucun souvenir n’est affiché sans preuve qu’il appartient à la partie.
    Une preuve, ici, est un flag posé par un choix du joueur (valeur exacte), jamais un flag de chapitre
    « Complete » que la carte des chapitres peut accorder sans que la scène ait été vécue.
-   Le tableau de correspondance lisible est dans docs/production/generique_chronique_audit.md. */
+   Le tableau de correspondance lisible est dans docs/production/generique_chronique_audit.md.
+
+   v2 (v0.430) : la chronique retranscrit la totalité du parcours prouvé, chapitre par chapitre :
+   souvenirs illustrés du catalogue (sans plafond), choix réellement cliqués (journal de parcours),
+   choix reconstitués à partir des flags qu’un seul choix du jeu peut poser, souvenirs de Progression. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -13,7 +17,7 @@
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   'use strict';
 
-  const CATALOG_VERSION = 1;
+  const CATALOG_VERSION = 2;
 
   const CATEGORIES = {
     premiers_pas: 'Les premiers pas',
@@ -382,5 +386,217 @@
     };
   }
 
-  return { CATALOG_VERSION, CATEGORIES, QUOTAS, MAX_ENTRIES, ENTRIES, EVIDENCE_KEYS, IMG, normalize, select, capture };
+
+  /* ---------- v2 : le parcours complet, chapitre par chapitre ---------- */
+  // Copie de repli de la carte des chapitres (le jeu fournit CHAPTER_SELECT_DATA, prioritaire).
+  const CHAPTERS = [
+    ['intro', 'Introduction', 'L’Auberge du Forestier', 'assets/images/chapter_select/chapter_intro.png'],
+    ['ch1', 'Chapitre I', 'Une convocation impériale', 'assets/images/chapter_select/chapter_1.png'],
+    ['ch2', 'Chapitre II', 'Sur la route d’Al’Gratal', 'assets/images/chapter_select/chapter_2.png'],
+    ['ch3', 'Chapitre III', 'Préparatifs pour une nouvelle aventure', 'assets/images/chapter_select/chapter_3.png'],
+    ['ch4', 'Chapitre IV', 'Croisée des récits', 'assets/images/chapter_select/chapter_4.png'],
+    ['ch5', 'Chapitre V', 'Une rencontre hors du temps', 'assets/images/chapter_select/chapter_5.png'],
+    ['ch6', 'Chapitre VI', 'Une Parenthèse au Cœur de Mir’Aldas', 'assets/images/chapter_select/chapter_6.png'],
+    ['ch7', 'Chapitre VII', 'Du Chaos aux Ombres', 'assets/images/chapter_select/chapter_7.png'],
+    ['ch8', 'Chapitre VIII', 'Un sombre conseiller', 'assets/images/chapter_select/chapter_8.png'],
+    ['ch9', 'Chapitre IX', 'L’heure du départ', 'assets/images/chapter_select/chapter_9.png'],
+    ['ch10', 'Chapitre X', 'Deux perspectives', 'assets/images/chapter_select/ch10_routes.png'],
+    ['ch11_i', 'Chapitre XI_I', 'Amie ou ennemie ?', 'assets/images/chapter_select/chapter_11_i.png'],
+    ['ch11_g', 'Chapitre XI_G', 'Le Bal des Élus', 'assets/images/chapter_select/chapter_11_g.png'],
+    ['ch12_i', 'Chapitre XII_I', 'Le souvenir d’Amanea', 'assets/images/chapter_select/chapter_12_i.png'],
+    ['ch12_g', 'Chapitre XII_G', 'La fête bat son plein', 'assets/images/chapter_select/chapter_12_g.png'],
+    ['ch13_i', 'Chapitre XIII_I', 'Une dernière trahison', 'assets/images/chapter_select/ch13_i_piano.png'],
+    ['ch13_g', 'Chapitre XIII_G', 'Le Bal des Élus : Dénouement', 'assets/images/chapter_select/ch13_g_romance.png'],
+    ['ch14', 'Chapitre XIV', 'Le Conseil de Guerre', 'assets/images/chapter_select/ch14_conseil.png'],
+    ['ch15', 'Chapitre XV', 'L’heure du départ', 'assets/images/keyscenes/chapter15/c15_briefing_01_camp.png'],
+    ['ch16', 'Chapitre XVI', 'L’assaut des morts-vivants', 'assets/images/keyscenes/chapter16/c16_premier_choc.webp'],
+    ['ch17', 'Chapitre XVII', 'La Porte Noire', 'assets/images/keyscenes/chapter17-s02/s02_05_porte_maitre.webp'],
+    ['ch18', 'Chapitre XVIII', 'Début de la fin', 'assets/images/backgrounds/finale/bg_porte_noire_blizzard.png'],
+    ['ch19', 'Épilogue', 'Tome I', 'assets/images/backgrounds/iriana/iriana_throneroom.png'],
+  ].map(([key, label, title, image]) => ({ key, label, title, image }));
+  const CHAPTER_KEYS = CHAPTERS.map((c) => c.key);
+  const MEMORY_BUCKET = { key: 'souvenirs', label: 'Ils se souviendront', title: 'Ce que les autres ont retenu', image: '' };
+  const OTHER_BUCKET = { key: 'autres', label: 'Hors des chapitres', title: 'Autres pages de votre voyage', image: '' };
+
+  function chapterOf(sceneId) {
+    const sid = String(sceneId || '');
+    if (/^intro/.test(sid)) return 'intro';
+    if (/^(p\d|s\d|duel|ending)/.test(sid)) return 'ch1';
+    if (/^x12i/.test(sid)) return 'ch12_i';
+    const m = /^c(\d+)([a-z])?/.exec(sid);
+    if (!m) return null;
+    const n = Number(m[1]);
+    const key = n >= 11 && n <= 13 && (m[2] === 'g' || m[2] === 'i') ? `ch${n}_${m[2]}` : `ch${n}`;
+    return CHAPTER_KEYS.includes(key) ? key : null;
+  }
+
+  // Ne prouvent pas un choix : marqueurs de chapitre, relectures, manches de duel réinitialisées, outils.
+  const IGNORED_FLAG = /(Complete|Played|Seen|Unlocked|Available)$|^c18Played|^finaleSeen|^s04(M\d|Qte)|^tome1|^finaleReplay|^dev/i;
+  // Ne sont pas des décisions : navigation, reprises, Game Over, portes de développement, manches de duel.
+  const TRIVIAL_LABEL = /^(continuer|poursuivre|commencer|recommencer|réessayer|retour|retourner|revenir|rejouer|passer|forcer la variante|voir cette nuit depuis)/i;
+  const IGNORED_SCENE = /gameover|game_over|_bad_|_dev_|dev_gate|_retry|_qte|duel_|_m\d+$|^duel/i;
+  const IGNORED_TITLE = /game over|terminé$/i;
+
+  const cleanText = (v) => String(v == null ? '' : v).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const resolve = (v, ctx) => { try { return cleanText(typeof v === 'function' ? v.call(ctx) : v); } catch (_e) { return ''; } };
+  const cleanLabel = (label) => cleanText(label).replace(/^Choix (stratégique|bonus|secret|rare)\s*:\s*/i, '');
+  const sceneContext = (scene) => {
+    const t = resolve(scene && scene.title, scene);
+    if (!t || IGNORED_TITLE.test(t)) return '';
+    if (/^(Chapitre|Introduction|Épilogue)\b/i.test(t)) { const parts = t.split(' · '); return parts.length > 1 ? '' : ''; }
+    return t;
+  };
+  const isDecisionScene = (sid, scene) => Boolean(scene && Array.isArray(scene.choices) && scene.choices.length >= 2 && !IGNORED_SCENE.test(sid) && !IGNORED_TITLE.test(resolve(scene.title, scene)));
+
+  // Index des flags posés par un seul libellé de choix du jeu : flag=valeur -> { sid, label }.
+  function choiceIndex(scenes) {
+    const byPair = new Map();
+    for (const [sid, scene] of Object.entries(scenes || {})) {
+      if (!isDecisionScene(sid, scene)) continue;
+      for (const c of scene.choices) {
+        if (!c || !isObj(c.flags)) continue;
+        const label = cleanLabel(resolve(c.label, c));
+        if (!label || TRIVIAL_LABEL.test(label)) continue;
+        for (const [k, v] of Object.entries(c.flags)) {
+          if (IGNORED_FLAG.test(k) || v === false || v === null || v === undefined || v === '' || v === 0) continue;
+          const pair = k + '=' + JSON.stringify(v);
+          const list = byPair.get(pair) || [];
+          list.push({ sid, label, memories: c.memories });
+          byPair.set(pair, list);
+        }
+      }
+    }
+    const out = new Map();
+    for (const [pair, list] of byPair) if (new Set(list.map((x) => x.label)).size === 1) out.set(pair, list[0]);
+    return out;
+  }
+  // Scène du choix qui accorde chaque souvenir de Progression.
+  function memorySources(scenes) {
+    const out = new Map();
+    for (const [sid, scene] of Object.entries(scenes || {})) {
+      if (!scene || !Array.isArray(scene.choices)) continue;
+      for (const c of scene.choices) {
+        const keys = c && c.memories ? (Array.isArray(c.memories) ? c.memories : [c.memories]) : [];
+        for (const k of keys) if (!out.has(k)) out.set(k, sid);
+      }
+    }
+    return out;
+  }
+
+  // Preuves gardées dans la capture : flags de choix (valeurs simples) et souvenirs de Progression.
+  function evidenceOf(source) {
+    const flags = isObj(source && source.flags) ? source.flags : {};
+    const out = {};
+    for (const [k, v] of Object.entries(flags)) {
+      if (IGNORED_FLAG.test(k) && !EVIDENCE_KEYS.includes(k)) continue;
+      if (v === undefined || v === null || v === false || v === '' || v === 0) continue;
+      if (typeof v === 'string' || typeof v === 'number' || v === true) out[k] = v;
+    }
+    return out;
+  }
+
+  function selectAll(source) {
+    const ev = normalize(isObj(source) && isObj(source.flags) ? source : { flags: source || {} });
+    const bestByGroup = new Map();
+    for (const entry of ENTRIES) {
+      if (!eligible(entry, ev)) continue;
+      const cur = bestByGroup.get(entry.group);
+      if (!cur || entry.priority > cur.priority || (entry.priority === cur.priority && entry.id < cur.id)) bestByGroup.set(entry.group, entry);
+    }
+    return [...bestByGroup.values()].sort((a, b) => (a.chapterOrder - b.chapterOrder) || (a.id < b.id ? -1 : 1));
+  }
+
+  /* chronicle(source, ctx)
+     source : { flags, memories }  (état du moteur ou preuve figée)
+     ctx    : { scenes (S), memoryDefs (PROGRESSION_MEMORIES), chapters (CHAPTER_SELECT_DATA), trail [[sid, libellé]], journal [[sid, libellé]] }
+     Rend : [{ key, label, title, image, items: [souvenir | choix | memoire] }] dans l’ordre du livre. */
+  function chronicle(source, ctx = {}) {
+    const scenes = ctx.scenes || {};
+    const order = new Map(Object.keys(scenes).map((k, i) => [k, i]));
+    const pos = (sid) => (order.has(sid) ? order.get(sid) : 1e6);
+    const flagsEv = evidenceOf(source);
+    const buckets = new Map();
+    const push = (key, item) => { key = key || OTHER_BUCKET.key; if (!buckets.has(key)) buckets.set(key, []); buckets.get(key).push(item); };
+    const coveredScenes = new Set();
+    const coveredPairs = new Set();
+
+    // 1. Souvenirs illustrés du catalogue : tous ceux que la sauvegarde prouve, un par groupe.
+    const curated = selectAll({ flags: flagsEv });
+    const personal = curated.filter((x) => !x.common);
+    for (const x of personal) {
+      coveredScenes.add(x.scene);
+      for (const [k, v] of Object.entries(x.requires.flags || {})) coveredPairs.add(k + '=' + JSON.stringify(v));
+      push(chapterOf(x.scene), { kind: 'souvenir', id: x.id, group: x.group, category: x.category, categoryLabel: CATEGORIES[x.category], title: x.title, text: x.text, backgrounds: x.backgrounds.slice(0, 3), scene: x.scene, at: pos(x.scene), order: x.chapterOrder });
+    }
+
+    // 2. Choix réellement cliqués (journal de parcours), puis 3. choix prouvés par un flag qu’un seul libellé peut poser.
+    const seen = new Set();
+    const addChoice = (sid, label, how) => {
+      label = cleanLabel(label);
+      if (!sid || !label || TRIVIAL_LABEL.test(label)) return;
+      const scene = scenes[sid];
+      if (scene && !isDecisionScene(sid, scene)) return;
+      if (!scene && IGNORED_SCENE.test(sid)) return;
+      if (coveredScenes.has(sid)) return;
+      const key = sid + '|' + label;
+      if (seen.has(key)) return;
+      if ([...seen].some((s) => s.startsWith(sid + '|'))) return; // une décision par écran (la dernière connue)
+      seen.add(key);
+      push(chapterOf(sid), { kind: 'choix', scene: sid, context: sceneContext(scene), label, how, at: pos(sid) });
+    };
+    const trail = Array.isArray(ctx.trail) ? ctx.trail : [];
+    for (let i = trail.length - 1; i >= 0; i--) { const t = trail[i]; if (Array.isArray(t)) addChoice(t[0], t[1], 'parcours'); }
+    const index = choiceIndex(scenes);
+    for (const [k, v] of Object.entries(flagsEv)) {
+      const pair = k + '=' + JSON.stringify(v);
+      if (coveredPairs.has(pair)) continue;
+      const hit = index.get(pair);
+      if (hit) addChoice(hit.sid, hit.label, 'flag');
+    }
+    const journal = Array.isArray(ctx.journal) ? ctx.journal : [];
+    for (let i = journal.length - 1; i >= 0; i--) { const t = journal[i]; if (Array.isArray(t)) addChoice(t[0], t[1], 'journal'); }
+
+    // 4. Souvenirs de Progression gagnés dans la partie (textes du jeu).
+    const defs = ctx.memoryDefs || {};
+    const mems = Array.isArray(source && source.memories) ? source.memories : [];
+    const memSrc = memorySources(scenes);
+    for (const k of [...new Set(mems)]) {
+      const d = defs[k]; if (!d) continue;
+      const sid = memSrc.get(k);
+      push(chapterOf(sid) || MEMORY_BUCKET.key, { kind: 'memoire', id: k, title: cleanText(d.title), text: cleanText(d.body), type: cleanText(d.type), at: sid ? pos(sid) + 0.5 : 1e6 });
+    }
+
+    // 7. Partie peu documentée : repères communs confirmés.
+    const total = [...buckets.values()].reduce((n, l) => n + l.length, 0);
+    if (total < 6) for (const x of curated.filter((y) => y.common)) push(chapterOf(x.scene), { kind: 'souvenir', id: x.id, group: x.group, category: x.category, categoryLabel: CATEGORIES[x.category], title: x.title, text: x.text, backgrounds: x.backgrounds.slice(0, 3), scene: x.scene, at: pos(x.scene), order: x.chapterOrder, common: true });
+
+    const meta = new Map(CHAPTERS.map((c) => [c.key, c]));
+    for (const c of Array.isArray(ctx.chapters) ? ctx.chapters : []) if (c && c.key && meta.has(c.key)) meta.set(c.key, { key: c.key, label: cleanText(c.label) || meta.get(c.key).label, title: cleanText(c.title) || meta.get(c.key).title, image: c.image || meta.get(c.key).image });
+    meta.set(MEMORY_BUCKET.key, MEMORY_BUCKET); meta.set(OTHER_BUCKET.key, OTHER_BUCKET);
+    const kindRank = { souvenir: 0, choix: 1, memoire: 2 };
+    return [...CHAPTER_KEYS, OTHER_BUCKET.key, MEMORY_BUCKET.key].filter((k) => buckets.has(k)).map((k) => ({
+      ...meta.get(k),
+      items: buckets.get(k).sort((a, b) => (a.at - b.at) || (kindRank[a.kind] - kindRank[b.kind]) || ((a.order || 0) - (b.order || 0))),
+    }));
+  }
+
+  function captureV2(source, ctx = {}, meta = {}) {
+    const evidence = evidenceOf(source);
+    const memories = [...new Set(Array.isArray(source && source.memories) ? source.memories : [])];
+    const chapters = chronicle({ flags: evidence, memories }, ctx);
+    return {
+      v: 2,
+      catalog: CATALOG_VERSION,
+      game: meta.game || '',
+      at: meta.at || '',
+      provenance: meta.provenance || 'partie',
+      evidence,
+      memories,
+      chapters,
+      entries: chapters.flatMap((c) => c.items.filter((x) => x.kind === 'souvenir')),
+      counts: { chapitres: chapters.length, rubriques: chapters.reduce((n, c) => n + c.items.length, 0) },
+    };
+  }
+
+  return { CATALOG_VERSION, CATEGORIES, QUOTAS, MAX_ENTRIES, ENTRIES, EVIDENCE_KEYS, IMG, CHAPTERS, normalize, select, selectAll, capture, captureV2, chronicle, chapterOf, choiceIndex, evidenceOf };
 });

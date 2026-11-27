@@ -1,5 +1,22 @@
 # Journal · Final du Tome I
 
+## v0.430 (branche `fix/generique-passerelle`)
+
+Retours de l’auteur sur le générique v0.429.
+
+- Votre Chronique ne montrait qu’une rubrique. Deux causes : en mode développeur (et pendant une relecture), aucune chronique n’était capturée et le générique n’affichait que le texte neutre ; dans une vraie partie, la sélection était plafonnée à 10-16 souvenirs illustrés, un par sous-section. La chronique retranscrit désormais tout le parcours prouvé, chapitre par chapitre, sans plafond :
+  - souvenirs illustrés du catalogue (tous ceux que la sauvegarde prouve) ;
+  - décisions réellement cliquées, notées dans un journal de parcours (`localStorage.sylvinia_vn_parcours_v1`, une décision par écran, remis à zéro par « Nouvelle aventure » et « Nouveau départ ») ;
+  - décisions reconstituées à partir des flags qu’un seul libellé de choix du jeu peut poser (anciennes parties) ;
+  - souvenirs de Progression (textes du jeu).
+  Navigation, reprises, Game Over, manches de duel et portes de développement sont exclues. Rien n’apparaît sans preuve.
+- Capture v2 figée à `c19_bilan` (chapitres et textes résolus). Une chronique v0.429 est mise à niveau à partir de ses preuves. En mode développeur, le générique montre un aperçu calculé, jamais enregistré.
+- Transition depuis l’épilogue : voile noir tombant du haut, deux lignes (« Ainsi s’achève le Tome I. », « Les pages se referment, mais votre chronique demeure. »), trait de lumière qui lance le titre frontal. Le thème du menu démarre avec le titre.
+- Deux boutons discrets, semi-transparents, toujours présents : « » ×1 / ×3 » (accélérer) et « Passer » (avec confirmation).
+- Passerelle finale sur la vidéo du menu de la Chronique Alternative (fichier existant) : « Retour au menu principal » ou « Poursuivre dans la Chronique Alternative » (accès habituel du sélecteur de mode, sauvegarde de l’Histoire faite avant).
+- Scénario, routes, seuils, déblocages, duels, CA, Studio et sauvegardes `sylvinia_vn_v82` inchangés.
+- Bulle de mise à jour : « v0.430 · Générique : votre chronique complète ».
+
 ## v0.429 (branche `feat/generique-fin-tome1`)
 
 - Générique de fin du Mode Histoire, Tome I, selon `docs/production/generique_fin_tome1.md` : titre frontal « Les Chroniques de / SYLVINIA / TOME I », puis quatre actes défilant du bas vers le haut (« Le silence après la tempête », « Votre Chronique », « Derrière les Chroniques », « Un monde qui continue de vivre »), crédits exacts, auteur sous pseudonyme seul.
