@@ -1,5 +1,16 @@
 # Journal · Final du Tome I
 
+## v0.435 (branche `feat/generique-v0435`)
+
+Retours de l’auteur sur la v0.434.
+
+- Boucles V01 à V05 : reprise native, sans fondu. Un fondu court n’a lieu qu’entre deux vidéos différentes (et vers V06). Les fondus de reprise cassaient la foulée et, toutes les 15 s environ, forçaient une recomposition de tout l’écran isolé, ce qui faisait clignoter le texte et les images incrustées. Le calque texte/interface est désormais composé à part, indépendant des événements vidéo. Instrumentation sur 60 s (boucle V02, 4 reprises) : 0 mutation DOM et 0 relance d’animation sur le texte et les incrustations ; seules les reprises natives de la vidéo ont été observées.
+- Sprites de « Avec la participation de… » : bustes plus grands, à droite, avec le même fondu bas que dans le VN (`#000 78%` vers transparent). Recadrage CSS uniquement.
+- Souvenirs : environ 53 % de la largeur à droite en paysage, environ 48 % de la hauteur en haut en portrait. Centre plus opaque (0,97), bords toujours fondus, sans cadre. Le texte est tenu sur le côté opposé (gauche en paysage, dessous en portrait).
+- Boutons d’accélération et de passage inchangés.
+- Scénario, routes, choix, combats, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.435 · Générique : boucles nettes, souvenirs et bustes plus présents ».
+
 ## v0.434 (branche `feat/generique-illus-fondu`)
 
 Retour de l’auteur sur les illustrations v0.433, trop franches, « posées » sur la course.
