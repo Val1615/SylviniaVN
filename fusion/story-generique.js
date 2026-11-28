@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.433';
+  const GAME_VERSION = 'v0.434';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -288,11 +288,11 @@
 .gq-warm.on{opacity:1}
 /* Course active : les illustrations deviennent des souvenirs latéraux, la course reste visible */
 #${ROOT_ID}.course-on{background:transparent}
-#${ROOT_ID}.course-on .gq-layer{inset:auto;top:7%;right:1%;width:48%;height:78%;opacity:0}
-#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.96)}
+#${ROOT_ID}.course-on .gq-layer{inset:auto;top:10%;right:3%;width:38%;height:70%;opacity:0}
+#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.88)}
 #${ROOT_ID}.course-on .gq-fill{display:none}
-#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 78% 72% at 52% 46%,#000 40%,rgba(0,0,0,.82) 62%,transparent 100%);mask-image:radial-gradient(ellipse 78% 72% at 52% 46%,#000 40%,rgba(0,0,0,.82) 62%,transparent 100%);filter:saturate(.96) brightness(.96)}
-#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:1%}
+#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);filter:saturate(.9) brightness(1.04) contrast(.94)}
+#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:3%}
 #${ROOT_ID}.course-on .gq-cover{display:none}
 #${ROOT_ID}.course-on .gq-veil{background:
   linear-gradient(90deg,rgba(5,4,8,var(--v-texte,.72)) 0%,rgba(5,4,8,calc(var(--v-texte,.72) * .7)) 28%,rgba(5,4,8,calc(var(--v-texte,.72) * .25)) 46%,rgba(5,4,8,0) 60%),
@@ -305,7 +305,9 @@
 #${ROOT_ID} .gq-layer.kind-sprite .gq-img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)) brightness(.95);-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-sprite.vis .gq-img,#${ROOT_ID} .gq-layer.kind-carte.vis .gq-img{animation:none}
-#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:6%;right:2%;width:44%;height:80%}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:8%;right:4%;width:36%;height:72%}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite .gq-img{filter:brightness(.96) drop-shadow(0 6px 22px rgba(0,0,0,.28));-webkit-mask-image:radial-gradient(ellipse 48% 55% at 50% 40%,#000 28%,rgba(0,0,0,.7) 52%,rgba(0,0,0,.28) 72%,transparent 100%);mask-image:radial-gradient(ellipse 48% 55% at 50% 40%,#000 28%,rgba(0,0,0,.7) 52%,rgba(0,0,0,.28) 72%,transparent 100%)}
+#${ROOT_ID}.course-on .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);filter:saturate(.9) brightness(1.04) contrast(.94)}
 /* Acte I : cartons individuels, côtés alternés */
 .gq-cartons{position:absolute;inset:0;pointer-events:none}
 .gq-carton{position:absolute;top:24%;max-width:min(42%,30rem);padding:0 2vw;opacity:0;transform:translateY(6px);transition:opacity var(--c-out,.7s) ease,transform var(--c-out,.7s) ease;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.65)}
@@ -322,10 +324,10 @@
 #${ROOT_ID}.portrait .gq-carton{top:16%;max-width:80%}
 #${ROOT_ID}.portrait .gq-carton.centre{top:42%}
 /* Portrait · Au-delà des cendres, avec la course */
-#${ROOT_ID}.portrait.course-on .gq-layer{top:3%;left:6%;right:6%;width:auto;height:40%}
-#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:16%;right:16%;width:auto;height:42%}
+#${ROOT_ID}.portrait.course-on .gq-layer{top:2%;left:10%;right:10%;width:auto;height:38%}
+#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:18%;right:18%;width:auto;height:38%}
 #${ROOT_ID}.portrait.course-on .gq-layer .gq-img{top:0;height:100%}
-#${ROOT_ID}.portrait.course-on .gq-view{top:38%;bottom:12%}
+#${ROOT_ID}.portrait.course-on .gq-view{top:34%;bottom:12%}
 #${ROOT_ID}.portrait.course-on .gq-veil{background:radial-gradient(ellipse 110% 60% at 50% 46%,rgba(5,4,8,var(--v-centre,.5)) 0%,rgba(5,4,8,calc(var(--v-centre,.5) * .55)) 60%,rgba(5,4,8,.15) 100%),linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,0) 18%,rgba(5,4,8,0) 80%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait.course-on.cartons-on .gq-veil{background:linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,.2) 35%,rgba(5,4,8,.08) 75%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait .gq-layer.kind-sprite,#${ROOT_ID}.portrait .gq-layer.kind-carte{top:4%;left:20%;right:20%;width:auto;height:40%}
@@ -1336,7 +1338,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : le thème de la course de Hylee';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : souvenirs fondus dans la course';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,

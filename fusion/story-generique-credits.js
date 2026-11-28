@@ -85,7 +85,7 @@
       // Cadrage (object-position / object-fit) par orientation ; un clip peut le surcharger par clips.Vxx.cadrage.
       cadrage: { paysage: { position: '50% 62%', fit: 'cover' }, portrait: { position: '50% 66%', fit: 'cover' } },
       // Voiles de contraste (opacité 0-1) posés sur la vidéo, sous le texte.
-      voiles: { paysage: { texte: 0.72, haut: 0.4, bas: 0.28 }, portrait: { centre: 0.5, haut: 0.42, bas: 0.3 }, illustrations: 0.96 },
+      voiles: { paysage: { texte: 0.72, haut: 0.4, bas: 0.28 }, portrait: { centre: 0.5, haut: 0.42, bas: 0.3 }, illustrations: 0.88 },
       // Image fixe sobre si V06 manque (ou mouvement réduit).
       repli: BG.rentrons,
       // Fond du titre frontal et des cartons si aucune vidéo ne peut être lue.
