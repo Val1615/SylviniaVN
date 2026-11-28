@@ -65,3 +65,7 @@ En paysage, les souvenirs occupent environ 53 % de la largeur, à droite ; en po
 Les boucles V01 à V05 se reprennent nativement, sans fondu. Un fondu n’intervient qu’au passage d’une vidéo à une autre. Les fondus de reprise de la v0.433/v0.434 faisaient clignoter le texte et les incrustations (recomposition de tout l’écran). Le calque d’interface est maintenant isolé.
 
 Les boucles V01 à V05 se raccordent par un fondu entre les deux lecteurs, pour éviter le flash d’une reprise native. Un changement d’orientation ne bascule que hors d’une zone morte autour du format carré (écran de Fold déplié).
+
+## Incrustations stables (v0.436)
+
+Le fondu des bustes et des souvenirs est pré-rendu dans un calque bitmap, sans `mask-image` ni filtre CSS pendant l’affichage. La dérive de caméra est coupée tant que la course est visible, pour éviter qu’un masque animé scintille au-dessus de la vidéo.

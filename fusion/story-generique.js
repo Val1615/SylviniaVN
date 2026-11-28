@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.435';
+  const GAME_VERSION = 'v0.436';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -289,12 +289,15 @@
 .gq-warm.on{opacity:1}
 /* Course active : les illustrations deviennent des souvenirs latéraux, la course reste visible */
 #${ROOT_ID}.course-on{background:transparent}
-#${ROOT_ID}.course-on .gq-layer{inset:auto;top:5%;right:0;width:53%;height:86%;opacity:0}
-#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.97)}
+#${ROOT_ID}.course-on .gq-layer{inset:auto;top:5%;right:0;width:53%;height:86%;opacity:0;isolation:isolate;transform:translateZ(0);will-change:transform;contain:paint}
+#${ROOT_ID}.course-on .gq-layer.vis{opacity:1}
 #${ROOT_ID}.course-on .gq-fill{display:none}
 #${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);filter:saturate(.94) brightness(1.02)}
 #${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:0}
 #${ROOT_ID}.course-on .gq-cover{display:none}
+#${ROOT_ID}.course-on .gq-layer.vis .gq-img{animation:none}
+#${ROOT_ID}.course-on .gq-layer.baked .gq-img{object-fit:fill;object-position:center center;filter:none;-webkit-mask-image:none;mask-image:none;animation:none;transform:none}
+
 #${ROOT_ID}.course-on .gq-view{width:46%}
 #${ROOT_ID}.course-on .gq-act h2{font-size:clamp(24px,4.8vmin,56px)}
 #${ROOT_ID}.course-on .gq-veil{background:
@@ -562,6 +565,7 @@
       p.offset = Math.max(0, Math.min(p.offset, p.stopAt));
       paintStrip();
     }
+    requestAnimationFrame(() => rebakeVisible());
   }
   const paintStrip = () => { if (P) P.strip.style.transform = `translate3d(0,${(P.viewH - P.offset).toFixed(1)}px,0)`; };
 
@@ -575,24 +579,167 @@
     if (loaded.size > 14) { const first = loaded.keys().next().value; loaded.delete(first); } // libère les anciens médias
     return pr;
   }
+  const bitmaps = new Map();
+  const bakeUrls = new Map();
+  function loadBitmap(src) {
+    if (bitmaps.has(src)) return bitmaps.get(src);
+    const pr = new Promise((res, rej) => {
+      const im = new Image();
+      im.decoding = 'async';
+      im.onload = () => { const done = () => res(im); if (im.decode) im.decode().then(done, done); else done(); };
+      im.onerror = () => rej(new Error('bitmap'));
+      im.src = src;
+    });
+    bitmaps.set(src, pr);
+    return pr;
+  }
+  function parseFocus(focus, fallback) {
+    const parts = String(focus || fallback || '50% 45%').trim().split(/\s+/);
+    const num = (s, d) => { const m = String(s || '').match(/^([\d.]+)%$/); return m ? (parseFloat(m[1]) / 100) : d; };
+    return [num(parts[0], 0.5), num(parts[1], 0.45)];
+  }
+  function drawFitted(ctx, im, w, h, fit, pos) {
+    const ir = im.naturalWidth / Math.max(1, im.naturalHeight), br = w / h;
+    let dw, dh;
+    if (fit === 'contain') { if (br > ir) { dh = h; dw = h * ir; } else { dw = w; dh = w / ir; } }
+    else { if (br > ir) { dw = w; dh = w / ir; } else { dh = h; dw = h * ir; } }
+    ctx.drawImage(im, (w - dw) * pos[0], (h - dh) * pos[1], dw, dh);
+  }
+  function applySpriteMask(ctx, w, h) {
+    const g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(0.78, 'rgba(0,0,0,1)');
+    g.addColorStop(0.99, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  function applySouvenirMask(ctx, w, h) {
+    const cx = w * 0.52, cy = h * 0.46, rx = Math.max(1, w * 0.5), ry = Math.max(1, h * 0.5);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(rx, ry);
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(0.42, 'rgba(0,0,0,1)');
+    g.addColorStop(0.60, 'rgba(0,0,0,0.85)');
+    g.addColorStop(0.75, 'rgba(0,0,0,0.45)');
+    g.addColorStop(0.88, 'rgba(0,0,0,0.12)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, 1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  function courseWantsBake() { return Boolean(P && P.root && P.root.classList.contains('course-on')); }
+  function bakeOverlay(src, kind, layer, focus) {
+    if (!src || !layer) return Promise.resolve(null);
+    const r = layer.getBoundingClientRect();
+    if (r.width < 8 || r.height < 8) return Promise.resolve(null);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const w = Math.max(1, Math.round(r.width * dpr)), h = Math.max(1, Math.round(r.height * dpr));
+    const key = src + '|' + (kind || '') + '|' + w + 'x' + h + '|' + (focus || '');
+    if (bakeUrls.has(key)) return Promise.resolve(bakeUrls.get(key));
+    return loadBitmap(src).then((im) => new Promise((res) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      if (!ctx) { res(src); return; }
+      ctx.filter = kind === 'sprite' ? 'brightness(0.98)' : 'saturate(0.94) brightness(1.02)';
+      const fit = kind === 'sprite' ? 'contain' : 'cover';
+      const pos = kind === 'sprite' ? [0.5, 1] : parseFocus(focus, '60% 45%');
+      drawFitted(ctx, im, w, h, fit, pos);
+      ctx.filter = 'none';
+      if (kind === 'sprite') applySpriteMask(ctx, w, h); else applySouvenirMask(ctx, w, h);
+      canvas.toBlob((blob) => {
+        if (!blob) { res(src); return; }
+        const url = URL.createObjectURL(blob);
+        bakeUrls.set(key, url);
+        if (bakeUrls.size > 24) {
+          const first = bakeUrls.keys().next().value;
+          const old = bakeUrls.get(first);
+          const used = P && P.layers && P.layers.some((ly) => { const i = ly.querySelector('.gq-img'); return i && i.src === old; });
+          if (!used) {
+            bakeUrls.delete(first);
+            if (old && String(old).indexOf('blob:') === 0) try { URL.revokeObjectURL(old); } catch (_e) { /* ignore */ }
+          }
+        }
+        res(url);
+      }, 'image/png');
+    })).catch(() => src);
+  }
+  function rebakeVisible() {
+    const p = P; if (!p || !courseWantsBake() || !p.layers) return;
+    p.layers.forEach((layer) => {
+      const img = layer.querySelector('.gq-img');
+      if (!img) return;
+      const raw = img.dataset.rawSrc || ((layer.classList.contains('vis') && p.bgSrc) || '');
+      if (!raw) return;
+      const kind = layer.classList.contains('kind-sprite') ? 'sprite' : (layer.classList.contains('kind-carte') ? 'carte' : '');
+      const focus = img.dataset.focus || '';
+      bakeOverlay(raw, kind, layer, focus).then((url) => {
+        if (!P || !url || img.dataset.rawSrc && img.dataset.rawSrc !== raw) return;
+        img.dataset.rawSrc = raw;
+        img.dataset.focus = focus;
+        layer.classList.add('baked');
+        if (img.src !== url) img.src = url;
+        img.style.animation = 'none';
+        img.style.filter = '';
+      });
+    });
+  }
   function showBg(src, focus, kind = '') {
     const p = P; if (!p) return;
     if (src === p.bgSrc) return;
     const token = ++p.bgToken;
-    const go = (ok) => {
+    const layers = p.layers; const next = layers[p.bgIdx ^ 1], cur = layers[p.bgIdx];
+    const img = next.querySelector('.gq-img'), fill = next.querySelector('.gq-fill');
+    const reveal = (url, baked) => {
+      if (!P || token !== p.bgToken) return;
+      if (url) {
+        img.dataset.rawSrc = src;
+        img.dataset.focus = focus || '';
+        img.src = url;
+        img.style.setProperty('--focus', focus || '60% 45%');
+        img.style.visibility = '';
+        fill.style.backgroundImage = 'url("' + String(src).replace(/"/g, '%22') + '")';
+      } else {
+        delete img.dataset.rawSrc;
+        img.removeAttribute('src');
+        img.style.visibility = 'hidden';
+        fill.style.backgroundImage = 'none';
+      }
+      if (!baked) { img.style.animation = 'none'; void img.offsetWidth; img.style.animation = ''; }
+      else img.style.animation = 'none';
+      next.classList.toggle('kind-sprite', kind === 'sprite');
+      next.classList.toggle('kind-carte', kind === 'carte');
+      next.classList.toggle('baked', Boolean(baked));
+      const goVis = () => {
+        if (!P || token !== p.bgToken) return;
+        next.classList.add('vis'); cur.classList.remove('vis');
+        p.bgIdx ^= 1; p.bgSrc = src; p.bgSince = p.clock;
+      };
+      if (url && img.decode) img.decode().then(goVis, goVis); else goVis();
+    };
+    const start = (ok) => {
       if (!P || token !== p.bgToken) return;
       if (src && !ok) return; // asset manquant : on garde le fond valide
-      const layers = p.layers; const next = layers[p.bgIdx ^ 1], cur = layers[p.bgIdx];
-      const img = next.querySelector('.gq-img'), fill = next.querySelector('.gq-fill');
-      if (src) { img.src = src; img.style.setProperty('--focus', focus || '60% 45%'); img.style.visibility = ''; fill.style.backgroundImage = `url("${src.replace(/"/g, '%22')}")`; }
-      else { img.removeAttribute('src'); img.style.visibility = 'hidden'; fill.style.backgroundImage = 'none'; }
-      // relance la dérive de caméra
-      img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
-      next.classList.toggle('kind-sprite', kind === 'sprite'); next.classList.toggle('kind-carte', kind === 'carte');
-      next.classList.add('vis'); cur.classList.remove('vis');
-      p.bgIdx ^= 1; p.bgSrc = src; p.bgSince = p.clock;
+      if (src && courseWantsBake()) {
+        bakeOverlay(src, kind, next, focus).then((url) => {
+          const baked = Boolean(url && String(url).indexOf('blob:') === 0);
+          reveal(url || src, baked);
+        });
+      } else {
+        next.classList.remove('baked');
+        reveal(src, false);
+      }
     };
-    if (!src) go(true); else preload(src).then(go);
+    if (!src) start(true); else preload(src).then(start);
   }
   function syncBg() {
     const p = P; if (!p || !p.blocks.length) return;
@@ -690,6 +837,7 @@
       if (K.order.includes(id)) c.idx = K.order.indexOf(id);
       c.on = true; p.root.classList.add('course-on');
       courseLayout();
+      requestAnimationFrame(() => rebakeVisible());
       return true;
     });
   }
@@ -1312,7 +1460,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : boucles nettes, souvenirs et bustes plus présents';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : incrustations stables, sans clignotement';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,

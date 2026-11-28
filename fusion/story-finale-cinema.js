@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.435 · Générique : boucles nettes, souvenirs et bustes plus présents';
+  if (update) update.textContent = 'Mise à jour · v0.436 · Générique : incrustations stables, sans clignotement';
 
   window.SylviniaFinaleCinema = {
     src: SRC,

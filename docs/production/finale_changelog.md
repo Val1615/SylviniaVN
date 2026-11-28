@@ -1,5 +1,15 @@
 # Journal · Final du Tome I
 
+## v0.436 (branche `feat/generique-v0436`)
+
+Retours de l’auteur sur la v0.435 : les bustes et les souvenirs clignotaient encore un peu (le texte, lui, était stable).
+
+- Cause : le masque CSS (`mask-image`) et les filtres (`drop-shadow`, `brightness`, `saturate`) étaient recalculés en permanence au-dessus de la vidéo, surtout sur Chrome Android. Sur les souvenirs, la dérive de caméra (`gqDrift`) animait aussi le calque masqué, ce qui produisait un scintillement mesurable (écart de luminance plus élevé, et des sauts en fin d’animation).
+- Correctif : le fondu (bas pour les bustes, elliptique pour les souvenirs) est cuit une fois dans un calque pré-rendu (canvas, à l’exécution, fichiers inchangés). L’image affichée n’a plus ni masque CSS ni filtre, ni animation pendant le maintien. Elle est décodée avant d’apparaître. Le calque est isolé sur le GPU.
+- Mesure (screencast, 1024×880, 16 à 22 s, y compris une reprise de boucle). Buste, zone du visage : déjà stable avant (écart moyen 0,062) et après (0,055). Souvenir, centre opaque : avant, écart moyen 0,738, étendue 2,27, quelques sauts (masque CSS, opacité 0,97 laissant passer un peu de vidéo, dérive de caméra). Après le calque pré-rendu, à opacité 1 et sans dérive : écart 0, étendue 0, aucun saut, alors que la vidéo à côté continue de bouger. Les fichiers sources des images restent byte-identiques.
+- Scénario, routes, choix, combats, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.436 · Générique : incrustations stables, sans clignotement ».
+
 ## v0.435 (branche `feat/generique-v0435`)
 
 Retours de l’auteur sur la v0.434.
