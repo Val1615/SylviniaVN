@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.432';
+  const GAME_VERSION = 'v0.433';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -274,6 +274,7 @@
 @media (prefers-reduced-motion:reduce){#${ROOT_ID} .gq-layer.vis .gq-img{animation:none}#${ROOT_ID} .gq-layer{transition-duration:.8s}}
 /* ==== Composition en trois couches : 01 course de Hylee, 02 illustrations, 03 texte et interface ==== */
 #${ROOT_ID}{isolation:isolate}
+.gq-score{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
 .gq-course{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050407}
 .gq-bg{z-index:1;pointer-events:none}
 .gq-veil{z-index:2}.gq-motes{z-index:3}.gq-view{z-index:4}.gq-cartons{z-index:4}.gq-opening{z-index:5}
@@ -287,11 +288,12 @@
 .gq-warm.on{opacity:1}
 /* Course active : les illustrations deviennent des souvenirs latéraux, la course reste visible */
 #${ROOT_ID}.course-on{background:transparent}
-#${ROOT_ID}.course-on .gq-layer{inset:auto;top:5%;right:3%;width:40%;height:58%;opacity:0}
-#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.92)}
+#${ROOT_ID}.course-on .gq-layer{inset:auto;top:7%;right:1%;width:48%;height:78%;opacity:0}
+#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.96)}
 #${ROOT_ID}.course-on .gq-fill{display:none}
-#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%);filter:saturate(.92) brightness(.9)}
-#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:3%}
+#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 78% 72% at 52% 46%,#000 40%,rgba(0,0,0,.82) 62%,transparent 100%);mask-image:radial-gradient(ellipse 78% 72% at 52% 46%,#000 40%,rgba(0,0,0,.82) 62%,transparent 100%);filter:saturate(.96) brightness(.96)}
+#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:1%}
+#${ROOT_ID}.course-on .gq-cover{display:none}
 #${ROOT_ID}.course-on .gq-veil{background:
   linear-gradient(90deg,rgba(5,4,8,var(--v-texte,.72)) 0%,rgba(5,4,8,calc(var(--v-texte,.72) * .7)) 28%,rgba(5,4,8,calc(var(--v-texte,.72) * .25)) 46%,rgba(5,4,8,0) 60%),
   linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.4)) 0%,rgba(5,4,8,0) 20%,rgba(5,4,8,0) 82%,rgba(5,4,8,var(--v-bas,.28)) 100%)}
@@ -303,7 +305,7 @@
 #${ROOT_ID} .gq-layer.kind-sprite .gq-img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)) brightness(.95);-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-sprite.vis .gq-img,#${ROOT_ID} .gq-layer.kind-carte.vis .gq-img{animation:none}
-#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:6%;right:6%;width:36%;height:62%}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:6%;right:2%;width:44%;height:80%}
 /* Acte I : cartons individuels, côtés alternés */
 .gq-cartons{position:absolute;inset:0;pointer-events:none}
 .gq-carton{position:absolute;top:24%;max-width:min(42%,30rem);padding:0 2vw;opacity:0;transform:translateY(6px);transition:opacity var(--c-out,.7s) ease,transform var(--c-out,.7s) ease;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.65)}
@@ -320,10 +322,10 @@
 #${ROOT_ID}.portrait .gq-carton{top:16%;max-width:80%}
 #${ROOT_ID}.portrait .gq-carton.centre{top:42%}
 /* Portrait · Au-delà des cendres, avec la course */
-#${ROOT_ID}.portrait.course-on .gq-layer{top:2%;left:7%;right:7%;width:auto;height:26%}
-#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:26%;right:26%;width:auto;height:26%}
+#${ROOT_ID}.portrait.course-on .gq-layer{top:3%;left:6%;right:6%;width:auto;height:40%}
+#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:16%;right:16%;width:auto;height:42%}
 #${ROOT_ID}.portrait.course-on .gq-layer .gq-img{top:0;height:100%}
-#${ROOT_ID}.portrait.course-on .gq-view{top:27%;bottom:14%}
+#${ROOT_ID}.portrait.course-on .gq-view{top:38%;bottom:12%}
 #${ROOT_ID}.portrait.course-on .gq-veil{background:radial-gradient(ellipse 110% 60% at 50% 46%,rgba(5,4,8,var(--v-centre,.5)) 0%,rgba(5,4,8,calc(var(--v-centre,.5) * .55)) 60%,rgba(5,4,8,.15) 100%),linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,0) 18%,rgba(5,4,8,0) 80%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait.course-on.cartons-on .gq-veil{background:linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,.2) 35%,rgba(5,4,8,.08) 75%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait .gq-layer.kind-sprite,#${ROOT_ID}.portrait .gq-layer.kind-carte{top:4%;left:20%;right:20%;width:auto;height:40%}
@@ -436,11 +438,29 @@
 
   function wantMusic() {
     const st = game(); if (!st || st.musicOn === false) return false;
-    if (D.track === 'music_menu' && st.menuMusicOn === false) return false; // même sémantique que le menu
+    if (D.track === 'music_menu' && st.menuMusicOn === false) return false;
     return true;
   }
+  function wantMenuMusic() {
+    const st = game(); return Boolean(st && st.musicOn !== false && st.menuMusicOn !== false);
+  }
+  const scoreCfg = () => Object.assign({ fadeIn: 2.6, fadeOut: 2.4, menuFadeIn: 1.8, loopCrossfade: 4, loopTail: 5.5, loopOffset: 0.5 }, D.music || {});
+  function trackSrc() {
+    const key = D.track;
+    try { if (typeof getAudioCandidates === 'function') { const c = getAudioCandidates(key); if (c && c[0]) return c[0]; } } catch (_e) { /* ignore */ }
+    try { if (typeof A !== 'undefined' && A[key]) return A[key]; } catch (_e) { /* ignore */ }
+    return (D.music && D.music.src) || '';
+  }
   const stopFade = () => { if (P && P.fadeT) { clearInterval(P.fadeT); P.fadeT = 0; } };
-  function applyGain() { const m = musicEl(); if (!m || !P) return; try { m.volume = sliderVolume() * P.gain; } catch (_e) { /* volume bloqué */ } }
+  const stopMenuFade = () => { if (P && P.menuFadeT) { clearInterval(P.menuFadeT); P.menuFadeT = 0; } };
+  const stopLoopFade = () => { if (P && P.score && P.score.xfadeT) { clearInterval(P.score.xfadeT); P.score.xfadeT = 0; } };
+  function applyGain() {
+    const p = P; if (!p) return;
+    if (p.score && p.score.started && !p.score.stopped) scoreVolume();
+    const m = musicEl(); if (!m) return;
+    if (p.restoringMenu) { try { m.volume = sliderVolume() * (p.menuGain || 0); } catch (_e) { /* volume bloqué */ } }
+    else if (!p.musicStarted || p.phase === 'prelude') { try { m.volume = sliderVolume() * p.gain; } catch (_e) { /* volume bloqué */ } }
+  }
   function fadeGain(target, ms, then) {
     if (!P) { then && then(); return; }
     stopFade();
@@ -453,7 +473,12 @@
   }
 
   const baseSpeed = (p) => Math.max(24, Math.min(58, p.viewH * 0.06)) * (p.devSpeed || 1) * (p.userSpeed || 1);
-  function orientation() { return window.innerHeight > window.innerWidth * 1.02 ? 'portrait' : 'landscape'; }
+  function orientation() {
+    const r = window.innerHeight / Math.max(1, window.innerWidth);
+    const prev = (P && P.orient) || (r > 1.02 ? 'portrait' : 'landscape');
+    if (prev === 'portrait') return r < 0.92 ? 'landscape' : 'portrait';
+    return r > 1.12 ? 'portrait' : 'landscape';
+  }
   function lite() { return reducedMotion() || Math.min(window.innerWidth, window.innerHeight) < 420 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2); }
 
   function mount(mode, chronicle) {
@@ -466,6 +491,7 @@
     root.setAttribute('aria-label', mode === 'chronique' ? 'Ma Chronique' : 'Générique de fin du Tome I');
     const op = D.opening;
     root.innerHTML = `
+      <div class="gq-score" aria-hidden="true"><audio preload="auto"></audio><audio preload="auto"></audio></div>
       <div class="gq-course" aria-hidden="true"><video class="gq-vid" muted playsinline preload="none" disablepictureinpicture></video><video class="gq-vid" muted playsinline preload="none" disablepictureinpicture></video><img class="gq-still" alt=""><div class="gq-mist"></div><div class="gq-warm"></div></div>
       <div class="gq-bg"><div class="gq-layer"><div class="gq-fill"></div><img class="gq-img" alt="" decoding="async"></div><div class="gq-layer"><div class="gq-fill"></div><img class="gq-img" alt="" decoding="async"></div></div>
       <div class="gq-veil"></div>
@@ -586,7 +612,15 @@
   function courseInit(p) {
     const vids = [...p.root.querySelectorAll('.gq-vid')];
     p.course = { vids, active: -1, clip: '', idx: -1, pending: '', since: -99, missing: new Set(), cues: [], on: false, enabled: courseEnabled() };
-    vids.forEach((v) => { v.muted = true; v.defaultMuted = true; v.volume = 0; v.playsInline = true; v.setAttribute('muted', ''); });
+    vids.forEach((v) => {
+      v.muted = true; v.defaultMuted = true; v.volume = 0; v.playsInline = true; v.setAttribute('muted', '');
+      v.addEventListener('ended', () => {
+        const q = P; const c = q && q.course; if (!c || c.vids[c.active] !== v) return;
+        const clip = K && K.clips[c.clip]; if (clip && clip.loop === false) return;
+        if (c.seaming || c.pending) return;
+        try { v.currentTime = 0; playVid(v); } catch (_e) { /* ignore */ }
+      });
+    });
     const root = p.root.style; const tm = (K && K.timing) || {};
     root.setProperty('--xfade', (tm.crossfade || 1.4) + 's');
     if (p.course.enabled) courseGo(p.mode === 'chronique' ? (K.order[1] || K.order[0]) : K.order[0]);
@@ -620,7 +654,7 @@
       const onOk = () => end(true), onErr = () => end(false);
       const to = setTimeout(() => end(v.readyState >= 2), ((K.timing && K.timing.loadTimeout) || 8) * 1000);
       v.addEventListener('loadeddata', onOk); v.addEventListener('error', onErr);
-      v.loop = clip.loop !== false; v.muted = true; v.preload = 'auto';
+      v.loop = false; v.muted = true; v.preload = 'auto';
       v.dataset.clip = id; v.src = clip.src;
       try { v.load(); } catch (_e) { end(false); }
     });
@@ -638,7 +672,7 @@
       c.pending = '';
       if (!ok) { c.missing.add(id); try { v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } console.warn('[Sylvinia] Générique : vidéo absente ou illisible', id, K.clips[id] && K.clips[id].src); return false; }
       try { v.currentTime = 0; } catch (_e) { /* ignore */ }
-      v.loop = K.clips[id].loop !== false;
+      v.loop = false;
       if (opts.fade) v.style.setProperty('--xfade', opts.fade + 's'); else v.style.removeProperty('--xfade');
       playVid(v);
       const mist = p.root.querySelector('.gq-mist');
@@ -661,8 +695,36 @@
     const v = c.vids[c.active < 0 ? 0 : c.active ^ 1];
     if (v.dataset.clip !== id) loadInto(v, id).then((ok) => { if (!ok && P && P.course === c) c.missing.add(id); });
   }
+  function courseSeamTick() {
+    const p = P; const c = p && p.course;
+    if (!c || !c.enabled || c.pending || c.seaming || p.phase === 'finale' || p.phase === 'gate' || p.phase === 'prelude') return;
+    const v = c.active >= 0 ? c.vids[c.active] : null;
+    if (!v || !c.clip || !v.duration || !Number.isFinite(v.duration)) return;
+    const clip = K.clips[c.clip];
+    if (clip && clip.loop === false) return;
+    const fade = (K.timing && K.timing.crossfade) || 1.4;
+    if (v.duration - v.currentTime > fade + 0.25) return;
+    c.seaming = true;
+    const id = c.clip, slot = c.active ^ 1, next = c.vids[slot];
+    const start = () => {
+      if (!P || P.course !== c || c.clip !== id) { c.seaming = false; return; }
+      try { next.currentTime = 0; } catch (_e) { /* ignore */ }
+      playVid(next);
+      const mist = p.root.querySelector('.gq-mist');
+      if (mist) { mist.classList.add('on'); setTimeout(() => mist.classList.remove('on'), fade * 700); }
+      next.classList.add('vis'); v.classList.remove('vis');
+      setTimeout(() => {
+        if (!P || P.course !== c) return;
+        try { v.pause(); v.currentTime = 0; } catch (_e) { /* ignore */ }
+        if (c.clip === id && c.active === (slot ^ 1)) c.active = slot;
+        c.seaming = false;
+      }, (fade + 0.2) * 1000);
+    };
+    const ready = (next.dataset.clip === id && next.readyState >= 2) ? Promise.resolve(true) : loadInto(next, id);
+    ready.then((ok) => { if (!ok) { c.seaming = false; try { v.currentTime = 0; playVid(v); } catch (_e) { /* ignore */ } return; } start(); });
+  }
   function courseTick() {
-    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending) return;
+    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending || c.seaming) return;
     let target = p.mode === 'chronique' ? 1 : 0;
     if (p.phase === 'strip' || p.phase === 'hold') for (const cue of c.cues) if (p.viewH - p.offset + cue.pos <= p.reading) target = Math.max(target, cue.idx);
     if (target <= c.idx) return;
@@ -708,7 +770,7 @@
       if (!P || P !== p) return;
       if (!ok) { fallback(); return; }
       const v = c.vids[c.active];
-      v.addEventListener('ended', () => { if (P === p && p.phase === 'finale') { p.finaleEnd = p.clock + (tm.finaleHold || 1.2); fadeGain(0.55, 1400); } }, { once: true });
+      v.addEventListener('ended', () => { if (P === p && p.phase === 'finale') p.finaleEnd = p.clock + (tm.finaleHold || 1.2); }, { once: true });
       p.finaleDeadline = p.clock + Math.max(tm.finaleMax || 20, (Number.isFinite(v.duration) ? v.duration : 0) + 4);
     });
   }
@@ -717,9 +779,12 @@
   function sizeMotes() {
     const p = P; if (!p) return;
     const c = p.canvas, r = Math.min(2, window.devicePixelRatio || 1);
-    c.width = Math.round(window.innerWidth * r); c.height = Math.round(window.innerHeight * r);
+    const w = Math.round(window.innerWidth * r), h = Math.round(window.innerHeight * r);
     const n = lite() ? 14 : (p.orient === 'portrait' ? 46 : 30);
-    p.motes = Array.from({ length: n }, (_, i) => ({ x: Math.random(), y: Math.random(), s: 0.6 + Math.random() * 1.8, v: 0.006 + Math.random() * 0.018, w: Math.random() * 6.28, ember: p.orient === 'portrait' ? i % 3 === 0 : i % 7 === 0 }));
+    if (p.moteW === w && p.moteH === h && p.motes && p.motes.length === n) return;
+    const keep = (p.motes && p.motes.length === n) ? p.motes : null;
+    c.width = w; c.height = h; p.moteW = w; p.moteH = h;
+    p.motes = keep || Array.from({ length: n }, (_, i) => ({ x: Math.random(), y: Math.random(), s: 0.6 + Math.random() * 1.8, v: 0.006 + Math.random() * 0.018, w: Math.random() * 6.28, ember: p.orient === 'portrait' ? i % 3 === 0 : i % 7 === 0 }));
   }
   function drawMotes(dt) {
     const p = P; if (!p || !p.motes) return;
@@ -758,9 +823,15 @@
         if (!p.finalePreloaded && p.mode === 'generique') { p.finalePreloaded = true; coursePreload('V06'); }
         if (p.clock >= p.holdEnd) { if (p.mode === 'generique' && D.course) startFinale(); else finish('fin'); }
       } else if (p.phase === 'finale') {
+        const fade = (scoreCfg().fadeOut || 2.4);
+        if (!p.scoreFadingOut && p.finaleEnd && p.clock >= p.finaleEnd - fade) {
+          p.scoreFadingOut = true;
+          fadeGain(0, Math.max(400, (p.finaleEnd - p.clock + 0.6) * 1000));
+        }
         if ((p.finaleEnd && p.clock >= p.finaleEnd) || p.clock >= p.finaleDeadline) finish('fin');
       }
-      if (p.phase !== 'prelude' && p.phase !== 'finale' && p.phase !== 'gate') courseTick();
+      if (p.phase !== 'prelude' && p.phase !== 'finale' && p.phase !== 'gate') { courseTick(); courseSeamTick(); }
+      scoreTick();
     }
     drawMotes(running ? dt : 0);
     p.raf = requestAnimationFrame(frame);
@@ -861,9 +932,8 @@
     if (v) { v.muted = true; v.addEventListener('error', () => v.remove(), true); try { const pl = v.play(); if (pl) pl.catch(() => {}); } catch (_e) { /* l’affiche reste */ } }
     requestAnimationFrame(() => P && P.root.classList.add('gate'));
     setTimeout(() => { if (P === p) courseStop(p); }, 1800);
-    if (p.musicStarted && p.gain < 1) fadeGain(1, 1800);
+    restoreMenuMusic();
     setTimeout(() => { const b = P && P.root.querySelector('[data-gq="gate-menu"]'); if (b) b.focus({ preventScroll: true }); }, 700);
-    if (!p.musicStarted) startMusic();
   }
   // La CA garde son accès habituel (sélecteur de mode, toujours ouvert) et sa propre sauvegarde ; l’Histoire est sauvegardée avant.
   function goAlternative() {
@@ -871,7 +941,10 @@
     p.closing = true;
     p.root.classList.add('out');
     fadeGain(0, 900);
+    if (p.restoringMenu) fadeMenu(0, 900);
     setTimeout(() => {
+      scoreStop(true);
+      const m = musicEl(); if (m && !m.paused) try { m.pause(); } catch (_e) { /* la CA reprend son propre thème */ }
       teardown(p, 'chronique-alternative');
       try { if (typeof save === 'function') save(); } catch (_e) { /* ignore */ }
       if (typeof openAlternativeChronicleFromModeSelect === 'function') openAlternativeChronicleFromModeSelect();
@@ -887,7 +960,12 @@
     p.ctrlT = setTimeout(() => { if (P && P.confirm.hidden) P.root.classList.remove('ctrl'); }, 3200);
     const m = musicEl();
     // autoplay bloqué : la musique démarre au premier geste autorisé
-    if (m && wantMusic() && !p.paused && m.paused && p.musicStarted) m.play().then(applyGain).catch(() => {});
+    if (p.restoringMenu) {
+      if (m && wantMenuMusic() && !p.paused && m.paused) m.play().then(applyGain).catch(() => {});
+    } else if (p.musicStarted && wantMusic() && !p.paused && p.score && !p.score.stopped) {
+      const a = p.score.els[p.score.active];
+      if (a && a.paused) a.play().then(applyGain).catch(() => {});
+    }
   }
   function setPaused(on) {
     const p = P; if (!p) return;
@@ -895,8 +973,11 @@
     courseSetPaused(on);
     const b = p.root.querySelector('[data-gq="pause"]'); if (b) b.textContent = on ? 'Reprendre' : 'Pause';
     const m = musicEl();
-    if (on) { p.musicWasPlaying = !!(m && !m.paused); if (p.musicWasPlaying) try { m.pause(); } catch (_e) { /* déjà en pause */ } }
-    else if (p.musicWasPlaying && m && wantMusic()) m.play().then(applyGain).catch(() => {});
+    scoreHold(on);
+    if (p.restoringMenu) {
+      if (on) { p.musicWasPlaying = !!(m && !m.paused); if (p.musicWasPlaying) try { m.pause(); } catch (_e) { /* déjà en pause */ } }
+      else if (p.musicWasPlaying && m && wantMenuMusic()) m.play().then(applyGain).catch(() => {});
+    }
   }
   function askSkip(on) { const p = P; if (!p) return; p.confirm.hidden = !on; if (on) { p.root.classList.add('ctrl'); p.confirm.querySelector('[data-gq="skip-no"]').focus({ preventScroll: true }); } }
   function onClick(ev) {
@@ -928,9 +1009,18 @@
     else if (ev.key === 'Escape' || ev.key === 'Esc') { ev.preventDefault(); ev.stopPropagation(); askSkip(P.confirm.hidden); }
     else { ev.stopPropagation(); }
   }
-  function onVisibility() { if (!P) return; P.last = performance.now(); courseSetPaused(document.hidden || P.paused); }
+  function onVisibility() { if (!P) return; P.last = performance.now(); const hold = document.hidden || P.paused; courseSetPaused(hold); if (!P.paused) scoreHold(document.hidden); }
   let resizeT = 0;
-  function onResize() { clearTimeout(resizeT); resizeT = setTimeout(relayout, 140); }
+  function onResize() {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => {
+      if (!P) return;
+      const w = window.innerWidth, h = window.innerHeight;
+      if (P.lastW != null && Math.abs(w - P.lastW) < 16 && Math.abs(h - P.lastH) < 16 && orientation() === P.orient) return;
+      P.lastW = w; P.lastH = h;
+      relayout();
+    }, 140);
+  }
 
   /* ---- Ouverture / fermeture ---- */
   function open(mode, chronicle, opts = {}) {
@@ -945,6 +1035,7 @@
     };
     P.openEnd = T.openingIn + T.openingHold + (mode === 'chronique' ? -1.5 : 0);
     courseInit(P);
+    scoreInit(P);
     layout();
     // sans vidéo lisible (absente, mouvement réduit) : le titre et les cartons gardent un fond illustré
     if (K && K.repliOuverture) setTimeout(() => { const q = P; if (q && q.root === root && !(q.course && q.course.on) && !q.bgSrc) showBg(K.repliOuverture.src, K.repliOuverture.focus); }, 2500);
@@ -971,16 +1062,125 @@
     P.raf = requestAnimationFrame(frame);
     return true;
   }
+
+  /* ---- Piste du générique : deux lecteurs, boucle en fondu enchaîné, #music laissé au menu ---- */
+  function scoreInit(p) {
+    const els = [...p.root.querySelectorAll('.gq-score audio')];
+    const src = trackSrc();
+    p.score = { els, src, active: 0, mix: [0, 0], looping: false, started: false, stopped: false, ready: false, was: [false, false], xfadeT: 0 };
+    if (!src) return;
+    els.forEach((a) => {
+      a.preload = 'auto';
+      a.loop = false;
+      try { a.src = src; a.load(); } catch (_e) { /* préchargement impossible */ }
+      a.addEventListener('canplaythrough', () => { if (P === p && p.score) p.score.ready = true; }, { once: true });
+    });
+  }
+  function scoreVolume() {
+    const p = P; if (!p || !p.score) return;
+    const vol = sliderVolume() * (p.gain || 0);
+    p.score.els.forEach((a, i) => { try { a.volume = Math.max(0, Math.min(1, vol * (p.score.mix[i] || 0))); } catch (_e) { /* volume bloqué */ } });
+  }
+  function scoreStop(clearSrc) {
+    const p = P; if (!p || !p.score) return;
+    stopLoopFade();
+    p.score.stopped = true;
+    p.score.looping = false;
+    p.score.els.forEach((a, i) => {
+      try { a.pause(); } catch (_e) { /* ignore */ }
+      p.score.mix[i] = 0;
+      if (clearSrc) { try { a.removeAttribute('src'); a.load(); } catch (_e) { /* ignore */ } }
+    });
+  }
+  function scoreHold(on) {
+    const p = P; if (!p || !p.score || !p.score.started || p.score.stopped) return;
+    if (on) {
+      p.score.was = p.score.els.map((a) => !a.paused);
+      p.score.els.forEach((a) => { if (!a.paused) try { a.pause(); } catch (_e) { /* ignore */ } });
+    } else if (wantMusic()) {
+      p.score.els.forEach((a, i) => { if (p.score.was[i]) a.play().then(scoreVolume).catch(() => {}); });
+    }
+  }
+  function scoreTick() {
+    const p = P; if (!p || !p.score || !p.musicStarted || p.paused || p.score.stopped || p.score.looping || p.restoringMenu || p.scoreFadingOut) return;
+    if (!wantMusic() || p.phase === 'prelude' || p.phase === 'gate') return;
+    const s = p.score;
+    const a = s.els[s.active];
+    if (!a || a.paused || !a.duration || !Number.isFinite(a.duration)) return;
+    const cfg = scoreCfg();
+    const tail = cfg.loopTail || 5.5;
+    if ((a.duration - a.currentTime) > tail) return;
+    const b = s.els[1 - s.active];
+    if (!b) return;
+    s.looping = true;
+    const offset = Math.max(0, cfg.loopOffset || 0);
+    try { b.currentTime = offset; } catch (_e) { /* ignore */ }
+    s.mix[1 - s.active] = 0;
+    scoreVolume();
+    b.play().then(() => {
+      if (!P || P !== p || p.score.stopped) return;
+      const ms = Math.max(400, (cfg.loopCrossfade || 4) * 1000);
+      const fromA = s.mix[s.active];
+      const idxA = s.active, idxB = 1 - s.active;
+      let i = 0, steps = Math.max(1, Math.round(ms / 40));
+      stopLoopFade();
+      s.xfadeT = setInterval(() => {
+        if (!P || P !== p) { stopLoopFade(); return; }
+        i += 1;
+        const k = Math.min(1, i / steps);
+        s.mix[idxA] = fromA * (1 - k);
+        s.mix[idxB] = k;
+        scoreVolume();
+        if (i >= steps) {
+          stopLoopFade();
+          try { a.pause(); a.currentTime = offset; } catch (_e) { /* ignore */ }
+          s.mix[idxA] = 0; s.mix[idxB] = 1;
+          s.active = idxB; s.looping = false;
+          scoreVolume();
+        }
+      }, 40);
+    }).catch(() => { s.looping = false; });
+  }
+  function fadeMenu(target, ms, then) {
+    const p = P; if (!p) { then && then(); return; }
+    stopMenuFade();
+    const from = p.menuGain || 0;
+    const steps = Math.max(1, Math.round(ms / 40)); let i = 0;
+    p.menuFadeT = setInterval(() => {
+      if (!P) return;
+      i += 1; p.menuGain = from + (target - from) * (i / steps); applyGain();
+      if (i >= steps) { stopMenuFade(); then && then(); }
+    }, 40);
+  }
+  function restoreMenuMusic() {
+    const p = P; if (!p || p.restoringMenu) return;
+    p.restoringMenu = true;
+    p.scoreFadingOut = true;
+    const cfg = scoreCfg();
+    fadeGain(0, Math.max(400, (cfg.fadeOut || 2.4) * 400), () => scoreStop(true));
+    const m = musicEl();
+    if (!wantMenuMusic()) { if (m && !m.paused) try { m.pause(); } catch (_e) { /* ignore */ } return; }
+    p.menuGain = 0; applyGain();
+    try { if (typeof playMusic === 'function') playMusic('music_menu'); } catch (_e) { /* ignore */ }
+    if (m && m.paused) m.play().catch(() => {});
+    fadeMenu(1, (cfg.menuFadeIn || 1.8) * 1000);
+  }
+
   function startMusic() {
-    const p = P; if (!p) return;
+    const p = P; if (!p || p.restoringMenu) return;
     p.musicStarted = true;
     const m = musicEl();
-    if (!wantMusic()) { if (m && !m.paused) try { m.pause(); } catch (_e) { /* ignore */ } return; }
+    if (m && !m.paused) try { m.pause(); } catch (_e) { /* le thème du menu ou de l’épilogue cède la place */ }
+    if (!wantMusic()) { scoreStop(false); return; }
+    const s = p.score;
+    if (!s || !s.src) { p.gain = 0; applyGain(); return; }
+    const a = s.els[s.active] || s.els[0];
+    s.active = s.els[0] ? 0 : s.active;
+    s.mix = [1, 0]; s.looping = false; s.stopped = false; s.started = true;
+    try { a.currentTime = 0; } catch (_e) { /* ignore */ }
     p.gain = 0; applyGain();
-    try { if (typeof playMusic === 'function') playMusic(D.track); } catch (_e) { /* piste indisponible : générique silencieux */ }
-    if (m && m.dataset.currentKey !== D.track) { try { m.pause(); } catch (_e) { /* ignore */ } return; }
-    if (m && m.paused) m.play().catch(() => {});
-    fadeGain(1, 2600);
+    const ms = (scoreCfg().fadeIn || 2.6) * 1000;
+    a.play().then(() => fadeGain(1, ms)).catch(() => {});
   }
   function teardown(p, reason) {
     cancelAnimationFrame(p.raf);
@@ -988,8 +1188,9 @@
     document.removeEventListener('visibilitychange', onVisibility);
     window.removeEventListener('resize', onResize);
     window.removeEventListener('orientationchange', onResize);
-    clearTimeout(p.ctrlT); stopFade();
+    clearTimeout(p.ctrlT); stopFade(); stopMenuFade(); stopLoopFade();
     courseStop(p);
+    scoreStop(true);
     const v = p.root.querySelector('.gq-gate video'); if (v) { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } }
     p.root.remove();
     P = null;
@@ -1011,14 +1212,14 @@
         if (p.prevMusicKey && p.prevMusicKey !== D.track && typeof playMusic === 'function') { try { playMusic(p.prevMusicKey); } catch (_e) { /* ignore */ } }
         else if (p.prevMusicPaused && m) try { m.pause(); } catch (_e) { /* ignore */ }
       } else {
-        // retour au menu principal, thème du menu conservé sans doublon
+        // retour au menu principal : le thème du menu est déjà relancé à la passerelle, sans doublon
         try { if (typeof setScreen === 'function') setScreen('title'); } catch (_e) { /* ignore */ }
         try { if (document.body.classList.contains('ui-biblio') && window.BibliothequeAstrale) window.BibliothequeAstrale.route('#/titre'); } catch (_e) { /* ignore */ }
-        if (m && wantMusic() && m.paused) m.play().catch(() => {});
+        if (m && wantMenuMusic() && m.paused) { try { if (typeof playMusic === 'function') playMusic('music_menu'); } catch (_e) { /* ignore */ } if (m.paused) m.play().catch(() => {}); }
       }
     };
     const m = musicEl();
-    if ((p.mode === 'chronique' || p.opts.replay) && m && !m.paused && p.prevMusicKey !== D.track) fadeGain(0, T.outro * 1000 * 0.9);
+    if (p.mode === 'chronique' || p.opts.replay) fadeGain(0, T.outro * 1000 * 0.9);
     setTimeout(done, T.outro * 1000);
   }
 
@@ -1033,7 +1234,7 @@
       // le thème du menu attend le titre frontal
       const m = musicEl();
       if (P) { stopFade(); P.gain = 0; applyGain(); }
-      if (m && m.dataset.currentKey === D.track && !m.paused) try { m.pause(); } catch (_e) { /* ignore */ }
+      if (m && !m.paused) try { m.pause(); } catch (_e) { /* ignore */ }
     };
     let opened = false;
     try { opened = open('generique', chronicle, { prelude: Boolean(D.prelude), onCovered }); } catch (err) { console.error('[Sylvinia] Générique', err); }
@@ -1076,7 +1277,7 @@
   if (typeof playMusic === 'function') {
     const previousPlayMusic = playMusic;
     playMusic = window.playMusic = function (key) {
-      if (P && !P.closing && key !== D.track) return undefined;
+      if (P && !P.closing && !P.restoringMenu && key !== D.track) return undefined;
       const r = previousPlayMusic.apply(this, arguments);
       if (P && !P.closing) applyGain();
       return r;
@@ -1135,7 +1336,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : la course de Hylee';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : le thème de la course de Hylee';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,
@@ -1150,7 +1351,7 @@
     jouer: (opts = {}) => open(opts.mode || 'generique', opts.chronicle || currentChronicle(), opts) && (startMusic(), true),
     apercu: () => makeCapture('apercu'),
     parcours: () => readTrail(),
-    etat: () => P && { mode: P.mode, phase: P.phase, offset: Math.round(P.offset), stopAt: Math.round(P.stopAt), clock: +P.clock.toFixed(2), orient: P.orient, paused: P.paused, bg: P.bgSrc, anchor: anchorNow(), speed: P.speed, course: P.course && { on: P.course.on, clip: P.course.clip, pending: P.course.pending, manquantes: [...P.course.missing], active: P.course.enabled }, finaleDegradee: Boolean(P.finaleDegraded) },
+    etat: () => P && { mode: P.mode, phase: P.phase, offset: Math.round(P.offset), stopAt: Math.round(P.stopAt), clock: +P.clock.toFixed(2), orient: P.orient, paused: P.paused, bg: P.bgSrc, anchor: anchorNow(), speed: P.speed, course: P.course && { on: P.course.on, clip: P.course.clip, pending: P.course.pending, manquantes: [...P.course.missing], active: P.course.enabled }, finaleDegradee: Boolean(P.finaleDegraded), musique: P.score && { on: Boolean(P.score.started && !P.score.stopped && wantMusic()), piste: D.track, src: P.score.src, pret: P.score.ready, actif: P.score.active, fondu: P.score.looping, menu: Boolean(P.restoringMenu), temps: P.score.els[P.score.active] ? +P.score.els[P.score.active].currentTime.toFixed(2) : 0, duree: P.score.els[P.score.active] && Number.isFinite(P.score.els[P.score.active].duration) ? +P.score.els[P.score.active].duration.toFixed(2) : 0 } },
     vitesse: (n = 1) => { if (P) { P.devSpeed = n; P.speed = baseSpeed(P); } },
     accelerer: (on = true) => setFast(on),
     passer: () => finish('passe'),

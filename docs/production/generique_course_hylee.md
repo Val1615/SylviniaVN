@@ -47,3 +47,19 @@ Tout est dans `fusion/story-generique-credits.js` :
 - `course.timing` : fondu, durée minimale par boucle, délai de chargement, entrée et maintien de V06, repli ;
 - `course.cadrage` : object-position / object-fit par orientation (surcharge possible par clip) ;
 - `course.voiles` : opacités des voiles de contraste et des illustrations.
+
+
+## Musique
+
+Thème original de l’auteur, `assets/audio/generique_tome1.mp3` (clé `music_generique`, 3 min 39,8 s), à la place de la musique du menu.
+
+Elle commence avec le titre frontal (préchargée pendant le prélude) et accompagne le générique jusqu’au dernier sourire, sans relance lors des changements de vidéo ou d’orientation. Comme le générique dure plus longtemps que la piste, celle-ci boucle par un fondu enchaîné de 4 s, amorcé 5,5 s avant la fin du fichier pour éviter la queue silencieuse, la nouvelle boucle commençant à 0,5 s (attaque de la phrase).
+
+À la fin de V06, le thème du générique s’éteint. À la passerelle, le thème du menu reprend, sans double lecture. Si la musique est désactivée, aucun son n’est imposé, y compris la piste vidéo. Pause et reprise restent synchronisées. Tous les réglages sont dans `fusion/story-generique-credits.js` (`track` et `music`).
+
+
+## Illustrations et stabilité (v0.433)
+
+En paysage, les souvenirs occupent près de la moitié de la largeur, à droite, autour de Hylee, avec des bords estompés. En portrait, ils prennent un bandeau haut plus généreux, le texte restant en dessous. Tant que la course est visible, les petites vignettes du défilement sont masquées pour éviter le double emploi.
+
+Les boucles V01 à V05 se raccordent par un fondu entre les deux lecteurs, pour éviter le flash d’une reprise native. Un changement d’orientation ne bascule que hors d’une zone morte autour du format carré (écran de Fold déplié).

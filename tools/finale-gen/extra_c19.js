@@ -157,5 +157,5 @@ L’histoire continue dans le Tome II.`;
     String(id).startsWith('c19_') ? 'Chapitre XIX · ' + chapter : previousLabel(id);  // « XIX » sert seulement au rangement de l’interface (carte ch19).
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.432 · Générique : la course de Hylee';
+  if (update) update.textContent = 'Mise à jour · v0.433 · Générique : le thème de la course de Hylee';
 })();

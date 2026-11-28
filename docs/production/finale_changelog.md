@@ -1,5 +1,19 @@
 # Journal · Final du Tome I
 
+## v0.433 (branche `feat/generique-musique`)
+
+Thème original de l’auteur pour le générique de fin du Tome I, à la place de la musique du menu.
+
+- Piste byte-identique : `assets/audio/generique_tome1.mp3` (3 min 39,8 s), clé `music_generique`, configurable dans `fusion/story-generique-credits.js`.
+- Démarre avec le titre frontal (préchargée pendant le prélude), accompagne tout le générique, muette si la musique est désactivée.
+- Illustrations latérales nettement plus présentes (environ la moitié de la largeur en paysage, bandeau haut en portrait, bords estompés). Les petites vignettes dans le texte sont masquées tant que la course de Hylee est visible, pour laisser les souvenirs émerger autour d’elle.
+- Clignotement corrigé : raccord en fondu entre deux boucles d’une même vidéo (plus de flash à chaque reprise), hystérésis d’orientation sur écran presque carré, et plus de recréation inutile des poussières au moindre redimensionnement.
+
+- Boucle en fondu enchaîné discret (4 s, en évitant la queue silencieuse de la piste) : pas de coupure sèche ni de silence.
+- Fin de V06 : fondu de sortie du thème du générique. Passerelle : retour propre au thème du menu, sans double lecture.
+- Scénario, routes, choix, combats, sauvegardes `sylvinia_vn_v82`, CA et Studio inchangés.
+- Bulle de mise à jour : « v0.433 · Générique : le thème de la course de Hylee ».
+
 ## v0.432 (branche `feat/generique-course-hylee`)
 
 Consigne de l’auteur « Évolution du générique de fin du Tome I » (détails : `generique_course_hylee.md`).
