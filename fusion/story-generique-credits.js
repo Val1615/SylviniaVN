@@ -28,9 +28,17 @@
   const VID = 'assets/video/generique/';
 
   window.SylviniaGeneriqueData = {
-    // Piste provisoire : la musique réellement jouée au menu principal (clé officielle du gestionnaire audio).
-    // Pour un futur thème de crédits original, il suffira de déclarer sa clé dans A et de la mettre ici.
-    track: 'music_menu',
+    // Thème original du générique (clé officielle du gestionnaire audio, piste interchangeable).
+    track: 'music_generique',
+    music: {
+      src: 'assets/audio/generique_tome1.mp3',
+      fadeIn: 2.6,
+      fadeOut: 2.4,
+      menuFadeIn: 1.8,
+      loopCrossfade: 4,
+      loopTail: 5.5,
+      loopOffset: 0.5,
+    },
     // Réglages de départ, ajustés au rendu réel (voir le compte rendu).
     timing: { openingIn: 2.5, openingHold: 4.5, openingOut: 2.0, crossfade: 2.2, minHold: 3.5, finalHold: 7, outro: 3.2 },
     opening: { line1: 'Les Chroniques de', title: 'Sylvinia', tome: 'Tome I' },
@@ -77,7 +85,7 @@
       // Cadrage (object-position / object-fit) par orientation ; un clip peut le surcharger par clips.Vxx.cadrage.
       cadrage: { paysage: { position: '50% 62%', fit: 'cover' }, portrait: { position: '50% 66%', fit: 'cover' } },
       // Voiles de contraste (opacité 0-1) posés sur la vidéo, sous le texte.
-      voiles: { paysage: { texte: 0.72, haut: 0.4, bas: 0.28 }, portrait: { centre: 0.5, haut: 0.42, bas: 0.3 }, illustrations: 0.92 },
+      voiles: { paysage: { texte: 0.72, haut: 0.4, bas: 0.28 }, portrait: { centre: 0.5, haut: 0.42, bas: 0.3 }, illustrations: 0.96 },
       // Image fixe sobre si V06 manque (ou mouvement réduit).
       repli: BG.rentrons,
       // Fond du titre frontal et des cartons si aucune vidéo ne peut être lue.

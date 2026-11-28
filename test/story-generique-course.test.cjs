@@ -1,4 +1,4 @@
-/* Générique v0.432 : données de mise en scène (node test/story-generique-course.test.cjs). */
+/* Générique v0.433 : données de mise en scène (node test/story-generique-course.test.cjs). */
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -30,4 +30,12 @@ assert.equal(K.clips.V06.loop, false);
 const idx = K.cues.map((q) => K.order.indexOf(q.clip));
 assert.deepEqual([...idx], [...idx].sort((a, b) => a - b));
 const present = Object.entries(K.clips).filter(([, v]) => fs.existsSync(path.join(root, v.src))).map(([k]) => k);
-console.log("story-generique-course : ok (vidéos présentes : " + present.join(", ") + ")");
+
+// Musique dédiée : piste présente, configurable, distincte du thème du menu.
+assert.equal(D.track, "music_generique");
+assert.ok(D.music && D.music.src);
+assert.ok(fs.existsSync(path.join(root, D.music.src)), D.music.src);
+assert.ok(D.music.loopCrossfade > 0 && D.music.loopTail > 0);
+assert.equal(fs.statSync(path.join(root, D.music.src)).size, 4736692);
+
+console.log("story-generique-course : ok (vidéos présentes : " + present.join(", ") + ", musique " + D.track + ")");
