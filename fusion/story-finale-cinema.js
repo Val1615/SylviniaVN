@@ -264,7 +264,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · v0.434 · Générique : souvenirs fondus dans la course';
+  if (update) update.textContent = 'Mise à jour · v0.435 · Générique : boucles nettes, souvenirs et bustes plus présents';
 
   window.SylviniaFinaleCinema = {
     src: SRC,

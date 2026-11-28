@@ -9,7 +9,7 @@
   const C = window.SylviniaChronique;
   if (!D || !C) return;
 
-  const GAME_VERSION = 'v0.434';
+  const GAME_VERSION = 'v0.435';
   const STATE_KEY = 'tome1Chronicle';                     // capture versionnée, rangée à côté des flags (jamais dedans)
   const MIRROR_KEY = 'sylvinia_vn_chronique_tome1_v1';     // copie de la dernière chronique terminée (relectures de chapitre, Ma Chronique)
   const ROOT_ID = 'sylviniaGenerique';
@@ -275,7 +275,8 @@
 /* ==== Composition en trois couches : 01 course de Hylee, 02 illustrations, 03 texte et interface ==== */
 #${ROOT_ID}{isolation:isolate}
 .gq-score{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
-.gq-course{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050407}
+.gq-course{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#050407;isolation:isolate;transform:translateZ(0)}
+.gq-bg,.gq-veil,.gq-motes,.gq-view,.gq-cartons{isolation:isolate;transform:translateZ(0)}
 .gq-bg{z-index:1;pointer-events:none}
 .gq-veil{z-index:2}.gq-motes{z-index:3}.gq-view{z-index:4}.gq-cartons{z-index:4}.gq-opening{z-index:5}
 .gq-curtain,.gq-prelude,.gq-launch{z-index:6}.gq-gate{z-index:7}.gq-paused,.gq-quick,.gq-ctrl,.gq-confirm{z-index:8}
@@ -288,12 +289,14 @@
 .gq-warm.on{opacity:1}
 /* Course active : les illustrations deviennent des souvenirs latéraux, la course reste visible */
 #${ROOT_ID}.course-on{background:transparent}
-#${ROOT_ID}.course-on .gq-layer{inset:auto;top:10%;right:3%;width:38%;height:70%;opacity:0}
-#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.88)}
+#${ROOT_ID}.course-on .gq-layer{inset:auto;top:5%;right:0;width:53%;height:86%;opacity:0}
+#${ROOT_ID}.course-on .gq-layer.vis{opacity:var(--illus,.97)}
 #${ROOT_ID}.course-on .gq-fill{display:none}
-#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);filter:saturate(.9) brightness(1.04) contrast(.94)}
-#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:3%}
+#${ROOT_ID}.course-on .gq-layer .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);filter:saturate(.94) brightness(1.02)}
+#${ROOT_ID}.course-on[data-cote="droite"] .gq-layer{right:auto;left:0}
 #${ROOT_ID}.course-on .gq-cover{display:none}
+#${ROOT_ID}.course-on .gq-view{width:46%}
+#${ROOT_ID}.course-on .gq-act h2{font-size:clamp(24px,4.8vmin,56px)}
 #${ROOT_ID}.course-on .gq-veil{background:
   linear-gradient(90deg,rgba(5,4,8,var(--v-texte,.72)) 0%,rgba(5,4,8,calc(var(--v-texte,.72) * .7)) 28%,rgba(5,4,8,calc(var(--v-texte,.72) * .25)) 46%,rgba(5,4,8,0) 60%),
   linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.4)) 0%,rgba(5,4,8,0) 20%,rgba(5,4,8,0) 82%,rgba(5,4,8,var(--v-bas,.28)) 100%)}
@@ -305,9 +308,11 @@
 #${ROOT_ID} .gq-layer.kind-sprite .gq-img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 26px rgba(0,0,0,.6)) brightness(.95);-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent 100%);mask-image:linear-gradient(180deg,#000 72%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 55%,transparent 100%)}
 #${ROOT_ID} .gq-layer.kind-sprite.vis .gq-img,#${ROOT_ID} .gq-layer.kind-carte.vis .gq-img{animation:none}
-#${ROOT_ID}.course-on .gq-layer.kind-sprite,#${ROOT_ID}.course-on .gq-layer.kind-carte{top:8%;right:4%;width:36%;height:72%}
-#${ROOT_ID}.course-on .gq-layer.kind-sprite .gq-img{filter:brightness(.96) drop-shadow(0 6px 22px rgba(0,0,0,.28));-webkit-mask-image:radial-gradient(ellipse 48% 55% at 50% 40%,#000 28%,rgba(0,0,0,.7) 52%,rgba(0,0,0,.28) 72%,transparent 100%);mask-image:radial-gradient(ellipse 48% 55% at 50% 40%,#000 28%,rgba(0,0,0,.7) 52%,rgba(0,0,0,.28) 72%,transparent 100%)}
-#${ROOT_ID}.course-on .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 46%,rgba(0,0,0,.95) 0%,rgba(0,0,0,.82) 30%,rgba(0,0,0,.52) 52%,rgba(0,0,0,.25) 70%,rgba(0,0,0,.08) 86%,transparent 100%);filter:saturate(.9) brightness(1.04) contrast(.94)}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite{top:auto;right:0;bottom:0;left:auto;width:54%;height:94%}
+#${ROOT_ID}.course-on .gq-layer.kind-carte{top:6%;right:0;width:50%;height:84%}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite.vis,#${ROOT_ID}.course-on .gq-layer.kind-carte.vis{opacity:1}
+#${ROOT_ID}.course-on .gq-layer.kind-sprite .gq-img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 10px 26px rgba(0,0,0,.45)) brightness(.98);-webkit-mask-image:linear-gradient(180deg,#000 78%,transparent 99%);mask-image:linear-gradient(180deg,#000 78%,transparent 99%)}
+#${ROOT_ID}.course-on .gq-layer.kind-carte .gq-img{-webkit-mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 52% 46%,#000 0%,#000 28%,rgba(0,0,0,.88) 48%,rgba(0,0,0,.5) 68%,rgba(0,0,0,.16) 84%,transparent 100%);filter:saturate(.94) brightness(1.02)}
 /* Acte I : cartons individuels, côtés alternés */
 .gq-cartons{position:absolute;inset:0;pointer-events:none}
 .gq-carton{position:absolute;top:24%;max-width:min(42%,30rem);padding:0 2vw;opacity:0;transform:translateY(6px);transition:opacity var(--c-out,.7s) ease,transform var(--c-out,.7s) ease;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 22px rgba(0,0,0,.65)}
@@ -324,10 +329,11 @@
 #${ROOT_ID}.portrait .gq-carton{top:16%;max-width:80%}
 #${ROOT_ID}.portrait .gq-carton.centre{top:42%}
 /* Portrait · Au-delà des cendres, avec la course */
-#${ROOT_ID}.portrait.course-on .gq-layer{top:2%;left:10%;right:10%;width:auto;height:38%}
-#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite,#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:2%;left:18%;right:18%;width:auto;height:38%}
+#${ROOT_ID}.portrait.course-on .gq-layer{top:0;left:4%;right:4%;width:auto;height:48%}
+#${ROOT_ID}.portrait.course-on .gq-layer.kind-sprite{top:0;bottom:auto;left:4%;right:4%;width:auto;height:44%}
+#${ROOT_ID}.portrait.course-on .gq-layer.kind-carte{top:0;left:8%;right:8%;width:auto;height:48%}
 #${ROOT_ID}.portrait.course-on .gq-layer .gq-img{top:0;height:100%}
-#${ROOT_ID}.portrait.course-on .gq-view{top:34%;bottom:12%}
+#${ROOT_ID}.portrait.course-on .gq-view{top:48%;bottom:12%;width:auto;left:0;right:0}
 #${ROOT_ID}.portrait.course-on .gq-veil{background:radial-gradient(ellipse 110% 60% at 50% 46%,rgba(5,4,8,var(--v-centre,.5)) 0%,rgba(5,4,8,calc(var(--v-centre,.5) * .55)) 60%,rgba(5,4,8,.15) 100%),linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,0) 18%,rgba(5,4,8,0) 80%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait.course-on.cartons-on .gq-veil{background:linear-gradient(180deg,rgba(5,4,8,var(--v-haut,.42)) 0%,rgba(5,4,8,.2) 35%,rgba(5,4,8,.08) 75%,rgba(5,4,8,var(--v-bas,.3)) 100%)}
 #${ROOT_ID}.portrait .gq-layer.kind-sprite,#${ROOT_ID}.portrait .gq-layer.kind-carte{top:4%;left:20%;right:20%;width:auto;height:40%}
@@ -614,18 +620,14 @@
   function courseInit(p) {
     const vids = [...p.root.querySelectorAll('.gq-vid')];
     p.course = { vids, active: -1, clip: '', idx: -1, pending: '', since: -99, missing: new Set(), cues: [], on: false, enabled: courseEnabled() };
-    vids.forEach((v) => {
-      v.muted = true; v.defaultMuted = true; v.volume = 0; v.playsInline = true; v.setAttribute('muted', '');
-      v.addEventListener('ended', () => {
-        const q = P; const c = q && q.course; if (!c || c.vids[c.active] !== v) return;
-        const clip = K && K.clips[c.clip]; if (clip && clip.loop === false) return;
-        if (c.seaming || c.pending) return;
-        try { v.currentTime = 0; playVid(v); } catch (_e) { /* ignore */ }
-      });
-    });
+    vids.forEach((v) => { v.muted = true; v.defaultMuted = true; v.volume = 0; v.playsInline = true; v.setAttribute('muted', ''); });
     const root = p.root.style; const tm = (K && K.timing) || {};
     root.setProperty('--xfade', (tm.crossfade || 1.4) + 's');
     if (p.course.enabled) courseGo(p.mode === 'chronique' ? (K.order[1] || K.order[0]) : K.order[0]);
+  }
+  function setVar(st, name, val) {
+    const v = String(val);
+    if (st.getPropertyValue(name) !== v) st.setProperty(name, v);
   }
   function courseLayout() {
     const p = P; if (!p || !p.course || !K) return;
@@ -633,11 +635,11 @@
     const clipCad = (K.clips[p.course.clip] && K.clips[p.course.clip].cadrage && K.clips[p.course.clip].cadrage[o]) || {};
     const cad = { ...(K.cadrage && K.cadrage[o]), ...clipCad };
     const st = p.root.style;
-    if (cad.position) st.setProperty('--vpos', cad.position);
-    if (cad.fit) st.setProperty('--vfit', cad.fit);
+    if (cad.position) setVar(st, '--vpos', cad.position);
+    if (cad.fit) setVar(st, '--vfit', cad.fit);
     const v = (K.voiles && K.voiles[o]) || {};
-    for (const [k, val] of Object.entries(v)) st.setProperty('--v-' + k, String(val));
-    if (K.voiles && K.voiles.illustrations != null) st.setProperty('--illus', String(K.voiles.illustrations));
+    for (const [k, val] of Object.entries(v)) setVar(st, '--v-' + k, val);
+    if (K.voiles && K.voiles.illustrations != null) setVar(st, '--illus', K.voiles.illustrations);
     // positions des ancres dans la bande
     const top = (id) => { const b = p.blocks.find((x) => x.id === id); return b ? b.top : null; };
     const c0 = top('chronique-intro'), c1 = top('chronique-fin');
@@ -656,7 +658,7 @@
       const onOk = () => end(true), onErr = () => end(false);
       const to = setTimeout(() => end(v.readyState >= 2), ((K.timing && K.timing.loadTimeout) || 8) * 1000);
       v.addEventListener('loadeddata', onOk); v.addEventListener('error', onErr);
-      v.loop = false; v.muted = true; v.preload = 'auto';
+      v.loop = clip.loop !== false; v.muted = true; v.preload = 'auto';
       v.dataset.clip = id; v.src = clip.src;
       try { v.load(); } catch (_e) { end(false); }
     });
@@ -674,7 +676,7 @@
       c.pending = '';
       if (!ok) { c.missing.add(id); try { v.removeAttribute('src'); v.load(); } catch (_e) { /* ignore */ } console.warn('[Sylvinia] Générique : vidéo absente ou illisible', id, K.clips[id] && K.clips[id].src); return false; }
       try { v.currentTime = 0; } catch (_e) { /* ignore */ }
-      v.loop = false;
+      v.loop = K.clips[id].loop !== false;
       if (opts.fade) v.style.setProperty('--xfade', opts.fade + 's'); else v.style.removeProperty('--xfade');
       playVid(v);
       const mist = p.root.querySelector('.gq-mist');
@@ -697,36 +699,8 @@
     const v = c.vids[c.active < 0 ? 0 : c.active ^ 1];
     if (v.dataset.clip !== id) loadInto(v, id).then((ok) => { if (!ok && P && P.course === c) c.missing.add(id); });
   }
-  function courseSeamTick() {
-    const p = P; const c = p && p.course;
-    if (!c || !c.enabled || c.pending || c.seaming || p.phase === 'finale' || p.phase === 'gate' || p.phase === 'prelude') return;
-    const v = c.active >= 0 ? c.vids[c.active] : null;
-    if (!v || !c.clip || !v.duration || !Number.isFinite(v.duration)) return;
-    const clip = K.clips[c.clip];
-    if (clip && clip.loop === false) return;
-    const fade = (K.timing && K.timing.crossfade) || 1.4;
-    if (v.duration - v.currentTime > fade + 0.25) return;
-    c.seaming = true;
-    const id = c.clip, slot = c.active ^ 1, next = c.vids[slot];
-    const start = () => {
-      if (!P || P.course !== c || c.clip !== id) { c.seaming = false; return; }
-      try { next.currentTime = 0; } catch (_e) { /* ignore */ }
-      playVid(next);
-      const mist = p.root.querySelector('.gq-mist');
-      if (mist) { mist.classList.add('on'); setTimeout(() => mist.classList.remove('on'), fade * 700); }
-      next.classList.add('vis'); v.classList.remove('vis');
-      setTimeout(() => {
-        if (!P || P.course !== c) return;
-        try { v.pause(); v.currentTime = 0; } catch (_e) { /* ignore */ }
-        if (c.clip === id && c.active === (slot ^ 1)) c.active = slot;
-        c.seaming = false;
-      }, (fade + 0.2) * 1000);
-    };
-    const ready = (next.dataset.clip === id && next.readyState >= 2) ? Promise.resolve(true) : loadInto(next, id);
-    ready.then((ok) => { if (!ok) { c.seaming = false; try { v.currentTime = 0; playVid(v); } catch (_e) { /* ignore */ } return; } start(); });
-  }
   function courseTick() {
-    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending || c.seaming) return;
+    const p = P; const c = p && p.course; if (!c || !c.enabled || c.pending) return;
     let target = p.mode === 'chronique' ? 1 : 0;
     if (p.phase === 'strip' || p.phase === 'hold') for (const cue of c.cues) if (p.viewH - p.offset + cue.pos <= p.reading) target = Math.max(target, cue.idx);
     if (target <= c.idx) return;
@@ -832,7 +806,7 @@
         }
         if ((p.finaleEnd && p.clock >= p.finaleEnd) || p.clock >= p.finaleDeadline) finish('fin');
       }
-      if (p.phase !== 'prelude' && p.phase !== 'finale' && p.phase !== 'gate') { courseTick(); courseSeamTick(); }
+      if (p.phase !== 'prelude' && p.phase !== 'finale' && p.phase !== 'gate') courseTick();
       scoreTick();
     }
     drawMotes(running ? dt : 0);
@@ -1338,7 +1312,7 @@
   }
 
   const update = document.querySelector('.menuUpdateBubble');
-  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : souvenirs fondus dans la course';
+  if (update) update.textContent = 'Mise à jour · ' + GAME_VERSION + ' · Générique : boucles nettes, souvenirs et bustes plus présents';
 
   window.SylviniaGenerique = {
     version: GAME_VERSION,
