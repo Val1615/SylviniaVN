@@ -19,6 +19,13 @@
   };
 
   const credit = (role, name, desc) => ({ type: 'credit', role, name, desc });
+  // Faux crédits (acte « Avec la participation de… ») : portrait authentique du jeu dans la couche des illustrations.
+  // sprite = buste détouré du VN (affiché entier) ; carte = portrait rectangulaire (bords estompés).
+  const cast = (id, name, role, src, kind = 'sprite', focus = '50% 30%') => ({ id: 'cast-' + id, gap: 10, bg: { src, focus, kind }, items: [
+    { type: 'role', text: role },
+    { type: 'name', text: name },
+  ] });
+  const VID = 'assets/video/generique/';
 
   window.SylviniaGeneriqueData = {
     // Piste provisoire : la musique réellement jouée au menu principal (clé officielle du gestionnaire audio).
@@ -27,6 +34,55 @@
     // Réglages de départ, ajustés au rendu réel (voir le compte rendu).
     timing: { openingIn: 2.5, openingHold: 4.5, openingOut: 2.0, crossfade: 2.2, minHold: 3.5, finalHold: 7, outro: 3.2 },
     opening: { line1: 'Les Chroniques de', title: 'Sylvinia', tome: 'Tome I' },
+    /* Acte I · À l’origine des Chroniques : un carton à la fois, côtés alternés, pseudonyme seul (jamais d’identité civile).
+       Durées en secondes, réglables : fondu d’entrée, maintien, fondu de sortie, battement entre deux cartons. */
+    cartons: {
+      title: 'À l’origine des Chroniques',
+      name: 'Le Chroniqueur Vagabond',
+      timing: { titleHold: 2.6, fadeIn: 0.8, hold: 2.5, fadeOut: 0.7, gap: 0.25, finalHold: 3.6, breath: 1.6 },
+      items: [
+        { role: 'Création originale', side: 'gauche', bg: BG.champ },
+        { role: 'Univers et mythologie', side: 'droite', bg: BG.portePulse },
+        { role: 'Écriture et scénario', side: 'gauche', bg: BG.miraldas },
+        { role: 'Direction narrative', side: 'droite', bg: BG.akuhn },
+        { role: 'Direction artistique', side: 'gauche', bg: BG.portes },
+        { role: 'Game design', side: 'droite', bg: BG.panorama },
+        { role: 'Direction musicale', side: 'gauche', bg: BG.cielVoile },
+        { role: 'Production et réalisation', side: 'droite', bg: BG.foretMorte },
+      ],
+      final: { lines: ['Un jeu du', 'Chroniqueur Vagabond'] },
+    },
+    /* Couche 01 · Le voyage de Hylee : course plein écran permanente, derrière les illustrations et le texte.
+       Fichiers de l’auteur, byte-identiques (aucun réencodage), muets dans le lecteur. Un fichier absent ou illisible
+       est simplement sauté : la boucle en cours continue, ou, sans aucune vidéo, le rendu par illustrations plein écran. */
+    course: {
+      clips: {
+        V01: { src: VID + 'V01_forets_humaines.mp4', label: 'Forêts humaines' },
+        V02: { src: VID + 'V02_forets_sylviniennes.mp4', label: 'Forêts sylviniennes' },
+        V03: { src: VID + 'V03_miraldas.mp4', label: 'Mir’Aldas' },
+        V04: { src: VID + 'V04_foret_interdite.mp4', label: 'Forêt Interdite' },
+        V05: { src: VID + 'V05_champ_de_bataille.mp4', label: 'Champ de bataille' },
+        V06: { src: VID + 'V06_surplomb.mp4', label: 'Surplomb des terres sylviniennes', loop: false },
+      },
+      order: ['V01', 'V02', 'V03', 'V04', 'V05'],
+      // Ancres de la chronologie (jamais de retour en arrière, une étape à la fois) :
+      //   block = l’en-tête de ce bloc atteint la ligne de lecture ; chronique = fraction de Votre Chronique parcourue.
+      cues: [
+        { clip: 'V02', block: 'participation' },
+        { clip: 'V03', chronique: 0.4 },
+        { clip: 'V04', chronique: 0.72 },
+        { clip: 'V05', block: 'chronique-fin' },
+      ],
+      timing: { crossfade: 1.4, minClip: 14, loadTimeout: 8, finaleIn: 2.4, finaleHold: 1.2, finaleMax: 20, fallbackHold: 5 },
+      // Cadrage (object-position / object-fit) par orientation ; un clip peut le surcharger par clips.Vxx.cadrage.
+      cadrage: { paysage: { position: '50% 62%', fit: 'cover' }, portrait: { position: '50% 66%', fit: 'cover' } },
+      // Voiles de contraste (opacité 0-1) posés sur la vidéo, sous le texte.
+      voiles: { paysage: { texte: 0.72, haut: 0.4, bas: 0.28 }, portrait: { centre: 0.5, haut: 0.42, bas: 0.3 }, illustrations: 0.92 },
+      // Image fixe sobre si V06 manque (ou mouvement réduit).
+      repli: BG.rentrons,
+      // Fond du titre frontal et des cartons si aucune vidéo ne peut être lue.
+      repliOuverture: BG.cielVoile,
+    },
     // Transition depuis la dernière scène de l’épilogue : voile noir tombant du haut, deux lignes, puis l’ouverture.
     // Textes originaux de mise en scène (pas des citations du roman).
     prelude: { lines: ['Ainsi s’achève le Tome I.', 'Les pages se referment, mais votre chronique demeure.'], curtain: 3.0, lineIn: 1.4, lineHold: 2.6, launch: 2.2 },
@@ -42,30 +98,36 @@
     },
     acts: [
       {
-        id: 'acte1', numeral: 'I', title: 'Le silence après la tempête', bg: BG.cielVoile,
+        id: 'participation', numeral: 'II', title: 'Avec la participation de…', bg: null,
         blocks: [
-          { id: 'creation', bg: BG.champ, items: [
-            { type: 'dept', title: 'Création originale' },
-            { type: 'role', text: 'Imaginé, écrit et réalisé par' },
-            { type: 'name', text: 'Le Chroniqueur Vagabond', big: true },
-          ] },
-          { id: 'creation-roles', bg: BG.portePulse, items: [
-            { type: 'line', text: 'Création de l’univers, de la mythologie et des personnages' },
-            { type: 'line', text: 'Écriture du roman original et direction narrative' },
-            { type: 'line', text: 'Direction créative, artistique et musicale' },
-            { type: 'line', text: 'Conception du jeu et supervision de la production' },
+          cast('hylee', 'Hylee', 'Responsable des catastrophes magiques', 'assets/sprites/chapter3/hylee2_surprised.png'),
+          cast('remerii', 'Remerii', 'Service de réparation des catastrophes magiques', 'assets/sprites/remerii_strict.png'),
+          cast('iriana', 'Iriana', 'Respect du protocole impérial', 'assets/sprites/iriana_stern.png'),
+          cast('valurn', 'Valurn', 'Non-respect du protocole impérial', 'assets/sprites/valurn_amused.png'),
+          cast('tia', 'Tia Farae', 'Gestion des crises impériales', 'chronique-alternative/assets/portraits/tia.png', 'carte', '50% 24%'),
+          cast('draven', 'Draven', 'Responsable des relations diplomatiques', 'assets/sprites/draven_gruff.png'),
+          cast('amanea', 'Amanea Farae', 'Gestion des ressources démoniaques', 'assets/sprites/amanea_smile.png'),
+          cast('saidin', 'Saidin', 'Conservation et transmission du savoir', 'assets/sprites/chapter5/saidin_neutral.png'),
+          cast('naiah', 'Naïah', 'Destruction de la stabilité mentale', 'assets/sprites/chapter7/naiah_smirk.png'),
+          cast('allenna', 'Allenna', 'Responsable des conflits familiaux', 'chronique-alternative/assets/portraits/allenna.png', 'carte', '50% 24%'),
+          cast('bhaal', 'Bhaal', 'Ouverture des portes non autorisées', 'assets/images/keyscenes/chapter19-s09/s09_10_remerii_face_a_bhaal.webp', 'carte', '62% 45%'),
+          cast('medig', 'Medig', 'Soutien moral et supervision aérienne', 'assets/images/chapter3/c3_key_medig.png', 'carte', '70% 40%'),
+          { id: 'cast-vous', gap: 16, bg: null, items: [
+            { type: 'kicker', text: 'Et bien évidemment…' },
+            { type: 'name', text: 'Vous', big: true },
+            { type: 'line', text: 'Pour avoir survécu à tout ce petit monde.', italic: true },
           ] },
         ],
       },
       {
-        id: 'chronique', numeral: 'II', title: 'Votre Chronique', bg: BG.panorama, personal: true,
+        id: 'chronique', numeral: 'III', title: 'Votre Chronique', bg: BG.panorama, personal: true,
         intro: ['Je vous ai offert un monde.', 'Vous lui avez donné votre propre histoire.', 'Souvenez-vous…'],
         outro: { text: 'Telle fut votre chronique.', bg: BG.foretMorte },
         // Partie sans souvenir prouvable (ancienne sauvegarde, mode développeur) : aucune fausse personnalisation.
         empty: 'Les pages de votre voyage n’ont pas laissé de trace lisible dans cette sauvegarde. Le monde, lui, se souvient de votre passage.',
       },
       {
-        id: 'acte3', numeral: 'III', title: 'Derrière les Chroniques', bg: BG.akuhn,
+        id: 'acte3', numeral: 'IV', title: 'Derrière les Chroniques', bg: BG.akuhn,
         blocks: [
           { id: 'dept-dev', bg: BG.akuhn, items: [
             { type: 'dept', title: 'Conception & Développement', sub: 'Contributions assistées par IA' },
@@ -89,7 +151,7 @@
         ],
       },
       {
-        id: 'acte4', numeral: 'IV', title: 'Un monde qui continue de vivre', bg: BG.rentrons,
+        id: 'acte4', numeral: 'V', title: 'Un monde qui continue de vivre', bg: BG.rentrons,
         blocks: [
           { id: 'mot', bg: BG.rentrons, items: [
             { type: 'kicker', text: 'Mot de l’auteur' },
